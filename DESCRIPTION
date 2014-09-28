@@ -1,0 +1,14 @@
+Package: styleR
+Title: How stylish is your code?
+Version: 0.1
+Authors@R: "Jim Hester <james.f.hester@gmail.com> [aut, cre]"
+Description: Check how well your R package source conforms to
+    http://r-pkgs.had.co.nz/style.html.
+Depends:
+    R (>= 3.1.1)
+Imports:
+    rex
+License: MIT
+LazyData: true
+Suggests:
+    testthat
