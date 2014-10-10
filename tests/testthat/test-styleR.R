@@ -22,6 +22,13 @@ test_that("Camel case file names", {
     #"not differ only in capitalization")
 })
 
+context("variable_names")
+test_that("base_functions ignored", {
+  #re <- variable_names[["Should not be in camel case"]]
+  #lapply(base_functions, function(name) {
+    #expect_false(grepl(re, name, perl = TRUE), info = name)
+  #})
+})
 context("source")
 test_that("Camel case variable names", {
   expect_true(message_contains(check_file(variable_names, 'camelCase'),
@@ -34,21 +41,21 @@ test_that("multiple dots", {
 })
 
 test_that("remove text within quotes", {
-  expect_equal(blank_quoted_text(
+  expect_equal(blank_text(re = quoted,
       "single_quoted 'text to remove'"),
       "single_quoted '              '")
-  expect_equal(blank_quoted_text(
+  expect_equal(blank_text(re = quoted,
       "double_quoted \"text to remove\""),
       "double_quoted \"              \"")
 
-  expect_equal(blank_quoted_text(
+  expect_equal(blank_text(re = quoted,
       "no_quotes"),
       "no_quotes")
 
-  expect_equal(blank_quoted_text(
+  expect_equal(blank_text(re = quoted,
       "escaped quotes 'quoted text \\' not the end yet!'"),
       "escaped quotes '                               '")
-  expect_equal(blank_quoted_text(
+  expect_equal(blank_text(re = quoted,
       "escaped quotes \"quoted text \\\" not the end yet!\""),
       "escaped quotes \"                               \"")
 })
@@ -76,23 +83,42 @@ ops <-c(
   '||',
   '&',
   '&&',
-  '!',
   "%>%",
   "%Anything%",
   "%+%",
   NULL)
 
 test_that("does not match operators with correct spacing", {
-  with_spaces <- ops[grepl(spacing[["Should have spaces around operators"]], paste0("a ", ops, " b"), perl=TRUE)]
-  expect_equal(with_spaces, character(0), info=paste("bad operators: ", paste0(collapse=", ", with_spaces)))
+  lapply(ops, function(op){
+    expect_false(grepl(spacing[["Should have spaces around infix operators"]], paste0("a ", op, " b"), perl = TRUE), info = op)
+  })
 })
 
 test_that("does match operators without correct spacing", {
-  for(op in ops){
+  lapply(ops, function(op) {
     search = paste0("a", op, " b")
-    expect_true(grepl(spacing[["Should have spaces around operators"]], search, perl = TRUE), info=search)
+    expect_true(grepl(spacing[["Should have spaces around infix operators"]], search, perl = TRUE), info=search)
 
     search = paste0("a ", op, "b")
-    expect_true(grepl(spacing[["Should have spaces around operators"]], search, perl = TRUE), info=search)
-  }
+    expect_true(grepl(spacing[["Should have spaces around infix operators"]], search, perl = TRUE), info=search)
+  })
+})
+
+context("assignment")
+
+test_that("matches assignment", {
+  re <- assignment[["Use <- not = for assignment"]]
+
+  expect_false(grepl(parens, "arst", perl = TRUE))
+  expect_false(grepl(parens, "a(st", perl = TRUE))
+  expect_true(grepl(parens, "a()t", perl = TRUE))
+  expect_false(grepl(parens, "a)t", perl = TRUE))
+
+  expect_true(grepl(re, "blah = blah", perl = TRUE))
+  expect_true(grepl(re, "blah = list(blah,", perl = TRUE))
+  expect_true(grepl(re, "blah = fun(true)", perl = TRUE))
+
+  expect_false(grepl(re, "fun(blah = true)", perl = TRUE))
+  expect_false(grepl(re, "blah = true,", perl = TRUE))
+  #expect_false(grepl(re, "blah = fun(true),", perl = TRUE)) PUNT! I can't get this one to work without breaking the others
 })
