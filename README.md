@@ -1,6 +1,8 @@
 # lintr
 A framework for linting R source code.
 
+![lintr](https://github.com/jimhester/lintr/raw/master/lintr.png "lintr")
+
 ## Vim
 lintr can be integrated with
 [syntastic](https://github.com/scrooloose/syntastic) to lint after
