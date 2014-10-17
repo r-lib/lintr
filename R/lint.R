@@ -1,9 +1,13 @@
 #' @export
 lint_file <- function(filename, linters = default_linters) {
   source_file <- srcfile(filename)
-  source_file$content <- paste0(collapse = '\n', readLines(filename))
+  lines <- readLines(filename)
+  source_file$content <- paste0(collapse = '\n', lines)
+
+  source_file$num_lines <- length(lines)
 
   lint_error <- function(e) {
+
     message_info <- re_matches(e$message,
       rex(except_some_of(":"),
         ":",
@@ -22,6 +26,8 @@ lint_file <- function(filename, linters = default_linters) {
     line_number <- as.integer(message_info$line)
     column_number <- as.integer(message_info$column)
 
+    # If the column number is zero it means the error really occurred at the
+    # end of the previous line
     if(column_number == 0L){
       line_number <- line_number - 1L
       line <- getSrcLines(source_file, line_number, line_number)
@@ -30,31 +36,40 @@ lint_file <- function(filename, linters = default_linters) {
 
     lint(
       filename = source_file$filename,
-      line_number = message_info$line,
+      line_number = line_number,
       column_number = column_number,
       type = "error",
       message = message_info$message,
       line = getSrcLines(source_file, line_number, line_number)
       )
   }
-  e <- tryCatch(parse(text=source_file$content, srcfile=source_file), error = lint_error)
 
-  if(!is.null(e)) {
-    return(e)
-  }
+  e <- tryCatch(parse(text=source_file$content, srcfile=source_file),
+    error = lint_error)
 
   source_file$parsed_content <- getParseData(source_file)
 
   structure(
-    lapply(linters, function(linter) {
-      structure(
-        Filter(Negate(is.null),
-          linter(source_file)),
-        class = "lints")
-    }),
-  class = "lints")
+    c(
+      # get lints from all the linters
+      Filter(is_empty_list,
+        lapply(linters,
+          function(linter) {
+            structure(
+              Filter(Negate(is.null),
+                linter(source_file)),
+              class = "lints")
+          })),
+
+      # append any errors
+      if(inherits(e, 'lint')) { list(e) }
+      ),
+    class = "lints")
 }
 
+is_empty_list <- function(x) {
+  is.list(x) && length(x) == 1L
+}
 
 #' @export
 lint <- function(filename, line_number = 1L, column_number = NULL, type = "style", message = "", line = "", ranges = NULL) {
@@ -100,7 +115,7 @@ print.lints <- function(x, ...) {
 }
 
 highlight_string <- function(column_number = NULL, ranges = NULL) {
-  maximum = max(column_number, unlist(ranges))
+  maximum <- max(column_number, unlist(ranges))
 
   line <- fill_with(" ", maximum)
 

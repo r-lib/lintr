@@ -62,6 +62,8 @@ function! SyntaxCheckers_r_lintr_GetLocList() dict
         \ '%W%f:%l:%c: warning: %m,' .
         \ '%E%f:%l:%c: error: %m,'
 
+    call self.setWantSort(1)
+
     return SyntasticMake({
         \ 'makeprg': makeprg,
         \ 'errorformat': errorformat,
