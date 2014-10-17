@@ -1,33 +1,31 @@
 .__LINTERS__. <- new.env(parent = emptyenv())
 
-##' Add a Linter
-##'
-##' Add a linter, to be used in subsequent calls to \code{\link{lint}}.
-##'
-##' @param name The name of the linter, as a string.
-##' @param linter A \code{\link{linter}}.
-##' @export
-##' @example examples/example-linter.R
+#' Add a Linter
+#'
+#' Add a linter, to be used in subsequent calls to \code{\link{lint}}.
+#'
+#' @param name The name of the linter, as a string.
+#' @param linter A \code{\link{linter}}.
+#' @export
 add_linter <- function(name, linter) {
   assign(name, linter, envir = .__LINTERS__.)
 }
 
 
-##' Create a Linter
-##'
-##' Generate a linter, which can identify errors or problematic regions in a
-##' project.
-##'
-##' @param apply Function that, given the content of a file, returns the indices
-##'   at which problems were found.
-##' @param takes Function that, given a set of paths, returns the subset of
-##'   paths that this linter uses.
-##' @param message Function that, given content and lines, returns an
-##'   informative message for the user. Typically generated with
-##'   \code{\link{make_linter_message}}.
-##' @param suggestion String giving a prescribed fix for the linted problem.
-##' @export
-##' @example examples/example-linter.R
+#' Create a Linter
+#'
+#' Generate a linter, which can identify errors or problematic regions in a
+#' project.
+#'
+#' @param apply Function that, given the content of a file, returns the indices
+#'   at which problems were found.
+#' @param takes Function that, given a set of paths, returns the subset of
+#'   paths that this linter uses.
+#' @param message Function that, given content and lines, returns an
+#'   informative message for the user. Typically generated with
+#'   \code{\link{make_linter_message}}.
+#' @param suggestion String giving a prescribed fix for the linted problem.
+#' @export
 linter <- function(apply, takes, message, suggestion) {
   result <- list(
     apply = apply,
@@ -57,13 +55,13 @@ apply_linter <- function(linter, ...) {
   }
 }
 
-##' Lint a Project
-##'
-##' Takes the set of active linters (see \code{\link{add_linter}}), and applies
-##' them to all files within a project.
-##'
-##' @param project Path to a project directory.
-##' @export
+#' Lint a Project
+#'
+#' Takes the set of active linters (see \code{\link{add_linter}}), and applies
+#' them to all files within a project.
+#'
+#' @param project Path to a project directory.
+#' @export
 lint <- function(files) {
 
   linters <- mget(objects(.__LINTERS__.), envir = .__LINTERS__.)

@@ -23,7 +23,7 @@ variable <- rex(some_of(alnum, "."))
 #"." %or% list(maybe("."), some_of(alnum, ".")))
 variable_names = list(
   "Should not be in camel case" = rex(lower, upper),
-  "Should not have multiple dots" = rex(".", except_some(".", space), ".")
+  "Should not have multiple dots" = rex(".", except_some_of(".", space), ".")
 )
 
 operators <- rex(or(

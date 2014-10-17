@@ -7,7 +7,8 @@ Description: Check how well your R package source conforms to
 Depends:
     R (>= 3.1.1)
 Imports:
-    rex
+    rex,
+    crayon
 License: MIT
 LazyData: true
 Suggests:

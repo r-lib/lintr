@@ -3,16 +3,25 @@ strip_comments <- function(content) {
 }
 
 has_absolute_paths <- function(content) {
-  regex <- c(
-    "[\'\"]\\s*[a-zA-Z]:/[^\"\']", ## windows-style absolute paths
-    "[\'\"]\\s*\\\\\\\\", ## windows UNC paths
-    "[\'\"]\\s*/(?!/)(.*?)/(.*?)", ## unix-style absolute paths
-    "[\'\"]\\s*~/", ## path to home directory
-    "\\[(.*?)\\]\\(\\s*[a-zA-Z]:/[^\"\']", ## windows-style markdown references [Some image](C:/...)
-    "\\[(.*?)\\]\\(\\s*/", ## unix-style markdown references [Some image](/Users/...)
-    NULL ## so we don't worry about commas above
+  absolute_path_types <- list(
+    rex(letter, ":", some_of("/", "\\")), ## windows-style absolute paths
+    rex("\\", "\\"), ## windows UNC paths
+    rex("/", except_some_of("/")),## unix-style absolute paths
+    rex("~"),
+    NULL
   )
-  results <- as.logical(Reduce(`+`, lapply(regex, function(rex) {
+
+  regex <- vapply(absolute_path_types,
+    function(x) {
+      c(
+        rex(quote, any_spaces, x),
+        rex("[", except_any_of("]"), "]", "(", any_spaces, x)
+        )
+    },
+    character(2),
+    USE.NAMES=FALSE)
+
+  results <- as.logical(Reduce(any, lapply(regex, function(rex) {
     grepl(rex, content, perl = TRUE)
   })))
 }
@@ -80,6 +89,6 @@ has_lint <- function(x) {
   })))
 }
 
-is_rCode_file <- function(path) {
+is_r_code_file <- function(path) {
   grepl("\\.[rR]$|\\.[rR]md$|\\.[rR]nw$", path)
 }
