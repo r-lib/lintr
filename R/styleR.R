@@ -1,5 +1,6 @@
 #' @import rex
 NULL
+
 camel_case <- function(x, exclude = NULL) {
   re = rex_(~capture(any_of(alnum, "."), lower, upper, any_of(alnum, ".")))
   res <- gregexpr(re, x, perl = TRUE)
@@ -29,7 +30,7 @@ variable_names = list(
 operators <- rex(or(
     "=" %if_prev_isnt% one_of("=", "!", "<", ">") %if_next_isnt% "=",
       "==",
-      "!=",
+      '!=',
       "<=",
       ">=",
     "+",

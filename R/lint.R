@@ -1,25 +1,68 @@
 #' @export
-lint_file <- function(filename, linters) {
+lint_file <- function(filename, linters = default_linters) {
   source_file <- srcfile(filename)
   source_file$content <- paste0(collapse = '\n', readLines(filename))
 
-  try(parse(text=source_file$content, srcfile=source_file))
+  lint_error <- function(e) {
+    message_info <- re_matches(e$message,
+      rex(except_some_of(":"),
+        ":",
+        capture(name = "line",
+          digits),
+        ":",
+        capture(name = "column",
+          digits),
+        ":",
+        space,
+        capture(name = "message",
+          anything),
+        "\n")
+      )
+
+    line_number <- as.integer(message_info$line)
+    column_number <- as.integer(message_info$column)
+
+    if(column_number == 0L){
+      line_number <- line_number - 1L
+      line <- getSrcLines(source_file, line_number, line_number)
+      column_number <- nchar(line)
+    }
+
+    lint(
+      filename = source_file$filename,
+      line_number = message_info$line,
+      column_number = column_number,
+      type = "error",
+      message = message_info$message,
+      line = getSrcLines(source_file, line_number, line_number)
+      )
+  }
+  e <- tryCatch(parse(text=source_file$content, srcfile=source_file), error = lint_error)
+
+  if(!is.null(e)) {
+    return(e)
+  }
+
   source_file$parsed_content <- getParseData(source_file)
 
   structure(
     lapply(linters, function(linter) {
-      structure(linter(source_file), class = "lints")
+      structure(
+        Filter(Negate(is.null),
+          linter(source_file)),
+        class = "lints")
     }),
   class = "lints")
 }
+
 
 #' @export
 lint <- function(filename, line_number = 1L, column_number = NULL, type = "style", message = "", line = "", ranges = NULL) {
   structure(
     list(
       filename = filename,
-      line_number = line_number,
-      column_number = column_number %||% 1L,
+      line_number = as.integer(line_number),
+      column_number = as.integer(column_number) %||% 1L,
       type = type,
       message = message,
       line = line,
