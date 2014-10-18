@@ -1,5 +1,27 @@
 #' @export
 lint_file <- function(filename, linters = default_linters) {
+
+  source_file <- get_source_file(filename)
+
+  structure(
+    c(
+      # get lints from all the linters
+      Filter(is_not_empty_list,
+        lapply(linters,
+          function(linter) {
+            structure(
+              Filter(Negate(is.null),
+                linter(source_file)),
+              class = "lints")
+          })),
+
+      # append any errors
+      if(!is.null(source_file$error)) { list(source_file$error) }
+      ),
+    class = "lints")
+}
+
+get_source_file <- function(filename) {
   source_file <- srcfile(filename)
   lines <- readLines(filename)
   source_file$content <- paste0(collapse = '\n', lines)
@@ -47,28 +69,17 @@ lint_file <- function(filename, linters = default_linters) {
   e <- tryCatch(parse(text=source_file$content, srcfile=source_file),
     error = lint_error)
 
+  if(inherits(e, 'lint')) {
+    source_file$error <- e
+  }
+
   source_file$parsed_content <- getParseData(source_file)
 
-  structure(
-    c(
-      # get lints from all the linters
-      Filter(is_empty_list,
-        lapply(linters,
-          function(linter) {
-            structure(
-              Filter(Negate(is.null),
-                linter(source_file)),
-              class = "lints")
-          })),
-
-      # append any errors
-      if(inherits(e, 'lint')) { list(e) }
-      ),
-    class = "lints")
+  source_file
 }
 
-is_empty_list <- function(x) {
-  is.list(x) && length(x) == 1L
+is_not_empty_list <- function(x) {
+  is.list(x) && length(x) != 0L
 }
 
 #' @export
