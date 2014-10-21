@@ -1,10 +1,11 @@
 # lintr
 [![Build Status](https://travis-ci.org/jimhester/lintr.png?branch=master)](https://travis-ci.org/jimhester/lintr)
-A framework for linting R source code.
+
+## A framework for linting R source code. ##
 
 ![lintr](https://github.com/jimhester/lintr/raw/master/lintr.png "lintr")
 
-## Vim
+### Vim
 lintr can be integrated with
 [syntastic](https://github.com/scrooloose/syntastic) to lint after
 every save.
