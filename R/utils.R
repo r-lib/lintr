@@ -98,3 +98,20 @@ fix_names <- function(x, default) {
   names(x) <- nms
   x
 }
+
+
+blank_text <- function(s, re, shift_start = 0, shift_end = 0) {
+  m <- gregexpr(re, s, perl = TRUE)
+  regmatches(s, m) <- lapply(regmatches(s, m), quoted_blanks, shift_start = shift_start, shift_end = shift_end)
+  s
+}
+
+quoted_blanks <- function(matches, shift_start = 0, shift_end = 0) {
+  lengths <- nchar(matches)
+  blanks <- vapply(Map(rep.int,
+      rep.int(" ", length(lengths - (shift_start + shift_end))),
+      lengths - (shift_start + shift_end), USE.NAMES = FALSE), paste, "", collapse = "")
+
+  substr(matches, shift_start + 1L, nchar(matches)-shift_end) <- blanks
+  matches
+}

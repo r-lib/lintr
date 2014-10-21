@@ -61,6 +61,8 @@ test_that("returns the correct linting", {
 
   expect_lint("'~'", NULL, absolute_paths_linter)
 
+  expect_lint("# 'C:/blah/file.txt'", NULL, absolute_paths_linter)
+
   expect_lint("'/blah/file.txt'", rex("Do not use absolute paths."), absolute_paths_linter)
 
   expect_lint("\"/blah/file.txt\"", rex("Do not use absolute paths."), absolute_paths_linter)
@@ -78,4 +80,21 @@ test_that("returns the correct linting", {
   expect_lint("'~james.hester/blah/file.txt'", rex("Do not use absolute paths."), absolute_paths_linter)
 
   expect_lint("'~/'", rex("Do not use absolute paths."), absolute_paths_linter)
+})
+
+context("r-linter-no_tabs")
+test_that("returns the correct linting", {
+
+  expect_lint("blah", NULL, no_tab_linter)
+
+  expect_lint("  blah", NULL, no_tab_linter)
+
+  expect_lint("  blah", NULL, no_tab_linter)
+
+  expect_lint("#\tblah", NULL, no_tab_linter)
+
+  expect_lint("\tblah", rex("Use two spaces to indent, never tabs."), no_tab_linter)
+
+  expect_lint("\t\tblah", rex("Use two spaces to indent, never tabs."), no_tab_linter)
+
 })

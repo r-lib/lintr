@@ -30,6 +30,21 @@ get_source_file <- function(filename) {
   lines <- readLines(filename)
   source_file$content <- paste0(collapse = "\n", lines)
 
+  source_file$stripped_comments <- blank_text(source_file$content, rex("#", except_any_of("\n")))
+
+  newline_locs <- c(0L,
+    re_matches(source_file$content, rex("\n"), locations = TRUE, global = TRUE)[[1]]$start,
+    nchar(source_file$content))
+
+  source_file$find_line <- function(x) {
+    which(newline_locs >= x)[1L] - 1L
+  }
+
+  source_file$find_column <- function(x) {
+    line_number <- which(newline_locs >= x)[1L] - 1L
+    x - newline_locs[line_number]
+  }
+
   source_file$num_lines <- length(lines)
 
   lint_error <- function(e) {
