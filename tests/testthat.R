@@ -1,4 +1,4 @@
 library(testthat)
-library(styleR)
+library(lintr)
 
-test_check("styleR")
+test_check("lintr")
