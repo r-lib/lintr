@@ -16,7 +16,10 @@ expect_lint <- function(content, checks, ...) {
   reporter <- get_reporter()
 
   # flatten list if a list of lists
-  if(is.list(results) && is.list(results[[1]]) && !is.expectation(results[[1]])) {
+  if(is.list(results) &&
+    is.list(results[[1]]) &&
+    !is.expectation(results[[1]])) {
+
     results <- unlist(recursive = FALSE, results)
   }
 
@@ -102,7 +105,11 @@ fix_names <- function(x, default) {
 
 blank_text <- function(s, re, shift_start = 0, shift_end = 0) {
   m <- gregexpr(re, s, perl = TRUE)
-  regmatches(s, m) <- lapply(regmatches(s, m), quoted_blanks, shift_start = shift_start, shift_end = shift_end)
+  regmatches(s, m) <- lapply(regmatches(s, m),
+    quoted_blanks,
+    shift_start = shift_start,
+    shift_end = shift_end)
+
   s
 }
 
@@ -110,7 +117,8 @@ quoted_blanks <- function(matches, shift_start = 0, shift_end = 0) {
   lengths <- nchar(matches)
   blanks <- vapply(Map(rep.int,
       rep.int(" ", length(lengths - (shift_start + shift_end))),
-      lengths - (shift_start + shift_end), USE.NAMES = FALSE), paste, "", collapse = "")
+      lengths - (shift_start + shift_end), USE.NAMES = FALSE),
+    paste, "", collapse = "")
 
   substr(matches, shift_start + 1L, nchar(matches)-shift_end) <- blanks
   matches

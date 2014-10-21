@@ -30,15 +30,21 @@ get_source_file <- function(filename) {
   lines <- readLines(filename)
   source_file$content <- paste0(collapse = "\n", lines)
 
-  source_file$stripped_comments <- blank_text(source_file$content, rex("#", except_any_of("\n")))
+  source_file$stripped_comments <-
+    blank_text(source_file$content, rex("#", except_any_of("\n")))
 
-  newline_search <- re_matches(source_file$content, rex("\n"), locations = TRUE, global = TRUE)[[1]]$start
+  newline_search <-
+    re_matches(source_file$content,
+      rex("\n"),
+      locations = TRUE,
+      global = TRUE)[[1]]$start
 
   newline_locs <- c(0L,
-    if(!is.na(newline_search)) newline_search,
+    if(!is.na(newline_search[1])) newline_search,
     nchar(source_file$content) + 1L)
 
-  source_file$lengths <- (newline_locs[-1L]) - (newline_locs[-length(newline_locs)] + 1L)
+  source_file$lengths <-
+    (newline_locs[-1L]) - (newline_locs[-length(newline_locs)] + 1L)
 
   source_file$find_line <- function(x) {
     which(newline_locs >= x)[1L] - 1L
@@ -106,7 +112,9 @@ is_not_empty_list <- function(x) {
 }
 
 #' @export
-lint <- function(filename, line_number = 1L, column_number = NULL, type = "style", message = "", line = "", ranges = NULL) {
+lint <- function(filename, line_number = 1L, column_number = NULL,
+  type = "style", message = "", line = "", ranges = NULL) {
+
   structure(
     list(
       filename = filename,
@@ -148,7 +156,9 @@ print.lints <- function(x, ...) {
   invisible(x)
 }
 
-#TODO: the arrow/ranges get off sync if there is an escape (and likely with unicode chars as well)
+#TODO: the arrow/ranges get off sync if there is an escape (and likely with
+# unicode chars as well)
+
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {
 
   adjust <- adjust_position_fun(message)
@@ -162,7 +172,8 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
   line <- fill_with(" ", maximum)
 
   lapply(ranges, function(range) {
-    substr(line, range[1], range[2]) <<- fill_with("~", range[2] - range[1] + 1L)
+    substr(line, range[1], range[2]) <<-
+      fill_with("~", range[2] - range[1] + 1L)
     })
 
   substr(line, column_number, column_number + 1L) <- "^"
@@ -174,11 +185,23 @@ adjust_position_fun <- function(message) {
   positions <- re_matches(
     encodeString(message),
     rex("\\" %if_prev_isnt% "\\",
-      or(one_of("nrtbafv\'\"\`\\"), # ascii escapes
-        group(range(0, 7) %>% between(1, 3)), # octal code
-        group("x", one_of(digit, "abcdefABCDEF") %>% between(1, 2)), # hex code
-        group("u", one_of(digit, "abcdefABCDEF") %>% between(1, 4)), # unicode hex code
-        group("U", one_of(digit, "abcdefABCDEF") %>% between(1, 8)) # extended unicode hex code
+
+      or(
+
+        # ascii escapes
+        one_of("nrtbafv\'\"\`\\"),
+
+        # octal code
+        group(range(0, 7) %>% between(1, 3)),
+
+        # hex code
+        group("x", one_of(digit, "abcdefABCDEF") %>% between(1, 2)),
+
+        # unicode hex code
+        group("u", one_of(digit, "abcdefABCDEF") %>% between(1, 4)),
+
+        # extended unicode hex code
+        group("U", one_of(digit, "abcdefABCDEF") %>% between(1, 8))
         )
       ),
     locations = TRUE,

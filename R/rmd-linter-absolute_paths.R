@@ -7,11 +7,21 @@ absolute_paths_rmd_linter <- function(source_file) {
     character(1),
     USE.NAMES=FALSE)
 
-  newline_locs <- c(0L, re_matches(source_file$content, rex("\n"), locations = TRUE)$start)
+  newline_locs <-
+    c(0L,
+      re_matches(source_file$content, rex("\n"), locations = TRUE)$start
+      )
+
   newline_locs[ is.na(newline_locs) ] <- nchar(source_file$content)
 
   lapply(regexes, function(regex) {
-    res <- re_matches(source_file$content, regex, global = TRUE, locations = TRUE)
+    res <-
+      re_matches(
+        source_file$content,
+        regex,
+        global = TRUE,
+        locations = TRUE)
+
     lapply(res, function(match){
       if(!is.na(match$`1.start`)){
 

@@ -2,9 +2,29 @@
 absolute_path_types <- list(
 
   # note text uses encodeStrings
-  rex(capture(letter, ":", some_of("/", "\\\\"), except_any_of(space, quote))), ## windows-style absolute paths
-  rex(capture("\\\\", "\\\\", except_some_of("\\\\", space, quote))), ## windows UNC paths
-  rex(capture("/", except_some_of(space, quote, "/"))),## unix-style absolute paths
+
+  # windows-style absolute paths
+  rex(
+    capture(
+      letter,
+      ":",
+      some_of("/", "\\\\"),
+      except_any_of(space, quote)
+      )
+    ),
+
+  # windows UNC paths
+  rex(
+    capture(
+      "\\\\", "\\\\",
+      except_some_of("\\\\", space, quote)
+      )
+    ),
+
+  # unix-style absolute paths
+  rex(capture("/", except_some_of(space, quote, "/"))),
+
+  # unix-style tilda expansions
   rex(capture("~", except_some_of(space, quote)))
   )
 
