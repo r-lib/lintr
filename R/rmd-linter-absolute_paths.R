@@ -15,7 +15,6 @@ absolute_paths_rmd_linter <- function(source_file) {
     lapply(res, function(match){
       if(!is.na(match$`1.start`)){
 
-        str(newline_locs)
         line_number <- which(newline_locs > match$`1.start`)[1L] - 1L
         start <- match$`1.start` - newline_locs[line_number]
         end <- match$`1.end` - newline_locs[line_number]
@@ -33,4 +32,3 @@ absolute_paths_rmd_linter <- function(source_file) {
       })
     })
 }
-
