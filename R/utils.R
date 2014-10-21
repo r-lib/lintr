@@ -8,3 +8,93 @@
 `%!=%` <- function(x, y) {
   !identical(x, y)
 }
+
+expect_lint <- function(content, checks, ...) {
+
+  results <- expectation_lint(content, checks, ...)
+
+  reporter <- get_reporter()
+
+  # flatten list if a list of lists
+  if(is.list(results) && is.list(results[[1]]) && !is.expectation(results[[1]])) {
+    results <- unlist(recursive = FALSE, results)
+  }
+
+  if(is.expectation(results)) {
+    reporter$add_result(results)
+  }
+  else {
+    lapply(results, reporter$add_result)
+  }
+
+  invisible(results)
+}
+expectation_lint <- function(content, checks, ...) {
+
+  filename <- tempfile()
+  on.exit(unlink(filename))
+  cat(file=filename, content, sep="\n")
+
+  lints <- lint_file(filename, list(...))
+
+  linter_names <- substitute(alist(...))[-1]
+
+  if(is.null(checks)) {
+    return(expectation(length(lints) %==% 0L,
+        paste0(paste(collapse=", ", linter_names),
+          " returned ", length(lints),
+          " lints when it was expected to return none!"),
+        paste0(paste(collapse=", ", linter_names),
+          " returned 0 lints as expected.")))
+  }
+
+  if(!is.list(checks)) {
+    checks <- list(checks)
+  }
+  checks[] <- lapply(checks, fix_names, "message")
+
+  if(length(lints) != length(checks)) {
+    return(expectation(FALSE,
+        paste0(paste(collapse=", ", linter_names),
+          " did not return ", length(checks),
+          " lints as expected.")))
+  }
+
+  itr <- 0
+  mapply(function(lint, check) {
+    itr <- itr + 1L
+    lapply(names(check), function(field) {
+      value <- lint[[field]]
+      check <- check[[field]]
+      expectation(re_matches(value, check),
+        sprintf("lint: %d %s: %s did not match: %s",
+          itr,
+          field,
+          value,
+          check
+        ),
+        sprintf("lint: %d %s: %s matched: %s",
+          itr,
+          field,
+          value,
+          check
+        )
+      )
+    })
+  },
+  lints,
+  checks)
+}
+
+fix_names <- function(x, default) {
+  nms <- names(x)
+
+  if(is.null(nms)) {
+    nms <- default
+  }
+  else {
+    nms[ nms == "" ] <- default
+  }
+  names(x) <- nms
+  x
+}

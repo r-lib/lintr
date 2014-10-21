@@ -3,8 +3,8 @@ lint_file <- function(filename, linters = default_linters) {
 
   source_file <- get_source_file(filename)
 
-  structure(
-    c(
+  lints <- structure(
+    unlist(recursive = FALSE,
       # get lints from all the linters
       Filter(is_not_empty_list,
         lapply(linters,
@@ -14,11 +14,15 @@ lint_file <- function(filename, linters = default_linters) {
                 linter(source_file)),
               class = "lints")
           })),
-
-      # append any errors
-      if(!is.null(source_file$error)) { list(source_file$error) }
       ),
     class = "lints")
+
+  # append any errors
+  if(!is.null(source_file$error)) {
+    lints[[length(lints) + 1L]] <- source_file$error
+  }
+
+  lints
 }
 
 get_source_file <- function(filename) {
