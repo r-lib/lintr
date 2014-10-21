@@ -32,9 +32,13 @@ get_source_file <- function(filename) {
 
   source_file$stripped_comments <- blank_text(source_file$content, rex("#", except_any_of("\n")))
 
+  newline_search <- re_matches(source_file$content, rex("\n"), locations = TRUE, global = TRUE)[[1]]$start
+
   newline_locs <- c(0L,
-    re_matches(source_file$content, rex("\n"), locations = TRUE, global = TRUE)[[1]]$start,
-    nchar(source_file$content))
+    if(!is.na(newline_search)) newline_search,
+    nchar(source_file$content) + 1L)
+
+  source_file$lengths <- (newline_locs[-1L]) - (newline_locs[-length(newline_locs)] + 1L)
 
   source_file$find_line <- function(x) {
     which(newline_locs >= x)[1L] - 1L

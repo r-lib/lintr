@@ -98,3 +98,32 @@ test_that("returns the correct linting", {
   expect_lint("\t\tblah", rex("Use two spaces to indent, never tabs."), no_tab_linter)
 
 })
+
+context("r-linter-line_length")
+test_that("returns the correct linting", {
+
+  expect_lint("blah", NULL, line_length_linter(80))
+
+  expect_lint("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", NULL, line_length_linter(80))
+
+  expect_lint("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "lines should not be more than 80 characters" , line_length_linter(80))
+
+  expect_lint(
+    paste0("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"),
+
+    list(
+      "lines should not be more than 80 characters",
+      "lines should not be more than 80 characters"),
+
+    line_length_linter(80))
+
+  expect_lint("aaaaaaaaaaaaaaaaaaaa", NULL,
+    line_length_linter(20))
+
+  expect_lint("aaaaaaaaaaaaaaaaaaaab",
+    "lines should not be more than 20 characters",
+    line_length_linter(20))
+
+})
