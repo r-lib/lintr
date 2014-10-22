@@ -5,6 +5,7 @@ default_linters <- c(
   absolute_paths_linter,
   no_tab_linter,
   line_length_linter(80),
+  commas_linter,
 
   NULL
 )

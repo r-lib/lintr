@@ -32,6 +32,24 @@ expect_lint <- function(content, checks, ...) {
 
   invisible(results)
 }
+
+# Remove NULLs or empty objects from a list
+compact <- function(x) {
+  x[!vapply(x,
+    function(element) {
+      is.null(element) || length(element) %==% 0L
+    }, logical(1))]
+}
+
+flatten <- function(x) {
+  if(length(x) %==% 0L) { return(x) }
+
+  while(is.list(x) && !inherits(x[[1]], "lint")) {
+    x <- unlist(x, recursive = FALSE, use.names = FALSE)
+  }
+  x
+}
+
 expectation_lint <- function(content, checks, ...) {
 
   filename <- tempfile()
@@ -45,7 +63,7 @@ expectation_lint <- function(content, checks, ...) {
   if(is.null(checks)) {
     return(expectation(length(lints) %==% 0L,
         paste0(paste(collapse=", ", linter_names),
-          " returned ", length(lints),
+          " returned ", print(lints),
           " lints when it was expected to return none!"),
         paste0(paste(collapse=", ", linter_names),
           " returned 0 lints as expected.")))

@@ -4,17 +4,14 @@ lint <- function(filename, linters = default_linters) {
   source_file <- get_source_file(filename)
 
   lints <- structure(
-    unlist(recursive = FALSE,
+    flatten(
       # get lints from all the linters
-      Filter(is_not_empty_list,
+      compact(
         lapply(linters,
           function(linter) {
-            structure(
-              Filter(Negate(is.null),
-                linter(source_file)),
-              class = "lints")
-          })),
-      ),
+              compact(linter(source_file))
+          })
+        )),
     class = "lints")
 
   # append any errors
