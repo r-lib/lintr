@@ -1,4 +1,4 @@
-spaces_left_parentheses <- function(source_file) {
+spaces_left_parentheses_linter <- function(source_file) {
   lapply(which(source_file$parsed_content$token %in% "'('"),
     function(id) {
 

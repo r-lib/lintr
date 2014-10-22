@@ -7,6 +7,8 @@ default_linters <- c(
   line_length_linter(80),
   commas_linter,
   infix_spaces_linter,
+  spaces_left_parentheses_linter,
+  spaces_right_parentheses_linter,
 
   NULL
 )

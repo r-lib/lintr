@@ -259,63 +259,63 @@ test_that("returns the correct linting", {
 context("r-linter-spaces-left_parentheses")
 test_that("returns the correct linting", {
 
-  expect_lint("blah", NULL, spaces_left_parentheses)
+  expect_lint("blah", NULL, spaces_left_parentheses_linter)
 
-  expect_lint("print(blah)", NULL, spaces_left_parentheses)
+  expect_lint("print(blah)", NULL, spaces_left_parentheses_linter)
 
-  expect_lint("blah <- function(blah) { }", NULL, spaces_left_parentheses)
+  expect_lint("blah <- function(blah) { }", NULL, spaces_left_parentheses_linter)
 
-  expect_lint("(1 + 1)", NULL, spaces_left_parentheses)
+  expect_lint("(1 + 1)", NULL, spaces_left_parentheses_linter)
 
-  expect_lint("( (1 + 1) )", NULL, spaces_left_parentheses)
+  expect_lint("( (1 + 1) )", NULL, spaces_left_parentheses_linter)
 
-  expect_lint("if (blah) { }", NULL, spaces_left_parentheses)
+  expect_lint("if (blah) { }", NULL, spaces_left_parentheses_linter)
 
-  expect_lint("for (i in j) { }", NULL, spaces_left_parentheses)
+  expect_lint("for (i in j) { }", NULL, spaces_left_parentheses_linter)
 
-  expect_lint("1 * (1 + 1)", NULL, spaces_left_parentheses)
+  expect_lint("1 * (1 + 1)", NULL, spaces_left_parentheses_linter)
 
   expect_lint("((1 + 1))",
     "Place a space before left parenthesis, except in a function call.",
-    spaces_left_parentheses)
+    spaces_left_parentheses_linter)
 
   expect_lint("if(blah) { }",
     "Place a space before left parenthesis, except in a function call.",
-    spaces_left_parentheses)
+    spaces_left_parentheses_linter)
 
   expect_lint("for(i in j) { }",
     "Place a space before left parenthesis, except in a function call.",
-    spaces_left_parentheses)
+    spaces_left_parentheses_linter)
 
   expect_lint("1*(1 + 1)",
     "Place a space before left parenthesis, except in a function call.",
-    spaces_left_parentheses)
+    spaces_left_parentheses_linter)
 })
 
 context("r-linter-spaces-left_parentheses")
 test_that("returns the correct linting", {
 
-  expect_lint("blah", NULL, spaces_right_parentheses)
+  expect_lint("blah", NULL, spaces_right_parentheses_linter)
 
-  expect_lint("print(blah)", NULL, spaces_right_parentheses)
+  expect_lint("print(blah)", NULL, spaces_right_parentheses_linter)
 
-  expect_lint("if (blah) { }", NULL, spaces_right_parentheses)
+  expect_lint("if (blah) { }", NULL, spaces_right_parentheses_linter)
 
-  expect_lint("if (blah)\n{ }", NULL, spaces_right_parentheses)
+  expect_lint("if (blah)\n{ }", NULL, spaces_right_parentheses_linter)
 
-  expect_lint("if (debug) do( )", NULL, spaces_right_parentheses)
+  expect_lint("if (debug) do( )", NULL, spaces_right_parentheses_linter)
 
-  expect_lint("(a + b + c) / n", NULL, spaces_right_parentheses)
+  expect_lint("(a + b + c) / n", NULL, spaces_right_parentheses_linter)
 
   expect_lint("if(blah){ }",
      "Always place a space after right parenthesis.",
-     spaces_right_parentheses)
+     spaces_right_parentheses_linter)
 
   expect_lint("if (debug)do( )",
      "Always place a space after right parenthesis.",
-     spaces_right_parentheses)
+     spaces_right_parentheses_linter)
 
   expect_lint("(a + b + c)/n",
      "Always place a space after right parenthesis.",
-     spaces_right_parentheses)
+     spaces_right_parentheses_linter)
 })
