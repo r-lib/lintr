@@ -54,7 +54,9 @@ test_that("returns the correct linting", {
       ),
       assignment_linter)
 
-  expect_lint("fun((blah = fun(1)))", rex("Use <-, not =, for assignment."), assignment_linter)
+  expect_lint("fun((blah = fun(1)))",
+    rex("Use <-, not =, for assignment."),
+    assignment_linter)
 })
 
 context("r-linter-absolute_paths")
@@ -75,23 +77,41 @@ test_that("returns the correct linting", {
 
   expect_lint("# 'C:/blah/file.txt'", NULL, absolute_paths_linter)
 
-  expect_lint("'/blah/file.txt'", rex("Do not use absolute paths."), absolute_paths_linter)
+  expect_lint("'/blah/file.txt'",
+    rex("Do not use absolute paths."),
+    absolute_paths_linter)
 
-  expect_lint("\"/blah/file.txt\"", rex("Do not use absolute paths."), absolute_paths_linter)
+  expect_lint("\"/blah/file.txt\"",
+    rex("Do not use absolute paths."),
+    absolute_paths_linter)
 
-  expect_lint("'c:/blah/file.txt'", rex("Do not use absolute paths."), absolute_paths_linter)
+  expect_lint("'c:/blah/file.txt'",
+    rex("Do not use absolute paths."),
+    absolute_paths_linter)
 
-  expect_lint("'C:/blah/file.txt'", rex("Do not use absolute paths."), absolute_paths_linter)
+  expect_lint("'C:/blah/file.txt'",
+    rex("Do not use absolute paths."),
+    absolute_paths_linter)
 
-  expect_lint("'E:/blah/file.txt'", rex("Do not use absolute paths."), absolute_paths_linter)
+  expect_lint("'E:/blah/file.txt'",
+    rex("Do not use absolute paths."),
+    absolute_paths_linter)
 
-  expect_lint("'E:\\blah\\file.txt'", rex("Do not use absolute paths."), absolute_paths_linter)
+  expect_lint("'E:\\blah\\file.txt'",
+    rex("Do not use absolute paths."),
+    absolute_paths_linter)
 
-  expect_lint("'~/blah/file.txt'", rex("Do not use absolute paths."), absolute_paths_linter)
+  expect_lint("'~/blah/file.txt'",
+    rex("Do not use absolute paths."),
+    absolute_paths_linter)
 
-  expect_lint("'~james.hester/blah/file.txt'", rex("Do not use absolute paths."), absolute_paths_linter)
+  expect_lint("'~james.hester/blah/file.txt'",
+    rex("Do not use absolute paths."),
+    absolute_paths_linter)
 
-  expect_lint("'~/'", rex("Do not use absolute paths."), absolute_paths_linter)
+  expect_lint("'~/'",
+    rex("Do not use absolute paths."),
+    absolute_paths_linter)
 })
 
 context("r-linter-no_tabs")
@@ -105,21 +125,31 @@ test_that("returns the correct linting", {
 
   expect_lint("#\tblah", NULL, no_tab_linter)
 
-  expect_lint("\tblah", rex("Use two spaces to indent, never tabs."), no_tab_linter)
+  expect_lint("\tblah",
+    rex("Use two spaces to indent, never tabs."),
+      no_tab_linter)
 
-  expect_lint("\t\tblah", rex("Use two spaces to indent, never tabs."), no_tab_linter)
+  expect_lint("\t\tblah",
+    rex("Use two spaces to indent, never tabs."),
+      no_tab_linter)
 
 })
 
 context("r-linter-line_length")
-test_that("returns the correct linting", {
+test_that("returns the correct linting",
+  {
 
-  expect_lint("blah", NULL, line_length_linter(80))
+  expect_lint("blah",
+    NULL,
+    line_length_linter(80))
 
-  expect_lint("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", NULL, line_length_linter(80))
+  expect_lint("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    NULL,
+    line_length_linter(80))
 
   expect_lint("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-    "lines should not be more than 80 characters" , line_length_linter(80))
+    "lines should not be more than 80 characters",
+    line_length_linter(80))
 
   expect_lint(
     paste0("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n",
@@ -131,7 +161,8 @@ test_that("returns the correct linting", {
 
     line_length_linter(80))
 
-  expect_lint("aaaaaaaaaaaaaaaaaaaa", NULL,
+  expect_lint("aaaaaaaaaaaaaaaaaaaa",
+    NULL,
     line_length_linter(20))
 
   expect_lint("aaaaaaaaaaaaaaaaaaaab",
@@ -156,10 +187,12 @@ test_that("returns the correct linting", {
   expect_lint("fun(1\n  ,\n1)", NULL, commas_linter)
 
   expect_lint("fun(1\n,1)",
-      rex("Commas should always have a space after."), commas_linter)
+      rex("Commas should always have a space after."),
+      commas_linter)
 
   expect_lint("fun(1,1)",
-    rex("Commas should always have a space after."), commas_linter)
+    rex("Commas should always have a space after."),
+    commas_linter)
 
   expect_lint("fun(1 ,1)",
     list(
