@@ -1,3 +1,3 @@
-^lintr\.png$
-^lintr_vim\.gif$
+^.*\.png$
+^.*\.gif$
 ^\.travis\.yml$
