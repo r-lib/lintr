@@ -14,7 +14,7 @@ See URL `https://github.com/jimhester/lintr'."
  ((info line-start (file-name) ":" line ":" column ": " "style: "
            (message (one-or-more not-newline) line-end))
  (warning line-start (file-name) ":" line ":" column ": " "warning: "
-         (message (one-or-more not-newline) line-end)))
+         (message (one-or-more not-newline) line-end))
  (error line-start (file-name) ":" line ":" column ": " "error: "
          (message (one-or-more not-newline) line-end)))
 
