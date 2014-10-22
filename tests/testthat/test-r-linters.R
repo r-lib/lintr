@@ -12,11 +12,17 @@ test_that("returns the correct linting", {
 
   expect_lint("\"'blah'\"", NULL, single_quotes_linter)
 
-  expect_lint("'blah'", rex("Only use double-quotes."), single_quotes_linter)
+  expect_lint("'blah'",
+    rex("Only use double-quotes."),
+    single_quotes_linter)
 
-  expect_lint("fun('blah')", rex("Only use double-quotes."), single_quotes_linter)
+  expect_lint("fun('blah')",
+    rex("Only use double-quotes."),
+    single_quotes_linter)
 
-  expect_lint("{'blah'}", rex("Only use double-quotes."), single_quotes_linter)
+  expect_lint("{'blah'}",
+    rex("Only use double-quotes."),
+    single_quotes_linter)
 })
 
 context("r-linter-assignment")
@@ -29,11 +35,17 @@ test_that("returns the correct linting", {
 
   expect_lint("fun(blah=1)", NULL, assignment_linter)
 
-  expect_lint("blah=1", rex("Use <-, not =, for assignment."), assignment_linter)
+  expect_lint("blah=1",
+    rex("Use <-, not =, for assignment."),
+      assignment_linter)
 
-  expect_lint("blah = 1", rex("Use <-, not =, for assignment."), assignment_linter)
+    expect_lint("blah = 1",
+      rex("Use <-, not =, for assignment."),
+        assignment_linter)
 
-  expect_lint("blah = fun(1)", rex("Use <-, not =, for assignment."), assignment_linter)
+  expect_lint("blah = fun(1)",
+    rex("Use <-, not =, for assignment.")
+    , assignment_linter)
 
   expect_lint("blah = fun(1) {",
     list(
@@ -140,6 +152,8 @@ test_that("returns the correct linting", {
   expect_lint("fun(1,\n1)", NULL, commas_linter)
 
   expect_lint("fun(1\n,\n1)", NULL, commas_linter)
+
+  expect_lint("fun(1\n  ,\n1)", NULL, commas_linter)
 
   expect_lint("fun(1\n,1)",
       rex("Commas should always have a space after."), commas_linter)
