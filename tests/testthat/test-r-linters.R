@@ -291,31 +291,3 @@ test_that("returns the correct linting", {
     "Place a space before left parenthesis, except in a function call.",
     spaces_left_parentheses_linter)
 })
-
-context("r-linter-spaces-left_parentheses")
-test_that("returns the correct linting", {
-
-  expect_lint("blah", NULL, spaces_right_parentheses_linter)
-
-  expect_lint("print(blah)", NULL, spaces_right_parentheses_linter)
-
-  expect_lint("if (blah) { }", NULL, spaces_right_parentheses_linter)
-
-  expect_lint("if (blah)\n{ }", NULL, spaces_right_parentheses_linter)
-
-  expect_lint("if (debug) do( )", NULL, spaces_right_parentheses_linter)
-
-  expect_lint("(a + b + c) / n", NULL, spaces_right_parentheses_linter)
-
-  expect_lint("if(blah){ }",
-     "Always place a space after right parenthesis.",
-     spaces_right_parentheses_linter)
-
-  expect_lint("if (debug)do( )",
-     "Always place a space after right parenthesis.",
-     spaces_right_parentheses_linter)
-
-  expect_lint("(a + b + c)/n",
-     "Always place a space after right parenthesis.",
-     spaces_right_parentheses_linter)
-})
