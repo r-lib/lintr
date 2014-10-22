@@ -78,7 +78,7 @@ expectation_lint <- function(content, checks, ...) {
     return(expectation(FALSE,
         paste0(paste(collapse=", ", linter_names),
           " did not return ", length(checks),
-          " lints as expected.")))
+          " lints as expected from content:", content)))
   }
 
   itr <- 0

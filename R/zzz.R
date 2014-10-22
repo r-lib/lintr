@@ -6,6 +6,7 @@ default_linters <- c(
   no_tab_linter,
   line_length_linter(80),
   commas_linter,
+  infix_spaces_linter,
 
   NULL
 )
