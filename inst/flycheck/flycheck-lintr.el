@@ -8,22 +8,15 @@
 See URL `https://github.com/jimhester/lintr'."
 
  :command
- ("R" "--slave" "--restore" "--no-save"
-  "-e 'library(lintr);lint(commandArgs(TRUE))'" "--args" source)
+ ("R" "--slave" "--restore" "--no-save" "-e" "library(lintr);lint(commandArgs(TRUE))" "--args" source)
 
  :error-patterns
- ((info line-start (file-name) ":" line ":" column ": " "style:"
-           (message
-             (one-or-more " ") (one-or-more not-newline)
-             line-end)))
- ((warning line-start (file-name) ":" line ":" column ": " "warning:"
-           (message
-             (one-or-more " ") (one-or-more not-newline)
-             line-end)))
- ((error line-start (file-name) ":" line ":" column ": " "error:"
-         (message
-           (one-or-more " ") (one-or-more not-newline)
-           line-end)))
+ ((info line-start (file-name) ":" line ":" column ": " "style: "
+           (message (one-or-more not-newline) line-end))
+ (warning line-start (file-name) ":" line ":" column ": " "warning: "
+         (message (one-or-more not-newline) line-end)))
+ (error line-start (file-name) ":" line ":" column ": " "error: "
+         (message (one-or-more not-newline) line-end)))
 
  :modes ess-mode
 )
