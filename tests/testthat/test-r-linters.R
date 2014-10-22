@@ -250,5 +250,9 @@ test_that("returns the correct linting", {
       rex("Put spaces around all infix operators."),
       infix_spaces_linter)
   }
+
+  expect_lint("b <- 2E+4", NULL, infix_spaces_linter)
+
+  expect_lint("a <- 1e-3", NULL, infix_spaces_linter)
 })
 
