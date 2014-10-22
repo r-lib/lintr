@@ -38,7 +38,7 @@ expectation_lint <- function(content, checks, ...) {
   on.exit(unlink(filename))
   cat(file=filename, content, sep="\n")
 
-  lints <- lint_file(filename, list(...))
+  lints <- lint(filename, list(...))
 
   linter_names <- substitute(alist(...))[-1]
 
@@ -123,3 +123,4 @@ quoted_blanks <- function(matches, shift_start = 0, shift_end = 0) {
   substr(matches, shift_start + 1L, nchar(matches)-shift_end) <- blanks
   matches
 }
+

@@ -54,7 +54,7 @@ function! SyntaxCheckers_r_lintr_GetLocList() dict
     let setwd = syntastic#util#isRunningWindows() ? 'setwd("' . escape(getcwd(), '"\') . '"); ' : ''
     let makeprg = self.getExecEscaped() . ' --slave --restore --no-save' .
         \ ' -e ' . syntastic#util#shescape(setwd . 'library(lintr); ' .
-        \       'lint_file(commandArgs(TRUE))') .
+        \       'lint(commandArgs(TRUE))') .
         \ ' --args ' . syntastic#util#shexpand('%')
 
     let errorformat =

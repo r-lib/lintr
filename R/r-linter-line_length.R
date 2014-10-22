@@ -6,7 +6,7 @@ line_length_linter <- function(width) {
       col_start <- 1
       col_end <- source_file$lengths[line_number]
 
-      lint(
+      Lint(
         filename = source_file$filename,
         line_number = line_number,
         column_number = col_start,

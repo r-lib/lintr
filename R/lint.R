@@ -1,5 +1,5 @@
 #' @export
-lint_file <- function(filename, linters = default_linters) {
+lint <- function(filename, linters = default_linters) {
 
   source_file <- get_source_file(filename)
 
@@ -85,7 +85,7 @@ get_source_file <- function(filename) {
       column_number <- nchar(line)
     }
 
-    lint(
+    Lint(
       filename = source_file$filename,
       line_number = line_number,
       column_number = column_number,
@@ -112,7 +112,7 @@ is_not_empty_list <- function(x) {
 }
 
 #' @export
-lint <- function(filename, line_number = 1L, column_number = NULL,
+Lint <- function(filename, line_number = 1L, column_number = NULL,
   type = "style", message = "", line = "", ranges = NULL) {
 
   structure(
@@ -229,3 +229,6 @@ adjust_position_fun <- function(message) {
 fill_with <- function(character = " ", length = 1L) {
   paste0(collapse = "", rep.int(character, length))
 }
+
+# need to register rex shortcuts as globals to avoid CRAN check errors
+rex::register_shortcuts("lintr")

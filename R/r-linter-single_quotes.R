@@ -3,7 +3,7 @@ single_quotes_linter <- function(source_file) {
     function(id) {
       parsed <- source_file$parsed_content[id, ]
       if(re_matches(parsed$text, rex(start, "'", anything, "'", end))) {
-        lint(
+        Lint(
           filename = source_file$filename,
           line_number = parsed$line1,
           column_number = parsed$col1,

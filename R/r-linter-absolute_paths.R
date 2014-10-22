@@ -48,7 +48,7 @@ absolute_paths_linter <- function(source_file) {
           start <- parsed$col1 + res$`1.start` - 1L
           end <- parsed$col1 + res$`1.end` - 1L
           return(
-            lint(
+            Lint(
               filename = source_file$filename,
               line_number = parsed$line1,
               column_number = start,

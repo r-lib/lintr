@@ -9,7 +9,7 @@ See URL `https://github.com/jimhester/lintr'."
 
  :command
  ("R" "--slave" "--restore" "--no-save"
-  "-e 'library(lintr);lint_file(commandArgs(TRUE))'" "--args" source)
+  "-e 'library(lintr);lint(commandArgs(TRUE))'" "--args" source)
 
  :error-patterns
  ((info line-start (file-name) ":" line ":" column ": " "style:"

@@ -10,7 +10,7 @@ no_tab_linter <- function(source_file) {
       col_end <- source_file$find_column(end)
       line_num <- source_file$find_line(start)
 
-      lint(
+      Lint(
         filename = source_file$filename,
         line_number = line_num,
         column_number = col_start,

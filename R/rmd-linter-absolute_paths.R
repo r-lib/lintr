@@ -29,7 +29,7 @@ absolute_paths_rmd_linter <- function(source_file) {
         start <- match$`1.start` - newline_locs[line_number]
         end <- match$`1.end` - newline_locs[line_number]
 
-        lint(
+        Lint(
           filename = source_file$filename,
           line_number = line_number,
           column_number = start,
