@@ -298,4 +298,8 @@ test_that("returns the correct linting", {
   expect_lint("1*(1 + 1)",
     "Place a space before left parenthesis, except in a function call.",
     spaces_left_parentheses_linter)
+
+  expect_lint("test <- function(x) { if(1 + 1) 'hi' }",
+    "Place a space before left parenthesis, except in a function call.",
+    spaces_left_parentheses_linter)
 })

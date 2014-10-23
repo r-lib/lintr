@@ -15,7 +15,7 @@ commas_linter <- function(source_file) {
             end),
           locations = TRUE)
 
-      if(!is.na(before_match$start)) {
+      if (!is.na(before_match$start)) {
 
         res[[length(res) + 1L]] <-
           Lint(
@@ -30,7 +30,7 @@ commas_linter <- function(source_file) {
 
       }
 
-      if(re_matches(after_comma, rex(non_spaces))) {
+      if (re_matches(after_comma, rex(non_spaces))) {
 
         res[[length(res) + 1L]] <-
           Lint(

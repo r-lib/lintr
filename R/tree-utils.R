@@ -3,9 +3,9 @@ children <- function(data, id, levels = Inf) {
 
   itr <- 1L
   ids[[itr]] <- data[ data$parent == id, "id"]
-  while(levels > 1L && length(ids[[itr]]) != 0L) {
+  while (levels > 1L && length(ids[[itr]]) != 0L) {
 
-    for(id in ids[[itr]]){
+    for (id in ids[[itr]]){
       itr <- itr + 1L
       ids[[itr]] <- data[ data$parent == id, "id"]
     }
@@ -19,9 +19,9 @@ parents <- function(data, id, levels = Inf) {
 
   itr <- 1L
   ids[[itr]] <- data[ data$id == id, "parent"]
-  while(levels > 1L && length(ids[[itr]]) != 0L) {
+  while (levels > 1L && length(ids[[itr]]) != 0L) {
 
-    for(id in ids[[itr]]){
+    for (id in ids[[itr]]){
       itr <- itr + 1L
       ids[[itr]] <- data[ data$id == id, "parent"]
     }

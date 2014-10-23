@@ -42,9 +42,9 @@ absolute_paths_linter <- function(source_file) {
 
       parsed <- source_file$parsed_content[id, ]
 
-      for(regex in regexes){
+      for (regex in regexes){
         res <- re_matches(parsed$text, regex, locations = TRUE)
-        if(!is.na(res$`1.start`)){
+        if (!is.na(res$`1.start`)){
           start <- parsed$col1 + res$`1.start` - 1L
           end <- parsed$col1 + res$`1.end` - 1L
           return(

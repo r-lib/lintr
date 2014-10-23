@@ -13,7 +13,7 @@ spaces_left_parentheses_linter <- function(source_file) {
       is_function <- length(family_ids) %!=% 0L &&
         any(types %in% c("SYMBOL_FUNCTION_CALL", "FUNCTION"))
 
-      if(!is_function) {
+      if (!is_function) {
 
         line <- getSrcLines(source_file, parsed$line1, parsed$line1)
 
@@ -21,7 +21,7 @@ spaces_left_parentheses_linter <- function(source_file) {
 
         non_space_before <- re_matches(before_operator, rex(non_space))
 
-        if(non_space_before) {
+        if (non_space_before) {
           Lint(
             filename = source_file$filename,
             line_number = parsed$line1,

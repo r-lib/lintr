@@ -40,7 +40,7 @@ infix_spaces_linter <- function(source_file) {
       res <- list()
 
       # Need to special case - and + because they can be used before a number
-      if(
+      if (
         (parsed$token %in% infix_operators[1:2] &&
           non_space_before) ||
         (!parsed$token %in% infix_operators[1:2] &&
@@ -48,12 +48,12 @@ infix_spaces_linter <- function(source_file) {
         ) {
 
         start <- parsed$col1
-        if(non_space_before) {
+        if (non_space_before) {
           start <- parsed$col1 - 1L
         }
 
         end <- parsed$col1
-        if(non_space_after) {
+        if (non_space_after) {
           end <- parsed$col1 + nchar(parsed$text)
         }
 

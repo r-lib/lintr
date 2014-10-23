@@ -15,17 +15,11 @@ lint <- function(filename, linters = default_linters) {
     class = "lints")
 
   # append any errors
-  if(!is.null(source_file$error)) {
+  if (!is.null(source_file$error)) {
     lints[[length(lints) + 1L]] <- source_file$error
   }
 
   lints
-}
-
-srcdata <- function(filename) {
-  text <- readLines(filename)
-  sf <- srcfilecopy(filename, text, isFile = TRUE)
-  parse(text=sf$lines, srcfile=sf)
 }
 
 get_source_file <- function(filename) {
@@ -43,7 +37,7 @@ get_source_file <- function(filename) {
       global = TRUE)[[1]]$start
 
   newline_locs <- c(0L,
-    if(!is.na(newline_search[1])) newline_search,
+    if (!is.na(newline_search[1])) newline_search,
     nchar(source_file$content) + 1L)
 
   source_file$lengths <-
@@ -82,7 +76,7 @@ get_source_file <- function(filename) {
 
     # If the column number is zero it means the error really occurred at the
     # end of the previous line
-    if(column_number == 0L){
+    if (column_number == 0L){
       line_number <- line_number - 1L
       line <- getSrcLines(source_file, line_number, line_number)
       column_number <- nchar(line)
@@ -106,7 +100,7 @@ get_source_file <- function(filename) {
   e <- tryCatch(parse(text=source_file$content, srcfile=source_file),
     error = lint_error)
 
-  if(inherits(e, "lint")) {
+  if (inherits(e, "lint")) {
     source_file$error <- e
   }
 
@@ -215,7 +209,7 @@ adjust_position_fun <- function(message) {
     locations = TRUE,
     global = TRUE)[[1]]
 
-  if(is.na(positions$end[1L])) {
+  if (is.na(positions$end[1L])) {
     positions$length <- 0L
   }
   else {
@@ -225,7 +219,7 @@ adjust_position_fun <- function(message) {
   function(position) {
     escapes <- which(positions$start < position)
 
-    if(escapes %==% integer(0)) {
+    if (escapes %==% integer(0)) {
       position
     }
     else {

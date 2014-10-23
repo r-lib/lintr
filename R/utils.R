@@ -1,5 +1,5 @@
 `%||%` <- function(x, y) {
-  if(!is.null(x)) { x } else { y }
+  if (!is.null(x)) { x } else { y }
 }
 
 `%==%` <- function(x, y) {
@@ -16,14 +16,14 @@ expect_lint <- function(content, checks, ...) {
   reporter <- get_reporter()
 
   # flatten list if a list of lists
-  if(is.list(results) &&
+  if (is.list(results) &&
     is.list(results[[1]]) &&
     !is.expectation(results[[1]])) {
 
     results <- unlist(recursive = FALSE, results)
   }
 
-  if(is.expectation(results)) {
+  if (is.expectation(results)) {
     reporter$add_result(results)
   }
   else {
@@ -42,9 +42,9 @@ compact <- function(x) {
 }
 
 flatten <- function(x) {
-  if(length(x) %==% 0L) { return(x) }
+  if (length(x) %==% 0L) { return(x) }
 
-  while(is.list(x) && !inherits(x[[1]], "lint")) {
+  while (is.list(x) && !inherits(x[[1]], "lint")) {
     x <- unlist(x, recursive = FALSE, use.names = FALSE)
   }
   x
@@ -60,7 +60,7 @@ expectation_lint <- function(content, checks, ...) {
 
   linter_names <- substitute(alist(...))[-1]
 
-  if(is.null(checks)) {
+  if (is.null(checks)) {
     return(expectation(length(lints) %==% 0L,
         paste0(paste(collapse=", ", linter_names),
           " returned ", print(lints),
@@ -69,12 +69,12 @@ expectation_lint <- function(content, checks, ...) {
           " returned 0 lints as expected.")))
   }
 
-  if(!is.list(checks)) {
+  if (!is.list(checks)) {
     checks <- list(checks)
   }
   checks[] <- lapply(checks, fix_names, "message")
 
-  if(length(lints) != length(checks)) {
+  if (length(lints) != length(checks)) {
     return(expectation(FALSE,
         paste0(paste(collapse=", ", linter_names),
           " did not return ", length(checks),
@@ -110,7 +110,7 @@ expectation_lint <- function(content, checks, ...) {
 fix_names <- function(x, default) {
   nms <- names(x)
 
-  if(is.null(nms)) {
+  if (is.null(nms)) {
     nms <- default
   }
   else {
@@ -138,7 +138,7 @@ quoted_blanks <- function(matches, shift_start = 0, shift_end = 0) {
       lengths - (shift_start + shift_end), USE.NAMES = FALSE),
     paste, "", collapse = "")
 
-  substr(matches, shift_start + 1L, nchar(matches)-shift_end) <- blanks
+  substr(matches, shift_start + 1L, nchar(matches) - shift_end) <- blanks
   matches
 }
 
