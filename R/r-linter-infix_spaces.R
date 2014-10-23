@@ -39,14 +39,14 @@ infix_spaces_linter <- function(source_file) {
 
       res <- list()
 
-      # Need to special case - and + because they can be used before a number
-      if (
-        (parsed$token %in% infix_operators[1:2] &&
-          non_space_before) ||
-        (!parsed$token %in% infix_operators[1:2] &&
-          (non_space_before || non_space_after))
-        ) {
+      # we only should check spacing if the operator is infix,
+      # which only happens if there are two siblings
+      is_infix <-
+        length(siblings(source_file$parsed_content, parsed$id, 1)) %==% 2L
 
+      if (is_infix &&
+        (non_space_before || non_space_after)
+        ) {
         start <- parsed$col1
         if (non_space_before) {
           start <- parsed$col1 - 1L

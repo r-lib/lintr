@@ -31,15 +31,25 @@ parents <- function(data, id, levels = Inf) {
 }
 
 family <- function(data, id, parent_levels = 1L, child_levels = Inf) {
-  unlist(lapply(
-      parents(data, id, parent_levels),
-      children,
-      data = data,
-      levels = child_levels)
+  parents <- parents(data, id, parent_levels)
+  c(parents,
+    unlist(lapply(
+        parents,
+        children,
+        data = data,
+        levels = child_levels)
+      )
     )
 }
 
-siblings <- function(data, id) {
-  res <- family(data, id, 1L, 1L)
-  res[ res != id ]
+siblings <- function(data, id, child_levels = Inf) {
+  parents <- parents(data, id, 1L)
+  res <- unlist(lapply(
+      parents,
+      children,
+      data = data,
+      levels = child_levels
+      )
+    )
+  res[ res != id]
 }
