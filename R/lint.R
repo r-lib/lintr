@@ -22,6 +22,12 @@ lint <- function(filename, linters = default_linters) {
   lints
 }
 
+srcdata <- function(filename) {
+  text <- readLines(filename)
+  sf <- srcfilecopy(filename, text, isFile = TRUE)
+  parse(text=sf$lines, srcfile=sf)
+}
+
 get_source_file <- function(filename) {
   source_file <- srcfile(filename)
   lines <- readLines(filename)
@@ -92,6 +98,11 @@ get_source_file <- function(filename) {
       )
   }
 
+  e <- tryCatch(parse(text=source_file$content, srcfile=source_file),
+    error = lint_error)
+
+  # This needs to be done twice to avoid
+  #   https://bugs.r-project.org/bugzilla/show_bug.cgi?id=16041
   e <- tryCatch(parse(text=source_file$content, srcfile=source_file),
     error = lint_error)
 

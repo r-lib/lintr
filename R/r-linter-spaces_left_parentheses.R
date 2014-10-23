@@ -4,13 +4,14 @@ spaces_left_parentheses_linter <- function(source_file) {
 
       parsed <- source_file$parsed_content[id, ]
 
-      family_ids <- sort(family(source_file$parsed_content, parsed$id))
+      family_ids <- family(source_file$parsed_content, parsed$id)
+
+      types <- source_file$parsed_content[
+          source_file$parsed_content$id %in% family_ids,
+          "token"]
 
       is_function <- length(family_ids) %!=% 0L &&
-        source_file$parsed_content[
-          source_file$parsed_content$id == family_ids[[1]],
-          "token"] %in%
-        c("SYMBOL_FUNCTION_CALL", "FUNCTION")
+        any(types %in% c("SYMBOL_FUNCTION_CALL", "FUNCTION"))
 
       if(!is_function) {
 

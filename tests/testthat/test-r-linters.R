@@ -263,7 +263,15 @@ test_that("returns the correct linting", {
 
   expect_lint("print(blah)", NULL, spaces_left_parentheses_linter)
 
-  expect_lint("blah <- function(blah) { }", NULL, spaces_left_parentheses_linter)
+  expect_lint("base::print(blah)", NULL, spaces_left_parentheses_linter)
+
+  expect_lint("base::print(blah, fun(1))",
+    NULL,
+    spaces_left_parentheses_linter)
+
+  expect_lint("blah <- function(blah) { }",
+    NULL,
+    spaces_left_parentheses_linter)
 
   expect_lint("(1 + 1)", NULL, spaces_left_parentheses_linter)
 
