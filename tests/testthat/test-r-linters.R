@@ -309,3 +309,50 @@ test_that("returns the correct linting", {
     "Place a space before left parenthesis, except in a function call.",
     spaces_left_parentheses_linter)
 })
+context("r-linter-spaces-inside")
+test_that("returns the correct linting", {
+
+  expect_lint("blah", NULL, spaces_inside_linter)
+
+  expect_lint("print(blah)", NULL, spaces_inside_linter)
+
+  expect_lint("base::print(blah)", NULL, spaces_inside_linter)
+
+  expect_lint("a[, ]", NULL, spaces_inside_linter)
+
+  expect_lint("a[,]", NULL, spaces_inside_linter)
+
+  expect_lint("a[1]", NULL, spaces_inside_linter)
+
+  expect_lint("a[1 ]",
+    "Do not place spaces around code in parentheses or square brackets.",
+    spaces_inside_linter)
+
+  expect_lint("a[ 1]",
+    "Do not place spaces around code in parentheses or square brackets.",
+    spaces_inside_linter)
+
+  expect_lint("a[ 1 ]",
+    list("Do not place spaces around code in parentheses or square brackets.",
+    "Do not place spaces around code in parentheses or square brackets."),
+    spaces_inside_linter)
+
+  expect_lint("a(, )", NULL, spaces_inside_linter)
+
+  expect_lint("a(,)", NULL, spaces_inside_linter)
+
+  expect_lint("a(1)", NULL, spaces_inside_linter)
+
+  expect_lint("a(1 )",
+    "Do not place spaces around code in parentheses or square brackets.",
+    spaces_inside_linter)
+
+  expect_lint("a( 1)",
+    "Do not place spaces around code in parentheses or square brackets.",
+    spaces_inside_linter)
+
+  expect_lint("a( 1 )",
+    list("Do not place spaces around code in parentheses or square brackets.",
+    "Do not place spaces around code in parentheses or square brackets."),
+    spaces_inside_linter)
+})
