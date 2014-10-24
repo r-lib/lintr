@@ -9,7 +9,8 @@ default_linters <- c(
   infix_spaces_linter,
   spaces_left_parentheses_linter,
   spaces_inside_linter,
-  curly_newline_linter,
+  open_curly_newline_linter,
+  open_curly_own_line_linter,
 
   NULL
 )

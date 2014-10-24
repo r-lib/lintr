@@ -363,44 +363,44 @@ test_that("returns the correct linting", {
 context("r-linter-curly_newline")
 test_that("returns the correct linting", {
 
-  expect_lint("blah", NULL, curly_newline_linter)
+  expect_lint("blah", NULL, open_curly_newline_linter)
 
-  expect_lint("a <- function() {\n}", NULL, curly_newline_linter)
+  expect_lint("a <- function() {\n}", NULL, open_curly_newline_linter)
 
   expect_lint("a <- function() { 1 }",
     "Opening curly-braces should always be followed by a newline.",
-    curly_newline_linter)
+    open_curly_newline_linter)
 
   expect_lint("a <- function() {  \n}",
     "Opening curly-braces should always be followed by a newline.",
-    curly_newline_linter)
+    open_curly_newline_linter)
 })
 
 context("r-linter-curly-own_line")
 test_that("returns the correct linting", {
 
-  expect_lint("blah", NULL, curly_own_line_linter)
+  expect_lint("blah", NULL, open_curly_own_line_linter)
 
-  expect_lint("a <- function() {\n}", NULL, curly_own_line_linter)
+  expect_lint("a <- function() {\n}", NULL, open_curly_own_line_linter)
 
   expect_lint("a <- function() { 1 }",
     NULL,
-    curly_own_line_linter)
+    open_curly_own_line_linter)
 
   expect_lint("a <- function() {  1 \n}",
     NULL,
-    curly_own_line_linter)
+    open_curly_own_line_linter)
 
   expect_lint("a <- function()\n{  1 \n}",
-     "Opening curly-braces should never be on their own line.",
-    curly_own_line_linter)
+    "Opening curly-braces should always be on their own line.",
+    open_curly_own_line_linter)
 
   expect_lint("a <- function()\n    {  1 \n}",
-     "Opening curly-braces should never be on their own line.",
-    curly_own_line_linter)
+    "Opening curly-braces should always be on their own line.",
+    open_curly_own_line_linter)
 
   expect_lint("a <- function()\n\t{  1 \n}",
-     "Opening curly-braces should never be on their own line.",
-    curly_own_line_linter)
+    "Opening curly-braces should always be on their own line.",
+    open_curly_own_line_linter)
 })
 
