@@ -1,5 +1,9 @@
 `%||%` <- function(x, y) {
-  if (!is.null(x)) { x } else { y }
+  if (!is.null(x)) {
+    x
+  } else {
+    y
+  }
 }
 
 `%==%` <- function(x, y) {
@@ -40,6 +44,8 @@ flatten_lints <- function(x) {
   )
 }
 
+# any function using unlist or c was dropping the classnames,
+# so need to brute force copy the objects
 flatten_list <- function(x, class) {
 
   res <- list()
@@ -122,7 +128,7 @@ fix_names <- function(x, default) {
     nms <- default
   }
   else {
-    nms[ nms == "" ] <- default
+    nms[nms == ""] <- default
   }
   names(x) <- nms
   x

@@ -12,7 +12,7 @@ absolute_paths_rmd_linter <- function(source_file) {
       re_matches(source_file$content, rex("\n"), locations = TRUE)$start
       )
 
-  newline_locs[ is.na(newline_locs) ] <- nchar(source_file$content)
+  newline_locs[is.na(newline_locs)] <- nchar(source_file$content)
 
   lapply(regexes, function(regex) {
     res <-
