@@ -1,0 +1,48 @@
+# An opening curly brace should never go on its own line and should always be followed by a new line.
+
+open_curly_linter <- function(source_file) {
+  lapply(which(source_file$parsed_content$token %in% "'{'"),
+    function(id) {
+
+      parsed <- source_file$parsed_content[id, ]
+
+      tokens_before <- source_file$parsed_content[
+        source_file$parsed_content$line1 == parsed$line1 &
+        source_file$parsed_content$col1 < parsed$col1,
+        "token"
+        ]
+
+      tokens_after <- source_file$parsed_content[
+        source_file$parsed_content$line1 == parsed$line1 &
+        source_file$parsed_content$col1 > parsed$col1,
+        "token"
+        ]
+
+      line <- getSrcLines(source_file, parsed$line1, parsed$line1)
+
+      # the only tokens should be the { and the start of the expression.
+      some_before <- length(tokens_before) %!=% 0L
+      some_after <- length(tokens_after) %!=% 0L
+
+      whitespace_after <- substr(line, parsed$col1 + 1L, parsed$col1 + 1L) %!=% ""
+
+      #str(!some_before)
+
+      #str(some_after)
+
+      #str(whitespace_after)
+      if (!some_before || some_after || whitespace_after) {
+        Lint(
+          filename = source_file$filename,
+          line_number = parsed$line1,
+          column_number = parsed$col1,
+          type = "style",
+          message = "Opening curly braces should never go on their own line and should always be followed by a new line.",
+          line = getSrcLines(source_file, parsed$line1, parsed$line1)
+          )
+      }
+
+    })
+}
+
+

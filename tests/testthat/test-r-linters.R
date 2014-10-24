@@ -136,8 +136,7 @@ test_that("returns the correct linting", {
 })
 
 context("r-linter-line_length")
-test_that("returns the correct linting",
-  {
+test_that("returns the correct linting", {
 
   expect_lint("blah",
     NULL,
@@ -156,8 +155,8 @@ test_that("returns the correct linting",
     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"),
 
     list(
-      "lines should not be more than 80 characters",
-      "lines should not be more than 80 characters"),
+      rex("lines should not be more than 80 characters"),
+      rex("lines should not be more than 80 characters")),
 
     line_length_linter(80))
 
@@ -166,7 +165,7 @@ test_that("returns the correct linting",
     line_length_linter(20))
 
   expect_lint("aaaaaaaaaaaaaaaaaaaab",
-    "lines should not be more than 20 characters",
+    rex("lines should not be more than 20 characters"),
     line_length_linter(20))
 
 })
@@ -290,23 +289,23 @@ test_that("returns the correct linting", {
   expect_lint("1 * (1 + 1)", NULL, spaces_left_parentheses_linter)
 
   expect_lint("((1 + 1))",
-    "Place a space before left parenthesis, except in a function call.",
+    rex("Place a space before left parenthesis, except in a function call."),
     spaces_left_parentheses_linter)
 
   expect_lint("if(blah) { }",
-    "Place a space before left parenthesis, except in a function call.",
+    rex("Place a space before left parenthesis, except in a function call."),
     spaces_left_parentheses_linter)
 
   expect_lint("for(i in j) { }",
-    "Place a space before left parenthesis, except in a function call.",
+    rex("Place a space before left parenthesis, except in a function call."),
     spaces_left_parentheses_linter)
 
   expect_lint("1*(1 + 1)",
-    "Place a space before left parenthesis, except in a function call.",
+    rex("Place a space before left parenthesis, except in a function call."),
     spaces_left_parentheses_linter)
 
   expect_lint("test <- function(x) { if(1 + 1) 'hi' }",
-    "Place a space before left parenthesis, except in a function call.",
+    rex("Place a space before left parenthesis, except in a function call."),
     spaces_left_parentheses_linter)
 })
 
@@ -328,16 +327,16 @@ test_that("returns the correct linting", {
   expect_lint("fun(\na[1]\n  )", NULL, spaces_inside_linter)
 
   expect_lint("a[1 ]",
-    "Do not place spaces around code in parentheses or square brackets.",
+    rex("Do not place spaces around code in parentheses or square brackets."),
     spaces_inside_linter)
 
   expect_lint("a[ 1]",
-    "Do not place spaces around code in parentheses or square brackets.",
+    rex("Do not place spaces around code in parentheses or square brackets."),
     spaces_inside_linter)
 
   expect_lint("a[ 1 ]",
     list("Do not place spaces around code in parentheses or square brackets.",
-    "Do not place spaces around code in parentheses or square brackets."),
+    rex("Do not place spaces around code in parentheses or square brackets.")),
     spaces_inside_linter)
 
   expect_lint("a(, )", NULL, spaces_inside_linter)
@@ -347,60 +346,111 @@ test_that("returns the correct linting", {
   expect_lint("a(1)", NULL, spaces_inside_linter)
 
   expect_lint("a(1 )",
-    "Do not place spaces around code in parentheses or square brackets.",
+    rex("Do not place spaces around code in parentheses or square brackets."),
     spaces_inside_linter)
 
   expect_lint("a( 1)",
-    "Do not place spaces around code in parentheses or square brackets.",
+    rex("Do not place spaces around code in parentheses or square brackets."),
     spaces_inside_linter)
 
   expect_lint("a( 1 )",
     list("Do not place spaces around code in parentheses or square brackets.",
-    "Do not place spaces around code in parentheses or square brackets."),
+    rex("Do not place spaces around code in parentheses or square brackets.")),
     spaces_inside_linter)
 })
 
-context("r-linter-curly_newline")
+context("r-linter-open_curly")
 test_that("returns the correct linting", {
 
-  expect_lint("blah", NULL, open_curly_newline_linter)
+  expect_lint("blah", NULL, open_curly_linter)
 
-  expect_lint("a <- function() {\n}", NULL, open_curly_newline_linter)
+  expect_lint("a <- function() {\n}", NULL, open_curly_linter)
 
-  expect_lint("a <- function() { 1 }",
-    "Opening curly-braces should always be followed by a newline.",
-    open_curly_newline_linter)
+  expect_lint("a <- function()\n{\n  1 \n}",
+    rex("Opening curly braces should never go on their own line and should always be followed by a new line."),
+    open_curly_linter)
+
+  expect_lint("a <- function()\n    {\n  1 \n}",
+    rex("Opening curly braces should never go on their own line and should always be followed by a new line."),
+    open_curly_linter)
+
+  expect_lint("a <- function()\n\t{\n  1 \n}",
+    rex("Opening curly braces should never go on their own line and should always be followed by a new line."),
+    open_curly_linter)
 
   expect_lint("a <- function() {  \n}",
-    "Opening curly-braces should always be followed by a newline.",
-    open_curly_newline_linter)
-})
-
-context("r-linter-curly-own_line")
-test_that("returns the correct linting", {
-
-  expect_lint("blah", NULL, open_curly_own_line_linter)
-
-  expect_lint("a <- function() {\n}", NULL, open_curly_own_line_linter)
+    rex("Opening curly braces should never go on their own line and should always be followed by a new line."),
+    open_curly_linter)
 
   expect_lint("a <- function() { 1 }",
-    NULL,
-    open_curly_own_line_linter)
-
-  expect_lint("a <- function() {  1 \n}",
-    NULL,
-    open_curly_own_line_linter)
-
-  expect_lint("a <- function()\n{  1 \n}",
-    "Opening curly-braces should always be on their own line.",
-    open_curly_own_line_linter)
-
-  expect_lint("a <- function()\n    {  1 \n}",
-    "Opening curly-braces should always be on their own line.",
-    open_curly_own_line_linter)
-
-  expect_lint("a <- function()\n\t{  1 \n}",
-    "Opening curly-braces should always be on their own line.",
-    open_curly_own_line_linter)
+    rex("Opening curly braces should never go on their own line and should always be followed by a new line."),
+    open_curly_linter)
 })
 
+context("r-linter-closed_curly")
+test_that("returns the correct linting", {
+
+  expect_lint("blah",
+    NULL,
+    closed_curly_linter)
+
+  expect_lint("a <- function() {\n}",
+    NULL,
+    closed_curly_linter)
+
+  expect_lint("a <- function() { 1 }",
+    rex("Closing curly-braces should always be on their own line, unless it's followed by an else."),
+    closed_curly_linter)
+
+  expect_lint("a <- if(1) {\n 1} else {\n 2\n}",
+    rex("Closing curly-braces should always be on their own line, unless it's followed by an else."),
+    closed_curly_linter)
+
+  expect_lint("a <- if(1) {\n 1\n} else {\n 2}",
+    rex("Closing curly-braces should always be on their own line, unless it's followed by an else."),
+    closed_curly_linter)
+
+  expect_lint("a <- if(1) {\n 1} else {\n 2}",
+    list(
+      rex("Closing curly-braces should always be on their own line, unless it's followed by an else."),
+      rex("Closing curly-braces should always be on their own line, unless it's followed by an else.")
+      ),
+    closed_curly_linter)
+})
+
+context("r-linter-objects")
+test_that("returns the correct linting", {
+
+  expect_lint("blah",
+    NULL,
+    object_name_linter())
+
+  #variables from attached external packages are ignored
+  expect_lint("print.data.frame",
+    NULL,
+    object_name_linter())
+
+  expect_lint("row.names.data.frame",
+    NULL,
+    object_name_linter())
+
+  expect_lint("invokeRestartInteractively",
+    NULL,
+    object_name_linter())
+
+  expect_lint("camelCase",
+     rex("Variable and function names should be all lowercase."),
+    object_name_linter())
+
+  expect_lint("variable.name.test",
+     rex("Words within variable and function names should be separated by '_' rather than '.'."),
+    object_name_linter())
+
+  expect_lint("very_very_very_very_long_variable_names_are_not_ideal",
+    rex("Variable and function names should not be longer than 20 characters."),
+    object_name_linter())
+
+  expect_lint("very_very_very_very_long_variable_names_are_not_ideal",
+    rex("Variable and function names should not be longer than 40 characters."),
+    object_name_linter(length = 40))
+})
