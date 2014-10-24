@@ -3,23 +3,53 @@ lint <- function(filename, linters = default_linters) {
 
   source_file <- get_source_file(filename)
 
-  lints <- structure(
-    flatten(
-      # get lints from all the linters
-      compact(
-        lapply(linters,
-          function(linter) {
-              compact(linter(source_file))
-          })
-        )),
-    class = "lints")
+  flatten_lints(
+    append(
+      lapply(linters,
+        function(linter) {
+          linter(source_file)
+        }),
+      if(!is.null(source_file$error)) list(source_file$error)
+    )
+  )
+}
 
-  # append any errors
-  if (!is.null(source_file$error)) {
-    lints[[length(lints) + 1L]] <- source_file$error
+lint_package <- function(path = NULL, relative_path = TRUE) {
+  if (is.null(path)) {
+    path <- find_package()
+  }
+  files <- dir(path=path,
+    pattern = rex(".", one_of("Rr"), end),
+    recursive = TRUE,
+    full.names = TRUE)
+
+  lints <- flatten_lints(lapply(files, lint))
+
+  if (relative_path) {
+    lints[] <- lapply(lints,
+      function(x) {
+        x$filename <- re_substitutes(x$filename, rex(path), ".")
+        x
+      })
   }
 
   lints
+}
+
+find_package <- function() {
+  start_path <- getwd()
+  on.exit(setwd(start_path))
+
+  prev_path <- ""
+  while (!file.exists(file.path(prev_path, "DESCRIPTION"))) {
+    # this condition means we are at the root directory, so give up
+    if (prev_path %==% getwd()) {
+      return(NULL)
+    }
+    prev_path <- getwd()
+    setwd("..")
+  }
+  prev_path
 }
 
 get_source_file <- function(filename) {

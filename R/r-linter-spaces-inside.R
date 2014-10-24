@@ -10,17 +10,29 @@ spaces_inside_linter <- function(source_file) {
 
       parsed <- source_file$parsed_content[id, ]
 
+      is_open <- parsed$token %in% matches[c(1, 3)]
+
       line <- getSrcLines(source_file, parsed$line1, parsed$line1)
 
-      one_before_operator <- substr(line, parsed$col1 - 1L, parsed$col1 - 1L)
-      two_before_operator <- substr(line, parsed$col1 - 2L, parsed$col1 - 2L)
-      one_after_operator <- substr(line, parsed$col1 + 1L, parsed$col1 + 1L)
+      if (is_open) {
+        after_operator <- substr(line, parsed$col1 + 1L, parsed$col1 + 1L)
 
-      non_space_before <- re_matches(one_before_operator, rex(space))
-      non_space_after <- re_matches(one_after_operator, rex(space))
-      is_comma <- re_matches(two_before_operator, rex(","))
+        has_space <- re_matches(after_operator, rex(space))
+      }
+      else {
+        before_operator <- substr(line, 1L, parsed$col1 - 1L)
 
-      if (non_space_before && !is_comma || non_space_after) {
+        has_space <- re_matches(before_operator,
+          rex(non_space,
+
+            # need to special case ', '
+            spaces %if_prev_isnt% c(","),
+
+            end))
+      }
+
+
+      if (has_space) {
         Lint(
           filename = source_file$filename,
           line_number = parsed$line1,

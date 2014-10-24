@@ -33,21 +33,29 @@ expect_lint <- function(content, checks, ...) {
   invisible(results)
 }
 
-# Remove NULLs or empty objects from a list
-compact <- function(x) {
-  x[!vapply(x,
-    function(element) {
-      is.null(element) || length(element) %==% 0L
-    }, logical(1))]
+flatten_lints <- function(x) {
+  structure(
+    flatten_list(x, class = "lint"),
+    class = "lints"
+  )
 }
 
-flatten <- function(x) {
-  if (length(x) %==% 0L) { return(x) }
+flatten_list <- function(x, class) {
 
-  while (is.list(x) && !inherits(x[[1]], "lint")) {
-    x <- unlist(x, recursive = FALSE, use.names = FALSE)
+  res <- list()
+  itr <- 1L
+  assign_item <- function(x) {
+    if (inherits(x, class)) {
+      res[[itr]] <<- x
+      itr <<- itr + 1L
+    }
+    else if (is.list(x)) {
+      lapply(x, assign_item)
+    }
   }
-  x
+  assign_item(x)
+  res
+
 }
 
 expectation_lint <- function(content, checks, ...) {
