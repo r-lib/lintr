@@ -1,3 +1,6 @@
+#' Available linters
+#'
+#' @name linters
 default_linters <- c(
 
   assignment_linter,

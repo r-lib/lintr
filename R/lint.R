@@ -1,4 +1,13 @@
+#' @import rex
+NULL
+
+#' Lint a file
+#'
+#' @param filename the given filename to lint.
+#' @param linters a list of linter functions to apply see \code{\link{linters}}
+#' for a full list of default and available linters.
 #' @export
+#' @name lint_file
 lint <- function(filename, linters = default_linters) {
 
   source_file <- get_source_file(filename)
@@ -14,6 +23,15 @@ lint <- function(filename, linters = default_linters) {
   )
 }
 
+#' Lint all files in a package
+#'
+#' @param path the path to the base directory of the package, if \code{NULL},
+#' the base directory will be searched for by looking in the parent directories
+#' of the current directory.
+#' @param relative_path if \code{TRUE}, file paths are printed using their path
+#' relative to the package base directory.  If \code{FALSE}, use the full
+#' absolute path.
+#' @export
 lint_package <- function(path = NULL, relative_path = TRUE) {
   if (is.null(path)) {
     path <- find_package()
@@ -143,9 +161,20 @@ is_not_empty_list <- function(x) {
   is.list(x) && length(x) != 0L
 }
 
+#' Create a \code{Lint} object
+#' @param filename path to the source file that was linted.
+#' @param line_number line number where the lint occurred.
+#' @param column_number column the lint occurred.
+#' @param type type of lint.
+#' @param message message used to describe the lint error
+#' @param line code source where the lint occured
+#' @param ranges ranges on the line that should be emphasized.
 #' @export
 Lint <- function(filename, line_number = 1L, column_number = NULL,
-  type = "style", message = "", line = "", ranges = NULL) {
+  type = c("style", "warning", "error"),
+  message = "", line = "", ranges = NULL) {
+
+  type <- match.arg(type)
 
   structure(
     list(

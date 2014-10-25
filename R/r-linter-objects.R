@@ -1,7 +1,9 @@
 object_name_linter <- function(length = 20L) {
   function(source_file) {
 
-    attached_nms <- unlist(lapply(search(), ls))
+    attached_nms <-
+      c(unlist(lapply(search(), ls)),
+        "...")
 
     object_linter <- function(parsed, message) {
       Lint(

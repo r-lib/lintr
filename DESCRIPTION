@@ -11,7 +11,7 @@ Depends:
 Imports:
     rex,
     crayon
-License: MIT
+License: MIT + file LICENSE
 LazyData: true
 Suggests:
     testthat
