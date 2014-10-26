@@ -1,3 +1,5 @@
+#' @describeIn linters check the line length of both comments and code is less than
+#' width.
 line_length_linter <- function(width) {
   function(source_file) {
 

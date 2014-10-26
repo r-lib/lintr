@@ -1,5 +1,5 @@
-# An opening curly brace should never go on its own line and should always be followed by a new line.
-
+#' @describeIn linters check that opening curly braces are never on their own
+#' line and are always followed by a newline.
 open_curly_linter <- function(source_file) {
   lapply(which(source_file$parsed_content$token %in% "'{'"),
     function(id) {
@@ -24,13 +24,9 @@ open_curly_linter <- function(source_file) {
       some_before <- length(tokens_before) %!=% 0L
       some_after <- length(tokens_after) %!=% 0L
 
-      whitespace_after <- substr(line, parsed$col1 + 1L, parsed$col1 + 1L) %!=% ""
+      whitespace_after <-
+        substr(line, parsed$col1 + 1L, parsed$col1 + 1L) %!=% ""
 
-      #str(!some_before)
-
-      #str(some_after)
-
-      #str(whitespace_after)
       if (!some_before || some_after || whitespace_after) {
         Lint(
           filename = source_file$filename,

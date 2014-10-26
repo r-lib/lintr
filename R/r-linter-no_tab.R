@@ -1,3 +1,4 @@
+#' @describeIn linters check that only spaces are used, never tabs.
 no_tab_linter <- function(source_file) {
   res <- re_matches(source_file$stripped_comments,
     rex("\t" %>% one_or_more()), locations = TRUE, global = TRUE)[[1]]

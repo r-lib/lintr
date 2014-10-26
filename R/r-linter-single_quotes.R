@@ -1,3 +1,5 @@
+#' @describeIn linters checks that only single quotes are used to delimit
+#' string contestants.
 single_quotes_linter <- function(source_file) {
   lapply(which(source_file$parsed_content$token == "STR_CONST"),
     function(id) {

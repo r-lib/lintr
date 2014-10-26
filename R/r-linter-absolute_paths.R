@@ -28,6 +28,7 @@ absolute_path_types <- list(
   rex(capture("~", except_some_of(space, quote)))
   )
 
+#' @describeIn linters checks that no absolute paths are used.
 absolute_paths_linter <- function(source_file) {
 
   regexes <- vapply(absolute_path_types,

@@ -1,6 +1,11 @@
 #' Available linters
 #'
 #' @name linters
+#' @title linters
+#' @param source_file returned by \code{\link{get_source_file}}
+#' @param width the width cutoff to use for the given linter.
+NULL
+
 default_linters <- c(
 
   assignment_linter,

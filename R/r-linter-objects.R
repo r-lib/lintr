@@ -1,4 +1,10 @@
-object_name_linter <- function(length = 20L) {
+#' @describeIn linters check that objects
+#' \enumerate{
+#'   \item Are never camelCase
+#'   \item Are separated by \code{_} rather than \code{.}
+#'   \item Are not more than \code{width} characters
+#' }
+object_name_linter <- function(width = 20L) {
   function(source_file) {
 
     attached_nms <-
@@ -39,9 +45,9 @@ object_name_linter <- function(length = 20L) {
             res[[length(res) + 1L]] <- object_linter(parsed, "Words within variable and function names should be separated by '_' rather than '.'.")
           }
 
-          is_very_long <- nchar(name) > length
+          is_very_long <- nchar(name) > width
           if (is_very_long) {
-            res[[length(res) + 1L]] <- object_linter(parsed, paste0("Variable and function names should not be longer than ", length, " characters."))
+            res[[length(res) + 1L]] <- object_linter(parsed, paste0("Variable and function names should not be longer than ", width, " characters."))
           }
         }
 

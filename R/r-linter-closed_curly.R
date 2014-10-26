@@ -1,3 +1,5 @@
+#' @describeIn linters check that closed curly braces should always be on their
+#' own line unless they follow an else.
 closed_curly_linter <- function(source_file) {
   lapply(which(source_file$parsed_content$token %in% "'}'"),
     function(id) {

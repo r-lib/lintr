@@ -1,3 +1,5 @@
+#' @describeIn linters check that all left parentheses have a space before them
+#' unless they are in a function call.
 spaces_left_parentheses_linter <- function(source_file) {
   lapply(which(source_file$parsed_content$token %in% "'('"),
     function(id) {
