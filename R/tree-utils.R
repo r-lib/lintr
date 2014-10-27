@@ -14,7 +14,7 @@ children <- function(data, id, levels = Inf) {
   unlist(ids)
 }
 
-parents <- function(data, id, levels = Inf) {
+parents <- function(data, id, levels = Inf, inclusive = T) {
   ids <- list()
 
   itr <- 1L
@@ -27,7 +27,7 @@ parents <- function(data, id, levels = Inf) {
     }
     levels <- levels - 1L
   }
-  unlist(ids)
+  ids
 }
 
 family <- function(data, id, parent_levels = 1L, child_levels = Inf) {
@@ -52,4 +52,7 @@ siblings <- function(data, id, child_levels = Inf) {
       )
     )
   res[res != id]
+}
+previous_symbols <- function(data, id) {
+
 }

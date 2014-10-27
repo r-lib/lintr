@@ -7,9 +7,11 @@
 object_name_linter <- function(width = 20L) {
   function(source_file) {
 
+    #devtools::load_all(find_package())
     attached_nms <-
       c(unlist(lapply(search(), ls)),
         "...")
+
 
     object_linter <- function(parsed, message) {
       Lint(
@@ -56,4 +58,3 @@ object_name_linter <- function(width = 20L) {
       })
   }
 }
-

@@ -10,7 +10,8 @@ Depends:
     R (>= 3.1.1)
 Imports:
     rex,
-    crayon
+    crayon,
+    codetools
 License: MIT + file LICENSE
 LazyData: true
 Suggests:
