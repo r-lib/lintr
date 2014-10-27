@@ -38,8 +38,6 @@ infix_spaces_linter <- function(source_file) {
       non_space_before <- re_matches(before_operator, rex(non_space))
       non_space_after <- re_matches(after_operator, rex(non_space))
 
-      res <- list()
-
       # we only should check spacing if the operator is infix,
       # which only happens if there are two siblings
       is_infix <-

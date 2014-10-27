@@ -6,8 +6,6 @@ closed_curly_linter <- function(source_file) {
 
       parsed <- source_file$parsed_content[id, ]
 
-      line <- getSrcLines(source_file, parsed$line1, parsed$line1)
-
       tokens_before <- source_file$parsed_content[
         source_file$parsed_content$line1 == parsed$line1 &
         source_file$parsed_content$col1 < parsed$col1,

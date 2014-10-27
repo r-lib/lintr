@@ -54,9 +54,10 @@ lint_package <- function(path = NULL, relative_path = TRUE) {
   lints
 }
 
-find_package <- function() {
-  start_path <- getwd()
-  on.exit(setwd(start_path))
+find_package <- function(path = getwd()) {
+  start_wd <- getwd()
+  on.exit(setwd(start_wd))
+  setwd(path)
 
   prev_path <- ""
   while (!file.exists(file.path(prev_path, "DESCRIPTION"))) {
@@ -70,6 +71,19 @@ find_package <- function() {
   prev_path
 }
 
+pkg_name <- function(path = find_package()) {
+  if (is.null(path)) {
+    return(NULL)
+  } else {
+    read.dcf(file.path(path, "DESCRIPTION"), fields = "Package")[1]
+  }
+}
+
+#' Parsed sourced file from a filename
+#'
+#' This object is given as input to each linter
+#' @param filename the file to be parsed.
+#' @export
 get_source_file <- function(filename) {
   source_file <- srcfile(filename)
   lines <- readLines(filename)
@@ -292,6 +306,3 @@ adjust_position_fun <- function(message) {
 fill_with <- function(character = " ", length = 1L) {
   paste0(collapse = "", rep.int(character, length))
 }
-
-# need to register rex shortcuts as globals to avoid CRAN check errors
-rex::register_shortcuts("lintr")

@@ -27,7 +27,11 @@ parents <- function(data, id, levels = Inf, inclusive = T) {
     }
     levels <- levels - 1L
   }
-  ids
+  if (length(ids[[length(ids)]]) == 0L) {
+    ids[-length(ids)]
+  } else {
+    ids
+  }
 }
 
 family <- function(data, id, parent_levels = 1L, child_levels = Inf) {
@@ -43,7 +47,7 @@ family <- function(data, id, parent_levels = 1L, child_levels = Inf) {
 }
 
 siblings <- function(data, id, child_levels = Inf) {
-  parents <- parents(data, id, 1L)
+  parents <- parents(data, id, 1L)[[1]]
   res <- unlist(lapply(
       parents,
       children,
@@ -52,7 +56,4 @@ siblings <- function(data, id, child_levels = Inf) {
       )
     )
   res[res != id]
-}
-previous_symbols <- function(data, id) {
-
 }

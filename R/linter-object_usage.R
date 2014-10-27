@@ -4,13 +4,33 @@
 object_usage_linter <-  function(source_file) {
   # we need to evaluate each expression in order to use checkUsage on it.
 
-  env <- parent.frame()
+  pkg_name <- pkg_name(find_package(dirname(source_file$filename)))
+  parent_env <- if (!is.null(pkg_name)) {
+    getNamespace(pkg_name)
+  } else {
+    baseenv()
+  }
+  env <- new.env(parent=parent_env)
+
+  globals <- mget(".__global__",
+    parent_env,
+    ifnotfound = list(NULL))$`.__global__`
+
+  mapply(assign, globals, MoreArgs=list(value = NULL, envir = env))
+  ls.str(envir=env)
 
   lapply(which(
       re_matches(source_file$parsed_content$token,
         rex(start, "FUNCTION"))),
     function(id) {
-      parent_id <- source_file$parsed_content[id, "parent"]
+      parent_ids <- parents(source_file$parsed_content, source_file$parsed_content$id[id])
+
+      # not a top level function, so just return.
+      if (length(parent_ids) < 3L || parent_ids[[3]] %!=% 0L) {
+        return(NULL)
+      }
+
+      parent_id <- parent_ids[[1]]
 
       expr <- eval(
         parse(
@@ -60,7 +80,7 @@ parse_check_usage <- function(expression) {
   res <- re_matches(vals,
     rex(anything, ": ",
       capture(name = "message", anything,
-        "‘", capture(name = "name", anything), "’",
+        "\u2018", capture(name = "name", anything), "\u2019",
         anything),
       " ", "(", anything, ":", capture(name = "line_number", digits), ")"))
   res

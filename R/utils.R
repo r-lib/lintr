@@ -95,7 +95,7 @@ expectation_lint <- function(content, checks, ...) {
           " lints as expected from content:", content, str(lints))))
   }
 
-  itr <- 0
+  itr <- 0L
   mapply(function(lint, check) {
     itr <- itr + 1L
     lapply(names(check), function(field) {

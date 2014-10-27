@@ -3,6 +3,7 @@
 S3method(print,lint)
 S3method(print,lints)
 export(Lint)
+export(get_source_file)
 export(lint)
 export(lint_package)
 import(rex)

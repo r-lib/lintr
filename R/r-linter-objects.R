@@ -7,11 +7,16 @@
 object_name_linter <- function(width = 20L) {
   function(source_file) {
 
-    #devtools::load_all(find_package())
+    pkg_name <- pkg_name(find_package(dirname(source_file$filename)))
+
+    pkg_objects <- if (!is.null(pkg_name)) {
+      ls(envir=getNamespace(pkg_name))
+    }
+
     attached_nms <-
       c(unlist(lapply(search(), ls)),
-        "...")
-
+        "...",
+        pkg_objects)
 
     object_linter <- function(parsed, message) {
       Lint(

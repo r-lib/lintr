@@ -20,6 +20,7 @@ default_linters <- c(
   open_curly_linter,
   closed_curly_linter,
   object_name_linter(30),
+  object_usage_linter,
 
   NULL
 )
