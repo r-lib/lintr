@@ -439,7 +439,19 @@ test_that("returns the correct linting", {
     object_name_linter())
 
   expect_lint("camelCase",
-     rex("Variable and function names should be all lowercase."),
+    rex("Variable and function names should be all lowercase."),
+    object_name_linter())
+
+  expect_lint("pack::camelCase",
+    NULL,
+    object_name_linter())
+
+  expect_lint("pack:::camelCase",
+    NULL,
+    object_name_linter())
+
+  expect_lint("a(camelCase = 1)",
+    NULL,
     object_name_linter())
 
   expect_lint("variable.name.test",

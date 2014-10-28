@@ -30,19 +30,23 @@ object_name_linter <- function(width = 20L) {
         )
     }
 
-    lapply(which(
-        re_matches(source_file$parsed_content$token,
-          rex(start, "SYMBOL"))),
+    lapply(ids_with_token(source_file, re = rex(start, "SYMBOL" %if_next_isnt% "_SUB")),
 
       function(id) {
 
-        parsed <- source_file$parsed_content[id, ]
+        parsed <- source_file$parsed_content[as.character(id), ]
 
         name <- parsed$text
+        sibling_tokens <- source_file$parsed_content[
+          as.character(siblings(source_file$parsed_content, id)),
+          "token"]
 
         res <- list()
         if (!name %in% attached_nms) {
-          is_camel_case <- re_matches(name, rex(lower, upper))
+
+          is_camel_case <- !any(sibling_tokens %in% c("NS_GET", "NS_GET_INT")) &&
+            re_matches(name, rex(lower, upper))
+
           if (is_camel_case) {
             res[[length(res) + 1L]] <- object_linter(parsed, "Variable and function names should be all lowercase.")
           }

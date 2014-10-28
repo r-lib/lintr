@@ -156,3 +156,14 @@ quoted_blanks <- function(matches, shift_start = 0, shift_end = 0) {
   matches
 }
 
+ids_with_token <- function(source_file, exact = NULL, re = NULL) {
+  if (!is.null(exact)) {
+    source_file$parsed_content[source_file$parsed_content$token == exact, "id"]
+  } else if (!is.null(re)) {
+    source_file$parsed_content[
+      re_matches(source_file$parsed_content$token, re),
+      "id"]
+  } else {
+    stop("Must specify exact or re")
+  }
+}
