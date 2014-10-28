@@ -51,9 +51,9 @@ in `syntastic/syntax_checkers/r`.  If you are using
   width.
 * no_tab_linter - check that only spaces are used, never tabs.
 * object_name_linter - check that objects
-  # Are never camelCase
-  # Are separated by '_' rather than '.'
-  # Are not more than `width` characters
+  1. Are never camelCase
+  2. Are separated by '_' rather than '.'
+  3. Are not more than `width` characters
 * open_curly_linter - check that opening curly braces are never on their own
   line and are always followed by a newline.
 * single_quotes_linter - checks that only single quotes are used to delimit
