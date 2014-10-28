@@ -155,13 +155,13 @@ get_source_file <- function(filename) {
   }
 
   e <- tryCatch(
-    source_file$parse <- parse(text=source_file$content, srcfile=source_file),
+    source_file$parse <- parse(text=source_file$content, srcfile=source_file, keep.source = TRUE),
     error = lint_error)
 
   # This needs to be done twice to avoid
   #   https://bugs.r-project.org/bugzilla/show_bug.cgi?id=16041
   e <- tryCatch(
-    source_file$parse <- parse(text=source_file$content, srcfile=source_file),
+    source_file$parse <- parse(text=source_file$content, srcfile=source_file, keep.source = TRUE),
     error = lint_error)
 
   if (inherits(e, "lint")) {

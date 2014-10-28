@@ -17,7 +17,6 @@ object_usage_linter <-  function(source_file) {
     ifnotfound = list(NULL))$`.__global__`
 
   mapply(assign, globals, MoreArgs=list(value = NULL, envir = env))
-  ls.str(envir=env)
 
   lapply(which(
       re_matches(source_file$parsed_content$token,
@@ -34,8 +33,10 @@ object_usage_linter <-  function(source_file) {
 
       expr <- eval(
         parse(
-          text=getParseText(source_file$parsed_content, parent_id)),
-        envir=env
+          text=getParseText(source_file$parsed_content, parent_id),
+          keep.source = TRUE
+          ),
+        envir=env,
         )
 
       res <- parse_check_usage(expr)
