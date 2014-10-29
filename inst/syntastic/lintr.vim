@@ -25,8 +25,8 @@ if exists("g:loaded_syntastic_r_lintr_checker")
 endif
 let g:loaded_syntastic_r_lintr_checker = 1
 
-if !exists('g:syntastic_r_lintr_styles')
-    let g:syntastic_r_lintr_styles = 'lint.style'
+if !exists('g:syntastic_r_lintr_linters')
+    let g:syntastic_r_lintr_linters = 'default_linters'
 endif
 
 let s:save_cpo = &cpo
@@ -54,7 +54,7 @@ function! SyntaxCheckers_r_lintr_GetLocList() dict
     let setwd = syntastic#util#isRunningWindows() ? 'setwd("' . escape(getcwd(), '"\') . '"); ' : ''
     let makeprg = self.getExecEscaped() . ' --slave --restore --no-save' .
         \ ' -e ' . syntastic#util#shescape(setwd . 'library(lintr); ' .
-        \       'lint(commandArgs(TRUE))') .
+        \       'lint(commandArgs(TRUE), ' . g:syntastic_r_lintr_linters . ')') .
         \ ' --args ' . syntastic#util#shexpand('%')
 
     let errorformat =

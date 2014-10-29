@@ -1,6 +1,7 @@
 #' @describeIn linters checks that closures have the proper usage using
 #' \code{\link[codetools]{checkUsage}}.  Note this runs
 #' \code{\link[base]{eval}} on the code, so do not use with untrusted code.
+#' @export
 object_usage_linter <-  function(source_file) {
   # we need to evaluate each expression in order to use checkUsage on it.
 

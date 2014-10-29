@@ -1,4 +1,5 @@
 #' @describeIn linters checks that '<-' is always used for assignment
+#' @export
 assignment_linter <- function(source_file) {
   lapply(which(source_file$parsed_content$token == "EQ_ASSIGN"),
     function(id) {

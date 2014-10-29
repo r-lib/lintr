@@ -6,7 +6,41 @@
 #' @param width the width cutoff to use for the given linter.
 NULL
 
-default_linters <- c(
+named_list <- function(...) {
+  nms <- re_substitutes(as.character(eval(substitute(alist(...)))),
+    rex("(", anything), "")
+  vals <- list(...)
+  names(vals) <- nms
+  vals[!vapply(vals, is.null, logical(1))]
+}
+
+#' Modify the list of default linters
+#'
+#' @param ... named arguments of linters to change.  If the named linter already
+#' exists it is replaced by the new linter, if it does not exist it is added.
+#' If the value is \code{NULL} the linter is removed.
+#' @param default default linters to change
+#' @export
+#' @examples
+#' # change the default line length cutoff
+#' with_defaults(line_length_linter = line_length_linter(120))
+#' # you can also omit the argument name if you are just using different
+#' #   arguments.
+#' with_defaults(line_length_linter(120))
+with_defaults <- function(..., default = default_linters) {
+  vals <- list(...)
+  nms <- names2(vals)
+  missing <- nms == ""
+  if(any(missing)) {
+    nms[missing] <- re_substitutes(as.character(eval(substitute(alist(...)[missing]))),
+      rex("(", anything), "")
+  }
+  default[nms] <- vals
+  default[!vapply(default, is.null, logical(1))]
+}
+
+#' @export
+default_linters <- with_defaults(default = list(),
 
   assignment_linter,
   single_quotes_linter,

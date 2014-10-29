@@ -1,5 +1,6 @@
 #' @describeIn linters check that all commas are followed by spaces, but do not
 #' have spaces before them.
+#' @export
 commas_linter <- function(source_file) {
   lapply(which(source_file$parsed_content$token == "','"),
     function(id) {

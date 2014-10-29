@@ -29,6 +29,7 @@ absolute_path_types <- list(
   )
 
 #' @describeIn linters checks that no absolute paths are used.
+#' @export
 absolute_paths_linter <- function(source_file) {
 
   regexes <- vapply(absolute_path_types,

@@ -167,3 +167,8 @@ ids_with_token <- function(source_file, exact = NULL, re = NULL) {
     stop("Must specify exact or re")
   }
 }
+
+# The following functions is from dplyr
+names2 <- function(x) {
+  names(x) %||% rep("", length(x))
+}

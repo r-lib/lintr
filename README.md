@@ -34,6 +34,16 @@ in `syntastic/syntax_checkers/r`.  If you are using
 [pathogen](https://github.com/tpope/vim-pathogen) this directory is
 `~/.vim/bundles/syntastic/syntax_checkers/r`.
 
+You will also need to add the following lines to your `.vimrc`.
+```vim
+let g:syntastic_enable_r_lintr_checker = 1
+let g:syntastic_r_checkers = 1
+```
+You can also change what linters are used. e.g. to use a different line width cutoff.
+```vim
+let g:syntastic_r_lintr_linters = "with_defaults(line_length_linter(120))"
+```
+
 ## Available linters ##
 
 * `Syntax errors`: reported by [parse](http://www.inside-r.org/r-doc/base/parse).

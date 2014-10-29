@@ -1,5 +1,6 @@
 #' @describeIn linters check the line length of both comments and code is less
 #' than width.
+#' @export
 line_length_linter <- function(width) {
   function(source_file) {
 

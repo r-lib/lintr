@@ -4,6 +4,7 @@
 #'   \item Are separated by \code{_} rather than \code{.}
 #'   \item Are not more than \code{width} characters
 #' }
+#' @export
 object_name_linter <- function(width = 20L) {
   function(source_file) {
 

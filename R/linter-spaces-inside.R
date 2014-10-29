@@ -1,5 +1,6 @@
 #' @describeIn linters check that parentheses and square brackets do not have
 #' spaces directly inside them.
+#' @export
 spaces_inside_linter <- function(source_file) {
   matches <- c(
     "'('",
