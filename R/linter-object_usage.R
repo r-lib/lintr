@@ -17,7 +17,7 @@ object_usage_linter <-  function(source_file) {
     parent_env,
     ifnotfound = list(NULL))$`.__global__`
 
-  mapply(assign, globals, MoreArgs=list(value = NULL, envir = env))
+  mapply(assign, globals, MoreArgs=list(value = function() NULL, envir = env))
 
   lapply(which(
       re_matches(source_file$parsed_content$token,
