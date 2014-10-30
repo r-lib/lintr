@@ -17,7 +17,7 @@ expect_lint <- function(content, checks, ...) {
 
   results <- expectation_lint(content, checks, ...)
 
-  reporter <- get_reporter()
+  reporter <- testthat::get_reporter()
 
   # flatten list if a list of lists
   if (is.list(results) &&
@@ -92,7 +92,7 @@ expectation_lint <- function(content, checks, ...) {
     return(expectation(FALSE,
         paste0(paste(collapse=", ", linter_names),
           " did not return ", length(checks),
-          " lints as expected from content:", content, str(lints))))
+          " lints as expected from content:", content, lints)))
   }
 
   itr <- 0L
@@ -171,4 +171,13 @@ ids_with_token <- function(source_file, exact = NULL, re = NULL) {
 # The following functions is from dplyr
 names2 <- function(x) {
   names(x) %||% rep("", length(x))
+}
+
+recursive_ls <- function(env) {
+  if (parent.env(env) %!=% emptyenv()) {
+    c(ls(envir=env), recursive_ls(parent.env(env)))
+  }
+  else {
+    ls(envir=env)
+  }
 }

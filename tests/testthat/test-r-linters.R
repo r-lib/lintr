@@ -466,3 +466,75 @@ test_that("returns the correct linting", {
     rex("Variable and function names should not be longer than 40 characters."),
     object_name_linter(width = 40))
 })
+
+context("r-linter-object_usage")
+test_that("returns the correct linting", {
+  expect_lint("blah",
+    NULL,
+    object_usage_linter)
+
+  expect_lint(
+"function() {
+  a <- 1
+  a
+}",
+    NULL,
+    object_usage_linter)
+
+  expect_lint(
+"fun <- function(x) {
+  fun(1)
+}
+fun2 <- function(x) {
+  fun(2)
+}",
+    NULL,
+    object_usage_linter)
+
+  expect_lint(
+"fun <- function() {
+  a <- 1
+}",
+    rex("local variable", anything, "assigned but may not be used"),
+    object_usage_linter)
+
+  expect_lint(
+"fun <- function() {
+  a <- 1
+  1
+}",
+    rex("local variable", anything, "assigned but may not be used"),
+    object_usage_linter)
+
+  expect_lint(
+"fun <- function() {
+  a <- 1
+}",
+    rex("local variable", anything, "assigned but may not be used"),
+    object_usage_linter)
+
+  expect_lint(
+"fun <- function() {
+  a2 <- 1
+  a3
+}",
+    list(
+      rex("no visible binding for global variable ", anything, ", Did you mean"),
+      rex("local variable", anything, "assigned but may not be used")
+      ),
+    object_usage_linter)
+
+  expect_lint(
+"fun <- function() {
+  fnu(1)
+}",
+    rex("no visible global function definition for ", anything, ", Did you mean", anything),
+    object_usage_linter)
+
+  expect_lint(
+"fun <- function(x) {
+  n(1)
+}",
+    rex("no visible global function definition for ", anything, ", Did you mean", anything),
+    object_usage_linter)
+})

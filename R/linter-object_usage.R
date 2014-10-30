@@ -19,6 +19,11 @@ object_usage_linter <-  function(source_file) {
 
   mapply(assign, globals, MoreArgs=list(value = function() NULL, envir = env))
 
+  # add file locals to the environment
+  try(eval(source_file$parse, envir = env), silent = TRUE)
+
+  all_globals <- unique(recursive_ls(env))
+
   lapply(which(
       re_matches(source_file$parsed_content$token,
         rex(start, "FUNCTION"))),
@@ -32,19 +37,18 @@ object_usage_linter <-  function(source_file) {
 
       parent_id <- parent_ids[[1]]
 
-      expr <- eval(
+      try(fun <- eval(
         parse(
           text=getParseText(source_file$parsed_content, parent_id),
           keep.source = TRUE
           ),
-        envir=env,
-        )
+        envir=env), silent = TRUE)
 
-      res <- parse_check_usage(expr)
+      res <- parse_check_usage(fun)
 
-      locals <- codetools::findFuncLocals(formals(expr), body(expr))
+      locals <- codetools::findFuncLocals(formals(fun), body(fun))
 
-      both <- c(globals, locals)
+      both <- c(locals, all_globals)
 
       lapply(which(!is.na(res$message)),
         function(row_num) {
@@ -52,7 +56,7 @@ object_usage_linter <-  function(source_file) {
 
           # if a no visible binding message suggest an alternative
           if (re_matches(row$message,
-              rex("no visible binding"))) {
+              rex("no visible"))) {
 
             suggestion <- both[stringdist::amatch(row$name, both, maxDist = 2)]
 
@@ -69,7 +73,7 @@ object_usage_linter <-  function(source_file) {
 
           line <- getSrcLines(source_file, org_line_num, org_line_num)
           location <- re_matches(line,
-            rex(regex("\\b"), row$name, regex("\\b")),
+            rex(row$name),
             locations = TRUE)
 
           Lint(
@@ -95,11 +99,23 @@ parse_check_usage <- function(expression) {
 
   codetools::checkUsage(expression, report = report)
 
+  function_name <- rex(anything, ": ")
+  line_info <- rex(" ", anything, ":", capture(name = "line_number", digits), ")")
+
   res <- re_matches(vals,
-    rex(anything, ": ",
+    rex(function_name,
       capture(name = "message", anything,
-        "\u2018", capture(name = "name", anything), "\u2019",
+        one_of(quote, "\u2018"), capture(name = "name", anything), one_of(quote, "\u2019"),
         anything),
-      " ", "(", anything, ":", capture(name = "line_number", digits), ")"))
+      line_info))
+  missing <- is.na(res$message)
+  if (any(missing)) {
+    res[missing, ] <- re_matches(vals[missing],
+      rex(function_name,
+        capture(name = "message",
+          "possible error in ", capture(name = "name", anything), ": ", anything
+          ),
+          line_info))
+  }
   res
 }
