@@ -21,6 +21,9 @@ files.  *Note you will need to change the path to where you put
           (lambda () (flycheck-mode t)))
 (load "path/to/flycheck-linter.el")
 ```
+#### Configuration ####
+You can also configure what linters are used. e.g. using a different line width cutoff.
+- `M-X customize-opton` -> `flycheck-r-linters` -> `with_defaults(line_length_linter(120))`
 
 ### Vim
 lintr can be integrated with
@@ -39,7 +42,8 @@ You will also need to add the following lines to your `.vimrc`.
 let g:syntastic_enable_r_lintr_checker = 1
 let g:syntastic_r_checkers = 1
 ```
-You can also change what linters are used. e.g. to use a different line width cutoff.
+#### Configuration ####
+You can also configure what linters are used. e.g. using a different line width cutoff.
 ```vim
 let g:syntastic_r_lintr_linters = "with_defaults(line_length_linter(120))"
 ```

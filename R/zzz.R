@@ -39,6 +39,7 @@ with_defaults <- function(..., default = default_linters) {
   default[!vapply(default, is.null, logical(1))]
 }
 
+#' Default linters to use
 #' @export
 default_linters <- with_defaults(default = list(),
 

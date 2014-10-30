@@ -1,3 +1,7 @@
 ^.*\.png$
 ^.*\.gif$
 ^\.travis\.yml$
+^[^/]+\.R$
+^travis-tool\.sh$
+^.*\.gz$
+
