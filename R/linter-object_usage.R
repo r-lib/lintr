@@ -42,9 +42,25 @@ object_usage_linter <-  function(source_file) {
 
       res <- parse_check_usage(expr)
 
+      locals <- codetools::findFuncLocals(formals(expr), body(expr))
+
+      both <- c(globals, locals)
+
       lapply(which(!is.na(res$message)),
         function(row_num) {
           row <- res[row_num, ]
+
+          # if a no visible binding message suggest an alternative
+          if (re_matches(row$message,
+              rex("no visible binding"))) {
+
+            suggestion <- both[stringdist::amatch(row$name, both, maxDist = 2)]
+
+            if (!is.na(suggestion)) {
+              row$message <- paste0(row$message, ", Did you mean '", suggestion, "'?")
+            }
+
+          }
 
           org_line_num <- as.integer(row$line_number) +
             source_file$parsed_content[

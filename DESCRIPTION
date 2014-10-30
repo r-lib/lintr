@@ -11,7 +11,8 @@ Depends:
 Imports:
     rex,
     crayon,
-    codetools
+    codetools,
+    stringdist
 License: MIT + file LICENSE
 LazyData: true
 Suggests:
