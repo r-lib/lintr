@@ -12,7 +12,7 @@ lint <- function(filename, linters = default_linters) {
 
   source_file <- get_source_file(filename)
 
-  flatten_lints(
+  lints <- flatten_lints(
     append(
       lapply(linters,
         function(linter) {
@@ -21,6 +21,18 @@ lint <- function(filename, linters = default_linters) {
       if(!is.null(source_file$error)) list(source_file$error)
     )
   )
+  structure(reorder_lints(lints), class = "lints")
+}
+
+reorder_lints <- function(lints) {
+  files <- vapply(lints, `[[`, character(1), "filename")
+  lines <- vapply(lints, `[[`, integer(1), "line_number")
+  columns <- vapply(lints, `[[`, integer(1), "column_number")
+  lints[
+    order(files,
+      lines,
+      columns)
+    ]
 }
 
 #' Lint all files in a package

@@ -31,7 +31,7 @@ object_usage_linter <-  function(source_file) {
       parent_ids <- parents(source_file$parsed_content, source_file$parsed_content$id[id])
 
       # not a top level function, so just return.
-      if (length(parent_ids) < 3L || parent_ids[[3]] %!=% 0L) {
+      if (length(parent_ids) > 3L) {
         return(NULL)
       }
 
@@ -48,7 +48,7 @@ object_usage_linter <-  function(source_file) {
 
       locals <- codetools::findFuncLocals(formals(fun), body(fun))
 
-      both <- c(locals, all_globals)
+      both <- c(locals, names(formals(fun)), all_globals)
 
       lapply(which(!is.na(res$message)),
         function(row_num) {
@@ -97,7 +97,7 @@ parse_check_usage <- function(expression) {
     vals[[length(vals) + 1L]] <<- x
   }
 
-  codetools::checkUsage(expression, report = report)
+  try(codetools::checkUsage(expression, report = report))
 
   function_name <- rex(anything, ": ")
   line_info <- rex(" ", anything, ":", capture(name = "line_number", digits), ")")
