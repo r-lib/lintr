@@ -3,12 +3,12 @@
 
 ## A framework for linting R source code. ##
 
-![lintr](https://github.com/jimhester/lintr/raw/master/lintr.png "lintr")
+![lintr](lintr.png "lintr")
 
 ### Emacs ###
 lintr can be integrated with
 [flycheck](https://github.com/flycheck/flycheck) for on the fly linting.
-![Emacs Example](https://github.com/jimhester/lintr/raw/master/flycheck.png "Emacs Example")
+![Emacs Example](flycheck.png "Emacs Example")
 
 #### Installation ####
 Put the following in your .emacs file to automatically use `lintr` to check R
@@ -29,10 +29,10 @@ You can also configure what linters are used. e.g. using a different line width 
 lintr can be integrated with
 [syntastic](https://github.com/scrooloose/syntastic) for on the fly linting.
 
-![Vim Example](https://github.com/jimhester/lintr/raw/master/lintr_vim.gif "Vim Example")
+![Vim Example](lintr_vim.gif "Vim Example")
 
 #### Installation ####
-Put the file [syntastic/lintr.vim](https://github.com/jimhester/lintr/raw/master/inst/syntastic/lintr.vim)
+Put the file [syntastic/lintr.vim](syntastic/lintr.vim)
 in `syntastic/syntax_checkers/r`.  If you are using
 [pathogen](https://github.com/tpope/vim-pathogen) this directory is
 `~/.vim/bundles/syntastic/syntax_checkers/r`.
