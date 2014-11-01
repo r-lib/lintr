@@ -29,7 +29,7 @@ commas_linter(source_file)
 
 infix_spaces_linter(source_file)
 
-line_length_linter(width)
+line_length_linter(length)
 
 no_tab_linter(source_file)
 
@@ -74,7 +74,7 @@ have spaces before them.
 \item \code{infix_spaces_linter}: check that all infix operators have spaces around them.
 
 \item \code{line_length_linter}: check the line length of both comments and code is less
-than width.
+than length.
 
 \item \code{no_tab_linter}: check that only spaces are used, never tabs.
 

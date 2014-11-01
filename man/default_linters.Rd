@@ -6,49 +6,49 @@
 \format{\preformatted{List of 15
  $ assignment_linter             :function (source_file)  
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 3 22 16 1 22 1 3 16
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe081106678> 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07abe0078> 
  $ single_quotes_linter          :function (source_file)  
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 4 25 20 1 25 1 4 20
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07dbf3ce8> 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07f94acd0> 
  $ absolute_paths_linter         :function (source_file)  
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 33 26 66 1 26 1 33 66
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe08163ac68> 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07d9cbc68> 
  $ no_tab_linter                 :function (source_file)  
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 3 18 32 1 18 1 3 32
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07e9fd468> 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07aafc148> 
  $ line_length_linter            :function (source_file)  
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 5 3 22 3 3 3 5 22
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe0818d51f0> 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07a8f5e68> 
  $ commas_linter                 :function (source_file)  
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 4 18 52 1 18 1 4 52
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe081cc8f20> 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07a819948> 
  $ infix_spaces_linter           :function (source_file)  
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 28 24 73 1 24 1 28 73
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe081875710> 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07aa3f430> 
  $ spaces_left_parentheses_linter:function (source_file)  
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 4 35 40 1 35 1 4 40
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe0811a39f0> 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07a763d90> 
  $ spaces_inside_linter          :function (source_file)  
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 4 25 49 1 25 1 4 49
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07d89a0d0> 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe081021740> 
  $ open_curly_linter             :function (source_file)  
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 4 22 43 1 22 1 4 43
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07dbf30d8> 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07f907950> 
  $ closed_curly_linter           :function (source_file)  
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 4 24 41 1 24 1 4 41
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe081cb6f40> 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07abcb508> 
  $ object_camel_case_linter      :function (source_file)  
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 2 3 27 3 3 3 2 27
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07d9c6720> 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07f8b1390> 
  $ object_multiple_dots_linter   :function (source_file)  
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 2 3 27 3 3 3 2 27
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07d9c6720> 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07f8b1390> 
  $ object_length_linter          :function (source_file)  
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 2 3 27 3 3 3 2 27
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07d9c6720> 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07f8b1390> 
  $ object_usage_linter           :function (source_file)  
   ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 5 25 90 1 25 1 5 90
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07dd30278> 
+  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x7fe07e841758> 
 }}
 \usage{
 default_linters
