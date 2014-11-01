@@ -418,53 +418,105 @@ test_that("returns the correct linting", {
     closed_curly_linter)
 })
 
-context("r-linter-objects")
+context("object_camel_case_linter")
+test_that("returns the correct linting", {
+  expect_lint("blah",
+    NULL,
+    object_camel_case_linter)
+
+  expect_lint("invokeRestartInteractively",
+    NULL,
+    object_camel_case_linter)
+
+  expect_lint("camelCase",
+    rex("Variable and function names should be all lowercase."),
+    object_camel_case_linter)
+
+  expect_lint("camelCase()",
+    rex("Variable and function names should be all lowercase."),
+    object_camel_case_linter)
+
+  expect_lint("pack::camelCase",
+    NULL,
+    object_camel_case_linter)
+
+  expect_lint("pack:::camelCase",
+    NULL,
+    object_camel_case_linter)
+
+  expect_lint("a(camelCase = 1)",
+    NULL,
+    object_camel_case_linter)
+})
+
+context("object_snake_case_linter")
+test_that("returns the correct linting", {
+  expect_lint("blah",
+    NULL,
+    object_snake_case_linter)
+
+  expect_lint("seq_along",
+    NULL,
+    object_snake_case_linter)
+
+  expect_lint("snake_case",
+    rex("Variable and function names should not use underscores."),
+    object_snake_case_linter)
+
+  expect_lint("snake_case()",
+    rex("Variable and function names should not use underscores."),
+    object_snake_case_linter)
+
+
+  expect_lint("pack::snake_case",
+    NULL,
+    object_snake_case_linter)
+
+  expect_lint("pack:::snake_case",
+    NULL,
+    object_snake_case_linter)
+
+  expect_lint("a(snake_case = 1)",
+    NULL,
+    object_snake_case_linter)
+})
+
+context("object_multiple_dots_linter")
+test_that("returns the correct linting", {
+  expect_lint("blah",
+    NULL,
+    object_multiple_dots_linter)
+
+  expect_lint("variable.name.test",
+     rex("Words within variable and function names should be separated by '_' rather than '.'."),
+    object_multiple_dots_linter)
+})
+
+test_that("variables from attached external packages are ignored", {
+  expect_lint("print.data.frame",
+    NULL,
+    object_multiple_dots_linter)
+
+  expect_lint("row.names.data.frame",
+    NULL,
+    object_multiple_dots_linter)
+})
+
+context("object_length_linter")
 test_that("returns the correct linting", {
 
   expect_lint("blah",
     NULL,
-    object_name_linter())
-
-  #variables from attached external packages are ignored
-  expect_lint("print.data.frame",
-    NULL,
-    object_name_linter())
-
-  expect_lint("row.names.data.frame",
-    NULL,
-    object_name_linter())
-
-  expect_lint("invokeRestartInteractively",
-    NULL,
-    object_name_linter())
-
-  expect_lint("camelCase",
-    rex("Variable and function names should be all lowercase."),
-    object_name_linter())
-
-  expect_lint("pack::camelCase",
-    NULL,
-    object_name_linter())
-
-  expect_lint("pack:::camelCase",
-    NULL,
-    object_name_linter())
-
-  expect_lint("a(camelCase = 1)",
-    NULL,
-    object_name_linter())
-
-  expect_lint("variable.name.test",
-     rex("Words within variable and function names should be separated by '_' rather than '.'."),
-    object_name_linter())
+    object_length_linter())
 
   expect_lint("very_very_very_very_long_variable_names_are_not_ideal",
     rex("Variable and function names should not be longer than 20 characters."),
-    object_name_linter())
+    object_length_linter())
 
   expect_lint("very_very_very_very_long_variable_names_are_not_ideal",
     rex("Variable and function names should not be longer than 40 characters."),
-    object_name_linter(width = 40))
+    object_length_linter(length = 40))
+
 })
 
 context("r-linter-object_usage")

@@ -22,7 +22,7 @@ files.  *Note you will need to change the path to where you put
 (load "path/to/flycheck-linter.el")
 ```
 #### Configuration ####
-You can also configure what linters are used. e.g. using a different line width cutoff.
+You can also configure what linters are used. e.g. using a different line length cutoff.
 - `M-X customize-opton` -> `flycheck-r-linters` -> `with_defaults(line_length_linter(120))`
 
 ### Vim
@@ -43,7 +43,7 @@ let g:syntastic_enable_r_lintr_checker = 1
 let g:syntastic_r_checkers = 1
 ```
 #### Configuration ####
-You can also configure what linters are used. e.g. using a different line width cutoff.
+You can also configure what linters are used. e.g. using a different line length cutoff.
 ```vim
 let g:syntastic_r_lintr_linters = "with_defaults(line_length_linter(120))"
 ```
@@ -62,12 +62,12 @@ let g:syntastic_r_lintr_linters = "with_defaults(line_length_linter(120))"
   have spaces before them.
 * `infix_spaces_linter`: check that all infix operators have spaces around them.
 * `line_length_linter`: check the line length of both comments and code is less than
-  width.
+  length.
 * `no_tab_linter`: check that only spaces are used, never tabs.
-* `object_name_linter`: check that objects
-  1. Are never camelCase
-  2. Are separated by `_` rather than `.`
-  3. Are not more than `width` characters
+* `object_camel_case_linter`: check that function and variable names are not camelCase.
+* `object_snake_case_linter`: check that function and variable names are not snake_case.
+* `object_multiple_dots_linter`: check that function and variable names are separated by `_` rather than `.`.
+* `object_length_linter`: check that function and variable names are not more than `length` characters.
 * `open_curly_linter`: check that opening curly braces are never on their own
   line and are always followed by a newline.
 * `single_quotes_linter`: checks that only single quotes are used to delimit

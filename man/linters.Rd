@@ -8,7 +8,10 @@
 \alias{line_length_linter}
 \alias{linters}
 \alias{no_tab_linter}
-\alias{object_name_linter}
+\alias{object_camel_case_linter}
+\alias{object_length_linter}
+\alias{object_multiple_dots_linter}
+\alias{object_snake_case_linter}
 \alias{object_usage_linter}
 \alias{open_curly_linter}
 \alias{single_quotes_linter}
@@ -32,7 +35,13 @@ no_tab_linter(source_file)
 
 object_usage_linter(source_file)
 
-object_name_linter(width = 20L)
+object_camel_case_linter(source_file)
+
+object_snake_case_linter(source_file)
+
+object_multiple_dots_linter(source_file)
+
+object_length_linter(length = 20L)
 
 open_curly_linter(source_file)
 
@@ -45,7 +54,7 @@ spaces_left_parentheses_linter(source_file)
 \arguments{
 \item{source_file}{returned by \code{\link{get_source_file}}}
 
-\item{width}{the width cutoff to use for the given linter.}
+\item{length}{the length cutoff to use for the given linter.}
 }
 \description{
 Available linters
@@ -73,12 +82,14 @@ than width.
 \code{\link[codetools]{checkUsage}}.  Note this runs
 \code{\link[base]{eval}} on the code, so do not use with untrusted code.
 
-\item \code{object_name_linter}: check that objects
-\enumerate{
-  \item Are never camelCase
-  \item Are separated by \code{_} rather than \code{.}
-  \item Are not more than \code{width} characters
-}
+\item \code{object_camel_case_linter}: check that objects are not in camelCase.
+
+\item \code{object_snake_case_linter}: check that objects are not in snake_case.
+
+\item \code{object_multiple_dots_linter}: check that objects do not have.multiple.dots.
+
+\item \code{object_length_linter}: check that objects do are not very long.not
+have.multiple.dots.
 
 \item \code{open_curly_linter}: check that opening curly braces are never on their own
 line and are always followed by a newline.

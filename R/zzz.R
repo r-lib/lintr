@@ -3,7 +3,7 @@
 #' @name linters
 #' @title linters
 #' @param source_file returned by \code{\link{get_source_file}}
-#' @param width the width cutoff to use for the given linter.
+#' @param length the length cutoff to use for the given linter.
 NULL
 
 named_list <- function(...) {
@@ -31,7 +31,7 @@ with_defaults <- function(..., default = default_linters) {
   vals <- list(...)
   nms <- names2(vals)
   missing <- nms == ""
-  if(any(missing)) {
+  if (any(missing)) {
     nms[missing] <- re_substitutes(as.character(eval(substitute(alist(...)[missing]))),
       rex("(", anything), "")
   }
@@ -54,7 +54,9 @@ default_linters <- with_defaults(default = list(),
   spaces_inside_linter,
   open_curly_linter,
   closed_curly_linter,
-  object_name_linter(30),
+  object_camel_case_linter,
+  object_multiple_dots_linter,
+  object_length_linter(30),
   object_usage_linter,
 
   NULL
