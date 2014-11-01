@@ -3,12 +3,12 @@
 
 ## A framework for linting R source code. ##
 
-![lintr](lintr.gif "lintr")
+![lintr](http://i.imgur.com/acV27NV.gif "lintr")
 
 ### Emacs ###
 lintr can be integrated with
 [flycheck](https://github.com/flycheck/flycheck) for on the fly linting.
-![Emacs Example](flycheck.gif "Emacs Example")
+![Emacs Example](http://i.imgur.com/vquPht3.gif "Emacs Example")
 
 #### Installation ####
 Put the following in your .emacs file to automatically use `lintr` to check R
@@ -29,7 +29,7 @@ You can also configure what linters are used. e.g. using a different line length
 lintr can be integrated with
 [syntastic](https://github.com/scrooloose/syntastic) for on the fly linting.
 
-![Vim Example](syntastic.gif "Vim Example")
+![Vim Example](http://i.imgur.com/fR6Os5M.gif "Vim Example")
 
 #### Installation ####
 Put the file [syntastic/lintr.vim](syntastic/lintr.vim)
