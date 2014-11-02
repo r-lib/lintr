@@ -8,7 +8,7 @@ spaces_inside_linter <- function(source_file) {
     "'['",
     "']'")
 
-  lapply(which(source_file$parsed_content$token %in% matches),
+  lapply(ids_with_token(source_file, matches, fun=`%in%`),
     function(id) {
 
       parsed <- source_file$parsed_content[id, ]

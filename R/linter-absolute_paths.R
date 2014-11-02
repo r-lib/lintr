@@ -39,7 +39,7 @@ absolute_paths_linter <- function(source_file) {
     character(1),
     USE.NAMES=FALSE)
 
-  lapply(which(source_file$parsed_content$token == "STR_CONST"),
+  lapply(ids_with_token(source_file, "STR_CONST"),
     function(id) {
 
       parsed <- source_file$parsed_content[id, ]

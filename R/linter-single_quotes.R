@@ -2,7 +2,7 @@
 #' string contestants.
 #' @export
 single_quotes_linter <- function(source_file) {
-  lapply(which(source_file$parsed_content$token == "STR_CONST"),
+  lapply(ids_with_token(source_file, "STR_CONST"),
     function(id) {
       parsed <- source_file$parsed_content[id, ]
       if (re_matches(parsed$text, rex(start, "'", anything, "'", end))) {

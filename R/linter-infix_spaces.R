@@ -26,7 +26,7 @@ infix_operators <- c(
 #' @describeIn linters check that all infix operators have spaces around them.
 #' @export
 infix_spaces_linter <- function(source_file) {
-  lapply(which(source_file$parsed_content$token %in% infix_operators),
+  lapply(ids_with_token(source_file, infix_operators, fun=`%in%`),
     function(id) {
       parsed <- source_file$parsed_content[id, ]
       line <- getSrcLines(source_file, parsed$line1, parsed$line1)

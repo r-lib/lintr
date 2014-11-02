@@ -24,11 +24,9 @@ object_usage_linter <-  function(source_file) {
 
   all_globals <- unique(recursive_ls(env))
 
-  lapply(which(
-      re_matches(source_file$parsed_content$token,
-        rex(start, "FUNCTION"))),
+  lapply(ids_with_token(source_file, rex(start, "FUNCTION"), fun=re_matches),
     function(id) {
-      parent_ids <- parents(source_file$parsed_content, source_file$parsed_content$id[id])
+      parent_ids <- parents(source_file$parsed_content, id)
 
       # not a top level function, so just return.
       if (length(parent_ids) > 3L) {

@@ -2,7 +2,7 @@
 #' line and are always followed by a newline.
 #' @export
 open_curly_linter <- function(source_file) {
-  lapply(which(source_file$parsed_content$token %in% "'{'"),
+  lapply(ids_with_token(source_file, "'{'"),
     function(id) {
 
       parsed <- source_file$parsed_content[id, ]

@@ -2,7 +2,7 @@
 #' unless they are in a function call.
 #' @export
 spaces_left_parentheses_linter <- function(source_file) {
-  lapply(which(source_file$parsed_content$token %in% "'('"),
+  lapply(ids_with_token(source_file, "'('"),
     function(id) {
 
       parsed <- source_file$parsed_content[id, ]

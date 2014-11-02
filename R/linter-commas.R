@@ -2,7 +2,8 @@
 #' have spaces before them.
 #' @export
 commas_linter <- function(source_file) {
-  lapply(which(source_file$parsed_content$token == "','"),
+  lapply(ids_with_token(source_file, "','"),
+
     function(id) {
       parsed <- source_file$parsed_content[id, ]
       line <- getSrcLines(source_file, parsed$line1, parsed$line1)

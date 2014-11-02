@@ -12,7 +12,10 @@ make_object_linter <- function(fun) {
         "...",
         pkg_objects)
 
-    lapply(ids_with_token(source_file, re = rex(start, "SYMBOL" %if_next_isnt% "_SUB")),
+    lapply(
+      ids_with_token(source_file,
+        rex(start, "SYMBOL" %if_next_isnt% "_SUB"),
+        fun = re_matches),
 
       function(id) {
 
