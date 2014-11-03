@@ -180,6 +180,14 @@ test_that("returns the correct linting", {
     rex("lines should not be more than 20 characters"),
     line_length_linter(20))
 
+  expect_lint("'☂☂☂☂☂☂☂☂☂☂☂☂☂☂☂☂☂'",
+    NULL,
+    line_length_linter(20))
+
+  expect_lint("'☂☂☂☂☂☂☂☂☂☂☂☂☂☂☂☂☂☂☂'",
+    rex("lines should not be more than 20 characters"),
+    line_length_linter(20))
+
 })
 
 context("r-linter-commas")
@@ -601,4 +609,20 @@ fun2 <- function(x) {
 }",
     rex("no visible global function definition for ", anything, ", Did you mean", anything),
     object_usage_linter)
+
+  test_that("replace_functions_stripped", {
+    expect_lint(
+"fun <- function(x) {
+  n(x) = 1
+}",
+    rex("no visible global function definition for ", anything, ", Did you mean", anything),
+    object_usage_linter)
+
+    expect_lint(
+"fun <- function(x) {
+  n(x) <- 1
+}",
+    rex("no visible global function definition for ", anything, ", Did you mean", anything),
+    object_usage_linter)
+  })
 })

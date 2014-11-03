@@ -70,6 +70,9 @@ object_usage_linter <-  function(source_file) {
               "line1"] - 1L
 
           line <- getSrcLines(source_file, org_line_num, org_line_num)
+
+          row$name <- re_substitutes(row$name, rex("<-"), "")
+
           location <- re_matches(line,
             rex(row$name),
             locations = TRUE)
@@ -106,6 +109,7 @@ parse_check_usage <- function(expression) {
         one_of(quote, "\u2018"), capture(name = "name", anything), one_of(quote, "\u2019"),
         anything),
       line_info))
+
   missing <- is.na(res$message)
   if (any(missing)) {
     res[missing, ] <- re_matches(vals[missing],
@@ -115,5 +119,6 @@ parse_check_usage <- function(expression) {
           ),
           line_info))
   }
+
   res
 }
