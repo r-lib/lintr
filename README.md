@@ -32,7 +32,7 @@ lintr can be integrated with
 ![Vim Example](http://i.imgur.com/fR6Os5M.gif "Vim Example")
 
 #### Installation ####
-Put the file [syntastic/lintr.vim](syntastic/lintr.vim)
+Put the file [syntastic/lintr.vim](inst/syntastic/lintr.vim)
 in `syntastic/syntax_checkers/r`.  If you are using
 [pathogen](https://github.com/tpope/vim-pathogen) this directory is
 `~/.vim/bundles/syntastic/syntax_checkers/r`.
