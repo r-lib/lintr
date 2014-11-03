@@ -36,7 +36,19 @@ with_defaults <- function(..., default = default_linters) {
       rex("(", anything), "")
   }
   default[nms] <- vals
-  default[!vapply(default, is.null, logical(1))]
+
+  res <- default[!vapply(default, is.null, logical(1))]
+
+  res[] <- lapply(res, function(x) {
+    prev_class <- class(x)
+    class(x) <- c(prev_class, "lintr_function")
+    x
+  })
+}
+
+# this is just to make the auto documentation cleaner
+str.lintr_function <- function(x, ...) {
+  cat("\n")
 }
 
 #' Default linters to use
