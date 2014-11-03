@@ -180,9 +180,38 @@ get_source_file <- function(filename) {
     source_file$error <- e
   }
 
-  source_file$parsed_content <- getParseData(source_file)
+  source_file$parsed_content <- adjust_columns(getParseData(source_file))
 
   source_file
+}
+
+# This is used to adjust the columns that getParseData reports from bytes to
+# letters.
+adjust_columns <- function(content) {
+
+  text_lengths <- nchar(content$text, "chars")
+  byte_lengths <- nchar(content$text, "bytes")
+  differences <- byte_lengths - text_lengths
+
+  adjusted_col1 <- integer(NROW(content))
+  adjusted_col2 <- integer(NROW(content))
+
+  for (itr in seq_len(NROW(content))) {
+    adjusted_col1[itr] <-
+      content$col1[itr] -
+        sum(differences[
+          content$line1 == content$line1[itr] &
+          content$col1 < content$col1[itr]])
+
+    adjusted_col2[itr] <-
+      content$col2[itr] -
+        sum(differences[
+          content$line1 == content$line1[itr] &
+          content$col2 < content$col2[itr]])
+  }
+  content$col1 <- adjusted_col1
+  content$col2 <- adjusted_col2
+  content
 }
 
 is_not_empty_list <- function(x) {
