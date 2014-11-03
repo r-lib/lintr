@@ -1,6 +1,6 @@
 Package: lintr
 Title: How stylish is your code?
-Version: 0.1
+Version: 0.1.0
 Authors@R: "Jim Hester <james.f.hester@gmail.com> [aut, cre]"
 URL: https://github.com/jimhester/lintr
 BugReports: https://github.com/jimhester/lintr/issues

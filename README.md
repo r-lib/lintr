@@ -48,6 +48,35 @@ You can also configure what linters are used. e.g. using a different line length
 let g:syntastic_r_lintr_linters = "with_defaults(line_length_linter(120))"
 ```
 
+### Sublime Text 3 ###
+lintr can be intergrated with
+[Sublime Linter](https://github.com/SublimeLinter/SublimeLinter3) for on the fly linting.
+
+![Sublime Example](http://i.imgur.com/3pua2yz.gif "Sublime Example")
+
+#### Installation ####
+Clone the [repository](https://github.com/jimhester/SublimeLinter-contrib-R)
+
+```bash
+cd 'path/to/Sublime Text 3/Packages'
+git clone https://github.com/jimhester/SublimeLinter-contrib-R.git
+```
+
+#### Configuration ####
+You can also configure what linters are used. e.g. using a different line length cutoff.
+In the SublimeLinter User Settings
+```
+{
+  "user": {
+    "linters": {
+      "r": {
+        "linters": "with_defaults(line_length_linter(120))"
+      }
+    }
+  }
+}
+```
+
 ## Available linters ##
 
 * `Syntax errors`: reported by [parse](http://www.inside-r.org/r-doc/base/parse).
