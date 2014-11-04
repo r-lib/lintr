@@ -17,7 +17,7 @@ object_usage_linter <-  function(source_file) {
     parent_env,
     ifnotfound = list(NULL))$`.__global__`
 
-  mapply(assign, globals, MoreArgs=list(value = function() NULL, envir = env))
+  mapply(assign, globals, MoreArgs=list(value = function(...) NULL, envir = env))
 
   # add file locals to the environment
   try(eval(source_file$parse, envir = env), silent = TRUE)
