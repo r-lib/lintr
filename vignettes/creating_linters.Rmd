@@ -8,7 +8,7 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-This vignettes describes the steps necessary to create a new linter.
+This vignette describes the steps necessary to create a new linter.
 
 A good example of a simple linter is the `assignment_linter`.
 ```r
@@ -30,8 +30,9 @@ assignment_linter <- function(source_file) {
 }
 ```
 
-Now lets walk through the parts of the linter individually.
+Lets walk through the parts of the linter individually.
 
+## Writing the linter ##
 The first two lines add the linter to the `linters` documentation and export it
 for use outside the package.
 
@@ -46,13 +47,15 @@ assignment_linter <- function(source_file) {
 ```
 
 Next we need to figure out what tokens we want to check for linting.  These
-tokens are obtained by a previous `parse()` and `getParseData()` calls prior to
-calling the new linter.  `getParseData()` returns a data frame with information
-from the parse tree of the file being linted, which is stored in
-`source_file$parsed_content`. It is recommended to work with the previously parsed tokens
-rather than trying to tokenzie the R code yourself if possible.  This list of
+tokens are obtained by previous `parse()` and `getParseData()` calls prior to
+calling the new linter.  `getParseData()` returns a `data.frame` with information
+from the source parse tree of the file being linted.  This data is stored in
+`source_file$parsed_content`. The raw text of the file is also available with
+`source_file$content`, however it is recommended to work with the tokens from
+`source_file$parsed_content` if possible, as it is more robust. The list of
 tokens is in
 [r-source/src/main/gram.y](https://github.com/wch/r-source/blob/ff1bca2f21aba271d428474f00494eece5c36dd3/src/main/gram.y#L293-L307).
+
 `ids_with_token()` can be used to search for a specific token and return the
 associated id.  Note that the `rownames` for `parsed_content` are set to the
 `id`, so you can retrieve the rows for a given id with
@@ -63,8 +66,8 @@ lapply(ids_with_token(source_file, "EQ_ASSIGN"),
     parsed <- source_file$parsed_content[id, ]
 ```
 
-Lastly construct a linter to describe the issue.  See `?Lint` for a description
-of the arguments.
+Lastly build a `Lint` object which describes the issue.  See `?Lint` for a
+description of the arguments.
 ```r
 Lint(
   filename = source_file$filename,
@@ -77,6 +80,61 @@ Lint(
 ```
 
 You do not have to return a Lint for every iteration of your loop.  Feel free
-to return `NULL` (or nothing) for tokens who do not need to be linted.  You can
-even return a `list` of `Lint` objects. returned objects are searched for lints
-recursively.
+to return `NULL` (or nothing) for tokens which do not need to be linted.  You can
+even return a `list` of `Lint` objects.
+
+## Writing linter tests ##
+The `linter` package uses [testthat](https://github.com/hadley/testthat) for
+testing. You can run all of the available tests using `devtools::test()`.  If
+you want to run only the tests in a given file use the `filter` argument.
+
+Linter tests should be put in the
+[tests/testthat/](https://github.com/jimhester/lintr/tree/master/tests/testthat)
+folder.  The test filename should be the linter name prefixed by `test-`, e.g.
+`test-assignment_linter.R`.
+
+The first line in the test file should be a line which defines the context of the text (the linter name).
+```r
+context("assignment_linter")
+```
+
+You can then specify one or more `test_that` functions.  Most of the linters use the same default form.
+```r
+test_that("returns the correct linting", {
+```
+
+You then test a series of expectations for the linter using `expect_lint`.
+Please see `?expect_lint` for a full description of the parameters.
+
+I try to test 3 things.
+
+1. Linter returns nothing when there is nothing to lint. e.g.
+   ```r
+  expect_lint("blah", NULL, assignment_linter)
+   ```
+2. Linter returns a lint when there is something to lint. e.g.
+   ```r
+  expect_lint("blah=1",
+    rex("Use <-, not =, for assignment."),
+      assignment_linter)
+   ```
+3. As many edge cases as you can think of that might break it. e.g.
+   ```r
+   expect_lint("fun((blah = fun(1)))",
+     rex("Use <-, not =, for assignment."),
+     assignment_linter)
+   ```
+
+It is always better to write too many tests rather than too few.
+
+## Adding linter to the default_linters ##
+If your linter is non-project specific you can add it to `default_linters`.
+This object is created in the file `zzz.R`.  The name ensures that it will always run after all
+the linters are defined.  Simply add your linter name to the `default_linters`
+list before the `NULL` at the end.
+
+## Submit pull request ##
+Push your changes to a branch of your fork of the
+[lintr](https://github.com/jimhester/lintr) repository, and submit a pull
+request to get your linter merged into lintr.
+
