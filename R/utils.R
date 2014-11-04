@@ -157,8 +157,11 @@ quoted_blanks <- function(matches, shift_start = 0, shift_end = 0) {
 }
 
 ids_with_token <- function(source_file, value, fun = `==`) {
-    as.character(
-      source_file$parsed_content[fun(source_file$parsed_content$token, value), "id"]
+  if (source_file$parsed_content$col1 %==% integer(0)) {
+    return(NULL)
+  }
+  as.character(
+    source_file$parsed_content[fun(source_file$parsed_content$token, value), "id"]
     )
 }
 

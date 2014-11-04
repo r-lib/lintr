@@ -145,12 +145,35 @@ get_source_file <- function(filename) {
         "\n")
       )
 
+    # an error that does not use R_ParseErrorMsg
+    if (is.na(message_info$line)) {
+
+      message_info <- re_matches(e$message,
+        rex(single_quotes, capture(name = "name", anything), single_quotes,
+          anything,
+          double_quotes, capture(name = "starting", anything), double_quotes))
+
+      line_location <- re_matches(source_file$content, rex(message_info$starting), locations = TRUE)
+
+      line_number <- source_file$find_line(line_location$start)
+      return(
+        Lint(
+          filename = source_file$filename,
+          line_number = source_file$find_line(line_location$start),
+          column_number = source_file$find_column(line_location$start),
+          type = "error",
+          message = e$message,
+          line = getSrcLines(source_file, line_number, line_number)
+        )
+      )
+    }
+
     line_number <- as.integer(message_info$line)
     column_number <- as.integer(message_info$column)
 
     # If the column number is zero it means the error really occurred at the
     # end of the previous line
-    if (column_number == 0L){
+    if (column_number %==% 0L){
       line_number <- line_number - 1L
       line <- getSrcLines(source_file, line_number, line_number)
       column_number <- nchar(line)
