@@ -71,6 +71,7 @@ default_linters <- with_defaults(default = list(),
   object_length_linter(30),
   object_usage_linter,
   trailing_whitespace_linter,
+  eof_newline_linter,
 
   NULL
 )
