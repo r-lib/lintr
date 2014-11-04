@@ -6,14 +6,16 @@ URL: https://github.com/jimhester/lintr
 BugReports: https://github.com/jimhester/lintr/issues
 Description: Check how well your R package source conforms to
     http://r-pkgs.had.co.nz/style.html.
-Depends:
+Depends: 
     R (>= 3.1.1)
-Imports:
+Imports: 
     rex,
     crayon,
     codetools,
     stringdist
 License: MIT + file LICENSE
 LazyData: true
-Suggests:
-    testthat
+Suggests: 
+    testthat,
+    knitr
+VignetteBuilder: knitr

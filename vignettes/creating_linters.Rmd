@@ -1,0 +1,82 @@
+---
+title: "Creating new linters"
+author: "Jim Hester"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Creating new linters} %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+This vignettes describes the steps necessary to create a new linter.
+
+A good example of a simple linter is the `assignment_linter`.
+```r
+#' @describeIn linters checks that '<-' is always used for assignment
+#' @export
+assignment_linter <- function(source_file) {
+  lapply(ids_with_token(source_file, "EQ_ASSIGN"),
+    function(id) {
+      parsed <- source_file$parsed_content[id, ]
+      Lint(
+        filename = source_file$filename,
+        line_number = parsed$line1,
+        column_number = parsed$col1,
+        type = "style",
+        message = "Use <-, not =, for assignment.",
+        line = getSrcLines(source_file, parsed$line1, parsed$line1)
+        )
+    })
+}
+```
+
+Now lets walk through the parts of the linter individually.
+
+The first two lines add the linter to the `linters` documentation and export it
+for use outside the package.
+
+```r
+#' @describeIn linters checks that '<-' is always used for assignment
+#' @export
+```
+
+Next we define the name of the new linter.  All linter names are suffixed by `_linter`.
+```r
+assignment_linter <- function(source_file) {
+```
+
+Next we need to figure out what tokens we want to check for linting.  These
+tokens are obtained by a previous `parse()` and `getParseData()` calls prior to
+calling the new linter.  `getParseData()` returns a data frame with information
+from the parse tree of the file being linted, which is stored in
+`source_file$parsed_content`. It is recommended to work with the previously parsed tokens
+rather than trying to tokenzie the R code yourself if possible.  This list of
+tokens is in
+[r-source/src/main/gram.y](https://github.com/wch/r-source/blob/ff1bca2f21aba271d428474f00494eece5c36dd3/src/main/gram.y#L293-L307).
+`ids_with_token()` can be used to search for a specific token and return the
+associated id.  Note that the `rownames` for `parsed_content` are set to the
+`id`, so you can retrieve the rows for a given id with
+`source_file$parsed_content[id, ]`.
+```r
+lapply(ids_with_token(source_file, "EQ_ASSIGN"),
+  function(id) {
+    parsed <- source_file$parsed_content[id, ]
+```
+
+Lastly construct a linter to describe the issue.  See `?Lint` for a description
+of the arguments.
+```r
+Lint(
+  filename = source_file$filename,
+  line_number = parsed$line1,
+  column_number = parsed$col1,
+  type = "style",
+  message = "Use <-, not =, for assignment.",
+  line = getSrcLines(source_file, parsed$line1, parsed$line1)
+  )
+```
+
+You do not have to return a Lint for every iteration of your loop.  Feel free
+to return `NULL` (or nothing) for tokens who do not need to be linted.  You can
+even return a `list` of `Lint` objects. returned objects are searched for lints
+recursively.
