@@ -17,6 +17,7 @@
 \alias{single_quotes_linter}
 \alias{spaces_inside_linter}
 \alias{spaces_left_parentheses_linter}
+\alias{trailing_whitespace_linter}
 \title{linters}
 \usage{
 absolute_paths_linter(source_file)
@@ -50,6 +51,8 @@ single_quotes_linter(source_file)
 spaces_inside_linter(source_file)
 
 spaces_left_parentheses_linter(source_file)
+
+trailing_whitespace_linter(source_file)
 }
 \arguments{
 \item{source_file}{returned by \code{\link{get_source_file}}}
@@ -102,5 +105,7 @@ spaces directly inside them.
 
 \item \code{spaces_left_parentheses_linter}: check that all left parentheses have a space before them
 unless they are in a function call.
+
+\item \code{trailing_whitespace_linter}: check there are no trailing whitespace characters.
 }}
 

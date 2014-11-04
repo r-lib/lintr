@@ -70,6 +70,7 @@ default_linters <- with_defaults(default = list(),
   object_multiple_dots_linter,
   object_length_linter(30),
   object_usage_linter,
+  trailing_whitespace_linter,
 
   NULL
 )
