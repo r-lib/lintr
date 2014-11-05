@@ -21,18 +21,15 @@ make_object_linter <- function(fun) {
 
         parsed <- source_file$parsed_content[as.character(id), ]
 
-        name <- parsed$text
-
-        if (!name %in% attached_nms) {
-          fun(source_file, id)
+        if (!parsed$text %in% attached_nms) {
+          fun(source_file, parsed)
         }
       })
   }
 }
 
-object_lint <- function(source_file, id, message) {
+object_lint <- function(source_file, parsed, message) {
 
-  parsed <- source_file$parsed_content[as.character(id), ]
   Lint(
     filename = source_file$filename,
     line_number = parsed$line1,
@@ -46,63 +43,48 @@ object_lint <- function(source_file, id, message) {
 
 #' @describeIn linters check that objects are not in camelCase.
 #' @export
-object_camel_case_linter <- make_object_linter(function(source_file, id) {
+object_camel_case_linter <- make_object_linter(function(source_file, parsed) {
 
-  parsed <- source_file$parsed_content[as.character(id), ]
-
-  name <- parsed$text
-
-  sibling_tokens <- source_file$parsed_content[
-    as.character(siblings(source_file$parsed_content, id)),
-    "token"]
-
-  is_camel_case <- !any(sibling_tokens %in% c("NS_GET", "NS_GET_INT")) &&
-    re_matches(name, rex(lower, upper))
+  is_camel_case <- re_matches(parsed$text, rex(lower, upper))
 
   if (is_camel_case) {
-    object_lint(source_file,
-      id,
-      "Variable and function names should be all lowercase.")
+
+    if (!is_external_reference(source_file, parsed$id)) {
+      object_lint(source_file,
+        parsed,
+        "Variable and function names should be all lowercase.")
+    }
   }
 
 })
 
 #' @describeIn linters check that objects are not in snake_case.
 #' @export
-object_snake_case_linter <- make_object_linter(function(source_file, id) {
+object_snake_case_linter <- make_object_linter(function(source_file, parsed) {
 
-  parsed <- source_file$parsed_content[as.character(id), ]
-
-  name <- parsed$text
-
-  sibling_tokens <- source_file$parsed_content[
-    as.character(siblings(source_file$parsed_content, id)),
-    "token"]
-
-  is_snake_case <- !any(sibling_tokens %in% c("NS_GET", "NS_GET_INT")) &&
-    re_matches(name, rex(alnum, "_", alnum))
+  is_snake_case <- re_matches(parsed$text, rex(alnum, "_", alnum))
 
   if (is_snake_case) {
-    object_lint(source_file,
-      id,
-      "Variable and function names should not use underscores.")
+    if (!is_external_reference(source_file, parsed$id)) {
+      object_lint(source_file,
+        parsed,
+        "Variable and function names should not use underscores.")
+    }
   }
 
 })
 
 #' @describeIn linters check that objects do not have.multiple.dots.
 #' @export
-object_multiple_dots_linter <- make_object_linter(function(source_file, id) {
+object_multiple_dots_linter <- make_object_linter(function(source_file, parsed) {
 
-  parsed <- source_file$parsed_content[as.character(id), ]
-
-  name <- parsed$text
-
-  has_multiple_dots <- re_matches(name, rex(".", something, "."))
+  has_multiple_dots <- re_matches(parsed$text, rex(".", something, "."))
   if (has_multiple_dots) {
-    object_lint(source_file,
-      id,
-      "Words within variable and function names should be separated by '_' rather than '.'.")
+    if (!is_external_reference(source_file, parsed$id)) {
+      object_lint(source_file,
+        parsed,
+        "Words within variable and function names should be separated by '_' rather than '.'.")
+    }
   }
 
 })
@@ -111,17 +93,23 @@ object_multiple_dots_linter <- make_object_linter(function(source_file, id) {
 #' have.multiple.dots.
 #' @export
 object_length_linter <- function(length = 20L) {
-  make_object_linter(function(source_file, id) {
+  make_object_linter(function(source_file, parsed) {
 
-    parsed <- source_file$parsed_content[as.character(id), ]
-
-    name <- parsed$text
-
-    is_very_long <- nchar(name) > length
+    is_very_long <- nchar(parsed$text) > length
     if (is_very_long) {
-      object_lint(source_file,
-        id,
-        paste0("Variable and function names should not be longer than ", length, " characters."))
+      if (!is_external_reference(source_file, parsed$id)) {
+        object_lint(source_file,
+          parsed,
+          paste0("Variable and function names should not be longer than ", length, " characters."))
+      }
     }
   })
+}
+
+is_external_reference <- function(source_file, id) {
+  sibling_tokens <- source_file$parsed_content[
+    as.character(siblings(source_file$parsed_content, id, 1)),
+    "token"]
+
+  any(sibling_tokens %in% c("NS_GET", "NS_GET_INT"))
 }
