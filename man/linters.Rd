@@ -4,7 +4,6 @@
 \alias{assignment_linter}
 \alias{closed_curly_linter}
 \alias{commas_linter}
-\alias{eof_newline_linter}
 \alias{infix_spaces_linter}
 \alias{line_length_linter}
 \alias{linters}
@@ -28,8 +27,6 @@ assignment_linter(source_file)
 closed_curly_linter(source_file)
 
 commas_linter(source_file)
-
-eof_newline_linter(source_file)
 
 infix_spaces_linter(source_file)
 
@@ -76,8 +73,6 @@ own line unless they follow an else.
 
 \item \code{commas_linter}: check that all commas are followed by spaces, but do not
 have spaces before them.
-
-\item \code{eof_newline_linter}: check there is a newline at the end of the file.
 
 \item \code{infix_spaces_linter}: check that all infix operators have spaces around them.
 

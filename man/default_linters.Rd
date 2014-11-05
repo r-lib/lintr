@@ -3,7 +3,7 @@
 \name{default_linters}
 \alias{default_linters}
 \title{Default linters to use}
-\format{\preformatted{List of 17
+\format{\preformatted{List of 16
  $ assignment_linter             :
  $ single_quotes_linter          :
  $ absolute_paths_linter         :
@@ -20,7 +20,6 @@
  $ object_length_linter          :
  $ object_usage_linter           :
  $ trailing_whitespace_linter    :
- $ eof_newline_linter            :
 }}
 \usage{
 default_linters
