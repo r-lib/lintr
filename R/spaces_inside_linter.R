@@ -2,6 +2,11 @@
 #' spaces directly inside them.
 #' @export
 spaces_inside_linter <- function(source_file) {
+  tokens <- c(
+    "'('",
+    "')'",
+    "'['",
+    "']'")
 
   # using a regex here as checking each token is horribly slow
   re <- rex(list(one_of("[("), " ") %or% list(" " %if_prev_isnt% ",", one_of("])")))
@@ -22,15 +27,23 @@ spaces_inside_linter <- function(source_file) {
         start_of_line <- re_matches(line, rex(start, spaces, one_of("])")), locations = TRUE)
 
         if (is.na(start_of_line$start) || start_of_line$end != column_end) {
+          is_token <-
+            any(source_file$parsed_content$line1 == line_number &
+               (source_file$parsed_content$col1 == column_end |
+                source_file$parsed_content$col1 == column_number) &
+              source_file$parsed_content$token %in% tokens)
 
-          Lint(
-            filename = source_file$filename,
-            line_number = line_number,
-            column_number = column_number,
-            type = "style",
-            message = "Do not place spaces around code in parentheses or square brackets.",
-            line = line
-            )
+          if (is_token) {
+
+            Lint(
+              filename = source_file$filename,
+              line_number = line_number,
+              column_number = column_number,
+              type = "style",
+              message = "Do not place spaces around code in parentheses or square brackets.",
+              line = line
+              )
+          }
         }
 
       })

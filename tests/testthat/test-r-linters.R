@@ -1,30 +1,3 @@
-context("r-linter-single_quotes")
-test_that("returns the correct linting", {
-  expect_lint("blah", NULL, single_quotes_linter)
-
-  expect_lint("\"blah\"", NULL, single_quotes_linter)
-
-  expect_lint("\"'blah\"", NULL, single_quotes_linter)
-
-  expect_lint("\"blah'\"", NULL, single_quotes_linter)
-
-  expect_lint("\"blah'\"", NULL, single_quotes_linter)
-
-  expect_lint("\"'blah'\"", NULL, single_quotes_linter)
-
-  expect_lint("'blah'",
-    rex("Only use double-quotes."),
-    single_quotes_linter)
-
-  expect_lint("fun('blah')",
-    rex("Only use double-quotes."),
-    single_quotes_linter)
-
-  expect_lint("{'blah'}",
-    rex("Only use double-quotes."),
-    single_quotes_linter)
-})
-
 context("r-linter-absolute_paths")
 test_that("returns the correct linting", {
   expect_lint("blah", NULL, absolute_paths_linter)
@@ -281,56 +254,6 @@ test_that("returns the correct linting", {
   expect_lint("test <- function(x) { if(1 + 1) 'hi' }",
     rex("Place a space before left parenthesis, except in a function call."),
     spaces_left_parentheses_linter)
-})
-
-context("r-linter-spaces-inside")
-test_that("returns the correct linting", {
-
-  expect_lint("blah", NULL, spaces_inside_linter)
-
-  expect_lint("print(blah)", NULL, spaces_inside_linter)
-
-  expect_lint("base::print(blah)", NULL, spaces_inside_linter)
-
-  expect_lint("a[, ]", NULL, spaces_inside_linter)
-
-  expect_lint("a[,]", NULL, spaces_inside_linter)
-
-  expect_lint("a[1]", NULL, spaces_inside_linter)
-
-  expect_lint("fun(\na[1]\n  )", NULL, spaces_inside_linter)
-
-  expect_lint("a[1 ]",
-    rex("Do not place spaces around code in parentheses or square brackets."),
-    spaces_inside_linter)
-
-  expect_lint("a[ 1]",
-    rex("Do not place spaces around code in parentheses or square brackets."),
-    spaces_inside_linter)
-
-  expect_lint("a[ 1 ]",
-    list("Do not place spaces around code in parentheses or square brackets.",
-    rex("Do not place spaces around code in parentheses or square brackets.")),
-    spaces_inside_linter)
-
-  expect_lint("a(, )", NULL, spaces_inside_linter)
-
-  expect_lint("a(,)", NULL, spaces_inside_linter)
-
-  expect_lint("a(1)", NULL, spaces_inside_linter)
-
-  expect_lint("a(1 )",
-    rex("Do not place spaces around code in parentheses or square brackets."),
-    spaces_inside_linter)
-
-  expect_lint("a( 1)",
-    rex("Do not place spaces around code in parentheses or square brackets."),
-    spaces_inside_linter)
-
-  expect_lint("a( 1 )",
-    list("Do not place spaces around code in parentheses or square brackets.",
-    rex("Do not place spaces around code in parentheses or square brackets.")),
-    spaces_inside_linter)
 })
 
 context("r-linter-open_curly")
