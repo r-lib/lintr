@@ -56,7 +56,7 @@ absolute_paths_linter <- function(source_file) {
               column_number = start,
               type = "warning",
               message = "Do not use absolute paths.",
-              line = getSrcLines(source_file, parsed$line1, parsed$line1),
+              line = source_file$lines[parsed$line1],
               ranges = list(c(start, end))
               )
             )
@@ -102,7 +102,7 @@ absolute_paths_rmd_linter <- function(source_file) {
           column_number = start,
           type = "style",
           message = "Do not use absolute paths.",
-          line = getSrcLines(source_file, line_number, line_number),
+          line = source_file$lines[line_number],
           ranges = list(c(start, end))
           )
       }

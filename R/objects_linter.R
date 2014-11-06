@@ -36,7 +36,7 @@ object_lint <- function(source_file, parsed, message) {
     column_number = parsed$col1,
     type = "style",
     message = message,
-    line = getSrcLines(source_file, parsed$line1, parsed$line1),
+    line = source_file$lines[parsed$line1],
     ranges = list(c(parsed$col1, parsed$col2))
     )
 }

@@ -20,7 +20,7 @@ spaces_inside_linter <- function(source_file) {
         column_number <- source_file$find_column(res$start[itr])
         column_end <- source_file$find_column(res$end[itr])
 
-        line <- getSrcLines(source_file, line_number, line_number)
+        line <- source_file$lines[line_number]
 
         # we need to make sure that the closing are not at the start of a new
         # line (which is valid).

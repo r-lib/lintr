@@ -29,7 +29,7 @@ infix_spaces_linter <- function(source_file) {
   lapply(ids_with_token(source_file, infix_operators, fun=`%in%`),
     function(id) {
       parsed <- source_file$parsed_content[id, ]
-      line <- getSrcLines(source_file, parsed$line1, parsed$line1)
+      line <- source_file$lines[parsed$line1]
       before_operator <- substr(line, parsed$col1 - 1L, parsed$col1 - 1L)
       after_operator <-
         substr(line,
@@ -63,7 +63,7 @@ infix_spaces_linter <- function(source_file) {
           column_number = parsed$col1,
           type = "style",
           message = "Put spaces around all infix operators.",
-          line = getSrcLines(source_file, parsed$line1, parsed$line1),
+          line = line,
           ranges = list(c(start, end))
           )
 

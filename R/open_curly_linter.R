@@ -19,7 +19,7 @@ open_curly_linter <- function(source_file) {
         "token"
         ]
 
-      line <- getSrcLines(source_file, parsed$line1, parsed$line1)
+      line <- source_file$lines[parsed$line1]
 
       # the only tokens should be the { and the start of the expression.
       some_before <- length(tokens_before) %!=% 0L
@@ -35,7 +35,7 @@ open_curly_linter <- function(source_file) {
           column_number = parsed$col1,
           type = "style",
           message = "Opening curly braces should never go on their own line and should always be followed by a new line.",
-          line = getSrcLines(source_file, parsed$line1, parsed$line1)
+          line = source_file$lines[parsed$line1]
           )
       }
 

@@ -18,7 +18,7 @@ no_tab_linter <- function(source_file) {
         column_number = col_start,
         type = "style",
         message = "Use two spaces to indent, never tabs.",
-        line = getSrcLines(source_file, line_num, line_num),
+        line = source_file$lines[line_num],
 
         # R outputs tabs with 8 spaces
         # TODO: this is incorrect for embedded tabs, I am not going to fix it.

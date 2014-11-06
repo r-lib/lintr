@@ -99,6 +99,7 @@ pkg_name <- function(path = find_package()) {
 get_source_file <- function(filename) {
   source_file <- srcfile(filename)
   lines <- readLines(filename)
+  source_file$lines <- lines
   source_file$content <- paste0(collapse = "\n", lines)
 
   source_file$stripped_comments <-
@@ -163,7 +164,7 @@ get_source_file <- function(filename) {
           column_number = source_file$find_column(line_location$start),
           type = "error",
           message = e$message,
-          line = getSrcLines(source_file, line_number, line_number)
+          line = source_file$lines[line_number]
         )
       )
     }
@@ -175,7 +176,7 @@ get_source_file <- function(filename) {
     # end of the previous line
     if (column_number %==% 0L){
       line_number <- line_number - 1L
-      line <- getSrcLines(source_file, line_number, line_number)
+      line <- source_file$lines[line_number]
       column_number <- nchar(line)
     }
 
@@ -185,7 +186,7 @@ get_source_file <- function(filename) {
       column_number = column_number,
       type = "error",
       message = message_info$message,
-      line = getSrcLines(source_file, line_number, line_number)
+      line = source_file$lines[line_number]
       )
   }
 

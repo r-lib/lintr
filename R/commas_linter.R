@@ -17,7 +17,7 @@ commas_linter <- function(source_file) {
 
       start <- source_file$find_column(res$start[itr])
       end <- source_file$find_column(res$end[itr])
-      line <- getSrcLines(source_file, line_number, line_number)
+      line <- source_file$lines[line_number]
 
       comma_loc <- start + re_matches(substr(line, start, end), rex(","), locations = TRUE)$start - 1L
 

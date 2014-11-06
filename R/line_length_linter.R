@@ -15,7 +15,7 @@ line_length_linter <- function(length) {
         column_number = col_start,
         type = "style",
         message = sprintf("lines should not be more than %d characters.", length),
-        line = getSrcLines(source_file, line_number, line_number),
+        line = source_file$lines[line_number],
         ranges = list(c(col_start, col_end))
         )
     })

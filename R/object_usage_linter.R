@@ -69,7 +69,7 @@ object_usage_linter <-  function(source_file) {
               source_file$parsed_content$id == parent_id,
               "line1"] - 1L
 
-          line <- getSrcLines(source_file, org_line_num, org_line_num)
+          line <- source_file$lines[org_line_num]
 
           row$name <- re_substitutes(row$name, rex("<-"), "")
 
