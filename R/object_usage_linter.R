@@ -65,9 +65,7 @@ object_usage_linter <-  function(source_file) {
           }
 
           org_line_num <- as.integer(row$line_number) +
-            source_file$parsed_content[
-              source_file$parsed_content$id == parent_id,
-              "line1"] - 1L
+            source_file$parsed_content$line1[source_file$parsed_content$id == parent_id] - 1L
 
           line <- source_file$lines[org_line_num]
 

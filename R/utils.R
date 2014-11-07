@@ -79,9 +79,12 @@ ids_with_token <- function(source_file, value, fun = `==`) {
   if (source_file$parsed_content$col1 %==% integer(0)) {
     return(NULL)
   }
-  as.character(
-    source_file$parsed_content[fun(source_file$parsed_content$token, value), "id"]
-    )
+  id <- source_file$parsed_content$id[fun(source_file$parsed_content$token, value)]
+  if (id %==% integer(0)) {
+    NULL
+  } else {
+    as.character(id)
+  }
 }
 
 # The following functions is from dplyr
@@ -96,4 +99,8 @@ recursive_ls <- function(env) {
   else {
     ls(envir=env)
   }
+}
+
+with_id <- function(source_file, id) {
+  source_file$parsed_content[match(id, source_file$parsed_content$id), ]
 }

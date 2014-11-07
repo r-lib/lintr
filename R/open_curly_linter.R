@@ -5,19 +5,15 @@ open_curly_linter <- function(source_file) {
   lapply(ids_with_token(source_file, "'{'"),
     function(id) {
 
-      parsed <- source_file$parsed_content[id, ]
+      parsed <- with_id(source_file, id)
 
-      tokens_before <- source_file$parsed_content[
+      tokens_before <- source_file$parsed_content$token[
         source_file$parsed_content$line1 == parsed$line1 &
-        source_file$parsed_content$col1 < parsed$col1,
-        "token"
-        ]
+        source_file$parsed_content$col1 < parsed$col1]
 
-      tokens_after <- source_file$parsed_content[
+      tokens_after <- source_file$parsed_content$token[
         source_file$parsed_content$line1 == parsed$line1 &
-        source_file$parsed_content$col1 > parsed$col1,
-        "token"
-        ]
+        source_file$parsed_content$col1 > parsed$col1]
 
       line <- source_file$lines[parsed$line1]
 

@@ -205,6 +205,7 @@ get_source_file <- function(filename) {
   }
 
   source_file$parsed_content <- adjust_columns(getParseData(source_file))
+  class(source_file$parsed_content) <- c("tbl_df", class(source_file$parsed_content))
 
   source_file
 }

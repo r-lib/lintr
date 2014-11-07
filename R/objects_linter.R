@@ -19,7 +19,7 @@ make_object_linter <- function(fun) {
 
       function(id) {
 
-        parsed <- source_file$parsed_content[as.character(id), ]
+        parsed <- with_id(source_file, id)
 
         if (!parsed$text %in% attached_nms) {
           fun(source_file, parsed)
@@ -107,9 +107,7 @@ object_length_linter <- function(length = 20L) {
 }
 
 is_external_reference <- function(source_file, id) {
-  sibling_tokens <- source_file$parsed_content[
-    as.character(siblings(source_file$parsed_content, id, 1)),
-    "token"]
+  sibling_tokens <- with_id(source_file, siblings(source_file$parsed_content, id, 1))$token
 
   any(sibling_tokens %in% c("NS_GET", "NS_GET_INT"))
 }

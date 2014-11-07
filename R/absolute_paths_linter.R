@@ -42,7 +42,7 @@ absolute_paths_linter <- function(source_file) {
   lapply(ids_with_token(source_file, "STR_CONST"),
     function(id) {
 
-      parsed <- source_file$parsed_content[id, ]
+      parsed <- with_id(source_file, id)
 
       for (regex in regexes){
         res <- re_matches(parsed$text, regex, locations = TRUE)

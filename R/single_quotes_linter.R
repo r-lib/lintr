@@ -4,7 +4,7 @@
 single_quotes_linter <- function(source_file) {
   lapply(ids_with_token(source_file, "STR_CONST"),
     function(id) {
-      parsed <- source_file$parsed_content[id, ]
+      parsed <- with_id(source_file, id)
       if (re_matches(parsed$text, rex(start, "'", anything, "'", end))) {
         Lint(
           filename = source_file$filename,

@@ -2,35 +2,35 @@ children <- function(data, id, levels = Inf) {
   ids <- list()
 
   itr <- 1L
-  ids[[itr]] <- data[data$parent == id, "id"]
+  ids[[itr]] <- data$id[data$parent == id]
   while (levels > 1L && length(ids[[itr]]) != 0L) {
 
     for (id in ids[[itr]]){
       itr <- itr + 1L
-      ids[[itr]] <- data[data$parent == id, "id"]
+      ids[[itr]] <- data$id[data$parent == id]
     }
     levels <- levels - 1L
   }
-  unlist(ids)
+  as.character(unlist(ids))
 }
 
 parents <- function(data, id, levels = Inf, inclusive = T) {
   ids <- list()
 
   itr <- 1L
-  ids[[itr]] <- data[data$id == id, "parent"]
+  ids[[itr]] <- data$parent[data$id == id]
   while (levels > 1L && length(ids[[itr]]) != 0L) {
 
     for (id in ids[[itr]]){
       itr <- itr + 1L
-      ids[[itr]] <- data[data$id == id, "parent"]
+      ids[[itr]] <- data$parent[data$id == id]
     }
     levels <- levels - 1L
   }
   if (length(ids[[length(ids)]]) == 0L) {
-    ids[-length(ids)]
+    as.character(ids[-length(ids)])
   } else {
-    ids
+    as.character(ids)
   }
 }
 

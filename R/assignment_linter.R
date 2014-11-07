@@ -3,7 +3,7 @@
 assignment_linter <- function(source_file) {
   lapply(ids_with_token(source_file, "EQ_ASSIGN"),
     function(id) {
-      parsed <- source_file$parsed_content[id, ]
+      parsed <- with_id(source_file, id)
       Lint(
         filename = source_file$filename,
         line_number = parsed$line1,
