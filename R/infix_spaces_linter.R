@@ -34,21 +34,25 @@ infix_spaces_linter <- function(source_file) {
       around_operator <- substr(line, parsed$col1 - 1L, parsed$col2 + 1L)
 
       non_space_before <- re_matches(around_operator, rex(start, non_space))
+
+      newline_after <- nchar(line) %==% parsed$col2
       non_space_after <- re_matches(around_operator, rex(non_space, end))
 
-      if (non_space_before || non_space_after) {
+      if (non_space_before || (!newline_after && non_space_after)) {
 
         # we only should check spacing if the operator is infix,
         # which only happens if there are two siblings
         is_infix <-
           length(siblings(source_file$parsed_content, parsed$id, 1)) %==% 2L
 
+        start <- end <- parsed$col1
+
         if (is_infix) {
           if (non_space_before) {
             start <- parsed$col1 - 1L
           }
           if (non_space_after) {
-            end <- parsed$col2 - 1L
+            end <- parsed$col2 + 1L
           }
 
           Lint(
