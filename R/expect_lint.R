@@ -10,7 +10,6 @@
 #'   \item list-vectors check if the given lint matches (use if more than one lint is returned for the content)
 #' }
 #' @param ... one or more linters to use for the check
-
 expect_lint <- function(content, checks, ...) {
 
   results <- expectation_lint(content, checks, ...)
@@ -20,12 +19,12 @@ expect_lint <- function(content, checks, ...) {
   # flatten list if a list of lists
   if (is.list(results) &&
     is.list(results[[1]]) &&
-    !is.expectation(results[[1]])) {
+    !testthat::is.expectation(results[[1]])) {
 
     results <- unlist(recursive = FALSE, results)
   }
 
-  if (is.expectation(results)) {
+  if (testthat::is.expectation(results)) {
     reporter$add_result(results)
   }
   else {
@@ -46,7 +45,7 @@ expectation_lint <- function(content, checks, ...) {
   linter_names <- substitute(alist(...))[-1]
 
   if (is.null(checks)) {
-    return(expectation(length(lints) %==% 0L,
+    return(testthat::expectation(length(lints) %==% 0L,
         paste0(paste(collapse=", ", linter_names),
           " returned ", print(lints),
           " lints when it was expected to return none!"),
@@ -60,7 +59,7 @@ expectation_lint <- function(content, checks, ...) {
   checks[] <- lapply(checks, fix_names, "message")
 
   if (length(lints) != length(checks)) {
-    return(expectation(FALSE,
+    return(testthat::expectation(FALSE,
         paste0(paste(collapse=", ", linter_names),
           " did not return ", length(checks),
           " lints as expected from content:", content, lints)))
@@ -73,7 +72,7 @@ expectation_lint <- function(content, checks, ...) {
       value <- lint[[field]]
       check <- check[[field]]
       if (field == "message") {
-        expectation(re_matches(value, check),
+        testthat::expectation(re_matches(value, check),
           sprintf("lint: %d %s: %s did not match: %s",
             itr,
             field,
@@ -88,7 +87,7 @@ expectation_lint <- function(content, checks, ...) {
           )
         )
       } else {
-        expectation(`==`(value, check),
+        testthat::expectation(`==`(value, check),
           sprintf("lint: %d %s: %s did not match: %s",
             itr,
             field,

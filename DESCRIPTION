@@ -12,10 +12,10 @@ Imports:
     rex,
     crayon,
     codetools,
-    stringdist
+    stringdist,
+    testthat
 License: MIT + file LICENSE
 LazyData: true
 Suggests:
-    testthat,
     knitr
 VignetteBuilder: knitr
