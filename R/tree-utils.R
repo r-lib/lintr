@@ -57,3 +57,80 @@ siblings <- function(data, id, child_levels = Inf) {
     )
   res[res != id]
 }
+
+fix_eq_assign <- function(pc) {
+  eq_assign_locs <- which(pc$token == "EQ_ASSIGN")
+
+  id_itr <- max(pc$id)
+
+  line1 <- integer(length(eq_assign_locs))
+  col1 <- integer(length(eq_assign_locs))
+
+  line2 <- integer(length(eq_assign_locs))
+  col2 <- integer(length(eq_assign_locs))
+
+  id <- integer(length(eq_assign_locs))
+
+  parent <- integer(length(eq_assign_locs))
+
+  token <- character(length(eq_assign_locs))
+
+  terminal <- logical(length(eq_assign_locs))
+
+  text <- character(length(eq_assign_locs))
+
+  for (itr in seq_along(eq_assign_locs)) {
+    loc <- eq_assign_locs[itr]
+    prev_loc <- prev_with_parent(pc, loc)
+    next_loc <- next_with_parent(pc, loc)
+
+    line1[itr] <- pc[prev_loc, "line1"]
+    col1[itr] <- pc[prev_loc, "col1"]
+
+    line2[itr] <- pc[next_loc, "line2"]
+    col2[itr] <- pc[next_loc, "col2"]
+
+    id[itr] <- id_itr <- id_itr + 1L
+
+    parent[itr] <- pc[loc, "parent"]
+
+    token[itr] <- "expr"
+
+    terminal[itr] <- FALSE
+
+    text[itr] <- ""
+
+    pc[prev_loc, "parent"] <- id[itr]
+    pc[loc, "parent"] <- id[itr]
+    pc[next_loc, "parent"] <- id[itr]
+  }
+  rbind(pc, data.frame(line1, col1, line2, col2, id, parent, token, terminal, text, row.names=id))
+}
+
+prev_with_parent <- function(pc, loc) {
+
+  parent <- pc[loc, "parent"]
+
+  loc <- loc - 1L
+  while (loc > 0L) {
+    if (pc[loc, "parent"] %==% parent) {
+      return(loc)
+    }
+    loc <- loc - 1L
+  }
+
+}
+
+next_with_parent <- function(pc, loc) {
+
+  parent <- pc[loc, "parent"]
+
+  loc <- loc + 1L
+  while (loc <= NROW(pc)) {
+    if (pc[loc, "parent"] %==% parent) {
+      return(loc)
+    }
+    loc <- loc + 1L
+  }
+
+}
