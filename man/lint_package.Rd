@@ -4,7 +4,7 @@
 \alias{lint_package}
 \title{Lint all files in a package}
 \usage{
-lint_package(path = NULL, relative_path = TRUE)
+lint_package(path = NULL, relative_path = TRUE, ...)
 }
 \arguments{
 \item{path}{the path to the base directory of the package, if \code{NULL},

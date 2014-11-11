@@ -44,7 +44,7 @@ reorder_lints <- function(lints) {
 #' relative to the package base directory.  If \code{FALSE}, use the full
 #' absolute path.
 #' @export
-lint_package <- function(path = NULL, relative_path = TRUE) {
+lint_package <- function(path = NULL, relative_path = TRUE, ...) {
   if (is.null(path)) {
     path <- find_package()
   }
@@ -53,7 +53,7 @@ lint_package <- function(path = NULL, relative_path = TRUE) {
     recursive = TRUE,
     full.names = TRUE)
 
-  lints <- flatten_lints(lapply(files, lint))
+  lints <- flatten_lints(lapply(files, lint, ...))
 
   if (relative_path) {
     lints[] <- lapply(lints,
