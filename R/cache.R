@@ -41,15 +41,45 @@ cache_lint <- function(cache, expr, linter, lint) {
     value = lint)
 }
 
-retrieve_lint <- function(cache, expr, linter) {
-  get(
+retrieve_lint <- function(cache, expr, linter, lines) {
+  lint <- get(
     envir = cache,
     x = digest::digest(list(linter, expr$content), algo="sha1"),
   )
+  if (inherits(lint, "lint")) {
+    lint$line_number <- find_new_line(lint$line_number, unname(lint$line), lines)
+  }
+  lint
 }
 
 has_lint <- function(cache, expr, linter) {
   exists(envir = cache,
     x = digest::digest(list(linter, expr$content), algo="sha1"),
     )
+}
+
+find_new_line <- function(line_number, line, lines) {
+
+  if (lines[line_number] %==% line) {
+    return(line_number)
+  }
+
+  width <- 1L
+
+  while(width <= length(lines)) {
+    low <- line_number - width
+    if (low > 0L) {
+      if (lines[low] %==% line) {
+        return(low)
+      }
+    }
+    high <- line_number + width
+    if (high <= length(line)) {
+      if (lines[low] %==% line) {
+        return(low)
+      }
+    }
+    width <- width + 1L
+  }
+  return(NA)
 }

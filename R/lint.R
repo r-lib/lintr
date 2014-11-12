@@ -6,6 +6,7 @@ NULL
 #' @param filename the given filename to lint.
 #' @param linters a list of linter functions to apply see \code{\link{linters}}
 #' for a full list of default and available linters.
+#' @param cache toggle caching of lint results
 #' @export
 #' @name lint_file
 lint <- function(filename, linters = default_linters, cache = FALSE) {
@@ -28,10 +29,13 @@ lint <- function(filename, linters = default_linters, cache = FALSE) {
   for (expr in source_expressions$expressions) {
     for (linter in names(linters)) {
       if (cache && has_lint(lint_cache, expr, linter)) {
-        lints[[itr <- itr + 1L]] <- retrieve_lint(lint_cache, expr, linter)
+
+        lints[[itr <- itr + 1L]] <- retrieve_lint(lint_cache, expr, linter, source_expressions$lines)
       }
       else {
+
         expr_lints <- linters[[linter]](expr)
+
         lints[[itr <- itr + 1L]] <- expr_lints
         if (cache) {
           cache_lint(lint_cache, expr, linter, expr_lints)
@@ -129,7 +133,6 @@ pkg_name <- function(path = find_package()) {
 get_source_expressions <- function(filename) {
   source_file <- srcfile(filename)
   lines <- readLines(filename)
-  source_file$lines <- lines
   source_file$content <- paste0(collapse = "\n", lines)
 
   lint_error <- function(e) {
@@ -229,7 +232,7 @@ get_source_expressions <- function(filename) {
       )
     })
 
-  list(expressions = expressions, error = e)
+  list(expressions = expressions, error = e, lines = lines)
 }
 
 find_line_fun <- function(content) {

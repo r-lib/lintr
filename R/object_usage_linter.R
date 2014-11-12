@@ -26,7 +26,6 @@ object_usage_linter <-  function(source_file) {
 
   lapply(ids_with_token(source_file, rex(start, "FUNCTION"), fun=re_matches),
     function(id) {
-      a <<- source_file$parsed_content
       parent_ids <- parents(source_file$parsed_content, id)
 
       # not a top level function, so just return.
