@@ -26,6 +26,7 @@ object_usage_linter <-  function(source_file) {
 
   lapply(ids_with_token(source_file, rex(start, "FUNCTION"), fun=re_matches),
     function(id) {
+      a <<- source_file$parsed_content
       parent_ids <- parents(source_file$parsed_content, id)
 
       # not a top level function, so just return.
@@ -33,8 +34,7 @@ object_usage_linter <-  function(source_file) {
         return(NULL)
       }
 
-      parent_id <- parent_ids[[1]]
-
+      parent_id <- parent_ids[[2]]
       try(fun <- eval(
         parse(
           text=getParseText(source_file$parsed_content, parent_id),
@@ -67,7 +67,7 @@ object_usage_linter <-  function(source_file) {
           org_line_num <- as.integer(row$line_number) +
             source_file$parsed_content$line1[source_file$parsed_content$id == parent_id] - 1L
 
-          line <- source_file$lines[org_line_num]
+          line <- source_file$lines[as.character(org_line_num)]
 
           row$name <- re_substitutes(row$name, rex("<-"), "")
 

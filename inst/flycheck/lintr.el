@@ -9,6 +9,13 @@ The value of this variable is a string with the linters to use."
   :type 'string
   :safe #'stringp)
 
+(flycheck-def-option-var flycheck-r-cache "TRUE" r-lintr
+  "Whether to cache or not.
+
+The value of this variable is a string with either TRUE or FALSE."
+  :type 'string
+  :safe #'stringp)
+
 (flycheck-define-checker r-lintr
   "A R syntax and type checker using lintr.
 
@@ -16,7 +23,7 @@ See URL `https://github.com/jimhester/lintr'."
 
  :command
  ("R" "--slave" "--restore" "--no-save" "-e"
-  (eval (concat "library(lintr);lint(commandArgs(TRUE), "
+  (eval (concat "library(lintr);lint(cache = " flycheck-r-cache ", commandArgs(TRUE), "
           flycheck-r-linters ")"))
   "--args" source)
 

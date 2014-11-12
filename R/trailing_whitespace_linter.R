@@ -1,28 +1,32 @@
 #' @describeIn linters check there are no trailing whitespace characters.
 #' @export
 trailing_whitespace_linter <- function(source_file) {
-  res <- re_matches(source_file$content,
+  res <- re_matches(source_file$lines,
     rex(capture(name = "space", some_of(" ", regex("\\t"))), or(newline, end)),
     global = TRUE,
-    locations = TRUE)[[1]]
+    locations = TRUE)
 
-  if (!is.na(res$space.start[1])) {
-    lapply(seq_len(NROW(res)),
-      function(itr) {
-        line_number <- source_file$find_line(res$space.start[itr])
-        column_start <- source_file$find_column(res$space.start[itr])
-        column_end <- source_file$find_column(res$space.end[itr])
+  lapply(seq_along(lines), function(line_number) {
 
-        Lint(
-          filename = source_file$filename,
-          line_number = line_number,
-          column_number = column_start,
-          type = "style",
-          message = "Trailing whitespace is superfluous.",
-          line = source_file$lines[line_number],
-          ranges = list(c(column_start, column_end))
-          )
-    })
-  }
+      mapply(
+        FUN = function(start, end) {
+          if (is.na(start)) {
+            return()
+          }
+          Lint(
+            filename = source_file$filename,
+            line_number = line_number,
+            column_number = start,
+            type = "style",
+            message = "Trailing whitespace is superfluous.",
+            line = source_file$lines[line_number],
+            ranges = list(c(start, end))
+            )
+        },
+        start = res[[line_number]]$space.start,
+        end = res[[line_number]]$space.end,
+        SIMPLIFY = FALSE
+        )
+  })
 
 }

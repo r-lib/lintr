@@ -74,3 +74,14 @@ default_linters <- with_defaults(default = list(),
 
   NULL
 )
+
+.onLoad <- function(libname, pkgname) {
+  op <- options()
+  op.lintr <- list(
+    lintr.cache_directory = "~/.R/lintr_cache"
+  )
+  toset <- ! (names(op.lintr) %in% names(op))
+  if(any(toset)) options(op.lintr[toset])
+
+  invisible()
+}

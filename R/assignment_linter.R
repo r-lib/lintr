@@ -10,7 +10,7 @@ assignment_linter <- function(source_file) {
         column_number = parsed$col1,
         type = "style",
         message = "Use <-, not =, for assignment.",
-        line = source_file$lines[parsed$line1]
+        line = source_file$lines[as.character(parsed$line1)]
         )
     })
 }

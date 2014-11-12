@@ -8,20 +8,50 @@ NULL
 #' for a full list of default and available linters.
 #' @export
 #' @name lint_file
-lint <- function(filename, linters = default_linters) {
+lint <- function(filename, linters = default_linters, cache = FALSE) {
 
-  source_file <- get_source_file(filename)
+  if (!is.list(linters)) {
+    name <- deparse(substitute(linters))
+    linters <- list(linters)
+    names(linters) <- name
+  }
 
-  lints <- flatten_lints(
-    append(
-      lapply(linters,
-        function(linter) {
-          linter(source_file)
-        }),
-      if(!is.null(source_file$error)) list(source_file$error)
-    )
-  )
-  structure(reorder_lints(lints), class = "lints")
+  source_expressions <- get_source_expressions(filename)
+
+  lints <- list()
+  itr <- 0
+
+  if (cache) {
+    lint_cache <- load_cache(filename)
+  }
+
+  for (expr in source_expressions$expressions) {
+    for (linter in names(linters)) {
+      if (cache && has_lint(lint_cache, expr, linter)) {
+        lints[[itr <- itr + 1L]] <- retrieve_lint(lint_cache, expr, linter)
+      }
+      else {
+        expr_lints <- linters[[linter]](expr)
+        lints[[itr <- itr + 1L]] <- expr_lints
+        if (cache) {
+          cache_lint(lint_cache, expr, linter, expr_lints)
+        }
+      }
+    }
+  }
+
+  if (inherits(source_expressions$error, "lint")) {
+    lints[[itr <- itr + 1L]] <- source_expressions$error
+
+    if (cache) {
+      cache_lint(lint_cache, list(filename=filename, content=""), "error", source_expressions$error)
+    }
+  }
+
+  if (cache) {
+    save_cache(lint_cache, filename)
+  }
+  structure(reorder_lints(flatten_lints(lints)), class = "lints")
 }
 
 reorder_lints <- function(lints) {
@@ -96,38 +126,11 @@ pkg_name <- function(path = find_package()) {
 #' This object is given as input to each linter
 #' @param filename the file to be parsed.
 #' @export
-get_source_file <- function(filename) {
+get_source_expressions <- function(filename) {
   source_file <- srcfile(filename)
   lines <- readLines(filename)
   source_file$lines <- lines
   source_file$content <- paste0(collapse = "\n", lines)
-
-  source_file$stripped_comments <-
-    blank_text(source_file$content, rex("#", except_any_of("\n")))
-
-  newline_search <-
-    re_matches(source_file$content,
-      rex("\n"),
-      locations = TRUE,
-      global = TRUE)[[1]]$start
-
-  newline_locs <- c(0L,
-    if (!is.na(newline_search[1])) newline_search,
-    nchar(source_file$content) + 1L)
-
-  source_file$lengths <-
-    (newline_locs[-1L]) - (newline_locs[-length(newline_locs)] + 1L)
-
-  source_file$find_line <- function(x) {
-    which(newline_locs >= x)[1L] - 1L
-  }
-
-  source_file$find_column <- function(x) {
-    line_number <- which(newline_locs >= x)[1L] - 1L
-    x - newline_locs[line_number]
-  }
-
-  source_file$num_lines <- length(lines)
 
   lint_error <- function(e) {
 
@@ -156,12 +159,13 @@ get_source_file <- function(filename) {
 
       line_location <- re_matches(source_file$content, rex(message_info$starting), locations = TRUE)
 
-      line_number <- source_file$find_line(line_location$start)
+      line_number <- find_line_fun(source_file$content)(line_location$start)
+      column_number <- find_column_fun(source_file$content)(line_location$start)
       return(
         Lint(
           filename = source_file$filename,
-          line_number = source_file$find_line(line_location$start),
-          column_number = source_file$find_column(line_location$start),
+          line_number = line_number,
+          column_number = column_number,
           type = "error",
           message = e$message,
           line = source_file$lines[line_number]
@@ -174,7 +178,7 @@ get_source_file <- function(filename) {
 
     # If the column number is zero it means the error really occurred at the
     # end of the previous line
-    if (column_number %==% 0L){
+    if (column_number %==% 0L) {
       line_number <- line_number - 1L
       line <- source_file$lines[line_number]
       column_number <- nchar(line)
@@ -200,28 +204,83 @@ get_source_file <- function(filename) {
     source_file$parse <- parse(text=source_file$content, srcfile=source_file, keep.source = TRUE),
     error = lint_error)
 
-  if (inherits(e, "lint")) {
-    source_file$error <- e
+  parsed_content <- fix_eq_assign(adjust_columns(getParseData(source_file)))
+
+  expressions <- lapply(top_level_expressions(parsed_content), function(id) {
+    line_nums <- parsed_content[id, "line1"]:parsed_content[id, "line2"]
+    lines <- lines[line_nums]
+    names(lines) <- line_nums
+
+    content <- getParseText(parsed_content, id)
+
+    list(
+      filename = filename,
+      line = parsed_content[id, "line1"],
+      column = parsed_content[id, "col1"],
+      lines = lines,
+      parsed_content = parsed_content[c(id, children(parsed_content, id)), ],
+      content = content,
+
+      find_line = find_line_fun(content),
+
+      find_column = find_column_fun(content),
+
+      stripped_comments = blank_text(content, rex("#", except_any_of("\n")))
+      )
+    })
+
+  list(expressions = expressions, error = e)
+}
+
+find_line_fun <- function(content) {
+  newline_search <-
+    re_matches(content,
+      rex("\n"),
+      locations = TRUE,
+      global = TRUE)[[1]]$start
+
+  newline_locs <- c(0L,
+    if (!is.na(newline_search[1])) newline_search,
+    nchar(content) + 1L)
+
+  function(x) {
+    which(newline_locs >= x)[1L] - 1L
   }
+}
+find_column_fun <- function(content) {
+  newline_search <-
+    re_matches(content,
+      rex("\n"),
+      locations = TRUE,
+      global = TRUE)[[1]]$start
 
-  source_file$parsed_content <- adjust_columns(getParseData(source_file))
-  class(source_file$parsed_content) <- c("tbl_df", class(source_file$parsed_content))
+  newline_locs <- c(0L,
+    if (!is.na(newline_search[1])) newline_search,
+    nchar(content) + 1L)
 
-  source_file
+  function(x) {
+    line_number <- which(newline_locs >= x)[1L] - 1L
+    x - newline_locs[line_number]
+  }
 }
 
 # This is used to adjust the columns that getParseData reports from bytes to
 # letters.
 adjust_columns <- function(content) {
+  if (is.null(content)) {
+    return(NULL)
+  }
 
   text_lengths <- nchar(content$text, "chars")
   byte_lengths <- nchar(content$text, "bytes")
   differences <- byte_lengths - text_lengths
 
-  adjusted_col1 <- integer(NROW(content))
-  adjusted_col2 <- integer(NROW(content))
+  to_change <- which(content$line1 %in% content$line1[differences > 0L])
 
-  for (itr in seq_len(NROW(content))) {
+  adjusted_col1 <- content$col1
+  adjusted_col2 <- content$col2
+
+  for (itr in to_change) {
     adjusted_col1[itr] <-
       content$col1[itr] -
         sum(differences[

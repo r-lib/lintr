@@ -1,37 +1,35 @@
 children <- function(data, id, levels = Inf) {
+
+  child_ids <- function(ids) {
+    data$id[data$parent %in% ids]
+  }
+
   ids <- list()
-
-  itr <- 1L
-  ids[[itr]] <- data$id[data$parent == id]
+  itr <- 0L
+  ids[[itr <- itr + 1L]] <- child_ids(id)
   while (levels > 1L && length(ids[[itr]]) != 0L) {
-
-    for (id in ids[[itr]]){
-      itr <- itr + 1L
-      ids[[itr]] <- data$id[data$parent == id]
-    }
+    ids[[itr <- itr + 1L]] <- child_ids(ids[[itr]])
     levels <- levels - 1L
   }
+
   as.character(unlist(ids))
 }
 
-parents <- function(data, id, levels = Inf, inclusive = T) {
+parents <- function(data, id, levels = Inf) {
+
+  parent_ids <- function(ids) {
+    data$parent[data$id %in% ids]
+  }
+
   ids <- list()
-
-  itr <- 1L
-  ids[[itr]] <- data$parent[data$id == id]
+  itr <- 0L
+  ids[[itr <- itr + 1L]] <- parent_ids(id)
   while (levels > 1L && length(ids[[itr]]) != 0L) {
-
-    for (id in ids[[itr]]){
-      itr <- itr + 1L
-      ids[[itr]] <- data$parent[data$id == id]
-    }
+    ids[[itr <- itr + 1L]] <- parent_ids(ids[[itr]])
     levels <- levels - 1L
   }
-  if (length(ids[[length(ids)]]) == 0L) {
-    as.character(ids[-length(ids)])
-  } else {
-    as.character(ids)
-  }
+
+  as.character(unlist(ids))
 }
 
 family <- function(data, id, parent_levels = 1L, child_levels = Inf) {
@@ -59,6 +57,9 @@ siblings <- function(data, id, child_levels = Inf) {
 }
 
 fix_eq_assign <- function(pc) {
+  if (is.null(pc)) {
+    return(NULL)
+  }
   eq_assign_locs <- which(pc$token == "EQ_ASSIGN")
 
   id_itr <- max(pc$id)
@@ -133,4 +134,11 @@ next_with_parent <- function(pc, loc) {
     loc <- loc + 1L
   }
 
+}
+
+top_level_expressions <- function(pc) {
+  if (is.null(pc)) {
+    return(NULL)
+  }
+  as.character(pc[pc$parent == 0L & pc$token == "expr", "id"])
 }

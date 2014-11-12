@@ -13,7 +13,8 @@ Imports:
     crayon,
     codetools,
     stringdist,
-    testthat
+    testthat,
+    digest
 License: MIT + file LICENSE
 LazyData: true
 Suggests:

@@ -40,7 +40,7 @@ expectation_lint <- function(content, checks, ...) {
   on.exit(unlink(filename))
   cat(file=filename, content, sep="\n")
 
-  lints <- lint(filename, list(...))
+  lints <- lint(filename, ...)
 
   linter_names <- substitute(alist(...))[-1]
 

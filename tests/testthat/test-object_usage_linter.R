@@ -17,7 +17,7 @@ test_that("returns the correct linting", {
   fun(1)
 }
 fun2 <- function(x) {
-  fun(2)
+  fun2(2)
 }",
     NULL,
     object_usage_linter)

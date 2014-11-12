@@ -30,12 +30,13 @@ infix_spaces_linter <- function(source_file) {
     function(id) {
       parsed <- with_id(source_file, id)
 
-      line <- source_file$lines[parsed$line1]
+      line <- source_file$lines[as.character(parsed$line1)]
       around_operator <- substr(line, parsed$col1 - 1L, parsed$col2 + 1L)
 
       non_space_before <- re_matches(around_operator, rex(start, non_space))
 
-      newline_after <- nchar(line) %==% parsed$col2
+      newline_after <- unname(nchar(line)) %==% parsed$col2
+
       non_space_after <- re_matches(around_operator, rex(non_space, end))
 
       if (non_space_before || (!newline_after && non_space_after)) {

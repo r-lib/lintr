@@ -21,7 +21,7 @@ commas_linter <- function(source_file) {
 
       comma_loc <- start + re_matches(substr(line, start, end), rex(","), locations = TRUE)$start - 1L
 
-      space_before <- substr(line, comma_loc - 1L, comma_loc - 1L) %==% " "
+      space_before <- unname(substr(line, comma_loc - 1L, comma_loc - 1L)) %==% " "
 
       if (space_before) {
 

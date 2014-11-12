@@ -18,7 +18,7 @@ spaces_left_parentheses_linter <- function(source_file) {
 
       if (!is_function) {
 
-        line <- getSrcLines(source_file, parsed$line1, parsed$line1)
+        line <- source_file$lines[as.character(parsed$line1)]
 
         before_operator <- substr(line, parsed$col1 - 1L, parsed$col1 - 1L)
 
@@ -31,7 +31,7 @@ spaces_left_parentheses_linter <- function(source_file) {
             column_number = parsed$col1,
             type = "style",
             message = "Place a space before left parenthesis, except in a function call.",
-            line = getSrcLines(source_file, parsed$line1, parsed$line1)
+            line = line
             )
         }
       }

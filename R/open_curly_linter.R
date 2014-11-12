@@ -15,14 +15,14 @@ open_curly_linter <- function(source_file) {
         source_file$parsed_content$line1 == parsed$line1 &
         source_file$parsed_content$col1 > parsed$col1]
 
-      line <- source_file$lines[parsed$line1]
+      line <- source_file$lines[as.character(parsed$line1)]
 
       # the only tokens should be the { and the start of the expression.
       some_before <- length(tokens_before) %!=% 0L
       some_after <- length(tokens_after) %!=% 0L
 
       whitespace_after <-
-        substr(line, parsed$col1 + 1L, parsed$col1 + 1L) %!=% ""
+        unname(substr(line, parsed$col1 + 1L, parsed$col1 + 1L)) %!=% ""
 
       if (!some_before || some_after || whitespace_after) {
         Lint(
@@ -31,7 +31,7 @@ open_curly_linter <- function(source_file) {
           column_number = parsed$col1,
           type = "style",
           message = "Opening curly braces should never go on their own line and should always be followed by a new line.",
-          line = source_file$lines[parsed$line1]
+          line = line
           )
       }
 
