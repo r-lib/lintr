@@ -29,15 +29,9 @@ if !exists('g:syntastic_r_lintr_linters')
     let g:syntastic_r_lintr_linters = 'default_linters'
 endif
 
-if !exists('g:syntastic_r_lintr_linters')
-    let g:syntastic_r_lintr_cache = 1
+if !exists('g:syntastic_r_lintr_cache')
+    let g:syntastic_r_lintr_cache = 'TRUE'
 endif
-
-function R_boolean(value)
-    if value
-        return 'TRUE'
-    else
-        return 'FALSE'
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -64,7 +58,7 @@ function! SyntaxCheckers_r_lintr_GetLocList() dict
     let setwd = syntastic#util#isRunningWindows() ? 'setwd("' . escape(getcwd(), '"\') . '"); ' : ''
     let makeprg = self.getExecEscaped() . ' --slave --restore --no-save' .
         \ ' -e ' . syntastic#util#shescape(setwd . 'library(lintr); ' .
-        \       'lint(cache = ' . R_boolean(g:syntastic_r_lintr_cache) . ', commandArgs(TRUE), ' . g:syntastic_r_lintr_linters . ')') .
+        \       'lint(cache = ' . g:syntastic_r_lintr_cache . ', commandArgs(TRUE), ' . g:syntastic_r_lintr_linters . ')') .
         \ ' --args ' . syntastic#util#shexpand('%')
 
     let errorformat =
