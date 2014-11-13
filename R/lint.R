@@ -211,8 +211,8 @@ get_source_expressions <- function(filename) {
 
   expressions <- lapply(top_level_expressions(parsed_content), function(id) {
     line_nums <- parsed_content[id, "line1"]:parsed_content[id, "line2"]
-    lines <- lines[line_nums]
-    names(lines) <- line_nums
+    expr_lines <- lines[line_nums]
+    names(expr_lines) <- line_nums
 
     content <- getParseText(parsed_content, id)
 
@@ -220,7 +220,7 @@ get_source_expressions <- function(filename) {
       filename = filename,
       line = parsed_content[id, "line1"],
       column = parsed_content[id, "col1"],
-      lines = lines,
+      lines = expr_lines,
       parsed_content = parsed_content[c(id, children(parsed_content, id)), ],
       content = content,
 
@@ -231,6 +231,14 @@ get_source_expressions <- function(filename) {
       stripped_comments = blank_text(content, rex("#", except_any_of("\n")))
       )
     })
+
+  # add global expression
+  expressions[[length(expressions) + 1L]] <-
+    list(
+      filename = filename,
+      file_lines = lines,
+      content = lines
+      )
 
   list(expressions = expressions, error = e, lines = lines)
 }

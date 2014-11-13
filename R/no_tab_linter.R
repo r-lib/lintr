@@ -4,7 +4,7 @@ no_tab_linter <- function(source_file) {
   res <- re_matches(source_file$lines,
     rex("\t" %>% one_or_more()), locations = TRUE, global = TRUE)
 
-  lapply(seq_along(lines), function(line_number) {
+  lapply(seq_along(source_file$lines), function(line_number) {
     mapply(
       FUN = function(start, end) {
         if (is.na(start)) {

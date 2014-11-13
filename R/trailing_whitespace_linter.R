@@ -6,7 +6,7 @@ trailing_whitespace_linter <- function(source_file) {
     global = TRUE,
     locations = TRUE)
 
-  lapply(seq_along(lines), function(line_number) {
+  lapply(seq_along(source_file$lines), function(line_number) {
 
       mapply(
         FUN = function(start, end) {

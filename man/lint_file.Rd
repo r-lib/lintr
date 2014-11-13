@@ -12,6 +12,8 @@ lint(filename, linters = default_linters, cache = FALSE)
 
 \item{linters}{a list of linter functions to apply see \code{\link{linters}}
 for a full list of default and available linters.}
+
+\item{cache}{toggle caching of lint results}
 }
 \description{
 Lint a file
