@@ -55,7 +55,7 @@ lint <- function(filename, linters = default_linters, cache = FALSE) {
   if (cache) {
     save_cache(lint_cache, filename)
   }
-  structure(reorder_lints(flatten_lints(lints)), class = "lints")
+  structure(flatten_lints(lints), class = "lints")
 }
 
 reorder_lints <- function(lints) {
@@ -97,7 +97,7 @@ lint_package <- function(path = NULL, relative_path = TRUE, ...) {
       })
   }
 
-  lints
+  reorder_lints(lints)
 }
 
 find_package <- function(path = getwd()) {
@@ -171,7 +171,7 @@ get_source_expressions <- function(filename) {
           column_number = column_number,
           type = "error",
           message = e$message,
-          line = source_file$lines[line_number]
+          line = lines[[line_number]]
         )
       )
     }
@@ -183,7 +183,7 @@ get_source_expressions <- function(filename) {
     # end of the previous line
     if (column_number %==% 0L) {
       line_number <- line_number - 1L
-      line <- source_file$lines[line_number]
+      line <- lines[[line_number]]
       column_number <- nchar(line)
     }
 
@@ -193,7 +193,7 @@ get_source_expressions <- function(filename) {
       column_number = column_number,
       type = "error",
       message = message_info$message,
-      line = source_file$lines[line_number]
+      line = lines[[line_number]]
       )
   }
 

@@ -50,8 +50,8 @@ fun2 <- function(x) {
   a3
 }",
     list(
-      rex("local variable", anything, "assigned but may not be used"),
-      rex("no visible binding for global variable ", anything, ", Did you mean")
+      rex("no visible binding for global variable ", anything, ", Did you mean"),
+      rex("local variable", anything, "assigned but may not be used")
       ),
     object_usage_linter)
 
