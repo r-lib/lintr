@@ -105,3 +105,5 @@ In the SublimeLinter User Settings
   spaces directly inside them.
 * `spaces_left_parentheses_linter`: check that all left parentheses have a space before them
   unless they are in a function call.
+* `trailing_blank_lines_linter`: check there are no trailing blank lines.
+* `trailing_whitespace_linter`: check there are no trailing whitespace characters.
