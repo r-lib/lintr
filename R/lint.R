@@ -77,6 +77,7 @@ reorder_lints <- function(lints) {
 #' @param relative_path if \code{TRUE}, file paths are printed using their path
 #' relative to the package base directory.  If \code{FALSE}, use the full
 #' absolute path.
+#' @param ... additional arguments passed to \code{\link{lint}}
 #' @export
 lint_package <- function(path = NULL, relative_path = TRUE, ...) {
   if (is.null(path)) {

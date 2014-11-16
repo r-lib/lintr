@@ -59,7 +59,7 @@ trailing_blank_lines_linter(source_file)
 trailing_whitespace_linter(source_file)
 }
 \arguments{
-\item{source_file}{returned by \code{\link{get_source_file}}}
+\item{source_file}{returned by \code{\link{get_source_expressions}}}
 
 \item{length}{the length cutoff to use for the given linter.}
 }

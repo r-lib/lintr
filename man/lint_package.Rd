@@ -14,6 +14,8 @@ of the current directory.}
 \item{relative_path}{if \code{TRUE}, file paths are printed using their path
 relative to the package base directory.  If \code{FALSE}, use the full
 absolute path.}
+
+\item{...}{additional arguments passed to \code{\link{lint}}}
 }
 \description{
 Lint all files in a package
