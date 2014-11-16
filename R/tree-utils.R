@@ -1,4 +1,4 @@
-children <- function(data, id, levels = Inf) {
+children <- function(data, id, levels = Inf, simplify = TRUE) {
 
   child_ids <- function(ids) {
     data$id[data$parent %in% ids]
@@ -12,7 +12,11 @@ children <- function(data, id, levels = Inf) {
     levels <- levels - 1L
   }
 
-  as.character(unlist(ids))
+  if (simplify) {
+    as.character(unlist(ids))
+  } else {
+    ids
+  }
 }
 
 parents <- function(data, id, levels = Inf) {
@@ -29,7 +33,11 @@ parents <- function(data, id, levels = Inf) {
     levels <- levels - 1L
   }
 
-  as.character(unlist(ids))
+  if (simplify) {
+    as.character(unlist(ids))
+  } else {
+    ids
+  }
 }
 
 family <- function(data, id, parent_levels = 1L, child_levels = Inf) {
