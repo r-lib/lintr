@@ -1,7 +1,7 @@
 #' @describeIn linters check there are no trailing blank lines.
 #' @export
 trailing_blank_lines_linter <- function(source_file) {
-  blanks <<- re_matches(source_file$file_lines,
+  blanks <- re_matches(source_file$file_lines,
     rex(start, any_spaces, end),
     global = TRUE)
 

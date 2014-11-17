@@ -1,3 +1,10 @@
+generate_tree <- function(pc) {
+  if (is.null(pc)) {
+    return(NULL)
+  }
+  edges <- matrix(as.character(c(pc$parent, pc$id)), ncol=2)
+  igraph::graph.edgelist(edges, directed = TRUE)
+}
 children <- function(data, id, levels = Inf, simplify = TRUE) {
 
   child_ids <- function(ids) {
@@ -15,11 +22,11 @@ children <- function(data, id, levels = Inf, simplify = TRUE) {
   if (simplify) {
     as.character(unlist(ids))
   } else {
-    ids
+    as.character(ids)
   }
 }
 
-parents <- function(data, id, levels = Inf) {
+parents <- function(data, id, levels = Inf, simplify = TRUE) {
 
   parent_ids <- function(ids) {
     data$parent[data$id %in% ids]
@@ -36,7 +43,7 @@ parents <- function(data, id, levels = Inf) {
   if (simplify) {
     as.character(unlist(ids))
   } else {
-    ids
+    as.character(ids)
   }
 }
 
@@ -148,5 +155,5 @@ top_level_expressions <- function(pc) {
   if (is.null(pc)) {
     return(NULL)
   }
-  as.character(pc[pc$parent == 0L & pc$token == "expr", "id"])
+  which(pc$parent == 0L & pc$token == "expr")
 }

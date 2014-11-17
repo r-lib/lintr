@@ -210,26 +210,29 @@ get_source_expressions <- function(filename) {
 
   parsed_content <- fix_eq_assign(adjust_columns(getParseData(source_file)))
 
-  expressions <- lapply(top_level_expressions(parsed_content), function(id) {
-    line_nums <- parsed_content[id, "line1"]:parsed_content[id, "line2"]
+  tree <- generate_tree(parsed_content)
+
+  expressions <- lapply(top_level_expressions(parsed_content), function(loc) {
+    line_nums <- parsed_content$line1[loc]:parsed_content$line2[loc]
     expr_lines <- lines[line_nums]
     names(expr_lines) <- line_nums
 
-    content <- getParseText(parsed_content, id)
+    content <- get_content(expr_lines, parsed_content[loc, ])
 
+    id <- as.character(parsed_content$id[loc])
+    edges <- igraph::E(tree)[from(igraph::subcomponent(tree, id, mode = "out"))]
+    pc <- parsed_content[edges, ]
     list(
       filename = filename,
-      line = parsed_content[id, "line1"],
-      column = parsed_content[id, "col1"],
+      line = parsed_content[loc, "line1"],
+      column = parsed_content[loc, "col1"],
       lines = expr_lines,
-      parsed_content = parsed_content[c(id, children(parsed_content, id)), ],
+      parsed_content = pc,
       content = content,
 
       find_line = find_line_fun(content),
 
-      find_column = find_column_fun(content),
-
-      stripped_comments = blank_text(content, rex("#", except_any_of("\n")))
+      find_column = find_column_fun(content)
       )
     })
 

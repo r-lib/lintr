@@ -25,18 +25,12 @@ object_usage_linter <-  function(source_file) {
   all_globals <- unique(recursive_ls(env))
 
   lapply(ids_with_token(source_file, rex(start, "FUNCTION"), fun=re_matches),
-    function(id) {
-      parent_ids <- parents(source_file$parsed_content, id)
+    function(loc) {
+      id <- source_file$parsed_content$id[loc]
 
-      # not a top level function, so just return.
-      if (length(parent_ids) > 3L) {
-        return(NULL)
-      }
-
-      parent_id <- parent_ids[[2]]
       try(fun <- eval(
         parse(
-          text=getParseText(source_file$parsed_content, parent_id),
+          text=source_file$content,
           keep.source = TRUE
           ),
         envir=env), silent = TRUE)
@@ -63,8 +57,7 @@ object_usage_linter <-  function(source_file) {
 
           }
 
-          org_line_num <- as.integer(row$line_number) +
-            source_file$parsed_content$line1[source_file$parsed_content$id == parent_id] - 1L
+          org_line_num <- as.integer(row$line_number) + source_file$line - 1L
 
           line <- source_file$lines[as.character(org_line_num)]
 

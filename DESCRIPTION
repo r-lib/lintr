@@ -14,7 +14,8 @@ Imports:
     codetools,
     stringdist,
     testthat,
-    digest
+    digest,
+    igraph
 License: MIT + file LICENSE
 LazyData: true
 Suggests:

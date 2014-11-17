@@ -79,11 +79,11 @@ ids_with_token <- function(source_file, value, fun = `==`) {
   if (source_file$parsed_content$col1 %==% integer(0)) {
     return(NULL)
   }
-  id <- source_file$parsed_content$id[fun(source_file$parsed_content$token, value)]
-  if (id %==% integer(0)) {
+  loc <- which(fun(source_file$parsed_content$token, value))
+  if (loc %==% integer(0)) {
     NULL
   } else {
-    as.character(id)
+    loc
   }
 }
 
@@ -102,5 +102,11 @@ recursive_ls <- function(env) {
 }
 
 with_id <- function(source_file, id) {
-  source_file$parsed_content[match(id, source_file$parsed_content$id), ]
+  source_file$parsed_content[id, ]
+}
+
+get_content <- function(lines, info) {
+  lines[length(lines)] <- substr(lines[length(lines)], 1L, info$col2)
+  lines[1] <- substr(lines[1], info$col1, nchar(lines[1]))
+  paste0(collapse = "\n", lines)
 }
