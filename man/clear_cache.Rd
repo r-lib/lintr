@@ -4,7 +4,7 @@
 \alias{clear_cache}
 \title{Clear the lintr cache}
 \usage{
-clear_cache(file = NULL, path = getOption("lintr.cache_directory"))
+clear_cache(file, path = getOption("lintr.cache_directory"))
 }
 \arguments{
 \item{file}{filename whose cache to clear.  If you pass \code{NULL} it will
