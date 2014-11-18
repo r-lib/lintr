@@ -34,7 +34,7 @@ lint <- function(filename, linters = default_linters, cache = FALSE) {
       }
       else {
 
-        expr_lints <- linters[[linter]](expr)
+        expr_lints <- flatten_lints(linters[[linter]](expr))
 
         lints[[itr <- itr + 1L]] <- expr_lints
         if (cache) {

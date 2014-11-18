@@ -34,22 +34,24 @@ save_cache <- function(cache, file, path = getOption("lintr.cache_directory")) {
   save(file = file.path(path, file), envir = cache, list=ls(envir=cache))
 }
 
-cache_lint <- function(cache, expr, linter, lint) {
+cache_lint <- function(cache, expr, linter, lints) {
   assign(
     envir = cache,
     x = digest::digest(list(linter, expr$content), algo="sha1"),
-    value = lint)
+    value = lints)
 }
 
 retrieve_lint <- function(cache, expr, linter, lines) {
-  lint <- get(
+  lints <- get(
     envir = cache,
     x = digest::digest(list(linter, expr$content), algo="sha1"),
   )
-  if (inherits(lint, "lint")) {
+  lints[] <- lapply(lints, function(lint) {
     lint$line_number <- find_new_line(lint$line_number, unname(lint$line), lines)
-  }
-  lint
+    lint
+  })
+  cache_lint(cache, expr, linter, lints)
+  lints
 }
 
 has_lint <- function(cache, expr, linter) {
@@ -74,9 +76,9 @@ find_new_line <- function(line_number, line, lines) {
       }
     }
     high <- line_number + width
-    if (high <= length(line)) {
-      if (lines[low] %==% line) {
-        return(low)
+    if (high <= length(lines)) {
+      if (lines[high] %==% line) {
+        return(high)
       }
     }
     width <- width + 1L
