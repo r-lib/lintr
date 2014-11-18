@@ -14,10 +14,11 @@ children <- function(data, id, levels = Inf, simplify = TRUE) {
   ids <- list()
   itr <- 0L
   ids[[itr <- itr + 1L]] <- child_ids(id)
-  while (levels > 1L && length(ids[[itr]]) != 0L) {
+  while (levels >= 1L && length(ids[[itr]]) != 0L) {
     ids[[itr <- itr + 1L]] <- child_ids(ids[[itr]])
     levels <- levels - 1L
   }
+  ids <- ids[-length(ids)]
 
   if (simplify) {
     as.character(unlist(ids))
@@ -35,10 +36,11 @@ parents <- function(data, id, levels = Inf, simplify = TRUE) {
   ids <- list()
   itr <- 0L
   ids[[itr <- itr + 1L]] <- parent_ids(id)
-  while (levels > 1L && length(ids[[itr]]) != 0L) {
+  while (levels >= 1L && length(ids[[itr]]) != 0L) {
     ids[[itr <- itr + 1L]] <- parent_ids(ids[[itr]])
     levels <- levels - 1L
   }
+  ids <- ids[-length(ids)]
 
   if (simplify) {
     as.character(unlist(ids))
@@ -60,7 +62,7 @@ family <- function(data, id, parent_levels = 1L, child_levels = Inf) {
 }
 
 siblings <- function(data, id, child_levels = Inf) {
-  parents <- parents(data, id, 1L)[[1]]
+  parents <- parents(data, id, 1L)
   res <- unlist(lapply(
       parents,
       children,

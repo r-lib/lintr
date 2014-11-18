@@ -28,9 +28,17 @@ object_usage_linter <-  function(source_file) {
     function(loc) {
       id <- source_file$parsed_content$id[loc]
 
+      parent_ids <- parents(source_file$parsed_content, id, simplify = FALSE)
+
+      # not a top level function, so just return.
+      if (length(parent_ids) > 3L) {
+        return(NULL)
+      }
+      parent_id <- parent_ids[[1]]
+      text <- paste0(collapse = "\n", source_file$lines)
       try(fun <- eval(
         parse(
-          text=source_file$content,
+          text=text,
           keep.source = TRUE
           ),
         envir=env), silent = TRUE)
@@ -57,7 +65,7 @@ object_usage_linter <-  function(source_file) {
 
           }
 
-          org_line_num <- as.integer(row$line_number) + source_file$line - 1L
+          org_line_num <- as.integer(row$line_number) + as.integer(names(source_file$lines)[1]) - 1L
 
           line <- source_file$lines[as.character(org_line_num)]
 

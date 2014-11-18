@@ -21,7 +21,7 @@ no_tab_linter <- function(source_file) {
 
           # R outputs tabs with 8 spaces
           # TODO: this is incorrect for embedded tabs, I am not going to fix it.
-          ranges = list(c(start, (end - start + 1L) * 8L))
+          ranges = list(c(start, end))
           )
       },
       res[[line_number]]$start,

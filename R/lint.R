@@ -55,7 +55,7 @@ lint <- function(filename, linters = default_linters, cache = FALSE) {
   if (cache) {
     save_cache(lint_cache, filename)
   }
-  structure(flatten_lints(lints), class = "lints")
+  structure(reorder_lints(flatten_lints(lints)), class = "lints")
 }
 
 reorder_lints <- function(lints) {
@@ -378,11 +378,11 @@ print.lints <- function(x, ...) {
 
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {
 
-  adjust <- adjust_position_fun(message)
+  #adjust <- adjust_position_fun(message)
 
-  column_number <- adjust(column_number)
+  #column_number <- adjust(column_number)
 
-  ranges[] <- lapply(ranges, adjust)
+  #ranges[] <- lapply(ranges, adjust)
 
   maximum <- max(column_number, unlist(ranges))
 
