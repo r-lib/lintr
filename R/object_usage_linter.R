@@ -6,10 +6,11 @@ object_usage_linter <-  function(source_file) {
   # we need to evaluate each expression in order to use checkUsage on it.
 
   pkg_name <- pkg_name(find_package(dirname(source_file$filename)))
-  parent_env <- if (!is.null(pkg_name)) {
-    getNamespace(pkg_name)
-  } else {
-    baseenv()
+  if (!is.null(pkg_name)) {
+    parent_env <- try(getNamespace(pkg_name), silent = TRUE)
+  }
+  if (is.null(pkg_name) || inherits(parent_env, "try-error")) {
+    parent_env <- baseenv()
   }
   env <- new.env(parent=parent_env)
 
@@ -34,7 +35,6 @@ object_usage_linter <-  function(source_file) {
       if (length(parent_ids) > 3L) {
         return(NULL)
       }
-      parent_id <- parent_ids[[1]]
       text <- paste0(collapse = "\n", source_file$lines)
       try(fun <- eval(
         parse(

@@ -4,7 +4,11 @@ make_object_linter <- function(fun) {
     pkg_name <- pkg_name(find_package(dirname(source_file$filename)))
 
     pkg_objects <- if (!is.null(pkg_name)) {
-      ls(envir=getNamespace(pkg_name))
+      envir <- try(getNamespace(pkg_name), silent = TRUE)
+
+      if (!inherits(envir, "try-error")) {
+        ls(envir=envir)
+      }
     }
 
     attached_nms <-
