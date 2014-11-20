@@ -1,7 +1,7 @@
 # lintr
 [![Build Status](https://travis-ci.org/jimhester/lintr.png?branch=master)](https://travis-ci.org/jimhester/lintr)
 
-## A framework for linting R source code. ##
+## Static code analysis for R ##
 
 ![lintr](http://i.imgur.com/acV27NV.gif "lintr")
 
