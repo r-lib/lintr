@@ -1,11 +1,10 @@
 Package: lintr
-Title: A Code Style Checker
-Version: 0.1.0
+Title: Static Code Analysis
+Version: 0.2.0
 Authors@R: "Jim Hester <james.f.hester@gmail.com> [aut, cre]"
 URL: https://github.com/jimhester/lintr
 BugReports: https://github.com/jimhester/lintr/issues
-Description: Check how well your R package source conforms to
-    http://r-pkgs.had.co.nz/style.html.
+Description: Static code analysis to find errors in style, syntax and semantics.
 Depends:
     R (>= 3.1.1)
 Imports:
