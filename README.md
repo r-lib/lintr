@@ -107,3 +107,6 @@ In the SublimeLinter User Settings
   unless they are in a function call.
 * `trailing_blank_lines_linter`: check there are no trailing blank lines.
 * `trailing_whitespace_linter`: check there are no trailing whitespace characters.
+
+## References ##
+Most of the default linters are based on [Hadley Wickham's R Style Guide](http://r-pkgs.had.co.nz/style.html).
