@@ -73,84 +73,110 @@ siblings <- function(data, id, child_levels = Inf) {
   res[res != id]
 }
 
+lag <- function(x) {
+  c(NA, x[seq_len(length(x) - 1L)])
+}
+
 fix_eq_assign <- function(pc) {
   if (is.null(pc)) {
     return(NULL)
   }
+
   eq_assign_locs <- which(pc$token == "EQ_ASSIGN")
+  if (length(eq_assign_locs) == 0L) {
+    return(pc)
+  }
+
+  prev_locs <- vapply(eq_assign_locs, prev_with_parent, pc = pc, integer(1))
+  next_locs <- vapply(eq_assign_locs, next_with_parent, pc = pc, integer(1))
+  expr_locs <- (function(x){
+    x[is.na(x)] <- FALSE
+    !x
+    })(prev_locs == lag(next_locs))
 
   id_itr <- max(pc$id)
 
-  line1 <- integer(length(eq_assign_locs))
-  col1 <- integer(length(eq_assign_locs))
+  line1 <- integer(sum(expr_locs))
+  col1 <- integer(sum(expr_locs))
 
-  line2 <- integer(length(eq_assign_locs))
-  col2 <- integer(length(eq_assign_locs))
+  line2 <- integer(sum(expr_locs))
+  col2 <- integer(sum(expr_locs))
 
-  id <- integer(length(eq_assign_locs))
+  id <- integer(sum(expr_locs))
 
-  parent <- integer(length(eq_assign_locs))
+  parent <- integer(sum(expr_locs))
 
-  token <- character(length(eq_assign_locs))
+  token <- character(sum(expr_locs))
 
-  terminal <- logical(length(eq_assign_locs))
+  terminal <- logical(sum(expr_locs))
 
-  text <- character(length(eq_assign_locs))
+  text <- character(sum(expr_locs))
 
-  for (itr in seq_along(eq_assign_locs)) {
-    loc <- eq_assign_locs[itr]
-    prev_loc <- prev_with_parent(pc, loc)
-    next_loc <- next_with_parent(pc, loc)
+  true_locs <- which(expr_locs == TRUE)
+  for (i in seq_along(true_locs)) {
+    start <- true_locs[i]
 
-    line1[itr] <- pc[prev_loc, "line1"]
-    col1[itr] <- pc[prev_loc, "col1"]
+    end <- true_locs[i]
+    j <- end + 1L
+    while(j <= length(expr_locs) && expr_locs[j] == FALSE) {
+      end <- j
+      j <- j + 1L
+    }
 
-    line2[itr] <- pc[next_loc, "line2"]
-    col2[itr] <- pc[next_loc, "col2"]
+    prev_loc <- prev_locs[start]
+    next_loc <- next_locs[end]
 
-    id[itr] <- id_itr <- id_itr + 1L
+    line1[i] <- pc[prev_loc, "line1"]
+    col1[i] <- pc[prev_loc, "col1"]
 
-    parent[itr] <- pc[loc, "parent"]
+    line2[i] <- pc[next_loc, "line2"]
+    col2[i] <- pc[next_loc, "col2"]
 
-    token[itr] <- "expr"
+    id[i] <- id_itr <- id_itr + 1L
 
-    terminal[itr] <- FALSE
+    parent[i] <- pc[eq_assign_locs[true_locs[i]], "parent"]
 
-    text[itr] <- ""
+    token[i] <- "expr"
 
-    pc[prev_loc, "parent"] <- id[itr]
-    pc[loc, "parent"] <- id[itr]
-    pc[next_loc, "parent"] <- id[itr]
+    terminal[i] <- FALSE
+
+    text[i] <- ""
+
+    pc[eq_assign_locs[true_locs[i]], "parent"] <- id[i]
+    for (j in start:end) {
+      pc[prev_locs[j], "parent"] <- id[i]
+      pc[eq_assign_locs[j], "parent"] <- id[i]
+      pc[next_locs[j], "parent"] <- id[i]
+    }
+    pc[next_loc, "parent"] <- id[i]
   }
   rbind(pc, data.frame(line1, col1, line2, col2, id, parent, token, terminal, text, row.names=id))
 }
 
 prev_with_parent <- function(pc, loc) {
 
-  parent <- pc[loc, "parent"]
+  id <- pc$id[loc]
+  parent_id <- pc$parent[loc]
 
-  loc <- loc - 1L
-  while (loc > 0L) {
-    if (pc[loc, "parent"] %==% parent) {
-      return(loc)
-    }
-    loc <- loc - 1L
-  }
+  with_parent <- pc[pc$parent == parent_id,]
+  with_parent <- with_parent[order(with_parent$line1, with_parent$col1, with_parent$line2, with_parent$col2),]
 
+  loc <- which(with_parent$id == id)
+
+  return(which(pc$id == with_parent$id[loc - 1L]))
 }
 
 next_with_parent <- function(pc, loc) {
 
-  parent <- pc[loc, "parent"]
+  id <- pc$id[loc]
+  parent_id <- pc$parent[loc]
 
-  loc <- loc + 1L
-  while (loc <= NROW(pc)) {
-    if (pc[loc, "parent"] %==% parent) {
-      return(loc)
-    }
-    loc <- loc + 1L
-  }
+  with_parent <- pc[pc$parent == parent_id,]
+  with_parent <- with_parent[order(with_parent$line1, with_parent$col1, with_parent$line2, with_parent$col2),]
 
+  loc <- which(with_parent$id == id)
+
+  return(which(pc$id == with_parent$id[loc + 1L]))
 }
 
 top_level_expressions <- function(pc) {
