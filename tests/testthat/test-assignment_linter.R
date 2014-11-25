@@ -41,5 +41,10 @@ test_that("returns the correct linting", {
         c(column_number = 11L)),
       assignment_linter)
 
+    expect_lint("a = 1;aèn = 2",
+      list(c(column_number = 3L),
+        c(column_number = 11L)),
+      assignment_linter)
+
     })
 })
