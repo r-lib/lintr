@@ -2,7 +2,7 @@
 % Please edit documentation in R/lint.R
 \name{lint_package}
 \alias{lint_package}
-\title{Lint all files in a package}
+\title{Lint a package}
 \usage{
 lint_package(path = NULL, relative_path = TRUE, ...)
 }
@@ -18,6 +18,6 @@ absolute path.}
 \item{...}{additional arguments passed to \code{\link{lint}}}
 }
 \description{
-Lint all files in a package
+Apply one or more linters to all of the R files in a package.
 }
 

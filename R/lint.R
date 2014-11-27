@@ -1,5 +1,13 @@
-#' Lint a file
+#' Lintr
 #'
+#' Static code analysis to find errors in style, syntax and semantics.
+#' @name lintr
+#' @seealso \code{\link{lint}}, \code{\link{lint_package}}, \code{\link{linters}}
+NULL
+
+#' Lint a given file
+#'
+#' Apply one or more linters to a file and return a list of lints found.
 #' @param filename the given filename to lint.
 #' @param linters a list of linter functions to apply see \code{\link{linters}}
 #' for a full list of default and available linters.
@@ -66,8 +74,9 @@ reorder_lints <- function(lints) {
     ]
 }
 
-#' Lint all files in a package
+#' Lint a package
 #'
+#' Apply one or more linters to all of the R files in a package.
 #' @param path the path to the base directory of the package, if \code{NULL},
 #' the base directory will be searched for by looking in the parent directories
 #' of the current directory.
@@ -181,12 +190,6 @@ print.lints <- function(x, ...) {
 
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {
 
-  #adjust <- adjust_position_fun(message)
-
-  #column_number <- adjust(column_number)
-
-  #ranges[] <- lapply(ranges, adjust)
-
   maximum <- max(column_number, unlist(ranges))
 
   line <- fill_with(" ", maximum)
@@ -199,51 +202,6 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
   substr(line, column_number, column_number + 1L) <- "^"
 
   line
-}
-
-adjust_position_fun <- function(message) {
-  positions <- re_matches(
-    encodeString(message),
-    rex("\\" %if_prev_isnt% "\\",
-
-      or(
-
-        # ascii escapes
-        one_of("nrtbafv\'\"\`\\"),
-
-        # octal code
-        group(range(0, 7) %>% between(1, 3)),
-
-        # hex code
-        group("x", one_of(digit, "abcdefABCDEF") %>% between(1, 2)),
-
-        # unicode hex code
-        group("u", one_of(digit, "abcdefABCDEF") %>% between(1, 4)),
-
-        # extended unicode hex code
-        group("U", one_of(digit, "abcdefABCDEF") %>% between(1, 8))
-        )
-      ),
-    locations = TRUE,
-    global = TRUE)[[1]]
-
-  if (is.na(positions$end[1L])) {
-    positions$length <- 0L
-  }
-  else {
-    positions$length <- positions$end - positions$start
-  }
-
-  function(position) {
-    escapes <- which(positions$start < position)
-
-    if (escapes %==% integer(0)) {
-      position
-    }
-    else {
-      position + positions$length[which(positions$start < position)]
-    }
-  }
 }
 
 fill_with <- function(character = " ", length = 1L) {

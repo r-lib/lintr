@@ -3,7 +3,7 @@
 \name{lint_file}
 \alias{lint}
 \alias{lint_file}
-\title{Lint a file}
+\title{Lint a given file}
 \usage{
 lint(filename, linters = default_linters, cache = FALSE)
 }
@@ -16,6 +16,6 @@ for a full list of default and available linters.}
 \item{cache}{toggle caching of lint results}
 }
 \description{
-Lint a file
+Apply one or more linters to a file and return a list of lints found.
 }
 

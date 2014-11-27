@@ -70,17 +70,9 @@ get_source_expressions <- function(filename) {
       )
   }
 
-  e <- tryCatch(
-    source_file$parse <- parse(text=source_file$content, srcfile=source_file, keep.source = TRUE),
-    error = lint_error)
+  e <- NULL
 
-  # This needs to be done twice to avoid
-  #   https://bugs.r-project.org/bugzilla/show_bug.cgi?id=16041
-  e <- tryCatch(
-    source_file$parse <- parse(text=source_file$content, srcfile=source_file, keep.source = TRUE),
-    error = lint_error)
-
-  parsed_content <- fix_eq_assign(adjust_columns(getParseData(source_file)))
+  parsed_content <- get_source_file(filename, error = lint_error)
 
   tree <- generate_tree(parsed_content)
 
@@ -117,6 +109,29 @@ get_source_expressions <- function(filename) {
       )
 
   list(expressions = expressions, error = e, lines = lines)
+}
+
+get_source_file <- function(filename, error = identity) {
+
+  source_file <- srcfile(filename)
+  lines <- readLines(filename)
+  source_file$content <- paste0(collapse = "\n", lines)
+
+  e <- tryCatch(
+    source_file$parse <- parse(text=source_file$content, srcfile=source_file, keep.source = TRUE),
+    error = error)
+
+  # This needs to be done twice to avoid
+  #   https://bugs.r-project.org/bugzilla/show_bug.cgi?id=16041
+  e <- tryCatch(
+    source_file$parse <- parse(text=source_file$content, srcfile=source_file, keep.source = TRUE),
+    error = error)
+
+  if (!inherits(e, "expression")) {
+    assign("e", e,  envir=parent.frame())
+  }
+
+  fix_eq_assign(adjust_columns(getParseData(source_file)))
 }
 
 find_line_fun <- function(content) {
