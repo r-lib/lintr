@@ -1,4 +1,5 @@
 context("assignment_linter")
+options(encoding = "UTF-8")
 test_that("returns the correct linting", {
   expect_lint("blah", NULL, assignment_linter)
 
@@ -31,20 +32,4 @@ test_that("returns the correct linting", {
     rex("Use <-, not =, for assignment."),
     assignment_linter)
 
-  test_that("handles unicode characters correctly", {
-    expect_lint("Ħ = 1",
-      list(c(column_number = 3L)),
-      assignment_linter)
-
-    expect_lint("Ħ = 1;aèn = 2",
-      list(c(column_number = 3L),
-        c(column_number = 11L)),
-      assignment_linter)
-
-    expect_lint("a = 1;aèn = 2",
-      list(c(column_number = 3L),
-        c(column_number = 11L)),
-      assignment_linter)
-
-    })
 })

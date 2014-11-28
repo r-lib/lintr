@@ -31,14 +31,3 @@ test_that("returns the correct linting", {
     rex("lines should not be more than 20 characters"),
     line_length_linter(20))
 })
-test_that("works with unicode characters", {
-
-  expect_lint("'☂☂☂☂☂☂☂☂☂☂☂☂☂☂☂☂☂'",
-    NULL,
-    line_length_linter(20))
-
-  expect_lint("'☂☂☂☂☂☂☂☂☂☂☂☂☂☂☂☂☂☂☂'",
-    rex("lines should not be more than 20 characters"),
-    line_length_linter(20))
-
-})
