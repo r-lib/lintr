@@ -1,10 +1,12 @@
 Package: lintr
-Title: Static Code Analysis
+Title: Static R Code Analysis
 Version: 0.2.0
 Authors@R: "Jim Hester <james.f.hester@gmail.com> [aut, cre]"
 URL: https://github.com/jimhester/lintr
 BugReports: https://github.com/jimhester/lintr/issues
-Description: Static code analysis to find errors in style, syntax and semantics.
+Description: Checks adherence to a given style, syntax errors and possible
+    semantic issues.  Supports on the fly checking of R code edited with Emacs,
+    Vim and Sublime Text.
 Depends:
     R (>= 3.1.1)
 Imports:
