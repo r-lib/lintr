@@ -10,7 +10,7 @@ object_usage_linter <-  function(source_file) {
     parent_env <- try(getNamespace(pkg_name), silent = TRUE)
   }
   if (is.null(pkg_name) || inherits(parent_env, "try-error")) {
-    parent_env <- baseenv()
+    parent_env <- globalenv()
   }
   env <- new.env(parent=parent_env)
 
@@ -36,56 +36,62 @@ object_usage_linter <-  function(source_file) {
         return(NULL)
       }
       text <- paste0(collapse = "\n", source_file$lines)
-      try(fun <- eval(
-        parse(
-          text=text,
-          keep.source = TRUE
-          ),
-        envir=env), silent = TRUE)
+      suppressWarnings(
+        suppressMessages(
+          fun <- try(eval(
+              parse(
+                text=text,
+                keep.source = TRUE
+                ),
+              envir=env), silent = TRUE)
+        )
+      )
 
-      res <- parse_check_usage(fun)
+      if (!inherits(fun, "try-error")) {
+        res <- parse_check_usage(fun)
 
-      locals <- codetools::findFuncLocals(formals(fun), body(fun))
+        locals <- codetools::findFuncLocals(formals(fun), body(fun))
 
-      both <- c(locals, names(formals(fun)), all_globals)
+        both <- c(locals, names(formals(fun)), all_globals)
 
-      lapply(which(!is.na(res$message)),
-        function(row_num) {
-          row <- res[row_num, ]
+        lapply(which(!is.na(res$message)),
+          function(row_num) {
+            row <- res[row_num, ]
 
-          # if a no visible binding message suggest an alternative
-          if (re_matches(row$message,
-              rex("no visible"))) {
+            # if a no visible binding message suggest an alternative
+            if (re_matches(row$message,
+                rex("no visible"))) {
 
-            suggestion <- both[stringdist::amatch(row$name, both, maxDist = 2)]
+              suggestion <- both[stringdist::amatch(row$name, both, maxDist = 2)]
 
-            if (!is.na(suggestion)) {
-              row$message <- paste0(row$message, ", Did you mean '", suggestion, "'?")
+              if (!is.na(suggestion)) {
+                row$message <- paste0(row$message, ", Did you mean '", suggestion, "'?")
+              }
+
             }
 
-          }
+            org_line_num <- as.integer(row$line_number) + as.integer(names(source_file$lines)[1]) - 1L
 
-          org_line_num <- as.integer(row$line_number) + as.integer(names(source_file$lines)[1]) - 1L
+            line <- source_file$lines[as.character(org_line_num)]
 
-          line <- source_file$lines[as.character(org_line_num)]
+            row$name <- re_substitutes(row$name, rex("<-"), "")
 
-          row$name <- re_substitutes(row$name, rex("<-"), "")
+            location <- re_matches(line,
+              rex(row$name),
+              locations = TRUE)
 
-          location <- re_matches(line,
-            rex(row$name),
-            locations = TRUE)
-
-          Lint(
-            filename = source_file$filename,
-            line_number = org_line_num,
-            column_number = location$start,
-            type = "warning",
-            message = row$message,
-            line = line,
-            ranges = list(c(location$start, location$end))
-            )
-        })
-  })
+            Lint(
+              filename = source_file$filename,
+              line_number = org_line_num,
+              column_number = location$start,
+              type = "warning",
+              message = row$message,
+              line = line,
+              ranges = list(c(location$start, location$end))
+              )
+          })
+      }
+    })
 }
 
 parse_check_usage <- function(expression) {

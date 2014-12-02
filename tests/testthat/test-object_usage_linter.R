@@ -84,4 +84,15 @@ fun2 <- function(x) {
     rex("no visible global function definition for ", anything, ", Did you mean", anything),
     object_usage_linter)
   })
+
+})
+
+test_that("eval errors are ignored", {
+  expect_lint("
+    setMethod(\"[[<-\", c(\"stampedEnv\", \"character\", \"missing\"),
+      function(x) {
+        x
+      })",
+    NULL,
+    object_usage_linter)
 })
