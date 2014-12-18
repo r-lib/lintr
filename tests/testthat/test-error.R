@@ -11,5 +11,8 @@ test_that("returns the correct linting", {
   expect_lint("\"\\z\"",
     rex("is an unrecognized escape in character string starting")
     )
+  expect_lint("a <- 1
+    function() {
+    b",
+    rex("unexpected end of input"), (function(...) NULL))
 })
-
