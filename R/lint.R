@@ -1,6 +1,8 @@
 #' Lintr
 #'
-#' Static code analysis to find errors in style, syntax and semantics.
+#' Checks adherence to a given style, syntax errors and possible semantic
+#' issues.  Supports on the fly checking of R code edited with Emacs, Vim and
+#' Sublime Text.
 #' @name lintr
 #' @seealso \code{\link{lint}}, \code{\link{lint_package}}, \code{\link{linters}}
 NULL
