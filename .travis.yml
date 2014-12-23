@@ -9,12 +9,16 @@ before_install:
 
 install:
   - ./travis-tool.sh github_package jimhester/rex
+  - ./travis-tool.sh github_package jimhester/covr
   - ./travis-tool.sh install_deps
 
 script: ./travis-tool.sh run_tests
 
 on_failure:
   - ./travis-tool.sh dump_logs
+
+on_success:
+  - Rscript -e 'library(covr);coveralls()'
 
 notifications:
   email:
