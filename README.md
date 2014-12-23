@@ -1,5 +1,6 @@
 # lintr
 [![Build Status](https://travis-ci.org/jimhester/lintr.png?branch=master)](https://travis-ci.org/jimhester/lintr)
+[![Coverage Status](https://img.shields.io/coveralls/jimhester/lintr.svg)](https://coveralls.io/r/jimhester/lintr?branch=master)
 
 ## Static code analysis for R ##
 
