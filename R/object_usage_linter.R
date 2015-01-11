@@ -62,9 +62,9 @@ object_usage_linter <-  function(source_file) {
             if (re_matches(row$message,
                 rex("no visible"))) {
 
-              suggestion <- both[stringdist::amatch(row$name, both, maxDist = 2)]
+              suggestion <- try(both[stringdist::amatch(row$name, both, maxDist = 2)], silent = TRUE)
 
-              if (!is.na(suggestion)) {
+              if (!inherits(suggestion, "try-error") && !is.na(suggestion)) {
                 row$message <- paste0(row$message, ", Did you mean '", suggestion, "'?")
               }
 

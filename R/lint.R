@@ -96,7 +96,17 @@ lint_package <- function(path = NULL, relative_path = TRUE, ...) {
     recursive = TRUE,
     full.names = TRUE)
 
-  lints <- flatten_lints(lapply(files, lint, ...))
+  lints <- flatten_lints(lapply(files,
+      function(file, ...) {
+        if (interactive()) {
+          message(".", appendLF = FALSE)
+        }
+        lint(file, ...)
+      }))
+
+  if (interactive()) {
+    message()
+  }
 
   if (relative_path) {
     lints[] <- lapply(lints,
@@ -106,7 +116,9 @@ lint_package <- function(path = NULL, relative_path = TRUE, ...) {
       })
   }
 
-  reorder_lints(lints)
+  lints <- reorder_lints(lints)
+  class(lints) <- "lints"
+  lints
 }
 
 find_package <- function(path = getwd()) {
