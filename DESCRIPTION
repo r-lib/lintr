@@ -16,7 +16,8 @@ Imports:
     stringdist,
     testthat,
     digest,
-    igraph
+    igraph,
+    rstudioapi (>= 0.2)
 License: MIT + file LICENSE
 LazyData: true
 Suggests:
