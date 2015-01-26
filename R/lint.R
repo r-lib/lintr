@@ -114,12 +114,11 @@ lint_package <- function(path = NULL, relative_path = TRUE, ...) {
         x$filename <- re_substitutes(x$filename, rex(path), ".")
         x
       })
+    attr(lints, "package_path") <- path
   }
 
   lints <- reorder_lints(lints)
   class(lints) <- "lints"
-  attr(lints, "package_path") <- path
-  attr(lints, "relative_path") <- relative_path
   lints
 }
 
@@ -200,41 +199,39 @@ print.lint <- function(x, ...) {
 
 #' @export
 print.lints <- function(x, ...) {
-  if (getOption("lintr.rstudio_source_markers", TRUE) && 
-      rstudioapi::hasFun("sourceMarkers"))
+  if (getOption("lintr.rstudio_source_markers", TRUE) &&
+      rstudioapi::hasFun("sourceMarkers")) {
     rstudio_source_markers(x)
-  else
+  }
+  else {
     lapply(x, print, ...)
+  }
   invisible(x)
 }
 
 rstudio_source_markers <- function(lints) {
-  
-  # if relative paths were requested then save the package_path
-  # to be passed along as the basePath to the sourceMarker function
-  relative_path <- isTRUE(attr(lints, "relative_path"))
-  if (relative_path)
-    package_path <- attr(lints, "package_path")
-  else
-    package_path <- NULL
-  
+
+  # package path will be NULL unless it is a relative path
+  package_path <- attr(lints, "package_path")
+
   # generate the markers
   markers <- lapply(lints, function(x) {
     marker <- list()
     marker$type <- x$type
-    if (relative_path)
+    if (!is.null(package_path)) {
       x$filename <- file.path(package_path, x$filename)
+    }
     marker$file <- x$filename
     marker$line <- x$line_number
     marker$column <- x$column_number
     marker$message <- x$message
     marker
   })
-  
+
   # request source markers
-  rstudioapi::callFun("sourceMarkers", 
-                      name = "lintr", 
-                      markers = markers, 
+  rstudioapi::callFun("sourceMarkers",
+                      name = "lintr",
+                      markers = markers,
                       basePath = package_path,
                       autoSelect = "first")
 }
