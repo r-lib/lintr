@@ -216,12 +216,15 @@ rstudio_source_markers <- function(lints) {
 
   # generate the markers
   markers <- lapply(lints, function(x) {
+    filename <- if (!is.null(package_path)) {
+      file.path(package_path, x$filename)
+    } else {
+      x$filename
+    }
+
     marker <- list()
     marker$type <- x$type
-    if (!is.null(package_path)) {
-      x$filename <- file.path(package_path, x$filename)
-    }
-    marker$file <- x$filename
+    marker$file <- filename
     marker$line <- x$line_number
     marker$column <- x$column_number
     marker$message <- x$message
