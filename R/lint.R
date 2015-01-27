@@ -29,8 +29,12 @@ lint <- function(filename, linters = default_linters, cache = FALSE) {
   lints <- list()
   itr <- 0
 
-  if (cache) {
+  if (isTRUE(cache)) {
     lint_cache <- load_cache(filename)
+    lints <- retrieve_file(lint_cache, filename, linters)
+    if (!is.null(lints)) {
+      return(lints)
+    }
   }
 
   for (expr in source_expressions$expressions) {
@@ -54,15 +58,19 @@ lint <- function(filename, linters = default_linters, cache = FALSE) {
   if (inherits(source_expressions$error, "lint")) {
     lints[[itr <- itr + 1L]] <- source_expressions$error
 
-    if (cache) {
+    if (isTRUE(cache)) {
       cache_lint(lint_cache, list(filename=filename, content=""), "error", source_expressions$error)
     }
   }
 
-  if (cache) {
+  lints <- structure(reorder_lints(flatten_lints(lints)), class = "lints")
+
+  if (isTRUE(cache)) {
+    cache_file(lint_cache, filename, linters, lints)
     save_cache(lint_cache, filename)
   }
-  structure(reorder_lints(flatten_lints(lints)), class = "lints")
+
+  lints
 }
 
 reorder_lints <- function(lints) {
@@ -97,7 +105,7 @@ lint_package <- function(path = NULL, relative_path = TRUE, ...) {
     full.names = TRUE)
 
   lints <- flatten_lints(lapply(files,
-      function(file, ...) {
+      function(file) {
         if (interactive()) {
           message(".", appendLF = FALSE)
         }

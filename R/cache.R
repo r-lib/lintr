@@ -34,6 +34,24 @@ save_cache <- function(cache, file, path = getOption("lintr.cache_directory")) {
   save(file = file.path(path, file), envir = cache, list=ls(envir=cache))
 }
 
+cache_file <- function(cache, filename, linters, lints) {
+  assign(envir = cache,
+    x = digest::digest(list(linters, readLines(filename)), algo = "sha1"),
+    value = lints
+  )
+}
+retrieve_file <- function(cache, filename, linters) {
+  key <- digest::digest(list(linters, readLines(filename)), algo = "sha1")
+  if (exists(key, envir = cache)) {
+    get(
+      envir = cache,
+      x = digest::digest(list(linters, readLines(filename)), algo = "sha1")
+      )
+  } else {
+    NULL
+  }
+}
+
 cache_lint <- function(cache, expr, linter, lints) {
   assign(
     envir = cache,
@@ -44,7 +62,7 @@ cache_lint <- function(cache, expr, linter, lints) {
 retrieve_lint <- function(cache, expr, linter, lines) {
   lints <- get(
     envir = cache,
-    x = digest::digest(list(linter, expr$content), algo="sha1"),
+    x = digest::digest(list(linter, expr$content), algo="sha1")
   )
   lints[] <- lapply(lints, function(lint) {
     lint$line_number <- find_new_line(lint$line_number, unname(lint$line), lines)
