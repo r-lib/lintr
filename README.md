@@ -7,8 +7,7 @@
 ![lintr](http://i.imgur.com/acV27NV.gif "lintr")
 
 ### Emacs ###
-lintr can be integrated with
-[flycheck](https://github.com/flycheck/flycheck) for on the fly linting.
+lintr has [built-in integration](http://www.flycheck.org/en/latest/guide/languages.html#r) with [flycheck](https://github.com/flycheck/flycheck) versions greater than `0.23`.
 ![Emacs Example](http://i.imgur.com/vquPht3.gif "Emacs Example")
 
 #### Installation ####
@@ -20,7 +19,6 @@ files.  *Note you will need to change the path to where you put
 (require 'flycheck)
 (add-hook 'ess-mode-hook
           (lambda () (flycheck-mode t)))
-(load "path/to/flycheck-linter.el")
 ```
 #### Configuration ####
 You can also configure what linters are used. e.g. using a different line length cutoff.
