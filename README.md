@@ -54,12 +54,9 @@ lintr can be intergrated with
 ![Sublime Example](http://i.imgur.com/3pua2yz.gif "Sublime Example")
 
 #### Installation ####
-Clone the [repository](https://github.com/jimhester/SublimeLinter-contrib-R)
+Simply install `sublimeLinter-contrib-lintr` using [Package Control](https://packagecontrol.io/).
 
-```bash
-cd 'path/to/Sublime Text 3/Packages'
-git clone https://github.com/jimhester/SublimeLinter-contrib-R.git
-```
+For more information see [Sublime Linter Docs](http://sublimelinter.readthedocs.org/en/latest/installation.html#installing-via-pc)
 
 #### Configuration ####
 You can also configure what linters are used. e.g. using a different line length cutoff.
