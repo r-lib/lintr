@@ -37,5 +37,3 @@ open_curly_linter <- function(source_file) {
 
     })
 }
-
-

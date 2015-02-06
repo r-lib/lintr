@@ -21,7 +21,7 @@ object_usage_linter <-  function(source_file) {
   mapply(assign, globals, MoreArgs=list(value = function(...) NULL, envir = env))
 
   # add file locals to the environment
-  try(eval(source_file$parse, envir = env), silent = TRUE)
+  try(eval(source_file$parsed_content, envir = env), silent = TRUE)
 
   all_globals <- unique(recursive_ls(env))
 

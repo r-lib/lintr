@@ -116,7 +116,7 @@ lint_package <- function(path = NULL, relative_path = TRUE, ...) {
     message()
   }
 
-  if (relative_path) {
+  if (relative_path == TRUE) {
     lints[] <- lapply(lints,
       function(x) {
         x$filename <- re_substitutes(x$filename, rex(path), ".")
@@ -181,40 +181,6 @@ Lint <- function(filename, line_number = 1L, column_number = NULL,
       ranges = ranges
       ),
     class="lint")
-}
-
-#' @export
-print.lint <- function(x, ...) {
-
-  color <- switch(x$type,
-    "warning" = crayon::magenta,
-    "error" = crayon::red,
-    "style" = crayon::blue,
-    crayon::bold
-  )
-
-  message(
-    crayon::bold(x$filename, ":",
-    as.character(x$line_number), ":",
-    as.character(x$column_number), ": ", sep = ""),
-    color(x$type, ": ", sep = ""),
-    crayon::bold(x$message), "\n",
-    x$line, "\n",
-    highlight_string(x$message, x$column_number, x$ranges)
-    )
-  invisible(x)
-}
-
-#' @export
-print.lints <- function(x, ...) {
-  if (getOption("lintr.rstudio_source_markers", TRUE) &&
-      rstudioapi::hasFun("sourceMarkers")) {
-    rstudio_source_markers(x)
-  }
-  else {
-    lapply(x, print, ...)
-  }
-  invisible(x)
 }
 
 rstudio_source_markers <- function(lints) {
