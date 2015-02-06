@@ -2,6 +2,8 @@
 
 S3method(print,lint)
 S3method(print,lints)
+S3method(names,lints)
+S3method(split,lints)
 export(Lint)
 export(absolute_paths_linter)
 export(assignment_linter)

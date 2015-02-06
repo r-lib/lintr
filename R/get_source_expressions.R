@@ -118,13 +118,13 @@ get_source_file <- function(filename, error = identity) {
   source_file$content <- paste0(collapse = "\n", lines)
 
   e <- tryCatch(
-    source_file$parse <- parse(text=source_file$content, srcfile=source_file, keep.source = TRUE),
+    source_file$parsed_content <- parse(text=source_file$content, srcfile=source_file, keep.source = TRUE),
     error = error)
 
   # This needs to be done twice to avoid
   #   https://bugs.r-project.org/bugzilla/show_bug.cgi?id=16041
   e <- tryCatch(
-    source_file$parse <- parse(text=source_file$content, srcfile=source_file, keep.source = TRUE),
+    source_file$parsed_content <- parse(text=source_file$content, srcfile=source_file, keep.source = TRUE),
     error = error)
 
   if (!inherits(e, "expression")) {
