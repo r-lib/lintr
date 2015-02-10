@@ -16,11 +16,13 @@ NULL
 #' @param cache toggle caching of lint results
 #' @export
 #' @name lint_file
-lint <- function(filename, linters = default_linters, cache = FALSE) {
+lint <- function(filename, linters = NULL, cache = FALSE) {
 
-  if (!is.list(linters)) {
+  if (is.null(linters)) {
+    linters <- find_default_linters(filename)
+  } else if (!is.list(linters)) {
     name <- deparse(substitute(linters))
-    linters <- list(linters)
+   linters <- list(linters)
     names(linters) <- name
   }
 
@@ -73,6 +75,47 @@ lint <- function(filename, linters = default_linters, cache = FALSE) {
   lints
 }
 
+#' Specifying default linters
+#' 
+#' Lintr searches for default linters for a given file in the following order.
+#' \enumerate{
+#'   \item specified using the \code{lintr.linters} option.
+#'   \item \code{linter_file} in the same directory
+#'   \item \code{linter_file} in the project directory
+#'   \item \code{\link{default_linters}}
+#' }
+#' 
+#' The default linter_file name is \code{.lintr} but it can be changed with option 
+#' \code{lintr.linter_file}.
+#' @param filename source file to be linted
+find_default_linters <- function(filename) {
+
+  ## If the linters option is set use that
+  linter_config <- getOption("lintr.linters")
+  if (!is.null(linter_config)) {
+    return(linter_config)
+  }
+
+  path <- dirname(filename)
+  linter_file <- getOption("lintr.linter_file")
+
+  ## next check for a .linters file in the current directory
+  linter_config <- file.path(path, linter_file)
+  if (isTRUE(file.exists(linter_config))) {
+    return(source(linter_config)$value)
+  }
+
+  ## next check for a .linters file in the project directory
+  project <- find_package(path)
+  linter_config <- file.path(project, linter_file)
+  if (isTRUE(file.exists(linter_config))) {
+    return(source(linter_config)$value)
+  }
+
+  ## lastly use the default linters
+  default_linters
+}
+
 reorder_lints <- function(lints) {
   files <- vapply(lints, `[[`, character(1), "filename")
   lines <- vapply(lints, `[[`, integer(1), "line_number")
@@ -99,10 +142,17 @@ lint_package <- function(path = NULL, relative_path = TRUE, ...) {
   if (is.null(path)) {
     path <- find_package()
   }
-  files <- dir(path=path,
+  
+  files <- dir(
+    path = file.path(path, 
+                     c("R",
+                       "tests",
+                       "inst")
+                     ),
     pattern = rex(".", one_of("Rr"), end),
     recursive = TRUE,
-    full.names = TRUE)
+    full.names = TRUE
+  )
 
   lints <- flatten_lints(lapply(files,
       function(file) {
@@ -119,7 +169,7 @@ lint_package <- function(path = NULL, relative_path = TRUE, ...) {
   if (relative_path == TRUE) {
     lints[] <- lapply(lints,
       function(x) {
-        x$filename <- re_substitutes(x$filename, rex(path), ".")
+        x$filename <- re_substitutes(x$filename, rex(path, one_of("/", "\\")), "")
         x
       })
     attr(lints, "package_path") <- path

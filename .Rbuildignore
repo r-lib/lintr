@@ -6,3 +6,6 @@
 ^.*\.gz$
 ^cran-comments\.md$
 ^NEWS.md$
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.lintr$
