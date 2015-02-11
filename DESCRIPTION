@@ -1,6 +1,6 @@
 Package: lintr
 Title: Static R Code Analysis
-Version: 0.2.1.9000
+Version: 0.3.0.9000
 Authors@R: "Jim Hester <james.f.hester@gmail.com> [aut, cre]"
 URL: https://github.com/jimhester/lintr
 BugReports: https://github.com/jimhester/lintr/issues

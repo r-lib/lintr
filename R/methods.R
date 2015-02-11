@@ -44,3 +44,24 @@ split.lints <- function(x, f=NULL, ...) {
   for(i in names(splt)) class(splt[[i]]) <- "lints"
   return(splt)
 }
+
+#' @export
+as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) {
+  data.frame(filename = vapply(x, `[[`, character(1), "filename"),
+             line_number = vapply(x, `[[`, numeric(1), "line_number"),
+             column_number = vapply(x, `[[`, numeric(1), "column_number"),
+             type = vapply(x, `[[`, character(1), "type"),
+             message = vapply(x, `[[`, character(1), "message"),
+             line = vapply(x, `[[`, character(1), "line"),
+             stringsAsFactors = FALSE
+  )
+}
+
+#' @export
+`[.lints` <- function(x, ...) {
+  attrs <- attributes(x)
+  x <- unclass(x)
+  x <- x[...]
+  attributes(x) <- attrs
+  x
+}

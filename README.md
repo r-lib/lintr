@@ -89,9 +89,9 @@ In the SublimeLinter User Settings
 * `line_length_linter`: check the line length of both comments and code is less than
   length.
 * `no_tab_linter`: check that only spaces are used, never tabs.
-* `object_camel_case_linter`: check that function and variable names are not camelCase.
-* `object_snake_case_linter`: check that function and variable names are not snake_case.
-* `object_multiple_dots_linter`: check that function and variable names are separated by `_` rather than `.`.
+* `camel_case_linter`: check that function and variable names are not camelCase.
+* `snake_case_linter`: check that function and variable names are not snake_case.
+* `multiple_dots_linter`: check that function and variable names are separated by `_` rather than `.`.
 * `object_length_linter`: check that function and variable names are not more than `length` characters.
 * `open_curly_linter`: check that opening curly braces are never on their own
   line and are always followed by a newline.
@@ -103,6 +103,24 @@ In the SublimeLinter User Settings
   unless they are in a function call.
 * `trailing_blank_lines_linter`: check there are no trailing blank lines.
 * `trailing_whitespace_linter`: check there are no trailing whitespace characters.
+
+## Project Configuration ##
+
+Lintr supports per-project configuration of the following fields.  The config file is in [Debian Control Field Format](http://www.debian.org/doc/debian-policy/ch-controlfields.html).
+
+- `linters` - see `?with_defaults` for example of specifying only a few non-default linters.
+- `exclude` - a regex pattern for lines to exclude from linting.  Default is "# nolint"
+- `exclude_start` - a regex pattern to start exclusion range. Default is "# nolint start"
+- `exclude_end` - a regex pattern to end exclusion range. Default is "# nolint end"
+
+An example file that uses 120 character line lengths and different exclude regexes would be
+
+```
+linters: with_defaults(line_length_linter(120))
+exclude: "# Exclude Linting"
+exclude_start: "# Begin Exclude Linting"
+exclude_end: "# End Exclude Linting"
+```
 
 ## References ##
 Most of the default linters are based on [Hadley Wickham's R Style Guide](http://r-pkgs.had.co.nz/style.html).

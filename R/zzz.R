@@ -81,6 +81,17 @@ default_linters <- with_defaults(default = list(),
   NULL
 )
 
+settings <- new.env(parent = emptyenv())
+
+#' Default lintr settings
+#' @seealso \code{\link{read_settings}}, \code{\link{default_linters}}
+default_settings <- list(
+  linters = default_linters,
+  exclude = rex::rex("#", any_spaces, "nolint"),
+  exclude_start = rex::rex("#", any_spaces, "nolint start"),
+  exclude_end = rex::rex("#", any_spaces, "nolint end")
+)
+
 .onLoad <- function(libname, pkgname) {
   op <- options()
   op.lintr <- list(

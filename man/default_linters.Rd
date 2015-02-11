@@ -16,8 +16,8 @@
  $ spaces_inside_linter          :
  $ open_curly_linter             :
  $ closed_curly_linter           :
- $ object_camel_case_linter      :
- $ object_multiple_dots_linter   :
+ $ camel_case_linter             :
+ $ multiple_dots_linter          :
  $ object_length_linter          :
  $ object_usage_linter           :
  $ trailing_whitespace_linter    :

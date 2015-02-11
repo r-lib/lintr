@@ -67,7 +67,7 @@ test_that("it prepends the package path if it exists", {
           message = "hi")
         ),
       class = "lints",
-      package_path = "test"
+      path = "test"
       ),
     marker3 <- rstudio_source_markers(lint3),
     expect_equal(marker3$name, "lintr"),

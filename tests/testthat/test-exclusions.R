@@ -1,0 +1,149 @@
+context("parse_exclusions")
+test_that("it returns an empty vector if there are no exclusions", {
+  t1 <- tempfile()
+  on.exit(unlink(t1))
+  writeLines(
+    c("this",
+      "is",
+      "a",
+      "test"), t1)
+  expect_equal(parse_exclusions(t1), numeric(0))
+})
+
+test_that("it returns the line if one line is excluded", {
+  t1 <- tempfile()
+  on.exit(unlink(t1))
+  writeLines(
+    c("this",
+      "is # nolint",
+      "a",
+      "test"), t1)
+  expect_equal(parse_exclusions(t1), c(2))
+  
+  t2 <- tempfile()
+  on.exit(unlink(t2))
+  writeLines(
+    c("this",
+      "is # nolint",
+      "a",
+      "test # nolint"), t2)
+  expect_equal(parse_exclusions(t2), c(2, 4))
+})
+
+test_that("it returns all lines between start and end", {
+  t1 <- tempfile()
+  on.exit(unlink(t1))
+  writeLines(
+    c("this # nolint start",
+      "is",
+      "a # nolint end",
+      "test"), t1)
+  expect_equal(parse_exclusions(t1), c(1, 2, 3))
+  
+  t2 <- tempfile()
+  on.exit(unlink(t2))
+  writeLines(
+    c("this # nolint start",
+      "is",
+      "a # nolint end",
+      "test",
+      "of",
+      "the # nolint start",
+      "emergency # nolint end",
+      "broadcast",
+      "system"
+    ), t2)
+  expect_equal(parse_exclusions(t2), c(1, 2, 3, 6, 7))
+})
+
+test_that("it ignores exclude coverage lines within start and end", {
+  t1 <- tempfile()
+  on.exit(unlink(t1))
+  writeLines(
+    c("this # nolint start",
+      "is # nolint",
+      "a # nolint end",
+      "test"), t1)
+  expect_equal(parse_exclusions(t1), c(1, 2, 3))
+})
+
+test_that("it throws an error if start and end are unpaired", {
+  t1 <- tempfile()
+  on.exit(unlink(t1))
+  writeLines(
+    c("this # nolint start",
+      "is # nolint",
+      "a",
+      "test"), t1)
+  expect_error(parse_exclusions(t1), "but only")
+})
+
+context("normalize_exclusions")
+test_that("it merges two NULL or empty objects as an empty list", {
+  expect_equal(normalize_exclusions(c(NULL, NULL)), list())
+  expect_equal(normalize_exclusions(c(NULL, list())), list())
+  expect_equal(normalize_exclusions(c(list(), NULL)), list())
+  expect_equal(normalize_exclusions(c(list(), list())), list())
+})
+
+test_that("it returns the object if the other is NULL", {
+  t1 <- list(a = 1:10)
+  
+  expect_equal(normalize_exclusions(c(t1, NULL)), t1)
+  expect_equal(normalize_exclusions(c(NULL, t1)), t1)
+})
+
+test_that("it returns the union of two non-overlapping lists", {
+  t1 <- list(a = 1:10)
+  t2 <- list(a = 20:30)
+  
+  expect_equal(normalize_exclusions(c(t1, t2)), list(a = c(1:10, 20:30)))
+})
+
+test_that("it returns the union of two overlapping lists", {
+  t1 <- list(a = 1:10)
+  t2 <- list(a = 5:15)
+  
+  expect_equal(normalize_exclusions(c(t1, t2)), list(a = 1:15))
+})
+
+test_that("it adds names if needed", {
+  t1 <- list(a = 1:10)
+  t2 <- list(b = 5:15)
+  
+  expect_equal(normalize_exclusions(c(t1, t2)), list(a = 1:10, b = 5:15))
+})
+
+test_that("it handles full file exclusions", {
+  
+  expect_equal(normalize_exclusions(list("a")), list(a = Inf))
+  
+  expect_equal(normalize_exclusions(list("a", b = 1)), list(a = Inf, b = 1))
+})
+
+test_that("it handles redundant lines", {
+  
+  expect_equal(normalize_exclusions(list(a=c(1, 1, 1:10))), list(a = 1:10))
+               
+  expect_equal(normalize_exclusions(list(a=c(1, 1, 1:10), b = 1:10)), list(a = 1:10, b = 1:10))
+})
+
+test_that("it handles redundant files", {
+  
+  expect_equal(normalize_exclusions(list(a=c(1:10), a=c(10:20))), list(a = 1:20))           
+})
+
+context("exclude")
+test_that("it excludes properly", {
+  t1 <- lint("exclusions.R")
+  
+  expect_equal(length(t1), 2)
+  
+  t2 <- lint("exclusions.R", exclusions = list(exclusions.R = 4))
+  
+  expect_equal(length(t2), 1)
+  
+  t3 <- lint("exclusions.R", exclusions = list("exclusions.R"))
+  
+  expect_equal(length(t3), 0)
+})

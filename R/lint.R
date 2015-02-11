@@ -14,12 +14,24 @@ NULL
 #' @param linters a list of linter functions to apply see \code{\link{linters}}
 #' for a full list of default and available linters.
 #' @param cache toggle caching of lint results
+#' @param exclusions additional lines or files to exclude.
+#' @param ... additional arguments passed to \code{\link{parse_exclusions}}.
+#' @section Exclusions:
+#' Exclusions can be specified in three different ways.
+#' \enumerate{
+#' \item{single line in the source file. default: \code{# nolint}}
+#' \item{line range in the source file. default: \code{# nolint start}, \code{# nolint end}}
+#' \item{exclusions parameter, a named list of the files and lines to exclude, or just the filenames 
+#' if you want to exclude the entire file.}
+#' }
 #' @export
 #' @name lint_file
-lint <- function(filename, linters = NULL, cache = FALSE) {
+lint <- function(filename, linters = NULL, cache = FALSE, exclusions = NULL, ...) {
 
+  read_settings(filename)
+  
   if (is.null(linters)) {
-    linters <- find_default_linters(filename)
+    linters <- settings$linters
   } else if (!is.list(linters)) {
     name <- deparse(substitute(linters))
    linters <- list(linters)
@@ -72,48 +84,7 @@ lint <- function(filename, linters = NULL, cache = FALSE) {
     save_cache(lint_cache, filename)
   }
 
-  lints
-}
-
-#' Specifying default linters
-#' 
-#' Lintr searches for default linters for a given file in the following order.
-#' \enumerate{
-#'   \item specified using the \code{lintr.linters} option.
-#'   \item \code{linter_file} in the same directory
-#'   \item \code{linter_file} in the project directory
-#'   \item \code{\link{default_linters}}
-#' }
-#' 
-#' The default linter_file name is \code{.lintr} but it can be changed with option 
-#' \code{lintr.linter_file}.
-#' @param filename source file to be linted
-find_default_linters <- function(filename) {
-
-  ## If the linters option is set use that
-  linter_config <- getOption("lintr.linters")
-  if (!is.null(linter_config)) {
-    return(linter_config)
-  }
-
-  path <- dirname(filename)
-  linter_file <- getOption("lintr.linter_file")
-
-  ## next check for a .linters file in the current directory
-  linter_config <- file.path(path, linter_file)
-  if (isTRUE(file.exists(linter_config))) {
-    return(source(linter_config)$value)
-  }
-
-  ## next check for a .linters file in the project directory
-  project <- find_package(path)
-  linter_config <- file.path(project, linter_file)
-  if (isTRUE(file.exists(linter_config))) {
-    return(source(linter_config)$value)
-  }
-
-  ## lastly use the default linters
-  default_linters
+  exclude(lints, exclusions, ...)
 }
 
 reorder_lints <- function(lints) {
@@ -166,16 +137,17 @@ lint_package <- function(path = NULL, relative_path = TRUE, ...) {
     message()
   }
 
+  lints <- reorder_lints(lints)
+  
   if (relative_path == TRUE) {
     lints[] <- lapply(lints,
       function(x) {
         x$filename <- re_substitutes(x$filename, rex(path, one_of("/", "\\")), "")
         x
       })
-    attr(lints, "package_path") <- path
+    attr(lints, "path") <- path
   }
-
-  lints <- reorder_lints(lints)
+  
   class(lints) <- "lints"
   lints
 }
@@ -236,7 +208,7 @@ Lint <- function(filename, line_number = 1L, column_number = NULL,
 rstudio_source_markers <- function(lints) {
 
   # package path will be NULL unless it is a relative path
-  package_path <- attr(lints, "package_path")
+  package_path <- attr(lints, "path")
 
   # generate the markers
   markers <- lapply(lints, function(x) {

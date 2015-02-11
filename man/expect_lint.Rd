@@ -4,7 +4,7 @@
 \alias{expect_lint}
 \title{Lint expectation}
 \usage{
-expect_lint(content, checks, ...)
+expect_lint(content, checks, ..., file = NULL)
 }
 \arguments{
 \item{content}{the file content to be linted}
@@ -19,6 +19,8 @@ different checks depending on the value of checks.
 }}
 
 \item{...}{one or more linters to use for the check}
+
+\item{file}{if not \code{NULL} read content from a file rather than from \code{content}}
 }
 \description{
 Lint expectation

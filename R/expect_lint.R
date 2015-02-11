@@ -10,8 +10,13 @@
 #'   \item list-vectors check if the given lint matches (use if more than one lint is returned for the content)
 #' }
 #' @param ... one or more linters to use for the check
-expect_lint <- function(content, checks, ...) {
+#' @param file if not \code{NULL} read content from a file rather than from \code{content}
+expect_lint <- function(content, checks, ..., file = NULL) {
 
+  if (!is.null(file)) {
+    content <- readChar(file, file.info(file)$size)
+  }
+  
   results <- expectation_lint(content, checks, ...)
 
   reporter <- testthat::get_reporter()
@@ -65,7 +70,7 @@ expectation_lint <- function(content, checks, ...) {
           " lints as expected from content:", content, lints)))
   }
 
-  itr <- 0L
+  itr <- 0L #nolint
   mapply(function(lint, check) {
     itr <- itr + 1L
     lapply(names(check), function(field) {
@@ -106,4 +111,11 @@ expectation_lint <- function(content, checks, ...) {
   },
   lints,
   checks)
+}
+
+#' Lint free expectation
+#'
+#' @inheritParams expect_lint
+expect_lint_free <- function(content, ...) {
+  expect_lint(content, NULL, ...)
 }
