@@ -70,6 +70,9 @@ lint <- function(filename, linters = default_linters, cache = FALSE) {
     save_cache(lint_cache, filename)
   }
 
+  ends_with_noqa <- function(s) grepl("# no-qa$", str_trim(s$line))
+
+  lints <- Filter(ends_with_noqa, lints)
   lints
 }
 
