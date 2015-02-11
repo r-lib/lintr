@@ -47,7 +47,7 @@ object_lint <- function(source_file, parsed, message) {
 
 #' @describeIn linters check that objects are not in camelCase.
 #' @export
-object_camel_case_linter <- make_object_linter(function(source_file, parsed) {
+camel_case_linter <- make_object_linter(function(source_file, parsed) {
 
   is_camel_case <- re_matches(parsed$text, rex(lower, upper))
 
@@ -64,7 +64,7 @@ object_camel_case_linter <- make_object_linter(function(source_file, parsed) {
 
 #' @describeIn linters check that objects are not in snake_case.
 #' @export
-object_snake_case_linter <- make_object_linter(function(source_file, parsed) {
+snake_case_linter <- make_object_linter(function(source_file, parsed) {
 
   is_snake_case <- re_matches(parsed$text, rex(alnum, "_", alnum))
 
@@ -80,7 +80,7 @@ object_snake_case_linter <- make_object_linter(function(source_file, parsed) {
 
 #' @describeIn linters check that objects do not have.multiple.dots.
 #' @export
-object_multiple_dots_linter <- make_object_linter(function(source_file, parsed) {
+multiple_dots_linter <- make_object_linter(function(source_file, parsed) {
 
   has_multiple_dots <- re_matches(parsed$text, rex(".", something, "."))
   if (has_multiple_dots) {

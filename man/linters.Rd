@@ -3,19 +3,19 @@
 \name{absolute_paths_linter}
 \alias{absolute_paths_linter}
 \alias{assignment_linter}
+\alias{camel_case_linter}
 \alias{closed_curly_linter}
 \alias{commas_linter}
 \alias{infix_spaces_linter}
 \alias{line_length_linter}
 \alias{linters}
+\alias{multiple_dots_linter}
 \alias{no_tab_linter}
-\alias{object_camel_case_linter}
 \alias{object_length_linter}
-\alias{object_multiple_dots_linter}
-\alias{object_snake_case_linter}
 \alias{object_usage_linter}
 \alias{open_curly_linter}
 \alias{single_quotes_linter}
+\alias{snake_case_linter}
 \alias{spaces_inside_linter}
 \alias{spaces_left_parentheses_linter}
 \alias{trailing_blank_lines_linter}
@@ -38,11 +38,11 @@ no_tab_linter(source_file)
 
 object_usage_linter(source_file)
 
-object_camel_case_linter(source_file)
+camel_case_linter(source_file)
 
-object_snake_case_linter(source_file)
+snake_case_linter(source_file)
 
-object_multiple_dots_linter(source_file)
+multiple_dots_linter(source_file)
 
 object_length_linter(length = 20L)
 
@@ -89,11 +89,11 @@ than length.
 \code{\link[codetools]{checkUsage}}.  Note this runs
 \code{\link[base]{eval}} on the code, so do not use with untrusted code.
 
-\item \code{object_camel_case_linter}: check that objects are not in camelCase.
+\item \code{camel_case_linter}: check that objects are not in camelCase.
 
-\item \code{object_snake_case_linter}: check that objects are not in snake_case.
+\item \code{snake_case_linter}: check that objects are not in snake_case.
 
-\item \code{object_multiple_dots_linter}: check that objects do not have.multiple.dots.
+\item \code{multiple_dots_linter}: check that objects do not have.multiple.dots.
 
 \item \code{object_length_linter}: check that objects do are not very long.not
 have.multiple.dots.
