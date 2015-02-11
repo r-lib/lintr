@@ -1,25 +1,41 @@
-exclude <- function(lints, exclusions = NULL, ...) {
+#' Exclude lines or files from linting
+#' 
+#' @param lints that need to be filetered.
+#' @param exclusions manually specified exclusions
+#' @param ... additional arguments passed to \code{\link{parse_exclusions}}
+#' @param full_path whether to exclude using the full or relative paths
+#' @details
+#' Exclusions can be specified in three different ways.
+#' \enumerate{
+#' \item{single line in the source file. default: \code{# nolint}}
+#' \item{line range in the source file. default: \code{# nolint start}, \code{# nolint end}}
+#' \item{exclusions parameter, a named list of the files and lines to exclude, or just the filenames 
+#' if you want to exclude the entire file.}
+#' }
+exclude <- function(lints, exclusions = settings$exclusions, ..., full_path = FALSE) {
+  if (length(lints) <= 0) {
+    return(lints)
+  }
+
   df <- as.data.frame(lints)
-  
+
   filenames <- unique(df$filename)
-  
-  full_filenames <-
-    if (!is.null(attr(lints, "path"))) {
-      file.path(attr(lints, "path"), filenames)
-    } else {
-      filenames
-    }
-  
-  source_exclusions <- lapply(full_filenames, parse_exclusions, ...)
+
+  source_exclusions <- lapply(filenames, parse_exclusions, ...)
   names(source_exclusions) <- filenames
-  
-  excl <- normalize_exclusions(c(source_exclusions, exclusions))
-  
+
+  excl <- normalize_exclusions(c(source_exclusions, exclusions), full_path = full_path)
+
   to_exclude <- vapply(seq_len(NROW(df)),
     function(i) {
       file <- df$filename[i]
+
+      if (full_path) {
+        file <- normalizePath(file)
+      }
+
       file %in% names(excl) &&
-        excl[[file]] == Inf |
+        excl[[file]] == Inf ||
         df$line_number[i] %in% excl[[file]]
      },
     logical(1))
@@ -27,7 +43,7 @@ exclude <- function(lints, exclusions = NULL, ...) {
   if (any(to_exclude)) {
     lints <- lints[!to_exclude]
   }
-  
+
   lints
 }
 #' read a source file and parse all the excluded lines from it
@@ -40,44 +56,44 @@ parse_exclusions <- function(file, exclude = settings$exclude,
                              exclude_start = settings$exclude_start,
                              exclude_end = settings$exclude_end) {
   lines <- readLines(file)
-  
+
   exclusions <- numeric(0)
-  
+
   starts <- which(rex::re_matches(lines, exclude_start))
   ends <- which(rex::re_matches(lines, exclude_end))
-  
+
   if (length(starts) > 0) {
     if (length(starts) != length(ends)) {
       stop(file, " has ", length(starts), " starts but only ", length(ends), " ends!")
     }
-    
+
     for(i in seq_along(starts)) {
       exclusions <- c(exclusions, seq(starts[i], ends[i]))
     }
   }
-  
+
   sort(unique(c(exclusions, which(rex::re_matches(lines, exclude)))))
 }
 
-normalize_exclusions <- function(x) {
+normalize_exclusions <- function(x, full_path = FALSE) {
   if (is.null(x) || length(x) <= 0) {
     return(list())
   }
-  
+
   # no named parameters at all
   if (is.null(names(x))) {
     x <- structure(relist(rep(Inf, length(x)), x), names = x)
   } else {
     unnamed <- names(x) == ""
     if (any(unnamed)) {
-      
+
       # must be character vectors of length 1
-      bad <- vapply(seq_along(x), 
+      bad <- vapply(seq_along(x),
         function(i) {
           unnamed[i] & (!is.character(x[[i]]) | length(x[[i]]) != 1)
         },
         logical(1))
-      
+
       if (any(bad)) {
         stop("Full file exclusions must be character vectors of length 1. items: ",
              paste(collapse = ", ", which(bad)),
@@ -87,6 +103,10 @@ normalize_exclusions <- function(x) {
       names(x)[unnamed] <- x[unnamed]
       x[unnamed] <- Inf
     }
+  }
+
+  if (full_path) {
+    names(x) <- normalizePath(names(x))
   }
   
   remove_line_duplicates(
@@ -98,8 +118,10 @@ normalize_exclusions <- function(x) {
 
 remove_file_duplicates <- function(x) {
   unique_names <- unique(names(x))
-  if (length(unique_names) < length(names(x))) { # must be duplicate files
-    x <- lapply(unique_names, 
+
+  ## check for duplicate files
+  if (length(unique_names) < length(names(x))) {
+    x <- lapply(unique_names,
                 function(name) {
                   vals <- unname(unlist(x[names(x) == name]))
                   if (any(vals == Inf)) {
@@ -108,16 +130,16 @@ remove_file_duplicates <- function(x) {
                     vals
                   }
                 })
-    
+
     names(x) <- unique_names
   }
-  
+
   x
 }
 
 remove_line_duplicates <- function(x) {
   x[] <- lapply(x, unique)
-  
+
   x
 }
 remove_empty <- function(x) {

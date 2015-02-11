@@ -32,5 +32,3 @@ test_that("returns the correct linting", {
     NULL,
     commas_linter)
 })
-
-

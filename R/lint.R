@@ -14,22 +14,14 @@ NULL
 #' @param linters a list of linter functions to apply see \code{\link{linters}}
 #' for a full list of default and available linters.
 #' @param cache toggle caching of lint results
-#' @param exclusions additional lines or files to exclude.
-#' @param ... additional arguments passed to \code{\link{parse_exclusions}}.
-#' @section Exclusions:
-#' Exclusions can be specified in three different ways.
-#' \enumerate{
-#' \item{single line in the source file. default: \code{# nolint}}
-#' \item{line range in the source file. default: \code{# nolint start}, \code{# nolint end}}
-#' \item{exclusions parameter, a named list of the files and lines to exclude, or just the filenames 
-#' if you want to exclude the entire file.}
-#' }
+#' @param ... additional arguments passed to \code{\link{exclude}}.
 #' @export
 #' @name lint_file
-lint <- function(filename, linters = NULL, cache = FALSE, exclusions = NULL, ...) {
+lint <- function(filename, linters = NULL, cache = FALSE, ...) {
 
   read_settings(filename)
-  
+  on.exit(clear_settings, add = TRUE)
+
   if (is.null(linters)) {
     linters <- settings$linters
   } else if (!is.list(linters)) {
@@ -59,7 +51,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, exclusions = NULL, ...
       }
       else {
 
-        expr_lints <- flatten_lints(linters[[linter]](expr))
+        expr_lints <- flatten_lints(linters[[linter]](expr)) # nolint
 
         lints[[itr <- itr + 1L]] <- expr_lints
         if (cache) {
@@ -84,7 +76,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, exclusions = NULL, ...
     save_cache(lint_cache, filename)
   }
 
-  exclude(lints, exclusions, ...)
+  exclude(lints, ...)
 }
 
 reorder_lints <- function(lints) {
@@ -113,14 +105,14 @@ lint_package <- function(path = NULL, relative_path = TRUE, ...) {
   if (is.null(path)) {
     path <- find_package()
   }
-  
+
   files <- dir(
-    path = file.path(path, 
+    path = file.path(path,
                      c("R",
                        "tests",
                        "inst")
                      ),
-    pattern = rex(".", one_of("Rr"), end),
+    pattern = rex::rex(".", one_of("Rr"), end),
     recursive = TRUE,
     full.names = TRUE
   )
@@ -130,15 +122,15 @@ lint_package <- function(path = NULL, relative_path = TRUE, ...) {
         if (interactive()) {
           message(".", appendLF = FALSE)
         }
-        lint(file, ...)
+        lint(file, ..., full_path = TRUE)
       }))
 
   if (interactive()) {
-    message()
+    message() # for a newline
   }
 
   lints <- reorder_lints(lints)
-  
+
   if (relative_path == TRUE) {
     lints[] <- lapply(lints,
       function(x) {
@@ -147,8 +139,9 @@ lint_package <- function(path = NULL, relative_path = TRUE, ...) {
       })
     attr(lints, "path") <- path
   }
-  
+
   class(lints) <- "lints"
+
   lints
 }
 

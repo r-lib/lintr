@@ -1,0 +1,12 @@
+a <- function() {
+  x = 1 #TeSt_NoLiNt
+
+  b = 2
+
+  c = 3 #TeSt_NoLiNt_StArT
+  b + 1
+  d = 4
+  e = 5 #TeSt_NoLiNt_EnD
+  f = 6
+  f + 1
+}

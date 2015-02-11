@@ -49,5 +49,3 @@ test_that("returns the correct linting", {
     NULL,
     spaces_left_parentheses_linter)
 })
-
-

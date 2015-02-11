@@ -51,4 +51,3 @@ test_that("returns the correct linting", {
     NULL,
     spaces_inside_linter)
 })
-

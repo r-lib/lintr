@@ -34,4 +34,3 @@ test_that("returns the correct linting", {
     rex("Opening curly braces should never go on their own line and should always be followed by a new line."),
     open_curly_linter)
 })
-

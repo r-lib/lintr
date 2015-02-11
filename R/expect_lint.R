@@ -16,8 +16,8 @@ expect_lint <- function(content, checks, ..., file = NULL) {
   if (!is.null(file)) {
     content <- readChar(file, file.info(file)$size)
   }
-  
-  results <- expectation_lint(content, checks, ...)
+
+    results <- expectation_lint(content, checks, ...)
 
   reporter <- testthat::get_reporter()
 
