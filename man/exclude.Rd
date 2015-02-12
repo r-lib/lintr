@@ -4,7 +4,7 @@
 \alias{exclude}
 \title{Exclude lines or files from linting}
 \usage{
-exclude(lints, exclusions = settings$exclusions, ...)
+exclude(lints, exclusions = settings$exclusions, ..., full_path = FALSE)
 }
 \arguments{
 \item{lints}{that need to be filetered.}
@@ -12,6 +12,8 @@ exclude(lints, exclusions = settings$exclusions, ...)
 \item{exclusions}{manually specified exclusions}
 
 \item{...}{additional arguments passed to \code{\link{parse_exclusions}}}
+
+\item{full_path}{whether to exclude using the full or relative paths}
 }
 \description{
 Exclude lines or files from linting

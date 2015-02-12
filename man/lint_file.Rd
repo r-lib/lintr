@@ -5,7 +5,7 @@
 \alias{lint_file}
 \title{Lint a given file}
 \usage{
-lint(filename, linters = NULL, cache = FALSE, exclusions = NULL, ...)
+lint(filename, linters = NULL, cache = FALSE, ...)
 }
 \arguments{
 \item{filename}{the given filename to lint.}
@@ -15,21 +15,9 @@ for a full list of default and available linters.}
 
 \item{cache}{toggle caching of lint results}
 
-\item{exclusions}{additional lines or files to exclude.}
-
-\item{...}{additional arguments passed to \code{\link{parse_exclusions}}.}
+\item{...}{additional arguments passed to \code{\link{exclude}}.}
 }
 \description{
 Apply one or more linters to a file and return a list of lints found.
-}
-\section{Exclusions}{
-
-Exclusions can be specified in three different ways.
-\enumerate{
-\item{single line in the source file. default: \code{# nolint}}
-\item{line range in the source file. default: \code{# nolint start}, \code{# nolint end}}
-\item{exclusions parameter, a named list of the files and lines to exclude, or just the filenames
-if you want to exclude the entire file.}
-}
 }
 

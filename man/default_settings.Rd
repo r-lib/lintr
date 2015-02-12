@@ -4,8 +4,8 @@
 \name{default_settings}
 \alias{default_settings}
 \title{Default lintr settings}
-\format{\preformatted{List of 5
- $ linters      :List of 17
+\format{\preformatted{List of 6
+ $ linters        :List of 17
   ..$ assignment_linter             :
   ..$ single_quotes_linter          :
   ..$ absolute_paths_linter         :
@@ -23,10 +23,11 @@
   ..$ object_usage_linter           :
   ..$ trailing_whitespace_linter    :
   ..$ trailing_blank_lines_linter   :
- $ exclude      :Class 'regex'  chr "#[[:space:]]*nolint"
- $ exclude_start:Class 'regex'  chr "#[[:space:]]*nolint start"
- $ exclude_end  :Class 'regex'  chr "#[[:space:]]*nolint end"
- $ exclusions   : NULL
+ $ exclude        :Class 'regex'  chr "#[[:space:]]*nolint"
+ $ exclude_start  :Class 'regex'  chr "#[[:space:]]*nolint start"
+ $ exclude_end    :Class 'regex'  chr "#[[:space:]]*nolint end"
+ $ exclusions     : NULL
+ $ cache_directory: chr "~/.R/lintr_cache"
 }}
 \usage{
 default_settings
