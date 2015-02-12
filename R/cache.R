@@ -5,7 +5,13 @@
 #' @param path directory to store caches.  Reads option 'lintr.cache_directory'
 #' as the default.
 #' @export
-clear_cache <- function(file, path = getOption("lintr.cache_directory")) {
+clear_cache <- function(file = NULL, path = NULL) {
+  read_settings(file)
+
+  if (is.null(path)) {
+    path <- settings$cache_directory
+  }
+
   if (is.null(file)) {
     unlink(path, recursive = TRUE)
   }
@@ -15,18 +21,30 @@ clear_cache <- function(file, path = getOption("lintr.cache_directory")) {
   }
 }
 
-load_cache <- function(file, path = getOption("lintr.cache_directory")) {
+load_cache <- function(file, path = NULL) {
+  read_settings(file)
+
+  if (is.null(path)) {
+    path <- settings$cache_directory
+  }
+
   file <- basename(file)
   env <- new.env(parent=emptyenv())
 
   file_path <- file.path(path, file)
   if (file.exists(file_path)) {
-    load(file = file.path(path, file), envir = env)
+    load(file = file_path, envir = env)
   }
   env
 }
 
-save_cache <- function(cache, file, path = getOption("lintr.cache_directory")) {
+save_cache <- function(cache, file, path = NULL) {
+  read_settings(file)
+
+  if (is.null(path)) {
+    path <- settings$cache_directory
+  }
+
   file <- basename(file)
   if (!file.exists(path)) {
     dir.create(path, recursive = TRUE)
@@ -40,6 +58,7 @@ cache_file <- function(cache, filename, linters, lints) {
     value = lints
   )
 }
+
 retrieve_file <- function(cache, filename, linters) {
   key <- digest::digest(list(linters, readLines(filename)), algo = "sha1")
   if (exists(key, envir = cache)) {
@@ -55,14 +74,14 @@ retrieve_file <- function(cache, filename, linters) {
 cache_lint <- function(cache, expr, linter, lints) {
   assign(
     envir = cache,
-    x = digest::digest(list(linter, expr$content), algo="sha1"),
+    x = digest::digest(list(linter, expr$content), algo = "sha1"),
     value = lints)
 }
 
 retrieve_lint <- function(cache, expr, linter, lines) {
   lints <- get(
     envir = cache,
-    x = digest::digest(list(linter, expr$content), algo="sha1")
+    x = digest::digest(list(linter, expr$content), algo = "sha1")
   )
   lints[] <- lapply(lints, function(lint) {
     lint$line_number <- find_new_line(lint$line_number, unname(lint$line), lines)
@@ -74,7 +93,7 @@ retrieve_lint <- function(cache, expr, linter, lines) {
 
 has_lint <- function(cache, expr, linter) {
   exists(envir = cache,
-    x = digest::digest(list(linter, expr$content), algo="sha1"),
+    x = digest::digest(list(linter, expr$content), algo = "sha1"),
     )
 }
 

@@ -90,13 +90,13 @@ default_settings <- list(
   exclude = rex::rex("#", any_spaces, "nolint"),
   exclude_start = rex::rex("#", any_spaces, "nolint start"),
   exclude_end = rex::rex("#", any_spaces, "nolint end"),
-  exclusions = NULL
+  exclusions = NULL,
+  cache_directory = "~/.R/lintr_cache" # nolint
 )
 
 .onLoad <- function(libname, pkgname) { # nolint
   op <- options()
   op.lintr <- list(
-    lintr.cache_directory = "~/.R/lintr_cache", # nolint
     lintr.linter_file = ".lintr"
   )
   toset <- ! (names(op.lintr) %in% names(op))
