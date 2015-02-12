@@ -8,14 +8,15 @@ print.lint <- function(x, ...) {
     crayon::bold
   )
 
-  message(
+  cat(
     crayon::bold(x$filename, ":",
     as.character(x$line_number), ":",
     as.character(x$column_number), ": ", sep = ""),
     color(x$type, ": ", sep = ""),
     crayon::bold(x$message), "\n",
     x$line, "\n",
-    highlight_string(x$message, x$column_number, x$ranges)
+    highlight_string(x$message, x$column_number, x$ranges),
+    "\n"
     )
   invisible(x)
 }

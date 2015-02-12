@@ -5,7 +5,7 @@
 \alias{lint_file}
 \title{Lint a given file}
 \usage{
-lint(filename, linters = NULL, cache = FALSE, ...)
+lint(filename, linters = NULL, cache = FALSE, ..., parse_settings = TRUE)
 }
 \arguments{
 \item{filename}{the given filename to lint.}
@@ -16,6 +16,8 @@ for a full list of default and available linters.}
 \item{cache}{toggle caching of lint results}
 
 \item{...}{additional arguments passed to \code{\link{exclude}}.}
+
+\item{parse_settings}{whether to try and parse the settings}
 }
 \description{
 Apply one or more linters to a file and return a list of lints found.

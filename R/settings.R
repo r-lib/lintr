@@ -24,16 +24,12 @@ read_settings <- function(filename) {
   }
 
   for (setting in names(default_settings)) {
-    settings[[setting]] <- get_setting(setting, config, default_settings)
-    
-    # excludes are always defined relative to the package path
-    if (setting == "excludes") {
-      path = find_package(dirname(filename))
-      
-      if (!is.null(path)) {
-        names(settings[[setting]]) <- normalizePath(file.path(path, names(settings[[setting]])))
-      }
+    value <- get_setting(setting, config, default_settings)
+    if (setting == "exclusions") {
+      value <- normalize_exclusions(value)
     }
+
+    settings[[setting]] <- value
   }
 }
 

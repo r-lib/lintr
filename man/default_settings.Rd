@@ -26,7 +26,7 @@
  $ exclude        :Class 'regex'  chr "#[[:space:]]*nolint"
  $ exclude_start  :Class 'regex'  chr "#[[:space:]]*nolint start"
  $ exclude_end    :Class 'regex'  chr "#[[:space:]]*nolint end"
- $ exclusions     : NULL
+ $ exclusions     : list()
  $ cache_directory: chr "~/.R/lintr_cache"
 }}
 \usage{

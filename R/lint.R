@@ -15,12 +15,15 @@ NULL
 #' for a full list of default and available linters.
 #' @param cache toggle caching of lint results
 #' @param ... additional arguments passed to \code{\link{exclude}}.
+#' @param parse_settings whether to try and parse the settings
 #' @export
 #' @name lint_file
-lint <- function(filename, linters = NULL, cache = FALSE, ...) {
+lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = TRUE) {
 
-  read_settings(filename)
-  on.exit(clear_settings, add = TRUE)
+  if (isTRUE(parse_settings)) {
+    read_settings(filename)
+    on.exit(clear_settings, add = TRUE)
+  }
 
   if (is.null(linters)) {
     linters <- settings$linters
@@ -106,6 +109,11 @@ lint_package <- function(path = NULL, relative_path = TRUE, ...) {
     path <- find_package()
   }
 
+  read_settings(path)
+  on.exit(clear_settings, add = TRUE)
+  
+  names(settings$exclusions) <- normalizePath(file.path(path, names(settings$exclusions)))
+
   files <- dir(
     path = file.path(path,
                      c("R",
@@ -117,12 +125,14 @@ lint_package <- function(path = NULL, relative_path = TRUE, ...) {
     full.names = TRUE
   )
 
+  files <- normalizePath(files)
+
   lints <- flatten_lints(lapply(files,
       function(file) {
         if (interactive()) {
           message(".", appendLF = FALSE)
         }
-        lint(file, ...)
+        lint(file, ..., parse_settings = FALSE)
       }))
 
   if (interactive()) {
@@ -134,7 +144,7 @@ lint_package <- function(path = NULL, relative_path = TRUE, ...) {
   if (relative_path == TRUE) {
     lints[] <- lapply(lints,
       function(x) {
-        x$filename <- re_substitutes(x$filename, rex(path, one_of("/", "\\")), "")
+        x$filename <- re_substitutes(x$filename, rex(normalizePath(path), one_of("/", "\\")), "")
         x
       })
     attr(lints, "path") <- path
@@ -150,7 +160,7 @@ find_package <- function(path = getwd()) {
   on.exit(setwd(start_wd))
   setwd(path)
 
-  prev_path <- ""
+  prev_path <- start_wd
   while (!file.exists(file.path(prev_path, "DESCRIPTION"))) {
     # this condition means we are at the root directory, so give up
     if (prev_path %==% getwd()) {

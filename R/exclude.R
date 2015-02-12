@@ -3,7 +3,6 @@
 #' @param lints that need to be filetered.
 #' @param exclusions manually specified exclusions
 #' @param ... additional arguments passed to \code{\link{parse_exclusions}}
-#' @param full_path whether to exclude using the full or relative paths
 #' @details
 #' Exclusions can be specified in three different ways.
 #' \enumerate{
@@ -12,7 +11,7 @@
 #' \item{exclusions parameter, a named list of the files and lines to exclude, or just the filenames 
 #' if you want to exclude the entire file.}
 #' }
-exclude <- function(lints, exclusions = settings$exclusions, ..., full_path = FALSE) {
+exclude <- function(lints, exclusions = settings$exclusions, ...) {
   if (length(lints) <= 0) {
     return(lints)
   }
@@ -29,6 +28,7 @@ exclude <- function(lints, exclusions = settings$exclusions, ..., full_path = FA
   to_exclude <- vapply(seq_len(NROW(df)),
     function(i) {
       file <- df$filename[i]
+
 
       file %in% names(excl) &&
         excl[[file]] == Inf ||
@@ -71,7 +71,7 @@ parse_exclusions <- function(file, exclude = settings$exclude,
   sort(unique(c(exclusions, which(rex::re_matches(lines, exclude)))))
 }
 
-normalize_exclusions <- function(x, full_path = FALSE) {
+normalize_exclusions <- function(x) {
   if (is.null(x) || length(x) <= 0) {
     return(list())
   }
