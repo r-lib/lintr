@@ -1,7 +1,7 @@
 context("clear_cache")
 test_that("it calls unlink with the filename if given a file", {
   with_mock(
-    read_settings = function(...) invisible(...),
+    `lintr::read_settings` = function(...) invisible(...),
     `base::unlink` = function(...) return(list(...)),
 
     expect_equal(clear_cache(file = "file", path = "."), list(file.path(".", "file"))),
@@ -11,7 +11,7 @@ test_that("it calls unlink with the filename if given a file", {
 })
 test_that("it calls unlink with the directory if given a file", {
   with_mock(
-    read_settings = function(...) invisible(...),
+    `lintr::read_settings` = function(...) invisible(...),
     `base::unlink` = function(...) return(list(...)),
 
     expect_equal(clear_cache(file = NULL, path = "."), list(".", recursive = TRUE))
@@ -21,7 +21,7 @@ test_that("it calls unlink with the directory if given a file", {
 context("load_cache")
 test_that("it loads the saved file in a new empty environment", {
   with_mock(
-    read_settings = function(...) invisible(...),
+    `lintr::read_settings` = function(...) invisible(...),
 
     f1 <- tempfile(),
     on.exit(unlink(f1)),
@@ -36,7 +36,7 @@ test_that("it loads the saved file in a new empty environment", {
 
 test_that("it returns an empty environment if no file exists", {
   with_mock(
-    read_settings = function(...) invisible(...),
+    `lintr::read_settings` = function(...) invisible(...),
 
     t1 <- load_cache(file = tempfile(), path = "."),
 
@@ -47,7 +47,7 @@ test_that("it returns an empty environment if no file exists", {
 context("save_cache")
 test_that("it creates a directory if it doesn't exist", {
   with_mock(
-    read_settings = function(...) invisible(...),
+    `lintr::read_settings` = function(...) invisible(...),
 
     e1 <- new.env(parent = emptyenv()),
     f1 <- tempfile(),
@@ -64,7 +64,7 @@ test_that("it creates a directory if it doesn't exist", {
 
 test_that("it saves all non-hidden objects from the environment", {
   with_mock(
-    read_settings = function(...) invisible(...),
+    `lintr::read_settings` = function(...) invisible(...),
 
     e1 <- new.env(parent = emptyenv()),
     e1$t1 <- 1,
