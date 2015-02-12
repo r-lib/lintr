@@ -2,16 +2,16 @@
 % Please edit documentation in R/expect_lint.R
 \name{expect_lint_free}
 \alias{expect_lint_free}
-\title{Lint free expectation}
+\title{Test that the package is lint free}
 \usage{
-expect_lint_free(content, ...)
+expect_lint_free(...)
 }
 \arguments{
-\item{content}{the file content to be linted}
-
-\item{...}{one or more linters to use for the check}
+\item{...}{arguments passed to \code{\link{lint_package}}}
 }
 \description{
-Lint free expectation
+This function is a thin wrapper around lint_package that simply tests there are no
+lints in the package.  It can be used to ensure that your tests fail if the package
+contains lints.
 }
 

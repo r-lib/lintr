@@ -113,9 +113,19 @@ expectation_lint <- function(content, checks, ...) {
   checks)
 }
 
-#' Lint free expectation
-#'
-#' @inheritParams expect_lint
-expect_lint_free <- function(content, ...) {
-  expect_lint(content, NULL, ...)
+#' Test that the package is lint free
+#' 
+#' This function is a thin wrapper around lint_package that simply tests there are no 
+#' lints in the package.  It can be used to ensure that your tests fail if the package 
+#' contains lints.
+#' 
+#' @param ... arguments passed to \code{\link{lint_package}}
+#' @export
+expect_lint_free <- function(...) {
+  lints <- lint_package(...)
+  has_lints <- length(lints) > 0
+  if (has_lints) {
+    print(lints)
+  }
+  testthat::expectation(!has_lints, "not lint free", "lint free")
 }

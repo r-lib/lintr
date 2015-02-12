@@ -122,7 +122,7 @@ lint_package <- function(path = NULL, relative_path = TRUE, ...) {
         if (interactive()) {
           message(".", appendLF = FALSE)
         }
-        lint(file, ..., full_path = TRUE)
+        lint(file, ...)
       }))
 
   if (interactive()) {
