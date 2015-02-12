@@ -108,7 +108,7 @@ normalize_exclusions <- function(x, full_path = FALSE) {
   if (full_path) {
     names(x) <- normalizePath(names(x))
   }
-  
+
   remove_line_duplicates(
     remove_file_duplicates(
       remove_empty(x)
