@@ -25,7 +25,7 @@ github_comment <- function(text, token = settings$comment_token) {
   info <- get_travis_build_info()
 
   message(capture.output(str(info)))
-  message(capture.output(str(settings)))
+  message(capture.output(str(settings$comment_token)))
   
   if (!is.null(info$pull) && info$pull != "false") {
     response <- httr::POST("https://api.github.com",
@@ -41,6 +41,6 @@ github_comment <- function(text, token = settings$comment_token) {
       encode = "json")
   }
   if (httr::status_code(response) >= 300) {
-    stop(httr::http_condition(response, "error", message = httr::content(response)))
+    stop(httr::http_condition(response, "error", message = httr::content(response, as = "text")))
   }
 }
