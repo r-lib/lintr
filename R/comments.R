@@ -32,6 +32,8 @@ github_comment <- function(text, token = settings$comment_token) {
       encode = "json")
     httr::stop_for_status(response)
   } else if (!is.null(info$commit)) {
+    str(info)
+    str(token)
     response <- httr::POST("https://api.github.com",
       path=paste(sep = "/", "repos", info$user, info$repo, "commits", info$commit, "comments"),
       body = list("body"=jsonlite::unbox(text)),
