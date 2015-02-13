@@ -57,6 +57,8 @@ find_config <- function(filename) {
 
   if (!is_directory(filename)) {
     path <- dirname(filename)
+  } else {
+    path <- filename
   }
   ## check for a file in the current directory
   linter_config <- file.path(path, linter_file)
