@@ -15,7 +15,7 @@ script: ./travis-tool.sh run_tests
 after_success:
   - Rscript -e 'library(covr);coveralls()'
 
-on_failure:
+after_failure:
   - ./travis-tool.sh dump_logs
 
 notifications:
