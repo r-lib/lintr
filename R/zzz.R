@@ -81,8 +81,6 @@ default_linters <- with_defaults(default = list(),
   NULL
 )
 
-settings <- new.env(parent = emptyenv())
-
 #' Default lintr settings
 #' @seealso \code{\link{read_settings}}, \code{\link{default_linters}}
 default_settings <- list(
@@ -91,8 +89,11 @@ default_settings <- list(
   exclude_start = rex::rex("#", any_spaces, "nolint start"),
   exclude_end = rex::rex("#", any_spaces, "nolint end"),
   exclusions = list(),
-  cache_directory = "~/.R/lintr_cache" # nolint
+  cache_directory = "~/.R/lintr_cache", # nolint
+  comment_token = "4e710f82c0d85359729bbefe8f22d20822617d57"
 )
+
+settings <- list2env(default_settings, parent = emptyenv())
 
 .onLoad <- function(libname, pkgname) { # nolint
   op <- options()

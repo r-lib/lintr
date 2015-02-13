@@ -26,8 +26,13 @@ print.lints <- function(x, ...) {
   if (getOption("lintr.rstudio_source_markers", TRUE) &&
       rstudioapi::hasFun("sourceMarkers")) {
     rstudio_source_markers(x)
-  }
-  else {
+  } else if (in_travis()) {
+    has_lints <- length(x) > 0
+    if (has_lints) {
+      lint_output <- paste(collapse = "\n", capture.output(lapply(x, print, ...)))
+      github_comment(lint_output, ...)
+    }
+  } else {
     lapply(x, print, ...)
   }
   invisible(x)
