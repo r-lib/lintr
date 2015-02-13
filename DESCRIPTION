@@ -17,7 +17,9 @@ Imports:
     testthat,
     digest,
     igraph,
-    rstudioapi (>= 0.2)
+    rstudioapi (>= 0.2),
+    httr,
+    jsonlite
 License: MIT + file LICENSE
 LazyData: true
 Suggests:

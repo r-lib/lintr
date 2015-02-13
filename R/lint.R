@@ -104,10 +104,8 @@ reorder_lints <- function(lints) {
 #' absolute path.
 #' @param ... additional arguments passed to \code{\link{lint}}
 #' @export
-lint_package <- function(path = NULL, relative_path = TRUE, ...) {
-  if (is.null(path)) {
-    path <- find_package()
-  }
+lint_package <- function(path = ".", relative_path = TRUE, ...) {
+  path <- find_package(path)
 
   read_settings(path)
   on.exit(clear_settings, add = TRUE)
@@ -160,7 +158,7 @@ find_package <- function(path = getwd()) {
   on.exit(setwd(start_wd))
   setwd(path)
 
-  prev_path <- start_wd
+  prev_path <- ""
   while (!file.exists(file.path(prev_path, "DESCRIPTION"))) {
     # this condition means we are at the root directory, so give up
     if (prev_path %==% getwd()) {

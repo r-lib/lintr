@@ -27,7 +27,8 @@ test_that("it uses config settings in same directory if provided", {
   on.exit({
     unlink(file)
     unlink(config_file)
-  })
+  },
+  add = TRUE)
 
   read_settings(file)
 

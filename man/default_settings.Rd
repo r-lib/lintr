@@ -4,7 +4,7 @@
 \name{default_settings}
 \alias{default_settings}
 \title{Default lintr settings}
-\format{\preformatted{List of 6
+\format{\preformatted{List of 7
  $ linters        :List of 17
   ..$ assignment_linter             :
   ..$ single_quotes_linter          :
@@ -28,6 +28,7 @@
  $ exclude_end    :Class 'regex'  chr "#[[:space:]]*nolint end"
  $ exclusions     : list()
  $ cache_directory: chr "~/.R/lintr_cache"
+ $ comment_token  : chr "4e710f82c0d85359729bbefe8f22d20822617d57"
 }}
 \usage{
 default_settings

@@ -8,7 +8,7 @@ print.lint <- function(x, ...) {
     crayon::bold
   )
 
-  cat(
+  cat(sep = "",
     crayon::bold(x$filename, ":",
     as.character(x$line_number), ":",
     as.character(x$column_number), ": ", sep = ""),
@@ -21,18 +21,39 @@ print.lint <- function(x, ...) {
   invisible(x)
 }
 
+markdown <- function(x, ...) {
+  
+  cat(sep = "",
+    "**", 
+      x$filename, ":",
+      as.character(x$line_number), ":",
+      as.character(x$column_number), ":",
+    "** ",
+    "*", x$type, ":", "* ",
+    "**", x$message, "**\n",
+    x$line, "\n",
+    highlight_string(x$message, x$column_number, x$ranges),
+    "\n"
+  )
+  invisible(x)
+}
+
 #' @export
 print.lints <- function(x, ...) {
   if (getOption("lintr.rstudio_source_markers", TRUE) &&
       rstudioapi::hasFun("sourceMarkers")) {
     rstudio_source_markers(x)
-  } else if (in_travis()) {
-    has_lints <- length(x) > 0
-    if (has_lints) {
-      lint_output <- paste(collapse = "\n", capture.output(lapply(x, print, ...)))
-      github_comment(lint_output, ...)
-    }
   } else {
+    if (in_travis()) {
+      has_lints <- length(x) > 0
+      if (has_lints) {
+        lint_output <- paste0(collapse = "\n", 
+                              capture.output(
+                                invisible(lapply(x, markdown, ...)))
+        )
+        github_comment(lint_output, ...)
+      }
+    }
     lapply(x, print, ...)
   }
   invisible(x)
