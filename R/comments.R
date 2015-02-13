@@ -33,13 +33,14 @@ github_comment <- function(text, token = settings$comment_token) {
       body = list("body"=jsonlite::unbox(text)),
       query = list(access_token = token),
       encode = "json")
-    httr::stop_for_status(response)
   } else if (!is.null(info$commit)) {
     response <- httr::POST("https://api.github.com",
       path=paste(sep = "/", "repos", info$user, info$repo, "commits", info$commit, "comments"),
       body = list("body"=jsonlite::unbox(text)),
       query = list(access_token = token),
       encode = "json")
-    httr::stop_for_status(response)
+  }
+  if (status_code(x) >= 300) {
+    stop(http_condition(response, "error", message = paste(info, content(response))))
   }
 }
