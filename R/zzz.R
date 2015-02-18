@@ -90,7 +90,7 @@ default_settings <- list(
   exclude_end = rex::rex("#", any_spaces, "nolint end"),
   exclusions = list(),
   cache_directory = "~/.R/lintr_cache", # nolint
-  comment_token = "4e710f82c0d85359729bbefe8f22d20822617d57"
+  comment_token = "565a3dc866ba3997b3c39d070c5cb269034e1b46"
 )
 
 settings <- list2env(default_settings, parent = emptyenv())
