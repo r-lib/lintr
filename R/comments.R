@@ -38,7 +38,7 @@ github_comment <- function(text, token = settings$comment_token) {
       path=paste(sep = "/", "repos", info$user, info$repo, "commits", info$commit, "comments"),
       body = list("body"=jsonlite::unbox(text)),
       #query = list(access_token = token),
-      config = authenticate(token, "x-oauth-basic", type = "basic"),
+      config = httr::authenticate(token, "x-oauth-basic", type = "basic"),
       encode = "json")
   }
   if (httr::status_code(response) >= 300) {
