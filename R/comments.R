@@ -27,7 +27,7 @@ github_comment <- function(text, token = settings$comment_token) {
   message(capture.output(str(info)))
   message(capture.output(str(settings$comment_token)))
   
-  user <- content(
+  user <- httr::content(
     httr::POST("https://api.github.com", path = "user"),
     config = httr::authenticate(token, "x-oauth-basic", type = "basic")
   )
