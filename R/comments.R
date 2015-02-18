@@ -27,18 +27,22 @@ github_comment <- function(text, token = settings$comment_token) {
   message(capture.output(str(info)))
   message(capture.output(str(settings$comment_token)))
   
+  user <- content(
+    httr::POST("https://api.github.com", path = "user"),
+    config = httr::authenticate(token, "x-oauth-basic", type = "basic")
+  )
+  message(capture.output(str(user$token)))
   if (!is.null(info$pull) && info$pull != "false") {
     response <- httr::POST("https://api.github.com",
       path=paste(sep = "/", "repos", info$user, info$repo, "issues", info$pull, "comments"),
       body = list("body"=jsonlite::unbox(text)),
-      query = list(access_token = token),
+      query = list(access_token = user$token),
       encode = "json")
   } else if (!is.null(info$commit)) {
     response <- httr::POST("https://api.github.com",
       path=paste(sep = "/", "repos", info$user, info$repo, "commits", info$commit, "comments"),
       body = list("body"=jsonlite::unbox(text)),
-      #query = list(access_token = token),
-      config = httr::authenticate(token, "x-oauth-basic", type = "basic"),
+      query = list(access_token = user$token),
       encode = "json")
   }
   if (httr::status_code(response) >= 300) {
