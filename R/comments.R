@@ -26,7 +26,6 @@ github_comment <- function(text, info = NULL, token = settings$comment_token) {
     info <- travis_build_info()
   }
 
-  
   if (!is.null(info$pull) && info$pull != "false") {
     response <- httr::POST("https://api.github.com",
       path=paste(sep = "/", "repos", info$user, info$repo, "issues", info$pull, "comments"),

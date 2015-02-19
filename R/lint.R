@@ -109,7 +109,7 @@ lint_package <- function(path = ".", relative_path = TRUE, ...) {
 
   read_settings(path)
   on.exit(clear_settings, add = TRUE)
-  
+
   names(settings$exclusions) <- normalizePath(file.path(path, names(settings$exclusions)))
 
   files <- dir(

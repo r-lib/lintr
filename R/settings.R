@@ -78,6 +78,6 @@ find_config <- function(filename) {
 
 is_directory <- function(filename) {
   is_dir <- file.info(filename)$isdir
-  
+
   !is.na(is_dir) && is_dir
 }
