@@ -21,19 +21,30 @@ print.lint <- function(x, ...) {
   invisible(x)
 }
 
-markdown <- function(x, ...) {
-  
+markdown <- function(x, info, ...) {
+
   cat(sep = "",
-    "**", 
-      x$filename, ":",
+      "[", x$filename, ":",
       as.character(x$line_number), ":",
-      as.character(x$column_number), ":",
-    "** ",
+      as.character(x$column_number), ":", "]",
+      "(",
+        paste(sep = "/",
+          "https://github.com",
+          info$user,
+          info$repo,
+          "blob",
+          info$commit,
+          x$filename
+        ), "#L", x$line_number,
+      ")",
+    " ",
     "*", x$type, ":", "* ",
     "**", x$message, "**\n",
+    "```r\n\U180E", # we use a zero width unicode character here so that Github
+                    # does not strip the leading whitespace
     x$line, "\n",
     highlight_string(x$message, x$column_number, x$ranges),
-    "\n"
+    "\n```\n"
   )
   invisible(x)
 }
@@ -47,11 +58,14 @@ print.lints <- function(x, ...) {
     if (in_travis()) {
       has_lints <- length(x) > 0
       if (has_lints) {
-        lint_output <- paste0(collapse = "\n", 
+
+        info <- travis_build_info()
+
+        lint_output <- paste0(collapse = "\n",
                               capture.output(
-                                invisible(lapply(x, markdown, ...)))
+                                invisible(lapply(x, markdown, info, ...)))
         )
-        github_comment(lint_output, ...)
+        github_comment(lint_output, info, ...)
       }
     }
     lapply(x, print, ...)

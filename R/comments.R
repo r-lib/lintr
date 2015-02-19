@@ -2,13 +2,13 @@ in_travis <- function() {
   return (Sys.getenv("TRAVIS_REPO_SLUG") > 0)
 }
 
-get_travis_build_info <- function() {
+travis_build_info <- function() {
   slug <- Sys.getenv("TRAVIS_REPO_SLUG") %||% NULL
-  
+
   if (is.null(slug)) {
     return(NULL)
   }
-  
+
   slug_info <- strsplit(slug, "/")[[1]]
 
   list(
@@ -20,12 +20,12 @@ get_travis_build_info <- function() {
   )
 }
 
-github_comment <- function(text, token = settings$comment_token) {
+github_comment <- function(text, info = NULL, token = settings$comment_token) {
 
-  info <- get_travis_build_info()
+  if (is.null(info)) {
+    info <- travis_build_info()
+  }
 
-  message(capture.output(str(info)))
-  message(capture.output(str(settings$comment_token)))
   
   if (!is.null(info$pull) && info$pull != "false") {
     response <- httr::POST("https://api.github.com",
@@ -40,6 +40,7 @@ github_comment <- function(text, token = settings$comment_token) {
       query = list(access_token = token),
       encode = "json")
   }
+
   if (httr::status_code(response) >= 300) {
     stop(httr::http_condition(response, "error", message = httr::content(response, as = "text")))
   }
