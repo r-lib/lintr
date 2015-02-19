@@ -106,21 +106,61 @@ In the SublimeLinter User Settings
 
 ## Project Configuration ##
 
-Lintr supports per-project configuration of the following fields.  The config file is in [Debian Control Field Format](http://www.debian.org/doc/debian-policy/ch-controlfields.html).
+Lintr supports per-project configuration of the following fields.
+The config file is in [Debian Control Field Format](http://www.debian.org/doc/debian-policy/ch-controlfields.html).
 
 - `linters` - see `?with_defaults` for example of specifying only a few non-default linters.
+- `exclusions` - a list of filenames to exclude from linting.  You can use a
+  named item to exclude only certain lines from a file.
 - `exclude` - a regex pattern for lines to exclude from linting.  Default is "# nolint"
 - `exclude_start` - a regex pattern to start exclusion range. Default is "# nolint start"
 - `exclude_end` - a regex pattern to end exclusion range. Default is "# nolint end"
 
-An example file that uses 120 character line lengths and different exclude regexes would be
-
+An example file that uses 120 character line lengths, excludes a couple of
+files and sets different default exclude regexs follows.
 ```
 linters: with_defaults(line_length_linter(120))
+exclusions: list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "tests/testthat/exclusions-test")
 exclude: "# Exclude Linting"
 exclude_start: "# Begin Exclude Linting"
 exclude_end: "# End Exclude Linting"
 ```
+
+## Travis-CI ##
+If you want to run `lintr` on [Travis-CI](https://travis-ci.org) you will need
+to have travis install the package first.  This can be done by adding the
+following line to your `.travis.yml`
+
+```yaml
+  - ./travis-tool.sh github_package jimhester/lintr
+```
+
+### Testthat ###
+If you are already using [testthat](https://github.com/hadley/testthat) for
+testing simply add the following to your tests to fail if there are any lints
+in your project.  You will have to add `Suggests: lintr` to your package
+`DESCRIPTION` as well.
+
+```r
+if (requireNamespace(“lintr”, quietly = TRUE)) {
+  context("lints")
+  test_that("Package Style", {
+    lintr::expect_lint_free()
+  })
+}
+```
+
+### Non-failing Lints ###
+If you do not want to fail the travis build on lints or do not use testthat you
+can simply add the following to your `.travis.yml`
+```yaml
+after_success:
+  - Rscript -e 'lintr::lint_package()'
+```
+
+In both cases the [lintr-bot](https://github.com/lintr-bot) will add comments
+to the commit or pull request with the lints found and they will also be
+printed on Travis-CI.
 
 ## References ##
 Most of the default linters are based on [Hadley Wickham's R Style Guide](http://r-pkgs.had.co.nz/style.html).
