@@ -142,7 +142,7 @@ in your project.  You will have to add `Suggests: lintr` to your package
 `DESCRIPTION` as well.
 
 ```r
-if (requireNamespace(“lintr”, quietly = TRUE)) {
+if (requireNamespace("lintr", quietly = TRUE)) {
   context("lints")
   test_that("Package Style", {
     lintr::expect_lint_free()
