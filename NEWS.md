@@ -1,5 +1,9 @@
 # lintr 0.3.0.9000 #
 
+* Now trims long comments (#55, reported by @paulstaab)
+* Automatic commenting of Github commits and pull requests when linting on Travis-CI
+* expect_lint_free expectation can be added to testthat unit tests.
+* Robust configuration system and exclusion logic
 * Emacs and Sublime Text 3 plugins now available from their respective package repositories.
 * add `names.lints`, `split.lints` (#49, @ttriche)
 * Fixed bug that caused vim syntatic plugin not to work properly in windows (#46, @abossenbroek)

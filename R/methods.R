@@ -61,16 +61,47 @@ print.lints <- function(x, ...) {
 
         info <- travis_build_info()
 
-        lint_output <- paste0(collapse = "\n",
-                              capture.output(
-                                invisible(lapply(x, markdown, info, ...)))
-        )
+        lint_output <-
+          trim_output(paste0(collapse = "\n",
+                             capture.output(invisible(lapply(x, markdown, info, ...)))
+                            )
+                     )
+
         github_comment(lint_output, info, ...)
       }
     }
     lapply(x, print, ...)
   }
   invisible(x)
+}
+
+trim_output <- function(x, max = 65535) {
+
+  # if x is less than the max, just return it
+  if (length(x) <= 0 || nchar(x) <= max) {
+    return(x)
+  }
+
+  # otherwise trim x to the max, then search for the lint starts
+  x <- substr(x, 1, max)
+
+  re <- rex::rex("[", except_some_of(":"), ":", numbers, ":", numbers, ":", "]",
+                 "(", except_some_of(")"), ")",
+                 space,
+                 "*", or("style", "warning", "error"), ":", "*",
+                 except_some_of(newline), newline, except_some_of(newline),
+                 newline, except_some_of(newline), newline)
+
+  lint_starts <- rex::re_matches(x, re, global = TRUE, locations = TRUE)[[1]]
+
+  # if at least one lint ends before the cutoff, cutoff there, else just use
+  # the cutoff
+  last_end <- lint_starts[NROW(lint_starts), "end"]
+  if (!is.na(last_end)) {
+    substr(x, 1, last_end)
+  } else {
+    x
+  }
 }
 
 #' @export
