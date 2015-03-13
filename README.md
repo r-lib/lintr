@@ -11,15 +11,9 @@ lintr has [built-in integration](http://www.flycheck.org/en/latest/guide/languag
 ![Emacs Example](http://i.imgur.com/vquPht3.gif "Emacs Example")
 
 #### Installation ####
-Put the following in your .emacs file to automatically use `lintr` to check R
-files.  *Note you will need to change the path to where you put
-[lintr.el](https://github.com/jimhester/lintr/raw/master/inst/flycheck/lintr.el)*
+lintr is fully integrated into flycheck when using [ESS](http://ess.r-project.org/).  See the
+installalation documentation for those packages for more information.
 
-```emacs
-(require 'flycheck)
-(add-hook 'ess-mode-hook
-          (lambda () (flycheck-mode t)))
-```
 #### Configuration ####
 You can also configure what linters are used. e.g. using a different line length cutoff.
 - `M-X customize-opton` -> `flycheck-r-linters` -> `with_defaults(line_length_linter(120))`
