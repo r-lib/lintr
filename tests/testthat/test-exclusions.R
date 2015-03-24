@@ -161,6 +161,13 @@ test_that("it excludes properly", {
   t3 <- lint("exclusions-test", exclusions = list("exclusions-test"))
 
   expect_equal(length(t3), 0)
+
+  lintr::clear_cache()
+  for (info in sprintf("caching: pass %s", 1:4)) {
+    t4 <- lint("exclusions-test", cache = TRUE)
+
+    expect_equal(length(t4), 2, info = info)
+  }
 })
 
 options(old_ops)
