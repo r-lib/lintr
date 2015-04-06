@@ -7,7 +7,6 @@ extract_r_source <- function(content, start_re, end_re) {
     stop("Malformed file!", call. = FALSE)
   }
 
-  str(max(ends))
   # there is no need to worry about the content after the last chunk end
   output <- rep.int(NA_character_, max(ends - 1))
   Map(

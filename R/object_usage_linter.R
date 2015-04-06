@@ -35,12 +35,12 @@ object_usage_linter <-  function(source_file) {
       if (length(parent_ids) > 3L) {
         return(NULL)
       }
-      text <- paste0(collapse = "\n", source_file$lines)
+      #text <- paste0(collapse = "\n", source_file$lines)
       suppressWarnings(
         suppressMessages(
           fun <- try(eval(
               parse(
-                text=text,
+                text=source_file$content,
                 keep.source = TRUE
                 ),
               envir=env), silent = TRUE)

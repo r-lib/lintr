@@ -62,6 +62,8 @@ get_source_expressions <- function(filename) {
       line_number <- line_number - 1L
       line <- source_file$lines[[line_number]]
       column_number <- nchar(line)
+    } else {
+      line <- source_file$lines[[line_number]]
     }
 
     Lint(
