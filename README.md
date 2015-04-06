@@ -6,6 +6,10 @@
 
 ![lintr](http://i.imgur.com/acV27NV.gif "lintr")
 
+### RStudio ###
+lintr lints are automatically displayed in the RStudio Marker pane, Rstudio versions (> v0.99.206).
+![RStudio Example](http://i.imgur.com/PIKnpbn.png "Rstudio Example")
+
 ### Emacs ###
 lintr has [built-in integration](http://www.flycheck.org/en/latest/guide/languages.html#r) with [flycheck](https://github.com/flycheck/flycheck) versions greater than `0.23`.
 ![Emacs Example](http://i.imgur.com/vquPht3.gif "Emacs Example")
