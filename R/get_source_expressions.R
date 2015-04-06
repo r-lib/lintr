@@ -5,8 +5,12 @@
 #' @export
 get_source_expressions <- function(filename) {
   source_file <- srcfile(filename)
-  lines <- readLines(filename)
-  source_file$content <- paste0(collapse = "\n", lines)
+  source_file$lines <- readLines(filename)
+  pattern <- get_knitr_pattern(source_file)
+  if (!is.null(pattern)) {
+    source_file$lines <- extract_r_source(source_file$lines, pattern$chunk.begin, pattern$chunk.end)
+  }
+  source_file$content <- get_content(source_file$lines)
 
   lint_error <- function(e) {
 
@@ -44,7 +48,7 @@ get_source_expressions <- function(filename) {
           column_number = column_number,
           type = "error",
           message = e$message,
-          line = lines[[line_number]]
+          line = source_file$lines[[line_number]]
         )
       )
     }
@@ -56,7 +60,7 @@ get_source_expressions <- function(filename) {
     # end of the previous line
     if (column_number %==% 0L) {
       line_number <- line_number - 1L
-      line <- lines[[line_number]]
+      line <- source_file$lines[[line_number]]
       column_number <- nchar(line)
     }
 
@@ -66,19 +70,19 @@ get_source_expressions <- function(filename) {
       column_number = column_number,
       type = "error",
       message = message_info$message,
-      line = lines[[line_number]]
+      line = line
       )
   }
 
   e <- NULL
 
-  parsed_content <- get_source_file(filename, error = lint_error)
+  parsed_content <- get_source_file(source_file, error = lint_error)
 
   tree <- generate_tree(parsed_content)
 
   expressions <- lapply(top_level_expressions(parsed_content), function(loc) {
     line_nums <- parsed_content$line1[loc]:parsed_content$line2[loc]
-    expr_lines <- lines[line_nums]
+    expr_lines <- source_file$lines[line_nums]
     names(expr_lines) <- line_nums
 
     content <- get_content(expr_lines, parsed_content[loc, ])
@@ -104,18 +108,14 @@ get_source_expressions <- function(filename) {
   expressions[[length(expressions) + 1L]] <-
     list(
       filename = filename,
-      file_lines = lines,
-      content = lines
+      file_lines = source_file$lines,
+      content = paste(collapse="\n", source_file$lines)
       )
 
-  list(expressions = expressions, error = e, lines = lines)
+  list(expressions = expressions, error = e, lines = source_file$lines)
 }
 
-get_source_file <- function(filename, error = identity) {
-
-  source_file <- srcfile(filename)
-  lines <- readLines(filename)
-  source_file$content <- paste0(collapse = "\n", lines)
+get_source_file <- function(source_file, error = identity) {
 
   e <- tryCatch(
     source_file$parsed_content <- parse(text=source_file$content, srcfile=source_file, keep.source = TRUE),

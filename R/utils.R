@@ -106,7 +106,11 @@ with_id <- function(source_file, id) {
 }
 
 get_content <- function(lines, info) {
-  lines[length(lines)] <- substr(lines[length(lines)], 1L, info$col2)
-  lines[1] <- substr(lines[1], info$col1, nchar(lines[1]))
+  lines[is.na(lines)] <- ""
+
+  if (!missing(info)) {
+    lines[length(lines)] <- substr(lines[length(lines)], 1L, info$col2)
+    lines[1] <- substr(lines[1], info$col1, nchar(lines[1]))
+  }
   paste0(collapse = "\n", lines)
 }

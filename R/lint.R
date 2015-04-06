@@ -79,6 +79,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     save_cache(lint_cache, filename)
   }
 
+  str(lints)
   exclude(lints, ...)
 }
 
