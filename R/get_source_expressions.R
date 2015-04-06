@@ -111,7 +111,7 @@ get_source_expressions <- function(filename) {
     list(
       filename = filename,
       file_lines = source_file$lines,
-      content = paste(collapse="\n", source_file$lines)
+      content = source_file$lines
       )
 
   list(expressions = expressions, error = e, lines = source_file$lines)

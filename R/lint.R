@@ -48,16 +48,14 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   for (expr in source_expressions$expressions) {
     for (linter in names(linters)) {
-      if (cache && has_lint(lint_cache, expr, linter)) {
-
+      if (isTRUE(cache) && has_lint(lint_cache, expr, linter)) {
         lints[[itr <- itr + 1L]] <- retrieve_lint(lint_cache, expr, linter, source_expressions$lines)
       }
       else {
-
         expr_lints <- flatten_lints(linters[[linter]](expr)) # nolint
 
         lints[[itr <- itr + 1L]] <- expr_lints
-        if (cache) {
+        if (isTRUE(cache)) {
           cache_lint(lint_cache, expr, linter, expr_lints)
         }
       }
@@ -74,8 +72,9 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   lints <- structure(reorder_lints(flatten_lints(lints)), class = "lints")
 
+
   if (isTRUE(cache)) {
-    cache_file(lint_cache, filename, linters, lints)
+    #cache_file(lint_cache, filename, linters, lints)
     save_cache(lint_cache, filename)
   }
 
