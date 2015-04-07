@@ -6,10 +6,7 @@
 get_source_expressions <- function(filename) {
   source_file <- srcfile(filename)
   source_file$lines <- readLines(filename)
-  pattern <- get_knitr_pattern(source_file)
-  if (!is.null(pattern)) {
-    source_file$lines <- extract_r_source(source_file$lines, pattern$chunk.begin, pattern$chunk.end)
-  }
+  source_file$lines <- extract_r_source(source_file$filename, source_file$lines)
   source_file$content <- get_content(source_file$lines)
 
   lint_error <- function(e) {

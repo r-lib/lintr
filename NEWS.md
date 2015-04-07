@@ -14,7 +14,8 @@
 * `trailing_whitespace_linter` was reporting the incorrect line number
 * Use RStudio source marker API to display lints (#37, @jjallaire)
 * Permit single quotes if they quote literal double quotes (#28, @jackwasey)
-* # nolint comment are respected with caching (#68, @krlmlr)
+* # nolint comments are respected with caching (#68, @krlmlr)
+* Properly handle all knitr document formats
 
 # lintr 0.2.0 #
 

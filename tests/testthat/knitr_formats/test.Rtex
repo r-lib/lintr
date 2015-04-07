@@ -1,0 +1,32 @@
+\documentclass{article}
+\usepackage{graphicx}
+\title{Test}
+
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+%% begin.rcode
+% a = 1
+%% end.rcode
+
+\subtitle{Test}
+
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+%% begin.rcode test_chunk
+% b <- function(x) {
+%   d = 1
+% }
+%
+%% end.rcode
+
+%% begin.rcode engine="python"
+% a=[]
+%
+% a[0]=1
+%% end.rcode

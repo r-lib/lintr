@@ -3,7 +3,6 @@
 [![Coverage Status](https://img.shields.io/coveralls/jimhester/lintr.svg)](https://coveralls.io/r/jimhester/lintr?branch=master)
 
 ## Static code analysis for R ##
-
 ![lintr](http://i.imgur.com/acV27NV.gif "lintr")
 
 ### RStudio ###
