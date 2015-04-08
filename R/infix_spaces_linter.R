@@ -64,7 +64,8 @@ infix_spaces_linter <- function(source_file) {
             type = "style",
             message = "Put spaces around all infix operators.",
             line = line,
-            ranges = list(c(start, end))
+            ranges = list(c(start, end)),
+            linter = "infix_spaces_linter"
             )
 
         }

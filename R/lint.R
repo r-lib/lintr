@@ -188,7 +188,7 @@ pkg_name <- function(path = find_package()) {
 #' @export
 Lint <- function(filename, line_number = 1L, column_number = NULL,
   type = c("style", "warning", "error"),
-  message = "", line = "", ranges = NULL) {
+  message = "", line = "", ranges = NULL, linter = NULL) {
 
   type <- match.arg(type)
 
@@ -200,7 +200,8 @@ Lint <- function(filename, line_number = 1L, column_number = NULL,
       type = type,
       message = message,
       line = line,
-      ranges = ranges
+      ranges = ranges,
+      linter = linter
       ),
     class="lint")
 }

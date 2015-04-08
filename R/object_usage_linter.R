@@ -87,7 +87,8 @@ object_usage_linter <-  function(source_file) {
               type = "warning",
               message = row$message,
               line = line,
-              ranges = list(c(location$start, location$end))
+              ranges = list(c(location$start, location$end)),
+              linter = "object_usage_linter"
               )
           })
       }

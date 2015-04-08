@@ -32,7 +32,7 @@ make_object_linter <- function(fun) {
   }
 }
 
-object_lint <- function(source_file, parsed, message) {
+object_lint <- function(source_file, parsed, message, type) {
 
   Lint(
     filename = source_file$filename,
@@ -41,7 +41,8 @@ object_lint <- function(source_file, parsed, message) {
     type = "style",
     message = message,
     line = source_file$lines[as.character(parsed$line1)],
-    ranges = list(c(parsed$col1, parsed$col2))
+    ranges = list(c(parsed$col1, parsed$col2)),
+    linter = type
     )
 }
 
@@ -56,7 +57,8 @@ camel_case_linter <- make_object_linter(function(source_file, parsed) {
     if (!is_external_reference(source_file, parsed$id)) {
       object_lint(source_file,
         parsed,
-        "Variable and function names should be all lowercase.")
+        "Variable and function names should be all lowercase.",
+        "camel_case_linter")
     }
   }
 
@@ -72,7 +74,8 @@ snake_case_linter <- make_object_linter(function(source_file, parsed) {
     if (!is_external_reference(source_file, parsed$id)) {
       object_lint(source_file,
         parsed,
-        "Variable and function names should not use underscores.")
+        "Variable and function names should not use underscores.",
+        "snake_case_linter")
     }
   }
 
@@ -87,7 +90,8 @@ multiple_dots_linter <- make_object_linter(function(source_file, parsed) {
     if (!is_external_reference(source_file, parsed$id)) {
       object_lint(source_file,
         parsed,
-        "Words within variable and function names should be separated by '_' rather than '.'.")
+        "Words within variable and function names should be separated by '_' rather than '.'.",
+        "multiple_dots_linter")
     }
   }
 
@@ -104,7 +108,8 @@ object_length_linter <- function(length = 20L) {
       if (!is_external_reference(source_file, parsed$id)) {
         object_lint(source_file,
           parsed,
-          paste0("Variable and function names should not be longer than ", length, " characters."))
+          paste0("Variable and function names should not be longer than ", length, " characters."),
+          "object_length_linter")
       }
     }
   })

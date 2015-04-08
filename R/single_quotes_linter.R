@@ -13,7 +13,8 @@ single_quotes_linter <- function(source_file) {
           type = "style",
           message = "Only use double-quotes.",
           line = source_file$lines[as.character(parsed$line1)],
-          ranges = list(c(parsed$col1, parsed$col2))
+          ranges = list(c(parsed$col1, parsed$col2)),
+          linter = "single_quotes_linter"
           )
       }
     })

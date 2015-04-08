@@ -57,7 +57,8 @@ absolute_paths_linter <- function(source_file) {
               type = "warning",
               message = "Do not use absolute paths.",
               line = source_file$lines[as.character(parsed$line1)],
-              ranges = list(c(start, end))
+              ranges = list(c(start, end)),
+              "absolute_paths_linter"
               )
             )
         }

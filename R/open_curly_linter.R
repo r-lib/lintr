@@ -31,7 +31,8 @@ open_curly_linter <- function(source_file) {
           column_number = parsed$col1,
           type = "style",
           message = "Opening curly braces should never go on their own line and should always be followed by a new line.", # nolint
-          line = line
+          line = line,
+          linter = "open_curly_linter"
           )
       }
 

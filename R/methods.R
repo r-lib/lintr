@@ -125,6 +125,7 @@ as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) {
              type = vapply(x, `[[`, character(1), "type"),
              message = vapply(x, `[[`, character(1), "message"),
              line = vapply(x, `[[`, character(1), "line"),
+             linter = vapply(x, `[[`, character(1), "linter"),
              stringsAsFactors = FALSE
   )
 }

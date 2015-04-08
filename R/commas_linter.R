@@ -41,7 +41,8 @@ commas_linter <- function(source_file) {
                   type = "style",
                   message = "Commas should never have a space before.",
                   line = line,
-                  ranges = list(c(start, end))
+                  ranges = list(c(start, end)),
+                  "commas_linter"
                   )
             }
           }
@@ -64,7 +65,8 @@ commas_linter <- function(source_file) {
                   column_number = comma_loc,
                   type = "style",
                   message = "Commas should always have a space after.",
-                  line = line
+                  line = line,
+                  linter = "commas_linter"
                   )
             }
 

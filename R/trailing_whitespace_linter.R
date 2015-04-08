@@ -21,7 +21,8 @@ trailing_whitespace_linter <- function(source_file) {
             type = "style",
             message = "Trailing whitespace is superfluous.",
             line = source_file$lines[as.character(line_number)],
-            ranges = list(c(start, end))
+            ranges = list(c(start, end)),
+            linter = "trailing_whitespace_linter"
             )
         },
         start = res[[itr]]$space.start,

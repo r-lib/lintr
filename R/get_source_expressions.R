@@ -45,7 +45,8 @@ get_source_expressions <- function(filename) {
           column_number = column_number,
           type = "error",
           message = e$message,
-          line = source_file$lines[[line_number]]
+          line = source_file$lines[[line_number]],
+          linter = "error"
         )
       )
     }
@@ -69,7 +70,8 @@ get_source_expressions <- function(filename) {
       column_number = column_number,
       type = "error",
       message = message_info$message,
-      line = line
+      line = line,
+      linter = "error"
       )
   }
 

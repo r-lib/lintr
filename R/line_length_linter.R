@@ -17,7 +17,8 @@ line_length_linter <- function(length) {
           type = "style",
           message = sprintf("lines should not be more than %d characters.", length),
           line = line,
-          ranges = list(c(col_start, col_end))
+          ranges = list(c(col_start, col_end)),
+          linter = "line_length_linter"
           )
       })
   }

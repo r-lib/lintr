@@ -42,7 +42,8 @@ spaces_inside_linter <- function(source_file) {
               column_number = start,
               type = "style",
               message = "Do not place spaces around code in parentheses or square brackets.",
-              line = line
+              line = line,
+              linter = "spaces_inside_linter"
               )
           }
         }

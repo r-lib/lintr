@@ -31,7 +31,8 @@ closed_curly_linter <- function(source_file) {
           column_number = parsed$col1,
           type = "style",
           message = "Closing curly-braces should always be on their own line, unless it's followed by an else.",
-          line = source_file$lines[as.character(parsed$line1)]
+          line = source_file$lines[as.character(parsed$line1)],
+          linter = "closed_curly_linter"
           )
       }
 

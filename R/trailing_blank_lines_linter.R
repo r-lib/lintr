@@ -15,7 +15,8 @@ trailing_blank_lines_linter <- function(source_file) {
           column_number = 1,
           type = "style",
           message = "Trailing blank lines are superfluous.",
-          line = source_file$file_lines[[line_number]]
+          line = source_file$file_lines[[line_number]],
+          linter = "trailing_blank_lines_linter"
           )
     }
     line_number <- line_number - 1L
