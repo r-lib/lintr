@@ -127,13 +127,13 @@ You can create an configuration file for `lintr` that ignores all linters that s
 
 ```r
 library(magrittr)
+library(dplyr)
 lintr::lint_package() %>%
   as.data.frame %>%
-  plyr::count("linter") %>%
-  plyr::arrange(-freq) %>%
-  with(sprintf(
-    "linters: with_defaults(\n    %s\n  )",
-    paste(sprintf("%s = NULL # %s", linter, freq), collapse = "\n    , "))) %>%
+  group_by(linter) %>%
+  tally(sort = TRUE) %$%
+  sprintf("with_defaults(\n  %s\n  NULL\n)",
+          paste0(linter, " = NULL, # ", n, collapse="\n  ")) %>%
   cat(file = ".lintr")
 ```
 
