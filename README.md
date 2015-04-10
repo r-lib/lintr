@@ -19,7 +19,7 @@ installalation documentation for those packages for more information.
 
 #### Configuration ####
 You can also configure what linters are used. e.g. using a different line length cutoff.
-- `M-X customize-opton` -> `flycheck-r-linters` -> `with_defaults(line_length_linter(120))`
+- `M-x customize-option` -> `flycheck-r-linters` -> `with_defaults(line_length_linter(120))`
 
 ### Vim
 lintr can be integrated with
