@@ -10,7 +10,7 @@ lintr lints are automatically displayed in the RStudio Marker pane, Rstudio vers
 ![RStudio Example](http://i.imgur.com/PIKnpbn.png "Rstudio Example")
 
 ### Emacs ###
-lintr has [built-in integration](http://www.flycheck.org/en/latest/guide/languages.html#r) with [flycheck](https://github.com/flycheck/flycheck) versions greater than `0.23`.
+lintr has [built-in integration](http://www.flycheck.org/manual/0.23/Supported-languages.html#R) with [flycheck](https://github.com/flycheck/flycheck) versions greater than `0.23`.
 ![Emacs Example](http://i.imgur.com/vquPht3.gif "Emacs Example")
 
 #### Installation ####
@@ -19,7 +19,7 @@ installalation documentation for those packages for more information.
 
 #### Configuration ####
 You can also configure what linters are used. e.g. using a different line length cutoff.
-- `M-X customize-opton` -> `flycheck-r-linters` -> `with_defaults(line_length_linter(120))`
+- `M-x customize-option` -> `flycheck-lintr-linters` -> `with_defaults(line_length_linter(120))`
 
 ### Vim
 lintr can be integrated with
