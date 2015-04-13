@@ -10,7 +10,7 @@ lintr lints are automatically displayed in the RStudio Marker pane, Rstudio vers
 ![RStudio Example](http://i.imgur.com/PIKnpbn.png "Rstudio Example")
 
 ### Emacs ###
-lintr has [built-in integration](http://www.flycheck.org/en/latest/guide/languages.html#r) with [flycheck](https://github.com/flycheck/flycheck) versions greater than `0.23`.
+lintr has [built-in integration](http://www.flycheck.org/manual/0.23/Supported-languages.html#R) with [flycheck](https://github.com/flycheck/flycheck) versions greater than `0.23`.
 ![Emacs Example](http://i.imgur.com/vquPht3.gif "Emacs Example")
 
 #### Installation ####
@@ -19,7 +19,7 @@ installalation documentation for those packages for more information.
 
 #### Configuration ####
 You can also configure what linters are used. e.g. using a different line length cutoff.
-- `M-X customize-opton` -> `flycheck-r-linters` -> `with_defaults(line_length_linter(120))`
+- `M-x customize-option` -> `flycheck-lintr-linters` -> `with_defaults(line_length_linter(120))`
 
 ### Vim
 lintr can be integrated with
@@ -122,6 +122,22 @@ exclude: "# Exclude Linting"
 exclude_start: "# Begin Exclude Linting"
 exclude_end: "# End Exclude Linting"
 ```
+
+You can create an configuration file for `lintr` that ignores all linters that show at least one error with the following command:
+
+```r
+library(magrittr)
+library(dplyr)
+lintr::lint_package() %>%
+  as.data.frame %>%
+  group_by(linter) %>%
+  tally(sort = TRUE) %$%
+  sprintf("with_defaults(\n  %s\n  NULL\n)",
+          paste0(linter, " = NULL, # ", n, collapse="\n  ")) %>%
+  cat(file = ".lintr")
+```
+
+The resulting configuration will contain each currently failing linter and the corresponding number of hits as a comment. Proceed by successively enabling linters, starting with those with the least number of hits.
 
 ## Travis-CI ##
 If you want to run `lintr` on [Travis-CI](https://travis-ci.org) you will need

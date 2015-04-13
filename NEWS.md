@@ -1,5 +1,6 @@
 # lintr 0.3.0.9000 #
 
+* commented_code_linter (#83, @jackwasey)
 * Now trims long comments (#55, reported by @paulstaab)
 * Automatic commenting of Github commits and pull requests when linting on Travis-CI
 * expect_lint_free expectation can be added to testthat unit tests.
