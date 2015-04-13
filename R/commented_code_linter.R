@@ -1,29 +1,74 @@
 #' @describeIn linters checks that there is no commented code outside roxygen
 #'   blocks
 #' @export
+
+ops <- list(
+  "+",
+  "-",
+  "=",
+  "==",
+  "!=",
+  "<=",
+  ">=",
+  "<-",
+  "<<-",
+  "<",
+  ">",
+  "->",
+  "->>",
+  "%%",
+  "/",
+  "^",
+  "*",
+  "**",
+  "|",
+  "||",
+  "&",
+  "&&",
+  rex("%", except_any_of("%"), "%"))
+
 commented_code_linter <- function(source_file) {
   res <- re_matches(source_file$file_lines,
-                    rex("#", except("'"), anything,
-                        or(some_of("{}[]"), # code-like parentheses
-                           "<-", "->", "==", # an assignment
-                           group(graphs, "(", anything, ")"), # a function call
-                           group("!", alphas) # a negation
+                    rex("#", any_spaces,
+                        capture(name = "code",
+                          except("'"), anything,
+                          or(some_of("{}[]"), # code-like parentheses
+                            or(ops), # any operator
+                            group(graphs, "(", anything, ")"), # a function call
+                            group("!", alphas) # a negation
+                            ),
+                          anything
                         )
                     ),
-                    global = TRUE, locations = TRUE)
-  line_number <- length(source_file$file_lines)
-  lints <- list()
-  while (line_number > 0L && !is.na(res[[line_number]][["start"]])) {
-    lints[[length(lints) + 1L]] <- Lint(
-      filename = source_file$filename,
-      line_number = line_number,
-      column_number = res[[line_number]][["start"]],
-      type = "style",
-      message = "Commented code should be removed.",
-      line = source_file$file_lines[[line_number]],
-      linter = "commented_code_linter"
-    )
-    line_number <- line_number - 1L
+                    global = FALSE, locations = TRUE)
+
+  line_numbers <- rownames(na.omit(res))
+  lapply(line_numbers, function(line_number) {
+    line <- source_file$file_lines[as.numeric(line_number)]
+    is_parsable <- parsable(substr(line,
+                                   res[line_number, "code.start"],
+                                   res[line_number, "code.end"]))
+    if (is_parsable) {
+      Lint(
+        filename = source_file$filename,
+        line_number = line_number,
+        column_number = res[line_number, "code.start"],
+        type = "style",
+        message = "Commented code should be removed.",
+        line = line,
+        linter = "commented_code_linter",
+        range = list(c(res[line_number, "code.start"], res[line_number, "code.end"]))
+        )
+    }
+  })
+}
+
+# is given text parsable
+parsable <- function(x) {
+  if (is.null(x)) {
+    return(FALSE)
   }
-  invisible(lints)
+  res <- try(parse(text = x), silent = TRUE)
+
+  !inherits(res, "try-error")
 }
