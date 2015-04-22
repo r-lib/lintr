@@ -19,9 +19,8 @@ Imports:
     igraph,
     rstudioapi (>= 0.2),
     httr,
-    jsonlite
+    jsonlite,
+    knitr
 License: MIT + file LICENSE
 LazyData: true
-Suggests:
-    knitr
 VignetteBuilder: knitr
