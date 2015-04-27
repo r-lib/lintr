@@ -52,16 +52,14 @@ camel_case_linter <- make_object_linter(function(source_file, parsed) {
 
   is_camel_case <- re_matches(parsed$text, rex(lower, upper))
 
-  if (is_camel_case) {
-
-    if (!is_external_reference(source_file, parsed$id)) {
-      object_lint(source_file,
-        parsed,
-        "Variable and function names should be all lowercase.",
-        "camel_case_linter")
-    }
+  if (is_camel_case &&
+      !is_external_reference(source_file, parsed$id) &&
+      !is_base_function(parsed$text)) {
+    object_lint(source_file,
+      parsed,
+      "Variable and function names should be all lowercase.",
+      "camel_case_linter")
   }
-
 })
 
 #' @describeIn linters check that objects are not in snake_case.
@@ -70,15 +68,14 @@ snake_case_linter <- make_object_linter(function(source_file, parsed) {
 
   is_snake_case <- re_matches(parsed$text, rex(alnum, "_", alnum))
 
-  if (is_snake_case) {
-    if (!is_external_reference(source_file, parsed$id)) {
+  if (is_snake_case &&
+      !is_external_reference(source_file, parsed$id) &&
+      !is_base_function(parsed$text)) {
       object_lint(source_file,
         parsed,
         "Variable and function names should not use underscores.",
         "snake_case_linter")
     }
-  }
-
 })
 
 #' @describeIn linters check that objects do not have.multiple.dots.
@@ -86,15 +83,14 @@ snake_case_linter <- make_object_linter(function(source_file, parsed) {
 multiple_dots_linter <- make_object_linter(function(source_file, parsed) {
 
   has_multiple_dots <- re_matches(parsed$text, rex(".", something, "."))
-  if (has_multiple_dots) {
-    if (!is_external_reference(source_file, parsed$id)) {
+  if (has_multiple_dots &&
+      !is_external_reference(source_file, parsed$id) &&
+      !is_base_function(parsed$text)) {
       object_lint(source_file,
         parsed,
         "Words within variable and function names should be separated by '_' rather than '.'.",
         "multiple_dots_linter")
     }
-  }
-
 })
 
 #' @describeIn linters check that objects do are not very long.not
@@ -104,14 +100,14 @@ object_length_linter <- function(length = 20L) {
   make_object_linter(function(source_file, parsed) {
 
     is_very_long <- nchar(parsed$text) > length
-    if (is_very_long) {
-      if (!is_external_reference(source_file, parsed$id)) {
+    if (is_very_long &&
+        !is_external_reference(source_file, parsed$id) &&
+        !is_base_function(parsed$text)) {
         object_lint(source_file,
           parsed,
           paste0("Variable and function names should not be longer than ", length, " characters."),
           "object_length_linter")
       }
-    }
   })
 }
 
@@ -119,4 +115,42 @@ is_external_reference <- function(source_file, id) {
   sibling_tokens <- with_id(source_file, siblings(source_file$parsed_content, id, 1))$token
 
   any(sibling_tokens %in% c("NS_GET", "NS_GET_INT"))
+}
+
+base_pkgs <- c(
+               "base",
+               "tools",
+               "utils",
+               "grDevices",
+               "graphics",
+               "stats",
+               "datasets",
+               "methods",
+               "grid",
+               "splines",
+               "stats4",
+               "tcltk",
+               "compiler",
+               "parallel",
+               "MASS",
+               "lattice",
+               "Matrix",
+               "nlme",
+               "survival",
+               "boot",
+               "cluster",
+               "codetools",
+               "foreign",
+               "KernSmooth",
+               "rpart",
+               "class",
+               "nnet",
+               "spatial",
+               "mgcv"
+               )
+
+base_funs <- unlist(lapply(base_pkgs, function(x) ls(asNamespace(x), all.names = TRUE)))
+
+is_base_function <- function(x) {
+  x %in% base_funs
 }
