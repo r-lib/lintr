@@ -1,5 +1,19 @@
+in_ci <- function() {
+  isTRUE(logical_env(Sys.getenv("CI")))
+}
+
+ci_type <- function() {
+  if (in_travis()) {
+    return("travis")
+  }
+  if (in_wercker()) {
+    return("wercker")
+  }
+  ""
+}
+
 in_travis <- function() {
-  return (Sys.getenv("TRAVIS_REPO_SLUG") > 0)
+  return(nzchar(Sys.getenv("TRAVIS_REPO_SLUG")))
 }
 
 travis_build_info <- function() {
@@ -20,10 +34,31 @@ travis_build_info <- function() {
   )
 }
 
+in_wercker <- function() {
+  return(nzchar(Sys.getenv("WERCKER_GIT_BRANCH")))
+}
+
+ci_build_info <- function() {
+  type <- ci_type()
+  switch(type,
+         travis = travis_build_info(),
+         wercker = wercker_build_info()
+         )
+}
+
+wercker_build_info <- function() {
+  list(
+       user = Sys.getenv("WERCKER_GIT_OWNER") %||% NULL,
+       repo = Sys.getenv("WERCKER_GIT_REPOSITORY") %||% NULL,
+       branch = Sys.getenv("WERCKER_GIT_BRANCH") %||% NULL,
+       commit = Sys.getenv("WERCKER_GIT_COMMIT") %||% NULL
+       )
+}
+
 github_comment <- function(text, info = NULL, token = settings$comment_token) {
 
   if (is.null(info)) {
-    info <- travis_build_info()
+    info <- ci_build_info()
   }
 
   if (!is.null(info$pull) && info$pull != "false") {
@@ -41,6 +76,6 @@ github_comment <- function(text, info = NULL, token = settings$comment_token) {
   }
 
   if (httr::status_code(response) >= 300) {
-    stop(httr::http_condition(response, "error", message = httr::content(response, as = "text")))
+    message(httr::http_condition(response, "error", message = httr::content(response, as = "text")))
   }
 }

@@ -114,3 +114,11 @@ get_content <- function(lines, info) {
   }
   paste0(collapse = "\n", lines)
 }
+
+logical_env <- function(x) {
+  res <- as.logical(Sys.getenv(x))
+  if (is.na(res)) {
+    return(NULL)
+  }
+  res
+}

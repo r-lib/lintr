@@ -94,7 +94,9 @@ default_settings <- list(
                          "3598997a",
                          "0887b075",
                          "dcc71584",
-                         "9bf1a3ce")
+                         "9bf1a3ce"),
+  comment_bot = logical_env("LINTR_COMMENT_BOT") %||% TRUE,
+  error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
 )
 
 settings <- list2env(default_settings, parent = emptyenv())

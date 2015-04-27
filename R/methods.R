@@ -51,26 +51,29 @@ markdown <- function(x, info, ...) {
 
 #' @export
 print.lints <- function(x, ...) {
+  has_lints <- length(x) > 0
+
   if (getOption("lintr.rstudio_source_markers", TRUE) &&
       rstudioapi::hasFun("sourceMarkers")) {
     rstudio_source_markers(x)
   } else {
-    if (in_travis()) {
-      has_lints <- length(x) > 0
-      if (has_lints) {
+    if (has_lints && in_ci() && getOption("lintr.comment_bot")) {
 
-        info <- travis_build_info()
+      info <- ci_build_info()
 
-        lint_output <-
-          trim_output(paste0(collapse = "\n",
-                             capture.output(invisible(lapply(x, markdown, info, ...)))
-                            )
-                     )
+      lint_output <-
+        trim_output(paste0(collapse = "\n",
+                           capture.output(invisible(lapply(x, markdown, info, ...)))
+                           )
+      )
 
-        github_comment(lint_output, info, ...)
-      }
+      github_comment(lint_output, info, ...)
     }
     lapply(x, print, ...)
+  }
+
+  if (has_lints && getOption("lintr.error_on_lint")) {
+    quit("no", 31, FALSE)
   }
   invisible(x)
 }

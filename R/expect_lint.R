@@ -71,7 +71,7 @@ expectation_lint <- function(content, checks, ...) {
   }
 
   itr <- 0L #nolint
-  mapply(function(lint, check) {
+  res <- mapply(function(lint, check) {
     itr <- itr + 1L
     lapply(names(check), function(field) {
       value <- lint[[field]]
@@ -111,6 +111,7 @@ expectation_lint <- function(content, checks, ...) {
   },
   lints,
   checks)
+  res[[1]]
 }
 
 #' Test that the package is lint free

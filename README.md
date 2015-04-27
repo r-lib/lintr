@@ -173,7 +173,8 @@ after_success:
 
 In both cases the [lintr-bot](https://github.com/lintr-bot) will add comments
 to the commit or pull request with the lints found and they will also be
-printed on Travis-CI.
+printed on Travis-CI or Wercker.  If you want to disable the commenting you can
+set the environment variable `LINTR_COMMENT_BOT=false`.
 
 ## References ##
 Most of the default linters are based on [Hadley Wickham's R Style Guide](http://r-pkgs.had.co.nz/style.html).
