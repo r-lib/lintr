@@ -57,7 +57,7 @@ print.lints <- function(x, ...) {
       rstudioapi::hasFun("sourceMarkers")) {
     rstudio_source_markers(x)
   } else {
-    if (has_lints && in_ci() && getOption("lintr.comment_bot")) {
+    if (has_lints && in_ci() && settings$comment_bot) {
 
       info <- ci_build_info()
 
@@ -72,7 +72,7 @@ print.lints <- function(x, ...) {
     lapply(x, print, ...)
   }
 
-  if (has_lints && getOption("lintr.error_on_lint")) {
+  if (has_lints && isTRUE(settings$error_on_lint)) {
     quit("no", 31, FALSE)
   }
   invisible(x)
