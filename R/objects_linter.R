@@ -129,7 +129,6 @@ base_pkgs <- c(
                "grid",
                "splines",
                "stats4",
-               "tcltk",
                "compiler",
                "parallel",
                "MASS",
