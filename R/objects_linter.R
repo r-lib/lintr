@@ -149,7 +149,7 @@ base_pkgs <- c(
                "mgcv"
                )
 
-base_funs <- unlist(lapply(base_pkgs, function(x) ls(asNamespace(x), all.names = TRUE)))
+base_funs <- unlist(lapply(base_pkgs, function(x) ls(getNamespace(x), all.names = TRUE)))
 
 is_base_function <- function(x) {
   x %in% base_funs
