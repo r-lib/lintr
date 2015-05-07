@@ -1,6 +1,6 @@
 # lintr
-[![Build Status](https://travis-ci.org/jimhester/lintr.png?branch=master)](https://travis-ci.org/jimhester/lintr)
-[![Coverage Status](https://img.shields.io/coveralls/jimhester/lintr.svg)](https://coveralls.io/r/jimhester/lintr?branch=master)
+[![Build Status](https://app.wercker.com/status/9b57842367f234e4c7e17d01fd8a4a15/s/master "wercker status")](https://app.wercker.com/project/bykey/9b57842367f234e4c7e17d01fd8a4a15)
+[![codecov.io](http://codecov.io/github/jimhester/lintr/coverage.svg?branch=master)](http://codecov.io/github/jimhester/lintr?branch=master)
 
 ## Static code analysis for R ##
 ![lintr](http://i.imgur.com/acV27NV.gif "lintr")

@@ -1,8 +1,7 @@
 box: rocker/hadleyverse
 build:
   steps:
-    - jimhester/r-dependencies:
-      github_packages: hadley/testthat
+    - jimhester/r-dependencies
     - jimhester/r-check
     - jimhester/r-lint
     - jimhester/r-coverage
