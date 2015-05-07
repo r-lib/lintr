@@ -150,7 +150,7 @@ base_pkgs <- c(
 
 base_funs <- unlist(lapply(base_pkgs,
     function(x) {
-      name <- getNamespace(x)
+      tryCatch(name <- getNamespace(x), error = invisible)
       ls(name, all.names = TRUE)
     }))
 
