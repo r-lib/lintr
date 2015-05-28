@@ -123,7 +123,7 @@ exclude_start: "# Begin Exclude Linting"
 exclude_end: "# End Exclude Linting"
 ```
 
-You can create an configuration file for `lintr` that ignores all linters that show at least one error with the following command:
+With the following command, you can create a configuration file for `lintr` that ignores all linters that show at least one error:
 
 ```r
 library(magrittr)
@@ -137,7 +137,7 @@ lintr::lint_package() %>%
   cat(file = ".lintr")
 ```
 
-The resulting configuration will contain each currently failing linter and the corresponding number of hits as a comment. Proceed by successively enabling linters, starting with those with the least number of hits.
+The resulting configuration will contain each currently failing linter and the corresponding number of hits as a comment. Proceed by successively enabling linters, starting with those with the least number of hits. Note that this requires `lintr` 0.3.0.9001 or later.
 
 ## Travis-CI ##
 If you want to run `lintr` on [Travis-CI](https://travis-ci.org) you will need
