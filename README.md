@@ -132,8 +132,8 @@ lintr::lint_package() %>%
   as.data.frame %>%
   group_by(linter) %>%
   tally(sort = TRUE) %$%
-  sprintf("linters: with_defaults(\n    %s\n  NULL\n  )",
-          paste0(linter, " = NULL, # ", n, collapse="\n  ")) %>%
+  sprintf("linters: with_defaults(\n    %s\n  NULL\n  )\n",
+          paste0(linter, " = NULL, # ", n, collapse="\n    ")) %>%
   cat(file = ".lintr")
 ```
 
