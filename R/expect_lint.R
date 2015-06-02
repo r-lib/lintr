@@ -1,4 +1,5 @@
-#' Lint expectation
+#' Test that the given content produces lints with attributes matching 
+#' those given in checks.
 #'
 #' @param content the file content to be linted
 #' @param checks a list of named vectors of checks to be performed.  Performs
@@ -11,6 +12,7 @@
 #' }
 #' @param ... one or more linters to use for the check
 #' @param file if not \code{NULL} read content from a file rather than from \code{content}
+#' @export
 expect_lint <- function(content, checks, ..., file = NULL) {
 
   if (!is.null(file)) {
@@ -126,7 +128,21 @@ expectation_lint <- function(content, checks, ...) {
   checks)
 }
 
-#' Test that the package is lint free
+
+
+#' Test that the given content is lint free, this is 
+#' equivalent to \code{expect_lint(content, NULL, ..., file)}.
+#'
+#' @param content the file content to be linted
+#' @param ... one or more linters to use for the check
+#' @param file if not \code{NULL} read content from a file rather than from \code{content}
+#' @export
+expect_lint_free <- function(content, ..., file = NULL) {
+  expect_lint(content, NULL, ..., file)
+}
+
+
+#' Test that a package is lint free
 #' 
 #' This function is a thin wrapper around lint_package that simply tests there are no 
 #' lints in the package.  It can be used to ensure that your tests fail if the package 
@@ -134,7 +150,7 @@ expectation_lint <- function(content, checks, ...) {
 #' 
 #' @param ... arguments passed to \code{\link{lint_package}}
 #' @export
-expect_lint_free <- function(...) {
+expect_package_lint_free <- function(...) {
   lints <- lint_package(...)
   has_lints <- length(lints) > 0
 
