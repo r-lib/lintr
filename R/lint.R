@@ -78,7 +78,6 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     save_cache(lint_cache, filename)
   }
 
-  lints
   exclude(lints, ...)
 }
 
@@ -186,6 +185,7 @@ pkg_name <- function(path = find_package()) {
 #' @param message message used to describe the lint error
 #' @param line code source where the lint occured
 #' @param ranges ranges on the line that should be emphasized.
+#' @param linter name of linter that created the Lint object.
 #' @export
 Lint <- function(filename, line_number = 1L, column_number = NULL,
   type = c("style", "warning", "error"),

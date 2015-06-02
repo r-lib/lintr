@@ -2,7 +2,8 @@
 % Please edit documentation in R/expect_lint.R
 \name{expect_lint}
 \alias{expect_lint}
-\title{Lint expectation}
+\title{Test that the given content produces lints with attributes matching
+those given in checks.}
 \usage{
 expect_lint(content, checks, ..., file = NULL)
 }
@@ -23,6 +24,7 @@ different checks depending on the value of checks.
 \item{file}{if not \code{NULL} read content from a file rather than from \code{content}}
 }
 \description{
-Lint expectation
+Test that the given content produces lints with attributes matching
+those given in checks.
 }
 

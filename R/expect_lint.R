@@ -1,4 +1,5 @@
-#' Lint expectation
+#' Test that the given content produces lints with attributes matching 
+#' those given in checks.
 #'
 #' @param content the file content to be linted
 #' @param checks a list of named vectors of checks to be performed.  Performs
@@ -11,22 +12,23 @@
 #' }
 #' @param ... one or more linters to use for the check
 #' @param file if not \code{NULL} read content from a file rather than from \code{content}
+#' @export
 expect_lint <- function(content, checks, ..., file = NULL) {
 
   if (!is.null(file)) {
     content <- readChar(file, file.info(file)$size)
   }
 
-    results <- expectation_lint(content, checks, ...)
+  results <- expectation_lint(content, checks, ...)
 
   reporter <- testthat::get_reporter()
 
-  # flatten list if a list of lists
+  # flatten list if a list of lists of expectations
   if (is.list(results) &&
-    is.list(results[[1]]) &&
-    !testthat::is.expectation(results[[1]])) {
+      is.list(results[[1]]) &&
+      !testthat::is.expectation(results[[1]])) {
 
-    results <- unlist(recursive = FALSE, results)
+    results <- unlist(results, recursive = FALSE)
   }
 
   if (testthat::is.expectation(results)) {
@@ -50,12 +52,18 @@ expectation_lint <- function(content, checks, ...) {
   linter_names <- substitute(alist(...))[-1]
 
   if (is.null(checks)) {
-    return(testthat::expectation(length(lints) %==% 0L,
-        paste0(paste(collapse=", ", linter_names),
+    return(
+      testthat::expectation(
+        length(lints) %==% 0L,
+        paste0(
+          paste(collapse=", ", linter_names),
           " returned ", print(lints),
           " lints when it was expected to return none!"),
-        paste0(paste(collapse=", ", linter_names),
-          " returned 0 lints as expected.")))
+          paste0(paste(collapse=", ", linter_names),
+          " returned 0 lints as expected."
+        )
+      )
+    )
   }
 
   if (!is.list(checks)) {
@@ -64,14 +72,21 @@ expectation_lint <- function(content, checks, ...) {
   checks[] <- lapply(checks, fix_names, "message")
 
   if (length(lints) != length(checks)) {
-    return(testthat::expectation(FALSE,
-        paste0(paste(collapse=", ", linter_names),
+    return(
+      testthat::expectation(
+        FALSE,
+        paste0(
+          paste(collapse=", ", linter_names),
           " did not return ", length(checks),
-          " lints as expected from content:", content, lints)))
+          " lints as expected.\n", 
+          paste(lints, collapse="\n")
+        )
+      )
+    )
   }
 
   itr <- 0L #nolint
-  res <- mapply(function(lint, check) {
+  mapply(function(lint, check) {
     itr <- itr + 1L
     lapply(names(check), function(field) {
       value <- lint[[field]]
@@ -111,10 +126,23 @@ expectation_lint <- function(content, checks, ...) {
   },
   lints,
   checks)
-  res[[1]]
 }
 
-#' Test that the package is lint free
+
+
+#' Test that the given content is lint free, this is 
+#' equivalent to \code{expect_lint(content, NULL, ..., file)}.
+#'
+#' @param content the file content to be linted
+#' @param ... one or more linters to use for the check
+#' @param file if not \code{NULL} read content from a file rather than from \code{content}
+#' @export
+expect_lint_free <- function(content, ..., file = NULL) {
+  expect_lint(content, NULL, ..., file)
+}
+
+
+#' Test that a package is lint free
 #' 
 #' This function is a thin wrapper around lint_package that simply tests there are no 
 #' lints in the package.  It can be used to ensure that your tests fail if the package 
@@ -122,7 +150,7 @@ expectation_lint <- function(content, checks, ...) {
 #' 
 #' @param ... arguments passed to \code{\link{lint_package}}
 #' @export
-expect_lint_free <- function(...) {
+expect_package_lint_free <- function(...) {
   lints <- lint_package(...)
   has_lints <- length(lints) > 0
 
