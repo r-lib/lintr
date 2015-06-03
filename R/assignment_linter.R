@@ -11,7 +11,7 @@ assignment_linter <- function(source_file) {
         type = "style",
         message = "Use <-, not =, for assignment.",
         line = source_file$lines[as.character(parsed$line1)],
-        linter = "absolute_paths_linter"
+        linter = "assignment_linter"
         )
     })
 }
