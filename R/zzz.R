@@ -90,11 +90,13 @@ default_settings <- list(
   exclude_end = rex::rex("#", any_spaces, "nolint end"),
   exclusions = list(),
   cache_directory = "~/.R/lintr_cache", # nolint
-  comment_token = paste0("7713914a",
-                         "3598997a",
-                         "0887b075",
-                         "dcc71584",
-                         "9bf1a3ce"),
+  comment_token = rot(
+    paste0(
+      "9R6813SOS",
+      "2R79O746S5",
+      "4OS326NP4S",
+      "N9Q06OR31S2")
+    ),
   comment_bot = logical_env("LINTR_COMMENT_BOT") %||% TRUE,
   error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
 )
