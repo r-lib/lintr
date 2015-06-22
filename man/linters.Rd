@@ -27,7 +27,7 @@ absolute_paths_linter(source_file)
 
 assignment_linter(source_file)
 
-closed_curly_linter(source_file)
+closed_curly_linter(single_line = FALSE)
 
 commas_linter(source_file)
 
@@ -49,7 +49,7 @@ multiple_dots_linter(source_file)
 
 object_length_linter(length = 20L)
 
-open_curly_linter(source_file)
+open_curly_linter(allow_single_line = FALSE)
 
 single_quotes_linter(source_file)
 
@@ -65,6 +65,12 @@ trailing_whitespace_linter(source_file)
 \item{source_file}{returned by \code{\link{get_source_expressions}}}
 
 \item{length}{the length cutoff to use for the given linter.}
+
+\item{allow_single_line}{if true allow a open and closed curly pair on the
+same line.}
+
+\item{allow_single_line}{if true allow a open and closed curly pair on the
+same line.}
 }
 \description{
 Available linters

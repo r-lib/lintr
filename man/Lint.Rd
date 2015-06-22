@@ -22,6 +22,8 @@ Lint(filename, line_number = 1L, column_number = NULL, type = c("style",
 \item{line}{code source where the lint occured}
 
 \item{ranges}{ranges on the line that should be emphasized.}
+
+\item{linter}{name of linter that created the Lint object.}
 }
 \description{
 Create a \code{Lint} object
