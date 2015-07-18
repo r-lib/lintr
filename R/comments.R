@@ -1,5 +1,5 @@
 in_ci <- function() {
-  isTRUE(logical_env(Sys.getenv("CI")))
+  isTRUE(logical_env("CI"))
 }
 
 ci_type <- function() {
