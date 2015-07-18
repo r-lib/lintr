@@ -145,7 +145,8 @@ to have travis install the package first.  This can be done by adding the
 following line to your `.travis.yml`
 
 ```yaml
-  - ./travis-tool.sh github_package jimhester/lintr
+r_github_packages:
+  - jimhester/lintr
 ```
 
 ### Testthat ###
