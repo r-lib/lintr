@@ -123,6 +123,7 @@ logical_env <- function(x) {
   res
 }
 
+# from ?chartr
 rot <- function(ch, k = 13) {
   p0 <- function(...) paste(c(...), collapse = "")
   A <- c(letters, LETTERS, " '")
