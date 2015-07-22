@@ -177,5 +177,12 @@ to the commit or pull request with the lints found and they will also be
 printed on Travis-CI or Wercker.  If you want to disable the commenting you can
 set the environment variable `LINTR_COMMENT_BOT=false`.
 
+## Installation of develment version ##
+To install the latest development version of lintr from GitHub
+
+```r
+devtools::install_github("jimhester/lintr")
+```
+
 ## References ##
 Most of the default linters are based on [Hadley Wickham's R Style Guide](http://r-pkgs.had.co.nz/style.html).
