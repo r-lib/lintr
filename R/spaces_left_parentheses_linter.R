@@ -23,8 +23,9 @@ spaces_left_parentheses_linter <- function(source_file) {
         before_operator <- substr(line, parsed$col1 - 1L, parsed$col1 - 1L)
 
         non_space_before <- re_matches(before_operator, rex(non_space))
+        not_exception <- !(before_operator %in% c("!", ":", "["))
 
-        if (non_space_before) {
+        if (non_space_before && not_exception) {
           Lint(
             filename = source_file$filename,
             line_number = parsed$line1,

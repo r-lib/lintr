@@ -25,6 +25,16 @@ test_that("returns the correct linting", {
 
   expect_lint("1 * (1 + 1)", NULL, spaces_left_parentheses_linter)
 
+  expect_lint("!(1 == 1)", NULL, spaces_left_parentheses_linter)
+
+  expect_lint("(2 - 1):(3 - 1)", NULL, spaces_left_parentheses_linter)
+
+  expect_lint("c(1, 2, 3)[(2 - 1)]", NULL, spaces_left_parentheses_linter)
+
+  expect_lint("list(1, 2, 3)[[(2 - 1)]]", NULL, spaces_left_parentheses_linter)
+
+  expect_lint("range(10)[(2 - 1):(10 - 1)]", NULL, spaces_left_parentheses_linter)
+
   expect_lint("((1 + 1))",
     rex("Place a space before left parenthesis, except in a function call."),
     spaces_left_parentheses_linter)
