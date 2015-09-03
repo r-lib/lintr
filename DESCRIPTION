@@ -1,7 +1,7 @@
 Package: lintr
 Title: Static R Code Analysis
-Version: 0.3.0.9002
-Authors@R: "Jim Hester <james.f.hester@gmail.com> [aut, cre]"
+Version: 0.3.1
+Authors@R: person("Jim", "Hester", email = "james.f.hester@gmail.com", role = c("aut", "cre"))
 URL: https://github.com/jimhester/lintr
 BugReports: https://github.com/jimhester/lintr/issues
 Description: Checks adherence to a given style, syntax errors and possible
@@ -20,7 +20,9 @@ Imports:
     rstudioapi (>= 0.2),
     httr,
     jsonlite,
-    knitr
+    knitr,
+    stats,
+    utils
 License: MIT + file LICENSE
 LazyData: true
 VignetteBuilder: knitr

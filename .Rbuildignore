@@ -10,3 +10,4 @@
 ^\.Rproj\.user$
 ^\.lintr$
 ^wercker\.yml$
+^[^/]+.Rmd$

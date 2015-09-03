@@ -5,6 +5,8 @@
 #' Sublime Text.
 #' @name lintr
 #' @seealso \code{\link{lint}}, \code{\link{lint_package}}, \code{\link{linters}}
+#' @importFrom stats na.omit
+#' @importFrom utils capture.output getParseData relist
 NULL
 
 #' Lint a given file

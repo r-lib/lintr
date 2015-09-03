@@ -1,7 +1,5 @@
 #' @describeIn linters check that opening curly braces are never on their own
 #' line and are always followed by a newline.
-#' @param allow_single_line if true allow a open and closed curly pair on the
-#' same line.
 #' @export
 open_curly_linter <- function(allow_single_line = FALSE) {
   function(source_file) {

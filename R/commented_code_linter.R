@@ -56,7 +56,7 @@ commented_code_linter <- function(source_file) {
         message = "Commented code should be removed.",
         line = line,
         linter = "commented_code_linter",
-        range = list(c(res[line_number, "code.start"], res[line_number, "code.end"]))
+        ranges = list(c(res[line_number, "code.start"], res[line_number, "code.end"]))
         )
     }
   })

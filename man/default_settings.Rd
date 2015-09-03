@@ -28,7 +28,7 @@
  $ exclude_end    :Class 'regex'  chr "#[[:space:]]*nolint end"
  $ exclusions     : list()
  $ cache_directory: chr "~/.R/lintr_cache"
- $ comment_token  : chr "9c6813d'd2c79'746d54'd326 a4d 9b06'c31d2"
+ $ comment_token  : chr "772D988720C026BE314FECF37F82D9213BCE9823"
  $ comment_bot    : logi TRUE
  $ error_on_lint  : logi FALSE
 }}
