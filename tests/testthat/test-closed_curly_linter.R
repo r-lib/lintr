@@ -1,4 +1,4 @@
-context("closed_curly_linter()")
+context("closed_curly_linter")
 test_that("returns the correct linting", {
 
   expect_lint("blah",

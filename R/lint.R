@@ -15,7 +15,8 @@ NULL
 #' @param filename the given filename to lint.
 #' @param linters a list of linter functions to apply see \code{\link{linters}}
 #' for a full list of default and available linters.
-#' @param cache toggle caching of lint results
+#' @param cache toggle caching of lint results, if passed a character vector
+#' uses that file as the cache.
 #' @param ... additional arguments passed to \code{\link{exclude}}.
 #' @param parse_settings whether to try and parse the settings
 #' @export
@@ -41,7 +42,13 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   itr <- 0
 
   if (isTRUE(cache)) {
-    lint_cache <- load_cache(filename)
+    cache <- settings$cache_directory
+  } else if (is.logical(cache)) { # FALSE
+    cache <- character(0)
+  }
+
+  if (length(cache)) {
+    lint_cache <- load_cache(filename, cache)
     lints <- retrieve_file(lint_cache, filename, linters)
     if (!is.null(lints)) {
       return(exclude(lints, ...))
