@@ -178,7 +178,7 @@ to the commit or pull request with the lints found and they will also be
 printed on Travis-CI or Wercker.  If you want to disable the commenting you can
 set the environment variable `LINTR_COMMENT_BOT=false`.
 
-## Installation of develment version ##
+## Installation of development version ##
 To install the latest development version of lintr from GitHub
 
 ```r
