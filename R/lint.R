@@ -43,7 +43,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   if (isTRUE(cache)) {
     cache <- settings$cache_directory
-  } else if (is.logical(cache)) { # FALSE
+  } else if (is.logical(cache)) {
     cache <- character(0)
   }
 
@@ -83,7 +83,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
 
   if (isTRUE(cache)) {
-    #cache_file(lint_cache, filename, linters, lints)
+    cache_file(lint_cache, filename, linters, lints)
     save_cache(lint_cache, filename)
   }
 

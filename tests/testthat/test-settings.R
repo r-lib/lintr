@@ -38,10 +38,3 @@ test_that("it uses config settings in same directory if provided", {
 
   expect_equal(settings$exclude, "test")
 })
-
-#test_that("it uses project settings in project directory if provided", {
-#
-#  read_settings("test-settings.R")
-#
-#  expect_equal(environment(settings$linters$line_length_linter)$length, 120)
-#})

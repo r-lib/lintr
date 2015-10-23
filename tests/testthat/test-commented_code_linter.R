@@ -45,16 +45,4 @@ test_that("returns the correct linting", {
       commented_code_linter)
   }
 
-  # TODO handle commented code which spans multiple lines
-  #expect_lint(c("# for (i in a) {",
-                #"#   i <- 1",
-                #"# }",
-                #"# comment without code"),
-    #list(
-      #c(message = rex("Commented code should be removed")),
-      #c(message = rex("Commented code should be removed")),
-      #c(message = rex("Commented code should be removed"))
-      #),
-    #NULL,
-    #commented_code_linter)
 })
