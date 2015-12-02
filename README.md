@@ -46,7 +46,7 @@ let g:syntastic_r_lintr_linters = "with_defaults(line_length_linter(120))"
 ```
 
 ### Sublime Text 3 ###
-lintr can be intergrated with
+lintr can be integrated with
 [Sublime Linter](https://github.com/SublimeLinter/SublimeLinter3) for on the fly linting.
 
 ![Sublime Example](http://i.imgur.com/3pua2yz.gif "Sublime Example")
@@ -70,6 +70,18 @@ In the SublimeLinter User Settings
   }
 }
 ```
+
+### Atom ###
+lintr can be integrated with
+[AtomLinter](https://github.com/AtomLinter) for on the fly linting.
+
+#### Installation ####
+Simply install `linter-lintr` from within Atom or on the command line with:
+```bash
+apm install linter-lintr
+```
+
+For more information and bug reports see [Atom linter-lintr](https://github.com/AtomLinter/linter-lintr).
 
 ## Available linters ##
 
