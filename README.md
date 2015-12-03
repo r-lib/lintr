@@ -73,7 +73,9 @@ In the SublimeLinter User Settings
 
 ### Atom ###
 lintr can be integrated with
-[AtomLinter](https://github.com/AtomLinter) for on the fly linting.
+[Linter](https://github.com/atom-community/linter) for on the fly linting.
+
+![Atom Example](http://i.imgur.com/E1Isi4T.png "Atom Example")
 
 #### Installation ####
 Simply install `linter-lintr` from within Atom or on the command line with:
