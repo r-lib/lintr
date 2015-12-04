@@ -45,7 +45,7 @@ function! SyntaxCheckers_r_lintr_IsAvailable() dict
     if !executable(self.getExec())
         return 0
     endif
-    call system(self.getExecEscaped() . ' --slave --restore --no-save -e ' . syntastic#util#shescape('library(lintr)'))
+    call system(self.getExecEscaped() . ' --slave --no-restore --no-save -e ' . syntastic#util#shescape('library(lintr)'))
     return v:shell_error == 0
 endfunction
 
@@ -57,7 +57,7 @@ function! SyntaxCheckers_r_lintr_GetLocList() dict
 
     let setwd = syntastic#util#isRunningWindows() ? 'setwd(''' . escape(getcwd(), '"\') . '''); ' : ''
     let makeprg = self.getExecEscaped() . ' --slave --no-restore --no-save' .
-        \ ' -e ' . syntastic#util#shescape(setwd . 'library(lintr); ' .
+        \ ' -e ' . syntastic#util#shescape(setwd . 'suppressPackageStartupMessages(library(lintr)); ' .
         \       'lint(cache = ' . g:syntastic_r_lintr_cache . ', commandArgs(TRUE), ' . g:syntastic_r_lintr_linters . ')') .
         \ ' --args ' . syntastic#util#shexpand('%')
 
