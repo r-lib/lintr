@@ -30,7 +30,7 @@ if !exists('g:syntastic_r_lintr_linters')
 endif
 
 if !exists('g:syntastic_r_lintr_cache')
-    let g:syntastic_r_lintr_cache = 'TRUE'
+    let g:syntastic_r_lintr_cache = 'FALSE'
 endif
 
 let s:save_cpo = &cpo
