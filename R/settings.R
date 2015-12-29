@@ -38,7 +38,7 @@ get_setting <- function(setting, config, defaults) {
   if (!is.null(option)) {
     option
   } else if (!is.null(config[[setting]])) {
-    eval(parse(text=config[[setting]]))
+    eval(parse(text = config[[setting]]))
   } else {
     defaults[[setting]]
   }

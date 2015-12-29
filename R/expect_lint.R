@@ -43,7 +43,7 @@ expectation_lint <- function(content, checks, ...) {
 
   filename <- tempfile()
   on.exit(unlink(filename))
-  cat(file=filename, content, sep="\n")
+  cat(file = filename, content, sep = "\n")
 
   lints <- lint(filename, ...)
 
@@ -51,10 +51,10 @@ expectation_lint <- function(content, checks, ...) {
 
   if (is.null(checks)) {
     return(testthat::expectation(length(lints) %==% 0L,
-        paste0(paste(collapse=", ", linter_names),
+        paste0(paste(collapse = ", ", linter_names),
           " returned ", print(lints),
           " lints when it was expected to return none!"),
-        paste0(paste(collapse=", ", linter_names),
+        paste0(paste(collapse = ", ", linter_names),
           " returned 0 lints as expected.")))
   }
 
@@ -65,7 +65,7 @@ expectation_lint <- function(content, checks, ...) {
 
   if (length(lints) != length(checks)) {
     return(testthat::expectation(FALSE,
-        paste0(paste(collapse=", ", linter_names),
+        paste0(paste(collapse = ", ", linter_names),
           " did not return ", length(checks),
           " lints as expected from content:", content, lints)))
   }
@@ -115,11 +115,11 @@ expectation_lint <- function(content, checks, ...) {
 }
 
 #' Test that the package is lint free
-#' 
-#' This function is a thin wrapper around lint_package that simply tests there are no 
-#' lints in the package.  It can be used to ensure that your tests fail if the package 
+#'
+#' This function is a thin wrapper around lint_package that simply tests there are no
+#' lints in the package.  It can be used to ensure that your tests fail if the package
 #' contains lints.
-#' 
+#'
 #' @param ... arguments passed to \code{\link{lint_package}}
 #' @export
 expect_lint_free <- function(...) {

@@ -94,10 +94,10 @@ names2 <- function(x) {
 
 recursive_ls <- function(env) {
   if (parent.env(env) %!=% emptyenv()) {
-    c(ls(envir=env), recursive_ls(parent.env(env)))
+    c(ls(envir = env), recursive_ls(parent.env(env)))
   }
   else {
-    ls(envir=env)
+    ls(envir = env)
   }
 }
 

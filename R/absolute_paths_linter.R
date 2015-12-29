@@ -37,7 +37,7 @@ absolute_paths_linter <- function(source_file) {
       rex(quote, x)
     },
     character(1),
-    USE.NAMES=FALSE)
+    USE.NAMES = FALSE)
 
   lapply(ids_with_token(source_file, "STR_CONST"),
     function(id) {
@@ -73,7 +73,7 @@ absolute_paths_rmd_linter <- function(source_file) {
       rex("[", except_any_of("]"), "]", "(", any_spaces, x)
     },
     character(1),
-    USE.NAMES=FALSE)
+    USE.NAMES = FALSE)
 
   newline_locs <-
     c(0L,

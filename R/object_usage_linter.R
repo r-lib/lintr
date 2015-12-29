@@ -12,20 +12,20 @@ object_usage_linter <-  function(source_file) {
   if (is.null(pkg_name) || inherits(parent_env, "try-error")) {
     parent_env <- globalenv()
   }
-  env <- new.env(parent=parent_env)
+  env <- new.env(parent = parent_env)
 
   globals <- mget(".__global__",
     parent_env,
     ifnotfound = list(NULL))$`.__global__`
 
-  mapply(assign, globals, MoreArgs=list(value = function(...) NULL, envir = env))
+  mapply(assign, globals, MoreArgs = list(value = function(...) NULL, envir = env))
 
   # add file locals to the environment
   try(eval(source_file$parsed_content, envir = env), silent = TRUE)
 
   all_globals <- unique(recursive_ls(env))
 
-  lapply(ids_with_token(source_file, rex(start, "FUNCTION"), fun=re_matches),
+  lapply(ids_with_token(source_file, rex(start, "FUNCTION"), fun = re_matches),
     function(loc) {
       id <- source_file$parsed_content$id[loc]
 
@@ -40,10 +40,10 @@ object_usage_linter <-  function(source_file) {
         suppressMessages(
           fun <- try(eval(
               parse(
-                text=source_file$content,
+                text = source_file$content,
                 keep.source = TRUE
                 ),
-              envir=env), silent = TRUE)
+              envir = env), silent = TRUE)
         )
       )
 

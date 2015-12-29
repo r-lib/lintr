@@ -29,7 +29,7 @@ load_cache <- function(file, path = NULL) {
   }
 
   file <- basename(file)
-  env <- new.env(parent=emptyenv())
+  env <- new.env(parent = emptyenv())
 
   file_path <- file.path(path, file)
   if (file.exists(file_path)) {
@@ -49,7 +49,7 @@ save_cache <- function(cache, file, path = NULL) {
   if (!file.exists(path)) {
     dir.create(path, recursive = TRUE)
   }
-  save(file = file.path(path, file), envir = cache, list=ls(envir=cache))
+  save(file = file.path(path, file), envir = cache, list = ls(envir = cache))
 }
 
 cache_file <- function(cache, filename, linters, lints) {

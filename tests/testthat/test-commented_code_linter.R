@@ -32,7 +32,7 @@ test_that("returns the correct linting", {
     NULL,
     commented_code_linter)
 
-  test_ops <- append(ops[ops != "%[^%]*%"], values= c("%>%", "%anything%"))
+  test_ops <- append(ops[ops != "%[^%]*%"], values = c("%>%", "%anything%"))
   for (op in test_ops) {
     expect_lint(paste("i", op, "1", collapse = ""), NULL, commented_code_linter)
 
