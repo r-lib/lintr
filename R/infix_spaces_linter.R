@@ -15,6 +15,7 @@ infix_tokens <- c(
   "LEFT_ASSIGN",
   "RIGHT_ASSIGN",
   "EQ_ASSIGN",
+  "EQ_SUB",
   "SPECIAL",
   "'/'",
   "'^'",
@@ -26,7 +27,7 @@ infix_tokens <- c(
 #' @describeIn linters check that all infix operators have spaces around them.
 #' @export
 infix_spaces_linter <- function(source_file) {
-  lapply(ids_with_token(source_file, infix_tokens, fun=`%in%`),
+  lapply(ids_with_token(source_file, infix_tokens, fun = `%in%`),
     function(id) {
       parsed <- with_id(source_file, id)
 
@@ -43,9 +44,9 @@ infix_spaces_linter <- function(source_file) {
       if (non_space_before || (!newline_after && non_space_after)) {
 
         # we only should check spacing if the operator is infix,
-        # which only happens if there are two siblings
+        # which only happens if there is more than one sibling
         is_infix <-
-          length(siblings(source_file$parsed_content, parsed$id, 1)) %==% 2L
+          length(siblings(source_file$parsed_content, parsed$id, 1)) > 1L
 
         start <- end <- parsed$col1
 
