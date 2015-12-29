@@ -1,5 +1,5 @@
 #' Exclude lines or files from linting
-#' 
+#'
 #' @param lints that need to be filetered.
 #' @param exclusions manually specified exclusions
 #' @param ... additional arguments passed to \code{\link{parse_exclusions}}
@@ -8,7 +8,7 @@
 #' \enumerate{
 #' \item{single line in the source file. default: \code{# nolint}}
 #' \item{line range in the source file. default: \code{# nolint start}, \code{# nolint end}}
-#' \item{exclusions parameter, a named list of the files and lines to exclude, or just the filenames 
+#' \item{exclusions parameter, a named list of the files and lines to exclude, or just the filenames
 #' if you want to exclude the entire file.}
 #' }
 exclude <- function(lints, exclusions = settings$exclusions, ...) {
@@ -63,7 +63,7 @@ parse_exclusions <- function(file, exclude = settings$exclude,
       stop(file, " has ", length(starts), " starts but only ", length(ends), " ends!")
     }
 
-    for(i in seq_along(starts)) {
+    for (i in seq_along(starts)) {
       exclusions <- c(exclusions, seq(starts[i], ends[i]))
     }
   }

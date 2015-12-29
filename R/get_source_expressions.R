@@ -249,7 +249,7 @@ fix_eq_assign <- function(pc) {
 
     end <- true_locs[i]
     j <- end + 1L
-    while(j <= length(expr_locs) && expr_locs[j] == FALSE) {
+    while (j <= length(expr_locs) && expr_locs[j] == FALSE) {
       end <- j
       j <- j + 1L
     }

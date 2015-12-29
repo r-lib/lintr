@@ -6,7 +6,7 @@ trailing_blank_lines_linter <- function(source_file) {
 
   line_number <- length(source_file$file_lines)
   lints <- list()
-  while(line_number > 0L && (is.na(blanks[[line_number]]) || isTRUE(blanks[[line_number]]))) {
+  while (line_number > 0L && (is.na(blanks[[line_number]]) || isTRUE(blanks[[line_number]]))) {
     if (!is.na(blanks[[line_number]])) {
       lints[[length(lints) + 1L]] <-
         Lint(

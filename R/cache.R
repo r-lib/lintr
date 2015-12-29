@@ -105,7 +105,7 @@ find_new_line <- function(line_number, line, lines) {
 
   width <- 1L
 
-  while(width <= length(lines)) {
+  while (width <= length(lines)) {
     low <- line_number - width
     if (low > 0L) {
       if (lines[low] %==% line) {
