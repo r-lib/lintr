@@ -282,7 +282,7 @@ fix_eq_assign <- function(pc) {
     pc[next_loc, "parent"] <- id[i]
   }
   res <- rbind(pc, data.frame(line1, col1, line2, col2, id, parent, token, terminal, text, row.names=id))
-  res[order(res$line1, res$col1, res$line2, res$col2, res$id),]
+  res[order(res$line1, res$col1, res$line2, res$col2, res$id), ]
 }
 
 prev_with_parent <- function(pc, loc) {
@@ -290,8 +290,8 @@ prev_with_parent <- function(pc, loc) {
   id <- pc$id[loc]
   parent_id <- pc$parent[loc]
 
-  with_parent <- pc[pc$parent == parent_id,]
-  with_parent <- with_parent[order(with_parent$line1, with_parent$col1, with_parent$line2, with_parent$col2),]
+  with_parent <- pc[pc$parent == parent_id, ]
+  with_parent <- with_parent[order(with_parent$line1, with_parent$col1, with_parent$line2, with_parent$col2), ]
 
   loc <- which(with_parent$id == id)
 
@@ -303,8 +303,8 @@ next_with_parent <- function(pc, loc) {
   id <- pc$id[loc]
   parent_id <- pc$parent[loc]
 
-  with_parent <- pc[pc$parent == parent_id,]
-  with_parent <- with_parent[order(with_parent$line1, with_parent$col1, with_parent$line2, with_parent$col2),]
+  with_parent <- pc[pc$parent == parent_id, ]
+  with_parent <- with_parent[order(with_parent$line1, with_parent$col1, with_parent$line2, with_parent$col2), ]
 
   loc <- which(with_parent$id == id)
 
