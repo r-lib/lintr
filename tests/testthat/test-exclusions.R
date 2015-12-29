@@ -136,14 +136,14 @@ test_that("it handles full file exclusions", {
 
 test_that("it handles redundant lines", {
 
-  expect_equal(normalize_exclusions(list(a=c(1, 1, 1:10))), list(a = 1:10))
+  expect_equal(normalize_exclusions(list(a = c(1, 1, 1:10))), list(a = 1:10))
 
-  expect_equal(normalize_exclusions(list(a=c(1, 1, 1:10), b = 1:10)), list(a = 1:10, b = 1:10))
+  expect_equal(normalize_exclusions(list(a = c(1, 1, 1:10), b = 1:10)), list(a = 1:10, b = 1:10))
 })
 
 test_that("it handles redundant files", {
 
-  expect_equal(normalize_exclusions(list(a=c(1:10), a=c(10:20))), list(a = 1:20))
+  expect_equal(normalize_exclusions(list(a = c(1:10), a = c(10:20))), list(a = 1:20))
 })
 
 context("exclude")

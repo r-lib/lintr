@@ -75,7 +75,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     lints[[itr <- itr + 1L]] <- source_expressions$error
 
     if (isTRUE(cache)) {
-      cache_lint(lint_cache, list(filename=filename, content=""), "error", source_expressions$error)
+      cache_lint(lint_cache, list(filename = filename, content = ""), "error", source_expressions$error)
     }
   }
 
@@ -213,7 +213,7 @@ Lint <- function(filename, line_number = 1L, column_number = NULL,
       ranges = ranges,
       linter = linter
       ),
-    class="lint")
+    class = "lint")
 }
 
 rstudio_source_markers <- function(lints) {

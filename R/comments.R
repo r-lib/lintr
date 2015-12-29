@@ -63,14 +63,14 @@ github_comment <- function(text, info = NULL, token = settings$comment_token) {
 
   if (!is.null(info$pull) && info$pull != "false") {
     response <- httr::POST("https://api.github.com",
-      path=paste(sep = "/", "repos", info$user, info$repo, "issues", info$pull, "comments"),
-      body = list("body"=jsonlite::unbox(text)),
+      path = paste(sep = "/", "repos", info$user, info$repo, "issues", info$pull, "comments"),
+      body = list("body" = jsonlite::unbox(text)),
       query = list(access_token = token),
       encode = "json")
   } else if (!is.null(info$commit)) {
     response <- httr::POST("https://api.github.com",
-      path=paste(sep = "/", "repos", info$user, info$repo, "commits", info$commit, "comments"),
-      body = list("body"=jsonlite::unbox(text)),
+      path = paste(sep = "/", "repos", info$user, info$repo, "commits", info$commit, "comments"),
+      body = list("body" = jsonlite::unbox(text)),
       query = list(access_token = token),
       encode = "json")
   }

@@ -60,4 +60,8 @@ test_that("returns the correct linting", {
   expect_lint("a[-1 + 1]", NULL, infix_spaces_linter)
 
   expect_lint("a[1 + -1]", NULL, infix_spaces_linter)
+
+  expect_lint("fun(a=1)",
+    rex("Put spaces around all infix operators."),
+    infix_spaces_linter)
 })

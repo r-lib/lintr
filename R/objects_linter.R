@@ -7,7 +7,7 @@ make_object_linter <- function(fun) {
       envir <- try(getNamespace(pkg_name), silent = TRUE)
 
       if (!inherits(envir, "try-error")) {
-        ls(envir=envir)
+        ls(envir = envir)
       }
     }
 
