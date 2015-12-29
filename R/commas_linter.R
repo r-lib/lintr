@@ -7,7 +7,8 @@ commas_linter <- function(source_file) {
 
   res <- re_matches(source_file$lines, re, global = TRUE, locations = TRUE)
 
-  lapply(seq_along(res), function(line_number) {
+  lapply(seq_along(res), function(id) {
+    line_number <- names(source_file$lines)[id]
 
     mapply(
         FUN = function(start, end) {
@@ -17,7 +18,7 @@ commas_linter <- function(source_file) {
 
           lints <- list()
 
-          line <- unname(source_file$lines[[line_number]])
+          line <- unname(source_file$lines[[id]])
 
           comma_loc <- start + re_matches(substr(line, start, end), rex(","), locations = TRUE)$start - 1L
 
@@ -62,7 +63,7 @@ commas_linter <- function(source_file) {
                 Lint(
                   filename = source_file$filename,
                   line_number = line_number,
-                  column_number = comma_loc,
+                  column_number = comma_loc + 1,
                   type = "style",
                   message = "Commas should always have a space after.",
                   line = line,
@@ -74,8 +75,8 @@ commas_linter <- function(source_file) {
 
           lints
         },
-        start = res[[line_number]]$start,
-        end = res[[line_number]]$end,
+        start = res[[id]]$start,
+        end = res[[id]]$end,
         SIMPLIFY = FALSE
         )
 })
