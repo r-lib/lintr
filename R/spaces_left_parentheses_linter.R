@@ -15,7 +15,7 @@ spaces_left_parentheses_linter <- function(source_file) {
       last_type <- tail(terminal_tokens_before, n = 1)
 
       is_function <- length(last_type) %!=% 0L &&
-        (last_type %in% c("SYMBOL_FUNCTION_CALL", "FUNCTION", "'}'", "')'"))
+        (last_type %in% c("SYMBOL_FUNCTION_CALL", "FUNCTION", "'}'", "')'", "']'"))
 
       if (!is_function) {
 
