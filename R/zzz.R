@@ -93,10 +93,10 @@ default_settings <- list(
   cache_directory = "~/.R/lintr_cache", # nolint
   comment_token = rot(
     paste0(
-      "1sos345614s",
-      "s6sop911507",
-      "73572r4p85r",
-      "r23srqp9s8")
+      "0n12nn72507",
+      "r6273qnnp34",
+      "43qno7q42n1",
+      "n71nn28")
     , 54 - 13),
   comment_bot = logical_env("LINTR_COMMENT_BOT") %||% TRUE,
   error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
