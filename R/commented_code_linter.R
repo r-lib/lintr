@@ -23,7 +23,6 @@ ops <- list(
   "&&",
   rex("%", except_any_of("%"), "%"))
 
-# Gene blah-1
 #' @describeIn linters checks that there is no commented code outside roxygen
 #' blocks
 #' @export
