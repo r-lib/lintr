@@ -7,14 +7,15 @@ spaces_left_parentheses_linter <- function(source_file) {
 
       parsed <- source_file$parsed_content[id, ]
 
-      family_ids <- family(source_file$parsed_content, parsed$id)
+      terminal_tokens_before <-
+        source_file$parsed_content$token[
+                                         source_file$parsed_content$line1 == parsed$line1 &
+                                         source_file$parsed_content$col1 < parsed$col1 &
+                                         source_file$parsed_content$terminal]
+      last_type <- tail(terminal_tokens_before, n = 1)
 
-      types <- source_file$parsed_content[
-          source_file$parsed_content$id %in% family_ids,
-          "token"]
-
-      is_function <- length(family_ids) %!=% 0L &&
-        any(types %in% c("SYMBOL_FUNCTION_CALL", "FUNCTION"))
+      is_function <- length(last_type) %!=% 0L &&
+        (last_type %in% c("SYMBOL_FUNCTION_CALL", "FUNCTION", "'}'", "')'", "']'"))
 
       if (!is_function) {
 

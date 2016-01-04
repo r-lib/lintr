@@ -1,5 +1,7 @@
 # lintr 0.3.0.9000 #
-
+* infix_spaces_linter now properly checks `=` in named arguments. (#130, @saurfang).
+* commas_linter now properly recognizes lints when preceded by a blank line and points to the missing space rather than the comma (#111, #129, @saurfang).
+* Make spaces_left_parentheses_linter more robust when determining `(` type (#128, @saurfang)
 * commented_code_linter (#83, @jackwasey)
 * Now trims long comments (#55, reported by @paulstaab)
 * Automatic commenting of Github commits and pull requests when linting on Travis-CI

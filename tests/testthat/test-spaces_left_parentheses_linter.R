@@ -35,6 +35,10 @@ test_that("returns the correct linting", {
 
   expect_lint("range(10)[(2 - 1):(10 - 1)]", NULL, spaces_left_parentheses_linter)
 
+  expect_lint("function(){function(){}}()()", NULL, spaces_left_parentheses_linter)
+
+  expect_lint("c(function(){})[1]()", NULL, spaces_left_parentheses_linter)
+
   expect_lint("((1 + 1))",
     rex("Place a space before left parenthesis, except in a function call."),
     spaces_left_parentheses_linter)
@@ -52,6 +56,10 @@ test_that("returns the correct linting", {
     spaces_left_parentheses_linter)
 
   expect_lint("test <- function(x) { if(1 + 1) 'hi' }",
+    rex("Place a space before left parenthesis, except in a function call."),
+    spaces_left_parentheses_linter)
+
+  expect_lint("test <- function(x) { if(`+`(1, 1)) 'hi' }",
     rex("Place a space before left parenthesis, except in a function call."),
     spaces_left_parentheses_linter)
 

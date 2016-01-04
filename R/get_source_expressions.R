@@ -119,17 +119,17 @@ get_source_expressions <- function(filename) {
 get_source_file <- function(source_file, error = identity) {
 
   e <- tryCatch(
-    source_file$parsed_content <- parse(text=source_file$content, srcfile=source_file, keep.source = TRUE),
+    source_file$parsed_content <- parse(text = source_file$content, srcfile = source_file, keep.source = TRUE),
     error = error)
 
   # This needs to be done twice to avoid
   #   https://bugs.r-project.org/bugzilla/show_bug.cgi?id=16041
   e <- tryCatch(
-    source_file$parsed_content <- parse(text=source_file$content, srcfile=source_file, keep.source = TRUE),
+    source_file$parsed_content <- parse(text = source_file$content, srcfile = source_file, keep.source = TRUE),
     error = error)
 
   if (!inherits(e, "expression")) {
-    assign("e", e,  envir=parent.frame())
+    assign("e", e,  envir = parent.frame())
   }
 
   fix_eq_assign(adjust_columns(getParseData(source_file)))
@@ -249,7 +249,7 @@ fix_eq_assign <- function(pc) {
 
     end <- true_locs[i]
     j <- end + 1L
-    while(j <= length(expr_locs) && expr_locs[j] == FALSE) {
+    while (j <= length(expr_locs) && expr_locs[j] == FALSE) {
       end <- j
       j <- j + 1L
     }
@@ -281,8 +281,8 @@ fix_eq_assign <- function(pc) {
     }
     pc[next_loc, "parent"] <- id[i]
   }
-  res <- rbind(pc, data.frame(line1, col1, line2, col2, id, parent, token, terminal, text, row.names=id))
-  res[order(res$line1, res$col1, res$line2, res$col2, res$id),]
+  res <- rbind(pc, data.frame(line1, col1, line2, col2, id, parent, token, terminal, text, row.names = id))
+  res[order(res$line1, res$col1, res$line2, res$col2, res$id), ]
 }
 
 prev_with_parent <- function(pc, loc) {
@@ -290,8 +290,8 @@ prev_with_parent <- function(pc, loc) {
   id <- pc$id[loc]
   parent_id <- pc$parent[loc]
 
-  with_parent <- pc[pc$parent == parent_id,]
-  with_parent <- with_parent[order(with_parent$line1, with_parent$col1, with_parent$line2, with_parent$col2),]
+  with_parent <- pc[pc$parent == parent_id, ]
+  with_parent <- with_parent[order(with_parent$line1, with_parent$col1, with_parent$line2, with_parent$col2), ]
 
   loc <- which(with_parent$id == id)
 
@@ -303,8 +303,8 @@ next_with_parent <- function(pc, loc) {
   id <- pc$id[loc]
   parent_id <- pc$parent[loc]
 
-  with_parent <- pc[pc$parent == parent_id,]
-  with_parent <- with_parent[order(with_parent$line1, with_parent$col1, with_parent$line2, with_parent$col2),]
+  with_parent <- pc[pc$parent == parent_id, ]
+  with_parent <- with_parent[order(with_parent$line1, with_parent$col1, with_parent$line2, with_parent$col2), ]
 
   loc <- which(with_parent$id == id)
 

@@ -2,7 +2,7 @@ generate_tree <- function(pc) {
   if (is.null(pc)) {
     return(NULL)
   }
-  edges <- matrix(as.character(c(pc$parent, pc$id)), ncol=2)
+  edges <- matrix(as.character(c(pc$parent, pc$id)), ncol = 2)
   igraph::graph.edgelist(edges, directed = TRUE)
 }
 children <- function(data, id, levels = Inf, simplify = TRUE) {

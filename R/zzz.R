@@ -28,7 +28,7 @@ named_list <- function(...) {
 #' # you can also omit the argument name if you are just using different
 #' #   arguments.
 #' with_defaults(line_length_linter(120))
-#' 
+#'
 #' # enforce camelCase rather than snake_case
 #' with_defaults(camel_case_linter = NULL,
 #'               snake_case_linter)
@@ -110,7 +110,7 @@ settings <- list2env(default_settings, parent = emptyenv())
     lintr.linter_file = ".lintr"
   )
   toset <- ! (names(op.lintr) %in% names(op))
-  if(any(toset)) options(op.lintr[toset])
+  if (any(toset)) options(op.lintr[toset])
 
   invisible()
 }

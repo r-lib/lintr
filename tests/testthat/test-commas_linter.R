@@ -21,6 +21,10 @@ test_that("returns the correct linting", {
     rex("Commas should always have a space after."),
     commas_linter)
 
+  expect_lint("\nfun(1,1)",
+    rex("Commas should always have a space after."),
+    commas_linter)
+
   expect_lint("fun(1 ,1)",
     list(
       rex("Commas should never have a space before."),
