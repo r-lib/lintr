@@ -84,33 +84,36 @@ default_linters <- with_defaults(default = list(),
 
 #' Default lintr settings
 #' @seealso \code{\link{read_settings}}, \code{\link{default_linters}}
-default_settings <- list(
-  linters = default_linters,
-  exclude = rex::rex("#", any_spaces, "nolint"),
-  exclude_start = rex::rex("#", any_spaces, "nolint start"),
-  exclude_end = rex::rex("#", any_spaces, "nolint end"),
-  exclusions = list(),
-  cache_directory = "~/.R/lintr_cache", # nolint
-  comment_token = rot(
-    paste0(
-      "0n12nn72507",
-      "r6273qnnp34",
-      "43qno7q42n1",
-      "n71nn28")
-    , 54 - 13),
-  comment_bot = logical_env("LINTR_COMMENT_BOT") %||% TRUE,
-  error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
-)
+default_settings <- NULL
 
-settings <- list2env(default_settings, parent = emptyenv())
+settings <- NULL
 
 .onLoad <- function(libname, pkgname) { # nolint
   op <- options()
   op.lintr <- list(
     lintr.linter_file = ".lintr"
   )
-  toset <- ! (names(op.lintr) %in% names(op))
+  toset <- !(names(op.lintr) %in% names(op))
   if (any(toset)) options(op.lintr[toset])
 
+  default_settings <<- list(
+    linters = default_linters,
+    exclude = rex::rex("#", any_spaces, "nolint"),
+    exclude_start = rex::rex("#", any_spaces, "nolint start"),
+    exclude_end = rex::rex("#", any_spaces, "nolint end"),
+    exclusions = list(),
+    cache_directory = "~/.R/lintr_cache", # nolint
+    comment_token = rot(
+      paste0(
+        "0n12nn72507",
+        "r6273qnnp34",
+        "43qno7q42n1",
+        "n71nn28")
+      , 54 - 13),
+    comment_bot = logical_env("LINTR_COMMENT_BOT") %||% TRUE,
+    error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
+  )
+
+  settings <<- list2env(default_settings, parent = emptyenv())
   invisible()
 }
