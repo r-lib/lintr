@@ -23,6 +23,8 @@ Imports:
     knitr,
     stats,
     utils
+Remotes:
+    hadley/testthat
 License: MIT + file LICENSE
 LazyData: true
 VignetteBuilder: knitr
