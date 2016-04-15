@@ -1,0 +1,16 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
+sudo: false
+cache: packages
+
+addons:
+  apt:
+    packages:
+      libicu-dev
+
+before_script:
+  - Rscript -e 'devtools::install_github("jimhester/covr")'
+
+after_success:
+  - Rscript -e 'covr::codecov()'

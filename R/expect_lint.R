@@ -17,26 +17,7 @@ expect_lint <- function(content, checks, ..., file = NULL) {
     content <- readChar(file, file.info(file)$size)
   }
 
-    results <- expectation_lint(content, checks, ...)
-
-  reporter <- testthat::get_reporter()
-
-  # flatten list if a list of lists
-  if (is.list(results) &&
-    is.list(results[[1]]) &&
-    !testthat::is.expectation(results[[1]])) {
-
-    results <- unlist(recursive = FALSE, results)
-  }
-
-  if (testthat::is.expectation(results)) {
-    reporter$add_result(results)
-  }
-  else {
-    lapply(results, reporter$add_result)
-  }
-
-  invisible(results)
+  expectation_lint(content, checks, ...)
 }
 
 expectation_lint <- function(content, checks, ...) {
@@ -50,12 +31,11 @@ expectation_lint <- function(content, checks, ...) {
   linter_names <- substitute(alist(...))[-1]
 
   if (is.null(checks)) {
-    return(testthat::expectation(length(lints) %==% 0L,
+    return(testthat::expect(length(lints) %==% 0L,
         paste0(paste(collapse = ", ", linter_names),
           " returned ", print(lints),
           " lints when it was expected to return none!"),
-        paste0(paste(collapse = ", ", linter_names),
-          " returned 0 lints as expected.")))
+        ))
   }
 
   if (!is.list(checks)) {
@@ -64,7 +44,7 @@ expectation_lint <- function(content, checks, ...) {
   checks[] <- lapply(checks, fix_names, "message")
 
   if (length(lints) != length(checks)) {
-    return(testthat::expectation(FALSE,
+    return(testthat::expect(FALSE,
         paste0(paste(collapse = ", ", linter_names),
           " did not return ", length(checks),
           " lints as expected from content:", content, lints)))
@@ -77,35 +57,19 @@ expectation_lint <- function(content, checks, ...) {
       value <- lint[[field]]
       check <- check[[field]]
       if (field == "message") {
-        testthat::expectation(re_matches(value, check),
+        testthat::expect(re_matches(value, check),
           sprintf("lint: %d %s: %s did not match: %s",
             itr,
             field,
             value,
-            check
-          ),
-          sprintf("lint: %d %s: %s matched: %s",
-            itr,
-            field,
-            value,
-            check
-          )
-        )
+            check))
       } else {
-        testthat::expectation(`==`(value, check),
+        testthat::expect(`==`(value, check),
           sprintf("lint: %d %s: %s did not match: %s",
             itr,
             field,
             value,
-            check
-          ),
-          sprintf("lint: %d %s: %s matched: %s",
-            itr,
-            field,
-            value,
-            check
-          )
-        )
+            check))
       }
     })
   },
@@ -130,12 +94,10 @@ expect_lint_free <- function(...) {
   if (has_lints) {
     lint_output <- paste(collapse = "\n", capture.output(print(lints)))
   }
-  result <- testthat::expectation(!has_lints,
+  result <- testthat::expect(!has_lints,
                         paste(sep = "\n",
                               "Not lint free",
-                              lint_output),
-                        "lint free")
+                              lint_output))
 
-  testthat::get_reporter()$add_result(result)
   invisible(result)
 }
