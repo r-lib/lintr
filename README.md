@@ -1,5 +1,5 @@
 # lintr
-[![Build Status](https://app.wercker.com/status/9b57842367f234e4c7e17d01fd8a4a15/s/master "wercker status")](https://app.wercker.com/project/bykey/9b57842367f234e4c7e17d01fd8a4a15)
+[![Travis-CI Build Status](https://travis-ci.org/jimhester/lintr.svg?branch=master)](https://travis-ci.org/jimhester/lintr)
 [![codecov.io](http://codecov.io/github/jimhester/lintr/coverage.svg?branch=master)](http://codecov.io/github/jimhester/lintr?branch=master)
 [![CRAN version](http://www.r-pkg.org/badges/version/lintr)](http://cran.rstudio.com/web/packages/lintr/index.html)
 
