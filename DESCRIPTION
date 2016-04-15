@@ -25,6 +25,8 @@ Imports:
     utils
 Remotes:
     hadley/testthat
+Suggests:
+    rmarkdown
 License: MIT + file LICENSE
 LazyData: true
 VignetteBuilder: knitr
