@@ -1,4 +1,7 @@
-# lintr 0.3.0.9000 #
+# lintr 1.0.0 #
+* bugfix to work with testthat 1.0.0
+
+# lintr 0.3.3 #
 * infix_spaces_linter now properly checks `=` in named arguments. (#130, @saurfang).
 * commas_linter now properly recognizes lints when preceded by a blank line and points to the missing space rather than the comma (#111, #129, @saurfang).
 * Make spaces_left_parentheses_linter more robust when determining `(` type (#128, @saurfang)
