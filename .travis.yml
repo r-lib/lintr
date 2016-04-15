@@ -4,7 +4,7 @@ language: R
 sudo: false
 cache: packages
 
-before_install:
+before_script:
   - Rscript -e 'devtools::install_github("jimhester/covr")'
 
 after_success:
