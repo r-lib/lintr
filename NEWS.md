@@ -1,3 +1,7 @@
+# lintr 1.0.0.9000 #
+
+* Commas linter handles missing arguments calls properly (#145)
+
 # lintr 1.0.0 #
 * bugfix to work with testthat 1.0.0
 

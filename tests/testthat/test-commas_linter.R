@@ -35,4 +35,12 @@ test_that("returns the correct linting", {
   expect_lint("\"fun(1 ,1)\"",
     NULL,
     commas_linter)
+
+  expect_lint("a[1, , 2]",
+    NULL,
+    commas_linter)
+
+  expect_lint("a[1, , 2, , 3]",
+    NULL,
+    commas_linter)
 })

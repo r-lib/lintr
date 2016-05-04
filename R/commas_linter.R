@@ -32,7 +32,8 @@ commas_linter <- function(source_file) {
 
             start_of_line <- re_matches(line, rex(start, spaces, ","))
 
-            if (has_token && !start_of_line) {
+            empty_comma <- substr(line, comma_loc - 2L, comma_loc - 1L) %==% ", "
+            if (has_token && !start_of_line && !empty_comma) {
 
               lints[[length(lints) + 1L]] <-
                 Lint(
