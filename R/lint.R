@@ -42,17 +42,20 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   itr <- 0
 
   if (isTRUE(cache)) {
-    cache <- settings$cache_directory
+    cacheDir <- settings$cache_directory
   } else if (is.logical(cache)) {
-    cache <- character(0)
+    cacheDir <- character(0)
   }
 
   if (length(cache)) {
-    lint_cache <- load_cache(filename, cache)
+    lint_cache <- load_cache(filename, cacheDir)
     lints <- retrieve_file(lint_cache, filename, linters)
     if (!is.null(lints)) {
       return(exclude(lints, ...))
     }
+    cache = TRUE
+  } else {
+    cache = FALSE
   }
 
   for (expr in source_expressions$expressions) {
