@@ -122,6 +122,7 @@ lint_package <- function(path = ".", relative_path = TRUE, ...) {
   on.exit(clear_settings, add = TRUE)
 
   names(settings$exclusions) <- normalizePath(file.path(path, names(settings$exclusions)))
+  exclusions = force(settings$exclusions)
 
   files <- dir(
     path = file.path(path,
@@ -141,7 +142,7 @@ lint_package <- function(path = ".", relative_path = TRUE, ...) {
         if (interactive()) {
           message(".", appendLF = FALSE)
         }
-        lint(file, ..., parse_settings = FALSE)
+        lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
       }))
 
   if (interactive()) {
