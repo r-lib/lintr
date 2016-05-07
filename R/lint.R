@@ -47,7 +47,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     cacheDir <- character(0)
   }
 
-  if (length(cache)) {
+  if (length(cacheDir)) {
     lint_cache <- load_cache(filename, cacheDir)
     lints <- retrieve_file(lint_cache, filename, linters)
     if (!is.null(lints)) {
