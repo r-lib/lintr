@@ -43,7 +43,9 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   if (isTRUE(cache)) {
     cacheDir <- settings$cache_directory
-  } else if (is.logical(cache)) {
+  } else if (is.character(cache)) {
+    cacheDir <- cache
+  } else {
     cacheDir <- character(0)
   }
 
