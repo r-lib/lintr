@@ -1,4 +1,6 @@
 # lintr 1.0.0.9000 #
+* lintr does not need the igraph package any more (#152, @gaborcsardi)
+
 * trailing_semicolon_linter (#147, @gaborcsardi)
 
 * Commas linter handles missing arguments calls properly (#145)
