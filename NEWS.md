@@ -1,5 +1,6 @@
 # lintr 1.0.0.9000 #
 
+* Fixed lint_package bug where cache was not caching (#146, @schloerke)
 * Commas linter handles missing arguments calls properly (#145)
 
 # lintr 1.0.0 #
