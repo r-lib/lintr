@@ -42,15 +42,15 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   itr <- 0
 
   if (isTRUE(cache)) {
-    cacheDir <- settings$cache_directory
+    cache_dir <- settings$cache_directory
   } else if (is.character(cache)) {
-    cacheDir <- cache
+    cache_dir <- cache
   } else {
-    cacheDir <- character(0)
+    cache_dir <- character(0)
   }
 
-  if (length(cacheDir)) {
-    lint_cache <- load_cache(filename, cacheDir)
+  if (length(cache_dir)) {
+    lint_cache <- load_cache(filename, cache_dir)
     lints <- retrieve_file(lint_cache, filename, linters)
     if (!is.null(lints)) {
       return(exclude(lints, ...))
