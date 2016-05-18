@@ -89,7 +89,7 @@ get_source_expressions <- function(filename) {
     content <- get_content(expr_lines, parsed_content[loc, ])
 
     id <- as.character(parsed_content$id[loc])
-    edges <- igraph::E(tree)[from(igraph::subcomponent(tree, id, mode = "out"))]
+    edges <- component_edges(tree, id)
     pc <- parsed_content[c(loc, edges), ]
     list(
       filename = filename,
