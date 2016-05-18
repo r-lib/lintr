@@ -42,17 +42,22 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   itr <- 0
 
   if (isTRUE(cache)) {
-    cache <- settings$cache_directory
-  } else if (is.logical(cache)) {
-    cache <- character(0)
+    cache_dir <- settings$cache_directory
+  } else if (is.character(cache)) {
+    cache_dir <- cache
+  } else {
+    cache_dir <- character(0)
   }
 
-  if (length(cache)) {
-    lint_cache <- load_cache(filename, cache)
+  if (length(cache_dir)) {
+    lint_cache <- load_cache(filename, cache_dir)
     lints <- retrieve_file(lint_cache, filename, linters)
     if (!is.null(lints)) {
       return(exclude(lints, ...))
     }
+    cache = TRUE
+  } else {
+    cache = FALSE
   }
 
   for (expr in source_expressions$expressions) {
@@ -119,6 +124,7 @@ lint_package <- function(path = ".", relative_path = TRUE, ...) {
   on.exit(clear_settings, add = TRUE)
 
   names(settings$exclusions) <- normalizePath(file.path(path, names(settings$exclusions)))
+  exclusions = force(settings$exclusions)
 
   files <- dir(
     path = file.path(path,
@@ -138,7 +144,7 @@ lint_package <- function(path = ".", relative_path = TRUE, ...) {
         if (interactive()) {
           message(".", appendLF = FALSE)
         }
-        lint(file, ..., parse_settings = FALSE)
+        lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
       }))
 
   if (interactive()) {
