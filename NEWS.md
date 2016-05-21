@@ -1,13 +1,9 @@
 # lintr 1.0.0.9000 #
 * seq_linter, finds `1:length(...)` (and similar) expressions (#155, @gaborcsardi)
-
 * linters can use the XML parse tree as well now, via the
   https://github.com/MangoTheCat/xmlparsedata package (#154, @gaborcsardi)
-
 * lintr does not need the igraph package any more (#152, @gaborcsardi)
-
 * trailing_semicolon_linter (#147, @gaborcsardi)
-
 * Fixed lint_package bug where cache was not caching (#146, @schloerke)
 * Commas linter handles missing arguments calls properly (#145)
 
