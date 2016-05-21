@@ -1,4 +1,7 @@
 # lintr 1.0.0.9000 #
+* linters can use the XML parse tree as well now, via the
+  https://github.com/MangoTheCat/xmlparsedata package (#154, @gaborcsardi)
+
 * lintr does not need the igraph package any more (#152, @gaborcsardi)
 
 * trailing_semicolon_linter (#147, @gaborcsardi)
