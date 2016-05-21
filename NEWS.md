@@ -1,4 +1,6 @@
 # lintr 1.0.0.9000 #
+* seq_linter, finds `1:length(...)` (and similar) expressions (#155, @gaborcsardi)
+
 * linters can use the XML parse tree as well now, via the
   https://github.com/MangoTheCat/xmlparsedata package (#154, @gaborcsardi)
 
