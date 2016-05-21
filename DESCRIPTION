@@ -21,7 +21,10 @@ Imports:
     jsonlite,
     knitr,
     stats,
-    utils
+    utils,
+    xml2,
+    xmlparsedata
+Remotes: MangoTheCat/xmlparsedata
 Suggests:
     rmarkdown
 License: MIT + file LICENSE
