@@ -252,6 +252,44 @@ rstudio_source_markers <- function(lints) {
                       autoSelect = "first")
 }
 
+#' Checkstyle Report for lint results
+#' 
+#' Generate a report of the linting results using the Checkstyle xml format
+#' @param lints the linting results.
+#' @param reportName the name of the output report.  It will be generated and stored
+#'                    in a reports/ directory.
+#' @export
+checkstyle_output <- function(lints, reportName = "lint_checkstyle_results.xml") {
+
+  # Auto-create a results directory, if one has no existed previously
+  if (!dir.exists("results")) {
+    dir.create("results")
+  }
+  reportPath = paste("results/", reportName, sep = "")
+  file.create(reportPath)
+
+  # setup file
+  cat("<?xml version=\"1.0\" encoding=\"utf-8\"?>", file = reportPath, sep = "\n", append = TRUE)
+  cat("<checkstyle version=\"4.3\">", file = reportPath, sep = "\n", append = TRUE)
+
+  # output the style markers to the file
+  lapply(lints, function(x) {
+    # Need to replace left carat for xml report
+    msg <- sub("<", "&gt;", x$message)
+
+    filemsg = paste("\t<file name=\"", x$filename, "\">", sep = "")
+    cat(filemsg, file = reportPath, "\n", append = TRUE)
+
+    errmsg = paste("\t\t<error line=\"", x$line_number,"\" column=\"", x$column,
+                   "\" severity=\"error\" message=\"",msg,"\" />", sep = "")
+    cat(errmsg, file = reportPath, sep = "\n", append = TRUE)
+
+    cat("\t</file>", file = reportPath, sep = "\n", append = TRUE)
+  })
+
+  cat("</checkstyle>", file = reportPath, sep = "\n", append = TRUE)
+}
+
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {
 
   maximum <- max(column_number, unlist(ranges))
