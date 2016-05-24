@@ -1,4 +1,5 @@
 # lintr 1.0.0.9000 #
+* Support checkstyle XML output (#156, @joshkgold)
 * lintr does not need the igraph package any more (#152, @gaborcsardi)
 
 * trailing_semicolon_linter (#147, @gaborcsardi)

@@ -1,6 +1,6 @@
 Package: lintr
 Title: Static R Code Analysis
-Version: 1.0.0.9000
+Version: 1.0.0.9001
 Authors@R: person("Jim", "Hester", email = "james.f.hester@gmail.com", role = c("aut", "cre"))
 URL: https://github.com/jimhester/lintr
 BugReports: https://github.com/jimhester/lintr/issues
@@ -23,7 +23,10 @@ Imports:
     stats,
     utils
 Suggests:
-    rmarkdown
+    rmarkdown,
+    xml2 (>= 0.1.2.9000)
+Remotes:
+    hadley/xml2
 License: MIT + file LICENSE
 LazyData: true
 VignetteBuilder: knitr

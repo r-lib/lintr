@@ -252,6 +252,48 @@ rstudio_source_markers <- function(lints) {
                       autoSelect = "first")
 }
 
+#' Checkstyle Report for lint results
+#'
+#' Generate a report of the linting results using the
+#' \href{http://checkstyle.sourceforge.net/}{Checkstyle} XML format.
+#' @param lints the linting results.
+#' @param filename the name of the output report
+#' @export
+checkstyle_output <- function(lints, filename = "lintr_results.xml") {
+
+  if (!requireNamespace("xml2")) {
+     stop("`xml2` package >= 0.1.2.9000 must be installed to use `checkstyle_output()`", call. = FALSE)
+  }
+  # package path will be NULL unless it is a relative path
+  package_path <- attr(lints, "path")
+
+  # setup file
+  d <- xml2::xml_new_document()
+  n <- xml2::xml_add_child(d, "checkstyle", version = paste0("lintr-", utils::packageVersion("lintr")))
+
+  # output the style markers to the file
+  lapply(split(lints, names(lints)), function(lints_per_file) {
+    filename <- if (!is.null(package_path)) {
+      file.path(package_path, lints_per_file[[1]]$filename)
+    } else {
+      lints_per_file[[1]]$filename
+    }
+    f <- xml2::xml_add_child(n, "file", name = filename)
+
+    lapply(lints_per_file, function(x) {
+      xml2::xml_add_child(f, "error",
+        line = as.character(x$line_number),
+        column = as.character(x$column_number),
+        severity = switch(x$type,
+          style = "info",
+          x$type),
+        message = x$message)
+    })
+  })
+
+  xml2::write_xml(d, filename)
+}
+
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {
 
   maximum <- max(column_number, unlist(ranges))
