@@ -1,0 +1,48 @@
+#' @describeIn linters check for \code{1:length(...)}, \code{1:nrow(...)},
+#' \code{1:ncol(...)}, \code{1:NROW(...)} and \code{1:NCOL(...)}
+#' expressions. These often cause bugs when the right hand side is zero.
+#' It is safer to use \code{\link[base]{seq_len}} or
+#' \code{\link[base]{seq_along}} instead.
+#' @export
+seq_linter <- function(source_file) {
+
+  if (!length(source_file$parsed_content)) return(list())
+
+  xml <- source_file$xml_parsed_content
+
+  bad_funcs <- c("length", "nrow", "ncol", "NROW", "NCOL")
+  text_clause <- paste0("text() = '", bad_funcs, "'", collapse = " or ")
+
+  xpath <- paste0(
+    "//expr",
+    "[expr[NUM_CONST[text()='1']]]",
+    "[OP-COLON]",
+    "[expr[expr[SYMBOL_FUNCTION_CALL[", text_clause, "]]]]"
+  )
+
+  badx <- xml2::xml_find_all(xml, xpath)
+
+  ## Unfortunately the more natural lapply(badx, ...) does not work,
+  ## because badx looses its class for length() and/or [[
+  lapply(
+    seq_along(badx),
+    function(i) {
+      x <- badx[[i]]
+      fun <- trim_ws(xml2::xml_text(
+        xml2::xml_children(xml2::xml_children(x)[[3]])[[1]]))
+      line1 <- xml2::xml_attr(x, "line1")
+      col1 <- xml2::xml_attr(x, "col1")
+      col2 <- xml2::xml_attr(x, "col1")
+      Lint(
+        filename = source_file$filename,
+        line_number = as.integer(line1),
+        column_number = as.integer(col1),
+        type = "warning",
+        message = paste0("Avoid 1:", fun, "(...) expressions, use seq_len."),
+        line = source_file$lines[line1],
+        ranges = list(c(as.integer(col1), as.integer(col2))),
+        linter = "seq_linter"
+      )
+    }
+  )
+}
