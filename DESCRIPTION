@@ -22,14 +22,13 @@ Imports:
     knitr,
     stats,
     utils,
-    xml2,
+    xml2 (>= 0.1.2.9000),
     xmlparsedata
-Remotes: MangoTheCat/xmlparsedata
 Suggests:
-    rmarkdown,
-    xml2 (>= 0.1.2.9000)
+    rmarkdown
 Remotes:
-    hadley/xml2
+    hadley/xml2,
+    MangoTheCat/xmlparsedata
 License: MIT + file LICENSE
 LazyData: true
 VignetteBuilder: knitr
