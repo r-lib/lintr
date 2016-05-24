@@ -261,9 +261,6 @@ rstudio_source_markers <- function(lints) {
 #' @export
 checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 
-  if (!requireNamespace("xml2")) {
-     stop("`xml2` package >= 0.1.2.9000 must be installed to use `checkstyle_output()`", call. = FALSE)
-  }
   # package path will be NULL unless it is a relative path
   package_path <- attr(lints, "path")
 
