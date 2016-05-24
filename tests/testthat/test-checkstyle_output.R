@@ -1,4 +1,3 @@
-library(XML)
 context("checkstyle_output")
 test_that("return lint report as checkstyle xml", {
   lints <- structure(
