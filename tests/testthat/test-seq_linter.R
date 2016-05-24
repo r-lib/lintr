@@ -27,3 +27,15 @@ test_that("finds 1:length(...) expressions", {
     rex("NCOL(...) expressions, use seq_len"),
     seq_linter)
 })
+
+test_that("1L is also bad", {
+  expect_lint("function(x) { 1L:length(x) }",
+    rex("1L:length(...) expressions, use seq_len"),
+    seq_linter)
+})
+
+test_that("reverse seq is ok", {
+  expect_lint("function(x) { length(x):1 }",
+    rex("length(...):1 expressions, use seq_len"),
+    seq_linter)
+})
