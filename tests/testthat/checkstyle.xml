@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<checkstyle version="lintr-1.0.0.9001">
+  <file name="test_file">
+    <error line="1" column="2" severity="error" message="foo"/>
+    <error line="2" column="1" severity="info" message="bar"/>
+  </file>
+  <file name="test_file2">
+    <error line="1" column="1" severity="warning" message="baz"/>
+  </file>
+</checkstyle>

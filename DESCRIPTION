@@ -23,7 +23,10 @@ Imports:
     stats,
     utils
 Suggests:
-    rmarkdown
+    rmarkdown,
+    xml2 (>= 0.1.2.9000)
+Remotes:
+    hadley/xml2
 License: MIT + file LICENSE
 LazyData: true
 VignetteBuilder: knitr

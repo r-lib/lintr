@@ -253,41 +253,45 @@ rstudio_source_markers <- function(lints) {
 }
 
 #' Checkstyle Report for lint results
-#' 
-#' Generate a report of the linting results using the Checkstyle xml format
+#'
+#' Generate a report of the linting results using the
+#' \href{http://checkstyle.sourceforge.net/}{Checkstyle} XML format.
 #' @param lints the linting results.
-#' @param reportName the name of the output report.  It will be generated and stored
-#'                    in a reports/ directory.
+#' @param filename the name of the output report
 #' @export
-checkstyle_output <- function(lints, reportName = "lint_checkstyle_results.xml") {
+checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 
-  # Auto-create a results directory, if one has no existed previously
-  if (!dir.exists("results")) {
-    dir.create("results")
+  if (!requireNamespace("xml2")) {
+     stop("`xml2` package >= 0.1.2.9000 must be installed to use `checkstyle_output()`", call. = FALSE)
   }
-  reportPath = paste("results/", reportName, sep = "")
-  file.create(reportPath)
+  # package path will be NULL unless it is a relative path
+  package_path <- attr(lints, "path")
 
   # setup file
-  cat("<?xml version=\"1.0\" encoding=\"utf-8\"?>", file = reportPath, sep = "\n", append = TRUE)
-  cat("<checkstyle version=\"4.3\">", file = reportPath, sep = "\n", append = TRUE)
+  d <- xml2::xml_new_document()
+  n <- xml2::xml_add_child(d, "checkstyle", version = paste0("lintr-", utils::packageVersion("lintr")))
 
   # output the style markers to the file
-  lapply(lints, function(x) {
-    # Need to replace left carat for xml report
-    msg <- sub("<", "&gt;", x$message)
+  lapply(split(lints, names(lints)), function(lints_per_file) {
+    filename <- if (!is.null(package_path)) {
+      file.path(package_path, lints_per_file[[1]]$filename)
+    } else {
+      lints_per_file[[1]]$filename
+    }
+    f <- xml2::xml_add_child(n, "file", name = filename)
 
-    filemsg = paste("\t<file name=\"", x$filename, "\">", sep = "")
-    cat(filemsg, file = reportPath, "\n", append = TRUE)
-
-    errmsg = paste("\t\t<error line=\"", x$line_number,"\" column=\"", x$column,
-                   "\" severity=\"error\" message=\"",msg,"\" />", sep = "")
-    cat(errmsg, file = reportPath, sep = "\n", append = TRUE)
-
-    cat("\t</file>", file = reportPath, sep = "\n", append = TRUE)
+    lapply(lints_per_file, function(x) {
+      xml2::xml_add_child(f, "error",
+        line = as.character(x$line_number),
+        column = as.character(x$column_number),
+        severity = switch(x$type,
+          style = "info",
+          x$type),
+        message = x$message)
+    })
   })
 
-  cat("</checkstyle>", file = reportPath, sep = "\n", append = TRUE)
+  xml2::write_xml(d, filename)
 }
 
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {
