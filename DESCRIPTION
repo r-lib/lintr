@@ -21,7 +21,10 @@ Imports:
     jsonlite,
     knitr,
     stats,
-    utils
+    utils,
+    xml2,
+    xmlparsedata
+Remotes: MangoTheCat/xmlparsedata
 Suggests:
     rmarkdown,
     xml2 (>= 0.1.2.9000)

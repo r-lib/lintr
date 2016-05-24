@@ -97,6 +97,7 @@ get_source_expressions <- function(filename) {
       column = parsed_content[loc, "col1"],
       lines = expr_lines,
       parsed_content = pc,
+      xml_parsed_content = xml2::read_xml(xmlparsedata::xml_parse_data(pc)),
       content = content,
 
       find_line = find_line_fun(content),
