@@ -1,6 +1,6 @@
 #' @describeIn linters check that all commas do not have spaces before them.
 #' @export
-commas_linter <- function(source_file) {
+commas_before_linter <- function(source_file) {
 
   re <- rex(list(one_or_more(" "), ",") %or% list(",", non_space))
 
