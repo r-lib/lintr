@@ -22,6 +22,11 @@ closed_curly_linter <- function(allow_single_line = FALSE) {
                return()
              }
 
+             if (length(tokens_after) &&
+                 tokens_after[[1]] %in% c("')'", "','")) {
+               return()
+             }
+
              has_expression_before <- any(tokens_before %in% "expr")
 
              has_expression_after <- any(tokens_after %in% "expr")
