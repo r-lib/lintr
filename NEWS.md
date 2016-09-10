@@ -1,4 +1,5 @@
 # lintr 1.0.0.9000 #
+* Allow closing parenthesis or comma after closing curly brace (#167, @Enchufa2)
 * Support checkstyle XML output (#156, @joshkgold)
 * seq_linter, finds `1:length(...)` (and similar) expressions (#155, @gaborcsardi)
 * linters can use the XML parse tree as well now, via the
