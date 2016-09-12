@@ -54,5 +54,5 @@ commas_before_linter <- function(source_file) {
         end = res[[id]]$end,
         SIMPLIFY = FALSE
         )
-})
+  })
 }
