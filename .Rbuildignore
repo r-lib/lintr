@@ -11,3 +11,4 @@
 ^wercker\.yml$
 ^[^/]+.Rmd$
 ^revdep$
+^COPYING$
