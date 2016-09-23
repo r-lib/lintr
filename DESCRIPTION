@@ -17,7 +17,7 @@ Imports:
     testthat,
     digest,
     rstudioapi (>= 0.2),
-    httr,
+    httr (>= 1.2.1),
     jsonlite,
     knitr,
     stats,
