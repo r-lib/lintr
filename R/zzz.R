@@ -62,7 +62,6 @@ default_linters <- with_defaults(default = list(),
 
   assignment_linter,
   single_quotes_linter,
-  absolute_paths_linter,
   no_tab_linter,
   line_length_linter(80),
   commas_linter,
