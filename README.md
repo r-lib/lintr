@@ -37,7 +37,7 @@ in `syntastic/syntax_checkers/r`.  If you are using
 You will also need to add the following lines to your `.vimrc`.
 ```vim
 let g:syntastic_enable_r_lintr_checker = 1
-let g:syntastic_r_checkers = 1
+let g:syntastic_r_checkers = ['lintr']
 ```
 #### Configuration ####
 You can also configure what linters are used. e.g. using a different line length cutoff.
