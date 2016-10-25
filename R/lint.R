@@ -23,6 +23,15 @@ NULL
 #' @name lint_file
 lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = TRUE) {
 
+  inline_data <- rex::re_matches(filename, rex::rex(newline))
+  if (inline_data) {
+    content <- filename
+    filename <- tempfile()
+    on.exit(unlink(filename))
+    cat(file = filename, content, sep = "\n")
+  }
+  source_expressions <- get_source_expressions(filename)
+
   if (isTRUE(parse_settings)) {
     read_settings(filename)
     on.exit(clear_settings, add = TRUE)
@@ -35,8 +44,6 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
    linters <- list(linters)
     names(linters) <- name
   }
-
-  source_expressions <- get_source_expressions(filename)
 
   lints <- list()
   itr <- 0
@@ -92,7 +99,15 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     save_cache(lint_cache, filename)
   }
 
-  exclude(lints, ...)
+  res <- exclude(lints, ...)
+
+  # simplify filename if inline
+  if (inline_data) {
+    for (i in seq_along(res)) {
+      res[[i]][["filename"]] <- "<text>"
+    }
+  }
+  res
 }
 
 reorder_lints <- function(lints) {
