@@ -74,3 +74,11 @@ test_that("it does _not_ handle brew", {
     ),
     default_linters)
 })
+
+test_that("it does _not_ error with inline \\Sexpr", {
+  expect_lint("#' text \\Sexpr{1 + 1} more text\n",
+    checks = list(
+      rex("Trailing blank lines are superfluous.")
+    ),
+    default_linters)
+})

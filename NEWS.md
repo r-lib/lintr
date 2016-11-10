@@ -1,4 +1,5 @@
 # lintr 1.0.0.9000 #
+* Do not error with inline \\Sexpr (#127).
 * Do not error with '<% %>' constructs (#185).
 * Allow closing parenthesis or comma after closing curly brace (#167, @Enchufa2)
 * Support checkstyle XML output (#156, @joshkgold)

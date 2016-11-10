@@ -9,6 +9,11 @@ extract_r_source <- function(filename, lines) {
   starts <- grep(pattern$chunk.begin, lines, perl = TRUE)
   ends <- grep(pattern$chunk.end, lines, perl = TRUE)
 
+  # no chunks found, so just return the lines
+  if (length(starts) == 0 || length(ends) == 0) {
+    return(lines)
+  }
+
   if (length(starts) != length(ends)) {
     stop("Malformed file!", call. = FALSE)
   }
