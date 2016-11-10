@@ -2,7 +2,7 @@
 extract_r_source <- function(filename, lines) {
 
   pattern <- get_knitr_pattern(filename, lines)
-  if (is.null(pattern)) {
+  if (is.null(pattern$chunk.begin) || is.null(pattern$chunk.end)) {
     return(lines)
   }
 

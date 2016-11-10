@@ -65,3 +65,12 @@ test_that("it handles asciidoc", {
     default_linters
   )
 })
+
+test_that("it does _not_ handle brew", {
+  expect_lint("'<% a %>'\n",
+    checks = list(
+      rex("Only use double-quotes."),
+      rex("Trailing blank lines are superfluous.")
+    ),
+    default_linters)
+})
