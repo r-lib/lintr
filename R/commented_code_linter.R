@@ -47,7 +47,9 @@ commented_code_linter <- function(source_file) {
     is_parsable <- parsable(substr(line,
                                    res[line_number, "code.start"],
                                    res[line_number, "code.end"]))
-    if (is_parsable) {
+    is_roxygen_comment <- re_matches(line, rex(start, "#'", any_spaces))
+
+    if (is_parsable && !is_roxygen_comment) {
       Lint(
         filename = source_file$filename,
         line_number = line_number,

@@ -22,6 +22,10 @@ test_that("returns the correct linting", {
     NULL,
     commented_code_linter)
 
+  expect_lint("#' foo(bar, 2L) # 1 + 2",
+    NULL,
+    commented_code_linter)
+
   expect_lint(c("a <- 1",
                 "# comment without code"),
     NULL,
