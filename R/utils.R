@@ -133,3 +133,14 @@ rot <- function(ch, k = 13) {
 trim_ws <- function(x) {
   sub("^\\s+", "", sub("\\s+$", "", x))
 }
+
+digit_words <- c("one", "two", "three", "four", "five", "six", "seven", "eight", "nine")
+
+digit_to_word <- function(num) {
+	if (!is.integer(num))
+		stop("num needs to be an integer, got", class(num))
+	if (num > 9L || num < 1L)
+		stop(num, "needs to be in range 1-9")
+	
+	digit_words[[num]]
+}
