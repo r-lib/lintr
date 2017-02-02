@@ -52,9 +52,11 @@ camel_case_linter <- make_object_linter(function(source_file, parsed) {
 
   is_camel_case <- re_matches(parsed$text, rex(lower, upper))
 
+
   if (is_camel_case &&
       !is_external_reference(source_file, parsed$id) &&
-      !is_base_function(parsed$text)) {
+      !is_base_function(parsed$text) &&
+      !is_library_or_require(source_file, parsed)) {
     object_lint(source_file,
       parsed,
       "Variable and function names should be all lowercase.",
@@ -70,7 +72,8 @@ snake_case_linter <- make_object_linter(function(source_file, parsed) {
 
   if (is_snake_case &&
       !is_external_reference(source_file, parsed$id) &&
-      !is_base_function(parsed$text)) {
+      !is_base_function(parsed$text) &&
+      !is_library_or_require(source_file, parsed)) {
       object_lint(source_file,
         parsed,
         "Variable and function names should not use underscores.",
@@ -109,6 +112,28 @@ object_length_linter <- function(length = 20L) {
           "object_length_linter")
       }
   })
+}
+
+is_library_or_require <- function(source_file, parsed) {
+
+  terminal_tokens_before <-
+    source_file$parsed_content$token[
+                                     source_file$parsed_content$line1 == parsed$line1 &
+                                     source_file$parsed_content$col1 < parsed$col1 &
+                                     source_file$parsed_content$terminal]
+  terminal_text_before <-
+    source_file$parsed_content$text[
+                                     source_file$parsed_content$line1 == parsed$line1 &
+                                     source_file$parsed_content$col1 < parsed$col1 &
+                                     source_file$parsed_content$terminal]
+
+  last_type <- terminal_tokens_before[length(terminal_tokens_before) - 1]
+  last_text <- terminal_text_before[length(terminal_text_before) - 1]
+
+  is_library_or_require <- length(last_type) %!=% 0L &&
+    (last_type %in% c("SYMBOL_FUNCTION_CALL")) &&
+    length(last_text) %!=% 0L &&
+    (last_text %in% c("library", "require"))
 }
 
 is_external_reference <- function(source_file, id) {

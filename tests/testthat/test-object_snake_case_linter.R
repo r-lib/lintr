@@ -16,6 +16,13 @@ test_that("returns the correct linting", {
     rex("Variable and function names should not use underscores."),
     snake_case_linter)
 
+  expect_lint("library(snake_case)",
+    NULL,
+    snake_case_linter)
+
+  expect_lint("require(snake_case)",
+    NULL,
+    snake_case_linter)
 
   expect_lint("pack::snake_case",
     NULL,
