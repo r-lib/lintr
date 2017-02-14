@@ -13,8 +13,10 @@
 #' @param file if not \code{NULL} read content from a file rather than from \code{content}
 expect_lint <- function(content, checks, ..., file = NULL) {
 
-  if (!is.null(file)) {
-    content <- readChar(file, file.info(file)$size)
+  content <- if (!is.null(file)) {
+    readChar(file, file.info(file)$size)
+  } else {
+    encodeString(content)
   }
 
   expectation_lint(content, checks, ...)
