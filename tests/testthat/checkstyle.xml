@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <checkstyle version="lintr-1.0.0.9001">
   <file name="test_file">
     <error line="1" column="2" severity="error" message="foo"/>
