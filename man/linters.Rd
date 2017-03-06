@@ -5,7 +5,8 @@
 %   R/objects_linter.R, R/open_curly_linter.R, R/path_linters.R,
 %   R/seq_linter.R, R/single_quotes_linter.R, R/spaces_inside_linter.R,
 %   R/spaces_left_parentheses_linter.R, R/trailing_blank_lines_linter.R,
-%   R/trailing_semicolons_linter.R, R/trailing_whitespace_linter.R, R/zzz.R
+%   R/trailing_semicolons_linter.R, R/trailing_whitespace_linter.R,
+%   R/unneeded_concatenation_linter.R, R/zzz.R
 \name{assignment_linter}
 \alias{assignment_linter}
 \alias{closed_curly_linter}
@@ -29,6 +30,7 @@
 \alias{trailing_blank_lines_linter}
 \alias{trailing_semicolons_linter}
 \alias{trailing_whitespace_linter}
+\alias{unneeded_concatenation_linter}
 \alias{linters}
 \title{linters}
 \usage{
@@ -75,6 +77,8 @@ trailing_blank_lines_linter(source_file)
 trailing_semicolons_linter(source_file)
 
 trailing_whitespace_linter(source_file)
+
+unneeded_concatenation_linter(source_file)
 }
 \arguments{
 \item{source_file}{returned by \code{\link{get_source_expressions}}}
@@ -149,5 +153,8 @@ unless they are in a function call.
 \item \code{trailing_semicolons_linter}: check there are no trailing semicolons.
 
 \item \code{trailing_whitespace_linter}: check there are no trailing whitespace characters.
+
+\item \code{unneeded_concatenation_linter}: Check that the \code{c} function is not used without arguments nor with a
+single constant.
 }}
 
