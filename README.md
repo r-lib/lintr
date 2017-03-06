@@ -88,11 +88,12 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
 ## Available linters ##
 
 * `Syntax errors`: reported by [parse](http://www.inside-r.org/r-doc/base/parse).
-* `object_usage_linter`: checks that closures have the proper usage using
+* `object_usage_linter`: check that closures have the proper usage using
   [codetools::checkUsage()](http://www.inside-r.org/r-doc/codetools/checkUsage).  Note this runs
   [base::eval()](http://www.inside-r.org/r-doc/base/eval) on the code, so do not use with untrusted code.
-* `absolute_paths_linter`: checks that no absolute paths are used.
-* `assignment_linter`: checks that `<-` is always used for assignment
+* `absolute_path_linter`: check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
+* `nonportable_path_linter`: check that file.path() is used to construct safe and portable paths.
+* `assignment_linter`: check that `<-` is always used for assignment
 * `closed_curly_linter`: check that closed curly braces should always be on their
   own line unless they follow an else.
 * `commas_linter`: check that all commas are followed by spaces, but do not
@@ -107,7 +108,7 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
 * `object_length_linter`: check that function and variable names are not more than `length` characters.
 * `open_curly_linter`: check that opening curly braces are never on their own
   line and are always followed by a newline.
-* `single_quotes_linter`: checks that only single quotes are used to delimit
+* `single_quotes_linter`: check that only single quotes are used to delimit
   string contestants.
 * `spaces_inside_linter`: check that parentheses and square brackets do not have
   spaces directly inside them.

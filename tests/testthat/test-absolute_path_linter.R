@@ -1,0 +1,160 @@
+context("absolute_path_linter")
+
+
+test_that("isRootPath", {
+  f <- s001:::.isRootPath  #nolint current package
+
+  x <- character()
+  y <- logical()
+  expect_equal(f(x), y)
+
+  x <- c(   "", "foo", "http://rseek.org/",  "./",  " /", "/foo", "'/'")
+  y <- c(FALSE, FALSE,               FALSE, FALSE, FALSE,  FALSE, FALSE)
+  expect_equal(f(x), y)
+
+  x <- c( "/",  "//")
+  y <- c(TRUE, FALSE)
+  expect_equal(f(x), y)
+
+  x <- c( "~", "~/", "~//", "~bob2", "~foo_bar/")
+  y <- c(TRUE, TRUE,  TRUE,    TRUE,        TRUE)
+  expect_equal(f(x), y)
+
+  x <- c("c:", "C:\\", "D:/", "C:\\\\", "D://")
+  y <- c(TRUE,  TRUE,   TRUE,    FALSE,  FALSE)
+  expect_equal(f(x), y)
+
+  x <- c("\\\\", "\\\\localhost", "\\\\localhost\\")
+  y <- c(  TRUE,            TRUE,              TRUE)
+  expect_equal(f(x), y)
+})
+
+
+test_that("isAbsolutePath", {
+  f <- s001:::.isAbsolutePath  #nolint current package
+
+  x <- character()
+  y <- logical()
+  expect_equal(f(x), y)
+
+  x <- c( "/",  "//", "/foo", "/foo/")
+  y <- c(TRUE, FALSE,   TRUE,    TRUE)
+  expect_equal(f(x), y)
+
+  x <- c( "~", "~/foo", "~/foo/",  "~'")  #nolint
+  y <- c(TRUE,    TRUE,     TRUE, FALSE)
+  expect_equal(f(x), y)
+
+  x <- c("c:", "C:\\foo\\", "C:/foo/")  #nolint
+  y <- c(TRUE,        TRUE,      TRUE)
+  expect_equal(f(x), y)
+
+  x <- c("\\\\", "\\\\localhost", "\\\\localhost\\c$", "\\\\localhost\\c$\\foo")  #nolint
+  y <- c(  TRUE,            TRUE,                TRUE,                     TRUE)
+  expect_equal(f(x), y)
+})
+
+
+test_that("isRelativePath", {
+  f <- s001:::.isRelativePath  #nolint current package
+
+  x <- character()
+  y <- logical()
+  expect_equal(f(x), y)
+
+  x <- c(  "/", "c:\\",  "~/", "foo", "http://rseek.org/", "'./'")
+  y <- c(FALSE,  FALSE, FALSE, FALSE,               FALSE,  FALSE)
+  expect_equal(f(x), y)
+
+  x <- c("/foo", "foo/", "foo/bar", "foo//bar", "./foo", "../foo")  #nolint
+  y <- c( FALSE,   TRUE,      TRUE,       TRUE,    TRUE,     TRUE)
+  expect_equal(f(x), y)
+
+  x <- c("\\\\", "\\foo", "foo\\", "foo\\bar", ".\\foo", "..\\foo",  ".", "..", "../")  #nolint
+  y <- c( FALSE,   FALSE,    TRUE,       TRUE,     TRUE,      TRUE, TRUE, TRUE,  TRUE)
+  expect_equal(f(x), y)
+})
+
+
+test_that("isPath", {
+  f <- s001:::.isPath  #nolint current package
+
+  x <- character()
+  y <- logical()
+  expect_equal(f(x), y)
+
+  x <- c(   "",  "foo", "http://rseek.org/", "foo\nbar", "'foo/bar'", "'/'")
+  y <- c(FALSE,  FALSE,               FALSE,      FALSE,       FALSE, FALSE)
+  expect_equal(f(x), y)
+
+  x <- c("c:", "..", "foo/bar", "foo\\bar",  "~", "\\\\localhost")  #nolint
+  y <- c(TRUE, TRUE,      TRUE,       TRUE, TRUE,            TRUE)
+  expect_equal(f(x), y)
+})
+
+
+test_that("isValidPath", {
+  f <- s001:::.isValidPath  #nolint current package
+
+  x <- character()
+  y <- logical()
+  expect_equal(f(x), y)
+
+  x <- c("C:/asdf", "C:/asd*f", "a\\s:df", "a\\\nsdf")  #nolint
+  y <- c(     TRUE,      FALSE,     FALSE,      FALSE)
+  expect_equal(f(x), y)
+
+  x <- c("C:/asdf", "C:/asd*f", "a\\s:df", "a\\\nsdf")  #nolint
+  y <- c(     TRUE,      FALSE,     FALSE,      FALSE)
+  expect_equal(f(x, lax=TRUE), y)
+
+  x <- c("/asdf", "/asd*f", "/as:df", "/a\nsdf")
+  y <- c(   TRUE,    TRUE,    TRUE,        TRUE)
+  expect_equal(f(x), y)
+
+  x <- c("/asdf", "/asd*f", "/as:df", "/a\nsdf")
+  y <- c(   TRUE,    FALSE,    FALSE,     FALSE)
+  expect_equal(f(x, lax=TRUE), y)
+})
+
+
+test_that("isLongPath", {
+  f <- s001:::.isLongPath  #nolint current package
+
+  x <- character()
+  y <- logical()
+  expect_equal(f(x), y)
+
+  x <- c("foo/", "/foo", "n/a", "Z:\\foo", "foo/bar", "~/foo", "../foo")  #nolint
+  y <- c( FALSE,  FALSE, FALSE,      TRUE,      TRUE,    TRUE,     TRUE)
+  expect_equal(f(x), y)
+})
+
+
+test_that("returns the correct linting", {
+  msg <- rex::escape("Do not use absolute paths.")
+
+  # strict mode
+  linter <- absolute_path_linter(lax=FALSE)
+  expect_lint("'..'", NULL, linter)
+  expect_lint("'./blah'", NULL, linter)
+  expect_lint(encodeString("'blah\\file.txt'"), NULL, linter)  # lintr bug 205
+  expect_lint("\"'/'\"", NULL, linter)
+
+  expect_lint("'/'", msg, linter)
+  expect_lint("'/blah/file.txt'", msg, linter)
+  expect_lint(encodeString("'d:\\'"), msg, linter)  # lintr bug 205
+  expect_lint("'E:/blah/file.txt'", msg, linter)
+  expect_lint(encodeString("'\\\\'"), msg, linter)  # lintr bug 205
+  expect_lint(encodeString("'\\\\server\\path'"), msg, linter)  # lintr bug 205
+  expect_lint("'~'", msg, linter)
+  expect_lint("'~james.hester/blah/file.txt'", msg, linter)
+  expect_lint(encodeString("'/a\nsdf'"), msg, linter)  # lintr bug 205
+  expect_lint("'/as:df'", msg, linter)
+
+  # lax mode: no check for strings that are likely not paths (too short or with special characters)
+  linter <- absolute_path_linter(lax=TRUE)
+  expect_lint("'/'", NULL, linter)
+  expect_lint(encodeString("'/a\nsdf/bar'"), NULL, linter)  # lintr bug 205
+  expect_lint("'/as:df/bar'", NULL, linter)
+})
