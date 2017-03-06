@@ -20,6 +20,14 @@ test_that("returns the correct linting", {
     NULL,
     camel_case_linter)
 
+  expect_lint("library(camelCase)",
+    NULL,
+    camel_case_linter)
+
+  expect_lint("require(camelCase)",
+    NULL,
+    camel_case_linter)
+
   expect_lint("pack:::camelCase",
     NULL,
     camel_case_linter)
