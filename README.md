@@ -98,6 +98,7 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
   own line unless they follow an else.
 * `commas_linter`: check that all commas are followed by spaces, but do not
   have spaces before them.
+* `implicit_integer_linter`: check that integers are explicitly typed using the form `1L` instead of `1`.
 * `infix_spaces_linter`: check that all infix operators have spaces around them.
 * `line_length_linter`: check the line length of both comments and code is less than
   length.
