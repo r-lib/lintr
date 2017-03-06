@@ -7,7 +7,8 @@
 %   R/path_linters.R, R/seq_linter.R, R/single_quotes_linter.R,
 %   R/spaces_inside_linter.R, R/spaces_left_parentheses_linter.R,
 %   R/trailing_blank_lines_linter.R, R/trailing_semicolons_linter.R,
-%   R/trailing_whitespace_linter.R, R/unneeded_concatenation_linter.R, R/zzz.R
+%   R/trailing_whitespace_linter.R, R/undesirable_function_linter.R,
+%   R/undesirable_operator_linter.R, R/unneeded_concatenation_linter.R, R/zzz.R
 \name{T_and_F_symbol_linter}
 \alias{T_and_F_symbol_linter}
 \alias{assignment_linter}
@@ -35,6 +36,8 @@
 \alias{trailing_blank_lines_linter}
 \alias{trailing_semicolons_linter}
 \alias{trailing_whitespace_linter}
+\alias{undesirable_function_linter}
+\alias{undesirable_operator_linter}
 \alias{unneeded_concatenation_linter}
 \alias{linters}
 \title{linters}
@@ -91,6 +94,10 @@ trailing_semicolons_linter(source_file)
 
 trailing_whitespace_linter(source_file)
 
+undesirable_function_linter(fun = default_undesirable_funs)
+
+undesirable_operator_linter(op = default_undesirable_ops)
+
 unneeded_concatenation_linter(source_file)
 }
 \arguments{
@@ -104,6 +111,12 @@ same line.}
 \item{length}{the length cutoff to use for the given linter.}
 
 \item{lax}{Less stringent linting, leading to fewer false positives.}
+
+\item{fun}{Named character vector, where the names are the names of the undesirable functions,
+and the values are the text for the alternative function to use (or \code{NA}).}
+
+\item{op}{Named character vector, where the names are the names of the undesirable operators,
+and the values are the text for the alternative operator to use (or \code{NA}).}
 }
 \description{
 Available linters
@@ -178,6 +191,12 @@ unless they are in a function call.
 \item \code{trailing_semicolons_linter}: check there are no trailing semicolons.
 
 \item \code{trailing_whitespace_linter}: check there are no trailing whitespace characters.
+
+\item \code{undesirable_function_linter}: Report the use of undesirable functions, e.g. \code{return}, \code{options},
+or \code{sapply} and suggest an alternative.
+
+\item \code{undesirable_operator_linter}: Report the use of undesirable operators, e.g. \code{`:::`} or \code{`<<-`}
+and suggest an alternative.
 
 \item \code{unneeded_concatenation_linter}: Check that the \code{c} function is not used without arguments nor with a
 single constant.

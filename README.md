@@ -121,6 +121,10 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
 * `trailing_blank_lines_linter`: check there are no trailing blank lines.
 * `trailing_whitespace_linter`: check there are no trailing whitespace characters.
 * `T_and_F_symbol_linter`: avoid the symbols `T` and `F` (for `TRUE` and `FALSE`).
+* `undesirable_function_linter`: rport the use of undesirable functions, e.g. `return`, `options`,
+  or `sapply` and suggest an alternative.
+* `undesirable_operator_linter`: report the use of undesirable operators, e.g. `:::` or `<<-` and
+  suggest an alternative.
 * `unneeded_concatenation_linter`: check that the `c` function is not used without arguments nor
   with a single constant.
 
