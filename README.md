@@ -111,6 +111,7 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
 * `object_length_linter`: check that function and variable names are not more than `length` characters.
 * `open_curly_linter`: check that opening curly braces are never on their own
   line and are always followed by a newline.
+* `semicolon_terminator_linter`: check that no semicolons terminate statements.
 * `single_quotes_linter`: check that only single quotes are used to delimit
   string contestants.
 * `spaces_inside_linter`: check that parentheses and square brackets do not have

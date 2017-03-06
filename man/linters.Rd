@@ -4,9 +4,9 @@
 %   R/extraction_operator_linter.R, R/implicit_integer_linter.R,
 %   R/infix_spaces_linter.R, R/line_length_linter.R, R/no_tab_linter.R,
 %   R/object_usage_linter.R, R/objects_linter.R, R/open_curly_linter.R,
-%   R/path_linters.R, R/seq_linter.R, R/single_quotes_linter.R,
-%   R/spaces_inside_linter.R, R/spaces_left_parentheses_linter.R,
-%   R/trailing_blank_lines_linter.R, R/trailing_semicolons_linter.R,
+%   R/path_linters.R, R/semicolon_terminator_linter.R, R/seq_linter.R,
+%   R/single_quotes_linter.R, R/spaces_inside_linter.R,
+%   R/spaces_left_parentheses_linter.R, R/trailing_blank_lines_linter.R,
 %   R/trailing_whitespace_linter.R, R/undesirable_function_linter.R,
 %   R/undesirable_operator_linter.R, R/unneeded_concatenation_linter.R, R/zzz.R
 \name{T_and_F_symbol_linter}
@@ -29,12 +29,12 @@
 \alias{open_curly_linter}
 \alias{absolute_path_linter}
 \alias{nonportable_path_linter}
+\alias{semicolon_terminator_linter}
 \alias{seq_linter}
 \alias{single_quotes_linter}
 \alias{spaces_inside_linter}
 \alias{spaces_left_parentheses_linter}
 \alias{trailing_blank_lines_linter}
-\alias{trailing_semicolons_linter}
 \alias{trailing_whitespace_linter}
 \alias{undesirable_function_linter}
 \alias{undesirable_operator_linter}
@@ -80,6 +80,8 @@ absolute_path_linter(lax = TRUE)
 
 nonportable_path_linter(lax = TRUE)
 
+semicolon_terminator_linter(type = c("compound", "trailing"))
+
 seq_linter(source_file)
 
 single_quotes_linter(source_file)
@@ -89,8 +91,6 @@ spaces_inside_linter(source_file)
 spaces_left_parentheses_linter(source_file)
 
 trailing_blank_lines_linter(source_file)
-
-trailing_semicolons_linter(source_file)
 
 trailing_whitespace_linter(source_file)
 
@@ -111,6 +111,11 @@ same line.}
 \item{length}{the length cutoff to use for the given linter.}
 
 \item{lax}{Less stringent linting, leading to fewer false positives.}
+
+\item{type}{A character vector defining which semicolons to report:\describe{
+  \item{compound}{Semicolons that separate two statements on the same line.}
+  \item{trailing}{Semicolons following the last statement on the line.}
+}}
 
 \item{fun}{Named character vector, where the names are the names of the undesirable functions,
 and the values are the text for the alternative function to use (or \code{NA}).}
@@ -171,6 +176,8 @@ line and are always followed by a newline.
 
 \item \code{nonportable_path_linter}: Check that file.path() is used to construct safe and portable paths.
 
+\item \code{semicolon_terminator_linter}: Check that no semicolons are used at the end of statements.
+
 \item \code{seq_linter}: check for \code{1:length(...)}, \code{1:nrow(...)},
 \code{1:ncol(...)}, \code{1:NROW(...)} and \code{1:NCOL(...)}
 expressions. These often cause bugs when the right hand side is zero.
@@ -187,8 +194,6 @@ spaces directly inside them.
 unless they are in a function call.
 
 \item \code{trailing_blank_lines_linter}: check there are no trailing blank lines.
-
-\item \code{trailing_semicolons_linter}: check there are no trailing semicolons.
 
 \item \code{trailing_whitespace_linter}: check there are no trailing whitespace characters.
 
