@@ -114,6 +114,7 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
   spaces directly inside them.
 * `spaces_left_parentheses_linter`: check that all left parentheses have a space before them
   unless they are in a function call.
+* `todo_comment_linter`: check that the source contains no TODO comments (case-insensitive).
 * `trailing_blank_lines_linter`: check there are no trailing blank lines.
 * `trailing_whitespace_linter`: check there are no trailing whitespace characters.
 * `T_and_F_symbol_linter`: avoid the symbols `T` and `F` (for `TRUE` and `FALSE`).
