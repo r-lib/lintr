@@ -116,7 +116,8 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
   unless they are in a function call.
 * `trailing_blank_lines_linter`: check there are no trailing blank lines.
 * `trailing_whitespace_linter`: check there are no trailing whitespace characters.
-* `unneeded_concatenation_linter`: check that the c() function is not used without arguments nor
+* `T_and_F_symbol_linter`: avoid the symbols `T` and `F` (for `TRUE` and `FALSE`).
+* `unneeded_concatenation_linter`: check that the `c` function is not used without arguments nor
   with a single constant.
 
 ## Project Configuration ##
