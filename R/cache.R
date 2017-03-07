@@ -1,6 +1,6 @@
 #' Clear the lintr cache
 #'
-#' @param file filename whose cache to clear.  If you pass \code{NULL} it will
+#' @param file filename whose cache to clear.  If you pass \code{NULL}, it will
 #' delete all of the caches.
 #' @param path directory to store caches.  Reads option 'lintr.cache_directory'
 #' as the default.

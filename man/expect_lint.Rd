@@ -18,11 +18,10 @@ different checks depending on the value of checks.
   \item list-vectors check if the given lint matches (use if more than one lint is returned for the content)
 }}
 
-\item{...}{one or more linters to use for the check}
+\item{...}{arguments passed to \code{\link{lint}} including e.g. the linters or cache to use.}
 
 \item{file}{if not \code{NULL} read content from a file rather than from \code{content}}
 }
 \description{
 Lint expectation
 }
-

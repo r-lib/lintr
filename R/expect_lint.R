@@ -9,7 +9,7 @@
 #'   \item named-vector check if the lint's field matches the named field.
 #'   \item list-vectors check if the given lint matches (use if more than one lint is returned for the content)
 #' }
-#' @param ... one or more linters to use for the check
+#' @param ... arguments passed to \code{\link{lint}} including e.g. the linters or cache to use.
 #' @param file if not \code{NULL} read content from a file rather than from \code{content}
 expect_lint <- function(content, checks, ..., file = NULL) {
 
