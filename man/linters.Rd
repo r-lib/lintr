@@ -3,7 +3,7 @@
 %   R/closed_curly_linter.R, R/commas_linter.R, R/comment_linters.R,
 %   R/extraction_operator_linter.R, R/implicit_integer_linter.R,
 %   R/infix_spaces_linter.R, R/line_length_linter.R, R/no_tab_linter.R,
-%   R/object_usage_linter.R, R/objects_linter.R, R/open_curly_linter.R,
+%   R/object_name_linters.R, R/object_usage_linter.R, R/open_curly_linter.R,
 %   R/path_linters.R, R/semicolon_terminator_linter.R, R/seq_linter.R,
 %   R/single_quotes_linter.R, R/spaces_inside_linter.R,
 %   R/spaces_left_parentheses_linter.R, R/trailing_blank_lines_linter.R,
@@ -21,11 +21,9 @@
 \alias{infix_spaces_linter}
 \alias{line_length_linter}
 \alias{no_tab_linter}
-\alias{object_usage_linter}
-\alias{camel_case_linter}
-\alias{snake_case_linter}
-\alias{multiple_dots_linter}
+\alias{object_name_linter}
 \alias{object_length_linter}
+\alias{object_usage_linter}
 \alias{open_curly_linter}
 \alias{absolute_path_linter}
 \alias{nonportable_path_linter}
@@ -64,15 +62,11 @@ line_length_linter(length)
 
 no_tab_linter(source_file)
 
-object_usage_linter(source_file)
-
-camel_case_linter(source_file)
-
-snake_case_linter(source_file)
-
-multiple_dots_linter(source_file)
+object_name_linter(style = "lowerCamelCase")
 
 object_length_linter(length = 20L)
+
+object_usage_linter(source_file)
 
 open_curly_linter(allow_single_line = FALSE)
 
@@ -109,6 +103,9 @@ same line.}
 \item{todo}{Vector of strings that identify TODO comments.}
 
 \item{length}{the length cutoff to use for the given linter.}
+
+\item{style}{UpperCamelCase, lowerCamelCase, alllowercase, ALLUPPERCASE, snake_case or
+dotted.case}
 
 \item{lax}{Less stringent linting, leading to fewer false positives.}
 
@@ -156,18 +153,13 @@ than length.
 
 \item \code{no_tab_linter}: check that only spaces are used, never tabs.
 
+\item \code{object_name_linter}: Check that object names conform to a single naming style.
+
+\item \code{object_length_linter}: check that object names are not too long.
+
 \item \code{object_usage_linter}: checks that closures have the proper usage using
 \code{\link[codetools]{checkUsage}}.  Note this runs
 \code{\link[base]{eval}} on the code, so do not use with untrusted code.
-
-\item \code{camel_case_linter}: check that objects are not in camelCase.
-
-\item \code{snake_case_linter}: check that objects are not in snake_case.
-
-\item \code{multiple_dots_linter}: check that objects do not have.multiple.dots.
-
-\item \code{object_length_linter}: check that objects do are not very long.not
-have.multiple.dots.
 
 \item \code{open_curly_linter}: check that opening curly braces are never on their own
 line and are always followed by a newline.
@@ -176,7 +168,7 @@ line and are always followed by a newline.
 
 \item \code{nonportable_path_linter}: Check that file.path() is used to construct safe and portable paths.
 
-\item \code{semicolon_terminator_linter}: Check that no semicolons are used at the end of statements.
+\item \code{semicolon_terminator_linter}: Check that no semicolons terminate statements.
 
 \item \code{seq_linter}: check for \code{1:length(...)}, \code{1:nrow(...)},
 \code{1:ncol(...)}, \code{1:NROW(...)} and \code{1:NCOL(...)}

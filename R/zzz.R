@@ -25,13 +25,13 @@ named_list <- function(...) {
 #' # change the default line length cutoff
 #' with_defaults(line_length_linter = line_length_linter(120))
 #'
-#' # you can also omit the argument name if you are just using different
-#' #   arguments.
-#' with_defaults(line_length_linter(120))
+#' # omit the argument name if you are just using different arguments
+#' with_defaults(line_length_linter(120),
+#'               object_name_linter("lowerCamelCase"))
 #'
-#' # enforce camelCase rather than snake_case
-#' with_defaults(camel_case_linter = NULL,
-#'               snake_case_linter)
+#' # enforce absolute paths instead of assignments
+#' with_defaults(assignment_linter = NULL,
+#'               absolute_path_linter)
 with_defaults <- function(..., default = default_linters) {
   vals <- list(...)
   nms <- names2(vals)
@@ -59,7 +59,6 @@ str.lintr_function <- function(x, ...) {
 #' Default linters to use
 #' @export
 default_linters <- with_defaults(default = list(),
-
   assignment_linter,
   single_quotes_linter,
   no_tab_linter,
@@ -70,8 +69,7 @@ default_linters <- with_defaults(default = list(),
   spaces_inside_linter,
   open_curly_linter(),
   closed_curly_linter(),
-  camel_case_linter,
-  multiple_dots_linter,
+  object_name_linter("snake_case"),
   object_length_linter(30),
   object_usage_linter,
   trailing_whitespace_linter,
