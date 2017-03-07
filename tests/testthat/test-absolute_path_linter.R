@@ -1,8 +1,8 @@
 context("absolute_path_linter")
 
 
-test_that("isRootPath", {
-  f <- s001:::.isRootPath  #nolint current package
+test_that("is_root_path", {
+  f <- lintr:::is_root_path
 
   x <- character()
   y <- logical()
@@ -30,8 +30,8 @@ test_that("isRootPath", {
 })
 
 
-test_that("isAbsolutePath", {
-  f <- s001:::.isAbsolutePath  #nolint current package
+test_that("is_absolute_path", {
+  f <- lintr:::is_absolute_path
 
   x <- character()
   y <- logical()
@@ -55,8 +55,8 @@ test_that("isAbsolutePath", {
 })
 
 
-test_that("isRelativePath", {
-  f <- s001:::.isRelativePath  #nolint current package
+test_that("is_relative_path", {
+  f <- lintr:::is_relative_path
 
   x <- character()
   y <- logical()
@@ -76,8 +76,8 @@ test_that("isRelativePath", {
 })
 
 
-test_that("isPath", {
-  f <- s001:::.isPath  #nolint current package
+test_that("is_path", {
+  f <- lintr:::is_path
 
   x <- character()
   y <- logical()
@@ -93,8 +93,8 @@ test_that("isPath", {
 })
 
 
-test_that("isValidPath", {
-  f <- s001:::.isValidPath  #nolint current package
+test_that("is_valid_path", {
+  f <- lintr:::is_valid_path
 
   x <- character()
   y <- logical()
@@ -118,8 +118,8 @@ test_that("isValidPath", {
 })
 
 
-test_that("isLongPath", {
-  f <- s001:::.isLongPath  #nolint current package
+test_that("is_long_path", {
+  f <- lintr:::is_long_path
 
   x <- character()
   y <- logical()
