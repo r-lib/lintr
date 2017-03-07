@@ -135,7 +135,7 @@ own line unless they follow an else.
 \item \code{commas_linter}: check that all commas are followed by spaces, but do not
 have spaces before them.
 
-\item \code{commented_code_linter}: checks that there is no commented code outside roxygen
+\item \code{commented_code_linter}: Check that there is no commented code outside roxygen
 blocks
 
 \item \code{todo_comment_linter}: Check that the source contains no TODO comments (case-insensitive).
