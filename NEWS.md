@@ -10,6 +10,7 @@
 * trailing_semicolon_linter (#147, @gaborcsardi)
 * Fixed lint_package bug where cache was not caching (#146, @schloerke)
 * Commas linter handles missing arguments calls properly (#145)
+* Add `function_left_parentheses_linter` to check that there is no space between a function name and its left parentheses (#204, @jrnold).
 
 # lintr 1.0.0 #
 * bugfix to work with testthat 1.0.0
