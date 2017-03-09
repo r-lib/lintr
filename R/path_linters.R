@@ -43,20 +43,20 @@ relative_path_regex <- rex(
 
 path_regex <- rex(or(absolute_path_regex, relative_path_regex))
 
-is_absolute_path <- function(str) {
-  re_matches(str, absolute_path_regex)
+is_absolute_path <- function(path) {
+  re_matches(path, absolute_path_regex)
 }
 
-is_root_path <- function(str) {
-  re_matches(str, root_path_regex)
+is_root_path <- function(path) {
+  re_matches(path, root_path_regex)
 }
 
-is_relative_path <- function(str) {
-  re_matches(str, relative_path_regex)
+is_relative_path <- function(path) {
+  re_matches(path, relative_path_regex)
 }
 
-is_path <- function(str) {
-  re_matches(str, path_regex)
+is_path <- function(path) {
+  re_matches(path, path_regex)
 }
 
 is_valid_path <- function(path, lax=FALSE) {
