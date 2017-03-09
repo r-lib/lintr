@@ -43,20 +43,20 @@ relative_path_regex <- rex(
 
 path_regex <- rex(or(absolute_path_regex, relative_path_regex))
 
-is_absolute_path <- function(path) {
-  re_matches(path, absolute_path_regex)
+is_absolute_path <- function(str) {
+  re_matches(str, absolute_path_regex)
 }
 
-is_root_path <- function(path) {
-  re_matches(path, root_path_regex)
+is_root_path <- function(str) {
+  re_matches(str, root_path_regex)
 }
 
-is_relative_path <- function(path) {
-  re_matches(path, relative_path_regex)
+is_relative_path <- function(str) {
+  re_matches(str, relative_path_regex)
 }
 
-is_path <- function(path) {
-  re_matches(path, path_regex)
+is_path <- function(str) {
+  re_matches(str, path_regex)
 }
 
 is_valid_path <- function(path, lax=FALSE) {
@@ -82,7 +82,7 @@ is_valid_path <- function(path, lax=FALSE) {
 }
 
 is_long_path <- function(path) {
-  # Given a character vector of paths, determine if they are "long enough"
+  # Take a character vector of paths and determine if they are "long enough"
   # TRUE , e.g.: "./foo", "C:\\foo", "foo/bar"
   # FALSE, e.g.: "/",  "\\", "n/a", "/foo", "foo/"
   re_matches(
@@ -101,12 +101,12 @@ is_valid_long_path <- function(path, lax=FALSE) {
 }
 
 
-split_path <- function(fp, fsep="/|\\\\") {
-  if (!is.character(fp)) {
-    stop("argument 'fp' should be a character vector")
+split_path <- function(path, sep="/|\\\\") {
+  if (!is.character(path)) {
+    stop("argument 'path' should be a character vector")
   }
-  if (!is.character(fsep) || length(fsep) != 1L || !nzchar(fsep)) {
-    stop("argument 'fsep' should be a non-empty regular expression character string")
+  if (!is.character(sep) || length(sep) != 1L || !nzchar(sep)) {
+    stop("argument 'sep' should be a non-empty regular expression character string")
   }
   Map(
     function(dirs, prefix) {
@@ -133,8 +133,8 @@ split_path <- function(fp, fsep="/|\\\\") {
       # remove empty dirs
       dirs[nzchar(dirs)]
     },
-    strsplit(fp, fsep),
-    substr(fp, 1L, 1L)
+    strsplit(path, sep),
+    substr(path, 1L, 1L)
   )
 }
 
