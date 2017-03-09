@@ -128,7 +128,7 @@ object_lint <- function(source_file, token, message, type) {
 #' @param style UpperCamelCase, lowerCamelCase, alllowercase, ALLUPPERCASE, snake_case or
 #'              dotted.case
 #' @export
-object_name_linter <- function(style = "lowerCamelCase") {
+object_name_linter <- function(style = "snake_case") {
   make_object_linter(
     function(source_file, token) {
       name <- unquote(token[["text"]])
