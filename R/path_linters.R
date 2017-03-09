@@ -43,23 +43,23 @@ relative_path_regex <- rex(
 
 path_regex <- rex(or(absolute_path_regex, relative_path_regex))
 
-is_absolute_path <- function(str) {
-  re_matches(str, absolute_path_regex)
+is_absolute_path <- function(path) {
+  re_matches(path, absolute_path_regex)
 }
 
-is_root_path <- function(str) {
-  re_matches(str, root_path_regex)
+is_root_path <- function(path) {
+  re_matches(path, root_path_regex)
 }
 
-is_relative_path <- function(str) {
-  re_matches(str, relative_path_regex)
+is_relative_path <- function(path) {
+  re_matches(path, relative_path_regex)
 }
 
-is_path <- function(str) {
-  re_matches(str, path_regex)
+is_path <- function(path) {
+  re_matches(path, path_regex)
 }
 
-is_valid_path <- function(str, lax=FALSE) {
+is_valid_path <- function(path, lax=FALSE) {
   # Given a character vector of paths, return FALSE for directory or file having valid characters.
   # On Windows, invalid chars are all control chars and: * ? " < > | :
   # On Unix, all characters are valid, except when lax=TRUE (use same invalid chars as Windows).
@@ -75,26 +75,27 @@ is_valid_path <- function(str, lax=FALSE) {
           TRUE  # either Unix path or strict (lax=FALSE)
         }
       },
-      split_path(str),
-      re_matches(str, rex(or(list(root_regex[["win32"]], root_regex[["unc"]], "\\"))))
+      split_path(path),
+      re_matches(path, rex(or(list(root_regex[["win32"]], root_regex[["unc"]], "\\"))))
     )
   )
 }
 
-is_long_path <- function(str) {
+is_long_path <- function(path) {
+  # Given a character vector of paths, determine if they are "long enough"
   # TRUE , e.g.: "./foo", "C:\\foo", "foo/bar"
   # FALSE, e.g.: "/",  "\\", "n/a", "/foo", "foo/"
   re_matches(
-    re_substitutes(str, ":", ""),
+    re_substitutes(path, ":", ""),
     rex(at_least(safe_char_regex, 1L), one_of("/", "\\"), at_least(safe_char_regex, 2L))
   )
 }
 
-is_valid_long_path <- function(str, lax=FALSE) {
+is_valid_long_path <- function(path, lax=FALSE) {
   # Convenience function to avoid linting short paths and those unlikely to be valid paths
-  ret <- is_valid_path(str, lax)
+  ret <- is_valid_path(path, lax)
   if (lax) {
-    ret <- ret & is_long_path(str)
+    ret <- ret & is_long_path(path)
   }
   ret
 }
