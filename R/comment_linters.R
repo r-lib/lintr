@@ -89,7 +89,8 @@ todo_comment_linter <- function(todo=c("todo", "fixme")) {
         code_locs <<- register_code_locations(source_file, code_locs)
       } else {
         # non-code section: detect and report TODOs
-        if (length(file_lines) == 0L) {file_lines <- ""}  # workaround rex bug goo.gl/2rbZDy
+        # workaround issue https://github.com/kevinushey/rex/issues/50 :
+        if (length(file_lines) == 0L) {file_lines <- ""}
         res <- gather_matches(
           re_matches(file_lines, regex, global=TRUE, locations=TRUE, ignore.case=TRUE))
         apply(
