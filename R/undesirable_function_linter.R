@@ -1,31 +1,9 @@
-default_undesirable_funs <- c(
-  "setwd"="use withr::with_dir()",
-  "sink"="use withr::with_sink()",
-  "par"="use withr::with_par()",
-  "options"="use withr::with_options()",
-  "Sys.setenv"="use withr::with_envvar()",
-  "Sys.setlocale"="use withr::with_locale()",
-  ".libPaths"="use withr::with_libpaths()",
-  "attach"="use roxygen2's @importFrom statement in packages, or `::` in scripts",
-  "detach"="use roxygen2's @importFrom statement in packages, or `::` in scripts",
-  "library"= "use roxygen2's @importFrom statement in packages, or `::` in scripts",
-  "require"= "use roxygen2's @importFrom statement in packages, or `::` in scripts",
-  "loadNamespace"="use `::` or requireNamespace()",
-  "source"=NA,
-  "sapply"="use vapply() or lapply()",
-  "mapply"="use Map()",
-  "ifelse"="use an if () {} else {} block",
-  "return"="let the last value of a function automatically be returned",
-  "substring"="use substr()"
-)
-
-
 #' @describeIn linters  Report the use of undesirable functions, e.g. \code{return}, \code{options},
 #'                      or \code{sapply} and suggest an alternative.
 #' @param fun  Named character vector, where the names are the names of the undesirable functions,
 #'             and the values are the text for the alternative function to use (or \code{NA}).
 #' @export
-undesirable_function_linter <- function(fun=default_undesirable_funs) {
+undesirable_function_linter <- function(fun=default_undesirable_functions) {
   function(source_file) {
     lapply(
       ids_with_token(source_file, c("SYMBOL_FUNCTION_CALL", "SYMBOL"), fun=`%in%`),
