@@ -7,18 +7,13 @@ op_types <- c(
   "NS_GET", "NS_GET_INT"                                           # :: :::
 )
 
-default_undesirable_ops <- c(
-  ":::"=NA,
-  "<<-"=NA,
-  "->>"=NA
-)
 
 #' @describeIn linters  Report the use of undesirable operators, e.g. \code{`:::`} or \code{`<<-`}
 #'                      and suggest an alternative.
 #' @param op  Named character vector, where the names are the names of the undesirable operators,
 #'            and the values are the text for the alternative operator to use (or \code{NA}).
 #' @export
-undesirable_operator_linter <- function(op=default_undesirable_ops) {
+undesirable_operator_linter <- function(op=default_undesirable_operators) {
   function(source_file) {
     lapply(
       ids_with_token(source_file, op_types, fun=`%in%`),
