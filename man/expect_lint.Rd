@@ -32,15 +32,15 @@ Lint expectation
 }
 \examples{
 # no expected lint
-expect_lint("a", NULL, trailing_blank_lines_linter)
+lintr:::expect_lint("a", NULL, trailing_blank_lines_linter)
 
 # one expected lint
-expect_lint("a\\n", "superfluous", trailing_blank_lines_linter)
-expect_lint("a\\n", c(message="superfluous", line_number=2), trailing_blank_lines_linter)
+lintr:::expect_lint("a\\n", "superfluous", trailing_blank_lines_linter)
+lintr:::expect_lint("a\\n", c(message="superfluous", line_number=2), trailing_blank_lines_linter)
 
 # several expected lints
-expect_lint("a\\n\\n", list("superfluous", "superfluous"), trailing_blank_lines_linter)
-expect_lint(
+lintr:::expect_lint("a\\n\\n", list("superfluous", "superfluous"), trailing_blank_lines_linter)
+lintr:::expect_lint(
   "a\\n\\n",
   list(c(message="superfluous", line_number=2), c(message="superfluous", line_number=3)),
   trailing_blank_lines_linter)
