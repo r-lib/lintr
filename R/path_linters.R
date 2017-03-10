@@ -138,13 +138,40 @@ split_path <- function(path, sep="/|\\\\") {
   )
 }
 
+unquote <- function(str, q="`") {
+  # Remove surrounding quotes (select either single, double or backtick) from given character vector
+  # and unescape special characters.
+  str <- re_substitutes(str, rex(start, q, capture(anything), q, end), "\\1")
+  unescape(str, q)
+}
 
-unquote <- function(str, type=c("'", "\"", "`")) {
-  # Remove the outtermost quotes and unescape backslashes
-  for (q in type) {
-    str <- re_substitutes(str, rex(start, q, capture(zero_or_more(any)), q, end), "\\1")
-  }
-  stringi::stri_unescape_unicode(str)
+escape_chars <- c(
+  "\\\\" = "\\",  # backslash
+  "\\n"  = "\n",  # newline
+  "\\r"  = "\r",  # carriage return
+  "\\t"  = "\t",  # tab
+  "\\b"  = "\b",  # backspace
+  "\\a"  = "\a",  # alert (bell)
+  "\\f"  = "\f",  # form feed
+  "\\v"  = "\v"   # vertical tab
+  # dynamically-added:
+  #"\\'"  = "'",  # ASCII apostrophe
+  #"\\\"" = "\"", # ASCII quotation mark
+  #"\\`"  = "`"   # ASCII grave accent (backtick)
+)
+
+unescape <- function(str, q="`") {
+  names(q) <- paste0("\\", q)
+  my_escape_chars <- c(escape_chars, q)
+  res <- gregexpr(text=str, pattern=rex(or(names(my_escape_chars))))
+  all_matches <- regmatches(str, res)
+  regmatches(str, res) <- lapply(
+    all_matches,
+    function(string_matches) {
+      my_escape_chars[string_matches]
+    }
+  )
+  str
 }
 
 
@@ -157,7 +184,7 @@ absolute_path_linter <- function(lax=TRUE) {
       ids_with_token(source_file, "STR_CONST"),
       function(id) {
         token <- with_id(source_file, id)
-        path <- unquote(token[["text"]])
+        path <- unquote(token[["text"]], "'")
         if (is_absolute_path(path) && is_valid_long_path(path, lax)) {
           start <- token[["col1"]] + 1L
           end <- token[["col2"]] - 1L
@@ -186,7 +213,7 @@ nonportable_path_linter <- function(lax=TRUE) {
       ids_with_token(source_file, "STR_CONST"),
       function(id) {
         token <- with_id(source_file, id)
-        path <- unquote(token[["text"]])
+        path <- unquote(token[["text"]], "'")
         if (is_path(path) && is_valid_long_path(path, lax) && path != "/" &&
             re_matches(path, rex(one_of("/", "\\")))) {
           start <- token[["col1"]] + 1L
