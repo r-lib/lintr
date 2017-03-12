@@ -78,14 +78,12 @@ get_source_expressions <- function(filename) {
   e <- NULL
 
   parsed_content <- get_source_file(source_file, error = lint_error)
-
   tree <- generate_tree(parsed_content)
 
   expressions <- lapply(top_level_expressions(parsed_content), function(loc) {
     line_nums <- parsed_content$line1[loc]:parsed_content$line2[loc]
     expr_lines <- source_file$lines[line_nums]
     names(expr_lines) <- line_nums
-
     content <- get_content(expr_lines, parsed_content[loc, ])
 
     id <- as.character(parsed_content$id[loc])
@@ -207,6 +205,7 @@ adjust_columns <- function(content) {
   content
 }
 
+
 # This function wraps equal assign expressions in a parent expression so they
 # are the same as the corresponding <- expression
 fix_eq_assign <- function(pc) {
@@ -286,6 +285,44 @@ fix_eq_assign <- function(pc) {
   res[order(res$line1, res$col1, res$line2, res$col2, res$id), ]
 }
 
+
+#### Instead of the ';' and COMMENT tokens being on their own, without parent,
+#### have the expression that precedes them adopt them.
+###fix_dangling_tokens <- function(pc) {
+###  trailing_tokens <- pc[pc[["token"]] %in% c("';'", "COMMENT"), ]
+###  if (nrow(trailing_tokens)) {
+###    parent_ids <- apply(
+###      trailing_tokens,
+###      1L,
+###      preceding_expr,
+###      pc=pc
+###    )
+###    trailing_tokens <- trailing_tokens[!is.na(parent_ids), ]
+###    parent_ids <- parent_ids[!is.na(parent_ids)]
+###    pc[which(pc[["id"]] %in% trailing_tokens[["id"]]), "parent"] <- parent_ids
+###  }
+###  pc
+###}
+
+
+###preceding_expr <- function(token, pc) {
+###  line_max <- as.integer(token[["line2"]])
+###  col_max  <- as.integer(token[["col2"]])
+###  pc <- pc[pc[["token"]] == "expr" &
+###           (pc[["line2"]] < line_max |
+###            (pc[["line2"]] == line_max & pc[["col2"]] <= col_max)), ]
+###  if (nrow(pc)) {
+###    pc <- pc[pc[["line2"]] == max(pc[["line2"]]) &
+###             pc[["col2"]] == max(pc[["col2"]]), ]
+###    pc <- pc[pc[["line1"]] == min(pc[["line1"]]) &
+###             pc[["col1"]] == min(pc[["col1"]]), ]
+###    pc[["id"]]
+###  } else {
+###    NA
+###  }
+###}
+
+
 prev_with_parent <- function(pc, loc) {
 
   id <- pc$id[loc]
@@ -296,7 +333,7 @@ prev_with_parent <- function(pc, loc) {
 
   loc <- which(with_parent$id == id)
 
-  return(which(pc$id == with_parent$id[loc - 1L]))
+  which(pc$id == with_parent$id[loc - 1L])
 }
 
 next_with_parent <- function(pc, loc) {
@@ -309,12 +346,13 @@ next_with_parent <- function(pc, loc) {
 
   loc <- which(with_parent$id == id)
 
-  return(which(pc$id == with_parent$id[loc + 1L]))
+  which(pc$id == with_parent$id[loc + 1L])
 }
 
 top_level_expressions <- function(pc) {
   if (is.null(pc)) {
     return(NULL)
   }
-  which(pc$parent == 0L & pc$token == "expr")
+  #which(pc$parent == 0L & pc$token == "expr")
+  which(pc$parent <= 0L) ###
 }
