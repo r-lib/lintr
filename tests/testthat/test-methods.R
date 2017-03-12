@@ -17,3 +17,50 @@ test_that("it returns the input trimmed to the last full lint if one exists with
 
   expect_equal(trim_output(t1, max = 2000), substr(t1, 1, 1930))
 })
+
+test_that("as.data.frame.lints", {
+  # A minimum lint 
+  expect_is(
+    l1 <- Lint("dummy.R",
+         line_number = 1L,
+         type = "style",
+         message = "",
+         line = ""),
+    "lint"
+  )
+    
+  # A larger lint
+  expect_is(
+    l2 <- Lint("dummy.R",
+              line_number = 2L,
+              column_number = 6L,
+              type = "error",
+              message = "Under no circumstances is the use of foobar allowed.",
+              line = "a <- 1",
+              ranges = list(c(1, 2), c(10, 20)),
+              linter = "custom_linter"),
+    "lint"
+  )
+  
+  # Convert lints to data.frame
+  lints <- structure(list(l1, l2), class = "lints")
+  expect_is(
+    df <- as.data.frame.lints(lints),
+    "data.frame"
+  )
+
+  exp <- data.frame(
+    filename = rep("dummy.R", 2),
+    line_number = c(1, 2),
+    column_number = c(1, 6),
+    type = c("style", "error"),
+    message = c("", "Under no circumstances is the use of foobar allowed."),
+    line = c("", "a <- 1"),
+    linter = c("", "custom_linter"),
+    stringsAsFactors = FALSE)
+  
+  expect_equal(
+    df,
+    exp
+  )  
+})

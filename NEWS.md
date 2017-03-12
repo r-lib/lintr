@@ -25,9 +25,9 @@
   and do not consider "-" an R operator to avoid too many false positives.
 * Fixed object linters to only lint objects declared in the current file 
   (#76, #108, #136, #191, #194, #201, @fangly).
-* Fixed cache not saved in the requested directory (#213, @fangly)
 * Fixed expect_lint() issues (#180, #211, @fangly): markers were displayed when
   check was NULL, some error messages were malformed.
+* Fixed Lint() / as.data.frame() error (#179, @fangly).
 * Do not error with inline \\Sexpr (#127).
 * Do not error with '<% %>' constructs (#185).
 * Allow closing parenthesis or comma after closing curly brace (#167, @Enchufa2)
@@ -37,6 +37,7 @@
   https://github.com/MangoTheCat/xmlparsedata package (#154, @gaborcsardi)
 * lintr does not need the igraph package any more (#152, @gaborcsardi)
 * Fixed lint_package bug where cache was not caching (#146, @schloerke)
+* Fixed cache not saved in a directory other than requested (#213, @fangly)
 * Commas linter handles missing arguments calls properly (#145)
 
 # lintr 1.0.0 #

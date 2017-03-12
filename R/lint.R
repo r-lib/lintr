@@ -217,9 +217,9 @@ pkg_name <- function(path = find_package()) {
 #' @param ranges ranges on the line that should be emphasized.
 #' @param linter name of linter that created the Lint object.
 #' @export
-Lint <- function(filename, line_number = 1L, column_number = NULL,
+Lint <- function(filename, line_number = 1L, column_number = 1L,
   type = c("style", "warning", "error"),
-  message = "", line = "", ranges = NULL, linter = NULL) {
+  message = "", line = "", ranges = NULL, linter = "") {
 
   type <- match.arg(type)
 
@@ -227,7 +227,7 @@ Lint <- function(filename, line_number = 1L, column_number = NULL,
     list(
       filename = filename,
       line_number = as.integer(line_number),
-      column_number = as.integer(column_number) %||% 1L,
+      column_number = as.integer(column_number),
       type = type,
       message = message,
       line = line,
