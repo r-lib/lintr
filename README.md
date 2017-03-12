@@ -106,7 +106,7 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
   length.
 * `no_tab_linter`: check that only spaces are used, never tabs.
 * `object_length_linter`: check that function and variable names are not more than `length` characters.
-* `object_name_linter`: check that object names conform to a single naming style, e.g. lowerCamelCase.
+* `object_name_linter`: check that object names conform to a single naming style, e.g. snake_case or lowerCamelCase.
 * `open_curly_linter`: check that opening curly braces are never on their own
   line and are always followed by a newline.
 * `semicolon_terminator_linter`: check that no semicolons terminate statements.
@@ -120,8 +120,7 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
 * `trailing_blank_lines_linter`: check there are no trailing blank lines.
 * `trailing_whitespace_linter`: check there are no trailing whitespace characters.
 * `T_and_F_symbol_linter`: avoid the symbols `T` and `F` (for `TRUE` and `FALSE`).
-* `undesirable_function_linter`: rport the use of undesirable functions, e.g. `return`, `options`,
-  or `sapply` and suggest an alternative.
+* `undesirable_function_linter`: report the use of undesirable functions, e.g. `options` or `sapply` and suggest an alternative.
 * `undesirable_operator_linter`: report the use of undesirable operators, e.g. `:::` or `<<-` and
   suggest an alternative.
 * `unneeded_concatenation_linter`: check that the `c` function is not used without arguments nor
