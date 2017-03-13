@@ -88,33 +88,43 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
 ## Available linters ##
 
 * `Syntax errors`: reported by [parse](http://www.inside-r.org/r-doc/base/parse).
-* `object_usage_linter`: checks that closures have the proper usage using
+* `object_usage_linter`: check that closures have the proper usage using
   [codetools::checkUsage()](http://www.inside-r.org/r-doc/codetools/checkUsage).  Note this runs
   [base::eval()](http://www.inside-r.org/r-doc/base/eval) on the code, so do not use with untrusted code.
-* `absolute_paths_linter`: checks that no absolute paths are used.
-* `assignment_linter`: checks that `<-` is always used for assignment
+* `absolute_path_linter`: check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
+* `nonportable_path_linter`: check that file.path() is used to construct safe and portable paths.
+* `assignment_linter`: check that `<-` is always used for assignment
 * `closed_curly_linter`: check that closed curly braces should always be on their
   own line unless they follow an else.
 * `commas_linter`: check that all commas are followed by spaces, but do not
   have spaces before them.
+* `extraction_operator_linter`: check that the `[[` operator is used when extracting a single
+  element from an object, not `[` (subsetting) nor `$` (interactive use).
+* `implicit_integer_linter`: check that integers are explicitly typed using the form `1L` instead of `1`.
 * `infix_spaces_linter`: check that all infix operators have spaces around them.
 * `line_length_linter`: check the line length of both comments and code is less than
   length.
 * `no_tab_linter`: check that only spaces are used, never tabs.
-* `camel_case_linter`: check that function and variable names are not camelCase.
-* `snake_case_linter`: check that function and variable names are not snake_case.
-* `multiple_dots_linter`: check that function and variable names are separated by `_` rather than `.`.
 * `object_length_linter`: check that function and variable names are not more than `length` characters.
+* `object_name_linter`: check that object names conform to a single naming style, e.g. snake_case or lowerCamelCase.
 * `open_curly_linter`: check that opening curly braces are never on their own
   line and are always followed by a newline.
-* `single_quotes_linter`: checks that only single quotes are used to delimit
+* `semicolon_terminator_linter`: check that no semicolons terminate statements.
+* `single_quotes_linter`: check that only single quotes are used to delimit
   string contestants.
 * `spaces_inside_linter`: check that parentheses and square brackets do not have
   spaces directly inside them.
 * `spaces_left_parentheses_linter`: check that all left parentheses have a space before them
   unless they are in a function call.
+* `todo_comment_linter`: check that the source contains no TODO comments (case-insensitive).
 * `trailing_blank_lines_linter`: check there are no trailing blank lines.
 * `trailing_whitespace_linter`: check there are no trailing whitespace characters.
+* `T_and_F_symbol_linter`: avoid the symbols `T` and `F` (for `TRUE` and `FALSE`).
+* `undesirable_function_linter`: report the use of undesirable functions, e.g. `options` or `sapply` and suggest an alternative.
+* `undesirable_operator_linter`: report the use of undesirable operators, e.g. `:::` or `<<-` and
+  suggest an alternative.
+* `unneeded_concatenation_linter`: check that the `c` function is not used without arguments nor
+  with a single constant.
 
 ## Project Configuration ##
 

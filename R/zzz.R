@@ -14,39 +14,63 @@ named_list <- function(...) {
   vals[!vapply(vals, is.null, logical(1))]
 }
 
-#' Modify the list of default linters
+#' Modify lintr defaults
 #'
-#' @param ... named arguments of linters to change.  If the named linter already
-#' exists it is replaced by the new linter, if it does not exist it is added.
-#' If the value is \code{NULL} the linter is removed.
-#' @param default default linters to change
-#' @export
+#' Make a new list based on \pkg{lintr}'s default linters, undesirable operators or functions.
+#'
+#' @param ... arguments of elements to change. If unnamed, the argument is named. If the named
+#' argument already exists in "default", it is replaced by the new element. If it does not exist,
+#' it is added. If the value is \code{NULL}, the element is removed.
+#' @param default list of elements to modify.
+#' @return A modified list of elements.
 #' @examples
-#' # change the default line length cutoff
-#' with_defaults(line_length_linter = line_length_linter(120))
+#' # the default linter list with a different line length cutoff
+#' my_linters <- with_defaults(line_length_linter = line_length_linter(120))
 #'
-#' # you can also omit the argument name if you are just using different
-#' #   arguments.
-#' with_defaults(line_length_linter(120))
+#' # omit the argument name if you are just using different arguments
+#' my_linters <- with_defaults(default = my_linters,
+#'                             object_name_linter("lowerCamelCase"))
 #'
-#' # enforce camelCase rather than snake_case
-#' with_defaults(camel_case_linter = NULL,
-#'               snake_case_linter)
+#' # remove assignment checks (with NULL), add absolute path checks
+#' my_linters <- with_defaults(default = my_linters,
+#'                             assignment_linter = NULL,
+#'                             absolute_path_linter)
+#'
+#' # custom list of undesirable functions:
+#' #    remove sapply (using NULL)
+#' #    add cat (with a accompanying message),
+#' #    add print (unnamed, i.e. with no accompanying message)
+#' #    add return (as taken from all_undesirable_functions)
+#' my_undesirable_functions <- with_defaults(default = default_undesirable_functions,
+#'   sapply=NULL, "cat"="No cat allowed", "print", all_undesirable_functions[["return"]])
+#' @export
 with_defaults <- function(..., default = default_linters) {
   vals <- list(...)
   nms <- names2(vals)
   missing <- nms == ""
   if (any(missing)) {
-    nms[missing] <- re_substitutes(as.character(eval(substitute(alist(...)[missing]))),
-      rex("(", anything), "")
+    args <- as.character(eval(substitute(alist(...)[missing])))
+    # foo_linter(x=1) => "foo"
+    # var[["foo"]]    => "foo"
+    nms[missing] <- re_substitutes(
+      re_substitutes(
+        re_substitutes(args, rex("(", anything), ""),
+        rex(start, anything, "[\""),
+        ""),
+      rex("\"]", anything, end),
+      "")
   }
+
+  vals[nms == vals] <- NA
   default[nms] <- vals
 
   res <- default[!vapply(default, is.null, logical(1))]
 
   res[] <- lapply(res, function(x) {
     prev_class <- class(x)
-    class(x) <- c(prev_class, "lintr_function")
+    if (inherits(x, "function")) {
+      class(x) <- c(prev_class, "lintr_function")
+    }
     x
   })
 }
@@ -56,10 +80,11 @@ str.lintr_function <- function(x, ...) {
   cat("\n")
 }
 
-#' Default linters to use
+#' Default linters
+#'
+#' List of default linters for \code{\link{lint}}. Use \code{\link{with_defaults}} to customize it.
 #' @export
 default_linters <- with_defaults(default = list(),
-
   assignment_linter,
   single_quotes_linter,
   no_tab_linter,
@@ -70,19 +95,87 @@ default_linters <- with_defaults(default = list(),
   spaces_inside_linter,
   open_curly_linter(),
   closed_curly_linter(),
-  camel_case_linter,
-  multiple_dots_linter,
+  object_name_linter("snake_case"),
   object_length_linter(30),
   object_usage_linter,
   trailing_whitespace_linter,
   trailing_blank_lines_linter,
-  commented_code_linter,
-
-  NULL
+  commented_code_linter
 )
+
+
+#' Default undesirable functions and operators
+#'
+#' Lists of function names and operators for \code{\link{undesirable_function_linter}} and
+#' \code{\link{undesirable_operator_linter}}. There is a list for the default elements and another
+#' that contains all available elements. Use \code{\link{with_defaults}} to produce a custom list.
+#' @format A named list of character strings.
+#' @rdname default_undesirable_functions
+#' @export
+all_undesirable_functions <- with_defaults(default = list(),
+  "attach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
+  "detach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
+  "ifelse" = "use an if () {} else {} block",
+  ".libPaths" = "use withr::with_libpaths()",
+  "library" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
+  "loadNamespace" = "use `::` or requireNamespace()",
+  "mapply" = "use Map()",
+  "options" = "use withr::with_options()",
+  "par" = "use withr::with_par()",
+  "require" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
+  "return" = "let the last value of a function automatically be returned",
+  "sapply" = "use vapply() or lapply()",
+  "setwd" = "use withr::with_dir()",
+  "sink" = "use withr::with_sink()",
+  "source" = NA,
+  "substring" = "use substr()",
+  "Sys.setenv" = "use withr::with_envvar()",
+  "Sys.setlocale" = "use withr::with_locale()"
+)
+
+#' @rdname default_undesirable_functions
+#' @export
+default_undesirable_functions <- do.call(with_defaults, c(list(default=list()),
+  all_undesirable_functions[c(
+    "attach",
+    "detach",
+    ".libPaths",
+    "library",
+    "mapply",
+    "options",
+    "par",
+    "require",
+    "sapply",
+    "setwd",
+    "sink",
+    "source",
+    "Sys.setenv",
+    "Sys.setlocale"
+  )]
+))
+
+#' @rdname default_undesirable_functions
+#' @export
+all_undesirable_operators <- with_defaults(default = list(),
+  ":::" = NA,
+  "<<-" = NA,
+  "->>" = NA
+)
+
+#' @rdname default_undesirable_functions
+#' @export
+default_undesirable_operators <- do.call(with_defaults, c(list(default=list()),
+  all_undesirable_operators[c(
+    ":::",
+    "<<-",
+    "->>"
+  )]
+))
+
 
 #' Default lintr settings
 #' @seealso \code{\link{read_settings}}, \code{\link{default_linters}}
+#' @export
 default_settings <- NULL
 
 settings <- NULL

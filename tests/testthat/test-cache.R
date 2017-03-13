@@ -307,3 +307,15 @@ test_that("it returns the correct line if it is after the current line", {
 
   expect_equal(find_new_line(3, "test3", t1), 3)
 })
+
+
+test_that("lint() uses the provided cache directory", {
+  dir <- "temp_lintr_cache"
+  unlink(dir, recursive = TRUE)
+  expect_false(dir.exists(dir))
+  expect_lint("a <- 1", NULL, assignment_linter, cache=dir) # create the cache
+  expect_true(dir.exists(dir))
+  expect_lint("a <- 1", NULL, assignment_linter, cache=dir) # read the cache
+  expect_true(dir.exists(dir))
+  unlink(dir, recursive = TRUE)
+})

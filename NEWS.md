@@ -1,4 +1,33 @@
-# lintr 1.0.0.9000 #
+# lintr 1.0.0.9001 #
+* Deprecated camel_case_linter(), snake_case_linter() and multiple_dots_linter()
+  in favor of object_name_linter() which enforce the given style: snake_case,
+  dotted.case, lowerCamelCalse, UpperCamelCase, alllowercase or ALLUPPERCASE
+  (#59, @fangly).
+* Deprecated absolute_paths_linter() in favor of the new absolute_path_linter(),
+  with a lax mode for fewer false positive lints (#199, fangly).
+* New semicolon_terminator_linter() reports semicolons at the end a line (#147,
+  @gaborcsardi) and between expressions (#181, @fangly).
+* New nonportable_path_linter() identifies paths constructed without file.path()
+  (@fangly).
+* New unneeded_concatenation_linter() lints uses of c() with a constant or no
+  arguments (@fangly).
+* New T_and_F_symbol_linter() warns when using T and F instead of TRUE and FALSE
+  (@fangly).
+* New todo_comment_linter() lints TODOs (@fangly).
+* New implicit_integer_linter() detects round numbers not declared as integers,
+  i.e. 1 instead of 1L (@fangly).
+* New extraction_operator_linter() checks that the `[[` operator is used when
+  extracting a single element from an object, not `[` (subsetting) nor `$`
+  (interactive use) (@fangly).
+* Undesirable_operator_linter() and undesirable_function_linter() lint uses of
+  user-specified functions and operators (#48, #149, @fangly).
+* Relaxed the commented_code_linter(): do not lint comments within roxygen blocks
+  and do not consider "-" an R operator to avoid too many false positives.
+* Fixed object linters to only lint objects declared in the current file 
+  (#76, #108, #136, #191, #194, #201, @fangly).
+* Fixed expect_lint() issues (#180, #211, @fangly): markers were displayed when
+  check was NULL, some error messages were malformed.
+* Fixed Lint() / as.data.frame() error (#179, @fangly).
 * Do not error with inline \\Sexpr (#127).
 * Do not error with '<% %>' constructs (#185).
 * Allow closing parenthesis or comma after closing curly brace (#167, @Enchufa2)
@@ -7,8 +36,8 @@
 * linters can use the XML parse tree as well now, via the
   https://github.com/MangoTheCat/xmlparsedata package (#154, @gaborcsardi)
 * lintr does not need the igraph package any more (#152, @gaborcsardi)
-* trailing_semicolon_linter (#147, @gaborcsardi)
 * Fixed lint_package bug where cache was not caching (#146, @schloerke)
+* Fixed cache not saved in a directory other than requested (#213, @fangly)
 * Commas linter handles missing arguments calls properly (#145)
 
 # lintr 1.0.0 #
@@ -16,7 +45,8 @@
 
 # lintr 0.3.3 #
 * infix_spaces_linter now properly checks `=` in named arguments. (#130, @saurfang).
-* commas_linter now properly recognizes lints when preceded by a blank line and points to the missing space rather than the comma (#111, #129, @saurfang).
+* commas_linter now properly recognizes lints when preceded by a blank line and
+  points to the missing space rather than the comma (#111, #129, @saurfang).
 * Make spaces_left_parentheses_linter more robust when determining `(` type (#128, @saurfang)
 * commented_code_linter (#83, @jackwasey)
 * Now trims long comments (#55, reported by @paulstaab)

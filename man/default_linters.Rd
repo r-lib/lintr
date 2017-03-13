@@ -4,7 +4,7 @@
 \name{default_linters}
 \alias{default_linters}
 \title{Default linters to use}
-\format{An object of class \code{list} of length 18.}
+\format{An object of class \code{list} of length 16.}
 \usage{
 default_linters
 }
@@ -12,4 +12,3 @@ default_linters
 Default linters to use
 }
 \keyword{datasets}
-

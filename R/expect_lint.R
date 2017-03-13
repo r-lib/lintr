@@ -1,16 +1,33 @@
 #' Lint expectation
 #'
-#' @param content the file content to be linted
-#' @param checks a list of named vectors of checks to be performed.  Performs
-#' different checks depending on the value of checks.
-#' \itemize{
-#'   \item NULL check if the lint returns no lints.
-#'   \item unnamed-vector check if the lint's message matches the value.
-#'   \item named-vector check if the lint's field matches the named field.
-#'   \item list-vectors check if the given lint matches (use if more than one lint is returned for the content)
+#' @param content a character vector for the file content to be linted.
+#' @param checks checks to be performed:
+#' \describe{
+#'   \item{NULL}{check that no lints are returned.}
+#'   \item{unnamed vector or regex object}{check if the returned lint's message matches the given
+#'   regular expression.}
+#'   \item{named-vector}{check if the returned lint's fields match the named fields. Accepted fields
+#'   are the same as those taken by \code{\link{Lint}}.}
+#'   \item{list of vectors}{check if the returned lints matches (use if more than one lint is
+#'   returned).}
 #' }
-#' @param ... one or more linters to use for the check
-#' @param file if not \code{NULL} read content from a file rather than from \code{content}
+#' @param ... arguments passed to \code{\link{lint}}, e.g. the linters or cache to use.
+#' @param file if not \code{NULL}, read content from the specified file rather than from \code{content}.
+#' @return \code{NULL}, invisibly.
+#' @examples
+#' # no expected lint
+#' lintr:::expect_lint("a", NULL, trailing_blank_lines_linter)
+#'
+#' # one expected lint
+#' lintr:::expect_lint("a\n", "superfluous", trailing_blank_lines_linter)
+#' lintr:::expect_lint("a\n", c(message="superfluous", line_number=2), trailing_blank_lines_linter)
+#'
+#' # several expected lints
+#' lintr:::expect_lint("a\n\n", list("superfluous", "superfluous"), trailing_blank_lines_linter)
+#' lintr:::expect_lint(
+#'   "a\n\n",
+#'   list(c(message="superfluous", line_number=2), c(message="superfluous", line_number=3)),
+#'   trailing_blank_lines_linter)
 expect_lint <- function(content, checks, ..., file = NULL) {
 
   if (!is.null(file)) {
@@ -20,6 +37,11 @@ expect_lint <- function(content, checks, ..., file = NULL) {
   expectation_lint(content, checks, ...)
 }
 
+
+# Note: this function cannot be properly unit tested because testthat's
+# expect_success() and expect_failure() do not like the way we execute several
+# expect() statements
+
 expectation_lint <- function(content, checks, ...) {
 
   filename <- tempfile()
@@ -27,15 +49,13 @@ expectation_lint <- function(content, checks, ...) {
   cat(file = filename, content, sep = "\n")
 
   lints <- lint(filename, ...)
+  n_lints <- length(lints)
+  lint_str <- if (n_lints) {paste0(c("", lints), collapse="\n")} else {""}
 
-  linter_names <- substitute(alist(...))[-1]
-
+  wrong_number_fmt  <- "got %d lints instead of %d%s"
   if (is.null(checks)) {
-    return(testthat::expect(length(lints) %==% 0L,
-        paste0(paste(collapse = ", ", linter_names),
-          " returned ", print(lints),
-          " lints when it was expected to return none!"),
-        ))
+    msg <- sprintf(wrong_number_fmt, n_lints, length(checks), lint_str)
+    return(testthat::expect(n_lints %==% 0L, msg))
   }
 
   if (!is.list(checks)) {
@@ -43,40 +63,41 @@ expectation_lint <- function(content, checks, ...) {
   }
   checks[] <- lapply(checks, fix_names, "message")
 
-  if (length(lints) != length(checks)) {
-    return(testthat::expect(FALSE,
-        paste0(paste(collapse = ", ", linter_names),
-          " did not return ", length(checks),
-          " lints as expected from content:", content, lints)))
+  if (n_lints != length(checks)) {
+    msg <- sprintf(wrong_number_fmt, n_lints, length(checks), lint_str)
+    return(testthat::expect(FALSE, msg))
   }
 
-  itr <- 0L #nolint
-  res <- mapply(function(lint, check) {
-    itr <- itr + 1L
-    lapply(names(check), function(field) {
-      value <- lint[[field]]
-      check <- check[[field]]
-      if (field == "message") {
-        testthat::expect(re_matches(value, check),
-          sprintf("lint: %d %s: %s did not match: %s",
-            itr,
-            field,
-            value,
-            check))
-      } else {
-        testthat::expect(`==`(value, check),
-          sprintf("lint: %d %s: %s did not match: %s",
-            itr,
-            field,
-            value,
-            check))
-      }
+  local({
+    itr <- 0L #nolint
+    lintFields <- names(formals(Lint))
+    Map(function(lint, check) {
+      itr <<- itr + 1L
+      lapply(names(check), function(field) {
+        if (!field %in% lintFields) {
+          stop(sprintf(
+            "check #%d had an invalid field: \"%s\"\nValid fields are: %s\n",
+            itr, field, toString(lintFields)))
+        }
+        check <- check[[field]]
+        value <- lint[[field]]
+        msg <- sprintf("check #%d: %s \"%s\" did not match \"%s\"",
+                       itr, field, value, check)
+        exp <- if (field == "message") {
+          re_matches(value, check)
+        } else {
+           `==`(value, check)
+        }
+        testthat::expect(exp, msg)
+        })
+      },
+      lints,
+      checks)
     })
-  },
-  lints,
-  checks)
-  res[[1]]
+
+  invisible(NULL)
 }
+
 
 #' Test that the package is lint free
 #'
@@ -95,9 +116,7 @@ expect_lint_free <- function(...) {
     lint_output <- paste(collapse = "\n", capture.output(print(lints)))
   }
   result <- testthat::expect(!has_lints,
-                        paste(sep = "\n",
-                              "Not lint free",
-                              lint_output))
+                             paste(sep = "\n", "Not lint free", lint_output))
 
   invisible(result)
 }

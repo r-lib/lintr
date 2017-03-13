@@ -15,8 +15,8 @@ NULL
 #' @param filename the given filename to lint.
 #' @param linters a list of linter functions to apply see \code{\link{linters}}
 #' for a full list of default and available linters.
-#' @param cache toggle caching of lint results, if passed a character vector
-#' uses that file as the cache.
+#' @param cache given a logical, toggle caching of lint results. If passed a
+#' character string, store the cache in this directory.
 #' @param ... additional arguments passed to \code{\link{exclude}}.
 #' @param parse_settings whether to try and parse the settings
 #' @export
@@ -96,7 +96,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   if (isTRUE(cache)) {
     cache_file(lint_cache, filename, linters, lints)
-    save_cache(lint_cache, filename)
+    save_cache(lint_cache, filename, cache_dir)
   }
 
   res <- exclude(lints, ...)
@@ -217,9 +217,9 @@ pkg_name <- function(path = find_package()) {
 #' @param ranges ranges on the line that should be emphasized.
 #' @param linter name of linter that created the Lint object.
 #' @export
-Lint <- function(filename, line_number = 1L, column_number = NULL,
+Lint <- function(filename, line_number = 1L, column_number = 1L,
   type = c("style", "warning", "error"),
-  message = "", line = "", ranges = NULL, linter = NULL) {
+  message = "", line = "", ranges = NULL, linter = "") {
 
   type <- match.arg(type)
 
@@ -227,7 +227,7 @@ Lint <- function(filename, line_number = 1L, column_number = NULL,
     list(
       filename = filename,
       line_number = as.integer(line_number),
-      column_number = as.integer(column_number) %||% 1L,
+      column_number = as.integer(column_number),
       type = type,
       message = message,
       line = line,
