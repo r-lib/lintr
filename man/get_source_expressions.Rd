@@ -12,4 +12,3 @@ get_source_expressions(filename)
 \description{
 This object is given as input to each linter
 }
-

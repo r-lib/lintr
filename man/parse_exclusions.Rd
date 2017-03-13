@@ -20,4 +20,3 @@ parse_exclusions(file, exclude = settings$exclude,
 \description{
 read a source file and parse all the excluded lines from it
 }
-

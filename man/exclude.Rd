@@ -25,4 +25,3 @@ Exclusions can be specified in three different ways.
 if you want to exclude the entire file.}
 }
 }
-
