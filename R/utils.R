@@ -133,3 +133,26 @@ rot <- function(ch, k = 13) {
 trim_ws <- function(x) {
   sub("^\\s+", "", sub("\\s+$", "", x))
 }
+
+`@` <- function(x, y) {
+  name <- as.character(substitute(y))
+  attr(x, name, exact = TRUE)
+}
+
+global_parsed_content <- function(source_file) {
+  if (exists("file_lines", source_file)) {
+    source_file$parsed_content
+  }
+}
+
+global_xml_parsed_content <- function(source_file) {
+  if (exists("file_lines", source_file)) {
+    source_file$xml_parsed_content
+  }
+}
+
+get_file_line <- function(source_file, line) {
+  unname(source_file$file_lines[[as.numeric(line)]])
+}
+
+p <- function(...) paste0(...)
