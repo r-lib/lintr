@@ -10,7 +10,7 @@ test_that("returns the correct linting", {
     line_length_linter(80))
 
   expect_lint("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-    "lines should not be more than 80 characters",
+    "Lines should not be more than 80 characters",
     line_length_linter(80))
 
   expect_lint(
@@ -18,8 +18,8 @@ test_that("returns the correct linting", {
     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"),
 
     list(
-      rex("lines should not be more than 80 characters"),
-      rex("lines should not be more than 80 characters")),
+      rex("Lines should not be more than 80 characters"),
+      rex("Lines should not be more than 80 characters")),
 
     line_length_linter(80))
 
@@ -28,6 +28,6 @@ test_that("returns the correct linting", {
     line_length_linter(20))
 
   expect_lint("aaaaaaaaaaaaaaaaaaaab",
-    rex("lines should not be more than 20 characters"),
+    rex("Lines should not be more than 20 characters"),
     line_length_linter(20))
 })
