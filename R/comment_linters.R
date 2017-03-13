@@ -80,8 +80,8 @@ parsable <- function(x) {
 todo_comment_linter <- function(todo=c("todo", "fixme")) {
   function(source_file) {
     tokens <- with_id(source_file, ids_with_token(source_file, "COMMENT"))
-    is_todo <- re_matches(tokens[["text"]], rex(one_or_more("#"), any_spaces, or(todo)), ignore.case = TRUE)
-    tokens <- tokens[is_todo, ]
+    are_todo <- re_matches(tokens[["text"]], rex(one_or_more("#"), any_spaces, or(todo)), ignore.case = TRUE)
+    tokens <- tokens[are_todo, ]
     lapply(
       split(tokens, seq_len(nrow(tokens))),
       function(token) {
