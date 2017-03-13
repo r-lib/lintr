@@ -62,7 +62,7 @@ test_that("Lint all semicolons", {
 
 
 test_that("Compound semicolons only", {
-  linter <- semicolon_terminator_linter(type="compound")
+  linter <- semicolon_terminator_linter(semicolon = "compound")
   expect_lint("a <- 1;", NULL, linter)
   expect_lint("function(){a <- 1;}", NULL, linter)
   expect_lint("a <- 1; \n", NULL, linter)
@@ -71,7 +71,7 @@ test_that("Compound semicolons only", {
 
 
 test_that("Trailing semicolons only", {
-  linter <- semicolon_terminator_linter(type="trailing")
+  linter <- semicolon_terminator_linter(semicolon = "trailing")
   expect_lint("a <- 1;b <- 2", NULL, linter)
   expect_lint("function() {a <- 1;b <- 2}\n", NULL, linter)
   expect_lint("f <-\n 1 ;f <- 1.23", NULL, linter)
