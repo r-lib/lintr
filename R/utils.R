@@ -77,13 +77,14 @@ quoted_blanks <- function(matches, shift_start = 0, shift_end = 0) {
 }
 
 ids_with_token <- function(source_file, value, fun = `==`) {
-  pc <- source_file$parsed_content
-  if (!pc$col1 %==% integer(0) &&
-      !(loc <- which(fun(pc$token, value))) %==% integer(0) ) {
-    loc
-  } else {
-    character()
+  if (source_file$parsed_content$col1 %==% integer(0)) {
+    return(integer(0))
   }
+  loc <- which(fun(source_file$parsed_content$token, value))
+  if (loc %==% integer(0)) {
+    return(integer(0))
+  }
+  loc
 }
 
 # The following functions is from dplyr
@@ -101,12 +102,10 @@ recursive_ls <- function(env) {
 }
 
 with_id <- function(source_file, id) {
-  pc <- source_file$parsed_content
-  if (is.null(pc)) {
-    data.frame()
-  } else {
-    pc[id, ]
+  if (is.null(source_file$parsed_content)) {
+    return(data.frame())
   }
+  source_file$parsed_content[id, ]
 }
 
 get_content <- function(lines, info) {
