@@ -4,13 +4,13 @@
 #'   \item{trailing}{Semicolons following the last statement on the line.}
 #' }
 #' @export
-semicolon_terminator_linter <- function(type = c("compound", "trailing")) {
+semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
   function(source_file) {
     tokens <- with_id(source_file, ids_with_token(source_file, "';'"))
     is_trailing <- is_trailing_sc(tokens, source_file)
 
-    to_keep <- ( is_trailing & "trailing" %in% type) |
-               (!is_trailing & "compound" %in% type)
+    to_keep <- ( is_trailing & "trailing" %in% semicolon) |
+               (!is_trailing & "compound" %in% semicolon)
 
     tokens <- tokens[to_keep, ]
     are_trailing <- is_trailing[to_keep]
