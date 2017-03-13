@@ -77,7 +77,7 @@ absolute_path_linter(lax = TRUE)
 
 nonportable_path_linter(lax = TRUE)
 
-semicolon_terminator_linter(type = c("compound", "trailing"))
+semicolon_terminator_linter(semicolon = c("compound", "trailing"))
 
 seq_linter(source_file)
 
@@ -112,7 +112,7 @@ dotted.case}
 
 \item{lax}{Less stringent linting, leading to fewer false positives.}
 
-\item{type}{A character vector defining which semicolons to report:\describe{
+\item{semicolon}{A character vector defining which semicolons to report:\describe{
   \item{compound}{Semicolons that separate two statements on the same line.}
   \item{trailing}{Semicolons following the last statement on the line.}
 }}
