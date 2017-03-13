@@ -285,44 +285,6 @@ fix_eq_assign <- function(pc) {
   res[order(res$line1, res$col1, res$line2, res$col2, res$id), ]
 }
 
-
-#### Instead of the ';' and COMMENT tokens being on their own, without parent,
-#### have the expression that precedes them adopt them.
-###fix_dangling_tokens <- function(pc) {
-###  trailing_tokens <- pc[pc[["token"]] %in% c("';'", "COMMENT"), ]
-###  if (nrow(trailing_tokens)) {
-###    parent_ids <- apply(
-###      trailing_tokens,
-###      1L,
-###      preceding_expr,
-###      pc=pc
-###    )
-###    trailing_tokens <- trailing_tokens[!is.na(parent_ids), ]
-###    parent_ids <- parent_ids[!is.na(parent_ids)]
-###    pc[which(pc[["id"]] %in% trailing_tokens[["id"]]), "parent"] <- parent_ids
-###  }
-###  pc
-###}
-
-
-###preceding_expr <- function(token, pc) {
-###  line_max <- as.integer(token[["line2"]])
-###  col_max  <- as.integer(token[["col2"]])
-###  pc <- pc[pc[["token"]] == "expr" &
-###           (pc[["line2"]] < line_max |
-###            (pc[["line2"]] == line_max & pc[["col2"]] <= col_max)), ]
-###  if (nrow(pc)) {
-###    pc <- pc[pc[["line2"]] == max(pc[["line2"]]) &
-###             pc[["col2"]] == max(pc[["col2"]]), ]
-###    pc <- pc[pc[["line1"]] == min(pc[["line1"]]) &
-###             pc[["col1"]] == min(pc[["col1"]]), ]
-###    pc[["id"]]
-###  } else {
-###    NA
-###  }
-###}
-
-
 prev_with_parent <- function(pc, loc) {
 
   id <- pc$id[loc]
@@ -351,8 +313,8 @@ next_with_parent <- function(pc, loc) {
 
 top_level_expressions <- function(pc) {
   if (is.null(pc)) {
-    return(NULL)
+    character()
+  } else {
+    which(pc$parent <= 0L)
   }
-  #which(pc$parent == 0L & pc$token == "expr")
-  which(pc$parent <= 0L) ###
 }
