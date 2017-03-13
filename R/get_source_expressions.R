@@ -313,8 +313,7 @@ next_with_parent <- function(pc, loc) {
 
 top_level_expressions <- function(pc) {
   if (is.null(pc)) {
-    character()
-  } else {
-    which(pc$parent <= 0L)
+    return(integer(0))
   }
+  which(pc$parent <= 0L)
 }
