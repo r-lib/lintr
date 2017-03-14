@@ -89,4 +89,3 @@ multiple_dots_linter <- make_object_linter(function(source_file, parsed) {
                 "multiple_dots_linter")
   }
 })
-

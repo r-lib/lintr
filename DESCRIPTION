@@ -1,7 +1,10 @@
 Package: lintr
 Title: Static R Code Analysis
 Version: 1.0.0.9001
-Authors@R: person("Jim", "Hester", email = "james.f.hester@gmail.com", role = c("aut", "cre"))
+Authors@R: c(
+    person("Jim", "Hester", email = "james.f.hester@gmail.com", role = c("aut", "cre")),
+    person("Florent", "Angly", role = "aut")
+    )
 URL: https://github.com/jimhester/lintr
 BugReports: https://github.com/jimhester/lintr/issues
 Description: Checks adherence to a given style, syntax errors and possible
