@@ -177,8 +177,8 @@ line and are always followed by a newline.
 
 \item \code{nonportable_path_linter}: Check that file.path() is used to construct safe and portable paths.
 
-\item \code{pipe_continuation_linter}: check that all commas are followed by spaces, but do not
-have spaces before them.
+\item \code{pipe_continuation_linter}: Check that each step in a pipeline is on a new line, or
+the entire pipe fits on one line.
 
 \item \code{semicolon_terminator_linter}: Check that no semicolons terminate statements.
 

@@ -1,5 +1,5 @@
-#' @describeIn linters check that all commas are followed by spaces, but do not
-#' have spaces before them.
+#' @describeIn linters Check that each step in a pipeline is on a new line, or
+#' the entire pipe fits on one line.
 #' @importFrom xml2 xml_find_all as_list
 #' @export
 pipe_continuation_linter <- function(source_file) {
@@ -30,7 +30,7 @@ pipe_continuation_linter <- function(source_file) {
         line_number = x@line1,
         column_number = x@col2,
         type = "style",
-        message = "Each `%>%` statement should be on it's own line.",
+        message = "`%>%` should always have a space before it and a new line after it, unless the full pipeline fits on one line.",
         line = line,
         ranges = list(as.numeric(c(x@col1, x@col2))),
         "pipe_continuation_linter"

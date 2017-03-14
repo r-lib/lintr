@@ -100,7 +100,8 @@ default_linters <- with_defaults(default = list(),
   object_usage_linter,
   trailing_whitespace_linter,
   trailing_blank_lines_linter,
-  commented_code_linter
+  commented_code_linter,
+  pipe_continuation_linter
 )
 
 
