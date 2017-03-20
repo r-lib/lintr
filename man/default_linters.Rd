@@ -3,12 +3,12 @@
 \docType{data}
 \name{default_linters}
 \alias{default_linters}
-\title{Default linters to use}
-\format{An object of class \code{list} of length 16.}
+\title{Default linters}
+\format{An object of class \code{list} of length 17.}
 \usage{
 default_linters
 }
 \description{
-Default linters to use
+List of default linters for \code{\link{lint}}. Use \code{\link{with_defaults}} to customize it.
 }
 \keyword{datasets}

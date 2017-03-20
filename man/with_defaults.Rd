@@ -2,29 +2,41 @@
 % Please edit documentation in R/zzz.R
 \name{with_defaults}
 \alias{with_defaults}
-\title{Modify the list of default linters}
+\title{Modify lintr defaults}
 \usage{
 with_defaults(..., default = default_linters)
 }
 \arguments{
-\item{...}{named arguments of linters to change.  If the named linter already
-exists it is replaced by the new linter, if it does not exist it is added.
-If the value is \code{NULL} the linter is removed.}
+\item{...}{arguments of elements to change. If unnamed, the argument is named. If the named
+argument already exists in "default", it is replaced by the new element. If it does not exist,
+it is added. If the value is \code{NULL}, the element is removed.}
 
-\item{default}{default linters to change}
+\item{default}{list of elements to modify.}
+}
+\value{
+A modified list of elements.
 }
 \description{
-Modify the list of default linters
+Make a new list based on \pkg{lintr}'s default linters, undesirable operators or functions.
 }
 \examples{
-# change the default line length cutoff
-with_defaults(line_length_linter = line_length_linter(120))
+# the default linter list with a different line length cutoff
+my_linters <- with_defaults(line_length_linter = line_length_linter(120))
 
 # omit the argument name if you are just using different arguments
-with_defaults(line_length_linter(120),
-              object_name_linter("lowerCamelCase"))
+my_linters <- with_defaults(default = my_linters,
+                            object_name_linter("lowerCamelCase"))
 
-# enforce absolute paths instead of assignments
-with_defaults(assignment_linter = NULL,
-              absolute_path_linter)
+# remove assignment checks (with NULL), add absolute path checks
+my_linters <- with_defaults(default = my_linters,
+                            assignment_linter = NULL,
+                            absolute_path_linter)
+
+# custom list of undesirable functions:
+#    remove sapply (using NULL)
+#    add cat (with a accompanying message),
+#    add print (unnamed, i.e. with no accompanying message)
+#    add return (as taken from all_undesirable_functions)
+my_undesirable_functions <- with_defaults(default = default_undesirable_functions,
+  sapply=NULL, "cat"="No cat allowed", "print", all_undesirable_functions[["return"]])
 }

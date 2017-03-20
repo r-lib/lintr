@@ -20,4 +20,3 @@ absolute path.}
 \description{
 Apply one or more linters to all of the R files in a package.
 }
-

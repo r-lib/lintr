@@ -22,4 +22,3 @@ Lintr searches for settings for a given file in the following order.
 The default linter_file name is \code{.lintr} but it can be changed with option
 \code{lintr.linter_file}.  This file is a dcf file, see \code{\link{read.dcf}} for details.
 }
-
