@@ -14,4 +14,3 @@ This function is a thin wrapper around lint_package that simply tests there are 
 lints in the package.  It can be used to ensure that your tests fail if the package
 contains lints.
 }
-

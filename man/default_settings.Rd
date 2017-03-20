@@ -15,4 +15,3 @@ Default lintr settings
 \code{\link{read_settings}}, \code{\link{default_linters}}
 }
 \keyword{datasets}
-

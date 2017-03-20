@@ -93,6 +93,8 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
   [base::eval()](http://www.inside-r.org/r-doc/base/eval) on the code, so do not use with untrusted code.
 * `absolute_path_linter`: check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
 * `nonportable_path_linter`: check that file.path() is used to construct safe and portable paths.
+* pipe_continuation_linter: Check that each step in a pipeline is on a new
+  line, or the entire pipe fits on one line.
 * `assignment_linter`: check that `<-` is always used for assignment
 * `closed_curly_linter`: check that closed curly braces should always be on their
   own line unless they follow an else.

@@ -11,4 +11,3 @@ Sublime Text.
 \seealso{
 \code{\link{lint}}, \code{\link{lint_package}}, \code{\link{linters}}
 }
-
