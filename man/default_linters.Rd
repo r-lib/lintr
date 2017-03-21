@@ -3,7 +3,7 @@
 \docType{data}
 \name{default_linters}
 \alias{default_linters}
-\title{Default linters to use}
+\title{Default linters}
 \format{An object of class \code{list} of length 17.}
 \usage{
 default_linters
