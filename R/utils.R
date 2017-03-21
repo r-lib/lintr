@@ -54,6 +54,21 @@ fix_names <- function(x, default) {
   x
 }
 
+names2 <- function(x) {
+  names(x) %||% rep("", length(x))
+}
+
+auto_names <- function(x) {
+  nms <- names2(x)
+  missing <- nms == ""
+  if (all(!missing)) return(nms)
+
+  deparse2 <- function(x) paste(deparse(x, 500L), collapse = "")
+  defaults <- vapply(x[missing], deparse2, character(1), USE.NAMES = FALSE)
+
+  nms[missing] <- defaults
+  nms
+}
 
 blank_text <- function(s, re, shift_start = 0, shift_end = 0) {
   m <- gregexpr(re, s, perl = TRUE)

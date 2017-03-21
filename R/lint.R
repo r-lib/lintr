@@ -43,6 +43,8 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     name <- deparse(substitute(linters))
    linters <- list(linters)
     names(linters) <- name
+  } else {
+    names(linters) <- auto_names(linters)
   }
 
   lints <- list()
