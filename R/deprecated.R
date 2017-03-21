@@ -31,7 +31,7 @@ absolute_paths_linter <- function(source_file) {
 #' @export
 trailing_semicolons_linter <- function(source_file) {
   lintr_deprecated("trailing_semicolons_linter", "semicolon_terminator_linter", "1.0.0.9001")
-  semicolon_terminator_linter(type = "trailing")(source_file)
+  semicolon_terminator_linter(semicolon = "trailing")(source_file)
 }
 
 
@@ -89,4 +89,3 @@ multiple_dots_linter <- make_object_linter(function(source_file, parsed) {
                 "multiple_dots_linter")
   }
 })
-

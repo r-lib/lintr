@@ -78,14 +78,12 @@ get_source_expressions <- function(filename) {
   e <- NULL
 
   parsed_content <- get_source_file(source_file, error = lint_error)
-
   tree <- generate_tree(parsed_content)
 
   expressions <- lapply(top_level_expressions(parsed_content), function(loc) {
     line_nums <- parsed_content$line1[loc]:parsed_content$line2[loc]
     expr_lines <- source_file$lines[line_nums]
     names(expr_lines) <- line_nums
-
     content <- get_content(expr_lines, parsed_content[loc, ])
 
     id <- as.character(parsed_content$id[loc])
@@ -208,6 +206,7 @@ adjust_columns <- function(content) {
   content
 }
 
+
 # This function wraps equal assign expressions in a parent expression so they
 # are the same as the corresponding <- expression
 fix_eq_assign <- function(pc) {
@@ -297,7 +296,7 @@ prev_with_parent <- function(pc, loc) {
 
   loc <- which(with_parent$id == id)
 
-  return(which(pc$id == with_parent$id[loc - 1L]))
+  which(pc$id == with_parent$id[loc - 1L])
 }
 
 next_with_parent <- function(pc, loc) {
@@ -310,12 +309,12 @@ next_with_parent <- function(pc, loc) {
 
   loc <- which(with_parent$id == id)
 
-  return(which(pc$id == with_parent$id[loc + 1L]))
+  which(pc$id == with_parent$id[loc + 1L])
 }
 
 top_level_expressions <- function(pc) {
   if (is.null(pc)) {
-    return(NULL)
+    return(integer(0))
   }
-  which(pc$parent == 0L & pc$token == "expr")
+  which(pc$parent <= 0L)
 }
