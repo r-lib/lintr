@@ -86,25 +86,23 @@ str.lintr_function <- function(x, ...) {
 #' @export
 default_linters <- with_defaults(default = list(),
   assignment_linter,
-  single_quotes_linter,
-  no_tab_linter,
-  line_length_linter(80),
-  commas_linter,
-  infix_spaces_linter,
-  spaces_left_parentheses_linter,
-  spaces_inside_linter,
-  open_curly_linter(),
   closed_curly_linter(),
-  object_name_linter("snake_case"),
-  object_length_linter(30),
-  object_usage_linter,
-  trailing_whitespace_linter,
-  trailing_blank_lines_linter,
+  commas_linter,
   commented_code_linter,
+  function_left_parentheses_linter,
+  infix_spaces_linter,
+  line_length_linter(80),
+  no_tab_linter,
+  object_length_linter(30),
+  object_name_linter("snake_case"),
+  object_usage_linter,
+  open_curly_linter(),
   pipe_continuation_linter,
-  function_left_parentheses_linter
-)
-
+  single_quotes_linter,
+  spaces_inside_linter,
+  spaces_left_parentheses_linter,
+  trailing_blank_lines_linter,
+  trailing_whitespace_linter)
 
 #' Default undesirable functions and operators
 #'
