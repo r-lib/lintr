@@ -25,7 +25,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   inline_data <- rex::re_matches(filename, rex::rex(newline))
   if (inline_data) {
-    content <- filename
+    content <- gsub("\n$", "", filename)
     filename <- tempfile()
     on.exit(unlink(filename))
     cat(file = filename, content, sep = "\n")
