@@ -56,7 +56,7 @@ commented_code_linter(source_file)
 
 todo_comment_linter(todo = c("todo", "fixme"))
 
-object_name_linter(style = "snake_case")
+object_name_linter(styles = "snake_case")
 
 object_length_linter(length = 20L)
 
@@ -112,9 +112,6 @@ same line.}
 
 \item{todo}{Vector of strings that identify TODO comments.}
 
-\item{style}{UpperCamelCase, lowerCamelCase, alllowercase, ALLUPPERCASE, snake_case or
-dotted.case}
-
 \item{length}{the length cutoff to use for the given linter.}
 
 \item{lax}{Less stringent linting, leading to fewer false positives.}
@@ -129,6 +126,8 @@ and the values are the text for the alternative function to use (or \code{NA}).}
 
 \item{op}{Named character vector, where the names are the names of the undesirable operators,
 and the values are the text for the alternative operator to use (or \code{NA}).}
+
+\item{style}{One of \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}.}
 }
 \description{
 Available linters
