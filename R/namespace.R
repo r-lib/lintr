@@ -1,19 +1,20 @@
 # Parse namespace files and return imports exports, methods
 namespace_imports <- function(path = ".") {
-  tryCatch({
+  imports <- tryCatch({
     d <- desc::desc(file.path(path, "DESCRIPTION"))
-    data <- parseNamespaceFile(d$get("Package"), file.path(path, ".."))
+    data <- parseNamespaceFile(package=d$get("Package"), package.lib=file.path(path, ".."))
+    data$imports
   }, error = function(e) {
-    data <- list()
+    list()
   })
 
-  full_imports <- lengths(data$imports) == 1
+  full_imports <- lengths(imports) == 1
 
   # this loads the namespaces, but is the easiest way to do it
-  data$imports[full_imports] <- lapply(data$imports[full_imports], function(x) list(x, getNamespaceExports(asNamespace(x))))
+  imports[full_imports] <- lapply(imports[full_imports], function(x) list(x, getNamespaceExports(asNamespace(x))))
 
   data.frame(
-    pkg = unlist(lapply(data$imports, function(x) rep(x[[1L]], length(x[[2L]])))),
-    fun = unlist(lapply(data$imports, `[[`, 2L)),
+    pkg = unlist(lapply(imports, function(x) rep(x[[1L]], length(x[[2L]])))),
+    fun = unlist(lapply(imports, `[[`, 2L)),
     stringsAsFactors = FALSE)
 }
