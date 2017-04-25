@@ -2,54 +2,61 @@
 #'
 #' @param file filename whose cache to clear.  If you pass \code{NULL}, it will
 #' delete all of the caches.
-#' @param path directory to store caches.  Reads option 'lintr.cache_directory'
+#' @param dir directory to store caches.  Reads option 'lintr.cache_directory'
 #' as the default.
+#' @param path deprecated argument.
+#' @return 0 for success, 1 for failure, invisibly.
 #' @export
-clear_cache <- function(file = NULL, path = NULL) {
+clear_cache <- function(file = NULL, dir = NULL, path = NULL) {
+  if (!missing(path)) {
+    lintr_deprecated("path", "dir", "1.0.0.9001", type="Argument")
+    dir <- path
+  }
+
   read_settings(file)
 
-  if (is.null(path)) {
-    path <- settings$cache_directory
+  if (is.null(dir)) {
+    dir <- settings$cache_directory
   }
 
   if (is.null(file)) {
-    unlink(path, recursive = TRUE)
+    unlink(dir, recursive = TRUE)
   }
   else {
     file <- basename(file)
-    unlink(file.path(path, file))
+    unlink(file.path(dir, file))
   }
 }
 
-load_cache <- function(file, path = NULL) {
+load_cache <- function(file, dir = NULL) {
   read_settings(file)
 
-  if (is.null(path)) {
-    path <- settings$cache_directory
+  if (is.null(dir)) {
+    dir <- settings$cache_directory
   }
 
   file <- basename(file)
   env <- new.env(parent = emptyenv())
 
-  file_path <- file.path(path, file)
+  file_path <- file.path(dir, file)
   if (file.exists(file_path)) {
     load(file = file_path, envir = env)
   }
   env
 }
 
-save_cache <- function(cache, file, path = NULL) {
+save_cache <- function(cache, file, dir = NULL) {
   read_settings(file)
 
-  if (is.null(path)) {
-    path <- settings$cache_directory
+  if (is.null(dir)) {
+    dir <- settings$cache_directory
   }
 
   file <- basename(file)
-  if (!file.exists(path)) {
-    dir.create(path, recursive = TRUE)
+  if (!file.exists(dir)) {
+    dir.create(dir, recursive = TRUE)
   }
-  save(file = file.path(path, file), envir = cache, list = ls(envir = cache))
+  save(file = file.path(dir, file), envir = cache, list = ls(envir = cache))
 }
 
 cache_file <- function(cache, filename, linters, lints) {

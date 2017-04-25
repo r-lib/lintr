@@ -1,12 +1,14 @@
 context("clear_cache")
 test_that("it calls unlink with the filename if given a file", {
+  want <- list(file.path(".", "file"))
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
     `base::unlink` = function(...) return(list(...)),
 
-    expect_equal(clear_cache(file = "file", path = "."), list(file.path(".", "file"))),
-
-    expect_equal(clear_cache(file = "R/file", path = "."), list(file.path(".", "file")))
+    expect_equal(clear_cache("file", "."), want),
+    expect_equal(clear_cache(file = "file", dir = "."), want),
+    expect_equal(suppressWarnings(clear_cache(file = "file", path = ".")), want),  # deprecated
+    expect_equal(clear_cache(file = "R/file", dir = "."), want)
   )
 })
 test_that("it calls unlink with the directory if given a file", {
@@ -14,7 +16,7 @@ test_that("it calls unlink with the directory if given a file", {
     `lintr::read_settings` = function(...) invisible(...),
     `base::unlink` = function(...) return(list(...)),
 
-    expect_equal(clear_cache(file = NULL, path = "."), list(".", recursive = TRUE))
+    expect_equal(clear_cache(file = NULL, dir = "."), list(".", recursive = TRUE))
   )
 })
 
@@ -27,7 +29,7 @@ test_that("it loads the saved file in a new empty environment", {
     on.exit(unlink(f1)),
     t1 <- "test",
     save(t1, file = f1),
-    t2 <- load_cache(file = basename(f1), path = dirname(f1)),
+    t2 <- load_cache(file = basename(f1), dir = dirname(f1)),
 
     expect_equal(ls(t2), "t1"),
     expect_equal(t2[["t1"]], "test")
@@ -38,7 +40,7 @@ test_that("it returns an empty environment if no file exists", {
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
 
-    t1 <- load_cache(file = tempfile(), path = "."),
+    t1 <- load_cache(file = tempfile(), dir = "."),
 
     expect_equal(ls(t1), character(0))
   )

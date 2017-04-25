@@ -55,19 +55,20 @@ find_config <- function(filename) {
   }
   linter_file <- getOption("lintr.linter_file")
 
-  if (!is_directory(filename)) {
-    path <- dirname(filename)
+  if (is_directory(filename)) {
+    dir <- filename
   } else {
-    path <- filename
+    dir <- dirname(filename)
   }
+
   ## check for a file in the current directory
-  linter_config <- file.path(path, linter_file)
+  linter_config <- file.path(dir, linter_file)
   if (isTRUE(file.exists(linter_config))) {
     return(linter_config)
   }
 
   ## next check for a file in the project directory
-  project <- find_package(path)
+  project <- find_package(dir)
   linter_config <- file.path(project, linter_file)
   if (isTRUE(file.exists(linter_config))) {
     return(linter_config)

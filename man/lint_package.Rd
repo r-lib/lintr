@@ -4,10 +4,10 @@
 \alias{lint_package}
 \title{Lint a package}
 \usage{
-lint_package(path = ".", relative_path = TRUE, ...)
+lint_package(dir = ".", relative_path = TRUE, ..., path = NULL)
 }
 \arguments{
-\item{path}{the path to the base directory of the package, if \code{NULL},
+\item{dir}{the path to the base directory of the package, if \code{NULL},
 the base directory will be searched for by looking in the parent directories
 of the current directory.}
 
@@ -16,6 +16,8 @@ relative to the package base directory.  If \code{FALSE}, use the full
 absolute path.}
 
 \item{...}{additional arguments passed to \code{\link{lint}}}
+
+\item{path}{deprecated argument.}
 }
 \description{
 Apply one or more linters to all of the R files in a package.

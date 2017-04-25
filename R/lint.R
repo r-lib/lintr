@@ -126,25 +126,31 @@ reorder_lints <- function(lints) {
 #' Lint a package
 #'
 #' Apply one or more linters to all of the R files in a package.
-#' @param path the path to the base directory of the package, if \code{NULL},
+#' @param dir the path to the base directory of the package, if \code{NULL},
 #' the base directory will be searched for by looking in the parent directories
 #' of the current directory.
 #' @param relative_path if \code{TRUE}, file paths are printed using their path
 #' relative to the package base directory.  If \code{FALSE}, use the full
 #' absolute path.
 #' @param ... additional arguments passed to \code{\link{lint}}
+#' @param path deprecated argument.
 #' @export
-lint_package <- function(path = ".", relative_path = TRUE, ...) {
-  path <- find_package(path)
+lint_package <- function(dir = ".", relative_path = TRUE, ..., path = NULL) {
+  if (!missing(path)) {
+    lintr_deprecated("path", "dir", "1.0.0.9001", type="Argument")
+    dir <- path
+  }
 
-  read_settings(path)
+  dir <- find_package(dir)
+
+  read_settings(dir)
   on.exit(clear_settings, add = TRUE)
 
-  names(settings$exclusions) <- normalizePath(file.path(path, names(settings$exclusions)))
+  names(settings$exclusions) <- normalizePath(file.path(dir, names(settings$exclusions)))
   exclusions = force(settings$exclusions)
 
   files <- dir(
-    path = file.path(path,
+    path = file.path(dir,
                      c("R",
                        "tests",
                        "inst")
@@ -173,10 +179,10 @@ lint_package <- function(path = ".", relative_path = TRUE, ...) {
   if (relative_path == TRUE) {
     lints[] <- lapply(lints,
       function(x) {
-        x$filename <- re_substitutes(x$filename, rex(normalizePath(path), one_of("/", "\\")), "")
+        x$filename <- re_substitutes(x$filename, rex(normalizePath(dir), one_of("/", "\\")), "")
         x
       })
-    attr(lints, "path") <- path
+    attr(lints, "dir") <- dir
   }
 
   class(lints) <- "lints"
@@ -184,28 +190,28 @@ lint_package <- function(path = ".", relative_path = TRUE, ...) {
   lints
 }
 
-find_package <- function(path = getwd()) {
+find_package <- function(dir = getwd()) {
   start_wd <- getwd()
   on.exit(setwd(start_wd))
-  setwd(path)
+  setwd(dir)
 
-  prev_path <- ""
-  while (!file.exists(file.path(prev_path, "DESCRIPTION"))) {
+  prev_dir <- ""
+  while (!file.exists(file.path(prev_dir, "DESCRIPTION"))) {
     # this condition means we are at the root directory, so give up
-    if (prev_path %==% getwd()) {
+    if (prev_dir %==% getwd()) {
       return(NULL)
     }
-    prev_path <- getwd()
+    prev_dir <- getwd()
     setwd("..")
   }
-  prev_path
+  prev_dir
 }
 
-pkg_name <- function(path = find_package()) {
-  if (is.null(path)) {
+pkg_name <- function(dir = find_package()) {
+  if (is.null(dir)) {
     return(NULL)
   } else {
-    read.dcf(file.path(path, "DESCRIPTION"), fields = "Package")[1]
+    read.dcf(file.path(dir, "DESCRIPTION"), fields = "Package")[1]
   }
 }
 
@@ -242,12 +248,12 @@ Lint <- function(filename, line_number = 1L, column_number = 1L,
 rstudio_source_markers <- function(lints) {
 
   # package path will be NULL unless it is a relative path
-  package_path <- attr(lints, "path")
+  package_dir <- attr(lints, "dir")
 
   # generate the markers
   markers <- lapply(lints, function(x) {
-    filename <- if (!is.null(package_path)) {
-      file.path(package_path, x$filename)
+    filename <- if (!is.null(package_dir)) {
+      file.path(package_dir, x$filename)
     } else {
       x$filename
     }
@@ -265,7 +271,7 @@ rstudio_source_markers <- function(lints) {
   rstudioapi::callFun("sourceMarkers",
                       name = "lintr",
                       markers = markers,
-                      basePath = package_path,
+                      basePath = package_dir,
                       autoSelect = "first")
 }
 
@@ -279,7 +285,7 @@ rstudio_source_markers <- function(lints) {
 checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 
   # package path will be NULL unless it is a relative path
-  package_path <- attr(lints, "path")
+  package_dir <- attr(lints, "dir")
 
   # setup file
   d <- xml2::xml_new_document()
@@ -287,8 +293,8 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 
   # output the style markers to the file
   lapply(split(lints, names(lints)), function(lints_per_file) {
-    filename <- if (!is.null(package_path)) {
-      file.path(package_path, lints_per_file[[1]]$filename)
+    filename <- if (!is.null(package_dir)) {
+      file.path(package_dir, lints_per_file[[1]]$filename)
     } else {
       lints_per_file[[1]]$filename
     }
