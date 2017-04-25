@@ -147,7 +147,7 @@ lint_package <- function(dir = ".", relative_path = TRUE, ..., path = NULL) {
   on.exit(clear_settings, add = TRUE)
 
   names(settings$exclusions) <- normalizePath(file.path(dir, names(settings$exclusions)))
-  exclusions = force(settings$exclusions)
+  exclusions <- force(settings$exclusions)
 
   files <- dir(
     path = file.path(dir,
@@ -179,7 +179,7 @@ lint_package <- function(dir = ".", relative_path = TRUE, ..., path = NULL) {
   if (relative_path == TRUE) {
     lints[] <- lapply(lints,
       function(x) {
-        x$filename <- re_substitutes(x$filename, rex(normalizePath(dir), one_of("/", "\\")), "")
+        x$filename <- relative_path(x$filename, dir)
         x
       })
     attr(lints, "dir") <- dir
@@ -189,6 +189,57 @@ lint_package <- function(dir = ".", relative_path = TRUE, ..., path = NULL) {
 
   lints
 }
+
+
+# 'path' and 'relative_to' both character vectors
+relative_path <- function(path, relative_to = find_package()) {
+  lp <- length(path)
+  lr <- length(relative_to)
+  if (lr != lp) {
+    if (lr == 0L) {
+      stop("'relative_to' must have length >= 1")
+    } else if (lr == 1L) {
+      relative_to <- rep.int(relative_to, lp)
+    } else if (lp == 1L) {
+      path <- rep.int(path, lr)
+    } else {
+      stop("'path' and 'relative_to' must have length 1 or the same length")
+    }
+  }
+
+  r <- character(lp)
+  path <- normalizePath(path, winslash = "/", mustWork = TRUE)
+  relative_to <- normalizePath(relative_to, winslash = "/", mustWork = TRUE)
+
+  # identical paths - the "." case
+  which <- path == relative_to
+  n_same <- sum(which)
+  if (n_same) {
+    r[which] <- rep.int(".", n_same)
+  }
+
+  # relative_to path is shorter - the "./" case
+  np <- nchar(path)
+  nr <- nchar(relative_to)
+  which <- np > nr
+  tmp <- strsplit(path[which], split = relative_to[which], fixed=TRUE)
+  tmp <- vapply(tmp, `[[`, character(1L), 2L, USE.NAMES=FALSE)
+  r[which] <- paste0(".", tmp)
+
+  # relative_to path is longer - the "../" case
+  which <- np < nr
+  tmp <- strsplit(relative_to[which], split = path[which], fixed = TRUE)
+  tmp <- vapply(tmp, `[[`, character(1L), 2L, USE.NAMES=FALSE)
+  tmp <- strsplit(tmp, split = "/", fixed=TRUE)
+  num <- vapply(tmp, length, integer(1L), USE.NAMES=FALSE) - 1L
+  r[which] <- as.character(Map(
+    function(n) {do.call(file.path, c(rep.int(list(".."), n), fsep = "/"))},
+    num
+  ))
+
+  r
+}
+
 
 find_package <- function(dir = getwd()) {
   start_wd <- getwd()
