@@ -191,7 +191,7 @@ lint_package <- function(dir = ".", relative_path = TRUE, ..., path = NULL) {
 }
 
 
-# 'path' and 'relative_to' both character vectors
+# 'path' and 'relative_to' are both character vectors
 relative_path <- function(path, relative_to = find_package()) {
   lp <- length(path)
   lr <- length(relative_to)
@@ -222,16 +222,16 @@ relative_path <- function(path, relative_to = find_package()) {
   np <- nchar(path)
   nr <- nchar(relative_to)
   which <- np > nr
-  tmp <- strsplit(path[which], split = relative_to[which], fixed=TRUE)
-  tmp <- vapply(tmp, `[[`, character(1L), 2L, USE.NAMES=FALSE)
-  r[which] <- paste0(".", tmp)
+  tmp <- strsplit(path[which], split = relative_to[which], fixed = TRUE)
+  tmp <- vapply(tmp, `[[`, character(1L), 2L, USE.NAMES = FALSE)
+  r[which] <- sub("^/", "", tmp)
 
   # relative_to path is longer - the "../" case
   which <- np < nr
   tmp <- strsplit(relative_to[which], split = path[which], fixed = TRUE)
-  tmp <- vapply(tmp, `[[`, character(1L), 2L, USE.NAMES=FALSE)
-  tmp <- strsplit(tmp, split = "/", fixed=TRUE)
-  tmp <- vapply(tmp, length, integer(1L), USE.NAMES=FALSE) - 1L
+  tmp <- vapply(tmp, `[[`, character(1L), 2L, USE.NAMES = FALSE)
+  tmp <- strsplit(tmp, split = "/", fixed = TRUE)
+  tmp <- vapply(tmp, length, integer(1L), USE.NAMES = FALSE) - 1L
   r[which] <- as.character(Map(
     function(n) {do.call(file.path, c(rep.int(list(".."), n), fsep = "/"))},
     tmp
