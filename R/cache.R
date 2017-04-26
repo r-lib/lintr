@@ -22,11 +22,25 @@ clear_cache <- function(file = NULL, dir = NULL, path = NULL) {
   path <- if (is.null(file)) {
     dir
   } else {
-    file.path(dir, basename(file))
+    get_cache_file_path(file, dir)
   }
 
   unlink(path, recursive = TRUE)
 }
+
+
+get_cache_file_path <- function(file, dir) {
+  file.path(
+    dir,
+    tryCatch(
+      relative_path(file),
+      error=function(e){basename(file)}
+      # fallback if file not relative to package, e.g. temporary file created by expect_lint() when
+      # called with a string instead of a file
+    )
+  )
+}
+
 
 load_cache <- function(file, dir = NULL) {
   read_settings(file)
@@ -37,10 +51,10 @@ load_cache <- function(file, dir = NULL) {
 
   env <- new.env(parent = emptyenv())
 
-  path <- file.path(dir, basename(file))
-  if (file.exists(path)) {
-    load(file = path, envir = env)
-  }
+  file <- get_cache_file_path(file, dir)
+  if (file.exists(file)) {
+    load(file = file, envir = env)
+  } # else nothing to do for source file that has no cache
 
   env
 }
@@ -52,10 +66,13 @@ save_cache <- function(cache, file, dir = NULL) {
     dir <- settings$cache_directory
   }
 
+  file <- get_cache_file_path(file, dir)
+  dir <- dirname(file)
   if (!file.exists(dir)) {
     dir.create(dir, recursive = TRUE)
   }
-  save(file = file.path(dir, basename(file)), envir = cache, list = ls(envir = cache))
+
+  save(file = file, envir = cache, list = ls(envir = cache))
 }
 
 cache_file <- function(cache, filename, linters, lints) {

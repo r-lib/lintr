@@ -1,22 +1,41 @@
+mock_package <- function(pkg_files = character()) {
+  pkg_dir <- tempfile(pattern="mock_package_")
+  dir.create(pkg_dir, showWarnings = FALSE, recursive = TRUE)
+  for (sub_dir in file.path(pkg_dir, dirname(pkg_files))) {
+    dir.create(sub_dir, showWarnings = FALSE, recursive = TRUE)
+  }
+  pkg_files <- file.path(pkg_dir, pkg_files)
+  file.create(pkg_files)
+  #cat("\ncreated package", pkg_dir, "\n")  ###
+  list(dir = pkg_dir, files = pkg_files)
+}
+
+
 context("clear_cache")
 
-test_that("it calls unlink with the filename if given a file", {
-  want <- list(file.path(".", "file"), recursive = TRUE)
+test_that("it deletes the file if a file is given", {
+  f1 <- "R/test.R"
+  pkg <- mock_package(f1)
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
-    `base::unlink` = function(...) return(list(...)),
+    `lintr::find_package` = function(...) pkg$dir,
+    `base::unlink` = function(...) list(...),
 
-    expect_equal(clear_cache("file", "."), want),
-    expect_equal(clear_cache(file = "file", dir = "."), want),
-    expect_equal(suppressWarnings(clear_cache(file = "file", path = ".")), want),  # deprecated
-    expect_equal(clear_cache(file = "R/file", dir = "."), want)
+    e1 <- new.env(parent = emptyenv()),
+    d1 <- tempfile(pattern="lintr_cache_"),
+    save_cache(cache = e1, file = pkg$file[[1]], dir = d1),
+
+    want <- list(file.path(d1, f1), recursive = TRUE),
+    expect_equal(clear_cache(pkg$file[[1]], d1), want),
+    expect_equal(clear_cache(file = pkg$file[[1]], dir = d1), want),
+    expect_equal(suppressWarnings(clear_cache(file = pkg$file[[1]], path = d1)), want)  # deprecated
   )
 })
 
-test_that("it calls unlink with the directory if given a file", {
+test_that("it deletes the directory if no file is given", {
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
-    `base::unlink` = function(...) return(list(...)),
+    `base::unlink` = function(...) list(...),
 
     expect_equal(clear_cache(file = NULL, dir = "."), list(".", recursive = TRUE))
   )
@@ -26,45 +45,57 @@ test_that("it calls unlink with the directory if given a file", {
 context("load_cache")
 
 test_that("it loads the saved file in a new empty environment", {
+  f1 <- "R/test.R"
+  pkg <- mock_package(f1)
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
+    `lintr::find_package` = function(...) pkg$dir,
 
-    f1 <- tempfile(),
-    on.exit(unlink(f1)),
-    t1 <- "test.R",
-    save(t1, file = f1),
-    t2 <- load_cache(file = basename(f1), dir = dirname(f1)),
+    e1 <- new.env(parent = emptyenv()),
+    assign("x", "foobar", envir = e1),
+    d1 <- tempfile(pattern="lintr_cache_"),
+    save_cache(cache = e1, file = pkg$file[[1]], dir = d1),
+    e2 <- load_cache(file = pkg$file[[1]], dir = d1),
 
-    expect_equal(ls(t2), "t1"),
-    expect_equal(t2[["t1"]], "test.R")
+    expect_equal(ls(e2), "x"),
+    expect_equal(e2[["x"]], "foobar")
   )
 })
 
-test_that("it returns an empty environment if no file exists", {
+test_that("it returns an empty environment if no cache file exists", {
+  f1 <- "R/test.R"
+  f2 <- "test.R"
+  pkg <- mock_package(c(f1, f2))
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
+    `lintr::find_package` = function(...) pkg$dir,
 
-    t1 <- load_cache(file = tempfile(), dir = "."),
+    e1 <- new.env(parent = emptyenv()),
+    d1 <- tempfile(pattern="lintr_cache_"),
+    save_cache(cache = e1, file = pkg$file[[1]], dir = d1),
+    e2 <- load_cache(file = pkg$file[[2]], dir = d1),
 
-    expect_equal(ls(t1), character(0))
+    expect_equal(ls(e2), character(0))
   )
 })
 
 
 context("save_cache")
 
-test_that("it creates a directory if it doesn't exist", {
+test_that("it creates a directory if needed", {
+  f1 <- "R/test.R"
+  pkg <- mock_package(f1)
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
+    `lintr::find_package` = function(...) pkg$dir,
 
     e1 <- new.env(parent = emptyenv()),
     d1 <- tempfile(pattern="lintr_cache_"),
-    f1 <- "test.R",
 
     expect_false(file.exists(d1)),
     expect_false(file.exists(file.path(d1, f1))),
 
-    save_cache(cache = e1, file = f1, dir = d1),
+    save_cache(cache = e1, file = pkg$files[[1]], dir = d1),
 
     expect_true(file.exists(d1)),
     expect_true(file.info(d1)$isdir),
@@ -72,18 +103,42 @@ test_that("it creates a directory if it doesn't exist", {
   )
 })
 
-test_that("it saves all non-hidden objects from the environment", {
+test_that("it uses unambiguous cache file names", {
+  f1 <- "R/test.R"
+  f2 <- "test.R"
+  pkg <- mock_package(c(f1, f2))
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
+    `lintr::find_package` = function(...) pkg$dir,
+
+    e1 <- new.env(parent = emptyenv()),
+    d1 <- tempfile(pattern="lintr_cache_"),
+
+    expect_false(file.exists(file.path(d1, f1))),
+    expect_false(file.exists(file.path(d1, f2))),
+
+    save_cache(cache = e1, file = pkg$file[[1]], dir = d1),
+    save_cache(cache = e1, file = pkg$file[[2]], dir = d1),
+
+    expect_true(file.exists(file.path(d1, f1))),
+    expect_true(file.exists(file.path(d1, f2)))
+  )
+})
+
+test_that("it saves all non-hidden objects from the environment", {
+  f1 <- "R/test.R"
+  pkg <- mock_package(f1)
+  with_mock(
+    `lintr::read_settings` = function(...) invisible(...),
+    `lintr::find_package` = function(...) pkg$dir,
 
     e1 <- new.env(parent = emptyenv()),
     e1$t1 <- 1,
     e1$t2 <- 2,
 
     d1 <- tempfile(pattern="lintr_cache_"),
-    f1 <- "test.R",
 
-    save_cache(cache = e1, file = f1, dir = d1),
+    save_cache(cache = e1, file = pkg$files[[1]], dir = d1),
 
     e2 <- new.env(parent = emptyenv()),
     load(file = file.path(d1, f1), envir = e2),
@@ -99,7 +154,7 @@ test_that("it generates the same cache with different lints", {
   e1 <- new.env(parent = emptyenv())
 
   f1 <- tempfile()
-  writeLines("test.R", f1)
+  writeLines("foobar", f1)
   on.exit(unlink(f1))
 
   cache_file(e1, f1, list(), list())
@@ -112,7 +167,7 @@ test_that("it generates different caches for different linters", {
   e1 <- new.env(parent = emptyenv())
 
   f1 <- tempfile()
-  writeLines("test.R", f1)
+  writeLines("foobar", f1)
   on.exit(unlink(f1))
 
   cache_file(e1, f1, list(), list())
@@ -128,7 +183,7 @@ test_that("it returns NULL if there is no cached result", {
   e1 <- new.env(parent = emptyenv())
 
   f1 <- tempfile()
-  writeLines("test.R", f1)
+  writeLines("foobar", f1)
   on.exit(unlink(f1))
 
   expect_equal(retrieve_file(e1, f1, list()), NULL)
@@ -138,11 +193,11 @@ test_that("it returns the cached result if found", {
   e1 <- new.env(parent = emptyenv())
 
   f1 <- tempfile()
-  writeLines("test.R", f1)
+  writeLines("foobar", f1)
   on.exit(unlink(f1))
 
-  cache_file(e1, f1, list(), list("test.R"))
-  expect_equal(retrieve_file(e1, f1, list()), list("test.R"))
+  cache_file(e1, f1, list(), list("foobar"))
+  expect_equal(retrieve_file(e1, f1, list()), list("foobar"))
 })
 
 
@@ -151,7 +206,7 @@ context("cache_lint")
 test_that("it generates the same cache with different lints", {
   e1 <- new.env(parent = emptyenv())
 
-  t1 <- list(content = "test.R")
+  t1 <- list(content = "test")
   cache_lint(e1, t1, list(), list())
   cache_lint(e1, t1, list(), list(1))
 
@@ -161,7 +216,7 @@ test_that("it generates the same cache with different lints", {
 test_that("it generates different caches for different linters", {
   e1 <- new.env(parent = emptyenv())
 
-  t1 <- list(content = "test.R")
+  t1 <- list(content = "test")
 
   cache_lint(e1, t1, list(), list())
   cache_lint(e1, t1, list(1), list())
@@ -175,12 +230,12 @@ context("retrieve_lint")
 test_that("it returns the same lints if nothing has changed", {
   e1 <- new.env(parent = emptyenv())
 
-  lines1 <- c("test1.R", "test2.R", "test3.R")
+  lines1 <- c("foobar1", "foobar2", "foobar3")
 
   lints1 <- list(
-    Lint("test_file", 1, line = "test1.R"),
-    Lint("test_file", 2, line = "test2.R"),
-    Lint("test_file", 3, line = "test3.R")
+    Lint("R/test.R", 1, line = "foobar1"),
+    Lint("R/test.R", 2, line = "foobar2"),
+    Lint("R/test.R", 3, line = "foobar3")
   )
 
   expr1 <- list(content = paste(collapse = "\n", lines1))
@@ -201,13 +256,13 @@ test_that("it returns the same lints if nothing has changed", {
 test_that("it returns the same lints with fixed line numbers if lines added above", {
   e1 <- new.env(parent = emptyenv())
 
-  lines1 <- c("test1.R", "test2.R", "test3.R")
-  lines2 <- c("", "test1.R", "test2.R", "test3.R")
+  lines1 <- c("foobar1", "foobar2", "foobar3")
+  lines2 <- c("", "foobar1", "foobar2", "foobar3")
 
   lints1 <- list(
-    Lint("test_file", 1, line = "test1.R"),
-    Lint("test_file", 2, line = "test2.R"),
-    Lint("test_file", 3, line = "test3.R")
+    Lint("R/test.R", 1, line = "foobar1"),
+    Lint("R/test.R", 2, line = "foobar2"),
+    Lint("R/test.R", 3, line = "foobar3")
   )
 
   expr1 <- list(content = paste(collapse = "\n", lines1))
@@ -229,13 +284,13 @@ test_that("it returns the same lints with fixed line numbers if lines added abov
 test_that("it returns the same lints with if lines added below", {
   e1 <- new.env(parent = emptyenv())
 
-  lines1 <- c("test1.R", "test2.R", "test3.R")
-  lines2 <- c("test1.R", "test2.R", "test3.R", "")
+  lines1 <- c("foobar1", "foobar2", "foobar3")
+  lines2 <- c("foobar1", "foobar2", "foobar3", "")
 
   lints1 <- list(
-    Lint("test_file", 1, line = "test1.R"),
-    Lint("test_file", 2, line = "test2.R"),
-    Lint("test_file", 3, line = "test3.R")
+    Lint("R/test.R", 1, line = "foobar1"),
+    Lint("R/test.R", 2, line = "foobar2"),
+    Lint("R/test.R", 3, line = "foobar3")
   )
 
   expr1 <- list(content = paste(collapse = "\n", lines1))
@@ -255,13 +310,13 @@ test_that("it returns the same lints with if lines added below", {
 test_that("it returns the same lints with fixed line numbers if lines added between", {
   e1 <- new.env(parent = emptyenv())
 
-  lines1 <- c("test1.R", "test2.R", "test3.R")
-  lines2 <- c("test1.R", "", "test2.R", "test3.R", "")
+  lines1 <- c("foobar1", "foobar2", "foobar3")
+  lines2 <- c("foobar1", "", "foobar2", "foobar3", "")
 
   lints1 <- list(
-    Lint("test_file", 1, line = "test1.R"),
-    Lint("test_file", 2, line = "test2.R"),
-    Lint("test_file", 3, line = "test3.R")
+    Lint("R/test.R", 1, line = "foobar1"),
+    Lint("R/test.R", 2, line = "foobar2"),
+    Lint("R/test.R", 3, line = "foobar3")
   )
 
   expr1 <- list(content = paste(collapse = "\n", lines1))
@@ -286,14 +341,14 @@ context("has_lint")
 test_that("it returns FALSE if there is no cached result", {
   e1 <- new.env(parent = emptyenv())
 
-  t1 <- list(content = "test.R")
+  t1 <- list(content = "foobar")
   expect_false(has_lint(e1, t1, list()))
 })
 
 test_that("it returns TRUE if there is a cached result", {
   e1 <- new.env(parent = emptyenv())
 
-  t1 <- list(content = "test.R")
+  t1 <- list(content = "foobar")
   cache_lint(e1, t1, list(), list())
   expect_true(has_lint(e1, t1, list()))
 })
@@ -302,46 +357,46 @@ test_that("it returns TRUE if there is a cached result", {
 context("find_new_line")
 
 test_that("it returns the same if the line is the same", {
-  t1 <- c("test1.R",
-          "test2.R",
-          "test3.R")
-  expect_equal(find_new_line(1, "test1.R", t1), 1)
+  t1 <- c("foobar1",
+          "foobar2",
+          "foobar3")
+  expect_equal(find_new_line(1, "foobar1", t1), 1)
 
-  expect_equal(find_new_line(2, "test2.R", t1), 2)
+  expect_equal(find_new_line(2, "foobar2", t1), 2)
 
-  expect_equal(find_new_line(3, "test3.R", t1), 3)
+  expect_equal(find_new_line(3, "foobar3", t1), 3)
 })
 
 test_that("it returns the correct line if it is before the current line", {
-  t1 <- c("test1.R",
-          "test2.R",
-          "test3.R")
-  expect_equal(find_new_line(1, "test1.R", t1), 1)
+  t1 <- c("foobar1",
+          "foobar2",
+          "foobar3")
+  expect_equal(find_new_line(1, "foobar1", t1), 1)
 
-  expect_equal(find_new_line(2, "test1.R", t1), 1)
+  expect_equal(find_new_line(2, "foobar1", t1), 1)
 
-  expect_equal(find_new_line(3, "test1.R", t1), 1)
+  expect_equal(find_new_line(3, "foobar1", t1), 1)
 })
 
 test_that("it returns the correct line if it is after the current line", {
-  t1 <- c("test1.R",
-          "test2.R",
-          "test3.R")
-  expect_equal(find_new_line(1, "test3.R", t1), 3)
+  t1 <- c("foobar1",
+          "foobar2",
+          "foobar3")
+  expect_equal(find_new_line(1, "foobar3", t1), 3)
 
-  expect_equal(find_new_line(2, "test3.R", t1), 3)
+  expect_equal(find_new_line(2, "foobar3", t1), 3)
 
-  expect_equal(find_new_line(3, "test3.R", t1), 3)
+  expect_equal(find_new_line(3, "foobar3", t1), 3)
 })
 
 
 test_that("lint() uses the provided cache directory", {
-  dir <- "temp_lintr_cache"
-  unlink(dir, recursive = TRUE)
+  dir <- tempfile(pattern = "my_cache_dir_")
   expect_false(dir.exists(dir))
   expect_lint("a <- 1", NULL, assignment_linter, cache=dir) # create the cache
   expect_true(dir.exists(dir))
+  expect_length(list.files(dir, "^file.*"), 1L)
   expect_lint("a <- 1", NULL, assignment_linter, cache=dir) # read the cache
   expect_true(dir.exists(dir))
-  unlink(dir, recursive = TRUE)
 })
+
