@@ -19,13 +19,13 @@ clear_cache <- function(file = NULL, dir = NULL, path = NULL) {
     dir <- settings$cache_directory
   }
 
-  if (is.null(file)) {
-    unlink(dir, recursive = TRUE)
+  path <- if (is.null(file)) {
+    dir
+  } else {
+    file.path(dir, basename(file))
   }
-  else {
-    file <- basename(file)
-    unlink(file.path(dir, file))
-  }
+
+  unlink(path, recursive = TRUE)
 }
 
 load_cache <- function(file, dir = NULL) {
@@ -35,13 +35,13 @@ load_cache <- function(file, dir = NULL) {
     dir <- settings$cache_directory
   }
 
-  file <- basename(file)
   env <- new.env(parent = emptyenv())
 
-  file_path <- file.path(dir, file)
-  if (file.exists(file_path)) {
-    load(file = file_path, envir = env)
+  path <- file.path(dir, basename(file))
+  if (file.exists(path)) {
+    load(file = path, envir = env)
   }
+
   env
 }
 
@@ -52,11 +52,10 @@ save_cache <- function(cache, file, dir = NULL) {
     dir <- settings$cache_directory
   }
 
-  file <- basename(file)
   if (!file.exists(dir)) {
     dir.create(dir, recursive = TRUE)
   }
-  save(file = file.path(dir, file), envir = cache, list = ls(envir = cache))
+  save(file = file.path(dir, basename(file)), envir = cache, list = ls(envir = cache))
 }
 
 cache_file <- function(cache, filename, linters, lints) {
@@ -127,5 +126,5 @@ find_new_line <- function(line_number, line, lines) {
     }
     width <- width + 1L
   }
-  return(NA)
+  NA
 }

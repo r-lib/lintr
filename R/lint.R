@@ -231,10 +231,10 @@ relative_path <- function(path, relative_to = find_package()) {
   tmp <- strsplit(relative_to[which], split = path[which], fixed = TRUE)
   tmp <- vapply(tmp, `[[`, character(1L), 2L, USE.NAMES=FALSE)
   tmp <- strsplit(tmp, split = "/", fixed=TRUE)
-  num <- vapply(tmp, length, integer(1L), USE.NAMES=FALSE) - 1L
+  tmp <- vapply(tmp, length, integer(1L), USE.NAMES=FALSE) - 1L
   r[which] <- as.character(Map(
     function(n) {do.call(file.path, c(rep.int(list(".."), n), fsep = "/"))},
-    num
+    tmp
   ))
 
   r
