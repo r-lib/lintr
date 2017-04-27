@@ -393,14 +393,22 @@ test_that("it returns the correct line if it is after the current line", {
 context("lint with cache")
 
 test_that("it uses the provided cache directory", {
-  pkg <- "lintr"
-  dir <- file.path(tempfile(pattern = "my_cache_dir_"))
-  expect_false(dir.exists(file.path(dir, pkg)))
-  expect_lint("a <- 1", NULL, assignment_linter, cache = dir) # create the cache
-  expect_true(dir.exists(file.path(dir, pkg)))
-  expect_length(list.files(file.path(dir, pkg), "^file.*"), 1L)
-  expect_lint("a <- 1", NULL, assignment_linter, cache = dir) # read the cache
-  expect_true(dir.exists(file.path(dir, pkg)))
+  pkg <- mock_package(files = "R/test.R", name = "my_pkg")
+  with_mock(
+    `lintr::read_settings` = function(...) invisible(...),
+    `lintr::find_package` = function(...) pkg$dir,
+    `lintr::pkg_name` = function(...) pkg$name,
+
+    dir <- file.path(tempfile(pattern = "my_cache_dir_")),
+    expect_false(dir.exists(file.path(dir, "my_pkg"))),
+    # create the cache
+    expect_lint("a <- 1", NULL, assignment_linter, cache = dir),
+    expect_true(dir.exists(file.path(dir, "my_pkg"))),
+    expect_length(list.files(file.path(dir, "my_pkg"), "^file.*"), 1L),
+    # read the cache
+    expect_lint("a <- 1", NULL, assignment_linter, cache = dir),
+    expect_true(dir.exists(file.path(dir, "my_pkg")))
+  )
 })
 
 test_that("it works outside of a package", {
