@@ -35,7 +35,7 @@ get_cache_file_path <- function(file, dir) {
     pkg_name(pkg_dir)
   } else {
     # for files not in a package, make a unique package name from file location
-    gsub('[\\\\/*?"<>|:]', "_", dirname(file))
+    gsub('[\\\\/*?"<>|:]', "_", dirname(normalizePath(file)))
   }
 
   file <- tryCatch(
