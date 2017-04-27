@@ -30,25 +30,17 @@
 #'   trailing_blank_lines_linter)
 expect_lint <- function(content, checks, ..., file = NULL) {
 
-  if (!is.null(file)) {
-    content <- readChar(file, file.info(file)$size)
+  # Note: this function cannot be properly unit tested because testthat's
+  # expect_success() and expect_failure() do not like the way we execute several
+  # expect() statements
+
+  if (is.null(file)) {
+    file <- tempfile()
+    on.exit(unlink(file))
+    writeLines(content, con = file, sep = "\n")
   }
 
-  expectation_lint(content, checks, ...)
-}
-
-
-# Note: this function cannot be properly unit tested because testthat's
-# expect_success() and expect_failure() do not like the way we execute several
-# expect() statements
-
-expectation_lint <- function(content, checks, ...) {
-
-  filename <- tempfile()
-  on.exit(unlink(filename))
-  cat(file = filename, content, sep = "\n")
-
-  lints <- lint(filename, ...)
+  lints <- lint(file, ...)
   n_lints <- length(lints)
   lint_str <- if (n_lints) {paste0(c("", lints), collapse="\n")} else {""}
 
