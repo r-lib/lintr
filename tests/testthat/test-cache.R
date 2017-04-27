@@ -281,7 +281,7 @@ test_that("it returns the same lints with fixed line numbers if lines added abov
   expect_equal(t1[[3]]$line_number, lints1[[3]]$line_number + 1)
 })
 
-test_that("it returns the same lints with if lines added below", {
+test_that("it returns the same lints with lines added below", {
   e1 <- new.env(parent = emptyenv())
 
   lines1 <- c("foobar1", "foobar2", "foobar3")
@@ -353,6 +353,17 @@ test_that("it returns TRUE if there is a cached result", {
   expect_true(has_lint(e1, t1, list()))
 })
 
+test_that("it distinguishes global expressions from line expression with same content", {
+  e1 <- new.env(parent = emptyenv())
+
+  same_content <- "foobar"
+
+  line_expr   <- list(content = same_content, parsed_content = data.frame())
+  cache_lint(e1, line_expr, list(), list())
+
+  global_expr <- list(content = same_content, file_lines = character())
+  expect_false(has_lint(e1, global_expr, list()))
+})
 
 context("find_new_line")
 

@@ -132,8 +132,8 @@ has_lint <- function(cache, expr, linter) {
 
 digest_content <- function(linters, obj) {
   content <- if (is.list(obj)) {
-    # assume an expression
-    list(linters, obj$content)
+    # assume an expression (global expression if obj$parsed_content is lacking)
+    list(linters, obj$content, is.null(obj$parsed_content))
   } else {
     # assume a filename
     list(linters, readLines(obj))
