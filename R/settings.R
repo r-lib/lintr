@@ -74,7 +74,7 @@ find_config <- function(filename) {
     return(linter_config)
   }
 
-  return(NULL)
+  NULL
 }
 
 is_directory <- function(filename) {

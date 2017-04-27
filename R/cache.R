@@ -30,17 +30,21 @@ clear_cache <- function(file = NULL, dir = NULL, path = NULL) {
 
 
 get_cache_file_path <- function(file, dir) {
-  file.path(
-    dir,
-    tryCatch(
-      relative_path(file),
-      error=function(e){basename(file)}
-      # fallback if file not relative to package, e.g. temporary file created by expect_lint() when
-      # called with a string instead of a file
-    )
-  )
-}
+  pkg_dir <- find_package()
+  pkg_name <- if (length(pkg_dir)) {
+    pkg_name(pkg_dir)
+  } else {
+    # for files not in a package, make a unique package name from file location
+    gsub('[\\\\/*?"<>|:]', "_", dirname(file))
+  }
 
+  file <- tryCatch(
+    relative_path(file, pkg_dir),
+    error = function(e) {basename(file)} # fallback for files not located within package folder
+  )
+
+  file.path(dir, pkg_name, file)
+}
 
 load_cache <- function(file, dir = NULL) {
   read_settings(file)
