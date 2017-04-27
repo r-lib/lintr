@@ -80,35 +80,38 @@ save_cache <- function(cache, file, dir = NULL) {
 }
 
 cache_file <- function(cache, filename, linters, lints) {
-  assign(envir = cache,
-    x = digest::digest(list(linters, readLines(filename)), algo = "sha1"),
-    value = lints
+  assign(
+    envir = cache,
+    x = digest_content(linters, filename),
+    value = lints,
+    inherits = FALSE
   )
 }
 
 retrieve_file <- function(cache, filename, linters) {
-  key <- digest::digest(list(linters, readLines(filename)), algo = "sha1")
-  if (exists(key, envir = cache)) {
-    get(
-      envir = cache,
-      x = digest::digest(list(linters, readLines(filename)), algo = "sha1")
-      )
-  } else {
-    NULL
-  }
+  mget(
+    envir = cache,
+    x = digest_content(linters, filename),
+    mode = "list",
+    inherits = FALSE,
+    ifnotfound = list(NULL)
+  )[[1L]]
 }
 
 cache_lint <- function(cache, expr, linter, lints) {
   assign(
     envir = cache,
-    x = digest::digest(list(linter, expr$content), algo = "sha1"),
-    value = lints)
+    x = digest_content(linter, expr),
+    value = lints,
+    inherits = FALSE)
 }
 
 retrieve_lint <- function(cache, expr, linter, lines) {
   lints <- get(
     envir = cache,
-    x = digest::digest(list(linter, expr$content), algo = "sha1")
+    x = digest_content(linter, expr),
+    mode = "list",
+    inherits = FALSE
   )
   lints[] <- lapply(lints, function(lint) {
     lint$line_number <- find_new_line(lint$line_number, unname(lint$line), lines)
@@ -119,9 +122,23 @@ retrieve_lint <- function(cache, expr, linter, lines) {
 }
 
 has_lint <- function(cache, expr, linter) {
-  exists(envir = cache,
-    x = digest::digest(list(linter, expr$content), algo = "sha1"),
-    )
+  exists(
+    envir = cache,
+    x = digest_content(linter, expr),
+    mode = "list",
+    inherits = FALSE
+  )
+}
+
+digest_content <- function(linters, obj) {
+  content <- if (is.list(obj)) {
+    # assume an expression
+    list(linters, obj$content)
+  } else {
+    # assume a filename
+    list(linters, readLines(obj))
+  }
+  digest::digest(content, algo = "sha1")
 }
 
 find_new_line <- function(line_number, line, lines) {
