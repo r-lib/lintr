@@ -23,16 +23,16 @@ exclude <- function(lints, exclusions = settings$exclusions, ...) {
   source_exclusions <- lapply(filenames, parse_exclusions, ...)
   names(source_exclusions) <- filenames
 
-  excl <- normalize_exclusions(c(source_exclusions, exclusions))
+  exclusions <- normalize_exclusions(c(source_exclusions, exclusions))
 
   to_exclude <- vapply(seq_len(NROW(df)),
     function(i) {
       file <- df$filename[i]
 
 
-      file %in% names(excl) &&
-        excl[[file]] == Inf ||
-        df$line_number[i] %in% excl[[file]]
+      file %in% names(exclusions) &&
+        exclusions[[file]] == Inf ||
+        df$line_number[i] %in% exclusions[[file]]
      },
     logical(1))
 
@@ -100,6 +100,9 @@ normalize_exclusions <- function(x) {
       x[unnamed] <- Inf
     }
   }
+
+  x <- x[file.exists(names(x))]       # remove exclusions for non-existing files
+  names(x) <- normalizePath(names(x)) # get full path for remaining files
 
   remove_line_duplicates(
     remove_file_duplicates(

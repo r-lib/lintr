@@ -25,7 +25,7 @@ test_that("it returns the line if one line is excluded", {
       "is #TeSt_NoLiNt",
       "a",
       "test"), t1)
-  expect_equal(parse_exclusions(t1), c(2))
+  expect_equal(parse_exclusions(t1), 2)
 
   t2 <- tempfile()
   on.exit(unlink(t2))
@@ -92,6 +92,12 @@ test_that("it throws an error if start and end are unpaired", {
 })
 
 context("normalize_exclusions")
+
+a <- tempfile()
+b <- tempfile()
+c <- tempfile(tmpdir=".")
+file.create(a, b, c)
+
 test_that("it merges two NULL or empty objects as an empty list", {
   expect_equal(normalize_exclusions(c(NULL, NULL)), list())
   expect_equal(normalize_exclusions(c(NULL, list())), list())
@@ -100,51 +106,72 @@ test_that("it merges two NULL or empty objects as an empty list", {
 })
 
 test_that("it returns the object if the other is NULL", {
-  t1 <- list(a = 1:10)
-
+  t1 <- list(); t1[[a]] <- 1:10
   expect_equal(normalize_exclusions(c(t1, NULL)), t1)
   expect_equal(normalize_exclusions(c(NULL, t1)), t1)
 })
 
 test_that("it returns the union of two non-overlapping lists", {
-  t1 <- list(a = 1:10)
-  t2 <- list(a = 20:30)
-
-  expect_equal(normalize_exclusions(c(t1, t2)), list(a = c(1:10, 20:30)))
+  t1 <- list(); t1[[a]] <- 1:10
+  t2 <- list(); t2[[a]] <- 20:30
+  res <- list(); res[[a]] <- c(1:10, 20:30)
+  expect_equal(normalize_exclusions(c(t1, t2)), res)
 })
 
 test_that("it returns the union of two overlapping lists", {
-  t1 <- list(a = 1:10)
-  t2 <- list(a = 5:15)
-
-  expect_equal(normalize_exclusions(c(t1, t2)), list(a = 1:15))
+  t1 <- list(); t1[[a]] <- 1:10
+  t2 <- list(); t2[[a]] <- 5:15
+  res <- list(); res[[a]] <- 1:15
+  expect_equal(normalize_exclusions(c(t1, t2)), res)
 })
 
 test_that("it adds names if needed", {
-  t1 <- list(a = 1:10)
-  t2 <- list(b = 5:15)
-
-  expect_equal(normalize_exclusions(c(t1, t2)), list(a = 1:10, b = 5:15))
+  t1 <- list(); t1[[a]] <- 1:10
+  t2 <- list(); t2[[b]] <- 5:15
+  res <- list(); res[[a]] <- 1:10; res[[b]] <- 5:15
+  expect_equal(normalize_exclusions(c(t1, t2)), res)
 })
 
 test_that("it handles full file exclusions", {
+  res <- list(); res[[a]] <- Inf
+  expect_equal(normalize_exclusions(list(a)), res)
 
-  expect_equal(normalize_exclusions(list("a")), list(a = Inf))
-
-  expect_equal(normalize_exclusions(list("a", b = 1)), list(a = Inf, b = 1))
+  t1 <- list(); t1[[1]] <- a; t1[[b]] <- 1
+  res <- list(); res[[a]] <- Inf; res[[b]] <- 1
+  expect_equal(normalize_exclusions(t1), res)
 })
 
 test_that("it handles redundant lines", {
+  t1 <- list(); t1[[a]] <- c(1, 1, 1:10)
+  res <- list(); res[[a]] <- 1:10
+  expect_equal(normalize_exclusions(t1), res)
 
-  expect_equal(normalize_exclusions(list(a = c(1, 1, 1:10))), list(a = 1:10))
-
-  expect_equal(normalize_exclusions(list(a = c(1, 1, 1:10), b = 1:10)), list(a = 1:10, b = 1:10))
+  t1 <- list(); t1[[a]] <-  c(1, 1, 1:10); t1[[b]] <- 1:10
+  res <- list(); res[[a]] <- 1:10; res[[b]] <- 1:10
+  expect_equal(normalize_exclusions(t1), res)
 })
 
 test_that("it handles redundant files", {
-
-  expect_equal(normalize_exclusions(list(a = c(1:10), a = c(10:20))), list(a = 1:20))
+  t1 <- list(1:10, 10:20); names(t1) <- c(a, a)
+  res <- list(); res[[a]] <- 1:20
+  expect_equal(normalize_exclusions(t1), res)
 })
+
+test_that("it removes non-existing files", {
+  t1 <- list(); t1[[a]] <- 1:10
+  t2 <- list(); t2[["notafile"]] <- 5:15
+  res <- list(); res[[a]] <- 1:10
+  expect_equal(normalize_exclusions(c(t1, t2)), res)
+})
+
+test_that("it normalize file paths", {
+  t1 <- list(); t1[[a]] <- 1:10
+  t3 <- list(); t3[[c]] <- 5:15
+  res <- list(); res[[a]] <- 1:10; res[[normalizePath(c)]] <- 5:15
+  expect_equal(normalize_exclusions(c(t1, t3)), res)
+})
+
+unlink(c(a, b, c))
 
 context("exclude")
 test_that("it excludes properly", {

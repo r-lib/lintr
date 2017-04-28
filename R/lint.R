@@ -97,7 +97,6 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   lints <- structure(reorder_lints(flatten_lints(lints)), class = "lints")
 
-
   if (isTRUE(cache)) {
     cache_file(lint_cache, filename, linters, lints)
     save_cache(lint_cache, filename, cache_path)
@@ -142,7 +141,7 @@ lint_package <- function(path = ".", relative_path = TRUE, ...) {
   read_settings(path)
   on.exit(clear_settings, add = TRUE)
 
-  names(settings$exclusions) <- normalizePath(file.path(path, names(settings$exclusions)))
+  names(settings$exclusions) <- file.path(path, names(settings$exclusions))
   exclusions <- force(settings$exclusions)
 
   files <- dir(
@@ -155,8 +154,6 @@ lint_package <- function(path = ".", relative_path = TRUE, ...) {
     recursive = TRUE,
     full.names = TRUE
   )
-
-  files <- normalizePath(files)
 
   lints <- flatten_lints(lapply(files,
       function(file) {
@@ -175,7 +172,7 @@ lint_package <- function(path = ".", relative_path = TRUE, ...) {
   if (relative_path == TRUE) {
     lints[] <- lapply(lints,
       function(x) {
-        x$filename <- re_substitutes(x$filename, rex(normalizePath(path), one_of("/", "\\")), "")
+        x$filename <- re_substitutes(x$filename, rex(path, one_of("/", "\\")), "")
         x
       })
     attr(lints, "path") <- path
@@ -201,7 +198,7 @@ find_package <- function(path = getwd()) {
     prev_path <- getwd()
     setwd("..")
   }
-  prev_path
+  normalizePath(prev_path)
 }
 
 pkg_name <- function(path = find_package()) {
