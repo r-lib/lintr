@@ -50,16 +50,16 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   lints <- list()
   itr <- 0
 
-  if (isTRUE(cache)) {
-    cache_dir <- settings$cache_directory
+  cache_path <- if (isTRUE(cache)) {
+    settings$cache_directory
   } else if (is.character(cache)) {
-    cache_dir <- cache
+    cache
   } else {
-    cache_dir <- character(0)
+    character(0)
   }
 
-  if (length(cache_dir)) {
-    lint_cache <- load_cache(filename, cache_dir)
+  if (length(cache_path)) {
+    lint_cache <- load_cache(filename, cache_path)
     lints <- retrieve_file(lint_cache, filename, linters)
     if (!is.null(lints)) {
       return(exclude(lints, ...))
@@ -98,7 +98,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   if (isTRUE(cache)) {
     cache_file(lint_cache, filename, linters, lints)
-    save_cache(lint_cache, filename, cache_dir)
+    save_cache(lint_cache, filename, cache_path)
   }
 
   res <- exclude(lints, ...)
@@ -126,31 +126,25 @@ reorder_lints <- function(lints) {
 #' Lint a package
 #'
 #' Apply one or more linters to all of the R files in a package.
-#' @param dir the path to the base directory of the package, if \code{NULL},
+#' @param path the path to the base directory of the package, if \code{NULL},
 #' the base directory will be searched for by looking in the parent directories
 #' of the current directory.
 #' @param relative_path if \code{TRUE}, file paths are printed using their path
 #' relative to the package base directory.  If \code{FALSE}, use the full
 #' absolute path.
 #' @param ... additional arguments passed to \code{\link{lint}}
-#' @param path deprecated argument.
 #' @export
-lint_package <- function(dir = ".", relative_path = TRUE, ..., path = NULL) {
-  if (!missing(path)) {
-    lintr_deprecated("path", "dir", "1.0.0.9001", type="Argument")
-    dir <- path
-  }
+lint_package <- function(path = ".", relative_path = TRUE, ...) {
+  path <- find_package(path)
 
-  dir <- find_package(dir)
-
-  read_settings(dir)
+  read_settings(path)
   on.exit(clear_settings, add = TRUE)
 
-  names(settings$exclusions) <- normalizePath(file.path(dir, names(settings$exclusions)))
+  names(settings$exclusions) <- normalizePath(file.path(path, names(settings$exclusions)))
   exclusions <- force(settings$exclusions)
 
   files <- dir(
-    path = file.path(dir,
+    path = file.path(path,
                      c("R",
                        "tests",
                        "inst")
@@ -179,10 +173,10 @@ lint_package <- function(dir = ".", relative_path = TRUE, ..., path = NULL) {
   if (relative_path == TRUE) {
     lints[] <- lapply(lints,
       function(x) {
-        x$filename <- relative_path(x$filename, dir)
+        x$filename <- relative_path(x$filename, path)
         x
       })
-    attr(lints, "dir") <- dir
+    attr(lints, "path") <- path
   }
 
   class(lints) <- "lints"
@@ -241,28 +235,28 @@ relative_path <- function(path, relative_to = find_package()) {
 }
 
 
-find_package <- function(dir = getwd()) {
-  start_wd <- getwd()
-  on.exit(setwd(start_wd))
-  setwd(dir)
+find_package <- function(path = getwd()) {
+  start_path <- getwd()
+  on.exit(setwd(start_path))
+  setwd(path)
 
-  prev_dir <- ""
-  while (!file.exists(file.path(prev_dir, "DESCRIPTION"))) {
+  prev_path <- ""
+  while (!file.exists(file.path(prev_path, "DESCRIPTION"))) {
     # this condition means we are at the root directory, so give up
-    if (prev_dir %==% getwd()) {
+    if (prev_path %==% getwd()) {
       return(NULL)
     }
-    prev_dir <- getwd()
+    prev_path <- getwd()
     setwd("..")
   }
-  prev_dir
+  prev_path
 }
 
-pkg_name <- function(dir = find_package()) {
-  if (is.null(dir)) {
+pkg_name <- function(path = find_package()) {
+  if (is.null(path)) {
     return(NULL)
   } else {
-    read.dcf(file.path(dir, "DESCRIPTION"), fields = "Package")[1]
+    read.dcf(file.path(path, "DESCRIPTION"), fields = "Package")[1]
   }
 }
 
@@ -299,12 +293,12 @@ Lint <- function(filename, line_number = 1L, column_number = 1L,
 rstudio_source_markers <- function(lints) {
 
   # package path will be NULL unless it is a relative path
-  package_dir <- attr(lints, "dir")
+  package_path <- attr(lints, "path")
 
   # generate the markers
   markers <- lapply(lints, function(x) {
-    filename <- if (!is.null(package_dir)) {
-      file.path(package_dir, x$filename)
+    filename <- if (!is.null(package_path)) {
+      file.path(package_path, x$filename)
     } else {
       x$filename
     }
@@ -322,7 +316,7 @@ rstudio_source_markers <- function(lints) {
   rstudioapi::callFun("sourceMarkers",
                       name = "lintr",
                       markers = markers,
-                      basePath = package_dir,
+                      basePath = package_path,
                       autoSelect = "first")
 }
 
@@ -336,7 +330,7 @@ rstudio_source_markers <- function(lints) {
 checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 
   # package path will be NULL unless it is a relative path
-  package_dir <- attr(lints, "dir")
+  package_path <- attr(lints, "path")
 
   # setup file
   d <- xml2::xml_new_document()
@@ -344,8 +338,8 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 
   # output the style markers to the file
   lapply(split(lints, names(lints)), function(lints_per_file) {
-    filename <- if (!is.null(package_dir)) {
-      file.path(package_dir, lints_per_file[[1]]$filename)
+    filename <- if (!is.null(package_path)) {
+      file.path(package_path, lints_per_file[[1]]$filename)
     } else {
       lints_per_file[[1]]$filename
     }

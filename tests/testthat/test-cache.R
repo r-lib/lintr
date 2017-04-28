@@ -1,12 +1,12 @@
 mock_package <- function(files = character(), name = character()) {
-  dir <- tempfile(pattern = "mock_package_")
-  dir.create(dir, showWarnings = FALSE, recursive = TRUE)
-  for (sub_dir in file.path(dir, dirname(files))) {
-    dir.create(sub_dir, showWarnings = FALSE, recursive = TRUE)
+  path <- tempfile(pattern = "mock_package_")
+  dir.create(path, showWarnings = FALSE, recursive = TRUE)
+  for (sub_path in file.path(path, dirname(files))) {
+    dir.create(sub_path, showWarnings = FALSE, recursive = TRUE)
   }
-  files <- file.path(dir, files)
+  files <- file.path(path, files)
   file.create(files)
-  list(dir = dir, files = files, name = name )
+  list(path = path, files = files, name = name)
 }
 
 
@@ -16,18 +16,17 @@ test_that("it deletes the file if a file is given", {
   pkg <- mock_package(files = "R/test.R", name = "my_pkg")
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
-    `lintr::find_package` = function(...) pkg$dir,
+    `lintr::find_package` = function(...) pkg$path,
     `lintr::pkg_name` = function(...) pkg$name,
     `base::unlink` = function(...) list(...),
 
     e1 <- new.env(parent = emptyenv()),
     d1 <- tempfile(pattern = "lintr_cache_"),
-    save_cache(cache = e1, file = pkg$file[[1]], dir = d1),
+    save_cache(cache = e1, file = pkg$file[[1]], path = d1),
 
     want <- list(file.path(d1, "my_pkg", "R/test.R"), recursive = TRUE),
     expect_equal(clear_cache(pkg$file[[1]], d1), want),
-    expect_equal(clear_cache(file = pkg$file[[1]], dir = d1), want),
-    expect_equal(suppressWarnings(clear_cache(file = pkg$file[[1]], path = d1)), want)  # deprecated
+    expect_equal(clear_cache(file = pkg$file[[1]], path = d1), want)
   )
 })
 
@@ -36,7 +35,7 @@ test_that("it deletes the directory if no file is given", {
     `lintr::read_settings` = function(...) invisible(...),
     `base::unlink` = function(...) list(...),
 
-    expect_equal(clear_cache(file = NULL, dir = "."), list(".", recursive = TRUE))
+    expect_equal(clear_cache(file = NULL, path = "."), list(".", recursive = TRUE))
   )
 })
 
@@ -47,14 +46,14 @@ test_that("it loads the saved file in a new empty environment", {
   pkg <- mock_package(files = "R/test.R", name = "my_pkg")
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
-    `lintr::find_package` = function(...) pkg$dir,
+    `lintr::find_package` = function(...) pkg$path,
     `lintr::pkg_name` = function(...) pkg$name,
 
     e1 <- new.env(parent = emptyenv()),
     assign("x", "foobar", envir = e1),
     d1 <- tempfile(pattern = "lintr_cache_"),
-    save_cache(cache = e1, file = pkg$file[[1]], dir = d1),
-    e2 <- load_cache(file = pkg$file[[1]], dir = d1),
+    save_cache(cache = e1, file = pkg$file[[1]], path = d1),
+    e2 <- load_cache(file = pkg$file[[1]], path = d1),
 
     expect_equal(ls(e2), "x"),
     expect_equal(e2[["x"]], "foobar")
@@ -65,13 +64,13 @@ test_that("it returns an empty environment if no cache file exists", {
   pkg <- mock_package(files = c("R/test.R", "test.R"), name = "my_pkg")
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
-    `lintr::find_package` = function(...) pkg$dir,
+    `lintr::find_package` = function(...) pkg$path,
     `lintr::pkg_name` = function(...) pkg$name,
 
     e1 <- new.env(parent = emptyenv()),
     d1 <- tempfile(pattern = "lintr_cache_"),
-    save_cache(cache = e1, file = pkg$file[[1]], dir = d1),
-    e2 <- load_cache(file = pkg$file[[2]], dir = d1),
+    save_cache(cache = e1, file = pkg$file[[1]], path = d1),
+    e2 <- load_cache(file = pkg$file[[2]], path = d1),
 
     expect_equal(ls(e2), character(0))
   )
@@ -84,7 +83,7 @@ test_that("it creates a directory if needed", {
   pkg <- mock_package(files = "R/test.R", name = "my_pkg")
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
-    `lintr::find_package` = function(...) pkg$dir,
+    `lintr::find_package` = function(...) pkg$path,
     `lintr::pkg_name` = function(...) pkg$name,
 
     e1 <- new.env(parent = emptyenv()),
@@ -94,7 +93,7 @@ test_that("it creates a directory if needed", {
     expect_false(file.exists(file.path(d1, "my_pkg"))),
     expect_false(file.exists(file.path(d1, "my_pkg", "R/test.R"))),
 
-    save_cache(cache = e1, file = pkg$files[[1]], dir = d1),
+    save_cache(cache = e1, file = pkg$files[[1]], path = d1),
 
     expect_true(file.exists(d1)),
     expect_true(file.info(d1)$isdir),
@@ -108,7 +107,7 @@ test_that("it uses unambiguous cache file names", {
   pkg <- mock_package(files = c("R/test.R", "test.R"), name = "my_pkg")
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
-    `lintr::find_package` = function(...) pkg$dir,
+    `lintr::find_package` = function(...) pkg$path,
     `lintr::pkg_name` = function(...) pkg$name,
 
     e1 <- new.env(parent = emptyenv()),
@@ -117,8 +116,8 @@ test_that("it uses unambiguous cache file names", {
     expect_false(file.exists(file.path(d1, "my_pkg", "R/test.R"))),
     expect_false(file.exists(file.path(d1, "my_pkg", "test.R"))),
 
-    save_cache(cache = e1, file = pkg$file[[1]], dir = d1),
-    save_cache(cache = e1, file = pkg$file[[2]], dir = d1),
+    save_cache(cache = e1, file = pkg$file[[1]], path = d1),
+    save_cache(cache = e1, file = pkg$file[[2]], path = d1),
 
     expect_true(file.exists(file.path(d1, "my_pkg", "R/test.R"))),
     expect_true(file.exists(file.path(d1, "my_pkg", "test.R")))
@@ -129,7 +128,7 @@ test_that("it saves all non-hidden objects from the environment", {
   pkg <- mock_package(files = "R/test.R", name = "my_pkg")
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
-    `lintr::find_package` = function(...) pkg$dir,
+    `lintr::find_package` = function(...) pkg$path,
     `lintr::pkg_name` = function(...) pkg$name,
 
     e1 <- new.env(parent = emptyenv()),
@@ -138,7 +137,7 @@ test_that("it saves all non-hidden objects from the environment", {
 
     d1 <- tempfile(pattern = "lintr_cache_"),
 
-    save_cache(cache = e1, file = pkg$files[[1]], dir = d1),
+    save_cache(cache = e1, file = pkg$files[[1]], path = d1),
 
     e2 <- new.env(parent = emptyenv()),
     load(file = file.path(d1, "my_pkg", "R/test.R"), envir = e2),
@@ -407,18 +406,18 @@ test_that("it uses the provided cache directory", {
   pkg <- mock_package(files = "R/test.R", name = "my_pkg")
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
-    `lintr::find_package` = function(...) pkg$dir,
+    `lintr::find_package` = function(...) pkg$path,
     `lintr::pkg_name` = function(...) pkg$name,
 
-    dir <- file.path(tempfile(pattern = "my_cache_dir_")),
-    expect_false(dir.exists(file.path(dir, "my_pkg"))),
+    path <- file.path(tempfile(pattern = "my_cache_dir_")),
+    expect_false(dir.exists(file.path(path, "my_pkg"))),
     # create the cache
-    expect_lint("a <- 1", NULL, assignment_linter, cache = dir),
-    expect_true(dir.exists(file.path(dir, "my_pkg"))),
-    expect_length(list.files(file.path(dir, "my_pkg"), "^file.*"), 1L),
+    expect_lint("a <- 1", NULL, assignment_linter, cache = path),
+    expect_true(dir.exists(file.path(path, "my_pkg"))),
+    expect_length(list.files(file.path(path, "my_pkg"), "^file.*"), 1L),
     # read the cache
-    expect_lint("a <- 1", NULL, assignment_linter, cache = dir),
-    expect_true(dir.exists(file.path(dir, "my_pkg")))
+    expect_lint("a <- 1", NULL, assignment_linter, cache = path),
+    expect_true(dir.exists(file.path(path, "my_pkg")))
   )
 })
 
@@ -428,13 +427,13 @@ test_that("it works outside of a package", {
     `lintr::find_package` = function(...) NULL,
     `lintr::pkg_name` = function(...) NULL,
 
-    dir <- tempfile(pattern = "my_cache_dir_"),
-    expect_false(dir.exists(dir)),
-    expect_lint("a <- 1", NULL, assignment_linter, cache = dir),
-    expect_true(dir.exists(dir)),
-    expect_length(list.files(dir, ".*"), 1L),
-    expect_true(file.info(list.files(dir, ".*", full.names = TRUE)[[1L]])$isdir),
-    expect_lint("a <- 1", NULL, assignment_linter, cache = dir),
-    expect_true(dir.exists(dir))
+    path <- tempfile(pattern = "my_cache_dir_"),
+    expect_false(dir.exists(path)),
+    expect_lint("a <- 1", NULL, assignment_linter, cache = path),
+    expect_true(dir.exists(path)),
+    expect_length(list.files(path, ".*"), 1L),
+    expect_true(file.info(list.files(path, ".*", full.names = TRUE)[[1L]])$isdir),
+    expect_lint("a <- 1", NULL, assignment_linter, cache = path),
+    expect_true(dir.exists(path))
   )
 })

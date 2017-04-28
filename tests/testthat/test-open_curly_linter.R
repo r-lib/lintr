@@ -7,11 +7,11 @@ test_that("returns the correct linting", {
   expect_lint("a <- function() {\n}", NULL, open_curly_linter())
 
   expect_lint(
-"pkg_name <- function(dir = find_package()) {
-  if (is.null(dir)) {
+"pkg_name <- function(path = find_package()) {
+  if (is.null(path)) {
     return(NULL)
   } else {
-    read.dcf(file.path(dir, \"DESCRIPTION\"), fields = \"Package\")[1]
+    read.dcf(file.path(path, \"DESCRIPTION\"), fields = \"Package\")[1]
   }
 }", NULL, open_curly_linter())
 

@@ -4,16 +4,14 @@
 \alias{clear_cache}
 \title{Clear the lintr cache}
 \usage{
-clear_cache(file = NULL, dir = NULL, path = NULL)
+clear_cache(file = NULL, path = NULL)
 }
 \arguments{
 \item{file}{filename whose cache to clear.  If you pass \code{NULL}, it will
 delete all of the caches.}
 
-\item{dir}{directory to store caches.  Reads option 'lintr.cache_directory'
+\item{path}{directory to store caches.  Reads option 'lintr.cache_directory'
 as the default.}
-
-\item{path}{deprecated argument.}
 }
 \value{
 0 for success, 1 for failure, invisibly.

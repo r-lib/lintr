@@ -2,60 +2,52 @@
 #'
 #' @param file filename whose cache to clear.  If you pass \code{NULL}, it will
 #' delete all of the caches.
-#' @param dir directory to store caches.  Reads option 'lintr.cache_directory'
+#' @param path directory to store caches.  Reads option 'lintr.cache_directory'
 #' as the default.
-#' @param path deprecated argument.
 #' @return 0 for success, 1 for failure, invisibly.
 #' @export
-clear_cache <- function(file = NULL, dir = NULL, path = NULL) {
-  if (!missing(path)) {
-    lintr_deprecated("path", "dir", "1.0.0.9001", type="Argument")
-    dir <- path
-  }
-
+clear_cache <- function(file = NULL, path = NULL) {
   read_settings(file)
 
-  if (is.null(dir)) {
-    dir <- settings$cache_directory
+  if (is.null(path)) {
+    path <- settings$cache_directory
   }
 
-  path <- if (is.null(file)) {
-    dir
-  } else {
-    get_cache_file_path(file, dir)
+  if (!is.null(file)) {
+    path <- get_cache_file_path(file, path)
   }
 
   unlink(path, recursive = TRUE)
 }
 
 
-get_cache_file_path <- function(file, dir) {
-  pkg_dir <- find_package()
-  pkg_name <- if (length(pkg_dir)) {
-    pkg_name(pkg_dir)
+get_cache_file_path <- function(file, path) {
+  pkg_path <- find_package()
+  pkg_name <- if (length(pkg_path)) {
+    pkg_name(pkg_path)
   } else {
     # for files not in a package, make a unique package name from file location
     gsub('[\\\\/*?"<>|:]', "_", dirname(normalizePath(file)))
   }
 
   file <- tryCatch(
-    relative_path(file, pkg_dir),
+    relative_path(file, pkg_path),
     error = function(e) {basename(file)} # fallback for files not located within package folder
   )
 
-  file.path(dir, pkg_name, file)
+  file.path(path, pkg_name, file)
 }
 
-load_cache <- function(file, dir = NULL) {
+load_cache <- function(file, path = NULL) {
   read_settings(file)
 
-  if (is.null(dir)) {
-    dir <- settings$cache_directory
+  if (is.null(path)) {
+    path <- settings$cache_directory
   }
 
   env <- new.env(parent = emptyenv())
 
-  file <- get_cache_file_path(file, dir)
+  file <- get_cache_file_path(file, path)
   if (file.exists(file)) {
     load(file = file, envir = env)
   } # else nothing to do for source file that has no cache
@@ -63,17 +55,17 @@ load_cache <- function(file, dir = NULL) {
   env
 }
 
-save_cache <- function(cache, file, dir = NULL) {
+save_cache <- function(cache, file, path = NULL) {
   read_settings(file)
 
-  if (is.null(dir)) {
-    dir <- settings$cache_directory
+  if (is.null(path)) {
+    path <- settings$cache_directory
   }
 
-  file <- get_cache_file_path(file, dir)
-  dir <- dirname(file)
-  if (!file.exists(dir)) {
-    dir.create(dir, recursive = TRUE)
+  file <- get_cache_file_path(file, path)
+  path <- dirname(file)
+  if (!file.exists(path)) {
+    dir.create(path, recursive = TRUE)
   }
 
   save(file = file, envir = cache, list = ls(envir = cache))
