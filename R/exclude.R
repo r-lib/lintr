@@ -1,6 +1,6 @@
 #' Exclude lines or files from linting
 #'
-#' @param lints that need to be filetered.
+#' @param lints that need to be filtered.
 #' @param exclusions manually specified exclusions
 #' @param ... additional arguments passed to \code{\link{parse_exclusions}}
 #' @details
@@ -71,7 +71,7 @@ parse_exclusions <- function(file, exclude = settings$exclude,
   sort(unique(c(exclusions, which(rex::re_matches(lines, exclude)))))
 }
 
-normalize_exclusions <- function(x) {
+normalize_exclusions <- function(x, normalize_path=TRUE) {
   if (is.null(x) || length(x) <= 0) {
     return(list())
   }
@@ -101,8 +101,10 @@ normalize_exclusions <- function(x) {
     }
   }
 
-  x <- x[file.exists(names(x))]       # remove exclusions for non-existing files
-  names(x) <- normalizePath(names(x)) # get full path for remaining files
+  if (normalize_path) {
+    x <- x[file.exists(names(x))]       # remove exclusions for non-existing files
+    names(x) <- normalizePath(names(x)) # get full path for remaining files
+  }
 
   remove_line_duplicates(
     remove_file_duplicates(

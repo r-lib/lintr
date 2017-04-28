@@ -133,7 +133,8 @@ reorder_lints <- function(lints) {
 #' @param relative_path if \code{TRUE}, file paths are printed using their path
 #' relative to the package base directory.  If \code{FALSE}, use the full
 #' absolute path.
-#' @param ... additional arguments passed to \code{\link{lint}}
+#' @param ... additional arguments passed to \code{\link{lint}}, e.g. \code{cache=TRUE} or
+#' \code{exclusions=list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")}.
 #' @export
 lint_package <- function(path = ".", relative_path = TRUE, ...) {
   path <- find_package(path)
@@ -141,8 +142,10 @@ lint_package <- function(path = ".", relative_path = TRUE, ...) {
   read_settings(path)
   on.exit(clear_settings, add = TRUE)
 
-  names(settings$exclusions) <- file.path(path, names(settings$exclusions))
-  exclusions <- force(settings$exclusions)
+  args <- list(...)
+  exclusions <- normalize_exclusions(c(args$exclusions, settings$exclusions), FALSE)
+  names(exclusions) <- file.path(path, names(exclusions))
+  args$exclusions <- exclusions
 
   files <- dir(
     path = file.path(path,
@@ -160,7 +163,7 @@ lint_package <- function(path = ".", relative_path = TRUE, ...) {
         if (interactive()) {
           message(".", appendLF = FALSE)
         }
-        lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
+        do.call(lint, c(file, args, parse_settings = FALSE))
       }))
 
   if (interactive()) {

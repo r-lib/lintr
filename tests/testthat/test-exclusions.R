@@ -157,18 +157,15 @@ test_that("it handles redundant files", {
   expect_equal(normalize_exclusions(t1), res)
 })
 
-test_that("it removes non-existing files", {
+test_that("it normalizes file paths, removing non-existing files", {
   t1 <- list(); t1[[a]] <- 1:10
   t2 <- list(); t2[["notafile"]] <- 5:15
-  res <- list(); res[[a]] <- 1:10
-  expect_equal(normalize_exclusions(c(t1, t2)), res)
-})
-
-test_that("it normalize file paths", {
-  t1 <- list(); t1[[a]] <- 1:10
   t3 <- list(); t3[[c]] <- 5:15
   res <- list(); res[[a]] <- 1:10; res[[normalizePath(c)]] <- 5:15
-  expect_equal(normalize_exclusions(c(t1, t3)), res)
+  expect_equal(normalize_exclusions(c(t1, t2, t3)), res)
+
+  res <- list(); res[[a]] <- 1:10; res[["notafile"]] <- 5:15; res[[c]] <- 5:15
+  expect_equal(normalize_exclusions(c(t1, t2, t3), normalize_path=FALSE), res)
 })
 
 unlink(c(a, b, c))

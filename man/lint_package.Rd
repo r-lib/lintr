@@ -15,7 +15,8 @@ of the current directory.}
 relative to the package base directory.  If \code{FALSE}, use the full
 absolute path.}
 
-\item{...}{additional arguments passed to \code{\link{lint}}}
+\item{...}{additional arguments passed to \code{\link{lint}}, e.g. \code{cache=TRUE} or
+\code{exclusions=list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")}.}
 }
 \description{
 Apply one or more linters to all of the R files in a package.
