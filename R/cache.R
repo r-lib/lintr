@@ -22,20 +22,8 @@ clear_cache <- function(file = NULL, path = NULL) {
 
 
 get_cache_file_path <- function(file, path) {
-  pkg_path <- find_package()
-  pkg_name <- if (length(pkg_path)) {
-    pkg_name(pkg_path)
-  } else {
-    # for files not in a package, make a unique package name from file location
-    gsub('[\\\\/*?"<>|:]', "_", dirname(normalizePath(file)))
-  }
-
-  file <- tryCatch(
-    relative_path(file, pkg_path),
-    error = function(e) {basename(file)} # fallback for files not located within package folder
-  )
-
-  file.path(path, pkg_name, file)
+  # this assumes that a normalized absolute file path was given
+  file.path(path, digest::digest(file, algo = "sha1"))
 }
 
 load_cache <- function(file, path = NULL) {
@@ -62,13 +50,11 @@ save_cache <- function(cache, file, path = NULL) {
     path <- settings$cache_directory
   }
 
-  file <- get_cache_file_path(file, path)
-  path <- dirname(file)
   if (!file.exists(path)) {
-    dir.create(path, recursive = TRUE)
+    dir.create(path)
   }
 
-  save(file = file, envir = cache, list = ls(envir = cache))
+  save(file = get_cache_file_path(file, path), envir = cache, list = ls(envir = cache))
 }
 
 cache_file <- function(cache, filename, linters, lints) {

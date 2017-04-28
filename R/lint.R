@@ -30,6 +30,8 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     on.exit(unlink(filename))
     cat(file = filename, content, sep = "\n")
   }
+
+  filename <- normalizePath(filename)  # to ensure a unique file in cache
   source_expressions <- get_source_expressions(filename)
 
   if (isTRUE(parse_settings)) {
@@ -41,7 +43,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     linters <- settings$linters
   } else if (!is.list(linters)) {
     name <- deparse(substitute(linters))
-   linters <- list(linters)
+    linters <- list(linters)
     names(linters) <- name
   } else {
     names(linters) <- auto_names(linters)
@@ -173,7 +175,7 @@ lint_package <- function(path = ".", relative_path = TRUE, ...) {
   if (relative_path == TRUE) {
     lints[] <- lapply(lints,
       function(x) {
-        x$filename <- relative_path(x$filename, path)
+        x$filename <- re_substitutes(x$filename, rex(normalizePath(path), one_of("/", "\\")), "")
         x
       })
     attr(lints, "path") <- path
@@ -182,56 +184,6 @@ lint_package <- function(path = ".", relative_path = TRUE, ...) {
   class(lints) <- "lints"
 
   lints
-}
-
-
-# 'path' and 'relative_to' are both character vectors
-relative_path <- function(path, relative_to = find_package()) {
-  lp <- length(path)
-  lr <- length(relative_to)
-  if (lr != lp) {
-    if (lr == 0L) {
-      stop("'relative_to' must have length >= 1")
-    } else if (lr == 1L) {
-      relative_to <- rep.int(relative_to, lp)
-    } else if (lp == 1L) {
-      path <- rep.int(path, lr)
-    } else {
-      stop("'path' and 'relative_to' must have length 1 or the same length")
-    }
-  }
-
-  r <- character(lp)
-  path <- normalizePath(path, winslash = "/", mustWork = TRUE)
-  relative_to <- normalizePath(relative_to, winslash = "/", mustWork = TRUE)
-
-  # identical paths - the "." case
-  which <- path == relative_to
-  n_same <- sum(which)
-  if (n_same) {
-    r[which] <- rep.int(".", n_same)
-  }
-
-  # relative_to path is shorter - the "./" case
-  np <- nchar(path)
-  nr <- nchar(relative_to)
-  which <- np > nr
-  tmp <- strsplit(path[which], split = relative_to[which], fixed = TRUE)
-  tmp <- vapply(tmp, `[[`, character(1L), 2L, USE.NAMES = FALSE)
-  r[which] <- sub("^/", "", tmp)
-
-  # relative_to path is longer - the "../" case
-  which <- np < nr
-  tmp <- strsplit(relative_to[which], split = path[which], fixed = TRUE)
-  tmp <- vapply(tmp, `[[`, character(1L), 2L, USE.NAMES = FALSE)
-  tmp <- strsplit(tmp, split = "/", fixed = TRUE)
-  tmp <- vapply(tmp, length, integer(1L), USE.NAMES = FALSE) - 1L
-  r[which] <- as.character(Map(
-    function(n) {do.call(file.path, c(rep.int(list(".."), n), fsep = "/"))},
-    tmp
-  ))
-
-  r
 }
 
 
