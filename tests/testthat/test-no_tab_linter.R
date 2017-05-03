@@ -10,7 +10,9 @@ test_that("returns the correct linting", {
 
   expect_lint("#\tblah", NULL, no_tab_linter)
 
-  expect_lint("\tblah", msg, no_tab_linter)
+  expect_lint("\tblah", c(message = msg, line_number = 1L), no_tab_linter)
 
-  expect_lint("\t\tblah", msg, no_tab_linter)
+  expect_lint("\n\t\tblah", c(message = msg, line_number = 2L), no_tab_linter)
+
+  # Note: no tests of column number since they are currently incorrect (tabs converted to 8 spaces)
 })
