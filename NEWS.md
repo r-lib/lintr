@@ -1,4 +1,6 @@
 # lintr 1.0.0.9001 #
+* Fix line and column number sometimes wrongly reported by spaces_inside_linter()
+  (#203, @fangly)
 * Add `pipe_continuation_linter()` (#216).
 * Deprecated camel_case_linter(), snake_case_linter() and multiple_dots_linter()
   in favor of object_name_linter() which enforce the given style: snake_case,
@@ -24,7 +26,7 @@
   user-specified functions and operators (#48, #149, @fangly).
 * Relaxed the commented_code_linter(): do not lint comments within roxygen blocks
   and do not consider "-" an R operator to avoid too many false positives.
-* Fixed object linters to only lint objects declared in the current file 
+* Fixed object linters to only lint objects declared in the current file
   (#76, #108, #136, #191, #194, #201, @fangly).
 * Fixed expect_lint() issues (#180, #211, @fangly): markers were displayed when
   check was NULL, some error messages were malformed.
