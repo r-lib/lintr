@@ -174,3 +174,5 @@ get_file_line <- function(source_file, line) {
 }
 
 p <- function(...) paste0(...)
+
+lengths <- function(x) vapply(x, length, integer(1L))

@@ -70,4 +70,5 @@ test_that("linter returns correct linting", {
   expect_lint("pack::camelCase", NULL, linter)
   expect_lint("pack:::camelCase", NULL, linter)
   expect_lint("a(camelCase = 1)", NULL, linter)
+  expect_lint("a$b <- 1", NULL, linter)
 })

@@ -23,7 +23,7 @@ object_name_linter <- function(styles = "snake_case") {
 
     # Retrieve assigned name
     nms <- strip_names(
-      as.character(xml2::xml_find_all(assignments, "./text()")))
+      as.character(xml2::xml_find_first(assignments, "./text()")))
 
     generics <- c(declared_s3_generics(x), namespace_imports()$fun, names(.knownS3Generics), .S3PrimitiveGenerics, ls(baseenv()))
 
@@ -35,6 +35,10 @@ object_name_linter <- function(styles = "snake_case") {
 
 check_style <- function(nms, style, generics = character()) {
   conforming <- re_matches(nms, style_regexes[[style]])
+
+  # mark empty names and NA names as conforming
+  conforming[!nzchar(nms) | is.na(conforming)] <- TRUE
+
   if (any(!conforming)) {
     possible_s3 <- re_matches(nms[!conforming], rex(capture(name = "generic", something), ".", capture(name = "method", something)))
     if (any(!is.na(possible_s3))) {
@@ -49,8 +53,8 @@ check_style <- function(nms, style, generics = character()) {
 
 # Remove quotes or other things from names
 strip_names <- function(x) {
-  x <- re_substitutes(x, rex(start, some_of(".", quote, "`", "%")), "")
-  x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%"), end), "")
+  x <- re_substitutes(x, rex(start, some_of(".", quote, "`", "%", "$", "@")), "")
+  x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%", "$", "@"), end), "")
   x
 }
 
