@@ -16,18 +16,19 @@
 #' @return \code{NULL}, invisibly.
 #' @examples
 #' # no expected lint
-#' lintr:::expect_lint("a", NULL, trailing_blank_lines_linter)
+#' expect_lint("a", NULL, trailing_blank_lines_linter)
 #'
 #' # one expected lint
-#' lintr:::expect_lint("a\n", "superfluous", trailing_blank_lines_linter)
-#' lintr:::expect_lint("a\n", c(message="superfluous", line_number=2), trailing_blank_lines_linter)
+#' expect_lint("a\n", "superfluous", trailing_blank_lines_linter)
+#' expect_lint("a\n", c(message="superfluous", line_number=2), trailing_blank_lines_linter)
 #'
 #' # several expected lints
-#' lintr:::expect_lint("a\n\n", list("superfluous", "superfluous"), trailing_blank_lines_linter)
-#' lintr:::expect_lint(
+#' expect_lint("a\n\n", list("superfluous", "superfluous"), trailing_blank_lines_linter)
+#' expect_lint(
 #'   "a\n\n",
 #'   list(c(message="superfluous", line_number=2), c(message="superfluous", line_number=3)),
 #'   trailing_blank_lines_linter)
+#' @export
 expect_lint <- function(content, checks, ..., file = NULL) {
 
   # Note: this function cannot be properly unit tested because testthat's
