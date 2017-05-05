@@ -75,12 +75,13 @@ expect_lint <- function(content, checks, ..., file = NULL) {
         }
         check <- check[[field]]
         value <- lint[[field]]
-        msg <- sprintf("check #%d: %s \"%s\" did not match \"%s\"",
-                       itr, field, value, check)
+        msg <- sprintf("check #%d: %s %s did not match %s",
+                       itr, field, deparse(value), deparse(check))
+               # deparse ensures that NULL, list(), etc are handled gracefully
         exp <- if (field == "message") {
           re_matches(value, check)
         } else {
-          `==`(value, check)
+          isTRUE(all.equal(value, check))
         }
         testthat::expect(exp, msg)
         })

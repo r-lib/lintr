@@ -10,7 +10,10 @@ test_that("returns the correct linting", {
 
   expect_lint("#\tblah", NULL, no_tab_linter)
 
-  expect_lint("\tblah", msg, no_tab_linter)
+  expect_lint(
+    "\tblah",
+    list(message = msg, line_number = 1L, column_number = 1, ranges = list(c(1L, 1L))),
+    no_tab_linter)
 
   expect_lint("\t\tblah", msg, no_tab_linter)
 })
