@@ -12,14 +12,14 @@ test_that("returns the correct linting", {
   expect_lint("c(1, recursive=FALSE)", NULL, linter)
   expect_lint("lapply(1, c)", NULL, linter)
 
-  expect_lint("c()", c(message=msg_e, line_number=1L, column_number=1L), linter)
-  expect_lint("c(NULL)", c(message=msg_c, line_number=1L, column_number=1L), linter)
-  expect_lint("c(1)", c(message=msg_c, line_number=1L, column_number=1L), linter)
-  expect_lint("c (\n'a' )", c(message=msg_c, line_number=1L, column_number=1L), linter)
+  expect_lint("c()", list(message=msg_e, line_number=1L, column_number=1L), linter)
+  expect_lint("c(NULL)", list(message=msg_c, line_number=1L, column_number=1L), linter)
+  expect_lint("c(1)", list(message=msg_c, line_number=1L, column_number=1L), linter)
+  expect_lint("c (\n'a' )", list(message=msg_c, line_number=1L, column_number=1L), linter)
   expect_lint("c(y, c('c('),\nc())",
               list(
-                c(message=msg_c, line_number=1L, column_number=6L),
-                c(message=msg_e, line_number=2L, column_number=1L)
+                list(message=msg_c, line_number=1L, column_number=6L),
+                list(message=msg_e, line_number=2L, column_number=1L)
               ),
               linter)
 })

@@ -7,12 +7,12 @@ test_that("returns the correct linting", {
   expect_lint("FALSE", NULL, linter)
   expect_lint("TRUE", NULL, linter)
   expect_lint("x <- \"TRUE master vs FALSE slave\"", NULL, linter)
-  expect_lint("T", c(message=msgT, line_number=1L, column_number=2L), linter)
-  expect_lint("F", c(message=msgF, line_number=1L, column_number=2L), linter)
+  expect_lint("T", list(message=msgT, line_number=1L, column_number=2L), linter)
+  expect_lint("F", list(message=msgF, line_number=1L, column_number=2L), linter)
   expect_lint("for (i in 1:10) {x <- c(T, TRUE, F, FALSE)}",
               list(
-                c(message=msgT, line_number=1L, column_number=26L),
-                c(message=msgF, line_number=1L, column_number=35L)
+                list(message=msgT, line_number=1L, column_number=26L),
+                list(message=msgF, line_number=1L, column_number=35L)
               ),
               linter)
 })

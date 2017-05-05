@@ -7,12 +7,12 @@ test_that("linter returns correct linting", {
 
   expect_lint("x <- options()", NULL, linter)
   expect_lint("cat(\"Try to return\")", NULL, linter)
-  expect_lint("lapply(x, log10)", c(message=msgL, line_number=1L, column_number=11L), linter)
-  expect_lint("return()", c(message=msgR, line_number=1L, column_number=1L), linter)
+  expect_lint("lapply(x, log10)", list(message=msgL, line_number=1L, column_number=11L), linter)
+  expect_lint("return()", list(message=msgR, line_number=1L, column_number=1L), linter)
   expect_lint("function(x) {\nprint(options())\ny <- log10(x)\nreturn(y)\n}",
               list(
-                c(message=msgL, line_number=3L, column_number=6L),
-                c(message=msgR, line_number=4L, column_number=1L)
+                list(message=msgL, line_number=3L, column_number=6L),
+                list(message=msgR, line_number=4L, column_number=1L)
               ),
               linter)
 })
