@@ -7,14 +7,14 @@ test_that("returns the correct linting", {
   expect_lint("a <- \"you#need#to#fixme\"", NULL, linter)
   expect_lint("# something todo", NULL, linter)
   expect_lint("cat(x) ### fixme",
-              c(message=msg, line_number=1L, column_number=8L),
+              list(message=msg, line_number=1L, column_number=8L),
               linter)
   expect_lint("x <- \"1.0\n2.0 #FIXME\n3 #TODO 4\"; y <- 2; z <- 3 # todo later",
-              c(message=msg, line_number=3L, column_number=28L),
+              list(message=msg, line_number=3L, column_number=28L),
               linter)
   expect_lint("function() {\n# TODO\n  function() {\n  # fixme\n  }\n}",
               list(
-                c(message=msg, line_number=2L, column_number=1L),
-                c(message=msg, line_number=4L, column_number=3L)
+                list(message=msg, line_number=2L, column_number=1L),
+                list(message=msg, line_number=4L, column_number=3L)
               ), linter)
 })
