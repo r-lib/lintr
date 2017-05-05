@@ -1,5 +1,5 @@
 # lintr 1.0.0.9001 #
-* Export expect_lint() (#210)
+* Export expect_lint() (#178, #210)
 * Add `pipe_continuation_linter()` (#216).
 * Deprecated camel_case_linter(), snake_case_linter() and multiple_dots_linter()
   in favor of object_name_linter() which enforce the given style: snake_case,
