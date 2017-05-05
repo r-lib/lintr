@@ -1,4 +1,5 @@
 # lintr 1.0.0.9001 #
+* Added proper handling of tab characters (fixes #44, @fangly)
 * Fix line number sometimes wrongly reported by no_tab_linter() (#134, @fangly)
 * Fix line and column number sometimes wrongly reported by spaces_inside_linter()
   (#203, @fangly)

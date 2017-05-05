@@ -132,7 +132,7 @@ get_source_file <- function(source_file, error = identity) {
     assign("e", e,  envir = parent.frame())
   }
 
-  fix_eq_assign(adjust_columns(getParseData(source_file)))
+  fix_eq_assign(fix_tab_indentation(adjust_columns(getParseData(source_file)), source_file$lines))
 }
 
 find_line_fun <- function(content) {
@@ -206,6 +206,71 @@ adjust_columns <- function(content) {
   content
 }
 
+# Restore column numbers without tab indentation
+#
+# parse() and thus getParseData() count 1 tab as a variable number of spaces (see src/main/gram.c).
+# The number of spaces is just so that the code is brought to the next 8-character indentation level
+# e.g.:
+#   "1\t;"          -> "1       ;"
+#   "12\t;"         -> "12      ;"
+#   "123\t;"        -> "123     ;"
+#   "1234\t;"       -> "1234    ;"
+#   "12345\t;"      -> "12345   ;"
+#   "123456\t;"     -> "123456  ;"
+#   "1234567\t;"    -> "1234567 ;"
+#   "12345678\t;"   -> "12345678        ;"
+#   "123456789\t;"  -> "123456789       ;"
+#   "1234567890\t;" -> "1234567890      ;"
+# Fix the column numbers so that each tab counts as a single character, not a tab indentation.
+fix_tab_indentation <- function(pc, lines) {
+  tab_cols <- re_matches(lines, "\t", global = TRUE, locations = TRUE)
+  tab_cols <- lapply(
+    tab_cols,
+    function(cols) {
+      start_cols <- cols[["start"]]
+      if (!is.na(start_cols[[1L]])) {
+        start_cols
+      } else {
+        NA
+      }
+    }
+  )
+  names(tab_cols) <- seq_along(tab_cols)
+  tab_cols <- tab_cols[!is.na(tab_cols)]
+
+  for (line in names(tab_cols)) {
+    tab_widths <- tab_widths(tab_cols[[line]])
+    which_lines <- pc[["line1"]] == as.integer(line)
+    cols <- pc[which_lines, c("col1", "col2")]
+    if (nrow(cols)) {
+      for (tab_col in tab_cols[[line]]) {
+        which_cols <- cols > tab_col
+        cols[which_cols] <- cols[which_cols] - tab_widths[[as.character(tab_col)]] + 1L
+        pc[which_lines, c("col1", "col2")] <- cols
+      }
+    }
+  }
+
+  pc
+}
+
+
+tab_widths <- function(tab_columns, indent_width = 8L) {
+  nms <- as.character(tab_columns)
+  widths <- vapply(
+    seq_along(tab_columns),
+    function(i) {
+      tab_col <- tab_columns[[i]]
+      tab_width <- indent_width - (tab_col - 1L) %% indent_width
+      which_cols <- tab_columns > tab_col
+      tab_columns[which_cols] <<- tab_columns[which_cols] + tab_width - 1L
+      tab_width
+    },
+    integer(1L)
+  )
+  names(widths) <- nms
+  widths
+}
 
 # This function wraps equal assign expressions in a parent expression so they
 # are the same as the corresponding <- expression
