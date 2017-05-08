@@ -132,7 +132,7 @@ get_source_file <- function(source_file, error = identity) {
     assign("e", e,  envir = parent.frame())
   }
 
-  fix_eq_assign(fix_tab_indentation(adjust_columns(getParseData(source_file)), source_file$lines))
+  fix_eq_assigns(fix_column_numbers(fix_tab_indentations(source_file)))
 }
 
 find_line_fun <- function(content) {
@@ -168,10 +168,9 @@ find_column_fun <- function(content) {
   }
 }
 
-# This is used to adjust the columns that getParseData reports from bytes to
-# letters.
-adjust_columns <- function(content) {
-  if (is.null(content)) {
+# Adjust the columns that getParseData reports from bytes to characters.
+fix_column_numbers <- function(content) {
+  if (is.null(pc)) {
     return(NULL)
   }
 
@@ -206,9 +205,9 @@ adjust_columns <- function(content) {
   content
 }
 
-# Restore column numbers without tab indentation
-#
-# parse() and thus getParseData() count 1 tab as a variable number of spaces:
+
+# Fix column numbers when there are tabs
+# getParseData() counts 1 tab as a variable number of spaces instead of one:
 # https://github.com/wch/r-source/blame/e7401b68ab0e032fce3e376aaca9a5431619b2b4/src/main/gram.y#L512
 # The number of spaces is so that the code is brought to the next 8-character indentation level e.g:
 #   "1\t;"          -> "1       ;"
@@ -221,9 +220,13 @@ adjust_columns <- function(content) {
 #   "12345678\t;"   -> "12345678        ;"
 #   "123456789\t;"  -> "123456789       ;"
 #   "1234567890\t;" -> "1234567890      ;"
-# Fix the column numbers so that each tab counts as a single character, not a tab indentation.
-fix_tab_indentation <- function(pc, lines) {
-  tab_cols <- re_matches(lines, "\t", global = TRUE, locations = TRUE)
+fix_tab_indentations <- function(source_file) {
+  pc <- getParseData(source_file)
+  if (is.null(pc)) {
+    return(NULL)
+  }
+
+  tab_cols <- re_matches(source_file[["lines"]], "\t", global = TRUE, locations = TRUE)
   tab_cols <- lapply(
     tab_cols,
     function(cols) {
@@ -274,7 +277,7 @@ tab_widths <- function(tab_columns, indent_width = 8L) {
 
 # This function wraps equal assign expressions in a parent expression so they
 # are the same as the corresponding <- expression
-fix_eq_assign <- function(pc) {
+fix_eq_assigns <- function(pc) {
   if (is.null(pc)) {
     return(NULL)
   }
