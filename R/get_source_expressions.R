@@ -170,7 +170,7 @@ find_column_fun <- function(content) {
 
 # Adjust the columns that getParseData reports from bytes to characters.
 fix_column_numbers <- function(content) {
-  if (is.null(pc)) {
+  if (is.null(content)) {
     return(NULL)
   }
 
@@ -226,19 +226,12 @@ fix_tab_indentations <- function(source_file) {
     return(NULL)
   }
 
-  tab_cols <- re_matches(source_file[["lines"]], "\t", global = TRUE, locations = TRUE)
-  names(tab_cols) <- seq_along(tab_cols)
+
   tab_cols <- lapply(
-    tab_cols,
-    function(cols) {
-      start_cols <- cols[["start"]]
-      if (!is.na(start_cols[[1L]])) {
-        start_cols
-      } else {
-        NA
-      }
-    }
+    gregexpr("\t", source_file[["lines"]], fixed = TRUE),
+    function(x) {if (is.na(x) || x[[1L]] < 0L) {NA} else {x}}
   )
+  names(tab_cols) <- seq_along(tab_cols)
   tab_cols <- tab_cols[!is.na(tab_cols)]
 
   for (line in names(tab_cols)) {
