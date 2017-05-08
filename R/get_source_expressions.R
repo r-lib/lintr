@@ -227,6 +227,7 @@ fix_tab_indentations <- function(source_file) {
   }
 
   tab_cols <- re_matches(source_file[["lines"]], "\t", global = TRUE, locations = TRUE)
+  names(tab_cols) <- seq_along(tab_cols)
   tab_cols <- lapply(
     tab_cols,
     function(cols) {
@@ -238,17 +239,16 @@ fix_tab_indentations <- function(source_file) {
       }
     }
   )
-  names(tab_cols) <- seq_along(tab_cols)
   tab_cols <- tab_cols[!is.na(tab_cols)]
 
   for (line in names(tab_cols)) {
-    tab_widths <- tab_widths(tab_cols[[line]])
-    which_lines <- pc[["line1"]] == as.integer(line)
+    tab_offsets <- tab_offsets(tab_cols[[line]])
+    which_lines <- pc[["line1"]] == line
     cols <- pc[which_lines, c("col1", "col2")]
     if (nrow(cols)) {
       for (tab_col in tab_cols[[line]]) {
         which_cols <- cols > tab_col
-        cols[which_cols] <- cols[which_cols] - tab_widths[[as.character(tab_col)]] + 1L
+        cols[which_cols] <- cols[which_cols] - tab_offsets[[as.character(tab_col)]]
         pc[which_lines, c("col1", "col2")] <- cols
       }
     }
@@ -258,21 +258,19 @@ fix_tab_indentations <- function(source_file) {
 }
 
 
-tab_widths <- function(tab_columns, indent_width = 8L) {
-  nms <- as.character(tab_columns)
-  widths <- vapply(
-    seq_along(tab_columns),
-    function(i) {
-      tab_col <- tab_columns[[i]]
-      tab_width <- indent_width - (tab_col - 1L) %% indent_width
-      which_cols <- tab_columns > tab_col
-      tab_columns[which_cols] <<- tab_columns[which_cols] + tab_width - 1L
-      tab_width
+tab_offsets <- function(tab_columns) {
+  names(tab_columns) <- as.character(tab_columns)
+  cum_offset <- 0L
+  vapply(
+    tab_columns - 1L,
+    function(tab_idx) {
+      offset <- 7L - (tab_idx + cum_offset) %% 8L  # using a tab width of 8 characters
+      cum_offset <<- cum_offset + offset
+      offset
     },
-    integer(1L)
+    integer(1L),
+    USE.NAMES = TRUE
   )
-  names(widths) <- nms
-  widths
 }
 
 # This function wraps equal assign expressions in a parent expression so they
