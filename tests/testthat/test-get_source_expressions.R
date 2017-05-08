@@ -1,42 +1,54 @@
 context("get_source_expression")
 
-test_that("tab positions have been corrected", {
+
+with_content_to_parse <- function(content, code) {
   f <- tempfile()
+  on.exit(unlink(f))
+  writeLines(content, f)
+  pc <- lapply(get_source_expressions(f)[["expressions"]], `[[`, "parsed_content")
+  eval(substitute(code))
+}
 
-  writeLines("1\n\t", f)
-  expect_error(lintr:::get_source_expressions(f), NA, label="empty parsed_content line")
 
-  writeLines("TRUE", f)
-  pc <- lintr:::get_source_expressions(f)[["expressions"]][[1L]][["parsed_content"]]
-  expect_equivalent(pc[pc[["text"]] == "TRUE", c("col1", "col2")], c(1L, 4L))
+test_that("tab positions have been corrected", {
+  with_content_to_parse("1\n\t",
+    expect_length(pc, 2L)
+  )
 
-  writeLines("\tTRUE", f)
-  pc <- lintr:::get_source_expressions(f)[["expressions"]][[1L]][["parsed_content"]]
-  expect_equivalent(pc[pc[["text"]] == "TRUE", c("col1", "col2")], c(2L, 5L))
+  with_content_to_parse("TRUE",
+    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], c(1L, 4L))
+  )
 
-  writeLines("\t\tTRUE", f)
-  pc <- lintr:::get_source_expressions(f)[["expressions"]][[1L]][["parsed_content"]]
-  expect_equivalent(pc[pc[["text"]] == "TRUE", c("col1", "col2")], c(3L, 6L))
+  with_content_to_parse("\tTRUE",
+    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], c(2L, 5L))
+  )
 
-  writeLines("n\t<=\tTRUE", f)
-  pc <- lintr:::get_source_expressions(f)[["expressions"]][[1L]][["parsed_content"]]
-  expect_equivalent(pc[pc[["text"]] == "n", c("col1", "col2")], c(1L, 1L))
-  expect_equivalent(pc[pc[["text"]] == "<=", c("col1", "col2")], c(3L, 4L))
-  expect_equivalent(pc[pc[["text"]] == "TRUE", c("col1", "col2")], c(6L, 9L))
+  with_content_to_parse("\t\tTRUE",
+    expect_equivalent(pc[[1]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], c(3L, 6L))
+  )
 
-  writeLines("\tfunction\t(x)\t{\tprint(pc[\t,1])\t;\t}", f)
-  pc <- lintr:::get_source_expressions(f)[["expressions"]][[1L]][["parsed_content"]]
-  expect_equivalent(pc[pc[["text"]] == "function", c("col1", "col2")], c(2L, 9L))
-  expect_equivalent(pc[pc[["text"]] == "x", c("col1", "col2")], c(12L, 12L))
-  expect_equivalent(pc[pc[["text"]] == "print", c("col1", "col2")], c(17L, 21L))
-  expect_equivalent(pc[pc[["text"]] == ";", c("col1", "col2")], c(32L, 32L))
-  expect_equivalent(pc[pc[["text"]] == "}", c("col1", "col2")], c(34L, 34L))
+  with_content_to_parse("n\t<=\tTRUE", {
+    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "n", c("col1", "col2")], c(1L, 1L))
+    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "<=", c("col1", "col2")], c(3L, 4L))
+    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], c(6L, 9L))
+  })
 
-  writeLines("# test tab\n\ns <- 'I have \\t a dog'\nrep(\ts, \t3)", f)
-  y <- lintr:::get_source_expressions(f)[["expressions"]]
-  pc <- y[[2]][["parsed_content"]]
-  expect_equivalent(pc[pc[["token"]] == "STR_CONST", c("line1", "col1", "col2")], c(3L, 6L, 22L))
-  pc <- y[[3]][["parsed_content"]]
-  expect_equivalent(pc[pc[["token"]] == "NUM_CONST", c("line1", "col1", "col2")], c(4L, 10L, 10L))
+  with_content_to_parse("\tfunction\t(x)\t{\tprint(pc[\t,1])\t;\t}", {
+    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "function", c("col1", "col2")], c(2L, 9L))
+    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "x", c("col1", "col2")], c(12L, 12L))
+    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "print", c("col1", "col2")], c(17L, 21L))
+    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == ";", c("col1", "col2")], c(32L, 32L))
+    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "}", c("col1", "col2")], c(34L, 34L))
+  })
 
+  with_content_to_parse("# test tab\n\ns <- 'I have \\t a dog'\nrep(\ts, \t3)", {
+    expect_equivalent(
+      pc[[2L]][pc[[2L]][["text"]] == "'I have \\t a dog'", c("line1", "col1", "col2")],
+      c(3L, 6L, 22L)
+    )
+    expect_equivalent(
+      pc[[3L]][pc[[3L]][["text"]] == "3", c("line1", "col1", "col2")],
+      c(4L, 10L, 10L)
+    )
+  })
 })
