@@ -226,25 +226,24 @@ fix_tab_indentations <- function(source_file) {
     return(NULL)
   }
 
+  tab_cols <- gregexpr("\t", source_file[["lines"]], fixed = TRUE)
 
-  tab_cols <- lapply(
-    gregexpr("\t", source_file[["lines"]], fixed = TRUE),
-    function(x) {if (is.na(x) || x[[1L]] < 0L) {NA} else {x}}
-  )
-  names(tab_cols) <- seq_along(tab_cols)
-  tab_cols <- tab_cols[!is.na(tab_cols)]
-
-  for (line in names(tab_cols)) {
-    tab_offsets <- tab_offsets(tab_cols[[line]])
-    which_lines <- pc[["line1"]] == line
-    cols <- pc[which_lines, c("col1", "col2")]
-    if (nrow(cols)) {
-      for (tab_col in tab_cols[[line]]) {
-        which_cols <- cols > tab_col
-        cols[which_cols] <- cols[which_cols] - tab_offsets[[as.character(tab_col)]]
-        pc[which_lines, c("col1", "col2")] <- cols
-      }
+  for (line in seq_along(tab_cols)) {
+    line_tab_cols <- tab_cols[[line]]
+    if (is.na(line_tab_cols) || line_tab_cols[[1L]] < 0L) {
+      next
     }
+    pc_lines <- which(pc[["line1"]] == line)
+    if (!length(pc_lines)) {
+      next
+    }
+    cols <- pc[pc_lines, c("col1", "col2")]
+    line_tab_offsets <- tab_offsets(line_tab_cols)
+    for (tab_col in line_tab_cols) {
+      cols_after_tab <- cols > tab_col  # & cols < tab_col + offset
+      cols[cols_after_tab] <- cols[cols_after_tab] - line_tab_offsets[[as.character(tab_col)]]
+    }
+    pc[pc_lines, c("col1", "col2")] <- cols
   }
 
   pc
