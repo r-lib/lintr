@@ -222,29 +222,48 @@ fix_column_numbers <- function(content) {
 #   "1234567890\t;" -> "1234567890      ;"
 fix_tab_indentations <- function(source_file) {
   pc <- getParseData(source_file)
+
   if (is.null(pc)) {
     return(NULL)
   }
 
   tab_cols <- gregexpr("\t", source_file[["lines"]], fixed = TRUE)
+  names(tab_cols) <- seq_along(tab_cols)
+  tab_cols <- tab_cols[!is.na(tab_cols)]  # source lines from .Rmd and other files are NA
+  tab_cols <- lapply(tab_cols, function(x) {if (x[[1L]] < 0L) {NA} else {x}})
+  tab_cols <- tab_cols[!is.na(tab_cols)]
 
-  for (line in seq_along(tab_cols)) {
-    line_tab_cols <- tab_cols[[line]]
-    if (is.na(line_tab_cols) || line_tab_cols[[1L]] < 0L) {
-      next
-    }
-    pc_lines <- which(pc[["line1"]] == line)
-    if (!length(pc_lines)) {
-      next
-    }
-    cols <- pc[pc_lines, c("col1", "col2")]
-    line_tab_offsets <- tab_offsets(line_tab_cols)
-    for (tab_col in line_tab_cols) {
-      cols_after_tab <- cols > tab_col  # & cols < tab_col + offset
-      cols[cols_after_tab] <- cols[cols_after_tab] - line_tab_offsets[[as.character(tab_col)]]
-    }
-    pc[pc_lines, c("col1", "col2")] <- cols
+  if (!length(tab_cols)) {
+    return(pc)
   }
+
+  dat <- as.matrix(pc[, c("line1", "col1", "line2", "col2")])
+  for (line in names(tab_cols)) {
+
+    line_tab_cols <- tab_cols[[line]]
+
+    line1_log <- dat[, "line1"] == line
+    line2_log <- dat[, "line2"] == line
+    if (any(line1_log | line2_log)) {
+
+      line_tab_offsets <- tab_offsets(line_tab_cols)
+
+      for (tab_col in line_tab_cols) {
+        col1_ind <- which(line1_log & dat[, "col1"] > tab_col)
+        col2_ind <- which(line2_log & dat[, "col2"] > tab_col)
+        col1_len <- length(col1_ind)
+        col2_len <- length(col2_ind)
+        if (col1_len + col2_len) {
+          ind <- matrix(
+            data = c(col1_ind, col2_ind, rep(2L, col1_len), rep(4L, col2_len)),
+            ncol = 2L
+          )
+          dat[ind] <- dat[ind] - line_tab_offsets[[as.character(tab_col)]]
+        }
+      }
+    }
+  }
+  pc[, c("line1", "col1", "line2", "col2")] <- dat
 
   pc
 }

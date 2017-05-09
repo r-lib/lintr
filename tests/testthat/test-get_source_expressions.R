@@ -27,9 +27,9 @@ test_that("tab positions have been corrected", {
     expect_equivalent(pc[[1]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], c(3L, 6L))
   )
 
-  with_content_to_parse("n\t<=\tTRUE", {
-    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "n", c("col1", "col2")], c(1L, 1L))
-    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "<=", c("col1", "col2")], c(3L, 4L))
+  with_content_to_parse("x\t<-\tTRUE", {
+    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "x", c("col1", "col2")], c(1L, 1L))
+    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "<-", c("col1", "col2")], c(3L, 4L))
     expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], c(6L, 9L))
   })
 
@@ -49,6 +49,14 @@ test_that("tab positions have been corrected", {
     expect_equivalent(
       pc[[3L]][pc[[3L]][["text"]] == "3", c("line1", "col1", "col2")],
       c(4L, 10L, 10L)
+    )
+  })
+
+  with_content_to_parse("function(){\nTRUE\n\t}", {
+    expect_equivalent(
+      pc[[1L]][1L, c("line1", "col1", "line2", "col2")],
+      c(1L, 1L, 3L, 2L),
+      info = "expression that spans several lines"
     )
   })
 })
