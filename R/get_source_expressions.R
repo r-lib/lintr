@@ -237,40 +237,27 @@ fix_tab_indentations <- function(source_file) {
     return(pc)
   }
 
-  dat <- as.matrix(pc[, c("line1", "col1", "line2", "col2")])
-  for (line in names(tab_cols)) {
-
-    line_tab_cols <- tab_cols[[line]]
-
-    line1_log <- dat[, "line1"] == line
-    line2_log <- dat[, "line2"] == line
-    if (any(line1_log | line2_log)) {
-
-      line_tab_offsets <- tab_offsets(line_tab_cols)
-
-      for (tab_col in line_tab_cols) {
-        col1_ind <- which(line1_log & dat[, "col1"] > tab_col)
-        col2_ind <- which(line2_log & dat[, "col2"] > tab_col)
-        col1_len <- length(col1_ind)
-        col2_len <- length(col2_ind)
-        if (col1_len + col2_len) {
-          ind <- matrix(
-            data = c(col1_ind, col2_ind, rep(2L, col1_len), rep(4L, col2_len)),
-            ncol = 2L
-          )
-          dat[ind] <- dat[ind] - line_tab_offsets[[as.character(tab_col)]]
+  pc_cols <- c("line1", "line2", "col1", "col2")
+  dat <- matrix(data = unlist(pc[, pc_cols], use.names = FALSE), ncol = 2)
+  lines <- as.integer(names(tab_cols))
+  for (i in seq_along(tab_cols)) {
+    is_curr_line <- dat[, 1L] == lines[[i]]
+    if (any(is_curr_line)) {
+      line_tab_offsets <- tab_offsets(tab_cols[[i]])
+      for (j in seq_along(tab_cols[[i]])) {
+        is_line_to_change <- is_curr_line & dat[, 2L] > tab_cols[[i]][[j]]
+        if (any(is_line_to_change)) {
+          dat[is_line_to_change, 2L] <- dat[is_line_to_change, 2L] - line_tab_offsets[[j]]
         }
       }
     }
   }
-  pc[, c("line1", "col1", "line2", "col2")] <- dat
-
+  pc[, pc_cols] <- dat
   pc
 }
 
 
 tab_offsets <- function(tab_columns) {
-  names(tab_columns) <- as.character(tab_columns)
   cum_offset <- 0L
   vapply(
     tab_columns - 1L,
@@ -280,7 +267,7 @@ tab_offsets <- function(tab_columns) {
       offset
     },
     integer(1L),
-    USE.NAMES = TRUE
+    USE.NAMES = FALSE
   )
 }
 
