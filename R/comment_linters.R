@@ -80,7 +80,7 @@ parsable <- function(x) {
 #' @param todo  Vector of strings that identify TODO comments.
 #' @export
 todo_comment_linter <- function(todo=c("todo", "fixme")) {
-  function(source_file) {
+  Linter(function(source_file) {
     tokens <- with_id(source_file, ids_with_token(source_file, "COMMENT"))
     are_todo <- re_matches(tokens[["text"]], rex(one_or_more("#"), any_spaces, or(todo)), ignore.case = TRUE)
     tokens <- tokens[are_todo, ]
@@ -99,5 +99,5 @@ todo_comment_linter <- function(todo=c("todo", "fixme")) {
         )
       }
     )
-  }
+  })
 }

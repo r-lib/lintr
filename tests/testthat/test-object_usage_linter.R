@@ -2,7 +2,8 @@ context("object_usage_linter")
 
 test_that("returns the correct linting", {
   msg_not_used <- rex("local variable", anything, "assigned but may not be used")
-  msg_not_def <- rex("no visible global function definition for ", anything, ", Did you mean", anything)
+  msg_no_def <- rex("no visible global function definition for ", anything, ", Did you mean", anything)
+  msg_no_bind <- rex("no visible binding for global variable ", anything, ", Did you mean")
   linter <- object_usage_linter()
   expect_is(linter, "linter")
 
@@ -57,7 +58,7 @@ fun2 <- function(x) {
 }",
     list(
       msg_not_used,
-      msg_not_def
+      msg_no_bind
       ),
     linter)
 
@@ -65,14 +66,14 @@ fun2 <- function(x) {
 "fun <- function() {
   fnu(1)
 }",
-    msg_not_def,
+    msg_no_def,
     linter)
 
   expect_lint(
 "fun <- function(x) {
   n(1)
 }",
-    msg_not_def,
+    msg_no_def,
     linter)
 
   test_that("replace_functions_stripped", {
@@ -80,14 +81,14 @@ fun2 <- function(x) {
 "fun <- function(x) {
   n(x) = 1
 }",
-    msg_not_def,
+    msg_no_def,
     linter)
 
     expect_lint(
 "fun <- function(x) {
   n(x) <- 1
 }",
-    msg_not_def,
+    msg_no_def,
     linter)
   })
 
@@ -101,5 +102,5 @@ test_that("eval errors are ignored", {
         x
       })",
     NULL,
-    object_usage_linter)
+    object_usage_linter())
 })

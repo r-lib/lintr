@@ -25,6 +25,7 @@ absolute_paths_linter <- function(source_file) {
   lintr_deprecated("absolute_paths_linter", "absolute_path_linter", "1.0.0.9001")
   absolute_path_linter(lax = TRUE)(source_file)
 }
+class(absolute_paths_linter) <- "linter"
 
 
 #' @describeIn lintr-deprecated check there are no trailing semicolons.
@@ -33,6 +34,7 @@ trailing_semicolons_linter <- function(source_file) {
   lintr_deprecated("trailing_semicolons_linter", "semicolon_terminator_linter", "1.0.0.9001")
   semicolon_terminator_linter(semicolon = "trailing")(source_file)
 }
+class(trailing_semicolons_linter) <- "linter"
 
 
 #' @describeIn linters check that objects are not in camelCase.

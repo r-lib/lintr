@@ -5,7 +5,7 @@ test_that("returns the correct linting", {
   linter <- spaces_left_parentheses_linter()
   expect_is(linter, "linter")
 
-  expect_lint("blah", NULL, spaces_left_parentheses_linter)
+  expect_lint("blah", NULL, linter)
 
   expect_lint("print(blah)", NULL, linter)
 

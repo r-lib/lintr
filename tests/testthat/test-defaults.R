@@ -6,7 +6,8 @@ test_that("linters", {
   expect_is(x, "list")
   expect_gt(length(x), 0L)
   expect_true(all(names(x) != ""))
-  expect_true(all(vapply(x, inherits, logical(1L), "function")))
+  expect_true(all(vapply(x, inherits, logical(1L), "linter")))
+  expect_true(all(vapply(x, is.function, logical(1L))))
 })
 
 test_that("undesirable functions and operators", {
