@@ -178,8 +178,8 @@ unescape <- function(str, q="`") {
 #' @describeIn linters  Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
 #' @param lax  Less stringent linting, leading to fewer false positives.
 #' @export
-absolute_path_linter <- function(lax=TRUE) {
-  function(source_file) {
+absolute_path_linter <- function(lax = TRUE) {
+  Linter(function(source_file) {
     lapply(
       ids_with_token(source_file, "STR_CONST"),
       function(id) {
@@ -201,14 +201,14 @@ absolute_path_linter <- function(lax=TRUE) {
         }
       }
     )
-  }
+  })
 }
 
 
 #' @describeIn linters  Check that file.path() is used to construct safe and portable paths.
 #' @export
-nonportable_path_linter <- function(lax=TRUE) {
-  function(source_file) {
+nonportable_path_linter <- function(lax = TRUE) {
+  Linter(function(source_file) {
     lapply(
       ids_with_token(source_file, "STR_CONST"),
       function(id) {
@@ -231,6 +231,6 @@ nonportable_path_linter <- function(lax=TRUE) {
         }
       }
     )
-  }
+  })
 }
 

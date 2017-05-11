@@ -2,7 +2,7 @@
 % Please edit documentation in R/T_and_F_symbol_linter.R, R/assignment_linter.R,
 %   R/closed_curly_linter.R, R/commas_linter.R, R/comment_linters.R,
 %   R/object_name_linters.R, R/deprecated.R, R/extraction_operator_linter.R,
-%   R/function_left_parentheses.R, R/implicit_integer_linter.R,
+%   R/function_left_parentheses_linter.R, R/implicit_integer_linter.R,
 %   R/infix_spaces_linter.R, R/line_length_linter.R, R/no_tab_linter.R,
 %   R/object_usage_linter.R, R/open_curly_linter.R, R/path_linters.R,
 %   R/pipe_continuation_linter.R, R/semicolon_terminator_linter.R,
@@ -44,15 +44,15 @@
 \alias{linters}
 \title{linters}
 \usage{
-T_and_F_symbol_linter(source_file)
+T_and_F_symbol_linter()
 
-assignment_linter(source_file)
+assignment_linter()
 
 closed_curly_linter(allow_single_line = FALSE)
 
-commas_linter(source_file)
+commas_linter()
 
-commented_code_linter(source_file)
+commented_code_linter()
 
 todo_comment_linter(todo = c("todo", "fixme"))
 
@@ -62,19 +62,19 @@ object_length_linter(length = 20L)
 
 camel_case_linter(source_file)
 
-extraction_operator_linter(source_file)
+extraction_operator_linter()
 
-function_left_parentheses_linter(source_file)
+function_left_parentheses_linter()
 
-implicit_integer_linter(source_file)
+implicit_integer_linter()
 
-infix_spaces_linter(source_file)
+infix_spaces_linter()
 
 line_length_linter(length)
 
-no_tab_linter(source_file)
+no_tab_linter()
 
-object_usage_linter(source_file)
+object_usage_linter()
 
 open_curly_linter(allow_single_line = FALSE)
 
@@ -82,33 +82,31 @@ absolute_path_linter(lax = TRUE)
 
 nonportable_path_linter(lax = TRUE)
 
-pipe_continuation_linter(source_file)
+pipe_continuation_linter()
 
 semicolon_terminator_linter(semicolon = c("compound", "trailing"))
 
 seq_linter(source_file)
 
-single_quotes_linter(source_file)
+single_quotes_linter()
 
-spaces_inside_linter(source_file)
+spaces_inside_linter()
 
-spaces_left_parentheses_linter(source_file)
+spaces_left_parentheses_linter()
 
-trailing_blank_lines_linter(source_file)
+trailing_blank_lines_linter()
 
-trailing_whitespace_linter(source_file)
+trailing_whitespace_linter()
 
 undesirable_function_linter(fun = default_undesirable_functions)
 
 undesirable_operator_linter(op = default_undesirable_operators)
 
-unneeded_concatenation_linter(source_file)
+unneeded_concatenation_linter()
 }
 \arguments{
-\item{source_file}{returned by \code{\link{get_source_expressions}}}
-
-\item{allow_single_line}{if true allow a open and closed curly pair on the
-same line.}
+\item{allow_single_line}{if \code{TRUE}, allow a open and closed curly pair
+on the same line.}
 
 \item{todo}{Vector of strings that identify TODO comments.}
 
@@ -116,6 +114,8 @@ same line.}
 dotted.case}
 
 \item{length}{the length cutoff to use for the given linter.}
+
+\item{source_file}{returned by \code{\link{get_source_expressions}}}
 
 \item{lax}{Less stringent linting, leading to fewer false positives.}
 
@@ -137,16 +137,15 @@ Available linters
 \itemize{
 \item \code{T_and_F_symbol_linter}: Avoid the symbols \code{T} and \code{F} (for \code{TRUE} and \code{FALSE}).
 
-\item \code{assignment_linter}: checks that '<-' is always used for assignment
+\item \code{assignment_linter}: Check that '<-' is always used for assignment.
 
-\item \code{closed_curly_linter}: check that closed curly braces should always be on their
-own line unless they follow an else.
+\item \code{closed_curly_linter}: Check that closed curly braces are on their own line
+unless they follow an else.
 
-\item \code{commas_linter}: check that all commas are followed by spaces, but do not
-have spaces before them.
+\item \code{commas_linter}: Check that spaces do not precede commas but follow them.
 
 \item \code{commented_code_linter}: Check that there is no commented code outside roxygen
-blocks
+blocks.
 
 \item \code{todo_comment_linter}: Check that the source contains no TODO comments (case-insensitive).
 
@@ -159,24 +158,24 @@ blocks
 \item \code{extraction_operator_linter}: Check that the `[[` operator is used when extracting a single element from
 an object, not `[` (subsetting) nor `$` (interactive use).
 
-\item \code{function_left_parentheses_linter}: check that all left parentheses in a function call
-do not have spaces before them.
+\item \code{function_left_parentheses_linter}: Check that no spaces precede the left parenthesis in a
+function call.
 
 \item \code{implicit_integer_linter}: Check that integers are explicitly typed using the form \code{1L} instead of
 \code{1}.
 
-\item \code{infix_spaces_linter}: check that all infix operators have spaces around them.
+\item \code{infix_spaces_linter}: Check that infix operators are surrounded by spaces.
 
-\item \code{line_length_linter}: check the line length of both comments and code is less
-than length.
+\item \code{line_length_linter}: Check that the line length of both comments and code is
+less than length.
 
-\item \code{no_tab_linter}: check that only spaces are used for indentation, not tabs.
+\item \code{no_tab_linter}: Check that only spaces are used for indentation, not tabs.
 
-\item \code{object_usage_linter}: checks that closures have the proper usage using
-\code{\link[codetools]{checkUsage}}.  Note this runs
+\item \code{object_usage_linter}: Check that closures have the proper usage using
+\code{\link[codetools]{checkUsage}}.  Note that this runs
 \code{\link[base]{eval}} on the code, so do not use with untrusted code.
 
-\item \code{open_curly_linter}: check that opening curly braces are never on their own
+\item \code{open_curly_linter}: Check that opening curly braces are never on their own
 line and are always followed by a newline.
 
 \item \code{absolute_path_linter}: Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
@@ -194,18 +193,20 @@ expressions. These often cause bugs when the right hand side is zero.
 It is safer to use \code{\link[base]{seq_len}} or
 \code{\link[base]{seq_along}} instead.
 
-\item \code{single_quotes_linter}: checks that only single quotes are used to delimit
-string contestants.
+\item \code{single_quotes_linter}: Check that only single quotes are used to delimit string
+constants.
 
 \item \code{spaces_inside_linter}: check that parentheses and square brackets do not have
 spaces directly inside them.
 
-\item \code{spaces_left_parentheses_linter}: check that all left parentheses have a space before them
+\item \code{spaces_left_parentheses_linter}: Check that all left parentheses are preceded by a space
 unless they are in a function call.
 
-\item \code{trailing_blank_lines_linter}: check there are no trailing blank lines.
+\item \code{trailing_blank_lines_linter}: Check that there are no trailing blank lines in source
+files.
 
-\item \code{trailing_whitespace_linter}: check there are no trailing whitespace characters.
+\item \code{trailing_whitespace_linter}: Check that there are no space characters at the end of
+source lines.
 
 \item \code{undesirable_function_linter}: Report the use of undesirable functions, e.g. \code{return}, \code{options},
 or \code{sapply} and suggest an alternative.
@@ -213,7 +214,7 @@ or \code{sapply} and suggest an alternative.
 \item \code{undesirable_operator_linter}: Report the use of undesirable operators, e.g. \code{`:::`} or \code{`<<-`}
 and suggest an alternative.
 
-\item \code{unneeded_concatenation_linter}: Check that the \code{c} function is not used without arguments nor with a
-single constant.
+\item \code{unneeded_concatenation_linter}: Check that the \code{c} function is not used without arguments nor
+with a single constant.
 }}
 

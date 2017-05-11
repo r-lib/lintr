@@ -1,7 +1,7 @@
-#' @describeIn linters  Check that all left parentheses are preceded by a space
-#' unless they are in a function call.
+#' @describeIn linters  Check that no spaces precede the left parenthesis in a
+#' function call.
 #' @export
-spaces_left_parentheses_linter <- function() {
+function_left_parentheses_linter <- function() {
   Linter(function(source_file) {
     lapply(ids_with_token(source_file, "'('"),
       function(id) {
@@ -18,24 +18,23 @@ spaces_left_parentheses_linter <- function() {
         is_function <- length(last_type) %!=% 0L &&
           (last_type %in% c("SYMBOL_FUNCTION_CALL", "FUNCTION", "'}'", "')'", "']'"))
 
-        if (!is_function) {
+        if (is_function) {
 
           line <- source_file$lines[as.character(parsed$line1)]
 
           before_operator <- substr(line, parsed$col1 - 1L, parsed$col1 - 1L)
 
-          non_space_before <- re_matches(before_operator, rex(non_space))
-          not_exception <- !(before_operator %in% c("!", ":", "["))
+          space_before <- re_matches(before_operator, rex(space))
 
-          if (non_space_before && not_exception) {
+          if (space_before) {
             Lint(
               filename = source_file$filename,
               line_number = parsed$line1,
               column_number = parsed$col1,
               type = "style",
-              message = "Place a space before left parenthesis, except in a function call.",
+              message = "Remove spaces before the left parenthesis in a function call.",
               line = line,
-              linter = "spaces_left_parentheses_linter"
+              linter = "function_left_parentheses"
               )
           }
         }

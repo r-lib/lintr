@@ -1,5 +1,8 @@
+#' @include lint.R
+NULL
+
 make_object_linter <- function(fun) {
-  function(source_file) {
+  Linter(function(source_file) {
     lapply(
       ids_with_token(source_file, rex(start, "SYMBOL" %if_next_isnt% "_SUB"), fun=re_matches),
       function(token_num) {
@@ -14,7 +17,7 @@ make_object_linter <- function(fun) {
         }
       }
     )
-  }
+  })
 }
 
 known_generic_regex <- rex(

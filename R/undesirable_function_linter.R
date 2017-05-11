@@ -3,8 +3,8 @@
 #' @param fun  Named character vector, where the names are the names of the undesirable functions,
 #'             and the values are the text for the alternative function to use (or \code{NA}).
 #' @export
-undesirable_function_linter <- function(fun=default_undesirable_functions) {
-  function(source_file) {
+undesirable_function_linter <- function(fun = default_undesirable_functions) {
+  Linter(function(source_file) {
     lapply(
       ids_with_token(source_file, c("SYMBOL_FUNCTION_CALL", "SYMBOL"), fun=`%in%`),
       function(id) {
@@ -32,5 +32,5 @@ undesirable_function_linter <- function(fun=default_undesirable_functions) {
         }
       }
     )
-  }
+  })
 }

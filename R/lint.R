@@ -41,11 +41,22 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     linters <- settings$linters
   } else if (!is.list(linters)) {
     name <- deparse(substitute(linters))
-   linters <- list(linters)
+    linters <- list(linters)
     names(linters) <- name
   } else {
     names(linters) <- auto_names(linters)
   }
+
+  Map(
+    function(obj, name) {
+      if (!inherits(obj, "linter")) {
+        stop(sprintf("Expected '%s' to be of class 'linter', not '%s'",
+                     name, class(obj)[[1L]]))
+      }
+    },
+    linters,
+    names(linters)
+  )
 
   lints <- list()
   itr <- 0
@@ -238,6 +249,11 @@ Lint <- function(filename, line_number = 1L, column_number = 1L,
       ),
     class = "lint")
 }
+
+Linter <- function(fun) {
+  structure(fun, class = "linter")
+}
+
 
 rstudio_source_markers <- function(lints) {
 

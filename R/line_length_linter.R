@@ -1,8 +1,8 @@
-#' @describeIn linters check the line length of both comments and code is less
-#' than length.
+#' @describeIn linters  Check that the line length of both comments and code is
+#' less than length.
 #' @export
 line_length_linter <- function(length) {
-  function(source_file) {
+  Linter(function(source_file) {
 
     lapply(names(source_file$lines)[vapply(source_file$lines, nchar, integer(1)) > length],
       function(line_number) {
@@ -21,5 +21,5 @@ line_length_linter <- function(length) {
           linter = "line_length_linter"
           )
       })
-  }
+  })
 }
