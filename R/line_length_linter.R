@@ -1,7 +1,7 @@
 #' @describeIn linters  Check that the line length of both comments and code is
 #' less than length.
 #' @export
-line_length_linter <- function(length) {
+line_length_linter <- function(length = 80L) {
   Linter(function(source_file) {
 
     lapply(names(source_file$lines)[vapply(source_file$lines, nchar, integer(1)) > length],
