@@ -27,7 +27,7 @@
 #' lintr:::expect_lint(
 #'   "a\n\n",
 #'   list(c(message="superfluous", line_number=2), c(message="superfluous", line_number=3)),
-#'   trailing_blank_lines_linter)
+#'   trailing_blank_lines_linter())
 expect_lint <- function(content, checks, ..., file = NULL) {
 
   if (!is.null(file)) {

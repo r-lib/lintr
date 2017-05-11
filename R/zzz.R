@@ -1,9 +1,15 @@
-#' Available linters
-#'
 #' @name linters
 #' @title linters
-#' @param source_file returned by \code{\link{get_source_expressions}}
+#'
+#' @description  A variety of linters is available in \pkg{lintr}. The most popular ones are readily
+#' accessible through \code{\link{default_linters}}, though there are additional ones you may want
+#' to use.
+#'
+#' All the functions listed below are \bold{getters} that return a closure of class 'linter'.
+#' Within a \code{\link{lint()}} function call, the linters in use are initialized with the provided
+#' arguments and fed with the source file (provided by \code{\link{get_source_expressions}}).
 #' @param length the length cutoff to use for the given linter.
+#' @return  A closure of class 'linter'.
 NULL
 
 named_list <- function(...) {
@@ -34,7 +40,7 @@ named_list <- function(...) {
 #' # remove assignment checks (with NULL), add absolute path checks
 #' my_linters <- with_defaults(default = my_linters,
 #'                             assignment_linter = NULL,
-#'                             absolute_path_linter)
+#'                             absolute_path_linter())
 #'
 #' # custom list of undesirable functions:
 #' #    remove sapply (using NULL)

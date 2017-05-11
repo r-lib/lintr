@@ -1,4 +1,6 @@
 # lintr 1.0.0.9001 #
+* Consistent access to linters through a function call, even for linters without
+  parameters (@fangly)
 * Fix line number sometimes wrongly reported by no_tab_linter() (#134, @fangly)
 * Fix line and column number sometimes wrongly reported by spaces_inside_linter()
   (#203, @fangly)

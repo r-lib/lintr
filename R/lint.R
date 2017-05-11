@@ -220,7 +220,7 @@ pkg_name <- function(path = find_package()) {
   }
 }
 
-#' Create a \code{Lint} object
+#' Create a \code{lint} object
 #' @param filename path to the source file that was linted.
 #' @param line_number line number where the lint occurred.
 #' @param column_number column the lint occurred.
@@ -229,6 +229,7 @@ pkg_name <- function(path = find_package()) {
 #' @param line code source where the lint occured
 #' @param ranges ranges on the line that should be emphasized.
 #' @param linter name of linter that created the Lint object.
+#' @return an object of class 'lint'.
 #' @export
 Lint <- function(filename, line_number = 1L, column_number = 1L,
   type = c("style", "warning", "error"),
@@ -250,6 +251,10 @@ Lint <- function(filename, line_number = 1L, column_number = 1L,
     class = "lint")
 }
 
+#' Create a \code{linter} closure
+#' @param fun  a function that takes a source file and returns \code{lint} objects.
+#' @return  the same function with its class set to 'linter'.
+#' @export
 Linter <- function(fun) {
   structure(fun, class = "linter")
 }
