@@ -1,24 +1,17 @@
 context("trailing_whitespace_linter")
+
 test_that("returns the correct linting", {
-  expect_lint("blah",
-    NULL,
-    trailing_whitespace_linter)
+  msg <- rex("Trailing whitespace is superfluous.")
+  linter <- trailing_whitespace_linter()
+  expect_is(linter, "linter")
 
-  expect_lint("blah <- 1  ",
-    c(message = rex("Trailing whitespace is superfluous."),
-      column_number = 10),
-    trailing_whitespace_linter)
+  expect_lint("blah", NULL, linter)
 
-  expect_lint("blah <- 1  \n'hi'",
-    rex("Trailing whitespace is superfluous."),
-    trailing_whitespace_linter)
+  expect_lint("blah <- 1  ", c(message = msg, column_number = 10), linter)
+
+  expect_lint("blah <- 1  \n'hi'", msg, linter)
 
   expect_lint("blah <- 1\n'hi'\na <- 2  ",
-    list(
-      c(
-        message = rex("Trailing whitespace is superfluous."),
-        line_number = 3
-      )
-    ),
-    trailing_whitespace_linter)
+    list(c(message = msg, line_number = 3)),
+    linter)
 })

@@ -39,21 +39,11 @@ test_that("styles are correctly identified", {
   expect_error(lintr:::matches_styles("text", "invalid_style"), "Invalid style")
 })
 
-test_that("linter ignores some objects", {
-  # names for which style check is ignored
-  expect_lint("`%x%` <- t", NULL, object_name_linter(style="snake_case"))              # operator
-  expect_lint("`t.test` <- t", NULL, object_name_linter(style="ALLUPPERCASE"))         # std pkg
-  expect_lint(".Deprecated('x')", NULL, object_name_linter(style="alllowercase"))      # std pkg
-  expect_lint("abc::read_me <- t", NULL, object_name_linter(style="dotted.case"))      # ext pkg
-  expect_lint("as.foo <- t", NULL, object_name_linter(style="UpperCamelCase"))         # S3 generic
-  expect_lint("names.foo <- t", NULL, object_name_linter(style="UpperCamelCase"))      # int generic
-  expect_lint("sapply(x,f,USE.NAMES=T)", NULL, object_name_linter(style="snake_case")) # defined
-                                                                                       # elsewhere
-})
 
 test_that("linter returns correct linting", {
   msg <- "Variable or function name should be lowerCamelCase."
   linter <- object_name_linter(style="lowerCamelCase")
+  expect_is(linter, "linter")
 
   expect_lint("myObject <- 123", NULL, linter)
   expect_lint("`myObject` <- 123", NULL, linter)
@@ -78,4 +68,17 @@ test_that("linter returns correct linting", {
   expect_lint("pack::camelCase", NULL, linter)
   expect_lint("pack:::camelCase", NULL, linter)
   expect_lint("a(camelCase = 1)", NULL, linter)
+})
+
+
+test_that("linter ignores some objects", {
+  # names for which style check is ignored
+  expect_lint("`%x%` <- t", NULL, object_name_linter(style="snake_case"))              # operator
+  expect_lint("`t.test` <- t", NULL, object_name_linter(style="ALLUPPERCASE"))         # std pkg
+  expect_lint(".Deprecated('x')", NULL, object_name_linter(style="alllowercase"))      # std pkg
+  expect_lint("abc::read_me <- t", NULL, object_name_linter(style="dotted.case"))      # ext pkg
+  expect_lint("as.foo <- t", NULL, object_name_linter(style="UpperCamelCase"))         # S3 generic
+  expect_lint("names.foo <- t", NULL, object_name_linter(style="UpperCamelCase"))      # int generic
+  expect_lint("sapply(x,f,USE.NAMES=T)", NULL, object_name_linter(style="snake_case")) # defined
+  # elsewhere
 })

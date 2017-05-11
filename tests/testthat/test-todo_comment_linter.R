@@ -1,8 +1,9 @@
 context("todo_comment_linter")
 
 test_that("returns the correct linting", {
-  linter <- todo_comment_linter(todo=c("todo", "fixme"))
   msg <- "TODO comments should be removed."
+  linter <- todo_comment_linter(todo=c("todo", "fixme"))
+  expect_is(linter, "linter")
 
   expect_lint("a <- \"you#need#to#fixme\"", NULL, linter)
   expect_lint("# something todo", NULL, linter)

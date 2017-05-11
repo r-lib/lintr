@@ -2,8 +2,9 @@ context("nonportable_path_linter")
 
 
 test_that("Non-portable path linter", {
-  linter <- nonportable_path_linter(lax=FALSE)
   msg <- rex::escape("Use file.path() to construct portable file paths.")
+  linter <- nonportable_path_linter(lax = FALSE)
+  expect_is(linter, "linter")
 
   # various strings
   expect_lint("'foo'", NULL, linter)

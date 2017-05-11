@@ -1,8 +1,14 @@
 context("object_usage_linter")
+
 test_that("returns the correct linting", {
+  msg_not_used <- rex("local variable", anything, "assigned but may not be used")
+  msg_not_def <- rex("no visible global function definition for ", anything, ", Did you mean", anything)
+  linter <- object_usage_linter()
+  expect_is(linter, "linter")
+
   expect_lint("blah",
     NULL,
-    object_usage_linter)
+    linter)
 
   expect_lint(
 "function() {
@@ -10,7 +16,7 @@ test_that("returns the correct linting", {
   a
 }",
     NULL,
-    object_usage_linter)
+    linter)
 
   expect_lint(
 "fun <- function(x) {
@@ -20,29 +26,29 @@ fun2 <- function(x) {
   fun2(2)
 }",
     NULL,
-    object_usage_linter)
+    linter)
 
   expect_lint(
 "fun <- function() {
   a <- 1
 }",
-    rex("local variable", anything, "assigned but may not be used"),
-    object_usage_linter)
+    msg_not_used,
+    linter)
 
   expect_lint(
 "fun <- function() {
   a <- 1
   1
 }",
-    rex("local variable", anything, "assigned but may not be used"),
-    object_usage_linter)
+    msg_not_used,
+    linter)
 
   expect_lint(
 "fun <- function() {
   a <- 1
 }",
-    rex("local variable", anything, "assigned but may not be used"),
-    object_usage_linter)
+    msg_not_used,
+    linter)
 
   expect_lint(
 "fun <- function() {
@@ -50,42 +56,43 @@ fun2 <- function(x) {
   a3
 }",
     list(
-      rex("local variable", anything, "assigned but may not be used"),
-      rex("no visible binding for global variable ", anything, ", Did you mean")
+      msg_not_used,
+      msg_not_def
       ),
-    object_usage_linter)
+    linter)
 
   expect_lint(
 "fun <- function() {
   fnu(1)
 }",
-    rex("no visible global function definition for ", anything, ", Did you mean", anything),
-    object_usage_linter)
+    msg_not_def,
+    linter)
 
   expect_lint(
 "fun <- function(x) {
   n(1)
 }",
-    rex("no visible global function definition for ", anything, ", Did you mean", anything),
-    object_usage_linter)
+    msg_not_def,
+    linter)
 
   test_that("replace_functions_stripped", {
     expect_lint(
 "fun <- function(x) {
   n(x) = 1
 }",
-    rex("no visible global function definition for ", anything, ", Did you mean", anything),
-    object_usage_linter)
+    msg_not_def,
+    linter)
 
     expect_lint(
 "fun <- function(x) {
   n(x) <- 1
 }",
-    rex("no visible global function definition for ", anything, ", Did you mean", anything),
-    object_usage_linter)
+    msg_not_def,
+    linter)
   })
 
 })
+
 
 test_that("eval errors are ignored", {
   expect_lint("

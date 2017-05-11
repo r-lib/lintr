@@ -158,9 +158,10 @@ test_that("is_long_path", {
 
 test_that("returns the correct linting", {
   msg <- rex::escape("Do not use absolute paths.")
+  linter <- absolute_path_linter(lax=FALSE)
+  expect_is(linter, "linter")
 
   # strict mode
-  linter <- absolute_path_linter(lax=FALSE)
   expect_lint("'..'", NULL, linter)
   expect_lint("'./blah'", NULL, linter)
   expect_lint(encodeString("'blah\\file.txt'"), NULL, linter)  # lintr bug 205

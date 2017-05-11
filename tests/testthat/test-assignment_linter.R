@@ -1,35 +1,32 @@
 context("assignment_linter")
+
 options(encoding = "UTF-8")
 test_that("returns the correct linting", {
-  expect_lint("blah", NULL, assignment_linter)
+  msg <- rex("Use <-, not =, for assignment.")
+  linter <- assignment_linter()
+  expect_is(linter, "linter")
 
-  expect_lint("blah <- 1", NULL, assignment_linter)
+  expect_lint("blah", NULL, linter)
 
-  expect_lint("blah<-1", NULL, assignment_linter)
+  expect_lint("blah <- 1", NULL, linter)
 
-  expect_lint("fun(blah=1)", NULL, assignment_linter)
+  expect_lint("blah<-1", NULL, linter)
 
-  expect_lint("blah=1",
-    rex("Use <-, not =, for assignment."),
-      assignment_linter)
+  expect_lint("fun(blah=1)", NULL, linter)
 
-    expect_lint("blah = 1",
-      rex("Use <-, not =, for assignment."),
-        assignment_linter)
+  expect_lint("blah=1", msg, linter)
 
-  expect_lint("blah = fun(1)",
-    rex("Use <-, not =, for assignment.")
-    , assignment_linter)
+  expect_lint("blah = 1", msg, linter)
+
+  expect_lint("blah = fun(1)", msg, linter)
 
   expect_lint("blah = fun(1) {",
     list(
-      rex("Use <-, not =, for assignment."),
+      msg,
       c(type = "error", "unexpected")
       ),
-      assignment_linter)
+    linter)
 
-  expect_lint("fun((blah = fun(1)))",
-    rex("Use <-, not =, for assignment."),
-    assignment_linter)
+  expect_lint("fun((blah = fun(1)))", msg, linter)
 
 })
