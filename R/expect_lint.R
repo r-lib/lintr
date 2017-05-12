@@ -64,14 +64,14 @@ expect_lint <- function(content, checks, ..., file = NULL) {
 
   local({
     itr <- 0L #nolint
-    lintFields <- names(formals(Lint))
+    lint_fields <- names(formals(Lint))
     Map(function(lint, check) {
       itr <<- itr + 1L
       lapply(names(check), function(field) {
-        if (!field %in% lintFields) {
+        if (!field %in% lint_fields) {
           stop(sprintf(
             "check #%d had an invalid field: \"%s\"\nValid fields are: %s\n",
-            itr, field, toString(lintFields)))
+            itr, field, toString(lint_fields)))
         }
         check <- check[[field]]
         value <- lint[[field]]

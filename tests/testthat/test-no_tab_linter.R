@@ -17,7 +17,7 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "\n\t\t\tblah",
-    list(c(message = msg, line_number = 2L, column_number = 1L)),
+    list(message = msg, line_number = 2L, column_number = 1L),
     no_tab_linter
   )
 })
