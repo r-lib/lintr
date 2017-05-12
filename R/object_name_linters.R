@@ -1,5 +1,5 @@
 #' @describeIn linters  Check that object names conform to a single naming style.
-#' @param style One of \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}.
+#' @param styles One of \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}.
 #' @export
 object_name_linter <- function(styles = "snake_case") {
   styles <- match.arg(styles, names(style_regexes), several.ok = TRUE)

@@ -112,6 +112,8 @@ same line.}
 
 \item{todo}{Vector of strings that identify TODO comments.}
 
+\item{styles}{One of \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}.}
+
 \item{length}{the length cutoff to use for the given linter.}
 
 \item{lax}{Less stringent linting, leading to fewer false positives.}
@@ -126,8 +128,6 @@ and the values are the text for the alternative function to use (or \code{NA}).}
 
 \item{op}{Named character vector, where the names are the names of the undesirable operators,
 and the values are the text for the alternative operator to use (or \code{NA}).}
-
-\item{style}{One of \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}.}
 }
 \description{
 Available linters
