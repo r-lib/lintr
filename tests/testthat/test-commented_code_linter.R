@@ -10,12 +10,12 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "bleurgh <- fun_call(1) # other_call()",
-    c(message = msg, column_number = 26),
+    list(message = msg, column_number = 26),
     linter)
 
   expect_lint(
     " #blah <- 1",
-    c(message = msg, column_number = 3),
+    list(message = msg, column_number = 3),
     linter)
 
   expect_lint("#' blah <- 1", NULL, linter)

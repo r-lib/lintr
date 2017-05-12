@@ -28,7 +28,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     content <- gsub("\n$", "", filename)
     filename <- tempfile()
     on.exit(unlink(filename))
-    cat(file = filename, content, sep = "\n")
+    writeLines(text = content, con = filename, sep = "\n")
   }
   source_expressions <- get_source_expressions(filename)
 
