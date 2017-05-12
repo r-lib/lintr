@@ -26,9 +26,6 @@ no_tab_linter <- function(source_file) {
             type = "style",
             message = "Use spaces to indent, not tabs.",
             line = source_file$lines[[as.character(line_number)]],
-
-            # R outputs tabs with 8 spaces
-            # TODO: this is incorrect for embedded tabs, I am not going to fix it.
             ranges = list(c(start, end)),
             linter = "no_tab_linter"
           )
