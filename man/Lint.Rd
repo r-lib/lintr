@@ -13,7 +13,7 @@ Lint(filename, line_number = 1L, column_number = 1L, type = c("style",
 
 \item{line_number}{line number where the lint occurred.}
 
-\item{column_number}{column the lint occurred.}
+\item{column_number}{column number where the lint occurred.}
 
 \item{type}{type of lint.}
 
@@ -21,7 +21,7 @@ Lint(filename, line_number = 1L, column_number = 1L, type = c("style",
 
 \item{line}{code source where the lint occured}
 
-\item{ranges}{ranges on the line that should be emphasized.}
+\item{ranges}{a list of ranges on the line that should be emphasized.}
 
 \item{linter}{name of linter that created the Lint object.}
 }
