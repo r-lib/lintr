@@ -47,12 +47,25 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     names(linters) <- auto_names(linters)
   }
 
-  Map(
+  linters <- Map(
     function(obj, name) {
-      if (!inherits(obj, "linter")) {
+      if (inherits(obj, "linter")) {
+      } else if (inherits(obj, "function")) {
+        if (is.null(formals(obj))) {
+          old <- "Passing linters as variables"
+          new <- "a call to the linters (see ?linters)"
+          lintr_deprecated(old = old, new = new, version = "1.0.0.9001")
+          obj <- obj()
+        } else {
+          old <- "The use of linters of class 'function'"
+          new <- "linters classed as 'linter' (see ?Linter)"
+          lintr_deprecated(old = old, new = new, version = "1.0.0.9001")
+        }
+      } else {
         stop(sprintf("Expected '%s' to be of class 'linter', not '%s'",
                      name, class(obj)[[1L]]))
       }
+      obj
     },
     linters,
     names(linters)

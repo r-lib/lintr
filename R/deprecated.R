@@ -8,10 +8,14 @@
 #' @include object_name_linters.R
 NULL
 
-lintr_deprecated <- function(old, new, version) {
-  msg <- sprintf(
-    "'%s' was deprecated in lintr version %s. Use '%s' instead. See help(\"lintr-deprecated\").",
-    old, version, new)
+lintr_deprecated <- function(old, new = NULL, version = NULL) {
+  msg <- c(
+    c(old, " was deprecated"),
+    if (length(version)) {c(" in lintr version ", version)},
+    ". ",
+    if (length(new)) {c("Use ", new, " instead.")}
+  )
+  msg <- paste0(msg, collapse = "")
   warning(msg, call. = FALSE, domain = NA)
 }
 
@@ -22,7 +26,7 @@ lintr_deprecated <- function(old, new, version) {
 #' @describeIn lintr-deprecated checks that no absolute paths are used.
 #' @export
 absolute_paths_linter <- function(source_file) {
-  lintr_deprecated("absolute_paths_linter", "absolute_path_linter", "1.0.0.9001")
+  lintr_deprecated("'absolute_paths_linter", "'absolute_path_linter'", "1.0.0.9001")
   absolute_path_linter(lax = TRUE)(source_file)
 }
 class(absolute_paths_linter) <- "linter"
@@ -31,7 +35,7 @@ class(absolute_paths_linter) <- "linter"
 #' @describeIn lintr-deprecated  Check there are no trailing semicolons.
 #' @export
 trailing_semicolons_linter <- function(source_file) {
-  lintr_deprecated("trailing_semicolons_linter", "semicolon_terminator_linter", "1.0.0.9001")
+  lintr_deprecated("'trailing_semicolons_linter'", "'semicolon_terminator_linter'", "1.0.0.9001")
   semicolon_terminator_linter(semicolon = "trailing")(source_file)
 }
 class(trailing_semicolons_linter) <- "linter"
@@ -41,7 +45,7 @@ class(trailing_semicolons_linter) <- "linter"
 #' @export
 camel_case_linter <- make_object_linter(function(source_file, parsed) {
 
-  lintr_deprecated("camel_case_linter", "object_name_linter", "1.0.0.9001")
+  lintr_deprecated("'camel_case_linter'", "'object_name_linter'", "1.0.0.9001")
 
   is_camel_case <- re_matches(parsed$text, rex(lower, upper))
 
@@ -60,7 +64,7 @@ camel_case_linter <- make_object_linter(function(source_file, parsed) {
 #' @export
 snake_case_linter <- make_object_linter(function(source_file, parsed) {
 
-  lintr_deprecated("snake_case_linter", "object_name_linter", "1.0.0.9001")
+  lintr_deprecated("'snake_case_linter'", "'object_name_linter'", "1.0.0.9001")
 
   is_snake_case <- re_matches(parsed$text, rex(alnum, "_", alnum))
 
@@ -79,7 +83,7 @@ snake_case_linter <- make_object_linter(function(source_file, parsed) {
 #' @export
 multiple_dots_linter <- make_object_linter(function(source_file, parsed) {
 
-  lintr_deprecated("multiple_dots_linter", "object_name_linter", "1.0.0.9001")
+  lintr_deprecated("'multiple_dots_linter'", "'object_name_linter'", "1.0.0.9001")
 
   has_multiple_dots <- re_matches(parsed$text, rex(".", something, "."))
   if (has_multiple_dots &&
