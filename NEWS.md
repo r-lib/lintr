@@ -1,5 +1,9 @@
 # lintr 1.0.0.9001 #
 * Fixed crash caused by ambiguous cache file paths (#212, @fangly).
+* Added proper handling of tab characters (fixes #44, @fangly)
+* Fix line number sometimes wrongly reported by no_tab_linter() (#134, @fangly)
+* Fix line and column number sometimes wrongly reported by spaces_inside_linter()
+  (#203, @fangly)
 * Add `pipe_continuation_linter()` (#216).
 * Deprecated camel_case_linter(), snake_case_linter() and multiple_dots_linter()
   in favor of object_name_linter() which enforce the given style: snake_case,
@@ -41,7 +45,8 @@
 * Fixed lint_package bug where cache was not caching (#146, @schloerke)
 * Fixed cache not saved in a directory other than requested (#213, @fangly)
 * Commas linter handles missing arguments calls properly (#145)
-* Add `function_left_parentheses_linter` to check that there is no space between a function name and its left parentheses (#204, @jrnold).
+* Add `function_left_parentheses_linter` to check that there is no space between
+  a function name and its left parentheses (#204, @jrnold).
 
 # lintr 1.0.0 #
 * bugfix to work with testthat 1.0.0

@@ -34,7 +34,6 @@ extract_r_source <- function(filename, lines) {
       }
     },
     starts, ends)
-  output
   replace_prefix(output, pattern$chunk.code)
 }
 
