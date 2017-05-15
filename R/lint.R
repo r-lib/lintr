@@ -29,7 +29,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     content <- gsub("\n$", "", filename)
     filename <- tempfile()
     on.exit(unlink(filename))
-    cat(file = filename, content, sep = "\n")
+    writeLines(text = content, con = filename, sep = "\n")
   }
 
   filename <- normalizePath(filename)  # to ensure a unique file in cache
@@ -225,11 +225,11 @@ pkg_name <- function(path = find_package()) {
 #' Create a \code{Lint} object
 #' @param filename path to the source file that was linted.
 #' @param line_number line number where the lint occurred.
-#' @param column_number column the lint occurred.
+#' @param column_number column number where the lint occurred.
 #' @param type type of lint.
 #' @param message message used to describe the lint error
 #' @param line code source where the lint occured
-#' @param ranges ranges on the line that should be emphasized.
+#' @param ranges a list of ranges on the line that should be emphasized.
 #' @param linter name of linter that created the Lint object.
 #' @export
 Lint <- function(filename, line_number = 1L, column_number = 1L,

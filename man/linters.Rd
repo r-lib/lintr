@@ -170,7 +170,7 @@ do not have spaces before them.
 \item \code{line_length_linter}: check the line length of both comments and code is less
 than length.
 
-\item \code{no_tab_linter}: check that only spaces are used, never tabs.
+\item \code{no_tab_linter}: check that only spaces are used for indentation, not tabs.
 
 \item \code{object_usage_linter}: checks that closures have the proper usage using
 \code{\link[codetools]{checkUsage}}.  Note this runs

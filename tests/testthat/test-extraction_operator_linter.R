@@ -10,14 +10,14 @@ test_that("linter returns the correct linting", {
   expect_lint("x[1, 'a']", NULL, linter)
   expect_lint("self$a", NULL, linter)
   expect_lint(".self $\na", NULL, linter)
-  expect_lint("x$a", c(message=msgD, line_number=1L, column_number=2L), linter)
-  expect_lint("x $\na", c(message=msgD, line_number=1L, column_number=3L), linter)
-  expect_lint("x[NULL]", c(message=msgB, line_number=1L, column_number=2L), linter)
-  expect_lint("x[++ + 3]", c(message=msgB, line_number=1L, column_number=2L), linter)
+  expect_lint("x$a", list(message=msgD, line_number=1L, column_number=2L), linter)
+  expect_lint("x $\na", list(message=msgD, line_number=1L, column_number=3L), linter)
+  expect_lint("x[NULL]", list(message=msgB, line_number=1L, column_number=2L), linter)
+  expect_lint("x[++ + 3]", list(message=msgB, line_number=1L, column_number=2L), linter)
   expect_lint("c(x['a'], x [ 1 ])",
               list(
-                c(message=msgB, line_number=1L, column_number=4L),
-                c(message=msgB, line_number=1L, column_number=13L)
+                list(message=msgB, line_number=1L, column_number=4L),
+                list(message=msgB, line_number=1L, column_number=13L)
               ),
               linter)
 })

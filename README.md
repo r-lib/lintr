@@ -87,13 +87,13 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
 
 ## Available linters ##
 
-* `Syntax errors`: reported by [parse](http://www.inside-r.org/r-doc/base/parse).
+* `Syntax errors`: reported by [parse](https://www.rdocumentation.org/packages/base/versions/3.4.0/topics/parse).
 * `object_usage_linter`: check that closures have the proper usage using
-  [codetools::checkUsage()](http://www.inside-r.org/r-doc/codetools/checkUsage).  Note this runs
-  [base::eval()](http://www.inside-r.org/r-doc/base/eval) on the code, so do not use with untrusted code.
+  [codetools::checkUsage()](https://www.rdocumentation.org/packages/codetools/versions/0.2-15/topics/checkUsage).  Note this runs
+  [base::eval()](https://www.rdocumentation.org/packages/base/versions/3.4.0/topics/eval) on the code, so do not use with untrusted code.
 * `absolute_path_linter`: check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
 * `nonportable_path_linter`: check that file.path() is used to construct safe and portable paths.
-* pipe_continuation_linter: Check that each step in a pipeline is on a new
+* `pipe_continuation_linter`: Check that each step in a pipeline is on a new
   line, or the entire pipe fits on one line.
 * `assignment_linter`: check that `<-` is always used for assignment
 * `closed_curly_linter`: check that closed curly braces should always be on their
