@@ -134,7 +134,7 @@ accessible through \code{\link{default_linters}}, though there are additional on
 to use.
 
 All the functions listed below are \bold{getters} that return a closure of class 'linter'.
-Within a \code{\link{lint()}} function call, the linters in use are initialized with the provided
+Within a \code{\link{lint}} function call, the linters in use are initialized with the provided
 arguments and fed with the source file (provided by \code{\link{get_source_expressions}}).
 }
 \section{Functions}{

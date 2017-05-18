@@ -5,6 +5,7 @@
 #'
 #' @name lintr-deprecated
 #' @inheritParams linters
+#' @param source_file  source file object from \code{\link{get_source_expressions}}
 #' @include object_name_linters.R
 NULL
 
@@ -26,7 +27,7 @@ lintr_deprecated <- function(old, new = NULL, version = NULL) {
 #' @describeIn lintr-deprecated checks that no absolute paths are used.
 #' @export
 absolute_paths_linter <- function(source_file) {
-  lintr_deprecated("'absolute_paths_linter", "'absolute_path_linter'", "1.0.0.9001")
+  lintr_deprecated("'absolute_paths_linter'", "'absolute_path_linter'", "1.0.0.9001")
   absolute_path_linter(lax = TRUE)(source_file)
 }
 class(absolute_paths_linter) <- "linter"

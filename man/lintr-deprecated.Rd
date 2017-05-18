@@ -19,6 +19,9 @@ snake_case_linter(source_file)
 
 multiple_dots_linter(source_file)
 }
+\arguments{
+\item{source_file}{source file object from \code{\link{get_source_expressions}}}
+}
 \description{
 Functions that have been deprecated and replaced by newer ones. They will be removed in an
 upcoming version of \pkg{lintr} and should thus not be used anymore.
