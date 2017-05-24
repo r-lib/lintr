@@ -41,7 +41,12 @@ detect_pattern <- get("detect_pattern", asNamespace("knitr"))
 file_ext <- get("file_ext", asNamespace("knitr"))
 
 get_knitr_pattern <- function(filename, lines) {
-  pattern <- detect_pattern(lines, tolower(file_ext(filename)))
+  if (tolower(file_ext(filename)) == "r") {
+    pattern <- NULL
+  } else {
+    pattern <- detect_pattern(lines, tolower(file_ext(filename)))
+  }
+  
   if (!is.null(pattern)) {
     knitr::all_patterns[[pattern]]
   } else {
