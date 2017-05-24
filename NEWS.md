@@ -47,7 +47,7 @@
 * Commas linter handles missing arguments calls properly (#145)
 * Add `function_left_parentheses_linter` to check that there is no space between
   a function name and its left parentheses (#204, @jrnold).
-* Recognize .R scripts that contain Roxygen inline expressions as simply .R scripts (@wildoane)
+* Recognize .R scripts that contain Roxygen inline expressions as simply .R scripts (#246, @wildoane)
 
 # lintr 1.0.0 #
 * bugfix to work with testthat 1.0.0
