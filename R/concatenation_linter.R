@@ -1,24 +1,29 @@
 #' @describeIn linters  Check that the \code{c} function is not used needlessly or coercively.
 #' @param concatenation A character vector for the types of concatenations to report:\describe{
-#'   \item{unneeded}{Concatenation with no argument or a single constant.}
+#'   \item{unneeded}{Unneeded concatenation with no argument or a single constant.}
+#'   \item{coercive}{Coercive concatenation of heterogeneous atomic constants.}
 #' }
 #' @export
-concatenation_linter <- function(concatenation = c("unneeded")) {
+concatenation_linter <- function(concatenation = c("unneeded", "coercive")) {
+  concatenation <- match.arg(concatenation, several.ok = TRUE)
   function(source_file) {
     tokens <- source_file[["parsed_content"]] <-
       filter_out_token_type(source_file[["parsed_content"]], "expr")
-    msg_empty <- "Unneded concatenation without arguments. Replace the \"c\" call by NULL or vector()."
-    msg_const <- "Unneded concatenation of a constant. Remove the \"c\" call."
+    msg_empty <- "Unneded concatenation without arguments. Replace the \"c\" call by NULL."
+    msg_null <- "Unneded concatenation of NULL. Remove NULL."
+    msg_single <- "Unneded concatenation of a single constant. Remove the \"c\" call."
+    msg_coercive <- "Coercive concatenation of heterogeneous atomic constants. Replace the \"c\" call by list()."
     check_unneeded <- "unneeded" %in% concatenation
+    check_coercive <- "coercive" %in% concatenation
     lapply(
       ids_with_token(source_file, "SYMBOL_FUNCTION_CALL"),
       function(token_num) {
-        num_args <- get_num_concat_args(token_num, tokens)
-        msg <- if (num_args == 0) {
-          if (check_unneeded) {msg_empty}
-        } else if (num_args == 1) {
-          if (check_unneeded) {msg_const}
-        }
+        msg <- switch(detect_concat_type(token_num, tokens),
+          "empty"         = if (check_unneeded) {msg_empty   },
+          "null"          = if (check_unneeded) {msg_null    },
+          "single"        = if (check_unneeded) {msg_single  },
+          "heterogeneous" = if (check_coercive) {msg_coercive}
+        )
         if (!is.null(msg)) {
           token <- with_id(source_file, token_num)
           start_col_num <- token[["col1"]]
@@ -41,31 +46,43 @@ concatenation_linter <- function(concatenation = c("unneeded")) {
   }
 }
 
-get_num_concat_args <- function(token_num, tokens) {
-  # Detect the sequence "c" + "(" + optional constant + ")" and return a number:
-  #   -1 if not a concatenation call
-  #    0 if a concatenation without arguments
-  #    1 if a concatenation with a single constant argument
-  #    2 if a concatenation in other cases
+detect_concat_type <- function(token_num, tokens) {
+  # Detect the type of concatenation "empty", "null", "single", "heterogeneous" or "".
   open_paren_num <- token_num + 1L
+  r <- ""
   if (tokens[token_num, "text"] == "c" &&
       tokens[open_paren_num, "token"] == "'('") {
     token_args <- get_tokens_in_parentheses(open_paren_num, tokens)
-    num_token_args <- nrow(token_args)
-    if (!num_token_args) {
-      0L
-    } else if (num_token_args == 1L) {
-      if (token_args[1L, "token"] %in% c("STR_CONST", "NUM_CONST", "NULL_CONST")) {
-        1L
-      } else {
-        2L
-      }
+    recursive_tokens <- token_args[token_args[, "text"] == "recursive", "token"]
+    plus_args <- if (length(recursive_tokens) && length(recursive_tokens == "SYMBOL_SUB")) {
+      -1L # recursive argument was given
     } else {
-      2L
+      0L
     }
-  } else {
-    -1L
+    token_args <- token_args[["token"]]
+    num_args <- if (length(token_args)) {
+      sum(token_args == "','") + 1L + plus_args
+    } else {
+      0L
+    }
+    if (!num_args) {
+      r <- "empty"
+    } else if (num_args == 1L) {
+      if (token_args[[1L]] == "NULL_CONST") {
+        r <- "null"
+      } else if (token_args[[1L]] %in% c("STR_CONST", "NUM_CONST")) {
+        r <- "single"
+      }
+    } else if (num_args > 1L) {
+      if (any(token_args == "NULL_CONST")) {
+        r <- "null"
+      } else if ( any(token_args == "STR_CONST") &&
+                  any(token_args == "NUM_CONST") ) {
+        r <- "heterogeneous"
+      }
+    }
   }
+  r
 }
 
 get_tokens_in_parentheses <- function(open_paren_line_num, tokens) {
@@ -97,7 +114,6 @@ get_sibling_tokens <- function(child, tokens) {
 }
 
 
-
-filter_out_token_type <- function(tokens, type) {
-  tokens[tokens[["token"]] != type, ]
+filter_out_token_type <- function(tokens, types) {
+  tokens[!tokens[["token"]] %in% types, ]
 }
