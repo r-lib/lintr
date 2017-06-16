@@ -53,6 +53,7 @@ detect_concat_type <- function(token_num, tokens) {
   if (tokens[token_num, "text"] == "c" &&
       tokens[open_paren_num, "token"] == "'('") {
     token_args <- get_tokens_in_parentheses(open_paren_num, tokens)
+    print(token_args)
     recursive_tokens <- token_args[token_args[, "text"] == "recursive", "token"]
     plus_args <- if (length(recursive_tokens) && length(recursive_tokens == "SYMBOL_SUB")) {
       -1L # recursive argument was given
@@ -76,8 +77,8 @@ detect_concat_type <- function(token_num, tokens) {
     } else if (num_args > 1L) {
       if (any(token_args == "NULL_CONST")) {
         r <- "null"
-      } else if ( any(token_args == "STR_CONST") &&
-                  any(token_args == "NUM_CONST") ) {
+      } else if ( any(token_args == "STR_CONST") &&   # double, integer, logical
+                  any(token_args == "NUM_CONST") ) {  # character
         r <- "heterogeneous"
       }
     }

@@ -56,7 +56,7 @@ commented_code_linter(source_file)
 
 todo_comment_linter(todo = c("todo", "fixme"))
 
-concatenation_linter(concatenation = c("unneeded"))
+concatenation_linter(concatenation = c("unneeded", "coercive"))
 
 object_name_linter(style = "snake_case")
 
@@ -113,7 +113,8 @@ same line.}
 \item{todo}{Vector of strings that identify TODO comments.}
 
 \item{concatenation}{A character vector for the types of concatenations to report:\describe{
-  \item{unneeded}{Concatenation with no argument or a single constant.}
+  \item{unneeded}{Unneeded concatenation with no argument or a single constant.}
+  \item{coercive}{Coercive concatenation of heterogeneous atomic constants.}
 }}
 
 \item{style}{UpperCamelCase, lowerCamelCase, alllowercase, ALLUPPERCASE, snake_case or
