@@ -38,6 +38,7 @@ VignetteBuilder: knitr
 RoxygenNote: 6.0.1
 Collate: 
     'T_and_F_symbol_linter.R'
+    'utils.R'
     'aaa.R'
     'assignment_linter.R'
     'cache.R'
@@ -75,5 +76,4 @@ Collate:
     'undesirable_function_linter.R'
     'undesirable_operator_linter.R'
     'unneeded_concatenation_linter.R'
-    'utils.R'
     'zzz.R'

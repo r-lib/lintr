@@ -174,3 +174,11 @@ get_file_line <- function(source_file, line) {
 }
 
 p <- function(...) paste0(...)
+
+try_silently <- function(expr) {
+  suppressWarnings(
+    suppressMessages(
+      try(expr, silent = TRUE)
+    )
+  )
+}

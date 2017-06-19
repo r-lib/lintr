@@ -100,7 +100,7 @@ base_pkgs <- c(
 
 base_funs <- unlist(lapply(base_pkgs,
                            function(x) {
-                             name <- try(getNamespace(x))
+                             name <- try_silently(getNamespace(x))
                              if (!inherits(name, "try-error")) {
                                ls(name, all.names = TRUE)
                              }
