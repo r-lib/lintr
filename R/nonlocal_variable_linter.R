@@ -24,28 +24,26 @@ nonlocal_variable_linter <- function(variable = c("global", "other")) {
       is_toplevel <- c(is_toplevel, rep.int(FALSE, length(inner_funcs)))
     }
     Map(
-      function(xml_func, is_toplevel) {
-        locs <- nonlocal_var_locations(xml_func, source_file)
-        print(locs)
-        Map(
-          function(var_name, var_loc) {
+      function(xml_func, is_toplevel, source_file) {
+        lapply(
+          nonlocal_var_locations(xml_func, source_file),
+          function(var_loc) {
             Lint(
               filename = source_file$filename,
               line_number = var_loc[["line1"]],
               column_number = var_loc[["col1"]],
               type = "warning",
-              message = paste0("Variable ", var_name, " is non-local"),
+              message = "Variable is non-local",
               line = source_file[["file_lines"]][[var_loc[["line1"]]]],
               ranges = list(c(var_loc[["col1"]], var_loc[["col2"]])),
               linter = "nonlocal_variable_linter"
             )
-          },
-          names(locs),
-          locs
+          }
         )
       },
       funcs,
-      is_toplevel
+      is_toplevel,
+      MoreArgs = list(source_file = source_file)
     )
   }
 }
@@ -68,15 +66,6 @@ inner_functions_xml <- function(x) {
     "/exprlist/*//*[not(self::LEFT_ASSIGN) and not(self::EQ_ASSIGN)]/expr[FUNCTION]"
   )
   xml2::xml_find_all(x, xpath)
-}
-
-variable_locations <- function(x, var_names) {
-  lapply(
-    var_names,
-    function(var_name) {
-      xml_location(xml2::xml_find_first(x, paste0("//SYMBOL[text() = '", var_name,"']")))
-    }
-  )
 }
 
 function_source <- function(x, source_file) {
@@ -106,4 +95,15 @@ nonlocal_var_locations <- function(xml_func, source_file) {
   is_nonlocal_var <- !vapply(vars, exists, logical(1), envir=env)
   vars <- vars[is_nonlocal_var]
   variable_locations(xml_func, vars)
+}
+
+
+variable_locations <- function(x, var_names) {
+  lapply(
+    var_names,
+    function(var_name, xml) {
+      xml_location(xml2::xml_find_first(xml, paste0(".//SYMBOL[text() = '", var_name,"']")))
+    },
+    x
+  )
 }
