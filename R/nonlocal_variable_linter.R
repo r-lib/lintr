@@ -1,51 +1,32 @@
-#' @describeIn linters  Check that functions do not use global and other non-local variables.
-#' Note that this uses \code{\link[base]{eval}}, so do not use with untrusted code.
-#' @param variable A character vector defining which non-local variables to report:\describe{
-#'   \item{global}{Global variables.}
-#'   \item{other}{Other variables not in the local scope of the function in which they are used.}
-#' }
+#' @describeIn linters  Check that functions avoid the use of non-local variables. Note that this
+#' uses \code{\link[base]{eval}}, so do not use with untrusted code.
 #' @export
-nonlocal_variable_linter <- function(variable = c("global", "other")) {
-  match.arg(variable)
-  function(source_file) {
-    x <- global_xml_parsed_content(source_file)
-    if (is.null(x)) {
-      return()
-    }
-    funcs <- character()
-    is_toplevel <- logical()
-    if ("global" %in% variable) {
-      funcs <- toplevel_functions_xml(x)
-      is_toplevel <- rep.int(TRUE, length(funcs))
-    }
-    if ("other" %in% variable) {
-      inner_funcs <- inner_functions_xml(x)
-      funcs <- c(funcs, inner_funcs)
-      is_toplevel <- c(is_toplevel, rep.int(FALSE, length(inner_funcs)))
-    }
-    Map(
-      function(xml_func, is_toplevel, source_file) {
-        lapply(
-          nonlocal_var_locations(xml_func, source_file),
-          function(var_loc) {
-            Lint(
-              filename = source_file$filename,
-              line_number = var_loc[["line1"]],
-              column_number = var_loc[["col1"]],
-              type = "warning",
-              message = "Variable is non-local",
-              line = source_file[["file_lines"]][[var_loc[["line1"]]]],
-              ranges = list(c(var_loc[["col1"]], var_loc[["col2"]])),
-              linter = "nonlocal_variable_linter"
-            )
-          }
-        )
-      },
-      funcs,
-      is_toplevel,
-      MoreArgs = list(source_file = source_file)
-    )
+nonlocal_variable_linter <- function(source_file) {
+  x <- global_xml_parsed_content(source_file)
+  if (is.null(x)) {
+    return()
   }
+  Map(
+    function(xml_func, source_file) {
+      lapply(
+        nonlocal_var_locations(xml_func, source_file),
+        function(var_loc) {
+          Lint(
+            filename = source_file$filename,
+            line_number = var_loc[["line1"]],
+            column_number = var_loc[["col1"]],
+            type = "warning",
+            message = "Do not use non-local variables.",
+            line = source_file[["file_lines"]][[var_loc[["line1"]]]],
+            ranges = list(c(var_loc[["col1"]], var_loc[["col2"]])),
+            linter = "nonlocal_variable_linter"
+          )
+        }
+      )
+    },
+    c(toplevel_functions_xml(x), inner_functions_xml(x)),
+    MoreArgs = list(source_file = source_file)
+  )
 }
 
 toplevel_functions_xml <- function(x) {

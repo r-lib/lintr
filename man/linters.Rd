@@ -76,7 +76,7 @@ line_length_linter(length)
 
 no_tab_linter(source_file)
 
-nonlocal_variable_linter(variable = c("global", "other"))
+nonlocal_variable_linter(source_file)
 
 object_usage_linter(source_file)
 
@@ -120,11 +120,6 @@ same line.}
 dotted.case}
 
 \item{length}{the length cutoff to use for the given linter.}
-
-\item{variable}{A character vector defining which non-local variables to report:\describe{
-  \item{global}{Global variables.}
-  \item{other}{Other variables not in the local scope of the function in which they are used.}
-}}
 
 \item{lax}{Less stringent linting, leading to fewer false positives.}
 
@@ -181,8 +176,8 @@ than length.
 
 \item \code{no_tab_linter}: check that only spaces are used for indentation, not tabs.
 
-\item \code{nonlocal_variable_linter}: Check that functions do not use global and other non-local variables.
-Note that this uses \code{\link[base]{eval}}, so do not use with untrusted code.
+\item \code{nonlocal_variable_linter}: Check that functions avoid the use of non-local variables. Note that this
+uses \code{\link[base]{eval}}, so do not use with untrusted code.
 
 \item \code{object_usage_linter}: checks that closures have the proper usage using
 \code{\link[codetools]{checkUsage}}.  Note this runs
