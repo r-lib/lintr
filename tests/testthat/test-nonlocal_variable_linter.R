@@ -23,6 +23,8 @@ global_3 <- "some_func <- function(x) {
 
 global_4 <- "function() {const <<- 123.456}"
 
+global_5 <- "l <- lapply(c(intKeys, strKeys), function(k) {valTransform(dictRefExistent(d, k))})"
+
 nonlocal_1 <- "some_func <- function() {
   inner_func <- function(x) {
     dummy <- \"test\"
@@ -55,8 +57,11 @@ test_that("returns the correct linting", {
 
   expect_lint("function(a) {a*2L}", NULL, linter)
 
-  expect_lint("function() {a <- a+1}", NULL, linter)
+  # properly handle @ attributes
+  expect_lint("function(u, v) {mget(u, v@.xData)}", NULL, linter)
+
   # codetools cannot distinguish a non-local access from a local assignment to the same name
+  expect_lint("function() {a <- a+1}", NULL, linter)
 
   expect_lint(
     global_1,
@@ -80,6 +85,12 @@ test_that("returns the correct linting", {
   expect_lint(
     global_4,
     list(message = msg, line_number = 1L, column_number = 13L),
+    linter
+  )
+
+  expect_lint(
+    global_5,
+    list(message = msg, line_number = 1L, column_number = 76L),
     linter
   )
 

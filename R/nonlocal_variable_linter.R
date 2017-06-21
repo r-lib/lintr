@@ -53,8 +53,13 @@ function_source <- function(x, source_file) {
   pos <- xml_location(x)
   lines <- source_file[["file_lines"]][seq.int(pos[["line1"]], pos[["line2"]])]
   lines[[1L]] <- substr(lines[[1L]], pos[["col1"]], nchar(lines[[1L]]))
-  last <- length(lines)
-  lines[[last]] <- substr(lines[[last]], 1, pos[["col2"]])
+  last_line <- length(lines)
+  last_char <- if (last_line == 1L) {
+    pos[["col2"]] - pos[["col1"]] + 1L
+  } else {
+    pos[["col2"]]
+  }
+  lines[[last_line]] <- substr(lines[[last_line]], 1L, last_char)
   paste0(lines, collapse = "\n")
 }
 
@@ -71,20 +76,23 @@ nonlocal_var_locations <- function(xml_func, source_file) {
     parse(text = function_source(xml_func, source_file), keep.source = TRUE),
     envir = env
   ))
-  vars <- codetools::findGlobals(func)
+  vars <- codetools::findGlobals(func, merge = FALSE)[["variables"]]
   names(vars) <- vars
-  is_nonlocal_var <- !vapply(vars, exists, logical(1), envir=env)
+  is_nonlocal_var <- !vapply(vars, exists, logical(1), envir = env)
   vars <- vars[is_nonlocal_var]
-  variable_locations(xml_func, vars)
+  res <- variable_locations(xml_func, vars)
+  res
 }
 
 
 variable_locations <- function(x, var_names) {
-  lapply(
+  # return the variable locations, drop unfound variables because of false positives e.g. "obj@attr"
+  locs <- lapply(
     var_names,
     function(var_name, xml) {
       xml_location(xml2::xml_find_first(xml, paste0(".//SYMBOL[text() = '", var_name,"']")))
     },
     x
   )
+  locs <- locs[!is.na(locs)]
 }
