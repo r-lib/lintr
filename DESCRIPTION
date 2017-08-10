@@ -1,12 +1,12 @@
 Package: lintr
-Title: Static R Code Analysis
-Version: 1.0.0
+Title: Linting for R Code
+Version: 1.0.1
 Authors@R: person("Jim", "Hester", email = "james.f.hester@gmail.com", role = c("aut", "cre"))
 URL: https://github.com/jimhester/lintr
 BugReports: https://github.com/jimhester/lintr/issues
 Description: Checks adherence to a given style, syntax errors and possible
-    semantic issues.  Supports on the fly checking of R code edited with Emacs,
-    Vim and Sublime Text.
+    semantic issues.  Supports on the fly checking of R code edited with RStudio IDE, Emacs,
+    Vim, Sublime Text and Atom.
 Depends:
     R (>= 3.1.1)
 Imports:
