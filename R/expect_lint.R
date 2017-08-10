@@ -87,6 +87,8 @@ expectation_lint <- function(content, checks, ...) {
 #' @param ... arguments passed to \code{\link{lint_package}}
 #' @export
 expect_lint_free <- function(...) {
+  testthat::skip_on_cran()
+
   lints <- lint_package(...)
   has_lints <- length(lints) > 0
 
