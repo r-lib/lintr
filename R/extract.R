@@ -34,7 +34,7 @@ extract_r_source <- function(filename, lines) {
 }
 
 get_knitr_pattern <- function(filename, lines) {
-  pattern <- ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename)))
+  pattern <- ("knitr" %:::% "detect_pattern")(lines, tolower( ("knitr" %:::% "file_ext")(filename)))
   if (!is.null(pattern)) {
     knitr::all_patterns[[pattern]]
   } else {
