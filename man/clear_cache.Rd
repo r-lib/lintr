@@ -16,4 +16,3 @@ as the default.}
 \description{
 Clear the lintr cache
 }
-

@@ -25,4 +25,3 @@ different checks depending on the value of checks.
 \description{
 Lint expectation
 }
-

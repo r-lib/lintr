@@ -28,4 +28,3 @@ with_defaults(line_length_linter(120))
 with_defaults(camel_case_linter = NULL,
               snake_case_linter)
 }
-

@@ -19,7 +19,7 @@ Lint(filename, line_number = 1L, column_number = NULL, type = c("style",
 
 \item{message}{message used to describe the lint error}
 
-\item{line}{code source where the lint occured}
+\item{line}{code source where the lint occurred}
 
 \item{ranges}{ranges on the line that should be emphasized.}
 
@@ -28,4 +28,3 @@ Lint(filename, line_number = 1L, column_number = NULL, type = c("style",
 \description{
 Create a \code{Lint} object
 }
-

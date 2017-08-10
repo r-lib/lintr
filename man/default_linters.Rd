@@ -12,4 +12,3 @@ default_linters
 Default linters to use
 }
 \keyword{datasets}
-
