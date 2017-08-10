@@ -192,7 +192,7 @@ pkg_name <- function(path = find_package()) {
 #' @param column_number column the lint occurred.
 #' @param type type of lint.
 #' @param message message used to describe the lint error
-#' @param line code source where the lint occured
+#' @param line code source where the lint occurred
 #' @param ranges ranges on the line that should be emphasized.
 #' @param linter name of linter that created the Lint object.
 #' @export
