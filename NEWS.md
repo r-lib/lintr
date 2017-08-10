@@ -1,3 +1,9 @@
+# lintr 1.0.1 #
+* bugfix to work with knitr 1.16.7
+* `expect_lint_free()` now is always skipped on CRAN. This is necessary because
+  the non-binary R source may not be available when running tests on CRAN, and
+  those tests may not be run in the package directory.
+
 # lintr 1.0.0 #
 * bugfix to work with testthat 1.0.0
 
