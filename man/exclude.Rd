@@ -7,7 +7,7 @@
 exclude(lints, exclusions = settings$exclusions, ...)
 }
 \arguments{
-\item{lints}{that need to be filetered.}
+\item{lints}{that need to be filtered.}
 
 \item{exclusions}{manually specified exclusions}
 

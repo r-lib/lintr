@@ -14,6 +14,10 @@
   !identical(x, y)
 }
 
+"%:::%" <- function(p, f) {
+  get(f, envir = asNamespace(p))
+}
+
 flatten_lints <- function(x) {
   structure(
     flatten_list(x, class = "lint"),

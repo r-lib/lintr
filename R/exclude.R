@@ -1,6 +1,6 @@
 #' Exclude lines or files from linting
 #'
-#' @param lints that need to be filetered.
+#' @param lints that need to be filtered.
 #' @param exclusions manually specified exclusions
 #' @param ... additional arguments passed to \code{\link{parse_exclusions}}
 #' @details

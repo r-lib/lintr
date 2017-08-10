@@ -1,4 +1,4 @@
-# lintr 1.0.0.9001 #
+# lintr 1.0.1.9001 #
 * Export expect_lint() (#178, #210)
 * Added proper handling of tab characters (fixes #44, @fangly)
 * Fix line number sometimes wrongly reported by no_tab_linter() (#134, @fangly)
@@ -47,6 +47,12 @@
 * Commas linter handles missing arguments calls properly (#145)
 * Add `function_left_parentheses_linter` to check that there is no space between
   a function name and its left parentheses (#204, @jrnold).
+
+# lintr 1.0.1 #
+* bugfix to work with knitr 1.16.7
+* `expect_lint_free()` now is always skipped on CRAN. This is necessary because
+  the non-binary R source may not be available when running tests on CRAN, and
+  those tests may not be run in the package directory.
 
 # lintr 1.0.0 #
 * bugfix to work with testthat 1.0.0

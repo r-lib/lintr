@@ -1,10 +1,11 @@
 ## Comments
-This release fixes the ERRORs due to the latest testthat release.
+This release fixes a WARNING caused by knitr 1.16.7.
 
 ## Test environments
-* local OS X install, R 3.2.4
-* ubuntu 12.04 (on travis-ci), R 3.2.4
+* local OS X install, R 3.4.1-patched
+* ubuntu 12.04 (on travis-ci), R 3.4.1
 * win-builder (devel and release)
+* rhub
 
 ## R CMD check results
 
