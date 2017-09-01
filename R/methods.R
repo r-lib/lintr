@@ -150,19 +150,7 @@ summary.lints <- function(object, ...) {
   tbl <- table(filenames, types)
   filenames <- rownames(tbl)
   res <- as.data.frame.matrix(tbl, stringsAsFactors = FALSE, row.names = NULL)
-  res$filenames <- filenames
+  res$filenames <- filenames %||% character()
   nms <- colnames(res)
-  if (!nrow(res)){
-    return(
-      invisible(
-        data.frame(
-          filenames = character(0),
-          style = integer(0),
-          warning = integer(0),
-          error = integer(0)
-        ) # data.frame
-      ) # invisible
-    ) # return
-  }
   res[order(res$filenames), c("filenames", nms[nms != "filenames"])]
 }
