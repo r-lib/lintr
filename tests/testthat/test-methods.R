@@ -19,7 +19,7 @@ test_that("it returns the input trimmed to the last full lint if one exists with
 })
 
 test_that("as.data.frame.lints", {
-  # A minimum lint 
+  # A minimum lint
   expect_is(
     l1 <- Lint("dummy.R",
          line_number = 1L,
@@ -28,7 +28,7 @@ test_that("as.data.frame.lints", {
          line = ""),
     "lint"
   )
-    
+
   # A larger lint
   expect_is(
     l2 <- Lint("dummy.R",
@@ -41,7 +41,7 @@ test_that("as.data.frame.lints", {
               linter = "custom_linter"),
     "lint"
   )
-  
+
   # Convert lints to data.frame
   lints <- structure(list(l1, l2), class = "lints")
   expect_is(
@@ -58,9 +58,35 @@ test_that("as.data.frame.lints", {
     line = c("", "a <- 1"),
     linter = c("", "custom_linter"),
     stringsAsFactors = FALSE)
-  
+
   expect_equal(
     df,
     exp
-  )  
+  )
+})
+
+test_that("summary.lints works", {
+  good <- "if (1 > 0){
+      print(\"good\")
+    }"
+  bad <- "if(1>0){
+      print  ('bad')
+    }
+  "
+  file <- tempfile()
+  on.exit(unlink(file))
+
+  writeLines(good, con = file, sep = "\n")
+  expect_silent(out <- summary(lint(file)))
+  expect_true(is.data.frame(out))
+  expect_equal(nrow(out), 0)
+
+  writeLines(bad, con = file, sep = "\n")
+  expect_silent(out <- summary(lint(file)))
+
+  expect_true(is.data.frame(out))
+  expect_equal(nrow(out), 1)
+  expect_true(out$style > 0)
+  expect_equal(out$warning, 0)
+  expect_equal(out$error, 0)
 })

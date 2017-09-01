@@ -141,3 +141,28 @@ as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) {
   attributes(x) <- attrs
   x
 }
+
+#' @export
+summary.lints <- function(object, ...) {
+  filenames <- vapply(object, `[[`, character(1), "filename")
+  types <- factor(vapply(object, `[[`, character(1), "type"),
+    levels = c("style", "warning", "error"))
+  tbl <- table(filenames, types)
+  filenames <- rownames(tbl)
+  res <- as.data.frame.matrix(tbl, stringsAsFactors = FALSE, row.names = NULL)
+  res$filenames <- filenames
+  nms <- colnames(res)
+  if (!nrow(res)){
+    return(
+      invisible(
+        data.frame(
+          filenames = character(0),
+          style = integer(0),
+          warning = integer(0),
+          error = integer(0)
+        ) # data.frame
+      ) # invisible
+    ) # return
+  }
+  res[order(res$filenames), c("filenames", nms[nms != "filenames"])]
+}
