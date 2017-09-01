@@ -65,28 +65,24 @@ test_that("as.data.frame.lints", {
   )
 })
 
-test_that("summary.lints works", {
-  good <- "if (1 > 0){
-      print(\"good\")
-    }"
-  bad <- "if(1>0){
-      print  ('bad')
-    }
-  "
-  file <- tempfile()
-  on.exit(unlink(file))
-
-  writeLines(good, con = file, sep = "\n")
-  expect_silent(out <- summary(lint(file)))
-  expect_true(is.data.frame(out))
-  expect_equal(nrow(out), 0)
-
-  writeLines(bad, con = file, sep = "\n")
-  expect_silent(out <- summary(lint(file)))
-
-  expect_true(is.data.frame(out))
-  expect_equal(nrow(out), 1)
-  expect_true(out$style > 0)
-  expect_equal(out$warning, 0)
-  expect_equal(out$error, 0)
+test_that("summary.lints() works (no lints)", {
+  no_lints <- lint(
+    "x <- 1\n",
+    linters = assignment_linter)
+  no_lint_summary <- summary(no_lints)
+  expect_true(is.data.frame(no_lint_summary))
+  expect_equal(nrow(no_lint_summary), 0)
 })
+
+test_that("summary.lints() works (lints found)", {
+  has_lints <- lint(
+    "x = 1\n",
+    linters = assignment_linter)
+  has_lint_summary <- summary(has_lints)
+  expect_true(is.data.frame(has_lint_summary))
+  expect_equal(nrow(has_lint_summary), 1)
+  expect_true(has_lint_summary$style > 0)
+  expect_equal(has_lint_summary$warning, 0)
+  expect_equal(has_lint_summary$error, 0)
+})
+
