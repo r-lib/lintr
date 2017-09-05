@@ -10,6 +10,13 @@
 lintr lints are automatically displayed in the RStudio Marker pane, Rstudio versions (> v0.99.206).
 ![RStudio Example](http://i.imgur.com/PIKnpbn.png "Rstudio Example")
 
+This package also includes two addins for linting the current source and package.
+TO bind the addin to a keyboard shortcut navigate to Tools > addins > 
+Browse Addins > Keyboard Shortcuts. It's recommended to use Alt+Shift+L for
+linting the current source code and Ctrl+Shift+Alt+L to code the package.
+These are easy to remember as you are Alt+Shift+L(int) ;)
+
+
 ### Emacs ###
 lintr has [built-in integration](http://www.flycheck.org/en/latest/languages.html#r) with [flycheck](https://github.com/flycheck/flycheck) versions greater than `0.23`.
 ![Emacs Example](http://i.imgur.com/vquPht3.gif "Emacs Example")
