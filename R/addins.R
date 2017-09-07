@@ -3,7 +3,18 @@ addin_lint <- function() {
   if (filename$path == "") {
     return("Current source has no path. Please save before continue")
   }
-  lintr::lint(filename$path)
+
+  config_file <- lintr:::find_config(filename$path)
+  config <- read.dcf(config_file, all = T)
+  config_linters <- gsub("\n", "", config[["linters"]])
+  linters <- if (length(config_linters) == 0) {
+    message("No configuration found. Using default linters.")
+    default_linters
+  } else {
+    eval(parse(text = config_linters))
+  }
+
+  lintr::lint(filename$path, linters = linters)
 }
 
 addin_lint_package <- function() {
