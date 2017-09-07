@@ -1,5 +1,5 @@
 addin_lint <- function() {
-  filename <- rstudioapi::getActiveDocumentContext()
+  filename <- rstudioapi::getSourceEditorContext()
   if (filename$path == "") {
     return("Current source has no path. Please save before continue")
   }
@@ -7,7 +7,7 @@ addin_lint <- function() {
 }
 
 addin_lint_package <- function() {
-  project <- rstudioapi::getAciveProject()
+  project <- rstudioapi::getActiveProject()
   project_path <- if (is.null(project)) getwd() else project
 
   if (is.null(project)) message("No project found, passing current directory")
