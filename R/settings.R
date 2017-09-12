@@ -6,6 +6,7 @@
 #'   \item options defined as \code{linter.setting}.
 #'   \item \code{linter_file} in the same directory
 #'   \item \code{linter_file} in the project directory
+#'   \item \code{linter_file} in the user home directory
 #'   \item \code{\link{default_settings}}
 #' }
 #'
@@ -70,6 +71,14 @@ find_config <- function(filename) {
   ## next check for a file in the project directory
   project <- find_package(path)
   linter_config <- file.path(project, linter_file)
+  if (isTRUE(file.exists(linter_config))) {
+    return(linter_config)
+  }
+
+  ## next check for a file in the user directory
+  # cf: rstudio@bc9b6a5 SessionRSConnect.R#L32
+  home_dir <- Sys.getenv("HOME", unset = "~")
+  linter_config <- file.path(home_dir, linter_file)
   if (isTRUE(file.exists(linter_config))) {
     return(linter_config)
   }
