@@ -131,7 +131,7 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
 ## Project Configuration ##
 
 Lintr supports per-project configuration of the following fields.
-The config file (default file name: `.lintr`) is in [Debian Control Field Format](http://www.debian.org/doc/debian-policy/ch-controlfields.html).
+The config file (default file name: `.lintr`) is in [Debian Control Field Format](https://www.debian.org/doc/debian-policy/#document-ch-controlfields).
 
 - `linters` - see `?with_defaults` for example of specifying only a few non-default linters.
 - `exclusions` - a list of filenames to exclude from linting.  You can use a
