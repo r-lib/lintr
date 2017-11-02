@@ -141,3 +141,16 @@ as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) {
   attributes(x) <- attrs
   x
 }
+
+#' @export
+summary.lints <- function(object, ...) {
+  filenames <- vapply(object, `[[`, character(1), "filename")
+  types <- factor(vapply(object, `[[`, character(1), "type"),
+    levels = c("style", "warning", "error"))
+  tbl <- table(filenames, types)
+  filenames <- rownames(tbl)
+  res <- as.data.frame.matrix(tbl, stringsAsFactors = FALSE, row.names = NULL)
+  res$filenames <- filenames %||% character()
+  nms <- colnames(res)
+  res[order(res$filenames), c("filenames", nms[nms != "filenames"])]
+}
