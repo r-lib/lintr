@@ -7,8 +7,22 @@
 ![lintr](http://i.imgur.com/acV27NV.gif "lintr")
 
 ### RStudio ###
-lintr lints are automatically displayed in the RStudio Marker pane, Rstudio versions (> v0.99.206).
+lintr lints are automatically displayed in the RStudio Markers pane, Rstudio versions (> v0.99.206).
 ![RStudio Example](http://i.imgur.com/PIKnpbn.png "Rstudio Example")
+
+#### Installation ####
+Install lintr, type `install.packages("lintr")` in the Console.
+
+In order to show the "Markers" pane in RStudio:
+Menu "Tools" -> "Global Options...", a window with title "Options" will pop up. In that window: Click "Code" on the left; Click "Diagnostics" tab; check "Show diagnostics for R".
+
+To lint a source file `test.R` type in the Console `lintr::lint("test.R")` and look at the result in the "Markers" pane.
+
+This package also includes two addins for linting the current source and package.
+To bind the addin to a keyboard shortcut navigate to Tools > addins > 
+Browse Addins > Keyboard Shortcuts. It's recommended to use Alt+Shift+L for
+linting the current source code and Ctrl+Shift+Alt+L to code the package.
+These are easy to remember as you are Alt+Shift+L(int) ;)
 
 ### Emacs ###
 lintr has [built-in integration](http://www.flycheck.org/en/latest/languages.html#r) with [flycheck](https://github.com/flycheck/flycheck) versions greater than `0.23`.
@@ -131,7 +145,7 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
 ## Project Configuration ##
 
 Lintr supports per-project configuration of the following fields.
-The config file (default file name: `.lintr`) is in [Debian Control Field Format](http://www.debian.org/doc/debian-policy/ch-controlfields.html).
+The config file (default file name: `.lintr`) is in [Debian Control Field Format](https://www.debian.org/doc/debian-policy/#document-ch-controlfields).
 
 - `linters` - see `?with_defaults` for example of specifying only a few non-default linters.
 - `exclusions` - a list of filenames to exclude from linting.  You can use a

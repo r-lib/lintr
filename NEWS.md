@@ -1,4 +1,6 @@
 # lintr 1.0.1.9001 #
+* Fixed crash caused by ambiguous cache file paths (#212, @fangly).
+* RStudio addins to lint current source and project (fixes #264, @JhossePaul)
 * Export expect_lint() (#178, #210)
 * Added proper handling of tab characters (fixes #44, @fangly)
 * Fix line number sometimes wrongly reported by no_tab_linter() (#134, @fangly)

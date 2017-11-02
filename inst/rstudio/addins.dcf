@@ -1,0 +1,9 @@
+Name: Lint current file
+Description: Runs lintr::lint on the current file
+Binding: addin_lint
+Interative: false
+
+Name: Lint current package
+Description: Runs lintr::lint_package
+Binding: addin_lint_package
+Interative: false
