@@ -1,5 +1,6 @@
 #' @import rex
 #' @importFrom utils tail
+#' @include utils.R
 NULL
 
 # need to register rex shortcuts as globals to avoid CRAN check errors

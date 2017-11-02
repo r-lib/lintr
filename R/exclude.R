@@ -19,17 +19,14 @@ exclude <- function(lints, exclusions = settings$exclusions, ...) {
   df <- as.data.frame(lints)
 
   filenames <- unique(df$filename)
-
   source_exclusions <- lapply(filenames, parse_exclusions, ...)
   names(source_exclusions) <- filenames
 
-  exclusions <- normalize_exclusions(c(source_exclusions, exclusions))
 
-  to_exclude <- vapply(seq_len(NROW(df)),
+  exclusions <- normalize_exclusions(c(source_exclusions, exclusions))
+  to_exclude <- vapply(seq_len(nrow(df)),
     function(i) {
       file <- df$filename[i]
-
-
       file %in% names(exclusions) &&
         exclusions[[file]] == Inf ||
         df$line_number[i] %in% exclusions[[file]]

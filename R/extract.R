@@ -37,11 +37,8 @@ extract_r_source <- function(filename, lines) {
   replace_prefix(output, pattern$chunk.code)
 }
 
-detect_pattern <- get("detect_pattern", asNamespace("knitr"))
-file_ext <- get("file_ext", asNamespace("knitr"))
-
 get_knitr_pattern <- function(filename, lines) {
-  pattern <- detect_pattern(lines, tolower(file_ext(filename)))
+  pattern <- ("knitr" %:::% "detect_pattern")(lines, tolower( ("knitr" %:::% "file_ext")(filename)))
   if (!is.null(pattern)) {
     knitr::all_patterns[[pattern]]
   } else {

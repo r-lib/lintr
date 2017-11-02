@@ -7,7 +7,7 @@ object_usage_linter <-  function(source_file) {
 
   pkg_name <- pkg_name(find_package(dirname(source_file$filename)))
   if (!is.null(pkg_name)) {
-    parent_env <- try(getNamespace(pkg_name), silent = TRUE)
+    parent_env <- try_silently(getNamespace(pkg_name))
   }
   if (is.null(pkg_name) || inherits(parent_env, "try-error")) {
     parent_env <- globalenv()
@@ -21,7 +21,7 @@ object_usage_linter <-  function(source_file) {
   mapply(assign, globals, MoreArgs = list(value = function(...) NULL, envir = env))
 
   # add file locals to the environment
-  try(eval(source_file$parsed_content, envir = env), silent = TRUE)
+  try_silently(eval(source_file$parsed_content, envir = env))
 
   all_globals <- unique(recursive_ls(env))
 
@@ -36,62 +36,61 @@ object_usage_linter <-  function(source_file) {
         return(NULL)
       }
 
-      suppressWarnings(
-        suppressMessages(
-          fun <- try(eval(
+      fun <- try_silently(eval(
               parse(
                 text = source_file$content,
                 keep.source = TRUE
                 ),
-              envir = env), silent = TRUE)
-        )
-      )
+              envir = env))
 
-      if (!inherits(fun, "try-error")) {
-        res <- parse_check_usage(fun)
+      if (inherits(fun, "try-error")) {
+        return()
+      }
 
-        locals <- codetools::findFuncLocals(formals(fun), body(fun))
+      res <- parse_check_usage(fun)
 
-        both <- c(locals, names(formals(fun)), all_globals)
+      locals <- codetools::findFuncLocals(formals(fun), body(fun))
 
-        lapply(which(!is.na(res$message)),
-          function(row_num) {
-            row <- res[row_num, ]
+      both <- c(locals, names(formals(fun)), all_globals)
 
-            # if a no visible binding message suggest an alternative
-            if (re_matches(row$message,
-                rex("no visible"))) {
+      lapply(which(!is.na(res$message)),
+        function(row_num) {
+          row <- res[row_num, ]
 
-              suggestion <- try(both[stringdist::amatch(row$name, both, maxDist = 2)], silent = TRUE)
+          # if a no visible binding message suggest an alternative
+          if (re_matches(row$message,
+              rex("no visible"))) {
 
-              if (!inherits(suggestion, "try-error") && !is.na(suggestion)) {
-                row$message <- paste0(row$message, ", Did you mean '", suggestion, "'?")
-              }
+            suggestion <- try_silently(both[stringdist::amatch(row$name, both, maxDist = 2)])
 
+            if (!inherits(suggestion, "try-error") && !is.na(suggestion)) {
+              row$message <- paste0(row$message, ", Did you mean '", suggestion, "'?")
             }
 
-            org_line_num <- as.integer(row$line_number) + as.integer(names(source_file$lines)[1]) - 1L
+          }
 
-            line <- source_file$lines[as.character(org_line_num)]
+          org_line_num <- as.integer(row$line_number) + as.integer(names(source_file$lines)[1]) - 1L
 
-            row$name <- re_substitutes(row$name, rex("<-"), "")
+          line <- source_file$lines[as.character(org_line_num)]
 
-            location <- re_matches(line,
-              rex(row$name),
-              locations = TRUE)
+          row$name <- re_substitutes(row$name, rex("<-"), "")
 
-            Lint(
-              filename = source_file$filename,
-              line_number = org_line_num,
-              column_number = location$start,
-              type = "warning",
-              message = row$message,
-              line = line,
-              ranges = list(c(location$start, location$end)),
-              linter = "object_usage_linter"
-              )
-          })
-      }
+          location <- re_matches(line,
+            rex(row$name),
+            locations = TRUE)
+
+          Lint(
+            filename = source_file$filename,
+            line_number = org_line_num,
+            column_number = location$start,
+            type = "warning",
+            message = row$message,
+            line = line,
+            ranges = list(c(location$start, location$end)),
+            linter = "object_usage_linter"
+            )
+        })
+
     })
 }
 

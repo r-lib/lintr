@@ -1,71 +1,63 @@
-# Setup
+# Platform
 
-## Platform
+|field    |value                                       |
+|:--------|:-------------------------------------------|
+|version  |R version 3.4.1 Patched (2017-08-06 r73048) |
+|os       |macOS Sierra 10.12.6                        |
+|system   |x86_64, darwin15.6.0                        |
+|ui       |X11                                         |
+|language |(EN)                                        |
+|collate  |en_US.UTF-8                                 |
+|tz       |America/New_York                            |
+|date     |2017-08-10                                  |
 
-|setting  |value                        |
-|:--------|:----------------------------|
-|version  |R version 3.2.4 (2016-03-10) |
-|system   |x86_64, darwin13.4.0         |
-|ui       |X11                          |
-|language |(EN)                         |
-|collate  |en_US.UTF-8                  |
-|tz       |America/New_York             |
-|date     |2016-04-15                   |
+# Dependencies
 
-## Packages
+|package    |old     |new     |Δ  |
+|:----------|:-------|:-------|:--|
+|lintr      |1.0.0   |1.0.1   |*  |
+|crayon     |1.3.2   |1.3.2   |   |
+|curl       |NA      |2.8.1   |*  |
+|evaluate   |NA      |0.10.1  |*  |
+|igraph     |1.1.2   |1.1.2   |   |
+|irlba      |2.2.1   |2.2.1   |   |
+|jsonlite   |NA      |1.5     |*  |
+|pkgconfig  |2.0.1   |2.0.1   |   |
+|R6         |NA      |2.2.2   |*  |
+|stringdist |0.9.4.6 |0.9.4.6 |   |
 
-|package |*  |version |date       |source                  |
-|:-------|:--|:-------|:----------|:-----------------------|
-|lintr   |*  |1.0.0   |2016-04-15 |local (jimhester/lintr) |
+# Revdeps
 
-# Check results
-6 packages
+## All (28)
 
-## caretEnsemble (2.0.0)
-Maintainer: Zachary A. Deane-Mayer <zach.mayer@gmail.com>  
-Bug reports: https://github.com/zachmayer/caretEnsemble/issues
-
-0 errors | 0 warnings | 0 notes
-
-## describer (0.2.0)
-Maintainer: Paul Hendricks <paul.hendricks.2013@owu.edu>  
-Bug reports: https://github.com/paulhendricks/describer/issues
-
-0 errors | 0 warnings | 0 notes
-
-## devtools (1.11.0)
-Maintainer: Hadley Wickham <hadley@rstudio.com>  
-Bug reports: https://github.com/hadley/devtools/issues
-
-0 errors | 0 warnings | 0 notes
-
-## ggthemes (3.0.3)
-Maintainer: Jeffrey B. Arnold <jeffrey.arnold@gmail.com>  
-Bug reports: http://github.com/jrnold/ggthemes
-
-0 errors | 0 warnings | 0 notes
-
-## rex (1.1.1)
-Maintainer: Jim Hester <james.f.hester@gmail.com>  
-Bug reports: https://github.com/kevinushey/rex/issues
-
-0 errors | 0 warnings | 0 notes
-
-## spaero (0.1.0)
-Maintainer: Eamon O'Dea <odea35@gmail.com>
-
-0 errors | 0 warnings | 1 note 
-
-```
-checking re-building of vignette outputs ... NOTE
-Error in re-building vignettes:
-  ...
-pandoc-citeproc: Error in $[0][15]: The key "SoftBreak" was not found
-pandoc: Error running filter /usr/local/bin/pandoc-citeproc
-Filter returned error status 1
-Error: processing vignette 'spaero-introduction.Rmd' failed with diagnostics:
-pandoc document conversion failed with error 83
-Execution halted
-
-```
+|package                                        |version |error |warning |note |
+|:----------------------------------------------|:-------|:-----|:-------|:----|
+|[biolink](problems.md#biolink)                 |0.1.2   |-1    |        |1    |
+|BTYDplus                                       |1.0.1   |      |        |     |
+|caretEnsemble                                  |2.0.0   |      |        |     |
+|[CoGAPS](problems.md#cogaps)                   |2.10.0  |      |1       |1    |
+|dat                                            |0.3.0   |-1    |        |     |
+|datarobot                                      |2.6.0   |      |        |     |
+|[datastructures](problems.md#datastructures)   |0.2.0   |      |        |1    |
+|[DBItest](problems.md#dbitest)                 |1.5     |      |        |1    |
+|describer                                      |0.2.0   |-1    |        |     |
+|devtools                                       |1.13.3  |      |        |     |
+|[diffusr](problems.md#diffusr)                 |0.1.1   |      |        |1    |
+|[easyml](problems.md#easyml)                   |0.1.0   |      |        |1    |
+|edpclient                                      |0.1.0   |      |        |     |
+|[geofacet](problems.md#geofacet)               |0.1.5   |-1    |        |1    |
+|[ggfortify](problems.md#ggfortify)             |0.4.1   |2     |        |1    |
+|[ggthemes](problems.md#ggthemes)               |3.4.0   |      |        |1    |
+|jwutil                                         |1.1.1   |-1    |        |     |
+|mimager                                        |1.0.0   |-1    |        |     |
+|modules                                        |0.6.0   |-1    |        |     |
+|[netReg](problems.md#netreg)                   |1.0.1   |      |        |1    |
+|opencage                                       |0.1.2   |      |        |     |
+|[Plasmidprofiler](problems.md#plasmidprofiler) |0.1.6   |1     |        |     |
+|[rbokeh](problems.md#rbokeh)                   |0.5.0   |      |        |2    |
+|rex                                            |1.1.1   |      |        |     |
+|[rodham](problems.md#rodham)                   |0.1.1   |      |        |2    |
+|ropenaq                                        |0.2.2   |      |        |     |
+|tuber                                          |0.9.0   |-1    |        |     |
+|virustotal                                     |0.2.1   |-1    |        |     |
 
