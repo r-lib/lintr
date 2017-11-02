@@ -1,7 +1,7 @@
 
 #' Read lintr settings
 #'
-#' Lintr searches for settings for a given file in the following order.
+#' Lintr searches for settings for a given source file in the following order.
 #' \enumerate{
 #'   \item options defined as \code{linter.setting}.
 #'   \item \code{linter_file} in the same directory
@@ -10,7 +10,7 @@
 #' }
 #'
 #' The default linter_file name is \code{.lintr} but it can be changed with option
-#' \code{lintr.linter_file}.  This file is a dcf file, see \code{\link{read.dcf}} for details.
+#' \code{lintr.linter_file}.  This file is a dcf file, see \code{\link[base]{read.dcf}} for details.
 #' @param filename source file to be linted
 read_settings <- function(filename) {
   clear_settings()
@@ -55,11 +55,12 @@ find_config <- function(filename) {
   }
   linter_file <- getOption("lintr.linter_file")
 
-  if (!is_directory(filename)) {
-    path <- dirname(filename)
+  path <- if (is_directory(filename)) {
+    filename
   } else {
-    path <- filename
+    dirname(filename)
   }
+
   ## check for a file in the current directory
   linter_config <- file.path(path, linter_file)
   if (isTRUE(file.exists(linter_config))) {
@@ -73,7 +74,7 @@ find_config <- function(filename) {
     return(linter_config)
   }
 
-  return(NULL)
+  NULL
 }
 
 is_directory <- function(filename) {

@@ -8,10 +8,10 @@
 #' @include object_name_linters.R
 NULL
 
-lintr_deprecated <- function(old, new, version) {
+lintr_deprecated <- function(old, new, version, type="Function") {
   msg <- sprintf(
-    "'%s' was deprecated in lintr version %s. Use '%s' instead. See help(\"lintr-deprecated\").",
-    old, version, new)
+    "%s '%s' was deprecated in lintr version %s. Use '%s' instead. See help(\"lintr-deprecated\").",
+    type, old, version, new)
   warning(msg, call. = FALSE, domain = NA)
 }
 
