@@ -1,4 +1,5 @@
 # lintr 1.0.1.9001 #
+* Config files are now also searched for in the users' home directory (#266, @randy3k)
 * Fixed crash caused by ambiguous cache file paths (#212, @fangly).
 * RStudio addins to lint current source and project (fixes #264, @JhossePaul)
 * Export expect_lint() (#178, #210)
