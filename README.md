@@ -18,6 +18,11 @@ Menu "Tools" -> "Global Options...", a window with title "Options" will pop up. 
 
 To lint a source file `test.R` type in the Console `lintr::lint("test.R")` and look at the result in the "Markers" pane.
 
+This package also includes two addins for linting the current source and package.
+To bind the addin to a keyboard shortcut navigate to Tools > addins > 
+Browse Addins > Keyboard Shortcuts. It's recommended to use Alt+Shift+L for
+linting the current source code and Ctrl+Shift+Alt+L to code the package.
+These are easy to remember as you are Alt+Shift+L(int) ;)
 
 ### Emacs ###
 lintr has [built-in integration](http://www.flycheck.org/en/latest/languages.html#r) with [flycheck](https://github.com/flycheck/flycheck) versions greater than `0.23`.
@@ -140,7 +145,7 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
 ## Project Configuration ##
 
 Lintr supports per-project configuration of the following fields.
-The config file (default file name: `.lintr`) is in [Debian Control Field Format](http://www.debian.org/doc/debian-policy/ch-controlfields.html).
+The config file (default file name: `.lintr`) is in [Debian Control Field Format](https://www.debian.org/doc/debian-policy/#document-ch-controlfields).
 
 - `linters` - see `?with_defaults` for example of specifying only a few non-default linters.
 - `exclusions` - a list of filenames to exclude from linting.  You can use a

@@ -40,6 +40,7 @@ Collate:
     'T_and_F_symbol_linter.R'
     'utils.R'
     'aaa.R'
+    'addins.R'
     'assignment_linter.R'
     'cache.R'
     'closed_curly_linter.R'
