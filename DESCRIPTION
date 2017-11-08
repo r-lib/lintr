@@ -1,6 +1,6 @@
 Package: lintr
 Title: A 'Linter' for R Code
-Version: 1.0.1
+Version: 1.0.2
 Authors@R: person("Jim", "Hester", email = "james.f.hester@gmail.com", role = c("aut", "cre"))
 URL: https://github.com/jimhester/lintr
 BugReports: https://github.com/jimhester/lintr/issues
