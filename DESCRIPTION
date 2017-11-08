@@ -24,7 +24,8 @@ Imports:
     stats,
     utils
 Suggests:
-    rmarkdown
+    rmarkdown,
+    mockery
 License: MIT + file LICENSE
 LazyData: true
 VignetteBuilder: knitr

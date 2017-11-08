@@ -1,21 +1,17 @@
 context("clear_cache")
 test_that("it calls unlink with the filename if given a file", {
-  with_mock(
-    `lintr::read_settings` = function(...) invisible(...),
-    `base::unlink` = function(...) return(list(...)),
+  mockery::stub(clear_cache, "read_settings", function(...) invisible(...))
+  mockery::stub(clear_cache, "unlink", function(...) list(...))
 
-    expect_equal(clear_cache(file = "file", path = "."), list(file.path(".", "file"))),
+  expect_equal(clear_cache(file = "file", path = "."), list(file.path(".", "file")))
 
-    expect_equal(clear_cache(file = "R/file", path = "."), list(file.path(".", "file")))
-  )
+  expect_equal(clear_cache(file = "R/file", path = "."), list(file.path(".", "file")))
 })
 test_that("it calls unlink with the directory if given a file", {
-  with_mock(
-    `lintr::read_settings` = function(...) invisible(...),
-    `base::unlink` = function(...) return(list(...)),
+  mockery::stub(clear_cache, "read_settings", function(...) invisible(...))
+  mockery::stub(clear_cache, "unlink", function(...) list(...))
 
-    expect_equal(clear_cache(file = NULL, path = "."), list(".", recursive = TRUE))
-  )
+  expect_equal(clear_cache(file = NULL, path = "."), list(".", recursive = TRUE))
 })
 
 context("load_cache")
