@@ -51,6 +51,8 @@
 * Add `function_left_parentheses_linter` to check that there is no space between
   a function name and its left parentheses (#204, @jrnold).
 * Implement `summary.lints()` (#260, #262, @wlandau).
+* Changed `lint_package` to remove fully excluded files as soon as possible to
+  avoid reading and pre-processing of ignored files (@mwaldstein)
 
 # lintr 1.0.1 #
 * bugfix to work with knitr 1.16.7
