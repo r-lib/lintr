@@ -155,7 +155,6 @@ lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = NUL
   on.exit(clear_settings, add = TRUE)
 
   exclusions <- normalize_exclusions(c(exclusions, settings$exclusions), FALSE)
-  names(exclusions) <- file.path(path, names(exclusions))
 
   files <- dir(
     path = file.path(path,
@@ -167,6 +166,15 @@ lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = NUL
     recursive = TRUE,
     full.names = TRUE
   )
+
+  # Remove fully ignored files to avoid reading & parsing
+  to_exclude <- vapply(seq_len(length(files)),
+    function(i) {
+      file <- files[i]
+      file %in% names(exclusions) && exclusions[[file]] == Inf
+     },
+    logical(1))
+  files <- files[!to_exclude]
 
   lints <- flatten_lints(lapply(files,
       function(file) {
