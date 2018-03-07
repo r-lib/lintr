@@ -85,6 +85,7 @@
 * Permit single quotes if they quote literal double quotes (#28, @jackwasey)
 * # nolint comments are respected with caching (#68, @krlmlr)
 * Properly handle all knitr document formats
+* Allow for (( when linting (#259, @nathaneastwood)
 
 # lintr 0.2.0 #
 
