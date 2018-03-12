@@ -86,6 +86,7 @@
 * # nolint comments are respected with caching (#68, @krlmlr)
 * Properly handle all knitr document formats
 * Allow for (( when linting (#259, @nathaneastwood)
+* Remove ^ from infix spaces to conform with tidyverse. (#302, @nathaneastwood)
 
 # lintr 0.2.0 #
 
