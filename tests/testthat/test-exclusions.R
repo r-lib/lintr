@@ -97,6 +97,9 @@ a <- tempfile()
 b <- tempfile()
 c <- tempfile(tmpdir=".")
 file.create(a, b, c)
+a <- normalizePath(a)
+b <- normalizePath(b)
+c <- normalizePath(c)
 
 test_that("it merges two NULL or empty objects as an empty list", {
   expect_equal(normalize_exclusions(c(NULL, NULL)), list())

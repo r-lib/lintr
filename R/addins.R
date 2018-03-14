@@ -4,7 +4,7 @@ addin_lint <- function() {
     return("Current source has no path. Please save before continue")
   }
 
-  config_file <- lintr:::find_config(filename$path)
+  config_file <- (get("find_config", asNamespace("lintr")))(filename$path)
   if (length(config_file) == 0) {
     config_linters <- NULL
   } else {

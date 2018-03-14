@@ -208,6 +208,9 @@ lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = NUL
 find_package <- function(path = getwd()) {
   start_path <- getwd()
   on.exit(setwd(start_path))
+  if (!file.exists(path)) {
+    return(NULL)
+  }
   setwd(path)
 
   prev_path <- ""
