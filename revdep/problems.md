@@ -2,30 +2,6 @@
 
 Version: 0.1.2
 
-## Newly fixed
-
-*   checking tests ...
-    ```
-     ERROR
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-         })
-      9: FUN(X[[i]], ...)
-      10: lint(file, ..., parse_settings = FALSE)
-      11: get_source_expressions(filename)
-      12: extract_r_source(source_file$filename, source_file$lines)
-      13: get_knitr_pattern(filename, lines)
-      14: detect_pattern(lines, tolower(file_ext(filename)))
-      15: grep(pat, text)
-      
-      testthat results ================================================================
-      OK: 116 SKIPPED: 0 FAILED: 1
-      1. Error: Package Style (@test-style.r#4) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
 ## In both
 
 *   checking dependencies in R code ... NOTE
@@ -34,37 +10,29 @@ Version: 0.1.2
       All declared Imports should be used.
     ```
 
+# BTYDplus
+
+Version: 1.0.1
+
+## In both
+
+*   R CMD check timed out
+    
+
+# caretEnsemble
+
+Version: 2.0.0
+
+## In both
+
+*   R CMD check timed out
+    
+
 # CoGAPS
 
 Version: 2.10.0
 
 ## In both
-
-*   checking whether package ‘CoGAPS’ can be installed ... WARNING
-    ```
-    ...
-      GibbsSampler-update.cpp:602:18: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      GibbsSampler-update.cpp:604:14: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      GibbsSampler-update.cpp:721:46: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      GibbsSampler-update.cpp:722:46: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      GibbsSampler-update.cpp:778:18: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      GibbsSampler-update.cpp:780:14: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      GibbsSampler-update.cpp:1009:54: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      GibbsSampler-update.cpp:1010:54: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      GibbsSampler-update.cpp:1103:46: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      GibbsSampler-update.cpp:1104:46: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      cogapsmaptestR.cpp:177:27: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      cogapsmaptestR.cpp:179:27: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      cogapsmaptestR.cpp:181:27: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      cogapsmaptestR.cpp:183:27: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      cogapsmaptestR.cpp:528:18: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      cogapstestR.cpp:159:27: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      cogapstestR.cpp:161:27: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      cogapstestR.cpp:163:27: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      cogapstestR.cpp:165:27: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-      cogapstestR.cpp:532:18: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-    See ‘.../revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00install.out’ for details.
-    ```
 
 *   checking R code for possible problems ... NOTE
     ```
@@ -92,6 +60,46 @@ Version: 2.10.0
       BySet Samples i value
     ```
 
+# dat
+
+Version: 0.3.0
+
+## In both
+
+*   checking tests ...
+    ```
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      tests/testthat/test-open_curly_linter.R:30:1: style: lines should not be more than 100 characters.
+          rex("Opening curly braces should never go on their own line and should always be followed by a new line."),
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      tests/testthat/test-open_curly_linter.R:34:1: style: lines should not be more than 100 characters.
+          rex("Opening curly braces should never go on their own line and should always be followed by a new line."),
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      
+      
+      testthat results ================================================================
+      OK: 108 SKIPPED: 0 FAILED: 1
+      1. Failure: Package Style (@test-lintr.R#5) 
+      
+      Error: testthat unit tests failed
+      Execution halted
+    ```
+
+# datarobot
+
+Version: 2.7.1
+
+## In both
+
+*   checking dependencies in R code ... NOTE
+    ```
+    Namespace in Imports field not imported from: ‘curl’
+      All declared Imports should be used.
+    ```
+
 # datastructures
 
 Version: 0.2.0
@@ -100,10 +108,10 @@ Version: 0.2.0
 
 *   checking installed package size ... NOTE
     ```
-      installed size is 19.7Mb
+      installed size is  5.9Mb
       sub-directories of 1Mb or more:
         doc    1.2Mb
-        libs  17.4Mb
+        libs   3.7Mb
     ```
 
 # DBItest
@@ -120,7 +128,7 @@ Version: 1.5
 
 # diffusr
 
-Version: 0.1.1
+Version: 0.1.2
 
 ## In both
 
@@ -143,35 +151,61 @@ Version: 0.1.0
       All declared Imports should be used.
     ```
 
-# geofacet
+# edpclient
 
-Version: 0.1.5
+Version: 0.2.0
 
-## Newly fixed
+## In both
 
 *   checking tests ...
     ```
      ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
-         })
-      9: FUN(X[[i]], ...)
-      10: lint(file, ..., parse_settings = FALSE)
-      11: get_source_expressions(filename)
-      12: extract_r_source(source_file$filename, source_file$lines)
-      13: get_knitr_pattern(filename, lines)
-      14: detect_pattern(lines, tolower(file_ext(filename)))
-      15: grep(pat, text)
-      
       testthat results ================================================================
-      OK: 14 SKIPPED: 0 FAILED: 1
-      1. Error: package Style (@test-zzz-lintr.R#5) 
+      OK: 55 SKIPPED: 1 FAILED: 16
+      1. Failure: source lints (@test_lint.R#7) 
+      2. Error: populations can be listed (@test_population.R#3) 
+      3. Error: population object utilities work (@test_population.R#12) 
+      4. Error: population model object utilities work (@test_population.R#22) 
+      5. Error: population models on a population can be listed (@test_population.R#35) 
+      6. Error: we can find the latest population model (@test_population.R#43) 
+      7. Error: basic edp_session operations work (@test_session.R#3) 
+      8. Error: we can work with population models (@test_session.R#11) 
+      9. Error: we can select from yaxcatpeople (@test_session.R#24) 
+      1. ...
       
       Error: testthat unit tests failed
       Execution halted
     ```
 
+# geofacet
+
+Version: 0.1.5
+
 ## In both
+
+*   checking tests ...
+    ```
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+         ^
+      inst/example/bad.R:9:5: style: Trailing whitespace is superfluous.
+        5}  
+          ^~
+      inst/example/bad.R:10:1: error: unexpected end of input
+      {
+      ^
+      
+      
+      testthat results ================================================================
+      OK: 14 SKIPPED: 0 FAILED: 1
+      1. Failure: package Style (@test-zzz-lintr.R#5) 
+      
+      Error: testthat unit tests failed
+      Execution halted
+    ```
 
 *   checking data for non-ASCII characters ... NOTE
     ```
@@ -205,18 +239,18 @@ Version: 0.4.1
      ERROR
     Running the tests in ‘tests/test-all.R’ failed.
     Last 13 lines of output:
-      8: eval_bare(dot$expr, dot$env)
-      9: lapply(seq(1:lags), .lag)
-      10: FUN(X[[i]], ...)
-      11: as.vector(lag(ts, k)) at .../revdep/checks/ggfortify/new/ggfortify.Rcheck/00_pkg_src/ggfortify/R/tslib.R:336
       12: lag(ts, k)
       13: bad_args("x", "must be a vector, not a ts object, do you want `stats::lag()`?")
       14: glubort(fmt_args(args), ..., .envir = .envir)
       15: .abort(text)
       
       testthat results ================================================================
-      OK: 1442 SKIPPED: 9 FAILED: 1
-      1. Error: gglagplot (@test-tslib.R#103) 
+      OK: 1617 SKIPPED: 0 FAILED: 5
+      1. Failure: autoplot.aareg works for lung (@test-surv.R#220) 
+      2. Failure: autoplot.aareg works for lung (@test-surv.R#221) 
+      3. Failure: autoplot.aareg works for lung (@test-surv.R#222) 
+      4. Failure: autoplot.aareg works for lung (@test-surv.R#223) 
+      5. Error: gglagplot (@test-tslib.R#103) 
       
       Error: testthat unit tests failed
       Execution halted
@@ -240,6 +274,34 @@ Version: 3.4.0
     Package unavailable to check Rd xrefs: ‘latticeExtra’
     ```
 
+# modules
+
+Version: 0.6.0
+
+## In both
+
+*   checking tests ...
+    ```
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      tests/testthat/test-open_curly_linter.R:30:1: style: lines should not be more than 100 characters.
+          rex("Opening curly braces should never go on their own line and should always be followed by a new line."),
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      tests/testthat/test-open_curly_linter.R:34:1: style: lines should not be more than 100 characters.
+          rex("Opening curly braces should never go on their own line and should always be followed by a new line."),
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      
+      
+      testthat results ================================================================
+      OK: 62 SKIPPED: 0 FAILED: 1
+      1. Failure: Package Style (@test-lintr.R#3) 
+      
+      Error: testthat unit tests failed
+      Execution halted
+    ```
+
 # netReg
 
 Version: 1.0.1
@@ -248,40 +310,47 @@ Version: 1.0.1
 
 *   checking installed package size ... NOTE
     ```
-      installed size is 66.0Mb
+      installed size is 65.5Mb
       sub-directories of 1Mb or more:
         include  64.8Mb
     ```
 
-# Plasmidprofiler
+# opencage
 
-Version: 0.1.6
+Version: 0.1.2
 
 ## In both
 
-*   checking examples ... ERROR
+*   checking tests ...
     ```
-    ...
-    > ### Name: zetner_score
-    > ### Title: Adds the Zetner Score column to report
-    > ### Aliases: zetner_score
-    > 
-    > ### ** Examples
-    > 
-    > ## Not run: 
-    > ##D zetner_score(report)
-    > ## End(Not run)
-    > 
-    > 
-    > 
-    > ### * <FOOTER>
-    > ###
-    > options(digits = 7L)
-    > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-    Time elapsed:  10.307 0.181 13.31 0.518 0.067 
-    > grDevices::dev.off()
-    Error in grDevices::dev.off() : 
-      cannot shut down device 1 (the null device)
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      3: `_f`(placename = placename, key = key, bounds = bounds, countrycode = countrycode, 
+             language = language, limit = limit, min_confidence = min_confidence, no_annotations = no_annotations, 
+             no_dedupe = no_dedupe, no_record = no_record, abbrv = abbrv)
+      4: opencage_check(temp) at .../revdep/checks/opencage/new/opencage.Rcheck/00_pkg_src/opencage/R/forward_geocoding.R:44
+      5: stop("HTTP failure: ", req$status_code, "\n", message, call. = FALSE) at .../revdep/checks/opencage/new/opencage.Rcheck/00_pkg_src/opencage/R/utils.R:5
+      
+      testthat results ================================================================
+      OK: 23 SKIPPED: 0 FAILED: 4
+      1. Error: opencage_parse returns what it should for both functions (@test-opencage_parse.R#6) 
+      2. Error: opencage_parse returns what it should for both functions with several parameters (@test-opencage_parse.R#40) 
+      3. Error: opencage_parse deals well with resuls being NULL (@test-opencage_parse.R#72) 
+      4. Error: the bounds argument is well taken into account (@test-opencage_parse.R#86) 
+      
+      Error: testthat unit tests failed
+      Execution halted
+    ```
+
+*   checking re-building of vignette outputs ... WARNING
+    ```
+    Error in re-building vignettes:
+      ...
+    Quitting from lines 41-47 (opencage.Rmd) 
+    Error: processing vignette 'opencage.Rmd' failed with diagnostics:
+    HTTP failure: 403
+    Invalid or missing api key (forbidden)
     Execution halted
     ```
 
@@ -317,5 +386,110 @@ Version: 0.1.1
 *   checking data for non-ASCII characters ... NOTE
     ```
       Note: found 59 marked UTF-8 strings
+    ```
+
+# ropenaq
+
+Version: 0.2.2
+
+## In both
+
+*   checking tests ...
+    ```
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      uh oh, the OpenAQ API seems to be having some issues, try again later
+      1: aq_measurements(page = 1, limit = 10, city = "Chennai") at testthat/test-measurements.R:31
+      2: getResults(urlAQ, argsList) at .../revdep/checks/ropenaq/new/ropenaq.Rcheck/00_pkg_src/ropenaq/R/measurements.R:104
+      3: getResults_bypage(urlAQ, argsList) at .../revdep/checks/ropenaq/new/ropenaq.Rcheck/00_pkg_src/ropenaq/R/utils.R:218
+      4: stop("uh oh, the OpenAQ API seems to be having some issues, try again later") at .../revdep/checks/ropenaq/new/ropenaq.Rcheck/00_pkg_src/ropenaq/R/utils.R:237
+      
+      testthat results ================================================================
+      OK: 75 SKIPPED: 0 FAILED: 4
+      1. Error: Queries work with spaces and accents (@test-buildQueries.R#54) 
+      2. Error: The value_from and value_to arguments work as they should (@test-measurements.R#10) 
+      3. Error: measurements returns a data.frame (tbl_df) (@test-measurements.R#16) 
+      4. Error: measurements has the right columns (@test-measurements.R#31) 
+      
+      Error: testthat unit tests failed
+      Execution halted
+    ```
+
+*   checking re-building of vignette outputs ... WARNING
+    ```
+    Error in re-building vignettes:
+      ...
+    
+    Attaching package: 'dplyr'
+    
+    The following objects are masked from 'package:stats':
+    
+        filter, lag
+    
+    The following objects are masked from 'package:base':
+    
+        intersect, setdiff, setequal, union
+    
+    Quitting from lines 34-48 (using_openair_package_with_openaq_data.Rmd) 
+    Error: processing vignette 'using_openair_package_with_openaq_data.Rmd' failed with diagnostics:
+    uh oh, the OpenAQ API seems to be having some issues, try again later
+    Execution halted
+    ```
+
+# tuber
+
+Version: 0.9.1
+
+## In both
+
+*   checking tests ...
+    ```
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+         ^
+      inst/example/bad.R:9:5: style: Trailing whitespace is superfluous.
+        5}  
+          ^~
+      inst/example/bad.R:10:1: error: unexpected end of input
+      {
+      ^
+      
+      
+      testthat results ================================================================
+      OK: 4 SKIPPED: 0 FAILED: 1
+      1. Failure: Package Style (@test-pkg-style.R#5) 
+      
+      Error: testthat unit tests failed
+      Execution halted
+    ```
+
+# virustotal
+
+Version: 0.2.1
+
+## In both
+
+*   checking tests ...
+    ```
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      inst/example/bad.R:9:5: style: Trailing whitespace is superfluous.
+        5}  
+          ^~
+      inst/example/bad.R:10:1: error: unexpected end of input
+      {
+      ^
+      
+      
+      testthat results ================================================================
+      OK: 6 SKIPPED: 0 FAILED: 2
+      1. Error: can decrypt secrets and data structures verified (@test-data-structures.R#40) 
+      2. Failure: Package Style (@test-pkg-style.R#5) 
+      
+      Error: testthat unit tests failed
+      Execution halted
     ```
 
