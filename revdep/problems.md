@@ -63,31 +63,31 @@ Version: 2.10.0
       cogapstestR.cpp:163:27: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
       cogapstestR.cpp:165:27: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
       cogapstestR.cpp:532:18: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
-    See ‘/Users/jhester/Dropbox/projects/lintr/revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00install.out’ for details.
+    See ‘.../revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00install.out’ for details.
     ```
 
 *   checking R code for possible problems ... NOTE
     ```
     ...
-      (/Users/jhester/Dropbox/projects/lintr/revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00_pkg_src/CoGAPS/R/patternMatcher.R:122-124)
+      (.../revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00_pkg_src/CoGAPS/R/patternMatcher.R:122-124)
     patternMatcher : <anonymous>: no visible binding for global variable
       ‘Samples’
-      (/Users/jhester/Dropbox/projects/lintr/revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00_pkg_src/CoGAPS/R/patternMatcher.R:126-128)
+      (.../revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00_pkg_src/CoGAPS/R/patternMatcher.R:126-128)
     patternMatcher : <anonymous>: no visible binding for global variable
       ‘value’
-      (/Users/jhester/Dropbox/projects/lintr/revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00_pkg_src/CoGAPS/R/patternMatcher.R:126-128)
+      (.../revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00_pkg_src/CoGAPS/R/patternMatcher.R:126-128)
     patternMatcher : <anonymous>: no visible binding for global variable
       ‘BySet’
-      (/Users/jhester/Dropbox/projects/lintr/revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00_pkg_src/CoGAPS/R/patternMatcher.R:126-128)
+      (.../revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00_pkg_src/CoGAPS/R/patternMatcher.R:126-128)
     patternMatcher : <anonymous>: no visible binding for global variable
       ‘Samples’
-      (/Users/jhester/Dropbox/projects/lintr/revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00_pkg_src/CoGAPS/R/patternMatcher.R:130-132)
+      (.../revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00_pkg_src/CoGAPS/R/patternMatcher.R:130-132)
     patternMatcher : <anonymous>: no visible binding for global variable
       ‘value’
-      (/Users/jhester/Dropbox/projects/lintr/revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00_pkg_src/CoGAPS/R/patternMatcher.R:130-132)
+      (.../revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00_pkg_src/CoGAPS/R/patternMatcher.R:130-132)
     patternMatcher : <anonymous>: no visible binding for global variable
       ‘BySet’
-      (/Users/jhester/Dropbox/projects/lintr/revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00_pkg_src/CoGAPS/R/patternMatcher.R:130-132)
+      (.../revdep/checks/CoGAPS/new/CoGAPS.Rcheck/00_pkg_src/CoGAPS/R/patternMatcher.R:130-132)
     Undefined global functions or variables:
       BySet Samples i value
     ```
@@ -208,7 +208,7 @@ Version: 0.4.1
       8: eval_bare(dot$expr, dot$env)
       9: lapply(seq(1:lags), .lag)
       10: FUN(X[[i]], ...)
-      11: as.vector(lag(ts, k)) at /Users/jhester/Dropbox/projects/lintr/revdep/checks/ggfortify/new/ggfortify.Rcheck/00_pkg_src/ggfortify/R/tslib.R:336
+      11: as.vector(lag(ts, k)) at .../revdep/checks/ggfortify/new/ggfortify.Rcheck/00_pkg_src/ggfortify/R/tslib.R:336
       12: lag(ts, k)
       13: bad_args("x", "must be a vector, not a ts object, do you want `stats::lag()`?")
       14: glubort(fmt_args(args), ..., .envir = .envir)
