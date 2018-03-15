@@ -5,28 +5,24 @@ fhash <- function(filename) {
 context("clear_cache")
 
 test_that("it deletes the file if a file is given", {
-  with_mock(
-    `lintr::read_settings` = function(...) invisible(...),
-    `base::unlink` = function(...) list(...),
+  mockery::stub(clear_cache, "read_settings", function(...) invisible(...))
+  mockery::stub(clear_cache, "unlink", function(...) list(...))
 
-    e1 <- new.env(parent = emptyenv()),
-    d1 <- tempfile(pattern = "lintr_cache_"),
-    f1 <- "R/test.R",
-    save_cache(cache = e1, file = f1, path = d1),
+  e1 <- new.env(parent = emptyenv())
+  d1 <- tempfile(pattern = "lintr_cache_")
+  f1 <- "R/test.R"
+  save_cache(cache = e1, file = f1, path = d1)
 
-    want <- list(file.path(d1, fhash("R/test.R")), recursive = TRUE),
-    expect_equal(clear_cache(f1, d1), want),
-    expect_equal(clear_cache(file = f1, path = d1), want)
-  )
+  want <- list(file.path(d1, fhash("R/test.R")), recursive = TRUE)
+  expect_equal(clear_cache(f1, d1), want)
+  expect_equal(clear_cache(file = f1, path = d1), want)
 })
 
 test_that("it deletes the directory if no file is given", {
-  with_mock(
-    `lintr::read_settings` = function(...) invisible(...),
-    `base::unlink` = function(...) list(...),
+  mockery::stub(clear_cache, "read_settings", function(...) invisible(...))
+  mockery::stub(clear_cache, "unlink", function(...) list(...))
 
-    expect_equal(clear_cache(file = NULL, path = "."), list(".", recursive = TRUE))
-  )
+  expect_equal(clear_cache(file = NULL, path = "."), list(".", recursive = TRUE))
 })
 
 

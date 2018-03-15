@@ -39,10 +39,6 @@ test_that("returns the correct linting", {
 
   expect_lint("c(function(){})[1]()", NULL, spaces_left_parentheses_linter)
 
-  expect_lint("((1 + 1))",
-    rex("Place a space before left parenthesis, except in a function call."),
-    spaces_left_parentheses_linter)
-
   expect_lint("if(blah) { }",
     rex("Place a space before left parenthesis, except in a function call."),
     spaces_left_parentheses_linter)

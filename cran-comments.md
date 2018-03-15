@@ -1,5 +1,6 @@
 ## Comments
-This release fixes a WARNING caused by knitr 1.16.7.
+This is a patch release for compatibility with the upcoming testthat release,
+only changes are in test code from the previous release.
 
 ## Test environments
 * local OS X install, R 3.4.1-patched
@@ -13,6 +14,6 @@ This release fixes a WARNING caused by knitr 1.16.7.
 
 ## Reverse dependencies
 
-* I have run R CMD check on the 6 downstream dependencies.
+* I have run R CMD check on the 28 downstream dependencies.
   Summary at: https://github.com/jimhester/lintr/blob/master/revdep/
   There were no errors found.
