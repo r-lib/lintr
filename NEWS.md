@@ -53,6 +53,8 @@
 * Implement `summary.lints()` (#260, #262, @wlandau).
 * Changed `lint_package` to remove fully excluded files as soon as possible to
   avoid reading and pre-processing of ignored files (@mwaldstein)
+* Allow for any number of `#` to start a comment. Useful in ESS (#299, @prosoitos)
+
 # lintr 1.0.2 #
 * Fix tests to work with upcoming testthat release.
 
