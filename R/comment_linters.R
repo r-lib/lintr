@@ -28,7 +28,7 @@ ops <- list(
 #' @export
 commented_code_linter <- function(source_file) {
   res <- re_matches(source_file$file_lines,
-                    rex("#", any_spaces,
+                    rex(some_of("#"), any_spaces,
                         capture(name = "code",
                           # except("'"),
                           anything,
