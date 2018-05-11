@@ -71,15 +71,13 @@ Simply install `sublimeLinter-contrib-lintr` using [Package Control](https://pac
 For more information see [Sublime Linter Docs](http://sublimelinter.readthedocs.org/en/latest/installation.html#installing-via-pc)
 
 #### Configuration ####
-You can also configure what linters are used. e.g. using a different line length cutoff.
+You can also configure what linters are used. e.g. disabling the assignment linter and using a different line length cutoff.
 In the SublimeLinter User Settings
 ```
 {
-  "user": {
-    "linters": {
-      "r": {
-        "linters": "with_defaults(line_length_linter(120))"
-      }
+  "linters": {
+    "lintr": {
+      "linters": "with_defaults(assignment_linter = NULL, line_length_linter(120))"
     }
   }
 }
