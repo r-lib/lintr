@@ -15,7 +15,6 @@ test_that("returns the correct linting", {
     "%%",
     "/",
     "*",
-    "**",
     "|",
     "||",
     "&",
