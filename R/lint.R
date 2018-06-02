@@ -204,6 +204,78 @@ lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = NUL
   lints
 }
 
+#' Lint a shiny application
+#'
+#' Apply one or more linters to all of the R files in a shiny application.
+#' @param path the path to the base directory of the shiny app, if \code{NULL},
+#' it will be searched in the parent directories of the current directory.
+#' @param relative_path if \code{TRUE}, file paths are printed using their path
+#' relative to the app base directory.  If \code{FALSE}, use the full
+#' absolute path.
+#' @param ... additional arguments passed to \code{\link{lint}}, e.g.
+#' \code{cache} or \code{linters}.
+#' @param exclusions exclusions for \code{\link{exclude}}, relative to the
+#' package path.
+#' @inherit lint_file return
+#' @examples
+#' \dontrun{
+#'   lint_shinyapp()
+#'   lint_shinyapp(
+#'     linters = list(semicolon_terminator_linter())
+#'     cache = TRUE,
+#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
+#'   )
+#' }
+#' @export
+lint_shinyapp <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL) {
+  read_settings(path)
+  on.exit(clear_settings, add = TRUE)
+
+  exclusions <- normalize_exclusions(c(exclusions, settings$exclusions), FALSE)
+
+  files <- dir(
+    path = path,
+    pattern = rex::rex(".", one_of("Rr"), end),
+    recursive = TRUE,
+    full.names = TRUE
+  )
+
+  # Remove fully ignored files to avoid reading & parsing
+  to_exclude <- vapply(seq_len(length(files)),
+                       function(i) {
+                         file <- files[i]
+                         file %in% names(exclusions) && exclusions[[file]] == Inf
+                       },
+                       logical(1))
+  files <- files[!to_exclude]
+
+  lints <- flatten_lints(lapply(files,
+                                function(file) {
+                                  if (interactive()) {
+                                    message(".", appendLF = FALSE)
+                                  }
+                                  lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
+                                }))
+
+  if (interactive()) {
+    message() # for a newline
+  }
+
+  lints <- reorder_lints(lints)
+
+  if (relative_path == TRUE) {
+    lints[] <- lapply(lints,
+                      function(x) {
+                        x$filename <- re_substitutes(x$filename, rex(path, one_of("/", "\\")), "")
+                        x
+                      })
+    attr(lints, "path") <- path
+  }
+
+  class(lints) <- "lints"
+
+  lints
+}
 
 find_package <- function(path = getwd()) {
   start_path <- getwd()

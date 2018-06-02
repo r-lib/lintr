@@ -29,3 +29,12 @@ addin_lint_package <- function() {
 
   lintr::lint_package(project_path)
 }
+
+addin_lint_shinyapp <- function() {
+  project <- rstudioapi::getActiveProject()
+  project_path <- if (is.null(project)) getwd() else project
+
+  if (is.null(project)) message("No project found, passing current directory")
+
+  lintr::lint_shinyapp(project_path)
+}
