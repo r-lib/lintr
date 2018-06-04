@@ -4,7 +4,7 @@
 #' issues.  Supports on the fly checking of R code edited with Emacs, Vim and
 #' Sublime Text.
 #' @name lintr
-#' @seealso \code{\link{lint}}, \code{\link{lint_package}}, \code{\link{linters}}
+#' @seealso \code{\link{lint}}, \code{\link{lint_package}},\code{\link{lint_shinyapp}}, \code{\link{linters}}
 #' @importFrom stats na.omit
 #' @importFrom utils capture.output getParseData relist
 NULL
@@ -207,15 +207,14 @@ lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = NUL
 #' Lint a shiny application
 #'
 #' Apply one or more linters to all of the R files in a shiny application.
-#' @param path the path to the base directory of the shiny app, if \code{NULL},
-#' it will be searched in the parent directories of the current directory.
+#' @param path the path to the base directory of the shiny app.
 #' @param relative_path if \code{TRUE}, file paths are printed using their path
 #' relative to the app base directory.  If \code{FALSE}, use the full
 #' absolute path.
 #' @param ... additional arguments passed to \code{\link{lint}}, e.g.
 #' \code{cache} or \code{linters}.
 #' @param exclusions exclusions for \code{\link{exclude}}, relative to the
-#' package path.
+#' shiny app path.
 #' @inherit lint_file return
 #' @examples
 #' \dontrun{

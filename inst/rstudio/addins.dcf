@@ -7,3 +7,8 @@ Name: Lint current package
 Description: Runs lintr::lint_package
 Binding: addin_lint_package
 Interative: false
+
+Name: Lint current shiny app
+Description: Runs lintr::lint_shinyapp
+Binding: addin_lint_shinyapp
+Interative: false

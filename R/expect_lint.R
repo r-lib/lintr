@@ -117,3 +117,26 @@ expect_lint_free <- function(...) {
 
   invisible(result)
 }
+
+#' Test that the shiny app is lint free
+#'
+#' This function is a thin wrapper around lint_shinyapp that simply tests there are no
+#' lints in the app.
+#'
+#' @param ... arguments passed to \code{\link{lint_shinyapp}}
+#' @export
+expect_app_lint_free <- function(...) {
+  testthat::skip_on_cran()
+
+  lints <- lint_shinyapp(...)
+  has_lints <- length(lints) > 0
+
+  lint_output <- NULL
+  if (has_lints) {
+    lint_output <- paste(collapse = "\n", capture.output(print(lints)))
+  }
+  result <- testthat::expect(!has_lints,
+                             paste(sep = "\n", "Not lint free", lint_output))
+
+  invisible(result)
+}
