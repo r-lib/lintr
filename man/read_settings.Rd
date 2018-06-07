@@ -15,6 +15,7 @@ Lintr searches for settings for a given source file in the following order.
   \item options defined as \code{linter.setting}.
   \item \code{linter_file} in the same directory
   \item \code{linter_file} in the project directory
+  \item \code{linter_file} in the user home directory
   \item \code{\link{default_settings}}
 }
 }
