@@ -56,6 +56,9 @@ find_config <- function(filename) {
   }
   linter_file <- getOption("lintr.linter_file")
 
+  ## if users changed lintr.linter_file, return immediately.
+  if (is_absolute_path(linter_file) && file.exists(linter_file)) return(linter_file)
+
   path <- if (is_directory(filename)) {
     filename
   } else {
