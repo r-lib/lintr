@@ -80,7 +80,7 @@ test_that("linter returns correct linting", {
   expect_lint("a(camelCase = 1)", NULL, linter)
 })
 
-test_that("linter accepts vectors of styles", {
+test_that("linter accepts vector of styles", {
   msg <- "Variable or function name should be lowerCamelCase or dotted.case."
   linter <- object_name_linter(style=c("lowerCamelCase", "dotted.case"))
 
