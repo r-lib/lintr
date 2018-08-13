@@ -179,7 +179,7 @@ matches_styles <- function(name, styles=names(style_regexes)) {
 
 #' @describeIn linters check that object names are not too long.
 #' @export
-object_length_linter <- function(length = 20L) {
+object_length_linter <- function(length = 30L) {
   make_object_linter(function(source_file, token) {
     if (nchar(token$text) > length) {
         object_lint(
