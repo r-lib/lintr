@@ -132,11 +132,11 @@ object_name_linter <- function(style = "snake_case") {
   make_object_linter(
     function(source_file, token) {
       name <- unquote(token[["text"]])
-      if (!matches_styles(name, style)) {
+      if (!any(matches_styles(name, style))) {
         object_lint(
           source_file,
           token,
-          sprintf("Variable or function name should be %s.", style),
+          sprintf("Variable or function name should be %s.", paste(style, collapse = " or ")),
           "object_name_linter"
         )
       }
