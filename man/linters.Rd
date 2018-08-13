@@ -60,7 +60,7 @@ todo_comment_linter(todo = c("todo", "fixme"))
 
 object_name_linter(style = "snake_case")
 
-object_length_linter(length = 20L)
+object_length_linter(length = 30L)
 
 camel_case_linter(source_file)
 
