@@ -190,16 +190,16 @@ r_github_packages:
 
 There are two strategies for getting `lintr` results: 
 
-* either using `lintr::lint_package` as a separate step in your build process (cf [subsection below](#nonfailinglints), which we recommend,
+* either using `lintr::lint_package` as a separate step in your build process (cf [subsection below](#non-failing-lints), which we recommend,
 
 * or setting an unit test (cf [subsection below](#testthat)), which might take a long time to run and hinder development.
 
 In both cases the [lintr-bot](https://github.com/lintr-bot) will add comments
 to the commit or pull request with the lints found and they will also be
-printed on Travis-CI or Wercker.  If you want to disable the commenting you can
+printed on Travis-CI.  If you want to disable the commenting you can
 set the environment variable `LINTR_COMMENT_BOT=false`.
 
-### Non-failing Lints <a href="#nonfailinglints" name="nonfailinglints"></a>
+### Non-failing Lints ###
 If you do not want to fail the travis build on lints or do not use testthat you
 can simply add the following to your `.travis.yml`
 ```yaml
@@ -209,7 +209,7 @@ after_success:
 
 Live example of a package using this setup: [`hibpwned`](https://github.com/lockedata/HIBPwned/blob/master/.travis.yml), [lintr-bot commenting on a PR](https://github.com/lockedata/HIBPwned/pull/30).
 
-### Testthat <a href="#testthat" name="testthat"></a> 
+### Testthat ### 
 
 If you are already using [testthat](https://github.com/hadley/testthat) for
 testing simply add the following to your tests to fail if there are any lints
