@@ -190,9 +190,9 @@ r_github_packages:
 
 There are two strategies for getting `lintr` results: 
 
-* either using `lintr::lint_package` as a separate step in your build process (cf [subsection below](#non-failing-lints), which we recommend,
+* either using `lintr::lint_package` as a [after_success step in your build process](#non-failing-lints), which we recommend
 
-* or setting an unit test (cf [subsection below](#testthat)), which might take a long time to run and hinder development.
+* or setting an [testthat unit test](#testthat), which might take a long time to run and hinder development.
 
 In both cases the [lintr-bot](https://github.com/lintr-bot) will add comments
 to the commit or pull request with the lints found and they will also be
@@ -204,6 +204,7 @@ If you do not want to fail the travis build on lints or do not use testthat you
 can simply add the following to your `.travis.yml`
 ```yaml
 after_success:
+  - R CMD INSTALL $PKG_TARBALL
   - Rscript -e 'lintr::lint_package()'
 ```
 
