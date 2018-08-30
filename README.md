@@ -180,7 +180,7 @@ The resulting configuration will contain each currently failing linter and the c
 
 ## Travis-CI ##
 If you want to run `lintr` on [Travis-CI](https://travis-ci.org) in order to check that commits and pull requests don't deteriorate code style, you will need
-to have travis install the package first.  This can be done by adding the
+to have Travis install the package first.  This can be done by adding the
 following line to your `.travis.yml`
 
 ```yaml
@@ -199,7 +199,7 @@ to the commit or pull request with the lints found and they will also be
 printed on Travis-CI or Wercker.  If you want to disable the commenting you can
 set the environment variable `LINTR_COMMENT_BOT=false`.
 
-<a href="#nonfailinglints" name="nonfailinglints"></a>### Non-failing Lints ###
+### Non-failing Lints ### <a href="#nonfailinglints" name="nonfailinglints"></a>
 If you do not want to fail the travis build on lints or do not use testthat you
 can simply add the following to your `.travis.yml`
 ```yaml
@@ -209,7 +209,8 @@ after_success:
 
 Live example of a package using this setup: [`hibpwned`](https://github.com/lockedata/HIBPwned/blob/master/.travis.yml), [lintr-bot commenting on a PR](https://github.com/lockedata/HIBPwned/pull/30).
 
-<a href="#testthat" name="testthat"></a>### Testthat ###
+### Testthat ### <a href="#testthat" name="testthat"></a> 
+
 If you are already using [testthat](https://github.com/hadley/testthat) for
 testing simply add the following to your tests to fail if there are any lints
 in your project.  You will have to add `Suggests: lintr` to your package
