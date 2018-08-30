@@ -179,7 +179,7 @@ lintr::lint_package() %>%
 The resulting configuration will contain each currently failing linter and the corresponding number of hits as a comment. Proceed by successively enabling linters, starting with those with the least number of hits. Note that this requires `lintr` 0.3.0.9001 or later.
 
 ## Travis-CI ##
-If you want to run `lintr` on [Travis-CI](https://travis-ci.org) you will need
+If you want to run `lintr` on [Travis-CI](https://travis-ci.org) in order to check that commits and pull requests don't deteriorate code style, you will need
 to have travis install the package first.  This can be done by adding the
 following line to your `.travis.yml`
 
@@ -188,7 +188,28 @@ r_github_packages:
   - jimhester/lintr
 ```
 
-### Testthat ###
+There are two strategies for getting `lintr` results: 
+
+* either using `lintr::lint_package` as a separate step in your build process (cf [subsection below](#nonfailinglints), which we recommend,
+
+* or setting an unit test (cf [subsection below](#testthat)), which might take a long time to run and hinder development.
+
+In both cases the [lintr-bot](https://github.com/lintr-bot) will add comments
+to the commit or pull request with the lints found and they will also be
+printed on Travis-CI or Wercker.  If you want to disable the commenting you can
+set the environment variable `LINTR_COMMENT_BOT=false`.
+
+<a href="#nonfailinglints" name="nonfailinglints"></a>### Non-failing Lints ###
+If you do not want to fail the travis build on lints or do not use testthat you
+can simply add the following to your `.travis.yml`
+```yaml
+after_success:
+  - Rscript -e 'lintr::lint_package()'
+```
+
+Live example of a package using this setup: [`hibpwned`](https://github.com/lockedata/HIBPwned/blob/master/.travis.yml), [lintr-bot commenting on a PR](https://github.com/lockedata/HIBPwned/pull/30).
+
+<a href="#testthat" name="testthat"></a>### Testthat ###
 If you are already using [testthat](https://github.com/hadley/testthat) for
 testing simply add the following to your tests to fail if there are any lints
 in your project.  You will have to add `Suggests: lintr` to your package
@@ -203,18 +224,6 @@ if (requireNamespace("lintr", quietly = TRUE)) {
 }
 ```
 
-### Non-failing Lints ###
-If you do not want to fail the travis build on lints or do not use testthat you
-can simply add the following to your `.travis.yml`
-```yaml
-after_success:
-  - Rscript -e 'lintr::lint_package()'
-```
-
-In both cases the [lintr-bot](https://github.com/lintr-bot) will add comments
-to the commit or pull request with the lints found and they will also be
-printed on Travis-CI or Wercker.  If you want to disable the commenting you can
-set the environment variable `LINTR_COMMENT_BOT=false`.
 
 ## Installation of development version ##
 To install the latest development version of lintr from GitHub
