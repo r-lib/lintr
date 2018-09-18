@@ -7,7 +7,10 @@ extract_r_source <- function(filename, lines) {
   }
 
   starts <- grep(pattern$chunk.begin, lines, perl = TRUE)
-  ends <- grep(pattern$chunk.end, lines, perl = TRUE)
+  ends <- filter_chunk_end_positions(
+    starts = starts,
+    ends = grep(pattern$chunk.end, lines, perl = TRUE)
+  )
 
   # no chunks found, so just return the lines
   if (length(starts) == 0 || length(ends) == 0) {
@@ -44,6 +47,32 @@ get_knitr_pattern <- function(filename, lines) {
   } else {
     NULL
   }
+}
+
+filter_chunk_end_positions <- function(starts, ends) {
+  # In a valid file, possibly with plain-code-blocks,
+  # - there should be at least as many ends as starts,
+  #   and there should be an even-number of extra ends (possibly zero)
+  #   since each plain-code-block should open & close, and the open/close
+  #   tags of a plain-code-block both match the chunk.end pattern
+
+  # starts (1, 3, 5, 7,        11)  --> (1, 3, 5, 7, 11)
+  # ends   (2, 4, 6, 8, 9, 10, 12)  --> (2, 4, 6, 8, 12) # return this
+  length_difference <- length(ends) - length(starts)
+
+  if(length_difference < 0 | length_difference %% 2 != 0) {
+    stop("Malformed file!", call. = FALSE)
+  }
+  if (length_difference == 0 && all(ends > starts)) {
+    return(ends)
+  }
+
+  positions <- sort(c(starts = starts, ends = ends))
+  code_start_indexes <- which(grepl("starts", names(positions)))
+  code_ends <- positions[1 + code_start_indexes]
+
+  stopifnot(all(grepl("ends", names(code_ends))))
+  code_ends
 }
 
 replace_prefix <- function(lines, prefix_pattern) {
