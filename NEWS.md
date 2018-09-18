@@ -58,6 +58,7 @@
 * Allow for any number of `#` to start a comment. Useful in ESS (#299, @prosoitos)
 * New equals_na_linter() (#143, #326, @jabranham)
 * Fixed plain-code-block bug in Rmarkdown (#252, @russHyde)
+* Fixed bug where non-R chunks using {lang} `engine format` were parsed from R-markdown (#322, @russHyde)
 
 # lintr 1.0.2 #
 * Fix tests to work with upcoming testthat release.
