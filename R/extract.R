@@ -26,7 +26,6 @@ extract_r_source <- function(filename, lines) {
   Map(
     function(start, end) {
       if (
-
         # block contains at least one line of code
         start + 1 < end &&
 
@@ -76,16 +75,19 @@ filter_chunk_end_positions <- function(starts, ends) {
 }
 
 defines_knitr_engine <- function(line) {
-  # "scala|python|bash|..."
-  engine_choices <- paste(names(knitr::knit_engines$get()), collapse = "|")
+  engines <- names(knitr::knit_engines$get())
 
-  # Looks for {some_engine}, {some_engine label, ...} or {some_engine, ...}
-  bare_engine_pattern <- paste0("\\{(", engine_choices, ")[, }]")
+  # {some_engine}, {some_engine label, ...} or {some_engine, ...}
+  bare_engine_pattern <- rex::rex(
+    "{", or(engines), one_of("}", " ", ",")
+  )
+  # {... engine = "some_engine" ...}
+  explicit_engine_pattern <- rex::rex(
+    boundary, "engine", any_spaces, "="
+  )
 
-  rex::re_matches(
-    line, rex::rex(boundary, "engine", any_spaces, "=")
-  ) ||
-    grepl(pattern = bare_engine_pattern, x = line)
+  rex::re_matches(line, explicit_engine_pattern) ||
+  rex::re_matches(line, bare_engine_pattern)
 }
 
 replace_prefix <- function(lines, prefix_pattern) {
