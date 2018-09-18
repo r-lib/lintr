@@ -34,3 +34,19 @@ a[0]=1
 Plain code blocks can be written after three or more backticks
 - R Markdown: The Definitive Guide. Xie, Allaire and Grolemund (2.5.2)
 ```
+
+Calls to a non-R knitr-engine using {engine_name} syntax.
+
+```{python}
+# Python that looks like R
+a = list()
+b = {2}
+print(a)
+```
+
+```{python}
+# Python that's definitely not R
+a = []
+a.append(2)
+print(a)
+```

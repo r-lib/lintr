@@ -31,8 +31,8 @@ extract_r_source <- function(filename, lines) {
         start + 1 < end &&
 
         # block does not set an engine (so is r code)
-        !rex::re_matches(lines[start],
-          rex::rex(boundary, "engine", any_spaces, "="))) {
+        !defines_knitr_engine(lines[start])
+      ) {
         output[seq(start + 1, end - 1)] <<- lines[seq(start + 1, end - 1)]
       }
     },
@@ -68,11 +68,24 @@ filter_chunk_end_positions <- function(starts, ends) {
   }
 
   positions <- sort(c(starts = starts, ends = ends))
-  code_start_indexes <- which(grepl("starts", names(positions)))
+  code_start_indexes <- grep("starts", names(positions))
   code_ends <- positions[1 + code_start_indexes]
 
   stopifnot(all(grepl("ends", names(code_ends))))
   code_ends
+}
+
+defines_knitr_engine <- function(line) {
+  # "scala|python|bash|..."
+  engine_choices <- paste(names(knitr::knit_engines$get()), collapse = "|")
+
+  # Looks for {some_engine}, {some_engine label, ...} or {some_engine, ...}
+  bare_engine_pattern <- paste0("\\{(", engine_choices, ")[, }]")
+
+  rex::re_matches(
+    line, rex::rex(boundary, "engine", any_spaces, "=")
+  ) ||
+    grepl(pattern = bare_engine_pattern, x = line)
 }
 
 replace_prefix <- function(lines, prefix_pattern) {
