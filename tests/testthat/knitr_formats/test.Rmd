@@ -29,3 +29,8 @@ a=[]
 
 a[0]=1
 ```
+
+```
+Plain code blocks can be written after three or more backticks
+- R Markdown: The Definitive Guide. Xie, Allaire and Grolemund (2.5.2)
+```
