@@ -4,7 +4,165 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/lintr)](https://cran.r-project.org/package=lintr) [![Join the chat at https://gitter.im/jimhester-lintr/Lobby](https://badges.gitter.im/jimhester-lintr/Lobby.svg)](https://gitter.im/jimhester-lintr/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Static code analysis for R ##
+
+`lintr` is an R package offering [static code analysis for R](https://en.wikipedia.org/wiki/Static_program_analysis). It checks adherence to a given style, syntax errors and possible semantic issues, see the animation below. In this README find out 
+
+* [what linters i.e. checks are supported](#available-linters);
+
+* [how to configure the project to e.g. tweak checks and ignore files](#project-configuration);
+
+* [how to setup `lintr` for on-the-fly checking in different editors](#editors-setup);
+
+* [how to use `lintr` in combination with continuous integration](#continuous-integration);
+
 ![lintr](http://i.imgur.com/acV27NV.gif "lintr")
+
+### What to do with `lintr` output?
+
+If you need a bit automatic help for re-styling your code, have a look at [the `styler` package](https://github.com/r-lib/styler)
+
+## Available linters ##
+
+* `Syntax errors`: reported by [parse](https://www.rdocumentation.org/packages/base/versions/3.4.0/topics/parse).
+* `object_usage_linter`: check that closures have the proper usage using
+  [codetools::checkUsage()](https://www.rdocumentation.org/packages/codetools/versions/0.2-15/topics/checkUsage).  Note this runs
+  [base::eval()](https://www.rdocumentation.org/packages/base/versions/3.4.0/topics/eval) on the code, so do not use with untrusted code.
+* `absolute_path_linter`: check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
+* `nonportable_path_linter`: check that file.path() is used to construct safe and portable paths.
+* `pipe_continuation_linter`: Check that each step in a pipeline is on a new
+  line, or the entire pipe fits on one line.
+* `assignment_linter`: check that `<-` is always used for assignment
+* `closed_curly_linter`: check that closed curly braces should always be on their
+  own line unless they follow an else.
+* `commas_linter`: check that all commas are followed by spaces, but do not
+  have spaces before them.
+* `extraction_operator_linter`: check that the `[[` operator is used when extracting a single
+  element from an object, not `[` (subsetting) nor `$` (interactive use).
+* `implicit_integer_linter`: check that integers are explicitly typed using the form `1L` instead of `1`.
+* `infix_spaces_linter`: check that all infix operators have spaces around them.
+* `line_length_linter`: check the line length of both comments and code is less than
+  length.
+* `no_tab_linter`: check that only spaces are used, never tabs.
+* `object_length_linter`: check that function and variable names are not more than `length` characters.
+* `object_name_linter`: check that object names conform to a single naming style, e.g. snake_case or lowerCamelCase.
+* `open_curly_linter`: check that opening curly braces are never on their own
+  line and are always followed by a newline.
+* `semicolon_terminator_linter`: check that no semicolons terminate statements.
+* `single_quotes_linter`: check that only single quotes are used to delimit
+  string contestants.
+* `spaces_inside_linter`: check that parentheses and square brackets do not have
+  spaces directly inside them.
+* `spaces_left_parentheses_linter`: check that all left parentheses have a space before them
+  unless they are in a function call.
+* `todo_comment_linter`: check that the source contains no TODO comments (case-insensitive).
+* `trailing_blank_lines_linter`: check there are no trailing blank lines.
+* `trailing_whitespace_linter`: check there are no trailing whitespace characters.
+* `T_and_F_symbol_linter`: avoid the symbols `T` and `F` (for `TRUE` and `FALSE`).
+* `undesirable_function_linter`: report the use of undesirable functions, e.g. `options` or `sapply` and suggest an alternative.
+* `undesirable_operator_linter`: report the use of undesirable operators, e.g. `:::` or `<<-` and
+  suggest an alternative.
+* `unneeded_concatenation_linter`: check that the `c` function is not used without arguments nor
+  with a single constant.
+  
+### References ###
+Most of the default linters are based on [Hadley Wickham's R Style Guide](http://r-pkgs.had.co.nz/style.html).
+
+## Project Configuration ##
+
+Lintr supports per-project configuration of the following fields.
+The config file (default file name: `.lintr`) is in [Debian Control Field Format](https://www.debian.org/doc/debian-policy/#document-ch-controlfields).
+
+- `linters` - see `?with_defaults` for example of specifying only a few non-default linters.
+- `exclusions` - a list of filenames to exclude from linting.  You can use a
+  named item to exclude only certain lines from a file.
+- `exclude` - a regex pattern for lines to exclude from linting.  Default is "# nolint"
+- `exclude_start` - a regex pattern to start exclusion range. Default is "# nolint start"
+- `exclude_end` - a regex pattern to end exclusion range. Default is "# nolint end"
+
+An example file that uses 120 character line lengths, excludes a couple of
+files and sets different default exclude regexs follows.
+```
+linters: with_defaults(line_length_linter(120))
+exclusions: list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "tests/testthat/exclusions-test")
+exclude: "# Exclude Linting"
+exclude_start: "# Begin Exclude Linting"
+exclude_end: "# End Exclude Linting"
+```
+
+With the following command, you can create a configuration file for `lintr` that ignores all linters that show at least one error:
+
+```r
+library(magrittr)
+library(dplyr)
+lintr::lint_package() %>%
+  as.data.frame %>%
+  group_by(linter) %>%
+  tally(sort = TRUE) %$%
+  sprintf("linters: with_defaults(\n    %s\n    NULL\n  )\n",
+          paste0(linter, " = NULL, # ", n, collapse="\n    ")) %>%
+  cat(file = ".lintr")
+```
+
+The resulting configuration will contain each currently failing linter and the corresponding number of hits as a comment. Proceed by successively enabling linters, starting with those with the least number of hits. Note that this requires `lintr` 0.3.0.9001 or later.
+
+## Continuous integration ##
+If you want to run `lintr` on [Travis-CI](https://travis-ci.org) in order to check that commits and pull requests don't deteriorate code style, you will need
+to have Travis install the package first.  This can be done by adding the
+following line to your `.travis.yml`
+
+```yaml
+r_github_packages:
+  - jimhester/lintr
+```
+
+There are two strategies for getting `lintr` results: 
+
+* either using `lintr::lint_package` as a [after_success step in your build process](#non-failing-lints), which we recommend
+
+* or setting an [testthat unit test](#testthat), which might take a long time to run and hinder development.
+
+In both cases the [lintr-bot](https://github.com/lintr-bot) will add comments
+to the commit or pull request with the lints found and they will also be
+printed on Travis-CI.  If you want to disable the commenting you can
+set the environment variable `LINTR_COMMENT_BOT=false`.
+
+### Non-failing Lints ###
+If you do not want to fail the travis build on lints or do not use testthat you
+can simply add the following to your `.travis.yml`
+```yaml
+after_success:
+  - R CMD INSTALL $PKG_TARBALL
+  - Rscript -e 'lintr::lint_package()'
+```
+
+Live example of a package using this setup: [`hibpwned`](https://github.com/lockedata/HIBPwned/blob/master/.travis.yml), [lintr-bot commenting on a PR](https://github.com/lockedata/HIBPwned/pull/30).
+
+### Testthat ### 
+
+If you are already using [testthat](https://github.com/hadley/testthat) for
+testing simply add the following to your tests to fail if there are any lints
+in your project.  You will have to add `Suggests: lintr` to your package
+`DESCRIPTION` as well.
+
+```r
+if (requireNamespace("lintr", quietly = TRUE)) {
+  context("lints")
+  test_that("Package Style", {
+    lintr::expect_lint_free()
+  })
+}
+```
+
+
+## Installation of development version ##
+To install the latest development version of lintr from GitHub
+
+```r
+devtools::install_github("jimhester/lintr")
+```
+
+
+## Editors setup ##
 
 ### RStudio ###
 lintr lints are automatically displayed in the RStudio Markers pane, Rstudio versions (> v0.99.206).
@@ -96,143 +254,3 @@ apm install linter-lintr
 ```
 
 For more information and bug reports see [Atom linter-lintr](https://github.com/AtomLinter/linter-lintr).
-
-## Available linters ##
-
-* `Syntax errors`: reported by [parse](https://www.rdocumentation.org/packages/base/versions/3.4.0/topics/parse).
-* `object_usage_linter`: check that closures have the proper usage using
-  [codetools::checkUsage()](https://www.rdocumentation.org/packages/codetools/versions/0.2-15/topics/checkUsage).  Note this runs
-  [base::eval()](https://www.rdocumentation.org/packages/base/versions/3.4.0/topics/eval) on the code, so do not use with untrusted code.
-* `absolute_path_linter`: check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
-* `nonportable_path_linter`: check that file.path() is used to construct safe and portable paths.
-* `pipe_continuation_linter`: Check that each step in a pipeline is on a new
-  line, or the entire pipe fits on one line.
-* `assignment_linter`: check that `<-` is always used for assignment
-* `closed_curly_linter`: check that closed curly braces should always be on their
-  own line unless they follow an else.
-* `commas_linter`: check that all commas are followed by spaces, but do not
-  have spaces before them.
-* `extraction_operator_linter`: check that the `[[` operator is used when extracting a single
-  element from an object, not `[` (subsetting) nor `$` (interactive use).
-* `implicit_integer_linter`: check that integers are explicitly typed using the form `1L` instead of `1`.
-* `infix_spaces_linter`: check that all infix operators have spaces around them.
-* `line_length_linter`: check the line length of both comments and code is less than
-  length.
-* `no_tab_linter`: check that only spaces are used, never tabs.
-* `object_length_linter`: check that function and variable names are not more than `length` characters.
-* `object_name_linter`: check that object names conform to a single naming style, e.g. snake_case or lowerCamelCase.
-* `open_curly_linter`: check that opening curly braces are never on their own
-  line and are always followed by a newline.
-* `semicolon_terminator_linter`: check that no semicolons terminate statements.
-* `single_quotes_linter`: check that only single quotes are used to delimit
-  string contestants.
-* `spaces_inside_linter`: check that parentheses and square brackets do not have
-  spaces directly inside them.
-* `spaces_left_parentheses_linter`: check that all left parentheses have a space before them
-  unless they are in a function call.
-* `todo_comment_linter`: check that the source contains no TODO comments (case-insensitive).
-* `trailing_blank_lines_linter`: check there are no trailing blank lines.
-* `trailing_whitespace_linter`: check there are no trailing whitespace characters.
-* `T_and_F_symbol_linter`: avoid the symbols `T` and `F` (for `TRUE` and `FALSE`).
-* `undesirable_function_linter`: report the use of undesirable functions, e.g. `options` or `sapply` and suggest an alternative.
-* `undesirable_operator_linter`: report the use of undesirable operators, e.g. `:::` or `<<-` and
-  suggest an alternative.
-* `unneeded_concatenation_linter`: check that the `c` function is not used without arguments nor
-  with a single constant.
-
-## Project Configuration ##
-
-Lintr supports per-project configuration of the following fields.
-The config file (default file name: `.lintr`) is in [Debian Control Field Format](https://www.debian.org/doc/debian-policy/#document-ch-controlfields).
-
-- `linters` - see `?with_defaults` for example of specifying only a few non-default linters.
-- `exclusions` - a list of filenames to exclude from linting.  You can use a
-  named item to exclude only certain lines from a file.
-- `exclude` - a regex pattern for lines to exclude from linting.  Default is "# nolint"
-- `exclude_start` - a regex pattern to start exclusion range. Default is "# nolint start"
-- `exclude_end` - a regex pattern to end exclusion range. Default is "# nolint end"
-
-An example file that uses 120 character line lengths, excludes a couple of
-files and sets different default exclude regexs follows.
-```
-linters: with_defaults(line_length_linter(120))
-exclusions: list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "tests/testthat/exclusions-test")
-exclude: "# Exclude Linting"
-exclude_start: "# Begin Exclude Linting"
-exclude_end: "# End Exclude Linting"
-```
-
-With the following command, you can create a configuration file for `lintr` that ignores all linters that show at least one error:
-
-```r
-library(magrittr)
-library(dplyr)
-lintr::lint_package() %>%
-  as.data.frame %>%
-  group_by(linter) %>%
-  tally(sort = TRUE) %$%
-  sprintf("linters: with_defaults(\n    %s\n    NULL\n  )\n",
-          paste0(linter, " = NULL, # ", n, collapse="\n    ")) %>%
-  cat(file = ".lintr")
-```
-
-The resulting configuration will contain each currently failing linter and the corresponding number of hits as a comment. Proceed by successively enabling linters, starting with those with the least number of hits. Note that this requires `lintr` 0.3.0.9001 or later.
-
-## Travis-CI ##
-If you want to run `lintr` on [Travis-CI](https://travis-ci.org) in order to check that commits and pull requests don't deteriorate code style, you will need
-to have Travis install the package first.  This can be done by adding the
-following line to your `.travis.yml`
-
-```yaml
-r_github_packages:
-  - jimhester/lintr
-```
-
-There are two strategies for getting `lintr` results: 
-
-* either using `lintr::lint_package` as a [after_success step in your build process](#non-failing-lints), which we recommend
-
-* or setting an [testthat unit test](#testthat), which might take a long time to run and hinder development.
-
-In both cases the [lintr-bot](https://github.com/lintr-bot) will add comments
-to the commit or pull request with the lints found and they will also be
-printed on Travis-CI.  If you want to disable the commenting you can
-set the environment variable `LINTR_COMMENT_BOT=false`.
-
-### Non-failing Lints ###
-If you do not want to fail the travis build on lints or do not use testthat you
-can simply add the following to your `.travis.yml`
-```yaml
-after_success:
-  - R CMD INSTALL $PKG_TARBALL
-  - Rscript -e 'lintr::lint_package()'
-```
-
-Live example of a package using this setup: [`hibpwned`](https://github.com/lockedata/HIBPwned/blob/master/.travis.yml), [lintr-bot commenting on a PR](https://github.com/lockedata/HIBPwned/pull/30).
-
-### Testthat ### 
-
-If you are already using [testthat](https://github.com/hadley/testthat) for
-testing simply add the following to your tests to fail if there are any lints
-in your project.  You will have to add `Suggests: lintr` to your package
-`DESCRIPTION` as well.
-
-```r
-if (requireNamespace("lintr", quietly = TRUE)) {
-  context("lints")
-  test_that("Package Style", {
-    lintr::expect_lint_free()
-  })
-}
-```
-
-
-## Installation of development version ##
-To install the latest development version of lintr from GitHub
-
-```r
-devtools::install_github("jimhester/lintr")
-```
-
-## References ##
-Most of the default linters are based on [Hadley Wickham's R Style Guide](http://r-pkgs.had.co.nz/style.html).
