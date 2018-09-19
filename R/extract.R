@@ -26,13 +26,12 @@ extract_r_source <- function(filename, lines) {
   Map(
     function(start, end) {
       if (
-
         # block contains at least one line of code
         start + 1 < end &&
 
         # block does not set an engine (so is r code)
-        !rex::re_matches(lines[start],
-          rex::rex(boundary, "engine", any_spaces, "="))) {
+        !defines_knitr_engine(lines[start])
+      ) {
         output[seq(start + 1, end - 1)] <<- lines[seq(start + 1, end - 1)]
       }
     },
@@ -68,11 +67,27 @@ filter_chunk_end_positions <- function(starts, ends) {
   }
 
   positions <- sort(c(starts = starts, ends = ends))
-  code_start_indexes <- which(grepl("starts", names(positions)))
+  code_start_indexes <- grep("starts", names(positions))
   code_ends <- positions[1 + code_start_indexes]
 
   stopifnot(all(grepl("ends", names(code_ends))))
   code_ends
+}
+
+defines_knitr_engine <- function(line) {
+  engines <- names(knitr::knit_engines$get())
+
+  # {some_engine}, {some_engine label, ...} or {some_engine, ...}
+  bare_engine_pattern <- rex::rex(
+    "{", or(engines), one_of("}", " ", ",")
+  )
+  # {... engine = "some_engine" ...}
+  explicit_engine_pattern <- rex::rex(
+    boundary, "engine", any_spaces, "="
+  )
+
+  rex::re_matches(line, explicit_engine_pattern) ||
+  rex::re_matches(line, bare_engine_pattern)
 }
 
 replace_prefix <- function(lines, prefix_pattern) {
