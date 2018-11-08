@@ -1,6 +1,6 @@
 # lintr
 [![Travis-CI Build Status](https://travis-ci.org/jimhester/lintr.svg?branch=master)](https://travis-ci.org/jimhester/lintr)
-[![codecov.io](http://codecov.io/github/jimhester/lintr/coverage.svg?branch=master)](http://codecov.io/github/jimhester/lintr?branch=master)
+[![codecov.io](https://codecov.io/github/jimhester/lintr/coverage.svg?branch=master)](http://codecov.io/github/jimhester/lintr?branch=master)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/lintr)](https://cran.r-project.org/package=lintr)
 
 ## Static code analysis for R ##
@@ -87,10 +87,10 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
 
 ## Available linters ##
 
-* `Syntax errors`: reported by [parse](http://www.inside-r.org/r-doc/base/parse).
+* `Syntax errors`: reported by [parse](https://www.rdocumentation.org/packages/base/versions/3.4.0/topics/parse).
 * `object_usage_linter`: checks that closures have the proper usage using
-  [codetools::checkUsage()](http://www.inside-r.org/r-doc/codetools/checkUsage).  Note this runs
-  [base::eval()](http://www.inside-r.org/r-doc/base/eval) on the code, so do not use with untrusted code.
+  [codetools::checkUsage()](https://www.rdocumentation.org/packages/codetools/versions/0.2-15/topics/checkUsage).  Note this runs
+  [base::eval()](https://www.rdocumentation.org/packages/base/versions/3.4.0/topics/eval) on the code, so do not use with untrusted code.
 * `absolute_paths_linter`: checks that no absolute paths are used.
 * `assignment_linter`: checks that `<-` is always used for assignment
 * `closed_curly_linter`: check that closed curly braces should always be on their
