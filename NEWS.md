@@ -1,3 +1,6 @@
+# lintr 1.0.3 #
+* Fix tests to work with changes in the parser in R 3.6
+
 # lintr 1.0.2 #
 * Fix tests to work with upcoming testthat release.
 

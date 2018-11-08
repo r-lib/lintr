@@ -214,7 +214,7 @@ fix_eq_assign <- function(pc) {
   }
 
   eq_assign_locs <- which(pc$token == "EQ_ASSIGN")
-  if (length(eq_assign_locs) == 0L) {
+  if (length(eq_assign_locs) == 0L || "equal_assign" %in% pc$token) {
     return(pc)
   }
 
@@ -267,7 +267,7 @@ fix_eq_assign <- function(pc) {
 
     parent[i] <- pc[eq_assign_locs[true_locs[i]], "parent"]
 
-    token[i] <- "expr"
+    token[i] <- "expr" # R now uses "equal_assign"
 
     terminal[i] <- FALSE
 
@@ -315,5 +315,5 @@ top_level_expressions <- function(pc) {
   if (is.null(pc)) {
     return(NULL)
   }
-  which(pc$parent == 0L & pc$token == "expr")
+  which(pc$parent == 0L & pc$token %in% c("expr","equal_assign"))
 }
