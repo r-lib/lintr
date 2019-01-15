@@ -1,5 +1,5 @@
 `%||%` <- function(x, y) {
-  if (is.null(x) || length(x) <= 0) {
+  if (is.null(x) || is.na(x) || length(x) <= 0) {
     y
   } else {
     x

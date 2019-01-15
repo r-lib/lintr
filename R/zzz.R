@@ -196,7 +196,7 @@ settings <- NULL
     exclude_end = rex::rex("#", any_spaces, "nolint end"),
     exclusions = list(),
     cache_directory = "~/.R/lintr_cache", # nolint
-    comment_token = rot(
+    comment_token = Sys.getenv("GITHUB_TOKEN", unset = NA) %||% rot(
       paste0(
         "0n12nn72507",
         "r6273qnnp34",
