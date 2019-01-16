@@ -43,11 +43,11 @@ test_that("tab positions have been corrected", {
 
   with_content_to_parse("# test tab\n\ns <- 'I have \\t a dog'\nrep(\ts, \t3)", {
     expect_equivalent(
-      pc[[2L]][pc[[2L]][["text"]] == "'I have \\t a dog'", c("line1", "col1", "col2")],
+      pc[[1L]][pc[[1L]][["text"]] == "'I have \\t a dog'", c("line1", "col1", "col2")],
       c(3L, 6L, 22L)
     )
     expect_equivalent(
-      pc[[3L]][pc[[3L]][["text"]] == "3", c("line1", "col1", "col2")],
+      pc[[2L]][pc[[2L]][["text"]] == "3", c("line1", "col1", "col2")],
       c(4L, 10L, 10L)
     )
   })
