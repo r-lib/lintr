@@ -33,7 +33,7 @@ Suggests:
 License: MIT + file LICENSE
 LazyData: true
 VignetteBuilder: knitr
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Collate: 
     'T_and_F_symbol_linter.R'
     'utils.R'
