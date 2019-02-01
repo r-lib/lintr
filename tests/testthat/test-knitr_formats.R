@@ -82,3 +82,9 @@ test_that("it does _not_ error with inline \\Sexpr", {
     ),
     default_linters)
 })
+
+test_that("it does not error with text-only R-markdown", {
+  expect_lint(file = "knitr_formats/text-only.Rmd",
+    checks = NULL,
+    default_linters)
+})
