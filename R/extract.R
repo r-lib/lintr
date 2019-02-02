@@ -12,7 +12,7 @@ extract_r_source <- function(filename, lines) {
     ends = grep(pattern$chunk.end, lines, perl = TRUE)
   )
 
-  # no chunks found, so just return the lines
+  # no chunks found
   if (length(starts) == 0 || length(ends) == 0) {
     return(character(0))
   }
