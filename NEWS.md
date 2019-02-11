@@ -1,4 +1,6 @@
 # lintr 1.0.3.9000 # 
+* Add support for overriding GitHub API Token via `GITHUB_TOKEN` environment
+  variable (#63, @mattyb)
 * Changed the default value of the `length` argument to `object_length_linter` to 30 for consistency (#325 @DragosMG) 
 * Fixed error when object_name_linter is passed multiple styles (#341, @infotroph)
 * Config files are now also searched for in the users' home directory (#266, @randy3k)

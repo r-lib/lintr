@@ -14,7 +14,7 @@ NULL
 #' Apply one or more linters to a file and return the lints found.
 #' @name lint_file
 #' @param filename the given filename to lint.
-#' @param linters a list of linter functions to apply see \code{\link{linters}}
+#' @param linters a named list of linter functions to apply see \code{\link{linters}}
 #' for a full list of default and available linters.
 #' @param cache given a logical, toggle caching of lint results. If passed a
 #' character string, store the cache in this directory.

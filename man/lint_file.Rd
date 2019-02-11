@@ -11,7 +11,7 @@ lint(filename, linters = NULL, cache = FALSE, ...,
 \arguments{
 \item{filename}{the given filename to lint.}
 
-\item{linters}{a list of linter functions to apply see \code{\link{linters}}
+\item{linters}{a named list of linter functions to apply see \code{\link{linters}}
 for a full list of default and available linters.}
 
 \item{cache}{given a logical, toggle caching of lint results. If passed a

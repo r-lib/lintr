@@ -105,7 +105,7 @@ lintr::lint_package() %>%
 
 The resulting configuration will contain each currently failing linter and the corresponding number of hits as a comment. Proceed by successively enabling linters, starting with those with the least number of hits. Note that this requires `lintr` 0.3.0.9001 or later.
 
-If you are developing a package, you can add `^\.lintr$` to your `.Rbuildignore` file using `devtools::use_build_ignore(".lintr")`.
+If you are developing a package, you can add `^\.lintr$` to your `.Rbuildignore` file using `usethis::use_build_ignore(".lintr")`.
 
 ## Continuous integration ##
 If you want to run `lintr` on [Travis-CI](https://travis-ci.org) in order to check that commits and pull requests don't deteriorate code style, you will need
