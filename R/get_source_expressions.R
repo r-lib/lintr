@@ -380,5 +380,5 @@ top_level_expressions <- function(pc) {
   if (is.null(pc)) {
     return(integer(0))
   }
-  which(pc$parent <= 0L & pc$token %in% c("expr","equal_assign"))
+  which(pc$parent <= 0L)
 }
