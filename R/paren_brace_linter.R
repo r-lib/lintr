@@ -1,5 +1,5 @@
-#' @describeIn linters that check for lack of a space between right
-#' parenthesis and an opening curly brace
+#' @describeIn linters check for lack of a space between right
+#' parenthesis and an opening curly brace.
 #' @export
 paren_brace_linter <- function(source_file) {
   all_matches <- re_matches(

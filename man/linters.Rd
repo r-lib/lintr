@@ -5,12 +5,12 @@
 %   R/extraction_operator_linter.R, R/function_left_parentheses.R,
 %   R/implicit_integer_linter.R, R/infix_spaces_linter.R,
 %   R/line_length_linter.R, R/no_tab_linter.R, R/object_usage_linter.R,
-%   R/open_curly_linter.R, R/path_linters.R, R/pipe_continuation_linter.R,
-%   R/semicolon_terminator_linter.R, R/seq_linter.R, R/single_quotes_linter.R,
-%   R/spaces_inside_linter.R, R/spaces_left_parentheses_linter.R,
-%   R/trailing_blank_lines_linter.R, R/trailing_whitespace_linter.R,
-%   R/undesirable_function_linter.R, R/undesirable_operator_linter.R,
-%   R/unneeded_concatenation_linter.R, R/zzz.R
+%   R/open_curly_linter.R, R/paren_brace_linter.R, R/path_linters.R,
+%   R/pipe_continuation_linter.R, R/semicolon_terminator_linter.R,
+%   R/seq_linter.R, R/single_quotes_linter.R, R/spaces_inside_linter.R,
+%   R/spaces_left_parentheses_linter.R, R/trailing_blank_lines_linter.R,
+%   R/trailing_whitespace_linter.R, R/undesirable_function_linter.R,
+%   R/undesirable_operator_linter.R, R/unneeded_concatenation_linter.R, R/zzz.R
 \name{T_and_F_symbol_linter}
 \alias{T_and_F_symbol_linter}
 \alias{assignment_linter}
@@ -30,6 +30,7 @@
 \alias{no_tab_linter}
 \alias{object_usage_linter}
 \alias{open_curly_linter}
+\alias{paren_brace_linter}
 \alias{absolute_path_linter}
 \alias{nonportable_path_linter}
 \alias{pipe_continuation_linter}
@@ -81,6 +82,8 @@ no_tab_linter(source_file)
 object_usage_linter(source_file)
 
 open_curly_linter(allow_single_line = FALSE)
+
+paren_brace_linter(source_file)
 
 absolute_path_linter(lax = TRUE)
 
@@ -184,6 +187,9 @@ than length.
 
 \item \code{open_curly_linter}: check that opening curly braces are never on their own
 line and are always followed by a newline.
+
+\item \code{paren_brace_linter}: check for lack of a space between right
+parenthesis and an opening curly brace.
 
 \item \code{absolute_path_linter}: Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
 
