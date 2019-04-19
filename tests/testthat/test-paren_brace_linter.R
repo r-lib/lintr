@@ -1,21 +1,21 @@
-context("equals_na_linter")
+context("paren_brace_linter")
 
 test_that("returns the correct linting", {
-  msg <- rex("Use is.na rather than == NA.")
-  expect_lint("blah", NULL, equals_na_linter)
-  expect_lint("  blah", NULL, equals_na_linter)
-  expect_lint("  blah", NULL, equals_na_linter)
-  expect_lint("x=NA", NULL, equals_na_linter)
+  msg <- rex("There should be a space between right parenthesis and an opening curly brace.")
+
+  expect_lint("blah", NULL, paren_brace_linter)
+  expect_lint("blah <- function() {}", NULL, paren_brace_linter)
+  expect_lint("blah <- function() {\n}", NULL, paren_brace_linter)
 
   expect_lint(
-    "x == NA",
-    list(message = msg, line_number = 1L, column_number = 3),
-    equals_na_linter)
-
-  expect_lint(
-    "x==NA",
-    list(message = msg, line_number = 1L, column_number = 2),
-    equals_na_linter
+    "blah <- function(){}",
+    msg,
+    paren_brace_linter
   )
 
+  expect_lint(
+    "\nblah <- function(){\n\n\n}",
+    msg,
+    paren_brace_linter
+  )
 })
