@@ -47,6 +47,7 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 * `object_name_linter`: check that object names conform to a single naming style, e.g. snake_case or lowerCamelCase.
 * `open_curly_linter`: check that opening curly braces are never on their own
   line and are always followed by a newline.
+* `paren_brace_linter`: check that there is a space between right parenthesis and an opening curly brace.
 * `semicolon_terminator_linter`: check that no semicolons terminate statements.
 * `single_quotes_linter`: check that only single quotes are used to delimit
   string contestants.
