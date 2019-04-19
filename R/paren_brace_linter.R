@@ -1,4 +1,4 @@
-#' @describeIn linters check for lack of a space between right
+#' @describeIn linters check that there is a space between right
 #' parenthesis and an opening curly brace.
 #' @export
 paren_brace_linter <- function(source_file) {

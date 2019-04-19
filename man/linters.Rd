@@ -188,7 +188,7 @@ than length.
 \item \code{open_curly_linter}: check that opening curly braces are never on their own
 line and are always followed by a newline.
 
-\item \code{paren_brace_linter}: check for lack of a space between right
+\item \code{paren_brace_linter}: check that there is a space between right
 parenthesis and an opening curly brace.
 
 \item \code{absolute_path_linter}: Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
