@@ -1,5 +1,5 @@
 # lintr 1.0.3.9000 # 
-* Add `paren_brace_linter()` (#242, @bfgray3)
+* Added the new `paren_brace_linter()` to the default linters; it checks that there is a space between right parenthesis and an opening curly brace (@bfgray3, #242).
 * Add support for overriding GitHub API Token via `GITHUB_TOKEN` environment
   variable (#63, @mattyb)
 * Changed the default value of the `length` argument to `object_length_linter` to 30 for consistency (#325 @DragosMG) 
