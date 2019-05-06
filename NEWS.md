@@ -1,4 +1,6 @@
-# lintr 1.0.2.9000 # 
+# lintr 1.0.3.9000 # 
+* Add support for overriding GitHub API Token via `GITHUB_TOKEN` environment
+  variable (#63, @mattyb)
 * Changed the default value of the `length` argument to `object_length_linter` to 30 for consistency (#325 @DragosMG) 
 * Fixed error when object_name_linter is passed multiple styles (#341, @infotroph)
 * Config files are now also searched for in the users' home directory (#266, @randy3k)
@@ -59,6 +61,9 @@
 * New equals_na_linter() (#143, #326, @jabranham)
 * Fixed plain-code-block bug in Rmarkdown (#252, @russHyde)
 * Fixed bug where non-R chunks using {lang} `engine format` were parsed from R-markdown (#322, @russHyde)
+
+# lintr 1.0.3 #
+* Fix tests to work with changes in the parser in R 3.6
 
 # lintr 1.0.2 #
 * Fix tests to work with upcoming testthat release.

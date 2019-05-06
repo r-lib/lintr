@@ -1,7 +1,7 @@
 # lintr
 [![Travis-CI Build Status](https://travis-ci.org/jimhester/lintr.svg?branch=master)](https://travis-ci.org/jimhester/lintr)
-[![codecov.io](http://codecov.io/github/jimhester/lintr/coverage.svg?branch=master)](http://codecov.io/github/jimhester/lintr?branch=master)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/lintr)](https://cran.r-project.org/package=lintr) [![Join the chat at https://gitter.im/jimhester-lintr/Lobby](https://badges.gitter.im/jimhester-lintr/Lobby.svg)](https://gitter.im/jimhester-lintr/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![codecov.io](https://codecov.io/github/jimhester/lintr/coverage.svg?branch=master)](https://codecov.io/github/jimhester/lintr?branch=master)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/lintr)](https://cran.r-project.org/package=lintr) [![Join the chat at https://gitter.im/jimhester-lintr/Lobby](https://badges.gitter.im/jimhester-lintr/Lobby.svg)](https://gitter.im/jimhester-lintr/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Static code analysis for R ##
 
@@ -36,6 +36,7 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
   own line unless they follow an else.
 * `commas_linter`: check that all commas are followed by spaces, but do not
   have spaces before them.
+* `commented_code_linter`: check that there is no commented code outside of roxygen comments.
 * `extraction_operator_linter`: check that the `[[` operator is used when extracting a single
   element from an object, not `[` (subsetting) nor `$` (interactive use).
 * `implicit_integer_linter`: check that integers are explicitly typed using the form `1L` instead of `1`.
@@ -105,7 +106,7 @@ lintr::lint_package() %>%
 
 The resulting configuration will contain each currently failing linter and the corresponding number of hits as a comment. Proceed by successively enabling linters, starting with those with the least number of hits. Note that this requires `lintr` 0.3.0.9001 or later.
 
-If you are developing a package, you can add `^\.lintr$` to your `.Rbuildignore` file using `devtools::use_build_ignore(".lintr")`.
+If you are developing a package, you can add `^\.lintr$` to your `.Rbuildignore` file using `usethis::use_build_ignore(".lintr")`.
 
 ## Continuous integration ##
 If you want to run `lintr` on [Travis-CI](https://travis-ci.org) in order to check that commits and pull requests don't deteriorate code style, you will need
