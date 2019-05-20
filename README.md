@@ -36,6 +36,7 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
   own line unless they follow an else.
 * `commas_linter`: check that all commas are followed by spaces, but do not
   have spaces before them.
+* `commented_code_linter`: check that there is no commented code outside of roxygen comments.
 * `extraction_operator_linter`: check that the `[[` operator is used when extracting a single
   element from an object, not `[` (subsetting) nor `$` (interactive use).
 * `implicit_integer_linter`: check that integers are explicitly typed using the form `1L` instead of `1`.

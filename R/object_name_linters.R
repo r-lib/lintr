@@ -1,14 +1,27 @@
 make_object_linter <- function(fun) {
   function(source_file) {
+
+    token_nums <- ids_with_token(
+      source_file, rex(start, "SYMBOL" %if_next_isnt% "_SUB"), fun=re_matches
+    )
+    if(length(token_nums) == 0){
+      return(list())
+    }
+    tokens <- with_id(source_file, token_nums)
+    names <- unquote(tokens[["text"]]) # remove surrounding backticks
+
+    keep_indices <- which(
+      !is_operator(names) &
+        !is_known_generic(names) &
+        !is_base_function(names)
+    )
+
     lapply(
-      ids_with_token(source_file, rex(start, "SYMBOL" %if_next_isnt% "_SUB"), fun=re_matches),
-      function(token_num) {
-        token <- with_id(source_file, token_num)
-        name <- unquote(token[["text"]])  # remove surrounding backticks
+      keep_indices,
+      function(i) {
+        token <- tokens[i, ]
+        name <- names[i]
         if (is_declared_here(token, source_file) &&
-            !is_operator(name) &&
-            !is_known_generic(name) &&
-            !is_base_function(name) &&
             !is_external_reference(source_file, token[["id"]])) {
           fun(source_file, token)
         }
