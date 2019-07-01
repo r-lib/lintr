@@ -50,7 +50,7 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
   line and are always followed by a newline.
 * `semicolon_terminator_linter`: check that no semicolons terminate statements.
 * `single_quotes_linter`: check that only single quotes are used to delimit
-  string contestants.
+  string constants.
 * `spaces_inside_linter`: check that parentheses and square brackets do not have
   spaces directly inside them.
 * `spaces_left_parentheses_linter`: check that all left parentheses have a space before them
