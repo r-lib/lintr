@@ -201,7 +201,7 @@ It is safer to use \code{\link[base]{seq_len}} or
 \code{\link[base]{seq_along}} instead.
 
 \item \code{single_quotes_linter}: checks that only single quotes are used to delimit
-string contestants.
+string constants.
 
 \item \code{spaces_inside_linter}: check that parentheses and square brackets do not have
 spaces directly inside them.
