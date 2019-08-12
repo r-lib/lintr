@@ -95,16 +95,6 @@ quoted_blanks <- function(matches, shift_start = 0, shift_end = 0) {
   matches
 }
 
-ids_with_token <- function(source_file, value, fun = `==`) {
-  if (source_file$parsed_content$col1 %==% integer(0)) {
-    return(integer(0))
-  }
-  loc <- which(fun(source_file$parsed_content$token, value))
-  if (loc %==% integer(0)) {
-    return(integer(0))
-  }
-  loc
-}
 
 # The following functions is from dplyr
 names2 <- function(x) {
@@ -118,13 +108,6 @@ recursive_ls <- function(env) {
   else {
     ls(envir = env)
   }
-}
-
-with_id <- function(source_file, id) {
-  if (is.null(source_file$parsed_content)) {
-    return(data.frame())
-  }
-  source_file$parsed_content[id, ]
 }
 
 get_content <- function(lines, info) {
