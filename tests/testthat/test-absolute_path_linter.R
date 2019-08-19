@@ -163,23 +163,23 @@ test_that("returns the correct linting", {
   linter <- absolute_path_linter(lax=FALSE)
   expect_lint("'..'", NULL, linter)
   expect_lint("'./blah'", NULL, linter)
-  expect_lint(encodeString("'blah\\file.txt'"), NULL, linter)  # lintr bug 205
+  expect_lint(encodeString("'blah\\file.txt'"), NULL, linter)
   expect_lint("\"'/'\"", NULL, linter)
 
   expect_lint("'/'", msg, linter)
   expect_lint("'/blah/file.txt'", msg, linter)
-  expect_lint(encodeString("'d:\\'"), msg, linter)  # lintr bug 205
+  expect_lint(encodeString("'d:\\'"), msg, linter)
   expect_lint("'E:/blah/file.txt'", msg, linter)
-  expect_lint(encodeString("'\\\\'"), msg, linter)  # lintr bug 205
-  expect_lint(encodeString("'\\\\server\\path'"), msg, linter)  # lintr bug 205
+  expect_lint(encodeString("'\\\\'"), msg, linter)
+  expect_lint(encodeString("'\\\\server\\path'"), msg, linter)
   expect_lint("'~'", msg, linter)
   expect_lint("'~james.hester/blah/file.txt'", msg, linter)
-  expect_lint(encodeString("'/a\nsdf'"), msg, linter)  # lintr bug 205
+  expect_lint(encodeString("'/a\nsdf'"), msg, linter)
   expect_lint("'/as:df'", msg, linter)
 
   # lax mode: no check for strings that are likely not paths (too short or with special characters)
   linter <- absolute_path_linter(lax=TRUE)
   expect_lint("'/'", NULL, linter)
-  expect_lint(encodeString("'/a\nsdf/bar'"), NULL, linter)  # lintr bug 205
+  expect_lint(encodeString("'/a\nsdf/bar'"), NULL, linter)
   expect_lint("'/as:df/bar'", NULL, linter)
 })

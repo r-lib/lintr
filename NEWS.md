@@ -1,4 +1,16 @@
-# lintr 1.0.0.9001 #
+# lintr 1.0.3.9000 # 
+* Add support for overriding GitHub API Token via `GITHUB_TOKEN` environment
+  variable (#63, @mattyb)
+* Changed the default value of the `length` argument to `object_length_linter` to 30 for consistency (#325 @DragosMG) 
+* Fixed error when object_name_linter is passed multiple styles (#341, @infotroph)
+* Config files are now also searched for in the users' home directory (#266, @randy3k)
+* Fixed crash caused by ambiguous cache file paths (#212, @fangly).
+* RStudio addins to lint current source and project (fixes #264, @JhossePaul)
+* Export expect_lint() (#178, #210)
+* Added proper handling of tab characters (fixes #44, @fangly)
+* Fix line number sometimes wrongly reported by no_tab_linter() (#134, @fangly)
+* Fix line and column number sometimes wrongly reported by spaces_inside_linter()
+  (#203, @fangly)
 * Add `pipe_continuation_linter()` (#216).
 * Deprecated camel_case_linter(), snake_case_linter() and multiple_dots_linter()
   in favor of object_name_linter() which enforce the given style: snake_case,
@@ -24,7 +36,7 @@
   user-specified functions and operators (#48, #149, @fangly).
 * Relaxed the commented_code_linter(): do not lint comments within roxygen blocks
   and do not consider "-" an R operator to avoid too many false positives.
-* Fixed object linters to only lint objects declared in the current file 
+* Fixed object linters to only lint objects declared in the current file
   (#76, #108, #136, #191, #194, #201, @fangly).
 * Fixed expect_lint() issues (#180, #211, @fangly): markers were displayed when
   check was NULL, some error messages were malformed.
@@ -40,7 +52,30 @@
 * Fixed lint_package bug where cache was not caching (#146, @schloerke)
 * Fixed cache not saved in a directory other than requested (#213, @fangly)
 * Commas linter handles missing arguments calls properly (#145)
-* Add `function_left_parentheses_linter` to check that there is no space between a function name and its left parentheses (#204, @jrnold).
+* Add `function_left_parentheses_linter` to check that there is no space between
+  a function name and its left parentheses (#204, @jrnold).
+* Implement `summary.lints()` (#260, #262, @wlandau).
+* Changed `lint_package` to remove fully excluded files as soon as possible to
+  avoid reading and pre-processing of ignored files (@mwaldstein)
+* Allow for any number of `#` to start a comment. Useful in ESS (#299, @prosoitos)
+* New equals_na_linter() (#143, #326, @jabranham)
+* Fixed plain-code-block bug in Rmarkdown (#252, @russHyde)
+* Fixed bug where non-R chunks using {lang} `engine format` were parsed from R-markdown (#322, @russHyde)
+* Ensured `lintr` runs / installs / tests on R-3.6: pinned to github
+  `xmlparsedata`; ensure vectors are length-1 when compared using `&&` and `||`
+  (#363 #377 #384 #391, @russHyde).
+
+# lintr 1.0.3 #
+* Fix tests to work with changes in the parser in R 3.6
+
+# lintr 1.0.2 #
+* Fix tests to work with upcoming testthat release.
+
+# lintr 1.0.1 #
+* bugfix to work with knitr 1.16.7
+* `expect_lint_free()` now is always skipped on CRAN. This is necessary because
+  the non-binary R source may not be available when running tests on CRAN, and
+  those tests may not be run in the package directory.
 
 # lintr 1.0.0 #
 * bugfix to work with testthat 1.0.0
@@ -67,6 +102,8 @@
 * Permit single quotes if they quote literal double quotes (#28, @jackwasey)
 * # nolint comments are respected with caching (#68, @krlmlr)
 * Properly handle all knitr document formats
+* Allow for (( when linting (#259, @nathaneastwood)
+* Remove ^ from infix spaces to conform with tidyverse. (#302, @nathaneastwood)
 
 # lintr 0.2.0 #
 

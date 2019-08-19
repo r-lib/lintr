@@ -41,13 +41,13 @@ test_that("linter returns the correct linting", {
 
   expect_lint("x <<- 1L", NULL, linter)
   expect_lint("1.0/-Inf -> y", NULL, linter)
-  expect_lint("y <- 1+i", c(message=msg, line_number=1L, column_number=7L), linter)
-  expect_lint("z <- 1e5", c(message=msg, line_number=1L, column_number=9L), linter)
-  expect_lint("cat(1:n)", c(message=msg, line_number=1L, column_number=6L), linter)
+  expect_lint("y <- 1+i", list(message=msg, line_number=1L, column_number=7L), linter)
+  expect_lint("z <- 1e5", list(message=msg, line_number=1L, column_number=9L), linter)
+  expect_lint("cat(1:n)", list(message=msg, line_number=1L, column_number=6L), linter)
   expect_lint("552^9",
               list(
-                c(message=msg, line_number=1L, column_number=4L),
-                c(message=msg, line_number=1L, column_number=6L)
+                list(message=msg, line_number=1L, column_number=4L),
+                list(message=msg, line_number=1L, column_number=6L)
               ),
               linter)
 })

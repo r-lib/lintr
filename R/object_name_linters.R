@@ -75,15 +75,28 @@ object_lint2 <- function(expr, source_file, message, type) {
 
 make_object_linter <- function(fun) {
   function(source_file) {
+
+    token_nums <- ids_with_token(
+      source_file, rex(start, "SYMBOL" %if_next_isnt% "_SUB"), fun=re_matches
+    )
+    if(length(token_nums) == 0){
+      return(list())
+    }
+    tokens <- with_id(source_file, token_nums)
+    names <- unquote(tokens[["text"]]) # remove surrounding backticks
+
+    keep_indices <- which(
+      !is_operator(names) &
+        !is_known_generic(names) &
+        !is_base_function(names)
+    )
+
     lapply(
-      ids_with_token(source_file, rex(start, "SYMBOL" %if_next_isnt% "_SUB"), fun=re_matches),
-      function(token_num) {
-        token <- with_id(source_file, token_num)
-        name <- unquote(token[["text"]])  # remove surrounding backticks
+      keep_indices,
+      function(i) {
+        token <- tokens[i, ]
+        name <- names[i]
         if (is_declared_here(token, source_file) &&
-            !is_operator(name) &&
-            !is_known_generic(name) &&
-            !is_base_function(name) &&
             !is_external_reference(source_file, token[["id"]])) {
           fun(source_file, token)
         }
@@ -175,7 +188,7 @@ base_pkgs <- c(
 
 base_funs <- unlist(lapply(base_pkgs,
                            function(x) {
-                             name <- try(getNamespace(x))
+                             name <- try_silently(getNamespace(x))
                              if (!inherits(name, "try-error")) {
                                ls(name, all.names = TRUE)
                              }
@@ -203,11 +216,11 @@ object_name_linter_old <- function(style = "snake_case") {
   make_object_linter(
     function(source_file, token) {
       name <- unquote(token[["text"]])
-      if (!matches_styles(name, style)) {
+      if (!any(matches_styles(name, style))) {
         object_lint(
           source_file,
           token,
-          sprintf("Variable or function name should be %s.", style),
+          sprintf("Variable or function name should be %s.", paste(style, collapse = " or ")),
           "object_name_linter"
         )
       }
@@ -248,7 +261,7 @@ matches_styles <- function(name, styles=names(style_regexes)) {
 
 #' @describeIn linters check that object names are not too long.
 #' @export
-object_length_linter <- function(length = 20L) {
+object_length_linter <- function(length = 30L) {
   make_object_linter(function(source_file, token) {
     if (nchar(token$text) > length) {
         object_lint(

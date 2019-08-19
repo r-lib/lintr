@@ -1,2 +1,4 @@
+DESCRIPTION eol=lf
+NAMESPACE eol=lf
 *R text eol=lf
 *Rd text eol=lf

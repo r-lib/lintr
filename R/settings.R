@@ -1,16 +1,17 @@
 
 #' Read lintr settings
 #'
-#' Lintr searches for settings for a given file in the following order.
+#' Lintr searches for settings for a given source file in the following order.
 #' \enumerate{
 #'   \item options defined as \code{linter.setting}.
 #'   \item \code{linter_file} in the same directory
 #'   \item \code{linter_file} in the project directory
+#'   \item \code{linter_file} in the user home directory
 #'   \item \code{\link{default_settings}}
 #' }
 #'
 #' The default linter_file name is \code{.lintr} but it can be changed with option
-#' \code{lintr.linter_file}.  This file is a dcf file, see \code{\link{read.dcf}} for details.
+#' \code{lintr.linter_file}.  This file is a dcf file, see \code{\link[base]{read.dcf}} for details.
 #' @param filename source file to be linted
 read_settings <- function(filename) {
   clear_settings()
@@ -55,11 +56,15 @@ find_config <- function(filename) {
   }
   linter_file <- getOption("lintr.linter_file")
 
-  if (!is_directory(filename)) {
-    path <- dirname(filename)
+  ## if users changed lintr.linter_file, return immediately.
+  if (is_absolute_path(linter_file) && file.exists(linter_file)) return(linter_file)
+
+  path <- if (is_directory(filename)) {
+    filename
   } else {
-    path <- filename
+    dirname(filename)
   }
+
   ## check for a file in the current directory
   linter_config <- file.path(path, linter_file)
   if (isTRUE(file.exists(linter_config))) {
@@ -73,7 +78,15 @@ find_config <- function(filename) {
     return(linter_config)
   }
 
-  return(NULL)
+  ## next check for a file in the user directory
+  # cf: rstudio@bc9b6a5 SessionRSConnect.R#L32
+  home_dir <- Sys.getenv("HOME", unset = "~")
+  linter_config <- file.path(home_dir, linter_file)
+  if (isTRUE(file.exists(linter_config))) {
+    return(linter_config)
+  }
+
+  NULL
 }
 
 is_directory <- function(filename) {

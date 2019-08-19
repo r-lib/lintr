@@ -18,7 +18,6 @@ infix_tokens <- c(
   "EQ_SUB",
   "SPECIAL",
   "'/'",
-  "'^'",
   "'*'",
 
   NULL

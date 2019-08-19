@@ -52,14 +52,17 @@ test_that("linter returns correct linting", {
 
   expect_lint("myObject <- 123", NULL, linter)
   expect_lint("`myObject` <- 123", NULL, linter)
-  expect_lint("my.confused_NAME <- 1;", c(message=msg, line_number=1L, column_number=1L), linter)
-  expect_lint("1 ->> read.data.frame;", c(message=msg, line_number=1L, column_number=7L), linter)
+  expect_lint("my.confused_NAME <- 1;", list(message=msg, line_number=1L, column_number=1L), linter)
+  expect_lint("1 ->> read.data.frame;", list(message=msg, line_number=1L, column_number=7L), linter)
   expect_lint("object_name_linter <- function(...) {}",
-              c(message=msg, line_number=1L, column_number=1L), linter)
+              list(message=msg, line_number=1L, column_number=1L), linter)
 
   expect_lint(
     "Z = sapply('function', function(x=function(x){1}, b.a.z=F){identity(b.a.z)}, USE.NAMES=TRUE)",
-      c(message=msg, line_number=1L, column_number=1L),
+    list(
+      list(message=msg, line_number=1L, column_number=1L),
+      list(message=msg, line_number=1L, column_number=51L)
+    ),
     linter
   )
 
@@ -71,4 +74,15 @@ test_that("linter returns correct linting", {
   expect_lint("pack:::camelCase", NULL, linter)
   expect_lint("a(camelCase = 1)", NULL, linter)
   expect_lint("a$b <- 1", NULL, linter)
+})
+
+test_that("linter accepts vector of styles", {
+  msg <- "Variable or function name should be lowerCamelCase or dotted.case."
+  linter <- object_name_linter(style=c("lowerCamelCase", "dotted.case"))
+
+  expect_lint(
+    c("var.one <- 1", "varTwo <- 2", "var_three <- 3"),
+    list(message=msg, line_number=3L, column_number=1L),
+    linter
+  )
 })

@@ -3,14 +3,15 @@
 \name{lint_file}
 \alias{lint_file}
 \alias{lint}
-\title{Lint a given file}
+\title{Lint a file}
 \usage{
-lint(filename, linters = NULL, cache = FALSE, ..., parse_settings = TRUE)
+lint(filename, linters = NULL, cache = FALSE, ...,
+  parse_settings = TRUE)
 }
 \arguments{
 \item{filename}{the given filename to lint.}
 
-\item{linters}{a list of linter functions to apply see \code{\link{linters}}
+\item{linters}{a named list of linter functions to apply see \code{\link{linters}}
 for a full list of default and available linters.}
 
 \item{cache}{given a logical, toggle caching of lint results. If passed a
@@ -20,6 +21,9 @@ character string, store the cache in this directory.}
 
 \item{parse_settings}{whether to try and parse the settings}
 }
+\value{
+A list of lint objects.
+}
 \description{
-Apply one or more linters to a file and return a list of lints found.
+Apply one or more linters to a file and return the lints found.
 }

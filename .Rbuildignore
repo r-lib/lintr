@@ -1,3 +1,4 @@
+^CRAN-RELEASE$
 ^.*\.png$
 ^.*\.gif$
 ^\.travis\.yml$
@@ -13,3 +14,4 @@
 ^revdep$
 ^COPYING$
 ^bad\.R$
+^\.github$

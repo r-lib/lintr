@@ -1,6 +1,6 @@
 Package: lintr
-Title: Static R Code Analysis
-Version: 1.0.0.9001
+Title: A 'Linter' for R Code
+Version: 1.0.3.9000
 Authors@R: c(
     person("Jim", "Hester", email = "james.f.hester@gmail.com", role = c("aut", "cre")),
     person("Florent", "Angly", role = "aut")
@@ -8,8 +8,8 @@ Authors@R: c(
 URL: https://github.com/jimhester/lintr
 BugReports: https://github.com/jimhester/lintr/issues
 Description: Checks adherence to a given style, syntax errors and possible
-    semantic issues.  Supports on the fly checking of R code edited with Emacs,
-    Vim and Sublime Text.
+    semantic issues.  Supports on the fly checking of R code edited with 'RStudio IDE', 'Emacs',
+    'Vim', 'Sublime Text' and 'Atom'.
 Depends:
     R (>= 3.1.1)
 Imports:
@@ -25,20 +25,22 @@ Imports:
     knitr,
     stats,
     utils,
-    xml2 (>= 0.1.2.9000),
+    xml2 (>= 1.0.0),
     xmlparsedata
 Suggests:
-    rmarkdown
+    rmarkdown,
+    mockery
 Remotes:
-    hadley/xml2,
-    MangoTheCat/xmlparsedata
+    r-lib/xmlparsedata
 License: MIT + file LICENSE
 LazyData: true
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 Collate: 
     'T_and_F_symbol_linter.R'
+    'utils.R'
     'aaa.R'
+    'addins.R'
     'assignment_linter.R'
     'cache.R'
     'closed_curly_linter.R'
@@ -48,6 +50,7 @@ Collate:
     'declared_functions.R'
     'object_name_linters.R'
     'deprecated.R'
+    'equals_na_lintr.R'
     'exclude.R'
     'expect_lint.R'
     'extract.R'
@@ -77,5 +80,4 @@ Collate:
     'undesirable_function_linter.R'
     'undesirable_operator_linter.R'
     'unneeded_concatenation_linter.R'
-    'utils.R'
     'zzz.R'

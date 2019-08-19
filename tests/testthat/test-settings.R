@@ -20,9 +20,9 @@ test_that("it uses option settings if provided", {
 
 test_that("it uses config settings in same directory if provided", {
 
-  dir <- tempdir()
-  file <- tempfile(tmpdir = dir)
-  config_file <- file.path(dir, ".lintr")
+  path <- tempdir()
+  file <- tempfile(tmpdir = path)
+  config_file <- file.path(path, ".lintr")
   writeLines("exclude: \"test\"", config_file)
   on.exit({
     unlink(file)

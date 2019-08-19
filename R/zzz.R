@@ -89,11 +89,12 @@ default_linters <- with_defaults(default = list(),
   closed_curly_linter(),
   commas_linter,
   commented_code_linter,
+  equals_na_linter,
   function_left_parentheses_linter,
   infix_spaces_linter,
   line_length_linter(80),
   no_tab_linter,
-  object_length_linter(30),
+  object_length_linter(),
   object_name_linter("snake_case"),
   object_usage_linter,
   open_curly_linter(),
@@ -195,7 +196,7 @@ settings <- NULL
     exclude_end = rex::rex("#", any_spaces, "nolint end"),
     exclusions = list(),
     cache_directory = "~/.R/lintr_cache", # nolint
-    comment_token = rot(
+    comment_token = Sys.getenv("GITHUB_TOKEN", unset = NA) %||% rot(
       paste0(
         "0n12nn72507",
         "r6273qnnp34",
