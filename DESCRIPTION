@@ -47,6 +47,7 @@ Collate:
     'commas_linter.R'
     'comment_linters.R'
     'comments.R'
+    'cyclocomp_linter.R'
     'object_name_linters.R'
     'deprecated.R'
     'equals_na_lintr.R'
