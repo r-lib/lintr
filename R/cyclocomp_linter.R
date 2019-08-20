@@ -21,10 +21,8 @@ cyclocomp_linter <- function(complexity_limit = 25) {
       column_number = source_file[["column"]][1],
       type = "style",
       message = paste0(
-        "Write short and simple functions and avoid complex conditionals,",
-        "e.g. by encapsulating distinct steps into subfunctions.",
-        "The expression starting on this line has a cyclomatic complexity of ",
-        complexity, ", should be at most ", complexity_limit, "."
+        "functions should have cyclomatic complexity of less than",
+        complexity_limit, ", this has ", complexity,"."
       ),
       ranges = list(c(NA, NA)),
       line = source_file$lines[1],
