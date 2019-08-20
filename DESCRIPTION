@@ -30,6 +30,8 @@ Imports:
 Suggests:
     rmarkdown,
     mockery
+Remotes:
+    r-lib/xmlparsedata
 License: MIT + file LICENSE
 LazyData: true
 VignetteBuilder: knitr

@@ -61,6 +61,9 @@
 * New equals_na_linter() (#143, #326, @jabranham)
 * Fixed plain-code-block bug in Rmarkdown (#252, @russHyde)
 * Fixed bug where non-R chunks using {lang} `engine format` were parsed from R-markdown (#322, @russHyde)
+* Ensured `lintr` runs / installs / tests on R-3.6: pinned to github
+  `xmlparsedata`; ensure vectors are length-1 when compared using `&&` and `||`
+  (#363 #377 #384 #391, @russHyde).
 
 # lintr 1.0.3 #
 * Fix tests to work with changes in the parser in R 3.6
