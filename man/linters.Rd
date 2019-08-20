@@ -59,7 +59,7 @@ commented_code_linter(source_file)
 
 todo_comment_linter(todo = c("todo", "fixme"))
 
-cyclocomp_linter(complexity_limit)
+cyclocomp_linter(complexity_limit = 25)
 
 object_name_linter(style = "snake_case")
 
@@ -120,7 +120,7 @@ same line.}
 \item{todo}{Vector of strings that identify TODO comments.}
 
 \item{complexity_limit}{expressions with a cyclomatic complexity higher than
-this are linted. See \code{\link[cyclocomp]{cyclocomp}}.}
+this are linted, defaults to 25. See \code{\link[cyclocomp]{cyclocomp}}.}
 
 \item{style}{UpperCamelCase, lowerCamelCase, alllowercase, ALLUPPERCASE, snake_case or
 dotted.case}
@@ -160,7 +160,8 @@ blocks
 
 \item \code{todo_comment_linter}: Check that the source contains no TODO comments (case-insensitive).
 
-\item \code{cyclocomp_linter}: Report the presence of expressions with overly high complexity.
+\item \code{cyclocomp_linter}: Check for overly complicated expressions. See
+\code{\link[cyclocomp]{cyclocomp}}.
 
 \item \code{object_name_linter}: Check that object names conform to a single naming style.
 

@@ -1,17 +1,18 @@
-#' @describeIn linters  Report the presence of expressions with overly high complexity.
+#' @describeIn linters Check for overly complicated expressions. See
+#'   \code{\link[cyclocomp]{cyclocomp}}.
 #' @param complexity_limit expressions with a cyclomatic complexity higher than
-#'   this are linted, defaults to 15. See \code{\link[cyclocomp]{cyclocomp}}.
+#'   this are linted, defaults to 25. See \code{\link[cyclocomp]{cyclocomp}}.
 #' @importFrom cyclocomp cyclocomp
 #' @export
-cyclocomp_linter <- function(complexity_limit = 15) {
+cyclocomp_linter <- function(complexity_limit = 25) {
   function(source_file) {
     if (!is.null(source_file[["file_lines"]])) {
-      # abort if source_file is entire file, not just a top level expression.
+      # abort if source_file is entire file, not a top level expression.
       return(NULL)
     }
     complexity <- try_silently(
       cyclocomp::cyclocomp(parse(text = source_file$content))
-      )
+    )
     if (inherits(complexity, "try-error")) return(NULL)
     if (complexity <= complexity_limit) return(NULL)
     Lint(
@@ -31,4 +32,3 @@ cyclocomp_linter <- function(complexity_limit = 15) {
     )
   }
 }
-# expect_lint(readLines("inst/example/complexity.R"), NULL, cyclocomp_linter(10))

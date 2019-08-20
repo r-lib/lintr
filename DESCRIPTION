@@ -16,6 +16,7 @@ Imports:
     rex,
     crayon,
     codetools,
+    cyclocomp,
     stringdist,
     testthat,
     digest,
