@@ -137,6 +137,7 @@ reorder_lints <- function(lints) {
 #' \code{cache} or \code{linters}.
 #' @param exclusions exclusions for \code{\link{exclude}}, relative to the
 #' package path.
+#' @param pattern pattern for files, by default it will take files with .R or .r extension.
 #' @inherit lint_file return
 #' @examples
 #' \dontrun{
