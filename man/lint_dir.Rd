@@ -2,12 +2,13 @@
 % Please edit documentation in R/lint.R
 \name{lint_dir}
 \alias{lint_dir}
-\title{Lint a package}
+\title{Lint a directory}
 \usage{
-lint_dir(path = ".", relative_path = TRUE, ..., exclusions = NULL)
+lint_dir(path = ".", relative_path = TRUE, ..., exclusions = NULL,
+  pattern = rex::rex(".", one_of("Rr"), end))
 }
 \arguments{
-\item{path}{the path to the base directory of the package, if \code{NULL},
+\item{path}{the path to the base directory, if \code{NULL},
 it will be searched in the parent directories of the current directory.}
 
 \item{relative_path}{if \code{TRUE}, file paths are printed using their path
@@ -19,9 +20,14 @@ absolute path.}
 
 \item{exclusions}{exclusions for \code{\link{exclude}}, relative to the
 package path.}
+
+\item{pattern}{pattern for files, by default it will take files with .R or .r extension.}
+}
+\value{
+A list of lint objects.
 }
 \description{
-Apply one or more linters to all of the R files in a package.
+Apply one or more linters to all of the R files in a directory
 }
 \examples{
 \dontrun{
@@ -33,4 +39,3 @@ Apply one or more linters to all of the R files in a package.
   )
 }
 }
-
