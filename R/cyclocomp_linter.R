@@ -21,7 +21,7 @@ cyclocomp_linter <- function(complexity_limit = 25) {
       column_number = source_file[["column"]][1],
       type = "style",
       message = paste0(
-        "functions should have cyclomatic complexity of less than",
+        "functions should have cyclomatic complexity of less than ",
         complexity_limit, ", this has ", complexity,"."
       ),
       ranges = list(c(NA, NA)),
