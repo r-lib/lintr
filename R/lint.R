@@ -148,9 +148,9 @@ reorder_lints <- function(lints) {
 #'   )
 #' }
 #' @export
-lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL) {
+lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL, pattern = rex::rex(".", one_of("Rr"), end)) {
   files <- dir( path,
-    pattern = rex::rex(".", one_of("Rr"), end),
+    pattern = pattern,
     recursive = TRUE,
     full.names = TRUE
   )
