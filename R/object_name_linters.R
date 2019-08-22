@@ -2,13 +2,31 @@
 #' @param styles One of \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}.
 #' @export
 object_name_linter <- function(styles = "snake_case") {
+
+  .or_string <- function(xs) {
+    # returns "<S> or <T>"
+    # where <T> is the last string in xs
+    # where <S> is a comma-separated string of all entries in xs except <T>
+    len <- length(xs)
+    if (len <= 1) {
+      return(xs)
+    }
+    comma_sepd_prefix <- paste(xs[-len], collapse = ", ")
+    paste(comma_sepd_prefix, "or", xs[len])
+  }
+
   styles <- match.arg(styles, names(style_regexes), several.ok = TRUE)
+
+  lint_msg <- paste0(
+    "Variable and function name style should be ", .or_string(styles), "."
+  )
 
   function (source_file) {
     x <- global_xml_parsed_content(source_file)
     if (is.null(x)) {
       return()
     }
+
     xpath <- paste0(
       # Left hand assignments
       "//expr[SYMBOL or STR_CONST][following-sibling::LEFT_ASSIGN or following-sibling::EQ_ASSIGN]/*",
@@ -17,7 +35,14 @@ object_name_linter <- function(styles = "snake_case") {
       " | ",
 
       # Right hand assignments
-      "//expr[SYMBOL or STR_CONST][preceding-sibling::RIGHT_ASSIGN]/*")
+      "//expr[SYMBOL or STR_CONST][preceding-sibling::RIGHT_ASSIGN]/*",
+
+      # Or
+      " | ",
+
+      # Formal argument names
+      "//SYMBOL_FORMALS"
+    )
 
     assignments <- xml2::xml_find_all(x, xpath)
 
@@ -25,11 +50,25 @@ object_name_linter <- function(styles = "snake_case") {
     nms <- strip_names(
       as.character(xml2::xml_find_first(assignments, "./text()")))
 
-    generics <- c(declared_s3_generics(x), namespace_imports()$fun, names(.knownS3Generics), .S3PrimitiveGenerics, ls(baseenv()))
+    generics <- c(
+      declared_s3_generics(x),
+      namespace_imports()$fun,
+      names(.knownS3Generics),
+      .S3PrimitiveGenerics, ls(baseenv()))
 
-    lapply(styles, function(style) {
-      lapply(assignments[!check_style(nms, style, generics)], object_lint2, source_file, paste0("Variable and function names should be in ", style, "."), "object_name_linter")
-      })
+    style_matches <- lapply(styles, function(x) {
+      check_style(nms, x, generics)
+    })
+
+    matches_a_style <- Reduce(`|`, style_matches)
+
+    lapply(
+      assignments[!matches_a_style],
+      object_lint2,
+      source_file,
+      lint_msg,
+      "object_name_linter"
+    )
   }
 }
 
@@ -220,7 +259,7 @@ object_name_linter_old <- function(style = "snake_case") {
         object_lint(
           source_file,
           token,
-          sprintf("Variable or function name should be %s.", paste(style, collapse = " or ")),
+          sprintf("Variable and function name style should be %s.", paste(style, collapse = " or ")),
           "object_name_linter"
         )
       }

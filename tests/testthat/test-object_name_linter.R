@@ -47,7 +47,7 @@ test_that("linter ignores some objects", {
 })
 
 test_that("linter returns correct linting", {
-  msg <- "Variable and function names should be in camelCase."
+  msg <- "Variable and function name style should be camelCase."
   linter <- object_name_linter("camelCase")
 
   expect_lint("myObject <- 123", NULL, linter)
@@ -58,7 +58,7 @@ test_that("linter returns correct linting", {
               list(message=msg, line_number=1L, column_number=1L), linter)
 
   expect_lint(
-    "Z = sapply('function', function(x=function(x){1}, b.a.z=F){identity(b.a.z)}, USE.NAMES=TRUE)",
+    "Z = sapply('function', function(x=function(x){1}, b.a.z=F, ...){identity(b.a.z)}, USE.NAMES=TRUE)",
     list(
       list(message=msg, line_number=1L, column_number=1L),
       list(message=msg, line_number=1L, column_number=51L)
@@ -77,8 +77,8 @@ test_that("linter returns correct linting", {
 })
 
 test_that("linter accepts vector of styles", {
-  msg <- "Variable or function name should be lowerCamelCase or dotted.case."
-  linter <- object_name_linter(style=c("lowerCamelCase", "dotted.case"))
+  msg <- "Variable and function name style should be camelCase or dotted.case."
+  linter <- object_name_linter(styles=c("camelCase", "dotted.case"))
 
   expect_lint(
     c("var.one <- 1", "varTwo <- 2", "var_three <- 3"),
