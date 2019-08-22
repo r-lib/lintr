@@ -116,7 +116,9 @@ same line.}
 
 \item{todo}{Vector of strings that identify TODO comments.}
 
-\item{styles}{One of \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}.}
+\item{styles}{A subset of
+\Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
+match at least one of these styles.}
 
 \item{length}{the length cutoff to use for the given linter.}
 
@@ -153,7 +155,7 @@ blocks
 
 \item \code{todo_comment_linter}: Check that the source contains no TODO comments (case-insensitive).
 
-\item \code{object_name_linter}: Check that object names conform to a single naming style.
+\item \code{object_name_linter}: Check that object names conform to a naming style.
 
 \item \code{object_length_linter}: check that object names are not too long.
 
