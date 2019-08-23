@@ -13,4 +13,5 @@
 ^[^/]+.Rmd$
 ^revdep$
 ^COPYING$
+^bad\.R$
 ^\.github$

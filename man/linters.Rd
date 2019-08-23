@@ -59,9 +59,10 @@ commented_code_linter(source_file)
 
 todo_comment_linter(todo = c("todo", "fixme"))
 
-cyclocomp_linter(complexity_limit = 25)
+  
+object_name_linter(styles = "snake_case")
 
-object_name_linter(style = "snake_case")
+cyclocomp_linter(complexity_limit = 25)
 
 object_length_linter(length = 30L)
 
@@ -119,11 +120,12 @@ same line.}
 
 \item{todo}{Vector of strings that identify TODO comments.}
 
+\item{styles}{A subset of
+\Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
+match at least one of these styles.}
+
 \item{complexity_limit}{expressions with a cyclomatic complexity higher than
 this are linted, defaults to 25. See \code{\link[cyclocomp]{cyclocomp}}.}
-
-\item{style}{UpperCamelCase, lowerCamelCase, alllowercase, ALLUPPERCASE, snake_case or
-dotted.case}
 
 \item{length}{the length cutoff to use for the given linter.}
 
@@ -160,10 +162,10 @@ blocks
 
 \item \code{todo_comment_linter}: Check that the source contains no TODO comments (case-insensitive).
 
+\item \code{object_name_linter}: Check that object names conform to a naming style.
+
 \item \code{cyclocomp_linter}: Check for overly complicated expressions. See
 \code{\link[cyclocomp]{cyclocomp}}.
-
-\item \code{object_name_linter}: Check that object names conform to a single naming style.
 
 \item \code{object_length_linter}: check that object names are not too long.
 
