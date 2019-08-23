@@ -1,4 +1,5 @@
 # lintr 1.0.3.9000 # 
+* New cyclocomp_linter() identifies overly complex functions (#361, @fabian-s)
 * Add support for overriding GitHub API Token via `GITHUB_TOKEN` environment
   variable (#63, @mattyb)
 * Changed the default value of the `length` argument to `object_length_linter` to 30 for consistency (#325 @DragosMG) 
