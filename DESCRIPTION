@@ -16,6 +16,7 @@ Imports:
     rex,
     crayon,
     codetools,
+    cyclocomp,
     stringdist,
     testthat,
     digest,
@@ -48,6 +49,7 @@ Collate:
     'commas_linter.R'
     'comment_linters.R'
     'comments.R'
+    'cyclocomp_linter.R'
     'declared_functions.R'
     'object_name_linters.R'
     'deprecated.R'
