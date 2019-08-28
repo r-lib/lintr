@@ -24,7 +24,7 @@ cyclocomp_linter <- function(complexity_limit = 25) {
         "functions should have cyclomatic complexity of less than ",
         complexity_limit, ", this has ", complexity,"."
       ),
-      ranges = list(c(NA, NA)),
+      ranges = list(c(source_file[["column"]][1], source_file[["column"]][1])),
       line = source_file$lines[1],
       linter = "cyclocomp_linter"
     )
