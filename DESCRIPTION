@@ -11,7 +11,7 @@ Description: Checks adherence to a given style, syntax errors and possible
     semantic issues.  Supports on the fly checking of R code edited with 'RStudio IDE', 'Emacs',
     'Vim', 'Sublime Text' and 'Atom'.
 Depends:
-    R (>= 3.1.1)
+    R (>= 3.2)
 Imports:
     rex,
     crayon,

@@ -3,10 +3,11 @@ This is a patch release for compatibility with the upcoming testthat release,
 only changes are in test code from the previous release.
 
 ## Test environments
-* local OS X install, R 3.4.1-patched
-* ubuntu 12.04 (on travis-ci), R 3.4.1
-* win-builder (devel and release)
-* rhub
+
+* local: linux-gnu-3.6.1
+* travis: 3.2, 3.3, 3.4, oldrel, release, devel
+* r-hub: windows-x86_64-devel, ubuntu-gcc-release, fedora-clang-devel
+* win-builder: windows-x86_64-devel
 
 ## R CMD check results
 
