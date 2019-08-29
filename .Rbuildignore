@@ -15,3 +15,5 @@
 ^COPYING$
 ^bad\.R$
 ^\.github$
+^codecov\.yml$
+^\.covrignore$
