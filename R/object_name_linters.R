@@ -1,3 +1,119 @@
+#' @describeIn linters  Check that object names conform to a naming style.
+#' @param styles A subset of
+#'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
+#'   match at least one of these styles.
+#' @export
+object_name_linter <- function(styles = "snake_case") {
+
+  .or_string <- function(xs) {
+    # returns "<S> or <T>"
+    # where <T> is the last string in xs
+    # where <S> is a comma-separated string of all entries in xs except <T>
+    len <- length(xs)
+    if (len <= 1) {
+      return(xs)
+    }
+    comma_sepd_prefix <- paste(xs[-len], collapse = ", ")
+    paste(comma_sepd_prefix, "or", xs[len])
+  }
+
+  styles <- match.arg(styles, names(style_regexes), several.ok = TRUE)
+
+  lint_msg <- paste0(
+    "Variable and function name style should be ", .or_string(styles), "."
+  )
+
+  function (source_file) {
+    x <- global_xml_parsed_content(source_file)
+    if (is.null(x)) {
+      return()
+    }
+
+    xpath <- paste0(
+      # Left hand assignments
+      "//expr[SYMBOL or STR_CONST][following-sibling::LEFT_ASSIGN or following-sibling::EQ_ASSIGN]/*",
+
+      # Or
+      " | ",
+
+      # Right hand assignments
+      "//expr[SYMBOL or STR_CONST][preceding-sibling::RIGHT_ASSIGN]/*",
+
+      # Or
+      " | ",
+
+      # Formal argument names
+      "//SYMBOL_FORMALS"
+    )
+
+    assignments <- xml2::xml_find_all(x, xpath)
+
+    # Retrieve assigned name
+    nms <- strip_names(
+      as.character(xml2::xml_find_first(assignments, "./text()")))
+
+    generics <- c(
+      declared_s3_generics(x),
+      namespace_imports()$fun,
+      names(.knownS3Generics),
+      .S3PrimitiveGenerics, ls(baseenv()))
+
+    style_matches <- lapply(styles, function(x) {
+      check_style(nms, x, generics)
+    })
+
+    matches_a_style <- Reduce(`|`, style_matches)
+
+    lapply(
+      assignments[!matches_a_style],
+      object_lint2,
+      source_file,
+      lint_msg,
+      "object_name_linter"
+    )
+  }
+}
+
+check_style <- function(nms, style, generics = character()) {
+  conforming <- re_matches(nms, style_regexes[[style]])
+
+  # mark empty names and NA names as conforming
+  conforming[!nzchar(nms) | is.na(conforming)] <- TRUE
+
+  if (any(!conforming)) {
+    possible_s3 <- re_matches(nms[!conforming], rex(capture(name = "generic", something), ".", capture(name = "method", something)))
+    if (any(!is.na(possible_s3))) {
+      has_generic <- possible_s3$generic %in% generics
+
+      # If they are not conforming, but are S3 methods then ignore them
+      conforming[!conforming][has_generic] <- TRUE
+    }
+  }
+  conforming
+}
+
+# Remove quotes or other things from names
+strip_names <- function(x) {
+  x <- re_substitutes(x, rex(start, some_of(".", quote, "`", "%", "$", "@")), "")
+  x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%", "$", "@"), end), "")
+  x
+}
+
+
+object_lint2 <- function(expr, source_file, message, type) {
+  symbol <- xml2::as_list(expr)
+  Lint(
+    filename = source_file$filename,
+    line_number = symbol@line1,
+    column_number = symbol@col1,
+    type = "style",
+    message = message,
+    line = source_file$file_lines[as.numeric(symbol@line1)],
+    ranges = list(as.numeric(c(symbol@col1, symbol@col2))),
+    linter = type
+    )
+}
+
 make_object_linter <- function(fun) {
   function(source_file) {
 
@@ -137,11 +253,7 @@ object_lint <- function(source_file, token, message, type) {
 }
 
 
-#' @describeIn linters  Check that object names conform to a single naming style.
-#' @param style UpperCamelCase, lowerCamelCase, alllowercase, ALLUPPERCASE, snake_case or
-#'              dotted.case
-#' @export
-object_name_linter <- function(style = "snake_case") {
+object_name_linter_old <- function(style = "snake_case") {
   make_object_linter(
     function(source_file, token) {
       name <- unquote(token[["text"]])
@@ -149,7 +261,7 @@ object_name_linter <- function(style = "snake_case") {
         object_lint(
           source_file,
           token,
-          sprintf("Variable or function name should be %s.", paste(style, collapse = " or ")),
+          sprintf("Variable and function name style should be %s.", paste(style, collapse = " or ")),
           "object_name_linter"
         )
       }
@@ -162,17 +274,15 @@ loweralnum <- rex(one_of(lower, digit))
 upperalnum <- rex(one_of(upper, digit))
 
 style_regexes <- list(
-  "UpperCamelCase" = rex(start, upper, zero_or_more(alnum), end),
-  "lowerCamelCase" = rex(start, lower, zero_or_more(alnum), end),
-  "snake_case"     = rex(start, one_or_more(loweralnum), zero_or_more("_", one_or_more(loweralnum)), end),
-  "dotted.case"    = rex(start, one_or_more(loweralnum), zero_or_more(dot, one_or_more(loweralnum)), end),
-  "alllowercase"   = rex(start, one_or_more(loweralnum), end),
-  "ALLUPPERCASE"   = rex(start, one_or_more(upperalnum), end)
+  "CamelCase" = rex(start, maybe("."), upper, zero_or_more(alnum), end),
+  "camelCase" = rex(start, maybe("."), lower, zero_or_more(alnum), end),
+  "snake_case"     = rex(start, maybe("."), some_of(lower, digit), any_of("_", lower, digit), end),
+  "dotted.case"    = rex(start, maybe("."), one_or_more(loweralnum), zero_or_more(dot, one_or_more(loweralnum)), end),
+  "lowercase"   = rex(start, maybe("."), one_or_more(loweralnum), end),
+  "UPPERCASE"   = rex(start, maybe("."), one_or_more(upperalnum), end)
 )
-# Note: snake_case and dotted.case styles are assumed to be lowercase.
-# other styles include:
-#   SCREAMING_SNAKE_CASE, same as snake_case, but uppercase
-#   kebab-case, i.e. dash-separated (not practical in R since it should be quoted with backticks)
+
+regexes_rd <- paste0(collapse = ", ", paste0("\\sQuote{", names(style_regexes), "}"))
 
 matches_styles <- function(name, styles=names(style_regexes)) {
   invalids <- paste(styles[!styles %in% names(style_regexes)], collapse=", ")

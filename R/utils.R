@@ -1,5 +1,5 @@
 `%||%` <- function(x, y) {
-  if (is.null(x) || is.na(x) || length(x) <= 0) {
+  if (is.null(x) || length(x) <= 0 || is.na(x[[1L]])) {
     y
   } else {
     x
@@ -161,6 +161,8 @@ get_file_line <- function(source_file, line) {
 }
 
 p <- function(...) paste0(...)
+
+lengths <- function(x) vapply(x, length, integer(1L))
 
 try_silently <- function(expr) {
   suppressWarnings(

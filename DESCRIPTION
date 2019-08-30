@@ -11,11 +11,12 @@ Description: Checks adherence to a given style, syntax errors and possible
     semantic issues.  Supports on the fly checking of R code edited with 'RStudio IDE', 'Emacs',
     'Vim', 'Sublime Text' and 'Atom'.
 Depends:
-    R (>= 3.1.1)
+    R (>= 3.2)
 Imports:
     rex,
     crayon,
     codetools,
+    cyclocomp,
     stringdist,
     testthat,
     digest,
@@ -30,12 +31,15 @@ Imports:
 Suggests:
     rmarkdown,
     mockery
+Remotes:
+    r-lib/xmlparsedata
 License: MIT + file LICENSE
 LazyData: true
 Encoding: UTF-8
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
-Collate: 
+Encoding: UTF-8
+Collate:
     'T_and_F_symbol_linter.R'
     'utils.R'
     'aaa.R'
@@ -46,6 +50,8 @@ Collate:
     'commas_linter.R'
     'comment_linters.R'
     'comments.R'
+    'cyclocomp_linter.R'
+    'declared_functions.R'
     'object_name_linters.R'
     'deprecated.R'
     'equals_na_lintr.R'
@@ -61,6 +67,7 @@ Collate:
     'line_length_linter.R'
     'lint.R'
     'methods.R'
+    'namespace.R'
     'no_tab_linter.R'
     'object_usage_linter.R'
     'open_curly_linter.R'
