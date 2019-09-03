@@ -35,6 +35,7 @@ Remotes:
     r-lib/xmlparsedata
 License: MIT + file LICENSE
 LazyData: true
+Encoding: UTF-8
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
 Encoding: UTF-8
@@ -60,6 +61,7 @@ Collate:
     'extraction_operator_linter.R'
     'function_left_parentheses.R'
     'get_source_expressions.R'
+    'ids_with_token.R'
     'implicit_integer_linter.R'
     'infix_spaces_linter.R'
     'line_length_linter.R'
@@ -83,4 +85,5 @@ Collate:
     'undesirable_function_linter.R'
     'undesirable_operator_linter.R'
     'unneeded_concatenation_linter.R'
+    'with_id.R'
     'zzz.R'
