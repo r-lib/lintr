@@ -8,7 +8,7 @@ lint_dir(path = ".", relative_path = TRUE, ..., exclusions = NULL,
   pattern = rex::rex(".", one_of("Rr"), end))
 }
 \arguments{
-\item{path}{the path to the base directory, if \code{NULL},
+\item{path}{the path to the base directory, by default,
 it will be searched in the parent directories of the current directory.}
 
 \item{relative_path}{if \code{TRUE}, file paths are printed using their path

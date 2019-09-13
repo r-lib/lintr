@@ -5,8 +5,7 @@
 \alias{lint}
 \title{Lint a file}
 \usage{
-lint(filename, linters = NULL, cache = FALSE, ...,
-  parse_settings = TRUE)
+lint(filename, linters = NULL, cache = FALSE, ..., parse_settings = TRUE)
 }
 \arguments{
 \item{filename}{the given filename to lint.}
