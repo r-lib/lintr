@@ -128,7 +128,7 @@ reorder_lints <- function(lints) {
 #' Lint a directory
 #'
 #' Apply one or more linters to all of the R files in a directory
-#' @param path the path to the base directory, if \code{NULL},
+#' @param path the path to the base directory, by default,
 #' it will be searched in the parent directories of the current directory.
 #' @param relative_path if \code{TRUE}, file paths are printed using their path
 #' relative to the base directory.  If \code{FALSE}, use the full
@@ -150,28 +150,36 @@ reorder_lints <- function(lints) {
 #' }
 #' @export
 lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL, pattern = rex::rex(".", one_of("Rr"), end)) {
-  files <- dir( path,
+  if (is.null(path)) {
+    path <- "."
+  }
+
+  files <- dir(path,
     pattern = pattern,
     recursive = TRUE,
     full.names = TRUE
   )
 
   # Remove fully ignored files to avoid reading & parsing
-  to_exclude <- vapply(seq_len(length(files)),
-                       function(i) {
-                         file <- files[i]
-                         file %in% names(exclusions) && exclusions[[file]] == Inf
-                       },
-                       logical(1))
+  to_exclude <- vapply(
+    seq_len(length(files)),
+    function(i) {
+      file <- files[i]
+      file %in% names(exclusions) && exclusions[[file]] == Inf
+    },
+    logical(1)
+  )
   files <- files[!to_exclude]
 
-  lints <- flatten_lints(lapply(files,
-                                function(file) {
-                                  if (interactive()) {
-                                    message(".", appendLF = FALSE)
-                                  }
-                                  lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
-                                }))
+  lints <- flatten_lints(lapply(
+    files,
+    function(file) {
+      if (interactive()) {
+        message(".", appendLF = FALSE)
+      }
+      lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
+    }
+  ))
 
   if (interactive()) {
     message() # for a newline
@@ -180,11 +188,13 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL, p
   lints <- reorder_lints(lints)
 
   if (relative_path == TRUE) {
-    lints[] <- lapply(lints,
-                      function(x) {
-                        x$filename <- re_substitutes(x$filename, rex(path, one_of("/", "\\")), "")
-                        x
-                      })
+    lints[] <- lapply(
+      lints,
+      function(x) {
+        x$filename <- re_substitutes(x$filename, rex(path, one_of("/", "\\")), "")
+        x
+      }
+    )
     attr(lints, "path") <- path
   }
 
@@ -199,14 +209,8 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL, p
 #' Apply one or more linters to all of the R files in a package.
 #' @param path the path to the base directory of the package, if \code{NULL},
 #' it will be searched in the parent directories of the current directory.
-#' @param relative_path if \code{TRUE}, file paths are printed using their path
-#' relative to the package base directory.  If \code{FALSE}, use the full
-#' absolute path.
-#' @param ... additional arguments passed to \code{\link{lint}}, e.g.
-#' \code{cache} or \code{linters}.
-#' @param exclusions exclusions for \code{\link{exclude}}, relative to the
-#' package path.
 #' @inherit lint_file return
+#' @inheritParams lint_dir
 #' @examples
 #' \dontrun{
 #'   lint_package()
