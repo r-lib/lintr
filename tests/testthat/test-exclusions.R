@@ -211,6 +211,9 @@ test_that("it excludes properly", {
 test_that("it excludes properly by dir", {
   pattern <- rex::rex(start, "exclusions-test", end)
 
+  t0 <- lint_dir(path = NULL, pattern = pattern )
+  expect_equal(length(t0), 2)
+
   t1 <- lint_dir(path = ".", pattern = pattern )
 
   expect_equal(length(t1), 2)
