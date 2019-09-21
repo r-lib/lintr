@@ -1,4 +1,6 @@
 # lintr 1.0.3.9000 # 
+* fixed pipe-continuation-linter behaviour in nested expressions, functions etc
+  (#366 @russHyde)
 * New exports: ids_with_token() and with_id() (#297 @stufield)
 * New cyclocomp_linter() identifies overly complex functions (#361, @fabian-s)
 * Add support for overriding GitHub API Token via `GITHUB_TOKEN` environment
