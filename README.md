@@ -32,23 +32,34 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 * `pipe_continuation_linter`: Check that each step in a pipeline is on a new
   line, or the entire pipe fits on one line.
 * `assignment_linter`: check that `<-` is always used for assignment
+* `camel_case_linter`: check that objects are not in camelCase.
 * `closed_curly_linter`: check that closed curly braces should always be on their
   own line unless they follow an else.
 * `commas_linter`: check that all commas are followed by spaces, but do not
   have spaces before them.
 * `commented_code_linter`: check that there is no commented code outside of roxygen comments.
+* `cyclocomp_linter`: check for overly complicated expressions.
+* `equals_na_linter`: check for x == NA
 * `extraction_operator_linter`: check that the `[[` operator is used when extracting a single
   element from an object, not `[` (subsetting) nor `$` (interactive use).
+* `function_left_parentheses_linter`: check that all left parentheses in a
+  function call do not have spaces before them.
 * `implicit_integer_linter`: check that integers are explicitly typed using the form `1L` instead of `1`.
 * `infix_spaces_linter`: check that all infix operators have spaces around them.
 * `line_length_linter`: check the line length of both comments and code is less than
   length.
 * `no_tab_linter`: check that only spaces are used, never tabs.
 * `object_length_linter`: check that function and variable names are not more than `length` characters.
-* `object_name_linter`: check that object names conform to a single naming style, e.g. snake_case or lowerCamelCase.
+* `object_name_linter`: check that object names conform to a single naming
+  style, e.g. CamelCase, camelCase, snake_case, dotted.case, lowercase,
+  or UPPERCASE.
 * `open_curly_linter`: check that opening curly braces are never on their own
   line and are always followed by a newline.
 * `semicolon_terminator_linter`: check that no semicolons terminate statements.
+* `seq_linter`: check for `1:length(...)`, `1:nrow(...)`, `1:ncol(...)`,
+  `1:NROW(...)`, and `1:NCOL(...)` expressions. These often cause bugs when the
+  right hand side is zero. It is safer to use `seq_len()` or `seq_along()`
+  instead.
 * `single_quotes_linter`: check that only single quotes are used to delimit
   string constants.
 * `spaces_inside_linter`: check that parentheses and square brackets do not have
