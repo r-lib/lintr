@@ -31,8 +31,10 @@ object_usage_linter <-  function(source_file) {
 
       parent_ids <- parents(source_file$parsed_content, id, simplify = FALSE)
 
+      parent_has_assign <- "LEFT_ASSIGN" %in% source_file$parsed_content$token[source_file$parsed_content$parent == parent_ids[[2]]]
+
       # not a top level function, so just return.
-      if (length(parent_ids) > 3L) {
+      if (length(parent_ids) > 3L || !parent_has_assign) {
         return(NULL)
       }
 

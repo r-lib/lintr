@@ -1,4 +1,6 @@
 # lintr 1.0.3.9000 # 
+* Top level calls that contain function definitions are not properly ignored by
+  the object usage linter (#26).
 * fixed pipe-continuation-linter behaviour in nested expressions, functions etc
   (#366 @russHyde)
 * New exports: ids_with_token() and with_id() (#297 @stufield)
