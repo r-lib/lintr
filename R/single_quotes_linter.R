@@ -1,5 +1,5 @@
 #' @describeIn linters checks that only single quotes are used to delimit
-#' string contestants.
+#' string constants.
 #' @export
 single_quotes_linter <- function(source_file) {
   lapply(ids_with_token(source_file, "STR_CONST"),

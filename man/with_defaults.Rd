@@ -25,7 +25,7 @@ my_linters <- with_defaults(line_length_linter = line_length_linter(120))
 
 # omit the argument name if you are just using different arguments
 my_linters <- with_defaults(default = my_linters,
-                            object_name_linter("lowerCamelCase"))
+                            object_name_linter("camelCase"))
 
 # remove assignment checks (with NULL), add absolute path checks
 my_linters <- with_defaults(default = my_linters,

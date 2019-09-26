@@ -28,6 +28,7 @@ exclude <- function(lints, exclusions = settings$exclusions, ...) {
     function(i) {
       file <- df$filename[i]
       file %in% names(exclusions) &&
+        length(exclusions[[file]]) == 1 &&
         exclusions[[file]] == Inf ||
         df$line_number[i] %in% exclusions[[file]]
      },

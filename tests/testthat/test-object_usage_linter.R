@@ -96,3 +96,10 @@ test_that("eval errors are ignored", {
     NULL,
     object_usage_linter)
 })
+
+test_that("calls with top level function definitions are ignored", {
+  expect_lint('
+    tryCatch("foo", error = function(e) e)',
+    NULL,
+    object_usage_linter)
+})
