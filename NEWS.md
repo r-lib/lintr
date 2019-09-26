@@ -1,4 +1,7 @@
 # lintr 1.0.3.9000 # 
+* `expect_lint_free()` is now automatically skipped when run on covr (#287)
+* Added the new `paren_brace_linter()` to the default linters; it checks that there is a space between right parenthesis and an opening curly brace (@bfgray3, #242).
+* Now lintr only tries to generate comments if running in wercker or travis CI (#166)
 * Top level calls that contain function definitions are not properly ignored by
   the object usage linter (#26).
 * fixed pipe-continuation-linter behaviour in nested expressions, functions etc

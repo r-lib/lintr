@@ -83,6 +83,9 @@ expect_lint <- function(content, checks, ..., file = NULL) {
         } else {
           isTRUE(all.equal(value, check))
         }
+        if (!is.logical(exp)) {
+          stop("Invalid regex result, did you mistakenly have a capture group in the regex? Be sure to escape parenthesis with `[]`", call. = FALSE)
+        }
         testthat::expect(exp, msg)
         })
       },
@@ -104,6 +107,7 @@ expect_lint <- function(content, checks, ..., file = NULL) {
 #' @export
 expect_lint_free <- function(...) {
   testthat::skip_on_cran()
+  testthat::skip_on_covr()
 
   lints <- lint_package(...)
   has_lints <- length(lints) > 0
