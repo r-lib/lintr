@@ -29,7 +29,7 @@ named_list <- function(...) {
 #'
 #' # omit the argument name if you are just using different arguments
 #' my_linters <- with_defaults(default = my_linters,
-#'                             object_name_linter("lowerCamelCase"))
+#'                             object_name_linter("camelCase"))
 #'
 #' # remove assignment checks (with NULL), add absolute path checks
 #' my_linters <- with_defaults(default = my_linters,
@@ -89,6 +89,7 @@ default_linters <- with_defaults(default = list(),
   closed_curly_linter(),
   commas_linter,
   commented_code_linter,
+  cyclocomp_linter(15),
   equals_na_linter,
   function_left_parentheses_linter,
   infix_spaces_linter,

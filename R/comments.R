@@ -1,5 +1,5 @@
 in_ci <- function() {
-  isTRUE(logical_env("CI"))
+  in_travis() || in_wercker()
 }
 
 ci_type <- function() {

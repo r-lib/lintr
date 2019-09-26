@@ -1,5 +1,12 @@
 # lintr 1.0.3.9000 # 
 * Added the new `paren_brace_linter()` to the default linters; it checks that there is a space between right parenthesis and an opening curly brace (@bfgray3, #242).
+* Now lintr only tries to generate comments if running in wercker or travis CI (#166)
+* Top level calls that contain function definitions are not properly ignored by
+  the object usage linter (#26).
+* fixed pipe-continuation-linter behaviour in nested expressions, functions etc
+  (#366 @russHyde)
+* New exports: ids_with_token() and with_id() (#297 @stufield)
+* New cyclocomp_linter() identifies overly complex functions (#361, @fabian-s)
 * Add support for overriding GitHub API Token via `GITHUB_TOKEN` environment
   variable (#63, @mattyb)
 * Changed the default value of the `length` argument to `object_length_linter` to 30 for consistency (#325 @DragosMG) 
@@ -62,6 +69,9 @@
 * New equals_na_linter() (#143, #326, @jabranham)
 * Fixed plain-code-block bug in Rmarkdown (#252, @russHyde)
 * Fixed bug where non-R chunks using {lang} `engine format` were parsed from R-markdown (#322, @russHyde)
+* Ensured `lintr` runs / installs / tests on R-3.6: pinned to github
+  `xmlparsedata`; ensure vectors are length-1 when compared using `&&` and `||`
+  (#363 #377 #384 #391, @russHyde).
 
 # lintr 1.0.3 #
 * Fix tests to work with changes in the parser in R 3.6
