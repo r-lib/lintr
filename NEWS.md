@@ -1,4 +1,5 @@
 # lintr 1.0.3.9000 # 
+* Now lintr only tries to generate comments if running in wercker or travis CI (#166)
 * Top level calls that contain function definitions are not properly ignored by
   the object usage linter (#26).
 * fixed pipe-continuation-linter behaviour in nested expressions, functions etc
