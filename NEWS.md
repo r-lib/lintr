@@ -1,4 +1,6 @@
 # lintr 1.0.3.9000 # 
+* `read_settings()` now has a better error message when the config file does
+  not end with a newline (#160, #189)
 * `expect_lint_free()` is now automatically skipped when run on covr (#287)
 * Added the new `paren_brace_linter()` to the default linters; it checks that there is a space between right parenthesis and an opening curly brace (@bfgray3, #242).
 * Now lintr only tries to generate comments if running in wercker or travis CI (#166)
