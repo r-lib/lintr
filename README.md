@@ -55,6 +55,7 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
   or UPPERCASE.
 * `open_curly_linter`: check that opening curly braces are never on their own
   line and are always followed by a newline.
+* `paren_brace_linter`: check that there is a space between right parenthesis and an opening curly brace.
 * `semicolon_terminator_linter`: check that no semicolons terminate statements.
 * `seq_linter`: check for `1:length(...)`, `1:nrow(...)`, `1:ncol(...)`,
   `1:NROW(...)`, and `1:NCOL(...)` expressions. These often cause bugs when the
