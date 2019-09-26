@@ -156,20 +156,14 @@ r_github_packages:
   - jimhester/lintr
 ```
 
-There are two strategies for getting `lintr` results: 
+We recommend running `lintr::lint_package()` as an [after_success step in your build process](#non-failing-lints)]
 
-* either using `lintr::lint_package` as a [after_success step in your build process](#non-failing-lints), which we recommend
-
-* or setting an [testthat unit test](#testthat), which might take a long time to run and hinder development.
-
-In both cases the [lintr-bot](https://github.com/lintr-bot) will add comments
+[lintr-bot](https://github.com/lintr-bot) will then add comments
 to the commit or pull request with the lints found and they will also be
 printed on Travis-CI.  If you want to disable the commenting you can
 set the environment variable `LINTR_COMMENT_BOT=false`.
 
 ### Non-failing Lints ###
-If you do not want to fail the travis build on lints or do not use testthat you
-can simply add the following to your `.travis.yml`
 ```yaml
 after_success:
   - R CMD INSTALL $PKG_TARBALL
@@ -177,23 +171,6 @@ after_success:
 ```
 
 Live example of a package using this setup: [`hibpwned`](https://github.com/lockedata/HIBPwned/blob/master/.travis.yml), [lintr-bot commenting on a PR](https://github.com/lockedata/HIBPwned/pull/30).
-
-### Testthat ### 
-
-If you are already using [testthat](https://github.com/hadley/testthat) for
-testing simply add the following to your tests to fail if there are any lints
-in your project.  You will have to add `Suggests: lintr` to your package
-`DESCRIPTION` as well.
-
-```r
-if (requireNamespace("lintr", quietly = TRUE)) {
-  context("lints")
-  test_that("Package Style", {
-    lintr::expect_lint_free()
-  })
-}
-```
-
 
 ## Installation of development version ##
 To install the latest development version of lintr from GitHub
