@@ -1,4 +1,5 @@
 # lintr 1.0.3.9000 # 
+* Fix issue in lintr's compatibility with R-devel, due to to a new version of the PCRE library (#411.)
 * `read_settings()` now has a better error message when the config file does
   not end with a newline (#160, #189)
 * `expect_lint_free()` is now automatically skipped when run on covr (#287)
