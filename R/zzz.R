@@ -16,7 +16,9 @@ named_list <- function(...) {
 
 #' Modify lintr defaults
 #'
-#' Make a new list based on \pkg{lintr}'s default linters, undesirable operators or functions.
+#' Make a new list based on \pkg{lintr}'s default linters, undesirable
+#' operators or functions. The result of this function is meant to be passed to
+#' the `linters` argument of `lint()`, or put in your configuration file.
 #'
 #' @param ... arguments of elements to change. If unnamed, the argument is named. If the named
 #' argument already exists in "default", it is replaced by the new element. If it does not exist,
@@ -24,6 +26,10 @@ named_list <- function(...) {
 #' @param default list of elements to modify.
 #' @return A modified list of elements.
 #' @examples
+#' # When using interatively you will usuaully pass the result onto `lint` or `lint_package()`
+#' \dontrun{
+#' lint("foo.R", linters = with_defaults(line_length_linter = line_length_linter(120)))
+#' }
 #' # the default linter list with a different line length cutoff
 #' my_linters <- with_defaults(line_length_linter = line_length_linter(120))
 #'

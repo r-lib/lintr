@@ -17,9 +17,15 @@ it is added. If the value is \code{NULL}, the element is removed.}
 A modified list of elements.
 }
 \description{
-Make a new list based on \pkg{lintr}'s default linters, undesirable operators or functions.
+Make a new list based on \pkg{lintr}'s default linters, undesirable
+operators or functions. The result of this function is meant to be passed to
+the `linters` argument of `lint()`, or put in your configuration file.
 }
 \examples{
+# When using interatively you will usuaully pass the result onto `lint` or `lint_package()`
+\dontrun{
+lint("foo.R", linters = with_defaults(line_length_linter = line_length_linter(120)))
+}
 # the default linter list with a different line length cutoff
 my_linters <- with_defaults(line_length_linter = line_length_linter(120))
 

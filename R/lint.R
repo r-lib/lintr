@@ -214,8 +214,9 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL, p
 #' @examples
 #' \dontrun{
 #'   lint_package()
+#'
 #'   lint_package(
-#'     linters = list(semicolon_terminator_linter())
+#'     linters = with_defaults(semicolon_linter = semicolon_terminator_linter())
 #'     cache = TRUE,
 #'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
 #'   )
