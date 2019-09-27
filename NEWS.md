@@ -1,4 +1,5 @@
 # lintr 1.0.3.9000 # 
+* `open_curly_linter()` and `closed_curly_linter()` now do not lint double curly syntax (#388)
 * `open_curly_linter()` now allows comments after the curly braces (#188)
 * `lint_package()` now excludes `R/RcppExports.R` by default (#282)
 * `function_left_parentheses_linter()` now allows spaces if a function starts with a left parenthesis (#311)

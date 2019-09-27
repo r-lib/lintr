@@ -47,4 +47,6 @@ test_that("returns the correct linting", {
   expect_lint("out <- lapply(stuff, function(i) {\n  do_something(i)\n}) %>% unlist",
               NULL,
               closed_curly_linter())
+
+  expect_lint('{{x}}', NULL, closed_curly_linter())
 })
