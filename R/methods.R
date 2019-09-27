@@ -92,8 +92,11 @@ trim_output <- function(x, max = 65535) {
                  "(", except_some_of(")"), ")",
                  space,
                  "*", or("style", "warning", "error"), ":", "*",
-                 except_some_of(newline), newline, except_some_of(newline),
-                 newline, except_some_of(newline), newline)
+                 except_some_of("\r\n"), newline,
+                 except_some_of("\r\n"), newline,
+                 except_some_of("\r\n"), newline,
+                 except_some_of("\r\n"), newline,
+                 except_some_of("\r\n"), newline)
 
   lint_starts <- rex::re_matches(x, re, global = TRUE, locations = TRUE)[[1]]
 

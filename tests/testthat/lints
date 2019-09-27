@@ -1,0 +1,435 @@
+[R/AES.R:30:34:](https://github.com///blob//R/AES.R#L30) *style:* **Put spaces around all infix operators.**
+```r
+            for (i in seq_len(len/16)) {
+                                ~^~
+```
+[R/AES.R:31:26:](https://github.com///blob//R/AES.R#L31) *style:* **Put spaces around all infix operators.**
+```r
+                ind <- (i-1)*16 + 1:16
+                        ~^~
+```
+[R/AES.R:31:29:](https://github.com///blob//R/AES.R#L31) *style:* **Put spaces around all infix operators.**
+```r
+                ind <- (i-1)*16 + 1:16
+                           ~^~
+```
+[R/AES.R:39:29:](https://github.com///blob//R/AES.R#L39) *style:* **Put spaces around all infix operators.**
+```r
+            result <- raw(16*blocks)
+                           ~^~
+```
+[R/AES.R:42:26:](https://github.com///blob//R/AES.R#L42) *style:* **Put spaces around all infix operators.**
+```r
+                result[16*(i-1)+1:16] <- IV
+                        ~^~
+```
+[R/AES.R:42:27:](https://github.com///blob//R/AES.R#L42) *style:* **Place a space before left parenthesis, except in a function call.**
+```r
+                result[16*(i-1)+1:16] <- IV
+                          ^
+```
+[R/AES.R:42:29:](https://github.com///blob//R/AES.R#L42) *style:* **Put spaces around all infix operators.**
+```r
+                result[16*(i-1)+1:16] <- IV
+                           ~^~
+```
+[R/AES.R:42:32:](https://github.com///blob//R/AES.R#L42) *style:* **Put spaces around all infix operators.**
+```r
+                result[16*(i-1)+1:16] <- IV
+                              ~^~
+```
+[R/AES.R:64:34:](https://github.com///blob//R/AES.R#L64) *style:* **Put spaces around all infix operators.**
+```r
+            for (i in seq_len(len/16)) {
+                                ~^~
+```
+[R/AES.R:65:26:](https://github.com///blob//R/AES.R#L65) *style:* **Put spaces around all infix operators.**
+```r
+                ind <- (i-1)*16 + 1:16
+                        ~^~
+```
+[R/AES.R:65:29:](https://github.com///blob//R/AES.R#L65) *style:* **Put spaces around all infix operators.**
+```r
+                ind <- (i-1)*16 + 1:16
+                           ~^~
+```
+[R/AES.R:72:1:](https://github.com///blob//R/AES.R#L72) *style:* **Trailing whitespace is superfluous.**
+```r
+        
+^~~~~~~~
+```
+[R/AES.R:89:1:](https://github.com///blob//R/AES.R#L89) *style:* **Trailing blank lines are superfluous.**
+```r
+
+^
+```
+[R/digest.R:54:1:](https://github.com///blob//R/digest.R#L54) *style:* **lines should not be more than 80 characters.**
+```r
+        stop("Argument object must be of type character or raw vector if serialize is FALSE")
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[R/digest.R:71:27:](https://github.com///blob//R/digest.R#L71) *style:* **Put spaces around all infix operators.**
+```r
+        algoint <- algoint+100
+                         ~^~
+```
+[R/hmac.R:4:15:](https://github.com///blob//R/hmac.R#L4) *style:* **Only use double-quotes.**
+```r
+    UseMethod('makeRaw')
+              ^~~~~~~~~
+```
+[R/hmac.R:13:33:](https://github.com///blob//R/hmac.R#L13) *style:* **Opening curly braces should never go on their own line and should always be followed by a new line.**
+```r
+                    function(i) { substr(x, i, i + 1) })
+                                ^
+```
+[R/hmac.R:13:55:](https://github.com///blob//R/hmac.R#L13) *style:* **Closing curly-braces should always be on their own line, unless it's followed by an else.**
+```r
+                    function(i) { substr(x, i, i + 1) })
+                                                      ^
+```
+[R/hmac.R:29:20:](https://github.com///blob//R/hmac.R#L29) *style:* **Trailing whitespace is superfluous.**
+```r
+    blocksize <- 64 
+                   ^
+```
+[R/hmac.R:33:31:](https://github.com///blob//R/hmac.R#L33) *style:* **Opening curly braces should never go on their own line and should always be followed by a new line.**
+```r
+    if(length(k) > blocksize) {# not while() 
+                              ^
+```
+[R/hmac.R:33:45:](https://github.com///blob//R/hmac.R#L33) *style:* **Trailing whitespace is superfluous.**
+```r
+    if(length(k) > blocksize) {# not while() 
+                                            ^
+```
+[R/hmac.R:34:11:](https://github.com///blob//R/hmac.R#L34) *style:* **Put spaces around all infix operators.**
+```r
+        k <-digest(k, algo=algo, serialize=FALSE,raw=TRUE)
+          ^~~
+```
+[R/hmac.R:47:5:](https://github.com///blob//R/hmac.R#L47) *style:* **Words within variable and function names should be separated by '_' rather than '.'.**
+```r
+    i.xored.key <- xor(padded.key, makeRaw(0x36))
+    ^~~~~~~~~~~
+```
+[R/hmac.R:48:34:](https://github.com///blob//R/hmac.R#L48) *style:* **Words within variable and function names should be separated by '_' rather than '.'.**
+```r
+    character.digest <- digest(c(i.xored.key, makeRaw(object)),
+                                 ^~~~~~~~~~~
+```
+[R/hmac.R:51:5:](https://github.com///blob//R/hmac.R#L51) *style:* **Words within variable and function names should be separated by '_' rather than '.'.**
+```r
+    o.xored.key <- xor(padded.key, makeRaw(0x5c))
+    ^~~~~~~~~~~
+```
+[R/hmac.R:52:1:](https://github.com///blob//R/hmac.R#L52) *style:* **lines should not be more than 80 characters.**
+```r
+    result <- digest(c(o.xored.key, raw.digest), algo=algo, serialize=serialize, ...)
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[R/hmac.R:52:24:](https://github.com///blob//R/hmac.R#L52) *style:* **Words within variable and function names should be separated by '_' rather than '.'.**
+```r
+    result <- digest(c(o.xored.key, raw.digest), algo=algo, serialize=serialize, ...)
+                       ^~~~~~~~~~~
+```
+[tests/AESTest.R:8:1:](https://github.com///blob//tests/AESTest.R#L8) *style:* **Variable and function names should be all lowercase.**
+```r
+hextextToRaw <- function(text) {
+^~~~~~~~~~~~
+```
+[tests/AESTest.R:9:1:](https://github.com///blob//tests/AESTest.R#L9) *style:* **lines should not be more than 80 characters.**
+```r
+  vals <- matrix(as.integer(as.hexmode(strsplit(text, "")[[1]])), ncol=2, byrow=TRUE)
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/AESTest.R:14:20:](https://github.com///blob//tests/AESTest.R#L14) *style:* **Variable and function names should be all lowercase.**
+```r
+plaintext       <- hextextToRaw("00112233445566778899aabbccddeeff")
+                   ^~~~~~~~~~~~
+```
+[tests/AESTest.R:16:20:](https://github.com///blob//tests/AESTest.R#L16) *style:* **Variable and function names should be all lowercase.**
+```r
+aes128key       <- hextextToRaw("000102030405060708090a0b0c0d0e0f")
+                   ^~~~~~~~~~~~
+```
+[tests/AESTest.R:17:20:](https://github.com///blob//tests/AESTest.R#L17) *style:* **Variable and function names should be all lowercase.**
+```r
+aes128output    <- hextextToRaw("69c4e0d86a7b0430d8cdb78070b4c55a")
+                   ^~~~~~~~~~~~
+```
+[tests/AESTest.R:24:1:](https://github.com///blob//tests/AESTest.R#L24) *style:* **lines should not be more than 80 characters.**
+```r
+aes192key       <- hextextToRaw("000102030405060708090a0b0c0d0e0f1011121314151617")
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/AESTest.R:24:20:](https://github.com///blob//tests/AESTest.R#L24) *style:* **Variable and function names should be all lowercase.**
+```r
+aes192key       <- hextextToRaw("000102030405060708090a0b0c0d0e0f1011121314151617")
+                   ^~~~~~~~~~~~
+```
+[tests/AESTest.R:25:20:](https://github.com///blob//tests/AESTest.R#L25) *style:* **Variable and function names should be all lowercase.**
+```r
+aes192output    <- hextextToRaw("dda97ca4864cdfe06eaf70a0ec0d7191")
+                   ^~~~~~~~~~~~
+```
+[tests/AESTest.R:32:1:](https://github.com///blob//tests/AESTest.R#L32) *style:* **lines should not be more than 80 characters.**
+```r
+aes256key       <- hextextToRaw("000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f")
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/AESTest.R:32:20:](https://github.com///blob//tests/AESTest.R#L32) *style:* **Variable and function names should be all lowercase.**
+```r
+aes256key       <- hextextToRaw("000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f")
+                   ^~~~~~~~~~~~
+```
+[tests/AESTest.R:33:21:](https://github.com///blob//tests/AESTest.R#L33) *style:* **Variable and function names should be all lowercase.**
+```r
+aes256output     <- hextextToRaw("8ea2b7ca516745bfeafc49904b496089")
+                    ^~~~~~~~~~~~
+```
+[tests/AESTest.R:42:14:](https://github.com///blob//tests/AESTest.R#L42) *style:* **Variable and function names should be all lowercase.**
+```r
+plaintext <- hextextToRaw(paste("6bc1bee22e409f96e93d7e117393172a",
+             ^~~~~~~~~~~~
+```
+[tests/AESTest.R:46:8:](https://github.com///blob//tests/AESTest.R#L46) *style:* **Variable and function names should be all lowercase.**
+```r
+key <- hextextToRaw("2b7e151628aed2a6abf7158809cf4f3c")
+       ^~~~~~~~~~~~
+```
+[tests/AESTest.R:48:17:](https://github.com///blob//tests/AESTest.R#L48) *style:* **Variable and function names should be all lowercase.**
+```r
+ecb128output <- hextextToRaw(paste("3ad77bb40d7a3660a89ecaf32466ef97",
+                ^~~~~~~~~~~~
+```
+[tests/AESTest.R:58:17:](https://github.com///blob//tests/AESTest.R#L58) *style:* **Variable and function names should be all lowercase.**
+```r
+cbc128output <- hextextToRaw(paste("7649abac8119b246cee98e9b12e9197d",
+                ^~~~~~~~~~~~
+```
+[tests/AESTest.R:62:7:](https://github.com///blob//tests/AESTest.R#L62) *style:* **Variable and function names should be all lowercase.**
+```r
+iv <- hextextToRaw("000102030405060708090a0b0c0d0e0f")
+      ^~~~~~~~~~~~
+```
+[tests/AESTest.R:70:17:](https://github.com///blob//tests/AESTest.R#L70) *style:* **Variable and function names should be all lowercase.**
+```r
+ctr128output <- hextextToRaw(paste("874d6191b620e3261bef6864990db6ce",
+                ^~~~~~~~~~~~
+```
+[tests/AESTest.R:74:7:](https://github.com///blob//tests/AESTest.R#L74) *style:* **Variable and function names should be all lowercase.**
+```r
+iv <- hextextToRaw("f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff")
+      ^~~~~~~~~~~~
+```
+[tests/digestTest.R:67:13:](https://github.com///blob//tests/digestTest.R#L67) *style:* **Put spaces around all infix operators.**
+```r
+sha512Input <-c(
+            ^~~
+```
+[tests/digestTest.R:72:1:](https://github.com///blob//tests/digestTest.R#L72) *style:* **lines should not be more than 80 characters.**
+```r
+    "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e",
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/digestTest.R:73:1:](https://github.com///blob//tests/digestTest.R#L73) *style:* **lines should not be more than 80 characters.**
+```r
+    "91ea1245f20d46ae9a037a989f54f1f790f0a47607eeb8a14d12890cea77a1bbc6c7ed9cf205e67b7f2b8fd4c7dfd3a7a8617e45f3c463d481c7e586c39ac1ed")
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:7:17:](https://github.com///blob//tests/hmacTest.R#L7) *style:* **Only use double-quotes.**
+```r
+current <- hmac('Jefe', 'what do ya want for nothing?', "md5")
+                ^~~~~~
+```
+[tests/hmacTest.R:7:25:](https://github.com///blob//tests/hmacTest.R#L7) *style:* **Only use double-quotes.**
+```r
+current <- hmac('Jefe', 'what do ya want for nothing?', "md5")
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:8:11:](https://github.com///blob//tests/hmacTest.R#L8) *style:* **Only use double-quotes.**
+```r
+target <- '750c783e6ab0b503eaa86e310a5db738'
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:12:17:](https://github.com///blob//tests/hmacTest.R#L12) *style:* **Only use double-quotes.**
+```r
+current <- hmac('Jefe', 'what do ya want for nothing?', "md5")
+                ^~~~~~
+```
+[tests/hmacTest.R:12:25:](https://github.com///blob//tests/hmacTest.R#L12) *style:* **Only use double-quotes.**
+```r
+current <- hmac('Jefe', 'what do ya want for nothing?', "md5")
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:13:11:](https://github.com///blob//tests/hmacTest.R#L13) *style:* **Only use double-quotes.**
+```r
+target <- '750c783e6ab0b503eaa86e310a5db738'
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:17:32:](https://github.com///blob//tests/hmacTest.R#L17) *style:* **Only use double-quotes.**
+```r
+current <- hmac(rep(0x0b, 16), 'Hi There', "md5")
+                               ^~~~~~~~~~
+```
+[tests/hmacTest.R:18:11:](https://github.com///blob//tests/hmacTest.R#L18) *style:* **Only use double-quotes.**
+```r
+target <- '9294727a3638bb1c13f48ef8158bfc9d'
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:23:11:](https://github.com///blob//tests/hmacTest.R#L23) *style:* **Only use double-quotes.**
+```r
+target <- '56be34521d144c88dbb8c733f0e8b3f6'
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:29:1:](https://github.com///blob//tests/hmacTest.R#L29) *style:* **lines should not be more than 80 characters.**
+```r
+current <- hmac('ThisKeyIsLongerThan64BytesAndThereforeLongerThanTheHashDigestByFour', 'what do ya want for nothing?', "md5")
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:29:17:](https://github.com///blob//tests/hmacTest.R#L29) *style:* **Only use double-quotes.**
+```r
+current <- hmac('ThisKeyIsLongerThan64BytesAndThereforeLongerThanTheHashDigestByFour', 'what do ya want for nothing?', "md5")
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:29:88:](https://github.com///blob//tests/hmacTest.R#L29) *style:* **Only use double-quotes.**
+```r
+current <- hmac('ThisKeyIsLongerThan64BytesAndThereforeLongerThanTheHashDigestByFour', 'what do ya want for nothing?', "md5")
+                                                                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:30:11:](https://github.com///blob//tests/hmacTest.R#L30) *style:* **Only use double-quotes.**
+```r
+target <- '109af8ddd9cccbf8927d354da8be892b'
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:36:17:](https://github.com///blob//tests/hmacTest.R#L36) *style:* **Only use double-quotes.**
+```r
+current <- hmac('Jefe', 'what do ya want for nothing?', "sha1")
+                ^~~~~~
+```
+[tests/hmacTest.R:36:25:](https://github.com///blob//tests/hmacTest.R#L36) *style:* **Only use double-quotes.**
+```r
+current <- hmac('Jefe', 'what do ya want for nothing?', "sha1")
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:37:11:](https://github.com///blob//tests/hmacTest.R#L37) *style:* **Only use double-quotes.**
+```r
+target <- 'effcdf6ae5eb2fa2d27416d5f184df9c259a7c79'
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:41:32:](https://github.com///blob//tests/hmacTest.R#L41) *style:* **Only use double-quotes.**
+```r
+current <- hmac(rep(0x0b, 16), 'Hi There', "sha1")
+                               ^~~~~~~~~~
+```
+[tests/hmacTest.R:42:11:](https://github.com///blob//tests/hmacTest.R#L42) *style:* **Only use double-quotes.**
+```r
+target <- '675b0b3a1b4ddf4e124872da6c2f632bfed957e9'
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:47:11:](https://github.com///blob//tests/hmacTest.R#L47) *style:* **Only use double-quotes.**
+```r
+target <- 'd730594d167e35d5956fd8003d0db3d3f46dc7bb'
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:52:17:](https://github.com///blob//tests/hmacTest.R#L52) *style:* **Only use double-quotes.**
+```r
+current <- hmac('key', 'The quick brown fox jumps over the lazy dog', 'sha256')
+                ^~~~~
+```
+[tests/hmacTest.R:52:24:](https://github.com///blob//tests/hmacTest.R#L52) *style:* **Only use double-quotes.**
+```r
+current <- hmac('key', 'The quick brown fox jumps over the lazy dog', 'sha256')
+                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:52:71:](https://github.com///blob//tests/hmacTest.R#L52) *style:* **Only use double-quotes.**
+```r
+current <- hmac('key', 'The quick brown fox jumps over the lazy dog', 'sha256')
+                                                                      ^~~~~~~~
+```
+[tests/hmacTest.R:53:11:](https://github.com///blob//tests/hmacTest.R#L53) *style:* **Only use double-quotes.**
+```r
+target <- 'f7bc83f430538424b13298e6aa6fb143ef4d59a14946175997479dbc2d1a3cd8'
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:63:17:](https://github.com///blob//tests/hmacTest.R#L63) *style:* **Only use double-quotes.**
+```r
+current <- hmac('Jefe', 'what do ya want for nothing?', "sha512")
+                ^~~~~~
+```
+[tests/hmacTest.R:63:25:](https://github.com///blob//tests/hmacTest.R#L63) *style:* **Only use double-quotes.**
+```r
+current <- hmac('Jefe', 'what do ya want for nothing?', "sha512")
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:64:1:](https://github.com///blob//tests/hmacTest.R#L64) *style:* **lines should not be more than 80 characters.**
+```r
+target <- '164b7a7bfcf819e2e395fbe73b56e0a387bd64222e831fd610270cd7ea2505549758bf75c05a994a6d034f65f8f0e6fdcaeab1a34d4a6b4b636e070a38bce737'
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:64:11:](https://github.com///blob//tests/hmacTest.R#L64) *style:* **Only use double-quotes.**
+```r
+target <- '164b7a7bfcf819e2e395fbe73b56e0a387bd64222e831fd610270cd7ea2505549758bf75c05a994a6d034f65f8f0e6fdcaeab1a34d4a6b4b636e070a38bce737'
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:68:17:](https://github.com///blob//tests/hmacTest.R#L68) *style:* **Only use double-quotes.**
+```r
+current <- hmac('love', 'message', 'sha512')
+                ^~~~~~
+```
+[tests/hmacTest.R:68:25:](https://github.com///blob//tests/hmacTest.R#L68) *style:* **Only use double-quotes.**
+```r
+current <- hmac('love', 'message', 'sha512')
+                        ^~~~~~~~~
+```
+[tests/hmacTest.R:68:36:](https://github.com///blob//tests/hmacTest.R#L68) *style:* **Only use double-quotes.**
+```r
+current <- hmac('love', 'message', 'sha512')
+                                   ^~~~~~~~
+```
+[tests/hmacTest.R:69:1:](https://github.com///blob//tests/hmacTest.R#L69) *style:* **lines should not be more than 80 characters.**
+```r
+target <- 'f955821b3f6161673eb20985c677e3dc101860cafef3321ee31641acad9fcd85d9c7d3481ed3e4e1f4fa7af41d7e6ea9606d51e9bc7205d0091a4ee87d90fb9c'
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:69:11:](https://github.com///blob//tests/hmacTest.R#L69) *style:* **Only use double-quotes.**
+```r
+target <- 'f955821b3f6161673eb20985c677e3dc101860cafef3321ee31641acad9fcd85d9c7d3481ed3e4e1f4fa7af41d7e6ea9606d51e9bc7205d0091a4ee87d90fb9c'
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:74:1:](https://github.com///blob//tests/hmacTest.R#L74) *style:* **lines should not be more than 80 characters.**
+```r
+current <- hmac('verylongkeyinfactlongerthanthedigestandthereforehashedbyitselfonlyifwegettothislengthsoonpleasepleasebutiddoesnotlooksoogoodahthereweare', 'message', 'sha512')
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:74:17:](https://github.com///blob//tests/hmacTest.R#L74) *style:* **Only use double-quotes.**
+```r
+current <- hmac('verylongkeyinfactlongerthanthedigestandthereforehashedbyitselfonlyifwegettothislengthsoonpleasepleasebutiddoesnotlooksoogoodahthereweare', 'message', 'sha512')
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:74:157:](https://github.com///blob//tests/hmacTest.R#L74) *style:* **Only use double-quotes.**
+```r
+current <- hmac('verylongkeyinfactlongerthanthedigestandthereforehashedbyitselfonlyifwegettothislengthsoonpleasepleasebutiddoesnotlooksoogoodahthereweare', 'message', 'sha512')
+                                                                                                                                                            ^~~~~~~~~
+```
+[tests/hmacTest.R:74:168:](https://github.com///blob//tests/hmacTest.R#L74) *style:* **Only use double-quotes.**
+```r
+current <- hmac('verylongkeyinfactlongerthanthedigestandthereforehashedbyitselfonlyifwegettothislengthsoonpleasepleasebutiddoesnotlooksoogoodahthereweare', 'message', 'sha512')
+                                                                                                                                                                       ^~~~~~~~
+```
+[tests/hmacTest.R:75:1:](https://github.com///blob//tests/hmacTest.R#L75) *style:* **lines should not be more than 80 characters.**
+```r
+target <- '54b274484a8b8a371c8ae898f453d37c90d488b0c88c89dd705de06b18263d50c28069f1f778c8a997a61a4d53a06bc8e8719ad11a553c49140bb93a4636882e'
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:75:11:](https://github.com///blob//tests/hmacTest.R#L75) *style:* **Only use double-quotes.**
+```r
+target <- '54b274484a8b8a371c8ae898f453d37c90d488b0c88c89dd705de06b18263d50c28069f1f778c8a997a61a4d53a06bc8e8719ad11a553c49140bb93a4636882e'
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+[tests/hmacTest.R:78:1:](https://github.com///blob//tests/hmacTest.R#L78) *style:* **Trailing blank lines are superfluous.**
+```r
+
+^
+```

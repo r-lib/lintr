@@ -19,7 +19,12 @@ read_settings <- function(filename) {
   config_file <- find_config(filename)
 
   if (!is.null(config_file)) {
-    config <- read.dcf(config_file, all = TRUE)
+    tryCatch(
+      config <- read.dcf(config_file, all = TRUE),
+      warning = function(e) {
+        stop("Malformed config file, ensure it ends in a newline\n  ", conditionMessage(e), call. = FALSE)
+      }
+    )
   } else {
     config <- NULL
   }
