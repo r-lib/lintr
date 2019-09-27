@@ -191,6 +191,7 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL, p
   lints <- reorder_lints(lints)
 
   if (relative_path == TRUE) {
+    path <- normalizePath(path)
     lints[] <- lapply(
       lints,
       function(x) {
