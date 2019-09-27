@@ -18,9 +18,6 @@ object_usage_linter <-  function(source_file) {
   }
   env <- new.env(parent = parent_env)
 
-  # add file assignments to globals
-  try_silently(eval(source_file$file_lines, envir = env))
-
   declared_globals <- utils::globalVariables(package = pkg_name %||% globalenv())
 
   all_globals <- unique(recursive_ls(env))
@@ -33,6 +30,9 @@ object_usage_linter <-  function(source_file) {
       envir = env))
 
   res <- parse_check_usage(env)
+
+  # keep only results that match this filename
+  res <- res[basename(res$path) == basename(source_file$filename), ]
 
   lapply(which(!is.na(res$message)),
     function(row_num) {
@@ -74,7 +74,7 @@ parse_check_usage <- function(expression) {
   try(codetools::checkUsageEnv(expression, report = report))
 
   function_name <- rex(anything, ": ")
-  line_info <- rex(" ", anything, ":", capture(name = "line_number", digits), ")")
+  line_info <- rex(" ", "(", capture(name = "path", non_spaces), ":", capture(name = "line_number", digits), ")")
 
   res <- re_matches(vals,
     rex(function_name,
