@@ -4,13 +4,14 @@
 %   R/comment_linters.R, R/cyclocomp_linter.R, R/object_name_linters.R,
 %   R/deprecated.R, R/equals_na_lintr.R, R/extraction_operator_linter.R,
 %   R/function_left_parentheses.R, R/implicit_integer_linter.R,
-%   R/infix_spaces_linter.R, R/line_length_linter.R, R/no_tab_linter.R,
-%   R/object_usage_linter.R, R/open_curly_linter.R,R/paren_brace_linter.R, R/path_linters.R,
-%   R/pipe_continuation_linter.R, R/semicolon_terminator_linter.R,
-%   R/seq_linter.R, R/single_quotes_linter.R, R/spaces_inside_linter.R,
-%   R/spaces_left_parentheses_linter.R, R/trailing_blank_lines_linter.R,
-%   R/trailing_whitespace_linter.R, R/undesirable_function_linter.R,
-%   R/undesirable_operator_linter.R, R/unneeded_concatenation_linter.R, R/zzz.R
+%   R/infix_spaces_linter.R, R/line_length_linter.R,
+%   R/no_tab_linter.R, R/object_usage_linter.R, R/open_curly_linter.R,
+%   R/paren_brace_linter.R, R/path_linters.R, R/pipe_continuation_linter.R,
+%   R/semicolon_terminator_linter.R, R/seq_linter.R, R/single_quotes_linter.R,
+%   R/spaces_inside_linter.R, R/spaces_left_parentheses_linter.R,
+%   R/trailing_blank_lines_linter.R, R/trailing_whitespace_linter.R,
+%   R/undesirable_function_linter.R, R/undesirable_operator_linter.R,
+%   R/unneeded_concatenation_linter.R, R/zzz.R
 \name{T_and_F_symbol_linter}
 \alias{T_and_F_symbol_linter}
 \alias{assignment_linter}
@@ -60,10 +61,9 @@ commented_code_linter(source_file)
 
 todo_comment_linter(todo = c("todo", "fixme"))
 
-  
-object_name_linter(styles = "snake_case")
-
 cyclocomp_linter(complexity_limit = 25)
+
+object_name_linter(styles = "snake_case")
 
 object_length_linter(length = 30L)
 
@@ -123,12 +123,12 @@ same line.}
 
 \item{todo}{Vector of strings that identify TODO comments.}
 
+\item{complexity_limit}{expressions with a cyclomatic complexity higher than
+this are linted, defaults to 25. See \code{\link[cyclocomp]{cyclocomp}}.}
+
 \item{styles}{A subset of
 \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
 match at least one of these styles.}
-
-\item{complexity_limit}{expressions with a cyclomatic complexity higher than
-this are linted, defaults to 25. See \code{\link[cyclocomp]{cyclocomp}}.}
 
 \item{length}{the length cutoff to use for the given linter.}
 
@@ -165,10 +165,10 @@ blocks
 
 \item \code{todo_comment_linter}: Check that the source contains no TODO comments (case-insensitive).
 
-\item \code{object_name_linter}: Check that object names conform to a naming style.
-
 \item \code{cyclocomp_linter}: Check for overly complicated expressions. See
 \code{\link[cyclocomp]{cyclocomp}}.
+
+\item \code{object_name_linter}: Check that object names conform to a naming style.
 
 \item \code{object_length_linter}: check that object names are not too long.
 
