@@ -23,6 +23,8 @@ object_usage_linter <-  function(source_file) {
   # add file locals to the environment
   try_silently(eval(source_file$parsed_content, envir = env))
 
+  declared_globals <- utils::globalVariables(package = pkg_name %||% globalenv())
+
   all_globals <- unique(recursive_ls(env))
 
   lapply(ids_with_token(source_file, rex(start, "FUNCTION"), fun = re_matches),
@@ -58,6 +60,10 @@ object_usage_linter <-  function(source_file) {
       lapply(which(!is.na(res$message)),
         function(row_num) {
           row <- res[row_num, ]
+
+          if (row$name %in% declared_globals) {
+            return()
+          }
 
           # if a no visible binding message suggest an alternative
           if (re_matches(row$message,

@@ -1,4 +1,5 @@
 # lintr 1.0.3.9000 # 
+* `object_usage_linter()` now respects `utils::globalVariables()`, so it can be used to avoid false positive warnings due to non-standard evaluation (#352)
 * `seq_linter` is now one of the default linters (#316).
 * R Markdown files that do not contain chunks are no longer treated as code (#370).
 * `open_curly_linter()` and `closed_curly_linter()` now do not lint double curly syntax (#388)
