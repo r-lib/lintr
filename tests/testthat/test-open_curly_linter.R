@@ -38,4 +38,12 @@ test_that("returns the correct linting", {
   expect_lint("a <- function() { 1 }",
     NULL,
     open_curly_linter(allow_single_line = TRUE))
+
+  expect_lint(
+'if ("P" != "NP") { # what most people expect
+    print("Cryptomania is possible")
+}',
+    NULL,
+    open_curly_linter()
+  )
 })

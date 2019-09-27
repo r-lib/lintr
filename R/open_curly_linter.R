@@ -14,7 +14,8 @@ open_curly_linter <- function(allow_single_line = FALSE) {
 
              tokens_after <- source_file$parsed_content$token[
                                                               source_file$parsed_content$line1 == parsed$line1 &
-                                                              source_file$parsed_content$col1 > parsed$col1]
+                                                              source_file$parsed_content$col1 > parsed$col1 &
+                                                              source_file$parsed_content$token != "COMMENT"]
 
              if (isTRUE(allow_single_line) &&
                  "'}'" %in% tokens_after) {
@@ -27,10 +28,14 @@ open_curly_linter <- function(allow_single_line = FALSE) {
              some_before <- length(tokens_before) %!=% 0L
              some_after <- length(tokens_after) %!=% 0L
 
+             content_after <- unname(substr(line, parsed$col1 + 1L, nchar(line)))
+
+             only_comment <- rex::re_matches(content_after, rex::rex(any_spaces, "#", something, end))
+
              whitespace_after <-
                unname(substr(line, parsed$col1 + 1L, parsed$col1 + 1L)) %!=% ""
 
-             if (!some_before || some_after || whitespace_after) {
+             if (!some_before || some_after || (whitespace_after && !only_comment)) {
                Lint(
                     filename = source_file$filename,
                     line_number = parsed$line1,
