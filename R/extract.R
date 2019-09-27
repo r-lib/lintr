@@ -14,7 +14,7 @@ extract_r_source <- function(filename, lines) {
 
   # no chunks found, so just return the lines
   if (length(starts) == 0 || length(ends) == 0) {
-    return(lines)
+    return(character())
   }
 
   if (length(starts) != length(ends)) {
