@@ -32,7 +32,7 @@ object_usage_linter <-  function(source_file) {
   res <- parse_check_usage(env)
 
   # keep only results that match this filename
-  res <- res[basename(res$path) == basename(source_file$filename), ]
+  res <- res[res$path == "<text>" | basename(res$path) == basename(source_file$filename), ]
 
   lapply(which(!is.na(res$message)),
     function(row_num) {
