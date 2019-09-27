@@ -78,9 +78,8 @@ find_config <- function(filename) {
     return(linter_config)
   }
 
-  ## next check for a file in the project directory
-  project <- find_package(path)
-  linter_config <- file.path(project, linter_file)
+  ## next check for a file higher directories
+  linter_config <- find_config2(path)
   if (isTRUE(file.exists(linter_config))) {
     return(linter_config)
   }

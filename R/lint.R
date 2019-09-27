@@ -256,6 +256,27 @@ find_package <- function(path = getwd()) {
   normalizePath(prev_path)
 }
 
+is_root <- function(path) {
+  identical(path, dirname(path))
+}
+
+has_config <- function(path, config) {
+  file.exists(file.path(path, config))
+}
+
+find_config2 <- function(path) {
+  config <- basename(getOption("lintr.linter_file"))
+  path <- normalizePath(path, mustWork = FALSE)
+
+  while (!has_config(path, config)) {
+    path <- dirname(path)
+    if (is_root(path)) {
+      return(character())
+    }
+  }
+  return(file.path(path, config))
+}
+
 pkg_name <- function(path = find_package()) {
   if (is.null(path)) {
     return(NULL)

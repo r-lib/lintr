@@ -1,4 +1,5 @@
 # lintr 1.0.3.9000 # 
+* lintr now looks up its configuration in any parent directories as well as the package directory (#238, #345)
 * `object_usage_linter()` has been changed to better detect lexical scoping of global variables (#27, #336, #91, #382)
 * `object_usage_linter()` now respects `utils::globalVariables()`, so it can be used to avoid false positive warnings due to non-standard evaluation (#352)
 * `seq_linter` is now one of the default linters (#316).
