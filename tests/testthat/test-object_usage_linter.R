@@ -51,7 +51,7 @@ fun2 <- function(x) {
 }",
     list(
       rex("local variable", anything, "assigned but may not be used"),
-      rex("no visible binding for global variable ", anything, ", Did you mean")
+      rex("no visible binding for global variable ", anything)
       ),
     object_usage_linter)
 
@@ -59,14 +59,14 @@ fun2 <- function(x) {
 "fun <- function() {
   fnu(1)
 }",
-    rex("no visible global function definition for ", anything, ", Did you mean", anything),
+    rex("no visible global function definition for ", anything),
     object_usage_linter)
 
   expect_lint(
 "fun <- function(x) {
   n(1)
 }",
-    rex("no visible global function definition for ", anything, ", Did you mean", anything),
+    rex("no visible global function definition for ", anything),
     object_usage_linter)
 
   test_that("replace_functions_stripped", {
@@ -74,14 +74,14 @@ fun2 <- function(x) {
 "fun <- function(x) {
   n(x) = 1
 }",
-    rex("no visible global function definition for ", anything, ", Did you mean", anything),
+    rex("no visible global function definition for ", anything),
     object_usage_linter)
 
     expect_lint(
 "fun <- function(x) {
   n(x) <- 1
 }",
-    rex("no visible global function definition for ", anything, ", Did you mean", anything),
+    rex("no visible global function definition for ", anything),
     object_usage_linter)
   })
 

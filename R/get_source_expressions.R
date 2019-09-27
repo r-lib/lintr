@@ -110,8 +110,9 @@ get_source_expressions <- function(filename) {
       filename = filename,
       file_lines = source_file$lines,
       content = source_file$lines,
+      full_parsed_content = parsed_content,
       xml_parsed_content = if (!is.null(parsed_content)) xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content))
-      )
+    )
 
   list(expressions = expressions, error = e, lines = source_file$lines)
 }
