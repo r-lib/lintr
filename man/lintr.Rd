@@ -9,5 +9,5 @@ issues.  Supports on the fly checking of R code edited with Emacs, Vim and
 Sublime Text.
 }
 \seealso{
-\code{\link{lint}}, \code{\link{lint_package}}, \code{\link{linters}}
+\code{\link{lint}}, \code{\link{lint_package}}, \code{\link{lint_dir}}, \code{\link{linters}}
 }

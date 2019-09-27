@@ -89,6 +89,16 @@ test_that("it throws an error if start and end are unpaired", {
       "a",
       "test"), t1)
   expect_error(parse_exclusions(t1), "but only")
+
+
+  t2 <- tempfile()
+  on.exit(unlink(t2))
+  writeLines(
+    c("this #TeSt_NoLiNt_StArT",
+      "is #TeSt_NoLiNt_EnD",
+      "a  #TeSt_NoLiNt_EnD",
+      "test"), t2)
+  expect_error(parse_exclusions(t2), "but only")
 })
 
 context("normalize_exclusions")
@@ -196,6 +206,41 @@ test_that("it excludes properly", {
 
     expect_equal(length(t4), 2, info = info)
   }
+})
+
+test_that("it excludes properly by dir", {
+  pattern <- rex::rex(start, "exclusions-test", end)
+
+  t0 <- lint_dir(path = NULL, pattern = pattern )
+  expect_equal(length(t0), 2)
+
+  t1 <- lint_dir(path = ".", pattern = pattern )
+
+  expect_equal(length(t1), 2)
+
+  t2 <- lint_dir(path = ".", exclusions = list("exclusions-test" = 4), pattern = pattern)
+
+  expect_equal(length(t2), 1)
+
+  t3 <- lint_dir(path = ".", exclusions = list("exclusions-test"), pattern = pattern)
+
+  expect_equal(length(t3), 0)
+
+  cache_path <- file.path(tempdir(), "lintr_cache")
+  clear_cache("exclusions-test", cache_path)
+  for (info in sprintf("caching: pass %s", 1:4)) {
+    t4 <- lint_dir(path = ".", cache = cache_path,  pattern = pattern)
+
+    expect_equal(length(t4), 2, info = info)
+  }
+})
+
+
+
+test_that("it excludes properly by package", {
+  pattern <- rex::rex(start, "exclusions-test", end)
+  t1 <- lint_package(path = "." , pattern=pattern)
+  expect_equal(length(t1), 2)
 })
 
 options(old_ops)

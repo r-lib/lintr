@@ -1,4 +1,14 @@
 context("knitr_formats")
+
+test_that("it handles dir", {
+  lints <- lint_dir(path = "knitr_formats", pattern = rex::rex(".R", one_of("html", "md", "nw", "rst", "tex", "txt")))
+  has_lints <- length(lints) > 0
+  testthat::expect(has_lints, "There should be lints")
+
+  testthat::expect_equivalent(length(unique(names(lints))), 6, info="For every file there should be at least 1 lint")
+})
+
+
 test_that("it handles markdown", {
   expect_lint(file = "knitr_formats/test.Rmd",
     checks = list(
