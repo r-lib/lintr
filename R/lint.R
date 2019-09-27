@@ -150,9 +150,11 @@ reorder_lints <- function(lints) {
 #'   )
 #' }
 #' @export
-lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL, pattern = rex::rex(".", one_of("Rr"), end)) {
-  if (is.null(path)) {
-    path <- "."
+lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL, pattern = rex::rex(".", one_of("Rr"), end), parse_settings = TRUE) {
+
+  if (isTRUE(parse_settings)) {
+    read_settings(path)
+    on.exit(clear_settings, add = TRUE)
   }
 
   files <- dir(path,
@@ -233,7 +235,7 @@ lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = lis
 
   path = file.path(path, c("R", "tests",  "inst"))
 
-  lint_dir(path = path, relative_path=relative_path, exclusions=exclusions, ...)
+  lint_dir(path = path, relative_path = relative_path, exclusions = exclusions, parse_settings = FALSE, ...)
 }
 
 
