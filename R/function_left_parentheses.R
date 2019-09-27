@@ -8,16 +8,16 @@ function_left_parentheses_linter <- function(source_file) {
       parsed <- source_file$parsed_content[id, ]
 
       terminal_tokens_before <-
-        source_file$parsed_content$token[
-                                         source_file$parsed_content$line1 == parsed$line1 &
-                                         source_file$parsed_content$col1 < parsed$col1 &
-                                         source_file$parsed_content$terminal]
-      last_type <- tail(terminal_tokens_before, n = 1)
+        source_file$parsed_content$line1 == parsed$line1 &
+        source_file$parsed_content$col1 < parsed$col1 &
+        source_file$parsed_content$terminal
 
-      is_function <- length(last_type) %!=% 0L &&
-        (last_type %in% c("SYMBOL_FUNCTION_CALL", "FUNCTION", "'}'", "')'", "']'"))
+      last_type <- tail(source_file$parsed_content$token[terminal_tokens_before], n = 1)
 
-      if (is_function) {
+      is_function_call <- length(last_type) %!=% 0L &&
+        (last_type %in% c("SYMBOL_FUNCTION_CALL", "FUNCTION", "'}'", "']'"))
+
+      if (is_function_call) {
 
         line <- source_file$lines[as.character(parsed$line1)]
 

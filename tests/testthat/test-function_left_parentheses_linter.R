@@ -39,6 +39,8 @@ test_that("returns the correct linting", {
 
   expect_lint("c(function(){})[1]()", NULL, function_left_parentheses_linter)
 
+  expect_lint("function(x) (mean(x) + 3)", NULL, function_left_parentheses_linter)
+
   expect_lint("blah (1)",
     rex("Remove spaces before the left parenthesis in a function call."),
     function_left_parentheses_linter)
