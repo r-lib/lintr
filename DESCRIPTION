@@ -27,12 +27,10 @@ Imports:
     stats,
     utils,
     xml2 (>= 1.0.0),
-    xmlparsedata
+    xmlparsedata (>= 1.0.3)
 Suggests:
     rmarkdown,
     mockery
-Remotes:
-    r-lib/xmlparsedata
 License: MIT + file LICENSE
 LazyData: true
 Encoding: UTF-8
