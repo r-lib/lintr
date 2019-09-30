@@ -4,7 +4,7 @@
 \alias{lint_dir}
 \title{Lint a directory}
 \usage{
-lint_dir(path = ".", relative_path = TRUE, ..., exclusions = NULL,
+lint_dir(path = ".", relative_path = FALSE, ..., exclusions = NULL,
   pattern = rex::rex(".", one_of("Rr"), end), parse_settings = TRUE)
 }
 \arguments{
