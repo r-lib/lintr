@@ -208,36 +208,4 @@ test_that("it excludes properly", {
   }
 })
 
-test_that("it excludes properly by dir", {
-  pattern <- rex::rex(start, "exclusions-test", end)
-
-  t1 <- lint_dir(path = ".", pattern = pattern )
-
-  expect_equal(length(t1), 2)
-
-  t2 <- lint_dir(path = ".", exclusions = list("exclusions-test" = 4), pattern = pattern)
-
-  expect_equal(length(t2), 1)
-
-  t3 <- lint_dir(path = ".", exclusions = list("exclusions-test"), pattern = pattern)
-
-  expect_equal(length(t3), 0)
-
-  cache_path <- file.path(tempdir(), "lintr_cache")
-  clear_cache("exclusions-test", cache_path)
-  for (info in sprintf("caching: pass %s", 1:4)) {
-    t4 <- lint_dir(path = ".", cache = cache_path,  pattern = pattern)
-
-    expect_equal(length(t4), 2, info = info)
-  }
-})
-
-
-
-test_that("it excludes properly by package", {
-  pattern <- rex::rex(start, "exclusions-test", end)
-  t1 <- lint_package(path = "." , pattern=pattern)
-  expect_equal(length(t1), 2)
-})
-
 options(old_ops)
