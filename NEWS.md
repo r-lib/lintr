@@ -1,4 +1,4 @@
-# lintr 1.0.3.9000 # 
+# lintr 2.0.0
 
 lintr 2.0.0 is a major release, and incorporates development changes since the last major release (1.0.0) in 2016-04-16.
 
