@@ -1,6 +1,5 @@
 ## Comments
-This is a patch release for compatibility with the upcoming testthat release,
-only changes are in test code from the previous release.
+This release fixes R CMD check issues in R-devel, as requested by CRAN.
 
 ## Test environments
 
@@ -15,6 +14,6 @@ only changes are in test code from the previous release.
 
 ## Reverse dependencies
 
-* I have run R CMD check on the 28 downstream dependencies.
+* I have run R CMD check on the 81 downstream dependencies.
   Summary at: https://github.com/jimhester/lintr/blob/master/revdep/
   There were no errors found.

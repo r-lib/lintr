@@ -192,7 +192,7 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL, p
   lints <- reorder_lints(lints)
 
   if (relative_path == TRUE) {
-    path <- normalizePath(path)
+    path <- normalizePath(path, mustWork = FALSE)
     lints[] <- lapply(
       lints,
       function(x) {
@@ -235,9 +235,7 @@ lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = lis
 
   exclusions <- normalize_exclusions(c(exclusions, settings$exclusions), FALSE)
 
-  path = file.path(path, c("R", "tests",  "inst"))
-
-  lint_dir(path = path, relative_path = relative_path, exclusions = exclusions, parse_settings = FALSE, ...)
+  lint_dir(path, relative_path = relative_path, exclusions = exclusions, parse_settings = FALSE, ...)
 }
 
 
