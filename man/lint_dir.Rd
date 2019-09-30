@@ -5,7 +5,7 @@
 \title{Lint a directory}
 \usage{
 lint_dir(path = ".", relative_path = TRUE, ..., exclusions = NULL,
-  pattern = rex::rex(".", one_of("Rr"), end))
+  pattern = rex::rex(".", one_of("Rr"), end), parse_settings = TRUE)
 }
 \arguments{
 \item{path}{the path to the base directory, by default,
@@ -22,6 +22,8 @@ absolute path.}
 package path.}
 
 \item{pattern}{pattern for files, by default it will take files with .R or .r extension.}
+
+\item{parse_settings}{whether to try and parse the settings}
 }
 \value{
 A list of lint objects.

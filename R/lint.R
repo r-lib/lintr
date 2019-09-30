@@ -140,6 +140,7 @@ reorder_lints <- function(lints) {
 #' package path.
 #' @param pattern pattern for files, by default it will take files with .R or .r extension.
 #' @inherit lint_file return
+#' @inheritParams lint_file
 #' @examples
 #' \dontrun{
 #'   lint_dir()
