@@ -151,7 +151,7 @@ reorder_lints <- function(lints) {
 #'   )
 #' }
 #' @export
-lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL, pattern = rex::rex(".", one_of("Rr"), end), parse_settings = TRUE) {
+lint_dir <- function(path = ".", relative_path = FALSE, ..., exclusions = NULL, pattern = rex::rex(".", one_of("Rr"), end), parse_settings = TRUE) {
 
   if (isTRUE(parse_settings)) {
     read_settings(path)
