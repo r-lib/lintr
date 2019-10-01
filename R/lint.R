@@ -235,7 +235,21 @@ lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = lis
 
   exclusions <- normalize_exclusions(c(exclusions, settings$exclusions), FALSE)
 
-  lint_dir(path, relative_path = relative_path, exclusions = exclusions, parse_settings = FALSE, ...)
+  lints <- lint_dir(file.path(path, c("R", "tests", "inst")), relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
+
+  if (isTRUE(relative_path)) {
+    path <- normalizePath(path, mustWork = TRUE)
+    lints[] <- lapply(
+      lints,
+      function(x) {
+        x$filename <- re_substitutes(x$filename, rex(path, one_of("/", "\\")), "")
+        x
+      }
+    )
+    attr(lints, "path") <- path
+  }
+
+  lints
 }
 
 

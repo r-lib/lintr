@@ -171,3 +171,6 @@ try_silently <- function(expr) {
     )
   )
 }
+
+viapply <- function(x, ...) vapply(x, ..., FUN.VALUE = integer(1))
+vcapply <- function(x, ...) vapply(x, ..., FUN.VALUE = character(1))
