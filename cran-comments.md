@@ -1,4 +1,7 @@
 ## Comments
+This is a resubmission, it fixes a bug in the previous submission that caused
+an error in a reverse dependency.
+
 This release fixes R CMD check issues in R-devel, as requested by CRAN.
 
 ## Test environments
