@@ -24,7 +24,7 @@ object_usage_linter <-  function(source_file) {
   }
   env <- new.env(parent = parent_env)
 
-  declared_globals <- utils::globalVariables(package = pkg_name %||% globalenv())
+  declared_globals <- try_silently(utils::globalVariables(package = pkg_name %||% globalenv()))
 
   symbols <- get_assignment_symbols(source_file$xml_parsed_content)
 
