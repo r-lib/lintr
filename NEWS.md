@@ -67,9 +67,15 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * `space_inside_linter()` now reports proper line and column numbers (#203, @fangly)
 
 ## General improvements and fixes
+* `expect_lint()` now no longer shows Rstudio markers and error messages are correctly preserved (#180, #211, @fangly)
+* `Lint()` / `as.data.frame()` error now fixed (#179, @fangly).
+* `lint()` no longer errors with inline `\\Sexpr` (#127).
+* `lint()` no longer errors with '<% %>' constructs (#185).
+* `lint_package()` now works with the cache, as intended (#146, @schloerke)
+* `lint_package()` now excludes `R/RcppExports.R` by default (#282)
+* `lint_package()` now removes fully excluded files as soon as possible to
 * lintr now looks up its configuration in any parent directories as well as the package directory (#238, #345)
 * `seq_linter` is now one of the default linters (#316).
-* `lint_package()` now excludes `R/RcppExports.R` by default (#282)
 * Fix issue in lintr's compatibility with R-devel, due to to a new version of the PCRE library (#411.)
 * `read_settings()` now has a better error message when the config file does
   not end with a newline (#160, #189)
@@ -81,14 +87,8 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * Fixed crash caused by ambiguous cache file paths (#212, @fangly).
 * RStudio addins to lint current source and project (fixes #264, @JhossePaul)
 * Added proper handling of tab characters (fixes #44, @fangly)
-* `expect_lint()` now no longer shows Rstudio markers and error messages are correctly preserved (#180, #211, @fangly)
-* `Lint()` / `as.data.frame()` error now fixed (#179, @fangly).
-* `lint()` no longer errors with inline `\\Sexpr` (#127).
-* `lint()` no longer errors with '<% %>' constructs (#185).
 * lintr does not need the igraph package any more (#152, @gaborcsardi)
-* `lint_package()` now works with the cache, as intended (#146, @schloerke)
 * Fixed cache not saved in a directory other than requested (#213, @fangly)
-* `lint_package()` now removes fully excluded files as soon as possible to
   avoid reading and pre-processing of ignored files (@mwaldstein)
 * Allow for any number of `#` to start a comment. Useful in ESS (#299, @prosoitos)
 * R Markdown files that do not contain chunks are no longer treated as code (#370).
