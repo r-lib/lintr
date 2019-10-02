@@ -235,28 +235,39 @@ lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = lis
 
   exclusions <- normalize_exclusions(c(exclusions, settings$exclusions), FALSE)
 
-  lint_dir(path, relative_path = relative_path, exclusions = exclusions, parse_settings = FALSE, ...)
+  lints <- lint_dir(file.path(path, c("R", "tests", "inst")), relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
+
+  if (isTRUE(relative_path)) {
+    path <- normalizePath(path, mustWork = FALSE)
+    lints[] <- lapply(
+      lints,
+      function(x) {
+        x$filename <- re_substitutes(x$filename, rex(path, one_of("/", "\\")), "")
+        x
+      }
+    )
+    attr(lints, "path") <- path
+  }
+
+  lints
 }
 
 
-find_package <- function(path = getwd()) {
-  start_path <- getwd()
-  on.exit(setwd(start_path))
-  if (!file.exists(path)) {
-    return(NULL)
-  }
-  setwd(path)
+has_description <- function(path) {
+  file.exists(file.path(path, "DESCRIPTION"))
+}
 
-  prev_path <- ""
-  while (!file.exists(file.path(prev_path, "DESCRIPTION"))) {
-    # this condition means we are at the root directory, so give up
-    if (prev_path %==% getwd()) {
+find_package <- function(path) {
+  path <- normalizePath(path, mustWork = FALSE)
+
+  while(!has_description(path)) {
+    path <- dirname(path)
+    if (is_root(path)) {
       return(NULL)
     }
-    prev_path <- getwd()
-    setwd("..")
   }
-  normalizePath(prev_path)
+
+  path
 }
 
 is_root <- function(path) {

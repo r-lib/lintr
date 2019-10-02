@@ -7,6 +7,12 @@ object_usage_linter <-  function(source_file) {
   if (is.null(source_file$file_lines)) {
     return()
   }
+
+  # If there is no xml data just return
+  if (is.null(source_file$xml_parsed_content)) {
+    return()
+  }
+
   source_file$parsed_content <- source_file$full_parsed_content
 
   pkg_name <- pkg_name(find_package(dirname(source_file$filename)))
@@ -18,49 +24,104 @@ object_usage_linter <-  function(source_file) {
   }
   env <- new.env(parent = parent_env)
 
-  declared_globals <- utils::globalVariables(package = pkg_name %||% globalenv())
+  declared_globals <- try_silently(utils::globalVariables(package = pkg_name %||% globalenv()))
+
+  symbols <- get_assignment_symbols(source_file$xml_parsed_content)
+
+  # Just assign them an empty function
+  for(symbol in symbols) {
+    assign(symbol, function(...) invisible(), envir = env)
+  }
 
   all_globals <- unique(recursive_ls(env))
 
-  try_silently(eval(
+  fun_info <- get_function_assignments(source_file$xml_parsed_content)
+
+  lapply(seq_len(NROW(fun_info)), function(i) {
+    info <- fun_info[i, ]
+
+    code <- get_content(lines = source_file$content[seq(info$line1, info$line2)], info)
+    fun <- try_silently(eval(envir = env,
       parse(
-        text = source_file$content,
+        text = code,
         keep.source = TRUE
-        ),
-      envir = env))
-
-  res <- parse_check_usage(env)
-
-  # keep only results that match this filename
-  res <- res[res$path == "<text>" | basename(res$path) == basename(source_file$filename), ]
-
-  lapply(which(!is.na(res$message)),
-    function(row_num) {
-      row <- res[row_num, ]
-
-      if (row$name %in% declared_globals) {
-        return()
-      }
-
-      line <- source_file$content[as.integer(row$line_number)]
-
-      row$name <- re_substitutes(row$name, rex("<-"), "")
-
-      location <- re_matches(line,
-        rex(row$name),
-        locations = TRUE)
-
-      Lint(
-        filename = source_file$filename,
-        line_number = row$line_number,
-        column_number = location$start,
-        type = "warning",
-        message = row$message,
-        line = line,
-        ranges = list(c(location$start, location$end)),
-        linter = "object_usage_linter"
       )
-    })
+    ))
+
+    if (inherits(fun, "try-error")) {
+      return()
+    }
+    res <- parse_check_usage(fun)
+
+    lapply(which(!is.na(res$message)),
+      function(row_num) {
+        row <- res[row_num, ]
+
+        if (row$name %in% declared_globals) {
+          return()
+        }
+
+        org_line_num <- as.integer(row$line_number) + info$line1 - 1L
+
+        line <- source_file$content[as.integer(org_line_num)]
+
+        row$name <- re_substitutes(row$name, rex("<-"), "")
+
+        location <- re_matches(line,
+          rex(row$name),
+          locations = TRUE)
+
+        Lint(
+          filename = source_file$filename,
+          line_number = row$line_number,
+          column_number = location$start,
+          type = "warning",
+          message = row$message,
+          line = line,
+          ranges = list(c(location$start, location$end)),
+          linter = "object_usage_linter"
+        )
+      })
+  })
+}
+
+get_assignment_symbols <- function(xml) {
+  left_assignment_symbols <- xml2::xml_text(xml2::xml_find_all(xml, "expr[LEFT_ASSIGN]/expr[1]/*"))
+
+  equal_assignment_symbols <- xml2::xml_text(xml2::xml_find_all(xml, "equal_assign/expr[1]/*"))
+
+  assign_fun_symbols <- xml2::xml_text(xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/*"))
+
+  set_method_fun_symbols <- xml2::xml_text(xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[2]/*"))
+
+  symbols <- c(left_assignment_symbols, equal_assignment_symbols, assign_fun_symbols, set_method_fun_symbols)
+
+  # remove quotes or backticks from the beginning or the end
+  symbols <- gsub("^[`'\"]|['\"`]$", "", symbols)
+
+  symbols
+}
+
+get_function_assignments <- function(xml) {
+  left_assignment_functions <- xml2::xml_find_all(xml, "expr[LEFT_ASSIGN][expr[2][FUNCTION]]/expr[2]")
+
+  equal_assignment_functions <- xml2::xml_find_all(xml, "equal_assign[expr[2]][expr[FUNCTION]]/expr[2]")
+
+  assign_fun_assignment_functions <- xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='assign']]/expr[3]")
+
+  set_method_fun_assignment_functions <- xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[3]")
+
+  funs <- c(left_assignment_functions, equal_assignment_functions, assign_fun_assignment_functions, set_method_fun_assignment_functions)
+
+  get_attr <- function(x, attr) as.integer(xml2::xml_attr(x, attr))
+
+  data.frame(
+    line1 = viapply(funs, get_attr, "line1"),
+    line2 = viapply(funs, get_attr, "line2"),
+    col1 = viapply(funs, get_attr, "col1"),
+    col2 = viapply(funs, get_attr, "col2"),
+    stringsAsFactors = FALSE
+  )
 }
 
 parse_check_usage <- function(expression) {
@@ -71,7 +132,7 @@ parse_check_usage <- function(expression) {
     vals[[length(vals) + 1L]] <<- x
   }
 
-  try(codetools::checkUsageEnv(expression, report = report))
+  try(codetools::checkUsage(expression, report = report))
 
   function_name <- rex(anything, ": ")
   line_info <- rex(" ", "(", capture(name = "path", non_spaces), ":", capture(name = "line_number", digits), ")")
