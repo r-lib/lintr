@@ -227,7 +227,7 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL, p
 #'   )
 #' }
 #' @export
-lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = list("R/RppExports.R")) {
+lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = list("R/RcppExports.R")) {
   path <- find_package(path)
 
   read_settings(path)
