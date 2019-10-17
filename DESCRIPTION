@@ -17,7 +17,7 @@ Imports:
     crayon,
     codetools,
     cyclocomp,
-    testthat,
+    testthat (>= 2.2.1),
     digest,
     rstudioapi (>= 0.2),
     httr (>= 1.2.1),
