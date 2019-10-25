@@ -30,3 +30,28 @@ test_that("settings", {
   expect_gt(length(x), 0L)
   expect_true(all(names(x) != ""))
 })
+
+test_that("linter_names", {
+  # If they throw a Lint() call, the name of the caught linter should match
+  # the name of the linting function
+  test_file <- "default_linter_testcode.R"
+  x <- default_linters
+  for (linter_name in names(x)) {
+    lints <- lint(test_file, linters = x[linter_name])
+    lint_df <- as.data.frame(lints)
+    expect_true(
+      nrow(lint_df) > 0,
+      info = paste(
+        "each default linter should throw a lint on",
+        "'default_linter_testcode.R'"
+      )
+    )
+    expect_equal(
+      lint_df[["linter"]][1], linter_name,
+      info = paste(
+        "the 'linter' name reported by lint() / Lint() should match the",
+        "name of the corresponding linting function"
+      )
+    )
+  }
+})
