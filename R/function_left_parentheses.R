@@ -33,7 +33,7 @@ function_left_parentheses_linter <- function(source_file) {
             type = "style",
             message = "Remove spaces before the left parenthesis in a function call.",
             line = line,
-            linter = "function_left_parentheses"
+            linter = "function_left_parentheses_linter"
             )
         }
       }
