@@ -34,7 +34,7 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 * `assignment_linter`: check that `<-` is always used for assignment
 * `camel_case_linter`: check that objects are not in camelCase.
 * `closed_curly_linter`: check that closed curly braces should always be on their
-  own line unless they follow an else.
+  own line unless they are followed by an else.
 * `commas_linter`: check that all commas are followed by spaces, but do not
   have spaces before them.
 * `commented_code_linter`: check that there is no commented code outside of roxygen comments.
