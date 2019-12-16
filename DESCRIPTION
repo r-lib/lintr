@@ -29,7 +29,8 @@ Imports:
     xmlparsedata (>= 1.0.3)
 Suggests:
     rmarkdown,
-    mockery
+    mockery,
+    withr
 License: MIT + file LICENSE
 LazyData: true
 Encoding: UTF-8
