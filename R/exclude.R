@@ -69,7 +69,7 @@ parse_exclusions <- function(file, exclude = settings$exclude,
   sort(unique(c(exclusions, which(rex::re_matches(lines, exclude)))))
 }
 
-normalize_exclusions <- function(x, normalize_path=TRUE) {
+normalize_exclusions <- function(x, normalize_path=TRUE, dir_prefix = NULL) {
   if (is.null(x) || length(x) <= 0) {
     return(list())
   }
@@ -98,7 +98,11 @@ normalize_exclusions <- function(x, normalize_path=TRUE) {
       x[unnamed] <- Inf
     }
   }
-
+  # Paths to excluded files are specified relative-to the package- or
+  # directory-root (when running lint_dir or lint_package)
+  if (!is.null(dir_prefix)) {
+    names(x) <- file.path(dir_prefix, names(x))
+  }
   if (normalize_path) {
     x <- x[file.exists(names(x))]       # remove exclusions for non-existing files
     names(x) <- normalizePath(names(x)) # get full path for remaining files
