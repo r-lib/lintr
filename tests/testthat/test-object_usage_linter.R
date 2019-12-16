@@ -103,3 +103,16 @@ test_that("calls with top level function definitions are ignored", {
     NULL,
     object_usage_linter)
 })
+
+test_that("object-usage line-numbers are relative to start-of-file", {
+  expect_lint(
+"a <- function(y) {
+  y ** 2
+}
+b <- function() {
+  x
+}
+",
+  list(line_number = 5L),
+  object_usage_linter)
+})

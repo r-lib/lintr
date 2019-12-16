@@ -73,7 +73,7 @@ object_usage_linter <-  function(source_file) {
 
         Lint(
           filename = source_file$filename,
-          line_number = row$line_number,
+          line_number = org_line_num,
           column_number = location$start,
           type = "warning",
           message = row$message,

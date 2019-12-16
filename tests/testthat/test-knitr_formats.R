@@ -12,10 +12,10 @@ test_that("it handles dir", {
 test_that("it handles markdown", {
   expect_lint(file = "knitr_formats/test.Rmd",
     checks = list(
-      rex("local variable"),
-      rex("Use <-, not =, for assignment."),
-      rex("Use <-, not =, for assignment."),
-      rex("Trailing blank lines are superfluous.")
+      list(rex("Use <-, not =, for assignment."), line_number = 9),
+      list(rex("local variable"), line_number = 22),
+      list(rex("Use <-, not =, for assignment."), line_number = 22),
+      list(rex("Trailing blank lines are superfluous."), line_number = 24)
     ),
     default_linters
   )
@@ -23,10 +23,10 @@ test_that("it handles markdown", {
 test_that("it handles Sweave", {
   expect_lint(file = "knitr_formats/test.Rnw",
     checks = list(
-      rex("local variable"),
-      rex("Use <-, not =, for assignment."),
-      rex("Use <-, not =, for assignment."),
-      rex("Trailing blank lines are superfluous.")
+      list(rex("Use <-, not =, for assignment."), line_number = 12),
+      list(rex("local variable"), line_number = 24),
+      list(rex("Use <-, not =, for assignment."), line_number = 24),
+      list(rex("Trailing blank lines are superfluous."), line_number = 26)
     ),
     default_linters
   )
@@ -34,10 +34,10 @@ test_that("it handles Sweave", {
 test_that("it handles reStructuredText", {
   expect_lint(file = "knitr_formats/test.Rrst",
     checks = list(
-      rex("local variable"),
-      rex("Use <-, not =, for assignment."),
-      rex("Use <-, not =, for assignment."),
-      rex("Trailing blank lines are superfluous.")
+      list(rex("Use <-, not =, for assignment."), line_number = 10),
+      list(rex("local variable"), line_number = 23),
+      list(rex("Use <-, not =, for assignment."), line_number = 23),
+      list(rex("Trailing blank lines are superfluous."), line_number = 25)
     ),
     default_linters
   )
@@ -45,10 +45,10 @@ test_that("it handles reStructuredText", {
 test_that("it handles HTML", {
   expect_lint(file = "knitr_formats/test.Rhtml",
     checks = list(
-      rex("local variable"),
-      rex("Use <-, not =, for assignment."),
-      rex("Use <-, not =, for assignment."),
-      rex("Trailing blank lines are superfluous.")
+      list(rex("Use <-, not =, for assignment."), line_number = 15),
+      list(rex("local variable"), line_number = 27),
+      list(rex("Use <-, not =, for assignment."), line_number = 27),
+      list(rex("Trailing blank lines are superfluous."), line_number = 29)
     ),
     default_linters
   )
@@ -56,10 +56,10 @@ test_that("it handles HTML", {
 test_that("it handles tex", {
   expect_lint(file = "knitr_formats/test.Rtex",
     checks = list(
-      rex("local variable"),
-      rex("Use <-, not =, for assignment."),
-      rex("Use <-, not =, for assignment."),
-      rex("Trailing blank lines are superfluous.")
+      list(rex("Use <-, not =, for assignment."), line_number = 11),
+      list(rex("local variable"), line_number = 23),
+      list(rex("Use <-, not =, for assignment."), line_number = 23),
+      list(rex("Trailing blank lines are superfluous."), line_number = 25)
     ),
     default_linters
   )
@@ -67,10 +67,10 @@ test_that("it handles tex", {
 test_that("it handles asciidoc", {
   expect_lint(file = "knitr_formats/test.Rtxt",
     checks = list(
-      rex("local variable"),
-      rex("Use <-, not =, for assignment."),
-      rex("Use <-, not =, for assignment."),
-      rex("Trailing blank lines are superfluous.")
+      list(rex("Use <-, not =, for assignment."), line_number = 9),
+      list(rex("local variable"), line_number = 22),
+      list(rex("Use <-, not =, for assignment."), line_number = 22),
+      list(rex("Trailing blank lines are superfluous."), line_number = 24)
     ),
     default_linters
   )
