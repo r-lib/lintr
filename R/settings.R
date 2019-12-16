@@ -34,7 +34,13 @@ read_settings <- function(filename) {
   for (setting in names(default_settings)) {
     value <- get_setting(setting, config, default_settings)
     if (setting == "exclusions") {
-      value <- normalize_exclusions(value)
+      # value is a list ("filename" -> numeric, "filename")
+      # - `filename -> numeric` means exclude lines in `numeric` from `filename`
+      # - `filename` means exclude all lines in `filename`
+      # normalise_exclusions needs to know which directory the excluded-files
+      # are pinned against
+      dir_prefix <- if (is_directory(filename)) filename else NULL
+      value <- normalize_exclusions(value, dir_prefix = dir_prefix)
     }
 
     settings[[setting]] <- value
@@ -96,6 +102,9 @@ find_config <- function(filename) {
 }
 
 is_directory <- function(filename) {
+  if (is.null(filename)) {
+    return(FALSE)
+  }
   is_dir <- file.info(filename)$isdir
 
   !is.na(is_dir) && is_dir
