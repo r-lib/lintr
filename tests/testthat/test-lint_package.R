@@ -1,32 +1,27 @@
 context("Integration tests for lint_package")
 
-make_temp_package <- function(pkgname, path) {
-  utils::package.skeleton(name = pkgname, path = path)
-}
+# Two packages were set up, one (withExclusions) has a .lintr file that
+# specifies to exclude the file "R/abc.R" and line 1 from "R/jkl.R"
+#
+# Aside from the absence of the .lintr file from "withoutExclusions", there are
+# no differences between these dummy packages
 
-test_that("lint_package does not depend on how the path is specified", {
-  # When called from inside a package:
-  # lint_package(".")
-  # .. should give the same results (modulo file prefixes) as when called from
-  # outside the package with:
-  # lint_package(path_to_package)
+# When called from inside a package:
+# lint_package(".")
+# .. should give the same results as when called from outside the package
+# with:
+# lint_package(path_to_package)
 
-  # Since excluded regions can be specified in two ways
-  # list(filename = line_numbers, filename), the test checks both approaches
+test_that(
+  "`lint_package` does not depend on path to pkg - no excluded files", {
 
-  td <- tempdir()
-  pkg_path <- tempfile(pattern = "tempPackage")
-  pkg_name <- basename(pkg_path)
-  utils::package.skeleton(name = pkg_name, path = td)
-  cat(
-    "abc = 123\nghi <- 456\n", file = file.path(pkg_path, "R", "abc.R")
+  expected_lines <- c(
+    # from abc.R
+    "abc = 123",
+    # from jkl.R
+    "jkl = 456", "mno = 789"
   )
-  cat(
-    "jkl = 456\nmno = 789\n", file = file.path(pkg_path, "R", "jkl.R")
-  )
-
-  # When including all files:
-  expected_lines <- c("abc = 123", "jkl = 456", "mno = 789")
+  pkg_path <- file.path("dummy_packages", "withoutExclusions")
   lints_from_a_distance <- lint_package(
     pkg_path, linters = list(assignment_linter)
   )
@@ -47,12 +42,19 @@ test_that("lint_package does not depend on how the path is specified", {
       "regardless of path"
     )
   )
+})
+
+test_that(
+  "`lint_package` does not depend on path to pkg - with excluded files", {
+  # Since excluded regions can be specified in two ways
+  # list(
+  #   filename = line_numbers, # approach 1
+  #   filename                 # approach 2
+  # ),
+  # the test checks both approaches
 
   # When excluding the whole of abc.R and the first line of jkl.R:
-  cat(
-    "exclusions: list('R/abc.R', 'R/jkl.R' = 1)\n",
-    file = file.path(pkg_path, ".lintr")
-  )
+  pkg_path <- file.path("dummy_packages", "withExclusions")
   expected_lines <- c("mno = 789")
   lints_from_a_distance <- lint_package(
     pkg_path, linters = list(assignment_linter)
@@ -70,10 +72,8 @@ test_that("lint_package does not depend on how the path is specified", {
     as.data.frame(lints_from_a_distance),
     as.data.frame(lints_from_inside),
     info = paste(
-      "lint_package() finds the same lints when files are excluded, regardless",
-      "of path"
+      "lint_package() finds the same lints when files / lines are excluded,",
+      "regardless of path"
     )
   )
-
-  unlink(pkg_path)
 })
