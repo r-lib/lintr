@@ -1,1 +1,0 @@
-exclusions: list('R/abc.R', 'R/jkl.R' = 1)
