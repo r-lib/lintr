@@ -18,4 +18,3 @@
 ^codecov\.yml$
 ^\.covrignore$
 ^script[.]R$
-^tests/testthat/dummy_packages/withExclusions/.lintr$
