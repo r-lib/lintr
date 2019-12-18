@@ -26,23 +26,35 @@ test_that(
     # from jkl.R
     "jkl = 456", "mno = 789"
   )
-  lints_from_a_distance <- lint_package(
+  lints_from_outside <- lint_package(
     pkg_path, linters = list(assignment_linter)
   )
-  lints_from_inside <- withr::with_dir(
+  lints_from_pkg_root <- withr::with_dir(
     pkg_path,
     lint_package(".", linters = list(assignment_linter))
   )
+  lints_from_a_subdir <- withr::with_dir(
+    file.path(pkg_path, "R"),
+    lint_package("..", linters = list(assignment_linter))
+  )
 
   expect_equal(
-    as.data.frame(lints_from_a_distance)[["line"]], expected_lines
+    as.data.frame(lints_from_outside)[["line"]], expected_lines
   )
   expect_equal(
-    as.data.frame(lints_from_a_distance),
-    as.data.frame(lints_from_inside),
+    as.data.frame(lints_from_outside),
+    as.data.frame(lints_from_pkg_root),
     info = paste(
-      "lint_package() finds the same lints when no files are excluded,",
-      "regardless of path"
+      "lint_package() finds the same lints from pkg-root as from outside a pkg",
+      "(no .lintr config present)"
+    )
+  )
+  expect_equal(
+    as.data.frame(lints_from_outside),
+    as.data.frame(lints_from_a_subdir),
+    info = paste(
+      "lint_package() finds the same lints from a subdir as from outside a pkg",
+      "(no .lintr config present)"
     )
   )
 })
@@ -68,23 +80,36 @@ test_that(
   on.exit(unlink(config_path))
 
   expected_lines <- c("mno = 789")
-  lints_from_a_distance <- lint_package(
+  lints_from_outside <- lint_package(
     pkg_path, linters = list(assignment_linter)
   )
-  lints_from_inside <- withr::with_dir(
+  lints_from_pkg_root <- withr::with_dir(
     pkg_path,
     lint_package(".", linters = list(assignment_linter))
   )
+  lints_from_a_subdir <- withr::with_dir(
+    file.path(pkg_path, "R"),
+    lint_package("..", linters = list(assignment_linter))
+  )
 
   expect_equal(
-    as.data.frame(lints_from_a_distance)[["line"]], expected_lines
+    as.data.frame(lints_from_outside)[["line"]], expected_lines
   )
   expect_equal(
-    as.data.frame(lints_from_a_distance),
-    as.data.frame(lints_from_inside),
+    as.data.frame(lints_from_outside),
+    as.data.frame(lints_from_pkg_root),
     info = paste(
-      "lint_package() finds the same lints when files / lines are excluded,",
-      "regardless of path"
+      "lint_package() finds the same lints from pkg-root as from outside a pkg",
+      "(.lintr config present)"
+    )
+  )
+  expect_equal(
+    as.data.frame(lints_from_outside),
+    as.data.frame(lints_from_a_subdir),
+    info = paste(
+      "lint_package() finds the same lints from a subdir as from outside a pkg",
+      "(.lintr config present)"
     )
   )
 })
+
