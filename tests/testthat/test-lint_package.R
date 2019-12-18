@@ -13,29 +13,12 @@ context("Integration tests for `lint_package`")
 # hidden files, but can't be added to RBuildIgnore since they should be
 # available during `R CMD check` tests)
 
-# We copy the package structure in "tests/testthat/dummy_packages/<pkgName>"
-# to a temp location, so that a .lintr file can be added to the package while
-# testing.
-
-make_temp_package_copy <- function(dummy_package) {
-  # Creates a temporary copy of the input package, and returns the filepath for
-  # that copy
-  #
-  # Temp location: <temp_directory>/tempPackage<random_string>/pkgName
-  package_name <- basename(dummy_package)
-  parent_of_copy <- tempfile(pattern = "tempPackage")
-  dir.create(parent_of_copy)
-  file.copy(dummy_package, parent_of_copy, recursive = TRUE)
-  file.path(parent_of_copy, package_name)
-}
-
 test_that(
   "`lint_package` does not depend on path to pkg - no excluded files", {
 
-  package_name <- "withoutExclusions"
-  copied_package_path <- make_temp_package_copy(
-    file.path("dummy_packages", package_name)
-  )
+  # This dummy package does not have a .lintr file, so no files / lines should
+  # be excluded from analysis
+  pkg_path <- file.path("dummy_packages", "assignmentLinter")
 
   expected_lines <- c(
     # from abc.R
@@ -44,11 +27,10 @@ test_that(
     "jkl = 456", "mno = 789"
   )
   lints_from_a_distance <- lint_package(
-    copied_package_path, linters = list(assignment_linter)
+    pkg_path, linters = list(assignment_linter)
   )
-
   lints_from_inside <- withr::with_dir(
-    copied_package_path,
+    pkg_path,
     lint_package(".", linters = list(assignment_linter))
   )
 
@@ -74,25 +56,23 @@ test_that(
   # ),
   # the test checks both approaches
 
-  pkg_name <- "withoutExclusions"
-  copied_package_path <- make_temp_package_copy(
-    file.path("dummy_packages", pkg_name)
-  )
+  pkg_path <- file.path("dummy_packages", "assignmentLinter")
+  config_path <- file.path(pkg_path, ".lintr")
 
   # Add a .lintr that excludes the whole of `abc.R` and the first line of
-  # `jkl.R`:
+  # `jkl.R` (and remove it on finishing this test)
   cat(
     "exclusions: list('R/abc.R', 'R/jkl.R' = 1)\n",
-    file = file.path(copied_package_path, ".lintr")
+    file = config_path
   )
+  on.exit(unlink(config_path))
+
   expected_lines <- c("mno = 789")
-
   lints_from_a_distance <- lint_package(
-    copied_package_path, linters = list(assignment_linter)
+    pkg_path, linters = list(assignment_linter)
   )
-
   lints_from_inside <- withr::with_dir(
-    copied_package_path,
+    pkg_path,
     lint_package(".", linters = list(assignment_linter))
   )
 
