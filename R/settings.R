@@ -34,9 +34,9 @@ read_settings <- function(filename) {
   for (setting in names(default_settings)) {
     value <- get_setting(setting, config, default_settings)
     if (setting == "exclusions") {
-      # value is a list ("filename" -> numeric, "filename")
-      # - `filename -> numeric` means exclude lines in `numeric` from `filename`
-      # - `filename` means exclude all lines in `filename`
+      # value is of the form list("file1" = vec_of_excluded_lines, "file2", ...)
+      # - `file1 = vec_of_excluded_lines` excludes the stated lines from file1
+      # - `file2` means exclude all lines in file2
       # normalise_exclusions needs to know which directory the excluded-files
       # are pinned against
       dir_prefix <- if (is_directory(filename)) filename else NULL
