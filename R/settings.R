@@ -38,8 +38,8 @@ read_settings <- function(filename) {
       # - `file1 = vec_of_excluded_lines` excludes the stated lines from file1
       # - `file2` means exclude all lines in file2
       # normalise_exclusions needs to know which directory the excluded-files
-      # are pinned against
-      dir_prefix <- if (is_directory(filename)) filename else NULL
+      # are pinned against (the directory that contains the .lintr file)
+      dir_prefix <- if (is.null(config_file)) NULL else dirname(config_file)
       value <- normalize_exclusions(value, dir_prefix = dir_prefix)
     }
 
