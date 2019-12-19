@@ -41,13 +41,13 @@ test_that("lint() results do not depend on the working directory", {
   )
 
   expect_equal(
-    as.data.frame(lints_from_outside)[["line"]], expected_lines
+    as.data.frame(lints_from_pkg_root)[["line"]], expected_lines
   )
   expect_equal(
-    as.data.frame(lints_from_pkg_root), as.data.frame(lints_from_outside)
+    as.data.frame(lints_from_outside), as.data.frame(lints_from_pkg_root)
   )
   expect_equal(
-    as.data.frame(lints_from_a_subdir), as.data.frame(lints_from_outside)
+    as.data.frame(lints_from_a_subdir), as.data.frame(lints_from_pkg_root)
   )
 })
 
@@ -76,6 +76,9 @@ test_that("lint() results do not depend on the position of the .lintr", {
   # - 1) a .lintr config in the package root,
   # - 2) a .lintr config in the source directory R/
 
+  # The second line of jkl.R contains the following assignment lint:
+  expected_lines <- "mno = 789"
+
   lints_with_config_at_pkg_root <- withr::with_dir(
     pkg_path,
     lint_with_config(
@@ -95,7 +98,14 @@ test_that("lint() results do not depend on the position of the .lintr", {
   )
 
   expect_equal(
+    as.data.frame(lints_with_config_at_pkg_root)[["line"]], expected_lines
+  )
+  expect_equal(
     as.data.frame(lints_with_config_at_pkg_root),
-    as.data.frame(lints_with_config_in_source_dir)
+    as.data.frame(lints_with_config_in_source_dir),
+    info = paste(
+      "lints for a source file should be independent of whether the .lintr",
+      "file is in the project-root or the source-file-directory"
+    )
   )
 })
