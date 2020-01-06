@@ -174,3 +174,39 @@ try_silently <- function(expr) {
 
 viapply <- function(x, ...) vapply(x, ..., FUN.VALUE = integer(1))
 vcapply <- function(x, ...) vapply(x, ..., FUN.VALUE = character(1))
+
+unquote <- function(str, q="`") {
+  # Remove surrounding quotes (select either single, double or backtick) from given character vector
+  # and unescape special characters.
+  str <- re_substitutes(str, rex(start, q, capture(anything), q, end), "\\1")
+  unescape(str, q)
+}
+
+escape_chars <- c(
+  "\\\\" = "\\",  # backslash
+  "\\n"  = "\n",  # newline
+  "\\r"  = "\r",  # carriage return
+  "\\t"  = "\t",  # tab
+  "\\b"  = "\b",  # backspace
+  "\\a"  = "\a",  # alert (bell)
+  "\\f"  = "\f",  # form feed
+  "\\v"  = "\v"   # vertical tab
+  # dynamically-added:
+  #"\\'"  = "'",  # ASCII apostrophe
+  #"\\\"" = "\"", # ASCII quotation mark
+  #"\\`"  = "`"   # ASCII grave accent (backtick)
+)
+
+unescape <- function(str, q="`") {
+  names(q) <- paste0("\\", q)
+  my_escape_chars <- c(escape_chars, q)
+  res <- gregexpr(text=str, pattern=rex(or(names(my_escape_chars))))
+  all_matches <- regmatches(str, res)
+  regmatches(str, res) <- lapply(
+    all_matches,
+    function(string_matches) {
+      my_escape_chars[string_matches]
+    }
+  )
+  str
+}

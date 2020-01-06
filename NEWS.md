@@ -1,8 +1,10 @@
 # lintr (development version)
 
+* `absolute_path_linter()` and `nonportable_path_linter()` now handle
+  file-paths that are wrapped with double-quotes (#433, #437, @russHyde).
 * `object_usage_linter` has been changed to ensure lint-position is indicated
   relative to the start of the file, rather than the start of a defining
-  function (#432, @russHyde)
+  function (#432, @russHyde).
 
 # lintr 2.0.0
 

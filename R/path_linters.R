@@ -138,40 +138,37 @@ split_path <- function(path, sep="/|\\\\") {
   )
 }
 
-unquote <- function(str, q="`") {
-  # Remove surrounding quotes (select either single, double or backtick) from given character vector
-  # and unescape special characters.
-  str <- re_substitutes(str, rex(start, q, capture(anything), q, end), "\\1")
-  unescape(str, q)
-}
 
-escape_chars <- c(
-  "\\\\" = "\\",  # backslash
-  "\\n"  = "\n",  # newline
-  "\\r"  = "\r",  # carriage return
-  "\\t"  = "\t",  # tab
-  "\\b"  = "\b",  # backspace
-  "\\a"  = "\a",  # alert (bell)
-  "\\f"  = "\f",  # form feed
-  "\\v"  = "\v"   # vertical tab
-  # dynamically-added:
-  #"\\'"  = "'",  # ASCII apostrophe
-  #"\\\"" = "\"", # ASCII quotation mark
-  #"\\`"  = "`"   # ASCII grave accent (backtick)
-)
-
-unescape <- function(str, q="`") {
-  names(q) <- paste0("\\", q)
-  my_escape_chars <- c(escape_chars, q)
-  res <- gregexpr(text=str, pattern=rex(or(names(my_escape_chars))))
-  all_matches <- regmatches(str, res)
-  regmatches(str, res) <- lapply(
-    all_matches,
-    function(string_matches) {
-      my_escape_chars[string_matches]
-    }
-  )
-  str
+#' @include   utils.R
+make_path_linter <- function(path_function, message, linter) {
+  function(source_file) {
+    lapply(
+      ids_with_token(source_file, "STR_CONST"),
+      function(id) {
+        token <- with_id(source_file, id)
+        quote_char <- if (substr(token[["text"]], 1, 1) == '"') {
+          '"'
+        } else {
+          "'"
+        }
+        path <- unquote(token[["text"]], q = quote_char)
+        if (path_function(path)) {
+          start <- token[["col1"]] + 1L
+          end <- token[["col2"]] - 1L
+          Lint(
+            filename = source_file[["filename"]],
+            line_number = token[["line1"]],
+            column_number = start,
+            type = "warning",
+            message = message,
+            line = source_file[["lines"]][[as.character(token[["line1"]])]],
+            ranges = list(c(start, end)),
+            linter = linter
+          )
+        }
+      }
+    )
+  }
 }
 
 
@@ -179,58 +176,25 @@ unescape <- function(str, q="`") {
 #' @param lax  Less stringent linting, leading to fewer false positives.
 #' @export
 absolute_path_linter <- function(lax=TRUE) {
-  function(source_file) {
-    lapply(
-      ids_with_token(source_file, "STR_CONST"),
-      function(id) {
-        token <- with_id(source_file, id)
-        path <- unquote(token[["text"]], "'")
-        if (is_absolute_path(path) && is_valid_long_path(path, lax)) {
-          start <- token[["col1"]] + 1L
-          end <- token[["col2"]] - 1L
-          Lint(
-            filename = source_file[["filename"]],
-            line_number = token[["line1"]],
-            column_number = start,
-            type = "warning",
-            message = "Do not use absolute paths.",
-            line = source_file[["lines"]][[as.character(token[["line1"]])]],
-            ranges = list(c(start, end)),
-            "absolute_path_linter"
-          )
-        }
-      }
-    )
-  }
+  make_path_linter(
+    path_function = function(path) {
+      is_absolute_path(path) && is_valid_long_path(path, lax)
+    },
+    message = "Do not use absolute paths.",
+    linter = "absolute_path_linter"
+  )
 }
 
 
 #' @describeIn linters  Check that file.path() is used to construct safe and portable paths.
 #' @export
 nonportable_path_linter <- function(lax=TRUE) {
-  function(source_file) {
-    lapply(
-      ids_with_token(source_file, "STR_CONST"),
-      function(id) {
-        token <- with_id(source_file, id)
-        path <- unquote(token[["text"]], "'")
-        if (is_path(path) && is_valid_long_path(path, lax) && path != "/" &&
-            re_matches(path, rex(one_of("/", "\\")))) {
-          start <- token[["col1"]] + 1L
-          end <- token[["col2"]] - 1L
-          Lint(
-            filename = source_file[["filename"]],
-            line_number = token[["line1"]],
-            column_number = start,
-            type = "warning",
-            message = "Use file.path() to construct portable file paths.",
-            line = source_file[["lines"]][[as.character(token[["line1"]])]],
-            ranges = list(c(start, end)),
-            "nonportable_filepath_linter"
-          )
-        }
-      }
-    )
-  }
+  make_path_linter(
+    path_function = function(path) {
+      is_path(path) && is_valid_long_path(path, lax) && path != "/" &&
+        re_matches(path, rex(one_of("/", "\\")))
+    },
+    message = "Use file.path() to construct portable file paths.",
+    linter = "nonportable_filepath_linter"
+  )
 }
-
