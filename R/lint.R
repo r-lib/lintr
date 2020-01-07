@@ -233,7 +233,7 @@ lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = lis
   read_settings(path)
   on.exit(clear_settings, add = TRUE)
 
-  exclusions <- normalize_exclusions(c(exclusions, settings$exclusions), FALSE)
+  exclusions <- normalize_exclusions(c(exclusions, settings$exclusions), dir_prefix = path)
 
   lints <- lint_dir(file.path(path, c("R", "tests", "inst")), relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
 

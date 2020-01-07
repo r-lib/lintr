@@ -101,7 +101,8 @@ normalize_exclusions <- function(x, normalize_path=TRUE, dir_prefix = NULL) {
   # Paths to excluded files are specified relative-to the package- or
   # directory-root (when running lint_dir or lint_package)
   if (!is.null(dir_prefix)) {
-    names(x) <- file.path(dir_prefix, names(x))
+    relative_paths <- !is_absolute_path(names(x))
+    names(x)[relative_paths] <- file.path(dir_prefix, names(x)[relative_paths])
   }
   if (normalize_path) {
     x <- x[file.exists(names(x))]       # remove exclusions for non-existing files
