@@ -7,3 +7,5 @@
 "example"	"2020-02-07T13:52:51Z"	"no_lints"	0.0129549619999807	0.0132727550000027	0.0136335059999908	0.0139127144999946	0.0239310599999953	10	1	0.146107929999943	463128
 
 [{"suite":"example","benchmark_time":"2020-02-07T13:54:21Z","expression":"all_lints","min":0.1475,"1Q":0.1497,"median":0.1529,"3Q":0.156,"max":0.4197,"n_itr":10,"n_gc":18,"total_time":1.79,"mem_alloc":9247576}]
+
+[{"suite":"example","benchmark_time":"2020-02-07T13:54:21Z","expression":"no_lints","min":0.0133,"1Q":0.0136,"median":0.0139,"3Q":0.014,"max":0.0232,"n_itr":10,"n_gc":1,"total_time":0.1475,"mem_alloc":463128}]
