@@ -1,3 +1,0 @@
-[{"suite":"example","benchmark_time":"2020-02-07T13:56:10Z","expression":"all_lints","min":0.1204,"1Q":0.1223,"median":0.1237,"3Q":0.1255,"max":0.366,"n_itr":10,"n_gc":15,"total_time":1.4782,"mem_alloc":9247576}]
-
-[{"suite":"example","benchmark_time":"2020-02-07T13:56:10Z","expression":"no_lints","min":0.0132,"1Q":0.0135,"median":0.0137,"3Q":0.0142,"max":0.0214,"n_itr":10,"n_gc":1,"total_time":0.145,"mem_alloc":463128}]
