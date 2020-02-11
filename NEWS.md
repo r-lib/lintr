@@ -5,6 +5,9 @@
 * `object_usage_linter` has been changed to ensure lint-position is indicated
   relative to the start of the file, rather than the start of a defining
   function (#432, @russHyde).
+* `get_source_expressions` has been changed to handle `expr_or_assign_or_help`
+  tokens arising when parsing code containing equals-assignments in R-devel
+  (#403, #456, @russHyde).
 
 # lintr 2.0.0
 
