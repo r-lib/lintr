@@ -4,9 +4,12 @@
 \alias{parse_exclusions}
 \title{read a source file and parse all the excluded lines from it}
 \usage{
-parse_exclusions(file, exclude = settings$exclude,
+parse_exclusions(
+  file,
+  exclude = settings$exclude,
   exclude_start = settings$exclude_start,
-  exclude_end = settings$exclude_end)
+  exclude_end = settings$exclude_end
+)
 }
 \arguments{
 \item{file}{R source file}

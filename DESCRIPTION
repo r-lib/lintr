@@ -34,11 +34,12 @@ License: MIT + file LICENSE
 LazyData: true
 Encoding: UTF-8
 VignetteBuilder: knitr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Collate:
     'T_and_F_symbol_linter.R'
     'utils.R'
     'aaa.R'
+    'actions.R'
     'addins.R'
     'assignment_linter.R'
     'cache.R'
