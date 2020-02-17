@@ -1,8 +1,5 @@
 ## Comments
 
-This is a resubmission, it fixes a bug in the previous submission that caused
-an error in a reverse dependency.
-
 This release fixes R CMD check issues in R-devel, as requested by CRAN.
 
 ## Test environments
@@ -18,7 +15,5 @@ This release fixes R CMD check issues in R-devel, as requested by CRAN.
 
 ## Reverse dependencies
 
-* I have run R CMD check on the 81 downstream dependencies.
-  Summary at: https://github.com/jimhester/lintr/blob/master/revdep/
-  There was one regression found, I submitted a pull request to fix it at
-  https://github.com/maxconway/adaptalint/pull/1
+* I have run R CMD check on the downstream dependencies, no regressions were
+  found.
