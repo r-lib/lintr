@@ -18,3 +18,4 @@
 ^codecov\.yml$
 ^\.covrignore$
 ^script[.]R$
+^bench$
