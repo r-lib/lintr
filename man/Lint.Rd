@@ -4,9 +4,16 @@
 \alias{Lint}
 \title{Create a \code{Lint} object}
 \usage{
-Lint(filename, line_number = 1L, column_number = 1L,
-  type = c("style", "warning", "error"), message = "", line = "",
-  ranges = NULL, linter = "")
+Lint(
+  filename,
+  line_number = 1L,
+  column_number = 1L,
+  type = c("style", "warning", "error"),
+  message = "",
+  line = "",
+  ranges = NULL,
+  linter = ""
+)
 }
 \arguments{
 \item{filename}{path to the source file that was linted.}

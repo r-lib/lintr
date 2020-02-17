@@ -1,6 +1,10 @@
 # lintr (development version)
+
 * `single_quote_linter()` no longer causes a print issue when open quote 
-  appears at a column > than close quote (@jamieRowen)
+  appears at a column > than close quote (#457, @jamieRowen)
+
+* lintr now supports GitHub Actions and will print the lints as warning messages if lints are printed during an action.
+
 * `absolute_path_linter()` and `nonportable_path_linter()` now handle
   file-paths that are wrapped with double-quotes (#433, #437, @russHyde).
 * `object_usage_linter` has been changed to ensure lint-position is indicated

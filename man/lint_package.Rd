@@ -4,8 +4,12 @@
 \alias{lint_package}
 \title{Lint a package}
 \usage{
-lint_package(path = ".", relative_path = TRUE, ...,
-  exclusions = list("R/RcppExports.R"))
+lint_package(
+  path = ".",
+  relative_path = TRUE,
+  ...,
+  exclusions = list("R/RcppExports.R")
+)
 }
 \arguments{
 \item{path}{the path to the base directory of the package, if \code{NULL},

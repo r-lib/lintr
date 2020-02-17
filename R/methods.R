@@ -55,6 +55,8 @@ print.lints <- function(x, ...) {
     if (getOption("lintr.rstudio_source_markers", TRUE) &&
         rstudioapi::hasFun("sourceMarkers")) {
       rstudio_source_markers(x)
+    } else if (in_github_actions()) {
+      github_actions_log_lints(x)
     } else {
       if (in_ci() && settings$comment_bot) {
 

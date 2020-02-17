@@ -39,13 +39,13 @@ of checks.
 expect_lint("a", NULL, trailing_blank_lines_linter)
 
 # one expected lint
-expect_lint("a\\n", "superfluous", trailing_blank_lines_linter)
-expect_lint("a\\n", list(message="superfluous", line_number=2), trailing_blank_lines_linter)
+expect_lint("a\n", "superfluous", trailing_blank_lines_linter)
+expect_lint("a\n", list(message="superfluous", line_number=2), trailing_blank_lines_linter)
 
 # several expected lints
-expect_lint("a\\n\\n", list("superfluous", "superfluous"), trailing_blank_lines_linter)
+expect_lint("a\n\n", list("superfluous", "superfluous"), trailing_blank_lines_linter)
 expect_lint(
-  "a\\n\\n",
+  "a\n\n",
   list(list(message="superfluous", line_number=2), list(message="superfluous", line_number=3)),
   trailing_blank_lines_linter)
 }
