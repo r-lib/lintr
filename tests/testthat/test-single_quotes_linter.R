@@ -26,4 +26,10 @@ test_that("returns the correct linting", {
   expect_lint("{'blah'}",
     rex("Only use double-quotes."),
     single_quotes_linter)
+
+  expect_lint("
+    x = 'test
+    '",
+    rex("Only use double-quotes."),
+    single_quotes_linter)
 })
