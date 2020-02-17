@@ -3,7 +3,8 @@ Title: A 'Linter' for R Code
 Version: 2.0.1
 Authors@R: c(
     person("Jim", "Hester", email = "james.f.hester@gmail.com", role = c("aut", "cre")),
-    person("Florent", "Angly", role = "aut")
+    person("Florent", "Angly", role = "aut"),
+    person("Russ", "Hyde", role = "aut")
     )
 URL: https://github.com/jimhester/lintr
 BugReports: https://github.com/jimhester/lintr/issues
