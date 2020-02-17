@@ -1,4 +1,4 @@
-# lintr (development version)
+# lintr 2.0.1
 
 ## New features
 

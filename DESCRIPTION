@@ -1,6 +1,6 @@
 Package: lintr
 Title: A 'Linter' for R Code
-Version: 2.0.0.9000
+Version: 2.0.1
 Authors@R: c(
     person("Jim", "Hester", email = "james.f.hester@gmail.com", role = c("aut", "cre")),
     person("Florent", "Angly", role = "aut")
