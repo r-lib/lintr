@@ -1,18 +1,21 @@
 # lintr (development version)
 
-* `single_quote_linter()` no longer causes a print issue when open quote 
-  appears at a column > than close quote (#457, @jamieRowen)
+## New features
 
 * lintr now supports GitHub Actions and will print the lints as warning messages if lints are printed during an action.
 
+## Minor fixes and features
+
+* `single_quote_linter()` no longer causes a print issue when open quote
+  appears at a column > than close quote (#457, @jamieRowen)
 * `absolute_path_linter()` and `nonportable_path_linter()` now handle
   file-paths that are wrapped with double-quotes (#433, #437, @russHyde).
+* `get_source_expressions()` has been changed to handle `expr_or_assign_or_help`
+  tokens arising when parsing code containing equals-assignments in R-devel
+  (#403, #456, @russHyde).
 * `object_usage_linter` has been changed to ensure lint-position is indicated
   relative to the start of the file, rather than the start of a defining
   function (#432, @russHyde).
-* `get_source_expressions` has been changed to handle `expr_or_assign_or_help`
-  tokens arising when parsing code containing equals-assignments in R-devel
-  (#403, #456, @russHyde).
 
 # lintr 2.0.0
 
