@@ -290,6 +290,7 @@ fix_eq_assigns <- function(pc) {
 
   eq_assign_locs <- which(pc$token == "EQ_ASSIGN")
   if (length(eq_assign_locs) == 0L ||
+    length(pc$token) %in% eq_assign_locs ||
     any(c("equal_assign", "expr_or_assign_or_help") %in% pc$token)) {
     return(pc)
   }
