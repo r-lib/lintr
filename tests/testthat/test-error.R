@@ -15,4 +15,11 @@ test_that("returns the correct linting", {
     function() {
     b",
     rex("unexpected end of input"), (function(...) NULL))
+
+  expect_lint("x=\n",
+    rex("unexpected end of input")
+    )
+  expect_lint("sum(1:10, na.rm += 1)\n",
+    rex("unexpected '='")
+    )
 })
