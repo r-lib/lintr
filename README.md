@@ -212,7 +212,7 @@ installalation documentation for those packages for more information.
 You can also configure what linters are used. e.g. using a different line length cutoff.
 - `M-x customize-option` -> `flycheck-lintr-linters` -> `with_defaults(line_length_linter(120))`
 
-### Vim
+### Vim - syntastic
 lintr can be integrated with
 [syntastic](https://github.com/scrooloose/syntastic) for on the fly linting.
 
@@ -234,6 +234,26 @@ You can also configure what linters are used. e.g. using a different line length
 ```vim
 let g:syntastic_r_lintr_linters = "with_defaults(line_length_linter(120))"
 ```
+### Vim - ALE
+lintr can be integrated with
+[ALE](https://github.com/dense-analysis/ale) for on the fly linting.
+
+#### Installation ####
+lintr is integrated with ALE and requires no additional installation.
+#### Configuration ####
+You can configure what linters are used. e.g. using a different line length cutoff.
+```vim
+let g:ale_r_lintr_options = "with_defaults(line_length_linter(120))"
+```
+You can also configure whether `lint` or `lint_package` is used. 
+Set to 1 for `lint_package` and 0 (default) for `lint`.
+```vim
+let g:ale_r_lintr_lint_package = 1
+```
+
+See `:h ale_r_lintr` for more information.
+
+Note that configuration through `.lintr` files are not supported.
 
 ### Sublime Text 3 ###
 lintr can be integrated with
