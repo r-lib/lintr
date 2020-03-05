@@ -272,3 +272,19 @@ apm install linter-lintr
 ```
 
 For more information and bug reports see [Atom linter-lintr](https://github.com/AtomLinter/linter-lintr).
+
+### VSCode ###
+
+In VSCode, [vscode-r-lsp](https://marketplace.visualstudio.com/items?itemName=REditorSupport.r-lsp) presents the
+lintr diagnostics from [languageserver](https://github.com/REditorSupport/languageserver).
+
+![VSCode Example](https://user-images.githubusercontent.com/4662568/75946154-3e095500-5ed7-11ea-88e4-2afe09284362.png "VSCode Example")
+
+#### Installation ####
+
+Installing `languageserver` package in R and `vscode-r-lsp` extension in VSCode will enable lintr in VSCode by default or run the following command lines:
+
+```bash
+Rscript -e 'install.packages("languageserver")'
+code --install-extension REditorSupport.r-lsp
+```
