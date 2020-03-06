@@ -43,4 +43,8 @@ test_that("returns the correct linting", {
   expect_lint("a[1, , 2, , 3]",
     NULL,
     commas_linter)
+  
+  expect_lint("purrr::partial(list, 1, ... = , 2)\n",
+    rex("Commas should never have a space before."),
+    commas_linter)
 })
