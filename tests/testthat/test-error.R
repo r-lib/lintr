@@ -17,15 +17,25 @@ test_that("returns the correct linting", {
     rex("unexpected end of input"), (function(...) NULL))
 
   expect_lint("x=",
-    list(
-      rex("Use <-, not =, for assignment"),
-      rex("unexpected end of input")
-    )
+    rex("unexpected end of input"),
+    equals_na_linter
   )
   expect_lint("x += 1",
-    list(
-      rex("Use <-, not =, for assignment"),
-      rex("unexpected '='")
-    )
+    rex("unexpected '='"),
+    equals_na_linter
+  )
+  expect_lint("{x = }",
+    rex("unexpected '}'"),
+    equals_na_linter
+  )
+  expect_lint("x = ;",
+    rex("unexpected ';'"),
+    equals_na_linter
+  )
+
+  # no parsing error is expected for the equals-assignment in this code
+  expect_lint("purrr::partial(list, 1, ... = , 2)",
+    NULL,
+    equals_na_linter
   )
 })
