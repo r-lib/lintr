@@ -2,7 +2,7 @@
 % Please edit documentation in R/T_and_F_symbol_linter.R,
 %   R/assignment_linter.R, R/closed_curly_linter.R, R/commas_linter.R,
 %   R/comment_linters.R, R/cyclocomp_linter.R, R/object_name_linters.R,
-%   R/deprecated.R, R/equals_na_lintr.R, R/extraction_operator_linter.R,
+%   R/deprecated.R, R/equals_na_linter.R, R/extraction_operator_linter.R,
 %   R/function_left_parentheses.R, R/implicit_integer_linter.R,
 %   R/infix_spaces_linter.R, R/line_length_linter.R,
 %   R/no_tab_linter.R, R/object_usage_linter.R, R/open_curly_linter.R,
