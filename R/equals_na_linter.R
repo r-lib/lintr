@@ -7,7 +7,7 @@ equals_na_linter <- function(source_file) {
     return(NULL)
   }
 
-  xml <- source_file$xml_parsed_content
+  xml <- source_file[["xml_parsed_content"]]
 
   # match on the '=='
   xpath <- paste0(

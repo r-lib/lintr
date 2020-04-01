@@ -1,12 +1,42 @@
 #' @describeIn linters check that there is a space between right
 #' parenthesis and an opening curly brace.
-#' @include   make_linter_from_regex.R
 #'
 #' @export
 
-paren_brace_linter <- make_linter_from_regex(
-  regex = rex("){"),
-  lint_name = "paren_brace_linter",
-  lint_type = "style",
-  lint_msg = "There should be a space between right parenthesis and an opening curly brace."
-)
+paren_brace_linter <- function(source_file) {
+  if (!is.null(source_file[["file_lines"]])) {
+    # abort if source_file is entire file, not a top level expression.
+    return(NULL)
+  }
+
+  xml <- source_file[["xml_parsed_content"]]
+
+  xpath <- paste(
+    "//OP-RIGHT-PAREN[",
+      "@line1 = following-sibling::expr/OP-LEFT-BRACE/@line1",
+      "and",
+      "@col1 = following-sibling::expr/OP-LEFT-BRACE/@col1 - 1",
+    "]"
+  )
+
+  match_exprs <- xml2::xml_find_all(xml, xpath)
+
+  lapply(
+    match_exprs,
+    function(expr) {
+      x <- as_list(expr)
+      line_num <- x@line1
+      line <- source_file[["lines"]][[as.character(line_num)]]
+      Lint(
+        filename = source_file$filename,
+        line_number = line_num,
+        column_number = x@col1,
+        type = "style",
+        message = "There should be a space between right parenthesis and an opening curly brace.",
+        line = line,
+        ranges = list(as.numeric(c(x@col1, x@col2))),
+        "paren_brace_linter"
+      )
+    }
+  )
+}
