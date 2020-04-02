@@ -68,9 +68,9 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     if (!is.null(lints)) {
       return(exclude(lints, ...))
     }
-    cache = TRUE
+    cache <- TRUE
   } else {
-    cache = FALSE
+    cache <- FALSE
   }
 
   for (expr in source_expressions$expressions) {
@@ -138,7 +138,8 @@ reorder_lints <- function(lints) {
 #' \code{cache} or \code{linters}.
 #' @param exclusions exclusions for \code{\link{exclude}}, relative to the
 #' package path.
-#' @param pattern pattern for files, by default it will take files with .R or .r extension.
+#' @param pattern pattern for files, by default it will take files with any of
+#' the extensions .R, .r, .Rmd, .rmd, .Rnw, .rnw
 #' @inherit lint_file return
 #' @inheritParams lint_file
 #' @examples
@@ -151,7 +152,8 @@ reorder_lints <- function(lints) {
 #'   )
 #' }
 #' @export
-lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL, pattern = rex::rex(".", one_of("Rr"), end), parse_settings = TRUE) {
+lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
+                     pattern = rex::rex(".", one_of("Rr"), "" %or% "md" %or% "nw", end), parse_settings = TRUE) {
 
   if (isTRUE(parse_settings)) {
     read_settings(path)
@@ -235,7 +237,8 @@ lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = lis
 
   exclusions <- normalize_exclusions(c(exclusions, settings$exclusions), FALSE)
 
-  lints <- lint_dir(file.path(path, c("R", "tests", "inst")), relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
+  lints <- lint_dir(file.path(path, c("R", "tests", "inst", "vignettes", "data-raw")),
+                    relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
 
   if (isTRUE(relative_path)) {
     path <- normalizePath(path, mustWork = FALSE)
@@ -260,7 +263,7 @@ has_description <- function(path) {
 find_package <- function(path) {
   path <- normalizePath(path, mustWork = FALSE)
 
-  while(!has_description(path)) {
+  while (!has_description(path)) {
     path <- dirname(path)
     if (is_root(path)) {
       return(NULL)

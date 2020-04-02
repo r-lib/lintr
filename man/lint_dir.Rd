@@ -9,7 +9,7 @@ lint_dir(
   relative_path = TRUE,
   ...,
   exclusions = NULL,
-  pattern = rex::rex(".", one_of("Rr"), end),
+  pattern = rex::rex(".", one_of("Rr"), "" \%or\% "md" \%or\% "nw", end),
   parse_settings = TRUE
 )
 }
@@ -27,7 +27,8 @@ absolute path.}
 \item{exclusions}{exclusions for \code{\link{exclude}}, relative to the
 package path.}
 
-\item{pattern}{pattern for files, by default it will take files with .R or .r extension.}
+\item{pattern}{pattern for files, by default it will take files with any of
+the extensions .R, .r, .Rmd, .rmd, .Rnw, .rnw}
 
 \item{parse_settings}{whether to try and parse the settings}
 }
