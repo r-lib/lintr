@@ -9,7 +9,7 @@ lint_dir(
   relative_path = TRUE,
   ...,
   exclusions = NULL,
-  pattern = rex::rex(".", one_of("Rr"), "" \%or\% "md" \%or\% "nw", end),
+  pattern = rex::rex(".", one_of("Rr"), or("", "md", "nw"), end),
   parse_settings = TRUE
 )
 }
