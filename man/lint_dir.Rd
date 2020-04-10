@@ -9,7 +9,8 @@ lint_dir(
   relative_path = TRUE,
   ...,
   exclusions = NULL,
-  pattern = rex::rex(".", one_of("Rr"), or("", "md", "nw"), end),
+  pattern = rex::rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"),
+    end),
   parse_settings = TRUE
 )
 }
