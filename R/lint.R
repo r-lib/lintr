@@ -139,7 +139,8 @@ reorder_lints <- function(lints) {
 #' @param exclusions exclusions for \code{\link{exclude}}, relative to the
 #' package path.
 #' @param pattern pattern for files, by default it will take files with any of
-#' the extensions .R, .r, .Rmd, .rmd, .Rnw, .rnw
+#' the extensions .R, .Rmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for
+#' lowercase r (.r, ...)
 #' @inherit lint_file return
 #' @inheritParams lint_file
 #' @examples
