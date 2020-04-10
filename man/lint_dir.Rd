@@ -29,7 +29,8 @@ absolute path.}
 package path.}
 
 \item{pattern}{pattern for files, by default it will take files with any of
-the extensions .R, .r, .Rmd, .rmd, .Rnw, .rnw}
+the extensions .R, .Rmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for
+lowercase r (.r, ...)}
 
 \item{parse_settings}{whether to try and parse the settings}
 }
