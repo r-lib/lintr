@@ -12,10 +12,6 @@ extract_r_source <- function(filename, lines) {
     return(character())
   }
 
-  if (length(chunks[["starts"]]) != length(chunks[["ends"]])) {
-    stop("Malformed file!", call. = FALSE)
-  }
-
   # there is no need to worry about the lines after the last chunk end
   output <- rep.int(NA_character_, max(chunks[["ends"]] - 1))
   Map(
@@ -53,6 +49,7 @@ get_chunk_positions <- function(pattern, lines) {
 }
 
 filter_chunk_start_positions <- function(starts, lines) {
+  # keep blocks that don't set a knitr engine (and so contain evaluated R code)
   drop <- defines_knitr_engine(lines[starts])
   starts[!drop]
 }
@@ -69,6 +66,9 @@ filter_chunk_end_positions <- function(starts, ends) {
   length_difference <- length(ends) - length(starts)
   if (length_difference == 0 && all(ends > starts)) {
     return(ends)
+  }
+  if (length_difference < 0) {
+    stop("Malformed file!", call. = FALSE)
   }
 
   positions <- sort(c(starts = starts, ends = ends))
