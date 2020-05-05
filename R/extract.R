@@ -1,6 +1,5 @@
 # content is the file content from readLines
 extract_r_source <- function(filename, lines) {
-
   pattern <- get_knitr_pattern(filename, lines)
   if (is.null(pattern$chunk.begin) || is.null(pattern$chunk.end)) {
     return(lines)
@@ -30,7 +29,7 @@ extract_r_source <- function(filename, lines) {
 }
 
 get_knitr_pattern <- function(filename, lines) {
-  pattern <- ("knitr" %:::% "detect_pattern")(lines, tolower( ("knitr" %:::% "file_ext")(filename)))
+  pattern <- ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename)))
   if (!is.null(pattern)) {
     knitr::all_patterns[[pattern]]
   } else {
@@ -93,7 +92,7 @@ defines_knitr_engine <- function(start_lines) {
   )
 
   rex::re_matches(start_lines, explicit_engine_pattern) |
-  rex::re_matches(start_lines, bare_engine_pattern)
+    rex::re_matches(start_lines, bare_engine_pattern)
 }
 
 replace_prefix <- function(lines, prefix_pattern) {
@@ -106,7 +105,9 @@ replace_prefix <- function(lines, prefix_pattern) {
 
   blanks <- function(n) {
     vapply(Map(rep.int, rep.int(" ", length(n)), n, USE.NAMES = FALSE),
-      paste, "", collapse = "")
+      paste, "",
+      collapse = ""
+    )
   }
 
   regmatches(lines[non_na], m[non_na]) <-
