@@ -103,3 +103,10 @@ test_that("it does _not_ error with inline \\Sexpr", {
     default_linters
   )
 })
+
+test_that("it does error with malformed input", {
+  expect_error(
+    lint("knitr_malformed/incomplete_r_block.Rmd"),
+    regex = "Malformed"
+  )
+})
