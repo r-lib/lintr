@@ -1,3 +1,8 @@
+# lintr (development version)
+
+* `extract_r_source` handles Rmd containing unevaluated code blocks with named
+  format specifiers (#472, @russHyde)
+
 # lintr 2.0.1
 
 ## New features
