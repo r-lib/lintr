@@ -51,8 +51,8 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 * `no_tab_linter`: check that only spaces are used, never tabs.
 * `object_length_linter`: check that function and variable names are not more than `length` characters.
 * `object_name_linter`: check that object names conform to a single naming
-  style, e.g. CamelCase, camelCase, snake_case, dotted.case, lowercase,
-  or UPPERCASE.
+  style, e.g. CamelCase, camelCase, snake_case, SNAKE_CASE, dotted.case,
+  lowercase, or UPPERCASE.
 * `open_curly_linter`: check that opening curly braces are never on their own
   line and are always followed by a newline.
 * `paren_brace_linter`: check that there is a space between right parenthesis and an opening curly brace.
