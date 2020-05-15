@@ -18,7 +18,7 @@ test_that("styles are correctly identified", {
   expect_equivalent(lapply(styles, check_style, nms = "x1" ), list(FALSE,  TRUE,  TRUE, FALSE,  TRUE,   TRUE, FALSE))
   expect_equivalent(lapply(styles, check_style, nms = "X1" ), list( TRUE, FALSE, FALSE,  TRUE, FALSE,  FALSE,  TRUE))
   expect_equivalent(lapply(styles, check_style, nms = "x_y"), list(FALSE, FALSE,  TRUE, FALSE, FALSE,  FALSE, FALSE))
-  expect_equivalent(lapply(styles, check_style, nms = "X_Y"), list(FALSE, FALSE,  TRUE,  TRUE, FALSE,  FALSE, FALSE))
+  expect_equivalent(lapply(styles, check_style, nms = "X_Y"), list(FALSE, FALSE, FALSE,  TRUE, FALSE,  FALSE, FALSE))
   expect_equivalent(lapply(styles, check_style, nms = "X.Y"), list(FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
   expect_equivalent(lapply(styles, check_style, nms = "x_2"), list(FALSE, FALSE,  TRUE, FALSE, FALSE,  FALSE, FALSE))
   expect_equivalent(lapply(styles, check_style, nms = "X_2"), list(FALSE, FALSE, FALSE,  TRUE, FALSE,  FALSE, FALSE))
@@ -40,7 +40,7 @@ test_that("styles are correctly identified", {
 test_that("linter ignores some objects", {
   # names for which style check is ignored
   expect_lint("`%x%` <- t", NULL, object_name_linter("snake_case"))              # operator
-  expect_lint("`%x%` <- t", NULL, object_name_linter("SNAKE_CASE"))              # operator
+  expect_lint("`%X%` <- t", NULL, object_name_linter("SNAKE_CASE"))              # operator
   expect_lint("`t.test` <- t", NULL, object_name_linter("UPPERCASE"))         # std pkg
   expect_lint(".Deprecated('x')", NULL, object_name_linter("lowercase"))      # std pkg
   expect_lint("print.foo <- t", NULL, object_name_linter("CamelCase"))         # S3 generic
