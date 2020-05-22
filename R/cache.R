@@ -51,7 +51,7 @@ save_cache <- function(cache, file, path = NULL) {
   }
 
   if (!file.exists(path)) {
-    dir.create(path)
+    dir.create(path, recursive = TRUE)
   }
 
   save(file = get_cache_file_path(file, path), envir = cache, list = ls(envir = cache))
