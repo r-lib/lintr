@@ -30,7 +30,7 @@ indentation_linter <- function(indent = 2L, outermost_only = TRUE) {
     exprs_indent <- do.call(
       rbind,
       lapply(
-       split(exprs, exprs$line1),
+        split(exprs, exprs$line1),
         subset,
         seq_along(line_indent) == which.min(line_indent)))
 
