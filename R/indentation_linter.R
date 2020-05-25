@@ -1,4 +1,3 @@
-#' Indentation Linter
 #'
 #' @param indent The number of characters to indent each expression.
 #' @param outermost_only Whether all offending lines should be reported as lint,

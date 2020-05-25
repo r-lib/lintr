@@ -48,7 +48,7 @@
 \alias{undesirable_operator_linter}
 \alias{unneeded_concatenation_linter}
 \alias{linters}
-\title{Indentation Linter}
+\title{linters}
 \usage{
 T_and_F_symbol_linter(source_file)
 
