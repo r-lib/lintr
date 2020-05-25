@@ -1,5 +1,5 @@
 #' @export
-indentation_linter <- function(length = 80L, indent = 2L) {
+indentation_linter <- function(indent = 2L) {
   function(source_file) {
     exprs <- source_file$parsed_content
 
