@@ -17,7 +17,7 @@ test_that("indentation linter flags unindented expressions", {
     "indent",
     indentation_linter(indent = 2L))
 
-    expect_lint("
+  expect_lint("
       lapply(1:10, function(i) {
           i %% 2
       })
@@ -25,7 +25,7 @@ test_that("indentation linter flags unindented expressions", {
     NULL,
     indentation_linter(indent = 4L))
 
-    expect_lint("
+  expect_lint("
       lapply(1:10, function(i) {
         i %% 2  # indentation is only 2 characters
       })
@@ -71,7 +71,7 @@ test_that("indentation linter respects outermost flag", {
 })
 
 test_that("indentation linter flags improper closing curly braces", {
-    expect_lint("
+  expect_lint("
       lapply(1:10, function(i) {
         {
           i %% 2
@@ -81,7 +81,7 @@ test_that("indentation linter flags improper closing curly braces", {
     NULL,
     indentation_linter(indent = 2L))
 
-    expect_lint("
+  expect_lint("
       lapply(1:10, function(i) {
         i %% 2
         })  # closing curly doesn't return to parent indentation
