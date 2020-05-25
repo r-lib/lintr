@@ -1,5 +1,16 @@
+#' Indentation Linter
+#'
+#' @param indent The number of characters to indent each expression.
+#' @param outermost_only Whether all offending lines should be reported as lint,
+#'   or only the outermost expression. Default is \code{TRUE}, only the
+#'   outermost expressions.
+#'
+#' @describeIn linters Indent nested expressions and return to the parent
+#'   indentation for closing multi-line expressions with curly-braces.
+#'
 #' @export
-indentation_linter <- function(indent = 2L) {
+#'
+indentation_linter <- function(indent = 2L, outermost_only = TRUE) {
   function(source_file) {
     exprs <- source_file$parsed_content
 
@@ -19,7 +30,7 @@ indentation_linter <- function(indent = 2L) {
     exprs_indent <- do.call(
       rbind,
       lapply(
-        split(exprs, exprs$line1),
+       split(exprs, exprs$line1),
         subset,
         seq_along(line_indent) == which.min(line_indent)))
 
@@ -47,8 +58,11 @@ indentation_linter <- function(indent = 2L) {
     linty_closing_curly <- with(exprs, token == "'}'" & rel_indent != 0)
     linty_expr <- with(exprs, !token %in% ignored_tokens & bad_indent)
 
+    # only lint the first offending expression per line
+    linty_expr <- linty_expr & !duplicated(exprs[,"line1"] * linty_expr)
+
     # filter out nested linty expressions to avoid cascading indentation lints
-    if (any(linty_expr)) {
+    if (outermost_only && any(linty_expr)) {
       linty_lines <- unique(unlist(apply(exprs[linty_expr,], 1L, function(row) {
         tail(row["line1"]:row["line2"], -1L)
       })))

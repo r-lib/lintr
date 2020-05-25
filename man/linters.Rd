@@ -4,7 +4,7 @@
 %   R/comment_linters.R, R/cyclocomp_linter.R, R/object_name_linters.R,
 %   R/deprecated.R, R/equals_na_lintr.R, R/extraction_operator_linter.R,
 %   R/function_left_parentheses.R, R/implicit_integer_linter.R,
-%   R/infix_spaces_linter.R, R/line_length_linter.R,
+%   R/indentation_linter.R, R/infix_spaces_linter.R, R/line_length_linter.R,
 %   R/no_tab_linter.R, R/object_usage_linter.R, R/open_curly_linter.R,
 %   R/paren_brace_linter.R, R/path_linters.R, R/pipe_continuation_linter.R,
 %   R/semicolon_terminator_linter.R, R/seq_linter.R, R/single_quotes_linter.R,
@@ -27,6 +27,7 @@
 \alias{extraction_operator_linter}
 \alias{function_left_parentheses_linter}
 \alias{implicit_integer_linter}
+\alias{indentation_linter}
 \alias{infix_spaces_linter}
 \alias{line_length_linter}
 \alias{no_tab_linter}
@@ -47,7 +48,7 @@
 \alias{undesirable_operator_linter}
 \alias{unneeded_concatenation_linter}
 \alias{linters}
-\title{linters}
+\title{Indentation Linter}
 \usage{
 T_and_F_symbol_linter(source_file)
 
@@ -76,6 +77,8 @@ extraction_operator_linter(source_file)
 function_left_parentheses_linter(source_file)
 
 implicit_integer_linter(source_file)
+
+indentation_linter(indent = 2L, outermost_only = TRUE)
 
 infix_spaces_linter(source_file)
 
@@ -132,6 +135,12 @@ match at least one of these styles.}
 
 \item{length}{the length cutoff to use for the given linter.}
 
+\item{indent}{The number of characters to indent each expression.}
+
+\item{outermost_only}{Whether all offending lines should be reported as lint,
+or only the outermost expression. Default is \code{TRUE}, only the
+outermost expressions.}
+
 \item{lax}{Less stringent linting, leading to fewer false positives.}
 
 \item{semicolon}{A character vector defining which semicolons to report:\describe{
@@ -184,6 +193,9 @@ do not have spaces before them.
 
 \item \code{implicit_integer_linter}: Check that integers are explicitly typed using the form \code{1L} instead of
 \code{1}.
+
+\item \code{indentation_linter}: Indent nested expressions and return to the parent
+indentation for closing multi-line expressions with curly-braces.
 
 \item \code{infix_spaces_linter}: check that all infix operators have spaces around them.
 
