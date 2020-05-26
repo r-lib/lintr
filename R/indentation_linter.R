@@ -8,7 +8,6 @@
 #'   indentation for closing multi-line expressions with curly-braces.
 #'
 #' @export
-#'
 indentation_linter <- function(indent = 2L, outermost_only = TRUE) {
   function(source_file) {
     exprs <- source_file$parsed_content
