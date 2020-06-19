@@ -43,7 +43,7 @@ test_that("indentation linter respects outermost flag", {
       })
     ",
     NULL,
-    indentation_linter(outermost_only = TRUE))
+    indentation_linter(parent_only = TRUE))
 
   # single Lint generated when outermost_only = TRUE
   expect_lint("
@@ -54,7 +54,7 @@ test_that("indentation linter respects outermost flag", {
       })
     ",
     "indent",
-    indentation_linter(outermost_only = TRUE))
+    indentation_linter(parent_only = TRUE))
 
   # multiple Lints get generated when outermost_only = FALSE
   expect_lint("
@@ -67,7 +67,7 @@ test_that("indentation linter respects outermost flag", {
     list(
       list(linter = "indentation_linter"),
       list(linter = "indentation_linter")),
-    indentation_linter(outermost_only = FALSE))
+    indentation_linter(parent_only = FALSE))
 })
 
 test_that("indentation linter flags improper closing curly braces", {
@@ -84,8 +84,90 @@ test_that("indentation linter flags improper closing curly braces", {
   expect_lint("
       lapply(1:10, function(i) {
         i %% 2
-        })  # closing curly doesn't return to parent indentation
+        } # closing curly doesn't return to parent indentation
+      )
     ",
     "curly",
     indentation_linter(indent = 2L))
 })
+
+test_that("function argument indentation works in tidyverse-style", {
+  expect_lint("
+      function(a = 1L,
+               b = 2L) {
+        a + b
+      }
+    ",
+    NULL,
+    indentation_linter(indent = 2L))
+
+  expect_lint("
+      test <- function(a = 1L,
+                       b = 2L) {
+        a + b
+      }
+    ",
+    NULL,
+    indentation_linter(indent = 2L))
+
+  expect_lint("
+      function(a = 1L,
+         b = 2L) {
+        a + b
+      }
+    ",
+    "argument",
+    indentation_linter(indent = 2L))
+
+  expect_lint("
+      test  <- function(a = 1L,
+         b = 2L) {
+        a + b
+      }
+    ",
+    "argument",
+    indentation_linter(indent = 2L))
+})
+
+
+test_that("function argument indentation works in generic style", {
+  expect_lint("
+      function(a = 1L,
+        b = 2L) {
+        a + b
+      }
+    ",
+    NULL,
+    indentation_linter(indent = 2L, func_header_to_open_paren = FALSE))
+
+  expect_lint("
+      test <- function(a = 1L,
+        b = 2L) {
+
+        a + b
+      }
+    ",
+    NULL,
+    indentation_linter(indent = 2L, func_header_to_open_paren = FALSE))
+
+  expect_lint("
+      function(a = 1L,
+         b = 2L) {
+
+        a + b
+      }
+    ",
+    "argument",
+    indentation_linter(indent = 2L, func_header_to_open_paren = FALSE))
+
+  expect_lint("
+      test  <- function(a = 1L,
+         b = 2L) {
+
+        a + b
+      }
+    ",
+    "argument",
+    indentation_linter(indent = 2L, func_header_to_open_paren = FALSE))
+})
+
