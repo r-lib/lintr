@@ -23,6 +23,8 @@
 * `object_usage_linter` has been changed to ensure lint-position is indicated
   relative to the start of the file, rather than the start of a defining
   function (#432, @russHyde).
+* `commas_linter` now allows spaces to come before a comma when used to denote a 
+  fall-through in a switch statement (#499, @MrMallIronmaker)
 
 # lintr 2.0.0
 
