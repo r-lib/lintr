@@ -10,6 +10,8 @@
 ## New features
 
 * lintr now supports GitHub Actions and will print the lints as warning messages if lints are printed during an action.
+* `lint_package()` will now lint vignettes and data-raw by default (#447, @AshesITR).
+* `lint_dir()` will now include Rmd and Rnw files by default (@AshesITR).
 
 ## Minor fixes and features
 
