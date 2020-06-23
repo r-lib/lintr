@@ -1,5 +1,6 @@
 # lintr (development version)
 
+* `save_cache` will now recursively create the cache directory; this avoids errors that could arise if any parent directories do not exist (#60, @dankessler).
 * `extract_r_source` handles Rmd containing unevaluated code blocks with named
   format specifiers (#472, @russHyde)
 * New style SNAKE_CASE for `object_name_linter()` (#494, @AshesITR)
