@@ -46,6 +46,7 @@ exclude <- function(lints, exclusions = settings$exclusions, ...) {
 #' @param exclude regular expression used to mark lines to exclude
 #' @param exclude_start regular expression used to mark the start of an excluded range
 #' @param exclude_end regular expression used to mark the end of an excluded range
+#' @param lines a character vector of the content lines of \code{file}
 parse_exclusions <- function(file, exclude = settings$exclude,
                              exclude_start = settings$exclude_start,
                              exclude_end = settings$exclude_end,

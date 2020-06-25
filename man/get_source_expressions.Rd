@@ -8,6 +8,8 @@ get_source_expressions(filename, lines = NULL)
 }
 \arguments{
 \item{filename}{the file to be parsed.}
+
+\item{lines}{a character vector of the content lines of \code{file}.}
 }
 \description{
 This object is given as input to each linter

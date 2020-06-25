@@ -2,6 +2,7 @@
 #'
 #' This object is given as input to each linter
 #' @param filename the file to be parsed.
+#' @param lines a character vector of the content lines of \code{file}.
 #' @export
 get_source_expressions <- function(filename, lines = NULL) {
   source_file <- srcfile(filename)

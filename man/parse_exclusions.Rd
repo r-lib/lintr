@@ -20,6 +20,8 @@ parse_exclusions(
 \item{exclude_start}{regular expression used to mark the start of an excluded range}
 
 \item{exclude_end}{regular expression used to mark the end of an excluded range}
+
+\item{lines}{a character vector of the content lines of \code{file}}
 }
 \description{
 read a source file and parse all the excluded lines from it
