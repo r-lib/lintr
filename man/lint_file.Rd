@@ -5,7 +5,14 @@
 \alias{lint}
 \title{Lint a file}
 \usage{
-lint(filename, linters = NULL, cache = FALSE, ..., parse_settings = TRUE)
+lint(
+  filename,
+  linters = NULL,
+  cache = FALSE,
+  ...,
+  parse_settings = TRUE,
+  text = NULL
+)
 }
 \arguments{
 \item{filename}{the given filename to lint.}
@@ -19,6 +26,9 @@ character string, store the cache in this directory.}
 \item{...}{additional arguments passed to \code{\link{exclude}}.}
 
 \item{parse_settings}{whether to try and parse the settings}
+
+\item{text}{the string content to be used as if linting \code{filename}.
+If supplied, \code{filename} must be a valid path.}
 }
 \value{
 A list of lint objects.

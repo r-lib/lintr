@@ -4,7 +4,7 @@
 \alias{get_source_expressions}
 \title{Parsed sourced file from a filename}
 \usage{
-get_source_expressions(filename)
+get_source_expressions(filename, lines = NULL)
 }
 \arguments{
 \item{filename}{the file to be parsed.}

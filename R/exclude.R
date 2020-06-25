@@ -48,8 +48,11 @@ exclude <- function(lints, exclusions = settings$exclusions, ...) {
 #' @param exclude_end regular expression used to mark the end of an excluded range
 parse_exclusions <- function(file, exclude = settings$exclude,
                              exclude_start = settings$exclude_start,
-                             exclude_end = settings$exclude_end) {
-  lines <- readLines(file)
+                             exclude_end = settings$exclude_end,
+                             lines = NULL) {
+  if (is.null(lines)) {
+    lines <- readLines(file)
+  }
 
   exclusions <- numeric(0)
 

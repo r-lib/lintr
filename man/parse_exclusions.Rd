@@ -8,7 +8,8 @@ parse_exclusions(
   file,
   exclude = settings$exclude,
   exclude_start = settings$exclude_start,
-  exclude_end = settings$exclude_end
+  exclude_end = settings$exclude_end,
+  lines = NULL
 )
 }
 \arguments{

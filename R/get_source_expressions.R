@@ -3,9 +3,9 @@
 #' This object is given as input to each linter
 #' @param filename the file to be parsed.
 #' @export
-get_source_expressions <- function(filename) {
+get_source_expressions <- function(filename, lines = NULL) {
   source_file <- srcfile(filename)
-  source_file$lines <- readLines(filename)
+  source_file$lines <- if (is.null(lines)) readLines(filename) else lines
   source_file$lines <- extract_r_source(source_file$filename, source_file$lines)
   source_file$content <- get_content(source_file$lines)
 

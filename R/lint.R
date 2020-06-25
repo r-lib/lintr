@@ -20,20 +20,35 @@ NULL
 #' character string, store the cache in this directory.
 #' @param ... additional arguments passed to \code{\link{exclude}}.
 #' @param parse_settings whether to try and parse the settings
+#' @param text the string content to be used as if linting \code{filename}.
+#'    If supplied, \code{filename} must be a valid path.
 #' @return A list of lint objects.
 #' @export
-lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = TRUE) {
+lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = TRUE, text = NULL) {
 
-  inline_data <- rex::re_matches(filename, rex::rex(newline))
-  if (inline_data) {
-    content <- gsub("\n$", "", filename)
-    filename <- tempfile()
-    on.exit(unlink(filename))
-    writeLines(text = content, con = filename, sep = "\n")
+  if (is.null(text)) {
+    inline_data <- rex::re_matches(filename, rex::rex(newline))
+    if (inline_data) {
+      text <- gsub("\n$", "", filename)
+      filename <- tempfile()
+      on.exit(unlink(filename))
+      writeLines(text = text, con = filename, sep = "\n")
+    }
+  } else {
+    inline_data <- FALSE
+    if (length(text) > 1) {
+      text <- paste0(text, collapse = "\n")
+    }
+  }
+
+  if (is.null(text)) {
+    lines <- readLines(filename)
+  } else {
+    lines <- strsplit(text, "\n", fixed = TRUE)[[1]]
   }
 
   filename <- normalizePath(filename)  # to ensure a unique file in cache
-  source_expressions <- get_source_expressions(filename)
+  source_expressions <- get_source_expressions(filename, lines)
 
   if (isTRUE(parse_settings)) {
     read_settings(filename)
@@ -64,7 +79,11 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   if (length(cache_path)) {
     lint_cache <- load_cache(filename, cache_path)
-    lints <- retrieve_file(lint_cache, filename, linters)
+    lint_obj <- if (is.null(text)) filename else list(
+      content = get_content(lines),
+      TRUE
+    )
+    lints <- retrieve_file(lint_cache, lint_obj, linters)
     if (!is.null(lints)) {
       return(exclude(lints, ...))
     }
