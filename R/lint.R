@@ -41,10 +41,10 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     }
   }
 
-  if (is.null(text)) {
-    lines <- readLines(filename)
+  lines <- if (is.null(text)) {
+    readLines(filename)
   } else {
-    lines <- strsplit(text, "\n", fixed = TRUE)[[1]]
+    strsplit(text, "\n", fixed = TRUE)[[1]]
   }
 
   filename <- normalizePath(filename)  # to ensure a unique file in cache
