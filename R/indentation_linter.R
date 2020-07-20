@@ -45,7 +45,8 @@ indentation_linter <- function(indent = 2L, parent_only = TRUE,
     # calculate indentation at the start of each function header
     func_header_indent <- exprs[exprs$token == "FUNCTION",]
     # TODO: this assumes no space between 'function' and '('
-    func_header_indent$func_indent = func_header_indent$col2 + 2L
+    func_header_indent$func_indent = func_header_indent$col1
+    func_header_indent$func_open_paren_indent = func_header_indent$col2 + 2L
 
     # associate per-line minimum indentation level of each line with all
     # expressions starting on that line
@@ -55,7 +56,7 @@ indentation_linter <- function(indent = 2L, parent_only = TRUE,
       by = "line1")
     exprs <- merge(
       exprs,
-      func_header_indent[c("parent", "func_indent")],
+      func_header_indent[c("parent", "func_indent", "func_open_paren_indent")],
       by = "parent",
       all.x = TRUE)
 
@@ -80,17 +81,29 @@ indentation_linter <- function(indent = 2L, parent_only = TRUE,
 
     # calculate indentation relative to parent
     exprs$rel_indent <- with(exprs, line_indent - line_indent.par)
-    exprs$rel_func_indent <- with(exprs, func_line_indent - func_indent)
+    exprs$rel_func_indent <- with(exprs, func_line_indent - line_indent)
+    exprs$rel_func_open_paren_indent <- with(exprs, func_line_indent - func_open_paren_indent)
     exprs$bad_indent <- with(exprs, line1 != line1.par & rel_indent != indent)
 
-    # calculate linty indenting
+    # attr(exprs$func_line_indent, "label") <- "indentation of lines within the function header"
+    attr(exprs$line_indent, "label") <- "indentation of the line"
+    attr(exprs$rel_indent, "label") <- "indentation relative to the parent expression in characters"
+    attr(exprs$rel_func_indent, "label") <- "indentation relative to the function declaration parent expression in characters"
+    attr(exprs$rel_func_open_paren_indent, "label") <- "indentation relative to the opening parenthesis function header"
+
+    # specify symbols to ignore for generalized indentation
     ignored_tokens <- c("')'", "'}'", "','", "SYMBOL_FORMALS", "COMMENT")
+
+    # calculate linty indenting
     linty <- with(exprs, list(
       closing_curly = token == "'}'" & rel_indent != 0L,
       closing_paren = token == "')'" & !is_func_top_level & rel_indent != 0L,
+      generalized_func_header = line1 != line1.par &
+        token == "SYMBOL_FORMALS" &
+        rel_func_indent != indent,
       hanging_func_header = line1 != line1.par &
         token == "SYMBOL_FORMALS" &
-        rel_func_indent != 0L,
+        rel_func_open_paren_indent != 0L,
       indent = !is_func_top_level & !token %in% ignored_tokens & bad_indent))
 
     # filter out NAs from linty results, caused by missing parent
@@ -115,6 +128,23 @@ indentation_linter <- function(indent = 2L, parent_only = TRUE,
         message = paste0(
           "Function arguments that wrap to a new line should be aligned with ",
           "the function header's opening parenthesis."),
+        line = "",
+        ranges = NULL,
+        linter = "indentation_linter"),
+      SIMPLIFY = FALSE)
+
+    generalizedd_func_header_lints <- mapply(
+      Lint,
+      line_number = exprs[linty$generalized_func_header, "line1"],
+      column_number = exprs[linty$generalized_func_header, "col1"],
+      MoreArgs = list(
+        filename = source_file$filename,
+        type = "style",
+        message = sprintf(
+          paste0(
+            "Function arguments that wrap to a new line should be indented by ",
+            "%d characters."),
+          indent),
         line = "",
         ranges = NULL,
         linter = "indentation_linter"),
@@ -167,10 +197,20 @@ indentation_linter <- function(indent = 2L, parent_only = TRUE,
         linter = "indentation_linter"),
       SIMPLIFY = FALSE)
 
+    header_indent_lints <- if (func_header_to_open_paren) {
+      hanging_func_header_lints
+    } else {
+      generalizedd_func_header_lints
+    }
+
     flatten_lints(list(
-      if (func_header_to_open_paren) hanging_func_header_lints,
+      header_indent_lints,
       if (func_call_closing_paren) closing_paren_indent_lints,
       closing_curly_indent_lints,
       expr_indent_lints))
   }
+}
+
+get_indentation_data <- function(pc) {
+
 }
