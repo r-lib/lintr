@@ -78,7 +78,12 @@ function_left_parentheses_linter(source_file)
 
 implicit_integer_linter(source_file)
 
-indentation_linter(indent = 2L, outermost_only = TRUE)
+indentation_linter(
+  indent = 2L,
+  parent_only = TRUE,
+  func_header_to_open_paren = TRUE,
+  func_call_closing_paren = TRUE
+)
 
 infix_spaces_linter(source_file)
 
@@ -137,9 +142,9 @@ match at least one of these styles.}
 
 \item{indent}{The number of characters to indent each expression.}
 
-\item{outermost_only}{Whether all offending lines should be reported as lint,
-or only the outermost expression. Default is \code{TRUE}, only the
-outermost expressions.}
+\item{parent_only}{Whether all offending lines should be reported as lint, or
+only the outermost offending parent expression. Default is \code{TRUE},
+only the outermost expressions will be flagged.}
 
 \item{lax}{Less stringent linting, leading to fewer false positives.}
 
