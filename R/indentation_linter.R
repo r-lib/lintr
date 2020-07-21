@@ -144,6 +144,9 @@ indentation_linter <- function(indent = 2L, parent_only = TRUE,
 #' Add indentation data to the parsed content
 #'
 #' @param pc parsed_content as produced by \code{get_source_file}
+#' @return a modified parsed_content data.frame with additional fields
+#'   relating to line indentation, function header indentation and indentation
+#'   relative to a parent expression's line.
 #'
 add_indentation_data <- function(pc) {
   # build a data.frame of parent expressions for each function call
