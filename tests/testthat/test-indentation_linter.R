@@ -43,7 +43,7 @@ test_that("indentation linter respects outermost flag", {
       })
     ",
     NULL,
-    indentation_linter(parent_only = TRUE))
+    indentation_linter(outermost_only = TRUE))
 
   # single Lint generated when outermost_only = TRUE
   expect_lint("
@@ -54,7 +54,7 @@ test_that("indentation linter respects outermost flag", {
       })
     ",
     "indent",
-    indentation_linter(parent_only = TRUE))
+    indentation_linter(outermost_only = TRUE))
 
   # multiple Lints get generated when outermost_only = FALSE
   expect_lint("
@@ -67,7 +67,7 @@ test_that("indentation linter respects outermost flag", {
     list(
       list(linter = "indentation_linter"),
       list(linter = "indentation_linter")),
-    indentation_linter(parent_only = FALSE))
+    indentation_linter(outermost_only = FALSE))
 })
 
 test_that("indentation linter flags improper closing curly braces", {
@@ -171,3 +171,81 @@ test_that("function argument indentation works in generic style", {
     indentation_linter(indent = 2L, func_header_to_open_paren = FALSE))
 })
 
+test_that("closing parenthesis and newline indentation catches function calls, but not other keyworded syntax", {
+  # Currently closing parenthesis for non-function keyword syntax is
+  # entirely unchecked. Indentation of expressions in non-function keywords
+  # is expected to follow generalized rules, indenting by one indentation.
+
+  expect_lint("
+    sum(
+      1,
+      2
+    )
+    ",
+    NULL,
+    indentation_linter(indent = 2L, func_call_closing_paren = TRUE))
+
+  expect_lint("
+    sum(
+      1,
+      2)
+    ",
+    "(?i)closing parenthesis",
+    indentation_linter(indent = 2L, func_call_closing_paren = TRUE))
+
+  expect_lint("
+    if (1 < 2 &
+      3 < 4) {
+      'Yep, thats right!'
+    }
+    ",
+    NULL,
+    indentation_linter(indent = 2L, func_call_closing_paren = TRUE))
+
+  expect_lint("
+    if (1 < 2 &
+        3 < 4) {
+      'Yep, thats right!'
+    }
+    ",
+    "indent",
+    indentation_linter(indent = 2L, func_call_closing_paren = TRUE))
+
+  expect_lint("
+    for (i in
+      seq_len(5L)) {
+      print(i)
+    }
+    ",
+    NULL,
+    indentation_linter(indent = 2L, func_call_closing_paren = TRUE))
+
+  expect_lint("
+    for (i in
+         seq_len(5L)) {
+      print(i)
+    }
+    ",
+    "indent",
+    indentation_linter(indent = 2L, func_call_closing_paren = TRUE))
+
+  expect_lint("
+    while (i < 5L &&
+      i > 0L) {
+      print(i)
+      i <- i + 1
+    }
+    ",
+    NULL,
+    indentation_linter(indent = 2L, func_call_closing_paren = TRUE))
+
+  expect_lint("
+    while (i < 5L &&
+           i > 0L) {
+      print(i)
+      i <- i + 1
+    }
+    ",
+    "indent",
+    indentation_linter(indent = 2L, func_call_closing_paren = TRUE))
+})

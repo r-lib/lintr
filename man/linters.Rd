@@ -80,9 +80,10 @@ implicit_integer_linter(source_file)
 
 indentation_linter(
   indent = 2L,
-  parent_only = TRUE,
+  outermost_only = TRUE,
   func_header_to_open_paren = TRUE,
-  func_call_closing_paren = TRUE
+  func_call_closing_paren = TRUE,
+  expr_closing_curly = TRUE
 )
 
 infix_spaces_linter(source_file)
@@ -142,9 +143,19 @@ match at least one of these styles.}
 
 \item{indent}{The number of characters to indent each expression.}
 
-\item{parent_only}{Whether all offending lines should be reported as lint, or
-only the outermost offending parent expression. Default is \code{TRUE},
-only the outermost expressions will be flagged.}
+\item{outermost_only}{Whether all offending lines should be reported as lint,
+or only the outermost offending expression. Default is \code{TRUE}, only
+the outermost expressions will be flagged.}
+
+\item{func_header_to_open_paren}{Whether function header parameters should be
+wrapped to the indentation level of the first parameter, immediately
+following an opening parenthesis or should otherwise be treated as a
+regular expression, indenting to one indentation level. The default is
+\code{TRUE}, to follow the tidyverse style guide, indenting to the first
+parameter.}
+
+\item{func_call_closing_paren}{Whether closing parenthesis of function calls
+should}
 
 \item{lax}{Less stringent linting, leading to fewer false positives.}
 
