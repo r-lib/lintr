@@ -28,27 +28,30 @@ indentation_linter <- function(indent = 2L, outermost_only = TRUE,
 
     # specify symbols to ignore for generalized indentation
     ignored_tokens <- c("')'", "'}'", "','", "SYMBOL_FORMALS", "COMMENT")
-    ignored_keyword_tokens <- c("IF", "FOR", "WHILE")
 
     # calculate linty indenting
     linty <- with(pc, list(
-      closing_curly = token == "'}'" &
-        rel_indent != 0L,
-      closing_paren = token == "')'" &
-        !is_func_top_level &
-        !first_token.par %in% ignored_keyword_tokens &
-        rel_indent != 0L,
-      generalized_func_header = line1 != line1.par &
-        token == "SYMBOL_FORMALS" &
-        rel_kw_indent != indent,
-      hanging_func_header = line1 != line1.par &
-        token == "SYMBOL_FORMALS" &
-        rel_kw_open_paren_indent != 0L,
-      indent = !is_func_top_level &
-        !token %in% ignored_tokens &
-        !first_token %in% ignored_keyword_tokens &
+      closing_curly =
+        token == "'}'" &
+        line_indent != kw_expr_indent.par,
+      closing_paren =
+        token == "')'" &
+        !is_kw_expr &   # ignore closing parens from FUNCTION, IF, FOR, WHILE
+        !token.par %in% "forcond" &  # handle FOR conditions parsing explicitly
+        line_indent != line_indent.par,
+      generalized_func_header =
         line1 != line1.par &
-        rel_indent != indent))
+        token == "SYMBOL_FORMALS" &
+        line_indent != kw_expr_indent + indent,
+      hanging_func_header =
+        line1 != line1.par &
+        token == "SYMBOL_FORMALS" &
+        line_indent != kw_open_paren_indent + 1L,
+      indent =
+        !token %in% ignored_tokens &
+        !is_kw_expr &  # ignore closing parens from FUNCTION, IF, FOR, WHILE
+        line1 != line1.par &
+        line_indent != ifelse(is_kw_expr.par, kw_expr_indent.par, line_indent.par) + indent))
 
     # filter out NAs from linty results, caused by missing parent
     linty <- lapply(linty, vapply, isTRUE, logical(1L))
@@ -164,63 +167,40 @@ indentation_linter <- function(indent = 2L, outermost_only = TRUE,
 #'   relative to a parent expression's line.
 #'
 add_indentation_data <- function(pc) {
-  # build a data.frame of parent expressions for each function call
-  function_tokens <- pc[pc$token == "FUNCTION",]
-
   # associate the first token to filter keyword expressions
-  pc <- pc[order(pc$parent, pc$line1, pc$col1),]
-  pc$first_token <- unlist(lapply(
-    split(pc, pc$parent),
-    function(i) rep(i$token[[1]], nrow(i))))
-
-  # only use one of redundant wrapping expressions and terminal symbols,
-  # prefer non-wrapping expressions
-  pc <- pc[order(pc$line1, pc$col1, -pc$parent),]
   pc <- pc[!duplicated(pc[c("line1", "col1", "line2", "col2")]),]
 
-  # flag components of a function header
-  pc$is_func_top_level <- pc$parent %in% function_tokens$parent
-
-  # short-circuit on empty expression content
-  if (!nrow(pc)) return(list())
-
+  # only use one of redundant wrapping expressions and terminal symbols,
   # calculate minimum indentation across expressions starting on same line
+  pc <- pc[order(pc$line1, pc$col1, pc$parent),]
   pc$line_indent <- pc$col1
-  pc_indent <- do.call(
-    rbind,
-    lapply(
-      split(pc, pc$line1, drop = TRUE),
-      subset,
-      seq_along(line_indent) == which.min(line_indent)))
+  pc$line_indent <- as.numeric(unlist(lapply(
+    split(pc, pc$line1, drop = TRUE),
+    function(i) rep(min(i$line_indent), nrow(i)))))
 
-  # calculate indentation at the start of each keyword header
-  kw_header <- pc[pc$token %in% c("FUNCTION", "IF", "FOR", "WHILE"),]
-  # TODO: this assumes no space between 'function' and '('
-  kw_header$kw_indent = kw_header$col1
-  kw_header$kw_open_paren_indent = kw_header$col2 + 2L
+  # calculate the first token within each expression
+  pc <- pc[order(pc$parent, pc$line1, pc$col1),]
+  pc$first_token <- as.character(unlist(lapply(
+    split(pc, pc$parent),
+    function(i) rep(i$token[[1]], nrow(i)))))
 
-  # associate per-line minimum indentation level of each line with all
-  # expressions starting on that line
-  pc <- merge(
-    pc[-which(names(pc) %in% "line_indent")],
-    pc_indent[c("line1", "line_indent")],
-    by = "line1")
-  pc <- merge(
-    pc,
-    kw_header[c("parent", "kw_indent", "kw_open_paren_indent")],
-    by = "parent",
-    all.x = TRUE)
+  # calculate indentation at the start of each keyword's opening
+  # parenthesis (e.g. `if (_`, `for (_`)
+  kw_tokens <- pc[pc$token %in% c("FUNCTION", "IF", "FOR", "forcond", "WHILE"),]
+  pc$is_kw_expr <- pc$parent %in% unique(kw_tokens$parent)
 
-  # update line indent for multi-line function headers
-  #  - `func_line_indent` represent per-line func header indentation
-  #  - `line_indent` represents indentation level for beginning of func header
-  is_header <- pc$parent %in% kw_header$parent
-  pc[is_header, "kw_line_indent"] <- pc[is_header, "line_indent"]
-  pc[is_header, "line_indent"] <- unlist(lapply(
-    split(pc[is_header,], pc[is_header, "parent"]),
-    function(i) rep(min(i$line_indent), nrow(i))))
+  pc[pc$is_kw_expr, "kw_open_paren_indent"] <- as.numeric(unlist(lapply(
+    split(pc[pc$is_kw_expr,], pc[pc$is_kw_expr, "parent"]),
+    function(i) {
+      res <- if (any(i$token == "'('")) i[i$token == "'('", "col2"][1] else NA
+      rep(res, nrow(i))
+    })))
 
-  # merge on parent id to associate parent scope indentation level
+  pc[pc$is_kw_expr, "kw_expr_indent"] <- as.numeric(unlist(lapply(
+    split(pc[pc$is_kw_expr,], pc[pc$is_kw_expr, "parent"]),
+    function(i) rep(min(i$line_indent), nrow(i)))))
+
+  # associate parent information for nested expressions
   pc <- merge(
     pc,
     pc,
@@ -228,18 +208,6 @@ add_indentation_data <- function(pc) {
     by.y = "id",
     suffixes = c("", ".par"),
     all.x = TRUE)
-
-  # calculate indentation relative to parent
-  pc$rel_indent <- with(pc, line_indent - line_indent.par)
-  pc$rel_kw_indent <- with(pc, kw_line_indent - line_indent)
-  pc$rel_kw_open_paren_indent <- with(pc, kw_line_indent - kw_open_paren_indent)
-
-  attr(pc$line_indent, "label") <- "indentation of the line on which an expression begins"
-  attr(pc$kw_line_indent, "label") <- "indentation of lines within a keyworded header"
-  attr(pc$kw_open_paren_indent, "label") <- "indentation level following the opening parenthesis of a keyworded header"
-  attr(pc$rel_indent, "label") <- "indentation relative to the parent expression in characters"
-  attr(pc$rel_kw_indent, "label") <- "indentation relative to the keyword parent expression in characters"
-  attr(pc$rel_kw_open_paren_indent, "label") <- "indentation relative to the opening parenthesis keyword header"
 
   pc
 }
