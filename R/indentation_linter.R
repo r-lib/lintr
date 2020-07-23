@@ -31,24 +31,19 @@ indentation_linter <- function(indent = 2L, outermost_only = TRUE,
 
     # calculate linty indenting
     linty <- with(pc, list(
-      closing_curly =
-        token == "'}'" &
+      closing_curly = token == "'}'" &
         line_indent != base_indent.par,
-      closing_paren =
-        token == "')'" &
+      closing_paren = token == "')'" &
         !is_kw_expr &   # ignore closing parens from FUNCTION, IF, FOR, WHILE
         !token.par %in% "forcond" &  # handle FOR conditions parsing explicitly
         line_indent != line_indent.par,
-      generalized_func_header =
-        line1 != line1.par &
+      generalized_func_header = line1 != line1.par &
         token == "SYMBOL_FORMALS" &
         line_indent != kw_expr_line_indent + indent,
-      hanging_func_header =
-        line1 != line1.par &
+      hanging_func_header = line1 != line1.par &
         token == "SYMBOL_FORMALS" &
         line_indent != kw_open_paren_indent + 1L,
-      indent =
-        !token %in% ignored_tokens &
+      indent = !token %in% ignored_tokens &
         !is_kw_expr &  # ignore closing parens from FUNCTION, IF, FOR, WHILE
         line1 != line1.par &
         line_indent != base_indent.par + indent))
@@ -168,7 +163,6 @@ indentation_linter <- function(indent = 2L, outermost_only = TRUE,
 #'
 add_indentation_data <- function(pc) {
   pc <- pc[!duplicated(pc[c("line1", "col1", "line2", "col2")]),]
-  pc <- pc[order(pc$line1, pc$col1, pc$parent),]
 
   # construct new parsed content df with columns for indentation data
   pc <- cbind(pc,
@@ -178,6 +172,7 @@ add_indentation_data <- function(pc) {
     kw_open_paren_indent = numeric(1L),
     kw_expr_line_indent = numeric(1L))
 
+  pc <- pc[order(pc$line1, pc$col1, pc$parent),]
   pc$line_indent <- as.numeric(unlist(lapply(
     split(pc, pc$line1, drop = TRUE),
     function(i) rep(min(i$col1), nrow(i)))))
@@ -188,6 +183,7 @@ add_indentation_data <- function(pc) {
   pc$is_kw_expr <- pc$parent %in% unique(kw_tokens$parent)
 
   # for each keyword syntax block, find opening paren and indentation
+  pc <- pc[order(pc$parent, pc$line1, pc$col1),]
   kw_data <- do.call(rbind, lapply(
     split(pc[pc$is_kw_expr,], pc[pc$is_kw_expr, "parent"]),
     function(i) {
