@@ -33,7 +33,7 @@ indentation_linter <- function(indent = 2L, outermost_only = TRUE,
     linty <- with(pc, list(
       closing_curly =
         token == "'}'" &
-        line_indent != kw_expr_indent.par,
+        line_indent != base_indent.par,
       closing_paren =
         token == "')'" &
         !is_kw_expr &   # ignore closing parens from FUNCTION, IF, FOR, WHILE
@@ -42,7 +42,7 @@ indentation_linter <- function(indent = 2L, outermost_only = TRUE,
       generalized_func_header =
         line1 != line1.par &
         token == "SYMBOL_FORMALS" &
-        line_indent != kw_expr_indent + indent,
+        line_indent != kw_expr_line_indent + indent,
       hanging_func_header =
         line1 != line1.par &
         token == "SYMBOL_FORMALS" &
@@ -51,7 +51,7 @@ indentation_linter <- function(indent = 2L, outermost_only = TRUE,
         !token %in% ignored_tokens &
         !is_kw_expr &  # ignore closing parens from FUNCTION, IF, FOR, WHILE
         line1 != line1.par &
-        line_indent != ifelse(is_kw_expr.par, kw_expr_indent.par, line_indent.par) + indent))
+        line_indent != base_indent.par + indent))
 
     # filter out NAs from linty results, caused by missing parent
     linty <- lapply(linty, vapply, isTRUE, logical(1L))
@@ -167,38 +167,40 @@ indentation_linter <- function(indent = 2L, outermost_only = TRUE,
 #'   relative to a parent expression's line.
 #'
 add_indentation_data <- function(pc) {
-  # associate the first token to filter keyword expressions
   pc <- pc[!duplicated(pc[c("line1", "col1", "line2", "col2")]),]
-
-  # only use one of redundant wrapping expressions and terminal symbols,
-  # calculate minimum indentation across expressions starting on same line
   pc <- pc[order(pc$line1, pc$col1, pc$parent),]
-  pc$line_indent <- pc$col1
+
+  # construct new parsed content df with columns for indentation data
+  pc <- cbind(pc,
+    line_indent = numeric(1L),
+    base_indent = numeric(1L),
+    is_kw_expr = logical(1L),
+    kw_open_paren_indent = numeric(1L),
+    kw_expr_line_indent = numeric(1L))
+
   pc$line_indent <- as.numeric(unlist(lapply(
     split(pc, pc$line1, drop = TRUE),
-    function(i) rep(min(i$line_indent), nrow(i)))))
-
-  # calculate the first token within each expression
-  pc <- pc[order(pc$parent, pc$line1, pc$col1),]
-  pc$first_token <- as.character(unlist(lapply(
-    split(pc, pc$parent),
-    function(i) rep(i$token[[1]], nrow(i)))))
+    function(i) rep(min(i$col1), nrow(i)))))
 
   # calculate indentation at the start of each keyword's opening
   # parenthesis (e.g. `if (_`, `for (_`)
   kw_tokens <- pc[pc$token %in% c("FUNCTION", "IF", "FOR", "forcond", "WHILE"),]
   pc$is_kw_expr <- pc$parent %in% unique(kw_tokens$parent)
 
-  pc[pc$is_kw_expr, "kw_open_paren_indent"] <- as.numeric(unlist(lapply(
+  # for each keyword syntax block, find opening paren and indentation
+  kw_data <- do.call(rbind, lapply(
     split(pc[pc$is_kw_expr,], pc[pc$is_kw_expr, "parent"]),
     function(i) {
-      res <- if (any(i$token == "'('")) i[i$token == "'('", "col2"][1] else NA
-      rep(res, nrow(i))
-    })))
+      kw_open_paren_indent_i <- c(i[i$token == "'('", "col2"], NA_real_)[1]
+      kw_expr_line_indent_i <- min(i$line_indent)
+      c(kw_open_paren_indent_i, kw_expr_line_indent_i, nrow(i))
+    }))
+  # build index to replicate across all expressions of each keyword syntax block
+  kw_indx <- rep(seq_along(kw_data[, 3L]), times = kw_data[, 3L])
 
-  pc[pc$is_kw_expr, "kw_expr_indent"] <- as.numeric(unlist(lapply(
-    split(pc[pc$is_kw_expr,], pc[pc$is_kw_expr, "parent"]),
-    function(i) rep(min(i$line_indent), nrow(i)))))
+  pc[pc$is_kw_expr, "kw_open_paren_indent"] <- as.numeric(kw_data[kw_indx, 1L])
+  pc[pc$is_kw_expr, "kw_expr_line_indent"] <- as.numeric(kw_data[kw_indx, 2L])
+  pc$base_indent <- ifelse(pc$is_kw_expr, pc$kw_expr_line_indent, pc$line_indent)
 
   # associate parent information for nested expressions
   pc <- merge(
