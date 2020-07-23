@@ -1,5 +1,6 @@
 #' @describeIn linters check that all commas are followed by spaces, but do not
 #' have spaces before them.
+#' @importFrom utils head
 #' @export
 commas_linter <- function(source_file) {
 
@@ -26,14 +27,33 @@ commas_linter <- function(source_file) {
 
           if (space_before) {
 
-            has_token <- any(source_file$parsed_content$line1 == line_number &
-              source_file$parsed_content$col1 == comma_loc &
+            comma_loc_filter <- source_file$parsed_content$line1 == line_number &
+              source_file$parsed_content$col1 == comma_loc
+
+            has_token <- any(comma_loc_filter &
               source_file$parsed_content$token == "','")
 
             start_of_line <- re_matches(line, rex(start, spaces, ","))
 
             empty_comma <- substr(line, comma_loc - 2L, comma_loc - 1L) %==% ", "
-            if (has_token && !start_of_line && !empty_comma) {
+
+            parent <- source_file$parsed_content$parent
+            parent <- replace(parent, parent==0, NA)
+
+            # a variable that is true for every node who has a grandchild that is switch,
+            # i.e, any expression that starts with the function call to switch.
+            switch_grandparents <- source_file$parsed_content[
+              # as.character allows interpretation as row indexes rather than row numbers
+              as.character(parent[source_file$parsed_content$text == "switch"]),
+            ]$parent
+
+            is_blank_switch <- any(comma_loc_filter &
+              (source_file$parsed_content$parent %in% switch_grandparents) &
+              c(NA, head(source_file$parsed_content$token, -1)) == "EQ_SUB",
+              na.rm=TRUE
+            )
+
+            if (has_token && !start_of_line && !empty_comma && !is_blank_switch) {
 
               lints[[length(lints) + 1L]] <-
                 Lint(
