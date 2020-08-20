@@ -4,8 +4,15 @@
 \alias{lint_dir}
 \title{Lint a directory}
 \usage{
-lint_dir(path = ".", relative_path = TRUE, ..., exclusions = NULL,
-  pattern = rex::rex(".", one_of("Rr"), end), parse_settings = TRUE)
+lint_dir(
+  path = ".",
+  relative_path = TRUE,
+  ...,
+  exclusions = NULL,
+  pattern = rex::rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"),
+    end),
+  parse_settings = TRUE
+)
 }
 \arguments{
 \item{path}{the path to the base directory, by default,
@@ -21,7 +28,9 @@ absolute path.}
 \item{exclusions}{exclusions for \code{\link{exclude}}, relative to the
 package path.}
 
-\item{pattern}{pattern for files, by default it will take files with .R or .r extension.}
+\item{pattern}{pattern for files, by default it will take files with any of
+the extensions .R, .Rmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for
+lowercase r (.r, ...)}
 
 \item{parse_settings}{whether to try and parse the settings}
 }

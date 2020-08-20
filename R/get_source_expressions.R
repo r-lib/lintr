@@ -10,7 +10,6 @@ get_source_expressions <- function(filename) {
   source_file$content <- get_content(source_file$lines)
 
   lint_error <- function(e) {
-
     message_info <- re_matches(e$message,
       rex(except_some_of(":"),
         ":",
@@ -72,37 +71,21 @@ get_source_expressions <- function(filename) {
       message = message_info$message,
       line = line,
       linter = "error"
-      )
+    )
   }
 
   e <- NULL
-
   parsed_content <- get_source_file(source_file, error = lint_error)
   tree <- generate_tree(parsed_content)
 
-  expressions <- lapply(top_level_expressions(parsed_content), function(loc) {
-    line_nums <- parsed_content$line1[loc]:parsed_content$line2[loc]
-    expr_lines <- source_file$lines[line_nums]
-    names(expr_lines) <- line_nums
-    content <- get_content(expr_lines, parsed_content[loc, ])
-
-    id <- as.character(parsed_content$id[loc])
-    edges <- component_edges(tree, id)
-    pc <- parsed_content[c(loc, edges), ]
-    list(
-      filename = filename,
-      line = parsed_content[loc, "line1"],
-      column = parsed_content[loc, "col1"],
-      lines = expr_lines,
-      parsed_content = pc,
-      xml_parsed_content = xml2::read_xml(xmlparsedata::xml_parse_data(pc)),
-      content = content,
-
-      find_line = find_line_fun(content),
-
-      find_column = find_column_fun(content)
-      )
-    })
+  expressions <- lapply(
+    X = top_level_expressions(parsed_content),
+    FUN = get_single_source_expression,
+    parsed_content,
+    source_file,
+    filename,
+    tree
+  )
 
   # add global expression
   expressions[[length(expressions) + 1L]] <-
@@ -115,6 +98,32 @@ get_source_expressions <- function(filename) {
     )
 
   list(expressions = expressions, error = e, lines = source_file$lines)
+}
+
+get_single_source_expression <- function(loc,
+                                         parsed_content,
+                                         source_file,
+                                         filename,
+                                         tree) {
+  line_nums <- parsed_content$line1[loc]:parsed_content$line2[loc]
+  expr_lines <- source_file$lines[line_nums]
+  names(expr_lines) <- line_nums
+  content <- get_content(expr_lines, parsed_content[loc, ])
+
+  id <- as.character(parsed_content$id[loc])
+  edges <- component_edges(tree, id)
+  pc <- parsed_content[c(loc, edges), ]
+  list(
+    filename = filename,
+    line = parsed_content[loc, "line1"],
+    column = parsed_content[loc, "col1"],
+    lines = expr_lines,
+    parsed_content = pc,
+    xml_parsed_content = xml2::read_xml(xmlparsedata::xml_parse_data(pc)),
+    content = content,
+    find_line = find_line_fun(content),
+    find_column = find_column_fun(content)
+  )
 }
 
 get_source_file <- function(source_file, error = identity) {
@@ -280,7 +289,9 @@ fix_eq_assigns <- function(pc) {
   }
 
   eq_assign_locs <- which(pc$token == "EQ_ASSIGN")
-  if (length(eq_assign_locs) == 0L || "equal_assign" %in% pc$token) {
+  if (length(eq_assign_locs) == 0L ||
+    nrow(pc) %in% eq_assign_locs || # check whether the equal-assignment is the final entry
+    any(c("equal_assign", "expr_or_assign_or_help") %in% pc$token)) {
     return(pc)
   }
 

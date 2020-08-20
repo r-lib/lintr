@@ -1,14 +1,3 @@
-# Test #
-
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
-
-```{r}
-a = 1
-```
-
 Test
 ====
 
@@ -17,47 +6,27 @@ tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
 vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
 no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
-```{r}
+.. {r rst-example}
+a = 1
+.. ..
+
+Test
+----
+
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+.. {r}
 b <- function(x) {
   d = 1
 }
 
-```
+.. ..
 
-```{r engine="python"}
+.. {r engine = "python"}
 a=[]
 
 a[0]=1
-```
-
-```
-Plain code blocks can be written after three or more backticks
-- R Markdown: The Definitive Guide. Xie, Allaire and Grolemund (2.5.2)
-```
-
-```r
-# This is a non-evaluated block of R code for formatting in markdown.
-# It should not be linted
-abc = 123
-```
-
-```cpp
-// Some C++ code for formatting by markdown
-
-```
-
-Calls to a non-R knitr-engine using {engine_name} syntax.
-
-```{python}
-# Python that looks like R
-a = list()
-b = {2}
-print(a)
-```
-
-```{python}
-# Python that's definitely not R
-a = []
-a.append(2)
-print(a)
-```
+.. ..

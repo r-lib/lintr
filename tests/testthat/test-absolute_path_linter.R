@@ -161,25 +161,44 @@ test_that("returns the correct linting", {
 
   # strict mode
   linter <- absolute_path_linter(lax=FALSE)
-  expect_lint("'..'", NULL, linter)
-  expect_lint("'./blah'", NULL, linter)
-  expect_lint(encodeString("'blah\\file.txt'"), NULL, linter)
-  expect_lint("\"'/'\"", NULL, linter)
+  non_absolute_path_strings <- c(
+    "..",
+    "./blah",
+    encodeString("blah\\file.txt")
+  )
+  for(path in non_absolute_path_strings) {
+    expect_lint(single_quote(path), NULL, linter)
+    expect_lint(double_quote(path), NULL, linter)
+  }
 
-  expect_lint("'/'", msg, linter)
-  expect_lint("'/blah/file.txt'", msg, linter)
-  expect_lint(encodeString("'d:\\'"), msg, linter)
-  expect_lint("'E:/blah/file.txt'", msg, linter)
-  expect_lint(encodeString("'\\\\'"), msg, linter)
-  expect_lint(encodeString("'\\\\server\\path'"), msg, linter)
-  expect_lint("'~'", msg, linter)
-  expect_lint("'~james.hester/blah/file.txt'", msg, linter)
-  expect_lint(encodeString("'/a\nsdf'"), msg, linter)
-  expect_lint("'/as:df'", msg, linter)
+  expect_lint("\"'/'\"", NULL, linter) # nested quotes
+
+  absolute_path_strings <- c(
+    "/",
+    "/blah/file.txt",
+    encodeString("d:\\"),
+    "E:/blah/file.txt",
+    encodeString("\\\\"),
+    encodeString("\\\\server\\path"),
+    "~",
+    "~james.hester/blah/file.txt",
+    encodeString("/a\nsdf"),
+    "/as:df"
+  )
+  for (path in absolute_path_strings) {
+    expect_lint(single_quote(path), msg, linter)
+    expect_lint(double_quote(path), msg, linter)
+  }
 
   # lax mode: no check for strings that are likely not paths (too short or with special characters)
   linter <- absolute_path_linter(lax=TRUE)
-  expect_lint("'/'", NULL, linter)
-  expect_lint(encodeString("'/a\nsdf/bar'"), NULL, linter)
-  expect_lint("'/as:df/bar'", NULL, linter)
+  unlikely_path_strings <- c(
+    "/",
+    encodeString("/a\nsdf/bar"),
+    "/as:df/bar"
+  )
+  for (path in unlikely_path_strings) {
+    expect_lint(single_quote(path), NULL, linter)
+    expect_lint(double_quote(path), NULL, linter)
+  }
 })

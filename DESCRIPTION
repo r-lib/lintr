@@ -1,9 +1,10 @@
 Package: lintr
 Title: A 'Linter' for R Code
-Version: 2.0.0.9000
+Version: 2.0.1.9000
 Authors@R: c(
     person("Jim", "Hester", email = "james.f.hester@gmail.com", role = c("aut", "cre")),
-    person("Florent", "Angly", role = "aut")
+    person("Florent", "Angly", role = "aut"),
+    person("Russ", "Hyde", role = "aut")
     )
 URL: https://github.com/jimhester/lintr
 BugReports: https://github.com/jimhester/lintr/issues
@@ -34,11 +35,12 @@ License: MIT + file LICENSE
 LazyData: true
 Encoding: UTF-8
 VignetteBuilder: knitr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 Collate:
     'T_and_F_symbol_linter.R'
     'utils.R'
     'aaa.R'
+    'actions.R'
     'addins.R'
     'assignment_linter.R'
     'cache.R'

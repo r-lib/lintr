@@ -34,7 +34,7 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 * `assignment_linter`: check that `<-` is always used for assignment
 * `camel_case_linter`: check that objects are not in camelCase.
 * `closed_curly_linter`: check that closed curly braces should always be on their
-  own line unless they follow an else.
+  own line unless they are followed by an else.
 * `commas_linter`: check that all commas are followed by spaces, but do not
   have spaces before them.
 * `commented_code_linter`: check that there is no commented code outside of roxygen comments.
@@ -51,8 +51,8 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 * `no_tab_linter`: check that only spaces are used, never tabs.
 * `object_length_linter`: check that function and variable names are not more than `length` characters.
 * `object_name_linter`: check that object names conform to a single naming
-  style, e.g. CamelCase, camelCase, snake_case, dotted.case, lowercase,
-  or UPPERCASE.
+  style, e.g. CamelCase, camelCase, snake_case, SNAKE_CASE, dotted.case,
+  lowercase, or UPPERCASE.
 * `open_curly_linter`: check that opening curly braces are never on their own
   line and are always followed by a newline.
 * `paren_brace_linter`: check that there is a space between right parenthesis and an opening curly brace.
@@ -212,7 +212,7 @@ installalation documentation for those packages for more information.
 You can also configure what linters are used. e.g. using a different line length cutoff.
 - `M-x customize-option` -> `flycheck-lintr-linters` -> `with_defaults(line_length_linter(120))`
 
-### Vim
+### Vim - syntastic
 lintr can be integrated with
 [syntastic](https://github.com/scrooloose/syntastic) for on the fly linting.
 
@@ -234,6 +234,26 @@ You can also configure what linters are used. e.g. using a different line length
 ```vim
 let g:syntastic_r_lintr_linters = "with_defaults(line_length_linter(120))"
 ```
+### Vim - ALE
+lintr can be integrated with
+[ALE](https://github.com/dense-analysis/ale) for on the fly linting.
+
+#### Installation ####
+lintr is integrated with ALE and requires no additional installation.
+#### Configuration ####
+You can configure what linters are used. e.g. using a different line length cutoff.
+```vim
+let g:ale_r_lintr_options = "with_defaults(line_length_linter(120))"
+```
+You can also configure whether `lint` or `lint_package` is used. 
+Set to 1 for `lint_package` and 0 (default) for `lint`.
+```vim
+let g:ale_r_lintr_lint_package = 1
+```
+
+See `:h ale_r_lintr` for more information.
+
+Note that configuration through `.lintr` files are not supported.
 
 ### Sublime Text 3 ###
 lintr can be integrated with
@@ -272,3 +292,19 @@ apm install linter-lintr
 ```
 
 For more information and bug reports see [Atom linter-lintr](https://github.com/AtomLinter/linter-lintr).
+
+### VSCode ###
+
+In VSCode, [vscode-r-lsp](https://marketplace.visualstudio.com/items?itemName=REditorSupport.r-lsp) presents the
+lintr diagnostics from [languageserver](https://github.com/REditorSupport/languageserver).
+
+![VSCode Example](https://user-images.githubusercontent.com/4662568/75946154-3e095500-5ed7-11ea-88e4-2afe09284362.png "VSCode Example")
+
+#### Installation ####
+
+Installing `languageserver` package in R and `vscode-r-lsp` extension in VSCode will enable lintr in VSCode by default or run the following command lines:
+
+```bash
+Rscript -e 'install.packages("languageserver")'
+code --install-extension REditorSupport.r-lsp
+```

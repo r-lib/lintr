@@ -35,17 +35,6 @@ Plain code blocks can be written after three or more backticks
 - R Markdown: The Definitive Guide. Xie, Allaire and Grolemund (2.5.2)
 ```
 
-```r
-# This is a non-evaluated block of R code for formatting in markdown.
-# It should not be linted
-abc = 123
-```
-
-```cpp
-// Some C++ code for formatting by markdown
-
-```
-
 Calls to a non-R knitr-engine using {engine_name} syntax.
 
 ```{python}
