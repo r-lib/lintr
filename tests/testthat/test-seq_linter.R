@@ -27,7 +27,7 @@ test_that("finds 1:length(...) expressions", {
     rex("NCOL(...) expressions, use seq_len"),
     seq_linter)
 
-  expect_lint("function(x) { 1:dim(x)[1] }",
+  expect_lint("function(x) { 1:dim(x)[1L] }",
     rex("dim(...) expressions, use seq_len"),
     seq_linter)
   
