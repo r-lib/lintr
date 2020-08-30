@@ -10,14 +10,14 @@ seq_linter <- function(source_file) {
 
   xml <- source_file$xml_parsed_content
 
-  bad_funcs <- c("length", "nrow", "ncol", "NROW", "NCOL")
+  bad_funcs <- c("length", "nrow", "ncol", "NROW", "NCOL", "dim")
   text_clause <- paste0("text() = '", bad_funcs, "'", collapse = " or ")
 
   xpath <- paste0(
     "//expr",
     "[expr[NUM_CONST[text()='1' or text()='1L']]]",
     "[OP-COLON]",
-    "[expr[expr[SYMBOL_FUNCTION_CALL[", text_clause, "]]]]"
+    "[expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[", text_clause, "]]]]]"
   )
 
   badx <- xml2::xml_find_all(xml, xpath)
@@ -27,7 +27,7 @@ seq_linter <- function(source_file) {
   get_fun <- function(x, n) {
     funcall <- xml2::xml_children(xml2::xml_children(x)[[n]])
     if (!length(funcall)) return(NULL)
-    fun <- trim_ws(xml2::xml_text(funcall[[1]]))
+    fun <- gsub("\\(.*\\)", "(...)", trim_ws(xml2::xml_text(funcall[[1]])))
     if (! fun %in% bad_funcs) fun else paste0(fun, "(...)")
   }
 
