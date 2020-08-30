@@ -49,8 +49,3 @@ is_bracket_extract <- function(token_line_num, tokens) {
       inside_tokens[1L, "token"] %in% c("STR_CONST", "NUM_CONST", "NULL_CONST")
   }
 }
-
-
-
-
-
