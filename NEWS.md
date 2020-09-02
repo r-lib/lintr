@@ -1,5 +1,6 @@
 # lintr (development version)
 
+* `save_cache` will now recursively create the cache directory; this avoids errors that could arise if any parent directories do not exist (#60, @dankessler).
 * `extract_r_source` handles Rmd containing unevaluated code blocks with named
   format specifiers (#472, @russHyde)
 * New style SNAKE_CASE for `object_name_linter()` (#494, @AshesITR)
@@ -9,6 +10,8 @@
 ## New features
 
 * lintr now supports GitHub Actions and will print the lints as warning messages if lints are printed during an action.
+* `lint_package()` will now lint vignettes and data-raw by default (#447, @AshesITR).
+* `lint_dir()` will now include Rmd and Rnw files by default (@AshesITR).
 
 ## Minor fixes and features
 
@@ -22,6 +25,8 @@
 * `object_usage_linter` has been changed to ensure lint-position is indicated
   relative to the start of the file, rather than the start of a defining
   function (#432, @russHyde).
+* `commas_linter` now allows spaces to come before a comma when used to denote a 
+  fall-through in a switch statement (#499, @MrMallIronmaker)
 
 # lintr 2.0.0
 
