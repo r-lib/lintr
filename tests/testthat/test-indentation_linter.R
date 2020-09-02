@@ -172,10 +172,6 @@ test_that("function argument indentation works in generic style", {
 })
 
 test_that("closing parenthesis and newline indentation catches function calls, but not other keyworded syntax", {
-  # Currently closing parenthesis for non-function keyword syntax is
-  # entirely unchecked. Indentation of expressions in non-function keywords
-  # is expected to follow generalized rules, indenting by one indentation.
-
   expect_lint("
     sum(
       1,
@@ -183,7 +179,9 @@ test_that("closing parenthesis and newline indentation catches function calls, b
     )
     ",
     NULL,
-    indentation_linter(indent = 2L, func_call_closing_paren = TRUE))
+    linters = list(
+      indentation_linter(indent = 2L, func_call_closing_paren = TRUE)
+    ))
 
   expect_lint("
     sum(
@@ -191,7 +189,9 @@ test_that("closing parenthesis and newline indentation catches function calls, b
       2)
     ",
     "(?i)closing parenthesis",
-    indentation_linter(indent = 2L, func_call_closing_paren = TRUE))
+    linters = list(
+      indentation_linter(indent = 2L, func_call_closing_paren = TRUE)
+    ))
 
   expect_lint("
     if (1 < 2 &
@@ -200,16 +200,9 @@ test_that("closing parenthesis and newline indentation catches function calls, b
     }
     ",
     NULL,
-    indentation_linter(indent = 2L, func_call_closing_paren = TRUE))
-
-  expect_lint("
-    if (1 < 2 &
-        3 < 4) {
-      'Yep, thats right!'
-    }
-    ",
-    "indent",
-    indentation_linter(indent = 2L, func_call_closing_paren = TRUE))
+    linters = list(
+      indentation_linter(indent = 2L, func_call_closing_paren = TRUE)
+    ))
 
   expect_lint("
     for (i in
@@ -218,7 +211,9 @@ test_that("closing parenthesis and newline indentation catches function calls, b
     }
     ",
     NULL,
-    indentation_linter(indent = 2L, func_call_closing_paren = TRUE))
+    linters = list(
+      indentation_linter(indent = 2L, func_call_closing_paren = TRUE)
+    ))
 
   expect_lint("
     for (i in
@@ -227,7 +222,9 @@ test_that("closing parenthesis and newline indentation catches function calls, b
     }
     ",
     "indent",
-    indentation_linter(indent = 2L, func_call_closing_paren = TRUE))
+    linters = list(
+      indentation_linter(indent = 2L, func_call_closing_paren = TRUE)
+    ))
 
   expect_lint("
     while (i < 5L &&
@@ -237,7 +234,9 @@ test_that("closing parenthesis and newline indentation catches function calls, b
     }
     ",
     NULL,
-    indentation_linter(indent = 2L, func_call_closing_paren = TRUE))
+    linters = list(
+      indentation_linter(indent = 2L, func_call_closing_paren = TRUE)
+    ))
 
   expect_lint("
     while (i < 5L &&
@@ -247,5 +246,196 @@ test_that("closing parenthesis and newline indentation catches function calls, b
     }
     ",
     "indent",
-    indentation_linter(indent = 2L, func_call_closing_paren = TRUE))
+    linters = list(
+      indentation_linter(indent = 2L, func_call_closing_paren = TRUE)
+    ))
+})
+
+test_that("indentation to keyword opening parenthesis throws lints when option disabled", {
+  expect_lint("
+    for (i in
+      seq_len(10)) {
+      print(i)
+    }
+    ",
+    NULL,
+    linters = list(
+      indentation_linter(indent = 2L, keyword_to_open_paren = FALSE)
+    ))
+
+  expect_lint("
+    for (i in
+         seq_len(10)) {
+      print(i)
+    }
+    ",
+    "indent",
+    linters = list(
+      indentation_linter(indent = 2L, keyword_to_open_paren = FALSE)
+    ))
+
+  expect_lint("
+    for (i in
+         seq_len(10)) {
+      print(i)
+    }
+    ",
+    NULL,
+    linters = list(
+      indentation_linter(indent = 2L, keyword_to_open_paren = TRUE)
+    ))
+
+  expect_lint("
+    for (i in
+      seq_len(10)) {
+      print(i)
+    }
+    ",
+    "paren",
+    linters = list(
+      indentation_linter(indent = 2L, keyword_to_open_paren = TRUE)
+    ))
+
+
+  expect_lint("
+    while (i <
+      10) {
+      i <- i + 1
+      print(i)
+    }
+    ",
+    NULL,
+    linters = list(
+      indentation_linter(indent = 2L, keyword_to_open_paren = FALSE)
+    ))
+
+  expect_lint("
+    while (i <
+           10) {
+      i <- i + 1
+      print(i)
+    }
+    ",
+    "indent",
+    linters = list(
+      indentation_linter(indent = 2L, keyword_to_open_paren = FALSE)
+    ))
+
+  expect_lint("
+    while (i <
+           10) {
+      i <- i + 1
+      print(i)
+    }
+    ",
+    NULL,
+    linters = list(
+      indentation_linter(indent = 2L, keyword_to_open_paren = TRUE)
+    ))
+
+  expect_lint("
+    while (i <
+      10) {
+      i <- i + 1
+      print(i)
+    }
+    ",
+    "paren",
+    linters = list(
+      indentation_linter(indent = 2L, keyword_to_open_paren = TRUE)
+    ))
+
+
+  expect_lint("
+    if (i <
+      10) {
+      print(i)
+    }
+    ",
+    NULL,
+    linters = list(
+      indentation_linter(indent = 2L, keyword_to_open_paren = FALSE)
+    ))
+
+  expect_lint("
+    if (i <
+        10) {
+      print(i)
+    }
+    ",
+    "indent",
+    linters = list(
+      indentation_linter(indent = 2L, keyword_to_open_paren = FALSE)
+    ))
+
+  expect_lint("
+    if (i <
+        10) {
+      print(i)
+    }
+    ",
+    NULL,
+    linters = list(
+      indentation_linter(indent = 2L, keyword_to_open_paren = TRUE)
+    ))
+
+  expect_lint("
+    if (i <
+      10) {
+      print(i)
+    }
+    ",
+    "paren",
+    linters = list(
+      indentation_linter(indent = 2L, keyword_to_open_paren = TRUE)
+    ))
+})
+
+
+test_that("linter for 'else' keyword alignment with 'if' keyword", {
+  expect_lint("
+    {
+      if (i < 3) 'a'
+      else 'b'
+    }",
+    NULL,
+    linters = list(
+      indentation_linter(indent = 2L)
+    ))
+
+  expect_lint("
+    {
+      if (i < 3) 'a'
+        else 'b'
+    }",
+    "if-else",
+    linters = list(
+      indentation_linter(indent = 2L)
+    ))
+
+  expect_lint("
+    {
+      if (i < 3) {
+        'a'
+      } else {
+        'b'
+      }
+    }",
+    NULL,
+    linters = list(
+      indentation_linter(indent = 2L)
+    ))
+
+   expect_lint("
+    function(i) {
+      if (i < 3) {
+        'a'
+      } else {
+        'b'
+      }
+    }",
+    NULL,
+    linters = list(
+      indentation_linter(indent = 2L)
+    ))
 })

@@ -82,6 +82,7 @@ indentation_linter(
   indent = 2L,
   outermost_only = TRUE,
   func_header_to_open_paren = TRUE,
+  keyword_to_open_paren = FALSE,
   func_call_closing_paren = TRUE,
   expr_closing_curly = TRUE
 )
@@ -154,6 +155,11 @@ regular expression, indenting to one indentation level. The default is
 \code{TRUE}, to follow the tidyverse style guide, indenting to the first
 parameter.}
 
+\item{keyword_to_open_paren}{Whether keyword parenthetical expressions (such
+as the parentheses following `for`, `while`, `if` or `else`) should be
+indented so that they are aligned with the opening parenthesis. The default
+is \code{TRUE}.}
+
 \item{func_call_closing_paren}{Whether closing parenthesis of function calls
 should}
 
@@ -169,6 +175,9 @@ and the values are the text for the alternative function to use (or \code{NA}).}
 
 \item{op}{Named character vector, where the names are the names of the undesirable operators,
 and the values are the text for the alternative operator to use (or \code{NA}).}
+
+\item{expr_closing_curyl}{Whether all curly braces that wrap multi-line
+expressions should return to the parent indentation level.}
 }
 \description{
 Available linters
