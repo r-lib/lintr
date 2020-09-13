@@ -4,6 +4,7 @@
 * `extract_r_source` handles Rmd containing unevaluated code blocks with named
   format specifiers (#472, @russHyde)
 * New style SNAKE_CASE for `object_name_linter()` (#494, @AshesITR)
+* RStudio source markers are cleared when there are no lints (#520, @AshesITR)
 
 # lintr 2.0.1
 

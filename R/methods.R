@@ -62,10 +62,11 @@ print.lints <- function(x, ...) {
 
         info <- ci_build_info()
 
-        lint_output <-
-          trim_output(paste0(collapse = "\n",
-                             capture.output(invisible(lapply(x, markdown, info, ...)))
-                             )
+        lint_output <- trim_output(
+          paste0(
+            collapse = "\n",
+            capture.output(invisible(lapply(x, markdown, info, ...)))
+          )
         )
 
         github_comment(lint_output, info, ...)
@@ -76,6 +77,10 @@ print.lints <- function(x, ...) {
     if (isTRUE(settings$error_on_lint)) {
       quit("no", 31, FALSE)
     }
+  } else if (getOption("lintr.rstudio_source_markers", TRUE) &&
+             rstudioapi::hasFun("sourceMarkers")) {
+    # Empty lints: clear RStudio source markers
+    rstudio_source_markers(x)
   }
   invisible(x)
 }
