@@ -78,7 +78,7 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
   with a single constant.
   
 ### References ###
-Most of the default linters are based on [Hadley Wickham's R Style Guide](http://r-pkgs.had.co.nz/style.html).
+Most of the default linters are based on [Hadley Wickham's The tidyverse style guide](https://style.tidyverse.org/).
 
 ## Project Configuration ##
 
