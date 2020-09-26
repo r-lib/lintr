@@ -58,7 +58,9 @@ parse_exclusions <- function(file, exclude = settings$exclude,
 
   if (length(starts) > 0) {
     if (length(starts) != length(ends)) {
-      stop(file, " has ", length(starts), " starts but only ", length(ends), " ends!")
+      starts_msg <- sprintf(ngettext(length(starts), "%d range start", "%d range starts"), length(starts))
+      ends_msg <- sprintf(ngettext(length(ends), "%d range end", "%d range ends"), length(ends))
+      stop(file, " has ", starts_msg, " but only ", ends_msg, " for exclusion from linting!")
     }
 
     for (i in seq_along(starts)) {
