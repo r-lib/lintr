@@ -47,7 +47,7 @@ seq_linter <- function(source_file) {
         line_number = as.integer(line1),
         column_number = as.integer(col1),
         type = "warning",
-        message = paste0(f1, ":", f2, " is likely wrong in the empty ",
+        message = paste0(f1, ":", f2, " is likely to be wrong in the empty ",
           "edge case, use seq_len."),
         line = source_file$lines[line1],
         ranges = list(c(as.integer(col1), as.integer(col2))),
