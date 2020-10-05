@@ -38,12 +38,12 @@ test_that("finds 1:length(...) expressions", {
 
 test_that("1L is also bad", {
   expect_lint("function(x) { 1L:length(x) }",
-    rex("length(...)", anything, "use seq_len"),
+    rex("1L:length(...)", anything, "use seq_len"),
     seq_linter)
 })
 
 test_that("reverse seq is ok", {
   expect_lint("function(x) { length(x):1 }",
-    rex("length(...)", anything, "use seq_len"),
+    rex("length(...):1", anything, "use seq_len"),
     seq_linter)
 })
