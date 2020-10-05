@@ -12,27 +12,27 @@ test_that("finds 1:length(...) expressions", {
     seq_linter)
 
   expect_lint("function(x) { 1:nrow(x) }",
-    rex("length(...)", anything, "use seq_len"),
+    rex("nrow(...)", anything, "use seq_len"),
     seq_linter)
 
   expect_lint("function(x) { 1:ncol(x) }",
-    rex("length(...)", anything, "use seq_len"),
+    rex("ncol(...)", anything, "use seq_len"),
     seq_linter)
 
   expect_lint("function(x) { 1:NROW(x) }",
-    rex("length(...)", anything, "use seq_len"),
+    rex("NROW(...)", anything, "use seq_len"),
     seq_linter)
 
   expect_lint("function(x) { 1:NCOL(x) }",
-    rex("length(...)", anything, "use seq_len"),
+    rex("NCOL(...)", anything, "use seq_len"),
     seq_linter)
 
   expect_lint("function(x) { 1:dim(x)[1L] }",
-    rex("length(...)", anything, "use seq_len"),
+    rex("dim(...)", anything, "use seq_len"),
     seq_linter)
   
   expect_lint("function(x) { 1L:dim(x)[[1]] }",
-    rex("length(...)", anything, "use seq_len"),
+    rex("dim(...)", anything, "use seq_len"),
     seq_linter)
 })
 
