@@ -4,7 +4,6 @@
 spaces_left_parentheses_linter <- function(source_file) {
   lapply(ids_with_token(source_file, "'('"),
     function(id) {
-      #browser()
 
       parsed <- source_file$parsed_content[id, ]
 
