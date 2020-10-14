@@ -9,9 +9,9 @@
 %   R/paren_brace_linter.R, R/path_linters.R, R/pipe_continuation_linter.R,
 %   R/semicolon_terminator_linter.R, R/seq_linter.R, R/single_quotes_linter.R,
 %   R/spaces_inside_linter.R, R/spaces_left_parentheses_linter.R,
-%   R/trailing_blank_lines_linter.R, R/trailing_whitespace_linter.R,
-%   R/undesirable_function_linter.R, R/undesirable_operator_linter.R,
-%   R/unneeded_concatenation_linter.R, R/zzz.R
+%   R/stop_paste_linter.R, R/trailing_blank_lines_linter.R,
+%   R/trailing_whitespace_linter.R, R/undesirable_function_linter.R,
+%   R/undesirable_operator_linter.R, R/unneeded_concatenation_linter.R, R/zzz.R
 \name{T_and_F_symbol_linter}
 \alias{T_and_F_symbol_linter}
 \alias{assignment_linter}
@@ -41,6 +41,7 @@
 \alias{single_quotes_linter}
 \alias{spaces_inside_linter}
 \alias{spaces_left_parentheses_linter}
+\alias{stop_paste_linter}
 \alias{trailing_blank_lines_linter}
 \alias{trailing_whitespace_linter}
 \alias{undesirable_function_linter}
@@ -104,6 +105,8 @@ single_quotes_linter(source_file)
 spaces_inside_linter(source_file)
 
 spaces_left_parentheses_linter(source_file)
+
+stop_paste_linter(source_file)
 
 trailing_blank_lines_linter(source_file)
 
@@ -225,6 +228,11 @@ spaces directly inside them.
 
 \item \code{spaces_left_parentheses_linter}: check that all left parentheses have a space before them
 unless they are in a function call.
+
+\item \code{stop_paste_linter}: check for \code{stop(paste(...))},
+\code{message(paste0(...))}, \code{warning(paste(...))}, and similar
+invocations. These usages are basically redundant and interfere with
+efforts to make the package messaging portable across human languages.
 
 \item \code{trailing_blank_lines_linter}: check there are no trailing blank lines.
 
