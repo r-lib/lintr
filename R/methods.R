@@ -14,7 +14,8 @@ print.lint <- function(x, ...) {
     as.character(x$column_number), ": ", sep = ""),
     color(x$type, ": ", sep = ""),
     crayon::bold(x$message), "\n",
-    x$line, "\n",
+    # swap tabs for spaces for #528 (sorry Richard Hendricks)
+    chartr("\t", " ", x$line), "\n",
     highlight_string(x$message, x$column_number, x$ranges),
     "\n"
     )
