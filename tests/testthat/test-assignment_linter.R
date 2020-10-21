@@ -1,6 +1,11 @@
 context("assignment_linter")
 options(encoding = "UTF-8")
 test_that("returns the correct linting", {
+  # unexpected { is R language dependent
+  oldlang <- Sys.getenv("LANGUAGE")
+  Sys.setenv(LANGUAGE = "en")
+  on.exit(Sys.setenv(LANGUAGE = oldlang))
+
   expect_lint("blah", NULL, assignment_linter)
 
   expect_lint("blah <- 1", NULL, assignment_linter)

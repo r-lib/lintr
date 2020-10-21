@@ -27,3 +27,38 @@ test_that("lint all relevant directories in a package", {
   expect_s3_class(lints, "lints")
   expect_setequal(linted_files, files)
 })
+
+test_that("respects directory exclusions", {
+  the_dir <- tempfile()
+  dir.create(the_dir, recursive = TRUE)
+  on.exit(unlink(the_dir, recursive = TRUE))
+
+  the_excluded_dir <- file.path(the_dir, "exclude-me")
+  dir.create(the_excluded_dir)
+
+  file.copy("default_linter_testcode.R", the_dir)
+  file.copy("default_linter_testcode.R", the_excluded_dir)
+  file.copy("default_linter_testcode.R", file.path(the_excluded_dir, "bad2.R"))
+
+  lints <- lint_dir(the_dir, exclusions = "exclude-me")
+  linted_files <- unique(names(lints))
+  expect_length(linted_files, 1L)
+})
+
+test_that("respect directory exclusions from settings", {
+  the_dir <- tempfile()
+  dir.create(the_dir, recursive = TRUE)
+  on.exit(unlink(the_dir, recursive = TRUE))
+
+  the_excluded_dir <- file.path(the_dir, "exclude-me")
+  dir.create(the_excluded_dir)
+
+  file.copy("default_linter_testcode.R", the_dir)
+  file.copy("default_linter_testcode.R", the_excluded_dir)
+  file.copy("default_linter_testcode.R", file.path(the_excluded_dir, "bad2.R"))
+  cat("exclusions:\n  'exclude-me'\n", file = file.path(the_dir, ".lintr"))
+
+  lints <- lint_dir(the_dir)
+  linted_files <- unique(names(lints))
+  expect_length(linted_files, 1L)
+})

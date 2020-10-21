@@ -7,9 +7,8 @@
 #' @return 0 for success, 1 for failure, invisibly.
 #' @export
 clear_cache <- function(file = NULL, path = NULL) {
-  read_settings(file)
-
   if (is.null(path)) {
+    read_settings(file)
     path <- settings$cache_directory
   }
 
@@ -27,9 +26,8 @@ get_cache_file_path <- function(file, path) {
 }
 
 load_cache <- function(file, path = NULL) {
-  read_settings(file)
-
   if (is.null(path)) {
+    read_settings(file)
     path <- settings$cache_directory
   }
 
@@ -44,9 +42,8 @@ load_cache <- function(file, path = NULL) {
 }
 
 save_cache <- function(cache, file, path = NULL) {
-  read_settings(file)
-
   if (is.null(path)) {
+    read_settings(file)
     path <- settings$cache_directory
   }
 

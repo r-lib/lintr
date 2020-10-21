@@ -71,7 +71,9 @@ parse_exclusions <- function(file, exclude = settings$exclude,
   sort(unique(c(exclusions, which(rex::re_matches(lines, exclude)))))
 }
 
-normalize_exclusions <- function(x, normalize_path=TRUE) {
+normalize_exclusions <- function(x, normalize_path = TRUE,
+                                 root = getwd(),
+                                 pattern = NULL) {
   if (is.null(x) || length(x) <= 0) {
     return(list())
   }
@@ -101,8 +103,42 @@ normalize_exclusions <- function(x, normalize_path=TRUE) {
     }
   }
 
+  paths <- names(x)
+  rel_path <- !is_absolute_path(paths)
+  paths[rel_path] <- file.path(root, paths[rel_path])
+
+  is_dir <- dir.exists(paths)
+  if (any(is_dir)) {
+    dirs <- names(x)[is_dir]
+    x <- x[!is_dir]
+    all_file_names <- unlist(lapply(
+      dirs,
+      function(dir) {
+        dir_path <- if (is_absolute_path(dir)) dir else file.path(root, dir)
+        files <- list.files(
+          path = dir_path,
+          pattern = pattern,
+          recursive = TRUE
+        )
+        file.path(dir, files) # non-normalized relative paths
+      }
+    ))
+
+    # Only exclude file if there is no more specific exclusion already
+    all_file_names <- setdiff(all_file_names, names(x))
+
+    dir_exclusions <- as.list(rep_len(Inf, length(all_file_names)))
+    names(dir_exclusions) <- all_file_names
+    x <- c(x, dir_exclusions)
+  }
+
   if (normalize_path) {
-    x <- x[file.exists(names(x))]       # remove exclusions for non-existing files
+    paths <- names(x)
+    # specify relative paths w.r.t. root
+    rel_path <- !is_absolute_path(paths)
+    paths[rel_path] <- file.path(root, paths[rel_path])
+    names(x) <- paths
+    x <- x[file.exists(paths)]       # remove exclusions for non-existing files
     names(x) <- normalizePath(names(x)) # get full path for remaining files
   }
 

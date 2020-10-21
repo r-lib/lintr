@@ -1,5 +1,10 @@
 context("error")
 test_that("returns the correct linting", {
+  # error messages are R language dependent
+  oldlang <- Sys.getenv("LANGUAGE")
+  Sys.setenv(LANGUAGE = "en")
+  on.exit(Sys.setenv(LANGUAGE = oldlang))
+
   expect_lint("\"\\R\"",
     rex("is an unrecognized escape in character string starting")
     )

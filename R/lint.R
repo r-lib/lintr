@@ -164,7 +164,15 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
   if (isTRUE(parse_settings)) {
     read_settings(path)
     on.exit(clear_settings, add = TRUE)
+
+    exclusions <- c(exclusions, settings$exclusions)
   }
+
+  exclusions <- normalize_exclusions(
+    exclusions,
+    root = path,
+    pattern = pattern
+  )
 
   files <- dir(path,
     pattern = pattern,
@@ -241,7 +249,11 @@ lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = lis
   read_settings(path)
   on.exit(clear_settings, add = TRUE)
 
-  exclusions <- normalize_exclusions(c(exclusions, settings$exclusions), FALSE)
+  exclusions <- normalize_exclusions(
+    c(exclusions, settings$exclusions),
+    root = path,
+    pattern = pattern
+  )
 
   lints <- lint_dir(file.path(path, c("R", "tests", "inst", "vignettes", "data-raw")),
                     relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
