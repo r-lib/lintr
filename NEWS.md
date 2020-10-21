@@ -172,3 +172,4 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 # lintr 0.2.0 #
 
 * Initial release
+* New assignment_spaces() lintr. (#538, @f-ritter)
