@@ -9,8 +9,12 @@ assignment_spaces <- function(source_file) {
     function(id) {
       parsed <- with_id(source_file, id)
       match <- re_matches(
-        source_file$lines[parsed$line1],
-        rex(any, at_least(space, 2), any)
+        substr(
+          x = source_file$lines[parsed$line1],
+          start = parsed$col1 - 2,
+          stop = parsed$col1 + nchar(parsed$text) + 1
+        ),
+        rex(at_least(space, 2))
       )
       if (match) {
         Lint(
