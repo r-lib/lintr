@@ -9,8 +9,8 @@ assignment_spaces <- function(source_file) {
     function(id) {
       parsed <- with_id(source_file, id)
       match <- re_matches(
-        source_file$lines[as.character(parsed$line1)],
-        rex(list(one_or_more(space), space, "<-" %or% "=") %or% list("<-" %or% "=", space, one_or_more(space)))
+        source_file$lines[parsed$line1],
+        rex(any, at_least(space, 2), any)
       )
       if (match) {
         Lint(
@@ -19,7 +19,7 @@ assignment_spaces <- function(source_file) {
           column_number = parsed$col1,
           type = "style",
           message = "Assignments should only have one space before and after the operator.",
-          line = source_file$lines[as.character(parsed$line1)],
+          line = source_file$lines[parsed$line1],
           linter = "assignment_spaces"
         )
       }
