@@ -86,3 +86,12 @@ test_that("summary.lints() works (lints found)", {
   expect_equal(has_lint_summary$error, 0)
 })
 
+test_that("print.lint works", {
+  # don't treat \t as width-1, #528
+  l <- Lint(
+    filename = "tmp", line_number = 1L, column_number = 3L,
+    type = "warning", message = "this is a lint",
+    line = c(`1` = "\t\t1:length(x)"), ranges = list(c(3L, 3L)), linter = "lnt"
+  )
+  expect_output(print(l), "  1:length(x)", fixed = TRUE)
+})

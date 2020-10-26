@@ -32,6 +32,7 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 * `pipe_continuation_linter`: Check that each step in a pipeline is on a new
   line, or the entire pipe fits on one line.
 * `assignment_linter`: check that `<-` is always used for assignment
+* `assignment_spaces_linter`: checks that assignments only have one space before and after
 * `camel_case_linter`: check that objects are not in camelCase.
 * `closed_curly_linter`: check that closed curly braces should always be on their
   own line unless they are followed by an else.
