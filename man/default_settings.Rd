@@ -4,9 +4,7 @@
 \name{default_settings}
 \alias{default_settings}
 \title{Default lintr settings}
-\format{
-An object of class \code{list} of length 9.
-}
+\format{An object of class \code{list} of length 9.}
 \usage{
 default_settings
 }
