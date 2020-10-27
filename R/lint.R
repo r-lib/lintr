@@ -174,11 +174,13 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
     pattern = pattern
   )
 
-  files <- dir(path,
+  # normalizePath ensures names(exclusions) and files have the same names for the same files.
+  # Otherwise on windows, files might incorrectly not be excluded in to_exclude
+  files <- normalizePath(dir(path,
     pattern = pattern,
     recursive = TRUE,
     full.names = TRUE
-  )
+  ))
 
   # Remove fully ignored files to avoid reading & parsing
   to_exclude <- vapply(
