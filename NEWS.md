@@ -6,6 +6,7 @@
 * New style SNAKE_CASE for `object_name_linter()` (#494, @AshesITR)
 * RStudio source markers are cleared when there are no lints (#520, @AshesITR)
 * New `assignment_spaces()` lintr. (#538, @f-ritter)
+* `seq_linter()`'s lint message is clearer about the reason for linting. (#522, @michaelchirico)
 
 # lintr 2.0.1
 
