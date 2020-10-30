@@ -7,6 +7,7 @@
 * RStudio source markers are cleared when there are no lints (#520, @AshesITR)
 * New `assignment_spaces()` lintr. (#538, @f-ritter)
 * `seq_linter()`'s lint message is clearer about the reason for linting. (#522, @michaelchirico)
+* `equals_na_linter()` now lints `x != NA` and `NA == x`, and skips usages in comments (#545, @michaelchirico)
 
 # lintr 2.0.1
 
