@@ -8,14 +8,15 @@ missing_package_linter <- function(source_file) {
 
   library_calls <- c("library", "require", "loadNamespace", "requireNamespace")
 
-  xpath <- sprintf(
-    "//expr[expr/SYMBOL_FUNCTION_CALL[%s]]",
-    paste0(sprintf("text()='%s'", library_calls), collapse = " or ")
-  )
+  name_xpath <- "OP-LEFT-PAREN[1]/following-sibling::expr[1][SYMBOL | STR_CONST]"
+  call_xpath <- paste0(sprintf(
+    "//expr[expr[SYMBOL_FUNCTION_CALL[%s]]/following-sibling::%s]",
+    paste0(sprintf("text()='%s'", library_calls), collapse = " or "),
+    name_xpath
+  ))
 
-  pkg_calls <- xml2::xml_find_all(xml, xpath)
-  pkg_names <- xml2::xml_find_all(pkg_calls,
-    "OP-LEFT-PAREN/following-sibling::expr[1]/*[self::SYMBOL | self::STR_CONST]")
+  pkg_calls <- xml2::xml_find_all(xml, call_xpath)
+  pkg_names <- xml2::xml_find_all(pkg_calls, name_xpath)
   pkg_names <- xml2::xml_text(pkg_names)
   pkg_names <- parse(text = pkg_names, keep.source = FALSE)
   pkg_names <- vapply(pkg_names, format, character(1L))
