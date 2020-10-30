@@ -14,8 +14,6 @@ equals_na_linter <- function(source_file) {
   xpath_fmt <- "//expr[expr[NUM_CONST[%s]]]/*[%s]"
   xpath <- sprintf(xpath_fmt, NA_table, comparator_table)
 
-  #browser()
-
   bad_expr <- xml2::xml_find_all(xml, xpath)
 
   lapply(bad_expr, xml_nodes_to_lint, source_file,
