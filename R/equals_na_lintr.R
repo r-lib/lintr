@@ -1,4 +1,4 @@
-#' @describeIn linters that checks for x == NA
+#' @describeIn linters that checks for x == NA and x != NA
 #' @export
 equals_na_linter <- function(source_file) {
 
