@@ -49,6 +49,7 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 * `infix_spaces_linter`: check that all infix operators have spaces around them.
 * `line_length_linter`: check the line length of both comments and code is less than
   length.
+* `namespace_linter`: check if there are missing packages and symbols in namespace calls with `::` and `:::`.
 * `no_tab_linter`: check that only spaces are used, never tabs.
 * `object_length_linter`: check that function and variable names are not more than `length` characters.
 * `object_name_linter`: check that object names conform to a single naming
