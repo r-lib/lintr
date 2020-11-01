@@ -36,8 +36,12 @@ test_that("returns the correct linting", {
     NULL,
     namespace_linter())
 
-  expect_lint("stats:::sd(c(1,2,3))",
+  expect_lint("stats:::print.formula",
     NULL,
+    namespace_linter())
+
+  expect_lint("stats:::sd(c(1,2,3))",
+    list(message = rex("'sd' is exported from {stats}. Use stats::sd instead.")),
     namespace_linter())
 
   expect_lint("statts:::sd(c(1,2,3))",
