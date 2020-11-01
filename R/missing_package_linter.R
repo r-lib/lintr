@@ -20,7 +20,7 @@ missing_package_linter <- function(source_file) {
   pkg_names <- xml2::xml_find_all(pkg_calls, name_xpath)
   pkg_names <- xml2::xml_text(pkg_names)
   pkg_names <- parse(text = pkg_names, keep.source = FALSE)
-  pkg_names <- vapply(pkg_names, format, character(1L))
+  pkg_names <- vapply(pkg_names, as.character, character(1L))
 
   installed_packges <- .packages(all.available = TRUE)
   missing_ids <- which(!(pkg_names %in% installed_packges))
