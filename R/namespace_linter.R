@@ -17,7 +17,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     get_node_text <- function(nodes) {
       text <- xml2::xml_text(nodes)
       expr <- parse(text = text, keep.source = FALSE)
-      vapply(expr, format, character(1L))
+      vapply(expr, as.character, character(1L))
     }
 
     pkg_nodes <- xml2::xml_find_all(ns_nodes, "preceding-sibling::*[1]")
