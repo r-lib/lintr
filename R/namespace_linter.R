@@ -51,7 +51,25 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
             }
 
             if (check_nonexports && ops[[i]] == ":::") {
-              if (!exists(syms[[i]], ns, inherits = FALSE)) {
+              if (exists(syms[[i]], ns, inherits = FALSE)) {
+                exports <- getNamespaceExports(ns)
+                if (syms[[i]] %in% exports) {
+                  line1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "line1"))
+                  col1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col1"))
+                  col2 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col2"))
+                  return(Lint(
+                    filename = source_file$filename,
+                    line_number = line1,
+                    column_number = col1,
+                    type = "style",
+                    message = sprintf("'%s' is exported from {%s}. Use %s::%s instead.",
+                      syms[[i]], pkgs[[i]], pkgs[[i]], syms[[i]]),
+                    line = source_file$lines[line1],
+                    ranges = list(c(col1, col2)),
+                    linter = "namespace_linter"
+                  ))
+                }
+              } else {
                 line1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "line1"))
                 col1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col1"))
                 col2 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col2"))
