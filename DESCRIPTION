@@ -66,6 +66,7 @@ Collate:
     'line_length_linter.R'
     'lint.R'
     'methods.R'
+    'missing_package_linter.R'
     'namespace.R'
     'namespace_linter.R'
     'no_tab_linter.R'
