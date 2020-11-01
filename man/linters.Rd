@@ -31,6 +31,7 @@
 \alias{infix_spaces_linter}
 \alias{line_length_linter}
 \alias{missing_package_linter}
+\alias{namespace_linter}
 \alias{no_tab_linter}
 \alias{object_usage_linter}
 \alias{open_curly_linter}
@@ -87,6 +88,8 @@ line_length_linter(length)
 
 missing_package_linter(source_file)
 
+namespace_linter(check_exports = TRUE, check_nonexports = TRUE)
+
 no_tab_linter(source_file)
 
 object_usage_linter(source_file)
@@ -137,6 +140,12 @@ this are linted, defaults to 25. See \code{\link[cyclocomp]{cyclocomp}}.}
 match at least one of these styles.}
 
 \item{length}{the length cutoff to use for the given linter.}
+
+\item{check_exports}{Check if \code{symbol} is exported from \code{namespace} in
+\code{namespace::symbol} calls.}
+
+\item{check_nonexports}{Check if \code{symbol} exists in \code{namespace} in
+\code{namespace:::symbol} calls.}
 
 \item{lax}{Less stringent linting, leading to fewer false positives.}
 
@@ -200,6 +209,10 @@ than length.
 
 \item \code{missing_package_linter}: checks for missing packages in \code{library()},
 \code{require()}, \code{loadNamespace()} and \code{requireNamespace()} calls.
+
+\item \code{namespace_linter}: check for missing packages and symbols in namespace calls.
+Note that using \code{check_exports=TRUE} or \code{check_nonexports=TRUE} will
+load packages used in user code so it could potentially change the global state.
 
 \item \code{no_tab_linter}: check that only spaces are used for indentation, not tabs.
 
