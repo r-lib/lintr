@@ -22,40 +22,61 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     ops <- xml2::xml_text(ns_nodes)
     syms <- get_node_text(sym_nodes)
 
-    results <- lapply(seq_along(ns_nodes), function(i) {
-      ns <- tryCatch(getNamespace(pkgs[[i]]), error = function(e) NULL)
-      if (isNamespace(ns)) {
-        if (check_exports && ops[[i]] == "::") {
-          exports <- getNamespaceExports(ns)
-          lazydata <- names(.getNamespaceInfo(ns, "lazydata"))
-          if (!(syms[[i]] %in% c(exports, lazydata))) {
-            line1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "line1"))
-            col1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col1"))
-            col2 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col2"))
-            return(Lint(
-              filename = source_file$filename,
-              line_number = line1,
-              column_number = col1,
-              type = "warning",
-              message = sprintf("'%s' is not exported from {%s}.", syms[[i]], pkgs[[i]]),
-              line = source_file$lines[line1],
-              ranges = list(c(col1, col2)),
-              linter = "namespace_linter"
-            ))
-          }
-        }
+    installed_packages <- .packages(all.available = TRUE)
 
-        if (check_nonexports && ops[[i]] == ":::") {
-          if (!exists(syms[[i]], ns, inherits = FALSE)) {
-            line1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "line1"))
-            col1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col1"))
-            col2 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col2"))
+    results <- lapply(seq_along(ns_nodes), function(i) {
+      if (pkgs[[i]] %in% installed_packages) {
+        if (check_exports || check_nonexports) {
+          ns <- tryCatch(getNamespace(pkgs[[i]]), error = function(e) e)
+
+          if (isNamespace(ns)) {
+            if (check_exports && ops[[i]] == "::") {
+              exports <- getNamespaceExports(ns)
+              lazydata <- names(.getNamespaceInfo(ns, "lazydata"))
+              if (!(syms[[i]] %in% c(exports, lazydata))) {
+                line1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "line1"))
+                col1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col1"))
+                col2 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col2"))
+                return(Lint(
+                  filename = source_file$filename,
+                  line_number = line1,
+                  column_number = col1,
+                  type = "warning",
+                  message = sprintf("'%s' is not exported from {%s}.", syms[[i]], pkgs[[i]]),
+                  line = source_file$lines[line1],
+                  ranges = list(c(col1, col2)),
+                  linter = "namespace_linter"
+                ))
+              }
+            }
+
+            if (check_nonexports && ops[[i]] == ":::") {
+              if (!exists(syms[[i]], ns, inherits = FALSE)) {
+                line1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "line1"))
+                col1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col1"))
+                col2 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col2"))
+                return(Lint(
+                  filename = source_file$filename,
+                  line_number = line1,
+                  column_number = col1,
+                  type = "warning",
+                  message = sprintf("'%s' does not exist in {%s}.", syms[[i]], pkgs[[i]]),
+                  line = source_file$lines[line1],
+                  ranges = list(c(col1, col2)),
+                  linter = "namespace_linter"
+                ))
+              }
+            }
+          } else {
+            line1 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "line1"))
+            col1 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "col1"))
+            col2 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "col2"))
             return(Lint(
               filename = source_file$filename,
               line_number = line1,
               column_number = col1,
               type = "warning",
-              message = sprintf("'%s' does not exist in {%s}.", syms[[i]], pkgs[[i]]),
+              message = conditionMessage(ns),
               line = source_file$lines[line1],
               ranges = list(c(col1, col2)),
               linter = "namespace_linter"
