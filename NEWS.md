@@ -7,6 +7,8 @@
 * RStudio source markers are cleared when there are no lints (#520, @AshesITR)
 * New `assignment_spaces()` lintr. (#538, @f-ritter)
 * `seq_linter()`'s lint message is clearer about the reason for linting. (#522, @michaelchirico)
+* exclusions are now always relative to the location of the `.lintr` file and they support excluding entire directories
+  by specifying a directory instead of a file (#158, #438, @AshesITR)
 
 # lintr 2.0.1
 

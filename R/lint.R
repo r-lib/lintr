@@ -149,7 +149,7 @@ reorder_lints <- function(lints) {
 #'   lint_dir(
 #'     linters = list(semicolon_terminator_linter())
 #'     cache = TRUE,
-#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
+#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "renv")
 #'   )
 #' }
 #' @export
@@ -241,7 +241,7 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
 #'   lint_package(
 #'     linters = with_defaults(semicolon_linter = semicolon_terminator_linter())
 #'     cache = TRUE,
-#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
+#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "data")
 #'   )
 #' }
 #' @export

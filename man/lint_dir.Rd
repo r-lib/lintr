@@ -46,7 +46,7 @@ Apply one or more linters to all of the R files in a directory
   lint_dir(
     linters = list(semicolon_terminator_linter())
     cache = TRUE,
-    exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
+    exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "renv")
   )
 }
 }
