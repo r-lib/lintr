@@ -1,6 +1,10 @@
-#' @describeIn linters that checks for missing packages and symbols in namespace calls.
+#' @describeIn linters check for missing packages and symbols in namespace calls.
 #'   Note that using \code{check_exports=TRUE} or \code{check_nonexports=TRUE} will
 #'   load packages used in user code so it could potentially change the global state.
+#' @param check_exports Check if \code{symbol} is exported from \code{namespace} in
+#'   \code{namespace::symbol} calls.
+#' @param check_nonexports Check if \code{symbol} exists in \code{namespace} in
+#'   \code{namespace:::symbol} calls.
 #' @export
 namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
   function(source_file) {

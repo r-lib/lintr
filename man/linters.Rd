@@ -138,6 +138,12 @@ match at least one of these styles.}
 
 \item{length}{the length cutoff to use for the given linter.}
 
+\item{check_exports}{Check if \code{symbol} is exported from \code{namespace} in
+\code{namespace::symbol} calls.}
+
+\item{check_nonexports}{Check if \code{symbol} exists in \code{namespace} in
+\code{namespace:::symbol} calls.}
+
 \item{lax}{Less stringent linting, leading to fewer false positives.}
 
 \item{semicolon}{A character vector defining which semicolons to report:\describe{
@@ -198,7 +204,7 @@ do not have spaces before them.
 \item \code{line_length_linter}: check the line length of both comments and code is less
 than length.
 
-\item \code{namespace_linter}: that checks for missing packages and symbols in namespace calls.
+\item \code{namespace_linter}: check for missing packages and symbols in namespace calls.
 Note that using \code{check_exports=TRUE} or \code{check_nonexports=TRUE} will
 load packages used in user code so it could potentially change the global state.
 
