@@ -37,9 +37,9 @@ Encoding: UTF-8
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
 Collate:
-    'T_and_F_symbol_linter.R'
     'utils.R'
     'aaa.R'
+    'T_and_F_symbol_linter.R'
     'actions.R'
     'addins.R'
     'assignment_linter.R'
