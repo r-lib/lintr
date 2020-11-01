@@ -35,7 +35,7 @@ License: MIT + file LICENSE
 LazyData: true
 Encoding: UTF-8
 VignetteBuilder: knitr
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Collate:
     'T_and_F_symbol_linter.R'
     'utils.R'
