@@ -7,6 +7,8 @@
 * RStudio source markers are cleared when there are no lints (#520, @AshesITR)
 * New `assignment_spaces()` lintr. (#538, @f-ritter)
 * `seq_linter()`'s lint message is clearer about the reason for linting. (#522, @michaelchirico)
+* New `missing_package_linter()` (#536, #547, @renkun-ken)
+* New `namespace_linter()` (#548, #551, @renkun-ken)
 
 # lintr 2.0.1
 
