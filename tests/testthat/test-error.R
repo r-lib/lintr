@@ -43,4 +43,8 @@ test_that("returns the correct linting", {
     NULL,
     equals_na_linter
   )
+
+  expect_lint("\\",
+    rex("unexpected input")
+  )
 })

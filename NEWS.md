@@ -9,6 +9,7 @@
 * `seq_linter()`'s lint message is clearer about the reason for linting. (#522, @michaelchirico)
 * New `missing_package_linter()` (#536, #547, @renkun-ken)
 * New `namespace_linter()` (#548, #551, @renkun-ken)
+* Fix possible error on invalid XML produced by xmlparsedata (#559, #560, @renkun-ken)
 * exclusions are now always relative to the location of the `.lintr` file and they support excluding entire directories
   by specifying a directory instead of a file (#158, #438, @AshesITR)
 
