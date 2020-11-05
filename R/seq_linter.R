@@ -6,7 +6,7 @@
 #' @export
 seq_linter <- function(source_file) {
 
-  if (!length(source_file$parsed_content)) return(list())
+  if (!length(source_file$parsed_content) || is.null(source_file$xml_parsed_content)) return(list())
 
   xml <- source_file$xml_parsed_content
 
