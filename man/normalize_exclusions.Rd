@@ -17,7 +17,7 @@ If no, they will be relative to \code{root}.}
 \item{root}{Base directory for relative filename resolution.}
 
 \item{pattern}{If non-NULL, only exclude files in excluded directories if they match
-\code{pattern}. Passed to \link{base::list.files} if a directory is excluded.}
+\code{pattern}. Passed to \link[base]{list.files} if a directory is excluded.}
 }
 \description{
 Normalize lint exclusions

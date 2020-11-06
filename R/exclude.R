@@ -81,7 +81,7 @@ parse_exclusions <- function(file, exclude = settings$exclude,
 #' If no, they will be relative to \code{root}.
 #' @param root Base directory for relative filename resolution.
 #' @param pattern If non-NULL, only exclude files in excluded directories if they match
-#' \code{pattern}. Passed to \link{base::list.files} if a directory is excluded.
+#' \code{pattern}. Passed to \link[base]{list.files} if a directory is excluded.
 #'
 #' @value A named list of line numbers to exclude, or the sentinel \code{Inf} for completely
 #' excluded files. The names of the list specify the filenames to be excluded.
