@@ -8,6 +8,8 @@
 #' @export
 clear_cache <- function(file = NULL, path = NULL) {
   if (is.null(path)) {
+    # Only retrieve settings if `path` isn't specified.
+    # Otherwise, other settings may inadvertently be loaed, such as exclusions.
     read_settings(file)
     path <- settings$cache_directory
   }
@@ -27,6 +29,8 @@ get_cache_file_path <- function(file, path) {
 
 load_cache <- function(file, path = NULL) {
   if (is.null(path)) {
+    # Only retrieve settings if `path` isn't specified.
+    # Otherwise, other settings may inadvertently be loaed, such as exclusions.
     read_settings(file)
     path <- settings$cache_directory
   }
@@ -43,6 +47,8 @@ load_cache <- function(file, path = NULL) {
 
 save_cache <- function(cache, file, path = NULL) {
   if (is.null(path)) {
+    # Only retrieve settings if `path` isn't specified.
+    # Otherwise, other settings may inadvertently be loaed, such as exclusions.
     read_settings(file)
     path <- settings$cache_directory
   }
