@@ -1,11 +1,6 @@
 context("cyclocomp_linter")
 
 test_that("returns the correct linting", {
-  # unexpected symbol is R language dependent
-  oldlang <- Sys.getenv("LANGUAGE")
-  Sys.setenv(LANGUAGE = "en")
-  on.exit(Sys.setenv(LANGUAGE = oldlang))
-
   cc_linter_1 <- cyclocomp_linter(1)
   cc_linter_2 <- cyclocomp_linter(2)
   msg <- rex("functions should have cyclomatic complexity")
