@@ -31,14 +31,14 @@
 #' @export
 get_source_expressions <- function(filename) {
   source_file <- srcfile(filename)
-  terminal_newline <- FALSE
+  terminal_newline <- TRUE
   source_file$lines <- withCallingHandlers(
     {
       readLines(filename)
     },
     warning = function(w) {
       if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
-        terminal_newline <<- TRUE
+        terminal_newline <<- FALSE
         invokeRestart("muffleWarning")
       }
     }
