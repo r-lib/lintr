@@ -38,7 +38,7 @@ missing_package_linter <- function(source_file) {
       message = sprintf("Package '%s' is not installed.", pkg_names[[i]]),
       line = source_file$lines[line1[[i]]],
       ranges = list(c(col1[[i]], col2[[i]])),
-      linter = "missing_pkg_linter"
+      linter = "missing_package_linter"
     )
   })
 }
