@@ -9,7 +9,7 @@ missing_argument_linter <- function(source_file) {
   xpath <- "//expr[expr[SYMBOL_FUNCTION_CALL]]/*[
     self::OP-COMMA[preceding-sibling::*[1][self::OP-LEFT-PAREN or self::OP-COMMA]] or
     self::OP-COMMA[following-sibling::*[1][self::OP-RIGHT-PAREN]] or
-    self::EQ_SUB[following-sibling::*[1][self::OP-RIGHT-PAREN]]
+    self::EQ_SUB[following-sibling::*[1][self::OP-RIGHT-PAREN or self::OP-COMMA]]
   ]"
 
   missing_args <- xml2::xml_find_all(xml, xpath)
