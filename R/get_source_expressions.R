@@ -2,10 +2,57 @@
 #'
 #' This object is given as input to each linter
 #' @param filename the file to be parsed.
+#' @return A `list` with three components:
+#'   \item{expressions}{a `list` of
+#'   `n+1` objects. The first `n` elements correspond to each expression in
+#'   `filename`, and consist of a list of 9 elements:
+#'   \itemize{
+#'     \item{`filename` (`character`)}
+#'     \item{`line` (`integer`) the line in `filename` where this expression begins}
+#'     \item{`column` (`integer`) the column in `filename` where this expression begins}
+#'     \item{`lines` (named `character`) vector of all lines spanned by this
+#'           expression, named with the line number corresponding to `filename`}
+#'     \item{`parsed_content` (`data.frame`) as given by [utils::getParseData()] for this expression}
+#'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of this
+#'          expression as given by [xmlparsedata::xml_parse_data()]}
+#'     \item{`content` (`character`) the same as `lines` as a single string (not split across lines)}
+#'     \item{`find_line` (`function`) a function for returning lines in this expression}
+#'     \item{`find_column` (`function`) a similar function for columns}
+#'   }
+#'
+#'   The final element of `expressions` is a list corresponding to the full file
+#'   consisting of 6 elements:
+#'   \itemize{
+#'     \item{`filename` (`character`)}
+#'     \item{`file_lines` (`character`) the [readLines()] output for this file}
+#'     \item{`content` (`character`) for .R files, the same as `file_lines`;
+#'           for .Rmd scripts, this is the extracted R source code (as text)}
+#'     \item{`full_parsed_content` (`data.frame`) as given by
+#'           [utils::getParseData()] for the full content}
+#'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of all
+#'           expressions as given by [xmlparsedata::xml_parse_data()]}
+#'     \item{`terminal_newline` (`logical`) records whether `filename` has a terminal
+#'           newline (as determined by [readLines()] producing a corresponding warning)}
+#'   }
+#'   }
+#'   \item{error}{A `Lint` object describing any parsing error.}
+#'   \item{lines}{The [readLines()] output for this file.}
 #' @export
+#' @md
 get_source_expressions <- function(filename) {
   source_file <- srcfile(filename)
-  source_file$lines <- readLines(filename)
+  terminal_newline <- TRUE
+  source_file$lines <- withCallingHandlers(
+    {
+      readLines(filename)
+    },
+    warning = function(w) {
+      if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
+        terminal_newline <<- FALSE
+        invokeRestart("muffleWarning")
+      }
+    }
+  )
   source_file$lines <- extract_r_source(source_file$filename, source_file$lines)
   source_file$content <- get_content(source_file$lines)
 
@@ -94,7 +141,8 @@ get_source_expressions <- function(filename) {
       file_lines = source_file$lines,
       content = source_file$lines,
       full_parsed_content = parsed_content,
-      xml_parsed_content = if (!is.null(parsed_content)) tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)), error = function(e) NULL)
+      xml_parsed_content = if (!is.null(parsed_content)) tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)), error = function(e) NULL),
+      terminal_newline = terminal_newline
     )
 
   list(expressions = expressions, error = e, lines = source_file$lines)
