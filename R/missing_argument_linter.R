@@ -18,7 +18,7 @@ missing_argument_linter <- function(source_file) {
   col1 <- as.integer(xml2::xml_attr(missing_args, "col1"))
   col2 <- as.integer(xml2::xml_attr(missing_args, "col2"))
 
-  lapply(missing_ids, function(i) {
+  lapply(seq_along(missing_args), function(i) {
     Lint(
       filename = source_file$filename,
       line_number = line1[[i]],
