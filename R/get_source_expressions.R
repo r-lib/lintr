@@ -2,33 +2,43 @@
 #'
 #' This object is given as input to each linter
 #' @param filename the file to be parsed.
-#' @return A `list` with three components: (1) `expressions`, a `list` of
-#'   `n+1` objects. The first `n` elements correspond to each expressions in
+#' @return A `list` with three components:
+#'   \item{expressions}{a `list` of
+#'   `n+1` objects. The first `n` elements correspond to each expression in
 #'   `filename`, and consist of a list of 9 elements:
-#'   (1) `filename` (`character`); (2) `line` (`integer`) the line in `filename`
-#'   where this expression begins; (3) `column` (`integer`) the column in
-#'   `filename` where this expression begins; (4) `lines` (named `character`)
-#'   vector of all lines spanned by this expression, named with the line number
-#'   corresponding to `filename`; (5) `parsed_content` (`data.frame`) as given
-#'   by [utils::getParseData()] for this expression; (6) `xml_parsed_content`
-#'   (`xml_document`) the XML parse tree of this expression as given by
-#'   [xmlparsedata::xml_parse_data()]; (7) `content` (`character`) the same as
-#'   `lines` as a single string (not split across lines); (8) `find_line`
-#'   (`function`) a function for returning lines in this expression; and (9)
-#'   `find_column` (`function`) a similar function for columns. The final
-#'   element of `expressions` is a list corresponding to the full file
-#'   consisting of 6 elements: (1) `filename` (`character`); (2) `file_lines`
-#'   (`character`) the [readLines()] output for this file; (3) `content`
-#'   (`character`) for .R files, the same as `file_lines`; for .Rmd scripts,
-#'   this is the extracted R source code (as text); (4) `full_parsed_content`
-#'   (`data.frame`) as given by [utils::getParseData()] for the full content;
-#'   (5) `xml_parsed_content` (`xml_document`) the XML parse tree of all
-#'   expressions as given by [xmlparsedata::xml_parse_data()]; and (6)
-#'   `terminal_newline` (`logical`) records whether `filename` has a terminal
-#'   newline (as determined by [readLines()] producing a corresponding warning).
-#'   (2) `error` a `Lint` object describing any parsing error. (3) `lines` the
-#'   [readLines()] output for this file.
+#'   \itemize{
+#'     \item{`filename` (`character`)}
+#'     \item{`line` (`integer`) the line in `filename` where this expression begins}
+#'     \item{`column` (`integer`) the column in `filename` where this expression begins}
+#'     \item{`lines` (named `character`) vector of all lines spanned by this
+#'           expression, named with the line number corresponding to `filename`}
+#'     \item{`parsed_content` (`data.frame`) as given by [utils::getParseData()] for this expression}
+#'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of this
+#'          expression as given by [xmlparsedata::xml_parse_data()]}
+#'     \item{`content` (`character`) the same as `lines` as a single string (not split across lines)}
+#'     \item{`find_line` (`function`) a function for returning lines in this expression}
+#'     \item{`find_column` (`function`) a similar function for columns}
+#'   }
+#'
+#'   The final element of `expressions` is a list corresponding to the full file
+#'   consisting of 6 elements:
+#'   \itemize{
+#'     \item{`filename` (`character`)}
+#'     \item{`file_lines` (`character`) the [readLines()] output for this file}
+#'     \item{`content` (`character`) for .R files, the same as `file_lines`;
+#'           for .Rmd scripts, this is the extracted R source code (as text)}
+#'     \item{`full_parsed_content` (`data.frame`) as given by
+#'           [utils::getParseData()] for the full content}
+#'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of all
+#'           expressions as given by [xmlparsedata::xml_parse_data()]}
+#'     \item{`terminal_newline` (`logical`) records whether `filename` has a terminal
+#'           newline (as determined by [readLines()] producing a corresponding warning)}
+#'   }
+#'   }
+#'   \item{error}{A `Lint` object describing any parsing error.}
+#'   \item{lines}{The [readLines()] output for this file.}
 #' @export
+#' @md
 get_source_expressions <- function(filename) {
   source_file <- srcfile(filename)
   terminal_newline <- FALSE
