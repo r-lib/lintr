@@ -71,6 +71,7 @@ get_source_expressions <- function(filename) {
           anything),
         "\n")
       )
+      
 
     # an error that does not use R_ParseErrorMsg
     if (is.na(message_info$line)) {
@@ -81,6 +82,31 @@ get_source_expressions <- function(filename) {
           double_quotes, capture(name = "starting", anything), double_quotes))
 
       line_location <- re_matches(source_file$content, rex(message_info$starting), locations = TRUE)
+      line_location <- line_location[complete.cases(line_location), ]
+
+      if (nrow(line_location) == 0L) {
+        if (grepl("attempt to use zero-length variable name", e$message)) {
+          # empty symbol: ``, ``(), ''(), ""(), fun(''=42), fun(""=42)
+          loc <- re_matches(source_file$content,
+            "``|''\\s*\\(|\"\"\\s*\\(|\\(''\\s*=|\\(\"\"\\s*=", locations = TRUE)
+          loc <- loc[complete.cases(loc), ]
+          if (nrow(loc) > 0) {
+            line_location <- loc[1, ]
+          }
+        } else {
+          return(
+            Lint(
+              filename = source_file$filename,
+              line_number = 1,
+              column_number = 1,
+              type = "error",
+              message = e$message,
+              line = "",
+              linter = "error"
+            )
+          )
+        }
+      }
 
       line_number <- find_line_fun(source_file$content)(line_location$start)
       column_number <- find_column_fun(source_file$content)(line_location$start)
