@@ -85,7 +85,7 @@ get_source_expressions <- function(filename) {
       line_location <- line_location[complete.cases(line_location), ]
 
       if (nrow(line_location) == 0L) {
-        if (grepl("attempt to use zero-length variable name", e$message)) {
+        if (grepl("attempt to use zero-length variable name", e$message, fixed = TRUE)) {
           # empty symbol: ``, ``(), ''(), ""(), fun(''=42), fun(""=42), fun(a=1,""=42)
           loc <- re_matches(source_file$content,
             rex("``" %or% list(or("''", '""'), any_spaces, "(") %or%
