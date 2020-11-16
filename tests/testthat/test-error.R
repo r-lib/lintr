@@ -55,7 +55,7 @@ test_that("returns the correct linting", {
     rex("attempt to use zero-length variable name")
   )
 
-  expect_lint("\"\"()",
+  expect_lint('""()',
     rex("attempt to use zero-length variable name")
   )
 
@@ -63,11 +63,11 @@ test_that("returns the correct linting", {
     rex("attempt to use zero-length variable name")
   )
 
-  expect_lint("fun(\"\"=42)",
+  expect_lint('fun(""=42)',
     rex("attempt to use zero-length variable name")
   )
 
-  expect_lint("fun(a=1,\"\"=42)",
+  expect_lint('fun(a=1,""=42)',
     rex("attempt to use zero-length variable name")
   )
 })
