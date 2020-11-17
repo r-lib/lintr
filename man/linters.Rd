@@ -89,7 +89,7 @@ infix_spaces_linter(source_file)
 
 line_length_linter(length)
 
-missing_argument_linter(source_file)
+missing_argument_linter(except = c("switch", "alist"))
 
 missing_package_linter(source_file)
 
@@ -145,6 +145,8 @@ this are linted, defaults to 25. See \code{\link[cyclocomp]{cyclocomp}}.}
 match at least one of these styles.}
 
 \item{length}{the length cutoff to use for the given linter.}
+
+\item{except}{a character vector of function names as exceptions.}
 
 \item{check_exports}{Check if \code{symbol} is exported from \code{namespace} in
 \code{namespace::symbol} calls.}
