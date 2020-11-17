@@ -71,7 +71,6 @@ get_source_expressions <- function(filename) {
           anything),
         "\n")
       )
-      
 
     # an error that does not use R_ParseErrorMsg
     if (is.na(message_info$line)) {
