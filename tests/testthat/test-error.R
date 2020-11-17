@@ -42,4 +42,32 @@ test_that("returns the correct linting", {
   expect_lint("\\",
     rex("unexpected input")
   )
+
+  expect_lint("``",
+    rex("attempt to use zero-length variable name")
+  )
+
+  expect_lint("``()",
+    rex("attempt to use zero-length variable name")
+  )
+
+  expect_lint("''()",
+    rex("attempt to use zero-length variable name")
+  )
+
+  expect_lint('""()',
+    rex("attempt to use zero-length variable name")
+  )
+
+  expect_lint("fun(''=42)",
+    rex("attempt to use zero-length variable name")
+  )
+
+  expect_lint('fun(""=42)',
+    rex("attempt to use zero-length variable name")
+  )
+
+  expect_lint('fun(a=1,""=42)',
+    rex("attempt to use zero-length variable name")
+  )
 })
