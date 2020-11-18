@@ -5,7 +5,8 @@
 %   R/cyclocomp_linter.R, R/object_name_linters.R, R/deprecated.R,
 %   R/equals_na_lintr.R, R/extraction_operator_linter.R,
 %   R/function_left_parentheses.R, R/implicit_integer_linter.R,
-%   R/infix_spaces_linter.R, R/line_length_linter.R, R/missing_package_linter.R,
+%   R/infix_spaces_linter.R, R/line_length_linter.R,
+%   R/missing_argument_linter.R, R/missing_package_linter.R,
 %   R/namespace_linter.R, R/no_tab_linter.R, R/object_usage_linter.R,
 %   R/open_curly_linter.R, R/paren_brace_linter.R, R/path_linters.R,
 %   R/pipe_continuation_linter.R, R/semicolon_terminator_linter.R,
@@ -32,6 +33,7 @@
 \alias{implicit_integer_linter}
 \alias{infix_spaces_linter}
 \alias{line_length_linter}
+\alias{missing_argument_linter}
 \alias{missing_package_linter}
 \alias{namespace_linter}
 \alias{no_tab_linter}
@@ -87,6 +89,8 @@ infix_spaces_linter(source_file)
 
 line_length_linter(length)
 
+missing_argument_linter(except = c("switch", "alist"))
+
 missing_package_linter(source_file)
 
 namespace_linter(check_exports = TRUE, check_nonexports = TRUE)
@@ -141,6 +145,8 @@ this are linted, defaults to 25. See \code{\link[cyclocomp]{cyclocomp}}.}
 match at least one of these styles.}
 
 \item{length}{the length cutoff to use for the given linter.}
+
+\item{except}{a character vector of function names as exceptions.}
 
 \item{check_exports}{Check if \code{symbol} is exported from \code{namespace} in
 \code{namespace::symbol} calls.}
@@ -207,6 +213,8 @@ do not have spaces before them.
 
 \item \code{line_length_linter}: check the line length of both comments and code is less
 than length.
+
+\item \code{missing_argument_linter}: checks for missing arguments in function calls.
 
 \item \code{missing_package_linter}: checks for missing packages in \code{library()},
 \code{require()}, \code{loadNamespace()} and \code{requireNamespace()} calls.

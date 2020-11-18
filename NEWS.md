@@ -10,6 +10,8 @@
 * New `missing_package_linter()` (#536, #547, @renkun-ken)
 * New `namespace_linter()` (#548, #551, @renkun-ken)
 * Fix possible error on invalid XML produced by xmlparsedata (#559, #560, @renkun-ken)
+* Fix handling zero-length variable name error (#566, #567, @renkun-ken)
+* New `missing_argument_linter()` (#563, #565, @renkun-ken)
 * exclusions are now always relative to the location of the `.lintr` file and they support excluding entire directories
   by specifying a directory instead of a file (#158, #438, @AshesITR)
 
