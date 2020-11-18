@@ -11,6 +11,7 @@
 * New `namespace_linter()` (#548, #551, @renkun-ken)
 * Fix possible error on invalid XML produced by xmlparsedata (#559, #560, @renkun-ken)
 * Fix handling zero-length variable name error (#566, #567, @renkun-ken)
+* New `missing_argument_linter()` (#563, #565, @renkun-ken)
 
 # lintr 2.0.1
 

@@ -12,7 +12,7 @@ get_source_expressions(filename)
 \value{
 A \code{list} with three components:
 \item{expressions}{a \code{list} of
-\code{n+1} objects. The first \code{n} elements correspond to each expressions in
+\code{n+1} objects. The first \code{n} elements correspond to each expression in
 \code{filename}, and consist of a list of 9 elements:
 \itemize{
 \item{\code{filename} (\code{character})}
