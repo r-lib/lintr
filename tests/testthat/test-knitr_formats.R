@@ -105,8 +105,9 @@ test_that("it does _not_ error with inline \\Sexpr", {
 })
 
 test_that("it does error with malformed input", {
-  expect_error(
-    lint("knitr_malformed/incomplete_r_block.Rmd"),
-    regex = "Malformed"
+  expect_lint(
+    file = "knitr_malformed/incomplete_r_block.Rmd",
+    checks = "Missing chunk end",
+    default_linters
   )
 })

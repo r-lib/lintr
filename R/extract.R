@@ -1,11 +1,16 @@
 # content is the file content from readLines
-extract_r_source <- function(filename, lines) {
+extract_r_source <- function(filename, lines, error = identity) {
   pattern <- get_knitr_pattern(filename, lines)
   if (is.null(pattern$chunk.begin) || is.null(pattern$chunk.end)) {
     return(lines)
   }
 
-  chunks <- get_chunk_positions(pattern = pattern, lines = lines)
+  chunks <- tryCatch(get_chunk_positions(pattern = pattern, lines = lines), error = error)
+  if (!inherits(chunks, "list")) {
+    assign("e", chunks,  envir = parent.frame())
+    # error, so return empty code
+    return(character())
+  }
 
   # no chunks found, so just return the lines
   if (length(chunks[["starts"]]) == 0 || length(chunks[["ends"]]) == 0) {
@@ -67,15 +72,22 @@ filter_chunk_end_positions <- function(starts, ends) {
   if (length_difference == 0 && all(ends > starts)) {
     return(ends)
   }
-  if (length_difference < 0) {
-    stop("Malformed file!", call. = FALSE)
-  }
 
   positions <- sort(c(starts = starts, ends = ends))
   code_start_indexes <- grep("starts", names(positions))
-  code_ends <- positions[1 + code_start_indexes]
 
-  stopifnot(all(grepl("ends", names(code_ends))))
+  code_ends <- positions[pmin(1 + code_start_indexes, length(positions))]
+
+  bad_end_indexes <- which(grepl("starts", names(code_ends)))
+  if (length(bad_end_indexes)) {
+    bad_start_positions <- positions[code_start_indexes[bad_end_indexes]]
+    # This error message is formatted like a parse error
+    stop(sprintf(
+      "<rmd>:%1$d:1: Missing chunk end for chunk (maybe starting at line %1$d).\n",
+      bad_start_positions[1L]
+    ), call. = FALSE)
+  }
+
   code_ends
 }
 

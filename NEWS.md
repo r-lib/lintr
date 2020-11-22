@@ -15,6 +15,7 @@
 * New `sprintf_linter()` (#544, #578, @renkun-ken)
 * Exclusions specified in the `.lintr` file are now relative to the location of that file 
   and support excluding entire directories (#158, #438, @AshesITR)
+* Malformed Rmd files now cause a lint instead of an error (#571, @AshesITR)
 
 # lintr 2.0.1
 
