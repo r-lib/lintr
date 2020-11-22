@@ -41,6 +41,7 @@
 #' @md
 get_source_expressions <- function(filename) {
   source_file <- srcfile(filename)
+  source_file$lines <- readLines(filename)
   terminal_newline <- TRUE
   source_file$lines <- withCallingHandlers(
     {
@@ -145,6 +146,36 @@ get_source_expressions <- function(filename) {
       type = "error",
       message = message_info$message,
       line = line,
+      linter = "error"
+    )
+  }
+
+  rmd_error <- function(e) {
+    message_info <- re_matches(e$message,
+      rex(except_some_of(":"),
+        ":",
+        capture(name = "line",
+          digits),
+        ":",
+        capture(name = "column",
+          digits),
+        ":",
+        space,
+        capture(name = "message",
+          anything),
+        "\n")
+      )
+
+    line_number <- as.integer(message_info$line)
+    column_number <- as.integer(message_info$column)
+
+    Lint(
+      filename = source_file$filename,
+      line_number = line_number,
+      column_number = column_number,
+      type = "error",
+      message = message_info$message,
+      line = source_file$lines[line_number],
       linter = "error"
     )
   }
