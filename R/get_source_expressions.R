@@ -41,7 +41,6 @@
 #' @md
 get_source_expressions <- function(filename) {
   source_file <- srcfile(filename)
-  source_file$lines <- readLines(filename)
   terminal_newline <- TRUE
   source_file$lines <- withCallingHandlers(
     {
