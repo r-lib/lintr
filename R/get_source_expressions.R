@@ -80,8 +80,8 @@ get_source_expressions <- function(filename) {
           anything,
           double_quotes, capture(name = "starting", anything), double_quotes))
 
-      line_location <- re_matches(source_file$content, rex(message_info$starting), locations = TRUE)
-      line_location <- line_location[complete.cases(line_location), ]
+      loc <- re_matches(source_file$content, rex(message_info$starting), locations = TRUE)
+      line_location <- loc[!is.na(loc$start) & !is.na(loc$end), ]
 
       if (nrow(line_location) == 0L) {
         if (grepl("attempt to use zero-length variable name", e$message, fixed = TRUE)) {
@@ -91,7 +91,7 @@ get_source_expressions <- function(filename) {
               list(or("(", ","), any_spaces, or("''", '""'), any_spaces, "=")),
             options = "multi-line",
             locations = TRUE)
-          loc <- loc[complete.cases(loc), ]
+          loc <- loc[!is.na(loc$start) & !is.na(loc$end), ]
           if (nrow(loc) > 0) {
             line_location <- loc[1, ]
           }
