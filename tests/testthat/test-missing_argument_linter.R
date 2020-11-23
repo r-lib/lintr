@@ -36,6 +36,10 @@ test_that("returns the correct linting", {
     list(message = rex("Missing argument in function call.")),
     missing_argument_linter())
 
+  expect_lint("f <- function(x, y) x\nf(, y = 1)\n",
+    list(line = "f(, y = 1)"),
+    missing_argument_linter())
+
   expect_lint("fun(a = 1,, b = 2)",
     list(message = rex("Missing argument in function call.")),
     missing_argument_linter())

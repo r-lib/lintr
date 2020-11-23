@@ -55,4 +55,8 @@ test_that("returns the correct linting", {
   expect_lint("stats:::sdd(c(1,2,3))",
     NULL,
     namespace_linter(check_nonexports = FALSE))
+
+  expect_lint("stats::sd(c(1,2,3))\nstats::sdd(c(1,2,3))",
+    list(line = "stats::sdd(c(1,2,3))"),
+    namespace_linter())
 })
