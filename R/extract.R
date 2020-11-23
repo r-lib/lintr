@@ -78,7 +78,7 @@ filter_chunk_end_positions <- function(starts, ends) {
 
   code_ends <- positions[pmin(1 + code_start_indexes, length(positions))]
 
-  bad_end_indexes <- which(grepl("starts", names(code_ends)))
+  bad_end_indexes <- which(grepl("starts", names(code_ends), fixed = TRUE))
   if (length(bad_end_indexes)) {
     bad_start_positions <- positions[code_start_indexes[bad_end_indexes]]
     # This error message is formatted like a parse error
