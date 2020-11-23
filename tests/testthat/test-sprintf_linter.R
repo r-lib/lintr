@@ -40,6 +40,10 @@ test_that("returns the correct linting", {
     NULL,
     sprintf_linter)
 
+  expect_lint("sprintf('hello %1$s %s', 'a', 'b')",
+    NULL,
+    sprintf_linter)
+
   expect_lint("sprintf('hello %1$s %1$s', x, y)",
     NULL,
     sprintf_linter)
