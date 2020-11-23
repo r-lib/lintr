@@ -28,13 +28,17 @@ sprintf_linter <- function(source_file) {
   line2 <- as.integer(xml2::xml_attr(sprintf_calls, "line2"))
   col2 <- as.integer(xml2::xml_attr(sprintf_calls, "col2"))
 
+  is_missing <- function(x) {
+    is.symbol(x) && !nzchar(x)
+  }
+
   result <- .mapply(function(line1, col1, line2, col2) {
     text <- get_range_text(source_file$file_lines, line1, col1, line2, col2)
     expr <- tryCatch(parse(text = text, keep.source = FALSE)[[1]], error = function(e) NULL)
     if (is.call(expr) && is.language(expr[[1]]) && is.character(expr[[2]])) {
       if (length(expr) >= 3) {
         for (i in 3:length(expr)) {
-          if (!is.atomic(expr[[i]])) {
+          if (!is_missing(expr[[i]]) && !is.atomic(expr[[i]])) {
             expr[[i]] <- 0
           }
         }
