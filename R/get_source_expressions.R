@@ -53,8 +53,6 @@ get_source_expressions <- function(filename) {
       }
     }
   )
-  source_file$lines <- extract_r_source(source_file$filename, source_file$lines)
-  source_file$content <- get_content(source_file$lines)
 
   lint_error <- function(e) {
     message_info <- re_matches(e$message,
@@ -180,6 +178,8 @@ get_source_expressions <- function(filename) {
   }
 
   e <- NULL
+  source_file$lines <- extract_r_source(source_file$filename, source_file$lines, error = rmd_error)
+  source_file$content <- get_content(source_file$lines)
   parsed_content <- get_source_file(source_file, error = lint_error)
   tree <- generate_tree(parsed_content)
 
