@@ -14,13 +14,10 @@ sprintf_linter <- function(source_file) {
   sprintf_calls <- xml2::xml_find_all(xml, xpath)
 
   get_range_text <- function(content, line1, col1, line2, col2) {
-    text <- content[line1:line2]
-    text[[1]] <- substr(text[[1]], col1, nchar(text[[1]]))
-    if (line2 > line1) {
-      nlines <- length(text)
-      text[[nlines]] <- substr(text[[nlines]], col2, nchar(text[[nlines]]))
-    }
-    text
+    lines <- content[line1:line2]
+    lines[length(lines)] <- substr(lines[length(lines)], 1L, col2)
+    lines[1] <- substr(lines[1], col1, nchar(lines[1]))
+    lines
   }
 
   line1 <- as.integer(xml2::xml_attr(sprintf_calls, "line1"))
