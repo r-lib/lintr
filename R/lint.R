@@ -245,11 +245,13 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
 #'   )
 #' }
 #' @export
-lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = list("R/RcppExports.R")) {
+lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = list("R/RcppExports.R"), parse_settings = TRUE) {
   path <- find_package(path)
 
-  read_settings(path)
-  on.exit(clear_settings, add = TRUE)
+  if (parse_settings) {
+    read_settings(path)
+    on.exit(clear_settings, add = TRUE)
+  }
 
   exclusions <- normalize_exclusions(
     c(exclusions, settings$exclusions),

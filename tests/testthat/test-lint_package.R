@@ -26,16 +26,17 @@ test_that(
     # from jkl.R
     "jkl = 456", "mno = 789"
   )
+  read_settings(NULL)
   lints_from_outside <- lint_package(
-    pkg_path, linters = list(assignment_linter)
+    pkg_path, linters = list(assignment_linter), parse_settings = FALSE
   )
   lints_from_pkg_root <- withr::with_dir(
     pkg_path,
-    lint_package(".", linters = list(assignment_linter))
+    lint_package(".", linters = list(assignment_linter), parse_settings = FALSE)
   )
   lints_from_a_subdir <- withr::with_dir(
     file.path(pkg_path, "R"),
-    lint_package("..", linters = list(assignment_linter))
+    lint_package("..", linters = list(assignment_linter), parse_settings = FALSE)
   )
 
   expect_equal(

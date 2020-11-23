@@ -1,10 +1,10 @@
 context("directory linters")
 
 test_that("lint all files in a directory", {
-  the_dir <- "package/vignettes"
+  the_dir <- file.path("dummy_packages", "package", "vignettes")
   files <- list.files(the_dir)
 
-  lints <- lint_dir(the_dir)
+  lints <- lint_dir(the_dir, parse_settings = FALSE)
   linted_files <- unique(names(lints))
 
   expect_s3_class(lints, "lints")
@@ -12,13 +12,14 @@ test_that("lint all files in a directory", {
 })
 
 test_that("lint all relevant directories in a package", {
-  the_pkg <- "package"
+  the_pkg <- file.path("dummy_packages", "package")
   files <- setdiff(
     list.files(the_pkg, recursive = TRUE),
     c("package.Rproj", "DESCRIPTION", "NAMESPACE")
   )
 
-  lints <- lint_package(the_pkg)
+  read_settings(NULL)
+  lints <- lint_package(the_pkg, parse_settings = FALSE)
   linted_files <- unique(names(lints))
 
   # lintr paths contain backslash on windows, list.files uses forward slash.
