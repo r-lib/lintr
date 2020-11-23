@@ -28,6 +28,10 @@ test_that("returns the correct linting", {
     list(message = rex("Package 'statts' is not installed.")),
     missing_package_linter)
 
+  expect_lint("library(utils)\nlibrary(statts)\n",
+    list(line = "library(statts)"),
+    missing_package_linter)
+
   expect_lint("library(statts, quietly = TRUE)",
     list(message = rex("Package 'statts' is not installed.")),
     missing_package_linter)
