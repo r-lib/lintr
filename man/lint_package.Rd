@@ -8,7 +8,8 @@ lint_package(
   path = ".",
   relative_path = TRUE,
   ...,
-  exclusions = list("R/RcppExports.R")
+  exclusions = list("R/RcppExports.R"),
+  parse_settings = TRUE
 )
 }
 \arguments{
@@ -24,6 +25,8 @@ absolute path.}
 
 \item{exclusions}{exclusions for \code{\link{exclude}}, relative to the
 package path.}
+
+\item{parse_settings}{whether to try and parse the settings}
 }
 \value{
 A list of lint objects.
