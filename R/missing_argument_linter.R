@@ -4,7 +4,7 @@
 missing_argument_linter <- function(except = c("switch", "alist")) {
   function(source_file) {
 
-    if (!length(source_file$parsed_content) || is.null(source_file$xml_parsed_content)) return(list())
+    if (!length(source_file$full_parsed_content) || is.null(source_file$xml_parsed_content)) return(list())
 
     xml <- source_file$xml_parsed_content
 
@@ -31,7 +31,7 @@ missing_argument_linter <- function(except = c("switch", "alist")) {
           column_number = col1[[i]],
           type = "warning",
           message = "Missing argument in function call.",
-          line = source_file$lines[line1[[i]]],
+          line = source_file$file_lines[line1[[i]]],
           ranges = list(c(col1[[i]], col2[[i]])),
           linter = "missing_argument_linter"
         )
