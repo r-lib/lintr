@@ -29,7 +29,7 @@ sprintf_linter <- function(source_file) {
   col2 <- as.integer(xml2::xml_attr(sprintf_calls, "col2"))
 
   result <- .mapply(function(line1, col1, line2, col2) {
-    text <- get_range_text(source_file$content, line1, col1, line2, col2)
+    text <- get_range_text(source_file$file_lines, line1, col1, line2, col2)
     expr <- tryCatch(parse(text = text, keep.source = FALSE)[[1]], error = function(e) NULL)
     if (is.call(expr) && is.language(expr[[1]]) && is.character(expr[[2]])) {
       if (length(expr) >= 3) {
@@ -48,7 +48,7 @@ sprintf_linter <- function(source_file) {
           column_number = col1,
           type = "warning",
           message = conditionMessage(res),
-          line = source_file$content[line1],
+          line = source_file$file_lines[line1],
           ranges = list(c(col1, col2)),
           linter = "sprintf_linter"
         )
