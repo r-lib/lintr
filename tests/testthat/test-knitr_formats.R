@@ -104,10 +104,59 @@ test_that("it does _not_ error with inline \\Sexpr", {
   )
 })
 
-test_that("it does error with malformed input", {
+test_that("it does lint with malformed input", {
   expect_lint(
     file = "knitr_malformed/incomplete_r_block.Rmd",
     checks = "Missing chunk end",
     default_linters
   )
+
+  contents <- c(
+    paste(
+      "```{r chunk}",
+      "lm(x ~ y)",
+      "",
+      "",
+      "# some text",
+      "",
+      "```",
+      "bash some_script.sh",
+      "```",
+      sep = "\n"
+    ),
+    paste(
+      "```{r chunk-1}",
+      "code <- 42",
+      "",
+      "# A heading",
+      "Some text",
+      "",
+      "```{r chunk-2}",
+      "some_more_code <- 42",
+      "```",
+      sep = "\n"
+    ),
+    paste(
+      "```{r chunk-1}",
+      "code <- 42",
+      "```",
+      "",
+      "# A heading",
+      "Some text",
+      "",
+      "```{r chunk-2}",
+      "some_more_code <- 42",
+      sep = "\n"
+    )
+  )
+
+  expected <- list(
+    NULL, # This test case would require parsing all chunk fences, not just r chunks.
+    "maybe starting at line 1",
+    "maybe starting at line 8"
+  )
+
+  for (i in seq_along(contents)) {
+    expect_lint(contents[[i]], expected[[i]], linters = list())
+  }
 })
