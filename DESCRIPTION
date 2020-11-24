@@ -83,6 +83,7 @@ Collate:
     'single_quotes_linter.R'
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'
+    'sprintf_linter.R'
     'trailing_blank_lines_linter.R'
     'trailing_whitespace_linter.R'
     'tree-utils.R'
