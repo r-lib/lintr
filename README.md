@@ -72,6 +72,8 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
   spaces directly inside them.
 * `spaces_left_parentheses_linter`: check that all left parentheses have a space before them
   unless they are in a function call.
+* `sprintf_linter`: check that the numbers of arguments are correct and types of arguments are compatible in
+  `sprintf("string", ...)` calls.
 * `todo_comment_linter`: check that the source contains no TODO comments (case-insensitive).
 * `trailing_blank_lines_linter`: check there are no trailing blank lines.
 * `trailing_whitespace_linter`: check there are no trailing whitespace characters.
