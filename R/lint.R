@@ -241,7 +241,7 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
 #'   lint_package(
 #'     linters = with_defaults(semicolon_linter = semicolon_terminator_linter())
 #'     cache = TRUE,
-#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "data")
+#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
 #'   )
 #' }
 #' @export
