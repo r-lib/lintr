@@ -41,12 +41,13 @@ get_num_concat_args <- function(token_num, tokens) {
   if (tokens[token_num, "text"] == "c" &&
       tokens[open_paren_num, "token"] == "'('") {
     token_args <- get_tokens_in_parentheses(open_paren_num, tokens)
+    preceding_pipe <- check_for_pipe(token_num, tokens)
     num_token_args <- nrow(token_args)
     if (!num_token_args) {
-      0L
+      0L + preceding_pipe
     } else if (num_token_args == 1L) {
       if (token_args[1L, "token"] %in% c("STR_CONST", "NUM_CONST", "NULL_CONST")) {
-        1L
+        1L + preceding_pipe
       } else {
         2L
       }
@@ -90,4 +91,16 @@ get_sibling_tokens <- function(child, tokens) {
 
 filter_out_token_type <- function(tokens, type) {
   tokens[tokens[["token"]] != type, ]
+}
+
+
+check_for_pipe <- function(token_num, tokens) {
+  # Checks for concatenation in a magrittr pipeline. If found the argument
+  # count should be incremented by one, thanks to magrittr's implicit first
+  # argument.
+  if (token_num < 2) {
+    0L
+  } else {
+    as.integer(tokens$text[token_num - 1] == "%>%")
+  }
 }
