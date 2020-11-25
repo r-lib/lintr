@@ -127,7 +127,10 @@ trailing_blank_lines_linter(source_file)
 
 trailing_whitespace_linter(source_file)
 
-undesirable_function_linter(fun = default_undesirable_functions)
+undesirable_function_linter(
+  fun = default_undesirable_functions,
+  symbol_is_undesirable = TRUE
+)
 
 undesirable_operator_linter(op = default_undesirable_operators)
 
@@ -165,8 +168,12 @@ match at least one of these styles.}
   \item{trailing}{Semicolons following the last statement on the line.}
 }}
 
-\item{fun}{Named character vector, where the names are the names of the undesirable functions,
-and the values are the text for the alternative function to use (or \code{NA}).}
+\item{fun}{Named character vector, where the names are the names of the
+undesirable functions, and the values are the text for the alternative
+function to use (or \code{NA}).}
+
+\item{symbol_is_undesirable}{Whether to consider the use of an undesirable
+function name as a symbol undesirable or not.}
 
 \item{op}{Named character vector, where the names are the names of the undesirable operators,
 and the values are the text for the alternative operator to use (or \code{NA}).}
@@ -270,8 +277,8 @@ arguments with incompatible types in \code{sprintf} calls.
 
 \item \code{trailing_whitespace_linter}: check there are no trailing whitespace characters.
 
-\item \code{undesirable_function_linter}: Report the use of undesirable functions, e.g. \code{return}, \code{options},
-or \code{sapply} and suggest an alternative.
+\item \code{undesirable_function_linter}: Report the use of undesirable functions, e.g.
+\code{return}, \code{options}, or \code{sapply} and suggest an alternative.
 
 \item \code{undesirable_operator_linter}: Report the use of undesirable operators, e.g. \code{`:::`} or \code{`<<-`}
 and suggest an alternative.
@@ -280,3 +287,31 @@ and suggest an alternative.
 single constant.
 }}
 
+\examples{
+\dontrun{
+x <- tempfile()
+
+lint_this <- function(this, ..., file) {
+  writeLines(this, con = file, sep = "\n")
+  lint(file, ...)
+}
+
+linter <- undesirable_function_linter(fun = c("dir" = NA))
+
+lints <- lint_this('dir(".")', linter, file = x)
+unclass(lints)
+
+lints <- lint_this('dir <- 1:3', linter, file = x)
+unclass(lints)
+
+linter <- undesirable_function_linter(
+  fun = c("dir" = NA),
+  symbol_is_undesirable = FALSE
+)
+
+lints <- lint_this('dir <- 1:3', linter, file = x)
+unclass(lints)
+
+unlink(x)
+}
+}

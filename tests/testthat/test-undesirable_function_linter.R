@@ -16,3 +16,11 @@ test_that("linter returns correct linting", {
               ),
               linter)
 })
+
+test_that("it's possible to NOT lint symbols", {
+  linter <- undesirable_function_linter(
+    fun = c("dir" = NA),
+    symbol_is_undesirable = FALSE
+  )
+  expect_lint("dir <- 1:3", NULL, linter)
+})
