@@ -11,6 +11,10 @@ test_that("it returns the input trimmed strictly to max if no lints found", {
 
 test_that("it returns the input trimmed to the last full lint if one exists within the max", {
   t1 <- readChar(test_path("lints"), file.size(test_path("lints")))
+  if (.Platform$OS.type == "windows") {
+    # Magic numbers expect newlines to be 1 character
+    t1 <- gsub("\\r\\n", "\\n", t1, fixed = TRUE)
+  }
   expect_equal(trim_output(t1, max = 200), substr(t1, 1, 195))
 
   expect_equal(trim_output(t1, max = 400), substr(t1, 1, 380))
