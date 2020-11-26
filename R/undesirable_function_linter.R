@@ -5,25 +5,6 @@
 #'   function to use (or \code{NA}).
 #' @param symbol_is_undesirable Whether to consider the use of an undesirable
 #'   function name as a symbol undesirable or not.
-#'
-#' @examples
-#' \dontrun{
-#' linter <- undesirable_function_linter(fun = c("dir" = NA))
-#'
-#' lints <- lint('dir(".")\n', linter)
-#' unclass(lints)
-#'
-#' lints <- lint('dir <- 1:3\n', linter)
-#' unclass(lints)
-#'
-#' linter <- undesirable_function_linter(
-#'   fun = c("dir" = NA),
-#'   symbol_is_undesirable = FALSE
-#' )
-#'
-#' lints <- lint('dir <- 1:3\n', linter)
-#' unclass(lints)
-#' }
 #' @export
 undesirable_function_linter <- function(fun=default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {

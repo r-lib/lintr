@@ -287,22 +287,3 @@ and suggest an alternative.
 single constant.
 }}
 
-\examples{
-\dontrun{
-linter <- undesirable_function_linter(fun = c("dir" = NA))
-
-lints <- lint('dir(".")\n', linter)
-unclass(lints)
-
-lints <- lint('dir <- 1:3\n', linter)
-unclass(lints)
-
-linter <- undesirable_function_linter(
-  fun = c("dir" = NA),
-  symbol_is_undesirable = FALSE
-)
-
-lints <- lint('dir <- 1:3\n', linter)
-unclass(lints)
-}
-}
