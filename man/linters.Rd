@@ -289,19 +289,12 @@ single constant.
 
 \examples{
 \dontrun{
-x <- tempfile()
-
-lint_this <- function(this, ..., file) {
-  writeLines(this, con = file, sep = "\n")
-  lint(file, ...)
-}
-
 linter <- undesirable_function_linter(fun = c("dir" = NA))
 
-lints <- lint_this('dir(".")', linter, file = x)
+lints <- lint('dir(".")\n', linter)
 unclass(lints)
 
-lints <- lint_this('dir <- 1:3', linter, file = x)
+lints <- lint('dir <- 1:3\n', linter)
 unclass(lints)
 
 linter <- undesirable_function_linter(
@@ -309,9 +302,7 @@ linter <- undesirable_function_linter(
   symbol_is_undesirable = FALSE
 )
 
-lints <- lint_this('dir <- 1:3', linter, file = x)
+lints <- lint('dir <- 1:3\n', linter)
 unclass(lints)
-
-unlink(x)
 }
 }
