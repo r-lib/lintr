@@ -30,12 +30,12 @@ undesirable_function_linter <- function(fun=default_undesirable_functions,
   stopifnot(is.logical(symbol_is_undesirable))
   function(source_file) {
     if (symbol_is_undesirable) {
-      ids <- ids_with_token(source_file, c("SYMBOL_FUNCTION_CALL", "SYMBOL"), fun=`%in%`)
+      vals <- c("SYMBOL_FUNCTION_CALL", "SYMBOL")
     } else {
-      ids <- ids_with_token(source_file, "SYMBOL_FUNCTION_CALL")
+      vals <- "SYMBOL_FUNCTION_CALL"
     }
     lapply(
-      ids,
+      ids_with_token(source_file, vals, fun = `%in%`),
       function(id) {
         token <- with_id(source_file, id)
         fun_name <- token[["text"]]
