@@ -23,4 +23,10 @@ test_that("it's possible to NOT lint symbols", {
     symbol_is_undesirable = FALSE
   )
   expect_lint("dir <- 1:3", NULL, linter)
+
+  linter <- undesirable_function_linter(
+    fun = c("log10" = "use log()"),
+    symbol_is_undesirable = FALSE
+  )
+  expect_lint("lapply(x, log10)", NULL, linter)
 })
