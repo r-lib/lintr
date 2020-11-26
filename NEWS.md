@@ -13,6 +13,8 @@
 * Fix handling zero-length variable name error (#566, #567, @renkun-ken)
 * New `missing_argument_linter()` (#563, #565, @renkun-ken)
 * New `sprintf_linter()` (#544, #578, @renkun-ken)
+* Exclusions specified in the `.lintr` file are now relative to the location of that file 
+  and support excluding entire directories (#158, #438, @AshesITR)
 
 # lintr 2.0.1
 
