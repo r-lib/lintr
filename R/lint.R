@@ -28,7 +28,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   if (inline_data) {
     content <- gsub("\n$", "", filename)
     filename <- tempfile()
-    on.exit(unlink(filename))
+    on.exit(unlink(filename), add = TRUE)
     writeLines(text = content, con = filename, sep = "\n")
   }
 
