@@ -30,7 +30,8 @@ Imports:
     xmlparsedata (>= 1.0.3)
 Suggests:
     rmarkdown,
-    mockery
+    mockery,
+    withr
 License: MIT + file LICENSE
 LazyData: true
 Encoding: UTF-8
@@ -82,6 +83,7 @@ Collate:
     'single_quotes_linter.R'
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'
+    'sprintf_linter.R'
     'trailing_blank_lines_linter.R'
     'trailing_whitespace_linter.R'
     'tree-utils.R'
