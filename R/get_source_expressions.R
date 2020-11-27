@@ -80,7 +80,35 @@ get_source_expressions <- function(filename) {
           anything,
           double_quotes, capture(name = "starting", anything), double_quotes))
 
-      line_location <- re_matches(source_file$content, rex(message_info$starting), locations = TRUE)
+      loc <- re_matches(source_file$content, rex(message_info$starting), locations = TRUE)
+      line_location <- loc[!is.na(loc$start) & !is.na(loc$end), ]
+
+      if (nrow(line_location) == 0L) {
+        if (grepl("attempt to use zero-length variable name", e$message, fixed = TRUE)) {
+          # empty symbol: ``, ``(), ''(), ""(), fun(''=42), fun(""=42), fun(a=1,""=42)
+          loc <- re_matches(source_file$content,
+            rex("``" %or% list(or("''", '""'), any_spaces, "(") %or%
+              list(or("(", ","), any_spaces, or("''", '""'), any_spaces, "=")),
+            options = "multi-line",
+            locations = TRUE)
+          loc <- loc[!is.na(loc$start) & !is.na(loc$end), ]
+          if (nrow(loc) > 0) {
+            line_location <- loc[1, ]
+          }
+        } else {
+          return(
+            Lint(
+              filename = source_file$filename,
+              line_number = 1,
+              column_number = 1,
+              type = "error",
+              message = e$message,
+              line = "",
+              linter = "error"
+            )
+          )
+        }
+      }
 
       line_number <- find_line_fun(source_file$content)(line_location$start)
       column_number <- find_column_fun(source_file$content)(line_location$start)

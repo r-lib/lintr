@@ -8,9 +8,9 @@ Authors@R: c(
     )
 URL: https://github.com/jimhester/lintr
 BugReports: https://github.com/jimhester/lintr/issues
-Description: Checks adherence to a given style, syntax errors and possible
-    semantic issues.  Supports on the fly checking of R code edited with 'RStudio IDE', 'Emacs',
-    'Vim', 'Sublime Text', 'Atom' and 'Visual Studio Code'
+Description: Checks adherence to a given style, syntax errors and possible semantic issues.
+    Supports on the fly checking of R code edited with 'RStudio IDE', 'Emacs', 'Vim', 'Sublime Text',
+    'Atom' and 'Visual Studio Code'.
 Depends:
     R (>= 3.2)
 Imports:
@@ -30,7 +30,8 @@ Imports:
     xmlparsedata (>= 1.0.3)
 Suggests:
     rmarkdown,
-    mockery
+    mockery,
+    withr
 License: MIT + file LICENSE
 LazyData: true
 Encoding: UTF-8
@@ -66,6 +67,7 @@ Collate:
     'line_length_linter.R'
     'lint.R'
     'methods.R'
+    'missing_argument_linter.R'
     'missing_package_linter.R'
     'namespace.R'
     'namespace_linter.R'
@@ -81,6 +83,7 @@ Collate:
     'single_quotes_linter.R'
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'
+    'sprintf_linter.R'
     'trailing_blank_lines_linter.R'
     'trailing_whitespace_linter.R'
     'tree-utils.R'

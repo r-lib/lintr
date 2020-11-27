@@ -5,14 +5,16 @@
 %   R/cyclocomp_linter.R, R/object_name_linters.R, R/deprecated.R,
 %   R/equals_na_lintr.R, R/extraction_operator_linter.R,
 %   R/function_left_parentheses.R, R/implicit_integer_linter.R,
-%   R/infix_spaces_linter.R, R/line_length_linter.R, R/missing_package_linter.R,
+%   R/infix_spaces_linter.R, R/line_length_linter.R,
+%   R/missing_argument_linter.R, R/missing_package_linter.R,
 %   R/namespace_linter.R, R/no_tab_linter.R, R/object_usage_linter.R,
 %   R/open_curly_linter.R, R/paren_brace_linter.R, R/path_linters.R,
 %   R/pipe_continuation_linter.R, R/semicolon_terminator_linter.R,
 %   R/seq_linter.R, R/single_quotes_linter.R, R/spaces_inside_linter.R,
-%   R/spaces_left_parentheses_linter.R, R/trailing_blank_lines_linter.R,
-%   R/trailing_whitespace_linter.R, R/undesirable_function_linter.R,
-%   R/undesirable_operator_linter.R, R/unneeded_concatenation_linter.R
+%   R/spaces_left_parentheses_linter.R, R/sprintf_linter.R,
+%   R/trailing_blank_lines_linter.R, R/trailing_whitespace_linter.R,
+%   R/undesirable_function_linter.R, R/undesirable_operator_linter.R,
+%   R/unneeded_concatenation_linter.R
 \name{linters}
 \alias{linters}
 \alias{T_and_F_symbol_linter}
@@ -32,6 +34,7 @@
 \alias{implicit_integer_linter}
 \alias{infix_spaces_linter}
 \alias{line_length_linter}
+\alias{missing_argument_linter}
 \alias{missing_package_linter}
 \alias{namespace_linter}
 \alias{no_tab_linter}
@@ -46,6 +49,7 @@
 \alias{single_quotes_linter}
 \alias{spaces_inside_linter}
 \alias{spaces_left_parentheses_linter}
+\alias{sprintf_linter}
 \alias{trailing_blank_lines_linter}
 \alias{trailing_whitespace_linter}
 \alias{undesirable_function_linter}
@@ -87,6 +91,8 @@ infix_spaces_linter(source_file)
 
 line_length_linter(length)
 
+missing_argument_linter(except = c("switch", "alist"))
+
 missing_package_linter(source_file)
 
 namespace_linter(check_exports = TRUE, check_nonexports = TRUE)
@@ -115,6 +121,8 @@ spaces_inside_linter(source_file)
 
 spaces_left_parentheses_linter(source_file)
 
+sprintf_linter(source_file)
+
 trailing_blank_lines_linter(source_file)
 
 trailing_whitespace_linter(source_file)
@@ -141,6 +149,8 @@ this are linted, defaults to 25. See \code{\link[cyclocomp]{cyclocomp}}.}
 match at least one of these styles.}
 
 \item{length}{the length cutoff to use for the given linter.}
+
+\item{except}{a character vector of function names as exceptions.}
 
 \item{check_exports}{Check if \code{symbol} is exported from \code{namespace} in
 \code{namespace::symbol} calls.}
@@ -208,6 +218,8 @@ do not have spaces before them.
 \item \code{line_length_linter}: check the line length of both comments and code is less
 than length.
 
+\item \code{missing_argument_linter}: checks for missing arguments in function calls.
+
 \item \code{missing_package_linter}: checks for missing packages in \code{library()},
 \code{require()}, \code{loadNamespace()} and \code{requireNamespace()} calls.
 
@@ -250,6 +262,9 @@ spaces directly inside them.
 
 \item \code{spaces_left_parentheses_linter}: check that all left parentheses have a space before them
 unless they are in a function call.
+
+\item \code{sprintf_linter}: checks for inconsistent number of arguments or
+arguments with incompatible types in \code{sprintf} calls.
 
 \item \code{trailing_blank_lines_linter}: check there are no trailing blank lines.
 

@@ -9,7 +9,8 @@
 #' \item{single line in the source file. default: \code{# nolint}}
 #' \item{line range in the source file. default: \code{# nolint start}, \code{# nolint end}}
 #' \item{exclusions parameter, a named list of the files and lines to exclude, or just the filenames
-#' if you want to exclude the entire file.}
+#' if you want to exclude the entire file, or the directory names if you want to exclude all files
+#' in a directory.}
 #' }
 exclude <- function(lints, exclusions = settings$exclusions, ...) {
   if (length(lints) <= 0) {
@@ -71,7 +72,26 @@ parse_exclusions <- function(file, exclude = settings$exclude,
   sort(unique(c(exclusions, which(rex::re_matches(lines, exclude)))))
 }
 
-normalize_exclusions <- function(x, normalize_path=TRUE) {
+#' Normalize lint exclusions
+#'
+#' @param x Exclusion specification
+#'  - A character vector of filenames or directories relative to \code{root}
+#'  - A named list of integers specifying lines to be excluded per file
+#' @param normalize_path Should the names of the returned exclusion list be normalized paths?
+#' If no, they will be relative to \code{root}.
+#' @param root Base directory for relative filename resolution.
+#' @param pattern If non-NULL, only exclude files in excluded directories if they match
+#' \code{pattern}. Passed to \link[base]{list.files} if a directory is excluded.
+#'
+#' @return A named list of line numbers to exclude, or the sentinel \code{Inf} for completely
+#' excluded files. The names of the list specify the filenames to be excluded.
+#' If \code{normalize_path} is \code{TRUE}, they will be normalized relative to \code{root}.
+#' Otherwise the paths are left as provided (relative to \code{root} or absolute).
+#'
+#' @keywords internal
+normalize_exclusions <- function(x, normalize_path = TRUE,
+                                 root = getwd(),
+                                 pattern = NULL) {
   if (is.null(x) || length(x) <= 0) {
     return(list())
   }
@@ -101,8 +121,42 @@ normalize_exclusions <- function(x, normalize_path=TRUE) {
     }
   }
 
+  paths <- names(x)
+  rel_path <- !is_absolute_path(paths)
+  paths[rel_path] <- file.path(root, paths[rel_path])
+
+  is_dir <- dir.exists(paths)
+  if (any(is_dir)) {
+    dirs <- names(x)[is_dir]
+    x <- x[!is_dir]
+    all_file_names <- unlist(lapply(
+      dirs,
+      function(dir) {
+        dir_path <- if (is_absolute_path(dir)) dir else file.path(root, dir)
+        files <- list.files(
+          path = dir_path,
+          pattern = pattern,
+          recursive = TRUE
+        )
+        file.path(dir, files) # non-normalized relative paths
+      }
+    ))
+
+    # Only exclude file if there is no more specific exclusion already
+    all_file_names <- setdiff(all_file_names, names(x))
+
+    dir_exclusions <- as.list(rep_len(Inf, length(all_file_names)))
+    names(dir_exclusions) <- all_file_names
+    x <- c(x, dir_exclusions)
+  }
+
   if (normalize_path) {
-    x <- x[file.exists(names(x))]       # remove exclusions for non-existing files
+    paths <- names(x)
+    # specify relative paths w.r.t. root
+    rel_path <- !is_absolute_path(paths)
+    paths[rel_path] <- file.path(root, paths[rel_path])
+    names(x) <- paths
+    x <- x[file.exists(paths)]       # remove exclusions for non-existing files
     names(x) <- normalizePath(names(x)) # get full path for remaining files
   }
 
