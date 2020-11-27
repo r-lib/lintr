@@ -29,11 +29,9 @@ object_usage_linter <-  function(source_file) {
   symbols <- get_assignment_symbols(source_file$xml_parsed_content)
 
   # Just assign them an empty function
-  for(symbol in symbols) {
+  for (symbol in symbols) {
     assign(symbol, function(...) invisible(), envir = env)
   }
-
-  all_globals <- unique(recursive_ls(env))
 
   fun_info <- get_function_assignments(source_file$xml_parsed_content)
 
@@ -128,7 +126,7 @@ parse_check_usage <- function(expression) {
 
   vals <- list()
 
-  report <- function (x) {
+  report <- function(x) {
     vals[[length(vals) + 1L]] <<- x
   }
 
