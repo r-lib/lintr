@@ -34,7 +34,12 @@ read_settings <- function(filename) {
   for (setting in names(default_settings)) {
     value <- get_setting(setting, config, default_settings)
     if (setting == "exclusions") {
-      value <- normalize_exclusions(value)
+      if (!is.null(config_file)) {
+        root <- dirname(config_file)
+      } else {
+        root <- getwd()
+      }
+      value <- normalize_exclusions(value, root = root)
     }
 
     settings[[setting]] <- value
