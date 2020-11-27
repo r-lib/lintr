@@ -2,7 +2,7 @@ linters: with_defaults(
    line_length_linter = line_length_linter(160), # TODO reduce to 120
    infix_spaces_linter = NULL, # TODO enable
    commented_code_linter = NULL, # TODO enable
-   cyclocomp_linter = NULL, # TODO enable
+   cyclocomp_linter = cyclocomp_linter(29), # TODO reduce to 15
    open_curly_linter = NULL, # TODO enable
    object_name_linter = NULL, # TODO enable
    spaces_inside_linter = NULL, # TODO enable
