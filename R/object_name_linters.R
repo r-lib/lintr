@@ -23,7 +23,7 @@ object_name_linter <- function(styles = "snake_case") {
     "Variable and function name style should be ", .or_string(styles), "."
   )
 
-  function (source_file) {
+  function(source_file) {
     x <- global_xml_parsed_content(source_file)
     if (is.null(x)) {
       return()
@@ -120,7 +120,7 @@ make_object_linter <- function(fun) {
     token_nums <- ids_with_token(
       source_file, rex(start, "SYMBOL" %if_next_isnt% "_SUB"), fun=re_matches
     )
-    if(length(token_nums) == 0){
+    if (length(token_nums) == 0) {
       return(list())
     }
     tokens <- with_id(source_file, token_nums)
@@ -136,7 +136,6 @@ make_object_linter <- function(fun) {
       keep_indices,
       function(i) {
         token <- tokens[i, ]
-        name <- names[i]
         if (is_declared_here(token, source_file) &&
             !is_external_reference(source_file, token[["id"]])) {
           fun(source_file, token)

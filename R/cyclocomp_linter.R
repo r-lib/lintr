@@ -22,7 +22,7 @@ cyclocomp_linter <- function(complexity_limit = 25) {
       type = "style",
       message = paste0(
         "functions should have cyclomatic complexity of less than ",
-        complexity_limit, ", this has ", complexity,"."
+        complexity_limit, ", this has ", complexity, "."
       ),
       ranges = list(c(source_file[["column"]][1], source_file[["column"]][1])),
       line = source_file$lines[1],
