@@ -112,42 +112,39 @@ test_that("it does lint with malformed input", {
   )
 
   contents <- c(
-    paste(
-      "```{r chunk}",
-      "lm(x ~ y)",
-      "",
-      "",
-      "# some text",
-      "",
-      "```",
-      "bash some_script.sh",
-      "```",
-      sep = "\n"
-    ),
-    paste(
-      "```{r chunk-1}",
-      "code <- 42",
-      "",
-      "# A heading",
-      "Some text",
-      "",
-      "```{r chunk-2}",
-      "some_more_code <- 42",
-      "```",
-      sep = "\n"
-    ),
-    paste(
-      "```{r chunk-1}",
-      "code <- 42",
-      "```",
-      "",
-      "# A heading",
-      "Some text",
-      "",
-      "```{r chunk-2}",
-      "some_more_code <- 42",
-      sep = "\n"
-    )
+    trim_some("
+      ```{r chunk}
+      lm(x ~ y)
+
+
+      # some text
+
+      ```
+      bash some_script.sh
+      ```
+    "),
+    trim_some("
+      ```{r chunk-1}
+      code <- 42
+
+      # A heading
+      Some text
+
+      ```{r chunk-2}
+      some_more_code <- 42
+      ```
+    "),
+    trim_some("
+      ```{r chunk-1}
+      code <- 42
+      ```
+
+      # A heading
+      Some text
+
+      ```{r chunk-2}
+      some_more_code <- 42
+    ")
   )
 
   expected <- list(
