@@ -144,15 +144,9 @@ trim_ws <- function(x) {
   attr(x, name, exact = TRUE)
 }
 
-global_parsed_content <- function(source_file) {
-  if (exists("file_lines", source_file)) {
-    source_file$parsed_content
-  }
-}
-
 global_xml_parsed_content <- function(source_file) {
   if (exists("file_lines", source_file)) {
-    source_file$xml_parsed_content
+    source_file$full_xml_parsed_content
   }
 }
 
