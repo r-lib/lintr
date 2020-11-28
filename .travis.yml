@@ -9,9 +9,7 @@ addons:
     packages:
       libicu-dev
 
-r_github_packages:
-  - jimhester/covr
-  - jimhester/lintr
+r_github_packages: jimhester/covr
 
 matrix:
   include:
