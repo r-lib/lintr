@@ -4,9 +4,9 @@
 missing_argument_linter <- function(except = c("switch", "alist")) {
   function(source_file) {
 
-    if (is.null(source_file$xml_parsed_content)) return(list())
+    if (is.null(source_file$full_xml_parsed_content)) return(list())
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_file$full_xml_parsed_content
 
     xpath <- "//expr[expr[SYMBOL_FUNCTION_CALL]]/*[
       self::OP-COMMA[preceding-sibling::*[1][self::OP-LEFT-PAREN or self::OP-COMMA]] or
