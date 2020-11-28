@@ -22,6 +22,8 @@
 #' @param language temporarily override Rs \code{LANGUAGE} envvar, controlling localisation of base
 #' R error messages. This makes testing them reproducible on all systems irrespective of their
 #' native R language setting.
+#' @param parse_settings whether to try and parse the settings. Defaults to \code{FALSE} to make the test independent
+#' from the enclosing \code{.lintr} configuration.
 #' @return \code{NULL}, invisibly.
 #' @examples
 #' # no expected lint
@@ -38,7 +40,7 @@
 #'   list(list(message="superfluous", line_number=2), list(message="superfluous", line_number=3)),
 #'   trailing_blank_lines_linter)
 #' @export
-expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
+expect_lint <- function(content, checks, ..., file = NULL, language = "en", parse_settings = FALSE) {
   oldlang <- Sys.getenv("LANGUAGE")
   Sys.setenv(LANGUAGE = language)
   on.exit(Sys.setenv(LANGUAGE = oldlang))
@@ -49,7 +51,11 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
     writeLines(content, con = file, sep = "\n")
   }
 
-  lints <- lint(file, ...)
+  if (!parse_settings) {
+    read_settings(NULL)
+  }
+
+  lints <- lint(file, ..., parse_settings = parse_settings)
   n_lints <- length(lints)
   lint_str <- if (n_lints) {paste0(c("", lints), collapse="\n")} else {""}
 

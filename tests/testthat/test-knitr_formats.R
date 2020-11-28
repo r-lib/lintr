@@ -27,8 +27,7 @@ test_that("it handles markdown", {
       list(regexes[["assign"]], line_number = 22),
       list(regexes[["trailing"]], line_number = 24)
     ),
-    default_linters,
-    parse_settings = FALSE
+    default_linters
   )
 })
 
@@ -40,8 +39,7 @@ test_that("it handles Sweave", {
       list(regexes[["assign"]], line_number = 24),
       list(regexes[["trailing"]], line_number = 26)
     ),
-    default_linters,
-    parse_settings = FALSE
+    default_linters
   )
 })
 
@@ -53,8 +51,7 @@ test_that("it handles reStructuredText", {
       list(regexes[["assign"]], line_number = 23),
       list(regexes[["trailing"]], line_number = 25)
     ),
-    default_linters,
-    parse_settings = FALSE
+    default_linters
   )
 })
 
@@ -66,8 +63,7 @@ test_that("it handles HTML", {
       list(regexes[["assign"]], line_number = 27),
       list(regexes[["trailing"]], line_number = 29)
     ),
-    default_linters,
-    parse_settings = FALSE
+    default_linters
   )
 })
 
@@ -79,8 +75,7 @@ test_that("it handles tex", {
       list(regexes[["assign"]], line_number = 23),
       list(regexes[["trailing"]], line_number = 25)
     ),
-    default_linters,
-    parse_settings = FALSE
+    default_linters
   )
 })
 
@@ -92,8 +87,7 @@ test_that("it handles asciidoc", {
       list(regexes[["assign"]], line_number = 22),
       list(regexes[["trailing"]], line_number = 24)
     ),
-    default_linters,
-    parse_settings = FALSE
+    default_linters
   )
 })
 
@@ -103,8 +97,7 @@ test_that("it does _not_ handle brew", {
       regexes[["quotes"]],
       regexes[["trailing"]]
     ),
-    default_linters,
-    parse_settings = FALSE
+    default_linters
   )
 })
 

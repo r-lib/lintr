@@ -4,7 +4,14 @@
 \alias{expect_lint}
 \title{Lint expectation}
 \usage{
-expect_lint(content, checks, ..., file = NULL, language = "en")
+expect_lint(
+  content,
+  checks,
+  ...,
+  file = NULL,
+  language = "en",
+  parse_settings = FALSE
+)
 }
 \arguments{
 \item{content}{a character vector for the file content to be linted, each vector element
@@ -30,6 +37,9 @@ is not recommended for new code.}
 \item{language}{temporarily override Rs \code{LANGUAGE} envvar, controlling localisation of base
 R error messages. This makes testing them reproducible on all systems irrespective of their
 native R language setting.}
+
+\item{parse_settings}{whether to try and parse the settings. Defaults to \code{FALSE} to make the test independent
+from the enclosing \code{.lintr} configuration.}
 }
 \value{
 \code{NULL}, invisibly.
