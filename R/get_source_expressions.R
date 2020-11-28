@@ -169,7 +169,7 @@ get_source_expressions <- function(filename) {
       file_lines = source_file$lines,
       content = source_file$lines,
       full_parsed_content = parsed_content,
-      full_xml_parsed_content = if (is.null(parsed_content)) NULL else safe_parse_to_xml(parsed_content),
+      full_xml_parsed_content = safe_parse_to_xml(parsed_content),
       terminal_newline = terminal_newline
     )
 

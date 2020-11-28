@@ -33,9 +33,8 @@ open_curly_linter <- function(allow_single_line = FALSE) {
 
              only_comment <- rex::re_matches(content_after, rex::rex(any_spaces, "#", something, end))
 
-             double_curly <-
-               rex::re_matches(content_after, rex::rex(start, "{")) ||
-                 rex::re_matches(content_before, rex::rex("{", end))
+             double_curly <- rex::re_matches(content_after, rex::rex(start, "{")) ||
+               rex::re_matches(content_before, rex::rex("{", end))
 
              if (double_curly) {
                return()

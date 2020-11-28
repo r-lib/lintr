@@ -111,6 +111,7 @@ recursive_ls <- function(env) {
 }
 
 safe_parse_to_xml <- function(parsed_content) {
+  if (is.null(parsed_content)) return(NULL)
   tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)), error = function(e) NULL)
 }
 

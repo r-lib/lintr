@@ -37,9 +37,8 @@ closed_curly_linter <- function(allow_single_line = FALSE) {
              content_after <- unname(substr(line, parsed$col1 + 1L, nchar(line)))
              content_before <- unname(substr(line, 1, parsed$col1 - 1L))
 
-             double_curly <-
-               rex::re_matches(content_after, rex::rex(start, "}")) ||
-                 rex::re_matches(content_before, rex::rex("}", end))
+             double_curly <- rex::re_matches(content_after, rex::rex(start, "}")) ||
+               rex::re_matches(content_before, rex::rex("}", end))
 
              if (double_curly) {
                return()
