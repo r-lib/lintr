@@ -240,6 +240,7 @@ is_base_function <- function(x) {
   x %in% base_funs
 }
 
+# see ?".onLoad" and ?"Startup"
 special_funs <- c(
   ".onLoad",
   ".onAttach",
