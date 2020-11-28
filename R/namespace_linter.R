@@ -8,9 +8,9 @@
 #' @export
 namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
   function(source_file) {
-    if (is.null(source_file$xml_parsed_content)) return(list())
+    if (is.null(source_file$full_xml_parsed_content)) return(list())
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_file$full_xml_parsed_content
 
     ns_nodes <- xml2::xml_find_all(xml, "//expr/*[self::NS_GET or self::NS_GET_INT]")
 
