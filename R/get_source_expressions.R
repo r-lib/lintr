@@ -169,7 +169,7 @@ get_source_expressions <- function(filename) {
       file_lines = source_file$lines,
       content = source_file$lines,
       full_parsed_content = parsed_content,
-      full_xml_parsed_content = if (!is.null(parsed_content)) tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)), error = function(e) NULL),
+      full_xml_parsed_content = if (is.null(parsed_content)) NULL else safe_parse_to_xml(parsed_content),
       terminal_newline = terminal_newline
     )
 
@@ -195,7 +195,7 @@ get_single_source_expression <- function(loc,
     column = parsed_content[loc, "col1"],
     lines = expr_lines,
     parsed_content = pc,
-    xml_parsed_content = tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(pc)), error = function(e) NULL),
+    xml_parsed_content = safe_parse_to_xml(pc),
     content = content,
     find_line = find_line_fun(content),
     find_column = find_column_fun(content)

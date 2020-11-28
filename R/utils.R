@@ -110,6 +110,10 @@ recursive_ls <- function(env) {
   }
 }
 
+safe_parse_to_xml <- function(parsed_content) {
+  tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)), error = function(e) NULL)
+}
+
 get_content <- function(lines, info) {
   lines[is.na(lines)] <- ""
 
