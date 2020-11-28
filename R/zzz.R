@@ -1,6 +1,6 @@
 named_list <- function(...) {
   nms <- re_substitutes(as.character(eval(substitute(alist(...)))),
-    rex("(", anything), "")
+                        rex("(", anything), "")
   vals <- list(...)
   names(vals) <- nms
   vals[!vapply(vals, is.null, logical(1))]
@@ -66,7 +66,7 @@ with_defaults <- function(..., default = default_linters) {
 
   res[] <- lapply(res, function(x) {
     prev_class <- class(x)
-    if (inherits(x, "function")) {
+    if (inherits(x, "function") && !inherits(x, "lintr_function")) {
       class(x) <- c(prev_class, "lintr_function")
     }
     x
@@ -82,7 +82,8 @@ str.lintr_function <- function(x, ...) {
 #'
 #' List of default linters for \code{\link{lint}}. Use \code{\link{with_defaults}} to customize it.
 #' @export
-default_linters <- with_defaults(default = list(),
+default_linters <- with_defaults(
+  default = list(),
   assignment_linter,
   closed_curly_linter(),
   commas_linter,
@@ -103,8 +104,10 @@ default_linters <- with_defaults(default = list(),
   single_quotes_linter,
   spaces_inside_linter,
   spaces_left_parentheses_linter,
+  T_and_F_symbol_linter,
   trailing_blank_lines_linter,
-  trailing_whitespace_linter)
+  trailing_whitespace_linter
+)
 
 #' Default undesirable functions and operators
 #'
@@ -115,63 +118,67 @@ default_linters <- with_defaults(default = list(),
 #' @rdname default_undesirable_functions
 #' @export
 all_undesirable_functions <- with_defaults(default = list(),
-  "attach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
-  "detach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
-  "ifelse" = "use an if () {} else {} block",
-  ".libPaths" = "use withr::with_libpaths()",
-  "library" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
-  "loadNamespace" = "use `::` or requireNamespace()",
-  "mapply" = "use Map()",
-  "options" = "use withr::with_options()",
-  "par" = "use withr::with_par()",
-  "require" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
-  "return" = "let the last value of a function automatically be returned",
-  "sapply" = "use vapply() or lapply()",
-  "setwd" = "use withr::with_dir()",
-  "sink" = "use withr::with_sink()",
-  "source" = NA,
-  "substring" = "use substr()",
-  "Sys.setenv" = "use withr::with_envvar()",
-  "Sys.setlocale" = "use withr::with_locale()"
+                                           "attach" = "use roxygen2's @importFrom statement in packages, or `::` in
+                                           scripts",
+                                           "detach" = "use roxygen2's @importFrom statement in packages, or `::` in
+                                           scripts",
+                                           "ifelse" = "use an if () {} else {} block",
+                                           ".libPaths" = "use withr::with_libpaths()",
+                                           "library" = "use roxygen2's @importFrom statement in packages, or `::` in
+                                           scripts",
+                                           "loadNamespace" = "use `::` or requireNamespace()",
+                                           "mapply" = "use Map()",
+                                           "options" = "use withr::with_options()",
+                                           "par" = "use withr::with_par()",
+                                           "require" = "use roxygen2's @importFrom statement in packages, or `::` in
+                                           scripts",
+                                           "return" = "let the last value of a function automatically be returned",
+                                           "sapply" = "use vapply() or lapply()",
+                                           "setwd" = "use withr::with_dir()",
+                                           "sink" = "use withr::with_sink()",
+                                           "source" = NA,
+                                           "substring" = "use substr()",
+                                           "Sys.setenv" = "use withr::with_envvar()",
+                                           "Sys.setlocale" = "use withr::with_locale()"
 )
 
 #' @rdname default_undesirable_functions
 #' @export
-default_undesirable_functions <- do.call(with_defaults, c(list(default=list()),
-  all_undesirable_functions[c(
-    "attach",
-    "detach",
-    ".libPaths",
-    "library",
-    "mapply",
-    "options",
-    "par",
-    "require",
-    "sapply",
-    "setwd",
-    "sink",
-    "source",
-    "Sys.setenv",
-    "Sys.setlocale"
-  )]
+default_undesirable_functions <- do.call(with_defaults, c(list(default = list()),
+                                                          all_undesirable_functions[c(
+                                                            "attach",
+                                                            "detach",
+                                                            ".libPaths",
+                                                            "library",
+                                                            "mapply",
+                                                            "options",
+                                                            "par",
+                                                            "require",
+                                                            "sapply",
+                                                            "setwd",
+                                                            "sink",
+                                                            "source",
+                                                            "Sys.setenv",
+                                                            "Sys.setlocale"
+                                                          )]
 ))
 
 #' @rdname default_undesirable_functions
 #' @export
 all_undesirable_operators <- with_defaults(default = list(),
-  ":::" = NA,
-  "<<-" = NA,
-  "->>" = NA
+                                           ":::" = NA,
+                                           "<<-" = NA,
+                                           "->>" = NA
 )
 
 #' @rdname default_undesirable_functions
 #' @export
-default_undesirable_operators <- do.call(with_defaults, c(list(default=list()),
-  all_undesirable_operators[c(
-    ":::",
-    "<<-",
-    "->>"
-  )]
+default_undesirable_operators <- do.call(with_defaults, c(list(default = list()),
+                                                          all_undesirable_operators[c(
+                                                            ":::",
+                                                            "<<-",
+                                                            "->>"
+                                                          )]
 ))
 
 
@@ -182,13 +189,13 @@ default_settings <- NULL
 
 settings <- NULL
 
-.onLoad <- function(libname, pkgname) { # nolint
+.onLoad <- function(libname, pkgname) { # nolint # TODO remove once #500 is fixed
   op <- options()
-  op.lintr <- list(
+  op_lintr <- list(
     lintr.linter_file = ".lintr"
   )
-  toset <- !(names(op.lintr) %in% names(op))
-  if (any(toset)) options(op.lintr[toset])
+  toset <- !(names(op_lintr) %in% names(op))
+  if (any(toset)) options(op_lintr[toset])
 
   default_settings <<- list(
     linters = default_linters,
@@ -196,7 +203,7 @@ settings <- NULL
     exclude_start = rex::rex("#", any_spaces, "nolint start"),
     exclude_end = rex::rex("#", any_spaces, "nolint end"),
     exclusions = list(),
-    cache_directory = "~/.R/lintr_cache", # nolint
+    cache_directory = "~/.R/lintr_cache",
     comment_token = Sys.getenv("GITHUB_TOKEN", unset = NA) %||% rot(
       paste0(
         "0n12nn72507",
