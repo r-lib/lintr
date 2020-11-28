@@ -195,6 +195,7 @@ is_external_reference <- function(source_file, id) {
   any(sibling_tokens %in% c("NS_GET", "NS_GET_INT"))
 }
 
+# via unlist(tools:::.get_standard_package_names(), use.names = FALSE)
 base_pkgs <- c(
   "base",
   "tools",
