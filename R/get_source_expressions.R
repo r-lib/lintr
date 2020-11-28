@@ -29,9 +29,8 @@
 #'           for .Rmd scripts, this is the extracted R source code (as text)}
 #'     \item{`full_parsed_content` (`data.frame`) as given by
 #'           [utils::getParseData()] for the full content}
-#'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of all
+#'     \item{`full_xml_parsed_content` (`xml_document`) the XML parse tree of all
 #'           expressions as given by [xmlparsedata::xml_parse_data()]}
-#'     \item{`is_full_file` (`TRUE`) records that this
 #'     \item{`terminal_newline` (`logical`) records whether `filename` has a terminal
 #'           newline (as determined by [readLines()] producing a corresponding warning)}
 #'   }
@@ -170,8 +169,7 @@ get_source_expressions <- function(filename) {
       file_lines = source_file$lines,
       content = source_file$lines,
       full_parsed_content = parsed_content,
-      xml_parsed_content = if (!is.null(parsed_content)) tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)), error = function(e) NULL),
-      is_full_file = TRUE,
+      full_xml_parsed_content = if (!is.null(parsed_content)) tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)), error = function(e) NULL),
       terminal_newline = terminal_newline
     )
 
@@ -200,8 +198,7 @@ get_single_source_expression <- function(loc,
     xml_parsed_content = tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(pc)), error = function(e) NULL),
     content = content,
     find_line = find_line_fun(content),
-    find_column = find_column_fun(content),
-    is_full_file = FALSE
+    find_column = find_column_fun(content)
   )
 }
 
