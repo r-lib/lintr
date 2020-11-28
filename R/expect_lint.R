@@ -40,7 +40,7 @@
 #'   list(list(message="superfluous", line_number=2), list(message="superfluous", line_number=3)),
 #'   trailing_blank_lines_linter)
 #' @export
-expect_lint <- function(content, checks, ..., file = NULL, language = "en", parse_settings = FALSE) {
+expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   oldlang <- Sys.getenv("LANGUAGE")
   Sys.setenv(LANGUAGE = language)
   on.exit(Sys.setenv(LANGUAGE = oldlang))
@@ -51,11 +51,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", pars
     writeLines(content, con = file, sep = "\n")
   }
 
-  if (!parse_settings) {
-    read_settings(NULL)
-  }
-
-  lints <- lint(file, ..., parse_settings = parse_settings)
+  lints <- lint(file, ...)
   n_lints <- length(lints)
   lint_str <- if (n_lints) {paste0(c("", lints), collapse="\n")} else {""}
 

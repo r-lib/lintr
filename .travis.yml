@@ -9,7 +9,9 @@ addons:
     packages:
       libicu-dev
 
-r_github_packages: jimhester/covr
+r_github_packages:
+  - jimhester/covr
+  - jimhester/lintr
 
 matrix:
   include:
@@ -17,6 +19,7 @@ matrix:
   - r: release
     after_success:
     - Rscript -e 'covr::codecov()'
+    - Rscript -e 'lintr::lint_package()'
   - r: oldrel
   - r: 3.4
   - r: 3.3
