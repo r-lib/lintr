@@ -15,6 +15,7 @@
 * New `sprintf_linter()` (#544, #578, @renkun-ken)
 * Exclusions specified in the `.lintr` file are now relative to the location of that file 
   and support excluding entire directories (#158, #438, @AshesITR)
+* `object_name_linter()` now excludes special R functions such as `.onLoad` (#500, #614, @AshesITR)
 
 # lintr 2.0.1
 
