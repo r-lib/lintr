@@ -1,7 +1,7 @@
 linters: with_defaults(
   line_length_linter(120),
-  open_curly_linter
-)
+  open_curly_linter)
+
 exclusions: list(
   "inst/doc/creating_linters.R" = 1,
   "inst/example/bad.R",
