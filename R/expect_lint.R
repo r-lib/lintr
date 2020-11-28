@@ -22,8 +22,6 @@
 #' @param language temporarily override Rs \code{LANGUAGE} envvar, controlling localisation of base
 #' R error messages. This makes testing them reproducible on all systems irrespective of their
 #' native R language setting.
-#' @param parse_settings whether to try and parse the settings. Defaults to \code{FALSE} to make the test independent
-#' from the enclosing \code{.lintr} configuration.
 #' @return \code{NULL}, invisibly.
 #' @examples
 #' # no expected lint
