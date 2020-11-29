@@ -182,7 +182,7 @@ default_settings <- NULL
 
 settings <- NULL
 
-.onLoad <- function(libname, pkgname) { # nolint
+.onLoad <- function(libname, pkgname) {
   op <- options()
   op.lintr <- list(
     lintr.linter_file = ".lintr"
