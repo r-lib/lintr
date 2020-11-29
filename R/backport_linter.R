@@ -45,7 +45,7 @@ backport_linter <- function(r_version = getRversion()) {
 }
 
 backports <- list(
-  `r` = c("...names", "checkRdContents", "numToBits", "numToInts", "packBits"),
+  `devel` = c("...names", "checkRdContents", "numToBits", "numToInts", "packBits"),
   `4.0.0` = c(
     ".class2", ".S3method", "activeBindingFunction", "deparse1", "globalCallingHandlers",
     "infoRDS", "list2DF", "marginSums", "proportions", "R_user_dir", "socketTimeout", "tryInvokeRestart"
