@@ -9,7 +9,7 @@ equals_na_linter <- function(source_file) {
   comparators <- c("EQ", "NE")
   comparator_table <- paste0("self::", comparators, collapse = " or ")
   NA_values <- c("NA", "NA_integer_", "NA_real_", "NA_complex_", "NA_character_")
-  NA_table <- paste("text() =", sQuote(NA_values, "'"), collapse = " or ")
+  NA_table <- paste("text() =", quote_wrap(NA_values, "'"), collapse = " or ")
 
   xpath_fmt <- "//expr[expr[NUM_CONST[%s]]]/*[%s]"
   xpath <- sprintf(xpath_fmt, NA_table, comparator_table)

@@ -169,6 +169,9 @@ try_silently <- function(expr) {
 viapply <- function(x, ...) vapply(x, ..., FUN.VALUE = integer(1))
 vcapply <- function(x, ...) vapply(x, ..., FUN.VALUE = character(1))
 
+# imitate sQuote(x, q) [requires R>=3.6]
+quote_wrap <- function(x, q) sprintf("%1$s%2$s%1$s", q, x, q)
+
 unquote <- function(str, q="`") {
   # Remove surrounding quotes (select either single, double or backtick) from given character vector
   # and unescape special characters.
