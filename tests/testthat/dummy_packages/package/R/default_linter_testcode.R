@@ -18,7 +18,7 @@ f = function (x,y = 1){}
 # object_name
 # object_usage
 # open_curly
-someComplicatedFunctionWithALongCameCaseName <- function(x)
+someComplicatedFunctionWithALongCamelCaseName <- function(x)
 {
   y <- 1
   if (1 > 2 && 2 > 3 && 3 > 4 && 4 > 5 && 5*10 > 6 && x == NA) {TRUE} else {FALSE}

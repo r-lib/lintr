@@ -2,9 +2,9 @@
 #'    arguments with incompatible types in \code{sprintf} calls.
 #' @export
 sprintf_linter <- function(source_file) {
-  if (!length(source_file$full_parsed_content) || is.null(source_file$xml_parsed_content)) return(list())
+  if (is.null(source_file$full_xml_parsed_content)) return(list())
 
-  xml <- source_file$xml_parsed_content
+  xml <- source_file$full_xml_parsed_content
 
   xpath <- "//expr[
     expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf'] and
