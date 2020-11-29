@@ -15,6 +15,7 @@
 * New `sprintf_linter()` (#544, #578, @renkun-ken)
 * Exclusions specified in the `.lintr` file are now relative to the location of that file 
   and support excluding entire directories (#158, #438, @AshesITR)
+* New `backport_linter()` for detecting mismatched R version dependencies (#506, @MichaelChirico)
 
 # lintr 2.0.1
 
