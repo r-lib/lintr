@@ -8,7 +8,6 @@ linters: with_defaults( # The following TODOs are part of an effort to have {lin
    closed_curly_linter = NULL, # TODO enable (#599)
    object_length_linter = NULL, # TODO enable (#600)
    equals_na_linter = NULL, # TODO enable (#601)
-   object_usage_linter = NULL, # TODO enable (#602)
    paren_brace_linter = NULL # TODO enable (#603)
  )
 exclusions: list(
