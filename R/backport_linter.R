@@ -3,7 +3,11 @@
 backport_linter <- function(r_version = getRversion()) {
   function(source_file) {
     if (inherits(r_version, "numeric_version")) r_version <- format(r_version)
-    if (is.null(source_file$xml_parsed_content) || r_version >= "r") return(list())
+    if (r_version < "3.0.0") {
+      warning("It is not recommended to depend on an R version older than 3.0.0. Resetting 'r_version' to 3.0.0.")
+      r_version <- "3.0.0"
+    }
+    if (is.null(source_file$xml_parsed_content)) return(list())
 
     xml <- source_file$xml_parsed_content
 
