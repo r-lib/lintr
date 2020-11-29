@@ -40,7 +40,7 @@ spaces_inside_linter <- function(source_file) {
               Lint(
                 filename = source_file$filename,
                 line_number = line_number,
-                column_number = if (substr(line, start, start) == " ") {start} else {start + 1L},
+                column_number = if (substr(line, start, start) == " ") start else start + 1L,
                 type = "style",
                 message = "Do not place spaces around code in parentheses or square brackets.",
                 line = line,

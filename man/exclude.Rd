@@ -22,6 +22,7 @@ Exclusions can be specified in three different ways.
 \item{single line in the source file. default: \code{# nolint}}
 \item{line range in the source file. default: \code{# nolint start}, \code{# nolint end}}
 \item{exclusions parameter, a named list of the files and lines to exclude, or just the filenames
-if you want to exclude the entire file.}
+if you want to exclude the entire file, or the directory names if you want to exclude all files
+in a directory.}
 }
 }

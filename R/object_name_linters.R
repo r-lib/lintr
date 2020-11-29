@@ -23,7 +23,7 @@ object_name_linter <- function(styles = "snake_case") {
     "Variable and function name style should be ", .or_string(styles), "."
   )
 
-  function (source_file) {
+  function(source_file) {
     x <- global_xml_parsed_content(source_file)
     if (is.null(x)) {
       return()
@@ -120,7 +120,7 @@ make_object_linter <- function(fun) {
     token_nums <- ids_with_token(
       source_file, rex(start, "SYMBOL" %if_next_isnt% "_SUB"), fun=re_matches
     )
-    if(length(token_nums) == 0){
+    if (length(token_nums) == 0) {
       return(list())
     }
     tokens <- with_id(source_file, token_nums)
@@ -129,14 +129,14 @@ make_object_linter <- function(fun) {
     keep_indices <- which(
       !is_operator(names) &
         !is_known_generic(names) &
-        !is_base_function(names)
+        !is_base_function(names) &
+        !is_special_function(names)
     )
 
     lapply(
       keep_indices,
       function(i) {
         token <- tokens[i, ]
-        name <- names[i]
         if (is_declared_here(token, source_file) &&
             !is_external_reference(source_file, token[["id"]])) {
           fun(source_file, token)
@@ -196,6 +196,7 @@ is_external_reference <- function(source_file, id) {
   any(sibling_tokens %in% c("NS_GET", "NS_GET_INT"))
 }
 
+# via unlist(tools:::.get_standard_package_names(), use.names = FALSE)
 base_pkgs <- c(
   "base",
   "tools",
@@ -237,6 +238,21 @@ base_funs <- unlist(lapply(base_pkgs,
 
 is_base_function <- function(x) {
   x %in% base_funs
+}
+
+# see ?".onLoad" and ?"Startup"
+special_funs <- c(
+  ".onLoad",
+  ".onAttach",
+  ".onUnload",
+  ".onDetach",
+  ".Last.lib",
+  ".First",
+  ".Last"
+)
+
+is_special_function <- function(x) {
+  x %in% special_funs
 }
 
 object_lint <- function(source_file, token, message, type) {
