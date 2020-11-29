@@ -1,11 +1,3 @@
-named_list <- function(...) {
-  nms <- re_substitutes(as.character(eval(substitute(alist(...)))),
-                        rex("(", anything), "")
-  vals <- list(...)
-  names(vals) <- nms
-  vals[!vapply(vals, is.null, logical(1))]
-}
-
 #' Modify lintr defaults
 #'
 #' Make a new list based on \pkg{lintr}'s default linters, undesirable
@@ -117,68 +109,68 @@ default_linters <- with_defaults(
 #' @format A named list of character strings.
 #' @rdname default_undesirable_functions
 #' @export
-all_undesirable_functions <- with_defaults(default = list(),
-                                           "attach" = "use roxygen2's @importFrom statement in packages, or `::` in
-                                           scripts",
-                                           "detach" = "use roxygen2's @importFrom statement in packages, or `::` in
-                                           scripts",
-                                           "ifelse" = "use an if () {} else {} block",
-                                           ".libPaths" = "use withr::with_libpaths()",
-                                           "library" = "use roxygen2's @importFrom statement in packages, or `::` in
-                                           scripts",
-                                           "loadNamespace" = "use `::` or requireNamespace()",
-                                           "mapply" = "use Map()",
-                                           "options" = "use withr::with_options()",
-                                           "par" = "use withr::with_par()",
-                                           "require" = "use roxygen2's @importFrom statement in packages, or `::` in
-                                           scripts",
-                                           "return" = "let the last value of a function automatically be returned",
-                                           "sapply" = "use vapply() or lapply()",
-                                           "setwd" = "use withr::with_dir()",
-                                           "sink" = "use withr::with_sink()",
-                                           "source" = NA,
-                                           "substring" = "use substr()",
-                                           "Sys.setenv" = "use withr::with_envvar()",
-                                           "Sys.setlocale" = "use withr::with_locale()"
+all_undesirable_functions <- with_defaults(
+  default = list(),
+  "attach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
+  "detach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
+  "ifelse" = "use an if () {} else {} block",
+  ".libPaths" = "use withr::with_libpaths()",
+  "library" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
+  "loadNamespace" = "use `::` or requireNamespace()",
+  "mapply" = "use Map()",
+  "options" = "use withr::with_options()",
+  "par" = "use withr::with_par()",
+  "require" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
+  "return" = "let the last value of a function automatically be returned",
+  "sapply" = "use vapply() or lapply()",
+  "setwd" = "use withr::with_dir()",
+  "sink" = "use withr::with_sink()",
+  "source" = NA,
+  "substring" = "use substr()",
+  "Sys.setenv" = "use withr::with_envvar()",
+  "Sys.setlocale" = "use withr::with_locale()"
 )
 
 #' @rdname default_undesirable_functions
 #' @export
-default_undesirable_functions <- do.call(with_defaults, c(list(default = list()),
-                                                          all_undesirable_functions[c(
-                                                            "attach",
-                                                            "detach",
-                                                            ".libPaths",
-                                                            "library",
-                                                            "mapply",
-                                                            "options",
-                                                            "par",
-                                                            "require",
-                                                            "sapply",
-                                                            "setwd",
-                                                            "sink",
-                                                            "source",
-                                                            "Sys.setenv",
-                                                            "Sys.setlocale"
-                                                          )]
+default_undesirable_functions <- do.call(with_defaults, c(
+  list(default = list()),
+  all_undesirable_functions[c(
+    "attach",
+    "detach",
+    ".libPaths",
+    "library",
+    "mapply",
+    "options",
+    "par",
+    "require",
+    "sapply",
+    "setwd",
+    "sink",
+    "source",
+    "Sys.setenv",
+    "Sys.setlocale"
+  )]
 ))
 
 #' @rdname default_undesirable_functions
 #' @export
-all_undesirable_operators <- with_defaults(default = list(),
-                                           ":::" = NA,
-                                           "<<-" = NA,
-                                           "->>" = NA
+all_undesirable_operators <- with_defaults(
+  default = list(),
+  ":::" = NA,
+  "<<-" = NA,
+  "->>" = NA
 )
 
 #' @rdname default_undesirable_functions
 #' @export
-default_undesirable_operators <- do.call(with_defaults, c(list(default = list()),
-                                                          all_undesirable_operators[c(
-                                                            ":::",
-                                                            "<<-",
-                                                            "->>"
-                                                          )]
+default_undesirable_operators <- do.call(with_defaults, c(
+  list(default = list()),
+  all_undesirable_operators[c(
+    ":::",
+    "<<-",
+    "->>"
+  )]
 ))
 
 
@@ -189,6 +181,7 @@ default_settings <- NULL
 
 settings <- NULL
 
+# nocov start
 .onLoad <- function(libname, pkgname) {
   op <- options()
   op_lintr <- list(
@@ -218,3 +211,4 @@ settings <- NULL
   settings <<- list2env(default_settings, parent = emptyenv())
   invisible()
 }
+# nocov end
