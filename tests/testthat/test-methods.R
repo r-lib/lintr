@@ -11,6 +11,10 @@ test_that("it returns the input trimmed strictly to max if no lints found", {
 
 test_that("it returns the input trimmed to the last full lint if one exists within the max", {
   t1 <- readChar(test_path("lints"), file.size(test_path("lints")))
+  if (.Platform$OS.type == "windows") {
+    # Magic numbers expect newlines to be 1 character
+    t1 <- gsub("\r\n", "\n", t1, fixed = TRUE)
+  }
   expect_equal(trim_output(t1, max = 200), substr(t1, 1, 195))
 
   expect_equal(trim_output(t1, max = 400), substr(t1, 1, 380))
@@ -86,3 +90,12 @@ test_that("summary.lints() works (lints found)", {
   expect_equal(has_lint_summary$error, 0)
 })
 
+test_that("print.lint works", {
+  # don't treat \t as width-1, #528
+  l <- Lint(
+    filename = "tmp", line_number = 1L, column_number = 3L,
+    type = "warning", message = "this is a lint",
+    line = c(`1` = "\t\t1:length(x)"), ranges = list(c(3L, 3L)), linter = "lnt"
+  )
+  expect_output(print(l), "  1:length(x)", fixed = TRUE)
+})
