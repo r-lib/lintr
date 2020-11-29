@@ -80,7 +80,7 @@ get_tokens_in_parentheses <- function(open_paren_line_num, tokens) {
 are_matching_parentheses <- function(open_paren_text, close_paren_text) {
   isTRUE(
     match(open_paren_text, c("(", "{", "[", "[[")) ==
-      match(close_paren_text, c(")", "}" ,"]", "]]"))
+      match(close_paren_text, c(")", "}", "]", "]]"))
   )
 }
 
