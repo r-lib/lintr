@@ -37,7 +37,7 @@ consisting of 6 elements:
 for .Rmd scripts, this is the extracted R source code (as text)}
 \item{\code{full_parsed_content} (\code{data.frame}) as given by
 \code{\link[utils:getParseData]{utils::getParseData()}} for the full content}
-\item{\code{xml_parsed_content} (\code{xml_document}) the XML parse tree of all
+\item{\code{full_xml_parsed_content} (\code{xml_document}) the XML parse tree of all
 expressions as given by \code{\link[xmlparsedata:xml_parse_data]{xmlparsedata::xml_parse_data()}}}
 \item{\code{terminal_newline} (\code{logical}) records whether \code{filename} has a terminal
 newline (as determined by \code{\link[=readLines]{readLines()}} producing a corresponding warning)}
