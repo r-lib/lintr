@@ -13,7 +13,7 @@ object_name_linter <- function(styles = "snake_case") {
     if (len <= 1) {
       return(xs)
     }
-    comma_sepd_prefix <- paste(xs[-len], collapse = ", ")
+    comma_sepd_prefix <- toString(xs[-len])
     paste(comma_sepd_prefix, "or", xs[len])
   }
 
@@ -24,10 +24,9 @@ object_name_linter <- function(styles = "snake_case") {
   )
 
   function(source_file) {
-    x <- global_xml_parsed_content(source_file)
-    if (is.null(x)) {
-      return()
-    }
+    if (is.null(source_file$full_xml_parsed_content)) return(list())
+
+    xml <- source_file$full_xml_parsed_content
 
     xpath <- paste0(
       # Left hand assignments
@@ -46,14 +45,16 @@ object_name_linter <- function(styles = "snake_case") {
       "//SYMBOL_FORMALS"
     )
 
-    assignments <- xml2::xml_find_all(x, xpath)
+    assignments <- xml2::xml_find_all(xml, xpath)
 
     # Retrieve assigned name
-    nms <- strip_names(
-      as.character(xml2::xml_find_first(assignments, "./text()")))
+    nms <- xml2::xml_text(assignments, "./text()")
+
+    # exclude operators if they're only symbols (e.g. %+%), #615
+    nms <- strip_names(grep("^[`'\"]%[^[:alnum:]]+%[`'\"]$", nms, invert = TRUE, value = TRUE))
 
     generics <- c(
-      declared_s3_generics(x),
+      declared_s3_generics(xml),
       namespace_imports()$fun,
       names(.knownS3Generics),
       .S3PrimitiveGenerics, ls(baseenv()))
@@ -94,8 +95,8 @@ check_style <- function(nms, style, generics = character()) {
 
 # Remove quotes or other things from names
 strip_names <- function(x) {
-  x <- re_substitutes(x, rex(start, some_of(".", quote, "`", "%", "$", "@")), "")
-  x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%", "$", "@"), end), "")
+  x <- re_substitutes(x, rex(start, some_of(".", quote, "`", "$", "@")), "")
+  x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "$", "@"), end), "")
   x
 }
 
@@ -286,9 +287,9 @@ style_regexes <- list(
 regexes_rd <- paste0(collapse = ", ", paste0("\\sQuote{", names(style_regexes), "}"))
 
 matches_styles <- function(name, styles=names(style_regexes)) {
-  invalids <- paste(styles[!styles %in% names(style_regexes)], collapse=", ")
+  invalids <- toString(styles[!styles %in% names(style_regexes)])
   if (nzchar(invalids)) {
-    valids <- paste(names(style_regexes), collapse=", ")
+    valids <- toString(names(style_regexes))
     stop(sprintf("Invalid style(s) requested: %s\nValid styles are: %s\n", invalids, valids))
   }
   name <- re_substitutes(name, rex(start, one_or_more(dot)), "")  # remove leading dots
