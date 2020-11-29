@@ -21,7 +21,7 @@ unneeded_concatenation_linter <- function(source_file) {
           line_number = line_num,
           column_number = start_col_num,
           type = "warn",
-          message = if (num_args) {msg_const} else {msg_empty},
+          message = if (num_args) msg_const else msg_empty,
           line = line,
           linter = "unneeded_concatenation_linter",
           ranges = list(c(start_col_num, end_col_num))
