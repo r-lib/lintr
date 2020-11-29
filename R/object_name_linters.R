@@ -3,7 +3,7 @@
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
 #'   match at least one of these styles.
 #' @export
-object_name_linter <- function(styles = "snake_case") {
+object_name_linter <- function(styles = c("snake_case", "symbols")) {
 
   .or_string <- function(xs) {
     # returns "<S> or <T>"
@@ -48,10 +48,8 @@ object_name_linter <- function(styles = "snake_case") {
     assignments <- xml2::xml_find_all(xml, xpath)
 
     # Retrieve assigned name
-    nms <- xml2::xml_text(assignments, "./text()")
-
-    # exclude operators if they're only symbols (e.g. %+%), #615
-    nms <- strip_names(grep("^[`'\"]%[^[:alnum:]]+%[`'\"]$", nms, invert = TRUE, value = TRUE))
+    nms <- strip_names(
+      as.character(xml2::xml_find_first(assignments, "./text()")))
 
     generics <- c(
       declared_s3_generics(xml),
@@ -275,11 +273,12 @@ loweralnum <- rex(one_of(lower, digit))
 upperalnum <- rex(one_of(upper, digit))
 
 style_regexes <- list(
-  "CamelCase" = rex(start, maybe("."), upper, zero_or_more(alnum), end),
-  "camelCase" = rex(start, maybe("."), lower, zero_or_more(alnum), end),
-  "snake_case"     = rex(start, maybe("."), some_of(lower, digit), any_of("_", lower, digit), end),
-  "SNAKE_CASE"     = rex(start, maybe("."), some_of(upper, digit), any_of("_", upper, digit), end),
-  "dotted.case"    = rex(start, maybe("."), one_or_more(loweralnum), zero_or_more(dot, one_or_more(loweralnum)), end),
+  "symbols"     = rex(start, maybe("."), zero_or_more(none_of(alnum)), end),
+  "CamelCase"   = rex(start, maybe("."), upper, zero_or_more(alnum), end),
+  "camelCase"   = rex(start, maybe("."), lower, zero_or_more(alnum), end),
+  "snake_case"  = rex(start, maybe("."), some_of(lower, digit), any_of("_", lower, digit), end),
+  "SNAKE_CASE"  = rex(start, maybe("."), some_of(upper, digit), any_of("_", upper, digit), end),
+  "dotted.case" = rex(start, maybe("."), one_or_more(loweralnum), zero_or_more(dot, one_or_more(loweralnum)), end),
   "lowercase"   = rex(start, maybe("."), one_or_more(loweralnum), end),
   "UPPERCASE"   = rex(start, maybe("."), one_or_more(upperalnum), end)
 )
