@@ -32,6 +32,7 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 * `pipe_continuation_linter`: Check that each step in a pipeline is on a new
   line, or the entire pipe fits on one line.
 * `assignment_linter`: check that `<-` is always used for assignment
+* `assignment_spaces_linter`: checks that assignments only have one space before and after
 * `camel_case_linter`: check that objects are not in camelCase.
 * `closed_curly_linter`: check that closed curly braces should always be on their
   own line unless they are followed by an else.
@@ -48,6 +49,10 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 * `infix_spaces_linter`: check that all infix operators have spaces around them.
 * `line_length_linter`: check the line length of both comments and code is less than
   length.
+* `missing_argument_linter`: check that no missing argument is supplied to function calls.
+* `missing_package_linter`: check that no packages loaded by
+  `library()`, `require()`, `loadNamespace()`, and `requireNamespace()` are missing.
+* `namespace_linter`: check if there are missing packages and symbols in namespace calls with `::` and `:::`.
 * `no_tab_linter`: check that only spaces are used, never tabs.
 * `object_length_linter`: check that function and variable names are not more than `length` characters.
 * `object_name_linter`: check that object names conform to a single naming
@@ -67,6 +72,8 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
   spaces directly inside them.
 * `spaces_left_parentheses_linter`: check that all left parentheses have a space before them
   unless they are in a function call.
+* `sprintf_linter`: check that the numbers of arguments are correct and types of arguments are compatible in
+  `sprintf("string", ...)` calls.
 * `todo_comment_linter`: check that the source contains no TODO comments (case-insensitive).
 * `trailing_blank_lines_linter`: check there are no trailing blank lines.
 * `trailing_whitespace_linter`: check there are no trailing whitespace characters.

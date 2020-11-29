@@ -35,7 +35,7 @@ test_that("single check", {
 })
 
 test_that("multiple checks", {
-  expect_success(expect_lint(file = "exclusions-test", checks = as.list(rep(msg, 6L)), linters = linter))
+  expect_success(expect_lint(file = "exclusions-test", checks = as.list(rep(msg, 6L)), linters = linter, parse_settings = FALSE))
 
   expect_success(expect_lint("a=1; b=2", list(msg, msg), linter))
   expect_success(expect_lint("a=1; b=2", list(c(message = msg), c(message = msg)), linter))
@@ -49,4 +49,3 @@ test_that("multiple checks", {
   expect_success(expect_lint("\t1\n\t2", list("tabs", list(column_number = 1L, ranges = list(c(1L, 1L)))), no_tab_linter))
 
 })
-

@@ -9,7 +9,7 @@ object_usage_linter <-  function(source_file) {
   }
 
   # If there is no xml data just return
-  if (is.null(source_file$xml_parsed_content)) {
+  if (is.null(source_file$full_xml_parsed_content)) {
     return()
   }
 
@@ -26,16 +26,14 @@ object_usage_linter <-  function(source_file) {
 
   declared_globals <- try_silently(utils::globalVariables(package = pkg_name %||% globalenv()))
 
-  symbols <- get_assignment_symbols(source_file$xml_parsed_content)
+  symbols <- get_assignment_symbols(source_file$full_xml_parsed_content)
 
   # Just assign them an empty function
-  for(symbol in symbols) {
+  for (symbol in symbols) {
     assign(symbol, function(...) invisible(), envir = env)
   }
 
-  all_globals <- unique(recursive_ls(env))
-
-  fun_info <- get_function_assignments(source_file$xml_parsed_content)
+  fun_info <- get_function_assignments(source_file$full_xml_parsed_content)
 
   lapply(seq_len(NROW(fun_info)), function(i) {
     info <- fun_info[i, ]
@@ -86,15 +84,21 @@ object_usage_linter <-  function(source_file) {
 }
 
 get_assignment_symbols <- function(xml) {
-  left_assignment_symbols <- xml2::xml_text(xml2::xml_find_all(xml, "expr[LEFT_ASSIGN]/expr[1]/*"))
+  left_assignment_symbols <-
+    xml2::xml_text(xml2::xml_find_all(xml, "expr[LEFT_ASSIGN]/expr[1]/*"))
+  equal_assignment_symbols <-
+    xml2::xml_text(xml2::xml_find_all(xml, "equal_assign/expr[1]/*"))
+  assign_fun_symbols <-
+    xml2::xml_text(xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/*"))
+  set_method_fun_symbols <-
+    xml2::xml_text(xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[2]/*"))
 
-  equal_assignment_symbols <- xml2::xml_text(xml2::xml_find_all(xml, "equal_assign/expr[1]/*"))
-
-  assign_fun_symbols <- xml2::xml_text(xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/*"))
-
-  set_method_fun_symbols <- xml2::xml_text(xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[2]/*"))
-
-  symbols <- c(left_assignment_symbols, equal_assignment_symbols, assign_fun_symbols, set_method_fun_symbols)
+  symbols <- c(
+    left_assignment_symbols,
+    equal_assignment_symbols,
+    assign_fun_symbols,
+    set_method_fun_symbols
+  )
 
   # remove quotes or backticks from the beginning or the end
   symbols <- gsub("^[`'\"]|['\"`]$", "", symbols)
@@ -103,15 +107,21 @@ get_assignment_symbols <- function(xml) {
 }
 
 get_function_assignments <- function(xml) {
-  left_assignment_functions <- xml2::xml_find_all(xml, "expr[LEFT_ASSIGN][expr[2][FUNCTION]]/expr[2]")
+  left_assignment_functions <-
+      xml2::xml_find_all(xml, "expr[LEFT_ASSIGN][expr[2][FUNCTION]]/expr[2]")
+  equal_assignment_functions <-
+      xml2::xml_find_all(xml, "equal_assign[expr[2]][expr[FUNCTION]]/expr[2]")
+  assign_assignment_functions <-
+      xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='assign']]/expr[3]")
+  setmethod_assignment_functions <-
+      xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[3]")
 
-  equal_assignment_functions <- xml2::xml_find_all(xml, "equal_assign[expr[2]][expr[FUNCTION]]/expr[2]")
-
-  assign_fun_assignment_functions <- xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='assign']]/expr[3]")
-
-  set_method_fun_assignment_functions <- xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[3]")
-
-  funs <- c(left_assignment_functions, equal_assignment_functions, assign_fun_assignment_functions, set_method_fun_assignment_functions)
+  funs <- c(
+    left_assignment_functions,
+    equal_assignment_functions,
+    assign_assignment_functions,
+    setmethod_assignment_functions
+  )
 
   get_attr <- function(x, attr) as.integer(xml2::xml_attr(x, attr))
 
@@ -128,7 +138,7 @@ parse_check_usage <- function(expression) {
 
   vals <- list()
 
-  report <- function (x) {
+  report <- function(x) {
     vals[[length(vals) + 1L]] <<- x
   }
 

@@ -2,10 +2,56 @@
 #'
 #' This object is given as input to each linter
 #' @param filename the file to be parsed.
+#' @return A `list` with three components:
+#'   \item{expressions}{a `list` of
+#'   `n+1` objects. The first `n` elements correspond to each expression in
+#'   `filename`, and consist of a list of 9 elements:
+#'   \itemize{
+#'     \item{`filename` (`character`)}
+#'     \item{`line` (`integer`) the line in `filename` where this expression begins}
+#'     \item{`column` (`integer`) the column in `filename` where this expression begins}
+#'     \item{`lines` (named `character`) vector of all lines spanned by this
+#'           expression, named with the line number corresponding to `filename`}
+#'     \item{`parsed_content` (`data.frame`) as given by [utils::getParseData()] for this expression}
+#'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of this
+#'          expression as given by [xmlparsedata::xml_parse_data()]}
+#'     \item{`content` (`character`) the same as `lines` as a single string (not split across lines)}
+#'     \item{`find_line` (`function`) a function for returning lines in this expression}
+#'     \item{`find_column` (`function`) a similar function for columns}
+#'   }
+#'
+#'   The final element of `expressions` is a list corresponding to the full file
+#'   consisting of 6 elements:
+#'   \itemize{
+#'     \item{`filename` (`character`)}
+#'     \item{`file_lines` (`character`) the [readLines()] output for this file}
+#'     \item{`content` (`character`) for .R files, the same as `file_lines`;
+#'           for .Rmd scripts, this is the extracted R source code (as text)}
+#'     \item{`full_parsed_content` (`data.frame`) as given by
+#'           [utils::getParseData()] for the full content}
+#'     \item{`full_xml_parsed_content` (`xml_document`) the XML parse tree of all
+#'           expressions as given by [xmlparsedata::xml_parse_data()]}
+#'     \item{`terminal_newline` (`logical`) records whether `filename` has a terminal
+#'           newline (as determined by [readLines()] producing a corresponding warning)}
+#'   }
+#'   }
+#'   \item{error}{A `Lint` object describing any parsing error.}
+#'   \item{lines}{The [readLines()] output for this file.}
 #' @export
+#' @md
 get_source_expressions <- function(filename) {
   source_file <- srcfile(filename)
-  source_file$lines <- readLines(filename)
+  terminal_newline <- TRUE
+  source_file$lines <- withCallingHandlers({
+      readLines(filename)
+    },
+    warning = function(w) {
+      if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
+        terminal_newline <<- FALSE
+        invokeRestart("muffleWarning")
+      }
+    }
+  )
   source_file$lines <- extract_r_source(source_file$filename, source_file$lines)
   source_file$content <- get_content(source_file$lines)
 
@@ -33,7 +79,35 @@ get_source_expressions <- function(filename) {
           anything,
           double_quotes, capture(name = "starting", anything), double_quotes))
 
-      line_location <- re_matches(source_file$content, rex(message_info$starting), locations = TRUE)
+      loc <- re_matches(source_file$content, rex(message_info$starting), locations = TRUE)
+      line_location <- loc[!is.na(loc$start) & !is.na(loc$end), ]
+
+      if (nrow(line_location) == 0L) {
+        if (grepl("attempt to use zero-length variable name", e$message, fixed = TRUE)) {
+          # empty symbol: ``, ``(), ''(), ""(), fun(''=42), fun(""=42), fun(a=1,""=42)
+          loc <- re_matches(source_file$content,
+            rex("``" %or% list(or("''", '""'), any_spaces, "(") %or%
+              list(or("(", ","), any_spaces, or("''", '""'), any_spaces, "=")),
+            options = "multi-line",
+            locations = TRUE)
+          loc <- loc[!is.na(loc$start) & !is.na(loc$end), ]
+          if (nrow(loc) > 0) {
+            line_location <- loc[1, ]
+          }
+        } else {
+          return(
+            Lint(
+              filename = source_file$filename,
+              line_number = 1,
+              column_number = 1,
+              type = "error",
+              message = e$message,
+              line = "",
+              linter = "error"
+            )
+          )
+        }
+      }
 
       line_number <- find_line_fun(source_file$content)(line_location$start)
       column_number <- find_column_fun(source_file$content)(line_location$start)
@@ -94,7 +168,8 @@ get_source_expressions <- function(filename) {
       file_lines = source_file$lines,
       content = source_file$lines,
       full_parsed_content = parsed_content,
-      xml_parsed_content = if (!is.null(parsed_content)) xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content))
+      full_xml_parsed_content = if (!is.null(parsed_content)) tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)), error = function(e) NULL),
+      terminal_newline = terminal_newline
     )
 
   list(expressions = expressions, error = e, lines = source_file$lines)
@@ -119,7 +194,7 @@ get_single_source_expression <- function(loc,
     column = parsed_content[loc, "col1"],
     lines = expr_lines,
     parsed_content = pc,
-    xml_parsed_content = xml2::read_xml(xmlparsedata::xml_parse_data(pc)),
+    xml_parsed_content = tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(pc)), error = function(e) NULL),
     content = content,
     find_line = find_line_fun(content),
     find_column = find_column_fun(content)
@@ -240,7 +315,7 @@ fix_tab_indentations <- function(source_file) {
   tab_cols <- gregexpr("\t", source_file[["lines"]], fixed = TRUE)
   names(tab_cols) <- seq_along(tab_cols)
   tab_cols <- tab_cols[!is.na(tab_cols)]  # source lines from .Rmd and other files are NA
-  tab_cols <- lapply(tab_cols, function(x) {if (x[[1L]] < 0L) {NA} else {x}})
+  tab_cols <- lapply(tab_cols, function(x) if (x[[1L]] < 0L) NA else x)
   tab_cols <- tab_cols[!is.na(tab_cols)]
 
   if (!length(tab_cols)) {
@@ -297,7 +372,7 @@ fix_eq_assigns <- function(pc) {
 
   prev_locs <- vapply(eq_assign_locs, prev_with_parent, pc = pc, integer(1))
   next_locs <- vapply(eq_assign_locs, next_with_parent, pc = pc, integer(1))
-  expr_locs <- (function(x){
+  expr_locs <- (function(x) {
     x[is.na(x)] <- FALSE
     !x
     })(prev_locs == lag(next_locs)) # nolint

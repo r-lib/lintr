@@ -19,3 +19,4 @@
 ^\.covrignore$
 ^script[.]R$
 ^bench$
+^tests/testthat/package/[.]Rbuildignore$
