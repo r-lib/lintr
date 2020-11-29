@@ -22,23 +22,24 @@ f = function (x,y = 1){}
 someComplicatedFunctionWithALongCamelCaseName <- function(x)
 {
   y <- 1
-  if (1 > 2 && 2 > 3 && 3 > 4 && 4 > 5 && 5*10 > 6 && x == NA) {T} else {F}
+  if (1 > 2 && 2 > 3 && 3 > 4 && 4 > 5 && 5*10 > 6 && 5 > 6 && 6 > 7 && x == NA) {T} else {F}
 }
 
+# no_tab
 # pipe_continuation
 # seq_linter
 # spaces_inside
 x <- 1:10
 x[ 2]
 1:length(x) %>% lapply(function(x) x*2) %>%
-  head()
+	head()
 
 # single_quotes
 message('single_quotes')
 
 # spaces_left_parentheses
 # trailing_whitespace
-y <- 2 +(1:10)    
+y <- 2 +(1:10)
 
 # trailing_blank_lines
 
