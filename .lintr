@@ -1,5 +1,5 @@
 linters: with_defaults( # The following TODOs are part of an effort to have {lintr} lint-free (#584)
-   line_length_linter = line_length_linter(160), # TODO reduce to 120 (#593)
+   line_length_linter = line_length_linter(120),
    infix_spaces_linter = NULL, # TODO enable (#594)
    commented_code_linter = NULL, # TODO enable (#595)
    cyclocomp_linter = cyclocomp_linter(29), # TODO reduce to 15
