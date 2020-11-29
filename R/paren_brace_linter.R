@@ -4,12 +4,11 @@
 #' @export
 
 paren_brace_linter <- function(source_file) {
-  if (!is.null(source_file[["file_lines"]])) {
-    # abort if source_file is entire file, not a top level expression.
+  if (is.null(source_file$xml_parsed_content)) {
     return(NULL)
   }
 
-  xml <- source_file[["xml_parsed_content"]]
+  xml <- source_file$xml_parsed_content
 
   xpath <- paste(
     "//OP-RIGHT-PAREN[",
@@ -24,9 +23,9 @@ paren_brace_linter <- function(source_file) {
   lapply(
     match_exprs,
     function(expr) {
-      x <- as_list(expr)
+      x <- xml2::as_list(expr)
       line_num <- x@line1
-      line <- source_file[["lines"]][[as.character(line_num)]]
+      line <- source_file$lines[[as.character(line_num)]]
       Lint(
         filename = source_file$filename,
         line_number = line_num,
