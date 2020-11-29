@@ -6,7 +6,7 @@
 #' @param symbol_is_undesirable Whether to consider the use of an undesirable
 #'   function name as a symbol undesirable or not.
 #' @export
-undesirable_function_linter <- function(fun=default_undesirable_functions,
+undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   stopifnot(is.logical(symbol_is_undesirable))
   function(source_file) {
