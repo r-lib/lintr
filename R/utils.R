@@ -110,6 +110,11 @@ recursive_ls <- function(env) {
   }
 }
 
+safe_parse_to_xml <- function(parsed_content) {
+  if (is.null(parsed_content)) return(NULL)
+  tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)), error = function(e) NULL)
+}
+
 get_content <- function(lines, info) {
   lines[is.na(lines)] <- ""
 
@@ -144,15 +149,9 @@ trim_ws <- function(x) {
   attr(x, name, exact = TRUE)
 }
 
-global_parsed_content <- function(source_file) {
-  if (exists("file_lines", source_file)) {
-    source_file$parsed_content
-  }
-}
-
 global_xml_parsed_content <- function(source_file) {
   if (exists("file_lines", source_file)) {
-    source_file$xml_parsed_content
+    source_file$full_xml_parsed_content
   }
 }
 

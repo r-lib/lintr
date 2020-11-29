@@ -149,7 +149,7 @@ reorder_lints <- function(lints) {
 #'   lint_dir(
 #'     linters = list(semicolon_terminator_linter())
 #'     cache = TRUE,
-#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
+#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "renv")
 #'   )
 #' }
 #' @export
@@ -164,13 +164,23 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
   if (isTRUE(parse_settings)) {
     read_settings(path)
     on.exit(clear_settings, add = TRUE)
+
+    exclusions <- c(exclusions, settings$exclusions)
   }
 
-  files <- dir(path,
+  exclusions <- normalize_exclusions(
+    exclusions,
+    root = path,
+    pattern = pattern
+  )
+
+  # normalizePath ensures names(exclusions) and files have the same names for the same files.
+  # Otherwise on windows, files might incorrectly not be excluded in to_exclude
+  files <- normalizePath(dir(path,
     pattern = pattern,
     recursive = TRUE,
     full.names = TRUE
-  )
+  ))
 
   # Remove fully ignored files to avoid reading & parsing
   to_exclude <- vapply(
@@ -235,13 +245,20 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
 #'   )
 #' }
 #' @export
-lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = list("R/RcppExports.R")) {
+lint_package <- function(path = ".", relative_path = TRUE, ...,
+                         exclusions = list("R/RcppExports.R"), parse_settings = TRUE) {
   path <- find_package(path)
 
-  read_settings(path)
-  on.exit(clear_settings, add = TRUE)
+  if (parse_settings) {
+    read_settings(path)
+    on.exit(clear_settings, add = TRUE)
+  }
 
-  exclusions <- normalize_exclusions(c(exclusions, settings$exclusions), FALSE)
+  exclusions <- normalize_exclusions(
+    c(exclusions, settings$exclusions),
+    root = path,
+    pattern = pattern
+  )
 
   lints <- lint_dir(file.path(path, c("R", "tests", "inst", "vignettes", "data-raw")),
                     relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)

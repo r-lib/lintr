@@ -44,4 +44,3 @@ undesirable_operator_linter <- function(op=default_undesirable_operators) {
     )
   }
 }
-

@@ -1,3 +1,5 @@
+#' @include aaa.R
+#'
 #' @describeIn linters  Avoid the symbols \code{T} and \code{F} (for \code{TRUE} and \code{FALSE}).
 #' @export
 T_and_F_symbol_linter <- function(source_file) {

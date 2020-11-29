@@ -45,4 +45,3 @@ is_trailing_sc <- function(sc_tokens, source_file) {
   tail_str <- substr(line_str, sc_tokens[["col1"]] + 1L, nchar(line_str))
   grepl("^\\s*(#|}|\\z)", tail_str, perl = TRUE)
 }
-
