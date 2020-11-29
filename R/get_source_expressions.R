@@ -42,8 +42,7 @@
 get_source_expressions <- function(filename) {
   source_file <- srcfile(filename)
   terminal_newline <- TRUE
-  source_file$lines <- withCallingHandlers(
-    {
+  source_file$lines <- withCallingHandlers({
       readLines(filename)
     },
     warning = function(w) {
@@ -346,7 +345,7 @@ fix_tab_indentations <- function(source_file) {
   tab_cols <- gregexpr("\t", source_file[["lines"]], fixed = TRUE)
   names(tab_cols) <- seq_along(tab_cols)
   tab_cols <- tab_cols[!is.na(tab_cols)]  # source lines from .Rmd and other files are NA
-  tab_cols <- lapply(tab_cols, function(x) {if (x[[1L]] < 0L) {NA} else {x}})
+  tab_cols <- lapply(tab_cols, function(x) if (x[[1L]] < 0L) NA else x)
   tab_cols <- tab_cols[!is.na(tab_cols)]
 
   if (!length(tab_cols)) {
