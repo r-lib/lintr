@@ -6,7 +6,7 @@ extract_r_source <- function(filename, lines, error = identity) {
   }
 
   chunks <- tryCatch(get_chunk_positions(pattern = pattern, lines = lines), error = error)
-  if (inherits(chunks, "error")) {
+  if (inherits(chunks, "error") || inherits(chunks, "lint")) {
     assign("e", chunks,  envir = parent.frame())
     # error, so return empty code
     return(character())

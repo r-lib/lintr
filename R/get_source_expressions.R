@@ -245,7 +245,7 @@ get_source_file <- function(source_file, error = identity) {
     error = error
   )
 
-  if (inherits(e, "error")) {
+  if (inherits(e, "error") || inherits(e, "lint")) {
     assign("e", e,  envir = parent.frame())
   }
 
