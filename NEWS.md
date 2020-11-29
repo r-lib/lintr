@@ -15,6 +15,8 @@
 * New `sprintf_linter()` (#544, #578, @renkun-ken)
 * Exclusions specified in the `.lintr` file are now relative to the location of that file 
   and support excluding entire directories (#158, #438, @AshesITR)
+* `equals_na_linter`, `paren_brace_linter`, and `no_tab_linter` all use more reliable matching (e.g.,
+  excluding matches found in comments; #441 and #545, @russHyde)
 
 # lintr 2.0.1
 
