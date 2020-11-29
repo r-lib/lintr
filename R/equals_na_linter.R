@@ -1,9 +1,7 @@
-#' @describeIn linters check that there is a space between right
-#' parenthesis and an opening curly brace.
+#' @describeIn linters that checks for x == NA
 #'
 #' @export
-
-paren_brace_linter <- function(source_file) {
+equals_na_linter <- function(source_file) {
   if (!is.null(source_file[["file_lines"]])) {
     # abort if source_file is entire file, not a top level expression.
     return(NULL)
@@ -11,18 +9,18 @@ paren_brace_linter <- function(source_file) {
 
   xml <- source_file[["xml_parsed_content"]]
 
-  xpath <- paste(
-    "//OP-RIGHT-PAREN[",
-      "@line1 = following-sibling::expr/OP-LEFT-BRACE/@line1",
-      "and",
-      "@col1 = following-sibling::expr/OP-LEFT-BRACE/@col1 - 1",
+  # match on the '=='
+  xpath <- paste0(
+    "//EQ[",
+    "text() = '==' ",
+    "and following-sibling::*/NUM_CONST[text() = 'NA']",
     "]"
   )
 
-  match_exprs <- xml2::xml_find_all(xml, xpath)
+  eq_na_exprs <- xml2::xml_find_all(xml, xpath)
 
   lapply(
-    match_exprs,
+    eq_na_exprs,
     function(expr) {
       x <- as_list(expr)
       line_num <- x@line1
@@ -31,11 +29,11 @@ paren_brace_linter <- function(source_file) {
         filename = source_file$filename,
         line_number = line_num,
         column_number = x@col1,
-        type = "style",
-        message = "There should be a space between right parenthesis and an opening curly brace.",
+        type = "warning",
+        message = "Use is.na rather than == NA.",
         line = line,
         ranges = list(as.numeric(c(x@col1, x@col2))),
-        "paren_brace_linter"
+        "equals_na_linter"
       )
     }
   )

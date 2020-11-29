@@ -3,7 +3,7 @@
 %   R/assignment_linter.R, R/assignment_spaces_linter.R,
 %   R/closed_curly_linter.R, R/commas_linter.R, R/comment_linters.R,
 %   R/cyclocomp_linter.R, R/object_name_linters.R, R/deprecated.R,
-%   R/equals_na_lintr.R, R/extraction_operator_linter.R,
+%   R/equals_na_linter.R, R/extraction_operator_linter.R,
 %   R/function_left_parentheses.R, R/implicit_integer_linter.R,
 %   R/infix_spaces_linter.R, R/line_length_linter.R,
 %   R/missing_argument_linter.R, R/missing_package_linter.R,
