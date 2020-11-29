@@ -38,7 +38,7 @@ spaces_left_parentheses_linter <- function(source_file) {
         } else {
           rep(FALSE, nrow(source_file$parsed_content))
         }
-        not_exception = not_exception &&
+        not_exception <- not_exception &&
           !(before_operator %in% c("-", "+") &&
              nrow(source_file$parsed_content[is_sibling_expr, ]) == 1L)
 
