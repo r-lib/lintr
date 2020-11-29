@@ -21,7 +21,7 @@ f = function (x,y = 1){}
 someComplicatedFunctionWithALongCamelCaseName <- function(x)
 {
   y <- 1
-	if (1 > 2 && 2 > 3 && 3 > 4 && 4 > 5 && 5*10 > 6 && x == NA) {TRUE} else {FALSE}
+	if (1 > 2 && 2 > 3 && 3 > 4 && 4 > 5 && 5*10 > 6 && x == NA) {T} else {F}
 }
 
 # pipe_continuation
