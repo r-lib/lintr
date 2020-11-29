@@ -1,12 +1,11 @@
 #' @describeIn linters that checks for usage of unavailable functions. Not reliable for testing r-devel dependencies.
 #' @export
-backport_linter <- function(r_version = "4.0.3") {
+backport_linter <- function(r_version = getRversion()) {
   function(source_file) {
-    if (is.null(source_file$xml_parsed_content) || r_version >= "r-devel") return(list())
+    if (inherits(r_version, "numeric_version")) r_version <- format(r_version)
+    if (is.null(source_file$xml_parsed_content) || r_version >= "r") return(list())
 
     xml <- source_file$xml_parsed_content
-
-    #browser()
 
     names_xpath <- "//*[self::SYMBOL or self::SYMBOL_FUNCTION_CALL]"
     all_names_nodes <- xml2::xml_find_all(xml, names_xpath)
@@ -15,9 +14,9 @@ backport_linter <- function(r_version = "4.0.3") {
     # guaranteed to include 1 by early return above; which.min fails if all TRUE (handled by nomatch)
     needs_backport_names <- backports[1:(match(FALSE, r_version < names(backports), nomatch = length(backports)) - 1L)]
 
-    # not sapply, which may over-simplify -- cbind makes sure apply works
+    # not sapply/vapply, which may over-simplify to vector -- cbind makes sure we have a matrix so rowSums works
     needs_backport <- do.call(cbind, lapply(needs_backport_names, function(nm) all_names %in% nm))
-    bad_idx <- apply(needs_backport, 1L, any)
+    bad_idx <- rowSums(needs_backport) > 0L
 
     lapply(which(bad_idx), function(ii) {
       node <- all_names_nodes[[ii]]
@@ -46,7 +45,7 @@ backport_linter <- function(r_version = "4.0.3") {
 }
 
 backports <- list(
-  `r-devel` = c("...names", "checkRdContents", "numToBits", "numToInts", "packBits"),
+  `r` = c("...names", "checkRdContents", "numToBits", "numToInts", "packBits"),
   `4.0.0` = c(
     ".class2", ".S3method", "activeBindingFunction", "deparse1", "globalCallingHandlers",
     "infoRDS", "list2DF", "marginSums", "proportions", "R_user_dir", "socketTimeout", "tryInvokeRestart"
@@ -55,7 +54,7 @@ backports <- list(
     "asplit", "hcl.colors", "hcl.pals", "mem.maxNsize", "mem.maxVsize", "nullfile", "str2lang",
     "str2expression", "update_PACKAGES"
   ),
-  `3.5.0` = c("...elt", "...length", "askYesNo", "getDefaultCluster", "packageDate", "warnErrList"),
+  `3.5.0` = c("...elt", "...length", "askYesNo", "getDefaultCluster", "isFALSE", "packageDate", "warnErrList"),
   `3.4.0` = c(
     "check_packages_in_dir_details", "CRAN_package_db", "debugcall", "hasName",
     "isS3stdgeneric", "strcapture", "Sys.setFileTime", "undebugcall"
