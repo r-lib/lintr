@@ -7,13 +7,13 @@ test_that("backport_linter detects backwards-incompatibility", {
 
   expect_lint(
     "numToBits(2)",
-    rex("numToBits (R r-devel) is not available for dependency R >= 4.0.0."),
+    rex("numToBits (R devel) is not available for dependency R >= 4.0.0."),
     backport_linter("4.0.0")
   )
   # symbols as well as calls
   expect_lint(
     "lapply(1:10, numToBits)",
-    rex("numToBits (R r-devel) is not available for dependency R >= 4.0.0."),
+    rex("numToBits (R devel) is not available for dependency R >= 4.0.0."),
     backport_linter("4.0.0")
   )
 
@@ -21,7 +21,7 @@ test_that("backport_linter detects backwards-incompatibility", {
     "trimws(...names())",
     list(
       rex("trimws (R 3.2.0) is not available for dependency R >= 3.0.0."),
-      rex("...names (R r-devel) is not available for dependency R >= 3.0.0.")
+      rex("...names (R devel) is not available for dependency R >= 3.0.0.")
     ),
     backport_linter("3.0.0")
   )
