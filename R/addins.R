@@ -1,3 +1,4 @@
+# nocov start
 addin_lint <- function() {
   filename <- rstudioapi::getSourceEditorContext()
   if (filename$path == "") {
@@ -29,3 +30,4 @@ addin_lint_package <- function() {
 
   lintr::lint_package(project_path)
 }
+# nocov end
