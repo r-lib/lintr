@@ -5,7 +5,7 @@ test_that("returns the correct linting", {
     sprintf_linter)
 
   expect_lint("sprintf('hello', 1)",
-    NULL,
+    if (getRversion() <= "4.0.3") NULL else "one argument not used by format",
     sprintf_linter)
 
   expect_lint("sprintf('hello %d', 1)",
@@ -41,11 +41,11 @@ test_that("returns the correct linting", {
     sprintf_linter)
 
   expect_lint("sprintf('hello %1$s %s', 'a', 'b')",
-    NULL,
+    if (getRversion() <= "4.0.3") NULL else "one argument not used by format",
     sprintf_linter)
 
   expect_lint("sprintf('hello %1$s %1$s', x, y)",
-    NULL,
+    if (getRversion() <= "4.0.3") NULL else "one argument not used by format",
     sprintf_linter)
 
   expect_lint("sprintf('hello %1$s %1$s %2$d', x, y)",
