@@ -35,6 +35,8 @@ test_that("styles are correctly identified", {
   expect_equivalent(lapply(styles, check_style, nms = "ihave1cat"    ), c(FALSE, FALSE,  TRUE,  TRUE, FALSE,  TRUE,   TRUE, FALSE))
   expect_equivalent(lapply(styles, check_style, nms = "IHAVE1CAT"    ), c(FALSE,  TRUE, FALSE, FALSE,  TRUE, FALSE,  FALSE,  TRUE))
   expect_equivalent(lapply(styles, check_style, nms = "I.HAVE_ONECAT"), c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
+  expect_equivalent(lapply(styles, check_style, nms = "."            ), c( TRUE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
+  expect_equivalent(lapply(styles, check_style, nms = "%^%"          ), c( TRUE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
 })
 
 test_that("linter ignores some objects", {
