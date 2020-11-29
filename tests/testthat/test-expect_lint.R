@@ -32,6 +32,8 @@ test_that("single check", {
   expect_success(expect_lint("\t1", list(ranges = list(c(1L, 1L))), no_tab_linter))
   expect_success(expect_lint("a=1", list(message = msg, line_number = 1L), linter))
   expect_failure(expect_lint("a=1", list(2L, msg), linter))
+
+  expect_error(expect_lint("1:nrow(x)", "(group)", seq_linter), "Invalid regex result", fixed = TRUE)
 })
 
 test_that("multiple checks", {
