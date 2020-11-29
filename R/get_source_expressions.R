@@ -29,7 +29,7 @@
 #'           for .Rmd scripts, this is the extracted R source code (as text)}
 #'     \item{`full_parsed_content` (`data.frame`) as given by
 #'           [utils::getParseData()] for the full content}
-#'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of all
+#'     \item{`full_xml_parsed_content` (`xml_document`) the XML parse tree of all
 #'           expressions as given by [xmlparsedata::xml_parse_data()]}
 #'     \item{`terminal_newline` (`logical`) records whether `filename` has a terminal
 #'           newline (as determined by [readLines()] producing a corresponding warning)}
@@ -42,8 +42,7 @@
 get_source_expressions <- function(filename) {
   source_file <- srcfile(filename)
   terminal_newline <- TRUE
-  source_file$lines <- withCallingHandlers(
-    {
+  source_file$lines <- withCallingHandlers({
       readLines(filename)
     },
     warning = function(w) {
@@ -169,7 +168,7 @@ get_source_expressions <- function(filename) {
       file_lines = source_file$lines,
       content = source_file$lines,
       full_parsed_content = parsed_content,
-      xml_parsed_content = if (!is.null(parsed_content)) tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)), error = function(e) NULL),
+      full_xml_parsed_content = if (!is.null(parsed_content)) tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)), error = function(e) NULL),
       terminal_newline = terminal_newline
     )
 
@@ -316,7 +315,7 @@ fix_tab_indentations <- function(source_file) {
   tab_cols <- gregexpr("\t", source_file[["lines"]], fixed = TRUE)
   names(tab_cols) <- seq_along(tab_cols)
   tab_cols <- tab_cols[!is.na(tab_cols)]  # source lines from .Rmd and other files are NA
-  tab_cols <- lapply(tab_cols, function(x) {if (x[[1L]] < 0L) {NA} else {x}})
+  tab_cols <- lapply(tab_cols, function(x) if (x[[1L]] < 0L) NA else x)
   tab_cols <- tab_cols[!is.na(tab_cols)]
 
   if (!length(tab_cols)) {
@@ -373,7 +372,7 @@ fix_eq_assigns <- function(pc) {
 
   prev_locs <- vapply(eq_assign_locs, prev_with_parent, pc = pc, integer(1))
   next_locs <- vapply(eq_assign_locs, next_with_parent, pc = pc, integer(1))
-  expr_locs <- (function(x){
+  expr_locs <- (function(x) {
     x[is.na(x)] <- FALSE
     !x
     })(prev_locs == lag(next_locs)) # nolint
