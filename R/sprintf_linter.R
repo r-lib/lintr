@@ -41,8 +41,8 @@ sprintf_linter <- function(source_file) {
         }
       }
 
-      res <- tryCatch(eval(expr, envir = baseenv()), error = function(e) e)
-      if (inherits(res, "error")) {
+      res <- tryCatch(eval(expr, envir = baseenv()), warning = identity, error = identity)
+      if (inherits(res, "condition")) {
         Lint(
           filename = source_file$filename,
           line_number = line1,

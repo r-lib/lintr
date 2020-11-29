@@ -51,7 +51,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
 
   lints <- lint(file, ...)
   n_lints <- length(lints)
-  lint_str <- if (n_lints) {paste0(c("", lints), collapse="\n")} else {""}
+  lint_str <- if (n_lints) paste0(c("", lints), collapse="\n") else ""
 
   wrong_number_fmt  <- "got %d lints instead of %d%s"
   if (is.null(checks)) {
