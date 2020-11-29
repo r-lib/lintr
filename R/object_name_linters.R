@@ -80,7 +80,10 @@ check_style <- function(nms, style, generics = character()) {
   conforming[!nzchar(nms) | is.na(conforming)] <- TRUE
 
   if (any(!conforming)) {
-    possible_s3 <- re_matches(nms[!conforming], rex(capture(name = "generic", something), ".", capture(name = "method", something)))
+    possible_s3 <- re_matches(
+      nms[!conforming],
+      rex(capture(name = "generic", something), ".", capture(name = "method", something))
+    )
     if (any(!is.na(possible_s3))) {
       has_generic <- possible_s3$generic %in% generics
 
