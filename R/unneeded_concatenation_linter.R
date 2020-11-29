@@ -39,7 +39,7 @@ get_num_concat_args <- function(token_num, tokens) {
   #    2 if a concatenation in other cases
   open_paren_num <- token_num + 1L
   if (tokens[token_num, "text"] == "c" &&
-      tokens[open_paren_num, "token"] == "'('") {
+    tokens[open_paren_num, "token"] == "'('") {
     token_args <- get_tokens_in_parentheses(open_paren_num, tokens)
     num_token_args <- nrow(token_args)
     if (!num_token_args) {
@@ -65,10 +65,7 @@ get_tokens_in_parentheses <- function(open_paren_line_num, tokens) {
   close_paren_token <- tail(get_sibling_tokens(open_paren_token, tokens), 1L)
   close_paren_text <- close_paren_token[["text"]]
   close_paren_line_num <- which(rownames(tokens) == rownames(close_paren_token))
-  if ( (open_paren_text == "("  && close_paren_text ==  ")") ||
-       (open_paren_text == "{"  && close_paren_text ==  "}") ||
-       (open_paren_text == "["  && close_paren_text ==  "]") ||
-       (open_paren_text == "[[" && close_paren_text == "]]") ) {
+  if (are_matching_parenteses(open_paren_text, close_paren_text)) {
     range <- if (open_paren_line_num + 1L == close_paren_line_num) {
       integer()
     } else {
@@ -80,12 +77,17 @@ get_tokens_in_parentheses <- function(open_paren_line_num, tokens) {
   }
 }
 
+are_matching_parentheses <- function(open_paren_text, close_paren_text) {
+  isTRUE(
+    match(open_paren_text, c("(", "{", "[", "[[")) ==
+      match(close_paren_text, c(")", "}" ,"]", "]]"))
+  )
+}
 
 get_sibling_tokens <- function(child, tokens) {
   # Get all siblings of the given child token (i.e. that have the same parent id)
   tokens[tokens[, "parent"] == child[["parent"]], ]
 }
-
 
 
 filter_out_token_type <- function(tokens, type) {
