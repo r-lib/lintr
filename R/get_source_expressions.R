@@ -235,15 +235,17 @@ get_source_file <- function(source_file, error = identity) {
 
   e <- tryCatch(
     source_file$parsed_content <- parse(text = source_file$content, srcfile = source_file, keep.source = TRUE),
-    error = error)
+    error = error
+  )
 
   # This needs to be done twice to avoid
   #   https://bugs.r-project.org/bugzilla/show_bug.cgi?id=16041
   e <- tryCatch(
     source_file$parsed_content <- parse(text = source_file$content, srcfile = source_file, keep.source = TRUE),
-    error = error)
+    error = error
+  )
 
-  if (!inherits(e, "expression")) {
+  if (inherits(e, "error")) {
     assign("e", e,  envir = parent.frame())
   }
 

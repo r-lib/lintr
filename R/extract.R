@@ -6,7 +6,7 @@ extract_r_source <- function(filename, lines, error = identity) {
   }
 
   chunks <- tryCatch(get_chunk_positions(pattern = pattern, lines = lines), error = error)
-  if (!inherits(chunks, "list")) {
+  if (inherits(chunks, "error")) {
     assign("e", chunks,  envir = parent.frame())
     # error, so return empty code
     return(character())
@@ -78,7 +78,7 @@ filter_chunk_end_positions <- function(starts, ends) {
 
   code_ends <- positions[pmin(1 + code_start_indexes, length(positions))]
 
-  bad_end_indexes <- which(grepl("starts", names(code_ends), fixed = TRUE))
+  bad_end_indexes <- grep("starts", names(code_ends), fixed = TRUE)
   if (length(bad_end_indexes)) {
     bad_start_positions <- positions[code_start_indexes[bad_end_indexes]]
     # This error message is formatted like a parse error
