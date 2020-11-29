@@ -132,7 +132,8 @@ make_object_linter <- function(fun) {
     keep_indices <- which(
       !is_operator(names) &
         !is_known_generic(names) &
-        !is_base_function(names)
+        !is_base_function(names) &
+        !is_special_function(names)
     )
 
     lapply(
@@ -240,6 +241,21 @@ base_funs <- unlist(lapply(base_pkgs,
 
 is_base_function <- function(x) {
   x %in% base_funs
+}
+
+# see ?".onLoad" and ?"Startup"
+special_funs <- c(
+  ".onLoad",
+  ".onAttach",
+  ".onUnload",
+  ".onDetach",
+  ".Last.lib",
+  ".First",
+  ".Last"
+)
+
+is_special_function <- function(x) {
+  x %in% special_funs
 }
 
 object_lint <- function(source_file, token, message, type) {
