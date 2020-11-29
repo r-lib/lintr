@@ -1,11 +1,3 @@
-named_list <- function(...) {
-  nms <- re_substitutes(as.character(eval(substitute(alist(...)))),
-    rex("(", anything), "")
-  vals <- list(...)
-  names(vals) <- nms
-  vals[!vapply(vals, is.null, logical(1))]
-}
-
 #' Modify lintr defaults
 #'
 #' Make a new list based on \pkg{lintr}'s default linters, undesirable
@@ -45,7 +37,7 @@ named_list <- function(...) {
 with_defaults <- function(..., default = default_linters) {
   vals <- list(...)
   nms <- names2(vals)
-  missing <- nms == ""
+  missing <- !nzchar(nms, keepNA = TRUE)
   if (any(missing)) {
     args <- as.character(eval(substitute(alist(...)[missing])))
     # foo_linter(x=1) => "foo"
@@ -53,16 +45,18 @@ with_defaults <- function(..., default = default_linters) {
     nms[missing] <- re_substitutes(
       re_substitutes(
         re_substitutes(args, rex("(", anything), ""),
-        rex(start, anything, "[\""),
-        ""),
-      rex("\"]", anything, end),
-      "")
+        rex(start, anything, '["'),
+        ""
+      ),
+      rex('"]', anything, end),
+      ""
+    )
   }
 
-  vals[nms == vals] <- NA
+  is.na(vals) <- nms == vals
   default[nms] <- vals
 
-  res <- default[!vapply(default, is.null, logical(1))]
+  res <- default[!vapply(default, is.null, logical(1L))]
 
   res[] <- lapply(res, function(x) {
     prev_class <- class(x)
@@ -73,7 +67,10 @@ with_defaults <- function(..., default = default_linters) {
   })
 }
 
-# this is just to make the auto documentation cleaner
+#' this is just to make the auto documentation cleaner
+#' @export
+#' @keywords internal
+#' @noRd
 str.lintr_function <- function(x, ...) {
   cat("\n")
 }
@@ -182,6 +179,7 @@ default_settings <- NULL
 
 settings <- NULL
 
+# nocov start
 .onLoad <- function(libname, pkgname) {
   op <- options()
   op.lintr <- list(
@@ -211,3 +209,4 @@ settings <- NULL
   settings <<- list2env(default_settings, parent = emptyenv())
   invisible()
 }
+# nocov end
