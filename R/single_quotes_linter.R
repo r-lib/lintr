@@ -9,7 +9,7 @@ single_quotes_linter <- function(source_file) {
   content <- source_file$full_parsed_content
   str_idx <- which(content$token == "STR_CONST")
   squote_matches <- which(re_matches(
-    content[str_idx, 'text'],
+    content[str_idx, "text"],
     rex(start, single_quote, any_non_double_quotes, single_quote, end)
   ))
 
