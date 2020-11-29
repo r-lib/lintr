@@ -1,3 +1,4 @@
+# nocov start
 in_ci <- function() {
   in_travis() || in_wercker()
 }
@@ -23,7 +24,7 @@ travis_build_info <- function() {
     return(NULL)
   }
 
-  slug_info <- strsplit(slug, "/")[[1]]
+  slug_info <- strsplit(slug, "/", fixed = TRUE)[[1]]
 
   list(
     user = slug_info[1],
@@ -55,7 +56,6 @@ wercker_build_info <- function() {
        )
 }
 
-# nocov start
 github_comment <- function(text, info = NULL, token = settings$comment_token) {
 
   if (is.null(info)) {
