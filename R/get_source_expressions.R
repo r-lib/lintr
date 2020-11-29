@@ -29,7 +29,7 @@
 #'           for .Rmd scripts, this is the extracted R source code (as text)}
 #'     \item{`full_parsed_content` (`data.frame`) as given by
 #'           [utils::getParseData()] for the full content}
-#'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of all
+#'     \item{`full_xml_parsed_content` (`xml_document`) the XML parse tree of all
 #'           expressions as given by [xmlparsedata::xml_parse_data()]}
 #'     \item{`terminal_newline` (`logical`) records whether `filename` has a terminal
 #'           newline (as determined by [readLines()] producing a corresponding warning)}
@@ -169,7 +169,7 @@ get_source_expressions <- function(filename) {
       file_lines = source_file$lines,
       content = source_file$lines,
       full_parsed_content = parsed_content,
-      xml_parsed_content = if (!is.null(parsed_content)) tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)), error = function(e) NULL),
+      full_xml_parsed_content = if (!is.null(parsed_content)) tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)), error = function(e) NULL),
       terminal_newline = terminal_newline
     )
 
@@ -373,7 +373,7 @@ fix_eq_assigns <- function(pc) {
 
   prev_locs <- vapply(eq_assign_locs, prev_with_parent, pc = pc, integer(1))
   next_locs <- vapply(eq_assign_locs, next_with_parent, pc = pc, integer(1))
-  expr_locs <- (function(x){
+  expr_locs <- (function(x) {
     x[is.na(x)] <- FALSE
     !x
     })(prev_locs == lag(next_locs)) # nolint
