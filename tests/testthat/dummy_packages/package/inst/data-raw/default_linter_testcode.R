@@ -18,6 +18,7 @@ f = function (x,y = 1){}
 # object_name
 # object_usage
 # open_curly
+# T_and_F_symbol
 someComplicatedFunctionWithALongCamelCaseName <- function(x)
 {
   y <- 1
