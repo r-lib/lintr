@@ -15,6 +15,7 @@
 * New `sprintf_linter()` (#544, #578, #624, #625, @renkun-ken, @AshesITR)
 * Exclusions specified in the `.lintr` file are now relative to the location of that file 
   and support excluding entire directories (#158, #438, @AshesITR)
+* `object_name_linter()` now excludes special R hook functions such as `.onLoad` (#500, #614, @AshesITR)
 * `T_and_F_symbol_linter` is now part of the default linters (#517, #612, @AshesITR)
 * `with_defaults()` no longer duplicates the `lintr_function` class when it is already present (#511, #612, @AshesITR)
 

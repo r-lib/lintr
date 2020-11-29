@@ -189,7 +189,7 @@ default_settings <- NULL
 
 settings <- NULL
 
-.onLoad <- function(libname, pkgname) { # nolint # TODO remove once #500 is fixed
+.onLoad <- function(libname, pkgname) {
   op <- options()
   op_lintr <- list(
     lintr.linter_file = ".lintr"
