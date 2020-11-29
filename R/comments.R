@@ -55,6 +55,7 @@ wercker_build_info <- function() {
        )
 }
 
+# nocov start
 github_comment <- function(text, info = NULL, token = settings$comment_token) {
 
   if (is.null(info)) {
@@ -79,3 +80,4 @@ github_comment <- function(text, info = NULL, token = settings$comment_token) {
     message(httr::http_condition(response, "error", task = httr::content(response, as = "text")))
   }
 }
+# nocov end
