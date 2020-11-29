@@ -65,7 +65,7 @@ get_tokens_in_parentheses <- function(open_paren_line_num, tokens) {
   close_paren_token <- tail(get_sibling_tokens(open_paren_token, tokens), 1L)
   close_paren_text <- close_paren_token[["text"]]
   close_paren_line_num <- which(rownames(tokens) == rownames(close_paren_token))
-  if (are_matching_parenteses(open_paren_text, close_paren_text)) {
+  if (are_matching_parentheses(open_paren_text, close_paren_text)) {
     range <- if (open_paren_line_num + 1L == close_paren_line_num) {
       integer()
     } else {
