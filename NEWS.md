@@ -15,6 +15,7 @@
 * New `sprintf_linter()` (#544, #578, #624, #625, @renkun-ken, @AshesITR)
 * Exclusions specified in the `.lintr` file are now relative to the location of that file 
   and support excluding entire directories (#158, #438, @AshesITR)
+* `object_name_linter()` now excludes special R hook functions such as `.onLoad` (#500, #614, @AshesITR)
 * New `backport_linter()` for detecting mismatched R version dependencies (#506, @MichaelChirico)
 
 # lintr 2.0.1
