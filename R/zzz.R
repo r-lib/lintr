@@ -1,11 +1,3 @@
-#' Available linters
-#'
-#' @name linters
-#' @title linters
-#' @param source_file returned by \code{\link{get_source_expressions}}
-#' @param length the length cutoff to use for the given linter.
-NULL
-
 named_list <- function(...) {
   nms <- re_substitutes(as.character(eval(substitute(alist(...)))),
     rex("(", anything), "")
@@ -190,7 +182,7 @@ default_settings <- NULL
 
 settings <- NULL
 
-.onLoad <- function(libname, pkgname) { # nolint
+.onLoad <- function(libname, pkgname) {
   op <- options()
   op.lintr <- list(
     lintr.linter_file = ".lintr"

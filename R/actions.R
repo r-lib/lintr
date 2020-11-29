@@ -5,7 +5,10 @@ in_github_actions <- function() {
 # Output logging commands for any lints found
 github_actions_log_lints <- function(lints) {
   for (x in lints) {
-    cat(sprintf("::warning file=%s,line=%s,col=%s::%s\n", x$filename, x$line_number, x$column_number, x$message), sep = "")
+    cat(
+      sprintf("::warning file=%s,line=%s,col=%s::%s\n", x$filename, x$line_number, x$column_number, x$message),
+      sep = ""
+    )
   }
 }
 

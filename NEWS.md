@@ -5,6 +5,17 @@
   format specifiers (#472, @russHyde)
 * New style SNAKE_CASE for `object_name_linter()` (#494, @AshesITR)
 * RStudio source markers are cleared when there are no lints (#520, @AshesITR)
+* New `assignment_spaces()` lintr. (#538, @f-ritter)
+* `seq_linter()`'s lint message is clearer about the reason for linting. (#522, @michaelchirico)
+* New `missing_package_linter()` (#536, #547, @renkun-ken)
+* New `namespace_linter()` (#548, #551, @renkun-ken)
+* Fix possible error on invalid XML produced by xmlparsedata (#559, #560, @renkun-ken)
+* Fix handling zero-length variable name error (#566, #567, @renkun-ken)
+* New `missing_argument_linter()` (#563, #565, @renkun-ken)
+* New `sprintf_linter()` (#544, #578, #624, #625, @renkun-ken, @AshesITR)
+* Exclusions specified in the `.lintr` file are now relative to the location of that file 
+  and support excluding entire directories (#158, #438, @AshesITR)
+* `object_name_linter()` now excludes special R hook functions such as `.onLoad` (#500, #614, @AshesITR)
 
 # lintr 2.0.1
 
