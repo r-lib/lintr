@@ -119,7 +119,7 @@ test_that("it does lint with malformed input", {
     file = "knitr_malformed/incomplete_r_block.Rmd",
     checks = "Missing chunk end",
     default_linters,
-    parse_settings = FALSE)
+    parse_settings = FALSE
   )
 
   contents <- c(
