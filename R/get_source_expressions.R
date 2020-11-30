@@ -52,8 +52,6 @@ get_source_expressions <- function(filename) {
       }
     }
   )
-  source_file$lines <- extract_r_source(source_file$filename, source_file$lines)
-  source_file$content <- get_content(source_file$lines)
 
   lint_error <- function(e) {
     message_info <- re_matches(e$message,
@@ -148,7 +146,39 @@ get_source_expressions <- function(filename) {
     )
   }
 
+  rmd_error <- function(e) {
+    message_info <- re_matches(e$message,
+      rex(except_some_of(":"),
+        ":",
+        capture(name = "line",
+          digits),
+        ":",
+        capture(name = "column",
+          digits),
+        ":",
+        space,
+        capture(name = "message",
+          anything),
+        "\n")
+      )
+
+    line_number <- as.integer(message_info$line)
+    column_number <- as.integer(message_info$column)
+
+    Lint(
+      filename = source_file$filename,
+      line_number = line_number,
+      column_number = column_number,
+      type = "error",
+      message = message_info$message,
+      line = source_file$lines[line_number],
+      linter = "error"
+    )
+  }
+
   e <- NULL
+  source_file$lines <- extract_r_source(source_file$filename, source_file$lines, error = rmd_error)
+  source_file$content <- get_content(source_file$lines)
   parsed_content <- get_source_file(source_file, error = lint_error)
   tree <- generate_tree(parsed_content)
 
@@ -205,15 +235,17 @@ get_source_file <- function(source_file, error = identity) {
 
   e <- tryCatch(
     source_file$parsed_content <- parse(text = source_file$content, srcfile = source_file, keep.source = TRUE),
-    error = error)
+    error = error
+  )
 
   # This needs to be done twice to avoid
   #   https://bugs.r-project.org/bugzilla/show_bug.cgi?id=16041
   e <- tryCatch(
     source_file$parsed_content <- parse(text = source_file$content, srcfile = source_file, keep.source = TRUE),
-    error = error)
+    error = error
+  )
 
-  if (!inherits(e, "expression")) {
+  if (inherits(e, "error") || inherits(e, "lint")) {
     assign("e", e,  envir = parent.frame())
   }
 
