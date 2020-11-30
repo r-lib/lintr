@@ -1,5 +1,6 @@
 # lintr (development version)
 
+* Switched CI from Travis to GitHub Actions, using the full tidyverse recommended R CMD check. Code coverage and linting are implemented using separate GitHub Actions workflows (#572, @dragosmg)
 * `save_cache` will now recursively create the cache directory; this avoids errors that could arise if any parent directories do not exist (#60, @dankessler).
 * `extract_r_source` handles Rmd containing unevaluated code blocks with named
   format specifiers (#472, @russHyde)
