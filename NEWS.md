@@ -1,5 +1,6 @@
 # lintr (development version)
 
+* Switched CI from Travis to GitHub Actions, using the full tidyverse recommended R CMD check. Code coverage and linting are implemented using separate GitHub Actions workflows (#572, @dragosmg)
 * `save_cache` will now recursively create the cache directory; this avoids errors that could arise if any parent directories do not exist (#60, @dankessler).
 * `extract_r_source` handles Rmd containing unevaluated code blocks with named
   format specifiers (#472, @russHyde)
@@ -16,6 +17,8 @@
 * Exclusions specified in the `.lintr` file are now relative to the location of that file 
   and support excluding entire directories (#158, #438, @AshesITR)
 * `object_name_linter()` now excludes special R hook functions such as `.onLoad` (#500, #614, @AshesITR)
+* `equals_na_linter()` now lints `x != NA` and `NA == x`, and skips usages in comments (#545, @michaelchirico)
+* Malformed Rmd files now cause a lint instead of an error (#571, #575, @AshesITR)
 * New `backport_linter()` for detecting mismatched R version dependencies (#506, @MichaelChirico)
 
 # lintr 2.0.1
