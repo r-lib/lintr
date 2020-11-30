@@ -72,4 +72,8 @@ test_that("returns the correct linting", {
   expect_lint("if (!(foo && bar || baz)) { foo }",
     NULL,
     spaces_left_parentheses_linter)
+
+  expect_lint("x^(y + z)", NULL, spaces_left_parentheses_linter)
+
+  expect_lint("a <- -(b)", NULL, spaces_left_parentheses_linter)
 })
