@@ -12,10 +12,12 @@
 * Fix possible error on invalid XML produced by xmlparsedata (#559, #560, @renkun-ken)
 * Fix handling zero-length variable name error (#566, #567, @renkun-ken)
 * New `missing_argument_linter()` (#563, #565, @renkun-ken)
-* New `sprintf_linter()` (#544, #578, @renkun-ken)
+* New `sprintf_linter()` (#544, #578, #624, #625, @renkun-ken, @AshesITR)
 * Exclusions specified in the `.lintr` file are now relative to the location of that file 
   and support excluding entire directories (#158, #438, @AshesITR)
-* `equals_na_linter`, `paren_brace_linter`, and `no_tab_linter` all use more reliable matching (e.g.,
+* `object_name_linter()` now excludes special R hook functions such as `.onLoad` (#500, #614, @AshesITR)
+* `equals_na_linter()` now lints `x != NA` and `NA == x`, and skips usages in comments (#545, @michaelchirico)
+* `paren_brace_linter` and `no_tab_linter` also use more reliable matching (e.g.,
   excluding matches found in comments; #441 and #545, @russHyde)
 
 # lintr 2.0.1

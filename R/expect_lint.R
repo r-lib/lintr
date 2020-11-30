@@ -51,7 +51,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
 
   lints <- lint(file, ...)
   n_lints <- length(lints)
-  lint_str <- if (n_lints) {paste0(c("", lints), collapse="\n")} else {""}
+  lint_str <- if (n_lints) paste0(c("", lints), collapse="\n") else ""
 
   wrong_number_fmt  <- "got %d lints instead of %d%s"
   if (is.null(checks)) {
@@ -91,7 +91,11 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
           isTRUE(all.equal(value, check))
         }
         if (!is.logical(exp)) {
-          stop("Invalid regex result, did you mistakenly have a capture group in the regex? Be sure to escape parenthesis with `[]`", call. = FALSE)
+          stop(
+            "Invalid regex result, did you mistakenly have a capture group in the regex? ",
+            "Be sure to escape parenthesis with `[]`",
+            call. = FALSE
+          )
         }
         testthat::expect(exp, msg)
         })

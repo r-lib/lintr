@@ -111,16 +111,16 @@ get_function_assignments <- function(xml) {
       xml2::xml_find_all(xml, "expr[LEFT_ASSIGN][expr[2][FUNCTION]]/expr[2]")
   equal_assignment_functions <-
       xml2::xml_find_all(xml, "equal_assign[expr[2]][expr[FUNCTION]]/expr[2]")
-  assign_fun_assignment_functions <-
+  assign_assignment_functions <-
       xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='assign']]/expr[3]")
-  set_method_fun_assignment_functions <-
+  setmethod_assignment_functions <-
       xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[3]")
 
   funs <- c(
     left_assignment_functions,
     equal_assignment_functions,
-    assign_fun_assignment_functions,
-    set_method_fun_assignment_functions
+    assign_assignment_functions,
+    setmethod_assignment_functions
   )
 
   get_attr <- function(x, attr) as.integer(xml2::xml_attr(x, attr))
