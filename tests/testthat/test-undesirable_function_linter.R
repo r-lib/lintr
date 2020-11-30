@@ -16,3 +16,12 @@ test_that("linter returns correct linting", {
               ),
               linter)
 })
+
+test_that("it's possible to NOT lint symbols", {
+  linter <- undesirable_function_linter(
+    fun = c("dir" = NA, "log10" = "use log()"),
+    symbol_is_undesirable = FALSE
+  )
+  expect_lint("dir <- 'path/to/a/directory'", NULL, linter)
+  expect_lint("lapply(x, log10)", NULL, linter)
+})
