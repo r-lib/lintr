@@ -209,7 +209,7 @@ blocks
 
 \item \code{camel_case_linter}: check that objects are not in camelCase.
 
-\item \code{equals_na_linter}: that checks for x == NA
+\item \code{equals_na_linter}: that checks for x == NA and x != NA
 
 \item \code{extraction_operator_linter}: Check that the `[[` operator is used when extracting a single element from
 an object, not `[` (subsetting) nor `$` (interactive use).
