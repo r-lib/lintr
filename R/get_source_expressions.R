@@ -327,16 +327,16 @@ fix_column_numbers <- function(content) {
 # getParseData() counts 1 tab as a variable number of spaces instead of one:
 # https://github.com/wch/r-source/blame/e7401b68ab0e032fce3e376aaca9a5431619b2b4/src/main/gram.y#L512
 # The number of spaces is so that the code is brought to the next 8-character indentation level e.g:
-#   "1\t;"          -> "1       ;"
-#   "12\t;"         -> "12      ;"
-#   "123\t;"        -> "123     ;"
-#   "1234\t;"       -> "1234    ;"
-#   "12345\t;"      -> "12345   ;"
-#   "123456\t;"     -> "123456  ;"
-#   "1234567\t;"    -> "1234567 ;"
-#   "12345678\t;"   -> "12345678        ;"
-#   "123456789\t;"  -> "123456789       ;"
-#   "1234567890\t;" -> "1234567890      ;"
+#   "1\t;"          --> "1       ;"
+#   "12\t;"         --> "12      ;"
+#   "123\t;"        --> "123     ;"
+#   "1234\t;"       --> "1234    ;"
+#   "12345\t;"      --> "12345   ;"
+#   "123456\t;"     --> "123456  ;"
+#   "1234567\t;"    --> "1234567 ;"
+#   "12345678\t;"   --> "12345678        ;"
+#   "123456789\t;"  --> "123456789       ;"
+#   "1234567890\t;" --> "1234567890      ;"
 fix_tab_indentations <- function(source_file) {
   pc <- getParseData(source_file)
 
