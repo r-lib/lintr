@@ -71,7 +71,7 @@ with_defaults <- function(..., default = default_linters) {
 #' @export
 #' @keywords internal
 #' @noRd
-str.lintr_function <- function(x, ...) {
+str.lintr_function <- function(object, ...) {
   cat("\n")
 }
 
