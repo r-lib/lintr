@@ -1,4 +1,4 @@
-control_char_regex <- rex(one_of(intToUtf8(seq.int(0L, 31L), multiple = TRUE)))
+control_char_regex <- rex(one_of(intToUtf8(seq.int(0L, 31L), multiple=TRUE)))
 # control chars (non-printing)
 
 win32_bad_punct_regex <- rex(one_of("*", "?", "\"", "<", ">", "|", ":", "/", "\\"))
@@ -121,7 +121,7 @@ split_path <- function(path, sep="/|\\\\") {
       }
       i <- i - 1L
       if (i > 0L) {
-        dirs <- c(paste0(rep(prefix, i), collapse = ""), tail(dirs, -i))
+        dirs <- c(paste0(rep(prefix, i), collapse=""), tail(dirs, -i))
       }
       # add // to protocols (like http, smb, ...)
       if (length(dirs)) {

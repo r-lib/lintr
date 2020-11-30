@@ -1,4 +1,4 @@
-#' @Describein linters  Check that object names conform to a naming style.
+#' @describeIn linters  Check that object names conform to a naming style.
 #' @param styles A subset of
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
 #'   match at least one of these styles.
