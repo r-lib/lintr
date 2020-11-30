@@ -67,14 +67,6 @@ with_defaults <- function(..., default = default_linters) {
   })
 }
 
-#' this is just to make the auto documentation cleaner
-#' @export
-#' @keywords internal
-#' @noRd
-str.lintr_function <- function(object, ...) {
-  cat("\n")
-}
-
 #' Default linters
 #'
 #' List of default linters for \code{\link{lint}}. Use \code{\link{with_defaults}} to customize it.

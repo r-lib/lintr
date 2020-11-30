@@ -50,13 +50,8 @@ test_that("it errors if the config file does not end in a newline", {
 })
 
 test_that("with_defaults works as expected", {
-  defaults <- with_defaults()
-
-  # testing str.lintr_function
-  expect_equal(capture.output(str(defaults[[1]])), "")
-
   # test capturing unnamed args
-  defaults_2 <- with_defaults(assignment_linter)
+  defaults <- with_defaults(assignment_linter)
   # assignment_linter is in defaults, so output doesn't change
-  expect_equal(names(defaults), names(defaults_2))
+  expect_equal(names(defaults), names(with_defaults()))
 })
