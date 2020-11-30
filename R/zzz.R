@@ -137,7 +137,7 @@ all_undesirable_functions <- with_defaults(default = list(),
 
 #' @rdname default_undesirable_functions
 #' @export
-default_undesirable_functions <- do.call(with_defaults, c(list(default=list()),
+default_undesirable_functions <- do.call(with_defaults, c(list(default = list()),
   all_undesirable_functions[c(
     "attach",
     "detach",
@@ -166,7 +166,7 @@ all_undesirable_operators <- with_defaults(default = list(),
 
 #' @rdname default_undesirable_functions
 #' @export
-default_undesirable_operators <- do.call(with_defaults, c(list(default=list()),
+default_undesirable_operators <- do.call(with_defaults, c(list(default = list()),
   all_undesirable_operators[c(
     ":::",
     "<<-",

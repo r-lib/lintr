@@ -202,7 +202,7 @@ escape_chars <- c(
 unescape <- function(str, q="`") {
   names(q) <- paste0("\\", q)
   my_escape_chars <- c(escape_chars, q)
-  res <- gregexpr(text=str, pattern=rex(or(names(my_escape_chars))))
+  res <- gregexpr(text = str, pattern = rex(or(names(my_escape_chars))))
   all_matches <- regmatches(str, res)
   regmatches(str, res) <- lapply(
     all_matches,

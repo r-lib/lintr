@@ -121,7 +121,7 @@ make_object_linter <- function(fun) {
   function(source_file) {
 
     token_nums <- ids_with_token(
-      source_file, rex(start, "SYMBOL" %if_next_isnt% "_SUB"), fun=re_matches
+      source_file, rex(start, "SYMBOL" %if_next_isnt% "_SUB"), fun = re_matches
     )
     if (length(token_nums) == 0) {
       return(list())
@@ -305,9 +305,9 @@ style_regexes <- list(
 regexes_rd <- paste0(collapse = ", ", paste0("\\sQuote{", names(style_regexes), "}"))
 
 matches_styles <- function(name, styles=names(style_regexes)) {
-  invalids <- paste(styles[!styles %in% names(style_regexes)], collapse=", ")
+  invalids <- paste(styles[!styles %in% names(style_regexes)], collapse = ", ")
   if (nzchar(invalids)) {
-    valids <- paste(names(style_regexes), collapse=", ")
+    valids <- paste(names(style_regexes), collapse = ", ")
     stop(sprintf("Invalid style(s) requested: %s\nValid styles are: %s\n", invalids, valids))
   }
   name <- re_substitutes(name, rex(start, one_or_more(dot)), "")  # remove leading dots
@@ -315,7 +315,7 @@ matches_styles <- function(name, styles=names(style_regexes)) {
     style_regexes[styles],
     re_matches,
     logical(1L),
-    data=name
+    data = name
   )
 }
 
