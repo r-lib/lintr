@@ -101,7 +101,6 @@ strip_names <- function(x) {
   x
 }
 
-
 object_lint2 <- function(expr, source_file, message, type) {
   symbol <- xml2::as_list(expr)
   Lint(
@@ -271,23 +270,6 @@ object_lint <- function(source_file, token, message, type) {
 }
 
 
-object_name_linter_old <- function(style = "snake_case") {
-  make_object_linter(
-    function(source_file, token) {
-      name <- unquote(token[["text"]])
-      if (!any(matches_styles(name, style))) {
-        object_lint(
-          source_file,
-          token,
-          sprintf("Variable and function name style should be %s.", paste(style, collapse = " or ")),
-          "object_name_linter"
-        )
-      }
-    }
-  )
-}
-
-
 loweralnum <- rex(one_of(lower, digit))
 upperalnum <- rex(one_of(upper, digit))
 
@@ -302,23 +284,7 @@ style_regexes <- list(
   "UPPERCASE"   = rex(start, maybe("."), one_or_more(upperalnum), end)
 )
 
-regexes_rd <- paste0(collapse = ", ", paste0("\\sQuote{", names(style_regexes), "}"))
-
-matches_styles <- function(name, styles=names(style_regexes)) {
-  invalids <- toString(styles[!styles %in% names(style_regexes)])
-  if (nzchar(invalids)) {
-    valids <- toString(names(style_regexes))
-    stop(sprintf("Invalid style(s) requested: %s\nValid styles are: %s\n", invalids, valids))
-  }
-  name <- re_substitutes(name, rex(start, one_or_more(dot)), "")  # remove leading dots
-  vapply(
-    style_regexes[styles],
-    re_matches,
-    logical(1L),
-    data=name
-  )
-}
-
+regexes_rd <- toString(paste0("\\sQuote{", names(style_regexes), "}"))
 
 #' @describeIn linters check that object names are not too long.
 #' @export
