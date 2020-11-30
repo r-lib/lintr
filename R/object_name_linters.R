@@ -52,14 +52,14 @@ object_name_linter <- function(styles = "snake_case") {
     nms <- strip_names(
       as.character(xml2::xml_find_first(assignments, "./text()")))
 
-    generics <- c(
+    generics <- strip_names(c(
       declared_s3_generics(x),
       namespace_imports()$fun,
       names(.knownS3Generics),
-      .S3PrimitiveGenerics, ls(baseenv()))
+      .S3PrimitiveGenerics, ls(baseenv())))
 
-    style_matches <- lapply(styles, function(x) {
-      check_style(nms, x, generics)
+    style_matches <- lapply(styles, function(style) {
+      check_style(nms, style, generics)
     })
 
     matches_a_style <- Reduce(`|`, style_matches)
@@ -91,6 +91,9 @@ check_style <- function(nms, style, generics = character()) {
       # If they are not conforming, but are S3 methods then ignore them
       conforming[!conforming][has_generic] <- TRUE
     }
+    # exclude namespace hooks like
+    is_special <- is_special_function(nms[!conforming])
+    conforming[!conforming][is_special] <- TRUE
   }
   conforming
 }
@@ -132,8 +135,7 @@ make_object_linter <- function(fun) {
     keep_indices <- which(
       !is_operator(names) &
         !is_known_generic(names) &
-        !is_base_function(names) &
-        !is_special_function(names)
+        !is_base_function(names)
     )
 
     lapply(
@@ -231,27 +233,34 @@ base_pkgs <- c(
   "mgcv"
 )
 
-base_funs <- unlist(lapply(base_pkgs,
-                           function(x) {
-                             name <- try_silently(getNamespace(x))
-                             if (!inherits(name, "try-error")) {
-                               ls(name, all.names = TRUE)
-                             }
-                           }))
+# some duplicates such as .onLoad appear in multiple packages; sort for efficiency
+base_funs <- sort(unique(unlist(lapply(
+  base_pkgs,
+  function(x) {
+    name <- try_silently(getNamespace(x))
+    if (!inherits(name, "try-error")) {
+      ls(name, all.names = TRUE)
+    }
+  }
+))))
 
 is_base_function <- function(x) {
   x %in% base_funs
 }
 
-# see ?".onLoad" and ?"Startup"
+# see ?".onLoad", ?Startup, and ?quit. Remove leading dot to match behavior of strip_names().
+#   All of .onLoad, .onAttach, and .onUnload are used in base packages,
+#   and should be caught in is_base_function; they're included here for completeness / stability
+#   (they don't strictly _have_ to be defined in base, so could in principle be removed).
+#   .Last.sys and .First.sys are part of base itself, so aren't included here.
 special_funs <- c(
-  ".onLoad",
-  ".onAttach",
-  ".onUnload",
-  ".onDetach",
-  ".Last.lib",
-  ".First",
-  ".Last"
+  "onLoad",
+  "onAttach",
+  "onUnload",
+  "onDetach",
+  "Last.lib",
+  "First",
+  "Last"
 )
 
 is_special_function <- function(x) {
@@ -268,7 +277,7 @@ object_lint <- function(source_file, token, message, type) {
     line = source_file$lines[as.character(token$line1)],
     ranges = list(c(token$col1, token$col2)),
     linter = type
-    )
+  )
 }
 
 
