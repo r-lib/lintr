@@ -49,6 +49,7 @@ test_that("linter ignores some objects", {
   expect_lint("names.foo <- t", NULL, object_name_linter("CamelCase"))      # int generic
   expect_lint("sapply(x,f,USE.NAMES=T)", NULL, object_name_linter("snake_case")) # defined elsewhere
   expect_lint(".onLoad <- function(...) TRUE", NULL, object_name_linter("snake_case")) # namespace hooks, #500
+  expect_lint(".First <- function(...) TRUE", NULL, object_name_linter("snake_case")) # namespace hooks
 })
 
 test_that("linter returns correct linting", {

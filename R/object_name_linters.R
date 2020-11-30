@@ -91,7 +91,7 @@ check_style <- function(nms, style, generics = character()) {
       # If they are not conforming, but are S3 methods then ignore them
       conforming[!conforming][has_generic] <- TRUE
     }
-    # exclude namespace hooks like
+    # exclude namespace hooks like .onLoad, .Last.lib, etc (#500)
     is_special <- is_special_function(nms[!conforming])
     conforming[!conforming][is_special] <- TRUE
   }
