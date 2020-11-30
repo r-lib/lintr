@@ -53,4 +53,6 @@ test_that("returns the correct linting", {
     NULL,
     spaces_inside_linter)
 
+  # trailing comments are OK (#636)
+  expect_lint("or( #code\n  x, y\n)", NULL, spaces_inside_linter)
 })
