@@ -2,5 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
+.idea
 bad.R
 script.R
