@@ -127,7 +127,10 @@ trailing_blank_lines_linter(source_file)
 
 trailing_whitespace_linter(source_file)
 
-undesirable_function_linter(fun = default_undesirable_functions)
+undesirable_function_linter(
+  fun = default_undesirable_functions,
+  symbol_is_undesirable = TRUE
+)
 
 undesirable_operator_linter(op = default_undesirable_operators)
 
@@ -165,8 +168,12 @@ match at least one of these styles.}
   \item{trailing}{Semicolons following the last statement on the line.}
 }}
 
-\item{fun}{Named character vector, where the names are the names of the undesirable functions,
-and the values are the text for the alternative function to use (or \code{NA}).}
+\item{fun}{Named character vector, where the names are the names of the
+undesirable functions, and the values are the text for the alternative
+function to use (or \code{NA}).}
+
+\item{symbol_is_undesirable}{Whether to consider the use of an undesirable
+function name as a symbol undesirable or not.}
 
 \item{op}{Named character vector, where the names are the names of the undesirable operators,
 and the values are the text for the alternative operator to use (or \code{NA}).}
@@ -202,7 +209,7 @@ blocks
 
 \item \code{camel_case_linter}: check that objects are not in camelCase.
 
-\item \code{equals_na_linter}: that checks for x == NA
+\item \code{equals_na_linter}: that checks for x == NA and x != NA
 
 \item \code{extraction_operator_linter}: Check that the `[[` operator is used when extracting a single element from
 an object, not `[` (subsetting) nor `$` (interactive use).
@@ -270,8 +277,8 @@ arguments with incompatible types in \code{sprintf} calls.
 
 \item \code{trailing_whitespace_linter}: check there are no trailing whitespace characters.
 
-\item \code{undesirable_function_linter}: Report the use of undesirable functions, e.g. \code{return}, \code{options},
-or \code{sapply} and suggest an alternative.
+\item \code{undesirable_function_linter}: Report the use of undesirable functions, e.g.
+\code{return}, \code{options}, or \code{sapply} and suggest an alternative.
 
 \item \code{undesirable_operator_linter}: Report the use of undesirable operators, e.g. \code{`:::`} or \code{`<<-`}
 and suggest an alternative.
