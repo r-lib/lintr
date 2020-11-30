@@ -1,11 +1,3 @@
-named_list <- function(...) {
-  nms <- re_substitutes(as.character(eval(substitute(alist(...)))),
-    rex("(", anything), "")
-  vals <- list(...)
-  names(vals) <- nms
-  vals[!vapply(vals, is.null, logical(1))]
-}
-
 #' Modify lintr defaults
 #'
 #' Make a new list based on \pkg{lintr}'s default linters, undesirable
@@ -173,7 +165,6 @@ default_undesirable_operators <- do.call(with_defaults, c(list(default=list()),
     "->>"
   )]
 ))
-
 
 #' Default lintr settings
 #' @seealso \code{\link{read_settings}}, \code{\link{default_linters}}
