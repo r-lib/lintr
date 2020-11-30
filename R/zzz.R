@@ -184,11 +184,11 @@ settings <- NULL
 
 .onLoad <- function(libname, pkgname) {
   op <- options()
-  op.lintr <- list(
+  op_lintr <- list(
     lintr.linter_file = ".lintr"
   )
-  toset <- !(names(op.lintr) %in% names(op))
-  if (any(toset)) options(op.lintr[toset])
+  toset <- !(names(op_lintr) %in% names(op))
+  if (any(toset)) options(op_lintr[toset])
 
   default_settings <<- list(
     linters = default_linters,

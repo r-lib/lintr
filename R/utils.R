@@ -136,8 +136,9 @@ logical_env <- function(x) {
 # from ?chartr
 rot <- function(ch, k = 13) {
   p0 <- function(...) paste(c(...), collapse = "")
-  A <- c(letters, LETTERS, " '")
-  I <- seq_len(k); chartr(p0(A), p0(c(A[-I], A[I])), ch)
+  alphabet <- c(letters, LETTERS, " '")
+  idx <- seq_len(k)
+  chartr(p0(alphabet), p0(c(alphabet[-idx], alphabet[idx])), ch)
 }
 
 trim_ws <- function(x) {
