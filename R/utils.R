@@ -194,9 +194,9 @@ escape_chars <- c(
   "\\f"  = "\f",  # form feed
   "\\v"  = "\v"   # vertical tab
   # dynamically-added:
-  #"\\'"  = "'",  # ASCII apostrophe
-  #"\\\"" = "\"", # ASCII quotation mark
-  #"\\`"  = "`"   # ASCII grave accent (backtick)
+  #"\\'"  --> "'",  # ASCII apostrophe
+  #"\\\"" --> "\"", # ASCII quotation mark
+  #"\\`"  --> "`"   # ASCII grave accent (backtick)
 )
 
 unescape <- function(str, q="`") {
