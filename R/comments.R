@@ -1,4 +1,3 @@
-# nocov start
 in_ci <- function() {
   in_travis() || in_wercker()
 }
@@ -56,6 +55,7 @@ wercker_build_info <- function() {
        )
 }
 
+# nocov start
 github_comment <- function(text, info = NULL, token = settings$comment_token) {
 
   if (is.null(info)) {
