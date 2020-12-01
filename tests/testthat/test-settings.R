@@ -51,5 +51,5 @@ test_that("it errors if the config file does not end in a newline", {
 
 test_that("rot utility works as intended", {
   rot <- lintr:::rot
-  expect_equal(rot(letters), c(letters[14:26], LETTERS[1:3]))
+  expect_equal(rot(letters), c(letters[14:26], LETTERS[1:13]))
 })
