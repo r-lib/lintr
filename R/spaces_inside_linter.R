@@ -10,7 +10,7 @@ spaces_inside_linter <- function(source_file) {
 
   # using a regex here as checking each token is horribly slow
   re <- rex(
-    list(one_of("[("), one_or_more(" "), none_of(end %or% "#")) %or%
+    list(one_of("[("), one_or_more(" "), none_of(end %or% "#" %or% " ")) %or%
       list(" " %if_prev_isnt% ",", one_of("])"))
   )
   all_matches <- re_matches(source_file$lines, re, global = TRUE, locations = TRUE)
