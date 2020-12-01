@@ -73,18 +73,6 @@ parents <- function(data, id, levels = Inf, simplify = TRUE) {
   }
 }
 
-family <- function(data, id, parent_levels = 1L, child_levels = Inf) {
-  parents <- parents(data, id, parent_levels)
-  c(parents,
-    unlist(lapply(
-        parents,
-        children,
-        data = data,
-        levels = child_levels)
-      )
-    )
-}
-
 siblings <- function(data, id, child_levels = Inf) {
   parents <- parents(data, id, 1L)
   res <- unlist(lapply(
