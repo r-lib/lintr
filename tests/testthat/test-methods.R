@@ -99,3 +99,19 @@ test_that("print.lint works", {
   )
   expect_output(print(l), "  1:length(x)", fixed = TRUE)
 })
+
+test_that("print.lints works", {
+  tmp <- tempfile()
+  file.create(tmp)
+  on.exit(unlink(tmp))
+
+  expect_invisible(print(lint(tmp)))
+})
+
+test_that("split.lint works as intended", {
+  writeLines("1:nrow(x)\n1:ncol(x)", tmp <- tempfile())
+  on.exit(unlink(tmp))
+
+  l <- lint(tmp, seq_linter)
+  expect_true(all(vapply(split(l), inherits, logical(1L), "lints")))
+})

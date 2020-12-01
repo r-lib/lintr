@@ -76,7 +76,7 @@ print.lints <- function(x, ...) {
     }
 
     if (isTRUE(settings$error_on_lint)) {
-      quit("no", 31, FALSE)
+      quit("no", 31, FALSE) # nocov
     }
   } else if (getOption("lintr.rstudio_source_markers", TRUE) &&
              rstudioapi::hasFun("sourceMarkers")) {
