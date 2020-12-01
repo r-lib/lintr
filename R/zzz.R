@@ -37,7 +37,7 @@
 with_defaults <- function(..., default = default_linters) {
   vals <- list(...)
   nms <- names2(vals)
-  missing <- nms == ""
+  missing <- !nzchar(nms, keepNA = TRUE)
   if (any(missing)) {
     args <- as.character(eval(substitute(alist(...)[missing])))
     # foo_linter(x=1) => "foo"
@@ -45,16 +45,18 @@ with_defaults <- function(..., default = default_linters) {
     nms[missing] <- re_substitutes(
       re_substitutes(
         re_substitutes(args, rex("(", anything), ""),
-        rex(start, anything, "[\""),
-        ""),
-      rex("\"]", anything, end),
-      "")
+        rex(start, anything, '["'),
+        ""
+      ),
+      rex('"]', anything, end),
+      ""
+    )
   }
 
-  vals[nms == vals] <- NA
+  is.na(vals) <- nms == vals
   default[nms] <- vals
 
-  res <- default[!vapply(default, is.null, logical(1))]
+  res <- default[!vapply(default, is.null, logical(1L))]
 
   res[] <- lapply(res, function(x) {
     prev_class <- class(x)
@@ -63,11 +65,6 @@ with_defaults <- function(..., default = default_linters) {
     }
     x
   })
-}
-
-# this is just to make the auto documentation cleaner
-str.lintr_function <- function(x, ...) {
-  cat("\n")
 }
 
 #' Default linters
