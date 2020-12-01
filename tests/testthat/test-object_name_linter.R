@@ -3,40 +3,40 @@ context("object_name_linter")
 
 test_that("styles are correctly identified", {
   styles <- names(style_regexes)
-
   do_style_check <- function(nms) lapply(styles, check_style, nms = nms)
-  #                                              UpC   lowC   snake  SNAKE  dot    alllow  ALLUP
-  expect_equivalent(do_style_check("x"  ), list(FALSE,  TRUE,  TRUE, FALSE,  TRUE,   TRUE, FALSE))
-  expect_equivalent(do_style_check(".x" ), list(FALSE,  TRUE,  TRUE, FALSE,  TRUE,   TRUE, FALSE))
-  expect_equivalent(do_style_check("X"  ), list( TRUE, FALSE, FALSE,  TRUE, FALSE,  FALSE,  TRUE))
-  expect_equivalent(do_style_check("x." ), list(FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("X." ), list(FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("x_" ), list(FALSE, FALSE,  TRUE, FALSE, FALSE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("X_" ), list(FALSE, FALSE, FALSE,  TRUE, FALSE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("xy" ), list(FALSE,  TRUE,  TRUE, FALSE,  TRUE,   TRUE, FALSE))
-  expect_equivalent(do_style_check("xY" ), list(FALSE,  TRUE, FALSE, FALSE, FALSE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("Xy" ), list( TRUE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("XY" ), list( TRUE, FALSE, FALSE,  TRUE, FALSE,  FALSE,  TRUE))
-  expect_equivalent(do_style_check("x1" ), list(FALSE,  TRUE,  TRUE, FALSE,  TRUE,   TRUE, FALSE))
-  expect_equivalent(do_style_check("X1" ), list( TRUE, FALSE, FALSE,  TRUE, FALSE,  FALSE,  TRUE))
-  expect_equivalent(do_style_check("x_y"), list(FALSE, FALSE,  TRUE, FALSE, FALSE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("X_Y"), list(FALSE, FALSE, FALSE,  TRUE, FALSE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("X.Y"), list(FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("x_2"), list(FALSE, FALSE,  TRUE, FALSE, FALSE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("X_2"), list(FALSE, FALSE, FALSE,  TRUE, FALSE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("x.2"), list(FALSE, FALSE, FALSE, FALSE,  TRUE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("X.2"), list(FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
+  #                                             symbl   UpC   lowC   snake  SNAKE  dot    alllow  ALLUP
+  expect_equivalent(do_style_check("x"  ), list(FALSE, FALSE,  TRUE,  TRUE, FALSE,  TRUE,   TRUE, FALSE))
+  expect_equivalent(do_style_check(".x" ), list(FALSE, FALSE,  TRUE,  TRUE, FALSE,  TRUE,   TRUE, FALSE))
+  expect_equivalent(do_style_check("X"  ), list(FALSE,  TRUE, FALSE, FALSE,  TRUE, FALSE,  FALSE,  TRUE))
+  expect_equivalent(do_style_check("x." ), list(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("X." ), list(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("x_" ), list(FALSE, FALSE, FALSE,  TRUE, FALSE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("X_" ), list(FALSE, FALSE, FALSE, FALSE,  TRUE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("xy" ), list(FALSE, FALSE,  TRUE,  TRUE, FALSE,  TRUE,   TRUE, FALSE))
+  expect_equivalent(do_style_check("xY" ), list(FALSE, FALSE,  TRUE, FALSE, FALSE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("Xy" ), list(FALSE,  TRUE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("XY" ), list(FALSE,  TRUE, FALSE, FALSE,  TRUE, FALSE,  FALSE,  TRUE))
+  expect_equivalent(do_style_check("x1" ), list(FALSE, FALSE,  TRUE,  TRUE, FALSE,  TRUE,   TRUE, FALSE))
+  expect_equivalent(do_style_check("X1" ), list(FALSE,  TRUE, FALSE, FALSE,  TRUE, FALSE,  FALSE,  TRUE))
+  expect_equivalent(do_style_check("x_y"), list(FALSE, FALSE, FALSE,  TRUE, FALSE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("X_Y"), list(FALSE, FALSE, FALSE, FALSE,  TRUE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("X.Y"), list(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("x_2"), list(FALSE, FALSE, FALSE,  TRUE, FALSE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("X_2"), list(FALSE, FALSE, FALSE, FALSE,  TRUE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("x.2"), list(FALSE, FALSE, FALSE, FALSE, FALSE,  TRUE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("X.2"), list(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
 
-
-  #                                                     UpC   lowC   snake  SNAKE  dot    alllow  ALLUP
-  expect_equivalent(do_style_check("IHave1Cat"    ), c( TRUE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("iHave1Cat"    ), c(FALSE,  TRUE, FALSE, FALSE, FALSE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("i_have_1_cat" ), c(FALSE, FALSE,  TRUE, FALSE, FALSE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("I_HAVE_1_CAT" ), c(FALSE, FALSE, FALSE,  TRUE, FALSE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("i.have.1.cat" ), c(FALSE, FALSE, FALSE, FALSE,  TRUE,  FALSE, FALSE))
-  expect_equivalent(do_style_check("ihave1cat"    ), c(FALSE,  TRUE,  TRUE, FALSE,  TRUE,   TRUE, FALSE))
-  expect_equivalent(do_style_check("IHAVE1CAT"    ), c( TRUE, FALSE, FALSE,  TRUE, FALSE,  FALSE,  TRUE))
-  expect_equivalent(do_style_check("I.HAVE_ONECAT"), c(FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
+  #                                                    symbl   UpC   lowC   snake  SNAKE  dot    alllow  ALLUP
+  expect_equivalent(do_style_check("IHave1Cat"    ), c(FALSE,  TRUE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("iHave1Cat"    ), c(FALSE, FALSE,  TRUE, FALSE, FALSE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("i_have_1_cat" ), c(FALSE, FALSE, FALSE,  TRUE, FALSE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("I_HAVE_1_CAT" ), c(FALSE, FALSE, FALSE, FALSE,  TRUE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("i.have.1.cat" ), c(FALSE, FALSE, FALSE, FALSE, FALSE,  TRUE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("ihave1cat"    ), c(FALSE, FALSE,  TRUE,  TRUE, FALSE,  TRUE,   TRUE, FALSE))
+  expect_equivalent(do_style_check("IHAVE1CAT"    ), c(FALSE,  TRUE, FALSE, FALSE,  TRUE, FALSE,  FALSE,  TRUE))
+  expect_equivalent(do_style_check("I.HAVE_ONECAT"), c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("."            ), c( TRUE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
+  expect_equivalent(do_style_check("%^%"          ), c( TRUE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
 })
 
 test_that("linter ignores some objects", {
@@ -48,6 +48,7 @@ test_that("linter ignores some objects", {
   expect_lint("print.foo <- t", NULL, object_name_linter("CamelCase"))         # S3 generic
   expect_lint("names.foo <- t", NULL, object_name_linter("CamelCase"))      # int generic
   expect_lint("sapply(x,f,USE.NAMES=T)", NULL, object_name_linter("snake_case")) # defined elsewhere
+  expect_lint("`%++%` <- `+`", NULL, object_name_linter("symbols")) # all-symbol operator
 })
 
 test_that("linter returns correct linting", {

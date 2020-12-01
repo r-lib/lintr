@@ -3,7 +3,7 @@
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
 #'   match at least one of these styles.
 #' @export
-object_name_linter <- function(styles = "snake_case") {
+object_name_linter <- function(styles = c("snake_case", "symbols")) {
 
   .or_string <- function(xs) {
     # returns "<S> or <T>"
@@ -13,7 +13,7 @@ object_name_linter <- function(styles = "snake_case") {
     if (len <= 1) {
       return(xs)
     }
-    comma_sepd_prefix <- paste(xs[-len], collapse = ", ")
+    comma_sepd_prefix <- toString(xs[-len])
     paste(comma_sepd_prefix, "or", xs[len])
   }
 
@@ -24,10 +24,9 @@ object_name_linter <- function(styles = "snake_case") {
   )
 
   function(source_file) {
-    x <- global_xml_parsed_content(source_file)
-    if (is.null(x)) {
-      return()
-    }
+    if (is.null(source_file$full_xml_parsed_content)) return(list())
+
+    xml <- source_file$full_xml_parsed_content
 
     xpath <- paste0(
       # Left hand assignments
@@ -46,14 +45,14 @@ object_name_linter <- function(styles = "snake_case") {
       "//SYMBOL_FORMALS"
     )
 
-    assignments <- xml2::xml_find_all(x, xpath)
+    assignments <- xml2::xml_find_all(xml, xpath)
 
     # Retrieve assigned name
     nms <- strip_names(
       as.character(xml2::xml_find_first(assignments, "./text()")))
 
     generics <- c(
-      declared_s3_generics(x),
+      declared_s3_generics(xml),
       namespace_imports()$fun,
       names(.knownS3Generics),
       .S3PrimitiveGenerics, ls(baseenv()))
@@ -101,7 +100,6 @@ strip_names <- function(x) {
   x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%", "$", "@"), end), "")
   x
 }
-
 
 object_lint2 <- function(expr, source_file, message, type) {
   symbol <- xml2::as_list(expr)
@@ -272,53 +270,21 @@ object_lint <- function(source_file, token, message, type) {
 }
 
 
-object_name_linter_old <- function(style = "snake_case") {
-  make_object_linter(
-    function(source_file, token) {
-      name <- unquote(token[["text"]])
-      if (!any(matches_styles(name, style))) {
-        object_lint(
-          source_file,
-          token,
-          sprintf("Variable and function name style should be %s.", paste(style, collapse = " or ")),
-          "object_name_linter"
-        )
-      }
-    }
-  )
-}
-
-
 loweralnum <- rex(one_of(lower, digit))
 upperalnum <- rex(one_of(upper, digit))
 
 style_regexes <- list(
-  "CamelCase" = rex(start, maybe("."), upper, zero_or_more(alnum), end),
-  "camelCase" = rex(start, maybe("."), lower, zero_or_more(alnum), end),
-  "snake_case"     = rex(start, maybe("."), some_of(lower, digit), any_of("_", lower, digit), end),
-  "SNAKE_CASE"     = rex(start, maybe("."), some_of(upper, digit), any_of("_", upper, digit), end),
-  "dotted.case"    = rex(start, maybe("."), one_or_more(loweralnum), zero_or_more(dot, one_or_more(loweralnum)), end),
+  "symbols"     = rex(start, maybe("."), zero_or_more(none_of(alnum)), end),
+  "CamelCase"   = rex(start, maybe("."), upper, zero_or_more(alnum), end),
+  "camelCase"   = rex(start, maybe("."), lower, zero_or_more(alnum), end),
+  "snake_case"  = rex(start, maybe("."), some_of(lower, digit), any_of("_", lower, digit), end),
+  "SNAKE_CASE"  = rex(start, maybe("."), some_of(upper, digit), any_of("_", upper, digit), end),
+  "dotted.case" = rex(start, maybe("."), one_or_more(loweralnum), zero_or_more(dot, one_or_more(loweralnum)), end),
   "lowercase"   = rex(start, maybe("."), one_or_more(loweralnum), end),
   "UPPERCASE"   = rex(start, maybe("."), one_or_more(upperalnum), end)
 )
 
-regexes_rd <- paste0(collapse = ", ", paste0("\\sQuote{", names(style_regexes), "}"))
-
-matches_styles <- function(name, styles=names(style_regexes)) {
-  invalids <- paste(styles[!styles %in% names(style_regexes)], collapse=", ")
-  if (nzchar(invalids)) {
-    valids <- paste(names(style_regexes), collapse=", ")
-    stop(sprintf("Invalid style(s) requested: %s\nValid styles are: %s\n", invalids, valids))
-  }
-  name <- re_substitutes(name, rex(start, one_or_more(dot)), "")  # remove leading dots
-  vapply(
-    style_regexes[styles],
-    re_matches,
-    logical(1L),
-    data=name
-  )
-}
-
+regexes_rd <- toString(paste0("\\sQuote{", names(style_regexes), "}"))
 
 #' @describeIn linters check that object names are not too long.
 #' @export
