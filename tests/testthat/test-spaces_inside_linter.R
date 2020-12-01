@@ -55,4 +55,11 @@ test_that("returns the correct linting", {
 
   # trailing comments are OK (#636)
   expect_lint("or( #code\n  x, y\n)", NULL, spaces_inside_linter)
+  
+  expect_lint(trim_some("
+    fun(      # this is another comment
+      a = 42, # because 42 is always the answer
+      b = Inf
+    )
+  "), NULL, spaces_inside_linter)
 })
