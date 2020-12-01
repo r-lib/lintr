@@ -48,3 +48,8 @@ test_that("it errors if the config file does not end in a newline", {
   options("lintr.linter_file" = f)
   expect_error(read_settings("foo"), "Malformed config file")
 })
+
+test_that("rot utility works as intended", {
+  rot <- lintr:::rot
+  expect_equal(rot(letters), c(letters[14:26], LETTERS[1:3]))
+})
