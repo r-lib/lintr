@@ -74,16 +74,6 @@ auto_names <- function(x) {
   nms
 }
 
-blank_text <- function(s, re, shift_start = 0, shift_end = 0) {
-  m <- gregexpr(re, s, perl = TRUE)
-  regmatches(s, m) <- lapply(regmatches(s, m),
-    quoted_blanks,
-    shift_start = shift_start,
-    shift_end = shift_end)
-
-  s
-}
-
 quoted_blanks <- function(matches, shift_start = 0, shift_end = 0) {
   lengths <- nchar(matches)
   blanks <- vapply(Map(rep.int,
@@ -99,15 +89,6 @@ quoted_blanks <- function(matches, shift_start = 0, shift_end = 0) {
 # The following functions is from dplyr
 names2 <- function(x) {
   names(x) %||% rep("", length(x))
-}
-
-recursive_ls <- function(env) {
-  if (parent.env(env) %!=% emptyenv()) {
-    c(ls(envir = env), recursive_ls(parent.env(env)))
-  }
-  else {
-    ls(envir = env)
-  }
 }
 
 safe_parse_to_xml <- function(parsed_content) {
@@ -173,7 +154,6 @@ try_silently <- function(expr) {
 }
 
 viapply <- function(x, ...) vapply(x, ..., FUN.VALUE = integer(1))
-vcapply <- function(x, ...) vapply(x, ..., FUN.VALUE = character(1))
 
 # imitate sQuote(x, q) [requires R>=3.6]
 quote_wrap <- function(x, q) paste0(q, x, q)
