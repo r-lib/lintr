@@ -65,6 +65,8 @@ with_defaults <- function(..., default = default_linters) {
   })
 }
 
+# bla blah
+
 # this is just to make the auto documentation cleaner
 str.lintr_function <- function(x, ...) {
   cat("\n")
