@@ -109,3 +109,11 @@ test_that("lint() results do not depend on the position of the .lintr", {
     )
   )
 })
+
+test_that("split.lint works as intended", {
+  writeLines("1:nrow(x)\n1:ncol(x)", tmp <- tempfile())
+  on.exit(unlink(tmp))
+
+  l <- lint(tmp, seq_linter)
+  expect_true(all(vapply(split(l), inherits, logical(1L), "lints")))
+})
