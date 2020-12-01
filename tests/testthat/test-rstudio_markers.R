@@ -1,4 +1,3 @@
-context("rstudio_source_markers")
 test_that("it returns markers which match lints", {
   with_mock(`rstudioapi::callFun` = function(...) return(list(...)),
     lint1 <- structure(
@@ -53,7 +52,8 @@ test_that("it returns markers which match lints", {
     expect_equal(marker2$markers[[2]]$line, lint2[[2]]$line_number),
     expect_equal(marker2$markers[[2]]$column, lint2[[2]]$column_number),
     expect_equal(marker2$markers[[2]]$message, lint2[[2]]$message)
-  )})
+  )
+})
 
 test_that("it prepends the package path if it exists", {
   with_mock(`rstudioapi::callFun` = function(...) return(list(...)),
@@ -79,6 +79,7 @@ test_that("it prepends the package path if it exists", {
     expect_equal(marker3$markers[[1]]$message, lint3[[1]]$message)
   )
 })
+
 test_that("it returns an empty list of markers if there are no lints", {
   with_mock(`rstudioapi::callFun` = function(...) return(list(...)),
     lint4 <- structure(
@@ -89,5 +90,28 @@ test_that("it returns an empty list of markers if there are no lints", {
 
     expect_equal(marker4$name, "lintr"),
     expect_equal(marker4$markers, list())
+  )
+})
+
+test_that("rstudio_source_markers apply to print within rstudio", {
+  with_mock(
+    `rstudioapi::hasFun` = function(x, ...) TRUE,
+    `rstudioapi::callFun` = function(...) cat("matched\n"), {
+      writeLines("1:ncol(x)", tmp <- tempfile())
+      on.exit(unlink(tmp))
+
+      old = options(lintr.rstudio_source_markers = TRUE)
+      on.exit(options(old), add = TRUE)
+
+      l <- lint(tmp, seq_linter)
+
+      expect_output(print(l), "matched", fixed = TRUE)
+
+      empty <- tempfile()
+      file.create(empty)
+      on.exit(unlink(empty), add = TRUE)
+
+      expect_output(print(l), "matched", fixed = TRUE)
+    }
   )
 })
