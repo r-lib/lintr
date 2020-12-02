@@ -37,7 +37,6 @@ jobs:
           remotes::install_cran("gh")
           remotes::install_github("jimhester/lintr")
           remotes::install_cran("purrr")
-          remotes::install_cran("fs")
         shell: Rscript {0}
 
       - name: Add lintr options
@@ -49,7 +48,5 @@ jobs:
           files <- gh::gh("GET https://api.github.com/repos/jimhester/lintr/pulls/${{ github.event.pull_request.number }}/files")
           changed_files <- purrr::map_chr(files, "filename")
           files_to_lint <- changed_files[grepl(".R$|.Rmd$", changed_files)]
-          all_files <- fs::dir_ls(recurse = TRUE, glob = ".R$|.Rmd$")
-          exclusions_list <- as.list(setdiff(all_files, files_to_lint))
-          lintr::lint_package(exclusions = exclusions_list)
+          for (f in files_to_lint) { print(lintr::lint(f)) }
         shell: Rscript {0}
