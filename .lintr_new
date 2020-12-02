@@ -1,6 +1,5 @@
 linters: with_defaults(
-    line_length_linter = line_length_linter(120),
-    T_and_F_symbol_linter = T_and_F_symbol_linter
+    line_length_linter = line_length_linter(120)
   )
 exclusions: list(
   "tests/testthat/dummy_packages",
