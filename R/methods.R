@@ -52,9 +52,12 @@ markdown <- function(x, info, ...) {
 
 #' @export
 print.lints <- function(x, ...) {
+  rstudio_source_markers <- getOption("lintr.rstudio_source_markers", TRUE) &&
+    rstudioapi::hasFun("sourceMarkers")
+
   if (length(x)) {
-    if (getOption("lintr.rstudio_source_markers", TRUE) &&
-        rstudioapi::hasFun("sourceMarkers")) {
+    inline_data <- x[[1]][["filename"]] == "<text>"
+    if (!inline_data && rstudio_source_markers) {
       rstudio_source_markers(x)
     } else if (in_github_actions()) {
       github_actions_log_lints(x)
@@ -78,8 +81,7 @@ print.lints <- function(x, ...) {
     if (isTRUE(settings$error_on_lint)) {
       quit("no", 31, FALSE)
     }
-  } else if (getOption("lintr.rstudio_source_markers", TRUE) &&
-             rstudioapi::hasFun("sourceMarkers")) {
+  } else if (rstudio_source_markers) {
     # Empty lints: clear RStudio source markers
     rstudio_source_markers(x)
   }
