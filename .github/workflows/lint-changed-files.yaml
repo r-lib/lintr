@@ -4,10 +4,10 @@ on:
       - main
       - master
 
-name: lint changed files
+name: lint-changed-files
 
 jobs:
-  lintr:
+  lint-changed-files:
     runs-on: macOS-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -49,7 +49,7 @@ jobs:
           files <- gh::gh("GET https://api.github.com/repos/jimhester/lintr/pulls/${{ github.event.pull_request.number }}/files")
           changed_files <- purrr::map_chr(files, "filename")
           files_to_lint <- changed_files[grepl(".R$|.Rmd$", changed_files)]
-          all_files <- fs::dir_ls(recurse = TRUE, glob = ".Rmd|.R")
+          all_files <- fs::dir_ls(recurse = TRUE, glob = ".R$|.Rmd$")
           exclusions_list <- as.list(setdiff(all_files, files_to_lint))
           lintr::lint_package(exclusions = exclusions_list)
         shell: Rscript {0}
