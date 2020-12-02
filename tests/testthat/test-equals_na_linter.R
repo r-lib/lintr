@@ -35,4 +35,11 @@ test_that("returns the correct linting", {
     NULL,
     equals_na_linter
   )
+
+  # correct line number for multiline code
+  expect_lint(
+    "x ==\nNA",
+    list(line_number = 1L, column_number = 3L, ranges = list(3:4)),
+    equals_na_linter
+  )
 })
