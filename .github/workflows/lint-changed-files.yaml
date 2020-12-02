@@ -47,6 +47,7 @@ jobs:
         run: |
           files <- gh::gh("GET https://api.github.com/repos/jimhester/lintr/pulls/${{ github.event.pull_request.number }}/files")
           changed_files <- purrr::map_chr(files, "filename")
-          files_to_lint <- changed_files[grepl(".R$|.Rmd$", changed_files)]
-          for (f in files_to_lint) { print(lintr::lint(f)) }
+          all_files <- list.files(recursive = TRUE)
+          exclusions_list <- as.list(setdiff(all_files, changed_files))
+          lintr::lint_package(exclusions = exclusions_list)
         shell: Rscript {0}
