@@ -60,7 +60,7 @@ with_defaults <- function(..., default = default_linters) {
 
   res[] <- lapply(res, function(x) {
     prev_class <- class(x)
-    if (inherits(x, "function")) {
+    if (inherits(x, "function") && !inherits(x, "lintr_function")) {
       class(x) <- c(prev_class, "lintr_function")
     }
     x
@@ -71,7 +71,8 @@ with_defaults <- function(..., default = default_linters) {
 #'
 #' List of default linters for \code{\link{lint}}. Use \code{\link{with_defaults}} to customize it.
 #' @export
-default_linters <- with_defaults(default = list(),
+default_linters <- with_defaults(
+  default = list(),
   assignment_linter,
   closed_curly_linter(),
   commas_linter,
@@ -92,8 +93,10 @@ default_linters <- with_defaults(default = list(),
   single_quotes_linter,
   spaces_inside_linter,
   spaces_left_parentheses_linter,
+  T_and_F_symbol_linter,
   trailing_blank_lines_linter,
-  trailing_whitespace_linter)
+  trailing_whitespace_linter
+)
 
 #' Default undesirable functions and operators
 #'
@@ -103,7 +106,8 @@ default_linters <- with_defaults(default = list(),
 #' @format A named list of character strings.
 #' @rdname default_undesirable_functions
 #' @export
-all_undesirable_functions <- with_defaults(default = list(),
+all_undesirable_functions <- with_defaults(
+  default = list(),
   "attach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
   "detach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
   "ifelse" = "use an if () {} else {} block",
@@ -126,7 +130,8 @@ all_undesirable_functions <- with_defaults(default = list(),
 
 #' @rdname default_undesirable_functions
 #' @export
-default_undesirable_functions <- do.call(with_defaults, c(list(default=list()),
+default_undesirable_functions <- do.call(with_defaults, c(
+  list(default = list()),
   all_undesirable_functions[c(
     "attach",
     "detach",
@@ -147,7 +152,8 @@ default_undesirable_functions <- do.call(with_defaults, c(list(default=list()),
 
 #' @rdname default_undesirable_functions
 #' @export
-all_undesirable_operators <- with_defaults(default = list(),
+all_undesirable_operators <- with_defaults(
+  default = list(),
   ":::" = NA,
   "<<-" = NA,
   "->>" = NA
@@ -155,7 +161,8 @@ all_undesirable_operators <- with_defaults(default = list(),
 
 #' @rdname default_undesirable_functions
 #' @export
-default_undesirable_operators <- do.call(with_defaults, c(list(default=list()),
+default_undesirable_operators <- do.call(with_defaults, c(
+  list(default = list()),
   all_undesirable_operators[c(
     ":::",
     "<<-",
@@ -174,11 +181,11 @@ settings <- NULL
 # nocov start
 .onLoad <- function(libname, pkgname) {
   op <- options()
-  op.lintr <- list(
+  op_lintr <- list(
     lintr.linter_file = ".lintr"
   )
-  toset <- !(names(op.lintr) %in% names(op))
-  if (any(toset)) options(op.lintr[toset])
+  toset <- !(names(op_lintr) %in% names(op))
+  if (any(toset)) options(op_lintr[toset])
 
   default_settings <<- list(
     linters = default_linters,
@@ -186,7 +193,7 @@ settings <- NULL
     exclude_start = rex::rex("#", any_spaces, "nolint start"),
     exclude_end = rex::rex("#", any_spaces, "nolint end"),
     exclusions = list(),
-    cache_directory = "~/.R/lintr_cache", # nolint
+    cache_directory = "~/.R/lintr_cache",
     comment_token = Sys.getenv("GITHUB_TOKEN", unset = NA) %||% rot(
       paste0(
         "0n12nn72507",
