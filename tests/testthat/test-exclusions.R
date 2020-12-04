@@ -131,6 +131,13 @@ test_that("it returns the union of two non-overlapping lists", {
   expect_equal(normalize_exclusions(c(t1, t2)), res)
 })
 
+test_that("it works with named lists", {
+  t1 <- list(); t1[[a]] <- list(1:10, my_linter = 1:20)
+  t2 <- list(); t2[[a]] <- list(11:15, my_linter = 21:25)
+  res <- list(); res[[a]] <- list(1:15, my_linter = 1:25)
+  expect_equal(normalize_exclusions(c(t1, t2)), res)
+})
+
 test_that("it returns the union of two overlapping lists", {
   t1 <- list(); t1[[a]] <- list(1:10)
   t2 <- list(); t2[[a]] <- list(5:15)
@@ -161,6 +168,20 @@ test_that("it handles redundant lines", {
 
   t1 <- list(); t1[[a]] <-  list(c(1, 1, 1:10)); t1[[b]] <- list(1:10)
   res <- list(); res[[a]] <- list(1:10); res[[b]] <- list(1:10)
+  expect_equal(normalize_exclusions(t1), res)
+})
+
+test_that("it handles redundant linters", {
+  t1 <- list(); t1[[a]] <- list(c(1, 1, 1:10), my_linter = c(1, 1, 1, 2), my_linter = 3)
+  res <- list(); res[[a]] <- list(1:10, my_linter = 1:3)
+  expect_equal(normalize_exclusions(t1), res)
+
+  t1 <- list()
+  t1[[a]] <- list(c(1, 1, 1:10), my_linter = c(1, 1, 1, 2))
+  t1[[b]] <- list(1:10, my_linter = 1:10, my_linter = 11:20)
+  res <- list()
+  res[[a]] <- list(1:10, my_linter = 1:2)
+  res[[b]] <- list(1:10, my_linter = 1:20)
   expect_equal(normalize_exclusions(t1), res)
 })
 
