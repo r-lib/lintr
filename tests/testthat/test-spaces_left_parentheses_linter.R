@@ -77,3 +77,11 @@ test_that("returns the correct linting", {
 
   expect_lint("a <- -(b)", NULL, spaces_left_parentheses_linter)
 })
+
+test_that("doesn't produce a warning", {
+  expect_silent(
+    lint(
+      system.file("example/complexity.R", package = "lintr")
+    )
+  )
+})
