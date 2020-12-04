@@ -39,8 +39,10 @@ test_that("returns the correct linting", {
     equals_na_linter
   )
 
-  expect_lint("\\",
-    rex("unexpected input")
+  expect_lint(
+    "\\",
+    # Error message changed in R-devel as of 2020/12
+    rex("unexpected input" %or% "unexpected end of line")
   )
 
   expect_lint("``",
