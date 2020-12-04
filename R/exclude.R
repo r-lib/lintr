@@ -69,8 +69,6 @@ parse_exclusions <- function(file, exclude = settings$exclude,
                              exclude_linter_sep = settings$exclude_linter_sep) {
   lines <- readLines(file)
 
-  # Location in exclusions where global exclusions are stored (name == "")
-  wildcard_location <- NA_integer_
   exclusions <- list()
 
   start_locations <- rex::re_matches(lines, exclude_start, locations = TRUE)[, "end"] + 1L
@@ -102,9 +100,11 @@ parse_exclusions <- function(file, exclude = settings$exclude,
 
   nolint_locations <- rex::re_matches(lines, exclude, locations = TRUE)[, "end"] + 1L
   nolints <- which(!is.na(nolint_locations))
+  # Disregard nolint tags if they als match nolint start / end
+  nolints <- setdiff(nolints, c(starts, ends))
 
   for (i in seq_along(nolints)) {
-    linters_string <- substring(lines[starts[i]], start_locations[starts[i]])
+    linters_string <- substring(lines[nolints[i]], nolint_locations[nolints[i]])
     linters_string <- rex::re_matches(linters_string, exclude_linter)[, 1L]
 
     # No match for linter list: Add to global excludes
@@ -125,7 +125,7 @@ parse_exclusions <- function(file, exclude = settings$exclude,
 add_excluded_lines <- function(exclusions, excluded_lines, excluded_linters) {
   for (linter in excluded_linters) {
     if (linter %in% names2(exclusions)) {
-      i <- which(linter %in% names2(exclusions))
+      i <- which(names2(exclusions) %in% linter)
       exclusions[[i]] <- c(exclusions[[i]], excluded_lines)
     } else {
       exclusions <- c(exclusions, list(excluded_lines))
