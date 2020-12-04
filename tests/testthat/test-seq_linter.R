@@ -30,7 +30,7 @@ test_that("finds 1:length(...) expressions", {
   expect_lint("function(x) { 1:dim(x)[1L] }",
     rex("dim(...)", anything, "use seq_len"),
     seq_linter)
-  
+
   expect_lint("function(x) { 1L:dim(x)[[1]] }",
     rex("dim(...)", anything, "use seq_len"),
     seq_linter)

@@ -4,7 +4,7 @@ test_that("GitHub Actions functionality works", {
     writeLines("x <- 1:nrow(y)", tmp <- tempfile())
     on.exit(unlink(tmp))
 
-    old = options(lintr.rstudio_source_markers = FALSE)
+    old <- options(lintr.rstudio_source_markers = FALSE)
     on.exit(options(old), add = TRUE)
 
     l <- lint(tmp)
