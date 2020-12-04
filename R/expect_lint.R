@@ -45,7 +45,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
 
   if (is.null(file)) {
     file <- tempfile()
-    on.exit(unlink(file))
+    on.exit(unlink(file), add = TRUE)
     writeLines(content, con = file, sep = "\n")
   }
 
