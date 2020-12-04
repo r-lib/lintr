@@ -1,3 +1,4 @@
+# nocov start
 addin_lint <- function() {
   filename <- rstudioapi::getSourceEditorContext()
   if (filename$path == "") {
@@ -8,7 +9,7 @@ addin_lint <- function() {
   if (length(config_file) == 0) {
     config_linters <- NULL
   } else {
-    config <- read.dcf(config_file, all = T)
+    config <- read.dcf(config_file, all = TRUE)
     config_linters <- gsub("\n", "", config[["linters"]])
   }
   linters <- if (length(config_linters) == 0) {
@@ -29,3 +30,4 @@ addin_lint_package <- function() {
 
   lintr::lint_package(project_path)
 }
+# nocov end
