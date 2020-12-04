@@ -1,0 +1,10 @@
+linters: with_defaults(
+    line_length_linter = line_length_linter(120)
+  )
+exclusions: list(
+  "tests/testthat/dummy_packages",
+  "tests/testthat/knitr_formats",
+  "tests/testthat/knitr_malformed",
+  "inst",
+  "vignettes"
+ )

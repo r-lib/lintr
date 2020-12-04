@@ -1,5 +1,6 @@
 # lintr (development version)
 
+* Added a secondary, more restrictive lint workflow - `lint-changed-files` - for newly written / modified code (#641, @dragosmg) 
 * Switched CI from Travis to GitHub Actions, using the full tidyverse recommended R CMD check. Code coverage and linting are implemented using separate GitHub Actions workflows (#572, @dragosmg)
 * `save_cache` will now recursively create the cache directory; this avoids errors that could arise if any parent directories do not exist (#60, @dankessler).
 * `extract_r_source` handles Rmd containing unevaluated code blocks with named
@@ -16,9 +17,13 @@
 * New `sprintf_linter()` (#544, #578, #624, #625, @renkun-ken, @AshesITR)
 * Exclusions specified in the `.lintr` file are now relative to the location of that file 
   and support excluding entire directories (#158, #438, @AshesITR)
-* `object_name_linter()` now excludes special R hook functions such as `.onLoad` (#500, #614, @AshesITR)
+* `object_name_linter()` now excludes special R hook functions such as `.onLoad` (#500, #614, @AshesITR and @michaelchirico)
 * `equals_na_linter()` now lints `x != NA` and `NA == x`, and skips usages in comments (#545, @michaelchirico)
 * Malformed Rmd files now cause a lint instead of an error (#571, #575, @AshesITR)
+* `object_name_linter()` gains a new default style, `"symbols"`, which won't lint all-symbol object names (in particular, that means operator names like `%+%` are skipped; #615, @michaelchirico)
+* `spaces_inside_linter` ignores spaces preceding trailing comments (#636, @michaelchirico)
+* `T_and_F_symbol_linter` is now part of the default linters (#517, #612, @AshesITR)
+* `with_defaults()` no longer duplicates the `lintr_function` class when it is already present (#511, #612, @AshesITR)
 * `paren_brace_linter` and `no_tab_linter` also use more reliable matching (e.g.,
   excluding matches found in comments; #441 and #545, @russHyde)
 

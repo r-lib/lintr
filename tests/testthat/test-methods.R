@@ -99,3 +99,20 @@ test_that("print.lint works", {
   )
   expect_output(print(l), "  1:length(x)", fixed = TRUE)
 })
+
+test_that("print.lint works for inline data, even in RStudio", {
+  l <- lint("x = 1\n")
+
+  withr::with_options(
+    list("lintr.rstudio_source_markers" = FALSE),
+    expect_output(print(l), "not =")
+  )
+
+  withr::with_options(
+    list("lintr.rstudio_source_markers" = TRUE),
+    with_mock(
+      `rstudioapi::hasFun` = function(...) TRUE,
+      expect_output(print(l), "not =")
+    )
+  )
+})

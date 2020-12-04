@@ -73,7 +73,7 @@ todo_comment_linter(todo = c("todo", "fixme"))
 
 cyclocomp_linter(complexity_limit = 25)
 
-object_name_linter(styles = "snake_case")
+object_name_linter(styles = c("snake_case", "symbols"))
 
 object_length_linter(length = 30L)
 
