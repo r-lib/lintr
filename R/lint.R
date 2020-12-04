@@ -187,7 +187,7 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
     seq_len(length(files)),
     function(i) {
       file <- files[i]
-      file %in% names(exclusions) && exclusions[[file]] == Inf
+      file %in% names(exclusions) && is_excluded_file(exclusions[[file]])
     },
     logical(1)
   )
