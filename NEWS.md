@@ -25,6 +25,8 @@
 * `T_and_F_symbol_linter` is now part of the default linters (#517, #612, @AshesITR)
 * `with_defaults()` no longer duplicates the `lintr_function` class when it is already present (#511, #612, @AshesITR)
 * New `backport_linter()` for detecting mismatched R version dependencies (#506, @MichaelChirico)
+* `paren_brace_linter` and `no_tab_linter` also use more reliable matching (e.g.,
+  excluding matches found in comments; #441 and #545, @russHyde)
 
 # lintr 2.0.1
 
