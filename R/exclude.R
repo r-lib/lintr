@@ -25,13 +25,15 @@ exclude <- function(lints, exclusions = settings$exclusions, ...) {
 
 
   exclusions <- normalize_exclusions(c(source_exclusions, exclusions))
-  to_exclude <- vapply(seq_len(nrow(df)),
-                       function(i) {
-                         file <- df$filename[i]
-                         file %in% names(exclusions) &&
-                           is_excluded(df$line_number[i], df$linter, exclusions[[file]])
-                       },
-                       logical(1))
+  to_exclude <- vapply(
+    seq_len(nrow(df)),
+    function(i) {
+      file <- df$filename[i]
+      file %in% names(exclusions) &&
+        is_excluded(df$line_number[i], df$linter, exclusions[[file]])
+    },
+    logical(1L)
+  )
 
   if (any(to_exclude)) {
     lints <- lints[!to_exclude]
@@ -55,16 +57,24 @@ is_excluded_file <- function(file_exclusion) {
 #' @param exclude regular expression used to mark lines to exclude
 #' @param exclude_start regular expression used to mark the start of an excluded range
 #' @param exclude_end regular expression used to mark the end of an excluded range
+#' @param exclude_linter regular expression used to capture a list of to-be-excluded linters immediately following a
+#' \code{exclude} or \code{exclude_start} marker.
+#' @param exclude_linter_sep regular expression used to split a linter list into indivdual linter names for exclusion.
 #'
 #' @return A possibly named list of excluded lines, possibly for specific linters.
 parse_exclusions <- function(file, exclude = settings$exclude,
                              exclude_start = settings$exclude_start,
-                             exclude_end = settings$exclude_end) {
+                             exclude_end = settings$exclude_end,
+                             exclude_linter = settings$exclude_linter,
+                             exclude_linter_sep = settings$exclude_linter_sep) {
   lines <- readLines(file)
 
-  exclusions <- numeric(0)
+  # Location in exclusions where global exclusions are stored (name == "")
+  wildcard_location <- NA_integer_
+  exclusions <- list()
 
-  starts <- which(rex::re_matches(lines, exclude_start))
+  start_locations <- rex::re_matches(lines, exclude_start, locations = TRUE)[, "end"] + 1L
+  starts <- which(!is.na(start_locations))
   ends <- which(rex::re_matches(lines, exclude_end))
 
   if (length(starts) > 0) {
@@ -75,18 +85,57 @@ parse_exclusions <- function(file, exclude = settings$exclude,
     }
 
     for (i in seq_along(starts)) {
-      exclusions <- c(exclusions, seq(starts[i], ends[i]))
+      excluded_lines <- seq(starts[i], ends[i])
+      linters_string <- substring(lines[starts[i]], start_locations[starts[i]])
+      linters_string <- rex::re_matches(linters_string, exclude_linter)[, 1L]
+
+      # No match for linter list: Add to global excludes
+      if (is.na(linters_string)) {
+        exclusions <- add_excluded_lines(exclusions, excluded_lines, "")
+      } else {
+        # Matched a linter list: only add excluded lines for the listed linters.
+        excluded_linters <- strsplit(linters_string, exclude_linter_sep)[[1L]]
+        exclusions <- add_excluded_lines(exclusions, excluded_lines, excluded_linters)
+      }
     }
   }
 
-  # TODO parse specific linter exclusions here
-  global_exclusions <- sort(unique(c(exclusions, which(rex::re_matches(lines, exclude)))))
+  nolint_locations <- rex::re_matches(lines, exclude, locations = TRUE)[, "end"] + 1L
+  nolints <- which(!is.na(nolint_locations))
 
-  if (length(global_exclusions)) {
-    list(global_exclusions)
-  } else {
-    list()
+  for (i in seq_along(nolints)) {
+    linters_string <- substring(lines[starts[i]], start_locations[starts[i]])
+    linters_string <- rex::re_matches(linters_string, exclude_linter)[, 1L]
+
+    # No match for linter list: Add to global excludes
+    if (is.na(linters_string)) {
+      exclusions <- add_excluded_lines(exclusions, nolints[i], "")
+    } else {
+      # Matched a linter list: only add excluded lines for the listed linters.
+      excluded_linters <- strsplit(linters_string, exclude_linter_sep)[[1L]]
+      exclusions <- add_excluded_lines(exclusions, nolints[i], excluded_linters)
+    }
   }
+
+  exclusions[] <- lapply(exclusions, function(lines) sort(unique(lines)))
+
+  exclusions
+}
+
+add_excluded_lines <- function(exclusions, excluded_lines, excluded_linters) {
+  for (linter in excluded_linters) {
+    if (linter %in% names2(exclusions)) {
+      i <- which(linter %in% names2(exclusions))
+      exclusions[[i]] <- c(exclusions[[i]], excluded_lines)
+    } else {
+      exclusions <- c(exclusions, list(excluded_lines))
+      if (linter != "") {
+        names(exclusions)[length(exclusions)] <- linter
+      }
+    }
+  }
+
+  exclusions
 }
 
 #' Normalize lint exclusions
