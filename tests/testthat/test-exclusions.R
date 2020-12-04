@@ -37,6 +37,64 @@ test_that("it returns the line if one line is excluded", {
   expect_equal(parse_exclusions(t2), list(c(2, 4)))
 })
 
+test_that("it supports specific linter exclusions", {
+  read_settings(NULL)
+
+  t1 <- tempfile()
+  on.exit(unlink(t1))
+  writeLines(
+    c("this",
+      "is #TeSt_NoLiNt: my_linter.",
+      "a",
+      "test"), t1)
+  expect_equal(parse_exclusions(t1), list(my_linter = 2))
+
+  t2 <- tempfile()
+  on.exit(unlink(t2))
+  writeLines(
+    c("this",
+      "is #TeSt_NoLiNt: my_linter.",
+      "a",
+      "test #TeSt_NoLiNt: my_linter2."), t2)
+  expect_equal(parse_exclusions(t2), list(my_linter = 2, my_linter2 = 4))
+
+  t3 <- tempfile()
+  on.exit(unlink(t3))
+  writeLines(
+    c("this",
+      "is #TeSt_NoLiNt: my_linter.",
+      "another",
+      "useful #TeSt_NoLiNt: my_linter.",
+      "test",
+      "testing #TeSt_NoLiNt: my_linter2."), t2)
+  expect_equal(parse_exclusions(t2), list(my_linter = c(2, 4), my_linter2 = 6))
+})
+
+test_that("it supports multiple linter exclusions", {
+  t1 <- tempfile()
+  on.exit(unlink(t1))
+  writeLines(trim_some("
+    this #TeSt_NoLiNt
+    is #TeSt_NoLiNt: a, b.
+    a
+    thorough #TeSt_NoLiNt_StArT: a, b, c.
+    test #TeSt_NoLiNt
+    of #TeSt_NoLiNt_EnD
+    all
+    features #TeSt_NoLiNt_StArT a, b, c
+    interleaved #TeSt_NoLiNt a, b
+    with
+    each #TeSt_NoLiNt_EnD
+    other
+  "), t1)
+  expect_equal(parse_exclusions(t1), list(
+    a = c(2, 4:6),
+    b = c(2, 4:6),
+    c = 4:6,
+    c(1, 5, 8:11)
+  ))
+})
+
 test_that("it returns all lines between start and end", {
   read_settings(NULL)
 
