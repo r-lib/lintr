@@ -30,7 +30,7 @@ exclude <- function(lints, exclusions = settings$exclusions, ...) {
     function(i) {
       file <- df$filename[i]
       file %in% names(exclusions) &&
-        is_excluded(df$line_number[i], df$linter, exclusions[[file]])
+        is_excluded(df$line_number[i], df$linter[i], exclusions[[file]])
     },
     logical(1L)
   )
@@ -130,6 +130,10 @@ add_excluded_lines <- function(exclusions, excluded_lines, excluded_linters) {
     } else {
       exclusions <- c(exclusions, list(excluded_lines))
       if (linter != "") {
+        if (is.null(names(exclusions))) {
+          # Repair names if linter == "" is the first exclusion added.
+          names(exclusions) <- ""
+        }
         names(exclusions)[length(exclusions)] <- linter
       }
     }
