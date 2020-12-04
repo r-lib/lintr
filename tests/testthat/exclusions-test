@@ -9,4 +9,10 @@ a <- function() {
   e = 5 #TeSt_NoLiNt_EnD
   f = 6
   f + 1
+  a.b = 42 #TeSt_NoLiNt: assignment_linter.
+
+  #TeSt_NoLiNt_StArT: assignment_linter, object_name_linter.
+  a.b.c = 33
+  F = T
+  #TeSt_NoLiNt_EnD
 }
