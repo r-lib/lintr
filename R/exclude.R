@@ -26,14 +26,12 @@ exclude <- function(lints, exclusions = settings$exclusions, ...) {
 
   exclusions <- normalize_exclusions(c(source_exclusions, exclusions))
   to_exclude <- vapply(seq_len(nrow(df)),
-    function(i) {
-      file <- df$filename[i]
-      file %in% names(exclusions) &&
-        length(exclusions[[file]]) == 1 &&
-        exclusions[[file]] == Inf ||
-        df$line_number[i] %in% exclusions[[file]]
-     },
-    logical(1))
+                       function(i) {
+                         file <- df$filename[i]
+                         file %in% names(exclusions) &&
+                           is_excluded(df$line_number[i], df$linter, exclusions[[file]])
+                       },
+                       logical(1))
 
   if (any(to_exclude)) {
     lints <- lints[!to_exclude]
@@ -41,12 +39,24 @@ exclude <- function(lints, exclusions = settings$exclusions, ...) {
 
   lints
 }
+
+is_excluded <- function(line_number, linter, file_exclusion) {
+  excluded_lines <- unlist(file_exclusion[names2(file_exclusion) %in% c("", linter)])
+  Inf %in% excluded_lines || line_number %in% excluded_lines
+}
+
+is_excluded_file <- function(file_exclusion) {
+  Inf %in% file_exclusion[[names2(file_exclusion) == ""]]
+}
+
 #' read a source file and parse all the excluded lines from it
 #'
 #' @param file R source file
 #' @param exclude regular expression used to mark lines to exclude
 #' @param exclude_start regular expression used to mark the start of an excluded range
 #' @param exclude_end regular expression used to mark the end of an excluded range
+#'
+#' @return A possibly named list of excluded lines, possibly for specific linters.
 parse_exclusions <- function(file, exclude = settings$exclude,
                              exclude_start = settings$exclude_start,
                              exclude_end = settings$exclude_end) {
@@ -69,7 +79,14 @@ parse_exclusions <- function(file, exclude = settings$exclude,
     }
   }
 
-  sort(unique(c(exclusions, which(rex::re_matches(lines, exclude)))))
+  # TODO parse specific linter exclusions here
+  global_exclusions <- sort(unique(c(exclusions, which(rex::re_matches(lines, exclude)))))
+
+  if (length(global_exclusions)) {
+    list(global_exclusions)
+  } else {
+    list()
+  }
 }
 
 #' Normalize lint exclusions
@@ -77,15 +94,21 @@ parse_exclusions <- function(file, exclude = settings$exclude,
 #' @param x Exclusion specification
 #'  - A character vector of filenames or directories relative to \code{root}
 #'  - A named list of integers specifying lines to be excluded per file
+#'  - A named list of named lists specifying linters and lines to be excluded for the linters per file.
 #' @param normalize_path Should the names of the returned exclusion list be normalized paths?
 #' If no, they will be relative to \code{root}.
 #' @param root Base directory for relative filename resolution.
 #' @param pattern If non-NULL, only exclude files in excluded directories if they match
 #' \code{pattern}. Passed to \link[base]{list.files} if a directory is excluded.
 #'
-#' @return A named list of line numbers to exclude, or the sentinel \code{Inf} for completely
-#' excluded files. The names of the list specify the filenames to be excluded.
-#' If \code{normalize_path} is \code{TRUE}, they will be normalized relative to \code{root}.
+#' @return A named list of file exclusions.
+#' The names of the list specify the filenames to be excluded.
+#'
+#' Each file exclusion is a possibly named list containing line numbers to exclude, or the sentinel \code{Inf} for
+#' completely excluded files. If the an entry is named, the exclusions only take effect for the linter with the same
+#' name.
+#'
+#' If \code{normalize_path} is \code{TRUE}, file names will be normalized relative to \code{root}.
 #' Otherwise the paths are left as provided (relative to \code{root} or absolute).
 #'
 #' @keywords internal
@@ -98,17 +121,21 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
 
   # no named parameters at all
   if (is.null(names(x))) {
-    x <- structure(relist(rep(Inf, length(x)), x), names = x)
+    # x is a character vector of file names
+    # Normalize to list(<filename> = list(Inf), ...)
+    x <- structure(rep(list(Inf), length(x)), names = x)
   } else {
     unnamed <- names(x) == ""
     if (any(unnamed)) {
 
       # must be character vectors of length 1
-      bad <- vapply(seq_along(x),
+      bad <- vapply(
+        seq_along(x),
         function(i) {
-          unnamed[i] & (!is.character(x[[i]]) | length(x[[i]]) != 1)
+          unnamed[i] & (!is.character(x[[i]]) | length(x[[i]]) != 1L)
         },
-        logical(1))
+        logical(1L)
+      )
 
       if (any(bad)) {
         stop("Full file exclusions must be character vectors of length 1. items: ",
@@ -117,7 +144,32 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
              call. = FALSE)
       }
       names(x)[unnamed] <- x[unnamed]
-      x[unnamed] <- Inf
+      x[unnamed] <- rep(list(list(Inf)), sum(unnamed))
+    }
+
+    full_line_exclusions <- !vapply(x, is.list, logical(1L))
+
+    if (any(full_line_exclusions)) {
+
+      # must be integer or numeric vectors
+      bad <- vapply(
+        seq_along(x),
+        function(i) {
+          full_line_exclusions[i] && !is.numeric(x[[i]])
+        },
+        logical(1L)
+      )
+
+      if (any(bad)) {
+        stop("Full line exclusions must be numeric or integer vectors. items: ",
+             paste(collapse = ", ", which(bad)),
+             " are not!",
+             call. = FALSE)
+      }
+
+      # Normalize list(<filename> = c(<lines>)) to
+      # list(<filename> = list(c(<lines>)))
+      x[full_line_exclusions] <- lapply(x[full_line_exclusions], list)
     }
   }
 
@@ -145,7 +197,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     # Only exclude file if there is no more specific exclusion already
     all_file_names <- setdiff(all_file_names, names(x))
 
-    dir_exclusions <- as.list(rep_len(Inf, length(all_file_names)))
+    dir_exclusions <- rep_len(list(Inf), length(all_file_names))
     names(dir_exclusions) <- all_file_names
     x <- c(x, dir_exclusions)
   }
@@ -161,26 +213,27 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
   }
 
   remove_line_duplicates(
-    remove_file_duplicates(
-      remove_empty(x)
+    remove_linter_duplicates(
+      remove_file_duplicates(
+        remove_empty(x)
+      )
     )
   )
 }
 
+# Combines file exclusions for identical files.
 remove_file_duplicates <- function(x) {
   unique_names <- unique(names(x))
 
   ## check for duplicate files
   if (length(unique_names) < length(names(x))) {
-    x <- lapply(unique_names,
-                function(name) {
-                  vals <- unname(unlist(x[names(x) == name]))
-                  if (any(vals == Inf)) {
-                    Inf
-                  } else {
-                    vals
-                  }
-                })
+    x <- lapply(
+      unique_names,
+      function(name) {
+        vals <- unname(x[names(x) == name])
+        do.call(c, vals)
+      }
+    )
 
     names(x) <- unique_names
   }
@@ -188,11 +241,44 @@ remove_file_duplicates <- function(x) {
   x
 }
 
+# Removes duplicate line information for each linter within each file.
 remove_line_duplicates <- function(x) {
-  x[] <- lapply(x, unique)
+  x[] <- lapply(x, function(ex) {
+    ex[] <- lapply(ex, unique)
+    ex
+  })
 
   x
 }
+
+# Combines line exclusions for identical linters within each file.
+remove_linter_duplicates <- function(x) {
+  x[] <- lapply(x, function(ex) {
+    unique_linters <- unique(names2(ex))
+
+    if (length(unique_linters) < length(ex)) {
+      ex <- lapply(unique_linters, function(linter) {
+        lines <- unlist(ex[names2(ex) == linter])
+        if (Inf %in% lines) {
+          Inf
+        } else {
+          lines
+        }
+      })
+
+      if (!identical(unique_linters, "")) {
+        names(ex) <- unique_linters
+      }
+    }
+
+    ex
+  })
+
+  x
+}
+
+# Removes linter exclusions without lines and files without any linter exclusions.
 remove_empty <- function(x) {
-  x[vapply(x, length, numeric(1)) > 0]
+  x[] <- lapply(x, function(ex) ex[lengths(ex) > 0L])
+  x[lengths(x) > 0L]
 }
