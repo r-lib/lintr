@@ -9,7 +9,7 @@ semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
     tokens <- with_id(source_file, ids_with_token(source_file, "';'"))
     is_trailing <- is_trailing_sc(tokens, source_file)
 
-    to_keep <- ( is_trailing & "trailing" %in% semicolon) |
+    to_keep <- (is_trailing & "trailing" %in% semicolon) |
                (!is_trailing & "compound" %in% semicolon)
 
     tokens <- tokens[to_keep, ]
