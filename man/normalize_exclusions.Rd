@@ -9,7 +9,8 @@ normalize_exclusions(x, normalize_path = TRUE, root = getwd(), pattern = NULL)
 \arguments{
 \item{x}{Exclusion specification
 - A character vector of filenames or directories relative to \code{root}
-- A named list of integers specifying lines to be excluded per file}
+- A named list of integers specifying lines to be excluded per file
+- A named list of named lists specifying linters and lines to be excluded for the linters per file.}
 
 \item{normalize_path}{Should the names of the returned exclusion list be normalized paths?
 If no, they will be relative to \code{root}.}
@@ -20,9 +21,14 @@ If no, they will be relative to \code{root}.}
 \code{pattern}. Passed to \link[base]{list.files} if a directory is excluded.}
 }
 \value{
-A named list of line numbers to exclude, or the sentinel \code{Inf} for completely
-excluded files. The names of the list specify the filenames to be excluded.
-If \code{normalize_path} is \code{TRUE}, they will be normalized relative to \code{root}.
+A named list of file exclusions.
+The names of the list specify the filenames to be excluded.
+
+Each file exclusion is a possibly named list containing line numbers to exclude, or the sentinel \code{Inf} for
+completely excluded files. If the an entry is named, the exclusions only take effect for the linter with the same
+name.
+
+If \code{normalize_path} is \code{TRUE}, file names will be normalized relative to \code{root}.
 Otherwise the paths are left as provided (relative to \code{root} or absolute).
 }
 \description{
