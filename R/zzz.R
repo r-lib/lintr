@@ -195,8 +195,8 @@ settings <- NULL
     exclude_linter = rex::rex(start, any_spaces, ":", any_spaces,
                               capture(
                                 name = "linters",
-                                zero_or_more(one_or_more(none_of(",")), any_spaces, ",", any_spaces),
-                                one_or_more(none_of(","))
+                                zero_or_more(one_or_more(none_of(",.")), any_spaces, ",", any_spaces),
+                                one_or_more(none_of(",."))
                               ), "."),
     exclude_linter_sep = rex::rex(any_spaces, ",", any_spaces),
     exclusions = list(),
