@@ -40,9 +40,9 @@ test_that("returns the correct linting", {
   )
 
   # Error message changed in R-devel as of 2020/12
-  old_lang <- Sys.getenv("LANG")
-  Sys.setenv(LANG = "en")
-  on.exit(Sys.setenv(LANG = old_lang), add = TRUE)
+  old_lang <- Sys.getenv("LANGUAGE")
+  Sys.setenv(LANGUAGE = "en")
+  on.exit(Sys.setenv(LANGUAGE = old_lang), add = TRUE)
   expected_message <- tryCatch(parse(text = "\\"), error = function(e) {
     rex::re_substitutes(
       data = conditionMessage(e),
