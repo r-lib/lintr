@@ -47,7 +47,7 @@ test_that("returns the correct linting", {
     rex::re_substitutes(
       data = conditionMessage(e),
       pattern = rex::rex(
-        list(start, "<text>:1:1: ") %or%
+        list(start, "<text>:", any_digits, ":", any_digits, ": ") %or%
           list(newline, anything, newline, anything, end)
       ),
       replacement = "",
