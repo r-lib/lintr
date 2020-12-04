@@ -28,7 +28,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   if (inline_data) {
     content <- gsub("\n$", "", filename)
     filename <- tempfile()
-    on.exit(unlink(filename))
+    on.exit(unlink(filename), add = TRUE)
     writeLines(text = content, con = filename, sep = "\n")
   }
 
@@ -378,11 +378,23 @@ rstudio_source_markers <- function(lints) {
   })
 
   # request source markers
-  rstudioapi::callFun("sourceMarkers",
-                      name = "lintr",
-                      markers = markers,
-                      basePath = package_path,
-                      autoSelect = "first")
+  out <- rstudioapi::callFun(
+    "sourceMarkers",
+    name = "lintr",
+    markers = markers,
+    basePath = package_path,
+    autoSelect = "first"
+  )
+
+  # workaround to avoid focusing an empty Markers pane
+  # when possible, better solution is to delete the "lintr" source marker list
+  # https://github.com/rstudio/rstudioapi/issues/209
+  if (length(lints) == 0) {
+    Sys.sleep(0.1)
+    rstudioapi::executeCommand("activateConsole")
+  }
+
+  out
 }
 
 #' Checkstyle Report for lint results
