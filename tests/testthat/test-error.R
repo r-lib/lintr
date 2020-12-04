@@ -39,8 +39,25 @@ test_that("returns the correct linting", {
     equals_na_linter
   )
 
-  expect_lint("\\",
-    rex("unexpected input")
+  # Error message changed in R-devel as of 2020/12
+  old_lang <- Sys.getenv("LANGUAGE")
+  Sys.setenv(LANGUAGE = "en")
+  on.exit(Sys.setenv(LANGUAGE = old_lang), add = TRUE)
+  expected_message <- tryCatch(parse(text = "\\"), error = function(e) {
+    rex::re_substitutes(
+      data = conditionMessage(e),
+      pattern = rex::rex(
+        list(start, "<text>:", any_digits, ":", any_digits, ": ") %or%
+          list(newline, anything, newline, anything, end)
+      ),
+      replacement = "",
+      global = TRUE
+    )
+  })
+
+  expect_lint(
+    "\\",
+    rex(expected_message)
   )
 
   expect_lint("``",
