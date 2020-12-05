@@ -40,10 +40,12 @@ test_that("returns the correct linting", {
   )
 
   # Error message changed in R-devel as of 2020/12
-  old_lang <- Sys.getenv("LANGUAGE")
-  Sys.setenv(LANGUAGE = "en")
-  on.exit(Sys.setenv(LANGUAGE = old_lang), add = TRUE)
-  expected_message <- tryCatch(parse(text = "\\"), error = function(e) {
+  old_lang <- lintr:::set_lang("en")
+  on.exit(lintr:::reset_lang(old_lang), add = TRUE)
+
+  # trigger error with base only, and extract it to match against
+  #   what comes out from expect_lint.
+  get_base_message <- function(e) {
     rex::re_substitutes(
       data = conditionMessage(e),
       pattern = rex::rex(
@@ -53,12 +55,15 @@ test_that("returns the correct linting", {
       replacement = "",
       global = TRUE
     )
-  })
+  }
 
-  expect_lint(
-    "\\",
-    rex(expected_message)
-  )
+  expected_message <- tryCatch(parse(text = "\\"), error = get_base_message)
+  expect_lint("\\", rex(expected_message))
+
+  # also try when LANGUAGE initially unset
+  Sys.unsetenv("LANGUAGE")
+  expected_message <- tryCatch(parse(text = "\\"), error = get_base_message)
+  expect_lint("\\", rex(expected_message))
 
   expect_lint("``",
     rex("attempt to use zero-length variable name")
