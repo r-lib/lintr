@@ -74,18 +74,6 @@ auto_names <- function(x) {
   nms
 }
 
-quoted_blanks <- function(matches, shift_start = 0, shift_end = 0) {
-  lengths <- nchar(matches)
-  blanks <- vapply(Map(rep.int,
-      rep.int(" ", length(lengths - (shift_start + shift_end))),
-      lengths - (shift_start + shift_end), USE.NAMES = FALSE),
-    paste, "", collapse = "")
-
-  substr(matches, shift_start + 1L, nchar(matches) - shift_end) <- blanks
-  matches
-}
-
-
 # The following functions is from dplyr
 names2 <- function(x) {
   names(x) %||% rep("", length(x))
