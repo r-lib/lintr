@@ -43,10 +43,10 @@ get_source_expressions <- function(filename) {
   source_file <- srcfile(filename)
   terminal_newline <- TRUE
 
-  # Ensure english locale for terminal newline warning message
-  old_lang <- Sys.getenv("LANGUAGE")
-  on.exit(Sys.setenv(LANGUAGE = old_lang))
-  Sys.setenv(LANGUAGE = "en")
+  # Ensure English locale for terminal newline and zero-length variable warning messages
+  old_lang <- set_lang("en")
+  on.exit(reset_lang(old_lang))
+
   source_file$lines <- withCallingHandlers({
       readLines(filename)
     },
