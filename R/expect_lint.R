@@ -39,9 +39,8 @@
 #'   trailing_blank_lines_linter)
 #' @export
 expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
-  oldlang <- Sys.getenv("LANGUAGE")
-  Sys.setenv(LANGUAGE = language)
-  on.exit(Sys.setenv(LANGUAGE = oldlang))
+  old_lang <- set_lang(language)
+  on.exit(reset_lang(old_lang))
 
   if (is.null(file)) {
     file <- tempfile()
