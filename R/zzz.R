@@ -84,7 +84,7 @@ default_linters <- with_defaults(
   line_length_linter(80),
   no_tab_linter,
   object_length_linter(),
-  object_name_linter("snake_case"),
+  object_name_linter(c("snake_case", "symbols")),
   object_usage_linter,
   open_curly_linter(),
   paren_brace_linter,
