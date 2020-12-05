@@ -9,7 +9,7 @@ T_and_F_symbol_linter <- function(source_file) {
       token <- with_id(source_file, id)
       symbol <- re_matches(token[["text"]], rex(start, capture(or("T", "F")), end))[1L, 1L]
       if (!is.na(symbol)) {
-        replacement <- switch(symbol, "T"="TRUE", "F"="FALSE")
+        replacement <- switch(symbol, "T" = "TRUE", "F" = "FALSE")
         line_num <- token[["line2"]]
         start_col_num <- token[["col1"]]
         end_col_num <- token[["col2"]]

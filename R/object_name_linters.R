@@ -122,7 +122,7 @@ make_object_linter <- function(fun) {
   function(source_file) {
 
     token_nums <- ids_with_token(
-      source_file, rex(start, "SYMBOL" %if_next_isnt% "_SUB"), fun=re_matches
+      source_file, rex(start, "SYMBOL" %if_next_isnt% "_SUB"), fun = re_matches
     )
     if (length(token_nums) == 0) {
       return(list())
