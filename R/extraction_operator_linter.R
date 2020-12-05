@@ -5,7 +5,7 @@ extraction_operator_linter <- function(source_file) {
   tokens <- source_file[["parsed_content"]] <-
     filter_out_token_type(source_file[["parsed_content"]], "expr")
   lapply(
-    ids_with_token(source_file, c("'$'", "'['"), fun=`%in%`),
+    ids_with_token(source_file, c("'$'", "'['"), fun = `%in%`),
     function(token_num) {
       if (is_dollar_extract(token_num, tokens) || is_bracket_extract(token_num, tokens)) {
         token <- with_id(source_file, token_num)

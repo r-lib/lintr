@@ -24,10 +24,12 @@
 * `spaces_inside_linter` ignores spaces preceding trailing comments (#636, @michaelchirico)
 * `T_and_F_symbol_linter` is now part of the default linters (#517, #612, @AshesITR)
 * `with_defaults()` no longer duplicates the `lintr_function` class when it is already present (#511, #612, @AshesITR)
+* New `backport_linter()` for detecting mismatched R version dependencies (#506, @MichaelChirico)
 * `paren_brace_linter` and `no_tab_linter` also use more reliable matching (e.g.,
   excluding matches found in comments; #441 and #545, @russHyde)
 * Lints are now marked with the name of the `linter` that caused them instead of the name of their implementation
   function (#664, #673, @AshesITR).
+* Fixed `spaces_left_parentheses_linter` sporadically causing warnings (#654, #674, @AshesITR)
 
 # lintr 2.0.1
 

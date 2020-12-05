@@ -13,10 +13,10 @@ op_types <- c(
 #' @param op  Named character vector, where the names are the names of the undesirable operators,
 #'            and the values are the text for the alternative operator to use (or \code{NA}).
 #' @export
-undesirable_operator_linter <- function(op=default_undesirable_operators) {
+undesirable_operator_linter <- function(op = default_undesirable_operators) {
   function(source_file) {
     lapply(
-      ids_with_token(source_file, op_types, fun=`%in%`),
+      ids_with_token(source_file, op_types, fun = `%in%`),
       function(id) {
         token <- with_id(source_file, id)
         op_name <- token[["text"]]
@@ -34,7 +34,7 @@ undesirable_operator_linter <- function(op=default_undesirable_operators) {
             line_number = line_num,
             column_number = start_col_num,
             type = "warning",
-            message = paste0(msg, collapse=" "),
+            message = paste0(msg, collapse = " "),
             line = source_file[["lines"]][[as.character(line_num)]],
             ranges = list(c(start_col_num, end_col_num)),
             linter = "undesirable_function_linter"
