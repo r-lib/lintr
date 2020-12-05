@@ -173,15 +173,15 @@ is_declared_here <- function(token, source_file) {
   filt <- filter_out_token_type(source_file[["parsed_content"]], "expr")
   assign_regex <- rex(start, or("EQ_ASSIGN", "LEFT_ASSIGN"), end)
   l <- which(filt[, "id"] == token[["id"]])
-  if ( (l + 1L <= dim(filt)[[1L]] && re_matches(filt[l + 1L, "token"], assign_regex)) ||
-       (l >= 2L  &&  filt[l - 1L, "token"] == "RIGHT_ASSIGN") ) {
+  if ((l + 1L <= dim(filt)[[1L]] && re_matches(filt[l + 1L, "token"], assign_regex)) ||
+       (l >= 2L  &&  filt[l - 1L, "token"] == "RIGHT_ASSIGN")) {
     # assigned variable or function parameter
     TRUE
   } else {
     sibling_ids <- siblings(source_file[["parsed_content"]], token[["id"]], 1L)
     if (token[["text"]] != "..." &&
         length(sibling_ids) &&
-        with_id(source_file, sibling_ids[[1L]])[["text"]] == "function" ) {
+        with_id(source_file, sibling_ids[[1L]])[["text"]] == "function") {
       # parameter in function definition
       TRUE
     } else {

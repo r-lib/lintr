@@ -33,7 +33,7 @@ spaces_left_parentheses_linter <- function(source_file) {
         is_sibling_expr <- if (any(before_operator_idx)) {
           with(
             source_file$parsed_content,
-            token == "expr" & parent == parent[before_operator_idx]
+            token == "expr" & parent %in% parent[before_operator_idx]
           )
         } else {
           rep(FALSE, nrow(source_file$parsed_content))
