@@ -27,6 +27,7 @@
 * New `backport_linter()` for detecting mismatched R version dependencies (#506, @MichaelChirico)
 * `paren_brace_linter` and `no_tab_linter` also use more reliable matching (e.g.,
   excluding matches found in comments; #441 and #545, @russHyde)
+* Fixed `spaces_left_parentheses_linter` sporadically causing warnings (#654, #674, @AshesITR)
 
 # lintr 2.0.1
 
