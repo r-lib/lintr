@@ -40,9 +40,8 @@ test_that("returns the correct linting", {
   )
 
   # Error message changed in R-devel as of 2020/12
-  old_lang <- Sys.getenv("LANGUAGE")
-  Sys.setenv(LANGUAGE = "en")
-  on.exit(Sys.setenv(LANGUAGE = old_lang), add = TRUE)
+  old_lang <- lintr:::set_lang("en")
+  on.exit(lintr:::reset_lang(old_lang), add = TRUE)
 
   # trigger error with base only, and extract it to match against
   #   what comes out from expect_lint.
