@@ -65,6 +65,9 @@ test_that("returns the correct linting", {
   expected_message <- tryCatch(parse(text = "\\"), error = get_base_message)
   expect_lint("\\", rex(expected_message))
 
+  # restore
+  lintr:::set_lang("en")
+
   expect_lint("``",
     rex("attempt to use zero-length variable name")
   )
