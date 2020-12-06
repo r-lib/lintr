@@ -1,5 +1,3 @@
-context("T_and_F_symbol_linter")
-
 test_that("returns the correct linting", {
   linter <- T_and_F_symbol_linter
   msg_true <- "Use TRUE instead of the symbol T."

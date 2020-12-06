@@ -1,5 +1,3 @@
-context("undesirable_operator_linter")
-
 test_that("linter returns correct linting", {
   linter <- undesirable_operator_linter(op = c("$" = "use the `[[` accessor", "<<-" = NA))
   msg_assign <- rex::escape("Operator `<<-` is undesirable.")

@@ -1,6 +1,3 @@
-context("nonportable_path_linter")
-
-
 test_that("Non-portable path linter", {
   linter <- nonportable_path_linter(lax = FALSE)
   msg <- rex::escape("Use file.path() to construct portable file paths.")

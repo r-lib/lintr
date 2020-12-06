@@ -1,5 +1,3 @@
-context("extraction_operator_linter")
-
 test_that("linter returns the correct linting", {
   linter <- extraction_operator_linter
   msg_b <- rex::escape("Use `[[` instead of `[`  to extract an element.")

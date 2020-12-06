@@ -1,6 +1,3 @@
-context("object_name_linter")
-
-
 test_that("styles are correctly identified", {
   styles <- names(style_regexes)
   do_style_check <- function(nms) lapply(styles, check_style, nms = nms)

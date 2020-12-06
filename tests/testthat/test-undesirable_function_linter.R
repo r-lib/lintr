@@ -1,5 +1,3 @@
-context("undesirable_function_linter")
-
 test_that("linter returns correct linting", {
   linter <- undesirable_function_linter(fun = c("return" = NA, "log10" = "use log()"))
   msg_return <- "Function \"return\" is undesirable.$"

@@ -1,4 +1,3 @@
-context("read_settings")
 test_that("it uses default settings if none provided", {
 
   read_settings(NULL)

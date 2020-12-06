@@ -1,5 +1,3 @@
-context("todo_comment_linter")
-
 test_that("returns the correct linting", {
   linter <- todo_comment_linter(todo = c("todo", "fixme"))
   msg <- "TODO comments should be removed."

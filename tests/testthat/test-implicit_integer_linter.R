@@ -1,5 +1,3 @@
-context("implicit_integer_linter")
-
 test_that("single numerical constants are properly identified ", {
   # Test single numerical constants
   is_implicit <- lintr:::is_implicit_integer

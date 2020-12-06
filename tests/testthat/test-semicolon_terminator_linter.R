@@ -1,5 +1,3 @@
-context("semicolon_terminator_linter")
-
 trail_msg <- "Trailing semicolons are not needed."
 comp_msg <- "Compound semicolons are not needed. Replace them by a newline."
 

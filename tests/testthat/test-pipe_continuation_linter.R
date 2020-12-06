@@ -1,5 +1,3 @@
-context("pipe_continuation_linter")
-
 pipe_error <- rex(
   paste(
     "`%>%` should always have a space before it and a new line after it,",
