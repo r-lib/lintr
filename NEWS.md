@@ -43,6 +43,7 @@
   or `# nolint start: linter_name, linter2_name.` in source files or named lists of line numbers in `.lintr`.
   (#660, @AshesITR)
 * Fixed `line_length_linter` causing duplicate lints for lines containing multiple expressions (#681, #682, @AshesITR)
+* `unneeded_concatenation_linter` now correctly considers arguments piped in via magrittr `%>%` (#573, #585, @michaelquinn32)
 
 # lintr 2.0.1
 
