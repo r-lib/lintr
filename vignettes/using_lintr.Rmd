@@ -73,6 +73,16 @@ If none of the steps yield an existing linter file, no configuration is loaded f
 Settings from the `.lintr` file can be overridden using `options`. An option `option_name` is read from
 `lintr.option_name`. If that is non-`NULL`, it will take precedence over settings from the `.lintr` file.
 
+### Using arguments to `lint()`
+
+The settings can also be passed as arguments to linting functions directly.
+In case of `exclusions`, these will be combined with the globally parsed settings. Other settings will be overridden.
+
+If only the specified settings should be changed, and the remaining settings should be taken directly from the defaults,
+the argument `parse_settings = FALSE` can be added to the function calls. This will suppress reading of the `.lintr`
+configuration. This is particularly useful for tests which should not exclude example files containing lints while the
+package-level `.lintr` excludes those files because the lints are intentional.
+
 ### Defaults
 
 The default settings of `lintr` are intended to conform to the [tidyverse style guide](https://style.tidyverse.org/).
@@ -88,7 +98,7 @@ default_settings$exclusions <- "(empty)"
 
 make_string <- function(x) {
   if (inherits(x, "regex")) {
-    paste0('`"', x, '"`')
+    paste0('regex: `', x, '`')
   } else {
     as.character(x)
   }
@@ -102,9 +112,20 @@ defaults_table <- data.frame(
 knitr::kable(defaults_table)
 ```
 
-#### Default linters
+#### Customizing active linters
 
-By default, the following linters are enabled:
+If one wants to only customize some linters, one can use the helper function `with_defaults()`, which will keep all
+untouched linters with the default settings. Disable a linter by passing `NULL`. For example, to set the line length
+limit to 120 characters and globally disable the `no_tab_linter`, you can put this into your `.lintr`:
+
+```r
+linters: with_defaults(
+    line_length_linter = line_length_linter(120L),
+    no_tab_linter = NULL
+  )
+```
+
+By default, the following linters are enabled. Where applicable, the default settings are also shown.
 
 ```{r, echo = FALSE}
 default_linters <- lintr::default_linters
@@ -124,6 +145,8 @@ make_setting_string <- function(linter_name) {
   arglist <- vapply(args, function(arg) {
     env <- environment(default_linters[[linter_name]])
     if (linter_name == "object_length_linter") {
+      # object_length_linter creates a inner implementation named `fun`.
+      # all other linters keep their configuration in the same environment as the linter function.
       env <- environment(env[["fun"]])
     }
     deparse(env[[arg]])
@@ -143,8 +166,146 @@ knitr::kable(defaults_table)
 
 ## Exclusions
 
+Sometimes, linters should not be globally disabled. Instead, one might want to exclude some code from linting altogether
+or selectively disable some linters on some part of the code.
+
 ### Excluding lines of code
+
+Within source files, special comments can be used to exclude single lines of code from linting.
+All lints produced on the marked line are excluded from the results.
+
+By default, this special comment is `# nolint`:
+
+**file.R**
+```r
+X = 42L # -------------- this comment overflows the default 80 chars line length.
+```
+
+`> lint("file.R")`
+```{r, echo = FALSE}
+lintr::lint("X = 42L # -------------- this comment overflows the default 80 chars line length.\n",
+            parse_settings = FALSE)
+```
+
+**file2.R**
+```r
+X = 42L # nolint ------ this comment overflows the default 80 chars line length.
+```
+
+`> lint("file2.R")`
+```{r, echo = FALSE}
+lintr::lint("X = 42L # nolint ------ this comment overflows the default 80 chars line length.\n",
+            parse_settings = FALSE)
+```
+Observe how all lints were suppressed and no output is shown.
+Sometimes, only a specific linter needs to be excluded. In this case, the *name* of the linter can be appended to the
+`# nolint` comment preceded by a colon and terminated by a dot.
+
+**file3.R**
+```r
+X = 42L # nolint: object_name_linter. this comment overflows the default 80 chars line length.
+```
+
+`> lint("file3.R")`
+```{r, echo = FALSE}
+lintr::lint("X = 42L # nolint: object_name_linter. this comment overflows the default 80 chars line length.\n",
+            parse_settings = FALSE)
+```
+Observe how only the `object_name_linter` was suppressed. This is preferable to blanket `# nolint` statements because
+they may accidentally silence a linter that was not intentionally suppressed.
+
+Multiple linters can be specified by listing them with a comma as a separator:
+
+**file4.R**
+```r
+X = 42L # nolint: object_name_linter, line_length_linter. this comment overflows the default 80 chars line length.
+```
+
+`> lint("file4.R")`
+```{r, echo = FALSE}
+lintr::lint(
+  paste(
+    "X = 42L",
+    "# nolint: object_name_linter, line_length_linter. this comment overflows the default 80 chars line length.\n"
+  ),
+  parse_settings = FALSE
+)
+```
+
+#### Excluding multiple lines of codes
+
+If any or all linters should be disabled for a contiguous block of code, the `exclude_start` and `exclude_end` patterns
+can be used. They default to `# nolint start` and `# nolint end` respectively.
+
+The `# nolint start` accepts the same syntax as `# nolint` to disable specific linters in the following lines until a
+`# nolint end` is encountered.
+
+```r
+# x <- 42L
+# print(x)
+```
+
+```{r, echo = FALSE}
+lintr::lint("# x <- 42L\n# print(x)\n", parse_settings = FALSE)
+```
+
+```r
+# nolint start: commented_code_linter.
+# x <- 42L
+# print(x)
+# nolint end
+```
+
+```{r, echo = FALSE}
+lintr::lint("# nolint start: commented_code_linter.\n# x <- 42L\n# print(x)\n# nolint end\n",
+            parse_settings = FALSE)
+```
+(No lints)
+
+#### Excluding lines via the config file
+
+Individual lines can also be excluded via the config file.
+To exclude all lints for line 1 of file `R/bad.R` and line_length_linter for lines 4 to 6 of the same file, one can set
+
+```r
+exclude: list(
+    "R/bad.R" = list(
+      1, # global exclusions are unnamed
+      line_length_linter = 4:6
+    )
+  )
+```
+
+All paths are seen as relative to the location of the `.lintr` file.
 
 ### Excluding files
 
+The linter configuration can also be used to exclude a file entirely, or a linter for a file entirely.
+Use the sentinel line number `Inf` to mark all lines as excluded within a file. If a file is only given as a character
+vector, full exclusion is implied.
+
+```r
+exclude: list(
+    # excluded from all lints:
+    "R/excluded1.R",
+    "R/excluded2.R" = Inf,
+    "R/excluded3.R" = list(Inf),
+    # excluded from line_length_linter:
+    "R/no-line-length.R" = list(
+      line_length_linter = Inf
+    )
+  )
+```
+
 ### Excluding directories
+
+To exclude an entire directory from linting, specify it as a file name. For example, to exclude the `renv` library from
+linting in a R project using `renv`, set
+
+```r
+exclude: list(
+    "renv"
+  )
+```
+
+This is particularly useful for projects which somehow include external code in subdirectories
