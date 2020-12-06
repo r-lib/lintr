@@ -126,11 +126,11 @@ reorder_lints <- function(lints) {
   files <- vapply(lints, `[[`, character(1), "filename")
   lines <- vapply(lints, `[[`, integer(1), "line_number")
   columns <- vapply(lints, `[[`, integer(1), "column_number")
-  lints[
-    order(files,
-          lines,
-          columns)
-  ]
+  lints[order(
+    files,
+    lines,
+    columns
+  )]
 }
 
 #' Lint a directory
@@ -183,10 +183,11 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
 
   # normalizePath ensures names(exclusions) and files have the same names for the same files.
   # Otherwise on windows, files might incorrectly not be excluded in to_exclude
-  files <- normalizePath(dir(path,
-                             pattern = pattern,
-                             recursive = TRUE,
-                             full.names = TRUE
+  files <- normalizePath(dir(
+    path,
+    pattern = pattern,
+    recursive = TRUE,
+    full.names = TRUE
   ))
 
   # Remove fully ignored files to avoid reading & parsing
@@ -434,9 +435,11 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
         f, "error",
         line = as.character(x$line_number),
         column = as.character(x$column_number),
-        severity = switch(x$type,
-                          style = "info",
-                          x$type),
+        severity = switch(
+          x$type,
+          style = "info",
+          x$type
+        ),
         message = x$message)
     })
   })

@@ -35,6 +35,9 @@
   excluding matches found in comments; #441 and #545, @russHyde)
 * Lints are now marked with the name of the `linter` that caused them instead of the name of their implementation
   function (#664, #673, @AshesITR).
+* New syntax to exclude only selected linters from linting lines or passages. Use `# nolint: linter_name, linter2_name.`
+  or `# nolint start: linter_name, linter2_name.` in source files or named lists of line numbers in `.lintr`.
+  (#660, @AshesITR)
 * Fixed `spaces_left_parentheses_linter` sporadically causing warnings (#654, #674, @AshesITR)
 * New syntax to exclude only selected linters from linting lines or passages. Use `# nolint: linter_name, linter2_name.`
   or `# nolint start: linter_name, linter2_name.` in source files or named lists of line numbers in `.lintr`.
