@@ -1,7 +1,6 @@
 linters: with_defaults( # The following TODOs are part of an effort to have {lintr} lint-free (#584)
    line_length_linter = line_length_linter(120),
    cyclocomp_linter = cyclocomp_linter(29), # TODO reduce to 15
-   object_name_linter = NULL, # TODO enable (#597)
    equals_na_linter = NULL, # TODO enable (#601)
    paren_brace_linter = NULL # TODO enable (#603)
  )

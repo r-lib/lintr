@@ -8,11 +8,11 @@ equals_na_linter <- function(source_file) {
 
   comparators <- c("EQ", "NE")
   comparator_table <- paste0("self::", comparators, collapse = " or ")
-  NA_values <- c("NA", "NA_integer_", "NA_real_", "NA_complex_", "NA_character_")
-  NA_table <- paste("text() =", quote_wrap(NA_values, "'"), collapse = " or ")
+  na_values <- c("NA", "NA_integer_", "NA_real_", "NA_complex_", "NA_character_")
+  na_table <- paste("text() =", quote_wrap(na_values, "'"), collapse = " or ")
 
   xpath_fmt <- "//expr[expr[NUM_CONST[%s]]]/*[%s]"
-  xpath <- sprintf(xpath_fmt, NA_table, comparator_table)
+  xpath <- sprintf(xpath_fmt, na_table, comparator_table)
 
   bad_expr <- xml2::xml_find_all(xml, xpath)
 
