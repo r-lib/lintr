@@ -105,7 +105,7 @@ context("normalize_exclusions")
 
 a <- tempfile()
 b <- tempfile()
-c <- tempfile(tmpdir=".")
+c <- tempfile(tmpdir = ".")
 file.create(a, b, c)
 a <- normalizePath(a)
 b <- normalizePath(b)
@@ -178,7 +178,7 @@ test_that("it normalizes file paths, removing non-existing files", {
   expect_equal(normalize_exclusions(c(t1, t2, t3)), res)
 
   res <- list(); res[[a]] <- 1:10; res[["notafile"]] <- 5:15; res[[c]] <- 5:15
-  expect_equal(normalize_exclusions(c(t1, t2, t3), normalize_path=FALSE), res)
+  expect_equal(normalize_exclusions(c(t1, t2, t3), normalize_path = FALSE), res)
 })
 
 unlink(c(a, b, c))
