@@ -2,7 +2,7 @@ context("nonportable_path_linter")
 
 
 test_that("Non-portable path linter", {
-  linter <- nonportable_path_linter(lax=FALSE)
+  linter <- nonportable_path_linter(lax = FALSE)
   msg <- rex::escape("Use file.path() to construct portable file paths.")
 
   # various strings
@@ -44,7 +44,7 @@ test_that("Non-portable path linter", {
   }
 
   # lax mode: no check for strings that are likely not paths (too short or with special characters)
-  linter <- nonportable_path_linter(lax=TRUE)
+  linter <- nonportable_path_linter(lax = TRUE)
 
   unlikely_path_strings <- c(
     "/foo", encodeString("/a\nsdf/bar"), "/as:df/bar"
