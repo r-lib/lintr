@@ -31,6 +31,7 @@
 * Lints are now marked with the name of the `linter` that caused them instead of the name of their implementation
   function (#664, #673, @AshesITR).
 * Fixed `spaces_left_parentheses_linter` sporadically causing warnings (#654, #674, @AshesITR)
+* Fixed `line_length_linter` causing duplicate lints for lines containing multiple expressions (#681, #682, @AshesITR)
 
 # lintr 2.0.1
 
