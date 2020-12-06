@@ -21,3 +21,17 @@ test_that("returns the correct linting", {
               ),
               linter)
 })
+
+test_that("Correctly handles concatenation within pipes", {
+  expect_lint('"a" %>% c("b")', NULL, unneeded_concatenation_linter)
+  expect_lint(
+    '"a" %>% c()',
+    "Unneeded concatenation of a constant",
+    unneeded_concatenation_linter
+  )
+  expect_lint(
+    '"a" %>% list("b", c())',
+    "Unneeded concatenation without arguments",
+    unneeded_concatenation_linter
+  )
+})
