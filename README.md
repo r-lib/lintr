@@ -154,7 +154,30 @@ The resulting configuration will contain each currently failing linter and the c
 If you are developing a package, you can add `^\.lintr$` to your `.Rbuildignore` file using `usethis::use_build_ignore(".lintr")`.
 
 ## Continuous integration ##
-If you want to run `lintr` on [Travis-CI](https://travis-ci.org) in order to check that commits and pull requests don't deteriorate code style, you will need
+You can configure `lintr` to run as part of continuous integration in order to automatically check that commits and pull requests do not deteriorate code style. 
+
+### GitHub Actions ###
+
+If your package is on GitHub, the easiest way to do this is with GitHub Actions. 
+The workflow configuration files use YAML syntax. The `usethis` package has some 
+great functionality, that can help you with workflow files. The most straightforward 
+way to add a `lint` workflow to your package is to use the [r-lib/actions](https://github.com/r-lib/actions/tree/master/examples)'s `lint` 
+example. To do this with `usethis`, you need to call 
+
+```r
+usethis::use_github_action("lint")
+```
+
+This will create a workflow file called `lint.yaml` and place it in the correct 
+location, namely in the `.github/workflows` directory of your repository. This file configures all the steps required to run `lintr::lintr_package()` on your package.  
+
+[lintr-bot](https://github.com/lintr-bot) will then add comments to the commit or 
+pull request with the lints found and they will also be printed as [annotations](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-status-checks#types-of-status-checks-on-github) along side the status check on GitHub.  If you want to disable the commenting you can
+set the environment variable `LINTR_COMMENT_BOT=false`.
+
+### Travis CI ###
+
+If you want to run `lintr` on [Travis-CI](https://travis-ci.org), you will need
 to have Travis install the package first.  This can be done by adding the
 following line to your `.travis.yml`
 
@@ -165,12 +188,12 @@ r_github_packages:
 
 We recommend running `lintr::lint_package()` as an [after_success step in your build process](#non-failing-lints)]
 
-[lintr-bot](https://github.com/lintr-bot) will then add comments
-to the commit or pull request with the lints found and they will also be
+Just like with GitHub Actions, [lintr-bot](https://github.com/lintr-bot) will then 
+add comments to the commit or pull request with the lints found and they will also be
 printed on Travis-CI.  If you want to disable the commenting you can
 set the environment variable `LINTR_COMMENT_BOT=false`.
 
-### Non-failing Lints ###
+#### Non-failing Lints ####
 ```yaml
 after_success:
   - R CMD INSTALL $PKG_TARBALL
