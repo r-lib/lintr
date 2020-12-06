@@ -161,8 +161,8 @@ You can configure `lintr` to run as part of continuous integration in order to a
 If your package is on GitHub, the easiest way to do this is with GitHub Actions. 
 The workflow configuration files use YAML syntax. The `usethis` package has some 
 great functionality, that can help you with workflow files. The most straightforward 
-way to add a `lint` workflow to your package is to use the `lint` example in  [r-lib/actions](https://github.com/r-lib/actions/tree/master/examples). To do 
-this with `usethis`, you need to call 
+way to add a `lint` workflow to your package is to use the [r-lib/actions](https://github.com/r-lib/actions/tree/master/examples)'s `lint` 
+example. To do this with `usethis`, you need to call 
 
 ```r
 usethis::use_github_action("lint")
