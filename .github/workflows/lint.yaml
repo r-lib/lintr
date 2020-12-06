@@ -39,8 +39,10 @@ jobs:
         run: |
           install.packages(c("remotes"))
           remotes::install_deps(dependencies = TRUE)
-          remotes::install_github("jimhester/lintr")
         shell: Rscript {0}
+
+      - name: Install package
+        run: R CMD INSTALL .
 
       - name: Lint
         run: lintr::lint_package()
