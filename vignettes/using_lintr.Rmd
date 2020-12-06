@@ -1,0 +1,150 @@
+---
+title: "Using lintr"
+author: "Alexander Rosenstock"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using lintr}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+This vignette describes how to set up and configure `lintr` for use with projects or packages.
+
+## Running `lintr` on a project
+
+Checking a R project for lints can be done with three different functions:
+
+* Lint a single file using `lint()`:
+
+```r
+lint(filename = "R/bad.R")
+```
+
+* Lint a directory using `lint_dir()`:
+
+```r
+lint_dir(path = "R")
+```
+
+This will apply `lint()` to all R source files matching the `pattern` argument.
+By default, this means all `.R` files as well as `knitr` formats (e.g. `.Rmd`, `.Rnw`).
+
+`lint_dir` is vectorized over `path`, so multiple directories can be linted at the same time.
+
+* Lint all relevant directories of an R package using `lint_package()`:
+
+```r
+lint_package(path = ".")
+```
+
+This will apply `lint_dir()` to all subdirectories usually containing R code in packages:
+
+ - `R` containing the package implementation.
+ - `tests` containing test code.
+ - `inst` containing sample code or vignettes that will be installed along with the package.
+ - `vignettes` containing package vignettes.
+ - `data-raw` containing code to produce `data` files.
+
+For more information about the assumed package structure, view
+[R Packages](https://r-pkgs.org/package-structure-state.html).
+
+## Configuring linters
+
+### The `.lintr` file
+
+For R projects or R packages the most convenient method of configuration is creating a `.lintr` file in the project
+root. This file is in debian control format (`?read.dcf`) and each key is evaluated as R code by `lintr` when reading
+the settings.
+
+The settings file is searched for in the following order:
+
+ 1. If `options(lintr.linter_file)` is an absolute path, this file will be used.
+    The default for this option is `".lintr"`.
+ 2. If there is a file named like `lintr.linter_file` in the currently searched directory, this file will be used.
+ 3. Parent directories of the currently searched directory are searched for the linter file. If one is found, this file
+    will be used.
+ 4. If a linter file exists in the users `HOME` directory, this file is used.
+
+If none of the steps yield an existing linter file, no configuration is loaded from the file.
+
+### Using `options()`
+
+Settings from the `.lintr` file can be overridden using `options`. An option `option_name` is read from
+`lintr.option_name`. If that is non-`NULL`, it will take precedence over settings from the `.lintr` file.
+
+### Defaults
+
+The default settings of `lintr` are intended to conform to the [tidyverse style guide](https://style.tidyverse.org/).
+However, the behavior can be customized using different methods.
+
+Apart from `lintr.linter_file`, which defaults to `".lintr"`, there are the following settings:
+
+```{r, echo = FALSE}
+default_settings <- lintr::default_settings
+default_settings$linters <- "`lintr::default_linters`"
+default_settings$comment_token <- "(lintr-bot comment token for automatic GitHub comments)"
+default_settings$exclusions <- "(empty)"
+
+make_string <- function(x) {
+  if (inherits(x, "regex")) {
+    paste0('`"', x, '"`')
+  } else {
+    as.character(x)
+  }
+}
+
+defaults_table <- data.frame(
+  default = vapply(default_settings, make_string, character(1L)),
+  stringsAsFactors = FALSE
+)
+
+knitr::kable(defaults_table)
+```
+
+#### Default linters
+
+By default, the following linters are enabled:
+
+```{r, echo = FALSE}
+default_linters <- lintr::default_linters
+linters_with_args <- list(
+  cyclocomp_linter = "complexity_limit",
+  line_length_linter = "length",
+  object_length_linter = "length",
+  closed_curly_linter = "allow_single_line",
+  object_name_linter = "styles",
+  open_curly_linter = "allow_single_line"
+)
+
+make_setting_string <- function(linter_name) {
+  args <- linters_with_args[[linter_name]]
+  if (is.null(args)) return("")
+
+  arglist <- vapply(args, function(arg) {
+    env <- environment(default_linters[[linter_name]])
+    if (linter_name == "object_length_linter") {
+      env <- environment(env[["fun"]])
+    }
+    deparse(env[[arg]])
+  }, character(1L))
+
+  paste0(args, " = ", arglist, collapse = ", ")
+}
+
+defaults_table <- data.frame(
+  row.names = names(default_linters),
+  settings = vapply(names(default_linters), make_setting_string, character(1L)),
+  stringsAsFactors = FALSE
+)
+
+knitr::kable(defaults_table)
+```
+
+## Exclusions
+
+### Excluding lines of code
+
+### Excluding files
+
+### Excluding directories
