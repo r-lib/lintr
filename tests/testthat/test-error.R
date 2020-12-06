@@ -1,4 +1,3 @@
-context("error")
 test_that("returns the correct linting", {
   expect_lint("\"\\R\"",
     rex("is an unrecognized escape in character string starting")
@@ -57,11 +56,6 @@ test_that("returns the correct linting", {
     )
   }
 
-  expected_message <- tryCatch(parse(text = "\\"), error = get_base_message)
-  expect_lint("\\", rex(expected_message))
-
-  # also try when LANGUAGE initially unset
-  Sys.unsetenv("LANGUAGE")
   expected_message <- tryCatch(parse(text = "\\"), error = get_base_message)
   expect_lint("\\", rex(expected_message))
 
