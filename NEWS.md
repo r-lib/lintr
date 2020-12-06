@@ -32,6 +32,7 @@
   function (#664, #673, @AshesITR).
 * Fixed `spaces_left_parentheses_linter` sporadically causing warnings (#654, #674, @AshesITR)
 * Fixed `line_length_linter` causing duplicate lints for lines containing multiple expressions (#681, #682, @AshesITR)
+* `unneeded_concatenation_linter` now correctly considers arguments piped in via magrittr `%>%` (#573, #585, @michaelquinn32)
 
 # lintr 2.0.1
 
