@@ -2,7 +2,7 @@
 #'
 #' @describeIn linters  Avoid the symbols \code{T} and \code{F} (for \code{TRUE} and \code{FALSE}).
 #' @export
-T_and_F_symbol_linter <- function(source_file) {
+T_and_F_symbol_linter <- function(source_file) { # nolint: object_name_linter.
   lapply(
     ids_with_token(source_file, "SYMBOL"),
     function(id) {
