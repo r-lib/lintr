@@ -35,13 +35,15 @@ jobs:
           install.packages(c("remotes"))
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("gh")
-          remotes::install_github("jimhester/lintr")
           remotes::install_cran("purrr")
         shell: Rscript {0}
 
       - name: Add lintr options
         run: cat('\noptions(lintr.linter_file = ".lintr_new")\n', file = "~/.Rprofile", append = TRUE)
         shell: Rscript {0}
+
+      - name: Install package
+        run: R CMD INSTALL .
 
       - name: Extract and lint files changed by this PR
         run: |
