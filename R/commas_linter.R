@@ -38,7 +38,7 @@ commas_linter <- function(source_file) {
             empty_comma <- substr(line, comma_loc - 2L, comma_loc - 1L) %==% ", "
 
             parent <- source_file$parsed_content$parent
-            parent <- replace(parent, parent==0, NA)
+            parent <- replace(parent, parent == 0, NA)
 
             # a variable that is true for every node who has a grandchild that is switch,
             # i.e, any expression that starts with the function call to switch.
@@ -50,7 +50,7 @@ commas_linter <- function(source_file) {
             is_blank_switch <- any(comma_loc_filter &
               (source_file$parsed_content$parent %in% switch_grandparents) &
               c(NA, head(source_file$parsed_content$token, -1)) == "EQ_SUB",
-              na.rm=TRUE
+              na.rm = TRUE
             )
 
             if (has_token && !start_of_line && !empty_comma && !is_blank_switch) {

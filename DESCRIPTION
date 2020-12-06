@@ -45,6 +45,7 @@ Collate:
     'addins.R'
     'assignment_linter.R'
     'assignment_spaces_linter.R'
+    'backport_linter.R'
     'cache.R'
     'closed_curly_linter.R'
     'commas_linter.R'
