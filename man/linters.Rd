@@ -71,7 +71,7 @@ commented_code_linter(source_file)
 
 todo_comment_linter(todo = c("todo", "fixme"))
 
-cyclocomp_linter(complexity_limit = 25)
+cyclocomp_linter(complexity_limit = 15L)
 
 object_name_linter(styles = c("snake_case", "symbols"))
 
