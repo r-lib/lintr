@@ -1,5 +1,3 @@
-context("open_curly_linter")
-
 test_that("returns the correct linting", {
 
   expect_lint("blah", NULL, open_curly_linter())

@@ -1,4 +1,3 @@
-context("comments")
 test_that("it detects CI environments", {
   org_value <- Sys.getenv("CI")
   on.exit(Sys.setenv(CI = org_value), add = TRUE)
