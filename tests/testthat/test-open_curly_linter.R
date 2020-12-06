@@ -47,5 +47,5 @@ test_that("returns the correct linting", {
     open_curly_linter()
   )
 
-  expect_lint('{{x}}', NULL, open_curly_linter())
+  expect_lint("{{x}}", NULL, open_curly_linter())
 })

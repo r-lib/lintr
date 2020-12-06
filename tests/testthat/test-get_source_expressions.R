@@ -1,12 +1,10 @@
-context("get_source_expression")
-
-
 with_content_to_parse <- function(content, code) {
   f <- tempfile()
   on.exit(unlink(f))
   writeLines(content, f)
-  pc <- lapply(get_source_expressions(f)[["expressions"]], `[[`, "parsed_content")
-  eval(substitute(code))
+  content_env <- new.env()
+  content_env$pc <- lapply(get_source_expressions(f)[["expressions"]], `[[`, "parsed_content")
+  eval(substitute(code), envir = content_env)
 }
 
 
