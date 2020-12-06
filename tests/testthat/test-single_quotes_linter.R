@@ -30,6 +30,9 @@ test_that("returns the correct linting", {
   expect_lint("
     x = 'test
     '",
-    rex("Only use double-quotes."),
+    list(
+      message = "Only use double-quotes.",
+      ranges = list(c(9L, 13L))
+    ),
     single_quotes_linter)
 })

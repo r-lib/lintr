@@ -109,3 +109,16 @@ test_that("lint() results do not depend on the position of the .lintr", {
     )
   )
 })
+
+test_that("lint uses linter names", {
+  expect_lint("a = 2", list(linter = "bla"), linters = list(bla = assignment_linter), parse_settings = FALSE)
+})
+
+test_that("exclusions work with custom linter names", {
+  expect_lint(
+    "a = 2 # nolint: bla.",
+    NULL,
+    linters = list(bla = assignment_linter),
+    parse_settings = FALSE
+  )
+})
