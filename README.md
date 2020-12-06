@@ -154,6 +154,12 @@ The resulting configuration will contain each currently failing linter and the c
 If you are developing a package, you can add `^\.lintr$` to your `.Rbuildignore` file using `usethis::use_build_ignore(".lintr")`.
 
 ## Continuous integration ##
+You can configure `lintr` to run as part of continuous integration in order to check that commits and pull requests do not deteriorate code style. 
+
+### GitHub Actions ###
+
+If your package is on GitHub, the easiest way to do this is with GitHub Actions. The workflow configuration files use YAML syntax. The `usethis` package has some great functionality, that can help you with workflow files. You can either use of the examples from [r-lib/actions](https://github.com/r-lib/actions/tree/master/examples) 
+
 If you want to run `lintr` on [Travis-CI](https://travis-ci.org) in order to check that commits and pull requests don't deteriorate code style, you will need
 to have Travis install the package first.  This can be done by adding the
 following line to your `.travis.yml`
