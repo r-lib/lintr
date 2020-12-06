@@ -7,7 +7,7 @@ linters: with_defaults( # The following TODOs are part of an effort to have {lin
 exclusions: list(
   "inst/doc/creating_linters.R" = 1,
   "inst/example/bad.R",
-  "tests", # TODO remove this
+  "tests/testthat/default_linter_testcode.R",
   "tests/testthat/dummy_packages",
   "tests/testthat/exclusions-test",
   "tests/testthat/knitr_formats",

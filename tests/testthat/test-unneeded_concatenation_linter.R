@@ -1,5 +1,3 @@
-context("unneeded_concatenation_linter")
-
 test_that("returns the correct linting", {
   linter <- unneeded_concatenation_linter
   msg_c <- rex::escape("Unneeded concatenation of a constant. Remove the \"c\" call.")
@@ -23,4 +21,3 @@ test_that("returns the correct linting", {
               ),
               linter)
 })
-

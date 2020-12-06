@@ -35,18 +35,18 @@ test_that("returns the correct linting", {
       rex("Closing curly-braces should always be on their own line, unless it's followed by an else.")
       ),
     closed_curly_linter())
-  
+
   expect_lint("eval(bquote({...}))",
               NULL,
               closed_curly_linter())
-  
+
   expect_lint("fun({\n  statements\n}, param)",
               NULL,
               closed_curly_linter())
-  
+
   expect_lint("out <- lapply(stuff, function(i) {\n  do_something(i)\n}) %>% unlist",
               NULL,
               closed_curly_linter())
 
-  expect_lint('{{x}}', NULL, closed_curly_linter())
+  expect_lint("{{x}}", NULL, closed_curly_linter())
 })
