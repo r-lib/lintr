@@ -1,4 +1,3 @@
-context("read_settings")
 test_that("it uses default settings if none provided", {
 
   read_settings(NULL)
@@ -63,16 +62,16 @@ test_that("rot utility works as intended", {
 test_that("logical_env utility works as intended", {
   test_env <- "LINTR_TEST_LOGICAL_ENV_"
   sym_set_env <- function(key, value) do.call(Sys.setenv, setNames(list(value), key))
-  old = Sys.getenv(test_env, unset = NA)
+  old <- Sys.getenv(test_env, unset = NA)
   on.exit(if (is.na(old)) Sys.unsetenv(test_env) else sym_set_env(test_env, old))
 
-  sym_set_env(test_env, 'true')
+  sym_set_env(test_env, "true")
   expect_equal(lintr:::logical_env(test_env), TRUE)
 
-  sym_set_env(test_env, 'F')
+  sym_set_env(test_env, "F")
   expect_equal(lintr:::logical_env(test_env), FALSE)
 
-  sym_set_env(test_env, '')
+  sym_set_env(test_env, "")
   expect_null(lintr:::logical_env(test_env))
 
   Sys.unsetenv(test_env)
