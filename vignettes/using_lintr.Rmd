@@ -98,7 +98,7 @@ default_settings$exclusions <- "(empty)"
 
 make_string <- function(x) {
   if (inherits(x, "regex")) {
-    paste0('regex: `', x, '`')
+    paste0("regex: `", x, "`")
   } else {
     as.character(x)
   }
