@@ -42,6 +42,11 @@
 get_source_expressions <- function(filename) {
   source_file <- srcfile(filename)
   terminal_newline <- TRUE
+
+  # Ensure English locale for terminal newline and zero-length variable warning messages
+  old_lang <- set_lang("en")
+  on.exit(reset_lang(old_lang))
+
   source_file$lines <- withCallingHandlers({
       readLines(filename)
     },

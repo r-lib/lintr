@@ -34,7 +34,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
             line_number = line_num,
             column_number = start_col_num,
             type = "warning",
-            message = paste0(msg, collapse=" "),
+            message = paste0(msg, collapse = " "),
             line = source_file[["lines"]][[as.character(line_num)]],
             ranges = list(c(start_col_num, end_col_num)),
             linter = "undesirable_function_linter"

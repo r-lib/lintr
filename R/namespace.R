@@ -2,7 +2,7 @@
 namespace_imports <- function(path = find_package()) {
   imports <- tryCatch({
     pkg_name <- suppressWarnings(pkg_name(path))
-    data <- parseNamespaceFile(package=pkg_name, package.lib=file.path(path, ".."))
+    data <- parseNamespaceFile(package = pkg_name, package.lib = file.path(path, ".."))
     data$imports
   }, error = function(e) {
     list()

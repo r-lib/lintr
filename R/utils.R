@@ -74,18 +74,6 @@ auto_names <- function(x) {
   nms
 }
 
-quoted_blanks <- function(matches, shift_start = 0, shift_end = 0) {
-  lengths <- nchar(matches)
-  blanks <- vapply(Map(rep.int,
-      rep.int(" ", length(lengths - (shift_start + shift_end))),
-      lengths - (shift_start + shift_end), USE.NAMES = FALSE),
-    paste, "", collapse = "")
-
-  substr(matches, shift_start + 1L, nchar(matches) - shift_end) <- blanks
-  matches
-}
-
-
 # The following functions is from dplyr
 names2 <- function(x) {
   names(x) %||% rep("", length(x))
@@ -183,7 +171,7 @@ escape_chars <- c(
 unescape <- function(str, q="`") {
   names(q) <- paste0("\\", q)
   my_escape_chars <- c(escape_chars, q)
-  res <- gregexpr(text=str, pattern=rex(or(names(my_escape_chars))))
+  res <- gregexpr(text = str, pattern = rex(or(names(my_escape_chars))))
   all_matches <- regmatches(str, res)
   regmatches(str, res) <- lapply(
     all_matches,
@@ -216,4 +204,15 @@ xml_nodes_to_lint <- function(xml, source_file, message, linter,
     ranges = list(c(col1, col2)),
     linter = linter
   ))
+}
+
+# interface to work like options() or setwd() -- returns the old value for convenience
+set_lang <- function(new_lang) {
+  old_lang <- Sys.getenv("LANGUAGE", unset = NA)
+  Sys.setenv(LANGUAGE = new_lang)
+  old_lang
+}
+# handle the logic of either unsetting if it was previously unset, or resetting
+reset_lang <- function(old_lang) {
+  if (is.na(old_lang)) Sys.unsetenv("LANGUAGE") else Sys.setenv(LANGUAGE = old_lang)
 }
