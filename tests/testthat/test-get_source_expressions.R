@@ -61,13 +61,13 @@ test_that("tab positions have been corrected", {
 
 test_that("Terminal newlines are detected correctly", {
   writeLines("lm(y ~ x)", tmp <- tempfile())
-  on.exit(unlink(tmp), add=TRUE)
+  on.exit(unlink(tmp), add = TRUE)
   writeBin(
     # strip the last (two) element(s) (\r\n or \n)
     head(readBin(tmp, raw(), file.size(tmp)), if (.Platform$OS.type == "windows") -2L else -1L),
     tmp2 <- tempfile()
   )
-  on.exit(unlink(tmp2), add=TRUE)
+  on.exit(unlink(tmp2), add = TRUE)
 
   expect_true(get_source_expressions(tmp)$expressions[[2L]]$terminal_newline)
   expect_false(get_source_expressions(tmp2)$expressions[[2L]]$terminal_newline)

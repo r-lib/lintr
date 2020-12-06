@@ -1,5 +1,3 @@
-context("pipe_continuation_linter")
-
 pipe_error <- rex(
   paste(
     "`%>%` should always have a space before it and a new line after it,",
@@ -48,11 +46,11 @@ test_that("pipe-continuation linter correctly handles nesting", {
 
   expect_lint(
     "my_fun <- function(){\n  a %>% b() %>%\n    c()\n}\n",
-    list(list(message=pipe_error, line_number=2L)),
+    list(list(message = pipe_error, line_number = 2L)),
     pipe_continuation_linter)
 
   expect_lint(
     "my_fun <- function(){\n  a %>%\n    b() %>% c()\n}\n",
-    list(list(message=pipe_error, line_number=3L)),
+    list(list(message = pipe_error, line_number = 3L)),
     pipe_continuation_linter)
 })

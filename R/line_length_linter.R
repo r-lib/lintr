@@ -4,10 +4,16 @@
 line_length_linter <- function(length) {
   function(source_file) {
 
-    lapply(names(source_file$lines)[vapply(source_file$lines, nchar, integer(1)) > length],
+    # Only go over complete file
+    if (is.null(source_file$file_lines)) return(list())
+
+    oversized_lines <- which(vapply(source_file$file_lines, nchar, integer(1)) > length)
+
+    lapply(oversized_lines,
       function(line_number) {
+
         col_start <- 1
-        line <- source_file$lines[as.character(line_number)]
+        line <- source_file$file_lines[line_number]
         col_end <- unname(nchar(line))
 
         Lint(
