@@ -72,4 +72,10 @@ test_that("returns the correct linting", {
   expect_lint("if (!(foo && bar || baz)) { foo }",
     NULL,
     spaces_left_parentheses_linter)
+
+  if (getRversion() >= "4.1.0") {
+    expect_lint("\\(x) x + 1",
+      NULL,
+      spaces_left_parentheses_linter)
+  }
 })
