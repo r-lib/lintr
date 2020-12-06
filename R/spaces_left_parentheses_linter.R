@@ -7,11 +7,10 @@ spaces_left_parentheses_linter <- function(source_file) {
 
       parsed <- source_file$parsed_content[id, ]
 
-      terminal_tokens_before <-
-        source_file$parsed_content$token[
-                                         source_file$parsed_content$line1 == parsed$line1 &
-                                         source_file$parsed_content$col1 < parsed$col1 &
-                                         source_file$parsed_content$terminal]
+      terminal_tokens_before <- with(
+        source_file$parsed_content,
+        token[line1 == parsed$line1 & col1 < parsed$col1 & terminal]
+      )
       last_type <- tail(terminal_tokens_before, n = 1)
 
       is_function <- length(last_type) %!=% 0L &&
@@ -24,7 +23,24 @@ spaces_left_parentheses_linter <- function(source_file) {
         before_operator <- substr(line, parsed$col1 - 1L, parsed$col1 - 1L)
 
         non_space_before <- re_matches(before_operator, rex(non_space))
-        not_exception <- !(before_operator %in% c("!", ":", "[", "("))
+        not_exception <- !(before_operator %in% c("!", ":", "[", "(", "^"))
+
+        # exception for unary - and unary +, #508
+        before_operator_idx <- with(
+          source_file$parsed_content,
+          col1 == parsed$col1 - 1L & col1 == col2
+        )
+        is_sibling_expr <- if (any(before_operator_idx)) {
+          with(
+            source_file$parsed_content,
+            token == "expr" & parent %in% parent[before_operator_idx]
+          )
+        } else {
+          rep(FALSE, nrow(source_file$parsed_content))
+        }
+        not_exception <- not_exception &&
+          !(before_operator %in% c("-", "+") &&
+             nrow(source_file$parsed_content[is_sibling_expr, ]) == 1L)
 
         if (non_space_before && not_exception) {
           Lint(

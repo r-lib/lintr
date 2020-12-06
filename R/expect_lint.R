@@ -19,6 +19,9 @@
 #' is not recommended for new code.
 #' @param ... arguments passed to \code{\link{lint}}, e.g. the linters or cache to use.
 #' @param file if not \code{NULL}, read content from the specified file rather than from \code{content}.
+#' @param language temporarily override Rs \code{LANGUAGE} envvar, controlling localisation of base
+#' R error messages. This makes testing them reproducible on all systems irrespective of their
+#' native R language setting.
 #' @return \code{NULL}, invisibly.
 #' @examples
 #' # no expected lint
@@ -35,16 +38,19 @@
 #'   list(list(message="superfluous", line_number=2), list(message="superfluous", line_number=3)),
 #'   trailing_blank_lines_linter)
 #' @export
-expect_lint <- function(content, checks, ..., file = NULL) {
+expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
+  old_lang <- set_lang(language)
+  on.exit(reset_lang(old_lang))
+
   if (is.null(file)) {
     file <- tempfile()
-    on.exit(unlink(file))
+    on.exit(unlink(file), add = TRUE)
     writeLines(content, con = file, sep = "\n")
   }
 
   lints <- lint(file, ...)
   n_lints <- length(lints)
-  lint_str <- if (n_lints) {paste0(c("", lints), collapse="\n")} else {""}
+  lint_str <- if (n_lints) paste0(c("", lints), collapse = "\n") else ""
 
   wrong_number_fmt  <- "got %d lints instead of %d%s"
   if (is.null(checks)) {
@@ -84,7 +90,11 @@ expect_lint <- function(content, checks, ..., file = NULL) {
           isTRUE(all.equal(value, check))
         }
         if (!is.logical(exp)) {
-          stop("Invalid regex result, did you mistakenly have a capture group in the regex? Be sure to escape parenthesis with `[]`", call. = FALSE)
+          stop(
+            "Invalid regex result, did you mistakenly have a capture group in the regex? ",
+            "Be sure to escape parenthesis with `[]`",
+            call. = FALSE
+          )
         }
         testthat::expect(exp, msg)
         })

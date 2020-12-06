@@ -8,7 +8,11 @@ regexes <- list(
 )
 
 test_that("it handles dir", {
-  lints <- lint_dir(path = "knitr_formats", pattern = rex::rex(".R", one_of("html", "md", "nw", "rst", "tex", "txt")))
+  lints <- lint_dir(
+    path = "knitr_formats",
+    pattern = rex::rex(".R", one_of("html", "md", "nw", "rst", "tex", "txt")),
+    parse_settings = FALSE
+  )
   has_lints <- length(lints) > 0
   testthat::expect(has_lints, "There should be lints")
 
@@ -23,7 +27,8 @@ test_that("it handles markdown", {
       list(regexes[["assign"]], line_number = 22),
       list(regexes[["trailing"]], line_number = 24)
     ),
-    default_linters
+    default_linters,
+    parse_settings = FALSE
   )
 })
 
@@ -35,7 +40,8 @@ test_that("it handles Sweave", {
       list(regexes[["assign"]], line_number = 24),
       list(regexes[["trailing"]], line_number = 26)
     ),
-    default_linters
+    default_linters,
+    parse_settings = FALSE
   )
 })
 
@@ -47,7 +53,8 @@ test_that("it handles reStructuredText", {
       list(regexes[["assign"]], line_number = 23),
       list(regexes[["trailing"]], line_number = 25)
     ),
-    default_linters
+    default_linters,
+    parse_settings = FALSE
   )
 })
 
@@ -59,7 +66,8 @@ test_that("it handles HTML", {
       list(regexes[["assign"]], line_number = 27),
       list(regexes[["trailing"]], line_number = 29)
     ),
-    default_linters
+    default_linters,
+    parse_settings = FALSE
   )
 })
 
@@ -71,7 +79,8 @@ test_that("it handles tex", {
       list(regexes[["assign"]], line_number = 23),
       list(regexes[["trailing"]], line_number = 25)
     ),
-    default_linters
+    default_linters,
+    parse_settings = FALSE
   )
 })
 
@@ -83,7 +92,8 @@ test_that("it handles asciidoc", {
       list(regexes[["assign"]], line_number = 22),
       list(regexes[["trailing"]], line_number = 24)
     ),
-    default_linters
+    default_linters,
+    parse_settings = FALSE
   )
 })
 
@@ -104,9 +114,57 @@ test_that("it does _not_ error with inline \\Sexpr", {
   )
 })
 
-test_that("it does error with malformed input", {
-  expect_error(
-    lint("knitr_malformed/incomplete_r_block.Rmd"),
-    regex = "Malformed"
+test_that("it does lint with malformed input", {
+  expect_lint(
+    file = "knitr_malformed/incomplete_r_block.Rmd",
+    checks = "Missing chunk end",
+    default_linters,
+    parse_settings = FALSE
   )
+
+  contents <- c(
+    trim_some("
+      ```{r chunk}
+      lm(x ~ y)
+
+
+      # some text
+
+      ```
+      bash some_script.sh
+      ```
+    "),
+    trim_some("
+      ```{r chunk-1}
+      code <- 42
+
+      # A heading
+      Some text
+
+      ```{r chunk-2}
+      some_more_code <- 42
+      ```
+    "),
+    trim_some("
+      ```{r chunk-1}
+      code <- 42
+      ```
+
+      # A heading
+      Some text
+
+      ```{r chunk-2}
+      some_more_code <- 42
+    ")
+  )
+
+  expected <- list(
+    NULL, # This test case would require parsing all chunk fences, not just r chunks.
+    "maybe starting at line 1",
+    "maybe starting at line 8"
+  )
+
+  for (i in seq_along(contents)) {
+    expect_lint(contents[[i]], expected[[i]], linters = list())
+  }
 })

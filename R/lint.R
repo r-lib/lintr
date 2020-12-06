@@ -28,7 +28,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   if (inline_data) {
     content <- gsub("\n$", "", filename)
     filename <- tempfile()
-    on.exit(unlink(filename))
+    on.exit(unlink(filename), add = TRUE)
     writeLines(text = content, con = filename, sep = "\n")
   }
 
@@ -80,6 +80,13 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
       }
       else {
         expr_lints <- flatten_lints(linters[[linter]](expr)) # nolint
+
+        if (length(expr_lints)) {
+          expr_lints[] <- lapply(expr_lints, function(lint) {
+            lint$linter <- linter
+            lint
+          })
+        }
 
         lints[[itr <- itr + 1L]] <- expr_lints
         if (isTRUE(cache)) {
@@ -149,7 +156,7 @@ reorder_lints <- function(lints) {
 #'   lint_dir(
 #'     linters = list(semicolon_terminator_linter())
 #'     cache = TRUE,
-#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
+#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "renv")
 #'   )
 #' }
 #' @export
@@ -164,13 +171,23 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
   if (isTRUE(parse_settings)) {
     read_settings(path)
     on.exit(clear_settings, add = TRUE)
+
+    exclusions <- c(exclusions, settings$exclusions)
   }
 
-  files <- dir(path,
+  exclusions <- normalize_exclusions(
+    exclusions,
+    root = path,
+    pattern = pattern
+  )
+
+  # normalizePath ensures names(exclusions) and files have the same names for the same files.
+  # Otherwise on windows, files might incorrectly not be excluded in to_exclude
+  files <- normalizePath(dir(path,
     pattern = pattern,
     recursive = TRUE,
     full.names = TRUE
-  )
+  ))
 
   # Remove fully ignored files to avoid reading & parsing
   to_exclude <- vapply(
@@ -235,13 +252,20 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
 #'   )
 #' }
 #' @export
-lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = list("R/RcppExports.R")) {
+lint_package <- function(path = ".", relative_path = TRUE, ...,
+                         exclusions = list("R/RcppExports.R"), parse_settings = TRUE) {
   path <- find_package(path)
 
-  read_settings(path)
-  on.exit(clear_settings, add = TRUE)
+  if (parse_settings) {
+    read_settings(path)
+    on.exit(clear_settings, add = TRUE)
+  }
 
-  exclusions <- normalize_exclusions(c(exclusions, settings$exclusions), FALSE)
+  exclusions <- normalize_exclusions(
+    c(exclusions, settings$exclusions),
+    root = path,
+    pattern = pattern
+  )
 
   lints <- lint_dir(file.path(path, c("R", "tests", "inst", "vignettes", "data-raw")),
                     relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
@@ -318,7 +342,8 @@ pkg_name <- function(path = find_package()) {
 #' @param ranges a list of ranges on the line that should be emphasized.
 #' @param linter name of linter that created the Lint object.
 #' @export
-Lint <- function(filename, line_number = 1L, column_number = 1L,
+Lint <- function( # nolint: object_name_linter.
+  filename, line_number = 1L, column_number = 1L,
   type = c("style", "warning", "error"),
   message = "", line = "", ranges = NULL, linter = "") {
 
@@ -361,11 +386,23 @@ rstudio_source_markers <- function(lints) {
   })
 
   # request source markers
-  rstudioapi::callFun("sourceMarkers",
-                      name = "lintr",
-                      markers = markers,
-                      basePath = package_path,
-                      autoSelect = "first")
+  out <- rstudioapi::callFun(
+    "sourceMarkers",
+    name = "lintr",
+    markers = markers,
+    basePath = package_path,
+    autoSelect = "first"
+  )
+
+  # workaround to avoid focusing an empty Markers pane
+  # when possible, better solution is to delete the "lintr" source marker list
+  # https://github.com/rstudio/rstudioapi/issues/209
+  if (length(lints) == 0) {
+    Sys.sleep(0.1)
+    rstudioapi::executeCommand("activateConsole")
+  }
+
+  out
 }
 
 #' Checkstyle Report for lint results

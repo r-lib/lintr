@@ -1,5 +1,3 @@
-context("spaces_inside_linter")
-
 test_that("returns the correct linting", {
   msg <- rex::rex("Do not place spaces around code in parentheses or square brackets.")
 
@@ -53,4 +51,13 @@ test_that("returns the correct linting", {
     NULL,
     spaces_inside_linter)
 
+  # trailing comments are OK (#636)
+  expect_lint("or( #code\n  x, y\n)", NULL, spaces_inside_linter)
+
+  expect_lint(trim_some("
+    fun(      # this is another comment
+      a = 42, # because 42 is always the answer
+      b = Inf
+    )
+  "), NULL, spaces_inside_linter)
 })

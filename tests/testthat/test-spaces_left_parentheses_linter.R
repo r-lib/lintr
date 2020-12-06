@@ -72,4 +72,20 @@ test_that("returns the correct linting", {
   expect_lint("if (!(foo && bar || baz)) { foo }",
     NULL,
     spaces_left_parentheses_linter)
+
+  expect_lint("x^(y + z)", NULL, spaces_left_parentheses_linter)
+
+  expect_lint("a <- -(b)", NULL, spaces_left_parentheses_linter)
+})
+
+test_that("doesn't produce a warning", {
+  # complexity.R contains a function with nested if-statements where the conditional includes a unary minus.
+  # This specific constellation with another if-statement at the same nesting level on the other enclosing if-branch
+  # caused a warning in spaces_left_parentheses_linter (e.g. 84bc3a is broken)
+
+  expect_silent(
+    lint(
+      system.file("example/complexity.R", package = "lintr")
+    )
+  )
 })

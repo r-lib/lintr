@@ -11,6 +11,10 @@ test_that("it returns the input trimmed strictly to max if no lints found", {
 
 test_that("it returns the input trimmed to the last full lint if one exists within the max", {
   t1 <- readChar(test_path("lints"), file.size(test_path("lints")))
+  if (.Platform$OS.type == "windows") {
+    # Magic numbers expect newlines to be 1 character
+    t1 <- gsub("\r\n", "\n", t1, fixed = TRUE)
+  }
   expect_equal(trim_output(t1, max = 200), substr(t1, 1, 195))
 
   expect_equal(trim_output(t1, max = 400), substr(t1, 1, 380))
@@ -94,4 +98,37 @@ test_that("print.lint works", {
     line = c(`1` = "\t\t1:length(x)"), ranges = list(c(3L, 3L)), linter = "lnt"
   )
   expect_output(print(l), "  1:length(x)", fixed = TRUE)
+})
+
+test_that("print.lint works for inline data, even in RStudio", {
+  l <- lint("x = 1\n")
+
+  withr::with_options(
+    list("lintr.rstudio_source_markers" = FALSE),
+    expect_output(print(l), "not =")
+  )
+
+  withr::with_options(
+    list("lintr.rstudio_source_markers" = TRUE),
+    with_mock(
+      `rstudioapi::hasFun` = function(...) TRUE,
+      expect_output(print(l), "not =")
+    )
+  )
+})
+
+test_that("print.lints works", {
+  tmp <- tempfile()
+  file.create(tmp)
+  on.exit(unlink(tmp))
+
+  expect_invisible(print(lint(tmp)))
+})
+
+test_that("split.lint works as intended", {
+  writeLines("1:nrow(x)\n1:ncol(x)", tmp <- tempfile())
+  on.exit(unlink(tmp))
+
+  l <- lint(tmp, seq_linter)
+  expect_true(all(vapply(split(l), inherits, logical(1L), "lints")))
 })

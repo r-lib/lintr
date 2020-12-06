@@ -32,10 +32,14 @@ test_that("single check", {
   expect_success(expect_lint("\t1", list(ranges = list(c(1L, 1L))), no_tab_linter))
   expect_success(expect_lint("a=1", list(message = msg, line_number = 1L), linter))
   expect_failure(expect_lint("a=1", list(2L, msg), linter))
+
+  expect_error(expect_lint("1:nrow(x)", "(group)", seq_linter), "Invalid regex result", fixed = TRUE)
 })
 
 test_that("multiple checks", {
-  expect_success(expect_lint(file = "exclusions-test", checks = as.list(rep(msg, 6L)), linters = linter))
+  expect_success(
+    expect_lint(file = "exclusions-test", checks = as.list(rep(msg, 6L)), linters = linter, parse_settings = FALSE)
+  )
 
   expect_success(expect_lint("a=1; b=2", list(msg, msg), linter))
   expect_success(expect_lint("a=1; b=2", list(c(message = msg), c(message = msg)), linter))
@@ -46,7 +50,12 @@ test_that("multiple checks", {
 
   expect_success(expect_lint("a=1; b=2", list(list(line_number = 1L), list(line_number = 2L)), linter))
   expect_failure(expect_lint("a=1; b=2", list(list(line_number = 2L), list(line_number = 2L)), linter))
-  expect_success(expect_lint("\t1\n\t2", list("tabs", list(column_number = 1L, ranges = list(c(1L, 1L)))), no_tab_linter))
+  expect_success(
+    expect_lint("\t1\n\t2", list("tabs", list(column_number = 1L, ranges = list(c(1L, 1L)))), no_tab_linter)
+  )
 
 })
 
+test_that("expect_lint_free works", {
+  withr::with_envvar(c(NOT_CRAN = "true", R_COVR = "false"), expect_lint_free("dummy_packages/clean"))
+})

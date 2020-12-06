@@ -3,7 +3,7 @@
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
 #'   match at least one of these styles.
 #' @export
-object_name_linter <- function(styles = "snake_case") {
+object_name_linter <- function(styles = c("snake_case", "symbols")) {
 
   .or_string <- function(xs) {
     # returns "<S> or <T>"
@@ -13,7 +13,7 @@ object_name_linter <- function(styles = "snake_case") {
     if (len <= 1) {
       return(xs)
     }
-    comma_sepd_prefix <- paste(xs[-len], collapse = ", ")
+    comma_sepd_prefix <- toString(xs[-len])
     paste(comma_sepd_prefix, "or", xs[len])
   }
 
@@ -23,11 +23,10 @@ object_name_linter <- function(styles = "snake_case") {
     "Variable and function name style should be ", .or_string(styles), "."
   )
 
-  function (source_file) {
-    x <- global_xml_parsed_content(source_file)
-    if (is.null(x)) {
-      return()
-    }
+  function(source_file) {
+    if (is.null(source_file$full_xml_parsed_content)) return(list())
+
+    xml <- source_file$full_xml_parsed_content
 
     xpath <- paste0(
       # Left hand assignments
@@ -46,20 +45,20 @@ object_name_linter <- function(styles = "snake_case") {
       "//SYMBOL_FORMALS"
     )
 
-    assignments <- xml2::xml_find_all(x, xpath)
+    assignments <- xml2::xml_find_all(xml, xpath)
 
     # Retrieve assigned name
     nms <- strip_names(
       as.character(xml2::xml_find_first(assignments, "./text()")))
 
-    generics <- c(
-      declared_s3_generics(x),
+    generics <- strip_names(c(
+      declared_s3_generics(xml),
       namespace_imports()$fun,
       names(.knownS3Generics),
-      .S3PrimitiveGenerics, ls(baseenv()))
+      .S3PrimitiveGenerics, ls(baseenv())))
 
-    style_matches <- lapply(styles, function(x) {
-      check_style(nms, x, generics)
+    style_matches <- lapply(styles, function(style) {
+      check_style(nms, style, generics)
     })
 
     matches_a_style <- Reduce(`|`, style_matches)
@@ -81,13 +80,19 @@ check_style <- function(nms, style, generics = character()) {
   conforming[!nzchar(nms) | is.na(conforming)] <- TRUE
 
   if (any(!conforming)) {
-    possible_s3 <- re_matches(nms[!conforming], rex(capture(name = "generic", something), ".", capture(name = "method", something)))
+    possible_s3 <- re_matches(
+      nms[!conforming],
+      rex(capture(name = "generic", something), ".", capture(name = "method", something))
+    )
     if (any(!is.na(possible_s3))) {
       has_generic <- possible_s3$generic %in% generics
 
       # If they are not conforming, but are S3 methods then ignore them
       conforming[!conforming][has_generic] <- TRUE
     }
+    # exclude namespace hooks like .onLoad, .Last.lib, etc (#500)
+    is_special <- is_special_function(nms[!conforming])
+    conforming[!conforming][is_special] <- TRUE
   }
   conforming
 }
@@ -98,7 +103,6 @@ strip_names <- function(x) {
   x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%", "$", "@"), end), "")
   x
 }
-
 
 object_lint2 <- function(expr, source_file, message, type) {
   symbol <- xml2::as_list(expr)
@@ -118,9 +122,9 @@ make_object_linter <- function(fun) {
   function(source_file) {
 
     token_nums <- ids_with_token(
-      source_file, rex(start, "SYMBOL" %if_next_isnt% "_SUB"), fun=re_matches
+      source_file, rex(start, "SYMBOL" %if_next_isnt% "_SUB"), fun = re_matches
     )
-    if(length(token_nums) == 0){
+    if (length(token_nums) == 0) {
       return(list())
     }
     tokens <- with_id(source_file, token_nums)
@@ -136,7 +140,6 @@ make_object_linter <- function(fun) {
       keep_indices,
       function(i) {
         token <- tokens[i, ]
-        name <- names[i]
         if (is_declared_here(token, source_file) &&
             !is_external_reference(source_file, token[["id"]])) {
           fun(source_file, token)
@@ -170,15 +173,15 @@ is_declared_here <- function(token, source_file) {
   filt <- filter_out_token_type(source_file[["parsed_content"]], "expr")
   assign_regex <- rex(start, or("EQ_ASSIGN", "LEFT_ASSIGN"), end)
   l <- which(filt[, "id"] == token[["id"]])
-  if ( (l + 1L <= dim(filt)[[1L]] && re_matches(filt[l + 1L, "token"], assign_regex)) ||
-       (l >= 2L  &&  filt[l - 1L, "token"] == "RIGHT_ASSIGN") ) {
+  if ((l + 1L <= dim(filt)[[1L]] && re_matches(filt[l + 1L, "token"], assign_regex)) ||
+       (l >= 2L  &&  filt[l - 1L, "token"] == "RIGHT_ASSIGN")) {
     # assigned variable or function parameter
     TRUE
   } else {
     sibling_ids <- siblings(source_file[["parsed_content"]], token[["id"]], 1L)
     if (token[["text"]] != "..." &&
         length(sibling_ids) &&
-        with_id(source_file, sibling_ids[[1L]])[["text"]] == "function" ) {
+        with_id(source_file, sibling_ids[[1L]])[["text"]] == "function") {
       # parameter in function definition
       TRUE
     } else {
@@ -196,6 +199,7 @@ is_external_reference <- function(source_file, id) {
   any(sibling_tokens %in% c("NS_GET", "NS_GET_INT"))
 }
 
+# via unlist(tools:::.get_standard_package_names(), use.names = FALSE)
 base_pkgs <- c(
   "base",
   "tools",
@@ -227,16 +231,38 @@ base_pkgs <- c(
   "mgcv"
 )
 
-base_funs <- unlist(lapply(base_pkgs,
-                           function(x) {
-                             name <- try_silently(getNamespace(x))
-                             if (!inherits(name, "try-error")) {
-                               ls(name, all.names = TRUE)
-                             }
-                           }))
+# some duplicates such as .onLoad appear in multiple packages; sort for efficiency
+base_funs <- sort(unique(unlist(lapply(
+  base_pkgs,
+  function(x) {
+    name <- try_silently(getNamespace(x))
+    if (!inherits(name, "try-error")) {
+      ls(name, all.names = TRUE)
+    }
+  }
+))))
 
 is_base_function <- function(x) {
   x %in% base_funs
+}
+
+# see ?".onLoad", ?Startup, and ?quit. Remove leading dot to match behavior of strip_names().
+#   All of .onLoad, .onAttach, and .onUnload are used in base packages,
+#   and should be caught in is_base_function; they're included here for completeness / stability
+#   (they don't strictly _have_ to be defined in base, so could in principle be removed).
+#   .Last.sys and .First.sys are part of base itself, so aren't included here.
+special_funs <- c(
+  "onLoad",
+  "onAttach",
+  "onUnload",
+  "onDetach",
+  "Last.lib",
+  "First",
+  "Last"
+)
+
+is_special_function <- function(x) {
+  x %in% special_funs
 }
 
 object_lint <- function(source_file, token, message, type) {
@@ -249,23 +275,6 @@ object_lint <- function(source_file, token, message, type) {
     line = source_file$lines[as.character(token$line1)],
     ranges = list(c(token$col1, token$col2)),
     linter = type
-    )
-}
-
-
-object_name_linter_old <- function(style = "snake_case") {
-  make_object_linter(
-    function(source_file, token) {
-      name <- unquote(token[["text"]])
-      if (!any(matches_styles(name, style))) {
-        object_lint(
-          source_file,
-          token,
-          sprintf("Variable and function name style should be %s.", paste(style, collapse = " or ")),
-          "object_name_linter"
-        )
-      }
-    }
   )
 }
 
@@ -274,32 +283,17 @@ loweralnum <- rex(one_of(lower, digit))
 upperalnum <- rex(one_of(upper, digit))
 
 style_regexes <- list(
-  "CamelCase" = rex(start, maybe("."), upper, zero_or_more(alnum), end),
-  "camelCase" = rex(start, maybe("."), lower, zero_or_more(alnum), end),
-  "snake_case"     = rex(start, maybe("."), some_of(lower, digit), any_of("_", lower, digit), end),
-  "SNAKE_CASE"     = rex(start, maybe("."), some_of(upper, digit), any_of("_", upper, digit), end),
-  "dotted.case"    = rex(start, maybe("."), one_or_more(loweralnum), zero_or_more(dot, one_or_more(loweralnum)), end),
+  "symbols"     = rex(start, maybe("."), zero_or_more(none_of(alnum)), end),
+  "CamelCase"   = rex(start, maybe("."), upper, zero_or_more(alnum), end),
+  "camelCase"   = rex(start, maybe("."), lower, zero_or_more(alnum), end),
+  "snake_case"  = rex(start, maybe("."), some_of(lower, digit), any_of("_", lower, digit), end),
+  "SNAKE_CASE"  = rex(start, maybe("."), some_of(upper, digit), any_of("_", upper, digit), end),
+  "dotted.case" = rex(start, maybe("."), one_or_more(loweralnum), zero_or_more(dot, one_or_more(loweralnum)), end),
   "lowercase"   = rex(start, maybe("."), one_or_more(loweralnum), end),
   "UPPERCASE"   = rex(start, maybe("."), one_or_more(upperalnum), end)
 )
 
-regexes_rd <- paste0(collapse = ", ", paste0("\\sQuote{", names(style_regexes), "}"))
-
-matches_styles <- function(name, styles=names(style_regexes)) {
-  invalids <- paste(styles[!styles %in% names(style_regexes)], collapse=", ")
-  if (nzchar(invalids)) {
-    valids <- paste(names(style_regexes), collapse=", ")
-    stop(sprintf("Invalid style(s) requested: %s\nValid styles are: %s\n", invalids, valids))
-  }
-  name <- re_substitutes(name, rex(start, one_or_more(dot)), "")  # remove leading dots
-  vapply(
-    style_regexes[styles],
-    re_matches,
-    logical(1L),
-    data=name
-  )
-}
-
+regexes_rd <- toString(paste0("\\sQuote{", names(style_regexes), "}"))
 
 #' @describeIn linters check that object names are not too long.
 #' @export

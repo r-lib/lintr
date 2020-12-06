@@ -105,7 +105,7 @@ context("normalize_exclusions")
 
 a <- tempfile()
 b <- tempfile()
-c <- tempfile(tmpdir=".")
+c <- tempfile(tmpdir = ".")
 file.create(a, b, c)
 a <- normalizePath(a)
 b <- normalizePath(b)
@@ -178,7 +178,7 @@ test_that("it normalizes file paths, removing non-existing files", {
   expect_equal(normalize_exclusions(c(t1, t2, t3)), res)
 
   res <- list(); res[[a]] <- 1:10; res[["notafile"]] <- 5:15; res[[c]] <- 5:15
-  expect_equal(normalize_exclusions(c(t1, t2, t3), normalize_path=FALSE), res)
+  expect_equal(normalize_exclusions(c(t1, t2, t3), normalize_path = FALSE), res)
 })
 
 unlink(c(a, b, c))
@@ -187,22 +187,22 @@ context("exclude")
 test_that("it excludes properly", {
   read_settings(NULL)
 
-  t1 <- lint("exclusions-test")
+  t1 <- lint("exclusions-test", parse_settings = FALSE)
 
   expect_equal(length(t1), 2)
 
-  t2 <- lint("exclusions-test", exclusions = list("exclusions-test" = 4))
+  t2 <- lint("exclusions-test", exclusions = list("exclusions-test" = 4), parse_settings = FALSE)
 
   expect_equal(length(t2), 1)
 
-  t3 <- lint("exclusions-test", exclusions = list("exclusions-test"))
+  t3 <- lint("exclusions-test", exclusions = list("exclusions-test"), parse_settings = FALSE)
 
   expect_equal(length(t3), 0)
 
   cache_path <- file.path(tempdir(), "lintr_cache")
   clear_cache("exclusions-test", cache_path)
   for (info in sprintf("caching: pass %s", 1:4)) {
-    t4 <- lint("exclusions-test", cache = cache_path)
+    t4 <- lint("exclusions-test", cache = cache_path, parse_settings = FALSE)
 
     expect_equal(length(t4), 2, info = info)
   }

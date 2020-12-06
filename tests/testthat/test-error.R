@@ -1,4 +1,3 @@
-context("error")
 test_that("returns the correct linting", {
   expect_lint("\"\\R\"",
     rex("is an unrecognized escape in character string starting")
@@ -39,9 +38,26 @@ test_that("returns the correct linting", {
     equals_na_linter
   )
 
-  expect_lint("\\",
-    rex("unexpected input")
-  )
+  # Error message changed in R-devel as of 2020/12
+  old_lang <- lintr:::set_lang("en")
+  on.exit(lintr:::reset_lang(old_lang), add = TRUE)
+
+  # trigger error with base only, and extract it to match against
+  #   what comes out from expect_lint.
+  get_base_message <- function(e) {
+    rex::re_substitutes(
+      data = conditionMessage(e),
+      pattern = rex::rex(
+        list(start, "<text>:", any_digits, ":", any_digits, ": ") %or%
+          list(newline, anything, newline, anything, end)
+      ),
+      replacement = "",
+      global = TRUE
+    )
+  }
+
+  expected_message <- tryCatch(parse(text = "\\"), error = get_base_message)
+  expect_lint("\\", rex(expected_message))
 
   expect_lint("``",
     rex("attempt to use zero-length variable name")

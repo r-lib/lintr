@@ -9,7 +9,10 @@ spaces_inside_linter <- function(source_file) {
     "']'")
 
   # using a regex here as checking each token is horribly slow
-  re <- rex(list(one_of("[("), " ") %or% list(" " %if_prev_isnt% ",", one_of("])")))
+  re <- rex(
+    list(one_of("[("), one_or_more(" "), none_of(end %or% "#" %or% " ")) %or%
+      list(" " %if_prev_isnt% ",", one_of("])"))
+  )
   all_matches <- re_matches(source_file$lines, re, global = TRUE, locations = TRUE)
   line_numbers <- as.integer(names(source_file$lines))
 
@@ -40,7 +43,7 @@ spaces_inside_linter <- function(source_file) {
               Lint(
                 filename = source_file$filename,
                 line_number = line_number,
-                column_number = if (substr(line, start, start) == " ") {start} else {start + 1L},
+                column_number = if (substr(line, start, start) == " ") start else start + 1L,
                 type = "style",
                 message = "Do not place spaces around code in parentheses or square brackets.",
                 line = line,

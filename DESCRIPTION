@@ -30,7 +30,8 @@ Imports:
     xmlparsedata (>= 1.0.3)
 Suggests:
     rmarkdown,
-    mockery
+    mockery,
+    withr
 License: MIT + file LICENSE
 LazyData: true
 Encoding: UTF-8
@@ -44,6 +45,7 @@ Collate:
     'addins.R'
     'assignment_linter.R'
     'assignment_spaces_linter.R'
+    'backport_linter.R'
     'cache.R'
     'closed_curly_linter.R'
     'commas_linter.R'
@@ -53,7 +55,7 @@ Collate:
     'declared_functions.R'
     'object_name_linters.R'
     'deprecated.R'
-    'equals_na_lintr.R'
+    'equals_na_linter.R'
     'exclude.R'
     'expect_lint.R'
     'extract.R'
@@ -65,6 +67,7 @@ Collate:
     'infix_spaces_linter.R'
     'line_length_linter.R'
     'lint.R'
+    'make_linter_from_regex.R'
     'methods.R'
     'missing_argument_linter.R'
     'missing_package_linter.R'
