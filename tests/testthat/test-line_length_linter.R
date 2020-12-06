@@ -32,8 +32,11 @@ test_that("returns the correct linting", {
 
   # Don't duplicate lints
   expect_length(
-    lint("x <- 2 # ------------\n",
-         linters = line_length_linter(20)),
+    lint(
+      "x <- 2 # ------------\n",
+      linters = line_length_linter(20),
+      parse_settings = FALSE
+    ),
     1L
   )
 })

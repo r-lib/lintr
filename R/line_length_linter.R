@@ -7,7 +7,9 @@ line_length_linter <- function(length) {
     # Only go over complete file
     if (is.null(source_file$file_lines)) return(list())
 
-    lapply(which(vapply(source_file$file_lines, nchar, integer(1)) > length),
+    oversized_lines <- which(vapply(source_file$file_lines, nchar, integer(1)) > length)
+
+    lapply(oversized_lines,
       function(line_number) {
 
         col_start <- 1
