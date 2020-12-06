@@ -94,6 +94,24 @@ test_that("it supports multiple linter exclusions", {
   ))
 })
 
+test_that("it supports overlapping exclusion ranges", {
+  t1 <- tempfile()
+  on.exit(unlink(t1))
+  writeLines(trim_some("
+    this #TeSt_NoLiNt_StArT: a.
+    is
+    a #TeSt_NoLiNt_StArT: b.
+    test
+    with #TeSt_NoLiNt_EnD
+    overlapping #TeSt_NoLiNt_EnD
+    ranges
+  "), t1)
+  expect_equal(parse_exclusions(t1), list(
+    a = 1:5,
+    b = 3:6
+  ))
+})
+
 test_that("it returns all lines between start and end", {
   read_settings(NULL)
 
