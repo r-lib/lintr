@@ -23,7 +23,8 @@
 * `object_name_linter()` gains a new default style, `"symbols"`, which won't lint all-symbol object names 
   (in particular, that means operator names like `%+%` are skipped; #615, #670, @michaelchirico and @AshesITR)
 * `spaces_inside_linter` ignores spaces preceding trailing comments (#636, @michaelchirico)
-* `T_and_F_symbol_linter` is now part of the default linters (#517, #612, @AshesITR)
+* `T_and_F_symbol_linter` and `semicolon_terminator_linter` are now part of the default linters
+  (#517, #612, #683, #684, @AshesITR)
 * `with_defaults()` no longer duplicates the `lintr_function` class when it is already present (#511, #612, @AshesITR)
 * New `backport_linter()` for detecting mismatched R version dependencies (#506, @MichaelChirico)
 * `paren_brace_linter` and `no_tab_linter` also use more reliable matching (e.g.,
