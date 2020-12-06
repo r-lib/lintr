@@ -89,6 +89,7 @@ default_linters <- with_defaults(
   open_curly_linter(),
   paren_brace_linter,
   pipe_continuation_linter,
+  semicolon_terminator_linter(),
   seq_linter,
   single_quotes_linter,
   spaces_inside_linter,
