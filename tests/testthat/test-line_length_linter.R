@@ -1,4 +1,3 @@
-context("line_length_linter")
 test_that("returns the correct linting", {
 
   expect_lint("blah",
@@ -30,4 +29,14 @@ test_that("returns the correct linting", {
   expect_lint("aaaaaaaaaaaaaaaaaaaab",
     rex("Lines should not be more than 20 characters"),
     line_length_linter(20))
+
+  # Don't duplicate lints
+  expect_length(
+    lint(
+      "x <- 2 # ------------\n",
+      linters = line_length_linter(20),
+      parse_settings = FALSE
+    ),
+    1L
+  )
 })
