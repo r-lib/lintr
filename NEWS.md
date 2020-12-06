@@ -33,6 +33,8 @@
 * Fixed `spaces_left_parentheses_linter` sporadically causing warnings (#654, #674, @AshesITR)
 * Fixed `line_length_linter` causing duplicate lints for lines containing multiple expressions (#681, #682, @AshesITR)
 * `unneeded_concatenation_linter` now correctly considers arguments piped in via magrittr `%>%` (#573, #585, @michaelquinn32)
+* Set the default `complexity_limit` in `cyclocomp_linter` to 15. This is the same complexity limit that is enforced via
+  `default_linters` (#693, #695, @AshesITR).
 
 # lintr 2.0.1
 
