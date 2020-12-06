@@ -15,6 +15,7 @@
 * New `sprintf_linter()` (#544, #578, @renkun-ken)
 * Exclusions specified in the `.lintr` file are now relative to the location of that file 
   and support excluding entire directories (#158, #438, @AshesITR)
+* `spaces_left_parentheses_linter` now supports the newly introduced syntax of lambda expression (#685, #686, @renkun-ken)
 
 # lintr 2.0.1
 
