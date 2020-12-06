@@ -21,5 +21,3 @@ test_that("linter returns the correct linting", {
               ),
               linter)
 })
-
-

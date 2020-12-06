@@ -166,7 +166,7 @@ test_that("returns the correct linting", {
     "./blah",
     encodeString("blah\\file.txt")
   )
-  for(path in non_absolute_path_strings) {
+  for (path in non_absolute_path_strings) {
     expect_lint(single_quote(path), NULL, linter)
     expect_lint(double_quote(path), NULL, linter)
   }

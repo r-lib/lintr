@@ -1,13 +1,11 @@
-context("Integration tests for `lint_package`")
-
 # When called from inside a package:
-# lint_package(".")
+# lint_package(".") # nolint
 # .. should give the same results as when called from outside the package
 # with:
-# lint_package(path_to_package)
+# lint_package(path_to_package) # nolint
 
 # Template packages for use in testing are stored in
-# `tests/testthat/dummy_packages/<pkgName>`
+# tests/testthat/dummy_packages/<pkgName>
 # These packages should not have a .lintr file:  Hardcoding a .lintr in a
 # dummy package throws problems during `R CMD check` (they are flagged as
 # hidden files, but can't be added to RBuildIgnore since they should be

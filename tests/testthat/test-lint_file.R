@@ -88,7 +88,7 @@ test_that("lint() results do not depend on the position of the .lintr", {
     )
   )
 
-  lints_with_config_in_source_dir <- withr::with_dir(
+  lints_with_config_in_r_dir <- withr::with_dir(
     pkg_path,
     lint_with_config(
       config_path = "R/.lintr",
@@ -102,7 +102,7 @@ test_that("lint() results do not depend on the position of the .lintr", {
   )
   expect_equal(
     as.data.frame(lints_with_config_at_pkg_root),
-    as.data.frame(lints_with_config_in_source_dir),
+    as.data.frame(lints_with_config_in_r_dir),
     info = paste(
       "lints for a source file should be independent of whether the .lintr",
       "file is in the project-root or the source-file-directory"
