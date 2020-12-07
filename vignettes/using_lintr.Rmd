@@ -308,4 +308,4 @@ exclude: list(
   )
 ```
 
-This is particularly useful for projects which somehow include external code in subdirectories
+This is particularly useful for projects which include external code in subdirectories.
