@@ -1,4 +1,3 @@
-context("missing_argument_linter")
 test_that("returns the correct linting", {
   expect_lint("fun(x, a = 1)",
     NULL,

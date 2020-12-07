@@ -1,5 +1,3 @@
-context("commented_code_linter")
-
 test_that("returns the correct linting", {
   linter <- commented_code_linter
   msg <- rex("Commented code should be removed.")

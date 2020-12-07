@@ -1,4 +1,3 @@
-context("single_quotes_linter")
 test_that("returns the correct linting", {
   expect_lint("blah", NULL, single_quotes_linter)
 

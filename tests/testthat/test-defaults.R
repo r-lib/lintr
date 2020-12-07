@@ -1,5 +1,3 @@
-context("defaults")
-
 test_that("linters", {
   # non-empty named list of functions
   x <- default_linters

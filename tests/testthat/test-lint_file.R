@@ -1,5 +1,3 @@
-context("Integration tests for lint('some_file')")
-
 # The lints for a given file should be the same regardless of the working
 # directory
 

@@ -1,4 +1,3 @@
-context("trim_output")
 test_that("it returns the input if less than the max", {
   expect_equal(trim_output(character(0)), character(0))
 
