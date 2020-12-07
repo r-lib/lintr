@@ -219,7 +219,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
 
       if (any(bad)) {
         stop("Full line exclusions must be numeric or integer vectors. items: ",
-             paste(collapse = ", ", which(bad)),
+             toString(which(bad)),
              " are not!",
              call. = FALSE)
       }
