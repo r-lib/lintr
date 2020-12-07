@@ -46,7 +46,7 @@ This will apply `lint_dir()` to all subdirectories usually containing R code in 
  - `vignettes` containing package vignettes.
  - `data-raw` containing code to produce `data` files.
 
-For more information about the assumed package structure, view
+For more information about the assumed package structure, see
 [R Packages](https://r-pkgs.org/package-structure-state.html).
 
 ## Configuring linters
