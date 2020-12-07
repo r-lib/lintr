@@ -196,7 +196,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
 
       if (any(bad)) {
         stop("Full file exclusions must be character vectors of length 1. items: ",
-             paste(collapse = ", ", which(bad)),
+             toString(which(bad)),
              " are not!",
              call. = FALSE)
       }
