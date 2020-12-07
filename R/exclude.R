@@ -133,7 +133,7 @@ add_excluded_lines <- function(exclusions, excluded_lines, excluded_linters) {
       exclusions[[i]] <- c(exclusions[[i]], excluded_lines)
     } else {
       exclusions <- c(exclusions, list(excluded_lines))
-      if (linter != "") {
+      if (nzchar(linter)) {
         if (is.null(names(exclusions))) {
           # Repair names if linter == "" is the first exclusion added.
           names(exclusions) <- ""
