@@ -1,5 +1,3 @@
-context("directory linters")
-
 test_that("lint all files in a directory", {
   the_dir <- file.path("dummy_packages", "package", "vignettes")
   files <- list.files(the_dir)

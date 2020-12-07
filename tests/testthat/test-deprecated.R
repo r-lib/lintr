@@ -1,5 +1,3 @@
-context("deprecated")
-
 expect_quiet_lint <- function(...) {
   suppressWarnings(expect_lint(...))
 }

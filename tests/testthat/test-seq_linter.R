@@ -1,5 +1,3 @@
-context("seq_linter")
-
 test_that("other : expressions are fine", {
   expect_lint("function() { 1:10 }", NULL, seq_linter)
   expect_lint("function(x) { 2:length(x) }", NULL, seq_linter)
