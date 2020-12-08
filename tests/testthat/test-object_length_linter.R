@@ -1,5 +1,3 @@
-context("object_length_linter")
-
 test_that("returns the correct linting", {
 
   expect_lint("blah",

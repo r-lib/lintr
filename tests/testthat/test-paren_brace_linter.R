@@ -1,5 +1,3 @@
-context("paren_brace_linter")
-
 test_that("returns the correct linting", {
   msg <- rex("There should be a space between right parenthesis and an opening curly brace.")
 

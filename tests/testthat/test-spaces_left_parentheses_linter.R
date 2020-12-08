@@ -1,4 +1,3 @@
-context("spaces_left_parentheses_linter")
 test_that("returns the correct linting", {
 
   expect_lint("blah", NULL, spaces_left_parentheses_linter)
@@ -7,13 +6,17 @@ test_that("returns the correct linting", {
 
   expect_lint("base::print(blah)", NULL, spaces_left_parentheses_linter)
 
-  expect_lint("base::print(blah, fun(1))",
+  expect_lint(
+    "base::print(blah, fun(1))",
     NULL,
-    spaces_left_parentheses_linter)
+    spaces_left_parentheses_linter
+  )
 
-  expect_lint("blah <- function(blah) { }",
+  expect_lint(
+    "blah <- function(blah) { }",
     NULL,
-    spaces_left_parentheses_linter)
+    spaces_left_parentheses_linter
+  )
 
   expect_lint("(1 + 1)", NULL, spaces_left_parentheses_linter)
 
@@ -41,37 +44,53 @@ test_that("returns the correct linting", {
 
   expect_lint("c(function(){})[1]()", NULL, spaces_left_parentheses_linter)
 
-  expect_lint("if(blah) { }",
+  expect_lint(
+    "if(blah) { }",
     rex("Place a space before left parenthesis, except in a function call."),
-    spaces_left_parentheses_linter)
+    spaces_left_parentheses_linter
+  )
 
-  expect_lint("for(i in j) { }",
+  expect_lint(
+    "for(i in j) { }",
     rex("Place a space before left parenthesis, except in a function call."),
-    spaces_left_parentheses_linter)
+    spaces_left_parentheses_linter
+  )
 
-  expect_lint("1*(1 + 1)",
+  expect_lint(
+    "1*(1 + 1)",
     rex("Place a space before left parenthesis, except in a function call."),
-    spaces_left_parentheses_linter)
+    spaces_left_parentheses_linter
+  )
 
-  expect_lint("test <- function(x) { if(1 + 1) 'hi' }",
+  expect_lint(
+    "test <- function(x) { if(1 + 1) 'hi' }",
     rex("Place a space before left parenthesis, except in a function call."),
-    spaces_left_parentheses_linter)
+    spaces_left_parentheses_linter
+  )
 
-  expect_lint("test <- function(x) { if(`+`(1, 1)) 'hi' }",
+  expect_lint(
+    "test <- function(x) { if(`+`(1, 1)) 'hi' }",
     rex("Place a space before left parenthesis, except in a function call."),
-    spaces_left_parentheses_linter)
+    spaces_left_parentheses_linter
+  )
 
-  expect_lint("\"test <- function(x) { if(1 + 1) 'hi' }\"",
+  expect_lint(
+    "\"test <- function(x) { if(1 + 1) 'hi' }\"",
     NULL,
-    spaces_left_parentheses_linter)
+    spaces_left_parentheses_linter
+  )
 
-  expect_lint("res <- c((mat - 1L) %*% combs + 1L)",
+  expect_lint(
+    "res <- c((mat - 1L) %*% combs + 1L)",
     NULL,
-    spaces_left_parentheses_linter)
+    spaces_left_parentheses_linter
+  )
 
-  expect_lint("if (!(foo && bar || baz)) { foo }",
+  expect_lint(
+    "if (!(foo && bar || baz)) { foo }",
     NULL,
-    spaces_left_parentheses_linter)
+    spaces_left_parentheses_linter
+  )
 
   expect_lint("x^(y + z)", NULL, spaces_left_parentheses_linter)
 

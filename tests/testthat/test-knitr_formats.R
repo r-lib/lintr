@@ -1,5 +1,3 @@
-context("knitr_formats")
-
 regexes <- list(
   assign = rex("Use <-, not =, for assignment."),
   local_var = rex("local variable"),

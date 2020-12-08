@@ -2,9 +2,7 @@ fhash <- function(filename) {
   digest::digest(filename, algo = "sha1")
 }
 
-context("clear_cache")
-
-test_that("it deletes the file if a file is given", {
+test_that("clear_cache deletes the file if a file is given", {
   mockery::stub(clear_cache, "read_settings", function(...) invisible(...))
   mockery::stub(clear_cache, "unlink", function(...) list(...))
 
@@ -18,17 +16,14 @@ test_that("it deletes the file if a file is given", {
   expect_equal(clear_cache(file = f1, path = d1), want)
 })
 
-test_that("it deletes the directory if no file is given", {
+test_that("clear_cache deletes the directory if no file is given", {
   mockery::stub(clear_cache, "read_settings", function(...) invisible(...))
   mockery::stub(clear_cache, "unlink", function(...) list(...))
 
   expect_equal(clear_cache(file = NULL, path = "."), list(".", recursive = TRUE))
 })
 
-
-context("load_cache")
-
-test_that("it loads the saved file in a new empty environment", {
+test_that("load_cache loads the saved file in a new empty environment", {
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
 
@@ -44,7 +39,7 @@ test_that("it loads the saved file in a new empty environment", {
   )
 })
 
-test_that("it returns an empty environment if no cache file exists", {
+test_that("load_cache returns an empty environment if no cache file exists", {
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
 
@@ -60,10 +55,7 @@ test_that("it returns an empty environment if no cache file exists", {
   )
 })
 
-
-context("save_cache")
-
-test_that("it creates a directory if needed", {
+test_that("save_cache creates a directory if needed", {
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
 
@@ -82,7 +74,7 @@ test_that("it creates a directory if needed", {
   )
 })
 
-test_that("it uses unambiguous cache file names", {
+test_that("save_cache uses unambiguous cache file names", {
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
 
@@ -103,7 +95,7 @@ test_that("it uses unambiguous cache file names", {
   )
 })
 
-test_that("it saves all non-hidden objects from the environment", {
+test_that("save_cache saves all non-hidden objects from the environment", {
   with_mock(
     `lintr::read_settings` = function(...) invisible(...),
 
@@ -123,10 +115,7 @@ test_that("it saves all non-hidden objects from the environment", {
   )
 })
 
-
-context("cache_file")
-
-test_that("it generates the same cache with different lints", {
+test_that("cache_file generates the same cache with different lints", {
   e1 <- new.env(parent = emptyenv())
 
   f1 <- tempfile()
@@ -139,7 +128,7 @@ test_that("it generates the same cache with different lints", {
   expect_equal(length(ls(e1)), 1)
 })
 
-test_that("it generates different caches for different linters", {
+test_that("cache_file generates different caches for different linters", {
   e1 <- new.env(parent = emptyenv())
 
   f1 <- tempfile()
@@ -152,10 +141,7 @@ test_that("it generates different caches for different linters", {
   expect_equal(length(ls(e1)), 2)
 })
 
-
-context("retrieve_file")
-
-test_that("it returns NULL if there is no cached result", {
+test_that("retrieve_file returns NULL if there is no cached result", {
   e1 <- new.env(parent = emptyenv())
 
   f1 <- tempfile()
@@ -165,7 +151,7 @@ test_that("it returns NULL if there is no cached result", {
   expect_equal(retrieve_file(e1, f1, list()), NULL)
 })
 
-test_that("it returns the cached result if found", {
+test_that("retrieve_file returns the cached result if found", {
   e1 <- new.env(parent = emptyenv())
 
   f1 <- tempfile()
@@ -176,10 +162,7 @@ test_that("it returns the cached result if found", {
   expect_equal(retrieve_file(e1, f1, list()), list("foobar"))
 })
 
-
-context("cache_lint")
-
-test_that("it generates the same cache with different lints", {
+test_that("cache_lint generates the same cache with different lints", {
   e1 <- new.env(parent = emptyenv())
 
   t1 <- list(content = "test")
@@ -189,7 +172,7 @@ test_that("it generates the same cache with different lints", {
   expect_equal(length(ls(e1)), 1)
 })
 
-test_that("it generates different caches for different linters", {
+test_that("cache_lint generates different caches for different linters", {
   e1 <- new.env(parent = emptyenv())
 
   t1 <- list(content = "test")
@@ -200,10 +183,7 @@ test_that("it generates different caches for different linters", {
   expect_equal(length(ls(e1)), 2)
 })
 
-
-context("retrieve_lint")
-
-test_that("it returns the same lints if nothing has changed", {
+test_that("retrieve_lint returns the same lints if nothing has changed", {
   e1 <- new.env(parent = emptyenv())
 
   lines1 <- c("foobar1", "foobar2", "foobar3")
@@ -229,7 +209,7 @@ test_that("it returns the same lints if nothing has changed", {
   expect_equal(t1, lints1)
 })
 
-test_that("it returns the same lints with fixed line numbers if lines added above", {
+test_that("retrieve_lint returns the same lints with fixed line numbers if lines added above", {
   e1 <- new.env(parent = emptyenv())
 
   lines1 <- c("foobar1", "foobar2", "foobar3")
@@ -257,7 +237,7 @@ test_that("it returns the same lints with fixed line numbers if lines added abov
   expect_equal(t1[[3]]$line_number, lints1[[3]]$line_number + 1)
 })
 
-test_that("it returns the same lints with lines added below", {
+test_that("retrieve_lint returns the same lints with lines added below", {
   e1 <- new.env(parent = emptyenv())
 
   lines1 <- c("foobar1", "foobar2", "foobar3")
@@ -283,7 +263,7 @@ test_that("it returns the same lints with lines added below", {
   expect_equal(t1, lints1)
 })
 
-test_that("it returns the same lints with fixed line numbers if lines added between", {
+test_that("retrieve_lint returns the same lints with fixed line numbers if lines added between", {
   e1 <- new.env(parent = emptyenv())
 
   lines1 <- c("foobar1", "foobar2", "foobar3")
@@ -311,17 +291,14 @@ test_that("it returns the same lints with fixed line numbers if lines added betw
   expect_equal(t1[[3]]$line_number, lints1[[3]]$line_number + 1)
 })
 
-
-context("has_lint")
-
-test_that("it returns FALSE if there is no cached result", {
+test_that("has_lint returns FALSE if there is no cached result", {
   e1 <- new.env(parent = emptyenv())
 
   t1 <- list(content = "foobar")
   expect_false(has_lint(e1, t1, list()))
 })
 
-test_that("it returns TRUE if there is a cached result", {
+test_that("has_lint returns TRUE if there is a cached result", {
   e1 <- new.env(parent = emptyenv())
 
   t1 <- list(content = "foobar")
@@ -329,7 +306,7 @@ test_that("it returns TRUE if there is a cached result", {
   expect_true(has_lint(e1, t1, list()))
 })
 
-test_that("it distinguishes global expressions from line expression with same content", {
+test_that("has_lint distinguishes global expressions from line expression with same content", {
   e1 <- new.env(parent = emptyenv())
 
   same_content <- "foobar"
@@ -341,9 +318,7 @@ test_that("it distinguishes global expressions from line expression with same co
   expect_false(has_lint(e1, global_expr, list()))
 })
 
-context("find_new_line")
-
-test_that("it returns the same if the line is the same", {
+test_that("find_new_line returns the same if the line is the same", {
   t1 <- c("foobar1",
           "foobar2",
           "foobar3")
@@ -354,7 +329,7 @@ test_that("it returns the same if the line is the same", {
   expect_equal(find_new_line(3, "foobar3", t1), 3)
 })
 
-test_that("it returns the correct line if it is before the current line", {
+test_that("find_new_line returns the correct line if it is before the current line", {
   t1 <- c("foobar1",
           "foobar2",
           "foobar3")
@@ -365,7 +340,7 @@ test_that("it returns the correct line if it is before the current line", {
   expect_equal(find_new_line(3, "foobar1", t1), 1)
 })
 
-test_that("it returns the correct line if it is after the current line", {
+test_that("find_new_line returns the correct line if it is after the current line", {
   t1 <- c("foobar1",
           "foobar2",
           "foobar3")
@@ -376,10 +351,7 @@ test_that("it returns the correct line if it is after the current line", {
   expect_equal(find_new_line(3, "foobar3", t1), 3)
 })
 
-
-context("lint with cache")
-
-test_that("it uses the provided relative cache directory", {
+test_that("lint with cache uses the provided relative cache directory", {
   path <- "./my_cache_dir"
   expect_false(dir.exists(path))
 
