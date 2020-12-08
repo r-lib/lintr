@@ -22,7 +22,7 @@ component_edges <- function(graph, id) {
     neis <- unlist(graph$adjlist[newv])
     newv <- setdiff(neis, sc)
     sc <- c(sc, newv)
-    if (length(sc) == size) break;
+    if (length(sc) == size) break
     size <- length(sc)
   }
 
