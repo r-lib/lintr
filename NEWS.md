@@ -26,7 +26,6 @@
 * Malformed Rmd files now cause a lint instead of an error (#571, #575, @AshesITR)
 * `object_name_linter()` gains a new default style, `"symbols"`, which won't lint all-symbol object names 
   (in particular, that means operator names like `%+%` are skipped; #615, #670, @michaelchirico and @AshesITR)
-  (in particular, that means operator names like `%+%` are skipped; #615, @michaelchirico)
 * `spaces_inside_linter` ignores spaces preceding trailing comments (#636, @michaelchirico)
 * `T_and_F_symbol_linter` and `semicolon_terminator_linter` are now part of the default linters
   (#517, #612, #683, #684, @AshesITR)
