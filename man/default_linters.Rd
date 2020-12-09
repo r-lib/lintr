@@ -5,7 +5,7 @@
 \alias{default_linters}
 \title{Default linters}
 \format{
-An object of class \code{list} of length 23.
+An object of class \code{list} of length 24.
 }
 \usage{
 default_linters
