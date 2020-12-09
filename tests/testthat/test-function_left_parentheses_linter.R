@@ -1,4 +1,3 @@
-context("function_left_parentheses_linter")
 test_that("returns the correct linting", {
 
   expect_lint("blah", NULL, function_left_parentheses_linter)

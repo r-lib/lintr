@@ -1,5 +1,3 @@
-context("assignment_linter")
-options(encoding = "UTF-8")
 test_that("returns the correct linting", {
   expect_lint("blah", NULL, assignment_linter)
 

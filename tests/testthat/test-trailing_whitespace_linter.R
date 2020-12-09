@@ -1,4 +1,3 @@
-context("trailing_whitespace_linter")
 test_that("returns the correct linting", {
   expect_lint("blah",
     NULL,

@@ -1,6 +1,3 @@
-context("expect_lint")
-
-
 # testthat's expect_success() and expect_failure() can only handle the first expectation and are
 # thus less than ideal to test expect_lint(), which can process multiple lints. If you want to test
 # for failure, always put the lint check or lint field that must fail first.

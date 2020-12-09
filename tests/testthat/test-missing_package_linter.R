@@ -1,4 +1,3 @@
-context("missing_package_linter")
 test_that("returns the correct linting", {
   expect_lint("library(stats)",
     NULL,

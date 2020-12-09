@@ -1,4 +1,3 @@
-context("trailing_blank_lines_linter")
 test_that("returns the correct linting", {
   expect_lint("blah",
     NULL,
