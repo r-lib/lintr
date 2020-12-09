@@ -92,7 +92,7 @@ implicit_integer_linter(source_file)
 
 infix_spaces_linter(source_file)
 
-line_length_linter(length)
+line_length_linter(length = 80L)
 
 missing_argument_linter(except = c("switch", "alist"))
 
