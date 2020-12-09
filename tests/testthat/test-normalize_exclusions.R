@@ -101,5 +101,15 @@ test_that("it normalizes file paths, removing non-existing files", {
   expect_equal(normalize_exclusions(c(t1, t2, t3), normalize_path = FALSE), res)
 })
 
+test_that("it errors for invalid specifications", {
+  msg_full_files <- "Full file exclusions must be character vectors of length 1."
+  expect_error(normalize_exclusions(2), msg_full_files)
+  expect_error(normalize_exclusions(list("a.R", 2)), msg_full_files)
+  expect_error(normalize_exclusions(list("a.R" = Inf, 2)), msg_full_files)
+
+  msg_full_lines <- "Full line exclusions must be numeric or integer vectors."
+  expect_error(normalize_exclusions(list("a.R" = "Inf")), msg_full_lines)
+})
+
 unlink(c(a, b, c))
 options(old_ops)

@@ -178,7 +178,21 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
 
   # no named parameters at all
   if (is.null(names(x))) {
-    # x is a character vector of file names
+    bad <- vapply(
+      seq_along(x),
+      function(i) {
+        (!is.character(x[[i]]) | length(x[[i]]) != 1L)
+      },
+      logical(1L)
+    )
+
+    if (any(bad)) {
+      stop("Full file exclusions must be character vectors of length 1. items: ",
+           toString(which(bad)),
+           " are not!",
+           call. = FALSE)
+    }
+    # x is a character vector (or list) of file names
     # Normalize to list(<filename> = list(Inf), ...)
     x <- structure(rep(list(Inf), length(x)), names = x)
   } else {
