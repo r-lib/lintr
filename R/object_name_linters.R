@@ -49,7 +49,8 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
 
     # Retrieve assigned name
     nms <- strip_names(
-      as.character(xml2::xml_find_first(assignments, "./text()")))
+      xml2::xml_text(xml2::xml_find_first(assignments, "./text()"))
+    )
 
     generics <- strip_names(c(
       declared_s3_generics(xml),
@@ -283,7 +284,7 @@ loweralnum <- rex(one_of(lower, digit))
 upperalnum <- rex(one_of(upper, digit))
 
 style_regexes <- list(
-  "symbols"     = rex(start, maybe("."), zero_or_more(none_of(alnum)), end),
+  "symbols"     = rex(start, zero_or_more(none_of(alnum)), end),
   "CamelCase"   = rex(start, maybe("."), upper, zero_or_more(alnum), end),
   "camelCase"   = rex(start, maybe("."), lower, zero_or_more(alnum), end),
   "snake_case"  = rex(start, maybe("."), some_of(lower, digit), any_of("_", lower, digit), end),
