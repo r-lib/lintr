@@ -57,21 +57,24 @@ For R projects or R packages the most convenient method of configuration is crea
 root. This file is in debian control format (`?read.dcf`) and each key is evaluated as R code by `lintr` when reading
 the settings.
 
-The settings file is searched for in the following order:
+The settings file is searched for in the following order. The first one found, if any, will be used.
 
  1. If `options(lintr.linter_file)` is an absolute path, this file will be used.
     The default for this option is `".lintr"`.
- 2. If there is a file named like `lintr.linter_file` in the currently searched directory, this file will be used.
- 3. Parent directories of the currently searched directory are searched for the linter file. If one is found, this file
-    will be used.
- 4. If a linter file exists in the users `HOME` directory, this file is used.
+ 2. A linter file (that is a file named like `lintr.linter_file`) in the currently searched directory,
+    i.e. the directory of the file passed to `lint()`. When ran from `lint_package()`, this directory can vary by each
+    linted file.
+ 3. A linter file in a parent directory of the currently searched directory, starting from the
+    deepest path, moving upwards one level at a time.
+ 4. A linter file in the users `HOME` directory.
 
-If none of the steps yield an existing linter file, no configuration is loaded from the file.
+If no linter file is found, only default settings take effect (see [defaults](#defaults)).
 
 ### Using `options()`
 
-Settings from the `.lintr` file can be overridden using `options`. An option `option_name` is read from
-`lintr.option_name`. If that is non-`NULL`, it will take precedence over settings from the `.lintr` file.
+Values in `options()`, if they are not `NULL`, take precedence over those in the linter file (e.g. `.lintr`).
+Note that the key `option_name` in the linter file translates to an R option `lintr.option_name`.
+For example, `options(lintr.exclude = "# skip lint")` will take precedence over `exclude: # nolint` in the linter file.
 
 ### Using arguments to `lint()`
 
@@ -169,6 +172,10 @@ knitr::kable(defaults_table)
 Sometimes, linters should not be globally disabled. Instead, one might want to exclude some code from linting altogether
 or selectively disable some linters on some part of the code.
 
+> Note that the preferred way of excluding lints from source code is to use the narrowest possible scope and specify
+> exactly which linters should not throw a lint on a marked line. This prevents accidental suppression of justified
+> lints that happen to be on the same line as a lint that needs to be suppressed.
+
 ### Excluding lines of code
 
 Within source files, special comments can be used to exclude single lines of code from linting.
@@ -201,6 +208,8 @@ Observe how all lints were suppressed and no output is shown.
 Sometimes, only a specific linter needs to be excluded. In this case, the *name* of the linter can be appended to the
 `# nolint` comment preceded by a colon and terminated by a dot.
 
+### Excluding only some linters
+
 **file3.R**
 ```r
 X = 42L # nolint: object_name_linter. this comment overflows the default 80 chars line length.
@@ -232,7 +241,7 @@ lintr::lint(
 )
 ```
 
-#### Excluding multiple lines of codes
+### Excluding multiple lines of codes
 
 If any or all linters should be disabled for a contiguous block of code, the `exclude_start` and `exclude_end` patterns
 can be used. They default to `# nolint start` and `# nolint end` respectively.
@@ -262,7 +271,7 @@ lintr::lint("# nolint start: commented_code_linter.\n# x <- 42L\n# print(x)\n# n
 ```
 (No lints)
 
-#### Excluding lines via the config file
+### Excluding lines via the config file
 
 Individual lines can also be excluded via the config file.
 To exclude all lints for line 1 of file `R/bad.R` and line_length_linter for lines 4 to 6 of the same file, one can set
@@ -278,7 +287,7 @@ exclude: list(
 
 All paths are seen as relative to the location of the `.lintr` file.
 
-### Excluding files
+### Excluding files completely
 
 The linter configuration can also be used to exclude a file entirely, or a linter for a file entirely.
 Use the sentinel line number `Inf` to mark all lines as excluded within a file. If a file is only given as a character
@@ -297,7 +306,7 @@ exclude: list(
   )
 ```
 
-### Excluding directories
+### Excluding directories completely
 
 To exclude an entire directory from linting, specify it as a file name. For example, to exclude the `renv` library from
 linting in a R project using `renv`, set
