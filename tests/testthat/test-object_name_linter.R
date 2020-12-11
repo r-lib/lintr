@@ -48,6 +48,7 @@ test_that("linter ignores some objects", {
   expect_lint(".onLoad <- function(...) TRUE", NULL, object_name_linter("snake_case")) # namespace hooks, #500
   expect_lint(".First <- function(...) TRUE", NULL, object_name_linter("snake_case")) # namespace hooks
   expect_lint("`%++%` <- `+`", NULL, object_name_linter("symbols")) # all-symbol operator
+  expect_lint("`%<-%` <- `+`", NULL, object_name_linter("symbols")) # all-symbol operator #495
 })
 
 test_that("linter returns correct linting", {
