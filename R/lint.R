@@ -287,7 +287,8 @@ lint_package <- function(path = ".", relative_path = TRUE, ...,
 
 
 has_description <- function(path) {
-  file.exists(file.path(path, "DESCRIPTION"))
+  desc_info <- file.info(file.path(path , "DESCRIPTION"))
+  !is.na(desc_info$size) && desc_info$size > 0 && !desc_info$isdir
 }
 
 find_package <- function(path) {
