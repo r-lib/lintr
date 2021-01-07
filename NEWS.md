@@ -37,6 +37,7 @@
 * Set the default `complexity_limit` in `cyclocomp_linter` to 15. This is the same complexity limit that is enforced via
   `default_linters` (#693, #695, @AshesITR).
 * `lint_package()` now lints files in the `demo` directory by default (#703, @dmurdoch).
+* `object_usage_linter()` now correctly detects global variables if there are top-level dollar-assignments (#666, #709, @AshesITR)
 
 # lintr 2.0.1
 

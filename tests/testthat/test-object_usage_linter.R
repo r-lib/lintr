@@ -148,3 +148,36 @@ test_that("object-usage line-numbers are relative to start-of-file", {
     object_usage_linter
   )
 })
+
+test_that("used symbols are detected correctly", {
+  # From #666
+  expect_lint(
+    trim_some("
+      foo <- data.frame(0)
+      foo$bar <- 1
+      zero <- function() {
+        file.info(\"/dev/null\")$size
+      }
+      message(zero())
+    "),
+    NULL,
+    object_usage_linter
+  )
+
+  # Also test deeper nesting
+  expect_lint(
+    trim_some("
+      foo <- list(0)
+      foo$bar$baz$goo <- 1
+      zero <- function() {
+        file.info(\"/dev/null\")$size
+        foo$bar
+        foo$bar$baz
+        foo$bar$baz$goo
+      }
+      message(zero())
+    "),
+    NULL,
+    object_usage_linter
+  )
+})
