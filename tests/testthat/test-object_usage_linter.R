@@ -37,14 +37,16 @@ test_that("returns the correct linting", {
     object_usage_linter
   )
 
-  expect_lint(trim_some("
+  expect_lint(
+    trim_some("
       fun <- function() {
         a <- 1
         1
       }
     "),
-              rex("local variable", anything, "assigned but may not be used"),
-              object_usage_linter)
+    rex("local variable", anything, "assigned but may not be used"),
+    object_usage_linter
+  )
 
   expect_lint(
     trim_some("
@@ -174,6 +176,26 @@ test_that("used symbols are detected correctly", {
         foo$bar
         foo$bar$baz
         foo$bar$baz$goo
+      }
+      message(zero())
+    "),
+    NULL,
+    object_usage_linter
+  )
+
+  # Test alternative assignment and access methods
+  expect_lint(
+    trim_some("
+      foo <- list(0)
+      foo[['bar']][['baz']][['goo']] <- 1
+      zero <- function() {
+        file.info(\"/dev/null\")$size
+        foo$bar
+        foo$bar$baz
+        foo$bar$baz$goo
+        foo[[\"bar\"]]
+        foo[[c(\"bar\", \"baz\")]]
+        foo[[\"bar\"]]$baz$goo
       }
       message(zero())
     "),
