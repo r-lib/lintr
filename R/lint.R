@@ -267,7 +267,7 @@ lint_package <- function(path = ".", relative_path = TRUE, ...,
     pattern = pattern
   )
 
-  lints <- lint_dir(file.path(path, c("R", "tests", "inst", "vignettes", "data-raw")),
+  lints <- lint_dir(file.path(path, c("R", "tests", "inst", "vignettes", "data-raw", "demo")),
                     relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
 
   if (isTRUE(relative_path)) {
