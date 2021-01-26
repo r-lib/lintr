@@ -12,15 +12,27 @@ NULL
 #' Lint a file
 #'
 #' Apply one or more linters to a file and return the lints found.
+#'
 #' @name lint_file
-#' @param filename the given filename to lint.
-#' @param linters a named list of linter functions to apply see \code{\link{linters}}
-#' for a full list of default and available linters.
+#'
+#' @param filename either the filename for a file to lint, or a character
+#' string of inline R code for linting. If a newline character is detected,
+#' this will be assumed to be inline code.
+#' @param linters a named list of linter functions to apply see
+#' \code{\link{linters}} for a full list of default and available linters.
 #' @param cache given a logical, toggle caching of lint results. If passed a
 #' character string, store the cache in this directory.
 #' @param ... additional arguments passed to \code{\link{exclude}}.
-#' @param parse_settings whether to try and parse the settings
+#' @param parse_settings whether to try and parse the settings.
+#'
 #' @return A list of lint objects.
+#'
+#' @examples
+#' \dontrun{
+#'   lint("some/file-name.R") # linting a file
+#'   lint("a = 123\n")        # linting inline-code
+#' }
+#'
 #' @export
 lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = TRUE) {
 
