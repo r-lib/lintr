@@ -32,7 +32,7 @@ package path.}
 the extensions .R, .Rmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for
 lowercase r (.r, ...)}
 
-\item{parse_settings}{whether to try and parse the settings}
+\item{parse_settings}{whether to try and parse the settings.}
 }
 \value{
 A list of lint objects.
