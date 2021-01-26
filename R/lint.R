@@ -16,8 +16,8 @@ NULL
 #' @name lint_file
 #'
 #' @param filename either the filename for a file to lint, or a character
-#' string of inline R code for linting. If a newline character is detected,
-#' this will be assumed to be inline code.
+#' string of inline R code for linting. The latter [inline data] applies
+#' whenever \code{filename} has a newline character (\\n).
 #' @param linters a named list of linter functions to apply see
 #' \code{\link{linters}} for a full list of default and available linters.
 #' @param cache given a logical, toggle caching of lint results. If passed a
