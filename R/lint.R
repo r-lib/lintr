@@ -54,17 +54,12 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   linters <- define_linters(linters)
   linters <- Map(validate_linter_object, linters, names(linters))
+  cache_path <- define_cache_path(cache)
 
   lints <- list()
   itr <- 0
 
-  cache_path <- if (isTRUE(cache)) {
-    settings$cache_directory
-  } else if (is.character(cache)) {
-    cache
-  } else {
-    character(0)
-  }
+  cacheable <- list()
 
   if (length(cache_path)) {
     lint_cache <- load_cache(filename, cache_path)
@@ -83,34 +78,39 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
         lints[[itr <- itr + 1L]] <- retrieve_lint(lint_cache, expr, linter, source_expressions$lines)
       }
       else {
-        expr_lints <- flatten_lints(linters[[linter]](expr))
-
-        if (length(expr_lints)) {
-          expr_lints[] <- lapply(expr_lints, function(lint) {
-            lint$linter <- linter
-            lint
-          })
-        }
-
+        expr_lints <- set_linter_name(
+          flatten_lints(linters[[linter]](expr)),
+          linter = linter
+        )
+        lint_details <- list(
+          expr = expr, linter = linter, expr_lints = expr_lints
+        )
         lints[[itr <- itr + 1L]] <- expr_lints
-        if (isTRUE(cache)) {
-          cache_lint(lint_cache, expr, linter, expr_lints)
-        }
+        cacheable <- append(cacheable, list(lint_details))
       }
     }
   }
 
   if (inherits(source_expressions$error, "lint")) {
+    lint_details <- list(
+      expr = list(filename = filename, content = ""),
+      linter = "error",
+      expr_lints = source_expressions$error
+    )
     lints[[itr <- itr + 1L]] <- source_expressions$error
 
-    if (isTRUE(cache)) {
-      cache_lint(lint_cache, list(filename = filename, content = ""), "error", source_expressions$error)
-    }
+    cacheable <- append(cacheable, list(lint_details))
   }
 
   lints <- structure(reorder_lints(flatten_lints(lints)), class = "lints")
 
   if (isTRUE(cache)) {
+    for (lint_details in cacheable) {
+      cache_lint(
+        lint_cache, lint_details[["expr"]], lint_details[["linter"]],
+        lint_details[["expr_lints"]]
+      )
+    }
     cache_file(lint_cache, filename, linters, lints)
     save_cache(lint_cache, filename, cache_path)
   }
@@ -124,6 +124,26 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     }
   }
   res
+}
+
+set_linter_name <- function(expr_lints, linter) {
+  if (length(expr_lints)) {
+    expr_lints[] <- lapply(expr_lints, function(lint) {
+      lint$linter <- linter
+      lint
+    })
+  }
+  expr_lints
+}
+
+define_cache_path <- function(cache) {
+  if (isTRUE(cache)) {
+    settings$cache_directory
+  } else if (is.character(cache)) {
+    cache
+  } else {
+    character(0)
+  }
 }
 
 #' Lint a directory
