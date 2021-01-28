@@ -1,11 +1,9 @@
-closed_curly_message_regex <- rex(
-  paste(
-    "Closing curly-braces should always be on their own line,",
-    "unless they are followed by an else."
-  )
-)
-
 test_that("returns the correct linting", {
+  closed_curly_message_regex <- rex(
+    paste(
+      "Closing curly-braces should always be on their own line,",
+      "unless they are followed by an else."
+    ))
 
   expect_lint("blah",
     NULL,
