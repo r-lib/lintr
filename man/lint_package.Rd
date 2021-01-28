@@ -26,7 +26,7 @@ absolute path.}
 \item{exclusions}{exclusions for \code{\link{exclude}}, relative to the
 package path.}
 
-\item{parse_settings}{whether to try and parse the settings}
+\item{parse_settings}{whether to try and parse the settings.}
 }
 \value{
 A list of lint objects.
