@@ -1,7 +1,7 @@
 closed_curly_message_regex <- rex(
   paste(
     "Closing curly-braces should always be on their own line,",
-    "unless it's followed by an else."
+    "unless they are followed by an else."
   )
 )
 
