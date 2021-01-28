@@ -102,11 +102,11 @@ The config file (default file name: `.lintr`) is in [Debian Control Field Format
 
 ### .lintr File Example
 
-Below is an exmaple .lintr file that uses:
+Below is an example .lintr file that uses:
 
 - 120 character line lengths
 - Excludes a couple of files
-- Disables a specific lintr, and; 
+- Disables a specific linter, and; 
 - Sets different default exclude regexes
 
 ```
