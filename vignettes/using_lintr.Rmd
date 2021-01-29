@@ -117,8 +117,8 @@ knitr::kable(defaults_table)
 
 #### Customizing active linters
 
-If one wants to only customize some linters, one can use the helper function `with_defaults()`, which will keep all
-untouched linters with the default settings. Disable a linter by passing `NULL`. For example, to set the line length
+If you only want to customize some linters, you can use the helper function `with_defaults()`, which will keep all
+unnamed linters with the default settings. Disable a linter by passing `NULL`. For example, to set the line length
 limit to 120 characters and globally disable the `no_tab_linter`, you can put this into your `.lintr`:
 
 ```r
@@ -221,7 +221,7 @@ lintr::lint("X = 42L # nolint: object_name_linter. this comment overflows the de
             parse_settings = FALSE)
 ```
 Observe how only the `object_name_linter` was suppressed. This is preferable to blanket `# nolint` statements because
-they may accidentally silence a linter that was not intentionally suppressed.
+blanket exclusions may accidentally silence a linter that was not intentionally suppressed.
 
 Multiple linters can be specified by listing them with a comma as a separator:
 
@@ -246,7 +246,7 @@ lintr::lint(
 If any or all linters should be disabled for a contiguous block of code, the `exclude_start` and `exclude_end` patterns
 can be used. They default to `# nolint start` and `# nolint end` respectively.
 
-The `# nolint start` accepts the same syntax as `# nolint` to disable specific linters in the following lines until a
+`# nolint start` accepts the same syntax as `# nolint` to disable specific linters in the following lines until a
 `# nolint end` is encountered.
 
 ```r
@@ -273,8 +273,10 @@ lintr::lint("# nolint start: commented_code_linter.\n# x <- 42L\n# print(x)\n# n
 
 ### Excluding lines via the config file
 
-Individual lines can also be excluded via the config file.
-To exclude all lints for line 1 of file `R/bad.R` and line_length_linter for lines 4 to 6 of the same file, one can set
+Individual lines can also be excluded via the config file by setting the
+key `exclude` to a list with elements corresponding to different files.
+To exclude all lints for line 1 of file `R/bad.R` and `line_length_linter`
+for lines 4 to 6 of the same file, one can set
 
 ```r
 exclude: list(
@@ -285,7 +287,7 @@ exclude: list(
   )
 ```
 
-All paths are seen as relative to the location of the `.lintr` file.
+All paths are interpreted relative to the location of the `.lintr` file.
 
 ### Excluding files completely
 
@@ -308,7 +310,8 @@ exclude: list(
 
 ### Excluding directories completely
 
-To exclude an entire directory from linting, specify it as a file name. For example, to exclude the `renv` library from
+Entire directories are also recognized when supplied as strings in the `exclude` key.
+For example, to exclude the `renv` folder from
 linting in a R project using `renv`, set
 
 ```r
