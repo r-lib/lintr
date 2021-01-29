@@ -69,7 +69,15 @@ with_defaults <- function(..., default = default_linters) {
 
 #' Default linters
 #'
-#' List of default linters for \code{\link{lint}}. Use \code{\link{with_defaults}} to customize it.
+#' @description List of default linters for \code{\link{lint}}. Use
+#' \code{\link{with_defaults}} to customize it.
+#'
+#' The set of default linters is as follows (any parameterised linters, eg,
+#' \code{line_length_linter} use their default argument(s), see \code{?
+#' <linter_name>} for details):
+#'
+#' - \Sexpr[stage=render, results=rd]{paste(names(lintr::default_linters), collapse=", ")}.
+#'
 #' @export
 default_linters <- with_defaults(
   default = list(),
