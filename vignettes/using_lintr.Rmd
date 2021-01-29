@@ -53,20 +53,20 @@ For more information about the assumed package structure, see
 
 ### The `.lintr` file
 
-For R projects or R packages the most convenient method of configuration is creating a `.lintr` file in the project
-root. This file is in debian control format (`?read.dcf`) and each key is evaluated as R code by `lintr` when reading
-the settings.
+The canonical way to configure R projects and packages for linting is to create a `.lintr` file in the project
+root. This is a file in debian control format (`?read.dcf`), each value of which is evaluated as R code by `lintr`
+when reading the settings.
 
-The settings file is searched for in the following order. The first one found, if any, will be used.
+More generally, `lintr` searches for a settings file according to following prioritized list. The first one found, if any, will be used.
 
  1. If `options(lintr.linter_file)` is an absolute path, this file will be used.
     The default for this option is `".lintr"`.
  2. A linter file (that is a file named like `lintr.linter_file`) in the currently searched directory,
-    i.e. the directory of the file passed to `lint()`. When ran from `lint_package()`, this directory can vary by each
+    i.e. the directory of the file passed to `lint()`. When run from `lint_package()`, this directory can differ for each
     linted file.
- 3. A linter file in a parent directory of the currently searched directory, starting from the
+ 3. A linter file in a parent directory of the currently-searched directory, starting from the
     deepest path, moving upwards one level at a time.
- 4. A linter file in the users `HOME` directory.
+ 4. A linter file in the user's `HOME` directory.
 
 If no linter file is found, only default settings take effect (see [defaults](#defaults)).
 
