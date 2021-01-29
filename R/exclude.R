@@ -133,13 +133,13 @@ add_excluded_lines <- function(exclusions, excluded_lines, excluded_linters) {
 
 add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep) {
   # No match for linter list: Add to global excludes
-    if (is.na(linters_string)) {
-      exclusions <- add_excluded_lines(exclusions, lines, "")
-    } else {
-      # Matched a linter list: only add excluded lines for the listed linters.
-      excluded_linters <- strsplit(linters_string, exclude_linter_sep)[[1L]]
-      exclusions <- add_excluded_lines(exclusions, lines, excluded_linters)
-    }
+  if (is.na(linters_string)) {
+    exclusions <- add_excluded_lines(exclusions, lines, "")
+  } else {
+    # Matched a linter list: only add excluded lines for the listed linters.
+    excluded_linters <- strsplit(linters_string, exclude_linter_sep)[[1L]]
+    exclusions <- add_excluded_lines(exclusions, lines, excluded_linters)
+  }
   exclusions
 }
 
