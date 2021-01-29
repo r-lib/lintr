@@ -91,34 +91,19 @@ parse_exclusions <- function(file, exclude = settings$exclude,
       linters_string <- substring(lines[starts[i]], start_locations[starts[i]])
       linters_string <- rex::re_matches(linters_string, exclude_linter)[, 1L]
 
-      # No match for linter list: Add to global excludes
-      if (is.na(linters_string)) {
-        exclusions <- add_excluded_lines(exclusions, excluded_lines, "")
-      } else {
-        # Matched a linter list: only add excluded lines for the listed linters.
-        excluded_linters <- strsplit(linters_string, exclude_linter_sep)[[1L]]
-        exclusions <- add_excluded_lines(exclusions, excluded_lines, excluded_linters)
-      }
+      exclusions <- add_exclusions(exclusions, excluded_lines, linters_string, exclude_linter_sep)
     }
   }
 
   nolint_locations <- rex::re_matches(lines, exclude, locations = TRUE)[, "end"] + 1L
   nolints <- which(!is.na(nolint_locations))
-  # Disregard nolint tags if they als match nolint start / end
+  # Disregard nolint tags if they also match nolint start / end
   nolints <- setdiff(nolints, c(starts, ends))
 
   for (i in seq_along(nolints)) {
     linters_string <- substring(lines[nolints[i]], nolint_locations[nolints[i]])
     linters_string <- rex::re_matches(linters_string, exclude_linter)[, 1L]
-
-    # No match for linter list: Add to global excludes
-    if (is.na(linters_string)) {
-      exclusions <- add_excluded_lines(exclusions, nolints[i], "")
-    } else {
-      # Matched a linter list: only add excluded lines for the listed linters.
-      excluded_linters <- strsplit(linters_string, exclude_linter_sep)[[1L]]
-      exclusions <- add_excluded_lines(exclusions, nolints[i], excluded_linters)
-    }
+    exclusions <- add_exclusions(exclusions, nolints[i], linters_string, exclude_linter_sep)
   }
 
   exclusions[] <- lapply(exclusions, function(lines) sort(unique(lines)))
@@ -143,6 +128,18 @@ add_excluded_lines <- function(exclusions, excluded_lines, excluded_linters) {
     }
   }
 
+  exclusions
+}
+
+add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep) {
+  # No match for linter list: Add to global excludes
+    if (is.na(linters_string)) {
+      exclusions <- add_excluded_lines(exclusions, lines, "")
+    } else {
+      # Matched a linter list: only add excluded lines for the listed linters.
+      excluded_linters <- strsplit(linters_string, exclude_linter_sep)[[1L]]
+      exclusions <- add_excluded_lines(exclusions, lines, excluded_linters)
+    }
   exclusions
 }
 
@@ -215,7 +212,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
              call. = FALSE)
       }
       names(x)[unnamed] <- x[unnamed]
-      x[unnamed] <- rep(list(list(Inf)), sum(unnamed))
+      x[unnamed] <- rep_len(list(list(Inf)), sum(unnamed))
     }
 
     full_line_exclusions <- !vapply(x, is.list, logical(1L))
