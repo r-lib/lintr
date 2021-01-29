@@ -13,7 +13,7 @@ This vignette describes how to set up and configure `lintr` for use with project
 
 ## Running `lintr` on a project
 
-Checking a R project for lints can be done with three different functions:
+Checking an R project for lints can be done with three different functions:
 
 * Lint a single file using `lint()`:
 
