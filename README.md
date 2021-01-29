@@ -99,10 +99,21 @@ The config file (default file name: `.lintr`) is in [Debian Control Field Format
 - `exclude_start` - a regex pattern to start exclusion range. Default is "# nolint start"
 - `exclude_end` - a regex pattern to end exclusion range. Default is "# nolint end"
 
-An example file that uses 120 character line lengths, excludes a couple of
-files and sets different default exclude regexs follows.
+
+### .lintr File Example
+
+Below is an example .lintr file that uses:
+
+- 120 character line lengths
+- Excludes a couple of files
+- Disables a specific linter, and; 
+- Sets different default exclude regexes
+
 ```
-linters: with_defaults(line_length_linter(120))
+linters: with_defaults(
+  line_length_linter(120), 
+  commented_code_linter = NULL
+  )
 exclusions: list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "tests/testthat/exclusions-test")
 exclude: "# Exclude Linting"
 exclude_start: "# Begin Exclude Linting"
