@@ -181,7 +181,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     bad <- vapply(
       seq_along(x),
       function(i) {
-        (!is.character(x[[i]]) || length(x[[i]]) != 1L)
+        !is.character(x[[i]]) || length(x[[i]]) != 1L
       },
       logical(1L)
     )
@@ -203,7 +203,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
       bad <- vapply(
         seq_along(x),
         function(i) {
-          unnamed[i] & (!is.character(x[[i]]) | length(x[[i]]) != 1L)
+          unnamed[i] && (!is.character(x[[i]]) || length(x[[i]]) != 1L)
         },
         logical(1L)
       )
