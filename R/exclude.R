@@ -11,7 +11,7 @@
 #' \code{# nolint: linter_name, linter2_name.}. There may not be anything between the colon and the line exclusion tag
 #' and the listing must be terminated with a full stop (\code{.}) for the linter list to be respected.}
 #' \item{line range in the source file. default: \code{# nolint start}, \code{# nolint end}.
-#' \code{# nolint start} accepts linter lists in the same form as code{# nolint}.}
+#' \code{#}\code{ nolint start} accepts linter lists in the same form as code{# nolint}.}
 #' \item{exclusions parameter, a named list of files with named lists of linters and lines to exclude them on,
 #' a named list of the files and lines to exclude, or just the filenames if you want to exclude the entire file,
 #' or the directory names if you want to exclude all files in a directory.}
