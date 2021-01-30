@@ -35,7 +35,7 @@ test_that("single check", {
 
 test_that("multiple checks", {
   expect_success(
-    expect_lint(file = "exclusions-test", checks = as.list(rep(msg, 6L)), linters = linter, parse_settings = FALSE)
+    expect_lint(file = "exclusions-test", checks = as.list(rep(msg, 9L)), linters = linter, parse_settings = FALSE)
   )
 
   expect_success(expect_lint("a=1; b=2", list(msg, msg), linter))

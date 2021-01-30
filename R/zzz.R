@@ -69,7 +69,15 @@ with_defaults <- function(..., default = default_linters) {
 
 #' Default linters
 #'
-#' List of default linters for \code{\link{lint}}. Use \code{\link{with_defaults}} to customize it.
+#' @description List of default linters for \code{\link{lint}}. Use
+#' \code{\link{with_defaults}} to customize it.
+#'
+#' The set of default linters is as follows (any parameterised linters, eg,
+#' \code{line_length_linter} use their default argument(s), see \code{?
+#' <linter_name>} for details):
+#'
+#' - \Sexpr[stage=render, results=rd]{paste(names(lintr::default_linters), collapse=", ")}.
+#'
 #' @export
 default_linters <- with_defaults(
   default = list(),
@@ -193,6 +201,13 @@ settings <- NULL
     exclude = rex::rex("#", any_spaces, "nolint"),
     exclude_start = rex::rex("#", any_spaces, "nolint start"),
     exclude_end = rex::rex("#", any_spaces, "nolint end"),
+    exclude_linter = rex::rex(start, any_spaces, ":", any_spaces,
+                              capture(
+                                name = "linters",
+                                zero_or_more(one_or_more(none_of(",.")), any_spaces, ",", any_spaces),
+                                one_or_more(none_of(",."))
+                              ), "."),
+    exclude_linter_sep = rex::rex(any_spaces, ",", any_spaces),
     exclusions = list(),
     cache_directory = "~/.R/lintr_cache",
     comment_token = Sys.getenv("GITHUB_TOKEN", unset = NA) %||% rot(
