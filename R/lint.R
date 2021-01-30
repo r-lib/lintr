@@ -91,7 +91,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
         lints[[itr <- itr + 1L]] <- retrieve_lint(lint_cache, expr, linter, source_expressions$lines)
       }
       else {
-        expr_lints <- flatten_lints(linters[[linter]](expr)) # nolint
+        expr_lints <- flatten_lints(linters[[linter]](expr))
 
         if (length(expr_lints)) {
           expr_lints[] <- lapply(expr_lints, function(lint) {
@@ -138,11 +138,11 @@ reorder_lints <- function(lints) {
   files <- vapply(lints, `[[`, character(1), "filename")
   lines <- vapply(lints, `[[`, integer(1), "line_number")
   columns <- vapply(lints, `[[`, integer(1), "column_number")
-  lints[
-    order(files,
-      lines,
-      columns)
-    ]
+  lints[order(
+    files,
+    lines,
+    columns
+  )]
 }
 
 #' Lint a directory
@@ -195,7 +195,8 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
 
   # normalizePath ensures names(exclusions) and files have the same names for the same files.
   # Otherwise on windows, files might incorrectly not be excluded in to_exclude
-  files <- normalizePath(dir(path,
+  files <- normalizePath(dir(
+    path,
     pattern = pattern,
     recursive = TRUE,
     full.names = TRUE
@@ -206,7 +207,7 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
     seq_len(length(files)),
     function(i) {
       file <- files[i]
-      file %in% names(exclusions) && exclusions[[file]] == Inf
+      file %in% names(exclusions) && is_excluded_file(exclusions[[file]])
     },
     logical(1)
   )
@@ -354,10 +355,9 @@ pkg_name <- function(path = find_package()) {
 #' @param ranges a list of ranges on the line that should be emphasized.
 #' @param linter name of linter that created the Lint object.
 #' @export
-Lint <- function( # nolint: object_name_linter.
-  filename, line_number = 1L, column_number = 1L,
-  type = c("style", "warning", "error"),
-  message = "", line = "", ranges = NULL, linter = "") {
+Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name_linter.
+                 type = c("style", "warning", "error"),
+                 message = "", line = "", ranges = NULL, linter = "") {
 
   type <- match.arg(type)
 
@@ -371,7 +371,7 @@ Lint <- function( # nolint: object_name_linter.
       line = line,
       ranges = ranges,
       linter = linter
-      ),
+    ),
     class = "lint")
 }
 
@@ -443,12 +443,15 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
     f <- xml2::xml_add_child(n, "file", name = filename)
 
     lapply(lints_per_file, function(x) {
-      xml2::xml_add_child(f, "error",
+      xml2::xml_add_child(
+        f, "error",
         line = as.character(x$line_number),
         column = as.character(x$column_number),
-        severity = switch(x$type,
+        severity = switch(
+          x$type,
           style = "info",
-          x$type),
+          x$type
+        ),
         message = x$message)
     })
   })
@@ -465,7 +468,7 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
   lapply(ranges, function(range) {
     substr(line, range[1], range[2]) <<-
       fill_with("~", range[2] - range[1] + 1L)
-    })
+  })
 
   substr(line, column_number, column_number + 1L) <- "^"
 
