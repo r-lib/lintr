@@ -166,6 +166,18 @@ test_that("used symbols are detected correctly", {
     object_usage_linter
   )
 
+  expect_lint(
+    trim_some("
+      foo$bar <- 1
+      zero <- function() {
+        foo
+      }
+      message(zero())
+    "),
+    list("foo"),
+    object_usage_linter
+  )
+
   # Also test deeper nesting
   expect_lint(
     trim_some("
