@@ -45,6 +45,16 @@ commented_code_linter <- function(source_file) {
   line_numbers <- rownames(na.omit(res))
   lapply(line_numbers, function(line_number) {
     line <- source_file$file_lines[as.numeric(line_number)]
+    line_code_end <- max(
+      source_file$full_parsed_content[source_file$full_parsed_content$line1 == line_number &
+                                        source_file$full_parsed_content$line2 == line_number, "col2"],
+      0
+    )
+    if (res[line_number, "code.start"] < line_code_end) {
+      # regex matched a part of actual code
+      return()
+    }
+
     is_parsable <- parsable(substr(line,
                                    res[line_number, "code.start"],
                                    res[line_number, "code.end"]))
