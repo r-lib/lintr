@@ -12,9 +12,9 @@ paren_brace_linter <- function(source_file) {
 
   xpath <- paste(
     "//OP-LEFT-BRACE[",
-      "@line1 = preceeding-sibling::expr/OP-RIGHT-PAREN/@line1",
+      "@line1 = parent::expr/preceding-sibling::OP-RIGHT-PAREN/@line1",
       "and",
-      "@col1 = preceeding-sibling::expr/OP-RIGHT-PAREN/@col1 + 1",
+      "@col1 = parent::expr/preceding-sibling::OP-RIGHT-PAREN/@col1 + 1",
     "]"
   )
 
