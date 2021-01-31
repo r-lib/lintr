@@ -172,7 +172,7 @@ reorder_lints <- function(lints) {
 #'   )
 #' }
 #' @export
-lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
+lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = list("renv", "packrat"),
                      pattern = rex::rex(
                        ".", one_of("Rr"),
                        or("", "html", "md", "nw", "rst", "tex", "txt"),
