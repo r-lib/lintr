@@ -2,58 +2,22 @@
 #' unless they are in a function call.
 #' @export
 spaces_left_parentheses_linter <- function(source_file) {
-  lapply(ids_with_token(source_file, "'('"),
-    function(id) {
 
-      parsed <- source_file$parsed_content[id, ]
+  if (is.null(source_file$xml_parsed_content)) return(list())
 
-      terminal_tokens_before <- with(
-        source_file$parsed_content,
-        token[line1 == parsed$line1 & col1 < parsed$col1 & terminal]
-      )
-      last_type <- tail(terminal_tokens_before, n = 1)
+  xml <- source_file$xml_parsed_content
 
-      is_function <- length(last_type) %!=% 0L &&
-        (last_type %in% c("SYMBOL_FUNCTION_CALL", "FUNCTION", "'}'", "')'", "']'"))
+  function_cond <-
+    "@start = preceding-sibling::*[not(self::FUNCTION or self::expr[SYMBOL_FUNCTION_CALL or FUNCTION])]/@end + 1"
+  for_cond <- "parent::forcond[@start = preceding-sibling::FOR/@end + 1]"
+  mult_cond <- "parent::expr[@start = preceding-sibling::OP-STAR/@end + 1]"
 
-      if (!is_function) {
+  paren_cond <- sprintf("(%s)", paste(function_cond, for_cond, mult_cond, sep = ") or ("))
+  xpath <- sprintf("//OP-LEFT-PAREN[%s]", paren_cond)
 
-        line <- source_file$lines[as.character(parsed$line1)]
+  bad_paren <- xml2::xml_find_all(xml, xpath)
 
-        before_operator <- substr(line, parsed$col1 - 1L, parsed$col1 - 1L)
-
-        non_space_before <- re_matches(before_operator, rex(non_space))
-        not_exception <- !(before_operator %in% c("!", ":", "[", "(", "^"))
-
-        # exception for unary - and unary +, #508
-        before_operator_idx <- with(
-          source_file$parsed_content,
-          col1 == parsed$col1 - 1L & col1 == col2
-        )
-        is_sibling_expr <- if (any(before_operator_idx)) {
-          with(
-            source_file$parsed_content,
-            token == "expr" & parent %in% parent[before_operator_idx]
-          )
-        } else {
-          rep(FALSE, nrow(source_file$parsed_content))
-        }
-        not_exception <- not_exception &&
-          !(before_operator %in% c("-", "+") &&
-             nrow(source_file$parsed_content[is_sibling_expr, ]) == 1L)
-
-        if (non_space_before && not_exception) {
-          Lint(
-            filename = source_file$filename,
-            line_number = parsed$line1,
-            column_number = parsed$col1,
-            type = "style",
-            message = "Place a space before left parenthesis, except in a function call.",
-            line = line,
-            linter = "spaces_left_parentheses_linter"
-            )
-        }
-      }
-
-    })
+  lapply(bad_paren, xml_nodes_to_lint, source_file,
+         message = "Place a space before left parenthesis, except in a function call.",
+         linter = "spaces_left_parentheses_linter", type = "style")
 }
