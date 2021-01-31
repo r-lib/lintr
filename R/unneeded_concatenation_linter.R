@@ -20,7 +20,7 @@ unneeded_concatenation_linter <- function(source_file) {
           filename = source_file[["filename"]],
           line_number = line_num,
           column_number = start_col_num,
-          type = "warn",
+          type = "warning",
           message = if (num_args) msg_const else msg_empty,
           line = line,
           linter = "unneeded_concatenation_linter",
