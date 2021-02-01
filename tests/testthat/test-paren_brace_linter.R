@@ -7,13 +7,19 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "blah <- function(){}",
-    msg,
+    list(
+      message = msg,
+      column_number = 19L
+    ),
     paren_brace_linter
   )
 
   expect_lint(
     "\nblah <- function(){\n\n\n}",
-    msg,
+    list(
+      message = msg,
+      column_number = 19L
+    ),
     paren_brace_linter
   )
 
