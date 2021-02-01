@@ -11,10 +11,10 @@ paren_brace_linter <- function(source_file) {
   xml <- source_file$xml_parsed_content
 
   xpath <- paste(
-    "//OP-RIGHT-PAREN[",
-      "@line1 = following-sibling::expr/OP-LEFT-BRACE/@line1",
+    "//OP-LEFT-BRACE[",
+      "@line1 = parent::expr/preceding-sibling::OP-RIGHT-PAREN/@line1",
       "and",
-      "@col1 = following-sibling::expr/OP-LEFT-BRACE/@col1 - 1",
+      "@col1 = parent::expr/preceding-sibling::OP-RIGHT-PAREN/@col1 + 1",
     "]"
   )
 
