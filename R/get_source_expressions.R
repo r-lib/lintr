@@ -412,7 +412,7 @@ fix_eq_assigns <- function(pc) {
   expr_locs <- (function(x) {
     x[is.na(x)] <- FALSE
     !x
-    })(prev_locs == lag(next_locs)) # nolint
+    })(prev_locs == lag(next_locs))
 
   id_itr <- max(pc$id)
 

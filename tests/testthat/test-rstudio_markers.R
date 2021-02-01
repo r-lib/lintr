@@ -70,7 +70,7 @@ test_that("it prepends the package path if it exists", {
     marker3 <- rstudio_source_markers(lint3)
   )
   expect_equal(marker3$name, "lintr")
-  expect_equal(marker3$basePath, "test") # nolint
+  expect_equal(marker3$basePath, "test")
   expect_equal(marker3$markers[[1]]$type, lint3[[1]]$type)
   expect_equal(marker3$markers[[1]]$file, file.path("test", lint3[[1]]$filename))
   expect_equal(marker3$markers[[1]]$line, lint3[[1]]$line_number)

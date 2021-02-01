@@ -20,6 +20,7 @@
 * New `sprintf_linter()` (#544, #578, #624, #625, @renkun-ken, @AshesITR)
 * Exclusions specified in the `.lintr` file are now relative to the location of that file 
   and support excluding entire directories (#158, #438, @AshesITR)
+* `lint_dir()` excludes the `renv` and `packrat` directories by default (#697, @AshesITR)
 * `object_name_linter()` now excludes special R hook functions such as `.onLoad` 
   (#500, #614, @AshesITR and @michaelchirico)
 * `equals_na_linter()` now lints `x != NA` and `NA == x`, and skips usages in comments (#545, @michaelchirico)
@@ -45,6 +46,7 @@
   `default_linters` (#693, #695, @AshesITR).
 * `lint_package()` now lints files in the `demo` directory by default (#703, @dmurdoch).
 * `object_usage_linter()` now correctly detects global variables if there are top-level dollar-assignments (#666, #709, @AshesITR)
+* `commented_code_linter()` uses the parse tree to find comments, eliminating some false positives (#451, @AshesITR)
 
 # lintr 2.0.1
 

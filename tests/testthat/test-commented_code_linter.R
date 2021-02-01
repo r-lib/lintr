@@ -52,4 +52,7 @@ test_that("returns the correct linting", {
 
   expect_lint("1+1 # cat('123')", msg, linter)
   expect_lint("#expect_ftype(1e-12 , t)", msg, linter)
+
+  # regression test for #451
+  expect_lint("c('#a#' = 1)", NULL, linter)
 })
