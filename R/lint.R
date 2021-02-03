@@ -276,8 +276,7 @@ lint_package <- function(path = ".", relative_path = TRUE, ...,
 
   exclusions <- normalize_exclusions(
     c(exclusions, settings$exclusions),
-    root = path,
-    pattern = pattern
+    root = path
   )
 
   lints <- lint_dir(file.path(path, c("R", "tests", "inst", "vignettes", "data-raw", "demo")),
