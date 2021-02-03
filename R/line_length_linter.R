@@ -1,7 +1,7 @@
 #' @describeIn linters check the line length of both comments and code is less
 #' than length.
 #' @export
-line_length_linter <- function(length) {
+line_length_linter <- function(length = 80L) {
   function(source_file) {
     if (is.null(source_file$file_lines)) return(list())
 
