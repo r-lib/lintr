@@ -97,6 +97,8 @@ a file (using `lintr::lint(file_path)`), package (`lintr::lint_package(pkg_path)
 Similarly, `lintr` can be run from the command line using
 `Rscript -e "lintr::lint_package(commandArgs(trailingOnly = TRUE))" pkg_path` (linux/mac; for windows use Rscript.exe).
 
+Advanced users may run `lintr` during [continuous-integration](#continuous-integration); or [within their IDE or text editor](#editors-setup);
+
 ## Project Configuration ##
 
 Lintr supports per-project configuration of the following fields.
