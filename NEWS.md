@@ -48,6 +48,7 @@
   `default_linters` (#693, #695, @AshesITR).
 * `lint_package()` now lints files in the `demo` directory by default (#703, @dmurdoch).
 * `commented_code_linter()` uses the parse tree to find comments, eliminating some false positives (#451, @AshesITR)
+* `trailing_blank_lines_linter()` now also lints if a trailing blank line is missing (#675, @AshesITR)
 
 # lintr 2.0.1
 
