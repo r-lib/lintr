@@ -13,6 +13,9 @@ delete all of the caches.}
 \item{path}{directory to store caches.  Reads option 'lintr.cache_directory'
 as the default.}
 }
+\value{
+0 for success, 1 for failure, invisibly.
+}
 \description{
 Clear the lintr cache
 }

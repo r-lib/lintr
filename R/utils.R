@@ -1,5 +1,5 @@
 `%||%` <- function(x, y) {
-  if (is.null(x) || length(x) <= 0) {
+  if (is.null(x) || length(x) <= 0 || is.na(x[[1L]])) {
     y
   } else {
     x
@@ -12,6 +12,10 @@
 
 `%!=%` <- function(x, y) {
   !identical(x, y)
+}
+
+"%:::%" <- function(p, f) {
+  get(f, envir = asNamespace(p))
 }
 
 flatten_lints <- function(x) {
@@ -70,57 +74,14 @@ auto_names <- function(x) {
   nms
 }
 
-blank_text <- function(s, re, shift_start = 0, shift_end = 0) {
-  m <- gregexpr(re, s, perl = TRUE)
-  regmatches(s, m) <- lapply(regmatches(s, m),
-    quoted_blanks,
-    shift_start = shift_start,
-    shift_end = shift_end)
-
-  s
-}
-
-quoted_blanks <- function(matches, shift_start = 0, shift_end = 0) {
-  lengths <- nchar(matches)
-  blanks <- vapply(Map(rep.int,
-      rep.int(" ", length(lengths - (shift_start + shift_end))),
-      lengths - (shift_start + shift_end), USE.NAMES = FALSE),
-    paste, "", collapse = "")
-
-  substr(matches, shift_start + 1L, nchar(matches) - shift_end) <- blanks
-  matches
-}
-
-ids_with_token <- function(source_file, value, fun = `==`) {
-  if (source_file$parsed_content$col1 %==% integer(0)) {
-    return(integer(0))
-  }
-  loc <- which(fun(source_file$parsed_content$token, value))
-  if (loc %==% integer(0)) {
-    return(integer(0))
-  }
-  loc
-}
-
 # The following functions is from dplyr
 names2 <- function(x) {
   names(x) %||% rep("", length(x))
 }
 
-recursive_ls <- function(env) {
-  if (parent.env(env) %!=% emptyenv()) {
-    c(ls(envir = env), recursive_ls(parent.env(env)))
-  }
-  else {
-    ls(envir = env)
-  }
-}
-
-with_id <- function(source_file, id) {
-  if (is.null(source_file$parsed_content)) {
-    return(data.frame())
-  }
-  source_file$parsed_content[id, ]
+safe_parse_to_xml <- function(parsed_content) {
+  if (is.null(parsed_content)) return(NULL)
+  tryCatch(xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)), error = function(e) NULL)
 }
 
 get_content <- function(lines, info) {
@@ -144,8 +105,9 @@ logical_env <- function(x) {
 # from ?chartr
 rot <- function(ch, k = 13) {
   p0 <- function(...) paste(c(...), collapse = "")
-  A <- c(letters, LETTERS, " '")
-  I <- seq_len(k); chartr(p0(A), p0(c(A[-I], A[I])), ch)
+  alphabet <- c(letters, LETTERS, " '")
+  idx <- seq_len(k)
+  chartr(p0(alphabet), p0(c(alphabet[-idx], alphabet[idx])), ch)
 }
 
 trim_ws <- function(x) {
@@ -157,15 +119,9 @@ trim_ws <- function(x) {
   attr(x, name, exact = TRUE)
 }
 
-global_parsed_content <- function(source_file) {
-  if (exists("file_lines", source_file)) {
-    source_file$parsed_content
-  }
-}
-
 global_xml_parsed_content <- function(source_file) {
   if (exists("file_lines", source_file)) {
-    source_file$xml_parsed_content
+    source_file$full_xml_parsed_content
   }
 }
 
@@ -174,3 +130,89 @@ get_file_line <- function(source_file, line) {
 }
 
 p <- function(...) paste0(...)
+
+lengths <- function(x) vapply(x, length, integer(1L))
+
+try_silently <- function(expr) {
+  suppressWarnings(
+    suppressMessages(
+      try(expr, silent = TRUE)
+    )
+  )
+}
+
+viapply <- function(x, ...) vapply(x, ..., FUN.VALUE = integer(1))
+
+# imitate sQuote(x, q) [requires R>=3.6]
+quote_wrap <- function(x, q) paste0(q, x, q)
+
+unquote <- function(str, q="`") {
+  # Remove surrounding quotes (select either single, double or backtick) from given character vector
+  # and unescape special characters.
+  str <- re_substitutes(str, rex(start, q, capture(anything), q, end), "\\1")
+  unescape(str, q)
+}
+
+escape_chars <- c(
+  "\\\\" = "\\",  # backslash
+  "\\n"  = "\n",  # newline
+  "\\r"  = "\r",  # carriage return
+  "\\t"  = "\t",  # tab
+  "\\b"  = "\b",  # backspace
+  "\\a"  = "\a",  # alert (bell)
+  "\\f"  = "\f",  # form feed
+  "\\v"  = "\v"   # vertical tab
+  # dynamically-added:
+  #"\\'"  --> "'",  # ASCII apostrophe
+  #"\\\"" --> "\"", # ASCII quotation mark
+  #"\\`"  --> "`"   # ASCII grave accent (backtick)
+)
+
+unescape <- function(str, q="`") {
+  names(q) <- paste0("\\", q)
+  my_escape_chars <- c(escape_chars, q)
+  res <- gregexpr(text = str, pattern = rex(or(names(my_escape_chars))))
+  all_matches <- regmatches(str, res)
+  regmatches(str, res) <- lapply(
+    all_matches,
+    function(string_matches) {
+      my_escape_chars[string_matches]
+    }
+  )
+  str
+}
+
+# convert an XML match into a Lint
+xml_nodes_to_lint <- function(xml, source_file, message, linter,
+                              type = c("style", "warning", "error")) {
+  type <- match.arg(type, c("style", "warning", "error"))
+  line1 <- xml2::xml_attr(xml, "line1")[1]
+  col1 <- as.integer(xml2::xml_attr(xml, "col1"))
+
+  if (xml2::xml_attr(xml, "line2") == line1) {
+    col2 <- as.integer(xml2::xml_attr(xml, "col2"))
+  } else {
+    col2 <- nchar(source_file$lines[line1])
+  }
+  return(Lint(
+    filename = source_file$filename,
+    line_number = as.integer(line1),
+    column_number = as.integer(col1),
+    type = type,
+    message = message,
+    line = source_file$lines[line1],
+    ranges = list(c(col1, col2)),
+    linter = linter
+  ))
+}
+
+# interface to work like options() or setwd() -- returns the old value for convenience
+set_lang <- function(new_lang) {
+  old_lang <- Sys.getenv("LANGUAGE", unset = NA)
+  Sys.setenv(LANGUAGE = new_lang)
+  old_lang
+}
+# handle the logic of either unsetting if it was previously unset, or resetting
+reset_lang <- function(old_lang) {
+  if (is.na(old_lang)) Sys.unsetenv("LANGUAGE") else Sys.setenv(LANGUAGE = old_lang)
+}

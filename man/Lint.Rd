@@ -4,24 +4,31 @@
 \alias{Lint}
 \title{Create a \code{lint} object}
 \usage{
-Lint(filename, line_number = 1L, column_number = 1L, type = c("style",
-  "warning", "error"), message = "", line = "", ranges = NULL,
-  linter = "")
+Lint(
+  filename,
+  line_number = 1L,
+  column_number = 1L,
+  type = c("style", "warning", "error"),
+  message = "",
+  line = "",
+  ranges = NULL,
+  linter = ""
+)
 }
 \arguments{
 \item{filename}{path to the source file that was linted.}
 
 \item{line_number}{line number where the lint occurred.}
 
-\item{column_number}{column the lint occurred.}
+\item{column_number}{column number where the lint occurred.}
 
 \item{type}{type of lint.}
 
 \item{message}{message used to describe the lint error}
 
-\item{line}{code source where the lint occured}
+\item{line}{code source where the lint occurred}
 
-\item{ranges}{ranges on the line that should be emphasized.}
+\item{ranges}{a list of ranges on the line that should be emphasized.}
 
 \item{linter}{name of linter that created the Lint object.}
 }

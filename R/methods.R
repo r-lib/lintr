@@ -14,7 +14,8 @@ print.lint <- function(x, ...) {
     as.character(x$column_number), ": ", sep = ""),
     color(x$type, ": ", sep = ""),
     crayon::bold(x$message), "\n",
-    x$line, "\n",
+    # swap tabs for spaces for #528 (sorry Richard Hendricks)
+    chartr("\t", " ", x$line), "\n",
     highlight_string(x$message, x$column_number, x$ranges),
     "\n"
     )
@@ -51,29 +52,38 @@ markdown <- function(x, info, ...) {
 
 #' @export
 print.lints <- function(x, ...) {
-  has_lints <- length(x) > 0
+  rstudio_source_markers <- getOption("lintr.rstudio_source_markers", TRUE) &&
+    rstudioapi::hasFun("sourceMarkers")
 
-  if (getOption("lintr.rstudio_source_markers", TRUE) &&
-      rstudioapi::hasFun("sourceMarkers")) {
-    rstudio_source_markers(x)
-  } else {
-    if (has_lints && in_ci() && settings$comment_bot) {
+  if (length(x)) {
+    inline_data <- x[[1]][["filename"]] == "<text>"
+    if (!inline_data && rstudio_source_markers) {
+      rstudio_source_markers(x)
+    } else if (in_github_actions()) {
+      github_actions_log_lints(x)
+    } else {
+      if (in_ci() && settings$comment_bot) {
 
-      info <- ci_build_info()
+        info <- ci_build_info()
 
-      lint_output <-
-        trim_output(paste0(collapse = "\n",
-                           capture.output(invisible(lapply(x, markdown, info, ...)))
-                           )
-      )
+        lint_output <- trim_output(
+          paste0(
+            collapse = "\n",
+            capture.output(invisible(lapply(x, markdown, info, ...)))
+          )
+        )
 
-      github_comment(lint_output, info, ...)
+        github_comment(lint_output, info, ...)
+      }
+      lapply(x, print, ...)
     }
-    lapply(x, print, ...)
-  }
 
-  if (has_lints && isTRUE(settings$error_on_lint)) {
-    quit("no", 31, FALSE)
+    if (isTRUE(settings$error_on_lint)) {
+      quit("no", 31, FALSE) # nocov
+    }
+  } else if (rstudio_source_markers) {
+    # Empty lints: clear RStudio source markers
+    rstudio_source_markers(x)
   }
   invisible(x)
 }
@@ -92,8 +102,11 @@ trim_output <- function(x, max = 65535) {
                  "(", except_some_of(")"), ")",
                  space,
                  "*", or("style", "warning", "error"), ":", "*",
-                 except_some_of(newline), newline, except_some_of(newline),
-                 newline, except_some_of(newline), newline)
+                 except_some_of("\r\n"), newline,
+                 except_some_of("\r\n"), newline,
+                 except_some_of("\r\n"), newline,
+                 except_some_of("\r\n"), newline,
+                 except_some_of("\r\n"), newline)
 
   lint_starts <- rex::re_matches(x, re, global = TRUE, locations = TRUE)[[1]]
 
@@ -140,4 +153,17 @@ as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) {
   x <- x[...]
   attributes(x) <- attrs
   x
+}
+
+#' @export
+summary.lints <- function(object, ...) {
+  filenames <- vapply(object, `[[`, character(1), "filename")
+  types <- factor(vapply(object, `[[`, character(1), "type"),
+    levels = c("style", "warning", "error"))
+  tbl <- table(filenames, types)
+  filenames <- rownames(tbl)
+  res <- as.data.frame.matrix(tbl, stringsAsFactors = FALSE, row.names = NULL)
+  res$filenames <- filenames %||% character()
+  nms <- colnames(res)
+  res[order(res$filenames), c("filenames", nms[nms != "filenames"])]
 }

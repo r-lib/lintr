@@ -7,18 +7,18 @@
 seq_linter <- function() {
   Linter(function(source_file) {
 
-    if (!length(source_file$parsed_content)) return(list())
+    if (is.null(source_file$xml_parsed_content)) return(list())
 
     xml <- source_file$xml_parsed_content
 
-    bad_funcs <- c("length", "nrow", "ncol", "NROW", "NCOL")
+    bad_funcs <- c("length", "nrow", "ncol", "NROW", "NCOL", "dim")
     text_clause <- paste0("text() = '", bad_funcs, "'", collapse = " or ")
 
     xpath <- paste0(
       "//expr",
       "[expr[NUM_CONST[text()='1' or text()='1L']]]",
       "[OP-COLON]",
-      "[expr[expr[SYMBOL_FUNCTION_CALL[", text_clause, "]]]]"
+      "[expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[", text_clause, "]]]]]"
     )
 
     badx <- xml2::xml_find_all(xml, xpath)
@@ -28,8 +28,8 @@ seq_linter <- function() {
     get_fun <- function(x, n) {
       funcall <- xml2::xml_children(xml2::xml_children(x)[[n]])
       if (!length(funcall)) return(NULL)
-      fun <- trim_ws(xml2::xml_text(funcall[[1]]))
-      if (! fun %in% bad_funcs) fun else paste0(fun, "(...)")
+      fun <- gsub("\\(.*\\)", "(...)", trim_ws(xml2::xml_text(funcall[[1]])))
+      if (!fun %in% bad_funcs) fun else paste0(fun, "(...)")
     }
 
     ## Unfortunately the more natural lapply(badx, ...) does not work,
@@ -48,8 +48,8 @@ seq_linter <- function() {
           line_number = as.integer(line1),
           column_number = as.integer(col1),
           type = "warning",
-          message = paste0("Avoid ", f1, ":", f2,
-            " expressions, use seq_len."),
+          message = paste0(f1, ":", f2, " is likely to be wrong in the empty ",
+                           "edge case, use seq_len."),
           line = source_file$lines[line1],
           ranges = list(c(as.integer(col1), as.integer(col2))),
           linter = "seq_linter"

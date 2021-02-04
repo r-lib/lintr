@@ -5,13 +5,14 @@
 #'
 #' @name lintr-deprecated
 #' @inheritParams linters
-#' @param source_file  source file object from \code{\link{get_source_expressions}}
+#' @param source_file source file object from \code{\link{get_source_expressions}}
 #' @include object_name_linters.R
 NULL
 
-lintr_deprecated <- function(old, new = NULL, version = NULL) {
+lintr_deprecated <- function(old, new = NULL, version = NULL,
+                             type = "Function") {
   msg <- c(
-    c(old, " was deprecated"),
+    c(type, " ", old, " was deprecated"),
     if (length(version)) {c(" in lintr version ", version)},
     ". ",
     if (length(new)) {c("Use ", new, " instead.")}
@@ -33,7 +34,7 @@ absolute_paths_linter <- function(source_file) {
 class(absolute_paths_linter) <- "linter"
 
 
-#' @describeIn lintr-deprecated  Check there are no trailing semicolons.
+#' @describeIn lintr-deprecated Check there are no trailing semicolons.
 #' @export
 trailing_semicolons_linter <- function(source_file) {
   lintr_deprecated("'trailing_semicolons_linter'", "'semicolon_terminator_linter'", "1.0.0.9001")
@@ -42,7 +43,7 @@ trailing_semicolons_linter <- function(source_file) {
 class(trailing_semicolons_linter) <- "linter"
 
 
-#' @describeIn lintr-deprecated  Check that objects are not in camelCase.
+#' @describeIn lintr-deprecated Check that objects are not in camelCase.
 #' @export
 camel_case_linter <- make_object_linter(function(source_file, parsed) {
 
@@ -61,7 +62,7 @@ camel_case_linter <- make_object_linter(function(source_file, parsed) {
 })
 
 
-#' @describeIn lintr-deprecated  Check that objects are not in snake_case.
+#' @describeIn lintr-deprecated Check that objects are not in snake_case.
 #' @export
 snake_case_linter <- make_object_linter(function(source_file, parsed) {
 

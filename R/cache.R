@@ -4,84 +4,95 @@
 #' delete all of the caches.
 #' @param path directory to store caches.  Reads option 'lintr.cache_directory'
 #' as the default.
+#' @return 0 for success, 1 for failure, invisibly.
 #' @export
 clear_cache <- function(file = NULL, path = NULL) {
-  read_settings(file)
-
   if (is.null(path)) {
+    # Only retrieve settings if `path` isn't specified.
+    # Otherwise, other settings may inadvertently be loaded, such as exclusions.
+    read_settings(file)
     path <- settings$cache_directory
   }
 
-  if (is.null(file)) {
-    unlink(path, recursive = TRUE)
+  if (!is.null(file)) {
+    path <- get_cache_file_path(file, path)
   }
-  else {
-    file <- basename(file)
-    unlink(file.path(path, file))
-  }
+
+  unlink(path, recursive = TRUE)
+}
+
+
+get_cache_file_path <- function(file, path) {
+  # this assumes that a normalized absolute file path was given
+  file.path(path, digest::digest(file, algo = "sha1"))
 }
 
 load_cache <- function(file, path = NULL) {
-  read_settings(file)
-
   if (is.null(path)) {
+    # Only retrieve settings if `path` isn't specified.
+    # Otherwise, other settings may inadvertently be loaded, such as exclusions.
+    read_settings(file)
     path <- settings$cache_directory
   }
 
-  file <- basename(file)
   env <- new.env(parent = emptyenv())
 
-  file_path <- file.path(path, file)
-  if (file.exists(file_path)) {
-    load(file = file_path, envir = env)
-  }
+  file <- get_cache_file_path(file, path)
+  if (file.exists(file)) {
+    load(file = file, envir = env)
+  } # else nothing to do for source file that has no cache
+
   env
 }
 
 save_cache <- function(cache, file, path = NULL) {
-  read_settings(file)
-
   if (is.null(path)) {
+    # Only retrieve settings if `path` isn't specified.
+    # Otherwise, other settings may inadvertently be loaded, such as exclusions.
+    read_settings(file)
     path <- settings$cache_directory
   }
 
-  file <- basename(file)
   if (!file.exists(path)) {
     dir.create(path, recursive = TRUE)
   }
-  save(file = file.path(path, file), envir = cache, list = ls(envir = cache))
+
+  save(file = get_cache_file_path(file, path), envir = cache, list = ls(envir = cache))
 }
 
 cache_file <- function(cache, filename, linters, lints) {
-  assign(envir = cache,
-    x = digest::digest(list(linters, readLines(filename)), algo = "sha1"),
-    value = lints
+  assign(
+    envir = cache,
+    x = digest_content(linters, filename),
+    value = lints,
+    inherits = FALSE
   )
 }
 
 retrieve_file <- function(cache, filename, linters) {
-  key <- digest::digest(list(linters, readLines(filename)), algo = "sha1")
-  if (exists(key, envir = cache)) {
-    get(
-      envir = cache,
-      x = digest::digest(list(linters, readLines(filename)), algo = "sha1")
-      )
-  } else {
-    NULL
-  }
+  mget(
+    envir = cache,
+    x = digest_content(linters, filename),
+    mode = "list",
+    inherits = FALSE,
+    ifnotfound = list(NULL)
+  )[[1L]]
 }
 
 cache_lint <- function(cache, expr, linter, lints) {
   assign(
     envir = cache,
-    x = digest::digest(list(linter, expr$content), algo = "sha1"),
-    value = lints)
+    x = digest_content(linter, expr),
+    value = lints,
+    inherits = FALSE)
 }
 
 retrieve_lint <- function(cache, expr, linter, lines) {
   lints <- get(
     envir = cache,
-    x = digest::digest(list(linter, expr$content), algo = "sha1")
+    x = digest_content(linter, expr),
+    mode = "list",
+    inherits = FALSE
   )
   lints[] <- lapply(lints, function(lint) {
     lint$line_number <- find_new_line(lint$line_number, unname(lint$line), lines)
@@ -92,9 +103,23 @@ retrieve_lint <- function(cache, expr, linter, lines) {
 }
 
 has_lint <- function(cache, expr, linter) {
-  exists(envir = cache,
-    x = digest::digest(list(linter, expr$content), algo = "sha1"),
-    )
+  exists(
+    envir = cache,
+    x = digest_content(linter, expr),
+    mode = "list",
+    inherits = FALSE
+  )
+}
+
+digest_content <- function(linters, obj) {
+  content <- if (is.list(obj)) {
+    # assume an expression (global expression if obj$parsed_content is lacking)
+    list(linters, obj$content, is.null(obj$parsed_content))
+  } else {
+    # assume a filename
+    list(linters, readLines(obj))
+  }
+  digest::digest(content, algo = "sha1")
 }
 
 find_new_line <- function(line_number, line, lines) {
@@ -120,5 +145,5 @@ find_new_line <- function(line_number, line, lines) {
     }
     width <- width + 1L
   }
-  return(NA)
+  NA
 }

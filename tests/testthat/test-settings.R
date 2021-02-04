@@ -1,4 +1,3 @@
-context("read_settings")
 test_that("it uses default settings if none provided", {
 
   read_settings(NULL)
@@ -20,9 +19,9 @@ test_that("it uses option settings if provided", {
 
 test_that("it uses config settings in same directory if provided", {
 
-  dir <- tempdir()
-  file <- tempfile(tmpdir = dir)
-  config_file <- file.path(dir, ".lintr")
+  path <- tempdir()
+  file <- tempfile(tmpdir = path)
+  config_file <- file.path(path, ".lintr")
   writeLines("exclude: \"test\"", config_file)
   on.exit({
     unlink(file)
@@ -37,4 +36,44 @@ test_that("it uses config settings in same directory if provided", {
   })
 
   expect_equal(settings$exclude, "test")
+})
+
+test_that("it errors if the config file does not end in a newline", {
+
+  f <- tempfile()
+  cat("linters: with_defaults(closed_curly_linter = NULL)", file = f)
+  old <- options()
+  on.exit(options(old))
+  options("lintr.linter_file" = f)
+  expect_error(read_settings("foo"), "Malformed config file")
+})
+
+test_that("with_defaults works as expected", {
+  # test capturing unnamed args
+  defaults <- with_defaults(assignment_linter)
+  # assignment_linter is in defaults, so output doesn't change
+  expect_equal(names(defaults), names(with_defaults()))
+})
+
+test_that("rot utility works as intended", {
+  expect_equal(lintr:::rot(letters), c(letters[14:26], LETTERS[1:13]))
+})
+
+test_that("logical_env utility works as intended", {
+  test_env <- "LINTR_TEST_LOGICAL_ENV_"
+  sym_set_env <- function(key, value) do.call(Sys.setenv, setNames(list(value), key))
+  old <- Sys.getenv(test_env, unset = NA)
+  on.exit(if (is.na(old)) Sys.unsetenv(test_env) else sym_set_env(test_env, old))
+
+  sym_set_env(test_env, "true")
+  expect_equal(lintr:::logical_env(test_env), TRUE)
+
+  sym_set_env(test_env, "F")
+  expect_equal(lintr:::logical_env(test_env), FALSE)
+
+  sym_set_env(test_env, "")
+  expect_null(lintr:::logical_env(test_env))
+
+  Sys.unsetenv(test_env)
+  expect_null(lintr:::logical_env(test_env))
 })

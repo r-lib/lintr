@@ -1,5 +1,5 @@
 in_ci <- function() {
-  isTRUE(logical_env("CI"))
+  in_travis() || in_wercker()
 }
 
 ci_type <- function() {
@@ -23,7 +23,7 @@ travis_build_info <- function() {
     return(NULL)
   }
 
-  slug_info <- strsplit(slug, "/")[[1]]
+  slug_info <- strsplit(slug, "/", fixed = TRUE)[[1]]
 
   list(
     user = slug_info[1],
@@ -55,6 +55,7 @@ wercker_build_info <- function() {
        )
 }
 
+# nocov start
 github_comment <- function(text, info = NULL, token = settings$comment_token) {
 
   if (is.null(info)) {
@@ -79,3 +80,4 @@ github_comment <- function(text, info = NULL, token = settings$comment_token) {
     message(httr::http_condition(response, "error", task = httr::content(response, as = "text")))
   }
 }
+# nocov end

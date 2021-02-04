@@ -13,26 +13,25 @@ This vignette describes the steps necessary to create a new linter.
 
 A good example of a simple linter is the `assignment_linter`.
 ```r
-#' @describeIn linters  Check that '<-' is always used for assignment.
+#' @describeIn linters Check that '<-' is always used for assignment.
 #' @export
 assignment_linter <- function() {
-  Linter(function(source_file) {
-    lapply(ids_with_token(source_file, "EQ_ASSIGN"),
-      function(id) {
-        parsed <- with_id(source_file, id)
-        Lint(
-          filename = source_file$filename,
-          line_number = parsed$line1,
-          column_number = parsed$col1,
-          type = "style",
-          message = "Use <-, not =, for assignment.",
-          line = source_file$lines[[as.character(parsed$line1)]],
-          linter = "assignment_linter"
-          )
-      })
+Linter(function(source_file) {
+  lapply(ids_with_token(source_file, "EQ_ASSIGN"),
+    function(id) {
+      parsed <- source_file$parsed_content[id, ]
+      Lint(
+        filename = source_file$filename,
+        line_number = parsed$line1,
+        column_number = parsed$col1,
+        type = "style",
+        message = "Use <-, not =, for assignment.",
+        line = source_file$lines[parsed$line1],
+        linter = "assignment_linter"
+        )
     })
+})
 }
-
 ```
 
 Let us walk through the parts of the linter individually.
@@ -87,7 +86,8 @@ Lint(
   column_number = parsed$col1,
   type = "style",
   message = "Use <-, not =, for assignment.",
-  line = source_file$lines[parsed$line1]
+  line = source_file$lines[parsed$line1],
+  linter = "assignment_linter"
   )
 ```
 Lastly, build a `lint` object which describes the issue.  See `?Lint` for a

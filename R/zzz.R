@@ -1,28 +1,8 @@
-#' @name linters
-#' @title linters
-#'
-#' @description  A variety of linters is available in \pkg{lintr}. The most popular ones are readily
-#' accessible through \code{\link{default_linters}}, though there are additional ones you may want
-#' to use.
-#'
-#' All the functions listed below are \bold{getters} that return a closure of class 'linter'.
-#' Within a \code{\link{lint}} function call, the linters in use are initialized with the provided
-#' arguments and fed with the source file (provided by \code{\link{get_source_expressions}}).
-#' @param length the length cutoff to use for the given linter.
-#' @return  A closure of class 'linter'.
-NULL
-
-named_list <- function(...) {
-  nms <- re_substitutes(as.character(eval(substitute(alist(...)))),
-    rex("(", anything), "")
-  vals <- list(...)
-  names(vals) <- nms
-  vals[!vapply(vals, is.null, logical(1))]
-}
-
 #' Modify lintr defaults
 #'
-#' Make a new list based on \pkg{lintr}'s default linters, undesirable operators or functions.
+#' Make a new list based on \pkg{lintr}'s default linters, undesirable
+#' operators or functions. The result of this function is meant to be passed to
+#' the `linters` argument of `lint()`, or put in your configuration file.
 #'
 #' @param ... arguments of elements to change. If unnamed, the argument is named. If the named
 #' argument already exists in "default", it is replaced by the new element. If it does not exist,
@@ -30,12 +10,16 @@ named_list <- function(...) {
 #' @param default list of elements to modify.
 #' @return A modified list of elements.
 #' @examples
+#' # When using interatively you will usuaully pass the result onto `lint` or `lint_package()`
+#' \dontrun{
+#' lint("foo.R", linters = with_defaults(line_length_linter = line_length_linter(120)))
+#' }
 #' # the default linter list with a different line length cutoff
 #' my_linters <- with_defaults(line_length_linter = line_length_linter(120))
 #'
 #' # omit the argument name if you are just using different arguments
 #' my_linters <- with_defaults(default = my_linters,
-#'                             object_name_linter("lowerCamelCase"))
+#'                             object_name_linter("camelCase"))
 #'
 #' # remove assignment checks (with NULL), add absolute path checks
 #' my_linters <- with_defaults(default = my_linters,
@@ -53,7 +37,7 @@ named_list <- function(...) {
 with_defaults <- function(..., default = default_linters) {
   vals <- list(...)
   nms <- names2(vals)
-  missing <- nms == ""
+  missing <- !nzchar(nms, keepNA = TRUE)
   if (any(missing)) {
     args <- as.character(eval(substitute(alist(...)[missing])))
     # foo_linter(x=1) => "foo"
@@ -61,54 +45,67 @@ with_defaults <- function(..., default = default_linters) {
     nms[missing] <- re_substitutes(
       re_substitutes(
         re_substitutes(args, rex("(", anything), ""),
-        rex(start, anything, "[\""),
-        ""),
-      rex("\"]", anything, end),
-      "")
+        rex(start, anything, '["'),
+        ""
+      ),
+      rex('"]', anything, end),
+      ""
+    )
   }
 
-  vals[nms == vals] <- NA
+  is.na(vals) <- nms == vals
   default[nms] <- vals
 
-  res <- default[!vapply(default, is.null, logical(1))]
+  res <- default[!vapply(default, is.null, logical(1L))]
 
   res[] <- lapply(res, function(x) {
     prev_class <- class(x)
-    if (inherits(x, "function")) {
+    if (inherits(x, "function") && !inherits(x, "lintr_function")) {
       class(x) <- c(prev_class, "lintr_function")
     }
     x
   })
 }
 
-# this is just to make the auto documentation cleaner
-str.lintr_function <- function(x, ...) {
-  cat("\n")
-}
-
 #' Default linters
 #'
-#' List of default linters for \code{\link{lint}}. Use \code{\link{with_defaults}} to customize it.
+#' @description List of default linters for \code{\link{lint}}. Use
+#' \code{\link{with_defaults}} to customize it.
+#'
+#' The set of default linters is as follows (any parameterised linters, eg,
+#' \code{line_length_linter} use their default argument(s), see \code{?
+#' <linter_name>} for details):
+#'
+#' - \Sexpr[stage=render, results=rd]{paste(names(lintr::default_linters), collapse=", ")}.
+#'
 #' @export
-default_linters <- with_defaults(default = list(),
+default_linters <- with_defaults(
+  default = list(),
   assignment_linter(),
   closed_curly_linter(),
   commas_linter(),
   commented_code_linter(),
+  cyclocomp_linter(),
+  equals_na_linter(),
   function_left_parentheses_linter(),
   infix_spaces_linter(),
-  line_length_linter(80),
+  line_length_linter(),
   no_tab_linter(),
-  object_length_linter(30),
-  object_name_linter("snake_case"),
-  object_usage_linter(),
+  object_length_linter(),
+  object_name_linter(),
+  object_usage_linter,
   open_curly_linter(),
+  paren_brace_linter(),
   pipe_continuation_linter(),
+  semicolon_terminator_linter(),
+  seq_linter(),
   single_quotes_linter(),
   spaces_inside_linter(),
   spaces_left_parentheses_linter(),
+  T_and_F_symbol_linter(),
   trailing_blank_lines_linter(),
-  trailing_whitespace_linter())
+  trailing_whitespace_linter()
+)
 
 #' Default undesirable functions and operators
 #'
@@ -118,7 +115,8 @@ default_linters <- with_defaults(default = list(),
 #' @format A named list of character strings.
 #' @rdname default_undesirable_functions
 #' @export
-all_undesirable_functions <- with_defaults(default = list(),
+all_undesirable_functions <- with_defaults(
+  default = list(),
   "attach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
   "detach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
   "ifelse" = "use an if () {} else {} block",
@@ -141,7 +139,8 @@ all_undesirable_functions <- with_defaults(default = list(),
 
 #' @rdname default_undesirable_functions
 #' @export
-default_undesirable_functions <- do.call(with_defaults, c(list(default=list()),
+default_undesirable_functions <- do.call(with_defaults, c(
+  list(default = list()),
   all_undesirable_functions[c(
     "attach",
     "detach",
@@ -162,7 +161,8 @@ default_undesirable_functions <- do.call(with_defaults, c(list(default=list()),
 
 #' @rdname default_undesirable_functions
 #' @export
-all_undesirable_operators <- with_defaults(default = list(),
+all_undesirable_operators <- with_defaults(
+  default = list(),
   ":::" = NA,
   "<<-" = NA,
   "->>" = NA
@@ -170,7 +170,8 @@ all_undesirable_operators <- with_defaults(default = list(),
 
 #' @rdname default_undesirable_functions
 #' @export
-default_undesirable_operators <- do.call(with_defaults, c(list(default=list()),
+default_undesirable_operators <- do.call(with_defaults, c(
+  list(default = list()),
   all_undesirable_operators[c(
     ":::",
     "<<-",
@@ -186,22 +187,30 @@ default_settings <- NULL
 
 settings <- NULL
 
-.onLoad <- function(libname, pkgname) { # nolint
+# nocov start
+.onLoad <- function(libname, pkgname) {
   op <- options()
-  op.lintr <- list(
+  op_lintr <- list(
     lintr.linter_file = ".lintr"
   )
-  toset <- !(names(op.lintr) %in% names(op))
-  if (any(toset)) options(op.lintr[toset])
+  toset <- !(names(op_lintr) %in% names(op))
+  if (any(toset)) options(op_lintr[toset])
 
   default_settings <<- list(
     linters = default_linters,
     exclude = rex::rex("#", any_spaces, "nolint"),
     exclude_start = rex::rex("#", any_spaces, "nolint start"),
     exclude_end = rex::rex("#", any_spaces, "nolint end"),
+    exclude_linter = rex::rex(start, any_spaces, ":", any_spaces,
+                              capture(
+                                name = "linters",
+                                zero_or_more(one_or_more(none_of(",.")), any_spaces, ",", any_spaces),
+                                one_or_more(none_of(",."))
+                              ), "."),
+    exclude_linter_sep = rex::rex(any_spaces, ",", any_spaces),
     exclusions = list(),
-    cache_directory = "~/.R/lintr_cache", # nolint
-    comment_token = rot(
+    cache_directory = "~/.R/lintr_cache",
+    comment_token = Sys.getenv("GITHUB_TOKEN", unset = NA) %||% rot(
       paste0(
         "0n12nn72507",
         "r6273qnnp34",
@@ -215,3 +224,4 @@ settings <- NULL
   settings <<- list2env(default_settings, parent = emptyenv())
   invisible()
 }
+# nocov end

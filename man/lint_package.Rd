@@ -4,19 +4,44 @@
 \alias{lint_package}
 \title{Lint a package}
 \usage{
-lint_package(path = ".", relative_path = TRUE, ...)
+lint_package(
+  path = ".",
+  relative_path = TRUE,
+  ...,
+  exclusions = list("R/RcppExports.R"),
+  parse_settings = TRUE
+)
 }
 \arguments{
 \item{path}{the path to the base directory of the package, if \code{NULL},
-the base directory will be searched for by looking in the parent directories
-of the current directory.}
+it will be searched in the parent directories of the current directory.}
 
 \item{relative_path}{if \code{TRUE}, file paths are printed using their path
-relative to the package base directory.  If \code{FALSE}, use the full
+relative to the base directory.  If \code{FALSE}, use the full
 absolute path.}
 
-\item{...}{additional arguments passed to \code{\link{lint}}}
+\item{...}{additional arguments passed to \code{\link{lint}}, e.g.
+\code{cache} or \code{linters}.}
+
+\item{exclusions}{exclusions for \code{\link{exclude}}, relative to the
+package path.}
+
+\item{parse_settings}{whether to try and parse the settings.}
+}
+\value{
+A list of lint objects.
 }
 \description{
 Apply one or more linters to all of the R files in a package.
+}
+\examples{
+\dontrun{
+  lint_package()
+
+  lint_package(
+    linters = with_defaults(semicolon_linter = semicolon_terminator_linter())
+    cache = TRUE,
+    exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
+  )
+}
 }

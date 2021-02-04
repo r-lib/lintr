@@ -6,7 +6,7 @@ extraction_operator_linter <- function() {
     tokens <- source_file[["parsed_content"]] <-
       filter_out_token_type(source_file[["parsed_content"]], "expr")
     lapply(
-      ids_with_token(source_file, c("'$'", "'['"), fun=`%in%`),
+      ids_with_token(source_file, c("'$'", "'['"), fun = `%in%`),
       function(token_num) {
         if (is_dollar_extract(token_num, tokens) || is_bracket_extract(token_num, tokens)) {
           token <- with_id(source_file, token_num)
@@ -18,7 +18,7 @@ extraction_operator_linter <- function() {
             filename = source_file[["filename"]],
             line_number = line_num,
             column_number = start_col_num,
-            type = "warn",
+            type = "warning",
             message = sprintf("Use `[[` instead of `%s`  to extract an element.", token[["text"]]),
             line = line,
             linter = "extraction_operator_linter",
@@ -32,7 +32,7 @@ extraction_operator_linter <- function() {
 
 is_dollar_extract <- function(token_line_num, tokens) {
   # A "$" that is not preceded by a ReferenceClass ".self" or R6 class "self" object.
-  tokens[token_line_num, "text"] == "$"  &&
+  tokens[token_line_num, "text"] == "$" &&
     re_substitutes(tokens[token_line_num - 1L, "text"], rex(start, maybe(dot)), "") != "self"
 }
 
@@ -46,13 +46,8 @@ is_bracket_extract <- function(token_line_num, tokens) {
     while (inside_tokens[start_line, "text"] == "+") {
       start_line <- start_line + 1L
     }
-    inside_tokens <- inside_tokens[start_line:nrow(inside_tokens), ]
+    inside_tokens <- inside_tokens[start_line:nrow(inside_tokens),]
     nrow(inside_tokens) == 1L &&
       inside_tokens[1L, "token"] %in% c("STR_CONST", "NUM_CONST", "NULL_CONST")
   }
 }
-
-
-
-
-

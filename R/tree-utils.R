@@ -22,7 +22,7 @@ component_edges <- function(graph, id) {
     neis <- unlist(graph$adjlist[newv])
     newv <- setdiff(neis, sc)
     sc <- c(sc, newv)
-    if (length(sc) == size) break;
+    if (length(sc) == size) break
     size <- length(sc)
   }
 
@@ -71,18 +71,6 @@ parents <- function(data, id, levels = Inf, simplify = TRUE) {
   } else {
     as.character(ids)
   }
-}
-
-family <- function(data, id, parent_levels = 1L, child_levels = Inf) {
-  parents <- parents(data, id, parent_levels)
-  c(parents,
-    unlist(lapply(
-        parents,
-        children,
-        data = data,
-        levels = child_levels)
-      )
-    )
 }
 
 siblings <- function(data, id, child_levels = Inf) {

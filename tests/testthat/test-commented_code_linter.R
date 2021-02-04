@@ -1,5 +1,3 @@
-context("commented_code_linter")
-
 test_that("returns the correct linting", {
   msg <- rex("Commented code should be removed.")
   linter <- commented_code_linter()
@@ -11,12 +9,12 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "bleurgh <- fun_call(1) # other_call()",
-    c(message = msg, column_number = 26),
+    list(message = msg, column_number = 26),
     linter)
 
   expect_lint(
     " #blah <- 1",
-    c(message = msg, column_number = 3),
+    list(message = msg, column_number = 3),
     linter)
 
   expect_lint("#' blah <- 1", NULL, linter)
@@ -28,6 +26,11 @@ test_that("returns the correct linting", {
 
   expect_lint(
     c("a <- 1", "# comment without code"),
+    NULL,
+    linter)
+
+  expect_lint(
+    c("a <- 1", "## whatever"),
     NULL,
     linter)
 
@@ -50,4 +53,7 @@ test_that("returns the correct linting", {
 
   expect_lint("1+1 # cat('123')", msg, linter)
   expect_lint("#expect_ftype(1e-12 , t)", msg, linter)
+
+  # regression test for #451
+  expect_lint("c('#a#' = 1)", NULL, linter)
 })

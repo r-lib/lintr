@@ -1,12 +1,10 @@
-context("deprecated")
-
 expect_quiet_lint <- function(...) {
   suppressWarnings(expect_lint(...))
 }
 
 test_that("absolute_paths_linter() returns the correct linting", {
   expect_quiet_lint("blah", NULL, absolute_paths_linter)
-  expect_quiet_lint("'/blah/file.txt'", # nolint
+  expect_quiet_lint("'/blah/file.txt'",
                     rex("Do not use absolute paths."),
                     absolute_paths_linter)
 })

@@ -1,10 +1,13 @@
 ## Comments
-This release fixes the ERRORs due to the latest testthat release.
+
+This release fixes R CMD check issues in R-devel, as requested by CRAN.
 
 ## Test environments
-* local OS X install, R 3.2.4
-* ubuntu 12.04 (on travis-ci), R 3.2.4
-* win-builder (devel and release)
+
+* local: linux-gnu-3.6.1
+* travis: 3.2, 3.3, 3.4, oldrel, release, devel
+* r-hub: windows-x86_64-devel, ubuntu-gcc-release, fedora-clang-devel
+* win-builder: windows-x86_64-devel
 
 ## R CMD check results
 
@@ -12,6 +15,5 @@ This release fixes the ERRORs due to the latest testthat release.
 
 ## Reverse dependencies
 
-* I have run R CMD check on the 6 downstream dependencies.
-  Summary at: https://github.com/jimhester/lintr/blob/master/revdep/
-  There were no errors found.
+* I have run R CMD check on the downstream dependencies, no regressions were
+  found.

@@ -9,6 +9,43 @@ get_source_expressions(filename)
 \arguments{
 \item{filename}{the file to be parsed.}
 }
+\value{
+A \code{list} with three components:
+\item{expressions}{a \code{list} of
+\code{n+1} objects. The first \code{n} elements correspond to each expression in
+\code{filename}, and consist of a list of 9 elements:
+\itemize{
+\item{\code{filename} (\code{character})}
+\item{\code{line} (\code{integer}) the line in \code{filename} where this expression begins}
+\item{\code{column} (\code{integer}) the column in \code{filename} where this expression begins}
+\item{\code{lines} (named \code{character}) vector of all lines spanned by this
+expression, named with the line number corresponding to \code{filename}}
+\item{\code{parsed_content} (\code{data.frame}) as given by \code{\link[utils:getParseData]{utils::getParseData()}} for this expression}
+\item{\code{xml_parsed_content} (\code{xml_document}) the XML parse tree of this
+expression as given by \code{\link[xmlparsedata:xml_parse_data]{xmlparsedata::xml_parse_data()}}}
+\item{\code{content} (\code{character}) the same as \code{lines} as a single string (not split across lines)}
+\item{\code{find_line} (\code{function}) a function for returning lines in this expression}
+\item{\code{find_column} (\code{function}) a similar function for columns}
+}
+
+The final element of \code{expressions} is a list corresponding to the full file
+consisting of 6 elements:
+\itemize{
+\item{\code{filename} (\code{character})}
+\item{\code{file_lines} (\code{character}) the \code{\link[=readLines]{readLines()}} output for this file}
+\item{\code{content} (\code{character}) for .R files, the same as \code{file_lines};
+for .Rmd scripts, this is the extracted R source code (as text)}
+\item{\code{full_parsed_content} (\code{data.frame}) as given by
+\code{\link[utils:getParseData]{utils::getParseData()}} for the full content}
+\item{\code{full_xml_parsed_content} (\code{xml_document}) the XML parse tree of all
+expressions as given by \code{\link[xmlparsedata:xml_parse_data]{xmlparsedata::xml_parse_data()}}}
+\item{\code{terminal_newline} (\code{logical}) records whether \code{filename} has a terminal
+newline (as determined by \code{\link[=readLines]{readLines()}} producing a corresponding warning)}
+}
+}
+\item{error}{A \code{Lint} object describing any parsing error.}
+\item{lines}{The \code{\link[=readLines]{readLines()}} output for this file.}
+}
 \description{
 This object is given as input to each linter
 }

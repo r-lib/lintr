@@ -1,106 +1,150 @@
-context("object_usage_linter")
-
 test_that("returns the correct linting", {
-  msg_not_used <- rex("local variable", anything, "assigned but may not be used")
-  msg_no_def <- rex("no visible global function definition for ", anything, ", Did you mean", anything)
-  msg_no_bind <- rex("no visible binding for global variable ", anything, ", Did you mean")
-  linter <- object_usage_linter()
-  expect_is(linter, "linter")
-
   expect_lint("blah",
+              NULL,
+              object_usage_linter)
+
+  expect_lint(
+    trim_some("
+      function() {
+        a <- 1
+        a
+      }
+    "),
     NULL,
-    linter)
+    object_usage_linter
+  )
 
   expect_lint(
-"function() {
-  a <- 1
-  a
-}",
+    trim_some("
+      fun <- function(x) {
+        fun(1)
+      }
+      fun2 <- function(x) {
+        fun2(2)
+      }
+    "),
     NULL,
-    linter)
+    object_usage_linter
+  )
 
   expect_lint(
-"fun <- function(x) {
-  fun(1)
-}
-fun2 <- function(x) {
-  fun2(2)
-}",
-    NULL,
-    linter)
+    trim_some("
+      fun <- function() {
+        a <- 1
+      }
+    "),
+    rex("local variable", anything, "assigned but may not be used"),
+    object_usage_linter
+  )
+
+  expect_lint(trim_some("
+      fun <- function() {
+        a <- 1
+        1
+      }
+    "),
+              rex("local variable", anything, "assigned but may not be used"),
+              object_usage_linter)
 
   expect_lint(
-"fun <- function() {
-  a <- 1
-}",
-    msg_not_used,
-    linter)
+    trim_some("
+      fun <- function() {
+        a <- 1
+      }
+    "),
+    rex("local variable", anything, "assigned but may not be used"),
+    object_usage_linter
+  )
 
   expect_lint(
-"fun <- function() {
-  a <- 1
-  1
-}",
-    msg_not_used,
-    linter)
-
-  expect_lint(
-"fun <- function() {
-  a <- 1
-}",
-    msg_not_used,
-    linter)
-
-  expect_lint(
-"fun <- function() {
-  a2 <- 1
-  a3
-}",
+    trim_some("
+      fun <- function() {
+        a2 <- 1
+        a3
+      }
+    "),
     list(
-      msg_not_used,
-      msg_no_bind
-      ),
-    linter)
+      rex("local variable", anything, "assigned but may not be used"),
+      rex("no visible binding for global variable ", anything)
+    ),
+    object_usage_linter
+  )
 
   expect_lint(
-"fun <- function() {
-  fnu(1)
-}",
-    msg_no_def,
-    linter)
+    trim_some("
+      fun <- function() {
+        fnu(1)
+      }
+    "),
+    rex("no visible global function definition for ", anything),
+    object_usage_linter
+  )
 
   expect_lint(
-"fun <- function(x) {
-  n(1)
-}",
-    msg_no_def,
-    linter)
-
-  test_that("replace_functions_stripped", {
-    expect_lint(
-"fun <- function(x) {
-  n(x) = 1
-}",
-    msg_no_def,
-    linter)
-
-    expect_lint(
-"fun <- function(x) {
-  n(x) <- 1
-}",
-    msg_no_def,
-    linter)
-  })
-
+    trim_some("
+      fun <- function(x) {
+        n(1)
+      }
+    "),
+    rex("no visible global function definition for ", anything),
+    object_usage_linter
+  )
 })
 
+test_that("replace_functions_stripped", {
+  expect_lint(
+    trim_some("
+      fun <- function(x) {
+        n(x) = 1
+      }
+    "),
+    rex("no visible global function definition for ", anything),
+    object_usage_linter
+  )
+
+  expect_lint(
+    trim_some("
+      fun <- function(x) {
+        n(x) <- 1
+      }
+    "),
+    rex("no visible global function definition for ", anything),
+    object_usage_linter
+  )
+})
 
 test_that("eval errors are ignored", {
-  expect_lint("
+  expect_lint(
+    trim_some("
     setMethod(\"[[<-\", c(\"stampedEnv\", \"character\", \"missing\"),
       function(x) {
         x
-      })",
+      })
+    "),
     NULL,
-    object_usage_linter())
+    object_usage_linter
+  )
+})
+
+test_that("calls with top level function definitions are ignored", {
+  expect_lint(
+    'tryCatch("foo", error = function(e) e)',
+    NULL,
+    object_usage_linter
+  )
+})
+
+test_that("object-usage line-numbers are relative to start-of-file", {
+  expect_lint(
+    trim_some("
+      a <- function(y) {
+        y ** 2
+      }
+      b <- function() {
+        x
+      }
+    "),
+    list(line_number = 5L),
+    object_usage_linter
+  )
 })

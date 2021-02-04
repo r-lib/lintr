@@ -1,3 +1,4 @@
+^CRAN-RELEASE$
 ^.*\.png$
 ^.*\.gif$
 ^\.travis\.yml$
@@ -7,8 +8,17 @@
 ^cran-comments\.md$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.idea$
 ^\.lintr$
+^\.lintr_new$
 ^wercker\.yml$
 ^[^/]+.Rmd$
 ^revdep$
 ^COPYING$
+^bad\.R$
+^\.github$
+^codecov\.yml$
+^\.covrignore$
+^script[.]R$
+^bench$
+^tests/testthat/dummy_packages/package/[.]Rbuildignore$

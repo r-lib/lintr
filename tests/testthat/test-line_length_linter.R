@@ -1,29 +1,42 @@
-context("line_length_linter")
-
 test_that("returns the correct linting", {
-  msg <- rex("Lines should not be more than 80 characters")
-  linter <- line_length_linter(80)
-  expect_is(linter, "linter")
 
-  expect_lint("blah", NULL, linter)
+  expect_lint("blah",
+    NULL,
+    line_length_linter(80))
 
   expect_lint("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     NULL,
-    linter)
+    line_length_linter(80))
 
   expect_lint("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "Lines should not be more than 80 characters",
-    linter)
+    line_length_linter(80))
 
   expect_lint(
     paste0("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n",
     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"),
-    list(msg, msg),
-    linter)
 
-  expect_lint("aaaaaaaaaaaaaaaaaaaa", NULL, line_length_linter(20))
+    list(
+      rex("Lines should not be more than 80 characters"),
+      rex("Lines should not be more than 80 characters")),
+
+    line_length_linter(80))
+
+  expect_lint("aaaaaaaaaaaaaaaaaaaa",
+    NULL,
+    line_length_linter(20))
 
   expect_lint("aaaaaaaaaaaaaaaaaaaab",
     rex("Lines should not be more than 20 characters"),
     line_length_linter(20))
+
+  # Don't duplicate lints
+  expect_length(
+    lint(
+      "x <- 2 # ------------\n",
+      linters = line_length_linter(20),
+      parse_settings = FALSE
+    ),
+    1L
+  )
 })
