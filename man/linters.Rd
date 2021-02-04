@@ -176,8 +176,6 @@ function name as a symbol undesirable or not.}
 
 \item{op}{Named character vector, where the names are the names of the undesirable operators,
 and the values are the text for the alternative operator to use (or \code{NA}).}
-
-\item{source_file}{returned by \code{\link{get_source_expressions}}}
 }
 \value{
 A closure of class 'linter'.

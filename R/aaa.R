@@ -17,7 +17,6 @@ NULL
 #' Within a \code{\link{lint}} function call, the linters in use are initialized with the provided
 #' arguments and fed with the source file (provided by \code{\link{get_source_expressions}}).
 #'
-#' @param source_file returned by \code{\link{get_source_expressions}}
 #' @param length the length cutoff to use for the given linter.
 #' @return  A closure of class 'linter'.
 NULL

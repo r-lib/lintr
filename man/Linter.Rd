@@ -7,10 +7,10 @@
 Linter(fun)
 }
 \arguments{
-\item{fun}{a function that takes a source file and returns \code{lint} objects.}
+\item{fun}{A function that takes a source file and returns \code{lint} objects.}
 }
 \value{
-the same function with its class set to 'linter'.
+The same function with its class set to 'linter'.
 }
 \description{
 Create a \code{linter} closure

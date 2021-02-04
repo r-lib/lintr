@@ -218,8 +218,8 @@ reset_lang <- function(old_lang) {
 }
 
 #' Create a \code{linter} closure
-#' @param fun  a function that takes a source file and returns \code{lint} objects.
-#' @return  the same function with its class set to 'linter'.
+#' @param fun A function that takes a source file and returns \code{lint} objects.
+#' @return The same function with its class set to 'linter'.
 #' @export
 Linter <- function(fun) { # nolint: object_name_linter.
   structure(fun, class = "linter")
