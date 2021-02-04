@@ -46,7 +46,7 @@ is_bracket_extract <- function(token_line_num, tokens) {
     while (inside_tokens[start_line, "text"] == "+") {
       start_line <- start_line + 1L
     }
-    inside_tokens <- inside_tokens[start_line:nrow(inside_tokens),]
+    inside_tokens <- inside_tokens[start_line:nrow(inside_tokens), ]
     nrow(inside_tokens) == 1L &&
       inside_tokens[1L, "token"] %in% c("STR_CONST", "NUM_CONST", "NULL_CONST")
   }

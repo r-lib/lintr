@@ -70,12 +70,14 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
         if (is.null(formals(obj))) {
           old <- "Passing linters as variables"
           new <- "a call to the linters (see ?linters)"
-          lintr_deprecated(old = old, new = new, version = "1.0.0.9001")
+          lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
+                           type = "")
           obj <- obj()
         } else {
           old <- "The use of linters of class 'function'"
           new <- "linters classed as 'linter' (see ?Linter)"
-          lintr_deprecated(old = old, new = new, version = "1.0.0.9001")
+          lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
+                           type = "")
         }
       } else {
         stop(sprintf("Expected '%s' to be of class 'linter', not '%s'",
@@ -398,15 +400,6 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
     ),
     class = "lint")
 }
-
-#' Create a \code{linter} closure
-#' @param fun  a function that takes a source file and returns \code{lint} objects.
-#' @return  the same function with its class set to 'linter'.
-#' @export
-Linter <- function(fun) {
-  structure(fun, class = "linter")
-}
-
 
 rstudio_source_markers <- function(lints) {
 

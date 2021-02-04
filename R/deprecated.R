@@ -4,7 +4,6 @@
 #' upcoming version of \pkg{lintr} and should thus not be used anymore.
 #'
 #' @name lintr-deprecated
-#' @inheritParams linters
 #' @param source_file source file object from \code{\link{get_source_expressions}}
 #' @include object_name_linters.R
 NULL
@@ -13,9 +12,13 @@ lintr_deprecated <- function(old, new = NULL, version = NULL,
                              type = "Function") {
   msg <- c(
     c(type, " ", old, " was deprecated"),
-    if (length(version)) {c(" in lintr version ", version)},
+    if (length(version)) {
+      c(" in lintr version ", version)
+    },
     ". ",
-    if (length(new)) {c("Use ", new, " instead.")}
+    if (length(new)) {
+      c("Use ", new, " instead.")
+    }
   )
   msg <- paste0(msg, collapse = "")
   warning(msg, call. = FALSE, domain = NA)

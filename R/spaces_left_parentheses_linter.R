@@ -7,7 +7,7 @@ spaces_left_parentheses_linter <- function() {
       ids_with_token(source_file, "'('"),
       function(id) {
 
-        parsed <- source_file$parsed_content[id,]
+        parsed <- source_file$parsed_content[id, ]
 
         terminal_tokens_before <- with(
           source_file$parsed_content,
@@ -44,7 +44,7 @@ spaces_left_parentheses_linter <- function() {
           }
           not_exception <- not_exception &&
             !(before_operator %in% c("-", "+") &&
-              nrow(source_file$parsed_content[is_sibling_expr,]) == 1L)
+              nrow(source_file$parsed_content[is_sibling_expr, ]) == 1L)
 
           if (non_space_before && not_exception) {
             Lint(

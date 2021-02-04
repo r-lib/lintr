@@ -63,7 +63,7 @@ get_num_concat_args <- function(token_num, tokens) {
 
 get_tokens_in_parentheses <- function(open_paren_line_num, tokens) {
   # Return the tokens enclosed by the opening parenthesis/bracket at the given line, or NA.
-  open_paren_token <- tokens[open_paren_line_num,]
+  open_paren_token <- tokens[open_paren_line_num, ]
   open_paren_text <- open_paren_token[["text"]]
   close_paren_token <- tail(get_sibling_tokens(open_paren_token, tokens), 1L)
   close_paren_text <- close_paren_token[["text"]]
@@ -74,7 +74,7 @@ get_tokens_in_parentheses <- function(open_paren_line_num, tokens) {
     } else {
       (open_paren_line_num + 1L):(close_paren_line_num - 1L)
     }
-    tokens[range,]
+    tokens[range, ]
   } else {
     NA
   }
@@ -89,12 +89,12 @@ are_matching_parentheses <- function(open_paren_text, close_paren_text) {
 
 get_sibling_tokens <- function(child, tokens) {
   # Get all siblings of the given child token (i.e. that have the same parent id)
-  tokens[tokens[, "parent"] == child[["parent"]],]
+  tokens[tokens[, "parent"] == child[["parent"]], ]
 }
 
 
 filter_out_token_type <- function(tokens, type) {
-  tokens[tokens[["token"]] != type,]
+  tokens[tokens[["token"]] != type, ]
 }
 
 

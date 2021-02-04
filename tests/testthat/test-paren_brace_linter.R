@@ -1,9 +1,10 @@
 test_that("returns the correct linting", {
+  linter <- paren_brace_linter()
   msg <- rex("There should be a space between right parenthesis and an opening curly brace.")
 
-  expect_lint("blah", NULL, paren_brace_linter)
-  expect_lint("blah <- function() {}", NULL, paren_brace_linter)
-  expect_lint("blah <- function() {\n}", NULL, paren_brace_linter)
+  expect_lint("blah", NULL, linter)
+  expect_lint("blah <- function() {}", NULL, linter)
+  expect_lint("blah <- function() {\n}", NULL, linter)
 
   expect_lint(
     "blah <- function(){}",
@@ -11,7 +12,7 @@ test_that("returns the correct linting", {
       message = msg,
       column_number = 19L
     ),
-    paren_brace_linter
+    linter
   )
 
   expect_lint(
@@ -20,19 +21,15 @@ test_that("returns the correct linting", {
       message = msg,
       column_number = 19L
     ),
-    paren_brace_linter
+    linter
   )
 
   # paren_brace_linter should ignore strings and comments, as in regexes:
-  expect_lint(
-    "grepl('(iss){2}', 'Mississippi')",
-    NULL,
-    paren_brace_linter
-  )
+  expect_lint("grepl('(iss){2}', 'Mississippi')", NULL, linter)
   expect_lint(
     "x <- 123 # dont flag (paren){brace} if inside a comment",
     NULL,
-    paren_brace_linter
+    linter
   )
   # paren-brace lint should not be thrown when the brace lies on subsequent line
   expect_lint(
@@ -42,6 +39,6 @@ test_that("returns the correct linting", {
       sep = "\n"
     ),
     NULL,
-    paren_brace_linter
+    linter
   )
 })

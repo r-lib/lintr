@@ -37,7 +37,7 @@ object_usage_linter <- function() {
     fun_info <- get_function_assignments(source_file$full_xml_parsed_content)
 
     lapply(seq_len(NROW(fun_info)), function(i) {
-      info <- fun_info[i,]
+      info <- fun_info[i, ]
 
       code <- get_content(lines = source_file$content[seq(info$line1, info$line2)], info)
       fun <- try_silently(eval(envir = env,
@@ -54,7 +54,7 @@ object_usage_linter <- function() {
 
       lapply(which(!is.na(res$message)),
              function(row_num) {
-               row <- res[row_num,]
+               row <- res[row_num, ]
 
                if (row$name %in% declared_globals) {
                  return()
@@ -158,7 +158,7 @@ parse_check_usage <- function(expression) {
 
   missing <- is.na(res$message)
   if (any(missing)) {
-    res[missing,] <- re_matches(vals[missing],
+    res[missing, ] <- re_matches(vals[missing],
                                 rex(function_name,
                                     capture(name = "message",
                                             "possible error in ", capture(name = "name", anything), ": ", anything

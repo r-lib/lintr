@@ -3,7 +3,7 @@
 
 # Helper function: run assignment_linter on a given file
 lint_assignments <- function(filename) {
-  lint(filename, linters = list(assignment_linter))
+  lint(filename, linters = list(assignment_linter()))
 }
 
 test_that("lint() results do not depend on the working directory", {
@@ -109,14 +109,14 @@ test_that("lint() results do not depend on the position of the .lintr", {
 })
 
 test_that("lint uses linter names", {
-  expect_lint("a = 2", list(linter = "bla"), linters = list(bla = assignment_linter), parse_settings = FALSE)
+  expect_lint("a = 2", list(linter = "bla"), linters = list(bla = assignment_linter()), parse_settings = FALSE)
 })
 
 test_that("exclusions work with custom linter names", {
   expect_lint(
     "a = 2 # nolint: bla.",
     NULL,
-    linters = list(bla = assignment_linter),
+    linters = list(bla = assignment_linter()),
     parse_settings = FALSE
   )
 })

@@ -17,7 +17,7 @@ single_quotes_linter <- function() {
     lapply(
       squote_matches,
       function(id) {
-        with(content[str_idx[id],], {
+        with(content[str_idx[id], ], {
           line <- source_file$file_lines[line1]
           col2 <- if (line1 == line2) col2 else nchar(line)
           Lint(
