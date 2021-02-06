@@ -1,4 +1,4 @@
-#' @describeIn linters  Check that '<-' is always used for assignment.
+#' @describeIn linters  Check that \code{<-} is always used for assignment.
 #' @export
 assignment_linter <- function() {
   Linter(function(source_file) {
