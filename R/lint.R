@@ -80,8 +80,8 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
                            type = "")
         }
       } else {
-        stop(sprintf("Expected '%s' to be of class 'linter', not '%s'",
-                     name, class(obj)[[1L]]))
+        stop(gettextf("Expected '%s' to be of class 'linter', not '%s'",
+                      name, class(obj)[[1L]]))
       }
       obj
     },
