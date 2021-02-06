@@ -1,7 +1,7 @@
 #' @describeIn linters  Check that closed curly braces are on their own line
-#' unless they follow an else.
-#' @param allow_single_line if \code{TRUE}, allow a open and closed curly pair
-#' on the same line.
+#'   unless they follow an else.
+#' @param allow_single_line if \code{TRUE}, allow an open and closed curly pair
+#'   on the same line.
 #' @export
 closed_curly_linter <- function(allow_single_line = FALSE) {
   Linter(function(source_file) {
