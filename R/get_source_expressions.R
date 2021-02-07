@@ -98,6 +98,7 @@ get_source_expressions <- function(filename) {
             line_location <- loc[1, ]
           }
         } else {
+          # nocov start
           return(
             Lint(
               filename = source_file$filename,
@@ -109,6 +110,7 @@ get_source_expressions <- function(filename) {
               linter = "error"
             )
           )
+          # nocov end
         }
       }
 
