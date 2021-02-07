@@ -78,7 +78,7 @@ test_that("Multi-byte characters correct columns", {
     "`\U2020` <- 1",
     {
       # fix_column_numbers corrects the start of <-
-      expect_equal(pc[[1L]]$col1[4L], pc[[1L]]$col2[2L] + 4L)
+      expect_equal(pc[[1L]]$col1[4L], pc[[1L]]$col1[2L] + 4L)
     }
   )
 })
