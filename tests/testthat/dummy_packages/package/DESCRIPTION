@@ -1,4 +1,4 @@
-Package: lintr
+Package: package
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
 Authors@R: 
@@ -10,5 +10,6 @@ Authors@R:
 Description: What the package does (one paragraph).
 License: What license it uses
 Encoding: UTF-8
+Imports: lintr
 LazyData: true
 Roxygen: list(markdown = TRUE)
