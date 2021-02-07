@@ -222,5 +222,8 @@ reset_lang <- function(old_lang) {
 #' @return The same function with its class set to 'linter'.
 #' @export
 Linter <- function(fun) { # nolint: object_name_linter.
+  if (!is.function(fun) || length(formals(args(fun))) != 1L) {
+    stop("`fun` must be a function of one argument.", call. = FALSE)
+  }
   structure(fun, class = "linter")
 }

@@ -66,7 +66,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   linters <- Map(
     function(obj, name) {
       if (inherits(obj, "linter")) {
-      } else if (inherits(obj, "function")) {
+      } else if (is.function(obj)) {
         if (is.null(formals(obj))) {
           old <- "Passing linters as variables"
           new <- "a call to the linters (see ?linters)"
@@ -78,6 +78,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
           new <- "linters classed as 'linter' (see ?Linter)"
           lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
                            type = "")
+          obj <- Linter(obj)
         }
       } else {
         stop(gettextf("Expected '%s' to be of class 'linter', not '%s'",
