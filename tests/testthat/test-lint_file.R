@@ -120,3 +120,35 @@ test_that("exclusions work with custom linter names", {
     parse_settings = FALSE
   )
 })
+
+test_that("compatibility warnings work", {
+  expect_warning(
+    expect_lint(
+      "a == NA",
+      "Use is.na",
+      linters = equals_na_linter
+    ),
+    fixed = "Passing linters as variables"
+  )
+
+  expect_warning(
+    expect_lint(
+      "a == NA",
+      "Use is.na",
+      linters = unclass(equals_na_linter())
+    ),
+    fixed = "The use of linters of class 'function'"
+  )
+
+  expect_error(
+    expect_warning(
+      lint("a <- 1\n", linters = function(two, arguments) NULL),
+      fixed = "The use of linters of class 'function'"
+    ),
+    fixed = "`fun` must be a function of one argument"
+  )
+
+  expect_error(
+    lint("a <- 1\n", linters = "equals_na_linter")
+  )
+})
