@@ -43,7 +43,7 @@
   (#660, @AshesITR)
 * Fixed `spaces_left_parentheses_linter` sporadically causing warnings (#654, #674, @AshesITR)
 * Fixed `line_length_linter` causing duplicate lints for lines containing multiple expressions (#681, #682, @AshesITR)
-* `line_length_linter` now places the source marker at the end of the affected line to improve user experience during 
+* `line_length_linter` now places the source marker at the margin of the affected line to improve user experience during 
   de-linting -- just press <kbd>Return</kbd> (#735, @AshesITR)
 * `unneeded_concatenation_linter` now correctly considers arguments piped in via magrittr `%>%` (#573, #585, @michaelquinn32)
 * Set the default `complexity_limit` in `cyclocomp_linter` to 15. This is the same complexity limit that is enforced via
