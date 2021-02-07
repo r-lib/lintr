@@ -77,8 +77,8 @@ test_that("Multi-byte characters correct columns", {
   with_content_to_parse(
     "`\U2020` <- 1",
     {
-      # fix_column_numbers puts the start of "<-" two past the end of the multi-byte character
-      expect_equal(pc[[1L]]$col1[4L], pc[[1L]]$col2[2L] + 2L)
+      # fix_column_numbers corrects the start of <-
+      expect_equal(pc[[1L]]$col1[4L], pc[[1L]]$col2[2L])
     }
   )
 })
