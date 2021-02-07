@@ -90,6 +90,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
               }
             }
           } else {
+            # nocov start: need getNamespace to fail. Could be done with {mockery} in principle
             line1 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "line1"))
             col1 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "col1"))
             col2 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "col2"))
@@ -103,6 +104,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
               ranges = list(c(col1, col2)),
               linter = "namespace_linter"
             ))
+            # nocov end
           }
         }
       } else {
