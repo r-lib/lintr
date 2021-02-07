@@ -217,14 +217,14 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = list("r
     files,
     function(file) {
       if (interactive()) {
-        message(".", appendLF = FALSE)
+        message(".", appendLF = FALSE) # nocov
       }
       lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
     }
   ))
 
   if (interactive()) {
-    message() # for a newline
+    message() # nocov. for a newline
   }
 
   lints <- reorder_lints(lints)
