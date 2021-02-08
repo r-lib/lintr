@@ -1,12 +1,3 @@
-# lintr 1.0.0.9001 #
-* Consistent access to linters through a function call, even for linters without
-  parameters (@fangly)
-* Fix line number sometimes wrongly reported by no_tab_linter() (#134, @fangly)
-* Fix line and column number sometimes wrongly reported by spaces_inside_linter()
-  (#203, @fangly)
-* Add `pipe_continuation_linter()` (#216).
-* Deprecated camel_case_linter(), snake_case_linter() and multiple_dots_linter()
-  in favor of object_name_linter() which enforce the given style: snake_case,
 # lintr (development version)
 
 * Added a secondary, more restrictive lint workflow - `lint-changed-files` - for newly written / modified code 
@@ -57,6 +48,7 @@
   `default_linters` (#693, #695, @AshesITR).
 * `lint_package()` now lints files in the `demo` directory by default (#703, @dmurdoch).
 * `commented_code_linter()` uses the parse tree to find comments, eliminating some false positives (#451, @AshesITR)
+* Consistent access to linters through a function call, even for linters without parameters (#245, @fangly, @AshesITR, and @MichaelChirico)
 
 # lintr 2.0.1
 
