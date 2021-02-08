@@ -7,7 +7,7 @@
 #'   \code{namespace:::symbol} calls.
 #' @export
 namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
-  function(source_file) {
+  Linter(function(source_file) {
     if (is.null(source_file$full_xml_parsed_content)) return(list())
 
     xml <- source_file$full_xml_parsed_content
@@ -125,5 +125,5 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     })
 
     results[!vapply(results, is.null, logical(1L))]
-  }
+  })
 }

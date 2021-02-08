@@ -24,7 +24,7 @@
 #' # remove assignment checks (with NULL), add absolute path checks
 #' my_linters <- with_defaults(default = my_linters,
 #'                             assignment_linter = NULL,
-#'                             absolute_path_linter)
+#'                             absolute_path_linter())
 #'
 #' # custom list of undesirable functions:
 #' #    remove sapply (using NULL)
@@ -81,30 +81,30 @@ with_defaults <- function(..., default = default_linters) {
 #' @export
 default_linters <- with_defaults(
   default = list(),
-  assignment_linter,
+  assignment_linter(),
   closed_curly_linter(),
-  commas_linter,
-  commented_code_linter,
+  commas_linter(),
+  commented_code_linter(),
   cyclocomp_linter(),
-  equals_na_linter,
-  function_left_parentheses_linter,
-  infix_spaces_linter,
+  equals_na_linter(),
+  function_left_parentheses_linter(),
+  infix_spaces_linter(),
   line_length_linter(),
-  no_tab_linter,
+  no_tab_linter(),
   object_length_linter(),
   object_name_linter(),
-  object_usage_linter,
+  object_usage_linter(),
   open_curly_linter(),
-  paren_brace_linter,
-  pipe_continuation_linter,
+  paren_brace_linter(),
+  pipe_continuation_linter(),
   semicolon_terminator_linter(),
-  seq_linter,
-  single_quotes_linter,
-  spaces_inside_linter,
-  spaces_left_parentheses_linter,
-  T_and_F_symbol_linter,
-  trailing_blank_lines_linter,
-  trailing_whitespace_linter
+  seq_linter(),
+  single_quotes_linter(),
+  spaces_inside_linter(),
+  spaces_left_parentheses_linter(),
+  T_and_F_symbol_linter(),
+  trailing_blank_lines_linter(),
+  trailing_whitespace_linter()
 )
 
 #' Default undesirable functions and operators

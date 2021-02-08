@@ -15,9 +15,7 @@ test_that("it returns the input trimmed to the last full lint if one exists with
     t1 <- gsub("\r\n", "\n", t1, fixed = TRUE)
   }
   expect_equal(trim_output(t1, max = 200), substr(t1, 1, 195))
-
   expect_equal(trim_output(t1, max = 400), substr(t1, 1, 380))
-
   expect_equal(trim_output(t1, max = 2000), substr(t1, 1, 1930))
 })
 
@@ -71,7 +69,7 @@ test_that("as.data.frame.lints", {
 test_that("summary.lints() works (no lints)", {
   no_lints <- lint(
     "x <- 1\n",
-    linters = assignment_linter)
+    linters = assignment_linter())
   no_lint_summary <- summary(no_lints)
   expect_true(is.data.frame(no_lint_summary))
   expect_equal(nrow(no_lint_summary), 0)
@@ -80,7 +78,7 @@ test_that("summary.lints() works (no lints)", {
 test_that("summary.lints() works (lints found)", {
   has_lints <- lint(
     "x = 1\n",
-    linters = assignment_linter)
+    linters = assignment_linter())
   has_lint_summary <- summary(has_lints)
   expect_true(is.data.frame(has_lint_summary))
   expect_equal(nrow(has_lint_summary), 1)
@@ -128,6 +126,6 @@ test_that("split.lint works as intended", {
   writeLines("1:nrow(x)\n1:ncol(x)", tmp <- tempfile())
   on.exit(unlink(tmp))
 
-  l <- lint(tmp, seq_linter)
+  l <- lint(tmp, seq_linter())
   expect_true(all(vapply(split(l), inherits, logical(1L), "lints")))
 })

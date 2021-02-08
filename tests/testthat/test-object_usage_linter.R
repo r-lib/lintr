@@ -1,7 +1,7 @@
 test_that("returns the correct linting", {
-  expect_lint("blah",
-              NULL,
-              object_usage_linter)
+  linter <- object_usage_linter()
+
+  expect_lint("blah", NULL, linter)
 
   expect_lint(
     trim_some("
@@ -11,7 +11,7 @@ test_that("returns the correct linting", {
       }
     "),
     NULL,
-    object_usage_linter
+    linter
   )
 
   expect_lint(
@@ -24,7 +24,7 @@ test_that("returns the correct linting", {
       }
     "),
     NULL,
-    object_usage_linter
+    linter
   )
 
   expect_lint(
@@ -34,17 +34,19 @@ test_that("returns the correct linting", {
       }
     "),
     rex("local variable", anything, "assigned but may not be used"),
-    object_usage_linter
+    linter
   )
 
-  expect_lint(trim_some("
+  expect_lint(
+    trim_some("
       fun <- function() {
         a <- 1
         1
       }
     "),
-              rex("local variable", anything, "assigned but may not be used"),
-              object_usage_linter)
+    rex("local variable", anything, "assigned but may not be used"),
+    linter
+  )
 
   expect_lint(
     trim_some("
@@ -53,7 +55,7 @@ test_that("returns the correct linting", {
       }
     "),
     rex("local variable", anything, "assigned but may not be used"),
-    object_usage_linter
+    linter
   )
 
   expect_lint(
@@ -67,7 +69,7 @@ test_that("returns the correct linting", {
       rex("local variable", anything, "assigned but may not be used"),
       rex("no visible binding for global variable ", anything)
     ),
-    object_usage_linter
+    linter
   )
 
   expect_lint(
@@ -77,7 +79,7 @@ test_that("returns the correct linting", {
       }
     "),
     rex("no visible global function definition for ", anything),
-    object_usage_linter
+    linter
   )
 
   expect_lint(
@@ -87,7 +89,7 @@ test_that("returns the correct linting", {
       }
     "),
     rex("no visible global function definition for ", anything),
-    object_usage_linter
+    linter
   )
 })
 
@@ -99,7 +101,7 @@ test_that("replace_functions_stripped", {
       }
     "),
     rex("no visible global function definition for ", anything),
-    object_usage_linter
+    object_usage_linter()
   )
 
   expect_lint(
@@ -109,7 +111,7 @@ test_that("replace_functions_stripped", {
       }
     "),
     rex("no visible global function definition for ", anything),
-    object_usage_linter
+    object_usage_linter()
   )
 })
 
@@ -122,7 +124,7 @@ test_that("eval errors are ignored", {
       })
     "),
     NULL,
-    object_usage_linter
+    object_usage_linter()
   )
 })
 
@@ -130,7 +132,7 @@ test_that("calls with top level function definitions are ignored", {
   expect_lint(
     'tryCatch("foo", error = function(e) e)',
     NULL,
-    object_usage_linter
+    object_usage_linter()
   )
 })
 
@@ -145,6 +147,6 @@ test_that("object-usage line-numbers are relative to start-of-file", {
       }
     "),
     list(line_number = 5L),
-    object_usage_linter
+    object_usage_linter()
   )
 })

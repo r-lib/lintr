@@ -9,7 +9,7 @@
 undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   stopifnot(is.logical(symbol_is_undesirable))
-  function(source_file) {
+  Linter(function(source_file) {
     if (symbol_is_undesirable) {
       vals <- c("SYMBOL_FUNCTION_CALL", "SYMBOL")
     } else {
@@ -42,5 +42,5 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
         }
       }
     )
-  }
+  })
 }

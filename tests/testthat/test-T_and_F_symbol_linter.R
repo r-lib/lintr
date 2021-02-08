@@ -1,5 +1,5 @@
 test_that("returns the correct linting", {
-  linter <- T_and_F_symbol_linter
+  linter <- T_and_F_symbol_linter()
   msg_true <- "Use TRUE instead of the symbol T."
   msg_false <- "Use FALSE instead of the symbol F."
   expect_lint("FALSE", NULL, linter)

@@ -63,6 +63,33 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     names(linters) <- auto_names(linters)
   }
 
+  linters <- Map(
+    function(obj, name) {
+      if (inherits(obj, "linter")) {
+      } else if (is.function(obj)) {
+        if (is.null(formals(obj))) {
+          old <- "Passing linters as variables"
+          new <- "a call to the linters (see ?linters)"
+          lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
+                           type = "")
+          obj <- obj()
+        } else {
+          old <- "The use of linters of class 'function'"
+          new <- "linters classed as 'linter' (see ?Linter)"
+          lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
+                           type = "")
+          obj <- Linter(obj)
+        }
+      } else {
+        stop(gettextf("Expected '%s' to be of class 'linter', not '%s'",
+                      name, class(obj)[[1L]]))
+      }
+      obj
+    },
+    linters,
+    names(linters)
+  )
+
   lints <- list()
   itr <- 0
 
@@ -344,7 +371,7 @@ pkg_name <- function(path = find_package()) {
   }
 }
 
-#' Create a \code{Lint} object
+#' Create a \code{lint} object
 #' @param filename path to the source file that was linted.
 #' @param line_number line number where the lint occurred.
 #' @param column_number column number where the lint occurred.
@@ -353,6 +380,7 @@ pkg_name <- function(path = find_package()) {
 #' @param line code source where the lint occurred
 #' @param ranges a list of ranges on the line that should be emphasized.
 #' @param linter name of linter that created the Lint object.
+#' @return an object of class 'lint'.
 #' @export
 Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name_linter.
                  type = c("style", "warning", "error"),
