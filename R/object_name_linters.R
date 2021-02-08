@@ -54,7 +54,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
 
     generics <- strip_names(c(
       declared_s3_generics(xml),
-      namespace_imports()$fun,
+      namespace_imports(find_package(source_file$filename))$fun,
       names(.knownS3Generics),
       .S3PrimitiveGenerics, ls(baseenv())))
 
