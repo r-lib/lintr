@@ -70,9 +70,6 @@ commented_code_linter <- function(source_file) {
 
 # is given text parsable
 parsable <- function(x) {
-  if (is.null(x)) {
-    return(FALSE)
-  }
   res <- try_silently(parse(text = x))
   !inherits(res, "try-error")
 }
