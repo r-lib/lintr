@@ -23,6 +23,20 @@ trailing_blank_lines_linter <- function() {
       }
       line_number <- line_number - 1L
     }
+    if (identical(source_file$terminal_newline, FALSE)) { # could use isFALSE, but needs backports
+      last_line <- tail(source_file$file_lines, 1L)
+
+      lints[[length(lints) + 1L]] <-
+        Lint(
+          filename = source_file$filename,
+          line_number = length(source_file$file_lines),
+          column_number = nchar(last_line) + 1L,
+          type = "style",
+          message = "Missing terminal newline.",
+          line = last_line,
+          linter = "trailing_blank_lines_linter"
+        )
+    }
     lints
   })
 }
