@@ -2,7 +2,7 @@
 #' @param r_version Minimum R version to test for compatibility
 #' @export
 backport_linter <- function(r_version = getRversion()) {
-  function(source_file) {
+  Linter(function(source_file) {
     if (inherits(r_version, "numeric_version")) r_version <- format(r_version)
     if (r_version < "3.0.0") {
       warning("It is not recommended to depend on an R version older than 3.0.0. Resetting 'r_version' to 3.0.0.")
@@ -46,7 +46,7 @@ backport_linter <- function(r_version = getRversion()) {
         linter = "backport_linter"
       )
     })
-  }
+  })
 }
 
 backports <- list(

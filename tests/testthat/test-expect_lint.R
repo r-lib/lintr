@@ -2,7 +2,7 @@
 # thus less than ideal to test expect_lint(), which can process multiple lints. If you want to test
 # for failure, always put the lint check or lint field that must fail first.
 
-linter <- assignment_linter
+linter <- assignment_linter()
 msg <- "Use <-, not ="
 
 test_that("no checks", {
@@ -26,11 +26,11 @@ test_that("single check", {
   expect_error(expect_lint("a=1", c(message = msg, lineXXX = 1L), linter), "invalid field")
 
   expect_failure(expect_lint("a=1", list(ranges = list(c(2L, 2L))), linter))
-  expect_success(expect_lint("\t1", list(ranges = list(c(1L, 1L))), no_tab_linter))
+  expect_success(expect_lint("\t1", list(ranges = list(c(1L, 1L))), no_tab_linter()))
   expect_success(expect_lint("a=1", list(message = msg, line_number = 1L), linter))
   expect_failure(expect_lint("a=1", list(2L, msg), linter))
 
-  expect_error(expect_lint("1:nrow(x)", "(group)", seq_linter), "Invalid regex result", fixed = TRUE)
+  expect_error(expect_lint("1:nrow(x)", "(group)", seq_linter()), "Invalid regex result", fixed = TRUE)
 })
 
 test_that("multiple checks", {
@@ -48,7 +48,7 @@ test_that("multiple checks", {
   expect_success(expect_lint("a=1; b=2", list(list(line_number = 1L), list(line_number = 2L)), linter))
   expect_failure(expect_lint("a=1; b=2", list(list(line_number = 2L), list(line_number = 2L)), linter))
   expect_success(
-    expect_lint("\t1\n\t2", list("tabs", list(column_number = 1L, ranges = list(c(1L, 1L)))), no_tab_linter)
+    expect_lint("\t1\n\t2", list("tabs", list(column_number = 1L, ranges = list(c(1L, 1L)))), no_tab_linter())
   )
 
 })

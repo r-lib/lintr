@@ -5,7 +5,7 @@
 #' }
 #' @export
 semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
-  function(source_file) {
+  Linter(function(source_file) {
     tokens <- with_id(source_file, ids_with_token(source_file, "';'"))
     is_trailing <- is_trailing_sc(tokens, source_file)
 
@@ -36,7 +36,7 @@ semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
       split(tokens, seq_len(nrow(tokens))),
       are_trailing
     )
-  }
+  })
 }
 
 
