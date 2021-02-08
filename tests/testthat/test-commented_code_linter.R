@@ -1,6 +1,7 @@
 test_that("returns the correct linting", {
-  linter <- commented_code_linter
   msg <- rex("Commented code should be removed.")
+  linter <- commented_code_linter()
+  expect_is(linter, "linter")
 
   expect_lint("blah", NULL, linter)
 

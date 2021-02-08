@@ -51,6 +51,8 @@
 * `lint_package()` now lints files in the `demo` directory by default (#703, @dmurdoch).
 * `commented_code_linter()` uses the parse tree to find comments, eliminating some false positives (#451, @AshesITR)
 * `trailing_blank_lines_linter()` now also lints files without a terminal newline (#675, @AshesITR)
+* `object_name_linter()` now correctly detects imported functions when linting packages (#642, @AshesITR)
+* Consistent access to linters through a function call, even for linters without parameters (#245, @fangly, @AshesITR, and @MichaelChirico)
 
 # lintr 2.0.1
 

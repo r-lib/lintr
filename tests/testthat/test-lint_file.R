@@ -3,7 +3,7 @@
 
 # Helper function: run assignment_linter on a given file
 lint_assignments <- function(filename) {
-  lint(filename, linters = list(assignment_linter))
+  lint(filename, linters = list(assignment_linter()))
 }
 
 test_that("lint() results do not depend on the working directory", {
@@ -109,14 +109,47 @@ test_that("lint() results do not depend on the position of the .lintr", {
 })
 
 test_that("lint uses linter names", {
-  expect_lint("a = 2", list(linter = "bla"), linters = list(bla = assignment_linter), parse_settings = FALSE)
+  expect_lint("a = 2", list(linter = "bla"), linters = list(bla = assignment_linter()), parse_settings = FALSE)
 })
 
 test_that("exclusions work with custom linter names", {
   expect_lint(
     "a = 2 # nolint: bla.",
     NULL,
-    linters = list(bla = assignment_linter),
+    linters = list(bla = assignment_linter()),
     parse_settings = FALSE
+  )
+})
+
+test_that("compatibility warnings work", {
+  expect_warning(
+    expect_lint(
+      "a == NA",
+      "Use is.na",
+      linters = equals_na_linter
+    ),
+    fixed = "Passing linters as variables"
+  )
+
+  expect_warning(
+    expect_lint(
+      "a == NA",
+      "Use is.na",
+      linters = unclass(equals_na_linter())
+    ),
+    fixed = "The use of linters of class 'function'"
+  )
+
+  expect_error(
+    expect_warning(
+      lint("a <- 1\n", linters = function(two, arguments) NULL),
+      fixed = "The use of linters of class 'function'"
+    ),
+    fixed = "`fun` must be a function of one argument"
+  )
+
+  expect_error(
+    lint("a <- 1\n", linters = "equals_na_linter"),
+    regexp = rex("Expected '", anything, "' to be of class 'linter'")
   )
 })

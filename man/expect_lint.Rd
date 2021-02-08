@@ -51,5 +51,6 @@ expect_lint("a\n\n", list("superfluous", "superfluous"), trailing_blank_lines_li
 expect_lint(
   "a\n\n",
   list(list(message="superfluous", line_number=2), list(message="superfluous", line_number=3)),
-  trailing_blank_lines_linter)
+  trailing_blank_lines_linter()
+)
 }

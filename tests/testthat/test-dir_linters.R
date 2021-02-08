@@ -25,6 +25,20 @@ test_that("lint all relevant directories in a package", {
 
   expect_s3_class(lints, "lints")
   expect_setequal(linted_files, files)
+
+  # Code coverage is not detected for default_linters.
+  # We want to ensure that object_name_linter uses namespace_imports correctly.
+  # assignment_linter is needed to cause a lint in all vignettes.
+  linters <- list(assignment_linter, object_name_linter())
+  read_settings(NULL)
+  lints <- lint_package(the_pkg, linters = linters, parse_settings = FALSE)
+  linted_files <- unique(names(lints))
+
+  # lintr paths contain backslash on windows, list.files uses forward slash.
+  linted_files <- gsub("\\", "/", linted_files, fixed = TRUE)
+
+  expect_s3_class(lints, "lints")
+  expect_setequal(linted_files, files)
 })
 
 test_that("respects directory exclusions", {

@@ -102,7 +102,7 @@ test_that("rstudio_source_markers apply to print within rstudio", {
       old <- options(lintr.rstudio_source_markers = TRUE)
       on.exit(options(old), add = TRUE)
 
-      l <- lint(tmp, seq_linter)
+      l <- lint(tmp, seq_linter())
 
       expect_output(print(l), "matched", fixed = TRUE)
 
@@ -125,7 +125,7 @@ test_that("rstudio_source_markers apply to print within rstudio", {
       old <- options(lintr.rstudio_source_markers = TRUE)
       on.exit(options(old), add = TRUE)
 
-      l <- lint(tmp, seq_linter)
+      l <- lint(tmp, seq_linter())
 
       expect_output(print(l), "matched", fixed = TRUE)
 

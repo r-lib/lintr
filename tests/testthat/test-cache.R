@@ -354,30 +354,33 @@ test_that("find_new_line returns the correct line if it is after the current lin
 test_that("lint with cache uses the provided relative cache directory", {
   path <- "./my_cache_dir"
   expect_false(dir.exists(path))
+  linter <- assignment_linter()
 
   # create the cache
-  expect_lint("a <- 1", NULL, assignment_linter, cache = path)
+  expect_lint("a <- 1", NULL, linter, cache = path)
   expect_true(dir.exists(path))
   expect_length(list.files(file.path(path)), 1)
 
   # read the cache
-  expect_lint("a <- 1", NULL, assignment_linter, cache = path)
+  expect_lint("a <- 1", NULL, linter, cache = path)
   expect_true(dir.exists(path))
 
   unlink(path, recursive = TRUE)
 })
 
 test_that("it works outside of a package", {
+  linter <- assignment_linter()
+
   with_mock(
     `lintr::find_package` = function(...) NULL,
     `lintr::pkg_name` = function(...) NULL,
 
     path <- tempfile(pattern = "my_cache_dir_"),
     expect_false(dir.exists(path)),
-    expect_lint("a <- 1", NULL, assignment_linter, cache = path),
+    expect_lint("a <- 1", NULL, linter, cache = path),
     expect_true(dir.exists(path)),
     expect_length(list.files(path), 1),
-    expect_lint("a <- 1", NULL, assignment_linter, cache = path),
+    expect_lint("a <- 1", NULL, linter, cache = path),
     expect_true(dir.exists(path))
   )
 })

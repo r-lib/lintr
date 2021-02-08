@@ -2,7 +2,7 @@
 % Please edit documentation in R/lint.R
 \name{Lint}
 \alias{Lint}
-\title{Create a \code{Lint} object}
+\title{Create a \code{lint} object}
 \usage{
 Lint(
   filename,
@@ -32,6 +32,9 @@ Lint(
 
 \item{linter}{name of linter that created the Lint object.}
 }
+\value{
+an object of class 'lint'.
+}
 \description{
-Create a \code{Lint} object
+Create a \code{lint} object
 }

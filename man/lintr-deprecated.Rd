@@ -4,6 +4,7 @@
 \alias{lintr-deprecated}
 \alias{absolute_paths_linter}
 \alias{trailing_semicolons_linter}
+\alias{camel_case_linter}
 \alias{snake_case_linter}
 \alias{multiple_dots_linter}
 \title{Deprecated functions}
@@ -12,12 +13,14 @@ absolute_paths_linter(source_file)
 
 trailing_semicolons_linter(source_file)
 
+camel_case_linter(source_file)
+
 snake_case_linter(source_file)
 
 multiple_dots_linter(source_file)
 }
 \arguments{
-\item{source_file}{returned by \code{\link{get_source_expressions}}}
+\item{source_file}{source file object from \code{\link{get_source_expressions}}}
 }
 \description{
 Functions that have been deprecated and replaced by newer ones. They will be removed in an
@@ -27,9 +30,11 @@ upcoming version of \pkg{lintr} and should thus not be used anymore.
 \itemize{
 \item \code{absolute_paths_linter}: checks that no absolute paths are used.
 
-\item \code{trailing_semicolons_linter}: check there are no trailing semicolons.
+\item \code{trailing_semicolons_linter}: Check there are no trailing semicolons.
 
-\item \code{snake_case_linter}: check that objects are not in snake_case.
+\item \code{camel_case_linter}: Check that objects are not in camelCase.
+
+\item \code{snake_case_linter}: Check that objects are not in snake_case.
 
 \item \code{multiple_dots_linter}: check that objects do not have.multiple.dots.
 }}
