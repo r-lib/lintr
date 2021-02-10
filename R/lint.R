@@ -74,20 +74,19 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   for (expr in source_expressions$expressions) {
     for (linter in names(linters)) {
-      if (isTRUE(cache) && has_lint(lint_cache, expr, linter)) {
-        lints[[itr <- itr + 1L]] <- retrieve_lint(lint_cache, expr, linter, source_expressions$lines)
+      lint_details <- list(expr = expr, linter = linter)
+      should_retrieve <- isTRUE(cache) && has_lint(lint_cache, expr, linter)
+      if (should_retrieve) {
+        lint_details$expr_lints <- retrieve_lint(lint_cache, expr, linter, source_expressions$lines)
       }
       else {
-        expr_lints <- set_linter_name(
+        lint_details$expr_lints <- set_linter_name(
           flatten_lints(linters[[linter]](expr)),
           linter = linter
         )
-        lint_details <- list(
-          expr = expr, linter = linter, expr_lints = expr_lints
-        )
-        lints[[itr <- itr + 1L]] <- expr_lints
         cacheable <- append(cacheable, list(lint_details))
       }
+      lints[[itr <- itr + 1L]] <- lint_details[["expr_lints"]]
     }
   }
 
