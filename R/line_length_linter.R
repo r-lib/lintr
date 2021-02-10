@@ -16,7 +16,7 @@ line_length_linter <- function(length = 80L) {
       Lint(
         filename = source_file$filename,
         line_number = long_line,
-        column_number = 1L,
+        column_number = length + 1L,
         type = "style",
         message = lint_message,
         line = source_file$file_lines[long_line],
