@@ -56,11 +56,6 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   linters <- Map(validate_linter_object, linters, names(linters))
   cache_path <- define_cache_path(cache)
 
-  lints <- list()
-  itr <- 0
-
-  cacheable <- list()
-
   if (length(cache_path)) {
     lint_cache <- load_cache(filename, cache_path)
     lints <- retrieve_file(lint_cache, filename, linters)
@@ -72,46 +67,22 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     cache <- FALSE
   }
 
-  for (expr in source_expressions$expressions) {
-    for (linter in names(linters)) {
-      lint_details <- list(expr = expr, linter = linter)
-      should_retrieve <- isTRUE(cache) && has_lint(lint_cache, expr, linter)
-      if (should_retrieve) {
-        lint_details$expr_lints <- retrieve_lint(lint_cache, expr, linter, source_expressions$lines)
-      }
-      else {
-        lint_details$expr_lints <- set_linter_name(
-          flatten_lints(linters[[linter]](expr)),
-          linter = linter
-        )
-        cacheable <- append(cacheable, list(lint_details))
-      }
-      lints[[itr <- itr + 1L]] <- lint_details[["expr_lints"]]
-    }
-  }
 
-  if (inherits(source_expressions$error, "lint")) {
-    lint_details <- list(
-      expr = list(filename = filename, content = ""),
-      linter = "error",
-      expr_lints = source_expressions$error
-    )
-    lints[[itr <- itr + 1L]] <- source_expressions$error
-
-    cacheable <- append(cacheable, list(lint_details))
-  }
-
+  lints <- get_lint_details_collection(
+    source_expressions,
+    linters,
+    cache,
+    lint_cache,
+    filename
+  )
+  cacheable <- Filter(function(x) x[["should_cache"]], lints)
+  lints <- Map(function(x) x[["expr_lints"]], lints)
   lints <- structure(reorder_lints(flatten_lints(lints)), class = "lints")
 
   if (isTRUE(cache)) {
-    for (lint_details in cacheable) {
-      cache_lint(
-        lint_cache, lint_details[["expr"]], lint_details[["linter"]],
-        lint_details[["expr_lints"]]
-      )
-    }
-    cache_file(lint_cache, filename, linters, lints)
-    save_cache(lint_cache, filename, cache_path)
+    cache_all_lints(
+      cacheable, lint_cache, filename, linters, lints, cache_path
+    )
   }
 
   res <- exclude(lints, ...)
@@ -123,6 +94,61 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     }
   }
   res
+}
+
+get_lint_details_collection <- function(source_expressions,
+                                        linters,
+                                        cache,
+                                        lint_cache,
+                                        filename) {
+  lints <- list()
+  itr <- 0
+
+  for (expr in source_expressions$expressions) {
+    for (linter in names(linters)) {
+      should_retrieve <- isTRUE(cache) && has_lint(lint_cache, expr, linter)
+      lint_details <- list(
+        expr = expr,
+        linter = linter,
+        should_cache = isTRUE(cache) && !should_retrieve
+      )
+      lint_details$expr_lints <- if (should_retrieve) {
+        retrieve_lint(lint_cache, expr, linter, source_expressions$lines)
+      }
+      else {
+        set_linter_name(flatten_lints(linters[[linter]](expr)), linter = linter)
+      }
+      lints[[itr <- itr + 1L]] <- lint_details
+    }
+  }
+
+  if (inherits(source_expressions$error, "lint")) {
+    lint_details <- list(
+      expr = list(filename = filename, content = ""),
+      linter = "error",
+      should_cache <- isTRUE(cache),
+      expr_lints = source_expressions$error
+    )
+    lints[[itr <- itr + 1L]] <- lint_details
+  }
+
+  lints
+}
+
+cache_all_lints <- function(cacheable_lints,
+                            lint_cache,
+                            filename,
+                            linters,
+                            lints,
+                            cache_path) {
+  for (lint_details in cacheable_lints) {
+    cache_lint(
+      lint_cache, lint_details[["expr"]], lint_details[["linter"]],
+      lint_details[["expr_lints"]]
+    )
+  }
+  cache_file(lint_cache, filename, linters, lints)
+  save_cache(lint_cache, filename, cache_path)
 }
 
 set_linter_name <- function(expr_lints, linter) {
