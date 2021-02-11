@@ -94,8 +94,8 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   if (isTRUE(cache_object$should_cache)) {
     cache_file(cache_object$lint_cache, filename, linters, lints)
-    save_cache(cache_object$lint_cache, filename, cache_object$cache_path)
   }
+  save_cache(cache_object)
 
   res <- exclude(lints, ...)
 
