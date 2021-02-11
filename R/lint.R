@@ -80,19 +80,14 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
         }
 
         lints[[itr <- itr + 1L]] <- expr_lints
-        if (isTRUE(cache_object$should_cache)) {
-          cache_lint(cache_object$lint_cache, expr, linter, expr_lints)
-        }
+        cache_lint(cache_object, expr, linter, expr_lints)
       }
     }
   }
 
   if (inherits(source_expressions$error, "lint")) {
     lints[[itr <- itr + 1L]] <- source_expressions$error
-
-    if (isTRUE(cache_object$should_cache)) {
-      cache_lint(cache_object$lint_cache, list(filename = filename, content = ""), "error", source_expressions$error)
-    }
+    cache_lint(cache_object, list(filename = filename, content = ""), "error", source_expressions$error)
   }
 
   lints <- structure(reorder_lints(flatten_lints(lints)), class = "lints")
