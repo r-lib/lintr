@@ -95,12 +95,22 @@ retrieve_file <- function(cache, filename, linters) {
   )[[1L]]
 }
 
-cache_lint <- function(cache, expr, linter, lints) {
+cache_lint <- function(cache, ...) {
+  UseMethod("cache_lint", cache)
+}
+
+cache_lint.default <- function(cache, expr, linter, lints) {
   assign(
     envir = cache,
     x = digest_content(linter, expr),
     value = lints,
     inherits = FALSE)
+}
+
+cache_lint.Cache <- function(cache, expr, linter, lints) {
+  if (isTRUE(cache$should_cache)) {
+    cache_lint(cache$lint_cache, expr, linter, lints)
+  }
 }
 
 retrieve_lint <- function(cache, expr, linter, lines) {
