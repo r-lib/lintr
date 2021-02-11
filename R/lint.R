@@ -60,21 +60,14 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   cache_object <- Cache(cache = cache, filename = filename, linters = linters)
 
-  if (length(cache_object$cache_path)) {
-    lint_cache <- load_cache(cache_object$filename, cache_object$cache_path)
-    cached_lints <- retrieve_file(lint_cache, cache_object$filename, cache_object$linters)
-    if (!is.null(cached_lints)) {
-      return(exclude(cached_lints, ...))
-    }
-    should_cache <- TRUE
-  } else {
-    should_cache <- FALSE
+  if (!is.null(cache_object$cached_lints)) {
+    return(exclude(cache_object$cached_lints, ...))
   }
 
   for (expr in source_expressions$expressions) {
     for (linter in names(linters)) {
-      if (isTRUE(should_cache) && has_lint(lint_cache, expr, linter)) {
-        lints[[itr <- itr + 1L]] <- retrieve_lint(lint_cache, expr, linter, source_expressions$lines)
+      if (isTRUE(cache_object$should_cache) && has_lint(cache_object$lint_cache, expr, linter)) {
+        lints[[itr <- itr + 1L]] <- retrieve_lint(cache_object$lint_cache, expr, linter, source_expressions$lines)
       }
       else {
         expr_lints <- flatten_lints(linters[[linter]](expr))
@@ -87,8 +80,8 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
         }
 
         lints[[itr <- itr + 1L]] <- expr_lints
-        if (isTRUE(should_cache)) {
-          cache_lint(lint_cache, expr, linter, expr_lints)
+        if (isTRUE(cache_object$should_cache)) {
+          cache_lint(cache_object$lint_cache, expr, linter, expr_lints)
         }
       }
     }
@@ -97,16 +90,16 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   if (inherits(source_expressions$error, "lint")) {
     lints[[itr <- itr + 1L]] <- source_expressions$error
 
-    if (isTRUE(should_cache)) {
-      cache_lint(lint_cache, list(filename = filename, content = ""), "error", source_expressions$error)
+    if (isTRUE(cache_object$should_cache)) {
+      cache_lint(cache_object$lint_cache, list(filename = filename, content = ""), "error", source_expressions$error)
     }
   }
 
   lints <- structure(reorder_lints(flatten_lints(lints)), class = "lints")
 
-  if (isTRUE(should_cache)) {
-    cache_file(lint_cache, filename, linters, lints)
-    save_cache(lint_cache, filename, cache_object$cache_path)
+  if (isTRUE(cache_object$should_cache)) {
+    cache_file(cache_object$lint_cache, filename, linters, lints)
+    save_cache(cache_object$lint_cache, filename, cache_object$cache_path)
   }
 
   res <- exclude(lints, ...)
@@ -127,6 +120,13 @@ Cache <- function(cache = FALSE, filename, linters) { # nolint: object_name_lint
     filename = filename,
     linters = linters
   )
+  if (length(cache_path)) {
+    instance$lint_cache <- load_cache(filename, cache_path)
+    instance$cached_lints <- retrieve_file(instance$lint_cache, filename, linters)
+    instance$should_cache <- TRUE
+  } else {
+    instance$should_cache <- FALSE
+  }
   class(instance) <- "Cache"
   instance
 }
