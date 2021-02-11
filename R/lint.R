@@ -58,16 +58,6 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   lints <- list()
   itr <- 0
 
-  define_cache_path <- function(cache) {
-    if (isTRUE(cache)) {
-      settings$cache_directory
-    } else if (is.character(cache)) {
-      cache
-    } else {
-      character(0)
-    }
-  }
-
   cache_path <- define_cache_path(cache)
 
   if (length(cache_path)) {
@@ -128,6 +118,16 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     }
   }
   res
+}
+
+define_cache_path <- function(cache) {
+  if (isTRUE(cache)) {
+    settings$cache_directory
+  } else if (is.character(cache)) {
+    cache
+  } else {
+    character(0)
+  }
 }
 
 #' Lint a directory
