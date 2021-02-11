@@ -93,13 +93,23 @@ save_cache.Cache <- function(cache) {
   }
 }
 
-cache_file <- function(cache, filename, linters, lints) {
+cache_file <- function(cache, ...) {
+  UseMethod("cache_file", cache)
+}
+
+cache_file.default <- function(cache, filename, linters, lints) {
   assign(
     envir = cache,
     x = digest_content(linters, filename),
     value = lints,
     inherits = FALSE
   )
+}
+
+cache_file.Cache <- function(cache, lints) {
+  if (isTRUE(cache$should_cache)) {
+    cache_file(cache$lint_cache, cache$filename, cache$linters, lints)
+  }
 }
 
 retrieve_file <- function(cache, filename, linters) {
