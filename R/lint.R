@@ -62,9 +62,9 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   if (length(cache_object$cache_path)) {
     lint_cache <- load_cache(cache_object$filename, cache_object$cache_path)
-    lints <- retrieve_file(lint_cache, cache_object$filename, cache_object$linters)
-    if (!is.null(lints)) {
-      return(exclude(lints, ...))
+    cached_lints <- retrieve_file(lint_cache, cache_object$filename, cache_object$linters)
+    if (!is.null(cached_lints)) {
+      return(exclude(cached_lints, ...))
     }
     should_cache <- TRUE
   } else {
