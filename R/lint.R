@@ -92,9 +92,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   lints <- structure(reorder_lints(flatten_lints(lints)), class = "lints")
 
-  if (isTRUE(cache_object$should_cache)) {
-    cache_file(cache_object$lint_cache, filename, linters, lints)
-  }
+  cache_file(cache_object, lints)
   save_cache(cache_object)
 
   res <- exclude(lints, ...)
