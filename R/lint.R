@@ -67,7 +67,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   for (expr in source_expressions$expressions) {
     for (linter in names(linters)) {
       if (has_lint(cache_object, expr, linter)) {
-        lints[[itr <- itr + 1L]] <- retrieve_lint(cache_object$lint_cache, expr, linter, source_expressions$lines)
+        lints[[itr <- itr + 1L]] <- retrieve_lint(cache_object, expr, linter, source_expressions$lines)
       }
       else {
         expr_lints <- flatten_lints(linters[[linter]](expr))
