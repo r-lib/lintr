@@ -58,7 +58,8 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   lints <- list()
   itr <- 0
 
-  cache_path <- define_cache_path(cache)
+  cache_object <- Cache(cache)
+  cache_path <- cache_object$cache_path
 
   if (length(cache_path)) {
     lint_cache <- load_cache(filename, cache_path)
@@ -118,6 +119,14 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     }
   }
   res
+}
+
+Cache <- function(cache = FALSE) { # nolint: object_name_linter.
+  instance <- list(
+    cache_path = define_cache_path(cache)
+  )
+  class(instance) <- "Cache"
+  instance
 }
 
 define_cache_path <- function(cache) {
