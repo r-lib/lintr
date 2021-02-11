@@ -1,3 +1,33 @@
+# nolint start: object_name_linter.
+Cache <- function(cache = FALSE, filename, linters) {
+  # nolint end
+  cache_path <- define_cache_path(cache)
+  instance <- list(
+    cache_path = cache_path,
+    filename = filename,
+    linters = linters
+  )
+  if (length(cache_path)) {
+    instance$lint_cache <- load_cache(filename, cache_path)
+    instance$cached_lints <- retrieve_file(instance$lint_cache, filename, linters)
+    instance$should_cache <- TRUE
+  } else {
+    instance$should_cache <- FALSE
+  }
+  class(instance) <- "Cache"
+  instance
+}
+
+define_cache_path <- function(cache) {
+  if (isTRUE(cache)) {
+    settings$cache_directory
+  } else if (is.character(cache)) {
+    cache
+  } else {
+    character(0)
+  }
+}
+
 #' Clear the lintr cache
 #'
 #' @param file filename whose cache to clear.  If you pass \code{NULL}, it will
