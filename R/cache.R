@@ -113,7 +113,11 @@ cache_lint.Cache <- function(cache, expr, linter, lints) {
   }
 }
 
-retrieve_lint <- function(cache, expr, linter, lines) {
+retrieve_lint <- function(cache, ...) {
+  UseMethod("retrieve_lint", cache)
+}
+
+retrieve_lint.default <- function(cache, expr, linter, lines) {
   lints <- get(
     envir = cache,
     x = digest_content(linter, expr),
@@ -126,6 +130,15 @@ retrieve_lint <- function(cache, expr, linter, lines) {
   })
   cache_lint(cache, expr, linter, lints)
   lints
+}
+
+retrieve_lint.Cache <- function(cache, expr, linter, lines) {
+  if (!"lint_cache" %in% names(cache)) {
+    stop("Attempting to read from a non-existing cache")
+  }
+  retrieve_lint(
+    cache$lint_cache, expr, linter, lines
+  )
 }
 
 has_lint <- function(cache, ...) {
