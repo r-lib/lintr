@@ -59,10 +59,9 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   itr <- 0
 
   cache_object <- Cache(cache)
-  cache_path <- cache_object$cache_path
 
-  if (length(cache_path)) {
-    lint_cache <- load_cache(filename, cache_path)
+  if (length(cache_object$cache_path)) {
+    lint_cache <- load_cache(filename, cache_object$cache_path)
     lints <- retrieve_file(lint_cache, filename, linters)
     if (!is.null(lints)) {
       return(exclude(lints, ...))
@@ -107,7 +106,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   if (isTRUE(cache)) {
     cache_file(lint_cache, filename, linters, lints)
-    save_cache(lint_cache, filename, cache_path)
+    save_cache(lint_cache, filename, cache_object$cache_path)
   }
 
   res <- exclude(lints, ...)
@@ -122,8 +121,9 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 }
 
 Cache <- function(cache = FALSE) { # nolint: object_name_linter.
+  cache_path <- define_cache_path(cache)
   instance <- list(
-    cache_path = define_cache_path(cache)
+    cache_path = cache_path
   )
   class(instance) <- "Cache"
   instance
