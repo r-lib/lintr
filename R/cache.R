@@ -128,13 +128,21 @@ retrieve_lint <- function(cache, expr, linter, lines) {
   lints
 }
 
-has_lint <- function(cache, expr, linter) {
+has_lint <- function(cache, ...) {
+  UseMethod("has_lint", cache)
+}
+
+has_lint.default <- function(cache, expr, linter) {
   exists(
     envir = cache,
     x = digest_content(linter, expr),
     mode = "list",
     inherits = FALSE
   )
+}
+
+has_lint.Cache <- function(cache, expr, linter) {
+  isTRUE(cache$should_cache) && has_lint(cache$lint_cache, expr, linter)
 }
 
 digest_content <- function(linters, obj) {
