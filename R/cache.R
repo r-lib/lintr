@@ -68,12 +68,29 @@ load_cache <- function(file, path = NULL) {
   env
 }
 
-save_cache <- function(cache, file, path = NULL) {
+save_cache <- function(cache, ...) {
+  UseMethod("save_cache", cache)
+}
+
+save_cache.default <- function(cache, file, path = NULL) {
+  if (is.null(path)) {
+    # Only retrieve settings if `path` isn't specified.
+    # Otherwise, other settings may inadvertently be loaded, such as exclusions.
+    read_settings(file)
+    path <- settings$cache_directory
+  }
+
   if (!file.exists(path)) {
     dir.create(path, recursive = TRUE)
   }
 
   save(file = get_cache_file_path(file, path), envir = cache, list = ls(envir = cache))
+}
+
+save_cache.Cache <- function(cache) {
+  if (isTRUE(cache$should_cache)) {
+    save_cache(cache$lint_cache, cache$filename, cache$cache_path)
+  }
 }
 
 cache_file <- function(cache, filename, linters, lints) {
