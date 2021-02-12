@@ -52,14 +52,6 @@ clear_cache <- function(file = NULL, path = NULL) {
   unlink(path, recursive = TRUE)
 }
 
-load_cache <- function(cache, ...) {
-  UseMethod("load_cache", cache)
-}
-
-load_cache.Cache <- function(cache, ...) {
-  load_cache_from_file(cache$filename, cache$cache_path)
-}
-
 load_cache_from_file <- function(file, path = NULL) {
   if (is.null(path)) {
     # Only retrieve settings if `path` isn't specified.

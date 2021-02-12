@@ -31,6 +31,14 @@ save_cache.Cache <- function(cache) {
   }
 }
 
+load_cache <- function(cache, ...) {
+  UseMethod("load_cache", cache)
+}
+
+load_cache.Cache <- function(cache, ...) {
+  load_cache_from_file(cache$filename, cache$cache_path)
+}
+
 # file-specific stuff
 
 cache_file <- function(cache, ...) {
