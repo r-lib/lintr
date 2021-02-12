@@ -41,6 +41,24 @@ load_cache.Cache <- function(cache, ...) {
 
 # file-specific stuff
 
+retrieve_file <- function(cache, ...) {
+  UseMethod("retrieve_file", cache)
+}
+
+retrieve_file.default <- function(cache, filename, linters) {
+  mget(
+    envir = cache,
+    x = digest_content(linters, filename),
+    mode = "list",
+    inherits = FALSE,
+    ifnotfound = list(NULL)
+  )[[1L]]
+}
+
+retrieve_file.Cache <- function(cache) {
+  retrieve_file(cache$lint_cache, cache$filename, cache$linters)
+}
+
 cache_file <- function(cache, ...) {
   UseMethod("cache_file", cache)
 }

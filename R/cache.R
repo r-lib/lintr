@@ -75,24 +75,6 @@ get_cache_file_path <- function(file, path) {
   file.path(path, digest::digest(file, algo = "sha1"))
 }
 
-retrieve_file <- function(cache, ...) {
-  UseMethod("retrieve_file", cache)
-}
-
-retrieve_file.default <- function(cache, filename, linters) {
-  mget(
-    envir = cache,
-    x = digest_content(linters, filename),
-    mode = "list",
-    inherits = FALSE,
-    ifnotfound = list(NULL)
-  )[[1L]]
-}
-
-retrieve_file.Cache <- function(cache) {
-  retrieve_file(cache$lint_cache, cache$filename, cache$linters)
-}
-
 digest_content <- function(linters, obj) {
   content <- if (is.list(obj)) {
     # assume an expression (global expression if obj$parsed_content is lacking)
