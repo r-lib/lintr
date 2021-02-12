@@ -138,7 +138,7 @@ unneeded_concatenation_linter()
 \arguments{
 \item{r_version}{Minimum R version to test for compatibility}
 
-\item{allow_single_line}{if \code{TRUE}, allow a open and closed curly pair
+\item{allow_single_line}{if \code{TRUE}, allow an open and closed curly pair
 on the same line.}
 
 \item{todo}{Vector of strings that identify TODO comments.}
@@ -196,7 +196,7 @@ Available linters
 \itemize{
 \item \code{T_and_F_symbol_linter}: Avoid the symbols \code{T} and \code{F} (for \code{TRUE} and \code{FALSE}).
 
-\item \code{assignment_linter}: Check that '<-' is always used for assignment.
+\item \code{assignment_linter}: Check that \code{<-} is always used for assignment.
 
 \item \code{assignment_spaces}: checks that assignments only have one space before and after
 
