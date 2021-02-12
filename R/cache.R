@@ -11,7 +11,7 @@ Cache <- function(cache = FALSE, filename, linters) {
 
   if (length(cache_path)) {
     instance$lint_cache <- load_cache(instance)
-    instance$cached_lints <- retrieve_file(instance$lint_cache, filename, linters)
+    instance$cached_lints <- retrieve_file(instance)
     instance$should_cache <- TRUE
   } else {
     instance$should_cache <- FALSE
@@ -56,5 +56,3 @@ get_cache_file_path <- function(file, path) {
   # this assumes that a normalized absolute file path was given
   file.path(path, digest::digest(file, algo = "sha1"))
 }
-
-
