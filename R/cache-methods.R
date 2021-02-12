@@ -6,7 +6,7 @@ save_cache <- function(cache, ...) {
   UseMethod("save_cache", cache)
 }
 
-save_cache.default <- function(cache, file, path = NULL) {
+save_cache.environment <- function(cache, file, path = NULL) {
   if (is.null(path)) {
     # Only retrieve settings if `path` isn't specified.
     # Otherwise, other settings may inadvertently be loaded, such as exclusions.
@@ -45,7 +45,7 @@ retrieve_file <- function(cache, ...) {
   UseMethod("retrieve_file", cache)
 }
 
-retrieve_file.default <- function(cache, filename, linters) {
+retrieve_file.environment <- function(cache, filename, linters) {
   mget(
     envir = cache,
     x = digest_content(linters, filename),
@@ -63,7 +63,7 @@ cache_file <- function(cache, ...) {
   UseMethod("cache_file", cache)
 }
 
-cache_file.default <- function(cache, filename, linters, lints) {
+cache_file.environment <- function(cache, filename, linters, lints) {
   assign(
     envir = cache,
     x = digest_content(linters, filename),
@@ -84,7 +84,7 @@ retrieve_lint <- function(cache, ...) {
   UseMethod("retrieve_lint", cache)
 }
 
-retrieve_lint.default <- function(cache, expr, linter, lines) {
+retrieve_lint.environment <- function(cache, expr, linter, lines) {
   lints <- get(
     envir = cache,
     x = digest_content(linter, expr),
@@ -114,7 +114,7 @@ cache_lint <- function(cache, ...) {
   UseMethod("cache_lint", cache)
 }
 
-cache_lint.default <- function(cache, expr, linter, lints) {
+cache_lint.environment <- function(cache, expr, linter, lints) {
   assign(
     envir = cache,
     x = digest_content(linter, expr),
@@ -132,7 +132,7 @@ has_lint <- function(cache, ...) {
   UseMethod("has_lint", cache)
 }
 
-has_lint.default <- function(cache, expr, linter) {
+has_lint.environment <- function(cache, expr, linter) {
   exists(
     envir = cache,
     x = digest_content(linter, expr),
