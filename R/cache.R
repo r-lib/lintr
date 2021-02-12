@@ -51,12 +51,6 @@ clear_cache <- function(file = NULL, path = NULL) {
   unlink(path, recursive = TRUE)
 }
 
-
-get_cache_file_path <- function(file, path) {
-  # this assumes that a normalized absolute file path was given
-  file.path(path, digest::digest(file, algo = "sha1"))
-}
-
 load_cache <- function(file, path = NULL) {
   env <- new.env(parent = emptyenv())
 
@@ -91,6 +85,11 @@ save_cache.Cache <- function(cache) {
   if (isTRUE(cache$should_cache)) {
     save_cache(cache$lint_cache, cache$filename, cache$cache_path)
   }
+}
+
+get_cache_file_path <- function(file, path) {
+  # this assumes that a normalized absolute file path was given
+  file.path(path, digest::digest(file, algo = "sha1"))
 }
 
 cache_file <- function(cache, ...) {
