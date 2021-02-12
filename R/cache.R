@@ -52,62 +52,9 @@ clear_cache <- function(file = NULL, path = NULL) {
   unlink(path, recursive = TRUE)
 }
 
-load_cache_from_file <- function(file, path = NULL) {
-  if (is.null(path)) {
-    # Only retrieve settings if `path` isn't specified.
-    # Otherwise, other settings may inadvertently be loaded, such as exclusions.
-    read_settings(file)
-    path <- settings$cache_directory
-  }
-
-  env <- new.env(parent = emptyenv())
-
-  file <- get_cache_file_path(file, path)
-  if (file.exists(file)) {
-    load(file = file, envir = env)
-  } # else nothing to do for source file that has no cache
-
-  env
-}
-
 get_cache_file_path <- function(file, path) {
   # this assumes that a normalized absolute file path was given
   file.path(path, digest::digest(file, algo = "sha1"))
 }
 
-digest_content <- function(linters, obj) {
-  content <- if (is.list(obj)) {
-    # assume an expression (global expression if obj$parsed_content is lacking)
-    list(linters, obj$content, is.null(obj$parsed_content))
-  } else {
-    # assume a filename
-    list(linters, readLines(obj))
-  }
-  digest::digest(content, algo = "sha1")
-}
 
-find_new_line <- function(line_number, line, lines) {
-
-  if (lines[line_number] %==% line) {
-    return(line_number)
-  }
-
-  width <- 1L
-
-  while (width <= length(lines)) {
-    low <- line_number - width
-    if (low > 0L) {
-      if (lines[low] %==% line) {
-        return(low)
-      }
-    }
-    high <- line_number + width
-    if (high <= length(lines)) {
-      if (lines[high] %==% line) {
-        return(high)
-      }
-    }
-    width <- width + 1L
-  }
-  NA
-}
