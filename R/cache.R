@@ -7,14 +7,15 @@ Cache <- function(cache = FALSE, filename, linters) {
     filename = filename,
     linters = linters
   )
+  class(instance) <- "Cache"
+
   if (length(cache_path)) {
-    instance$lint_cache <- load_cache(filename, cache_path)
+    instance$lint_cache <- load_cache(instance)
     instance$cached_lints <- retrieve_file(instance$lint_cache, filename, linters)
     instance$should_cache <- TRUE
   } else {
     instance$should_cache <- FALSE
   }
-  class(instance) <- "Cache"
   instance
 }
 
@@ -51,7 +52,22 @@ clear_cache <- function(file = NULL, path = NULL) {
   unlink(path, recursive = TRUE)
 }
 
-load_cache <- function(file, path = NULL) {
+load_cache <- function(cache, ...) {
+  UseMethod("load_cache", cache)
+}
+
+load_cache.Cache <- function(cache, ...) {
+  load_cache_from_file(cache$filename, cache$cache_path)
+}
+
+load_cache_from_file <- function(file, path = NULL) {
+  if (is.null(path)) {
+    # Only retrieve settings if `path` isn't specified.
+    # Otherwise, other settings may inadvertently be loaded, such as exclusions.
+    read_settings(file)
+    path <- settings$cache_directory
+  }
+
   env <- new.env(parent = emptyenv())
 
   file <- get_cache_file_path(file, path)

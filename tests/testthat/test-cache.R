@@ -61,7 +61,7 @@ test_that("load_cache loads the saved file in a new empty environment", {
     d1 <- tempfile(pattern = "lintr_cache_"),
     f1 <- "R/test.R",
     save_cache(cache = e1, file = f1, path = d1),
-    e2 <- load_cache(file = f1, path = d1),
+    e2 <- load_cache_from_file(file = f1, path = d1),
 
     expect_equal(ls(e2), "x"),
     expect_equal(e2[["x"]], "foobar")
@@ -78,7 +78,7 @@ test_that("load_cache returns an empty environment if no cache file exists", {
     f2 <- "test.R",
 
     save_cache(cache = e1, file = f1, path = d1),
-    e2 <- load_cache(file = f2, path = d1),
+    e2 <- load_cache_from_file(file = f2, path = d1),
 
     expect_equal(ls(e2), character(0))
   )
