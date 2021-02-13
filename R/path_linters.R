@@ -139,7 +139,8 @@ split_path <- function(path, sep="/|\\\\") {
 }
 
 #' @include utils.R
-make_path_linter <- function(path_function, message, linter) {
+make_path_linter <- function(path_function, message, linter, name = linter_auto_name()) {
+  force(name)
   Linter(function(source_file) {
     lapply(
       ids_with_token(source_file, "STR_CONST"),
@@ -167,7 +168,7 @@ make_path_linter <- function(path_function, message, linter) {
         }
       }
     )
-  })
+  }, name = name)
 }
 
 #' @describeIn linters  Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").

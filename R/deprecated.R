@@ -35,6 +35,7 @@ absolute_paths_linter <- function(source_file) {
   absolute_path_linter(lax = TRUE)(source_file)
 }
 class(absolute_paths_linter) <- "linter"
+attr(absolute_paths_linter, "name") <- "absolute_paths_linter"
 
 
 #' @describeIn lintr-deprecated Check there are no trailing semicolons.
@@ -44,6 +45,7 @@ trailing_semicolons_linter <- function(source_file) {
   semicolon_terminator_linter(semicolon = "trailing")(source_file)
 }
 class(trailing_semicolons_linter) <- "linter"
+attr(trailing_semicolons_linter, "name") <- "trailing_semicolons_linter"
 
 
 #' @describeIn lintr-deprecated Check that objects are not in camelCase.
