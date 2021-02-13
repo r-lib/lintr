@@ -20,7 +20,7 @@
 #' *rows* where `fun` evaluates to `TRUE` for the `value` in the *token* column.
 #' @export
 ids_with_token <- function(source_file, value, fun = `==`) {
-  if (source_file$parsed_content$col1 %==% integer(0)) {
+  if (is.null(source_file$parsed_content)) {
     return(integer(0))
   }
   loc <- which(fun(source_file$parsed_content$token, value))

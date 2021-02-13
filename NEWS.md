@@ -43,6 +43,8 @@
   (#660, @AshesITR)
 * Fixed `spaces_left_parentheses_linter` sporadically causing warnings (#654, #674, @AshesITR)
 * Fixed `line_length_linter` causing duplicate lints for lines containing multiple expressions (#681, #682, @AshesITR)
+* `line_length_linter` now places the source marker at the margin of the affected line to improve user experience during 
+  de-linting -- just press <kbd>Return</kbd> (#735, @AshesITR)
 * `unneeded_concatenation_linter` now correctly considers arguments piped in via magrittr `%>%` (#573, #585, @michaelquinn32)
 * Set the default `complexity_limit` in `cyclocomp_linter` to 15. This is the same complexity limit that is enforced via
   `default_linters` (#693, #695, @AshesITR).
@@ -50,6 +52,8 @@
 * `object_usage_linter()` now correctly detects global variables if there are top-level dollar-assignments (#666, #709, @AshesITR)
 * `commented_code_linter()` uses the parse tree to find comments, eliminating some false positives (#451, @AshesITR)
 * `trailing_blank_lines_linter()` now also lints files without a terminal newline (#675, @AshesITR)
+* `object_name_linter()` now correctly detects imported functions when linting packages (#642, @AshesITR)
+* Consistent access to linters through a function call, even for linters without parameters (#245, @fangly, @AshesITR, and @MichaelChirico)
 
 # lintr 2.0.1
 

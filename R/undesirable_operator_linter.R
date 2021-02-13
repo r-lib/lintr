@@ -14,7 +14,7 @@ op_types <- c(
 #'            and the values are the text for the alternative operator to use (or \code{NA}).
 #' @export
 undesirable_operator_linter <- function(op = default_undesirable_operators) {
-  function(source_file) {
+  Linter(function(source_file) {
     lapply(
       ids_with_token(source_file, op_types, fun = `%in%`),
       function(id) {
@@ -42,5 +42,5 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
         }
       }
     )
-  }
+  })
 }

@@ -1,13 +1,12 @@
-#' @describeIn linters check that closed curly braces should always be on their
-#' own line unless they follow an else.
-#' @param allow_single_line if true allow a open and closed curly pair on the
-#' same line.
+#' @describeIn linters  Check that closed curly braces are on their own line
+#'   unless they follow an else.
+#' @param allow_single_line if \code{TRUE}, allow an open and closed curly pair
+#'   on the same line.
 #' @export
 closed_curly_linter <- function(allow_single_line = FALSE) {
-  function(source_file) {
-    lapply(
-      ids_with_token(source_file, "'}'"),
-      function(id) {
+  Linter(function(source_file) {
+    lapply(ids_with_token(source_file, "'}'"),
+           function(id) {
 
         parsed <- with_id(source_file, id)
         parsed_content <- source_file[["parsed_content"]]
@@ -64,5 +63,5 @@ closed_curly_linter <- function(allow_single_line = FALSE) {
           )}
       }
     )
-  }
+  })
 }

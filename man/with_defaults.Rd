@@ -36,7 +36,7 @@ my_linters <- with_defaults(default = my_linters,
 # remove assignment checks (with NULL), add absolute path checks
 my_linters <- with_defaults(default = my_linters,
                             assignment_linter = NULL,
-                            absolute_path_linter)
+                            absolute_path_linter())
 
 # custom list of undesirable functions:
 #    remove sapply (using NULL)

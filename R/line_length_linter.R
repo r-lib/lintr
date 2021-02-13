@@ -1,8 +1,8 @@
-#' @describeIn linters check the line length of both comments and code is less
-#' than length.
+#' @describeIn linters Check that the line length of both comments and code is
+#' less than length.
 #' @export
 line_length_linter <- function(length = 80L) {
-  function(source_file) {
+  Linter(function(source_file) {
 
     # Only go over complete file
     if (is.null(source_file$file_lines)) return(list())
@@ -16,7 +16,7 @@ line_length_linter <- function(length = 80L) {
       Lint(
         filename = source_file$filename,
         line_number = long_line,
-        column_number = 1L,
+        column_number = length + 1L,
         type = "style",
         message = lint_message,
         line = source_file$file_lines[long_line],
@@ -24,5 +24,5 @@ line_length_linter <- function(length = 80L) {
         linter = "line_length_linter"
       )
     })
-  }
+  })
 }

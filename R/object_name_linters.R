@@ -23,7 +23,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
     "Variable and function name style should be ", .or_string(styles), "."
   )
 
-  function(source_file) {
+  Linter(function(source_file) {
     if (is.null(source_file$full_xml_parsed_content)) return(list())
 
     xml <- source_file$full_xml_parsed_content
@@ -54,7 +54,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
 
     generics <- strip_names(c(
       declared_s3_generics(xml),
-      namespace_imports()$fun,
+      namespace_imports(find_package(source_file$filename))$fun,
       names(.knownS3Generics),
       .S3PrimitiveGenerics, ls(baseenv())))
 
@@ -71,7 +71,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
       lint_msg,
       "object_name_linter"
     )
-  }
+  })
 }
 
 check_style <- function(nms, style, generics = character()) {
@@ -120,7 +120,7 @@ object_lint2 <- function(expr, source_file, message, type) {
 }
 
 make_object_linter <- function(fun) {
-  function(source_file) {
+  Linter(function(source_file) {
 
     token_nums <- ids_with_token(
       source_file, rex(start, "SYMBOL" %if_next_isnt% "_SUB"), fun = re_matches
@@ -147,7 +147,7 @@ make_object_linter <- function(fun) {
         }
       }
     )
-  }
+  })
 }
 
 known_generic_regex <- rex(

@@ -28,13 +28,6 @@ get_cache_file_path <- function(file, path) {
 }
 
 load_cache <- function(file, path = NULL) {
-  if (is.null(path)) {
-    # Only retrieve settings if `path` isn't specified.
-    # Otherwise, other settings may inadvertently be loaded, such as exclusions.
-    read_settings(file)
-    path <- settings$cache_directory
-  }
-
   env <- new.env(parent = emptyenv())
 
   file <- get_cache_file_path(file, path)
@@ -46,13 +39,6 @@ load_cache <- function(file, path = NULL) {
 }
 
 save_cache <- function(cache, file, path = NULL) {
-  if (is.null(path)) {
-    # Only retrieve settings if `path` isn't specified.
-    # Otherwise, other settings may inadvertently be loaded, such as exclusions.
-    read_settings(file)
-    path <- settings$cache_directory
-  }
-
   if (!file.exists(path)) {
     dir.create(path, recursive = TRUE)
   }

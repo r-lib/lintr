@@ -2,7 +2,7 @@
 #' @param except a character vector of function names as exceptions.
 #' @export
 missing_argument_linter <- function(except = c("switch", "alist")) {
-  function(source_file) {
+  Linter(function(source_file) {
 
     if (is.null(source_file$full_xml_parsed_content)) return(list())
 
@@ -39,5 +39,5 @@ missing_argument_linter <- function(except = c("switch", "alist")) {
     })
 
     result[vapply(result, is.list, logical(1L))]
-  }
+  })
 }

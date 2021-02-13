@@ -5,7 +5,7 @@
 #' @importFrom cyclocomp cyclocomp
 #' @export
 cyclocomp_linter <- function(complexity_limit = 15L) {
-  function(source_file) {
+  Linter(function(source_file) {
     if (!is.null(source_file[["file_lines"]])) {
       # abort if source_file is entire file, not a top level expression.
       return(NULL)
@@ -28,5 +28,5 @@ cyclocomp_linter <- function(complexity_limit = 15L) {
       line = source_file$lines[1],
       linter = "cyclocomp_linter"
     )
-  }
+  })
 }

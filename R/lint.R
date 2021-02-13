@@ -52,16 +52,8 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     on.exit(clear_settings, add = TRUE)
   }
 
-  if (is.null(linters)) {
-    linters <- settings$linters
-    names(linters) <- auto_names(linters)
-  } else if (!is.list(linters)) {
-    name <- deparse(substitute(linters))
-    linters <- list(linters)
-    names(linters) <- name
-  } else {
-    names(linters) <- auto_names(linters)
-  }
+  linters <- define_linters(linters)
+  linters <- Map(validate_linter_object, linters, names(linters))
 
   lints <- list()
   itr <- 0
@@ -132,17 +124,6 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     }
   }
   res
-}
-
-reorder_lints <- function(lints) {
-  files <- vapply(lints, `[[`, character(1), "filename")
-  lines <- vapply(lints, `[[`, integer(1), "line_number")
-  columns <- vapply(lints, `[[`, integer(1), "column_number")
-  lints[order(
-    files,
-    lines,
-    columns
-  )]
 }
 
 #' Lint a directory
@@ -217,14 +198,14 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = list("r
     files,
     function(file) {
       if (interactive()) {
-        message(".", appendLF = FALSE)
+        message(".", appendLF = FALSE) # nocov
       }
       lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
     }
   ))
 
   if (interactive()) {
-    message() # for a newline
+    message() # nocov. for a newline
   }
 
   lints <- reorder_lints(lints)
@@ -298,6 +279,54 @@ lint_package <- function(path = ".", relative_path = TRUE, ...,
 }
 
 
+define_linters <- function(linters = NULL) {
+  if (is.null(linters)) {
+    linters <- settings$linters
+    names(linters) <- auto_names(linters)
+  } else if (!is.list(linters)) {
+    name <- deparse(substitute(linters))
+    linters <- list(linters)
+    names(linters) <- name
+  } else {
+    names(linters) <- auto_names(linters)
+  }
+  linters
+}
+
+validate_linter_object <- function(linter, name) {
+  if (inherits(linter, "linter")) {
+  } else if (is.function(linter)) {
+    if (is.null(formals(linter))) {
+      old <- "Passing linters as variables"
+      new <- "a call to the linters (see ?linters)"
+      lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
+                       type = "")
+      linter <- linter()
+    } else {
+      old <- "The use of linters of class 'function'"
+      new <- "linters classed as 'linter' (see ?Linter)"
+      lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
+                       type = "")
+      linter <- Linter(linter)
+    }
+  } else {
+    stop(gettextf("Expected '%s' to be of class 'linter', not '%s'",
+                  name, class(linter)[[1L]]))
+  }
+  linter
+}
+
+reorder_lints <- function(lints) {
+  files <- vapply(lints, `[[`, character(1), "filename")
+  lines <- vapply(lints, `[[`, integer(1), "line_number")
+  columns <- vapply(lints, `[[`, integer(1), "column_number")
+  lints[order(
+    files,
+    lines,
+    columns
+  )]
+}
+
 has_description <- function(path) {
   file.exists(file.path(path, "DESCRIPTION"))
 }
@@ -344,7 +373,7 @@ pkg_name <- function(path = find_package()) {
   }
 }
 
-#' Create a \code{Lint} object
+#' Create a \code{lint} object
 #' @param filename path to the source file that was linted.
 #' @param line_number line number where the lint occurred.
 #' @param column_number column number where the lint occurred.
@@ -353,6 +382,7 @@ pkg_name <- function(path = find_package()) {
 #' @param line code source where the lint occurred
 #' @param ranges a list of ranges on the line that should be emphasized.
 #' @param linter name of linter that created the Lint object.
+#' @return an object of class 'lint'.
 #' @export
 Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name_linter.
                  type = c("style", "warning", "error"),
