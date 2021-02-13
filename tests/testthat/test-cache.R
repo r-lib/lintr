@@ -388,7 +388,7 @@ test_that("it works outside of a package", {
 test_that("chache = TRUE workflow works", {
   # Need a test structure with a safe to load .lintr
   pkg <- "dummy_packages/package"
-  files <- normalizePath(list.files(pkg, recursive = TRUE))
+  files <- normalizePath(list.files(pkg, recursive = TRUE, full.names = TRUE))
 
   # Manually clear cache (that function is exported)
   for (f in files) {
