@@ -278,7 +278,6 @@ lint_package <- function(path = ".", relative_path = TRUE, ...,
   lints
 }
 
-
 define_linters <- function(linters = NULL) {
   if (is.null(linters)) {
     linters <- settings$linters

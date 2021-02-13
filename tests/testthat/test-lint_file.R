@@ -140,6 +140,16 @@ test_that("compatibility warnings work", {
     fixed = "The use of linters of class 'function'"
   )
 
+  # Trigger compatibility in auto_names()
+  expect_warning(
+    expect_lint(
+      "a == NA",
+      "Use is.na",
+      linters = list(unclass(equals_na_linter()))
+    ),
+    fixed = "The use of linters of class 'function'"
+  )
+
   expect_error(
     expect_warning(
       lint("a <- 1\n", linters = function(two, arguments) NULL),
