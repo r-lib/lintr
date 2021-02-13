@@ -55,6 +55,9 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   if (is.null(linters)) {
     linters <- settings$linters
     names(linters) <- auto_names(linters)
+  } else if (inherits(linters, "linter")) {
+    linters <- list(linters)
+    names(linters) <- attr(linters[[1L]], "name", exact = TRUE)
   } else if (!is.list(linters)) {
     name <- deparse(substitute(linters))
     linters <- list(linters)
@@ -78,7 +81,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
           new <- "linters classed as 'linter' (see ?Linter)"
           lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
                            type = "")
-          obj <- Linter(obj)
+          obj <- Linter(obj, name = name)
         }
       } else {
         stop(gettextf("Expected '%s' to be of class 'linter', not '%s'",

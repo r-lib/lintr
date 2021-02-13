@@ -119,7 +119,8 @@ object_lint2 <- function(expr, source_file, message, type) {
     )
 }
 
-make_object_linter <- function(fun) {
+make_object_linter <- function(fun, name = linter_auto_name()) {
+  force(name)
   Linter(function(source_file) {
 
     token_nums <- ids_with_token(
@@ -147,7 +148,7 @@ make_object_linter <- function(fun) {
         }
       }
     )
-  })
+  }, name = name)
 }
 
 known_generic_regex <- rex(

@@ -62,13 +62,30 @@ names2 <- function(x) {
   names(x) %||% rep("", length(x))
 }
 
+linter_auto_name <- function(which = -3L) {
+  call <- sys.call(which = which)
+  nm <- deparse(call)
+  regex <- rex(start, one_or_more(alnum %or% "." %or% "_"))
+  if (re_matches(nm, regex)) {
+    match <- re_matches(nm, regex, locations = TRUE)
+    nm <- substr(nm, start = 1L, stop = match[1L, "end"])
+  }
+  nm
+}
+
 auto_names <- function(x) {
   nms <- names2(x)
   missing <- nms == ""
   if (all(!missing)) return(nms)
 
-  deparse2 <- function(x) paste(deparse(x, 500L), collapse = "")
-  defaults <- vapply(x[missing], deparse2, character(1), USE.NAMES = FALSE)
+  default_name <- function(x) {
+    if (inherits(x, "linter")) {
+      attr(x, "name", exact = TRUE)
+    } else {
+      paste(deparse(x, 500L), collapse = "")
+    }
+  }
+  defaults <- vapply(x[missing], default_name, character(1), USE.NAMES = FALSE)
 
   nms[missing] <- defaults
   nms
@@ -219,11 +236,14 @@ reset_lang <- function(old_lang) {
 
 #' Create a \code{linter} closure
 #' @param fun A function that takes a source file and returns \code{lint} objects.
+#' @param name Default name of the Linter.
+#' Lints produced by the linter will be labelled with \code{name} by default.
 #' @return The same function with its class set to 'linter'.
 #' @export
-Linter <- function(fun) { # nolint: object_name_linter.
+Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name_linter.
   if (!is.function(fun) || length(formals(args(fun))) != 1L) {
     stop("`fun` must be a function taking exactly one argument.", call. = FALSE)
   }
-  structure(fun, class = "linter")
+  force(name)
+  structure(fun, class = "linter", name = name)
 }
