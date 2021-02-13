@@ -23,6 +23,7 @@
 * `lint_dir()` excludes the `renv` and `packrat` directories by default (#697, @AshesITR)
 * `object_name_linter()` now excludes special R hook functions such as `.onLoad` 
   (#500, #614, @AshesITR and @michaelchirico)
+* Improved generic detection for `object_name_linter()` (#737, @AshesITR)
 * `equals_na_linter()` now lints `x != NA` and `NA == x`, and skips usages in comments (#545, @michaelchirico)
 * Malformed Rmd files now cause a lint instead of an error (#571, #575, @AshesITR)
 * `object_name_linter()` gains a new default style, `"symbols"`, which won't lint all-symbol object names 
