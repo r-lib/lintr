@@ -57,13 +57,13 @@ commented_code_linter <- function() {
         Lint(
           filename = source_file$filename,
           line_number = line_number,
-          column_number = column_offset + code_candidates[line_number, "code.start"],
+          column_number = column_offset + code_candidates[code_candidate, "code.start"],
           type = "style",
           message = "Commented code should be removed.",
           line = source_file$file_lines[line_number],
           linter = "commented_code_linter",
-          ranges = list(column_offset + c(code_candidates[line_number, "code.start"],
-                                          code_candidates[line_number, "code.end"]))
+          ranges = list(column_offset + c(code_candidates[code_candidate, "code.start"],
+                                          code_candidates[code_candidate, "code.end"]))
         )
       }
     })
