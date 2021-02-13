@@ -56,7 +56,9 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
       declared_s3_generics(xml),
       namespace_imports(find_package(source_file$filename))$fun,
       names(.knownS3Generics),
-      .S3PrimitiveGenerics, ls(baseenv())))
+      .S3PrimitiveGenerics, ls(baseenv())
+    ))
+    generics <- unique(generics[generics != ""])
 
     style_matches <- lapply(styles, function(style) {
       check_style(nms, style, generics)
@@ -83,7 +85,7 @@ check_style <- function(nms, style, generics = character()) {
   if (any(!conforming)) {
     possible_s3 <- re_matches(
       nms[!conforming],
-      rex(capture(name = "generic", or(generics)), ".", capture(name = "method", something))
+      rex(start, capture(name = "generic", or(generics)), ".", capture(name = "method", something), end)
     )
     if (any(!is.na(possible_s3))) {
       has_generic <- possible_s3$generic %in% generics
