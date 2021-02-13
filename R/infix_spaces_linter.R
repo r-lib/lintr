@@ -1,24 +1,24 @@
 infix_tokens <- c(
 
-  "'+'",
-  "'-'",
-  "GT",
-  "GE",
-  "LT",
-  "LE",
-  "EQ",
-  "NE",
-  "AND",
-  "OR",
-  "AND2",
-  "OR2",
-  "LEFT_ASSIGN",
-  "RIGHT_ASSIGN",
-  "EQ_ASSIGN",
-  "EQ_SUB",
-  "SPECIAL",
-  "'/'",
-  "'*'",
+  "'+'",          # +        : unary plus
+  "'-'",          # -        : unary minus
+  "GT",           # >        : greater than
+  "GE",           # <=       : greater than or equal to
+  "LT",           # <        : less than
+  "LE",           # <=       : less than or equal to
+  "EQ",           # ==       : vector equality
+  "NE",           # !=       : not equal
+  "AND",          # &        : vector boolean and
+  "OR",           # |        : vector boolean or
+  "AND2",         # &&       : scalar boolean and
+  "OR2",          # ||       : scalar boolean or
+  "LEFT_ASSIGN",  # <- or := : left assignment
+  "RIGHT_ASSIGN", # ->       : right assignment
+  "EQ_ASSIGN",    # =        : equal assignment
+  "EQ_SUB",       # =        : keyword assignment
+  "SPECIAL",      # %[^%]*%  : infix operators
+  "'/'",          # /        : unary division
+  "'*'",          # *        : unary multiplication
 
   NULL
   )
