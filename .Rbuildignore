@@ -23,3 +23,4 @@
 ^bench$
 ^tests/testthat/dummy_packages/package/[.]Rbuildignore$
 ^tests/testthat/dummy_packages/package/[.]lintr$
+^tests/testthat/dummy_packages/clean/[.]lintr$
