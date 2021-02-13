@@ -27,11 +27,9 @@ backport_linter <- function(r_version = getRversion()) {
       node <- all_names_nodes[[ii]]
       line1 <- xml2::xml_attr(node, "line1")
       col1 <- as.integer(xml2::xml_attr(node, "col1"))
-      if (xml2::xml_attr(node, "line2") == line1) {
-        col2 <- as.integer(xml2::xml_attr(node, "col2"))
-      } else {
-        col2 <- nchar(source_file$lines[line1])
-      }
+      col2 <- as.integer(xml2::xml_attr(node, "col2"))
+      # line1 != line2 can't happen because function symbols cannot span multiple lines
+      stopifnot(xml2::xml_attr(node, "line2") == line1)
       Lint(
         filename = source_file$filename,
         line_number = as.integer(line1),

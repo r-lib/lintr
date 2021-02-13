@@ -384,3 +384,17 @@ test_that("it works outside of a package", {
     expect_true(dir.exists(path))
   )
 })
+
+test_that("chache = TRUE workflow works", {
+  # Need a test structure with a safe to load .lintr
+  pkg <- "dummy_packages/package"
+  files <- normalizePath(list.files(pkg, recursive = TRUE))
+
+  # Manually clear cache (that function is exported)
+  for (f in files) {
+    clear_cache(file = f)
+  }
+  l1 <- lint_package(pkg, cache = TRUE)
+  l2 <- lint_package(pkg, cache = TRUE)
+  expect_identical(l1, l2)
+})

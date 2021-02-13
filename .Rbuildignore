@@ -22,3 +22,4 @@
 ^script[.]R$
 ^bench$
 ^tests/testthat/dummy_packages/package/[.]Rbuildignore$
+^tests/testthat/dummy_packages/package/[.]lintr$
