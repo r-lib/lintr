@@ -20,8 +20,7 @@ line_length_linter <- function(length = 80L) {
         type = "style",
         message = lint_message,
         line = source_file$file_lines[long_line],
-        ranges = list(c(1L, line_lengths[long_line])),
-        linter = "line_length_linter"
+        ranges = list(c(1L, line_lengths[long_line]))
       )
     })
   })

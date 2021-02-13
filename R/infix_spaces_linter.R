@@ -21,32 +21,29 @@ infix_tokens <- c(
   "'*'",          # *        : unary multiplication
 
   NULL
-  )
+)
 
 #' @describeIn linters  Check that infix operators are surrounded by spaces.
 #' @export
 infix_spaces_linter <- function() {
   Linter(function(source_file) {
-    lapply(ids_with_token(source_file, infix_tokens, fun = `%in%`),
+    lapply(
+      ids_with_token(source_file, infix_tokens, fun = `%in%`),
       function(id) {
         parsed <- with_id(source_file, id)
 
         line <- source_file$lines[as.character(parsed$line1)]
 
         around_operator <- substr(line, parsed$col1 - 1L, parsed$col2 + 1L)
-
         non_space_before <- re_matches(around_operator, rex(start, non_space))
-
         newline_after <- unname(nchar(line)) %==% parsed$col2
-
         non_space_after <- re_matches(around_operator, rex(non_space, end))
 
         if (non_space_before || (!newline_after && non_space_after)) {
 
           # we only should check spacing if the operator is infix,
           # which only happens if there is more than one sibling
-          is_infix <-
-            length(siblings(source_file$parsed_content, parsed$id, 1)) > 1L
+          is_infix <- length(siblings(source_file$parsed_content, parsed$id, 1)) > 1L
 
           start <- end <- parsed$col1
 
@@ -65,13 +62,10 @@ infix_spaces_linter <- function() {
               type = "style",
               message = "Put spaces around all infix operators.",
               line = line,
-              ranges = list(c(start, end)),
-              linter = "infix_spaces_linter"
-              )
-
+              ranges = list(c(start, end))
+            )
           }
         }
-
       })
   })
 }

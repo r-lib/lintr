@@ -383,12 +383,19 @@ pkg_name <- function(path = find_package()) {
 #' @param message message used to describe the lint error
 #' @param line code source where the lint occurred
 #' @param ranges a list of ranges on the line that should be emphasized.
-#' @param linter name of linter that created the Lint object.
+#' @param linter deprecated. No longer used.
 #' @return an object of class 'lint'.
 #' @export
 Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name_linter.
                  type = c("style", "warning", "error"),
                  message = "", line = "", ranges = NULL, linter = "") {
+  if (!missing(linter)) {
+    lintr_deprecated(
+      old = "Using the `linter` argument of `Lint()`",
+      version = "2.0.1.9001",
+      type = ""
+    )
+  }
 
   type <- match.arg(type)
 
@@ -401,7 +408,7 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
       message = message,
       line = line,
       ranges = ranges,
-      linter = linter
+      linter = NA_character_
     ),
     class = "lint")
 }

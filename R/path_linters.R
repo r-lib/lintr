@@ -162,8 +162,7 @@ make_path_linter <- function(path_function, message, linter, name = linter_auto_
             type = "warning",
             message = message,
             line = source_file[["lines"]][[as.character(token[["line1"]])]],
-            ranges = list(c(start, end)),
-            linter = linter
+            ranges = list(c(start, end))
           )
         }
       }
@@ -179,8 +178,7 @@ absolute_path_linter <- function(lax = TRUE) {
     path_function = function(path) {
       is_absolute_path(path) && is_valid_long_path(path, lax)
     },
-    message = "Do not use absolute paths.",
-    linter = "absolute_path_linter"
+    message = "Do not use absolute paths."
   )
 }
 
@@ -192,7 +190,6 @@ nonportable_path_linter <- function(lax = TRUE) {
       is_path(path) && is_valid_long_path(path, lax) && path != "/" &&
         re_matches(path, rex(one_of("/", "\\")))
     },
-    message = "Use file.path() to construct portable file paths.",
-    linter = "nonportable_filepath_linter"
+    message = "Use file.path() to construct portable file paths."
   )
 }
