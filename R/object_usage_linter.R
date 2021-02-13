@@ -4,15 +4,8 @@
 #' @export
 object_usage_linter <- function() {
   Linter(function(source_file) {
-    # we only want to run on the full file
-    if (is.null(source_file$file_lines)) {
-      return()
-    }
-
     # If there is no xml data just return
-    if (is.null(source_file$full_xml_parsed_content)) {
-      return()
-    }
+    if (is.null(source_file$full_xml_parsed_content)) return(list())
 
     source_file$parsed_content <- source_file$full_parsed_content
 

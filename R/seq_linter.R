@@ -27,7 +27,6 @@ seq_linter <- function() {
     ## In practice we need to handle length(x):1
     get_fun <- function(x, n) {
       funcall <- xml2::xml_children(xml2::xml_children(x)[[n]])
-      if (!length(funcall)) return(NULL)
       fun <- gsub("\\(.*\\)", "(...)", trim_ws(xml2::xml_text(funcall[[1]])))
       if (!fun %in% bad_funcs) fun else paste0(fun, "(...)")
     }
