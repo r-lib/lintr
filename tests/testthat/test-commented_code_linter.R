@@ -10,19 +10,32 @@ test_that("returns the correct linting", {
   expect_lint(
     "bleurgh <- fun_call(1) # other_call()",
     list(message = msg, column_number = 26),
-    linter)
+    linter
+  )
 
   expect_lint(
     " #blah <- 1",
     list(message = msg, column_number = 3),
-    linter)
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+    # non-code comment
+    line_without_comment <- 42L
+     #blah <- 1
+    "),
+    list(message = msg, line_number = 3L, column_number = 3L),
+    linter
+  )
 
   expect_lint("#' blah <- 1", NULL, linter)
 
   expect_lint(
     c("a <- 1", "# comment without code"),
     NULL,
-    linter)
+    linter
+  )
 
   expect_lint(
     c("a <- 1", "# comment without code"),
