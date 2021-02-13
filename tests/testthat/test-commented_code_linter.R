@@ -19,6 +19,7 @@ test_that("returns the correct linting", {
     linter
   )
 
+  # Regression test for #742, line number and comment number don't match up
   expect_lint(
     trim_some("
     # non-code comment
