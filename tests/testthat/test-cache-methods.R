@@ -4,22 +4,48 @@ fixtures <- list()
 
 fixtures$retrieve_lint <- function() {
   file_name <- "R/test.R"
-  lines <- c("foobar1", "foobar2", "foobar3")
+  lines <- c("foobar1 = 1", "foobar2 = 2", "foobar3 = 3")
   lints <- list(
-    Lint(file_name, 1, line = "foobar1"),
-    Lint(file_name, 2, line = "foobar2"),
-    Lint(file_name, 3, line = "foobar3")
+    Lint(file_name, 1, line = "foobar1 = 1"),
+    Lint(file_name, 2, line = "foobar2 = 2"),
+    Lint(file_name, 3, line = "foobar3 = 3")
   )
-  expr <- list(content = paste(collapse = "\n", lines))
   list(
+    filename = file_name,
     lines = lines,
-    linters = list(),
-    lints = lints,
-    expr = expr
+    expr = list(content = paste(collapse = "\n", lines)),
+    linters = list(assignment_linter = assignment_linter()),
+    lints = lints
   )
 }
 
 # `retrieve_lint`
+
+test_that("retrieve_lint returns NULL when no cache is in use", {
+  test_data <- fixtures$retrieve_lint()
+
+  cache_object <- Cache(
+    cache = FALSE,
+    filename = test_data[["filename"]],
+    linters = test_data[["linters"]]
+  )
+
+  cache_lint(
+    cache = cache_object,
+    expr = test_data[["expr"]],
+    linter = test_data[["linters"]],
+    lints = test_data[["lints"]]
+  )
+
+  cached_lints <- retrieve_lint(
+    cache = cache_object,
+    expr = test_data[["expr"]],
+    linter = test_data[["linters"]],
+    lines = test_data[["lines"]]
+  )
+
+  expect_null(cached_lints)
+})
 
 test_that("retrieve_lint returns the same lints if nothing has changed", {
   test_data <- fixtures$retrieve_lint()
