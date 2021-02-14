@@ -103,7 +103,7 @@ retrieve_lint.environment <- function(cache, expr, linter, lines) {
 
 retrieve_lint.Cache <- function(cache, expr, linter, lines) {
   if (!"lint_cache" %in% names(cache)) {
-    stop("Attempting to read from a non-existing cache")
+    return(NULL)
   }
   retrieve_lint(
     cache$lint_cache, expr, linter, lines
