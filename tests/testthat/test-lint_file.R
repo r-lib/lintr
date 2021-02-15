@@ -128,7 +128,8 @@ test_that("compatibility warnings work", {
       "Use is.na",
       linters = equals_na_linter
     ),
-    fixed = "Passing linters as variables"
+    regexp = "Passing linters as variables",
+    fixed = TRUE
   )
 
   expect_warning(
@@ -137,15 +138,18 @@ test_that("compatibility warnings work", {
       "Use is.na",
       linters = unclass(equals_na_linter())
     ),
-    fixed = "The use of linters of class 'function'"
+    regexp = "The use of linters of class 'function'",
+    fixed = TRUE
   )
 
   expect_error(
     expect_warning(
       lint("a <- 1\n", linters = function(two, arguments) NULL),
-      fixed = "The use of linters of class 'function'"
+      regexp = "The use of linters of class 'function'",
+      fixed = TRUE
     ),
-    fixed = "`fun` must be a function of one argument"
+    regexp = "`fun` must be a function of one argument",
+    fixed = TRUE
   )
 
   expect_error(
