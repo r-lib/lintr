@@ -183,30 +183,45 @@ test_that("cache_lint generates different caches for different linters", {
   expect_equal(length(ls(e1)), 2)
 })
 
+fixtures <- list()
+
+fixtures$retrieve_lint <- function() {
+  file_name <- "R/test.R"
+  lines <- c("foobar1", "foobar2", "foobar3")
+  lints <- list(
+    Lint(file_name, 1, line = "foobar1"),
+    Lint(file_name, 2, line = "foobar2"),
+    Lint(file_name, 3, line = "foobar3")
+  )
+  expr <- list(content = paste(collapse = "\n", lines))
+  list(
+    lines = lines,
+    linters = list(),
+    lints = lints,
+    expr = expr
+  )
+}
+
 test_that("retrieve_lint returns the same lints if nothing has changed", {
+  test_data <- fixtures$retrieve_lint()
+
   e1 <- new.env(parent = emptyenv())
 
-  lines1 <- c("foobar1", "foobar2", "foobar3")
-
-  lints1 <- list(
-    Lint("R/test.R", 1, line = "foobar1"),
-    Lint("R/test.R", 2, line = "foobar2"),
-    Lint("R/test.R", 3, line = "foobar3")
+  cache_lint(
+    cache = e1,
+    expr = test_data[["expr"]],
+    linter = test_data[["linters"]],
+    lints = test_data[["lints"]]
   )
 
-  expr1 <- list(content = paste(collapse = "\n", lines1))
-  cache_lint(cache = e1,
-             expr = expr1,
-             linter = list(),
-             lints = lints1)
+  t1 <- retrieve_lint(
+    cache = e1,
+    expr = test_data[["expr"]],
+    linter = test_data[["linters"]],
+    lines = test_data[["lines"]]
+  )
 
-  t1 <- retrieve_lint(cache = e1,
-                      expr = expr1,
-                      linter = list(),
-                      lines1
-                      )
-
-  expect_equal(t1, lints1)
+  expect_equal(t1, test_data[["lints"]])
 })
 
 test_that("retrieve_lint returns the same lints with fixed line numbers if lines added above", {
