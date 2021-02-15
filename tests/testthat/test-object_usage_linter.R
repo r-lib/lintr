@@ -166,6 +166,42 @@ test_that("object_usage_linter finds lints spanning multiple lines", {
     list(
       list(message = "unknown_function", line_number = 2L),
       list(message = "unknown_function", line_number = 4L)
-    )
+    ),
+    object_usage_linter()
+  )
+})
+
+test_that("global variable detection works", {
+  old_globals <- utils::globalVariables(package = globalenv())
+  utils::globalVariables("global_function", package = globalenv())
+  on.exit(utils::globalVariables(old_globals, package = globalenv(), add = FALSE))
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        if (global_function()) NULL
+
+        if (global_function()) {
+          NULL
+        }
+      }
+    "),
+    NULL,
+    object_usage_linter()
+  )
+})
+
+test_that("package detection works", {
+  expect_length(
+    lint_package("dummy_packages/package", linters = object_usage_linter(), parse_settings = FALSE),
+    9L
+  )
+})
+
+test_that("robust against errors", {
+  expect_lint(
+    "assign(\"x\", unknown_function)",
+    NULL,
+    object_usage_linter()
   )
 })
