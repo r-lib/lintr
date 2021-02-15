@@ -4,27 +4,32 @@
 #' @export
 T_and_F_symbol_linter <- function() { # nolint: object_name_linter.
   Linter(function(source_file) {
-    lapply(
-      ids_with_token(source_file, "SYMBOL"),
-      function(id) {
-        token <- with_id(source_file, id)
-        symbol <- re_matches(token[["text"]], rex(start, capture(or("T", "F")), end))[1L, 1L]
-        if (!is.na(symbol)) {
-          replacement <- switch(symbol, "T" = "TRUE", "F" = "FALSE")
-          line_num <- token[["line2"]]
-          start_col_num <- token[["col1"]]
-          end_col_num <- token[["col2"]]
-          Lint(
-            filename = source_file[["filename"]],
-            line_number = line_num,
-            column_number = end_col_num + 1L,
-            type = "style",
-            message = sprintf("Use %s instead of the symbol %s.", replacement, symbol),
-            line = source_file[["lines"]][[as.character(line_num)]],
-            ranges = list(c(start_col_num, end_col_num))
-          )
-        }
-      }
+    if (is.null(source_file$xml_parsed_content)) return(list())
+
+    xpath <- paste0(
+      "//SYMBOL[",
+      "(text() = 'T' or text() = 'F')", # T or F symbol
+      " and count(preceding-sibling::OP-DOLLAR) = 0", # not part of a $-subset expression
+      " and count(parent::expr/following-sibling::LEFT_ASSIGN) = 0", # not target of left assignment
+      " and count(parent::expr/preceding-sibling::RIGHT_ASSIGN) = 0", # not target of right assignment
+      " and count(parent::expr/following-sibling::EQ_ASSIGN) = 0", # not target of equals assignment
+      "]"
     )
+
+    bad_exprs <- xml2::xml_find_all(source_file$xml_parsed_content, xpath)
+
+    lapply(bad_exprs, function(expr) {
+      symbol <- xml2::xml_text(expr)
+      replacement <- switch(symbol, "T" = "TRUE", "F" = "FALSE")
+      message <- sprintf("Use %s instead of the symbol %s.", replacement, symbol)
+      xml_nodes_to_lint(
+        xml = expr,
+        source_file = source_file,
+        message = message,
+        linter = "T_and_F_symbol_linter",
+        type = "style",
+        offset = 1L
+      )
+    })
   })
 }
