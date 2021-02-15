@@ -87,6 +87,18 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 ### References ###
 Most of the default linters are based on [Hadley Wickham's The tidyverse style guide](https://style.tidyverse.org/).
 
+## Running `lintr` ##
+
+There are several ways to use `lintr`.
+
+When inside an R session, `lintr` can analyse all the R code in
+a file (using `lintr::lint(file_path)`), package (`lintr::lint_package(pkg_path)`) or directory (`lintr::lint_dir(dir_path)`).
+
+Similarly, `lintr` can be run from the command line using
+`Rscript -e "lintr::lint_package(commandArgs(trailingOnly = TRUE))" pkg_path` (linux/mac; for windows use Rscript.exe).
+
+Advanced users may run `lintr` during [continuous-integration](#continuous-integration), or [within their IDE or text editor](#editors-setup).
+
 ## Project Configuration ##
 
 Lintr supports per-project configuration of the following fields.
@@ -99,10 +111,21 @@ The config file (default file name: `.lintr`) is in [Debian Control Field Format
 - `exclude_start` - a regex pattern to start exclusion range. Default is "# nolint start"
 - `exclude_end` - a regex pattern to end exclusion range. Default is "# nolint end"
 
-An example file that uses 120 character line lengths, excludes a couple of
-files and sets different default exclude regexs follows.
+
+### .lintr File Example
+
+Below is an example .lintr file that uses:
+
+- 120 character line lengths
+- Excludes a couple of files
+- Disables a specific linter, and; 
+- Sets different default exclude regexes
+
 ```
-linters: with_defaults(line_length_linter(120))
+linters: with_defaults(
+  line_length_linter(120), 
+  commented_code_linter = NULL
+  )
 exclusions: list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "tests/testthat/exclusions-test")
 exclude: "# Exclude Linting"
 exclude_start: "# Begin Exclude Linting"

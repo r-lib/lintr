@@ -98,6 +98,7 @@ get_source_expressions <- function(filename) {
             line_location <- loc[1, ]
           }
         } else {
+          # nocov start
           return(
             Lint(
               filename = source_file$filename,
@@ -109,6 +110,7 @@ get_source_expressions <- function(filename) {
               linter = "error"
             )
           )
+          # nocov end
         }
       }
 
@@ -412,25 +414,27 @@ fix_eq_assigns <- function(pc) {
   expr_locs <- (function(x) {
     x[is.na(x)] <- FALSE
     !x
-    })(prev_locs == lag(next_locs)) # nolint
+    })(prev_locs == lag(next_locs))
 
   id_itr <- max(pc$id)
 
-  line1 <- integer(sum(expr_locs))
-  col1 <- integer(sum(expr_locs))
+  n_expr <- sum(expr_locs)
 
-  line2 <- integer(sum(expr_locs))
-  col2 <- integer(sum(expr_locs))
+  line1 <- integer(n_expr)
+  col1 <- integer(n_expr)
 
-  id <- integer(sum(expr_locs))
+  line2 <- integer(n_expr)
+  col2 <- integer(n_expr)
 
-  parent <- integer(sum(expr_locs))
+  id <- integer(n_expr)
 
-  token <- character(sum(expr_locs))
+  parent <- integer(n_expr)
 
-  terminal <- logical(sum(expr_locs))
+  token <- character(n_expr)
 
-  text <- character(sum(expr_locs))
+  terminal <- logical(n_expr)
+
+  text <- character(n_expr)
 
   true_locs <- which(expr_locs == TRUE)
   for (i in seq_along(true_locs)) {

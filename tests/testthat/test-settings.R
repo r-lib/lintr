@@ -38,6 +38,32 @@ test_that("it uses config settings in same directory if provided", {
   expect_equal(settings$exclude, "test")
 })
 
+test_that("it uses config home directory settings if provided", {
+
+  path <- tempfile()
+  home_path <- tempfile()
+  dir.create(path)
+  dir.create(home_path)
+  file <- tempfile(tmpdir = path)
+  config_file <- file.path(home_path, ".lintr")
+  writeLines("exclude: \"test\"", config_file)
+  on.exit({
+    unlink(file)
+    unlink(config_file)
+    unlink(path)
+    unlink(home_path)
+  },
+  add = TRUE)
+
+  withr::with_envvar(c(HOME = home_path), read_settings(file))
+
+  lapply(setdiff(ls(settings), "exclude"), function(setting) {
+    expect_equal(settings[[setting]], default_settings[[setting]])
+  })
+
+  expect_equal(settings$exclude, "test")
+})
+
 test_that("it errors if the config file does not end in a newline", {
 
   f <- tempfile()

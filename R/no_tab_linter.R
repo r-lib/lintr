@@ -1,5 +1,5 @@
-#' @describeIn linters check that only spaces are used for indentation, not tabs.
-#' @include   make_linter_from_regex.R
+#' @describeIn linters Check that only spaces are used for indentation, not tabs.
+#' @include make_linter_from_regex.R
 #'
 #' @export
 no_tab_linter <- make_linter_from_regex(

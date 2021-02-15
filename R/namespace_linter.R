@@ -7,7 +7,7 @@
 #'   \code{namespace:::symbol} calls.
 #' @export
 namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
-  function(source_file) {
+  Linter(function(source_file) {
     if (is.null(source_file$full_xml_parsed_content)) return(list())
 
     xml <- source_file$full_xml_parsed_content
@@ -90,6 +90,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
               }
             }
           } else {
+            # nocov start: need getNamespace to fail. Could be done with {mockery} in principle
             line1 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "line1"))
             col1 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "col1"))
             col2 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "col2"))
@@ -103,6 +104,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
               ranges = list(c(col1, col2)),
               linter = "namespace_linter"
             ))
+            # nocov end
           }
         }
       } else {
@@ -123,5 +125,5 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     })
 
     results[!vapply(results, is.null, logical(1L))]
-  }
+  })
 }

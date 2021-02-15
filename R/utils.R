@@ -216,3 +216,14 @@ set_lang <- function(new_lang) {
 reset_lang <- function(old_lang) {
   if (is.na(old_lang)) Sys.unsetenv("LANGUAGE") else Sys.setenv(LANGUAGE = old_lang)
 }
+
+#' Create a \code{linter} closure
+#' @param fun A function that takes a source file and returns \code{lint} objects.
+#' @return The same function with its class set to 'linter'.
+#' @export
+Linter <- function(fun) { # nolint: object_name_linter.
+  if (!is.function(fun) || length(formals(args(fun))) != 1L) {
+    stop("`fun` must be a function taking exactly one argument.", call. = FALSE)
+  }
+  structure(fun, class = "linter")
+}

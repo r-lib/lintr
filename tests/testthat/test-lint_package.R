@@ -26,15 +26,15 @@ test_that(
   )
   read_settings(NULL)
   lints_from_outside <- lint_package(
-    pkg_path, linters = list(assignment_linter), parse_settings = FALSE
+    pkg_path, linters = list(assignment_linter()), parse_settings = FALSE
   )
   lints_from_pkg_root <- withr::with_dir(
     pkg_path,
-    lint_package(".", linters = list(assignment_linter), parse_settings = FALSE)
+    lint_package(".", linters = list(assignment_linter()), parse_settings = FALSE)
   )
   lints_from_a_subdir <- withr::with_dir(
     file.path(pkg_path, "R"),
-    lint_package("..", linters = list(assignment_linter), parse_settings = FALSE)
+    lint_package("..", linters = list(assignment_linter()), parse_settings = FALSE)
   )
 
   expect_equal(
@@ -80,15 +80,15 @@ test_that(
 
   expected_lines <- c("mno = 789")
   lints_from_outside <- lint_package(
-    pkg_path, linters = list(assignment_linter)
+    pkg_path, linters = list(assignment_linter())
   )
   lints_from_pkg_root <- withr::with_dir(
     pkg_path,
-    lint_package(".", linters = list(assignment_linter))
+    lint_package(".", linters = list(assignment_linter()))
   )
   lints_from_a_subdir <- withr::with_dir(
     file.path(pkg_path, "R"),
-    lint_package("..", linters = list(assignment_linter))
+    lint_package("..", linters = list(assignment_linter()))
   )
 
   expect_equal(

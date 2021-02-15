@@ -1,34 +1,36 @@
 #' @describeIn linters  Check that the \code{c} function is not used without arguments nor with a
 #'                      single constant.
 #' @export
-unneeded_concatenation_linter <- function(source_file) {
-  tokens <- source_file[["parsed_content"]] <-
-    filter_out_token_type(source_file[["parsed_content"]], "expr")
-  msg_empty <- "Unneeded concatenation without arguments. Replace the \"c\" call by NULL or vector()."
-  msg_const <- "Unneeded concatenation of a constant. Remove the \"c\" call."
-  lapply(
-    ids_with_token(source_file, "SYMBOL_FUNCTION_CALL"),
-    function(token_num) {
-      num_args <- get_num_concat_args(token_num, tokens)
-      if (num_args == 0L || num_args == 1L) {
-        token <- with_id(source_file, token_num)
-        start_col_num <- token[["col1"]]
-        end_col_num <- token[["col2"]]
-        line_num <- token[["line1"]]
-        line <- source_file[["lines"]][[as.character(line_num)]]
-        Lint(
-          filename = source_file[["filename"]],
-          line_number = line_num,
-          column_number = start_col_num,
-          type = "warn",
-          message = if (num_args) msg_const else msg_empty,
-          line = line,
-          linter = "unneeded_concatenation_linter",
-          ranges = list(c(start_col_num, end_col_num))
-        )
+unneeded_concatenation_linter <- function() {
+  Linter(function(source_file) {
+    tokens <- source_file[["parsed_content"]] <-
+      filter_out_token_type(source_file[["parsed_content"]], "expr")
+    msg_empty <- "Unneeded concatenation without arguments. Replace the \"c\" call by NULL or vector()."
+    msg_const <- "Unneeded concatenation of a constant. Remove the \"c\" call."
+    lapply(
+      ids_with_token(source_file, "SYMBOL_FUNCTION_CALL"),
+      function(token_num) {
+        num_args <- get_num_concat_args(token_num, tokens)
+        if (num_args == 0L || num_args == 1L) {
+          token <- with_id(source_file, token_num)
+          start_col_num <- token[["col1"]]
+          end_col_num <- token[["col2"]]
+          line_num <- token[["line1"]]
+          line <- source_file[["lines"]][[as.character(line_num)]]
+          Lint(
+            filename = source_file[["filename"]],
+            line_number = line_num,
+            column_number = start_col_num,
+            type = "warning",
+            message = if (num_args) msg_const else msg_empty,
+            line = line,
+            linter = "unneeded_concatenation_linter",
+            ranges = list(c(start_col_num, end_col_num))
+          )
+        }
       }
-    }
-  )
+    )
+  })
 }
 
 get_num_concat_args <- function(token_num, tokens) {

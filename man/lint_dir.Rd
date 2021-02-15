@@ -8,7 +8,7 @@ lint_dir(
   path = ".",
   relative_path = TRUE,
   ...,
-  exclusions = NULL,
+  exclusions = list("renv", "packrat"),
   pattern = rex::rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex",
     "txt"), end),
   parse_settings = TRUE
@@ -32,7 +32,7 @@ package path.}
 the extensions .R, .Rmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for
 lowercase r (.r, ...)}
 
-\item{parse_settings}{whether to try and parse the settings}
+\item{parse_settings}{whether to try and parse the settings.}
 }
 \value{
 A list of lint objects.

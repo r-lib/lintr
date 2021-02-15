@@ -1,8 +1,8 @@
-#' @describeIn linters check that opening curly braces are never on their own
+#' @describeIn linters  Check that opening curly braces are never on their own
 #' line and are always followed by a newline.
 #' @export
 open_curly_linter <- function(allow_single_line = FALSE) {
-  function(source_file) {
+  Linter(function(source_file) {
     lapply(ids_with_token(source_file, "'{'"),
            function(id) {
 
@@ -49,12 +49,15 @@ open_curly_linter <- function(allow_single_line = FALSE) {
                     line_number = parsed$line1,
                     column_number = parsed$col1,
                     type = "style",
-                    message = "Opening curly braces should never go on their own line and should always be followed by a new line.", # nolint
+                    message = paste(
+                      "Opening curly braces should never go on their own line and",
+                      "should always be followed by a new line."
+                    ),
                     line = line,
                     linter = "open_curly_linter"
                     )
              }
 
            })
-  }
+  })
 }
