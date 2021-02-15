@@ -225,31 +225,31 @@ test_that("retrieve_lint returns the same lints if nothing has changed", {
 })
 
 test_that("retrieve_lint returns the same lints with fixed line numbers if lines added above", {
+  test_data <- fixtures$retrieve_lint()
+
   e1 <- new.env(parent = emptyenv())
 
-  lines1 <- c("foobar1", "foobar2", "foobar3")
-  lines2 <- c("", "foobar1", "foobar2", "foobar3")
+  lines1 <- test_data[["lines"]]
+  lines2 <- c("", lines1)
+  lints <- test_data[["lints"]]
 
-  lints1 <- list(
-    Lint("R/test.R", 1, line = "foobar1"),
-    Lint("R/test.R", 2, line = "foobar2"),
-    Lint("R/test.R", 3, line = "foobar3")
+  cache_lint(
+    cache = e1,
+    expr = test_data[["expr"]],
+    linter = test_data[["linters"]],
+    lints = lints
   )
 
-  expr1 <- list(content = paste(collapse = "\n", lines1))
-  cache_lint(cache = e1,
-             expr = expr1,
-             linter = list(),
-             lints = lints1)
+  t1 <- retrieve_lint(
+    cache = e1,
+    expr = test_data[["expr"]],
+    linter = test_data[["linters"]],
+    lines = lines2
+  )
 
-  t1 <- retrieve_lint(cache = e1,
-                      expr = expr1,
-                      linter = list(),
-                      lines2)
-
-  expect_equal(t1[[1]]$line_number, lints1[[1]]$line_number + 1)
-  expect_equal(t1[[2]]$line_number, lints1[[2]]$line_number + 1)
-  expect_equal(t1[[3]]$line_number, lints1[[3]]$line_number + 1)
+  expect_equal(t1[[1]]$line_number, lints[[1]]$line_number + 1)
+  expect_equal(t1[[2]]$line_number, lints[[2]]$line_number + 1)
+  expect_equal(t1[[3]]$line_number, lints[[3]]$line_number + 1)
 })
 
 test_that("retrieve_lint returns the same lints with lines added below", {
