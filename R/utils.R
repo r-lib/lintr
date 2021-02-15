@@ -64,7 +64,7 @@ names2 <- function(x) {
 
 linter_auto_name <- function(which = -3L) {
   call <- sys.call(which = which)
-  nm <- paste(deparse(call, 500L), collapse = "")
+  nm <- paste(deparse(call, 500L), collapse = " ")
   regex <- rex(start, one_or_more(alnum %or% "." %or% "_"))
   if (re_matches(nm, regex)) {
     match <- re_matches(nm, regex, locations = TRUE)
@@ -82,7 +82,7 @@ auto_names <- function(x) {
     if (inherits(x, "linter")) {
       attr(x, "name", exact = TRUE)
     } else {
-      paste(deparse(x, 500L), collapse = "")
+      paste(deparse(x, 500L), collapse = " ")
     }
   }
   defaults <- vapply(x[missing], default_name, character(1), USE.NAMES = FALSE)

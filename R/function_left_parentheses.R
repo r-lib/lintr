@@ -7,7 +7,7 @@ function_left_parentheses_linter <- function() { # nolint: object_length_linter.
       ids_with_token(source_file, "'('"),
       function(id) {
 
-        parsed <- source_file$parsed_content[id,]
+        parsed <- source_file$parsed_content[id, ]
 
         terminal_tokens_before <-
           source_file$parsed_content$line1 == parsed$line1 &

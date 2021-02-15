@@ -47,7 +47,8 @@ test_that("as.data.frame.lints", {
 
   expect_warning(
     Lint("dummy.R", linter = "deprecated"),
-    fixed = "deprecated"
+    regexp = "deprecated",
+    fixed = TRUE
   )
 
   # Convert lints to data.frame
