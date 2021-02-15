@@ -27,6 +27,8 @@ fhash <- function(filename) {
 
 # Tests
 
+# `clear_cache`
+
 test_that("clear_cache deletes the file if a file is given", {
   mockery::stub(clear_cache, "read_settings", function(...) invisible(...))
   mockery::stub(clear_cache, "unlink", function(...) list(...))
@@ -47,6 +49,8 @@ test_that("clear_cache deletes the directory if no file is given", {
 
   expect_equal(clear_cache(file = NULL, path = "."), list(".", recursive = TRUE))
 })
+
+# `load_cache`
 
 test_that("load_cache loads the saved file in a new empty environment", {
   with_mock(
@@ -79,6 +83,8 @@ test_that("load_cache returns an empty environment if no cache file exists", {
     expect_equal(ls(e2), character(0))
   )
 })
+
+# `save_cache`
 
 test_that("save_cache creates a directory if needed", {
   with_mock(
@@ -140,6 +146,8 @@ test_that("save_cache saves all non-hidden objects from the environment", {
   )
 })
 
+# `cache_file`
+
 test_that("cache_file generates the same cache with different lints", {
   e1 <- new.env(parent = emptyenv())
 
@@ -166,6 +174,8 @@ test_that("cache_file generates different caches for different linters", {
   expect_equal(length(ls(e1)), 2)
 })
 
+# `retrieve_file`
+
 test_that("retrieve_file returns NULL if there is no cached result", {
   e1 <- new.env(parent = emptyenv())
 
@@ -187,6 +197,8 @@ test_that("retrieve_file returns the cached result if found", {
   expect_equal(retrieve_file(e1, f1, list()), list("foobar"))
 })
 
+# `cache_lint`
+
 test_that("cache_lint generates the same cache with different lints", {
   e1 <- new.env(parent = emptyenv())
 
@@ -207,6 +219,8 @@ test_that("cache_lint generates different caches for different linters", {
 
   expect_equal(length(ls(e1)), 2)
 })
+
+# `retrieve_lint`
 
 test_that("retrieve_lint returns the same lints if nothing has changed", {
   test_data <- fixtures$retrieve_lint()
@@ -316,6 +330,8 @@ test_that(
   expect_equal(t1[[3]]$line_number, lints1[[3]]$line_number + 1)
 })
 
+# `has_lint`
+
 test_that("has_lint returns FALSE if there is no cached result", {
   e1 <- new.env(parent = emptyenv())
 
@@ -342,6 +358,8 @@ test_that("has_lint distinguishes global expressions from line expression with s
   global_expr <- list(content = same_content, file_lines = character())
   expect_false(has_lint(e1, global_expr, list()))
 })
+
+# `find_new_line`
 
 test_that("find_new_line returns the same if the line is the same", {
   t1 <- c("foobar1",
@@ -375,6 +393,8 @@ test_that("find_new_line returns the correct line if it is after the current lin
 
   expect_equal(find_new_line(3, "foobar3", t1), 3)
 })
+
+#
 
 test_that("lint with cache uses the provided relative cache directory", {
   path <- "./my_cache_dir"
