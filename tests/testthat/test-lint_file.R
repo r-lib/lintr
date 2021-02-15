@@ -148,7 +148,7 @@ test_that("compatibility warnings work", {
       regexp = "The use of linters of class 'function'",
       fixed = TRUE
     ),
-    regexp = "`fun` must be a function of one argument",
+    regexp = "`fun` must be a function taking exactly one argument",
     fixed = TRUE
   )
 
