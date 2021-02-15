@@ -219,7 +219,7 @@ xml_nodes_to_lint <- function(xml, source_file, message,
     type = type,
     message = message,
     line = source_file$lines[line1],
-    ranges = list(c(col1, col2))
+    ranges = list(c(col1 - offset, col2))
   ))
 }
 
