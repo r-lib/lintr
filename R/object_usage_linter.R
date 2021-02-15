@@ -45,35 +45,34 @@ object_usage_linter <- function() {
       }
       res <- parse_check_usage(fun)
 
-      lapply(which(!is.na(res$message)),
-             function(row_num) {
-               row <- res[row_num, ]
+      lapply(
+        which(!is.na(res$message)),
+        function(row_num) {
+          row <- res[row_num, ]
 
-               if (row$name %in% declared_globals) {
-                 return()
-               }
+          if (row$name %in% declared_globals) {
+            return()
+          }
 
-               org_line_num <- as.integer(row$line_number) + info$line1 - 1L
+          org_line_num <- as.integer(row$line1) + info$line1 - 1L
+          line <- source_file$content[as.integer(org_line_num)]
 
-               line <- source_file$content[as.integer(org_line_num)]
+          row$name <- re_substitutes(row$name, rex("<-"), "")
 
-               row$name <- re_substitutes(row$name, rex("<-"), "")
+          location <- re_matches(line, rex(row$name), locations = TRUE)
 
-               location <- re_matches(line,
-                                      rex(row$name),
-                                      locations = TRUE)
-
-               Lint(
-                 filename = source_file$filename,
-                 line_number = org_line_num,
-                 column_number = location$start,
-                 type = "warning",
-                 message = row$message,
-                 line = line,
-                 ranges = list(c(location$start, location$end)),
-                 linter = "object_usage_linter"
-               )
-             })
+          Lint(
+            filename = source_file$filename,
+            line_number = org_line_num,
+            column_number = location$start,
+            type = "warning",
+            message = row$message,
+            line = line,
+            ranges = list(c(location$start, location$end)),
+            linter = "object_usage_linter"
+          )
+        }
+      )
     })
   })
 }
@@ -140,23 +139,37 @@ parse_check_usage <- function(expression) {
   try(codetools::checkUsage(expression, report = report))
 
   function_name <- rex(anything, ": ")
-  line_info <- rex(" ", "(", capture(name = "path", non_spaces), ":", capture(name = "line_number", digits), ")")
+  line_info <- rex(" ", "(", capture(name = "path", non_spaces), ":", capture(name = "line1", digits), maybe("-", capture(name = "line2", digits)), ")")
 
-  res <- re_matches(vals,
-                    rex(function_name,
-                        capture(name = "message", anything,
-                                one_of(quote, "\u2018"), capture(name = "name", anything), one_of(quote, "\u2019"),
-                                anything),
-                        line_info))
+  res <- re_matches(
+    vals,
+    rex(
+      function_name,
+      capture(
+        name = "message",
+        anything,
+        one_of(quote, "\u2018"),
+        capture(name = "name", anything),
+        one_of(quote, "\u2019"),
+        anything
+      ),
+      line_info
+    )
+  )
 
   missing <- is.na(res$message)
   if (any(missing)) {
-    res[missing, ] <- re_matches(vals[missing],
-                                rex(function_name,
-                                    capture(name = "message",
-                                            "possible error in ", capture(name = "name", anything), ": ", anything
-                                    ),
-                                    line_info))
+    res[missing, ] <- re_matches(
+      vals[missing],
+      rex(
+        function_name,
+        capture(
+          name = "message",
+          "possible error in ", capture(name = "name", anything), ": ", anything
+        ),
+        line_info
+      )
+    )
   }
 
   res

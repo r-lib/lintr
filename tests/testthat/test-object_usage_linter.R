@@ -150,3 +150,22 @@ test_that("object-usage line-numbers are relative to start-of-file", {
     object_usage_linter()
   )
 })
+
+test_that("object_usage_linter finds lints spanning multiple lines", {
+  # Regression test for #507
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        if (unknown_function()) NULL
+
+        if (unknown_function()) {
+          NULL
+        }
+      }
+    "),
+    list(
+      list(message = "unknown_function", line_number = 2L),
+      list(message = "unknown_function", line_number = 4L)
+    )
+  )
+})
