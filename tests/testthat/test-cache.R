@@ -1,6 +1,31 @@
+# Fixtures
+
+fixtures <- list()
+
+fixtures$retrieve_lint <- function() {
+  file_name <- "R/test.R"
+  lines <- c("foobar1", "foobar2", "foobar3")
+  lints <- list(
+    Lint(file_name, 1, line = "foobar1"),
+    Lint(file_name, 2, line = "foobar2"),
+    Lint(file_name, 3, line = "foobar3")
+  )
+  expr <- list(content = paste(collapse = "\n", lines))
+  list(
+    lines = lines,
+    linters = list(),
+    lints = lints,
+    expr = expr
+  )
+}
+
+# Helper functions
+
 fhash <- function(filename) {
   digest::digest(filename, algo = "sha1")
 }
+
+# Tests
 
 test_that("clear_cache deletes the file if a file is given", {
   mockery::stub(clear_cache, "read_settings", function(...) invisible(...))
@@ -182,25 +207,6 @@ test_that("cache_lint generates different caches for different linters", {
 
   expect_equal(length(ls(e1)), 2)
 })
-
-fixtures <- list()
-
-fixtures$retrieve_lint <- function() {
-  file_name <- "R/test.R"
-  lines <- c("foobar1", "foobar2", "foobar3")
-  lints <- list(
-    Lint(file_name, 1, line = "foobar1"),
-    Lint(file_name, 2, line = "foobar2"),
-    Lint(file_name, 3, line = "foobar3")
-  )
-  expr <- list(content = paste(collapse = "\n", lines))
-  list(
-    lines = lines,
-    linters = list(),
-    lints = lints,
-    expr = expr
-  )
-}
 
 test_that("retrieve_lint returns the same lints if nothing has changed", {
   test_data <- fixtures$retrieve_lint()
