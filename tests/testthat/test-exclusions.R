@@ -7,11 +7,11 @@ test_that("it excludes properly", {
 
   t1 <- lint("exclusions-test", parse_settings = FALSE)
 
-  expect_equal(length(t1), 8)
+  expect_equal(length(t1), 7)
 
   t2 <- lint("exclusions-test", exclusions = list("exclusions-test" = 4), parse_settings = FALSE)
 
-  expect_equal(length(t2), 7)
+  expect_equal(length(t2), 6)
 
   t3 <- lint("exclusions-test", exclusions = list("exclusions-test"), parse_settings = FALSE)
 
@@ -22,7 +22,7 @@ test_that("it excludes properly", {
   for (info in sprintf("caching: pass %s", 1:4)) {
     t4 <- lint("exclusions-test", cache = cache_path, parse_settings = FALSE)
 
-    expect_equal(length(t4), 8, info = info)
+    expect_equal(length(t4), 7, info = info)
   }
 })
 
