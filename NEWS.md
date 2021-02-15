@@ -55,7 +55,8 @@
 * `trailing_blank_lines_linter()` now also lints files without a terminal newline (#675, @AshesITR)
 * `object_name_linter()` now correctly detects imported functions when linting packages (#642, @AshesITR)
 * Consistent access to linters through a function call, even for linters without parameters (#245, @fangly, @AshesITR, and @MichaelChirico)
-* `T_and_F_symbol_linter()` no longer lints occurrences of `T` and `F` when used as variable names or subsetting names (#657, @AshesITR)
+* `T_and_F_symbol_linter()` no longer lints occurrences of `T` and `F` when used for subsetting and gives a better 
+  message when used as variable names (#657, @AshesITR)
 
 # lintr 2.0.1
 
