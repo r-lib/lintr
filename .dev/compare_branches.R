@@ -86,6 +86,7 @@ if ("outfile" %in% names(args)) {
 # read Depends from DESCRIPTION
 get_deps <- function(pkg) {
   deps <- read.dcf(file.path(pkg, "DESCRIPTION"), "Depends")
+  if (is.na(deps)) return(character())
   deps <- strsplit(deps, ",", fixed = TRUE)[[1L]]
   deps <- trimws(gsub("\\([^)]*\\)", "", deps))
   deps <- deps[deps != "R"]
