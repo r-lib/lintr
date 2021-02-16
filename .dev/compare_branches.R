@@ -174,12 +174,12 @@ run_branch_workflow <- function(linter_name, pkgs, branch) {
 
 message(pr)
 message(toString(linter_names))
-message("Any package repo found in these directories will be analysed:", toString(packages))
+message("Any package repo found in these directories will be analysed:", toString(basename(packages)))
 
 if (is_branch) {
-  lints <- purrr::map_df(linter_names, run_pr_workflow, packages, pr)
-} else {
   lints <- purrr::map_df(linter_names, run_branch_workflow, packages, branch)
+} else {
+  lints <- purrr::map_df(linter_names, run_pr_workflow, packages, pr)
 }
 
 write.csv(lints, outfile, row.names = FALSE)
