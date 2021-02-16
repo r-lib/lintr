@@ -106,7 +106,9 @@ lint_all_packages <- function(pkgs, linter) {
       if (!pkg_is_dir[ii]) {
         tmp <- file.path(tempdir(), pkg_names[ii])
         on.exit(unlink(tmp, recursive = TRUE))
-        utils::untar(pkgs[ii], exdir = tmp)
+        # --strip-components makes sure the output structure is
+        # /path/to/tmp/pkg/ instead of /path/to/tmp/pkg/pkg
+        utils::untar(pkgs[ii], exdir = tmp, extras="--strip-components=1")
         pkg <- tmp
       }
       # devtools::load_all() may not work for packages with Depends
