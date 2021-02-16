@@ -83,7 +83,14 @@ if ("outfile" %in% names(args)) {
   )
 }
 
-# In lintr directory
+# read Depends from DESCRIPTION
+get_deps <- function(pkg) {
+  deps <- read.dcf(file.path(pkg, "DESCRIPTION"), "Depends")
+  deps <- strsplit(deps, ",", fixed = TRUE)[[1L]]
+  deps <- trimws(gsub("\\([^)]*\\)", "", deps))
+  deps <- deps[deps != "R"]
+  deps
+}
 
 lint_all_packages <- function(pkgs, linter) {
   pkg_is_dir <- file.info(pkgs)$isdir
@@ -102,6 +109,11 @@ lint_all_packages <- function(pkgs, linter) {
         utils::untar(pkgs[ii], exdir = tmp)
         pkg <- tmp
       }
+      # devtools::load_all() may not work for packages with Depends
+      tryCatch(
+        find.package(get_deps(pkg)),
+        warning = function(w) stop("Package dependencies missing:\n", w$message)
+      )
       lint_dir(pkg, linters = linter, parse_settings = FALSE)
     }
   ) %>%
