@@ -48,7 +48,7 @@ if ("branch" %in% names(args)) {
   branch <- args["branch"]
   is_branch <- TRUE
 } else if ("pr" %in% names(args)) {
-  pr <- args["pr"]
+  pr <- as.integer(args["pr"])
 } else {
   pr <- 709L
 }
@@ -78,7 +78,8 @@ if ("outfile" %in% names(args)) {
   outfile <- args["outfile"]
 } else {
   outfile <- normalizePath(
-    file.path("~", sprintf("lintr_compare_branches_%d.csv", as.integer(Sys.time())))
+    file.path("~", sprintf("lintr_compare_branches_%d.csv", as.integer(Sys.time()))),
+    mustWork = FALSE
   )
 }
 
