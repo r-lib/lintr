@@ -144,7 +144,7 @@ run_pr_workflow <- function(linter_name, pkgs, pr) {
 
   dplyr::bind_rows(
     main = run_on("master", pkgs, linter_name),
-    pr = run_on("pr", pkgs, linter_name, pr),
+    pr = run_on("pr", pkgs, linter_name, number = pr),
     .id = "source"
   )
 }
@@ -155,7 +155,7 @@ run_branch_workflow <- function(linter_name, pkgs, branch) {
 
   dplyr::bind_rows(
     main = run_on("master", pkgs, linter_name),
-    branch = run_on("branch", pkgs, linter_name, branch),
+    branch = run_on("branch", pkgs, linter_name, branch = branch),
     .id = "source"
   )
 }
