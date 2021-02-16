@@ -80,9 +80,9 @@ object_usage_linter <- function() {
 
 get_assignment_symbols <- function(xml) {
   left_assignment_symbols <-
-    xml2::xml_text(xml2::xml_find_all(xml, "expr[LEFT_ASSIGN]/expr[1]/*"))
+    xml2::xml_text(xml2::xml_find_all(xml, "expr[LEFT_ASSIGN]/expr[1]/SYMBOL[1]"))
   equal_assignment_symbols <-
-    xml2::xml_text(xml2::xml_find_all(xml, "equal_assign/expr[1]/*"))
+    xml2::xml_text(xml2::xml_find_all(xml, "equal_assign/expr[1]/SYMBOL[1]"))
   assign_fun_symbols <-
     xml2::xml_text(xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/*"))
   set_method_fun_symbols <-
