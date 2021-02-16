@@ -1,26 +1,8 @@
 #!/usr/local/bin/Rscript
 
-# compare the lints obtained before/after a given PR
-# the PR is always compared against master
+# compare the lints obtained before/after a given PR/branch vs current master
 
-# arguments
-# --linters=linter1,linter2,...
-#   run the comparison for these linters
-# --branch=branch
-#   run the comparison for master vs this branch
-# --pr=pr
-#   run the comparison for master vs this pr
-# --packages=/path/to/package1,/path/to/package2,...
-#   run the comparison for these packages
-# --pkg_dir=pkg_dir
-#   run the comparison for all packages in dir
-# --sample_size
-#   select a sample of the packages found in
-#   --packages/--pkg_dir of the given size
-# --outfile
-#   a file to which to write the output
-
-library(magrittr)
+library(optparse)
 library(dplyr)
 library(purrr)
 library(tibble)
@@ -32,34 +14,65 @@ if(!file.exists("lintr.Rproj")) {
   "compare_branches.R should be run inside the lintr-package directory"
 }
 
-args <- strsplit(gsub("^--", "", commandArgs(TRUE)), "=", fixed = TRUE)
-args <- setNames(
-  vapply(args, `[`, character(1L), 2L),
-  vapply(args, `[`, character(1L), 1L)
+param_list <- list(
+  optparse::make_option(
+    "--linters",
+    default = "object_usage_linter",
+    help = "Run the comparison for these linter(s) (comma-separated) [default %default]"
+  ),
+  optparse::make_option(
+    "--branch",
+    help = "Run the comparison for master vs. this branch"
+  ),
+  optparse::make_option(
+    "--pr",
+    type = "integer",
+    help = "Run the comparison for master vs. this PR"
+  ),
+  optparse::make_option(
+    "--packages",
+     help = "Run the comparison using these packages (comma-separated)"
+  ),
+  optparse::make_option(
+    "--pkg_dir",
+    help = "Run the comparison using all packages in this directory"
+  ),
+  optparse::make_option(
+    "--sample_size",
+    type = "integer",
+    help = "Select a sample of this number of packages from 'packages' or 'pkg_dir'"
+  ),
+  optparse::make_option(
+    "--outfile",
+    default = file.path("~", sprintf("lintr_compare_branches_%d.csv", as.integer(Sys.time()))),
+    help = "Destination file to which to write the output"
+  )
 )
-if ("linters" %in% names(args)) {
-  linter_names <- strsplit(args["linters"], ",", fixed = TRUE)[[1L]]
-} else {
-  linter_names <- "object_usage_linter"
-}
+
+params <- optparse::parse_args(optparse::OptionParse(option_list = param_list))
+
+linter_names <- strsplit(params$linters, ",", fixed = TRUE)[[1L]]
+
 # prioritize "branch"
 is_branch <- FALSE
-if ("branch" %in% names(args)) {
-  branch <- args["branch"]
+if (!is.null(params$branch)) {
+  branch <- params$branch
   is_branch <- TRUE
-} else if ("pr" %in% names(args)) {
-  pr <- as.integer(args["pr"])
+} else if (!is.null(params$pr)) {
+  pr <- params$pr
 } else {
-  pr <- 709L
+  message("Please supply a branch (--branch) or a PR number (--pr)")
+  q("no")
 }
 
 # prioritize packages
-if ("packages" %in% names(args)) {
-  packages <- strsplit(args["packages"], ",", fixed = TRUE)[[1L]]
-} else if ("pkg_dir" %in% names(args)) {
-  packages <- list.files(normalizePath(args["pkg_dir"]), full.names = TRUE)
+if (!is.null(params$packages)) {
+  packages <- strsplit(params$packages, ",", fixed = TRUE)[[1L]]
+} else if (!is.null(params$pkg_dir)) {
+  packages <- list.files(normalizePath(params$pkg_dir), full.names = TRUE)
 } else {
-  packages <- file.path("~", "proj", "code_as_data", "data", "packages")
+  message("Please supply a comma-separated list of packages (--packages) or a directory of packages (--pkg_dir)")
+  q("no")
 }
 # filter to (1) package directories or (2) package tar.gz files
 packages <- packages[
@@ -70,17 +83,8 @@ packages <- packages[
     )
 ]
 
-if ("sample_size" %in% names(args)) {
-  packages <- sample(packages, min(length(packages), as.integer(args["sample_size"])))
-}
-
-if ("outfile" %in% names(args)) {
-  outfile <- args["outfile"]
-} else {
-  outfile <- normalizePath(
-    file.path("~", sprintf("lintr_compare_branches_%d.csv", as.integer(Sys.time()))),
-    mustWork = FALSE
-  )
+if (!is.null(params$sample_size)) {
+  packages <- sample(packages, min(length(packages), params$sample_size))
 }
 
 # read Depends from DESCRIPTION
@@ -176,15 +180,8 @@ run_branch_workflow <- function(linter_name, pkgs, branch) {
 }
 
 ###############################################################################
-
 # TODO: handle both command line args and interactive runs
 # TODO: handle the case when working directory is not the lintr directory
-# TODO: convert to the original branch (if this was not master)
-#   - at the end of the workflow (currently this always converts back to
-#   master)
-#   - and if there is any error when running the workflow
-# TODO: save data.frame of lints to file
-
 ###############################################################################
 
 message(pr)
