@@ -59,17 +59,15 @@ commas_linter <- function() {
               !empty_comma &&
               !is_blank_switch) {
 
-              lints[[length(lints) + 1L]] <-
-                Lint(
-                  filename = source_file$filename,
-                  line_number = line_number,
-                  column_number = comma_loc,
-                  type = "style",
-                  message = "Commas should never have a space before.",
-                  line = line,
-                  ranges = list(c(start, end)),
-                  "commas_linter"
-                )
+              lints[[length(lints) + 1L]] <- Lint(
+                filename = source_file$filename,
+                line_number = line_number,
+                column_number = comma_loc,
+                type = "style",
+                message = "Commas should never have a space before.",
+                line = line,
+                ranges = list(c(start, end))
+              )
             }
           }
 
@@ -83,17 +81,14 @@ commas_linter <- function() {
                                source_file$parsed_content$token == "','")
 
             if (has_token) {
-
-              lints[[length(lints) + 1L]] <-
-                Lint(
-                  filename = source_file$filename,
-                  line_number = line_number,
-                  column_number = comma_loc + 1,
-                  type = "style",
-                  message = "Commas should always have a space after.",
-                  line = line,
-                  linter = "commas_linter"
-                )
+              lints[[length(lints) + 1L]] <- Lint(
+                filename = source_file$filename,
+                line_number = line_number,
+                column_number = comma_loc + 1,
+                type = "style",
+                message = "Commas should always have a space after.",
+                line = line
+              )
             }
 
           }

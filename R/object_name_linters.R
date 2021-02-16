@@ -68,8 +68,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
       assignments[!matches_a_style],
       object_lint2,
       source_file,
-      lint_msg,
-      "object_name_linter"
+      lint_msg
     )
   })
 }
@@ -105,7 +104,7 @@ strip_names <- function(x) {
   x
 }
 
-object_lint2 <- function(expr, source_file, message, type) {
+object_lint2 <- function(expr, source_file, message) {
   symbol <- xml2::as_list(expr)
   Lint(
     filename = source_file$filename,
@@ -115,11 +114,11 @@ object_lint2 <- function(expr, source_file, message, type) {
     message = message,
     line = source_file$file_lines[as.numeric(symbol@line1)],
     ranges = list(as.numeric(c(symbol@col1, symbol@col2))),
-    linter = type
-    )
+  )
 }
 
-make_object_linter <- function(fun) {
+make_object_linter <- function(fun, name = linter_auto_name()) {
+  force(name)
   Linter(function(source_file) {
 
     token_nums <- ids_with_token(
@@ -147,7 +146,7 @@ make_object_linter <- function(fun) {
         }
       }
     )
-  })
+  }, name = name)
 }
 
 known_generic_regex <- rex(
@@ -266,7 +265,7 @@ is_special_function <- function(x) {
   x %in% special_funs
 }
 
-object_lint <- function(source_file, token, message, type) {
+object_lint <- function(source_file, token, message) {
   Lint(
     filename = source_file$filename,
     line_number = token$line1,
@@ -274,8 +273,7 @@ object_lint <- function(source_file, token, message, type) {
     type = "style",
     message = message,
     line = source_file$lines[as.character(token$line1)],
-    ranges = list(c(token$col1, token$col2)),
-    linter = type
+    ranges = list(c(token$col1, token$col2))
   )
 }
 
@@ -304,8 +302,7 @@ object_length_linter <- function(length = 30L) {
         object_lint(
           source_file,
           token,
-          paste0("Variable and function names should not be longer than ", length, " characters."),
-          "object_length_linter"
+          paste0("Variable and function names should not be longer than ", length, " characters.")
         )
       }
   })

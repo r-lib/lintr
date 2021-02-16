@@ -53,8 +53,7 @@ spaces_left_parentheses_linter <- function() {
               column_number = parsed$col1,
               type = "style",
               message = "Place a space before left parenthesis, except in a function call.",
-              line = line,
-              linter = "spaces_left_parentheses_linter"
+              line = line
             )
           }
         }

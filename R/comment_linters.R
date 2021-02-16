@@ -61,7 +61,6 @@ commented_code_linter <- function() {
           type = "style",
           message = "Commented code should be removed.",
           line = source_file$file_lines[line_number],
-          linter = "commented_code_linter",
           ranges = list(column_offset + c(code_candidates[code_candidate, "code.start"],
                                           code_candidates[code_candidate, "code.end"]))
         )
@@ -95,8 +94,7 @@ todo_comment_linter <- function(todo = c("todo", "fixme")) {
           type = "style",
           message = "TODO comments should be removed.",
           line = source_file[["lines"]][[as.character(token[["line1"]])]],
-          ranges = list(c(token[["col1"]], token[["col2"]])),
-          linter = "todo_comment_linter"
+          ranges = list(c(token[["col1"]], token[["col2"]]))
         )
       }
     )

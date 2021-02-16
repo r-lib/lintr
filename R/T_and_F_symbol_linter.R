@@ -21,8 +21,7 @@ T_and_F_symbol_linter <- function() { # nolint: object_name_linter.
             type = "style",
             message = sprintf("Use %s instead of the symbol %s.", replacement, symbol),
             line = source_file[["lines"]][[as.character(line_num)]],
-            ranges = list(c(start_col_num, end_col_num)),
-            linter = "T_and_F_symbol_linter"
+            ranges = list(c(start_col_num, end_col_num))
           )
         }
       }

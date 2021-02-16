@@ -1,5 +1,4 @@
 make_linter_from_regex <- function(regex,
-                                   lint_name,
                                    lint_type,
                                    lint_msg,
                                    ignore_strings = TRUE) {
@@ -39,8 +38,7 @@ make_linter_from_regex <- function(regex,
                 type = lint_type,
                 message = lint_msg,
                 line = source_file[["lines"]][[as.character(line_number)]],
-                ranges = list(c(start, end)),
-                linter = lint_name
+                ranges = list(c(start, end))
               )
             }
           )

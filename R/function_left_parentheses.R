@@ -34,12 +34,11 @@ function_left_parentheses_linter <- function() { # nolint: object_length_linter.
               column_number = parsed$col1,
               type = "style",
               message = "Remove spaces before the left parenthesis in a function call.",
-              line = line,
-              linter = "function_left_parentheses_linter"
+              line = line
             )
           }
         }
-
-      })
+      }
+    )
   })
 }

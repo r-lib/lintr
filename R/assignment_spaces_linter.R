@@ -24,8 +24,7 @@ assignment_spaces <- function() {
             column_number = parsed$col1,
             type = "style",
             message = "Assignments should only have one space before and after the operator.",
-            line = source_file$lines[parsed$line1],
-            linter = "assignment_spaces"
+            line = source_file$lines[parsed$line1]
           )
         }
       }
