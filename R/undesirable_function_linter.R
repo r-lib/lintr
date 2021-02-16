@@ -29,6 +29,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
           if (!is.na(alt_fun)) {
             msg <- c(msg, sprintf("As an alternative, %s.", alt_fun))
           }
+
           Lint(
             filename = source_file[["filename"]],
             line_number = line_num,
@@ -36,8 +37,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
             type = "warning",
             message = paste0(msg, collapse = " "),
             line = source_file[["lines"]][[as.character(line_num)]],
-            ranges = list(c(start_col_num, end_col_num)),
-            linter = "undesirable_function_linter"
+            ranges = list(c(start_col_num, end_col_num))
           )
         }
       }

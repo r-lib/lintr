@@ -70,8 +70,9 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   }
 
   local({
-    itr <- 0L #nolint
-    lint_fields <- names(formals(Lint))
+    itr <- 0L
+    # keep 'linter' as a field even if we remove the deprecated argument from Lint() in the future
+    lint_fields <- unique(c(names(formals(Lint)), "linter"))
     Map(function(lint, check) {
       itr <<- itr + 1L
       lapply(names(check), function(field) {

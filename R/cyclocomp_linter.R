@@ -25,8 +25,7 @@ cyclocomp_linter <- function(complexity_limit = 15L) {
         complexity_limit, ", this has ", complexity, "."
       ),
       ranges = list(c(source_file[["column"]][1], source_file[["column"]][1])),
-      line = source_file$lines[1],
-      linter = "cyclocomp_linter"
+      line = source_file$lines[1]
     )
   })
 }

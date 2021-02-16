@@ -53,8 +53,7 @@ sprintf_linter <- function() {
             type = "warning",
             message = conditionMessage(res),
             line = source_file$file_lines[line1],
-            ranges = list(c(col1, col2)),
-            linter = "sprintf_linter"
+            ranges = list(c(col1, col2))
           )
         }
       }

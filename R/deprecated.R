@@ -35,6 +35,7 @@ absolute_paths_linter <- function(source_file) {
   absolute_path_linter(lax = TRUE)(source_file)
 }
 class(absolute_paths_linter) <- "linter"
+attr(absolute_paths_linter, "name") <- "absolute_paths_linter"
 
 
 #' @describeIn lintr-deprecated Check there are no trailing semicolons.
@@ -44,6 +45,7 @@ trailing_semicolons_linter <- function(source_file) {
   semicolon_terminator_linter(semicolon = "trailing")(source_file)
 }
 class(trailing_semicolons_linter) <- "linter"
+attr(trailing_semicolons_linter, "name") <- "trailing_semicolons_linter"
 
 
 #' @describeIn lintr-deprecated Check that objects are not in camelCase.
@@ -59,10 +61,9 @@ camel_case_linter <- make_object_linter(function(source_file, parsed) {
       !is_base_function(parsed$text)) {
     object_lint(source_file,
                 parsed,
-                "Variable and function names should be all lowercase.",
-                "camel_case_linter")
+                "Variable and function names should be all lowercase.")
   }
-})
+}, name = "camel_case_linter")
 
 
 #' @describeIn lintr-deprecated Check that objects are not in snake_case.
@@ -78,10 +79,9 @@ snake_case_linter <- make_object_linter(function(source_file, parsed) {
       !is_base_function(parsed$text)) {
     object_lint(source_file,
                 parsed,
-                "Variable and function names should not use underscores.",
-                "snake_case_linter")
+                "Variable and function names should not use underscores.")
   }
-})
+}, name = "snake_case_linter")
 
 
 #' @describeIn lintr-deprecated check that objects do not have.multiple.dots.
@@ -96,7 +96,6 @@ multiple_dots_linter <- make_object_linter(function(source_file, parsed) {
       !is_base_function(parsed$text)) {
     object_lint(source_file,
                 parsed,
-                "Words within variable and function names should be separated by '_' rather than '.'.",
-                "multiple_dots_linter")
+                "Words within variable and function names should be separated by '_' rather than '.'.")
   }
-})
+}, name = "multiple_dots_linter")

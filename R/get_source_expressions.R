@@ -106,8 +106,7 @@ get_source_expressions <- function(filename) {
               column_number = 1,
               type = "error",
               message = e$message,
-              line = "",
-              linter = "error"
+              line = ""
             )
           )
           # nocov end
@@ -123,8 +122,7 @@ get_source_expressions <- function(filename) {
           column_number = column_number,
           type = "error",
           message = e$message,
-          line = source_file$lines[[line_number]],
-          linter = "error"
+          line = source_file$lines[[line_number]]
         )
       )
     }
@@ -148,8 +146,7 @@ get_source_expressions <- function(filename) {
       column_number = column_number,
       type = "error",
       message = message_info$message,
-      line = line,
-      linter = "error"
+      line = line
     )
   }
 
@@ -178,8 +175,7 @@ get_source_expressions <- function(filename) {
       column_number = column_number,
       type = "error",
       message = message_info$message,
-      line = source_file$lines[line_number],
-      linter = "error"
+      line = source_file$lines[line_number]
     )
   }
 

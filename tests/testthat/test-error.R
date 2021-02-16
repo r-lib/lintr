@@ -8,7 +8,7 @@ test_that("returns the correct linting", {
     function() {
     b",
     rex("unexpected end of input"),
-    structure(function(...) NULL, class = "linter")
+    structure(function(...) NULL, class = "linter", name = "null")
   )
 
   linter <- equals_na_linter()
