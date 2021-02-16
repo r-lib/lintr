@@ -50,6 +50,7 @@
 * Set the default `complexity_limit` in `cyclocomp_linter` to 15. This is the same complexity limit that is enforced via
   `default_linters` (#693, #695, @AshesITR).
 * `lint_package()` now lints files in the `demo` directory by default (#703, @dmurdoch).
+* `object_usage_linter()` now correctly detects global variables if there are top-level dollar-assignments (#666, #709, @AshesITR)
 * `commented_code_linter()` uses the parse tree to find comments, eliminating some false positives (#451, @AshesITR)
 * `trailing_blank_lines_linter()` now also lints files without a terminal newline (#675, @AshesITR)
 * `object_name_linter()` now correctly detects imported functions when linting packages (#642, @AshesITR)
