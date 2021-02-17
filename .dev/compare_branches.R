@@ -180,7 +180,6 @@ run_branch_workflow <- function(linter_name, pkgs, branch) {
 }
 
 ###############################################################################
-# TODO: handle both command line args and interactive runs
 # TODO: handle the case when working directory is not the lintr directory
 ###############################################################################
 
