@@ -30,7 +30,7 @@ imported_s3_generics <- function(ns_imports) {
       fun <- ns_imports$fun[i]
       if (exists(fun, envir = ns)) {
         fun_obj <- get(ns_imports$fun[i], envir = asNamespace(ns_imports$pkg[i]))
-        is.function(fun_obj) && utils::isS3stdGeneric(fun_obj)
+        is.function(fun_obj) && !is.primitive(fun_obj) && is_s3_generic(fun_obj)
       } else {
         FALSE
       }
@@ -41,6 +41,12 @@ imported_s3_generics <- function(ns_imports) {
   ns_imports[is_generic, ]
 }
 
+is_s3_generic <- if (getRversion() >= "3.4.0") {
+  utils::isS3stdGeneric(fun)
+} else {
+  is.function
+}
+
 .base_s3_generics <- c(
   names(.knownS3Generics),
   .S3PrimitiveGenerics,
@@ -49,6 +55,6 @@ imported_s3_generics <- function(ns_imports) {
   } else {
     # R < 3.5.0 doesn't provide .S3_methods_table
     # fallback: search baseenv() for generic methods
-    imported_s3_generics(data.frame(pkg = "base", fun = ls(baseenv()), stringsAsFactors = FALSE))
+    imported_s3_generics(data.frame(pkg = "base", fun = ls(baseenv()), stringsAsFactors = FALSE))$fun
   }
 )
