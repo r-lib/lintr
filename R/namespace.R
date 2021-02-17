@@ -40,3 +40,15 @@ imported_s3_generics <- function(ns_imports) {
 
   ns_imports[is_generic, ]
 }
+
+.base_s3_generics <- c(
+  names(.knownS3Generics),
+  .S3PrimitiveGenerics,
+  if (getRversion() >= "3.5.0") {
+    .S3_methods_table[, 1L]
+  } else {
+    # R < 3.5.0 doesn't provide .S3_methods_table
+    # fallback: search baseenv() for generic methods
+    imported_s3_generics(data.frame(pkg = "base", fun = ls(baseenv()), stringsAsFactors = FALSE))
+  }
+)
