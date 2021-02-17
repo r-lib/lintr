@@ -38,7 +38,8 @@
 * `paren_brace_linter` now marks lints at the opening brace instead of the closing parenthesis, making fixing the lints
   by jumping to source markers easier (#583, @AshesITR)
 * Lints are now marked with the name of the `linter` that caused them instead of the name of their implementation
-  function (#664, #673, @AshesITR).
+  function.    
+  Deprecated the obsolete `linter` argument of `Lint()`. (#664, #673, #746, @AshesITR)
 * New syntax to exclude only selected linters from linting lines or passages. Use `# nolint: linter_name, linter2_name.`
   or `# nolint start: linter_name, linter2_name.` in source files or named lists of line numbers in `.lintr`.
   (#660, @AshesITR)

@@ -4,10 +4,13 @@
 \alias{Linter}
 \title{Create a \code{linter} closure}
 \usage{
-Linter(fun)
+Linter(fun, name = linter_auto_name())
 }
 \arguments{
 \item{fun}{A function that takes a source file and returns \code{lint} objects.}
+
+\item{name}{Default name of the Linter.
+Lints produced by the linter will be labelled with \code{name} by default.}
 }
 \value{
 The same function with its class set to 'linter'.

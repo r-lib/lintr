@@ -3,8 +3,8 @@
 #' @export
 extraction_operator_linter <- function() {
   Linter(function(source_file) {
-    tokens <- source_file[["parsed_content"]] <-
-      filter_out_token_type(source_file[["parsed_content"]], "expr")
+    tokens <- source_file[["parsed_content"]] <- filter_out_token_type(source_file[["parsed_content"]], "expr")
+
     lapply(
       ids_with_token(source_file, c("'$'", "'['"), fun = `%in%`),
       function(token_num) {
@@ -14,6 +14,7 @@ extraction_operator_linter <- function() {
           end_col_num <- token[["col2"]]
           line_num <- token[["line1"]]
           line <- source_file[["lines"]][[as.character(line_num)]]
+
           Lint(
             filename = source_file[["filename"]],
             line_number = line_num,
@@ -21,7 +22,6 @@ extraction_operator_linter <- function() {
             type = "warning",
             message = sprintf("Use `[[` instead of `%s`  to extract an element.", token[["text"]]),
             line = line,
-            linter = "extraction_operator_linter",
             ranges = list(c(start_col_num, end_col_num))
           )
         }
