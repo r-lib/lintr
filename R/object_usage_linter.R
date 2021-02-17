@@ -59,7 +59,23 @@ object_usage_linter <- function() {
 
           row$name <- re_substitutes(row$name, rex("<-"), "")
 
-          location <- re_matches(line, rex(row$name), locations = TRUE)
+          location <- re_matches(line, rex(boundary, row$name, boundary), locations = TRUE)
+
+          if (is.na(location$start) && row$line2 != row$line1) {
+            lines <- source_file$content[org_line_num:(as.integer(row$line2) + info$line1 - 1L)]
+            locations <- re_matches(lines, rex(boundary, row$name, boundary), locations = TRUE)
+
+            matching_row <- (which(!is.na(locations$start)) %||% 1L)[[1L]] # first matching row or 1 (as a fallback)
+
+            org_line_num <- org_line_num + matching_row - 1L
+            location <- locations[matching_row, ]
+            line <- lines[matching_row]
+          }
+
+          if (is.na(location$start)) {
+            location$start <- 1L
+            location$end <- nchar(line)
+          }
 
           Lint(
             filename = source_file$filename,
@@ -138,7 +154,8 @@ parse_check_usage <- function(expression) {
   try(codetools::checkUsage(expression, report = report))
 
   function_name <- rex(anything, ": ")
-  line_info <- rex(" ", "(", capture(name = "path", non_spaces), ":", capture(name = "line1", digits), maybe("-", capture(name = "line2", digits)), ")")
+  line_info <- rex(" ", "(", capture(name = "path", non_spaces), ":",
+                   capture(name = "line1", digits), maybe("-", capture(name = "line2", digits)), ")")
 
   res <- re_matches(
     vals,
