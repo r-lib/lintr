@@ -22,24 +22,39 @@ param_list <- list(
   ),
   optparse::make_option(
     "--branch",
+    default = if (interactive()) {
+      readline("Name a branch to compare to master (or skip to enter a PR#): ")
+    },
     help = "Run the comparison for master vs. this branch"
   ),
   optparse::make_option(
     "--pr",
+    default = if (interactive()) {
+      as.integer(readline("Name a PR # to compare to master (skip if you've entered a branch): "))
+    },
     type = "integer",
     help = "Run the comparison for master vs. this PR"
   ),
   optparse::make_option(
     "--packages",
-     help = "Run the comparison using these packages (comma-separated)"
+    default = if (interactive()) {
+      readline("Provide a comma-separated list of packages (skip to provide a directory): ")
+    },
+    help = "Run the comparison using these packages (comma-separated)"
   ),
   optparse::make_option(
     "--pkg_dir",
+    default = if (interactive()) {
+      readline("Provide a directory where to select packages (skip if already provided as a list): ")
+    },
     help = "Run the comparison using all packages in this directory"
   ),
   optparse::make_option(
     "--sample_size",
     type = "integer",
+    default = if (interactive()) {
+      as.integer(readline("Enter the number of packages to include (skip to include all): "))
+    },
     help = "Select a sample of this number of packages from 'packages' or 'pkg_dir'"
   ),
   optparse::make_option(
@@ -49,7 +64,13 @@ param_list <- list(
   )
 )
 
-params <- optparse::parse_args(optparse::OptionParse(option_list = param_list))
+params <- optparse::parse_args(optparse::OptionParser(option_list = param_list))
+# treat any skipped arguments from the prompt as missing
+if (interactive()) {
+  for (opt in c("branch", "pr", "packages", "pkg_dir", "sample_size")) {
+    if (params[[opt]] == "") params[[opt]] = NULL
+  }
+}
 
 linter_names <- strsplit(params$linters, ",", fixed = TRUE)[[1L]]
 
@@ -97,7 +118,7 @@ get_deps <- function(pkg) {
   deps
 }
 
-lint_all_packages <- function(pkgs, linter) {
+lint_all_packages <- function(pkgs, linter, check_depends) {
   pkg_is_dir <- file.info(pkgs)$isdir
   pkg_names <- dplyr::if_else(
     pkg_is_dir,
@@ -116,11 +137,22 @@ lint_all_packages <- function(pkgs, linter) {
         utils::untar(pkgs[ii], exdir = tmp, extras="--strip-components=1")
         pkg <- tmp
       }
-      # devtools::load_all() may not work for packages with Depends
-      tryCatch(
-        find.package(get_deps(pkg)),
-        warning = function(w) stop("Package dependencies missing:\n", w$message)
-      )
+      # object_usage_linter requires running package code, which may
+      #   not work if the package has unavailable Depends
+      if (check_depends) {
+        try_deps <- tryCatch(
+          find.package(get_deps(pkg)),
+          error = identity, warning = identity
+        )
+        if (inherits(e, c("warning", "error")) {
+          warning(sprintf(
+            "Some package Dependencies for %s were unavailable: %s; skipping",
+            pkg_names[ii],
+            gsub("there (?:are no packages|is no package) called ", "", e$message)
+          ))
+          return(NULL)
+        }
+      }
       lint_dir(pkg, linters = linter, parse_settings = FALSE)
     }
   ) %>%
@@ -129,12 +161,12 @@ lint_all_packages <- function(pkgs, linter) {
 
 format_lints <- function(x) {
   x %>%
-    purrr::map(as_tibble) %>%
+    purrr::map(tibble::as_tibble) %>%
     dplyr::bind_rows(.id = "package")
 }
 
-run_lints <- function(pkgs, linter) {
-  format_lints(lint_all_packages(pkgs, linter))
+run_lints <- function(pkgs, linter, check_depends) {
+  format_lints(lint_all_packages(pkgs, linter, check_depends))
 }
 
 run_on <- function(what, pkgs, linter_name, ...) {
@@ -154,7 +186,9 @@ run_on <- function(what, pkgs, linter_name, ...) {
 
   linter <- get(linter_name)()
 
-  run_lints(pkgs, linter)
+  check_depends <- linter_name %in% c("object_usage_linter", "object_name_linter")
+
+  run_lints(pkgs, linter, check_depends = check_depends)
 }
 
 run_pr_workflow <- function(linter_name, pkgs, pr) {
@@ -193,4 +227,4 @@ if (is_branch) {
   lints <- purrr::map_df(linter_names, run_pr_workflow, packages, pr)
 }
 
-write.csv(lints, outfile, row.names = FALSE)
+write.csv(lints, params$outfile, row.names = FALSE)
