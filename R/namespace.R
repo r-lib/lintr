@@ -30,7 +30,7 @@ imported_s3_generics <- function(ns_imports) {
       fun <- ns_imports$fun[i]
       if (exists(fun, envir = ns)) {
         fun_obj <- get(ns_imports$fun[i], envir = asNamespace(ns_imports$pkg[i]))
-        is.function(fun_obj) && !is.primitive(fun_obj) && is_s3_generic(fun_obj)
+        is.function(fun_obj) && is_s3_generic(fun_obj)
       } else {
         FALSE
       }
@@ -41,10 +41,14 @@ imported_s3_generics <- function(ns_imports) {
   ns_imports[is_generic, ]
 }
 
-is_s3_generic <- if (getRversion() >= "3.4.0") {
-  utils::isS3stdGeneric
-} else {
-  is.function
+is_s3_generic <- function(fun) {
+  if (getRversion() >= "3.5.0") {
+    # Available in 3.4.0, but bugged there in multiple ways that cause errors
+    # throughout may base functions, e.g. `-`, `as.null.default`, `dontCheck`
+    utils::isS3stdGeneric(fun)
+  } else {
+    is.function(fun) # nocov
+  }
 }
 
 .base_s3_generics <- c(
