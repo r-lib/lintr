@@ -24,7 +24,6 @@ unneeded_concatenation_linter <- function() {
             type = "warning",
             message = if (num_args) msg_const else msg_empty,
             line = line,
-            linter = "unneeded_concatenation_linter",
             ranges = list(c(start_col_num, end_col_num))
           )
         }

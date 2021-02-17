@@ -50,8 +50,7 @@ seq_linter <- function() {
           message = paste0(f1, ":", f2, " is likely to be wrong in the empty ",
                            "edge case, use seq_len."),
           line = source_file$lines[line1],
-          ranges = list(c(as.integer(col1), as.integer(col2))),
-          linter = "seq_linter"
+          ranges = list(c(as.integer(col1), as.integer(col2)))
         )
       }
     )

@@ -40,8 +40,7 @@ backport_linter <- function(r_version = getRversion()) {
           all_names[ii], names(needs_backport_names)[which(needs_backport[ii, ])], r_version
         ),
         line = source_file$lines[[line1]],
-        ranges = list(c(col1, col2)),
-        linter = "backport_linter"
+        ranges = list(c(col1, col2))
       )
     })
   })

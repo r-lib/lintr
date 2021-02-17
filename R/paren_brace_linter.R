@@ -34,8 +34,7 @@ paren_brace_linter <- function() {
           type = "style",
           message = "There should be a space between right parenthesis and an opening curly brace.",
           line = line,
-          ranges = list(as.numeric(c(x@col1, x@col2))),
-          "paren_brace_linter"
+          ranges = list(as.numeric(c(x@col1, x@col2)))
         )
       }
     )

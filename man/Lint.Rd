@@ -30,7 +30,7 @@ Lint(
 
 \item{ranges}{a list of ranges on the line that should be emphasized.}
 
-\item{linter}{name of linter that created the Lint object.}
+\item{linter}{deprecated. No longer used.}
 }
 \value{
 an object of class 'lint'.

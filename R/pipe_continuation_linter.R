@@ -67,8 +67,7 @@ pipe_continuation_linter <- function() {
             " unless the full pipeline fits on one line."
           ),
           line = line,
-          ranges = list(as.numeric(c(x@col1, x@col2))),
-          "pipe_continuation_linter"
+          ranges = list(as.numeric(c(x@col1, x@col2)))
         )
       })
   })

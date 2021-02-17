@@ -47,8 +47,7 @@ spaces_inside_linter <- function() {
                   column_number = if (substr(line, start, start) == " ") start else start + 1L,
                   type = "style",
                   message = "Do not place spaces around code in parentheses or square brackets.",
-                  line = line,
-                  linter = "spaces_inside_linter"
+                  line = line
                 )
               }
             }

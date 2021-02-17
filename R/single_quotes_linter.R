@@ -27,8 +27,7 @@ single_quotes_linter <- function() {
             type = "style",
             message = "Only use double-quotes.",
             line = line,
-            ranges = list(c(col1, col2)),
-            linter = "single_quotes_linter"
+            ranges = list(c(col1, col2))
           )
         })
       }

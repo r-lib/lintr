@@ -19,8 +19,7 @@ implicit_integer_linter <- function() {
             message =
               "Integers should not be implicit. Use the form 1L for integers or 1.0 for doubles.",
             line = source_file[["lines"]][[as.character(line_num)]],
-            ranges = list(c(start_col_num, end_col_num)),
-            linter = "implicit_integer_linter"
+            ranges = list(c(start_col_num, end_col_num))
           )
         }
       }

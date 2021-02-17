@@ -19,6 +19,6 @@ equals_na_linter <- function() {
 
     lapply(bad_expr, xml_nodes_to_lint, source_file,
            message = "Use is.na for comparisons to NA (not == or !=)",
-           linter = "equals_na_linter", type = "warning")
+           type = "warning")
   })
 }
