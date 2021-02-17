@@ -140,7 +140,6 @@ lint_all_packages <- function(pkgs, linter, check_depends) {
   map(
     seq_along(pkgs),
     function(ii) {
-      cat(pkg_names[ii], "\n")
       if (!pkg_is_dir[ii]) {
         tmp <- file.path(tempdir(), pkg_names[ii])
         on.exit(unlink(tmp, recursive = TRUE))
