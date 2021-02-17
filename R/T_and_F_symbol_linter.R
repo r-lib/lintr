@@ -41,7 +41,6 @@ T_and_F_symbol_linter <- function() { # nolint: object_name_linter.
         xml = expr,
         source_file = source_file,
         message = message,
-        linter = "T_and_F_symbol_linter",
         type = "style",
         offset = 1L
       )
