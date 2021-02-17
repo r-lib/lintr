@@ -106,6 +106,18 @@ if (!is.null(params$sample_size)) {
   packages <- sample(packages, min(length(packages), params$sample_size))
 }
 
+# test if nchar(., "chars") works as intended
+#   for all files in dir (see #541)
+test_encoding <- function(dir) {
+  tryCatch({
+    lapply(
+      list.files(dir, pattern = "(?i)\\.r(?:md)?$", recursive = TRUE, full.names = TRUE),
+      function(x) nchar(readLines(x))
+    )
+    TRUE
+  }, error = function(x) FALSE)
+}
+
 # read Depends from DESCRIPTION
 get_deps <- function(pkg) {
   deps <- read.dcf(file.path(pkg, "DESCRIPTION"), c("Imports", "Depends"))
@@ -137,6 +149,13 @@ lint_all_packages <- function(pkgs, linter, check_depends) {
         utils::untar(pkgs[ii], exdir = tmp, extras="--strip-components=1")
         pkg <- tmp
       }
+      if (test_encoding(pkg)) {
+        warning(sprintf(
+          "Package %s has some files with unknown encoding; skipping",
+          pkg_names[ii]
+        ))
+        return(NULL)
+      }
       # object_usage_linter requires running package code, which may
       #   not work if the package has unavailable Depends;
       # object_name_linter also tries to run loadNamespace on Imports
@@ -145,7 +164,7 @@ lint_all_packages <- function(pkgs, linter, check_depends) {
         pkg_deps <- get_deps(pkg)
         if ("tcltk" %in% pkg_deps && !capabilities("tcltk")) {
           warning(sprintf(
-            "Package %s depends on tcltk, which is not available (via capabilities())",
+            "Package %s depends on tcltk, which is not available (via capabilities()); skipping",
             pkg_names[ii]
           ))
           return(NULL)
