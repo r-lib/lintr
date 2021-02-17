@@ -144,7 +144,7 @@ lint_all_packages <- function(pkgs, linter, check_depends) {
           find.package(get_deps(pkg)),
           error = identity, warning = identity
         )
-        if (inherits(e, c("warning", "error")) {
+        if (inherits(e, c("warning", "error"))) {
           warning(sprintf(
             "Some package Dependencies for %s were unavailable: %s; skipping",
             pkg_names[ii],
