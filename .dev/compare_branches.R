@@ -10,7 +10,7 @@ library(usethis)
 library(gert)
 library(devtools)
 
-if(!file.exists("lintr.Rproj")) {
+if (!file.exists("lintr.Rproj")) {
   "compare_branches.R should be run inside the lintr-package directory"
 }
 
@@ -68,7 +68,7 @@ params <- optparse::parse_args(optparse::OptionParser(option_list = param_list))
 # treat any skipped arguments from the prompt as missing
 if (interactive()) {
   for (opt in c("branch", "pr", "packages", "pkg_dir", "sample_size")) {
-    if (params[[opt]] == "") params[[opt]] = NULL
+    if (params[[opt]] == "") params[[opt]] <- NULL
   }
 }
 
@@ -82,8 +82,7 @@ if (!is.null(params$branch)) {
 } else if (!is.null(params$pr)) {
   pr <- params$pr
 } else {
-  message("Please supply a branch (--branch) or a PR number (--pr)")
-  q("no")
+  stop("Please supply a branch (--branch) or a PR number (--pr)")
 }
 
 # prioritize packages
@@ -92,8 +91,7 @@ if (!is.null(params$packages)) {
 } else if (!is.null(params$pkg_dir)) {
   packages <- list.files(normalizePath(params$pkg_dir), full.names = TRUE)
 } else {
-  message("Please supply a comma-separated list of packages (--packages) or a directory of packages (--pkg_dir)")
-  q("no")
+  stop("Please supply a comma-separated list of packages (--packages) or a directory of packages (--pkg_dir)")
 }
 # filter to (1) package directories or (2) package tar.gz files
 packages <- packages[
@@ -110,8 +108,9 @@ if (!is.null(params$sample_size)) {
 
 # read Depends from DESCRIPTION
 get_deps <- function(pkg) {
-  deps <- read.dcf(file.path(pkg, "DESCRIPTION"), "Depends")
-  if (is.na(deps)) return(character())
+  deps <- read.dcf(file.path(pkg, "DESCRIPTION"), c("Imports", "Depends"))
+  deps <- toString(deps[!is.na(deps)])
+  if (deps == "") return(character())
   deps <- strsplit(deps, ",", fixed = TRUE)[[1L]]
   deps <- trimws(gsub("\\([^)]*\\)", "", deps))
   deps <- deps[deps != "R"]
@@ -129,6 +128,7 @@ lint_all_packages <- function(pkgs, linter, check_depends) {
   map(
     seq_along(pkgs),
     function(ii) {
+      cat(pkg_names[ii], "\n")
       if (!pkg_is_dir[ii]) {
         tmp <- file.path(tempdir(), pkg_names[ii])
         on.exit(unlink(tmp, recursive = TRUE))
@@ -138,17 +138,27 @@ lint_all_packages <- function(pkgs, linter, check_depends) {
         pkg <- tmp
       }
       # object_usage_linter requires running package code, which may
-      #   not work if the package has unavailable Depends
+      #   not work if the package has unavailable Depends;
+      # object_name_linter also tries to run loadNamespace on Imports
+      #   found in the target package's NAMESPACE file
       if (check_depends) {
+        pkg_deps <- get_deps(pkg)
+        if ("tcltk" %in% pkg_deps && !capabilities("tcltk")) {
+          warning(sprintf(
+            "Package %s depends on tcltk, which is not available (via capabilities())",
+            pkg_names[ii]
+          ))
+          return(NULL)
+        }
         try_deps <- tryCatch(
-          find.package(get_deps(pkg)),
+          find.package(pkg_deps),
           error = identity, warning = identity
         )
-        if (inherits(e, c("warning", "error"))) {
+        if (inherits(try_deps, c("warning", "error"))) {
           warning(sprintf(
             "Some package Dependencies for %s were unavailable: %s; skipping",
             pkg_names[ii],
-            gsub("there (?:are no packages|is no package) called ", "", e$message)
+            gsub("there (?:are no packages|is no package) called ", "", try_deps$message)
           ))
           return(NULL)
         }
@@ -217,9 +227,13 @@ run_branch_workflow <- function(linter_name, pkgs, branch) {
 # TODO: handle the case when working directory is not the lintr directory
 ###############################################################################
 
-message(pr)
-message(toString(linter_names))
-message("Any package repo found in these directories will be analysed:", toString(basename(packages)))
+message("Comparing the output of the following linters: ", toString(linter_names))
+if (is_branch) {
+  message("Comparing branch ", branch, " to master")
+} else {
+  message("Comparing PR#", pr, " to master")
+}
+message("Comparing output of lint_dir run for the following packages: ", toString(basename(packages)))
 
 if (is_branch) {
   lints <- purrr::map_df(linter_names, run_branch_workflow, packages, branch)
