@@ -16,5 +16,20 @@ namespace_imports <- function(path = find_package()) {
   data.frame(
     pkg = unlist(lapply(imports, function(x) rep(x[[1L]], length(x[[2L]])))),
     fun = unlist(lapply(imports, `[[`, 2L)),
-    stringsAsFactors = FALSE)
+    stringsAsFactors = FALSE
+  )
+}
+
+# filter namespace_imports() for S3 generics
+# this loads all imported namespaces
+imported_s3_generics <- function(ns_imports) {
+  is_generic <- vapply(
+    function(i) {
+      fun_obj <- get(ns_imports$fun[i], envir = asNamespace(ns_imports$pkg[i]))
+      utils::isS3stdGeneric(fun_obj)
+    },
+    logical(1L)
+  )
+
+  ns_imports[is_generic, ]
 }
