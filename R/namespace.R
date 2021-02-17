@@ -26,8 +26,14 @@ imported_s3_generics <- function(ns_imports) {
   is_generic <- vapply(
     seq_len(nrow(ns_imports)),
     function(i) {
-      fun_obj <- get(ns_imports$fun[i], envir = asNamespace(ns_imports$pkg[i]))
-      utils::isS3stdGeneric(fun_obj)
+      ns <- asNamespace(ns_imports$pkg[i])
+      fun <- ns_imports$fun[i]
+      if (exists(fun, envir = ns)) {
+        fun_obj <- get(ns_imports$fun[i], envir = asNamespace(ns_imports$pkg[i]))
+        is.function(fun_obj) && utils::isS3stdGeneric(fun_obj)
+      } else {
+        FALSE
+      }
     },
     logical(1L)
   )
