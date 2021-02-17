@@ -234,6 +234,34 @@ test_that("object_usage_linter finds lints spanning multiple lines", {
     ),
     object_usage_linter()
   )
+
+  # Linted symbol is not on the first line of the usage warning
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        with(
+          x,
+          unknown_symbol
+        )
+      }
+    "),
+    list(message = "unknown_symbol", line_number = 4L, column_number = 5L),
+    object_usage_linter()
+  )
+
+  # Kill regex match to enforce fallback to line 1 column 1 of the warning
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        with(
+          x,
+          `\u2019regex_kill`
+        )
+      }
+    "),
+    list(line_number = 2L, column_number = 1L),
+    object_usage_linter()
+  )
 })
 
 test_that("global variable detection works", {
