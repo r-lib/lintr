@@ -42,7 +42,7 @@ imported_s3_generics <- function(ns_imports) {
 }
 
 is_s3_generic <- if (getRversion() >= "3.4.0") {
-  utils::isS3stdGeneric(fun)
+  utils::isS3stdGeneric
 } else {
   is.function
 }
