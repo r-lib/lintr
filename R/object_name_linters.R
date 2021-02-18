@@ -29,14 +29,15 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
     xml <- source_file$full_xml_parsed_content
 
     xpath <- paste0(
-      # Left hand assignments
-      "//expr[SYMBOL or STR_CONST][following-sibling::LEFT_ASSIGN or following-sibling::EQ_ASSIGN]/*",
-
-      # Or
-      " | ",
-
-      # Right hand assignments
-      "//expr[SYMBOL or STR_CONST][preceding-sibling::RIGHT_ASSIGN]/*",
+      # assignments
+      "//SYMBOL[",
+      " not(preceding-sibling::OP-DOLLAR)",
+      " and ancestor::expr[",
+      "  following-sibling::LEFT_ASSIGN",
+      "  or preceding-sibling::RIGHT_ASSIGN",
+      "  or following-sibling::EQ_ASSIGN",
+      " ]",
+      "]",
 
       # Or
       " | ",
@@ -49,7 +50,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
 
     # Retrieve assigned name
     nms <- strip_names(
-      xml2::xml_text(xml2::xml_find_first(assignments, "./text()"))
+      xml2::xml_text(assignments)
     )
 
     generics <- strip_names(c(
