@@ -9,15 +9,12 @@ spaces_left_parentheses_linter <- function() {
 
         parsed <- source_file$parsed_content[id, ]
 
-        # nolint start: object_usage_linter.
-        # suppress "no visible binding" warnings in with() block
         terminal_tokens_before <- with(
           source_file$parsed_content,
           token[line1 == parsed$line1 &
                   col1 < parsed$col1 &
                   terminal]
         )
-        # nolint end
         last_type <- tail(terminal_tokens_before, n = 1)
 
         is_function <- length(last_type) %!=% 0L &&
@@ -38,13 +35,10 @@ spaces_left_parentheses_linter <- function() {
             col1 == parsed$col1 - 1L & col1 == col2
           )
           is_sibling_expr <- if (any(before_operator_idx)) {
-            # nolint start: object_usage_linter.
-            # suppress "no visible binding" warnings in with() block
             with(
               source_file$parsed_content,
               token == "expr" & parent %in% parent[before_operator_idx]
             )
-            # nolint end
           } else {
             rep(FALSE, nrow(source_file$parsed_content))
           }
