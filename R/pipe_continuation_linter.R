@@ -72,5 +72,3 @@ pipe_continuation_linter <- function() {
       })
   })
 }
-
-utils::globalVariables(c("line1", "line2", "col1", "col2"), "lintr")
