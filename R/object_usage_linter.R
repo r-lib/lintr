@@ -61,7 +61,7 @@ object_usage_linter <- function() {
 
           location <- re_matches(line, rex(boundary, row$name, boundary), locations = TRUE)
 
-          if (is.na(location$start) && row$line2 != "" && row$line2 != row$line1) {
+          if (is.na(location$start) && nzchar(row$line2) && row$line2 != row$line1) {
             lines <- source_file$content[org_line_num:(as.integer(row$line2) + info$line1 - 1L)]
             locations <- re_matches(lines, rex(boundary, row$name, boundary), locations = TRUE)
 
