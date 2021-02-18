@@ -24,4 +24,8 @@ NULL
 # need to register rex shortcuts as globals to avoid CRAN check errors
 rex::register_shortcuts("lintr")
 
-utils::globalVariables("from", "lintr")
+utils::globalVariables(
+  c("line1", "col1", "line2", "col2", # columns of parsed_content
+    "id", "parent", "token", "terminal", "text"), # dito
+  "lintr"
+)
