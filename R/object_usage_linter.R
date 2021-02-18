@@ -45,34 +45,51 @@ object_usage_linter <- function() {
       }
       res <- parse_check_usage(fun)
 
-      lapply(which(!is.na(res$message)),
-             function(row_num) {
-               row <- res[row_num, ]
+      lapply(
+        which(!is.na(res$message)),
+        function(row_num) {
+          row <- res[row_num, ]
 
-               if (row$name %in% declared_globals) {
-                 return()
-               }
+          if (row$name %in% declared_globals) {
+            return()
+          }
 
-               org_line_num <- as.integer(row$line_number) + info$line1 - 1L
+          org_line_num <- as.integer(row$line1) + info$line1 - 1L
+          line <- source_file$content[as.integer(org_line_num)]
 
-               line <- source_file$content[as.integer(org_line_num)]
+          row$name <- re_substitutes(row$name, rex("<-"), "")
 
-               row$name <- re_substitutes(row$name, rex("<-"), "")
+          location <- re_matches(line, rex(boundary, row$name, boundary), locations = TRUE)
 
-               location <- re_matches(line,
-                                      rex(row$name),
-                                      locations = TRUE)
+          # Handle multi-line lints where name occurs on subsequent lines (#507)
+          if (is.na(location$start) && nzchar(row$line2) && row$line2 != row$line1) {
+            lines <- source_file$content[org_line_num:(as.integer(row$line2) + info$line1 - 1L)]
+            locations <- re_matches(lines, rex(boundary, row$name, boundary), locations = TRUE)
 
-               Lint(
-                 filename = source_file$filename,
-                 line_number = org_line_num,
-                 column_number = location$start,
-                 type = "warning",
-                 message = row$message,
-                 line = line,
-                 ranges = list(c(location$start, location$end))
-               )
-             })
+            matching_row <- (which(!is.na(locations$start)) %||% 1L)[[1L]] # first matching row or 1 (as a fallback)
+
+            org_line_num <- org_line_num + matching_row - 1L
+            location <- locations[matching_row, ]
+            line <- lines[matching_row]
+          }
+
+          # Fallback if name isn't found anywhere: lint the first line
+          if (is.na(location$start)) {
+            location$start <- 1L
+            location$end <- nchar(line)
+          }
+
+          Lint(
+            filename = source_file$filename,
+            line_number = org_line_num,
+            column_number = location$start,
+            type = "warning",
+            message = row$message,
+            line = line,
+            ranges = list(c(location$start, location$end))
+          )
+        }
+      )
     })
   })
 }
@@ -139,23 +156,38 @@ parse_check_usage <- function(expression) {
   try(codetools::checkUsage(expression, report = report))
 
   function_name <- rex(anything, ": ")
-  line_info <- rex(" ", "(", capture(name = "path", non_spaces), ":", capture(name = "line_number", digits), ")")
+  line_info <- rex(" ", "(", capture(name = "path", non_spaces), ":",
+                   capture(name = "line1", digits), maybe("-", capture(name = "line2", digits)), ")")
 
-  res <- re_matches(vals,
-                    rex(function_name,
-                        capture(name = "message", anything,
-                                one_of(quote, "\u2018"), capture(name = "name", anything), one_of(quote, "\u2019"),
-                                anything),
-                        line_info))
+  res <- re_matches(
+    vals,
+    rex(
+      function_name,
+      capture(
+        name = "message",
+        anything,
+        one_of(quote, "\u2018"),
+        capture(name = "name", anything),
+        one_of(quote, "\u2019"),
+        anything
+      ),
+      line_info
+    )
+  )
 
   missing <- is.na(res$message)
   if (any(missing)) {
-    res[missing, ] <- re_matches(vals[missing],
-                                rex(function_name,
-                                    capture(name = "message",
-                                            "possible error in ", capture(name = "name", anything), ": ", anything
-                                    ),
-                                    line_info))
+    res[missing, ] <- re_matches(
+      vals[missing],
+      rex(
+        function_name,
+        capture(
+          name = "message",
+          "possible error in ", capture(name = "name", anything), ": ", anything
+        ),
+        line_info
+      )
+    )
   }
 
   res
