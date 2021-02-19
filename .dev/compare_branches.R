@@ -23,7 +23,7 @@ temp_repo <- file.path(tempdir(), "lintr_repo")
 dir.create(temp_repo)
 file.copy(".", temp_repo, recursive = TRUE)
 message("Executing from copy of repo at ", temp_repo)
-old_ws <- setwd(temp_repo)
+old_wd <- setwd(temp_repo)
 if (!interactive()) {
   .Last <- function() { unlink(temp_repo, recursive = TRUE) }
 }
@@ -277,4 +277,7 @@ if (is_branch) {
 
 write.csv(lints, params$outfile, row.names = FALSE)
 
-if (interactive()) setwd(old_wd)
+if (interactive()) {
+  setwd(old_wd)
+  unlink(temp_repo, recursive = TRUE)
+}
