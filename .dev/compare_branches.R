@@ -304,7 +304,17 @@ if (is_branch) {
 } else {
   message("Comparing PR#", pr, " to master")
 }
-message("Comparing output of lint_dir run for the following packages: ", toString(basename(packages)))
+if (length(packages) > 50L) {
+  message(
+    "Comparing output of lint_dir run on many packages; here are 50: ",
+    toString(basename(sample(packages, 50L)))
+  )
+} else {
+  message(
+    "Comparing output of lint_dir run for the following packages: ",
+    toString(basename(packages))
+  )
+}
 
 if (is_branch) {
   lints <- purrr::map_df(linter_names, run_branch_workflow, packages, branch)
