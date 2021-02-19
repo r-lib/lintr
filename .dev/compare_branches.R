@@ -11,7 +11,21 @@ library(gert)
 library(devtools)
 
 if (!file.exists("lintr.Rproj")) {
-  "compare_branches.R should be run inside the lintr-package directory"
+  stop("compare_branches.R should be run inside the lintr-package directory")
+}
+
+# move to temp repo. this allows multiple executions of this
+#   script simultaneously (otherwise the branch state across
+#   executions will collide)
+# named lintr_repo in case this script happens to be run against
+#   a tar of lintr itself...
+temp_repo <- file.path(tempdir(), "lintr_repo")
+dir.create(temp_repo)
+file.copy(".", temp_repo, recursive = TRUE)
+message("Executing from copy of repo at ", temp_repo)
+old_ws <- setwd(temp_repo)
+if (!interactive()) {
+  .Last <- function() { unlink(temp_repo, recursive = TRUE) }
 }
 
 param_list <- list(
@@ -30,7 +44,8 @@ param_list <- list(
   optparse::make_option(
     "--pr",
     default = if (interactive()) {
-      as.integer(readline("Name a PR # to compare to master (skip if you've entered a branch): "))
+      # NB: optparse handles integer conversion
+      readline("Name a PR # to compare to master (skip if you've entered a branch): ")
     },
     type = "integer",
     help = "Run the comparison for master vs. this PR"
@@ -53,7 +68,7 @@ param_list <- list(
     "--sample_size",
     type = "integer",
     default = if (interactive()) {
-      as.integer(readline("Enter the number of packages to include (skip to include all): "))
+      readline("Enter the number of packages to include (skip to include all): ")
     },
     help = "Select a sample of this number of packages from 'packages' or 'pkg_dir'"
   ),
@@ -68,7 +83,8 @@ params <- optparse::parse_args(optparse::OptionParser(option_list = param_list))
 # treat any skipped arguments from the prompt as missing
 if (interactive()) {
   for (opt in c("branch", "pr", "packages", "pkg_dir", "sample_size")) {
-    if (params[[opt]] == "") params[[opt]] <- NULL
+    # typed arguments get cast even when missing, probably to NA
+    if (is.na(params[[opt]]) || params[[opt]] == "") params[[opt]] <- NULL
   }
 }
 
@@ -260,3 +276,5 @@ if (is_branch) {
 }
 
 write.csv(lints, params$outfile, row.names = FALSE)
+
+if (interactive()) setwd(old_wd)
