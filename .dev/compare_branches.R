@@ -16,12 +16,14 @@ if (!file.exists("lintr.Rproj")) {
 
 # move to temp repo. this allows multiple executions of this
 #   script simultaneously (otherwise the branch state across
-#   executions will collide)
+#   executions will collide), as well as continuing dev
+#   on the "main" package clone while the script runs (otherwise
+#   all current edits must be checked in before running)
 # named lintr_repo in case this script happens to be run against
 #   a tar of lintr itself...
 temp_repo <- file.path(tempdir(), "lintr_repo")
 dir.create(temp_repo)
-file.copy(".", temp_repo, recursive = TRUE)
+invisible(file.copy(".", temp_repo, recursive = TRUE))
 message("Executing from copy of repo at ", temp_repo)
 old_wd <- setwd(temp_repo)
 if (!interactive()) {
