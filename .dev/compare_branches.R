@@ -118,8 +118,21 @@ packages <- packages[
     )
 ]
 
-if (!is.null(params$sample_size)) {
-  packages <- sample(packages, min(length(packages), params$sample_size))
+if (is.null(params$sample_size)) {
+  n_packages <- length(packages)
+} else {
+  if (params$sample_size > length(packages)) {
+    message(sprintf(
+      "Requested a sample of %d pacakges but only %d are available; running on all packages",
+      params$sample_size,
+      length(packages)
+    ))
+    n_packages <- length(packages)
+  } else {
+    n_packages <- params$sample_size
+  }
+  # randomize the order
+  packages <- sample(packages)
 }
 
 # test if nchar(., "chars") works as intended
@@ -153,54 +166,76 @@ lint_all_packages <- function(pkgs, linter, check_depends) {
     gsub("_.*", "", basename(pkgs))
   )
 
-  map(
-    seq_along(pkgs),
-    function(ii) {
-      if (!pkg_is_dir[ii]) {
-        tmp <- file.path(tempdir(), pkg_names[ii])
-        on.exit(unlink(tmp, recursive = TRUE))
-        # --strip-components makes sure the output structure is
-        # /path/to/tmp/pkg/ instead of /path/to/tmp/pkg/pkg
-        utils::untar(pkgs[ii], exdir = tmp, extras="--strip-components=1")
-        pkg <- tmp
-      }
-      if (test_encoding(pkg)) {
+  # given how common it is to skip packages (e.g. due to uninstalled
+  #   dependencies), use a while loop to try and reach n_packages instead
+  #   of just iterating over n_packages (which may in actuality lint
+  #   far fewer than that number)
+  lints <- vector("list", n_packages)
+  lint_names <- character(n_packages)
+  ii <- 1L
+  jj <- 0L
+  while (ii <= length(pkgs) && jj <= n_packages) {
+    if (pkg_is_dir[ii]) {
+      pkg <- pkgs[ii]
+    } else {
+      tmp <- file.path(tempdir(), pkg_names[ii])
+      on.exit(unlink(tmp, recursive = TRUE))
+      # --strip-components makes sure the output structure is
+      # /path/to/tmp/pkg/ instead of /path/to/tmp/pkg/pkg
+      utils::untar(pkgs[ii], exdir = tmp, extras="--strip-components=1")
+      pkg <- tmp
+    }
+    if (test_encoding(pkg)) {
+      warning(sprintf(
+        "Package %s has some files with unknown encoding; skipping",
+        pkg_names[ii]
+      ))
+      ii <- ii + 1L
+      next
+    }
+    # object_usage_linter requires running package code, which may
+    #   not work if the package has unavailable Depends;
+    # object_name_linter also tries to run loadNamespace on Imports
+    #   found in the target package's NAMESPACE file
+    if (check_depends) {
+      pkg_deps <- get_deps(pkg)
+      if ("tcltk" %in% pkg_deps && !capabilities("tcltk")) {
         warning(sprintf(
-          "Package %s has some files with unknown encoding; skipping",
+          "Package %s depends on tcltk, which is not available (via capabilities()); skipping",
           pkg_names[ii]
         ))
-        return(NULL)
+        ii <- ii + 1L
+        next
       }
-      # object_usage_linter requires running package code, which may
-      #   not work if the package has unavailable Depends;
-      # object_name_linter also tries to run loadNamespace on Imports
-      #   found in the target package's NAMESPACE file
-      if (check_depends) {
-        pkg_deps <- get_deps(pkg)
-        if ("tcltk" %in% pkg_deps && !capabilities("tcltk")) {
-          warning(sprintf(
-            "Package %s depends on tcltk, which is not available (via capabilities()); skipping",
-            pkg_names[ii]
-          ))
-          return(NULL)
-        }
-        try_deps <- tryCatch(
-          find.package(pkg_deps),
-          error = identity, warning = identity
-        )
-        if (inherits(try_deps, c("warning", "error"))) {
-          warning(sprintf(
-            "Some package Dependencies for %s were unavailable: %s; skipping",
-            pkg_names[ii],
-            gsub("there (?:are no packages|is no package) called ", "", try_deps$message)
-          ))
-          return(NULL)
-        }
+      try_deps <- tryCatch(
+        find.package(pkg_deps),
+        error = identity,
+        warning = identity
+      )
+      if (inherits(try_deps, c("warning", "error"))) {
+        warning(sprintf(
+          "Some package Dependencies for %s were unavailable: %s; skipping",
+          pkg_names[ii],
+          gsub("there (?:are no packages|is no package) called ", "", try_deps$message)
+        ))
+        ii <- ii + 1L
+        next
       }
-      lint_dir(pkg, linters = linter, parse_settings = FALSE)
     }
-  ) %>%
-    set_names(pkg_names)
+    jj <- jj + 1L
+    lints[[jj]] <- lint_dir(pkg, linters = linter, parse_settings = FALSE)
+    lint_names[jj] <- pkg_names[ii]
+    ii <- ii + 1L
+  }
+  if (jj == 0L) {
+    stop("Couldn't successfully lint any packages")
+  }
+  if (jj < n_packages) {
+    message(sprintf("Requested %d packages, but could only lint %d", n_packages, jj))
+    lints = lints[1:jj]
+    lint_names = lint_names[1:jj]
+  }
+  return(rlang::set_names(lints, lint_names))
 }
 
 format_lints <- function(x) {
