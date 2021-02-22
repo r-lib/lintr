@@ -27,7 +27,10 @@ invisible(file.copy(".", temp_repo, recursive = TRUE))
 message("Executing from copy of repo at ", temp_repo)
 old_wd <- setwd(temp_repo)
 if (!interactive()) {
-  .Last <- function() { unlink(temp_repo, recursive = TRUE) }
+  .Last <- function() {
+    setwd(old_wd)
+    unlink(temp_repo, recursive = TRUE)
+  }
 }
 
 param_list <- list(
@@ -160,7 +163,7 @@ get_deps <- function(pkg) {
   deps
 }
 
-lint_all_packages <- function(pkgs, linter, check_depends) {
+lint_all_packages <- function(pkgs, linter, check_depends, warn = TRUE) {
   pkg_is_dir <- file.info(pkgs)$isdir
   pkg_names <- dplyr::if_else(
     pkg_is_dir,
@@ -188,7 +191,7 @@ lint_all_packages <- function(pkgs, linter, check_depends) {
       pkg <- tmp
     }
     if (test_encoding(pkg)) {
-      warning(sprintf(
+      if (warn) warning(sprintf(
         "Package %s has some files with unknown encoding; skipping",
         pkg_names[ii]
       ))
@@ -202,7 +205,7 @@ lint_all_packages <- function(pkgs, linter, check_depends) {
     if (check_depends) {
       pkg_deps <- get_deps(pkg)
       if ("tcltk" %in% pkg_deps && !capabilities("tcltk")) {
-        warning(sprintf(
+        if (warn) warning(sprintf(
           "Package %s depends on tcltk, which is not available (via capabilities()); skipping",
           pkg_names[ii]
         ))
@@ -215,7 +218,7 @@ lint_all_packages <- function(pkgs, linter, check_depends) {
         warning = identity
       )
       if (inherits(try_deps, c("warning", "error"))) {
-        warning(sprintf(
+        if (warn) warning(sprintf(
           "Some package Dependencies for %s were unavailable: %s; skipping",
           pkg_names[ii],
           gsub("there (?:are no packages|is no package) called ", "", try_deps$message)
@@ -246,21 +249,24 @@ format_lints <- function(x) {
     dplyr::bind_rows(.id = "package")
 }
 
-run_lints <- function(pkgs, linter, check_depends) {
-  format_lints(lint_all_packages(pkgs, linter, check_depends))
+run_lints <- function(pkgs, linter, check_depends, warn = TRUE) {
+  format_lints(lint_all_packages(pkgs, linter, check_depends, warn))
 }
 
 run_on <- function(what, pkgs, linter_name, ...) {
+  # safe to use force=TRUE because we're in temp_repo
   switch(
     what,
     master = {
-      gert::git_branch_checkout("master")
+      gert::git_branch_checkout("master", force = TRUE)
     },
     pr = {
+      # pr_fetch doesn't expose this so use this to reset
+      gert::git_branch_checkout("master", force = TRUE)
       usethis::pr_fetch(...)
     },
     branch = {
-      gert::git_branch_checkout(...)
+      gert::git_branch_checkout(..., force = TRUE)
     }
   )
   devtools::load_all()
@@ -269,7 +275,8 @@ run_on <- function(what, pkgs, linter_name, ...) {
 
   check_depends <- linter_name %in% c("object_usage_linter", "object_name_linter")
 
-  run_lints(pkgs, linter, check_depends = check_depends)
+  # only show the warnings on "master" so as not to be repetitive
+  run_lints(pkgs, linter, check_depends = check_depends, warn = what == "master")
 }
 
 run_pr_workflow <- function(linter_name, pkgs, pr) {
@@ -322,6 +329,7 @@ if (is_branch) {
   lints <- purrr::map_df(linter_names, run_pr_workflow, packages, pr)
 }
 
+message("Writing output to ", params$outfile)
 write.csv(lints, params$outfile, row.names = FALSE)
 
 if (interactive()) {
