@@ -102,3 +102,16 @@ test_that("dollar subsetting only lints the first expression", {
   expect_lint("my_var$MY_SUB$MY_COL <- 42L", NULL, linter)
   expect_lint("MY_VAR$MY_SUB$MY_COL <- 42L", msg, linter)
 })
+
+test_that("assignment targets of compound lhs are correctly identified", {
+  linter <- object_name_linter()
+  msg <- "Variable and function name style should be snake_case or symbols."
+
+  expect_lint("good_name[badName] <- badName2", NULL, linter)
+  expect_lint("good_name[1L][badName] <- badName2", NULL, linter)
+  expect_lint("good_name[[badName]] <- badName2", NULL, linter)
+  expect_lint("good_name[[1L]][[badName]] <- badName2", NULL, linter)
+  expect_lint("good_name[[fun(badName)]] <- badName2", NULL, linter)
+  expect_lint("setter(badName) <- good_name", msg, linter)
+  expect_lint("setter(good_name[[badName]]) <- good_name2", NULL, linter)
+})

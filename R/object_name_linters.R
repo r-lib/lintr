@@ -37,6 +37,10 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
       "  or preceding-sibling::RIGHT_ASSIGN",
       "  or following-sibling::EQ_ASSIGN",
       " ]",
+      " and not(ancestor::expr[",
+      "  preceding-sibling::OP-LEFT-BRACKET",
+      "  or preceding-sibling::LBB",
+      " ])",
       "]",
 
       # Or
