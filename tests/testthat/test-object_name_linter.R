@@ -107,11 +107,24 @@ test_that("assignment targets of compound lhs are correctly identified", {
   linter <- object_name_linter()
   msg <- "Variable and function name style should be snake_case or symbols."
 
+  # (recursive) [, $, and [[ subsetting
   expect_lint("good_name[badName] <- badName2", NULL, linter)
   expect_lint("good_name[1L][badName] <- badName2", NULL, linter)
   expect_lint("good_name[[badName]] <- badName2", NULL, linter)
   expect_lint("good_name[[1L]][[badName]] <- badName2", NULL, linter)
   expect_lint("good_name[[fun(badName)]] <- badName2", NULL, linter)
+  expect_lint("good_name[[badName]]$badName2 <- badName3", NULL, linter)
+  expect_lint("good_name$badName[[badName2]][badName3]$badName4 <- badName5", NULL, linter)
+
+  expect_lint("badName[badName] <- badName2", msg, linter)
+  expect_lint("badName[1L][badName] <- badName2", msg, linter)
+  expect_lint("badName[[badName]] <- badName2", msg, linter)
+  expect_lint("badName[[1L]][[badName]] <- badName2", msg, linter)
+  expect_lint("badName[[fun(badName)]] <- badName2", msg, linter)
+  expect_lint("badName[[badName]]$badName2 <- badName3", msg, linter)
+  expect_lint("badName$badName[[badName2]][badName3]$badName4 <- badName5", msg, linter)
+
+  # setters
   expect_lint("setter(badName) <- good_name", msg, linter)
   expect_lint("setter(good_name[[badName]]) <- good_name2", NULL, linter)
 })
