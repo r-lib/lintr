@@ -127,4 +127,20 @@ test_that("assignment targets of compound lhs are correctly identified", {
   # setters
   expect_lint("setter(badName) <- good_name", msg, linter)
   expect_lint("setter(good_name[[badName]]) <- good_name2", NULL, linter)
+
+  # quotation
+  expect_lint("\"good_name\" <- 42", NULL, linter)
+  expect_lint("\"badName\" <- 42", msg, linter)
+  expect_lint("'good_name' <- 42", NULL, linter)
+  expect_lint("'badName' <- 42", msg, linter)
+  expect_lint("`good_name` <- 42", NULL, linter)
+  expect_lint("`badName` <- 42", msg, linter)
+
+  # subsetting with quotation
+  expect_lint("good_name$\"badName\" <- 42", NULL, linter)
+  expect_lint("good_name$'badName' <- 42", NULL, linter)
+  expect_lint("badName$\"good_name\" <- 42", msg, linter)
+  expect_lint("badName$'good_name' <- 42", msg, linter)
+  expect_lint("`badName`$\"good_name\" <- 42", msg, linter)
+  expect_lint("`badName`$'good_name' <- 42", msg, linter)
 })
