@@ -38,8 +38,8 @@ test_that("styles are correctly identified", {
 
 test_that("linter ignores some objects", {
   # names for which style check is ignored
-  expect_lint("`%x%` <- t", NULL, object_name_linter("snake_case")) # operator
   expect_lint("`%X%` <- t", NULL, object_name_linter("SNAKE_CASE")) # operator
+  expect_lint("`%x%` <- t", NULL, object_name_linter("snake_case")) # operator
   expect_lint("`t.test` <- t", NULL, object_name_linter("UPPERCASE")) # std pkg
   expect_lint(".Deprecated('x')", NULL, object_name_linter("lowercase")) # std pkg
   expect_lint("print.foo <- t", NULL, object_name_linter("CamelCase")) # S3 generic
@@ -90,4 +90,57 @@ test_that("linter accepts vector of styles", {
     list(message = msg, line_number = 3L, column_number = 1L),
     linter
   )
+})
+
+test_that("dollar subsetting only lints the first expression", {
+  # Regression test for #582
+  linter <- object_name_linter()
+  msg <- "Variable and function name style should be snake_case or symbols."
+
+  expect_lint("my_var$MY_COL <- 42L", NULL, linter)
+  expect_lint("MY_VAR$MY_COL <- 42L", msg, linter)
+  expect_lint("my_var$MY_SUB$MY_COL <- 42L", NULL, linter)
+  expect_lint("MY_VAR$MY_SUB$MY_COL <- 42L", msg, linter)
+})
+
+test_that("assignment targets of compound lhs are correctly identified", {
+  linter <- object_name_linter()
+  msg <- "Variable and function name style should be snake_case or symbols."
+
+  # (recursive) [, $, and [[ subsetting
+  expect_lint("good_name[badName] <- badName2", NULL, linter)
+  expect_lint("good_name[1L][badName] <- badName2", NULL, linter)
+  expect_lint("good_name[[badName]] <- badName2", NULL, linter)
+  expect_lint("good_name[[1L]][[badName]] <- badName2", NULL, linter)
+  expect_lint("good_name[[fun(badName)]] <- badName2", NULL, linter)
+  expect_lint("good_name[[badName]]$badName2 <- badName3", NULL, linter)
+  expect_lint("good_name$badName[[badName2]][badName3]$badName4 <- badName5", NULL, linter)
+
+  expect_lint("badName[badName] <- badName2", msg, linter)
+  expect_lint("badName[1L][badName] <- badName2", msg, linter)
+  expect_lint("badName[[badName]] <- badName2", msg, linter)
+  expect_lint("badName[[1L]][[badName]] <- badName2", msg, linter)
+  expect_lint("badName[[fun(badName)]] <- badName2", msg, linter)
+  expect_lint("badName[[badName]]$badName2 <- badName3", msg, linter)
+  expect_lint("badName$badName[[badName2]][badName3]$badName4 <- badName5", msg, linter)
+
+  # setters
+  expect_lint("setter(badName) <- good_name", msg, linter)
+  expect_lint("setter(good_name[[badName]]) <- good_name2", NULL, linter)
+
+  # quotation
+  expect_lint("\"good_name\" <- 42", NULL, linter)
+  expect_lint("\"badName\" <- 42", msg, linter)
+  expect_lint("'good_name' <- 42", NULL, linter)
+  expect_lint("'badName' <- 42", msg, linter)
+  expect_lint("`good_name` <- 42", NULL, linter)
+  expect_lint("`badName` <- 42", msg, linter)
+
+  # subsetting with quotation
+  expect_lint("good_name$\"badName\" <- 42", NULL, linter)
+  expect_lint("good_name$'badName' <- 42", NULL, linter)
+  expect_lint("badName$\"good_name\" <- 42", msg, linter)
+  expect_lint("badName$'good_name' <- 42", msg, linter)
+  expect_lint("`badName`$\"good_name\" <- 42", msg, linter)
+  expect_lint("`badName`$'good_name' <- 42", msg, linter)
 })
