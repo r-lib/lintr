@@ -112,6 +112,6 @@ test_that(
   )
 })
 
-expect_that("lint_package returns early if no package is found", {
+test_that("lint_package returns early if no package is found", {
   expect_equal(nrow(as.data.frame(lint_package("/"))), 0L)
 })
