@@ -250,7 +250,14 @@ lint_package <- function(path = ".", relative_path = TRUE, ...,
                          exclusions = list("R/RcppExports.R"), parse_settings = TRUE) {
   path <- find_package(path)
 
-  if (is.null(path)) return(list())
+  if (is.null(path)) {
+    lints <- structure(
+      list(),
+      class = "lints",
+      path = if (isTRUE(relative_path)) normalizePath(path, mustWork = FALSE)
+    )
+    return(lints)
+  }
 
   if (parse_settings) {
     read_settings(path)
