@@ -47,6 +47,9 @@ test_that("returns the correct linting", {
 
   expect_lint("'[[<-.data.frame'(object, y)", NULL, linter)
   expect_lint("object@data@get('input')", NULL, linter)
+  # these don't violate the linter, even if they are strange coding practice
+  expect_lint("for (ii in 1:10) next()", NULL, linter)
+  expect_lint("for (ii in 1:10) break()", NULL, linter)
 })
 
 test_that("doesn't produce a warning", {
