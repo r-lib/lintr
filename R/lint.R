@@ -250,6 +250,8 @@ lint_package <- function(path = ".", relative_path = TRUE, ...,
                          exclusions = list("R/RcppExports.R"), parse_settings = TRUE) {
   path <- find_package(path)
 
+  if (is.null(path)) return(list())
+
   if (parse_settings) {
     read_settings(path)
     on.exit(clear_settings, add = TRUE)

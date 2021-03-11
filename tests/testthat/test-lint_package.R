@@ -111,3 +111,7 @@ test_that(
     )
   )
 })
+
+expect_that("lint_package returns early if no package is found", {
+  expect_equal(lint_package("/"), list())
+})
