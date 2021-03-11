@@ -1,8 +1,12 @@
 # names: xml tags; values: getParseData tokens
-infix_tokens <- c(
-
+# these can be used as unary operators; treat separately
+unary_infix_tokens <- c(
   "OP-PLUS" = "'+'",               # +        : unary plus
   "OP-MINUS" = "'-'",              # -        : unary minus
+  NULL
+)
+binary_infix_tokens <- c(
+
   "GT" = "GT",                     # >        : greater than
   "GE" = "GE",                     # <=       : greater than or equal to
   "LT" = "LT",                     # <        : less than
@@ -23,6 +27,7 @@ infix_tokens <- c(
 
   NULL
 )
+infix_tokens <- c(unary_infix_tokens, binary_infix_tokens)
 
 #' @describeIn linters  Check that infix operators are surrounded by spaces.
 #' @export

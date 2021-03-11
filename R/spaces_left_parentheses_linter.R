@@ -18,14 +18,16 @@ spaces_left_parentheses_linter <- function() {
     if_while_cond <- "@start - 1 = preceding-sibling::*[self::IF or self::WHILE]/@end"
     for_cond <- "@start - 1 = parent::forcond/preceding-sibling::FOR/@end"
 
-    # see infix_spaces_linter.R; preceding-sibling::* is for unary operators like -(a)
-    infix_nodes <- c(names(infix_tokens), "OP-COMMA", "OP-TILDE", "ELSE", "IN")
-    infix_selves <- paste0("self::", infix_nodes, "[preceding-sibling::*]", collapse = " or ")
+    # see infix_spaces_linter.R; preceding-sibling::* is needed for unary operators where '-(a)' is ok
+    unary_nodes <- c(names(unary_infix_tokens), "OP-TILDE")
+    unary_selves <- paste0("self::", unary_nodes, "[preceding-sibling::*]", collapse = " or ")
+    binary_nodes <- c(names(binary_infix_tokens), "OP-COMMA", "OP-LEFT-BRACE", "ELSE", "IN")
+    binary_selves <- paste0("self::", binary_nodes, collapse = " or ")
     # preceding-symbol::* catches (1) function definitions and (2) function calls
     # ancestor::expr needed for nested RHS expressions, e.g. 'y1<-(abs(yn)>90)*1'
     infix_cond <- sprintf(
       "not(preceding-sibling::*) and (@start - 1 = ancestor::expr/preceding-sibling::*[%s]/@end)",
-      infix_selves
+      paste(unary_selves, "or", binary_selves)
     )
     xpath <- sprintf(
       "//OP-LEFT-PAREN[(%s) or (%s) or (%s)]",
