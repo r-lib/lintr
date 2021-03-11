@@ -254,6 +254,12 @@ run_lints <- function(pkgs, linter, check_depends, warn = TRUE) {
 }
 
 run_on <- function(what, pkgs, linter_name, ...) {
+  t0 <- Sys.time()
+  on.exit({
+    t1 <- Sys.time()
+    message("Completed on ", what, " in ", format(difftime(t1, t0, units = "mins")))
+  })
+
   # safe to use force=TRUE because we're in temp_repo
   switch(
     what,
