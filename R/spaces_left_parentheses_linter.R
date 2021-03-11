@@ -5,6 +5,7 @@ spaces_left_parentheses_linter <- function() {
   Linter(function(source_file) {
 
     if (is.null(source_file$xml_parsed_content)) {
+      if (is.null(source_file$full_xml_parsed_content)) return(list())
       # 'x = 1;(x + 2)' can't be detected from the expression-level tree
       xml <- source_file$full_xml_parsed_content
       xpath <- "//OP-LEFT-PAREN[@start - 1 = ancestor::expr/preceding-sibling::OP-SEMICOLON/@end]"
