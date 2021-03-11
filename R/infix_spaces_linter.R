@@ -1,24 +1,25 @@
+# names: xml tags; values: getParseData tokens
 infix_tokens <- c(
 
-  "'+'",          # +        : unary plus
-  "'-'",          # -        : unary minus
-  "GT",           # >        : greater than
-  "GE",           # <=       : greater than or equal to
-  "LT",           # <        : less than
-  "LE",           # <=       : less than or equal to
-  "EQ",           # ==       : vector equality
-  "NE",           # !=       : not equal
-  "AND",          # &        : vector boolean and
-  "OR",           # |        : vector boolean or
-  "AND2",         # &&       : scalar boolean and
-  "OR2",          # ||       : scalar boolean or
-  "LEFT_ASSIGN",  # <- or := : left assignment
-  "RIGHT_ASSIGN", # ->       : right assignment
-  "EQ_ASSIGN",    # =        : equal assignment
-  "EQ_SUB",       # =        : keyword assignment
-  "SPECIAL",      # %[^%]*%  : infix operators
-  "'/'",          # /        : unary division
-  "'*'",          # *        : unary multiplication
+  "OP-PLUS" = "'+'",               # +        : unary plus
+  "OP-MINUS" = "'-'",              # -        : unary minus
+  "GT" = "GT",                     # >        : greater than
+  "GE" = "GE",                     # <=       : greater than or equal to
+  "LT" = "LT",                     # <        : less than
+  "LE" = "LE",                     # <=       : less than or equal to
+  "EQ" = "EQ",                     # ==       : vector equality
+  "NE" = "NE",                     # !=       : not equal
+  "AND" = "AND",                   # &        : vector boolean and
+  "OR" = "OR",                     # |        : vector boolean or
+  "AND2" = "AND2",                 # &&       : scalar boolean and
+  "OR2" = "OR2",                   # ||       : scalar boolean or
+  "LEFT_ASSIGN" = "LEFT_ASSIGN",   # <- or := : left assignment
+  "RIGHT_ASSIGN" = "RIGHT_ASSIGN", # ->       : right assignment
+  "EQ_ASSIGN" = "EQ_ASSIGN",       # =        : equal assignment
+  "EQ_SUB" = "EQ_SUB",             # =        : keyword assignment
+  "SPECIAL" = "SPECIAL",           # %[^%]*%  : infix operators
+  "OP-SLASH" = "'/'",              # /        : unary division
+  "OP-STAR" = "'*'",               # *        : unary multiplication
 
   NULL
 )

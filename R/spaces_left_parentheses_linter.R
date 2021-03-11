@@ -8,13 +8,21 @@ spaces_left_parentheses_linter <- function() {
 
     xml <- source_file$xml_parsed_content
 
-    function_cond <-
-      "@start = preceding-sibling::*[not(self::FUNCTION or self::expr[SYMBOL_FUNCTION_CALL or FUNCTION])]/@end + 1"
-    for_cond <- "parent::forcond[@start = preceding-sibling::FOR/@end + 1]"
-    mult_cond <- "parent::expr[@start = preceding-sibling::OP-STAR/@end + 1]"
-
-    paren_cond <- sprintf("(%s)", paste(function_cond, for_cond, mult_cond, sep = ") or ("))
-    xpath <- sprintf("//OP-LEFT-PAREN[%s]", paren_cond)
+    # see infix_spaces_linter.R; preceding-sibling::* is for unary operators like -(a)
+    infix_selves <- paste0("self::", names(infix_tokens), "[preceding-sibling::*]", collapse = " or ")
+    # -2 on LHS because, when RHS matches nothing, +2 tricks the condition into returning true...
+    #   while @start will always be there, the @end may not be
+    if_while_cond <- "@start - 2 != preceding-sibling::*[self::IF or self::WHILE]/@end"
+    for_cond <- "@start - 2 != parent::forcond/preceding-sibling::FOR/@end"
+    # preceding-symbol::* catches (1) function definitions and (2) function calls
+    infix_cond <- sprintf(
+      "not(preceding-sibling::*) and (@start - 2 != parent::expr/preceding-sibling::*[%s]/@end)",
+      infix_selves
+    )
+    xpath <- sprintf(
+      "//OP-LEFT-PAREN[(%s) or (%s) or (%s)]",
+      if_while_cond, for_cond, infix_cond
+    )
 
     bad_paren <- xml2::xml_find_all(xml, xpath)
 
