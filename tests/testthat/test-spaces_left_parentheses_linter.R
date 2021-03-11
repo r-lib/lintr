@@ -32,6 +32,7 @@ test_that("returns the correct linting", {
   expect_lint("res <- c((mat - 1L) %*% combs + 1L)", NULL, linter)
   expect_lint("if (!(foo && bar || baz)) { foo }", NULL, linter)
   expect_lint("x^(y + z)", NULL, linter)
+  expect_lint("x**(y + z)", NULL, linter)
   expect_lint("a <- -(b)", NULL, linter)
 
   # more complicated cases for parse tree
@@ -41,6 +42,8 @@ test_that("returns the correct linting", {
   expect_lint("y~(x+z)", msg, linter)
   expect_lint("if (x>y) {(x+y) / (x-y)}", msg, linter)
   expect_lint("for (ii in(1:10)) { }", msg, linter)
+  expect_lint("x = 1;(x + 2)*3", msg, linter)
+  expect_lint("foo <- function(x=(1+2)) { }", msg, linter)
 
   expect_lint("'[[<-.data.frame'(object, y)", NULL, linter)
   expect_lint("object@data@get('input')", NULL, linter)

@@ -202,15 +202,17 @@ unescape <- function(str, q="`") {
 # convert an XML match into a Lint
 xml_nodes_to_lint <- function(xml, source_file, message,
                               type = c("style", "warning", "error"),
-                              offset = 0L) {
+                              offset = 0L, global = FALSE) {
   type <- match.arg(type, c("style", "warning", "error"))
   line1 <- xml2::xml_attr(xml, "line1")[1]
   col1 <- as.integer(xml2::xml_attr(xml, "col1")) + offset
 
+  line_elt <- if (global) "file_lines" else "lines"
+
   if (xml2::xml_attr(xml, "line2") == line1) {
     col2 <- as.integer(xml2::xml_attr(xml, "col2")) + offset
   } else {
-    col2 <- nchar(source_file$lines[line1])
+    col2 <- nchar(source_file[[line_elt]][line1])
   }
   return(Lint(
     filename = source_file$filename,
@@ -218,7 +220,7 @@ xml_nodes_to_lint <- function(xml, source_file, message,
     column_number = as.integer(col1),
     type = type,
     message = message,
-    line = source_file$lines[line1],
+    line = source_file[[line_elt]][line1],
     ranges = list(c(col1 - offset, col2))
   ))
 }
