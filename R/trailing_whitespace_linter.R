@@ -1,12 +1,16 @@
-#' @describeIn linters check there are no trailing whitespace characters.
+#' @describeIn linters  Check that there are no space characters at the end of
+#' source lines.
 #' @export
-trailing_whitespace_linter <- function(source_file) {
-  res <- re_matches(source_file$lines,
-    rex(capture(name = "space", some_of(" ", regex("\\t"))), or(newline, end)),
-    global = TRUE,
-    locations = TRUE)
+trailing_whitespace_linter <- function() {
+  Linter(function(source_file) {
+    res <- re_matches(
+      source_file$lines,
+      rex(capture(name = "space", some_of(" ", regex("\\t"))), or(newline, end)),
+      global = TRUE,
+      locations = TRUE
+    )
 
-  lapply(seq_along(source_file$lines), function(itr) {
+    lapply(seq_along(source_file$lines), function(itr) {
 
       mapply(
         FUN = function(start, end) {
@@ -21,14 +25,14 @@ trailing_whitespace_linter <- function(source_file) {
             type = "style",
             message = "Trailing whitespace is superfluous.",
             line = source_file$lines[as.character(line_number)],
-            ranges = list(c(start, end)),
-            linter = "trailing_whitespace_linter"
-            )
+            ranges = list(c(start, end))
+          )
         },
         start = res[[itr]]$space.start,
         end = res[[itr]]$space.end,
         SIMPLIFY = FALSE
-        )
-  })
+      )
+    })
 
+  })
 }

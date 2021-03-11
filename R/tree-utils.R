@@ -29,7 +29,7 @@ component_edges <- function(graph, id) {
   which(graph$edges[, 1] %in% sc)
 }
 
-children <- function(data, id, levels = Inf, simplify = TRUE) {
+children <- function(data, id, levels = Inf) {
 
   child_ids <- function(ids) {
     data$id[data$parent %in% ids]
@@ -44,14 +44,10 @@ children <- function(data, id, levels = Inf, simplify = TRUE) {
   }
   ids <- ids[-length(ids)]
 
-  if (simplify) {
-    as.character(unlist(ids))
-  } else {
-    as.character(ids)
-  }
+  as.character(unlist(ids))
 }
 
-parents <- function(data, id, levels = Inf, simplify = TRUE) {
+parents <- function(data, id, levels = Inf) {
 
   parent_ids <- function(ids) {
     data$parent[data$id %in% ids]
@@ -66,11 +62,7 @@ parents <- function(data, id, levels = Inf, simplify = TRUE) {
   }
   ids <- ids[-length(ids)]
 
-  if (simplify) {
-    as.character(unlist(ids))
-  } else {
-    as.character(ids)
-  }
+  as.character(unlist(ids))
 }
 
 siblings <- function(data, id, child_levels = Inf) {

@@ -13,67 +13,72 @@ This vignette describes the steps necessary to create a new linter.
 
 A good example of a simple linter is the `assignment_linter`.
 ```r
-#' @describeIn linters checks that '<-' is always used for assignment
+#' @describeIn linters Check that '<-' is always used for assignment.
 #' @export
-assignment_linter <- function(source_file) {
-  lapply(ids_with_token(source_file, "EQ_ASSIGN"),
-    function(id) {
-      parsed <- source_file$parsed_content[id, ]
-      Lint(
-        filename = source_file$filename,
-        line_number = parsed$line1,
-        column_number = parsed$col1,
-        type = "style",
-        message = "Use <-, not =, for assignment.",
-        line = source_file$lines[parsed$line1],
-        linter = "assignment_linter"
+assignment_linter <- function() {
+  Linter(function(source_file) {
+    lapply(
+      ids_with_token(source_file, "EQ_ASSIGN"),
+      function(id) {
+        parsed <- source_file$parsed_content[id, ]
+        Lint(
+          filename = source_file$filename,
+          line_number = parsed$line1,
+          column_number = parsed$col1,
+          type = "style",
+          message = "Use <-, not =, for assignment.",
+          line = source_file$lines[parsed$line1]
         )
-    })
+      }
+    )
+  })
 }
 ```
 
-Lets walk through the parts of the linter individually.
+Let us walk through the parts of the linter individually.
 
 ## Writing the linter ##
+```r
+#' @describeIn linters  Check that '<-' is always used for assignment.
+#' @export
+```
 The first two lines add the linter to the `linters` documentation and export it
 for use outside the package.
 
 ```r
-#' @describeIn linters checks that '<-' is always used for assignment
-#' @export
+assignment_linter <- function() {
 ```
+Next, we define the name of the new linter.  The convention is to suffix all
+linter names with `_linter`. All `_linter` functions are getters that return a
+closure that will do the actual linting. We could define additional parameters
+that are useful for the linter in this function declaration, but
+`assignment_linter` requires no additional arguments.
 
-Next we define the name of the new linter.  The convention is that all linter
-names are suffixed by `_linter`.
 ```r
-assignment_linter <- function(source_file) {
+Linter(function(source_file) {
 ```
+This is the closure. It will be called on the `source_file` variable that
+contains the top level expressions in the file to be linted. The call to
+`Linter()` simply gives this closure the class 'linter'.
 
-Your linter will be called by each top level expression in the file to be
-linted.
-
-The raw text of the expression is available from `source_file$content`. However it is
-recommended to work with the tokens from
-`source_file$parsed_content` if possible, as they are tokenzied from the `R`
-parser. These tokens are obtained from `parse()` and `getParseData()`
-calls done prior to calling the new linter. `getParseData()` returns a `data.frame`
-with information from the source parse tree of the file being linted. A list of
-tokens available from
+The raw text of the expression is available from `source_file$content`. However
+it is recommended to work with the tokens from `source_file$parsed_content` if
+possible, as they are tokenized from the `R` parser. These tokens are obtained
+from `parse()` and `getParseData()` calls done prior to calling the new linter.
+`getParseData()` returns a `data.frame` with information from the source parse
+tree of the file being linted. A list of tokens is available from
 [r-source/src/main/gram.y](https://github.com/wch/r-source/blob/ff1bca2f21aba271d428474f00494eece5c36dd3/src/main/gram.y#L293-L307).
-
-`ids_with_token()` can be used to search for a specific token and return the
-associated id.  Note that the `rownames` for `parsed_content` are set to the
-`id`, so you can retrieve the rows for a given id with
-`source_file$parsed_content[id, ]`.
 
 ```r
 lapply(ids_with_token(source_file, "EQ_ASSIGN"),
   function(id) {
-    parsed <- source_file$parsed_content[id, ]
+    parsed <- with_id(source_file, id)
 ```
-
-Lastly build a `Lint` object which describes the issue.  See `?Lint` for a
-description of the arguments.
+`ids_with_token()` is used to search for a token of a specific type and return
+the associated `id`.  Note that `rownames()` for `parsed_content` returns this
+`id`, so you can retrieve the rows for a given id with
+`source_file$parsed_content[id, ]`. The same operation may be more conveniently
+carried out with `with_id(source_file, id)`.
 
 ```r
 Lint(
@@ -82,14 +87,14 @@ Lint(
   column_number = parsed$col1,
   type = "style",
   message = "Use <-, not =, for assignment.",
-  line = source_file$lines[parsed$line1],
-  linter = "assignment_linter"
-  )
+  line = source_file$lines[parsed$line1]
+)
 ```
-
-You do not have to return a Lint for every iteration of your loop.  Feel free
-to return `NULL` or empty lists() for tokens which do not need to be linted.
-You can even return a `list` of `Lint` objects if more than one Lint was found.
+Lastly, build a `lint` object which describes the issue.  See `?Lint` for a
+description of the arguments. You do not have to return a lint for every
+iteration of your loop.  Feel free to return `NULL` or `list()` for tokens which
+do not need to be linted. You can even return a `list` of `lint` objects if
+more than one lint was found.
 
 ## Writing linter tests ##
 The `linter` package uses [testthat](https://github.com/hadley/testthat) for
@@ -102,41 +107,68 @@ Linter tests should be put in the
 folder.  The test filename should be the linter name prefixed by `test-`, e.g.
 `test-assignment_linter.R`.
 
-The first line in the test file should be a line which defines the context of the text (the linter name).
+The first line in the test file should be a line which defines the context of
+the text (the linter name).
 ```r
 context("assignment_linter")
 ```
 
-You can then specify one or more `test_that` functions.  Most of the linters use the same default form.
+You can then specify one or more `test_that` functions.  Most of the linters
+use the same default form.
 ```r
 test_that("returns the correct linting", {
 ```
-
 You then test a series of expectations for the linter using `expect_lint`.
 Please see `?expect_lint` for a full description of the parameters.
 
-I try to test 3 main things.
+The main three aspects to test are:
 
-1. Linter returns no lints when there is nothing to lint. e.g.
+1. Linter returns no lints when there is nothing to lint, e.g.
 
 ```r
-expect_lint("blah", NULL, assignment_linter)
+expect_lint("blah", NULL, assignment_linter())
 ```
 
-2. Linter returns a lint when there is something to lint. e.g.
+2. Linter returns a lint when there is something to lint, e.g.
 
 ```r
 expect_lint("blah=1",
   rex("Use <-, not =, for assignment."),
-    assignment_linter)
+  assignment_linter())
 ```
 
-3. As many edge cases as you can think of that might break it. e.g.
+3. As many edge cases as you can think of that might break it, e.g.
 
 ```r
 expect_lint("fun((blah = fun(1)))",
   rex("Use <-, not =, for assignment."),
-  assignment_linter)
+  assignment_linter())
+```
+
+You should also test that the linter belongs to the right class, e.g.
+
+```r
+expect_is(assignment_linter(), "linter")
+```
+
+You may want to test that additional `lint` attributes are correct,
+such as the type, line number, column number, e.g.
+
+```r
+expect_lint("blah=1",
+  list(message = "assignment", line_number = 1, column_number = 5, type = "style"),
+  assignment_linter())
+```
+
+Finally, it is a good idea to test that your linter reports multiple lints if
+needed, e.g.
+```r
+expect_lint("blah=1; blah=2",
+  list(
+    list(line_number = 1, column_number = 5),
+    list(line_number = 1, column_number = 13),
+  )
+  assignment_linter())
 ```
 
 It is always better to write too many tests rather than too few.

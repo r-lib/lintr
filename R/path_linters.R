@@ -138,10 +138,10 @@ split_path <- function(path, sep="/|\\\\") {
   )
 }
 
-
-#' @include   utils.R
-make_path_linter <- function(path_function, message, linter) {
-  function(source_file) {
+#' @include utils.R
+make_path_linter <- function(path_function, message, linter, name = linter_auto_name()) {
+  force(name)
+  Linter(function(source_file) {
     lapply(
       ids_with_token(source_file, "STR_CONST"),
       function(id) {
@@ -162,39 +162,34 @@ make_path_linter <- function(path_function, message, linter) {
             type = "warning",
             message = message,
             line = source_file[["lines"]][[as.character(token[["line1"]])]],
-            ranges = list(c(start, end)),
-            linter = linter
+            ranges = list(c(start, end))
           )
         }
       }
     )
-  }
+  }, name = name)
 }
-
 
 #' @describeIn linters  Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
 #' @param lax  Less stringent linting, leading to fewer false positives.
 #' @export
-absolute_path_linter <- function(lax=TRUE) {
+absolute_path_linter <- function(lax = TRUE) {
   make_path_linter(
     path_function = function(path) {
       is_absolute_path(path) && is_valid_long_path(path, lax)
     },
-    message = "Do not use absolute paths.",
-    linter = "absolute_path_linter"
+    message = "Do not use absolute paths."
   )
 }
 
-
 #' @describeIn linters  Check that file.path() is used to construct safe and portable paths.
 #' @export
-nonportable_path_linter <- function(lax=TRUE) {
+nonportable_path_linter <- function(lax = TRUE) {
   make_path_linter(
     path_function = function(path) {
       is_path(path) && is_valid_long_path(path, lax) && path != "/" &&
         re_matches(path, rex(one_of("/", "\\")))
     },
-    message = "Use file.path() to construct portable file paths.",
-    linter = "nonportable_filepath_linter"
+    message = "Use file.path() to construct portable file paths."
   )
 }

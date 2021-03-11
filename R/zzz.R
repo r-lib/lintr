@@ -24,7 +24,7 @@
 #' # remove assignment checks (with NULL), add absolute path checks
 #' my_linters <- with_defaults(default = my_linters,
 #'                             assignment_linter = NULL,
-#'                             absolute_path_linter)
+#'                             absolute_path_linter())
 #'
 #' # custom list of undesirable functions:
 #' #    remove sapply (using NULL)
@@ -69,34 +69,42 @@ with_defaults <- function(..., default = default_linters) {
 
 #' Default linters
 #'
-#' List of default linters for \code{\link{lint}}. Use \code{\link{with_defaults}} to customize it.
+#' @description List of default linters for \code{\link{lint}}. Use
+#' \code{\link{with_defaults}} to customize it.
+#'
+#' The set of default linters is as follows (any parameterised linters, eg,
+#' \code{line_length_linter} use their default argument(s), see \code{?
+#' <linter_name>} for details):
+#'
+#' - \Sexpr[stage=render, results=rd]{paste(names(lintr::default_linters), collapse=", ")}.
+#'
 #' @export
 default_linters <- with_defaults(
   default = list(),
-  assignment_linter,
+  assignment_linter(),
   closed_curly_linter(),
-  commas_linter,
-  commented_code_linter,
+  commas_linter(),
+  commented_code_linter(),
   cyclocomp_linter(),
-  equals_na_linter,
-  function_left_parentheses_linter,
-  infix_spaces_linter,
+  equals_na_linter(),
+  function_left_parentheses_linter(),
+  infix_spaces_linter(),
   line_length_linter(),
-  no_tab_linter,
+  no_tab_linter(),
   object_length_linter(),
   object_name_linter(),
-  object_usage_linter,
+  object_usage_linter(),
   open_curly_linter(),
-  paren_brace_linter,
-  pipe_continuation_linter,
+  paren_brace_linter(),
+  pipe_continuation_linter(),
   semicolon_terminator_linter(),
-  seq_linter,
-  single_quotes_linter,
-  spaces_inside_linter,
-  spaces_left_parentheses_linter,
-  T_and_F_symbol_linter,
-  trailing_blank_lines_linter,
-  trailing_whitespace_linter
+  seq_linter(),
+  single_quotes_linter(),
+  spaces_inside_linter(),
+  spaces_left_parentheses_linter(),
+  T_and_F_symbol_linter(),
+  trailing_blank_lines_linter(),
+  trailing_whitespace_linter()
 )
 
 #' Default undesirable functions and operators
@@ -193,6 +201,13 @@ settings <- NULL
     exclude = rex::rex("#", any_spaces, "nolint"),
     exclude_start = rex::rex("#", any_spaces, "nolint start"),
     exclude_end = rex::rex("#", any_spaces, "nolint end"),
+    exclude_linter = rex::rex(start, any_spaces, ":", any_spaces,
+                              capture(
+                                name = "linters",
+                                zero_or_more(one_or_more(none_of(",.")), any_spaces, ",", any_spaces),
+                                one_or_more(none_of(",."))
+                              ), "."),
+    exclude_linter_sep = rex::rex(any_spaces, ",", any_spaces),
     exclusions = list(),
     cache_directory = "~/.R/lintr_cache",
     comment_token = Sys.getenv("GITHUB_TOKEN", unset = NA) %||% rot(

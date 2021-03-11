@@ -62,13 +62,30 @@ names2 <- function(x) {
   names(x) %||% rep("", length(x))
 }
 
+linter_auto_name <- function(which = -3L) {
+  call <- sys.call(which = which)
+  nm <- paste(deparse(call, 500L), collapse = " ")
+  regex <- rex(start, one_or_more(alnum %or% "." %or% "_"))
+  if (re_matches(nm, regex)) {
+    match <- re_matches(nm, regex, locations = TRUE)
+    nm <- substr(nm, start = 1L, stop = match[1L, "end"])
+  }
+  nm
+}
+
 auto_names <- function(x) {
   nms <- names2(x)
   missing <- nms == ""
   if (all(!missing)) return(nms)
 
-  deparse2 <- function(x) paste(deparse(x, 500L), collapse = "")
-  defaults <- vapply(x[missing], deparse2, character(1), USE.NAMES = FALSE)
+  default_name <- function(x) {
+    if (inherits(x, "linter")) {
+      attr(x, "name", exact = TRUE)
+    } else {
+      paste(deparse(x, 500L), collapse = " ")
+    }
+  }
+  defaults <- vapply(x[missing], default_name, character(1), USE.NAMES = FALSE)
 
   nms[missing] <- defaults
   nms
@@ -183,14 +200,15 @@ unescape <- function(str, q="`") {
 }
 
 # convert an XML match into a Lint
-xml_nodes_to_lint <- function(xml, source_file, message, linter,
-                              type = c("style", "warning", "error")) {
+xml_nodes_to_lint <- function(xml, source_file, message,
+                              type = c("style", "warning", "error"),
+                              offset = 0L) {
   type <- match.arg(type, c("style", "warning", "error"))
   line1 <- xml2::xml_attr(xml, "line1")[1]
-  col1 <- as.integer(xml2::xml_attr(xml, "col1"))
+  col1 <- as.integer(xml2::xml_attr(xml, "col1")) + offset
 
   if (xml2::xml_attr(xml, "line2") == line1) {
-    col2 <- as.integer(xml2::xml_attr(xml, "col2"))
+    col2 <- as.integer(xml2::xml_attr(xml, "col2")) + offset
   } else {
     col2 <- nchar(source_file$lines[line1])
   }
@@ -201,8 +219,7 @@ xml_nodes_to_lint <- function(xml, source_file, message, linter,
     type = type,
     message = message,
     line = source_file$lines[line1],
-    ranges = list(c(col1, col2)),
-    linter = linter
+    ranges = list(c(col1 - offset, col2))
   ))
 }
 
@@ -215,4 +232,18 @@ set_lang <- function(new_lang) {
 # handle the logic of either unsetting if it was previously unset, or resetting
 reset_lang <- function(old_lang) {
   if (is.na(old_lang)) Sys.unsetenv("LANGUAGE") else Sys.setenv(LANGUAGE = old_lang)
+}
+
+#' Create a \code{linter} closure
+#' @param fun A function that takes a source file and returns \code{lint} objects.
+#' @param name Default name of the Linter.
+#' Lints produced by the linter will be labelled with \code{name} by default.
+#' @return The same function with its class set to 'linter'.
+#' @export
+Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name_linter.
+  if (!is.function(fun) || length(formals(args(fun))) != 1L) {
+    stop("`fun` must be a function taking exactly one argument.", call. = FALSE)
+  }
+  force(name)
+  structure(fun, class = "linter", name = name)
 }

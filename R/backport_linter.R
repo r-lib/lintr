@@ -2,7 +2,7 @@
 #' @param r_version Minimum R version to test for compatibility
 #' @export
 backport_linter <- function(r_version = getRversion()) {
-  function(source_file) {
+  Linter(function(source_file) {
     if (inherits(r_version, "numeric_version")) r_version <- format(r_version)
     if (r_version < "3.0.0") {
       warning("It is not recommended to depend on an R version older than 3.0.0. Resetting 'r_version' to 3.0.0.")
@@ -27,11 +27,9 @@ backport_linter <- function(r_version = getRversion()) {
       node <- all_names_nodes[[ii]]
       line1 <- xml2::xml_attr(node, "line1")
       col1 <- as.integer(xml2::xml_attr(node, "col1"))
-      if (xml2::xml_attr(node, "line2") == line1) {
-        col2 <- as.integer(xml2::xml_attr(node, "col2"))
-      } else {
-        col2 <- nchar(source_file$lines[line1])
-      }
+      col2 <- as.integer(xml2::xml_attr(node, "col2"))
+      # line1 != line2 can't happen because function symbols cannot span multiple lines
+      stopifnot(xml2::xml_attr(node, "line2") == line1)
       Lint(
         filename = source_file$filename,
         line_number = as.integer(line1),
@@ -42,11 +40,10 @@ backport_linter <- function(r_version = getRversion()) {
           all_names[ii], names(needs_backport_names)[which(needs_backport[ii, ])], r_version
         ),
         line = source_file$lines[[line1]],
-        ranges = list(c(col1, col2)),
-        linter = "backport_linter"
+        ranges = list(c(col1, col2))
       )
     })
-  }
+  })
 }
 
 backports <- list(

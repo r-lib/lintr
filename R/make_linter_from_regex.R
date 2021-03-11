@@ -1,5 +1,4 @@
 make_linter_from_regex <- function(regex,
-                                   lint_name,
                                    lint_type,
                                    lint_msg,
                                    ignore_strings = TRUE) {
@@ -10,46 +9,45 @@ make_linter_from_regex <- function(regex,
     ignore_strings && in_string(source_file, line_number, match)
   }
 
-  linter <- function(source_file) {
-    all_matches <- re_matches(
-      source_file[["lines"]],
-      regex,
-      locations = TRUE,
-      global = TRUE
-    )
+  function() {
+    Linter(function(source_file) {
+      all_matches <- re_matches(
+        source_file[["lines"]],
+        regex,
+        locations = TRUE,
+        global = TRUE
+      )
 
-    line_numbers <- as.integer(names(source_file[["lines"]]))
+      line_numbers <- as.integer(names(source_file[["lines"]]))
 
-    Map(
-      function(line_matches, line_number) {
-        lapply(
-          split(line_matches, seq_len(nrow(line_matches))),
-          function(.match) {
-            if (is.na(.match[["start"]]) ||
+      Map(
+        function(line_matches, line_number) {
+          lapply(
+            split(line_matches, seq_len(nrow(line_matches))),
+            function(.match) {
+              if (is.na(.match[["start"]]) ||
                 .in_ignorable_position(source_file, line_number, .match)) {
-              return()
+                return()
+              }
+              start <- .match[["start"]]
+              end <- .match[["end"]]
+              Lint(
+                filename = source_file[["filename"]],
+                line_number = line_number,
+                column_number = start,
+                type = lint_type,
+                message = lint_msg,
+                line = source_file[["lines"]][[as.character(line_number)]],
+                ranges = list(c(start, end))
+              )
             }
-            start <- .match[["start"]]
-            end <- .match[["end"]]
-            Lint(
-              filename = source_file[["filename"]],
-              line_number = line_number,
-              column_number = start,
-              type = lint_type,
-              message = lint_msg,
-              line = source_file[["lines"]][[as.character(line_number)]],
-              ranges = list(c(start, end)),
-              linter = lint_name
-            )
-          }
-        )
-      },
-      all_matches,
-      line_numbers
-    )
+          )
+        },
+        all_matches,
+        line_numbers
+      )
+    })
   }
-
-  linter
 }
 
 #' Determine if a regex match is covered by an expression in a source_file
@@ -64,7 +62,7 @@ make_linter_from_regex <- function(regex,
 
 is_match_covered <- function(source_file, line_number, match, token_type = NULL) {
   pc <- source_file[["parsed_content"]]
-  if (! is.null(token_type)) {
+  if (!is.null(token_type)) {
     pc <- pc[pc[["token"]] == token_type, ]
   }
   covering_rows <- pc[["line1"]] <= line_number & pc[["line2"]] >= line_number

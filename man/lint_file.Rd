@@ -8,21 +8,30 @@
 lint(filename, linters = NULL, cache = FALSE, ..., parse_settings = TRUE)
 }
 \arguments{
-\item{filename}{the given filename to lint.}
+\item{filename}{either the filename for a file to lint, or a character
+string of inline R code for linting. The latter [inline data] applies
+whenever \code{filename} has a newline character (\\n).}
 
-\item{linters}{a named list of linter functions to apply see \code{\link{linters}}
-for a full list of default and available linters.}
+\item{linters}{a named list of linter functions to apply see
+\code{\link{linters}} for a full list of default and available linters.}
 
 \item{cache}{given a logical, toggle caching of lint results. If passed a
 character string, store the cache in this directory.}
 
 \item{...}{additional arguments passed to \code{\link{exclude}}.}
 
-\item{parse_settings}{whether to try and parse the settings}
+\item{parse_settings}{whether to try and parse the settings.}
 }
 \value{
 A list of lint objects.
 }
 \description{
 Apply one or more linters to a file and return the lints found.
+}
+\examples{
+\dontrun{
+  lint("some/file-name.R") # linting a file
+  lint("a = 123\n")        # linting inline-code
+}
+
 }

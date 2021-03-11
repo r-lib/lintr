@@ -5,7 +5,7 @@
 #' }
 #' @export
 semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
-  function(source_file) {
+  Linter(function(source_file) {
     tokens <- with_id(source_file, ids_with_token(source_file, "';'"))
     is_trailing <- is_trailing_sc(tokens, source_file)
 
@@ -22,6 +22,7 @@ semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
         } else  {
           "Compound semicolons are not needed. Replace them by a newline."
         }
+
         Lint(
           filename = source_file[["filename"]],
           line_number = token[["line1"]],
@@ -29,16 +30,14 @@ semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
           type = "style",
           message = msg,
           line = source_file[["lines"]][[as.character(token[["line1"]])]],
-          ranges = list(c(token[["col1"]], token[["col2"]])),
-          linter = "semicolon_linter"
+          ranges = list(c(token[["col1"]], token[["col2"]]))
         )
       },
       split(tokens, seq_len(nrow(tokens))),
       are_trailing
     )
-  }
+  })
 }
-
 
 is_trailing_sc <- function(sc_tokens, source_file) {
   line_str <- source_file[["lines"]][as.character(sc_tokens[["line1"]])]
