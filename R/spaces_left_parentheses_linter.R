@@ -9,9 +9,9 @@ spaces_left_parentheses_linter <- function() {
     xml <- source_file$xml_parsed_content
 
     # apply the lint by requiring a gap in three cases:
-    #   (1) if/while loop conditions, e.g. 'if(x>2) { }'
+    #   (1) if/while loop conditions, e.g. 'if(x>2) { }', including 'else('
     #   (2) for loop conditions, e.g. 'for(i in 1:5) { }' [very similar to (1) in code but different in XML]
-    #   (3) non-unary infix operators, e.g. 'x&(y | z)'
+    #   (3) non-unary infix operators, e.g. 'x&(y | z)', and including commas, braces, e.g. 'c(a,(a+b))'
 
     # -1 on LHS because, when RHS matches nothing, +1 tricks the condition into returning true...
     #   while @start will always be there, the @end may not be.
@@ -19,10 +19,12 @@ spaces_left_parentheses_linter <- function() {
     for_cond <- "@start - 1 = parent::forcond/preceding-sibling::FOR/@end"
 
     # see infix_spaces_linter.R; preceding-sibling::* is for unary operators like -(a)
-    infix_selves <- paste0("self::", names(infix_tokens), "[preceding-sibling::*]", collapse = " or ")
+    infix_nodes <- c(names(infix_tokens), "OP-COMMA", "OP-TILDE", "ELSE", "IN")
+    infix_selves <- paste0("self::", infix_nodes, "[preceding-sibling::*]", collapse = " or ")
     # preceding-symbol::* catches (1) function definitions and (2) function calls
+    # ancestor::expr needed for nested RHS expressions, e.g. 'y1<-(abs(yn)>90)*1'
     infix_cond <- sprintf(
-      "not(preceding-sibling::*) and (@start - 1 = parent::expr/preceding-sibling::*[%s]/@end)",
+      "not(preceding-sibling::*) and (@start - 1 = ancestor::expr/preceding-sibling::*[%s]/@end)",
       infix_selves
     )
     xpath <- sprintf(
