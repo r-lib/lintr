@@ -7,7 +7,7 @@
 #'   \code{namespace:::symbol} calls.
 #' @export
 namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
-  function(source_file) {
+  Linter(function(source_file) {
     if (is.null(source_file$full_xml_parsed_content)) return(list())
 
     xml <- source_file$full_xml_parsed_content
@@ -48,8 +48,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
                   type = "warning",
                   message = sprintf("'%s' is not exported from {%s}.", syms[[i]], pkgs[[i]]),
                   line = source_file$file_lines[line1],
-                  ranges = list(c(col1, col2)),
-                  linter = "namespace_linter"
+                  ranges = list(c(col1, col2))
                 ))
               }
             }
@@ -69,8 +68,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
                     message = sprintf("'%s' is exported from {%s}. Use %s::%s instead.",
                       syms[[i]], pkgs[[i]], pkgs[[i]], syms[[i]]),
                     line = source_file$file_lines[line1],
-                    ranges = list(c(col1, col2)),
-                    linter = "namespace_linter"
+                    ranges = list(c(col1, col2))
                   ))
                 }
               } else {
@@ -84,12 +82,12 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
                   type = "warning",
                   message = sprintf("'%s' does not exist in {%s}.", syms[[i]], pkgs[[i]]),
                   line = source_file$file_lines[line1],
-                  ranges = list(c(col1, col2)),
-                  linter = "namespace_linter"
+                  ranges = list(c(col1, col2))
                 ))
               }
             }
           } else {
+            # nocov start: need getNamespace to fail. Could be done with {mockery} in principle
             line1 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "line1"))
             col1 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "col1"))
             col2 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "col2"))
@@ -100,9 +98,9 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
               type = "warning",
               message = conditionMessage(ns),
               line = source_file$file_lines[line1],
-              ranges = list(c(col1, col2)),
-              linter = "namespace_linter"
+              ranges = list(c(col1, col2))
             ))
+            # nocov end
           }
         }
       } else {
@@ -116,12 +114,11 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
           type = "warning",
           message = sprintf("Package '%s' is not installed.", pkgs[[i]]),
           line = source_file$file_lines[line1],
-          ranges = list(c(col1, col2)),
-          linter = "namespace_linter"
+          ranges = list(c(col1, col2))
         ))
       }
     })
 
     results[!vapply(results, is.null, logical(1L))]
-  }
+  })
 }

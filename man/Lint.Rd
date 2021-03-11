@@ -2,7 +2,7 @@
 % Please edit documentation in R/lint.R
 \name{Lint}
 \alias{Lint}
-\title{Create a \code{Lint} object}
+\title{Create a \code{lint} object}
 \usage{
 Lint(
   filename,
@@ -30,8 +30,11 @@ Lint(
 
 \item{ranges}{a list of ranges on the line that should be emphasized.}
 
-\item{linter}{name of linter that created the Lint object.}
+\item{linter}{deprecated. No longer used.}
+}
+\value{
+an object of class 'lint'.
 }
 \description{
-Create a \code{Lint} object
+Create a \code{lint} object
 }

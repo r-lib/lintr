@@ -87,6 +87,18 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 ### References ###
 Most of the default linters are based on [Hadley Wickham's The tidyverse style guide](https://style.tidyverse.org/).
 
+## Running `lintr` ##
+
+There are several ways to use `lintr`.
+
+When inside an R session, `lintr` can analyse all the R code in
+a file (using `lintr::lint(file_path)`), package (`lintr::lint_package(pkg_path)`) or directory (`lintr::lint_dir(dir_path)`).
+
+Similarly, `lintr` can be run from the command line using
+`Rscript -e "lintr::lint_package(commandArgs(trailingOnly = TRUE))" pkg_path` (linux/mac; for windows use Rscript.exe).
+
+Advanced users may run `lintr` during [continuous-integration](#continuous-integration), or [within their IDE or text editor](#editors-setup).
+
 ## Project Configuration ##
 
 Lintr supports per-project configuration of the following fields.

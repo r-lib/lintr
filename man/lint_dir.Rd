@@ -8,7 +8,7 @@ lint_dir(
   path = ".",
   relative_path = TRUE,
   ...,
-  exclusions = NULL,
+  exclusions = list("renv", "packrat"),
   pattern = rex::rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex",
     "txt"), end),
   parse_settings = TRUE

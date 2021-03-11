@@ -72,3 +72,10 @@ test_that("Terminal newlines are detected correctly", {
   expect_true(get_source_expressions(tmp)$expressions[[2L]]$terminal_newline)
   expect_false(get_source_expressions(tmp2)$expressions[[2L]]$terminal_newline)
 })
+
+test_that("Multi-byte characters correct columns", {
+  with_content_to_parse("`\U2020` <- 1", {
+    # fix_column_numbers corrects the start of <-
+    expect_equal(pc[[1L]]$col1[4L], pc[[1L]]$col1[2L] + 4L)
+  })
+})

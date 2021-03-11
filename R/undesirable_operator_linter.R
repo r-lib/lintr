@@ -14,7 +14,7 @@ op_types <- c(
 #'            and the values are the text for the alternative operator to use (or \code{NA}).
 #' @export
 undesirable_operator_linter <- function(op = default_undesirable_operators) {
-  function(source_file) {
+  Linter(function(source_file) {
     lapply(
       ids_with_token(source_file, op_types, fun = `%in%`),
       function(id) {
@@ -29,6 +29,7 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
           if (!is.na(alt_op)) {
             msg <- c(msg, sprintf("As an alternative, %s.", alt_op))
           }
+
           Lint(
             filename = source_file[["filename"]],
             line_number = line_num,
@@ -36,11 +37,10 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
             type = "warning",
             message = paste0(msg, collapse = " "),
             line = source_file[["lines"]][[as.character(line_num)]],
-            ranges = list(c(start_col_num, end_col_num)),
-            linter = "undesirable_function_linter"
+            ranges = list(c(start_col_num, end_col_num))
           )
         }
       }
     )
-  }
+  })
 }

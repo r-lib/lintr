@@ -8,7 +8,10 @@
 ^cran-comments\.md$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.idea$
+^\.dev$
 ^\.lintr$
+^\.lintr_new$
 ^wercker\.yml$
 ^[^/]+.Rmd$
 ^revdep$
@@ -19,4 +22,5 @@
 ^\.covrignore$
 ^script[.]R$
 ^bench$
-^tests/testthat/package/[.]Rbuildignore$
+^tests/testthat/dummy_packages/package/[.]Rbuildignore$
+^tests/testthat/dummy_packages/package/[.]lintr$
