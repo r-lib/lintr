@@ -44,7 +44,9 @@ with_defaults <- function(..., default = default_linters) {
     # var[["foo"]]    => "foo"
     nms[missing] <- re_substitutes(
       re_substitutes(
-        re_substitutes(args, rex("(", anything), ""),
+          # Very long input might have newlines which are not caught
+          #  by . in a perl regex; see #774
+        re_substitutes(args, rex("(", anything), "", options = "s"),
         rex(start, anything, '["'),
         ""
       ),
