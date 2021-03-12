@@ -58,8 +58,9 @@
 * `object_usage_linter()` now correctly reports usage warnings spanning multiple lines (#507, @AshesITR)
 * `T_and_F_symbol_linter()` no longer lints occurrences of `T` and `F` when used for subsetting and gives a better 
   message when used as variable names (#657, @AshesITR)
-* `with_defaults` handles automatic naming of very long arguments correctly (#774, @michaelchirico)
+* `with_defaults()` handles automatic naming of very long arguments correctly (#774, @michaelchirico)
 * `object_name_linter()` no longer lints names used for subsetting (#582, @AshesITR)
+* `lint_package()` warns and returns `NULL` if no package is found (instead of giving a peculiar error message) (#776, @michaelchirico)
 
 # lintr 2.0.1
 
