@@ -248,23 +248,28 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = list("r
 #' @export
 lint_package <- function(path = ".", relative_path = TRUE, ...,
                          exclusions = list("R/RcppExports.R"), parse_settings = TRUE) {
-  path <- find_package(path)
+  pkg_path <- find_package(path)
+
+  if (is.null(pkg_path)) {
+    warning("Didn't find any R package searching upwards from '", path, "'.")
+    return(NULL)
+  }
 
   if (parse_settings) {
-    read_settings(path)
+    read_settings(pkg_path)
     on.exit(clear_settings, add = TRUE)
   }
 
   exclusions <- normalize_exclusions(
     c(exclusions, settings$exclusions),
-    root = path
+    root = pkg_path
   )
 
-  lints <- lint_dir(file.path(path, c("R", "tests", "inst", "vignettes", "data-raw", "demo")),
+  lints <- lint_dir(file.path(pkg_path, c("R", "tests", "inst", "vignettes", "data-raw", "demo")),
                     relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
 
   if (isTRUE(relative_path)) {
-    path <- normalizePath(path, mustWork = FALSE)
+    path <- normalizePath(pkg_path, mustWork = FALSE)
     lints[] <- lapply(
       lints,
       function(x) {
