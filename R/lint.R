@@ -251,12 +251,8 @@ lint_package <- function(path = ".", relative_path = TRUE, ...,
   pkg_path <- find_package(path)
 
   if (is.null(pkg_path)) {
-    lints <- structure(
-      list(),
-      class = "lints",
-      path = if (isTRUE(relative_path)) normalizePath(path, mustWork = FALSE)
-    )
-    return(lints)
+    warning("Didn't find any R package searching upwards from ", path)
+    return(NULL)
   }
 
   if (parse_settings) {

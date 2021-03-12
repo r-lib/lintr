@@ -113,6 +113,10 @@ test_that(
 })
 
 test_that("lint_package returns early if no package is found", {
-  skip_if(length(lint_package(dirname(tempdir()))), "temp directory matches a package structure")
-  expect_equal(nrow(as.data.frame(lint_package(tempdir()))), 0L)
+  skip_if(
+    !is.null(suppressWarnings(lint_package(dirname(tempdir())))),
+    "temp directory matches a package structure"
+  )
+  expect_warning(l <- lint_package(tempdir()), "Didn't find any R package", fixed = TRUE)
+  expect_null(l)
 })
