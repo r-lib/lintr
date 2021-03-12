@@ -212,7 +212,8 @@ xml_nodes_to_lint <- function(xml, source_file, message,
   if (xml2::xml_attr(xml, "line2") == line1) {
     col2 <- as.integer(xml2::xml_attr(xml, "col2")) + offset
   } else {
-    col2 <- nchar(source_file[[line_elt]][line1])
+    # as.integer to strip names
+    col2 <- as.integer(nchar(source_file[[line_elt]][line1]))
   }
   return(Lint(
     filename = source_file$filename,
