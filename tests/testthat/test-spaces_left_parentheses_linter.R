@@ -32,7 +32,27 @@ test_that("returns the correct linting", {
   expect_lint("res <- c((mat - 1L) %*% combs + 1L)", NULL, linter)
   expect_lint("if (!(foo && bar || baz)) { foo }", NULL, linter)
   expect_lint("x^(y + z)", NULL, linter)
+  expect_lint("x**(y + z)", NULL, linter)
   expect_lint("a <- -(b)", NULL, linter)
+
+  # more complicated cases for parse tree
+  expect_lint("y1<-(abs(yn)>90)*1", msg, linter)
+  expect_lint("c(a,(a+b))", msg, linter)
+  expect_lint("if (x>y) 1 else(2)", msg, linter)
+  expect_lint("y~(x+z)", msg, linter)
+  expect_lint("if (x>y) {(x+y) / (x-y)}", msg, linter)
+  expect_lint("for (ii in(1:10)) { }", msg, linter)
+  expect_lint("x = 1;(x + 2)*3", msg, linter)
+  expect_lint("foo <- function(x=(1+2)) { }", msg, linter)
+
+  expect_lint("'[[<-.data.frame'(object, y)", NULL, linter)
+  expect_lint("object@data@get('input')", NULL, linter)
+  expect_lint("x <- ~(. + y)", NULL, linter)
+  # the internal newline is required to trigger the lint
+  expect_lint("if (x > 1)\n  x <- x[-(i)]", NULL, linter)
+  # these don't violate the linter, even if they are strange coding practice
+  expect_lint("for (ii in 1:10) next()", NULL, linter)
+  expect_lint("for (ii in 1:10) break()", NULL, linter)
 })
 
 test_that("doesn't produce a warning", {
