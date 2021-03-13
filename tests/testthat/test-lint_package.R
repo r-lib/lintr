@@ -119,4 +119,14 @@ test_that("lint_package returns early if no package is found", {
   )
   expect_warning(l <- lint_package(tempdir()), "Didn't find any R package", fixed = TRUE)
   expect_null(l)
+
+  skip_if(
+    !is.null(suppressWarnings(lint_package("."))),
+    "package test directory matches a package structure"
+  )
+  # ignore a folder named DESCRIPTION, #702
+  expect_warning(
+    lint_package(file.path("dummy_packages", "desc_dir_pkg", "DESCRIPTION", "R")),
+    "Didn't find any R package", fixed = TRUE
+  )
 })
