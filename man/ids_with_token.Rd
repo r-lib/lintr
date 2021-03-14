@@ -13,7 +13,7 @@ with_id(source_file, id)
 \item{source_file}{A list of source expressions, the result of a call to
 `\link{get_source_expressions}()`, for the desired filename.}
 
-\item{value}{Character. String correspondin to the token to search for.
+\item{value}{Character. String corresponding to the token to search for.
 For example:
 \itemize{
   \item "SYMBOL"
@@ -23,7 +23,7 @@ For example:
   \item "("
 }}
 
-\item{fun}{For additionaly flexibility, a function to search for in
+\item{fun}{For additional flexibility, a function to search for in
 the `token` column of `parsed_content`. Typically `==` or `\%in\%`.}
 
 \item{id}{Integer. The index corresponding to the desired row

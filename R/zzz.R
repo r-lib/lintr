@@ -10,7 +10,7 @@
 #' @param default list of elements to modify.
 #' @return A modified list of elements.
 #' @examples
-#' # When using interatively you will usuaully pass the result onto `lint` or `lint_package()`
+#' # When using interactively you will usually pass the result onto `lint` or `lint_package()`
 #' \dontrun{
 #' lint("foo.R", linters = with_defaults(line_length_linter = line_length_linter(120)))
 #' }
