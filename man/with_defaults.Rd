@@ -22,7 +22,7 @@ operators or functions. The result of this function is meant to be passed to
 the `linters` argument of `lint()`, or put in your configuration file.
 }
 \examples{
-# When using interatively you will usuaully pass the result onto `lint` or `lint_package()`
+# When using interactively you will usually pass the result onto `lint` or `lint_package()`
 \dontrun{
 lint("foo.R", linters = with_defaults(line_length_linter = line_length_linter(120)))
 }
