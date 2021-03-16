@@ -259,7 +259,7 @@ lintr has [built-in integration](http://www.flycheck.org/en/latest/languages.htm
 
 #### Installation ####
 lintr is fully integrated into flycheck when using [ESS](http://ess.r-project.org/).  See the
-installalation documentation for those packages for more information.
+installation documentation for those packages for more information.
 
 #### Configuration ####
 You can also configure what linters are used. e.g. using a different line length cutoff.
