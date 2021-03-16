@@ -26,4 +26,6 @@ test_that("it excludes properly", {
   }
 })
 
+# TODO test encoding-specific behaviour
+
 options(old_ops)

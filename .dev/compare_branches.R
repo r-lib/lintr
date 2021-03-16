@@ -146,7 +146,7 @@ test_encoding <- function(dir) {
   tryCatch({
     lapply(
       list.files(dir, pattern = "(?i)\\.r(?:md)?$", recursive = TRUE, full.names = TRUE),
-      function(x) nchar(readLines(x, warn = FALSE))
+      function(x) nchar(readLines(x, warn = FALSE)) # TODO respect encoding
     )
     FALSE
   }, error = function(x) TRUE)

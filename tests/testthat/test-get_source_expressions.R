@@ -90,3 +90,5 @@ test_that("Multi-byte character truncated by parser is ignored", {
     expect_equal(error$column_number, 8L)
   })
 })
+
+# TODO test encoding-specific behaviour

@@ -480,3 +480,5 @@ test_that("cache = TRUE works with nolint", {
   writeLines("1+1 # nolint\n", file)
   expect_length(lint(file, linters, cache = TRUE), 0)
 })
+
+# TODO test encoding-specific behaviour
