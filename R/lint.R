@@ -376,6 +376,23 @@ find_package <- function(path) {
   path
 }
 
+has_rproj <- function(path) {
+  length(list.files(path = path, pattern = "\\.Rproj$")) > 0L
+}
+
+find_rproj <- function(path) {
+  path <- normalizePath(path, mustWork = FALSE)
+
+  while (!has_rproj(path)) {
+    path <- dirname(path)
+    if (is_root(path)) {
+      return(NULL)
+    }
+  }
+
+  list.files(path = path, pattern = "\\.Rproj$", full.names = TRUE)[1L]
+}
+
 is_root <- function(path) {
   identical(path, dirname(path))
 }

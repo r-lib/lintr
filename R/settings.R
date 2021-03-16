@@ -17,6 +17,11 @@ read_settings <- function(filename) {
   clear_settings()
 
   config_file <- find_config(filename)
+  default_encoding <- find_default_encoding(filename)
+  if (!is.null(default_encoding)) {
+    # Locally override the default for encoding if we found a smart default
+    default_settings[["encoding"]] <- default_encoding
+  }
 
   if (!is.null(config_file)) {
     f <- function(e) {
@@ -95,6 +100,44 @@ find_config <- function(filename) {
   linter_config <- file.path(home_dir, linter_file)
   if (isTRUE(file.exists(linter_config))) {
     return(linter_config)
+  }
+
+  NULL
+}
+
+find_default_encoding <- function(filename) {
+  if (is.null(filename)) {
+    return(NULL)
+  }
+
+  pkg_path <- find_package(filename)
+  if (!is.null(pkg_path)) {
+    # Get Encoding from DESCRIPTION
+    dcf <- tryCatch(
+      read.dcf(file.path(pkg_path, "DESCRIPTION")),
+      error = function(e) NULL
+    )
+    if (!is.null(dcf) && nrow(dcf) >= 1L && "Encoding" %in% colnames(dcf)) {
+      return(unname(dcf[1L, "Encoding"]))
+    }
+  }
+
+  rproj_file <- find_rproj(filename)
+  if (!is.null(rproj_file)) {
+    # Get Encoding from .Rproj
+    dcf <- tryCatch(
+      read.dcf(rproj_file),
+      error = function(e) NULL,
+      warning = function(e) NULL
+    )
+
+    if (!is.null(dcf) && nrow(dcf) >= 1L && "Encoding" %in% colnames(dcf)) {
+      encodings <- dcf[, "Encoding"]
+      encodings <- encodings[!is.na(encodings)]
+      if (length(encodings) > 0L) {
+        return(encodings[1L])
+      }
+    }
   }
 
   NULL
