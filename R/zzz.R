@@ -10,7 +10,7 @@
 #' @param default list of elements to modify.
 #' @return A modified list of elements.
 #' @examples
-#' # When using interatively you will usuaully pass the result onto `lint` or `lint_package()`
+#' # When using interactively you will usually pass the result onto `lint` or `lint_package()`
 #' \dontrun{
 #' lint("foo.R", linters = with_defaults(line_length_linter = line_length_linter(120)))
 #' }
@@ -44,7 +44,9 @@ with_defaults <- function(..., default = default_linters) {
     # var[["foo"]]    => "foo"
     nms[missing] <- re_substitutes(
       re_substitutes(
-        re_substitutes(args, rex("(", anything), ""),
+          # Very long input might have newlines which are not caught
+          #  by . in a perl regex; see #774
+        re_substitutes(args, rex("(", anything), "", options = "s"),
         rex(start, anything, '["'),
         ""
       ),

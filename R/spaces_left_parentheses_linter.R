@@ -3,61 +3,50 @@
 #' @export
 spaces_left_parentheses_linter <- function() {
   Linter(function(source_file) {
-    lapply(
-      ids_with_token(source_file, "'('"),
-      function(id) {
 
-        parsed <- source_file$parsed_content[id, ]
+    if (is.null(source_file$xml_parsed_content)) {
+      if (is.null(source_file$full_xml_parsed_content)) return(list()) # nocov (actually this is covered -- remove me!)
+      # 'x = 1;(x + 2)' can't be detected from the expression-level tree
+      xml <- source_file$full_xml_parsed_content
+      xpath <- "//OP-LEFT-PAREN[@start - 1 = ancestor::expr/preceding-sibling::OP-SEMICOLON/@end]"
+      global <- TRUE
+    } else {
 
-        terminal_tokens_before <- with(
-          source_file$parsed_content,
-          token[line1 == parsed$line1 &
-                  col1 < parsed$col1 &
-                  terminal]
-        )
-        last_type <- tail(terminal_tokens_before, n = 1)
+      xml <- source_file$xml_parsed_content
 
-        is_function <- length(last_type) %!=% 0L &&
-          (last_type %in% c("SYMBOL_FUNCTION_CALL", "FUNCTION", "'}'", "')'", "']'"))
+      # apply the lint by requiring a gap in three cases:
+      #   (1) if/while loop conditions, e.g. 'if(x>2) { }', including 'else('
+      #   (2) for loop conditions, e.g. 'for(i in 1:5) { }' [very similar to (1) in code but different in XML]
+      #   (3) non-unary infix operators, e.g. 'x&(y | z)', and including commas, braces, e.g. 'c(a,(a+b))'
 
-        if (!is_function) {
+      # -1 on LHS because, when RHS matches nothing, +1 tricks the condition into returning true...
+      #   while @start will always be there, the @end may not be.
+      if_while_cond <- "@start - 1 = preceding-sibling::*[self::IF or self::WHILE]/@end"
+      for_cond <- "@start - 1 = parent::forcond/preceding-sibling::FOR/@end"
 
-          line <- source_file$lines[as.character(parsed$line1)]
+      # see infix_spaces_linter.R; preceding-sibling::* is needed for unary operators where '-(a)' is ok
+      unary_nodes <- c(names(unary_infix_tokens), "OP-TILDE")
+      unary_selves <- paste0("self::", unary_nodes, "[preceding-sibling::*]", collapse = " or ")
+      binary_nodes <- c(names(binary_infix_tokens), "EQ_FORMALS", "OP-COMMA", "OP-LEFT-BRACE", "ELSE", "IN")
+      binary_selves <- paste0("self::", binary_nodes, collapse = " or ")
+      # preceding-symbol::* catches (1) function definitions and (2) function calls
+      # ancestor::expr needed for nested RHS expressions, e.g. 'y1<-(abs(yn)>90)*1'
+      infix_cond <- sprintf(
+        "not(preceding-sibling::*) and (@start - 1 = ancestor::expr/preceding-sibling::*[%s]/@end)",
+        paste(unary_selves, "or", binary_selves)
+      )
+      xpath <- sprintf(
+        "//OP-LEFT-PAREN[(%s) or (%s) or (%s)]",
+        if_while_cond, for_cond, infix_cond
+      )
 
-          before_operator <- substr(line, parsed$col1 - 1L, parsed$col1 - 1L)
+      global <- FALSE
+    }
 
-          non_space_before <- re_matches(before_operator, rex(non_space))
-          not_exception <- !(before_operator %in% c("!", ":", "[", "(", "^"))
+    bad_paren <- xml2::xml_find_all(xml, xpath)
 
-          # exception for unary - and unary +, #508
-          before_operator_idx <- with(
-            source_file$parsed_content,
-            col1 == parsed$col1 - 1L & col1 == col2
-          )
-          is_sibling_expr <- if (any(before_operator_idx)) {
-            with(
-              source_file$parsed_content,
-              token == "expr" & parent %in% parent[before_operator_idx]
-            )
-          } else {
-            rep(FALSE, nrow(source_file$parsed_content))
-          }
-          not_exception <- not_exception &&
-            !(before_operator %in% c("-", "+") &&
-              nrow(source_file$parsed_content[is_sibling_expr, ]) == 1L)
-
-          if (non_space_before && not_exception) {
-            Lint(
-              filename = source_file$filename,
-              line_number = parsed$line1,
-              column_number = parsed$col1,
-              type = "style",
-              message = "Place a space before left parenthesis, except in a function call.",
-              line = line
-            )
-          }
-        }
-
-      })
+    lapply(bad_paren, xml_nodes_to_lint, source_file,
+           message = "Place a space before left parenthesis, except in a function call.",
+           type = "style", global = global)
   })
 }
