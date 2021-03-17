@@ -124,3 +124,14 @@ test_that("with_defaults doesn't break on very long input", {
     "lintr::undesirable_function_linter"
   )
 })
+
+test_that("it has a smart default for encodings", {
+  read_settings(NULL)
+  expect_equal(settings$encoding, "UTF-8")
+
+  read_settings("dummy_projects/project/metropolis-hastings-rho.R")
+  expect_equal(settings$encoding, "ISO8859-1")
+
+  read_settings("dummy_packages/cp1252/R/metropolis-hastings-rho.R")
+  expect_equal(settings$encoding, "ISO8859-1")
+})

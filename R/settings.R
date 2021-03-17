@@ -111,6 +111,15 @@ find_default_encoding <- function(filename) {
   }
 
   pkg_path <- find_package(filename)
+  rproj_file <- find_rproj(filename)
+
+  if (!is.null(rproj_file) && !is.null(pkg_path) && startsWith(rproj_file, pkg_path)) {
+    # Check precedence via directory hierarchy.
+    # Both paths are normalized so checking if rproj_file is within pkg_path is sufficient.
+    # Force reading from Rproj file
+    pkg_path <- NULL
+  }
+
   if (!is.null(pkg_path)) {
     # Get Encoding from DESCRIPTION
     dcf <- tryCatch(
@@ -122,7 +131,6 @@ find_default_encoding <- function(filename) {
     }
   }
 
-  rproj_file <- find_rproj(filename)
   if (!is.null(rproj_file)) {
     # Get Encoding from .Rproj
     dcf <- tryCatch(
