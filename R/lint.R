@@ -394,7 +394,7 @@ pkg_name <- function(path = find_package()) {
 #' @export
 Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name_linter.
                  type = c("style", "warning", "error"),
-                 message = "", line = "", ranges = NULL, linter = "") {
+                 message = "", line = "", ranges = NULL, fixes = NULL, linter = "") {
   if (!missing(linter)) {
     lintr_deprecated(
       old = "Using the `linter` argument of `Lint()`",
@@ -414,6 +414,7 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
       message = message,
       line = line,
       ranges = ranges,
+      fixes = fixes,
       linter = NA_character_
     ),
     class = "lint")
