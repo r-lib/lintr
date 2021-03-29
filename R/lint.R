@@ -51,7 +51,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     }
   }
 
-  if (inline_data && missing(filename) || is.null(filename)) {
+  if (inline_data && (missing(filename) || is.null(filename))) {
     filename <- tempfile()
     on.exit(unlink(filename))
     writeLines(text = text, con = filename, sep = "\n")
