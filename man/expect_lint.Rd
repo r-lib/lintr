@@ -4,7 +4,7 @@
 \alias{expect_lint}
 \title{Lint expectation}
 \usage{
-expect_lint(content, checks, ..., file = NULL)
+expect_lint(content, checks, ..., file = NULL, language = "en")
 }
 \arguments{
 \item{content}{a character vector for the file content to be linted, each vector element
@@ -26,6 +26,10 @@ is not recommended for new code.}
 \item{...}{arguments passed to \code{\link{lint}}, e.g. the linters or cache to use.}
 
 \item{file}{if not \code{NULL}, read content from the specified file rather than from \code{content}.}
+
+\item{language}{temporarily override Rs \code{LANGUAGE} envvar, controlling localisation of base
+R error messages. This makes testing them reproducible on all systems irrespective of their
+native R language setting.}
 }
 \value{
 \code{NULL}, invisibly.
@@ -47,5 +51,6 @@ expect_lint("a\n\n", list("superfluous", "superfluous"), trailing_blank_lines_li
 expect_lint(
   "a\n\n",
   list(list(message="superfluous", line_number=2), list(message="superfluous", line_number=3)),
-  trailing_blank_lines_linter)
+  trailing_blank_lines_linter()
+)
 }

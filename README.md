@@ -1,5 +1,5 @@
 # lintr
-[![Travis-CI Build Status](https://travis-ci.org/jimhester/lintr.svg?branch=master)](https://travis-ci.org/jimhester/lintr)
+[![R build status](https://github.com/jimhester/lintr/workflows/R-CMD-check/badge.svg)](https://github.com/jimhester/lintr/actions)
 [![codecov.io](https://codecov.io/github/jimhester/lintr/coverage.svg?branch=master)](https://codecov.io/github/jimhester/lintr?branch=master)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/lintr)](https://cran.r-project.org/package=lintr) [![Join the chat at https://gitter.im/jimhester-lintr/Lobby](https://badges.gitter.im/jimhester-lintr/Lobby.svg)](https://gitter.im/jimhester-lintr/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -32,6 +32,7 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 * `pipe_continuation_linter`: Check that each step in a pipeline is on a new
   line, or the entire pipe fits on one line.
 * `assignment_linter`: check that `<-` is always used for assignment
+* `assignment_spaces_linter`: checks that assignments only have one space before and after
 * `camel_case_linter`: check that objects are not in camelCase.
 * `closed_curly_linter`: check that closed curly braces should always be on their
   own line unless they are followed by an else.
@@ -48,6 +49,10 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 * `infix_spaces_linter`: check that all infix operators have spaces around them.
 * `line_length_linter`: check the line length of both comments and code is less than
   length.
+* `missing_argument_linter`: check that no missing argument is supplied to function calls.
+* `missing_package_linter`: check that no packages loaded by
+  `library()`, `require()`, `loadNamespace()`, and `requireNamespace()` are missing.
+* `namespace_linter`: check if there are missing packages and symbols in namespace calls with `::` and `:::`.
 * `no_tab_linter`: check that only spaces are used, never tabs.
 * `object_length_linter`: check that function and variable names are not more than `length` characters.
 * `object_name_linter`: check that object names conform to a single naming
@@ -67,6 +72,8 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
   spaces directly inside them.
 * `spaces_left_parentheses_linter`: check that all left parentheses have a space before them
   unless they are in a function call.
+* `sprintf_linter`: check that the numbers of arguments are correct and types of arguments are compatible in
+  `sprintf("string", ...)` calls.
 * `todo_comment_linter`: check that the source contains no TODO comments (case-insensitive).
 * `trailing_blank_lines_linter`: check there are no trailing blank lines.
 * `trailing_whitespace_linter`: check there are no trailing whitespace characters.
@@ -78,7 +85,19 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
   with a single constant.
   
 ### References ###
-Most of the default linters are based on [Hadley Wickham's R Style Guide](http://r-pkgs.had.co.nz/style.html).
+Most of the default linters are based on [Hadley Wickham's The tidyverse style guide](https://style.tidyverse.org/).
+
+## Running `lintr` ##
+
+There are several ways to use `lintr`.
+
+When inside an R session, `lintr` can analyse all the R code in
+a file (using `lintr::lint(file_path)`), package (`lintr::lint_package(pkg_path)`) or directory (`lintr::lint_dir(dir_path)`).
+
+Similarly, `lintr` can be run from the command line using
+`Rscript -e "lintr::lint_package(commandArgs(trailingOnly = TRUE))" pkg_path` (linux/mac; for windows use Rscript.exe).
+
+Advanced users may run `lintr` during [continuous-integration](#continuous-integration), or [within their IDE or text editor](#editors-setup).
 
 ## Project Configuration ##
 
@@ -92,10 +111,21 @@ The config file (default file name: `.lintr`) is in [Debian Control Field Format
 - `exclude_start` - a regex pattern to start exclusion range. Default is "# nolint start"
 - `exclude_end` - a regex pattern to end exclusion range. Default is "# nolint end"
 
-An example file that uses 120 character line lengths, excludes a couple of
-files and sets different default exclude regexs follows.
+
+### .lintr File Example
+
+Below is an example .lintr file that uses:
+
+- 120 character line lengths
+- Excludes a couple of files
+- Disables a specific linter, and; 
+- Sets different default exclude regexes
+
 ```
-linters: with_defaults(line_length_linter(120))
+linters: with_defaults(
+  line_length_linter(120), 
+  commented_code_linter = NULL
+  )
 exclusions: list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "tests/testthat/exclusions-test")
 exclude: "# Exclude Linting"
 exclude_start: "# Begin Exclude Linting"
@@ -147,7 +177,30 @@ The resulting configuration will contain each currently failing linter and the c
 If you are developing a package, you can add `^\.lintr$` to your `.Rbuildignore` file using `usethis::use_build_ignore(".lintr")`.
 
 ## Continuous integration ##
-If you want to run `lintr` on [Travis-CI](https://travis-ci.org) in order to check that commits and pull requests don't deteriorate code style, you will need
+You can configure `lintr` to run as part of continuous integration in order to automatically check that commits and pull requests do not deteriorate code style. 
+
+### GitHub Actions ###
+
+If your package is on GitHub, the easiest way to do this is with GitHub Actions. 
+The workflow configuration files use YAML syntax. The `usethis` package has some 
+great functionality, that can help you with workflow files. The most straightforward 
+way to add a `lint` workflow to your package is to use the [r-lib/actions](https://github.com/r-lib/actions/tree/master/examples)'s `lint` 
+example. To do this with `usethis`, you need to call 
+
+```r
+usethis::use_github_action("lint")
+```
+
+This will create a workflow file called `lint.yaml` and place it in the correct 
+location, namely in the `.github/workflows` directory of your repository. This file configures all the steps required to run `lintr::lintr_package()` on your package.  
+
+[lintr-bot](https://github.com/lintr-bot) will then add comments to the commit or 
+pull request with the lints found and they will also be printed as [annotations](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-status-checks#types-of-status-checks-on-github) along side the status check on GitHub.  If you want to disable the commenting you can
+set the environment variable `LINTR_COMMENT_BOT=false`.
+
+### Travis CI ###
+
+If you want to run `lintr` on [Travis-CI](https://travis-ci.org), you will need
 to have Travis install the package first.  This can be done by adding the
 following line to your `.travis.yml`
 
@@ -158,12 +211,12 @@ r_github_packages:
 
 We recommend running `lintr::lint_package()` as an [after_success step in your build process](#non-failing-lints)]
 
-[lintr-bot](https://github.com/lintr-bot) will then add comments
-to the commit or pull request with the lints found and they will also be
+Just like with GitHub Actions, [lintr-bot](https://github.com/lintr-bot) will then 
+add comments to the commit or pull request with the lints found and they will also be
 printed on Travis-CI.  If you want to disable the commenting you can
 set the environment variable `LINTR_COMMENT_BOT=false`.
 
-### Non-failing Lints ###
+#### Non-failing Lints ####
 ```yaml
 after_success:
   - R CMD INSTALL $PKG_TARBALL
@@ -206,7 +259,7 @@ lintr has [built-in integration](http://www.flycheck.org/en/latest/languages.htm
 
 #### Installation ####
 lintr is fully integrated into flycheck when using [ESS](http://ess.r-project.org/).  See the
-installalation documentation for those packages for more information.
+installation documentation for those packages for more information.
 
 #### Configuration ####
 You can also configure what linters are used. e.g. using a different line length cutoff.

@@ -14,7 +14,8 @@ print.lint <- function(x, ...) {
     as.character(x$column_number), ": ", sep = ""),
     color(x$type, ": ", sep = ""),
     crayon::bold(x$message), "\n",
-    x$line, "\n",
+    # swap tabs for spaces for #528 (sorry Richard Hendricks)
+    chartr("\t", " ", x$line), "\n",
     highlight_string(x$message, x$column_number, x$ranges),
     "\n"
     )
@@ -51,9 +52,12 @@ markdown <- function(x, info, ...) {
 
 #' @export
 print.lints <- function(x, ...) {
+  rstudio_source_markers <- getOption("lintr.rstudio_source_markers", TRUE) &&
+    rstudioapi::hasFun("sourceMarkers")
+
   if (length(x)) {
-    if (getOption("lintr.rstudio_source_markers", TRUE) &&
-        rstudioapi::hasFun("sourceMarkers")) {
+    inline_data <- x[[1]][["filename"]] == "<text>"
+    if (!inline_data && rstudio_source_markers) {
       rstudio_source_markers(x)
     } else if (in_github_actions()) {
       github_actions_log_lints(x)
@@ -62,10 +66,11 @@ print.lints <- function(x, ...) {
 
         info <- ci_build_info()
 
-        lint_output <-
-          trim_output(paste0(collapse = "\n",
-                             capture.output(invisible(lapply(x, markdown, info, ...)))
-                             )
+        lint_output <- trim_output(
+          paste0(
+            collapse = "\n",
+            capture.output(invisible(lapply(x, markdown, info, ...)))
+          )
         )
 
         github_comment(lint_output, info, ...)
@@ -74,8 +79,11 @@ print.lints <- function(x, ...) {
     }
 
     if (isTRUE(settings$error_on_lint)) {
-      quit("no", 31, FALSE)
+      quit("no", 31, FALSE) # nocov
     }
+  } else if (rstudio_source_markers) {
+    # Empty lints: clear RStudio source markers
+    rstudio_source_markers(x)
   }
   invisible(x)
 }

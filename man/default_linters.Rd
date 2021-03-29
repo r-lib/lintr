@@ -5,12 +5,19 @@
 \alias{default_linters}
 \title{Default linters}
 \format{
-An object of class \code{list} of length 22.
+An object of class \code{list} of length 24.
 }
 \usage{
 default_linters
 }
 \description{
-List of default linters for \code{\link{lint}}. Use \code{\link{with_defaults}} to customize it.
+List of default linters for \code{\link{lint}}. Use
+\code{\link{with_defaults}} to customize it.
+
+The set of default linters is as follows (any parameterised linters, eg,
+\code{line_length_linter} use their default argument(s), see \code{?
+<linter_name>} for details):
+
+- \Sexpr[stage=render, results=rd]{paste(names(lintr::default_linters), collapse=", ")}.
 }
 \keyword{datasets}

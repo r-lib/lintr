@@ -8,9 +8,9 @@ Authors@R: c(
     )
 URL: https://github.com/jimhester/lintr
 BugReports: https://github.com/jimhester/lintr/issues
-Description: Checks adherence to a given style, syntax errors and possible
-    semantic issues.  Supports on the fly checking of R code edited with 'RStudio IDE', 'Emacs',
-    'Vim', 'Sublime Text' and 'Atom'.
+Description: Checks adherence to a given style, syntax errors and possible semantic issues.
+    Supports on the fly checking of R code edited with 'RStudio IDE', 'Emacs', 'Vim', 'Sublime Text',
+    'Atom' and 'Visual Studio Code'.
 Depends:
     R (>= 3.2)
 Imports:
@@ -30,19 +30,22 @@ Imports:
     xmlparsedata (>= 1.0.3)
 Suggests:
     rmarkdown,
-    mockery
+    mockery,
+    withr
 License: MIT + file LICENSE
 LazyData: true
 Encoding: UTF-8
 VignetteBuilder: knitr
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Collate:
-    'T_and_F_symbol_linter.R'
     'utils.R'
     'aaa.R'
+    'T_and_F_symbol_linter.R'
     'actions.R'
     'addins.R'
     'assignment_linter.R'
+    'assignment_spaces_linter.R'
+    'backport_linter.R'
     'cache.R'
     'closed_curly_linter.R'
     'commas_linter.R'
@@ -52,7 +55,7 @@ Collate:
     'declared_functions.R'
     'object_name_linters.R'
     'deprecated.R'
-    'equals_na_lintr.R'
+    'equals_na_linter.R'
     'exclude.R'
     'expect_lint.R'
     'extract.R'
@@ -64,8 +67,12 @@ Collate:
     'infix_spaces_linter.R'
     'line_length_linter.R'
     'lint.R'
+    'make_linter_from_regex.R'
     'methods.R'
+    'missing_argument_linter.R'
+    'missing_package_linter.R'
     'namespace.R'
+    'namespace_linter.R'
     'no_tab_linter.R'
     'object_usage_linter.R'
     'open_curly_linter.R'
@@ -78,6 +85,7 @@ Collate:
     'single_quotes_linter.R'
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'
+    'sprintf_linter.R'
     'trailing_blank_lines_linter.R'
     'trailing_whitespace_linter.R'
     'tree-utils.R'

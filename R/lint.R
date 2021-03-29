@@ -12,10 +12,14 @@ NULL
 #' Lint a file
 #'
 #' Apply one or more linters to a file and return the lints found.
+#'
 #' @name lint_file
-#' @param filename the given filename to lint.
-#' @param linters a named list of linter functions to apply see \code{\link{linters}}
-#' for a full list of default and available linters.
+#'
+#' @param filename either the filename for a file to lint, or a character
+#' string of inline R code for linting. The latter [inline data] applies
+#' whenever \code{filename} has a newline character (\\n).
+#' @param linters a named list of linter functions to apply see
+#' \code{\link{linters}} for a full list of default and available linters.
 #' @param cache given a logical, toggle caching of lint results. If passed a
 #' character string, store the cache in this directory.
 #' @param ... additional arguments passed to \code{\link{exclude}}.
@@ -23,6 +27,13 @@ NULL
 #' @param text the string content to be used as if linting \code{filename}.
 #'    If supplied, \code{filename} must be a valid path.
 #' @return A list of lint objects.
+#'
+#' @examples
+#' \dontrun{
+#'   lint("some/file-name.R") # linting a file
+#'   lint("a = 123\n")        # linting inline-code
+#' }
+#'
 #' @export
 lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = TRUE, text = NULL) {
 
@@ -55,16 +66,8 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     on.exit(clear_settings, add = TRUE)
   }
 
-  if (is.null(linters)) {
-    linters <- settings$linters
-    names(linters) <- auto_names(linters)
-  } else if (!is.list(linters)) {
-    name <- deparse(substitute(linters))
-    linters <- list(linters)
-    names(linters) <- name
-  } else {
-    names(linters) <- auto_names(linters)
-  }
+  linters <- define_linters(linters)
+  linters <- Map(validate_linter_object, linters, names(linters))
 
   lints <- list()
   itr <- 0
@@ -98,7 +101,14 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
         lints[[itr <- itr + 1L]] <- retrieve_lint(lint_cache, expr, linter, source_expressions$lines)
       }
       else {
-        expr_lints <- flatten_lints(linters[[linter]](expr)) # nolint
+        expr_lints <- flatten_lints(linters[[linter]](expr))
+
+        if (length(expr_lints)) {
+          expr_lints[] <- lapply(expr_lints, function(lint) {
+            lint$linter <- linter
+            lint
+          })
+        }
 
         lints[[itr <- itr + 1L]] <- expr_lints
         if (isTRUE(cache)) {
@@ -134,17 +144,6 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   res
 }
 
-reorder_lints <- function(lints) {
-  files <- vapply(lints, `[[`, character(1), "filename")
-  lines <- vapply(lints, `[[`, integer(1), "line_number")
-  columns <- vapply(lints, `[[`, integer(1), "column_number")
-  lints[
-    order(files,
-      lines,
-      columns)
-    ]
-}
-
 #' Lint a directory
 #'
 #' Apply one or more linters to all of the R files in a directory
@@ -168,11 +167,11 @@ reorder_lints <- function(lints) {
 #'   lint_dir(
 #'     linters = list(semicolon_terminator_linter())
 #'     cache = TRUE,
-#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
+#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "renv")
 #'   )
 #' }
 #' @export
-lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
+lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = list("renv", "packrat"),
                      pattern = rex::rex(
                        ".", one_of("Rr"),
                        or("", "html", "md", "nw", "rst", "tex", "txt"),
@@ -183,20 +182,31 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
   if (isTRUE(parse_settings)) {
     read_settings(path)
     on.exit(clear_settings, add = TRUE)
+
+    exclusions <- c(exclusions, settings$exclusions)
   }
 
-  files <- dir(path,
+  exclusions <- normalize_exclusions(
+    exclusions,
+    root = path,
+    pattern = pattern
+  )
+
+  # normalizePath ensures names(exclusions) and files have the same names for the same files.
+  # Otherwise on windows, files might incorrectly not be excluded in to_exclude
+  files <- normalizePath(dir(
+    path,
     pattern = pattern,
     recursive = TRUE,
     full.names = TRUE
-  )
+  ))
 
   # Remove fully ignored files to avoid reading & parsing
   to_exclude <- vapply(
     seq_len(length(files)),
     function(i) {
       file <- files[i]
-      file %in% names(exclusions) && exclusions[[file]] == Inf
+      file %in% names(exclusions) && is_excluded_file(exclusions[[file]])
     },
     logical(1)
   )
@@ -206,14 +216,14 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
     files,
     function(file) {
       if (interactive()) {
-        message(".", appendLF = FALSE)
+        message(".", appendLF = FALSE) # nocov
       }
       lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
     }
   ))
 
   if (interactive()) {
-    message() # for a newline
+    message() # nocov. for a newline
   }
 
   lints <- reorder_lints(lints)
@@ -254,19 +264,30 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = NULL,
 #'   )
 #' }
 #' @export
-lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = list("R/RcppExports.R")) {
-  path <- find_package(path)
+lint_package <- function(path = ".", relative_path = TRUE, ...,
+                         exclusions = list("R/RcppExports.R"), parse_settings = TRUE) {
+  pkg_path <- find_package(path)
 
-  read_settings(path)
-  on.exit(clear_settings, add = TRUE)
+  if (is.null(pkg_path)) {
+    warning("Didn't find any R package searching upwards from '", path, "'.")
+    return(NULL)
+  }
 
-  exclusions <- normalize_exclusions(c(exclusions, settings$exclusions), FALSE)
+  if (parse_settings) {
+    read_settings(pkg_path)
+    on.exit(clear_settings, add = TRUE)
+  }
 
-  lints <- lint_dir(file.path(path, c("R", "tests", "inst", "vignettes", "data-raw")),
+  exclusions <- normalize_exclusions(
+    c(exclusions, settings$exclusions),
+    root = pkg_path
+  )
+
+  lints <- lint_dir(file.path(pkg_path, c("R", "tests", "inst", "vignettes", "data-raw", "demo")),
                     relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
 
   if (isTRUE(relative_path)) {
-    path <- normalizePath(path, mustWork = FALSE)
+    path <- normalizePath(pkg_path, mustWork = FALSE)
     lints[] <- lapply(
       lints,
       function(x) {
@@ -280,9 +301,60 @@ lint_package <- function(path = ".", relative_path = TRUE, ..., exclusions = lis
   lints
 }
 
+define_linters <- function(linters = NULL) {
+  if (is.null(linters)) {
+    linters <- settings$linters
+    names(linters) <- auto_names(linters)
+  } else if (inherits(linters, "linter")) {
+    linters <- list(linters)
+    names(linters) <- attr(linters[[1L]], "name", exact = TRUE)
+  } else if (!is.list(linters)) {
+    name <- deparse(substitute(linters))
+    linters <- list(linters)
+    names(linters) <- name
+  } else {
+    names(linters) <- auto_names(linters)
+  }
+  linters
+}
+
+validate_linter_object <- function(linter, name) {
+  if (inherits(linter, "linter")) {
+  } else if (is.function(linter)) {
+    if (is.null(formals(linter))) {
+      old <- "Passing linters as variables"
+      new <- "a call to the linters (see ?linters)"
+      lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
+                       type = "")
+      linter <- linter()
+    } else {
+      old <- "The use of linters of class 'function'"
+      new <- "linters classed as 'linter' (see ?Linter)"
+      lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
+                       type = "")
+      linter <- Linter(linter, name = name)
+    }
+  } else {
+    stop(gettextf("Expected '%s' to be of class 'linter', not '%s'",
+                  name, class(linter)[[1L]]))
+  }
+  linter
+}
+
+reorder_lints <- function(lints) {
+  files <- vapply(lints, `[[`, character(1), "filename")
+  lines <- vapply(lints, `[[`, integer(1), "line_number")
+  columns <- vapply(lints, `[[`, integer(1), "column_number")
+  lints[order(
+    files,
+    lines,
+    columns
+  )]
+}
 
 has_description <- function(path) {
-  file.exists(file.path(path, "DESCRIPTION"))
+  desc_info <- file.info(file.path(path, "DESCRIPTION"))
+  !is.na(desc_info$size) && desc_info$size > 0 && !desc_info$isdir
 }
 
 find_package <- function(path) {
@@ -327,7 +399,7 @@ pkg_name <- function(path = find_package()) {
   }
 }
 
-#' Create a \code{Lint} object
+#' Create a \code{lint} object
 #' @param filename path to the source file that was linted.
 #' @param line_number line number where the lint occurred.
 #' @param column_number column number where the lint occurred.
@@ -335,11 +407,19 @@ pkg_name <- function(path = find_package()) {
 #' @param message message used to describe the lint error
 #' @param line code source where the lint occurred
 #' @param ranges a list of ranges on the line that should be emphasized.
-#' @param linter name of linter that created the Lint object.
+#' @param linter deprecated. No longer used.
+#' @return an object of class 'lint'.
 #' @export
-Lint <- function(filename, line_number = 1L, column_number = 1L,
-  type = c("style", "warning", "error"),
-  message = "", line = "", ranges = NULL, linter = "") {
+Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name_linter.
+                 type = c("style", "warning", "error"),
+                 message = "", line = "", ranges = NULL, linter = "") {
+  if (!missing(linter)) {
+    lintr_deprecated(
+      old = "Using the `linter` argument of `Lint()`",
+      version = "2.0.1.9001",
+      type = ""
+    )
+  }
 
   type <- match.arg(type)
 
@@ -352,8 +432,8 @@ Lint <- function(filename, line_number = 1L, column_number = 1L,
       message = message,
       line = line,
       ranges = ranges,
-      linter = linter
-      ),
+      linter = NA_character_
+    ),
     class = "lint")
 }
 
@@ -380,11 +460,23 @@ rstudio_source_markers <- function(lints) {
   })
 
   # request source markers
-  rstudioapi::callFun("sourceMarkers",
-                      name = "lintr",
-                      markers = markers,
-                      basePath = package_path,
-                      autoSelect = "first")
+  out <- rstudioapi::callFun(
+    "sourceMarkers",
+    name = "lintr",
+    markers = markers,
+    basePath = package_path,
+    autoSelect = "first"
+  )
+
+  # workaround to avoid focusing an empty Markers pane
+  # when possible, better solution is to delete the "lintr" source marker list
+  # https://github.com/rstudio/rstudioapi/issues/209
+  if (length(lints) == 0) {
+    Sys.sleep(0.1)
+    rstudioapi::executeCommand("activateConsole")
+  }
+
+  out
 }
 
 #' Checkstyle Report for lint results
@@ -413,12 +505,15 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
     f <- xml2::xml_add_child(n, "file", name = filename)
 
     lapply(lints_per_file, function(x) {
-      xml2::xml_add_child(f, "error",
+      xml2::xml_add_child(
+        f, "error",
         line = as.character(x$line_number),
         column = as.character(x$column_number),
-        severity = switch(x$type,
+        severity = switch(
+          x$type,
           style = "info",
-          x$type),
+          x$type
+        ),
         message = x$message)
     })
   })
@@ -435,7 +530,7 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
   lapply(ranges, function(range) {
     substr(line, range[1], range[2]) <<-
       fill_with("~", range[2] - range[1] + 1L)
-    })
+  })
 
   substr(line, column_number, column_number + 1L) <- "^"
 

@@ -1,12 +1,10 @@
-context("get_source_expression")
-
-
 with_content_to_parse <- function(content, code) {
   f <- tempfile()
   on.exit(unlink(f))
   writeLines(content, f)
-  pc <- lapply(get_source_expressions(f)[["expressions"]], `[[`, "parsed_content")
-  eval(substitute(code))
+  content_env <- new.env()
+  content_env$pc <- lapply(get_source_expressions(f)[["expressions"]], `[[`, "parsed_content")
+  eval(substitute(code), envir = content_env)
 }
 
 
@@ -58,5 +56,26 @@ test_that("tab positions have been corrected", {
       c(1L, 1L, 3L, 2L),
       info = "expression that spans several lines"
     )
+  })
+})
+
+test_that("Terminal newlines are detected correctly", {
+  writeLines("lm(y ~ x)", tmp <- tempfile())
+  on.exit(unlink(tmp), add = TRUE)
+  writeBin(
+    # strip the last (two) element(s) (\r\n or \n)
+    head(readBin(tmp, raw(), file.size(tmp)), if (.Platform$OS.type == "windows") -2L else -1L),
+    tmp2 <- tempfile()
+  )
+  on.exit(unlink(tmp2), add = TRUE)
+
+  expect_true(get_source_expressions(tmp)$expressions[[2L]]$terminal_newline)
+  expect_false(get_source_expressions(tmp2)$expressions[[2L]]$terminal_newline)
+})
+
+test_that("Multi-byte characters correct columns", {
+  with_content_to_parse("`\U2020` <- 1", {
+    # fix_column_numbers corrects the start of <-
+    expect_equal(pc[[1L]]$col1[4L], pc[[1L]]$col1[2L] + 4L)
   })
 })

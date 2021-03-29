@@ -4,8 +4,8 @@
 #'   this are linted, defaults to 25. See \code{\link[cyclocomp]{cyclocomp}}.
 #' @importFrom cyclocomp cyclocomp
 #' @export
-cyclocomp_linter <- function(complexity_limit = 25) {
-  function(source_file) {
+cyclocomp_linter <- function(complexity_limit = 15L) {
+  Linter(function(source_file) {
     if (!is.null(source_file[["file_lines"]])) {
       # abort if source_file is entire file, not a top level expression.
       return(NULL)
@@ -22,11 +22,10 @@ cyclocomp_linter <- function(complexity_limit = 25) {
       type = "style",
       message = paste0(
         "functions should have cyclomatic complexity of less than ",
-        complexity_limit, ", this has ", complexity,"."
+        complexity_limit, ", this has ", complexity, "."
       ),
       ranges = list(c(source_file[["column"]][1], source_file[["column"]][1])),
-      line = source_file$lines[1],
-      linter = "cyclocomp_linter"
+      line = source_file$lines[1]
     )
-  }
+  })
 }

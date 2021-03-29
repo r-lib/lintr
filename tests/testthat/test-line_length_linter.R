@@ -1,33 +1,50 @@
-context("line_length_linter")
 test_that("returns the correct linting", {
+  linter <- line_length_linter(80)
+  msg <- rex("Lines should not be more than 80 characters")
 
-  expect_lint("blah",
-    NULL,
-    line_length_linter(80))
-
-  expect_lint("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-    NULL,
-    line_length_linter(80))
-
-  expect_lint("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-    "Lines should not be more than 80 characters",
-    line_length_linter(80))
+  expect_lint("blah", NULL, linter)
+  expect_lint(strrep("x", 80L), NULL, linter)
+  expect_lint(
+    strrep("x", 81L), list(
+      message = msg,
+      column_number = 81L
+    ),
+    linter
+  )
 
   expect_lint(
-    paste0("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n",
-    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"),
-
+    paste(rep(strrep("x", 81L), 2L), collapse = "\n"),
     list(
-      rex("Lines should not be more than 80 characters"),
-      rex("Lines should not be more than 80 characters")),
+      list(
+        message = msg,
+        column_number = 81L
+      ),
+      list(
+        message = msg,
+        column_number = 81L
+      )
+    ),
+    linter
+  )
 
-    line_length_linter(80))
+  linter <- line_length_linter(20)
+  msg <- rex("Lines should not be more than 20 characters")
+  expect_lint(strrep("a", 20L), NULL, linter)
+  expect_lint(
+    strrep("a", 22L), list(
+      message = msg,
+      column_number = 21L
+    ),
+    linter
+  )
 
-  expect_lint("aaaaaaaaaaaaaaaaaaaa",
-    NULL,
-    line_length_linter(20))
-
-  expect_lint("aaaaaaaaaaaaaaaaaaaab",
-    rex("Lines should not be more than 20 characters"),
-    line_length_linter(20))
+  # Don't duplicate lints
+  expect_length(
+    lint(
+      "x <- 2 # ------------\n",
+      linters = linter,
+      parse_settings = FALSE
+    ),
+    1L
+  )
 })

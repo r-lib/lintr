@@ -2,16 +2,17 @@
 #' have spaces before them.
 #' @importFrom utils head
 #' @export
-commas_linter <- function(source_file) {
+commas_linter <- function() {
+  Linter(function(source_file) {
 
-  re <- rex(list(one_or_more(" "), ",") %or% list(",", non_space))
+    re <- rex(list(one_or_more(" "), ",") %or% list(",", non_space))
 
-  res <- re_matches(source_file$lines, re, global = TRUE, locations = TRUE)
+    res <- re_matches(source_file$lines, re, global = TRUE, locations = TRUE)
 
-  lapply(seq_along(res), function(id) {
-    line_number <- names(source_file$lines)[id]
+    lapply(seq_along(res), function(id) {
+      line_number <- names(source_file$lines)[id]
 
-    mapply(
+      mapply(
         FUN = function(start, end) {
           if (is.na(start)) {
             return()
@@ -31,14 +32,14 @@ commas_linter <- function(source_file) {
               source_file$parsed_content$col1 == comma_loc
 
             has_token <- any(comma_loc_filter &
-              source_file$parsed_content$token == "','")
+                               source_file$parsed_content$token == "','")
 
             start_of_line <- re_matches(line, rex(start, spaces, ","))
 
             empty_comma <- substr(line, comma_loc - 2L, comma_loc - 1L) %==% ", "
 
             parent <- source_file$parsed_content$parent
-            parent <- replace(parent, parent==0, NA)
+            parent <- replace(parent, parent == 0, NA)
 
             # a variable that is true for every node who has a grandchild that is switch,
             # i.e, any expression that starts with the function call to switch.
@@ -48,24 +49,25 @@ commas_linter <- function(source_file) {
             ]$parent
 
             is_blank_switch <- any(comma_loc_filter &
-              (source_file$parsed_content$parent %in% switch_grandparents) &
-              c(NA, head(source_file$parsed_content$token, -1)) == "EQ_SUB",
-              na.rm=TRUE
+                                     (source_file$parsed_content$parent %in% switch_grandparents) &
+                                     c(NA, head(source_file$parsed_content$token, -1)) == "EQ_SUB",
+                                   na.rm = TRUE
             )
 
-            if (has_token && !start_of_line && !empty_comma && !is_blank_switch) {
+            if (has_token &&
+              !start_of_line &&
+              !empty_comma &&
+              !is_blank_switch) {
 
-              lints[[length(lints) + 1L]] <-
-                Lint(
-                  filename = source_file$filename,
-                  line_number = line_number,
-                  column_number = comma_loc,
-                  type = "style",
-                  message = "Commas should never have a space before.",
-                  line = line,
-                  ranges = list(c(start, end)),
-                  "commas_linter"
-                  )
+              lints[[length(lints) + 1L]] <- Lint(
+                filename = source_file$filename,
+                line_number = line_number,
+                column_number = comma_loc,
+                type = "style",
+                message = "Commas should never have a space before.",
+                line = line,
+                ranges = list(c(start, end))
+              )
             }
           }
 
@@ -75,21 +77,18 @@ commas_linter <- function(source_file) {
           if (non_space_after) {
 
             has_token <- any(source_file$parsed_content$line1 == line_number &
-              source_file$parsed_content$col1 == comma_loc &
-              source_file$parsed_content$token == "','")
+                               source_file$parsed_content$col1 == comma_loc &
+                               source_file$parsed_content$token == "','")
 
             if (has_token) {
-
-              lints[[length(lints) + 1L]] <-
-                Lint(
-                  filename = source_file$filename,
-                  line_number = line_number,
-                  column_number = comma_loc + 1,
-                  type = "style",
-                  message = "Commas should always have a space after.",
-                  line = line,
-                  linter = "commas_linter"
-                  )
+              lints[[length(lints) + 1L]] <- Lint(
+                filename = source_file$filename,
+                line_number = line_number,
+                column_number = comma_loc + 1,
+                type = "style",
+                message = "Commas should always have a space after.",
+                line = line
+              )
             }
 
           }
@@ -99,6 +98,7 @@ commas_linter <- function(source_file) {
         start = res[[id]]$start,
         end = res[[id]]$end,
         SIMPLIFY = FALSE
-        )
-})
+      )
+    })
+  })
 }

@@ -2,13 +2,64 @@
 #'
 #' This object is given as input to each linter
 #' @param filename the file to be parsed.
-#' @param lines a character vector of the content lines of \code{file}.
+#' @return A `list` with three components:
+#'   \item{expressions}{a `list` of
+#'   `n+1` objects. The first `n` elements correspond to each expression in
+#'   `filename`, and consist of a list of 9 elements:
+#'   \itemize{
+#'     \item{`filename` (`character`)}
+#'     \item{`line` (`integer`) the line in `filename` where this expression begins}
+#'     \item{`column` (`integer`) the column in `filename` where this expression begins}
+#'     \item{`lines` (named `character`) vector of all lines spanned by this
+#'           expression, named with the line number corresponding to `filename`}
+#'     \item{`parsed_content` (`data.frame`) as given by [utils::getParseData()] for this expression}
+#'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of this
+#'          expression as given by [xmlparsedata::xml_parse_data()]}
+#'     \item{`content` (`character`) the same as `lines` as a single string (not split across lines)}
+#'     \item{`find_line` (`function`) a function for returning lines in this expression}
+#'     \item{`find_column` (`function`) a similar function for columns}
+#'   }
+#'
+#'   The final element of `expressions` is a list corresponding to the full file
+#'   consisting of 6 elements:
+#'   \itemize{
+#'     \item{`filename` (`character`)}
+#'     \item{`file_lines` (`character`) the [readLines()] output for this file}
+#'     \item{`content` (`character`) for .R files, the same as `file_lines`;
+#'           for .Rmd scripts, this is the extracted R source code (as text)}
+#'     \item{`full_parsed_content` (`data.frame`) as given by
+#'           [utils::getParseData()] for the full content}
+#'     \item{`full_xml_parsed_content` (`xml_document`) the XML parse tree of all
+#'           expressions as given by [xmlparsedata::xml_parse_data()]}
+#'     \item{`terminal_newline` (`logical`) records whether `filename` has a terminal
+#'           newline (as determined by [readLines()] producing a corresponding warning)}
+#'   }
+#'   }
+#'   \item{error}{A `Lint` object describing any parsing error.}
+#'   \item{lines}{The [readLines()] output for this file.}
 #' @export
+#' @md
 get_source_expressions <- function(filename, lines = NULL) {
   source_file <- srcfile(filename)
-  source_file$lines <- if (is.null(lines)) readLines(filename) else lines
-  source_file$lines <- extract_r_source(source_file$filename, source_file$lines)
-  source_file$content <- get_content(source_file$lines)
+  terminal_newline <- TRUE
+
+  # Ensure English locale for terminal newline and zero-length variable warning messages
+  old_lang <- set_lang("en")
+  on.exit(reset_lang(old_lang))
+
+  source_file$lines <- if (is.null(lines)) {
+    withCallingHandlers({
+      readLines(filename)
+    },
+    warning = function(w) {
+      if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
+        terminal_newline <<- FALSE
+        invokeRestart("muffleWarning")
+      }
+    })
+  } else {
+    lines
+  }
 
   lint_error <- function(e) {
     message_info <- re_matches(e$message,
@@ -34,7 +85,36 @@ get_source_expressions <- function(filename, lines = NULL) {
           anything,
           double_quotes, capture(name = "starting", anything), double_quotes))
 
-      line_location <- re_matches(source_file$content, rex(message_info$starting), locations = TRUE)
+      loc <- re_matches(source_file$content, rex(message_info$starting), locations = TRUE)
+      line_location <- loc[!is.na(loc$start) & !is.na(loc$end), ]
+
+      if (nrow(line_location) == 0L) {
+        if (grepl("attempt to use zero-length variable name", e$message, fixed = TRUE)) {
+          # empty symbol: ``, ``(), ''(), ""(), fun(''=42), fun(""=42), fun(a=1,""=42)
+          loc <- re_matches(source_file$content,
+            rex("``" %or% list(or("''", '""'), any_spaces, "(") %or%
+              list(or("(", ","), any_spaces, or("''", '""'), any_spaces, "=")),
+            options = "multi-line",
+            locations = TRUE)
+          loc <- loc[!is.na(loc$start) & !is.na(loc$end), ]
+          if (nrow(loc) > 0) {
+            line_location <- loc[1, ]
+          }
+        } else {
+          # nocov start
+          return(
+            Lint(
+              filename = source_file$filename,
+              line_number = 1,
+              column_number = 1,
+              type = "error",
+              message = e$message,
+              line = ""
+            )
+          )
+          # nocov end
+        }
+      }
 
       line_number <- find_line_fun(source_file$content)(line_location$start)
       column_number <- find_column_fun(source_file$content)(line_location$start)
@@ -45,8 +125,7 @@ get_source_expressions <- function(filename, lines = NULL) {
           column_number = column_number,
           type = "error",
           message = e$message,
-          line = source_file$lines[[line_number]],
-          linter = "error"
+          line = source_file$lines[[line_number]]
         )
       )
     }
@@ -70,12 +149,42 @@ get_source_expressions <- function(filename, lines = NULL) {
       column_number = column_number,
       type = "error",
       message = message_info$message,
-      line = line,
-      linter = "error"
+      line = line
+    )
+  }
+
+  rmd_error <- function(e) {
+    message_info <- re_matches(e$message,
+      rex(except_some_of(":"),
+        ":",
+        capture(name = "line",
+          digits),
+        ":",
+        capture(name = "column",
+          digits),
+        ":",
+        space,
+        capture(name = "message",
+          anything),
+        "\n")
+      )
+
+    line_number <- as.integer(message_info$line)
+    column_number <- as.integer(message_info$column)
+
+    Lint(
+      filename = source_file$filename,
+      line_number = line_number,
+      column_number = column_number,
+      type = "error",
+      message = message_info$message,
+      line = source_file$lines[line_number]
     )
   }
 
   e <- NULL
+  source_file$lines <- extract_r_source(source_file$filename, source_file$lines, error = rmd_error)
+  source_file$content <- get_content(source_file$lines)
   parsed_content <- get_source_file(source_file, error = lint_error)
   tree <- generate_tree(parsed_content)
 
@@ -95,7 +204,8 @@ get_source_expressions <- function(filename, lines = NULL) {
       file_lines = source_file$lines,
       content = source_file$lines,
       full_parsed_content = parsed_content,
-      xml_parsed_content = if (!is.null(parsed_content)) xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content))
+      full_xml_parsed_content = safe_parse_to_xml(parsed_content),
+      terminal_newline = terminal_newline
     )
 
   list(expressions = expressions, error = e, lines = source_file$lines)
@@ -120,7 +230,7 @@ get_single_source_expression <- function(loc,
     column = parsed_content[loc, "col1"],
     lines = expr_lines,
     parsed_content = pc,
-    xml_parsed_content = xml2::read_xml(xmlparsedata::xml_parse_data(pc)),
+    xml_parsed_content = safe_parse_to_xml(pc),
     content = content,
     find_line = find_line_fun(content),
     find_column = find_column_fun(content)
@@ -131,15 +241,17 @@ get_source_file <- function(source_file, error = identity) {
 
   e <- tryCatch(
     source_file$parsed_content <- parse(text = source_file$content, srcfile = source_file, keep.source = TRUE),
-    error = error)
+    error = error
+  )
 
   # This needs to be done twice to avoid
   #   https://bugs.r-project.org/bugzilla/show_bug.cgi?id=16041
   e <- tryCatch(
     source_file$parsed_content <- parse(text = source_file$content, srcfile = source_file, keep.source = TRUE),
-    error = error)
+    error = error
+  )
 
-  if (!inherits(e, "expression")) {
+  if (inherits(e, "error") || inherits(e, "lint")) {
     assign("e", e,  envir = parent.frame())
   }
 
@@ -221,16 +333,16 @@ fix_column_numbers <- function(content) {
 # getParseData() counts 1 tab as a variable number of spaces instead of one:
 # https://github.com/wch/r-source/blame/e7401b68ab0e032fce3e376aaca9a5431619b2b4/src/main/gram.y#L512
 # The number of spaces is so that the code is brought to the next 8-character indentation level e.g:
-#   "1\t;"          -> "1       ;"
-#   "12\t;"         -> "12      ;"
-#   "123\t;"        -> "123     ;"
-#   "1234\t;"       -> "1234    ;"
-#   "12345\t;"      -> "12345   ;"
-#   "123456\t;"     -> "123456  ;"
-#   "1234567\t;"    -> "1234567 ;"
-#   "12345678\t;"   -> "12345678        ;"
-#   "123456789\t;"  -> "123456789       ;"
-#   "1234567890\t;" -> "1234567890      ;"
+#   "1\t;"          --> "1       ;"
+#   "12\t;"         --> "12      ;"
+#   "123\t;"        --> "123     ;"
+#   "1234\t;"       --> "1234    ;"
+#   "12345\t;"      --> "12345   ;"
+#   "123456\t;"     --> "123456  ;"
+#   "1234567\t;"    --> "1234567 ;"
+#   "12345678\t;"   --> "12345678        ;"
+#   "123456789\t;"  --> "123456789       ;"
+#   "1234567890\t;" --> "1234567890      ;"
 fix_tab_indentations <- function(source_file) {
   pc <- getParseData(source_file)
 
@@ -241,7 +353,7 @@ fix_tab_indentations <- function(source_file) {
   tab_cols <- gregexpr("\t", source_file[["lines"]], fixed = TRUE)
   names(tab_cols) <- seq_along(tab_cols)
   tab_cols <- tab_cols[!is.na(tab_cols)]  # source lines from .Rmd and other files are NA
-  tab_cols <- lapply(tab_cols, function(x) {if (x[[1L]] < 0L) {NA} else {x}})
+  tab_cols <- lapply(tab_cols, function(x) if (x[[1L]] < 0L) NA else x)
   tab_cols <- tab_cols[!is.na(tab_cols)]
 
   if (!length(tab_cols)) {
@@ -298,28 +410,30 @@ fix_eq_assigns <- function(pc) {
 
   prev_locs <- vapply(eq_assign_locs, prev_with_parent, pc = pc, integer(1))
   next_locs <- vapply(eq_assign_locs, next_with_parent, pc = pc, integer(1))
-  expr_locs <- (function(x){
+  expr_locs <- (function(x) {
     x[is.na(x)] <- FALSE
     !x
-    })(prev_locs == lag(next_locs)) # nolint
+    })(prev_locs == lag(next_locs))
 
   id_itr <- max(pc$id)
 
-  line1 <- integer(sum(expr_locs))
-  col1 <- integer(sum(expr_locs))
+  n_expr <- sum(expr_locs)
 
-  line2 <- integer(sum(expr_locs))
-  col2 <- integer(sum(expr_locs))
+  line1 <- integer(n_expr)
+  col1 <- integer(n_expr)
 
-  id <- integer(sum(expr_locs))
+  line2 <- integer(n_expr)
+  col2 <- integer(n_expr)
 
-  parent <- integer(sum(expr_locs))
+  id <- integer(n_expr)
 
-  token <- character(sum(expr_locs))
+  parent <- integer(n_expr)
 
-  terminal <- logical(sum(expr_locs))
+  token <- character(n_expr)
 
-  text <- character(sum(expr_locs))
+  terminal <- logical(n_expr)
+
+  text <- character(n_expr)
 
   true_locs <- which(expr_locs == TRUE)
   for (i in seq_along(true_locs)) {

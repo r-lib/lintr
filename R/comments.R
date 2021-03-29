@@ -17,20 +17,15 @@ in_travis <- function() {
 }
 
 travis_build_info <- function() {
-  slug <- Sys.getenv("TRAVIS_REPO_SLUG") %||% NULL
-
-  if (is.null(slug)) {
-    return(NULL)
-  }
-
-  slug_info <- strsplit(slug, "/")[[1]]
+  slug <- Sys.getenv("TRAVIS_REPO_SLUG")
+  slug_info <- strsplit(slug, "/", fixed = TRUE)[[1]]
 
   list(
-    user = slug_info[1],
-    repo = slug_info[2],
-    pull = Sys.getenv("TRAVIS_PULL_REQUEST") %||% NULL,
-    branch = Sys.getenv("TRAVIS_BRANCH") %||% NULL,
-    commit = Sys.getenv("TRAVIS_COMMIT") %||% NULL
+    user = slug_info[1] %||% "",
+    repo = slug_info[2] %||% "",
+    pull = Sys.getenv("TRAVIS_PULL_REQUEST"),
+    branch = Sys.getenv("TRAVIS_BRANCH"),
+    commit = Sys.getenv("TRAVIS_COMMIT")
   )
 }
 
@@ -40,21 +35,23 @@ in_wercker <- function() {
 
 ci_build_info <- function() {
   type <- ci_type()
-  switch(type,
-         travis = travis_build_info(),
-         wercker = wercker_build_info()
-         )
+  switch(
+    type,
+    travis = travis_build_info(),
+    wercker = wercker_build_info()
+  )
 }
 
 wercker_build_info <- function() {
   list(
-       user = Sys.getenv("WERCKER_GIT_OWNER") %||% NULL,
-       repo = Sys.getenv("WERCKER_GIT_REPOSITORY") %||% NULL,
-       branch = Sys.getenv("WERCKER_GIT_BRANCH") %||% NULL,
-       commit = Sys.getenv("WERCKER_GIT_COMMIT") %||% NULL
-       )
+    user = Sys.getenv("WERCKER_GIT_OWNER"),
+    repo = Sys.getenv("WERCKER_GIT_REPOSITORY"),
+    branch = Sys.getenv("WERCKER_GIT_BRANCH"),
+    commit = Sys.getenv("WERCKER_GIT_COMMIT")
+  )
 }
 
+# nocov start
 github_comment <- function(text, info = NULL, token = settings$comment_token) {
 
   if (is.null(info)) {
@@ -79,3 +76,4 @@ github_comment <- function(text, info = NULL, token = settings$comment_token) {
     message(httr::http_condition(response, "error", task = httr::content(response, as = "text")))
   }
 }
+# nocov end

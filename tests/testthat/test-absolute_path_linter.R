@@ -1,20 +1,18 @@
-context("absolute_path_linter")
-
 test_that("unquote", {
   f <- lintr:::unquote
   expect_equal(f(character()), character())
   expect_equal(f("foo"), "foo")
   expect_equal(
-    f(c("'f", "\"f'", "\"f\""), q="\""),
-      c("'f", "\"f'",   "f"  ))
+    f(c("'f", "\"f'", "\"f\""), q = "\""),
+      c("'f", "\"f'",   "f"))
   expect_equal(
-    f(c("\"f\"", "'f'", "`f`", "`'f'`"), q="'"),
+    f(c("\"f\"", "'f'", "`f`", "`'f'`"), q = "'"),
       c("\"f\"",  "f",  "`f`", "`'f'`"))
-  expect_equal(f("`a\\`b`", q=c("`")), "a`b")
+  expect_equal(f("`a\\`b`", q = c("`")), "a`b")
   x <- c("\"x\"", "\"\\n\"", "\"\\\\\"", "\"\\\\y\"", "\"\\ny\"", "\"\\\\ny\"", "\"\\\\\\ny\"",
          "\"\\\\\\\\ny\"", "\"'\"", "\"\\\"\"", "\"`\"")
   y <- c("x", "\n", "\\", "\\y", "\ny", "\\ny", "\\\ny", "\\\\ny", "'", "\"", "`")
-  expect_equal(f(x, q="\""), y)
+  expect_equal(f(x, q = "\""), y)
 })
 
 test_that("unescape", {
@@ -33,24 +31,24 @@ test_that("is_root_path", {
   y <- logical()
   expect_equal(f(x), y)
 
-  x <- c(   "", "foo", "http://rseek.org/",  "./",  " /", "/foo", "'/'")
-  y <- c(FALSE, FALSE,               FALSE, FALSE, FALSE,  FALSE, FALSE)
+  x <- c("",    "foo", "http://rseek.org/", "./",  " /",  "/foo", "'/'")
+  y <- c(FALSE, FALSE, FALSE,               FALSE, FALSE, FALSE,  FALSE)
   expect_equal(f(x), y)
 
-  x <- c( "/",  "//")
+  x <- c("/",  "//")
   y <- c(TRUE, FALSE)
   expect_equal(f(x), y)
 
-  x <- c( "~", "~/", "~//", "~bob2", "~foo_bar/")
-  y <- c(TRUE, TRUE,  TRUE,    TRUE,        TRUE)
+  x <- c("~",  "~/", "~//", "~bob2", "~foo_bar/")
+  y <- c(TRUE, TRUE, TRUE,  TRUE,    TRUE)
   expect_equal(f(x), y)
 
   x <- c("c:", "C:\\", "D:/", "C:\\\\", "D://")
-  y <- c(TRUE,  TRUE,   TRUE,    FALSE,  FALSE)
+  y <- c(TRUE, TRUE,   TRUE,  FALSE,    FALSE)
   expect_equal(f(x), y)
 
   x <- c("\\\\", "\\\\localhost", "\\\\localhost\\")
-  y <- c(  TRUE,            TRUE,              TRUE)
+  y <- c(TRUE,   TRUE,            TRUE)
   expect_equal(f(x), y)
 })
 
@@ -62,20 +60,20 @@ test_that("is_absolute_path", {
   y <- logical()
   expect_equal(f(x), y)
 
-  x <- c( "/",  "//", "/foo", "/foo/")
-  y <- c(TRUE, FALSE,   TRUE,    TRUE)
+  x <- c("/",  "//",  "/foo", "/foo/")
+  y <- c(TRUE, FALSE, TRUE,   TRUE)
   expect_equal(f(x), y)
 
-  x <- c( "~", "~/foo", "~/foo/",  "~'")  #nolint
-  y <- c(TRUE,    TRUE,     TRUE, FALSE)
+  x <- c("~",  "~/foo", "~/foo/", "~'")
+  y <- c(TRUE, TRUE,    TRUE,     FALSE)
   expect_equal(f(x), y)
 
-  x <- c("c:", "C:\\foo\\", "C:/foo/")  #nolint
-  y <- c(TRUE,        TRUE,      TRUE)
+  x <- c("c:", "C:\\foo\\", "C:/foo/")
+  y <- c(TRUE, TRUE,        TRUE)
   expect_equal(f(x), y)
 
-  x <- c("\\\\", "\\\\localhost", "\\\\localhost\\c$", "\\\\localhost\\c$\\foo")  #nolint
-  y <- c(  TRUE,            TRUE,                TRUE,                     TRUE)
+  x <- c("\\\\", "\\\\localhost", "\\\\localhost\\c$", "\\\\localhost\\c$\\foo")
+  y <- c(TRUE,   TRUE,            TRUE,                TRUE)
   expect_equal(f(x), y)
 })
 
@@ -87,16 +85,16 @@ test_that("is_relative_path", {
   y <- logical()
   expect_equal(f(x), y)
 
-  x <- c(  "/", "c:\\",  "~/", "foo", "http://rseek.org/", "'./'")
-  y <- c(FALSE,  FALSE, FALSE, FALSE,               FALSE,  FALSE)
+  x <- c("/",   "c:\\", "~/",  "foo", "http://rseek.org/", "'./'")
+  y <- c(FALSE, FALSE,  FALSE, FALSE, FALSE,               FALSE)
   expect_equal(f(x), y)
 
-  x <- c("/foo", "foo/", "foo/bar", "foo//bar", "./foo", "../foo")  #nolint
-  y <- c( FALSE,   TRUE,      TRUE,       TRUE,    TRUE,     TRUE)
+  x <- c("/foo", "foo/", "foo/bar", "foo//bar", "./foo", "../foo")
+  y <- c(FALSE,  TRUE,   TRUE,      TRUE,       TRUE,    TRUE)
   expect_equal(f(x), y)
 
-  x <- c("\\\\", "\\foo", "foo\\", "foo\\bar", ".\\foo", "..\\foo",  ".", "..", "../")  #nolint
-  y <- c( FALSE,   FALSE,    TRUE,       TRUE,     TRUE,      TRUE, TRUE, TRUE,  TRUE)
+  x <- c("\\\\", "\\foo", "foo\\", "foo\\bar", ".\\foo", "..\\foo", ".",  "..", "../")
+  y <- c(FALSE,  FALSE,   TRUE,    TRUE,       TRUE,     TRUE,      TRUE, TRUE, TRUE)
   expect_equal(f(x), y)
 })
 
@@ -108,12 +106,12 @@ test_that("is_path", {
   y <- logical()
   expect_equal(f(x), y)
 
-  x <- c(   "",  "foo", "http://rseek.org/", "foo\nbar", "'foo/bar'", "'/'")
-  y <- c(FALSE,  FALSE,               FALSE,      FALSE,       FALSE, FALSE)
+  x <- c("",    "foo", "http://rseek.org/", "foo\nbar", "'foo/bar'", "'/'")
+  y <- c(FALSE, FALSE, FALSE,               FALSE,      FALSE,       FALSE)
   expect_equal(f(x), y)
 
-  x <- c("c:", "..", "foo/bar", "foo\\bar",  "~", "\\\\localhost")  #nolint
-  y <- c(TRUE, TRUE,      TRUE,       TRUE, TRUE,            TRUE)
+  x <- c("c:", "..", "foo/bar", "foo\\bar", "~",  "\\\\localhost")
+  y <- c(TRUE, TRUE, TRUE,      TRUE,       TRUE, TRUE)
   expect_equal(f(x), y)
 })
 
@@ -125,21 +123,21 @@ test_that("is_valid_path", {
   y <- logical()
   expect_equal(f(x), y)
 
-  x <- c("C:/asdf", "C:/asd*f", "a\\s:df", "a\\\nsdf")  #nolint
-  y <- c(     TRUE,      FALSE,     FALSE,      FALSE)
+  x <- c("C:/asdf", "C:/asd*f", "a\\s:df", "a\\\nsdf")
+  y <- c(TRUE,      FALSE,      FALSE,     FALSE)
   expect_equal(f(x), y)
 
-  x <- c("C:/asdf", "C:/asd*f", "a\\s:df", "a\\\nsdf")  #nolint
-  y <- c(     TRUE,      FALSE,     FALSE,      FALSE)
-  expect_equal(f(x, lax=TRUE), y)
+  x <- c("C:/asdf", "C:/asd*f", "a\\s:df", "a\\\nsdf")
+  y <- c(TRUE,      FALSE,      FALSE,     FALSE)
+  expect_equal(f(x, lax = TRUE), y)
 
   x <- c("/asdf", "/asd*f", "/as:df", "/a\nsdf")
-  y <- c(   TRUE,    TRUE,    TRUE,        TRUE)
+  y <- c(TRUE,    TRUE,     TRUE,     TRUE)
   expect_equal(f(x), y)
 
   x <- c("/asdf", "/asd*f", "/as:df", "/a\nsdf")
-  y <- c(   TRUE,    FALSE,    FALSE,     FALSE)
-  expect_equal(f(x, lax=TRUE), y)
+  y <- c(TRUE,    FALSE,    FALSE,    FALSE)
+  expect_equal(f(x, lax = TRUE), y)
 })
 
 
@@ -150,8 +148,8 @@ test_that("is_long_path", {
   y <- logical()
   expect_equal(f(x), y)
 
-  x <- c("foo/", "/foo", "n/a", "Z:\\foo", "foo/bar", "~/foo", "../foo")  #nolint
-  y <- c( FALSE,  FALSE, FALSE,      TRUE,      TRUE,    TRUE,     TRUE)
+  x <- c("foo/", "/foo", "n/a", "Z:\\foo", "foo/bar", "~/foo", "../foo")
+  y <- c(FALSE,  FALSE,  FALSE, TRUE,      TRUE,      TRUE,    TRUE)
   expect_equal(f(x), y)
 })
 
@@ -160,13 +158,13 @@ test_that("returns the correct linting", {
   msg <- rex::escape("Do not use absolute paths.")
 
   # strict mode
-  linter <- absolute_path_linter(lax=FALSE)
+  linter <- absolute_path_linter(lax = FALSE)
   non_absolute_path_strings <- c(
     "..",
     "./blah",
     encodeString("blah\\file.txt")
   )
-  for(path in non_absolute_path_strings) {
+  for (path in non_absolute_path_strings) {
     expect_lint(single_quote(path), NULL, linter)
     expect_lint(double_quote(path), NULL, linter)
   }
@@ -191,7 +189,7 @@ test_that("returns the correct linting", {
   }
 
   # lax mode: no check for strings that are likely not paths (too short or with special characters)
-  linter <- absolute_path_linter(lax=TRUE)
+  linter <- absolute_path_linter(lax = TRUE)
   unlikely_path_strings <- c(
     "/",
     encodeString("/a\nsdf/bar"),

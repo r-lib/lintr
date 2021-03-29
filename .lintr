@@ -1,2 +1,13 @@
-linters: with_defaults(line_length_linter(120))
-exclusions: list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "tests/testthat/exclusions-test")
+linters: with_defaults( # The following TODOs are part of an effort to have {lintr} lint-free (#584)
+   line_length_linter = line_length_linter(120),
+   cyclocomp_linter = cyclocomp_linter(28) # TODO reduce to 15
+ )
+exclusions: list(
+  "inst/doc/creating_linters.R" = 1,
+  "inst/example/bad.R",
+  "tests/testthat/default_linter_testcode.R",
+  "tests/testthat/dummy_packages",
+  "tests/testthat/exclusions-test",
+  "tests/testthat/knitr_formats",
+  "tests/testthat/knitr_malformed"
+ )

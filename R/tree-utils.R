@@ -22,14 +22,14 @@ component_edges <- function(graph, id) {
     neis <- unlist(graph$adjlist[newv])
     newv <- setdiff(neis, sc)
     sc <- c(sc, newv)
-    if (length(sc) == size) break;
+    if (length(sc) == size) break
     size <- length(sc)
   }
 
   which(graph$edges[, 1] %in% sc)
 }
 
-children <- function(data, id, levels = Inf, simplify = TRUE) {
+children <- function(data, id, levels = Inf) {
 
   child_ids <- function(ids) {
     data$id[data$parent %in% ids]
@@ -44,14 +44,10 @@ children <- function(data, id, levels = Inf, simplify = TRUE) {
   }
   ids <- ids[-length(ids)]
 
-  if (simplify) {
-    as.character(unlist(ids))
-  } else {
-    as.character(ids)
-  }
+  as.character(unlist(ids))
 }
 
-parents <- function(data, id, levels = Inf, simplify = TRUE) {
+parents <- function(data, id, levels = Inf) {
 
   parent_ids <- function(ids) {
     data$parent[data$id %in% ids]
@@ -66,23 +62,7 @@ parents <- function(data, id, levels = Inf, simplify = TRUE) {
   }
   ids <- ids[-length(ids)]
 
-  if (simplify) {
-    as.character(unlist(ids))
-  } else {
-    as.character(ids)
-  }
-}
-
-family <- function(data, id, parent_levels = 1L, child_levels = Inf) {
-  parents <- parents(data, id, parent_levels)
-  c(parents,
-    unlist(lapply(
-        parents,
-        children,
-        data = data,
-        levels = child_levels)
-      )
-    )
+  as.character(unlist(ids))
 }
 
 siblings <- function(data, id, child_levels = Inf) {

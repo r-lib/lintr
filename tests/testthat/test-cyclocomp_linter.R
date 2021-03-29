@@ -1,5 +1,3 @@
-context("cyclocomp_linter")
-
 test_that("returns the correct linting", {
   cc_linter_1 <- cyclocomp_linter(1)
   cc_linter_2 <- cyclocomp_linter(2)
