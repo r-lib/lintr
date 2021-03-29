@@ -2,6 +2,8 @@
 #'
 #' This object is given as input to each linter
 #' @param filename the file to be parsed.
+#' @param lines a character vector of lines.
+#'   If \code{NULL}, then \code{filename} will be read.
 #' @return A `list` with three components:
 #'   \item{expressions}{a `list` of
 #'   `n+1` objects. The first `n` elements correspond to each expression in
