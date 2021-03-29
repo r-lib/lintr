@@ -58,7 +58,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   }
 
   lines <- if (is.null(text)) {
-    readLines(filename)
+    read_lines(filename)
   } else {
     strsplit(text, "\n", fixed = TRUE)[[1]]
   }

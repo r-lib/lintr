@@ -74,15 +74,7 @@ parse_exclusions <- function(file, exclude = settings$exclude,
                              exclude_linter_sep = settings$exclude_linter_sep,
                              lines = NULL) {
   if (is.null(lines)) {
-      lines <- withCallingHandlers({
-        readLines(file)
-      },
-      warning = function(w) {
-        if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
-          invokeRestart("muffleWarning")
-        }
-      }
-    )
+    lines <- read_lines(file)
   }
 
   exclusions <- list()

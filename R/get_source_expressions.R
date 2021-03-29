@@ -43,25 +43,18 @@
 #' @md
 get_source_expressions <- function(filename, lines = NULL) {
   source_file <- srcfile(filename)
-  terminal_newline <- TRUE
 
   # Ensure English locale for terminal newline and zero-length variable warning messages
   old_lang <- set_lang("en")
   on.exit(reset_lang(old_lang))
 
   source_file$lines <- if (is.null(lines)) {
-    withCallingHandlers({
-      readLines(filename)
-    },
-    warning = function(w) {
-      if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
-        terminal_newline <<- FALSE
-        invokeRestart("muffleWarning")
-      }
-    })
+    read_lines(filename)
   } else {
     lines
   }
+
+  terminal_newline <- !identical(attr(lines, "terminal_newline", exact = TRUE), FALSE)
 
   lint_error <- function(e) {
     message_info <- re_matches(e$message,
