@@ -65,7 +65,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     strsplit(text, "\n", fixed = TRUE)[[1]]
   }
 
-  filename <- normalizePath(filename)  # to ensure a unique file in cache
+  filename <- normalizePath(filename, mustWork = !inline_data)  # to ensure a unique file in cache
   source_expressions <- get_source_expressions(filename, lines)
 
   if (isTRUE(parse_settings)) {
@@ -95,7 +95,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     )
     lints <- retrieve_file(lint_cache, lint_obj, linters)
     if (!is.null(lints)) {
-      return(exclude(lints, ...))
+      return(exclude(lints, lines = lines, ...))
     }
     cache <- TRUE
   } else {
@@ -140,7 +140,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     save_cache(lint_cache, filename, cache_path)
   }
 
-  res <- exclude(lints, ...)
+  res <- exclude(lints, lines = lines, ...)
 
   # simplify filename if inline
   if (no_filename) {
