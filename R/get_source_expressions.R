@@ -54,7 +54,7 @@ get_source_expressions <- function(filename, lines = NULL) {
     lines
   }
 
-  terminal_newline <- !identical(attr(lines, "terminal_newline", exact = TRUE), FALSE)
+  terminal_newline <- !identical(attr(source_file$lines, "terminal_newline", exact = TRUE), FALSE)
 
   lint_error <- function(e) {
     message_info <- re_matches(e$message,
