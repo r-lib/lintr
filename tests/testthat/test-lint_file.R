@@ -121,14 +121,21 @@ test_that("lint() results from file or text should be consistent", {
   )
   writeLines(lines, file)
   text <- paste0(lines, collapse = "\n")
+  file <- normalizePath(file)
 
   lint_from_file <- lint(file, linters = linters)
   lint_from_lines <- lint(linters = linters, text = lines)
   lint_from_text <- lint(linters = linters, text = text)
 
+  unlink(file)
+  lint_from_text2 <- lint(file, linters = linters, text = text)
+
   expect_equal(length(lint_from_file), 2)
   expect_equal(length(lint_from_lines), 2)
   expect_equal(length(lint_from_text), 2)
+  expect_equal(length(lint_from_text2), 2)
+
+  expect_equal(lint_from_file, lint_from_text2)
 
   for (i in seq_along(lint_from_lines)) {
     lint_from_file[[i]]$filename <- ""
