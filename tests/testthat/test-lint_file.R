@@ -112,6 +112,34 @@ test_that("lint uses linter names", {
   expect_lint("a = 2", list(linter = "bla"), linters = list(bla = assignment_linter()), parse_settings = FALSE)
 })
 
+test_that("lint() results from file or text should be consistent", {
+  linters <- list(assignment_linter(), infix_spaces_linter())
+  file <- tempfile()
+  lines <- c(
+    "x<-1",
+    "x+1"
+  )
+  writeLines(lines, file)
+  text <- paste0(lines, collapse = "\n")
+
+  lint_from_file <- lint(file, linters = linters)
+  lint_from_lines <- lint(linters = linters, text = lines)
+  lint_from_text <- lint(linters = linters, text = text)
+
+  expect_equal(length(lint_from_file), 2)
+  expect_equal(length(lint_from_lines), 2)
+  expect_equal(length(lint_from_text), 2)
+
+  for (i in seq_along(lint_from_lines)) {
+    lint_from_file[[i]]$filename <- ""
+    lint_from_lines[[i]]$filename <- ""
+    lint_from_text[[i]]$filename <- ""
+  }
+
+  expect_equal(lint_from_file, lint_from_lines)
+  expect_equal(lint_from_file, lint_from_text)
+})
+
 test_that("exclusions work with custom linter names", {
   expect_lint(
     "a = 2 # nolint: bla.",
