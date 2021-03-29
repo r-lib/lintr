@@ -51,7 +51,9 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     }
   }
 
-  if (inline_data && (missing(filename) || is.null(filename))) {
+  no_filename <- missing(filename) || is.null(filename)
+
+  if (inline_data && no_filename) {
     filename <- tempfile()
     on.exit(unlink(filename))
     writeLines(text = text, con = filename, sep = "\n")
@@ -141,7 +143,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   res <- exclude(lints, ...)
 
   # simplify filename if inline
-  if (inline_data) {
+  if (no_filename) {
     for (i in seq_along(res)) {
       res[[i]][["filename"]] <- "<text>"
     }
