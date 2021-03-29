@@ -29,8 +29,9 @@ character string, store the cache in this directory.}
 
 \item{parse_settings}{whether to try and parse the settings}
 
-\item{text}{the string content to be used as if linting \code{filename}.
-If supplied, \code{filename} must be a valid path.}
+\item{text}{the string or lines to be used as if linting \code{filename}.
+If \code{text} is supplied but \code{filename} is missing, then \code{tempfile()}
+will be used as the \code{filename}.}
 }
 \value{
 A list of lint objects.

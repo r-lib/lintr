@@ -24,8 +24,9 @@ NULL
 #' character string, store the cache in this directory.
 #' @param ... additional arguments passed to \code{\link{exclude}}.
 #' @param parse_settings whether to try and parse the settings
-#' @param text the string content to be used as if linting \code{filename}.
-#'    If supplied, \code{filename} must be a valid path.
+#' @param text the string or lines to be used as if linting \code{filename}.
+#'   If \code{text} is supplied but \code{filename} is missing, then \code{tempfile()}
+#'   will be used as the \code{filename}.
 #' @return A list of lint objects.
 #'
 #' @examples
@@ -41,15 +42,18 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     inline_data <- rex::re_matches(filename, rex::rex(newline))
     if (inline_data) {
       text <- gsub("\n$", "", filename)
-      filename <- tempfile()
-      on.exit(unlink(filename))
-      writeLines(text = text, con = filename, sep = "\n")
     }
   } else {
-    inline_data <- FALSE
+    inline_data <- TRUE
     if (length(text) > 1) {
       text <- paste0(text, collapse = "\n")
     }
+  }
+
+  if (inline_data && missing(filename)) {
+    filename <- tempfile()
+    on.exit(unlink(filename))
+    writeLines(text = text, con = filename, sep = "\n")
   }
 
   lines <- if (is.null(text)) {
