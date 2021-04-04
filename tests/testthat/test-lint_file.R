@@ -127,6 +127,8 @@ test_that("lint() results from file or text should be consistent", {
   lint_from_lines <- lint(linters = linters, text = lines)
   lint_from_text <- lint(linters = linters, text = text)
 
+  # Remove file before linting to ensure that lint works and do not
+  # assume that file exists when both filename and text are supplied.
   unlink(file)
   lint_from_text2 <- lint(file, linters = linters, text = text)
 
