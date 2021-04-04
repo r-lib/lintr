@@ -91,10 +91,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   if (length(cache_path)) {
     lint_cache <- load_cache(filename, cache_path)
-    lint_obj <- if (is.null(text)) filename else list(
-      content = get_content(lines),
-      TRUE
-    )
+    lint_obj <- if (is.null(text)) filename else list(content = get_content(lines), TRUE)
     lints <- retrieve_file(lint_cache, lint_obj, linters)
     if (!is.null(lints)) {
       return(exclude(lints, lines = lines, ...))
