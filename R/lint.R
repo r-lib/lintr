@@ -24,6 +24,8 @@ NULL
 #' character string, store the cache in this directory.
 #' @param ... additional arguments passed to \code{\link{exclude}}.
 #' @param parse_settings whether to try and parse the settings.
+#' @param text Optional argument for supplying a string or lines directly,
+#'   e.g. if the file is already in memory or linting is being done ad hoc.
 #'
 #' @return A list of lint objects.
 #'
@@ -31,21 +33,41 @@ NULL
 #' \dontrun{
 #'   lint("some/file-name.R") # linting a file
 #'   lint("a = 123\n")        # linting inline-code
+#'   lint(text = "a = 123")   # linting inline-code
 #' }
 #'
 #' @export
-lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = TRUE) {
+lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = TRUE, text = NULL) {
 
-  inline_data <- rex::re_matches(filename, rex::rex(newline))
-  if (inline_data) {
-    content <- gsub("\n$", "", filename)
-    filename <- tempfile()
-    on.exit(unlink(filename), add = TRUE)
-    writeLines(text = content, con = filename, sep = "\n")
+  if (is.null(text)) {
+    inline_data <- rex::re_matches(filename, rex::rex(newline))
+    if (inline_data) {
+      text <- gsub("\n$", "", filename)
+      filename <- NULL
+    }
+  } else {
+    inline_data <- TRUE
+    if (length(text) > 1) {
+      text <- paste(text, sep = "", collapse = "\n")
+    }
   }
 
-  filename <- normalizePath(filename)  # to ensure a unique file in cache
-  source_expressions <- get_source_expressions(filename)
+  no_filename <- missing(filename) || is.null(filename)
+
+  if (inline_data && no_filename) {
+    filename <- tempfile()
+    on.exit(unlink(filename), add = TRUE)
+    writeLines(text = text, con = filename, sep = "\n")
+  }
+
+  lines <- if (is.null(text)) {
+    read_lines(filename)
+  } else {
+    strsplit(text, "\n", fixed = TRUE)[[1]]
+  }
+
+  filename <- normalizePath(filename, mustWork = !inline_data)  # to ensure a unique file in cache
+  source_expressions <- get_source_expressions(filename, lines)
 
   if (isTRUE(parse_settings)) {
     read_settings(filename)
@@ -68,9 +90,10 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   if (length(cache_path)) {
     lint_cache <- load_cache(filename, cache_path)
-    lints <- retrieve_file(lint_cache, filename, linters)
+    lint_obj <- if (is.null(text)) filename else list(content = get_content(lines), TRUE)
+    lints <- retrieve_file(lint_cache, lint_obj, linters)
     if (!is.null(lints)) {
-      return(exclude(lints, ...))
+      return(exclude(lints, lines = lines, ...))
     }
     cache <- TRUE
   } else {
@@ -115,10 +138,10 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     save_cache(lint_cache, filename, cache_path)
   }
 
-  res <- exclude(lints, ...)
+  res <- exclude(lints, lines = lines, ...)
 
   # simplify filename if inline
-  if (inline_data) {
+  if (no_filename) {
     for (i in seq_along(res)) {
       res[[i]][["filename"]] <- "<text>"
     }

@@ -10,7 +10,8 @@ parse_exclusions(
   exclude_start = settings$exclude_start,
   exclude_end = settings$exclude_end,
   exclude_linter = settings$exclude_linter,
-  exclude_linter_sep = settings$exclude_linter_sep
+  exclude_linter_sep = settings$exclude_linter_sep,
+  lines = NULL
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ parse_exclusions(
 \code{exclude} or \code{exclude_start} marker.}
 
 \item{exclude_linter_sep}{regular expression used to split a linter list into indivdual linter names for exclusion.}
+
+\item{lines}{a character vector of the content lines of \code{file}}
 }
 \value{
 A possibly named list of excluded lines, possibly for specific linters.
