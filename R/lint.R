@@ -24,7 +24,8 @@ NULL
 #' character string, store the cache in this directory.
 #' @param ... additional arguments passed to \code{\link{exclude}}.
 #' @param parse_settings whether to try and parse the settings.
-#' @param text the string or lines to be used as if linting \code{filename}.
+#' @param text Optional argument for supplying a string or lines or lines directly,
+#'   e.g. if the file is already in memory or linting is being done ad hoc.
 #'   If \code{text} is supplied but \code{filename} is missing, then \code{tempfile()}
 #'   will be used as the \code{filename}.
 #'

@@ -27,9 +27,10 @@ character string, store the cache in this directory.}
 
 \item{...}{additional arguments passed to \code{\link{exclude}}.}
 
-\item{parse_settings}{whether to try and parse the settings}
+\item{parse_settings}{whether to try and parse the settings.}
 
-\item{text}{the string or lines to be used as if linting \code{filename}.
+\item{text}{Optional argument for supplying a string or lines or lines directly,
+e.g. if the file is already in memory or linting is being done ad hoc.
 If \code{text} is supplied but \code{filename} is missing, then \code{tempfile()}
 will be used as the \code{filename}.}
 }
