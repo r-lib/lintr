@@ -29,10 +29,8 @@ character string, store the cache in this directory.}
 
 \item{parse_settings}{whether to try and parse the settings.}
 
-\item{text}{Optional argument for supplying a string or lines or lines directly,
-e.g. if the file is already in memory or linting is being done ad hoc.
-If \code{text} is supplied but \code{filename} is missing, then \code{tempfile()}
-will be used as the \code{filename}.}
+\item{text}{Optional argument for supplying a string or lines directly,
+e.g. if the file is already in memory or linting is being done ad hoc.}
 }
 \value{
 A list of lint objects.
@@ -44,6 +42,7 @@ Apply one or more linters to a file and return the lints found.
 \dontrun{
   lint("some/file-name.R") # linting a file
   lint("a = 123\n")        # linting inline-code
+  lint(text = "a = 123")   # linting inline-code
 }
 
 }

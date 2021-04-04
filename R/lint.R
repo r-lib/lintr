@@ -33,6 +33,7 @@ NULL
 #' \dontrun{
 #'   lint("some/file-name.R") # linting a file
 #'   lint("a = 123\n")        # linting inline-code
+#'   lint(text = "a = 123")   # linting inline-code
 #' }
 #'
 #' @export
