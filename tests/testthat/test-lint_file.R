@@ -119,6 +119,7 @@ test_that("lint() results from file or text should be consistent", {
     "x<-1",
     "x+1"
   )
+  on.exit(unlink(file))
   writeLines(lines, file)
   text <- paste0(lines, collapse = "\n")
   file <- normalizePath(file)
@@ -127,7 +128,6 @@ test_that("lint() results from file or text should be consistent", {
   lint_from_lines <- lint(linters = linters, text = lines)
   lint_from_text <- lint(linters = linters, text = text)
 
-  unlink(file)
   lint_from_text2 <- lint(file, linters = linters, text = text)
 
   expect_equal(length(lint_from_file), 2)
