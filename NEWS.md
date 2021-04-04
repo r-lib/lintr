@@ -62,6 +62,7 @@
 * `object_name_linter()` no longer lints names used for subsetting (#582, @AshesITR)
 * `lint_package()` warns and returns `NULL` if no package is found (instead of giving a peculiar error message) (#776, @michaelchirico)
 * `lint_package()` is also stricter about what it considers to be a package -- folders named `DESCRIPTION` are ignored (#702, @michaelchirico)
+* `lint()` now has a new optional argument `text` for supplying a string or lines directly, e.g. if the file is already in memory or linting is being done ad hoc. (#503, @renkun-ken)
 
 # lintr 2.0.1
 
