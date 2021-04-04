@@ -65,7 +65,7 @@ is_excluded_file <- function(file_exclusion) {
 #' \code{exclude} or \code{exclude_start} marker.
 #' @param exclude_linter_sep regular expression used to split a linter list into indivdual linter names for exclusion.
 #' @param lines a character vector of the content lines of \code{file}
-#' 
+#'
 #' @return A possibly named list of excluded lines, possibly for specific linters.
 parse_exclusions <- function(file, exclude = settings$exclude,
                              exclude_start = settings$exclude_start,
