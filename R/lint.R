@@ -27,6 +27,7 @@ NULL
 #' @param text the string or lines to be used as if linting \code{filename}.
 #'   If \code{text} is supplied but \code{filename} is missing, then \code{tempfile()}
 #'   will be used as the \code{filename}.
+#'
 #' @return A list of lint objects.
 #'
 #' @examples
