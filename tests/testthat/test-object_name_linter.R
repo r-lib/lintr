@@ -34,6 +34,8 @@ test_that("styles are correctly identified", {
   expect_equivalent(do_style_check("I.HAVE_ONECAT"), c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
   expect_equivalent(do_style_check("."),             c(TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
   expect_equivalent(do_style_check("%^%"),           c(TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
+  expect_equivalent(do_style_check("label<-"),       c(FALSE, FALSE, TRUE,  TRUE,  FALSE, TRUE,  TRUE,  FALSE))
+  expect_equivalent(do_style_check("LABEL<-"),       c(FALSE, TRUE,  FALSE, FALSE, TRUE,  FALSE, FALSE, TRUE))
 })
 
 test_that("linter ignores some objects", {

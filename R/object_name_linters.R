@@ -303,13 +303,13 @@ upperalnum <- rex(one_of(upper, digit))
 
 style_regexes <- list(
   "symbols"     = rex(start, zero_or_more(none_of(alnum)), end),
-  "CamelCase"   = rex(start, maybe("."), upper, zero_or_more(alnum), end),
-  "camelCase"   = rex(start, maybe("."), lower, zero_or_more(alnum), end),
-  "snake_case"  = rex(start, maybe("."), some_of(lower, digit), any_of("_", lower, digit), end),
-  "SNAKE_CASE"  = rex(start, maybe("."), some_of(upper, digit), any_of("_", upper, digit), end),
-  "dotted.case" = rex(start, maybe("."), one_or_more(loweralnum), zero_or_more(dot, one_or_more(loweralnum)), end),
-  "lowercase"   = rex(start, maybe("."), one_or_more(loweralnum), end),
-  "UPPERCASE"   = rex(start, maybe("."), one_or_more(upperalnum), end)
+  "CamelCase"   = rex(start, maybe("."), upper, zero_or_more(alnum), maybe("<-"), end),
+  "camelCase"   = rex(start, maybe("."), lower, zero_or_more(alnum), maybe("<-"), end),
+  "snake_case"  = rex(start, maybe("."), some_of(lower, digit), any_of("_", lower, digit), maybe("<-"), end),
+  "SNAKE_CASE"  = rex(start, maybe("."), some_of(upper, digit), any_of("_", upper, digit), maybe("<-"), end),
+  "dotted.case" = rex(start, maybe("."), one_or_more(loweralnum), zero_or_more(dot, one_or_more(loweralnum)), maybe("<-"), end),
+  "lowercase"   = rex(start, maybe("."), one_or_more(loweralnum),  maybe("<-"), end),
+  "UPPERCASE"   = rex(start, maybe("."), one_or_more(upperalnum), maybe("<-"), end)
 )
 
 regexes_rd <- toString(paste0("\\sQuote{", names(style_regexes), "}"))
