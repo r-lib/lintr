@@ -32,7 +32,7 @@ load_cache <- function(file, path = NULL) {
 
   file <- get_cache_file_path(file, path)
   if (file.exists(file)) {
-    load(file = file, envir = env)
+    tryCatch(load(file = file, envir = env), error = NULL)
   } # else nothing to do for source file that has no cache
 
   env
