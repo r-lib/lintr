@@ -34,7 +34,12 @@ load_cache <- function(file, path = NULL) {
   if (file.exists(file)) {
     tryCatch(
       load(file = file, envir = env),
-      error = function(e) warning(e)
+      error = function(e) {
+        warning(
+          "Could not load cache file '", file, "':\n",
+          conditionMessage(e)
+        )
+      }
     )
   } # else nothing to do for source file that has no cache
 
