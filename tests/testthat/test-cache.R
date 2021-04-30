@@ -84,6 +84,25 @@ test_that("load_cache returns an empty environment if no cache file exists", {
   )
 })
 
+test_that("load_cache returns an empty environment if reading cache file fails", {
+  with_mock(
+    `lintr::read_settings` = function(...) invisible(...),
+
+    e1 <- new.env(parent = emptyenv()),
+    assign("x", "foobar", envir = e1),
+    d1 <- tempfile(pattern = "lintr_cache_"),
+    f1 <- "R/test.R",
+    save_cache(cache = e1, file = f1, path = d1),
+    cache_f1 <- file.path(d1, fhash(f1)),
+    writeLines(character(), cache_f1),
+    expect_warning(e2 <- load_cache(file = f1, path = d1)),
+    saveRDS(e1, cache_f1),
+    expect_warning(e3 <- load_cache(file = f1, path = d1)),
+    expect_equal(ls(e2), character(0)),
+    expect_equal(ls(e3), character(0))
+  )
+})
+
 # `save_cache`
 
 test_that("save_cache creates a directory if needed", {
