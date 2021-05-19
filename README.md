@@ -177,7 +177,7 @@ The resulting configuration will contain each currently failing linter and the c
 If you are developing a package, you can add `^\.lintr$` to your `.Rbuildignore` file using `usethis::use_build_ignore(".lintr")`.
 
 ## Continuous integration ##
-You can configure `lintr` to run as part of continuous integration (either for a package or an analysis project) in order to automatically check that commits and pull requests do not deteriorate code style. 
+You can configure `lintr` to run as part of continuous integration (either for a package or a general project containing R files) in order to automatically check that commits and pull requests do not deteriorate code style. 
 
 ### For packages
 
