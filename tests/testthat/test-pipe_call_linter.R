@@ -14,6 +14,16 @@ test_that("pipe_call_linter skips allowed usages", {
 
   # symbol extraction is OK (don't force extract2(), e.g.)
   expect_lint("a %>% .$y %>% mean()", NULL, pipe_call_linter)
+  
+  # more complicated expressions don't pick up on nested symbols
+  lines <- trim_some("
+  x %>% {
+    tmp <- .
+    bla <- foo %>% unrelated_stuff(tmp)
+    my_combination_fun(tmp, bla)
+  }
+  ")
+  expect_lint(lines, NULL, pipe_call_linter)
 })
 
 test_that("pipe_call_linter blocks simple disallowed usages", {
