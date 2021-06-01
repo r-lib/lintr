@@ -194,7 +194,7 @@ usethis::use_github_action("lint")
 ```
 
 This will create a workflow file called `lint.yaml` and place it in the correct 
-location, namely in the `.github/workflows` directory of your repository. This file configures all the steps required to run `lintr::lintr_package()` on your package.  
+location, namely in the `.github/workflows` directory of your repository. This file configures all the steps required to run `lintr::lint_package()` on your package.  
 
 [lintr-bot](https://github.com/lintr-bot) will then add comments to the commit or 
 pull request with the lints found and they will also be printed as [annotations](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-status-checks#types-of-status-checks-on-github) along side the status check on GitHub.  If you want to disable the commenting you can
