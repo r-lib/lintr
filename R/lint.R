@@ -112,11 +112,8 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
       if (is.null(expr_lints)) {
         expr_lints <- flatten_lints(linters[[linter]](expr))
 
-        if (length(expr_lints)) {
-          expr_lints[] <- lapply(expr_lints, function(lint) {
-            lint$linter <- linter
-            lint
-          })
+        for (i in seq_along(expr_lints)) {
+          expr_lints[[i]]$linter <- linter
         }
 
         if (isTRUE(cache)) {
