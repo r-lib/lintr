@@ -88,18 +88,20 @@ retrieve_lint <- function(cache, expr, linter, lines) {
     mode = "list",
     inherits = FALSE
   )
-  missing_line_number <- FALSE
-  lints[] <- lapply(lints, function(lint) {
-    lint$line_number <- find_new_line(lint$line_number, unname(lint$line), lines)
-    if (is.na(lint$line_number)) {
-      missing_line_number <<- TRUE
+  for (i in seq_along(lints)) {
+    new_line_number <- find_new_line(
+      lints[[i]]$line_number,
+      unname(lints[[i]]$line),
+      lines
+    )
+    if (is.na(new_line_number)) {
+      return(NULL)
+    } else {
+      lints[[i]]$line_number <- new_line_number
     }
-    lint
-  })
-  if (!missing_line_number) {
-    cache_lint(cache, expr, linter, lints)
-    lints
   }
+  cache_lint(cache, expr, linter, lints)
+  lints
 }
 
 has_lint <- function(cache, expr, linter) {
