@@ -249,3 +249,18 @@ Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name_linte
   force(name)
   structure(fun, class = "linter", name = name)
 }
+
+read_lines <- function(file, ...) {
+  terminal_newline <- TRUE
+  lines <- withCallingHandlers({
+    readLines(file, warn = TRUE, ...)
+  },
+  warning = function(w) {
+    if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
+      terminal_newline <<- FALSE
+      invokeRestart("muffleWarning")
+    }
+  })
+  attr(lines, "terminal_newline") <- terminal_newline
+  lines
+}

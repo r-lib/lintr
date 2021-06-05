@@ -2,6 +2,8 @@
 #'
 #' This object is given as input to each linter
 #' @param filename the file to be parsed.
+#' @param lines a character vector of lines.
+#'   If \code{NULL}, then \code{filename} will be read.
 #' @return A `list` with three components:
 #'   \item{expressions}{a `list` of
 #'   `n+1` objects. The first `n` elements correspond to each expression in
@@ -39,24 +41,22 @@
 #'   \item{lines}{The [readLines()] output for this file.}
 #' @export
 #' @md
-get_source_expressions <- function(filename) {
+get_source_expressions <- function(filename, lines = NULL) {
   source_file <- srcfile(filename)
-  terminal_newline <- TRUE
 
   # Ensure English locale for terminal newline and zero-length variable warning messages
   old_lang <- set_lang("en")
   on.exit(reset_lang(old_lang))
 
-  source_file$lines <- withCallingHandlers({
-      readLines(filename)
-    },
-    warning = function(w) {
-      if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
-        terminal_newline <<- FALSE
-        invokeRestart("muffleWarning")
-      }
-    }
-  )
+  source_file$lines <- if (is.null(lines)) {
+    read_lines(filename)
+  } else {
+    lines
+  }
+
+  # Only regard explict attribute terminal_newline=FALSE as FALSE and all other cases (e.g. NULL or TRUE) as TRUE.
+  # We don't use isFALSE since it is introduced in R 3.5.0.
+  terminal_newline <- !identical(attr(source_file$lines, "terminal_newline", exact = TRUE), FALSE)
 
   lint_error <- function(e) {
     message_info <- re_matches(e$message,
