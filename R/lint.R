@@ -102,24 +102,25 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   for (expr in source_expressions$expressions) {
     for (linter in names(linters)) {
+      expr_lints <- NULL
       if (isTRUE(cache) && has_lint(lint_cache, expr, linter)) {
-        lints[[itr <- itr + 1L]] <- retrieve_lint(lint_cache, expr, linter, source_expressions$lines)
+        # retrieve_lint() might return NULL if missing line number is encountered.
+        # It could be caused by nolint comments.
+        expr_lints <- retrieve_lint(lint_cache, expr, linter, source_expressions$lines)
       }
-      else {
+
+      if (is.null(expr_lints)) {
         expr_lints <- flatten_lints(linters[[linter]](expr))
 
-        if (length(expr_lints)) {
-          expr_lints[] <- lapply(expr_lints, function(lint) {
-            lint$linter <- linter
-            lint
-          })
+        for (i in seq_along(expr_lints)) {
+          expr_lints[[i]]$linter <- linter
         }
 
-        lints[[itr <- itr + 1L]] <- expr_lints
         if (isTRUE(cache)) {
           cache_lint(lint_cache, expr, linter, expr_lints)
         }
       }
+      lints[[itr <- itr + 1L]] <- expr_lints
     }
   }
 

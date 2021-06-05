@@ -462,3 +462,21 @@ test_that("cache = TRUE workflow works", {
   l2 <- lint_package(pkg, cache = TRUE)
   expect_identical(l1, l2)
 })
+
+test_that("cache = TRUE works with nolint", {
+  linters <- list(infix_spaces_linter())
+  file <- tempfile()
+  on.exit(unlink(file))
+
+  writeLines("1+1\n", file)
+  expect_length(lint(file, linters, cache = TRUE), 1)
+
+  writeLines("1+1 # nolint\n", file)
+  expect_length(lint(file, linters, cache = TRUE), 0)
+
+  writeLines("1+1\n", file)
+  expect_length(lint(file, linters, cache = TRUE), 1)
+
+  writeLines("1+1 # nolint\n", file)
+  expect_length(lint(file, linters, cache = TRUE), 0)
+})
