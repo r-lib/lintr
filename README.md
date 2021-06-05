@@ -177,9 +177,11 @@ The resulting configuration will contain each currently failing linter and the c
 If you are developing a package, you can add `^\.lintr$` to your `.Rbuildignore` file using `usethis::use_build_ignore(".lintr")`.
 
 ## Continuous integration ##
-You can configure `lintr` to run as part of continuous integration in order to automatically check that commits and pull requests do not deteriorate code style. 
+You can configure `lintr` to run as part of continuous integration (either for a package or a general project containing R files) in order to automatically check that commits and pull requests do not deteriorate code style. 
 
-### GitHub Actions ###
+### For packages
+
+#### GitHub Actions ###
 
 If your package is on GitHub, the easiest way to do this is with GitHub Actions. 
 The workflow configuration files use YAML syntax. The `usethis` package has some 
@@ -192,13 +194,13 @@ usethis::use_github_action("lint")
 ```
 
 This will create a workflow file called `lint.yaml` and place it in the correct 
-location, namely in the `.github/workflows` directory of your repository. This file configures all the steps required to run `lintr::lintr_package()` on your package.  
+location, namely in the `.github/workflows` directory of your repository. This file configures all the steps required to run `lintr::lint_package()` on your package.  
 
 [lintr-bot](https://github.com/lintr-bot) will then add comments to the commit or 
 pull request with the lints found and they will also be printed as [annotations](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-status-checks#types-of-status-checks-on-github) along side the status check on GitHub.  If you want to disable the commenting you can
 set the environment variable `LINTR_COMMENT_BOT=false`.
 
-### Travis CI ###
+#### Travis CI ###
 
 If you want to run `lintr` on [Travis-CI](https://travis-ci.org), you will need
 to have Travis install the package first.  This can be done by adding the
@@ -216,7 +218,7 @@ add comments to the commit or pull request with the lints found and they will al
 printed on Travis-CI.  If you want to disable the commenting you can
 set the environment variable `LINTR_COMMENT_BOT=false`.
 
-#### Non-failing Lints ####
+##### Non-failing Lints ####
 ```yaml
 after_success:
   - R CMD INSTALL $PKG_TARBALL
@@ -224,6 +226,19 @@ after_success:
 ```
 
 Live example of a package using this setup: [`hibpwned`](https://github.com/lockedata/HIBPwned/blob/master/.travis.yml), [lintr-bot commenting on a PR](https://github.com/lockedata/HIBPwned/pull/30).
+
+### For projects ###
+
+You are not limited you using `lintr` for packages only, you can use it in combination with continuous integration for any other project. 
+
+#### GitHub Actions ####
+
+If your project is on GitHub, you could take advantage of GitHub Actions and the `usethis` functionality. [r-lib/actions](https://github.com/r-lib/actions/tree/master/examples) includes a `lint-project` example, which you can use by calling:
+
+```r
+usethis::use_github_action("lint-project")
+```
+
 
 ## Installation of development version ##
 To install the latest development version of lintr from GitHub
@@ -259,7 +274,7 @@ lintr has [built-in integration](http://www.flycheck.org/en/latest/languages.htm
 
 #### Installation ####
 lintr is fully integrated into flycheck when using [ESS](http://ess.r-project.org/).  See the
-installalation documentation for those packages for more information.
+installation documentation for those packages for more information.
 
 #### Configuration ####
 You can also configure what linters are used. e.g. using a different line length cutoff.

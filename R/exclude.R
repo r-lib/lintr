@@ -64,22 +64,18 @@ is_excluded_file <- function(file_exclusion) {
 #' @param exclude_linter regular expression used to capture a list of to-be-excluded linters immediately following a
 #' \code{exclude} or \code{exclude_start} marker.
 #' @param exclude_linter_sep regular expression used to split a linter list into indivdual linter names for exclusion.
+#' @param lines a character vector of the content lines of \code{file}
 #'
 #' @return A possibly named list of excluded lines, possibly for specific linters.
 parse_exclusions <- function(file, exclude = settings$exclude,
                              exclude_start = settings$exclude_start,
                              exclude_end = settings$exclude_end,
                              exclude_linter = settings$exclude_linter,
-                             exclude_linter_sep = settings$exclude_linter_sep) {
-  lines <- withCallingHandlers({
-      readLines(file)
-    },
-    warning = function(w) {
-      if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
-        invokeRestart("muffleWarning")
-      }
-    }
-  )
+                             exclude_linter_sep = settings$exclude_linter_sep,
+                             lines = NULL) {
+  if (is.null(lines)) {
+    lines <- read_lines(file)
+  }
 
   exclusions <- list()
 
