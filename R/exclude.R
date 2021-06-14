@@ -79,6 +79,12 @@ parse_exclusions <- function(file, exclude = settings$exclude,
 
   exclusions <- list()
 
+  e <- tryCatch(nchar(lines), error = identity)
+  if (inherits(e, "error")) {
+    # Invalid encoding. Don't parse exclusions.
+    return(list())
+  }
+
   start_locations <- rex::re_matches(lines, exclude_start, locations = TRUE)[, "end"] + 1L
   starts <- which(!is.na(start_locations))
   ends <- which(rex::re_matches(lines, exclude_end))

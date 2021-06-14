@@ -77,6 +77,20 @@ get_source_expressions <- function(filename, lines = NULL) {
     # an error that does not use R_ParseErrorMsg
     if (is.na(message_info$line)) {
 
+      if (grepl("invalid multibyte string, element", e$message, fixed = TRUE)) {
+        # Invalid encoding, will break even re_matches() below, so we need to handle this first.
+        return(
+          Lint(
+            filename = source_file$filename,
+            line_number = 1L,
+            column_number = 1L,
+            type = "error",
+            message = "Invalid multibyte string. Is the encoding correct?",
+            line = ""
+          )
+        )
+      }
+
       message_info <- re_matches(e$message,
         rex(single_quotes, capture(name = "name", anything), single_quotes,
           anything,
@@ -185,25 +199,30 @@ get_source_expressions <- function(filename, lines = NULL) {
   parsed_content <- get_source_file(source_file, error = lint_error)
   tree <- generate_tree(parsed_content)
 
-  expressions <- lapply(
-    X = top_level_expressions(parsed_content),
-    FUN = get_single_source_expression,
-    parsed_content,
-    source_file,
-    filename,
-    tree
-  )
-
-  # add global expression
-  expressions[[length(expressions) + 1L]] <-
-    list(
-      filename = filename,
-      file_lines = source_file$lines,
-      content = source_file$lines,
-      full_parsed_content = parsed_content,
-      full_xml_parsed_content = safe_parse_to_xml(parsed_content),
-      terminal_newline = terminal_newline
+  if (inherits(e, "lint") && !nzchar(e$line)) {
+    # Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
+    expressions <- NULL
+  } else {
+    expressions <- lapply(
+      X = top_level_expressions(parsed_content),
+      FUN = get_single_source_expression,
+      parsed_content,
+      source_file,
+      filename,
+      tree
     )
+
+    # add global expression
+    expressions[[length(expressions) + 1L]] <-
+      list(
+        filename = filename,
+        file_lines = source_file$lines,
+        content = source_file$lines,
+        full_parsed_content = parsed_content,
+        full_xml_parsed_content = safe_parse_to_xml(parsed_content),
+        terminal_newline = terminal_newline
+      )
+  }
 
   list(expressions = expressions, error = e, lines = source_file$lines)
 }
@@ -250,6 +269,17 @@ get_source_file <- function(source_file, error = identity) {
 
   if (inherits(e, "error") || inherits(e, "lint")) {
     assign("e", e,  envir = parent.frame())
+  }
+
+  # Triggers an error if the lines contain invalid characters.
+  e <- tryCatch(
+    nchar(source_file$content, type = "chars"),
+    error = error
+  )
+
+  if (inherits(e, "error") || inherits(e, "lint")) {
+    assign("e", e,  envir = parent.frame())
+    return() # parsed_content is unreliable if encoding is invalid
   }
 
   fix_eq_assigns(fix_column_numbers(fix_tab_indentations(source_file)))
