@@ -79,3 +79,12 @@ test_that("Multi-byte characters correct columns", {
     expect_equal(pc[[1L]]$col1[4L], pc[[1L]]$col1[2L] + 4L)
   })
 })
+
+test_that("Multi-byte character truncated by parser is ignored", {
+  tmp <- tempfile()
+  on.exit(unlink(tmp), add = TRUE)
+  writeLines("y <- x \U2013 42", tmp)  # Unicode en-dash
+  content <- expect_error(get_source_expressions(tmp), NA)
+  expect_identical(content$error$message, "unexpected input")
+  expect_identical(content$error$column_number, 8L)
+})
