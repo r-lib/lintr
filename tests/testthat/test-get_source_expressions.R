@@ -85,6 +85,6 @@ test_that("Multi-byte character truncated by parser is ignored", {
   on.exit(unlink(tmp), add = TRUE)
   writeLines("y <- x \U2013 42", tmp)  # Unicode en-dash
   content <- expect_error(get_source_expressions(tmp), NA)
-  expect_identical(content$error$message, "unexpected input")
-  expect_identical(content$error$column_number, 8L)
+  expect_equal(content$error$message, "unexpected input")
+  expect_equal(content$error$column_number, 8L)
 })
