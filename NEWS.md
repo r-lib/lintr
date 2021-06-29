@@ -1,7 +1,7 @@
 # lintr (development version)
 
-* Added a secondary, more restrictive lint workflow - `lint-changed-files` - for newly written / modified code 
-  (#641, @dragosmg) 
+* Updated R CMD GitHub Actions workflow to check for R 3.6 on Ubuntu, instead of R 3.3, and for R 4.0 on Windows, instead of R 3.6 (#803, @ dragosmg)
+* Added a secondary, more restrictive lint workflow - `lint-changed-files` - for newly written / modified code (#641, @dragosmg) 
 * Switched CI from Travis to GitHub Actions, using the full tidyverse recommended R CMD check. Code coverage and linting 
   are implemented using separate GitHub Actions workflows (#572, @dragosmg)
 * `save_cache` will now recursively create the cache directory; this avoids errors that could arise if any parent 
