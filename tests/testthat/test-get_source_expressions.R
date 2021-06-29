@@ -2,8 +2,10 @@ with_content_to_parse <- function(content, code) {
   f <- tempfile()
   on.exit(unlink(f))
   writeLines(content, f)
+  source_expressions <- get_source_expressions(f)
   content_env <- new.env()
-  content_env$pc <- lapply(get_source_expressions(f)[["expressions"]], `[[`, "parsed_content")
+  content_env$pc <- lapply(source_expressions[["expressions"]], `[[`, "parsed_content")
+  content_env$error <- source_expressions$error
   eval(substitute(code), envir = content_env)
 }
 
@@ -81,10 +83,10 @@ test_that("Multi-byte characters correct columns", {
 })
 
 test_that("Multi-byte character truncated by parser is ignored", {
-  tmp <- tempfile()
-  on.exit(unlink(tmp), add = TRUE)
-  writeLines("y <- x \U2013 42", tmp)  # Unicode en-dash
-  content <- expect_error(get_source_expressions(tmp), NA)
-  expect_equal(content$error$message, "unexpected input")
-  expect_equal(content$error$column_number, 8L)
+  # \U2013 is the Unicode character 'en dash', which is
+  # almost identical to a minus sign in monospaced fonts.
+  with_content_to_parse("y <- x \U2013 42", {
+    expect_equal(error$message, "unexpected input")
+    expect_equal(error$column_number, 8L)
+  })
 })
