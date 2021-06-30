@@ -254,6 +254,7 @@ get_single_source_expression <- function(loc,
 }
 
 get_source_file <- function(source_file, error = identity) {
+  parse_error <- FALSE
 
   e <- tryCatch(
     source_file$parsed_content <- parse(text = source_file$content, srcfile = source_file, keep.source = TRUE),
@@ -269,6 +270,7 @@ get_source_file <- function(source_file, error = identity) {
 
   if (inherits(e, "error") || inherits(e, "lint")) {
     assign("e", e,  envir = parent.frame())
+    parse_error <- TRUE
   }
 
   # Triggers an error if the lines contain invalid characters.
@@ -278,7 +280,8 @@ get_source_file <- function(source_file, error = identity) {
   )
 
   if (inherits(e, "error") || inherits(e, "lint")) {
-    assign("e", e,  envir = parent.frame())
+    # Let parse errors take precedence over encoding problems
+    if (!parse_error) assign("e", e,  envir = parent.frame())
     return() # parsed_content is unreliable if encoding is invalid
   }
 
