@@ -64,6 +64,7 @@
 * `lint_package()` is also stricter about what it considers to be a package -- folders named `DESCRIPTION` are ignored (#702, @michaelchirico)
 * `lint()` now has a new optional argument `text` for supplying a string or lines directly, e.g. if the file is already in memory or linting is being done ad hoc. (#503, @renkun-ken)
 * New `pipe_call_linter()` enforces that all steps of `magrittr` pipelines use explicit calls instead of symbols, e.g. `x %>% mean()` instead of `x %>% mean` (@michaelchirico)
+* `get_source_expressions()` no longer fails if `getParseData()` returns a truncated (invalid) Unicode character as parsed text (#815, #816, @leogama)
 
 # lintr 2.0.1
 
