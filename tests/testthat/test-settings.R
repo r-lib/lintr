@@ -132,6 +132,12 @@ test_that("it has a smart default for encodings", {
   proj_file <- file.path("dummy_projects", "project", "metropolis-hastings-rho.R")
   pkg_file <- file.path("dummy_packages", "cp1252", "R", "metropolis-hastings-rho.R")
 
+  expect_false("encoding" %in% colnames(read.dcf(find_config(proj_file))))
+  expect_false("encoding" %in% colnames(read.dcf(find_config(pkg_file))))
+
+  expect_type(find_rproj(proj_file), "character")
+  expect_type(find_package(pkg_file), "character")
+
   expect_equal(find_default_encoding(proj_file), "ISO8859-1")
   expect_equal(find_default_encoding(pkg_file), "ISO8859-1")
 
