@@ -35,7 +35,7 @@ The final element of \code{expressions} is a list corresponding to the full file
 consisting of 6 elements:
 \itemize{
 \item{\code{filename} (\code{character})}
-\item{\code{file_lines} (\code{character}) the \code{\link[=readLines]{readLines()}} output for this file} # TODO document encoding
+\item{\code{file_lines} (\code{character}) the \code{\link[=readLines]{readLines()}} output for this file}
 \item{\code{content} (\code{character}) for .R files, the same as \code{file_lines};
 for .Rmd scripts, this is the extracted R source code (as text)}
 \item{\code{full_parsed_content} (\code{data.frame}) as given by
@@ -47,8 +47,18 @@ newline (as determined by \code{\link[=readLines]{readLines()}} producing a corr
 }
 }
 \item{error}{A \code{Lint} object describing any parsing error.}
-\item{lines}{The \code{\link[=readLines]{readLines()}} output for this file.} # TODO document encoding
+\item{lines}{The \code{\link[=readLines]{readLines()}} output for this file.}
 }
 \description{
 This object is given as input to each linter
+}
+\details{
+The file is read in using the \code{encoding} setting.
+This setting found by taking the first valid result from the following locations
+\enumerate{
+\item The \code{encoding} key from the usual lintr configuration settings.
+\item The \code{Encoding} field from a Package \code{DESCRIPTION} file in a parent directory.
+\item The \code{Encoding} field from an R Project \code{.Rproj} file in a parent directory.
+\item \code{"UTF-8"} as a fallback.
+}
 }

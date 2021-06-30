@@ -92,7 +92,7 @@ test_that("Multi-byte character truncated by parser is ignored", {
 })
 
 test_that("Can read non UTF-8 file", {
-  file <- "dummy_projects/project/metropolis-hastings-rho.R"
+  file <- "dummy_projects/project/cp1252.R"
   read_settings(file)
   expect_null(get_source_expressions(file)$error)
 })
