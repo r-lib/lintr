@@ -252,8 +252,10 @@ Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name_linte
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
   terminal_newline <- TRUE
+  con <- file(file, encoding = encoding)
+  on.exit(close(con))
   lines <- withCallingHandlers({
-    readLines(file, warn = TRUE, encoding = encoding, ...)
+    readLines(con, warn = TRUE, ...)
   },
   warning = function(w) {
     if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {

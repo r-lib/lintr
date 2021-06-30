@@ -119,7 +119,9 @@ digest_content <- function(linters, obj) {
     list(linters, obj$content, is.null(obj$parsed_content))
   } else {
     # assume a filename
-    list(linters, readLines(obj)) # TODO respect encoding
+    con <- file(obj, encoding = settings$encoding)
+    on.exit(close(con))
+    list(linters, readLines(con))
   }
   digest::digest(content, algo = "sha1")
 }

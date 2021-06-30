@@ -1,6 +1,16 @@
 #' Parsed sourced file from a filename
 #'
 #' This object is given as input to each linter
+#'
+#' @details
+#' The file is read in using the `encoding` setting.
+#' This setting found by taking the first valid result from the following locations
+#'
+#' 1. The `encoding` key from the usual lintr configuration settings.
+#' 2. The `Encoding` field from a Package `DESCRIPTION` file in a parent directory.
+#' 3. The `Encoding` field from an R Project `.Rproj` file in a parent directory.
+#' 4. `"UTF-8"` as a fallback.
+#'
 #' @param filename the file to be parsed.
 #' @param lines a character vector of lines.
 #'   If \code{NULL}, then \code{filename} will be read.
@@ -26,7 +36,7 @@
 #'   consisting of 6 elements:
 #'   \itemize{
 #'     \item{`filename` (`character`)}
-#'     \item{`file_lines` (`character`) the [readLines()] output for this file} # TODO document encoding
+#'     \item{`file_lines` (`character`) the [readLines()] output for this file}
 #'     \item{`content` (`character`) for .R files, the same as `file_lines`;
 #'           for .Rmd scripts, this is the extracted R source code (as text)}
 #'     \item{`full_parsed_content` (`data.frame`) as given by
@@ -38,7 +48,7 @@
 #'   }
 #'   }
 #'   \item{error}{A `Lint` object describing any parsing error.}
-#'   \item{lines}{The [readLines()] output for this file.} # TODO document encoding
+#'   \item{lines}{The [readLines()] output for this file.}
 #' @export
 #' @md
 get_source_expressions <- function(filename, lines = NULL) {
