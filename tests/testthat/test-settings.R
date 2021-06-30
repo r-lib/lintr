@@ -129,15 +129,15 @@ test_that("it has a smart default for encodings", {
   read_settings(NULL)
   expect_equal(settings$encoding, "UTF-8")
 
-  ex1 <- file.exists(file.path("dummy_projects", "project", "metropolis-hastings-rho.R"))
-  ex2 <- file.exists(file.path("dummy_packages", "cp1252", "R", "metropolis-hastings-rho.R"))
-  if (!ex1 | !ex2) {
-    stop("Encoding test files do not exist (", ex1, ", ", ex2, "). getwd() = '", getwd(), "'.")
-  }
+  proj_file <- file.path("dummy_projects", "project", "metropolis-hastings-rho.R")
+  pkg_file <- file.path("dummy_packages", "cp1252", "R", "metropolis-hastings-rho.R")
 
-  read_settings(file.path("dummy_projects", "project", "metropolis-hastings-rho.R"))
+  expect_equal(find_default_encoding(proj_file), "ISO8859-1")
+  expect_equal(find_default_encoding(pkg_file), "ISO8859-1")
+
+  read_settings(proj_file)
   expect_equal(settings$encoding, "ISO8859-1")
 
-  read_settings(file.path("dummy_packages", "cp1252", "R", "metropolis-hastings-rho.R"))
+  read_settings(pkg_file)
   expect_equal(settings$encoding, "ISO8859-1")
 })
