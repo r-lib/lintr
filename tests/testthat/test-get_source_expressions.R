@@ -1,7 +1,9 @@
 with_content_to_parse <- function(content, code) {
   f <- tempfile()
-  on.exit(unlink(f))
-  writeLines(content, f)
+  con <- file(f, open = "w", encoding = "UTF-8")
+  on.exit({ unlink(f) })
+  writeLines(content, con)
+  close(con)
   source_expressions <- get_source_expressions(f)
   content_env <- new.env()
   content_env$pc <- lapply(source_expressions[["expressions"]], `[[`, "parsed_content")
