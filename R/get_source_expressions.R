@@ -324,11 +324,14 @@ fix_column_numbers <- function(content) {
     return(NULL)
   }
 
+  # Temporary: Apparently this is no longer necessary.
+  return(content)
+
   text_lengths <- nchar(content$text[content$terminal], "chars")
   byte_lengths <- nchar(content$text[content$terminal], "bytes")
   differences <- byte_lengths - text_lengths
 
-  to_change <- which(differences > 0L)
+  to_change <- which(content$terminal[differences > 0L])
 
   adjusted_col1 <- content$col1
   adjusted_col2 <- content$col2
@@ -337,17 +340,17 @@ fix_column_numbers <- function(content) {
     needs_adjustment <- which(content$line1 == content$line1[i] & content$col1 >= content$col1[i])
 
     for (j in needs_adjustment) {
-      adjusted_col1[j] <-
-        content$col1[j] -
-          sum(differences[
-            content$line1 == content$line1[j] &
-            content$col1 < content$col1[j]])
+      adjusted_col1[j] <- content$col1[j] -
+        sum(differences[
+              content$line1[content$terminal] == content$line1[j] &
+                content$col1[content$terminal] < content$col1[j]
+            ])
 
-      adjusted_col2[j] <-
-        content$col2[j] -
-          sum(differences[
-            content$line1 == content$line1[j] &
-            content$col2 < content$col2[j]])
+      adjusted_col2[j] <- content$col2[j] -
+        sum(differences[
+              content$line1[content$terminal] == content$line1[j] &
+                content$col2[content$terminal] <= content$col2[j]
+            ])
     }
   }
   content$col1 <- adjusted_col1
