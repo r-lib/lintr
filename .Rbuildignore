@@ -6,7 +6,7 @@
 ^travis-tool\.sh$
 ^.*\.gz$
 ^cran-comments\.md$
-^.*\.Rproj$
+^lintr\.Rproj$
 ^\.Rproj\.user$
 ^\.idea$
 ^\.dev$

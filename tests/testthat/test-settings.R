@@ -132,9 +132,6 @@ test_that("it has a smart default for encodings", {
   proj_file <- file.path("dummy_projects", "project", "metropolis-hastings-rho.R")
   pkg_file <- file.path("dummy_packages", "cp1252", "R", "metropolis-hastings-rho.R")
 
-  expect_false("encoding" %in% colnames(read.dcf(find_config(proj_file))))
-  expect_false("encoding" %in% colnames(read.dcf(find_config(pkg_file))))
-
   expect_equal(find_rproj(proj_file), normalizePath(file.path("dummy_projects", "project", "project.Rproj")))
   expect_equal(find_package(pkg_file), normalizePath(file.path("dummy_packages", "cp1252")))
 
