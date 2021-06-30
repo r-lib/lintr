@@ -42,7 +42,7 @@
 #' @export
 #' @md
 get_source_expressions <- function(filename, lines = NULL) {
-  source_file <- srcfile(filename)
+  source_file <- srcfile(filename, encoding = settings$encoding)
 
   # Ensure English locale for terminal newline and zero-length variable warning messages
   old_lang <- set_lang("en")
