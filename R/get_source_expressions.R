@@ -252,7 +252,7 @@ get_source_file <- function(source_file, error = identity) {
     assign("e", e,  envir = parent.frame())
   }
 
-  fix_eq_assigns(fix_column_numbers(fix_tab_indentations(source_file)))
+  fix_eq_assigns(fix_tab_indentations(source_file))
 }
 
 find_line_fun <- function(content) {
@@ -287,44 +287,6 @@ find_column_fun <- function(content) {
     x - newline_locs[line_number]
   }
 }
-
-# Adjust the columns that getParseData reports from bytes to characters.
-fix_column_numbers <- function(content) {
-  if (is.null(content)) {
-    return(NULL)
-  }
-
-  text_lengths <- nchar(content$text[content$terminal], "chars")
-  byte_lengths <- nchar(content$text[content$terminal], "bytes")
-  differences <- byte_lengths - text_lengths
-
-  to_change <- which(differences > 0L)
-
-  adjusted_col1 <- content$col1
-  adjusted_col2 <- content$col2
-
-  for (i in to_change) {
-    needs_adjustment <- which(content$line1 == content$line1[i] & content$col1 >= content$col1[i])
-
-    for (j in needs_adjustment) {
-      adjusted_col1[j] <-
-        content$col1[j] -
-          sum(differences[
-            content$line1 == content$line1[j] &
-            content$col1 < content$col1[j]])
-
-      adjusted_col2[j] <-
-        content$col2[j] -
-          sum(differences[
-            content$line1 == content$line1[j] &
-            content$col2 < content$col2[j]])
-    }
-  }
-  content$col1 <- adjusted_col1
-  content$col2 <- adjusted_col2
-  content
-}
-
 
 # Fix column numbers when there are tabs
 # getParseData() counts 1 tab as a variable number of spaces instead of one:
