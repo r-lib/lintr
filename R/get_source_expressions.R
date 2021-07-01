@@ -87,7 +87,23 @@ get_source_expressions <- function(filename, lines = NULL) {
     # an error that does not use R_ParseErrorMsg
     if (is.na(message_info$line)) {
 
-      if (grepl("invalid multibyte string, element", e$message, fixed = TRUE)) {
+      if (grepl("invalid multibyte character in parser at line", e$message, fixed = TRUE)) {
+        l <- as.integer(re_matches(
+          e$message,
+          rex("invalid multibyte character in parser at line ", capture(name = "line", digits))
+        )$line)
+        # Invalid encoding in source code
+        return(
+          Lint(
+            filename = source_file$filename,
+            line_number = l,
+            column_number = 1L,
+            type = "error",
+            message = "Invalid multibyte character in parser. Is the encoding correct?",
+            line = source_file$lines[[l]]
+          )
+        )
+      } else if (grepl("invalid multibyte string, element", e$message, fixed = TRUE)) {
         # Invalid encoding, will break even re_matches() below, so we need to handle this first.
         return(
           Lint(
