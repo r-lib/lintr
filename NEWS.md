@@ -65,6 +65,8 @@
 * `lint()` now has a new optional argument `text` for supplying a string or lines directly, e.g. if the file is already in memory or linting is being done ad hoc. (#503, @renkun-ken)
 * New `pipe_call_linter()` enforces that all steps of `magrittr` pipelines use explicit calls instead of symbols, e.g. `x %>% mean()` instead of `x %>% mean` (@michaelchirico)
 * `get_source_expressions()` no longer fails if `getParseData()` returns a truncated (invalid) Unicode character as parsed text (#815, #816, @leogama)
+* lintr now supports non-system character Encodings. Auto-detects the correct encoding from .Rproj or DESCRIPTION 
+  files in your project. Override the default in the `encoding` setting of lintr. (#752, #782, @AshesITR)
 
 # lintr 2.0.1
 

@@ -115,6 +115,9 @@ defaults_table <- data.frame(
 knitr::kable(defaults_table)
 ```
 
+Note that the default `encoding` setting depends on the file to be linted.
+If an Encoding is found in a `.Rproj` file or a `DESCRIPTION` file, that encoding overrides the default of UTF-8.
+
 #### Customizing active linters
 
 If you only want to customize some linters, you can use the helper function `with_defaults()`, which will keep all
