@@ -1,7 +1,7 @@
 with_content_to_parse <- function(content, code) {
   f <- tempfile()
   con <- file(f, open = "w", encoding = "UTF-8")
-  on.exit({ unlink(f) })
+  on.exit(unlink(f))
   writeLines(content, con)
   close(con)
   source_expressions <- get_source_expressions(f)

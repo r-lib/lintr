@@ -46,7 +46,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   if (is.null(file)) {
     file <- tempfile()
     con <- base::file(file, encoding = "UTF-8")
-    on.exit({ unlink(file) }, add = TRUE)
+    on.exit(unlink(file), add = TRUE)
     writeLines(content, con = con, sep = "\n")
     close(con)
   }
