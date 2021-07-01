@@ -26,6 +26,10 @@ test_that("it excludes properly", {
   }
 })
 
-# TODO test encoding-specific behaviour
+test_that("it doesn't fail when encountering misspecified encodings", {
+  read_settings(NULL)
+
+  expect_length(parse_exclusions("dummy_projects/project/cp1252.R"), 0L)
+})
 
 options(old_ops)
