@@ -294,8 +294,8 @@ fix_column_numbers <- function(content) {
     return(NULL)
   }
 
-  text_lengths <- nchar(content$text, "chars")
-  byte_lengths <- nchar(content$text, "bytes")
+  text_lengths <- nchar(content$text[content$terminal], "chars")
+  byte_lengths <- nchar(content$text[content$terminal], "bytes")
   differences <- byte_lengths - text_lengths
 
   to_change <- which(differences > 0L)

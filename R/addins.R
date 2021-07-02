@@ -10,7 +10,7 @@ addin_lint <- function() {
     config_linters <- NULL
   } else {
     config <- read.dcf(config_file, all = TRUE)
-    config_linters <- gsub("\n", "", config[["linters"]])
+    config_linters <- config[["linters"]]
   }
   linters <- if (length(config_linters) == 0) {
     message("No configuration found. Using default linters.")
