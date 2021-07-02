@@ -131,14 +131,13 @@ find_default_encoding <- function(filename) {
 get_encoding_from_dcf <- function(file) {
   if (is.null(file)) return(NULL)
 
-  dcf <- tryCatch(
-    read.dcf(file),
+  encodings <- tryCatch(
+    drop(read.dcf(file, "Encoding")),
     error = function(e) NULL,
     warning = function(e) NULL
   )
 
-  if (!is.null(dcf) && nrow(dcf) >= 1L && "Encoding" %in% colnames(dcf)) {
-    encodings <- dcf[, "Encoding"]
+  if (!is.null(encodings)) {
     encodings <- encodings[!is.na(encodings)]
     if (length(encodings) > 0L) {
       return(encodings[1L])
