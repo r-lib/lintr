@@ -6,9 +6,9 @@
 %   R/extraction_operator_linter.R, R/function_left_parentheses.R,
 %   R/implicit_integer_linter.R, R/infix_spaces_linter.R,
 %   R/line_length_linter.R, R/missing_argument_linter.R,
-%   R/missing_package_linter.R, R/namespace_linter.R,
-%   R/no_tab_linter.R, R/object_usage_linter.R, R/open_curly_linter.R,
-%   R/paren_brace_linter.R, R/path_linters.R, R/pipe_continuation_linter.R,
+%   R/missing_package_linter.R, R/namespace_linter.R, R/no_tab_linter.R,
+%   R/object_usage_linter.R, R/open_curly_linter.R, R/paren_brace_linter.R,
+%   R/path_linters.R, R/pipe_call_linter.R, R/pipe_continuation_linter.R,
 %   R/semicolon_terminator_linter.R, R/seq_linter.R, R/single_quotes_linter.R,
 %   R/spaces_inside_linter.R, R/spaces_left_parentheses_linter.R,
 %   R/sprintf_linter.R, R/trailing_blank_lines_linter.R,
@@ -42,6 +42,7 @@
 \alias{paren_brace_linter}
 \alias{absolute_path_linter}
 \alias{nonportable_path_linter}
+\alias{pipe_call_linter}
 \alias{pipe_continuation_linter}
 \alias{semicolon_terminator_linter}
 \alias{seq_linter}
@@ -107,6 +108,8 @@ paren_brace_linter()
 absolute_path_linter(lax = TRUE)
 
 nonportable_path_linter(lax = TRUE)
+
+pipe_call_linter()
 
 pipe_continuation_linter()
 
@@ -260,6 +263,8 @@ parenthesis and an opening curly brace.
 \item \code{absolute_path_linter}: Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
 
 \item \code{nonportable_path_linter}: Check that file.path() is used to construct safe and portable paths.
+
+\item \code{pipe_call_linter}: that forces explicit calls in magrittr pipes
 
 \item \code{pipe_continuation_linter}: Check that each step in a pipeline is on a new line, or
 the entire pipe fits on one line.

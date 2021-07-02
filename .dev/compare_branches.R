@@ -146,7 +146,11 @@ test_encoding <- function(dir) {
   tryCatch({
     lapply(
       list.files(dir, pattern = "(?i)\\.r(?:md)?$", recursive = TRUE, full.names = TRUE),
-      function(x) nchar(readLines(x, warn = FALSE))
+      function(x) {
+        con <- file(x, encoding = lintr:::find_default_encoding(x))
+        on.exit(close(con))
+        nchar(readLines(con, warn = FALSE))
+      }
     )
     FALSE
   }, error = function(x) TRUE)

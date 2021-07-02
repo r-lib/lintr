@@ -113,20 +113,19 @@ test_that(
 })
 
 test_that("lint_package returns early if no package is found", {
-  skip_if(
-    !is.null(suppressWarnings(lint_package(dirname(tempdir())))),
-    "temp directory matches a package structure"
-  )
-  expect_warning(l <- lint_package(tempdir()), "Didn't find any R package", fixed = TRUE)
+
+  temp_pkg <- tempfile("dir")
+  dir.create(temp_pkg)
+  on.exit(unlink(temp_pkg, recursive = TRUE))
+
+  expect_warning(l <- lint_package(temp_pkg), "Didn't find any R package", fixed = TRUE)
   expect_null(l)
 
-  skip_if(
-    !is.null(suppressWarnings(lint_package("."))),
-    "package test directory matches a package structure"
-  )
   # ignore a folder named DESCRIPTION, #702
+  file.copy(file.path("dummy_packages", "desc_dir_pkg"), temp_pkg, recursive = TRUE)
+
   expect_warning(
-    lint_package(file.path("dummy_packages", "desc_dir_pkg", "DESCRIPTION", "R")),
+    lint_package(file.path(temp_pkg, "desc_dir_pkg", "DESCRIPTION", "R")),
     "Didn't find any R package", fixed = TRUE
   )
 })

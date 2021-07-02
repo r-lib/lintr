@@ -1,7 +1,9 @@
 with_content_to_parse <- function(content, code) {
   f <- tempfile()
+  con <- file(f, open = "w", encoding = "UTF-8")
   on.exit(unlink(f))
-  writeLines(content, f)
+  writeLines(content, con)
+  close(con)
   source_expressions <- get_source_expressions(f)
   content_env <- new.env()
   content_env$pc <- lapply(source_expressions[["expressions"]], `[[`, "parsed_content")
@@ -89,4 +91,34 @@ test_that("Multi-byte character truncated by parser is ignored", {
     expect_equal(error$message, "unexpected input")
     expect_equal(error$column_number, 8L)
   })
+})
+
+test_that("Can read non UTF-8 file", {
+  file <- "dummy_projects/project/cp1252.R"
+  read_settings(file)
+  expect_null(get_source_expressions(file)$error)
+})
+
+test_that("Warns if encoding is misspecified", {
+  file <- "dummy_projects/project/cp1252.R"
+  read_settings(NULL)
+  the_lint <- get_source_expressions(file)$error
+  expect_s3_class(the_lint, "lint")
+
+  msg <- "Invalid multibyte character in parser. Is the encoding correct?"
+  if (.Platform$OS.type == "windows") {
+    # Windows parser throws a different error message because the source code is converted to native encoding
+    # This results in line 4 becoming <fc> <- 42 before the parser sees it.
+    msg <- "unexpected '<'"
+  }
+
+  expect_equal(the_lint$message, msg)
+  expect_equal(the_lint$line_number, 4L)
+
+  file <- "dummy_projects/project/cp1252_parseable.R"
+  read_settings(NULL)
+  the_lint <- get_source_expressions(file)$error
+  expect_s3_class(the_lint, "lint")
+  expect_equal(the_lint$message, "Invalid multibyte string. Is the encoding correct?")
+  expect_equal(the_lint$line_number, 1L)
 })
