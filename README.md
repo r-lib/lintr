@@ -24,15 +24,11 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 ## Available linters ##
 
 * `Syntax errors`: reported by [parse](https://www.rdocumentation.org/packages/base/versions/3.4.0/topics/parse).
-* `object_usage_linter`: check that closures have the proper usage using
-  [codetools::checkUsage()](https://www.rdocumentation.org/packages/codetools/versions/0.2-15/topics/checkUsage).  Note this runs
-  [base::eval()](https://www.rdocumentation.org/packages/base/versions/3.4.0/topics/eval) on the code, so do not use with untrusted code.
+* `Misencoded files`: check that files are read using the correct encoding.
 * `absolute_path_linter`: check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
-* `nonportable_path_linter`: check that file.path() is used to construct safe and portable paths.
-* `pipe_continuation_linter`: Check that each step in a pipeline is on a new
-  line, or the entire pipe fits on one line.
 * `assignment_linter`: check that `<-` is always used for assignment
 * `assignment_spaces_linter`: checks that assignments only have one space before and after
+* `backport_linter`: checks for usage of unavailable functions. Not reliable for testing r-devel dependencies.
 * `camel_case_linter`: check that objects are not in camelCase.
 * `closed_curly_linter`: check that closed curly braces should always be on their
   own line unless they are followed by an else.
@@ -54,13 +50,20 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
   `library()`, `require()`, `loadNamespace()`, and `requireNamespace()` are missing.
 * `namespace_linter`: check if there are missing packages and symbols in namespace calls with `::` and `:::`.
 * `no_tab_linter`: check that only spaces are used, never tabs.
+* `nonportable_path_linter`: check that file.path() is used to construct safe and portable paths.
 * `object_length_linter`: check that function and variable names are not more than `length` characters.
 * `object_name_linter`: check that object names conform to a single naming
   style, e.g. CamelCase, camelCase, snake_case, SNAKE_CASE, dotted.case,
   lowercase, or UPPERCASE.
+* `object_usage_linter`: check that closures have the proper usage using
+  [codetools::checkUsage()](https://www.rdocumentation.org/packages/codetools/versions/0.2-15/topics/checkUsage).  Note this runs
+  [base::eval()](https://www.rdocumentation.org/packages/base/versions/3.4.0/topics/eval) on the code, so do not use with untrusted code.
 * `open_curly_linter`: check that opening curly braces are never on their own
   line and are always followed by a newline.
 * `paren_brace_linter`: check that there is a space between right parenthesis and an opening curly brace.
+* `pipe_call_linter`: force explicit calls in magrittr pipes.
+* `pipe_continuation_linter`: Check that each step in a pipeline is on a new
+  line, or the entire pipe fits on one line.
 * `semicolon_terminator_linter`: check that no semicolons terminate statements.
 * `seq_linter`: check for `1:length(...)`, `1:nrow(...)`, `1:ncol(...)`,
   `1:NROW(...)`, and `1:NCOL(...)` expressions. These often cause bugs when the
