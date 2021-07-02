@@ -124,8 +124,6 @@ find_default_encoding <- function(filename) {
     # Let DESCRIPTION file take precedence if .Rproj file is further up the directory hierarchy
     return(pkg_enc %||% rproj_enc)
   }
-
-  NULL
 }
 
 get_encoding_from_dcf <- function(file) {
