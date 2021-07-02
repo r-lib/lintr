@@ -38,7 +38,7 @@ imported_s3_generics <- function(ns_imports) {
 is_s3_generic <- function(fun) {
   if (getRversion() >= "3.5.0") {
     # Available in 3.4.0, but bugged there in multiple ways that cause errors
-    # throughout may base functions, e.g. `-`, `as.null.default`, `dontCheck`
+    # throughout many base functions, e.g. `-`, `as.null.default`, `dontCheck`
     utils::isS3stdGeneric(fun)
   } else {
     is.function(fun) # nocov

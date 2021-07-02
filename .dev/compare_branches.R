@@ -147,7 +147,7 @@ test_encoding <- function(dir) {
     lapply(
       list.files(dir, pattern = "(?i)\\.r(?:md)?$", recursive = TRUE, full.names = TRUE),
       function(x) {
-        con <- file(x, encoding = lintr:::find_default_encoding(x))
+        con <- file(x, encoding = lintr:::find_default_encoding(x) %||% "UTF-8")
         on.exit(close(con))
         nchar(readLines(con, warn = FALSE))
       }
