@@ -110,6 +110,7 @@ The config file (default file name: `.lintr`) is in [Debian Control Field Format
 - `exclude` - a regex pattern for lines to exclude from linting.  Default is "# nolint"
 - `exclude_start` - a regex pattern to start exclusion range. Default is "# nolint start"
 - `exclude_end` - a regex pattern to end exclusion range. Default is "# nolint end"
+- `encoding` - the encoding used for source files. Default inferred from .Rproj or DESCRIPTION files, fallback to UTF-8
 
 
 ### .lintr File Example
@@ -120,6 +121,7 @@ Below is an example .lintr file that uses:
 - Excludes a couple of files
 - Disables a specific linter, and; 
 - Sets different default exclude regexes
+- Specifies the file encoding to be ISO-8859-1 (Latin 1)
 
 ```
 linters: with_defaults(
@@ -130,6 +132,7 @@ exclusions: list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "tests
 exclude: "# Exclude Linting"
 exclude_start: "# Begin Exclude Linting"
 exclude_end: "# End Exclude Linting"
+encoding: "ISO-8859-1"
 ```
 
 With the following command, you can create a configuration file for `lintr` that ignores all linters that show at least one error:

@@ -250,7 +250,7 @@ Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name_linte
   structure(fun, class = "linter", name = name)
 }
 
-read_lines <- function(file, ...) {
+read_lines <- function(file, encoding = settings$encoding, ...) {
   terminal_newline <- TRUE
   lines <- withCallingHandlers({
     readLines(file, warn = TRUE, ...)
@@ -261,6 +261,9 @@ read_lines <- function(file, ...) {
       invokeRestart("muffleWarning")
     }
   })
+  lines_conv <- iconv(lines, from = encoding, to = "UTF-8")
+  lines[!is.na(lines_conv)] <- lines_conv[!is.na(lines_conv)]
+  Encoding(lines) <- "UTF-8"
   attr(lines, "terminal_newline") <- terminal_newline
   lines
 }

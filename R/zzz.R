@@ -200,6 +200,7 @@ settings <- NULL
 
   default_settings <<- list(
     linters = default_linters,
+    encoding = "UTF-8",
     exclude = rex::rex("#", any_spaces, "nolint"),
     exclude_start = rex::rex("#", any_spaces, "nolint start"),
     exclude_end = rex::rex("#", any_spaces, "nolint end"),

@@ -1,6 +1,16 @@
 #' Parsed sourced file from a filename
 #'
 #' This object is given as input to each linter
+#'
+#' @details
+#' The file is read in using the `encoding` setting.
+#' This setting found by taking the first valid result from the following locations
+#'
+#' 1. The `encoding` key from the usual lintr configuration settings.
+#' 2. The `Encoding` field from a Package `DESCRIPTION` file in a parent directory.
+#' 3. The `Encoding` field from an R Project `.Rproj` file in a parent directory.
+#' 4. `"UTF-8"` as a fallback.
+#'
 #' @param filename the file to be parsed.
 #' @param lines a character vector of lines.
 #'   If \code{NULL}, then \code{filename} will be read.
@@ -42,7 +52,7 @@
 #' @export
 #' @md
 get_source_expressions <- function(filename, lines = NULL) {
-  source_file <- srcfile(filename)
+  source_file <- srcfile(filename, encoding = settings$encoding)
 
   # Ensure English locale for terminal newline and zero-length variable warning messages
   old_lang <- set_lang("en")
@@ -76,6 +86,36 @@ get_source_expressions <- function(filename, lines = NULL) {
 
     # an error that does not use R_ParseErrorMsg
     if (is.na(message_info$line)) {
+
+      if (grepl("invalid multibyte character in parser at line", e$message, fixed = TRUE)) {
+        l <- as.integer(re_matches(
+          e$message,
+          rex("invalid multibyte character in parser at line ", capture(name = "line", digits))
+        )$line)
+        # Invalid encoding in source code
+        return(
+          Lint(
+            filename = source_file$filename,
+            line_number = l,
+            column_number = 1L,
+            type = "error",
+            message = "Invalid multibyte character in parser. Is the encoding correct?",
+            line = source_file$lines[[l]]
+          )
+        )
+      } else if (grepl("invalid multibyte string, element", e$message, fixed = TRUE)) {
+        # Invalid encoding, will break even re_matches() below, so we need to handle this first.
+        return(
+          Lint(
+            filename = source_file$filename,
+            line_number = 1L,
+            column_number = 1L,
+            type = "error",
+            message = "Invalid multibyte string. Is the encoding correct?",
+            line = ""
+          )
+        )
+      }
 
       message_info <- re_matches(e$message,
         rex(single_quotes, capture(name = "name", anything), single_quotes,
@@ -185,25 +225,30 @@ get_source_expressions <- function(filename, lines = NULL) {
   parsed_content <- get_source_file(source_file, error = lint_error)
   tree <- generate_tree(parsed_content)
 
-  expressions <- lapply(
-    X = top_level_expressions(parsed_content),
-    FUN = get_single_source_expression,
-    parsed_content,
-    source_file,
-    filename,
-    tree
-  )
-
-  # add global expression
-  expressions[[length(expressions) + 1L]] <-
-    list(
-      filename = filename,
-      file_lines = source_file$lines,
-      content = source_file$lines,
-      full_parsed_content = parsed_content,
-      full_xml_parsed_content = safe_parse_to_xml(parsed_content),
-      terminal_newline = terminal_newline
+  if (inherits(e, "lint") && !nzchar(e$line)) {
+    # Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
+    expressions <- list()
+  } else {
+    expressions <- lapply(
+      X = top_level_expressions(parsed_content),
+      FUN = get_single_source_expression,
+      parsed_content,
+      source_file,
+      filename,
+      tree
     )
+
+    # add global expression
+    expressions[[length(expressions) + 1L]] <-
+      list(
+        filename = filename,
+        file_lines = source_file$lines,
+        content = source_file$lines,
+        full_parsed_content = parsed_content,
+        full_xml_parsed_content = safe_parse_to_xml(parsed_content),
+        terminal_newline = terminal_newline
+      )
+  }
 
   list(expressions = expressions, error = e, lines = source_file$lines)
 }
@@ -235,6 +280,7 @@ get_single_source_expression <- function(loc,
 }
 
 get_source_file <- function(source_file, error = identity) {
+  parse_error <- FALSE
 
   e <- tryCatch(
     source_file$parsed_content <- parse(text = source_file$content, srcfile = source_file, keep.source = TRUE),
@@ -250,9 +296,22 @@ get_source_file <- function(source_file, error = identity) {
 
   if (inherits(e, "error") || inherits(e, "lint")) {
     assign("e", e,  envir = parent.frame())
+    parse_error <- TRUE
   }
 
-  fix_eq_assigns(fix_column_numbers(fix_tab_indentations(source_file)))
+  # Triggers an error if the lines contain invalid characters.
+  e <- tryCatch(
+    nchar(source_file$content, type = "chars"),
+    error = error
+  )
+
+  if (inherits(e, "error") || inherits(e, "lint")) {
+    # Let parse errors take precedence over encoding problems
+    if (!parse_error) assign("e", e,  envir = parent.frame())
+    return() # parsed_content is unreliable if encoding is invalid
+  }
+
+  fix_eq_assigns(fix_tab_indentations(source_file))
 }
 
 find_line_fun <- function(content) {
@@ -287,44 +346,6 @@ find_column_fun <- function(content) {
     x - newline_locs[line_number]
   }
 }
-
-# Adjust the columns that getParseData reports from bytes to characters.
-fix_column_numbers <- function(content) {
-  if (is.null(content)) {
-    return(NULL)
-  }
-
-  text_lengths <- nchar(content$text[content$terminal], "chars")
-  byte_lengths <- nchar(content$text[content$terminal], "bytes")
-  differences <- byte_lengths - text_lengths
-
-  to_change <- which(differences > 0L)
-
-  adjusted_col1 <- content$col1
-  adjusted_col2 <- content$col2
-
-  for (i in to_change) {
-    needs_adjustment <- which(content$line1 == content$line1[i] & content$col1 >= content$col1[i])
-
-    for (j in needs_adjustment) {
-      adjusted_col1[j] <-
-        content$col1[j] -
-          sum(differences[
-            content$line1 == content$line1[j] &
-            content$col1 < content$col1[j]])
-
-      adjusted_col2[j] <-
-        content$col2[j] -
-          sum(differences[
-            content$line1 == content$line1[j] &
-            content$col2 < content$col2[j]])
-    }
-  }
-  content$col1 <- adjusted_col1
-  content$col2 <- adjusted_col2
-  content
-}
-
 
 # Fix column numbers when there are tabs
 # getParseData() counts 1 tab as a variable number of spaces instead of one:

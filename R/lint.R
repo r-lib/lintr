@@ -56,8 +56,10 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 
   if (inline_data && no_filename) {
     filename <- tempfile()
+    con <- file(filename, open = "w", encoding = settings$encoding)
     on.exit(unlink(filename), add = TRUE)
-    writeLines(text = text, con = filename, sep = "\n")
+    writeLines(text = text, con = con, sep = "\n")
+    close(con)
   }
 
   lines <- if (is.null(text)) {
@@ -374,6 +376,23 @@ find_package <- function(path) {
   }
 
   path
+}
+
+find_rproj_at <- function(path) {
+  head(list.files(path = path, pattern = "\\.Rproj$", full.names = TRUE), 1L)
+}
+
+find_rproj <- function(path) {
+  path <- normalizePath(path, mustWork = FALSE)
+
+  while (length(res <- find_rproj_at(path)) == 0L) {
+    path <- dirname(path)
+    if (is_root(path)) {
+      return(NULL)
+    }
+  }
+
+  res
 }
 
 is_root <- function(path) {

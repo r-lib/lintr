@@ -17,6 +17,11 @@ read_settings <- function(filename) {
   clear_settings()
 
   config_file <- find_config(filename)
+  default_encoding <- find_default_encoding(filename)
+  if (!is.null(default_encoding)) {
+    # Locally override the default for encoding if we found a smart default
+    default_settings[["encoding"]] <- default_encoding
+  }
 
   if (!is.null(config_file)) {
     f <- function(e) {
@@ -95,6 +100,44 @@ find_config <- function(filename) {
   linter_config <- file.path(home_dir, linter_file)
   if (isTRUE(file.exists(linter_config))) {
     return(linter_config)
+  }
+
+  NULL
+}
+
+find_default_encoding <- function(filename) {
+  if (is.null(filename)) {
+    return(NULL)
+  }
+
+  pkg_path <- find_package(filename)
+  rproj_file <- find_rproj(filename)
+  pkg_enc <- get_encoding_from_dcf(file.path(pkg_path, "DESCRIPTION"))
+  rproj_enc <- get_encoding_from_dcf(rproj_file)
+
+  if (!is.null(rproj_file) && !is.null(pkg_path) && startsWith(rproj_file, pkg_path)) {
+    # Check precedence via directory hierarchy.
+    # Both paths are normalized so checking if rproj_file is within pkg_path is sufficient.
+    # Let Rproj file take precedence
+    return(rproj_enc %||% pkg_enc)
+  } else {
+    # Let DESCRIPTION file take precedence if .Rproj file is further up the directory hierarchy
+    return(pkg_enc %||% rproj_enc)
+  }
+}
+
+get_encoding_from_dcf <- function(file) {
+  if (is.null(file)) return(NULL)
+
+  encodings <- tryCatch(
+    unname(drop(read.dcf(file, "Encoding"))),
+    error = function(e) NULL,
+    warning = function(e) NULL
+  )
+
+  encodings <- encodings[!is.na(encodings)]
+  if (length(encodings) > 0L) {
+    return(encodings[1L])
   }
 
   NULL

@@ -6,7 +6,7 @@
 ^travis-tool\.sh$
 ^.*\.gz$
 ^cran-comments\.md$
-^.*\.Rproj$
+^lintr\.Rproj$
 ^\.Rproj\.user$
 ^\.idea$
 ^\.dev$
@@ -24,3 +24,4 @@
 ^bench$
 ^tests/testthat/dummy_packages/package/[.]Rbuildignore$
 ^tests/testthat/dummy_packages/package/[.]lintr$
+^tests/testthat/dummy_packages/cp1252/[.]Rbuildignore$

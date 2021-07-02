@@ -3,6 +3,7 @@ linters: with_defaults(
   )
 exclusions: list(
   "tests/testthat/dummy_packages",
+  "tests/testthat/dummy_projects",
   "tests/testthat/knitr_formats",
   "tests/testthat/knitr_malformed",
   "inst",
