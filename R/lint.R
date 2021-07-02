@@ -379,7 +379,7 @@ find_package <- function(path) {
 }
 
 find_rproj_at <- function(path) {
-  head(list.files(path = path, pattern = "\\.Rproj$"), 1L)
+  head(list.files(path = path, pattern = "\\.Rproj$", full.names = TRUE), 1L)
 }
 
 find_rproj <- function(path) {
