@@ -227,7 +227,7 @@ get_source_expressions <- function(filename, lines = NULL) {
 
   if (inherits(e, "lint") && !nzchar(e$line)) {
     # Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
-    expressions <- NULL
+    expressions <- list()
   } else {
     expressions <- lapply(
       X = top_level_expressions(parsed_content),
