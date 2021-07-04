@@ -288,7 +288,7 @@ You can also configure what linters are used. e.g. using a different line length
 
 ### Vim - syntastic
 lintr can be integrated with
-[syntastic](https://github.com/scrooloose/syntastic) for on the fly linting.
+[syntastic](https://github.com/vim-syntastic/syntastic) for on the fly linting.
 
 ![Vim Example](http://i.imgur.com/fR6Os5M.gif "Vim Example")
 
@@ -331,14 +331,14 @@ Note that configuration through `.lintr` files are not supported.
 
 ### Sublime Text 3 ###
 lintr can be integrated with
-[Sublime Linter](https://github.com/SublimeLinter/SublimeLinter3) for on the fly linting.
+[Sublime Linter](https://github.com/SublimeLinter/SublimeLinter) for on the fly linting.
 
 ![Sublime Example](http://i.imgur.com/3pua2yz.gif "Sublime Example")
 
 #### Installation ####
 Simply install `sublimeLinter-contrib-lintr` using [Package Control](https://packagecontrol.io/).
 
-For more information see [Sublime Linter Docs](http://sublimelinter.readthedocs.org/en/latest/installation.html#installing-via-pc)
+For more information see [Sublime Linter Docs](http://sublimelinter.readthedocs.io/en/latest/installation.html#installing-via-pc)
 
 #### Configuration ####
 You can also configure what linters are used. e.g. disabling the assignment linter and using a different line length cutoff.
@@ -355,7 +355,7 @@ In the SublimeLinter User Settings
 
 ### Atom ###
 lintr can be integrated with
-[Linter](https://github.com/atom-community/linter) for on the fly linting.
+[Linter](https://github.com/steelbrain/linter) for on the fly linting.
 
 ![Atom Example](http://i.imgur.com/E1Isi4T.png "Atom Example")
 
