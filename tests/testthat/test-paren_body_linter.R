@@ -8,6 +8,7 @@ testthat::test_that("paren_body_linter returns correct lints", {
   expect_lint("if (TRUE)test", msg, linter)
   expect_lint("while (TRUE)test", msg, linter)
   expect_lint("for (i in seq_along(1))test", msg, linter)
+  expect_lint("\\()test", msg, linter)
 
   # A space after the closing parenthesis does not prompt a lint
   expect_lint("function() test", NULL, linter)

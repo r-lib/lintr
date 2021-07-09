@@ -14,6 +14,8 @@ paren_body_linter <- function() {
       "preceding-sibling::IF/@line1",
       "|",
       "preceding-sibling::WHILE/@line1",
+      "|",
+      "preceding-sibling::OP-LAMBDA/@line1",
       "and",
       "@col1 = preceding-sibling::OP-RIGHT-PAREN/@col1 + 1",
       "]",
