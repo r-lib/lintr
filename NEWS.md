@@ -68,6 +68,7 @@
 * `get_source_expressions()` no longer fails if `getParseData()` returns a truncated (invalid) Unicode character as parsed text (#815, #816, @leogama)
 * lintr now supports non-system character Encodings. Auto-detects the correct encoding from .Rproj or DESCRIPTION 
   files in your project. Override the default in the `encoding` setting of lintr. (#752, #782, @AshesITR)
+* New `paren_body_linter()` (#809, #830, @kpagacz)
 
 # lintr 2.0.1
 
