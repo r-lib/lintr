@@ -261,9 +261,7 @@ load packages used in user code so it could potentially change the global state.
 \item \code{open_curly_linter}: Check that opening curly braces are never on their own
 line and are always followed by a newline.
 
-\item \code{paren_body_linter}: check that there is a space between the
-right parenthesis and the function body when no braces are used
-to define a function.
+\item \code{paren_body_linter}: check that there is a space between right parenthesis and a body expression.
 
 \item \code{paren_brace_linter}: check that there is a space between right
 parenthesis and an opening curly brace.
