@@ -45,7 +45,7 @@ testthat::test_that("paren_body_linter returns correct lints", {
 
   # No space after the closing parenthesis of an anonymous function prompts a lint
   testthat::skip_if(
-    compareVersion(paste(R.version$major, R.version$minor, sep = "."), "4.1.0") < 0,
+    getRversion() < "4.1",
     message = "Not run on R version < 4.1.0"
   )
   expect_lint("\\()test", msg, linter)
