@@ -60,6 +60,7 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
   [base::eval()](https://rdrr.io/r/base/eval.html) on the code, so do not use with untrusted code.
 * `open_curly_linter`: check that opening curly braces are never on their own
   line and are always followed by a newline.
+* `paren_body_linter`: check that there is a space between right parenthesis and a body expression.
 * `paren_brace_linter`: check that there is a space between right parenthesis and an opening curly brace.
 * `pipe_call_linter`: force explicit calls in magrittr pipes.
 * `pipe_continuation_linter`: Check that each step in a pipeline is on a new
