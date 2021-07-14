@@ -1,6 +1,4 @@
-#' @describeIn linters check that there is a space between the
-#' right parenthesis and the function body when no braces are used
-#' to define a function.
+#' @describeIn linters check that there is a space between right parenthesis and a body expression.
 #'
 #' @export
 paren_body_linter <- function() {

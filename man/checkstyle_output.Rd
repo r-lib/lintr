@@ -13,5 +13,5 @@ checkstyle_output(lints, filename = "lintr_results.xml")
 }
 \description{
 Generate a report of the linting results using the
-\href{https://checkstyle.sourceforge.io/}{Checkstyle} XML format.
+\href{http://checkstyle.sourceforge.net/}{Checkstyle} XML format.
 }
