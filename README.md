@@ -368,18 +368,18 @@ apm install linter-lintr
 
 For more information and bug reports see [Atom linter-lintr](https://github.com/AtomLinter/linter-lintr).
 
-### VS Code ###
+### Visual Studio Code ###
 
-In VS Code, [vscode-R](https://marketplace.visualstudio.com/items?itemName=Ikuyadeu.r) presents the
+In Visual Studio Code, [vscode-R](https://marketplace.visualstudio.com/items?itemName=Ikuyadeu.r) presents the
 lintr diagnostics from [languageserver](https://github.com/REditorSupport/languageserver).
 
-![VS Code Example](https://user-images.githubusercontent.com/4662568/75946154-3e095500-5ed7-11ea-88e4-2afe09284362.png "VSCode Example")
+![VS Code Example](https://user-images.githubusercontent.com/4662568/75946154-3e095500-5ed7-11ea-88e4-2afe09284362.png "VS Code Example")
 
 #### Installation ####
 
-Installing `languageserver` package in R and `vscode-r-lsp` extension in VSCode will enable lintr in VSCode by default or run the following command lines:
+Installing `languageserver` package in R and `vscode-R` extension in VS Code will enable lintr in VS Code by default or run the following command lines:
 
 ```bash
 Rscript -e 'install.packages("languageserver")'
-code --install-extension REditorSupport.r-lsp
+code --install-extension ikuyadeu.r
 ```
