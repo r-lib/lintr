@@ -368,12 +368,12 @@ apm install linter-lintr
 
 For more information and bug reports see [Atom linter-lintr](https://github.com/AtomLinter/linter-lintr).
 
-### VSCode ###
+### VS Code ###
 
-In VSCode, [vscode-r-lsp](https://marketplace.visualstudio.com/items?itemName=REditorSupport.r-lsp) presents the
+In VS Code, [vscode-R](https://marketplace.visualstudio.com/items?itemName=Ikuyadeu.r) presents the
 lintr diagnostics from [languageserver](https://github.com/REditorSupport/languageserver).
 
-![VSCode Example](https://user-images.githubusercontent.com/4662568/75946154-3e095500-5ed7-11ea-88e4-2afe09284362.png "VSCode Example")
+![VS Code Example](https://user-images.githubusercontent.com/4662568/75946154-3e095500-5ed7-11ea-88e4-2afe09284362.png "VSCode Example")
 
 #### Installation ####
 
