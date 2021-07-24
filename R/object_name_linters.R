@@ -112,7 +112,7 @@ check_style <- function(nms, style, generics = character()) {
 strip_names <- function(x) {
   x <- re_substitutes(x, rex(start, some_of(".", quote, "`", "%", "$", "@")), "")
   x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%", "$", "@"), end), "")
-  x <- re_substitutes(x, rex(some_of("<-"), "."), ".")
+  x <- re_substitutes(x, rex("<-", "."), ".")
   x
 }
 
