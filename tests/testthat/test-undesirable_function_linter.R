@@ -23,3 +23,11 @@ test_that("it's possible to NOT lint symbols", {
   expect_lint("dir <- 'path/to/a/directory'", NULL, linter)
   expect_lint("lapply(x, log10)", NULL, linter)
 })
+
+test_that("undesirable_function_linter doesn't lint library and require calls", {
+  linter <- undesirable_function_linter(fun = c("foo" = NA))
+  expect_lint("test::foo()", "undesirable", linter)
+  expect_lint("foo::test()", NULL, linter)
+  expect_lint("library(foo)", NULL, linter)
+  expect_lint("require(foo)", NULL, linter)
+})

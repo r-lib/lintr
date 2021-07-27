@@ -70,6 +70,7 @@
   files in your project. Override the default in the `encoding` setting of lintr. (#752, #782, @AshesITR)
 * New default linter `paren_body_linter()` checks that there is a space between right parenthesis and a body 
   expression. (#809, #830, @kpagacz)
+* `undesirable_function_linter` no longer lints `library` and `require` calls attaching a package with an undesired name, e.g. `library(foo)` (#814, @kpagacz)
 
 # lintr 2.0.1
 
