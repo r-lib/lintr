@@ -273,7 +273,8 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = list("r
 #' }
 #' @export
 lint_package <- function(path = ".", relative_path = TRUE, ...,
-                         exclusions = list("R/RcppExports.R"), parse_settings = TRUE) {
+                         exclusions = list("R/RcppExports.R"), parse_settings = TRUE,
+                         path_prefix = "") {
   pkg_path <- find_package(path)
 
   if (is.null(pkg_path)) {
@@ -300,6 +301,9 @@ lint_package <- function(path = ".", relative_path = TRUE, ...,
       lints,
       function(x) {
         x$filename <- re_substitutes(x$filename, rex(path, one_of("/", "\\")), "")
+        if (nzchar(path_prefix)) {
+          x$filename <- file.path(path_prefix, x$filename)
+        }
         x
       }
     )
