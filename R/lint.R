@@ -259,6 +259,8 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = list("r
 #' Apply one or more linters to all of the R files in a package.
 #' @param path the path to the base directory of the package, if \code{NULL},
 #' it will be searched in the parent directories of the current directory.
+#' @param path_prefix a prefix to add to the path of any file found, useful for
+#' packages in subdirectories on github actions.
 #' @inherit lint_file return
 #' @inheritParams lint_dir
 #' @examples
