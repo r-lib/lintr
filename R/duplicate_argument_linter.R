@@ -8,9 +8,18 @@ duplicate_argument_linter <- function(except = character()) {
 
     xml <- source_file$full_xml_parsed_content
 
-    xpath <- "//expr[expr[SYMBOL_FUNCTION_CALL] and EQ_SUB]"
+    xpath <- "//expr[EQ_SUB]"
 
     calls <- xml2::xml_find_all(xml, xpath)
+
+    if (length(except)) {
+      calls_names <- xml2::xml_find_first(calls, "expr[1][count(*)=1]/*[1]")
+      calls_text <- vapply(
+        parse(text = xml2::xml_text(calls_names)),
+        as.character, character(1L)
+      )
+      calls <- calls[!(calls_text %in% except)]
+    }
 
     result <- lapply(calls, function(call) {
       args <- xml2::xml_find_all(call, "EQ_SUB/preceding-sibling::*[1]")
