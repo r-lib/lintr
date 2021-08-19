@@ -107,7 +107,7 @@ Advanced users may run `lintr` during [continuous-integration](#continuous-integ
 ## Project Configuration ##
 
 Lintr supports per-project configuration of the following fields.
-The config file (default file name: `.lintr`) is in [Debian Control Field Format](https://www.debian.org/doc/debian-policy/#document-ch-controlfields).
+The config file (default file name: `.lintr`) is in [Debian Control Field Format](https://www.debian.org/doc/debian-policy/ch-controlfields.html).
 
 - `linters` - see `?with_defaults` for example of specifying only a few non-default linters.
 - `exclusions` - a list of filenames to exclude from linting.  You can use a
