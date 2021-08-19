@@ -68,4 +68,8 @@ test_that("returns the correct linting", {
     list(var = 1, var = 2)",
     NULL,
     duplicate_argument_linter(except = "list"))
+
+  expect_lint("function(arg = 1, arg = 1) {}",
+    list(message = rex("Repeated formal argument 'arg'.")),
+    duplicate_argument_linter())
 })
