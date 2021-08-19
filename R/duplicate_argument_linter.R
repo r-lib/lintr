@@ -31,8 +31,10 @@ duplicate_argument_linter <- function(except = character()) {
       dup_args <- args[is_dup_arg]
       if (length(dup_args)) {
         line1 <- as.integer(xml2::xml_attr(dup_args, "line1"))
+        line2 <- as.integer(xml2::xml_attr(dup_args, "line2"))
         col1 <- as.integer(xml2::xml_attr(dup_args, "col1"))
         col2 <- as.integer(xml2::xml_attr(dup_args, "col2"))
+        col2[line2 > line1] <- nchar(source_file$file_lines[line1[line2 > line1]])
         lapply(seq_along(dup_args), function(i) {
           Lint(
             filename = source_file$filename,
