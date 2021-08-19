@@ -115,6 +115,28 @@ get_source_expressions <- function(filename, lines = NULL) {
             line = ""
           )
         )
+      } else if (grepl("repeated formal argument", e$message, fixed = TRUE)) {
+        matches <- re_matches(
+          e$message,
+          rex("repeated formal argument '",
+            capture(name = "symbol", anything),
+            "' on line ",
+            capture(name = "line", digits)
+          )
+        )
+        sym <- matches$symbol
+        l <- as.integer(matches$line)
+        # Repeated formal argument 'sym' on line l
+        return(
+          Lint(
+            filename = source_file$filename,
+            line_number = l,
+            column_number = 1L,
+            type = "error",
+            message = sprintf("Repeated formal argument '%s'.", sym),
+            line = source_file$lines[[l]]
+          )
+        )
       }
 
       message_info <- re_matches(e$message,
