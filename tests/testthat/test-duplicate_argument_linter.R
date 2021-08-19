@@ -62,4 +62,10 @@ test_that("returns the correct linting", {
     )",
     NULL,
     duplicate_argument_linter(except = "list"))
+
+  expect_lint(
+    "(function(x, y) x + y)(x = 1)
+    list(var = 1, var = 2)",
+    NULL,
+    duplicate_argument_linter(except = "list"))
 })
