@@ -57,6 +57,7 @@ Collate:
     'declared_functions.R'
     'object_name_linters.R'
     'deprecated.R'
+    'duplicate_argument_linter.R'
     'equals_na_linter.R'
     'exclude.R'
     'expect_lint.R'
