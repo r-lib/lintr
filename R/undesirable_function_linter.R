@@ -21,9 +21,9 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     xpath <- paste0(
       "//",
       tokens,
-      "[",
+      "[(",
       paste("text()='", names(fun), "'", sep = "", collapse = " or "),
-      " and ",
+      ") and ",
       "count(parent::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text()='library' or text()='require'])=0",
       "]",
       collapse = " | "
