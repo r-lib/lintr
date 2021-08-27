@@ -30,4 +30,10 @@ test_that("undesirable_function_linter doesn't lint library and require calls", 
   expect_lint("foo::test()", NULL, linter)
   expect_lint("library(foo)", NULL, linter)
   expect_lint("require(foo)", NULL, linter)
+
+  linter <- undesirable_function_linter(fun = c("foo" = NA, "bar" = NA))
+  expect_lint("library(foo)", NULL, linter)
+
+  linter <- undesirable_function_linter(fun = c("foo" = NA, "bar" = NA), symbol_is_undesirable = FALSE)
+  expect_lint("library(foo)", NULL, linter)
 })
