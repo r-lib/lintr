@@ -70,6 +70,8 @@
   files in your project. Override the default in the `encoding` setting of lintr. (#752, #782, @AshesITR)
 * New default linter `paren_body_linter()` checks that there is a space between right parenthesis and a body 
   expression. (#809, #830, @kpagacz)
+* New linter `duplicate_argument_linter()` checks that there are no duplicate arguments supplied to
+function calls. (#850, #851, @renkun-ken)
 
 # lintr 2.0.1
 
