@@ -5,8 +5,12 @@ unneeded_concatenation_linter <- function() {
   Linter(function(source_file) {
     tokens <- source_file[["parsed_content"]] <-
       filter_out_token_type(source_file[["parsed_content"]], "expr")
-    msg_empty <- "Unneeded concatenation without arguments. Replace the \"c\" call by NULL or vector()."
-    msg_const <- "Unneeded concatenation of a constant. Remove the \"c\" call."
+    msg_empty <- paste(
+      "Unneeded concatenation without arguments.",
+      'Replace the "c" call by NULL or, whenever possible,',
+      "vector() seeded with the correct type and/or length."
+    )
+    msg_const <- 'Unneeded concatenation of a constant. Remove the "c" call.'
     lapply(
       ids_with_token(source_file, "SYMBOL_FUNCTION_CALL"),
       function(token_num) {
