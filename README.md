@@ -208,7 +208,7 @@ location, namely in the `.github/workflows` directory of your repository. This f
 pull request with the lints found and they will also be printed as [annotations](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-status-checks#types-of-status-checks-on-github) along side the status check on GitHub.  If you want to disable the commenting you can
 set the environment variable `LINTR_COMMENT_BOT=false`.
 
-If your project is in a subdirectory, and you would like to use GitHub Actions annotations, you can set `options(lintr.github_annotation_project_dir = "path/to/project")` which will add the path specified to the beginning of filenames in the annotations.
+If your project is in a subdirectory and you would like to use GitHub Actions annotations, you can set `options(lintr.github_annotation_project_dir = "path/to/project")` which will make sure that the annotations point to the correct paths.
 
 #### Travis CI ###
 
