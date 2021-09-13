@@ -29,7 +29,7 @@ test_that("GitHub Actions functionality works in a subdirectory", {
     )
     expect_output(
       print(l),
-      paste0("::warning file=dummy_packages/assignmentLinter/R/abc\\.R")
+      paste0("::warning file=", file.path(pkg_path, "R", "abc\\.R"))
     )
   })
 })
