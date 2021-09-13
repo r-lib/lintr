@@ -9,8 +9,7 @@ lint_package(
   relative_path = TRUE,
   ...,
   exclusions = list("R/RcppExports.R"),
-  parse_settings = TRUE,
-  path_prefix = ""
+  parse_settings = TRUE
 )
 }
 \arguments{
@@ -28,9 +27,6 @@ absolute path.}
 package path.}
 
 \item{parse_settings}{whether to try and parse the settings.}
-
-\item{path_prefix}{a prefix to add to the path of any file found, useful for
-packages in subdirectories on github actions.}
 }
 \value{
 A list of lint objects.
