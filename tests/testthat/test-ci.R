@@ -14,7 +14,7 @@ test_that("GitHub Actions functionality works", {
 
 test_that("GitHub Actions functionality works in a subdirectory", {
   # imitate being on GHA whether or not we are
-  pkg_path <- test_path(file.path("dummy_packages", "assignmentLinter"))
+  pkg_path <- file.path("dummy_packages", "assignmentLinter")
   withr::with_envvar(c(GITHUB_ACTIONS = "true"), {
     old <- options(
       lintr.rstudio_source_markers = FALSE,
@@ -29,7 +29,7 @@ test_that("GitHub Actions functionality works in a subdirectory", {
     )
     expect_output(
       print(l),
-      paste0("::warning file=", file.path(pkg_path, "R", "abc\\.R"))
+      paste0("::warning file=", file.path(pkg_path, "R(/|\\\\)abc\\.R"))
     )
   })
 })
