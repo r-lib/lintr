@@ -36,6 +36,7 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
   have spaces before them.
 * `commented_code_linter`: check that there is no commented code outside of roxygen comments.
 * `cyclocomp_linter`: check for overly complicated expressions.
+* `duplicate_argument_linter`: check that no duplicate arguments are supplied to function calls.
 * `equals_na_linter`: check for x == NA
 * `extraction_operator_linter`: check that the `[[` operator is used when extracting a single
   element from an object, not `[` (subsetting) nor `$` (interactive use).
@@ -106,7 +107,7 @@ Advanced users may run `lintr` during [continuous-integration](#continuous-integ
 ## Project Configuration ##
 
 Lintr supports per-project configuration of the following fields.
-The config file (default file name: `.lintr`) is in [Debian Control Field Format](https://www.debian.org/doc/debian-policy/#document-ch-controlfields).
+The config file (default file name: `.lintr`) is in [Debian Control Field Format](https://www.debian.org/doc/debian-policy/ch-controlfields.html).
 
 - `linters` - see `?with_defaults` for example of specifying only a few non-default linters.
 - `exclusions` - a list of filenames to exclude from linting.  You can use a
