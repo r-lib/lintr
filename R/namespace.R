@@ -36,18 +36,14 @@ imported_s3_generics <- function(ns_imports) {
 }
 
 is_s3_generic <- function(fun) {
-  if (getRversion() >= "3.5.0") {
-    # Inspired by `utils::isS3stdGeneric`, though it will detect functions that
-    # have `useMethod()` in places other than the first expression.
-    bdexpr <- body(fun)
-    while (is.call(bdexpr) && bdexpr[[1L]] == "{") bdexpr <- tail(bdexpr, 1L)[[1L]]
-    ret <- is.call(bdexpr) && identical(bdexpr[[1L]], as.name("UseMethod"))
-    if (ret)
-      names(ret) <- bdexpr[[2L]]
-    ret
-  } else {
-    is.function(fun) # nocov
-  }
+  # Inspired by `utils::isS3stdGeneric`, though it will detect functions that
+  # have `useMethod()` in places other than the first expression.
+  bdexpr <- body(fun)
+  while (is.call(bdexpr) && bdexpr[[1L]] == "{") bdexpr <- tail(bdexpr, 1L)[[1L]]
+  ret <- is.call(bdexpr) && identical(bdexpr[[1L]], as.name("UseMethod"))
+  if (ret)
+    names(ret) <- bdexpr[[2L]]
+  ret
 }
 
 .base_s3_generics <- c(
