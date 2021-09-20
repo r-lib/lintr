@@ -3,6 +3,9 @@
 #' \code{\link[base]{eval}} on the code, so do not use with untrusted code.
 #' @export
 object_usage_linter <- function() {
+  if (!requireNamespace("codetools", quietly = TRUE)) {
+    stop("'object_usage_linter' depends on the codetools package to work, but it's not installed.")
+  }
   Linter(function(source_file) {
     # If there is no xml data just return
     if (is.null(source_file$full_xml_parsed_content)) return(list())

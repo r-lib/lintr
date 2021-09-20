@@ -463,6 +463,9 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
 }
 
 rstudio_source_markers <- function(lints) {
+  if (!requireNamespace("rstudioapi", quietly = TRUE)) {
+    stop("'rstudioapi' is required for rtsudio_source_markers().")
+  }
 
   # package path will be NULL unless it is a relative path
   package_path <- attr(lints, "path")

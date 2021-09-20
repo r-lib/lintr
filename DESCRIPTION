@@ -19,11 +19,7 @@ Depends:
 Imports:
     rex,
     crayon,
-    codetools,
-    cyclocomp,
-    testthat (>= 2.2.1),
     digest,
-    rstudioapi (>= 0.2),
     jsonlite,
     knitr,
     stats,
@@ -31,9 +27,13 @@ Imports:
     xml2 (>= 1.0.0),
     xmlparsedata (>= 1.0.3)
 Suggests:
+    codetools,
+    cyclocomp,
     httr (>= 1.2.1),
-    rmarkdown,
     mockery,
+    rmarkdown,
+    rstudioapi (>= 0.2),
+    testthat (>= 2.2.1),
     withr
 License: MIT + file LICENSE
 Encoding: UTF-8

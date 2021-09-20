@@ -5,6 +5,9 @@
 #' @importFrom cyclocomp cyclocomp
 #' @export
 cyclocomp_linter <- function(complexity_limit = 15L) {
+  if (!requireNamespace("cyclocomp", quietly = TRUE)) {
+    stop("'cyclocomp_linter' depends on the cyclocomp package to work, but it's not installed.")
+  }
   Linter(function(source_file) {
     if (!is.null(source_file[["file_lines"]])) {
       # abort if source_file is entire file, not a top level expression.
