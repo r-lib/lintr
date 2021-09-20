@@ -2,7 +2,6 @@
 #'   \code{\link[cyclocomp]{cyclocomp}}.
 #' @param complexity_limit expressions with a cyclomatic complexity higher than
 #'   this are linted, defaults to 25. See \code{\link[cyclocomp]{cyclocomp}}.
-#' @importFrom cyclocomp cyclocomp
 #' @export
 cyclocomp_linter <- function(complexity_limit = 15L) {
   if (!requireNamespace("cyclocomp", quietly = TRUE)) {
