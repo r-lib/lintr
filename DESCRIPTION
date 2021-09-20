@@ -18,6 +18,8 @@ Depends:
     R (>= 3.2)
 Imports:
     rex,
+    codetools,
+    cyclocomp,
     crayon,
     digest,
     jsonlite,
@@ -27,8 +29,6 @@ Imports:
     xml2 (>= 1.0.0),
     xmlparsedata (>= 1.0.3)
 Suggests:
-    codetools,
-    cyclocomp,
     httr (>= 1.2.1),
     mockery,
     rmarkdown,
