@@ -18,9 +18,9 @@ Depends:
     R (>= 3.2)
 Imports:
     rex,
+    crayon,
     codetools,
     cyclocomp,
-    crayon,
     digest,
     jsonlite,
     knitr,
