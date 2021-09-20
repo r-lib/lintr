@@ -24,7 +24,6 @@ Imports:
     testthat (>= 2.2.1),
     digest,
     rstudioapi (>= 0.2),
-    httr (>= 1.2.1),
     jsonlite,
     knitr,
     stats,
@@ -32,6 +31,7 @@ Imports:
     xml2 (>= 1.0.0),
     xmlparsedata (>= 1.0.3)
 Suggests:
+    httr (>= 1.2.1),
     rmarkdown,
     mockery,
     withr

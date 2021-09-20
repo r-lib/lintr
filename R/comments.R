@@ -53,24 +53,28 @@ wercker_build_info <- function() {
 
 # nocov start
 github_comment <- function(text, info = NULL, token = settings$comment_token) {
+  if (!requireNamespace("httr", quietly = TRUE)) {
+    stop("Package 'httr' is required to post comments with github_comment().")
+  }
 
   if (is.null(info)) {
     info <- ci_build_info()
   }
 
   if (!is.null(info$pull) && info$pull != "false") {
-    response <- httr::POST("https://api.github.com",
-      path = paste(sep = "/", "repos", info$user, info$repo, "issues", info$pull, "comments"),
-      body = list("body" = jsonlite::unbox(text)),
-      query = list(access_token = token),
-      encode = "json")
+    api_subdir <- file.path("issues", info$pull)
   } else if (!is.null(info$commit)) {
-    response <- httr::POST("https://api.github.com",
-      path = paste(sep = "/", "repos", info$user, info$repo, "commits", info$commit, "comments"),
-      body = list("body" = jsonlite::unbox(text)),
-      query = list(access_token = token),
-      encode = "json")
+    api_subdir <- file.path("commits", info$commit)
+  } else {
+    stop("Expected a pull or a commit, but received ci_build_info() = ", format(info))
   }
+  response <- httr::POST(
+    "https://api.github.com",
+    path = file.path("repos", info$user, info$repo, api_subdir, "comments"),
+    body = list("body" = jsonlite::unbox(text)),
+    query = list(access_token = token),
+    encode = "json"
+  )
 
   if (httr::status_code(response) >= 300) {
     message(httr::http_condition(response, "error", task = httr::content(response, as = "text")))
