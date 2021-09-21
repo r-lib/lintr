@@ -1,5 +1,8 @@
 # nocov start
 addin_lint <- function() {
+  if (!requireNamespace("rstudioapi", quietly = TRUE)) {
+    stop("'rstudioapi' is required for add-ins.") # nocov
+  }
   filename <- rstudioapi::getSourceEditorContext()
   if (filename$path == "") {
     return("Current source has no path. Please save before continue")
@@ -23,6 +26,9 @@ addin_lint <- function() {
 }
 
 addin_lint_package <- function() {
+  if (!requireNamespace("rstudioapi", quietly = TRUE)) {
+    stop("'rstudioapi' is required for add-ins.") # nocov
+  }
   project <- rstudioapi::getActiveProject()
   project_path <- if (is.null(project)) getwd() else project
 
