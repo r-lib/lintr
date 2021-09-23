@@ -19,7 +19,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     }
 
     xpath <- sprintf(
-      "//expr[*[(%s) and (%s)] and not(preceding-sibling::expr[SYMBOL_FUNCTION_CALL[%s]])]",
+      "//*[(%s) and (%s) and not(parent::expr/preceding-sibling::expr[SYMBOL_FUNCTION_CALL[%s]])]",
       paste0("self::", tokens, collapse = " or "),
       xp_text_in_table(names(fun)),
       xp_text_in_table(c("library", "require"))
