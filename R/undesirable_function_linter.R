@@ -9,38 +9,49 @@
 undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   stopifnot(is.logical(symbol_is_undesirable))
-  Linter(function(source_file) {
-    if (symbol_is_undesirable) {
-      vals <- c("SYMBOL_FUNCTION_CALL", "SYMBOL")
-    } else {
-      vals <- "SYMBOL_FUNCTION_CALL"
-    }
-    lapply(
-      ids_with_token(source_file, vals, fun = `%in%`),
-      function(id) {
-        token <- with_id(source_file, id)
-        fun_name <- token[["text"]]
-        if (fun_name %in% names(fun)) {
-          line_num <- token[["line1"]]
-          start_col_num <- token[["col1"]]
-          end_col_num <- token[["col2"]]
-          msg <- sprintf("Function \"%s\" is undesirable.", fun_name)
-          alt_fun <- fun[[fun_name]]
-          if (!is.na(alt_fun)) {
-            msg <- c(msg, sprintf("As an alternative, %s.", alt_fun))
-          }
 
-          Lint(
-            filename = source_file[["filename"]],
-            line_number = line_num,
-            column_number = start_col_num,
-            type = "warning",
-            message = paste0(msg, collapse = " "),
-            line = source_file[["lines"]][[as.character(line_num)]],
-            ranges = list(c(start_col_num, end_col_num))
-          )
+  Linter(function(source_file) {
+    if (is.null(source_file$xml_parsed_content)) return(NULL)
+    if (symbol_is_undesirable) {
+      tokens <- c("SYMBOL_FUNCTION_CALL", "SYMBOL")
+    } else {
+      tokens <- "SYMBOL_FUNCTION_CALL"
+    }
+
+    xpath <- paste0(
+      "//",
+      tokens,
+      "[(",
+      paste("text()='", names(fun), "'", sep = "", collapse = " or "),
+      ") and ",
+      "count(parent::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text()='library' or text()='require'])=0",
+      "]",
+      collapse = " | "
+    )
+    matched_nodes <- xml2::xml_find_all(source_file$xml_parsed_content, xpath)
+
+    lapply(
+      matched_nodes,
+      function(node) {
+        fun_name <- as.character(xml2::xml_contents(node))
+        msg <- sprintf("Function \"%s\" is undesirable.", fun_name)
+        if (!is.na(fun[[fun_name]])) {
+          msg <- paste(msg, sprintf("As an alternative, %s.", fun[[fun_name]]))
         }
+        line <- as.integer(xml2::xml_attr(node, "line1"))
+        col1 <- as.integer(xml2::xml_attr(node, "col1"))
+        col2 <- as.integer(xml2::xml_attr(node, "col2"))
+        Lint(
+          filename = source_file$filename,
+          line_number = line,
+          column_number = col1,
+          type = "style",
+          message = msg,
+          line = source_file$lines[[line]],
+          ranges = list(c(col2, col1))
+        )
       }
     )
   })
+
 }
