@@ -18,37 +18,35 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       tokens <- "SYMBOL_FUNCTION_CALL"
     }
 
-    xpath <- paste0(
-      "//",
-      tokens,
-      "[(",
-      paste("text()='", names(fun), "'", sep = "", collapse = " or "),
-      ") and ",
-      "count(parent::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text()='library' or text()='require'])=0",
-      "]",
-      collapse = " | "
+    xpath <- sprintf(
+      "//expr[*[(%s) and (%s)] and not(preceding-sibling::expr[SYMBOL_FUNCTION_CALL[%s]])]",
+      paste0("self::", tokens, collapse = " or "),
+      xp_text_in_table(names(fun)),
+      xp_text_in_table(c("library", "require"))
     )
+
     matched_nodes <- xml2::xml_find_all(source_file$xml_parsed_content, xpath)
 
     lapply(
       matched_nodes,
       function(node) {
-        fun_name <- as.character(xml2::xml_contents(node))
-        msg <- sprintf("Function \"%s\" is undesirable.", fun_name)
-        if (!is.na(fun[[fun_name]])) {
-          msg <- paste(msg, sprintf("As an alternative, %s.", fun[[fun_name]]))
+        fun_name <- xml2::xml_text(node)
+        msg <- sprintf('Function "%s" is undesirable.', fun_name)
+        alternative <- fun[[fun_name]]
+        if (!is.na(alternative)) {
+          msg <- paste(msg, sprintf("As an alternative, %s.", alternative))
         }
-        line <- as.integer(xml2::xml_attr(node, "line1"))
+        line <- xml2::xml_attr(node, "line1")
         col1 <- as.integer(xml2::xml_attr(node, "col1"))
         col2 <- as.integer(xml2::xml_attr(node, "col2"))
         Lint(
           filename = source_file$filename,
-          line_number = line,
+          line_number = as.integer(line),
           column_number = col1,
           type = "style",
           message = msg,
           line = source_file$lines[[line]],
-          ranges = list(c(col2, col1))
+          ranges = list(c(col1, col2))
         )
       }
     )
