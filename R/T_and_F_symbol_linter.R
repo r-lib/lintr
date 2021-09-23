@@ -6,9 +6,11 @@ T_and_F_symbol_linter <- function() { # nolint: object_name_linter.
   Linter(function(source_file) {
     if (is.null(source_file$xml_parsed_content)) return(list())
 
+    text_is_t_f <- sprintf("(%s)", xp_text_in_table(c("T", "F")))
+
     xpath <- paste0(
       "//SYMBOL[",
-      "(text() = 'T' or text() = 'F')", # T or F symbol
+      text_is_t_f, # T or F symbol
       " and not(preceding-sibling::OP-DOLLAR)", # not part of a $-subset expression
       " and not(parent::expr[",
       "  following-sibling::LEFT_ASSIGN", # not target of left assignment
@@ -20,7 +22,7 @@ T_and_F_symbol_linter <- function() { # nolint: object_name_linter.
 
     xpath_assignment <- paste0(
       "//SYMBOL[",
-      "(text() = 'T' or text() = 'F')", # T or F symbol
+      text_is_t_f, # T or F symbol
       " and not(preceding-sibling::OP-DOLLAR)", # not part of a $-subset expression
       " and parent::expr[", #, but ...
       "  following-sibling::LEFT_ASSIGN", # target of left assignment

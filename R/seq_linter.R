@@ -12,11 +12,11 @@ seq_linter <- function() {
     xml <- source_file$xml_parsed_content
 
     bad_funcs <- c("length", "nrow", "ncol", "NROW", "NCOL", "dim")
-    text_clause <- paste0("text() = '", bad_funcs, "'", collapse = " or ")
+    text_clause <- xp_text_in_table(bad_funcs)
 
     xpath <- paste0(
       "//expr",
-      "[expr[NUM_CONST[text()='1' or text()='1L']]]",
+      sprintf("[expr[NUM_CONST[%s]]]", xp_text_in_table(c("1", "1L"))),
       "[OP-COLON]",
       "[expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[", text_clause, "]]]]]"
     )

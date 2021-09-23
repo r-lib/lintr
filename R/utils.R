@@ -200,7 +200,7 @@ unescape <- function(str, q="`") {
 }
 
 # like `text() %in% table`, translated to XPath 1.0
-xp_text_in_table <- function(table) paste("text() = ", sQuote(table, "'"), collapse = " or ")
+xp_text_in_table <- function(table) paste("text() = ", quote_wrap(table, "'"), collapse = " or ")
 
 # convert an XML match into a Lint
 xml_nodes_to_lint <- function(xml, source_file, message,
