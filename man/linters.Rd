@@ -155,7 +155,7 @@ on the same line.}
 \item{todo}{Vector of strings that identify TODO comments.}
 
 \item{complexity_limit}{expressions with a cyclomatic complexity higher than
-this are linted, defaults to 25. See \code{\link[cyclocomp]{cyclocomp}}.}
+this are linted, defaults to 15. See \code{\link[cyclocomp]{cyclocomp}}.}
 
 \item{styles}{A subset of
 \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
