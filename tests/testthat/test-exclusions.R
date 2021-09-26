@@ -47,6 +47,8 @@ test_that("it doesn't fail when encountering misspecified encodings", {
   expect_length(parse_exclusions("dummy_projects/project/cp1252.R"), 0L)
 })
 
+options(old_ops)
+
 test_that("it gives the expected error message when there is only one start but no end", {
   read_settings(NULL)
 
@@ -66,5 +68,3 @@ test_that("it gives the expected error message when there is mismatch between mu
     fixed = TRUE
   )
 })
-
-options(old_ops)
