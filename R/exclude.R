@@ -57,14 +57,14 @@ is_excluded_file <- function(file_exclusion) {
 
 line_info <- function(line_numbers, type = c("start", "end")) {
   type <- match.arg(type)
-  type_word <- ngettext(length(line_numbers), type, paste0(type, "s"))
+  range_word <- paste0("range ", type, if (length(line_numbers) != 1L) "s")
   n <- length(line_numbers)
   if (n == 0) {
-    paste0("0 range ", type_word)
+    paste("0", range_word)
   } else if (n == 1) {
-    paste0("1 range ", type_word, " (line ", line_numbers, ")")
+    paste0("1 ", range_word, " (line ", line_numbers, ")")
   } else {
-    paste0(n, " range ", type_word, " (lines ", toString(line_numbers), ")")
+    paste0(n, " ", range_word, " (lines ", toString(line_numbers), ")")
   }
 }
 
