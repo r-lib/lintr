@@ -55,14 +55,16 @@ is_excluded_file <- function(file_exclusion) {
   Inf %in% file_exclusion[[names2(file_exclusion) == ""]]
 }
 
-line_info <- function(line_numbers) {
+line_info <- function(line_numbers, type = c("start", "end")) {
+  type <- match.arg(type)
+  type_word <- ngettext(length(line_numbers), type, paste0(type, "s"))
   n <- length(line_numbers)
   if (n == 0) {
-    "no lines"
+    paste0("0 range ", type_word)
   } else if (n == 1) {
-    paste("line", line_numbers)
+    paste0("1 range ", type_word, " (line ", line_numbers, ")")
   } else {
-    paste("lines", toString(line_numbers))
+    paste0(n, " range ", type_word, " (lines ", toString(line_numbers), ")")
   }
 }
 
@@ -103,16 +105,8 @@ parse_exclusions <- function(file, exclude = settings$exclude,
 
   if (length(starts) > 0) {
     if (length(starts) != length(ends)) {
-      starts_msg <- sprintf(
-        ngettext(length(starts), "%d range start (%s)", "%d range starts (%s)"),
-        length(starts),
-        line_info(starts)
-      )
-      ends_msg <- sprintf(
-        ngettext(length(ends), "%d range end (%s)", "%d range ends (%s)"),
-        length(ends),
-        line_info(ends)
-      )
+      starts_msg <- line_info(starts, type = "start")
+      ends_msg <- line_info(ends, type = "end")
       stop(file, " has ", starts_msg, " but only ", ends_msg, " for exclusion from linting!")
     }
 

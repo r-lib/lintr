@@ -1,15 +1,15 @@
 test_that("line_info works as expected", {
   expect_identical(
-    line_info(integer()),
-    "no lines"
+    line_info(integer(), type = "end"),
+    "0 range ends"
   )
   expect_identical(
-    line_info(2L),
-    "line 2"
+    line_info(2L, type = "start"),
+    "1 range start (line 2)"
   )
   expect_identical(
-    line_info(c(2, 5)),
-    "lines 2, 5"
+    line_info(c(2, 5), type = "end"),
+    "2 range ends (lines 2, 5)"
   )
 })
 
@@ -52,7 +52,7 @@ test_that("it gives the expected error message when there is only one start but 
 
   expect_error(
     parse_exclusions("dummy_projects/project/one_start_no_end.R"),
-    "has 1 range start (line 3) but only 0 range ends (no lines) for exclusion from linting",
+    "has 1 range start (line 3) but only 0 range ends for exclusion from linting",
     fixed = TRUE
   )
 })
