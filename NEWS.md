@@ -73,7 +73,7 @@
 * New linter `duplicate_argument_linter()` checks that there are no duplicate arguments supplied to
 function calls. (#850, #851, @renkun-ken)
 * Several optional `Imported` packages have become `Suggested` dependencies: `httr`, `testthat`, and `rstudioapi`. This should allow snappier CI builds for usages not relying on some more "peripheral" features of the package.
-* Error message for mismatched starts and ends of exclusion ranges now includes line numbers. (#860, @danielinteractive)
+* Error message for mismatched starts and ends of exclusion ranges is now more helpful. (#571, #860, @AshesITR and @danielinteractive)
 
 # lintr 2.0.1
 

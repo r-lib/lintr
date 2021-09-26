@@ -57,12 +57,12 @@ is_excluded_file <- function(file_exclusion) {
 
 line_info <- function(line_numbers) {
   n <- length(line_numbers)
-  if (identical(n, 0L)) {
+  if (n == 0) {
     "no lines"
-  } else if (identical(n, 1L)) {
+  } else if (n == 1) {
     paste("line", line_numbers)
   } else {
-    paste("lines", paste(line_numbers, collapse = ", "))
+    paste("lines", toString(line_numbers))
   }
 }
 
