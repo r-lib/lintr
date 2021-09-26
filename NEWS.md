@@ -70,6 +70,7 @@
   files in your project. Override the default in the `encoding` setting of lintr. (#752, #782, @AshesITR)
 * New default linter `paren_body_linter()` checks that there is a space between right parenthesis and a body 
   expression. (#809, #830, @kpagacz)
+* `undesirable_function_linter` no longer lints `library` and `require` calls attaching a package with an undesired name, e.g. `library(foo)` (#814, @kpagacz and @michaelchirico)
 * New linter `duplicate_argument_linter()` checks that there are no duplicate arguments supplied to
 function calls. (#850, #851, @renkun-ken)
 * Several optional `Imported` packages have become `Suggested` dependencies: `httr`, `testthat`, and `rstudioapi`. This should allow snappier CI builds for usages not relying on some more "peripheral" features of the package.
