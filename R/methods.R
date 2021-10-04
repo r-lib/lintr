@@ -53,6 +53,7 @@ markdown <- function(x, info, ...) {
 #' @export
 print.lints <- function(x, ...) {
   rstudio_source_markers <- getOption("lintr.rstudio_source_markers", TRUE) &&
+    requireNamespace("rstudioapi", quietly = TRUE) &&
     rstudioapi::hasFun("sourceMarkers")
 
   if (length(x)) {

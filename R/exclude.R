@@ -55,6 +55,19 @@ is_excluded_file <- function(file_exclusion) {
   Inf %in% file_exclusion[[names2(file_exclusion) == ""]]
 }
 
+line_info <- function(line_numbers, type = c("start", "end")) {
+  type <- match.arg(type)
+  range_word <- paste0("range ", type, if (length(line_numbers) != 1L) "s")
+  n <- length(line_numbers)
+  if (n == 0) {
+    paste("0", range_word)
+  } else if (n == 1) {
+    paste0("1 ", range_word, " (line ", line_numbers, ")")
+  } else {
+    paste0(n, " ", range_word, " (lines ", toString(line_numbers), ")")
+  }
+}
+
 #' read a source file and parse all the excluded lines from it
 #'
 #' @param file R source file
@@ -86,13 +99,14 @@ parse_exclusions <- function(file, exclude = settings$exclude,
   }
 
   start_locations <- rex::re_matches(lines, exclude_start, locations = TRUE)[, "end"] + 1L
+  end_locations <- rex::re_matches(lines, exclude_end, locations = TRUE)[, "start"]
   starts <- which(!is.na(start_locations))
-  ends <- which(rex::re_matches(lines, exclude_end))
+  ends <- which(!is.na(end_locations))
 
   if (length(starts) > 0) {
     if (length(starts) != length(ends)) {
-      starts_msg <- sprintf(ngettext(length(starts), "%d range start", "%d range starts"), length(starts))
-      ends_msg <- sprintf(ngettext(length(ends), "%d range end", "%d range ends"), length(ends))
+      starts_msg <- line_info(starts, type = "start")
+      ends_msg <- line_info(ends, type = "end")
       stop(file, " has ", starts_msg, " but only ", ends_msg, " for exclusion from linting!")
     }
 
