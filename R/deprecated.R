@@ -1,7 +1,8 @@
-# Deprecated functions
-#
-# Functions that have been deprecated and replaced by newer ones. They will be removed in an
-# upcoming version of \pkg{lintr} and should thus not be used anymore.
+#' Deprecated functions
+#'
+#' Functions that have been deprecated and replaced by newer ones. They will be removed in an
+#' upcoming version of \pkg{lintr} and should thus not be used anymore.
+#' @noRd
 NULL
 
 lintr_deprecated <- function(old, new = NULL, version = NULL,
