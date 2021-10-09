@@ -3,8 +3,11 @@ in_github_actions <- function() {
 }
 
 # Output logging commands for any lints found
-github_actions_log_lints <- function(lints) {
+github_actions_log_lints <- function(lints, project_dir = "") {
   for (x in lints) {
+    if (nzchar(project_dir)) {
+      x$filename <- file.path(project_dir, x$filename)
+    }
     file_line_col <- sprintf(
       "file=%s,line=%s,col=%s", x$filename, x$line_number, x$column_number
     )

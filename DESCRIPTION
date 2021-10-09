@@ -21,10 +21,7 @@ Imports:
     crayon,
     codetools,
     cyclocomp,
-    testthat (>= 2.2.1),
     digest,
-    rstudioapi (>= 0.2),
-    httr (>= 1.2.1),
     jsonlite,
     knitr,
     stats,
@@ -32,8 +29,11 @@ Imports:
     xml2 (>= 1.0.0),
     xmlparsedata (>= 1.0.3)
 Suggests:
-    rmarkdown,
+    httr (>= 1.2.1),
     mockery,
+    rmarkdown,
+    rstudioapi (>= 0.2),
+    testthat (>= 2.2.1),
     withr
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -55,7 +55,6 @@ Collate:
     'comments.R'
     'cyclocomp_linter.R'
     'declared_functions.R'
-    'object_name_linters.R'
     'deprecated.R'
     'duplicate_argument_linter.R'
     'equals_na_linter.R'
@@ -77,6 +76,7 @@ Collate:
     'namespace.R'
     'namespace_linter.R'
     'no_tab_linter.R'
+    'object_name_linters.R'
     'object_usage_linter.R'
     'open_curly_linter.R'
     'paren_body_linter.R'
