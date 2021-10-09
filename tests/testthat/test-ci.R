@@ -12,6 +12,28 @@ test_that("GitHub Actions functionality works", {
   })
 })
 
+test_that("GitHub Actions functionality works in a subdirectory", {
+  # imitate being on GHA whether or not we are
+  pkg_path <- file.path("dummy_packages", "assignmentLinter")
+  withr::with_envvar(c(GITHUB_ACTIONS = "true"), {
+    old <- options(
+      lintr.rstudio_source_markers = FALSE,
+      lintr.github_annotation_project_dir = pkg_path
+    )
+    on.exit(options(old), add = TRUE)
+
+    read_settings(NULL)
+    l <- lint_package(
+      pkg_path, linters = list(assignment_linter()),
+      parse_settings = FALSE
+    )
+    expect_output(
+      print(l),
+      paste0("::warning file=", file.path(pkg_path, "R(/|\\\\)abc\\.R"))
+    )
+  })
+})
+
 test_that("Printing works for Travis", {
   withr::with_envvar(c(GITHUB_ACTIONS = "false", TRAVIS_REPO_SLUG = "test/repo", LINTR_COMMENT_BOT = "true"), {
     old <- options(lintr.rstudio_source_markers = FALSE)

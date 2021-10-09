@@ -56,12 +56,14 @@ print.lints <- function(x, ...) {
     requireNamespace("rstudioapi", quietly = TRUE) &&
     rstudioapi::hasFun("sourceMarkers")
 
+  github_annotation_project_dir <- getOption("lintr.github_annotation_project_dir", "")
+
   if (length(x)) {
     inline_data <- x[[1]][["filename"]] == "<text>"
     if (!inline_data && rstudio_source_markers) {
       rstudio_source_markers(x)
     } else if (in_github_actions()) {
-      github_actions_log_lints(x)
+      github_actions_log_lints(x, project_dir = github_annotation_project_dir)
     } else {
       if (in_ci() && settings$comment_bot) {
 
