@@ -73,6 +73,7 @@
 * `undesirable_function_linter` no longer lints `library` and `require` calls attaching a package with an undesired name, e.g. `library(foo)` (#814, @kpagacz and @michaelchirico)
 * New linter `duplicate_argument_linter()` checks that there are no duplicate arguments supplied to
 function calls. (#850, #851, @renkun-ken)
+* Removed deprecated functions `absolute_paths_linter`, `camel_case_linter`, `multiple_dots_linter`, `snake_case_linter`, and `trailing_semicolons_linter`. They have been marked as deprecated since v1.0.1, which was released in 2017.
 * Several optional `Imported` packages have become `Suggested` dependencies: `httr`, `testthat`, and `rstudioapi`. This should allow snappier CI builds for usages not relying on some more "peripheral" features of the package.
 * Error message for mismatched starts and ends of exclusion ranges is now more helpful. (#571, #860, @AshesITR and @danielinteractive)
 
