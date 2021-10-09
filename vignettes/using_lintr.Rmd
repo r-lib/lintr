@@ -215,12 +215,12 @@ Sometimes, only a specific linter needs to be excluded. In this case, the *name*
 
 **file3.R**
 ```r
-X = 42L # nolint: object_name_linter. this comment overflows the default 80 chars line length.
+X = 42L # nolint: object_name. this comment overflows the default 80 chars line length.
 ```
 
 `> lint("file3.R")`
 ```{r, echo = FALSE}
-lintr::lint("X = 42L # nolint: object_name_linter. this comment overflows the default 80 chars line length.\n",
+lintr::lint("X = 42L # nolint: object_name. this comment overflows the default 80 chars line length.\n",
             parse_settings = FALSE)
 ```
 Observe how only the `object_name_linter` was suppressed. This is preferable to blanket `# nolint` statements because
@@ -230,7 +230,7 @@ Multiple linters can be specified by listing them with a comma as a separator:
 
 **file4.R**
 ```r
-X = 42L # nolint: object_name_linter, line_length_linter. this comment overflows the default 80 chars line length.
+X = 42L # nolint: object_name, line_length. this comment overflows the default 80 chars line length.
 ```
 
 `> lint("file4.R")`
@@ -238,7 +238,7 @@ X = 42L # nolint: object_name_linter, line_length_linter. this comment overflows
 lintr::lint(
   paste(
     "X = 42L",
-    "# nolint: object_name_linter, line_length_linter. this comment overflows the default 80 chars line length.\n"
+    "# nolint: object_name, line_length. this comment overflows the default 80 chars line length.\n"
   ),
   parse_settings = FALSE
 )

@@ -121,7 +121,7 @@ test_that("with_defaults doesn't break on very long input", {
         )
       ))
     )),
-    "lintr::undesirable_function_linter"
+    "lintr::undesirable_function"
   )
 })
 

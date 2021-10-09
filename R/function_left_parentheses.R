@@ -1,7 +1,7 @@
 #' @describeIn linters check that all left parentheses in a function call
 #' do not have spaces before them.
 #' @export
-function_left_parentheses_linter <- function() { # nolint: object_length_linter.
+function_left_parentheses_linter <- function() { # nolint: object_length.
   Linter(function(source_file) {
     lapply(
       ids_with_token(source_file, "'('"),

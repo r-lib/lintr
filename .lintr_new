@@ -1,5 +1,5 @@
 linters: with_defaults(
-    line_length_linter = line_length_linter(120)
+    line_length = line_length_linter(120)
   )
 exclusions: list(
   "tests/testthat/dummy_packages",

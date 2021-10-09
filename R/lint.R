@@ -435,7 +435,7 @@ pkg_name <- function(path = find_package()) {
 #' @param linter deprecated. No longer used.
 #' @return an object of class 'lint'.
 #' @export
-Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name_linter.
+Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name.
                  type = c("style", "warning", "error"),
                  message = "", line = "", ranges = NULL, linter = "") {
   if (!missing(linter)) {

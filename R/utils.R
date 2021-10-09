@@ -69,6 +69,7 @@ linter_auto_name <- function(which = -3L) {
   if (re_matches(nm, regex)) {
     match <- re_matches(nm, regex, locations = TRUE)
     nm <- substr(nm, start = 1L, stop = match[1L, "end"])
+    nm <- re_substitutes(nm, rex("_linter", end), "")
   }
   nm
 }
@@ -245,7 +246,7 @@ reset_lang <- function(old_lang) {
 #' Lints produced by the linter will be labelled with \code{name} by default.
 #' @return The same function with its class set to 'linter'.
 #' @export
-Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name_linter.
+Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name.
   if (!is.function(fun) || length(formals(args(fun))) != 1L) {
     stop("`fun` must be a function taking exactly one argument.", call. = FALSE)
   }
