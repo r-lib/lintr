@@ -66,7 +66,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
     return(testthat::expect(n_lints %==% 0L, msg))
   }
 
-  if (!is.list(checks) | !is.null(names(checks))) { # vector or named list
+  if (!is.list(checks) || !is.null(names(checks))) { # vector or named list
     checks <- list(checks)
   }
   checks[] <- lapply(checks, fix_names, "message")
