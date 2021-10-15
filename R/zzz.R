@@ -121,6 +121,9 @@ default_linters <- with_defaults(
 all_undesirable_functions <- with_defaults(
   default = list(),
   "attach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
+  "debug" = "remove debugging markers from 'final' code",
+  "debugcall" = "remove debugging markers from 'final' code",
+  "debugonce" = "remove debugging markers from 'final' code",
   "detach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
   "ifelse" = "use an if () {} else {} block",
   ".libPaths" = "use withr::with_libpaths()",
@@ -137,7 +140,10 @@ all_undesirable_functions <- with_defaults(
   "source" = NA,
   "substring" = "use substr()",
   "Sys.setenv" = "use withr::with_envvar()",
-  "Sys.setlocale" = "use withr::with_locale()"
+  "Sys.setlocale" = "use withr::with_locale()",
+  "trace" = "remove debugging markers from 'final' code",
+  "undebug" = "remove debugging markers from 'final' code",
+  "untrace" = "remove debugging markers from 'final' code"
 )
 
 #' @rdname default_undesirable_functions
