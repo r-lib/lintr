@@ -121,6 +121,7 @@ default_linters <- with_defaults(
 all_undesirable_functions <- with_defaults(
   default = list(),
   "attach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
+  "browser" = "remove debugging markers from 'final' code",
   "debug" = "remove debugging markers from 'final' code",
   "debugcall" = "remove debugging markers from 'final' code",
   "debugonce" = "remove debugging markers from 'final' code",
