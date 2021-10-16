@@ -153,6 +153,10 @@ default_undesirable_functions <- do.call(with_defaults, c(
   list(default = list()),
   all_undesirable_functions[c(
     "attach",
+    "browser",
+    "debug",
+    "debugcall",
+    "debugonce",
     "detach",
     ".libPaths",
     "library",
@@ -165,7 +169,10 @@ default_undesirable_functions <- do.call(with_defaults, c(
     "sink",
     "source",
     "Sys.setenv",
-    "Sys.setlocale"
+    "Sys.setlocale",
+    "trace",
+    "undebug",
+    "untrace"
   )]
 ))
 
