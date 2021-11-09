@@ -78,6 +78,7 @@ Collate:
     'no_tab_linter.R'
     'object_name_linters.R'
     'object_usage_linter.R'
+    'onload_packagestartup_linter.R'
     'open_curly_linter.R'
     'paren_body_linter.R'
     'paren_brace_linter.R'

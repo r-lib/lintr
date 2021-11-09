@@ -10,7 +10,7 @@
 \format{
 A named list of character strings.
 
-An object of class \code{list} of length 14.
+An object of class \code{list} of length 21.
 
 An object of class \code{list} of length 3.
 
