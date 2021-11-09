@@ -108,7 +108,7 @@ object_length_linter(length = 30L)
 
 object_usage_linter()
 
-onload_packagestartup_linter(source_file)
+onload_packagestartup_linter()
 
 open_curly_linter(allow_single_line = FALSE)
 
