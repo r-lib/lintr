@@ -20,9 +20,7 @@ onload_packagestartup_linter <- function(source_file) {
     bad_expr,
     xml_nodes_to_lint,
     source_file = source_file,
-    message =
-      "Put packageStartupMessage() calls in .onAttach(), not .onLoad().",
-    linter = "OnLoadPackageStartupMessageLinter",
+    message = "Put packageStartupMessage() calls in .onAttach(), not .onLoad().",
     type = "warning"
   ))
 }
