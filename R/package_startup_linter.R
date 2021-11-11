@@ -65,6 +65,7 @@ package_startup_linter <- function() {
     )
 
     # (3) .onLoad and .onAttach() shouldn't call require(), library(), or installed.packages()
+    # NB: base only checks the SYMBOL_FUNCTION_CALL version, not SYMBOL.
     library_require_xpath <- "
     //expr[SYMBOL[text() = '.onAttach' or text() = '.onLoad']]
     /following-sibling::expr//*[
