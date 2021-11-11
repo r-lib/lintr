@@ -38,7 +38,7 @@ Suggests:
 License: MIT + file LICENSE
 Encoding: UTF-8
 VignetteBuilder: knitr
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Collate:
     'utils.R'
     'aaa.R'
@@ -78,8 +78,8 @@ Collate:
     'no_tab_linter.R'
     'object_name_linters.R'
     'object_usage_linter.R'
-    'onload_packagestartup_linter.R'
     'open_curly_linter.R'
+    'package_startup_linter.R'
     'paren_body_linter.R'
     'paren_brace_linter.R'
     'path_linters.R'
