@@ -58,13 +58,13 @@ package_hooks_linter <- function() {
 
     load_arg_name_lints <- lapply(
       load_arg_name_expr,
-      xml_nodes_to_lint,
-      source_file = source_file,
-      message = paste(
-        ".onAttach() and .onLoad() should take two arguments,",
-        "with the first starting with 'lib' and the second starting with 'pkg'."
-      ),
-      type = "warning"
+      function(expr) {
+        message <- sprintf(
+          "%s() should take two arguments, with the first starting with 'lib' and the second starting with 'pkg'.",
+          xml2::xml_text(xml2::xml_find_all(expr, './parent::expr/expr/SYMBOL'))
+        )
+        xml_nodes_to_lint(expr, source_file, message, type = "warning")
+      }
     )
 
     # (3) .onLoad() and .onAttach() shouldn't call require(), library(), or installed.packages()

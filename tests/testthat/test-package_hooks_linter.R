@@ -98,18 +98,18 @@ test_that("package_hooks_linter skips valid .onLoad() and .onAttach() arguments"
 test_that("package_hooks_linter blocks invalid .onLoad() / .onAttach() arguments", {
   expect_lint(
     ".onAttach <- function(xxx, pkg) { }",
-    rex::rex(".onAttach() and .onLoad() should take two arguments"),
+    rex::rex(".onAttach() should take two arguments"),
     package_hooks_linter()
   )
   expect_lint(
     ".onLoad <- function(lib, yyy) { }",
-    rex::rex(".onAttach() and .onLoad() should take two arguments"),
+    rex::rex(".onLoad() should take two arguments"),
     package_hooks_linter()
   )
   # only one lint if both are wrong
   expect_lint(
     ".onLoad <- function(xxx, yyy) { }",
-    rex::rex(".onAttach() and .onLoad() should take two arguments"),
+    rex::rex(".onLoad() should take two arguments"),
     package_hooks_linter()
   )
 
@@ -117,22 +117,22 @@ test_that("package_hooks_linter blocks invalid .onLoad() / .onAttach() arguments
   # NB: QC.R allows ... arguments to be passed, but disallow this flexibility in the linter.
   expect_lint(
     ".onLoad <- function() { }",
-    rex::rex(".onAttach() and .onLoad() should take two arguments"),
+    rex::rex(".onLoad() should take two arguments"),
     package_hooks_linter()
   )
   expect_lint(
     ".onLoad <- function(lib) { }",
-    rex::rex(".onAttach() and .onLoad() should take two arguments"),
+    rex::rex(".onLoad() should take two arguments"),
     package_hooks_linter()
   )
   expect_lint(
     ".onLoad <- function(lib, pkg, third) { }",
-    rex::rex(".onAttach() and .onLoad() should take two arguments"),
+    rex::rex(".onLoad() should take two arguments"),
     package_hooks_linter()
   )
   expect_lint(
     ".onLoad <- function(lib, ...) { }",
-    rex::rex(".onAttach() and .onLoad() should take two arguments"),
+    rex::rex(".onLoad() should take two arguments"),
     package_hooks_linter()
   )
 })
