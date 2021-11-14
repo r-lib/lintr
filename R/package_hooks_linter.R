@@ -19,21 +19,43 @@ package_hooks_linter <- function() {
       /following-sibling::expr[FUNCTION]
       //SYMBOL_FUNCTION_CALL[%s]
     "
-    onload_bad_msg_call_xpath <- sprintf(bad_msg_call_xpath_fmt, '.onLoad', xp_text_in_table(bad_onload_calls))
+
+    bad_msg_fmt <- "Don't use %s() in %s()."
+
+    onload_bad_msg_call_xpath <- sprintf(bad_msg_call_xpath_fmt, ".onLoad", xp_text_in_table(bad_onload_calls))
+    onload_bad_msg_call_expr <- xml2::xml_find_all(xml, onload_bad_msg_call_xpath)
+    onload_bad_msg_calls <- xml2::xml_text(onload_bad_msg_call_expr)
+    onload_bad_msg_call_lints <- lapply(
+      seq_along(onload_bad_msg_call_expr),
+      function(ii) {
+        message <- switch(
+          onload_bad_msg_calls[ii],
+          cat = ,
+          message = ,
+          print = ,
+          writeLines = sprintf(bad_msg_fmt, onload_bad_msg_calls[ii], ".onLoad"),
+          packageStartupMessage = "Put packageStartupMessage() calls in .onAttach(), not .onLoad()."
+        )
+        xml_nodes_to_lint(onload_bad_msg_call_expr[[ii]], source_file, message, type = "warning")
+      }
+    )
+
     onattach_bad_msg_call_xpath <- sprintf(bad_msg_call_xpath_fmt, '.onAttach', xp_text_in_table(bad_onattach_calls))
-
-    bad_msg_call_expr <- xml2::xml_find_all(xml, paste0(onload_bad_msg_call_xpath, "|", onattach_bad_msg_call_xpath))
-
-    bad_msg_call_lints <- lapply(
-      bad_msg_call_expr,
-      xml_nodes_to_lint,
-      source_file = source_file,
-      message = paste(
-        "Don't use cat(), message(), print(), or writeLines() in .onLoad() or .onAttach().",
-        "Put packageStartupMessage() calls in .onAttach(), not .onLoad().",
-        "Put library.dynam() calls in .onLoad, not .onAttach()."
-      ),
-      type = "warning"
+    onattach_bad_msg_call_expr <- xml2::xml_find_all(xml, onattach_bad_msg_call_xpath)
+    onattach_bad_msg_calls <- xml2::xml_text(onattach_bad_msg_call_expr)
+    onattach_bad_msg_call_lints <- lapply(
+      seq_along(onattach_bad_msg_call_expr),
+      function(ii) {
+        message <- switch(
+          onattach_bad_msg_calls[ii],
+          cat = ,
+          message = ,
+          print = ,
+          writeLines = sprintf(bad_msg_fmt, onattach_bad_msg_calls[ii], ".onAttach"),
+          library.dynam = "Put library.dynam() calls in .onLoad, not .onAttach()."
+        )
+        xml_nodes_to_lint(onattach_bad_msg_call_expr[[ii]], source_file, message, type = "warning")
+      }
     )
 
     # (2) .onLoad() and .onAttach() should take two arguments, with names matching ^lib and ^pkg
@@ -127,7 +149,8 @@ package_hooks_linter <- function() {
     )
 
     return(c(
-      bad_msg_call_lints,
+      onload_bad_msg_call_lints,
+      onattach_bad_msg_call_lints,
       load_arg_name_lints,
       library_require_lints,
       bad_unload_call_lints,

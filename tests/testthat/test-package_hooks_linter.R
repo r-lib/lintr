@@ -29,7 +29,7 @@ test_that("package_hooks_linter blocks simple disallowed usages of packageStartu
         library.dynam()
       }
     "),
-    rex::rex("Put packageStartupMessage() calls in .onAttach()"),
+    rex::rex("Put library.dynam() calls in .onLoad, not .onAttach()."),
     package_hooks_linter()
   )
 
@@ -49,7 +49,7 @@ test_that("package_hooks_linter blocks simple disallowed usages of other blocked
   # inline version
   expect_lint(
     ".onLoad <- function(lib, pkg) cat('hi')",
-    rex::rex("Put packageStartupMessage() calls in .onAttach()"),
+    rex::rex("Don't use cat() in .onLoad()"),
     package_hooks_linter()
   )
 
@@ -60,7 +60,7 @@ test_that("package_hooks_linter blocks simple disallowed usages of other blocked
         writeLines('hi')
       }
     "),
-    rex::rex("Put packageStartupMessage() calls in .onAttach()"),
+    rex::rex("Don't use writeLines() in .onAttach()"),
     package_hooks_linter()
   )
 
@@ -70,7 +70,7 @@ test_that("package_hooks_linter blocks simple disallowed usages of other blocked
         print('hi')
       }
     "),
-    rex::rex("Put packageStartupMessage() calls in .onAttach()"),
+    rex::rex("Don't use print() in .onLoad()"),
     package_hooks_linter()
   )
 
@@ -81,7 +81,7 @@ test_that("package_hooks_linter blocks simple disallowed usages of other blocked
         foo(bar(baz(message('hi'))))
       }
     "),
-    rex::rex("Put packageStartupMessage() calls in .onAttach()"),
+    rex::rex("Don't use message() in .onAttach()"),
     package_hooks_linter()
   )
 })
