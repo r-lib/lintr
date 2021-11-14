@@ -1,7 +1,7 @@
-#' @describeIn linters Check various common "gotchas" in [.onLoad()] / [.onAttach()] namespace hooks that will
-#'    cause `R CMD check` issues.
+#' @describeIn linters Check various common "gotchas" in [.onLoad()], [.onAttach()], [.Last.lib()], and [.onDetach()]
+#'    namespace hooks that will cause `R CMD check` issues.
 #' @export
-package_startup_linter <- function() {
+package_hooks_linter <- function() {
   Linter(function(source_file) {
     if (length(source_file$parsed_content) == 0L) {
       return(list())
@@ -9,7 +9,7 @@ package_startup_linter <- function() {
 
     xml <- source_file$xml_parsed_content
 
-    # (1) improper messaging calls shouldn't be used inside .onLoad/.onAttach
+    # (1) improper messaging calls shouldn't be used inside .onLoad()/.onAttach()
     bad_msg_calls <- c("cat", "message", "print", "writeLines")
     bad_onload_calls <- c(bad_msg_calls, "packageStartupMessage")
     bad_onattach_calls <- c(bad_msg_calls, "library.dynam")
@@ -24,7 +24,7 @@ package_startup_linter <- function() {
 
     bad_msg_call_expr <- xml2::xml_find_all(xml, paste0(onload_bad_msg_call_xpath, "|", onattach_bad_msg_call_xpath))
 
-    bad_msg_call_expr <- lapply(
+    bad_msg_call_lints <- lapply(
       bad_msg_call_expr,
       xml_nodes_to_lint,
       source_file = source_file,
@@ -37,7 +37,7 @@ package_startup_linter <- function() {
     )
 
     # (2) .onLoad() and .onAttach() should take two arguments, with names matching ^lib and ^pkg
-    arg_name_xpath <- "
+    load_arg_name_xpath <- "
     //expr[SYMBOL[text() = '.onAttach' or text() = '.onLoad']]
     /following-sibling::expr[
       FUNCTION
@@ -51,10 +51,10 @@ package_startup_linter <- function() {
     ]
     "
 
-    arg_name_expr <- xml2::xml_find_all(xml, arg_name_xpath)
+    load_arg_name_expr <- xml2::xml_find_all(xml, load_arg_name_xpath)
 
-    arg_name_lints <- lapply(
-      arg_name_expr,
+    load_arg_name_lints <- lapply(
+      load_arg_name_expr,
       xml_nodes_to_lint,
       source_file = source_file,
       message = paste(
@@ -64,7 +64,7 @@ package_startup_linter <- function() {
       type = "warning"
     )
 
-    # (3) .onLoad and .onAttach() shouldn't call require(), library(), or installed.packages()
+    # (3) .onLoad() and .onAttach() shouldn't call require(), library(), or installed.packages()
     # NB: base only checks the SYMBOL_FUNCTION_CALL version, not SYMBOL.
     library_require_xpath <- "
     //expr[SYMBOL[text() = '.onAttach' or text() = '.onLoad']]
@@ -87,7 +87,52 @@ package_startup_linter <- function() {
       type = "warning"
     )
 
-    return(c(bad_msg_call_expr, arg_name_lints, library_require_lints))
+    # (4) .Last.lib() and .onDetach() shouldn't call library.dynam.unload()
+    bad_unload_call_xpath <- "
+      //expr[SYMBOL[text() = '.Last.lib' or text() = '.onDetach']]
+      /following-sibling::expr[FUNCTION]
+      //SYMBOL_FUNCTION_CALL[text() = 'library.dynam.unload']
+    "
+
+    bad_unload_call_expr <- xml2::xml_find_all(xml, bad_unload_call_xpath)
+
+    bad_unload_call_lints <- lapply(
+      bad_unload_call_expr,
+      xml_nodes_to_lint,
+      source_file = source_file,
+      message = "Use library.dynam() calls in .onUnload, not .onDetach() or .Last.lib().",
+      type = "warning"
+    )
+
+    # (5) .Last.lib() and .onDetach() should take one arguments with name matching ^lib
+    unload_arg_name_xpath <- "
+    //expr[SYMBOL[text() = '.onDetach' or text() = '.Last.lib']]
+    /following-sibling::expr[
+      FUNCTION
+      and (
+        count(SYMBOL_FORMALS) != 1
+        or SYMBOL_FORMALS[not(starts-with(text(), 'lib'))]
+      )
+    ]
+    "
+
+    unload_arg_name_expr <- xml2::xml_find_all(xml, unload_arg_name_xpath)
+
+    unload_arg_name_lints <- lapply(
+      unload_arg_name_expr,
+      xml_nodes_to_lint,
+      source_file = source_file,
+      message = ".onDetach() and .Last.lib() should take one argument starting with 'lib'.",
+      type = "warning"
+    )
+
+    return(c(
+      bad_msg_call_lints,
+      load_arg_name_lints,
+      library_require_lints,
+      bad_unload_call_lints,
+      unload_arg_name_lints
+    ))
   })
 }
 

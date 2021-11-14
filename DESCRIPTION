@@ -79,7 +79,7 @@ Collate:
     'object_name_linters.R'
     'object_usage_linter.R'
     'open_curly_linter.R'
-    'package_startup_linter.R'
+    'package_hooks_linter.R'
     'paren_body_linter.R'
     'paren_brace_linter.R'
     'path_linters.R'

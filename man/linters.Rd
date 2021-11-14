@@ -8,7 +8,7 @@
 %   R/line_length_linter.R, R/missing_argument_linter.R,
 %   R/missing_package_linter.R, R/namespace_linter.R, R/no_tab_linter.R,
 %   R/object_name_linters.R, R/object_usage_linter.R, R/open_curly_linter.R,
-%   R/package_startup_linter.R, R/paren_body_linter.R, R/paren_brace_linter.R,
+%   R/package_hooks_linter.R, R/paren_body_linter.R, R/paren_brace_linter.R,
 %   R/path_linters.R, R/pipe_call_linter.R, R/pipe_continuation_linter.R,
 %   R/semicolon_terminator_linter.R, R/seq_linter.R, R/single_quotes_linter.R,
 %   R/spaces_inside_linter.R, R/spaces_left_parentheses_linter.R,
@@ -41,7 +41,7 @@
 \alias{object_length_linter}
 \alias{object_usage_linter}
 \alias{open_curly_linter}
-\alias{package_startup_linter}
+\alias{package_hooks_linter}
 \alias{paren_body_linter}
 \alias{paren_brace_linter}
 \alias{absolute_path_linter}
@@ -109,7 +109,7 @@ object_usage_linter()
 
 open_curly_linter(allow_single_line = FALSE)
 
-package_startup_linter()
+package_hooks_linter()
 
 paren_body_linter()
 
@@ -269,8 +269,8 @@ load packages used in user code so it could potentially change the global state.
 \item \code{open_curly_linter}: Check that opening curly braces are never on their own
 line and are always followed by a newline.
 
-\item \code{package_startup_linter}: Check various common "gotchas" in [.onLoad()] / [.onAttach()] namespace hooks that will
-cause `R CMD check` issues.
+\item \code{package_hooks_linter}: Check various common "gotchas" in [.onLoad()], [.onAttach()], [.Last.lib()], and [.onDetach()]
+namespace hooks that will cause `R CMD check` issues.
 
 \item \code{paren_body_linter}: check that there is a space between right parenthesis and a body expression.
 

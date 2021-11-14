@@ -1,25 +1,25 @@
-test_that("package_startup_linter skips allowed usages of packageStartupMessage() & library.dynam()", {
+test_that("package_hooks_linter skips allowed usages of packageStartupMessage() & library.dynam()", {
   # allowed in .onAttach, not .onLoad
   expect_lint(
     ".onAttach <- function(lib, pkg) packageStartupMessage('hi')",
     NULL,
-    package_startup_linter()
+    package_hooks_linter()
   )
 
   # allowed in .onLoad, not .onAttach
   expect_lint(
     ".onLoad <- function(lib, pkg) library.dynam()",
     NULL,
-    package_startup_linter()
+    package_hooks_linter()
   )
 })
 
-test_that("package_startup_linter blocks simple disallowed usages of packageStartupMessage() & library.dynam()", {
+test_that("package_hooks_linter blocks simple disallowed usages of packageStartupMessage() & library.dynam()", {
   # inline version
   expect_lint(
     ".onLoad <- function(lib, pkg) packageStartupMessage('hi')",
     rex::rex("Put packageStartupMessage() calls in .onAttach()"),
-    package_startup_linter()
+    package_hooks_linter()
   )
 
   # multiline version
@@ -30,7 +30,7 @@ test_that("package_startup_linter blocks simple disallowed usages of packageStar
       }
     "),
     rex::rex("Put packageStartupMessage() calls in .onAttach()"),
-    package_startup_linter()
+    package_hooks_linter()
   )
 
   # found at deeper nesting too
@@ -41,16 +41,16 @@ test_that("package_startup_linter blocks simple disallowed usages of packageStar
       }
     "),
     rex::rex("Put packageStartupMessage() calls in .onAttach()"),
-    package_startup_linter()
+    package_hooks_linter()
   )
 })
 
-test_that("package_startup_linter blocks simple disallowed usages of other blocked messaging functions", {
+test_that("package_hooks_linter blocks simple disallowed usages of other blocked messaging functions", {
   # inline version
   expect_lint(
     ".onLoad <- function(lib, pkg) cat('hi')",
     rex::rex("Put packageStartupMessage() calls in .onAttach()"),
-    package_startup_linter()
+    package_hooks_linter()
   )
 
   # multiline version
@@ -61,7 +61,7 @@ test_that("package_startup_linter blocks simple disallowed usages of other block
       }
     "),
     rex::rex("Put packageStartupMessage() calls in .onAttach()"),
-    package_startup_linter()
+    package_hooks_linter()
   )
 
   expect_lint(
@@ -71,7 +71,7 @@ test_that("package_startup_linter blocks simple disallowed usages of other block
       }
     "),
     rex::rex("Put packageStartupMessage() calls in .onAttach()"),
-    package_startup_linter()
+    package_hooks_linter()
   )
 
   # found at deeper nesting too
@@ -82,35 +82,35 @@ test_that("package_startup_linter blocks simple disallowed usages of other block
       }
     "),
     rex::rex("Put packageStartupMessage() calls in .onAttach()"),
-    package_startup_linter()
+    package_hooks_linter()
   )
 })
 
-test_that("package_startup_linter skips valid .onLoad() and .onAttach() arguments", {
-  expect_lint(".onAttach <- function(lib, pkg) { }", NULL, package_startup_linter())
-  expect_lint(".onLoad <- function(lib, pkg) { }", NULL, package_startup_linter())
+test_that("package_hooks_linter skips valid .onLoad() and .onAttach() arguments", {
+  expect_lint(".onAttach <- function(lib, pkg) { }", NULL, package_hooks_linter())
+  expect_lint(".onLoad <- function(lib, pkg) { }", NULL, package_hooks_linter())
 
   # args only need to start with those characters
-  expect_lint(".onAttach <- function(libname, pkgpath) { }", NULL, package_startup_linter())
-  expect_lint(".onLoad <- function(libXXXX, pkgYYYY) { }", NULL, package_startup_linter())
+  expect_lint(".onAttach <- function(libname, pkgpath) { }", NULL, package_hooks_linter())
+  expect_lint(".onLoad <- function(libXXXX, pkgYYYY) { }", NULL, package_hooks_linter())
 })
 
-test_that("package_startup_linter blocks invalid .onLoad() / .onAttach() arguments", {
+test_that("package_hooks_linter blocks invalid .onLoad() / .onAttach() arguments", {
   expect_lint(
     ".onAttach <- function(xxx, pkg) { }",
     rex::rex(".onAttach() and .onLoad() should take two arguments"),
-    package_startup_linter()
+    package_hooks_linter()
   )
   expect_lint(
     ".onLoad <- function(lib, yyy) { }",
     rex::rex(".onAttach() and .onLoad() should take two arguments"),
-    package_startup_linter()
+    package_hooks_linter()
   )
   # only one lint if both are wrong
   expect_lint(
     ".onLoad <- function(xxx, yyy) { }",
     rex::rex(".onAttach() and .onLoad() should take two arguments"),
-    package_startup_linter()
+    package_hooks_linter()
   )
 
   # exactly two arguments required.
@@ -118,73 +118,131 @@ test_that("package_startup_linter blocks invalid .onLoad() / .onAttach() argumen
   expect_lint(
     ".onLoad <- function() { }",
     rex::rex(".onAttach() and .onLoad() should take two arguments"),
-    package_startup_linter()
+    package_hooks_linter()
   )
   expect_lint(
     ".onLoad <- function(lib) { }",
     rex::rex(".onAttach() and .onLoad() should take two arguments"),
-    package_startup_linter()
+    package_hooks_linter()
   )
   expect_lint(
     ".onLoad <- function(lib, pkg, third) { }",
     rex::rex(".onAttach() and .onLoad() should take two arguments"),
-    package_startup_linter()
+    package_hooks_linter()
   )
   expect_lint(
     ".onLoad <- function(lib, ...) { }",
     rex::rex(".onAttach() and .onLoad() should take two arguments"),
-    package_startup_linter()
+    package_hooks_linter()
   )
 })
 
-test_that("package_startup_linter skips valid namespace loading", {
-  expect_lint(".onAttach <- function(lib, pkg) { requireNamespace('foo') }", NULL, package_startup_linter())
-  expect_lint(".onLoad <- function(lib, pkg) {  requireNamespace('foo') }", NULL, package_startup_linter())
+test_that("package_hooks_linter skips valid namespace loading", {
+  expect_lint(".onAttach <- function(lib, pkg) { requireNamespace('foo') }", NULL, package_hooks_linter())
+  expect_lint(".onLoad <- function(lib, pkg) {  requireNamespace('foo') }", NULL, package_hooks_linter())
 })
 
-test_that("package_startup_linter blocks attaching namespaces", {
+test_that("package_hooks_linter blocks attaching namespaces", {
   expect_lint(
     ".onAttach <- function(lib, pkg) { require(foo) }",
     rex::rex("Don't alter the search() path in .onLoad() or .onAttach()"),
-    package_startup_linter()
+    package_hooks_linter()
   )
   expect_lint(
     ".onLoad <- function(lib, pkg) { library(foo) }",
     rex::rex("Don't alter the search() path in .onLoad() or .onAttach()"),
-    package_startup_linter()
+    package_hooks_linter()
   )
   expect_lint(
     ".onLoad <- function(lib, pkg) { installed.packages() }",
     rex::rex("slow down package load by running installed.packages()."),
-    package_startup_linter()
+    package_hooks_linter()
   )
 
   # find at further nesting too
   expect_lint(
     ".onAttach <- function(lib, pkg) { a(b(c(require(foo)))) }",
     rex::rex("Don't alter the search() path in .onLoad() or .onAttach()"),
-    package_startup_linter()
+    package_hooks_linter()
   )
   expect_lint(
     ".onLoad <- function(lib, pkg) { d(e(f(library(foo)))) }",
     rex::rex("Don't alter the search() path in .onLoad() or .onAttach()"),
-    package_startup_linter()
+    package_hooks_linter()
   )
   expect_lint(
     ".onLoad <- function(lib, pkg) { g(h(i(installed.packages()))) }",
     rex::rex("slow down package load by running installed.packages()."),
-    package_startup_linter()
+    package_hooks_linter()
   )
 
   # also find when used as names
   expect_lint(
     ".onAttach <- function(lib, pkg) { sapply(c('a', 'b', 'c'), require, character.only = TRUE) }",
     rex::rex("Don't alter the search() path in .onLoad() or .onAttach()"),
-    package_startup_linter()
+    package_hooks_linter()
   )
   expect_lint(
     ".onAttach <- function(lib, pkg) { lapply(c('a', 'b', 'c'), library, character.only = TRUE) }",
     rex::rex("Don't alter the search() path in .onLoad() or .onAttach()"),
-    package_startup_linter()
+    package_hooks_linter()
+  )
+})
+
+test_that("package_hooks_linter skips valid .onDetach() and .Last.lib()", {
+  expect_lint(".onDetach <- function(lib) { }", NULL, package_hooks_linter())
+  expect_lint(".onDetach <- function(libname) { }", NULL, package_hooks_linter())
+
+  expect_lint(".Last.lib <- function(lib) { }", NULL, package_hooks_linter())
+  expect_lint(".Last.lib <- function(libname) { }", NULL, package_hooks_linter())
+})
+
+test_that("package_hooks_linter catches usage of library.dynam.unload()", {
+  expect_lint(
+    ".onDetach <- function(lib) { library.dynam.unload() }",
+    rex::rex("Use library.dynam() calls in .onUnload, not .onDetach() or .Last.lib()."),
+    package_hooks_linter()
+  )
+  expect_lint(
+    ".Last.lib <- function(lib) { library.dynam.unload() }",
+    rex::rex("Use library.dynam() calls in .onUnload, not .onDetach() or .Last.lib()."),
+    package_hooks_linter()
+  )
+  # expected usage is in .onUnload
+  expect_lint(
+    ".onUnload <- function(lib) { library.dynam.unload() }",
+    NULL,
+    package_hooks_linter()
+  )
+})
+
+test_that("package_hooks_linter detects bad argument names in .onDetach()/.Last.lib()", {
+  expect_lint(
+    ".onDetach <- function(xxx) { }",
+    rex::rex(".onDetach() and .Last.lib() should take one argument starting with 'lib'."),
+    package_hooks_linter()
+  )
+  expect_lint(
+    ".Last.lib <- function(yyy) { }",
+    rex::rex(".onDetach() and .Last.lib() should take one argument starting with 'lib'."),
+    package_hooks_linter()
+  )
+
+  # exactly one argument required.
+  # NB: QC.R allows ... arguments to be passed, but disallow this flexibility in the linter.
+  expect_lint(
+    ".onDetach <- function() { }",
+    rex::rex(".onDetach() and .Last.lib() should take one argument starting with 'lib'."),
+    package_hooks_linter()
+  )
+  expect_lint(
+    ".Last.lib <- function(lib, pkg) { }",
+    rex::rex(".onDetach() and .Last.lib() should take one argument starting with 'lib'."),
+    package_hooks_linter()
+  )
+  expect_lint(
+    ".onDetach <- function(...) { }",
+    rex::rex(".onDetach() and .Last.lib() should take one argument starting with 'lib'."),
+    package_hooks_linter()
   )
 })
