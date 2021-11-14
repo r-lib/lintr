@@ -200,12 +200,12 @@ test_that("package_hooks_linter skips valid .onDetach() and .Last.lib()", {
 test_that("package_hooks_linter catches usage of library.dynam.unload()", {
   expect_lint(
     ".onDetach <- function(lib) { library.dynam.unload() }",
-    rex::rex("Use library.dynam() calls in .onUnload, not .onDetach() or .Last.lib()."),
+    rex::rex("Use library.dynam.unload() calls in .onUnload(), not .onDetach()."),
     package_hooks_linter()
   )
   expect_lint(
     ".Last.lib <- function(lib) { library.dynam.unload() }",
-    rex::rex("Use library.dynam() calls in .onUnload, not .onDetach() or .Last.lib()."),
+    rex::rex("Use library.dynam.unload() calls in .onUnload(), not .Last.lib()."),
     package_hooks_linter()
   )
   # expected usage is in .onUnload
@@ -219,12 +219,12 @@ test_that("package_hooks_linter catches usage of library.dynam.unload()", {
 test_that("package_hooks_linter detects bad argument names in .onDetach()/.Last.lib()", {
   expect_lint(
     ".onDetach <- function(xxx) { }",
-    rex::rex(".onDetach() and .Last.lib() should take one argument starting with 'lib'."),
+    rex::rex(".onDetach() should take one argument starting with 'lib'."),
     package_hooks_linter()
   )
   expect_lint(
     ".Last.lib <- function(yyy) { }",
-    rex::rex(".onDetach() and .Last.lib() should take one argument starting with 'lib'."),
+    rex::rex(".Last.lib() should take one argument starting with 'lib'."),
     package_hooks_linter()
   )
 
@@ -232,17 +232,17 @@ test_that("package_hooks_linter detects bad argument names in .onDetach()/.Last.
   # NB: QC.R allows ... arguments to be passed, but disallow this flexibility in the linter.
   expect_lint(
     ".onDetach <- function() { }",
-    rex::rex(".onDetach() and .Last.lib() should take one argument starting with 'lib'."),
+    rex::rex(".onDetach() should take one argument starting with 'lib'."),
     package_hooks_linter()
   )
   expect_lint(
     ".Last.lib <- function(lib, pkg) { }",
-    rex::rex(".onDetach() and .Last.lib() should take one argument starting with 'lib'."),
+    rex::rex(".Last.lib() should take one argument starting with 'lib'."),
     package_hooks_linter()
   )
   expect_lint(
     ".onDetach <- function(...) { }",
-    rex::rex(".onDetach() and .Last.lib() should take one argument starting with 'lib'."),
+    rex::rex(".onDetach() should take one argument starting with 'lib'."),
     package_hooks_linter()
   )
 })

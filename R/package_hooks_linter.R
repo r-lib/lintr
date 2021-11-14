@@ -111,10 +111,10 @@ package_hooks_linter <- function() {
 
     bad_unload_call_lints <- lapply(
       bad_unload_call_expr,
-      xml_nodes_to_lint,
-      source_file = source_file,
-      message = "Use library.dynam() calls in .onUnload, not .onDetach() or .Last.lib().",
-      type = "warning"
+      function(expr) {
+        message <- sprintf("Use library.dynam.unload() calls in .onUnload(), not %s().", get_hook(expr))
+        xml_nodes_to_lint(expr, source_file, message, type = "warning")
+      }
     )
 
     # (5) .Last.lib() and .onDetach() should take one arguments with name matching ^lib
@@ -133,10 +133,13 @@ package_hooks_linter <- function() {
 
     unload_arg_name_lints <- lapply(
       unload_arg_name_expr,
-      xml_nodes_to_lint,
-      source_file = source_file,
-      message = ".onDetach() and .Last.lib() should take one argument starting with 'lib'.",
-      type = "warning"
+      function(expr) {
+        message <- sprintf(
+          "%s() should take one argument starting with 'lib'.",
+          get_hook(expr)
+        )
+        xml_nodes_to_lint(expr, source_file, message, type = "warning")
+      }
     )
 
     return(c(
