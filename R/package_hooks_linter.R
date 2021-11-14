@@ -15,6 +15,13 @@ package_hooks_linter <- function() {
       ".onAttach" = c(bad_msg_calls, "library.dynam")
     )
 
+    # lints here will hit the function <expr>,
+    #   this path returns to the corresponding namespace hook's name
+    get_hook <- function(xml) {
+      ns_calls <- xp_text_in_table(c(".onLoad", ".onAttach", ".onDetach", ".Last.lib"))
+      xml2::xml_text(xml2::xml_find_all(xml, sprintf("./ancestor::expr/expr/SYMBOL[%s]", ns_calls)))
+    }
+
     # (1) improper messaging calls shouldn't be used inside .onLoad()/.onAttach()
     bad_msg_calls <- c("cat", "message", "print", "writeLines")
     bad_calls <- list(
@@ -61,7 +68,7 @@ package_hooks_linter <- function() {
       function(expr) {
         message <- sprintf(
           "%s() should take two arguments, with the first starting with 'lib' and the second starting with 'pkg'.",
-          xml2::xml_text(xml2::xml_find_all(expr, './parent::expr/expr/SYMBOL'))
+          get_hook(expr)
         )
         xml_nodes_to_lint(expr, source_file, message, type = "warning")
       }
@@ -81,13 +88,16 @@ package_hooks_linter <- function() {
 
     library_require_lints <- lapply(
       library_require_expr,
-      xml_nodes_to_lint,
-      source_file = source_file,
-      message = paste(
-        "Don't alter the search() path in .onLoad() or .onAttach() by calling library() or require(),",
-        "or slow down package load by running installed.packages()."
-      ),
-      type = "warning"
+      function(expr) {
+        bad_call <- xml2::xml_text(expr)
+        hook <- get_hook(expr)
+        if (bad_call == "installed.packages") {
+          message <- sprintf("Don't slow down package load by running installed.packages() in %s().", hook)
+        } else {
+          message <- sprintf("Don't alter the search() path in %s() by calling %s().", hook, bad_call)
+        }
+        xml_nodes_to_lint(expr, source_file, message, type = "warning")
+      }
     )
 
     # (4) .Last.lib() and .onDetach() shouldn't call library.dynam.unload()

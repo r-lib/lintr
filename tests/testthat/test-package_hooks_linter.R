@@ -145,46 +145,46 @@ test_that("package_hooks_linter skips valid namespace loading", {
 test_that("package_hooks_linter blocks attaching namespaces", {
   expect_lint(
     ".onAttach <- function(lib, pkg) { require(foo) }",
-    rex::rex("Don't alter the search() path in .onLoad() or .onAttach()"),
+    rex::rex("Don't alter the search() path in .onAttach() by calling require()."),
     package_hooks_linter()
   )
   expect_lint(
     ".onLoad <- function(lib, pkg) { library(foo) }",
-    rex::rex("Don't alter the search() path in .onLoad() or .onAttach()"),
+    rex::rex("Don't alter the search() path in .onLoad() by calling library()."),
     package_hooks_linter()
   )
   expect_lint(
     ".onLoad <- function(lib, pkg) { installed.packages() }",
-    rex::rex("slow down package load by running installed.packages()."),
+    rex::rex("Don't slow down package load by running installed.packages() in .onLoad()."),
     package_hooks_linter()
   )
 
   # find at further nesting too
   expect_lint(
     ".onAttach <- function(lib, pkg) { a(b(c(require(foo)))) }",
-    rex::rex("Don't alter the search() path in .onLoad() or .onAttach()"),
+    rex::rex("Don't alter the search() path in .onAttach() by calling require()."),
     package_hooks_linter()
   )
   expect_lint(
     ".onLoad <- function(lib, pkg) { d(e(f(library(foo)))) }",
-    rex::rex("Don't alter the search() path in .onLoad() or .onAttach()"),
+    rex::rex("Don't alter the search() path in .onLoad() by calling library()."),
     package_hooks_linter()
   )
   expect_lint(
     ".onLoad <- function(lib, pkg) { g(h(i(installed.packages()))) }",
-    rex::rex("slow down package load by running installed.packages()."),
+    rex::rex("Don't slow down package load by running installed.packages() in .onLoad()."),
     package_hooks_linter()
   )
 
   # also find when used as names
   expect_lint(
     ".onAttach <- function(lib, pkg) { sapply(c('a', 'b', 'c'), require, character.only = TRUE) }",
-    rex::rex("Don't alter the search() path in .onLoad() or .onAttach()"),
+    rex::rex("Don't alter the search() path in .onAttach() by calling require()."),
     package_hooks_linter()
   )
   expect_lint(
     ".onAttach <- function(lib, pkg) { lapply(c('a', 'b', 'c'), library, character.only = TRUE) }",
-    rex::rex("Don't alter the search() path in .onLoad() or .onAttach()"),
+    rex::rex("Don't alter the search() path in .onAttach() by calling library()"),
     package_hooks_linter()
   )
 })
