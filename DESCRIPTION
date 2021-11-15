@@ -100,4 +100,5 @@ Collate:
     'undesirable_operator_linter.R'
     'unneeded_concatenation_linter.R'
     'with_id.R'
+    'xp_utils.R'
     'zzz.R'
