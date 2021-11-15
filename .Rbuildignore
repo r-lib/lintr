@@ -10,7 +10,7 @@
 ^\.Rproj\.user$
 ^\.idea$
 ^\.dev$
-^\.lintr$
+\.lintr$
 ^\.lintr_new$
 ^wercker\.yml$
 ^[^/]+.Rmd$
