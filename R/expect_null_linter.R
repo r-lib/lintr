@@ -15,7 +15,7 @@ expect_null_linter <- function() {
     # for expect_{equal,identical}(x, NULL)
     equal_expr_cond <- sprintf(
       "SYMBOL_FUNCTION_CALL[%s] and following-sibling::expr[2][NULL_CONST]",
-      .XpTextInTable(c("expect_equal", "expect_identical"))
+      xp_text_in_table(c("expect_equal", "expect_identical"))
     )
   
     # for expect_true(is.null(x))
