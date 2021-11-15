@@ -1,4 +1,4 @@
-#' @title Linters for the Google extension to the tidyverse style guide
+#' Linters for the Google extension to the tidyverse style guide
 #'
 #' Google uses a fork of the tidyverse style guide, pursuant to which
 #'   its R users have written a bundle of linters, many of which
