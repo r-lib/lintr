@@ -5,6 +5,7 @@
 .idea
 bad.R
 script.R
+*~
 
 *.Rcheck
 lintr_*.tar.gz
