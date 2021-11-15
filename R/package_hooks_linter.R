@@ -39,7 +39,6 @@ package_hooks_linter <- function() {
     bad_msg_call_lints <- function(hook) {
       xpath <- sprintf(bad_msg_call_xpath_fmt, hook, xp_text_in_table(bad_calls[[hook]]))
       bad_expr <- xml2::xml_find_all(xml, xpath)
-      calls <- xml2::xml_text(bad_expr)
       lapply(bad_expr, make_bad_call_lint, source_file, hook)
     }
 
