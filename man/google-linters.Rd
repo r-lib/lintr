@@ -12,9 +12,6 @@ Google uses a fork of the tidyverse style guide, pursuant to which
 \usage{
 expect_null_linter()
 }
-\arguments{
-\item{source_file}{A `source_file` object, as returned by [get_source_expressions()]}
-}
 \description{
 Linters for the Google extension to the tidyverse style guide
 
