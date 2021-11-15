@@ -5,6 +5,5 @@
 #'   are generally useful for writing good R code. These linters
 #'   help encourage code consistency, readability, and best practices.
 #'
-#' @param source_file A `source_file` object, as returned by [get_source_expressions()]
 #' @name google-linters
 NULL
