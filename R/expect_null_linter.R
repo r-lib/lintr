@@ -37,7 +37,6 @@ expect_null_linter <- function() {
         "expect_null(x) is better than expect_equal(x, NULL),",
         "expect_identical(x, NULL), or expect_true(is.null(x))."
       ),
-      linter = "expect_null_linter",
       type = "warning"
     ))
   })
