@@ -122,3 +122,14 @@ test_that("Warns if encoding is misspecified", {
   expect_equal(the_lint$message, "Invalid multibyte string. Is the encoding correct?")
   expect_equal(the_lint$line_number, 1L)
 })
+
+test_that("Malformed raw string literal error is captured", {
+  skip_if_not(getRversion() >= "4.0.0")
+  expect_lint("line1 <- 1
+line2 <- 2
+line3 <- 3
+line4 <- R\"--/hello/--\"", checks = list(
+    message = "Malformed raw string literal.",
+    line_number = 4
+  ), default_linters)
+})

@@ -137,6 +137,22 @@ get_source_expressions <- function(filename, lines = NULL) {
             line = source_file$lines[[l]]
           )
         )
+      } else if (grepl("malformed raw string literal at line", e$message, fixed = TRUE)) {
+        l <- as.integer(re_matches(
+          e$message,
+          rex("malformed raw string literal at line ", capture(name = "line", digits))
+        )$line)
+        # Invalid raw string in source code
+        return(
+          Lint(
+            filename = source_file$filename,
+            line_number = l,
+            column_number = 1L,
+            type = "error",
+            message = "Malformed raw string literal.",
+            line = source_file$lines[[l]]
+          )
+        )
       }
 
       message_info <- re_matches(e$message,
