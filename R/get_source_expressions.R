@@ -145,6 +145,8 @@ get_source_expressions <- function(filename, lines = NULL) {
             e$message,
             parse_error_rx
           )$line)
+          # Sometimes the parser "line" runs one past the last line
+          l <- pmin(l, length(source_file$lines))
 
           return(
             Lint(
