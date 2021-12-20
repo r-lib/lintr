@@ -127,17 +127,18 @@ test_that("Can extract line number from parser errors", {
   skip_if_not(getRversion() >= "4.0")
 
   with_content_to_parse("\"ok\"\nR\"---a---\"", {
-    expect_equal(error$message, "malformed raw string literal at line 2")
+    expect_equal(error$message, "Malformed raw string literal.")
     expect_equal(error$line_number, 2L)
   })
 
   with_content_to_parse("ok\nok\n\"\\u{9999\"", {
-    expect_equal(error$message, "invalid \\u{xxxx} sequence (line 3)")
+    expect_equal(error$message, "Invalid \\u{xxxx} sequence.")
     expect_equal(error$line_number, 3L)
   })
 
   with_content_to_parse("ok\nok\n\"\\u{9999", {
-    expect_equal(error$message, "invalid \\u{xxxx} sequence (line 4)")
+    # parser erroneously reports line 4
+    expect_equal(error$message, "Invalid \\u{xxxx} sequence.")
     expect_equal(error$line_number, 3L)
   })
 })

@@ -28,6 +28,19 @@ error_formats <- grep("line %d", error_formats, fixed = TRUE, value = TRUE)
 .parse_error_regexes <- gsub("%s", ".*?", .parse_error_regexes, fixed = TRUE)
 .parse_error_regexes <- gsub("%6x", "[[:xdigit:]]{6}", .parse_error_regexes, fixed = TRUE)
 
+# Add message text capture groups
+.parse_error_regexes <- gsub(
+  "^\\^(.*?)( on | at | \\\\\\()line",
+  "^(?<msg_1>\\1)\\2line",
+  .parse_error_regexes
+)
+.parse_error_regexes <- gsub(
+  "(?s)(\\(\\?<line>\\[\\[:digit:\\]\\]\\+\\)(?:\\\\\\)| ))([^$]+?)\\$$",
+  "\\1(?<msg_2>\\2)$",
+  .parse_error_regexes,
+  perl = TRUE
+)
+
 # Check that no format specifiers remain
 stopifnot(!any(grepl("%", .parse_error_regexes)))
 

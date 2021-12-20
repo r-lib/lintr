@@ -141,12 +141,20 @@ get_source_expressions <- function(filename, lines = NULL) {
 
       for (parse_error_rx in .parse_error_regexes) {
         if (grepl(parse_error_rx, e$message, perl = TRUE)) {
-          l <- as.integer(re_matches(
+          rx_match <- re_matches(
             e$message,
             parse_error_rx
-          )$line)
+          )
+          l <- as.integer(rx_match$line)
           # Sometimes the parser "line" runs one past the last line
           l <- pmin(l, length(source_file$lines))
+
+          msg <- rx_match$msg_1
+          if ("msg_2" %in% names(rx_match)) {
+            msg <- paste(msg, rx_match$msg_2)
+          }
+          substr(msg, 1L, 1L) <- toupper(substr(msg, 1L, 1L))
+          msg <- paste0(msg, ".")
 
           return(
             Lint(
@@ -154,7 +162,7 @@ get_source_expressions <- function(filename, lines = NULL) {
               line_number = l,
               column_number = 1L,
               type = "error",
-              message = e$message,
+              message = msg,
               line = source_file$lines[[l]]
             )
           )
