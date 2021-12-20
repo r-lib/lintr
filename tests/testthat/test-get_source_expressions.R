@@ -122,3 +122,12 @@ test_that("Warns if encoding is misspecified", {
   expect_equal(the_lint$message, "Invalid multibyte string. Is the encoding correct?")
   expect_equal(the_lint$line_number, 1L)
 })
+
+test_that("Can extract line number from parser errors", {
+  skip_if_not(getRversion() >= "4.0")
+
+  with_content_to_parse("\"ok\"\nR\"---a---\"", {
+    expect_equal(error$message, "malformed raw string literal at line 2")
+    expect_equal(error$line_number, 2L)
+  })
+})

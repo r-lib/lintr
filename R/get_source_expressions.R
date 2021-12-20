@@ -139,6 +139,26 @@ get_source_expressions <- function(filename, lines = NULL) {
         )
       }
 
+      for (parse_error_rx in .parse_error_regexes) {
+        if (grepl(parse_error_rx, e$message, perl = TRUE)) {
+          l <- as.integer(re_matches(
+            e$message,
+            parse_error_rx
+          )$line)
+
+          return(
+            Lint(
+              filename = source_file$filename,
+              line_number = l,
+              column_number = 1L,
+              type = "error",
+              message = e$message,
+              line = source_file$lines[[l]]
+            )
+          )
+        }
+      }
+
       message_info <- re_matches(e$message,
         rex(single_quotes, capture(name = "name", anything), single_quotes,
           anything,
