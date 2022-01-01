@@ -162,8 +162,8 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 #' absolute path.
 #' @param ... additional arguments passed to \code{\link{lint}}, e.g.
 #' \code{cache} or \code{linters}.
-#' @param exclusions exclusions for \code{\link{exclude}}, relative to the
-#' package path.
+#' @param exclusions file or line exclusions for \code{\link{exclude}},
+#' relative to the package path.
 #' @param pattern pattern for files, by default it will take files with any of
 #' the extensions .R, .Rmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for
 #' lowercase r (.r, ...)
