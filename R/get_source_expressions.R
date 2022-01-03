@@ -139,34 +139,39 @@ get_source_expressions <- function(filename, lines = NULL) {
         )
       }
 
-      for (parse_error_rx in .parse_error_regexes) {
-        if (grepl(parse_error_rx, e$message, perl = TRUE)) {
-          rx_match <- re_matches(
-            e$message,
-            parse_error_rx
-          )
-          l <- as.integer(rx_match$line)
-          # Sometimes the parser "line" runs one past the last line
-          l <- pmin(l, length(source_file$lines))
+      parse_error_rx <- rex(
+        start,
+        capture(anything, name = "msg_1"),
+        or(" at ", " on ", " ("),
+        "line ",
+        capture(digits, name = "line"),
+        maybe(")"),
+        capture(anything, name = "msg_2"),
+        end
+      )
 
-          msg <- rx_match$msg_1
-          if ("msg_2" %in% names(rx_match)) {
-            msg <- paste(msg, rx_match$msg_2)
-          }
-          substr(msg, 1L, 1L) <- toupper(substr(msg, 1L, 1L))
-          msg <- paste0(msg, ".")
+      if (grepl(parse_error_rx, e$message, perl = TRUE)) {
+        rx_match <- re_matches(
+          e$message,
+          parse_error_rx
+        )
+        l <- as.integer(rx_match$line)
+        # Sometimes the parser "line" runs one past the last line
+        l <- pmin(l, length(source_file$lines))
 
-          return(
-            Lint(
-              filename = source_file$filename,
-              line_number = l,
-              column_number = 1L,
-              type = "error",
-              message = msg,
-              line = source_file$lines[[l]]
-            )
+        msg <- paste0(rx_match$msg_1, if (nzchar(rx_match$msg_2)) " ", rx_match$msg_2, ".")
+        substr(msg, 1L, 1L) <- toupper(substr(msg, 1L, 1L))
+
+        return(
+          Lint(
+            filename = source_file$filename,
+            line_number = l,
+            column_number = 1L,
+            type = "error",
+            message = msg,
+            line = source_file$lines[[l]]
           )
-        }
+        )
       }
 
       message_info <- re_matches(e$message,
