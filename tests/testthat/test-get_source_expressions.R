@@ -122,3 +122,46 @@ test_that("Warns if encoding is misspecified", {
   expect_equal(the_lint$message, "Invalid multibyte string. Is the encoding correct?")
   expect_equal(the_lint$line_number, 1L)
 })
+
+test_that("Can extract line number from parser errors", {
+  skip_if_not(getRversion() >= "4.0")
+
+  # malformed raw string literal at line 2
+  with_content_to_parse(
+    trim_some('
+      "ok"
+      R"---a---"
+    '), {
+    expect_equal(error$message, "Malformed raw string literal.")
+    expect_equal(error$line_number, 2L)
+  })
+
+  # invalid \u{xxxx} sequence (line 3)
+  with_content_to_parse(
+    trim_some('
+      ok
+      ok
+      "\\u{9999"
+    '), {
+    expect_equal(error$message, "Invalid \\u{xxxx} sequence.")
+    expect_equal(error$line_number, 3L)
+  })
+
+  # invalid \u{xxxx} sequence (line 4)
+  with_content_to_parse(
+    trim_some('
+      ok
+      ok
+      "\\u{9999
+    '), {
+    # parser erroneously reports line 4
+    expect_equal(error$message, "Invalid \\u{xxxx} sequence.")
+    expect_equal(error$line_number, 3L)
+  })
+
+  # repeated formal argument 'a' on line 1
+  with_content_to_parse("function(a, a) {}", {
+    expect_equal(error$message, "Repeated formal argument 'a'.")
+    expect_equal(error$line_number, 1L)
+  })
+})

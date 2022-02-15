@@ -78,6 +78,7 @@ function calls. (#850, #851, @renkun-ken)
 * Error message for mismatched starts and ends of exclusion ranges is now more helpful. (#571, #860, @AshesITR and @danielinteractive)
 * Debugging functions (`browser()`, `debug()`, `debugcall()`, `debugonce()`, `trace()`, `undebug()`, `untrace()`) are now part of the default set of undesirable functions to help prevent them from being committed by mistake. (#876, @michaelchirico)
 * New linter `package_hooks_linter()` runs a series of checks also done by `R CMD check` on the `.onLoad()`, `.onAttach()`, `.Last.lib()` and `.onDetach()` hooks (#882, @MichaelChirico)
+* Improved location information for R parse errors (#894, #892, @renkun-ken and @AshesITR)
 
 # lintr 2.0.1
 
