@@ -126,19 +126,42 @@ test_that("Warns if encoding is misspecified", {
 test_that("Can extract line number from parser errors", {
   skip_if_not(getRversion() >= "4.0")
 
-  with_content_to_parse("\"ok\"\nR\"---a---\"", {
+  # malformed raw string literal at line 2
+  with_content_to_parse(
+    trim_some('
+      "ok"
+      R"---a---"
+    '), {
     expect_equal(error$message, "Malformed raw string literal.")
     expect_equal(error$line_number, 2L)
   })
 
-  with_content_to_parse("ok\nok\n\"\\u{9999\"", {
+  # invalid \u{xxxx} sequence (line 3)
+  with_content_to_parse(
+    trim_some('
+      ok
+      ok
+      "\\u{9999"
+    '), {
     expect_equal(error$message, "Invalid \\u{xxxx} sequence.")
     expect_equal(error$line_number, 3L)
   })
 
-  with_content_to_parse("ok\nok\n\"\\u{9999", {
+  # invalid \u{xxxx} sequence (line 4)
+  with_content_to_parse(
+    trim_some('
+      ok
+      ok
+      "\\u{9999
+    '), {
     # parser erroneously reports line 4
     expect_equal(error$message, "Invalid \\u{xxxx} sequence.")
     expect_equal(error$line_number, 3L)
+  })
+
+  # repeated formal argument 'a' on line 1
+  with_content_to_parse("function(a, a) {}", {
+    expect_equal(error$message, "Repeated formal argument 'a'.")
+    expect_equal(error$line_number, 1L)
   })
 })
