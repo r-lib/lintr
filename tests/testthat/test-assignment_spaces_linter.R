@@ -1,5 +1,5 @@
 test_that("returns the correct linting", {
-  linter <- assignment_spaces()
+  linter <- assignment_spaces_linter()
   msg <- rex("Assignments should only have one space before and after the operator.")
 
   expect_lint("fun(blah =  1)", NULL, linter)
