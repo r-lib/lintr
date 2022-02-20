@@ -19,7 +19,7 @@
 \alias{linters}
 \alias{T_and_F_symbol_linter}
 \alias{assignment_linter}
-\alias{assignment_spaces}
+\alias{assignment_spaces_linter}
 \alias{backport_linter}
 \alias{closed_curly_linter}
 \alias{commas_linter}
@@ -65,7 +65,7 @@ T_and_F_symbol_linter()
 
 assignment_linter()
 
-assignment_spaces()
+assignment_spaces_linter()
 
 backport_linter(r_version = getRversion())
 
@@ -211,7 +211,7 @@ Available linters
 
 \item \code{assignment_linter}: Check that \code{<-} is always used for assignment.
 
-\item \code{assignment_spaces}: checks that assignments only have one space before and after
+\item \code{assignment_spaces_linter}: checks that assignments only have one space before and after
 
 \item \code{backport_linter}: that checks for usage of unavailable functions. Not reliable for testing r-devel dependencies.
 

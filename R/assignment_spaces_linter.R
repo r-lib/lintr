@@ -1,6 +1,6 @@
 #' @describeIn linters checks that assignments only have one space before and after
 #' @export
-assignment_spaces <- function() {
+assignment_spaces_linter <- function() {
   Linter(function(source_file) {
     lapply(
       c(
