@@ -13,3 +13,6 @@ Check for an inconsistent number of arguments or arguments with incompatible typ
 \section{Tags}{
 \link[=common_mistakes_linters]{common_mistakes}, \link[=correctness_linters]{correctness}
 }
+\section{Tags}{
+\link[=common_mistakes_linters]{common_mistakes}, \link[=correctness_linters]{correctness}
+}

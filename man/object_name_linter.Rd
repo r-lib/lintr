@@ -18,3 +18,6 @@ The default naming styles are "snake_case" and "symbols".
 \section{Tags}{
 \link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=style_linters]{style}
 }
+\section{Tags}{
+\link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=style_linters]{style}
+}

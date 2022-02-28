@@ -24,3 +24,6 @@ Report the use of undesirable functions, e.g. \code{\link[base]{return}}, \code{
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=efficiency_linters]{efficiency}, \link[=robustness_linters]{robustness}, \link[=style_linters]{style}
 }
+\section{Tags}{
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=efficiency_linters]{efficiency}, \link[=robustness_linters]{robustness}, \link[=style_linters]{style}
+}

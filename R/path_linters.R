@@ -195,7 +195,7 @@ absolute_path_linter <- function(lax = TRUE) {
 
 #' Non-portable path linter
 #'
-#' Check that \code{\link{file.path}()} is used to construct safe and portable paths.
+#' Check that [file.path()] is used to construct safe and portable paths.
 #'
 #' @inheritParams absolute_path_linter
 #' @evalRd rd_tags("nonportable_path_linter")
