@@ -3,6 +3,7 @@
 #' Check that the `[[` operator is used when extracting a single element from an object, not `[` (subsetting) nor `$`
 #' (interactive use).
 #'
+#' @evalRd rd_tags("extraction_operator_linter")
 #' @export
 extraction_operator_linter <- function() {
   Linter(function(source_file) {

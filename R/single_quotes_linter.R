@@ -2,6 +2,7 @@
 #'
 #' Check that only double quotes are used to delimit string constants.
 #'
+#' @evalRd rd_tags("single_quotes_linter")
 #' @export
 single_quotes_linter <- function() {
   Linter(function(source_file) {

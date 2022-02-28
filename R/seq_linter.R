@@ -6,6 +6,7 @@
 #' It is safer to use \code{\link[base]{seq_len}} or
 #' \code{\link[base]{seq_along}} instead.
 #'
+#' @evalRd rd_tags("seq_linter")
 #' @export
 seq_linter <- function() {
   Linter(function(source_file) {

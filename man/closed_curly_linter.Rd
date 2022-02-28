@@ -12,3 +12,6 @@ closed_curly_linter(allow_single_line = FALSE)
 \description{
 Check that closed curly braces are on their own line unless they follow an else.
 }
+\section{Tags}{
+\link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+}

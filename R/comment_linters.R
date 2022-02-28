@@ -27,6 +27,7 @@ ops <- list(
 #'
 #' Check that there is no commented code outside roxygen blocks.
 #'
+#' @evalRd rd_tags("commented_code_linter")
 #' @export
 commented_code_linter <- function() {
   Linter(function(source_file) {
@@ -83,6 +84,8 @@ parsable <- function(x) {
 #' Check that the source contains no TODO comments (case-insensitive).
 #'
 #' @param todo Vector of strings that identify TODO comments.
+#'
+#' @evalRd rd_tags("todo_comment_linter")
 #' @export
 todo_comment_linter <- function(todo = c("todo", "fixme")) {
   Linter(function(source_file) {

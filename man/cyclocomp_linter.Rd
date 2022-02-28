@@ -13,3 +13,6 @@ this are linted, defaults to 15. See \code{\link[cyclocomp]{cyclocomp}}.}
 \description{
 Check for overly complicated expressions. See \code{\link[cyclocomp]{cyclocomp}}.
 }
+\section{Tags}{
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+}

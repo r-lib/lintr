@@ -4,6 +4,7 @@
 #'
 #' @param complexity_limit expressions with a cyclomatic complexity higher than
 #'   this are linted, defaults to 15. See \code{\link[cyclocomp]{cyclocomp}}.
+#' @evalRd rd_tags("cyclocomp_linter")
 #' @importFrom cyclocomp cyclocomp
 #' @export
 cyclocomp_linter <- function(complexity_limit = 15L) {

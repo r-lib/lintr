@@ -3,6 +3,7 @@
 #' Check for duplicate arguments in function calls.
 #'
 #' @param except a character vector of function names as exceptions.
+#' @evalRd rd_tags("duplicate_argument_linter")
 #' @export
 duplicate_argument_linter <- function(except = character()) {
   Linter(function(source_file) {

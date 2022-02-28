@@ -15,3 +15,6 @@ semicolon_terminator_linter(semicolon = c("compound", "trailing"))
 \description{
 Check that no semicolons terminate expressions.
 }
+\section{Tags}{
+\link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+}

@@ -1,6 +1,8 @@
 #' Assignment spaces linter
 #'
 #' Check that assignments only have one space before and after.
+#'
+#' @evalRd rd_tags("assignment_spaces_linter")
 #' @export
 assignment_spaces_linter <- function() {
   Linter(function(source_file) {

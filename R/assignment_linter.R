@@ -1,6 +1,8 @@
 #' Assignment linter
 #'
 #' Check that \code{<-} is always used for assignment.
+#'
+#' @evalRd rd_tags("assignment_linter")
 #' @export
 assignment_linter <- function() {
   Linter(function(source_file) {

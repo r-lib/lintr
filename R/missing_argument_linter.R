@@ -2,6 +2,7 @@
 #'
 #' Check for missing arguments in function calls.
 #' @param except a character vector of function names as exceptions.
+#' @evalRd rd_tags("missing_argument_linter")
 #' @export
 missing_argument_linter <- function(except = c("switch", "alist")) {
   Linter(function(source_file) {

@@ -3,6 +3,7 @@
 #' Check various common "gotchas" in [.onLoad()], [.onAttach()], [.Last.lib()], and [.onDetach()]
 #'   namespace hooks that will cause `R CMD check` issues.
 #'
+#' @evalRd rd_tags("package_hooks_linter")
 #' @export
 package_hooks_linter <- function() {
   Linter(function(source_file) {

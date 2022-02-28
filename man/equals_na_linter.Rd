@@ -9,3 +9,6 @@ equals_na_linter()
 \description{
 Check for \code{x == NA} and \code{x != NA}
 }
+\section{Tags}{
+\link[=common_mistakes_linters]{common_mistakes}, \link[=correctness_linters]{correctness}, \link[=default_linters]{default}, \link[=robustness_linters]{robustness}
+}

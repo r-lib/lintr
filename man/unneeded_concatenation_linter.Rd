@@ -9,3 +9,6 @@ unneeded_concatenation_linter()
 \description{
 Check that the \code{c} function is not used without arguments nor with a single constant.
 }
+\section{Tags}{
+\link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+}

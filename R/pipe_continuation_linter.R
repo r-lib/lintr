@@ -2,6 +2,7 @@
 #'
 #' Check that each step in a pipeline is on a new line, or the entire pipe fits on one line.
 #'
+#' @evalRd rd_tags("pipe_continuation_linter")
 #' @importFrom xml2 xml_find_all as_list
 #' @export
 pipe_continuation_linter <- function() {

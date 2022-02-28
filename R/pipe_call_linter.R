@@ -3,6 +3,7 @@
 #' Force explicit calls in magrittr pipes, e.g.,
 #' \code{1:3 \%>\% sum()} instead of \code{1:3 \%>\% sum}.
 #'
+#' @evalRd rd_tags("pipe_call_linter")
 #' @export
 pipe_call_linter <- function() {
   Linter(function(source_file) {

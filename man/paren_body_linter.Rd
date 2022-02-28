@@ -9,3 +9,6 @@ paren_body_linter()
 \description{
 Check that there is a space between right parenthesis and a body expression.
 }
+\section{Tags}{
+\link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+}

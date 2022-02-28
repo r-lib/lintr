@@ -3,6 +3,7 @@
 #' Check for an inconsistent number of arguments or arguments with incompatible types (for literal arguments) in
 #' \code{sprintf} calls.
 #'
+#' @evalRd rd_tags("sprintf_linter")
 #' @export
 sprintf_linter <- function() {
   Linter(function(source_file) {

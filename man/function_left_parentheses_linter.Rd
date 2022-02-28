@@ -9,3 +9,6 @@ function_left_parentheses_linter()
 \description{
 Check that all left parentheses in a function call do not have spaces before them.
 }
+\section{Tags}{
+\link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+}

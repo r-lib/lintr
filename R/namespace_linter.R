@@ -7,6 +7,7 @@
 #'   \code{namespace::symbol} calls.
 #' @param check_nonexports Check if \code{symbol} exists in \code{namespace} in
 #'   \code{namespace:::symbol} calls.
+#' @evalRd rd_tags("namespace_linter")
 #' @export
 namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
   Linter(function(source_file) {

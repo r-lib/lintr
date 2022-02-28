@@ -11,3 +11,6 @@ Check that closures have the proper usage using
 \code{\link[codetools]{checkUsage}}. Note that this runs
 \code{\link[base]{eval}} on the code, so do not use with untrusted code.
 }
+\section{Tags}{
+\link[=correctness_linters]{correctness}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+}

@@ -10,3 +10,6 @@ spaces_inside_linter()
 Check that parentheses and square brackets do not have spaces directly inside them, i.e., directly following an
 opening delimiter or directly preceding a closing delimiter.
 }
+\section{Tags}{
+\link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+}

@@ -9,3 +9,6 @@ assignment_linter()
 \description{
 Check that \code{<-} is always used for assignment.
 }
+\section{Tags}{
+\link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=style_linters]{style}
+}

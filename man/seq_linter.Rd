@@ -13,3 +13,6 @@ expressions. These often cause bugs when the right-hand side is zero.
 It is safer to use \code{\link[base]{seq_len}} or
 \code{\link[base]{seq_along}} instead.
 }
+\section{Tags}{
+\link[=best_practices_linters]{best_practices}, \link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=efficiency_linters]{efficiency}, \link[=robustness_linters]{robustness}
+}

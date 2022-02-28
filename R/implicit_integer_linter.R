@@ -2,6 +2,7 @@
 #'
 #' Check that integers are explicitly typed using the form \code{1L} instead of \code{1}.
 #'
+#' @evalRd rd_tags("implicit_integer_linter")
 #' @export
 implicit_integer_linter <- function() {
   Linter(function(source_file) {

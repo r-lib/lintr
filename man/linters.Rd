@@ -14,6 +14,21 @@ arguments and fed with the source file (provided by \code{\link{get_source_expre
 A data frame of all available linters can be retrieved using \code{\link{available_linters}()}.
 Documentation for linters is structured into tags to allow for easier discovery.
 }
+\section{Tags}{
+The following tags exist:
+\itemize{
+\item{\link[=best_practices_linters]{best_practices} (10 linters)}
+\item{\link[=common_mistakes_linters]{common_mistakes} (5 linters)}
+\item{\link[=configurable_linters]{configurable} (16 linters)}
+\item{\link[=consistency_linters]{consistency} (7 linters)}
+\item{\link[=correctness_linters]{correctness} (7 linters)}
+\item{\link[=default_linters]{default} (25 linters)}
+\item{\link[=efficiency_linters]{efficiency} (4 linters)}
+\item{\link[=readability_linters]{readability} (21 linters)}
+\item{\link[=robustness_linters]{robustness} (10 linters)}
+\item{\link[=style_linters]{style} (32 linters)}
+}
+}
 \section{Linters}{
 The following linters exist:
 \itemize{

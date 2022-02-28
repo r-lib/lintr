@@ -10,3 +10,6 @@ extraction_operator_linter()
 Check that the `[[` operator is used when extracting a single element from an object, not `[` (subsetting) nor `$`
 (interactive use).
 }
+\section{Tags}{
+\link[=best_practices_linters]{best_practices}, \link[=style_linters]{style}
+}

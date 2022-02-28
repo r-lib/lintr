@@ -16,6 +16,7 @@ NULL
 #' A data frame of all available linters can be retrieved using \code{\link{available_linters}()}.
 #' Documentation for linters is structured into tags to allow for easier discovery.
 #'
+#' @evalRd rd_taglist()
 #' @evalRd rd_linterlist()
 NULL
 

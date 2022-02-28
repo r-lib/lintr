@@ -9,3 +9,6 @@ infix_spaces_linter()
 \description{
 Check that infix operators are surrounded by spaces.
 }
+\section{Tags}{
+\link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+}

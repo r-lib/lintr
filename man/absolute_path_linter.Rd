@@ -18,3 +18,6 @@ If \code{TRUE}, only lint path strings, which
 \description{
 Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
 }
+\section{Tags}{
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=robustness_linters]{robustness}
+}

@@ -12,3 +12,6 @@ todo_comment_linter(todo = c("todo", "fixme"))
 \description{
 Check that the source contains no TODO comments (case-insensitive).
 }
+\section{Tags}{
+\link[=configurable_linters]{configurable}, \link[=style_linters]{style}
+}

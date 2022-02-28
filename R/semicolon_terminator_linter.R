@@ -6,6 +6,7 @@
 #'   \item{compound}{Semicolons that separate two statements on the same line.}
 #'   \item{trailing}{Semicolons following the last statement on the line.}
 #' }
+#' @evalRd rd_tags("semicolon_terminator_linter")
 #' @export
 semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
   Linter(function(source_file) {

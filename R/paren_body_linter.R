@@ -2,6 +2,7 @@
 #'
 #' Check that there is a space between right parenthesis and a body expression.
 #'
+#' @evalRd rd_tags("paren_body_linter")
 #' @export
 paren_body_linter <- function() {
   Linter(function(source_file) {

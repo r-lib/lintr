@@ -2,6 +2,7 @@
 #'
 #' Check for \code{x == NA} and \code{x != NA}
 #'
+#' @evalRd rd_tags("equals_na_linter")
 #' @export
 equals_na_linter <- function() {
   Linter(function(source_file) {

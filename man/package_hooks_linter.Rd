@@ -10,3 +10,6 @@ package_hooks_linter()
 Check various common "gotchas" in [.onLoad()], [.onAttach()], [.Last.lib()], and [.onDetach()]
   namespace hooks that will cause `R CMD check` issues.
 }
+\section{Tags}{
+\link[=correctness_linters]{correctness}, \link[=style_linters]{style}
+}

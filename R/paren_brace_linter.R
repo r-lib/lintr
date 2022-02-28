@@ -2,6 +2,7 @@
 #'
 #' Check that there is a space between right parentheses and an opening curly brace.
 #'
+#' @evalRd rd_tags("paren_brace_linter")
 #' @export
 paren_brace_linter <- function() {
   Linter(function(source_file) {

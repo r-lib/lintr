@@ -182,6 +182,7 @@ make_path_linter <- function(path_function, message, linter, name = linter_auto_
 #' \item contain only alphanumeric chars (including UTF-8), spaces, and win32-allowed punctuation
 #' }
 #'
+#' @evalRd rd_tags("absolute_path_linter")
 #' @export
 absolute_path_linter <- function(lax = TRUE) {
   make_path_linter(
@@ -197,6 +198,7 @@ absolute_path_linter <- function(lax = TRUE) {
 #' Check that \code{\link{file.path}()} is used to construct safe and portable paths.
 #'
 #' @inheritParams absolute_path_linter
+#' @evalRd rd_tags("nonportable_path_linter")
 #' @export
 nonportable_path_linter <- function(lax = TRUE) {
   make_path_linter(

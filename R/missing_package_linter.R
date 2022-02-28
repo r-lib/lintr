@@ -3,6 +3,7 @@
 #' Check for missing packages in \code{library()}, \code{require()},
 #'   \code{loadNamespace()} and \code{requireNamespace()} calls.
 #'
+#' @evalRd rd_tags("missing_package_linter")
 #' @export
 missing_package_linter <- function() {
   Linter(function(source_file) {

@@ -9,3 +9,6 @@ commas_linter()
 \description{
 Check that all commas are followed by spaces, but do not have spaces before them.
 }
+\section{Tags}{
+\link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+}

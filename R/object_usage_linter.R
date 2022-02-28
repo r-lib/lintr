@@ -4,6 +4,7 @@
 #' \code{\link[codetools]{checkUsage}}. Note that this runs
 #' \code{\link[base]{eval}} on the code, so do not use with untrusted code.
 #'
+#' @evalRd rd_tags("object_usage_linter")
 #' @export
 object_usage_linter <- function() {
   Linter(function(source_file) {

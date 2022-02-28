@@ -9,3 +9,6 @@ trailing_blank_lines_linter()
 \description{
 Check that there are no trailing blank lines in source code.
 }
+\section{Tags}{
+\link[=default_linters]{default}, \link[=style_linters]{style}
+}

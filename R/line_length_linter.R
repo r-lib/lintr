@@ -3,6 +3,7 @@
 #' Check that the line length of both comments and code is less than \code{length}.
 #'
 #' @param length maximum line length allowed.
+#' @evalRd rd_tags("line_length_linter")
 #' @export
 line_length_linter <- function(length = 80L) {
   Linter(function(source_file) {

@@ -9,3 +9,6 @@ paren_brace_linter()
 \description{
 Check that there is a space between right parentheses and an opening curly brace.
 }
+\section{Tags}{
+\link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+}

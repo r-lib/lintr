@@ -9,3 +9,6 @@ trailing_whitespace_linter()
 \description{
 Check that there are no space characters at the end of source lines.
 }
+\section{Tags}{
+\link[=default_linters]{default}, \link[=style_linters]{style}
+}

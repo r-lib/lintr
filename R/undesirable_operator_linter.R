@@ -15,6 +15,7 @@ op_types <- c(
 #'
 #' @param op Named character vector, where the names are the names of the undesirable operators,
 #'           and the values are the text for the alternative operator to use (or \code{NA}).
+#' @evalRd rd_tags("undesirable_operator_linter")
 #' @export
 undesirable_operator_linter <- function(op = default_undesirable_operators) {
   Linter(function(source_file) {

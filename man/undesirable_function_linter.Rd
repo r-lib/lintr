@@ -21,3 +21,6 @@ function name as a symbol undesirable or not.}
 Report the use of undesirable functions, e.g. \code{\link[base]{return}}, \code{\link[base]{options}}, or
 \code{\link[base]{sapply}} and suggest an alternative.
 }
+\section{Tags}{
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=efficiency_linters]{efficiency}, \link[=robustness_linters]{robustness}, \link[=style_linters]{style}
+}

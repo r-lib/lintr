@@ -10,3 +10,6 @@ missing_package_linter()
 Check for missing packages in \code{library()}, \code{require()},
   \code{loadNamespace()} and \code{requireNamespace()} calls.
 }
+\section{Tags}{
+\link[=common_mistakes_linters]{common_mistakes}, \link[=robustness_linters]{robustness}
+}

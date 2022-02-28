@@ -3,6 +3,7 @@
 #' Check that parentheses and square brackets do not have spaces directly inside them, i.e., directly following an
 #' opening delimiter or directly preceding a closing delimiter.
 #'
+#' @evalRd rd_tags("spaces_inside_linter")
 #' @export
 spaces_inside_linter <- function() {
   Linter(function(source_file) {

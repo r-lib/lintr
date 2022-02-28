@@ -12,3 +12,6 @@ backport_linter(r_version = getRversion())
 \description{
 Check for usage of unavailable functions. Not reliable for testing r-devel dependencies.
 }
+\section{Tags}{
+\link[=configurable_linters]{configurable}, \link[=robustness_linters]{robustness}
+}

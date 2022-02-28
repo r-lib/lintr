@@ -3,6 +3,7 @@
 #' Check for usage of unavailable functions. Not reliable for testing r-devel dependencies.
 #'
 #' @param r_version Minimum R version to test for compatibility
+#' @evalRd rd_tags("backport_linter")
 #' @export
 backport_linter <- function(r_version = getRversion()) {
   Linter(function(source_file) {
