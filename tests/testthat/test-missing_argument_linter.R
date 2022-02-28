@@ -78,6 +78,9 @@ test_that("returns the correct linting", {
     list(message = rex("Missing argument in function call.")),
     missing_argument_linter(c()))
 
+  # Fixes https://github.com/r-lib/lintr/issues/906
+  # Comments should be ignored so that missing arguments could be
+  # properly identified in these cases.
   expect_lint("fun(
     1,
     2,
