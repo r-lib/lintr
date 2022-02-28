@@ -13,3 +13,6 @@ Force explicit calls in magrittr pipes, e.g.,
 \section{Tags}{
 \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }
+\section{Tags}{
+\link[=readability_linters]{readability}, \link[=style_linters]{style}
+}
