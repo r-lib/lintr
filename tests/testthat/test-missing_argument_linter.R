@@ -77,4 +77,28 @@ test_that("returns the correct linting", {
   expect_lint("alist(a =)",
     list(message = rex("Missing argument in function call.")),
     missing_argument_linter(c()))
+
+  expect_lint("fun(
+    1,
+    2,
+    # comment
+    )",
+    list(message = rex("Missing argument in function call.")),
+    missing_argument_linter())
+
+  expect_lint("fun(
+    # comment
+    ,
+    1
+    )",
+    list(message = rex("Missing argument in function call.")),
+    missing_argument_linter())
+
+  expect_lint("fun(
+    a = # comment
+    ,
+    1
+    )",
+    list(message = rex("Missing argument in function call.")),
+    missing_argument_linter())
 })
