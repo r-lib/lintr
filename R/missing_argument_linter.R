@@ -9,9 +9,9 @@ missing_argument_linter <- function(except = c("switch", "alist")) {
     xml <- source_file$full_xml_parsed_content
 
     xpath <- "//expr[expr[SYMBOL_FUNCTION_CALL]]/*[
-      self::OP-COMMA[preceding-sibling::*[1][self::OP-LEFT-PAREN or self::OP-COMMA]] or
-      self::OP-COMMA[following-sibling::*[1][self::OP-RIGHT-PAREN]] or
-      self::EQ_SUB[following-sibling::*[1][self::OP-RIGHT-PAREN or self::OP-COMMA]]
+      self::OP-COMMA[preceding-sibling::*[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-COMMA]] or
+      self::OP-COMMA[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN]] or
+      self::EQ_SUB[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN or self::OP-COMMA]]
     ]"
 
     missing_args <- xml2::xml_find_all(xml, xpath)
