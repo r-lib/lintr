@@ -1,0 +1,186 @@
+#' Get Linter metadata from a package
+#'
+#' Obtain a tagged list of all Linters available in a package.
+#'
+#' @param packages A character vector of packages to search for linters.
+#'
+#' @section Package Authors:
+#'
+#' To implement \code{available_linters()} for your package, include a file \code{inst/lintr/linters.csv} in your
+#' package.
+#' The CSV file must contain two columns, 'linter' and 'tags', and be UTF-8 encoded.
+#' Each row describes a linter by
+#'
+#' \enumerate{
+#' \item{its function name (e.g. \code{"assignment_linter"}) in the column 'linter'.}
+#' \item{space separated tags associated with the linter (e.g. \code{"style consistency default"}) in the column
+#'   'tags'.}
+#' }
+#'
+#' Tags should be snake_case.
+#'
+#' @return
+#' A data frame with columns 'linter', 'package' and 'tags':
+#'
+#' \describe{
+#' \item{linter}{A character column naming the function associated to the linter.}
+#' \item{package}{A characetr column containing the name of the package providing the linter.}
+#' \item{tags}{A list column containing tags associated to the linter.}
+#' }
+#'
+#' @examples
+#' lintr_linters <- available_linters()
+#'
+#' # If the package doesn't exist or isn't installed, an empty data frame will be returned
+#' available_linters("does-not-exist")
+#'
+#' lintr_linters2 <- available_linters(c("lintr", "does-not-exist"))
+#' identical(lintr_linters, lintr_linters2)
+#' @export
+available_linters <- function(packages = "lintr") {
+  if (!is.character(packages)) {
+    stop("`packages` must be a character vector.")
+  }
+
+  # Handle multiple packages
+  if (length(packages) > 1L) {
+    return(do.call(rbind, lapply(packages, available_linters)))
+  }
+
+  csv_file <- system.file("lintr", "linters.csv", package = packages)
+
+  # Make sure we always return a valid data frame
+  # data.frame(...) and as.data.frame(...) don't handle zero-row list-columns properly, so we need to manually create
+  # the structure.
+  empty_linters <- structure(list(
+    linter = character(),
+    package = character(),
+    tags = list()
+  ), row.names = integer(0), class = "data.frame")
+
+  if (!file.exists(csv_file)) {
+    return(empty_linters)
+  }
+  available <- utils::read.csv(csv_file, encoding = "UTF-8", as.is = TRUE)
+
+  # Check that the csv file contains two character columns, named 'linter' and 'tags'.
+  # Otherwise, fallback to an empty data frame.
+  if (!ncol(available) == 2L) {
+    warning(
+      "`linters.csv` must contain two columns, 'linter' and 'tags'.\nPackage '",
+      packages, "' contains ", ncol(available), " columns instead."
+    )
+    return(empty_linters)
+  } else if (!identical(colnames(available), c("linter", "tags"))) {
+    warning(
+      "`linters.csv` must contain two columns, 'linter' and 'tags'.\nPackage '",
+      packages, "' contains columns '", colnames(available)[1L], "' and '", colnames(available)[2L], "' instead."
+    )
+    return(empty_linters)
+  } else if (nrow(available) == 0L) {
+    # Circumvent empty list problem in data.frame(...)
+    return(empty_linters)
+  }
+
+  structure(list(
+    linter = available[["linter"]],
+    package = rep_len(packages, nrow(available)),
+    tags = strsplit(available[["tags"]], split = " ", fixed = TRUE)
+  ), row.names = c(NA, -nrow(available)), class = "data.frame")
+}
+
+#' Generate Rd fragment for the Tags section of a linter
+#'
+#' @param linter_name Name of the linter to generate Rd code for.
+#'
+#' @noRd
+rd_tags <- function(linter_name) {
+  linters <- available_linters()
+  tags <- sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
+
+  c(
+    "\\section{Tags}{",
+    if (length(tags)) {
+      paste(
+        vapply(tags, function(tag) {
+          paste0("\\link[=", tag, "_linters]{", tag, "}")
+        }, character(1L)),
+        collapse = ", "
+      )
+    } else {
+      "No tags are given."
+    },
+    "}"
+  )
+}
+
+#' Generate Rd fragment for the Linters section of a tag
+#'
+#' @param tag_name Name of the tag to generate Rd code for.
+#'
+#' @noRd
+rd_linters <- function(tag_name) {
+  linters <- available_linters()
+  tagged <- sort(linters[["linter"]][vapply(
+    linters[["tags"]],
+    function(tag_list) tag_name %in% tag_list,
+    logical(1L)
+  )])
+
+  c(
+    "\\section{Linters}{",
+    if (length(tagged)) {
+      c(
+        paste0("The following linters are tagged with '", tag_name, "':"),
+        "\\itemize{",
+        vapply(tagged, function(linter) {
+          paste0("\\item{\\code{\\link{", linter, "}}}")
+        }, character(1L)),
+        "}"
+      )
+    } else {
+      paste0("No linters are tagged with '", tag_name, "'.")
+    },
+    "}"
+  )
+}
+
+#' Generate Rd fragment for the main help page, listing all tags
+#'
+#' @noRd
+rd_taglist <- function() {
+  linters <- available_linters()
+  tags <- sort(unique(unlist(linters[["tags"]])))
+
+  c(
+    "\\section{Tags}{",
+    "The following tags exist:",
+    "\\itemize{",
+    vapply(tags, function(tag) {
+      n_linters <- sum(vapply(linters[["tags"]], function(tags) tag %in% tags, logical(1L)))
+      paste0("\\item{\\link[=", tag, "_linters]{", tag, "} (", n_linters, " linters)}")
+    }, character(1L)),
+    "}", # itemize
+    "}" # section
+  )
+}
+
+#' Generate Rd fragment for the main help page, listing all linters
+#'
+#' @noRd
+rd_linterlist <- function() {
+  linters <- available_linters()
+  linter_names <- sort(linters[["linter"]])
+
+  c(
+    "\\section{Linters}{",
+    "The following linters exist:",
+    "\\itemize{",
+    vapply(linter_names, function(linter_name) {
+      tags <- sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
+      paste0("\\item{\\code{\\link{", linter_name, "}} (tags: ", paste(tags, collapse = ", "), ")}")
+    }, character(1L)),
+    "}", # itemize
+    "}" # section
+  )
+}
