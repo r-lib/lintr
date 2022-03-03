@@ -1,5 +1,8 @@
-#' @describeIn linters Report the use of undesirable functions, e.g.
-#'   \code{return}, \code{options}, or \code{sapply} and suggest an alternative.
+#' Undesirable function linter
+#'
+#' Report the use of undesirable functions, e.g. \code{return}, \code{options}, or \code{sapply} and suggest an
+#' alternative.
+#'
 #' @param fun Named character vector, where the names are the names of the
 #'   undesirable functions, and the values are the text for the alternative
 #'   function to use (or \code{NA}).

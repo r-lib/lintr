@@ -23,8 +23,10 @@ ops <- list(
   "&&",
   rex("%", except_any_of("%"), "%"))
 
-#' @describeIn linters Check that there is no commented code outside roxygen
-#' blocks.
+#' Commented code linter
+#'
+#' Check that there is no commented code outside roxygen blocks.
+#'
 #' @export
 commented_code_linter <- function() {
   Linter(function(source_file) {
@@ -76,8 +78,11 @@ parsable <- function(x) {
 }
 
 
-#' @describeIn linters  Check that the source contains no TODO comments (case-insensitive).
-#' @param todo  Vector of strings that identify TODO comments.
+#' TODO comment linter
+#'
+#' Check that the source contains no TODO comments (case-insensitive).
+#'
+#' @param todo Vector of strings that identify TODO comments.
 #' @export
 todo_comment_linter <- function(todo = c("todo", "fixme")) {
   Linter(function(source_file) {

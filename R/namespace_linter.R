@@ -1,5 +1,7 @@
-#' @describeIn linters check for missing packages and symbols in namespace calls.
-#'   Note that using \code{check_exports=TRUE} or \code{check_nonexports=TRUE} will
+#' Namespace linter
+#'
+#' Check for missing packages and symbols in namespace calls.
+#' Note that using \code{check_exports=TRUE} or \code{check_nonexports=TRUE} will
 #'   load packages used in user code so it could potentially change the global state.
 #' @param check_exports Check if \code{symbol} is exported from \code{namespace} in
 #'   \code{namespace::symbol} calls.

@@ -1,5 +1,7 @@
-#' @describeIn linters check that all commas are followed by spaces, but do not
-#' have spaces before them.
+#' Commas linter
+#'
+#' Check that all commas are followed by spaces, but do not have spaces before them.
+#'
 #' @importFrom utils head
 #' @export
 commas_linter <- function() {

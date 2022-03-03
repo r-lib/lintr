@@ -1,5 +1,8 @@
-#' @describeIn linters  Check that the `[[` operator is used when extracting a single element from
-#'                      an object, not `[` (subsetting) nor `$` (interactive use).
+#' Extraction operator linter
+#'
+#' Check that the `[[` operator is used when extracting a single element from an object, not `[` (subsetting) nor `$`
+#' (interactive use).
+#'
 #' @export
 extraction_operator_linter <- function() {
   Linter(function(source_file) {

@@ -1,6 +1,9 @@
-#' @describeIn linters Check that closures have the proper usage using
+#' Object usage linter
+#'
+#' Check that closures have the proper usage using
 #' \code{\link[codetools]{checkUsage}}. Note that this runs
 #' \code{\link[base]{eval}} on the code, so do not use with untrusted code.
+#'
 #' @export
 object_usage_linter <- function() {
   Linter(function(source_file) {

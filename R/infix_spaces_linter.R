@@ -29,7 +29,10 @@ binary_infix_tokens <- c(
 )
 infix_tokens <- c(unary_infix_tokens, binary_infix_tokens)
 
-#' @describeIn linters  Check that infix operators are surrounded by spaces.
+#' Infix spaces linter
+#'
+#' Check that infix operators are surrounded by spaces.
+#'
 #' @export
 infix_spaces_linter <- function() {
   Linter(function(source_file) {

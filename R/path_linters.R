@@ -170,8 +170,11 @@ make_path_linter <- function(path_function, message, linter, name = linter_auto_
   }, name = name)
 }
 
-#' @describeIn linters  Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
-#' @param lax  Less stringent linting, leading to fewer false positives.
+#' Absolute path linter
+#'
+#' Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
+#'
+#' @param lax Less stringent linting, leading to fewer false positives.
 #' @export
 absolute_path_linter <- function(lax = TRUE) {
   make_path_linter(
@@ -182,7 +185,11 @@ absolute_path_linter <- function(lax = TRUE) {
   )
 }
 
-#' @describeIn linters  Check that file.path() is used to construct safe and portable paths.
+#' Non-portable path linter
+#'
+#' Check that file.path() is used to construct safe and portable paths.
+#'
+#' @inheritParams absolute_path_linter
 #' @export
 nonportable_path_linter <- function(lax = TRUE) {
   make_path_linter(

@@ -1,8 +1,11 @@
-#' @describeIn linters  Check for \code{1:length(...)}, \code{1:nrow(...)},
+#' Sequence linter
+#'
+#' Check for \code{1:length(...)}, \code{1:nrow(...)},
 #' \code{1:ncol(...)}, \code{1:NROW(...)} and \code{1:NCOL(...)}
 #' expressions. These often cause bugs when the right-hand side is zero.
 #' It is safer to use \code{\link[base]{seq_len}} or
 #' \code{\link[base]{seq_along}} instead.
+#'
 #' @export
 seq_linter <- function() {
   Linter(function(source_file) {

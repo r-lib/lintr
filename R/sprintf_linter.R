@@ -1,5 +1,7 @@
-#' @describeIn linters checks for inconsistent number of arguments or
-#'    arguments with incompatible types in \code{sprintf} calls.
+#' \code{sprintf} linter
+#'
+#' Check for inconsistent number of arguments or arguments with incompatible types in \code{sprintf} calls.
+#'
 #' @export
 sprintf_linter <- function() {
   Linter(function(source_file) {

@@ -1,4 +1,6 @@
-#' @describeIn linters checks for missing arguments in function calls.
+#' Missing argument linter
+#'
+#' Check for missing arguments in function calls.
 #' @param except a character vector of function names as exceptions.
 #' @export
 missing_argument_linter <- function(except = c("switch", "alist")) {

@@ -1,5 +1,8 @@
-#' @describeIn linters Check that the line length of both comments and code is
-#' less than length.
+#' Line length linter
+#'
+#' Check that the line length of both comments and code is less than length.
+#'
+#' @param length maximum line length allowed.
 #' @export
 line_length_linter <- function(length = 80L) {
   Linter(function(source_file) {

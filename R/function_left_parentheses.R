@@ -1,5 +1,7 @@
-#' @describeIn linters check that all left parentheses in a function call
-#' do not have spaces before them.
+#' Function left parentheses linter
+#'
+#' Check that all left parentheses in a function call do not have spaces before them.
+#'
 #' @export
 function_left_parentheses_linter <- function() { # nolint: object_length_linter.
   Linter(function(source_file) {

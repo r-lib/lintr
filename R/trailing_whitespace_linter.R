@@ -1,5 +1,7 @@
-#' @describeIn linters  Check that there are no space characters at the end of
-#' source lines.
+#' Trailing whitespace linter
+#'
+#' Check that there are no space characters at the end of source lines.
+#'
 #' @export
 trailing_whitespace_linter <- function() {
   Linter(function(source_file) {

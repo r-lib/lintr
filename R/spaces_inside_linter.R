@@ -1,5 +1,7 @@
-#' @describeIn linters Check that parentheses and square brackets do not have
-#' spaces directly inside them.
+#' Spaces inside linter
+#'
+#' Check that parentheses and square brackets do not have spaces directly inside them.
+#'
 #' @export
 spaces_inside_linter <- function() {
   Linter(function(source_file) {

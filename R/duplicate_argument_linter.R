@@ -1,4 +1,7 @@
-#' @describeIn linters checks for duplicate arguments in function calls.
+#' Duplicate argument linter
+#'
+#' Check for duplicate arguments in function calls.
+#'
 #' @param except a character vector of function names as exceptions.
 #' @export
 duplicate_argument_linter <- function(except = character()) {

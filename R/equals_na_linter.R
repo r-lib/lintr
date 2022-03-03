@@ -1,4 +1,7 @@
-#' @describeIn linters that checks for x == NA and x != NA
+#' Equality check with NA linter
+#'
+#' Check for \code{x == NA} and \code{x != NA}
+#'
 #' @export
 equals_na_linter <- function() {
   Linter(function(source_file) {

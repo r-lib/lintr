@@ -1,8 +1,8 @@
-#' @describeIn linters check that there is a space between right
-#' parenthesis and an opening curly brace.
+#' Parentheses before brace linter
+#'
+#' Check that there is a space between right parentheses and an opening curly brace.
 #'
 #' @export
-
 paren_brace_linter <- function() {
   Linter(function(source_file) {
     if (is.null(source_file$xml_parsed_content)) {

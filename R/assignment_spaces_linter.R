@@ -1,4 +1,6 @@
-#' @describeIn linters checks that assignments only have one space before and after
+#' Assignment spaces linter
+#'
+#' Check that assignments only have one space before and after.
 #' @export
 assignment_spaces_linter <- function() {
   Linter(function(source_file) {

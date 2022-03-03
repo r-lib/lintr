@@ -1,5 +1,7 @@
-#' @describeIn linters  Check that the \code{c} function is not used without arguments nor with a
-#'                      single constant.
+#' Unneeded concatenation linter
+#'
+#' Check that the \code{c} function is not used without arguments nor with a single constant.
+#'
 #' @export
 unneeded_concatenation_linter <- function() {
   Linter(function(source_file) {

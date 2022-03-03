@@ -78,7 +78,7 @@ with_defaults <- function(..., default = default_linters) {
 #' \code{line_length_linter} use their default argument(s), see \code{?
 #' <linter_name>} for details):
 #'
-#' - \Sexpr[stage=render, results=rd]{paste(names(lintr::default_linters), collapse=", ")}.
+#' @evalRd rd_linters("default")
 #'
 #' @export
 default_linters <- with_defaults(

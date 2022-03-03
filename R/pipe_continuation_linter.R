@@ -1,5 +1,7 @@
-#' @describeIn linters Check that each step in a pipeline is on a new line, or
-#' the entire pipe fits on one line.
+#' Pipe continuation linter
+#'
+#' Check that each step in a pipeline is on a new line, or the entire pipe fits on one line.
+#'
 #' @importFrom xml2 xml_find_all as_list
 #' @export
 pipe_continuation_linter <- function() {
