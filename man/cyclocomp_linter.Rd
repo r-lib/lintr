@@ -7,11 +7,14 @@
 cyclocomp_linter(complexity_limit = 15L)
 }
 \arguments{
-\item{complexity_limit}{expressions with a cyclomatic complexity higher than
-this are linted, defaults to 15. See \code{\link[cyclocomp]{cyclocomp}}.}
+\item{complexity_limit}{expressions with a cyclomatic complexity higher than this are linted, defaults to 15.
+See \code{\link[cyclocomp:cyclocomp]{cyclocomp::cyclocomp()}}.}
 }
 \description{
-Check for overly complicated expressions. See \code{\link[cyclocomp]{cyclocomp}}.
+Check for overly complicated expressions. See \code{\link[cyclocomp:cyclocomp]{cyclocomp::cyclocomp()}}.
+}
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}

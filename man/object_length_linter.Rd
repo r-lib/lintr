@@ -12,6 +12,9 @@ object_length_linter(length = 30L)
 \description{
 Check that object names are not too long.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
 \section{Tags}{
 \link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }

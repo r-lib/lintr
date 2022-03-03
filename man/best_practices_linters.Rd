@@ -6,6 +6,9 @@
 \description{
 Linters checking the use of coding best practices, such as explicit typing of numeric constants.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
 \section{Linters}{
 The following linters are tagged with 'best_practices':
 \itemize{

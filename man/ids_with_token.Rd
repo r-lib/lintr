@@ -10,39 +10,38 @@ ids_with_token(source_file, value, fun = `==`)
 with_id(source_file, id)
 }
 \arguments{
-\item{source_file}{A list of source expressions, the result of a call to
-`\link{get_source_expressions}()`, for the desired filename.}
+\item{source_file}{A list of source expressions, the result of a call to \code{\link[=get_source_expressions]{get_source_expressions()}}, for the desired
+filename.}
 
 \item{value}{Character. String corresponding to the token to search for.
 For example:
 \itemize{
-  \item "SYMBOL"
-  \item "FUNCTION"
-  \item "EQ_FORMALS"
-  \item "$"
-  \item "("
+\item "SYMBOL"
+\item "FUNCTION"
+\item "EQ_FORMALS"
+\item "$"
+\item "("
 }}
 
 \item{fun}{For additional flexibility, a function to search for in
-the `token` column of `parsed_content`. Typically `==` or `\%in\%`.}
+the \code{token} column of \code{parsed_content}. Typically \code{==} or \verb{\\\%in\\\%}.}
 
 \item{id}{Integer. The index corresponding to the desired row
-of `parsed_content`.}
+of \code{parsed_content}.}
 }
 \value{
-`ids_with_token`: The indices of the `parsed_content` data frame
+\code{ids_with_token}: The indices of the \code{parsed_content} data frame
 entry of the list of source expressions. Indices correspond to the
-*rows* where `fun` evaluates to `TRUE` for the `value` in the *token* column.
+\emph{rows} where \code{fun} evaluates to \code{TRUE} for the \code{value} in the \emph{token} column.
 
-`with_id`: A data frame corresponding to the row(s) specified in `id`.
+\code{with_id}: A data frame corresponding to the row(s) specified in \code{id}.
 }
 \description{
 Gets the source IDs (row indices) corresponding to given token.
 }
 \section{Functions}{
 \itemize{
-\item \code{with_id}: Return the row of the `parsed_content` entry of the
-`\link{get_source_expressions}()` object. Typically used in conjunction with
-`ids_with_token` to iterate over rows containing desired tokens.
+\item \code{with_id}: Return the row of the \code{parsed_content} entry of the \verb{[get_source_expressions]()} object. Typically used in
+conjunction with \code{ids_with_token} to iterate over rows containing desired tokens.
 }}
 

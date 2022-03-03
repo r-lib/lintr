@@ -4,10 +4,9 @@
 \alias{lintr}
 \title{Lintr}
 \description{
-Checks adherence to a given style, syntax errors and possible semantic
-issues.  Supports on the fly checking of R code edited with Emacs, Vim and
-Sublime Text.
+Checks adherence to a given style, syntax errors and possible semantic issues.
+Supports on the fly checking of R code edited with Emacs, Vim and Sublime Text.
 }
 \seealso{
-\code{\link{lint}}, \code{\link{lint_package}}, \code{\link{lint_dir}}, \code{\link{linters}}
+\code{\link[=lint]{lint()}}, \code{\link[=lint_package]{lint_package()}}, \code{\link[=lint_dir]{lint_dir()}}, \link{linters}
 }

@@ -7,15 +7,15 @@
 undesirable_operator_linter(op = default_undesirable_operators)
 }
 \arguments{
-\item{op}{Named character vector, where the names are the names of the undesirable operators,
-and the values are the text for the alternative operator to use (or \code{NA}).}
+\item{op}{Named character vector, where the names are the names of the undesirable operators, and the values are
+the text for the alternative operator to use (or \code{NA}).}
 }
 \description{
-Report the use of undesirable operators, e.g. \code{\link[base:ns-dblcolon]{`:::`}} or
-\code{\link[base:assignOps]{`<<-`}} and suggest an alternative.
+Report the use of undesirable operators, e.g. \code{\link[base:ns-dblcolon]{:::}} or
+\code{\link[base:assignOps]{<<-}} and suggest an alternative.
 }
-\section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=efficiency_linters]{efficiency}, \link[=robustness_linters]{robustness}, \link[=style_linters]{style}
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=efficiency_linters]{efficiency}, \link[=robustness_linters]{robustness}, \link[=style_linters]{style}

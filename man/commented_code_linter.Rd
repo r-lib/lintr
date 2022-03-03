@@ -9,6 +9,9 @@ commented_code_linter()
 \description{
 Check that there is no commented code outside roxygen blocks.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }

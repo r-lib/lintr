@@ -7,6 +7,7 @@
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
 #'   match at least one of these styles.
 #' @evalRd rd_tags("object_name_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 object_name_linter <- function(styles = c("snake_case", "symbols")) {
 
@@ -326,6 +327,7 @@ regexes_rd <- toString(paste0("\\sQuote{", names(style_regexes), "}"))
 #'
 #' @param length maximum variable name length allowed.
 #' @evalRd rd_tags("object_length_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 object_length_linter <- function(length = 30L) {
   make_object_linter(function(source_file, token) {

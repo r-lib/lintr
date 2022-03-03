@@ -2,11 +2,13 @@
 #'
 #' Check that no semicolons terminate expressions.
 #'
-#' @param semicolon A character vector defining which semicolons to report:\describe{
+#' @param semicolon A character vector defining which semicolons to report:
+#' \describe{
 #'   \item{compound}{Semicolons that separate two statements on the same line.}
 #'   \item{trailing}{Semicolons following the last statement on the line.}
 #' }
 #' @evalRd rd_tags("semicolon_terminator_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
   Linter(function(source_file) {

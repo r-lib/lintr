@@ -4,6 +4,7 @@
 #'
 #' @param r_version Minimum R version to test for compatibility
 #' @evalRd rd_tags("backport_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 backport_linter <- function(r_version = getRversion()) {
   Linter(function(source_file) {

@@ -7,8 +7,10 @@
 missing_package_linter()
 }
 \description{
-Check for missing packages in \code{library()}, \code{require()},
-  \code{loadNamespace()} and \code{requireNamespace()} calls.
+Check for missing packages in \code{library()}, \code{require()}, \code{loadNamespace()} and \code{requireNamespace()} calls.
+}
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
 \link[=common_mistakes_linters]{common_mistakes}, \link[=robustness_linters]{robustness}

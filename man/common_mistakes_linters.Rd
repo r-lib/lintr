@@ -6,6 +6,9 @@
 \description{
 Linters highlighting common mistakes, such as duplicate arguments.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
 \section{Linters}{
 The following linters are tagged with 'common_mistakes':
 \itemize{

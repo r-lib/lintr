@@ -7,16 +7,17 @@
 semicolon_terminator_linter(semicolon = c("compound", "trailing"))
 }
 \arguments{
-\item{semicolon}{A character vector defining which semicolons to report:\describe{
-  \item{compound}{Semicolons that separate two statements on the same line.}
-  \item{trailing}{Semicolons following the last statement on the line.}
+\item{semicolon}{A character vector defining which semicolons to report:
+\describe{
+\item{compound}{Semicolons that separate two statements on the same line.}
+\item{trailing}{Semicolons following the last statement on the line.}
 }}
 }
 \description{
 Check that no semicolons terminate expressions.
 }
-\section{Tags}{
-\link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
 \link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}

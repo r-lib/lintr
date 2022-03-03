@@ -9,6 +9,9 @@ assignment_spaces_linter()
 \description{
 Check that assignments only have one space before and after.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
 \section{Tags}{
 \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }

@@ -1,8 +1,9 @@
 #' Equality check with NA linter
 #'
-#' Check for \code{x == NA} and \code{x != NA}
+#' Check for `x == NA` and `x != NA`
 #'
 #' @evalRd rd_tags("equals_na_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 equals_na_linter <- function() {
   Linter(function(source_file) {

@@ -10,8 +10,8 @@ sprintf_linter()
 Check for an inconsistent number of arguments or arguments with incompatible types (for literal arguments) in
 \code{sprintf} calls.
 }
-\section{Tags}{
-\link[=common_mistakes_linters]{common_mistakes}, \link[=correctness_linters]{correctness}
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
 \link[=common_mistakes_linters]{common_mistakes}, \link[=correctness_linters]{correctness}

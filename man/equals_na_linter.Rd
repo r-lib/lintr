@@ -9,6 +9,9 @@ equals_na_linter()
 \description{
 Check for \code{x == NA} and \code{x != NA}
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
 \section{Tags}{
 \link[=common_mistakes_linters]{common_mistakes}, \link[=correctness_linters]{correctness}, \link[=default_linters]{default}, \link[=robustness_linters]{robustness}
 }

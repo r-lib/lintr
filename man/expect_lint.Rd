@@ -7,36 +7,33 @@
 expect_lint(content, checks, ..., file = NULL, language = "en")
 }
 \arguments{
-\item{content}{a character vector for the file content to be linted, each vector element
-representing a line of text.}
+\item{content}{a character vector for the file content to be linted, each vector element representing a line of
+text.}
 
 \item{checks}{checks to be performed:
 \describe{
-  \item{NULL}{check that no lints are returned.}
-  \item{single string or regex object}{check that the single lint returned has a matching
-  message.}
-  \item{named list}{check that the single lint returned has fields that match. Accepted fields
-  are the same as those taken by \code{\link{Lint}}.}
-  \item{list of named lists}{for each of the multiple lints returned, check that it matches
-  the checks in the corresponding named list (as described in the point above).}
+\item{NULL}{check that no lints are returned.}
+\item{single string or regex object}{check that the single lint returned has a matching message.}
+\item{named list}{check that the single lint returned has fields that match. Accepted fields are the same as those
+taken by \code{\link[=Lint]{Lint()}}.}
+\item{list of named lists}{for each of the multiple lints returned, check that it matches the checks in the
+corresponding named list (as described in the point above).}
 }
 Named vectors are also accepted instead of named lists, but this is a compatibility feature that
 is not recommended for new code.}
 
-\item{...}{arguments passed to \code{\link{lint}}, e.g. the linters or cache to use.}
+\item{...}{arguments passed to \code{\link[=lint]{lint()}}, e.g. the linters or cache to use.}
 
 \item{file}{if not \code{NULL}, read content from the specified file rather than from \code{content}.}
 
-\item{language}{temporarily override Rs \code{LANGUAGE} envvar, controlling localisation of base
-R error messages. This makes testing them reproducible on all systems irrespective of their
-native R language setting.}
+\item{language}{temporarily override Rs \code{LANGUAGE} envvar, controlling localisation of base R error messages.
+This makes testing them reproducible on all systems irrespective of their native R language setting.}
 }
 \value{
 \code{NULL}, invisibly.
 }
 \description{
-This is an expectation function to test that the lints produced by \code{lint} satisfy a number
-of checks.
+This is an expectation function to test that the lints produced by \code{lint} satisfy a number of checks.
 }
 \examples{
 # no expected lint

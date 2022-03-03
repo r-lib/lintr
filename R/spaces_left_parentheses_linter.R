@@ -3,6 +3,7 @@
 #' Check that all left parentheses have a space before them unless they are in a function call.
 #'
 #' @evalRd rd_tags("spaces_left_parentheses_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 spaces_left_parentheses_linter <- function() {
   Linter(function(source_file) {

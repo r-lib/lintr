@@ -6,6 +6,9 @@
 \description{
 Linters highlighting possible programming mistakes, such as unused variables.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
 \section{Linters}{
 The following linters are tagged with 'correctness':
 \itemize{

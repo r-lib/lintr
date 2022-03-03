@@ -4,6 +4,7 @@
 #' (interactive use).
 #'
 #' @evalRd rd_tags("extraction_operator_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 extraction_operator_linter <- function() {
   Linter(function(source_file) {

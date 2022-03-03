@@ -103,3 +103,4 @@ Collate:
     'unneeded_concatenation_linter.R'
     'with_id.R'
     'zzz.R'
+Roxygen: list(markdown = TRUE)

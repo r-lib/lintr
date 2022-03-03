@@ -9,8 +9,8 @@ single_quotes_linter()
 \description{
 Check that only double quotes are used to delimit string constants.
 }
-\section{Tags}{
-\link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
 \link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
