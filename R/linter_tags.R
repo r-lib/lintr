@@ -52,7 +52,7 @@ available_linters <- function(packages = "lintr") {
   # Make sure we always return a valid data frame
   # data.frame(...) and as.data.frame(...) don't handle zero-row list-columns properly, so we need to manually create
   # the structure.
-  empty_linters <- data.frame(linter = character(), package = character())
+  empty_linters <- data.frame(linter = character(), package = character(), stringsAsFactors = FALSE)
   empty_linters$tags <- list()
 
   if (!file.exists(csv_file)) {
@@ -77,7 +77,8 @@ available_linters <- function(packages = "lintr") {
 
   res <- data.frame(
     linter = available[["linter"]],
-    package = rep_len(packages, nrow(available))
+    package = rep_len(packages, nrow(available)),
+    stringsAsFactors = FALSE
   )
   res$tags <- strsplit(available[["tags"]], split = " ", fixed = TRUE)
   res
