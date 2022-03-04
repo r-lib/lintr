@@ -34,12 +34,13 @@ Suggests:
     mockery,
     rmarkdown,
     rstudioapi (>= 0.2),
-    testthat (>= 2.2.1),
+    testthat (>= 3.0.0),
     withr
 License: MIT + file LICENSE
 Encoding: UTF-8
 VignetteBuilder: knitr
 RoxygenNote: 7.1.2
+Config/testthat/edition: 3
 Collate:
     'utils.R'
     'aaa.R'
