@@ -23,9 +23,9 @@
 #' A data frame with columns 'linter', 'package' and 'tags':
 #'
 #' \describe{
-#' \item{linter}{A character column naming the function associated to the linter.}
-#' \item{package}{A characetr column containing the name of the package providing the linter.}
-#' \item{tags}{A list column containing tags associated to the linter.}
+#' \item{linter}{A character column naming the function associated with the linter.}
+#' \item{package}{A character column containing the name of the package providing the linter.}
+#' \item{tags}{A list column containing tags associated with the linter.}
 #' }
 #'
 #' @examples
@@ -52,11 +52,8 @@ available_linters <- function(packages = "lintr") {
   # Make sure we always return a valid data frame
   # data.frame(...) and as.data.frame(...) don't handle zero-row list-columns properly, so we need to manually create
   # the structure.
-  empty_linters <- structure(list(
-    linter = character(),
-    package = character(),
-    tags = list()
-  ), row.names = integer(0), class = "data.frame")
+  empty_linters <- data.frame(linter = character(), package = character())
+  empty_linters$tags <- list()
 
   if (!file.exists(csv_file)) {
     return(empty_linters)
@@ -65,16 +62,12 @@ available_linters <- function(packages = "lintr") {
 
   # Check that the csv file contains two character columns, named 'linter' and 'tags'.
   # Otherwise, fallback to an empty data frame.
-  if (!ncol(available) == 2L) {
+  if (!all(c("linter", "tags") %in% colnames(available))) {
     warning(
-      "`linters.csv` must contain two columns, 'linter' and 'tags'.\nPackage '",
-      packages, "' contains ", ncol(available), " columns instead."
-    )
-    return(empty_linters)
-  } else if (!identical(colnames(available), c("linter", "tags"))) {
-    warning(
-      "`linters.csv` must contain two columns, 'linter' and 'tags'.\nPackage '",
-      packages, "' contains columns '", colnames(available)[1L], "' and '", colnames(available)[2L], "' instead."
+      "`linters.csv` must contain the columns 'linter' and 'tags'.\nPackage '",
+      packages, "' is missing ",
+      paste0("'", setdiff(c("linter", "tags"), colnames(available)), "'", collapse = " and "),
+      "."
     )
     return(empty_linters)
   } else if (nrow(available) == 0L) {
@@ -82,11 +75,12 @@ available_linters <- function(packages = "lintr") {
     return(empty_linters)
   }
 
-  structure(list(
+  res <- data.frame(
     linter = available[["linter"]],
-    package = rep_len(packages, nrow(available)),
-    tags = strsplit(available[["tags"]], split = " ", fixed = TRUE)
-  ), row.names = c(NA, -nrow(available)), class = "data.frame")
+    package = rep_len(packages, nrow(available))
+  )
+  res$tags <- strsplit(available[["tags"]], split = " ", fixed = TRUE)
+  res
 }
 
 #' Generate Rd fragment for the Tags section of a linter
@@ -101,12 +95,7 @@ rd_tags <- function(linter_name) {
   c(
     "\\section{Tags}{",
     if (length(tags)) {
-      paste(
-        vapply(tags, function(tag) {
-          paste0("\\link[=", tag, "_linters]{", tag, "}")
-        }, character(1L)),
-        collapse = ", "
-      )
+      paste0("\\link[=", tags, "_linters]{", tags, "}", collapse = ", ")
     } else {
       "No tags are given."
     },
@@ -133,9 +122,7 @@ rd_linters <- function(tag_name) {
       c(
         paste0("The following linters are tagged with '", tag_name, "':"),
         "\\itemize{",
-        vapply(tagged, function(linter) {
-          paste0("\\item{\\code{\\link{", linter, "}}}")
-        }, character(1L)),
+        paste0("\\item{\\code{\\link{", tagged, "}}}"),
         "}"
       )
     } else {
@@ -178,7 +165,7 @@ rd_linterlist <- function() {
     "\\itemize{",
     vapply(linter_names, function(linter_name) {
       tags <- sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
-      paste0("\\item{\\code{\\link{", linter_name, "}} (tags: ", paste(tags, collapse = ", "), ")}")
+      paste0("\\item{\\code{\\link{", linter_name, "}} (tags: ", toString(tags), ")}")
     }, character(1L)),
     "}", # itemize
     "}" # section

@@ -13,9 +13,9 @@ available_linters(packages = "lintr")
 A data frame with columns 'linter', 'package' and 'tags':
 
 \describe{
-\item{linter}{A character column naming the function associated to the linter.}
-\item{package}{A characetr column containing the name of the package providing the linter.}
-\item{tags}{A list column containing tags associated to the linter.}
+\item{linter}{A character column naming the function associated with the linter.}
+\item{package}{A character column containing the name of the package providing the linter.}
+\item{tags}{A list column containing tags associated with the linter.}
 }
 }
 \description{
