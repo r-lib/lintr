@@ -8,12 +8,13 @@
 #'
 #' To implement \code{available_linters()} for your package, include a file \code{inst/lintr/linters.csv} in your
 #' package.
-#' The CSV file must contain two columns, 'linter' and 'tags', and be UTF-8 encoded.
+#' The CSV file must contain the columns 'linter' and 'tags', and be UTF-8 encoded.
+#' Additional columns will be silently ignored if present and the columns are identified by name.
 #' Each row describes a linter by
 #'
 #' \enumerate{
 #' \item{its function name (e.g. \code{"assignment_linter"}) in the column 'linter'.}
-#' \item{space separated tags associated with the linter (e.g. \code{"style consistency default"}) in the column
+#' \item{space-separated tags associated with the linter (e.g. \code{"style consistency default"}) in the column
 #'   'tags'.}
 #' }
 #'
