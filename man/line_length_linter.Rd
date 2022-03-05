@@ -10,5 +10,5 @@ line_length_linter(length = 80L)
 \item{length}{maximum line length allowed.}
 }
 \description{
-Check that the line length of both comments and code is less than length.
+Check that the line length of both comments and code is less than \code{length}.
 }

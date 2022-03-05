@@ -11,5 +11,6 @@ undesirable_operator_linter(op = default_undesirable_operators)
 and the values are the text for the alternative operator to use (or \code{NA}).}
 }
 \description{
-Report the use of undesirable operators, e.g. \code{`:::`} or \code{`<<-`} and suggest an alternative.
+Report the use of undesirable operators, e.g. \code{\link[base:ns-dblcolon]{`:::`}} or
+\code{\link[base:assignOps]{`<<-`}} and suggest an alternative.
 }

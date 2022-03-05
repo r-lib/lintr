@@ -7,5 +7,5 @@
 trailing_blank_lines_linter()
 }
 \description{
-Check that there are no trailing blank lines in source files.
+Check that there are no trailing blank lines in source code.
 }

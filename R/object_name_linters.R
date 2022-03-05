@@ -1,6 +1,7 @@
 #' Object name linter
 #'
 #' Check that object names conform to a naming style.
+#' The default naming styles are "snake_case" and "symbols".
 #'
 #' @param styles A subset of
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should

@@ -13,5 +13,5 @@ semicolon_terminator_linter(semicolon = c("compound", "trailing"))
 }}
 }
 \description{
-Check that no semicolons terminate statements.
+Check that no semicolons terminate expressions.
 }

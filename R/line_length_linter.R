@@ -1,6 +1,6 @@
 #' Line length linter
 #'
-#' Check that the line length of both comments and code is less than length.
+#' Check that the line length of both comments and code is less than \code{length}.
 #'
 #' @param length maximum line length allowed.
 #' @export

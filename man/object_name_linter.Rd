@@ -13,4 +13,5 @@ match at least one of these styles.}
 }
 \description{
 Check that object names conform to a naming style.
+The default naming styles are "snake_case" and "symbols".
 }

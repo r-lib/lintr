@@ -10,7 +10,8 @@ op_types <- c(
 
 #' Undesirable operator linter
 #'
-#' Report the use of undesirable operators, e.g. \code{`:::`} or \code{`<<-`} and suggest an alternative.
+#' Report the use of undesirable operators, e.g. \code{\link[base:ns-dblcolon]{`:::`}} or
+#' \code{\link[base:assignOps]{`<<-`}} and suggest an alternative.
 #'
 #' @param op Named character vector, where the names are the names of the undesirable operators,
 #'           and the values are the text for the alternative operator to use (or \code{NA}).

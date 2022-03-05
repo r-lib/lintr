@@ -1,6 +1,6 @@
 #' Single quotes linter
 #'
-#' Check that only single quotes are used to delimit string constants.
+#' Check that only double quotes are used to delimit string constants.
 #'
 #' @export
 single_quotes_linter <- function() {

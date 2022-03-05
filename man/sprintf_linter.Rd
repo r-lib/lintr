@@ -7,5 +7,6 @@
 sprintf_linter()
 }
 \description{
-Check for inconsistent number of arguments or arguments with incompatible types in \code{sprintf} calls.
+Check for an inconsistent number of arguments or arguments with incompatible types (for literal arguments) in
+\code{sprintf} calls.
 }

@@ -7,5 +7,5 @@
 single_quotes_linter()
 }
 \description{
-Check that only single quotes are used to delimit string constants.
+Check that only double quotes are used to delimit string constants.
 }

@@ -1,6 +1,6 @@
 #' Semicolon terminator linter
 #'
-#' Check that no semicolons terminate statements.
+#' Check that no semicolons terminate expressions.
 #'
 #' @param semicolon A character vector defining which semicolons to report:\describe{
 #'   \item{compound}{Semicolons that separate two statements on the same line.}

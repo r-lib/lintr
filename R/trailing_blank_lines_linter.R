@@ -1,6 +1,6 @@
 #' Trailing blank lines linter
 #'
-#' Check that there are no trailing blank lines in source files.
+#' Check that there are no trailing blank lines in source code.
 #'
 #' @export
 trailing_blank_lines_linter <- function() {
