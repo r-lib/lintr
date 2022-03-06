@@ -24,7 +24,7 @@ For example:
 }}
 
 \item{fun}{For additional flexibility, a function to search for in
-the \code{token} column of \code{parsed_content}. Typically \code{==} or \verb{\\\%in\\\%}.}
+the \code{token} column of \code{parsed_content}. Typically \code{==} or \code{\%in\%}.}
 
 \item{id}{Integer. The index corresponding to the desired row
 of \code{parsed_content}.}
