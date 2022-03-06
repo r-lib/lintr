@@ -7,5 +7,6 @@
 pipe_call_linter()
 }
 \description{
-Force explicit calls in magrittr pipes.
+Force explicit calls in magrittr pipes, e.g.,
+\code{1:3 \%>\% sum()} instead of \code{1:3 \%>\% sum}.
 }
