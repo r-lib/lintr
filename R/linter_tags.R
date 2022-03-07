@@ -6,17 +6,14 @@
 #'
 #' @section Package Authors:
 #'
-#' To implement \code{available_linters()} for your package, include a file \code{inst/lintr/linters.csv} in your
+#' To implement `available_linters()` for your package, include a file `inst/lintr/linters.csv` in your
 #' package.
 #' The CSV file must contain the columns 'linter' and 'tags', and be UTF-8 encoded.
 #' Additional columns will be silently ignored if present and the columns are identified by name.
 #' Each row describes a linter by
 #'
-#' \enumerate{
-#' \item{its function name (e.g. \code{"assignment_linter"}) in the column 'linter'.}
-#' \item{space-separated tags associated with the linter (e.g. \code{"style consistency default"}) in the column
-#'   'tags'.}
-#' }
+#'  1. its function name (e.g. `"assignment_linter"`) in the column 'linter'.
+#'  2. space-separated tags associated with the linter (e.g. `"style consistency default"`) in the column 'tags'.
 #'
 #' Tags should be snake_case.
 #'
@@ -37,6 +34,7 @@
 #'
 #' lintr_linters2 <- available_linters(c("lintr", "does-not-exist"))
 #' identical(lintr_linters, lintr_linters2)
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 available_linters <- function(packages = "lintr") {
   if (!is.character(packages)) {

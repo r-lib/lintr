@@ -1,5 +1,9 @@
-#' @describeIn linters  Check that there are no trailing blank lines in source
-#' files.
+#' Trailing blank lines linter
+#'
+#' Check that there are no trailing blank lines in source code.
+#'
+#' @evalRd rd_tags("trailing_blank_lines_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 trailing_blank_lines_linter <- function() {
   Linter(function(source_file) {
