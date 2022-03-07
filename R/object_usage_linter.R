@@ -1,9 +1,10 @@
 #' Object usage linter
 #'
-#' Check that closures have the proper usage using
-#' \code{\link[codetools]{checkUsage}}. Note that this runs
-#' \code{\link[base]{eval}} on the code, so do not use with untrusted code.
+#' Check that closures have the proper usage using [codetools::checkUsage()].
+#' Note that this runs [base::eval()] on the code, so do not use with untrusted code.
 #'
+#' @evalRd rd_tags("object_usage_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 object_usage_linter <- function() {
   Linter(function(source_file) {

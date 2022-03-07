@@ -12,3 +12,9 @@ missing_argument_linter(except = c("switch", "alist"))
 \description{
 Check for missing arguments in function calls.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
+\section{Tags}{
+\link[=common_mistakes_linters]{common_mistakes}, \link[=configurable_linters]{configurable}, \link[=correctness_linters]{correctness}
+}

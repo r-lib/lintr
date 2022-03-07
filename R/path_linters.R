@@ -175,13 +175,13 @@ make_path_linter <- function(path_function, message, linter, name = linter_auto_
 #' Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
 #'
 #' @param lax Less stringent linting, leading to fewer false positives.
-#' If \code{TRUE}, only lint path strings, which
+#' If `TRUE`, only lint path strings, which
 #'
-#' \itemize{
-#' \item contain at least two path elements, with one having at least two characters and
-#' \item contain only alphanumeric chars (including UTF-8), spaces, and win32-allowed punctuation
-#' }
+#' * contain at least two path elements, with one having at least two characters and
+#' * contain only alphanumeric chars (including UTF-8), spaces, and win32-allowed punctuation
 #'
+#' @evalRd rd_tags("absolute_path_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 absolute_path_linter <- function(lax = TRUE) {
   make_path_linter(
@@ -194,9 +194,11 @@ absolute_path_linter <- function(lax = TRUE) {
 
 #' Non-portable path linter
 #'
-#' Check that \code{\link{file.path}()} is used to construct safe and portable paths.
+#' Check that [file.path()] is used to construct safe and portable paths.
 #'
 #' @inheritParams absolute_path_linter
+#' @evalRd rd_tags("nonportable_path_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 nonportable_path_linter <- function(lax = TRUE) {
   make_path_linter(

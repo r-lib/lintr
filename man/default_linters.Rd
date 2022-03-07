@@ -11,12 +11,14 @@ An object of class \code{list} of length 25.
 default_linters
 }
 \description{
-List of default linters for \code{\link{lint}}. Use
-\code{\link{with_defaults}} to customize it.
+List of default linters for \code{\link[=lint]{lint()}}. Use
+\code{\link[=with_defaults]{with_defaults()}} to customize it.
 
-The set of default linters is as follows (any parameterised linters, eg,
-\code{line_length_linter} use their default argument(s), see \code{?
-<linter_name>} for details):
+The set of default linters is as follows (any parameterised linters, eg, \code{line_length_linter} use their default
+argument(s), see \verb{?<linter_name>} for details):
+}
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
 }
 \keyword{datasets}
 \section{Linters}{

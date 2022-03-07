@@ -2,6 +2,8 @@
 #'
 #' Check that all left parentheses in a function call do not have spaces before them.
 #'
+#' @evalRd rd_tags("function_left_parentheses_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 function_left_parentheses_linter <- function() { # nolint: object_length_linter.
   Linter(function(source_file) {

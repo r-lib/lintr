@@ -10,3 +10,9 @@ pipe_call_linter()
 Force explicit calls in magrittr pipes, e.g.,
 \code{1:3 \%>\% sum()} instead of \code{1:3 \%>\% sum}.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
+\section{Tags}{
+\link[=readability_linters]{readability}, \link[=style_linters]{style}
+}

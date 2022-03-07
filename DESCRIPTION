@@ -70,6 +70,7 @@ Collate:
     'infix_spaces_linter.R'
     'line_length_linter.R'
     'lint.R'
+    'linter_tag_docs.R'
     'linter_tags.R'
     'make_linter_from_regex.R'
     'methods.R'
@@ -102,3 +103,4 @@ Collate:
     'unneeded_concatenation_linter.R'
     'with_id.R'
     'zzz.R'
+Roxygen: list(markdown = TRUE)

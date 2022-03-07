@@ -2,6 +2,8 @@
 #'
 #' Check that all commas are followed by spaces, but do not have spaces before them.
 #'
+#' @evalRd rd_tags("commas_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @importFrom utils head
 #' @export
 commas_linter <- function() {

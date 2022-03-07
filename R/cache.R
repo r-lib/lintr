@@ -1,9 +1,7 @@
 #' Clear the lintr cache
 #'
-#' @param file filename whose cache to clear.  If you pass \code{NULL}, it will
-#' delete all of the caches.
-#' @param path directory to store caches.  Reads option 'lintr.cache_directory'
-#' as the default.
+#' @param file filename whose cache to clear. If you pass `NULL`, it will delete all of the caches.
+#' @param path directory to store caches. Reads option 'lintr.cache_directory' as the default.
 #' @return 0 for success, 1 for failure, invisibly.
 #' @export
 clear_cache <- function(file = NULL, path = NULL) {

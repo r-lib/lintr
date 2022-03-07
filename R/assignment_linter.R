@@ -1,6 +1,9 @@
 #' Assignment linter
 #'
-#' Check that \code{<-} is always used for assignment.
+#' Check that `<-` is always used for assignment.
+#'
+#' @evalRd rd_tags("assignment_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 assignment_linter <- function() {
   Linter(function(source_file) {

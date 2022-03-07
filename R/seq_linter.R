@@ -1,11 +1,11 @@
 #' Sequence linter
 #'
-#' Check for \code{1:length(...)}, \code{1:nrow(...)},
-#' \code{1:ncol(...)}, \code{1:NROW(...)} and \code{1:NCOL(...)}
-#' expressions. These often cause bugs when the right-hand side is zero.
-#' It is safer to use \code{\link[base]{seq_len}} or
-#' \code{\link[base]{seq_along}} instead.
+#' Check for `1:length(...)`, `1:nrow(...)`, `1:ncol(...)`, `1:NROW(...)` and `1:NCOL(...)` expressions.
+#' These often cause bugs when the right-hand side is zero.
+#' It is safer to use [base::seq_len()] or [base::seq_along()] instead.
 #'
+#' @evalRd rd_tags("seq_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 seq_linter <- function() {
   Linter(function(source_file) {

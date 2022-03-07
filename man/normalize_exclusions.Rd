@@ -8,9 +8,11 @@ normalize_exclusions(x, normalize_path = TRUE, root = getwd(), pattern = NULL)
 }
 \arguments{
 \item{x}{Exclusion specification
-- A character vector of filenames or directories relative to \code{root}
-- A named list of integers specifying lines to be excluded per file
-- A named list of named lists specifying linters and lines to be excluded for the linters per file.}
+\itemize{
+\item A character vector of filenames or directories relative to \code{root}
+\item A named list of integers specifying lines to be excluded per file
+\item A named list of named lists specifying linters and lines to be excluded for the linters per file.
+}}
 
 \item{normalize_path}{Should the names of the returned exclusion list be normalized paths?
 If no, they will be relative to \code{root}.}
@@ -18,7 +20,7 @@ If no, they will be relative to \code{root}.}
 \item{root}{Base directory for relative filename resolution.}
 
 \item{pattern}{If non-NULL, only exclude files in excluded directories if they match
-\code{pattern}. Passed to \link[base]{list.files} if a directory is excluded.}
+\code{pattern}. Passed to \link[base:list.files]{list.files} if a directory is excluded.}
 }
 \value{
 A named list of file exclusions.

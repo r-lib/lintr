@@ -9,3 +9,9 @@ pipe_continuation_linter()
 \description{
 Check that each step in a pipeline is on a new line, or the entire pipe fits on one line.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
+\section{Tags}{
+\link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+}

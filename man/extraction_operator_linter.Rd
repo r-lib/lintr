@@ -7,6 +7,12 @@
 extraction_operator_linter()
 }
 \description{
-Check that the `[[` operator is used when extracting a single element from an object, not `[` (subsetting) nor `$`
+Check that the \code{[[} operator is used when extracting a single element from an object, not \code{[} (subsetting) nor \code{$}
 (interactive use).
+}
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
+\section{Tags}{
+\link[=best_practices_linters]{best_practices}, \link[=style_linters]{style}
 }

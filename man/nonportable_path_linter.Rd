@@ -9,12 +9,17 @@ nonportable_path_linter(lax = TRUE)
 \arguments{
 \item{lax}{Less stringent linting, leading to fewer false positives.
 If \code{TRUE}, only lint path strings, which
-
 \itemize{
 \item contain at least two path elements, with one having at least two characters and
 \item contain only alphanumeric chars (including UTF-8), spaces, and win32-allowed punctuation
 }}
 }
 \description{
-Check that \code{\link{file.path}()} is used to construct safe and portable paths.
+Check that \code{\link[=file.path]{file.path()}} is used to construct safe and portable paths.
+}
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
+\section{Tags}{
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=robustness_linters]{robustness}
 }

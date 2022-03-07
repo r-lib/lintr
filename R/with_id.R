@@ -2,9 +2,8 @@
 #' Extract row by ID
 #'
 #' @describeIn ids_with_token
-#' Return the row of the `parsed_content` entry of the
-#' `\link{get_source_expressions}()` object. Typically used in conjunction with
-#' `ids_with_token` to iterate over rows containing desired tokens.
+#' Return the row of the `parsed_content` entry of the `[get_source_expressions]()` object. Typically used in
+#' conjunction with `ids_with_token` to iterate over rows containing desired tokens.
 #'
 #' @param id Integer. The index corresponding to the desired row
 #' of `parsed_content`.

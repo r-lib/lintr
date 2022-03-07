@@ -1,7 +1,9 @@
 #' Implicit integer linter
 #'
-#' Check that integers are explicitly typed using the form \code{1L} instead of \code{1}.
+#' Check that integers are explicitly typed using the form `1L` instead of `1`.
 #'
+#' @evalRd rd_tags("implicit_integer_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 implicit_integer_linter <- function() {
   Linter(function(source_file) {

@@ -1,7 +1,9 @@
-#' \code{T} and \code{F} symbol linter
+#' `T` and `F` symbol linter
 #'
-#' Avoid the symbols \code{T} and \code{F} (for \code{TRUE} and \code{FALSE}).
+#' Avoid the symbols `T` and `F` (for `TRUE` and `FALSE`).
 #'
+#' @evalRd rd_tags("T_and_F_symbol_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 T_and_F_symbol_linter <- function() { # nolint: object_name_linter.
   Linter(function(source_file) {
