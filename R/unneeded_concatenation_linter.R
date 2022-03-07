@@ -1,8 +1,9 @@
 #' Unneeded concatenation linter
 #'
-#' Check that the \code{c} function is not used without arguments nor with a single constant.
+#' Check that the `c` function is not used without arguments nor with a single constant.
 #'
 #' @evalRd rd_tags("unneeded_concatenation_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unneeded_concatenation_linter <- function() {
   Linter(function(source_file) {

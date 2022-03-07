@@ -6,6 +6,9 @@
 \description{
 Linters highlighting code robustness issues, such as possibly wrong edge case behaviour.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
 \section{Linters}{
 The following linters are tagged with 'robustness':
 \itemize{

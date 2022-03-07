@@ -34,6 +34,7 @@ infix_tokens <- c(unary_infix_tokens, binary_infix_tokens)
 #' Check that infix operators are surrounded by spaces.
 #'
 #' @evalRd rd_tags("infix_spaces_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 infix_spaces_linter <- function() {
   Linter(function(source_file) {

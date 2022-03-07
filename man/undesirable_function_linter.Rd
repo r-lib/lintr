@@ -10,16 +10,18 @@ undesirable_function_linter(
 )
 }
 \arguments{
-\item{fun}{Named character vector, where the names are the names of the
-undesirable functions, and the values are the text for the alternative
-function to use (or \code{NA}).}
+\item{fun}{Named character vector, where the names are the names of the undesirable functions, and the values are
+the text for the alternative function to use (or \code{NA}).}
 
-\item{symbol_is_undesirable}{Whether to consider the use of an undesirable
-function name as a symbol undesirable or not.}
+\item{symbol_is_undesirable}{Whether to consider the use of an undesirable function name as a symbol undesirable
+or not.}
 }
 \description{
-Report the use of undesirable functions, e.g. \code{\link[base]{return}}, \code{\link[base]{options}}, or
-\code{\link[base]{sapply}} and suggest an alternative.
+Report the use of undesirable functions, e.g. \code{\link[base:function]{base::return()}}, \code{\link[base:options]{base::options()}}, or
+\code{\link[base:lapply]{base::sapply()}} and suggest an alternative.
+}
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=efficiency_linters]{efficiency}, \link[=robustness_linters]{robustness}, \link[=style_linters]{style}

@@ -1,14 +1,14 @@
 #' Undesirable function linter
 #'
-#' Report the use of undesirable functions, e.g. \code{\link[base]{return}}, \code{\link[base]{options}}, or
-#' \code{\link[base]{sapply}} and suggest an alternative.
+#' Report the use of undesirable functions, e.g. [base::return()], [base::options()], or
+#' [base::sapply()] and suggest an alternative.
 #'
-#' @param fun Named character vector, where the names are the names of the
-#'   undesirable functions, and the values are the text for the alternative
-#'   function to use (or \code{NA}).
-#' @param symbol_is_undesirable Whether to consider the use of an undesirable
-#'   function name as a symbol undesirable or not.
+#' @param fun Named character vector, where the names are the names of the undesirable functions, and the values are
+#'   the text for the alternative function to use (or `NA`).
+#' @param symbol_is_undesirable Whether to consider the use of an undesirable function name as a symbol undesirable
+#'   or not.
 #' @evalRd rd_tags("undesirable_function_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {

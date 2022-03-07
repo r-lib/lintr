@@ -6,6 +6,9 @@
 \description{
 Linters highlighting code style issues.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
 \section{Linters}{
 The following linters are tagged with 'style':
 \itemize{

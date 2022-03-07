@@ -12,6 +12,9 @@ duplicate_argument_linter(except = character())
 \description{
 Check for duplicate arguments in function calls.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
 \section{Tags}{
 \link[=common_mistakes_linters]{common_mistakes}, \link[=configurable_linters]{configurable}, \link[=correctness_linters]{correctness}
 }

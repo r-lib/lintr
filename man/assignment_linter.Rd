@@ -7,7 +7,10 @@
 assignment_linter()
 }
 \description{
-Check that \code{<-} is always used for assignment.
+Check that \verb{<-} is always used for assignment.
+}
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
 \link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=style_linters]{style}

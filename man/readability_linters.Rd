@@ -6,6 +6,9 @@
 \description{
 Linters highlighting readability issues, such as missing whitespace.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
 \section{Linters}{
 The following linters are tagged with 'readability':
 \itemize{

@@ -4,6 +4,7 @@
 #'
 #' @param except a character vector of function names as exceptions.
 #' @evalRd rd_tags("duplicate_argument_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 duplicate_argument_linter <- function(except = character()) {
   Linter(function(source_file) {

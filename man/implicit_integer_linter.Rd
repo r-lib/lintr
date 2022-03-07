@@ -9,6 +9,9 @@ implicit_integer_linter()
 \description{
 Check that integers are explicitly typed using the form \code{1L} instead of \code{1}.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=consistency_linters]{consistency}, \link[=style_linters]{style}
 }

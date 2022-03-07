@@ -7,8 +7,11 @@
 package_hooks_linter()
 }
 \description{
-Check various common "gotchas" in [.onLoad()], [.onAttach()], [.Last.lib()], and [.onDetach()]
-  namespace hooks that will cause `R CMD check` issues.
+Check various common "gotchas" in \code{\link[=.onLoad]{.onLoad()}}, \code{\link[=.onAttach]{.onAttach()}}, \code{\link[=.Last.lib]{.Last.lib()}}, and \code{\link[=.onDetach]{.onDetach()}}
+namespace hooks that will cause \verb{R CMD check} issues.
+}
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
 \link[=correctness_linters]{correctness}, \link[=style_linters]{style}

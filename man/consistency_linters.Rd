@@ -7,6 +7,9 @@
 Linters checking enforcing a consistent alternative if there are multiple syntactically valid ways to write
 something.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
 \section{Linters}{
 The following linters are tagged with 'consistency':
 \itemize{

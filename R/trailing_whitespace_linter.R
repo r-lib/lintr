@@ -3,6 +3,7 @@
 #' Check that there are no space characters at the end of source lines.
 #'
 #' @evalRd rd_tags("trailing_whitespace_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 trailing_whitespace_linter <- function() {
   Linter(function(source_file) {

@@ -2,8 +2,9 @@
 #'
 #' Check that opening curly braces are never on their own line and are always followed by a newline.
 #'
-#' @param allow_single_line if \code{TRUE}, allow an open and closed curly pair on the same line.
+#' @param allow_single_line if `TRUE`, allow an open and closed curly pair on the same line.
 #' @evalRd rd_tags("open_curly_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 open_curly_linter <- function(allow_single_line = FALSE) {
   Linter(function(source_file) {
