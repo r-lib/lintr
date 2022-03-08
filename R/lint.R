@@ -1,10 +1,9 @@
 #' Lintr
 #'
-#' Checks adherence to a given style, syntax errors and possible semantic
-#' issues.  Supports on the fly checking of R code edited with Emacs, Vim and
-#' Sublime Text.
+#' Checks adherence to a given style, syntax errors and possible semantic issues.
+#' Supports on the fly checking of R code edited with Emacs, Vim and Sublime Text.
 #' @name lintr
-#' @seealso \code{\link{lint}}, \code{\link{lint_package}}, \code{\link{lint_dir}}, \code{\link{linters}}
+#' @seealso [lint()], [lint_package()], [lint_dir()], [linters]
 #' @importFrom stats na.omit
 #' @importFrom utils capture.output getParseData relist
 NULL
@@ -15,17 +14,16 @@ NULL
 #'
 #' @name lint_file
 #'
-#' @param filename either the filename for a file to lint, or a character
-#' string of inline R code for linting. The latter [inline data] applies
-#' whenever \code{filename} has a newline character (\\n).
-#' @param linters a named list of linter functions to apply see
-#' \code{\link{linters}} for a full list of default and available linters.
-#' @param cache given a logical, toggle caching of lint results. If passed a
-#' character string, store the cache in this directory.
-#' @param ... additional arguments passed to \code{\link{exclude}}.
+#' @param filename either the filename for a file to lint, or a character string of inline R code for linting.
+#' The latter (inline data) applies whenever `filename` has a newline character (\\n).
+#' @param linters a named list of linter functions to apply see [linters] for a full list of default and available
+#' linters.
+#' @param cache given a logical, toggle caching of lint results. If passed a character string, store the cache in this
+#' directory.
+#' @param ... additional arguments passed to [exclude()].
 #' @param parse_settings whether to try and parse the settings.
-#' @param text Optional argument for supplying a string or lines directly,
-#'   e.g. if the file is already in memory or linting is being done ad hoc.
+#' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
+#' linting is being done ad hoc.
 #'
 #' @return A list of lint objects.
 #'
@@ -155,18 +153,15 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
 #' Lint a directory
 #'
 #' Apply one or more linters to all of the R files in a directory
-#' @param path the path to the base directory, by default,
-#' it will be searched in the parent directories of the current directory.
-#' @param relative_path if \code{TRUE}, file paths are printed using their path
-#' relative to the base directory.  If \code{FALSE}, use the full
-#' absolute path.
-#' @param ... additional arguments passed to \code{\link{lint}}, e.g.
-#' \code{cache} or \code{linters}.
-#' @param exclusions exclusions for \code{\link{exclude}}, relative to the
-#' package path.
-#' @param pattern pattern for files, by default it will take files with any of
-#' the extensions .R, .Rmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for
-#' lowercase r (.r, ...)
+#'
+#' @param path the path to the base directory, by default, it will be searched in the parent directories of the current
+#' directory.
+#' @param relative_path if `TRUE`, file paths are printed using their path relative to the base directory.
+#'   If `FALSE`, use the full absolute path.
+#' @param ... additional arguments passed to [lint()], e.g. `cache` or `linters`.
+#' @param exclusions exclusions for [exclude()], relative to the package path.
+#' @param pattern pattern for files, by default it will take files with any of the extensions .R, .Rmd, .Rnw, .Rhtml,
+#' .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...)
 #' @inherit lint_file return
 #' @inheritParams lint_file
 #' @examples
@@ -257,8 +252,9 @@ lint_dir <- function(path = ".", relative_path = TRUE, ..., exclusions = list("r
 #' Lint a package
 #'
 #' Apply one or more linters to all of the R files in a package.
-#' @param path the path to the base directory of the package, if \code{NULL},
-#' it will be searched in the parent directories of the current directory.
+#'
+#' @param path the path to the base directory of the package, if `NULL`, it will be searched in the parent directories
+#' of the current directory.
 #' @inherit lint_file return
 #' @inheritParams lint_dir
 #' @examples
@@ -424,7 +420,7 @@ pkg_name <- function(path = find_package()) {
   }
 }
 
-#' Create a \code{lint} object
+#' Create a `lint` object
 #' @param filename path to the source file that was linted.
 #' @param line_number line number where the lint occurred.
 #' @param column_number column number where the lint occurred.
@@ -509,8 +505,8 @@ rstudio_source_markers <- function(lints) {
 
 #' Checkstyle Report for lint results
 #'
-#' Generate a report of the linting results using the
-#' \href{http://checkstyle.sourceforge.net/}{Checkstyle} XML format.
+#' Generate a report of the linting results using the [Checkstyle](http://checkstyle.sourceforge.net/) XML format.
+#'
 #' @param lints the linting results.
 #' @param filename the name of the output report
 #' @export
