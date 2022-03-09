@@ -85,7 +85,7 @@ function calls. (#850, #851, @renkun-ken)
   * Each linter can have multiple tags
   * New function `available_linters()` to list available linters and their tags 
     This feature is extensible by package authors providing add-on linters for {lintr}.
-* `lintr` now uses the 3rd edition of `testthat` (@MichaelChirico)
+* `lintr` now uses the 3rd edition of `testthat` (@MichaelChirico, #910)
 
 # lintr 2.0.1
 
