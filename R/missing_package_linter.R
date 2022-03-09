@@ -1,5 +1,9 @@
-#' @describeIn linters checks for missing packages in \code{library()},
-#'   \code{require()}, \code{loadNamespace()} and \code{requireNamespace()} calls.
+#' Missing package linter
+#'
+#' Check for missing packages in `library()`, `require()`, `loadNamespace()` and `requireNamespace()` calls.
+#'
+#' @evalRd rd_tags("missing_package_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 missing_package_linter <- function() {
   Linter(function(source_file) {

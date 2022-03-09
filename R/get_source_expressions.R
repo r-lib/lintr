@@ -13,8 +13,9 @@
 #'
 #' @param filename the file to be parsed.
 #' @param lines a character vector of lines.
-#'   If \code{NULL}, then \code{filename} will be read.
+#'   If `NULL`, then `filename` will be read.
 #' @return A `list` with three components:
+#' \describe{
 #'   \item{expressions}{a `list` of
 #'   `n+1` objects. The first `n` elements correspond to each expression in
 #'   `filename`, and consist of a list of 9 elements:
@@ -49,6 +50,7 @@
 #'   }
 #'   \item{error}{A `Lint` object describing any parsing error.}
 #'   \item{lines}{The [readLines()] output for this file.}
+#' }
 #' @export
 #' @md
 get_source_expressions <- function(filename, lines = NULL) {

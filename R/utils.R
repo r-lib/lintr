@@ -239,10 +239,11 @@ reset_lang <- function(old_lang) {
   if (is.na(old_lang)) Sys.unsetenv("LANGUAGE") else Sys.setenv(LANGUAGE = old_lang)
 }
 
-#' Create a \code{linter} closure
-#' @param fun A function that takes a source file and returns \code{lint} objects.
+#' Create a `linter` closure
+#'
+#' @param fun A function that takes a source file and returns `lint` objects.
 #' @param name Default name of the Linter.
-#' Lints produced by the linter will be labelled with \code{name} by default.
+#' Lints produced by the linter will be labelled with `name` by default.
 #' @return The same function with its class set to 'linter'.
 #' @export
 Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name_linter.

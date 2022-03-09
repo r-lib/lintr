@@ -11,13 +11,43 @@ An object of class \code{list} of length 25.
 default_linters
 }
 \description{
-List of default linters for \code{\link{lint}}. Use
-\code{\link{with_defaults}} to customize it.
+List of default linters for \code{\link[=lint]{lint()}}. Use
+\code{\link[=with_defaults]{with_defaults()}} to customize it.
 
-The set of default linters is as follows (any parameterised linters, eg,
-\code{line_length_linter} use their default argument(s), see \code{?
-<linter_name>} for details):
-
-- \Sexpr[stage=render, results=rd]{paste(names(lintr::default_linters), collapse=", ")}.
+The set of default linters is as follows (any parameterised linters, eg, \code{line_length_linter} use their default
+argument(s), see \verb{?<linter_name>} for details):
+}
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
 }
 \keyword{datasets}
+\section{Linters}{
+The following linters are tagged with 'default':
+\itemize{
+\item{\code{\link{assignment_linter}}}
+\item{\code{\link{closed_curly_linter}}}
+\item{\code{\link{commas_linter}}}
+\item{\code{\link{commented_code_linter}}}
+\item{\code{\link{cyclocomp_linter}}}
+\item{\code{\link{equals_na_linter}}}
+\item{\code{\link{function_left_parentheses_linter}}}
+\item{\code{\link{infix_spaces_linter}}}
+\item{\code{\link{line_length_linter}}}
+\item{\code{\link{no_tab_linter}}}
+\item{\code{\link{object_length_linter}}}
+\item{\code{\link{object_name_linter}}}
+\item{\code{\link{object_usage_linter}}}
+\item{\code{\link{open_curly_linter}}}
+\item{\code{\link{paren_body_linter}}}
+\item{\code{\link{paren_brace_linter}}}
+\item{\code{\link{pipe_continuation_linter}}}
+\item{\code{\link{semicolon_terminator_linter}}}
+\item{\code{\link{seq_linter}}}
+\item{\code{\link{single_quotes_linter}}}
+\item{\code{\link{spaces_inside_linter}}}
+\item{\code{\link{spaces_left_parentheses_linter}}}
+\item{\code{\link{T_and_F_symbol_linter}}}
+\item{\code{\link{trailing_blank_lines_linter}}}
+\item{\code{\link{trailing_whitespace_linter}}}
+}
+}
