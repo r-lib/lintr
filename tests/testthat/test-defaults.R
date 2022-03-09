@@ -1,7 +1,7 @@
 test_that("linters", {
   # non-empty named list of functions
   x <- default_linters
-  expect_is(x, "list")
+  expect_type(x, "list")
   expect_gt(length(x), 0L)
   expect_true(all(names(x) != ""))
   expect_true(all(vapply(x, inherits, logical(1L), "linter")))
@@ -14,7 +14,7 @@ test_that("undesirable functions and operators", {
                all_undesirable_operators, default_undesirable_operators)
 
   for (x in vars) {
-    expect_is(x, "list")
+    expect_type(x, "list")
     expect_gt(length(x), 0L)
     expect_true(all(names(x) != ""))
     expect_true(all(vapply(x, function(x) is.na(x) || is.character(x), logical(1L))))
@@ -25,7 +25,7 @@ test_that("undesirable functions and operators", {
 test_that("settings", {
   # non-empty named list
   x <- default_settings
-  expect_is(x, "list")
+  expect_type(x, "list")
   expect_gt(length(x), 0L)
   expect_true(all(names(x) != ""))
 })
