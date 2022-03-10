@@ -54,14 +54,13 @@ test_that("clear_cache deletes the directory if no file is given", {
 
 test_that("load_cache loads the saved file in a new empty environment", {
   e1 <- new.env(parent = emptyenv())
-  assign("x", "foobar", envir = e1)
+  e1[["x"]] <- "foobar"
   d1 <- tempfile(pattern = "lintr_cache_")
   f1 <- "R/test.R"
   save_cache(cache = e1, file = f1, path = d1)
   e2 <- load_cache(file = f1, path = d1)
 
-  expect_equal(ls(e2), "x")
-  expect_equal(e2[["x"]], "foobar")
+  expect_environments_equal(e2, e1)
 })
 
 test_that("load_cache returns an empty environment if no cache file exists", {
@@ -73,20 +72,22 @@ test_that("load_cache returns an empty environment if no cache file exists", {
   save_cache(cache = e1, file = f1, path = d1)
   e2 <- load_cache(file = f2, path = d1)
 
-  expect_equal(ls(e2), character(0))
+  expect_environments_equal(e2, e1)
 })
 
 test_that("load_cache returns an empty environment if reading cache file fails", {
   e1 <- new.env(parent = emptyenv())
-  assign("x", "foobar", envir = e1)
+  e1[["x"]] <- "foobar"
   d1 <- tempfile(pattern = "lintr_cache_")
   f1 <- "R/test.R"
   save_cache(cache = e1, file = f1, path = d1)
   cache_f1 <- file.path(d1, fhash(f1))
   writeLines(character(), cache_f1)
+
   expect_warning(e2 <- load_cache(file = f1, path = d1))
   saveRDS(e1, cache_f1)
   expect_warning(e3 <- load_cache(file = f1, path = d1))
+
   expect_equal(ls(e2), character(0))
   expect_equal(ls(e3), character(0))
 })
@@ -138,7 +139,7 @@ test_that("save_cache saves all non-hidden objects from the environment", {
   e2 <- new.env(parent = emptyenv())
   load(file = file.path(d1, fhash(f1)), envir = e2)
 
-  expect_identical(as.list(e1), as.list(e2))
+  expect_environments_equal(e1, e2)
 })
 
 # `cache_file`
@@ -153,7 +154,7 @@ test_that("cache_file generates the same cache with different lints", {
   cache_file(e1, f1, list(), list())
   cache_file(e1, f1, list(), list(1))
 
-  expect_equal(length(ls(e1)), 1)
+  expect_length(ls(e1), 1L)
 })
 
 test_that("cache_file generates different caches for different linters", {
@@ -166,7 +167,7 @@ test_that("cache_file generates different caches for different linters", {
   cache_file(e1, f1, list(), list())
   cache_file(e1, f1, list(1), list())
 
-  expect_equal(length(ls(e1)), 2)
+  expect_length(ls(e1), 2L)
 })
 
 # `retrieve_file`
@@ -201,7 +202,7 @@ test_that("cache_lint generates the same cache with different lints", {
   cache_lint(e1, t1, list(), list())
   cache_lint(e1, t1, list(), list(1))
 
-  expect_equal(length(ls(e1)), 1)
+  expect_length(ls(e1), 1L)
 })
 
 test_that("cache_lint generates different caches for different linters", {
@@ -212,7 +213,7 @@ test_that("cache_lint generates different caches for different linters", {
   cache_lint(e1, t1, list(), list())
   cache_lint(e1, t1, list(1), list())
 
-  expect_equal(length(ls(e1)), 2)
+  expect_length(ls(e1), 2L)
 })
 
 # `retrieve_lint`
@@ -416,7 +417,7 @@ test_that("it works outside of a package", {
   expect_false(dir.exists(path))
   expect_lint("a <- 1", NULL, linter, cache = path)
   expect_true(dir.exists(path))
-  expect_length(list.files(path), 1)
+  expect_length(list.files(path), 1L)
   expect_lint("a <- 1", NULL, linter, cache = path)
   expect_true(dir.exists(path))
 })

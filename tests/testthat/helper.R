@@ -44,3 +44,34 @@ trim_some <- function(x, num = NULL) {
 
   rex::re_substitutes(x, rex::rex(start, n_times(any, num)), "", global = TRUE, options = "multi-line")
 }
+
+expect_environments_equal <- function(actual, expected) {
+  act <- quasi_label(rlang::enquo(actual), arg = "actual")
+  exp <- quasi_label(rlang::enquo(expected), arg = "expected")
+
+  act$objs <- ls(act$val, all.names = TRUE)
+  exp$objs <- ls(exp$val, all.names = TRUE)
+
+  act_not_exp <- setdiff(act$objs, exp$objs)
+  if (length(act_not_exp) > 6L) act_not_exp <- c(utils::head(act_not_exp, 6L), "...")
+  expect(
+    length(act_not_exp) == 0L,
+    sprintf("Objects found in %s but not %s: %s", act$lab, exp$lab, toString(act_not_exp))
+  )
+
+  exp_not_act <- setdiff(act$objs, exp$objs)
+  if (length(exp_not_act) > 6L) exp_not_act <- c(utils::head(exp_not_act, 6L), "...")
+  expect(
+    length(exp_not_act) == 0L,
+    sprintf("Objects found in %s but not %s: %s", exp$lab, act$lab, toString(exp_not_act))
+  )
+
+  for (obj in intersect(act$objs, exp$objs))
+    expect_identical(
+      act$val[[obj]], exp$val[[obj]],
+      label = sprintf("%s$%s", act$lab, obj),
+      expected.label = sprintf("%s$%s", exp$lab, obj)
+    )
+
+  invisible(act$val)
+}
