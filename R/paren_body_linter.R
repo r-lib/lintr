@@ -1,5 +1,9 @@
-#' @describeIn linters check that there is a space between right parenthesis and a body expression.
+#' Parenthesis before body linter
 #'
+#' Check that there is a space between right parenthesis and a body expression.
+#'
+#' @evalRd rd_tags("paren_body_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 paren_body_linter <- function() {
   Linter(function(source_file) {

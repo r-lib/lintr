@@ -79,7 +79,13 @@ function calls. (#850, #851, @renkun-ken)
 * Debugging functions (`browser()`, `debug()`, `debugcall()`, `debugonce()`, `trace()`, `undebug()`, `untrace()`) are now part of the default set of undesirable functions to help prevent them from being committed by mistake. (#876, @michaelchirico)
 * New linter `package_hooks_linter()` runs a series of checks also done by `R CMD check` on the `.onLoad()`, `.onAttach()`, `.Last.lib()` and `.onDetach()` hooks (#882, @MichaelChirico)
 * Improved location information for R parse errors (#894, #892, @renkun-ken and @AshesITR)
-* `lintr` now uses the 3rd edition of `testthat` (@MichaelChirico)
+* New tag based documentation pages for linters (#888, @AshesITR)
+  * Each linter has its own help page
+  * `?linters` also links to tag help pages, collecting linters with a similar goal
+  * Each linter can have multiple tags
+  * New function `available_linters()` to list available linters and their tags 
+    This feature is extensible by package authors providing add-on linters for {lintr}.
+* `lintr` now uses the 3rd edition of `testthat` (@MichaelChirico, #910)
 
 # lintr 2.0.1
 

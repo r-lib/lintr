@@ -7,9 +7,9 @@
 with_defaults(..., default = default_linters)
 }
 \arguments{
-\item{...}{arguments of elements to change. If unnamed, the argument is named. If the named
-argument already exists in "default", it is replaced by the new element. If it does not exist,
-it is added. If the value is \code{NULL}, the element is removed.}
+\item{...}{arguments of elements to change. If unnamed, the argument is named. If the named argument already exists
+in "default", it is replaced by the new element. If it does not exist, it is added. If the value is \code{NULL}, the
+element is removed.}
 
 \item{default}{list of elements to modify.}
 }
@@ -17,9 +17,9 @@ it is added. If the value is \code{NULL}, the element is removed.}
 A modified list of elements.
 }
 \description{
-Make a new list based on \pkg{lintr}'s default linters, undesirable
-operators or functions. The result of this function is meant to be passed to
-the `linters` argument of `lint()`, or put in your configuration file.
+Make a new list based on \pkg{lintr}'s default linters, undesirable operators or functions.
+The result of this function is meant to be passed to the \code{linters} argument of \code{lint()}, or put in your
+configuration file.
 }
 \examples{
 # When using interactively you will usually pass the result onto `lint` or `lint_package()`

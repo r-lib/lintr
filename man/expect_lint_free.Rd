@@ -7,7 +7,7 @@
 expect_lint_free(...)
 }
 \arguments{
-\item{...}{arguments passed to \code{\link{lint_package}}}
+\item{...}{arguments passed to \code{\link[=lint_package]{lint_package()}}}
 }
 \description{
 This function is a thin wrapper around lint_package that simply tests there are no

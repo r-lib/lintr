@@ -2,20 +2,19 @@
 #'
 #' @param lints that need to be filtered.
 #' @param exclusions manually specified exclusions
-#' @param ... additional arguments passed to \code{\link{parse_exclusions}}
+#' @param ... additional arguments passed to [parse_exclusions()]
 #' @details
 #' Exclusions can be specified in three different ways.
-#' \enumerate{
-#' \item{single line in the source file. default: \code{# nolint}, possibly followed by a listing of linters to exclude.
-#' If the listing is missing, all linters are excluded on that line. The default listing format is
-#' \code{# nolint: linter_name, linter2_name.}. There may not be anything between the colon and the line exclusion tag
-#' and the listing must be terminated with a full stop (\code{.}) for the linter list to be respected.}
-#' \item{line range in the source file. default: \code{# nolint start}, \code{# nolint end}.
-#' \code{#}\code{ nolint start} accepts linter lists in the same form as code{# nolint}.}
-#' \item{exclusions parameter, a named list of files with named lists of linters and lines to exclude them on,
-#' a named list of the files and lines to exclude, or just the filenames if you want to exclude the entire file,
-#' or the directory names if you want to exclude all files in a directory.}
-#' }
+#'
+#'  1. single line in the source file. default: `# nolint`, possibly followed by a listing of linters to exclude.
+#'     If the listing is missing, all linters are excluded on that line. The default listing format is
+#'     `# nolint: linter_name, linter2_name.`. There may not be anything between the colon and the line exclusion tag
+#'     and the listing must be terminated with a full stop (`.`) for the linter list to be respected.
+#'  2. line range in the source file. default: `# nolint start`, `# nolint end`. `# nolint start` accepts linter
+#'     lists in the same form as `# nolint`.
+#'  3. exclusions parameter, a named list of files with named lists of linters and lines to exclude them on, a named
+#'     list of the files and lines to exclude, or just the filenames if you want to exclude the entire file, or the
+#'     directory names if you want to exclude all files in a directory.
 exclude <- function(lints, exclusions = settings$exclusions, ...) {
   if (length(lints) <= 0) {
     return(lints)
@@ -75,9 +74,9 @@ line_info <- function(line_numbers, type = c("start", "end")) {
 #' @param exclude_start regular expression used to mark the start of an excluded range
 #' @param exclude_end regular expression used to mark the end of an excluded range
 #' @param exclude_linter regular expression used to capture a list of to-be-excluded linters immediately following a
-#' \code{exclude} or \code{exclude_start} marker.
+#' `exclude` or `exclude_start` marker.
 #' @param exclude_linter_sep regular expression used to split a linter list into indivdual linter names for exclusion.
-#' @param lines a character vector of the content lines of \code{file}
+#' @param lines a character vector of the content lines of `file`
 #'
 #' @return A possibly named list of excluded lines, possibly for specific linters.
 parse_exclusions <- function(file, exclude = settings$exclude,
@@ -170,24 +169,24 @@ add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep
 #' Normalize lint exclusions
 #'
 #' @param x Exclusion specification
-#'  - A character vector of filenames or directories relative to \code{root}
+#'  - A character vector of filenames or directories relative to `root`
 #'  - A named list of integers specifying lines to be excluded per file
 #'  - A named list of named lists specifying linters and lines to be excluded for the linters per file.
 #' @param normalize_path Should the names of the returned exclusion list be normalized paths?
-#' If no, they will be relative to \code{root}.
+#' If no, they will be relative to `root`.
 #' @param root Base directory for relative filename resolution.
 #' @param pattern If non-NULL, only exclude files in excluded directories if they match
-#' \code{pattern}. Passed to \link[base]{list.files} if a directory is excluded.
+#' `pattern`. Passed to [list.files][base::list.files] if a directory is excluded.
 #'
 #' @return A named list of file exclusions.
 #' The names of the list specify the filenames to be excluded.
 #'
-#' Each file exclusion is a possibly named list containing line numbers to exclude, or the sentinel \code{Inf} for
+#' Each file exclusion is a possibly named list containing line numbers to exclude, or the sentinel `Inf` for
 #' completely excluded files. If the an entry is named, the exclusions only take effect for the linter with the same
 #' name.
 #'
-#' If \code{normalize_path} is \code{TRUE}, file names will be normalized relative to \code{root}.
-#' Otherwise the paths are left as provided (relative to \code{root} or absolute).
+#' If `normalize_path` is `TRUE`, file names will be normalized relative to `root`.
+#' Otherwise the paths are left as provided (relative to `root` or absolute).
 #'
 #' @keywords internal
 normalize_exclusions <- function(x, normalize_path = TRUE,
