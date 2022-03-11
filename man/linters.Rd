@@ -17,7 +17,7 @@ Documentation for linters is structured into tags to allow for easier discovery.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (10 linters)}
+\item{\link[=best_practices_linters]{best_practices} (11 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (5 linters)}
 \item{\link[=configurable_linters]{configurable} (16 linters)}
 \item{\link[=consistency_linters]{consistency} (7 linters)}
@@ -27,6 +27,7 @@ The following tags exist:
 \item{\link[=readability_linters]{readability} (21 linters)}
 \item{\link[=robustness_linters]{robustness} (10 linters)}
 \item{\link[=style_linters]{style} (32 linters)}
+\item{\link[=testing_linters]{testing} (1 linters)}
 }
 }
 \section{Linters}{
@@ -42,6 +43,7 @@ The following linters exist:
 \item{\code{\link{cyclocomp_linter}} (tags: best_practices, configurable, default, readability, style)}
 \item{\code{\link{duplicate_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{equals_na_linter}} (tags: common_mistakes, correctness, default, robustness)}
+\item{\code{\link{expect_null_linter}} (tags: best_practices, testing)}
 \item{\code{\link{extraction_operator_linter}} (tags: best_practices, style)}
 \item{\code{\link{function_left_parentheses_linter}} (tags: default, readability, style)}
 \item{\code{\link{implicit_integer_linter}} (tags: best_practices, consistency, style)}
