@@ -24,7 +24,6 @@ argument(s), see \verb{?<linter_name>} for details):
 \section{Linters}{
 The following linters are tagged with 'default':
 \itemize{
-\item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{assignment_linter}}}
 \item{\code{\link{closed_curly_linter}}}
 \item{\code{\link{commas_linter}}}
@@ -47,6 +46,7 @@ The following linters are tagged with 'default':
 \item{\code{\link{single_quotes_linter}}}
 \item{\code{\link{spaces_inside_linter}}}
 \item{\code{\link{spaces_left_parentheses_linter}}}
+\item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{trailing_blank_lines_linter}}}
 \item{\code{\link{trailing_whitespace_linter}}}
 }

@@ -12,7 +12,6 @@ Linters highlighting code style issues.
 \section{Linters}{
 The following linters are tagged with 'style':
 \itemize{
-\item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{assignment_linter}}}
 \item{\code{\link{assignment_spaces_linter}}}
 \item{\code{\link{closed_curly_linter}}}
@@ -38,6 +37,7 @@ The following linters are tagged with 'style':
 \item{\code{\link{single_quotes_linter}}}
 \item{\code{\link{spaces_inside_linter}}}
 \item{\code{\link{spaces_left_parentheses_linter}}}
+\item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{todo_comment_linter}}}
 \item{\code{\link{trailing_blank_lines_linter}}}
 \item{\code{\link{trailing_whitespace_linter}}}
