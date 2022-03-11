@@ -90,6 +90,8 @@ available_linters <- function(packages = "lintr") {
 #' @noRd
 rd_tags <- function(linter_name) {
   linters <- available_linters()
+  stopifnot(requireNamespace("withr", quietly = TRUE))
+  withr::local_locale(LC_COLLATE = "C")
   tags <- sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
 
   c(
@@ -110,6 +112,8 @@ rd_tags <- function(linter_name) {
 #' @noRd
 rd_linters <- function(tag_name) {
   linters <- available_linters()
+  stopifnot(requireNamespace("withr", quietly = TRUE))
+  withr::local_locale(LC_COLLATE = "C")
   tagged <- sort(linters[["linter"]][vapply(
     linters[["tags"]],
     function(tag_list) tag_name %in% tag_list,
@@ -137,6 +141,8 @@ rd_linters <- function(tag_name) {
 #' @noRd
 rd_taglist <- function() {
   linters <- available_linters()
+  stopifnot(requireNamespace("withr", quietly = TRUE))
+  withr::local_locale(LC_COLLATE = "C")
   tags <- sort(unique(unlist(linters[["tags"]])))
 
   c(
@@ -157,6 +163,8 @@ rd_taglist <- function() {
 #' @noRd
 rd_linterlist <- function() {
   linters <- available_linters()
+  stopifnot(requireNamespace("withr", quietly = TRUE))
+  withr::local_locale(LC_COLLATE = "C")
   linter_names <- sort(linters[["linter"]])
 
   c(

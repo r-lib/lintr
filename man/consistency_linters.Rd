@@ -13,12 +13,12 @@ something.
 \section{Linters}{
 The following linters are tagged with 'consistency':
 \itemize{
+\item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{assignment_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{no_tab_linter}}}
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{single_quotes_linter}}}
-\item{\code{\link{T_and_F_symbol_linter}}}
 }
 }
