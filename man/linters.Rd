@@ -50,8 +50,8 @@ The following linters exist:
 \item{\code{\link{missing_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{missing_package_linter}} (tags: common_mistakes, robustness)}
 \item{\code{\link{namespace_linter}} (tags: configurable, correctness, robustness)}
-\item{\code{\link{no_tab_linter}} (tags: consistency, default, style)}
 \item{\code{\link{nonportable_path_linter}} (tags: best_practices, configurable, robustness)}
+\item{\code{\link{no_tab_linter}} (tags: consistency, default, style)}
 \item{\code{\link{object_length_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{object_name_linter}} (tags: configurable, consistency, default, style)}
 \item{\code{\link{object_usage_linter}} (tags: correctness, default, readability, style)}
