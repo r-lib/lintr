@@ -78,9 +78,6 @@ function calls. (#850, #851, @renkun-ken)
 * Error message for mismatched starts and ends of exclusion ranges is now more helpful. (#571, #860, @AshesITR and @danielinteractive)
 * Debugging functions (`browser()`, `debug()`, `debugcall()`, `debugonce()`, `trace()`, `undebug()`, `untrace()`) are now part of the default set of undesirable functions to help prevent them from being committed by mistake. (#876, @michaelchirico)
 * New linter `package_hooks_linter()` runs a series of checks also done by `R CMD check` on the `.onLoad()`, `.onAttach()`, `.Last.lib()` and `.onDetach()` hooks (#882, @MichaelChirico)
-* A new set of linters provided as part of Google's extension to the tidyverse style guide, available as `google_linters` (#884, @michaelchirico)
-   + `expect_null_linter()` Require usage of `expect_null(x)` over `expect_equal(x, NULL)` and similar
-* New linter `package_hooks_linter()` runs a series of checks also done by `R CMD check` on the `.onLoad()`, `.onAttach()`, `.Last.lib()` and `.onDetach()` hooks (#882, @MichaelChirico)
 * Improved location information for R parse errors (#894, #892, @renkun-ken and @AshesITR)
 * New tag based documentation pages for linters (#888, @AshesITR)
   * Each linter has its own help page
@@ -89,6 +86,8 @@ function calls. (#850, #851, @renkun-ken)
   * New function `available_linters()` to list available linters and their tags 
     This feature is extensible by package authors providing add-on linters for {lintr}.
 * `lintr` now uses the 3rd edition of `testthat` (@MichaelChirico, #910)
+* `lintr` is adopting a new set of linters provided as part of Google's extension to the tidyverse style guide (#884, @michaelchirico)
+   + `expect_null_linter()` Require usage of `expect_null(x)` over `expect_equal(x, NULL)` and similar
 
 # lintr 2.0.1
 
