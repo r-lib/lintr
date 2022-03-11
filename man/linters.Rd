@@ -24,10 +24,10 @@ The following tags exist:
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=efficiency_linters]{efficiency} (4 linters)}
+\item{\link[=package_development_linters]{package_development} (1 linters)}
 \item{\link[=readability_linters]{readability} (21 linters)}
 \item{\link[=robustness_linters]{robustness} (10 linters)}
 \item{\link[=style_linters]{style} (32 linters)}
-\item{\link[=testing_linters]{testing} (1 linters)}
 }
 }
 \section{Linters}{
@@ -43,7 +43,7 @@ The following linters exist:
 \item{\code{\link{cyclocomp_linter}} (tags: best_practices, configurable, default, readability, style)}
 \item{\code{\link{duplicate_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{equals_na_linter}} (tags: common_mistakes, correctness, default, robustness)}
-\item{\code{\link{expect_null_linter}} (tags: best_practices, testing)}
+\item{\code{\link{expect_null_linter}} (tags: best_practices, package_development)}
 \item{\code{\link{extraction_operator_linter}} (tags: best_practices, style)}
 \item{\code{\link{function_left_parentheses_linter}} (tags: default, readability, style)}
 \item{\code{\link{implicit_integer_linter}} (tags: best_practices, consistency, style)}

@@ -1,10 +1,12 @@
 #' expect_null Linter
 #'
-#' Require usage of expect_null(x) over expect_equal(x, NULL) and similar
-#'   [testthat::expect_null()] exists specifically for testing for `NULL` objects.
-#'   [testthat::expect_equal()], [testthat::expect_identical()], and
-#'   [testthat::expect_true()] can also be used for such tests,
-#'   but it is better to use the tailored function instead.
+#' Require usage of `expect_null(x)` over `expect_equal(x, NULL)` and similar
+#' usages.
+#'
+#' [testthat::expect_null()] exists specifically for testing for `NULL` objects.
+#' [testthat::expect_equal()], [testthat::expect_identical()], and
+#' [testthat::expect_true()] can also be used for such tests,
+#' but it is better to use the tailored function instead.
 #'
 #' @evalRd rd_tags("expect_null_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
