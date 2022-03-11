@@ -1,6 +1,11 @@
-#' @describeIn linters checks that assignments only have one space before and after
+#' Assignment spaces linter
+#'
+#' Check that assignments only have one space before and after.
+#'
+#' @evalRd rd_tags("assignment_spaces_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-assignment_spaces <- function() {
+assignment_spaces_linter <- function() {
   Linter(function(source_file) {
     lapply(
       c(

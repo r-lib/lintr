@@ -12,9 +12,9 @@ test_that("it handles dir", {
     parse_settings = FALSE
   )
   has_lints <- length(lints) > 0
-  testthat::expect(has_lints, "There should be lints")
+  expect_true(has_lints, info = "There should be lints")
 
-  testthat::expect_equivalent(length(unique(names(lints))), 6, info="For every file there should be at least 1 lint")
+  expect_identical(length(unique(names(lints))), 6L, info = "For every file there should be at least 1 lint")
 })
 
 test_that("it handles markdown", {

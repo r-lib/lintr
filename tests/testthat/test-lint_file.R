@@ -186,7 +186,8 @@ test_that("compatibility warnings work", {
       "Use is.na",
       linters = list(unclass(equals_na_linter()))
     ),
-    fixed = "The use of linters of class 'function'"
+    "The use of linters of class 'function'",
+    fixed = TRUE
   )
 
   expect_error(

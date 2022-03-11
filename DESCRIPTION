@@ -29,20 +29,22 @@ Imports:
     xml2 (>= 1.0.0),
     xmlparsedata (>= 1.0.3)
 Suggests:
+    covr,
     httr (>= 1.2.1),
     mockery,
     rmarkdown,
     rstudioapi (>= 0.2),
-    testthat (>= 2.2.1),
+    testthat (>= 3.0.0),
     withr
 License: MIT + file LICENSE
 Encoding: UTF-8
 VignetteBuilder: knitr
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
+Config/testthat/edition: 3
 Collate:
+    'T_and_F_symbol_linter.R'
     'utils.R'
     'aaa.R'
-    'T_and_F_symbol_linter.R'
     'actions.R'
     'addins.R'
     'assignment_linter.R'
@@ -71,6 +73,8 @@ Collate:
     'infix_spaces_linter.R'
     'line_length_linter.R'
     'lint.R'
+    'linter_tag_docs.R'
+    'linter_tags.R'
     'make_linter_from_regex.R'
     'methods.R'
     'missing_argument_linter.R'
@@ -81,6 +85,7 @@ Collate:
     'object_name_linters.R'
     'object_usage_linter.R'
     'open_curly_linter.R'
+    'package_hooks_linter.R'
     'paren_body_linter.R'
     'paren_brace_linter.R'
     'path_linters.R'
@@ -102,3 +107,4 @@ Collate:
     'with_id.R'
     'xp_utils.R'
     'zzz.R'
+Roxygen: list(markdown = TRUE)

@@ -1,5 +1,10 @@
-#' @describeIn linters that checks for usage of unavailable functions. Not reliable for testing r-devel dependencies.
+#' Backport linter
+#'
+#' Check for usage of unavailable functions. Not reliable for testing r-devel dependencies.
+#'
 #' @param r_version Minimum R version to test for compatibility
+#' @evalRd rd_tags("backport_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 backport_linter <- function(r_version = getRversion()) {
   Linter(function(source_file) {
