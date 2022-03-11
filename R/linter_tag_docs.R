@@ -72,3 +72,12 @@ NULL
 #' @evalRd rd_linters("configurable")
 #' @seealso [linters] for a complete list of linters available in lintr.
 NULL
+
+#' Package development linters
+#' @name package_development_linters
+#' @description
+#' Linters useful to package developers, for example for writing consistent tests.
+#' @evalRd rd_linters("package_development")
+#' @seealso [linters] for a complete list of linters available in lintr.
+NULL
+
