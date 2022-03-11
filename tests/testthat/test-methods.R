@@ -21,7 +21,7 @@ test_that("it returns the input trimmed to the last full lint if one exists with
 
 test_that("as.data.frame.lints", {
   # A minimum lint
-  expect_is(
+  expect_s3_class(
     l1 <- Lint(
       "dummy.R",
       line_number = 1L,
@@ -33,7 +33,7 @@ test_that("as.data.frame.lints", {
   )
 
   # A larger lint
-  expect_is(
+  expect_s3_class(
     l2 <- Lint(
       "dummy.R",
       line_number = 2L,
@@ -53,7 +53,7 @@ test_that("as.data.frame.lints", {
 
   # Convert lints to data.frame
   lints <- structure(list(l1, l2), class = "lints")
-  expect_is(
+  expect_s3_class(
     df <- as.data.frame.lints(lints),
     "data.frame"
   )
