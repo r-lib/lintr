@@ -8,32 +8,26 @@
 #' @evalRd rd_tags("expect_type_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
+#' @importFrom glue glue
 expect_type_linter <- function() {
   Linter(function(source_file) {
     if (length(source_file$parsed_content) == 0L) {
       return(list())
     }
-  
+
     xml <- source_file$xml_parsed_content
-  
-    # for expect_{equal,identical}(typeof(x), t)
-    expect_calls <- xp_text_in_table(c("expect_equal", "expect_identical"))
-    equal_expr_cond <- xp_and(
-      sprintf("SYMBOL_FUNCTION_CALL[%s]", expect_calls),
-      "following-sibling::expr[1][expr[SYMBOL_FUNCTION_CALL[text() = 'typeof']]]"
-    )
-  
-    # for expect_true(is.<type>(x))
-    true_expr_cond <- xp_and(
-      "SYMBOL_FUNCTION_CALL[text() = 'expect_true']",
-      sprintf(
-        "following-sibling::expr[1][expr[SYMBOL_FUNCTION_CALL[%s]]]",
-        xp_text_in_table(paste0("is.", kBaseTypes))
+
+    base_type_tests <- xp_text_in_table(paste0("is.", base_types))
+    xpath <- glue::glue("//expr[
+      (
+        SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
+        and following-sibling::expr[1][expr[SYMBOL_FUNCTION_CALL[text() = 'typeof']]]
+      ) or (
+        SYMBOL_FUNCTION_CALL[text() = 'expect_true']
+        and following-sibling::expr[1][expr[SYMBOL_FUNCTION_CALL[ {base_type_tests} ]]]
       )
-    )
-  
-    xpath <- sprintf("//expr[(%s) or (%s)]", equal_expr_cond, true_expr_cond)
-  
+    ]")
+
     bad_expr <- xml2::xml_find_all(xml, xpath)
     return(lapply(
       bad_expr,
@@ -48,3 +42,18 @@ expect_type_linter <- function() {
     ))
   })
 }
+
+# NB: the full list of values that can arise from `typeof(x)` is available
+#   in ?typeof (or, slightly more robustly, in the R source: src/main/util.c.
+#   Not all of them are available in is.<type> form, e.g. 'any' or
+#   'special'. 'builtin' and 'closure' are special cases, corresponding to
+#   is.primitive and is.function (essentially).
+base_types <- c(
+  "raw", "logical", "integer", "double", "complex", "character", "list",
+  "numeric", "function", "primitive", "environment", "pairlist", "promise",
+  # Per ?is.language, it's the same as is.call || is.name || is.expression.
+  #   so by blocking it, we're forcing more precise tests of one of
+  #   those directly ("language", "symbol", and "expression", resp.)
+  # NB: is.name and is.symbol are identical.
+  "language", "call", "name", "symbol", "expression"
+)
