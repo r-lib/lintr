@@ -173,6 +173,7 @@ rd_linterlist <- function() {
 }
 
 platform_independent_sort <- function(x) {
+  stopifnot(`Package {withr} must be installed.` = requireNamespace("withr", quietly = TRUE))
   withr::local_locale(LC_COLLATE = if (.Platform$OS.type == "windows") "English" else "en_US")
   sort(x)
 }
