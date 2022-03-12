@@ -34,15 +34,16 @@ expect_null_linter <- function() {
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    return(lapply(
-      bad_expr,
-      xml_nodes_to_lint,
-      source_file = source_file,
-      message = paste(
-        "expect_null(x) is better than expect_equal(x, NULL),",
-        "expect_identical(x, NULL), or expect_true(is.null(x))."
-      ),
-      type = "warning"
-    ))
+    lapply(bad_expr, gen_expect_null_lint, source_file)
   })
+}
+
+gen_expect_null_lint <- function(expr, source_file) {
+  matched_function <- xml_text(xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
+  if (matched_function %in% c("expect_equal", "expect_identical")) {
+    lint_msg <- sprintf("expect_null(x) is better than %s(x, NULL)", matched_function)
+  } else {
+    lint_msg <- "expect_null(x) is better than expect_true(is.null(x))"
+  }
+  xml_nodes_to_lint(expr, source_file, lint_msg, type = "warning")
 }

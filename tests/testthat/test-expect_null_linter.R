@@ -22,7 +22,7 @@ test_that("expect_null_linter blocks simple disallowed usages", {
   # expect_identical is treated the same as expect_equal
   expect_lint(
     "testthat::expect_identical(x, NULL)",
-    rex::rex("expect_null(x) is better than expect_equal(x, NULL)"),
+    rex::rex("expect_null(x) is better than expect_identical(x, NULL)"),
     expect_null_linter()
   )
 
@@ -36,7 +36,7 @@ test_that("expect_null_linter blocks simple disallowed usages", {
   # different equivalent usage
   expect_lint(
     "expect_true(is.null(foo(x)))",
-    rex::rex("expect_null(x) is better than expect_equal(x, NULL)"),
+    rex::rex("expect_null(x) is better than expect_true(is.null(x))"),
     expect_null_linter()
   )
 })
