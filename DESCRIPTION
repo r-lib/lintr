@@ -62,6 +62,7 @@ Collate:
     'equals_na_linter.R'
     'exclude.R'
     'expect_lint.R'
+    'expect_null_linter.R'
     'extract.R'
     'extraction_operator_linter.R'
     'function_left_parentheses.R'
@@ -103,5 +104,6 @@ Collate:
     'undesirable_operator_linter.R'
     'unneeded_concatenation_linter.R'
     'with_id.R'
+    'xp_utils.R'
     'zzz.R'
 Roxygen: list(markdown = TRUE)

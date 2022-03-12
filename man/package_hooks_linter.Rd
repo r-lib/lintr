@@ -14,5 +14,5 @@ namespace hooks that will cause \verb{R CMD check} issues.
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=correctness_linters]{correctness}, \link[=style_linters]{style}
+\link[=correctness_linters]{correctness}, \link[=package_development_linters]{package_development}, \link[=style_linters]{style}
 }

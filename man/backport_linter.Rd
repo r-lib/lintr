@@ -16,5 +16,5 @@ Check for usage of unavailable functions. Not reliable for testing r-devel depen
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=configurable_linters]{configurable}, \link[=robustness_linters]{robustness}
+\link[=configurable_linters]{configurable}, \link[=package_development_linters]{package_development}, \link[=robustness_linters]{robustness}
 }
