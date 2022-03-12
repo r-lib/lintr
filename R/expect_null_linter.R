@@ -21,17 +21,17 @@ expect_null_linter <- function() {
     xml <- source_file$xml_parsed_content
 
     # two cases two match:
-    #  (1) expect_{equal,identical}(x, NULL)
+    #  (1) expect_{equal,identical}(x, NULL) (or NULL, x)
     #  (2) expect_true(is.null(x))
-    xpath <- glue::glue("//expr[
+    xpath <- "//expr[
       (
-        SYMBOL_FUNCTION_CALL[ {xp_text_in_table(c('expect_equal', 'expect_identical'))} ]
+        SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
         and following-sibling::expr[position() <= 2 and NULL_CONST]
       ) or (
         SYMBOL_FUNCTION_CALL[text() = 'expect_true']
         and following-sibling::expr[1][expr[SYMBOL_FUNCTION_CALL[text() = 'is.null']]]
       )
-    ]")
+    ]"
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
