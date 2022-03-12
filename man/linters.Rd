@@ -45,7 +45,6 @@ The following linters exist:
 \item{\code{\link{equals_na_linter}} (tags: common_mistakes, correctness, default, robustness)}
 \item{\code{\link{expect_null_linter}} (tags: best_practices, package_development)}
 \item{\code{\link{expect_type_linter}} (tags: best_practices, package_development)}
-\item{\code{\link{expect_type_linter}} (tags: best_practices, package_development)}
 \item{\code{\link{extraction_operator_linter}} (tags: best_practices, style)}
 \item{\code{\link{function_left_parentheses_linter}} (tags: default, readability, style)}
 \item{\code{\link{implicit_integer_linter}} (tags: best_practices, consistency, style)}
