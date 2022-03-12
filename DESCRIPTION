@@ -32,6 +32,7 @@ Suggests:
     covr,
     httr (>= 1.2.1),
     mockery,
+    patrick,
     rmarkdown,
     rstudioapi (>= 0.2),
     testthat (>= 3.0.0),
