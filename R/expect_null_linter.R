@@ -25,7 +25,7 @@ expect_null_linter <- function() {
     xpath <- glue::glue("//expr[
       (
         SYMBOL_FUNCTION_CALL[ {xp_text_in_table(c('expect_equal', 'expect_identical'))} ]
-        and following-sibling::expr[2][NULL_CONST]
+        and following-sibling::expr[position() <= 2 and NULL_CONST]
       ) or (
         SYMBOL_FUNCTION_CALL[text() = 'expect_true']
         and following-sibling::expr[1][expr[SYMBOL_FUNCTION_CALL[text() = 'is.null']]]

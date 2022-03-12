@@ -26,6 +26,13 @@ test_that("expect_null_linter blocks simple disallowed usages", {
     expect_null_linter()
   )
 
+  # reverse order lints the same
+  expect_lint(
+    "expect_equal(NULL, x)",
+    rex::rex("expect_null(x) is better than expect_equal(x, NULL)"),
+    expect_null_linter()
+  )
+
   # different equivalent usage
   expect_lint(
     "expect_true(is.null(foo(x)))",
