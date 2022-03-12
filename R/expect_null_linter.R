@@ -10,6 +10,7 @@
 #'
 #' @evalRd rd_tags("expect_null_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
+#' @importFrom glue glue
 #' @export
 expect_null_linter <- function() {
   Linter(function(source_file) {
