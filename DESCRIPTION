@@ -63,6 +63,7 @@ Collate:
     'exclude.R'
     'expect_lint.R'
     'expect_null_linter.R'
+    'expect_type_linter.R'
     'extract.R'
     'extraction_operator_linter.R'
     'function_left_parentheses.R'
