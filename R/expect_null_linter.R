@@ -39,7 +39,7 @@ expect_null_linter <- function() {
 }
 
 gen_expect_null_lint <- function(expr, source_file) {
-  matched_function <- xml_text(xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
+  matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
   if (matched_function %in% c("expect_equal", "expect_identical")) {
     lint_msg <- sprintf("expect_null(x) is better than %s(x, NULL)", matched_function)
   } else {
