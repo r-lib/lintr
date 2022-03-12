@@ -22,7 +22,6 @@ Imports:
     codetools,
     cyclocomp,
     digest,
-    glue,
     jsonlite,
     knitr,
     stats,
