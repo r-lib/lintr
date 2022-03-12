@@ -19,20 +19,18 @@ expect_null_linter <- function() {
 
     xml <- source_file$xml_parsed_content
 
-    # for expect_{equal,identical}(x, NULL)
-    equal_expr_cond <- sprintf(
-      "SYMBOL_FUNCTION_CALL[%s] and following-sibling::expr[2][NULL_CONST]",
-      xp_text_in_table(c("expect_equal", "expect_identical"))
-    )
-
-    # for expect_true(is.null(x))
-    is_null_call <- "SYMBOL_FUNCTION_CALL[text() = 'is.null']"
-    true_expr_cond <- xp_and(
-      "SYMBOL_FUNCTION_CALL[text() = 'expect_true']",
-      sprintf("following-sibling::expr[1][expr[%s]]", is_null_call)
-    )
-
-    xpath <- sprintf("//expr[(%s) or (%s)]", equal_expr_cond, true_expr_cond)
+    # two cases two match:
+    #  (1) expect_{equal,identical}(x, NULL)
+    #  (2) expect_true(is.null(x))
+    xpath <- glue::glue("//expr[
+      (
+        SYMBOL_FUNCTION_CALL[ {xp_text_in_table(c('expect_equal', 'expect_identical'))} ]
+        and following-sibling::expr[2][NULL_CONST]
+      ) or (
+        SYMBOL_FUNCTION_CALL[text() = 'expect_true']
+        and following-sibling::expr[1][expr[SYMBOL_FUNCTION_CALL[text() = 'is.null']]]
+      )
+    ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
