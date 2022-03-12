@@ -80,4 +80,3 @@ NULL
 #' @evalRd rd_linters("package_development")
 #' @seealso [linters] for a complete list of linters available in lintr.
 NULL
-
