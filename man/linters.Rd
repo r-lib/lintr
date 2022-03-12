@@ -24,7 +24,7 @@ The following tags exist:
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=efficiency_linters]{efficiency} (4 linters)}
-\item{\link[=package_development_linters]{package_development} (1 linters)}
+\item{\link[=package_development_linters]{package_development} (3 linters)}
 \item{\link[=readability_linters]{readability} (21 linters)}
 \item{\link[=robustness_linters]{robustness} (10 linters)}
 \item{\link[=style_linters]{style} (32 linters)}
@@ -36,7 +36,7 @@ The following linters exist:
 \item{\code{\link{absolute_path_linter}} (tags: best_practices, configurable, robustness)}
 \item{\code{\link{assignment_linter}} (tags: consistency, default, style)}
 \item{\code{\link{assignment_spaces_linter}} (tags: readability, style)}
-\item{\code{\link{backport_linter}} (tags: configurable, robustness)}
+\item{\code{\link{backport_linter}} (tags: configurable, package_development, robustness)}
 \item{\code{\link{closed_curly_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{commas_linter}} (tags: default, readability, style)}
 \item{\code{\link{commented_code_linter}} (tags: best_practices, default, readability, style)}
@@ -58,7 +58,7 @@ The following linters exist:
 \item{\code{\link{object_name_linter}} (tags: configurable, consistency, default, style)}
 \item{\code{\link{object_usage_linter}} (tags: correctness, default, readability, style)}
 \item{\code{\link{open_curly_linter}} (tags: configurable, default, readability, style)}
-\item{\code{\link{package_hooks_linter}} (tags: correctness, style)}
+\item{\code{\link{package_hooks_linter}} (tags: correctness, package_development, style)}
 \item{\code{\link{paren_body_linter}} (tags: default, readability, style)}
 \item{\code{\link{paren_brace_linter}} (tags: default, readability, style)}
 \item{\code{\link{pipe_call_linter}} (tags: readability, style)}

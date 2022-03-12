@@ -1,6 +1,7 @@
 linter,tags
 absolute_path_linter,robustness best_practices configurable
 assignment_linter,style consistency default
+backport_linter,robustness configurable package_development
 closed_curly_linter,style readability default configurable
 commas_linter,style readability default
 commented_code_linter,style readability best_practices default
@@ -18,6 +19,7 @@ object_length_linter,style readability default configurable
 object_name_linter,style consistency default configurable
 object_usage_linter,style readability correctness default
 open_curly_linter,style readability default configurable
+package_hooks_linter,style correctness package_development
 paren_brace_linter,style readability default
 pipe_continuation_linter,style readability default
 semicolon_terminator_linter,style readability default configurable
@@ -33,12 +35,10 @@ undesirable_function_linter,style efficiency configurable robustness best_practi
 undesirable_operator_linter,style efficiency configurable robustness best_practices
 unneeded_concatenation_linter,style readability efficiency
 assignment_spaces_linter,style readability
-backport_linter,robustness configurable
 duplicate_argument_linter,correctness common_mistakes configurable
 missing_argument_linter,correctness common_mistakes configurable
 missing_package_linter,robustness common_mistakes
 namespace_linter,correctness robustness configurable
-package_hooks_linter,style correctness
 paren_body_linter,style readability default
 pipe_call_linter,style readability
 sprintf_linter,correctness common_mistakes
