@@ -90,9 +90,7 @@ available_linters <- function(packages = "lintr") {
 #' @noRd
 rd_tags <- function(linter_name) {
   linters <- available_linters()
-  stopifnot(requireNamespace("withr", quietly = TRUE))
-  withr::local_locale(LC_COLLATE = "en_US")
-  tags <- sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
+  tags <- platform_independent_sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
 
   c(
     "\\section{Tags}{",
@@ -112,9 +110,7 @@ rd_tags <- function(linter_name) {
 #' @noRd
 rd_linters <- function(tag_name) {
   linters <- available_linters()
-  stopifnot(requireNamespace("withr", quietly = TRUE))
-  withr::local_locale(LC_COLLATE = "en_US")
-  tagged <- sort(linters[["linter"]][vapply(
+  tagged <- platform_independent_sort(linters[["linter"]][vapply(
     linters[["tags"]],
     function(tag_list) tag_name %in% tag_list,
     logical(1L)
@@ -141,9 +137,7 @@ rd_linters <- function(tag_name) {
 #' @noRd
 rd_taglist <- function() {
   linters <- available_linters()
-  stopifnot(requireNamespace("withr", quietly = TRUE))
-  withr::local_locale(LC_COLLATE = "en_US")
-  tags <- sort(unique(unlist(linters[["tags"]])))
+  tags <- platform_independent_sort(unique(unlist(linters[["tags"]])))
 
   c(
     "\\section{Tags}{",
@@ -163,19 +157,22 @@ rd_taglist <- function() {
 #' @noRd
 rd_linterlist <- function() {
   linters <- available_linters()
-  stopifnot(requireNamespace("withr", quietly = TRUE))
-  withr::local_locale(LC_COLLATE = "en_US")
-  linter_names <- sort(linters[["linter"]])
+  linter_names <- platform_independent_sort(linters[["linter"]])
 
   c(
     "\\section{Linters}{",
     "The following linters exist:",
     "\\itemize{",
     vapply(linter_names, function(linter_name) {
-      tags <- sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
+      tags <- platform_independent_sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
       paste0("\\item{\\code{\\link{", linter_name, "}} (tags: ", toString(tags), ")}")
     }, character(1L)),
     "}", # itemize
     "}" # section
   )
+}
+
+platform_independent_sort <- function(x) {
+  withr::local_locale(LC_COLLATE = if (.Platform$OS.type == "windows") "English" else "en_US")
+  sort(x)
 }
