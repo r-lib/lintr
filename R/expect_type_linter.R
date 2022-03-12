@@ -29,19 +29,20 @@ expect_type_linter <- function() {
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    return(lapply(
-      bad_expr,
-      xml_nodes_to_lint,
-      source_file = source_file,
-      message = paste(
-        "expect_type(x, t) is better than expect_equal(typeof(x), t),",
-        "expect_identical(typeof(x), t), or expect_true(is.<t>(x)).",
-        'Note that typeof(1) is "double" and typeof(function(x) x) is "closure".'
-      ),
-      type = "warning"
-    ))
+    return(lapply(bad_expr, source_file))
   })
 }
+
+gen_expect_type_lint <- function(expr, source_file) {
+  matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
+  if (matched_function %in% c("expect_equal", "expect_identical")) {
+    lint_msg <- sprintf("expect_type(x, t) is better than %s(typeof(x), t)", matched_function)
+  } else {
+    lint_msg <- "expect_type(x, t) is better than expect_true(is.<t>(x))"
+  }
+  xml_nodes_to_lint(expr, source_file, lint_msg, type = "warning")
+}
+
 
 # NB: the full list of values that can arise from `typeof(x)` is available
 #   in ?typeof (or, slightly more robustly, in the R source: src/main/util.c.

@@ -21,14 +21,14 @@ test_that("expect_type_linter blocks simple disallowed usages", {
   # expect_identical is treated the same as expect_equal
   expect_lint(
     "testthat::expect_identical(typeof(x), 'language')",
-    rex::rex("expect_type(x, t) is better than expect_equal(typeof(x), t)"),
+    rex::rex("expect_type(x, t) is better than expect_identical(typeof(x), t)"),
     expect_type_linter
   )
 
   # different equivalent usage
   expect_lint(
     "expect_true(is.complex(foo(x)))",
-    rex::rex("expect_type(x, t) is better than expect_equal(typeof(x), t)"),
+    rex::rex("expect_type(x, t) is better than expect_true(is.<t>(x))"),
     expect_type_linter
   )
 })
@@ -45,7 +45,7 @@ local({
     "expect_type_linter catches expect_true(is.<base type>)",
     expect_lint(
       sprintf("expect_true(is.%s(x))", is_type),
-      rex::rex("expect_type(x, t) is better than expect_equal(typeof(x), t)"),
+      rex::rex("expect_type(x, t) is better than expect_true(is.<t>(x))"),
       expect_type_linter
     ),
     .test_name = is_types,
