@@ -84,6 +84,7 @@ test_that("exclude_operators works", {
   expect_lint("a<<-1", NULL, infix_spaces_linter(exclude_operators = "<-"))
   expect_lint("a:=1", NULL, infix_spaces_linter(exclude_operators = "<-"))
   expect_lint("a->>1", NULL, infix_spaces_linter(exclude_operators = "->"))
+  expect_lint("a%any%1", NULL, infix_spaces_linter(exclude_operators = "%%"))
   expect_lint("function(a=1) { }", NULL, infix_spaces_linter(exclude_operators = "="))
   expect_lint("foo(a=1)", NULL, infix_spaces_linter(exclude_operators = "="))
 })
