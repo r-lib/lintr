@@ -58,7 +58,7 @@ infix_metadata$low_precedence <- infix_metadata$string_value %in% c(
 #' Infix spaces linter
 #'
 #' Check that infix operators are surrounded by spaces. Enforces the corresponding Tidyverse style guide rule;
-#'   see [https://style.tidyverse.org/syntax.html#infix-operators].
+#'   see <https://style.tidyverse.org/syntax.html#infix-operators>.
 #'
 #' @param exclude_operators Character vector of operators to exlude from consideration for linting.
 #'   Default is to include the following "low-precedence" operators:
