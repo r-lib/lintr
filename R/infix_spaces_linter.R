@@ -4,7 +4,7 @@
 # NB: this metadata is used elsewhere in lintr, e.g. spaces_left_parentheses_linter.
 #   because of that, even though some rows of this table are currently unused, but
 #   we keep them around because it's useful to keep this info in one place.
-infix_metadata <- data.frame(matrix(byrow = TRUE, ncol = 2L, c(
+infix_metadata <- data.frame(stringsAsFactors = FALSE, matrix(byrow = TRUE, ncol = 2L, c(
   "OP-PLUS", "+",
   "OP-MINUS", "-",
   "OP-TILDE", "~",
