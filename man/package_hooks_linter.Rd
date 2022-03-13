@@ -8,7 +8,18 @@ package_hooks_linter()
 }
 \description{
 Check various common "gotchas" in \code{\link[=.onLoad]{.onLoad()}}, \code{\link[=.onAttach]{.onAttach()}}, \code{\link[=.Last.lib]{.Last.lib()}}, and \code{\link[=.onDetach]{.onDetach()}}
-namespace hooks that will cause \verb{R CMD check} issues.
+namespace hooks that will cause \verb{R CMD check} issues. See Writing R Extensions for details.
+}
+\details{
+\enumerate{
+\item \code{.onLoad()} shouldn't call \code{\link[=cat]{cat()}}, \code{\link[=message]{message()}}, \code{\link[=print]{print()}}, \code{\link[=writeLines]{writeLines()}}, \code{\link[=packageStartupMessage]{packageStartupMessage()}},
+\code{\link[=require]{require()}}, \code{\link[=library]{library()}}, or \code{\link[=installed.packages]{installed.packages()}}.
+\item \code{.onAttach()} shouldn't call \code{cat()}, \code{message()}, \code{print()}, \code{writeLines()}, \code{\link[=library.dynam]{library.dynam()}},
+\code{require()}, \code{library()}, or \code{installed.packages()}.
+\item \code{.Last.lib()} and \code{.onDetach()} shouldn't call \code{\link[=library.dynam.unload]{library.dynam.unload()}}.
+\item \code{.onLoad()} and \code{.onAttach()} should take two arguments, with names matching \verb{^lib} and \verb{^pkg};
+\code{.Last.lib()} and \code{.onDetach()} should take one argument with name matching \verb{^lib}.
+}
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
