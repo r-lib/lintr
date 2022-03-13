@@ -4,7 +4,11 @@
 \alias{assignment_linter}
 \title{Assignment linter}
 \usage{
-assignment_linter()
+assignment_linter(block_double_assign = FALSE)
+}
+\arguments{
+\item{block_double_assign}{Logical, \code{FALSE} by default. If \code{TRUE}, usage
+of \code{\link[base:assignOps]{<<-}} and \code{\link[base:assignOps]{->>}} are also blocked.}
 }
 \description{
 Check that \verb{<-} is always used for assignment.

@@ -88,6 +88,7 @@ function calls. (#850, #851, @renkun-ken)
 * `lintr` now uses the 3rd edition of `testthat` (@MichaelChirico, #910)
 * `lintr` is adopting a new set of linters provided as part of Google's extension to the tidyverse style guide (#884, @michaelchirico)
    + `expect_null_linter()` Require usage of `expect_null(x)` over `expect_equal(x, NULL)` and similar
+* `assignment_linter()` now blocks right assignment (`->`) and gains an argument `block_double_assign` (`FALSE` by default) to optionally block `<<-` and `->>` as well (#915, @michaelchirico)
 
 # lintr 2.0.1
 
