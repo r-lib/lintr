@@ -31,6 +31,13 @@ test_that("expect_type_linter blocks simple disallowed usages", {
     rex::rex("expect_type(x, t) is better than expect_true(is.<t>(x))"),
     expect_type_linter()
   )
+
+  # yoda test with clear expect_type replacement
+  expect_lint(
+    "expect_equal('integer', typeof(x))",
+    rex::rex("expect_type(x, t) is better than expect_equal(typeof(x), t)"),
+    expect_type_linter()
+  )
 })
 
 

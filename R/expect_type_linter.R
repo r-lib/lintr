@@ -20,7 +20,10 @@ expect_type_linter <- function() {
     xpath <- glue::glue("//expr[
       (
         SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
-        and following-sibling::expr[1][expr[SYMBOL_FUNCTION_CALL[text() = 'typeof']]]
+        and following-sibling::expr[
+          expr[SYMBOL_FUNCTION_CALL[text() = 'typeof']]
+          and (position() = 1 or preceding-sibling::expr[STR_CONST])
+        ]
       ) or (
         SYMBOL_FUNCTION_CALL[text() = 'expect_true']
         and following-sibling::expr[1][expr[SYMBOL_FUNCTION_CALL[ {base_type_tests} ]]]
