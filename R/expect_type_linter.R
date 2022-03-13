@@ -29,7 +29,7 @@ expect_type_linter <- function() {
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    return(lapply(bad_expr, source_file))
+    return(lapply(bad_expr, gen_expect_type_lint, source_file))
   })
 }
 

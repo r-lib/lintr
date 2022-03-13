@@ -2,7 +2,7 @@ test_that("expect_type_linter skips allowed usages", {
   # expect_type doesn't have an inverted version
   expect_lint("expect_true(!is.numeric(x))", NULL, expect_type_linter())
   # NB: also applies to tinytest, but it's sufficient to test testthat
-  expect_lint("testthat::expect_true(!is.numeric(x))", NULL, expect_type_linter)
+  expect_lint("testthat::expect_true(!is.numeric(x))", NULL, expect_type_linter())
 
   # other is.<x> calls are not suitable for expect_type in particular
   expect_lint("expect_true(is.data.frame(x))", NULL, expect_type_linter())
