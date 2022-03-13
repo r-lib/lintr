@@ -82,6 +82,8 @@ test_that("returns the correct linting", {
     linter
   )
 
+  # e.g. if the test suite is run after library(dplyr)
+  skip_if(exists("n"))
   expect_lint(
     trim_some("
       fun <- function(x) {
