@@ -62,7 +62,7 @@ infix_metadata$low_precedence <- infix_metadata$string_value %in% c(
 #'
 #' @param exclude_operators Character vector of operators to exlude from consideration for linting.
 #'   Default is to include the following "low-precedence" operators:
-#'   `+`, `-`, `>`, `>=`, `<`, `<=`, `==`, `!=`, `&`, `&&`, `|`, `||`, `<-`, `:=`, `<<-`, `->`, `->>`,
+#'   `+`, `-`, `~`, `>`, `>=`, `<`, `<=`, `==`, `!=`, `&`, `&&`, `|`, `||`, `<-`, `:=`, `<<-`, `->`, `->>`,
 #'   `=`, `/`, `*`, and any infix operator (exclude infixes by passing `"%%"`). Note that `<-`, `:=`, and `<<-`
 #'   are included/excluded as a group (indicated by passing `"<-"`), as are `->` and `->>` (_viz_, `"->"`),
 #'   and that `=` for assignment and for setting arguments in calls are treated the same.
