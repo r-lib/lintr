@@ -13,7 +13,6 @@ Linters highlighting code style issues.
 The following linters are tagged with 'style':
 \itemize{
 \item{\code{\link{assignment_linter}}}
-\item{\code{\link{assignment_spaces_linter}}}
 \item{\code{\link{closed_curly_linter}}}
 \item{\code{\link{commas_linter}}}
 \item{\code{\link{commented_code_linter}}}
