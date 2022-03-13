@@ -4,7 +4,13 @@
 \alias{assignment_linter}
 \title{Assignment linter}
 \usage{
-assignment_linter()
+assignment_linter(allow_cascading_assign = TRUE, allow_right_assign = FALSE)
+}
+\arguments{
+\item{allow_cascading_assign}{Logical, default \code{TRUE}.
+If \code{FALSE}, \code{\link[base:assignOps]{<<-}} and \verb{->>} are not allowed.}
+
+\item{allow_right_assign}{Logical, default \code{FALSE}. If \code{TRUE}, \verb{->} and \verb{->>} are allowed.}
 }
 \description{
 Check that \verb{<-} is always used for assignment.
