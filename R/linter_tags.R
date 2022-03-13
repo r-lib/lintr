@@ -173,10 +173,7 @@ rd_linterlist <- function() {
 }
 
 platform_independent_sort <- function(x) {
-  if (!identical(sort(c("a", "B")), c("a", "B"))) {
-    stop("Please run in an English-like locale, e.g. LC_COLLATE=en_US")
-  }
   # see #923 -- some locales ignore _ when running sort(), others don't.
-  #   we want to consistently treat "_" < "n" < "N"
-  x[order(gsub("_", "0", x, fixed = TRUE))]
+  #   we want to consistently treat "_" < "n" = "N"
+  x[order(tolower(gsub("_", "0", x, fixed = TRUE)))]
 }
