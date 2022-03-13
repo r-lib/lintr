@@ -82,10 +82,12 @@ test_that("returns the correct linting", {
     linter
   )
 
+  # earlier we used n(1) but this might conflict with dplyr::n(),
+  #   so switch to use an obscure symbol
   expect_lint(
     trim_some("
       fun <- function(x) {
-        n(1)
+        `__lintr_obj`(1)
       }
     "),
     rex("no visible global function definition for ", anything),
@@ -97,7 +99,7 @@ test_that("replace_functions_stripped", {
   expect_lint(
     trim_some("
       fun <- function(x) {
-        n(x) = 1
+        `__lintr_obj`(x) = 1
       }
     "),
     rex("no visible global function definition for ", anything),
@@ -107,7 +109,7 @@ test_that("replace_functions_stripped", {
   expect_lint(
     trim_some("
       fun <- function(x) {
-        n(x) <- 1
+        `__lintr_obj`(x) <- 1
       }
     "),
     rex("no visible global function definition for ", anything),
