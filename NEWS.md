@@ -88,6 +88,7 @@ function calls. (#850, #851, @renkun-ken)
 * `lintr` now uses the 3rd edition of `testthat` (@MichaelChirico, #910)
 * `lintr` is adopting a new set of linters provided as part of Google's extension to the tidyverse style guide (#884, @michaelchirico)
    + `expect_null_linter()` Require usage of `expect_null(x)` over `expect_equal(x, NULL)` and similar
+   + `expect_type_linter()` Require usage of `expect_type(x, t)` over `expect_equal(typeof(x), t)` and similar
 
 # lintr 2.0.1
 
