@@ -8,7 +8,6 @@
 #' @evalRd rd_tags("expect_type_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-#' @importFrom glue glue
 expect_type_linter <- function() {
   Linter(function(source_file) {
     if (length(source_file$parsed_content) == 0L) {
