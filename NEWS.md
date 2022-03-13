@@ -1,5 +1,19 @@
 # lintr (development version)
 
+## Potentially breaking changes and pending deprecations
+
+* Lints are now marked with the name of the `linter` that caused them instead of the name of their implementation
+  function.
+  Deprecated the obsolete `linter` argument of `Lint()`. (#664, #673, #746, @AshesITR)
+  Downstream custom linters should follow suit.
+* Consistent access to linters through a function call, even for linters without parameters (#245, @fangly, @AshesITR, and @MichaelChirico)
+* Removed deprecated functions `absolute_paths_linter`, `camel_case_linter`, `multiple_dots_linter`, `snake_case_linter`, and `trailing_semicolons_linter`. They have been marked as deprecated since v1.0.1, which was released in 2017.
+* The `...` arguments for `lint()`, `lint_dir()`, and `lint_package()` have promoted to an earlier position to better match the [Tidyverse design principal](https://design.tidyverse.org/args-data-details.html) of data->descriptor->details. This change enables passing objects to `...` without needing to specify non-required arguments, e.g. `lint_dir("/path/to/dir", linter())` now works without the need to specify `relative_path`. This affects some code that uses positional arguments.
+  + For `lint()`, `...` is now the 3rd argument, where earlier this was `cache=`
+  + For `lint_dir()` and `lint_package()`, `...` is now the 2nd argument, where earlier this was `relative_path=`
+
+## New features, bug fixes, improvements
+
 * Updated R CMD GitHub Actions workflow to check for R 3.6 on Ubuntu, instead of R 3.3, and for R 4.0 on Windows, instead of R 3.6 (#803, @ dragosmg)
 * Added a secondary, more restrictive lint workflow - `lint-changed-files` - for newly written / modified code (#641, @dragosmg) 
 * Switched CI from Travis to GitHub Actions, using the full tidyverse recommended R CMD check. Code coverage and linting 
@@ -37,9 +51,6 @@
   excluding matches found in comments; #441 and #545, @russHyde)
 * `paren_brace_linter` now marks lints at the opening brace instead of the closing parenthesis, making fixing the lints
   by jumping to source markers easier (#583, @AshesITR)
-* Lints are now marked with the name of the `linter` that caused them instead of the name of their implementation
-  function.    
-  Deprecated the obsolete `linter` argument of `Lint()`. (#664, #673, #746, @AshesITR)
 * New syntax to exclude only selected linters from linting lines or passages. Use `# nolint: linter_name, linter2_name.`
   or `# nolint start: linter_name, linter2_name.` in source files or named lists of line numbers in `.lintr`.
   (#660, @AshesITR)
@@ -55,7 +66,6 @@
 * `commented_code_linter()` uses the parse tree to find comments, eliminating some false positives (#451, @AshesITR)
 * `trailing_blank_lines_linter()` now also lints files without a terminal newline (#675, @AshesITR)
 * `object_name_linter()` now correctly detects imported functions when linting packages (#642, @AshesITR)
-* Consistent access to linters through a function call, even for linters without parameters (#245, @fangly, @AshesITR, and @MichaelChirico)
 * `object_usage_linter()` now correctly reports usage warnings spanning multiple lines (#507, @AshesITR)
 * `T_and_F_symbol_linter()` no longer lints occurrences of `T` and `F` when used for subsetting and gives a better 
   message when used as variable names (#657, @AshesITR)
@@ -73,7 +83,6 @@
 * `undesirable_function_linter` no longer lints `library` and `require` calls attaching a package with an undesired name, e.g. `library(foo)` (#814, @kpagacz and @michaelchirico)
 * New linter `duplicate_argument_linter()` checks that there are no duplicate arguments supplied to
 function calls. (#850, #851, @renkun-ken)
-* Removed deprecated functions `absolute_paths_linter`, `camel_case_linter`, `multiple_dots_linter`, `snake_case_linter`, and `trailing_semicolons_linter`. They have been marked as deprecated since v1.0.1, which was released in 2017.
 * Several optional `Imported` packages have become `Suggested` dependencies: `httr`, `testthat`, and `rstudioapi`. This should allow snappier CI builds for usages not relying on some more "peripheral" features of the package.
 * Error message for mismatched starts and ends of exclusion ranges is now more helpful. (#571, #860, @AshesITR and @danielinteractive)
 * Debugging functions (`browser()`, `debug()`, `debugcall()`, `debugonce()`, `trace()`, `undebug()`, `untrace()`) are now part of the default set of undesirable functions to help prevent them from being committed by mistake. (#876, @michaelchirico)
