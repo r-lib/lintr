@@ -1,7 +1,15 @@
 #' Package hooks linter
 #'
 #' Check various common "gotchas" in [.onLoad()], [.onAttach()], [.Last.lib()], and [.onDetach()]
-#'   namespace hooks that will cause `R CMD check` issues.
+#'   namespace hooks that will cause `R CMD check` issues. See Writing R Extensions for details.
+#'
+#' 1. `.onLoad()` shouldn't call [cat()], [message()], [print()], [writeLines()], [packageStartupMessage()],
+#'    [require()], [library()], or [installed.packages()].
+#' 2. `.onAttach()` shouldn't call `cat()`, `message()`, `print()`, `writeLines()`, [library.dynam()],
+#'    `require()`, `library()`, or `installed.packages()`.
+#' 3. `.Last.lib()` and `.onDetach()` shouldn't call [library.dynam.unload()].
+#' 4. `.onLoad()` and `.onAttach()` should take two arguments, with names matching `^lib` and `^pkg`;
+#'    `.Last.lib()` and `.onDetach()` should take one argument with name matching `^lib`.
 #'
 #' @evalRd rd_tags("package_hooks_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
