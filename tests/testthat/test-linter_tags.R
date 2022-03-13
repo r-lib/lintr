@@ -21,5 +21,9 @@ test_that("default_linters and default tag match up", {
 
 test_that("available_linters matches the set of linters available from lintr", {
   lintr_db <- available_linters()
-  expect_setequal(lintr_db$linter, ls(asNamespace("lintr"), pattern = "_linter$"))
+  all_linters <- ls(asNamespace("lintr"), pattern = "_linter$")
+  # ensure that the contents of inst/lintr/linters.csv covers all _linter objects in our namespace
+  expect_setequal(lintr_db$linter, all_linters)
+  # ensure that all _linter objects in our namespace are also exported
+  expect_setequal(all_linters, grep("_linter$", getNamespaceExports("lintr"), value = TRUE))
 })
