@@ -173,7 +173,10 @@ rd_linterlist <- function() {
 }
 
 platform_independent_sort <- function(x) {
-  stopifnot(`Package {withr} must be installed.` = requireNamespace("withr", quietly = TRUE))
-  withr::local_locale(LC_COLLATE = if (.Platform$OS.type == "windows") "English" else "en_US")
-  sort(x)
+  if (!identical(sort(c("a", "B")), c("a", "B"))) {
+    stop("Please run in an English-like locale, e.g. LC_COLLATE=en_US")
+  }
+  # see #923 -- some locales ignore _ when running sort(), others don't.
+  #   we want to consistently treat "_" < "n" < "N"
+  x[order(gsub("_", "0", x, fixed = TRUE))]
 }
