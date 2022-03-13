@@ -1,3 +1,9 @@
+# some metadata about infix operators on the R parse tree.
+#   xml_tag gives the XML tag as returned by xmlparsedata::xml_parse_data().
+#   r_string gives the operator as you would write it in R code.
+# NB: this metadata is used elsewhere in lintr, e.g. spaces_left_parentheses_linter.
+#   because of that, even though some rows of this table are currently unused, but
+#   we keep them around because it's useful to keep this info in one place.
 infix_metadata <- data.frame(matrix(byrow = TRUE, ncol = 2L, c(
   "OP-PLUS", "+",
   "OP-MINUS", "-",
@@ -35,6 +41,7 @@ infix_metadata <- data.frame(matrix(byrow = TRUE, ncol = 2L, c(
   NULL
 )))
 names(infix_metadata) <- c("xml_tag", "string_value")
+# utils::getParseData()'s designation for the tokens wouldn't be valid as XML tags
 infix_metadata$parse_tag <- ifelse(
   startsWith(infix_metadata$xml_tag, "OP-"),
   sQuote(infix_metadata$string_value, "'"),
