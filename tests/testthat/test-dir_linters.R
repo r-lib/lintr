@@ -1,5 +1,4 @@
 test_that("lint all files in a directory", {
-  browser()
   the_dir <- file.path("dummy_packages", "package", "vignettes")
   files <- list.files(the_dir)
 
