@@ -2,23 +2,36 @@
 #'
 #' Check that `<-` is always used for assignment.
 #'
+#' @param block_double_assign Logical, `FALSE` by default. If `TRUE`, usage
+#'   of [`<<-`][base::assignOps] and [`->>`][base::assignOps] are also blocked.
 #' @evalRd rd_tags("assignment_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-assignment_linter <- function() {
+assignment_linter <- function(block_double_assign = FALSE) {
   Linter(function(source_file) {
-    lapply(
-      ids_with_token(source_file, "EQ_ASSIGN"),
-      function(id) {
-        parsed <- with_id(source_file, id)
-        Lint(
-          filename = source_file$filename,
-          line_number = parsed$line1,
-          column_number = parsed$col1,
-          type = "style",
-          message = "Use <-, not =, for assignment.",
-          line = source_file$lines[as.character(parsed$line1)]
-        )
-      })
+    if (is.null(source_file$xml_parsed_content)) return(list())
+
+    xml <- source_file$xml_parsed_content
+
+    node_conditions <- paste0("self::", c(
+      # always block = (NB: the parser differentiates EQ_ASSIGN and EQ_SUB)
+      "EQ_ASSIGN",
+      # -> and ->> are both 'RIGHT_ASSIGN'; check the text if not blocking ->>
+      paste0("RIGHT_ASSIGN", if (!block_double_assign) "[text() = '->']"),
+      # <-, :=, and <<- are all 'LEFT_ASSIGN'; check the text if blocking <<-
+      if (block_double_assign) "LEFT_ASSIGN[text() = '<<-']"
+    ))
+    # TODO: is there any performance consideration for //*[self::a or self::b] vs. //a|//b ?
+    xpath <- sprintf("//*[%s]", do.call(xp_or, as.list(node_conditions)))
+
+    bad_expr <- xml2::xml_find_all(xml, xpath)
+    lapply(bad_expr, gen_assignment_lint, source_file)
   })
+}
+
+gen_assignment_lint <- function(expr, source_file) {
+  operator <- xml2::xml_text(expr)
+  message <- sprintf("Use <-, not %s, for assignment.", operator)
+  if (operator %in% c("<<-", "->>")) message <- paste(message, "Assign to specific environments instead.")
+  xml_nodes_to_lint(expr, source_file, message, type = "style")
 }

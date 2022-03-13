@@ -2,15 +2,19 @@ test_that("returns the correct linting", {
   ops <- c(
     "+",
     "-",
+    "~",
     "=",
     "==",
     "!=",
     "<=",
     ">=",
     "<-",
+    ":=",
+    "<<-",
     "<",
     ">",
     "->",
+    "->>",
     "%%",
     "/",
     "*",
@@ -25,7 +29,7 @@ test_that("returns the correct linting", {
   )
 
   linter <- infix_spaces_linter()
-  msg <- rex("Put spaces around all infix operators.")
+  msg <- rex::rex("Put spaces around all infix operators.")
 
   expect_lint("blah", NULL, linter)
 
@@ -51,4 +55,35 @@ test_that("returns the correct linting", {
   expect_lint("a[1 + -1]", NULL, linter)
 
   expect_lint("fun(a=1)", msg, linter)
+})
+
+test_that("The three `=` are all linted", {
+  linter <- infix_spaces_linter()
+  msg <- rex::rex("Put spaces around all infix operators.")
+
+  # EQ_ASSIGN in the parse data
+  expect_lint("a=1", msg, linter)
+  # EQ_FORMALS in the parse data
+  expect_lint("foo <- function(x=1) {}", msg, linter)
+  # EQ_SUB in the parse data
+  expect_lint("foo(x=1)", msg, linter)
+})
+
+test_that("exclude_operators works", {
+  expect_lint("a+b", NULL, infix_spaces_linter(exclude_operators = "+"))
+  expect_lint(
+    trim_some("
+      a+b
+      a-b
+    "),
+    NULL,
+    infix_spaces_linter(exclude_operators = c("+", "-"))
+  )
+
+  # grouped operators
+  expect_lint("a<<-1", NULL, infix_spaces_linter(exclude_operators = "<-"))
+  expect_lint("a:=1", NULL, infix_spaces_linter(exclude_operators = "<-"))
+  expect_lint("a->>1", NULL, infix_spaces_linter(exclude_operators = "->"))
+  expect_lint("function(a=1) { }", NULL, infix_spaces_linter(exclude_operators = "="))
+  expect_lint("foo(a=1)", NULL, infix_spaces_linter(exclude_operators = "="))
 })
