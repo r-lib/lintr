@@ -88,3 +88,32 @@ test_that("exclude_operators works", {
   expect_lint("function(a=1) { }", NULL, infix_spaces_linter(exclude_operators = "="))
   expect_lint("foo(a=1)", NULL, infix_spaces_linter(exclude_operators = "="))
 })
+
+# more tests specifically for assignment
+test_that("assignment cases return the correct linting", {
+  linter <- infix_spaces_linter()
+  msg <- rex::rex("Put spaces around all infix operators.")
+
+  expect_lint("fun(blah =  1)", NULL, linter)
+
+  expect_lint("blah <- 1", NULL, linter)
+  expect_lint("blah = 1", NULL, linter)
+
+  expect_lint("\"my  =  variable\" <- 42.0", NULL, linter)
+
+  expect_lint("if (0 <  1) x <- 42L", NULL, linter)
+  expect_lint(
+    trim_some("
+    if (0 < 1) {
+      x <- 42L
+    }"),
+    NULL,
+    linter
+  )
+  expect_lint("my = bad = variable = name <- 2.0", NULL, linter)
+
+  expect_lint("blah<-  1", msg, linter)
+  expect_lint("blah  <-1", msg, linter)
+  expect_lint("blah=  1", msg, linter)
+  expect_lint("blah  =1", msg, linter)
+})
