@@ -20,7 +20,9 @@ assignment_linter <- function(allow_cascading_assign = TRUE, allow_right_assign 
       "//EQ_ASSIGN",
       # -> and ->> are both 'RIGHT_ASSIGN'
       if (!allow_right_assign) "//RIGHT_ASSIGN" else if (!allow_cascading_assign) "//RIGHT_ASSIGN[text() = '->>']",
-      # <-, :=, and <<- are all 'LEFT_ASSIGN'; check the text if blocking <<-
+      # <-, :=, and <<- are all 'LEFT_ASSIGN'; check the text if blocking <<-.
+      # NB: := is not linted because of (1) its common usage in rlang/data.table and
+      #   (2) it's extremely uncommon as a normal assignment operator
       if (!allow_cascading_assign) "//LEFT_ASSIGN[text() = '<<-']"
     ))
 
