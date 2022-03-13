@@ -18,3 +18,8 @@ test_that("default_linters and default tag match up", {
   tagged_default <- avail[["linter"]][vapply(avail[["tags"]], function(tags) "default" %in% tags, logical(1L))]
   expect_setequal(tagged_default, names(default_linters))
 })
+
+test_that("available_linters matches the set of linters available from lintr", {
+  lintr_db <- available_linters()
+  expect_setequal(lintr_db$linter, ls(asNamespace("lintr"), pattern = "_linter$"))
+})
