@@ -87,7 +87,6 @@ function calls. (#850, #851, @renkun-ken)
 * `lintr` now uses the 3rd edition of `testthat` (@MichaelChirico, #910)
 * `lintr` is adopting a new set of linters provided as part of Google's extension to the tidyverse style guide (#884, @michaelchirico)
    + `expect_null_linter()` Require usage of `expect_null(x)` over `expect_equal(x, NULL)` and similar
-* `assignment_linter()` now blocks right assignment (`->`) and gains an argument `block_double_assign` (`FALSE` by default) to optionally block `<<-` and `->>` as well (#915, @michaelchirico)
 * `infix_spaces_linter()` gains argument `exclude_operators` to disable lints on selected infix operators. By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these. (#914 @michaelchirico)
 * `infix_spaces_linter()` now throws a lint on `a~b` and `function(a=1) {}` (#930, @michaelchirico)
 

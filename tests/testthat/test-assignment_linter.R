@@ -21,14 +21,3 @@ test_that("returns the correct linting", {
     linter
   )
 })
-
-test_that("other operators are caught as well", {
-  expect_lint("1 -> blah", rex::rex("Use <-, not ->, for assignment."), assignment_linter())
-
-  # <<- and ->> are only blocked optionally
-  expect_lint("1 <<- blah", NULL, assignment_linter())
-  expect_lint("1 ->> blah", NULL, assignment_linter())
-  linter <- assignment_linter(block_double_assign = TRUE)
-  expect_lint("1 <<- blah", rex::rex("Use <-, not <<-, for assignment. Assign to specific environments instead."), linter)
-  expect_lint("1 ->> blah", rex::rex("Use <-, not ->>, for assignment. Assign to specific environments instead."), linter)
-})
