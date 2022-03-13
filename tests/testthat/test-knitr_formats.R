@@ -10,7 +10,8 @@ test_that("it handles dir", {
 
   lints <- lint_dir(path = "knitr_formats", pattern = file_pattern, parse_settings = FALSE)
 
-  expect_setequal(names(lints), list.files("knitr_formats", pattern = file_pattern), info = "For every file there should be at least 1 lint")
+  # For every file there should be at least 1 lint
+  expect_setequal(names(lints), list.files("knitr_formats", pattern = file_pattern))
 })
 
 test_that("it handles markdown", {
