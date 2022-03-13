@@ -1,4 +1,5 @@
 test_that("lint all files in a directory", {
+  browser()
   the_dir <- file.path("dummy_packages", "package", "vignettes")
   files <- list.files(the_dir)
 
@@ -81,4 +82,10 @@ test_that("respect directory exclusions from settings", {
   lints <- lint_dir(the_dir)
   linted_files <- unique(names(lints))
   expect_length(linted_files, 1L)
+})
+
+test_that("lint_dir works with specific linters without specifying other arguments", {
+  the_dir <- file.path("dummy_packages", "package", "vignettes")
+  expect_length(lint_dir(the_dir, assignment_linter(), parse_settings = FALSE), 12L)
+  expect_length(lint_dir(the_dir, commented_code_linter(), parse_settings = FALSE), 0L)
 })

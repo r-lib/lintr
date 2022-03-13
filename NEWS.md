@@ -8,7 +8,7 @@
   Downstream custom linters should follow suit.
 * Consistent access to linters through a function call, even for linters without parameters (#245, @fangly, @AshesITR, and @MichaelChirico)
 * Removed deprecated functions `absolute_paths_linter`, `camel_case_linter`, `multiple_dots_linter`, `snake_case_linter`, and `trailing_semicolons_linter`. They have been marked as deprecated since v1.0.1, which was released in 2017.
-* The `...` arguments for `lint()`, `lint_dir()`, and `lint_package()` have promoted to an earlier position to better match the [Tidyverse design principal](https://design.tidyverse.org/args-data-details.html) of data->descriptor->details. This change enables passing objects to `...` without needing to specify non-required arguments, e.g. `lint_dir("/path/to/dir", linter())` now works without the need to specify `relative_path`. This affects some code that uses positional arguments.
+* The `...` arguments for `lint()`, `lint_dir()`, and `lint_package()` have promoted to an earlier position to better match the [Tidyverse design principal](https://design.tidyverse.org/args-data-details.html) of data->descriptor->details. This change enables passing objects to `...` without needing to specify non-required arguments, e.g. `lint_dir("/path/to/dir", linter())` now works without the need to specify `relative_path`. This affects some code that uses positional arguments. (#935, @michaelchirico)
   + For `lint()`, `...` is now the 3rd argument, where earlier this was `cache=`
   + For `lint_dir()` and `lint_package()`, `...` is now the 2nd argument, where earlier this was `relative_path=`
 
