@@ -144,7 +144,7 @@ object_lint2 <- function(expr, source_file, message) {
   )
 }
 
-make_object_linter <- function(fun, name = linter_auto_name()) {
+object_linter_factory <- function(fun, name = linter_auto_name()) {
   force(name)
   Linter(function(source_file) {
 
@@ -330,7 +330,7 @@ regexes_rd <- toString(paste0("\\sQuote{", names(style_regexes), "}"))
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 object_length_linter <- function(length = 30L) {
-  make_object_linter(function(source_file, token) {
+  object_linter_factory(function(source_file, token) {
     if (nchar(token$text) > length) {
         object_lint(
           source_file,
