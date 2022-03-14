@@ -41,6 +41,7 @@ test_that("expect_type_linter blocks simple disallowed usages", {
 })
 
 
+skip_if_not_installed("patrick")
 local({
   # test for lint errors appropriately raised for all is.<type> calls
   is_types <- c(
