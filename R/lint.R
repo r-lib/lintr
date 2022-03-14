@@ -36,7 +36,16 @@ NULL
 #'
 #' @export
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
-
+  # TODO(next release after 3.0.0): remove this deprecated workaround
+  dots <- list(...)
+  if (length(dots) > 0L && is.logical(dots[[1L]])) {
+    warning(
+      "'cache' is no longer available as a positional argument; please supply 'cache' as a named argument instead. ",
+      "This warning will be upgraded to an error in the next release."
+    )
+    cache <- dots[[1L]]
+    dots <- dots[-1L]
+  }
   if (is.null(text)) {
     inline_data <- rex::re_matches(filename, rex::rex(newline))
     if (inline_data) {
@@ -93,7 +102,9 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     lint_obj <- if (is.null(text)) filename else list(content = get_content(lines), TRUE)
     lints <- retrieve_file(lint_cache, lint_obj, linters)
     if (!is.null(lints)) {
-      return(exclude(lints, lines = lines, ...))
+      # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
+      #   exclude(lints, lines = lines, ...)
+      return(do.call(exclude, c(list(lints, lines = lines), dots)))
     }
     cache <- TRUE
   } else {
@@ -139,7 +150,9 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     save_cache(lint_cache, filename, cache_path)
   }
 
-  res <- exclude(lints, lines = lines, ...)
+  # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
+  #   exclude(lints, lines = lines, ...)
+  res <- do.call(exclude, c(list(lints, lines = lines), dots))
 
   # simplify filename if inline
   if (no_filename) {
