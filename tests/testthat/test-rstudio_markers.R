@@ -88,7 +88,9 @@ test_that("it returns an empty list of markers if there are no lints", {
 
 test_that("rstudio_source_markers apply to print within rstudio", {
   withr::local_options(lintr.rstudio_source_markers = TRUE)
-  tmp <- withr::local_tempfile(lines = "1:ncol(x)")
+  # TODO(@michaelchirico): Recent (as of this writing) withr v2.5.0 supports local_tempfile(lines = l) to simplify this
+  tmp <- withr::local_tempfile()
+  writeLines("1:ncol(x)", tmp)
   empty <- withr::local_tempfile()
   file.create(empty)
 
