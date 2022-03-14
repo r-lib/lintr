@@ -139,7 +139,7 @@ split_path <- function(path, sep="/|\\\\") {
 }
 
 #' @include utils.R
-make_path_linter <- function(path_function, message, linter, name = linter_auto_name()) {
+path_linter_factory <- function(path_function, message, linter, name = linter_auto_name()) {
   force(name)
   Linter(function(source_file) {
     lapply(
@@ -184,7 +184,7 @@ make_path_linter <- function(path_function, message, linter, name = linter_auto_
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 absolute_path_linter <- function(lax = TRUE) {
-  make_path_linter(
+  path_linter_factory(
     path_function = function(path) {
       is_absolute_path(path) && is_valid_long_path(path, lax)
     },
@@ -201,7 +201,7 @@ absolute_path_linter <- function(lax = TRUE) {
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 nonportable_path_linter <- function(lax = TRUE) {
-  make_path_linter(
+  path_linter_factory(
     path_function = function(path) {
       is_path(path) && is_valid_long_path(path, lax) && path != "/" &&
         re_matches(path, rex(one_of("/", "\\")))
