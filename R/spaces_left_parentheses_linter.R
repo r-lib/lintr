@@ -32,7 +32,7 @@ spaces_left_parentheses_linter <- function() {
       unary_nodes <- infix_metadata[infix_metadata$unary, "xml_tag"]
       unary_selves <- paste0("self::", unary_nodes, "[preceding-sibling::*]", collapse = " or ")
       binary_nodes <- c(
-        infix_metadata[with(infix_metadata, low_precedence & !unary), "xml_tag"],
+        infix_metadata[infix_metadata$low_precedence & !infix_metadata$unary, "xml_tag"],
         "OP-COMMA", "OP-LEFT-BRACE", "ELSE", "IN"
       )
       binary_selves <- paste0("self::", binary_nodes, collapse = " or ")

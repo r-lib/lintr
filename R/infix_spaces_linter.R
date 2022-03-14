@@ -73,7 +73,7 @@ infix_metadata$low_precedence <- infix_metadata$string_value %in% c(
 infix_spaces_linter <- function(exclude_operators = NULL) {
   Linter(function(source_file) {
     infix_tokens <- infix_metadata[
-      with(infix_metadata, low_precedence & !string_value %in% exclude_operators),
+      infix_metadata$low_precedence & !infix_metadata$string_value %in% exclude_operators,
       "parse_tag"
     ]
     lapply(
