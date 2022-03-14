@@ -77,21 +77,11 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   linters <- define_linters(linters)
   linters <- Map(validate_linter_object, linters, names(linters))
 
-  lints <- list()
-  itr <- 0
-
-  cache_path <- if (isTRUE(cache)) {
-    settings$cache_directory
-  } else if (is.character(cache)) {
-    cache
-  } else {
-    character(0)
-  }
+  cache_path <- set_cache_path(cache, settings$cache_directory)
 
   if (length(cache_path)) {
     lint_cache <- load_cache(filename, cache_path)
-    lint_obj <- if (is.null(text)) filename else list(content = get_content(lines), TRUE)
-    lints <- retrieve_file(lint_cache, lint_obj, linters)
+    lints <- check_cached_lints(lint_cache, filename, linters, text, lines)
     if (!is.null(lints)) {
       return(exclude(lints, lines = lines, ...))
     }
@@ -100,32 +90,17 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     cache <- FALSE
   }
 
-  for (expr in source_expressions$expressions) {
-    for (linter in names(linters)) {
-      expr_lints <- NULL
-      if (isTRUE(cache) && has_lint(lint_cache, expr, linter)) {
-        # retrieve_lint() might return NULL if missing line number is encountered.
-        # It could be caused by nolint comments.
-        expr_lints <- retrieve_lint(lint_cache, expr, linter, source_expressions$lines)
-      }
-
-      if (is.null(expr_lints)) {
-        expr_lints <- flatten_lints(linters[[linter]](expr))
-
-        for (i in seq_along(expr_lints)) {
-          expr_lints[[i]]$linter <- linter
-        }
-
-        if (isTRUE(cache)) {
-          cache_lint(lint_cache, expr, linter, expr_lints)
-        }
-      }
-      lints[[itr <- itr + 1L]] <- expr_lints
-    }
-  }
+  n_linters <- length(linters)
+  n_checks <- length(source_expressions$expressions) * n_linters
+  lints <- lapply(seq_len(n_checks), function(check_i) {
+    # modular arithmetic to vary linters first, then expressions
+    expr <- source_expressions$expressions[[((check_i - 1L) %/% n_linters) + 1L]]
+    linter <- names(linters)[[((check_i -1L) %% n_linters) + 1L]]
+    get_expr_lints(expr, linter, linters[[linter]], cache, lint_cache, source_expressions$lines)
+  })
 
   if (inherits(source_expressions$error, "lint")) {
-    lints[[itr <- itr + 1L]] <- source_expressions$error
+    lints[[n_checks + 1L]] <- source_expressions$error
 
     if (isTRUE(cache)) {
       cache_lint(lint_cache, list(filename = filename, content = ""), "error", source_expressions$error)
@@ -148,6 +123,52 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
     }
   }
   res
+}
+
+set_cache_path <- function(cache, cache_directory) {
+  if (isTRUE(cache)) {
+    cache_directory
+  } else if (is.character(cache)) {
+    cache
+  } else {
+    character(0)
+  }
+}
+
+check_cached_lints <- function(lint_cache, filename, linters, text, lines) {
+  lint_obj <- if (is.null(text)) filename else list(content = get_content(lines), TRUE)
+  retrieve_file(lint_cache, lint_obj, linters)
+}
+
+get_cached_expr_lints <- function(expr, linter, cache, lint_cache, lines) {
+  if (!cache || !has_lint(lint_cache, expr, linter)) {
+    return(NULL)
+  }
+  # retrieve_lint() might return NULL if missing line number is encountered.
+  # It could be caused by nolint comments.
+  retrieve_lint(lint_cache, expr, linter, lines)
+}
+
+get_uncached_expr_lints <- function(expr, linter_name, linter_function) {
+  expr_lints <- flatten_lints(linter_function(expr))
+
+  for (i in seq_along(expr_lints)) {
+    expr_lints[[i]]$linter <- linter_name
+  }
+  expr_lints
+}
+
+get_expr_lints <- function(expr, linter_name, linter_function, cache, lint_cache, lines) {
+  expr_lints <- get_cached_expr_lints(expr, linter_name, cache, lint_cache, lines)
+
+  if (is.null(expr_lints)) {
+    expr_lints <- get_uncached_expr_lints(expr, linter_name, linter_function)
+
+    if (cache) {
+      cache_lint(lint_cache, expr, linter_name, expr_lints)
+    }
+  }
+  expr_lints
 }
 
 #' Lint a directory
