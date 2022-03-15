@@ -15,6 +15,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{absolute_path_linter}}}
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
+\item{\code{\link{expect_not_linter}}}
 \item{\code{\link{expect_null_linter}}}
 \item{\code{\link{expect_s3_class_linter}}}
 \item{\code{\link{expect_s4_class_linter}}}
