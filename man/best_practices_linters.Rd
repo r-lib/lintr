@@ -16,6 +16,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{expect_null_linter}}}
+\item{\code{\link{expect_type_linter}}}
 \item{\code{\link{extraction_operator_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
