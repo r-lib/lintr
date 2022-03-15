@@ -2,7 +2,7 @@ test_that("expect_s3_class_linter skips allowed usages", {
   # expect_s3_class doesn't have an inverted version
   expect_lint("expect_true(!inherits(x, 'class'))", NULL, expect_s3_class_linter())
   # NB: also applies to tinytest, but it's sufficient to test testthat
-  expect_lint("testthat::expect_s3_class(!inherits(x, 'class'))", NULL, expect_s3_class_linter())
+  expect_lint("testthat::expect_true(!inherits(x, 'class'))", NULL, expect_s3_class_linter())
 
   # other is.<x> calls are not suitable for expect_s3_class in particular
   expect_lint("expect_true(is.na(x))", NULL, expect_s3_class_linter())
