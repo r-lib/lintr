@@ -22,7 +22,10 @@ expect_s3_class_linter <- function() {
     xpath <- glue::glue("//expr[
       (
         SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
-        and following-sibling::expr[1][expr[SYMBOL_FUNCTION_CALL[text() = 'class']]]
+        and following-sibling::expr[
+          expr[SYMBOL_FUNCTION_CALL[text() = 'class']]
+          and (position() = 1 or preceding-sibling::expr[STR_CONST])
+        ]
       ) or (
         SYMBOL_FUNCTION_CALL[text() = 'expect_true']
         and following-sibling::expr[1][expr[SYMBOL_FUNCTION_CALL[ {is_class_call} ]]]

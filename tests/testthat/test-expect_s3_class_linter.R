@@ -25,6 +25,13 @@ test_that("expect_s3_class_linter blocks simple disallowed usages", {
     expect_s3_class_linter()
   )
 
+  # yoda test with string literal in first arg also caught
+  expect_lint(
+    "expect_equal('data.frame', class(x))",
+    rex::rex("expect_s3_class(x, k) is better than expect_equal(class(x), k)"),
+    expect_s3_class_linter()
+  )
+
   # different equivalent usages
   expect_lint(
     "expect_true(is.table(foo(x)))",
