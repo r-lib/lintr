@@ -18,6 +18,13 @@ test_that("expect_s3_class_linter blocks simple disallowed usages", {
     expect_s3_class_linter()
   )
 
+  # works when testing against a sequence of classes too
+  expect_lint(
+    "expect_equal(class(x), c('data.table', 'data.frame'))",
+    rex::rex("expect_s3_class(x, k) is better than expect_equal(class(x), k)"),
+    expect_s3_class_linter()
+  )
+
   # expect_identical is treated the same as expect_equal
   expect_lint(
     "testthat::expect_identical(class(x), 'lm')",
