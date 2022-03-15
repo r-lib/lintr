@@ -89,6 +89,7 @@ function calls. (#850, #851, @renkun-ken)
 * `lintr` is adopting a new set of linters provided as part of Google's extension to the tidyverse style guide (#884, @michaelchirico)
    + `expect_null_linter()` Require usage of `expect_null(x)` over `expect_equal(x, NULL)` and similar
    + `expect_type_linter()` Require usage of `expect_type(x, t)` over `expect_equal(typeof(x), t)` and similar
+   + `expect_not_linter()` Require usage of `expect_false(x)` over `expect_true(!x)`, and _vice versa_.
 * `assignment_linter()` now lints right assignment (`->` and `->>`) and gains two arguments. `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`; `allow_right_assign` toggles whether to lint `->` and `->>` (#915, @michaelchirico)
 
 # lintr 2.0.1
