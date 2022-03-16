@@ -22,15 +22,15 @@ test_that("it excludes properly", {
 
   t1 <- lint("exclusions-test", parse_settings = FALSE)
 
-  expect_equal(length(t1), 8)
+  expect_length(t1, 8L)
 
   t2 <- lint("exclusions-test", exclusions = list("exclusions-test" = 4), parse_settings = FALSE)
 
-  expect_equal(length(t2), 7)
+  expect_length(t2, 7L)
 
   t3 <- lint("exclusions-test", exclusions = list("exclusions-test"), parse_settings = FALSE)
 
-  expect_equal(length(t3), 0)
+  expect_length(t3, 0L)
 
   cache_path <- file.path(tempdir(), "lintr_cache")
   clear_cache("exclusions-test", cache_path)
