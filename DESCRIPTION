@@ -22,6 +22,7 @@ Imports:
     codetools,
     cyclocomp,
     digest,
+    glue,
     jsonlite,
     knitr,
     stats,
@@ -32,6 +33,7 @@ Suggests:
     covr,
     httr (>= 1.2.1),
     mockery,
+    patrick,
     rmarkdown,
     rstudioapi (>= 0.2),
     testthat (>= 3.0.0),
@@ -61,7 +63,11 @@ Collate:
     'equals_na_linter.R'
     'exclude.R'
     'expect_lint.R'
+    'expect_not_linter.R'
     'expect_null_linter.R'
+    'expect_s3_class_linter.R'
+    'expect_true_false_linter.R'
+    'expect_type_linter.R'
     'extract.R'
     'extraction_operator_linter.R'
     'function_left_parentheses.R'

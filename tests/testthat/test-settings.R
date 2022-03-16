@@ -92,10 +92,10 @@ test_that("logical_env utility works as intended", {
   on.exit(if (is.na(old)) Sys.unsetenv(test_env) else sym_set_env(test_env, old))
 
   sym_set_env(test_env, "true")
-  expect_equal(lintr:::logical_env(test_env), TRUE)
+  expect_true(lintr:::logical_env(test_env))
 
   sym_set_env(test_env, "F")
-  expect_equal(lintr:::logical_env(test_env), FALSE)
+  expect_false(lintr:::logical_env(test_env))
 
   sym_set_env(test_env, "")
   expect_null(lintr:::logical_env(test_env))
