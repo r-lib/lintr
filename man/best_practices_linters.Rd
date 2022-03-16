@@ -20,6 +20,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{expect_s3_class_linter}}}
 \item{\code{\link{expect_s4_class_linter}}}
 \item{\code{\link{expect_true_false_and_condition_linter}}}
+\item{\code{\link{expect_true_false_linter}}}
 \item{\code{\link{expect_type_linter}}}
 \item{\code{\link{extraction_operator_linter}}}
 \item{\code{\link{implicit_integer_linter}}}

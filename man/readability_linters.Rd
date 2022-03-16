@@ -19,6 +19,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{expect_not_linter}}}
 \item{\code{\link{expect_true_false_and_condition_linter}}}
+\item{\code{\link{expect_true_false_linter}}}
 \item{\code{\link{function_left_parentheses_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{line_length_linter}}}
