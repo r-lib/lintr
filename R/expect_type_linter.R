@@ -45,7 +45,6 @@ gen_expect_type_lint <- function(expr, source_file) {
   xml_nodes_to_lint(expr, source_file, lint_msg, type = "warning")
 }
 
-
 # NB: the full list of values that can arise from `typeof(x)` is available
 #   in ?typeof (or, slightly more robustly, in the R source: src/main/util.c.
 #   Not all of them are available in is.<type> form, e.g. 'any' or
