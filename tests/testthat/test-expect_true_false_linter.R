@@ -13,7 +13,7 @@ test_that("expect_true_false_linter blocks simple disallowed usages", {
   # expect_identical is treated the same as expect_equal
   expect_lint(
     "testthat::expect_identical(x, FALSE)",
-    rex::rex("expect_true(x) is better than expect_equal(x, TRUE)"),
+    rex::rex("expect_false(x) is better than expect_identical(x, FALSE)"),
     expect_true_false_linter()
   )
 

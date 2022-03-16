@@ -16,21 +16,24 @@ expect_true_false_linter <- function() {
 
     xml <- source_file$xml_parsed_content
 
-    xpath <- "//expr[
+    xpath <- "//expr[expr[
       SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
       and following-sibling::expr[position() <= 2 and NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]
-    ]"
+    ]]"
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    return(lapply(
-      bad_expr,
-      xml_nodes_to_lint,
-      source_file = source_file,
-      message = paste(
-        "expect_true(x) is better than expect_equal(x, TRUE);",
-        "expect_false(x) is better than expect_equal(x, FALSE)."
-      ),
-      type = "warning"
-    ))
+    return(lapply(bad_expr, gen_expect_true_false_lint, source_file))
   })
+}
+
+gen_expect_true_false_lint <- function(expr, source_file) {
+  # NB: use expr/$node, not expr[$node], to exclude other things (especially ns:: parts of the call)
+  call_name <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL[starts-with(text(), 'expect_')]"))
+  truth_value <- xml2::xml_text(xml2::xml_find_first(expr, "expr/NUM_CONST[text() = 'TRUE' or text() = 'FALSE']"))
+  if (truth_value == "TRUE") {
+    lint_msg <- sprintf("expect_true(x) is better than %s(x, TRUE)", call_name)
+  } else {
+    lint_msg <- sprintf("expect_false(x) is better than %s(x, FALSE)", call_name)
+  }
+  xml_nodes_to_lint(expr, source_file, lint_msg, type = "warning")
 }
