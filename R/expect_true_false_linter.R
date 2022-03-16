@@ -1,0 +1,36 @@
+#' Require usage of expect_true(x) over expect_equal(x, TRUE)
+#'
+#' [testthat::expect_true()] and [testthat::expect_false()] exist specifically
+#'   for testing the `TRUE`/`FALSE` value of an object.
+#'   [testthat::expect_equal()] and [testthat::expect_identical()] can also be
+#'   used for such tests, but it is better to use the tailored function instead.
+#'
+#' @evalRd rd_tags("expect_true_false_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
+#' @export
+expect_true_false_linter <- function() {
+  Linter(function(source_file) {
+    if (length(source_file$parsed_content) == 0L) {
+      return(list())
+    }
+
+    xml <- source_file$xml_parsed_content
+
+    xpath <- "//expr[
+      SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
+      and following-sibling::expr[position() <= 2 and NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]
+    ]"
+
+    bad_expr <- xml2::xml_find_all(xml, xpath)
+    return(lapply(
+      bad_expr,
+      xml_nodes_to_lint,
+      source_file = source_file,
+      message = paste(
+        "expect_true(x) is better than expect_equal(x, TRUE);",
+        "expect_false(x) is better than expect_equal(x, FALSE)."
+      ),
+      type = "warning"
+    ))
+  })
+}

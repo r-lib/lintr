@@ -15,6 +15,7 @@ The following linters are tagged with 'package_development':
 \item{\code{\link{backport_linter}}}
 \item{\code{\link{expect_not_linter}}}
 \item{\code{\link{expect_null_linter}}}
+\item{\code{\link{expect_true_false_linter}}}
 \item{\code{\link{expect_type_linter}}}
 \item{\code{\link{package_hooks_linter}}}
 }
