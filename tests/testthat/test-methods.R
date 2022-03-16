@@ -80,7 +80,7 @@ test_that("summary.lints() works (no lints)", {
     "x <- 1\n",
     linters = assignment_linter())
   no_lint_summary <- summary(no_lints)
-  expect_true(is.data.frame(no_lint_summary))
+  expect_s3_class(no_lint_summary, "data.frame")
   expect_equal(nrow(no_lint_summary), 0)
 })
 
@@ -89,7 +89,7 @@ test_that("summary.lints() works (lints found)", {
     "x = 1\n",
     linters = assignment_linter())
   has_lint_summary <- summary(has_lints)
-  expect_true(is.data.frame(has_lint_summary))
+  expect_s3_class(has_lint_summary, "data.frame")
   expect_equal(nrow(has_lint_summary), 1)
   expect_true(has_lint_summary$style > 0)
   expect_equal(has_lint_summary$warning, 0)
