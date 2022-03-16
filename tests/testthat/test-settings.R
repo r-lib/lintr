@@ -74,9 +74,11 @@ test_that("it errors if the config file does not end in a newline", {
   expect_error(read_settings("foo"), "Malformed config file")
 })
 
-test_that("with_defaults works as expected with unnamed args", {
+test_that("with_defaults works as expected", {
+  # test capturing unnamed args
+  defaults <- with_defaults(assignment_linter)
   # assignment_linter is in defaults, so output doesn't change
-  expect_named(with_defaults(assignment_linter), names(with_defaults()))
+  expect_equal(names(defaults), names(with_defaults()))
 })
 
 test_that("rot utility works as intended", {
@@ -104,8 +106,8 @@ test_that("logical_env utility works as intended", {
 
 # fixing #774
 test_that("with_defaults doesn't break on very long input", {
-  expect_named(
-    with_defaults(
+  expect_equal(
+    names(with_defaults(
       default = list(),
       lintr::undesirable_function_linter(c(
         detach = paste(
@@ -118,7 +120,7 @@ test_that("with_defaults doesn't break on very long input", {
           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         )
       ))
-    ),
+    )),
     "lintr::undesirable_function_linter"
   )
 })
