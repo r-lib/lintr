@@ -1,7 +1,6 @@
 linter,tags
 absolute_path_linter,robustness best_practices configurable
 assignment_linter,style consistency default
-assignment_spaces_linter,style readability
 backport_linter,robustness configurable package_development
 closed_curly_linter,style readability default configurable
 commas_linter,style readability default
