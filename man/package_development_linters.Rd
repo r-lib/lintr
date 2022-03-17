@@ -13,7 +13,12 @@ Linters useful to package developers, for example for writing consistent tests.
 The following linters are tagged with 'package_development':
 \itemize{
 \item{\code{\link{backport_linter}}}
+\item{\code{\link{expect_length_linter}}}
+\item{\code{\link{expect_not_linter}}}
 \item{\code{\link{expect_null_linter}}}
+\item{\code{\link{expect_s3_class_linter}}}
+\item{\code{\link{expect_s4_class_linter}}}
+\item{\code{\link{expect_true_false_linter}}}
 \item{\code{\link{expect_type_linter}}}
 \item{\code{\link{package_hooks_linter}}}
 }
