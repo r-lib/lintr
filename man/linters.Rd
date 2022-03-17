@@ -43,6 +43,7 @@ The following linters exist:
 \item{\code{\link{cyclocomp_linter}} (tags: best_practices, configurable, default, readability, style)}
 \item{\code{\link{duplicate_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{equals_na_linter}} (tags: common_mistakes, correctness, default, robustness)}
+\item{\code{\link{expect_length_linter}} (tags: best_practices, package_development, readability)}
 \item{\code{\link{expect_not_linter}} (tags: best_practices, package_development, readability)}
 \item{\code{\link{expect_null_linter}} (tags: best_practices, package_development)}
 \item{\code{\link{expect_s3_class_linter}} (tags: best_practices, package_development)}
