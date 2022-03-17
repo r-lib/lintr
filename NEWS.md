@@ -90,8 +90,6 @@ function calls. (#850, #851, @renkun-ken)
    + `expect_type_linter()` Require usage of `expect_type(x, t)` over `expect_equal(typeof(x), t)` and similar
    + `expect_s3_class_linter()` Require usage of `expect_s3_class(x, k)` over `expect_equal(class(x), k)` and similar
    + `expect_s4_class_linter()` Require usage of `expect_s4_class(x, k)` over `expect_true(methods::is(x, k))`
-   + `expect_not_linter()` Require usage of `expect_false(x)` over `expect_true(!x)`, and _vice versa_
-   + `expect_true_false_and_condition_linter()` Require multiple `expect_true()` tests over `expect_true(x && y)` and similar
    + `conjunct_expectation_linter()` Require usage of `expect_true(x)` over `expect_equal(x, TRUE)` and similar
    + `expect_not_linter()` Require usage of `expect_false(x)` over `expect_true(!x)`, and _vice versa_.
    + `expect_true_false_linter()` Require usage of `expect_true(x)` over `expect_equal(x, TRUE)` and similar

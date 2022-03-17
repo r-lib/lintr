@@ -16,7 +16,7 @@ and that \code{=} for assignment and for setting arguments in calls are treated 
 }
 \description{
 Check that infix operators are surrounded by spaces. Enforces the corresponding Tidyverse style guide rule;
-see \url{https://style.tidyverse.or\\href{https://g.corp.google.com/syntax}{g//syntax}.html#infix-operators}.
+see \url{https://style.tidyverse.org/syntax.html#infix-operators}.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
