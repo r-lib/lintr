@@ -17,23 +17,28 @@ expect_comparison_linter <- function() {
 
     xml <- source_file$xml_parsed_content
 
-    # TODO: customize the lint message. will be easier after upstream infix_metadata is merged
-    xpath <- "//expr[
+    # != doesn't have a clean replacement
+    comparator_nodes <-
+      setdiff(as.list(infix_metadata$xml_tag[infix_metadata$comparator]), "NE")  # nolint: object_usage_linter.
+    xpath <- glue::glue("//expr[
       expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
-      and expr[2][GT or GE or LT or LE or EQ]
-    ]"
+      and expr[2][ {do.call(xp_or, comparator_nodes)} ]
+    ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    return(lapply(
-      bad_expr,
-      xml_nodes_to_lint,
-      source_file = source_file,
-      message = paste(
-        "expect_gt(x, y) is better than expect_true(x > y).",
-        "The same goes for expect_lt() [x < y], expect_gte() [x >= y],",
-        "expect_lte() [x <= y], and expect_identical() or expect_equal() [x == y]"
-      ),
-      type = "warning"
-    ))
+    return(lapply(bad_expr, gen_expect_comparison_lint, source_file))
   })
+}
+
+comparator_expectation_map <- c(
+  `>` = "expect_gt", `>=` = "expect_gte",
+  `<` = "expect_lt", `<=` = "expect_lte",
+  `==` = "expect_identical"
+)
+
+gen_expect_comparison_lint <- function(expr, source_file) {
+  comparator <- xml2::xml_text(xml2::xml_find_first(expr, "expr[2]/*[2]"))
+  expectation <- comparator_expectation_map[[comparator]]
+  lint_msg <- sprintf("%s(x, y) is better than expect_true(x %s y).", expectation, comparator)
+  xml_nodes_to_lint(expr, source_file, lint_msg, type = "warning")
 }
