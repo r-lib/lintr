@@ -7,7 +7,7 @@
 #' @evalRd rd_tags("expect_true_false_and_condition_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-expect_true_false_and_condition_linter <- function() {
+conjunct_expectation_linter <- function() {
   Linter(function(source_file) {
     # need the full file to also catch usages at the top level
     if (length(source_file$full_parsed_content) == 0L) {

@@ -40,6 +40,7 @@ The following linters exist:
 \item{\code{\link{closed_curly_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{commas_linter}} (tags: default, readability, style)}
 \item{\code{\link{commented_code_linter}} (tags: best_practices, default, readability, style)}
+\item{\code{\link{conjunct_expectation_linter}} (tags: best_practices, package_development, readability)}
 \item{\code{\link{cyclocomp_linter}} (tags: best_practices, configurable, default, readability, style)}
 \item{\code{\link{duplicate_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{equals_na_linter}} (tags: common_mistakes, correctness, default, robustness)}
@@ -47,7 +48,6 @@ The following linters exist:
 \item{\code{\link{expect_null_linter}} (tags: best_practices, package_development)}
 \item{\code{\link{expect_s3_class_linter}} (tags: best_practices, package_development)}
 \item{\code{\link{expect_s4_class_linter}} (tags: best_practices, package_development)}
-\item{\code{\link{expect_true_false_and_condition_linter}} (tags: best_practices, package_development, readability)}
 \item{\code{\link{expect_true_false_linter}} (tags: best_practices, package_development, readability)}
 \item{\code{\link{expect_type_linter}} (tags: best_practices, package_development)}
 \item{\code{\link{extraction_operator_linter}} (tags: best_practices, style)}
