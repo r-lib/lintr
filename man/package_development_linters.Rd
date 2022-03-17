@@ -14,6 +14,7 @@ The following linters are tagged with 'package_development':
 \itemize{
 \item{\code{\link{backport_linter}}}
 \item{\code{\link{expect_comparison_linter}}}
+\item{\code{\link{expect_length_linter}}}
 \item{\code{\link{expect_not_linter}}}
 \item{\code{\link{expect_null_linter}}}
 \item{\code{\link{expect_s3_class_linter}}}
