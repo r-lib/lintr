@@ -10,7 +10,6 @@
   format specifiers (#472, @russHyde)
 * New style SNAKE_CASE for `object_name_linter()` (#494, @AshesITR)
 * RStudio source markers are cleared when there are no lints (#520, @AshesITR)
-* New `assignment_spaces()` lintr. (#538, @f-ritter)
 * `seq_linter()`'s lint message is clearer about the reason for linting. (#522, @michaelchirico)
 * New `missing_package_linter()` (#536, #547, @renkun-ken)
 * New `namespace_linter()` (#548, #551, @renkun-ken)
@@ -96,6 +95,8 @@ function calls. (#850, #851, @renkun-ken)
    * `expect_length_linter()` Require usage of `expect_length(x, n)` over `expect_equal(length(x), n)` and similar
    * `expect_setequal_lintr()` Require usage of `expect_setequal(x, y)` over `expect_equal(sort(x), sort(y))` and similar
 * `assignment_linter()` now lints right assignment (`->` and `->>`) and gains two arguments. `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`; `allow_right_assign` toggles whether to lint `->` and `->>` (#915, @michaelchirico)
+* `infix_spaces_linter()` gains argument `exclude_operators` to disable lints on selected infix operators. By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these. (#914 @michaelchirico)
+* `infix_spaces_linter()` now throws a lint on `a~b` and `function(a=1) {}` (#930, @michaelchirico)
 
 # lintr 2.0.1
 
