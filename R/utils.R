@@ -163,7 +163,7 @@ viapply <- function(x, ...) vapply(x, ..., FUN.VALUE = integer(1))
 # imitate sQuote(x, q) [requires R>=3.6]
 quote_wrap <- function(x, q) paste0(q, x, q)
 
-unquote <- function(str, q="`") {
+unquote <- function(str, q = "`") {
   # Remove surrounding quotes (select either single, double or backtick) from given character vector
   # and unescape special characters.
   str <- re_substitutes(str, rex(start, q, capture(anything), q, end), "\\1")
@@ -185,7 +185,7 @@ escape_chars <- c(
   #"\\`"  --> "`"   # ASCII grave accent (backtick)
 )
 
-unescape <- function(str, q="`") {
+unescape <- function(str, q = "`") {
   names(q) <- paste0("\\", q)
   my_escape_chars <- c(escape_chars, q)
   res <- gregexpr(text = str, pattern = rex(or(names(my_escape_chars))))
