@@ -59,7 +59,7 @@ is_path <- function(path) {
   re_matches(path, path_regex)
 }
 
-is_valid_path <- function(path, lax=FALSE) {
+is_valid_path <- function(path, lax = FALSE) {
   # Given a character vector of paths, return FALSE for directory or file having valid characters.
   # On Windows, invalid chars are all control chars and: * ? " < > | :
   # On Unix, all characters are valid, except when lax=TRUE (use same invalid chars as Windows).
@@ -91,7 +91,7 @@ is_long_path <- function(path) {
   )
 }
 
-is_valid_long_path <- function(path, lax=FALSE) {
+is_valid_long_path <- function(path, lax = FALSE) {
   # Convenience function to avoid linting short paths and those unlikely to be valid paths
   ret <- is_valid_path(path, lax)
   if (lax) {
@@ -101,7 +101,7 @@ is_valid_long_path <- function(path, lax=FALSE) {
 }
 
 
-split_path <- function(path, sep="/|\\\\") {
+split_path <- function(path, sep = "/|\\\\") {
   if (!is.character(path)) {
     stop("argument 'path' should be a character vector")
   }
