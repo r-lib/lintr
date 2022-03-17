@@ -4,10 +4,19 @@
 \alias{infix_spaces_linter}
 \title{Infix spaces linter}
 \usage{
-infix_spaces_linter()
+infix_spaces_linter(exclude_operators = NULL)
+}
+\arguments{
+\item{exclude_operators}{Character vector of operators to exlude from consideration for linting.
+Default is to include the following "low-precedence" operators:
+\code{+}, \code{-}, \code{~}, \code{>}, \code{>=}, \code{<}, \code{<=}, \code{==}, \code{!=}, \code{&}, \code{&&}, \code{|}, \code{||}, \verb{<-}, \verb{:=}, \verb{<<-}, \verb{->}, \verb{->>},
+\code{=}, \code{/}, \code{*}, and any infix operator (exclude infixes by passing \code{"\%\%"}). Note that \verb{<-}, \verb{:=}, and \verb{<<-}
+are included/excluded as a group (indicated by passing \code{"<-"}), as are \verb{->} and \verb{->>} (\emph{viz}, \code{"->"}),
+and that \code{=} for assignment and for setting arguments in calls are treated the same.}
 }
 \description{
-Check that infix operators are surrounded by spaces.
+Check that infix operators are surrounded by spaces. Enforces the corresponding Tidyverse style guide rule;
+see \url{https://style.tidyverse.or\\href{https://g.corp.google.com/syntax}{g//syntax}.html#infix-operators}.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
