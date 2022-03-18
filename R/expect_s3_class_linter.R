@@ -33,7 +33,21 @@ expect_s3_class_linter <- function() {
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    return(lapply(bad_expr, gen_expect_s3_class_lint, source_file))
+    return(lapply(
+      bad_expr,
+      xml_nodes_to_lint,
+      source_file,
+      function(expr) {
+        matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
+        if (matched_function %in% c("expect_equal", "expect_identical")) {
+          lint_msg <- sprintf("expect_s3_class(x, k) is better than %s(class(x), k).", matched_function)
+        } else {
+          lint_msg <- "expect_s3_class(x, k) is better than expect_true(is.<k>(x)) or expect_true(inherits(x, k))."
+        }
+        paste(lint_msg, "Note also expect_s4_class() available for testing S4 objects.")
+      },
+      type = "warning"
+    ))
   })
 }
 
@@ -56,13 +70,6 @@ is_s3_class_calls <- paste0("is.", c(
 ))
 
 gen_expect_s3_class_lint <- function(expr, source_file) {
-  matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
-  if (matched_function %in% c("expect_equal", "expect_identical")) {
-    lint_msg <- sprintf("expect_s3_class(x, k) is better than %s(class(x), k).", matched_function)
-  } else {
-    lint_msg <- "expect_s3_class(x, k) is better than expect_true(is.<k>(x)) or expect_true(inherits(x, k))."
-  }
-  lint_msg <- paste(lint_msg, "Note also expect_s4_class() available for testing S4 objects.")
   xml_nodes_to_lint(expr, source_file, lint_msg, type = "warning")
 }
 
@@ -98,7 +105,7 @@ expect_s4_class_linter <- function() {
       bad_expr,
       xml_nodes_to_lint,
       source_file = source_file,
-      message = paste(
+      lint_message = paste(
         "expect_s4_class(x, k) is better than expect_true(is(x, k)).",
         "Note also expect_s3_class() available for testing S3 objects."
       ),

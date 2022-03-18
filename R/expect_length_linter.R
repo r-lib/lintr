@@ -25,12 +25,15 @@ expect_length_linter <- function() {
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    return(lapply(bad_expr, gen_expect_length_lint, source_file))
+    return(lapply(
+      bad_expr,
+      xml_nodes_to_lint,
+      source_file,
+      function(expr) {
+        matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
+        sprintf("expect_length(x, n) is better than %s(length(x), n)", matched_function)
+      },
+      type = "warning"
+    ))
   })
-}
-
-gen_expect_length_lint <- function(expr, source_file) {
-  matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
-  lint_msg <- sprintf("expect_length(x, n) is better than %s(length(x), n)", matched_function)
-  xml_nodes_to_lint(expr, source_file, lint_msg, type = "warning")
 }

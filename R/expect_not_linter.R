@@ -28,7 +28,7 @@ expect_not_linter <- function() {
       bad_expr,
       xml_nodes_to_lint,
       source_file = source_file,
-      message = "expect_false(x) is better than expect_true(!x), and vice versa.",
+      lint_message = "expect_false(x) is better than expect_true(!x), and vice versa.",
       type = "warning"
     ))
   })
