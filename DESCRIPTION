@@ -64,6 +64,7 @@ Collate:
     'exclude.R'
     'expect_length_linter.R'
     'expect_lint.R'
+    'expect_named_linter.R'
     'expect_not_linter.R'
     'expect_null_linter.R'
     'expect_s3_class_linter.R'
