@@ -17,6 +17,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{conjunct_expectation_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{expect_length_linter}}}
+\item{\code{\link{expect_named_linter}}}
 \item{\code{\link{expect_not_linter}}}
 \item{\code{\link{expect_null_linter}}}
 \item{\code{\link{expect_s3_class_linter}}}
