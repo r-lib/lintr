@@ -82,7 +82,6 @@ The following linters exist:
 \item{\code{\link{undesirable_function_linter}} (tags: best_practices, configurable, efficiency, robustness, style)}
 \item{\code{\link{undesirable_operator_linter}} (tags: best_practices, configurable, efficiency, robustness, style)}
 \item{\code{\link{unneeded_concatenation_linter}} (tags: efficiency, readability, style)}
-\item{\code{\link{yoda_test_linter}} (tags: )}
-\item{\code{\link{yoda_test_linter}} (tags: )}
+\item{\code{\link{yoda_test_linter}} (tags: best_practices, package_development, readability)}
 }
 }

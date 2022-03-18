@@ -7,15 +7,15 @@
 yoda_test_linter()
 }
 \description{
-Yoda tests (\href{https://goto.google.com/c-readability-advice#avoid-yoda-style-comparisons}{go/c-readability-advice#avoid-yoda-style-comparisons}) test
-like \verb{(expected, actual)} instead of the more common \verb{(actual, expected)}.
+Yoda tests test \verb{(expected, actual)} instead of the more common \verb{(actual, expected)}.
 This is not always possible to detect statically; this linter focuses on
 the simple case of testing an expression against a literal value, e.g.
 \verb{(1L, foo(x))} should be \verb{(foo(x), 1L)}.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
+\url{https://en.wikipedia.org/wiki/Yoda_conditions}
 }
 \section{Tags}{
-No tags are given.
+\link[=best_practices_linters]{best_practices}, \link[=package_development_linters]{package_development}, \link[=readability_linters]{readability}
 }
