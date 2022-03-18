@@ -25,9 +25,9 @@ The following tags exist:
 \item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=efficiency_linters]{efficiency} (4 linters)}
 \item{\link[=package_development_linters]{package_development} (9 linters)}
-\item{\link[=readability_linters]{readability} (24 linters)}
+\item{\link[=readability_linters]{readability} (23 linters)}
 \item{\link[=robustness_linters]{robustness} (10 linters)}
-\item{\link[=style_linters]{style} (32 linters)}
+\item{\link[=style_linters]{style} (31 linters)}
 }
 }
 \section{Linters}{
@@ -35,7 +35,6 @@ The following linters exist:
 \itemize{
 \item{\code{\link{absolute_path_linter}} (tags: best_practices, configurable, robustness)}
 \item{\code{\link{assignment_linter}} (tags: consistency, default, style)}
-\item{\code{\link{assignment_spaces_linter}} (tags: readability, style)}
 \item{\code{\link{backport_linter}} (tags: configurable, package_development, robustness)}
 \item{\code{\link{closed_curly_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{commas_linter}} (tags: default, readability, style)}
@@ -44,6 +43,7 @@ The following linters exist:
 \item{\code{\link{duplicate_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{equals_na_linter}} (tags: common_mistakes, correctness, default, robustness)}
 \item{\code{\link{expect_length_linter}} (tags: best_practices, package_development, readability)}
+\item{\code{\link{expect_named_linter}} (tags: best_practices, package_development, readability)}
 \item{\code{\link{expect_not_linter}} (tags: best_practices, package_development, readability)}
 \item{\code{\link{expect_null_linter}} (tags: best_practices, package_development)}
 \item{\code{\link{expect_s3_class_linter}} (tags: best_practices, package_development)}
