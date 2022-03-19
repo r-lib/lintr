@@ -4,7 +4,7 @@
 xp_text_in_table <- function(table) paste("text() = ", quote_wrap(table, "'"), collapse = " or ")
 
 # convert an XML match into a Lint
-xml_nodes_to_lint <- function(xml, source_file, message,
+xml_nodes_to_lint <- function(xml, source_file, lint_message,
                               type = c("style", "warning", "error"),
                               offset = 0L,
                               global = FALSE) {
@@ -19,12 +19,13 @@ xml_nodes_to_lint <- function(xml, source_file, message,
   } else {
     col2 <- unname(nchar(source_file[[line_elt]][line1]))
   }
+  if (is.function(lint_message)) lint_message <- lint_message(xml)
   return(Lint(
     filename = source_file$filename,
     line_number = as.integer(line1),
     column_number = as.integer(col1),
     type = type,
-    message = message,
+    message = lint_message,
     line = source_file[[line_elt]][line1],
     ranges = list(c(col1 - offset, col2))
   ))
