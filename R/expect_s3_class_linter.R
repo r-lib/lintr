@@ -98,7 +98,7 @@ expect_s4_class_linter <- function() {
       bad_expr,
       xml_nodes_to_lint,
       source_file = source_file,
-      message = paste(
+      lint_message = paste(
         "expect_s4_class(x, k) is better than expect_true(is(x, k)).",
         "Note also expect_s3_class() available for testing S3 objects."
       ),
