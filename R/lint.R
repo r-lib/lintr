@@ -192,6 +192,17 @@ lint_dir <- function(path = ".", ...,
                      exclusions = list("renv", "packrat"),
                      pattern = rex::rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"), end),
                      parse_settings = TRUE) {
+  # TODO(next release after 3.0.0): remove this deprecated workaround
+  dots <- list(...)
+  if (length(dots) > 0L && is.logical(dots[[1L]])) {
+    warning(
+      "'relative_path' is no longer available as a positional argument; ",
+      "please supply 'relative_path' as a named argument instead. ",
+      "This warning will be upgraded to an error in the next release."
+    )
+    relative_path <- dots[[1L]]
+    dots <- dots[-1L]
+  }
 
   if (isTRUE(parse_settings)) {
     read_settings(path)
@@ -232,7 +243,9 @@ lint_dir <- function(path = ".", ...,
       if (interactive()) {
         message(".", appendLF = FALSE) # nocov
       }
-      lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
+      # TODO: once relative_path= is fully deprecated as 2nd positional argument (see top of body), restore the cleaner:
+      # > lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
+      do.call(lint, c(list(file, parse_settings = FALSE, exclusions = exclusions), dots))
     }
   ))
 
@@ -283,6 +296,18 @@ lint_package <- function(path = ".", ...,
                          relative_path = TRUE,
                          exclusions = list("R/RcppExports.R"),
                          parse_settings = TRUE) {
+  # TODO(next release after 3.0.0): remove this deprecated workaround
+  dots <- list(...)
+  if (length(dots) > 0L && is.logical(dots[[1L]])) {
+    warning(
+      "'relative_path' is no longer available as a positional argument; ",
+      "please supply 'relative_path' as a named argument instead. ",
+      "This warning will be upgraded to an error in the next release."
+    )
+    relative_path <- dots[[1L]]
+    dots <- dots[-1L]
+  }
+
   pkg_path <- find_package(path)
 
   if (is.null(pkg_path)) {
@@ -300,8 +325,13 @@ lint_package <- function(path = ".", ...,
     root = pkg_path
   )
 
-  lints <- lint_dir(file.path(pkg_path, c("R", "tests", "inst", "vignettes", "data-raw", "demo")),
-                    relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
+  r_directories <- file.path(pkg_path, c("R", "tests", "inst", "vignettes", "data-raw", "demo"))
+  # TODO: once relative_path= is fully deprecated as 2nd positional argument (see top of body), restore the cleaner:
+  # > lints <- lint_dir(r_directories, relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
+  lints <- do.call(
+    lint_dir,
+    c(list(r_directories, relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE), dots)
+  )
 
   if (isTRUE(relative_path)) {
     path <- normalizePath(pkg_path, mustWork = FALSE)
