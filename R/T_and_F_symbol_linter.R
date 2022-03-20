@@ -43,7 +43,7 @@ T_and_F_symbol_linter <- function() { # nolint: object_name_linter.
       xml_nodes_to_lint(
         xml = expr,
         source_file = source_file,
-        message = message,
+        lint_message = message,
         type = "style",
         offset = 1L
       )
