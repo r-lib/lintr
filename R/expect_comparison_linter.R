@@ -22,7 +22,7 @@ expect_comparison_linter <- function() {
       setdiff(as.list(infix_metadata$xml_tag[infix_metadata$comparator]), "NE")
     xpath <- glue::glue("//expr[
       expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
-      and expr[2][ {do.call(xp_or, comparator_nodes)} ]
+      and expr[2][ {xp_or(comparator_nodes)} ]
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
