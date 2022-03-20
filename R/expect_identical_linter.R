@@ -11,6 +11,13 @@
 #'   in which case `ignore_attr = "names"` should be supplied to
 #'   `expect_equal()` (or, for 2nd edition, `check.attributes = FALSE`).
 #'
+#' NB: The linter allows `expect_equal()` in three circumstances:
+#'   1. A named argument is set (e.g. `ignore_attr` or `tolerance`)
+#'   2. Comparison is made to an explicit decimal, e.g.
+#'      `expect_equal(x, 1.0)` (implicitly setting `tolerance`)
+#'   3. `...` is passed (wrapper functions whcih might set
+#'      arguments such as `ignore_attr` or `tolerance`)
+#'
 #' @evalRd rd_tags("expect_identical_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -58,14 +65,8 @@ expect_identical_linter <- function() {
       xml_nodes_to_lint,
       source_file = source_file,
       lint_message = paste(
-        "expect_identical(x, y) is the default way of comparing two objects in",
-        "testthat unit tests. Only use expect_equal() if testing numeric",
-        "equality (and specifying tolerance= explicitly) or there's a need to",
-        "ignore some attributes, e.g. with ignore_attr = 'names' for the 3rd",
-        "edition or check.attributes = FALSE for the second. For testing",
-        "approximate equality to a whole number, you can also avoid setting",
-        "tolerance= by including an explicit decimal point, e.g.,",
-        "expect_equal(x, 1.0), not expect_equal(x, 1)."
+        "Use expect_identical(x, y) by default; resort to expect_equal() only when needed,",
+        "e.g. when setting ignore_attr= or tolerance=."
       ),
       type = "warning"
     ))

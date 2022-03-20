@@ -7,16 +7,26 @@
 expect_identical_linter()
 }
 \description{
-\code{\link[testthat:equality-expectations]{testthat::expect_identical()}} should be the default/go-to function for
+At Google, \code{\link[testthat:equality-expectations]{testthat::expect_identical()}} should be the default/go-to function for
 comparing an output to an expected value. \code{expect_true(identical(x, y))}
 is an equivalent but unadvised method of the same test. Further,
-\code{\link[testthat:equality-expectations]{testthat::expect_equal()}}, should only be used when \code{expect_identical()}
+\code{\link[testthat:equality-expectations]{testthat::expect_equal()}} should only be used when \code{expect_identical()}
 is inappropriate, i.e., when \code{x} and \code{y} need only be \emph{numerically
 equivalent} instead of fully identical (in which case, provide the
 \verb{tolerance=} argument to \code{expect_equal()} explicitly). This also applies
 when it's inconvenient to check full equality (e.g., names can be ignored,
 in which case \code{ignore_attr = "names"} should be supplied to
 \code{expect_equal()} (or, for 2nd edition, \code{check.attributes = FALSE}).
+}
+\details{
+NB: The linter allows \code{expect_equal()} in three circumstances:
+\enumerate{
+\item A named argument is set (e.g. \code{ignore_attr} or \code{tolerance})
+\item Comparison is made to an explicit decimal, e.g.
+\code{expect_equal(x, 1.0)} (implicitly setting \code{tolerance})
+\item \code{...} is passed (wrapper functions whcih might set
+arguments such as \code{ignore_attr} or \code{tolerance})
+}
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

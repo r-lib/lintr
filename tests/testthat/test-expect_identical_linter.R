@@ -14,14 +14,14 @@ test_that("expect_identical_linter skips allowed usages", {
 test_that("expect_identical_linter blocks simple disallowed usages", {
   expect_lint(
     "expect_equal(x, y)",
-    rex::rex("expect_identical(x, y) is the default way of comparing two objects"),
+    rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed"),
     expect_identical_linter()
   )
 
   # different usage to redirect to expect_identical
   expect_lint(
     "expect_true(identical(x, y))",
-    rex::rex("expect_identical(x, y) is the default way of comparing two objects"),
+    rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed"),
     expect_identical_linter()
   )
 })
@@ -34,19 +34,19 @@ test_that("expect_identical_linter skips cases likely testing numeric equality",
   # plain numbers are still caught, however
   expect_lint(
     "expect_equal(x, 1L)",
-    rex::rex("expect_identical(x, y) is the default way of comparing two objects"),
+    rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed"),
     expect_identical_linter()
   )
   expect_lint(
     "expect_equal(x, 1)",
-    rex::rex("expect_identical(x, y) is the default way of comparing two objects"),
+    rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed"),
     expect_identical_linter()
   )
   # NB: TRUE is a NUM_CONST so we want test matching it, even though this test is
   #   also a violation of expect_true_false_linter()
   expect_lint(
     "expect_equal(x, TRUE)",
-    rex::rex("expect_identical(x, y) is the default way of comparing two objects"),
+    rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed"),
     expect_identical_linter()
   )
 })
