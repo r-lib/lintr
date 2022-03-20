@@ -4,7 +4,7 @@
 xp_text_in_table <- function(table) paste("text() = ", quote_wrap(table, "'"), collapse = " or ")
 
 # convert an XML match into a Lint
-xml_nodes_to_lint <- function(xml, source_file, message,
+xml_nodes_to_lint <- function(xml, source_file, lint_message,
                               type = c("style", "warning", "error"),
                               offset = 0L,
                               global = FALSE) {
@@ -19,15 +19,27 @@ xml_nodes_to_lint <- function(xml, source_file, message,
   } else {
     col2 <- unname(nchar(source_file[[line_elt]][line1]))
   }
+  if (is.function(lint_message)) lint_message <- lint_message(xml)
   return(Lint(
     filename = source_file$filename,
     line_number = as.integer(line1),
     column_number = as.integer(col1),
     type = type,
-    message = message,
+    message = lint_message,
     line = source_file[[line_elt]][line1],
     ranges = list(c(col1 - offset, col2))
   ))
+}
+
+paren_wrap <- function(..., sep) {
+  sep <- paste(")", sep, "(")
+  dots <- list(...)
+  if (length(dots) == 1L && length(dots[[1L]]) > 1L) {
+    inner <- paste(dots[[1L]], collapse = sep)
+  } else {
+    inner <- paste(..., sep = sep)
+  }
+  paste0("(", inner, ")")
 }
 
 #' Safer wrapper for paste(..., sep = " and ")
@@ -39,7 +51,7 @@ xml_nodes_to_lint <- function(xml, source_file, message,
 #'
 #' @param ... Series of conditions
 #' @noRd
-xp_and <- function(...) sprintf("(%s)", paste(..., sep = ") and ("))
+xp_and <- function(...) paren_wrap(..., sep = "and")
 
 #' Safer wrapper for paste(..., sep = " or ")
 #'
@@ -50,4 +62,4 @@ xp_and <- function(...) sprintf("(%s)", paste(..., sep = ") and ("))
 #'
 #' @param ... Series of conditions
 #' @noRd
-xp_or <- function(...) sprintf("(%s)", paste(..., sep = ") or ("))
+xp_or <- function(...) paren_wrap(..., sep = "or")

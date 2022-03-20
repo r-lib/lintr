@@ -24,7 +24,7 @@ pipe_call_linter <- function() {
       bad_expr,
       xml_nodes_to_lint,
       source_file = source_file,
-      message = "Use explicit calls in magrittr pipes, i.e., `a %>% foo` should be `a %>% foo()`.",
+      lint_message = "Use explicit calls in magrittr pipes, i.e., `a %>% foo` should be `a %>% foo()`.",
       type = "warning"
     ))
   })

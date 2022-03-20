@@ -23,7 +23,7 @@ equals_na_linter <- function() {
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
     lapply(bad_expr, xml_nodes_to_lint, source_file,
-           message = "Use is.na for comparisons to NA (not == or !=)",
+           lint_message = "Use is.na for comparisons to NA (not == or !=)",
            type = "warning")
   })
 }
