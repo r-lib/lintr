@@ -22,6 +22,7 @@ yoda_test_linter <- function() {
     #   (1) numeric literal (e.g. TRUE, 1L, 1.0, NA) [NUM_CONST]
     #   (2) string literal (e.g. 'str' or "str")     [STR_CONST]
     #   (3) arithmetic literal (e.g. 1+1 or 0+1i)    [OP-PLUS or OP-MINUS...]
+    # TODO(#963): fully generalize this & re-use elsewhere
     xpath <- "//expr[
       expr[SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical' or text() = 'expect_setequal']]
       and expr[2][NUM_CONST or STR_CONST or ((OP-PLUS or OP-MINUS) and count(expr[NUM_CONST]) = 2)]
