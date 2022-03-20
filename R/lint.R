@@ -103,7 +103,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     lints <- retrieve_file(lint_cache, lint_obj, linters)
     if (!is.null(lints)) {
       # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
-      #   exclude(lints, lines = lines, ...)
+      # > exclude(lints, lines = lines, ...)
       return(do.call(exclude, c(list(lints, lines = lines), dots)))
     }
     cache <- TRUE
@@ -151,7 +151,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   }
 
   # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
-  #   exclude(lints, lines = lines, ...)
+  # > exclude(lints, lines = lines, ...)
   res <- do.call(exclude, c(list(lints, lines = lines), dots))
 
   # simplify filename if inline
