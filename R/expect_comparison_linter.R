@@ -18,8 +18,8 @@ expect_comparison_linter <- function() {
     xml <- source_file$xml_parsed_content
 
     # != doesn't have a clean replacement
-    comparator_nodes <-
-      setdiff(as.list(infix_metadata$xml_tag[infix_metadata$comparator]), "NE")  # nolint: object_usage_linter.
+    comparator_nodes <- # nolint: object_usage_linter. TODO(#942): remove this.
+      setdiff(as.list(infix_metadata$xml_tag[infix_metadata$comparator]), "NE")
     xpath <- glue::glue("//expr[
       expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
       and expr[2][ {do.call(xp_or, comparator_nodes)} ]
