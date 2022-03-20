@@ -31,6 +31,17 @@ xml_nodes_to_lint <- function(xml, source_file, lint_message,
   ))
 }
 
+paren_wrap <- function(..., sep) {
+  sep <- paste(")", sep, "(")
+  dots <- list(...)
+  if (length(dots) == 1L && length(dots[[1L]]) > 1L) {
+    inner <- paste(dots[[1L]], collapse = sep)
+  } else {
+    inner <- paste(..., sep = sep)
+  }
+  paste0("(", inner, ")")
+}
+
 #' Safer wrapper for paste(..., sep = " and ")
 #'
 #' The intent is to use this for readability when combining XPath conditions so
@@ -40,7 +51,7 @@ xml_nodes_to_lint <- function(xml, source_file, lint_message,
 #'
 #' @param ... Series of conditions
 #' @noRd
-xp_and <- function(...) sprintf("(%s)", paste(..., sep = ") and ("))
+xp_and <- function(...) paren_wrap(..., sep = "and")
 
 #' Safer wrapper for paste(..., sep = " or ")
 #'
@@ -51,4 +62,4 @@ xp_and <- function(...) sprintf("(%s)", paste(..., sep = ") and ("))
 #'
 #' @param ... Series of conditions
 #' @noRd
-xp_or <- function(...) sprintf("(%s)", paste(..., sep = ") or ("))
+xp_or <- function(...) paren_wrap(..., sep = "or")
