@@ -49,6 +49,8 @@ test_that("expect_identical_linter skips cases likely testing numeric equality",
     rex::rex("expect_identical(x, y) is the default way of comparing two objects"),
     expect_identical_linter()
   )
+  # NB: TRUE is a NUM_CONST so we want test matching it, even though this test is
+  #   also a violation of expect_true_false_linter()
   expect_lint(
     "expect_equal(x, TRUE)",
     rex::rex("expect_identical(x, y) is the default way of comparing two objects"),
