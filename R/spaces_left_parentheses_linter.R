@@ -53,7 +53,7 @@ spaces_left_parentheses_linter <- function() {
     bad_paren <- xml2::xml_find_all(xml, xpath)
 
     lapply(bad_paren, xml_nodes_to_lint, source_file,
-           message = "Place a space before left parenthesis, except in a function call.",
+           lint_message = "Place a space before left parenthesis, except in a function call.",
            type = "style", global = global)
   })
 }
