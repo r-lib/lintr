@@ -34,7 +34,7 @@ yoda_test_linter <- function() {
       bad_expr,
       xml_nodes_to_lint,
       source_file = source_file,
-      message = paste(
+      lint_message = paste(
         "Tests should compare objects in the order 'actual', 'expected', not the reverse.",
         "For example, do expect_identical(foo(x), 2L) instead of expect_identical(2L, foo(x))."
       ),
