@@ -18,7 +18,7 @@ expect_s3_class_linter <- function() {
 
     # (1) expect_{equal,identical}(class(x), C)
     # (2) expect_true(is.<class>(x)) and expect_true(inherits(x, C))
-    is_class_call <- xp_text_in_table(c(is_s3_class_calls, "inherits")) # nolint: object_usage_linter. TODO(#942): fix this.
+    is_class_call <- xp_text_in_table(c(is_s3_class_calls, "inherits")) # nolint: object_usage_linter.
     xpath <- glue::glue("//expr[
       (
         SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
@@ -98,7 +98,7 @@ expect_s4_class_linter <- function() {
       bad_expr,
       xml_nodes_to_lint,
       source_file = source_file,
-      message = paste(
+      lint_message = paste(
         "expect_s4_class(x, k) is better than expect_true(is(x, k)).",
         "Note also expect_s3_class() available for testing S3 objects."
       ),
