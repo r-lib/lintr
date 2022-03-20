@@ -1,6 +1,6 @@
 #' Block obvious "yoda tests"
 #'
-#' Yoda tests test `(expected, actual)` instead of the more common `(actual, expected)`.
+#' Yoda tests use `(expected, actual)` instead of the more common `(actual, expected)`.
 #' This is not always possible to detect statically; this linter focuses on
 #'   the simple case of testing an expression against a literal value, e.g.
 #'   `(1L, foo(x))` should be `(foo(x), 1L)`.
@@ -34,10 +34,8 @@ yoda_test_linter <- function() {
       xml_nodes_to_lint,
       source_file = source_file,
       message = paste(
-        "Tests should compare objects in the order 'actual', 'expected', ",
-        "not the reverse. For example, do ",
-        "expect_identical(CountObservations(x), 2L) instead of ",
-        "expect_identical(2L, CountObservations(x))."
+        "Tests should compare objects in the order 'actual', 'expected', not the reverse.",
+        "For example, do expect_identical(foo(x), 2L) instead of expect_identical(2L, foo(x))."
       ),
       type = "warning"
     ))
