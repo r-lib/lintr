@@ -18,13 +18,6 @@ test_that("expect_identical_linter blocks simple disallowed usages", {
     expect_identical_linter()
   )
 
-  # check.attributes = TRUE (set explicitly) gets dinged
-  expect_lint(
-    "expect_equal(x, y, check.attributes = TRUE)",
-    rex::rex("expect_identical(x, y) is the default way of comparing two objects"),
-    expect_identical_linter()
-  )
-
   # different usage to redirect to expect_identical
   expect_lint(
     "expect_true(identical(x, y))",

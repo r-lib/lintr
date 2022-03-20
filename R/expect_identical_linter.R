@@ -24,10 +24,10 @@ expect_identical_linter <- function() {
 
     # outline:
     #   1. conditions for expect_equal()
-    #     - skip when tolerance= is set
-    #     - skip when check.attributes = FALSE [for 2nd edition tests]
-    #     - skip when any ignore_* is set [for 3rd edition tests]
-    #       specifically ignore_{srcref,attr,encoding,function_env,formula_env}
+    #     - skip when any named argument is set. most commonly this
+    #       is check.attributes (for 2e tests) or one of the ignore_*
+    #       arguments (for 3e tests). This will generate some false
+    #       negatives, but will be much easier to maintain.
     #     - skip cases like expect_equal(x, 1.02) or the constant vector version
     #       where a numeric constant indicates inexact testing is preferable
     #     - skip calls using dots (`...`); see tests
@@ -36,14 +36,7 @@ expect_identical_linter <- function() {
       (
         SYMBOL_FUNCTION_CALL[text() = 'expect_equal']
         and not(
-          following-sibling::SYMBOL_SUB[text() = 'tolerance']
-          or following-sibling::SYMBOL_SUB[
-            (
-              text() = 'check.attributes'
-              and following-sibling::expr[1][NUM_CONST[text() = 'FALSE']]
-            )
-            or starts-with(text(), 'ignore_')
-          ]
+          following-sibling::SYMBOL_SUB
           or following-sibling::expr[
             expr[SYMBOL_FUNCTION_CALL[text() = 'c']]
             and expr[NUM_CONST[contains(text(), '.')]]
@@ -64,7 +57,7 @@ expect_identical_linter <- function() {
       bad_expr,
       xml_nodes_to_lint,
       source_file = source_file,
-      message = paste(
+      lint_message = paste(
         "expect_identical(x, y) is the default way of comparing two objects in",
         "testthat unit tests. Only use expect_equal() if testing numeric",
         "equality (and specifying tolerance= explicitly) or there's a need to",
