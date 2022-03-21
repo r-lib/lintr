@@ -127,10 +127,18 @@ extract_glued_symbols <- function(expr) {
   if (length(glue_calls) == 0L) return(character())
   glued_symbols <- new.env(parent = emptyenv())
   for (cl in glue_calls) {
-    parsed_cl <- parse(text = xml2::xml_text(cl))[[1L]]
+    parsed_cl <- tryCatch(
+      parse(text = xml2::xml_text(cl)),
+      error = function(...) NULL,
+      warning = function(...) NULL
+    )[[1L]]
     if (is.null(parsed_cl)) next
     parsed_cl[[".transformer"]] <- function(text, envir) {
-      parsed_text <- parse(text = text)
+      parsed_text <- tryCatch(
+        parse(text = text),
+        error = function(...) NULL,
+        warning = function(...) NULL
+      )
       parsed_xml <- safe_parse_to_xml(parsed_text)
       if (is.null(parsed_xml)) return("")
       symbols <- xml2::xml_text(xml2::xml_find_all(parsed_xml, "//SYMBOL"))
