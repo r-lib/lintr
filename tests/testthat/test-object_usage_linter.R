@@ -309,6 +309,14 @@ test_that("interprets glue expressions", {
     }
   "), NULL, object_usage_linter())
 
+  # Check non-standard .open and .close
+  expect_lint(trim_some("
+    fun <- function() {
+      local_var <- 42
+      glue::glue('The answer is $[local_var].', .open = '$[', .close = ']')
+    }
+  "), NULL, object_usage_linter())
+
   # Steer clear of custom .transformer and .envir constructs
   expect_lint(trim_some("
     fun <- function() {
