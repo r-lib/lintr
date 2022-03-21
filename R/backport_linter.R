@@ -7,13 +7,37 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 backport_linter <- function(r_version = getRversion()) {
-  Linter(function(source_file) {
-    if (inherits(r_version, "numeric_version")) r_version <- format(r_version)
-    if (r_version < "3.0.0") {
-      warning("It is not recommended to depend on an R version older than 3.0.0. Resetting 'r_version' to 3.0.0.")
-      r_version <- "3.0.0"
+  if (is.character(r_version) &&
+    re_matches(r_version, rex(start, "release" %or% list("oldrel", maybe("-", digits)) %or% "devel", end))) {
+    # Support devel, release, oldrel, oldrel-1, ...
+
+    all_versions <- names(backports)
+    minor_versions <- unique(re_substitutes(all_versions, rex(".", digits, end), ""))
+    version_names <- c("devel", "release", "oldrel", paste0("oldrel-", seq_len(length(minor_versions) - 3L)))
+    if (!r_version %in% version_names) {
+      # This can only trip if e.g. oldrel-99 is requested
+      stop("`r_version` must be a version number or one of ", toString(sQuote(version_names)))
     }
+    requested_version <- minor_versions[match(r_version, table = version_names)]
+    available_patches <- all_versions[startsWith(all_versions, requested_version)]
+    selected_patch <- which.max(as.integer(substr(
+      available_patches, start = nchar(requested_version) + 2L, stop = nchar(available_patches)
+    )))
+
+    r_version <- R_system_version(available_patches[selected_patch])
+  } else if (is.character(r_version)) {
+    r_version <- R_system_version(r_version, strict = TRUE)
+  } else if (!inherits(r_version, "R_system_version")) {
+    stop("`r_version` must be a R version number, returned by R_system_version(), or a string.")
+  }
+  if (r_version < "3.0.0") {
+    warning("It is not recommended to depend on an R version older than 3.0.0. Resetting 'r_version' to 3.0.0.")
+    r_version <- R_system_version("3.0.0")
+  }
+
+  Linter(function(source_file) {
     if (is.null(source_file$xml_parsed_content)) return(list())
+    if (all(r_version >= R_system_version(names(backports)))) return(list())
 
     xml <- source_file$xml_parsed_content
 
@@ -22,7 +46,10 @@ backport_linter <- function(r_version = getRversion()) {
     all_names <- xml2::xml_text(all_names_nodes)
 
     # guaranteed to include 1 by early return above; which.min fails if all TRUE (handled by nomatch)
-    needs_backport_names <- backports[1:(match(FALSE, r_version < names(backports), nomatch = length(backports)) - 1L)]
+    needs_backport_names <- head(
+      backports,
+      match(FALSE, r_version < R_system_version(names(backports)), nomatch = length(backports)) - 1L
+    )
 
     # not sapply/vapply, which may over-simplify to vector -- cbind makes sure we have a matrix so rowSums works
     needs_backport <- do.call(cbind, lapply(needs_backport_names, function(nm) all_names %in% nm))
@@ -51,8 +78,12 @@ backport_linter <- function(r_version = getRversion()) {
   })
 }
 
+# Sources:
+# devel NEWS https://cran.rstudio.com/doc/manuals/r-devel/NEWS.html
+# release NEWS https://cran.r-project.org/doc/manuals/r-release/NEWS.html
 backports <- list(
-  `devel` = c("...names", "checkRdContents", "numToBits", "numToInts", "packBits"),
+  `4.2.0` = c(".pretty", ".LC.categories", "Sys.setLanguage()"), # R devel needs to be ahead of all other versions
+  `4.1.0` = c("numToBits", "numToInts", "gregexec", "charClass", "checkRdContents", "...names"),
   `4.0.0` = c(
     ".class2", ".S3method", "activeBindingFunction", "deparse1", "globalCallingHandlers",
     "infoRDS", "list2DF", "marginSums", "proportions", "R_user_dir", "socketTimeout", "tryInvokeRestart"
