@@ -335,6 +335,7 @@ test_that("interprets glue expressions", {
     }
   "), "local_var", linter)
 
+  # unused is caught, glue-used is not
   expect_lint(trim_some("
     fun <- function() {
       local_var <- 42
@@ -343,6 +344,7 @@ test_that("interprets glue expressions", {
     }
   "), "unused_var", linter)
 
+  # glue-only is caught with option off
   expect_lint(trim_some("
     fun <- function() {
       local_var <- 42
