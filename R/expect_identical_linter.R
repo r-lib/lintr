@@ -11,7 +11,9 @@
 #'   in which case `ignore_attr = "names"` should be supplied to
 #'   `expect_equal()` (or, for 2nd edition, `check.attributes = FALSE`).
 #'
-#' NB: The linter allows `expect_equal()` in three circumstances:
+#' @section Exceptions:
+#'
+#' The linter allows `expect_equal()` in three circumstances:
 #'   1. A named argument is set (e.g. `ignore_attr` or `tolerance`)
 #'   2. Comparison is made to an explicit decimal, e.g.
 #'      `expect_equal(x, 1.0)` (implicitly setting `tolerance`)

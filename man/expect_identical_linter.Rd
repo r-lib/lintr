@@ -18,8 +18,10 @@ when it's inconvenient to check full equality (e.g., names can be ignored,
 in which case \code{ignore_attr = "names"} should be supplied to
 \code{expect_equal()} (or, for 2nd edition, \code{check.attributes = FALSE}).
 }
-\details{
-NB: The linter allows \code{expect_equal()} in three circumstances:
+\section{Exceptions}{
+
+
+The linter allows \code{expect_equal()} in three circumstances:
 \enumerate{
 \item A named argument is set (e.g. \code{ignore_attr} or \code{tolerance})
 \item Comparison is made to an explicit decimal, e.g.
@@ -28,6 +30,7 @@ NB: The linter allows \code{expect_equal()} in three circumstances:
 arguments such as \code{ignore_attr} or \code{tolerance})
 }
 }
+
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
