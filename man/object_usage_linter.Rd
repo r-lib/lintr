@@ -4,7 +4,11 @@
 \alias{object_usage_linter}
 \title{Object usage linter}
 \usage{
-object_usage_linter()
+object_usage_linter(interpret_glue = TRUE)
+}
+\arguments{
+\item{interpret_glue}{If TRUE, interpret \code{\link[glue:glue]{glue::glue()}} calls to avoid false positives caused by local variables
+which are only used in a glue expression.}
 }
 \description{
 Check that closures have the proper usage using \code{\link[codetools:checkUsage]{codetools::checkUsage()}}.

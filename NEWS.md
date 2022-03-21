@@ -100,9 +100,10 @@ function calls. (#850, #851, @renkun-ken)
 * `assignment_linter()` now lints right assignment (`->` and `->>`) and gains two arguments. `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`; `allow_right_assign` toggles whether to lint `->` and `->>` (#915, @michaelchirico)
 * `infix_spaces_linter()` gains argument `exclude_operators` to disable lints on selected infix operators. By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these. (#914 @michaelchirico)
 * `infix_spaces_linter()` now throws a lint on `a~b` and `function(a=1) {}` (#930, @michaelchirico)
-* `object_length_linter()` correctly detects generics and only counts the implementation class towards the length. 
+* `object_usage_linter()` now detects usages inside `glue::glue()` constructs (#942, @AshesITR)
+* * `object_length_linter()` correctly detects generics and only counts the implementation class towards the length. 
   This prevents false positive lints in the case of long generic names, e.g. 
-  `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR) 
+  `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
 
 # lintr 2.0.1
 
