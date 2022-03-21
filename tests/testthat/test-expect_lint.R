@@ -54,6 +54,7 @@ test_that("multiple checks", {
 })
 
 test_that("expect_lint_free works", {
+  withr::local_options(lintr.rstudio_source_markers = FALSE)
   withr::with_envvar(c(NOT_CRAN = "true", R_COVR = "false"), expect_lint_free("dummy_packages/clean"))
   withr::with_envvar(c(NOT_CRAN = "true", R_COVR = "false"), expect_lint_free("dummy_packages/clean_subdir/r"))
   withr::with_envvar(

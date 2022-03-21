@@ -94,14 +94,12 @@ test_that("rstudio_source_markers apply to print within rstudio", {
   empty <- withr::local_tempfile()
   file.create(empty)
 
-  with_mock(
-    `rstudioapi::hasFun` = function(x, ...) TRUE,
-    `rstudioapi::callFun` = function(...) cat("matched\n"), {
-    l <- lint(tmp, seq_linter())
-    expect_output(print(l), "matched", fixed = TRUE)
+  mockery::stub(print.lints, "rstudioapi::hasFun", function(x, ...) TRUE)
+  mockery::stub(print.lints, "rstudio_source_markers", function(x) cat("matched\n"))
 
-    l <- lint(empty, seq_linter())
+  l <- lint(tmp, seq_linter())
+  expect_output(print(l), "matched", fixed = TRUE)
 
-    expect_output(print(l), "matched", fixed = TRUE)
-  })
+  l <- lint(empty, seq_linter())
+  expect_output(print(l), "matched", fixed = TRUE)
 })
