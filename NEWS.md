@@ -94,6 +94,7 @@ function calls. (#850, #851, @renkun-ken)
    + `expect_true_false_linter()` Require usage of `expect_true(x)` over `expect_equal(x, TRUE)` and similar
    + `expect_named_linter()` Require usage of `expect_named(x, n)` over `expect_equal(names(x), n)` and similar
    * `expect_length_linter()` Require usage of `expect_length(x, n)` over `expect_equal(length(x), n)` and similar
+   * `expect_identical_linter()` Require usage of `expect_identical()` by default, and `expect_equal()` only by exception
    * `expect_comparison_linter()` Require usage of `expect_gt(x, y)` over `expect_true(x > y)` and similar
 * `assignment_linter()` now lints right assignment (`->` and `->>`) and gains two arguments. `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`; `allow_right_assign` toggles whether to lint `->` and `->>` (#915, @michaelchirico)
 * `infix_spaces_linter()` gains argument `exclude_operators` to disable lints on selected infix operators. By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these. (#914 @michaelchirico)
