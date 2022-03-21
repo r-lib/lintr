@@ -34,12 +34,13 @@ assignment_linter <- function(allow_cascading_assign = TRUE, allow_right_assign 
       function(expr) {
         operator <- xml2::xml_text(expr)
         if (operator %in% c("<<-", "->>")) {
-          sprintf(
-            "%s can have hard-to-predict behavior; prefer assigning to a specific environment instead (with assign() or <-).",
-            operator
+          paste(
+            operator,
+            "can have hard-to-predict behavior;",
+            "prefer assigning to a specific environment instead (with assign() or <-)."
           )
         } else {
-          sprintf("Use <-, not %s, for assignment.", operator)
+          paste0("Use <-, not ", operator, ", for assignment.")
         }
       },
       type = "style"
