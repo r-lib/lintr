@@ -1,39 +1,23 @@
-object_name_xpath <- paste0(
-  # assignments
-  "//SYMBOL[",
-  " not(preceding-sibling::OP-DOLLAR)",
-  " and ancestor::expr[",
-  "  following-sibling::LEFT_ASSIGN",
-  "  or preceding-sibling::RIGHT_ASSIGN",
-  "  or following-sibling::EQ_ASSIGN",
-  " ]",
-  " and not(ancestor::expr[",
-  "  preceding-sibling::OP-LEFT-BRACKET",
-  "  or preceding-sibling::LBB",
-  " ])",
-  "]",
+object_name_xpath <- local({
+  xp_assignment_target <- paste(
+    "not(preceding-sibling::OP-DOLLAR)",
+    "and ancestor::expr[",
+    " following-sibling::LEFT_ASSIGN",
+    " or preceding-sibling::RIGHT_ASSIGN",
+    " or following-sibling::EQ_ASSIGN",
+    "]",
+    "and not(ancestor::expr[",
+    " preceding-sibling::OP-LEFT-BRACKET",
+    " or preceding-sibling::LBB",
+    "])"
+  )
 
-  " | ",
-
-  "//STR_CONST[",
-  " not(preceding-sibling::OP-DOLLAR)",
-  " and ancestor::expr[",
-  "  following-sibling::LEFT_ASSIGN",
-  "  or preceding-sibling::RIGHT_ASSIGN",
-  "  or following-sibling::EQ_ASSIGN",
-  " ]",
-  " and not(ancestor::expr[",
-  "  preceding-sibling::OP-LEFT-BRACKET",
-  "  or preceding-sibling::LBB",
-  " ])",
-  "]",
-
-  # Or
-  " | ",
-
-  # Formal argument names
-  "//SYMBOL_FORMALS"
-)
+  paste0(
+    "//SYMBOL[", xp_assignment_target, "] | ",
+    "//STR_CONST[", xp_assignment_target, "] | ",
+    "//SYMBOL_FORMALS"
+  )
+})
 
 #' Object name linter
 #'
@@ -182,13 +166,19 @@ regexes_rd <- toString(paste0("\\sQuote{", names(style_regexes), "}"))
 #' Object length linter
 #'
 #' Check that object names are not too long.
+#' The length of an object name is defined as the length in characters, after removing extraneous parts:
+#'
+#'  * generic prefixes for implementations of S3 generics, e.g. `as.data.frame.my_class` has length 8.
+#'  * leading `.`, e.g. `.my_hidden_function` has length 18.
+#'  * "%%" for infix operators, e.g. `%my_op%` has length 5.
+#'  * trailing `<-` for assignment functions, e.g. `my_attr<-` has length 7.
 #'
 #' @param length maximum variable name length allowed.
 #' @evalRd rd_tags("object_length_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 object_length_linter <- function(length = 30L) {
-  lint_msg <- paste0("Variable and function names should not be longer than ", length, " characters.")
+  lint_msg <- paste("Variable and function names should not be longer than", length, "characters.")
 
   Linter(function(source_file) {
     if (is.null(source_file$full_xml_parsed_content)) return(list())
@@ -202,9 +192,10 @@ object_length_linter <- function(length = 30L) {
       xml2::xml_text(assignments)
     )
 
+    ns_imports <- namespace_imports(find_package(source_file$filename))
     generics <- strip_names(c(
       declared_s3_generics(xml),
-      imported_s3_generics(namespace_imports(find_package(source_file$filename)))$fun,
+      imported_s3_generics(ns_imports)$fun,
       .base_s3_generics
     ))
     generics <- unique(generics[nzchar(generics)])
