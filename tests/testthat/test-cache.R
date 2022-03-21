@@ -182,7 +182,7 @@ test_that("retrieve_file returns NULL if there is no cached result", {
   writeLines("foobar", f1)
   on.exit(unlink(f1))
 
-  expect_equal(retrieve_file(e1, f1, list()), NULL)
+  expect_null(retrieve_file(e1, f1, list()))
 })
 
 test_that("retrieve_file returns the cached result if found", {

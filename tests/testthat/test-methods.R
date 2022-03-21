@@ -91,7 +91,7 @@ test_that("summary.lints() works (lints found)", {
   has_lint_summary <- summary(has_lints)
   expect_s3_class(has_lint_summary, "data.frame")
   expect_equal(nrow(has_lint_summary), 1)
-  expect_true(has_lint_summary$style > 0)
+  expect_gt(has_lint_summary$style, 0)
   expect_equal(has_lint_summary$warning, 0)
   expect_equal(has_lint_summary$error, 0)
 })
