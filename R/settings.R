@@ -133,7 +133,10 @@ get_encoding_from_dcf <- function(file) {
     warning = function(e) NULL
   )
 
-  encodings <- encodings[!is.na(encodings)]
+  if (!is.null(encodings)) {
+    # Produces a warning in R <= 3.5 if encodings is NULL
+    encodings <- encodings[!is.na(encodings)]
+  }
   if (length(encodings) > 0L) {
     return(encodings[1L])
   }

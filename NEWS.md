@@ -84,7 +84,7 @@ function calls. (#850, #851, @renkun-ken)
   * Each linter can have multiple tags
   * New function `available_linters()` to list available linters and their tags 
     This feature is extensible by package authors providing add-on linters for {lintr}.
-* `lintr` now uses the 3rd edition of `testthat` (@MichaelChirico, #910)
+* `lintr` now uses the 3rd edition of `testthat` (@MichaelChirico, @AshesITR, #910, #967)
 * `lintr` is adopting a new set of linters provided as part of Google's extension to the tidyverse style guide (#884, @michaelchirico)
    + `expect_null_linter()` Require usage of `expect_null(x)` over `expect_equal(x, NULL)` and similar
    + `expect_type_linter()` Require usage of `expect_type(x, t)` over `expect_equal(typeof(x), t)` and similar
