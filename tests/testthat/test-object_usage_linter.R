@@ -300,3 +300,36 @@ test_that("robust against errors", {
     object_usage_linter()
   )
 })
+
+test_that("interprets glue expressions", {
+  expect_lint(trim_some("
+    fun <- function() {
+      local_var <- 42
+      glue::glue('The answer is {local_var}.')
+    }
+  "), NULL, object_usage_linter())
+
+  # Steer clear of custom .transformer and .envir constructs
+  expect_lint(trim_some("
+    fun <- function() {
+      local_var <- 42
+      glue::glue('The answer is {local_var}.', .transformer = glue::identity_transformer)
+    }
+  "), "local_var", object_usage_linter())
+
+  expect_lint(trim_some("
+    fun <- function() {
+      local_var <- 42
+      e <- new.env()
+      glue::glue('The answer is {local_var}.', .envir = e)
+    }
+  "), "local_var", object_usage_linter())
+
+  expect_lint(trim_some("
+    fun <- function() {
+      local_var <- 42
+      unused_var <- 3
+      glue::glue('The answer is {local_var}.')
+    }
+  "), "unused_var", object_usage_linter())
+})
