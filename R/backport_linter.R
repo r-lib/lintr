@@ -7,33 +7,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 backport_linter <- function(r_version = getRversion()) {
-  if (is.character(r_version) &&
-    re_matches(r_version, rex(start, "release" %or% list("oldrel", maybe("-", digits)) %or% "devel", end))) {
-    # Support devel, release, oldrel, oldrel-1, ...
-
-    all_versions <- names(backports)
-    minor_versions <- unique(re_substitutes(all_versions, rex(".", digits, end), ""))
-    version_names <- c("devel", "release", "oldrel", paste0("oldrel-", seq_len(length(minor_versions) - 3L)))
-    if (!r_version %in% version_names) {
-      # This can only trip if e.g. oldrel-99 is requested
-      stop("`r_version` must be a version number or one of ", toString(sQuote(version_names)))
-    }
-    requested_version <- minor_versions[match(r_version, table = version_names)]
-    available_patches <- all_versions[startsWith(all_versions, requested_version)]
-    selected_patch <- which.max(as.integer(substr(
-      available_patches, start = nchar(requested_version) + 2L, stop = nchar(available_patches)
-    )))
-
-    r_version <- R_system_version(available_patches[selected_patch])
-  } else if (is.character(r_version)) {
-    r_version <- R_system_version(r_version, strict = TRUE)
-  } else if (!inherits(r_version, "R_system_version")) {
-    stop("`r_version` must be a R version number, returned by R_system_version(), or a string.")
-  }
-  if (r_version < "3.0.0") {
-    warning("It is not recommended to depend on an R version older than 3.0.0. Resetting 'r_version' to 3.0.0.")
-    r_version <- R_system_version("3.0.0")
-  }
+  r_version <- normalize_r_version(r_version)
 
   Linter(function(source_file) {
     if (is.null(source_file$xml_parsed_content)) return(list())
@@ -76,6 +50,39 @@ backport_linter <- function(r_version = getRversion()) {
       )
     })
   })
+}
+
+normalize_r_version <- function(r_version) {
+  if (is.character(r_version) &&
+    re_matches(r_version, rex(start, "release" %or%
+      list("oldrel", maybe("-", digits)) %or%
+      "devel", end))) {
+    # Support devel, release, oldrel, oldrel-1, ...
+
+    all_versions <- names(backports)
+    minor_versions <- unique(re_substitutes(all_versions, rex(".", digits, end), ""))
+    version_names <- c("devel", "release", "oldrel", paste0("oldrel-", seq_len(length(minor_versions) - 3L)))
+    if (!r_version %in% version_names) {
+      # This can only trip if e.g. oldrel-99 is requested
+      stop("`r_version` must be a version number or one of ", toString(sQuote(version_names)))
+    }
+    requested_version <- minor_versions[match(r_version, table = version_names)]
+    available_patches <- all_versions[startsWith(all_versions, requested_version)]
+    selected_patch <- which.max(as.integer(
+      substr(available_patches, start = nchar(requested_version) + 2L, stop = nchar(available_patches))
+    ))
+
+    r_version <- R_system_version(available_patches[selected_patch])
+  } else if (is.character(r_version)) {
+    r_version <- R_system_version(r_version, strict = TRUE)
+  } else if (!inherits(r_version, "R_system_version")) {
+    stop("`r_version` must be a R version number, returned by R_system_version(), or a string.")
+  }
+  if (r_version < "3.0.0") {
+    warning("It is not recommended to depend on an R version older than 3.0.0. Resetting 'r_version' to 3.0.0.")
+    r_version <- R_system_version("3.0.0")
+  }
+  r_version
 }
 
 # Sources:

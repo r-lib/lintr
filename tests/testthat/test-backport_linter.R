@@ -39,6 +39,8 @@ test_that("backport_linter detects backwards-incompatibility", {
     backport_linter("oldrel")
   )
 
+  expect_error(backport_linter("oldrel-99"), "`r_version` must be a version number or one of")
+
   # NB: oldrel-1 could be 3.6.3, but we don't have any backports listed for 3.6.3
   expect_lint(
     "numToBits(2)",
