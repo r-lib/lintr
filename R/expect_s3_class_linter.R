@@ -69,10 +69,6 @@ is_s3_class_calls <- paste0("is.", c(
   "mts", "stepfun", "ts", "tskernel"
 ))
 
-gen_expect_s3_class_lint <- function(expr, source_file) {
-  xml_nodes_to_lint(expr, source_file, lint_msg, type = "warning")
-}
-
 #' Require usage of expect_s4_class(x, k) over expect_true(is(x, k))
 #'
 #' [testthat::expect_s4_class()] exists specifically for testing the class
