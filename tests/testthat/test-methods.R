@@ -114,16 +114,15 @@ test_that("print.lint works for inline data, even in RStudio", {
     expect_output(print(l), "not =")
   )
 
+  mockery::stub(print.lints, "rstudioapi::hasFun", function(...) FALSE)
   withr::with_options(
     list("lintr.rstudio_source_markers" = TRUE),
-    with_mock(
-      `rstudioapi::hasFun` = function(...) TRUE,
-      expect_output(print(l), "not =")
-    )
+    expect_output(print(l), "not =")
   )
 })
 
 test_that("print.lints works", {
+  withr::local_options(lintr.rstudio_source_markers = FALSE)
   tmp <- tempfile()
   file.create(tmp)
   on.exit(unlink(tmp))

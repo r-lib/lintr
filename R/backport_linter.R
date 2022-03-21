@@ -7,12 +7,13 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 backport_linter <- function(r_version = getRversion()) {
+  if (inherits(r_version, "numeric_version")) r_version <- format(r_version)
+  if (r_version < "3.0.0") {
+    warning("It is not recommended to depend on an R version older than 3.0.0. Resetting 'r_version' to 3.0.0.")
+    r_version <- "3.0.0"
+  }
+
   Linter(function(source_file) {
-    if (inherits(r_version, "numeric_version")) r_version <- format(r_version)
-    if (r_version < "3.0.0") {
-      warning("It is not recommended to depend on an R version older than 3.0.0. Resetting 'r_version' to 3.0.0.")
-      r_version <- "3.0.0"
-    }
     if (is.null(source_file$xml_parsed_content)) return(list())
 
     xml <- source_file$xml_parsed_content
