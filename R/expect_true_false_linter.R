@@ -28,7 +28,9 @@ expect_true_false_linter <- function() {
       source_file,
       function(expr) {
         # NB: use expr/$node, not expr[$node], to exclude other things (especially ns:: parts of the call)
-        call_name <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL[starts-with(text(), 'expect_')]"))
+        call_name <- xml2::xml_text(
+          xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL[starts-with(text(), 'expect_')]")
+        )
         truth_value <- xml2::xml_text(xml2::xml_find_first(expr, "expr/NUM_CONST[text() = 'TRUE' or text() = 'FALSE']"))
         if (truth_value == "TRUE") {
           sprintf("expect_true(x) is better than %s(x, TRUE)", call_name)
