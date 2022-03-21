@@ -108,6 +108,18 @@ object_usage_linter <- function(interpret_glue = TRUE) {
 }
 
 extract_glued_symbols <- function(expr) {
+  # TODO support more glue functions
+  # Package glue:
+  #  - glue_sql()
+  #  - glue_safe()
+  #  - glue_col()
+  #  - glue_data()
+  #  - glue_data_sql()
+  #  - glue_data_safe()
+  #  - glue_data_col()
+  #
+  # Package stringr:
+  #  - str_interp()
   glue_calls <- xml2::xml_find_all(
     expr,
     xpath = paste0(

@@ -16,7 +16,7 @@ expect_type_linter <- function() {
 
     xml <- source_file$xml_parsed_content
 
-    base_type_tests <- xp_text_in_table(paste0("is.", base_types)) # nolint: object_usage_linter. TODO(#942): fix this.
+    base_type_tests <- xp_text_in_table(paste0("is.", base_types))
     xpath <- glue::glue("//expr[
       (
         SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
