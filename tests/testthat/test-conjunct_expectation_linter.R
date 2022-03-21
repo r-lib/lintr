@@ -7,7 +7,6 @@ test_that("conjunct_expectation_linter skips allowed usages of expect_true", {
   # the same by operator precedence, though not obvious a priori
   expect_lint("expect_true(x || y && z)", NULL, conjunct_expectation_linter())
   expect_lint("expect_true(x && y || z)", NULL, conjunct_expectation_linter())
-
 })
 
 test_that("conjunct_expectation_linter skips allowed usages of expect_true", {
@@ -42,6 +41,18 @@ test_that("conjunct_expectation_linter blocks || conditions with expect_false()"
 
   expect_lint(
     "expect_false(x || y || z)",
+    rex::rex("Instead of expect_false(A || B), write multiple expectations"),
+    conjunct_expectation_linter()
+  )
+
+  # these lint because `||` is always outer by operator precedence
+  expect_lint(
+    "expect_false(x || y && z)",
+    rex::rex("Instead of expect_false(A || B), write multiple expectations"),
+    conjunct_expectation_linter()
+  )
+  expect_lint(
+    "expect_false(x && y || z)",
     rex::rex("Instead of expect_false(A || B), write multiple expectations"),
     conjunct_expectation_linter()
   )
