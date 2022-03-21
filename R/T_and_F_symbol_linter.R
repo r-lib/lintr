@@ -51,8 +51,14 @@ T_and_F_symbol_linter <- function() { # nolint: object_name_linter.
     }
 
     c(
-      lapply(bad_exprs, make_lint, fmt = "Use %s instead of the symbol %s."),
-      lapply(bad_assigns, make_lint, fmt = "Don't use %2$s as a variable name, as it can break code relying on %2$s being %1$s.")
+      lapply(
+        bad_exprs, make_lint,
+        fmt = "Use %s instead of the symbol %s."
+      ),
+      lapply(
+        bad_assigns, make_lint,
+        fmt = "Don't use %2$s as a variable name, as it can break code relying on %2$s being %1$s."
+      )
     )
   })
 }
