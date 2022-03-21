@@ -52,7 +52,7 @@ package_hooks_linter <- function() {
     bad_msg_call_lints <- function(hook) {
       xpath <- sprintf(bad_msg_call_xpath_fmt, hook, xp_text_in_table(bad_calls[[hook]]))
       bad_expr <- xml2::xml_find_all(xml, xpath)
-      lapply(bad_expr, make_bad_call_lint, source_file, hook)
+      lapply(bad_expr, xml_nodes_to_lint, source_file, make_bad_call_lint_msg(hook), type = "warning")
     }
 
     onload_bad_msg_call_lints <- bad_msg_call_lints(".onLoad")
@@ -77,13 +77,13 @@ package_hooks_linter <- function() {
 
     load_arg_name_lints <- lapply(
       load_arg_name_expr,
-      function(expr) {
-        message <- sprintf(
-          "%s() should take two arguments, with the first starting with 'lib' and the second starting with 'pkg'.",
-          get_hook(expr)
-        )
-        xml_nodes_to_lint(expr, source_file, message, type = "warning")
-      }
+      xml_nodes_to_lint,
+      source_file,
+      function(expr) sprintf(
+        "%s() should take two arguments, with the first starting with 'lib' and the second starting with 'pkg'.",
+        get_hook(expr)
+      ),
+      type = "warning"
     )
 
     # (3) .onLoad() and .onAttach() shouldn't call require(), library(), or installed.packages()
@@ -100,16 +100,18 @@ package_hooks_linter <- function() {
 
     library_require_lints <- lapply(
       library_require_expr,
+      xml_nodes_to_lint,
+      source_file,
       function(expr) {
         bad_call <- xml2::xml_text(expr)
         hook <- get_hook(expr)
         if (bad_call == "installed.packages") {
-          message <- sprintf("Don't slow down package load by running installed.packages() in %s().", hook)
+          sprintf("Don't slow down package load by running installed.packages() in %s().", hook)
         } else {
-          message <- sprintf("Don't alter the search() path in %s() by calling %s().", hook, bad_call)
+          sprintf("Don't alter the search() path in %s() by calling %s().", hook, bad_call)
         }
-        xml_nodes_to_lint(expr, source_file, message, type = "warning")
-      }
+      },
+      type = "warning"
     )
 
     # (4) .Last.lib() and .onDetach() shouldn't call library.dynam.unload()
@@ -123,10 +125,10 @@ package_hooks_linter <- function() {
 
     bad_unload_call_lints <- lapply(
       bad_unload_call_expr,
-      function(expr) {
-        message <- sprintf("Use library.dynam.unload() calls in .onUnload(), not %s().", get_hook(expr))
-        xml_nodes_to_lint(expr, source_file, message, type = "warning")
-      }
+      xml_nodes_to_lint,
+      source_file,
+      function(expr) sprintf("Use library.dynam.unload() calls in .onUnload(), not %s().", get_hook(expr)),
+      type = "warning"
     )
 
     # (5) .Last.lib() and .onDetach() should take one arguments with name matching ^lib
@@ -145,13 +147,10 @@ package_hooks_linter <- function() {
 
     unload_arg_name_lints <- lapply(
       unload_arg_name_expr,
-      function(expr) {
-        message <- sprintf(
-          "%s() should take one argument starting with 'lib'.",
-          get_hook(expr)
-        )
-        xml_nodes_to_lint(expr, source_file, message, type = "warning")
-      }
+      xml_nodes_to_lint,
+      source_file,
+      function(expr) sprintf("%s() should take one argument starting with 'lib'.", get_hook(expr)),
+      type = "warning"
     )
 
     return(c(
@@ -165,16 +164,17 @@ package_hooks_linter <- function() {
   })
 }
 
-make_bad_call_lint <- function(expr, source_file, hook) {
-  call_name <- xml2::xml_text(expr)
-  message <- switch(
-    call_name,
-    cat = ,
-    message = ,
-    print = ,
-    writeLines = sprintf("Don't use %s() in %s().", call_name, hook),
-    packageStartupMessage = "Put packageStartupMessage() calls in .onAttach(), not .onLoad().",
-    library.dynam = "Put library.dynam() calls in .onLoad, not .onAttach()."
-  )
-  xml_nodes_to_lint(expr, source_file, message, type = "warning")
+make_bad_call_lint_msg <- function(hook) {
+  function(expr) {
+    call_name <- xml2::xml_text(expr)
+    switch(
+      call_name,
+      cat = ,
+      message = ,
+      print = ,
+      writeLines = sprintf("Don't use %s() in %s().", call_name, hook),
+      packageStartupMessage = "Put packageStartupMessage() calls in .onAttach(), not .onLoad().",
+      library.dynam = "Put library.dynam() calls in .onLoad, not .onAttach()."
+    )
+  }
 }
