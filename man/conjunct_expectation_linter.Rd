@@ -9,7 +9,8 @@ conjunct_expectation_linter()
 \description{
 For readability of test outputs, testing only one thing per call to
 \code{\link[testthat:logical-expectations]{testthat::expect_true()}} is preferable, i.e.,
-\verb{expect_true(A); expect_true(B)} is better than \code{expect_true(A && B)}.
+\verb{expect_true(A); expect_true(B)} is better than \code{expect_true(A && B)}, and
+\verb{expect_false(A); expect_false(B)} is better than \code{expect_false(A || B)}.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
