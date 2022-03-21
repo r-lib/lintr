@@ -302,12 +302,14 @@ test_that("robust against errors", {
 })
 
 test_that("interprets glue expressions", {
+  linter <- object_usage_linter()
+
   expect_lint(trim_some("
     fun <- function() {
       local_var <- 42
       glue::glue('The answer is {local_var}.')
     }
-  "), NULL, object_usage_linter())
+  "), NULL, linter)
 
   # Check non-standard .open and .close
   expect_lint(trim_some("
@@ -315,7 +317,7 @@ test_that("interprets glue expressions", {
       local_var <- 42
       glue::glue('The answer is $[local_var].', .open = '$[', .close = ']')
     }
-  "), NULL, object_usage_linter())
+  "), NULL, linter)
 
   # Steer clear of custom .transformer and .envir constructs
   expect_lint(trim_some("
@@ -323,7 +325,7 @@ test_that("interprets glue expressions", {
       local_var <- 42
       glue::glue('The answer is {local_var}.', .transformer = glue::identity_transformer)
     }
-  "), "local_var", object_usage_linter())
+  "), "local_var", linter)
 
   expect_lint(trim_some("
     fun <- function() {
@@ -331,7 +333,7 @@ test_that("interprets glue expressions", {
       e <- new.env()
       glue::glue('The answer is {local_var}.', .envir = e)
     }
-  "), "local_var", object_usage_linter())
+  "), "local_var", linter)
 
   expect_lint(trim_some("
     fun <- function() {
@@ -339,7 +341,7 @@ test_that("interprets glue expressions", {
       unused_var <- 3
       glue::glue('The answer is {local_var}.')
     }
-  "), "unused_var", object_usage_linter())
+  "), "unused_var", linter)
 
   expect_lint(trim_some("
     fun <- function() {

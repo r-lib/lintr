@@ -135,7 +135,7 @@ extract_glued_symbols <- function(expr) {
     if (is.null(parsed_cl)) next
     parsed_cl[[".transformer"]] <- function(text, envir) {
       parsed_text <- tryCatch(
-        parse(text = text),
+        parse(text = text, keep.source = TRUE),
         error = function(...) NULL,
         warning = function(...) NULL
       )
