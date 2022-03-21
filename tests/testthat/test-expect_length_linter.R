@@ -6,6 +6,11 @@ test_that("expect_length_linter skips allowed usages", {
   # only check the first argument. yoda tests in the second argument will be
   #   missed, but there are legitimate uses of length() in argument 2
   expect_lint("expect_equal(nrow(x), length(y))", NULL, expect_length_linter())
+
+  # expect_length() doesn't have info= or label= arguments
+  expect_lint("expect_equal(length(x), n, info = 'x should have size n')", NULL, expect_length_linter())
+  expect_lint("expect_equal(length(x), n, label = 'x size')", NULL, expect_length_linter())
+  expect_lint("expect_equal(length(x), n, expected.label = 'target size')", NULL, expect_length_linter())
 })
 
 test_that("expect_length_linter blocks simple disallowed usages", {
