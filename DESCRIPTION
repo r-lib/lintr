@@ -64,6 +64,7 @@ Collate:
     'equals_na_linter.R'
     'exclude.R'
     'expect_comparison_linter.R'
+    'expect_identical_linter.R'
     'expect_length_linter.R'
     'expect_lint.R'
     'expect_named_linter.R'

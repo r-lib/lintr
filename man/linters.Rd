@@ -24,7 +24,7 @@ The following tags exist:
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=efficiency_linters]{efficiency} (4 linters)}
-\item{\link[=package_development_linters]{package_development} (12 linters)}
+\item{\link[=package_development_linters]{package_development} (13 linters)}
 \item{\link[=readability_linters]{readability} (25 linters)}
 \item{\link[=robustness_linters]{robustness} (10 linters)}
 \item{\link[=style_linters]{style} (31 linters)}
@@ -44,6 +44,7 @@ The following linters exist:
 \item{\code{\link{duplicate_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{equals_na_linter}} (tags: common_mistakes, correctness, default, robustness)}
 \item{\code{\link{expect_comparison_linter}} (tags: best_practices, package_development)}
+\item{\code{\link{expect_identical_linter}} (tags: package_development)}
 \item{\code{\link{expect_length_linter}} (tags: best_practices, package_development, readability)}
 \item{\code{\link{expect_named_linter}} (tags: best_practices, package_development, readability)}
 \item{\code{\link{expect_not_linter}} (tags: best_practices, package_development, readability)}
