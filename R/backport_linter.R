@@ -19,14 +19,10 @@ backport_linter <- function(r_version = getRversion()) {
     all_names_nodes <- xml2::xml_find_all(xml, names_xpath)
     all_names <- xml2::xml_text(all_names_nodes)
 
-    # guaranteed to include 1 by early return above; which.min fails if all TRUE (handled by nomatch)
-    needs_backport_names <- head(
-      backports,
-      match(FALSE, r_version < R_system_version(names(backports)), nomatch = length(backports)) - 1L
-    )
+    backport_blacklist <- backports[r_version < R_system_version(names(backports))]
 
     # not sapply/vapply, which may over-simplify to vector -- cbind makes sure we have a matrix so rowSums works
-    needs_backport <- do.call(cbind, lapply(needs_backport_names, function(nm) all_names %in% nm))
+    needs_backport <- do.call(cbind, lapply(backport_blacklist, function(nm) all_names %in% nm))
     bad_idx <- rowSums(needs_backport) > 0L
 
     lapply(which(bad_idx), function(ii) {
@@ -43,7 +39,7 @@ backport_linter <- function(r_version = getRversion()) {
         type = "warning",
         message = sprintf(
           "%s (R %s) is not available for dependency R >= %s.",
-          all_names[ii], names(needs_backport_names)[which(needs_backport[ii, ])], r_version
+          all_names[ii], names(backport_blacklist)[which(needs_backport[ii, ])], r_version
         ),
         line = source_file$lines[[line1]],
         ranges = list(c(col1, col2))
