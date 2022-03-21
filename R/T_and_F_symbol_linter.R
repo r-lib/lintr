@@ -36,14 +36,15 @@ T_and_F_symbol_linter <- function() { # nolint: object_name_linter.
     bad_exprs <- xml2::xml_find_all(source_file$xml_parsed_content, xpath)
     bad_assigns <- xml2::xml_find_all(source_file$xml_parsed_content, xpath_assignment)
 
+    replacement_map <- c(T = "TRUE", F = "FALSE")
     make_lint <- function(expr, fmt) {
-      symbol <- xml2::xml_text(expr)
-      replacement <- switch(symbol, "T" = "TRUE", "F" = "FALSE")
-      message <- sprintf(fmt, replacement, symbol)
       xml_nodes_to_lint(
         xml = expr,
         source_file = source_file,
-        lint_message = message,
+        lint_message = function(expr) {
+          symbol <- xml2::xml_text(expr)
+          sprintf(fmt, replacement_map[[symbol]], symbol)
+        },
         type = "style",
         offset = 1L
       )

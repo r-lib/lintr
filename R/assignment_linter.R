@@ -27,19 +27,23 @@ assignment_linter <- function(allow_cascading_assign = TRUE, allow_right_assign 
     ))
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    lapply(bad_expr, gen_assignment_lint, source_file)
-  })
-}
-
-gen_assignment_lint <- function(expr, source_file) {
-  operator <- xml2::xml_text(expr)
-  if (operator %in% c("<<-", "->>")) {
-    message <- sprintf(
-      "%s can have hard-to-predict behavior; prefer assigning to a specific environment instead (with assign() or <-).",
-      operator
+    lapply(
+      bad_expr,
+      xml_nodes_to_lint,
+      source_file,
+      function(expr) {
+        operator <- xml2::xml_text(expr)
+        if (operator %in% c("<<-", "->>")) {
+          paste(
+            operator,
+            "can have hard-to-predict behavior;",
+            "prefer assigning to a specific environment instead (with assign() or <-)."
+          )
+        } else {
+          paste0("Use <-, not ", operator, ", for assignment.")
+        }
+      },
+      type = "style"
     )
-  } else {
-    message <- sprintf("Use <-, not %s, for assignment.", operator)
-  }
-  xml_nodes_to_lint(expr, source_file, message, type = "style")
+  })
 }

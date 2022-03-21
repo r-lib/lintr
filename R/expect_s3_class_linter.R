@@ -18,7 +18,7 @@ expect_s3_class_linter <- function() {
 
     # (1) expect_{equal,identical}(class(x), C)
     # (2) expect_true(is.<class>(x)) and expect_true(inherits(x, C))
-    is_class_call <- xp_text_in_table(c(is_s3_class_calls, "inherits")) # nolint: object_usage_linter.
+    is_class_call <- xp_text_in_table(c(is_s3_class_calls, "inherits"))
     xpath <- glue::glue("//expr[
       (
         SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
@@ -33,7 +33,21 @@ expect_s3_class_linter <- function() {
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    return(lapply(bad_expr, gen_expect_s3_class_lint, source_file))
+    return(lapply(
+      bad_expr,
+      xml_nodes_to_lint,
+      source_file,
+      function(expr) {
+        matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
+        if (matched_function %in% c("expect_equal", "expect_identical")) {
+          lint_msg <- sprintf("expect_s3_class(x, k) is better than %s(class(x), k).", matched_function)
+        } else {
+          lint_msg <- "expect_s3_class(x, k) is better than expect_true(is.<k>(x)) or expect_true(inherits(x, k))."
+        }
+        paste(lint_msg, "Note also expect_s4_class() available for testing S4 objects.")
+      },
+      type = "warning"
+    ))
   })
 }
 
@@ -54,17 +68,6 @@ is_s3_class_calls <- paste0("is.", c(
   # stats
   "mts", "stepfun", "ts", "tskernel"
 ))
-
-gen_expect_s3_class_lint <- function(expr, source_file) {
-  matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
-  if (matched_function %in% c("expect_equal", "expect_identical")) {
-    lint_msg <- sprintf("expect_s3_class(x, k) is better than %s(class(x), k).", matched_function)
-  } else {
-    lint_msg <- "expect_s3_class(x, k) is better than expect_true(is.<k>(x)) or expect_true(inherits(x, k))."
-  }
-  lint_msg <- paste(lint_msg, "Note also expect_s4_class() available for testing S4 objects.")
-  xml_nodes_to_lint(expr, source_file, lint_msg, type = "warning")
-}
 
 #' Require usage of expect_s4_class(x, k) over expect_true(is(x, k))
 #'

@@ -7,7 +7,7 @@
 yoda_test_linter()
 }
 \description{
-Yoda tests test \verb{(expected, actual)} instead of the more common \verb{(actual, expected)}.
+Yoda tests use \verb{(expected, actual)} instead of the more common \verb{(actual, expected)}.
 This is not always possible to detect statically; this linter focuses on
 the simple case of testing an expression against a literal value, e.g.
 \verb{(1L, foo(x))} should be \verb{(foo(x), 1L)}.
