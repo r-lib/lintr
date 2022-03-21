@@ -1,38 +1,83 @@
-# names: xml tags; values: getParseData tokens
-# these can be used as unary operators; treat separately
-unary_infix_tokens <- c(
-  "OP-PLUS" = "'+'",               # +        : unary plus
-  "OP-MINUS" = "'-'",              # -        : unary minus
+# some metadata about infix operators on the R parse tree.
+#   xml_tag gives the XML tag as returned by xmlparsedata::xml_parse_data().
+#   r_string gives the operator as you would write it in R code.
+# NB: this metadata is used elsewhere in lintr, e.g. spaces_left_parentheses_linter.
+#   because of that, even though some rows of this table are currently unused, but
+#   we keep them around because it's useful to keep this info in one place.
+infix_metadata <- data.frame(stringsAsFactors = FALSE, matrix(byrow = TRUE, ncol = 2L, c(
+  "OP-PLUS", "+",
+  "OP-MINUS", "-",
+  "OP-TILDE", "~",
+  "GT", ">",
+  "GE", ">=",
+  "LT", "<",
+  "LE", "<=",
+  "EQ", "==",
+  "NE", "!=",
+  "AND", "&",
+  "OR", "|",
+  "AND2", "&&",
+  "OR2", "||",
+  "LEFT_ASSIGN", "<-",  # also includes := and <<-
+  "RIGHT_ASSIGN", "->", # also includes ->>
+  "EQ_ASSIGN", "=",
+  "EQ_SUB", "=",        # in calls: foo(x = 1)
+  "EQ_FORMALS", "=",    # in definitions: function(x = 1)
+  "SPECIAL", "%%",
+  "OP-SLASH", "/",
+  "OP-STAR", "*",
+  "OP-COMMA", ",",
+  "OP-CARET", "^",      # also includes **
+  "OP-AT", "@",
+  "OP-EXCLAMATION", "!",
+  "OP-COLON", ":",
+  "NS_GET", "::",
+  "NS_GET_INT", ":::",
+  "OP-LEFT-BRACE", "{",
+  "OP-LEFT-BRACKET", "[",
+  "LBB", "[[",
+  "OP-LEFT-PAREN", "(",
+  "OP-QUESTION", "?",
   NULL
+)))
+names(infix_metadata) <- c("xml_tag", "string_value")
+# utils::getParseData()'s designation for the tokens wouldn't be valid as XML tags
+infix_metadata$parse_tag <- ifelse(
+  startsWith(infix_metadata$xml_tag, "OP-"),
+  # NB: sQuote(x, "'") doesn't work on older R versions
+  paste0("'", infix_metadata$string_value, "'"),
+  infix_metadata$xml_tag
 )
-binary_infix_tokens <- c(
-
-  "GT" = "GT",                     # >        : greater than
-  "GE" = "GE",                     # <=       : greater than or equal to
-  "LT" = "LT",                     # <        : less than
-  "LE" = "LE",                     # <=       : less than or equal to
-  "EQ" = "EQ",                     # ==       : vector equality
-  "NE" = "NE",                     # !=       : not equal
-  "AND" = "AND",                   # &        : vector boolean and
-  "OR" = "OR",                     # |        : vector boolean or
-  "AND2" = "AND2",                 # &&       : scalar boolean and
-  "OR2" = "OR2",                   # ||       : scalar boolean or
-  "LEFT_ASSIGN" = "LEFT_ASSIGN",   # <- or := : left assignment
-  "RIGHT_ASSIGN" = "RIGHT_ASSIGN", # ->       : right assignment
-  "EQ_ASSIGN" = "EQ_ASSIGN",       # =        : equal assignment
-  "EQ_SUB" = "EQ_SUB",             # =        : keyword assignment
-  "SPECIAL" = "SPECIAL",           # %[^%]*%  : infix operators
-  "OP-SLASH" = "'/'",              # /        : unary division
-  "OP-STAR" = "'*'",               # *        : unary multiplication
-
-  NULL
+# treated separately because spacing rules are different for unary operators
+infix_metadata$unary <- infix_metadata$xml_tag %in% c("OP-PLUS", "OP-MINUS", "OP-TILDE")
+# high-precedence operators are ignored by this linter; see
+#   https://style.tidyverse.org/syntax.html#infix-operators
+infix_metadata$low_precedence <- infix_metadata$string_value %in% c(
+  "+", "-", "~", ">", ">=", "<", "<=", "==", "!=", "&", "&&", "|", "||", "<-", "->", "=", "%%", "/", "*"
 )
-infix_tokens <- c(unary_infix_tokens, binary_infix_tokens)
+# comparators come up in several lints
+infix_metadata$comparator <- infix_metadata$string_value %in% c("<", "<=", ">", ">=", "==", "!=")
 
-#' @describeIn linters  Check that infix operators are surrounded by spaces.
+#' Infix spaces linter
+#'
+#' Check that infix operators are surrounded by spaces. Enforces the corresponding Tidyverse style guide rule;
+#'   see <https://style.tidyverse.org/syntax.html#infix-operators>.
+#'
+#' @param exclude_operators Character vector of operators to exlude from consideration for linting.
+#'   Default is to include the following "low-precedence" operators:
+#'   `+`, `-`, `~`, `>`, `>=`, `<`, `<=`, `==`, `!=`, `&`, `&&`, `|`, `||`, `<-`, `:=`, `<<-`, `->`, `->>`,
+#'   `=`, `/`, `*`, and any infix operator (exclude infixes by passing `"%%"`). Note that `<-`, `:=`, and `<<-`
+#'   are included/excluded as a group (indicated by passing `"<-"`), as are `->` and `->>` (_viz_, `"->"`),
+#'   and that `=` for assignment and for setting arguments in calls are treated the same.
+#' @evalRd rd_tags("infix_spaces_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-infix_spaces_linter <- function() {
+infix_spaces_linter <- function(exclude_operators = NULL) {
   Linter(function(source_file) {
+    infix_tokens <- infix_metadata[
+      infix_metadata$low_precedence & !infix_metadata$string_value %in% exclude_operators,
+      "parse_tag"
+    ]
     lapply(
       ids_with_token(source_file, infix_tokens, fun = `%in%`),
       function(id) {

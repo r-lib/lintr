@@ -1,4 +1,7 @@
 test_that("it returns markers which match lints", {
+  mockery::stub(rstudio_source_markers, "rstudioapi::callFun", function(...) list(...))
+  mockery::stub(rstudio_source_markers, "rstudioapi::executeCommand", function(...) NULL)
+
   lint1 <- structure(
     list(
       Lint(filename = "test_file",
@@ -10,11 +13,8 @@ test_that("it returns markers which match lints", {
     ),
     class = "lints"
   )
-  with_mock(
-    `rstudioapi::callFun` = function(...) list(...),
-    `rstudioapi::executeCommand` = function(...) NULL,
-    marker1 <- rstudio_source_markers(lint1)
-  )
+
+  marker1 <- rstudio_source_markers(lint1)
   expect_equal(marker1$name, "lintr")
   expect_equal(marker1$markers[[1]]$type, lint1[[1]]$type)
   expect_equal(marker1$markers[[1]]$file, lint1[[1]]$filename)
@@ -38,11 +38,7 @@ test_that("it returns markers which match lints", {
     ),
     class = "lints"
   )
-  with_mock(
-    `rstudioapi::callFun` = function(...) list(...),
-    `rstudioapi::executeCommand` = function(...) NULL,
-    marker2 <- rstudio_source_markers(lint2)
-  )
+  marker2 <- rstudio_source_markers(lint2)
   expect_equal(marker2$name, "lintr")
   expect_equal(marker2$markers[[1]]$type, lint2[[1]]$type)
   expect_equal(marker2$markers[[1]]$file, lint2[[1]]$filename)
@@ -52,6 +48,9 @@ test_that("it returns markers which match lints", {
 })
 
 test_that("it prepends the package path if it exists", {
+  mockery::stub(rstudio_source_markers, "rstudioapi::callFun", function(...) list(...))
+  mockery::stub(rstudio_source_markers, "rstudioapi::executeCommand", function(...) NULL)
+
   lint3 <- structure(
     list(
       Lint(filename = "test_file",
@@ -64,11 +63,7 @@ test_that("it prepends the package path if it exists", {
     class = "lints",
     path = "test"
   )
-  with_mock(
-    `rstudioapi::callFun` = function(...) list(...),
-    `rstudioapi::executeCommand` = function(...) NULL,
-    marker3 <- rstudio_source_markers(lint3)
-  )
+  marker3 <- rstudio_source_markers(lint3)
   expect_equal(marker3$name, "lintr")
   expect_equal(marker3$basePath, "test")
   expect_equal(marker3$markers[[1]]$type, lint3[[1]]$type)
@@ -79,40 +74,34 @@ test_that("it prepends the package path if it exists", {
 })
 
 test_that("it returns an empty list of markers if there are no lints", {
+  mockery::stub(rstudio_source_markers, "rstudioapi::callFun", function(...) list(...))
+  mockery::stub(rstudio_source_markers, "rstudioapi::executeCommand", function(...) NULL)
+
   lint4 <- structure(
     list(),
     class = "lints"
   )
-  with_mock(
-    `rstudioapi::callFun` = function(...) list(...),
-    `rstudioapi::executeCommand` = function(...) NULL,
-    marker4 <- rstudio_source_markers(lint4)
-  )
+  marker4 <- rstudio_source_markers(lint4)
   expect_equal(marker4$name, "lintr")
   expect_equal(marker4$markers, list())
 })
 
 test_that("rstudio_source_markers apply to print within rstudio", {
+  withr::local_options(lintr.rstudio_source_markers = TRUE)
+  # TODO(@michaelchirico): Recent (as of this writing) withr v2.5.0 supports local_tempfile(lines = l) to simplify this
+  tmp <- withr::local_tempfile()
+  writeLines("1:ncol(x)", tmp)
+  empty <- withr::local_tempfile()
+  file.create(empty)
+
   with_mock(
     `rstudioapi::hasFun` = function(x, ...) TRUE,
     `rstudioapi::callFun` = function(...) cat("matched\n"), {
-      writeLines("1:ncol(x)", tmp <- tempfile())
-      on.exit(unlink(tmp))
+    l <- lint(tmp, seq_linter())
+    expect_output(print(l), "matched", fixed = TRUE)
 
-      old <- options(lintr.rstudio_source_markers = TRUE)
-      on.exit(options(old), add = TRUE)
+    l <- lint(empty, seq_linter())
 
-      l <- lint(tmp, seq_linter())
-
-      expect_output(print(l), "matched", fixed = TRUE)
-
-      empty <- tempfile()
-      file.create(empty)
-      on.exit(unlink(empty), add = TRUE)
-
-      l <- lint(empty, seq_linter())
-
-      expect_output(print(l), "matched", fixed = TRUE)
-    }
-  )
+    expect_output(print(l), "matched", fixed = TRUE)
+  })
 })

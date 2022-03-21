@@ -52,16 +52,18 @@ markdown <- function(x, info, ...) {
 
 #' @export
 print.lints <- function(x, ...) {
-  rstudio_source_markers <- getOption("lintr.rstudio_source_markers", TRUE) &&
+  use_rstudio_source_markers <- getOption("lintr.rstudio_source_markers", TRUE) &&
     requireNamespace("rstudioapi", quietly = TRUE) &&
     rstudioapi::hasFun("sourceMarkers")
 
+  github_annotation_project_dir <- getOption("lintr.github_annotation_project_dir", "")
+
   if (length(x)) {
     inline_data <- x[[1]][["filename"]] == "<text>"
-    if (!inline_data && rstudio_source_markers) {
+    if (!inline_data && use_rstudio_source_markers) {
       rstudio_source_markers(x)
     } else if (in_github_actions()) {
-      github_actions_log_lints(x)
+      github_actions_log_lints(x, project_dir = github_annotation_project_dir)
     } else {
       if (in_ci() && settings$comment_bot) {
 
@@ -82,7 +84,7 @@ print.lints <- function(x, ...) {
     if (isTRUE(settings$error_on_lint)) {
       quit("no", 31, FALSE) # nocov
     }
-  } else if (rstudio_source_markers) {
+  } else if (use_rstudio_source_markers) {
     # Empty lints: clear RStudio source markers
     rstudio_source_markers(x)
   }
@@ -127,7 +129,7 @@ names.lints <- function(x, ...) {
 }
 
 #' @export
-split.lints <- function(x, f=NULL, ...) {
+split.lints <- function(x, f = NULL, ...) {
   if (is.null(f)) f <- names(x)
   splt <- split.default(x, f)
   for (i in names(splt)) class(splt[[i]]) <- "lints"

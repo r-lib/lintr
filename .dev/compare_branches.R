@@ -1,6 +1,19 @@
 #!/usr/local/bin/Rscript
 
-# compare the lints obtained before/after a given PR/branch vs current master
+# compare the lints obtained before/after a given PR/branch vs current master.
+#
+# How to use:
+#   See below (param_list <-) for documentation of the script's arguments.
+#   Most importantly, you'll need to provide a `--pkg_dir` pointing to a
+#     local directory containing R packages (e.g., a CRAN mirror or github
+#     directory containing some number of packages).
+#   The script is executable, e.g. you can run the following from the lintr TLD:
+#     ./dev/compare_branches --pkg_dir=/path/to/cran --sample_size=50 ...
+#   The script outputs a CSV with the lint results for the script options to --outfile.
+#   To compare the results of a PR to that at current HEAD, you could e.g. run
+#     ./dev/compare_branches --branch=my-feature-branch --outfile=new.csv ...
+#     ./dev/compare_branches --branch=master --outfile=old.csv ...
+#   And then compare the results found in new.csv & old.csv.
 
 library(optparse)
 library(dplyr)

@@ -132,10 +132,10 @@ test_that("lint() results from file or text should be consistent", {
   unlink(file)
   lint_from_text2 <- lint(file, linters = linters, text = text)
 
-  expect_equal(length(lint_from_file), 2)
-  expect_equal(length(lint_from_lines), 2)
-  expect_equal(length(lint_from_text), 2)
-  expect_equal(length(lint_from_text2), 2)
+  expect_length(lint_from_file, 2L)
+  expect_length(lint_from_lines, 2L)
+  expect_length(lint_from_text, 2L)
+  expect_length(lint_from_text2, 2L)
 
   expect_equal(lint_from_file, lint_from_text2)
 
@@ -186,7 +186,8 @@ test_that("compatibility warnings work", {
       "Use is.na",
       linters = list(unclass(equals_na_linter()))
     ),
-    fixed = "The use of linters of class 'function'"
+    "The use of linters of class 'function'",
+    fixed = TRUE
   )
 
   expect_error(

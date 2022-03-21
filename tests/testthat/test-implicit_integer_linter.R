@@ -36,7 +36,7 @@ test_that("single numerical constants are properly identified ", {
 test_that("linter returns the correct linting", {
   msg <- "Integers should not be implicit. Use the form 1L for integers or 1.0 for doubles."
   linter <- implicit_integer_linter()
-  expect_is(linter, "linter")
+  expect_s3_class(linter, "linter")
 
   expect_lint("x <<- 1L", NULL, linter)
   expect_lint("1.0/-Inf -> y", NULL, linter)

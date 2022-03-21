@@ -21,7 +21,7 @@ test_that("it returns the input trimmed to the last full lint if one exists with
 
 test_that("as.data.frame.lints", {
   # A minimum lint
-  expect_is(
+  expect_s3_class(
     l1 <- Lint(
       "dummy.R",
       line_number = 1L,
@@ -33,7 +33,7 @@ test_that("as.data.frame.lints", {
   )
 
   # A larger lint
-  expect_is(
+  expect_s3_class(
     l2 <- Lint(
       "dummy.R",
       line_number = 2L,
@@ -53,7 +53,7 @@ test_that("as.data.frame.lints", {
 
   # Convert lints to data.frame
   lints <- structure(list(l1, l2), class = "lints")
-  expect_is(
+  expect_s3_class(
     df <- as.data.frame.lints(lints),
     "data.frame"
   )
@@ -80,7 +80,7 @@ test_that("summary.lints() works (no lints)", {
     "x <- 1\n",
     linters = assignment_linter())
   no_lint_summary <- summary(no_lints)
-  expect_true(is.data.frame(no_lint_summary))
+  expect_s3_class(no_lint_summary, "data.frame")
   expect_equal(nrow(no_lint_summary), 0)
 })
 
@@ -89,7 +89,7 @@ test_that("summary.lints() works (lints found)", {
     "x = 1\n",
     linters = assignment_linter())
   has_lint_summary <- summary(has_lints)
-  expect_true(is.data.frame(has_lint_summary))
+  expect_s3_class(has_lint_summary, "data.frame")
   expect_equal(nrow(has_lint_summary), 1)
   expect_true(has_lint_summary$style > 0)
   expect_equal(has_lint_summary$warning, 0)

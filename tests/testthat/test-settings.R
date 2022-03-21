@@ -74,11 +74,9 @@ test_that("it errors if the config file does not end in a newline", {
   expect_error(read_settings("foo"), "Malformed config file")
 })
 
-test_that("with_defaults works as expected", {
-  # test capturing unnamed args
-  defaults <- with_defaults(assignment_linter)
+test_that("with_defaults works as expected with unnamed args", {
   # assignment_linter is in defaults, so output doesn't change
-  expect_equal(names(defaults), names(with_defaults()))
+  expect_named(with_defaults(assignment_linter), names(with_defaults()))
 })
 
 test_that("rot utility works as intended", {
@@ -92,10 +90,10 @@ test_that("logical_env utility works as intended", {
   on.exit(if (is.na(old)) Sys.unsetenv(test_env) else sym_set_env(test_env, old))
 
   sym_set_env(test_env, "true")
-  expect_equal(lintr:::logical_env(test_env), TRUE)
+  expect_true(lintr:::logical_env(test_env))
 
   sym_set_env(test_env, "F")
-  expect_equal(lintr:::logical_env(test_env), FALSE)
+  expect_false(lintr:::logical_env(test_env))
 
   sym_set_env(test_env, "")
   expect_null(lintr:::logical_env(test_env))
@@ -106,8 +104,8 @@ test_that("logical_env utility works as intended", {
 
 # fixing #774
 test_that("with_defaults doesn't break on very long input", {
-  expect_equal(
-    names(with_defaults(
+  expect_named(
+    with_defaults(
       default = list(),
       lintr::undesirable_function_linter(c(
         detach = paste(
@@ -120,7 +118,7 @@ test_that("with_defaults doesn't break on very long input", {
           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         )
       ))
-    )),
+    ),
     "lintr::undesirable_function_linter"
   )
 })

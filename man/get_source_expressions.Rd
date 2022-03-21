@@ -14,6 +14,7 @@ If \code{NULL}, then \code{filename} will be read.}
 }
 \value{
 A \code{list} with three components:
+\describe{
 \item{expressions}{a \code{list} of
 \code{n+1} objects. The first \code{n} elements correspond to each expression in
 \code{filename}, and consist of a list of 9 elements:
@@ -48,6 +49,7 @@ newline (as determined by \code{\link[=readLines]{readLines()}} producing a corr
 }
 \item{error}{A \code{Lint} object describing any parsing error.}
 \item{lines}{The \code{\link[=readLines]{readLines()}} output for this file.}
+}
 }
 \description{
 This object is given as input to each linter

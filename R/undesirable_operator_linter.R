@@ -8,10 +8,15 @@ op_types <- c(
 )
 
 
-#' @describeIn linters  Report the use of undesirable operators, e.g. \code{`:::`} or \code{`<<-`}
-#'                      and suggest an alternative.
-#' @param op  Named character vector, where the names are the names of the undesirable operators,
-#'            and the values are the text for the alternative operator to use (or \code{NA}).
+#' Undesirable operator linter
+#'
+#' Report the use of undesirable operators, e.g. [`:::`][base::ns-dblcolon] or
+#' [`<<-`][base::assignOps] and suggest an alternative.
+#'
+#' @param op Named character vector, where the names are the names of the undesirable operators, and the values are
+#'   the text for the alternative operator to use (or `NA`).
+#' @evalRd rd_tags("undesirable_operator_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 undesirable_operator_linter <- function(op = default_undesirable_operators) {
   Linter(function(source_file) {

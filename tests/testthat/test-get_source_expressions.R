@@ -18,45 +18,48 @@ test_that("tab positions have been corrected", {
   )
 
   with_content_to_parse("TRUE",
-    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], c(1L, 4L))
+    expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(1L, 4L))
   )
 
   with_content_to_parse("\tTRUE",
-    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], c(2L, 5L))
+    expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(2L, 5L))
   )
 
   with_content_to_parse("\t\tTRUE",
-    expect_equivalent(pc[[1]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], c(3L, 6L))
+    expect_identical(unlist(pc[[1]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(3L, 6L))
   )
 
   with_content_to_parse("x\t<-\tTRUE", {
-    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "x", c("col1", "col2")], c(1L, 1L))
-    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "<-", c("col1", "col2")], c(3L, 4L))
-    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], c(6L, 9L))
+    expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "x", c("col1", "col2")], use.names = FALSE), c(1L, 1L))
+    expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "<-", c("col1", "col2")], use.names = FALSE), c(3L, 4L))
+    expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(6L, 9L))
   })
 
   with_content_to_parse("\tfunction\t(x)\t{\tprint(pc[\t,1])\t;\t}", {
-    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "function", c("col1", "col2")], c(2L, 9L))
-    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "x", c("col1", "col2")], c(12L, 12L))
-    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "print", c("col1", "col2")], c(17L, 21L))
-    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == ";", c("col1", "col2")], c(32L, 32L))
-    expect_equivalent(pc[[1L]][pc[[1L]][["text"]] == "}", c("col1", "col2")], c(34L, 34L))
+    expect_identical(
+      unlist(pc[[1L]][pc[[1L]][["text"]] == "function", c("col1", "col2")], use.names = FALSE),
+      c(2L, 9L)
+    )
+    expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "x", c("col1", "col2")], use.names = FALSE), c(12L, 12L))
+    expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "print", c("col1", "col2")], use.names = FALSE), c(17L, 21L))
+    expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == ";", c("col1", "col2")], use.names = FALSE), c(32L, 32L))
+    expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "}", c("col1", "col2")], use.names = FALSE), c(34L, 34L))
   })
 
   with_content_to_parse("# test tab\n\ns <- 'I have \\t a dog'\nrep(\ts, \t3)", {
-    expect_equivalent(
-      pc[[2L]][pc[[2L]][["text"]] == "'I have \\t a dog'", c("line1", "col1", "col2")],
+    expect_identical(
+      unlist(pc[[2L]][pc[[2L]][["text"]] == "'I have \\t a dog'", c("line1", "col1", "col2")], use.names = FALSE),
       c(3L, 6L, 22L)
     )
-    expect_equivalent(
-      pc[[3L]][pc[[3L]][["text"]] == "3", c("line1", "col1", "col2")],
+    expect_identical(
+      unlist(pc[[3L]][pc[[3L]][["text"]] == "3", c("line1", "col1", "col2")], use.names = FALSE),
       c(4L, 10L, 10L)
     )
   })
 
   with_content_to_parse("function(){\nTRUE\n\t}", {
-    expect_equivalent(
-      pc[[1L]][1L, c("line1", "col1", "line2", "col2")],
+    expect_identical(
+      unlist(pc[[1L]][1L, c("line1", "col1", "line2", "col2")], use.names = FALSE),
       c(1L, 1L, 3L, 2L),
       info = "expression that spans several lines"
     )
@@ -121,4 +124,47 @@ test_that("Warns if encoding is misspecified", {
   expect_s3_class(the_lint, "lint")
   expect_equal(the_lint$message, "Invalid multibyte string. Is the encoding correct?")
   expect_equal(the_lint$line_number, 1L)
+})
+
+test_that("Can extract line number from parser errors", {
+  skip_if_not(getRversion() >= "4.0")
+
+  # malformed raw string literal at line 2
+  with_content_to_parse(
+    trim_some('
+      "ok"
+      R"---a---"
+    '), {
+    expect_equal(error$message, "Malformed raw string literal.")
+    expect_equal(error$line_number, 2L)
+  })
+
+  # invalid \u{xxxx} sequence (line 3)
+  with_content_to_parse(
+    trim_some('
+      ok
+      ok
+      "\\u{9999"
+    '), {
+    expect_equal(error$message, "Invalid \\u{xxxx} sequence.")
+    expect_equal(error$line_number, 3L)
+  })
+
+  # invalid \u{xxxx} sequence (line 4)
+  with_content_to_parse(
+    trim_some('
+      ok
+      ok
+      "\\u{9999
+    '), {
+    # parser erroneously reports line 4
+    expect_equal(error$message, "Invalid \\u{xxxx} sequence.")
+    expect_equal(error$line_number, 3L)
+  })
+
+  # repeated formal argument 'a' on line 1
+  with_content_to_parse("function(a, a) {}", {
+    expect_equal(error$message, "Repeated formal argument 'a'.")
+    expect_equal(error$line_number, 1L)
+  })
 })

@@ -59,7 +59,7 @@ is_path <- function(path) {
   re_matches(path, path_regex)
 }
 
-is_valid_path <- function(path, lax=FALSE) {
+is_valid_path <- function(path, lax = FALSE) {
   # Given a character vector of paths, return FALSE for directory or file having valid characters.
   # On Windows, invalid chars are all control chars and: * ? " < > | :
   # On Unix, all characters are valid, except when lax=TRUE (use same invalid chars as Windows).
@@ -91,7 +91,7 @@ is_long_path <- function(path) {
   )
 }
 
-is_valid_long_path <- function(path, lax=FALSE) {
+is_valid_long_path <- function(path, lax = FALSE) {
   # Convenience function to avoid linting short paths and those unlikely to be valid paths
   ret <- is_valid_path(path, lax)
   if (lax) {
@@ -101,7 +101,7 @@ is_valid_long_path <- function(path, lax=FALSE) {
 }
 
 
-split_path <- function(path, sep="/|\\\\") {
+split_path <- function(path, sep = "/|\\\\") {
   if (!is.character(path)) {
     stop("argument 'path' should be a character vector")
   }
@@ -139,7 +139,7 @@ split_path <- function(path, sep="/|\\\\") {
 }
 
 #' @include utils.R
-make_path_linter <- function(path_function, message, linter, name = linter_auto_name()) {
+path_linter_factory <- function(path_function, message, linter, name = linter_auto_name()) {
   force(name)
   Linter(function(source_file) {
     lapply(
@@ -170,11 +170,21 @@ make_path_linter <- function(path_function, message, linter, name = linter_auto_
   }, name = name)
 }
 
-#' @describeIn linters  Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
-#' @param lax  Less stringent linting, leading to fewer false positives.
+#' Absolute path linter
+#'
+#' Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
+#'
+#' @param lax Less stringent linting, leading to fewer false positives.
+#' If `TRUE`, only lint path strings, which
+#'
+#' * contain at least two path elements, with one having at least two characters and
+#' * contain only alphanumeric chars (including UTF-8), spaces, and win32-allowed punctuation
+#'
+#' @evalRd rd_tags("absolute_path_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 absolute_path_linter <- function(lax = TRUE) {
-  make_path_linter(
+  path_linter_factory(
     path_function = function(path) {
       is_absolute_path(path) && is_valid_long_path(path, lax)
     },
@@ -182,10 +192,16 @@ absolute_path_linter <- function(lax = TRUE) {
   )
 }
 
-#' @describeIn linters  Check that file.path() is used to construct safe and portable paths.
+#' Non-portable path linter
+#'
+#' Check that [file.path()] is used to construct safe and portable paths.
+#'
+#' @inheritParams absolute_path_linter
+#' @evalRd rd_tags("nonportable_path_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 nonportable_path_linter <- function(lax = TRUE) {
-  make_path_linter(
+  path_linter_factory(
     path_function = function(path) {
       is_path(path) && is_valid_long_path(path, lax) && path != "/" &&
         re_matches(path, rex(one_of("/", "\\")))

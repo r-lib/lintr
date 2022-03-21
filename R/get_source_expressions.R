@@ -13,8 +13,9 @@
 #'
 #' @param filename the file to be parsed.
 #' @param lines a character vector of lines.
-#'   If \code{NULL}, then \code{filename} will be read.
+#'   If `NULL`, then `filename` will be read.
 #' @return A `list` with three components:
+#' \describe{
 #'   \item{expressions}{a `list` of
 #'   `n+1` objects. The first `n` elements correspond to each expression in
 #'   `filename`, and consist of a list of 9 elements:
@@ -49,6 +50,7 @@
 #'   }
 #'   \item{error}{A `Lint` object describing any parsing error.}
 #'   \item{lines}{The [readLines()] output for this file.}
+#' }
 #' @export
 #' @md
 get_source_expressions <- function(filename, lines = NULL) {
@@ -68,183 +70,14 @@ get_source_expressions <- function(filename, lines = NULL) {
   # We don't use isFALSE since it is introduced in R 3.5.0.
   terminal_newline <- !identical(attr(source_file$lines, "terminal_newline", exact = TRUE), FALSE)
 
-  lint_error <- function(e) {
-    message_info <- re_matches(e$message,
-      rex(except_some_of(":"),
-        ":",
-        capture(name = "line",
-          digits),
-        ":",
-        capture(name = "column",
-          digits),
-        ":",
-        space,
-        capture(name = "message",
-          anything),
-        "\n")
-      )
-
-    # an error that does not use R_ParseErrorMsg
-    if (is.na(message_info$line)) {
-
-      if (grepl("invalid multibyte character in parser at line", e$message, fixed = TRUE)) {
-        l <- as.integer(re_matches(
-          e$message,
-          rex("invalid multibyte character in parser at line ", capture(name = "line", digits))
-        )$line)
-        # Invalid encoding in source code
-        return(
-          Lint(
-            filename = source_file$filename,
-            line_number = l,
-            column_number = 1L,
-            type = "error",
-            message = "Invalid multibyte character in parser. Is the encoding correct?",
-            line = source_file$lines[[l]]
-          )
-        )
-      } else if (grepl("invalid multibyte string, element", e$message, fixed = TRUE)) {
-        # Invalid encoding, will break even re_matches() below, so we need to handle this first.
-        return(
-          Lint(
-            filename = source_file$filename,
-            line_number = 1L,
-            column_number = 1L,
-            type = "error",
-            message = "Invalid multibyte string. Is the encoding correct?",
-            line = ""
-          )
-        )
-      } else if (grepl("repeated formal argument", e$message, fixed = TRUE)) {
-        matches <- re_matches(
-          e$message,
-          rex("repeated formal argument '",
-            capture(name = "symbol", anything),
-            "' on line ",
-            capture(name = "line", digits)
-          )
-        )
-        sym <- matches$symbol
-        l <- as.integer(matches$line)
-        # Repeated formal argument 'sym' on line l
-        return(
-          Lint(
-            filename = source_file$filename,
-            line_number = l,
-            column_number = 1L,
-            type = "error",
-            message = sprintf("Repeated formal argument '%s'.", sym),
-            line = source_file$lines[[l]]
-          )
-        )
-      }
-
-      message_info <- re_matches(e$message,
-        rex(single_quotes, capture(name = "name", anything), single_quotes,
-          anything,
-          double_quotes, capture(name = "starting", anything), double_quotes))
-
-      loc <- re_matches(source_file$content, rex(message_info$starting), locations = TRUE)
-      line_location <- loc[!is.na(loc$start) & !is.na(loc$end), ]
-
-      if (nrow(line_location) == 0L) {
-        if (grepl("attempt to use zero-length variable name", e$message, fixed = TRUE)) {
-          # empty symbol: ``, ``(), ''(), ""(), fun(''=42), fun(""=42), fun(a=1,""=42)
-          loc <- re_matches(source_file$content,
-            rex("``" %or% list(or("''", '""'), any_spaces, "(") %or%
-              list(or("(", ","), any_spaces, or("''", '""'), any_spaces, "=")),
-            options = "multi-line",
-            locations = TRUE)
-          loc <- loc[!is.na(loc$start) & !is.na(loc$end), ]
-          if (nrow(loc) > 0) {
-            line_location <- loc[1, ]
-          }
-        } else {
-          # nocov start
-          return(
-            Lint(
-              filename = source_file$filename,
-              line_number = 1,
-              column_number = 1,
-              type = "error",
-              message = e$message,
-              line = ""
-            )
-          )
-          # nocov end
-        }
-      }
-
-      line_number <- find_line_fun(source_file$content)(line_location$start)
-      column_number <- find_column_fun(source_file$content)(line_location$start)
-      return(
-        Lint(
-          filename = source_file$filename,
-          line_number = line_number,
-          column_number = column_number,
-          type = "error",
-          message = e$message,
-          line = source_file$lines[[line_number]]
-        )
-      )
-    }
-
-    line_number <- as.integer(message_info$line)
-    column_number <- as.integer(message_info$column)
-
-    # If the column number is zero it means the error really occurred at the
-    # end of the previous line
-    if (column_number %==% 0L) {
-      line_number <- line_number - 1L
-      line <- source_file$lines[[line_number]]
-      column_number <- nchar(line)
-    } else {
-      line <- source_file$lines[[line_number]]
-    }
-
-    Lint(
-      filename = source_file$filename,
-      line_number = line_number,
-      column_number = column_number,
-      type = "error",
-      message = message_info$message,
-      line = line
-    )
-  }
-
-  rmd_error <- function(e) {
-    message_info <- re_matches(e$message,
-      rex(except_some_of(":"),
-        ":",
-        capture(name = "line",
-          digits),
-        ":",
-        capture(name = "column",
-          digits),
-        ":",
-        space,
-        capture(name = "message",
-          anything),
-        "\n")
-      )
-
-    line_number <- as.integer(message_info$line)
-    column_number <- as.integer(message_info$column)
-
-    Lint(
-      filename = source_file$filename,
-      line_number = line_number,
-      column_number = column_number,
-      type = "error",
-      message = message_info$message,
-      line = source_file$lines[line_number]
-    )
-  }
-
   e <- NULL
-  source_file$lines <- extract_r_source(source_file$filename, source_file$lines, error = rmd_error)
+  source_file$lines <- extract_r_source(
+    filename = source_file$filename,
+    lines = source_file$lines,
+    error = function(e) lint_rmd_error(e, source_file)
+  )
   source_file$content <- get_content(source_file$lines)
-  parsed_content <- get_source_file(source_file, error = lint_error)
+  parsed_content <- get_source_file(source_file, error = function(e) lint_parse_error(e, source_file))
   tree <- generate_tree(parsed_content)
 
   if (inherits(e, "lint") && !nzchar(e$line)) {
@@ -273,6 +106,229 @@ get_source_expressions <- function(filename, lines = NULL) {
   }
 
   list(expressions = expressions, error = e, lines = source_file$lines)
+}
+
+lint_parse_error <- function(e, source_file) {
+  message_info <- re_matches(e$message,
+    rex(except_some_of(":"),
+      ":",
+      capture(name = "line",
+        digits),
+      ":",
+      capture(name = "column",
+        digits),
+      ":",
+      space,
+      capture(name = "message",
+        anything),
+      "\n")
+    )
+
+  # an error that does not use R_ParseErrorMsg
+  if (is.na(message_info$line)) {
+
+    if (grepl("invalid multibyte character in parser at line", e$message, fixed = TRUE)) {
+      l <- as.integer(re_matches(
+        e$message,
+        rex("invalid multibyte character in parser at line ", capture(name = "line", digits))
+      )$line)
+      # Invalid encoding in source code
+      return(
+        Lint(
+          filename = source_file$filename,
+          line_number = l,
+          column_number = 1L,
+          type = "error",
+          message = "Invalid multibyte character in parser. Is the encoding correct?",
+          line = source_file$lines[[l]]
+        )
+      )
+    } else if (grepl("invalid multibyte string, element", e$message, fixed = TRUE)) {
+      # Invalid encoding, will break even re_matches() below, so we need to handle this first.
+      return(
+        Lint(
+          filename = source_file$filename,
+          line_number = 1L,
+          column_number = 1L,
+          type = "error",
+          message = "Invalid multibyte string. Is the encoding correct?",
+          line = ""
+        )
+      )
+    } else if (grepl("repeated formal argument", e$message, fixed = TRUE)) {
+      matches <- re_matches(
+        e$message,
+        rex("repeated formal argument '",
+          capture(name = "symbol", anything),
+          "' on line ",
+          capture(name = "line", digits)
+        )
+      )
+      sym <- matches$symbol
+      l <- as.integer(matches$line)
+      # Repeated formal argument 'sym' on line l
+      return(
+        Lint(
+          filename = source_file$filename,
+          line_number = l,
+          column_number = 1L,
+          type = "error",
+          message = sprintf("Repeated formal argument '%s'.", sym),
+          line = source_file$lines[[l]]
+        )
+      )
+    }
+
+    # Hand-crafted regex to parse all error messages generated by the R parser code.
+    # The error messages can be found in src/main/gram.c and src/main/character.c in the R code.
+    # This code produces a list of all possible error messages:
+    #
+    # nolint start: commented_code_linter.
+    # parser_files <- c("src/main/gram.c", "src/main/character.c")
+    #
+    # lines <- unlist(lapply(
+    #   parser_files,
+    #   function(f) readLines(paste0("https://raw.githubusercontent.com/wch/r-source/trunk/", f))
+    # ))
+    # error_calls <- grep("error(_(", lines, fixed = TRUE, value = TRUE)
+    # error_formats <- trimws(gsub("^.*error\\(_\\(\"(.+)\".+", "\\1", error_calls))
+    # error_formats <- unique(error_formats)
+    # nolint end
+    parse_error_rx <- rex(
+      start,
+      capture(anything, name = "msg_1"),
+      or(" at ", " on ", " ("),
+      "line ",
+      capture(digits, name = "line"),
+      maybe(")"),
+      capture(anything, name = "msg_2"),
+      end
+    )
+
+    if (grepl(parse_error_rx, e$message, perl = TRUE)) {
+      rx_match <- re_matches(
+        e$message,
+        parse_error_rx
+      )
+      l <- as.integer(rx_match$line)
+      # Sometimes the parser "line" runs one past the last line
+      l <- pmin(l, length(source_file$lines))
+
+      msg <- paste0(rx_match$msg_1, if (nzchar(rx_match$msg_2)) " ", rx_match$msg_2, ".")
+      substr(msg, 1L, 1L) <- toupper(substr(msg, 1L, 1L))
+
+      return(
+        Lint(
+          filename = source_file$filename,
+          line_number = l,
+          column_number = 1L,
+          type = "error",
+          message = msg,
+          line = source_file$lines[[l]]
+        )
+      )
+    }
+
+    message_info <- re_matches(e$message,
+      rex(single_quotes, capture(name = "name", anything), single_quotes,
+        anything,
+        double_quotes, capture(name = "starting", anything), double_quotes))
+
+    loc <- re_matches(source_file$content, rex(message_info$starting), locations = TRUE)
+    line_location <- loc[!is.na(loc$start) & !is.na(loc$end), ]
+
+    if (nrow(line_location) == 0L) {
+      if (grepl("attempt to use zero-length variable name", e$message, fixed = TRUE)) {
+        # empty symbol: ``, ``(), ''(), ""(), fun(''=42), fun(""=42), fun(a=1,""=42)
+        loc <- re_matches(source_file$content,
+          rex("``" %or% list(or("''", '""'), any_spaces, "(") %or%
+            list(or("(", ","), any_spaces, or("''", '""'), any_spaces, "=")),
+          options = "multi-line",
+          locations = TRUE)
+        loc <- loc[!is.na(loc$start) & !is.na(loc$end), ]
+        if (nrow(loc) > 0) {
+          line_location <- loc[1, ]
+        }
+      } else {
+        # nocov start
+        return(
+          Lint(
+            filename = source_file$filename,
+            line_number = 1,
+            column_number = 1,
+            type = "error",
+            message = e$message,
+            line = ""
+          )
+        )
+        # nocov end
+      }
+    }
+
+    line_number <- find_line_fun(source_file$content)(line_location$start)
+    column_number <- find_column_fun(source_file$content)(line_location$start)
+    return(
+      Lint(
+        filename = source_file$filename,
+        line_number = line_number,
+        column_number = column_number,
+        type = "error",
+        message = e$message,
+        line = source_file$lines[[line_number]]
+      )
+    )
+  }
+
+  line_number <- as.integer(message_info$line)
+  column_number <- as.integer(message_info$column)
+
+  # If the column number is zero it means the error really occurred at the
+  # end of the previous line
+  if (column_number %==% 0L) {
+    line_number <- line_number - 1L
+    line <- source_file$lines[[line_number]]
+    column_number <- nchar(line)
+  } else {
+    line <- source_file$lines[[line_number]]
+  }
+
+  Lint(
+    filename = source_file$filename,
+    line_number = line_number,
+    column_number = column_number,
+    type = "error",
+    message = message_info$message,
+    line = line
+  )
+}
+
+lint_rmd_error <- function(e, source_file) {
+  message_info <- re_matches(e$message,
+    rex(except_some_of(":"),
+      ":",
+      capture(name = "line",
+        digits),
+      ":",
+      capture(name = "column",
+        digits),
+      ":",
+      space,
+      capture(name = "message",
+        anything),
+      "\n")
+    )
+
+  line_number <- as.integer(message_info$line)
+  column_number <- as.integer(message_info$column)
+
+  Lint(
+    filename = source_file$filename,
+    line_number = line_number,
+    column_number = column_number,
+    type = "error",
+    message = message_info$message,
+    line = source_file$lines[line_number]
+  )
 }
 
 get_single_source_expression <- function(loc,

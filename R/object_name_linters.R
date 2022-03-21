@@ -1,7 +1,13 @@
-#' @describeIn linters  Check that object names conform to a naming style.
+#' Object name linter
+#'
+#' Check that object names conform to a naming style.
+#' The default naming styles are "snake_case" and "symbols".
+#'
 #' @param styles A subset of
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
 #'   match at least one of these styles.
+#' @evalRd rd_tags("object_name_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 object_name_linter <- function(styles = c("snake_case", "symbols")) {
 
@@ -138,7 +144,7 @@ object_lint2 <- function(expr, source_file, message) {
   )
 }
 
-make_object_linter <- function(fun, name = linter_auto_name()) {
+object_linter_factory <- function(fun, name = linter_auto_name()) {
   force(name)
   Linter(function(source_file) {
 
@@ -315,10 +321,16 @@ style_regexes <- list(
 
 regexes_rd <- toString(paste0("\\sQuote{", names(style_regexes), "}"))
 
-#' @describeIn linters check that object names are not too long.
+#' Object length linter
+#'
+#' Check that object names are not too long.
+#'
+#' @param length maximum variable name length allowed.
+#' @evalRd rd_tags("object_length_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 object_length_linter <- function(length = 30L) {
-  make_object_linter(function(source_file, token) {
+  object_linter_factory(function(source_file, token) {
     if (nchar(token$text) > length) {
         object_lint(
           source_file,

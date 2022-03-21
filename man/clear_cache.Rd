@@ -7,11 +7,9 @@
 clear_cache(file = NULL, path = NULL)
 }
 \arguments{
-\item{file}{filename whose cache to clear.  If you pass \code{NULL}, it will
-delete all of the caches.}
+\item{file}{filename whose cache to clear. If you pass \code{NULL}, it will delete all of the caches.}
 
-\item{path}{directory to store caches.  Reads option 'lintr.cache_directory'
-as the default.}
+\item{path}{directory to store caches. Reads option 'lintr.cache_directory' as the default.}
 }
 \value{
 0 for success, 1 for failure, invisibly.
