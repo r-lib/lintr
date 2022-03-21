@@ -14,7 +14,7 @@ seq_linter <- function() {
 
     xml <- source_file$xml_parsed_content
 
-    bad_funcs <- c("length", "nrow", "ncol", "NROW", "NCOL", "dim") # nolint: object_usage_linter. TODO(#942): remove.
+    bad_funcs <- c("length", "nrow", "ncol", "NROW", "NCOL", "dim") # nolint: object_usage_linter.
 
     xpath <- glue::glue("//expr[
       expr[NUM_CONST[text() =  '1' or text() =  '1L']]
