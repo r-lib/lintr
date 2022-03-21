@@ -12,8 +12,13 @@ test_that("returns the correct linting", {
     rex("Variable and function names should not be longer than 40 characters."),
     object_length_linter(length = 40)
   )
+})
 
-  # Regression tests for #871
+# Regression tests for #871
+test_that("lints S3 generics correctly", {
+
+  linter <- object_length_linter()
+  lint_msg <- rex("Variable and function names should not be longer than 30 characters.")
 
   expect_lint("print.very_very_long_class_name <- 1", NULL, linter)
   expect_lint("print.very_very_very_very_long_class_name <- 1", lint_msg, linter)
