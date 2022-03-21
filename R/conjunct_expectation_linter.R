@@ -35,7 +35,7 @@ conjunct_expectation_linter <- function() {
 
 gen_conjunct_expectation_lint <- function(expr, source_file) {
   matched_fun <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
-  op = if (matched_fun == "expect_true") "&&" else "||"
+  op <- if (matched_fun == "expect_true") "&&" else "||"
   message <- sprintf("Instead of %1$s(A %2$s B), write multiple expectations like %1$s(A) and %1$s(B)", matched_fun, op)
   message <- paste(message, "The latter will produce better error messages in the case of failure.")
   xml_nodes_to_lint(expr, source_file, message, type = "warning", global = TRUE)
