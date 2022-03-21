@@ -340,4 +340,11 @@ test_that("interprets glue expressions", {
       glue::glue('The answer is {local_var}.')
     }
   "), "unused_var", object_usage_linter())
+
+  expect_lint(trim_some("
+    fun <- function() {
+      local_var <- 42
+      glue::glue('The answer is {local_var}.')
+    }
+  "), "local_var", object_usage_linter(interpret_glue = FALSE))
 })
