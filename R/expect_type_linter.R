@@ -19,15 +19,18 @@ expect_type_linter <- function() {
     base_type_tests <- xp_text_in_table(paste0("is.", base_types))
     xpath <- glue::glue("//expr[
       (
-        SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
-        and following-sibling::expr[
-          expr[SYMBOL_FUNCTION_CALL[text() = 'typeof']]
-          and (position() = 1 or preceding-sibling::expr[STR_CONST])
-        ]
-      ) or (
-        SYMBOL_FUNCTION_CALL[text() = 'expect_true']
-        and following-sibling::expr[1][expr[SYMBOL_FUNCTION_CALL[ {base_type_tests} ]]]
+        (
+          expr[SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']]
+          and expr[
+            expr[SYMBOL_FUNCTION_CALL[text() = 'typeof']]
+            and (position() = 2 or preceding-sibling::expr[STR_CONST])
+          ]
+        ) or (
+          expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
+          and expr[2][expr[SYMBOL_FUNCTION_CALL[ {base_type_tests} ]]]
+        )
       )
+      and not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
@@ -36,7 +39,7 @@ expect_type_linter <- function() {
       xml_nodes_to_lint,
       source_file,
       function(expr) {
-        matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
+        matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
         if (matched_function %in% c("expect_equal", "expect_identical")) {
           sprintf("expect_type(x, t) is better than %s(typeof(x), t)", matched_function)
         } else {
