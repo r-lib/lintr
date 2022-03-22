@@ -21,15 +21,18 @@ expect_s3_class_linter <- function() {
     is_class_call <- xp_text_in_table(c(is_s3_class_calls, "inherits"))
     xpath <- glue::glue("//expr[
       (
-        SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
-        and following-sibling::expr[
-          expr[SYMBOL_FUNCTION_CALL[text() = 'class']]
-          and (position() = 1 or preceding-sibling::expr[STR_CONST])
-        ]
-      ) or (
-        SYMBOL_FUNCTION_CALL[text() = 'expect_true']
-        and following-sibling::expr[1][expr[SYMBOL_FUNCTION_CALL[ {is_class_call} ]]]
+        (
+          expr[SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']]
+          and expr[
+            expr[SYMBOL_FUNCTION_CALL[text() = 'class']]
+            and (position() = 2 or preceding-sibling::expr[STR_CONST])
+          ]
+        ) or (
+          expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
+          and expr[2][expr[SYMBOL_FUNCTION_CALL[ {is_class_call} ]]]
+        )
       )
+      and not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
@@ -38,7 +41,7 @@ expect_s3_class_linter <- function() {
       xml_nodes_to_lint,
       source_file,
       function(expr) {
-        matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
+        matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
         if (matched_function %in% c("expect_equal", "expect_identical")) {
           lint_msg <- sprintf("expect_s3_class(x, k) is better than %s(class(x), k).", matched_function)
         } else {
@@ -92,8 +95,9 @@ expect_s4_class_linter <- function() {
     # require 2 expressions because methods::is(x) alone is a valid call, even
     #   though the character output wouldn't make any sense for expect_true().
     xpath <- "//expr[
-      SYMBOL_FUNCTION_CALL[text() = 'expect_true']
-      and following-sibling::expr[1][count(expr) = 3 and expr[SYMBOL_FUNCTION_CALL[text() = 'is']]]
+      expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
+      and expr[2][count(expr) = 3 and expr[SYMBOL_FUNCTION_CALL[text() = 'is']]]
+      and not(SYMBOL_SUB[text() = 'info' or text() = 'label'])
     ]"
 
     bad_expr <- xml2::xml_find_all(xml, xpath)

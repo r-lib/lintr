@@ -17,11 +17,12 @@ expect_length_linter <- function() {
 
     # TODO(michaelchirico): also catch expect_true(length(x) == 1)
     xpath <- sprintf("//expr[
-      SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
-      and following-sibling::expr[
+      expr[SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']]
+      and expr[
         expr[SYMBOL_FUNCTION_CALL[text() = 'length']]
-        and (position() = 1 or preceding-sibling::expr[NUM_CONST])
+        and (position() = 2 or preceding-sibling::expr[NUM_CONST])
       ]
+      and not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
@@ -30,7 +31,7 @@ expect_length_linter <- function() {
       xml_nodes_to_lint,
       source_file,
       function(expr) {
-        matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
+        matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
         sprintf("expect_length(x, n) is better than %s(length(x), n)", matched_function)
       },
       type = "warning"

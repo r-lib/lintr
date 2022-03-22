@@ -6,6 +6,9 @@ test_that("expect_comparison_linter skips allowed usages", {
 
   # multiple comparisons are OK
   expect_lint("expect_true(x > y || x > z)", NULL, expect_comparison_linter())
+
+  # expect_gt() and friends don't have an info= argument
+  expect_lint("expect_true(x > y, info = 'x is bigger than y yo')", NULL, expect_comparison_linter())
 })
 
 test_that("expect_comparison_linter blocks simple disallowed usages", {
