@@ -102,7 +102,7 @@ params <- optparse::parse_args(optparse::OptionParser(option_list = param_list))
 if (interactive()) {
   for (opt in c("branch", "pr", "packages", "pkg_dir", "sample_size")) {
     # typed arguments get cast even when missing, probably to NA
-    if (is.na(params[[opt]]) || params[[opt]] == "") params[[opt]] <- NULL
+    if (isTRUE(is.na(params[[opt]]) || params[[opt]] == "")) params[[opt]] <- NULL
   }
 }
 
@@ -149,8 +149,8 @@ if (is.null(params$sample_size)) {
   } else {
     n_packages <- params$sample_size
   }
-  # randomize the order
-  packages <- sample(packages)
+  # draw sample & randomize order
+  packages <- sample(packages, size = n_packages)
 }
 
 # test if nchar(., "chars") works as intended
@@ -346,10 +346,18 @@ if (length(packages) > 50L) {
   )
 }
 
+df_otherwise <- tibble::tibble(
+  "source" = NA, "package" = NA, "filename" = NA,"line_number" = NA,
+  "column_number" = NA, "type" = NA,"message" = NA,"line" = NA, "linter" = NA)
+
 if (is_branch) {
-  lints <- purrr::map_df(linter_names, run_branch_workflow, packages, branch)
+  lints <- purrr::map_df(linter_names,
+                         ~ purrr::possibly(run_branch_workflow, df_otherwise, quiet = FALSE)(
+                            linter_name = ., pkgs = packages, branch = branch))
 } else {
-  lints <- purrr::map_df(linter_names, run_pr_workflow, packages, pr)
+  lints <- purrr::map_df(linter_names,
+                         ~ purrr::possibly(run_pr_workflow, df_otherwise, quiet = FALSE)(
+                           linter_name = ., pkgs = packages,  pr = pr))
 }
 
 message("Writing output to ", params$outfile)
@@ -358,4 +366,6 @@ write.csv(lints, params$outfile, row.names = FALSE)
 if (interactive()) {
   setwd(old_wd)
   unlink(temp_repo, recursive = TRUE)
+} else {
+  warnings()
 }
