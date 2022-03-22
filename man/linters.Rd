@@ -34,6 +34,7 @@ The following tags exist:
 The following linters exist:
 \itemize{
 \item{\code{\link{absolute_path_linter}} (tags: best_practices, configurable, robustness)}
+\item{\code{\link{any_is_na_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{assignment_linter}} (tags: consistency, default, style)}
 \item{\code{\link{backport_linter}} (tags: configurable, package_development, robustness)}
 \item{\code{\link{closed_curly_linter}} (tags: configurable, default, readability, style)}

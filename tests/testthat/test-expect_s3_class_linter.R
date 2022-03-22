@@ -9,6 +9,12 @@ test_that("expect_s3_class_linter skips allowed usages", {
 
   # case where expect_s3_class() *could* be used but we don't enforce
   expect_lint("expect_true(is.data.table(x))", NULL, expect_s3_class_linter())
+
+  # expect_s3_class() doesn't have info= or label= arguments
+  expect_lint("expect_equal(class(x), k, info = 'x should have class k')", NULL, expect_s3_class_linter())
+  expect_lint("expect_equal(class(x), k, label = 'x class')", NULL, expect_s3_class_linter())
+  expect_lint("expect_equal(class(x), k, expected.label = 'target class')", NULL, expect_s3_class_linter())
+  expect_lint("expect_true(is.data.frame(x), info = 'x should be a data.frame')", NULL, expect_s3_class_linter())
 })
 
 test_that("expect_s3_class_linter blocks simple disallowed usages", {
@@ -65,6 +71,10 @@ test_that("expect_s4_class_linter skips allowed usages", {
   expect_lint("expect_true(!is(x, 'class'))", NULL, expect_s4_class_linter())
   # NB: also applies to tinytest, but it's sufficient to test testthat
   expect_lint("testthat::expect_s3_class(!is(x, 'class'))", NULL, expect_s4_class_linter())
+
+  # expect_s4_class() doesn't have info= or label= arguments
+  expect_lint("expect_true(is(x, 'SpatialPoly'), info = 'x should be SpatialPoly')", NULL, expect_s4_class_linter())
+  expect_lint("expect_true(is(x, 'SpatialPoly'), label = 'x inheritance')", NULL, expect_s4_class_linter())
 })
 
 test_that("expect_s4_class blocks simple disallowed usages", {
