@@ -119,7 +119,7 @@ extract_glued_symbols <- function(expr) {
   #  - glue_data_col
   #
   # Package stringr:
-  #  - str_interp()
+  #  - str_interp
   glue_calls <- xml2::xml_find_all(
     expr,
     xpath = paste0(
