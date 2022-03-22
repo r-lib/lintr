@@ -102,7 +102,7 @@ params <- optparse::parse_args(optparse::OptionParser(option_list = param_list))
 if (interactive()) {
   for (opt in c("branch", "pr", "packages", "pkg_dir", "sample_size")) {
     # typed arguments get cast even when missing, probably to NA
-    if (is.na(params[[opt]]) || params[[opt]] == "") params[[opt]] <- NULL
+    if (isTRUE(is.na(params[[opt]]) || params[[opt]] == "")) params[[opt]] <- NULL
   }
 }
 
@@ -149,31 +149,36 @@ if (is.null(params$sample_size)) {
   } else {
     n_packages <- params$sample_size
   }
-  # randomize the order
-  packages <- sample(packages)
+  # draw sample & randomize order
+  packages <- sample(packages, size = n_packages)
 }
 
 # test if nchar(., "chars") works as intended
 #   for all files in dir (see #541)
 test_encoding <- function(dir) {
-  tryCatch({
-    lapply(
-      list.files(dir, pattern = "(?i)\\.r(?:md)?$", recursive = TRUE, full.names = TRUE),
-      function(x) {
-        con <- file(x, encoding = lintr:::find_default_encoding(x) %||% "UTF-8")
-        on.exit(close(con))
-        nchar(readLines(con, warn = FALSE))
-      }
-    )
-    FALSE
-  }, error = function(x) TRUE)
+  tryCatch(
+    {
+      lapply(
+        list.files(dir, pattern = "(?i)\\.r(?:md)?$", recursive = TRUE, full.names = TRUE),
+        function(x) {
+          con <- file(x, encoding = lintr:::find_default_encoding(x) %||% "UTF-8")
+          on.exit(close(con))
+          nchar(readLines(con, warn = FALSE))
+        }
+      )
+      FALSE
+    },
+    error = function(x) TRUE
+  )
 }
 
 # read Depends from DESCRIPTION
 get_deps <- function(pkg) {
   deps <- read.dcf(file.path(pkg, "DESCRIPTION"), c("Imports", "Depends"))
   deps <- toString(deps[!is.na(deps)])
-  if (deps == "") return(character())
+  if (deps == "") {
+    return(character())
+  }
   deps <- strsplit(deps, ",", fixed = TRUE)[[1L]]
   deps <- trimws(gsub("\\([^)]*\\)", "", deps))
   deps <- deps[deps != "R"]
@@ -204,14 +209,16 @@ lint_all_packages <- function(pkgs, linter, check_depends, warn = TRUE) {
       on.exit(unlink(tmp, recursive = TRUE))
       # --strip-components makes sure the output structure is
       # /path/to/tmp/pkg/ instead of /path/to/tmp/pkg/pkg
-      utils::untar(pkgs[ii], exdir = tmp, extras="--strip-components=1")
+      utils::untar(pkgs[ii], exdir = tmp, extras = "--strip-components=1")
       pkg <- tmp
     }
     if (test_encoding(pkg)) {
-      if (warn) warning(sprintf(
-        "Package %s has some files with unknown encoding; skipping",
-        pkg_names[ii]
-      ))
+      if (warn) {
+        warning(sprintf(
+          "Package %s has some files with unknown encoding; skipping",
+          pkg_names[ii]
+        ))
+      }
       ii <- ii + 1L
       next
     }
@@ -222,10 +229,12 @@ lint_all_packages <- function(pkgs, linter, check_depends, warn = TRUE) {
     if (check_depends) {
       pkg_deps <- get_deps(pkg)
       if ("tcltk" %in% pkg_deps && !capabilities("tcltk")) {
-        if (warn) warning(sprintf(
-          "Package %s depends on tcltk, which is not available (via capabilities()); skipping",
-          pkg_names[ii]
-        ))
+        if (warn) {
+          warning(sprintf(
+            "Package %s depends on tcltk, which is not available (via capabilities()); skipping",
+            pkg_names[ii]
+          ))
+        }
         ii <- ii + 1L
         next
       }
@@ -235,11 +244,13 @@ lint_all_packages <- function(pkgs, linter, check_depends, warn = TRUE) {
         warning = identity
       )
       if (inherits(try_deps, c("warning", "error"))) {
-        if (warn) warning(sprintf(
-          "Some package Dependencies for %s were unavailable: %s; skipping",
-          pkg_names[ii],
-          gsub("there (?:are no packages|is no package) called ", "", try_deps$message)
-        ))
+        if (warn) {
+          warning(sprintf(
+            "Some package Dependencies for %s were unavailable: %s; skipping",
+            pkg_names[ii],
+            gsub("there (?:are no packages|is no package) called ", "", try_deps$message)
+          ))
+        }
         ii <- ii + 1L
         next
       }
@@ -254,8 +265,8 @@ lint_all_packages <- function(pkgs, linter, check_depends, warn = TRUE) {
   }
   if (jj < n_packages) {
     message(sprintf("Requested %d packages, but could only lint %d", n_packages, jj))
-    lints = lints[1:jj]
-    lint_names = lint_names[1:jj]
+    lints <- lints[1:jj]
+    lint_names <- lint_names[1:jj]
   }
   return(rlang::set_names(lints, lint_names))
 }
@@ -278,8 +289,7 @@ run_on <- function(what, pkgs, linter_name, ...) {
   })
 
   # safe to use force=TRUE because we're in temp_repo
-  switch(
-    what,
+  switch(what,
     master = {
       gert::git_branch_checkout("master", force = TRUE)
     },
@@ -346,10 +356,42 @@ if (length(packages) > 50L) {
   )
 }
 
+df_otherwise <- tibble::tibble(
+  "source" = NA,
+  "package" = NA,
+  "filename" = NA,
+  "line_number" = NA,
+  "column_number" = NA,
+  "type" = NA,
+  "message" = NA,
+  "line" = NA,
+  "linter" = NA
+)
+
 if (is_branch) {
-  lints <- purrr::map_df(linter_names, run_branch_workflow, packages, branch)
+  lints <- purrr::map_df(
+    linter_names,
+    ~ purrr::possibly(run_branch_workflow,
+      df_otherwise,
+      quiet = FALSE
+    )(
+      linter_name = .,
+      pkgs = packages,
+      branch = branch
+    )
+  )
 } else {
-  lints <- purrr::map_df(linter_names, run_pr_workflow, packages, pr)
+  lints <- purrr::map_df(
+    linter_names,
+    ~ purrr::possibly(run_pr_workflow,
+      df_otherwise,
+      quiet = FALSE
+    )(
+      linter_name = .,
+      pkgs = packages,
+      pr = pr
+    )
+  )
 }
 
 message("Writing output to ", params$outfile)
@@ -358,4 +400,6 @@ write.csv(lints, params$outfile, row.names = FALSE)
 if (interactive()) {
   setwd(old_wd)
   unlink(temp_repo, recursive = TRUE)
+} else {
+  warnings()
 }
