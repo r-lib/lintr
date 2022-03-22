@@ -7,11 +7,13 @@
 #' This linter covers inputs to `if()` and `while()` conditions and to
 #'   [testthat::expect_true()] and [testthat::expect_false()].
 #' @evalRd rd_tags("vector_logic_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso
+#'   [linters] for a complete list of linters available in lintr.
+#'   <https://style.tidyverse.org/syntax.html?q=else#if-statements>
 #' @export
 vector_logic_linter <- function() {
   Linter(function(source_file) {
-    if (length(source_file$parsed_content) == 0L) {
+    if (length(source_file$xml_parsed_content) == 0L) {
       return(list())
     }
 

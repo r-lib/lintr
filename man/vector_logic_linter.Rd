@@ -2,22 +2,23 @@
 % Please edit documentation in R/vector_logic_linter.R
 \name{vector_logic_linter}
 \alias{vector_logic_linter}
-\title{Enforce usage of scalar && in conditional statements}
+\title{Enforce usage of scalar logical operators in conditional statements}
 \usage{
 vector_logic_linter()
-}
-\value{
-a \code{list} of \code{\link[=Lint]{Lint()}} objects for each incorrect usage
-of \code{&} or \code{|} in an \code{if} or \code{while} condition.
 }
 \description{
 Usage of \code{&} in conditional statements is error-prone and inefficient.
 \code{condition} in \code{if (condition) expr} must always be length-1, in which
-case \code{&&} is to be preferred.
+case \code{&&} is to be preferred. Ditto for \code{|} vs. \code{||}.
+}
+\details{
+This linter covers inputs to \verb{if()} and \verb{while()} conditions and to
+\code{\link[testthat:logical-expectations]{testthat::expect_true()}} and \code{\link[testthat:logical-expectations]{testthat::expect_false()}}.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
+\url{https://style.tidyverse.org/syntax.html?q=else#if-statements}
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=efficiency_linters]{efficiency}
+\link[=best_practices_linters]{best_practices}, \link[=default_linters]{default}, \link[=efficiency_linters]{efficiency}
 }
