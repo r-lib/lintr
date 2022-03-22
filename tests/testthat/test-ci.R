@@ -36,9 +36,8 @@ test_that("Printing works for Travis", {
 
   l <- lint(tmp)
 
-  with_mock(github_comment = function(x, ...) cat(x, "\n"), .env = asNamespace("lintr"), {
-    expect_output(print(l), "*warning:*", fixed = TRUE)
-  })
+  mockery::stub(print.lints, "github_comment", function(x, ...) cat(x, "\n"))
+  expect_output(print(l), "*warning:*", fixed = TRUE)
 })
 
 test_that("Printing works for Wercker", {
@@ -49,7 +48,6 @@ test_that("Printing works for Wercker", {
 
   l <- lint(tmp)
 
-  with_mock(github_comment = function(x, ...) cat(x, "\n"), .env = asNamespace("lintr"), {
-    expect_output(print(l), "*warning:*", fixed = TRUE)
-  })
+  mockery::stub(print.lints, "github_comment", function(x, ...) cat(x, "\n"))
+  expect_output(print(l), "*warning:*", fixed = TRUE)
 })

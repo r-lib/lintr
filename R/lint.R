@@ -240,7 +240,7 @@ lint_dir <- function(path = ".", ...,
   lints <- flatten_lints(lapply(
     files,
     function(file) {
-      if (interactive()) {
+      if (interactive() && !identical(Sys.getenv("TESTTHAT"), "true")) {
         message(".", appendLF = FALSE) # nocov
       }
       # TODO: once relative_path= is fully deprecated as 2nd positional argument (see top of body), restore the cleaner:
@@ -249,7 +249,7 @@ lint_dir <- function(path = ".", ...,
     }
   ))
 
-  if (interactive()) {
+  if (interactive() && !identical(Sys.getenv("TESTTHAT"), "true")) {
     message() # nocov. for a newline
   }
 
@@ -503,7 +503,7 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
 
 rstudio_source_markers <- function(lints) {
   if (!requireNamespace("rstudioapi", quietly = TRUE)) {
-    stop("'rstudioapi' is required for rtsudio_source_markers().") # nocov
+    stop("'rstudioapi' is required for rstudio_source_markers().") # nocov
   }
 
   # package path will be NULL unless it is a relative path

@@ -13,6 +13,9 @@ Linters useful to package developers, for example for writing consistent tests.
 The following linters are tagged with 'package_development':
 \itemize{
 \item{\code{\link{backport_linter}}}
+\item{\code{\link{conjunct_expectation_linter}}}
+\item{\code{\link{expect_comparison_linter}}}
+\item{\code{\link{expect_identical_linter}}}
 \item{\code{\link{expect_length_linter}}}
 \item{\code{\link{expect_named_linter}}}
 \item{\code{\link{expect_not_linter}}}

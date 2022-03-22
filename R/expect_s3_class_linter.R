@@ -18,7 +18,7 @@ expect_s3_class_linter <- function() {
 
     # (1) expect_{equal,identical}(class(x), C)
     # (2) expect_true(is.<class>(x)) and expect_true(inherits(x, C))
-    is_class_call <- xp_text_in_table(c(is_s3_class_calls, "inherits")) # nolint: object_usage_linter.
+    is_class_call <- xp_text_in_table(c(is_s3_class_calls, "inherits"))
     xpath <- glue::glue("//expr[
       (
         SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
