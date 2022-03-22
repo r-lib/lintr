@@ -9,6 +9,12 @@ test_that("expect_type_linter skips allowed usages", {
 
   # expect_type(x, ...) cannot be cleanly used here:
   expect_lint("expect_true(typeof(x) %in% c('builtin', 'closure'))", NULL, expect_type_linter())
+
+  # expect_type() doesn't have info= or label= arguments
+  expect_lint("expect_equal(typeof(x), t, info = 'x should have type t')", NULL, expect_type_linter())
+  expect_lint("expect_equal(typeof(x), t, label = 'x type')", NULL, expect_type_linter())
+  expect_lint("expect_equal(typeof(x), t, expected.label = 'type')", NULL, expect_type_linter())
+  expect_lint("expect_true(is.double(x), info = 'x should be double')", NULL, expect_type_linter())
 })
 
 test_that("expect_type_linter blocks simple disallowed usages", {

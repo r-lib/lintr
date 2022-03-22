@@ -14,8 +14,7 @@ equals_na_linter <- function() {
 
     comparators <- c("EQ", "NE")
     comparator_table <- paste0("self::", comparators, collapse = " or ")
-    na_values <- c("NA", "NA_integer_", "NA_real_", "NA_complex_", "NA_character_")
-    na_table <- paste("text() =", quote_wrap(na_values, "'"), collapse = " or ")
+    na_table <- xp_text_in_table(c("NA", "NA_integer_", "NA_real_", "NA_complex_", "NA_character_"))
 
     xpath_fmt <- "//expr[expr[NUM_CONST[%s]]]/*[%s]"
     xpath <- sprintf(xpath_fmt, na_table, comparator_table)
