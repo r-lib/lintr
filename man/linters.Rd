@@ -22,7 +22,7 @@ The following tags exist:
 \item{\link[=configurable_linters]{configurable} (16 linters)}
 \item{\link[=consistency_linters]{consistency} (7 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
-\item{\link[=default_linters]{default} (25 linters)}
+\item{\link[=default_linters]{default} (26 linters)}
 \item{\link[=efficiency_linters]{efficiency} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (13 linters)}
 \item{\link[=readability_linters]{readability} (26 linters)}
@@ -56,7 +56,7 @@ The following linters exist:
 \item{\code{\link{expect_type_linter}} (tags: best_practices, package_development)}
 \item{\code{\link{extraction_operator_linter}} (tags: best_practices, style)}
 \item{\code{\link{function_left_parentheses_linter}} (tags: default, readability, style)}
-\item{\code{\link{if_else_match_braces_linter}} (tags: readability, style)}
+\item{\code{\link{if_else_match_braces_linter}} (tags: default, readability, style)}
 \item{\code{\link{implicit_integer_linter}} (tags: best_practices, consistency, style)}
 \item{\code{\link{infix_spaces_linter}} (tags: default, readability, style)}
 \item{\code{\link{line_length_linter}} (tags: configurable, default, readability, style)}

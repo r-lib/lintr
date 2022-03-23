@@ -31,6 +31,7 @@ The following linters are tagged with 'default':
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{equals_na_linter}}}
 \item{\code{\link{function_left_parentheses_linter}}}
+\item{\code{\link{if_else_match_braces_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{line_length_linter}}}
 \item{\code{\link{no_tab_linter}}}

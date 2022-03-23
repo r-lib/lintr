@@ -15,5 +15,5 @@ that either both branches use \code{{...}} or neither does.
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }

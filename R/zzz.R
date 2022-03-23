@@ -90,6 +90,7 @@ default_linters <- with_defaults(
   cyclocomp_linter(),
   equals_na_linter(),
   function_left_parentheses_linter(),
+  if_else_match_braces_linter(),
   infix_spaces_linter(),
   line_length_linter(),
   no_tab_linter(),
