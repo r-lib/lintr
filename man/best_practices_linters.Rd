@@ -33,5 +33,6 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
+\item{\code{\link{vector_logic_linter}}}
 }
 }

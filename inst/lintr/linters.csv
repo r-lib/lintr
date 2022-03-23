@@ -53,3 +53,4 @@ trailing_whitespace_linter,style default
 undesirable_function_linter,style efficiency configurable robustness best_practices
 undesirable_operator_linter,style efficiency configurable robustness best_practices
 unneeded_concatenation_linter,style readability efficiency
+vector_logic_linter,default efficiency best_practices

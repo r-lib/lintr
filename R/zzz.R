@@ -108,7 +108,8 @@ default_linters <- with_defaults(
   spaces_left_parentheses_linter(),
   T_and_F_symbol_linter(),
   trailing_blank_lines_linter(),
-  trailing_whitespace_linter()
+  trailing_whitespace_linter(),
+  vector_logic_linter()
 )
 
 #' Default undesirable functions and operators
