@@ -9,7 +9,7 @@ outer_negation_linter()
 \description{
 \code{any(!x)} is logically equivalent to \code{!any(x)}; ditto for the equivalence of
 \code{all(!x)} and \code{!any(x)}. Negating after aggregation only requires inverting
-one logical value, and should usually be more readable.
+one logical value, and is typically more readable.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
