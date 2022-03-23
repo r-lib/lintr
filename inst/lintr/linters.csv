@@ -3,6 +3,7 @@ absolute_path_linter,robustness best_practices configurable
 any_is_na_linter,efficiency best_practices
 assignment_linter,style consistency default
 backport_linter,robustness configurable package_development
+class_equals_linter,best_practices robustness consistency
 closed_curly_linter,style readability default configurable
 commas_linter,style readability default
 commented_code_linter,style readability best_practices default

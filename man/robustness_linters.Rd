@@ -14,6 +14,7 @@ The following linters are tagged with 'robustness':
 \itemize{
 \item{\code{\link{absolute_path_linter}}}
 \item{\code{\link{backport_linter}}}
+\item{\code{\link{class_equals_linter}}}
 \item{\code{\link{equals_na_linter}}}
 \item{\code{\link{missing_package_linter}}}
 \item{\code{\link{namespace_linter}}}
