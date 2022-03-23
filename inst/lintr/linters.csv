@@ -34,6 +34,7 @@ object_length_linter,style readability default configurable
 object_name_linter,style consistency default configurable
 object_usage_linter,style readability correctness default
 open_curly_linter,style readability default configurable
+outer_negation_linter,readability efficiency best_practices
 package_hooks_linter,style correctness package_development
 paren_body_linter,style readability default
 paren_brace_linter,style readability default
