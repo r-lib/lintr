@@ -20,14 +20,14 @@ The following tags exist:
 \item{\link[=best_practices_linters]{best_practices} (23 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (5 linters)}
 \item{\link[=configurable_linters]{configurable} (16 linters)}
-\item{\link[=consistency_linters]{consistency} (7 linters)}
+\item{\link[=consistency_linters]{consistency} (8 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (26 linters)}
 \item{\link[=efficiency_linters]{efficiency} (7 linters)}
 \item{\link[=package_development_linters]{package_development} (13 linters)}
-\item{\link[=readability_linters]{readability} (26 linters)}
+\item{\link[=readability_linters]{readability} (27 linters)}
 \item{\link[=robustness_linters]{robustness} (10 linters)}
-\item{\link[=style_linters]{style} (31 linters)}
+\item{\link[=style_linters]{style} (32 linters)}
 }
 }
 \section{Linters}{
@@ -64,6 +64,7 @@ The following linters exist:
 \item{\code{\link{namespace_linter}} (tags: configurable, correctness, robustness)}
 \item{\code{\link{no_tab_linter}} (tags: consistency, default, style)}
 \item{\code{\link{nonportable_path_linter}} (tags: best_practices, configurable, robustness)}
+\item{\code{\link{numeric_leading_zero_linter}} (tags: consistency, readability, style)}
 \item{\code{\link{object_length_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{object_name_linter}} (tags: configurable, consistency, default, style)}
 \item{\code{\link{object_usage_linter}} (tags: correctness, default, readability, style)}

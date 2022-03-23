@@ -92,6 +92,7 @@ Collate:
     'namespace.R'
     'namespace_linter.R'
     'no_tab_linter.R'
+    'numeric_leading_zero_linter.R'
     'object_name_linters.R'
     'object_usage_linter.R'
     'open_curly_linter.R'
