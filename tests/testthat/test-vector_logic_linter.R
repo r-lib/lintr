@@ -79,3 +79,13 @@ test_that("vector_logic_linter catches usages in expect_true()/expect_false()", 
   # valid nested usage within aggregator
   expect_lint("testthat::expect_false(any(TRUE | TRUE))", NULL, vector_logic_linter())
 })
+
+test_that("vector_logic_linter doesn't get mixed up from complex usage", {
+  lines <- trim_some("
+  if (a) {
+    expect_true(ok)
+    x <- 2
+    a | b
+  }")
+  expect_lint(lines, NULL, vector_logic_linter())
+})

@@ -17,7 +17,7 @@ This linter covers inputs to \verb{if()} and \verb{while()} conditions and to
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
-\url{https://style.tidyverse.org/syntax.html?q=else#if-statements}
+\url{https://style.tidyverse.org/syntax.html#if-statements}
 }
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=default_linters]{default}, \link[=efficiency_linters]{efficiency}
