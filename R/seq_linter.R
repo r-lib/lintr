@@ -15,14 +15,12 @@ seq_linter <- function() {
     xml <- source_file$xml_parsed_content
 
     bad_funcs <- c("length", "nrow", "ncol", "NROW", "NCOL", "dim")
-    text_clause <- paste0("text() = '", bad_funcs, "'", collapse = " or ")
 
-    xpath <- paste0(
-      "//expr",
-      "[expr[NUM_CONST[text()='1' or text()='1L']]]",
-      "[OP-COLON]",
-      "[expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[", text_clause, "]]]]]"
-    )
+    xpath <- glue::glue("//expr[
+      expr[NUM_CONST[text() =  '1' or text() =  '1L']]
+      and OP-COLON
+      and expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]
+    ]")
 
     badx <- xml2::xml_find_all(xml, xpath)
 
