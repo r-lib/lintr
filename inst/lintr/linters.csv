@@ -35,6 +35,7 @@ object_length_linter,style readability default configurable
 object_name_linter,style consistency default configurable
 object_usage_linter,style readability correctness default
 open_curly_linter,style readability default configurable
+outer_negation_linter,readability efficiency best_practices
 package_hooks_linter,style correctness package_development
 paren_body_linter,style readability default
 paren_brace_linter,style readability default
@@ -53,3 +54,4 @@ trailing_whitespace_linter,style default
 undesirable_function_linter,style efficiency configurable robustness best_practices
 undesirable_operator_linter,style efficiency configurable robustness best_practices
 unneeded_concatenation_linter,style readability efficiency
+vector_logic_linter,default efficiency best_practices

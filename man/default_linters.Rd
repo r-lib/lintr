@@ -5,7 +5,7 @@
 \alias{default_linters}
 \title{Default linters}
 \format{
-An object of class \code{list} of length 25.
+An object of class \code{list} of length 26.
 }
 \usage{
 default_linters
@@ -49,5 +49,6 @@ The following linters are tagged with 'default':
 \item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{trailing_blank_lines_linter}}}
 \item{\code{\link{trailing_whitespace_linter}}}
+\item{\code{\link{vector_logic_linter}}}
 }
 }
