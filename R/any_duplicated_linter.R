@@ -32,6 +32,13 @@ any_duplicated_linter <- function() {
     ]"
 
     any_duplicated_expr <- xml2::xml_find_all(xml, any_duplicated_xpath)
+    any_duplicated_lints <- lapply(
+      any_duplicated_expr,
+      xml_nodes_to_lint,
+      source_file = source_file,
+      lint_message = "anyDuplicated(x, ...) > 0 is better than any(duplicated(x), ...).",
+      type = "warning"
+    )
 
     # path from the expr of the unique() call to the call that needs to match.
     #  the final parent::expr/expr gets us to the expr on the other side of EQ;
@@ -95,17 +102,15 @@ any_duplicated_linter <- function() {
       ]]
     ]"
     length_unique_expr <- xml2::xml_find_all(xml, length_unique_xpath)
-
-    return(lapply(
-      c(any_duplicated_expr, length_unique_expr),
+    length_unique_lints <- lapply(
+      length_unique_expr,
       xml_nodes_to_lint,
       source_file = source_file,
-      lint_message = paste(
-        "anyDuplicated(x, ...) > 0 is better than any(duplicated(x), ...).",
-        "anyDuplicated(x) == 0L is better than length(unique(x)) == length(x)",
-        "and length(unique(DF$col)) == nrow(DF)."
-      ),
+      lint_message =
+        "anyDuplicated(x) == 0L is better than length(unique(x)) == length(x) and length(unique(DF$col)) == nrow(DF)",
       type = "warning"
-    ))
+    )
+
+    return(c(any_duplicated_lints, length_unique_lints))
   })
 }

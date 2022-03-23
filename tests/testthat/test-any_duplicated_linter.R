@@ -47,30 +47,30 @@ test_that("any_duplicated_linter catches length(unique()) equivalencies too", {
   # lintable usage
   expect_lint(
     "length(unique(x)) == length(x)",
-    rex::rex("anyDuplicated(x, ...) > 0 is better"),
+    rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == length(x)"),
     any_duplicated_linter()
   )
   # argument order doesn't matter
   expect_lint(
     "length(x) == length(unique(x))",
-    rex::rex("anyDuplicated(x, ...) > 0 is better"),
+    rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == length(x)"),
     any_duplicated_linter()
   )
   # nrow-style equivalency
   expect_lint(
     "nrow(DF) == length(unique(DF$col))",
-    rex::rex("anyDuplicated(x, ...) > 0 is better"),
+    rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == length(x)"),
     any_duplicated_linter()
   )
   expect_lint(
     "nrow(DF) == length(unique(DF[['col']]))",
-    rex::rex("anyDuplicated(x, ...) > 0 is better"),
+    rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == length(x)"),
     any_duplicated_linter()
   )
   # match with nesting too
   expect_lint(
     "nrow(l$DF) == length(unique(l$DF[['col']]))",
-    rex::rex("anyDuplicated(x, ...) > 0 is better"),
+    rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == length(x)"),
     any_duplicated_linter()
   )
 
@@ -79,17 +79,17 @@ test_that("any_duplicated_linter catches length(unique()) equivalencies too", {
   #   length(unique(x)) > length(x) doesn't seem like it would ever happen.
   expect_lint(
     "length(unique(x)) != length(x)",
-    rex::rex("anyDuplicated(x, ...) > 0 is better"),
+    rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == length(x)"),
     any_duplicated_linter()
   )
   expect_lint(
     "length(unique(x)) < length(x)",
-    rex::rex("anyDuplicated(x, ...) > 0 is better"),
+    rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == length(x)"),
     any_duplicated_linter()
   )
   expect_lint(
     "length(x) > length(unique(x))",
-    rex::rex("anyDuplicated(x, ...) > 0 is better"),
+    rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == length(x)"),
     any_duplicated_linter()
   )
 
@@ -101,7 +101,7 @@ test_that("any_duplicated_linter catches length(unique()) equivalencies too", {
 test_that("any_duplicated_linter catches expression with two types of lint", {
   expect_lint(
     "table(any(duplicated(x)), length(unique(DF$col)) == nrow(DF))",
-    rep(list(rex::rex("anyDuplicated(x, ...) > 0 is better")), 2L),
+    list(rex::rex("anyDuplicated(x, ...) > 0 is better"), rex::rex("anyDuplicated(x) == 0L is better")),
     any_duplicated_linter()
   )
 })
