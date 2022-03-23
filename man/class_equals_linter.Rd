@@ -8,8 +8,9 @@ class_equals_linter()
 }
 \description{
 Usage like \code{class(x) == "character"} is prone to error since class in R
-is in general a vector. Preferable in general is \code{inherits(x, "character")}
-or, for classes where it's implemented, \code{is.character(x)}.
+is in general a vector. The correct version for S3 classes is \code{\link[=inherits]{inherits()}}:
+\code{inherits(x, "character")}. Often, class \code{k} will have an \code{is.} equivalent,
+for example \code{\link[=is.character]{is.character()}} or \code{\link[=is.data.frame]{is.data.frame()}}.
 }
 \details{
 Similar reasoning applies for \code{class(x) \%in\% "character"}
