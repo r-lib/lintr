@@ -25,9 +25,9 @@ The following tags exist:
 \item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=efficiency_linters]{efficiency} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (13 linters)}
-\item{\link[=readability_linters]{readability} (25 linters)}
+\item{\link[=readability_linters]{readability} (26 linters)}
 \item{\link[=robustness_linters]{robustness} (10 linters)}
-\item{\link[=style_linters]{style} (31 linters)}
+\item{\link[=style_linters]{style} (32 linters)}
 }
 }
 \section{Linters}{
@@ -55,6 +55,7 @@ The following linters exist:
 \item{\code{\link{expect_true_false_linter}} (tags: best_practices, package_development, readability)}
 \item{\code{\link{expect_type_linter}} (tags: best_practices, package_development)}
 \item{\code{\link{extraction_operator_linter}} (tags: best_practices, style)}
+\item{\code{\link{function_brace_linter}} (tags: readability, style)}
 \item{\code{\link{function_left_parentheses_linter}} (tags: default, readability, style)}
 \item{\code{\link{implicit_integer_linter}} (tags: best_practices, consistency, style)}
 \item{\code{\link{infix_spaces_linter}} (tags: default, readability, style)}
