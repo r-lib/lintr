@@ -76,7 +76,7 @@ linter_auto_name <- function(which = -3L) {
 auto_names <- function(x) {
   nms <- names2(x)
   missing <- nms == ""
-  if (all(!missing)) return(nms)
+  if (!any(missing)) return(nms)
 
   default_name <- function(x) {
     if (inherits(x, "linter")) {
