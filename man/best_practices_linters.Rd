@@ -13,6 +13,7 @@ Linters checking the use of coding best practices, such as explicit typing of nu
 The following linters are tagged with 'best_practices':
 \itemize{
 \item{\code{\link{absolute_path_linter}}}
+\item{\code{\link{any_duplicated_linter}}}
 \item{\code{\link{any_is_na_linter}}}
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{conjunct_expectation_linter}}}
