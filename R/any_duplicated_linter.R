@@ -69,13 +69,38 @@ any_duplicated_linter <- function() {
     # EQ ensures we're in an ==, !=, <, or > clause
     length_unique_xpath <-
       sprintf("//expr[EQ or NE or GT or LT]/expr[%s]", length_unique_call_xpath)
+    length_unique_xpath <- "
+    //expr[EQ or NE or GT or LT]
+    /expr[
+      expr[SYMBOL_FUNCTION_CALL[text() = 'length']]
+      and expr[expr[
+        SYMBOL_FUNCTION_CALL[text() = 'unique']
+        and (
+          following-sibling::expr =
+            parent::expr
+            /parent::expr
+            /parent::expr
+            /expr
+            /expr[SYMBOL_FUNCTION_CALL[text()= 'length']]
+            /following-sibling::expr
+          or
+          following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
+            parent::expr
+            /parent::expr
+            /parent::expr
+            /expr
+            /expr[SYMBOL_FUNCTION_CALL[text()= 'nrow']]
+            /following-sibling::expr
+        )
+      ]]
+    ]"
     length_unique_expr <- xml2::xml_find_all(xml, length_unique_xpath)
 
     return(lapply(
       c(any_duplicated_expr, length_unique_expr),
       xml_nodes_to_lint,
       source_file = source_file,
-      message = paste(
+      lint_message = paste(
         "anyDuplicated(x, ...) > 0 is better than any(duplicated(x), ...).",
         "anyDuplicated(x) == 0L is better than length(unique(x)) == length(x)",
         "and length(unique(DF$col)) == nrow(DF)."

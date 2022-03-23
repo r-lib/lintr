@@ -39,22 +39,10 @@ test_that("any_duplicated_linter blocks simple disallowed usages", {
 test_that("any_duplicated_linter catches length(unique()) equivalencies too", {
   # non-matches
   ## different variable
-  expect_lint(
-    "length(unique(x)) == length(y)",
-    NULL,
-    any_duplicated_linter()
-  )
+  expect_lint("length(unique(x)) == length(y)", NULL, any_duplicated_linter())
   ## different table
-  expect_lint(
-    "length(unique(DF$x)) == nrow(DT)",
-    NULL,
-    any_duplicated_linter()
-  )
-  expect_lint(
-    "length(unique(l1$DF$x)) == nrow(l2$DF)",
-    NULL,
-    any_duplicated_linter()
-  )
+  expect_lint("length(unique(DF$x)) == nrow(DT)", NULL, any_duplicated_linter())
+  expect_lint("length(unique(l1$DF$x)) == nrow(l2$DF)", NULL, any_duplicated_linter())
 
   # lintable usage
   expect_lint(
@@ -113,7 +101,7 @@ test_that("any_duplicated_linter catches length(unique()) equivalencies too", {
 test_that("any_duplicated_linter catches expression with two types of lint", {
   expect_lint(
     "table(any(duplicated(x)), length(unique(DF$col)) == nrow(DF))",
-    rep(list("anyDuplicated\\(x, \\.\\.\\.\\) > 0 is better"), 2L),
+    rep(list(rex::rex("anyDuplicated(x, ...) > 0 is better")), 2L),
     any_duplicated_linter()
   )
 })
