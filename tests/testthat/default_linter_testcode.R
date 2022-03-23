@@ -25,6 +25,9 @@ someComplicatedFunctionWithALongCamelCaseName <- function(x)
   if (1 > 2 && 2 > 3 && 3 > 4 && 4 > 5 && 5*10 > 6 && 5 > 6 && 6 > 7 && x == NA) {T} else {F}
 }
 
+# vector_logic
+if (1 & 2) FALSE else TRUE
+
 # no_tab
 # pipe_continuation
 # seq_linter
