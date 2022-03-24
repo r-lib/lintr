@@ -22,6 +22,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{expect_not_linter}}}
 \item{\code{\link{expect_true_false_linter}}}
 \item{\code{\link{function_left_parentheses_linter}}}
+\item{\code{\link{if_else_match_braces_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{line_length_linter}}}
 \item{\code{\link{object_length_linter}}}
