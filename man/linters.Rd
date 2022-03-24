@@ -17,17 +17,17 @@ Documentation for linters is structured into tags to allow for easier discovery.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (23 linters)}
+\item{\link[=best_practices_linters]{best_practices} (24 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (5 linters)}
 \item{\link[=configurable_linters]{configurable} (16 linters)}
 \item{\link[=consistency_linters]{consistency} (8 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (27 linters)}
-\item{\link[=efficiency_linters]{efficiency} (7 linters)}
+\item{\link[=efficiency_linters]{efficiency} (8 linters)}
 \item{\link[=package_development_linters]{package_development} (13 linters)}
-\item{\link[=readability_linters]{readability} (27 linters)}
+\item{\link[=readability_linters]{readability} (28 linters)}
 \item{\link[=robustness_linters]{robustness} (10 linters)}
-\item{\link[=style_linters]{style} (32 linters)}
+\item{\link[=style_linters]{style} (33 linters)}
 }
 }
 \section{Linters}{
@@ -60,6 +60,7 @@ The following linters exist:
 \item{\code{\link{implicit_integer_linter}} (tags: best_practices, consistency, style)}
 \item{\code{\link{infix_spaces_linter}} (tags: default, readability, style)}
 \item{\code{\link{line_length_linter}} (tags: configurable, default, readability, style)}
+\item{\code{\link{literal_coercion_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{missing_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{missing_package_linter}} (tags: common_mistakes, robustness)}
 \item{\code{\link{namespace_linter}} (tags: configurable, correctness, robustness)}

@@ -86,6 +86,7 @@ Collate:
     'lint.R'
     'linter_tag_docs.R'
     'linter_tags.R'
+    'literal_coercion_linter.R'
     'make_linter_from_regex.R'
     'methods.R'
     'missing_argument_linter.R'
