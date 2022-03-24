@@ -24,6 +24,7 @@ The following linters are tagged with 'style':
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{line_length_linter}}}
 \item{\code{\link{no_tab_linter}}}
+\item{\code{\link{numeric_leading_zero_linter}}}
 \item{\code{\link{object_length_linter}}}
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{object_usage_linter}}}

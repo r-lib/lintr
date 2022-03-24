@@ -1,0 +1,25 @@
+test_that("numeric_leading_zero_linter skips allowed usages", {
+  expect_lint("a <- 0.1", NULL, numeric_leading_zero_linter())
+  expect_lint("b <- -0.2", NULL, numeric_leading_zero_linter())
+  expect_lint("c <- 3.0", NULL, numeric_leading_zero_linter())
+  expect_lint("d <- 4L", NULL, numeric_leading_zero_linter())
+  expect_lint("e <- TRUE", NULL, numeric_leading_zero_linter())
+  expect_lint("f <- 0.5e6", NULL, numeric_leading_zero_linter())
+  expect_lint("g <- 0x78", NULL, numeric_leading_zero_linter())
+  expect_lint("h <- 0.9 + 0.1i", NULL, numeric_leading_zero_linter())
+  expect_lint("h <- 0.9+0.1i", NULL, numeric_leading_zero_linter())
+  expect_lint("h <- 0.9 - 0.1i", NULL, numeric_leading_zero_linter())
+  expect_lint("i <- 2L + 3.4i", NULL, numeric_leading_zero_linter())
+})
+
+test_that("numeric_leading_zero_linter blocks simple disallowed usages", {
+  linter <- numeric_leading_zero_linter()
+  lint_message <- rex::rex("Include the leading zero for fractional numeric constants.")
+
+  expect_lint("a <- .1", lint_message, linter)
+  expect_lint("b <- -.2", lint_message, linter)
+  expect_lint("c <- .3 + 4.5i", lint_message, linter)
+  expect_lint("d <- 6.7 + .8i", lint_message, linter)
+  expect_lint("d <- 6.7+.8i", lint_message, linter)
+  expect_lint("e <- .9e10", lint_message, linter)
+})

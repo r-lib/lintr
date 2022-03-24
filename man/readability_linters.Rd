@@ -25,6 +25,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{if_else_match_braces_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{line_length_linter}}}
+\item{\code{\link{numeric_leading_zero_linter}}}
 \item{\code{\link{object_length_linter}}}
 \item{\code{\link{object_usage_linter}}}
 \item{\code{\link{open_curly_linter}}}
