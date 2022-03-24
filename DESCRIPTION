@@ -26,6 +26,7 @@ Imports:
     jsonlite,
     knitr,
     stats,
+    tibble,
     utils,
     xml2 (>= 1.0.0),
     xmlparsedata (>= 1.0.3)
