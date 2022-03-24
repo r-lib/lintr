@@ -97,6 +97,7 @@ function calls. (#850, #851, @renkun-ken)
    * `expect_length_linter()` Require usage of `expect_length(x, n)` over `expect_equal(length(x), n)` and similar
    * `expect_identical_linter()` Require usage of `expect_identical()` by default, and `expect_equal()` only by exception
    * `expect_comparison_linter()` Require usage of `expect_gt(x, y)` over `expect_true(x > y)` and similar
+   * `if_else_match_braces_linter()` Require balanced usage of `{}` in `if`/`else` conditions
    * `vector_logic_linter()` Require use of scalar logical operators (`&&` and `||`) inside `if()` conditions and similar
    * `any_is_na_linter()` Require usage of `anyNA(x)` over `any(is.na(x))`
    * `outer_negation_linter()` Require usage of `!any(x)` over `all(!x)` and `!all(x)` over `any(!x)`
