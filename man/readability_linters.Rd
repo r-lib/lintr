@@ -23,11 +23,14 @@ The following linters are tagged with 'readability':
 \item{\code{\link{expect_true_false_linter}}}
 \item{\code{\link{function_brace_linter}}}
 \item{\code{\link{function_left_parentheses_linter}}}
+\item{\code{\link{if_else_match_braces_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{line_length_linter}}}
+\item{\code{\link{numeric_leading_zero_linter}}}
 \item{\code{\link{object_length_linter}}}
 \item{\code{\link{object_usage_linter}}}
 \item{\code{\link{open_curly_linter}}}
+\item{\code{\link{outer_negation_linter}}}
 \item{\code{\link{paren_body_linter}}}
 \item{\code{\link{paren_brace_linter}}}
 \item{\code{\link{pipe_call_linter}}}
