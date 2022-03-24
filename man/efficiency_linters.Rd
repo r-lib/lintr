@@ -12,9 +12,12 @@ Linters highlighting code efficiency problems, such as unneccessary function cal
 \section{Linters}{
 The following linters are tagged with 'efficiency':
 \itemize{
+\item{\code{\link{any_is_na_linter}}}
+\item{\code{\link{outer_negation_linter}}}
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
 \item{\code{\link{unneeded_concatenation_linter}}}
+\item{\code{\link{vector_logic_linter}}}
 }
 }

@@ -91,7 +91,7 @@ test_that("summary.lints() works (lints found)", {
   has_lint_summary <- summary(has_lints)
   expect_s3_class(has_lint_summary, "data.frame")
   expect_equal(nrow(has_lint_summary), 1)
-  expect_true(has_lint_summary$style > 0)
+  expect_gt(has_lint_summary$style, 0)
   expect_equal(has_lint_summary$warning, 0)
   expect_equal(has_lint_summary$error, 0)
 })
@@ -112,9 +112,9 @@ test_that("print.lint works for inline data, even in RStudio", {
   # Make sure lints print to console.
   # The full output is:
   #
-  # <text>:1:3: style: Use <-, not =, for assignment.
-  # x = 1
-  #   ^
+  # > <text>:1:3: style: Use <-, not =, for assignment.
+  # > x = 1
+  # >   ^
 
   withr::with_options(
     list("lintr.rstudio_source_markers" = FALSE),
