@@ -10,6 +10,12 @@ literal_coercion_linter()
 \code{as.integer(1)} is the same as \code{1L} but the latter is more concise and
 gets typed correctly at compilation.
 }
+\details{
+The same applies to missing sentinels like \code{NA} -- typically, it is not
+necessary to specify the storage type of \code{NA}, but when it is, prefer
+using the typed version (e.g. \code{NA_real_}) instead of a coercion
+(like \code{as.numeric(NA)}).
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

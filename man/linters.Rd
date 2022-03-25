@@ -23,9 +23,9 @@ The following tags exist:
 \item{\link[=consistency_linters]{consistency} (8 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (27 linters)}
-\item{\link[=efficiency_linters]{efficiency} (8 linters)}
+\item{\link[=efficiency_linters]{efficiency} (9 linters)}
 \item{\link[=package_development_linters]{package_development} (13 linters)}
-\item{\link[=readability_linters]{readability} (28 linters)}
+\item{\link[=readability_linters]{readability} (29 linters)}
 \item{\link[=robustness_linters]{robustness} (10 linters)}
 \item{\link[=style_linters]{style} (33 linters)}
 }
@@ -64,6 +64,7 @@ The following linters exist:
 \item{\code{\link{missing_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{missing_package_linter}} (tags: common_mistakes, robustness)}
 \item{\code{\link{namespace_linter}} (tags: configurable, correctness, robustness)}
+\item{\code{\link{nested_ifelse_linter}} (tags: efficiency, readability)}
 \item{\code{\link{no_tab_linter}} (tags: consistency, default, style)}
 \item{\code{\link{nonportable_path_linter}} (tags: best_practices, configurable, robustness)}
 \item{\code{\link{numeric_leading_zero_linter}} (tags: consistency, readability, style)}
