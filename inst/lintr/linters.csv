@@ -30,6 +30,7 @@ line_length_linter,style readability default configurable
 missing_argument_linter,correctness common_mistakes configurable
 missing_package_linter,robustness common_mistakes
 namespace_linter,correctness robustness configurable
+nested_ifelse_linter,efficiency readability
 no_tab_linter,style consistency default
 nonportable_path_linter,robustness best_practices configurable
 numeric_leading_zero_linter,style consistency readability
