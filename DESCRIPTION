@@ -92,6 +92,7 @@ Collate:
     'missing_package_linter.R'
     'namespace.R'
     'namespace_linter.R'
+    'nested_ifelse_linter.R'
     'no_tab_linter.R'
     'numeric_leading_zero_linter.R'
     'object_name_linters.R'
