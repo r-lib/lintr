@@ -22,6 +22,7 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{paste_sep_linter}}}
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{single_quotes_linter}}}
+\item{\code{\link{stop_paste_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
 }
 }
