@@ -31,6 +31,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
 \item{\code{\link{outer_negation_linter}}}
+\item{\code{\link{paste_sep_linter}}}
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{undesirable_function_linter}}}

@@ -76,6 +76,7 @@ The following linters exist:
 \item{\code{\link{package_hooks_linter}} (tags: correctness, package_development, style)}
 \item{\code{\link{paren_body_linter}} (tags: default, readability, style)}
 \item{\code{\link{paren_brace_linter}} (tags: default, readability, style)}
+\item{\code{\link{paste_sep_linter}} (tags: best_practices, consistency)}
 \item{\code{\link{pipe_call_linter}} (tags: readability, style)}
 \item{\code{\link{pipe_continuation_linter}} (tags: default, readability, style)}
 \item{\code{\link{semicolon_terminator_linter}} (tags: configurable, default, readability, style)}
