@@ -101,6 +101,7 @@ Collate:
     'package_hooks_linter.R'
     'paren_body_linter.R'
     'paren_brace_linter.R'
+    'paste_sep_linter.R'
     'path_linters.R'
     'pipe_call_linter.R'
     'pipe_continuation_linter.R'
