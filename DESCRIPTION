@@ -26,7 +26,6 @@ Imports:
     jsonlite,
     knitr,
     stats,
-    tibble,
     utils,
     xml2 (>= 1.0.0),
     xmlparsedata (>= 1.0.3)
@@ -38,6 +37,7 @@ Suggests:
     rmarkdown,
     rstudioapi (>= 0.2),
     testthat (>= 3.0.0),
+    tibble,
     withr
 License: MIT + file LICENSE
 Encoding: UTF-8
