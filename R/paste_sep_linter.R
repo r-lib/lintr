@@ -13,14 +13,8 @@ paste_sep_linter <- function() {
 
     xml <- source_file$xml_parsed_content
 
-    paste_cond <- "expr[SYMBOL_FUNCTION_CALL[text() = 'paste']]"
-    sep_cond <- file.path(
-      "SYMBOL_SUB[text() = 'sep']",
-      # NB: length-2 means '' or "" (*not* 'ab' or 'cd' which have length 4)
-      "following-sibling::expr[1][STR_CONST[string-length(text()) = 2]]"
-    )
-    xpath_fmt <- "//expr[%s and %s]"
-    xpath <- sprintf(xpath_fmt, paste_cond, sep_cond)
+    # NB: string-length()=2 means '' or "" (*not* 'ab' or 'cd' which have length 4)
+    # TODO: adapt this for R>4.0 raw strings
     xpath <- "//expr[
       expr[SYMBOL_FUNCTION_CALL[text() = 'paste']]
       and SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1][STR_CONST[string-length(text()) = 2]]
