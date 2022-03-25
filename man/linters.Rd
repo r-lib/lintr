@@ -26,7 +26,7 @@ The following tags exist:
 \item{\link[=efficiency_linters]{efficiency} (8 linters)}
 \item{\link[=package_development_linters]{package_development} (13 linters)}
 \item{\link[=readability_linters]{readability} (29 linters)}
-\item{\link[=robustness_linters]{robustness} (10 linters)}
+\item{\link[=robustness_linters]{robustness} (11 linters)}
 \item{\link[=style_linters]{style} (33 linters)}
 }
 }
@@ -37,6 +37,7 @@ The following linters exist:
 \item{\code{\link{any_is_na_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{assignment_linter}} (tags: consistency, default, style)}
 \item{\code{\link{backport_linter}} (tags: configurable, package_development, robustness)}
+\item{\code{\link{class_equals_linter}} (tags: best_practices, consistency, robustness)}
 \item{\code{\link{closed_curly_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{commas_linter}} (tags: default, readability, style)}
 \item{\code{\link{commented_code_linter}} (tags: best_practices, default, readability, style)}

@@ -14,6 +14,7 @@ something.
 The following linters are tagged with 'consistency':
 \itemize{
 \item{\code{\link{assignment_linter}}}
+\item{\code{\link{class_equals_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{no_tab_linter}}}
 \item{\code{\link{numeric_leading_zero_linter}}}

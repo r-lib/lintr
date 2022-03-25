@@ -14,6 +14,7 @@ The following linters are tagged with 'best_practices':
 \itemize{
 \item{\code{\link{absolute_path_linter}}}
 \item{\code{\link{any_is_na_linter}}}
+\item{\code{\link{class_equals_linter}}}
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{conjunct_expectation_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
