@@ -7,7 +7,7 @@
 paste_sep_linter()
 }
 \description{
-\code{paste0} is a faster, more concise alternative to using \code{paste(sep = "")}.
+\code{\link[=paste0]{paste0()}} is a faster, more concise alternative to using \code{paste(sep = "")}.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
