@@ -13,7 +13,7 @@
 #' @export
 literal_coercion_linter <- function() {
   Linter(function(source_file) {
-    if (length(source_file$parsed_content) == 0L) {
+    if (length(source_file$xml_parsed_content) == 0L) {
       return(list())
     }
 
