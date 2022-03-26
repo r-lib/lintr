@@ -17,6 +17,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{conjunct_expectation_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
+\item{\code{\link{else_same_line_linter}}}
 \item{\code{\link{expect_length_linter}}}
 \item{\code{\link{expect_named_linter}}}
 \item{\code{\link{expect_not_linter}}}
