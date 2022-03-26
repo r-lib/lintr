@@ -28,6 +28,7 @@ if_else_match_braces_linter,default style readability
 implicit_integer_linter,style consistency best_practices
 infix_spaces_linter,style readability default
 line_length_linter,style readability default configurable
+literal_coercion_linter,best_practices consistency efficiency
 missing_argument_linter,correctness common_mistakes configurable
 missing_package_linter,robustness common_mistakes
 namespace_linter,correctness robustness configurable
