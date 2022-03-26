@@ -13,6 +13,7 @@ Linters checking the use of coding best practices, such as explicit typing of nu
 The following linters are tagged with 'best_practices':
 \itemize{
 \item{\code{\link{absolute_path_linter}}}
+\item{\code{\link{any_duplicated_linter}}}
 \item{\code{\link{any_is_na_linter}}}
 \item{\code{\link{class_equals_linter}}}
 \item{\code{\link{commented_code_linter}}}
@@ -29,6 +30,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{expect_type_linter}}}
 \item{\code{\link{extraction_operator_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
+\item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
 \item{\code{\link{outer_negation_linter}}}
 \item{\code{\link{paste_sep_linter}}}
