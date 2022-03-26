@@ -15,17 +15,19 @@ stop_paste_linter <- function() {
     xml <- source_file$xml_parsed_content
 
     translators <- c("packageStartupMessage", "message", "warning", "stop")
+    # TODO: refactor to work for raw-string equivalents
     xpath <- glue::glue("//expr[
       expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(translators)} ]]
       and expr[
         expr[SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']]
-        and not(SYMBOL_SUB[
-          text() = 'collapse'
-          or (
+        and not(SYMBOL_SUB[text() = 'collapse'])
+        and (
+          not(SYMBOL_SUB[text() = 'sep'])
+          or SYMBOL_SUB[
             text() = 'sep'
-            and not(following-sibling::expr[1][STR_CONST[text() = '\"\"' or text() = '\" \"']])
-          )
-        ])
+            and following-sibling::expr[1]/STR_CONST[text() = '\"\"' or text() = '\" \"']
+          ]
+        )
       ]
     ]")
 
