@@ -50,6 +50,7 @@ Collate:
     'aaa.R'
     'actions.R'
     'addins.R'
+    'any_duplicated_linter.R'
     'any_is_na_linter.R'
     'assignment_linter.R'
     'backport_linter.R'
