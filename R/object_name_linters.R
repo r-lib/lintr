@@ -90,12 +90,12 @@ check_style <- function(nms, style, generics = character()) {
   # mark empty names and NA names as conforming
   conforming[!nzchar(nms) | is.na(conforming)] <- TRUE
 
-  if (any(!conforming)) {
+  if (!all(conforming)) {
     possible_s3 <- re_matches(
       nms[!conforming],
       rex(start, capture(name = "generic", or(generics)), ".", capture(name = "method", something), end)
     )
-    if (any(!is.na(possible_s3))) {
+    if (!all(is.na(possible_s3))) {
       has_generic <- possible_s3$generic %in% generics
 
       # If they are not conforming, but are S3 methods then ignore them

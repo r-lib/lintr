@@ -1,8 +1,10 @@
 linter,tags
 absolute_path_linter,robustness best_practices configurable
+any_duplicated_linter,efficiency best_practices
 any_is_na_linter,efficiency best_practices
 assignment_linter,style consistency default
 backport_linter,robustness configurable package_development
+class_equals_linter,best_practices robustness consistency
 closed_curly_linter,style readability default configurable
 commas_linter,style readability default
 commented_code_linter,style readability best_practices default
@@ -22,21 +24,27 @@ expect_true_false_linter,package_development best_practices readability
 expect_type_linter,package_development best_practices
 extraction_operator_linter,style best_practices
 function_left_parentheses_linter,style readability default
+if_else_match_braces_linter,default style readability
 implicit_integer_linter,style consistency best_practices
 infix_spaces_linter,style readability default
 line_length_linter,style readability default configurable
+literal_coercion_linter,best_practices consistency efficiency
 missing_argument_linter,correctness common_mistakes configurable
 missing_package_linter,robustness common_mistakes
 namespace_linter,correctness robustness configurable
+nested_ifelse_linter,efficiency readability
 no_tab_linter,style consistency default
 nonportable_path_linter,robustness best_practices configurable
+numeric_leading_zero_linter,style consistency readability
 object_length_linter,style readability default configurable
 object_name_linter,style consistency default configurable
 object_usage_linter,style readability correctness default
 open_curly_linter,style readability default configurable
+outer_negation_linter,readability efficiency best_practices
 package_hooks_linter,style correctness package_development
 paren_body_linter,style readability default
 paren_brace_linter,style readability default
+paste_sep_linter,best_practices consistency
 pipe_call_linter,style readability
 pipe_continuation_linter,style readability default
 semicolon_terminator_linter,style readability default configurable
@@ -52,3 +60,4 @@ trailing_whitespace_linter,style default
 undesirable_function_linter,style efficiency configurable robustness best_practices
 undesirable_operator_linter,style efficiency configurable robustness best_practices
 unneeded_concatenation_linter,style readability efficiency
+vector_logic_linter,default efficiency best_practices
