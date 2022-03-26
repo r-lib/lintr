@@ -46,7 +46,7 @@ lint <- function(filename, linters = NULL, cache = FALSE, ..., parse_settings = 
   } else {
     inline_data <- TRUE
     if (length(text) > 1) {
-      text <- paste(text, sep = "", collapse = "\n")
+      text <- paste(text, collapse = "\n")
     }
   }
 
