@@ -37,6 +37,7 @@ Suggests:
     rmarkdown,
     rstudioapi (>= 0.2),
     testthat (>= 3.0.0),
+    tibble,
     withr
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -49,6 +50,7 @@ Collate:
     'aaa.R'
     'actions.R'
     'addins.R'
+    'any_duplicated_linter.R'
     'any_is_na_linter.R'
     'assignment_linter.R'
     'backport_linter.R'
@@ -88,6 +90,7 @@ Collate:
     'lint.R'
     'linter_tag_docs.R'
     'linter_tags.R'
+    'literal_coercion_linter.R'
     'make_linter_from_regex.R'
     'methods.R'
     'missing_argument_linter.R'
