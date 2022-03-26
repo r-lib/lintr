@@ -15,6 +15,7 @@ The following linters are tagged with 'efficiency':
 \item{\code{\link{any_is_na_linter}}}
 \item{\code{\link{nested_ifelse_linter}}}
 \item{\code{\link{outer_negation_linter}}}
+\item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}

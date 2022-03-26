@@ -17,13 +17,13 @@ Documentation for linters is structured into tags to allow for easier discovery.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (24 linters)}
+\item{\link[=best_practices_linters]{best_practices} (26 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (5 linters)}
 \item{\link[=configurable_linters]{configurable} (16 linters)}
-\item{\link[=consistency_linters]{consistency} (9 linters)}
+\item{\link[=consistency_linters]{consistency} (11 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (27 linters)}
-\item{\link[=efficiency_linters]{efficiency} (8 linters)}
+\item{\link[=efficiency_linters]{efficiency} (9 linters)}
 \item{\link[=package_development_linters]{package_development} (13 linters)}
 \item{\link[=readability_linters]{readability} (29 linters)}
 \item{\link[=robustness_linters]{robustness} (11 linters)}
@@ -79,6 +79,7 @@ The following linters exist:
 \item{\code{\link{paste_sep_linter}} (tags: best_practices, consistency)}
 \item{\code{\link{pipe_call_linter}} (tags: readability, style)}
 \item{\code{\link{pipe_continuation_linter}} (tags: default, readability, style)}
+\item{\code{\link{redundant_ifelse_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{semicolon_terminator_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{seq_linter}} (tags: best_practices, consistency, default, efficiency, robustness)}
 \item{\code{\link{single_quotes_linter}} (tags: consistency, default, readability, style)}

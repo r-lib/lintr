@@ -20,6 +20,7 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{numeric_leading_zero_linter}}}
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{paste_sep_linter}}}
+\item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{single_quotes_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
