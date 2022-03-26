@@ -37,6 +37,7 @@ Suggests:
     rmarkdown,
     rstudioapi (>= 0.2),
     testthat (>= 3.0.0),
+    tibble,
     withr
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -49,10 +50,12 @@ Collate:
     'aaa.R'
     'actions.R'
     'addins.R'
+    'any_duplicated_linter.R'
     'any_is_na_linter.R'
     'assignment_linter.R'
     'backport_linter.R'
     'cache.R'
+    'class_equals_linter.R'
     'closed_curly_linter.R'
     'commas_linter.R'
     'comment_linters.R'
@@ -86,12 +89,14 @@ Collate:
     'lint.R'
     'linter_tag_docs.R'
     'linter_tags.R'
+    'literal_coercion_linter.R'
     'make_linter_from_regex.R'
     'methods.R'
     'missing_argument_linter.R'
     'missing_package_linter.R'
     'namespace.R'
     'namespace_linter.R'
+    'nested_ifelse_linter.R'
     'no_tab_linter.R'
     'numeric_leading_zero_linter.R'
     'object_name_linters.R'
@@ -101,6 +106,7 @@ Collate:
     'package_hooks_linter.R'
     'paren_body_linter.R'
     'paren_brace_linter.R'
+    'paste_sep_linter.R'
     'path_linters.R'
     'pipe_call_linter.R'
     'pipe_continuation_linter.R'
