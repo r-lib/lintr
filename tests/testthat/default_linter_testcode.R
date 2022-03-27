@@ -29,6 +29,10 @@ someComplicatedFunctionWithALongCamelCaseName <- function(x)
 # vector_logic
 if (1 & 2) FALSE else TRUE
 
+# function_brace
+my_metric <- function(x)
+  sum(x) + prod(x)
+
 # no_tab
 # pipe_continuation
 # seq_linter
