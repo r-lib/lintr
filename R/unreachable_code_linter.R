@@ -19,6 +19,7 @@ unreachable_code_linter <- function() {
     # NB:
     #  - * returns all children, including the terminal }, so the position
     #    is not last(), but last()-1. If there's no }, this linter doesn't apply.
+    #    this is also why we need /* and not /expr -- position() must include all nodes
     #  - land on the culprit expression
     xpath <- "
     //FUNCTION
