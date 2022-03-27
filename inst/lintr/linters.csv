@@ -1,5 +1,6 @@
 linter,tags
 absolute_path_linter,robustness best_practices configurable
+any_duplicated_linter,efficiency best_practices
 any_is_na_linter,efficiency best_practices
 assignment_linter,style consistency default
 backport_linter,robustness configurable package_development
@@ -22,11 +23,13 @@ expect_s4_class_linter,package_development best_practices
 expect_true_false_linter,package_development best_practices readability
 expect_type_linter,package_development best_practices
 extraction_operator_linter,style best_practices
+function_brace_linter,default style readability
 function_left_parentheses_linter,style readability default
 if_else_match_braces_linter,default style readability
 implicit_integer_linter,style consistency best_practices
 infix_spaces_linter,style readability default
 line_length_linter,style readability default configurable
+literal_coercion_linter,best_practices consistency efficiency
 missing_argument_linter,correctness common_mistakes configurable
 missing_package_linter,robustness common_mistakes
 namespace_linter,correctness robustness configurable

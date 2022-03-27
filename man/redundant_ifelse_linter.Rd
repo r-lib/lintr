@@ -2,9 +2,9 @@
 % Please edit documentation in R/redundant_ifelse_linter.R
 \name{redundant_ifelse_linter}
 \alias{redundant_ifelse_linter}
-\title{Prevent ifelse() from being used to produce TRUE/FALSE}
+\title{Prevent ifelse() from being used to produce TRUE/FALSE or 1/0}
 \usage{
-redundant_ifelse_linter()
+redundant_ifelse_linter(allow10 = FALSE)
 }
 \description{
 Expressions like \code{ifelse(x, TRUE, FALSE)} and \code{ifelse(x, FALSE, TRUE)} are
