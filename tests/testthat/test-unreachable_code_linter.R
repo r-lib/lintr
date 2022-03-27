@@ -107,6 +107,28 @@ test_that("unreachable_code_linter finds code after stop()", {
   )
 })
 
+# TODO(michaelchirico): extend to work on switch() statements
+# test_that("unreachable_code_linter interacts with switch() as expected", {
+#   unreachable_inside_switch_lines <- trim_some("
+#     foo <- function(x) {
+#       switch(x,
+#         a = {
+#           return(x)
+#           x + 1
+#         },
+#         b = {
+#           return(x + 1)
+#         }
+#       )
+#     }
+#   ")
+#   expect_lint(
+#     unreachable_inside_switch_lines,
+#     rex::rex("Code and comments coming after a top-level return() or stop()"),
+#     unreachable_code_linter()
+#   )
+# })
+
 # TODO(michaelchirico): the logic could be extended to terminal if statements
 #   or control flows (for/while). There shouldn't really be such a thing as
 #   a terminal for/while (owing to ExplicitReturnLinter forcing these to
