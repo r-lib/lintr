@@ -132,5 +132,6 @@ Collate:
     'vector_logic_linter.R'
     'with_id.R'
     'xp_utils.R'
+    'yoda_test_linter.R'
     'zzz.R'
 Roxygen: list(markdown = TRUE)
