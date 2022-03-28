@@ -7,7 +7,7 @@
 regex_subset_linter()
 }
 \description{
-Using \code{value = TRUE} in \code{grep} returns the subset of the input that matches
+Using \code{value = TRUE} in \code{\link[=grep]{grep()}} returns the subset of the input that matches
 the pattern, e.g. \code{grep("[a-m]", letters, value = TRUE)} will return the
 first 13 elements (\code{a} through \code{m}).
 }
@@ -19,6 +19,16 @@ The \code{stringr} package also provides an even more readable alternative,
 namely \code{str_subset()}, which should be preferred to versions using
 \code{str_detect()} and \code{str_which()}.
 }
+\section{Exceptions}{
+
+Note that \code{x[grep(pattern, x)]} and \code{grep(pattern, x, value = TRUE)}
+are not \emph{completely} interchangeable when \code{x} is not character
+(most commonly, when \code{x} is a factor), because the output of the
+latter will be a character vector while the former remains a factor.
+It still may be preferable to refactor such code, as it may be faster
+to match the pattern on \code{levels(x)} and use that to subset instead.
+}
+
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

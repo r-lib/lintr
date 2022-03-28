@@ -95,6 +95,7 @@ function calls. (#850, #851, @renkun-ken)
    + `expect_true_false_linter()` Require usage of `expect_true(x)` over `expect_equal(x, TRUE)` and similar
    + `expect_named_linter()` Require usage of `expect_named(x, n)` over `expect_equal(names(x), n)` and similar
    * `expect_length_linter()` Require usage of `expect_length(x, n)` over `expect_equal(length(x), n)` and similar
+   * `yoda_test_linter()` Require usage of `expect_identical(x, 1L)` over `expect_equal(1L, x)` and similar
    * `expect_identical_linter()` Require usage of `expect_identical()` by default, and `expect_equal()` only by exception
    * `expect_comparison_linter()` Require usage of `expect_gt(x, y)` over `expect_true(x > y)` and similar
    * `if_else_match_braces_linter()` Require balanced usage of `{}` in `if`/`else` conditions
