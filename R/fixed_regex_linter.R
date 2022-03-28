@@ -103,7 +103,7 @@ fixed_regex_linter <- function() {
 #' @return A logical vector, `TRUE` wherever `str` could be replaced by a
 #'   string with `fixed = TRUE`.
 #' @noRd
-#' @useDynLib glint, .registration = TRUE, .fixes = "lintr_"
+#' @useDynLib lintr, .registration = TRUE, .fixes = "lintr_"
 is_not_regex <- function(str, skip_start = FALSE, skip_end = FALSE) {
   .Call(lintr_is_not_regex, str, skip_start, skip_end)
 }
