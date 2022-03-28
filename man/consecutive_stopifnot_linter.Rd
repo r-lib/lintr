@@ -7,7 +7,7 @@
 consecutive_stopifnot_linter()
 }
 \description{
-\code{stopifnot()} accepts any number of tests, so sequences like
+\code{\link[=stopifnot]{stopifnot()}} accepts any number of tests, so sequences like
 \verb{stopifnot(x); stopifnot(y)} are redundant.
 }
 \seealso{
