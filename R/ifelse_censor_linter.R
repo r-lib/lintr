@@ -33,12 +33,23 @@ ifelse_censor_linter <- function() {
       bad_expr,
       xml_nodes_to_lint,
       source_file = source_file,
-      lint_message = paste(
-        "pmin(x, y) is preferable to ifelse(x < y, x, y);",
-        "pmax(x, y) is preferable to ifelse(x > y, x, y).",
-        "This reasoning also extends to using ifelse to censor a vector",
-        "(from above or below)."
-      ),
+      lint_message = function(expr) {
+        op <- xml2::xml_text(xml2::xml_find_first(expr, "expr[2]/*[2]"))
+        match_first <- !is.na(xml2::xml_find_first(expr, "expr[2][expr[1] = following-sibling::expr[1]]"))
+        if (op %in% c("<", "<=")) {
+          if (match_first) {
+            sprintf("pmin(x, y) is preferable to ifelse(x %s y, x, y).", op)
+          } else {
+            sprintf("pmax(x, y) is preferable to ifelse(x %s y, y, x).", op)
+          }
+        } else {
+          if (match_first) {
+            sprintf("pmax(x, y) is preferable to ifelse(x %s y, x, y).", op)
+          } else {
+            sprintf("pmin(x, y) is preferable to ifelse(x %s y, y, x).", op)
+          }
+        }
+      },
       type = "warning"
     ))
   })
