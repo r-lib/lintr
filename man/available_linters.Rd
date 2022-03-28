@@ -4,10 +4,13 @@
 \alias{available_linters}
 \title{Get Linter metadata from a package}
 \usage{
-available_linters(packages = "lintr")
+available_linters(packages = "lintr", tags = NULL)
 }
 \arguments{
 \item{packages}{A character vector of packages to search for linters.}
+
+\item{tags}{Optional character vector of tags to search. Only linters with at least one matching tag will be
+returned. If \code{tags} is \code{NULL}, all linters will be returned.}
 }
 \value{
 A data frame with columns 'linter', 'package' and 'tags':

@@ -3,6 +3,8 @@
 #' Obtain a tagged list of all Linters available in a package.
 #'
 #' @param packages A character vector of packages to search for linters.
+#' @param tags Optional character vector of tags to search. Only linters with at least one matching tag will be
+#' returned. If `tags` is `NULL`, all linters will be returned.
 #'
 #' @section Package Authors:
 #'
@@ -36,14 +38,17 @@
 #' identical(lintr_linters, lintr_linters2)
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-available_linters <- function(packages = "lintr") {
+available_linters <- function(packages = "lintr", tags = NULL) {
   if (!is.character(packages)) {
     stop("`packages` must be a character vector.")
+  }
+  if (!is.null(tags) && !is.character(tags)) {
+    stop("`tags` must be a character vector.")
   }
 
   # Handle multiple packages
   if (length(packages) > 1L) {
-    return(do.call(rbind, lapply(packages, available_linters)))
+    return(do.call(rbind, lapply(packages, available_linters, tags = tags)))
   }
 
   csv_file <- system.file("lintr", "linters.csv", package = packages)
@@ -80,6 +85,10 @@ available_linters <- function(packages = "lintr") {
     stringsAsFactors = FALSE
   )
   res$tags <- strsplit(available[["tags"]], split = " ", fixed = TRUE)
+  if (!is.null(tags)) {
+    matches_tags <- vapply(res$tags, function(linter_tags) any(linter_tags %in% tags), logical(1L))
+    res <- res[matches_tags, ]
+  }
   res
 }
 
@@ -109,12 +118,8 @@ rd_tags <- function(linter_name) {
 #'
 #' @noRd
 rd_linters <- function(tag_name) {
-  linters <- available_linters()
-  tagged <- platform_independent_sort(linters[["linter"]][vapply(
-    linters[["tags"]],
-    function(tag_list) tag_name %in% tag_list,
-    logical(1L)
-  )])
+  linters <- available_linters(tags = tag_name)
+  tagged <- platform_independent_sort(linters[["linter"]])
 
   c(
     "\\section{Linters}{",
