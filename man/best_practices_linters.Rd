@@ -30,11 +30,13 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{expect_true_false_linter}}}
 \item{\code{\link{expect_type_linter}}}
 \item{\code{\link{extraction_operator_linter}}}
+\item{\code{\link{ifelse_censor_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
 \item{\code{\link{outer_negation_linter}}}
 \item{\code{\link{paste_sep_linter}}}
+\item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{regex_subset_linter}}}
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{system_file_linter}}}
