@@ -20,7 +20,12 @@ local({
     "as.Date", "as.POSIXct", "as.POSIXlt",
     "sin", "cos", "tan", "sinpi", "cospi", "tanpi", "asin", "acos", "atan",
     "log", "logb", "log2", "log10", "log1p", "exp", "expm1",
-    "sqrt", "abs"
+    "sqrt", "abs",
+    "ymd", "ydm", "mdy", "myd", "dmy", "dym",
+    "yq", "ym", "my",
+    "ymd_hms", "ymd_hm", "ymd_h", "dmy_hms", "dmy_hm", "dmy_h",
+    "mdy_hms", "mdy_hm", "mdy_h", "ydm_hms", "ydm_hm", "ydm_h",
+    NULL
   )
   patrick::with_parameters_test_that(
     "inner_combine_linter blocks simple vectorized calls:",

@@ -39,31 +39,31 @@ inner_combine_linter <- function() {
 
     # See ?log. Only these two take a 'base' argument.
     log_funs <- c("log", "logb")
+    log_args <- "base"
 
-    date_args_cond <- xp_or(
-      sprintf("not(expr[SYMBOL_FUNCTION_CALL[%s]])", xp_text_in_table(date_funs)),
-      "not(SYMBOL_SUB) and not(following-sibling::expr/SYMBOL_SUB)",
-      do.call(xp_and, as.list(vapply(date_args, arg_match_cond, character(1L))))
+    # See ?lubridate::ymd and ?lubridate::ymd_hms
+    lubridate_args <- c("quiet", "tz", "locale", "truncated")
+    lubridate_funs <- c(
+      "ymd", "ydm", "mdy", "myd", "dmy", "dym",
+      "yq", "ym", "my",
+      "ymd_hms", "ymd_hm", "ymd_h", "dmy_hms", "dmy_hm", "dmy_h",
+      "mdy_hms", "mdy_hm", "mdy_h", "ydm_hms", "ydm_hm", "ydm_h"
     )
 
-    log_args_cond <- xp_or(
-      sprintf("not(expr[SYMBOL_FUNCTION_CALL[%s]])", xp_text_in_table(log_funs)),
-      "not(SYMBOL_SUB) and not(following-sibling::expr/SYMBOL_SUB)",
-      arg_match_cond("base")
-    )
+    date_args_cond <- build_arg_condition(date_funs, date_args)
+    log_args_cond <- build_arg_condition(log_funs, log_args)
+    lubridate_args_cond <- build_arg_condition(lubridate_funs, lubridate_args)
 
     c_expr_cond <- xp_and(
       sprintf(
         "expr[SYMBOL_FUNCTION_CALL[%s]]",
-        xp_text_in_table(c(no_arg_vectorized_funs, date_funs, log_funs))
+        xp_text_in_table(c(no_arg_vectorized_funs, date_funs, log_funs, lubridate_funs))
       ),
       "not(following-sibling::expr[not(expr[SYMBOL_FUNCTION_CALL])])",
-      sprintf(
-        "not(%1$s != following-sibling::expr/%1$s)",
-        "expr/SYMBOL_FUNCTION_CALL"
-      ),
+      "not(expr/SYMBOL_FUNCTION_CALL != following-sibling::expr/expr/SYMBOL_FUNCTION_CALL)",
       date_args_cond,
-      log_args_cond
+      log_args_cond,
+      lubridate_args_cond
     )
     xpath <- glue::glue("//expr[
       count(expr) > 2
@@ -92,11 +92,11 @@ inner_combine_linter <- function() {
   })
 }
 
-' Make the XPath condition ensuring an argument matches across calls
+#' Make the XPath condition ensuring an argument matches across calls
 #'
 #' @param arg Character scalar naming an argument
 #' @noRd
-arg_match_cond <- function(arg) {
+arg_match_condition <- function(arg) {
   this_symbol <- sprintf("SYMBOL_SUB[text() = '%s']", arg)
   following_symbol <- sprintf("following-sibling::expr/%s", this_symbol)
   next_expr <- "following-sibling::expr[1]"
@@ -111,4 +111,12 @@ arg_match_cond <- function(arg) {
       )
     )
   ))
+}
+
+build_arg_condition <- function(calls, arguments) {
+  xp_or(
+    sprintf("not(expr[SYMBOL_FUNCTION_CALL[%s]])", xp_text_in_table(calls)),
+    "not(SYMBOL_SUB) and not(following-sibling::expr/SYMBOL_SUB)",
+   xp_and(vapply(arguments, arg_match_condition, character(1L)))
+  )
 }
