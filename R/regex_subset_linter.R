@@ -36,11 +36,10 @@ regex_subset_linter <- function() {
       #   parent::equal_assign for EQ_ASSIGN. So just use * as a catchall.
       "not(parent::*[LEFT_ASSIGN or EQ_ASSIGN or RIGHT_ASSIGN])"
     )
-    # However the equality operator in XPath works for expr[.] = expr/expr[.],
-    #   i.e., node1 = node2, suits our purpose -- we need that the
-    #   xml2::xml_text() that would come out from the matched nodes is the same,
-    #   i.e. that whatever expression comes in <expr>[grepl(pattern, <expr>)]
-    #   matches exactly, e.g. names(x)[grepl(pattern, names(x))].
+    # See https://www.w3.org/TR/1999/REC-xpath-19991116/#booleans;
+    #   equality of nodes is based on the string value of the nodes, which
+    #   is basically what we need, i.e., whatever expression comes in
+    #   <expr>[grepl(pattern, <expr>)] matches exactly, e.g. names(x)[grepl(ptn, names(x))].
     subset_cond_fmt <- xp_and(
       "expr[SYMBOL_FUNCTION_CALL[%s]]",
       "expr[position() = %d] = parent::expr/expr[1]"
