@@ -99,7 +99,7 @@ function calls. (#850, #851, @renkun-ken)
    + `expect_type_linter()` Require usage of `expect_type(x, t)` over `expect_equal(typeof(x), t)` and similar
    + `expect_s3_class_linter()` Require usage of `expect_s3_class(x, k)` over `expect_equal(class(x), k)` and similar
    + `expect_s4_class_linter()` Require usage of `expect_s4_class(x, k)` over `expect_true(methods::is(x, k))`
-   + `conjunct_expectation_linter()` Require usage of `expect_true(x); expect_true(y)` over `expect_true(x && y)` and similar
+   + `conjunct_test_linter()` Require usage of `expect_true(x); expect_true(y)` over `expect_true(x && y)` and similar
    + `expect_not_linter()` Require usage of `expect_false(x)` over `expect_true(!x)`, and _vice versa_.
    + `expect_true_false_linter()` Require usage of `expect_true(x)` over `expect_equal(x, TRUE)` and similar
    + `expect_named_linter()` Require usage of `expect_named(x, n)` over `expect_equal(names(x), n)` and similar
@@ -123,7 +123,6 @@ function calls. (#850, #851, @renkun-ken)
    * `consecutive_stopifnot_linter()` Require consecutive calls to `stopifnot()` to be unified into one
    * `ifelse_censor_linter()` Require usage of `pmax()` / `pmin()` where appropriate, e.g. `ifelse(x > y, x, y)` is `pmax(x, y)`
    * `system_file_linter()` Require file paths to be constructed by `system.file()` instead of calling `file.path()` directly
-   * `conjunct_stopifnot_linter()` Block usage of `&&` in `stopifnot()` tests, e.g. `stopifnot(A && B)` becomes `stopifnot(A, B)`
 * `assignment_linter()` now lints right assignment (`->` and `->>`) and gains two arguments. `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`; `allow_right_assign` toggles whether to lint `->` and `->>` (#915, @michaelchirico)
 * `infix_spaces_linter()` gains argument `exclude_operators` to disable lints on selected infix operators. By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these. (#914 @michaelchirico)
 * `infix_spaces_linter()` now throws a lint on `a~b` and `function(a=1) {}` (#930, @michaelchirico)
