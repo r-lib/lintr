@@ -7,7 +7,7 @@
 paste_to_string_linter()
 }
 \description{
-\code{toString} is a more concise and expressive wrapper for aggregating string
+\code{\link[=toString]{toString()}} is a more concise and expressive wrapper for aggregating string
 vectors with \code{paste(., collapse = ", ")}.
 }
 \seealso{
