@@ -64,4 +64,3 @@ unneeded_concatenation_linter,style readability efficiency
 unreachable_code_linter,best_practices readability
 vector_logic_linter,default efficiency best_practices
 yoda_test_linter,package_development best_practices readability
-
