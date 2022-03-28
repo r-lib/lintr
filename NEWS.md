@@ -116,6 +116,7 @@ function calls. (#850, #851, @renkun-ken)
    * `literal_coercion_linter()` Require using correctly-typed literals instead of direct coercion, e.g. `1L` instead of `as.numeric(1)`
    * `paste_sep_linter()` Require usage of `paste0()` over `paste(sep = "")`
    * `nested_ifelse_linter()` Prevent nested calls to `ifelse()` like `ifelse(A, x, ifelse(B, y, z))`, and similar
+   * `else_same_line_linter()` Require `else` to come on the same line as the preceding `}`, if present
    * `unreachable_code_linter()` Prevent code after `return()` and `stop()` statements that will never be reached
    * `regex_subset_linter()` Require usage of `grep(ptn, x, value = TRUE)` over `x[grep(ptn, x)]` and similar
    * `consecutive_stopifnot_linter()` Require consecutive calls to `stopifnot()` to be unified into one
