@@ -25,7 +25,7 @@ The following tags exist:
 \item{\link[=default_linters]{default} (28 linters)}
 \item{\link[=efficiency_linters]{efficiency} (11 linters)}
 \item{\link[=package_development_linters]{package_development} (13 linters)}
-\item{\link[=readability_linters]{readability} (30 linters)}
+\item{\link[=readability_linters]{readability} (31 linters)}
 \item{\link[=robustness_linters]{robustness} (11 linters)}
 \item{\link[=style_linters]{style} (34 linters)}
 }
@@ -96,6 +96,7 @@ The following linters exist:
 \item{\code{\link{undesirable_function_linter}} (tags: best_practices, configurable, efficiency, robustness, style)}
 \item{\code{\link{undesirable_operator_linter}} (tags: best_practices, configurable, efficiency, robustness, style)}
 \item{\code{\link{unneeded_concatenation_linter}} (tags: efficiency, readability, style)}
+\item{\code{\link{unreachable_code_linter}} (tags: best_practices, readability)}
 \item{\code{\link{vector_logic_linter}} (tags: best_practices, default, efficiency)}
 }
 }

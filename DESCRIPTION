@@ -125,6 +125,7 @@ Collate:
     'undesirable_function_linter.R'
     'undesirable_operator_linter.R'
     'unneeded_concatenation_linter.R'
+    'unreachable_code_linter.R'
     'vector_logic_linter.R'
     'with_id.R'
     'xp_utils.R'
