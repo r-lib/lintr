@@ -61,6 +61,7 @@ Collate:
     'comment_linters.R'
     'comments.R'
     'conjunct_expectation_linter.R'
+    'consecutive_stopifnot_linter.R'
     'cyclocomp_linter.R'
     'declared_functions.R'
     'deprecated.R'
