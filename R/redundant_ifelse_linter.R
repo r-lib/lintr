@@ -6,6 +6,9 @@
 #'   this should only be needed rarely.
 #'
 #' @evalRd rd_tags("redundant_ifelse_linter")
+#' @param allow10 Logical, default `FALSE`. If `TRUE`, usage like
+#'   `ifelse(x, 1, 0)` is allowed, i.e., only usage like
+#'   `ifelse(x, TRUE, FALSE)` is linted.
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 redundant_ifelse_linter <- function(allow10 = FALSE) {

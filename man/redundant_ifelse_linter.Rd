@@ -6,6 +6,11 @@
 \usage{
 redundant_ifelse_linter(allow10 = FALSE)
 }
+\arguments{
+\item{allow10}{Logical, default \code{FALSE}. If \code{TRUE}, usage like
+\code{ifelse(x, 1, 0)} is allowed, i.e., only usage like
+\code{ifelse(x, TRUE, FALSE)} is linted.}
+}
 \description{
 Expressions like \code{ifelse(x, TRUE, FALSE)} and \code{ifelse(x, FALSE, TRUE)} are
 redundant; just \code{x} or \code{!x} suffice in R code where logical vectors are a
