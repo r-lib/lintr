@@ -17,6 +17,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{any_is_na_linter}}}
 \item{\code{\link{class_equals_linter}}}
 \item{\code{\link{commented_code_linter}}}
+\item{\code{\link{condition_message_linter}}}
 \item{\code{\link{conjunct_expectation_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{expect_comparison_linter}}}
@@ -36,7 +37,6 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{paste_sep_linter}}}
 \item{\code{\link{regex_subset_linter}}}
 \item{\code{\link{seq_linter}}}
-\item{\code{\link{stop_paste_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{undesirable_function_linter}}}
