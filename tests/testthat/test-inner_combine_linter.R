@@ -6,7 +6,6 @@ test_that("inner_combine_linter lints a false positive-ish usage", {
   #   still preferable to vectorize the call, while being sure to use a
   #   consistent format for the inputs. In this case, the correct equivalent
   #   call is as.POSIXct(c("2021-01-01 00:00:00", "2021-01-01 01:00:00")).
-  # See http://google3/analysis/economics/r/izeitgeist/tests/testthat/test-izeitgeist.R;l=1058-1062;rcl=394984377.
   expect_lint(
     "c(as.POSIXct('2021-01-01'), as.POSIXct('2021-01-01 01:00:00'))",
     rex::rex("Combine inputs to vectorized functions first"),
