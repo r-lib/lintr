@@ -1,0 +1,114 @@
+#' Require c() to be applied before relatively expensive vectorized functions
+#'
+#' `as.Date(c(a, b))` is logically equivalent to `c(as.Date(a), as.Date(b))`;
+#'   ditto for the equivalence of several other vectorized functions like
+#'   [as.POSIXct()] and math functions like [sin()]. The former is to be
+#'   preferred so that the most expensive part of the operation ([as.Date()])
+#'   is applied only once.
+#'
+#' @evalRd rd_tags("inner_combine_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
+#' @export
+inner_combine_linter <- function() {
+  Linter(function(source_file) {
+    if (length(source_file$xml_parsed_content) == 0L) {
+      return(list())
+    }
+
+    xml <- source_file$xml_parsed_content
+
+    # these don't take any other arguments (except maybe by non-default
+    #   methods), so don't need to check equality of other arguments
+    no_arg_vectorized_funs <- c(
+      "sin", "cos", "tan", "sinpi", "cospi", "tanpi", "asin", "acos", "atan",
+      "log2", "log10", "log1p", "exp", "expm1",
+      "sqrt", "abs"
+    )
+
+    # TODO(michaelchirico): the need to spell out specific arguments is pretty brittle,
+    #   but writing the xpath for the alternative case was proving too tricky.
+    #   It's messy enough as is -- it may make sense to take another pass at
+    #   writing the xpath from scratch to see if it can't be simplified.
+
+    # See ?as.Date, ?as.POSIXct. tryFormats is not explicitly in any default
+    #   POSIXct method, but it is in as.Date.character and as.POSIXlt.character --
+    #   the latter is what actually gets invoked when running as.POSIXct
+    #   on a character. So it is indeed an argument by pass-through.
+    date_args <- c("format", "origin", "tz", "tryFormats")
+    date_funs <- c("as.Date", "as.POSIXct", "as.POSIXlt")
+
+    # See ?log. Only these two take a 'base' argument.
+    log_funs <- c("log", "logb")
+
+    date_args_cond <- xp_or(
+      sprintf("not(expr[SYMBOL_FUNCTION_CALL[%s]])", xp_text_in_table(date_funs)),
+      "not(SYMBOL_SUB) and not(following-sibling::expr/SYMBOL_SUB)",
+      do.call(xp_and, as.list(vapply(date_args, arg_match_cond, character(1L))))
+    )
+
+    log_args_cond <- xp_or(
+      sprintf("not(expr[SYMBOL_FUNCTION_CALL[%s]])", xp_text_in_table(log_funs)),
+      "not(SYMBOL_SUB) and not(following-sibling::expr/SYMBOL_SUB)",
+      arg_match_cond("base")
+    )
+
+    c_expr_cond <- xp_and(
+      sprintf(
+        "expr[SYMBOL_FUNCTION_CALL[%s]]",
+        xp_text_in_table(c(no_arg_vectorized_funs, date_funs, log_funs))
+      ),
+      "not(following-sibling::expr[not(expr[SYMBOL_FUNCTION_CALL])])",
+      sprintf(
+        "not(%1$s != following-sibling::expr/%1$s)",
+        "expr/SYMBOL_FUNCTION_CALL"
+      ),
+      date_args_cond,
+      log_args_cond
+    )
+    xpath <- glue::glue("//expr[
+      count(expr) > 2
+      and expr[
+        SYMBOL_FUNCTION_CALL[text() = 'c']
+        and following-sibling::expr[1][ {c_expr_cond} ]
+      ]
+    ]")
+
+    bad_expr <- xml2::xml_find_all(xml, xpath)
+
+    return(lapply(
+      bad_expr,
+      xml_nodes_to_lint,
+      source_file = source_file,
+      lint_message = function(expr) {
+        matched_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/expr/SYMBOL_FUNCTION_CALL"))
+        message <- sprintf(
+          "%1$s(c(x, y)) only runs the more expensive %1$s() once as compared to c(%1$s(x), %1$s(y)).",
+          matched_call
+        )
+        paste("Combine inputs to vectorized functions first to take full advantage of vectorization, e.g.,", message)
+      },
+      type = "warning"
+    ))
+  })
+}
+
+' Make the XPath condition ensuring an argument matches across calls
+#'
+#' @param arg Character scalar naming an argument
+#' @noRd
+arg_match_cond <- function(arg) {
+  this_symbol <- sprintf("SYMBOL_SUB[text() = '%s']", arg)
+  following_symbol <- sprintf("following-sibling::expr/%s", this_symbol)
+  next_expr <- "following-sibling::expr[1]"
+  return(xp_or(
+    sprintf("not(%s) and not(%s)", this_symbol, following_symbol),
+    xp_and(
+      this_symbol,
+      following_symbol,
+      sprintf(
+        "not(%1$s/%3$s != %2$s/%3$s)",
+        this_symbol, following_symbol, next_expr
+      )
+    )
+  ))
+}
