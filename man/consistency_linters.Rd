@@ -15,6 +15,7 @@ The following linters are tagged with 'consistency':
 \itemize{
 \item{\code{\link{assignment_linter}}}
 \item{\code{\link{class_equals_linter}}}
+\item{\code{\link{condition_message_linter}}}
 \item{\code{\link{consecutive_stopifnot_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{literal_coercion_linter}}}
