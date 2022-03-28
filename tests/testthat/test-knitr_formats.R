@@ -6,15 +6,12 @@ regexes <- list(
 )
 
 test_that("it handles dir", {
-  lints <- lint_dir(
-    path = "knitr_formats",
-    pattern = rex::rex(".R", one_of("html", "md", "nw", "rst", "tex", "txt")),
-    parse_settings = FALSE
-  )
-  has_lints <- length(lints) > 0
-  testthat::expect(has_lints, "There should be lints")
+  file_pattern <- rex::rex(".R", one_of("html", "md", "nw", "rst", "tex", "txt"))
 
-  testthat::expect_equivalent(length(unique(names(lints))), 6, info="For every file there should be at least 1 lint")
+  lints <- lint_dir(path = "knitr_formats", pattern = file_pattern, parse_settings = FALSE)
+
+  # For every file there should be at least 1 lint
+  expect_setequal(names(lints), list.files("knitr_formats", pattern = file_pattern))
 })
 
 test_that("it handles markdown", {

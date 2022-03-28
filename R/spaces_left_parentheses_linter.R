@@ -1,5 +1,9 @@
-#' @describeIn linters Check that all left parentheses have a space before them
-#' unless they are in a function call.
+#' Spaces before parentheses linter
+#'
+#' Check that all left parentheses have a space before them unless they are in a function call.
+#'
+#' @evalRd rd_tags("spaces_left_parentheses_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 spaces_left_parentheses_linter <- function() {
   Linter(function(source_file) {
@@ -25,9 +29,12 @@ spaces_left_parentheses_linter <- function() {
       for_cond <- "@start - 1 = parent::forcond/preceding-sibling::FOR/@end"
 
       # see infix_spaces_linter.R; preceding-sibling::* is needed for unary operators where '-(a)' is ok
-      unary_nodes <- c(names(unary_infix_tokens), "OP-TILDE")
+      unary_nodes <- infix_metadata[infix_metadata$unary, "xml_tag"]
       unary_selves <- paste0("self::", unary_nodes, "[preceding-sibling::*]", collapse = " or ")
-      binary_nodes <- c(names(binary_infix_tokens), "EQ_FORMALS", "OP-COMMA", "OP-LEFT-BRACE", "ELSE", "IN")
+      binary_nodes <- c(
+        infix_metadata[infix_metadata$low_precedence & !infix_metadata$unary, "xml_tag"],
+        "OP-COMMA", "OP-LEFT-BRACE", "ELSE", "IN"
+      )
       binary_selves <- paste0("self::", binary_nodes, collapse = " or ")
       # preceding-symbol::* catches (1) function definitions and (2) function calls
       # ancestor::expr needed for nested RHS expressions, e.g. 'y1<-(abs(yn)>90)*1'
@@ -46,7 +53,7 @@ spaces_left_parentheses_linter <- function() {
     bad_paren <- xml2::xml_find_all(xml, xpath)
 
     lapply(bad_paren, xml_nodes_to_lint, source_file,
-           message = "Place a space before left parenthesis, except in a function call.",
+           lint_message = "Place a space before left parenthesis, except in a function call.",
            type = "style", global = global)
   })
 }

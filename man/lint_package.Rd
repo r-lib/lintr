@@ -6,25 +6,22 @@
 \usage{
 lint_package(
   path = ".",
-  relative_path = TRUE,
   ...,
+  relative_path = TRUE,
   exclusions = list("R/RcppExports.R"),
   parse_settings = TRUE
 )
 }
 \arguments{
-\item{path}{the path to the base directory of the package, if \code{NULL},
-it will be searched in the parent directories of the current directory.}
+\item{path}{the path to the base directory of the package, if \code{NULL}, it will be searched in the parent directories
+of the current directory.}
 
-\item{relative_path}{if \code{TRUE}, file paths are printed using their path
-relative to the base directory.  If \code{FALSE}, use the full
-absolute path.}
+\item{...}{additional arguments passed to \code{\link[=lint]{lint()}}, e.g. \code{linters} or \code{cache}.}
 
-\item{...}{additional arguments passed to \code{\link{lint}}, e.g.
-\code{cache} or \code{linters}.}
+\item{relative_path}{if \code{TRUE}, file paths are printed using their path relative to the base directory.
+If \code{FALSE}, use the full absolute path.}
 
-\item{exclusions}{exclusions for \code{\link{exclude}}, relative to the
-package path.}
+\item{exclusions}{exclusions for \code{\link[=exclude]{exclude()}}, relative to the package path.}
 
 \item{parse_settings}{whether to try and parse the settings.}
 }

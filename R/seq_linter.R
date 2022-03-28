@@ -1,8 +1,11 @@
-#' @describeIn linters  Check for \code{1:length(...)}, \code{1:nrow(...)},
-#' \code{1:ncol(...)}, \code{1:NROW(...)} and \code{1:NCOL(...)}
-#' expressions. These often cause bugs when the right-hand side is zero.
-#' It is safer to use \code{\link[base]{seq_len}} or
-#' \code{\link[base]{seq_along}} instead.
+#' Sequence linter
+#'
+#' Check for `1:length(...)`, `1:nrow(...)`, `1:ncol(...)`, `1:NROW(...)` and `1:NCOL(...)` expressions.
+#' These often cause bugs when the right-hand side is zero.
+#' It is safer to use [base::seq_len()] or [base::seq_along()] instead.
+#'
+#' @evalRd rd_tags("seq_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 seq_linter <- function() {
   Linter(function(source_file) {
@@ -12,14 +15,12 @@ seq_linter <- function() {
     xml <- source_file$xml_parsed_content
 
     bad_funcs <- c("length", "nrow", "ncol", "NROW", "NCOL", "dim")
-    text_clause <- paste0("text() = '", bad_funcs, "'", collapse = " or ")
 
-    xpath <- paste0(
-      "//expr",
-      "[expr[NUM_CONST[text()='1' or text()='1L']]]",
-      "[OP-COLON]",
-      "[expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[", text_clause, "]]]]]"
-    )
+    xpath <- glue::glue("//expr[
+      expr[NUM_CONST[text() =  '1' or text() =  '1L']]
+      and OP-COLON
+      and expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]
+    ]")
 
     badx <- xml2::xml_find_all(xml, xpath)
 

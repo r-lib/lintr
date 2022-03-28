@@ -8,29 +8,28 @@
 lint(
   filename,
   linters = NULL,
-  cache = FALSE,
   ...,
+  cache = FALSE,
   parse_settings = TRUE,
   text = NULL
 )
 }
 \arguments{
-\item{filename}{either the filename for a file to lint, or a character
-string of inline R code for linting. The latter [inline data] applies
-whenever \code{filename} has a newline character (\\n).}
+\item{filename}{either the filename for a file to lint, or a character string of inline R code for linting.
+The latter (inline data) applies whenever \code{filename} has a newline character (\\n).}
 
-\item{linters}{a named list of linter functions to apply see
-\code{\link{linters}} for a full list of default and available linters.}
+\item{linters}{a named list of linter functions to apply see \link{linters} for a full list of default and available
+linters.}
 
-\item{cache}{given a logical, toggle caching of lint results. If passed a
-character string, store the cache in this directory.}
+\item{...}{additional arguments passed to \code{\link[=exclude]{exclude()}}.}
 
-\item{...}{additional arguments passed to \code{\link{exclude}}.}
+\item{cache}{given a logical, toggle caching of lint results. If passed a character string, store the cache in this
+directory.}
 
 \item{parse_settings}{whether to try and parse the settings.}
 
-\item{text}{Optional argument for supplying a string or lines directly,
-e.g. if the file is already in memory or linting is being done ad hoc.}
+\item{text}{Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
+linting is being done ad hoc.}
 }
 \value{
 A list of lint objects.

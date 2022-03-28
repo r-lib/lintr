@@ -1,12 +1,12 @@
 #' Modify lintr defaults
 #'
-#' Make a new list based on \pkg{lintr}'s default linters, undesirable
-#' operators or functions. The result of this function is meant to be passed to
-#' the `linters` argument of `lint()`, or put in your configuration file.
+#' Make a new list based on \pkg{lintr}'s default linters, undesirable operators or functions.
+#' The result of this function is meant to be passed to the `linters` argument of `lint()`, or put in your
+#' configuration file.
 #'
-#' @param ... arguments of elements to change. If unnamed, the argument is named. If the named
-#' argument already exists in "default", it is replaced by the new element. If it does not exist,
-#' it is added. If the value is \code{NULL}, the element is removed.
+#' @param ... arguments of elements to change. If unnamed, the argument is named. If the named argument already exists
+#' in "default", it is replaced by the new element. If it does not exist, it is added. If the value is `NULL`, the
+#' element is removed.
 #' @param default list of elements to modify.
 #' @return A modified list of elements.
 #' @examples
@@ -71,14 +71,14 @@ with_defaults <- function(..., default = default_linters) {
 
 #' Default linters
 #'
-#' @description List of default linters for \code{\link{lint}}. Use
-#' \code{\link{with_defaults}} to customize it.
+#' @description List of default linters for [lint()]. Use
+#' [with_defaults()] to customize it.
 #'
-#' The set of default linters is as follows (any parameterised linters, eg,
-#' \code{line_length_linter} use their default argument(s), see \code{?
-#' <linter_name>} for details):
+#' The set of default linters is as follows (any parameterised linters, eg, `line_length_linter` use their default
+#' argument(s), see `?<linter_name>` for details):
 #'
-#' - \Sexpr[stage=render, results=rd]{paste(names(lintr::default_linters), collapse=", ")}.
+#' @evalRd rd_linters("default")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #'
 #' @export
 default_linters <- with_defaults(
@@ -89,7 +89,9 @@ default_linters <- with_defaults(
   commented_code_linter(),
   cyclocomp_linter(),
   equals_na_linter(),
+  function_brace_linter(),
   function_left_parentheses_linter(),
+  if_else_match_braces_linter(),
   infix_spaces_linter(),
   line_length_linter(),
   no_tab_linter(),
@@ -107,20 +109,26 @@ default_linters <- with_defaults(
   spaces_left_parentheses_linter(),
   T_and_F_symbol_linter(),
   trailing_blank_lines_linter(),
-  trailing_whitespace_linter()
+  trailing_whitespace_linter(),
+  vector_logic_linter()
 )
 
 #' Default undesirable functions and operators
 #'
-#' Lists of function names and operators for \code{\link{undesirable_function_linter}} and
-#' \code{\link{undesirable_operator_linter}}. There is a list for the default elements and another
-#' that contains all available elements. Use \code{\link{with_defaults}} to produce a custom list.
+#' Lists of function names and operators for [undesirable_function_linter()] and [undesirable_operator_linter()].
+#' There is a list for the default elements and another that contains all available elements.
+#' Use [with_defaults()] to produce a custom list.
+#'
 #' @format A named list of character strings.
 #' @rdname default_undesirable_functions
 #' @export
 all_undesirable_functions <- with_defaults(
   default = list(),
   "attach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
+  "browser" = "remove debugging markers from 'final' code",
+  "debug" = "remove debugging markers from 'final' code",
+  "debugcall" = "remove debugging markers from 'final' code",
+  "debugonce" = "remove debugging markers from 'final' code",
   "detach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
   "ifelse" = "use an if () {} else {} block",
   ".libPaths" = "use withr::with_libpaths()",
@@ -137,7 +145,10 @@ all_undesirable_functions <- with_defaults(
   "source" = NA,
   "substring" = "use substr()",
   "Sys.setenv" = "use withr::with_envvar()",
-  "Sys.setlocale" = "use withr::with_locale()"
+  "Sys.setlocale" = "use withr::with_locale()",
+  "trace" = "remove debugging markers from 'final' code",
+  "undebug" = "remove debugging markers from 'final' code",
+  "untrace" = "remove debugging markers from 'final' code"
 )
 
 #' @rdname default_undesirable_functions
@@ -146,6 +157,10 @@ default_undesirable_functions <- do.call(with_defaults, c(
   list(default = list()),
   all_undesirable_functions[c(
     "attach",
+    "browser",
+    "debug",
+    "debugcall",
+    "debugonce",
     "detach",
     ".libPaths",
     "library",
@@ -158,7 +173,10 @@ default_undesirable_functions <- do.call(with_defaults, c(
     "sink",
     "source",
     "Sys.setenv",
-    "Sys.setlocale"
+    "Sys.setlocale",
+    "trace",
+    "undebug",
+    "untrace"
   )]
 ))
 
@@ -184,7 +202,7 @@ default_undesirable_operators <- do.call(with_defaults, c(
 
 
 #' Default lintr settings
-#' @seealso \code{\link{read_settings}}, \code{\link{default_linters}}
+#' @seealso [read_settings()], [default_linters()]
 #' @export
 default_settings <- NULL
 

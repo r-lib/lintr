@@ -1,8 +1,15 @@
-#' @describeIn linters Check that closures have the proper usage using
-#' \code{\link[codetools]{checkUsage}}. Note that this runs
-#' \code{\link[base]{eval}} on the code, so do not use with untrusted code.
+#' Object usage linter
+#'
+#' Check that closures have the proper usage using [codetools::checkUsage()].
+#' Note that this runs [base::eval()] on the code, so do not use with untrusted code.
+#'
+#' @param interpret_glue If TRUE, interpret [glue::glue()] calls to avoid false positives caused by local variables
+#' which are only used in a glue expression.
+#'
+#' @evalRd rd_tags("object_usage_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-object_usage_linter <- function() {
+object_usage_linter <- function(interpret_glue = TRUE) {
   Linter(function(source_file) {
     # If there is no xml data just return
     if (is.null(source_file$full_xml_parsed_content)) return(list())
@@ -43,7 +50,13 @@ object_usage_linter <- function() {
       if (inherits(fun, "try-error")) {
         return()
       }
-      res <- parse_check_usage(fun)
+      if (isTRUE(interpret_glue)) {
+        known_used_symbols <- extract_glued_symbols(info$expr[[1L]])
+      } else {
+        known_used_symbols <- character()
+      }
+
+      res <- parse_check_usage(fun, known_used_symbols = known_used_symbols)
 
       lapply(
         which(!is.na(res$message)),
@@ -94,6 +107,63 @@ object_usage_linter <- function() {
   })
 }
 
+extract_glued_symbols <- function(expr) {
+  # TODO support more glue functions
+  # Package glue:
+  #  - glue_sql
+  #  - glue_safe
+  #  - glue_col
+  #  - glue_data
+  #  - glue_data_sql
+  #  - glue_data_safe
+  #  - glue_data_col
+  #
+  # Package stringr:
+  #  - str_interp
+  glue_calls <- xml2::xml_find_all(
+    expr,
+    xpath = paste0(
+      "descendant::SYMBOL_FUNCTION_CALL[text() = 'glue']/", # a glue() call
+      "preceding-sibling::NS_GET/preceding-sibling::SYMBOL_PACKAGE[text() = 'glue']/", # qualified with glue::
+      "parent::expr[",
+      # without .envir or .transform arguments
+      "not(following-sibling::SYMBOL_SUB[text() = '.envir' or text() = '.transform']) and",
+      # argument that is not a string constant
+      "not(following-sibling::expr[not(STR_CONST)])",
+      "]/",
+      # get the complete call
+      "parent::expr"
+    )
+  )
+
+  if (length(glue_calls) == 0L) return(character())
+  glued_symbols <- new.env(parent = emptyenv())
+  for (cl in glue_calls) {
+    parsed_cl <- tryCatch(
+      parse(text = xml2::xml_text(cl)),
+      error = function(...) NULL,
+      warning = function(...) NULL
+    )[[1L]]
+    if (is.null(parsed_cl)) next
+    parsed_cl[[".transformer"]] <- function(text, envir) {
+      parsed_text <- tryCatch(
+        parse(text = text, keep.source = TRUE),
+        error = function(...) NULL,
+        warning = function(...) NULL
+      )
+      parsed_xml <- safe_parse_to_xml(parsed_text)
+      if (is.null(parsed_xml)) return("")
+      symbols <- xml2::xml_text(xml2::xml_find_all(parsed_xml, "//SYMBOL"))
+      for (sym in symbols) {
+        assign(sym, NULL, envir = glued_symbols)
+      }
+      ""
+    }
+    eval(parsed_cl)
+  }
+  ls(envir = glued_symbols, all.names = TRUE)
+}
+
 get_assignment_symbols <- function(xml) {
   left_assignment_symbols <-
     xml2::xml_text(xml2::xml_find_all(xml, "expr[LEFT_ASSIGN]/expr[1]/SYMBOL[1]"))
@@ -136,16 +206,18 @@ get_function_assignments <- function(xml) {
 
   get_attr <- function(x, attr) as.integer(xml2::xml_attr(x, attr))
 
-  data.frame(
+  res <- data.frame(
     line1 = viapply(funs, get_attr, "line1"),
     line2 = viapply(funs, get_attr, "line2"),
     col1 = viapply(funs, get_attr, "col1"),
     col2 = viapply(funs, get_attr, "col2"),
     stringsAsFactors = FALSE
   )
+  res[["expr"]] <- funs
+  res
 }
 
-parse_check_usage <- function(expression) {
+parse_check_usage <- function(expression, known_used_symbols = character()) {
 
   vals <- list()
 
@@ -153,7 +225,11 @@ parse_check_usage <- function(expression) {
     vals[[length(vals) + 1L]] <<- x
   }
 
-  try(codetools::checkUsage(expression, report = report))
+  try(codetools::checkUsage(
+    expression,
+    report = report,
+    suppressLocalUnused = known_used_symbols
+  ))
 
   function_name <- rex(anything, ": ")
   line_info <- rex(" ", "(", capture(name = "path", non_spaces), ":",

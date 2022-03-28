@@ -1,5 +1,19 @@
 # lintr (development version)
 
+## Potentially breaking changes and pending deprecations
+
+* Lints are now marked with the name of the `linter` that caused them instead of the name of their implementation
+  function.
+  Deprecated the obsolete `linter` argument of `Lint()`. (#664, #673, #746, @AshesITR)
+  Downstream custom linters should follow suit.
+* Consistent access to linters through a function call, even for linters without parameters (#245, @fangly, @AshesITR, and @MichaelChirico)
+* Removed deprecated functions `absolute_paths_linter`, `camel_case_linter`, `multiple_dots_linter`, `snake_case_linter`, and `trailing_semicolons_linter`. They have been marked as deprecated since v1.0.1, which was released in 2017.
+* The `...` arguments for `lint()`, `lint_dir()`, and `lint_package()` have promoted to an earlier position to better match the [Tidyverse design principal](https://design.tidyverse.org/args-data-details.html) of data->descriptor->details. This change enables passing objects to `...` without needing to specify non-required arguments, e.g. `lint_dir("/path/to/dir", linter())` now works without the need to specify `relative_path`. This affects some code that uses positional arguments. (#935, @michaelchirico)
+  + For `lint()`, `...` is now the 3rd argument, where earlier this was `cache=`
+  + For `lint_dir()` and `lint_package()`, `...` is now the 2nd argument, where earlier this was `relative_path=`
+
+## New features, bug fixes, improvements
+
 * Updated R CMD GitHub Actions workflow to check for R 3.6 on Ubuntu, instead of R 3.3, and for R 4.0 on Windows, instead of R 3.6 (#803, @ dragosmg)
 * Added a secondary, more restrictive lint workflow - `lint-changed-files` - for newly written / modified code (#641, @dragosmg) 
 * Switched CI from Travis to GitHub Actions, using the full tidyverse recommended R CMD check. Code coverage and linting 
@@ -10,7 +24,6 @@
   format specifiers (#472, @russHyde)
 * New style SNAKE_CASE for `object_name_linter()` (#494, @AshesITR)
 * RStudio source markers are cleared when there are no lints (#520, @AshesITR)
-* New `assignment_spaces()` lintr. (#538, @f-ritter)
 * `seq_linter()`'s lint message is clearer about the reason for linting. (#522, @michaelchirico)
 * New `missing_package_linter()` (#536, #547, @renkun-ken)
 * New `namespace_linter()` (#548, #551, @renkun-ken)
@@ -37,9 +50,6 @@
   excluding matches found in comments; #441 and #545, @russHyde)
 * `paren_brace_linter` now marks lints at the opening brace instead of the closing parenthesis, making fixing the lints
   by jumping to source markers easier (#583, @AshesITR)
-* Lints are now marked with the name of the `linter` that caused them instead of the name of their implementation
-  function.    
-  Deprecated the obsolete `linter` argument of `Lint()`. (#664, #673, #746, @AshesITR)
 * New syntax to exclude only selected linters from linting lines or passages. Use `# nolint: linter_name, linter2_name.`
   or `# nolint start: linter_name, linter2_name.` in source files or named lists of line numbers in `.lintr`.
   (#660, @AshesITR)
@@ -55,7 +65,6 @@
 * `commented_code_linter()` uses the parse tree to find comments, eliminating some false positives (#451, @AshesITR)
 * `trailing_blank_lines_linter()` now also lints files without a terminal newline (#675, @AshesITR)
 * `object_name_linter()` now correctly detects imported functions when linting packages (#642, @AshesITR)
-* Consistent access to linters through a function call, even for linters without parameters (#245, @fangly, @AshesITR, and @MichaelChirico)
 * `object_usage_linter()` now correctly reports usage warnings spanning multiple lines (#507, @AshesITR)
 * `T_and_F_symbol_linter()` no longer lints occurrences of `T` and `F` when used for subsetting and gives a better 
   message when used as variable names (#657, @AshesITR)
@@ -73,9 +82,51 @@
 * `undesirable_function_linter` no longer lints `library` and `require` calls attaching a package with an undesired name, e.g. `library(foo)` (#814, @kpagacz and @michaelchirico)
 * New linter `duplicate_argument_linter()` checks that there are no duplicate arguments supplied to
 function calls. (#850, #851, @renkun-ken)
-* Removed deprecated functions `absolute_paths_linter`, `camel_case_linter`, `multiple_dots_linter`, `snake_case_linter`, and `trailing_semicolons_linter`. They have been marked as deprecated since v1.0.1, which was released in 2017.
 * Several optional `Imported` packages have become `Suggested` dependencies: `httr`, `testthat`, and `rstudioapi`. This should allow snappier CI builds for usages not relying on some more "peripheral" features of the package.
 * Error message for mismatched starts and ends of exclusion ranges is now more helpful. (#571, #860, @AshesITR and @danielinteractive)
+* Debugging functions (`browser()`, `debug()`, `debugcall()`, `debugonce()`, `trace()`, `undebug()`, `untrace()`) are now part of the default set of undesirable functions to help prevent them from being committed by mistake. (#876, @michaelchirico)
+* New linter `package_hooks_linter()` runs a series of checks also done by `R CMD check` on the `.onLoad()`, `.onAttach()`, `.Last.lib()` and `.onDetach()` hooks (#882, @MichaelChirico)
+* Improved location information for R parse errors (#894, #892, @renkun-ken and @AshesITR)
+* New tag based documentation pages for linters (#888, @AshesITR)
+  * Each linter has its own help page
+  * `?linters` also links to tag help pages, collecting linters with a similar goal
+  * Each linter can have multiple tags
+  * New function `available_linters()` to list available linters and their tags 
+    This feature is extensible by package authors providing add-on linters for {lintr}.
+* `lintr` now uses the 3rd edition of `testthat` (@MichaelChirico, @AshesITR, #910, #967)
+* `lintr` is adopting a new set of linters provided as part of Google's extension to the tidyverse style guide (#884, @michaelchirico)
+   + `expect_null_linter()` Require usage of `expect_null(x)` over `expect_equal(x, NULL)` and similar
+   + `expect_type_linter()` Require usage of `expect_type(x, t)` over `expect_equal(typeof(x), t)` and similar
+   + `expect_s3_class_linter()` Require usage of `expect_s3_class(x, k)` over `expect_equal(class(x), k)` and similar
+   + `expect_s4_class_linter()` Require usage of `expect_s4_class(x, k)` over `expect_true(methods::is(x, k))`
+   + `conjunct_expectation_linter()` Require usage of `expect_true(x); expect_true(y)` over `expect_true(x && y)` and similar
+   + `expect_not_linter()` Require usage of `expect_false(x)` over `expect_true(!x)`, and _vice versa_.
+   + `expect_true_false_linter()` Require usage of `expect_true(x)` over `expect_equal(x, TRUE)` and similar
+   + `expect_named_linter()` Require usage of `expect_named(x, n)` over `expect_equal(names(x), n)` and similar
+   * `expect_length_linter()` Require usage of `expect_length(x, n)` over `expect_equal(length(x), n)` and similar
+   * `yoda_test_linter()` Require usage of `expect_identical(x, 1L)` over `expect_equal(1L, x)` and similar
+   * `expect_identical_linter()` Require usage of `expect_identical()` by default, and `expect_equal()` only by exception
+   * `expect_comparison_linter()` Require usage of `expect_gt(x, y)` over `expect_true(x > y)` and similar
+   * `if_else_match_braces_linter()` Require balanced usage of `{}` in `if`/`else` conditions
+   * `vector_logic_linter()` Require use of scalar logical operators (`&&` and `||`) inside `if()` conditions and similar
+   * `any_is_na_linter()` Require usage of `anyNA(x)` over `any(is.na(x))`
+   * `class_equals_linter()` Prevent comparing `class(x)` with `==`, `!=`, or `%in%`, where `inherits()` is typically preferred
+   * `outer_negation_linter()` Require usage of `!any(x)` over `all(!x)` and `!all(x)` over `any(!x)`
+   * `numeric_leading_zero_linter()` Require a leading `0` in fractional numeric constants, e.g. `0.1` instead of `.1`
+   * `literal_coercion_linter()` Require using correctly-typed literals instead of direct coercion, e.g. `1L` instead of `as.numeric(1)`
+   * `paste_sep_linter()` Require usage of `paste0()` over `paste(sep = "")`
+   * `nested_ifelse_linter()` Prevent nested calls to `ifelse()` like `ifelse(A, x, ifelse(B, y, z))`, and similar
+   * `unreachable_code_linter()` Prevent code after `return()` and `stop()` statements that will never be reached
+   * `regex_subset_linter()` Require usage of `grep(ptn, x, value = TRUE)` over `x[grep(ptn, x)]` and similar
+   * `consecutive_stopifnot_linter()` Require consecutive calls to `stopifnot()` to be unified into one
+   * `system_file_linter()` Require file paths to be constructed by `system.file()` instead of calling `file.path()` directly
+* `assignment_linter()` now lints right assignment (`->` and `->>`) and gains two arguments. `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`; `allow_right_assign` toggles whether to lint `->` and `->>` (#915, @michaelchirico)
+* `infix_spaces_linter()` gains argument `exclude_operators` to disable lints on selected infix operators. By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these. (#914 @michaelchirico)
+* `infix_spaces_linter()` now throws a lint on `a~b` and `function(a=1) {}` (#930, @michaelchirico)
+* `object_usage_linter()` now detects usages inside `glue::glue()` constructs (#942, @AshesITR)
+* * `object_length_linter()` correctly detects generics and only counts the implementation class towards the length. 
+  This prevents false positive lints in the case of long generic names, e.g. 
+  `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
 
 # lintr 2.0.1
 

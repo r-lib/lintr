@@ -1,4 +1,10 @@
-#' @describeIn linters that forces explicit calls in magrittr pipes
+#' Pipe call linter
+#'
+#' Force explicit calls in magrittr pipes, e.g.,
+#' `1:3 %>% sum()` instead of `1:3 %>% sum`.
+#'
+#' @evalRd rd_tags("pipe_call_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 pipe_call_linter <- function() {
   Linter(function(source_file) {
@@ -18,7 +24,7 @@ pipe_call_linter <- function() {
       bad_expr,
       xml_nodes_to_lint,
       source_file = source_file,
-      message = "Use explicit calls in magrittr pipes, i.e., `a %>% foo` should be `a %>% foo()`.",
+      lint_message = "Use explicit calls in magrittr pipes, i.e., `a %>% foo` should be `a %>% foo()`.",
       type = "warning"
     ))
   })

@@ -1,5 +1,9 @@
-#' @describeIn linters checks for missing packages in \code{library()},
-#'   \code{require()}, \code{loadNamespace()} and \code{requireNamespace()} calls.
+#' Missing package linter
+#'
+#' Check for missing packages in `library()`, `require()`, `loadNamespace()` and `requireNamespace()` calls.
+#'
+#' @evalRd rd_tags("missing_package_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 missing_package_linter <- function() {
   Linter(function(source_file) {
@@ -8,14 +12,14 @@ missing_package_linter <- function() {
 
     xml <- source_file$full_xml_parsed_content
 
-    library_calls <- c("library", "require", "loadNamespace", "requireNamespace")
+    library_text <- xp_text_in_table(c("library", "require", "loadNamespace", "requireNamespace"))
 
     name_xpath <- "OP-LEFT-PAREN[1]/following-sibling::expr[1][SYMBOL | STR_CONST]"
-    call_xpath <- paste0(sprintf(
+    call_xpath <- sprintf(
       "//expr[expr[SYMBOL_FUNCTION_CALL[%s]]/following-sibling::%s]",
-      paste0(sprintf("text()='%s'", library_calls), collapse = " or "),
+      library_text,
       name_xpath
-    ))
+    )
 
     pkg_calls <- xml2::xml_find_all(xml, call_xpath)
     pkg_names <- xml2::xml_find_all(pkg_calls, name_xpath)

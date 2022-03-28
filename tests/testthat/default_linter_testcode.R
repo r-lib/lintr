@@ -12,6 +12,7 @@ f = function (x,y = 1){}
 
 # cyclocomp
 # equals_na
+# if_else_match_braces_linter
 # infix_spaces
 # line_length
 # object_length
@@ -22,8 +23,15 @@ f = function (x,y = 1){}
 someComplicatedFunctionWithALongCamelCaseName <- function(x)
 {
   y <- 1
-  if (1 > 2 && 2 > 3 && 3 > 4 && 4 > 5 && 5*10 > 6 && 5 > 6 && 6 > 7 && x == NA) {T} else {F}
+  if (1 > 2 && 2 > 3 && 3 > 4 && 4 > 5 && 5*10 > 6 && 5 > 6 && 6 > 7 && x == NA) {T} else F
 }
+
+# vector_logic
+if (1 & 2) FALSE else TRUE
+
+# function_brace
+my_metric <- function(x)
+  sum(x) + prod(x)
 
 # no_tab
 # pipe_continuation

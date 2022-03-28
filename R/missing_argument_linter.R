@@ -1,5 +1,9 @@
-#' @describeIn linters checks for missing arguments in function calls.
+#' Missing argument linter
+#'
+#' Check for missing arguments in function calls.
 #' @param except a character vector of function names as exceptions.
+#' @evalRd rd_tags("missing_argument_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 missing_argument_linter <- function(except = c("switch", "alist")) {
   Linter(function(source_file) {
@@ -9,9 +13,9 @@ missing_argument_linter <- function(except = c("switch", "alist")) {
     xml <- source_file$full_xml_parsed_content
 
     xpath <- "//expr[expr[SYMBOL_FUNCTION_CALL]]/*[
-      self::OP-COMMA[preceding-sibling::*[1][self::OP-LEFT-PAREN or self::OP-COMMA]] or
-      self::OP-COMMA[following-sibling::*[1][self::OP-RIGHT-PAREN]] or
-      self::EQ_SUB[following-sibling::*[1][self::OP-RIGHT-PAREN or self::OP-COMMA]]
+      self::OP-COMMA[preceding-sibling::*[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-COMMA]] or
+      self::OP-COMMA[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN]] or
+      self::EQ_SUB[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN or self::OP-COMMA]]
     ]"
 
     missing_args <- xml2::xml_find_all(xml, xpath)
