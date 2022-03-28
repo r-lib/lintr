@@ -9,7 +9,7 @@ closed_curly_linter,style readability default configurable
 commas_linter,style readability default
 commented_code_linter,style readability best_practices default
 conjunct_expectation_linter,package_development best_practices readability
-stopifnot_conjunct_linter,consistency readability
+conjunct_stopifnot_linter,consistency readability
 consecutive_stopifnot_linter,style readability consistency
 cyclocomp_linter,style readability best_practices default configurable
 duplicate_argument_linter,correctness common_mistakes configurable

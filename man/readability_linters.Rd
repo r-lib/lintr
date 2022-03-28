@@ -16,6 +16,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{commas_linter}}}
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{conjunct_expectation_linter}}}
+\item{\code{\link{conjunct_stopifnot_linter}}}
 \item{\code{\link{consecutive_stopifnot_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{else_same_line_linter}}}
@@ -42,7 +43,6 @@ The following linters are tagged with 'readability':
 \item{\code{\link{single_quotes_linter}}}
 \item{\code{\link{spaces_inside_linter}}}
 \item{\code{\link{spaces_left_parentheses_linter}}}
-\item{\code{\link{stopifnot_conjunct_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{unneeded_concatenation_linter}}}
