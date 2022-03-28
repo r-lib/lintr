@@ -34,19 +34,20 @@ ifelse_censor_linter <- function() {
       xml_nodes_to_lint,
       source_file = source_file,
       lint_message = function(expr) {
+        matched_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
         op <- xml2::xml_text(xml2::xml_find_first(expr, "expr[2]/*[2]"))
         match_first <- !is.na(xml2::xml_find_first(expr, "expr[2][expr[1] = following-sibling::expr[1]]"))
         if (op %in% c("<", "<=")) {
           if (match_first) {
-            sprintf("pmin(x, y) is preferable to ifelse(x %s y, x, y).", op)
+            sprintf("pmin(x, y) is preferable to %s(x %s y, x, y).", matched_call, op)
           } else {
-            sprintf("pmax(x, y) is preferable to ifelse(x %s y, y, x).", op)
+            sprintf("pmax(x, y) is preferable to %s(x %s y, y, x).", matched_call, op)
           }
         } else {
           if (match_first) {
-            sprintf("pmax(x, y) is preferable to ifelse(x %s y, x, y).", op)
+            sprintf("pmax(x, y) is preferable to %s(x %s y, x, y).", matched_call, op)
           } else {
-            sprintf("pmin(x, y) is preferable to ifelse(x %s y, y, x).", op)
+            sprintf("pmin(x, y) is preferable to %s(x %s y, y, x).", matched_call, op)
           }
         }
       },

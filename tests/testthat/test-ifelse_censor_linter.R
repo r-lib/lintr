@@ -12,12 +12,12 @@ test_that("ifelse_censor_linter blocks simple disallowed usages", {
   # other equivalents to base::ifelse()
   expect_lint(
     "if_else(x < 0, 0, x)",
-    rex::rex("pmax(x, y) is preferable to ifelse(x < y, y, x)"),
+    rex::rex("pmax(x, y) is preferable to if_else(x < y, y, x)"),
     ifelse_censor_linter()
   )
   expect_lint(
     "fifelse(x < 0, 0, x)",
-    rex::rex("pmax(x, y) is preferable to ifelse(x < y, y, x)"),
+    rex::rex("pmax(x, y) is preferable to fifelse(x < y, y, x)"),
     ifelse_censor_linter()
   )
 
