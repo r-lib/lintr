@@ -62,11 +62,11 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
       xml2::xml_text(assignments)
     )
 
-    generics <- strip_names(c(
+    generics <- c(
       declared_s3_generics(xml),
       imported_s3_generics(namespace_imports(find_package(source_file$filename)))$fun,
       .base_s3_generics
-    ))
+    )
     generics <- unique(generics[nzchar(generics)])
 
     style_matches <- lapply(styles, function(style) {
