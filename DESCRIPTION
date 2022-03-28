@@ -123,6 +123,7 @@ Collate:
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'
     'sprintf_linter.R'
+    'stopifnot_conjunct_linter.R'
     'system_file_linter.R'
     'trailing_blank_lines_linter.R'
     'trailing_whitespace_linter.R'
