@@ -2,6 +2,10 @@
 #include <Rinternals.h>
 #include <stdbool.h>
 
+#ifndef LOGICAL_RO
+#define LOGICAL_RO LOGICAL
+#endif
+
 SEXP is_not_regex(SEXP patterns, SEXP skip_start, SEXP skip_end) {
   if (TYPEOF(patterns) != STRSXP) {
     Rf_error("Internal error: patterns should be a character vector, got %s",
