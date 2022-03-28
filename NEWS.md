@@ -130,7 +130,7 @@ function calls. (#850, #851, @renkun-ken)
 * * `object_length_linter()` correctly detects generics and only counts the implementation class towards the length. 
   This prevents false positive lints in the case of long generic names, e.g. 
   `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
-* Assignment generics on custom classes (#843, @jonkeane)
+* `object_name_linter()` now correctly detects assignment generics (#843, @jonkeane)
 
 # lintr 2.0.1
 
