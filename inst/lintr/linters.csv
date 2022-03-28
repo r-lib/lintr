@@ -9,6 +9,7 @@ closed_curly_linter,style readability default configurable
 commas_linter,style readability default
 commented_code_linter,style readability best_practices default
 conjunct_expectation_linter,package_development best_practices readability
+consecutive_stopifnot_linter,style readability consistency
 cyclocomp_linter,style readability best_practices default configurable
 duplicate_argument_linter,correctness common_mistakes configurable
 equals_na_linter,robustness correctness common_mistakes default
@@ -23,6 +24,7 @@ expect_s4_class_linter,package_development best_practices
 expect_true_false_linter,package_development best_practices readability
 expect_type_linter,package_development best_practices
 extraction_operator_linter,style best_practices
+function_brace_linter,default style readability
 function_left_parentheses_linter,style readability default
 if_else_match_braces_linter,default style readability
 implicit_integer_linter,style consistency best_practices
@@ -47,12 +49,14 @@ paren_brace_linter,style readability default
 paste_sep_linter,best_practices consistency
 pipe_call_linter,style readability
 pipe_continuation_linter,style readability default
+regex_subset_linter,best_practices efficiency
 semicolon_terminator_linter,style readability default configurable
 seq_linter,robustness efficiency consistency best_practices default
 single_quotes_linter,style consistency readability default
 spaces_inside_linter,style readability default
 spaces_left_parentheses_linter,style readability default
 sprintf_linter,correctness common_mistakes
+system_file_linter,consistency readability best_practices
 T_and_F_symbol_linter,style readability robustness consistency best_practices default
 todo_comment_linter,style configurable
 trailing_blank_lines_linter,style default
@@ -60,4 +64,6 @@ trailing_whitespace_linter,style default
 undesirable_function_linter,style efficiency configurable robustness best_practices
 undesirable_operator_linter,style efficiency configurable robustness best_practices
 unneeded_concatenation_linter,style readability efficiency
+unreachable_code_linter,best_practices readability
 vector_logic_linter,default efficiency best_practices
+yoda_test_linter,package_development best_practices readability

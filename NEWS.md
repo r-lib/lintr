@@ -104,6 +104,7 @@ function calls. (#850, #851, @renkun-ken)
    + `expect_true_false_linter()` Require usage of `expect_true(x)` over `expect_equal(x, TRUE)` and similar
    + `expect_named_linter()` Require usage of `expect_named(x, n)` over `expect_equal(names(x), n)` and similar
    * `expect_length_linter()` Require usage of `expect_length(x, n)` over `expect_equal(length(x), n)` and similar
+   * `yoda_test_linter()` Require usage of `expect_identical(x, 1L)` over `expect_equal(1L, x)` and similar
    * `expect_identical_linter()` Require usage of `expect_identical()` by default, and `expect_equal()` only by exception
    * `expect_comparison_linter()` Require usage of `expect_gt(x, y)` over `expect_true(x > y)` and similar
    * `if_else_match_braces_linter()` Require balanced usage of `{}` in `if`/`else` conditions
@@ -115,6 +116,10 @@ function calls. (#850, #851, @renkun-ken)
    * `literal_coercion_linter()` Require using correctly-typed literals instead of direct coercion, e.g. `1L` instead of `as.numeric(1)`
    * `paste_sep_linter()` Require usage of `paste0()` over `paste(sep = "")`
    * `nested_ifelse_linter()` Prevent nested calls to `ifelse()` like `ifelse(A, x, ifelse(B, y, z))`, and similar
+   * `unreachable_code_linter()` Prevent code after `return()` and `stop()` statements that will never be reached
+   * `regex_subset_linter()` Require usage of `grep(ptn, x, value = TRUE)` over `x[grep(ptn, x)]` and similar
+   * `consecutive_stopifnot_linter()` Require consecutive calls to `stopifnot()` to be unified into one
+   * `system_file_linter()` Require file paths to be constructed by `system.file()` instead of calling `file.path()` directly
 * `assignment_linter()` now lints right assignment (`->` and `->>`) and gains two arguments. `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`; `allow_right_assign` toggles whether to lint `->` and `->>` (#915, @michaelchirico)
 * `infix_spaces_linter()` gains argument `exclude_operators` to disable lints on selected infix operators. By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these. (#914 @michaelchirico)
 * `infix_spaces_linter()` now throws a lint on `a~b` and `function(a=1) {}` (#930, @michaelchirico)
