@@ -9,6 +9,9 @@ test_that("all default linters are tagged default", {
   # TODO(michaelchirico): use plain expect_equal after waldo#133 makes it into a CRAN release
   # Here, the environment()s are different because factories use them.
   skip_if_not(getRversion() >= "4.1") # Desired all.equal behaviour only available in >= 4.1
+  # covr modifies package functions causing differing deparse() results even for identical anonymous functions.
+  skip_if(covr::in_covr())
+
   expect_true(all.equal(with_tags(), with_defaults()))
 
   # Check that above test also trips on default arguments.
