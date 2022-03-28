@@ -109,6 +109,7 @@ function calls. (#850, #851, @renkun-ken)
    * `unreachable_code_linter()` Prevent code after `return()` and `stop()` statements that will never be reached
    * `regex_subset_linter()` Require usage of `grep(ptn, x, value = TRUE)` over `x[grep(ptn, x)]` and similar
    * `consecutive_stopifnot_linter()` Require consecutive calls to `stopifnot()` to be unified into one
+   * `system_file_linter()` Require file paths to be constructed by `system.file()` instead of calling `file.path()` directly
 * `assignment_linter()` now lints right assignment (`->` and `->>`) and gains two arguments. `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`; `allow_right_assign` toggles whether to lint `->` and `->>` (#915, @michaelchirico)
 * `infix_spaces_linter()` gains argument `exclude_operators` to disable lints on selected infix operators. By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these. (#914 @michaelchirico)
 * `infix_spaces_linter()` now throws a lint on `a~b` and `function(a=1) {}` (#930, @michaelchirico)
