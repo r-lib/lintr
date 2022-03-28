@@ -17,7 +17,7 @@ Documentation for linters is structured into tags to allow for easier discovery.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (28 linters)}
+\item{\link[=best_practices_linters]{best_practices} (29 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (5 linters)}
 \item{\link[=configurable_linters]{configurable} (16 linters)}
 \item{\link[=consistency_linters]{consistency} (12 linters)}
