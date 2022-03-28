@@ -1,12 +1,14 @@
 #' Block usage of paste() and paste0() with messaging functions using ...
 #'
 #' `stop(paste0(...))` is strictly redundant -- `stop(...)` is equivalent.
-#'   `stop(...)` is also preferable to `stop(paste(...))`.
+#'   `stop(...)` is also preferable to `stop(paste(...))`. The same applies to
+#'   all default condition functions, i.e., [stop()], [warning()], [message()],
+#'   and [packageStartupMessage()].
 #'
 #' @evalRd rd_tags("stop_paste_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-stop_paste_linter <- function() {
+condition_message_linter <- function() {
   Linter(function(source_file) {
     if (length(source_file$xml_parsed_content) == 0L) {
       return(list())
@@ -44,7 +46,7 @@ stop_paste_linter <- function() {
         message <- sprintf("Don't use %s to build %s strings.", inner_call, outer_call)
         paste(
           message,
-          "Instead use the fact that these functions build strings from their input",
+          "Instead use the fact that these functions build condition message strings from their input",
           '(using "" as a separator). For translateable strings, prefer using gettextf().'
         )
        },
