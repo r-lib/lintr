@@ -17,7 +17,8 @@ conjunct_test_linter <- function() {
 
     xml <- source_file$full_xml_parsed_content
 
-    # TODO(michaelchirico): address keyword arguments in R>=4.0 for stopifnot(). lint optionally (on by default)?
+    # TODO(#1016): include assert_that() for consideration here too
+    # TODO(#1017): address keyword arguments in R>=4.0 for stopifnot(). lint optionally (on by default)?
     xpath <- "//expr[
       (
         expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'stopifnot']]
