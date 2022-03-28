@@ -205,3 +205,12 @@ test_that("compatibility warnings work", {
     regexp = rex("Expected '", anything, "' to be of class 'linter'")
   )
 })
+
+test_that("Deprecated positional usage of cache= works, with warning", {
+  expect_warning(
+    l <- lint("a = 2\n", FALSE, linters = assignment_linter()),
+    "'cache' is no longer available as a positional argument",
+    fixed = TRUE
+  )
+  expect_identical(l, lint("a = 2\n", assignment_linter(), cache = FALSE))
+})

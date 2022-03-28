@@ -15,6 +15,7 @@ The following linters are tagged with 'consistency':
 \itemize{
 \item{\code{\link{assignment_linter}}}
 \item{\code{\link{class_equals_linter}}}
+\item{\code{\link{consecutive_stopifnot_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{no_tab_linter}}}
@@ -24,6 +25,7 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{single_quotes_linter}}}
 \item{\code{\link{stop_paste_linter}}}
+\item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
 }
 }

@@ -8,8 +8,8 @@
 lint(
   filename,
   linters = NULL,
-  cache = FALSE,
   ...,
+  cache = FALSE,
   parse_settings = TRUE,
   text = NULL
 )
@@ -21,10 +21,10 @@ The latter (inline data) applies whenever \code{filename} has a newline characte
 \item{linters}{a named list of linter functions to apply see \link{linters} for a full list of default and available
 linters.}
 
+\item{...}{additional arguments passed to \code{\link[=exclude]{exclude()}}.}
+
 \item{cache}{given a logical, toggle caching of lint results. If passed a character string, store the cache in this
 directory.}
-
-\item{...}{additional arguments passed to \code{\link[=exclude]{exclude()}}.}
 
 \item{parse_settings}{whether to try and parse the settings.}
 
