@@ -5,7 +5,7 @@
 #'   `expect_true(A); expect_true(B)` is better than `expect_true(A && B)`, and
 #'   `expect_false(A); expect_false(B)` is better than `expect_false(A || B)`.
 #'
-#' @evalRd rd_tags("expect_true_false_and_condition_linter")
+#' @evalRd rd_tags("conjunct_expecation_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 conjunct_expectation_linter <- function() {
