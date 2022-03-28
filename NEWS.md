@@ -115,6 +115,7 @@ function calls. (#850, #851, @renkun-ken)
    * `numeric_leading_zero_linter()` Require a leading `0` in fractional numeric constants, e.g. `0.1` instead of `.1`
    * `literal_coercion_linter()` Require using correctly-typed literals instead of direct coercion, e.g. `1L` instead of `as.numeric(1)`
    * `paste_sep_linter()` Require usage of `paste0()` over `paste(sep = "")`
+   * `paste_to_string_linter()` Require usage of `toString(x)` over `paste(x, collapse = ", ")`
    * `nested_ifelse_linter()` Prevent nested calls to `ifelse()` like `ifelse(A, x, ifelse(B, y, z))`, and similar
    * `redundant_ifelse_linter()` Prevent usage like `ifelse(A & B, TRUE, FALSE)` or `ifelse(C, 0, 1)` (the latter is `as.numeric(!C)`)
    * `else_same_line_linter()` Require `else` to come on the same line as the preceding `}`, if present
