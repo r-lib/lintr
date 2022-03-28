@@ -82,3 +82,19 @@ test_that("respect directory exclusions from settings", {
   linted_files <- unique(names(lints))
   expect_length(linted_files, 1L)
 })
+
+test_that("lint_dir works with specific linters without specifying other arguments", {
+  the_dir <- file.path("dummy_packages", "package", "vignettes")
+  expect_length(lint_dir(the_dir, assignment_linter(), parse_settings = FALSE), 12L)
+  expect_length(lint_dir(the_dir, commented_code_linter(), parse_settings = FALSE), 0L)
+})
+
+test_that("lint_dir continues to accept relative_path= in 2nd positional argument, with a warning", {
+  the_dir <- file.path("dummy_packages", "package", "vignettes")
+  expect_warning(
+    positional_lints <- lint_dir(the_dir, FALSE),
+    "'relative_path' is no longer available as a positional argument",
+    fixed = TRUE
+  )
+  expect_identical(positional_lints, lint_dir(the_dir, relative_path = FALSE))
+})
