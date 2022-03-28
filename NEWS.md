@@ -107,6 +107,7 @@ function calls. (#850, #851, @renkun-ken)
    * `paste_sep_linter()` Require usage of `paste0()` over `paste(sep = "")`
    * `nested_ifelse_linter()` Prevent nested calls to `ifelse()` like `ifelse(A, x, ifelse(B, y, z))`, and similar
    * `unreachable_code_linter()` Prevent code after `return()` and `stop()` statements that will never be reached
+   * `regex_subset_linter()` Require usage of `grep(ptn, x, value = TRUE)` over `x[grep(ptn, x)]` and similar
    * `consecutive_stopifnot_linter()` Require consecutive calls to `stopifnot()` to be unified into one
    * `system_file_linter()` Require file paths to be constructed by `system.file()` instead of calling `file.path()` directly
 * `assignment_linter()` now lints right assignment (`->` and `->>`) and gains two arguments. `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`; `allow_right_assign` toggles whether to lint `->` and `->>` (#915, @michaelchirico)
