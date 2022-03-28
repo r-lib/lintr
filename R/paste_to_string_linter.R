@@ -28,7 +28,11 @@ paste_to_string_linter <- function() {
       bad_expr,
       xml_nodes_to_lint,
       source_file = source_file,
-      lint_message = 'toString(.) is more expressive than paste(., collapse = ", ")',
+      lint_message = paste(
+        'toString(.) is more expressive than paste(., collapse = ", ").'
+        "Note also glue::glue_collapse() and and::and()",
+        "for constructing human-readable / translation-friendly lists"
+      ),
       type = "warning"
     ))
   })
