@@ -16,5 +16,5 @@ For readability of test outputs, testing only one thing per call to
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-No tags are given.
+\link[=best_practices_linters]{best_practices}, \link[=package_development_linters]{package_development}, \link[=readability_linters]{readability}
 }
