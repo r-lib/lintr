@@ -18,7 +18,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{class_equals_linter}}}
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{condition_message_linter}}}
-\item{\code{\link{conjunct_expectation_linter}}}
+\item{\code{\link{conjunct_test_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{expect_comparison_linter}}}
 \item{\code{\link{expect_length_linter}}}

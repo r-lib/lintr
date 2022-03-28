@@ -43,7 +43,7 @@ The following linters exist:
 \item{\code{\link{commas_linter}} (tags: default, readability, style)}
 \item{\code{\link{commented_code_linter}} (tags: best_practices, default, readability, style)}
 \item{\code{\link{condition_message_linter}} (tags: best_practices, consistency)}
-\item{\code{\link{conjunct_expectation_linter}} (tags: best_practices, package_development, readability)}
+\item{\code{\link{conjunct_test_linter}} (tags: best_practices, package_development, readability)}
 \item{\code{\link{consecutive_stopifnot_linter}} (tags: consistency, readability, style)}
 \item{\code{\link{cyclocomp_linter}} (tags: best_practices, configurable, default, readability, style)}
 \item{\code{\link{duplicate_argument_linter}} (tags: common_mistakes, configurable, correctness)}

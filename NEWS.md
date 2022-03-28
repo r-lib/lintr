@@ -99,7 +99,7 @@ function calls. (#850, #851, @renkun-ken)
    + `expect_type_linter()` Require usage of `expect_type(x, t)` over `expect_equal(typeof(x), t)` and similar
    + `expect_s3_class_linter()` Require usage of `expect_s3_class(x, k)` over `expect_equal(class(x), k)` and similar
    + `expect_s4_class_linter()` Require usage of `expect_s4_class(x, k)` over `expect_true(methods::is(x, k))`
-   + `conjunct_expectation_linter()` Require usage of `expect_true(x); expect_true(y)` over `expect_true(x && y)` and similar
+   + `conjunct_test_linter()` Require usage of `expect_true(x); expect_true(y)` over `expect_true(x && y)` and similar
    + `expect_not_linter()` Require usage of `expect_false(x)` over `expect_true(!x)`, and _vice versa_.
    + `expect_true_false_linter()` Require usage of `expect_true(x)` over `expect_equal(x, TRUE)` and similar
    + `expect_named_linter()` Require usage of `expect_named(x, n)` over `expect_equal(names(x), n)` and similar
@@ -131,6 +131,7 @@ function calls. (#850, #851, @renkun-ken)
 * * `object_length_linter()` correctly detects generics and only counts the implementation class towards the length. 
   This prevents false positive lints in the case of long generic names, e.g. 
   `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
+* `object_name_linter()` now correctly detects assignment generics (#843, @jonkeane)
 
 # lintr 2.0.1
 
