@@ -6,8 +6,8 @@
 \usage{
 lint_dir(
   path = ".",
-  relative_path = TRUE,
   ...,
+  relative_path = TRUE,
   exclusions = list("renv", "packrat"),
   pattern = rex::rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex",
     "txt"), end),
@@ -18,10 +18,10 @@ lint_dir(
 \item{path}{the path to the base directory, by default, it will be searched in the parent directories of the current
 directory.}
 
+\item{...}{additional arguments passed to \code{\link[=lint]{lint()}}, e.g. \code{linters} or \code{cache}.}
+
 \item{relative_path}{if \code{TRUE}, file paths are printed using their path relative to the base directory.
 If \code{FALSE}, use the full absolute path.}
-
-\item{...}{additional arguments passed to \code{\link[=lint]{lint()}}, e.g. \code{cache} or \code{linters}.}
 
 \item{exclusions}{exclusions for \code{\link[=exclude]{exclude()}}, relative to the package path.}
 
