@@ -78,7 +78,7 @@ is_s3_class_calls <- paste0("is.", c(
 #'   of S4 objects. [testthat::expect_true()] can also be used for such tests,
 #'   but it is better to use the tailored function instead.
 #'
-#' @evalRd rd_tags("expect_s3_class_linter")
+#' @evalRd rd_tags("expect_s4_class_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_s4_class_linter <- function() {
