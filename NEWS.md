@@ -117,6 +117,7 @@ function calls. (#850, #851, @renkun-ken)
    * `paste_sep_linter()` Require usage of `paste0()` over `paste(sep = "")`
    * `nested_ifelse_linter()` Prevent nested calls to `ifelse()` like `ifelse(A, x, ifelse(B, y, z))`, and similar
    * `condition_message_linter` Prevent condition messages from being constructed like `stop(paste(...))` (where just `stop(...)` is preferable)
+   * `else_same_line_linter()` Require `else` to come on the same line as the preceding `}`, if present
    * `unreachable_code_linter()` Prevent code after `return()` and `stop()` statements that will never be reached
    * `regex_subset_linter()` Require usage of `grep(ptn, x, value = TRUE)` over `x[grep(ptn, x)]` and similar
    * `consecutive_stopifnot_linter()` Require consecutive calls to `stopifnot()` to be unified into one
