@@ -42,6 +42,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{spaces_left_parentheses_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{unneeded_concatenation_linter}}}
+\item{\code{\link{unreachable_code_linter}}}
 \item{\code{\link{yoda_test_linter}}}
 }
 }

@@ -17,7 +17,7 @@ Documentation for linters is structured into tags to allow for easier discovery.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (28 linters)}
+\item{\link[=best_practices_linters]{best_practices} (29 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (5 linters)}
 \item{\link[=configurable_linters]{configurable} (16 linters)}
 \item{\link[=consistency_linters]{consistency} (11 linters)}
@@ -25,7 +25,7 @@ The following tags exist:
 \item{\link[=default_linters]{default} (28 linters)}
 \item{\link[=efficiency_linters]{efficiency} (10 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
-\item{\link[=readability_linters]{readability} (31 linters)}
+\item{\link[=readability_linters]{readability} (32 linters)}
 \item{\link[=robustness_linters]{robustness} (11 linters)}
 \item{\link[=style_linters]{style} (34 linters)}
 }
@@ -95,6 +95,7 @@ The following linters exist:
 \item{\code{\link{undesirable_function_linter}} (tags: best_practices, configurable, efficiency, robustness, style)}
 \item{\code{\link{undesirable_operator_linter}} (tags: best_practices, configurable, efficiency, robustness, style)}
 \item{\code{\link{unneeded_concatenation_linter}} (tags: efficiency, readability, style)}
+\item{\code{\link{unreachable_code_linter}} (tags: best_practices, readability)}
 \item{\code{\link{vector_logic_linter}} (tags: best_practices, default, efficiency)}
 \item{\code{\link{yoda_test_linter}} (tags: best_practices, package_development, readability)}
 }
