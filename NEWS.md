@@ -123,7 +123,7 @@ function calls. (#850, #851, @renkun-ken)
    * `consecutive_stopifnot_linter()` Require consecutive calls to `stopifnot()` to be unified into one
    * `ifelse_censor_linter()` Require usage of `pmax()` / `pmin()` where appropriate, e.g. `ifelse(x > y, x, y)` is `pmax(x, y)`
    * `system_file_linter()` Require file paths to be constructed by `system.file()` instead of calling `file.path()` directly
-   * `stopifnot_conjunct_linter()` Block usage of `&&` in `stopifnot()` tests, e.g. `stopifnot(A && B)` becomes `stopifnot(A, B)`
+   * `conjunct_stopifnot_linter()` Block usage of `&&` in `stopifnot()` tests, e.g. `stopifnot(A && B)` becomes `stopifnot(A, B)`
 * `assignment_linter()` now lints right assignment (`->` and `->>`) and gains two arguments. `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`; `allow_right_assign` toggles whether to lint `->` and `->>` (#915, @michaelchirico)
 * `infix_spaces_linter()` gains argument `exclude_operators` to disable lints on selected infix operators. By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these. (#914 @michaelchirico)
 * `infix_spaces_linter()` now throws a lint on `a~b` and `function(a=1) {}` (#930, @michaelchirico)
