@@ -5,7 +5,7 @@
 #'   all default condition functions, i.e., [stop()], [warning()], [message()],
 #'   and [packageStartupMessage()].
 #'
-#' @evalRd rd_tags("stop_paste_linter")
+#' @evalRd rd_tags("condition_message_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 condition_message_linter <- function() {
