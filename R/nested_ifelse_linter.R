@@ -46,4 +46,5 @@ nested_ifelse_linter <- function() {
 }
 
 # functions equivalent to base::ifelse() for linting purposes
+# NB: this is re-used elsewhere, e.g. in ifelse_censor_linter
 ifelse_funs <- c("ifelse", "if_else", "fifelse")

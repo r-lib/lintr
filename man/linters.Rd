@@ -63,6 +63,7 @@ The following linters exist:
 \item{\code{\link{function_brace_linter}} (tags: default, readability, style)}
 \item{\code{\link{function_left_parentheses_linter}} (tags: default, readability, style)}
 \item{\code{\link{if_else_match_braces_linter}} (tags: default, readability, style)}
+\item{\code{\link{ifelse_censor_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{implicit_integer_linter}} (tags: best_practices, consistency, style)}
 \item{\code{\link{infix_spaces_linter}} (tags: default, readability, style)}
 \item{\code{\link{line_length_linter}} (tags: configurable, default, readability, style)}
