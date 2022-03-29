@@ -82,7 +82,7 @@ with_defaults <- function(..., default = default_linters) {
 #' @inheritParams available_linters
 #'
 #' @return A modified list of linters.
-#' @seealso [with_defaults] for basing off lintrs set of default linters.
+#' @seealso [with_defaults] for basing off lintr's set of default linters.
 #' @seealso [available_linters] to get a data frame of available linters.
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @examples
