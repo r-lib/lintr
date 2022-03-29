@@ -46,8 +46,10 @@ test_that("lintr help files are up to date", {
   #   e.g. if a deleted/renamed linter's entry still persists in the help page, and vice versa
 
   expect_true(exists("linters", envir = help_env))
+  # objects in help_env are class Rd, see ?as.character.Rd (part of 'tools')
   linter_help_text <- paste(as.character(help_env$linters), collapse = "")
 
+  # Rd markup for items looks like \item{\code{\link{...}} (tags: ...)}
   linter_item_regex <- "[\\]item[{][\\]code[{][\\]link[{][a-zA-Z0-9._]+[}][}] [(]tags: [a-z_, ]+[)][}]"
   expect_identical(
     length(gregexpr(linter_item_regex, linter_help_text)[[1L]]),
@@ -65,6 +67,7 @@ test_that("lintr help files are up to date", {
 
     tag_help <- help_env[[paste0(tag, "_linters")]]
     tag_help_text[[tag]] <- paste(as.character(tag_help), collapse = "")
+    # Rd markup for items looks like \item{\code{\link{...}}}
     tag_item_regex <- "[\\]item[{][\\]code[{][\\]link[{][a-zA-Z0-9._]+[}][}][}]"
     expect_identical(
       length(gregexpr(tag_item_regex, tag_help_text[[tag]])[[1L]]),
