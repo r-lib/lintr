@@ -73,8 +73,8 @@ with_defaults <- function(..., default = default_linters) {
 #' Create a tag-based linter configuration
 #'
 #' Make a new list based on all linters tagged with `tags` from provided by `packages`.
-#' The result of this function is meant to be passed to the `linters` argument of `lint()`, or put in your
-#' configuration file.
+#' The result of this function is meant to be passed to the `linters` argument of `lint()`,
+#' or to be put in your configuration file.
 #'
 #' @param ... Arguments of elements to change. If unnamed, the argument is automatically named.
 #' If the named argument already exists in the list of linters, it is replaced by the new element.
