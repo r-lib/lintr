@@ -8,7 +8,8 @@
 #' in "default", it is replaced by the new element. If it does not exist, it is added. If the value is `NULL`, the
 #' element is removed.
 #' @param default list of elements to modify.
-#' @return A modified list of elements.
+#' @return A modified list of elements, sorted by name. To achieve this sort in a platform-independent way, two
+#'   transformations are applied to the names: (1) replace `_` with `0` and (2) convert [tolower()].
 #' @examples
 #' # When using interactively you will usually pass the result onto `lint` or `lint_package()`
 #' \dontrun{
