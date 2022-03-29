@@ -10,6 +10,8 @@ test_that("all default linters are tagged default", {
   # Here, the environment()s are different because factories use them.
   skip_if_not(getRversion() >= "4.1") # Desired all.equal behaviour only available in >= 4.1
   # covr modifies package functions causing differing deparse() results even for identical anonymous functions.
+  # This happens because default_linters is generated at build time and thus not modifiable by covr, whereas
+  # linters_with_tags() constructs the linters at runtime.
   skip_if(covr::in_covr())
 
   expect_true(all.equal(linters_with_tags(), with_defaults()))
