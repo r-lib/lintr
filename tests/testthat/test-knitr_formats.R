@@ -11,7 +11,7 @@ test_that("it handles dir", {
   lints <- lint_dir(path = "knitr_formats", pattern = file_pattern, parse_settings = FALSE)
 
   # For every file there should be at least 1 lint
-  expect_identical(sort(names(lints)), sort(list.files("knitr_formats", pattern = file_pattern)))
+  expect_identical(sort(unique(names(lints))), sort(list.files("knitr_formats", pattern = file_pattern)))
 })
 
 test_that("it handles markdown", {
