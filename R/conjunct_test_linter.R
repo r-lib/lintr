@@ -5,6 +5,8 @@
 #'   `expect_true(A); expect_true(B)` is better than `expect_true(A && B)`, and
 #'   `expect_false(A); expect_false(B)` is better than `expect_false(A || B)`.
 #'
+#' Similar reasoning applies to `&&` usage inside [stopifnot()] and `assertthat::assert_that()` calls.
+#'
 #' @evalRd rd_tags("conjunct_test_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -17,11 +19,10 @@ conjunct_test_linter <- function() {
 
     xml <- source_file$full_xml_parsed_content
 
-    # TODO(#1016): include assert_that() for consideration here too
     # TODO(#1017): address keyword arguments in R>=4.0 for stopifnot(). lint optionally (on by default)?
     xpath <- "//expr[
       (
-        expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'stopifnot']]
+        expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'stopifnot' or text() = 'assert_that']]
         and expr[2][AND2]
       ) or (
         expr[SYMBOL_FUNCTION_CALL[text() = 'expect_false']]
@@ -42,7 +43,7 @@ conjunct_test_linter <- function() {
         if (matched_fun %in% c("expect_true", "expect_false")) {
           replacement <- sprintf("write multiple expectations like %1$s(A) and %1$s(B)", matched_fun)
         } else {
-          replacement <- "write multiple conditions like stopifnot(A, B)."
+          replacement <- sprintf("write multiple conditions like %s(A, B).", matched_fun)
         }
         paste(instead_of, replacement, "The latter will produce better error messages in the case of failure.")
       },
