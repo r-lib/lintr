@@ -1,7 +1,15 @@
 # utils for working with xpaths
 
 # like `text() %in% table`, translated to XPath 1.0
-xp_text_in_table <- function(table) paste("text() = ", quote_wrap(table, "'"), collapse = " or ")
+xp_text_in_table <- function(table) {
+  # xpath doesn't seem to have a standard way of escaping quotes, so attempt
+  #   to use "" whenever the string has ' (not a perfect solution). info on
+  #   escaping from https://stackoverflow.com/questions/14822153
+  single_quoted <- grepl("'", table, fixed = TRUE)
+  table[single_quoted] <- paste0('"', table[single_quoted], '"')
+  table[!single_quoted] <- paste0("'", table[!single_quoted], "'")
+  return(paste0("text() = ", table, collapse = " or "))
+}
 
 # convert an XML match into a Lint
 xml_nodes_to_lint <- function(xml, source_file, lint_message,
