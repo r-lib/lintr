@@ -34,9 +34,8 @@ test_that("lintr help files are up to date", {
   skip_if_not(file.exists(file.path(helper_db_dir, "lintr.rdb")))
   skip_if_not(file.exists(file.path(helper_db_dir, "lintr.rdx")))
 
-  withr::local_dir(helper_db_dir)
   help_env <- new.env(parent = topenv())
-  lazyLoad("lintr", help_env)
+  lazyLoad(file.path(helper_db_dir, "lintr"), help_env)
 
   lintr_db <- available_linters()
 
