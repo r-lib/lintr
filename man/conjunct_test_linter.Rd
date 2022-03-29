@@ -12,6 +12,9 @@ For readability of test outputs, testing only one thing per call to
 \verb{expect_true(A); expect_true(B)} is better than \code{expect_true(A && B)}, and
 \verb{expect_false(A); expect_false(B)} is better than \code{expect_false(A || B)}.
 }
+\details{
+Similar reasoning applies to \code{&&} usage inside \code{\link[=stopifnot]{stopifnot()}} and \code{assertthat::assert_that()} calls.
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
