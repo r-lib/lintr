@@ -40,6 +40,11 @@ test_that("lintr help files are up to date", {
 
   lintr_db <- available_linters()
 
+  # some of the following might seem redundant, so note: we want to establish
+  #   that entries exist in the help _if and only if_ they exist in the csv in inst/.
+  #   so e.g. checking that all linters in the DB match a line in the Rd is not enough,
+  #   e.g. if a deleted/renamed linter's entry still persists in the help page, and vice versa
+
   expect_true(exists("linters", envir = help_env))
   linter_help_text <- paste(as.character(help_env$linters), collapse = "")
 
