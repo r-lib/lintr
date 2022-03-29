@@ -31,23 +31,11 @@ object_name_xpath <- local({
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 object_name_linter <- function(styles = c("snake_case", "symbols")) {
-
-  .or_string <- function(xs) {
-    # returns "<S> or <T>"
-    # where <T> is the last string in xs
-    # where <S> is a comma-separated string of all entries in xs except <T>
-    len <- length(xs)
-    if (len <= 1) {
-      return(xs)
-    }
-    comma_sepd_prefix <- toString(xs[-len])
-    paste(comma_sepd_prefix, "or", xs[len])
-  }
-
   styles <- match.arg(styles, names(style_regexes), several.ok = TRUE)
 
   lint_msg <- paste0(
-    "Variable and function name style should be ", .or_string(styles), "."
+    "Variable and function name style should be ",
+    glue::glue_collapse(styles, sep = ", ", last = " or "), "."
   )
 
   Linter(function(source_file) {
