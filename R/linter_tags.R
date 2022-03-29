@@ -97,7 +97,7 @@ rd_tags <- function(linter_name) {
 
   c(
     "\\section{Tags}{",
-    paste0("\\link[=", tags, "_linters]{", tags, "}", collapse = ", ")
+    paste0("\\link[=", tags, "_linters]{", tags, "}", collapse = ", "),
     "}"
   )
 }
