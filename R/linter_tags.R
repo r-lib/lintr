@@ -100,14 +100,13 @@ available_linters <- function(packages = "lintr", tags = NULL) {
 rd_tags <- function(linter_name) {
   linters <- available_linters()
   tags <- platform_independent_sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
+  if (length(tags) == 0L) {
+    stop("tags are required, but found none for ", linter_name)
+  }
 
   c(
     "\\section{Tags}{",
-    if (length(tags)) {
-      paste0("\\link[=", tags, "_linters]{", tags, "}", collapse = ", ")
-    } else {
-      "No tags are given."
-    },
+    paste0("\\link[=", tags, "_linters]{", tags, "}", collapse = ", "),
     "}"
   )
 }
@@ -120,20 +119,17 @@ rd_tags <- function(linter_name) {
 rd_linters <- function(tag_name) {
   linters <- available_linters(tags = tag_name)
   tagged <- platform_independent_sort(linters[["linter"]])
+  if (length(tagged) == 0L) {
+    stop("No linters found associated with tag ", tag_name)
+  }
 
   c(
     "\\section{Linters}{",
-    if (length(tagged)) {
-      c(
-        paste0("The following linters are tagged with '", tag_name, "':"),
-        "\\itemize{",
-        paste0("\\item{\\code{\\link{", tagged, "}}}"),
-        "}"
-      )
-    } else {
-      paste0("No linters are tagged with '", tag_name, "'.")
-    },
-    "}"
+    paste0("The following linters are tagged with '", tag_name, "':"),
+    "\\itemize{",
+    paste0("\\item{\\code{\\link{", tagged, "}}}"),
+    "}", # itemize
+    "}"  # section
   )
 }
 
@@ -142,18 +138,21 @@ rd_linters <- function(tag_name) {
 #' @noRd
 rd_taglist <- function() {
   linters <- available_linters()
+
+  tag_table <- table(unlist(linters[["tags"]]))
   tags <- platform_independent_sort(unique(unlist(linters[["tags"]])))
+  # re-order
+  tag_table <- tag_table[tags]
 
   c(
     "\\section{Tags}{",
     "The following tags exist:",
     "\\itemize{",
     vapply(tags, function(tag) {
-      n_linters <- sum(vapply(linters[["tags"]], function(tags) tag %in% tags, logical(1L)))
-      paste0("\\item{\\link[=", tag, "_linters]{", tag, "} (", n_linters, " linters)}")
+      paste0("\\item{\\link[=", tag, "_linters]{", tag, "} (", tag_table[[tag]], " linters)}")
     }, character(1L)),
     "}", # itemize
-    "}" # section
+    "}"  # section
   )
 }
 
