@@ -12,17 +12,17 @@ test_that("all default linters are tagged default", {
   # covr modifies package functions causing differing deparse() results even for identical anonymous functions.
   skip_if(covr::in_covr())
 
-  expect_true(all.equal(with_tags(), with_defaults()))
+  expect_true(all.equal(linters_with_tags(), with_defaults()))
 
   # Check that above test also trips on default arguments.
   expect_equal(
-    all.equal(with_tags(), with_defaults(line_length_linter(120))),
+    all.equal(linters_with_tags(), with_defaults(line_length_linter(120))),
     'Component "line_length_linter": Component "length": Mean relative difference: 0.5'
   )
 })
 
 test_that("can instantiate all linters without arguments", {
-  all_linters <- with_tags(tags = NULL)
+  all_linters <- linters_with_tags(tags = NULL)
 
   expect_type(all_linters, "list")
   expect_length(all_linters, nrow(available_linters()))

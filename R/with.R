@@ -9,7 +9,7 @@
 #' If it does not exist, it is added. If the value is `NULL`, the element is removed.
 #' @param default list of elements to modify.
 #' @return A modified list of elements.
-#' @seealso with_tags
+#' @seealso linters_with_tags
 #' @examples
 #' # When using interactively you will usually pass the result onto `lint` or `lint_package()`
 #' \dontrun{
@@ -86,19 +86,19 @@ with_defaults <- function(..., default = default_linters) {
 #' @seealso [available_linters] to get a data frame of available linters.
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @examples
-#' # Default invocations of `with_defaults()` and `with_tags()` are the same:
-#' all.equal(with_defaults(), with_tags())
+#' # Default invocations of `with_defaults()` and `linters_with_tags()` are the same:
+#' all.equal(with_defaults(), linters_with_tags())
 #'
 #' # Get all linters useful for package development
-#' with_tags(tags = "package_development")
+#' linters_with_tags(tags = "package_development")
 #'
 #' # Get all linters provided by lintr
-#' with_tags(tags = NULL)
+#' linters_with_tags(tags = NULL)
 #'
 #' # Get all linters tagged as "default" from lintr and mypkg
-#' \dontrun{with_tags(packages = c("lintr", "mypkg"))}
+#' \dontrun{linters_with_tags(packages = c("lintr", "mypkg"))}
 #' @export
-with_tags <- function(..., tags = "default", packages = "lintr") {
+linters_with_tags <- function(..., tags = "default", packages = "lintr") {
   tagged_linters <- list()
 
   for (package in packages) {
