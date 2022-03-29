@@ -16,7 +16,7 @@ test_that("available_linters returns a data frame", {
 test_that("default_linters and default tag match up", {
   avail <- available_linters()
   tagged_default <- avail[["linter"]][vapply(avail[["tags"]], function(tags) "default" %in% tags, logical(1L))]
-  expect_identical(sort(tagged_default), sort(names(default_linters)))
+  expect_identical(tagged_default, names(default_linters))
 })
 
 test_that("available_linters matches the set of linters available from lintr", {

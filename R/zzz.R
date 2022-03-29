@@ -67,6 +67,8 @@ with_defaults <- function(..., default = default_linters) {
     }
     x
   })
+  res <- res[platform_independent_order(names(res))]
+  res
 }
 
 #' Default linters
