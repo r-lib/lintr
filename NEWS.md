@@ -87,13 +87,14 @@ function calls. (#850, #851, @renkun-ken)
 * Debugging functions (`browser()`, `debug()`, `debugcall()`, `debugonce()`, `trace()`, `undebug()`, `untrace()`) are now part of the default set of undesirable functions to help prevent them from being committed by mistake. (#876, @michaelchirico)
 * New linter `package_hooks_linter()` runs a series of checks also done by `R CMD check` on the `.onLoad()`, `.onAttach()`, `.Last.lib()` and `.onDetach()` hooks (#882, @MichaelChirico)
 * Improved location information for R parse errors (#894, #892, @renkun-ken and @AshesITR)
-* New tag based documentation pages for linters (#888, @AshesITR)
+* New tag based documentation pages for linters (#888, #1015, @AshesITR)
   * Each linter has its own help page
   * `?linters` also links to tag help pages, collecting linters with a similar goal
   * Each linter can have multiple tags
   * New function `available_linters()` to list available linters and their tags 
     This feature is extensible by package authors providing add-on linters for {lintr}.
-  * New function `linters_with_tags()` to help build a list of linters using tags.
+  * New function `available_tags()` to list available tags
+  * New function `linters_with_tags()` to help build a list of linters using tags
 * `lintr` now uses the 3rd edition of `testthat` (@MichaelChirico, @AshesITR, #910, #967)
 * `lintr` is adopting a new set of linters provided as part of Google's extension to the tidyverse style guide (#884, @michaelchirico)
    + `expect_null_linter()` Require usage of `expect_null(x)` over `expect_equal(x, NULL)` and similar
