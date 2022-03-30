@@ -20,7 +20,7 @@ If it does not exist, it is added. If the value is \code{NULL}, the linter is re
 A modified list of linters.
 }
 \description{
-Make a new list based on all linters tagged with \code{tags} from provided by \code{packages}.
+Make a new list based on all linters provided by \code{packages} and tagged with \code{tags}.
 The result of this function is meant to be passed to the \code{linters} argument of \code{lint()},
 or to be put in your configuration file.
 }
