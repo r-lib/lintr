@@ -38,58 +38,88 @@ test_that("lintr help files are up to date", {
   lazyLoad(file.path(helper_db_dir, "lintr"), help_env)
 
   lintr_db <- available_linters()
+  lintr_db$package <- NULL
+  lintr_db$tags <- lapply(lintr_db$tags, sort)
 
-  # some of the following might seem redundant, so note: we want to establish
-  #   that entries exist in the help _if and only if_ they exist in the csv in inst/.
-  #   so e.g. checking that all linters in the DB match a line in the Rd is not enough,
-  #   e.g. if a deleted/renamed linter's entry still persists in the help page, and vice versa
-
-  expect_true(exists("linters", envir = help_env))
+  expect_true(exists("linters", envir = help_env), info = "?linters exists")
   # objects in help_env are class Rd, see ?as.character.Rd (part of 'tools')
   linter_help_text <- paste(as.character(help_env$linters), collapse = "")
 
+  # Test two things about ?linters
+  #   (1) the complete list of linters and tags matches that in available_linters()
+  #   (2) the tabulation of tags & corresponding count of linters matches that in available_linters()
+
   # Rd markup for items looks like \item{\code{\link{...}} (tags: ...)}
-  linter_item_regex <- "[\\]item[{][\\]code[{][\\]link[{][a-zA-Z0-9._]+[}][}] [(]tags: [a-z_, ]+[)][}]"
+  help_linters <- rex::re_matches(
+    linter_help_text,
+    rex::rex(
+      "\\item{\\code{\\link{",
+      capture(some_of(letter, number, "_", "."), name = "linter"),
+      "}} (tags: ",
+      capture(some_of(letter, "_", ",", " "), name = "tags"),
+      ")}"
+    ),
+    global = TRUE
+  )[[1L]]
+  help_linters$tags <- lapply(strsplit(help_linters$tags, ", ", fixed = TRUE), sort)
+
+
+  # (1) from above
   expect_identical(
-    length(gregexpr(linter_item_regex, linter_help_text)[[1L]]),
-    nrow(lintr_db),
-    info = "Count of linter entries in ?linters matches inst/lintr/linters.csv row count"
+    help_linters[order(help_linters$linter), ],
+    lintr_db[order(lintr_db$linter), ],
+    info = "Database implied by ?linters is the same as is available_linters()"
   )
 
-  tag_table <- table(unlist(lintr_db$tags))
-  all_tags <- names(tag_table)
-  tag_help_text <- character(length(all_tags))
-  names(tag_help_text) <- all_tags
+  db_tag_table <- as.data.frame(
+    table(tag = unlist(lintr_db$tags)),
+    responseName = "n_linters",
+    stringsAsFactors = FALSE
+  )
+  help_tag_table <- rex::re_matches(
+    linter_help_text,
+    rex::rex(
+      "\\item{\\link[=",
+      capture(some_of(letter, "_"), "_linters", name = "tag_page"),
+      "]{",
+      capture(some_of(letter, "_"), name = "tag"),
+      "} (",
+      capture(numbers, name = "n_linters"),
+      " linters)}"
+    ),
+    global = TRUE
+  )[[1L]]
+  # consistency check
+  expect_identical(help_tag_table$tag_page, paste0(help_tag_table$tag, "_linters"))
+  help_tag_table$tag_page <- NULL
+  help_tag_table$n_linters <- as.integer(help_tag_table$n_linters)
 
-  for (tag in all_tags) {
-    expect_true(exists(paste0(tag, "_linters"), envir = help_env), info = paste(tag, "tag page"))
+  # (2) from above
+  expect_identical(
+    help_tag_table[order(help_tag_table$tag), ],
+    db_tag_table[order(db_tag_table$tag), ],
+    info = "Tags and corresponding counts in ?linters is the same as in available_linters()"
+  )
+
+  # Now test an analogue to (1) from above for each tag's help page
+  for (tag in db_tag_table$tag) {
+    expect_true(exists(paste0(tag, "_linters"), envir = help_env), info = paste0("?", tag, "_linters exists"))
 
     tag_help <- help_env[[paste0(tag, "_linters")]]
-    tag_help_text[[tag]] <- paste(as.character(tag_help), collapse = "")
-    # Rd markup for items looks like \item{\code{\link{...}}}
-    tag_item_regex <- "[\\]item[{][\\]code[{][\\]link[{][a-zA-Z0-9._]+[}][}][}]"
+    tag_help_text <- paste(as.character(tag_help), collapse = "")
+
+    help_tag_linters <- rex::re_matches(
+      tag_help_text,
+      rex::rex("\\item{\\code{\\link{", capture(some_of(letter, number, "_", "."), name = "linter"), "}}}"),
+      global = TRUE
+    )[[1L]]
+
+    db_linter_has_tag <- vapply(lintr_db$tags, function(linter_tag) any(tag %in% linter_tag), logical(1L))
+
     expect_identical(
-      length(gregexpr(tag_item_regex, tag_help_text[[tag]])[[1L]]),
-      tag_table[[tag]],
-      info = paste0("Count of linter entries in ?", tag, "_linters matches tags given in inst/lintr/linters.csv")
+      sort(help_tag_linters$linter),
+      sort(lintr_db$linter[db_linter_has_tag]),
+      info = paste0("?", tag, "_linters lists all linters with that tag in available_linters()")
     )
-  }
-
-  for (ii in seq_len(nrow(lintr_db))) {
-    # NB: matching tags requires reproducing the "platform-independent sort" we do; instead, rely on the other tests
-    #   for matching the tags
-    linter_name <- lintr_db$linter[[ii]]
-    expected_entry <- sprintf("\\item{\\code{\\link{%s}} (tags:", linter_name)
-    expect_match(linter_help_text, expected_entry, fixed = TRUE, info = paste(linter_name, "entry in ?linters"))
-
-    for (linter_tag in lintr_db$tags[[ii]]) {
-      expected_entry <- sprintf("\\item{\\code{\\link{%s}}}", linter_name)
-      expect_match(
-        tag_help_text[[linter_tag]],
-        expected_entry,
-        fixed = TRUE,
-        info = paste0(linter_name, " entry in ?", linter_tag, "_linters")
-      )
-    }
   }
 })
