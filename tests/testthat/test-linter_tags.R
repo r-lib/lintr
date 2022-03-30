@@ -28,6 +28,8 @@ test_that("available_linters matches the set of linters available from lintr", {
   expect_setequal(all_linters, grep("_linter$", getNamespaceExports("lintr"), value = TRUE))
 })
 
+# See the roxygen helpers in R/linter_tags.R for the code used to generate the docs.
+#   This test helps ensure the documentation is up to date with the available_linters() database
 test_that("lintr help files are up to date", {
   helper_db_dir <- system.file("help", package = "lintr")
   skip_if_not(dir.exists(helper_db_dir))
