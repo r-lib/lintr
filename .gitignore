@@ -11,3 +11,5 @@ script.R
 *.Rcheck
 lintr_*.tar.gz
 testthat-problems.rds
+
+.dev/*.csv
