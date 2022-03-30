@@ -122,7 +122,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr") {
       }
       linter_factories <- mget(available$linter, envir = pkg_ns)
       linters <- mapply(
-        build_linter,
+        call_linter_factory,
         linter_factory = linter_factories,
         linter_name = names(linter_factories),
         MoreArgs = list(package = package)
@@ -134,7 +134,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr") {
   with_defaults(..., default = tagged_linters)
 }
 
-build_linter <- function(linter_factory, linter_name, package) {
+call_linter_factory <- function(linter_factory, linter_name, package) {
   linter <- tryCatch(
     linter_factory(),
     error = function(e) {
