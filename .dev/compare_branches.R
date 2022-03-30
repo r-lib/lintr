@@ -121,6 +121,9 @@ if (interactive()) {
 }
 
 linter_names <- strsplit(params$linters, ",", fixed = TRUE)[[1L]]
+if (length(linter_names) == 0L) {
+  stop("Please supply linters (--linters)")
+}
 
 base_branch <- params$base_branch
 if (is.null(base_branch) || is.na(base_branch) || !nzchar(base_branch)) {
