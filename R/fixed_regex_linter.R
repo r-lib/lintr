@@ -94,16 +94,29 @@ fixed_regex_linter <- function() {
 #'   on a given file, rather than passing strings to this function, which can
 #'   be confusing.
 #'
-#' NB: Tried implementing this at the R level, but the backsplash escaping was
-#'   becoming nightmarish -- after changing to a character-based approach in R,
-#'   the code loooked 95% similar to what it would look like in C++, so moved
-#'   the logic there to get the efficiency boost as well.
-#'
 #' @param str A character vector.
 #' @return A logical vector, `TRUE` wherever `str` could be replaced by a
 #'   string with `fixed = TRUE`.
 #' @noRd
-#' @useDynLib lintr, .registration = TRUE, .fixes = "lintr_"
-is_not_regex <- function(str, skip_start = FALSE, skip_end = FALSE) {
-  .Call(lintr_is_not_regex, str, skip_start, skip_end)
+is_not_regex <- function(str) {
+  # Handle string quoting and escaping using R directly
+  str <- vapply(str, function(elem) eval(parse(text = elem)), character(1L))
+
+  # any even number of backslashes without an additional escaping backslash or character group sign [.
+  # this guarantees the following tokens aren't escaped and are thus interpretable as regex control characters.
+  rx_not_escaped <- rex::rex(zero_or_more("\\\\") %if_prev_isnt% one_of("\\["))
+
+  # backslash followed by anything that might be a character class, such as \d
+  rx_char_class_escape <- rex::rex("\\", one_of(alnum, "<>"))
+
+  # control character other than [
+  rx_active_char <- rex::rex(one_of("^${(.*+?|"))
+
+  # character group with at least two elements, to preclude e.g. [.]
+  # also includes character classes like [:alnum:]
+  rx_nontrivial_char_group <- rex::rex("[", at_least(none_of("]"), 2L))
+
+  rx_dynamic_regex <- rex::rex(rx_not_escaped, or(rx_char_class_escape, rx_active_char, rx_nontrivial_char_group))
+
+  !grepl(rx_dynamic_regex, str, perl = TRUE)
 }
