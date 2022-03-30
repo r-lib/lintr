@@ -73,7 +73,7 @@ param_list <- list(
     help = "Run the comparison for base vs. this PR"
   ),
   optparse::make_option(
-    "--base-branch",
+    "--base_branch",
     default = if (interactive()) {
       readline("Name a branch to use as base (skip to use master): ")
     } else {
