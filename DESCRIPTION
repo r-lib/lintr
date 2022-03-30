@@ -113,6 +113,7 @@ Collate:
     'paren_body_linter.R'
     'paren_brace_linter.R'
     'paste_sep_linter.R'
+    'paste_to_string_linter.R'
     'path_linters.R'
     'pipe_call_linter.R'
     'pipe_continuation_linter.R'
