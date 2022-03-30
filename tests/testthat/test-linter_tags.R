@@ -22,6 +22,9 @@ test_that("available_tags returns a character vector", {
   expect_identical(tags, tags2)
   expect_length(empty, 0L)
   expect_true(all(available_linters()$tags[[1L]] %in% tags))
+  expect_true(all(unlist(available_linters()$tags) %in% tags))
+  expect_false(anyDuplicated(tags))
+  expect_identical(lintr:::platform_independent_order(tags), seq_along(tags))
 })
 
 test_that("default_linters and default tag match up", {
