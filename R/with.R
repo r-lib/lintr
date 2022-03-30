@@ -9,7 +9,7 @@
 #' If it does not exist, it is added. If the value is `NULL`, the element is removed.
 #' @param default list of elements to modify.
 #' @return A modified list of elements.
-#' @seealso linters_with_tags
+#' @seealso [linters_with_tags]
 #' @examples
 #' # When using interactively you will usually pass the result onto `lint` or `lint_package()`
 #' \dontrun{

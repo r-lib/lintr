@@ -47,5 +47,5 @@ my_undesirable_functions <- with_defaults(default = default_undesirable_function
   sapply=NULL, "cat"="No cat allowed", "print", all_undesirable_functions[["return"]])
 }
 \seealso{
-linters_with_tags
+\link{linters_with_tags}
 }
