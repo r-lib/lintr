@@ -123,6 +123,9 @@ if (interactive()) {
 linter_names <- strsplit(params$linters, ",", fixed = TRUE)[[1L]]
 
 base_branch <- params$base_branch
+if (is.null(base_branch) || is.na(base_branch) || !nzchar(base_branch)) {
+  stop("Please supply a base branch (--base-branch)")
+}
 
 # prioritize "branch"
 is_branch <- FALSE
