@@ -1,6 +1,6 @@
 #' Get Linter metadata from a package
 #'
-#' Obtain a tagged list of all Linters available in a package.
+#' `available_linters()` obtains a tagged list of all Linters available in a package.
 #'
 #' @param packages A character vector of packages to search for linters.
 #' @param tags Optional character vector of tags to search. Only linters with at least one matching tag will be
@@ -19,8 +19,10 @@
 #'
 #' Tags should be snake_case.
 #'
+#' See `available_tags("lintr")` to find out what tags are already used by lintr.
+#'
 #' @return
-#' A data frame with columns 'linter', 'package' and 'tags':
+#' `available_linters` returns a data frame with columns 'linter', 'package' and 'tags':
 #'
 #' \describe{
 #' \item{linter}{A character column naming the function associated with the linter.}
@@ -90,6 +92,19 @@ available_linters <- function(packages = "lintr", tags = NULL) {
     res <- res[matches_tags, ]
   }
   res
+}
+
+#' @rdname available_linters
+#'
+#' @description
+#' `available_tags()` searches for available tags.
+#'
+#' @return `available_tags` returns a character vector of linter tags used by the packages.
+#' @export
+#' @examples
+#' available_tags()
+available_tags <- function(packages = "lintr") {
+  platform_independent_sort(unique(unlist(available_linters(packages = packages)[["tags"]])))
 }
 
 #' Generate Rd fragment for the Tags section of a linter

@@ -13,6 +13,17 @@ test_that("available_linters returns a data frame", {
   expect_type(avail[["tags"]][[1L]], "character")
 })
 
+test_that("available_tags returns a character vector", {
+  tags <- available_tags()
+  tags2 <- available_tags(c("lintr", "not-a-package"))
+  empty <- available_tags("not-a-package")
+
+  expect_type(tags, "character")
+  expect_identical(tags, tags2)
+  expect_length(empty, 0L)
+  expect_true(all(available_linters()$tags[[1L]] %in% tags))
+})
+
 test_that("default_linters and default tag match up", {
   avail <- available_linters()
   tagged_default <- avail[["linter"]][vapply(avail[["tags"]], function(tags) "default" %in% tags, logical(1L))]

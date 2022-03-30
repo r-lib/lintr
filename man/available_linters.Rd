@@ -2,9 +2,12 @@
 % Please edit documentation in R/linter_tags.R
 \name{available_linters}
 \alias{available_linters}
+\alias{available_tags}
 \title{Get Linter metadata from a package}
 \usage{
 available_linters(packages = "lintr", tags = NULL)
+
+available_tags(packages = "lintr")
 }
 \arguments{
 \item{packages}{A character vector of packages to search for linters.}
@@ -13,16 +16,20 @@ available_linters(packages = "lintr", tags = NULL)
 returned. If \code{tags} is \code{NULL}, all linters will be returned.}
 }
 \value{
-A data frame with columns 'linter', 'package' and 'tags':
+\code{available_linters} returns a data frame with columns 'linter', 'package' and 'tags':
 
 \describe{
 \item{linter}{A character column naming the function associated with the linter.}
 \item{package}{A character column containing the name of the package providing the linter.}
 \item{tags}{A list column containing tags associated with the linter.}
 }
+
+\code{available_tags} returns a character vector of linter tags used by the packages.
 }
 \description{
-Obtain a tagged list of all Linters available in a package.
+\code{available_linters()} obtains a tagged list of all Linters available in a package.
+
+\code{available_tags()} searches for available tags.
 }
 \section{Package Authors}{
 
@@ -38,6 +45,8 @@ Each row describes a linter by
 }
 
 Tags should be snake_case.
+
+See \code{available_tags("lintr")} to find out what tags are already used by lintr.
 }
 
 \examples{
@@ -48,6 +57,7 @@ available_linters("does-not-exist")
 
 lintr_linters2 <- available_linters(c("lintr", "does-not-exist"))
 identical(lintr_linters, lintr_linters2)
+available_tags()
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
