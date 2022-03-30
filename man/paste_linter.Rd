@@ -24,3 +24,6 @@ wrapper for this, and alternatives like \code{\link[glue:glue_collapse]{glue::gl
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
+\section{Tags}{
+\link[=best_practices_linters]{best_practices}, \link[=consistency_linters]{consistency}
+}

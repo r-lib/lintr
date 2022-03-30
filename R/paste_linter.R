@@ -7,7 +7,7 @@
 #'  2. Block usage of `paste()` or `paste0()` with `collapse = ", "`. [toString()] is a direct
 #'     wrapper for this, and alternatives like [glue::glue_collapse()] might give better messages for humans.
 #'
-#' @evalRd rd_tags("paste_sep_linter")
+#' @evalRd rd_tags("paste_linter")
 #' @param allow_empty_sep Logical, default `FALSE`. If `TRUE`, usage of
 #'   [paste()] with `sep = ""` are not linted.
 #' @seealso [linters] for a complete list of linters available in lintr.
