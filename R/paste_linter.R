@@ -9,7 +9,9 @@
 #'
 #' @evalRd rd_tags("paste_linter")
 #' @param allow_empty_sep Logical, default `FALSE`. If `TRUE`, usage of
-#'   [paste()] with `sep = ""` are not linted.
+#'   `paste()` with `sep = ""` is not linted.
+#' @param allow_to_string Logical, default `FALSE`. If `TRUE`, usage of
+#'   `paste()` and `paste0()` with `collapse = ", "` is not linted.
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {

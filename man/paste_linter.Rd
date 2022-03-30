@@ -8,7 +8,10 @@ paste_linter(allow_empty_sep = FALSE, allow_to_string = FALSE)
 }
 \arguments{
 \item{allow_empty_sep}{Logical, default \code{FALSE}. If \code{TRUE}, usage of
-\code{\link[=paste]{paste()}} with \code{sep = ""} are not linted.}
+\code{paste()} with \code{sep = ""} is not linted.}
+
+\item{allow_to_string}{Logical, default \code{FALSE}. If \code{TRUE}, usage of
+\code{paste()} and \code{paste0()} with \code{collapse = ", "} is not linted.}
 }
 \description{
 The following issues are linted by default by this linter
