@@ -18,11 +18,13 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{condition_message_linter}}}
 \item{\code{\link{consecutive_stopifnot_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
+\item{\code{\link{inner_combine_linter}}}
 \item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{no_tab_linter}}}
 \item{\code{\link{numeric_leading_zero_linter}}}
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{paste_sep_linter}}}
+\item{\code{\link{paste_to_string_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{single_quotes_linter}}}
