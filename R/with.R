@@ -82,12 +82,13 @@ with_defaults <- function(..., default = default_linters) {
 #' @inheritParams available_linters
 #'
 #' @return A modified list of linters.
-#' @seealso [with_defaults] for basing off lintr's set of default linters.
-#' @seealso [available_linters] to get a data frame of available linters.
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso
+#' [with_defaults] for basing off lintr's set of default linters.
+#' [available_linters] to get a data frame of available linters.
+#' [linters] for a complete list of linters available in lintr.
 #' @examples
-#' # Default invocations of `with_defaults()` and `linters_with_tags()` are the same:
-#' all.equal(with_defaults(), linters_with_tags())
+#' # `with_defaults()` and `linters_with_tags("default")` are the same:
+#' all.equal(with_defaults(), linters_with_tags("default"))
 #'
 #' # Get all linters useful for package development
 #' linters_with_tags(tags = "package_development")
@@ -96,30 +97,48 @@ with_defaults <- function(..., default = default_linters) {
 #' linters_with_tags(tags = NULL)
 #'
 #' # Get all linters tagged as "default" from lintr and mypkg
-#' \dontrun{linters_with_tags(packages = c("lintr", "mypkg"))}
+#' \dontrun{linters_with_tags("default", packages = c("lintr", "mypkg"))}
 #' @export
-linters_with_tags <- function(..., tags = "default", packages = "lintr") {
+linters_with_tags <- function(tags, ..., packages = "lintr") {
+  if (!is.character(tags) && !is.null(tags)) {
+    stop("`tags` must be a character vector, or NULL.")
+  }
   tagged_linters <- list()
 
   for (package in packages) {
     pkg_ns <- loadNamespace(package)
+    ns_exports <- getNamespaceExports(pkg_ns)
     available <- available_linters(packages = package, tags = tags)
     if (nrow(available) > 0L) {
-      linter_factories <- mget(available$linter, envir = pkg_ns)
-      linters <- mapply(function(linter_factory, linter_name) {
-        linter <- tryCatch(
-          linter_factory(),
-          error = function(e) {
-            stop("Could not create linter with ", package, "::", linter_name, "(): ", conditionMessage(e))
-          }
+      if (!all(available$linter %in% ns_exports)) {
+        missing_linters <- setdiff(available$linter, ns_exports)
+        stop(
+          "Linters ", glue::glue_collapse(sQuote(missing_linters), sep = ", ", last = "and"),
+          " advertised by `available_linters()` but not exported by package ", package, "."
         )
-        # Otherwise, all linters would be called "linter_factory".
-        attr(linter, "name") <- linter_name
-        linter
-      }, linter_factory = linter_factories, linter_name = names(linter_factories))
+      }
+      linter_factories <- mget(available$linter, envir = pkg_ns)
+      linters <- mapply(
+        build_linter,
+        linter_factory = linter_factories,
+        linter_name = names(linter_factories),
+        MoreArgs = list(package = package)
+      )
       tagged_linters <- c(tagged_linters, linters)
     }
   }
 
   with_defaults(..., default = tagged_linters)
+}
+
+build_linter <- function() function(linter_factory, linter_name, package) {
+  linter <- tryCatch(
+    linter_factory(),
+    error = function(e) {
+      stop("Could not create linter with ", package, "::", linter_name, "(): ", conditionMessage(e))
+    }
+  )
+  # Otherwise, all linters would be called "linter_factory".
+  attr(linter, "name") <- linter_name
+  linter
 }

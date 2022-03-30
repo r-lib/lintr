@@ -14,11 +14,11 @@ test_that("all default linters are tagged default", {
   # linters_with_tags() constructs the linters at runtime.
   skip_if(covr::in_covr())
 
-  expect_true(all.equal(linters_with_tags(), with_defaults()))
+  expect_true(all.equal(linters_with_tags("default"), with_defaults()))
 
   # Check that above test also trips on default arguments.
   expect_equal(
-    all.equal(linters_with_tags(), with_defaults(line_length_linter(120))),
+    all.equal(linters_with_tags("default"), with_defaults(line_length_linter(120))),
     'Component "line_length_linter": Component "length": Mean relative difference: 0.5'
   )
 })

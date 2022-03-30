@@ -21,8 +21,8 @@ A modified list of linters.
 }
 \description{
 Make a new list based on all linters tagged with \code{tags} from provided by \code{packages}.
-The result of this function is meant to be passed to the \code{linters} argument of \code{lint()}, or put in your
-configuration file.
+The result of this function is meant to be passed to the \code{linters} argument of \code{lint()},
+or to be put in your configuration file.
 }
 \examples{
 # Default invocations of `with_defaults()` and `linters_with_tags()` are the same:
@@ -38,9 +38,7 @@ linters_with_tags(tags = NULL)
 \dontrun{linters_with_tags(packages = c("lintr", "mypkg"))}
 }
 \seealso{
-\link{with_defaults} for basing off lintrs set of default linters.
-
+\link{with_defaults} for basing off lintr's set of default linters.
 \link{available_linters} to get a data frame of available linters.
-
 \link{linters} for a complete list of linters available in lintr.
 }
