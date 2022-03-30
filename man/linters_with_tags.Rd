@@ -4,15 +4,15 @@
 \alias{linters_with_tags}
 \title{Create a tag-based linter configuration}
 \usage{
-linters_with_tags(..., tags = "default", packages = "lintr")
+linters_with_tags(tags, ..., packages = "lintr")
 }
 \arguments{
+\item{tags}{Optional character vector of tags to search. Only linters with at least one matching tag will be
+returned. If \code{tags} is \code{NULL}, all linters will be returned.}
+
 \item{...}{Arguments of elements to change. If unnamed, the argument is automatically named.
 If the named argument already exists in the list of linters, it is replaced by the new element.
 If it does not exist, it is added. If the value is \code{NULL}, the linter is removed.}
-
-\item{tags}{Optional character vector of tags to search. Only linters with at least one matching tag will be
-returned. If \code{tags} is \code{NULL}, all linters will be returned.}
 
 \item{packages}{A character vector of packages to search for linters.}
 }
@@ -25,8 +25,8 @@ The result of this function is meant to be passed to the \code{linters} argument
 or to be put in your configuration file.
 }
 \examples{
-# Default invocations of `with_defaults()` and `linters_with_tags()` are the same:
-all.equal(with_defaults(), linters_with_tags())
+# `with_defaults()` and `linters_with_tags("default")` are the same:
+all.equal(with_defaults(), linters_with_tags("default"))
 
 # Get all linters useful for package development
 linters_with_tags(tags = "package_development")
@@ -35,7 +35,7 @@ linters_with_tags(tags = "package_development")
 linters_with_tags(tags = NULL)
 
 # Get all linters tagged as "default" from lintr and mypkg
-\dontrun{linters_with_tags(packages = c("lintr", "mypkg"))}
+\dontrun{linters_with_tags("default", packages = c("lintr", "mypkg"))}
 }
 \seealso{
 \link{with_defaults} for basing off lintr's set of default linters.
