@@ -8,7 +8,8 @@
 #' If the named argument already exists in "default", it is replaced by the new element.
 #' If it does not exist, it is added. If the value is `NULL`, the element is removed.
 #' @param default list of elements to modify.
-#' @return A modified list of elements.
+#' @return A modified list of elements, sorted by name. To achieve this sort in a platform-independent way, two
+#'   transformations are applied to the names: (1) replace `_` with `0` and (2) convert [tolower()].
 #' @seealso [linters_with_tags]
 #' @examples
 #' # When using interactively you will usually pass the result onto `lint` or `lint_package()`
@@ -68,6 +69,8 @@ with_defaults <- function(..., default = default_linters) {
     }
     x
   })
+  res <- res[platform_independent_order(names(res))]
+  res
 }
 
 #' Create a tag-based linter configuration

@@ -14,7 +14,8 @@ If it does not exist, it is added. If the value is \code{NULL}, the element is r
 \item{default}{list of elements to modify.}
 }
 \value{
-A modified list of elements.
+A modified list of elements, sorted by name. To achieve this sort in a platform-independent way, two
+transformations are applied to the names: (1) replace \verb{_} with \code{0} and (2) convert \code{\link[=tolower]{tolower()}}.
 }
 \description{
 Make a new list based on \pkg{lintr}'s default linters, undesirable operators or functions.
