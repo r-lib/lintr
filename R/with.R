@@ -131,7 +131,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr") {
   with_defaults(..., default = tagged_linters)
 }
 
-build_linter <- function() function(linter_factory, linter_name, package) {
+build_linter <- function(linter_factory, linter_name, package) {
   linter <- tryCatch(
     linter_factory(),
     error = function(e) {
