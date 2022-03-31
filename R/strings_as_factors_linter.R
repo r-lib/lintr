@@ -67,9 +67,9 @@ strings_as_factors_linter <- function() {
       xml_nodes_to_lint,
       source_file = source_file,
       lint_message = paste(
-        "This code relies on stringsAsFactors=TRUE, which will",
-        "change in the future. Please supply this argument explicitly,",
-        "or otherwise change the code to rely on stringsAsFactors=FALSE."
+        "This code relies on stringsAsFactors=TRUE, which changed",
+        "in version R 4.0. Please supply an explicit value for",
+        "stringsAsFactors for this code to work with earlier versions of R."
       ),
       type = "warning"
     ))
