@@ -69,8 +69,8 @@ strings_as_factors_linter <- function() {
       lint_message = paste(
         "This code relies on the default value of stringsAsFactors,",
         "which changed in version R 4.0. Please supply an explicit value for",
-        "stringsAsFactors for this code to work versions of R both before",
-        "and after this split."
+        "stringsAsFactors for this code to work with versions of R both before",
+        "and after this switch."
       ),
       type = "warning"
     ))
