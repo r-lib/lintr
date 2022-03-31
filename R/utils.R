@@ -249,3 +249,8 @@ release_bullets <- function() {
   "Make sure README.md lists all available linters"
 }
 # nocov end
+
+# see issue #923 -- some locales ignore _ when running sort(), others don't.
+#   we want to consistently treat "_" < "n" = "N"
+platform_independent_order <- function(x) order(tolower(gsub("_", "0", x, fixed = TRUE)))
+platform_independent_sort <- function(x) x[platform_independent_order(x)]

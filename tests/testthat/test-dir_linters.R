@@ -6,7 +6,7 @@ test_that("lint all files in a directory", {
   linted_files <- unique(names(lints))
 
   expect_s3_class(lints, "lints")
-  expect_setequal(linted_files, files)
+  expect_identical(sort(linted_files), sort(files))
 })
 
 test_that("lint all relevant directories in a package", {
@@ -24,7 +24,7 @@ test_that("lint all relevant directories in a package", {
   linted_files <- gsub("\\", "/", linted_files, fixed = TRUE)
 
   expect_s3_class(lints, "lints")
-  expect_setequal(linted_files, files)
+  expect_identical(sort(linted_files), sort(files))
 
   # Code coverage is not detected for default_linters.
   # We want to ensure that object_name_linter uses namespace_imports correctly.
@@ -38,7 +38,7 @@ test_that("lint all relevant directories in a package", {
   linted_files <- gsub("\\", "/", linted_files, fixed = TRUE)
 
   expect_s3_class(lints, "lints")
-  expect_setequal(linted_files, files)
+  expect_identical(sort(linted_files), sort(files))
 })
 
 test_that("respects directory exclusions", {

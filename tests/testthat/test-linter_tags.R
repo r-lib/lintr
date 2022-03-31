@@ -13,19 +13,34 @@ test_that("available_linters returns a data frame", {
   expect_type(avail[["tags"]][[1L]], "character")
 })
 
+test_that("available_tags returns a character vector", {
+  tags <- available_tags()
+  tags2 <- available_tags(c("lintr", "not-a-package"))
+  empty <- available_tags("not-a-package")
+
+  expect_type(tags, "character")
+  expect_identical(tags, tags2)
+  expect_length(empty, 0L)
+  expect_true(all(available_linters()$tags[[1L]] %in% tags))
+  expect_true(all(unlist(available_linters()$tags) %in% tags))
+  expect_identical(anyDuplicated(tags), 0L)
+  expect_identical(lintr:::platform_independent_order(tags), seq_along(tags))
+})
+
 test_that("default_linters and default tag match up", {
   avail <- available_linters()
   tagged_default <- avail[["linter"]][vapply(avail[["tags"]], function(tags) "default" %in% tags, logical(1L))]
-  expect_setequal(tagged_default, names(default_linters))
+  expect_identical(tagged_default, names(default_linters))
 })
 
 test_that("available_linters matches the set of linters available from lintr", {
   lintr_db <- available_linters()
-  all_linters <- ls(asNamespace("lintr"), pattern = "_linter$")
+  linters_in_namespace <- ls(asNamespace("lintr"), pattern = "_linter$")
   # ensure that the contents of inst/lintr/linters.csv covers all _linter objects in our namespace
-  expect_setequal(lintr_db$linter, all_linters)
+  expect_identical(sort(lintr_db$linter), sort(linters_in_namespace))
   # ensure that all _linter objects in our namespace are also exported
-  expect_setequal(all_linters, grep("_linter$", getNamespaceExports("lintr"), value = TRUE))
+  exported_linters <- grep("_linter$", getNamespaceExports("lintr"), value = TRUE)
+  expect_identical(sort(linters_in_namespace), sort(exported_linters))
 })
 
 # See the roxygen helpers in R/linter_tags.R for the code used to generate the docs.

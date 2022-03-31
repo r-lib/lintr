@@ -1,6 +1,6 @@
 #!/usr/local/bin/Rscript
 
-# compare the lints obtained before/after a given PR/branch vs current master.
+# compare the lints obtained before/after a given PR/branch vs a base branch (default master).
 #
 # How to use:
 #   See below (param_list <-) for documentation of the script's arguments.
@@ -15,13 +15,15 @@
 #     ./dev/compare_branches --branch=master --outfile=old.csv ...
 #   And then compare the results found in new.csv & old.csv.
 
-library(optparse)
-library(dplyr)
-library(purrr)
-library(tibble)
-library(usethis)
-library(gert)
-library(devtools)
+suppressPackageStartupMessages({
+  library(optparse)
+  library(dplyr)
+  library(purrr)
+  library(tibble)
+  library(usethis)
+  library(gert)
+  library(devtools)
+})
 
 if (!file.exists("lintr.Rproj")) {
   stop("compare_branches.R should be run inside the lintr-package directory")
@@ -49,24 +51,35 @@ if (!interactive()) {
 param_list <- list(
   optparse::make_option(
     "--linters",
-    default = "object_usage_linter",
-    help = "Run the comparison for these linter(s) (comma-separated) [default %default]"
+    default = if (interactive()) {
+      readline("Provide a comma-separated list of linters to compare: ")
+    },
+    help = "Run the comparison for these linter(s) (comma-separated)"
   ),
   optparse::make_option(
     "--branch",
     default = if (interactive()) {
-      readline("Name a branch to compare to master (or skip to enter a PR#): ")
+      readline("Name a branch to compare to the base branch (or skip to enter a PR#): ")
     },
-    help = "Run the comparison for master vs. this branch"
+    help = "Run the comparison for base vs. this branch"
   ),
   optparse::make_option(
     "--pr",
     default = if (interactive()) {
       # NB: optparse handles integer conversion
-      readline("Name a PR # to compare to master (skip if you've entered a branch): ")
+      readline("Name a PR # to compare to the base branch (skip if you've entered a branch): ")
     },
     type = "integer",
-    help = "Run the comparison for master vs. this PR"
+    help = "Run the comparison for base vs. this PR"
+  ),
+  optparse::make_option(
+    "--base_branch",
+    default = if (interactive()) {
+      readline("Name a branch to use as base (skip to use master): ")
+    } else {
+      "master"
+    },
+    help = "Compare to this branch"
   ),
   optparse::make_option(
     "--packages",
@@ -92,7 +105,7 @@ param_list <- list(
   ),
   optparse::make_option(
     "--outfile",
-    default = file.path("~", sprintf("lintr_compare_branches_%d.csv", as.integer(Sys.time()))),
+    default = file.path(".dev", sprintf("lintr_compare_branches_%d.csv", as.integer(Sys.time()))),
     help = "Destination file to which to write the output"
   )
 )
@@ -104,9 +117,18 @@ if (interactive()) {
     # typed arguments get cast even when missing, probably to NA
     if (isTRUE(is.na(params[[opt]]) || params[[opt]] == "")) params[[opt]] <- NULL
   }
+  if (isTRUE(is.na(params$base_branch) || params$base_branch == "")) params$base_branch <- "master"
 }
 
 linter_names <- strsplit(params$linters, ",", fixed = TRUE)[[1L]]
+if (length(linter_names) == 0L) {
+  stop("Please supply linters (--linters)")
+}
+
+base_branch <- params$base_branch
+if (is.null(base_branch) || is.na(base_branch) || !nzchar(base_branch)) {
+  stop("Please supply a base branch (--base-branch)")
+}
 
 # prioritize "branch"
 is_branch <- FALSE
@@ -290,8 +312,8 @@ run_on <- function(what, pkgs, linter_name, ...) {
 
   # safe to use force=TRUE because we're in temp_repo
   switch(what,
-    master = {
-      gert::git_branch_checkout("master", force = TRUE)
+    base = {
+      gert::git_branch_checkout(base_branch, force = TRUE)
     },
     pr = {
       # pr_fetch doesn't expose this so use this to reset
@@ -308,8 +330,8 @@ run_on <- function(what, pkgs, linter_name, ...) {
 
   check_depends <- linter_name %in% c("object_usage_linter", "object_name_linter")
 
-  # only show the warnings on "master" so as not to be repetitive
-  run_lints(pkgs, linter, check_depends = check_depends, warn = what == "master")
+  # only show the warnings on base branch so as not to be repetitive
+  run_lints(pkgs, linter, check_depends = check_depends, warn = what == "base")
 }
 
 run_pr_workflow <- function(linter_name, pkgs, pr) {
@@ -317,7 +339,7 @@ run_pr_workflow <- function(linter_name, pkgs, pr) {
   on.exit(gert::git_branch_checkout(old_branch))
 
   dplyr::bind_rows(
-    main = run_on("master", pkgs, linter_name),
+    base = run_on("base", pkgs, linter_name),
     pr = run_on("pr", pkgs, linter_name, number = pr),
     .id = "source"
   )
@@ -328,7 +350,7 @@ run_branch_workflow <- function(linter_name, pkgs, branch) {
   on.exit(gert::git_branch_checkout(old_branch))
 
   dplyr::bind_rows(
-    main = run_on("master", pkgs, linter_name),
+    base = run_on("base", pkgs, linter_name),
     branch = run_on("branch", pkgs, linter_name, branch = branch),
     .id = "source"
   )
@@ -340,9 +362,9 @@ run_branch_workflow <- function(linter_name, pkgs, branch) {
 
 message("Comparing the output of the following linters: ", toString(linter_names))
 if (is_branch) {
-  message("Comparing branch ", branch, " to master")
+  message("Comparing branch ", branch, " to ", base_branch)
 } else {
-  message("Comparing PR#", pr, " to master")
+  message("Comparing PR#", pr, " to ", base_branch)
 }
 if (length(packages) > 50L) {
   message(
@@ -394,11 +416,11 @@ if (is_branch) {
   )
 }
 
+setwd(old_wd)
 message("Writing output to ", params$outfile)
 write.csv(lints, params$outfile, row.names = FALSE)
 
 if (interactive()) {
-  setwd(old_wd)
   unlink(temp_repo, recursive = TRUE)
 } else {
   warnings()
