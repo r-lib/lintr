@@ -1,8 +1,10 @@
 #' Get Linter metadata from a package
 #'
-#' Obtain a tagged list of all Linters available in a package.
+#' `available_linters()` obtains a tagged list of all Linters available in a package.
 #'
 #' @param packages A character vector of packages to search for linters.
+#' @param tags Optional character vector of tags to search. Only linters with at least one matching tag will be
+#' returned. If `tags` is `NULL`, all linters will be returned.
 #'
 #' @section Package Authors:
 #'
@@ -17,8 +19,10 @@
 #'
 #' Tags should be snake_case.
 #'
+#' See `available_tags("lintr")` to find out what tags are already used by lintr.
+#'
 #' @return
-#' A data frame with columns 'linter', 'package' and 'tags':
+#' `available_linters` returns a data frame with columns 'linter', 'package' and 'tags':
 #'
 #' \describe{
 #' \item{linter}{A character column naming the function associated with the linter.}
@@ -36,14 +40,17 @@
 #' identical(lintr_linters, lintr_linters2)
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-available_linters <- function(packages = "lintr") {
+available_linters <- function(packages = "lintr", tags = NULL) {
   if (!is.character(packages)) {
     stop("`packages` must be a character vector.")
+  }
+  if (!is.null(tags) && !is.character(tags)) {
+    stop("`tags` must be a character vector.")
   }
 
   # Handle multiple packages
   if (length(packages) > 1L) {
-    return(do.call(rbind, lapply(packages, available_linters)))
+    return(do.call(rbind, lapply(packages, available_linters, tags = tags)))
   }
 
   csv_file <- system.file("lintr", "linters.csv", package = packages)
@@ -80,7 +87,24 @@ available_linters <- function(packages = "lintr") {
     stringsAsFactors = FALSE
   )
   res$tags <- strsplit(available[["tags"]], split = " ", fixed = TRUE)
+  if (!is.null(tags)) {
+    matches_tags <- vapply(res$tags, function(linter_tags) any(linter_tags %in% tags), logical(1L))
+    res <- res[matches_tags, ]
+  }
   res
+}
+
+#' @rdname available_linters
+#'
+#' @description
+#' `available_tags()` searches for available tags.
+#'
+#' @return `available_tags` returns a character vector of linter tags used by the packages.
+#' @export
+#' @examples
+#' available_tags()
+available_tags <- function(packages = "lintr") {
+  platform_independent_sort(unique(unlist(available_linters(packages = packages)[["tags"]])))
 }
 
 #' Generate Rd fragment for the Tags section of a linter
@@ -91,14 +115,13 @@ available_linters <- function(packages = "lintr") {
 rd_tags <- function(linter_name) {
   linters <- available_linters()
   tags <- platform_independent_sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
+  if (length(tags) == 0L) {
+    stop("tags are required, but found none for ", linter_name)
+  }
 
   c(
     "\\section{Tags}{",
-    if (length(tags)) {
-      paste0("\\link[=", tags, "_linters]{", tags, "}", collapse = ", ")
-    } else {
-      "No tags are given."
-    },
+    paste0("\\link[=", tags, "_linters]{", tags, "}", collapse = ", "),
     "}"
   )
 }
@@ -109,26 +132,19 @@ rd_tags <- function(linter_name) {
 #'
 #' @noRd
 rd_linters <- function(tag_name) {
-  linters <- available_linters()
-  tagged <- platform_independent_sort(linters[["linter"]][vapply(
-    linters[["tags"]],
-    function(tag_list) tag_name %in% tag_list,
-    logical(1L)
-  )])
+  linters <- available_linters(tags = tag_name)
+  tagged <- platform_independent_sort(linters[["linter"]])
+  if (length(tagged) == 0L) {
+    stop("No linters found associated with tag ", tag_name)
+  }
 
   c(
     "\\section{Linters}{",
-    if (length(tagged)) {
-      c(
-        paste0("The following linters are tagged with '", tag_name, "':"),
-        "\\itemize{",
-        paste0("\\item{\\code{\\link{", tagged, "}}}"),
-        "}"
-      )
-    } else {
-      paste0("No linters are tagged with '", tag_name, "'.")
-    },
-    "}"
+    paste0("The following linters are tagged with '", tag_name, "':"),
+    "\\itemize{",
+    paste0("\\item{\\code{\\link{", tagged, "}}}"),
+    "}", # itemize
+    "}"  # section
   )
 }
 
@@ -137,18 +153,21 @@ rd_linters <- function(tag_name) {
 #' @noRd
 rd_taglist <- function() {
   linters <- available_linters()
+
+  tag_table <- table(unlist(linters[["tags"]]))
   tags <- platform_independent_sort(unique(unlist(linters[["tags"]])))
+  # re-order
+  tag_table <- tag_table[tags]
 
   c(
     "\\section{Tags}{",
     "The following tags exist:",
     "\\itemize{",
     vapply(tags, function(tag) {
-      n_linters <- sum(vapply(linters[["tags"]], function(tags) tag %in% tags, logical(1L)))
-      paste0("\\item{\\link[=", tag, "_linters]{", tag, "} (", n_linters, " linters)}")
+      paste0("\\item{\\link[=", tag, "_linters]{", tag, "} (", tag_table[[tag]], " linters)}")
     }, character(1L)),
     "}", # itemize
-    "}" # section
+    "}"  # section
   )
 }
 
@@ -170,10 +189,4 @@ rd_linterlist <- function() {
     "}", # itemize
     "}" # section
   )
-}
-
-platform_independent_sort <- function(x) {
-  # see issue #923 -- some locales ignore _ when running sort(), others don't.
-  #   we want to consistently treat "_" < "n" = "N"
-  x[order(tolower(gsub("_", "0", x, fixed = TRUE)))]
 }
