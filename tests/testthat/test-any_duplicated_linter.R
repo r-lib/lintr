@@ -95,7 +95,7 @@ test_that("any_duplicated_linter catches length(unique()) equivalencies too", {
 
   # TODO(michaelchirico): try and match data.table- and dplyr-specific versions of
   #   this, e.g. DT[, length(unique(col)) == .N] or
-  #   DT %>% filter(length(unique(col)) == n())
+  #   > DT %>% filter(length(unique(col)) == n())
 })
 
 test_that("any_duplicated_linter catches expression with two types of lint", {
