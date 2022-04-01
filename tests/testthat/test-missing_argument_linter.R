@@ -72,11 +72,11 @@ test_that("returns the correct linting", {
 
   expect_lint("switch(a =, b = 1, 0)",
     list(message = rex("Missing argument in function call.")),
-    missing_argument_linter(NULL))
+    missing_argument_linter(character()))
 
   expect_lint("alist(a =)",
     list(message = rex("Missing argument in function call.")),
-    missing_argument_linter(NULL))
+    missing_argument_linter(character()))
 
   # Fixes https://github.com/r-lib/lintr/issues/906
   # Comments should be ignored so that missing arguments could be
