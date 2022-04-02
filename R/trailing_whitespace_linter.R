@@ -2,41 +2,40 @@
 #'
 #' Check that there are no space characters at the end of source lines.
 #'
+#' @param allow_empty_lines Suppress lints for lines that only contain whitespace.
+#'
 #' @evalRd rd_tags("trailing_whitespace_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-trailing_whitespace_linter <- function() {
+trailing_whitespace_linter <- function(allow_empty_lines = FALSE) {
   Linter(function(source_file) {
+    if (is.null(source_file$file_lines)) return(list())
+
     res <- re_matches(
-      source_file$lines,
-      rex(capture(name = "space", some_of(" ", regex("\\t"))), or(newline, end)),
-      global = TRUE,
+      source_file$file_lines,
+      rex(blanks, end),
       locations = TRUE
     )
 
-    lapply(seq_along(source_file$lines), function(itr) {
+    if (isTRUE(allow_empty_lines)) {
+      bad_lines <- which(res$start > 1L)
+    } else {
+      bad_lines <- which(!is.na(res$start))
+    }
 
-      mapply(
-        FUN = function(start, end) {
-          if (is.na(start)) {
-            return()
-          }
-          line_number <- names(source_file$lines)[itr]
-          Lint(
-            filename = source_file$filename,
-            line_number = line_number,
-            column_number = start,
-            type = "style",
-            message = "Trailing whitespace is superfluous.",
-            line = source_file$lines[as.character(line_number)],
-            ranges = list(c(start, end))
-          )
-        },
-        start = res[[itr]]$space.start,
-        end = res[[itr]]$space.end,
-        SIMPLIFY = FALSE
-      )
-    })
-
+    lapply(
+      bad_lines,
+      function(line) {
+        Lint(
+          filename = source_file$filename,
+          line_number = line,
+          column_number = res$start[[line]],
+          type = "style",
+          message = "Trailing whitespace is superfluous.",
+          line = source_file$file_lines[[line]],
+          ranges = list(c(res$start[[line]], res$end[[line]]))
+        )
+      }
+    )
   })
 }

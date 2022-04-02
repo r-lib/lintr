@@ -20,4 +20,22 @@ test_that("returns the correct linting", {
     list(message = rex("Trailing whitespace is superfluous."), line_number = 3),
     linter
   )
+
+  expect_lint(
+    "blah <- 1\n  \n'hi'\na <- 2",
+    list(message = rex("Trailing whitespace is superfluous."), line_number = 2),
+    linter
+  )
+
+  expect_lint(
+    "blah <- 1  ",
+    list(message = rex("Trailing whitespace is superfluous."), column_number = 10),
+    trailing_whitespace_linter(allow_empty_lines = TRUE)
+  )
+
+  expect_lint(
+    "blah <- 1\n  \n'hi'\na <- 2",
+    NULL,
+    trailing_whitespace_linter(allow_empty_lines = TRUE)
+  )
 })

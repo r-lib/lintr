@@ -4,7 +4,10 @@
 \alias{trailing_whitespace_linter}
 \title{Trailing whitespace linter}
 \usage{
-trailing_whitespace_linter()
+trailing_whitespace_linter(allow_empty_lines = FALSE)
+}
+\arguments{
+\item{allow_empty_lines}{Suppress lints for lines that only contain whitespace.}
 }
 \description{
 Check that there are no space characters at the end of source lines.
