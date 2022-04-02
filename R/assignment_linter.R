@@ -1,6 +1,7 @@
 #' Assignment linter
 #'
 #' Check that `<-` is always used for assignment.
+#'   See <https://style.tidyverse.org/syntax.html#assignment-1>
 #'
 #' @param allow_cascading_assign Logical, default `TRUE`.
 #'   If `FALSE`, [`<<-`][base::assignOps] and `->>` are not allowed.
