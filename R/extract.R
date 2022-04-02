@@ -74,7 +74,7 @@ filter_chunk_end_positions <- function(starts, ends) {
   }
 
   positions <- sort(c(starts = starts, ends = ends))
-  code_start_indexes <- grep("starts", names(positions))
+  code_start_indexes <- grep("starts", names(positions), fixed = TRUE)
 
   code_ends <- positions[pmin(1 + code_start_indexes, length(positions))]
 

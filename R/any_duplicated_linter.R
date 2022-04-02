@@ -55,14 +55,14 @@ any_duplicated_linter <- function() {
     unique_expr_xpath <- xp_and(
       "SYMBOL_FUNCTION_CALL[text() = 'unique']",
       # ensure the expr matches to avoid spurious match like
-      #   length(unique(x)) == length(y)
+      # >  length(unique(x)) == length(y)
       xp_or(
-        # length(unique(x)) == length(x).
+        # > length(unique(x)) == length(x).
         sprintf(
           "following-sibling::expr = %s",
           sprintf(path_to_neighbor_call_expr_fmt, "length")
         ),
-        # length(unique( << DF$col or DF[["col"]] >> )) == nrow(DF)
+        # > length(unique( << DF$col or DF[["col"]] >> )) == nrow(DF)
         sprintf(
           "following-sibling::expr[OP-DOLLAR or LBB]/expr[1] = %s",
           sprintf(path_to_neighbor_call_expr_fmt, "nrow")
