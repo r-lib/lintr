@@ -1,52 +1,60 @@
-get_function_calls <- function(x) {
-  xml2::xml_text(xml2::xml_find_all(x, "//SYMBOL_FUNCTION_CALL/text()"))
-}
-
-get_import_exprs <- function(x) {
-  xml2::xml_find_all(x, "//expr[expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]]")
-}
-
-#' @describeIn linters checks that libraries imported are actually used.
+#' Check that imported packages are actually used
+#'
+#' @param except_packages Character vector of packages that are ignored.
+#' These are usually attached for their side effects.
+#'
+#' @evalRd rd_tags("unused_import_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-unused_import_linter <- function(except_packages = "tidyverse") {
-  function(source_file) {
+unused_import_linter <- function(except_packages = c("bit64", "data.table", "tidyverse")) {
+  Linter(function(source_file) {
     if (is.null(source_file$full_xml_parsed_content)) return(list())
 
-    import_exprs <- get_import_exprs(source_file$full_xml_parsed_content)
+    import_exprs <- xml2::xml_find_all(
+      source_file$full_xml_parsed_content,
+      paste(
+        "//expr[",
+        "expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]",
+        "and",
+        "not(SYMBOL_SUB[text() = 'character.only'])",
+        "]"
+      )
+    )
     if (length(import_exprs) == 0) {
       return()
     }
-    pkg_exprs <- xml2::xml_find_first(import_exprs, "./expr[STR_CONST|SYMBOL]")
-    import_pkgs <- strip_names(as.character(xml2::xml_find_first(pkg_exprs, "./*/node()")))
+    # strip_names() needed to turn "'pkg'" -> "pkg" for STR_CONST calls.
+    imported_pkgs <- strip_names(xml2::xml_text(xml2::xml_find_first(import_exprs, "expr[STR_CONST|SYMBOL]")))
 
-    function_calls <- get_function_calls(source_file$full_xml_parsed_content)
+    used_symbols <- xml2::xml_text(xml2::xml_find_all(
+      source_file$full_xml_parsed_content,
+      "//SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]/text() | //SYMBOL/text() | //SPECIAL/text()"
+    ))
 
-    lapply(
-      seq_along(import_pkgs),
-      function(i) {
-        pkg <- import_pkgs[[i]]
-
-        if (pkg %in% except_packages) {
-          return()
+    is_unused <- vapply(
+      imported_pkgs,
+      function(pkg) {
+        # Skip excepted packages and packages that are not installed
+        if (pkg %in% except_packages || !requireNamespace(pkg, quietly = TRUE)) {
+          return(FALSE)
         }
 
         package_exports <- getNamespaceExports(pkg)
-        if (!any(package_exports %in% function_calls)) {
-          import_expr <- xml2::as_list(import_exprs[[i]])
-          pkg_expr <- xml2::as_list(pkg_exprs[[i]])
-          line_num <- import_expr@line1
-          Lint(
-            filename = source_file[["filename"]],
-            line_number = line_num,
-            column_number = pkg_expr@col1,
-            type = "warning",
-            message = paste0("package ", pkg, " is never used."),
-            line = source_file[["file_lines"]][[as.numeric(line_num)]],
-            ranges = list(as.numeric(c(import_expr@col1, import_expr@col2))),
-            linter = "unused_import_linter"
-          )
-        }
-      }
+        !any(package_exports %in% used_symbols)
+      },
+      logical(1L)
     )
-  }
+
+    lapply(
+      import_exprs[is_unused],
+      xml_nodes_to_lint,
+      source_file = source_file,
+      lint_message = function(import_expr) {
+        pkg <- strip_names(xml2::xml_text(xml2::xml_find_first(import_expr, "expr[STR_CONST|SYMBOL]")))
+        paste0("package '", pkg, "' is attached but never used.")
+      },
+      type = "warning",
+      global = TRUE
+    )
+  })
 }

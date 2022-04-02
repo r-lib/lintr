@@ -137,6 +137,7 @@ function calls. (#850, #851, @renkun-ken)
   This prevents false positive lints in the case of long generic names, e.g. 
   `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
 * `object_name_linter()` now correctly detects assignment generics (#843, @jonkeane)
+* New `unused_import_linter()` to detect unnecessary `library()` calls in R scripts (#239, @jimhester, @AshesITR)
 
 # lintr 2.0.1
 
