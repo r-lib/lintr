@@ -19,7 +19,8 @@ Check that infix operators are surrounded by spaces. Enforces the corresponding 
 see \url{https://style.tidyverse.org/syntax.html#infix-operators}.
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr. \cr
+\url{https://style.tidyverse.org/syntax.html#infix-operators}
 }
 \section{Tags}{
 \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}

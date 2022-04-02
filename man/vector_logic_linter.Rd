@@ -16,7 +16,7 @@ This linter covers inputs to \verb{if()} and \verb{while()} conditions and to
 \code{\link[testthat:logical-expectations]{testthat::expect_true()}} and \code{\link[testthat:logical-expectations]{testthat::expect_false()}}.
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr. \cr
 \url{https://style.tidyverse.org/syntax.html#if-statements}
 }
 \section{Tags}{

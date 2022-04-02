@@ -5,7 +5,9 @@
 #'   that either both branches use `{...}` or neither does.
 #'
 #' @evalRd rd_tags("if_else_match_braces_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso
+#'   [linters] for a complete list of linters available in lintr. \cr
+#'   <https://style.tidyverse.org/syntax.html#if-statements>
 #' @export
 if_else_match_braces_linter <- function() {
   Linter(function(source_file) {

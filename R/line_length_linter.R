@@ -4,7 +4,9 @@
 #'
 #' @param length maximum line length allowed.
 #' @evalRd rd_tags("line_length_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso
+#'   [linters] for a complete list of linters available in lintr. \cr
+#'   <https://style.tidyverse.org/syntax.html#long-lines>
 #' @export
 line_length_linter <- function(length = 80L) {
   Linter(function(source_file) {

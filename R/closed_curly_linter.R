@@ -4,7 +4,9 @@
 #'
 #' @param allow_single_line if `TRUE`, allow an open and closed curly pair on the same line.
 #' @evalRd rd_tags("closed_curly_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso
+#'   [linters] for a complete list of linters available in lintr. \cr
+#'   <https://style.tidyverse.org/syntax.html#indenting>
 #' @export
 closed_curly_linter <- function(allow_single_line = FALSE) {
   Linter(function(source_file) {
@@ -15,12 +17,14 @@ closed_curly_linter <- function(allow_single_line = FALSE) {
         parsed_content <- source_file[["parsed_content"]]
 
         tokens_before <- parsed_content$token[
-                                              parsed_content$line1 == parsed$line1 &
-                                              parsed_content$col1 < parsed$col1]
+          parsed_content$line1 == parsed$line1 &
+            parsed_content$col1 < parsed$col1
+        ]
 
         tokens_after <- parsed_content$token[
-                                             parsed_content$line1 == parsed$line1 &
-                                             parsed_content$col1 > parsed$col1]
+          parsed_content$line1 == parsed$line1 &
+            parsed_content$col1 > parsed$col1
+        ]
         if (isTRUE(allow_single_line) &&
             "'{'" %in% tokens_before) {
           return()
