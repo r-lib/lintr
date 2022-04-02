@@ -10,7 +10,8 @@ T_and_F_symbol_linter()
 Avoid the symbols \code{T} and \code{F} (for \code{TRUE} and \code{FALSE}).
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr. \cr
+\url{https://style.tidyverse.org/syntax.html#logical-vectors}
 }
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=robustness_linters]{robustness}, \link[=style_linters]{style}

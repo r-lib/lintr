@@ -4,7 +4,9 @@
 #' opening delimiter or directly preceding a closing delimiter.
 #'
 #' @evalRd rd_tags("spaces_inside_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso
+#'   [linters] for a complete list of linters available in lintr. \cr
+#'   <https://style.tidyverse.org/syntax.html#parentheses>
 #' @export
 spaces_inside_linter <- function() {
   Linter(function(source_file) {

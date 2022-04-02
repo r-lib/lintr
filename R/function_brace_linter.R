@@ -4,7 +4,9 @@
 #'   that aren't wrapped in braces
 #'
 #' @evalRd rd_tags("function_brace_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso
+#'   [linters] for a complete list of linters available in lintr. \cr
+#'   <https://style.tidyverse.org/syntax.html#indenting>
 #' @export
 function_brace_linter <- function() {
   Linter(function(source_file) {

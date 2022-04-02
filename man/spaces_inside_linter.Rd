@@ -11,7 +11,8 @@ Check that parentheses and square brackets do not have spaces directly inside th
 opening delimiter or directly preceding a closing delimiter.
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr. \cr
+\url{https://style.tidyverse.org/syntax.html#parentheses}
 }
 \section{Tags}{
 \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
