@@ -3,7 +3,9 @@
 #' Check that only double quotes are used to delimit string constants.
 #'
 #' @evalRd rd_tags("single_quotes_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso
+#'   [linters] for a complete list of linters available in lintr. \cr
+#'   <https://style.tidyverse.org/syntax.html#character-vectors>
 #' @export
 single_quotes_linter <- function() {
   Linter(function(source_file) {

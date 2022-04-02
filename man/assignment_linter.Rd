@@ -16,7 +16,8 @@ If \code{FALSE}, \code{\link[base:assignOps]{<<-}} and \verb{->>} are not allowe
 Check that \verb{<-} is always used for assignment.
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr. \cr
+\url{https://style.tidyverse.org/syntax.html#assignment-1}
 }
 \section{Tags}{
 \link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=style_linters]{style}
