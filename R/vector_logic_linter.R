@@ -8,7 +8,7 @@
 #'   [testthat::expect_true()] and [testthat::expect_false()].
 #' @evalRd rd_tags("vector_logic_linter")
 #' @seealso
-#'   [linters] for a complete list of linters available in lintr.
+#'   [linters] for a complete list of linters available in lintr. \cr
 #'   <https://style.tidyverse.org/syntax.html#if-statements>
 #' @export
 vector_logic_linter <- function() {

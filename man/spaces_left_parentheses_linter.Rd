@@ -10,7 +10,8 @@ spaces_left_parentheses_linter()
 Check that all left parentheses have a space before them unless they are in a function call.
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr. \cr
+\url{https://style.tidyverse.org/syntax.html#parentheses}
 }
 \section{Tags}{
 \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}

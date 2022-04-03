@@ -51,8 +51,7 @@ outer_negation_linter,readability efficiency best_practices
 package_hooks_linter,style correctness package_development
 paren_body_linter,style readability default
 paren_brace_linter,style readability default
-paste_sep_linter,best_practices consistency
-paste_to_string_linter,best_practices consistency
+paste_linter,best_practices consistency
 pipe_call_linter,style readability
 pipe_continuation_linter,style readability default
 redundant_ifelse_linter,best_practices efficiency consistency
@@ -63,6 +62,7 @@ single_quotes_linter,style consistency readability default
 spaces_inside_linter,style readability default
 spaces_left_parentheses_linter,style readability default
 sprintf_linter,correctness common_mistakes
+strings_as_factors_linter,robustness
 system_file_linter,consistency readability best_practices
 T_and_F_symbol_linter,style readability robustness consistency best_practices default
 todo_comment_linter,style configurable

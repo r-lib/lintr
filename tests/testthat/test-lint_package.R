@@ -78,7 +78,7 @@ test_that(
   )
   on.exit(unlink(config_path))
 
-  expected_lines <- c("mno = 789")
+  expected_lines <- "mno = 789"
   lints_from_outside <- lint_package(
     pkg_path, linters = list(assignment_linter())
   )

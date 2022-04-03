@@ -70,7 +70,9 @@ infix_metadata$comparator <- infix_metadata$string_value %in% c("<", "<=", ">", 
 #'   are included/excluded as a group (indicated by passing `"<-"`), as are `->` and `->>` (_viz_, `"->"`),
 #'   and that `=` for assignment and for setting arguments in calls are treated the same.
 #' @evalRd rd_tags("infix_spaces_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso
+#'   [linters] for a complete list of linters available in lintr. \cr
+#'   <https://style.tidyverse.org/syntax.html#infix-operators>
 #' @export
 infix_spaces_linter <- function(exclude_operators = NULL) {
   Linter(function(source_file) {

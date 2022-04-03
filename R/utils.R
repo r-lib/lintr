@@ -35,8 +35,7 @@ flatten_list <- function(x, class) {
     if (inherits(x, class)) {
       res[[itr]] <<- x
       itr <<- itr + 1L
-    }
-    else if (is.list(x)) {
+    } else if (is.list(x)) {
       lapply(x, assign_item)
     }
   }
@@ -50,8 +49,7 @@ fix_names <- function(x, default) {
 
   if (is.null(nms)) {
     nms <- default
-  }
-  else {
+  } else {
     nms[nms == ""] <- default
   }
   names(x) <- nms

@@ -8,7 +8,9 @@
 #'   \item{trailing}{Semicolons following the last statement on the line.}
 #' }
 #' @evalRd rd_tags("semicolon_terminator_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso
+#'   [linters] for a complete list of linters available in lintr. \cr
+#'   <https://style.tidyverse.org/syntax.html#semicolons>
 #' @export
 semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
   Linter(function(source_file) {

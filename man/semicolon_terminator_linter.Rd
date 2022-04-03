@@ -17,7 +17,8 @@ semicolon_terminator_linter(semicolon = c("compound", "trailing"))
 Check that no semicolons terminate expressions.
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr. \cr
+\url{https://style.tidyverse.org/syntax.html#semicolons}
 }
 \section{Tags}{
 \link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}

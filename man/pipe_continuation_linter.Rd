@@ -10,7 +10,8 @@ pipe_continuation_linter()
 Check that each step in a pipeline is on a new line, or the entire pipe fits on one line.
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr. \cr
+\url{https://style.tidyverse.org/pipes.html#long-lines-2}
 }
 \section{Tags}{
 \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
