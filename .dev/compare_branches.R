@@ -154,7 +154,7 @@ packages <- packages[
   file.exists(packages) &
     (
       file.exists(file.path(packages, "DESCRIPTION")) |
-        grepl("^[a-zA-Z0-9.]+_[0-9.-]+\\.tar\\.gz", basename(packages))
+        grepl("^[a-zA-Z0-9.]+_[0-9.-]+(\\.tar\\.gz|\\.tgz)", basename(packages))
     )
 ]
 
@@ -163,7 +163,7 @@ if (is.null(params$sample_size)) {
 } else {
   if (params$sample_size > length(packages)) {
     message(sprintf(
-      "Requested a sample of %d pacakges but only %d are available; running on all packages",
+      "Requested a sample of %d packages but only %d are available; running on all packages",
       params$sample_size,
       length(packages)
     ))
@@ -379,15 +379,15 @@ if (length(packages) > 50L) {
 }
 
 df_otherwise <- tibble::tibble(
-  "source" = NA,
-  "package" = NA,
-  "filename" = NA,
-  "line_number" = NA,
-  "column_number" = NA,
-  "type" = NA,
-  "message" = NA,
-  "line" = NA,
-  "linter" = NA
+  source = NA,
+  package = NA,
+  filename = NA,
+  line_number = NA,
+  column_number = NA,
+  type = NA,
+  message = NA,
+  line = NA,
+  linter = NA
 )
 
 if (is_branch) {
