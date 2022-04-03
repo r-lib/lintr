@@ -112,7 +112,7 @@ object_lint <- function(expr, source_file, message) {
     type = "style",
     message = message,
     line = source_file$file_lines[as.numeric(symbol@line1)],
-    ranges = list(as.numeric(c(symbol@col1, symbol@col2))),
+    ranges = list(as.numeric(c(symbol@col1, symbol@col2)))
   )
 }
 

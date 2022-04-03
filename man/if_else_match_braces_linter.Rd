@@ -12,7 +12,8 @@ in \code{{...}} but the \verb{else} branch is not, or vice versa, i.e., it ensur
 that either both branches use \code{{...}} or neither does.
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr. \cr
+\url{https://style.tidyverse.org/syntax.html#if-statements}
 }
 \section{Tags}{
 \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}

@@ -107,6 +107,7 @@ test_that("unreachable_code_linter finds code after stop()", {
   )
 })
 
+# nolint start: commented_code_linter.
 # TODO(michaelchirico): extend to work on switch() statements
 # test_that("unreachable_code_linter interacts with switch() as expected", {
 #   unreachable_inside_switch_lines <- trim_some("
@@ -128,6 +129,7 @@ test_that("unreachable_code_linter finds code after stop()", {
 #     unreachable_code_linter()
 #   )
 # })
+# nolint end: commented_code_linter.
 
 # TODO(michaelchirico): the logic could be extended to terminal if statements
 #   or control flows (for/while). There shouldn't really be such a thing as

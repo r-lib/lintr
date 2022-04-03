@@ -79,10 +79,12 @@ package_hooks_linter <- function() {
       load_arg_name_expr,
       xml_nodes_to_lint,
       source_file,
-      function(expr) sprintf(
-        "%s() should take two arguments, with the first starting with 'lib' and the second starting with 'pkg'.",
-        get_hook(expr)
-      ),
+      function(expr) {
+        sprintf(
+          "%s() should take two arguments, with the first starting with 'lib' and the second starting with 'pkg'.",
+          get_hook(expr)
+        )
+      },
       type = "warning"
     )
 

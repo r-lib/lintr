@@ -10,7 +10,8 @@ paren_body_linter()
 Check that there is a space between right parenthesis and a body expression.
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr. \cr
+\url{https://style.tidyverse.org/syntax.html#parentheses}
 }
 \section{Tags}{
 \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}

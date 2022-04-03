@@ -17,10 +17,10 @@ Documentation for linters is structured into tags to allow for easier discovery.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (36 linters)}
+\item{\link[=best_practices_linters]{best_practices} (35 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (5 linters)}
 \item{\link[=configurable_linters]{configurable} (16 linters)}
-\item{\link[=consistency_linters]{consistency} (17 linters)}
+\item{\link[=consistency_linters]{consistency} (16 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (28 linters)}
 \item{\link[=efficiency_linters]{efficiency} (15 linters)}
@@ -85,8 +85,7 @@ The following linters exist:
 \item{\code{\link{package_hooks_linter}} (tags: correctness, package_development, style)}
 \item{\code{\link{paren_body_linter}} (tags: default, readability, style)}
 \item{\code{\link{paren_brace_linter}} (tags: default, readability, style)}
-\item{\code{\link{paste_sep_linter}} (tags: best_practices, consistency)}
-\item{\code{\link{paste_to_string_linter}} (tags: best_practices, consistency)}
+\item{\code{\link{paste_linter}} (tags: best_practices, consistency)}
 \item{\code{\link{pipe_call_linter}} (tags: readability, style)}
 \item{\code{\link{pipe_continuation_linter}} (tags: default, readability, style)}
 \item{\code{\link{redundant_ifelse_linter}} (tags: best_practices, consistency, efficiency)}
