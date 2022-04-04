@@ -104,7 +104,12 @@ is_not_regex <- function(str) {
 
   # any even number of backslashes without an additional escaping backslash or character group sign [.
   # this guarantees the following tokens aren't escaped and are thus interpretable as regex control characters.
-  rx_not_escaped <- rex::rex(zero_or_more("\\\\") %if_prev_isnt% one_of("\\["))
+  rx_not_escaped <- rex::rex(
+    or(
+      zero_or_more("\\\\") %if_prev_isnt% one_of("\\["),
+      c("\\[",  zero_or_more("\\\\"))
+    )
+  )
 
   # backslash followed by anything that might be a character class, such as \d
   rx_char_class_escape <- rex::rex("\\", one_of(alnum, "<>"))

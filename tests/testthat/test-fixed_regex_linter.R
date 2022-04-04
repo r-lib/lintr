@@ -14,6 +14,7 @@ test_that("fixed_regex_linter skips allowed usages", {
   expect_lint("grep('0+1', x, perl = TRUE)", NULL, fixed_regex_linter())
   expect_lint("grep('1*2', x)", NULL, fixed_regex_linter())
   expect_lint("grep('a|b', x)", NULL, fixed_regex_linter())
+  expect_lint("grep('\\\\[|\\\\]', x)", NULL, fixed_regex_linter())
 
   # if fixed=TRUE is already set, regex patterns don't matter
   expect_lint("gsub('\\\\.', '', y, fixed = TRUE)", NULL, fixed_regex_linter())
