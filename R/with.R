@@ -57,6 +57,16 @@ with_defaults <- function(..., default = default_linters) {
     )
   }
 
+  to_null <- vapply(vals, is.null, logical(1L))
+  if (!all(nms[to_null] %in% names(default))) {
+    bad_nms <- setdiff(nms[to_null], names(default))
+    is_are <- if (length(bad_nms) > 1L) "are" else "is"
+    warning(
+      "Trying to remove ", glue::glue_collapse(sQuote(bad_nms), sep = ", ", last = " and "),
+      ", which ", is_are," not in `default`."
+    )
+  }
+
   is.na(vals) <- nms == vals
   default[nms] <- vals
 
