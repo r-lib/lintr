@@ -2,7 +2,7 @@
 #'
 #' Check that there are no space characters at the end of source lines.
 #'
-#' @param allow_empty_lines Suppress lints for lines that contain only contain.
+#' @param allow_empty_lines Suppress lints for lines that contain only whitespace.
 #'
 #' @evalRd rd_tags("trailing_whitespace_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
