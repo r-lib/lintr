@@ -140,6 +140,8 @@ function calls. (#850, #851, @renkun-ken)
   This prevents false positive lints in the case of long generic names, e.g. 
   `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
 * `object_name_linter()` now correctly detects assignment generics (#843, @jonkeane)
+* `trailing_whitespace_linter()` now also lints completely blank lines by default. This can be disabled by setting the
+  new argument `allow_empty_lines = TRUE` (#1044, @AshesITR)
 
 # lintr 2.0.1
 

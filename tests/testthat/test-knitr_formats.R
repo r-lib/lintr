@@ -2,7 +2,8 @@ regexes <- list(
   assign = rex("Use <-, not =, for assignment."),
   local_var = rex("local variable"),
   quotes = rex("Only use double-quotes."),
-  trailing = rex("Trailing blank lines are superfluous.")
+  trailing = rex("Trailing blank lines are superfluous."),
+  trailws = rex("Trailing whitespace is superfluous.")
 )
 
 test_that("it handles dir", {
@@ -72,7 +73,12 @@ test_that("it handles tex", {
       list(regexes[["assign"]], line_number = 11),
       list(regexes[["local_var"]], line_number = 23),
       list(regexes[["assign"]], line_number = 23),
-      list(regexes[["trailing"]], line_number = 25)
+      list(regexes[["trailing"]], line_number = 25),
+      list(regexes[["trailws"]], line_number = 25)
+      # FIXME(AshesITR) #1043
+      # file_lines contains a whitespace on the final line for Rtex, because that is used to mark the Rtex escape char
+      # "%" as well.
+      # cf. get_source_expressions("tests/testthat/knitr_formats/test.Rtex")$lines[[25]]
     ),
     default_linters,
     parse_settings = FALSE
