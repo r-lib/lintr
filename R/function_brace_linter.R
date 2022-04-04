@@ -24,7 +24,7 @@ function_brace_linter <- function() {
       xml_nodes_to_lint,
       source_file = source_file,
       lint_message = "Any function spanning multiple lines must use curly braces.",
-      type = "warning"
+      type = "style"
     ))
   })
 }
