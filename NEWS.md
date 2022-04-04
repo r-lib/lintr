@@ -27,6 +27,7 @@
 * RStudio source markers are cleared when there are no lints (#520, @AshesITR)
 * `seq_linter()`'s lint message is clearer about the reason for linting. (#522, @michaelchirico)
 * New `missing_package_linter()` (#536, #547, @renkun-ken)
+   + Extension to skip programmatic usage of `loadNamespace()` and `requireNamespace()` like `loadNamespace(pkg)` (#1037, @michaelchirico)
 * New `namespace_linter()` (#548, #551, @renkun-ken)
 * Fix possible error on invalid XML produced by xmlparsedata (#559, #560, @renkun-ken)
 * Fix handling zero-length variable name error (#566, #567, @renkun-ken)
