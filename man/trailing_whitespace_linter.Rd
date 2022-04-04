@@ -7,7 +7,7 @@
 trailing_whitespace_linter(allow_empty_lines = FALSE)
 }
 \arguments{
-\item{allow_empty_lines}{Suppress lints for lines that only contain whitespace.}
+\item{allow_empty_lines}{Suppress lints for lines that contain only whitespace.}
 }
 \description{
 Check that there are no space characters at the end of source lines.
