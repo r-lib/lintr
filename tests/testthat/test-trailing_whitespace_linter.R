@@ -23,6 +23,8 @@ test_that("returns the correct linting", {
 })
 
 test_that("also handles completely empty lines per allow_empty_lines argument", {
+  linter <- trailing_whitespace_linter()
+
   expect_lint(
     "blah <- 1\n  \n'hi'\na <- 2",
     list(message = rex("Trailing whitespace is superfluous."), line_number = 2),
