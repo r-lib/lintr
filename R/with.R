@@ -63,7 +63,7 @@ with_defaults <- function(..., default = default_linters) {
     is_are <- if (length(bad_nms) > 1L) "are" else "is"
     warning(
       "Trying to remove ", glue::glue_collapse(sQuote(bad_nms), sep = ", ", last = " and "),
-      ", which ", is_are," not in `default`."
+      ", which ", is_are, " not in `default`."
     )
   }
 
