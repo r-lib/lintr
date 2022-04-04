@@ -35,8 +35,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
 \item{\code{\link{outer_negation_linter}}}
-\item{\code{\link{paste_sep_linter}}}
-\item{\code{\link{paste_to_string_linter}}}
+\item{\code{\link{paste_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{regex_subset_linter}}}
 \item{\code{\link{seq_linter}}}

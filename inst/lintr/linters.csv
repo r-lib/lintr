@@ -50,8 +50,7 @@ outer_negation_linter,readability efficiency best_practices
 package_hooks_linter,style correctness package_development
 paren_body_linter,style readability default
 paren_brace_linter,style readability default
-paste_sep_linter,best_practices consistency
-paste_to_string_linter,best_practices consistency
+paste_linter,best_practices consistency
 pipe_call_linter,style readability
 pipe_continuation_linter,style readability default
 redundant_ifelse_linter,best_practices efficiency consistency
