@@ -23,8 +23,12 @@ unused_import_linter <- function(except_packages = c("bit64", "data.table", "tid
     if (length(import_exprs) == 0) {
       return(list())
     }
-    # strip_names() needed to turn "'pkg'" -> "pkg" for STR_CONST calls.
-    imported_pkgs <- strip_names(xml2::xml_text(xml2::xml_find_first(import_exprs, "expr[STR_CONST|SYMBOL]")))
+    imported_pkgs <- xml2::xml_text(xml2::xml_find_first(import_exprs, "expr[STR_CONST|SYMBOL]"))
+    imported_pkgs <- vapply(
+      imported_pkgs,
+      function(expr) as.character(parse(text = expr, keep.source = FALSE)),
+      character(1L)
+    )
 
     used_symbols <- xml2::xml_text(xml2::xml_find_all(
       source_file$full_xml_parsed_content,
