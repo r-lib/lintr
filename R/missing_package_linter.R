@@ -15,7 +15,14 @@ missing_package_linter <- function() {
     call_xpath <- "//expr[
       (
         expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
-        and expr[2][SYMBOL or STR_CONST]
+        and (
+          (
+            not(SYMBOL_SUB[text() = 'character.only']) and expr[2][SYMBOL or STR_CONST]
+          ) or (
+            SYMBOL_SUB[text() = 'character.only' and following-sibling::expr[1]/NUM_CONST[starts-with(text(), 'T')]]
+            and expr[2][STR_CONST]
+          )
+        )
       ) or (
         expr[SYMBOL_FUNCTION_CALL[text() = 'loadNamespace' or text() = 'requireNamespace']]
         and expr[2][STR_CONST]

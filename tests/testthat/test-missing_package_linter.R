@@ -37,3 +37,15 @@ test_that("loadNamespace and requireNamespace allow plain symbols", {
   expect_lint("loadNamespace(mypkg)", NULL, missing_package_linter())
   expect_lint("requireNamespace(mypkg)", NULL, missing_package_linter())
 })
+
+test_that("character.only=TRUE case is handled", {
+  expect_lint("library(statts, character.only = TRUE)", NULL, missing_package_linter())
+  expect_lint("require(statts, character.only = TRUE)", NULL, missing_package_linter())
+
+  expect_lint('library("stats", character.only = TRUE)', NULL, missing_package_linter())
+  expect_lint(
+    'library("statts", character.only = TRUE)',
+    rex::rex("Package 'statts' is not installed."),
+    missing_package_linter()
+  )
+})
