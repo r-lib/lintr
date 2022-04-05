@@ -47,6 +47,7 @@
 * `T_and_F_symbol_linter` and `semicolon_terminator_linter` are now part of the default linters
   (#517, #612, #683, #684, @AshesITR)
 * `with_defaults()` no longer duplicates the `lintr_function` class when it is already present (#511, #612, @AshesITR)
+* `with_defaults()` now warns if a named argument is `NULL` but its name is not in `default` (#1049, @AshesITR)
 * New `backport_linter()` for detecting mismatched R version dependencies (#506, @MichaelChirico)
 * `paren_brace_linter` and `no_tab_linter` also use more reliable matching (e.g.,
   excluding matches found in comments; #441 and #545, @russHyde)
@@ -140,6 +141,8 @@ function calls. (#850, #851, @renkun-ken)
   This prevents false positive lints in the case of long generic names, e.g. 
   `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
 * `object_name_linter()` now correctly detects assignment generics (#843, @jonkeane)
+* `trailing_whitespace_linter()` now also lints completely blank lines by default. This can be disabled by setting the
+  new argument `allow_empty_lines = TRUE` (#1044, @AshesITR)
 
 # lintr 2.0.1
 
