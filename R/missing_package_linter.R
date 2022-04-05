@@ -16,11 +16,14 @@ missing_package_linter <- function() {
       (
         expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
         and (
-          (
-            not(SYMBOL_SUB[text() = 'character.only']) and expr[2][SYMBOL or STR_CONST]
-          ) or (
-            SYMBOL_SUB[text() = 'character.only' and following-sibling::expr[1]/NUM_CONST[starts-with(text(), 'T')]]
-            and expr[2][STR_CONST]
+          expr[2][STR_CONST]
+          or (
+            expr[2][SYMBOL]
+            and not(
+              SYMBOL_SUB[text() = 'character.only']
+              /following-sibling::expr[1]
+              /NUM_CONST[text() = 'TRUE' or text() = 'T']
+            )
           )
         )
       ) or (
