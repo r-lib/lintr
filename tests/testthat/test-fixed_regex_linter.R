@@ -186,6 +186,11 @@ test_that("str_replace_all's multi-replacement version is handled", {
   #   a pipeline where each step does one of the replacements and fixed() is used, this is overkill.
   #   Instead, ensure that no lint is returned for this case
   expect_lint('str_replace_all(x, c("one" = "1", "two" = "2", "three" = "3"))', NULL, fixed_regex_linter())
+  expect_lint('grepl(c("a" = "b"), x)', NULL, fixed_regex_linter())
+})
+
+test_that("Rare XML-unrepresentable characters are handled", {
+  expect_lint('strsplit(x, "\\1")', rex::rex("For static regular expression patterns, set `fixed = TRUE`."), fixed_regex_linter())
 })
 
 # TODO(michaelchirico): one difference for stringr functions vs. base is that
