@@ -181,6 +181,13 @@ test_that("fixed_regex_linter catches calls to str_split as well", {
   )
 })
 
+test_that("str_replace_all's multi-replacement version is handled", {
+  # While each of the replacements is fixed, and this _could_ in principle be replaced by
+  #   a pipeline where each step does one of the replacements and fixed() is used, this is overkill.
+  #   Instead, ensure that no lint is returned for this case
+  expect_lint('str_replace_all(x, c("one" = "1", "two" = "2", "three" = "3"))', NULL, fixed_regex_linter())
+})
+
 # TODO(michaelchirico): one difference for stringr functions vs. base is that
 #   stringr is much friendlier to piping, so that
 #   str %>% str_replace_all("x$", "y")
