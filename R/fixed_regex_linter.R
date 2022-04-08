@@ -51,12 +51,12 @@ fixed_regex_linter <- function() {
     )
 
     xpath_pos_1 <- sprintf(
-      "//expr[%s]/following-sibling::expr[1][STR_CONST]",
+      "//expr[%s]/following-sibling::expr[1][STR_CONST and not(EQ_SUB)]",
       sprintf(expr_cond, pos_1_regex_funs, fixed_cond, ignore_case_cond)
     )
     # strsplit doesn't have an ignore.case argument
     xpath_pos_2 <- sprintf(
-      "//expr[%s]/following-sibling::expr[2][STR_CONST]",
+      "//expr[%s]/following-sibling::expr[2][STR_CONST and not(EQ_SUB)]",
       sprintf(expr_cond, pos_2_regex_funs, fixed_cond, "true()")
     )
     xpath <- paste(xpath_pos_1, xpath_pos_2, sep = "|")
