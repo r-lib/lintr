@@ -15,6 +15,13 @@
 #     ./dev/compare_branches --branch=master --outfile=old.csv ...
 #   And then compare the results found in new.csv & old.csv.
 
+# TODO
+#  - document how to use with a local CRAN mirror
+#  - refactor -- flip loop so that the outer loop is packages, inner loop is linters
+#  - refactor -- unlink() doesn't happen until after all packages are linted(!!)
+#  - improvement -- only unzip the directories that lint_package() is checking?
+#  - make sure the name of the linter is recorded correctly in the data.
+
 suppressPackageStartupMessages({
   library(optparse)
   library(dplyr)
@@ -22,7 +29,7 @@ suppressPackageStartupMessages({
   library(tibble)
   library(usethis)
   library(gert)
-  library(devtools)
+  library(pkgload)
 })
 
 if (!file.exists("lintr.Rproj")) {
@@ -223,16 +230,23 @@ lint_all_packages <- function(pkgs, linter, check_depends, warn = TRUE) {
   lint_names <- character(n_packages)
   ii <- 1L
   jj <- 0L
+  pkgs_width <- as.integer(ceiling(log10(length(pkgs))))
+  done_width <- as.integer(ceiling(log10(n_packages)))
   while (ii <= length(pkgs) && jj <= n_packages) {
+    cat(sprintf(
+      "\r[%0*s : %0*s / %d] %s%s",
+      pkgs_width, ii, done_width, jj, n_packages, basename(pkgs[ii]), strrep(" ", 30L)
+    ))
     if (pkg_is_dir[ii]) {
       pkg <- pkgs[ii]
+      delete_tmp <- FALSE
     } else {
       tmp <- file.path(tempdir(), pkg_names[ii])
-      on.exit(unlink(tmp, recursive = TRUE))
       # --strip-components makes sure the output structure is
       # /path/to/tmp/pkg/ instead of /path/to/tmp/pkg/pkg
       utils::untar(pkgs[ii], exdir = tmp, extras = "--strip-components=1")
       pkg <- tmp
+      delete_tmp <- TRUE
     }
     if (test_encoding(pkg)) {
       if (warn) {
@@ -242,6 +256,7 @@ lint_all_packages <- function(pkgs, linter, check_depends, warn = TRUE) {
         ))
       }
       ii <- ii + 1L
+      if (delete_tmp) unlink(tmp, recursive = TRUE)
       next
     }
     # object_usage_linter requires running package code, which may
@@ -258,6 +273,7 @@ lint_all_packages <- function(pkgs, linter, check_depends, warn = TRUE) {
           ))
         }
         ii <- ii + 1L
+        if (delete_tmp) unlink(tmp, recursive = TRUE)
         next
       }
       try_deps <- tryCatch(
@@ -274,6 +290,7 @@ lint_all_packages <- function(pkgs, linter, check_depends, warn = TRUE) {
           ))
         }
         ii <- ii + 1L
+        if (delete_tmp) unlink(tmp, recursive = TRUE)
         next
       }
     }
@@ -281,7 +298,9 @@ lint_all_packages <- function(pkgs, linter, check_depends, warn = TRUE) {
     lints[[jj]] <- lint_dir(pkg, linters = linter, parse_settings = FALSE)
     lint_names[jj] <- pkg_names[ii]
     ii <- ii + 1L
+    if (delete_tmp) unlink(tmp, recursive = TRUE)
   }
+  cat("\n")
   if (jj == 0L) {
     stop("Couldn't successfully lint any packages")
   }
@@ -324,7 +343,7 @@ run_on <- function(what, pkgs, linter_name, ...) {
       gert::git_branch_checkout(..., force = TRUE)
     }
   )
-  devtools::load_all()
+  pkgload::load_all()
 
   linter <- get(linter_name)()
 
@@ -379,15 +398,15 @@ if (length(packages) > 50L) {
 }
 
 df_otherwise <- tibble::tibble(
-  source = NA,
-  package = NA,
-  filename = NA,
-  line_number = NA,
-  column_number = NA,
-  type = NA,
-  message = NA,
-  line = NA,
-  linter = NA
+  source = character(),
+  package = character(),
+  filename = character(),
+  line_number = integer(),
+  column_number = integer(),
+  type = character(),
+  message = character(),
+  line = character(),
+  linter = character()
 )
 
 if (is_branch) {
