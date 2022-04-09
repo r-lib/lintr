@@ -389,7 +389,7 @@ get_source_file <- function(source_file, error = identity) {
     return() # parsed_content is unreliable if encoding is invalid
   }
 
-  fix_eq_assigns(fix_tab_indentations(source_file))
+  fix_octal_escapes(fix_eq_assigns(fix_tab_indentations(source_file)), source_file$lines)
 }
 
 find_line_fun <- function(content) {
@@ -604,4 +604,36 @@ top_level_expressions <- function(pc) {
     return(integer(0))
   }
   which(pc$parent <= 0L)
+}
+
+# workaround for bad parse data bug for octal escapes
+#   https://bugs.r-project.org/show_bug.cgi?id=18323
+fix_octal_escapes <- function(pc, lines) {
+  # subset first to prevent using nchar() on MBCS input
+  is_str_const <- pc$token == "STR_CONST"
+  str_const <- pc[is_str_const, ]
+  str_const_mismatch <- str_const$col2 - str_const$col1 != nchar(str_const$text) - 1L
+  if (!any(str_const_mismatch)) {
+    return(pc)
+  }
+  str_const <- str_const[str_const_mismatch, ]
+  out <- character(nrow(str_const))
+  single_line <- str_const$line1 == str_const$line2
+  out[single_line] <- substr(
+    lines[str_const$line1[single_line]],
+    str_const$col1[single_line],
+    str_const$col2[single_line]
+  )
+  for (ii in which(!single_line)) {
+    out[ii] <- paste(
+      c(
+        substring(lines[str_const$line1[ii]], str_const$col1[ii]),
+        if (str_const$line1[ii] < str_const$line2[ii] - 1L) lines[(str_const$line1[ii] + 1L):(str_const$line2[ii] - 1L)],
+        substr(lines[str_const$line2[ii]], 1L, str_const$col2[ii])
+      ),
+      collapse = "\n"
+    )
+  }
+  pc$text[is_str_const][str_const_mismatch] <- out
+  pc
 }
