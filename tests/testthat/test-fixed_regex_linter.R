@@ -189,7 +189,7 @@ test_that("str_replace_all's multi-replacement version is handled", {
   expect_lint('grepl(c("a" = "b"), x)', NULL, fixed_regex_linter())
 })
 
-test_that("Rare XML-unrepresentable characters are handled", {
+test_that("1- or 2-width octal escape sequences are handled", {
   expect_lint('strsplit(x, "\\1")', rex::rex("For static regular expression patterns, set `fixed = TRUE`."), fixed_regex_linter())
 })
 
