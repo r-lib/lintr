@@ -39,27 +39,25 @@ fixed_regex_linter <- function() {
       "str_view", "str_view_all", "str_which"
     ))
 
-    # T will ultimately be unnecessary thanks to T_and_F_symbol_linter, but test anyway
-    arg_is_true_cond <-
-      "following-sibling::expr[1][NUM_CONST[text() = 'TRUE' or text() = 'T']]"
-    fixed_cond <- xp_and("text() = 'fixed'", arg_is_true_cond)
-    ignore_case_cond <- xp_and("text() = 'ignore.case'", arg_is_true_cond)
-
-    expr_cond <- xp_and(
-      "SYMBOL_FUNCTION_CALL[%s]",
-      "not(following-sibling::SYMBOL_SUB[(%s) or (%s)])"
-    )
-
-    xpath_pos_1 <- sprintf(
-      "//expr[%s]/following-sibling::expr[1][STR_CONST and not(EQ_SUB)]",
-      sprintf(expr_cond, pos_1_regex_funs, fixed_cond, ignore_case_cond)
-    )
-    # strsplit doesn't have an ignore.case argument
-    xpath_pos_2 <- sprintf(
-      "//expr[%s]/following-sibling::expr[2][STR_CONST and not(EQ_SUB)]",
-      sprintf(expr_cond, pos_2_regex_funs, fixed_cond, "true()")
-    )
-    xpath <- paste(xpath_pos_1, xpath_pos_2, sep = "|")
+    # NB: strsplit doesn't have an ignore.case argument
+    # NB: we intentionally exclude cases like gsub(x, c("a" = "b")), where "b" is fixed
+    xpath <- glue::glue("//expr[
+      SYMBOL_FUNCTION_CALL[ {pos_1_regex_funs} ]
+      and not(following-sibling::SYMBOL_SUB[
+        (text() = 'fixed' or text() = 'ignore.case')
+        and following-sibling::expr[1][NUM_CONST[text() = 'TRUE' or text() = 'T']]
+      ])
+    ]
+    /following-sibling::expr[1][STR_CONST and not(EQ_SUB)]
+    |
+    //expr[
+      SYMBOL_FUNCTION_CALL[ {pos_2_regex_funs} ]
+      and not(following-sibling::SYMBOL_SUB[
+        (text() = 'fixed' and following-sibling::expr[1][NUM_CONST[text() = 'TRUE' or text() = 'T']])
+      ])
+    ]
+    /following-sibling::expr[2][STR_CONST and not(EQ_SUB)]
+    ")
 
     patterns <- xml2::xml_find_all(xml, xpath)
 
