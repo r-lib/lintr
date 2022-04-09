@@ -45,7 +45,7 @@ fixed_regex_linter <- function() {
       SYMBOL_FUNCTION_CALL[ {pos_1_regex_funs} ]
       and not(following-sibling::SYMBOL_SUB[
         (text() = 'fixed' or text() = 'ignore.case')
-        and following-sibling::expr[1][NUM_CONST[text() = 'TRUE' or text() = 'T']]
+        and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
       ])
     ]
     /following-sibling::expr[1][STR_CONST and not(EQ_SUB)]
@@ -53,7 +53,8 @@ fixed_regex_linter <- function() {
     //expr[
       SYMBOL_FUNCTION_CALL[ {pos_2_regex_funs} ]
       and not(following-sibling::SYMBOL_SUB[
-        (text() = 'fixed' and following-sibling::expr[1][NUM_CONST[text() = 'TRUE' or text() = 'T']])
+        text() = 'fixed'
+        and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
       ])
     ]
     /following-sibling::expr[2][STR_CONST and not(EQ_SUB)]
