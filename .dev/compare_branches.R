@@ -19,7 +19,7 @@
 
 # TODO
 #  - improvement -- only unzip the directories that lint_package() is checking?
-#  - make sure the name of the linter is recorded correctly in the data.
+#  - make sure this works for comparing tags to facilitate release testing
 
 suppressPackageStartupMessages({
   library(optparse)
