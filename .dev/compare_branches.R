@@ -118,6 +118,8 @@ param_list <- list(
 )
 
 params <- optparse::parse_args(optparse::OptionParser(option_list = param_list))
+params$outdir <- dirname(params$outfile)
+
 # treat any skipped arguments from the prompt as missing
 if (interactive()) {
   for (opt in c("branch", "pr", "packages", "pkg_dir", "sample_size")) {
@@ -165,9 +167,16 @@ packages <- packages[
     )
 ]
 
+if (length(packages) == 0L) {
+  stop("No packages found!")
+}
+
 if (is.null(params$sample_size)) {
   n_packages <- length(packages)
 } else {
+  if (params$sample_size <= 0) {
+    stop("Please request >0 packages")
+  }
   if (params$sample_size > length(packages)) {
     message(sprintf(
       "Requested a sample of %d packages but only %d are available; running on all packages",
@@ -262,7 +271,7 @@ lint_one_package <- function(package, linters, out_dir, check_deps) {
   }
 
   lints <- as.data.frame(lint_dir(package, linters = linters, parse_settings = FALSE))
-  data.table::fwrite(lints, file.path(out_dir, paste0(package_name, ".csv")))
+  if (nrow(lints) > 0L) data.table::fwrite(lints, file.path(out_dir, paste0(package_name, ".csv")))
   TRUE
 }
 
@@ -272,7 +281,7 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
   on.exit({
     gert::git_branch_checkout(old_branch)
     t1 <- Sys.time()
-    message("Completed on ", what, " in ", format(difftime(t1, t0, units = "mins")), digits = 1L)
+    message("  Completed on ", what, " in ", format(difftime(t1, t0, units = "mins"), digits = 1L))
   })
 
   # safe to use force=TRUE because we're in temp_repo
@@ -288,7 +297,7 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
   check_deps <- any(c("object_usage_linter", "object_name_linter") %in% linter_names)
   linters <- lapply(linter_names, function(linter_name) eval(call(linter_name)))
   # accumulate results sequentially to allow for interruptions of long-running executions without losing progress
-  out_temp_dir <- file.path(dirname(params$outfile), ".partial", if (what == "pr") paste0("pr", number) else branch)
+  out_temp_dir <- file.path(old_wd, params$outdir, ".partial", if (what == "pr") paste0("pr", number) else branch)
   dir.create(out_temp_dir, recursive = TRUE, showWarnings = FALSE)
 
   linted_packages <- 0L
@@ -314,6 +323,7 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
       strrep(" ", stdout_width - 14L - pkgs_width - 2 * done_width - nchar(package_str))
     ))
   }
+  cat("\n")
   if (linted_packages == 0L) {
     stop("Couldn't successfully lint any packages")
   }
@@ -329,8 +339,10 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
 message("Comparing the output of the following linters: ", toString(linter_names))
 if (is_branch) {
   message("Comparing branch ", branch, " to ", base_branch)
+  target <- branch
 } else {
   message("Comparing PR#", pr, " to ", base_branch)
+  target <- pr
 }
 if (length(packages) > 50L) {
   message(
@@ -355,12 +367,26 @@ if (is_branch) {
   run_workflow("pr", packages, linter_names, number = target)
 }
 
-# setwd(old_wd)
-# message("Writing output to ", params$outfile)
-# write.csv(lints, params$outfile, row.names = FALSE)
-#
-# if (interactive()) {
-#   unlink(temp_repo, recursive = TRUE)
-# } else {
-#   warnings()
-# }
+setwd(old_wd)
+message("Writing output to ", params$outfile)
+
+load_partial_results <- function(target, is_branch) {
+  directory <- file.path(params$outdir, ".partial", if (is_branch) target else paste0("pr", target))
+  files <- list.files(directory, full.names = TRUE)
+  names(files) <- gsub("\\.csv$", "", basename(files))
+  purrr::map_df(files, readr::read_csv, show_col_types = FALSE, .id = "package")
+}
+
+lints <- dplyr::bind_rows(
+  base = load_partial_results(base_branch, TRUE),
+  branch = load_partial_results(target, is_branch),
+  .id = "source"
+)
+unlink(file.path(params$outdir, ".partial"), recursive = TRUE)
+data.table::fwrite(lints, params$outfile, row.names = FALSE)
+
+if (interactive()) {
+  unlink(temp_repo, recursive = TRUE)
+} else {
+  warnings()
+}
