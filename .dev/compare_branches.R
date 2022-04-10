@@ -24,6 +24,7 @@
 
 suppressPackageStartupMessages({
   library(optparse)
+  library(data.table, include.only = "fwrite")
   library(dplyr)
   library(purrr)
   library(tibble)
@@ -195,9 +196,9 @@ test_encoding <- function(dir) {
           nchar(readLines(con, warn = FALSE))
         }
       )
-      FALSE
+      TRUE
     },
-    error = function(x) TRUE
+    error = function(x) FALSE
   )
 }
 
@@ -214,7 +215,7 @@ get_deps <- function(pkg) {
   deps
 }
 
-lint_package <- function(package, linter_names, check_deps) {
+lint_package <- function(package, linters, out_dir, check_deps) {
   package_is_dir <- file.info(package)$isdir
   package_name <- gsub("_.*", "", package_name)
 
@@ -226,7 +227,7 @@ lint_package <- function(package, linter_names, check_deps) {
     on.exit(unlink(tmp, recursive = TRUE))
     package <- tmp
   }
-  if (test_encoding(package)) {
+  if (!test_encoding(package)) {
     warning(sprintf(
       "Package %s has some files with unknown encoding; skipping",
       package_name
@@ -240,14 +241,11 @@ lint_package <- function(package, linter_names, check_deps) {
   if (check_deps) {
     package_deps <- get_deps(package)
     if ("tcltk" %in% package_deps && !capabilities("tcltk")) {
-      if (warn) {
-        warning(sprintf(
-          "Package %s depends on tcltk, which is not available (via capabilities()); skipping",
-          package_names[ii]
-        ))
-      }
-      ii <- ii + 1L
-      next
+      warning(sprintf(
+        "Package %s depends on tcltk, which is not available (via capabilities()); skipping",
+        package_names[ii]
+      ))
+      return(FALSE)
     }
     try_deps <- tryCatch(
       find.package(package_deps),
@@ -255,31 +253,18 @@ lint_package <- function(package, linter_names, check_deps) {
       warning = identity
     )
     if (inherits(try_deps, c("warning", "error"))) {
-      if (warn) {
-        warning(sprintf(
-          "Some package Dependencies for %s were unavailable: %s; skipping",
-          package_names[ii],
-          gsub("there (?:are no packages|is no package) called ", "", try_deps$message)
-        ))
-      }
-      ii <- ii + 1L
-      next
+      warning(sprintf(
+        "Some package Dependencies for %s were unavailable: %s; skipping",
+        package_names[ii],
+        gsub("there (?:are no packages|is no package) called ", "", try_deps$message)
+      ))
+      return(FALSE)
     }
   }
-  jj <- jj + 1L
-  lints[[jj]] <- lint_dir(package, linters = linter, parse_settings = FALSE)
-  lint_names[jj] <- package_names[ii]
-  ii <- ii + 1L
-  cat("\n")
-  if (jj == 0L) {
-    stop("Couldn't successfully lint any packages")
-  }
-  if (jj < n_packages) {
-    message(sprintf("Requested %d packages, but could only lint %d", n_packages, jj))
-    lints <- lints[1:jj]
-    lint_names <- lint_names[1:jj]
-  }
-  return(rlang::set_names(lints, lint_names))
+
+  lints <- as.data.frame(lint_dir(package, linters = linters, parse_settings = FALSE))
+  data.table::fwrite(lints, file.path(out_dir, paste0(package, ".csv")))
+  TRUE
 }
 
 format_lints <- function(x) {
@@ -298,19 +283,20 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
   })
 
   # safe to use force=TRUE because we're in temp_repo
-  switch(what,
-    pr = {
-      # pr_fetch doesn't expose this so use this to reset
-      gert::git_branch_checkout("master", force = TRUE)
-      usethis::pr_fetch(...)
-    },
-    branch = {
-      gert::git_branch_checkout(branch, force = TRUE)
-    }
-  )
+  if (what == "pr") {
+    # pr_fetch doesn't expose this so use this to reset
+    gert::git_branch_checkout("master", force = TRUE)
+    usethis::pr_fetch(number)
+  } else branch {
+    gert::git_branch_checkout(branch, force = TRUE)
+  }
   pkgload::load_all()
 
   check_deps <- any(c("object_usage_linter", "object_name_linter") %in% linter_names)
+  linters <- lapply(linter_names, function(linter_name) eval(call(linter_name)))
+  # accumulate results sequentially to allow for interruptions of long-running executions without losing progress
+  out_temp_dir <- file.path(dirname(out_file), ".partial", if (what == "pr") paste0("pr", number) else branch)
+  dir.create(out_temp_dir, recursive = TRUE, showWarnings = FALSE)
 
   linted_packages <- 0L
   package_i <- 0L
@@ -332,8 +318,14 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
       # {[, ,:, , ,/, ,], }: 9 characters, plus 5 characters extra buffer
       strrep(" ", stdout_width - 14L - pkgs_width - 2 * done_width - nchar(package_str))
     ))
-    success <- lint_package(package, linter_names, check_deps)
+    success <- lint_package(package, linters, out_temp_dir, check_deps)
     linted_packages <- linted_packages + success
+  }
+  if (linted_packages == 0L) {
+    stop("Couldn't successfully lint any packages")
+  }
+  if (linted_packages < n_packages) {
+    message(sprintf("Requested %d packages, but could only lint %d", n_packages, linted_packages))
   }
 }
 
