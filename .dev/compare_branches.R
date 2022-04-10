@@ -18,7 +18,6 @@
 #   And then compare the results found in new.csv & old.csv.
 
 # TODO
-#  - refactor -- flip loop so that the outer loop is packages, inner loop is linters
 #  - improvement -- only unzip the directories that lint_package() is checking?
 #  - make sure the name of the linter is recorded correctly in the data.
 
@@ -65,6 +64,15 @@ param_list <- list(
     help = "Run the comparison for these linter(s) (comma-separated)"
   ),
   optparse::make_option(
+    "--base_branch",
+    default = if (interactive()) {
+      readline("Name a branch to use as base (skip to use master): ")
+    } else {
+      "master"
+    },
+    help = "Compare to this branch"
+  ),
+  optparse::make_option(
     "--branch",
     default = if (interactive()) {
       readline("Name a branch to compare to the base branch (or skip to enter a PR#): ")
@@ -79,15 +87,6 @@ param_list <- list(
     },
     type = "integer",
     help = "Run the comparison for base vs. this PR"
-  ),
-  optparse::make_option(
-    "--base_branch",
-    default = if (interactive()) {
-      readline("Name a branch to use as base (skip to use master): ")
-    } else {
-      "master"
-    },
-    help = "Compare to this branch"
   ),
   optparse::make_option(
     "--packages",
@@ -162,7 +161,7 @@ packages <- packages[
   file.exists(packages) &
     (
       file.exists(file.path(packages, "DESCRIPTION")) |
-        grepl("^[a-zA-Z0-9.]+_[0-9.-]+(\\.tar\\.gz|\\.tgz)", basename(packages))
+        grepl("^[a-zA-Z0-9.]+_[0-9.-]+\\.tar\\.gz", basename(packages))
     )
 ]
 
@@ -215,12 +214,12 @@ get_deps <- function(pkg) {
   deps
 }
 
-lint_package <- function(package, linters, out_dir, check_deps) {
+lint_one_package <- function(package, linters, out_dir, check_deps) {
   package_is_dir <- file.info(package)$isdir
-  package_name <- gsub("_.*", "", package_name)
+  package_name <- gsub("_.*", "", basename(package))
 
   if (!package_is_dir) {
-    tmp <- file.path(tempdir(), package_names)
+    tmp <- file.path(tempdir(), package_name)
     # --strip-components makes sure the output structure is
     # /path/to/tmp/pkg/ instead of /path/to/tmp/pkg/pkg
     utils::untar(package, exdir = tmp, extras = "--strip-components=1")
@@ -255,7 +254,7 @@ lint_package <- function(package, linters, out_dir, check_deps) {
     if (inherits(try_deps, c("warning", "error"))) {
       warning(sprintf(
         "Some package Dependencies for %s were unavailable: %s; skipping",
-        package_names[ii],
+        package_name,
         gsub("there (?:are no packages|is no package) called ", "", try_deps$message)
       ))
       return(FALSE)
@@ -263,14 +262,8 @@ lint_package <- function(package, linters, out_dir, check_deps) {
   }
 
   lints <- as.data.frame(lint_dir(package, linters = linters, parse_settings = FALSE))
-  data.table::fwrite(lints, file.path(out_dir, paste0(package, ".csv")))
+  data.table::fwrite(lints, file.path(out_dir, paste0(package_name, ".csv")))
   TRUE
-}
-
-format_lints <- function(x) {
-  x %>%
-    purrr::map(tibble::as_tibble) %>%
-    dplyr::bind_rows(.id = "package")
 }
 
 run_workflow <- function(what, packages, linter_names, branch, number) {
@@ -287,7 +280,7 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
     # pr_fetch doesn't expose this so use this to reset
     gert::git_branch_checkout("master", force = TRUE)
     usethis::pr_fetch(number)
-  } else branch {
+  } else {
     gert::git_branch_checkout(branch, force = TRUE)
   }
   pkgload::load_all()
@@ -295,7 +288,7 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
   check_deps <- any(c("object_usage_linter", "object_name_linter") %in% linter_names)
   linters <- lapply(linter_names, function(linter_name) eval(call(linter_name)))
   # accumulate results sequentially to allow for interruptions of long-running executions without losing progress
-  out_temp_dir <- file.path(dirname(out_file), ".partial", if (what == "pr") paste0("pr", number) else branch)
+  out_temp_dir <- file.path(dirname(params$outfile), ".partial", if (what == "pr") paste0("pr", number) else branch)
   dir.create(out_temp_dir, recursive = TRUE, showWarnings = FALSE)
 
   linted_packages <- 0L
@@ -312,14 +305,14 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
     if (package_i > length(packages)) break
     package <- packages[[package_i]]
     package_str <- gsub("_.*", "", basename(package))
+    success <- lint_one_package(package, linters, out_temp_dir, check_deps)
+    linted_packages <- linted_packages + success
     cat(sprintf(
       "\r[%0*s : %0*s / %d] %s%s",
-      pkgs_width, ii, done_width, jj, n_packages, package_str,
+      pkgs_width, package_i, done_width, linted_packages, n_packages, package_str,
       # {[, ,:, , ,/, ,], }: 9 characters, plus 5 characters extra buffer
       strrep(" ", stdout_width - 14L - pkgs_width - 2 * done_width - nchar(package_str))
     ))
-    success <- lint_package(package, linters, out_temp_dir, check_deps)
-    linted_packages <- linted_packages + success
   }
   if (linted_packages == 0L) {
     stop("Couldn't successfully lint any packages")
@@ -362,12 +355,12 @@ if (is_branch) {
   run_workflow("pr", packages, linter_names, number = target)
 }
 
-setwd(old_wd)
-message("Writing output to ", params$outfile)
-write.csv(lints, params$outfile, row.names = FALSE)
-
-if (interactive()) {
-  unlink(temp_repo, recursive = TRUE)
-} else {
-  warnings()
-}
+# setwd(old_wd)
+# message("Writing output to ", params$outfile)
+# write.csv(lints, params$outfile, row.names = FALSE)
+#
+# if (interactive()) {
+#   unlink(temp_repo, recursive = TRUE)
+# } else {
+#   warnings()
+# }
