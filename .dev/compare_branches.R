@@ -356,6 +356,13 @@ if (length(packages) > 50L) {
   )
 }
 
+if (dir.exists(file.path(params$outdir, ".partial"))) {
+  message(
+    "** A .partial directory already exists in ", params$outdir, "; ",
+    "these will be included here. Please interrupt & delete these files first if this is not intended"
+  )
+}
+
 # 3 nested loops, organized for efficiency
 #  (1) (outermost) branch (only build & install the package once per branch)
 #  (2) (central) packages (only unzip the package once per branch)
