@@ -303,6 +303,24 @@ test_that("one-character character classes with escaped characters are caught", 
   )
 })
 
+test_that("bracketed unicode escapes are caught", {
+  expect_lint(
+    'gsub("\\u{A0}", " ", out, useBytes = TRUE)',
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    'gsub("abc\\U{A0DEF}ghi", " ", out, useBytes = TRUE)',
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    'gsub("\\u{A0}\\U{FEDCBA98}", " ", out, useBytes = TRUE)',
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+})
+
 # TODO(michaelchirico): one difference for stringr functions vs. base is that
 #   stringr is much friendlier to piping, so that
 #   str %>% str_replace_all("x$", "y")

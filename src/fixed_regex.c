@@ -90,7 +90,21 @@ SEXP is_not_regex(SEXP patterns, SEXP skip_start, SEXP skip_end) {
             m = n + 1;
           }
         } else {  // 4k+0,1,3 slashes: escaped pairs + maybe an escape like \n
-          m = n;
+	  // unicode escapes like \u{HHHH} or \U{HHHHHHHH}. note that we only care about
+	  //   the em-braced version here -- versions like \U0123 will get recognized
+	  //   as non-regex regardless because the other hex characters are fixed
+	  if ((n - m) % 2 == 1 && n + 3 < pattern_i_size && (letters[n] == 'u' || letters[n] == 'U') && letters[n + 1] == '{') {
+            int right_brace = n + 2;
+	    while (right_brace < pattern_i_size && letters[right_brace] != '}') {
+	      ++right_brace;
+	    }
+	    if (right_brace == pattern_i_size) {
+	      break; // shouldn't really be possible, but if so, out[i]=TRUE
+	    }
+	    m = right_brace + 1;
+	  } else {
+            m = n;
+	  }
         }
       } else {
         ++m;
