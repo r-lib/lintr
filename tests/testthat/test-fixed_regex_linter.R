@@ -21,6 +21,11 @@ test_that("fixed_regex_linter skips allowed usages", {
 
   # ignore.case=TRUE implies regex interpretation
   expect_lint("gsub('abcdefg', '', y, ignore.case = TRUE)", NULL, fixed_regex_linter())
+
+  # char classes starting with [] might contain other characters -> not fixed
+  expect_lint("sub('[][]', '', y)", NULL, fixed_regex_linter())
+  expect_lint("sub('[][ ]', '', y)", NULL, fixed_regex_linter())
+  expect_lint("sub('[],[]', '', y)", NULL, fixed_regex_linter())
 })
 
 test_that("fixed_regex_linter blocks simple disallowed usages", {
@@ -71,6 +76,13 @@ test_that("fixed_regex_linter catches regex like [.] or [$]", {
 
   expect_lint(
     "grepl('a[*]b', x)",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+
+  # also catch char classes for [ and ]
+  expect_lint(
+    "gregexpr('[]]', x)",
     rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
     fixed_regex_linter()
   )
@@ -211,6 +223,107 @@ test_that("str_replace_all's multi-replacement version is handled", {
 
 test_that("1- or 2-width octal escape sequences are handled", {
   expect_lint('strsplit(x, "\\1")', rex::rex("For static regular expression patterns, set `fixed = TRUE`."), fixed_regex_linter())
+})
+
+test_that("one-character character classes with escaped characters are caught", {
+  expect_lint(
+    "gsub('[\\n]', '', x)",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "gsub('[\\\"]', '', x)",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\1]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\12]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\123]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\xa]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\xA7]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\uF]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\u01]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\u012]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\u0123]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\U8]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\U1A2B3C4D]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\u{1}]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\U{F7D5}]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\U{12345678}]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+})
+
+test_that("bracketed unicode escapes are caught", {
+  expect_lint(
+    'gsub("\\u{A0}", " ", out, useBytes = TRUE)',
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    'gsub("abc\\U{A0DEF}ghi", " ", out, useBytes = TRUE)',
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    'gsub("\\u{A0}\\U{FEDCBA98}", " ", out, useBytes = TRUE)',
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
 })
 
 # TODO(michaelchirico): one difference for stringr functions vs. base is that
