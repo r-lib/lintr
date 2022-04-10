@@ -214,92 +214,62 @@ get_deps <- function(pkg) {
   deps
 }
 
-lint_all_packages <- function(packages, linter_names, check_depends, warn = TRUE) {
-  package_is_dir <- file.info(packages)$isdir
-  package_names <- dplyr::if_else(
-    package_is_dir,
-    basename(packages),
-    gsub("_.*", "", basename(packages))
-  )
+lint_package <- function(package, linter_names, check_deps) {
+  package_is_dir <- file.info(package)$isdir
+  package_name <- gsub("_.*", "", package_name)
 
-  # given how common it is to skip packages (e.g. due to uninstalled
-  #   dependencies), use a while loop to try and reach n_packages instead
-  #   of just iterating over n_packages (which may in actuality lint
-  #   far fewer than that number)
-  lints <- vector("list", n_packages)
-  lint_names <- character(n_packages)
-  ii <- 1L
-  jj <- 0L
-  pkgs_width <- as.integer(ceiling(log10(length(packages))))
-  done_width <- as.integer(ceiling(log10(n_packages)))
-  while (ii <= length(packages) && jj <= n_packages) {
-    cat(sprintf(
-      "\r[%0*s : %0*s / %d] %s%s",
-      pkgs_width, ii, done_width, jj, n_packages, basename(packages[ii]), strrep(" ", 30L)
+  if (!package_is_dir) {
+    tmp <- file.path(tempdir(), package_names)
+    # --strip-components makes sure the output structure is
+    # /path/to/tmp/pkg/ instead of /path/to/tmp/pkg/pkg
+    utils::untar(package, exdir = tmp, extras = "--strip-components=1")
+    on.exit(unlink(tmp, recursive = TRUE))
+    package <- tmp
+  }
+  if (test_encoding(package)) {
+    warning(sprintf(
+      "Package %s has some files with unknown encoding; skipping",
+      package_name
     ))
-    if (package_is_dir[ii]) {
-      package <- packages[ii]
-      delete_tmp <- FALSE
-    } else {
-      tmp <- file.path(tempdir(), package_names[ii])
-      # --strip-components makes sure the output structure is
-      # /path/to/tmp/pkg/ instead of /path/to/tmp/pkg/pkg
-      utils::untar(packages[ii], exdir = tmp, extras = "--strip-components=1")
-      package <- tmp
-      delete_tmp <- TRUE
-    }
-    if (test_encoding(package)) {
+    return(FALSE)
+  }
+  # object_usage_linter requires running package code, which may
+  #   not work if the package has unavailable Depends;
+  # object_name_linter also tries to run loadNamespace on Imports
+  #   found in the target package's NAMESPACE file
+  if (check_deps) {
+    package_deps <- get_deps(package)
+    if ("tcltk" %in% package_deps && !capabilities("tcltk")) {
       if (warn) {
         warning(sprintf(
-          "Package %s has some files with unknown encoding; skipping",
+          "Package %s depends on tcltk, which is not available (via capabilities()); skipping",
           package_names[ii]
         ))
       }
       ii <- ii + 1L
-      if (delete_tmp) unlink(tmp, recursive = TRUE)
       next
     }
-    # object_usage_linter requires running package code, which may
-    #   not work if the package has unavailable Depends;
-    # object_name_linter also tries to run loadNamespace on Imports
-    #   found in the target package's NAMESPACE file
-    if (check_depends) {
-      package_deps <- get_deps(package)
-      if ("tcltk" %in% package_deps && !capabilities("tcltk")) {
-        if (warn) {
-          warning(sprintf(
-            "Package %s depends on tcltk, which is not available (via capabilities()); skipping",
-            package_names[ii]
-          ))
-        }
-        ii <- ii + 1L
-        if (delete_tmp) unlink(tmp, recursive = TRUE)
-        next
+    try_deps <- tryCatch(
+      find.package(package_deps),
+      error = identity,
+      warning = identity
+    )
+    if (inherits(try_deps, c("warning", "error"))) {
+      if (warn) {
+        warning(sprintf(
+          "Some package Dependencies for %s were unavailable: %s; skipping",
+          package_names[ii],
+          gsub("there (?:are no packages|is no package) called ", "", try_deps$message)
+        ))
       }
-      try_deps <- tryCatch(
-        find.package(package_deps),
-        error = identity,
-        warning = identity
-      )
-      if (inherits(try_deps, c("warning", "error"))) {
-        if (warn) {
-          warning(sprintf(
-            "Some package Dependencies for %s were unavailable: %s; skipping",
-            package_names[ii],
-            gsub("there (?:are no packages|is no package) called ", "", try_deps$message)
-          ))
-        }
-        ii <- ii + 1L
-        if (delete_tmp) unlink(tmp, recursive = TRUE)
-        next
-      }
+      ii <- ii + 1L
+      next
     }
-    jj <- jj + 1L
-    lints[[jj]] <- lint_dir(package, linters = linter, parse_settings = FALSE)
-    lint_names[jj] <- package_names[ii]
-    ii <- ii + 1L
-    if (delete_tmp) unlink(tmp, recursive = TRUE)
   }
+  jj <- jj + 1L
+  lints[[jj]] <- lint_dir(package, linters = linter, parse_settings = FALSE)
+  lint_names[jj] <- package_names[ii]
+  ii <- ii + 1L
   cat("\n")
   if (jj == 0L) {
     stop("Couldn't successfully lint any packages")
@@ -340,7 +310,31 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
   )
   pkgload::load_all()
 
-  lint_all_packages(packages, linter_names)
+  check_deps <- any(c("object_usage_linter", "object_name_linter") %in% linter_names)
+
+  linted_packages <- 0L
+  package_i <- 0L
+  pkgs_width <- as.integer(ceiling(log10(length(packages))))
+  done_width <- as.integer(ceiling(log10(n_packages)))
+  stdout_width <- getOption("width")
+  # given how common it can be to skip packages (e.g. due to uninstalled
+  #   dependencies), use a while loop to try and reach n_packages instead
+  #   of just iterating over n_packages (which may in actuality lint
+  #   far fewer than that number)
+  while (linted_packages < n_packages) {
+    package_i <- package_i + 1L
+    if (package_i > length(packages)) break
+    package <- packages[[package_i]]
+    package_str <- gsub("_.*", "", basename(package))
+    cat(sprintf(
+      "\r[%0*s : %0*s / %d] %s%s",
+      pkgs_width, ii, done_width, jj, n_packages, package_str,
+      # {[, ,:, , ,/, ,], }: 9 characters, plus 5 characters extra buffer
+      strrep(" ", stdout_width - 14L - pkgs_width - 2 * done_width - nchar(package_str))
+    ))
+    success <- lint_package(package, linter_names, check_deps)
+    linted_packages <- linted_packages + success
+  }
 }
 
 ###############################################################################
