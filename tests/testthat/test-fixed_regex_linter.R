@@ -213,6 +213,89 @@ test_that("1- or 2-width octal escape sequences are handled", {
   expect_lint('strsplit(x, "\\1")', rex::rex("For static regular expression patterns, set `fixed = TRUE`."), fixed_regex_linter())
 })
 
+test_that("one-character character classes with escaped characters are caught", {
+  expect_lint(
+    "gsub('[\\n]', '', x)",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "gsub('[\\\"]', '', x)",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\1]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\12]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\123]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\xa]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\xA7]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\uF]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\u01]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\u012]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\u0123]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\U8]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\U1A2B3C4D]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\u{1}]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\U{F7D5}]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+  expect_lint(
+    "str_split(x, '[\\U{12345678}]')",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
+})
+
 # TODO(michaelchirico): one difference for stringr functions vs. base is that
 #   stringr is much friendlier to piping, so that
 #   str %>% str_replace_all("x$", "y")
