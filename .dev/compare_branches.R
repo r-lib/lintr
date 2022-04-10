@@ -5,8 +5,10 @@
 # How to use:
 #   See below (param_list <-) for documentation of the script's arguments.
 #   Most importantly, you'll need to provide a `--pkg_dir` pointing to a
-#     local directory containing R packages (e.g., a CRAN mirror or github
-#     directory containing some number of packages).
+#     local directory containing R packages, e.g., a CRAN mirror or GitHub
+#     directory containing some number of packages. For a CRAN mirror at $CRAN_MIRROR,
+#     the correct subdirectory to use is $CRAN_MIRROR/src/contrib, which contains the R
+#     source code (the other binary directories only contain R code in inst/).
 #   The script is executable, e.g. you can run the following from the lintr TLD:
 #     ./dev/compare_branches --pkg_dir=/path/to/cran --sample_size=50 ...
 #   The script outputs a CSV with the lint results for the script options to --outfile.
@@ -16,9 +18,7 @@
 #   And then compare the results found in new.csv & old.csv.
 
 # TODO
-#  - document how to use with a local CRAN mirror
 #  - refactor -- flip loop so that the outer loop is packages, inner loop is linters
-#  - refactor -- unlink() doesn't happen until after all packages are linted(!!)
 #  - improvement -- only unzip the directories that lint_package() is checking?
 #  - make sure the name of the linter is recorded correctly in the data.
 
