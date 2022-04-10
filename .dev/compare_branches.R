@@ -214,12 +214,12 @@ get_deps <- function(pkg) {
   deps
 }
 
-lint_all_packages <- function(pkgs, linter, check_depends, warn = TRUE) {
-  pkg_is_dir <- file.info(pkgs)$isdir
-  pkg_names <- dplyr::if_else(
-    pkg_is_dir,
-    basename(pkgs),
-    gsub("_.*", "", basename(pkgs))
+lint_all_packages <- function(packages, linter_names, check_depends, warn = TRUE) {
+  package_is_dir <- file.info(packages)$isdir
+  package_names <- dplyr::if_else(
+    package_is_dir,
+    basename(packages),
+    gsub("_.*", "", basename(packages))
   )
 
   # given how common it is to skip packages (e.g. due to uninstalled
@@ -230,29 +230,29 @@ lint_all_packages <- function(pkgs, linter, check_depends, warn = TRUE) {
   lint_names <- character(n_packages)
   ii <- 1L
   jj <- 0L
-  pkgs_width <- as.integer(ceiling(log10(length(pkgs))))
+  pkgs_width <- as.integer(ceiling(log10(length(packages))))
   done_width <- as.integer(ceiling(log10(n_packages)))
-  while (ii <= length(pkgs) && jj <= n_packages) {
+  while (ii <= length(packages) && jj <= n_packages) {
     cat(sprintf(
       "\r[%0*s : %0*s / %d] %s%s",
-      pkgs_width, ii, done_width, jj, n_packages, basename(pkgs[ii]), strrep(" ", 30L)
+      pkgs_width, ii, done_width, jj, n_packages, basename(packages[ii]), strrep(" ", 30L)
     ))
-    if (pkg_is_dir[ii]) {
-      pkg <- pkgs[ii]
+    if (package_is_dir[ii]) {
+      package <- packages[ii]
       delete_tmp <- FALSE
     } else {
-      tmp <- file.path(tempdir(), pkg_names[ii])
+      tmp <- file.path(tempdir(), package_names[ii])
       # --strip-components makes sure the output structure is
       # /path/to/tmp/pkg/ instead of /path/to/tmp/pkg/pkg
-      utils::untar(pkgs[ii], exdir = tmp, extras = "--strip-components=1")
-      pkg <- tmp
+      utils::untar(packages[ii], exdir = tmp, extras = "--strip-components=1")
+      package <- tmp
       delete_tmp <- TRUE
     }
-    if (test_encoding(pkg)) {
+    if (test_encoding(package)) {
       if (warn) {
         warning(sprintf(
           "Package %s has some files with unknown encoding; skipping",
-          pkg_names[ii]
+          package_names[ii]
         ))
       }
       ii <- ii + 1L
@@ -264,12 +264,12 @@ lint_all_packages <- function(pkgs, linter, check_depends, warn = TRUE) {
     # object_name_linter also tries to run loadNamespace on Imports
     #   found in the target package's NAMESPACE file
     if (check_depends) {
-      pkg_deps <- get_deps(pkg)
-      if ("tcltk" %in% pkg_deps && !capabilities("tcltk")) {
+      package_deps <- get_deps(package)
+      if ("tcltk" %in% package_deps && !capabilities("tcltk")) {
         if (warn) {
           warning(sprintf(
             "Package %s depends on tcltk, which is not available (via capabilities()); skipping",
-            pkg_names[ii]
+            package_names[ii]
           ))
         }
         ii <- ii + 1L
@@ -277,7 +277,7 @@ lint_all_packages <- function(pkgs, linter, check_depends, warn = TRUE) {
         next
       }
       try_deps <- tryCatch(
-        find.package(pkg_deps),
+        find.package(package_deps),
         error = identity,
         warning = identity
       )
@@ -285,7 +285,7 @@ lint_all_packages <- function(pkgs, linter, check_depends, warn = TRUE) {
         if (warn) {
           warning(sprintf(
             "Some package Dependencies for %s were unavailable: %s; skipping",
-            pkg_names[ii],
+            package_names[ii],
             gsub("there (?:are no packages|is no package) called ", "", try_deps$message)
           ))
         }
@@ -295,8 +295,8 @@ lint_all_packages <- function(pkgs, linter, check_depends, warn = TRUE) {
       }
     }
     jj <- jj + 1L
-    lints[[jj]] <- lint_dir(pkg, linters = linter, parse_settings = FALSE)
-    lint_names[jj] <- pkg_names[ii]
+    lints[[jj]] <- lint_dir(package, linters = linter, parse_settings = FALSE)
+    lint_names[jj] <- package_names[ii]
     ii <- ii + 1L
     if (delete_tmp) unlink(tmp, recursive = TRUE)
   }
@@ -318,61 +318,29 @@ format_lints <- function(x) {
     dplyr::bind_rows(.id = "package")
 }
 
-run_lints <- function(pkgs, linter, check_depends, warn = TRUE) {
-  format_lints(lint_all_packages(pkgs, linter, check_depends, warn))
-}
-
-run_on <- function(what, pkgs, linter_name, ...) {
+run_workflow <- function(what, packages, linter_names, branch, number) {
   t0 <- Sys.time()
+  old_branch <- gert::git_branch()
   on.exit({
+    gert::git_branch_checkout(old_branch)
     t1 <- Sys.time()
-    message("Completed on ", what, " in ", format(difftime(t1, t0, units = "mins")))
+    message("Completed on ", what, " in ", format(difftime(t1, t0, units = "mins")), digits = 1L)
   })
 
   # safe to use force=TRUE because we're in temp_repo
   switch(what,
-    base = {
-      gert::git_branch_checkout(base_branch, force = TRUE)
-    },
     pr = {
       # pr_fetch doesn't expose this so use this to reset
       gert::git_branch_checkout("master", force = TRUE)
       usethis::pr_fetch(...)
     },
     branch = {
-      gert::git_branch_checkout(..., force = TRUE)
+      gert::git_branch_checkout(branch, force = TRUE)
     }
   )
   pkgload::load_all()
 
-  linter <- get(linter_name)()
-
-  check_depends <- linter_name %in% c("object_usage_linter", "object_name_linter")
-
-  # only show the warnings on base branch so as not to be repetitive
-  run_lints(pkgs, linter, check_depends = check_depends, warn = what == "base")
-}
-
-run_pr_workflow <- function(linter_name, pkgs, pr) {
-  old_branch <- gert::git_branch()
-  on.exit(gert::git_branch_checkout(old_branch))
-
-  dplyr::bind_rows(
-    base = run_on("base", pkgs, linter_name),
-    pr = run_on("pr", pkgs, linter_name, number = pr),
-    .id = "source"
-  )
-}
-
-run_branch_workflow <- function(linter_name, pkgs, branch) {
-  old_branch <- gert::git_branch()
-  on.exit(gert::git_branch_checkout(old_branch))
-
-  dplyr::bind_rows(
-    base = run_on("base", pkgs, linter_name),
-    branch = run_on("branch", pkgs, linter_name, branch = branch),
-    .id = "source"
-  )
+  lint_all_packages(packages, linter_names)
 }
 
 ###############################################################################
@@ -397,42 +365,15 @@ if (length(packages) > 50L) {
   )
 }
 
-df_otherwise <- tibble::tibble(
-  source = character(),
-  package = character(),
-  filename = character(),
-  line_number = integer(),
-  column_number = integer(),
-  type = character(),
-  message = character(),
-  line = character(),
-  linter = character()
-)
-
+# 3 nested loops, organized for efficiency
+#  (1) (outermost) branch (only build & install the package once per branch)
+#  (2) (central) packages (only unzip the package once per branch)
+#  (3) (innermost) linters (once the package is installed, easy to cycle through linters)
+run_workflow("branch", packages, linter_names, branch = base_branch)
 if (is_branch) {
-  lints <- purrr::map_df(
-    linter_names,
-    ~ purrr::possibly(run_branch_workflow,
-      df_otherwise,
-      quiet = FALSE
-    )(
-      linter_name = .,
-      pkgs = packages,
-      branch = branch
-    )
-  )
+  run_workflow("branch", packages, linter_names, branch = target)
 } else {
-  lints <- purrr::map_df(
-    linter_names,
-    ~ purrr::possibly(run_pr_workflow,
-      df_otherwise,
-      quiet = FALSE
-    )(
-      linter_name = .,
-      pkgs = packages,
-      pr = pr
-    )
-  )
+  run_workflow("pr", packages, linter_names, number = target)
 }
 
 setwd(old_wd)
