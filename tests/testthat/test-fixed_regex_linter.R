@@ -21,6 +21,11 @@ test_that("fixed_regex_linter skips allowed usages", {
 
   # ignore.case=TRUE implies regex interpretation
   expect_lint("gsub('abcdefg', '', y, ignore.case = TRUE)", NULL, fixed_regex_linter())
+
+  # char classes starting with [] might contain other characters -> not fixed
+  expect_lint("sub('[][]', '', y)", NULL, fixed_regex_linter())
+  expect_lint("sub('[][ ]', '', y)", NULL, fixed_regex_linter())
+  expect_lint("sub('[],[]', '', y)", NULL, fixed_regex_linter())
 })
 
 test_that("fixed_regex_linter blocks simple disallowed usages", {
