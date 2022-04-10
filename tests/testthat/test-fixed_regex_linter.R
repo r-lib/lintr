@@ -74,6 +74,13 @@ test_that("fixed_regex_linter catches regex like [.] or [$]", {
     rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
     fixed_regex_linter()
   )
+
+  # also catch char classes for [ and ]
+  expect_lint(
+    "gregexpr('[]]', x)",
+    rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
+    fixed_regex_linter()
+  )
 })
 
 test_that("fixed_regex_linter catches null calls to strsplit as well", {
