@@ -287,7 +287,7 @@ test_that("one-character character classes with escaped characters are caught", 
     fixed_regex_linter()
   )
   expect_lint(
-    "str_split(x, '[\\Ufeff0214]')",
+    "str_split(x, '[\\U1d4d7]')",
     rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
     fixed_regex_linter()
   )
@@ -302,7 +302,7 @@ test_that("one-character character classes with escaped characters are caught", 
     fixed_regex_linter()
   )
   expect_lint(
-    "str_split(x, '[\\U{FEFF0214}]')",
+    "str_split(x, '[\\U{1D4D7}]')",
     rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
     fixed_regex_linter()
   )
@@ -320,7 +320,7 @@ test_that("bracketed unicode escapes are caught", {
     fixed_regex_linter()
   )
   expect_lint(
-    'gsub("\\u{A0}\\U{feff0214}", " ", out, useBytes = TRUE)',
+    'gsub("\\u{A0}\\U{0001d4d7}", " ", out, useBytes = TRUE)',
     rex::rex("For static regular expression patterns, set `fixed = TRUE`."),
     fixed_regex_linter()
   )
