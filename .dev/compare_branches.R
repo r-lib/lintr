@@ -19,6 +19,7 @@
 
 # TODO
 #  - make sure this works for comparing tags to facilitate release testing
+#  - handle the case when working directory is not the lintr directory
 
 suppressPackageStartupMessages({
   library(optparse)
@@ -335,10 +336,6 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
     message(sprintf("Requested %d packages, but could only lint %d", n_packages, linted_packages))
   }
 }
-
-###############################################################################
-# TODO: handle the case when working directory is not the lintr directory
-###############################################################################
 
 message("Comparing the output of the following linters: ", toString(linter_names))
 if (is_branch) {
