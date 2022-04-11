@@ -18,7 +18,6 @@
 #   And then compare the results found in new.csv & old.csv.
 
 # TODO
-#  - improvement -- only unzip the directories that lint_package() is checking?
 #  - make sure this works for comparing tags to facilitate release testing
 
 suppressPackageStartupMessages({
