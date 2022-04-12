@@ -17,7 +17,7 @@ semicolon_linter <- function(allow_compound = FALSE, allow_trailing = FALSE) {
     is_trailing <- is_trailing_sc(tokens, source_file)
 
     to_keep <- (is_trailing & !allow_trailing) |
-               (!is_trailing & allow_compound)
+               (!is_trailing & !allow_compound)
 
     tokens <- tokens[to_keep, ]
     are_trailing <- is_trailing[to_keep]
