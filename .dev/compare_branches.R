@@ -160,7 +160,7 @@ if (is.null(params$pkg_dir)) {
 packages <- list.files(normalizePath(params$pkg_dir), full.names = TRUE)
 if (!is.null(params$packages)) {
   # strip version numbers
-  package_names <- gsub("_.*", "", packages)
+  package_names <- gsub("_.*", "", basename(packages))
   packages <- packages[package_names %in% strsplit(params$packages, ",", fixed = TRUE)[[1L]]]
 }
 # filter to (1) package directories or (2) package tar.gz files
@@ -343,12 +343,14 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
 }
 
 message("Comparing the output of the following linters: ", toString(linter_names))
-if (is_branch) {
-  message("Comparing branch ", branch, " to ", base_branch)
-  target <- branch
-} else {
-  message("Comparing PR#", pr, " to ", base_branch)
-  target <- pr
+if (has_target) {
+  if (is_branch) {
+    message("Comparing branch ", branch, " to ", base_branch)
+    target <- branch
+  } else {
+    message("Comparing PR#", pr, " to ", base_branch)
+    target <- pr
+  }
 }
 if (length(packages) > 50L) {
   message(
