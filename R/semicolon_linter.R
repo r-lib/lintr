@@ -6,7 +6,7 @@
 #'   semicolons (e.g. as in `x; y`, i.e., on the same line of code) are allowed.
 #' @param allow_trailing Logical, default `FALSE`. If `TRUE`, "trailing"
 #'   semicolons (i.e., those that terminate lines of code) are allowed.
-#' @evalRd rd_tags("semicolon_terminator_linter")
+#' @evalRd rd_tags("semicolon_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
 #'   <https://style.tidyverse.org/syntax.html#semicolons>

@@ -36,7 +36,7 @@ Apply one or more linters to all of the R files in a package.
   lint_package()
 
   lint_package(
-    linters = with_defaults(semicolon_linter = semicolon_terminator_linter())
+    linters = with_defaults(semicolon_linter = semicolon_linter())
     cache = TRUE,
     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
   )

@@ -89,7 +89,7 @@ The following linters exist:
 \item{\code{\link{pipe_continuation_linter}} (tags: default, readability, style)}
 \item{\code{\link{redundant_ifelse_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{regex_subset_linter}} (tags: best_practices, efficiency)}
-\item{\code{\link{semicolon_terminator_linter}} (tags: configurable, default, readability, style)}
+\item{\code{\link{semicolon_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{seq_linter}} (tags: best_practices, consistency, default, efficiency, robustness)}
 \item{\code{\link{single_quotes_linter}} (tags: consistency, default, readability, style)}
 \item{\code{\link{spaces_inside_linter}} (tags: default, readability, style)}

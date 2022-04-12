@@ -66,7 +66,7 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 * `pipe_call_linter`: force explicit calls in magrittr pipes.
 * `pipe_continuation_linter`: Check that each step in a pipeline is on a new
   line, or the entire pipe fits on one line.
-* `semicolon_terminator_linter`: check that no semicolons terminate statements.
+* `semicolon_linter`: check that no semicolons terminate statements.
 * `seq_linter`: check for `1:length(...)`, `1:nrow(...)`, `1:ncol(...)`,
   `1:NROW(...)`, and `1:NCOL(...)` expressions. These often cause bugs when the
   right hand side is zero. It is safer to use `seq_len()` or `seq_along()`
