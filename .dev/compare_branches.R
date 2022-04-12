@@ -394,11 +394,15 @@ load_partial_results <- function(target, is_branch) {
   purrr::map_df(files, readr::read_csv, show_col_types = FALSE, .id = "package")
 }
 
-lints <- dplyr::bind_rows(
-  base = load_partial_results(base_branch, TRUE),
-  branch = load_partial_results(target, is_branch),
-  .id = "source"
-)
+if (has_target) {
+  lints <- dplyr::bind_rows(
+    base = load_partial_results(base_branch, TRUE),
+    branch = load_partial_results(target, is_branch),
+    .id = "source"
+  )
+} else {
+  lints <- load_partial_results(base_branch, TRUE)
+}
 unlink(file.path(params$outdir, ".partial"), recursive = TRUE)
 data.table::fwrite(lints, params$outfile, row.names = FALSE)
 
