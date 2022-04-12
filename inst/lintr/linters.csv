@@ -56,7 +56,7 @@ pipe_continuation_linter,style readability default
 redundant_ifelse_linter,best_practices efficiency consistency
 regex_subset_linter,best_practices efficiency
 semicolon_linter,style readability default configurable
-semicolon_terminator_linter,style readability default configurable
+semicolon_terminator_linter,style readability configurable
 seq_linter,robustness efficiency consistency best_practices default
 single_quotes_linter,style consistency readability default
 spaces_inside_linter,style readability default

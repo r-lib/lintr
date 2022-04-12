@@ -25,6 +25,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{open_curly_linter}}}
 \item{\code{\link{semicolon_linter}}}
+\item{\code{\link{semicolon_terminator_linter}}}
 \item{\code{\link{todo_comment_linter}}}
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
