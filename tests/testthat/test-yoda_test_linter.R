@@ -36,6 +36,13 @@ test_that("yoda_test_linter ignores strings in $ expressions", {
   expect_lint('expect_equal(x$"key", 2)', NULL, yoda_test_linter())
 })
 
+# if we only inspect the first argument & ignore context, get false positives
+test_that("yoda_test_linter ignores usage in pipelines", {
+  expect_lint("foo() %>% expect_identical(2)", NULL, yoda_test_linter())
+  skip_if_not_installed("base", "4.1.0")
+  expect_lint("bar() |> expect_equal('a')", NULL, yoda_test_linter())
+})
+
 # TODO(michaelchirico): Should this be extended to RUnit tests? It seems yes,
 #   but the argument names in RUnit (inherited from base all.equal()) are a bit
 #   confusing, e.g. `checkEqual(target=, current=)`. From the name, one might

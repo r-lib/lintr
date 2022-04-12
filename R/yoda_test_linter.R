@@ -27,6 +27,7 @@ yoda_test_linter <- function() {
     xpath <- "//expr[
       expr[SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical' or text() = 'expect_setequal']]
       and expr[2][NUM_CONST or (STR_CONST and not(OP-DOLLAR)) or ((OP-PLUS or OP-MINUS) and count(expr[NUM_CONST]) = 2)]
+      and not(preceding-sibling::*[self::PIPE or self::SPECIAL[text() = '%>%']])
     ]"
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
