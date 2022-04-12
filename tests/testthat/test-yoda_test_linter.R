@@ -31,6 +31,11 @@ test_that("yoda_test_linter blocks simple disallowed usages", {
   )
 })
 
+test_that("yoda_test_linter ignores strings in $ expressions", {
+  # the "key" here shows up at the same level of the parse tree as plain "key" normally would
+  expect_lint('expect_equal(x$"key", 2)', NULL, yoda_test_linter())
+})
+
 # TODO(michaelchirico): Should this be extended to RUnit tests? It seems yes,
 #   but the argument names in RUnit (inherited from base all.equal()) are a bit
 #   confusing, e.g. `checkEqual(target=, current=)`. From the name, one might
