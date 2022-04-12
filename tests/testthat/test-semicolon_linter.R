@@ -2,7 +2,7 @@ trail_msg <- "Trailing semicolons are not needed."
 comp_msg <- "Compound semicolons are not needed. Replace them by a newline."
 
 test_that("Lint all semicolons", {
-  linter <- semicolon_terminator_linter()
+  linter <- semicolon_linter()
 
   # No semicolon
   expect_lint("", NULL, linter)
@@ -60,7 +60,7 @@ test_that("Lint all semicolons", {
 
 
 test_that("Compound semicolons only", {
-  linter <- semicolon_terminator_linter(semicolon  =  "compound")
+  linter <- semicolon_linter(semicolon  =  "compound")
   expect_lint("a <- 1;", NULL, linter)
   expect_lint("function(){a <- 1;}", NULL, linter)
   expect_lint("a <- 1; \n", NULL, linter)
@@ -69,7 +69,7 @@ test_that("Compound semicolons only", {
 
 
 test_that("Trailing semicolons only", {
-  linter <- semicolon_terminator_linter(semicolon  =  "trailing")
+  linter <- semicolon_linter(semicolon  =  "trailing")
   expect_lint("a <- 1;b <- 2", NULL, linter)
   expect_lint("function() {a <- 1;b <- 2}\n", NULL, linter)
   expect_lint("f <-\n 1 ;f <- 1.23", NULL, linter)
