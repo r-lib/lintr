@@ -13,9 +13,8 @@
 #     ./dev/compare_branches --pkg_dir=/path/to/cran --sample_size=50 ...
 #   The script outputs a CSV with the lint results for the script options to --outfile.
 #   To compare the results of a PR to that at current HEAD, you could e.g. run
-#     ./dev/compare_branches --branch=my-feature-branch --outfile=new.csv ...
-#     ./dev/compare_branches --branch=master --outfile=old.csv ...
-#   And then compare the results found in new.csv & old.csv.
+#     ./dev/compare_branches --branch=my-feature-branch ...
+#   And then compare the results found in the new CSV file in .dev
 
 # TODO
 #  - make sure this works for comparing tags to facilitate release testing
@@ -75,7 +74,7 @@ param_list <- list(
   optparse::make_option(
     "--branch",
     default = if (interactive()) {
-      readline("Name a branch to compare to the base branch (or skip to enter a PR#): ")
+      readline("Name a branch to compare to the base branch (or skip to enter a PR# or to run only on base_branch): ")
     },
     help = "Run the comparison for base vs. this branch"
   ),
@@ -83,24 +82,28 @@ param_list <- list(
     "--pr",
     default = if (interactive()) {
       # NB: optparse handles integer conversion
-      readline("Name a PR # to compare to the base branch (skip if you've entered a branch): ")
+      readline("Name a PR # to compare to the base branch (skip if you've entered a branch or to run only on base_branch): ")
     },
     type = "integer",
     help = "Run the comparison for base vs. this PR"
   ),
   optparse::make_option(
-    "--packages",
-    default = if (interactive()) {
-      readline("Provide a comma-separated list of packages (skip to provide a directory): ")
-    },
-    help = "Run the comparison using these packages (comma-separated)"
-  ),
-  optparse::make_option(
     "--pkg_dir",
-    default = if (interactive()) {
-      readline("Provide a directory where to select packages (skip if already provided as a list): ")
+    default = if (nzchar(cran_mirror <- Sys.getenv("CRAN_MIRROR"))) {
+      dir <- file.path(cran_mirror, "src", "contrib")
+      message("Using the CRAN miror found at Sys.getenv('CRAN_MIRROR'): ", dir)
+      dir
+    } else if (interactive()) {
+      readline("Provide a directory where to select packages (skip to select the current directory): ")
     },
     help = "Run the comparison using all packages in this directory"
+  ),
+  optparse::make_option(
+    "--packages",
+    default = if (interactive()) {
+      readline("Provide a comma-separated list of packages (skip to include all directories for sampling): ")
+    },
+    help = "Run the comparison using these packages (comma-separated)"
   ),
   optparse::make_option(
     "--sample_size",
@@ -141,22 +144,24 @@ if (is.null(base_branch) || is.na(base_branch) || !nzchar(base_branch)) {
 
 # prioritize "branch"
 is_branch <- FALSE
+has_target <- TRUE
 if (!is.null(params$branch)) {
   branch <- params$branch
   is_branch <- TRUE
 } else if (!is.null(params$pr)) {
   pr <- params$pr
 } else {
-  stop("Please supply a branch (--branch) or a PR number (--pr)")
+  has_target <- FALSE
 }
 
-# prioritize packages
+if (is.null(params$pkg_dir)) {
+  params$pkg_dir <- "."
+}
+packages <- list.files(normalizePath(params$pkg_dir), full.names = TRUE)
 if (!is.null(params$packages)) {
-  packages <- strsplit(params$packages, ",", fixed = TRUE)[[1L]]
-} else if (!is.null(params$pkg_dir)) {
-  packages <- list.files(normalizePath(params$pkg_dir), full.names = TRUE)
-} else {
-  stop("Please supply a comma-separated list of packages (--packages) or a directory of packages (--pkg_dir)")
+  # strip version numbers
+  package_names <- gsub("_.*", "", packages)
+  packages <- packages[package_names %in% strsplit(params$packages, ",", fixed = TRUE)[[1L]]]
 }
 # filter to (1) package directories or (2) package tar.gz files
 packages <- packages[
@@ -369,10 +374,12 @@ if (dir.exists(file.path(params$outdir, ".partial"))) {
 #  (2) (central) packages (only unzip the package once per branch)
 #  (3) (innermost) linters (once the package is installed, easy to cycle through linters)
 run_workflow("branch", packages, linter_names, branch = base_branch)
-if (is_branch) {
-  run_workflow("branch", packages, linter_names, branch = target)
-} else {
-  run_workflow("pr", packages, linter_names, number = target)
+if (has_target) {
+  if (is_branch) {
+    run_workflow("branch", packages, linter_names, branch = target)
+  } else {
+    run_workflow("pr", packages, linter_names, number = target)
+  }
 }
 
 setwd(old_wd)
