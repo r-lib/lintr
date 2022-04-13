@@ -39,7 +39,7 @@ strings_as_factors_linter <- function() {
     )
 
     # four inclusions of arguments to data.frame():
-    #   (1) "a"
+    #   (1) "a"                 (but exclude argument names, e.g. in c("a b" = 1), #1036)
     #   (2) c("a", "b")
     #   (3) rep("a", 2)
     #   (4) rep(c("a", "b"), 2)
@@ -50,7 +50,7 @@ strings_as_factors_linter <- function() {
       expr[SYMBOL_FUNCTION_CALL[text() = 'data.frame']]
       and expr[
         (
-          STR_CONST
+          STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
           or ( {c_combine_strings} )
           or expr[
             SYMBOL_FUNCTION_CALL[text() = 'rep']
