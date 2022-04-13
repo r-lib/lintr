@@ -69,12 +69,15 @@ infix_metadata$comparator <- infix_metadata$string_value %in% c("<", "<=", ">", 
 #'   `=`, `/`, `*`, and any infix operator (exclude infixes by passing `"%%"`). Note that `<-`, `:=`, and `<<-`
 #'   are included/excluded as a group (indicated by passing `"<-"`), as are `->` and `->>` (_viz_, `"->"`),
 #'   and that `=` for assignment and for setting arguments in calls are treated the same.
+#' @param allow_multiple_spaces Logical, default `TRUE`. If `FALSE`, usage like `x  =  2` will also be linted;
+#'   excluded by default because such usage can sometimes be used for better code alignment, as is allowed
+#'   by the style guide.
 #' @evalRd rd_tags("infix_spaces_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
 #'   <https://style.tidyverse.org/syntax.html#infix-operators>
 #' @export
-infix_spaces_linter <- function(exclude_operators = NULL) {
+infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces = TRUE) {
   Linter(function(source_file) {
     if (is.null(source_file$xml_parsed_content)) return(list())
 
@@ -87,16 +90,17 @@ infix_spaces_linter <- function(exclude_operators = NULL) {
     # NB: preceding-sibling::* and not preceding-sibling::expr because
     #   of the foo(a=1) case, where the tree is <SYMBOL_SUB><EQ_SUB><expr>
     # NB: position() > 1 for the unary case, e.g. x[-1]
+    op <- if (allow_multiple_spaces) "<" else "!="
     xpath <- glue::glue("//*[
       ({xp_or(paste0('self::', infix_tokens))})
       and position() > 1
       and (
         (
           @line1 = preceding-sibling::*[1]/@line1
-          and @col1 != preceding-sibling::*[1]/@col2 + 2
+          and @col1 {op} preceding-sibling::*[1]/@col2 + 2
         ) or (
           @line1 = following-sibling::*[1]/@line1
-          and @col2 != following-sibling::*[1]/@col1 - 2
+          and following-sibling::*[1]/@col1 {op} @col2 + 2
         )
       )
     ]")

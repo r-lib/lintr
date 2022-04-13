@@ -134,8 +134,10 @@ function calls. (#850, #851, @renkun-ken)
    * `strings_as_factors_linter()` Check for code designed to work before and after the new `stringsAsFactors = FALSE` default
    * `inner_combine_linter` Require inputs to vectorized functions to be combined first rather than later, e.g. `as.Date(c(x, y))` over `c(as.Date(x), as.Date(y))`
 * `assignment_linter()` now lints right assignment (`->` and `->>`) and gains two arguments. `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`; `allow_right_assign` toggles whether to lint `->` and `->>` (#915, @michaelchirico)
-* `infix_spaces_linter()` gains argument `exclude_operators` to disable lints on selected infix operators. By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these. (#914 @michaelchirico)
-* `infix_spaces_linter()` now throws a lint on `a~b` and `function(a=1) {}` (#930, @michaelchirico)
+* improvements to `infix_spaces_linter()`:
+   * gains argument `exclude_operators=` to disable lints on selected infix operators. By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these. (#914, @michaelchirico)
+   * gains argument `allow_multiple_spaces=` to turn on lints for operators used with multiple spaces, e.g. `x  +  2`. Turned off by default to allow such usage to increase alignment from line to line. (#940, @f-ritter and @michaelchirico)
+   * now throws a lint on `a~b` and `function(a=1) {}` (#930, @michaelchirico)
 * `object_usage_linter()` now detects usages inside `glue::glue()` constructs (#942, @AshesITR)
 * * `object_length_linter()` correctly detects generics and only counts the implementation class towards the length. 
   This prevents false positive lints in the case of long generic names, e.g. 
