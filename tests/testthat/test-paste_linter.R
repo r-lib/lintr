@@ -64,3 +64,19 @@ test_that("paste_linter respects non-default arguments", {
   expect_lint("paste(collapse = ', ', x)", NULL, paste_linter(allow_to_string = TRUE))
   expect_lint("paste0(foo(x), collapse = ', ')", NULL, paste_linter(allow_to_string = TRUE))
 })
+
+test_that("paste_linter works for raw strings", {
+  expect_lint("paste(a, b, sep = R'(xyz)')", NULL, paste_linter())
+  expect_lint(
+    'paste(a, b, sep = R"---[]---")',
+    rex::rex('paste0(...) is better than paste(..., sep = "").'),
+    paste_linter()
+  )
+
+  expect_lint("paste(x, collapse = R'(,,)')", NULL, paste_linter())
+  expect_lint(
+    'paste(c(a, b, c), collapse = R"-{, }-")',
+    rex::rex('toString(.) is more expressive than paste(., collapse = ", ")'),
+    paste_linter()
+  )
+})
