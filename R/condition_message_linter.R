@@ -23,20 +23,14 @@ condition_message_linter <- function() {
       and expr[
         expr[SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']]
         and not(SYMBOL_SUB[text() = 'collapse'])
-        and (
-          not(SYMBOL_SUB[text() = 'sep'])
-          or SYMBOL_SUB[
-            text() = 'sep'
-            and following-sibling::expr[1]/STR_CONST[text() = '\"\"' or text() = '\" \"']
-          ]
-        )
       ]
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
+    sep_value <- get_r_string(xml2::xml_find_first(bad_expr, "./expr/SYMBOL_SUB[text() = 'sep']/following-sibling::expr/STR_CONST"))
 
     return(lapply(
-      bad_expr,
+      bad_expr[is.na(sep_value) | sep_value %in% c("", " ")],
       xml_nodes_to_lint,
       source_file = source_file,
       lint_message = function(expr) {

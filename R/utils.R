@@ -252,3 +252,13 @@ release_bullets <- function() {
 #   we want to consistently treat "_" < "n" = "N"
 platform_independent_order <- function(x) order(tolower(gsub("_", "0", x, fixed = TRUE)))
 platform_independent_sort <- function(x) x[platform_independent_order(x)]
+
+# convert STR_CONST text() values into R strings. mainly to account for arbitrary
+#   character literals valid since R 4.0, e.g. R"------[ hello ]------".
+# NB: this is also properly vectorized.
+get_r_string <- function(s) {
+  if (inherits(s, "xml_nodeset")) s <- xml2::xml_text(s)
+  out <- as.character(parse(text = s))
+  is.na(out) <- is.na(s)
+  out
+}
