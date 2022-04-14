@@ -66,6 +66,7 @@ test_that("paste_linter respects non-default arguments", {
 })
 
 test_that("paste_linter works for raw strings", {
+  skip_if_not_installed("base", "4.0.0")
   expect_lint("paste(a, b, sep = R'(xyz)')", NULL, paste_linter())
   expect_lint(
     'paste(a, b, sep = R"---[]---")',
