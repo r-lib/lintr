@@ -222,7 +222,7 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 # NB: this is also properly vectorized.
 get_r_string <- function(s) {
   if (inherits(s, "xml_nodeset")) s <- xml2::xml_text(s)
-  out <- as.character(parse(text = s))
+  out <- as.character(parse(text = s, keep.source = FALSE))
   is.na(out) <- is.na(s)
   out
 }

@@ -13,9 +13,9 @@ sprintf_linter <- function() {
     xml <- source_file$full_xml_parsed_content
 
     xpath <- "//expr[
-    expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf'] and
-    OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST
-  ]"
+      expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf'] and
+      OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST
+    ]"
 
     sprintf_calls <- xml2::xml_find_all(xml, xpath)
 
