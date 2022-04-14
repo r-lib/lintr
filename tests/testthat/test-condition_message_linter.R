@@ -95,6 +95,7 @@ test_that("packageStartupMessage usages are also matched", {
 })
 
 test_that("R>=4.0.0 raw strings are handled", {
+  skip_if_not_installed("base", "4.0.0")
   expect_lint(
     "warning(paste(a, b, sep = R'( )'))",
     rex::rex("Don't use paste to build warning strings."),

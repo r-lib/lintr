@@ -174,3 +174,13 @@ test_that("returns the correct linting", {
     expect_lint(double_quote(path), NULL, linter)
   }
 })
+
+test_that("raw strings are handled correctly", {
+  skip_if_not_installed("base", "4.0.0")
+  expect_lint('R"(./blah)"', NULL, absolute_path_linter(lax = FALSE))
+  expect_lint(
+    "R'--[/blah/file.txt]--'",
+    rex::rex("Do not use absolute paths."),
+    absolute_path_linter(lax = FALSE)
+  )
+})
