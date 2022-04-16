@@ -1,5 +1,5 @@
 trail_msg <- "Trailing semicolons are not needed."
-comp_msg <- "Compound semicolons are not needed. Replace them by a newline."
+comp_msg <- "Compound semicolons are discouraged. Replace them by a newline."
 
 test_that("Lint all semicolons", {
   linter <- semicolon_linter()
@@ -84,7 +84,7 @@ test_that("deprecation notices for semicolon_terminator_linter succeed, and the 
   )
   expect_lint("a <- 1", NULL, linter)
   expect_lint("a <- 1;", rex::rex("Trailing semicolons are not needed."), linter)
-  expect_lint("a <- 1; b <- 2", rex::rex("Compound semicolons are not needed."), linter)
+  expect_lint("a <- 1; b <- 2", rex::rex("Compound semicolons are discouraged."), linter)
 
   # old string argument gets translated to new boolean arguments
   expect_warning(
@@ -94,7 +94,7 @@ test_that("deprecation notices for semicolon_terminator_linter succeed, and the 
   )
   expect_lint("a <- 1", NULL, linter)
   expect_lint("a <- 1;", NULL, linter)
-  expect_lint("a <- 1; b <- 2", rex::rex("Compound semicolons are not needed."), linter)
+  expect_lint("a <- 1; b <- 2", rex::rex("Compound semicolons are discouraged."), linter)
 
   expect_warning(
     linter <- semicolon_terminator_linter("trailing"),

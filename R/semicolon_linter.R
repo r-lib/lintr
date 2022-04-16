@@ -27,7 +27,7 @@ semicolon_linter <- function(allow_compound = FALSE, allow_trailing = FALSE) {
         msg <- if (is_trailing) {
           "Trailing semicolons are not needed."
         } else  {
-          "Compound semicolons are not needed. Replace them by a newline."
+          "Compound semicolons are discouraged. Replace them by a newline."
         }
 
         Lint(
