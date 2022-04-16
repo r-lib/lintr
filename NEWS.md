@@ -127,7 +127,7 @@ function calls. (#850, #851, @renkun-ken)
    * `condition_message_linter` Prevent condition messages from being constructed like `stop(paste(...))` (where just `stop(...)` is preferable)
    * `redundant_ifelse_linter()` Prevent usage like `ifelse(A & B, TRUE, FALSE)` or `ifelse(C, 0, 1)` (the latter is `as.numeric(!C)`)
    * `else_same_line_linter()` Require `else` to come on the same line as the preceding `}`, if present
-   * `unreachable_code_linter()` Prevent code after `return()` and `stop()` statements that will never be reached
+   * `unreachable_code_linter()` Prevent code after `return()` and `stop()` statements that will never be reached (extended for #1051 thanks to early user testing, thanks @bersbersbers!)
    * `regex_subset_linter()` Require usage of `grep(ptn, x, value = TRUE)` over `x[grep(ptn, x)]` and similar
    * `consecutive_stopifnot_linter()` Require consecutive calls to `stopifnot()` to be unified into one
    * `ifelse_censor_linter()` Require usage of `pmax()` / `pmin()` where appropriate, e.g. `ifelse(x > y, x, y)` is `pmax(x, y)`

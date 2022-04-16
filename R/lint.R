@@ -275,7 +275,9 @@ lint_dir <- function(path = ".", ...,
 
 #' Lint a package
 #'
-#' Apply one or more linters to all of the R files in a package.
+#' Apply one or more linters to all of the R files in a package. Specifically, [lint_dir()]
+#'   is run on the following sub-directories of the package found at `path`: R,
+#'   tests, inst, vignettes, data-raw, and demo.
 #'
 #' @param path the path to the base directory of the package, if `NULL`, it will be searched in the parent directories
 #' of the current directory.
