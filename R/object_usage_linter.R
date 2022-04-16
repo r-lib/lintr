@@ -192,7 +192,10 @@ get_function_assignments <- function(xml) {
   #   (under <expr_or_assign_or_help> or <equal_assign>)
   direct_assignment_functions <- xml2::xml_find_all(xml, "
     //*[
-      ((self::expr and LEFT_ASSIGN) or ((self::expr_or_assign_or_help or self::equal_assign) and EQ_ASSIGN))
+      (
+        (self::expr and (LEFT_ASSIGN or EQ_ASSIGN))
+        or ((self::expr_or_assign_or_help or self::equal_assign) and EQ_ASSIGN)
+      )
       and expr[2][FUNCTION]
     ]
     /expr[2]
