@@ -62,7 +62,7 @@ with_defaults <- function(..., default = default_linters) {
     bad_nms <- setdiff(nms[to_null], names(default))
     is_are <- if (length(bad_nms) > 1L) "are" else "is"
     warning(
-      "Trying to remove ", glue::glue_collapse(sQuote(bad_nms), sep = ", ", last = " and "),
+      "Trying to remove ", glue::glue_collapse(paste0("'", bad_nms, "'"), sep = ", ", last = " and "),
       ", which ", is_are, " not in `default`."
     )
   }

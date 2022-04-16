@@ -75,3 +75,40 @@ test_that("Trailing semicolons only", {
   expect_lint("f <-\n 1 ;f <- 1.23", NULL, linter)
   expect_lint("function(){\nf <-\n 1 ;f <- 1.23\n}", NULL, linter)
 })
+
+test_that("deprecation notices for semicolon_terminator_linter succeed, and the deprecated version works", {
+  expect_warning(
+    linter <- semicolon_terminator_linter(),
+    "Function semicolon_terminator_linter was deprecated",
+    fixed = TRUE
+  )
+  expect_lint("a <- 1", NULL, linter)
+  expect_lint("a <- 1;", rex::rex("Trailing semicolons are not needed."), linter)
+  expect_lint("a <- 1; b <- 2", rex::rex("Compound semicolons are not needed."), linter)
+
+  # old string argument gets translated to new boolean arguments
+  expect_warning(
+    linter <- semicolon_terminator_linter("compound"),
+    "Function semicolon_terminator_linter was deprecated",
+    fixed = TRUE
+  )
+  expect_lint("a <- 1", NULL, linter)
+  expect_lint("a <- 1;", NULL, linter)
+  expect_lint("a <- 1; b <- 2", rex::rex("Compound semicolons are not needed."), linter)
+
+  expect_warning(
+    linter <- semicolon_terminator_linter("trailing"),
+    "Function semicolon_terminator_linter was deprecated",
+    fixed = TRUE
+  )
+  expect_lint("a <- 1", NULL, linter)
+  expect_lint("a <- 1;", rex::rex("Trailing semicolons are not needed."), linter)
+  expect_lint("a <- 1; b <- 2", NULL, linter)
+
+  # with_defaults warns about now-absent semicolon_terminator_linter
+  expect_warning(
+    d <- with_defaults(semicolon_terminator_linter = NULL),
+    "Trying to remove 'semicolon_terminator_linter', which is not in `default`\\."
+  )
+  expect_true("semicolon_linter" %in% names(d))
+})

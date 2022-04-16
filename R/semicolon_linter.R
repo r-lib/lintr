@@ -56,8 +56,8 @@ semicolon_linter <- function(allow_compound = FALSE, allow_trailing = FALSE) {
 semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
   lintr_deprecated(old = "semicolon_terminator_linter", new = "semicolon_linter", version = "2.0.1.9001")
   semicolon <- match.arg(semicolon, several.ok = TRUE)
-  if ("compound" %in% semicolon) allow_compound <- FALSE
-  if ("trailing" %in% semicolon) allow_trailing <- FALSE
+  allow_compound <- !"compound" %in% semicolon
+  allow_trailing <- !"trailing" %in% semicolon
   semicolon_linter(allow_compound, allow_trailing)
 }
 
