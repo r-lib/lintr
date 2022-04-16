@@ -202,9 +202,6 @@ get_function_assignments <- function(xml) {
   ")
   assign_or_setmethod_assignment_functions <-
     xml2::xml_find_all(xml, "//expr[expr[SYMBOL_FUNCTION_CALL[text() = 'assign' or text() = 'setMethod']]]/expr[3]")
-  if (exists("__lintr_debugging__", envir = .GlobalEnv, inherits = FALSE) && length(direct_assignment_functions) == 0L) {
-    writeLines(as.character(xml))
-  }
 
   funs <- c(
     direct_assignment_functions,
