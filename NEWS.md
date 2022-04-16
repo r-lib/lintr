@@ -137,13 +137,14 @@ function calls. (#850, #851, @renkun-ken)
 * `infix_spaces_linter()` gains argument `exclude_operators` to disable lints on selected infix operators. By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these. (#914 @michaelchirico)
 * `infix_spaces_linter()` now throws a lint on `a~b` and `function(a=1) {}` (#930, @michaelchirico)
 * `object_usage_linter()` now detects usages inside `glue::glue()` constructs (#942, @AshesITR)
-* * `object_length_linter()` correctly detects generics and only counts the implementation class towards the length. 
+* `object_length_linter()` correctly detects generics and only counts the implementation class towards the length. 
   This prevents false positive lints in the case of long generic names, e.g. 
   `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
 * `object_name_linter()` now correctly detects assignment generics (#843, @jonkeane)
 * `trailing_whitespace_linter()` now also lints completely blank lines by default. This can be disabled by setting the
   new argument `allow_empty_lines = TRUE` (#1044, @AshesITR)
 * `get_source_expressions()` fixes the `text` value for `STR_CONST` nodes involving 1- or 2-width octal escapes (e.g. `"\1"`) to account for an R parser bug (https://bugs.r-project.org/show_bug.cgi?id=18323)
+* `object_usage_linter()` correctly detects functions assigned with `=` instead of `<-` (#1081, @michaelchirico)
 
 # lintr 2.0.1
 
