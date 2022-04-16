@@ -108,7 +108,8 @@ test_that("deprecation notices for semicolon_terminator_linter succeed, and the 
   # with_defaults warns about now-absent semicolon_terminator_linter
   expect_warning(
     d <- with_defaults(semicolon_terminator_linter = NULL),
-    "Trying to remove 'semicolon_terminator_linter', which is not in `default`\\."
+    # regex because the message uses sQuote() --> fancy quotes
+    rex::rex("Trying to remove", anything, "semicolon_terminator_linter", anything, ", which is not in `default`.")
   )
   expect_true("semicolon_linter" %in% names(d))
 })
