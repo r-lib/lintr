@@ -188,8 +188,15 @@ get_assignment_symbols <- function(xml) {
 }
 
 get_function_assignments <- function(xml) {
-  direct_assignment_functions <-
-    xml2::xml_find_all(xml, "//*[((self::expr and LEFT_ASSIGN) or (self::expr_or_assign_or_help and EQ_ASSIGN)) and expr[2][FUNCTION]]/expr[2]")
+  # NB: difference across R versions in how EQ_ASSIGN is represented in the AST
+  #   (under <expr_or_assign_or_help> or <equal_assign>)
+  direct_assignment_functions <- xml2::xml_find_all(xml, "
+    //*[
+      ((self::expr and LEFT_ASSIGN) or ((self::expr_or_assign_or_help or self::equal_assign) and EQ_ASSIGN))
+      and expr[2][FUNCTION]
+    ]
+    /expr[2]
+  ")
   assign_or_setmethod_assignment_functions <-
     xml2::xml_find_all(xml, "//expr[expr[SYMBOL_FUNCTION_CALL[text() = 'assign' or text() = 'setMethod']]]/expr[3]")
   if (exists("__lintr_debugging__", envir = .GlobalEnv, inherits = FALSE) && length(direct_assignment_functions) == 0L) {
