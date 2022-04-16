@@ -59,6 +59,7 @@ test_that("returns the correct linting", {
   )
 
   # same, using = for assignment
+  .GlobalEnv$"__lintr_debugging__" <- TRUE
   expect_lint(
     trim_some("
       fun = function() {
@@ -68,6 +69,7 @@ test_that("returns the correct linting", {
     rex("local variable", anything, "assigned but may not be used"),
     linter
   )
+  .GlobalEnv$"__lintr_debugging__" <- NULL
 
   expect_lint(
     trim_some("
