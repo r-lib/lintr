@@ -44,7 +44,10 @@ seq_linter <- function() {
         } else {
           replacement <- "seq_len"
         }
-        sprintf("%s:%s is likely to be wrong in the empty edge case. Use %s() instead.", dot_expr1, dot_expr2, replacement)
+        sprintf(
+          "%s:%s is likely to be wrong in the empty edge case. Use %s() instead.",
+          dot_expr1, dot_expr2, replacement
+        )
       },
       type = "warning"
     ))
