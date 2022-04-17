@@ -252,7 +252,7 @@ usethis::use_github_action("lint-project")
 #### Super-Linter ####
 
 [Super-Linter](https://github.com/github/super-linter) and [MegaLinter](https://megalinter.github.io/latest/),
-which performs linting for various languages, includes lintr for R.
+which perform linting for various languages, include lintr for R.
 They execute the `lintr::lint()` function on the R and R Markdown files included in the project.
 
 ## Installation of development version ##
