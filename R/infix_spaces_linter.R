@@ -79,7 +79,7 @@ infix_metadata$comparator <- infix_metadata$string_value %in% c("<", "<=", ">", 
 infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces = TRUE) {
   if (allow_multiple_spaces) {
     op <- "<"
-    lint_message <- "Put at least one space around each side of infix operators."
+    lint_message <- "Put spaces around all infix operators."
   } else {
     op <- "!="
     lint_message <- "Put exactly one space on each side of infix operators."
@@ -111,7 +111,7 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    
+
     lapply(
       bad_expr,
       xml_nodes_to_lint,

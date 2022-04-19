@@ -29,7 +29,7 @@ test_that("returns the correct linting", {
   )
 
   linter <- infix_spaces_linter()
-  msg <- rex::rex("Put at least one space around each side of infix operators.")
+  msg <- rex::rex("Put spaces around all infix operators.")
 
   expect_lint("blah", NULL, linter)
 
@@ -59,7 +59,7 @@ test_that("returns the correct linting", {
 
 test_that("The three `=` are all linted", {
   linter <- infix_spaces_linter()
-  msg <- rex::rex("Put at least one space around each side of infix operators.")
+  msg <- rex::rex("Put spaces around all infix operators.")
 
   # EQ_ASSIGN in the parse data
   expect_lint("a=1", msg, linter)
@@ -92,7 +92,7 @@ test_that("exclude_operators works", {
 # more tests specifically for assignment
 test_that("assignment cases return the correct linting", {
   linter <- infix_spaces_linter()
-  msg <- rex::rex("Put at least one space around each side of infix operators.")
+  msg <- rex::rex("Put spaces around all infix operators.")
 
   expect_lint("fun(blah =  1)", NULL, linter)
 
