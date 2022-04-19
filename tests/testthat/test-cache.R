@@ -244,8 +244,7 @@ test_that("retrieve_lint returns the same lints if nothing has changed", {
 })
 
 test_that(
-  p("retrieve_lint returns the same lints with fixed line numbers if lines",
-    " added above"), {
+  "retrieve_lint returns the same lints with fixed line numbers if lines added above", {
   test_data <- fixtures$retrieve_lint()
 
   e1 <- new.env(parent = emptyenv())
@@ -299,8 +298,7 @@ test_that("retrieve_lint returns the same lints with lines added below", {
 })
 
 test_that(
-  p("retrieve_lint returns the same lints with fixed line numbers if lines",
-    " added between"), {
+  "retrieve_lint returns the same lints with fixed line numbers if lines added between", {
   test_data <- fixtures$retrieve_lint()
 
   e1 <- new.env(parent = emptyenv())
