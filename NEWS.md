@@ -123,6 +123,7 @@ function calls. (#850, #851, @renkun-ken)
    * `paste_linter()` lint for common mis-use of `paste()` and `paste()`:
      + `paste0()` encouraged instead of `paste(sep = "")`
      + `toString()` or `glue::glue_collapse()` encouraged instead of `paste(x, collapse = ", ")`
+     + `sep=` passed to `paste0()` -- typically a mistake (extension for #998)
    * `nested_ifelse_linter()` Prevent nested calls to `ifelse()` like `ifelse(A, x, ifelse(B, y, z))`, and similar
    * `condition_message_linter` Prevent condition messages from being constructed like `stop(paste(...))` (where just `stop(...)` is preferable)
    * `redundant_ifelse_linter()` Prevent usage like `ifelse(A & B, TRUE, FALSE)` or `ifelse(C, 0, 1)` (the latter is `as.numeric(!C)`)
