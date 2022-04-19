@@ -40,7 +40,7 @@ Apply one or more linters to all of the R files in a directory
 \dontrun{
   lint_dir()
   lint_dir(
-    linters = list(semicolon_terminator_linter())
+    linters = list(semicolon_linter())
     cache = TRUE,
     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "renv")
   )
