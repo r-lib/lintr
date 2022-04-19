@@ -95,3 +95,17 @@ test_that("conjunct_test_linter blocks simple disallowed usages of stopifnot() a
     conjunct_test_linter()
   )
 })
+
+test_that("conjunct_test_linter's allow_named_stopifnot argument works", {
+  # allowed by default
+  expect_lint(
+    "stopifnot('x must be a logical scalar' = length(x) == 1 && is.logical(x) && !is.na(x))",
+    NULL,
+    conjunct_test_linter()
+  )
+  expect_lint(
+    "stopifnot('x is a logical scalar' = length(x) == 1 && is.logical(x) && !is.na(x))",
+    rex::rex("Instead of stopifnot(A && B), write multiple conditions"),
+    conjunct_test_linter(allow_named_stopifnot = FALSE)
+  )
+})
