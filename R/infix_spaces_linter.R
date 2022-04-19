@@ -77,6 +77,13 @@ infix_metadata$comparator <- infix_metadata$string_value %in% c("<", "<=", ">", 
 #'   <https://style.tidyverse.org/syntax.html#infix-operators>
 #' @export
 infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces = TRUE) {
+  if (allow_multiple_spaces) {
+    op <- "<"
+    lint_message <- "Put at least one space around each side of infix operators."
+  } else {
+    op <- "!="
+    lint_message <- "Put exactly one space on each side of infix operators."
+  }
   Linter(function(source_file) {
     if (is.null(source_file$xml_parsed_content)) return(list())
 
@@ -89,7 +96,6 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
     # NB: preceding-sibling::* and not preceding-sibling::expr because
     #   of the foo(a=1) case, where the tree is <SYMBOL_SUB><EQ_SUB><expr>
     # NB: position() > 1 for the unary case, e.g. x[-1]
-    op <- if (allow_multiple_spaces) "<" else "!="
     xpath <- glue::glue("//*[
       ({xp_or(paste0('self::', infix_tokens))})
       and position() > 1
@@ -105,11 +111,12 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
+    
     lapply(
       bad_expr,
       xml_nodes_to_lint,
       source_file = source_file,
-      lint_message = "Put spaces around all infix operators.",
+      lint_message = lint_message,
       type = "style"
     )
   })
