@@ -58,6 +58,17 @@ test_that("returns the correct linting", {
     linter
   )
 
+  # same, using = for assignment
+  expect_lint(
+    trim_some("
+      fun = function() {
+        a = 1
+      }
+    "),
+    rex("local variable", anything, "assigned but may not be used"),
+    linter
+  )
+
   expect_lint(
     trim_some("
       fun <- function() {
