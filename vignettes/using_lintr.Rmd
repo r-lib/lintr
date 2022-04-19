@@ -178,16 +178,17 @@ For some use cases, it may be useful to specify linters by string instead of by 
 Beware that in such cases, you should retrieve the linter function using `call()`, not `get()`:
 
 ```{r programmatic_lintr}
+library(lintr)
 linter_name <- "assignment_linter"
 
 withr::with_tempfile("tmp", {
   writeLines("a = 1", tmp)
 
   # linter column is just 'get'
-  print(as.data.frame(lintr::lint(tmp, linters = get(linter_name)())))
+  print(as.data.frame(lint(tmp, linters = get(linter_name)())))
 
   # linter column is 'assignment_linter'
-  print(as.data.frame(lintr::lint(tmp, linters = eval(call(linter_name)))))
+  print(as.data.frame(lint(tmp, linters = eval(call(linter_name)))))
 })
 ```
 
