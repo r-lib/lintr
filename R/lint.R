@@ -16,7 +16,7 @@ NULL
 #'
 #' @param filename either the filename for a file to lint, or a character string of inline R code for linting.
 #' The latter (inline data) applies whenever `filename` has a newline character (\\n).
-#' @param linters a named list of linter functions to apply see [linters] for a full list of default and available
+#' @param linters a named list of linter functions to apply. See [linters] for a full list of default and available
 #' linters.
 #' @param ... additional arguments passed to [exclude()].
 #' @param cache given a logical, toggle caching of lint results. If passed a character string, store the cache in this

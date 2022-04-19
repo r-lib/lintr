@@ -29,31 +29,29 @@ seq_linter <- function() {
     get_fun <- function(x, n) {
       funcall <- xml2::xml_children(xml2::xml_children(x)[[n]])
       fun <- gsub("\\(.*\\)", "(...)", trimws(xml2::xml_text(funcall[[1]])))
-      if (!fun %in% bad_funcs) fun else paste0(fun, "(...)")
+      if (fun %in% bad_funcs) paste0(fun, "(...)") else fun
     }
 
-    ## Unfortunately the more natural lapply(badx, ...) does not work,
-    ## because badx looses its class for length() and/or [[
     lapply(
-      seq_along(badx),
-      function(i) {
-        x <- badx[[i]]
-        f1 <- get_fun(x, 1)
-        f2 <- get_fun(x, 3)
-        line1 <- xml2::xml_attr(x, "line1")
-        col1 <- xml2::xml_attr(x, "col1")
-        col2 <- xml2::xml_attr(x, "col1")
-        Lint(
-          filename = source_file$filename,
-          line_number = as.integer(line1),
-          column_number = as.integer(col1),
-          type = "warning",
-          message = paste0(f1, ":", f2, " is likely to be wrong in the empty ",
-                           "edge case, use seq_len."),
-          line = source_file$lines[line1],
-          ranges = list(c(as.integer(col1), as.integer(col2)))
+      badx,
+      xml_nodes_to_lint,
+      source_file = source_file,
+      # TODO: better message customization. For example, length(x):1
+      #   would get rev(seq_along(x)) as the preferred replacement.
+      lint_message = function(expr) {
+        dot_expr1 <- get_fun(expr, 1L)
+        dot_expr2 <- get_fun(expr, 3L)
+        if (any(grepl("length(", c(dot_expr1, dot_expr2), fixed = TRUE))) {
+          replacement <- "seq_along"
+        } else {
+          replacement <- "seq_len"
+        }
+        sprintf(
+          "%s:%s is likely to be wrong in the empty edge case. Use %s() instead.",
+          dot_expr1, dot_expr2, replacement
         )
-      }
+      },
+      type = "warning"
     )
   })
 }

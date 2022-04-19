@@ -7,14 +7,14 @@ NULL
 #' @name linters
 #'
 #' @description A variety of linters is available in \pkg{lintr}. The most popular ones are readily
-#' accessible through [default_linters()], though there are additional ones you may want
-#' to use.
+#' accessible through [default_linters()].
 #'
 #' Within a [lint()] function call, the linters in use are initialized with the provided
 #' arguments and fed with the source file (provided by [get_source_expressions()]).
 #'
 #' A data frame of all available linters can be retrieved using [available_linters()].
-#' Documentation for linters is structured into tags to allow for easier discovery.
+#' Documentation for linters is structured into tags to allow for easier discovery;
+#' see also [available_tags()].
 #'
 #' @evalRd rd_taglist()
 #' @evalRd rd_linterlist()

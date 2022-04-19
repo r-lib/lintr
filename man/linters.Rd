@@ -5,14 +5,14 @@
 \title{Available linters}
 \description{
 A variety of linters is available in \pkg{lintr}. The most popular ones are readily
-accessible through \code{\link[=default_linters]{default_linters()}}, though there are additional ones you may want
-to use.
+accessible through \code{\link[=default_linters]{default_linters()}}.
 
 Within a \code{\link[=lint]{lint()}} function call, the linters in use are initialized with the provided
 arguments and fed with the source file (provided by \code{\link[=get_source_expressions]{get_source_expressions()}}).
 
 A data frame of all available linters can be retrieved using \code{\link[=available_linters]{available_linters()}}.
-Documentation for linters is structured into tags to allow for easier discovery.
+Documentation for linters is structured into tags to allow for easier discovery;
+see also \code{\link[=available_tags]{available_tags()}}.
 }
 \section{Tags}{
 The following tags exist:
