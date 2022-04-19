@@ -249,6 +249,12 @@ If your project is on GitHub, you could take advantage of GitHub Actions and the
 usethis::use_github_action("lint-project")
 ```
 
+#### Super-Linter ####
+
+`lintr` powers R lints for [Super-Linter](https://github.com/github/super-linter) and
+[MegaLinter](https://megalinter.github.io/latest/), which provide a unified linting experience
+across many languages. Specifically, they execute `lintr::lint()` on the R and R Markdown files
+included in a given project.
 
 ## Installation of development version ##
 To install the latest development version of lintr from GitHub
