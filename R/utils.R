@@ -136,11 +136,6 @@ base_backport("trimws", function(x) {
   sub("^\\s+", "", sub("\\s+$", "", x))
 })
 
-`@` <- function(x, y) {
-  name <- as.character(substitute(y))
-  attr(x, name, exact = TRUE)
-}
-
 global_xml_parsed_content <- function(source_file) {
   if (exists("file_lines", source_file)) {
     source_file$full_xml_parsed_content

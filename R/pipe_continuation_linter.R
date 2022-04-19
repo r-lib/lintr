@@ -60,21 +60,14 @@ pipe_continuation_linter <- function() {
 
     lapply(
       pipe_exprs,
-      function(expr) {
-        x <- as_list(expr)
-        line <- get_file_line(source_file, x@line1)
-        Lint(
-          filename = source_file$filename,
-          line_number = x@line1,
-          column_number = x@col2,
-          type = "style",
-          message = paste(
-            "`%>%` should always have a space before it and a new line after it,",
-            "unless the full pipeline fits on one line."
-          ),
-          line = line,
-          ranges = list(as.numeric(c(x@col1, x@col2)))
-        )
-      })
+      xml_nodes_to_lint,
+      source_file = source_file,
+      lint_message = paste(
+        "`%>%` should always have a space before it and a new line after it,",
+        "unless the full pipeline fits on one line."
+      ),
+      type = "style",
+      global = TRUE
+    )
   })
 }
