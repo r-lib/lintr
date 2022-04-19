@@ -39,7 +39,7 @@ message('single_quotes')
 
 # spaces_left_parentheses
 # trailing_whitespace
-# semicolon_terminator
+# semicolon
 x <- 42; y <- 2 +(1:10) 
 
 # trailing_blank_lines
