@@ -125,9 +125,16 @@ rot <- function(ch, k = 13) {
   chartr(p0(alphabet), p0(c(alphabet[-idx], alphabet[idx])), ch)
 }
 
-trim_ws <- function(x) {
-  sub("^\\s+", "", sub("\\s+$", "", x))
+base_backport <- function(name, replacement) {
+  if (exists(name, asNamespace("base"))) {
+    return(NULL)
+  }
+  assign(name, replacement, parent.frame())
 }
+
+base_backport("trimws", function(x) {
+  sub("^\\s+", "", sub("\\s+$", "", x))
+})
 
 global_xml_parsed_content <- function(source_file) {
   if (exists("file_lines", source_file)) {
@@ -141,7 +148,7 @@ get_file_line <- function(source_file, line) {
 
 p <- function(...) paste0(...)
 
-lengths <- function(x) vapply(x, length, integer(1L))
+base_backport("lengths", function(x) vapply(x, length, integer(1L)))
 
 try_silently <- function(expr) {
   suppressWarnings(
@@ -150,8 +157,6 @@ try_silently <- function(expr) {
     )
   )
 }
-
-viapply <- function(x, ...) vapply(x, ..., FUN.VALUE = integer(1))
 
 # imitate sQuote(x, q) [requires R>=3.6]
 quote_wrap <- function(x, q) paste0(q, x, q)
