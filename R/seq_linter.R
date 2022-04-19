@@ -32,10 +32,12 @@ seq_linter <- function() {
       if (fun %in% bad_funcs) paste0(fun, "(...)") else fun
     }
 
-    return(lapply(
+    lapply(
       badx,
       xml_nodes_to_lint,
       source_file = source_file,
+      # TODO: better message customization. For example, length(x):1
+      #   would get rev(seq_along(x)) as the preferred replacement.
       lint_message = function(expr) {
         dot_expr1 <- get_fun(expr, 1L)
         dot_expr2 <- get_fun(expr, 3L)
@@ -50,6 +52,6 @@ seq_linter <- function() {
         )
       },
       type = "warning"
-    ))
+    )
   })
 }
