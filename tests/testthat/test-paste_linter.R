@@ -81,3 +81,11 @@ test_that("paste_linter works for raw strings", {
     paste_linter()
   )
 })
+
+test_that("paste_linter catches use of paste0 with sep=", {
+  expect_lint(
+    "paste0(x, y, sep = '')",
+    rex::rex("sep= is not a formal argument to paste0();"),
+    paste_linter()
+  )
+})
