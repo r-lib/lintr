@@ -151,8 +151,6 @@ get_file_line <- function(source_file, line) {
   unname(source_file$file_lines[[as.numeric(line)]])
 }
 
-p <- function(...) paste0(...)
-
 base_backport("lengths", function(x) vapply(x, length, integer(1L)))
 
 try_silently <- function(expr) {
