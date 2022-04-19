@@ -44,8 +44,7 @@ names(infix_metadata) <- c("xml_tag", "string_value")
 # utils::getParseData()'s designation for the tokens wouldn't be valid as XML tags
 infix_metadata$parse_tag <- ifelse(
   startsWith(infix_metadata$xml_tag, "OP-"),
-  # NB: sQuote(x, "'") doesn't work on older R versions
-  paste0("'", infix_metadata$string_value, "'"),
+  quote_wrap(infix_metadata$string_value, "'"),
   infix_metadata$xml_tag
 )
 # treated separately because spacing rules are different for unary operators
