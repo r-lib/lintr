@@ -64,3 +64,11 @@ test_that("paste_linter respects non-default arguments", {
   expect_lint("paste(collapse = ', ', x)", NULL, paste_linter(allow_to_string = TRUE))
   expect_lint("paste0(foo(x), collapse = ', ')", NULL, paste_linter(allow_to_string = TRUE))
 })
+
+test_that("paste_linter catches use of paste0 with sep=", {
+  expect_lint(
+    "paste0(x, y, sep = '')",
+    rex::rex("sep= is not a formal argument to paste0();"),
+    paste_linter()
+  )
+})

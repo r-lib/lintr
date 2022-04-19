@@ -25,20 +25,10 @@ paren_brace_linter <- function() {
 
     lapply(
       match_exprs,
-      function(expr) {
-        x <- xml2::as_list(expr)
-        line_num <- x@line1
-        line <- source_file$lines[[as.character(line_num)]]
-        Lint(
-          filename = source_file$filename,
-          line_number = line_num,
-          column_number = x@col1,
-          type = "style",
-          message = "There should be a space between right parenthesis and an opening curly brace.",
-          line = line,
-          ranges = list(as.numeric(c(x@col1, x@col2)))
-        )
-      }
+      xml_nodes_to_lint,
+      source_file = source_file,
+      lint_message = "There should be a space between right parenthesis and an opening curly brace.",
+      type = "style"
     )
   })
 }
