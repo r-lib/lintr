@@ -34,7 +34,7 @@ pipe_continuation_linter <- function() {
       # rather than all ancestors.
 
       # select all pipes
-      "SPECIAL[text() = '%>%'",
+      "//SPECIAL[text() = '%>%'",
       # that are nested in a parent-expression that spans multiple lines
       "and parent::expr[@line1 < @line2]",
       # where the parent contains pipes that precede the pipe under scrutiny
@@ -56,7 +56,7 @@ pipe_continuation_linter <- function() {
       "]"
     )
 
-    pipe_exprs <- xml_find_all(x, p("//", multiline_pipe_test))
+    pipe_exprs <- xml_find_all(x, multiline_pipe_test)
 
     lapply(
       pipe_exprs,

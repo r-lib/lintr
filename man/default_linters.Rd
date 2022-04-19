@@ -43,7 +43,7 @@ The following linters are tagged with 'default':
 \item{\code{\link{paren_body_linter}}}
 \item{\code{\link{paren_brace_linter}}}
 \item{\code{\link{pipe_continuation_linter}}}
-\item{\code{\link{semicolon_terminator_linter}}}
+\item{\code{\link{semicolon_linter}}}
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{single_quotes_linter}}}
 \item{\code{\link{spaces_inside_linter}}}
