@@ -229,11 +229,11 @@ lint_one_package <- function(package, linters, out_dir, check_deps) {
 
   if (!package_is_dir) {
     tmp <- file.path(tempdir(), package_name)
-    # only extract files that lintr::lint_package() cares about
-    package_files <- utils::untar(package, list = TRUE)
-    lint_files <- grep(file.path(package_name, "(R|tests|inst|vignettes|data-raw|demo)"), package_files, value = TRUE)
+    # TODO: only extract files that lintr::lint_package() cares about
+    # package_files <- utils::untar(package, list = TRUE)
+    # lint_files <- grep(file.path(package_name, "(R|tests|inst|vignettes|data-raw|demo)"), package_files, value = TRUE)
     # exclude directories because untar() gets confused when extracting path/to and then path/to/file
-    lint_files <- lint_files[!endsWith(lint_files, "/")]
+    # lint_files <- lint_files[!endsWith(lint_files, "/")]
     # --strip-components makes sure the output structure is
     # /path/to/tmp/pkg/ instead of /path/to/tmp/pkg/pkg
     utils::untar(package, exdir = tmp, extras = "--strip-components=1")
