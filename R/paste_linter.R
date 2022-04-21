@@ -6,6 +6,8 @@
 #'  1. Block usage of [paste()] with `sep = ""`. [paste0()] is a faster, more concise alternative.
 #'  2. Block usage of `paste()` or `paste0()` with `collapse = ", "`. [toString()] is a direct
 #'     wrapper for this, and alternatives like [glue::glue_collapse()] might give better messages for humans.
+#'  3. Block usage of `paste0()` that supplies `sep=` -- this is not a formal argument to `paste0`, and
+#'     is likely to be a mistake.
 #'
 #' @evalRd rd_tags("paste_linter")
 #' @param allow_empty_sep Logical, default `FALSE`. If `TRUE`, usage of
@@ -69,6 +71,19 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
       )
     }
 
-    c(empty_sep_lints, to_string_lints)
+    paste0_sep_xpath <- "//expr[
+      expr[SYMBOL_FUNCTION_CALL[text() = 'paste0']]
+      and SYMBOL_SUB[text() = 'sep']
+    ]"
+    paste0_sep_expr <- xml2::xml_find_all(xml, paste0_sep_xpath)
+    paste0_sep_lints <- lapply(
+      paste0_sep_expr,
+      xml_nodes_to_lint,
+      source_file = source_file,
+      lint_message = "sep= is not a formal argument to paste0(); did you mean to use paste(), or collapse=?",
+      type = "warning"
+    )
+
+    c(empty_sep_lints, to_string_lints, paste0_sep_lints)
   })
 }

@@ -8,6 +8,7 @@
   Downstream custom linters should follow suit.
 * Consistent access to linters through a function call, even for linters without parameters (#245, @fangly, @AshesITR, and @MichaelChirico)
 * Removed deprecated functions `absolute_paths_linter`, `camel_case_linter`, `multiple_dots_linter`, `snake_case_linter`, and `trailing_semicolons_linter`. They have been marked as deprecated since v1.0.1, which was released in 2017.
+* Rename `semicolon_terminator_linter` to `semicolon_linter` for better consistency. `semicolon_terminator_linter` survives but is marked for deprecation. The new linter also has a new signature, taking arguments `allow_compound` and `allow_trailing` to replace the old single argument `semicolon=`, again for signature consistency with other linters.
 * The `...` arguments for `lint()`, `lint_dir()`, and `lint_package()` have promoted to an earlier position to better match the [Tidyverse design principal](https://design.tidyverse.org/args-data-details.html) of data->descriptor->details. This change enables passing objects to `...` without needing to specify non-required arguments, e.g. `lint_dir("/path/to/dir", linter())` now works without the need to specify `relative_path`. This affects some code that uses positional arguments. (#935, @michaelchirico)
   + For `lint()`, `...` is now the 3rd argument, where earlier this was `cache=`
   + For `lint_dir()` and `lint_package()`, `...` is now the 2nd argument, where earlier this was `relative_path=`
@@ -105,6 +106,7 @@ function calls. (#850, #851, @renkun-ken)
    + `expect_s3_class_linter()` Require usage of `expect_s3_class(x, k)` over `expect_equal(class(x), k)` and similar
    + `expect_s4_class_linter()` Require usage of `expect_s4_class(x, k)` over `expect_true(methods::is(x, k))`
    + `conjunct_test_linter()` Require usage of `expect_true(x); expect_true(y)` over `expect_true(x && y)` and similar (extended in #1016)
+     + Extended for #1011 to allow forcing R>=4-style named `stopifnot()` tests to be separate as well
    + `expect_not_linter()` Require usage of `expect_false(x)` over `expect_true(!x)`, and _vice versa_.
    + `expect_true_false_linter()` Require usage of `expect_true(x)` over `expect_equal(x, TRUE)` and similar
    + `expect_named_linter()` Require usage of `expect_named(x, n)` over `expect_equal(names(x), n)` and similar
@@ -122,28 +124,33 @@ function calls. (#850, #851, @renkun-ken)
    * `paste_linter()` lint for common mis-use of `paste()` and `paste()`:
      + `paste0()` encouraged instead of `paste(sep = "")`
      + `toString()` or `glue::glue_collapse()` encouraged instead of `paste(x, collapse = ", ")`
+     + `sep=` passed to `paste0()` -- typically a mistake (extension for #998)
    * `nested_ifelse_linter()` Prevent nested calls to `ifelse()` like `ifelse(A, x, ifelse(B, y, z))`, and similar
    * `condition_message_linter` Prevent condition messages from being constructed like `stop(paste(...))` (where just `stop(...)` is preferable)
    * `redundant_ifelse_linter()` Prevent usage like `ifelse(A & B, TRUE, FALSE)` or `ifelse(C, 0, 1)` (the latter is `as.numeric(!C)`)
    * `else_same_line_linter()` Require `else` to come on the same line as the preceding `}`, if present
-   * `unreachable_code_linter()` Prevent code after `return()` and `stop()` statements that will never be reached
+   * `unreachable_code_linter()` Prevent code after `return()` and `stop()` statements that will never be reached (extended for #1051 thanks to early user testing, thanks @bersbersbers!)
    * `regex_subset_linter()` Require usage of `grep(ptn, x, value = TRUE)` over `x[grep(ptn, x)]` and similar
    * `consecutive_stopifnot_linter()` Require consecutive calls to `stopifnot()` to be unified into one
    * `ifelse_censor_linter()` Require usage of `pmax()` / `pmin()` where appropriate, e.g. `ifelse(x > y, x, y)` is `pmax(x, y)`
    * `system_file_linter()` Require file paths to be constructed by `system.file()` instead of calling `file.path()` directly
    * `strings_as_factors_linter()` Check for code designed to work before and after the new `stringsAsFactors = FALSE` default
+     + Extended for #1036 to fix a false positive for the argument name in `data.frame(c("a b" = 1))`
    * `inner_combine_linter` Require inputs to vectorized functions to be combined first rather than later, e.g. `as.Date(c(x, y))` over `c(as.Date(x), as.Date(y))`
 * `assignment_linter()` now lints right assignment (`->` and `->>`) and gains two arguments. `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`; `allow_right_assign` toggles whether to lint `->` and `->>` (#915, @michaelchirico)
-* `infix_spaces_linter()` gains argument `exclude_operators` to disable lints on selected infix operators. By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these. (#914 @michaelchirico)
-* `infix_spaces_linter()` now throws a lint on `a~b` and `function(a=1) {}` (#930, @michaelchirico)
+* improvements to `infix_spaces_linter()`:
+   * gains argument `exclude_operators=` to disable lints on selected infix operators. By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these. (#914, @michaelchirico)
+   * gains argument `allow_multiple_spaces=` to turn on lints for operators used with multiple spaces, e.g. `x  +  2`. Turned off by default to allow such usage to improve alignment from line to line. (#940, @f-ritter and @michaelchirico)
+   * now throws a lint on `a~b` and `function(a=1) {}` (#930, @michaelchirico)
 * `object_usage_linter()` now detects usages inside `glue::glue()` constructs (#942, @AshesITR)
-* * `object_length_linter()` correctly detects generics and only counts the implementation class towards the length. 
+* `object_length_linter()` correctly detects generics and only counts the implementation class towards the length. 
   This prevents false positive lints in the case of long generic names, e.g. 
   `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
 * `object_name_linter()` now correctly detects assignment generics (#843, @jonkeane)
 * `trailing_whitespace_linter()` now also lints completely blank lines by default. This can be disabled by setting the
   new argument `allow_empty_lines = TRUE` (#1044, @AshesITR)
 * `get_source_expressions()` fixes the `text` value for `STR_CONST` nodes involving 1- or 2-width octal escapes (e.g. `"\1"`) to account for an R parser bug (https://bugs.r-project.org/show_bug.cgi?id=18323)
+* `object_usage_linter()` correctly detects functions assigned with `=` instead of `<-` (#1081, @michaelchirico)
 
 # lintr 2.0.1
 
