@@ -19,6 +19,8 @@
 # TODO
 #  - make sure this works for comparing tags to facilitate release testing
 #  - handle the case when working directory is not the lintr directory
+#  - support an interface for ad hoc download of packages to support running
+#    the script without needing a CRAN mirror more easily/friendly
 
 suppressPackageStartupMessages({
   library(optparse)
