@@ -29,14 +29,16 @@ If \code{FALSE}, use the full absolute path.}
 A list of lint objects.
 }
 \description{
-Apply one or more linters to all of the R files in a package.
+Apply one or more linters to all of the R files in a package. Specifically, \code{\link[=lint_dir]{lint_dir()}}
+is run on the following sub-directories of the package found at \code{path}: R,
+tests, inst, vignettes, data-raw, and demo.
 }
 \examples{
 \dontrun{
   lint_package()
 
   lint_package(
-    linters = with_defaults(semicolon_linter = semicolon_terminator_linter())
+    linters = with_defaults(semicolon_linter = semicolon_linter())
     cache = TRUE,
     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
   )

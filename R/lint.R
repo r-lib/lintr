@@ -16,7 +16,7 @@ NULL
 #'
 #' @param filename either the filename for a file to lint, or a character string of inline R code for linting.
 #' The latter (inline data) applies whenever `filename` has a newline character (\\n).
-#' @param linters a named list of linter functions to apply see [linters] for a full list of default and available
+#' @param linters a named list of linter functions to apply. See [linters] for a full list of default and available
 #' linters.
 #' @param ... additional arguments passed to [exclude()].
 #' @param cache given a logical, toggle caching of lint results. If passed a character string, store the cache in this
@@ -181,7 +181,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 #' \dontrun{
 #'   lint_dir()
 #'   lint_dir(
-#'     linters = list(semicolon_terminator_linter())
+#'     linters = list(semicolon_linter())
 #'     cache = TRUE,
 #'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "renv")
 #'   )
@@ -275,7 +275,9 @@ lint_dir <- function(path = ".", ...,
 
 #' Lint a package
 #'
-#' Apply one or more linters to all of the R files in a package.
+#' Apply one or more linters to all of the R files in a package. Specifically, [lint_dir()]
+#'   is run on the following sub-directories of the package found at `path`: R,
+#'   tests, inst, vignettes, data-raw, and demo.
 #'
 #' @param path the path to the base directory of the package, if `NULL`, it will be searched in the parent directories
 #' of the current directory.
@@ -286,7 +288,7 @@ lint_dir <- function(path = ".", ...,
 #'   lint_package()
 #'
 #'   lint_package(
-#'     linters = with_defaults(semicolon_linter = semicolon_terminator_linter())
+#'     linters = with_defaults(semicolon_linter = semicolon_linter())
 #'     cache = TRUE,
 #'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
 #'   )

@@ -24,43 +24,45 @@ strings_as_factors_linter <- function() {
 
     xml <- source_file$xml_parsed_content
 
-    atomic_const_cond <- "STR_CONST"
-    # like data.frame('a') and data.frame(c('a', 'b'))
-    c_cond <- xp_and(
-      "expr[SYMBOL_FUNCTION_CALL[text() = 'c']]",
-      "expr[STR_CONST]",
-      "not(expr[SYMBOL or expr])"
-    )
-    # save and re-use for rep_cond which satisfies the same condition
-    atomic_or_c_cond <- sprintf("%s or (%s)", atomic_const_cond, c_cond)
-    # like data.frame(rep(c('a', 'b'), 10L))
-    rep_cond <- xp_and(
-      "SYMBOL_FUNCTION_CALL[text() = 'rep']",
-      sprintf("following-sibling::expr[1][%s]", atomic_or_c_cond)
-    )
+    # a call to c() with only literal string inputs,
+    #   e.g. c("a") or c("a", "b"), but not c("a", b)
+    c_combine_strings <- "
+      expr[SYMBOL_FUNCTION_CALL[text() = 'c']]
+      and expr[STR_CONST]
+      and not(expr[SYMBOL or expr])
+    "
 
     # like data.frame(character()) or data.frame(as.character(1))
     known_character_funs <- c(
       "character", "as.character", "paste", "sprintf",
       "format", "formatC", "prettyNum", "toString", "encodeString"
     )
-    character_cond <- sprintf(
-      "expr[SYMBOL_FUNCTION_CALL[%s]]",
-      xp_text_in_table(known_character_funs)
-    )
 
-    expr_cond <- xp_and(
-      'expr[SYMBOL_FUNCTION_CALL[text() = "data.frame"]]',
-      sprintf(
-        "expr[((%s) or (expr[%s]) or (%s)) and not(%s)]",
-        atomic_or_c_cond,
-        rep_cond,
-        character_cond,
-        "preceding-sibling::SYMBOL_SUB[1][text() = 'row.names']"
-      ),
-      'not(SYMBOL_SUB[text() = "stringsAsFactors"])'
-    )
-    bad_expr <- xml2::xml_find_all(xml, sprintf("//expr[%s]", expr_cond))
+    # four inclusions of arguments to data.frame():
+    #   (1) "a"                 (but exclude argument names, e.g. in c("a b" = 1), #1036)
+    #   (2) c("a", "b")
+    #   (3) rep("a", 2)
+    #   (4) rep(c("a", "b"), 2)
+    # two exclusions
+    #   (1) above argument is to row.names=
+    #   (2) stringsAsFactors is manually supplied (with any value)
+    xpath <- glue::glue("//expr[
+      expr[SYMBOL_FUNCTION_CALL[text() = 'data.frame']]
+      and expr[
+        (
+          STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
+          or ( {c_combine_strings} )
+          or expr[
+            SYMBOL_FUNCTION_CALL[text() = 'rep']
+            and following-sibling::expr[1][STR_CONST or ({c_combine_strings})]
+          ]
+          or expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(known_character_funs)} ]]
+        )
+        and not(preceding-sibling::*[2][self::SYMBOL_SUB and text() = 'row.names'])
+      ]
+      and not(SYMBOL_SUB[text() = 'stringsAsFactors'])
+    ]")
+    bad_expr <- xml2::xml_find_all(xml, xpath)
 
     return(lapply(
       bad_expr,

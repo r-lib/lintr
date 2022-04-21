@@ -18,7 +18,7 @@ lint(
 \item{filename}{either the filename for a file to lint, or a character string of inline R code for linting.
 The latter (inline data) applies whenever \code{filename} has a newline character (\\n).}
 
-\item{linters}{a named list of linter functions to apply see \link{linters} for a full list of default and available
+\item{linters}{a named list of linter functions to apply. See \link{linters} for a full list of default and available
 linters.}
 
 \item{...}{additional arguments passed to \code{\link[=exclude]{exclude()}}.}
