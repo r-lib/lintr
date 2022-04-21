@@ -155,6 +155,11 @@ if (!is.null(params$branch)) {
 }
 
 if (is.null(params$pkg_dir)) {
+  # TODO: I think we need to enable running the script outside
+  #   the lintr directory in order for this to work. the intention is
+  #   to be able to run compare_branches --packages=p1,p2 --linters=l1,l2
+  #   and it looks in the executing directory for p1,p2.
+  stop("pkg_dir is required")
   params$pkg_dir <- "."
 }
 packages <- list.files(normalizePath(params$pkg_dir), full.names = TRUE)
@@ -342,8 +347,8 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
   }
 }
 
-message("Comparing the output of the following linters: ", toString(linter_names))
 if (has_target) {
+  message("Comparing the output of the following linters: ", toString(linter_names))
   if (is_branch) {
     message("Comparing branch ", branch, " to ", base_branch)
     target <- branch
@@ -351,6 +356,8 @@ if (has_target) {
     message("Comparing PR#", pr, " to ", base_branch)
     target <- pr
   }
+} else {
+  message("Running the following linters: ", toString(linter_names))
 }
 if (length(packages) > 50L) {
   message(
