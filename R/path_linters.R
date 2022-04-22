@@ -146,12 +146,7 @@ path_linter_factory <- function(path_function, message, linter, name = linter_au
       ids_with_token(source_file, "STR_CONST"),
       function(id) {
         token <- with_id(source_file, id)
-        quote_char <- if (substr(token[["text"]], 1, 1) == '"') {
-          '"'
-        } else {
-          "'"
-        }
-        path <- unquote(token[["text"]], q = quote_char)
+        path <- get_r_string(token$text)
         if (path_function(path)) {
           start <- token[["col1"]] + 1L
           end <- token[["col2"]] - 1L

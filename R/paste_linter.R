@@ -27,17 +27,16 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
     if (allow_empty_sep) {
       empty_sep_lints <- NULL
     } else {
-      # NB: string-length()=2 means '' or "" (*not* 'ab' or 'cd' which have length 4)
-      # TODO: adapt this for R>4.0 raw strings
-      empty_sep_xpath <- "//expr[
+      sep_xpath <- "//expr[
         expr[SYMBOL_FUNCTION_CALL[text() = 'paste']]
-        and SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1][STR_CONST[string-length(text()) = 2]]
+        and SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1][STR_CONST]
       ]"
 
-      empty_sep_expr <- xml2::xml_find_all(xml, empty_sep_xpath)
+      empty_sep_expr <- xml2::xml_find_all(xml, sep_xpath)
+      sep_value <- get_r_string(xml2::xml_find_first(empty_sep_expr, "./SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1]"))
 
       empty_sep_lints <- lapply(
-        empty_sep_expr,
+        empty_sep_expr[!nzchar(sep_value)],
         xml_nodes_to_lint,
         source_file = source_file,
         lint_message = 'paste0(...) is better than paste(..., sep = "").',
@@ -49,17 +48,16 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
       to_string_lints <- NULL
     } else {
       # 3 expr: the function call, the argument, and collapse=
-      # TODO(michaelchirico): catch raw-string equivalents
-      seps <- c("', '", '", "')
       to_string_xpath <- glue::glue("//expr[
       expr[SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']]
         and count(expr) = 3
-        and SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1][STR_CONST[ {xp_text_in_table(seps)} ]]
+        and SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1][STR_CONST]
       ]")
       to_string_expr <- xml2::xml_find_all(xml, to_string_xpath)
+      collapse_value <- get_r_string(xml2::xml_find_first(to_string_expr, "./SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1]"))
 
       to_string_lints <- lapply(
-        to_string_expr,
+        to_string_expr[collapse_value == ", "],
         xml_nodes_to_lint,
         source_file = source_file,
         lint_message = paste(
