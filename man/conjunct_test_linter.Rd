@@ -4,7 +4,11 @@
 \alias{conjunct_test_linter}
 \title{Force && conditions in expect_true(), expect_false() to be written separately}
 \usage{
-conjunct_test_linter()
+conjunct_test_linter(allow_named_stopifnot = TRUE)
+}
+\arguments{
+\item{allow_named_stopifnot}{Logical, \code{TRUE} by default. If \code{FALSE}, "named" calls to \code{stopifnot()},
+available since R 4.0.0 to provide helpful messages for test failures, are also linted.}
 }
 \description{
 For readability of test outputs, testing only one thing per call to

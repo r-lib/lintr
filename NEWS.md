@@ -106,6 +106,7 @@ function calls. (#850, #851, @renkun-ken)
    + `expect_s3_class_linter()` Require usage of `expect_s3_class(x, k)` over `expect_equal(class(x), k)` and similar
    + `expect_s4_class_linter()` Require usage of `expect_s4_class(x, k)` over `expect_true(methods::is(x, k))`
    + `conjunct_test_linter()` Require usage of `expect_true(x); expect_true(y)` over `expect_true(x && y)` and similar (extended in #1016)
+     + Extended for #1011 to allow forcing R>=4-style named `stopifnot()` tests to be separate as well
    + `expect_not_linter()` Require usage of `expect_false(x)` over `expect_true(!x)`, and _vice versa_.
    + `expect_true_false_linter()` Require usage of `expect_true(x)` over `expect_equal(x, TRUE)` and similar
    + `expect_named_linter()` Require usage of `expect_named(x, n)` over `expect_equal(names(x), n)` and similar
@@ -137,8 +138,10 @@ function calls. (#850, #851, @renkun-ken)
      + Extended for #1036 to fix a false positive for the argument name in `data.frame(c("a b" = 1))`
    * `inner_combine_linter` Require inputs to vectorized functions to be combined first rather than later, e.g. `as.Date(c(x, y))` over `c(as.Date(x), as.Date(y))`
 * `assignment_linter()` now lints right assignment (`->` and `->>`) and gains two arguments. `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`; `allow_right_assign` toggles whether to lint `->` and `->>` (#915, @michaelchirico)
-* `infix_spaces_linter()` gains argument `exclude_operators` to disable lints on selected infix operators. By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these. (#914 @michaelchirico)
-* `infix_spaces_linter()` now throws a lint on `a~b` and `function(a=1) {}` (#930, @michaelchirico)
+* improvements to `infix_spaces_linter()`:
+   * gains argument `exclude_operators=` to disable lints on selected infix operators. By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these. (#914, @michaelchirico)
+   * gains argument `allow_multiple_spaces=` to turn on lints for operators used with multiple spaces, e.g. `x  +  2`. Turned off by default to allow such usage to improve alignment from line to line. (#940, @f-ritter and @michaelchirico)
+   * now throws a lint on `a~b` and `function(a=1) {}` (#930, @michaelchirico)
 * `object_usage_linter()` now detects usages inside `glue::glue()` constructs (#942, @AshesITR)
 * `object_length_linter()` correctly detects generics and only counts the implementation class towards the length. 
   This prevents false positive lints in the case of long generic names, e.g. 
