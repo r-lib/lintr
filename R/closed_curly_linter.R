@@ -9,12 +9,12 @@
 #'   <https://style.tidyverse.org/syntax.html#indenting>
 #' @export
 closed_curly_linter <- function(allow_single_line = FALSE) {
-  Linter(function(source_file) {
-    lapply(ids_with_token(source_file, "'}'"),
+  Linter(function(source_expression) {
+    lapply(ids_with_token(source_expression, "'}'"),
            function(id) {
 
-        parsed <- with_id(source_file, id)
-        parsed_content <- source_file[["parsed_content"]]
+        parsed <- with_id(source_expression, id)
+        parsed_content <- source_expression[["parsed_content"]]
 
         tokens_before <- parsed_content$token[
           parsed_content$line1 == parsed$line1 &
@@ -41,7 +41,7 @@ closed_curly_linter <- function(allow_single_line = FALSE) {
 
         has_else_after <- any(tokens_after %in% "ELSE")
 
-        line <- source_file$lines[as.character(parsed$line1)]
+        line <- source_expression$lines[as.character(parsed$line1)]
         content_after <- unname(substr(line, parsed$col1 + 1L, nchar(line)))
         content_before <- unname(substr(line, 1, parsed$col1 - 1L))
 
@@ -57,7 +57,7 @@ closed_curly_linter <- function(allow_single_line = FALSE) {
         if (has_expression_before ||
             has_expression_after && !has_else_after) {
           Lint(
-            filename = source_file$filename,
+            filename = source_expression$filename,
             line_number = parsed$line1,
             column_number = parsed$col1,
             type = "style",
@@ -65,7 +65,7 @@ closed_curly_linter <- function(allow_single_line = FALSE) {
               "Closing curly-braces should always be on their own line,",
               "unless they are followed by an else."
             ),
-            line = source_file$lines[as.character(parsed$line1)]
+            line = source_expression$lines[as.character(parsed$line1)]
           )}
       }
     )

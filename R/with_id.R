@@ -9,9 +9,9 @@
 #' of `parsed_content`.
 #' @return `with_id`: A data frame corresponding to the row(s) specified in `id`.
 #' @export
-with_id <- function(source_file, id) {
-  if (is.null(source_file$parsed_content)) {
+with_id <- function(source_expression, id) {
+  if (is.null(source_expression$parsed_content)) {
     return(data.frame())
   }
-  source_file$parsed_content[id, ]
+  source_expression$parsed_content[id, ]
 }
