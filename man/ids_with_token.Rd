@@ -5,12 +5,12 @@
 \alias{with_id}
 \title{Get parsed IDs by token}
 \usage{
-ids_with_token(source_file, value, fun = `==`)
+ids_with_token(source_expression, value, fun = `==`)
 
-with_id(source_file, id)
+with_id(source_expression, id)
 }
 \arguments{
-\item{source_file}{A list of source expressions, the result of a call to \code{\link[=get_source_expressions]{get_source_expressions()}}, for the desired
+\item{source_expression}{A list of source expressions, the result of a call to \code{\link[=get_source_expressions]{get_source_expressions()}}, for the desired
 filename.}
 
 \item{value}{Character. String corresponding to the token to search for.
