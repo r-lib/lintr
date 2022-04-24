@@ -363,3 +363,19 @@ test_that("interprets glue expressions", {
     }
   "), "local_var", object_usage_linter(interpret_glue = FALSE))
 })
+
+# reported as #1088
+test_that("definition in parent environment is detected", {
+  expect_lint(
+    trim_some('
+      local({
+        x <- 1
+        f <- function() {
+          x
+        }
+      })
+    '),
+    NULL,
+    object_usage_linter()
+  )
+})
