@@ -3,6 +3,7 @@
 #' Perform various style checks related to placement and spacing of curly braces:
 #'
 #'  - Curly braces are on their own line unless they are followed by an `else`.
+#'  - Closing curly braces in `if` conditions are on the same line as the corresponding `else`.
 #'
 #' @param allow_single_line if `TRUE`, allow an open and closed curly pair on the same line.
 #'
@@ -31,6 +32,7 @@ brace_linter <- function(allow_single_line = FALSE) {
       )"
     ))
 
+    # TODO (AshesITR): if c_style_braces is TRUE, skip the not(ELSE) condition
     xp_closed_curly <- glue::glue("//OP-RIGHT-BRACE[
       { xp_cond_closed } and (
         (@line1 = preceding-sibling::*/@line2) or
@@ -46,6 +48,19 @@ brace_linter <- function(allow_single_line = FALSE) {
         "Closing curly-braces should always be on their own line,",
         "unless they are followed by an else."
       )
+    ))
+
+    xp_else_closed_curly <- "preceding-sibling::IF/following-sibling::expr[2]/OP-RIGHT-BRACE"
+    # need to (?) repeat previous_curly_path since != will return true if there is
+    #   no such node. ditto for approach with not(@line1 = ...).
+    # TODO (AshesITR): if c_style_braces is TRUE, this needs to be @line2 + 1
+    xp_else_same_line <- glue::glue("//ELSE[{xp_else_closed_curly} and @line1 != {xp_else_closed_curly}/@line2]")
+
+    lints <- c(lints, lapply(
+      xml2::xml_find_all(source_expression$xml_parsed_content, xp_else_same_line),
+      xml_nodes_to_lint,
+      source_file = source_expression,
+      lint_message = "`else` should come on the same line as the previous `}`."
     ))
 
     lints
