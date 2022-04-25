@@ -176,6 +176,7 @@ test_that("one-character character classes with escaped characters are caught", 
 })
 
 test_that("bracketed unicode escapes are caught", {
+  linter <- fixed_regex_linter()
   msg <- rex::rex("For static regular expression patterns, set `fixed = TRUE`.")
 
   expect_lint('gsub("\\u{A0}", " ", out, useBytes = TRUE)', msg, linter)
