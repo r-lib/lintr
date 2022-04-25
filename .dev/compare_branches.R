@@ -13,9 +13,14 @@
 #     ./dev/compare_branches --pkg_dir=/path/to/cran --sample_size=50 ...
 #   The script outputs a CSV with the lint results for the script options to --outfile.
 #   To compare the results of a PR to that at current HEAD, you could e.g. run
-#     ./dev/compare_branches --branch=my-feature-branch --outfile=new.csv ...
-#     ./dev/compare_branches --branch=master --outfile=old.csv ...
-#   And then compare the results found in new.csv & old.csv.
+#     ./dev/compare_branches --branch=my-feature-branch ...
+#   And then compare the results found in the new CSV file in .dev
+
+# TODO
+#  - make sure this works for comparing tags to facilitate release testing
+#  - handle the case when working directory is not the lintr directory
+#  - support an interface for ad hoc download of packages to support running
+#    the script without needing a CRAN mirror more easily/friendly
 
 # TODO
 #  - make sure this works for comparing tags to facilitate release testing
@@ -75,7 +80,7 @@ param_list <- list(
   optparse::make_option(
     "--branch",
     default = if (interactive()) {
-      readline("Name a branch to compare to the base branch (or skip to enter a PR#): ")
+      readline("Name a branch to compare to the base branch (or skip to enter a PR# or to run only on base_branch): ")
     },
     help = "Run the comparison for base vs. this branch"
   ),
@@ -83,24 +88,28 @@ param_list <- list(
     "--pr",
     default = if (interactive()) {
       # NB: optparse handles integer conversion
-      readline("Name a PR # to compare to the base branch (skip if you've entered a branch): ")
+      readline("Name a PR # to compare to the base branch (skip if you've entered a branch or to run only on base_branch): ")
     },
     type = "integer",
     help = "Run the comparison for base vs. this PR"
   ),
   optparse::make_option(
-    "--packages",
-    default = if (interactive()) {
-      readline("Provide a comma-separated list of packages (skip to provide a directory): ")
-    },
-    help = "Run the comparison using these packages (comma-separated)"
-  ),
-  optparse::make_option(
     "--pkg_dir",
-    default = if (interactive()) {
-      readline("Provide a directory where to select packages (skip if already provided as a list): ")
+    default = if (nzchar(cran_mirror <- Sys.getenv("CRAN_MIRROR"))) {
+      dir <- file.path(cran_mirror, "src", "contrib")
+      message("Using the CRAN miror found at Sys.getenv('CRAN_MIRROR'): ", dir)
+      dir
+    } else if (interactive()) {
+      readline("Provide a directory where to select packages (skip to select the current directory): ")
     },
     help = "Run the comparison using all packages in this directory"
+  ),
+  optparse::make_option(
+    "--packages",
+    default = if (interactive()) {
+      readline("Provide a comma-separated list of packages (skip to include all directories for sampling): ")
+    },
+    help = "Run the comparison using these packages (comma-separated)"
   ),
   optparse::make_option(
     "--sample_size",
@@ -141,22 +150,29 @@ if (is.null(base_branch) || is.na(base_branch) || !nzchar(base_branch)) {
 
 # prioritize "branch"
 is_branch <- FALSE
+has_target <- TRUE
 if (!is.null(params$branch)) {
   branch <- params$branch
   is_branch <- TRUE
 } else if (!is.null(params$pr)) {
   pr <- params$pr
 } else {
-  stop("Please supply a branch (--branch) or a PR number (--pr)")
+  has_target <- FALSE
 }
 
-# prioritize packages
+if (is.null(params$pkg_dir)) {
+  # TODO: I think we need to enable running the script outside
+  #   the lintr directory in order for this to work. the intention is
+  #   to be able to run compare_branches --packages=p1,p2 --linters=l1,l2
+  #   and it looks in the executing directory for p1,p2.
+  stop("pkg_dir is required")
+  params$pkg_dir <- "."
+}
+packages <- list.files(normalizePath(params$pkg_dir), full.names = TRUE)
 if (!is.null(params$packages)) {
-  packages <- strsplit(params$packages, ",", fixed = TRUE)[[1L]]
-} else if (!is.null(params$pkg_dir)) {
-  packages <- list.files(normalizePath(params$pkg_dir), full.names = TRUE)
-} else {
-  stop("Please supply a comma-separated list of packages (--packages) or a directory of packages (--pkg_dir)")
+  # strip version numbers
+  package_names <- gsub("_.*", "", basename(packages))
+  packages <- packages[package_names %in% strsplit(params$packages, ",", fixed = TRUE)[[1L]]]
 }
 # filter to (1) package directories or (2) package tar.gz files
 packages <- packages[
@@ -337,13 +353,17 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
   }
 }
 
-message("Comparing the output of the following linters: ", toString(linter_names))
-if (is_branch) {
-  message("Comparing branch ", branch, " to ", base_branch)
-  target <- branch
+if (has_target) {
+  message("Comparing the output of the following linters: ", toString(linter_names))
+  if (is_branch) {
+    message("Comparing branch ", branch, " to ", base_branch)
+    target <- branch
+  } else {
+    message("Comparing PR#", pr, " to ", base_branch)
+    target <- pr
+  }
 } else {
-  message("Comparing PR#", pr, " to ", base_branch)
-  target <- pr
+  message("Running the following linters: ", toString(linter_names))
 }
 if (length(packages) > 50L) {
   message(
@@ -369,10 +389,12 @@ if (dir.exists(file.path(params$outdir, ".partial"))) {
 #  (2) (central) packages (only unzip the package once per branch)
 #  (3) (innermost) linters (once the package is installed, easy to cycle through linters)
 run_workflow("branch", packages, linter_names, branch = base_branch)
-if (is_branch) {
-  run_workflow("branch", packages, linter_names, branch = target)
-} else {
-  run_workflow("pr", packages, linter_names, number = target)
+if (has_target) {
+  if (is_branch) {
+    run_workflow("branch", packages, linter_names, branch = target)
+  } else {
+    run_workflow("pr", packages, linter_names, number = target)
+  }
 }
 
 setwd(old_wd)
@@ -385,11 +407,15 @@ load_partial_results <- function(target, is_branch) {
   purrr::map_df(files, readr::read_csv, show_col_types = FALSE, .id = "package")
 }
 
-lints <- dplyr::bind_rows(
-  base = load_partial_results(base_branch, TRUE),
-  branch = load_partial_results(target, is_branch),
-  .id = "source"
-)
+if (has_target) {
+  lints <- dplyr::bind_rows(
+    base = load_partial_results(base_branch, TRUE),
+    branch = load_partial_results(target, is_branch),
+    .id = "source"
+  )
+} else {
+  lints <- load_partial_results(base_branch, TRUE)
+}
 unlink(file.path(params$outdir, ".partial"), recursive = TRUE)
 data.table::fwrite(lints, params$outfile, row.names = FALSE)
 
