@@ -144,3 +144,67 @@ test_that("brace_linter lints function expressions correctly", {
     linter
   )
 })
+
+test_that("braces_linter lints if/else matching braces correctly", {
+  linter <- braces_linter()
+  expect_lint("if (TRUE) 1 else 2", NULL, linter)
+  expect_lint("if (TRUE) 1", NULL, linter)
+
+  lines_brace <- trim_some("
+    if (TRUE) {
+      1
+    } else {
+      2
+    }
+  ")
+  expect_lint(lines_brace, NULL, linter)
+
+  # such usage is also not allowed by the style guide, but test anyway
+  lines_unbrace <- trim_some("
+    foo <- function(x) {
+      if (TRUE)
+        1
+      else
+        2
+    }
+  ")
+  expect_lint(lines_unbrace, NULL, linter)
+
+  # else if is OK
+  lines_else_if <- trim_some("
+    if (x) {
+     1
+    } else if (y) {
+     2
+    } else {
+     3
+    }
+  ")
+  expect_lint(lines_else_if, NULL, linter)
+
+  lines_if <- trim_some("
+    foo <- function(x) {
+      if (x) {
+        1
+      } else 2
+    }
+  ")
+  expect_lint(
+    lines_if,
+    rex::rex("Either both or neither branch in `if`/`else` should use curly braces."),
+    linter
+  )
+
+  lines_else <- trim_some("
+    foo <- function(x) {
+      if (x) 1 else {
+        2
+      }
+    }
+  ")
+  expect_lint(
+    lines_else,
+    rex::rex("Either both or neither branch in `if`/`else` should use curly braces."),
+    linter
+  )
+})

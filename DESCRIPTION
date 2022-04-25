@@ -85,7 +85,6 @@ Collate:
     'function_left_parentheses.R'
     'get_source_expressions.R'
     'ids_with_token.R'
-    'if_else_match_braces_linter.R'
     'ifelse_censor_linter.R'
     'implicit_integer_linter.R'
     'infix_spaces_linter.R'

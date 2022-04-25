@@ -4,13 +4,16 @@
 #'
 #'  - Curly braces are on their own line unless they are followed by an `else`.
 #'  - Closing curly braces in `if` conditions are on the same line as the corresponding `else`.
+#'  - Either both or neither branch in `if`/`else` use curly braces, i.e., either both branches use `{...}` or neither
+#'    does.
 #'  - Functions spanning multiple lines use curly braces.
 #'
 #' @param allow_single_line if `TRUE`, allow an open and closed curly pair on the same line.
 #'
 #' @evalRd rd_tags("brace_linter")
 #' @seealso [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#indenting>
+#'   <https://style.tidyverse.org/syntax.html#indenting> \cr
+#'   <https://style.tidyverse.org/syntax.html#if-statements>
 #' @export
 brace_linter <- function(allow_single_line = FALSE) {
   Linter(function(source_expression) {
@@ -72,6 +75,32 @@ brace_linter <- function(allow_single_line = FALSE) {
       xml_nodes_to_lint,
       source_file = source_expression,
       lint_message = "Any function spanning multiple lines should use curly braces."
+    ))
+
+    # if (x) { ... } else if (y) { ... } else { ... } is OK; fully exact pairing
+    #   of if/else would require this to be
+    #   if (x) { ... } else { if (y) { ... } else { ... } } since there's no
+    #   elif operator/token in R, which is pretty unseemly
+    xp_if_else_match_brace <- "
+    //IF[
+      following-sibling::expr[2][OP-LEFT-BRACE]
+      and following-sibling::ELSE
+          /following-sibling::expr[1][not(OP-LEFT-BRACE or IF/following-sibling::expr[2][OP-LEFT-BRACE])]
+    ]
+
+    |
+
+    //ELSE[
+      following-sibling::expr[1][OP-LEFT-BRACE]
+      and preceding-sibling::IF/following-sibling::expr[2][not(OP-LEFT-BRACE)]
+    ]
+    "
+
+    lints <- c(lints, lapply(
+      xml2::xml_find_all(source_expression$xml_parsed_content, xp_if_else_match_brace),
+      xml_nodes_to_lint,
+      source_file = source_expression,
+      lint_message = "Either both or neither branch in `if`/`else` should use curly braces."
     ))
 
     lints
