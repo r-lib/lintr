@@ -102,14 +102,15 @@ is_not_regex <- function(str) {
   str <- as.character(parse(text = str, keep.source = FALSE))
 
   rx_non_active_char <- rex::rex(none_of("^${(.*+?|[\\"))
+  rx_xdigit <- rex::rex(one_of("0":"9", "a":"f", "A":"F"))
   rx_char_escape <- rex::rex(or(
-    group("\\", none_of(alnum)),
-    group("\\x", between(xdigit, 1L, 2L)),
+    group("\\", none_of("a":"z", "A":"Z", "0":"9")),
+    group("\\x", between(rx_xdigit, 1L, 2L)),
     group("\\", between("0":"7", 1L, 3L)),
-    group("\\u{", between(xdigit, 1L, 4L), "}"),
-    group("\\u", between(xdigit, 1L, 4L)),
-    group("\\U{", between(xdigit, 1L, 8L), "}"),
-    group("\\U", between(xdigit, 1L, 8L))
+    group("\\u{", between(rx_xdigit, 1L, 4L), "}"),
+    group("\\u", between(rx_xdigit, 1L, 4L)),
+    group("\\U{", between(rx_xdigit, 1L, 8L), "}"),
+    group("\\U", between(rx_xdigit, 1L, 8L))
   ))
   rx_trivial_char_group <- rex::rex(
     "[",
