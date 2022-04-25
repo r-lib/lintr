@@ -99,28 +99,34 @@ fixed_regex_linter <- function() {
 #' @noRd
 is_not_regex <- function(str) {
   # Handle string quoting and escaping using R directly
-  str <- vapply(str, function(elem) eval(parse(text = elem)), character(1L))
+  str <- as.character(parse(text = str, keep.source = FALSE))
 
-  # any even number of backslashes without an additional escaping backslash or character group sign [.
-  # this guarantees the following tokens aren't escaped and are thus interpretable as regex control characters.
-  rx_not_escaped <- rex::rex(
+  rx_non_active_char <- rex::rex(none_of("^${(.*+?|[\\"))
+  rx_char_escape <- rex::rex(or(
+    group("\\", none_of(alnum)),
+    group("\\x", between(xdigit, 1L, 2L)),
+    group("\\", between("0":"7", 1L, 3L)),
+    group("\\u{", between(xdigit, 1L, 4L), "}"),
+    group("\\u", between(xdigit, 1L, 4L)),
+    group("\\U{", between(xdigit, 1L, 8L), "}"),
+    group("\\U", between(xdigit, 1L, 8L))
+  ))
+  rx_trivial_char_group <- rex::rex(
+    "[",
     or(
-      zero_or_more("\\\\") %if_prev_isnt% one_of("\\["),
-      c("\\[",  zero_or_more("\\\\"))
-    )
+      any,
+      group("\\", any),
+      rx_char_escape
+    ),
+    "]"
   )
+  rx_static_token <- rex::rex(or(
+    rx_non_active_char,
+    rx_char_escape,
+    rx_trivial_char_group
+  ))
+  rx_static_regex <- rex::rex(start, zero_or_more(rx_static_token), end)
 
-  # backslash followed by anything that might be a character class, such as \d
-  rx_char_class_escape <- rex::rex("\\", one_of(alnum, "<>"))
-
-  # control character other than [
-  rx_active_char <- rex::rex(one_of("^${(.*+?|"))
-
-  # character group with at least two elements, to preclude e.g. [.]
-  # also includes character classes like [:alnum:]
-  rx_nontrivial_char_group <- rex::rex("[", at_least(none_of("]"), 2L))
-
-  rx_dynamic_regex <- rex::rex(rx_not_escaped, or(rx_char_class_escape, rx_active_char, rx_nontrivial_char_group))
-
-  !grepl(rx_dynamic_regex, str, perl = TRUE)
+  # need to add multi-line option to allow literal newlines
+  grepl(paste0("(?m)", rx_static_regex), str, perl = TRUE)
 }
