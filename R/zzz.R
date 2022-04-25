@@ -13,7 +13,7 @@
 default_linters <- with_defaults(
   default = list(),
   assignment_linter(),
-  closed_curly_linter(),
+  brace_linter(),
   commas_linter(),
   commented_code_linter(),
   cyclocomp_linter(),

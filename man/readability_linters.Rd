@@ -12,6 +12,7 @@ Linters highlighting readability issues, such as missing whitespace.
 \section{Linters}{
 The following linters are tagged with 'readability':
 \itemize{
+\item{\code{\link{brace_linter}}}
 \item{\code{\link{closed_curly_linter}}}
 \item{\code{\link{commas_linter}}}
 \item{\code{\link{commented_code_linter}}}

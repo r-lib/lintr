@@ -4,8 +4,9 @@ any_duplicated_linter,efficiency best_practices
 any_is_na_linter,efficiency best_practices
 assignment_linter,style consistency default
 backport_linter,robustness configurable package_development
+brace_linter,style readability default configurable
 class_equals_linter,best_practices robustness consistency
-closed_curly_linter,style readability default configurable
+closed_curly_linter,style readability configurable
 commas_linter,style readability default
 commented_code_linter,style readability best_practices default
 condition_message_linter,best_practices consistency

@@ -54,6 +54,7 @@ Collate:
     'any_is_na_linter.R'
     'assignment_linter.R'
     'backport_linter.R'
+    'brace_linter.R'
     'cache.R'
     'class_equals_linter.R'
     'closed_curly_linter.R'
