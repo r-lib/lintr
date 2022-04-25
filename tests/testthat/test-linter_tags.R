@@ -34,7 +34,7 @@ test_that("default_linters and default tag match up", {
 })
 
 test_that("available_linters matches the set of linters available from lintr", {
-  lintr_db <- available_linters()
+  lintr_db <- available_linters(include_deprecated = TRUE)
   linters_in_namespace <- ls(asNamespace("lintr"), pattern = "_linter$")
   # ensure that the contents of inst/lintr/linters.csv covers all _linter objects in our namespace
   expect_identical(sort(lintr_db$linter), sort(linters_in_namespace))
@@ -54,7 +54,7 @@ test_that("lintr help files are up to date", {
   help_env <- new.env(parent = topenv())
   lazyLoad(file.path(helper_db_dir, "lintr"), help_env)
 
-  lintr_db <- available_linters()
+  lintr_db <- available_linters(include_deprecated = TRUE)
   lintr_db$package <- NULL
   lintr_db$tags <- lapply(lintr_db$tags, sort)
 

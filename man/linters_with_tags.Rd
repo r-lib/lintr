@@ -4,7 +4,7 @@
 \alias{linters_with_tags}
 \title{Create a tag-based linter configuration}
 \usage{
-linters_with_tags(tags, ..., packages = "lintr")
+linters_with_tags(tags, ..., packages = "lintr", include_deprecated = FALSE)
 }
 \arguments{
 \item{tags}{Optional character vector of tags to search. Only linters with at least one matching tag will be
@@ -15,6 +15,9 @@ If the named argument already exists in the list of linters, it is replaced by t
 If it does not exist, it is added. If the value is \code{NULL}, the linter is removed.}
 
 \item{packages}{A character vector of packages to search for linters.}
+
+\item{include_deprecated}{By default, linters with the special tag "deprecated" are not returned.
+Set this to \code{TRUE} to also include deprecated linters in the results.}
 }
 \value{
 A modified list of linters.

@@ -33,4 +33,8 @@ test_that("can instantiate all linters without arguments", {
 
   expect_type(all_linters, "list")
   expect_length(all_linters, nrow(available_linters()))
+
+  really_all_linters <- suppressWarnings(linters_with_tags(tags = NULL, include_deprecated = TRUE))
+  expect_type(really_all_linters, "list")
+  expect_length(really_all_linters, nrow(available_linters(include_deprecated = TRUE)))
 })

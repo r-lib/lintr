@@ -5,6 +5,8 @@
 #' @param packages A character vector of packages to search for linters.
 #' @param tags Optional character vector of tags to search. Only linters with at least one matching tag will be
 #' returned. If `tags` is `NULL`, all linters will be returned.
+#' @param include_deprecated By default, linters with the special tag "deprecated" are not returned.
+#' Set this to `TRUE` to also include deprecated linters in the results.
 #'
 #' @section Package Authors:
 #'
@@ -40,17 +42,20 @@
 #' identical(lintr_linters, lintr_linters2)
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-available_linters <- function(packages = "lintr", tags = NULL) {
+available_linters <- function(packages = "lintr", tags = NULL, include_deprecated = FALSE) {
   if (!is.character(packages)) {
     stop("`packages` must be a character vector.")
   }
   if (!is.null(tags) && !is.character(tags)) {
     stop("`tags` must be a character vector.")
   }
+  if (!is.logical(include_deprecated) || length(include_deprecated) != 1L || is.na(include_deprecated)) {
+    stop("`include_deprecated` must be a flag.")
+  }
 
   # Handle multiple packages
   if (length(packages) > 1L) {
-    return(do.call(rbind, lapply(packages, available_linters, tags = tags)))
+    return(do.call(rbind, lapply(packages, available_linters, tags = tags, include_deprecated = include_deprecated)))
   }
 
   csv_file <- system.file("lintr", "linters.csv", package = packages)
@@ -91,6 +96,10 @@ available_linters <- function(packages = "lintr", tags = NULL) {
     matches_tags <- vapply(res$tags, function(linter_tags) any(linter_tags %in% tags), logical(1L))
     res <- res[matches_tags, ]
   }
+  if (!include_deprecated) {
+    is_deprecated <- vapply(res$tags, function(linter_tags) "deprecated" %in% linter_tags, logical(1L))
+    res <- res[!is_deprecated, ]
+  }
   res
 }
 
@@ -104,7 +113,7 @@ available_linters <- function(packages = "lintr", tags = NULL) {
 #' @examples
 #' available_tags()
 available_tags <- function(packages = "lintr") {
-  platform_independent_sort(unique(unlist(available_linters(packages = packages)[["tags"]])))
+  platform_independent_sort(unique(unlist(available_linters(packages = packages, include_deprecated = TRUE)[["tags"]])))
 }
 
 #' Generate Rd fragment for the Tags section of a linter
@@ -113,7 +122,7 @@ available_tags <- function(packages = "lintr") {
 #'
 #' @noRd
 rd_tags <- function(linter_name) {
-  linters <- available_linters()
+  linters <- available_linters(include_deprecated = TRUE)
   tags <- platform_independent_sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
   if (length(tags) == 0L) {
     stop("tags are required, but found none for ", linter_name)
@@ -132,7 +141,7 @@ rd_tags <- function(linter_name) {
 #'
 #' @noRd
 rd_linters <- function(tag_name) {
-  linters <- available_linters(tags = tag_name)
+  linters <- available_linters(tags = tag_name, include_deprecated = TRUE)
   tagged <- platform_independent_sort(linters[["linter"]])
   if (length(tagged) == 0L) {
     stop("No linters found associated with tag ", tag_name)
@@ -152,7 +161,7 @@ rd_linters <- function(tag_name) {
 #'
 #' @noRd
 rd_taglist <- function() {
-  linters <- available_linters()
+  linters <- available_linters(include_deprecated = TRUE)
 
   tag_table <- table(unlist(linters[["tags"]]))
   tags <- platform_independent_sort(unique(unlist(linters[["tags"]])))
@@ -175,7 +184,7 @@ rd_taglist <- function() {
 #'
 #' @noRd
 rd_linterlist <- function() {
-  linters <- available_linters()
+  linters <- available_linters(include_deprecated = TRUE)
   linter_names <- platform_independent_sort(linters[["linter"]])
 
   c(

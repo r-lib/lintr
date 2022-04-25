@@ -23,6 +23,7 @@ The following tags exist:
 \item{\link[=consistency_linters]{consistency} (16 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (28 linters)}
+\item{\link[=deprecated_linters]{deprecated} (1 linters)}
 \item{\link[=efficiency_linters]{efficiency} (14 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=readability_linters]{readability} (37 linters)}
@@ -90,7 +91,7 @@ The following linters exist:
 \item{\code{\link{redundant_ifelse_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{regex_subset_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{semicolon_linter}} (tags: configurable, default, readability, style)}
-\item{\code{\link{semicolon_terminator_linter}} (tags: configurable, readability, style)}
+\item{\code{\link{semicolon_terminator_linter}} (tags: configurable, deprecated, readability, style)}
 \item{\code{\link{seq_linter}} (tags: best_practices, consistency, default, efficiency, robustness)}
 \item{\code{\link{single_quotes_linter}} (tags: consistency, default, readability, style)}
 \item{\code{\link{spaces_inside_linter}} (tags: default, readability, style)}

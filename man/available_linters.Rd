@@ -5,7 +5,7 @@
 \alias{available_tags}
 \title{Get Linter metadata from a package}
 \usage{
-available_linters(packages = "lintr", tags = NULL)
+available_linters(packages = "lintr", tags = NULL, include_deprecated = FALSE)
 
 available_tags(packages = "lintr")
 }
@@ -14,6 +14,9 @@ available_tags(packages = "lintr")
 
 \item{tags}{Optional character vector of tags to search. Only linters with at least one matching tag will be
 returned. If \code{tags} is \code{NULL}, all linters will be returned.}
+
+\item{include_deprecated}{By default, linters with the special tag "deprecated" are not returned.
+Set this to \code{TRUE} to also include deprecated linters in the results.}
 }
 \value{
 \code{available_linters} returns a data frame with columns 'linter', 'package' and 'tags':
