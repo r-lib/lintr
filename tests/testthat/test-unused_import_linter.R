@@ -18,6 +18,11 @@ test_that("unused_import_linter lints as expected", {
   expect_lint("library(dplyr)\n1 + 1", msg, linter)
   expect_lint("require(dplyr)\n1 + 1", msg, linter)
   expect_lint("library('dplyr')\n1 + 1", msg, linter)
-  # ignore namespaced usages
+  # ignore namespaced usages by default
   expect_lint("library(dplyr)\ndplyr::tibble(a = 1)", msg, linter)
+  expect_lint("library(dplyr)\ndplyr::tibble(a = 1)", NULL, unused_import_linter(allow_ns_usage = TRUE))
+
+  # ignore packages in except_packages
+  expect_lint("library(data.table)\n1 + 1", NULL, linter)
+  expect_lint("library(dplyr)\n1 + 1", NULL, unused_import_linter(except_packages = "dplyr"))
 })

@@ -19,6 +19,5 @@ The following linters are tagged with 'correctness':
 \item{\code{\link{object_usage_linter}}}
 \item{\code{\link{package_hooks_linter}}}
 \item{\code{\link{sprintf_linter}}}
-\item{\code{\link{unused_import_linter}}}
 }
 }

@@ -4,9 +4,16 @@
 \alias{unused_import_linter}
 \title{Check that imported packages are actually used}
 \usage{
-unused_import_linter(except_packages = c("bit64", "data.table", "tidyverse"))
+unused_import_linter(
+  allow_ns_usage = FALSE,
+  except_packages = c("bit64", "data.table", "tidyverse")
+)
 }
 \arguments{
+\item{allow_ns_usage}{Suppress lints for packages only used via namespace.
+This is \code{FALSE} by default because \code{pkg::fun()} doesn't require \code{library(pkg)}.
+You can use \link[=requireNamespace]{requireNamespace("pkg")} to ensure a package is installed without loading it.}
+
 \item{except_packages}{Character vector of packages that are ignored.
 These are usually attached for their side effects.}
 }
@@ -17,5 +24,5 @@ Check that imported packages are actually used
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=correctness_linters]{correctness}
+\link[=best_practices_linters]{best_practices}, \link[=common_mistakes_linters]{common_mistakes}, \link[=configurable_linters]{configurable}
 }
