@@ -127,7 +127,7 @@ test_that("Warns if encoding is misspecified", {
 })
 
 test_that("Can extract line number from parser errors", {
-  skip_if_not(getRversion() >= "4.0")
+  skip_if_not_r_version("4.0.0")
 
   # malformed raw string literal at line 2
   with_content_to_parse(
@@ -166,5 +166,29 @@ test_that("Can extract line number from parser errors", {
   with_content_to_parse("function(a, a) {}", {
     expect_equal(error$message, "Repeated formal argument 'a'.")
     expect_equal(error$line_number, 1L)
+  })
+})
+
+test_that("1- or 2-width octal expressions give the right STR_CONST values", {
+  with_content_to_parse("'\\1'", expect_identical(pc[[1L]][2L, "text"], "'\\1'"))
+  with_content_to_parse('"\\1"', expect_identical(pc[[1L]][2L, "text"], '"\\1"'))
+
+  # multiple literals
+  with_content_to_parse("'\\1'\n'\\2'", {
+    expect_identical(pc[[1L]][2L, "text"], "'\\1'")
+    expect_identical(pc[[2L]][2L, "text"], "'\\2'")
+  })
+
+  # multiple escapes
+  with_content_to_parse("'\\1\\2'", expect_identical(pc[[1L]][2L, "text"], "'\\1\\2'"))
+
+  # multi-line strings
+  with_content_to_parse("'\n\\1\n'", expect_identical(pc[[1L]][2L, "text"], "'\n\\1\n'"))
+  with_content_to_parse("a <- '\\1\n\\2'", expect_identical(pc[[1L]][5L, "text"], "'\\1\n\\2'"))
+
+  # mixed-length strings
+  with_content_to_parse("foo('\\1',\n  '\n\\2\n')", {
+    expect_identical(pc[[1L]][5L, "text"], "'\\1'")
+    expect_identical(pc[[1L]][8L, "text"], "'\n\\2\n'")
   })
 })

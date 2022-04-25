@@ -3,12 +3,17 @@ test_that("with_defaults works as expected with unnamed args", {
   expect_named(with_defaults(assignment_linter), names(with_defaults()))
 })
 
+test_that("with_defaults warns on unused NULLs", {
+  expect_warning(with_defaults(not_a_default = NULL), rex::rex("which is not in `default`."))
+  expect_warning(with_defaults(not_a_default = NULL, also_not_default = NULL), rex::rex("which are not in `default`."))
+})
+
 test_that("all default linters are tagged default", {
   expect_named(with_defaults(), available_linters(tags = "default")$linter)
 
   # TODO(michaelchirico): use plain expect_equal after waldo#133 makes it into a CRAN release
   # Here, the environment()s are different because factories use them.
-  skip_if_not(getRversion() >= "4.1") # Desired all.equal behaviour only available in >= 4.1
+  skip_if_not_r_version("4.1.0") # Desired all.equal behaviour only available in >= 4.1
   # covr modifies package functions causing differing deparse() results even for identical anonymous functions.
   # This happens because default_linters is generated at build time and thus not modifiable by covr, whereas
   # linters_with_tags() constructs the linters at runtime.

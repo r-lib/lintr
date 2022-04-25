@@ -12,20 +12,28 @@ missing_package_linter <- function() {
 
     xml <- source_file$full_xml_parsed_content
 
-    library_text <- xp_text_in_table(c("library", "require", "loadNamespace", "requireNamespace"))
-
-    name_xpath <- "OP-LEFT-PAREN[1]/following-sibling::expr[1][SYMBOL | STR_CONST]"
-    call_xpath <- sprintf(
-      "//expr[expr[SYMBOL_FUNCTION_CALL[%s]]/following-sibling::%s]",
-      library_text,
-      name_xpath
-    )
+    call_xpath <- "//expr[
+      (
+        expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
+        and (
+          expr[2][STR_CONST]
+          or (
+            expr[2][SYMBOL]
+            and not(
+              SYMBOL_SUB[text() = 'character.only']
+              /following-sibling::expr[1]
+              /NUM_CONST[text() = 'TRUE' or text() = 'T']
+            )
+          )
+        )
+      ) or (
+        expr[SYMBOL_FUNCTION_CALL[text() = 'loadNamespace' or text() = 'requireNamespace']]
+        and expr[2][STR_CONST]
+      )
+    ]"
 
     pkg_calls <- xml2::xml_find_all(xml, call_xpath)
-    pkg_names <- xml2::xml_find_all(pkg_calls, name_xpath)
-    pkg_names <- xml2::xml_text(pkg_names)
-    pkg_names <- parse(text = pkg_names, keep.source = FALSE)
-    pkg_names <- vapply(pkg_names, as.character, character(1L))
+    pkg_names <- get_r_string(xml2::xml_find_all(pkg_calls, "OP-LEFT-PAREN[1]/following-sibling::expr[1][SYMBOL | STR_CONST]"))
 
     installed_packges <- .packages(all.available = TRUE)
     missing_ids <- which(!(pkg_names %in% installed_packges))

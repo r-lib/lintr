@@ -44,8 +44,7 @@ names(infix_metadata) <- c("xml_tag", "string_value")
 # utils::getParseData()'s designation for the tokens wouldn't be valid as XML tags
 infix_metadata$parse_tag <- ifelse(
   startsWith(infix_metadata$xml_tag, "OP-"),
-  # NB: sQuote(x, "'") doesn't work on older R versions
-  paste0("'", infix_metadata$string_value, "'"),
+  quote_wrap(infix_metadata$string_value, "'"),
   infix_metadata$xml_tag
 )
 # treated separately because spacing rules are different for unary operators
@@ -69,56 +68,56 @@ infix_metadata$comparator <- infix_metadata$string_value %in% c("<", "<=", ">", 
 #'   `=`, `/`, `*`, and any infix operator (exclude infixes by passing `"%%"`). Note that `<-`, `:=`, and `<<-`
 #'   are included/excluded as a group (indicated by passing `"<-"`), as are `->` and `->>` (_viz_, `"->"`),
 #'   and that `=` for assignment and for setting arguments in calls are treated the same.
+#' @param allow_multiple_spaces Logical, default `TRUE`. If `FALSE`, usage like `x  =  2` will also be linted;
+#'   excluded by default because such usage can sometimes be used for better code alignment, as is allowed
+#'   by the style guide.
 #' @evalRd rd_tags("infix_spaces_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
 #'   <https://style.tidyverse.org/syntax.html#infix-operators>
 #' @export
-infix_spaces_linter <- function(exclude_operators = NULL) {
+infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces = TRUE) {
+  if (allow_multiple_spaces) {
+    op <- "<"
+    lint_message <- "Put spaces around all infix operators."
+  } else {
+    op <- "!="
+    lint_message <- "Put exactly one space on each side of infix operators."
+  }
   Linter(function(source_file) {
+    if (is.null(source_file$xml_parsed_content)) return(list())
+
+    xml <- source_file$xml_parsed_content
     infix_tokens <- infix_metadata[
       infix_metadata$low_precedence & !infix_metadata$string_value %in% exclude_operators,
-      "parse_tag"
+      "xml_tag"
     ]
+
+    # NB: preceding-sibling::* and not preceding-sibling::expr because
+    #   of the foo(a=1) case, where the tree is <SYMBOL_SUB><EQ_SUB><expr>
+    # NB: position() > 1 for the unary case, e.g. x[-1]
+    xpath <- glue::glue("//*[
+      ({xp_or(paste0('self::', infix_tokens))})
+      and position() > 1
+      and (
+        (
+          @line1 = preceding-sibling::*[1]/@line1
+          and @col1 {op} preceding-sibling::*[1]/@col2 + 2
+        ) or (
+          @line1 = following-sibling::*[1]/@line1
+          and following-sibling::*[1]/@col1 {op} @col2 + 2
+        )
+      )
+    ]")
+
+    bad_expr <- xml2::xml_find_all(xml, xpath)
+
     lapply(
-      ids_with_token(source_file, infix_tokens, fun = `%in%`),
-      function(id) {
-        parsed <- with_id(source_file, id)
-
-        line <- source_file$lines[as.character(parsed$line1)]
-
-        around_operator <- substr(line, parsed$col1 - 1L, parsed$col2 + 1L)
-        non_space_before <- re_matches(around_operator, rex(start, non_space))
-        newline_after <- unname(nchar(line)) %==% parsed$col2
-        non_space_after <- re_matches(around_operator, rex(non_space, end))
-
-        if (non_space_before || (!newline_after && non_space_after)) {
-
-          # we only should check spacing if the operator is infix,
-          # which only happens if there is more than one sibling
-          is_infix <- length(siblings(source_file$parsed_content, parsed$id, 1)) > 1L
-
-          start <- end <- parsed$col1
-
-          if (is_infix) {
-            if (non_space_before) {
-              start <- parsed$col1 - 1L
-            }
-            if (non_space_after) {
-              end <- parsed$col2 + 1L
-            }
-
-            Lint(
-              filename = source_file$filename,
-              line_number = parsed$line1,
-              column_number = parsed$col1,
-              type = "style",
-              message = "Put spaces around all infix operators.",
-              line = line,
-              ranges = list(c(start, end))
-            )
-          }
-        }
-      })
+      bad_expr,
+      xml_nodes_to_lint,
+      source_file = source_file,
+      lint_message = lint_message,
+      type = "style"
+    )
   })
 }

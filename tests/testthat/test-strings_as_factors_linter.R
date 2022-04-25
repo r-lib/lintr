@@ -7,8 +7,7 @@ test_that("strings_as_factors_linter skips allowed usages", {
   expect_lint("data.frame(x = c('a', 'b'), stringsAsFactors = FALSE)", NULL, strings_as_factors_linter())
 
   # strings in argument names to c() don't get linted
-  # TODO(michaelchirico): fix this; currently generates a false positive.
-  # expect_lint("data.frame(x = c('a b' = 1L, 'b c' = 2L))", NULL, strings_as_factors_linter())
+  expect_lint("data.frame(x = c('a b' = 1L, 'b c' = 2L))", NULL, strings_as_factors_linter())
 
   # characters supplied to row.names are not affected
   expect_lint("data.frame(x = 1:3, row.names = c('a', 'b', 'c'))", NULL, strings_as_factors_linter())

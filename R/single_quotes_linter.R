@@ -17,7 +17,7 @@ single_quotes_linter <- function() {
     str_idx <- which(content$token == "STR_CONST")
     squote_matches <- which(re_matches(
       content[str_idx, "text"],
-      rex(start, single_quote, any_non_double_quotes, single_quote, end)
+      rex(start, zero_or_one(character_class('rR')), single_quote, any_non_double_quotes, single_quote, end)
     ))
 
     lapply(
