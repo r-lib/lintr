@@ -24,11 +24,16 @@ yoda_test_linter <- function() {
     #       (but _not_ x$"key", #1067)
     #   (3) arithmetic literal (e.g. 1+1 or 0+1i)    [OP-PLUS or OP-MINUS...]
     # TODO(#963): fully generalize this & re-use elsewhere
-    xpath <- "//expr[
+    const_condition <- "
+      NUM_CONST
+      or (STR_CONST and not(OP-DOLLAR))
+      or ((OP-PLUS or OP-MINUS) and count(expr[NUM_CONST]) = 2)
+    "
+    xpath <- glue::glue("//expr[
       expr[SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical' or text() = 'expect_setequal']]
-      and expr[2][NUM_CONST or (STR_CONST and not(OP-DOLLAR)) or ((OP-PLUS or OP-MINUS) and count(expr[NUM_CONST]) = 2)]
+      and expr[2][ {const_condition} ]
       and not(preceding-sibling::*[self::PIPE or self::SPECIAL[text() = '%>%']])
-    ]"
+    ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
@@ -36,10 +41,18 @@ yoda_test_linter <- function() {
       bad_expr,
       xml_nodes_to_lint,
       source_file = source_file,
-      lint_message = paste(
-        "Tests should compare objects in the order 'actual', 'expected', not the reverse.",
-        "For example, do expect_identical(foo(x), 2L) instead of expect_identical(2L, foo(x))."
-      ),
+      lint_message = function(expr) {
+        matched_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
+        second_const <- xml2::xml_find_first(expr, glue::glue("expr[position() = 3 and ({const_condition})]"))
+        if (is.na(second_const)) {
+          paste(
+            "Tests should compare objects in the order 'actual', 'expected', not the reverse.",
+            sprintf("For example, do %1$s(foo(x), 2L) instead of %1$s(2L, foo(x)).", matched_call)
+          )
+        } else {
+          sprintf("Avoid storing placeholder tests like %s(1, 1)", matched_call)
+        }
+      },
       type = "warning"
     ))
   })
