@@ -110,6 +110,9 @@ function calls. (#850, #851, @renkun-ken)
    + `expect_named_linter()` Require usage of `expect_named(x, n)` over `expect_equal(names(x), n)` and similar
    * `expect_length_linter()` Require usage of `expect_length(x, n)` over `expect_equal(length(x), n)` and similar
    * `yoda_test_linter()` Require usage of `expect_identical(x, 1L)` over `expect_equal(1L, x)` and similar
+     + Extended for #979 to improve the lint message displayed for placeholder tests like `expect_equal(1, 1)`
+     + Extended for #1066 to exclude tests at the ends of pipelines like `foo() %>% expect_equal(2)`
+     + Extended for #1067 to exclude `$` extractions like `expect_equal(x$"key", 2)`
    * `expect_identical_linter()` Require usage of `expect_identical()` by default, and `expect_equal()` only by exception
    * `expect_comparison_linter()` Require usage of `expect_gt(x, y)` over `expect_true(x > y)` and similar
    * `if_else_match_braces_linter()` Require balanced usage of `{}` in `if`/`else` conditions
