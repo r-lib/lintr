@@ -9,7 +9,7 @@
 #' @evalRd rd_tags("brace_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-brace_linter <- function(allow_single_line = FALSE, c_style_braces = FALSE) {
+brace_linter <- function(allow_single_line = FALSE) {
   Linter(function(source_expression) {
     if (length(source_expression$xml_parsed_content) == 0L) {
       return(list())
