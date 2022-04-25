@@ -119,7 +119,7 @@ Collate:
     'pipe_continuation_linter.R'
     'redundant_ifelse_linter.R'
     'regex_subset_linter.R'
-    'semicolon_terminator_linter.R'
+    'semicolon_linter.R'
     'seq_linter.R'
     'settings.R'
     'single_quotes_linter.R'
