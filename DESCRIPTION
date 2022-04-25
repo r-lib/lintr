@@ -68,7 +68,6 @@ Collate:
     'declared_functions.R'
     'deprecated.R'
     'duplicate_argument_linter.R'
-    'else_same_line_linter.R'
     'equals_na_linter.R'
     'exclude.R'
     'expect_comparison_linter.R'

@@ -15,6 +15,7 @@ Perform various style checks related to placement and spacing of curly braces:
 \details{
 \itemize{
 \item Curly braces are on their own line unless they are followed by an \verb{else}.
+\item Closing curly braces in \code{if} conditions are on the same line as the corresponding \verb{else}.
 }
 }
 \seealso{

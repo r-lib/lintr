@@ -82,3 +82,46 @@ test_that("brace_linter lints closed braces correctly", {
   # }} is allowed
   expect_lint("{{ x }}", NULL, linter)
 })
+
+test_that("brace_linter lints else correctly", {
+  linter <- brace_linter()
+  expect_lint("if (TRUE) 1 else 2", NULL, linter)
+  expect_lint("if (TRUE) 1", NULL, linter)
+
+  lines_brace <- trim_some("
+    if (TRUE) {
+      1
+    } else {
+      2
+    }
+  ")
+  expect_lint(lines_brace, NULL, linter)
+
+  # such usage is also not allowed by the style guide, but test anyway
+  lines_unbrace <- trim_some("
+    foo <- function(x) {
+      if (TRUE)
+        1
+      else
+        2
+    }
+  ")
+  expect_lint(lines_unbrace, NULL, linter)
+
+  lines <- trim_some("
+    foo <- function(x) {
+      if (x) {
+        1
+      }
+      else {
+        2
+      }
+    }
+  ")
+  expect_lint(
+    lines,
+    rex::rex("`else` should come on the same line as the previous `}`."),
+    linter
+  )
+})
+
