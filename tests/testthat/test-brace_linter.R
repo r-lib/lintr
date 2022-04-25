@@ -113,6 +113,65 @@ test_that("brace_linter lints braces correctly", {
   )
 })
 
+test_that("brace_linter lints spaces before open braces", {
+  linter <- brace_linter()
+  msg <- rex::rex("There should be a space before an opening curly brace.")
+
+  expect_lint(
+    "blah <- function(){\n}",
+    list(
+      message = msg,
+      column_number = 19L
+    ),
+    linter
+  )
+
+  expect_lint(
+    "\nblah <- function(){\n\n\n}",
+    list(
+      message = msg,
+      column_number = 19L
+    ),
+    linter
+  )
+
+  # should also lint if/else
+  expect_lint(
+    "a <- if (a){\n} else{\n}",
+    list(
+      list(message = msg, line_number = 1L, column_number = 12L),
+      list(message = msg, line_number = 2L, column_number = 7L)
+    ),
+    linter
+  )
+
+  # should lint repeat{
+  expect_lint(
+    "repeat{\nblah\n}",
+    list(message = msg, line_number = 1L, column_number = 7L),
+    linter
+  )
+
+  # should ignore strings and comments, as in regexes:
+  expect_lint("grepl('(iss){2}', 'Mississippi')", NULL, linter)
+  expect_lint(
+    "x <- 123 # dont flag (paren){brace} if inside a comment",
+    NULL,
+    linter
+  )
+  # should not be thrown when the brace lies on subsequent line
+  expect_lint(
+    trim_some("
+      x <- function()
+                     {2}
+    "),
+    list(
+      rex::rex("Opening curly braces should never go on their own line and should always be followed by a new line."),
+      rex::rex("Closing curly-braces should always be on their own line, unless they are followed by an else.")
+    ), #, but not msg
+    linter
+  )
+})
 
 test_that("brace_linter lints else correctly", {
   linter <- brace_linter()
