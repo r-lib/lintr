@@ -109,8 +109,9 @@ test_that("Warns if encoding is misspecified", {
   expect_s3_class(the_lint, "lint")
 
   msg <- "Invalid multibyte character in parser. Is the encoding correct?"
-  if (.Platform$OS.type == "windows") {
-    # Windows parser throws a different error message because the source code is converted to native encoding
+  if (.Platform$OS.type == "windows" && getRversion() < "4.2.0") {
+    # Prior to R 4.2.0, the Windows parser throws a different error message because the source code is converted to
+    # native encoding.
     # This results in line 4 becoming <fc> <- 42 before the parser sees it.
     msg <- "unexpected '<'"
   }
