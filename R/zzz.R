@@ -25,7 +25,6 @@ default_linters <- with_defaults(
   object_length_linter(),
   object_name_linter(),
   object_usage_linter(),
-  open_curly_linter(),
   paren_body_linter(),
   paren_brace_linter(),
   pipe_continuation_linter(),

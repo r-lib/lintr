@@ -9,6 +9,7 @@
 #'   <https://style.tidyverse.org/syntax.html#indenting>
 #' @export
 open_curly_linter <- function(allow_single_line = FALSE) {
+  lintr_deprecated("open_curly_linter", new = "brace_linter", version = "2.0.1.9001", type = "Linter")
   Linter(function(source_file) {
     lapply(
       ids_with_token(source_file, "'{'"),
