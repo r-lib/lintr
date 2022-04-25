@@ -107,6 +107,20 @@ test_that("unreachable_code_linter finds code after stop()", {
   )
 })
 
+test_that("unreachable_code_linter ignores code after foo$stop(), which might be stopping a subprocess, for example", {
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        bar <- get_process()
+        bar$stop()
+        TRUE
+      }
+    "),
+    NULL,
+    unreachable_code_linter()
+  )
+})
+
 # nolint start: commented_code_linter.
 # TODO(michaelchirico): extend to work on switch() statements
 # test_that("unreachable_code_linter interacts with switch() as expected", {

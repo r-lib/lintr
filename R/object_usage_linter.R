@@ -188,31 +188,36 @@ get_assignment_symbols <- function(xml) {
 }
 
 get_function_assignments <- function(xml) {
-  left_assignment_functions <-
-    xml2::xml_find_all(xml, "expr[LEFT_ASSIGN][expr[2][FUNCTION]]/expr[2]")
-  equal_assignment_functions <-
-    xml2::xml_find_all(xml, "equal_assign[expr[2]][expr[FUNCTION]]/expr[2]")
-  assign_assignment_functions <-
-    xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='assign']]/expr[3]")
-  setmethod_assignment_functions <-
-    xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[3]")
+  # NB: difference across R versions in how EQ_ASSIGN is represented in the AST
+  #   (under <expr_or_assign_or_help> or <equal_assign>)
+  direct_assignment_functions <- xml2::xml_find_all(xml, "
+    //*[
+      (
+        (self::expr and (LEFT_ASSIGN or EQ_ASSIGN))
+        or ((self::expr_or_assign_or_help or self::equal_assign) and EQ_ASSIGN)
+      )
+      and expr[2][FUNCTION]
+    ]
+    /expr[2]
+  ")
+  assign_or_setmethod_assignment_functions <-
+    xml2::xml_find_all(xml, "//expr[expr[SYMBOL_FUNCTION_CALL[text() = 'assign' or text() = 'setMethod']]]/expr[3]")
 
   funs <- c(
-    left_assignment_functions,
-    equal_assignment_functions,
-    assign_assignment_functions,
-    setmethod_assignment_functions
+    direct_assignment_functions,
+    assign_or_setmethod_assignment_functions
   )
 
-  get_attr <- function(x, attr) as.integer(xml2::xml_attr(x, attr))
-
-  res <- data.frame(
-    line1 = viapply(funs, get_attr, "line1"),
-    line2 = viapply(funs, get_attr, "line2"),
-    col1 = viapply(funs, get_attr, "col1"),
-    col2 = viapply(funs, get_attr, "col2"),
-    stringsAsFactors = FALSE
-  )
+   if (length(funs) == 0L) {
+    res <- data.frame(line1 = integer(), line2 = integer(), col1 = integer(), col2 = integer())
+  } else {
+    res <- data.frame(
+      line1 = as.integer(vapply(funs, xml2::xml_attr, attr = "line1", "")),
+      line2 = as.integer(vapply(funs, xml2::xml_attr, attr = "line2", "")),
+      col1 = as.integer(vapply(funs, xml2::xml_attr, attr = "col1", "")),
+      col2 = as.integer(vapply(funs, xml2::xml_attr, attr = "col2", ""))
+    )
+  }
   res[["expr"]] <- funs
   res
 }

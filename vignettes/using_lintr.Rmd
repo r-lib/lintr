@@ -170,6 +170,33 @@ defaults_table <- data.frame(
 knitr::kable(defaults_table)
 ```
 
+#### Advanced: programmatic retrieval of linters
+
+For some use cases, it may be useful to specify linters by string instead of by name, i.e.
+`"assignment_linter"` instead of writing out `assignment_linter()`.
+
+Beware that in such cases, a simple `get()` is not enough:
+
+```{r programmatic_lintr}
+library(lintr)
+linter_name <- "assignment_linter"
+
+withr::with_tempfile("tmp", {
+  writeLines("a = 1", tmp)
+
+  # linter column is just 'get'
+  print(as.data.frame(lint(tmp, linters = get(linter_name)())))
+
+  this_linter <- get(linter_name)()
+  attr(this_linter, "name") <- linter_name
+  # linter column is 'assignment_linter'
+  print(as.data.frame(lint(tmp, linters = this_linter)))
+
+  # more concise alternative: use eval(call(.))
+  print(as.data.frame(lint(tmp, linters = eval(call(linter_name)))))
+})
+```
+
 ## Exclusions
 
 Sometimes, linters should not be globally disabled. Instead, one might want to exclude some code from linting altogether
