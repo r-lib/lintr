@@ -127,7 +127,7 @@ test_that("Warns if encoding is misspecified", {
 })
 
 test_that("Can extract line number from parser errors", {
-  skip_if_not(getRversion() >= "4.0")
+  skip_if_not_r_version("4.0.0")
 
   # malformed raw string literal at line 2
   with_content_to_parse(
