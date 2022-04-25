@@ -5,7 +5,7 @@
 \alias{default_linters}
 \title{Default linters}
 \format{
-An object of class \code{list} of length 28.
+An object of class \code{list} of length 27.
 }
 \usage{
 default_linters
@@ -30,7 +30,6 @@ The following linters are tagged with 'default':
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{equals_na_linter}}}
-\item{\code{\link{function_brace_linter}}}
 \item{\code{\link{function_left_parentheses_linter}}}
 \item{\code{\link{if_else_match_braces_linter}}}
 \item{\code{\link{infix_spaces_linter}}}

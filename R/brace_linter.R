@@ -4,11 +4,13 @@
 #'
 #'  - Curly braces are on their own line unless they are followed by an `else`.
 #'  - Closing curly braces in `if` conditions are on the same line as the corresponding `else`.
+#'  - Functions spanning multiple lines use curly braces.
 #'
 #' @param allow_single_line if `TRUE`, allow an open and closed curly pair on the same line.
 #'
 #' @evalRd rd_tags("brace_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso [linters] for a complete list of linters available in lintr. \cr
+#'   <https://style.tidyverse.org/syntax.html#indenting>
 #' @export
 brace_linter <- function(allow_single_line = FALSE) {
   Linter(function(source_expression) {
@@ -61,6 +63,15 @@ brace_linter <- function(allow_single_line = FALSE) {
       xml_nodes_to_lint,
       source_file = source_expression,
       lint_message = "`else` should come on the same line as the previous `}`."
+    ))
+
+    xp_function_brace <- "//expr[FUNCTION and @line1 != @line2 and not(expr[OP-LEFT-BRACE])]"
+
+    lints <- c(lints, lapply(
+      xml2::xml_find_all(source_expression$xml_parsed_content, xp_function_brace),
+      xml_nodes_to_lint,
+      source_file = source_expression,
+      lint_message = "Any function spanning multiple lines should use curly braces."
     ))
 
     lints

@@ -16,10 +16,12 @@ Perform various style checks related to placement and spacing of curly braces:
 \itemize{
 \item Curly braces are on their own line unless they are followed by an \verb{else}.
 \item Closing curly braces in \code{if} conditions are on the same line as the corresponding \verb{else}.
+\item Functions spanning multiple lines use curly braces.
 }
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr. \cr
+\url{https://style.tidyverse.org/syntax.html#indenting}
 }
 \section{Tags}{
 \link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}

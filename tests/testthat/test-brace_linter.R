@@ -123,3 +123,24 @@ test_that("brace_linter lints else correctly", {
   )
 })
 
+test_that("brace_linter lints function expressions correctly", {
+  linter <- brace_linter()
+  expect_lint("function(x) 4", NULL, linter)
+
+  lines <- trim_some("
+    function(x) {
+      x + 4
+    }
+  ")
+  expect_lint(lines, NULL, linter)
+
+  lines <- trim_some("
+    function(x)
+      x+4
+  ")
+  expect_lint(
+    lines,
+    rex::rex("Any function spanning multiple lines should use curly braces."),
+    linter
+  )
+})

@@ -22,12 +22,12 @@ The following tags exist:
 \item{\link[=configurable_linters]{configurable} (18 linters)}
 \item{\link[=consistency_linters]{consistency} (16 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
-\item{\link[=default_linters]{default} (28 linters)}
+\item{\link[=default_linters]{default} (27 linters)}
 \item{\link[=efficiency_linters]{efficiency} (14 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
-\item{\link[=readability_linters]{readability} (37 linters)}
+\item{\link[=readability_linters]{readability} (36 linters)}
 \item{\link[=robustness_linters]{robustness} (12 linters)}
-\item{\link[=style_linters]{style} (37 linters)}
+\item{\link[=style_linters]{style} (36 linters)}
 }
 }
 \section{Linters}{
@@ -60,7 +60,6 @@ The following linters exist:
 \item{\code{\link{expect_true_false_linter}} (tags: best_practices, package_development, readability)}
 \item{\code{\link{expect_type_linter}} (tags: best_practices, package_development)}
 \item{\code{\link{extraction_operator_linter}} (tags: best_practices, style)}
-\item{\code{\link{function_brace_linter}} (tags: default, readability, style)}
 \item{\code{\link{function_left_parentheses_linter}} (tags: default, readability, style)}
 \item{\code{\link{if_else_match_braces_linter}} (tags: default, readability, style)}
 \item{\code{\link{ifelse_censor_linter}} (tags: best_practices, efficiency)}

@@ -12,6 +12,7 @@
 * Combined several curly brace related linters into a new `brace_linter` (#1041, @AshesITR):
   + `closed_curly_linter()`
   + Require `else` to come on the same line as the preceding `}`, if present (#884, @michaelchirico)
+  + Require functions spanning multiple lines to use curly braces (@michaelchirico)
 * The `...` arguments for `lint()`, `lint_dir()`, and `lint_package()` have promoted to an earlier position to better match the [Tidyverse design principal](https://design.tidyverse.org/args-data-details.html) of data->descriptor->details. This change enables passing objects to `...` without needing to specify non-required arguments, e.g. `lint_dir("/path/to/dir", linter())` now works without the need to specify `relative_path`. This affects some code that uses positional arguments. (#935, @michaelchirico)
   + For `lint()`, `...` is now the 3rd argument, where earlier this was `cache=`
   + For `lint_dir()` and `lint_package()`, `...` is now the 2nd argument, where earlier this was `relative_path=`
