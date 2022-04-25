@@ -62,7 +62,7 @@ fixed_regex_linter <- function() {
 
     patterns <- xml2::xml_find_all(xml, xpath)
 
-    return(lapply(
+    lapply(
       patterns[is_not_regex(xml2::xml_text(patterns))],
       xml_nodes_to_lint,
       source_file = source_file,
@@ -80,7 +80,7 @@ fixed_regex_linter <- function() {
         "`gsub()` is affected by the `fixed` argument as well."
       ),
       type = "warning"
-    ))
+    )
   })
 }
 
