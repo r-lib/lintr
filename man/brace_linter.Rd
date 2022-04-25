@@ -4,7 +4,7 @@
 \alias{brace_linter}
 \title{Brace linter}
 \usage{
-brace_linter(allow_single_line = FALSE, c_style_braces = FALSE)
+brace_linter(allow_single_line = FALSE)
 }
 \arguments{
 \item{allow_single_line}{if \code{TRUE}, allow an open and closed curly pair on the same line.}
