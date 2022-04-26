@@ -13,5 +13,5 @@ Check that there is a space between right parentheses and an opening curly brace
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=readability_linters]{readability}, \link[=style_linters]{style}
 }

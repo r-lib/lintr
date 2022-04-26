@@ -19,11 +19,8 @@ The following linters are tagged with 'style':
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{consecutive_stopifnot_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
-\item{\code{\link{else_same_line_linter}}}
 \item{\code{\link{extraction_operator_linter}}}
-\item{\code{\link{function_brace_linter}}}
 \item{\code{\link{function_left_parentheses_linter}}}
-\item{\code{\link{if_else_match_braces_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{line_length_linter}}}
