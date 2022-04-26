@@ -48,6 +48,8 @@ test_that("brace_linter lints closed braces correctly", {
 
   # }) is allowed
   expect_lint("eval(bquote({...}))", NULL, linter)
+  # }] is too
+  expect_lint("df[, {...}]", NULL, linter)
 
   # }, is allowed
   expect_lint(

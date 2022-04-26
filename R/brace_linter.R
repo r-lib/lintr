@@ -22,8 +22,12 @@ brace_linter <- function(allow_single_line = FALSE) {
       if (isTRUE(allow_single_line)) {
         "(@line1 != preceding-sibling::OP-LEFT-BRACE/@line1)"
       },
-      # immediately followed by "," or ")"
-      "not(@line1 = ancestor::expr/following-sibling::*[1][self::OP-COMMA or self::OP-RIGHT-PAREN]/@line1)",
+      # immediately followed by ",", "]" or ")"
+      "not(
+        @line1 = ancestor::expr/following-sibling::*[1][
+          self::OP-COMMA or self::OP-RIGHT-BRACKET or self::OP-RIGHT-PAREN
+        ]/@line1
+      )",
       # double curly
       "not(
         (@line1 = parent::expr/following-sibling::OP-RIGHT-BRACE/@line1) or
@@ -33,7 +37,7 @@ brace_linter <- function(allow_single_line = FALSE) {
 
     xp_closed_curly <- glue::glue("//OP-RIGHT-BRACE[
       { xp_cond_closed } and (
-        (@line1 = preceding-sibling::*/@line2) or
+        (@line1 = preceding-sibling::*[1]/@line2) or
         (@line1 = parent::expr/following-sibling::*[1][not(self::ELSE)]/@line1)
       )
     ]")

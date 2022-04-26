@@ -67,7 +67,8 @@ closed_curly_linter <- function(allow_single_line = FALSE) {
               "unless they are followed by an else."
             ),
             line = source_file$lines[as.character(parsed$line1)]
-          )}
+          )
+        }
       }
     )
   })
