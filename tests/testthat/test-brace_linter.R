@@ -10,6 +10,7 @@ test_that("brace_linter lints braces correctly", {
   linter <- brace_linter()
   expect_lint("blah", NULL, linter)
   expect_lint("a <- function() {\n}", NULL, linter)
+  expect_lint("a <- function() {  \n}", NULL, linter)
 
   expect_lint("a <- function() { 1 }", list(open_curly_msg, closed_curly_msg), linter)
   # allowed by allow_single_line
