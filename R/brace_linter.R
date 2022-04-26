@@ -3,6 +3,7 @@
 #' Perform various style checks related to placement and spacing of curly braces:
 #'
 #'  - Opening curly braces are never on their own line and are always followed by a newline.
+#'  - Opening curly braces have a space before them.
 #'  - Closing curly braces are on their own line unless they are followed by an `else`.
 #'  - Closing curly braces in `if` conditions are on the same line as the corresponding `else`.
 #'  - Either both or neither branch in `if`/`else` use curly braces, i.e., either both branches use `{...}` or neither
@@ -52,6 +53,21 @@ brace_linter <- function(allow_single_line = FALSE) {
         "Opening curly braces should never go on their own line and",
         "should always be followed by a new line."
       )
+    ))
+
+    xp_open_preceding <- "parent::expr/preceding-sibling::*[1][self::OP-RIGHT-PAREN or self::ELSE or self::REPEAT]"
+
+    xp_paren_brace <- glue::glue("//OP-LEFT-BRACE[
+      @line1 = { xp_open_preceding }/@line1
+      and
+      @col1 = { xp_open_preceding }/@col2 + 1
+    ]")
+
+    lints <- c(lints, lapply(
+      xml2::xml_find_all(source_expression$xml_parsed_content, xp_paren_brace),
+      xml_nodes_to_lint,
+      source_file = source_expression,
+      lint_message = "There should be a space before an opening curly brace."
     ))
 
     xp_cond_closed <- xp_and(c(

@@ -5,7 +5,7 @@
 \alias{default_linters}
 \title{Default linters}
 \format{
-An object of class \code{list} of length 25.
+An object of class \code{list} of length 24.
 }
 \usage{
 default_linters
@@ -38,7 +38,6 @@ The following linters are tagged with 'default':
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{object_usage_linter}}}
 \item{\code{\link{paren_body_linter}}}
-\item{\code{\link{paren_brace_linter}}}
 \item{\code{\link{pipe_continuation_linter}}}
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{seq_linter}}}
