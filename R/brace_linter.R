@@ -2,7 +2,9 @@
 #'
 #' Perform various style checks related to placement and spacing of curly braces:
 #'
-#'  - Curly braces are on their own line unless they are followed by an `else`.
+#'  - Opening curly braces are never on their own line and are always followed by a newline.
+#'  - Opening curly braces have a space before them.
+#'  - Closing curly braces are on their own line unless they are followed by an `else`.
 #'  - Closing curly braces in `if` conditions are on the same line as the corresponding `else`.
 #'  - Either both or neither branch in `if`/`else` use curly braces, i.e., either both branches use `{...}` or neither
 #'    does.
@@ -22,6 +24,51 @@ brace_linter <- function(allow_single_line = FALSE) {
     }
 
     lints <- list()
+
+    xp_cond_open <- xp_and(c(
+      # matching } is on same line
+      if (isTRUE(allow_single_line)) {
+        "(@line1 != following-sibling::OP-LEFT-BRACE/@line1)"
+      },
+      # double curly
+      "not(
+        (@line1 = parent::expr/preceding-sibling::OP-LEFT-BRACE/@line1) or
+        (@line1 = following-sibling::expr/OP-LEFT-BRACE/@line1)
+      )"
+    ))
+
+    # TODO (AshesITR): if c_style_braces is TRUE, invert the preceding-sibling condition
+    xp_open_curly <- glue::glue("//OP-LEFT-BRACE[
+      { xp_cond_open } and (
+        not(@line1 = parent::expr/preceding-sibling::*/@line2) or
+        @line1 = following-sibling::*[1][not(self::COMMENT)]/@line1
+      )
+    ]")
+
+    lints <- c(lints, lapply(
+      xml2::xml_find_all(source_expression$xml_parsed_content, xp_open_curly),
+      xml_nodes_to_lint,
+      source_file = source_expression,
+      lint_message = paste(
+        "Opening curly braces should never go on their own line and",
+        "should always be followed by a new line."
+      )
+    ))
+
+    xp_open_preceding <- "parent::expr/preceding-sibling::*[1][self::OP-RIGHT-PAREN or self::ELSE or self::REPEAT]"
+
+    xp_paren_brace <- glue::glue("//OP-LEFT-BRACE[
+      @line1 = { xp_open_preceding }/@line1
+      and
+      @col1 = { xp_open_preceding }/@col2 + 1
+    ]")
+
+    lints <- c(lints, lapply(
+      xml2::xml_find_all(source_expression$xml_parsed_content, xp_paren_brace),
+      xml_nodes_to_lint,
+      source_file = source_expression,
+      lint_message = "There should be a space before an opening curly brace."
+    ))
 
     xp_cond_closed <- xp_and(c(
       # matching { is on same line

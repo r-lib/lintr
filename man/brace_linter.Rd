@@ -14,7 +14,9 @@ Perform various style checks related to placement and spacing of curly braces:
 }
 \details{
 \itemize{
-\item Curly braces are on their own line unless they are followed by an \verb{else}.
+\item Opening curly braces are never on their own line and are always followed by a newline.
+\item Opening curly braces have a space before them.
+\item Closing curly braces are on their own line unless they are followed by an \verb{else}.
 \item Closing curly braces in \code{if} conditions are on the same line as the corresponding \verb{else}.
 \item Either both or neither branch in \code{if}/\verb{else} use curly braces, i.e., either both branches use \code{{...}} or neither
 does.
