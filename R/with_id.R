@@ -9,7 +9,11 @@
 #' of `parsed_content`.
 #' @return `with_id`: A data frame corresponding to the row(s) specified in `id`.
 #' @export
-with_id <- function(source_expression, id) {
+with_id <- function(source_expression, id, source_file) {
+  if (!missing(source_file)) {
+    lintr_deprecated(old = "source_file", new = "source_expression", version = "2.0.1.9001", type = "Argument")
+    source_expression <- source_file
+  }
   if (is.null(source_expression$parsed_content)) {
     return(data.frame())
   }
