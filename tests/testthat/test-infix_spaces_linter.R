@@ -142,12 +142,14 @@ test_that("exception for box::use()", {
   expect_lint("box::use(a/b)", NULL, linter)
   expect_lint("box::use(./a/b)", NULL, linter)
   expect_lint(
-    "box::use(
-      a,
-      a/b,
-      ../a,
-      alias = a/b/c[xyz = abc, ...],
-    )",
+    trim_some("
+      box::use(
+        a,
+        a/b,
+        ../a,
+        alias = a/b/c[xyz = abc, ...],
+      )
+    "),
     NULL,
     linter
   )
