@@ -26,9 +26,7 @@ expect_s4_class_linter,package_development best_practices
 expect_true_false_linter,package_development best_practices readability
 expect_type_linter,package_development best_practices
 extraction_operator_linter,style best_practices
-function_brace_linter,default style readability
 function_left_parentheses_linter,style readability default
-if_else_match_braces_linter,default style readability
 ifelse_censor_linter,best_practices efficiency
 implicit_integer_linter,style consistency best_practices
 infix_spaces_linter,style readability default
@@ -45,11 +43,11 @@ numeric_leading_zero_linter,style consistency readability
 object_length_linter,style readability default configurable
 object_name_linter,style consistency default configurable
 object_usage_linter,style readability correctness default
-open_curly_linter,style readability default configurable
+open_curly_linter,style readability configurable
 outer_negation_linter,readability efficiency best_practices
 package_hooks_linter,style correctness package_development
 paren_body_linter,style readability default
-paren_brace_linter,style readability default
+paren_brace_linter,style readability
 paste_linter,best_practices consistency
 pipe_call_linter,style readability
 pipe_continuation_linter,style readability default
