@@ -112,6 +112,22 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
+    # Filter `box::use()` declarations
+    bad_expr <- Filter(
+      function (expr) {
+        is.na(xml2::xml_find_first(
+          expr,
+          "self::OP-SLASH[
+            ancestor::expr/preceding-sibling::OP-LEFT-PAREN/preceding-sibling::expr[
+              ./SYMBOL_PACKAGE[text() = 'box'] and
+              ./SYMBOL_FUNCTION_CALL[text() = 'use']
+            ]
+          ]"
+        ))
+      },
+      bad_expr
+    )
+
     lapply(
       bad_expr,
       xml_nodes_to_lint,
