@@ -12,7 +12,7 @@
 * Combined several curly brace related linters into a new `brace_linter` (#1041, @AshesITR):
   + `closed_curly_linter()`
   + `open_curly_linter()`, no longer linting unnecessary trailing whitespace
-  + `paren_brace_linter()`, also linting if/else and repeat with missing whitespace
+  + `paren_brace_linter()`, also linting `if`/`else` and `repeat` with missing whitespace
   + Require `else` to come on the same line as the preceding `}`, if present (#884, @michaelchirico)
   + Require functions spanning multiple lines to use curly braces (@michaelchirico)
   + Require balanced usage of `{}` in `if`/`else` conditions (@michaelchirico)
