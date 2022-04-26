@@ -96,6 +96,7 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
     # NB: preceding-sibling::* and not preceding-sibling::expr because
     #   of the foo(a=1) case, where the tree is <SYMBOL_SUB><EQ_SUB><expr>
     # NB: position() > 1 for the unary case, e.g. x[-1]
+    # NB: the last not() disables lints inside box::use() declarations
     xpath <- glue::glue("//*[
       ({xp_or(paste0('self::', infix_tokens))})
       and position() > 1
@@ -108,25 +109,17 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
           and following-sibling::*[1]/@col1 {op} @col2 + 2
         )
       )
+      and not(
+        self::OP-SLASH[
+          ancestor::expr/preceding-sibling::OP-LEFT-PAREN/preceding-sibling::expr[
+            ./SYMBOL_PACKAGE[text() = 'box'] and
+            ./SYMBOL_FUNCTION_CALL[text() = 'use']
+          ]
+        ]
+      )
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-
-    # Filter `box::use()` declarations
-    bad_expr <- Filter(
-      function (expr) {
-        is.na(xml2::xml_find_first(
-          expr,
-          "self::OP-SLASH[
-            ancestor::expr/preceding-sibling::OP-LEFT-PAREN/preceding-sibling::expr[
-              ./SYMBOL_PACKAGE[text() = 'box'] and
-              ./SYMBOL_FUNCTION_CALL[text() = 'use']
-            ]
-          ]"
-        ))
-      },
-      bad_expr
-    )
 
     lapply(
       bad_expr,
