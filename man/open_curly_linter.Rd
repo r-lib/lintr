@@ -17,5 +17,5 @@ Check that opening curly braces are never on their own line and are always follo
 \url{https://style.tidyverse.org/syntax.html#indenting}
 }
 \section{Tags}{
-\link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=configurable_linters]{configurable}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }
