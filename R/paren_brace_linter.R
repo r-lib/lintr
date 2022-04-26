@@ -6,6 +6,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 paren_brace_linter <- function() {
+  lintr_deprecated("paren_brace_linter", new = "brace_linter", version = "2.0.1.9001", type = "Linter")
   Linter(function(source_file) {
     if (is.null(source_file$xml_parsed_content)) {
       return(NULL)
