@@ -66,7 +66,7 @@ If you need a bit automatic help for re-styling your code, have a look at [the `
 * `pipe_call_linter`: force explicit calls in magrittr pipes.
 * `pipe_continuation_linter`: Check that each step in a pipeline is on a new
   line, or the entire pipe fits on one line.
-* `semicolon_terminator_linter`: check that no semicolons terminate statements.
+* `semicolon_linter`: check that no semicolons terminate statements.
 * `seq_linter`: check for `1:length(...)`, `1:nrow(...)`, `1:ncol(...)`,
   `1:NROW(...)`, and `1:NCOL(...)` expressions. These often cause bugs when the
   right hand side is zero. It is safer to use `seq_len()` or `seq_along()`
@@ -249,6 +249,12 @@ If your project is on GitHub, you could take advantage of GitHub Actions and the
 usethis::use_github_action("lint-project")
 ```
 
+#### Super-Linter ####
+
+`lintr` powers R lints for [Super-Linter](https://github.com/github/super-linter) and
+[MegaLinter](https://megalinter.github.io/latest/), which provide a unified linting experience
+across many languages. Specifically, they execute `lintr::lint()` on the R and R Markdown files
+included in a given project.
 
 ## Installation of development version ##
 To install the latest development version of lintr from GitHub

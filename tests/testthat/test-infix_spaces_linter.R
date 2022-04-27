@@ -117,3 +117,40 @@ test_that("assignment cases return the correct linting", {
   expect_lint("blah=  1", msg, linter)
   expect_lint("blah  =1", msg, linter)
 })
+
+test_that("infix_spaces_linter can allow >1 spaces optionally", {
+  expect_lint(
+    "x  ~  1",
+    rex::rex("Put exactly one space on each side of infix operators."),
+    infix_spaces_linter(allow_multiple_spaces = FALSE)
+  )
+  expect_lint(
+    "x  - 1",
+    rex::rex("Put exactly one space on each side of infix operators."),
+    infix_spaces_linter(allow_multiple_spaces = FALSE)
+  )
+  expect_lint(
+    "x /  1",
+    rex::rex("Put exactly one space on each side of infix operators."),
+    infix_spaces_linter(allow_multiple_spaces = FALSE)
+  )
+})
+
+test_that("exception for box::use()", {
+  linter <- infix_spaces_linter()
+
+  expect_lint("box::use(a/b)", NULL, linter)
+  expect_lint("box::use(./a/b)", NULL, linter)
+  expect_lint(
+    trim_some("
+      box::use(
+        a,
+        a/b,
+        ../a,
+        alias = a/b/c[xyz = abc, ...],
+      )
+    "),
+    NULL,
+    linter
+  )
+})

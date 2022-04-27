@@ -58,6 +58,17 @@ test_that("returns the correct linting", {
     linter
   )
 
+  # same, using = for assignment
+  expect_lint(
+    trim_some("
+      fun = function() {
+        a = 1
+      }
+    "),
+    rex("local variable", anything, "assigned but may not be used"),
+    linter
+  )
+
   expect_lint(
     trim_some("
       fun <- function() {
@@ -351,4 +362,20 @@ test_that("interprets glue expressions", {
       glue::glue('The answer is {local_var}.')
     }
   "), "local_var", object_usage_linter(interpret_glue = FALSE))
+})
+
+# reported as #1088
+test_that("definitions below top level are ignored (for now)", {
+  expect_lint(
+    trim_some('
+      local({
+        x <- 1
+        f <- function() {
+          x
+        }
+      })
+    '),
+    NULL,
+    object_usage_linter()
+  )
 })

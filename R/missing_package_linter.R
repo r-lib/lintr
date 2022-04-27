@@ -33,10 +33,7 @@ missing_package_linter <- function() {
     ]"
 
     pkg_calls <- xml2::xml_find_all(xml, call_xpath)
-    pkg_names <- xml2::xml_find_all(pkg_calls, "OP-LEFT-PAREN[1]/following-sibling::expr[1][SYMBOL | STR_CONST]")
-    pkg_names <- xml2::xml_text(pkg_names)
-    pkg_names <- parse(text = pkg_names, keep.source = FALSE)
-    pkg_names <- vapply(pkg_names, as.character, character(1L))
+    pkg_names <- get_r_string(xml2::xml_find_all(pkg_calls, "OP-LEFT-PAREN[1]/following-sibling::expr[1][SYMBOL | STR_CONST]"))
 
     installed_packges <- .packages(all.available = TRUE)
     missing_ids <- which(!(pkg_names %in% installed_packges))

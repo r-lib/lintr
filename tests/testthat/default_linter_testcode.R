@@ -2,7 +2,7 @@
 
 # assignment
 # function_left_parentheses
-# closed_curly
+# brace_linter
 # commas
 # paren_brace
 f = function (x,y = 1){}
@@ -12,7 +12,7 @@ f = function (x,y = 1){}
 
 # cyclocomp
 # equals_na
-# if_else_match_braces_linter
+# brace_linter
 # infix_spaces
 # line_length
 # object_length
@@ -47,7 +47,7 @@ message('single_quotes')
 
 # spaces_left_parentheses
 # trailing_whitespace
-# semicolon_terminator
+# semicolon
 x <- 42; y <- 2 +(1:10) 
 
 # trailing_blank_lines

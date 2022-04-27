@@ -6,6 +6,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 paren_brace_linter <- function() {
+  lintr_deprecated("paren_brace_linter", new = "brace_linter", version = "2.0.1.9001", type = "Linter")
   Linter(function(source_file) {
     if (is.null(source_file$xml_parsed_content)) {
       return(NULL)
@@ -25,20 +26,10 @@ paren_brace_linter <- function() {
 
     lapply(
       match_exprs,
-      function(expr) {
-        x <- xml2::as_list(expr)
-        line_num <- x@line1
-        line <- source_file$lines[[as.character(line_num)]]
-        Lint(
-          filename = source_file$filename,
-          line_number = line_num,
-          column_number = x@col1,
-          type = "style",
-          message = "There should be a space between right parenthesis and an opening curly brace.",
-          line = line,
-          ranges = list(as.numeric(c(x@col1, x@col2)))
-        )
-      }
+      xml_nodes_to_lint,
+      source_file = source_file,
+      lint_message = "There should be a space between right parenthesis and an opening curly brace.",
+      type = "style"
     )
   })
 }
