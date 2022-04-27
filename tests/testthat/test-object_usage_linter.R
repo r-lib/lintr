@@ -365,7 +365,7 @@ test_that("interprets glue expressions", {
 })
 
 # reported as #1088
-test_that("definition in parent environment is detected", {
+test_that("definitions below top level are ignored (for now)", {
   expect_lint(
     trim_some('
       local({
