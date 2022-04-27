@@ -9,6 +9,7 @@
 #'   <https://style.tidyverse.org/syntax.html#indenting>
 #' @export
 closed_curly_linter <- function(allow_single_line = FALSE) {
+  lintr_deprecated("closed_curly_linter", new = "brace_linter", version = "2.0.1.9001", type = "Linter")
   Linter(function(source_expression) {
     lapply(ids_with_token(source_expression, "'}'"),
            function(id) {
@@ -65,8 +66,14 @@ closed_curly_linter <- function(allow_single_line = FALSE) {
               "Closing curly-braces should always be on their own line,",
               "unless they are followed by an else."
             ),
+<<<<<<< HEAD
             line = source_expression$lines[as.character(parsed$line1)]
           )}
+=======
+            line = source_file$lines[as.character(parsed$line1)]
+          )
+        }
+>>>>>>> master
       }
     )
   })

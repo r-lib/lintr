@@ -9,6 +9,15 @@
 * Consistent access to linters through a function call, even for linters without parameters (#245, @fangly, @AshesITR, and @MichaelChirico)
 * Removed deprecated functions `absolute_paths_linter`, `camel_case_linter`, `multiple_dots_linter`, `snake_case_linter`, and `trailing_semicolons_linter`. They have been marked as deprecated since v1.0.1, which was released in 2017.
 * Rename `semicolon_terminator_linter` to `semicolon_linter` for better consistency. `semicolon_terminator_linter` survives but is marked for deprecation. The new linter also has a new signature, taking arguments `allow_compound` and `allow_trailing` to replace the old single argument `semicolon=`, again for signature consistency with other linters.
+* Combined several curly brace related linters into a new `brace_linter`:
+  + `closed_curly_linter()`, also allowing `}]` in addition to `})` and `},` as exceptions.
+* Combined several curly brace related linters into a new `brace_linter` (#1041, @AshesITR):
+  + `closed_curly_linter()`
+  + `open_curly_linter()`, no longer linting unnecessary trailing whitespace
+  + `paren_brace_linter()`, also linting `if`/`else` and `repeat` with missing whitespace
+  + Require `else` to come on the same line as the preceding `}`, if present (#884, @michaelchirico)
+  + Require functions spanning multiple lines to use curly braces (@michaelchirico)
+  + Require balanced usage of `{}` in `if`/`else` conditions (@michaelchirico)
 * The `...` arguments for `lint()`, `lint_dir()`, and `lint_package()` have promoted to an earlier position to better match the [Tidyverse design principal](https://design.tidyverse.org/args-data-details.html) of data->descriptor->details. This change enables passing objects to `...` without needing to specify non-required arguments, e.g. `lint_dir("/path/to/dir", linter())` now works without the need to specify `relative_path`. This affects some code that uses positional arguments. (#935, @michaelchirico)
   + For `lint()`, `...` is now the 3rd argument, where earlier this was `cache=`
   + For `lint_dir()` and `lint_package()`, `...` is now the 2nd argument, where earlier this was `relative_path=`
@@ -16,6 +25,7 @@
 
 ## New features, bug fixes, improvements
 
+* Add exception for `box::use()` declarations to infix spaces linter (#1087, @klmr)
 * Writes comments to GitHub repo when running in Jenkins CI (#488, @fdlk)
 * Updated R CMD GitHub Actions workflow to check for R 3.6 on Ubuntu, instead of R 3.3, and for R 4.0 on Windows, instead of R 3.6 (#803, @ dragosmg)
 * Added a secondary, more restrictive lint workflow - `lint-changed-files` - for newly written / modified code (#641, @dragosmg) 
@@ -118,7 +128,6 @@ function calls. (#850, #851, @renkun-ken)
      + Extended for #1067 to exclude `$` extractions like `expect_equal(x$"key", 2)`
    * `expect_identical_linter()` Require usage of `expect_identical()` by default, and `expect_equal()` only by exception
    * `expect_comparison_linter()` Require usage of `expect_gt(x, y)` over `expect_true(x > y)` and similar
-   * `if_else_match_braces_linter()` Require balanced usage of `{}` in `if`/`else` conditions
    * `vector_logic_linter()` Require use of scalar logical operators (`&&` and `||`) inside `if()` conditions and similar
    * `any_is_na_linter()` Require usage of `anyNA(x)` over `any(is.na(x))`
    * `class_equals_linter()` Prevent comparing `class(x)` with `==`, `!=`, or `%in%`, where `inherits()` is typically preferred
@@ -132,7 +141,10 @@ function calls. (#850, #851, @renkun-ken)
    * `nested_ifelse_linter()` Prevent nested calls to `ifelse()` like `ifelse(A, x, ifelse(B, y, z))`, and similar
    * `condition_message_linter` Prevent condition messages from being constructed like `stop(paste(...))` (where just `stop(...)` is preferable)
    * `redundant_ifelse_linter()` Prevent usage like `ifelse(A & B, TRUE, FALSE)` or `ifelse(C, 0, 1)` (the latter is `as.numeric(!C)`)
-   * `else_same_line_linter()` Require `else` to come on the same line as the preceding `}`, if present
+   * Extensions to `brace_linter()` 
+     + Require `else` to come on the same line as the preceding `}`, if present
+     + Require balanced usage of `{}` in `if`/`else` conditions
+     + Require functions spanning multiple lines to use curly braces
    * `unreachable_code_linter()` Prevent code after `return()` and `stop()` statements that will never be reached (extended for #1051 thanks to early user testing, thanks @bersbersbers!)
    * `regex_subset_linter()` Require usage of `grep(ptn, x, value = TRUE)` over `x[grep(ptn, x)]` and similar
    * `consecutive_stopifnot_linter()` Require consecutive calls to `stopifnot()` to be unified into one

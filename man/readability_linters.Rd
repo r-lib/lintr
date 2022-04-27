@@ -12,20 +12,18 @@ Linters highlighting readability issues, such as missing whitespace.
 \section{Linters}{
 The following linters are tagged with 'readability':
 \itemize{
+\item{\code{\link{brace_linter}}}
 \item{\code{\link{closed_curly_linter}}}
 \item{\code{\link{commas_linter}}}
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{conjunct_test_linter}}}
 \item{\code{\link{consecutive_stopifnot_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
-\item{\code{\link{else_same_line_linter}}}
 \item{\code{\link{expect_length_linter}}}
 \item{\code{\link{expect_named_linter}}}
 \item{\code{\link{expect_not_linter}}}
 \item{\code{\link{expect_true_false_linter}}}
-\item{\code{\link{function_brace_linter}}}
 \item{\code{\link{function_left_parentheses_linter}}}
-\item{\code{\link{if_else_match_braces_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{inner_combine_linter}}}
 \item{\code{\link{line_length_linter}}}
