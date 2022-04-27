@@ -26,7 +26,7 @@ For example:
 \item{fun}{For additional flexibility, a function to search for in
 the \code{token} column of \code{parsed_content}. Typically \code{==} or \code{\%in\%}.}
 
-\item{source_file}{\link{DEPRECATED} Same as \code{source_expression}. Will be removed.}
+\item{source_file}{(DEPRECATED) Same as \code{source_expression}. Will be removed.}
 
 \item{id}{Integer. The index corresponding to the desired row
 of \code{parsed_content}.}

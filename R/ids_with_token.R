@@ -15,7 +15,7 @@
 #'
 #' @param fun For additional flexibility, a function to search for in
 #' the `token` column of `parsed_content`. Typically `==` or `%in%`.
-#' @param source_file [DEPRECATED] Same as `source_expression`. Will be removed.
+#' @param source_file (DEPRECATED) Same as `source_expression`. Will be removed.
 #' @return `ids_with_token`: The indices of the `parsed_content` data frame
 #' entry of the list of source expressions. Indices correspond to the
 #' *rows* where `fun` evaluates to `TRUE` for the `value` in the *token* column.
