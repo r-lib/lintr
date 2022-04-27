@@ -19,15 +19,15 @@ The following tags exist:
 \itemize{
 \item{\link[=best_practices_linters]{best_practices} (35 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (5 linters)}
-\item{\link[=configurable_linters]{configurable} (17 linters)}
+\item{\link[=configurable_linters]{configurable} (18 linters)}
 \item{\link[=consistency_linters]{consistency} (16 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
-\item{\link[=default_linters]{default} (28 linters)}
+\item{\link[=default_linters]{default} (24 linters)}
 \item{\link[=efficiency_linters]{efficiency} (15 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
-\item{\link[=readability_linters]{readability} (38 linters)}
+\item{\link[=readability_linters]{readability} (36 linters)}
 \item{\link[=robustness_linters]{robustness} (12 linters)}
-\item{\link[=style_linters]{style} (37 linters)}
+\item{\link[=style_linters]{style} (35 linters)}
 }
 }
 \section{Linters}{
@@ -38,8 +38,9 @@ The following linters exist:
 \item{\code{\link{any_is_na_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{assignment_linter}} (tags: consistency, default, style)}
 \item{\code{\link{backport_linter}} (tags: configurable, package_development, robustness)}
+\item{\code{\link{brace_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{class_equals_linter}} (tags: best_practices, consistency, robustness)}
-\item{\code{\link{closed_curly_linter}} (tags: configurable, default, readability, style)}
+\item{\code{\link{closed_curly_linter}} (tags: configurable, readability, style)}
 \item{\code{\link{commas_linter}} (tags: default, readability, style)}
 \item{\code{\link{commented_code_linter}} (tags: best_practices, default, readability, style)}
 \item{\code{\link{condition_message_linter}} (tags: best_practices, consistency)}
@@ -47,7 +48,6 @@ The following linters exist:
 \item{\code{\link{consecutive_stopifnot_linter}} (tags: consistency, readability, style)}
 \item{\code{\link{cyclocomp_linter}} (tags: best_practices, configurable, default, readability, style)}
 \item{\code{\link{duplicate_argument_linter}} (tags: common_mistakes, configurable, correctness)}
-\item{\code{\link{else_same_line_linter}} (tags: readability, style)}
 \item{\code{\link{equals_na_linter}} (tags: common_mistakes, correctness, default, robustness)}
 \item{\code{\link{expect_comparison_linter}} (tags: best_practices, package_development)}
 \item{\code{\link{expect_identical_linter}} (tags: package_development)}
@@ -61,9 +61,7 @@ The following linters exist:
 \item{\code{\link{expect_type_linter}} (tags: best_practices, package_development)}
 \item{\code{\link{extraction_operator_linter}} (tags: best_practices, style)}
 \item{\code{\link{fixed_regex_linter}} (tags: best_practices, efficiency, readability)}
-\item{\code{\link{function_brace_linter}} (tags: default, readability, style)}
 \item{\code{\link{function_left_parentheses_linter}} (tags: default, readability, style)}
-\item{\code{\link{if_else_match_braces_linter}} (tags: default, readability, style)}
 \item{\code{\link{ifelse_censor_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{implicit_integer_linter}} (tags: best_practices, consistency, style)}
 \item{\code{\link{infix_spaces_linter}} (tags: default, readability, style)}
@@ -80,11 +78,11 @@ The following linters exist:
 \item{\code{\link{object_length_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{object_name_linter}} (tags: configurable, consistency, default, style)}
 \item{\code{\link{object_usage_linter}} (tags: correctness, default, readability, style)}
-\item{\code{\link{open_curly_linter}} (tags: configurable, default, readability, style)}
+\item{\code{\link{open_curly_linter}} (tags: configurable, readability, style)}
 \item{\code{\link{outer_negation_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{package_hooks_linter}} (tags: correctness, package_development, style)}
 \item{\code{\link{paren_body_linter}} (tags: default, readability, style)}
-\item{\code{\link{paren_brace_linter}} (tags: default, readability, style)}
+\item{\code{\link{paren_brace_linter}} (tags: readability, style)}
 \item{\code{\link{paste_linter}} (tags: best_practices, consistency)}
 \item{\code{\link{pipe_call_linter}} (tags: readability, style)}
 \item{\code{\link{pipe_continuation_linter}} (tags: default, readability, style)}

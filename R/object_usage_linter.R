@@ -190,8 +190,9 @@ get_assignment_symbols <- function(xml) {
 get_function_assignments <- function(xml) {
   # NB: difference across R versions in how EQ_ASSIGN is represented in the AST
   #   (under <expr_or_assign_or_help> or <equal_assign>)
+  # TODO(#1106): use //*[...] to capture assignments in more scopes
   direct_assignment_functions <- xml2::xml_find_all(xml, "
-    //*[
+    *[
       (
         (self::expr and (LEFT_ASSIGN or EQ_ASSIGN))
         or ((self::expr_or_assign_or_help or self::equal_assign) and EQ_ASSIGN)
