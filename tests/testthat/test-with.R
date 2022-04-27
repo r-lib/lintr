@@ -29,7 +29,8 @@ test_that("all default linters are tagged default", {
 })
 
 test_that("can instantiate all linters without arguments", {
-  all_linters <- linters_with_tags(tags = NULL)
+  # suppressWarnings() to ignore deprecation warnings
+  all_linters <- suppressWarnings(linters_with_tags(tags = NULL))
 
   expect_type(all_linters, "list")
   expect_length(all_linters, nrow(available_linters()))
