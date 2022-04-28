@@ -54,13 +54,13 @@
 #' @export
 #' @md
 get_source_expressions <- function(filename, lines = NULL) {
-  source_file <- srcfile(filename, encoding = settings$encoding)
+  source_expression <- srcfile(filename, encoding = settings$encoding)
 
   # Ensure English locale for terminal newline and zero-length variable warning messages
   old_lang <- set_lang("en")
   on.exit(reset_lang(old_lang))
 
-  source_file$lines <- if (is.null(lines)) {
+  source_expression$lines <- if (is.null(lines)) {
     read_lines(filename)
   } else {
     lines
@@ -68,16 +68,16 @@ get_source_expressions <- function(filename, lines = NULL) {
 
   # Only regard explict attribute terminal_newline=FALSE as FALSE and all other cases (e.g. NULL or TRUE) as TRUE.
   # We don't use isFALSE since it is introduced in R 3.5.0.
-  terminal_newline <- !identical(attr(source_file$lines, "terminal_newline", exact = TRUE), FALSE)
+  terminal_newline <- !identical(attr(source_expression$lines, "terminal_newline", exact = TRUE), FALSE)
 
   e <- NULL
-  source_file$lines <- extract_r_source(
-    filename = source_file$filename,
-    lines = source_file$lines,
-    error = function(e) lint_rmd_error(e, source_file)
+  source_expression$lines <- extract_r_source(
+    filename = source_expression$filename,
+    lines = source_expression$lines,
+    error = function(e) lint_rmd_error(e, source_expression)
   )
-  source_file$content <- get_content(source_file$lines)
-  parsed_content <- get_source_file(source_file, error = function(e) lint_parse_error(e, source_file))
+  source_expression$content <- get_content(source_expression$lines)
+  parsed_content <- get_source_expression(source_expression, error = function(e) lint_parse_error(e, source_expression))
   tree <- generate_tree(parsed_content)
 
   if (inherits(e, "lint") && !nzchar(e$line)) {
@@ -88,7 +88,7 @@ get_source_expressions <- function(filename, lines = NULL) {
       X = top_level_expressions(parsed_content),
       FUN = get_single_source_expression,
       parsed_content,
-      source_file,
+      source_expression,
       filename,
       tree
     )
@@ -97,18 +97,18 @@ get_source_expressions <- function(filename, lines = NULL) {
     expressions[[length(expressions) + 1L]] <-
       list(
         filename = filename,
-        file_lines = source_file$lines,
-        content = source_file$lines,
+        file_lines = source_expression$lines,
+        content = source_expression$lines,
         full_parsed_content = parsed_content,
         full_xml_parsed_content = safe_parse_to_xml(parsed_content),
         terminal_newline = terminal_newline
       )
   }
 
-  list(expressions = expressions, error = e, lines = source_file$lines)
+  list(expressions = expressions, error = e, lines = source_expression$lines)
 }
 
-lint_parse_error <- function(e, source_file) {
+lint_parse_error <- function(e, source_expression) {
   message_info <- re_matches(e$message,
     rex(except_some_of(":"),
       ":",
@@ -135,19 +135,19 @@ lint_parse_error <- function(e, source_file) {
       # Invalid encoding in source code
       return(
         Lint(
-          filename = source_file$filename,
+          filename = source_expression$filename,
           line_number = l,
           column_number = 1L,
           type = "error",
           message = "Invalid multibyte character in parser. Is the encoding correct?",
-          line = source_file$lines[[l]]
+          line = source_expression$lines[[l]]
         )
       )
     } else if (grepl("invalid multibyte string, element", e$message, fixed = TRUE)) {
       # Invalid encoding, will break even re_matches() below, so we need to handle this first.
       return(
         Lint(
-          filename = source_file$filename,
+          filename = source_expression$filename,
           line_number = 1L,
           column_number = 1L,
           type = "error",
@@ -169,12 +169,12 @@ lint_parse_error <- function(e, source_file) {
       # Repeated formal argument 'sym' on line l
       return(
         Lint(
-          filename = source_file$filename,
+          filename = source_expression$filename,
           line_number = l,
           column_number = 1L,
           type = "error",
           message = sprintf("Repeated formal argument '%s'.", sym),
-          line = source_file$lines[[l]]
+          line = source_expression$lines[[l]]
         )
       )
     }
@@ -212,19 +212,19 @@ lint_parse_error <- function(e, source_file) {
       )
       l <- as.integer(rx_match$line)
       # Sometimes the parser "line" runs one past the last line
-      l <- pmin(l, length(source_file$lines))
+      l <- pmin(l, length(source_expression$lines))
 
       msg <- paste0(rx_match$msg_1, if (nzchar(rx_match$msg_2)) " ", rx_match$msg_2, ".")
       substr(msg, 1L, 1L) <- toupper(substr(msg, 1L, 1L))
 
       return(
         Lint(
-          filename = source_file$filename,
+          filename = source_expression$filename,
           line_number = l,
           column_number = 1L,
           type = "error",
           message = msg,
-          line = source_file$lines[[l]]
+          line = source_expression$lines[[l]]
         )
       )
     }
@@ -234,13 +234,13 @@ lint_parse_error <- function(e, source_file) {
         anything,
         double_quotes, capture(name = "starting", anything), double_quotes))
 
-    loc <- re_matches(source_file$content, rex(message_info$starting), locations = TRUE)
+    loc <- re_matches(source_expression$content, rex(message_info$starting), locations = TRUE)
     line_location <- loc[!is.na(loc$start) & !is.na(loc$end), ]
 
     if (nrow(line_location) == 0L) {
       if (grepl("attempt to use zero-length variable name", e$message, fixed = TRUE)) {
         # empty symbol: ``, ``(), ''(), ""(), fun(''=42), fun(""=42), fun(a=1,""=42)
-        loc <- re_matches(source_file$content,
+        loc <- re_matches(source_expression$content,
           rex("``" %or% list(or("''", '""'), any_spaces, "(") %or%
             list(or("(", ","), any_spaces, or("''", '""'), any_spaces, "=")),
           options = "multi-line",
@@ -253,7 +253,7 @@ lint_parse_error <- function(e, source_file) {
         # nocov start
         return(
           Lint(
-            filename = source_file$filename,
+            filename = source_expression$filename,
             line_number = 1L,
             column_number = 1L,
             type = "error",
@@ -265,16 +265,16 @@ lint_parse_error <- function(e, source_file) {
       }
     }
 
-    line_number <- find_line_fun(source_file$content)(line_location$start)
-    column_number <- find_column_fun(source_file$content)(line_location$start)
+    line_number <- find_line_fun(source_expression$content)(line_location$start)
+    column_number <- find_column_fun(source_expression$content)(line_location$start)
     return(
       Lint(
-        filename = source_file$filename,
+        filename = source_expression$filename,
         line_number = line_number,
         column_number = column_number,
         type = "error",
         message = e$message,
-        line = source_file$lines[[line_number]]
+        line = source_expression$lines[[line_number]]
       )
     )
   }
@@ -286,14 +286,14 @@ lint_parse_error <- function(e, source_file) {
   # end of the previous line
   if (column_number %==% 0L) {
     line_number <- line_number - 1L
-    line <- source_file$lines[[line_number]]
+    line <- source_expression$lines[[line_number]]
     column_number <- nchar(line)
   } else {
-    line <- source_file$lines[[line_number]]
+    line <- source_expression$lines[[line_number]]
   }
 
   Lint(
-    filename = source_file$filename,
+    filename = source_expression$filename,
     line_number = line_number,
     column_number = column_number,
     type = "error",
@@ -302,7 +302,7 @@ lint_parse_error <- function(e, source_file) {
   )
 }
 
-lint_rmd_error <- function(e, source_file) {
+lint_rmd_error <- function(e, source_expression) {
   message_info <- re_matches(e$message,
     rex(except_some_of(":"),
       ":",
@@ -322,22 +322,22 @@ lint_rmd_error <- function(e, source_file) {
   column_number <- as.integer(message_info$column)
 
   Lint(
-    filename = source_file$filename,
+    filename = source_expression$filename,
     line_number = line_number,
     column_number = column_number,
     type = "error",
     message = message_info$message,
-    line = source_file$lines[line_number]
+    line = source_expression$lines[line_number]
   )
 }
 
 get_single_source_expression <- function(loc,
                                          parsed_content,
-                                         source_file,
+                                         source_expression,
                                          filename,
                                          tree) {
   line_nums <- parsed_content$line1[loc]:parsed_content$line2[loc]
-  expr_lines <- source_file$lines[line_nums]
+  expr_lines <- source_expression$lines[line_nums]
   names(expr_lines) <- line_nums
   content <- get_content(expr_lines, parsed_content[loc, ])
 
@@ -357,18 +357,18 @@ get_single_source_expression <- function(loc,
   )
 }
 
-get_source_file <- function(source_file, error = identity) {
+get_source_expression <- function(source_expression, error = identity) {
   parse_error <- FALSE
 
   e <- tryCatch(
-    source_file$parsed_content <- parse(text = source_file$content, srcfile = source_file, keep.source = TRUE),
+    source_expression$parsed_content <- parse(text = source_expression$content, srcfile = source_expression, keep.source = TRUE),
     error = error
   )
 
   # This needs to be done twice to avoid
   #   https://bugs.r-project.org/bugzilla/show_bug.cgi?id=16041
   e <- tryCatch(
-    source_file$parsed_content <- parse(text = source_file$content, srcfile = source_file, keep.source = TRUE),
+    source_expression$parsed_content <- parse(text = source_expression$content, srcfile = source_expression, keep.source = TRUE),
     error = error
   )
 
@@ -379,7 +379,7 @@ get_source_file <- function(source_file, error = identity) {
 
   # Triggers an error if the lines contain invalid characters.
   e <- tryCatch(
-    nchar(source_file$content, type = "chars"),
+    nchar(source_expression$content, type = "chars"),
     error = error
   )
 
@@ -389,7 +389,7 @@ get_source_file <- function(source_file, error = identity) {
     return() # parsed_content is unreliable if encoding is invalid
   }
 
-  fix_octal_escapes(fix_eq_assigns(fix_tab_indentations(source_file)), source_file$lines)
+  fix_octal_escapes(fix_eq_assigns(fix_tab_indentations(source_expression)), source_expression$lines)
 }
 
 find_line_fun <- function(content) {
@@ -443,14 +443,14 @@ find_column_fun <- function(content) {
 #   "12345678\t;"   --> "12345678        ;"
 #   "123456789\t;"  --> "123456789       ;"
 #   "1234567890\t;" --> "1234567890      ;"
-fix_tab_indentations <- function(source_file) {
-  pc <- getParseData(source_file)
+fix_tab_indentations <- function(source_expression) {
+  pc <- getParseData(source_expression)
 
   if (is.null(pc)) {
     return(NULL)
   }
 
-  tab_cols <- gregexpr("\t", source_file[["lines"]], fixed = TRUE)
+  tab_cols <- gregexpr("\t", source_expression[["lines"]], fixed = TRUE)
   names(tab_cols) <- seq_along(tab_cols)
   tab_cols <- tab_cols[!is.na(tab_cols)]  # source lines from .Rmd and other files are NA
   tab_cols <- lapply(tab_cols, function(x) if (x[[1L]] < 0L) NA else x)

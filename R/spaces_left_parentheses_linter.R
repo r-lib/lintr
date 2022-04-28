@@ -8,17 +8,17 @@
 #'   <https://style.tidyverse.org/syntax.html#parentheses>
 #' @export
 spaces_left_parentheses_linter <- function() {
-  Linter(function(source_file) {
+  Linter(function(source_expression) {
 
-    if (is.null(source_file$xml_parsed_content)) {
-      if (is.null(source_file$full_xml_parsed_content)) return(list()) # nocov (actually this is covered -- remove me!)
+    if (is.null(source_expression$xml_parsed_content)) {
+      if (is.null(source_expression$full_xml_parsed_content)) return(list()) # nocov (actually this is covered -- remove me!)
       # 'x = 1;(x + 2)' can't be detected from the expression-level tree
-      xml <- source_file$full_xml_parsed_content
+      xml <- source_expression$full_xml_parsed_content
       xpath <- "//OP-LEFT-PAREN[@start - 1 = ancestor::expr/preceding-sibling::OP-SEMICOLON/@end]"
       global <- TRUE
     } else {
 
-      xml <- source_file$xml_parsed_content
+      xml <- source_expression$xml_parsed_content
 
       # apply the lint by requiring a gap in three cases:
       #   (1) if/while loop conditions, e.g. 'if(x>2) { }', including 'else('
@@ -54,7 +54,7 @@ spaces_left_parentheses_linter <- function() {
 
     bad_paren <- xml2::xml_find_all(xml, xpath)
 
-    lapply(bad_paren, xml_nodes_to_lint, source_file,
+    lapply(bad_paren, xml_nodes_to_lint, source_expression,
            lint_message = "Place a space before left parenthesis, except in a function call.",
            type = "style", global = global)
   })

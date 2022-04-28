@@ -8,12 +8,12 @@
 #'   <https://style.tidyverse.org/syntax.html#character-vectors>
 #' @export
 single_quotes_linter <- function() {
-  Linter(function(source_file) {
-    if (is.null(source_file$full_parsed_content)) {
+  Linter(function(source_expression) {
+    if (is.null(source_expression$full_parsed_content)) {
       return(list())
     }
 
-    content <- source_file$full_parsed_content
+    content <- source_expression$full_parsed_content
     str_idx <- which(content$token == "STR_CONST")
     squote_matches <- which(re_matches(
       content[str_idx, "text"],
@@ -24,10 +24,10 @@ single_quotes_linter <- function() {
       squote_matches,
       function(id) {
         with(content[str_idx[id], ], {
-          line <- source_file$file_lines[line1]
+          line <- source_expression$file_lines[line1]
           col2 <- if (line1 == line2) col2 else nchar(line)
           Lint(
-            filename = source_file$filename,
+            filename = source_expression$filename,
             line_number = line1,
             column_number = col1,
             type = "style",

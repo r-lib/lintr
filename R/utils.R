@@ -136,14 +136,14 @@ base_backport("trimws", function(x) {
   sub("^\\s+", "", sub("\\s+$", "", x))
 })
 
-global_xml_parsed_content <- function(source_file) {
-  if (exists("file_lines", source_file)) {
-    source_file$full_xml_parsed_content
+global_xml_parsed_content <- function(source_expression) {
+  if (exists("file_lines", source_expression)) {
+    source_expression$full_xml_parsed_content
   }
 }
 
-get_file_line <- function(source_file, line) {
-  unname(source_file$file_lines[[as.numeric(line)]])
+get_file_line <- function(source_expression, line) {
+  unname(source_expression$file_lines[[as.numeric(line)]])
 }
 
 base_backport("lengths", function(x) vapply(x, length, integer(1L)))

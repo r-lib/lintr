@@ -24,12 +24,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_identical_linter <- function() {
-  Linter(function(source_file) {
-    if (length(source_file$parsed_content) == 0L) {
+  Linter(function(source_expression) {
+    if (length(source_expression$parsed_content) == 0L) {
       return(list())
     }
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     # outline:
     #   1. conditions for expect_equal()
@@ -65,7 +65,7 @@ expect_identical_linter <- function() {
     return(lapply(
       bad_expr,
       xml_nodes_to_lint,
-      source_file = source_file,
+      source_expression = source_expression,
       lint_message = paste(
         "Use expect_identical(x, y) by default; resort to expect_equal() only when needed,",
         "e.g. when setting ignore_attr= or tolerance=."

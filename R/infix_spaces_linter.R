@@ -84,10 +84,10 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
     op <- "!="
     lint_message <- "Put exactly one space on each side of infix operators."
   }
-  Linter(function(source_file) {
-    if (is.null(source_file$xml_parsed_content)) return(list())
+  Linter(function(source_expression) {
+    if (is.null(source_expression$xml_parsed_content)) return(list())
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
     infix_tokens <- infix_metadata[
       infix_metadata$low_precedence & !infix_metadata$string_value %in% exclude_operators,
       "xml_tag"
@@ -124,7 +124,7 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
     lapply(
       bad_expr,
       xml_nodes_to_lint,
-      source_file = source_file,
+      source_expression = source_expression,
       lint_message = lint_message,
       type = "style"
     )
