@@ -31,9 +31,9 @@ ops <- list(
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 commented_code_linter <- function() {
-  Linter(function(source_file) {
-    if (is.null(source_file$full_xml_parsed_content)) return(list())
-    all_comment_nodes <- xml2::xml_find_all(source_file$full_xml_parsed_content, "//COMMENT")
+  Linter(function(source_expression) {
+    if (is.null(source_expression$full_xml_parsed_content)) return(list())
+    all_comment_nodes <- xml2::xml_find_all(source_expression$full_xml_parsed_content, "//COMMENT")
     all_comments <- xml2::xml_text(all_comment_nodes)
     code_candidates <- re_matches(
       all_comments,
@@ -59,12 +59,12 @@ commented_code_linter <- function() {
         column_offset <- as.integer(xml2::xml_attr(comment_node, "col1")) - 1L
 
         Lint(
-          filename = source_file$filename,
+          filename = source_expression$filename,
           line_number = line_number,
           column_number = column_offset + code_candidates[code_candidate, "code.start"],
           type = "style",
           message = "Commented code should be removed.",
-          line = source_file$file_lines[line_number],
+          line = source_expression$file_lines[line_number],
           ranges = list(column_offset + c(code_candidates[code_candidate, "code.start"],
                                           code_candidates[code_candidate, "code.end"]))
         )
@@ -90,20 +90,20 @@ parsable <- function(x) {
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 todo_comment_linter <- function(todo = c("todo", "fixme")) {
-  Linter(function(source_file) {
-    tokens <- with_id(source_file, ids_with_token(source_file, "COMMENT"))
+  Linter(function(source_expression) {
+    tokens <- with_id(source_expression, ids_with_token(source_expression, "COMMENT"))
     are_todo <- re_matches(tokens[["text"]], rex(one_or_more("#"), any_spaces, or(todo)), ignore.case = TRUE)
     tokens <- tokens[are_todo, ]
     lapply(
       split(tokens, seq_len(nrow(tokens))),
       function(token) {
         Lint(
-          filename = source_file[["filename"]],
+          filename = source_expression[["filename"]],
           line_number = token[["line1"]],
           column_number = token[["col1"]],
           type = "style",
           message = "TODO comments should be removed.",
-          line = source_file[["lines"]][[as.character(token[["line1"]])]],
+          line = source_expression[["lines"]][[as.character(token[["line1"]])]],
           ranges = list(c(token[["col1"]], token[["col2"]]))
         )
       }

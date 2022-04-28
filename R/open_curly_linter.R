@@ -10,28 +10,28 @@
 #' @export
 open_curly_linter <- function(allow_single_line = FALSE) {
   lintr_deprecated("open_curly_linter", new = "brace_linter", version = "2.0.1.9001", type = "Linter")
-  Linter(function(source_file) {
+  Linter(function(source_expression) {
     lapply(
-      ids_with_token(source_file, "'{'"),
+      ids_with_token(source_expression, "'{'"),
       function(id) {
 
-        parsed <- with_id(source_file, id)
+        parsed <- with_id(source_expression, id)
 
-        tokens_before <- source_file$parsed_content$token[
-          source_file$parsed_content$line1 == parsed$line1 &
-            source_file$parsed_content$col1 < parsed$col1]
+        tokens_before <- source_expression$parsed_content$token[
+          source_expression$parsed_content$line1 == parsed$line1 &
+            source_expression$parsed_content$col1 < parsed$col1]
 
-        tokens_after <- source_file$parsed_content$token[
-          source_file$parsed_content$line1 == parsed$line1 &
-            source_file$parsed_content$col1 > parsed$col1 &
-            source_file$parsed_content$token != "COMMENT"]
+        tokens_after <- source_expression$parsed_content$token[
+          source_expression$parsed_content$line1 == parsed$line1 &
+            source_expression$parsed_content$col1 > parsed$col1 &
+            source_expression$parsed_content$token != "COMMENT"]
 
         if (isTRUE(allow_single_line) &&
             "'}'" %in% tokens_after) {
           return()
         }
 
-        line <- source_file$lines[as.character(parsed$line1)]
+        line <- source_expression$lines[as.character(parsed$line1)]
 
         # the only tokens should be the { and the start of the expression.
         some_before <- length(tokens_before) %!=% 0L
@@ -56,7 +56,7 @@ open_curly_linter <- function(allow_single_line = FALSE) {
           some_after ||
           (whitespace_after && !only_comment)) {
           Lint(
-            filename = source_file$filename,
+            filename = source_expression$filename,
             line_number = parsed$line1,
             column_number = parsed$col1,
             type = "style",

@@ -6,11 +6,11 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 equals_na_linter <- function() {
-  Linter(function(source_file) {
+  Linter(function(source_expression) {
 
-    if (is.null(source_file$xml_parsed_content)) return(list())
+    if (is.null(source_expression$xml_parsed_content)) return(list())
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     comparators <- c("EQ", "NE")
     comparator_table <- paste0("self::", comparators, collapse = " or ")
@@ -21,7 +21,7 @@ equals_na_linter <- function() {
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    lapply(bad_expr, xml_nodes_to_lint, source_file,
+    lapply(bad_expr, xml_nodes_to_lint, source_expression,
            lint_message = "Use is.na for comparisons to NA (not == or !=)",
            type = "warning")
   })

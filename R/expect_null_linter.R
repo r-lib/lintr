@@ -12,12 +12,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_null_linter <- function() {
-  Linter(function(source_file) {
-    if (length(source_file$parsed_content) == 0L) {
+  Linter(function(source_expression) {
+    if (length(source_expression$parsed_content) == 0L) {
       return(list())
     }
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     # two cases two match:
     #  (1) expect_{equal,identical}(x, NULL) (or NULL, x)
@@ -37,7 +37,7 @@ expect_null_linter <- function() {
     lapply(
       bad_expr,
       xml_nodes_to_lint,
-      source_file,
+      source_expression,
       function(expr) {
         matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
         if (matched_function %in% c("expect_equal", "expect_identical")) {
