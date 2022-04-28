@@ -12,12 +12,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 redundant_ifelse_linter <- function(allow10 = FALSE) {
-  Linter(function(source_file) {
-    if (length(source_file$xml_parsed_content) == 0L) {
+  Linter(function(source_expression) {
+    if (length(source_expression$xml_parsed_content) == 0L) {
       return(list())
     }
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     tf_xpath <- glue::glue("//expr[
       expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
@@ -28,7 +28,7 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
     tf_lints <- lapply(
       tf_expr,
       xml_nodes_to_lint,
-      source_file = source_file,
+      source_expression = source_expression,
       lint_message = function(expr) {
         matched_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
         # [1] call; [2] logical condiditon
@@ -54,7 +54,7 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
       num_lints <- lapply(
         num_expr,
         xml_nodes_to_lint,
-        source_file = source_file,
+        source_expression = source_expression,
         lint_message = function(expr) {
           matched_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
           # [1] call; [2] logical condiditon

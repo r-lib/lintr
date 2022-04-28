@@ -13,13 +13,13 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
-  Linter(function(source_file) {
+  Linter(function(source_expression) {
     # need the full file to also catch usages at the top level
-    if (length(source_file$full_parsed_content) == 0L) {
+    if (length(source_expression$full_parsed_content) == 0L) {
       return(list())
     }
 
-    xml <- source_file$full_xml_parsed_content
+    xml <- source_expression$full_xml_parsed_content
 
     named_stopifnot_condition <- if (allow_named_stopifnot) "and not(preceding-sibling::*[1][self::EQ_SUB])" else ""
     xpath <- glue::glue("//expr[
@@ -40,7 +40,7 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
     return(lapply(
       bad_expr,
       xml_nodes_to_lint,
-      source_file,
+      source_expression,
       lint_message = function(expr) {
         matched_fun <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
         op <- xml2::xml_text(xml2::xml_find_first(expr, "expr/*[self::AND2 or self::OR2]"))

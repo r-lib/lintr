@@ -17,12 +17,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 strings_as_factors_linter <- function() {
-  Linter(function(source_file) {
-    if (length(source_file$xml_parsed_content) == 0L) {
+  Linter(function(source_expression) {
+    if (length(source_expression$xml_parsed_content) == 0L) {
       return(list())
     }
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     # a call to c() with only literal string inputs,
     #   e.g. c("a") or c("a", "b"), but not c("a", b)
@@ -67,7 +67,7 @@ strings_as_factors_linter <- function() {
     return(lapply(
       bad_expr,
       xml_nodes_to_lint,
-      source_file = source_file,
+      source_expression = source_expression,
       lint_message = paste(
         "This code relies on the default value of stringsAsFactors,",
         "which changed in version R 4.0. Please supply an explicit value for",
