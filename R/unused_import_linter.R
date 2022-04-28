@@ -23,7 +23,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
         "]"
       )
     )
-    if (length(import_exprs) == 0) {
+    if (length(import_exprs) == 0L) {
       return(list())
     }
     imported_pkgs <- xml2::xml_text(xml2::xml_find_first(import_exprs, "expr[STR_CONST|SYMBOL]"))
