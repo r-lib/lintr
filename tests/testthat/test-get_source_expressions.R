@@ -11,7 +11,6 @@ with_content_to_parse <- function(content, code) {
   eval(substitute(code), envir = content_env)
 }
 
-
 test_that("tab positions have been corrected", {
   with_content_to_parse("1\n\t",
     expect_length(pc, 2L)
