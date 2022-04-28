@@ -80,3 +80,11 @@ NULL
 #' @evalRd rd_linters("package_development")
 #' @seealso [linters] for a complete list of linters available in lintr.
 NULL
+
+#' Deprecated linters
+#' @name deprecated_linters
+#' @description
+#' Linters that have been deprecated. See NEWS for explanations.
+#' @evalRd rd_linters("deprecated_linters")
+#' @seealso [linters] for a complete list of linters available in lintr.
+
