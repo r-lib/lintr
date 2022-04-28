@@ -628,7 +628,9 @@ fix_octal_escapes <- function(pc, lines) {
     out[ii] <- paste(
       c(
         substring(lines[str_const$line1[ii]], str_const$col1[ii]),
-        if (str_const$line1[ii] < str_const$line2[ii] - 1L) lines[(str_const$line1[ii] + 1L):(str_const$line2[ii] - 1L)],
+        if (str_const$line1[ii] < str_const$line2[ii] - 1L) {
+          lines[(str_const$line1[ii] + 1L):(str_const$line2[ii] - 1L)]
+        },
         substr(lines[str_const$line2[ii]], 1L, str_const$col2[ii])
       ),
       collapse = "\n"
