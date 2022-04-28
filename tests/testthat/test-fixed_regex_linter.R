@@ -326,6 +326,17 @@ test_that("bracketed unicode escapes are caught", {
   )
 })
 
+test_that("escaped characters are handled correctly", {
+  expect_lint("gsub('\\n+', '', sql)", NULL, fixed_regex_linter())
+  expect_lint('gsub("\\n{2,}", "\n", D)', NULL, fixed_regex_linter())
+  expect_lint('gsub("[\\r\\n]", "", x)', NULL, fixed_regex_linter())
+  expect_lint('gsub("\\n $", "", y)', NULL, fixed_regex_linter())
+  expect_lint('gsub("```\\n*```r*\\n*", "", x)', NULL, fixed_regex_linter())
+  expect_lint('strsplit(x, "(;|\n)")', NULL, fixed_regex_linter())
+  expect_lint('str_count(a$x$html, "\\\\<li\\\\>")', NULL, fixed_regex_linter())
+  expect_lint('strsplit(x, "(;|\\n)")', NULL, fixed_regex_linter())
+})
+
 # TODO(michaelchirico): one difference for stringr functions vs. base is that
 #   stringr is much friendlier to piping, so that
 #   str %>% str_replace_all("x$", "y")
