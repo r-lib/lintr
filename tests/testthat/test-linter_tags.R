@@ -33,8 +33,30 @@ test_that("default_linters and default tag match up", {
   expect_identical(tagged_default, names(default_linters))
 })
 
+test_that("warnings occur only for deprecated linters", {
+  expect_silent(linters_with_tags(tags = NULL))
+  num_deprecated_linters <- nrow(available_linters(tags = "deprecated", exclude_tags = NULL))
+  warns_expected <- num_deprecated_linters
+  expect_silent({
+    withCallingHandlers(
+      linters_with_tags(tags = "deprecated", exclude_tags = NULL),
+      warning = function(w) {
+        if (warns_expected >= 1L && grepl("was deprecated", conditionMessage(w))) {
+          warns_expected <<- warns_expected - 1L
+          invokeRestart("muffleWarning")
+        } else {
+          w
+        }
+      }
+    )
+    if (warns_expected != 0L) {
+      stop("Number of caught warnings not equal to number of deprecated linters (", num_deprecated_linters, ").")
+    }
+  })
+})
+
 test_that("available_linters matches the set of linters available from lintr", {
-  lintr_db <- available_linters(include_deprecated = TRUE)
+  lintr_db <- available_linters(exclude_tags = NULL)
   linters_in_namespace <- ls(asNamespace("lintr"), pattern = "_linter$")
   # ensure that the contents of inst/lintr/linters.csv covers all _linter objects in our namespace
   expect_identical(sort(lintr_db$linter), sort(linters_in_namespace))
@@ -54,7 +76,7 @@ test_that("lintr help files are up to date", {
   help_env <- new.env(parent = topenv())
   lazyLoad(file.path(helper_db_dir, "lintr"), help_env)
 
-  lintr_db <- available_linters(include_deprecated = TRUE)
+  lintr_db <- available_linters(exclude_tags = NULL)
   lintr_db$package <- NULL
   lintr_db$tags <- lapply(lintr_db$tags, sort)
 

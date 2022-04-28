@@ -20,6 +20,7 @@ test_that("all default linters are tagged default", {
   skip_if(covr::in_covr())
 
   expect_true(all.equal(linters_with_tags("default"), with_defaults()))
+  expect_length(linters_with_tags("default", exclude_tags = "default"), 0L)
 
   # Check that above test also trips on default arguments.
   expect_equal(
@@ -34,7 +35,7 @@ test_that("can instantiate all linters without arguments", {
   expect_type(all_linters, "list")
   expect_length(all_linters, nrow(available_linters()))
 
-  really_all_linters <- suppressWarnings(linters_with_tags(tags = NULL, include_deprecated = TRUE))
+  really_all_linters <- suppressWarnings(linters_with_tags(tags = NULL, exclude_tags = NULL))
   expect_type(really_all_linters, "list")
-  expect_length(really_all_linters, nrow(available_linters(include_deprecated = TRUE)))
+  expect_length(really_all_linters, nrow(available_linters(exclude_tags = NULL)))
 })

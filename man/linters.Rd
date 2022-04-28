@@ -23,7 +23,7 @@ The following tags exist:
 \item{\link[=consistency_linters]{consistency} (16 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (24 linters)}
-\item{\link[=deprecated_linters]{deprecated} (1 linters)}
+\item{\link[=deprecated_linters]{deprecated} (4 linters)}
 \item{\link[=efficiency_linters]{efficiency} (14 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=readability_linters]{readability} (35 linters)}
@@ -41,7 +41,7 @@ The following linters exist:
 \item{\code{\link{backport_linter}} (tags: configurable, package_development, robustness)}
 \item{\code{\link{brace_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{class_equals_linter}} (tags: best_practices, consistency, robustness)}
-\item{\code{\link{closed_curly_linter}} (tags: configurable, readability, style)}
+\item{\code{\link{closed_curly_linter}} (tags: configurable, deprecated, readability, style)}
 \item{\code{\link{commas_linter}} (tags: default, readability, style)}
 \item{\code{\link{commented_code_linter}} (tags: best_practices, default, readability, style)}
 \item{\code{\link{condition_message_linter}} (tags: best_practices, consistency)}
@@ -78,11 +78,11 @@ The following linters exist:
 \item{\code{\link{object_length_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{object_name_linter}} (tags: configurable, consistency, default, style)}
 \item{\code{\link{object_usage_linter}} (tags: correctness, default, readability, style)}
-\item{\code{\link{open_curly_linter}} (tags: configurable, readability, style)}
+\item{\code{\link{open_curly_linter}} (tags: configurable, deprecated, readability, style)}
 \item{\code{\link{outer_negation_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{package_hooks_linter}} (tags: correctness, package_development, style)}
 \item{\code{\link{paren_body_linter}} (tags: default, readability, style)}
-\item{\code{\link{paren_brace_linter}} (tags: readability, style)}
+\item{\code{\link{paren_brace_linter}} (tags: deprecated, readability, style)}
 \item{\code{\link{paste_linter}} (tags: best_practices, consistency)}
 \item{\code{\link{pipe_call_linter}} (tags: readability, style)}
 \item{\code{\link{pipe_continuation_linter}} (tags: default, readability, style)}
