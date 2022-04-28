@@ -19,6 +19,7 @@ test_that("unused_import_linter lints as expected", {
   expect_lint("library(dplyr)\n1 + 1", msg, linter)
   expect_lint("require(dplyr)\n1 + 1", msg, linter)
   expect_lint("library('dplyr')\n1 + 1", msg, linter)
+  expect_lint("library('dplyr', character.only = TRUE)\n1 + 1", msg, linter)
   # ignore namespaced usages by default, but provide custom lint message
   expect_lint("library(dplyr)\ndplyr::tibble(a = 1)", msg_ns, linter)
   expect_lint("library(dplyr)\ndplyr::tibble(a = 1)", NULL, unused_import_linter(allow_ns_usage = TRUE))
