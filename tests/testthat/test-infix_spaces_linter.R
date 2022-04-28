@@ -135,3 +135,22 @@ test_that("infix_spaces_linter can allow >1 spaces optionally", {
     infix_spaces_linter(allow_multiple_spaces = FALSE)
   )
 })
+
+test_that("exception for box::use()", {
+  linter <- infix_spaces_linter()
+
+  expect_lint("box::use(a/b)", NULL, linter)
+  expect_lint("box::use(./a/b)", NULL, linter)
+  expect_lint(
+    trim_some("
+      box::use(
+        a,
+        a/b,
+        ../a,
+        alias = a/b/c[xyz = abc, ...],
+      )
+    "),
+    NULL,
+    linter
+  )
+})
