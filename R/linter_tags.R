@@ -8,7 +8,6 @@
 #' @param exclude_tags Tags to exclude from the results. Linters with at least one matching tag will not be returned.
 #' If `except_tags` is `NULL`, no linters will be excluded.
 #'
-#'
 #' @section Package Authors:
 #'
 #' To implement `available_linters()` for your package, include a file `inst/lintr/linters.csv` in your
