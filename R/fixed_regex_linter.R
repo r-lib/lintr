@@ -14,12 +14,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 fixed_regex_linter <- function() {
-  Linter(function(source_file) {
-    if (length(source_file$xml_parsed_content) == 0L) {
+  Linter(function(source_expression) {
+    if (length(source_expression$xml_parsed_content) == 0L) {
       return(list())
     }
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     # regular expression pattern is the first argument
     pos_1_regex_funs <- xp_text_in_table(c(
@@ -65,7 +65,7 @@ fixed_regex_linter <- function() {
     lapply(
       patterns[is_not_regex(xml2::xml_text(patterns))],
       xml_nodes_to_lint,
-      source_file = source_file,
+      source_expression = source_expression,
       lint_message = paste(
         "For static regular expression patterns, set `fixed = TRUE`.",
         "Note that this includes regular expressions that can be expressed as",
