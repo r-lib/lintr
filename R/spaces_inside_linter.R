@@ -9,7 +9,7 @@
 #'   <https://style.tidyverse.org/syntax.html#parentheses>
 #' @export
 spaces_inside_linter <- function() {
-  Linter(function(source_file) {
+  Linter(function(source_expression) {
     tokens <- c(
       "'('",
       "')'",
@@ -21,8 +21,8 @@ spaces_inside_linter <- function() {
       list(one_of("[("), one_or_more(" "), none_of(end %or% "#" %or% " ")) %or%
         list(" " %if_prev_isnt% ",", one_of("])"))
     )
-    all_matches <- re_matches(source_file$lines, re, global = TRUE, locations = TRUE)
-    line_numbers <- as.integer(names(source_file$lines))
+    all_matches <- re_matches(source_expression$lines, re, global = TRUE, locations = TRUE)
+    line_numbers <- as.integer(names(source_expression$lines))
 
     Map(
       function(line_matches, line_number) {
@@ -35,13 +35,13 @@ spaces_inside_linter <- function() {
               return()
             }
             end <- match[["end"]]
-            line <- source_file$lines[[as.character(line_number)]]
+            line <- source_expression$lines[[as.character(line_number)]]
 
             # make sure that the closing is not at the start of a new line (which is valid).
             start_of_line <- re_matches(line, rex(start, spaces, one_of("])")), locations = TRUE)
 
             if (is.na(start_of_line$start) || start_of_line$end != end) {
-              pc <- source_file$parsed_content
+              pc <- source_expression$parsed_content
               is_token <-
                 any(pc[["line1"]] == line_number &
                       (pc[["col1"]] == end | pc[["col1"]] == start) &
@@ -49,7 +49,7 @@ spaces_inside_linter <- function() {
 
               if (is_token) {
                 Lint(
-                  filename = source_file$filename,
+                  filename = source_expression$filename,
                   line_number = line_number,
                   column_number = if (substr(line, start, start) == " ") start else start + 1L,
                   type = "style",

@@ -7,21 +7,21 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 extraction_operator_linter <- function() {
-  Linter(function(source_file) {
-    tokens <- source_file[["parsed_content"]] <- filter_out_token_type(source_file[["parsed_content"]], "expr")
+  Linter(function(source_expression) {
+    tokens <- source_expression[["parsed_content"]] <- filter_out_token_type(source_expression[["parsed_content"]], "expr")
 
     lapply(
-      ids_with_token(source_file, c("'$'", "'['"), fun = `%in%`),
+      ids_with_token(source_expression, c("'$'", "'['"), fun = `%in%`),
       function(token_num) {
         if (is_dollar_extract(token_num, tokens) || is_bracket_extract(token_num, tokens)) {
-          token <- with_id(source_file, token_num)
+          token <- with_id(source_expression, token_num)
           start_col_num <- token[["col1"]]
           end_col_num <- token[["col2"]]
           line_num <- token[["line1"]]
-          line <- source_file[["lines"]][[as.character(line_num)]]
+          line <- source_expression[["lines"]][[as.character(line_num)]]
 
           Lint(
-            filename = source_file[["filename"]],
+            filename = source_expression[["filename"]],
             line_number = line_num,
             column_number = start_col_num,
             type = "warning",
