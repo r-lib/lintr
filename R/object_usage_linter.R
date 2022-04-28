@@ -191,22 +191,23 @@ get_function_assignments <- function(xml) {
   # NB: difference across R versions in how EQ_ASSIGN is represented in the AST
   #   (under <expr_or_assign_or_help> or <equal_assign>)
   # TODO(#1106): use //*[...] to capture assignments in more scopes
-  direct_assignment_functions <- xml2::xml_find_all(xml, "
-    *[
-      (
-        (self::expr and (LEFT_ASSIGN or EQ_ASSIGN))
-        or ((self::expr_or_assign_or_help or self::equal_assign) and EQ_ASSIGN)
-      )
-      and expr[2][FUNCTION]
-    ]
-    /expr[2]
-  ")
-  assign_or_setmethod_assignment_functions <-
-    xml2::xml_find_all(xml, "//expr[expr[SYMBOL_FUNCTION_CALL[text() = 'assign' or text() = 'setMethod']]]/expr[3]")
-
-  funs <- c(
-    direct_assignment_functions,
-    assign_or_setmethod_assignment_functions
+  funs <- xml2::xml_find_all(
+    xml,
+    paste(
+      # direct assignments
+      "*[
+        (
+          (self::expr and (LEFT_ASSIGN or EQ_ASSIGN))
+          or ((self::expr_or_assign_or_help or self::equal_assign) and EQ_ASSIGN)
+        )
+        and expr[2][FUNCTION]
+      ]
+      /expr[2]
+      ",
+      # assign() and setMethod() assignments
+      "//expr[expr[SYMBOL_FUNCTION_CALL[text() = 'assign' or text() = 'setMethod']]]/expr[3]",
+      sep = " | "
+    )
   )
 
    if (length(funs) == 0L) {

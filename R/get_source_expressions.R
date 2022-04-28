@@ -246,16 +246,16 @@ lint_parse_error <- function(e, source_expression) {
           options = "multi-line",
           locations = TRUE)
         loc <- loc[!is.na(loc$start) & !is.na(loc$end), ]
-        if (nrow(loc) > 0) {
-          line_location <- loc[1, ]
+        if (nrow(loc) > 0L) {
+          line_location <- loc[1L, ]
         }
       } else {
         # nocov start
         return(
           Lint(
             filename = source_expression$filename,
-            line_number = 1,
-            column_number = 1,
+            line_number = 1L,
+            column_number = 1L,
             type = "error",
             message = e$message,
             line = ""
@@ -397,11 +397,13 @@ find_line_fun <- function(content) {
     re_matches(content,
       rex("\n"),
       locations = TRUE,
-      global = TRUE)[[1]]$start
+      global = TRUE
+    )[[1L]]$start
 
   newline_locs <- c(0L,
-    if (!is.na(newline_search[1])) newline_search,
-    nchar(content) + 1L)
+    if (!is.na(newline_search[1L])) newline_search,
+    nchar(content) + 1L
+  )
 
   function(x) {
     which(newline_locs >= x)[1L] - 1L
@@ -413,11 +415,13 @@ find_column_fun <- function(content) {
     re_matches(content,
       rex("\n"),
       locations = TRUE,
-      global = TRUE)[[1]]$start
+      global = TRUE
+    )[[1L]]$start
 
   newline_locs <- c(0L,
-    if (!is.na(newline_search[1])) newline_search,
-    nchar(content) + 1L)
+    if (!is.na(newline_search[1L])) newline_search,
+    nchar(content) + 1L
+  )
 
   function(x) {
     line_number <- which(newline_locs >= x)[1L] - 1L
@@ -457,7 +461,7 @@ fix_tab_indentations <- function(source_expression) {
   }
 
   pc_cols <- c("line1", "line2", "col1", "col2")
-  dat <- matrix(data = unlist(pc[, pc_cols], use.names = FALSE), ncol = 2)
+  dat <- matrix(data = unlist(pc[, pc_cols], use.names = FALSE), ncol = 2L)
   lines <- as.integer(names(tab_cols))
   for (i in seq_along(tab_cols)) {
     is_curr_line <- dat[, 1L] == lines[[i]]
@@ -504,8 +508,8 @@ fix_eq_assigns <- function(pc) {
     return(pc)
   }
 
-  prev_locs <- vapply(eq_assign_locs, prev_with_parent, pc = pc, integer(1))
-  next_locs <- vapply(eq_assign_locs, next_with_parent, pc = pc, integer(1))
+  prev_locs <- vapply(eq_assign_locs, prev_with_parent, pc = pc, integer(1L))
+  next_locs <- vapply(eq_assign_locs, next_with_parent, pc = pc, integer(1L))
   expr_locs <- (function(x) {
     x[is.na(x)] <- FALSE
     !x
@@ -601,7 +605,7 @@ next_with_parent <- function(pc, loc) {
 
 top_level_expressions <- function(pc) {
   if (is.null(pc)) {
-    return(integer(0))
+    return(integer(0L))
   }
   which(pc$parent <= 0L)
 }
@@ -628,7 +632,9 @@ fix_octal_escapes <- function(pc, lines) {
     out[ii] <- paste(
       c(
         substring(lines[str_const$line1[ii]], str_const$col1[ii]),
-        if (str_const$line1[ii] < str_const$line2[ii] - 1L) lines[(str_const$line1[ii] + 1L):(str_const$line2[ii] - 1L)],
+        if (str_const$line1[ii] < str_const$line2[ii] - 1L) {
+          lines[(str_const$line1[ii] + 1L):(str_const$line2[ii] - 1L)]
+        },
         substr(lines[str_const$line2[ii]], 1L, str_const$col2[ii])
       ),
       collapse = "\n"
