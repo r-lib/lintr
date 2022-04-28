@@ -11,7 +11,6 @@ with_content_to_parse <- function(content, code) {
   eval(substitute(code), envir = content_env)
 }
 
-
 test_that("tab positions have been corrected", {
   with_content_to_parse("1\n\t",
     expect_length(pc, 2L)
@@ -26,7 +25,7 @@ test_that("tab positions have been corrected", {
   )
 
   with_content_to_parse("\t\tTRUE",
-    expect_identical(unlist(pc[[1]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(3L, 6L))
+    expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(3L, 6L))
   )
 
   with_content_to_parse("x\t<-\tTRUE", {
