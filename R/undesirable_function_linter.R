@@ -22,12 +22,15 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       tokens <- "SYMBOL_FUNCTION_CALL"
     }
 
-    xpath <- sprintf(
-      "//*[(%s) and (%s) and not(parent::expr/preceding-sibling::expr[SYMBOL_FUNCTION_CALL[%s]])]",
+    xpath <- paste0("//*[", xp_and(
       paste0("self::", tokens, collapse = " or "),
       xp_text_in_table(names(fun)),
-      xp_text_in_table(c("library", "require"))
-    )
+      paste0(
+        "not(parent::expr/preceding-sibling::expr[SYMBOL_FUNCTION_CALL[",
+        xp_text_in_table(c("library", "require")), "]])"
+      ),
+      "not(preceding-sibling::OP-DOLLAR)"
+    ), "]")
 
     matched_nodes <- xml2::xml_find_all(source_file$xml_parsed_content, xpath)
 
@@ -55,5 +58,4 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       }
     )
   })
-
 }
