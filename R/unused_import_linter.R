@@ -31,11 +31,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
     imported_pkgs <- as.character(parse(text = imported_pkgs, keep.source = FALSE))
 
     xp_used_symbols <- paste(
-      if (isTRUE(allow_ns_usage)) {
-        "//SYMBOL_FUNCTION_CALL/text()"
-      } else {
-        "//SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]/text()"
-      },
+      "//SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]/text()",
       "//SYMBOL/text()",
       "//SPECIAL/text()",
       sep = " | "
@@ -43,19 +39,33 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
 
     used_symbols <- xml2::xml_text(xml2::xml_find_all(source_expression$full_xml_parsed_content, xp_used_symbols))
 
-    is_unused <- vapply(
+    is_used <- vapply(
       imported_pkgs,
       function(pkg) {
         # Skip excepted packages and packages that are not installed
         if (pkg %in% except_packages || !requireNamespace(pkg, quietly = TRUE)) {
-          return(FALSE)
+          return(TRUE)
         }
 
         package_exports <- getNamespaceExports(pkg)
-        !any(package_exports %in% used_symbols)
+        any(package_exports %in% used_symbols)
       },
       logical(1L)
     )
+
+    is_ns_used <- vapply(
+      imported_pkgs,
+      function(pkg) {
+        ns_usage <- xml2::xml_find_first(source_expression$full_xml_parsed_content, paste0("//SYMBOL_PACKAGE[text() = '", pkg, "']"))
+        !identical(ns_usage, xml2::xml_missing())
+      },
+      logical(1L)
+    )
+
+    is_unused <- !is_used
+    if (allow_ns_usage) {
+      is_unused[is_ns_used] <- FALSE
+    }
 
     lapply(
       import_exprs[is_unused],
@@ -63,7 +73,14 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
       source_file = source_expression,
       lint_message = function(import_expr) {
         pkg <- get_r_string(xml2::xml_text(xml2::xml_find_first(import_expr, "expr[STR_CONST|SYMBOL]")))
-        paste0("package '", pkg, "' is attached but never used.")
+        if (is_ns_used[match(pkg, imported_pkgs)]) {
+          paste0(
+            "package '", pkg, "' is only used by namespace. ",
+            "Check that it is installed using loadNamespace() instead."
+          )
+        } else {
+          paste0("package '", pkg, "' is attached but never used.")
+        }
       },
       type = "warning",
       global = TRUE
