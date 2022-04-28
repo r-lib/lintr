@@ -27,7 +27,8 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       xp_text_in_table(names(fun)),
       paste0(
         "not(parent::expr/preceding-sibling::expr[SYMBOL_FUNCTION_CALL[",
-        xp_text_in_table(c("library", "require")), "]])"
+        xp_text_in_table(c("library", "require")),
+        "]])"
       ),
       "not(preceding-sibling::OP-DOLLAR)"
     ), "]")
