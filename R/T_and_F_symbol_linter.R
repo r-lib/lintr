@@ -8,8 +8,8 @@
 #'   <https://style.tidyverse.org/syntax.html#logical-vectors>
 #' @export
 T_and_F_symbol_linter <- function() { # nolint: object_name_linter.
-  Linter(function(source_file) {
-    if (is.null(source_file$xml_parsed_content)) return(list())
+  Linter(function(source_expression) {
+    if (is.null(source_expression$xml_parsed_content)) return(list())
 
     xpath <- paste0(
       "//SYMBOL[",
@@ -35,14 +35,14 @@ T_and_F_symbol_linter <- function() { # nolint: object_name_linter.
       "]"
     )
 
-    bad_exprs <- xml2::xml_find_all(source_file$xml_parsed_content, xpath)
-    bad_assigns <- xml2::xml_find_all(source_file$xml_parsed_content, xpath_assignment)
+    bad_exprs <- xml2::xml_find_all(source_expression$xml_parsed_content, xpath)
+    bad_assigns <- xml2::xml_find_all(source_expression$xml_parsed_content, xpath_assignment)
 
     replacement_map <- c(T = "TRUE", F = "FALSE")
     make_lint <- function(expr, fmt) {
       xml_nodes_to_lint(
         xml = expr,
-        source_file = source_file,
+        source_expression = source_expression,
         lint_message = function(expr) {
           symbol <- xml2::xml_text(expr)
           sprintf(fmt, replacement_map[[symbol]], symbol)

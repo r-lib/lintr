@@ -7,11 +7,11 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 duplicate_argument_linter <- function(except = character()) {
-  Linter(function(source_file) {
+  Linter(function(source_expression) {
 
-    if (is.null(source_file$full_xml_parsed_content)) return(list())
+    if (is.null(source_expression$full_xml_parsed_content)) return(list())
 
-    xml <- source_file$full_xml_parsed_content
+    xml <- source_expression$full_xml_parsed_content
 
     xpath <- "//expr[EQ_SUB]"
 
@@ -39,15 +39,15 @@ duplicate_argument_linter <- function(except = character()) {
         line2 <- as.integer(xml2::xml_attr(dup_args, "line2"))
         col1 <- as.integer(xml2::xml_attr(dup_args, "col1"))
         col2 <- as.integer(xml2::xml_attr(dup_args, "col2"))
-        col2[line2 > line1] <- nchar(source_file$file_lines[line1[line2 > line1]])
+        col2[line2 > line1] <- nchar(source_expression$file_lines[line1[line2 > line1]])
         lapply(seq_along(dup_args), function(i) {
           Lint(
-            filename = source_file$filename,
+            filename = source_expression$filename,
             line_number = line1[[i]],
             column_number = col1[[i]],
             type = "warning",
             message = "Duplicate arguments in function call.",
-            line = source_file$file_lines[line1[[i]]],
+            line = source_expression$file_lines[line1[[i]]],
             ranges = list(c(col1[[i]], col2[[i]]))
           )
         })

@@ -8,8 +8,8 @@
 #'   <https://style.tidyverse.org/syntax.html#parentheses>
 #' @export
 paren_body_linter <- function() {
-  Linter(function(source_file) {
-    if (is.null(source_file$xml_parsed_content)) return(NULL)
+  Linter(function(source_expression) {
+    if (is.null(source_expression$xml_parsed_content)) return(NULL)
 
     xpath <- paste(
       "//expr[",
@@ -30,12 +30,12 @@ paren_body_linter <- function() {
       "@col1 = preceding-sibling::forcond/OP-RIGHT-PAREN/@col1 + 1",
       "]"
     )
-    matched_expressions <- xml2::xml_find_all(source_file$xml_parsed_content, xpath)
+    matched_expressions <- xml2::xml_find_all(source_expression$xml_parsed_content, xpath)
 
     lapply(
       matched_expressions,
       xml_nodes_to_lint,
-      source_file = source_file,
+      source_expression = source_expression,
       lint_message = "There should be a space between right parenthesis and a body expression."
     )
   })

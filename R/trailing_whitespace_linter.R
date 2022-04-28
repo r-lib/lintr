@@ -8,11 +8,11 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 trailing_whitespace_linter <- function(allow_empty_lines = FALSE) {
-  Linter(function(source_file) {
-    if (is.null(source_file$file_lines)) return(list())
+  Linter(function(source_expression) {
+    if (is.null(source_expression$file_lines)) return(list())
 
     res <- re_matches(
-      source_file$file_lines,
+      source_expression$file_lines,
       rex(blanks, end),
       locations = TRUE
     )
@@ -27,12 +27,12 @@ trailing_whitespace_linter <- function(allow_empty_lines = FALSE) {
       bad_lines,
       function(line) {
         Lint(
-          filename = source_file$filename,
+          filename = source_expression$filename,
           line_number = line,
           column_number = res$start[[line]],
           type = "style",
           message = "Trailing whitespace is superfluous.",
-          line = source_file$file_lines[[line]],
+          line = source_expression$file_lines[[line]],
           ranges = list(c(res$start[[line]], res$end[[line]]))
         )
       }

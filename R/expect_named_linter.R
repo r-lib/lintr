@@ -8,12 +8,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_named_linter <- function() {
-  Linter(function(source_file) {
-    if (length(source_file$parsed_content) == 0L) {
+  Linter(function(source_expression) {
+    if (length(source_expression$parsed_content) == 0L) {
       return(list())
     }
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     xpath <- "//expr[
       SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
@@ -24,12 +24,12 @@ expect_named_linter <- function() {
     ]"
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    return(lapply(bad_expr, gen_expect_named_lint, source_file))
+    return(lapply(bad_expr, gen_expect_named_lint, source_expression))
   })
 }
 
-gen_expect_named_lint <- function(expr, source_file) {
+gen_expect_named_lint <- function(expr, source_expression) {
   matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
   lint_msg <- sprintf("expect_named(x, n) is better than %s(names(x), n)", matched_function)
-  xml_nodes_to_lint(expr, source_file, lint_msg, type = "warning")
+  xml_nodes_to_lint(expr, source_expression, lint_msg, type = "warning")
 }

@@ -6,23 +6,23 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 implicit_integer_linter <- function() {
-  Linter(function(source_file) {
+  Linter(function(source_expression) {
     lapply(
-      ids_with_token(source_file, "NUM_CONST"),  # for numbers (finite/Inf/NaN) and logicals
+      ids_with_token(source_expression, "NUM_CONST"),  # for numbers (finite/Inf/NaN) and logicals
       function(id) {
-        token <- with_id(source_file, id)
+        token <- with_id(source_expression, id)
         if (is_implicit_integer(token[["text"]])) {
           line_num <- token[["line2"]]
           end_col_num <- token[["col2"]]
           start_col_num <- token[["col1"]]
           Lint(
-            filename = source_file[["filename"]],
+            filename = source_expression[["filename"]],
             line_number = line_num,
             column_number = end_col_num + 1L,
             type = "style",
             message =
               "Integers should not be implicit. Use the form 1L for integers or 1.0 for doubles.",
-            line = source_file[["lines"]][[as.character(line_num)]],
+            line = source_expression[["lines"]][[as.character(line_num)]],
             ranges = list(c(start_col_num, end_col_num))
           )
         }
