@@ -79,7 +79,7 @@ test_that("Trailing semicolons only", {
 test_that("deprecation notices for semicolon_terminator_linter succeed, and the deprecated version works", {
   expect_warning(
     linter <- semicolon_terminator_linter(),
-    "Function semicolon_terminator_linter was deprecated",
+    "Linter semicolon_terminator_linter was deprecated",
     fixed = TRUE
   )
   expect_lint("a <- 1", NULL, linter)
@@ -89,7 +89,7 @@ test_that("deprecation notices for semicolon_terminator_linter succeed, and the 
   # old string argument gets translated to new boolean arguments
   expect_warning(
     linter <- semicolon_terminator_linter("compound"),
-    "Function semicolon_terminator_linter was deprecated",
+    "Linter semicolon_terminator_linter was deprecated",
     fixed = TRUE
   )
   expect_lint("a <- 1", NULL, linter)
@@ -98,7 +98,7 @@ test_that("deprecation notices for semicolon_terminator_linter succeed, and the 
 
   expect_warning(
     linter <- semicolon_terminator_linter("trailing"),
-    "Function semicolon_terminator_linter was deprecated",
+    "Linter semicolon_terminator_linter was deprecated",
     fixed = TRUE
   )
   expect_lint("a <- 1", NULL, linter)

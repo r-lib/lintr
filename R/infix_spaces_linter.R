@@ -96,6 +96,7 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
     # NB: preceding-sibling::* and not preceding-sibling::expr because
     #   of the foo(a=1) case, where the tree is <SYMBOL_SUB><EQ_SUB><expr>
     # NB: position() > 1 for the unary case, e.g. x[-1]
+    # NB: the last not() disables lints inside box::use() declarations
     xpath <- glue::glue("//*[
       ({xp_or(paste0('self::', infix_tokens))})
       and position() > 1
@@ -107,6 +108,14 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
           @line1 = following-sibling::*[1]/@line1
           and following-sibling::*[1]/@col1 {op} @col2 + 2
         )
+      )
+      and not(
+        self::OP-SLASH[
+          ancestor::expr/preceding-sibling::OP-LEFT-PAREN/preceding-sibling::expr[
+            ./SYMBOL_PACKAGE[text() = 'box'] and
+            ./SYMBOL_FUNCTION_CALL[text() = 'use']
+          ]
+        ]
       )
     ]")
 
