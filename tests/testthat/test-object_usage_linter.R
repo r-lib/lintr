@@ -367,14 +367,14 @@ test_that("interprets glue expressions", {
 # reported as #1088
 test_that("definitions below top level are ignored (for now)", {
   expect_lint(
-    trim_some('
+    trim_some("
       local({
         x <- 1
         f <- function() {
           x
         }
       })
-    '),
+    "),
     NULL,
     object_usage_linter()
   )
