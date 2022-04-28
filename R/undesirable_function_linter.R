@@ -14,8 +14,8 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   stopifnot(is.logical(symbol_is_undesirable))
 
-  Linter(function(source_file) {
-    if (is.null(source_file$xml_parsed_content)) return(NULL)
+  Linter(function(source_expression) {
+    if (is.null(source_expression$xml_parsed_content)) return(NULL)
     if (symbol_is_undesirable) {
       tokens <- c("SYMBOL_FUNCTION_CALL", "SYMBOL")
     } else {
@@ -32,7 +32,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       "not(preceding-sibling::OP-DOLLAR)"
     ), "]")
 
-    matched_nodes <- xml2::xml_find_all(source_file$xml_parsed_content, xpath)
+    matched_nodes <- xml2::xml_find_all(source_expression$xml_parsed_content, xpath)
 
     lapply(
       matched_nodes,
@@ -47,12 +47,12 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
         col1 <- as.integer(xml2::xml_attr(node, "col1"))
         col2 <- as.integer(xml2::xml_attr(node, "col2"))
         Lint(
-          filename = source_file$filename,
+          filename = source_expression$filename,
           line_number = as.integer(line),
           column_number = col1,
           type = "style",
           message = msg,
-          line = source_file$lines[[line]],
+          line = source_expression$lines[[line]],
           ranges = list(c(col1, col2))
         )
       }

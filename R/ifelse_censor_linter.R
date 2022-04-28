@@ -12,12 +12,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 ifelse_censor_linter <- function() {
-  Linter(function(source_file) {
-    if (length(source_file$xml_parsed_content) == 0L) {
+  Linter(function(source_expression) {
+    if (length(source_expression$xml_parsed_content) == 0L) {
       return(list())
     }
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     xpath <- glue::glue("//expr[
       expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
@@ -32,7 +32,7 @@ ifelse_censor_linter <- function() {
     return(lapply(
       bad_expr,
       xml_nodes_to_lint,
-      source_file = source_file,
+      source_expression = source_expression,
       lint_message = function(expr) {
         matched_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
         op <- xml2::xml_text(xml2::xml_find_first(expr, "expr[2]/*[2]"))

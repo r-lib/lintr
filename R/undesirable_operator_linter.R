@@ -19,11 +19,11 @@ op_types <- c(
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 undesirable_operator_linter <- function(op = default_undesirable_operators) {
-  Linter(function(source_file) {
+  Linter(function(source_expression) {
     lapply(
-      ids_with_token(source_file, op_types, fun = `%in%`),
+      ids_with_token(source_expression, op_types, fun = `%in%`),
       function(id) {
-        token <- with_id(source_file, id)
+        token <- with_id(source_expression, id)
         op_name <- token[["text"]]
         if (op_name %in% names(op)) {
           line_num <- token[["line1"]]
@@ -36,12 +36,12 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
           }
 
           Lint(
-            filename = source_file[["filename"]],
+            filename = source_expression[["filename"]],
             line_number = line_num,
             column_number = start_col_num,
             type = "warning",
             message = paste0(msg, collapse = " "),
-            line = source_file[["lines"]][[as.character(line_num)]],
+            line = source_expression[["lines"]][[as.character(line_num)]],
             ranges = list(c(start_col_num, end_col_num))
           )
         }

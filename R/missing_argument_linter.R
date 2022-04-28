@@ -6,11 +6,11 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 missing_argument_linter <- function(except = c("switch", "alist")) {
-  Linter(function(source_file) {
+  Linter(function(source_expression) {
 
-    if (is.null(source_file$full_xml_parsed_content)) return(list())
+    if (is.null(source_expression$full_xml_parsed_content)) return(list())
 
-    xml <- source_file$full_xml_parsed_content
+    xml <- source_expression$full_xml_parsed_content
 
     xpath <- "//expr[expr[SYMBOL_FUNCTION_CALL]]/*[
       self::OP-COMMA[preceding-sibling::*[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-COMMA]] or
@@ -30,12 +30,12 @@ missing_argument_linter <- function(except = c("switch", "alist")) {
       func <- xml2::xml_text(func)
       if (length(func) == 1 && !(func %in% except)) {
         Lint(
-          filename = source_file$filename,
+          filename = source_expression$filename,
           line_number = line1[[i]],
           column_number = col1[[i]],
           type = "warning",
           message = "Missing argument in function call.",
-          line = source_file$file_lines[line1[[i]]],
+          line = source_expression$file_lines[line1[[i]]],
           ranges = list(c(col1[[i]], col2[[i]]))
         )
       }

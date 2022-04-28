@@ -9,14 +9,14 @@
 #' @importFrom utils head
 #' @export
 commas_linter <- function() {
-  Linter(function(source_file) {
+  Linter(function(source_expression) {
 
     re <- rex(list(one_or_more(" "), ",") %or% list(",", non_space))
 
-    res <- re_matches(source_file$lines, re, global = TRUE, locations = TRUE)
+    res <- re_matches(source_expression$lines, re, global = TRUE, locations = TRUE)
 
     lapply(seq_along(res), function(id) {
-      line_number <- names(source_file$lines)[id]
+      line_number <- names(source_expression$lines)[id]
 
       mapply(
         FUN = function(start, end) {
@@ -26,7 +26,7 @@ commas_linter <- function() {
 
           lints <- list()
 
-          line <- unname(source_file$lines[[id]])
+          line <- unname(source_expression$lines[[id]])
 
           comma_loc <- start + re_matches(substr(line, start, end), rex(","), locations = TRUE)$start - 1L
 
@@ -34,29 +34,29 @@ commas_linter <- function() {
 
           if (space_before) {
 
-            comma_loc_filter <- source_file$parsed_content$line1 == line_number &
-              source_file$parsed_content$col1 == comma_loc
+            comma_loc_filter <- source_expression$parsed_content$line1 == line_number &
+              source_expression$parsed_content$col1 == comma_loc
 
             has_token <- any(comma_loc_filter &
-                               source_file$parsed_content$token == "','")
+                               source_expression$parsed_content$token == "','")
 
             start_of_line <- re_matches(line, rex(start, spaces, ","))
 
             empty_comma <- substr(line, comma_loc - 2L, comma_loc - 1L) %==% ", "
 
-            parent <- source_file$parsed_content$parent
+            parent <- source_expression$parsed_content$parent
             parent <- replace(parent, parent == 0, NA)
 
             # a variable that is true for every node who has a grandchild that is switch,
             # i.e, any expression that starts with the function call to switch.
-            switch_grandparents <- source_file$parsed_content[
+            switch_grandparents <- source_expression$parsed_content[
               # as.character allows interpretation as row indexes rather than row numbers
-              as.character(parent[source_file$parsed_content$text == "switch"]),
+              as.character(parent[source_expression$parsed_content$text == "switch"]),
             ]$parent
 
             is_blank_switch <- any(comma_loc_filter &
-                                     (source_file$parsed_content$parent %in% switch_grandparents) &
-                                     c(NA, head(source_file$parsed_content$token, -1)) == "EQ_SUB",
+                                     (source_expression$parsed_content$parent %in% switch_grandparents) &
+                                     c(NA, head(source_expression$parsed_content$token, -1)) == "EQ_SUB",
                                    na.rm = TRUE
             )
 
@@ -66,7 +66,7 @@ commas_linter <- function() {
               !is_blank_switch) {
 
               lints[[length(lints) + 1L]] <- Lint(
-                filename = source_file$filename,
+                filename = source_expression$filename,
                 line_number = line_number,
                 column_number = comma_loc,
                 type = "style",
@@ -82,13 +82,13 @@ commas_linter <- function() {
 
           if (non_space_after) {
 
-            has_token <- any(source_file$parsed_content$line1 == line_number &
-                               source_file$parsed_content$col1 == comma_loc &
-                               source_file$parsed_content$token == "','")
+            has_token <- any(source_expression$parsed_content$line1 == line_number &
+                               source_expression$parsed_content$col1 == comma_loc &
+                               source_expression$parsed_content$token == "','")
 
             if (has_token) {
               lints[[length(lints) + 1L]] <- Lint(
-                filename = source_file$filename,
+                filename = source_expression$filename,
                 line_number = line_number,
                 column_number = comma_loc + 1,
                 type = "style",
