@@ -9,11 +9,11 @@
 backport_linter <- function(r_version = getRversion()) {
   r_version <- normalize_r_version(r_version)
 
-  Linter(function(source_file) {
-    if (!is_tree_level(source_file, "expression", require_xml = TRUE)) return(list())
+  Linter(function(source_expression) {
+    if (!is_tree_level(source_expression, "expression", require_xml = TRUE)) return(list())
     if (all(r_version >= R_system_version(names(backports)))) return(list())
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     names_xpath <- "//*[self::SYMBOL or self::SYMBOL_FUNCTION_CALL]"
     all_names_nodes <- xml2::xml_find_all(xml, names_xpath)
@@ -33,7 +33,7 @@ backport_linter <- function(r_version = getRversion()) {
       # line1 != line2 can't happen because function symbols cannot span multiple lines
       stopifnot(xml2::xml_attr(node, "line2") == line1)
       Lint(
-        filename = source_file$filename,
+        filename = source_expression$filename,
         line_number = as.integer(line1),
         column_number = col1,
         type = "warning",
@@ -41,7 +41,7 @@ backport_linter <- function(r_version = getRversion()) {
           "%s (R %s) is not available for dependency R >= %s.",
           all_names[ii], names(backport_blacklist)[which(needs_backport[ii, ])], r_version
         ),
-        line = source_file$lines[[line1]],
+        line = source_expression$lines[[line1]],
         ranges = list(c(col1, col2))
       )
     })

@@ -15,12 +15,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 package_hooks_linter <- function() {
-  Linter(function(source_file) {
-    if (length(source_file$parsed_content) == 0L) {
+  Linter(function(source_expression) {
+    if (length(source_expression$parsed_content) == 0L) {
       return(list())
     }
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     bad_msg_calls <- c("cat", "message", "print", "writeLines")
     bad_calls <- list(
@@ -48,11 +48,11 @@ package_hooks_linter <- function() {
       //SYMBOL_FUNCTION_CALL[%s]
     "
 
-    # inherits: xml, source_file, bad_msg_call_xpath_fmt
+    # inherits: xml, source_expression, bad_msg_call_xpath_fmt
     bad_msg_call_lints <- function(hook) {
       xpath <- sprintf(bad_msg_call_xpath_fmt, hook, xp_text_in_table(bad_calls[[hook]]))
       bad_expr <- xml2::xml_find_all(xml, xpath)
-      lapply(bad_expr, xml_nodes_to_lint, source_file, make_bad_call_lint_msg(hook), type = "warning")
+      lapply(bad_expr, xml_nodes_to_lint, source_expression, make_bad_call_lint_msg(hook), type = "warning")
     }
 
     onload_bad_msg_call_lints <- bad_msg_call_lints(".onLoad")
@@ -78,7 +78,7 @@ package_hooks_linter <- function() {
     load_arg_name_lints <- lapply(
       load_arg_name_expr,
       xml_nodes_to_lint,
-      source_file,
+      source_expression,
       function(expr) {
         sprintf(
           "%s() should take two arguments, with the first starting with 'lib' and the second starting with 'pkg'.",
@@ -103,7 +103,7 @@ package_hooks_linter <- function() {
     library_require_lints <- lapply(
       library_require_expr,
       xml_nodes_to_lint,
-      source_file,
+      source_expression,
       function(expr) {
         bad_call <- xml2::xml_text(expr)
         hook <- get_hook(expr)
@@ -128,7 +128,7 @@ package_hooks_linter <- function() {
     bad_unload_call_lints <- lapply(
       bad_unload_call_expr,
       xml_nodes_to_lint,
-      source_file,
+      source_expression,
       function(expr) sprintf("Use library.dynam.unload() calls in .onUnload(), not %s().", get_hook(expr)),
       type = "warning"
     )
@@ -150,7 +150,7 @@ package_hooks_linter <- function() {
     unload_arg_name_lints <- lapply(
       unload_arg_name_expr,
       xml_nodes_to_lint,
-      source_file,
+      source_expression,
       function(expr) sprintf("%s() should take one argument starting with 'lib'.", get_hook(expr)),
       type = "warning"
     )

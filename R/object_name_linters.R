@@ -33,15 +33,15 @@ object_name_xpath <- local({
 object_name_linter <- function(styles = c("snake_case", "symbols")) {
   styles <- match.arg(styles, names(style_regexes), several.ok = TRUE)
 
-  lint_msg <- paste0(
+  lint_message <- paste0(
     "Variable and function name style should be ",
     glue::glue_collapse(styles, sep = ", ", last = " or "), "."
   )
 
-  Linter(function(source_file) {
-    if (is.null(source_file$full_xml_parsed_content)) return(list())
+  Linter(function(source_expression) {
+    if (is.null(source_expression$full_xml_parsed_content)) return(list())
 
-    xml <- source_file$full_xml_parsed_content
+    xml <- source_expression$full_xml_parsed_content
 
     assignments <- xml2::xml_find_all(xml, object_name_xpath)
 
@@ -52,7 +52,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
 
     generics <- c(
       declared_s3_generics(xml),
-      imported_s3_generics(namespace_imports(find_package(source_file$filename)))$fun,
+      imported_s3_generics(namespace_imports(find_package(source_expression$filename)))$fun,
       .base_s3_generics
     )
     generics <- unique(generics[nzchar(generics)])
@@ -65,9 +65,11 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
 
     lapply(
       assignments[!matches_a_style],
-      object_lint,
-      source_file,
-      lint_msg
+      xml_nodes_to_lint,
+      source_expression,
+      lint_message = lint_message,
+      type = "style",
+      global = TRUE
     )
   })
 }
@@ -101,19 +103,6 @@ strip_names <- function(x) {
   x <- re_substitutes(x, rex(start, some_of(".", quote, "`", "%", "$", "@")), "")
   x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%", "$", "@"), end), "")
   x
-}
-
-object_lint <- function(expr, source_file, message) {
-  symbol <- xml2::as_list(expr)
-  Lint(
-    filename = source_file$filename,
-    line_number = symbol@line1,
-    column_number = symbol@col1,
-    type = "style",
-    message = message,
-    line = source_file$file_lines[as.numeric(symbol@line1)],
-    ranges = list(as.numeric(c(symbol@col1, symbol@col2)))
-  )
 }
 
 # see ?".onLoad", ?Startup, and ?quit. Remove leading dot to match behavior of strip_names().
@@ -166,12 +155,12 @@ regexes_rd <- toString(paste0("\\sQuote{", names(style_regexes), "}"))
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 object_length_linter <- function(length = 30L) {
-  lint_msg <- paste("Variable and function names should not be longer than", length, "characters.")
+  lint_message <- paste("Variable and function names should not be longer than", length, "characters.")
 
-  Linter(function(source_file) {
-    if (is.null(source_file$full_xml_parsed_content)) return(list())
+  Linter(function(source_expression) {
+    if (is.null(source_expression$full_xml_parsed_content)) return(list())
 
-    xml <- source_file$full_xml_parsed_content
+    xml <- source_expression$full_xml_parsed_content
 
     assignments <- xml2::xml_find_all(xml, object_name_xpath)
 
@@ -180,7 +169,7 @@ object_length_linter <- function(length = 30L) {
       xml2::xml_text(assignments)
     )
 
-    ns_imports <- namespace_imports(find_package(source_file$filename))
+    ns_imports <- namespace_imports(find_package(source_expression$filename))
     generics <- strip_names(c(
       declared_s3_generics(xml),
       imported_s3_generics(ns_imports)$fun,
@@ -196,9 +185,11 @@ object_length_linter <- function(length = 30L) {
 
     lapply(
       assignments[too_long],
-      object_lint,
-      source_file,
-      lint_msg
+      xml_nodes_to_lint,
+      source_expression = source_expression,
+      lint_message = lint_message,
+      type = "style",
+      global = TRUE
     )
   })
 }

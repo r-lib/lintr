@@ -6,13 +6,13 @@ xp_text_in_table <- function(table) {
   #   to use "" whenever the string has ' (not a perfect solution). info on
   #   escaping from https://stackoverflow.com/questions/14822153
   single_quoted <- grepl("'", table, fixed = TRUE)
-  table[single_quoted] <- paste0('"', table[single_quoted], '"')
-  table[!single_quoted] <- paste0("'", table[!single_quoted], "'")
+  table[single_quoted] <- quote_wrap(table[single_quoted], '"')
+  table[!single_quoted] <- quote_wrap(table[!single_quoted], "'")
   return(paste0("text() = ", table, collapse = " or "))
 }
 
 # convert an XML match into a Lint
-xml_nodes_to_lint <- function(xml, source_file, lint_message,
+xml_nodes_to_lint <- function(xml, source_expression, lint_message,
                               type = c("style", "warning", "error"),
                               offset = 0L,
                               global = FALSE) {
@@ -25,16 +25,16 @@ xml_nodes_to_lint <- function(xml, source_file, lint_message,
   if (xml2::xml_attr(xml, "line2") == line1) {
     col2 <- as.integer(xml2::xml_attr(xml, "col2")) + offset
   } else {
-    col2 <- unname(nchar(source_file[[line_elt]][line1]))
+    col2 <- unname(nchar(source_expression[[line_elt]][line1]))
   }
   if (is.function(lint_message)) lint_message <- lint_message(xml)
   return(Lint(
-    filename = source_file$filename,
+    filename = source_expression$filename,
     line_number = as.integer(line1),
     column_number = as.integer(col1),
     type = type,
     message = lint_message,
-    line = source_file[[line_elt]][line1],
+    line = source_expression[[line_elt]][line1],
     ranges = list(c(col1 - offset, col2))
   ))
 }

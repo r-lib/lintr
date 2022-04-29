@@ -6,11 +6,11 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 missing_package_linter <- function() {
-  Linter(function(source_file) {
+  Linter(function(source_expression) {
 
-    if (is.null(source_file$full_xml_parsed_content)) return(list())
+    if (is.null(source_expression$full_xml_parsed_content)) return(list())
 
-    xml <- source_file$full_xml_parsed_content
+    xml <- source_expression$full_xml_parsed_content
 
     call_xpath <- "//expr[
       (
@@ -33,10 +33,10 @@ missing_package_linter <- function() {
     ]"
 
     pkg_calls <- xml2::xml_find_all(xml, call_xpath)
-    pkg_names <- xml2::xml_find_all(pkg_calls, "OP-LEFT-PAREN[1]/following-sibling::expr[1][SYMBOL | STR_CONST]")
-    pkg_names <- xml2::xml_text(pkg_names)
-    pkg_names <- parse(text = pkg_names, keep.source = FALSE)
-    pkg_names <- vapply(pkg_names, as.character, character(1L))
+    pkg_names <- get_r_string(xml2::xml_find_all(
+      pkg_calls,
+      "OP-LEFT-PAREN[1]/following-sibling::expr[1][SYMBOL | STR_CONST]"
+    ))
 
     installed_packges <- .packages(all.available = TRUE)
     missing_ids <- which(!(pkg_names %in% installed_packges))
@@ -47,12 +47,12 @@ missing_package_linter <- function() {
 
     lapply(missing_ids, function(i) {
       Lint(
-        filename = source_file$filename,
+        filename = source_expression$filename,
         line_number = line1[[i]],
         column_number = col1[[i]],
         type = "warning",
         message = sprintf("Package '%s' is not installed.", pkg_names[[i]]),
-        line = source_file$file_lines[line1[[i]]],
+        line = source_expression$file_lines[line1[[i]]],
         ranges = list(c(col1[[i]], col2[[i]]))
       )
     })

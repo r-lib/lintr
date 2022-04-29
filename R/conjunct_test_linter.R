@@ -7,35 +7,40 @@
 #'
 #' Similar reasoning applies to `&&` usage inside [stopifnot()] and `assertthat::assert_that()` calls.
 #'
+#' @param allow_named_stopifnot Logical, `TRUE` by default. If `FALSE`, "named" calls to `stopifnot()`,
+#'   available since R 4.0.0 to provide helpful messages for test failures, are also linted.
 #' @evalRd rd_tags("conjunct_test_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-conjunct_test_linter <- function() {
-  Linter(function(source_file) {
+conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
+  Linter(function(source_expression) {
     # need the full file to also catch usages at the top level
-    if (length(source_file$full_parsed_content) == 0L) {
+    if (length(source_expression$full_parsed_content) == 0L) {
       return(list())
     }
 
-    xml <- source_file$full_xml_parsed_content
+    xml <- source_expression$full_xml_parsed_content
 
-    # TODO(#1017): address keyword arguments in R>=4.0 for stopifnot(). lint optionally (on by default)?
-    xpath <- "//expr[
+    named_stopifnot_condition <- if (allow_named_stopifnot) "and not(preceding-sibling::*[1][self::EQ_SUB])" else ""
+    xpath <- glue::glue("//expr[
       (
-        expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'stopifnot' or text() = 'assert_that']]
+        expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'assert_that']]
         and expr[2][AND2]
+      ) or (
+        expr[SYMBOL_FUNCTION_CALL[text() = 'stopifnot']]
+        and expr[2][AND2 {named_stopifnot_condition}]
       ) or (
         expr[SYMBOL_FUNCTION_CALL[text() = 'expect_false']]
         and expr[2][OR2]
       )
-    ]"
+    ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
     return(lapply(
       bad_expr,
       xml_nodes_to_lint,
-      source_file,
+      source_expression,
       lint_message = function(expr) {
         matched_fun <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
         op <- xml2::xml_text(xml2::xml_find_first(expr, "expr/*[self::AND2 or self::OR2]"))

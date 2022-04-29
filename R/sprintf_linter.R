@@ -7,15 +7,15 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 sprintf_linter <- function() {
-  Linter(function(source_file) {
-    if (is.null(source_file$full_xml_parsed_content)) return(list())
+  Linter(function(source_expression) {
+    if (is.null(source_expression$full_xml_parsed_content)) return(list())
 
-    xml <- source_file$full_xml_parsed_content
+    xml <- source_expression$full_xml_parsed_content
 
     xpath <- "//expr[
-    expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf'] and
-    OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST
-  ]"
+      expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf'] and
+      OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST
+    ]"
 
     sprintf_calls <- xml2::xml_find_all(xml, xpath)
 
@@ -36,7 +36,7 @@ sprintf_linter <- function() {
     }
 
     result <- .mapply(function(line1, col1, line2, col2) {
-      text <- get_range_text(source_file$file_lines, line1, col1, line2, col2)
+      text <- get_range_text(source_expression$file_lines, line1, col1, line2, col2)
       expr <- tryCatch(parse(text = text, keep.source = FALSE)[[1]], error = function(e) NULL)
       if (is.call(expr) &&
         is.language(expr[[1]]) &&
@@ -52,12 +52,12 @@ sprintf_linter <- function() {
         res <- tryCatch(eval(expr, envir = baseenv()), warning = identity, error = identity)
         if (inherits(res, "condition")) {
           Lint(
-            filename = source_file$filename,
+            filename = source_expression$filename,
             line_number = line1,
             column_number = col1,
             type = "warning",
             message = conditionMessage(res),
-            line = source_file$file_lines[line1],
+            line = source_expression$file_lines[line1],
             ranges = list(c(col1, col2))
           )
         }

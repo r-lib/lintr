@@ -26,3 +26,11 @@ test_that("returns the correct linting", {
     linter
   )
 })
+
+test_that("handles R>=4.0.0 strings", {
+  skip_if_not_r_version("4.0.0")
+  expect_lint('R"(hello \'\' there)"', NULL, single_quotes_linter())
+  expect_lint("R'( whoops )'", rex::rex("Only use double-quotes."), single_quotes_linter())
+  expect_lint("R'---[ daisy ]---'", rex::rex("Only use double-quotes."), single_quotes_linter())
+  expect_lint("r'(\")'", NULL, single_quotes_linter())
+})

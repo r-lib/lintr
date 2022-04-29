@@ -11,7 +11,6 @@ with_content_to_parse <- function(content, code) {
   eval(substitute(code), envir = content_env)
 }
 
-
 test_that("tab positions have been corrected", {
   with_content_to_parse("1\n\t",
     expect_length(pc, 2L)
@@ -26,7 +25,7 @@ test_that("tab positions have been corrected", {
   )
 
   with_content_to_parse("\t\tTRUE",
-    expect_identical(unlist(pc[[1]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(3L, 6L))
+    expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(3L, 6L))
   )
 
   with_content_to_parse("x\t<-\tTRUE", {
@@ -109,8 +108,9 @@ test_that("Warns if encoding is misspecified", {
   expect_s3_class(the_lint, "lint")
 
   msg <- "Invalid multibyte character in parser. Is the encoding correct?"
-  if (.Platform$OS.type == "windows") {
-    # Windows parser throws a different error message because the source code is converted to native encoding
+  if (!isTRUE(l10n_info()[["UTF-8"]])) {
+    # Prior to R 4.2.0, the Windows parser throws a different error message because the source code is converted to
+    # native encoding.
     # This results in line 4 becoming <fc> <- 42 before the parser sees it.
     msg <- "unexpected '<'"
   }
@@ -127,7 +127,7 @@ test_that("Warns if encoding is misspecified", {
 })
 
 test_that("Can extract line number from parser errors", {
-  skip_if_not(getRversion() >= "4.0")
+  skip_if_not_r_version("4.0.0")
 
   # malformed raw string literal at line 2
   with_content_to_parse(

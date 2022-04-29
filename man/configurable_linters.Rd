@@ -14,6 +14,7 @@ The following linters are tagged with 'configurable':
 \itemize{
 \item{\code{\link{absolute_path_linter}}}
 \item{\code{\link{backport_linter}}}
+\item{\code{\link{brace_linter}}}
 \item{\code{\link{closed_curly_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{duplicate_argument_linter}}}
@@ -24,6 +25,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{object_length_linter}}}
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{open_curly_linter}}}
+\item{\code{\link{semicolon_linter}}}
 \item{\code{\link{semicolon_terminator_linter}}}
 \item{\code{\link{todo_comment_linter}}}
 \item{\code{\link{undesirable_function_linter}}}
