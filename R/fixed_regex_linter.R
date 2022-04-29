@@ -15,7 +15,7 @@
 #' @export
 fixed_regex_linter <- function() {
   Linter(function(source_expression) {
-    if (length(source_expresion$xml_parsed_content) == 0L) {
+    if (length(source_expression$xml_parsed_content) == 0L) {
       return(list())
     }
 
