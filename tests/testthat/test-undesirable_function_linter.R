@@ -7,12 +7,21 @@ test_that("linter returns correct linting", {
   expect_lint("cat(\"Try to return\")", NULL, linter)
   expect_lint("lapply(x, log10)", list(message = msg_log10, line_number = 1L, column_number = 11L), linter)
   expect_lint("return()", list(message = msg_return, line_number = 1L, column_number = 1L), linter)
-  expect_lint("function(x) {\nprint(options())\ny <- log10(x)\nreturn(y)\n}",
-              list(
-                list(message = msg_log10, line_number = 3L, column_number = 6L),
-                list(message = msg_return, line_number = 4L, column_number = 1L)
-              ),
-              linter)
+  expect_lint(
+    trim_some("
+      function(x) {
+        print(options())
+        y <- log10(x)
+        return(y)
+      }"),
+    list(
+      list(message = msg_log10, line_number = 3L, column_number = 8L),
+      list(message = msg_return, line_number = 4L, column_number = 3L)
+    ),
+    linter
+  )
+  # regression test for #1050
+  expect_lint("df$return <- 1", NULL, linter)
 })
 
 test_that("it's possible to NOT lint symbols", {
