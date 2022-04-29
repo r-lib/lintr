@@ -90,7 +90,7 @@ test_that("fixed_regex_linter is more exact about distinguishing \\s from \\:", 
 })
 
 ## tests for stringr functions
-test_that("fixed_regex_linter skips allowed usages", {
+test_that("fixed_regex_linter skips allowed stringr usages", {
   linter <- fixed_regex_linter()
 
   expect_lint("str_replace(y, '[a-zA-Z]', '')", NULL, linter)
@@ -150,38 +150,38 @@ test_that("1- or 2-width octal escape sequences are handled", {
   linter <- fixed_regex_linter()
   msg <- rex::rex("For static regular expression patterns, set `fixed = TRUE`.")
 
-  expect_lint('strsplit(x, "\\\\1")', msg, linter)
+  expect_lint('strsplit(x, "\\1")', msg, linter)
 })
 
 test_that("one-character character classes with escaped characters are caught", {
   linter <- fixed_regex_linter()
   msg <- rex::rex("For static regular expression patterns, set `fixed = TRUE`.")
 
-  expect_lint("gsub('[\\\\n]', '', x)", msg, linter)
-  expect_lint("gsub('[\\\\\\\"]', '', x)", msg, linter)
-  expect_lint("str_split(x, '[\\\\1]')", msg, linter)
-  expect_lint("str_split(x, '[\\\\12]')", msg, linter)
-  expect_lint("str_split(x, '[\\\\123]')", msg, linter)
-  expect_lint("str_split(x, '[\\\\xa]')", msg, linter)
-  expect_lint("str_split(x, '[\\\\xA7]')", msg, linter)
-  expect_lint("str_split(x, '[\\\\uF]')", msg, linter)
-  expect_lint("str_split(x, '[\\\\u01]')", msg, linter)
-  expect_lint("str_split(x, '[\\\\u012]')", msg, linter)
-  expect_lint("str_split(x, '[\\\\u0123]')", msg, linter)
-  expect_lint("str_split(x, '[\\\\U8]')", msg, linter)
-  expect_lint("str_split(x, '[\\\\U1d4d7]')", msg, linter)
-  expect_lint("str_split(x, '[\\\\u{1}]')", msg, linter)
-  expect_lint("str_split(x, '[\\\\U{F7D5}]')", msg, linter)
-  expect_lint("str_split(x, '[\\\\U{1D4D7}]')", msg, linter)
+  expect_lint("gsub('[\\n]', '', x)", msg, linter)
+  expect_lint("gsub('[\\\"]', '', x)", msg, linter)
+  expect_lint("str_split(x, '[\\1]')", msg, linter)
+  expect_lint("str_split(x, '[\\12]')", msg, linter)
+  expect_lint("str_split(x, '[\\123]')", msg, linter)
+  expect_lint("str_split(x, '[\\xa]')", msg, linter)
+  expect_lint("str_split(x, '[\\xA7]')", msg, linter)
+  expect_lint("str_split(x, '[\\uF]')", msg, linter)
+  expect_lint("str_split(x, '[\\u01]')", msg, linter)
+  expect_lint("str_split(x, '[\\u012]')", msg, linter)
+  expect_lint("str_split(x, '[\\u0123]')", msg, linter)
+  expect_lint("str_split(x, '[\\U8]')", msg, linter)
+  expect_lint("str_split(x, '[\\U1d4d7]')", msg, linter)
+  expect_lint("str_split(x, '[\\u{1}]')", msg, linter)
+  expect_lint("str_split(x, '[\\U{F7D5}]')", msg, linter)
+  expect_lint("str_split(x, '[\\U{1D4D7}]')", msg, linter)
 })
 
 test_that("bracketed unicode escapes are caught", {
   linter <- fixed_regex_linter()
   msg <- rex::rex("For static regular expression patterns, set `fixed = TRUE`.")
 
-  expect_lint('gsub("\\\\u{A0}", " ", out, useBytes = TRUE)', msg, linter)
-  expect_lint('gsub("abc\\\\U{A0DEF}ghi", " ", out, useBytes = TRUE)', msg, linter)
-  expect_lint('gsub("\\\\u{A0}\\\\U{0001d4d7}", " ", out, useBytes = TRUE)', msg, linter)
+  expect_lint('gsub("\\u{A0}", " ", out, useBytes = TRUE)', msg, linter)
+  expect_lint('gsub("abc\\U{A0DEF}ghi", " ", out, useBytes = TRUE)', msg, linter)
+  expect_lint('gsub("\\u{A0}\\U{0001d4d7}", " ", out, useBytes = TRUE)', msg, linter)
 })
 
 test_that("escaped characters are handled correctly", {
@@ -202,3 +202,8 @@ test_that("escaped characters are handled correctly", {
 #   since it's the second argument and a non-regex string. Similarly,
 #   str %>% str_detect("x")
 #   is a false negative. thankfully there appear to be few false positives here
+
+# TODO(michaelchirico): we could in principle build in logic to detect whether
+#   perl=TRUE and interpret "regex or not" accordingly. One place
+#   up in practice is for '\<', which is a special character in default
+#   regex but not in PCRE. Empirically relevant for HTML-related regex e.g. \\<li\\>
