@@ -8,12 +8,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_length_linter <- function() {
-  Linter(function(source_file) {
-    if (length(source_file$parsed_content) == 0L) {
+  Linter(function(source_expression) {
+    if (length(source_expression$parsed_content) == 0L) {
       return(list())
     }
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     # TODO(michaelchirico): also catch expect_true(length(x) == 1)
     xpath <- sprintf("//expr[
@@ -29,7 +29,7 @@ expect_length_linter <- function() {
     return(lapply(
       bad_expr,
       xml_nodes_to_lint,
-      source_file,
+      source_expression,
       function(expr) {
         matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
         sprintf("expect_length(x, n) is better than %s(length(x), n)", matched_function)

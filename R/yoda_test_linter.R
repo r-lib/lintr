@@ -11,12 +11,12 @@
 #'   <https://en.wikipedia.org/wiki/Yoda_conditions>
 #' @export
 yoda_test_linter <- function() {
-  Linter(function(source_file) {
-    if (length(source_file$xml_parsed_content) == 0L) {
+  Linter(function(source_expression) {
+    if (length(source_expression$xml_parsed_content) == 0L) {
       return(list())
     }
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     # catch the following types of literal in the first argument:
     #   (1) numeric literal (e.g. TRUE, 1L, 1.0, NA) [NUM_CONST]
@@ -40,7 +40,7 @@ yoda_test_linter <- function() {
     return(lapply(
       bad_expr,
       xml_nodes_to_lint,
-      source_file = source_file,
+      source_expression = source_expression,
       lint_message = function(expr) {
         matched_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
         second_const <- xml2::xml_find_first(expr, glue::glue("expr[position() = 3 and ({const_condition})]"))

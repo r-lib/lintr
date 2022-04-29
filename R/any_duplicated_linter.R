@@ -12,12 +12,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 any_duplicated_linter <- function() {
-  Linter(function(source_file) {
-    if (length(source_file$xml_parsed_content) == 0L) {
+  Linter(function(source_expression) {
+    if (length(source_expression$xml_parsed_content) == 0L) {
       return(list())
     }
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     any_duplicated_xpath <- "//expr[
       expr[SYMBOL_FUNCTION_CALL[text() = 'any']]
@@ -35,7 +35,7 @@ any_duplicated_linter <- function() {
     any_duplicated_lints <- lapply(
       any_duplicated_expr,
       xml_nodes_to_lint,
-      source_file = source_file,
+      source_expression = source_expression,
       lint_message = "anyDuplicated(x, ...) > 0 is better than any(duplicated(x), ...).",
       type = "warning"
     )
@@ -105,7 +105,7 @@ any_duplicated_linter <- function() {
     length_unique_lints <- lapply(
       length_unique_expr,
       xml_nodes_to_lint,
-      source_file = source_file,
+      source_expression = source_expression,
       lint_message =
         "anyDuplicated(x) == 0L is better than length(unique(x)) == length(x) and length(unique(DF$col)) == nrow(DF)",
       type = "warning"

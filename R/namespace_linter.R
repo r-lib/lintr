@@ -10,10 +10,10 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
-  Linter(function(source_file) {
-    if (is.null(source_file$full_xml_parsed_content)) return(list())
+  Linter(function(source_expression) {
+    if (is.null(source_expression$full_xml_parsed_content)) return(list())
 
-    xml <- source_file$full_xml_parsed_content
+    xml <- source_expression$full_xml_parsed_content
 
     ns_nodes <- xml2::xml_find_all(xml, "//expr/*[self::NS_GET or self::NS_GET_INT]")
 
@@ -45,12 +45,12 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
                 col1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col1"))
                 col2 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col2"))
                 return(Lint(
-                  filename = source_file$filename,
+                  filename = source_expression$filename,
                   line_number = line1,
                   column_number = col1,
                   type = "warning",
                   message = sprintf("'%s' is not exported from {%s}.", syms[[i]], pkgs[[i]]),
-                  line = source_file$file_lines[line1],
+                  line = source_expression$file_lines[line1],
                   ranges = list(c(col1, col2))
                 ))
               }
@@ -64,13 +64,13 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
                   col1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col1"))
                   col2 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col2"))
                   return(Lint(
-                    filename = source_file$filename,
+                    filename = source_expression$filename,
                     line_number = line1,
                     column_number = col1,
                     type = "style",
                     message = sprintf("'%s' is exported from {%s}. Use %s::%s instead.",
                       syms[[i]], pkgs[[i]], pkgs[[i]], syms[[i]]),
-                    line = source_file$file_lines[line1],
+                    line = source_expression$file_lines[line1],
                     ranges = list(c(col1, col2))
                   ))
                 }
@@ -79,12 +79,12 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
                 col1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col1"))
                 col2 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col2"))
                 return(Lint(
-                  filename = source_file$filename,
+                  filename = source_expression$filename,
                   line_number = line1,
                   column_number = col1,
                   type = "warning",
                   message = sprintf("'%s' does not exist in {%s}.", syms[[i]], pkgs[[i]]),
-                  line = source_file$file_lines[line1],
+                  line = source_expression$file_lines[line1],
                   ranges = list(c(col1, col2))
                 ))
               }
@@ -95,12 +95,12 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
             col1 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "col1"))
             col2 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "col2"))
             return(Lint(
-              filename = source_file$filename,
+              filename = source_expression$filename,
               line_number = line1,
               column_number = col1,
               type = "warning",
               message = conditionMessage(ns),
-              line = source_file$file_lines[line1],
+              line = source_expression$file_lines[line1],
               ranges = list(c(col1, col2))
             ))
             # nocov end
@@ -111,12 +111,12 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
         col1 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "col1"))
         col2 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "col2"))
         return(Lint(
-          filename = source_file$filename,
+          filename = source_expression$filename,
           line_number = line1,
           column_number = col1,
           type = "warning",
           message = sprintf("Package '%s' is not installed.", pkgs[[i]]),
-          line = source_file$file_lines[line1],
+          line = source_expression$file_lines[line1],
           ranges = list(c(col1, col2))
         ))
       }

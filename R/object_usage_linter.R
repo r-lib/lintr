@@ -10,13 +10,13 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 object_usage_linter <- function(interpret_glue = TRUE) {
-  Linter(function(source_file) {
+  Linter(function(source_expression) {
     # If there is no xml data just return
-    if (is.null(source_file$full_xml_parsed_content)) return(list())
+    if (is.null(source_expression$full_xml_parsed_content)) return(list())
 
-    source_file$parsed_content <- source_file$full_parsed_content
+    source_expression$parsed_content <- source_expression$full_parsed_content
 
-    pkg_name <- pkg_name(find_package(dirname(source_file$filename)))
+    pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
     if (!is.null(pkg_name)) {
       parent_env <- try_silently(getNamespace(pkg_name))
     }
@@ -27,19 +27,19 @@ object_usage_linter <- function(interpret_glue = TRUE) {
 
     declared_globals <- try_silently(utils::globalVariables(package = pkg_name %||% globalenv()))
 
-    symbols <- get_assignment_symbols(source_file$full_xml_parsed_content)
+    symbols <- get_assignment_symbols(source_expression$full_xml_parsed_content)
 
     # Just assign them an empty function
     for (symbol in symbols) {
       assign(symbol, function(...) invisible(), envir = env)
     }
 
-    fun_info <- get_function_assignments(source_file$full_xml_parsed_content)
+    fun_info <- get_function_assignments(source_expression$full_xml_parsed_content)
 
     lapply(seq_len(NROW(fun_info)), function(i) {
       info <- fun_info[i, ]
 
-      code <- get_content(lines = source_file$content[seq(info$line1, info$line2)], info)
+      code <- get_content(lines = source_expression$content[seq(info$line1, info$line2)], info)
       fun <- try_silently(eval(envir = env,
                                parse(
                                  text = code,
@@ -68,7 +68,7 @@ object_usage_linter <- function(interpret_glue = TRUE) {
           }
 
           org_line_num <- as.integer(row$line1) + info$line1 - 1L
-          line <- source_file$content[as.integer(org_line_num)]
+          line <- source_expression$content[as.integer(org_line_num)]
 
           row$name <- re_substitutes(row$name, rex("<-"), "")
 
@@ -76,7 +76,7 @@ object_usage_linter <- function(interpret_glue = TRUE) {
 
           # Handle multi-line lints where name occurs on subsequent lines (#507)
           if (is.na(location$start) && nzchar(row$line2) && row$line2 != row$line1) {
-            lines <- source_file$content[org_line_num:(as.integer(row$line2) + info$line1 - 1L)]
+            lines <- source_expression$content[org_line_num:(as.integer(row$line2) + info$line1 - 1L)]
             locations <- re_matches(lines, rex(boundary, row$name, boundary), locations = TRUE)
 
             matching_row <- (which(!is.na(locations$start)) %||% 1L)[[1L]] # first matching row or 1 (as a fallback)
@@ -93,7 +93,7 @@ object_usage_linter <- function(interpret_glue = TRUE) {
           }
 
           Lint(
-            filename = source_file$filename,
+            filename = source_expression$filename,
             line_number = org_line_num,
             column_number = location$start,
             type = "warning",
@@ -191,22 +191,23 @@ get_function_assignments <- function(xml) {
   # NB: difference across R versions in how EQ_ASSIGN is represented in the AST
   #   (under <expr_or_assign_or_help> or <equal_assign>)
   # TODO(#1106): use //*[...] to capture assignments in more scopes
-  direct_assignment_functions <- xml2::xml_find_all(xml, "
-    *[
-      (
-        (self::expr and (LEFT_ASSIGN or EQ_ASSIGN))
-        or ((self::expr_or_assign_or_help or self::equal_assign) and EQ_ASSIGN)
-      )
-      and expr[2][FUNCTION]
-    ]
-    /expr[2]
-  ")
-  assign_or_setmethod_assignment_functions <-
-    xml2::xml_find_all(xml, "//expr[expr[SYMBOL_FUNCTION_CALL[text() = 'assign' or text() = 'setMethod']]]/expr[3]")
-
-  funs <- c(
-    direct_assignment_functions,
-    assign_or_setmethod_assignment_functions
+  funs <- xml2::xml_find_all(
+    xml,
+    paste(
+      # direct assignments
+      "*[
+        (
+          (self::expr and (LEFT_ASSIGN or EQ_ASSIGN))
+          or ((self::expr_or_assign_or_help or self::equal_assign) and EQ_ASSIGN)
+        )
+        and expr[2][FUNCTION]
+      ]
+      /expr[2]
+      ",
+      # assign() and setMethod() assignments
+      "//expr[expr[SYMBOL_FUNCTION_CALL[text() = 'assign' or text() = 'setMethod']]]/expr[3]",
+      sep = " | "
+    )
   )
 
    if (length(funs) == 0L) {

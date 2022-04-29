@@ -19,6 +19,7 @@
 * The `...` arguments for `lint()`, `lint_dir()`, and `lint_package()` have promoted to an earlier position to better match the [Tidyverse design principal](https://design.tidyverse.org/args-data-details.html) of data->descriptor->details. This change enables passing objects to `...` without needing to specify non-required arguments, e.g. `lint_dir("/path/to/dir", linter())` now works without the need to specify `relative_path`. This affects some code that uses positional arguments. (#935, @michaelchirico)
   + For `lint()`, `...` is now the 3rd argument, where earlier this was `cache=`
   + For `lint_dir()` and `lint_package()`, `...` is now the 2nd argument, where earlier this was `relative_path=`
+* Argument `source_file` to exported functions `with_id()` and `ids_with_token()` have been renamed to `source_expression` to better reflect that this argument is typically the output of `get_source_expressions()`. It has also been renamed as the argument of the now-private functional versions of many linters, which  has no direct effect on packages importing linter, but is mentioned in case custom linters imitating `lintr` style have also adopted the `source_file` naming and want to adapt to keep in sync.
 
 ## New features, bug fixes, improvements
 
@@ -165,6 +166,7 @@ function calls. (#850, #851, @renkun-ken)
 * `get_source_expressions()` fixes the `text` value for `STR_CONST` nodes involving 1- or 2-width octal escapes (e.g. `"\1"`) to account for an R parser bug (https://bugs.r-project.org/show_bug.cgi?id=18323)
 * Several linters tightened internal logic to allow for raw strings like `R"( a\string )"` (#1034, @michaelchirico)
 * `object_usage_linter()` correctly detects functions assigned with `=` instead of `<-` (#1081, @michaelchirico)
+* `undesirable_function_linter()` no longer lints undesirable symbols if they are used as names (#1050, @AshesITR)
 
 # lintr 2.0.1
 

@@ -9,12 +9,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unreachable_code_linter <- function() {
-  Linter(function(source_file) {
-    if (length(source_file$xml_parsed_content) == 0L) {
+  Linter(function(source_expression) {
+    if (length(source_expression$xml_parsed_content) == 0L) {
       return(list())
     }
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     # NB:
     #  - * returns all children, including the terminal }, so the position
@@ -39,7 +39,7 @@ unreachable_code_linter <- function() {
     return(lapply(
       bad_expr,
       xml_nodes_to_lint,
-      source_file = source_file,
+      source_expression = source_expression,
       lint_message = "Code and comments coming after a top-level return() or stop() should be removed.",
       type = "warning"
     ))

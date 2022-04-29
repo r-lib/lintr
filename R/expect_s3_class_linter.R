@@ -9,12 +9,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_s3_class_linter <- function() {
-  Linter(function(source_file) {
-    if (length(source_file$parsed_content) == 0L) {
+  Linter(function(source_expression) {
+    if (length(source_expression$parsed_content) == 0L) {
       return(list())
     }
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     # (1) expect_{equal,identical}(class(x), C)
     # (2) expect_true(is.<class>(x)) and expect_true(inherits(x, C))
@@ -39,7 +39,7 @@ expect_s3_class_linter <- function() {
     return(lapply(
       bad_expr,
       xml_nodes_to_lint,
-      source_file,
+      source_expression,
       function(expr) {
         matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
         if (matched_function %in% c("expect_equal", "expect_identical")) {
@@ -82,12 +82,12 @@ is_s3_class_calls <- paste0("is.", c(
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_s4_class_linter <- function() {
-  Linter(function(source_file) {
-    if (length(source_file$parsed_content) == 0L) {
+  Linter(function(source_expression) {
+    if (length(source_expression$parsed_content) == 0L) {
       return(list())
     }
 
-    xml <- source_file$xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     # TODO(michaelchirico): also catch expect_{equal,identical}(methods::is(x), k).
     #   there are no hits for this on google3 as of now.
@@ -104,7 +104,7 @@ expect_s4_class_linter <- function() {
     return(lapply(
       bad_expr,
       xml_nodes_to_lint,
-      source_file = source_file,
+      source_expression = source_expression,
       lint_message = paste(
         "expect_s4_class(x, k) is better than expect_true(is(x, k)).",
         "Note also expect_s3_class() available for testing S3 objects."
