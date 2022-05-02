@@ -128,5 +128,5 @@ is_not_regex <- function(str) {
   rx_static_regex <- rex::rex(start, zero_or_more(rx_static_token), end)
 
   # need to add single-line option to allow literal newlines
-  grepl(paste0("(?s)", rx_static_regex), str, perl = TRUE)
+  grepl(paste0("(?s)", rx_static_regex), str, perl = TRUE) || grepl(rx_static_regex, str)
 }
