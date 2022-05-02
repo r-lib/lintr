@@ -36,23 +36,21 @@ test_that("default_linters and default tag match up", {
 test_that("warnings occur only for deprecated linters", {
   expect_silent(linters_with_tags(tags = NULL))
   num_deprecated_linters <- nrow(available_linters(tags = "deprecated", exclude_tags = NULL))
-  warns_expected <- num_deprecated_linters
+  deprecation_warns_seen <- 0L
   expect_silent({
     withCallingHandlers(
       linters_with_tags(tags = "deprecated", exclude_tags = NULL),
       warning = function(w) {
-        if (warns_expected >= 1L && grepl("was deprecated", conditionMessage(w))) {
-          warns_expected <<- warns_expected - 1L
+        if (grepl("was deprecated", conditionMessage(w))) {
+          deprecation_warns_seen <<- deprecation_warns_seen + 1L
           invokeRestart("muffleWarning")
         } else {
           w
         }
       }
     )
-    if (warns_expected != 0L) {
-      stop("Number of caught warnings not equal to number of deprecated linters (", num_deprecated_linters, ").")
-    }
   })
+  expect_equal(deprecation_warns_seen, num_deprecated_linters)
 })
 
 test_that("available_linters matches the set of linters available from lintr", {
