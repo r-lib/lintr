@@ -288,7 +288,7 @@ lint_dir <- function(path = ".", ...,
 #'   lint_package()
 #'
 #'   lint_package(
-#'     linters = with_defaults(semicolon_linter = semicolon_linter())
+#'     linters = linters_with_defaults(semicolon_linter = semicolon_linter())
 #'     cache = TRUE,
 #'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
 #'   )
