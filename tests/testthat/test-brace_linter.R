@@ -137,7 +137,8 @@ test_that("brace_linter lints braces correctly", {
         {
           print(1)
         },
-        error = function(err) {}
+        error = function(err) {
+        }
       )
     "),
     NULL,
