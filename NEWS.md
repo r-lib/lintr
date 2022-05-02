@@ -11,7 +11,8 @@
 * Rename `semicolon_terminator_linter` to `semicolon_linter` for better consistency. `semicolon_terminator_linter` survives but is marked for deprecation. The new linter also has a new signature, taking arguments `allow_compound` and `allow_trailing` to replace the old single argument `semicolon=`, again for signature consistency with other linters.
 * Combined several curly brace related linters into a new `brace_linter` (#1041, @AshesITR):
   + `closed_curly_linter()`, also allowing `}]` in addition to `})` and `},` as exceptions.
-  + `open_curly_linter()`, no longer linting unnecessary trailing whitespace
+  + `open_curly_linter()`, no longer linting unnecessary trailing whitespace and also allowing `,` and `%>%` on
+    preceding lines as exceptions. (#487, #1028)
   + `paren_brace_linter()`, also linting `if`/`else` and `repeat` with missing whitespace
   + Require `else` to come on the same line as the preceding `}`, if present (#884, @michaelchirico)
   + Require functions spanning multiple lines to use curly braces (@michaelchirico)
@@ -167,6 +168,7 @@ function calls. (#850, #851, @renkun-ken)
 * `get_source_expressions()` fixes the `text` value for `STR_CONST` nodes involving 1- or 2-width octal escapes (e.g. `"\1"`) to account for an R parser bug (https://bugs.r-project.org/show_bug.cgi?id=18323)
 * Several linters tightened internal logic to allow for raw strings like `R"( a\string )"` (#1034, @michaelchirico)
 * `object_usage_linter()` correctly detects functions assigned with `=` instead of `<-` (#1081, @michaelchirico)
+* `undesirable_function_linter()` no longer lints undesirable symbols if they are used as names (#1050, @AshesITR)
 
 # lintr 2.0.1
 
