@@ -4,6 +4,10 @@
 #'
 #' @param path Path to project root, where a `.lintr` file should be created.
 #' If it already exists, an error will be thrown.
+#' @param type What kind of configuration to create?
+#'
+#'  * `minimal` creates a minimal lintr config, based off the default linters ([linters_with_defaults()]).
+#'  * `full` creates a lintr config using all available linters using [linters_with_tags()].
 #'
 #' @return Path to the generated configuration, invisibly.
 #'

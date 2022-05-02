@@ -9,6 +9,12 @@ use_lintr(path = ".", type = c("minimal", "full"))
 \arguments{
 \item{path}{Path to project root, where a \code{.lintr} file should be created.
 If it already exists, an error will be thrown.}
+
+\item{type}{What kind of configuration to create?
+\itemize{
+\item \code{minimal} creates a minimal lintr config, based off the default linters (\code{\link[=linters_with_defaults]{linters_with_defaults()}}).
+\item \code{full} creates a lintr config using all available linters using \code{\link[=linters_with_tags]{linters_with_tags()}}.
+}}
 }
 \value{
 Path to the generated configuration, invisibly.
