@@ -31,13 +31,13 @@ use_lintr <- function(path = ".", type = c("minimal", "full")) {
   the_config <- switch(
     type,
     minimal = list(
-      linters = "linters_with_defaults()",
+      linters = 'linters_with_defaults() # see vignette("using_lintr")',
       encoding = '"UTF-8"'
     ),
     full = list(
-      linters = "linters_with_tags(tags = NULL, packages = \"lintr\")",
+      linters = 'linters_with_tags(tags = NULL, packages = "lintr") # see vignette("using_lintr")',
       encoding = '"UTF-8"',
-      exclusions = "list(\"renv\", \"packrat\") # see ?exclude"
+      exclusions = "list(\"renv\", \"packrat\") # see ?lintr::exclude"
     )
   )
   write.dcf(the_config, config_file)
