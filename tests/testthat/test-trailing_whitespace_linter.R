@@ -43,3 +43,15 @@ test_that("also handles completely empty lines per allow_empty_lines argument", 
     trailing_whitespace_linter(allow_empty_lines = TRUE)
   )
 })
+
+test_that("also handles trailing whitespace in string constants", {
+  linter <- trailing_whitespace_linter()
+  msg <- rex::rex("Trailing whitespace is superfluous.")
+
+  expect_lint("blah <- '  \n  \n'", NULL, linter)
+  # can be enabled with allow_in_strings = FALSE
+  expect_lint("blah <- '  \n  \n'", msg,
+              trailing_whitespace_linter(allow_empty_lines = TRUE, allow_in_strings = FALSE))
+  expect_lint("blah <- '  \n  \n'", list(msg, msg),
+              trailing_whitespace_linter(allow_in_strings = FALSE))
+})
