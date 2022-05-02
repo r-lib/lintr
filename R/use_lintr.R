@@ -23,7 +23,7 @@
 #' lintr::lint_dir()
 #' }
 use_lintr <- function(path = ".", type = c("minimal", "full")) {
-  config_file <- normalizePath(file.path(path, getOption("lintr.linter_file")))
+  config_file <- normalizePath(file.path(path, getOption("lintr.linter_file")), mustWork = FALSE)
   if (file.exists(config_file)) {
     stop("File '", config_file, "' already exists.")
   }
@@ -32,11 +32,11 @@ use_lintr <- function(path = ".", type = c("minimal", "full")) {
     type,
     minimal = list(
       linters = "linters_with_defaults()",
-      encoding = "UTF-8"
+      encoding = '"UTF-8"'
     ),
     full = list(
       linters = "linters_with_tags(tags = NULL, packages = \"lintr\")",
-      encoding = "UTF-8",
+      encoding = '"UTF-8"',
       exclusions = "list(\"renv\", \"packrat\") # see ?exclude"
     )
   )
