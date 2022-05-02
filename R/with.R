@@ -112,7 +112,7 @@ with_defaults <- function(..., default = default_linters) {
 #' # Get all linters tagged as "default" from lintr and mypkg
 #' \dontrun{linters_with_tags("default", packages = c("lintr", "mypkg"))}
 #' @export
-linters_with_tags <- function(tags, ..., packages = "lintr") {
+linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "deprecated") {
   if (!is.character(tags) && !is.null(tags)) {
     stop("`tags` must be a character vector, or NULL.")
   }
@@ -121,7 +121,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr") {
   for (package in packages) {
     pkg_ns <- loadNamespace(package)
     ns_exports <- getNamespaceExports(pkg_ns)
-    available <- available_linters(packages = package, tags = tags)
+    available <- available_linters(packages = package, tags = tags, exclude_tags = exclude_tags)
     if (nrow(available) > 0L) {
       if (!all(available$linter %in% ns_exports)) {
         missing_linters <- setdiff(available$linter, ns_exports)
