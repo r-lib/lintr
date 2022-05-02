@@ -10,5 +10,8 @@ test_that("use_lintr works as expected", {
   expect_silent(read_settings(tmp))
   read_settings(NULL)
 
-  expect_equal(normalizePath(find_config(tmp)), lintr_file)
+  expect_equal(
+    normalizePath(find_config(tmp)),
+    normalizePath(lintr_file)
+  )
 })
