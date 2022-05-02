@@ -120,12 +120,12 @@ If an Encoding is found in a `.Rproj` file or a `DESCRIPTION` file, that encodin
 
 #### Customizing active linters
 
-If you only want to customize some linters, you can use the helper function `with_defaults()`, which will keep all
+If you only want to customize some linters, you can use the helper function `linters_with_defaults()`, which will keep all
 unnamed linters with the default settings. Disable a linter by passing `NULL`. For example, to set the line length
 limit to 120 characters and globally disable the `no_tab_linter`, you can put this into your `.lintr`:
 
 ```r
-linters: with_defaults(
+linters: linters_with_defaults(
     line_length_linter = line_length_linter(120L),
     no_tab_linter = NULL
   )

@@ -1,42 +1,27 @@
 #' Modify lintr defaults
 #'
-#' Make a new list based on \pkg{lintr}'s default linters, undesirable operators or functions.
-#' The result of this function is meant to be passed to the `linters` argument of `lint()`, or put in your
-#' configuration file.
+#' Modify a list of defaults by name, allowing for replacement, deletion and addition of new elements.
 #'
 #' @param ... arguments of elements to change. If unnamed, the argument is automatically named.
 #' If the named argument already exists in "default", it is replaced by the new element.
 #' If it does not exist, it is added. If the value is `NULL`, the element is removed.
-#' @param default list of elements to modify.
+#' @param default named list of elements to modify.
 #' @return A modified list of elements, sorted by name. To achieve this sort in a platform-independent way, two
 #'   transformations are applied to the names: (1) replace `_` with `0` and (2) convert [tolower()].
-#' @seealso [linters_with_tags]
+#' @seealso [linters_with_tags], [linters_with_defaults] for creating linter lists.
 #' @examples
-#' # When using interactively you will usually pass the result onto `lint` or `lint_package()`
-#' \dontrun{
-#' lint("foo.R", linters = with_defaults(line_length_linter = line_length_linter(120)))
-#' }
-#' # the default linter list with a different line length cutoff
-#' my_linters <- with_defaults(line_length_linter = line_length_linter(120))
-#'
-#' # omit the argument name if you are just using different arguments
-#' my_linters <- with_defaults(default = my_linters,
-#'                             object_name_linter("camelCase"))
-#'
-#' # remove assignment checks (with NULL), add absolute path checks
-#' my_linters <- with_defaults(default = my_linters,
-#'                             assignment_linter = NULL,
-#'                             absolute_path_linter())
-#'
 #' # custom list of undesirable functions:
 #' #    remove sapply (using NULL)
 #' #    add cat (with a accompanying message),
 #' #    add print (unnamed, i.e. with no accompanying message)
 #' #    add return (as taken from all_undesirable_functions)
-#' my_undesirable_functions <- with_defaults(default = default_undesirable_functions,
+#' my_undesirable_functions <- modify_defaults(default = default_undesirable_functions,
 #'   sapply=NULL, "cat"="No cat allowed", "print", all_undesirable_functions[["return"]])
 #' @export
-with_defaults <- function(..., default = default_linters) {
+modify_defaults <- function(default, ...) {
+  if (missing(default) || !is.list(default) || !all(nzchar(names2(default)))) {
+    stop("`default` must be a named list.")
+  }
   vals <- list(...)
   nms <- names2(vals)
   missing <- !nzchar(nms, keepNA = TRUE)
@@ -74,7 +59,7 @@ with_defaults <- function(..., default = default_linters) {
 
   res[] <- lapply(res, function(x) {
     prev_class <- class(x)
-    if (inherits(x, "function") && !inherits(x, "lintr_function")) {
+    if (is.function(x) && !inherits(x, "lintr_function")) {
       class(x) <- c(prev_class, "lintr_function")
     }
     x
@@ -96,12 +81,12 @@ with_defaults <- function(..., default = default_linters) {
 #'
 #' @return A modified list of linters.
 #' @seealso
-#' [with_defaults] for basing off lintr's set of default linters.
+#' [linters_with_defaults] for basing off lintr's set of default linters.
 #' [available_linters] to get a data frame of available linters.
 #' [linters] for a complete list of linters available in lintr.
 #' @examples
-#' # `with_defaults()` and `linters_with_tags("default")` are the same:
-#' all.equal(with_defaults(), linters_with_tags("default"))
+#' # `linters_with_defaults()` and `linters_with_tags("default")` are the same:
+#' all.equal(linters_with_defaults(), linters_with_tags("default"))
 #'
 #' # Get all linters useful for package development
 #' linters_with_tags(tags = "package_development")
@@ -141,7 +126,48 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
     }
   }
 
-  with_defaults(..., default = tagged_linters)
+  modify_defaults(..., default = tagged_linters)
+}
+
+#' Create a linter configuration based on defaults
+#'
+#' Make a new list based on \pkg{lintr}'s default linters.
+#' The result of this function is meant to be passed to the `linters` argument of `lint()`,
+#' or to be put in your configuration file.
+#'
+#' @param default Default list of linters to modify. Must be named.
+#' @inheritParams linters_with_tags
+#' @seealso
+#' [linters_with_tags] for basing off tags attached to linters, possibly across multiple packages.
+#' [available_linters] to get a data frame of available linters.
+#' [linters] for a complete list of linters available in lintr.
+#' @export
+#' @examples
+#' # When using interactively you will usually pass the result onto `lint` or `lint_package()`
+#' \dontrun{
+#' lint("foo.R", linters = linters_with_defaults(line_length_linter = line_length_linter(120)))
+#' }
+#' # the default linter list with a different line length cutoff
+#' my_linters <- linters_with_defaults(line_length_linter = line_length_linter(120))
+#'
+#' # omit the argument name if you are just using different arguments
+#' my_linters <- linters_with_defaults(default = my_linters, object_name_linter("camelCase"))
+#'
+#' # remove assignment checks (with NULL), add absolute path checks
+#' my_linters <- linters_with_defaults(
+#'   default = my_linters,
+#'   assignment_linter = NULL,
+#'   absolute_path_linter()
+#' )
+linters_with_defaults <- function(..., default = default_linters) {
+  modify_defaults(..., default = default)
+}
+
+#' @rdname linters_with_defaults
+#' @export
+with_defaults <- function(..., default = default_linters) {
+  lintr_deprecated("with_defaults", "linters_with_defaults", "2.0.9001")
+  linters_with_defaults(..., default = default)
 }
 
 call_linter_factory <- function(linter_factory, linter_name, package) {
