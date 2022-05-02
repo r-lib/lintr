@@ -15,13 +15,17 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
 
     import_exprs <- xml2::xml_find_all(
       source_expression$full_xml_parsed_content,
-      paste(
-        "//expr[",
-        "expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]",
-        "and",
-        "(not(SYMBOL_SUB[text() = 'character.only']) or *[1][self::STR_CONST])",
-        "]"
-      )
+      "//expr[
+        expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
+        and
+        (
+          not(SYMBOL_SUB[
+            text() = 'character.only' and
+            following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+          ]) or
+          expr[2][STR_CONST]
+        )
+      ]"
     )
     if (length(import_exprs) == 0L) {
       return(list())
