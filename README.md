@@ -390,5 +390,5 @@ Installing `languageserver` package in R and `vscode-R` extension in VS Code wil
 
 ```bash
 Rscript -e 'install.packages("languageserver")'
-code --install-extension ikuyadeu.r
+code --install-extension reditorsupport.r
 ```
