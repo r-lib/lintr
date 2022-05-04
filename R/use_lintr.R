@@ -37,7 +37,7 @@ use_lintr <- function(path = ".", type = c("minimal", "full")) {
     full = list(
       linters = 'linters_with_tags(tags = NULL, packages = "lintr") # see vignette("using_lintr")',
       encoding = '"UTF-8"',
-      exclusions = "list(\"renv\", \"packrat\") # see ?lintr::exclude"
+      exclusions = 'list("renv", "packrat") # see ?lintr::exclude'
     )
   )
   write.dcf(the_config, config_file)
