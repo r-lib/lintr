@@ -103,7 +103,7 @@ testing. You can run all of the currently available tests using
 `filter` argument to `devtools::test()`.
 
 Linter tests should be put in the
-[tests/testthat/](https://github.com/jimhester/lintr/tree/master/tests/testthat)
+[tests/testthat/](https://github.com/r-lib/lintr/tree/master/tests/testthat)
 folder.  The test filename should be the linter name prefixed by `test-`, e.g.
 `test-assignment_linter.R`.
 
@@ -181,5 +181,5 @@ list before the `NULL` at the end.
 
 ## Submit pull request ##
 Push your changes to a branch of your fork of the
-[lintr](https://github.com/jimhester/lintr) repository, and submit a pull
+[lintr](https://github.com/r-lib/lintr) repository, and submit a pull
 request to get your linter merged into lintr!
