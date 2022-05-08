@@ -3,11 +3,12 @@
 #' Create a minimal lintr config file as a starting point for customization
 #'
 #' @param path Path to project root, where a `.lintr` file should be created.
-#' If it already exists, an error will be thrown.
+#' If the `.lintr` file already exists, an error will be thrown.
 #' @param type What kind of configuration to create?
 #'
-#'  * `minimal` creates a minimal lintr config, based off the default linters ([linters_with_defaults()]).
-#'  * `full` creates a lintr config using all available linters using [linters_with_tags()].
+#'  * `tidyverse` creates a minimal lintr config, based on the default linters ([linters_with_defaults()]).
+#'    These are suitable for following [the tidyverse style guide](https://style.tidyverse.org/).
+#'  * `full` creates a lintr config using all available linters via [linters_with_tags()].
 #'
 #' @return Path to the generated configuration, invisibly.
 #'
@@ -22,15 +23,15 @@
 #' # then
 #' lintr::lint_dir()
 #' }
-use_lintr <- function(path = ".", type = c("minimal", "full")) {
+use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
   config_file <- normalizePath(file.path(path, getOption("lintr.linter_file")), mustWork = FALSE)
   if (file.exists(config_file)) {
-    stop("File '", config_file, "' already exists.")
+    stop("Found an existing configuration file at '", config_file, "'.")
   }
   type <- match.arg(type)
   the_config <- switch(
     type,
-    minimal = list(
+    tidyverse = list(
       linters = 'linters_with_defaults() # see vignette("using_lintr")',
       encoding = '"UTF-8"'
     ),
