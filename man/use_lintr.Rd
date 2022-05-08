@@ -34,3 +34,6 @@ lintr::use_lintr(type = "full")
 lintr::lint_dir()
 }
 }
+\seealso{
+\code{vignette("using_lintr")} for detailed introduction to using and configuring lintr.
+}

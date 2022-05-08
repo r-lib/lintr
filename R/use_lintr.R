@@ -13,6 +13,7 @@
 #' @return Path to the generated configuration, invisibly.
 #'
 #' @export
+#' @seealso `vignette("using_lintr")` for detailed introduction to using and configuring lintr.
 #' @examples
 #' \dontrun{
 #' # use the default set of linters
