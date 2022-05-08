@@ -4,16 +4,17 @@
 \alias{use_lintr}
 \title{Use lintr in your project}
 \usage{
-use_lintr(path = ".", type = c("minimal", "full"))
+use_lintr(path = ".", type = c("tidyverse", "full"))
 }
 \arguments{
 \item{path}{Path to project root, where a \code{.lintr} file should be created.
-If it already exists, an error will be thrown.}
+If the \code{.lintr} file already exists, an error will be thrown.}
 
 \item{type}{What kind of configuration to create?
 \itemize{
-\item \code{minimal} creates a minimal lintr config, based off the default linters (\code{\link[=linters_with_defaults]{linters_with_defaults()}}).
-\item \code{full} creates a lintr config using all available linters using \code{\link[=linters_with_tags]{linters_with_tags()}}.
+\item \code{tidyverse} creates a minimal lintr config, based on the default linters (\code{\link[=linters_with_defaults]{linters_with_defaults()}}).
+These are suitable for following \href{https://style.tidyverse.org/}{the tidyverse style guide}.
+\item \code{full} creates a lintr config using all available linters via \code{\link[=linters_with_tags]{linters_with_tags()}}.
 }}
 }
 \value{
