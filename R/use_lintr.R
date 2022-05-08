@@ -42,6 +42,6 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
       exclusions = 'list("renv", "packrat") # see ?lintr::exclude'
     )
   )
-  write.dcf(the_config, config_file)
+  write.dcf(the_config, config_file, width = Inf)
   invisible(config_file)
 }

@@ -11,14 +11,17 @@ test_that("use_lintr works as expected", {
   expect_silent(read_settings(tmp))
   read_settings(NULL)
 
-  file.remove(lintr_file)
-  # type = "full" also works with read_settings()
-  use_lintr(path = tmp, type = "full")
-  expect_silent(read_settings(tmp))
-  read_settings(NULL)
-
   expect_equal(
     normalizePath(find_config(tmp)),
     normalizePath(lintr_file)
   )
+})
+
+test_that("use_lintr with type = full also works", {
+  tmp <- withr::local_tempdir()
+
+  # type = "full" also works with read_settings()
+  use_lintr(path = tmp, type = "full")
+  expect_silent(read_settings(tmp))
+  read_settings(NULL)
 })
