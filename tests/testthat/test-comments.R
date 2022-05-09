@@ -1,26 +1,18 @@
-org_travis_repo_slug <- Sys.getenv("TRAVIS_REPO_SLUG")
-org_jenkins_url <- Sys.getenv("JENKINS_URL")
-org_git_url <- Sys.getenv("GIT_URL")
-org_git_url_1 <- Sys.getenv("GIT_URL_1")
-org_change_id <- Sys.getenv("CHANGE_ID")
-org_git_commit <- Sys.getenv("GIT_COMMIT")
-
-setup({
-  Sys.unsetenv(c("JENKINS_URL", "GIT_URL", "GIT_URL_1", "CHANGE_ID", "GIT_COMMIT"))
-})
-
-teardown({
-  Sys.setenv(
-    TRAVIS_REPO_SLUG = org_travis_repo_slug,
-    JENKINS_URL = org_jenkins_url,
-    GIT_URL = org_git_url,
-    GIT_URL_1 = org_git_url_1,
-    CHANGE_ID = org_change_id,
-    GIT_COMMIT = org_git_commit
+clear_ci_info <- function() {
+  withr::local_envvar(
+    c(
+      "JENKINS_URL" = NA_character_,
+      "GIT_URL" = NA_character_,
+      "GIT_URL_1" = NA_character_,
+      "CHANGE_ID" = NA_character_,
+      "GIT_COMMIT" = NA_character_
+    ),
+    .local_envir = parent.frame()
   )
-})
+}
 
 test_that("it detects CI environments", {
+  clear_ci_info()
   Sys.setenv(TRAVIS_REPO_SLUG = "foo/bar")
   expect_true(in_ci())
   Sys.setenv(TRAVIS_REPO_SLUG = "")
@@ -28,16 +20,17 @@ test_that("it detects CI environments", {
 })
 
 test_that("it returns NULL if GIT_URL is not on github", {
+  clear_ci_info()
   Sys.setenv(
     JENKINS_URL = "https://jenkins.example.org/",
     GIT_URL = "https://example.com/user/repo.git",
     CHANGE_ID = "123"
   )
   expect_false(in_ci())
-  Sys.unsetenv(c("JENKINS_URL", "GIT_URL", "CHANGE_ID"))
 })
 
 test_that("it determines Jenkins PR build info", {
+  clear_ci_info()
   Sys.setenv(
     JENKINS_URL = "https://jenkins.example.org/",
     GIT_URL = "https://github.com/user/repo.git",
@@ -57,6 +50,7 @@ test_that("it determines Jenkins PR build info", {
 })
 
 test_that("it determines Jenkins commit build info", {
+  clear_ci_info()
   Sys.setenv(
     JENKINS_URL = "https://jenkins.example.org/",
     GIT_URL_1 = "https://github.com/user/repo.git",
@@ -70,6 +64,4 @@ test_that("it determines Jenkins commit build info", {
     pull = NULL,
     commit = "abcde"
   ))
-
-  Sys.unsetenv(c("JENKINS_URL", "GIT_URL_1", "GIT_COMMIT"))
 })
