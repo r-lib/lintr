@@ -1,6 +1,6 @@
 # lintr
-[![R build status](https://github.com/r-lib/lintr/workflows/R-CMD-check/badge.svg)](https://github.com/jimhester/lintr/actions)
-[![codecov.io](https://codecov.io/github/r-lib/lintr/coverage.svg?branch=master)](https://codecov.io/github/jimhester/lintr?branch=master)
+[![R build status](https://github.com/r-lib/lintr/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/lintr/actions)
+[![codecov.io](https://codecov.io/github/r-lib/lintr/coverage.svg?branch=master)](https://codecov.io/github/r-lib/lintr?branch=master)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/lintr)](https://cran.r-project.org/package=lintr)
 [![Join the chat at https://gitter.im/jimhester-lintr/Lobby](https://badges.gitter.im/jimhester-lintr/Lobby.svg)](https://gitter.im/jimhester-lintr/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
