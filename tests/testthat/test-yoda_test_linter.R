@@ -39,7 +39,7 @@ test_that("yoda_test_linter ignores strings in $ expressions", {
 # if we only inspect the first argument & ignore context, get false positives
 test_that("yoda_test_linter ignores usage in pipelines", {
   expect_lint("foo() %>% expect_identical(2)", NULL, yoda_test_linter())
-  skip_if_not_installed("base", "4.1.0")
+  skip_if_not_r_version("4.1.0")
   expect_lint("bar() |> expect_equal('a')", NULL, yoda_test_linter())
 })
 
