@@ -109,6 +109,41 @@ get_source_expressions <- function(filename, lines = NULL) {
 }
 
 lint_parse_error <- function(e, source_expression) {
+  # R >= 4.3.0
+  if (inherits(e, "parseError")) {
+    msg <- rex::re_substitutes(e$message, rex::rex(" (", except_some_of(")"), ")", end), "")
+    line <- e$lineno
+    column <- e$colno
+    substr(msg, 1L, 1L) <- toupper(substr(msg, 1L, 1L))
+    msg <- paste0(msg, ".")
+
+    if (inherits(e, "invalidMBCS")) {
+      msg <- paste(msg, "Is the encoding correct?")
+    }
+
+    if (column == 0L) {
+      line <- line - 1L
+      column <- nchar(source_expression$lines[[line]])
+    }
+
+    if (line < 1L || line > length(source_expression$lines)) {
+      # Safely handle invalid location info
+      line <- 1L
+      column <- 1L
+    }
+
+    return(
+      Lint(
+        filename = source_expression$filename,
+        line_number = line,
+        column_number = column,
+        type = "error",
+        message = msg,
+        line = source_expression$lines[[line]]
+      )
+    )
+  }
+
   message_info <- re_matches(e$message,
     rex(except_some_of(":"),
       ":",

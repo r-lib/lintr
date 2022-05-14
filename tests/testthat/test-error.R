@@ -1,5 +1,5 @@
 test_that("returns the correct linting", {
-  msg_escape_char <- rex("is an unrecognized escape in character string starting")
+  msg_escape_char <- rex("is an unrecognized escape in character string")
   expect_lint("\"\\R\"", msg_escape_char)
   expect_lint("\"\\A\"", msg_escape_char)
   expect_lint("\"\\z\"", msg_escape_char)
