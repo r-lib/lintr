@@ -32,6 +32,9 @@ load_cache <- function(file, path = NULL) {
   if (file.exists(file)) {
     tryCatch(
       load(file = file, envir = env),
+      warning = function(w) {
+        invokeRestart("muffleWarning")
+      },
       error = function(e) {
         warning(
           "Could not load cache file '", file, "':\n",
