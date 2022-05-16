@@ -15,14 +15,14 @@ is_lint_level(
 of the object returned by \code{\link[=get_source_expressions]{get_source_expressions()}}.}
 
 \item{level}{Which level of expression is being tested? \code{"expression"}
-means an individual expression, while \code{"file"} means the full
-source tree for this file.}
+means an individual expression, while \code{"file"} means all expressions
+in the current file are available.}
 
 \item{require_xml}{If \code{TRUE}, the XML equivalent of the parse tree
 is required. Use this whenever writing a linter based on logic
-expressed via Xpath.}
+expressed via XPath.}
 }
 \description{
 Helper for determining whether the current \code{source_expression} contains
-the full file tree, or is just a single expression.
+all expressions in the current file, or just a single expression.
 }

@@ -1,16 +1,16 @@
 #' Is this an expression- or a file-level source object?
 #'
 #' Helper for determining whether the current `source_expression` contains
-#'   the full file tree, or is just a single expression.
+#'   all expressions in the current file, or just a single expression.
 #'
 #' @param source_expression A parsed expression object, i.e., an element
 #'   of the object returned by [get_source_expressions()].
 #' @param level Which level of expression is being tested? `"expression"`
-#'   means an individual expression, while `"file"` means the full
-#'   source tree for this file.
+#'   means an individual expression, while `"file"` means all expressions
+#'   in the current file are available.
 #' @param require_xml If `TRUE`, the XML equivalent of the parse tree
 #'   is required. Use this whenever writing a linter based on logic
-#'   expressed via Xpath.
+#'   expressed via XPath.
 #'
 #' @export
 is_lint_level <- function(source_expression, level = c("expression", "file"), require_xml = FALSE) {
