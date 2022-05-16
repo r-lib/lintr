@@ -89,6 +89,6 @@ test_that("partial matching works for exclusions but warns if no linter found", 
       ),
       rex::rex("Could not find linter named ", anything, "bogus_linter")
     ),
-    rex::rex("Could not find linters named ", anything, "hokus_pokus", anything, "bogus")
+    rex::rex("Could not find linters named ", anything, "hocus_pocus", anything, "bogus")
   )
 })

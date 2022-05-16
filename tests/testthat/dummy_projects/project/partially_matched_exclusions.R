@@ -10,4 +10,4 @@ x <- 42; y <- 2
 
 # nolint end
 
-# nolint: hokus_pokus, bogus.
+# nolint: hocus_pocus, bogus.

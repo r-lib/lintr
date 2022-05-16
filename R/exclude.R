@@ -166,15 +166,16 @@ add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep
     excluded_linters <- strsplit(linters_string, exclude_linter_sep)[[1L]]
     if (!is.null(linter_names)) {
       idxs <- pmatch(excluded_linters, linter_names, duplicates.ok = TRUE)
-      if (anyNA(idxs)) {
-        bad <- excluded_linters[is.na(idxs)]
+      matched <- !is.na(idxs)
+      if (!all(matched)) {
+        bad <- excluded_linters[!matched]
         warning(
           "Could not find linter", if (length(bad) > 1L) "s" else "", " named ",
           glue::glue_collapse(sQuote(bad), sep = ", ", last = " and "),
           " in the list of active linters. Make sure the linter is uniquely identified by the given name or prefix."
         )
       }
-      excluded_linters[!is.na(idxs)] <- linter_names[na.omit(idxs)]
+      excluded_linters[matched] <- linter_names[idxs[matched]]
     }
     exclusions <- add_excluded_lines(exclusions, lines, excluded_linters)
   }
