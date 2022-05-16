@@ -32,7 +32,7 @@ jobs:
 
       - name: Extract and lint files changed by this PR
         run: |
-          files <- gh::gh("GET https://api.github.com/repos/jimhester/lintr/pulls/${{ github.event.pull_request.number }}/files")
+          files <- gh::gh("GET https://api.github.com/repos/r-lib/lintr/pulls/${{ github.event.pull_request.number }}/files")
           changed_files <- purrr::map_chr(files, "filename")
           all_files <- list.files(recursive = TRUE)
           exclusions_list <- as.list(setdiff(all_files, changed_files))

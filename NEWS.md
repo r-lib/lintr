@@ -11,7 +11,7 @@
 * Rename `semicolon_terminator_linter` to `semicolon_linter` for better consistency. `semicolon_terminator_linter` survives but is marked for deprecation. The new linter also has a new signature, taking arguments `allow_compound` and `allow_trailing` to replace the old single argument `semicolon=`, again for signature consistency with other linters.
 * Combined several curly brace related linters into a new `brace_linter` (#1041, @AshesITR):
   + `closed_curly_linter()`, also allowing `}]` in addition to `})` and `},` as exceptions.
-  + `open_curly_linter()`, no longer linting unnecessary trailing whitespace and also allowing `,` and `%>%` on
+  + `open_curly_linter()`, no longer linting unnecessary trailing whitespace and also allowing `(`, `,` and `%>%` on
     preceding lines as exceptions. (#487, #1028)
   + `paren_brace_linter()`, also linting `if`/`else` and `repeat` with missing whitespace
   + Require `else` to come on the same line as the preceding `}`, if present (#884, @michaelchirico)
@@ -169,6 +169,9 @@ function calls. (#850, #851, @renkun-ken)
 * Several linters tightened internal logic to allow for raw strings like `R"( a\string )"` (#1034, @michaelchirico)
 * `object_usage_linter()` correctly detects functions assigned with `=` instead of `<-` (#1081, @michaelchirico)
 * `undesirable_function_linter()` no longer lints undesirable symbols if they are used as names (#1050, @AshesITR)
+* `trailing_whitespace_linter()` ignores trailing whitespace in strings by default. 
+  This can be disabled using `allow_in_strings = FALSE` (#1045, @AshesITR)
+* Moved the default lintr cache directory from `~/.R/lintr_cache` to `R_user_dir("lintr", "cache")`. Note that this major version update invalidated the old cache anyway, so it can be safely deleted. (#1062, @AshesITR)
 
 # lintr 2.0.1
 

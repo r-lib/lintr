@@ -9,8 +9,8 @@ Authors@R: c(
     person("Kun", "Ren", role = "aut"),
     person("Alexander", "Rosenstock", role = "aut")
     )
-URL: https://github.com/jimhester/lintr
-BugReports: https://github.com/jimhester/lintr/issues
+URL: https://github.com/r-lib/lintr
+BugReports: https://github.com/r-lib/lintr/issues
 Description: Checks adherence to a given style, syntax errors and possible semantic issues.
     Supports on the fly checking of R code edited with 'RStudio IDE', 'Emacs', 'Vim', 'Sublime Text',
     'Atom' and 'Visual Studio Code'.
@@ -28,7 +28,8 @@ Imports:
     stats,
     utils,
     xml2 (>= 1.0.0),
-    xmlparsedata (>= 1.0.3)
+    xmlparsedata (>= 1.0.3),
+    backports
 Suggests:
     covr,
     httr (>= 1.2.1),
