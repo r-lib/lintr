@@ -11,6 +11,9 @@ is_lint_level(
 )
 }
 \arguments{
+\item{source_expression}{A parsed expression object, i.e., an element
+of the object returned by \code{\link[=get_source_expressions]{get_source_expressions()}}.}
+
 \item{level}{Which level of expression is being tested? \code{"expression"}
 means an individual expression, while \code{"file"} means the full
 source tree for this file.}
@@ -18,9 +21,6 @@ source tree for this file.}
 \item{require_xml}{If \code{TRUE}, the XML equivalent of the parse tree
 is required. Use this whenever writing a linter based on logic
 expressed via Xpath.}
-
-\item{source_expresssion}{A parsed expression object, i.e., an element
-of the object returned by \code{\link[=get_source_expressions]{get_source_expressions()}}.}
 }
 \description{
 Helper for determining whether the current \code{source_expression} contains

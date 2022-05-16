@@ -3,7 +3,7 @@
 #' Helper for determining whether the current `source_expression` contains
 #'   the full file tree, or is just a single expression.
 #'
-#' @param source_expresssion A parsed expression object, i.e., an element
+#' @param source_expression A parsed expression object, i.e., an element
 #'   of the object returned by [get_source_expressions()].
 #' @param level Which level of expression is being tested? `"expression"`
 #'   means an individual expression, while `"file"` means the full
