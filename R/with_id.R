@@ -14,7 +14,7 @@ with_id <- function(source_expression, id, source_file) {
     lintr_deprecated(old = "source_file", new = "source_expression", version = "2.0.1.9001", type = "Argument")
     source_expression <- source_file
   }
-  if (is.null(source_expression$parsed_content)) {
+  if (!is_lint_level(source_expression, "expression")) {
     return(data.frame())
   }
   source_expression$parsed_content[id, ]

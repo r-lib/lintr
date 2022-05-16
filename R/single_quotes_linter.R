@@ -9,7 +9,7 @@
 #' @export
 single_quotes_linter <- function() {
   Linter(function(source_expression) {
-    if (is.null(source_expression$full_parsed_content)) {
+    if (!is_lint_level(source_expression, "file")) {
       return(list())
     }
 

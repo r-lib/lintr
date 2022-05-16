@@ -12,7 +12,9 @@
 object_usage_linter <- function(interpret_glue = TRUE) {
   Linter(function(source_expression) {
     # If there is no xml data just return
-    if (is.null(source_expression$full_xml_parsed_content)) return(list())
+    if (!is_lint_level(source_expression, "file", require_xml = TRUE)) {
+      return(list())
+    }
 
     pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
     if (!is.null(pkg_name)) {
