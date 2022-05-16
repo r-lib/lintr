@@ -4,13 +4,13 @@
 \alias{modify_defaults}
 \title{Modify lintr defaults}
 \usage{
-modify_defaults(default, ...)
+modify_defaults(defaults, ...)
 }
 \arguments{
-\item{default}{named list of elements to modify.}
+\item{defaults}{named list of elements to modify.}
 
 \item{...}{arguments of elements to change. If unnamed, the argument is automatically named.
-If the named argument already exists in "default", it is replaced by the new element.
+If the named argument already exists in \code{defaults}, it is replaced by the new element.
 If it does not exist, it is added. If the value is \code{NULL}, the element is removed.}
 }
 \value{
@@ -26,7 +26,7 @@ Modify a list of defaults by name, allowing for replacement, deletion and additi
 #    add cat (with a accompanying message),
 #    add print (unnamed, i.e. with no accompanying message)
 #    add return (as taken from all_undesirable_functions)
-my_undesirable_functions <- modify_defaults(default = default_undesirable_functions,
+my_undesirable_functions <- modify_defaults(defaults = default_undesirable_functions,
   sapply=NULL, "cat"="No cat allowed", "print", all_undesirable_functions[["return"]])
 }
 \seealso{

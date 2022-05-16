@@ -10,8 +10,8 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #'
 #' @export
-default_linters <- linters_with_defaults(
-  default = list(),
+default_linters <- modify_defaults(
+  defaults = list(),
   assignment_linter(),
   brace_linter(),
   commas_linter(),
@@ -48,7 +48,7 @@ default_linters <- linters_with_defaults(
 #' @rdname default_undesirable_functions
 #' @export
 all_undesirable_functions <- modify_defaults(
-  default = list(),
+  defaults = list(),
   "attach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
   "browser" = "remove debugging markers from 'final' code",
   "debug" = "remove debugging markers from 'final' code",
@@ -108,7 +108,7 @@ default_undesirable_functions <- do.call(modify_defaults, c(
 #' @rdname default_undesirable_functions
 #' @export
 all_undesirable_operators <- modify_defaults(
-  default = list(),
+  defaults = list(),
   ":::" = NA,
   "<<-" = NA,
   "->>" = NA

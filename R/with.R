@@ -3,9 +3,9 @@
 #' Modify a list of defaults by name, allowing for replacement, deletion and addition of new elements.
 #'
 #' @param ... arguments of elements to change. If unnamed, the argument is automatically named.
-#' If the named argument already exists in "default", it is replaced by the new element.
+#' If the named argument already exists in `defaults`, it is replaced by the new element.
 #' If it does not exist, it is added. If the value is `NULL`, the element is removed.
-#' @param default named list of elements to modify.
+#' @param defaults named list of elements to modify.
 #' @return A modified list of elements, sorted by name. To achieve this sort in a platform-independent way, two
 #'   transformations are applied to the names: (1) replace `_` with `0` and (2) convert [tolower()].
 #' @seealso [linters_with_tags], [linters_with_defaults] for creating linter lists.
@@ -15,12 +15,12 @@
 #' #    add cat (with a accompanying message),
 #' #    add print (unnamed, i.e. with no accompanying message)
 #' #    add return (as taken from all_undesirable_functions)
-#' my_undesirable_functions <- modify_defaults(default = default_undesirable_functions,
+#' my_undesirable_functions <- modify_defaults(defaults = default_undesirable_functions,
 #'   sapply=NULL, "cat"="No cat allowed", "print", all_undesirable_functions[["return"]])
 #' @export
-modify_defaults <- function(default, ...) {
-  if (missing(default) || !is.list(default) || !all(nzchar(names2(default)))) {
-    stop("`default` must be a named list.")
+modify_defaults <- function(defaults, ...) {
+  if (missing(defaults) || !is.list(defaults) || !all(nzchar(names2(defaults)))) {
+    stop("`defaults` must be a named list.")
   }
   vals <- list(...)
   nms <- names2(vals)
@@ -43,19 +43,19 @@ modify_defaults <- function(default, ...) {
   }
 
   to_null <- vapply(vals, is.null, logical(1L))
-  if (!all(nms[to_null] %in% names(default))) {
-    bad_nms <- setdiff(nms[to_null], names(default))
+  if (!all(nms[to_null] %in% names(defaults))) {
+    bad_nms <- setdiff(nms[to_null], names(defaults))
     is_are <- if (length(bad_nms) > 1L) "are" else "is"
     warning(
       "Trying to remove ", glue::glue_collapse(sQuote(bad_nms), sep = ", ", last = " and "),
-      ", which ", is_are, " not in `default`."
+      ", which ", is_are, " not in `defaults`."
     )
   }
 
   is.na(vals) <- nms == vals
-  default[nms] <- vals
+  defaults[nms] <- vals
 
-  res <- default[!vapply(default, is.null, logical(1L))]
+  res <- defaults[!vapply(defaults, is.null, logical(1L))]
 
   res[] <- lapply(res, function(x) {
     prev_class <- class(x)
@@ -126,7 +126,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
     }
   }
 
-  modify_defaults(..., default = tagged_linters)
+  modify_defaults(..., defaults = tagged_linters)
 }
 
 #' Create a linter configuration based on defaults
@@ -135,7 +135,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
 #' The result of this function is meant to be passed to the `linters` argument of `lint()`,
 #' or to be put in your configuration file.
 #'
-#' @param default Default list of linters to modify. Must be named.
+#' @param defaults Default list of linters to modify. Must be named.
 #' @inheritParams linters_with_tags
 #' @seealso
 #' [linters_with_tags] for basing off tags attached to linters, possibly across multiple packages.
@@ -151,23 +151,23 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
 #' my_linters <- linters_with_defaults(line_length_linter = line_length_linter(120))
 #'
 #' # omit the argument name if you are just using different arguments
-#' my_linters <- linters_with_defaults(default = my_linters, object_name_linter("camelCase"))
+#' my_linters <- linters_with_defaults(defaults = my_linters, object_name_linter("camelCase"))
 #'
 #' # remove assignment checks (with NULL), add absolute path checks
 #' my_linters <- linters_with_defaults(
-#'   default = my_linters,
+#'   defaults = my_linters,
 #'   assignment_linter = NULL,
 #'   absolute_path_linter()
 #' )
-linters_with_defaults <- function(..., default = default_linters) {
-  modify_defaults(..., default = default)
+linters_with_defaults <- function(..., defaults = default_linters) {
+  modify_defaults(..., defaults = defaults)
 }
 
 #' @rdname linters_with_defaults
 #' @export
 with_defaults <- function(..., default = default_linters) {
   lintr_deprecated("with_defaults", "linters_with_defaults", "2.0.9001")
-  linters_with_defaults(..., default = default)
+  linters_with_defaults(..., defaults = default)
 }
 
 call_linter_factory <- function(linter_factory, linter_name, package) {

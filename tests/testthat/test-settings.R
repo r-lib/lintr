@@ -101,7 +101,7 @@ test_that("logical_env utility works as intended", {
 test_that("linters_with_defaults doesn't break on very long input", {
   expect_named(
     linters_with_defaults(
-      default = list(),
+      defaults = list(),
       lintr::undesirable_function_linter(c(
         detach = paste(
           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",

@@ -4,10 +4,10 @@ test_that("linters_with_defaults works as expected with unnamed args", {
 })
 
 test_that("linters_with_defaults warns on unused NULLs", {
-  expect_warning(linters_with_defaults(not_a_default = NULL), rex::rex("which is not in `default`."))
+  expect_warning(linters_with_defaults(not_a_default = NULL), rex::rex("which is not in `defaults`."))
   expect_warning(
     linters_with_defaults(not_a_default = NULL, also_not_default = NULL),
-    rex::rex("which are not in `default`.")
+    rex::rex("which are not in `defaults`.")
   )
 })
 
@@ -54,10 +54,10 @@ test_that("with_defaults is supported with a deprecation warning", {
 
 test_that("modify_defaults works", {
   my_default <- list(a = 1, b = 2, c = 3)
-  expect_equal(modify_defaults(default = my_default), my_default)
-  expect_equal(modify_defaults(default = my_default, a = 2), list(a = 2, b = 2, c = 3))
-  expect_equal(modify_defaults(default = my_default, c = NULL), list(a = 1, b = 2))
+  expect_equal(modify_defaults(defaults = my_default), my_default)
+  expect_equal(modify_defaults(defaults = my_default, a = 2), list(a = 2, b = 2, c = 3))
+  expect_equal(modify_defaults(defaults = my_default, c = NULL), list(a = 1, b = 2))
 
   # auto-sorts
-  expect_equal(modify_defaults(default = list(b = 2, a = 1), c = 3), my_default)
+  expect_equal(modify_defaults(defaults = list(b = 2, a = 1), c = 3), my_default)
 })
