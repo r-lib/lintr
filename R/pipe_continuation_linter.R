@@ -66,8 +66,7 @@ pipe_continuation_linter <- function() {
         "`%>%` should always have a space before it and a new line after it,",
         "unless the full pipeline fits on one line."
       ),
-      type = "style",
-      global = TRUE
+      type = "style"
     )
   })
 }

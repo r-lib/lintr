@@ -52,8 +52,7 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
         }
         paste(instead_of, replacement, "The latter will produce better error messages in the case of failure.")
       },
-      type = "warning",
-      global = TRUE
+      type = "warning"
     ))
   })
 }

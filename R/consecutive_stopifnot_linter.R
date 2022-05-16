@@ -29,8 +29,7 @@ consecutive_stopifnot_linter <- function() {
       xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = "Unify consecutive calls to stopifnot().",
-      type = "warning",
-      global = TRUE
+      type = "warning"
     ))
   })
 }

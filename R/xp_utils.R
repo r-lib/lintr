@@ -11,21 +11,39 @@ xp_text_in_table <- function(table) {
   return(paste0("text() = ", table, collapse = " or "))
 }
 
-# convert an XML match into a Lint
+#' Convert an XML match into a Lint
+#'
+#' Convenience function for converting nodes matched by Xpath-based
+#'   linter logic into a [Lint()] object to return
+#'
+#' @inheritParams Lint
+#' @param xml An `xml_node` object, e.g. as returned by
+#'   [xml2::xml_find_all()] or [xml2::xml_find_first()].
+#' @param source_expression A source expression object, e.g. as
+#'   returned by [get_source_expressions()].
+#' @param lint_message The message to be included as the `message`
+#'   to the `Lint` object. If `lint_message` is a `function`,
+#'   this function is first applied to `xml` (so it should be a
+#'   function taking an `xml_node` as input and must produce a
+#'   length-1 character as output).
+#' @param offset Integer, default 0. The amount by which to offset the
+#'   `col1` and `col2` values taken from `xml` when producing
+#'   the `ranges` value in the `Lint` object.
+#' @export
 xml_nodes_to_lint <- function(xml, source_expression, lint_message,
                               type = c("style", "warning", "error"),
-                              offset = 0L,
-                              global = FALSE) {
+                              offset = 0L) {
   type <- match.arg(type, c("style", "warning", "error"))
   line1 <- xml2::xml_attr(xml, "line1")[1]
   col1 <- as.integer(xml2::xml_attr(xml, "col1")) + offset
 
-  line_elt <- if (global) "file_lines" else "lines"
+  lines <- source_expression[["lines"]]
+  if (is.null(lines)) lines <- source_expression[["file_lines"]]
 
   if (xml2::xml_attr(xml, "line2") == line1) {
     col2 <- as.integer(xml2::xml_attr(xml, "col2")) + offset
   } else {
-    col2 <- unname(nchar(source_expression[[line_elt]][line1]))
+    col2 <- unname(nchar(lines[line1]))
   }
   if (is.function(lint_message)) lint_message <- lint_message(xml)
   return(Lint(
@@ -34,7 +52,7 @@ xml_nodes_to_lint <- function(xml, source_expression, lint_message,
     column_number = as.integer(col1),
     type = type,
     message = lint_message,
-    line = source_expression[[line_elt]][line1],
+    line = lines[line1],
     ranges = list(c(col1 - offset, col2))
   ))
 }

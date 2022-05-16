@@ -86,8 +86,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
           paste0("package '", pkg, "' is attached but never used.")
         }
       },
-      type = "warning",
-      global = TRUE
+      type = "warning"
     )
   })
 }

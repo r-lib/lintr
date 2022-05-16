@@ -68,8 +68,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
       xml_nodes_to_lint,
       source_expression,
       lint_message = lint_message,
-      type = "style",
-      global = TRUE
+      type = "style"
     )
   })
 }
@@ -188,8 +187,7 @@ object_length_linter <- function(length = 30L) {
       xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = lint_message,
-      type = "style",
-      global = TRUE
+      type = "style"
     )
   })
 }
