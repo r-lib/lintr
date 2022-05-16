@@ -4,7 +4,7 @@
 \alias{exclude}
 \title{Exclude lines or files from linting}
 \usage{
-exclude(lints, exclusions = settings$exclusions, ...)
+exclude(lints, exclusions = settings$exclusions, linter_names = NULL, ...)
 }
 \arguments{
 \item{lints}{that need to be filtered.}
