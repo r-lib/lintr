@@ -130,6 +130,21 @@ test_that("brace_linter lints braces correctly", {
     linter
   )
 
+  # (\n{ is allowed optionally
+  expect_lint(
+    trim_some("
+      tryCatch(
+        {
+          print(1)
+        },
+        error = function(err) {
+        }
+      )
+    "),
+    NULL,
+    linter
+  )
+
   # {{ }} is allowed
   expect_lint("{{ x }}", NULL, linter)
 
