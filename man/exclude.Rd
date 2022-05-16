@@ -4,12 +4,14 @@
 \alias{exclude}
 \title{Exclude lines or files from linting}
 \usage{
-exclude(lints, exclusions = settings$exclusions, ...)
+exclude(lints, exclusions = settings$exclusions, linter_names = NULL, ...)
 }
 \arguments{
 \item{lints}{that need to be filtered.}
 
 \item{exclusions}{manually specified exclusions}
+
+\item{linter_names}{character vector of names of the active linters, used for parsing inline exclusions.}
 
 \item{...}{additional arguments passed to \code{\link[=parse_exclusions]{parse_exclusions()}}}
 }

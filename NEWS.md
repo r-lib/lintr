@@ -68,6 +68,7 @@
 * New syntax to exclude only selected linters from linting lines or passages. Use `# nolint: linter_name, linter2_name.`
   or `# nolint start: linter_name, linter2_name.` in source files or named lists of line numbers in `.lintr`.
   (#660, @AshesITR)
+  + Extended to allow for partial matching as long as the supplied prefix is unique (#872, @AshesITR)
 * Fixed `spaces_left_parentheses_linter` sporadically causing warnings (#654, #674, @AshesITR)
 * Fixed `line_length_linter` causing duplicate lints for lines containing multiple expressions (#681, #682, @AshesITR)
 * `line_length_linter` now places the source marker at the margin of the affected line to improve user experience during 
