@@ -265,6 +265,25 @@ lintr::lint(
 )
 ```
 
+You can also specify the linter names by a unique prefix instead of their full name:
+
+**file5.R**
+```r
+X = 42L # nolint: object_name, line_len. this comment still overflows the default 80 chars line length.
+```
+
+`> lint("file5.R")`
+```{r, echo = FALSE}
+lintr::lint(
+  paste(
+    "X = 42L",
+    "# nolint: object_name, line_len. this comment still overflows the default 80 chars line length.\n"
+  ),
+  parse_settings = FALSE
+)
+```
+
+
 ### Excluding multiple lines of codes
 
 If any or all linters should be disabled for a contiguous block of code, the `exclude_start` and `exclude_end` patterns

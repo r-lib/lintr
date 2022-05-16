@@ -7,7 +7,7 @@
 #'   [linters] for a complete list of linters available in lintr. \cr
 #'   <https://style.tidyverse.org/syntax.html#parentheses>
 #' @export
-function_left_parentheses_linter <- function() { # nolint: object_length_linter.
+function_left_parentheses_linter <- function() { # nolint: object_length.
   Linter(function(source_expression) {
     lapply(
       ids_with_token(source_expression, "'('"),

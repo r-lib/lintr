@@ -15,7 +15,7 @@
 #'  3. exclusions parameter, a named list of files with named lists of linters and lines to exclude them on, a named
 #'     list of the files and lines to exclude, or just the filenames if you want to exclude the entire file, or the
 #'     directory names if you want to exclude all files in a directory.
-exclude <- function(lints, exclusions = settings$exclusions, ...) {
+exclude <- function(lints, exclusions = settings$exclusions, linter_names = NULL, ...) {
   if (length(lints) <= 0) {
     return(lints)
   }
@@ -23,7 +23,7 @@ exclude <- function(lints, exclusions = settings$exclusions, ...) {
   df <- as.data.frame(lints)
 
   filenames <- unique(df$filename)
-  source_exclusions <- lapply(filenames, parse_exclusions, ...)
+  source_exclusions <- lapply(filenames, parse_exclusions, linter_names = linter_names, ...)
   names(source_exclusions) <- filenames
 
 
@@ -77,6 +77,7 @@ line_info <- function(line_numbers, type = c("start", "end")) {
 #' `exclude` or `exclude_start` marker.
 #' @param exclude_linter_sep regular expression used to split a linter list into indivdual linter names for exclusion.
 #' @param lines a character vector of the content lines of `file`
+#' @param linter_names Names of active linters
 #'
 #' @return A possibly named list of excluded lines, possibly for specific linters.
 parse_exclusions <- function(file, exclude = settings$exclude,
@@ -84,7 +85,8 @@ parse_exclusions <- function(file, exclude = settings$exclude,
                              exclude_end = settings$exclude_end,
                              exclude_linter = settings$exclude_linter,
                              exclude_linter_sep = settings$exclude_linter_sep,
-                             lines = NULL) {
+                             lines = NULL,
+                             linter_names = NULL) {
   if (is.null(lines)) {
     lines <- read_lines(file)
   }
@@ -114,7 +116,7 @@ parse_exclusions <- function(file, exclude = settings$exclude,
       linters_string <- substring(lines[starts[i]], start_locations[starts[i]])
       linters_string <- rex::re_matches(linters_string, exclude_linter)[, 1L]
 
-      exclusions <- add_exclusions(exclusions, excluded_lines, linters_string, exclude_linter_sep)
+      exclusions <- add_exclusions(exclusions, excluded_lines, linters_string, exclude_linter_sep, linter_names)
     }
   }
 
@@ -126,7 +128,7 @@ parse_exclusions <- function(file, exclude = settings$exclude,
   for (i in seq_along(nolints)) {
     linters_string <- substring(lines[nolints[i]], nolint_locations[nolints[i]])
     linters_string <- rex::re_matches(linters_string, exclude_linter)[, 1L]
-    exclusions <- add_exclusions(exclusions, nolints[i], linters_string, exclude_linter_sep)
+    exclusions <- add_exclusions(exclusions, nolints[i], linters_string, exclude_linter_sep, linter_names)
   }
 
   exclusions[] <- lapply(exclusions, function(lines) sort(unique(lines)))
@@ -154,13 +156,25 @@ add_excluded_lines <- function(exclusions, excluded_lines, excluded_linters) {
   exclusions
 }
 
-add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep) {
+add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep, linter_names) {
   # No match for linter list: Add to global excludes
   if (is.na(linters_string)) {
     exclusions <- add_excluded_lines(exclusions, lines, "")
   } else {
     # Matched a linter list: only add excluded lines for the listed linters.
     excluded_linters <- strsplit(linters_string, exclude_linter_sep)[[1L]]
+    if (!is.null(linter_names)) {
+      idxs <- pmatch(excluded_linters, linter_names, duplicates.ok = TRUE)
+      if (anyNA(idxs)) {
+        bad <- excluded_linters[is.na(idxs)]
+        warning(
+          "Could not find linter", if (length(bad) > 1L) "s" else "", " named ",
+          glue::glue_collapse(sQuote(bad), sep = ", ", last = " and "),
+          " in the list of active linters. Make sure the linter is uniquely identified by the given name or prefix."
+        )
+      }
+      excluded_linters[!is.na(idxs)] <- linter_names[na.omit(idxs)]
+    }
     exclusions <- add_excluded_lines(exclusions, lines, excluded_linters)
   }
   exclusions
