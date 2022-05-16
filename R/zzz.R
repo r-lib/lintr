@@ -76,7 +76,7 @@ default_linters <- modify_defaults(
 #'  * `substring()` was superseded by `substr()`.
 #'  * `Sys.setenv()` permanently modifies the global environment variables. Use `withr::with_envvar()` for a temporary
 #'    change instead.
-#'  * `Sys.setlocale()` permanentlyy modifies the session locale. Use `withr::with_locale()` for a temporary change
+#'  * `Sys.setlocale()` permanently modifies the session locale. Use `withr::with_locale()` for a temporary change
 #'    instead.
 #'  * `trace()` traps a function and causes execution of arbitrary code when that function is run. It should be removed.
 #'  * `undebug()` is only useful for interactive debugging with `debug()`. It should be removed.
