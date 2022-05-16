@@ -9,7 +9,9 @@
 #' @export
 T_and_F_symbol_linter <- function() { # nolint: object_name_linter.
   Linter(function(source_expression) {
-    if (is.null(source_expression$xml_parsed_content)) return(list())
+    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+      return(list())
+    }
 
     xpath <- paste0(
       "//SYMBOL[",

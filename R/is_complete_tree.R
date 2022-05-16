@@ -16,6 +16,6 @@
 is_lint_level <- function(source_expression, level = c("expression", "file"), require_xml = FALSE) {
   stopifnot(!missing(level))
   level <- match.arg(level)
-  required_key <- paste0(if (level == "complete") "full_", if (require_xml) "xml_", "parsed_content")
+  required_key <- paste0(if (level == "file") "full_", if (require_xml) "xml_", "parsed_content")
   !is.null(source_expression[[required_key]])
 }
