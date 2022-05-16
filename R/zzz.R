@@ -156,7 +156,7 @@ settings <- NULL
                               ), "."),
     exclude_linter_sep = rex::rex(any_spaces, ",", any_spaces),
     exclusions = list(),
-    cache_directory = "~/.R/lintr_cache",
+    cache_directory = R_user_dir("lintr", "cache"),
     comment_token = Sys.getenv("GITHUB_TOKEN", unset = NA) %||% rot(
       paste0(
         "0n12nn72507",
