@@ -461,7 +461,7 @@ pkg_name <- function(path = find_package()) {
   if (is.null(path)) {
     return(NULL)
   } else {
-    read.dcf(file.path(path, "DESCRIPTION"), fields = "Package")[1]
+    read.dcf(file.path(path, "DESCRIPTION"), fields = "Package")[1L]
   }
 }
 
