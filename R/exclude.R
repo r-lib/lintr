@@ -17,7 +17,7 @@
 #'     list of the files and lines to exclude, or just the filenames if you want to exclude the entire file, or the
 #'     directory names if you want to exclude all files in a directory.
 exclude <- function(lints, exclusions = settings$exclusions, linter_names = NULL, ...) {
-  if (length(lints) <= 0) {
+  if (length(lints) <= 0L) {
     return(lints)
   }
 
@@ -59,9 +59,9 @@ line_info <- function(line_numbers, type = c("start", "end")) {
   type <- match.arg(type)
   range_word <- paste0("range ", type, if (length(line_numbers) != 1L) "s")
   n <- length(line_numbers)
-  if (n == 0) {
+  if (n == 0L) {
     paste("0", range_word)
-  } else if (n == 1) {
+  } else if (n == 1L) {
     paste0("1 ", range_word, " (line ", line_numbers, ")")
   } else {
     paste0(n, " ", range_word, " (lines ", toString(line_numbers), ")")
@@ -105,7 +105,7 @@ parse_exclusions <- function(file, exclude = settings$exclude,
   starts <- which(!is.na(start_locations))
   ends <- which(!is.na(end_locations))
 
-  if (length(starts) > 0) {
+  if (length(starts) > 0L) {
     if (length(starts) != length(ends)) {
       starts_msg <- line_info(starts, type = "start")
       ends_msg <- line_info(ends, type = "end")
@@ -207,7 +207,7 @@ add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep
 normalize_exclusions <- function(x, normalize_path = TRUE,
                                  root = getwd(),
                                  pattern = NULL) {
-  if (is.null(x) || length(x) <= 0) {
+  if (is.null(x) || length(x) <= 0L) {
     return(list())
   }
 
