@@ -135,7 +135,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
 #' The result of this function is meant to be passed to the `linters` argument of `lint()`,
 #' or to be put in your configuration file.
 #'
-#' @param defaults Default list of linters to modify. Must be named.
+#' @param defaults,default Default list of linters to modify. Must be named.
 #' @inheritParams linters_with_tags
 #' @seealso
 #' [linters_with_tags] for basing off tags attached to linters, possibly across multiple packages.

@@ -14,7 +14,7 @@ with_defaults(..., default = default_linters)
 If the named argument already exists in the list of linters, it is replaced by the new element.
 If it does not exist, it is added. If the value is \code{NULL}, the linter is removed.}
 
-\item{defaults}{Default list of linters to modify. Must be named.}
+\item{defaults, default}{Default list of linters to modify. Must be named.}
 }
 \description{
 Make a new list based on \pkg{lintr}'s default linters.
