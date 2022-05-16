@@ -162,6 +162,7 @@ function calls. (#850, #851, @renkun-ken)
   This prevents false positive lints in the case of long generic names, e.g. 
   `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
 * `object_name_linter()` now correctly detects assignment generics (#843, @jonkeane)
+* New `unused_import_linter()` to detect unnecessary `library()` calls in R scripts (#239, @jimhester, @AshesITR)
 * `trailing_whitespace_linter()` now also lints completely blank lines by default. This can be disabled by setting the
   new argument `allow_empty_lines = TRUE` (#1044, @AshesITR)
 * `get_source_expressions()` fixes the `text` value for `STR_CONST` nodes involving 1- or 2-width octal escapes (e.g. `"\1"`) to account for an R parser bug (https://bugs.r-project.org/show_bug.cgi?id=18323)

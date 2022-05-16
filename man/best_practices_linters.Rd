@@ -44,6 +44,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
 \item{\code{\link{unreachable_code_linter}}}
+\item{\code{\link{unused_import_linter}}}
 \item{\code{\link{vector_logic_linter}}}
 \item{\code{\link{yoda_test_linter}}}
 }
