@@ -7,7 +7,7 @@
 #'   [linters] for a complete list of linters available in lintr. \cr
 #'   <https://style.tidyverse.org/syntax.html#parentheses>
 #' @export
-function_left_parentheses_linter <- function() { # nolint: object_length_linter.
+function_left_parentheses_linter <- function() { # nolint: object_length.
   Linter(function(source_expression) {
     lapply(
       ids_with_token(source_expression, "'('"),
@@ -20,7 +20,7 @@ function_left_parentheses_linter <- function() { # nolint: object_length_linter.
             source_expression$parsed_content$col1 < parsed$col1 &
             source_expression$parsed_content$terminal
 
-        last_type <- tail(source_expression$parsed_content$token[terminal_tokens_before], n = 1)
+        last_type <- tail(source_expression$parsed_content$token[terminal_tokens_before], n = 1L)
 
         is_function_call <- length(last_type) %!=% 0L &&
           (last_type %in% c("SYMBOL_FUNCTION_CALL", "FUNCTION", "'}'", "']'"))

@@ -12,7 +12,9 @@ line_length_linter <- function(length = 80L) {
   Linter(function(source_expression) {
 
     # Only go over complete file
-    if (is.null(source_expression$file_lines)) return(list())
+    if (!is_lint_level(source_expression, "file")) {
+      return(list())
+    }
 
     line_lengths <- nchar(source_expression$file_lines)
     long_lines <- which(line_lengths > length)

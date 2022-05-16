@@ -28,8 +28,8 @@ The result of this function is meant to be passed to the \code{linters} argument
 or to be put in your configuration file.
 }
 \examples{
-# `with_defaults()` and `linters_with_tags("default")` are the same:
-all.equal(with_defaults(), linters_with_tags("default"))
+# `linters_with_defaults()` and `linters_with_tags("default")` are the same:
+all.equal(linters_with_defaults(), linters_with_tags("default"))
 
 # Get all linters useful for package development
 linters_with_tags(tags = "package_development")
@@ -41,7 +41,7 @@ linters_with_tags(tags = NULL)
 \dontrun{linters_with_tags("default", packages = c("lintr", "mypkg"))}
 }
 \seealso{
-\link{with_defaults} for basing off lintr's set of default linters.
+\link{linters_with_defaults} for basing off lintr's set of default linters.
 \link{available_linters} to get a data frame of available linters.
 \link{linters} for a complete list of linters available in lintr.
 }

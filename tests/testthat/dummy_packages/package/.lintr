@@ -1,1 +1,1 @@
-linters: with_defaults()
+linters: linters_with_defaults()

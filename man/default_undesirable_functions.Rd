@@ -28,6 +28,6 @@ default_undesirable_operators
 \description{
 Lists of function names and operators for \code{\link[=undesirable_function_linter]{undesirable_function_linter()}} and \code{\link[=undesirable_operator_linter]{undesirable_operator_linter()}}.
 There is a list for the default elements and another that contains all available elements.
-Use \code{\link[=with_defaults]{with_defaults()}} to produce a custom list.
+Use \code{\link[=modify_defaults]{modify_defaults()}} to produce a custom list.
 }
 \keyword{datasets}

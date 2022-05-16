@@ -54,7 +54,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     }
   } else {
     inline_data <- TRUE
-    if (length(text) > 1) {
+    if (length(text) > 1L) {
       text <- paste(text, collapse = "\n")
     }
   }
@@ -72,7 +72,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   lines <- if (is.null(text)) {
     read_lines(filename)
   } else {
-    strsplit(text, "\n", fixed = TRUE)[[1]]
+    strsplit(text, "\n", fixed = TRUE)[[1L]]
   }
 
   filename <- normalizePath(filename, mustWork = !inline_data)  # to ensure a unique file in cache
@@ -87,14 +87,14 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   linters <- Map(validate_linter_object, linters, names(linters))
 
   lints <- list()
-  itr <- 0
+  itr <- 0L
 
   cache_path <- if (isTRUE(cache)) {
     settings$cache_directory
   } else if (is.character(cache)) {
     cache
   } else {
-    character(0)
+    character()
   }
 
   if (length(cache_path)) {
@@ -104,7 +104,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     if (!is.null(lints)) {
       # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
       # > exclude(lints, lines = lines, ...)
-      return(do.call(exclude, c(list(lints, lines = lines), dots)))
+      return(do.call(exclude, c(list(lints, lines = lines, linter_names = names(linters)), dots)))
     }
     cache <- TRUE
   } else {
@@ -152,7 +152,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
   # > exclude(lints, lines = lines, ...)
-  res <- do.call(exclude, c(list(lints, lines = lines), dots))
+  res <- do.call(exclude, c(list(lints, lines = lines, linter_names = names(linters)), dots))
 
   # simplify filename if inline
   if (no_filename) {
@@ -233,7 +233,7 @@ lint_dir <- function(path = ".", ...,
       file <- files[i]
       file %in% names(exclusions) && is_excluded_file(exclusions[[file]])
     },
-    logical(1)
+    logical(1L)
   )
   files <- files[!to_exclude]
 
@@ -288,7 +288,7 @@ lint_dir <- function(path = ".", ...,
 #'   lint_package()
 #'
 #'   lint_package(
-#'     linters = with_defaults(semicolon_linter = semicolon_linter())
+#'     linters = linters_with_defaults(semicolon_linter = semicolon_linter())
 #'     cache = TRUE,
 #'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
 #'   )
@@ -391,9 +391,9 @@ validate_linter_object <- function(linter, name) {
 }
 
 reorder_lints <- function(lints) {
-  files <- vapply(lints, `[[`, character(1), "filename")
-  lines <- vapply(lints, `[[`, integer(1), "line_number")
-  columns <- vapply(lints, `[[`, integer(1), "column_number")
+  files <- vapply(lints, `[[`, character(1L), "filename")
+  lines <- vapply(lints, `[[`, integer(1L), "line_number")
+  columns <- vapply(lints, `[[`, integer(1L), "column_number")
   lints[order(
     files,
     lines,
@@ -403,7 +403,7 @@ reorder_lints <- function(lints) {
 
 has_description <- function(path) {
   desc_info <- file.info(file.path(path, "DESCRIPTION"))
-  !is.na(desc_info$size) && desc_info$size > 0 && !desc_info$isdir
+  !is.na(desc_info$size) && desc_info$size > 0.0 && !desc_info$isdir
 }
 
 find_package <- function(path) {
@@ -461,7 +461,7 @@ pkg_name <- function(path = find_package()) {
   if (is.null(path)) {
     return(NULL)
   } else {
-    read.dcf(file.path(path, "DESCRIPTION"), fields = "Package")[1]
+    read.dcf(file.path(path, "DESCRIPTION"), fields = "Package")[1L]
   }
 }
 
@@ -476,7 +476,7 @@ pkg_name <- function(path = find_package()) {
 #' @param linter deprecated. No longer used.
 #' @return an object of class 'lint'.
 #' @export
-Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name_linter.
+Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name.
                  type = c("style", "warning", "error"),
                  message = "", line = "", ranges = NULL, linter = "") {
   if (!missing(linter)) {
