@@ -1,4 +1,4 @@
-linters: with_defaults(
+linters: linters_with_defaults(
     implicit_integer_linter(),
     line_length_linter = line_length_linter(120)
   )

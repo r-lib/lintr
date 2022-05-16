@@ -21,6 +21,7 @@
   + For `lint()`, `...` is now the 3rd argument, where earlier this was `cache=`
   + For `lint_dir()` and `lint_package()`, `...` is now the 2nd argument, where earlier this was `relative_path=`
 * Argument `source_file` to exported functions `with_id()` and `ids_with_token()` have been renamed to `source_expression` to better reflect that this argument is typically the output of `get_source_expressions()`. It has also been renamed as the argument of the now-private functional versions of many linters, which  has no direct effect on packages importing linter, but is mentioned in case custom linters imitating `lintr` style have also adopted the `source_file` naming and want to adapt to keep in sync.
+* Deprecated `with_defaults()` in favor of `linters_with_defaults()` (#1029, @AshesITR)
 
 ## New features, bug fixes, improvements
 
