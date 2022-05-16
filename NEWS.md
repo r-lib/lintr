@@ -170,6 +170,7 @@ function calls. (#850, #851, @renkun-ken)
 * `undesirable_function_linter()` no longer lints undesirable symbols if they are used as names (#1050, @AshesITR)
 * `trailing_whitespace_linter()` ignores trailing whitespace in strings by default. 
   This can be disabled using `allow_in_strings = FALSE` (#1045, @AshesITR)
+* Moved the default lintr cache directory from `~/.R/lintr_cache` to `R_user_dir("lintr", "cache")`. Note that this major version update invalidated the old cache anyway, so it can be safely deleted. (#1062, @AshesITR)
 
 # lintr 2.0.1
 
