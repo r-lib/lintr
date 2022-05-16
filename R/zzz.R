@@ -73,7 +73,7 @@ default_linters <- modify_defaults(
 #'  * `sink()` permanently redirects output. Use `withr::with_sink()` for a temporary redirection instead.
 #'  * `source()` loads code into the global environment unless `local = TRUE` is used, which can cause unexpected
 #'    behaviour.
-#'  * `substring()` was superseeded by `substr()`.
+#'  * `substring()` was superseded by `substr()`.
 #'  * `Sys.setenv()` permanently modifies the global environment variables. Use `withr::with_envvar()` for a temporary
 #'    change instead.
 #'  * `Sys.setlocale()` permanentlyy modifies the session locale. Use `withr::with_locale()` for a temporary change
