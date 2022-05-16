@@ -177,7 +177,7 @@ reset_lang <- function(old_lang) {
 #' Lints produced by the linter will be labelled with `name` by default.
 #' @return The same function with its class set to 'linter'.
 #' @export
-Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name_linter.
+Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name.
   if (!is.function(fun) || length(formals(args(fun))) != 1L) {
     stop("`fun` must be a function taking exactly one argument.", call. = FALSE)
   }

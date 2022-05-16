@@ -13,11 +13,13 @@ test_that("line_info works as expected", {
   )
 })
 
-old_ops <- options(lintr.exclude = "#TeSt_NoLiNt",
-                   lintr.exclude_start = "#TeSt_NoLiNt_StArT",
-                   lintr.exclude_end = "#TeSt_NoLiNt_EnD")
-
 test_that("it excludes properly", {
+  withr::local_options(
+    lintr.exclude = "#TeSt_NoLiNt",
+    lintr.exclude_start = "#TeSt_NoLiNt_StArT",
+    lintr.exclude_end = "#TeSt_NoLiNt_EnD"
+  )
+
   read_settings(NULL)
 
   t1 <- lint("exclusions-test", parse_settings = FALSE)
@@ -42,12 +44,15 @@ test_that("it excludes properly", {
 })
 
 test_that("it doesn't fail when encountering misspecified encodings", {
+  withr::local_options(
+    lintr.exclude = "#TeSt_NoLiNt",
+    lintr.exclude_start = "#TeSt_NoLiNt_StArT",
+    lintr.exclude_end = "#TeSt_NoLiNt_EnD"
+  )
   read_settings(NULL)
 
   expect_length(parse_exclusions("dummy_projects/project/cp1252.R"), 0L)
 })
-
-options(old_ops)
 
 test_that("it gives the expected error message when there is only one start but no end", {
   read_settings(NULL)
@@ -66,5 +71,24 @@ test_that("it gives the expected error message when there is mismatch between mu
     parse_exclusions("dummy_projects/project/mismatched_starts_ends.R"),
     "has 3 range starts (lines 3, 7, 11) but only 2 range ends (lines 1, 9) for exclusion from linting",
     fixed = TRUE
+  )
+})
+
+test_that("partial matching works for exclusions but warns if no linter found", {
+  read_settings(NULL)
+
+  expect_warning(
+    expect_warning(
+      expect_warning(
+        expect_lint(
+          file = "dummy_projects/project/partially_matched_exclusions.R",
+          checks = rex::rex("semicolons"),
+          parse_settings = FALSE
+        ),
+        rex::rex("Could not find linter named ", anything, "s")
+      ),
+      rex::rex("Could not find linter named ", anything, "bogus_linter")
+    ),
+    rex::rex("Could not find linters named ", anything, "hocus_pocus", anything, "bogus")
   )
 })
