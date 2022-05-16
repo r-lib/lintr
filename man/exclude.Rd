@@ -11,6 +11,8 @@ exclude(lints, exclusions = settings$exclusions, linter_names = NULL, ...)
 
 \item{exclusions}{manually specified exclusions}
 
+\item{linter_names}{character vector of names of the active linters, used for parsing inline exclusions.}
+
 \item{...}{additional arguments passed to \code{\link[=parse_exclusions]{parse_exclusions()}}}
 }
 \description{

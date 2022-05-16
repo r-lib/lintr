@@ -2,6 +2,7 @@
 #'
 #' @param lints that need to be filtered.
 #' @param exclusions manually specified exclusions
+#' @param linter_names character vector of names of the active linters, used for parsing inline exclusions.
 #' @param ... additional arguments passed to [parse_exclusions()]
 #' @details
 #' Exclusions can be specified in three different ways.
