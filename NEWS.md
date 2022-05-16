@@ -162,6 +162,7 @@ function calls. (#850, #851, @renkun-ken)
   This prevents false positive lints in the case of long generic names, e.g. 
   `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
 * `object_name_linter()` now correctly detects assignment generics (#843, @jonkeane)
+* New `unused_import_linter()` to detect unnecessary `library()` calls in R scripts (#239, @jimhester, @AshesITR)
 * `trailing_whitespace_linter()` now also lints completely blank lines by default. This can be disabled by setting the
   new argument `allow_empty_lines = TRUE` (#1044, @AshesITR)
 * `get_source_expressions()` fixes the `text` value for `STR_CONST` nodes involving 1- or 2-width octal escapes (e.g. `"\1"`) to account for an R parser bug (https://bugs.r-project.org/show_bug.cgi?id=18323)
@@ -170,6 +171,7 @@ function calls. (#850, #851, @renkun-ken)
 * `undesirable_function_linter()` no longer lints undesirable symbols if they are used as names (#1050, @AshesITR)
 * `trailing_whitespace_linter()` ignores trailing whitespace in strings by default. 
   This can be disabled using `allow_in_strings = FALSE` (#1045, @AshesITR)
+* Moved the default lintr cache directory from `~/.R/lintr_cache` to `R_user_dir("lintr", "cache")`. Note that this major version update invalidated the old cache anyway, so it can be safely deleted. (#1062, @AshesITR)
 
 # lintr 2.0.1
 
