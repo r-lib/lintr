@@ -30,4 +30,43 @@ Lists of function names and operators for \code{\link[=undesirable_function_lint
 There is a list for the default elements and another that contains all available elements.
 Use \code{\link[=modify_defaults]{modify_defaults()}} to produce a custom list.
 }
+\details{
+The following functions can be regarded as undesirable:
+\itemize{
+\item \code{attach()} modifies the global search path. Use roxygen2's @importFrom statement in packages, or \code{::} in scripts.
+\item \code{browser()} pauses execution when run and is likely a leftover from debugging. It should be removed.
+\item \code{debug()} traps a function and causes execution to pause when that function is run. It should be removed.
+\item \code{debugcall()} works similarly to \code{debug()}, causing execution to pause. It should be removed.
+\item \code{debugonce()} is only useful for interactive debugging. It should be removed.
+\item \code{detach()} modifies the global search path. Detaching environments from the search path should not be necessary
+in production code.
+\item \code{ifelse()} isn't type stable. Use an \code{if}/\verb{else} block for scalar logic, or use
+\code{dplyr::if_else()}/\code{data.table::fifelse()} for type stable vectorized logic.
+\item \code{.libPaths()} permanently modifies the library location. Use \code{withr::with_libpaths()} for a temporary change
+instead.
+\item \code{library()} modifies the global search path. Use roxygen2's @importFrom statement in packages, or \code{::} in scripts.
+\item \code{loadNamespace()} doesn't provide an easy way to signal failures. Use the return value of \code{requireNamespace()}
+instead.
+\item \code{mapply()} isn't type stable. Use \code{Map()} to guarantee a \code{list()} is returned and simplify accordingly.
+\item \code{options()} permanently modifies the session options. Use \code{withr::with_options()} for a temporary change instead.
+\item \code{par()} permanently modifies the graphics device parameters. Use \code{withr::with_par()} for a temporary change
+instead.
+\item \code{require()} modifies the global search path. Use roxygen2's @importFrom statement in packages, or \code{::} in scripts.
+\item \code{return()} is not necessary as the last value of a function is automatically returned.
+\item \code{sapply()} isn't type stable. Use \code{vapply()} with an appropriate \verb{FUN.VALUE=} argument to obtain type stable
+simplification.
+\item \code{setwd()} modifies the global working directory. Use \code{withr::with_dir()} for a temporary change instead.
+\item \code{sink()} permanently redirects output. Use \code{withr::with_sink()} for a temporary redirection instead.
+\item \code{source()} loads code into the global environment unless \code{local = TRUE} is used, which can cause unexpected
+behaviour.
+\item \code{substring()} was superseeded by \code{substr()}.
+\item \code{Sys.setenv()} permanently modifies the global environment variables. Use \code{withr::with_envvar()} for a temporary
+change instead.
+\item \code{Sys.setlocale()} permanentlyy modifies the session locale. Use \code{withr::with_locale()} for a temporary change
+instead.
+\item \code{trace()} traps a function and causes execution of arbitrary code when that function is run. It should be removed.
+\item \code{undebug()} is only useful for interactive debugging with \code{debug()}. It should be removed.
+\item \code{untrace()} is only useful for interactive debugging with \code{trace()}. It should be removed.
+}
+}
 \keyword{datasets}
