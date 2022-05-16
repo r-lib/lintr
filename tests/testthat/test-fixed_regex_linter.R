@@ -163,7 +163,7 @@ test_that("one-character character classes with escaped characters are caught", 
   expect_lint("str_split(x, '[\\12]')", msg, linter)
   expect_lint("str_split(x, '[\\123]')", msg, linter)
   expect_lint("str_split(x, '[\\xa]')", msg, linter)
-  expect_lint("str_split(x, '[\\xA7]')", msg, linter)
+  expect_lint("str_split(x, '[\\x32]')", msg, linter)
   expect_lint("str_split(x, '[\\uF]')", msg, linter)
   expect_lint("str_split(x, '[\\u01]')", msg, linter)
   expect_lint("str_split(x, '[\\u012]')", msg, linter)
