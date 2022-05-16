@@ -35,9 +35,11 @@ brace_linter <- function(allow_single_line = FALSE) {
         (@line1 = parent::expr/preceding-sibling::OP-LEFT-BRACE/@line1) or
         (@line1 = following-sibling::expr/OP-LEFT-BRACE/@line1)
       )",
-      # allow , and %>% on preceding line
+      # allow `(`, `,` and `%>%` on preceding line
       "not(
-        @line1 = parent::expr/preceding-sibling::*[1][self::OP-COMMA or (self::SPECIAL and text() = '%>%')]/@line2 + 1
+        @line1 = parent::expr/preceding-sibling::*[1][
+          self::OP-LEFT-PAREN or self::OP-COMMA or (self::SPECIAL and text() = '%>%')
+        ]/@line2 + 1
       )"
     ))
 

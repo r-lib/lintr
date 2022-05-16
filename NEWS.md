@@ -11,7 +11,7 @@
 * Rename `semicolon_terminator_linter` to `semicolon_linter` for better consistency. `semicolon_terminator_linter` survives but is marked for deprecation. The new linter also has a new signature, taking arguments `allow_compound` and `allow_trailing` to replace the old single argument `semicolon=`, again for signature consistency with other linters.
 * Combined several curly brace related linters into a new `brace_linter` (#1041, @AshesITR):
   + `closed_curly_linter()`, also allowing `}]` in addition to `})` and `},` as exceptions.
-  + `open_curly_linter()`, no longer linting unnecessary trailing whitespace and also allowing `,` and `%>%` on
+  + `open_curly_linter()`, no longer linting unnecessary trailing whitespace and also allowing `(`, `,` and `%>%` on
     preceding lines as exceptions. (#487, #1028)
   + `paren_brace_linter()`, also linting `if`/`else` and `repeat` with missing whitespace
   + Require `else` to come on the same line as the preceding `}`, if present (#884, @michaelchirico)
