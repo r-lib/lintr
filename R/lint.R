@@ -38,7 +38,7 @@ NULL
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
   # TODO(next release after 3.0.0): remove this deprecated workaround
   dots <- list(...)
-  if (length(dots) > 0L && is.logical(dots[[1L]])) {
+  if (length(dots) > 0L && is.logical(dots[[1L]]) && !nzchar(names2(dots)[1L])) {
     warning(
       "'cache' is no longer available as a positional argument; please supply 'cache' as a named argument instead. ",
       "This warning will be upgraded to an error in the next release."
@@ -194,7 +194,7 @@ lint_dir <- function(path = ".", ...,
                      parse_settings = TRUE) {
   # TODO(next release after 3.0.0): remove this deprecated workaround
   dots <- list(...)
-  if (length(dots) > 0L && is.logical(dots[[1L]])) {
+  if (length(dots) > 0L && is.logical(dots[[1L]]) && !nzchar(names2(dots)[1L])) {
     warning(
       "'relative_path' is no longer available as a positional argument; ",
       "please supply 'relative_path' as a named argument instead. ",
@@ -300,7 +300,7 @@ lint_package <- function(path = ".", ...,
                          parse_settings = TRUE) {
   # TODO(next release after 3.0.0): remove this deprecated workaround
   dots <- list(...)
-  if (length(dots) > 0L && is.logical(dots[[1L]])) {
+  if (length(dots) > 0L && is.logical(dots[[1L]]) && !nzchar(names2(dots)[1L])) {
     warning(
       "'relative_path' is no longer available as a positional argument; ",
       "please supply 'relative_path' as a named argument instead. ",
