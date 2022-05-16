@@ -1,6 +1,12 @@
 #' @import rex
 #' @importFrom utils tail
 #' @include utils.R
+#' @rawNamespace
+#' if (getRversion() >= "4.0.0") {
+#'   importFrom(tools, R_user_dir)
+#' } else {
+#'   importFrom(backports, R_user_dir)
+#' }
 NULL
 
 #' Available linters

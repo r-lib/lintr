@@ -12,9 +12,9 @@
 object_usage_linter <- function(interpret_glue = TRUE) {
   Linter(function(source_expression) {
     # If there is no xml data just return
-    if (is.null(source_expression$full_xml_parsed_content)) return(list())
-
-    source_expression$parsed_content <- source_expression$full_parsed_content
+    if (!is_lint_level(source_expression, "file", require_xml = TRUE)) {
+      return(list())
+    }
 
     pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
     if (!is.null(pkg_name)) {
@@ -27,7 +27,10 @@ object_usage_linter <- function(interpret_glue = TRUE) {
 
     declared_globals <- try_silently(utils::globalVariables(package = pkg_name %||% globalenv()))
 
-    symbols <- get_assignment_symbols(source_expression$full_xml_parsed_content)
+    symbols <- c(
+      get_assignment_symbols(source_expression$full_xml_parsed_content),
+      get_imported_symbols(source_expression$full_xml_parsed_content)
+    )
 
     # Just assign them an empty function
     for (symbol in symbols) {
@@ -274,4 +277,34 @@ parse_check_usage <- function(expression, known_used_symbols = character()) {
   }
 
   res
+}
+
+get_imported_symbols <- function(xml) {
+  import_exprs <- xml2::xml_find_all(
+    xml,
+    "//expr[
+      expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
+      and
+      (
+        not(SYMBOL_SUB[
+          text() = 'character.only' and
+          following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+        ]) or
+        expr[2][STR_CONST]
+      )
+    ]/expr[STR_CONST|SYMBOL][1]"
+  )
+  if (length(import_exprs) == 0L) {
+    return(character())
+  }
+  imported_pkgs <- get_r_string(import_exprs)
+
+  unlist(lapply(imported_pkgs, function(pkg) {
+    tryCatch(
+      getNamespaceExports(pkg),
+      error = function(e) {
+        character()
+      }
+    )
+  }))
 }

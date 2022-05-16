@@ -32,7 +32,9 @@ ops <- list(
 #' @export
 commented_code_linter <- function() {
   Linter(function(source_expression) {
-    if (is.null(source_expression$full_xml_parsed_content)) return(list())
+    if (!is_lint_level(source_expression, "file", require_xml = TRUE)) {
+      return(list())
+    }
     all_comment_nodes <- xml2::xml_find_all(source_expression$full_xml_parsed_content, "//COMMENT")
     all_comments <- xml2::xml_text(all_comment_nodes)
     code_candidates <- re_matches(

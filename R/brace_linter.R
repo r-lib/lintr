@@ -19,7 +19,7 @@
 #' @export
 brace_linter <- function(allow_single_line = FALSE) {
   Linter(function(source_expression) {
-    if (length(source_expression$xml_parsed_content) == 0L) {
+    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
       return(list())
     }
 
@@ -34,6 +34,12 @@ brace_linter <- function(allow_single_line = FALSE) {
       "not(
         (@line1 = parent::expr/preceding-sibling::OP-LEFT-BRACE/@line1) or
         (@line1 = following-sibling::expr/OP-LEFT-BRACE/@line1)
+      )",
+      # allow `(`, `,` and `%>%` on preceding line
+      "not(
+        @line1 = parent::expr/preceding-sibling::*[1][
+          self::OP-LEFT-PAREN or self::OP-COMMA or (self::SPECIAL and text() = '%>%')
+        ]/@line2 + 1
       )"
     ))
 

@@ -1,7 +1,8 @@
 # lintr
-[![R build status](https://github.com/jimhester/lintr/workflows/R-CMD-check/badge.svg)](https://github.com/jimhester/lintr/actions)
-[![codecov.io](https://codecov.io/github/jimhester/lintr/coverage.svg?branch=master)](https://codecov.io/github/jimhester/lintr?branch=master)
-[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/lintr)](https://cran.r-project.org/package=lintr) [![Join the chat at https://gitter.im/jimhester-lintr/Lobby](https://badges.gitter.im/jimhester-lintr/Lobby.svg)](https://gitter.im/jimhester-lintr/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![R build status](https://github.com/r-lib/lintr/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/lintr/actions)
+[![codecov.io](https://codecov.io/github/r-lib/lintr/coverage.svg?branch=master)](https://codecov.io/github/r-lib/lintr?branch=master)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/lintr)](https://cran.r-project.org/package=lintr)
+[![Join the chat at https://gitter.im/jimhester-lintr/Lobby](https://badges.gitter.im/jimhester-lintr/Lobby.svg)](https://gitter.im/jimhester-lintr/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Static code analysis for R ##
 
@@ -109,7 +110,8 @@ Advanced users may run `lintr` during [continuous-integration](#continuous-integ
 Lintr supports per-project configuration of the following fields.
 The config file (default file name: `.lintr`) is in [Debian Control Field Format](https://www.debian.org/doc/debian-policy/ch-controlfields.html).
 
-- `linters` - see `?with_defaults` for example of specifying only a few non-default linters.
+- `linters` - see `?linters_with_defaults` for example of specifying only a few non-default linters and 
+  `?linters_with_tags` for more fine-grained control.
 - `exclusions` - a list of filenames to exclude from linting.  You can use a
   named item to exclude only certain lines from a file.
 - `exclude` - a regex pattern for lines to exclude from linting.  Default is "# nolint"
@@ -129,7 +131,7 @@ Below is an example .lintr file that uses:
 - Specifies the file encoding to be ISO-8859-1 (Latin 1)
 
 ```
-linters: with_defaults(
+linters: linters_with_defaults(
   line_length_linter(120), 
   commented_code_linter = NULL
   )
@@ -168,7 +170,7 @@ lintr::lint_package() %>%
     as.data.frame %>%
     group_by(linter) %>%
     tally(sort = TRUE) %$%
-    sprintf("linters: with_defaults(\n    %s\n    dummy_linter = NULL\n  )\n",
+    sprintf("linters: linters_with_defaults(\n    %s\n    dummy_linter = NULL\n  )\n",
             paste0(linter, " = NULL, # ", n, collapse = "\n    ")) %>%
     cat(file = ".lintr")
 
@@ -218,7 +220,7 @@ following line to your `.travis.yml`
 
 ```yaml
 r_github_packages:
-  - jimhester/lintr
+  - r-lib/lintr
 ```
 
 We recommend running `lintr::lint_package()` as an [after_success step in your build process](#non-failing-lints)]
@@ -260,7 +262,7 @@ included in a given project.
 To install the latest development version of lintr from GitHub
 
 ```r
-devtools::install_github("jimhester/lintr")
+devtools::install_github("r-lib/lintr")
 ```
 
 
@@ -294,7 +296,7 @@ installation documentation for those packages for more information.
 
 #### Configuration ####
 You can also configure what linters are used. e.g. using a different line length cutoff.
-- `M-x customize-option` -> `flycheck-lintr-linters` -> `with_defaults(line_length_linter(120))`
+- `M-x customize-option` -> `flycheck-lintr-linters` -> `linters_with_defaults(line_length_linter(120))`
 
 ### Vim - syntastic
 lintr can be integrated with
@@ -316,7 +318,7 @@ let g:syntastic_r_checkers = ['lintr']
 #### Configuration ####
 You can also configure what linters are used. e.g. using a different line length cutoff.
 ```vim
-let g:syntastic_r_lintr_linters = "with_defaults(line_length_linter(120))"
+let g:syntastic_r_lintr_linters = "linters_with_defaults(line_length_linter(120))"
 ```
 ### Vim - ALE
 lintr can be integrated with
@@ -327,7 +329,7 @@ lintr is integrated with ALE and requires no additional installation.
 #### Configuration ####
 You can configure what linters are used. e.g. using a different line length cutoff.
 ```vim
-let g:ale_r_lintr_options = "with_defaults(line_length_linter(120))"
+let g:ale_r_lintr_options = "linters_with_defaults(line_length_linter(120))"
 ```
 You can also configure whether `lint` or `lint_package` is used. 
 Set to 1 for `lint_package` and 0 (default) for `lint`.
@@ -357,7 +359,7 @@ In the SublimeLinter User Settings
 {
   "linters": {
     "lintr": {
-      "linters": "with_defaults(assignment_linter = NULL, line_length_linter(120))"
+      "linters": "linters_with_defaults(assignment_linter = NULL, line_length_linter(120))"
     }
   }
 }
@@ -390,5 +392,5 @@ Installing `languageserver` package in R and `vscode-R` extension in VS Code wil
 
 ```bash
 Rscript -e 'install.packages("languageserver")'
-code --install-extension ikuyadeu.r
+code --install-extension reditorsupport.r
 ```

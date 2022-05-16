@@ -15,7 +15,9 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
   stopifnot(is.logical(symbol_is_undesirable))
 
   Linter(function(source_expression) {
-    if (is.null(source_expression$xml_parsed_content)) return(NULL)
+    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+      return(list())
+    }
     if (symbol_is_undesirable) {
       tokens <- c("SYMBOL_FUNCTION_CALL", "SYMBOL")
     } else {

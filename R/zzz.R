@@ -1,7 +1,7 @@
 #' Default linters
 #'
 #' @description List of default linters for [lint()]. Use
-#' [with_defaults()] to customize it.
+#' [linters_with_defaults()] to customize it.
 #'
 #' The set of default linters is as follows (any parameterised linters, eg, `line_length_linter` use their default
 #' argument(s), see `?<linter_name>` for details):
@@ -10,8 +10,8 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #'
 #' @export
-default_linters <- with_defaults(
-  default = list(),
+default_linters <- modify_defaults(
+  defaults = list(),
   assignment_linter(),
   brace_linter(),
   commas_linter(),
@@ -42,13 +42,13 @@ default_linters <- with_defaults(
 #'
 #' Lists of function names and operators for [undesirable_function_linter()] and [undesirable_operator_linter()].
 #' There is a list for the default elements and another that contains all available elements.
-#' Use [with_defaults()] to produce a custom list.
+#' Use [modify_defaults()] to produce a custom list.
 #'
 #' @format A named list of character strings.
 #' @rdname default_undesirable_functions
 #' @export
-all_undesirable_functions <- with_defaults(
-  default = list(),
+all_undesirable_functions <- modify_defaults(
+  defaults = list(),
   "attach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
   "browser" = "remove debugging markers from 'final' code",
   "debug" = "remove debugging markers from 'final' code",
@@ -78,7 +78,7 @@ all_undesirable_functions <- with_defaults(
 
 #' @rdname default_undesirable_functions
 #' @export
-default_undesirable_functions <- do.call(with_defaults, c(
+default_undesirable_functions <- do.call(modify_defaults, c(
   list(default = list()),
   all_undesirable_functions[c(
     "attach",
@@ -107,8 +107,8 @@ default_undesirable_functions <- do.call(with_defaults, c(
 
 #' @rdname default_undesirable_functions
 #' @export
-all_undesirable_operators <- with_defaults(
-  default = list(),
+all_undesirable_operators <- modify_defaults(
+  defaults = list(),
   ":::" = NA,
   "<<-" = NA,
   "->>" = NA
@@ -116,7 +116,7 @@ all_undesirable_operators <- with_defaults(
 
 #' @rdname default_undesirable_functions
 #' @export
-default_undesirable_operators <- do.call(with_defaults, c(
+default_undesirable_operators <- do.call(modify_defaults, c(
   list(default = list()),
   all_undesirable_operators[c(
     ":::",
@@ -127,7 +127,7 @@ default_undesirable_operators <- do.call(with_defaults, c(
 
 
 #' Default lintr settings
-#' @seealso [read_settings()], [default_linters()]
+#' @seealso [read_settings()], [default_linters]
 #' @export
 default_settings <- NULL
 
@@ -156,7 +156,7 @@ settings <- NULL
                               ), "."),
     exclude_linter_sep = rex::rex(any_spaces, ",", any_spaces),
     exclusions = list(),
-    cache_directory = "~/.R/lintr_cache",
+    cache_directory = R_user_dir("lintr", "cache"),
     comment_token = Sys.getenv("GITHUB_TOKEN", unset = NA) %||% rot(
       paste0(
         "0n12nn72507",

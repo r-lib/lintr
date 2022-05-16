@@ -83,6 +83,68 @@ test_that("brace_linter lints braces correctly", {
     linter
   )
 
+  # ,<\n>{ is allowed
+  expect_lint(
+    trim_some("
+      switch(
+        x,
+        'a' = do_something(x),
+        'b' = do_another(x),
+        {
+          do_first(x)
+          do_second(x)
+        }
+      )
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      fun(
+        'This is very very very long text.',
+        {
+          message('This is the code.')
+          message('It\\'s stupid, but proves my point.')
+        }
+      )
+    "),
+    NULL,
+    linter
+  )
+
+  # %>%\n{ is allowed
+  expect_lint(
+    trim_some("
+    letters %>%
+      {
+        tibble(
+          lo = .,
+          hi = toupper(.)
+        )
+      } %>%
+      mutate(row_id = row_number())
+    "),
+    NULL,
+    linter
+  )
+
+  # (\n{ is allowed optionally
+  expect_lint(
+    trim_some("
+      tryCatch(
+        {
+          print(1)
+        },
+        error = function(err) {
+        }
+      )
+    "),
+    NULL,
+    linter
+  )
+
   # {{ }} is allowed
   expect_lint("{{ x }}", NULL, linter)
 

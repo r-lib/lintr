@@ -67,7 +67,7 @@ test_that("it uses config home directory settings if provided", {
 test_that("it errors if the config file does not end in a newline", {
 
   f <- tempfile()
-  cat("linters: with_defaults(closed_curly_linter = NULL)", file = f)
+  cat("linters: linters_with_defaults(closed_curly_linter = NULL)", file = f)
   old <- options()
   on.exit(options(old))
   options("lintr.linter_file" = f)
@@ -98,10 +98,10 @@ test_that("logical_env utility works as intended", {
 })
 
 # fixing #774
-test_that("with_defaults doesn't break on very long input", {
+test_that("linters_with_defaults doesn't break on very long input", {
   expect_named(
-    with_defaults(
-      default = list(),
+    linters_with_defaults(
+      defaults = list(),
       lintr::undesirable_function_linter(c(
         detach = paste(
           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",

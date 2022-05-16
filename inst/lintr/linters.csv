@@ -6,7 +6,7 @@ assignment_linter,style consistency default
 backport_linter,robustness configurable package_development
 brace_linter,style readability default configurable
 class_equals_linter,best_practices robustness consistency
-closed_curly_linter,style readability configurable
+closed_curly_linter,style readability deprecated configurable
 commas_linter,style readability default
 commented_code_linter,style readability best_practices default
 condition_message_linter,best_practices consistency
@@ -44,18 +44,18 @@ numeric_leading_zero_linter,style consistency readability
 object_length_linter,style readability default configurable
 object_name_linter,style consistency default configurable
 object_usage_linter,style readability correctness default
-open_curly_linter,style readability configurable
+open_curly_linter,style readability deprecated configurable
 outer_negation_linter,readability efficiency best_practices
 package_hooks_linter,style correctness package_development
 paren_body_linter,style readability default
-paren_brace_linter,style readability
+paren_brace_linter,style readability deprecated
 paste_linter,best_practices consistency
 pipe_call_linter,style readability
 pipe_continuation_linter,style readability default
 redundant_ifelse_linter,best_practices efficiency consistency
 regex_subset_linter,best_practices efficiency
 semicolon_linter,style readability default configurable
-semicolon_terminator_linter,style readability configurable
+semicolon_terminator_linter,style readability deprecated configurable
 seq_linter,robustness efficiency consistency best_practices default
 single_quotes_linter,style consistency readability default
 spaces_inside_linter,style readability default
@@ -71,5 +71,6 @@ undesirable_function_linter,style efficiency configurable robustness best_practi
 undesirable_operator_linter,style efficiency configurable robustness best_practices
 unneeded_concatenation_linter,style readability efficiency
 unreachable_code_linter,best_practices readability
+unused_import_linter,best_practices common_mistakes configurable
 vector_logic_linter,default efficiency best_practices
 yoda_test_linter,package_development best_practices readability
