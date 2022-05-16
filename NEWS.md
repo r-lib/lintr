@@ -168,7 +168,7 @@ function calls. (#850, #851, @renkun-ken)
 * Several linters tightened internal logic to allow for raw strings like `R"( a\string )"` (#1034, @michaelchirico)
 * `object_usage_linter()` correctly detects functions assigned with `=` instead of `<-` (#1081, @michaelchirico)
 * `undesirable_function_linter()` no longer lints undesirable symbols if they are used as names (#1050, @AshesITR)
-* Moved the default lintr cache directory from `~/.R/lintr_cache` to `R_user_dir("lintr", "cache")` (#1062, @AshesITR)
+* Moved the default lintr cache directory from `~/.R/lintr_cache` to `R_user_dir("lintr", "cache")`. Note that this major version update invalidated the old cache anyway, so it can be safely deleted. (#1062, @AshesITR)
 
 # lintr 2.0.1
 
