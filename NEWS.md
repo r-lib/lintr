@@ -172,6 +172,7 @@ function calls. (#850, #851, @renkun-ken)
 * `trailing_whitespace_linter()` ignores trailing whitespace in strings by default. 
   This can be disabled using `allow_in_strings = FALSE` (#1045, @AshesITR)
 * Moved the default lintr cache directory from `~/.R/lintr_cache` to `R_user_dir("lintr", "cache")`. Note that this major version update invalidated the old cache anyway, so it can be safely deleted. (#1062, @AshesITR)
+* New helper `xml_nodes_to_lint()` helps convert `xml_node` objects obtained using linter logic expressed in Xpath into `Lint` objects (#1124, @michaelchirico)
 
 # lintr 2.0.1
 
