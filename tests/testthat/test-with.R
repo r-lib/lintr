@@ -5,8 +5,10 @@ test_that("linters_with_defaults works as expected with unnamed args", {
 
 test_that("linters_with_defaults warns on unused NULLs", {
   expect_warning(linters_with_defaults(not_a_default = NULL), rex::rex("which is not in `default`."))
-  expect_warning(linters_with_defaults(not_a_default = NULL, also_not_default = NULL),
-                 rex::rex("which are not in `default`."))
+  expect_warning(
+    linters_with_defaults(not_a_default = NULL, also_not_default = NULL),
+    rex::rex("which are not in `default`.")
+  )
 })
 
 test_that("all default linters are tagged default", {
