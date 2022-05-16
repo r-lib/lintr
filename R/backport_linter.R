@@ -10,8 +10,12 @@ backport_linter <- function(r_version = getRversion()) {
   r_version <- normalize_r_version(r_version)
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) return(list())
-    if (all(r_version >= R_system_version(names(backports)))) return(list())
+    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+      return(list())
+    }
+    if (all(r_version >= R_system_version(names(backports)))) {
+      return(list())
+    }
 
     xml <- source_expression$xml_parsed_content
 
