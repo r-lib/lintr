@@ -32,9 +32,8 @@ seq_linter <- function() {
       if (fun %in% bad_funcs) paste0(fun, "(...)") else fun
     }
 
-    lapply(
+    xml_nodes_to_lint(
       badx,
-      xml_nodes_to_lint,
       source_expression = source_expression,
       # TODO: better message customization. For example, length(x):1
       #   would get rev(seq_along(x)) as the preferred replacement.

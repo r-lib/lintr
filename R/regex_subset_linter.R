@@ -52,9 +52,8 @@ regex_subset_linter <- function() {
 
     grep_expr <- xml2::xml_find_all(xml, grep_xpath)
 
-    grep_lints <- lapply(
+    grep_lints <- xml_nodes_to_lint(
       grep_expr,
-      xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = paste(
         "Prefer grep(pattern, x, ..., value = TRUE) over",
@@ -71,9 +70,8 @@ regex_subset_linter <- function() {
 
     stringr_expr <- xml2::xml_find_all(xml, stringr_xpath)
 
-    stringr_lints <- lapply(
+    stringr_lints <- xml_nodes_to_lint(
       stringr_expr,
-      xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = paste(
         "Prefer stringr::str_subset(x, pattern) over",

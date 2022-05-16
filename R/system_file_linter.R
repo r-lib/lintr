@@ -25,9 +25,8 @@ system_file_linter <- function() {
     ]"
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    return(lapply(
+    xml_nodes_to_lint(
       bad_expr,
-      xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = function(expr) {
         outer_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
@@ -43,6 +42,6 @@ system_file_linter <- function() {
         )
       },
       type = "warning"
-    ))
+    )
   })
 }

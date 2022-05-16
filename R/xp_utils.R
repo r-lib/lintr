@@ -17,7 +17,8 @@ xp_text_in_table <- function(table) {
 #'   linter logic into a [Lint()] object to return
 #'
 #' @inheritParams Lint
-#' @param xml An `xml_node` object, e.g. as returned by
+#' @param xml An `xml_node` object (to generate one `Lint`) or an
+#'   `xml_nodeset` object (to generate several `Lint`s), e.g. as returned by
 #'   [xml2::xml_find_all()] or [xml2::xml_find_first()].
 #' @param source_expression A source expression object, e.g. as
 #'   returned by [get_source_expressions()].
@@ -33,8 +34,11 @@ xp_text_in_table <- function(table) {
 xml_nodes_to_lint <- function(xml, source_expression, lint_message,
                               type = c("style", "warning", "error"),
                               offset = 0L) {
+  if (length(xml) != 1L) {
+    return(lapply(xml, xml_nodes_to_lint, source_expression, lint_message, type, offset))
+  }
   type <- match.arg(type, c("style", "warning", "error"))
-  line1 <- xml2::xml_attr(xml, "line1")[1]
+  line1 <- xml2::xml_attr(xml, "line1")
   col1 <- as.integer(xml2::xml_attr(xml, "col1")) + offset
 
   lines <- source_expression[["lines"]]
@@ -46,7 +50,7 @@ xml_nodes_to_lint <- function(xml, source_expression, lint_message,
     col2 <- unname(nchar(lines[line1]))
   }
   if (is.function(lint_message)) lint_message <- lint_message(xml)
-  return(Lint(
+  Lint(
     filename = source_expression$filename,
     line_number = as.integer(line1),
     column_number = as.integer(col1),
@@ -54,7 +58,7 @@ xml_nodes_to_lint <- function(xml, source_expression, lint_message,
     message = lint_message,
     line = lines[line1],
     ranges = list(c(col1 - offset, col2))
-  ))
+  )
 }
 
 paren_wrap <- function(..., sep) {

@@ -40,15 +40,14 @@ literal_coercion_linter <- function() {
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    return(lapply(
+    xml_nodes_to_lint(
       bad_expr,
-      xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = paste(
         "Use literals directly where possible, instead of coercion.",
         "c.f. 1L instead of as.integer(1), or NA_real_ instead of as.numeric(NA)."
       ),
       type = "warning"
-    ))
+    )
   })
 }

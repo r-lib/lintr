@@ -121,12 +121,6 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    lapply(
-      bad_expr,
-      xml_nodes_to_lint,
-      source_expression = source_expression,
-      lint_message = lint_message,
-      type = "style"
-    )
+    xml_nodes_to_lint(bad_expr, source_expression = source_expression, lint_message = lint_message, type = "style")
   })
 }

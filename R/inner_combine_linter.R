@@ -75,9 +75,8 @@ inner_combine_linter <- function() {
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    return(lapply(
+    xml_nodes_to_lint(
       bad_expr,
-      xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = function(expr) {
         matched_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/expr/SYMBOL_FUNCTION_CALL"))
@@ -88,7 +87,7 @@ inner_combine_linter <- function() {
         paste("Combine inputs to vectorized functions first to take full advantage of vectorization, e.g.,", message)
       },
       type = "warning"
-    ))
+    )
   })
 }
 

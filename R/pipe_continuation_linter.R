@@ -58,9 +58,8 @@ pipe_continuation_linter <- function() {
 
     pipe_exprs <- xml_find_all(x, multiline_pipe_test)
 
-    lapply(
+    xml_nodes_to_lint(
       pipe_exprs,
-      xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = paste(
         "`%>%` should always have a space before it and a new line after it,",

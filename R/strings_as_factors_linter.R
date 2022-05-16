@@ -64,9 +64,8 @@ strings_as_factors_linter <- function() {
     ]")
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    return(lapply(
+    xml_nodes_to_lint(
       bad_expr,
-      xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = paste(
         "This code relies on the default value of stringsAsFactors,",
@@ -75,6 +74,6 @@ strings_as_factors_linter <- function() {
         "and after this switch."
       ),
       type = "warning"
-    ))
+    )
   })
 }

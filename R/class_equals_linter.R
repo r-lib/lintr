@@ -26,9 +26,8 @@ class_equals_linter <- function() {
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    return(lapply(
+    xml_nodes_to_lint(
       bad_expr,
-      xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = function(expr) {
         op <- xml2::xml_text(xml2::xml_find_first(expr, "*[2]"))
@@ -36,6 +35,6 @@ class_equals_linter <- function() {
         paste(message, "use inherits(x, 'class-name') or is.<class> or is(x, 'class')")
       },
       type = "warning"
-    ))
+    )
   })
 }

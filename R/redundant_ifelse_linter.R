@@ -25,9 +25,8 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
       and expr[NUM_CONST[text() = 'FALSE']]
     ]")
     tf_expr <- xml2::xml_find_all(xml, tf_xpath)
-    tf_lints <- lapply(
+    tf_lints <- xml_nodes_to_lint(
       tf_expr,
-      xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = function(expr) {
         matched_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
@@ -51,9 +50,8 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
         and expr[NUM_CONST[text() = '0' or text() = '0L']]
       ]")
       num_expr <- xml2::xml_find_all(xml, num_xpath)
-      num_lints <- lapply(
+      num_lints <- xml_nodes_to_lint(
         num_expr,
-        xml_nodes_to_lint,
         source_expression = source_expression,
         lint_message = function(expr) {
           matched_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))

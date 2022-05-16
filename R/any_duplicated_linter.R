@@ -32,9 +32,8 @@ any_duplicated_linter <- function() {
     ]"
 
     any_duplicated_expr <- xml2::xml_find_all(xml, any_duplicated_xpath)
-    any_duplicated_lints <- lapply(
+    any_duplicated_lints <- xml_nodes_to_lint(
       any_duplicated_expr,
-      xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = "anyDuplicated(x, ...) > 0 is better than any(duplicated(x), ...).",
       type = "warning"
@@ -102,9 +101,8 @@ any_duplicated_linter <- function() {
       ]]
     ]"
     length_unique_expr <- xml2::xml_find_all(xml, length_unique_xpath)
-    length_unique_lints <- lapply(
+    length_unique_lints <- xml_nodes_to_lint(
       length_unique_expr,
-      xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message =
         "anyDuplicated(x) == 0L is better than length(unique(x)) == length(x) and length(unique(DF$col)) == nrow(DF)",
