@@ -2,8 +2,8 @@
 #'
 #' Gets the source IDs (row indices) corresponding to given token.
 #'
-#' @param source_expression A list of source expressions, the result of a call to [get_source_expressions()], for the desired
-#' filename.
+#' @param source_expression A list of source expressions, the result of a call to [get_source_expressions()],
+#'   for the desired filename.
 #' @param value Character. String corresponding to the token to search for.
 #' For example:
 #'

@@ -15,8 +15,9 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
       return(list())
     }
 
+    xml <- source_expression$full_xml_parsed_content
     import_exprs <- xml2::xml_find_all(
-      source_expression$full_xml_parsed_content,
+      xml,
       "//expr[
         expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
         and
@@ -43,7 +44,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
       sep = " | "
     )
 
-    used_symbols <- xml2::xml_text(xml2::xml_find_all(source_expression$full_xml_parsed_content, xp_used_symbols))
+    used_symbols <- xml2::xml_text(xml2::xml_find_all(xml, xp_used_symbols))
 
     is_used <- vapply(
       imported_pkgs,
@@ -62,7 +63,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
     is_ns_used <- vapply(
       imported_pkgs,
       function(pkg) {
-        ns_usage <- xml2::xml_find_first(source_expression$full_xml_parsed_content, paste0("//SYMBOL_PACKAGE[text() = '", pkg, "']"))
+        ns_usage <- xml2::xml_find_first(xml, paste0("//SYMBOL_PACKAGE[text() = '", pkg, "']"))
         !identical(ns_usage, xml2::xml_missing())
       },
       logical(1L)
