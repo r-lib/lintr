@@ -34,7 +34,7 @@ paren_body_linter <- function() {
     )
     matched_expressions <- xml2::xml_find_all(source_expression$xml_parsed_content, xpath)
 
-    xml_nodes_to_lint(
+    xml_nodes_to_lints(
       matched_expressions,
       source_expression = source_expression,
       lint_message = "There should be a space between right parenthesis and a body expression."

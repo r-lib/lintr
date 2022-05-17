@@ -33,7 +33,7 @@ expect_comparison_linter <- function() {
       `==` = "expect_identical"
     )
 
-    xml_nodes_to_lint(
+    xml_nodes_to_lints(
       bad_expr,
       source_expression,
       lint_message = function(expr) {

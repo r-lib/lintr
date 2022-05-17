@@ -34,7 +34,7 @@ expect_type_linter <- function() {
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    xml_nodes_to_lint(
+    xml_nodes_to_lints(
       bad_expr,
       source_expression,
       function(expr) {

@@ -25,7 +25,7 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
       and expr[NUM_CONST[text() = 'FALSE']]
     ]")
     tf_expr <- xml2::xml_find_all(xml, tf_xpath)
-    tf_lints <- xml_nodes_to_lint(
+    tf_lints <- xml_nodes_to_lints(
       tf_expr,
       source_expression = source_expression,
       lint_message = function(expr) {
@@ -50,7 +50,7 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
         and expr[NUM_CONST[text() = '0' or text() = '0L']]
       ]")
       num_expr <- xml2::xml_find_all(xml, num_xpath)
-      num_lints <- xml_nodes_to_lint(
+      num_lints <- xml_nodes_to_lints(
         num_expr,
         source_expression = source_expression,
         lint_message = function(expr) {

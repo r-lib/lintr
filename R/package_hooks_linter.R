@@ -52,7 +52,7 @@ package_hooks_linter <- function() {
     bad_msg_call_lints <- function(hook) {
       xpath <- sprintf(bad_msg_call_xpath_fmt, hook, xp_text_in_table(bad_calls[[hook]]))
       bad_expr <- xml2::xml_find_all(xml, xpath)
-      xml_nodes_to_lint(bad_expr, source_expression, make_bad_call_lint_msg(hook), type = "warning")
+      xml_nodes_to_lints(bad_expr, source_expression, make_bad_call_lint_msg(hook), type = "warning")
     }
 
     onload_bad_msg_call_lints <- bad_msg_call_lints(".onLoad")
@@ -75,7 +75,7 @@ package_hooks_linter <- function() {
 
     load_arg_name_expr <- xml2::xml_find_all(xml, load_arg_name_xpath)
 
-    load_arg_name_lints <- xml_nodes_to_lint(
+    load_arg_name_lints <- xml_nodes_to_lints(
       load_arg_name_expr,
       source_expression,
       function(expr) {
@@ -99,7 +99,7 @@ package_hooks_linter <- function() {
 
     library_require_expr <- xml2::xml_find_all(xml, library_require_xpath)
 
-    library_require_lints <- xml_nodes_to_lint(
+    library_require_lints <- xml_nodes_to_lints(
       library_require_expr,
       source_expression,
       function(expr) {
@@ -123,7 +123,7 @@ package_hooks_linter <- function() {
 
     bad_unload_call_expr <- xml2::xml_find_all(xml, bad_unload_call_xpath)
 
-    bad_unload_call_lints <- xml_nodes_to_lint(
+    bad_unload_call_lints <- xml_nodes_to_lints(
       bad_unload_call_expr,
       source_expression,
       function(expr) sprintf("Use library.dynam.unload() calls in .onUnload(), not %s().", get_hook(expr)),
@@ -144,7 +144,7 @@ package_hooks_linter <- function() {
 
     unload_arg_name_expr <- xml2::xml_find_all(xml, unload_arg_name_xpath)
 
-    unload_arg_name_lints <- xml_nodes_to_lint(
+    unload_arg_name_lints <- xml_nodes_to_lints(
       unload_arg_name_expr,
       source_expression,
       function(expr) sprintf("%s() should take one argument starting with 'lib'.", get_hook(expr)),

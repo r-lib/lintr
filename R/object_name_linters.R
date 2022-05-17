@@ -65,7 +65,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
 
     matches_a_style <- Reduce(`|`, style_matches)
 
-    xml_nodes_to_lint(
+    xml_nodes_to_lints(
       assignments[!matches_a_style],
       source_expression,
       lint_message = lint_message,
@@ -185,7 +185,7 @@ object_length_linter <- function(length = 30L) {
 
     too_long <- nchar(nms_stripped) > length
 
-    xml_nodes_to_lint(
+    xml_nodes_to_lints(
       assignments[too_long],
       source_expression = source_expression,
       lint_message = lint_message,

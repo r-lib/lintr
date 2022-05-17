@@ -42,7 +42,7 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
 
     replacement_map <- c(T = "TRUE", F = "FALSE")
     make_lint <- function(expr, fmt) {
-      xml_nodes_to_lint(
+      xml_nodes_to_lints(
         xml = expr,
         source_expression = source_expression,
         lint_message = function(expr) {

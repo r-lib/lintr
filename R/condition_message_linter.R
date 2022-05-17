@@ -32,7 +32,7 @@ condition_message_linter <- function() {
       "./expr/SYMBOL_SUB[text() = 'sep']/following-sibling::expr/STR_CONST"
     ))
 
-    xml_nodes_to_lint(
+    xml_nodes_to_lints(
       bad_expr[is.na(sep_value) | sep_value %in% c("", " ")],
       source_expression = source_expression,
       lint_message = function(expr) {

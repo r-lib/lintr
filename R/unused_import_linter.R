@@ -74,7 +74,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
       is_unused[is_ns_used] <- FALSE
     }
 
-    xml_nodes_to_lint(
+    xml_nodes_to_lints(
       import_exprs[is_unused],
       source_expression = source_expression,
       lint_message = function(import_expr) {

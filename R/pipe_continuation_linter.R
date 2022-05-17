@@ -58,7 +58,7 @@ pipe_continuation_linter <- function() {
 
     pipe_exprs <- xml_find_all(x, multiline_pipe_test)
 
-    xml_nodes_to_lint(
+    xml_nodes_to_lints(
       pipe_exprs,
       source_expression = source_expression,
       lint_message = paste(

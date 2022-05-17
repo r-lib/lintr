@@ -38,7 +38,7 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
         "./SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1]"
       ))
 
-      empty_sep_lints <- xml_nodes_to_lint(
+      empty_sep_lints <- xml_nodes_to_lints(
         empty_sep_expr[!nzchar(sep_value)],
         source_expression = source_expression,
         lint_message = 'paste0(...) is better than paste(..., sep = "").',
@@ -61,7 +61,7 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
         "./SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1]"
       ))
 
-      to_string_lints <- xml_nodes_to_lint(
+      to_string_lints <- xml_nodes_to_lints(
         to_string_expr[collapse_value == ", "],
         source_expression = source_expression,
         lint_message = paste(
@@ -78,7 +78,7 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
       and SYMBOL_SUB[text() = 'sep']
     ]"
     paste0_sep_expr <- xml2::xml_find_all(xml, paste0_sep_xpath)
-    paste0_sep_lints <- xml_nodes_to_lint(
+    paste0_sep_lints <- xml_nodes_to_lints(
       paste0_sep_expr,
       source_expression = source_expression,
       lint_message = "sep= is not a formal argument to paste0(); did you mean to use paste(), or collapse=?",

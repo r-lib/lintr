@@ -33,14 +33,14 @@ xp_text_in_table <- function(table) {
 #'   the `ranges` value in the `Lint` object.
 #' @return For `xml_node`s, a `lint`. For `xml_nodeset`s, `lints` (a list of `lint`s).
 #' @export
-xml_nodes_to_lint <- function(xml, source_expression, lint_message,
+xml_nodes_to_lints <- function(xml, source_expression, lint_message,
                               type = c("style", "warning", "error"),
                               offset = 0L) {
   if (length(xml) == 0L) {
     return(list())
   }
   if (inherits(xml, "xml_nodeset")) {
-    lints <- lapply(xml, xml_nodes_to_lint, source_expression, lint_message, type, offset)
+    lints <- lapply(xml, xml_nodes_to_lints, source_expression, lint_message, type, offset)
     class(lints) <- "lints"
     return(lints)
   } else if (!inherits(xml, "xml_node")) {

@@ -34,7 +34,7 @@ seq_linter <- function() {
       if (fun %in% bad_funcs) paste0(fun, "(...)") else fun
     }
 
-    xml_nodes_to_lint(
+    xml_nodes_to_lints(
       badx,
       source_expression = source_expression,
       # TODO: better message customization. For example, length(x):1
