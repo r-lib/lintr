@@ -8,7 +8,8 @@
 #' @export
 extraction_operator_linter <- function() {
   Linter(function(source_expression) {
-    tokens <- source_expression[["parsed_content"]] <- filter_out_token_type(source_expression[["parsed_content"]], "expr")
+    tokens <- source_expression[["parsed_content"]] <-
+      filter_out_token_type(source_expression[["parsed_content"]], "expr")
 
     lapply(
       ids_with_token(source_expression, c("'$'", "'['"), fun = `%in%`),
