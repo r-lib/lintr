@@ -39,7 +39,9 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
   )
 
   Linter(function(source_expression) {
-    if (is.null(source_expression$full_xml_parsed_content)) return(list())
+    if (!is_lint_level(source_expression, "file", require_xml = TRUE)) {
+      return(list())
+    }
 
     xml <- source_expression$full_xml_parsed_content
 
@@ -156,7 +158,9 @@ object_length_linter <- function(length = 30L) {
   lint_message <- paste("Variable and function names should not be longer than", length, "characters.")
 
   Linter(function(source_expression) {
-    if (is.null(source_expression$full_xml_parsed_content)) return(list())
+    if (!is_lint_level(source_expression, "file", require_xml = TRUE)) {
+      return(list())
+    }
 
     xml <- source_expression$full_xml_parsed_content
 

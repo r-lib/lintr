@@ -10,7 +10,9 @@
 seq_linter <- function() {
   Linter(function(source_expression) {
 
-    if (is.null(source_expression$xml_parsed_content)) return(list())
+    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+      return(list())
+    }
 
     xml <- source_expression$xml_parsed_content
 

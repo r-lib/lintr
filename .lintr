@@ -1,4 +1,4 @@
-linters: with_defaults( # The following TODOs are part of an effort to have {lintr} lint-free (#584)
+linters: linters_with_defaults( # The following TODOs are part of an effort to have {lintr} lint-free (#584)
    line_length_linter = line_length_linter(120),
    # TODO add implicit_integer_linter()
    cyclocomp_linter = cyclocomp_linter(37) # TODO reduce to 15

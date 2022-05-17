@@ -10,7 +10,7 @@
 #' @export
 expect_s3_class_linter <- function() {
   Linter(function(source_expression) {
-    if (length(source_expression$parsed_content) == 0L) {
+    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
       return(list())
     }
 
@@ -82,7 +82,7 @@ is_s3_class_calls <- paste0("is.", c(
 #' @export
 expect_s4_class_linter <- function() {
   Linter(function(source_expression) {
-    if (length(source_expression$parsed_content) == 0L) {
+    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
       return(list())
     }
 

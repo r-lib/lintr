@@ -21,6 +21,7 @@
   + For `lint()`, `...` is now the 3rd argument, where earlier this was `cache=`
   + For `lint_dir()` and `lint_package()`, `...` is now the 2nd argument, where earlier this was `relative_path=`
 * Argument `source_file` to exported functions `with_id()` and `ids_with_token()` have been renamed to `source_expression` to better reflect that this argument is typically the output of `get_source_expressions()`. It has also been renamed as the argument of the now-private functional versions of many linters, which  has no direct effect on packages importing linter, but is mentioned in case custom linters imitating `lintr` style have also adopted the `source_file` naming and want to adapt to keep in sync.
+* Deprecated `with_defaults()` in favor of `linters_with_defaults()` (#1029, @AshesITR)
 
 ## New features, bug fixes, improvements
 
@@ -67,6 +68,7 @@
 * New syntax to exclude only selected linters from linting lines or passages. Use `# nolint: linter_name, linter2_name.`
   or `# nolint start: linter_name, linter2_name.` in source files or named lists of line numbers in `.lintr`.
   (#660, @AshesITR)
+  + Extended to allow for partial matching as long as the supplied prefix is unique (#872, @AshesITR)
 * Fixed `spaces_left_parentheses_linter` sporadically causing warnings (#654, #674, @AshesITR)
 * Fixed `line_length_linter` causing duplicate lints for lines containing multiple expressions (#681, #682, @AshesITR)
 * `line_length_linter` now places the source marker at the margin of the affected line to improve user experience during 
@@ -173,6 +175,8 @@ function calls. (#850, #851, @renkun-ken)
   This can be disabled using `allow_in_strings = FALSE` (#1045, @AshesITR)
 * Moved the default lintr cache directory from `~/.R/lintr_cache` to `R_user_dir("lintr", "cache")`. Note that this major version update invalidated the old cache anyway, so it can be safely deleted. (#1062, @AshesITR)
 * New helper `xml_nodes_to_lint()` helps convert `xml_node` objects obtained using linter logic expressed in Xpath into `Lint` objects (#1124, @michaelchirico)
+* New `is_lint_level()` helper for readably explaining which type of expression is required for a custom linter. Some linters are written to either require the full file's parse tree (for example, `single_quotes_linter()`). Others only need single expressions, which is more cache-friendly (most linters are written this way to leverage caching). (#921, @michaelchirico)
+* `object_usage_linter()` now detects functions exported by packages that are explicitly attached using `library()` or `require()` calls (#1127, @AshesITR)
 
 # lintr 2.0.1
 

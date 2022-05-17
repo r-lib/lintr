@@ -7,9 +7,11 @@
 #'   [linters] for a complete list of linters available in lintr. \cr
 #'   <https://style.tidyverse.org/syntax.html#logical-vectors>
 #' @export
-T_and_F_symbol_linter <- function() { # nolint: object_name_linter.
+T_and_F_symbol_linter <- function() { # nolint: object_name.
   Linter(function(source_expression) {
-    if (is.null(source_expression$xml_parsed_content)) return(list())
+    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+      return(list())
+    }
 
     xpath <- paste0(
       "//SYMBOL[",

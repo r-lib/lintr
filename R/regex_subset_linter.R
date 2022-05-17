@@ -24,7 +24,7 @@
 #' @export
 regex_subset_linter <- function() {
   Linter(function(source_expression) {
-    if (length(source_expression$xml_parsed_content) == 0L) {
+    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
       return(list())
     }
 

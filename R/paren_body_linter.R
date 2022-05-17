@@ -9,7 +9,9 @@
 #' @export
 paren_body_linter <- function() {
   Linter(function(source_expression) {
-    if (is.null(source_expression$xml_parsed_content)) return(NULL)
+    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+      return(list())
+    }
 
     xpath <- paste(
       "//expr[",

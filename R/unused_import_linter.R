@@ -11,7 +11,9 @@
 #' @export
 unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bit64", "data.table", "tidyverse")) {
   Linter(function(source_expression) {
-    if (is.null(source_expression$full_xml_parsed_content)) return(list())
+    if (!is_lint_level(source_expression, "file", require_xml = TRUE)) {
+      return(list())
+    }
 
     import_exprs <- xml2::xml_find_all(
       source_expression$full_xml_parsed_content,

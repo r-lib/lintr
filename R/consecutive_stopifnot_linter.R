@@ -9,7 +9,7 @@
 consecutive_stopifnot_linter <- function() {
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level
-    if (length(source_expression$full_xml_parsed_content) == 0L) {
+    if (!is_lint_level(source_expression, "file", require_xml = TRUE)) {
       return(list())
     }
 

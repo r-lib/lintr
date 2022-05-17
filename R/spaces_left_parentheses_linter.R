@@ -10,12 +10,12 @@
 spaces_left_parentheses_linter <- function() {
   Linter(function(source_expression) {
 
-    if (is.null(source_expression$xml_parsed_content)) {
-      if (is.null(source_expression$full_xml_parsed_content)) return(list()) # nocov (actually this is covered -- remove me!)
+    # else/if structure for trees that are missing XML content (both global & local)
+    if (is_lint_level(source_expression, "file", require_xml = TRUE)) {
       # 'x = 1;(x + 2)' can't be detected from the expression-level tree
       xml <- source_expression$full_xml_parsed_content
       xpath <- "//OP-LEFT-PAREN[@start - 1 = ancestor::expr/preceding-sibling::OP-SEMICOLON/@end]"
-    } else {
+    } else if (is_lint_level(source_expression, "expression", require_xml = TRUE)) {
 
       xml <- source_expression$xml_parsed_content
 
@@ -47,6 +47,9 @@ spaces_left_parentheses_linter <- function() {
         "//OP-LEFT-PAREN[(%s) or (%s) or (%s)]",
         if_while_cond, for_cond, infix_cond
       )
+    } else {
+      # probably a parsing error -- XML is missing
+      return(list())
     }
 
     bad_paren <- xml2::xml_find_all(xml, xpath)
