@@ -11,7 +11,7 @@ xp_text_in_table <- function(table) {
   return(paste0("text() = ", table, collapse = " or "))
 }
 
-#' Convert an XML match into a Lint
+#' Convert an XML node or nodeset into a Lint
 #'
 #' Convenience function for converting nodes matched by XPath-based
 #'   linter logic into a [Lint()] object to return.

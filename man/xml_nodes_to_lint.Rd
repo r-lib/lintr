@@ -2,7 +2,7 @@
 % Please edit documentation in R/xp_utils.R
 \name{xml_nodes_to_lint}
 \alias{xml_nodes_to_lint}
-\title{Convert an XML match into a Lint}
+\title{Convert an XML node or nodeset into a Lint}
 \usage{
 xml_nodes_to_lint(
   xml,
