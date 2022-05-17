@@ -33,6 +33,9 @@ length-1 character as output).}
 \code{col1} and \code{col2} values taken from \code{xml} when producing
 the \code{ranges} value in the \code{Lint} object.}
 }
+\value{
+For \code{xml_node}s, a \code{lint}. For \code{xml_nodeset}s, a list of \code{lint}s.
+}
 \description{
 Convenience function for converting nodes matched by XPath-based
 linter logic into a \code{\link[=Lint]{Lint()}} object to return.

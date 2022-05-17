@@ -31,6 +31,7 @@ xp_text_in_table <- function(table) {
 #' @param offset Integer, default 0. The amount by which to offset the
 #'   `col1` and `col2` values taken from `xml` when producing
 #'   the `ranges` value in the `Lint` object.
+#' @return For `xml_node`s, a `lint`. For `xml_nodeset`s, a list of `lint`s.
 #' @export
 xml_nodes_to_lint <- function(xml, source_expression, lint_message,
                               type = c("style", "warning", "error"),
