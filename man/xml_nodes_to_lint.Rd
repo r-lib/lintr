@@ -13,7 +13,8 @@ xml_nodes_to_lint(
 )
 }
 \arguments{
-\item{xml}{An \code{xml_node} object, e.g. as returned by
+\item{xml}{An \code{xml_node} object (to generate one \code{Lint}) or an
+\code{xml_nodeset} object (to generate several \code{Lint}s), e.g. as returned by
 \code{\link[xml2:xml_find_all]{xml2::xml_find_all()}} or \code{\link[xml2:xml_find_all]{xml2::xml_find_first()}}.}
 
 \item{source_expression}{A source expression object, e.g. as
