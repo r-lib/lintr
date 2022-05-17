@@ -18,7 +18,8 @@ xml_nodes_to_lint(
 \code{\link[xml2:xml_find_all]{xml2::xml_find_all()}} or \code{\link[xml2:xml_find_all]{xml2::xml_find_first()}}.}
 
 \item{source_expression}{A source expression object, e.g. as
-returned by \code{\link[=get_source_expressions]{get_source_expressions()}}.}
+returned typically by \code{\link[=lint]{lint()}}, or more generally
+by \code{\link[=get_source_expressions]{get_source_expressions()}}.}
 
 \item{lint_message}{The message to be included as the \code{message}
 to the \code{Lint} object. If \code{lint_message} is a \code{function},

@@ -10,8 +10,8 @@ ids_with_token(source_expression, value, fun = `==`, source_file)
 with_id(source_expression, id, source_file)
 }
 \arguments{
-\item{source_expression}{A list of source expressions, the result of a call to \code{\link[=get_source_expressions]{get_source_expressions()}}, for the desired
-filename.}
+\item{source_expression}{A list of source expressions, the result of a call to \code{\link[=get_source_expressions]{get_source_expressions()}},
+for the desired filename.}
 
 \item{value}{Character. String corresponding to the token to search for.
 For example:

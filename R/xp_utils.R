@@ -21,7 +21,8 @@ xp_text_in_table <- function(table) {
 #'   `xml_nodeset` object (to generate several `Lint`s), e.g. as returned by
 #'   [xml2::xml_find_all()] or [xml2::xml_find_first()].
 #' @param source_expression A source expression object, e.g. as
-#'   returned by [get_source_expressions()].
+#'   returned typically by [lint()], or more generally
+#'   by [get_source_expressions()].
 #' @param lint_message The message to be included as the `message`
 #'   to the `Lint` object. If `lint_message` is a `function`,
 #'   this function is first applied to `xml` (so it should be a
