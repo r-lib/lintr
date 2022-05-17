@@ -52,7 +52,6 @@ T_and_F_symbol_linter <- function() { # nolint: object_name_linter.
       )
     }
 
-    browser()
     c(
       make_lint(bad_exprs, fmt = "Use %s instead of the symbol %s."),
       make_lint(bad_assigns, fmt = "Don't use %2$s as a variable name, as it can break code relying on %2$s being %1$s.")

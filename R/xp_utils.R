@@ -34,8 +34,13 @@ xp_text_in_table <- function(table) {
 xml_nodes_to_lint <- function(xml, source_expression, lint_message,
                               type = c("style", "warning", "error"),
                               offset = 0L) {
-  if (length(xml) != 1L) {
+  if (length(xml) == 0L) {
+    return(list())
+  }
+  if (inherits(xml, "xml_nodeset")) {
     return(lapply(xml, xml_nodes_to_lint, source_expression, lint_message, type, offset))
+  } else if (!inherits(xml, "xml_node")) {
+    stop("Expected an xml_nodeset or xml_node, got an object of class(es): ", toString(class(xml)))
   }
   type <- match.arg(type, c("style", "warning", "error"))
   line1 <- xml2::xml_attr(xml, "line1")
