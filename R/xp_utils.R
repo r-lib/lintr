@@ -14,7 +14,7 @@ xp_text_in_table <- function(table) {
 #' Convert an XML match into a Lint
 #'
 #' Convenience function for converting nodes matched by XPath-based
-#'   linter logic into a [Lint()] object to return
+#'   linter logic into a [Lint()] object to return.
 #'
 #' @inheritParams Lint
 #' @param xml An `xml_node` object (to generate one `Lint`) or an
