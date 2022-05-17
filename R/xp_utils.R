@@ -13,7 +13,7 @@ xp_text_in_table <- function(table) {
 
 #' Convert an XML match into a Lint
 #'
-#' Convenience function for converting nodes matched by Xpath-based
+#' Convenience function for converting nodes matched by XPath-based
 #'   linter logic into a [Lint()] object to return
 #'
 #' @inheritParams Lint
