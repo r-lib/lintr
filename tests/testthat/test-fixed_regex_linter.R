@@ -197,7 +197,7 @@ test_that("escaped characters are handled correctly", {
 
 # make sure the logic is properly vectorized
 test_that("single expression with multiple regexes is OK", {
-  expect_lint('c(grep('^a', x), grep('b$', x))', NULL, fixed_regex_linter())
+  expect_lint('c(grep("^a", x), grep("b$", x))', NULL, fixed_regex_linter())
 })
 
 # TODO(michaelchirico): one difference for stringr functions vs. base is that
