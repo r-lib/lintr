@@ -1,6 +1,6 @@
 ---
 title: "Creating new linters"
-author: "Jim Hester"
+author: "lintr maintainers"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -11,113 +11,186 @@ vignette: >
 
 This vignette describes the steps necessary to create a new linter.
 
-A good example of a simple linter is the `assignment_linter`.
+In particular, it covers how to write a linter with the intention of contributing it to `lintr`, so
+some parts of the below will not be relevant for users writing custom linters for their own packages/repos.
+
+A good example of a simple linter is the `pipe_call_linter`.
+
 ```r
-#' @describeIn linters Check that '<-' is always used for assignment.
+#' Pipe call linter
+#'
+#' Force explicit calls in magrittr pipes, e.g.,
+#' `1:3 %>% sum()` instead of `1:3 %>% sum`.
+#'
+#' @evalRd rd_tags("pipe_call_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-assignment_linter <- function() {
-  Linter(function(source_file) {
-    lapply(
-      ids_with_token(source_file, "EQ_ASSIGN"),
-      function(id) {
-        parsed <- source_file$parsed_content[id, ]
-        Lint(
-          filename = source_file$filename,
-          line_number = parsed$line1,
-          column_number = parsed$col1,
-          type = "style",
-          message = "Use <-, not =, for assignment.",
-          line = source_file$lines[parsed$line1]
-        )
-      }
+pipe_call_linter <- function() {
+  Linter(function(source_expression) {
+    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+      return(list())
+    }
+
+    xml <- source_expression$xml_parsed_content
+
+    xpath <- "//expr[preceding-sibling::SPECIAL[text() = '%>%'] and *[1][self::SYMBOL]]"
+    bad_expr <- xml2::xml_find_all(xml, xpath)
+
+    xml_nodes_to_lint(
+      bad_expr,
+      source_expression = source_expression,
+      lint_message = "Use explicit calls in magrittr pipes, i.e., `a %>% foo` should be `a %>% foo()`.",
+      type = "warning"
     )
   })
 }
 ```
 
-Let us walk through the parts of the linter individually.
+Let's walk through the parts of the linter individually.
 
 ## Writing the linter ##
+
 ```r
-#' @describeIn linters  Check that '<-' is always used for assignment.
+#' Pipe call linter
+#'
+#' Force explicit calls in magrittr pipes, e.g.,
+#' `1:3 %>% sum()` instead of `1:3 %>% sum`.
+```
+
+Describe the linter, giving it a title and briefly covering the usages that are discouraged when the linter is active.
+
+```r
+#' @evalRd rd_tags("pipe_call_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 ```
-The first two lines add the linter to the `linters` documentation and export it
-for use outside the package.
+
+These lines (1) generate a Tags section in the documentation for the linter; (2) link to the full table of available linters; and (3) mark the function for export. The most unfamiliar here is probably (1); this uses a helper function inside lintr to generate custom Rd styling. See R/linter_tags.R.
 
 ```r
-assignment_linter <- function() {
+pipe_call_linter <- function() {
 ```
+
 Next, we define the name of the new linter.  The convention is to suffix all
 linter names with `_linter`. All `_linter` functions are getters that return a
-closure that will do the actual linting. We could define additional parameters
-that are useful for the linter in this function declaration, but
-`assignment_linter` requires no additional arguments.
+closure that will do the actual linting (i.e., they're function factories). We could define additional parameters
+that are useful for the linter in this function declaration (see, e.g. `assignment_linter`), but
+`pipe_call_linter` requires no additional arguments.
 
 ```r
-Linter(function(source_file) {
+Linter(function(source_expression) {
 ```
-This is the closure. It will be called on the `source_file` variable that
-contains the top level expressions in the file to be linted. The call to
-`Linter()` simply gives this closure the class 'linter'.
 
-The raw text of the expression is available from `source_file$content`. However
-it is recommended to work with the tokens from `source_file$parsed_content` if
-possible, as they are tokenized from the `R` parser. These tokens are obtained
-from `parse()` and `getParseData()` calls done prior to calling the new linter.
+This is the closure. It will be called on the `source_expression` variable that
+contains the top level expressions in the file to be linted. The call to
+`Linter()` gives this closure the class 'linter' and guesses its name.
+
+The raw text of the expression is available from `source_file$content`. However,
+it is not generally possible to implement linters from the raw text -- consider
+`equals_na_linter`. If we just look for `== NA` in the text of the file, we'll
+generate many false positives, e.g. in comments (such as `# note: is.na() is the proper way to check == NA`)
+or inside character literals (such as `warning("don't use == NA to check missingness")`).
+We're also likely to generate false negatives, for example when `==` and `NA` appear on different lines!
+Working around these issues using only the un-parsed text in every situation amounts to re-implementing the parser.
+
+Therefore it is recommended to work with the tokens from `source_file$parsed_content` or `source_file$xml_parsed_content`,
+as they are tokenized from the `R` parser. These tokens are obtained
+from `parse()` and `utils::getParseData()` calls done prior to calling the new linter.
 `getParseData()` returns a `data.frame` with information from the source parse
 tree of the file being linted. A list of tokens is available from
-[r-source/src/main/gram.y](https://github.com/wch/r-source/blob/ff1bca2f21aba271d428474f00494eece5c36dd3/src/main/gram.y#L293-L307).
+[r-source/src/main/gram.y](https://github.com/r-devel/r-svn/blob/master/src/main/gram.y#L395-L412).
+
+`source_file$xml_parsed_content` uses `xmlparsedata::xml_parse_data()` to convert the `getParseData()` output into an XML tree,
+which enables writing linter logic in [XPath](https://www.w3schools.com/xml/xpath_intro.asp), a powerful language
+for expressing paths within the nested XML data structure. Most linters in `lintr` are built using XPath because it is
+concise to write and fast to execute.
 
 ```r
-lapply(ids_with_token(source_file, "EQ_ASSIGN"),
-  function(id) {
-    parsed <- with_id(source_file, id)
+if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+  return(list())
+}
 ```
-`ids_with_token()` is used to search for a token of a specific type and return
-the associated `id`.  Note that `rownames()` for `parsed_content` returns this
-`id`, so you can retrieve the rows for a given id with
-`source_file$parsed_content[id, ]`. The same operation may be more conveniently
-carried out with `with_id(source_file, id)`.
+
+Here, we return early if `source_expression` is not the expression-level object. `get_source_expression()` returns an
+object that parses the input file in two ways -- once is done expression-by-expression, the other contains all of the
+expressions in the file. This is done to facilitate caching. Suppose your package has a long source file (e.g., 100s of expressions) --
+rather than run linters on every expression every time the file is updated, when caching is activated `lintr` will
+only run the linter again on expressions that have changed.
+
+Therefore, it is preferable to write expression-level linters whenever possible. Two types of exceptions observed in `lintr` are
+(1) when several or all expressions are _required_ to ensure the linter logic applies (e.g., `conjunct_test_linter` looks for
+consecutive calls to `stopifnot()`, which will typically appear on consecutive expressions) or (2) when the linter logic
+is very simple & fast to compute, so that the overhead of re-running the linter is low (e.g., `single_quotes_linter`).
 
 ```r
-Lint(
-  filename = source_file$filename,
-  line_number = parsed$line1,
-  column_number = parsed$col1,
-  type = "style",
-  message = "Use <-, not =, for assignment.",
-  line = source_file$lines[parsed$line1]
+xml <- source_expression$xml_parsed_content
+
+xpath <- "//expr[preceding-sibling::SPECIAL[text() = '%>%'] and *[1][self::SYMBOL]]"
+bad_expr <- xml2::xml_find_all(xml, xpath)
+```
+
+Here is the core linter logic. `source_expression$xml_parsed_content` is copied to a local variable
+(this is not strictly necessary but facilitates debugging). `xpath` is an XPath expression
+for expressions matching the discouraged usage. `bad_expr` is the result of executing this logic
+on the expression's XML representation.
+
+Let's examine the XPath a bit more closely:
+
+```xpath
+//expr                  # global search for 'expr' nodes (R expressions), at any nesting level
+[                       # node[...] looks for any 'node' satisfying conditions in ...
+  preceding-sibling::   # "siblings" are at the same nesting level in XML
+    SPECIAL[            # 'SPECIAL' is the parse token for infix operators like %% or %+%
+      text() = '%>%'    # text() returns the string associated with this node
+    ]                   #
+  and                   # combine conditions with 'and'
+  *                     # match any node
+  [1]                   # match the first such node
+  [self::SYMBOL]        # match if the current node is a 'SYMBOL' (i.e., a 'name' in R)
+]                       #
+```
+
+Taken together, that means we want to match `expr` nodes preceded by the `%>%` infix operator whose first child node is a `name`.
+That maps pretty closely to the description of what the `pipe_call_linter` is looking for, but there is subtlety in mapping
+between the R code you're used to and how they show up in the XML representation. `expr` nodes in particular take some practice
+to get accustomed to -- use the plentiful XPath-based linters in `lintr` as a guide to get extra practice.
+
+```r
+xml_nodes_to_lint(
+  bad_expr,
+  source_expression = source_expression,
+  lint_message = "Use explicit calls in magrittr pipes, i.e., `a %>% foo` should be `a %>% foo()`.",
+  type = "warning"
 )
 ```
-Lastly, build a `lint` object which describes the issue.  See `?Lint` for a
-description of the arguments. You do not have to return a lint for every
-iteration of your loop.  Feel free to return `NULL` or `list()` for tokens which
-do not need to be linted. You can even return a `list` of `lint` objects if
-more than one lint was found.
+
+Finally, we pass the matching XML node to `xml_nodes_to_lint()`, which returns `Lint` objects corresponding to any "bad" usages
+found in `source_expression`. See `?Lint` and `?xml_nodes_to_lint` for details about the arguments.
+Note that here, the `message` for the lint is always the same, but for many linters,
+the message is customized to more closely match the observed usage. In such cases, `xml_nodes_to_lint()` can conveniently
+accept a function in `lint_message` which takes a node as input and converts it to a customized message.
+See, for example, `seq_linter`.
 
 ## Writing linter tests ##
+
 The `linter` package uses [testthat](https://github.com/hadley/testthat) for
 testing. You can run all of the currently available tests using
 `devtools::test()`.  If you want to run only the tests in a given file use the
-`filter` argument to `devtools::test()`.
+`filter` argument to `devtools::test()`. (NB: this section uses the `assignment_linter()`
+which has simpler examples than `pipe_continuation_linter()`.)
 
 Linter tests should be put in the
 [tests/testthat/](https://github.com/r-lib/lintr/tree/master/tests/testthat)
 folder.  The test filename should be the linter name prefixed by `test-`, e.g.
-`test-assignment_linter.R`.
-
-The first line in the test file should be a line which defines the context of
-the text (the linter name).
-```r
-context("assignment_linter")
-```
+`test-pipe_continuation_linter.R`.
 
 You can then specify one or more `test_that` functions.  Most of the linters
 use the same default form.
+
 ```r
 test_that("returns the correct linting", {
 ```
+
 You then test a series of expectations for the linter using `expect_lint`.
 Please see `?expect_lint` for a full description of the parameters.
 
@@ -134,7 +207,8 @@ expect_lint("blah", NULL, assignment_linter())
 ```r
 expect_lint("blah=1",
   rex("Use <-, not =, for assignment."),
-  assignment_linter())
+  assignment_linter()
+)
 ```
 
 3. As many edge cases as you can think of that might break it, e.g.
@@ -142,13 +216,8 @@ expect_lint("blah=1",
 ```r
 expect_lint("fun((blah = fun(1)))",
   rex("Use <-, not =, for assignment."),
-  assignment_linter())
-```
-
-You should also test that the linter belongs to the right class, e.g.
-
-```r
-expect_is(assignment_linter(), "linter")
+  assignment_linter()
+)
 ```
 
 You may want to test that additional `lint` attributes are correct,
@@ -157,29 +226,34 @@ such as the type, line number, column number, e.g.
 ```r
 expect_lint("blah=1",
   list(message = "assignment", line_number = 1, column_number = 5, type = "style"),
-  assignment_linter())
+  assignment_linter()
+)
 ```
 
 Finally, it is a good idea to test that your linter reports multiple lints if
 needed, e.g.
+
 ```r
 expect_lint("blah=1; blah=2",
   list(
     list(line_number = 1, column_number = 5),
     list(line_number = 1, column_number = 13),
   )
-  assignment_linter())
+  assignment_linter()
+)
 ```
 
 It is always better to write too many tests rather than too few.
 
 ## Adding your linter to the default_linters ##
-If your linter is non-project specific you can add it to `default_linters`.
-This object is created in the file `zzz.R`.  The name ensures that it will always run after all
-the linters are defined.  Simply add your linter name to the `default_linters`
+
+If your linter is not project-specific you can add it to `default_linters`.
+This object is created in the file `zzz.R` (this name ensures that it will always run after all
+the linters are defined). Simply add your linter name to the `default_linters`
 list before the `NULL` at the end.
 
 ## Submit pull request ##
+
 Push your changes to a branch of your fork of the
 [lintr](https://github.com/r-lib/lintr) repository, and submit a pull
 request to get your linter merged into lintr!
