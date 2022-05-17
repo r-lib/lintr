@@ -31,7 +31,7 @@ xp_text_in_table <- function(table) {
 #' @param offset Integer, default 0. The amount by which to offset the
 #'   `col1` and `col2` values taken from `xml` when producing
 #'   the `ranges` value in the `Lint` object.
-#' @return For `xml_node`s, a `lint`. For `xml_nodeset`s, a list of `lint`s.
+#' @return For `xml_node`s, a `lint`. For `xml_nodeset`s, `lints` (a list of `lint`s).
 #' @export
 xml_nodes_to_lint <- function(xml, source_expression, lint_message,
                               type = c("style", "warning", "error"),
@@ -40,7 +40,9 @@ xml_nodes_to_lint <- function(xml, source_expression, lint_message,
     return(list())
   }
   if (inherits(xml, "xml_nodeset")) {
-    return(lapply(xml, xml_nodes_to_lint, source_expression, lint_message, type, offset))
+    lints <- lapply(xml, xml_nodes_to_lint, source_expression, lint_message, type, offset)
+    class(lints) <- "lints"
+    return(lints)
   } else if (!inherits(xml, "xml_node")) {
     stop("Expected an xml_nodeset or xml_node, got an object of class(es): ", toString(class(xml)))
   }
