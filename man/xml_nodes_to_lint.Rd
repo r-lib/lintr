@@ -33,6 +33,6 @@ length-1 character as output).}
 the \code{ranges} value in the \code{Lint} object.}
 }
 \description{
-Convenience function for converting nodes matched by Xpath-based
-linter logic into a \code{\link[=Lint]{Lint()}} object to return
+Convenience function for converting nodes matched by XPath-based
+linter logic into a \code{\link[=Lint]{Lint()}} object to return.
 }
