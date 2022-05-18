@@ -65,15 +65,15 @@ Describe the linter, giving it a title and briefly covering the usages that are 
 #' @export
 ```
 
-These lines (1) generate a Tags section in the documentation for the linter; (2) link to the full table of available linters; and (3) mark the function for export. The most unfamiliar here is probably (1); this uses a helper function inside lintr to generate custom Rd styling. See R/linter_tags.R.
+These lines (1) generate a Tags section in the documentation for the linter; (2) link to the full table of available linters; and (3) mark the function for export. The most unfamiliar here is probably (1), which can be skipped outside of `lintr` itself. This step uses a helper function inside lintr to generate custom Rd styling. See R/linter_tags.R.
 
 ```r
 pipe_call_linter <- function() {
 ```
 
 Next, we define the name of the new linter.  The convention is to suffix all
-linter names with `_linter`. All `_linter` functions are getters that return a
-closure that will do the actual linting (i.e., they're function factories). We could define additional parameters
+linter names with `_linter`. All `_linter` functions are function factories that return a
+closure that will do the actual linting function. We could define additional parameters
 that are useful for the linter in this function declaration (see, e.g. `assignment_linter`), but
 `pipe_call_linter` requires no additional arguments.
 
@@ -83,7 +83,7 @@ Linter(function(source_expression) {
 
 This is the closure. It will be called on the `source_expression` variable that
 contains the top level expressions in the file to be linted. The call to
-`Linter()` gives this closure the class 'linter' and guesses its name.
+`Linter()` gives this closure the class 'linter' (it also guesses the name of the linter; see `?Linter` for more details).
 
 The raw text of the expression is available from `source_file$content`. However,
 it is not generally possible to implement linters from the raw text -- consider
@@ -102,8 +102,7 @@ tree of the file being linted. A list of tokens is available from
 
 `source_file$xml_parsed_content` uses `xmlparsedata::xml_parse_data()` to convert the `getParseData()` output into an XML tree,
 which enables writing linter logic in [XPath](https://www.w3schools.com/xml/xpath_intro.asp), a powerful language
-for expressing paths within the nested XML data structure. Most linters in `lintr` are built using XPath because it is
-concise to write and fast to execute.
+for expressing paths within the nested XML data structure. Most linters in `lintr` are built using XPath because it is a powerful language for computation on the abstract syntax tree / parse tree.
 
 ```r
 if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
@@ -137,7 +136,7 @@ on the expression's XML representation.
 Let's examine the XPath a bit more closely:
 
 ```xpath
-//expr                  # global search for 'expr' nodes (R expressions), at any nesting level
+//expr                  # global search (//) for 'expr' nodes (R expressions), at any nesting level
 [                       # node[...] looks for any 'node' satisfying conditions in ...
   preceding-sibling::   # "siblings" are at the same nesting level in XML
     SPECIAL[            # 'SPECIAL' is the parse token for infix operators like %% or %+%
@@ -165,7 +164,7 @@ xml_nodes_to_lint(
 ```
 
 Finally, we pass the matching XML node to `xml_nodes_to_lint()`, which returns `Lint` objects corresponding to any "bad" usages
-found in `source_expression`. See `?Lint` and `?xml_nodes_to_lint` for details about the arguments.
+found in `source_expression`. See `?Lint` and `?xml_nodes_to_lints` for details about the arguments.
 Note that here, the `message` for the lint is always the same, but for many linters,
 the message is customized to more closely match the observed usage. In such cases, `xml_nodes_to_lint()` can conveniently
 accept a function in `lint_message` which takes a node as input and converts it to a customized message.
