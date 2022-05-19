@@ -8,6 +8,9 @@ script.R
 *~
 \#*\#
 
+*.o
+*.so
+
 *.Rcheck
 lintr_*.tar.gz
 testthat-problems.rds

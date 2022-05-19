@@ -44,6 +44,45 @@ default_linters <- modify_defaults(
 #' There is a list for the default elements and another that contains all available elements.
 #' Use [modify_defaults()] to produce a custom list.
 #'
+#' @details
+#' The following functions are sometimes regarded as undesirable:
+#'
+#'  * [attach()] modifies the global search path. Use roxygen2's @importFrom statement in packages, or `::` in scripts.
+#'  * [browser()] pauses execution when run and is likely a leftover from debugging. It should be removed.
+#'  * [debug()] traps a function and causes execution to pause when that function is run. It should be removed.
+#'  * [debugcall()] works similarly to [debug()], causing execution to pause. It should be removed.
+#'  * [debugonce()] is only useful for interactive debugging. It should be removed.
+#'  * [detach()] modifies the global search path. Detaching environments from the search path is rarely necessary in
+#'    production code.
+#'  * [ifelse()] isn't type stable. Use an `if`/`else` block for scalar logic, or use
+#'    [dplyr::if_else()]/[data.table::fifelse()] for type stable vectorized logic.
+#'  * [.libPaths()] permanently modifies the library location. Use [withr::with_libpaths()] for a temporary change
+#'    instead.
+#'  * [library()] modifies the global search path. Use roxygen2's @importFrom statement in packages, or `::` in scripts.
+#'  * [loadNamespace()] doesn't provide an easy way to signal failures. Use the return value of [requireNamespace()]
+#'    instead.
+#'  * [mapply()] isn't type stable. Use [Map()] to guarantee a list is returned and simplify accordingly.
+#'  * [options()] permanently modifies the session options. Use [withr::with_options()] for a temporary change instead.
+#'  * [par()] permanently modifies the graphics device parameters. Use [withr::with_par()] for a temporary change
+#'    instead.
+#'  * [require()] modifies the global search path. Use roxygen2's @importFrom statement in packages, and [library()]
+#'    or `::` in scripts.
+#'  * [return()] is not necessary as the last value of a function is automatically returned. # TODO remove this
+#'  * [sapply()] isn't type stable. Use [vapply()] with an appropriate `FUN.VALUE=` argument to obtain type stable
+#'    simplification.
+#'  * [setwd()] modifies the global working directory. Use [withr::with_dir()] for a temporary change instead.
+#'  * [sink()] permanently redirects output. Use [withr::with_sink()] for a temporary redirection instead.
+#'  * [source()] loads code into the global environment unless `local = TRUE` is used, which can cause unexpected
+#'    behaviour.
+#'  * [substring()] should be replaced by [substr()] with appropriate `stop=` value.
+#'  * [Sys.setenv()] permanently modifies the global environment variables. Use [withr::with_envvar()] for a temporary
+#'    change instead.
+#'  * [Sys.setlocale()] permanently modifies the session locale. Use [withr::with_locale()] for a temporary change
+#'    instead.
+#'  * [trace()] traps a function and causes execution of arbitrary code when that function is run. It should be removed.
+#'  * [undebug()] is only useful for interactive debugging with [debug()]. It should be removed.
+#'  * [untrace()] is only useful for interactive debugging with [trace()]. It should be removed.
+#'
 #' @format A named list of character strings.
 #' @rdname default_undesirable_functions
 #' @export
@@ -163,7 +202,7 @@ settings <- NULL
         "r6273qnnp34",
         "43qno7q42n1",
         "n71nn28")
-      , 54 - 13),
+      , 54L - 13L),
     comment_bot = logical_env("LINTR_COMMENT_BOT") %||% TRUE,
     error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
   )
