@@ -33,41 +33,41 @@ Use \code{\link[=modify_defaults]{modify_defaults()}} to produce a custom list.
 \details{
 The following functions are sometimes regarded as undesirable:
 \itemize{
-\item \code{attach()} modifies the global search path. Use roxygen2's @importFrom statement in packages, or \code{::} in scripts.
-\item \code{browser()} pauses execution when run and is likely a leftover from debugging. It should be removed.
-\item \code{debug()} traps a function and causes execution to pause when that function is run. It should be removed.
-\item \code{debugcall()} works similarly to \code{debug()}, causing execution to pause. It should be removed.
-\item \code{debugonce()} is only useful for interactive debugging. It should be removed.
-\item \code{detach()} modifies the global search path. Detaching environments from the search path is rarely necessary in
+\item \code{\link[=attach]{attach()}} modifies the global search path. Use roxygen2's @importFrom statement in packages, or \code{::} in scripts.
+\item \code{\link[=browser]{browser()}} pauses execution when run and is likely a leftover from debugging. It should be removed.
+\item \code{\link[=debug]{debug()}} traps a function and causes execution to pause when that function is run. It should be removed.
+\item \code{\link[=debugcall]{debugcall()}} works similarly to \code{\link[=debug]{debug()}}, causing execution to pause. It should be removed.
+\item \code{\link[=debugonce]{debugonce()}} is only useful for interactive debugging. It should be removed.
+\item \code{\link[=detach]{detach()}} modifies the global search path. Detaching environments from the search path is rarely necessary in
 production code.
-\item \code{ifelse()} isn't type stable. Use an \code{if}/\verb{else} block for scalar logic, or use
-\code{dplyr::if_else()}/\code{data.table::fifelse()} for type stable vectorized logic.
-\item \code{.libPaths()} permanently modifies the library location. Use \code{withr::with_libpaths()} for a temporary change
+\item \code{\link[=ifelse]{ifelse()}} isn't type stable. Use an \code{if}/\verb{else} block for scalar logic, or use
+\code{\link[dplyr:if_else]{dplyr::if_else()}}/\code{\link[data.table:fifelse]{data.table::fifelse()}} for type stable vectorized logic.
+\item \code{\link[=.libPaths]{.libPaths()}} permanently modifies the library location. Use \code{\link[withr:with_libpaths]{withr::with_libpaths()}} for a temporary change
 instead.
-\item \code{library()} modifies the global search path. Use roxygen2's @importFrom statement in packages, or \code{::} in scripts.
-\item \code{loadNamespace()} doesn't provide an easy way to signal failures. Use the return value of \code{requireNamespace()}
+\item \code{\link[=library]{library()}} modifies the global search path. Use roxygen2's @importFrom statement in packages, or \code{::} in scripts.
+\item \code{\link[=loadNamespace]{loadNamespace()}} doesn't provide an easy way to signal failures. Use the return value of \code{\link[=requireNamespace]{requireNamespace()}}
 instead.
-\item \code{mapply()} isn't type stable. Use \code{Map()} to guarantee a \code{list()} is returned and simplify accordingly.
-\item \code{options()} permanently modifies the session options. Use \code{withr::with_options()} for a temporary change instead.
-\item \code{par()} permanently modifies the graphics device parameters. Use \code{withr::with_par()} for a temporary change
+\item \code{\link[=mapply]{mapply()}} isn't type stable. Use \code{\link[=Map]{Map()}} to guarantee a list is returned and simplify accordingly.
+\item \code{\link[=options]{options()}} permanently modifies the session options. Use \code{\link[withr:with_options]{withr::with_options()}} for a temporary change instead.
+\item \code{\link[=par]{par()}} permanently modifies the graphics device parameters. Use \code{\link[withr:with_par]{withr::with_par()}} for a temporary change
 instead.
-\item \code{require()} modifies the global search path. Use roxygen2's @importFrom statement in packages, and \code{library()}
+\item \code{\link[=require]{require()}} modifies the global search path. Use roxygen2's @importFrom statement in packages, and \code{\link[=library]{library()}}
 or \code{::} in scripts.
-\item \code{return()} is not necessary as the last value of a function is automatically returned. # TODO remove this
-\item \code{sapply()} isn't type stable. Use \code{vapply()} with an appropriate \verb{FUN.VALUE=} argument to obtain type stable
+\item \code{\link[=return]{return()}} is not necessary as the last value of a function is automatically returned. # TODO remove this
+\item \code{\link[=sapply]{sapply()}} isn't type stable. Use \code{\link[=vapply]{vapply()}} with an appropriate \verb{FUN.VALUE=} argument to obtain type stable
 simplification.
-\item \code{setwd()} modifies the global working directory. Use \code{withr::with_dir()} for a temporary change instead.
-\item \code{sink()} permanently redirects output. Use \code{withr::with_sink()} for a temporary redirection instead.
-\item \code{source()} loads code into the global environment unless \code{local = TRUE} is used, which can cause unexpected
+\item \code{\link[=setwd]{setwd()}} modifies the global working directory. Use \code{\link[withr:with_dir]{withr::with_dir()}} for a temporary change instead.
+\item \code{\link[=sink]{sink()}} permanently redirects output. Use \code{\link[withr:with_sink]{withr::with_sink()}} for a temporary redirection instead.
+\item \code{\link[=source]{source()}} loads code into the global environment unless \code{local = TRUE} is used, which can cause unexpected
 behaviour.
-\item \code{substring()} should be replaced by \code{substr()} with appropriate \verb{stop=} value.
-\item \code{Sys.setenv()} permanently modifies the global environment variables. Use \code{withr::with_envvar()} for a temporary
+\item \code{\link[=substring]{substring()}} should be replaced by \code{\link[=substr]{substr()}} with appropriate \verb{stop=} value.
+\item \code{\link[=Sys.setenv]{Sys.setenv()}} permanently modifies the global environment variables. Use \code{\link[withr:with_envvar]{withr::with_envvar()}} for a temporary
 change instead.
-\item \code{Sys.setlocale()} permanently modifies the session locale. Use \code{withr::with_locale()} for a temporary change
+\item \code{\link[=Sys.setlocale]{Sys.setlocale()}} permanently modifies the session locale. Use \code{\link[withr:with_locale]{withr::with_locale()}} for a temporary change
 instead.
-\item \code{trace()} traps a function and causes execution of arbitrary code when that function is run. It should be removed.
-\item \code{undebug()} is only useful for interactive debugging with \code{debug()}. It should be removed.
-\item \code{untrace()} is only useful for interactive debugging with \code{trace()}. It should be removed.
+\item \code{\link[=trace]{trace()}} traps a function and causes execution of arbitrary code when that function is run. It should be removed.
+\item \code{\link[=undebug]{undebug()}} is only useful for interactive debugging with \code{\link[=debug]{debug()}}. It should be removed.
+\item \code{\link[=untrace]{untrace()}} is only useful for interactive debugging with \code{\link[=trace]{trace()}}. It should be removed.
 }
 }
 \keyword{datasets}
