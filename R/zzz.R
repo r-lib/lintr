@@ -67,7 +67,6 @@ default_linters <- modify_defaults(
 #'    instead.
 #'  * [require()] modifies the global search path. Use roxygen2's @importFrom statement in packages, and [library()]
 #'    or `::` in scripts.
-#'  * [return()] is not necessary as the last value of a function is automatically returned. # TODO remove this
 #'  * [sapply()] isn't type stable. Use [vapply()] with an appropriate `FUN.VALUE=` argument to obtain type stable
 #'    simplification.
 #'  * [setwd()] modifies the global working directory. Use [withr::with_dir()] for a temporary change instead.
@@ -88,31 +87,43 @@ default_linters <- modify_defaults(
 #' @export
 all_undesirable_functions <- modify_defaults(
   defaults = list(),
-  "attach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
-  "browser" = "remove debugging markers from 'final' code",
-  "debug" = "remove debugging markers from 'final' code",
-  "debugcall" = "remove debugging markers from 'final' code",
-  "debugonce" = "remove debugging markers from 'final' code",
-  "detach" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
-  "ifelse" = "use an if () {} else {} block",
-  ".libPaths" = "use withr::with_libpaths()",
-  "library" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
-  "loadNamespace" = "use `::` or requireNamespace()",
-  "mapply" = "use Map()",
-  "options" = "use withr::with_options()",
-  "par" = "use withr::with_par()",
-  "require" = "use roxygen2's @importFrom statement in packages, or `::` in scripts",
-  "return" = "let the last value of a function automatically be returned",
-  "sapply" = "use vapply() or lapply()",
-  "setwd" = "use withr::with_dir()",
-  "sink" = "use withr::with_sink()",
-  "source" = NA,
-  "substring" = "use substr()",
-  "Sys.setenv" = "use withr::with_envvar()",
-  "Sys.setlocale" = "use withr::with_locale()",
-  "trace" = "remove debugging markers from 'final' code",
-  "undebug" = "remove debugging markers from 'final' code",
-  "untrace" = "remove debugging markers from 'final' code"
+  "attach" = paste("It modifies the global search path. Use roxygen2's @importFrom statement in packages,",
+                   "or `::` in scripts."),
+  "browser" = "It pauses execution when run and is likely a leftover from debugging. It should be removed.",
+  "debug" = "It traps a function and causes execution to pause when that function is run. It should be removed.",
+  "debugcall" = "It works similarly to debug(), causing execution to pause. It should be removed.",
+  "debugonce" = "It is only useful for interactive debugging. It should be removed.",
+  "detach" = paste("It modifies the global search path. Detaching environments from the search path",
+                   "is rarely necessary in production code."),
+  "ifelse" = paste("It isn't type stable. Use an `if`/`else` block for scalar logic, or use",
+                   "dplyr::if_else()/data.table::fifelse() for type stable vectorized logic."),
+  ".libPaths" = paste("It permanently modifies the library location. Use withr::with_libpaths()",
+                      "for a temporary change instead."),
+  "library" = paste("It modifies the global search path. Use roxygen2's @importFrom statement in packages,",
+                    "or `::` in scripts."),
+  "loadNamespace" = paste("It doesn't provide an easy way to signal failures.",
+                          "Use the return value of requireNamespace() instead."),
+  "mapply" = "It isn't type stable. Use Map() to guarantee a list is returned and simplify accordingly.",
+  "options" = "It permanently modifies the session options. Use withr::with_options() for a temporary change instead.",
+  "par" = paste("It permanently modifies the graphics device parameters.",
+                "Use withr::with_par() for a temporary change instead."),
+  "require" = paste("It modifies the global search path. Use roxygen2's @importFrom statement in packages,",
+                    "and library() or `::` in scripts."),
+  "sapply" = paste("It isn't type stable.",
+                   "Use vapply() with an appropriate `FUN.VALUE=` argument to obtain type stable simplification."),
+  "setwd" = "It modifies the global working directory. Use withr::with_dir() for a temporary change instead.",
+  "sink" = "It permanently redirects output. Use withr::with_sink() for a temporary redirection instead.",
+  "source" = paste("It loads code into the global environment unless `local = TRUE` is used,",
+                   "which can cause unexpected behaviour."),
+  "substring" = "It should be replaced by substr() with appropriate `stop=` value.",
+  "Sys.setenv" = paste("It permanently modifies the global environment variables.",
+                       "Use withr::with_envvar() for a temporary change instead."),
+  "Sys.setlocale" = paste("It permanently modifies the session locale.",
+                          "Use withr::with_locale() for a temporary change instead."),
+  "trace" = paste("It traps a function and causes execution of arbitrary code when that function is run.",
+                  "It should be removed."),
+  "undebug" = "It is only useful for interactive debugging with debug(). It should be removed.",
+  "untrace" = "It is only useful for interactive debugging with trace(). It should be removed."
 )
 
 #' @rdname default_undesirable_functions
