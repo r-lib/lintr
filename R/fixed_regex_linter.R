@@ -62,7 +62,7 @@ fixed_regex_linter <- function() {
 
     patterns <- xml2::xml_find_all(xml, xpath)
 
-    return(lapply(
+    lapply(
       patterns[is_not_regex(xml2::xml_text(patterns))],
       xml_nodes_to_lint,
       source_expression = source_expression,
@@ -80,7 +80,7 @@ fixed_regex_linter <- function() {
         "`gsub()` is affected by the `fixed` argument as well."
       ),
       type = "warning"
-    ))
+    )
   })
 }
 
@@ -93,16 +93,40 @@ fixed_regex_linter <- function() {
 #'   on a given file, rather than passing strings to this function, which can
 #'   be confusing.
 #'
-#' NB: Tried implementing this at the R level, but the backsplash escaping was
-#'   becoming nightmarish -- after changing to a character-based approach in R,
-#'   the code loooked 95% similar to what it would look like in C++, so moved
-#'   the logic there to get the efficiency boost as well.
-#'
 #' @param str A character vector.
 #' @return A logical vector, `TRUE` wherever `str` could be replaced by a
 #'   string with `fixed = TRUE`.
 #' @noRd
-#' @useDynLib lintr, .registration = TRUE, .fixes = "lintr_"
-is_not_regex <- function(str, skip_start = FALSE, skip_end = FALSE) {
-  .Call(lintr_is_not_regex, str, skip_start, skip_end)
+is_not_regex <- function(str) {
+  # Handle string quoting and escaping using R directly
+  str <- as.character(parse(text = str, keep.source = FALSE))
+
+  rx_non_active_char <- rex::rex(none_of("^${(.*+?|[\\"))
+  rx_char_escape <- rex::rex(or(
+    group("\\", none_of(alnum)),
+    group("\\x", between(xdigit, 1L, 2L)),
+    group("\\", between("0":"7", 1L, 3L)),
+    group("\\u{", between(xdigit, 1L, 4L), "}"),
+    group("\\u", between(xdigit, 1L, 4L)),
+    group("\\U{", between(xdigit, 1L, 8L), "}"),
+    group("\\U", between(xdigit, 1L, 8L))
+  ))
+  rx_trivial_char_group <- rex::rex(
+    "[",
+    or(
+      any,
+      group("\\", none_of("dswDSW")), # character classes, e.g. \d are enabled in [] too if perl = TRUE
+      rx_char_escape
+    ),
+    "]"
+  )
+  rx_static_token <- rex::rex(or(
+    rx_non_active_char,
+    rx_char_escape,
+    rx_trivial_char_group
+  ))
+  rx_static_regex <- rex::rex(start, zero_or_more(rx_static_token), end)
+
+  # need to add single-line option to allow literal newlines
+  grepl(paste0("(?s)", rx_static_regex), str, perl = TRUE) | grepl(rx_static_regex, str)
 }

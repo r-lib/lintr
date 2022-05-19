@@ -163,7 +163,7 @@ test_that("one-character character classes with escaped characters are caught", 
   expect_lint("str_split(x, '[\\12]')", msg, linter)
   expect_lint("str_split(x, '[\\123]')", msg, linter)
   expect_lint("str_split(x, '[\\xa]')", msg, linter)
-  expect_lint("str_split(x, '[\\xA7]')", msg, linter)
+  expect_lint("str_split(x, '[\\x32]')", msg, linter)
   expect_lint("str_split(x, '[\\uF]')", msg, linter)
   expect_lint("str_split(x, '[\\u01]')", msg, linter)
   expect_lint("str_split(x, '[\\u012]')", msg, linter)
@@ -173,6 +173,7 @@ test_that("one-character character classes with escaped characters are caught", 
   expect_lint("str_split(x, '[\\u{1}]')", msg, linter)
   expect_lint("str_split(x, '[\\U{F7D5}]')", msg, linter)
   expect_lint("str_split(x, '[\\U{1D4D7}]')", msg, linter)
+  expect_lint('gsub("\\\\<", "x", x, perl = TRUE)', msg, linter)
 })
 
 test_that("bracketed unicode escapes are caught", {
@@ -193,6 +194,8 @@ test_that("escaped characters are handled correctly", {
   expect_lint('gsub("```\\n*```r*\\n*", "", x)', NULL, linter)
   expect_lint('strsplit(x, "(;|\n)")', NULL, linter)
   expect_lint('strsplit(x, "(;|\\n)")', NULL, linter)
+  expect_lint('grepl("[\\\\W]", x, perl = TRUE)', NULL, linter)
+  expect_lint('grepl("[\\\\W]", x)', NULL, linter)
 })
 
 # make sure the logic is properly vectorized
