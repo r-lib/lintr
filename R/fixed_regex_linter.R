@@ -115,7 +115,7 @@ is_not_regex <- function(str) {
     "[",
     or(
       any,
-      group("\\", any),
+      group("\\", none_of("dswDSW")), # character classes, e.g. \d are enabled in [] too if perl = TRUE
       rx_char_escape
     ),
     "]"
