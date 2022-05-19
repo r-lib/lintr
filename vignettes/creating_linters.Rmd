@@ -121,6 +121,9 @@ Therefore, it is preferable to write expression-level linters whenever possible.
 consecutive calls to `stopifnot()`, which will typically appear on consecutive expressions) or (2) when the linter logic
 is very simple & fast to compute, so that the overhead of re-running the linter is low (e.g., `single_quotes_linter`).
 
+Lastly, we have `require_xml = TRUE`. This ensures that the XML representation of the AST is available. This is sometimes
+not the case when, for example, `lint()` attempts to parse a script with a syntax error.
+
 ```r
 xml <- source_expression$xml_parsed_content
 
