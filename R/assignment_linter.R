@@ -31,9 +31,8 @@ assignment_linter <- function(allow_cascading_assign = TRUE, allow_right_assign 
     ))
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    lapply(
+    xml_nodes_to_lints(
       bad_expr,
-      xml_nodes_to_lint,
       source_expression,
       function(expr) {
         operator <- xml2::xml_text(expr)

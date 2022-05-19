@@ -11,32 +11,74 @@ xp_text_in_table <- function(table) {
   return(paste0("text() = ", table, collapse = " or "))
 }
 
-# convert an XML match into a Lint
-xml_nodes_to_lint <- function(xml, source_expression, lint_message,
+#' Convert an XML node or nodeset into a Lint
+#'
+#' Convenience function for converting nodes matched by XPath-based
+#'   linter logic into a [Lint()] object to return.
+#'
+#' @inheritParams Lint
+#' @param xml An `xml_node` object (to generate one `Lint`) or an
+#'   `xml_nodeset` object (to generate several `Lint`s), e.g. as returned by
+#'   [xml2::xml_find_all()] or [xml2::xml_find_first()].
+#' @param source_expression A source expression object, e.g. as
+#'   returned typically by [lint()], or more generally
+#'   by [get_source_expressions()].
+#' @param lint_message The message to be included as the `message`
+#'   to the `Lint` object. If `lint_message` is a `function`,
+#'   this function is first applied to `xml` (so it should be a
+#'   function taking an `xml_node` as input and must produce a
+#'   length-1 character as output).
+#' @param offset Integer, default 0. The amount by which to offset the
+#'   `column_number` relative to `col1` (useful for getting the RStudio
+#'   source markers to land in a particular place for convenient editing,
+#'   for example). Adjustments will also be made to ensure
+#'   `ranges[1L] <= column_number <= ranges[2L]`.
+#' @return For `xml_node`s, a `lint`. For `xml_nodeset`s, `lints` (a list of `lint`s).
+#' @export
+xml_nodes_to_lints <- function(xml, source_expression, lint_message,
                               type = c("style", "warning", "error"),
-                              offset = 0L,
-                              global = FALSE) {
+                              offset = 0L) {
+  if (length(xml) == 0L) {
+    return(list())
+  }
+  if (inherits(xml, "xml_nodeset")) {
+    lints <- lapply(xml, xml_nodes_to_lints, source_expression, lint_message, type, offset)
+    class(lints) <- "lints"
+    return(lints)
+  } else if (!inherits(xml, "xml_node")) {
+    stop("Expected an xml_nodeset or xml_node, got an object of class(es): ", toString(class(xml)))
+  }
   type <- match.arg(type, c("style", "warning", "error"))
-  line1 <- xml2::xml_attr(xml, "line1")[1]
-  col1 <- as.integer(xml2::xml_attr(xml, "col1")) + offset
+  line1 <- xml2::xml_attr(xml, "line1")
+  offset <- as.integer(offset)
+  col1 <- as.integer(xml2::xml_attr(xml, "col1"))
 
-  line_elt <- if (global) "file_lines" else "lines"
+  lines <- source_expression[["lines"]]
+  if (is.null(lines)) lines <- source_expression[["file_lines"]]
 
   if (xml2::xml_attr(xml, "line2") == line1) {
-    col2 <- as.integer(xml2::xml_attr(xml, "col2")) + offset
+    col2 <- as.integer(xml2::xml_attr(xml, "col2"))
   } else {
-    col2 <- unname(nchar(source_expression[[line_elt]][line1]))
+    col2 <- unname(nchar(lines[line1]))
   }
+
+  column_number <- col1 + offset
+  if (offset < 0L) {
+    col1 <- col1 + offset
+  } else if (column_number > col2) {
+    col2 <- column_number
+  }
+
   if (is.function(lint_message)) lint_message <- lint_message(xml)
-  return(Lint(
+  Lint(
     filename = source_expression$filename,
     line_number = as.integer(line1),
-    column_number = as.integer(col1),
+    column_number = column_number,
     type = type,
     message = lint_message,
-    line = source_expression[[line_elt]][line1],
-    ranges = list(c(col1 - offset, col2))
-  ))
+    line = lines[line1],
+    ranges = list(c(col1, col2))
+  )
 }
 
 paren_wrap <- function(..., sep) {

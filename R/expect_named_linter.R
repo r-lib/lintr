@@ -24,12 +24,14 @@ expect_named_linter <- function() {
     ]"
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    return(lapply(bad_expr, gen_expect_named_lint, source_expression))
+    xml_nodes_to_lints(
+      bad_expr,
+      source_expression = source_expression,
+      lint_message = function(expr) {
+        matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
+        sprintf("expect_named(x, n) is better than %s(names(x), n)", matched_function)
+      },
+      type = "warning"
+    )
   })
-}
-
-gen_expect_named_lint <- function(expr, source_expression) {
-  matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
-  lint_msg <- sprintf("expect_named(x, n) is better than %s(names(x), n)", matched_function)
-  xml_nodes_to_lint(expr, source_expression, lint_msg, type = "warning")
 }

@@ -37,9 +37,8 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    return(lapply(
+    xml_nodes_to_lints(
       bad_expr,
-      xml_nodes_to_lint,
       source_expression,
       lint_message = function(expr) {
         matched_fun <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
@@ -52,8 +51,7 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
         }
         paste(instead_of, replacement, "The latter will produce better error messages in the case of failure.")
       },
-      type = "warning",
-      global = TRUE
-    ))
+      type = "warning"
+    )
   })
 }
