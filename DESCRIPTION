@@ -83,6 +83,7 @@ Collate:
     'expect_type_linter.R'
     'extract.R'
     'extraction_operator_linter.R'
+    'fixed_regex_linter.R'
     'function_left_parentheses.R'
     'get_source_expressions.R'
     'ids_with_token.R'
