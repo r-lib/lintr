@@ -18,7 +18,7 @@
 #' @export
 nested_ifelse_linter <- function() {
   Linter(function(source_expression) {
-    if (length(source_expression$parsed_content) == 0L) {
+    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
       return(list())
     }
 

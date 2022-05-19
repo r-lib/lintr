@@ -2,8 +2,8 @@
 #'
 #' Gets the source IDs (row indices) corresponding to given token.
 #'
-#' @param source_expression A list of source expressions, the result of a call to [get_source_expressions()], for the desired
-#' filename.
+#' @param source_expression A list of source expressions, the result of a call to [get_source_expressions()],
+#'   for the desired filename.
 #' @param value Character. String corresponding to the token to search for.
 #' For example:
 #'
@@ -25,7 +25,7 @@ ids_with_token <- function(source_expression, value, fun = `==`, source_file) {
     lintr_deprecated(old = "source_file", new = "source_expression", version = "2.0.1.9001", type = "Argument")
     source_expression <- source_file
   }
-  if (is.null(source_expression$parsed_content)) {
+  if (!is_lint_level(source_expression, "expression")) {
     return(integer(0))
   }
   loc <- which(fun(source_expression$parsed_content$token, value))
