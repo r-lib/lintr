@@ -1,5 +1,5 @@
 test_that("linter returns correct linting", {
-  linter <- undesirable_operator_linter(op = c("$" = "use the `[[` accessor", "<<-" = NA))
+  linter <- undesirable_operator_linter(op = c("$" = "As an alternative, use the `[[` accessor.", "<<-" = NA))
   msg_assign <- rex::escape("Operator `<<-` is undesirable.")
   msg_dollar <- rex::escape("Operator `$` is undesirable. As an alternative, use the `[[` accessor.")
 
