@@ -45,15 +45,15 @@ default_linters <- modify_defaults(
 #' Use [modify_defaults()] to produce a custom list.
 #'
 #' @details
-#' The following functions can be regarded as undesirable:
+#' The following functions are sometimes regarded as undesirable:
 #'
 #'  * `attach()` modifies the global search path. Use roxygen2's @importFrom statement in packages, or `::` in scripts.
 #'  * `browser()` pauses execution when run and is likely a leftover from debugging. It should be removed.
 #'  * `debug()` traps a function and causes execution to pause when that function is run. It should be removed.
 #'  * `debugcall()` works similarly to `debug()`, causing execution to pause. It should be removed.
 #'  * `debugonce()` is only useful for interactive debugging. It should be removed.
-#'  * `detach()` modifies the global search path. Detaching environments from the search path should not be necessary
-#'    in production code.
+#'  * `detach()` modifies the global search path. Detaching environments from the search path is rarely necessary in
+#'    production code.
 #'  * `ifelse()` isn't type stable. Use an `if`/`else` block for scalar logic, or use
 #'    `dplyr::if_else()`/`data.table::fifelse()` for type stable vectorized logic.
 #'  * `.libPaths()` permanently modifies the library location. Use `withr::with_libpaths()` for a temporary change
@@ -65,15 +65,16 @@ default_linters <- modify_defaults(
 #'  * `options()` permanently modifies the session options. Use `withr::with_options()` for a temporary change instead.
 #'  * `par()` permanently modifies the graphics device parameters. Use `withr::with_par()` for a temporary change
 #'    instead.
-#'  * `require()` modifies the global search path. Use roxygen2's @importFrom statement in packages, or `::` in scripts.
-#'  * `return()` is not necessary as the last value of a function is automatically returned.
+#'  * `require()` modifies the global search path. Use roxygen2's @importFrom statement in packages, and `library()`
+#'    or `::` in scripts.
+#'  * `return()` is not necessary as the last value of a function is automatically returned. # TODO remove this
 #'  * `sapply()` isn't type stable. Use `vapply()` with an appropriate `FUN.VALUE=` argument to obtain type stable
 #'    simplification.
 #'  * `setwd()` modifies the global working directory. Use `withr::with_dir()` for a temporary change instead.
 #'  * `sink()` permanently redirects output. Use `withr::with_sink()` for a temporary redirection instead.
 #'  * `source()` loads code into the global environment unless `local = TRUE` is used, which can cause unexpected
 #'    behaviour.
-#'  * `substring()` was superseded by `substr()`.
+#'  * `substring()` should be replaced by `substr()` with appropriate `stop=` value.
 #'  * `Sys.setenv()` permanently modifies the global environment variables. Use `withr::with_envvar()` for a temporary
 #'    change instead.
 #'  * `Sys.setlocale()` permanently modifies the session locale. Use `withr::with_locale()` for a temporary change
