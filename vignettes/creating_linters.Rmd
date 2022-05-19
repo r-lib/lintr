@@ -36,7 +36,7 @@ pipe_call_linter <- function() {
     xpath <- "//expr[preceding-sibling::SPECIAL[text() = '%>%'] and *[1][self::SYMBOL]]"
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    xml_nodes_to_lint(
+    xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
       lint_message = "Use explicit calls in magrittr pipes, i.e., `a %>% foo` should be `a %>% foo()`.",
@@ -161,7 +161,7 @@ practice^[The W3schools tutorials are also quite helpful; see https://www.w3scho
 implements XPath 1.0, which lacks some helpful features available in XPath 2.0.
 
 ```r
-xml_nodes_to_lint(
+xml_nodes_to_lints(
   bad_expr,
   source_expression = source_expression,
   lint_message = "Use explicit calls in magrittr pipes, i.e., `a %>% foo` should be `a %>% foo()`.",
@@ -169,7 +169,7 @@ xml_nodes_to_lint(
 )
 ```
 
-Finally, we pass the matching XML node to `xml_nodes_to_lint()`, which returns `Lint` objects corresponding to any "bad" usages
+Finally, we pass the matching XML node(s) to `xml_nodes_to_lints()`, which returns `Lint` objects corresponding to any "bad" usages
 found in `source_expression`. See `?Lint` and `?xml_nodes_to_lints` for details about the arguments.
 Note that here, the `message` for the lint is always the same, but for many linters,
 the message is customized to more closely match the observed usage. In such cases, `xml_nodes_to_lint()` can conveniently
