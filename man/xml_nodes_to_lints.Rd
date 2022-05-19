@@ -30,8 +30,10 @@ length-1 character as output).}
 \item{type}{type of lint.}
 
 \item{offset}{Integer, default 0. The amount by which to offset the
-\code{col1} and \code{col2} values taken from \code{xml} when producing
-the \code{ranges} value in the \code{Lint} object.}
+\code{column_number} relative to \code{col1} (useful for getting the RStudio
+source markers to land in a particular place for convenient editing,
+for example). Adjustments will also be made to ensure
+\verb{ranges[1L] <= column_number <= ranges[2L]}.}
 }
 \value{
 For \code{xml_node}s, a \code{lint}. For \code{xml_nodeset}s, \code{lints} (a list of \code{lint}s).

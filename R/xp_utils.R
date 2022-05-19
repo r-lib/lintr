@@ -29,8 +29,10 @@ xp_text_in_table <- function(table) {
 #'   function taking an `xml_node` as input and must produce a
 #'   length-1 character as output).
 #' @param offset Integer, default 0. The amount by which to offset the
-#'   `col1` and `col2` values taken from `xml` when producing
-#'   the `ranges` value in the `Lint` object.
+#'   `column_number` relative to `col1` (useful for getting the RStudio
+#'   source markers to land in a particular place for convenient editing,
+#'   for example). Adjustments will also be made to ensure
+#'   `ranges[1L] <= column_number <= ranges[2L]`.
 #' @return For `xml_node`s, a `lint`. For `xml_nodeset`s, `lints` (a list of `lint`s).
 #' @export
 xml_nodes_to_lints <- function(xml, source_expression, lint_message,
@@ -48,25 +50,34 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
   }
   type <- match.arg(type, c("style", "warning", "error"))
   line1 <- xml2::xml_attr(xml, "line1")
-  col1 <- as.integer(xml2::xml_attr(xml, "col1")) + offset
+  offset <- as.integer(offset)
+  col1 <- as.integer(xml2::xml_attr(xml, "col1"))
 
   lines <- source_expression[["lines"]]
   if (is.null(lines)) lines <- source_expression[["file_lines"]]
 
   if (xml2::xml_attr(xml, "line2") == line1) {
-    col2 <- as.integer(xml2::xml_attr(xml, "col2")) + offset
+    col2 <- as.integer(xml2::xml_attr(xml, "col2"))
   } else {
     col2 <- unname(nchar(lines[line1]))
   }
+
+  column_number <- col1 + offset
+  if (offset < 0L) {
+    col1 <- col1 + offset
+  } else if (column_number > col2) {
+    col2 <- column_number
+  }
+
   if (is.function(lint_message)) lint_message <- lint_message(xml)
   Lint(
     filename = source_expression$filename,
     line_number = as.integer(line1),
-    column_number = as.integer(col1),
+    column_number = column_number,
     type = type,
     message = lint_message,
     line = lines[line1],
-    ranges = list(c(col1 - offset, col2))
+    ranges = list(c(col1, col2))
   )
 }
 
