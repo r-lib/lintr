@@ -33,9 +33,8 @@ expect_comparison_linter <- function() {
       `==` = "expect_identical"
     )
 
-    return(lapply(
+    xml_nodes_to_lints(
       bad_expr,
-      xml_nodes_to_lint,
       source_expression,
       lint_message = function(expr) {
         comparator <- xml2::xml_text(xml2::xml_find_first(expr, "expr[2]/*[2]"))
@@ -43,6 +42,6 @@ expect_comparison_linter <- function() {
         sprintf("%s(x, y) is better than expect_true(x %s y).", expectation, comparator)
       },
       type = "warning"
-    ))
+    )
   })
 }

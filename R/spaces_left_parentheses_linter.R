@@ -15,7 +15,6 @@ spaces_left_parentheses_linter <- function() {
       # 'x = 1;(x + 2)' can't be detected from the expression-level tree
       xml <- source_expression$full_xml_parsed_content
       xpath <- "//OP-LEFT-PAREN[@start - 1 = ancestor::expr/preceding-sibling::OP-SEMICOLON/@end]"
-      global <- TRUE
     } else if (is_lint_level(source_expression, "expression", require_xml = TRUE)) {
 
       xml <- source_expression$xml_parsed_content
@@ -48,8 +47,6 @@ spaces_left_parentheses_linter <- function() {
         "//OP-LEFT-PAREN[(%s) or (%s) or (%s)]",
         if_while_cond, for_cond, infix_cond
       )
-
-      global <- FALSE
     } else {
       # probably a parsing error -- XML is missing
       return(list())
@@ -57,8 +54,11 @@ spaces_left_parentheses_linter <- function() {
 
     bad_paren <- xml2::xml_find_all(xml, xpath)
 
-    lapply(bad_paren, xml_nodes_to_lint, source_expression,
-           lint_message = "Place a space before left parenthesis, except in a function call.",
-           type = "style", global = global)
+    xml_nodes_to_lints(
+      bad_paren,
+      source_expression,
+      lint_message = "Place a space before left parenthesis, except in a function call.",
+      type = "style"
+    )
   })
 }

@@ -74,9 +74,8 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
       is_unused[is_ns_used] <- FALSE
     }
 
-    lapply(
+    xml_nodes_to_lints(
       import_exprs[is_unused],
-      xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = function(import_expr) {
         pkg <- get_r_string(xml2::xml_text(xml2::xml_find_first(import_expr, "expr[STR_CONST|SYMBOL]")))
@@ -89,8 +88,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
           paste0("package '", pkg, "' is attached but never used.")
         }
       },
-      type = "warning",
-      global = TRUE
+      type = "warning"
     )
   })
 }

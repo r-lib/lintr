@@ -20,12 +20,11 @@ pipe_call_linter <- function() {
     xpath <- "//expr[preceding-sibling::SPECIAL[text() = '%>%'] and *[1][self::SYMBOL]]"
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    return(lapply(
+    xml_nodes_to_lints(
       bad_expr,
-      xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = "Use explicit calls in magrittr pipes, i.e., `a %>% foo` should be `a %>% foo()`.",
       type = "warning"
-    ))
+    )
   })
 }

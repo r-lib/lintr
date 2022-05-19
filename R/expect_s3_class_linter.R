@@ -36,9 +36,8 @@ expect_s3_class_linter <- function() {
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    return(lapply(
+    xml_nodes_to_lints(
       bad_expr,
-      xml_nodes_to_lint,
       source_expression,
       function(expr) {
         matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
@@ -50,7 +49,7 @@ expect_s3_class_linter <- function() {
         paste(lint_msg, "Note also expect_s4_class() available for testing S4 objects.")
       },
       type = "warning"
-    ))
+    )
   })
 }
 
@@ -101,15 +100,14 @@ expect_s4_class_linter <- function() {
     ]"
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    return(lapply(
+    xml_nodes_to_lints(
       bad_expr,
-      xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = paste(
         "expect_s4_class(x, k) is better than expect_true(is(x, k)).",
         "Note also expect_s3_class() available for testing S3 objects."
       ),
       type = "warning"
-    ))
+    )
   })
 }

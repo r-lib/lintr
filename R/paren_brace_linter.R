@@ -24,9 +24,8 @@ paren_brace_linter <- function() {
 
     match_exprs <- xml2::xml_find_all(xml, xpath)
 
-    lapply(
+    xml_nodes_to_lints(
       match_exprs,
-      xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = "There should be a space between right parenthesis and an opening curly brace.",
       type = "style"

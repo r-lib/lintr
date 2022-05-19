@@ -62,9 +62,8 @@ fixed_regex_linter <- function() {
 
     patterns <- xml2::xml_find_all(xml, xpath)
 
-    lapply(
+    xml_nodes_to_lints(
       patterns[is_not_regex(xml2::xml_text(patterns))],
-      xml_nodes_to_lint,
       source_expression = source_expression,
       lint_message = paste(
         "For static regular expression patterns, set `fixed = TRUE`.",

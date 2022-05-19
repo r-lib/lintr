@@ -34,9 +34,8 @@ expect_null_linter <- function() {
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    lapply(
+    xml_nodes_to_lints(
       bad_expr,
-      xml_nodes_to_lint,
       source_expression,
       function(expr) {
         matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "SYMBOL_FUNCTION_CALL"))
