@@ -11,7 +11,6 @@
 #' @export
 object_usage_linter <- function(interpret_glue = TRUE) {
   Linter(function(source_expression) {
-    # If there is no xml data just return
     if (!is_lint_level(source_expression, "file")) {
       return(list())
     }
@@ -40,6 +39,7 @@ object_usage_linter <- function(interpret_glue = TRUE) {
     fun_info <- get_function_assignments(source_expression$full_xml_parsed_content)
 
     lapply(seq_len(NROW(fun_info)), function(i) {
+      browser()
       info <- fun_info[i, ]
 
       code <- get_content(lines = source_expression$content[seq(info$line1, info$line2)], info)
@@ -155,7 +155,10 @@ extract_glued_symbols <- function(expr) {
         warning = function(...) NULL
       )
       parsed_xml <- safe_parse_to_xml(parsed_text)
-      if (is.na(parsed_xml)) return("")
+      # covers NULL & NA cases
+      if (length(parsed_xml) == 0L) {
+        return("")
+      }
       symbols <- xml2::xml_text(xml2::xml_find_all(parsed_xml, "//SYMBOL"))
       for (sym in symbols) {
         assign(sym, NULL, envir = glued_symbols)
