@@ -252,10 +252,13 @@ It is always better to write too many tests rather than too few.
 
 ## Adding your linter to the default_linters ##
 
-If your linter is not project-specific you can add it to `default_linters`.
+_NB: this section and the next are specific to adding new linters to {linter}_
+
+If your linter implements part of the tidyverse style guide you can add it to `default_linters`.
 This object is created in the file `zzz.R` (this name ensures that it will always run after all
-the linters are defined). Simply add your linter name to the `default_linters`
-list before the `NULL` at the end.
+the linters are defined). Add your linter name to the `default_linters`
+list before the `NULL` at the end, and add a corresponding test case to the test script
+`./tests/testthat/default_linter_testcode.R`.
 
 ## Submit pull request ##
 
