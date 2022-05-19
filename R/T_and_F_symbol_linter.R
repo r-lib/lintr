@@ -41,7 +41,7 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
     bad_assigns <- xml2::xml_find_all(source_expression$xml_parsed_content, xpath_assignment)
 
     replacement_map <- c(T = "TRUE", F = "FALSE")
-    make_lint <- function(expr, fmt) {
+    make_lints <- function(expr, fmt) {
       xml_nodes_to_lints(
         xml = expr,
         source_expression = source_expression,
@@ -55,8 +55,8 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
     }
 
     c(
-      make_lint(bad_exprs, "Use %s instead of the symbol %s."),
-      make_lint(bad_assigns, "Don't use %2$s as a variable name, as it can break code relying on %2$s being %1$s.")
+      make_lints(bad_exprs, "Use %s instead of the symbol %s."),
+      make_lints(bad_assigns, "Don't use %2$s as a variable name, as it can break code relying on %2$s being %1$s.")
     )
   })
 }
