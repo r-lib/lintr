@@ -155,7 +155,7 @@ extract_glued_symbols <- function(expr) {
         warning = function(...) NULL
       )
       parsed_xml <- safe_parse_to_xml(parsed_text)
-      if (is.null(parsed_xml)) return("")
+      if (is.na(parsed_xml)) return("")
       symbols <- xml2::xml_text(xml2::xml_find_all(parsed_xml, "//SYMBOL"))
       for (sym in symbols) {
         assign(sym, NULL, envir = glued_symbols)
