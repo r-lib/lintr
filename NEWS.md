@@ -22,6 +22,8 @@
   + For `lint_dir()` and `lint_package()`, `...` is now the 2nd argument, where earlier this was `relative_path=`
 * Argument `source_file` to exported functions `with_id()` and `ids_with_token()` have been renamed to `source_expression` to better reflect that this argument is typically the output of `get_source_expressions()`. It has also been renamed as the argument of the now-private functional versions of many linters, which  has no direct effect on packages importing linter, but is mentioned in case custom linters imitating `lintr` style have also adopted the `source_file` naming and want to adapt to keep in sync.
 * Deprecated `with_defaults()` in favor of `linters_with_defaults()` (#1029, @AshesITR)
+* Removed `"return"` from `all_undesirable_functions`. Follow #1100 for an upcoming `return_linter()` to lint 
+  unnecessary `return()` statements (#1146, @AshesITR)
 
 ## New features, bug fixes, improvements
 
@@ -177,6 +179,7 @@ function calls. (#850, #851, @renkun-ken)
 * New `is_lint_level()` helper for readably explaining which type of expression is required for a custom linter. Some linters are written to either require the full file's parse tree (for example, `single_quotes_linter()`). Others only need single expressions, which is more cache-friendly (most linters are written this way to leverage caching). (#921, @michaelchirico)
 * `object_usage_linter()` now detects functions exported by packages that are explicitly attached using `library()` or `require()` calls (#1127, @AshesITR)
 * New helper `xml_nodes_to_lints()` for converting `xml_node` objects obtained using linter logic expressed in XPath into `Lint` objects (#1124, @michaelchirico)
+* Added more explanation why certain functions might be undesirable and what alternatives to use (#1133, #1146, @AshesITR)
 
 # lintr 2.0.1
 

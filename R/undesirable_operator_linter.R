@@ -32,7 +32,7 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
           msg <- sprintf("Operator `%s` is undesirable.", op_name)
           alt_op <- op[[op_name]]
           if (!is.na(alt_op)) {
-            msg <- c(msg, sprintf("As an alternative, %s.", alt_op))
+            msg <- paste(msg, alt_op)
           }
 
           Lint(
