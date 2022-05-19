@@ -12,7 +12,7 @@
 object_usage_linter <- function(interpret_glue = TRUE) {
   Linter(function(source_expression) {
     # If there is no xml data just return
-    if (!is_lint_level(source_expression, "file", require_xml = TRUE)) {
+    if (!is_lint_level(source_expression, "file")) {
       return(list())
     }
 

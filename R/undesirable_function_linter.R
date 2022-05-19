@@ -15,7 +15,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
   stopifnot(is.logical(symbol_is_undesirable))
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+    if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
     if (symbol_is_undesirable) {

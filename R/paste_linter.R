@@ -18,7 +18,7 @@
 #' @export
 paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+    if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
 
