@@ -39,7 +39,6 @@ object_usage_linter <- function(interpret_glue = TRUE) {
     fun_info <- get_function_assignments(source_expression$full_xml_parsed_content)
 
     lapply(seq_len(NROW(fun_info)), function(i) {
-      browser()
       info <- fun_info[i, ]
 
       code <- get_content(lines = source_expression$content[seq(info$line1, info$line2)], info)
