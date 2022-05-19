@@ -102,7 +102,8 @@ tree of the file being linted. A list of tokens is available from
 
 `source_file$xml_parsed_content` uses `xmlparsedata::xml_parse_data()` to convert the `getParseData()` output into an XML tree,
 which enables writing linter logic in [XPath](https://www.w3schools.com/xml/xpath_intro.asp), a powerful language
-for expressing paths within the nested XML data structure. Most linters in `lintr` are built using XPath because it is a powerful language for computation on the abstract syntax tree / parse tree.
+for expressing paths within the nested XML data structure. Most linters in `lintr` are built using XPath because it is a
+powerful language for computation on the abstract syntax tree / parse tree.
 
 ```r
 if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
@@ -155,7 +156,9 @@ Let's examine the XPath a bit more closely:
 Taken together, that means we want to match `expr` nodes preceded by the `%>%` infix operator whose first child node is a `name`.
 That maps pretty closely to the description of what the `pipe_call_linter` is looking for, but there is subtlety in mapping
 between the R code you're used to and how they show up in the XML representation. `expr` nodes in particular take some practice
-to get accustomed to -- use the plentiful XPath-based linters in `lintr` as a guide to get extra practice.
+to get accustomed to -- use the plentiful XPath-based linters in `lintr` as a guide to get extra
+practice^[The W3schools tutorials are also quite helpful; see https://www.w3schools.com/xml/xpath_intro.asp]. Note: `xml2`
+implements XPath 1.0, which lacks some helpful features available in XPath 2.0.
 
 ```r
 xml_nodes_to_lint(
