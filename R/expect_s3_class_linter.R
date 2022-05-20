@@ -40,7 +40,7 @@ expect_s3_class_linter <- function() {
       bad_expr,
       source_expression,
       function(expr) {
-        matched_function <- xml2::xml_find_chr(expr, "string(expr/SYMBOL_FUNCTION_CALL)")
+        matched_function <- xp_call_name(expr)
         if (matched_function %in% c("expect_equal", "expect_identical")) {
           lint_msg <- sprintf("expect_s3_class(x, k) is better than %s(class(x), k).", matched_function)
         } else {

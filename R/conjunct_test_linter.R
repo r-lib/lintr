@@ -41,7 +41,7 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
       bad_expr,
       source_expression,
       lint_message = function(expr) {
-        matched_fun <- xml2::xml_find_chr(expr, "string(expr/SYMBOL_FUNCTION_CALL)")
+        matched_fun <- xp_call_name(expr)
         op <- xml2::xml_find_chr(expr, "string(expr/*[self::AND2 or self::OR2])")
         instead_of <- sprintf("Instead of %s(A %s B),", matched_fun, op)
         if (matched_fun %in% c("expect_true", "expect_false")) {

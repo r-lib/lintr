@@ -38,7 +38,7 @@ outer_negation_linter <- function() {
       bad_expr,
       source_expression = source_expression,
       lint_message = function(expr) {
-        matched_call <- xml2::xml_find_chr(expr, "string(expr/SYMBOL_FUNCTION_CALL)")
+        matched_call <- xp_call_name(expr)
         inverse_call <- if (matched_call == "any") "all" else "any"
         message <- sprintf("!%s(x) is better than %s(!x).", inverse_call, matched_call)
         paste(

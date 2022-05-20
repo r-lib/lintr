@@ -33,7 +33,7 @@ ifelse_censor_linter <- function() {
       bad_expr,
       source_expression = source_expression,
       lint_message = function(expr) {
-        matched_call <- xml2::xml_find_chr(expr, "string(expr/SYMBOL_FUNCTION_CALL)")
+        matched_call <- xp_call_name(expr)
         op <- xml2::xml_find_chr(expr, "string(expr[2]/*[2])")
         match_first <- !is.na(xml2::xml_find_first(expr, "expr[2][expr[1] = following-sibling::expr[1]]"))
         if (op %in% c("<", "<=")) {

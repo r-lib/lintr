@@ -36,8 +36,8 @@ condition_message_linter <- function() {
       bad_expr[is.na(sep_value) | sep_value %in% c("", " ")],
       source_expression = source_expression,
       lint_message = function(expr) {
-        outer_call <- xml2::xml_find_chr(expr, "string(expr/SYMBOL_FUNCTION_CALL)")
-        inner_call <- xml2::xml_find_chr(expr, "string(expr/expr/SYMBOL_FUNCTION_CALL)")
+        outer_call <- xp_call_name(expr)
+        inner_call <- xp_call_name(expr, depth = 2L)
 
         message <- sprintf("Don't use %s to build %s strings.", inner_call, outer_call)
         paste(

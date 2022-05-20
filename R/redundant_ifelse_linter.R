@@ -29,7 +29,7 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
       tf_expr,
       source_expression = source_expression,
       lint_message = function(expr) {
-        matched_call <- xml2::xml_find_chr(expr, "string(expr/SYMBOL_FUNCTION_CALL)")
+        matched_call <- xp_call_name(expr)
         # [1] call; [2] logical condiditon
         first_arg <- xml2::xml_find_chr(expr, "string(expr[3]/NUM_CONST)")
         second_arg <- xml2::xml_find_chr(expr, "string(expr[4]/NUM_CONST)")
@@ -54,7 +54,7 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
         num_expr,
         source_expression = source_expression,
         lint_message = function(expr) {
-          matched_call <- xml2::xml_find_chr(expr, "string(expr/SYMBOL_FUNCTION_CALL)")
+          matched_call <- xp_call_name(expr)
           # [1] call; [2] logical condiditon
           first_arg <- xml2::xml_find_chr(expr, "string(expr[3]/NUM_CONST)")
           second_arg <- xml2::xml_find_chr(expr, "string(expr[4]/NUM_CONST)")
