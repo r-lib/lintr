@@ -28,7 +28,7 @@ expect_named_linter <- function() {
       bad_expr,
       source_expression = source_expression,
       lint_message = function(expr) {
-        matched_function <- xp_call_name(expr)
+        matched_function <- xp_call_name(expr, depth = 0L)
         sprintf("expect_named(x, n) is better than %s(names(x), n)", matched_function)
       },
       type = "warning"
