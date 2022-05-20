@@ -10,11 +10,11 @@
 \format{
 A named list of character strings.
 
-An object of class \code{list} of length 21.
 
-An object of class \code{list} of length 3.
 
-An object of class \code{list} of length 3.
+
+
+
 }
 \usage{
 all_undesirable_functions

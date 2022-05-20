@@ -137,35 +137,34 @@ all_undesirable_functions <- modify_defaults(
 )
 
 #' @rdname default_undesirable_functions
+#' @format
 #' @export
-default_undesirable_functions <- do.call(modify_defaults, c(
-  list(default = list()),
-  all_undesirable_functions[c(
-    "attach",
-    "browser",
-    "debug",
-    "debugcall",
-    "debugonce",
-    "detach",
-    ".libPaths",
-    "library",
-    "mapply",
-    "options",
-    "par",
-    "require",
-    "sapply",
-    "setwd",
-    "sink",
-    "source",
-    "Sys.setenv",
-    "Sys.setlocale",
-    "trace",
-    "undebug",
-    "untrace"
-  )]
-))
+default_undesirable_functions <- all_undesirable_functions[names(all_undesirable_functions) %in% c(
+  "attach",
+  "browser",
+  "debug",
+  "debugcall",
+  "debugonce",
+  "detach",
+  ".libPaths",
+  "library",
+  "mapply",
+  "options",
+  "par",
+  "require",
+  "sapply",
+  "setwd",
+  "sink",
+  "source",
+  "Sys.setenv",
+  "Sys.setlocale",
+  "trace",
+  "undebug",
+  "untrace"
+)]
 
 #' @rdname default_undesirable_functions
+#' @format
 #' @export
 all_undesirable_operators <- modify_defaults(
   defaults = list(),
@@ -181,16 +180,13 @@ all_undesirable_operators <- modify_defaults(
 )
 
 #' @rdname default_undesirable_functions
+#' @format
 #' @export
-default_undesirable_operators <- do.call(modify_defaults, c(
-  list(default = list()),
-  all_undesirable_operators[c(
-    ":::",
-    "<<-",
-    "->>"
-  )]
-))
-
+default_undesirable_operators <- all_undesirable_operators[names(all_undesirable_operators) %in% c(
+  ":::",
+  "<<-",
+  "->>"
+)]
 
 #' Default lintr settings
 #' @seealso [read_settings()], [default_linters]
