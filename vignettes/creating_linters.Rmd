@@ -11,8 +11,7 @@ vignette: >
 
 This vignette describes the steps necessary to create a new linter.
 
-In particular, it covers how to write a linter with the intention of contributing it to `lintr`, so
-some parts of the below will not be relevant for users writing custom linters for their own packages/repos.
+See the last section for some details specific to writing new linters for `{lintr}`.
 
 A good example of a simple linter is the `pipe_call_linter`.
 
@@ -65,7 +64,7 @@ Describe the linter, giving it a title and briefly covering the usages that are 
 #' @export
 ```
 
-These lines (1) generate a Tags section in the documentation for the linter; (2) link to the full table of available linters; and (3) mark the function for export. The most unfamiliar here is probably (1), which can be skipped outside of `lintr` itself. This step uses a helper function inside lintr to generate custom Rd styling. See R/linter_tags.R.
+These lines (1) generate a Tags section in the documentation for the linter^[NB: this is a helper function for generating custom Rd styling. See R/linter_tags.R.]; (2) link to the full table of available linters; and (3) mark the function for export. The most unfamiliar here is probably (1), which can be skipped outside of `lintr` itself.
 
 ```r
 pipe_call_linter <- function() {
@@ -174,21 +173,14 @@ the message is customized to more closely match the observed usage. In such case
 accept a function in `lint_message` which takes a node as input and converts it to a customized message.
 See, for example, `seq_linter`.
 
-## Writing linter tests ##
+## Writing linter tests
 
-The `linter` package uses [testthat](https://github.com/hadley/testthat) for
-testing. You can run all of the currently available tests using
-`devtools::test()`.  If you want to run only the tests in a given file use the
-`filter` argument to `devtools::test()`. (NB: this section uses the `assignment_linter()`
-which has simpler examples than `pipe_continuation_linter()`.)
+(NB: this section uses the `assignment_linter()` which has simpler examples than `pipe_continuation_linter()`.)
 
-Linter tests should be put in the
-[tests/testthat/](https://github.com/r-lib/lintr/tree/master/tests/testthat)
-folder.  The test filename should be the linter name prefixed by `test-`, e.g.
-`test-pipe_continuation_linter.R`.
+`{lintr}` works best inside the `{testthat}` unit testing framework, in particular, `{lintr}`
+exports `lintr::expect_lint()` which is designed as a companion to other testthat expectations.
 
-You can then specify one or more `test_that` functions.  Most of the linters
-use the same default form.
+You can define tests inside separate `test_that` calls.  Most of the linters use the same default form.
 
 ```r
 test_that("returns the correct linting", {
@@ -248,7 +240,21 @@ expect_lint("blah=1; blah=2",
 
 It is always better to write too many tests rather than too few.
 
-## Adding your linter to the default_linters ##
+## Contributing to `{lintr}`
+
+### More details about writing tests for new `{lintr}` linters
+
+The `{lintr}` package uses [testthat](https://github.com/hadley/testthat) for
+testing. You can run all of the currently available tests using
+`devtools::test()`.  If you want to run only the tests in a given file use the
+`filter` argument to `devtools::test()`.
+
+Linter tests should be put in the
+[tests/testthat/](https://github.com/r-lib/lintr/tree/master/tests/testthat)
+folder.  The test filename should be the linter name prefixed by `test-`, e.g.
+`test-pipe_continuation_linter.R`.
+
+### Adding your linter to the default_linters ##
 
 _NB: this section and the next are specific to adding new linters to {linter}_
 
@@ -258,7 +264,7 @@ the linters are defined). Add your linter name to the `default_linters`
 list before the `NULL` at the end, and add a corresponding test case to the test script
 `./tests/testthat/default_linter_testcode.R`.
 
-## Submit pull request ##
+### Submit pull request ##
 
 Push your changes to a branch of your fork of the
 [lintr](https://github.com/r-lib/lintr) repository, and submit a pull
