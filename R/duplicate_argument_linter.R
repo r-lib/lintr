@@ -20,11 +20,7 @@ duplicate_argument_linter <- function(except = character()) {
     calls <- xml2::xml_find_all(xml, xpath)
 
     if (length(except)) {
-      calls_names <- xml2::xml_find_first(calls, "expr[1][count(*)=1]/*[1]")
-      calls_text <- vapply(
-        parse(text = xml2::xml_text(calls_names)),
-        as.character, character(1L)
-      )
+      calls_text <- get_r_string(xml2::xml_find_chr(calls_names, "string(expr[1][count(*)=1]/*[1])"))
       calls <- calls[!(calls_text %in% except)]
     }
 

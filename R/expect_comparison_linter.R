@@ -37,7 +37,7 @@ expect_comparison_linter <- function() {
       bad_expr,
       source_expression,
       lint_message = function(expr) {
-        comparator <- xml2::xml_text(xml2::xml_find_first(expr, "expr[2]/*[2]"))
+        comparator <- xml2::xml_find_chr(expr, "string(expr[2]/*[2])")
         expectation <- comparator_expectation_map[[comparator]]
         sprintf("%s(x, y) is better than expect_true(x %s y).", expectation, comparator)
       },

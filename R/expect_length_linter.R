@@ -30,7 +30,7 @@ expect_length_linter <- function() {
       bad_expr,
       source_expression,
       function(expr) {
-        matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
+        matched_function <- xml2::xml_find_chr(expr, "string(expr/SYMBOL_FUNCTION_CALL)")
         sprintf("expect_length(x, n) is better than %s(length(x), n)", matched_function)
       },
       type = "warning"

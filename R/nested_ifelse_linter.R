@@ -35,7 +35,7 @@ nested_ifelse_linter <- function() {
       bad_expr,
       source_expression = source_expression,
       lint_message = function(expr) {
-        matched_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
+        matched_call <- xml2::xml_find_chr(expr, "string(expr/SYMBOL_FUNCTION_CALL)")
         lint_message <- sprintf("Don't use nested %s() calls;", matched_call)
         paste(lint_message, "instead, try (1) data.table::fcase; (2) dplyr::case_when; or (3) using a lookup table.")
       },

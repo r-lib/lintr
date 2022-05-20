@@ -29,7 +29,7 @@ system_file_linter <- function() {
       bad_expr,
       source_expression = source_expression,
       lint_message = function(expr) {
-        outer_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
+        outer_call <- xml2::xml_find_chr(expr, "string(expr/SYMBOL_FUNCTION_CALL)")
         if (outer_call == "system.file") {
           bad_usage <- 'system.file(file.path("data", "model.csv"), package = "myrf")'
         } else {

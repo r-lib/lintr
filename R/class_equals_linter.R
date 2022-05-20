@@ -30,7 +30,7 @@ class_equals_linter <- function() {
       bad_expr,
       source_expression = source_expression,
       lint_message = function(expr) {
-        op <- xml2::xml_text(xml2::xml_find_first(expr, "*[2]"))
+        op <- xml2::xml_find_chr(expr, "string(*[2])")
         message <- sprintf("Instead of comparing class(x) with %s,", op)
         paste(message, "use inherits(x, 'class-name') or is.<class> or is(x, 'class')")
       },

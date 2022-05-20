@@ -33,7 +33,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
     if (length(import_exprs) == 0L) {
       return(list())
     }
-    imported_pkgs <- xml2::xml_text(xml2::xml_find_first(import_exprs, "expr[STR_CONST|SYMBOL]"))
+    imported_pkgs <- xml2::xml_find_chr(import_exprs, "string(expr[STR_CONST|SYMBOL])")
     # as.character(parse(...)) returns one entry per expression
     imported_pkgs <- as.character(parse(text = imported_pkgs, keep.source = FALSE))
 
@@ -78,7 +78,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
       import_exprs[is_unused],
       source_expression = source_expression,
       lint_message = function(import_expr) {
-        pkg <- get_r_string(xml2::xml_text(xml2::xml_find_first(import_expr, "expr[STR_CONST|SYMBOL]")))
+        pkg <- get_r_string(xml2::xml_find_chr(import_expr, "string(expr[STR_CONST|SYMBOL])"))
         if (is_ns_used[match(pkg, imported_pkgs)]) {
           paste0(
             "package '", pkg, "' is only used by namespace. ",

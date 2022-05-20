@@ -79,7 +79,7 @@ inner_combine_linter <- function() {
       bad_expr,
       source_expression = source_expression,
       lint_message = function(expr) {
-        matched_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/expr/SYMBOL_FUNCTION_CALL"))
+        matched_call <- xml2::xml_find_chr(expr, "string(expr/expr/SYMBOL_FUNCTION_CALL)")
         message <- sprintf(
           "%1$s(c(x, y)) only runs the more expensive %1$s() once as compared to c(%1$s(x), %1$s(y)).",
           matched_call

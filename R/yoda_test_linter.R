@@ -41,7 +41,7 @@ yoda_test_linter <- function() {
       bad_expr,
       source_expression = source_expression,
       lint_message = function(expr) {
-        matched_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
+        matched_call <- xml2::xml_find_chr(expr, "string(expr/SYMBOL_FUNCTION_CALL)")
         second_const <- xml2::xml_find_first(expr, glue::glue("expr[position() = 3 and ({const_condition})]"))
         if (is.na(second_const)) {
           paste(
