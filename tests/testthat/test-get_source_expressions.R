@@ -192,3 +192,16 @@ test_that("1- or 2-width octal expressions give the right STR_CONST values", {
     expect_identical(pc[[1L]][8L, "text"], "'\n\\2\n'")
   })
 })
+
+test_that("linters pass with xml_missing() content", {
+  # NB: this is just a cursory test for linters not to
+  #   fail on files where the XML content is xml_missing;
+  #   the main linter test files provide more thorough
+  #   evidence that things are working as intended.
+  bad_source <- withr::local_tempfile()
+  writeLines("a = 1\nb = 2", bad_source)
+  source_expression <- get_source_expressions(bad_source)
+  for (linter in linters_with_tags(tag = NULL)) {
+    expect_error(linter(source_expression), NA)
+  }
+})
