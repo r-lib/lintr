@@ -44,7 +44,7 @@ sprintf_linter <- function() {
         is.language(expr[[1L]]) &&
         is.character(expr[[2L]])) {
         if (length(expr) >= 3L) {
-          for (i in 3:length(expr)) {
+          for (i in 3L:length(expr)) {
             if (!is_missing(expr[[i]]) && !is.atomic(expr[[i]])) {
               expr[[i]] <- 0L
             }
