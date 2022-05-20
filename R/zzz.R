@@ -82,6 +82,16 @@ default_linters <- modify_defaults(
 #'  * [undebug()] is only useful for interactive debugging with [debug()]. It should be removed.
 #'  * [untrace()] is only useful for interactive debugging with [trace()]. It should be removed.
 #'
+#' The following operators are sometimes regarded as undesirable:
+#'
+#'  * [`:::`][base::ns-dblcolon] accesses non-exported functions inside packages. Code relying on these is likely to
+#'    break in future versions of the package because the functions are not part of the public interface and may be
+#'    changed or removed by the maintainers without notice.
+#'    Use public functions via `::` instead.
+#'  * [`<<-`][base::assignOps] and `->>` assign variables outside of the current environment, breaking functional
+#'    encapsulation by causing side-effects. This makes code harder to debug and reason about.
+#'    Use a separate environment created by [new.env()] for mutable state instead.
+#'
 #' @format A named list of character strings.
 #' @rdname default_undesirable_functions
 #' @export
@@ -159,9 +169,15 @@ default_undesirable_functions <- do.call(modify_defaults, c(
 #' @export
 all_undesirable_operators <- modify_defaults(
   defaults = list(),
-  ":::" = NA,
-  "<<-" = NA,
-  "->>" = NA
+  ":::" = paste("It accesses non-exported functions inside packages. Code relying on these is likely to break in",
+                "future versions of the package because the functions are not part of the public interface and may be",
+                "changed or removed by the maintainers without notice. Use public functions via :: instead."),
+  "<<-" = paste("It assigns variables outside of the current environment, breaking functional encapsulation by",
+                "causing side-effects. This makes code harder to debug and reason about.",
+                "Use a separate environment created by new.env() for mutable state instead."),
+  "->>" = paste("It assigns variables outside of the current environment, breaking functional encapsulation by",
+                "causing side-effects. This makes code harder to debug and reason about.",
+                "Use a separate environment created by new.env() for mutable state instead.")
 )
 
 #' @rdname default_undesirable_functions

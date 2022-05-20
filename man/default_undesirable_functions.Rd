@@ -53,7 +53,6 @@ instead.
 instead.
 \item \code{\link[=require]{require()}} modifies the global search path. Use roxygen2's @importFrom statement in packages, and \code{\link[=library]{library()}}
 or \code{::} in scripts.
-\item \code{\link[=return]{return()}} is not necessary as the last value of a function is automatically returned. # TODO remove this
 \item \code{\link[=sapply]{sapply()}} isn't type stable. Use \code{\link[=vapply]{vapply()}} with an appropriate \verb{FUN.VALUE=} argument to obtain type stable
 simplification.
 \item \code{\link[=setwd]{setwd()}} modifies the global working directory. Use \code{\link[withr:with_dir]{withr::with_dir()}} for a temporary change instead.
@@ -68,6 +67,17 @@ instead.
 \item \code{\link[=trace]{trace()}} traps a function and causes execution of arbitrary code when that function is run. It should be removed.
 \item \code{\link[=undebug]{undebug()}} is only useful for interactive debugging with \code{\link[=debug]{debug()}}. It should be removed.
 \item \code{\link[=untrace]{untrace()}} is only useful for interactive debugging with \code{\link[=trace]{trace()}}. It should be removed.
+}
+
+The following operators are sometimes regarded as undesirable:
+\itemize{
+\item \code{\link[base:ns-dblcolon]{:::}} accesses non-exported functions inside packages. Code relying on these is likely to
+break in future versions of the package because the functions are not part of the public interface and may be
+changed or removed by the maintainers without notice.
+Use public functions via \code{::} instead.
+\item \code{\link[base:assignOps]{<<-}} and \verb{->>} assign variables outside of the current environment, breaking functional
+encapsulation by causing side-effects. This makes code harder to debug and reason about.
+Use a separate environment created by \code{\link[=new.env]{new.env()}} for mutable state instead.
 }
 }
 \keyword{datasets}
