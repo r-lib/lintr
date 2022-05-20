@@ -244,7 +244,7 @@ It is always better to write too many tests rather than too few.
 
 ### More details about writing tests for new `{lintr}` linters
 
-The `{lintr}` package uses [testthat](https://github.com/hadley/testthat) for
+The `{lintr}` package uses [testthat](https://github.com/r-lib/testthat) for
 testing. You can run all of the currently available tests using
 `devtools::test()`.  If you want to run only the tests in a given file use the
 `filter` argument to `devtools::test()`.
@@ -255,8 +255,6 @@ folder.  The test filename should be the linter name prefixed by `test-`, e.g.
 `test-pipe_continuation_linter.R`.
 
 ### Adding your linter to the default_linters ##
-
-_NB: this section and the next are specific to adding new linters to {linter}_
 
 If your linter implements part of the tidyverse style guide you can add it to `default_linters`.
 This object is created in the file `zzz.R` (this name ensures that it will always run after all
