@@ -27,7 +27,7 @@ A good example of a simple linter is the `pipe_call_linter`.
 #' @export
 pipe_call_linter <- function() {
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+    if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
 
@@ -106,7 +106,7 @@ for expressing paths within the nested XML data structure. Most linters in `lint
 powerful language for computation on the abstract syntax tree / parse tree.
 
 ```r
-if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+if (!is_lint_level(source_expression, "expression")) {
   return(list())
 }
 ```
@@ -120,10 +120,8 @@ only run the linter again on expressions that have changed.
 Therefore, it is preferable to write expression-level linters whenever possible. Two types of exceptions observed in `lintr` are
 (1) when several or all expressions are _required_ to ensure the linter logic applies (e.g., `conjunct_test_linter` looks for
 consecutive calls to `stopifnot()`, which will typically appear on consecutive expressions) or (2) when the linter logic
-is very simple & fast to compute, so that the overhead of re-running the linter is low (e.g., `single_quotes_linter`).
-
-Lastly, we have `require_xml = TRUE`. This ensures that the XML representation of the AST is available. This is sometimes
-not the case when, for example, `lint()` attempts to parse a script with a syntax error.
+is very simple & fast to compute, so that the overhead of re-running the linter is low (e.g., `single_quotes_linter`). In those cases,
+use `is_lint_level(source_expression, "file")`.
 
 ```r
 xml <- source_expression$xml_parsed_content
