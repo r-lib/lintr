@@ -10,26 +10,27 @@
 #' @export
 cyclocomp_linter <- function(complexity_limit = 15L) {
   Linter(function(source_expression) {
-    if (!is.null(source_expression[["file_lines"]])) {
-      # abort if source_expression is entire file, not a top level expression.
-      return(NULL)
+    if (!is_lint_level(source_expression, "expression")) {
+      return(list())
     }
     complexity <- try_silently(
       cyclocomp::cyclocomp(parse(text = source_expression$content))
     )
-    if (inherits(complexity, "try-error")) return(NULL)
-    if (complexity <= complexity_limit) return(NULL)
+    if (inherits(complexity, "try-error") || complexity <= complexity_limit) {
+      return(list())
+    }
+    col1 <- source_expression[["column"]][1L]
     Lint(
       filename = source_expression[["filename"]],
-      line_number = source_expression[["line"]][1],
-      column_number = source_expression[["column"]][1],
+      line_number = source_expression[["line"]][1L],
+      column_number = source_expression[["column"]][1L],
       type = "style",
       message = paste0(
         "functions should have cyclomatic complexity of less than ",
         complexity_limit, ", this has ", complexity, "."
       ),
-      ranges = list(c(source_expression[["column"]][1], source_expression[["column"]][1])),
-      line = source_expression$lines[1]
+      ranges = list(rep(col1, 2L)),
+      line = source_expression$lines[1L]
     )
   })
 }

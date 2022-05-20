@@ -24,7 +24,7 @@ sprintf_linter <- function() {
     get_range_text <- function(content, line1, col1, line2, col2) {
       lines <- content[line1:line2]
       lines[length(lines)] <- substr(lines[length(lines)], 1L, col2)
-      lines[1] <- substr(lines[1], col1, nchar(lines[1]))
+      lines[1L] <- substr(lines[1L], col1, nchar(lines[1L]))
       lines
     }
 
@@ -39,14 +39,14 @@ sprintf_linter <- function() {
 
     result <- .mapply(function(line1, col1, line2, col2) {
       text <- get_range_text(source_expression$file_lines, line1, col1, line2, col2)
-      expr <- tryCatch(parse(text = text, keep.source = FALSE)[[1]], error = function(e) NULL)
+      expr <- tryCatch(parse(text = text, keep.source = FALSE)[[1L]], error = function(e) NULL)
       if (is.call(expr) &&
-        is.language(expr[[1]]) &&
-        is.character(expr[[2]])) {
-        if (length(expr) >= 3) {
-          for (i in 3:length(expr)) {
+        is.language(expr[[1L]]) &&
+        is.character(expr[[2L]])) {
+        if (length(expr) >= 3L) {
+          for (i in 3L:length(expr)) {
             if (!is_missing(expr[[i]]) && !is.atomic(expr[[i]])) {
-              expr[[i]] <- 0
+              expr[[i]] <- 0L
             }
           }
         }
