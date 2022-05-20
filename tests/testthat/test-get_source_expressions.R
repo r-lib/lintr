@@ -199,7 +199,7 @@ skip_if_not_installed("patrick")
 #   the main linter test files provide more thorough
 #   evidence that things are working as intended.
 bad_source <- withr::local_tempfile()
-writeLines("a <- 1\nb <- 2", bad_source)
+writeLines("a <- 1L\nb <- 2L", bad_source)
 expressions <- get_source_expressions(bad_source)$expressions
 
 # "zap" the xml_parsed_content to be xml_missing -- this gets
@@ -225,7 +225,8 @@ patrick::with_parameters_test_that(
   {
     linter <- eval(call(linter))
     expression <- expressions[[expression_idx]]
-    expect_silent(linter(expression))
+    # TODO(#1160): try and simplify this to expect_length(linter(.), 0L)
+    expect_identical(nrow(as.data.frame(linter(expression))), 0L)
   },
   .test_name = param_df$.test_name,
   linter = param_df$linter,
