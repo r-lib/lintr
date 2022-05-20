@@ -15,6 +15,7 @@ commas_linter <- function() {
 
     res <- re_matches(source_expression$lines, re, global = TRUE, locations = TRUE)
 
+    # no match --> return list(data.frame(NA, NA))
     if (length(res) == 1L && nrow(res[[1L]]) == 1L && all(is.na(res[[1L]]))) {
       return(list())
     }
