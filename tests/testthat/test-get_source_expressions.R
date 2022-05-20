@@ -200,8 +200,23 @@ test_that("linters pass with xml_missing() content", {
   #   evidence that things are working as intended.
   bad_source <- withr::local_tempfile()
   writeLines("a = 1\nb = 2", bad_source)
-  source_expression <- get_source_expressions(bad_source)
+  expressions <- get_source_expressions(bad_source)$expressions
+
+  # "zap" the xml_parsed_content to be xml_missing -- this gets
+  #   around the issue of creating a file that fails to parse now,
+  #   but later fails in a different way -> xml not missing.
+  for (ii in seq_along(expressions)) {
+    if ("xml_parsed_content" %in% names(expressions[[ii]])) {
+      expressions[[ii]]$xml_parsed_content <- xml2::xml_missing()
+    } else {
+      expressions[[ii]]$full_xml_parsed_content <- xml2::xml_missing()
+    }
+  }
+
+  # test all linters at least pass (no error) when finding xml_missing
   for (linter in linters_with_tags(tag = NULL)) {
-    expect_error(linter(source_expression), NA)
+    for (expr in expressions) {
+      expect_error(linter(expr), NA)
+    }
   }
 })
