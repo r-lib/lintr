@@ -193,30 +193,41 @@ test_that("1- or 2-width octal expressions give the right STR_CONST values", {
   })
 })
 
-test_that("linters pass with xml_missing() content", {
-  # NB: this is just a cursory test for linters not to
-  #   fail on files where the XML content is xml_missing;
-  #   the main linter test files provide more thorough
-  #   evidence that things are working as intended.
-  bad_source <- withr::local_tempfile()
-  writeLines("a = 1\nb = 2", bad_source)
-  expressions <- get_source_expressions(bad_source)$expressions
+skip_if_not_installed("patrick")
+# NB: this is just a cursory test for linters not to
+#   fail on files where the XML content is xml_missing;
+#   the main linter test files provide more thorough
+#   evidence that things are working as intended.
+bad_source <- withr::local_tempfile()
+writeLines("a <- 1\nb <- 2", bad_source)
+expressions <- get_source_expressions(bad_source)$expressions
 
-  # "zap" the xml_parsed_content to be xml_missing -- this gets
-  #   around the issue of creating a file that fails to parse now,
-  #   but later fails in a different way -> xml not missing.
-  for (ii in seq_along(expressions)) {
-    if ("xml_parsed_content" %in% names(expressions[[ii]])) {
-      expressions[[ii]]$xml_parsed_content <- xml2::xml_missing()
-    } else {
-      expressions[[ii]]$full_xml_parsed_content <- xml2::xml_missing()
-    }
+# "zap" the xml_parsed_content to be xml_missing -- this gets
+#   around the issue of creating a file that fails to parse now,
+#   but later fails in a different way -> xml not missing.
+for (ii in seq_along(expressions)) {
+  if ("xml_parsed_content" %in% names(expressions[[ii]])) {
+    expressions[[ii]]$xml_parsed_content <- xml2::xml_missing()
+  } else {
+    expressions[[ii]]$full_xml_parsed_content <- xml2::xml_missing()
   }
+}
+param_df <- expand.grid(
+  linter = available_linters(tags = NULL)$linter,
+  expression_idx = seq_along(expressions),
+  stringsAsFactors = FALSE
+)
+param_df$.test_name <-
+ with(param_df, sprintf("%s on expression %d", linter, expression_idx))
 
-  # test all linters at least pass (no error) when finding xml_missing
-  for (linter in linters_with_tags(tag = NULL)) {
-    for (expr in expressions) {
-      expect_error(linter(expr), NA)
-    }
-  }
-})
+patrick::with_parameters_test_that(
+  "linters pass with xml_missing() content",
+  {
+    linter <- eval(call(linter))
+    expression <- expressions[[expression_idx]]
+    expect_silent(linter(expression))
+  },
+  .test_name = param_df$.test_name,
+  linter = param_df$linter,
+  expression_idx = param_df$expression_idx
+)
