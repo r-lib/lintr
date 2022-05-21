@@ -8,14 +8,11 @@
 #' @param level Which level of expression is being tested? `"expression"`
 #'   means an individual expression, while `"file"` means all expressions
 #'   in the current file are available.
-#' @param require_xml If `TRUE`, the XML equivalent of the parse tree
-#'   is required. Use this whenever writing a linter based on logic
-#'   expressed via XPath.
 #'
 #' @export
-is_lint_level <- function(source_expression, level = c("expression", "file"), require_xml = FALSE) {
+is_lint_level <- function(source_expression, level = c("expression", "file")) {
   stopifnot(!missing(level))
   level <- match.arg(level)
-  required_key <- paste0(if (level == "file") "full_", if (require_xml) "xml_", "parsed_content")
+  required_key <- paste0(if (level == "file") "full_", "parsed_content")
   !is.null(source_expression[[required_key]])
 }

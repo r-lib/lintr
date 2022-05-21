@@ -11,7 +11,7 @@
 #' @export
 unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bit64", "data.table", "tidyverse")) {
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file", require_xml = TRUE)) {
+    if (!is_lint_level(source_expression, "file")) {
       return(list())
     }
 

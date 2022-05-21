@@ -53,7 +53,6 @@ instead.
 instead.
 \item \code{\link[=require]{require()}} modifies the global search path. Use roxygen2's @importFrom statement in packages, and \code{\link[=library]{library()}}
 or \code{::} in scripts.
-\item \code{\link[=return]{return()}} is not necessary as the last value of a function is automatically returned. # TODO remove this
 \item \code{\link[=sapply]{sapply()}} isn't type stable. Use \code{\link[=vapply]{vapply()}} with an appropriate \verb{FUN.VALUE=} argument to obtain type stable
 simplification.
 \item \code{\link[=setwd]{setwd()}} modifies the global working directory. Use \code{\link[withr:with_dir]{withr::with_dir()}} for a temporary change instead.
