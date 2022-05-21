@@ -109,9 +109,9 @@ check_for_pipe <- function(token_num, tokens) {
   # Checks for concatenation in a magrittr pipeline. If found the argument
   # count should be incremented by one, thanks to magrittr's implicit first
   # argument.
-  if (token_num < 2) {
+  if (token_num < 2L) {
     0L
   } else {
-    as.integer(tokens$text[token_num - 1] == "%>%")
+    as.integer(tokens$text[token_num - 1L] == "%>%")
   }
 }

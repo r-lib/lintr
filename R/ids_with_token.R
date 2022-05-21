@@ -26,11 +26,11 @@ ids_with_token <- function(source_expression, value, fun = `==`, source_file) {
     source_expression <- source_file
   }
   if (!is_lint_level(source_expression, "expression")) {
-    return(integer(0))
+    return(integer())
   }
   loc <- which(fun(source_expression$parsed_content$token, value))
-  if (loc %==% integer(0)) {
-    return(integer(0))
+  if (loc %==% integer()) {
+    return(integer())
   }
   loc
 }
