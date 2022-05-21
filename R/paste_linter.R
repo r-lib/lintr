@@ -53,7 +53,10 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
         and SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1][STR_CONST]
       ]")
       to_string_expr <- xml2::xml_find_all(xml, to_string_xpath)
-      collapse_value <- get_r_string(to_string_expr, xpath = "./SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1]")
+      collapse_value <- get_r_string(
+        to_string_expr,
+        xpath = "./SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1]"
+      )
 
       to_string_lints <- xml_nodes_to_lints(
         to_string_expr[collapse_value == ", "],
