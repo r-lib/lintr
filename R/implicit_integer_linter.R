@@ -20,7 +20,7 @@ implicit_integer_linter <- function() {
       source_expression = source_expression,
       lint_message = "Integers should not be implicit. Use the form 1L for integers or 1.0 for doubles.",
       type = "style",
-      offset = 1L
+      match_after_end = TRUE
     )
   })
 }
