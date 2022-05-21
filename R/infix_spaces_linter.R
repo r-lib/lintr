@@ -85,7 +85,7 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
     lint_message <- "Put exactly one space on each side of infix operators."
   }
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+    if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
 

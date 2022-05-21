@@ -11,7 +11,7 @@
 #' @export
 namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file", require_xml = TRUE)) {
+    if (!is_lint_level(source_expression, "file")) {
       return(list())
     }
 

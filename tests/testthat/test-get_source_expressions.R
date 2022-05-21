@@ -192,3 +192,44 @@ test_that("1- or 2-width octal expressions give the right STR_CONST values", {
     expect_identical(pc[[1L]][8L, "text"], "'\n\\2\n'")
   })
 })
+
+skip_if_not_installed("patrick")
+# NB: this is just a cursory test for linters not to
+#   fail on files where the XML content is xml_missing;
+#   the main linter test files provide more thorough
+#   evidence that things are working as intended.
+bad_source <- withr::local_tempfile()
+writeLines("a <- 1L\nb <- 2L", bad_source)
+expressions <- get_source_expressions(bad_source)$expressions
+
+# "zap" the xml_parsed_content to be xml_missing -- this gets
+#   around the issue of creating a file that fails to parse now,
+#   but later fails in a different way -> xml not missing.
+for (ii in seq_along(expressions)) {
+  if ("xml_parsed_content" %in% names(expressions[[ii]])) {
+    expressions[[ii]]$xml_parsed_content <- xml2::xml_missing()
+  } else {
+    expressions[[ii]]$full_xml_parsed_content <- xml2::xml_missing()
+  }
+}
+param_df <- expand.grid(
+  linter = available_linters(tags = NULL)$linter,
+  expression_idx = seq_along(expressions),
+  stringsAsFactors = FALSE
+)
+param_df$.test_name <-
+ with(param_df, sprintf("%s on expression %d", linter, expression_idx))
+
+patrick::with_parameters_test_that(
+  "linters pass with xml_missing() content",
+  {
+    linter <- eval(call(linter))
+    expression <- expressions[[expression_idx]]
+    # TODO(#1160): try and simplify this to expect_length(linter(.), 0L)
+    expect_warning(lints <- linter(expression), NA)
+    expect_identical(length(flatten_lints(lints)), 0L)
+  },
+  .test_name = param_df$.test_name,
+  linter = param_df$linter,
+  expression_idx = param_df$expression_idx
+)

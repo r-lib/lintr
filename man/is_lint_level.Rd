@@ -4,11 +4,7 @@
 \alias{is_lint_level}
 \title{Is this an expression- or a file-level source object?}
 \usage{
-is_lint_level(
-  source_expression,
-  level = c("expression", "file"),
-  require_xml = FALSE
-)
+is_lint_level(source_expression, level = c("expression", "file"))
 }
 \arguments{
 \item{source_expression}{A parsed expression object, i.e., an element
@@ -17,10 +13,6 @@ of the object returned by \code{\link[=get_source_expressions]{get_source_expres
 \item{level}{Which level of expression is being tested? \code{"expression"}
 means an individual expression, while \code{"file"} means all expressions
 in the current file are available.}
-
-\item{require_xml}{If \code{TRUE}, the XML equivalent of the parse tree
-is required. Use this whenever writing a linter based on logic
-expressed via XPath.}
 }
 \description{
 Helper for determining whether the current \code{source_expression} contains

@@ -8,7 +8,7 @@
 #' @export
 numeric_leading_zero_linter <- function() {
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+    if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
 
