@@ -19,7 +19,7 @@
 #' @export
 brace_linter <- function(allow_single_line = FALSE) {
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+    if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
 

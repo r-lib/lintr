@@ -9,7 +9,7 @@
 #' @export
 T_and_F_symbol_linter <- function() { # nolint: object_name.
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+    if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
 
@@ -50,7 +50,7 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
           sprintf(fmt, replacement_map[[symbol]], symbol)
         },
         type = "style",
-        offset = 1L
+        match_after_end = TRUE
       )
     }
 

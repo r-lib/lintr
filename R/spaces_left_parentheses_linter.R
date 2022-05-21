@@ -11,11 +11,11 @@ spaces_left_parentheses_linter <- function() {
   Linter(function(source_expression) {
 
     # else/if structure for trees that are missing XML content (both global & local)
-    if (is_lint_level(source_expression, "file", require_xml = TRUE)) {
+    if (is_lint_level(source_expression, "file")) {
       # 'x = 1;(x + 2)' can't be detected from the expression-level tree
       xml <- source_expression$full_xml_parsed_content
       xpath <- "//OP-LEFT-PAREN[@start - 1 = ancestor::expr/preceding-sibling::OP-SEMICOLON/@end]"
-    } else if (is_lint_level(source_expression, "expression", require_xml = TRUE)) {
+    } else if (is_lint_level(source_expression, "expression")) {
 
       xml <- source_expression$xml_parsed_content
 
