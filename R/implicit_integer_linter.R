@@ -7,26 +7,20 @@
 #' @export
 implicit_integer_linter <- function() {
   Linter(function(source_expression) {
-    lapply(
-      ids_with_token(source_expression, "NUM_CONST"),  # for numbers (finite/Inf/NaN) and logicals
-      function(id) {
-        token <- with_id(source_expression, id)
-        if (is_implicit_integer(token[["text"]])) {
-          line_num <- token[["line2"]]
-          end_col_num <- token[["col2"]]
-          start_col_num <- token[["col1"]]
-          Lint(
-            filename = source_expression[["filename"]],
-            line_number = line_num,
-            column_number = end_col_num + 1L,
-            type = "style",
-            message =
-              "Integers should not be implicit. Use the form 1L for integers or 1.0 for doubles.",
-            line = source_expression[["lines"]][[as.character(line_num)]],
-            ranges = list(c(start_col_num, end_col_num))
-          )
-        }
-      }
+    if (!is_lint_level(source_expression, "file")) {
+      return(list())
+    }
+
+    xml <- source_expression$full_xml_parsed_content
+
+    numbers <- xml2::xml_find_all(xml, "//NUM_CONST")
+
+    xml_nodes_to_lints(
+      numbers[is_implicit_integer(xml2::xml_text(numbers))],
+      source_expression = source_expression,
+      lint_message = "Integers should not be implicit. Use the form 1L for integers or 1.0 for doubles.",
+      type = "style",
+      match_after_end = TRUE
     )
   })
 }
