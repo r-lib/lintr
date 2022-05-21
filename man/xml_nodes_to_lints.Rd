@@ -9,7 +9,7 @@ xml_nodes_to_lints(
   source_expression,
   lint_message,
   type = c("style", "warning", "error"),
-  offset = 0L
+  match_after_end = FALSE
 )
 }
 \arguments{
@@ -29,11 +29,12 @@ length-1 character as output).}
 
 \item{type}{type of lint.}
 
-\item{offset}{Integer, default 0. The amount by which to offset the
-\code{column_number} relative to \code{col1} (useful for getting the RStudio
-source markers to land in a particular place for convenient editing,
-for example). Adjustments will also be made to ensure
-\verb{ranges[1L] <= column_number <= ranges[2L]}.}
+\item{match_after_end}{Logical, default \code{FALSE}. If \code{TRUE},
+The output \code{column_number} and \code{ranges[2L]} are set to \emph{after} the matched
+symbol in \code{xml}. This can be convenient for setting the source marker
+to land the editor's cursor exactly to the spot where corrected code can be
+entered. For example, in \code{\link[=T_and_F_symbol_linter]{T_and_F_symbol_linter()}}, in code using \code{T}, the
+cursor lands \emph{after} \code{T} so that \code{RUE} and be entered without further adjustment.}
 }
 \value{
 For \code{xml_node}s, a \code{lint}. For \code{xml_nodeset}s, \code{lints} (a list of \code{lint}s).
