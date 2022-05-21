@@ -1,5 +1,5 @@
 `%||%` <- function(x, y) {
-  if (is.null(x) || length(x) <= 0 || is.na(x[[1L]])) {
+  if (is.null(x) || length(x) <= 0L || is.na(x[[1L]])) {
     y
   } else {
     x
@@ -83,7 +83,7 @@ auto_names <- function(x) {
       paste(deparse(x, 500L), collapse = " ")
     }
   }
-  defaults <- vapply(x[missing], default_name, character(1), USE.NAMES = FALSE)
+  defaults <- vapply(x[missing], default_name, character(1L), USE.NAMES = FALSE)
 
   nms[missing] <- defaults
   nms
@@ -108,7 +108,7 @@ get_content <- function(lines, info) {
 
   if (!missing(info)) {
     lines[length(lines)] <- substr(lines[length(lines)], 1L, info$col2)
-    lines[1] <- substr(lines[1], info$col1, nchar(lines[1]))
+    lines[1L] <- substr(lines[1L], info$col1, nchar(lines[1L]))
   }
   paste0(collapse = "\n", lines)
 }
@@ -122,7 +122,7 @@ logical_env <- function(x) {
 }
 
 # from ?chartr
-rot <- function(ch, k = 13) {
+rot <- function(ch, k = 13L) {
   p0 <- function(...) paste(c(...), collapse = "")
   alphabet <- c(letters, LETTERS, " '")
   idx <- seq_len(k)
@@ -222,8 +222,17 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 # convert STR_CONST text() values into R strings. mainly to account for arbitrary
 #   character literals valid since R 4.0, e.g. R"------[ hello ]------".
 # NB: this is also properly vectorized.
-get_r_string <- function(s) {
-  if (inherits(s, "xml_nodeset")) s <- xml2::xml_text(s)
+get_r_string <- function(s, xpath = NULL) {
+  if (inherits(s, c("xml_node", "xml_nodeset"))) {
+    if (is.null(xpath)) {
+      s <- xml2::xml_text(s)
+    } else {
+      s <- xml2::xml_find_chr(s, sprintf("string(%s)", xpath))
+    }
+  }
+  # parse() skips "" elements --> offsets the length of the output,
+  #   but NA in --> NA out
+  is.na(s) <- !nzchar(s)
   out <- as.character(parse(text = s, keep.source = FALSE))
   is.na(out) <- is.na(s)
   out

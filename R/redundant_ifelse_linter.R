@@ -29,10 +29,10 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
       tf_expr,
       source_expression = source_expression,
       lint_message = function(expr) {
-        matched_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
+        matched_call <- xp_call_name(expr)
         # [1] call; [2] logical condiditon
-        first_arg <- xml2::xml_text(xml2::xml_find_first(expr, "expr[3]/NUM_CONST"))
-        second_arg <- xml2::xml_text(xml2::xml_find_first(expr, "expr[4]/NUM_CONST"))
+        first_arg <- xml2::xml_find_chr(expr, "string(expr[3]/NUM_CONST)")
+        second_arg <- xml2::xml_find_chr(expr, "string(expr[4]/NUM_CONST)")
         sprintf(
           "Just use the logical condition (or its negation) directly instead of calling %s(x, %s, %s)",
           matched_call, first_arg, second_arg
@@ -54,10 +54,10 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
         num_expr,
         source_expression = source_expression,
         lint_message = function(expr) {
-          matched_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
+          matched_call <- xp_call_name(expr)
           # [1] call; [2] logical condiditon
-          first_arg <- xml2::xml_text(xml2::xml_find_first(expr, "expr[3]/NUM_CONST"))
-          second_arg <- xml2::xml_text(xml2::xml_find_first(expr, "expr[4]/NUM_CONST"))
+          first_arg <- xml2::xml_find_chr(expr, "string(expr[3]/NUM_CONST)")
+          second_arg <- xml2::xml_find_chr(expr, "string(expr[4]/NUM_CONST)")
           replacement <- if (any(c(first_arg, second_arg) %in% c("0", "1"))) "as.numeric" else "as.integer"
           message <- sprintf(
             "Prefer %s(x) to %s(x, %s, %s) if really needed,",

@@ -27,17 +27,14 @@ condition_message_linter <- function() {
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    sep_value <- get_r_string(xml2::xml_find_first(
-      bad_expr,
-      "./expr/SYMBOL_SUB[text() = 'sep']/following-sibling::expr/STR_CONST"
-    ))
+    sep_value <- get_r_string(bad_expr, xpath = "./expr/SYMBOL_SUB[text() = 'sep']/following-sibling::expr/STR_CONST")
 
     xml_nodes_to_lints(
       bad_expr[is.na(sep_value) | sep_value %in% c("", " ")],
       source_expression = source_expression,
       lint_message = function(expr) {
-        outer_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
-        inner_call <- xml2::xml_text(xml2::xml_find_first(expr, "expr/expr/SYMBOL_FUNCTION_CALL"))
+        outer_call <- xp_call_name(expr)
+        inner_call <- xp_call_name(expr, depth = 2L)
 
         message <- sprintf("Don't use %s to build %s strings.", inner_call, outer_call)
         paste(
