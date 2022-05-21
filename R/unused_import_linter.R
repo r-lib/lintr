@@ -78,7 +78,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
       import_exprs[is_unused],
       source_expression = source_expression,
       lint_message = function(import_expr) {
-        pkg <- get_r_string(import_expr, xpath = "expr[STR_CONST | SYMBOL]")
+        pkg <- get_r_string(import_expr, xpath = "expr[STR_CONST|SYMBOL]")
         if (is_ns_used[match(pkg, imported_pkgs)]) {
           paste0(
             "package '", pkg, "' is only used by namespace. ",

@@ -219,7 +219,7 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #   character literals valid since R 4.0, e.g. R"------[ hello ]------".
 # NB: this is also properly vectorized.
 get_r_string <- function(s, xpath = NULL) {
-  if (inherits(s, "xml_nodeset")) {
+  if (inherits(s, c("xml_node", "xml_nodeset"))) {
     if (is.null(xpath)) {
       s <- xml2::xml_text(s)
     } else {
