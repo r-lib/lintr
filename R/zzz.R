@@ -82,6 +82,16 @@ default_linters <- modify_defaults(
 #'  * [undebug()] is only useful for interactive debugging with [debug()]. It should be removed.
 #'  * [untrace()] is only useful for interactive debugging with [trace()]. It should be removed.
 #'
+#' The following operators are sometimes regarded as undesirable:
+#'
+#'  * [`:::`][base::ns-dblcolon] accesses non-exported functions inside packages. Code relying on these is likely to
+#'    break in future versions of the package because the functions are not part of the public interface and may be
+#'    changed or removed by the maintainers without notice.
+#'    Use public functions via `::` instead.
+#'  * [`<<-`][base::assignOps] and `->>` assign outside the current environment in a way that can be hard to reason
+#'    about. Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific environment
+#'    with [assign()]. Recall that you can create an environment at the desired scope with [new.env()].
+#'
 #' @format A named list of character strings.
 #' @rdname default_undesirable_functions
 #' @export
@@ -127,54 +137,58 @@ all_undesirable_functions <- modify_defaults(
 )
 
 #' @rdname default_undesirable_functions
+#' @format
 #' @export
-default_undesirable_functions <- do.call(modify_defaults, c(
-  list(default = list()),
-  all_undesirable_functions[c(
-    "attach",
-    "browser",
-    "debug",
-    "debugcall",
-    "debugonce",
-    "detach",
-    ".libPaths",
-    "library",
-    "mapply",
-    "options",
-    "par",
-    "require",
-    "sapply",
-    "setwd",
-    "sink",
-    "source",
-    "Sys.setenv",
-    "Sys.setlocale",
-    "trace",
-    "undebug",
-    "untrace"
-  )]
-))
+default_undesirable_functions <- all_undesirable_functions[names(all_undesirable_functions) %in% c(
+  "attach",
+  "browser",
+  "debug",
+  "debugcall",
+  "debugonce",
+  "detach",
+  ".libPaths",
+  "library",
+  "mapply",
+  "options",
+  "par",
+  "require",
+  "sapply",
+  "setwd",
+  "sink",
+  "source",
+  "Sys.setenv",
+  "Sys.setlocale",
+  "trace",
+  "undebug",
+  "untrace"
+)]
 
 #' @rdname default_undesirable_functions
+#' @format
 #' @export
 all_undesirable_operators <- modify_defaults(
   defaults = list(),
-  ":::" = NA,
-  "<<-" = NA,
-  "->>" = NA
+  ":::" = paste("It accesses non-exported functions inside packages. Code relying on these is likely to break in",
+                "future versions of the package because the functions are not part of the public interface and may be",
+                "changed or removed by the maintainers without notice. Use public functions via :: instead."),
+  "<<-" = paste("It assigns outside the current environment in a way that can be hard to reason about.",
+                "Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific",
+                "environment with assign(). Recall that you can create an environment at the desired scope with",
+                "new.env()."),
+  "->>" = paste("It assigns outside the current environment in a way that can be hard to reason about.",
+                "Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific",
+                "environment with assign(). Recall that you can create an environment at the desired scope with",
+                "new.env().")
 )
 
 #' @rdname default_undesirable_functions
+#' @format
 #' @export
-default_undesirable_operators <- do.call(modify_defaults, c(
-  list(default = list()),
-  all_undesirable_operators[c(
-    ":::",
-    "<<-",
-    "->>"
-  )]
-))
-
+default_undesirable_operators <- all_undesirable_operators[names(all_undesirable_operators) %in% c(
+  ":::",
+  "<<-",
+  "->>"
+)]
 
 #' Default lintr settings
 #' @seealso [read_settings()], [default_linters]

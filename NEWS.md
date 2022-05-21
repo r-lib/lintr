@@ -179,7 +179,7 @@ function calls. (#850, #851, @renkun-ken)
 * New `is_lint_level()` helper for readably explaining which type of expression is required for a custom linter. Some linters are written to either require the full file's parse tree (for example, `single_quotes_linter()`). Others only need single expressions, which is more cache-friendly (most linters are written this way to leverage caching). (#921, @michaelchirico)
 * `object_usage_linter()` now detects functions exported by packages that are explicitly attached using `library()` or `require()` calls (#1127, @AshesITR)
 * New helper `xml_nodes_to_lints()` for converting `xml_node` objects obtained using linter logic expressed in XPath into `Lint` objects (#1124, @michaelchirico)
-* Added more explanation why certain functions might be undesirable and what alternatives to use (#1133, #1146, @AshesITR)
+* Added more explanation why certain functions and operators might be undesirable and what alternatives to use (#1133, #1146, #1159, @AshesITR)
 
 # lintr 2.0.1
 
