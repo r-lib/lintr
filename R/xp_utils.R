@@ -121,17 +121,7 @@ xp_call_name <- function(expr, depth = 1L, condition = NULL) {
     node <- sprintf("SYMBOL_FUNCTION_CALL[%s]", condition)
   }
 
-  # use an explicit condition for the most common cases, and an uglier
-  #   expression for full generality
-  if (depth == 0L) {
-    xpath <- node
-  } else if (depth == 1L) {
-    xpath <- sprintf("expr/%s", node)
-  } else if (depth == 2L) {
-    xpath <- sprintf("expr/expr/%s", node)
-  } else {
-    xpath <- do.call(file.path, c(rep(list("expr"), depth), list(node)))
-  }
+  xpath <- paste0("string(", strrep("expr/", depth), node, ")")
 
-  xml2::xml_find_chr(expr, sprintf("string(%s)", xpath))
+  xml2::xml_find_chr(expr, xpath)
 }
