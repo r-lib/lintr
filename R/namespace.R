@@ -39,7 +39,7 @@ is_s3_generic <- function(fun) {
   # Inspired by `utils::isS3stdGeneric`, though it will detect functions that
   # have `useMethod()` in places other than the first expression.
   bdexpr <- body(fun)
-  while (is.call(bdexpr) && bdexpr[[1L]] == "{") bdexpr <- tail(bdexpr, 1L)[[1L]]
+  while (is.call(bdexpr) && bdexpr[[1L]] == "{") bdexpr <- bdexpr[[length(bdexpr)]]
   ret <- is.call(bdexpr) && identical(bdexpr[[1L]], as.name("UseMethod"))
   if (ret)
     names(ret) <- bdexpr[[2L]]
