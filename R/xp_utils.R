@@ -112,3 +112,15 @@ xp_and <- function(...) paren_wrap(..., sep = "and")
 #' @param ... Series of conditions
 #' @noRd
 xp_or <- function(...) paren_wrap(..., sep = "or")
+
+xp_call_name <- function(expr, depth = 1L, condition = NULL) {
+  if (is.null(condition)) {
+    node <- "SYMBOL_FUNCTION_CALL"
+  } else {
+    node <- sprintf("SYMBOL_FUNCTION_CALL[%s]", condition)
+  }
+
+  xpath <- paste0("string(", strrep("expr/", depth), node, ")")
+
+  xml2::xml_find_chr(expr, xpath)
+}

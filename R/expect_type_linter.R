@@ -38,7 +38,7 @@ expect_type_linter <- function() {
       bad_expr,
       source_expression,
       function(expr) {
-        matched_function <- xml2::xml_text(xml2::xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL"))
+        matched_function <- xp_call_name(expr)
         if (matched_function %in% c("expect_equal", "expect_identical")) {
           sprintf("expect_type(x, t) is better than %s(typeof(x), t)", matched_function)
         } else {
