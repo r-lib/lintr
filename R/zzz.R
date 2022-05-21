@@ -88,9 +88,9 @@ default_linters <- modify_defaults(
 #'    break in future versions of the package because the functions are not part of the public interface and may be
 #'    changed or removed by the maintainers without notice.
 #'    Use public functions via `::` instead.
-#'  * [`<<-`][base::assignOps] and `->>` assign variables outside of the current environment, breaking functional
-#'    encapsulation by causing side-effects. This makes code harder to debug and reason about.
-#'    Use a separate environment created by [new.env()] for mutable state instead.
+#'  * [`<<-`][base::assignOps] and `->>` assign outside the current environment in a way that can be hard to reason
+#'    about. Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific environment
+#'    with [assign()]. Recall that you can create an environment at the desired scope with [new.env()].
 #'
 #' @format A named list of character strings.
 #' @rdname default_undesirable_functions
@@ -171,12 +171,14 @@ all_undesirable_operators <- modify_defaults(
   ":::" = paste("It accesses non-exported functions inside packages. Code relying on these is likely to break in",
                 "future versions of the package because the functions are not part of the public interface and may be",
                 "changed or removed by the maintainers without notice. Use public functions via :: instead."),
-  "<<-" = paste("It assigns variables outside of the current environment, breaking functional encapsulation by",
-                "causing side-effects. This makes code harder to debug and reason about.",
-                "Use a separate environment created by new.env() for mutable state instead."),
-  "->>" = paste("It assigns variables outside of the current environment, breaking functional encapsulation by",
-                "causing side-effects. This makes code harder to debug and reason about.",
-                "Use a separate environment created by new.env() for mutable state instead.")
+  "<<-" = paste("It assigns outside the current environment in a way that can be hard to reason about.",
+                "Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific",
+                "environment with assign(). Recall that you can create an environment at the desired scope with",
+                "new.env()."),
+  "->>" = paste("It assigns outside the current environment in a way that can be hard to reason about.",
+                "Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific",
+                "environment with assign(). Recall that you can create an environment at the desired scope with",
+                "new.env().")
 )
 
 #' @rdname default_undesirable_functions

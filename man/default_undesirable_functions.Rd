@@ -75,9 +75,9 @@ The following operators are sometimes regarded as undesirable:
 break in future versions of the package because the functions are not part of the public interface and may be
 changed or removed by the maintainers without notice.
 Use public functions via \code{::} instead.
-\item \code{\link[base:assignOps]{<<-}} and \verb{->>} assign variables outside of the current environment, breaking functional
-encapsulation by causing side-effects. This makes code harder to debug and reason about.
-Use a separate environment created by \code{\link[=new.env]{new.env()}} for mutable state instead.
+\item \code{\link[base:assignOps]{<<-}} and \verb{->>} assign outside the current environment in a way that can be hard to reason
+about. Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific environment
+with \code{\link[=assign]{assign()}}. Recall that you can create an environment at the desired scope with \code{\link[=new.env]{new.env()}}.
 }
 }
 \keyword{datasets}
