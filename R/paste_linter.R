@@ -33,10 +33,7 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
       ]"
 
       empty_sep_expr <- xml2::xml_find_all(xml, sep_xpath)
-      sep_value <- get_r_string(xml2::xml_find_chr(
-        empty_sep_expr,
-        "string(./SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1])"
-      ))
+      sep_value <- get_r_string(empty_sep_expr, xpath = "./SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1]")
 
       empty_sep_lints <- xml_nodes_to_lints(
         empty_sep_expr[!nzchar(sep_value)],
@@ -56,10 +53,7 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
         and SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1][STR_CONST]
       ]")
       to_string_expr <- xml2::xml_find_all(xml, to_string_xpath)
-      collapse_value <- get_r_string(xml2::xml_find_chr(
-        to_string_expr,
-        "string(./SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1])"
-      ))
+      collapse_value <- get_r_string(to_string_expr, xpath = "./SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1]")
 
       to_string_lints <- xml_nodes_to_lints(
         to_string_expr[collapse_value == ", "],

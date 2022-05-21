@@ -218,8 +218,14 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 # convert STR_CONST text() values into R strings. mainly to account for arbitrary
 #   character literals valid since R 4.0, e.g. R"------[ hello ]------".
 # NB: this is also properly vectorized.
-get_r_string <- function(s) {
-  if (inherits(s, "xml_nodeset")) s <- xml2::xml_text(s)
+get_r_string <- function(s, xpath = NULL) {
+  if (inherits(s, "xml_nodeset")) {
+    if (is.null(xpath)) {
+      s <- xml2::xml_text(s)
+    } else {
+      s <- xml2::xml_find_chr(s, sprintf("string(%s)", xpath))
+    }
+  }
   # parse() skips "" elements --> offsets the length of the output,
   #   but NA in --> NA out
   is.na(s) <- !nzchar(s)

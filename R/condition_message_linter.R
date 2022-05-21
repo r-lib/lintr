@@ -27,10 +27,7 @@ condition_message_linter <- function() {
     ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    sep_value <- get_r_string(xml2::xml_find_chr(
-      bad_expr,
-      "string(./expr/SYMBOL_SUB[text() = 'sep']/following-sibling::expr/STR_CONST)"
-    ))
+    sep_value <- get_r_string(bad_expr, xpath = "./expr/SYMBOL_SUB[text() = 'sep']/following-sibling::expr/STR_CONST")
 
     xml_nodes_to_lints(
       bad_expr[is.na(sep_value) | sep_value %in% c("", " ")],
