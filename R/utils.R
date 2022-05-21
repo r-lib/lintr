@@ -83,7 +83,7 @@ auto_names <- function(x) {
       paste(deparse(x, 500L), collapse = " ")
     }
   }
-  defaults <- vapply(x[missing], default_name, character(1), USE.NAMES = FALSE)
+  defaults <- vapply(x[missing], default_name, character(1L), USE.NAMES = FALSE)
 
   nms[missing] <- defaults
   nms
