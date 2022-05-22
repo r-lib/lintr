@@ -1,0 +1,7 @@
+url: https://lintr.r-lib.org
+template:
+  bootstrap: 5
+
+  includes:
+    in_header: |
+      <script defer data-domain="lintr.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
