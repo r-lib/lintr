@@ -10,8 +10,6 @@ reference:
 - title: Linting
   contents:
   - lint
-  - lint_dir
-  - lint_package
   - linters_with_defaults
 
 - title: Configuration

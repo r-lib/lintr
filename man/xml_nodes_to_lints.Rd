@@ -27,8 +27,6 @@ this function is first applied to \code{xml} (so it should be a
 function taking an \code{xml_node} as input and must produce a
 length-1 character as output).}
 
-\item{type}{type of lint.}
-
 \item{match_after_end}{Logical, default \code{FALSE}. If \code{TRUE},
 The output \code{column_number} and \code{ranges[2L]} are set to \emph{after} the matched
 symbol in \code{xml}. This can be convenient for setting the source marker
