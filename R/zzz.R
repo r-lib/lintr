@@ -137,7 +137,7 @@ all_undesirable_functions <- modify_defaults(
 )
 
 #' @rdname default_undesirable_functions
-#' @format
+#' @format NULL
 #' @export
 default_undesirable_functions <- all_undesirable_functions[names(all_undesirable_functions) %in% c(
   "attach",
@@ -164,7 +164,7 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
 )]
 
 #' @rdname default_undesirable_functions
-#' @format
+#' @format NULL
 #' @export
 all_undesirable_operators <- modify_defaults(
   defaults = list(),
@@ -182,7 +182,7 @@ all_undesirable_operators <- modify_defaults(
 )
 
 #' @rdname default_undesirable_functions
-#' @format
+#' @format NULL
 #' @export
 default_undesirable_operators <- all_undesirable_operators[names(all_undesirable_operators) %in% c(
   ":::",
