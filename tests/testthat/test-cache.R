@@ -6,9 +6,9 @@ fixtures$retrieve_lint <- function() {
   file_name <- "R/test.R"
   lines <- c("foobar1", "foobar2", "foobar3")
   lints <- list(
-    Lint(file_name, 1, line = "foobar1"),
-    Lint(file_name, 2, line = "foobar2"),
-    Lint(file_name, 3, line = "foobar3")
+    Lint(file_name, 1L, line = "foobar1"),
+    Lint(file_name, 2L, line = "foobar2"),
+    Lint(file_name, 3L, line = "foobar3")
   )
   expr <- list(content = paste(collapse = "\n", lines))
   list(
@@ -90,8 +90,8 @@ test_that("load_cache returns an empty environment if reading cache file fails",
   saveRDS(e1, cache_f1)
   expect_warning(e3 <- load_cache(file = f1, path = d1), "Could not load cache file")
 
-  expect_equal(ls(e2), character(0))
-  expect_equal(ls(e3), character(0))
+  expect_equal(ls(e2), character())
+  expect_equal(ls(e3), character())
 })
 
 # `save_cache`
@@ -130,8 +130,8 @@ test_that("save_cache uses unambiguous cache file names", {
 
 test_that("save_cache saves all non-hidden objects from the environment", {
   e1 <- new.env(parent = emptyenv())
-  e1$t1 <- 1
-  e1$t2 <- 2
+  e1$t1 <- 1L
+  e1$t2 <- 2L
 
   d1 <- tempfile(pattern = "lintr_cache_")
   f1 <- "R/test.R"
@@ -155,7 +155,7 @@ test_that("cache_file generates the same cache with different lints", {
   on.exit(unlink(f1))
 
   cache_file(e1, f1, list(), list())
-  cache_file(e1, f1, list(), list(1))
+  cache_file(e1, f1, list(), list(1L))
 
   expect_length(ls(e1), 1L)
 })
@@ -168,7 +168,7 @@ test_that("cache_file generates different caches for different linters", {
   on.exit(unlink(f1))
 
   cache_file(e1, f1, list(), list())
-  cache_file(e1, f1, list(1), list())
+  cache_file(e1, f1, list(1L), list())
 
   expect_length(ls(e1), 2L)
 })
@@ -203,7 +203,7 @@ test_that("cache_lint generates the same cache with different lints", {
 
   t1 <- list(content = "test")
   cache_lint(e1, t1, list(), list())
-  cache_lint(e1, t1, list(), list(1))
+  cache_lint(e1, t1, list(), list(1L))
 
   expect_length(ls(e1), 1L)
 })
@@ -214,7 +214,7 @@ test_that("cache_lint generates different caches for different linters", {
   t1 <- list(content = "test")
 
   cache_lint(e1, t1, list(), list())
-  cache_lint(e1, t1, list(1), list())
+  cache_lint(e1, t1, list(1L), list())
 
   expect_length(ls(e1), 2L)
 })
@@ -267,9 +267,9 @@ test_that(
     lines = lines2
   )
 
-  expect_equal(t1[[1]]$line_number, lints[[1]]$line_number + 1)
-  expect_equal(t1[[2]]$line_number, lints[[2]]$line_number + 1)
-  expect_equal(t1[[3]]$line_number, lints[[3]]$line_number + 1)
+  expect_equal(t1[[1L]]$line_number, lints[[1L]]$line_number + 1L)
+  expect_equal(t1[[2L]]$line_number, lints[[2L]]$line_number + 1L)
+  expect_equal(t1[[3L]]$line_number, lints[[3L]]$line_number + 1L)
 })
 
 test_that("retrieve_lint returns the same lints with lines added below", {
@@ -304,7 +304,7 @@ test_that(
   e1 <- new.env(parent = emptyenv())
 
   lines1 <- test_data[["lines"]]
-  lines2 <- c(lines1[1], "", lines1[2:3], "")
+  lines2 <- c(lines1[1L], "", lines1[2L:3L], "")
 
   lints1 <- test_data[["lints"]]
 
@@ -322,9 +322,9 @@ test_that(
     lines = lines2
   )
 
-  expect_equal(t1[[1]]$line_number, lints1[[1]]$line_number)
-  expect_equal(t1[[2]]$line_number, lints1[[2]]$line_number + 1)
-  expect_equal(t1[[3]]$line_number, lints1[[3]]$line_number + 1)
+  expect_equal(t1[[1L]]$line_number, lints1[[1L]]$line_number)
+  expect_equal(t1[[2L]]$line_number, lints1[[2L]]$line_number + 1L)
+  expect_equal(t1[[3L]]$line_number, lints1[[3L]]$line_number + 1L)
 })
 
 # `has_lint`
@@ -362,33 +362,33 @@ test_that("find_new_line returns the same if the line is the same", {
   t1 <- c("foobar1",
           "foobar2",
           "foobar3")
-  expect_equal(find_new_line(1, "foobar1", t1), 1)
+  expect_equal(find_new_line(1L, "foobar1", t1), 1L)
 
-  expect_equal(find_new_line(2, "foobar2", t1), 2)
+  expect_equal(find_new_line(2L, "foobar2", t1), 2L)
 
-  expect_equal(find_new_line(3, "foobar3", t1), 3)
+  expect_equal(find_new_line(3L, "foobar3", t1), 3L)
 })
 
 test_that("find_new_line returns the correct line if it is before the current line", {
   t1 <- c("foobar1",
           "foobar2",
           "foobar3")
-  expect_equal(find_new_line(1, "foobar1", t1), 1)
+  expect_equal(find_new_line(1L, "foobar1", t1), 1L)
 
-  expect_equal(find_new_line(2, "foobar1", t1), 1)
+  expect_equal(find_new_line(2L, "foobar1", t1), 1L)
 
-  expect_equal(find_new_line(3, "foobar1", t1), 1)
+  expect_equal(find_new_line(3L, "foobar1", t1), 1L)
 })
 
 test_that("find_new_line returns the correct line if it is after the current line", {
   t1 <- c("foobar1",
           "foobar2",
           "foobar3")
-  expect_equal(find_new_line(1, "foobar3", t1), 3)
+  expect_equal(find_new_line(1L, "foobar3", t1), 3L)
 
-  expect_equal(find_new_line(2, "foobar3", t1), 3)
+  expect_equal(find_new_line(2L, "foobar3", t1), 3L)
 
-  expect_equal(find_new_line(3, "foobar3", t1), 3)
+  expect_equal(find_new_line(3L, "foobar3", t1), 3L)
 })
 
 #
@@ -401,7 +401,7 @@ test_that("lint with cache uses the provided relative cache directory", {
   # create the cache
   expect_lint("a <- 1", NULL, linter, cache = path)
   expect_true(dir.exists(path))
-  expect_length(list.files(file.path(path)), 1)
+  expect_length(list.files(file.path(path)), 1L)
 
   # read the cache
   expect_lint("a <- 1", NULL, linter, cache = path)
@@ -443,14 +443,14 @@ test_that("cache = TRUE works with nolint", {
   on.exit(unlink(file))
 
   writeLines("1+1\n", file)
-  expect_length(lint(file, linters, cache = TRUE), 1)
+  expect_length(lint(file, linters, cache = TRUE), 1L)
 
   writeLines("1+1 # nolint\n", file)
-  expect_length(lint(file, linters, cache = TRUE), 0)
+  expect_length(lint(file, linters, cache = TRUE), 0L)
 
   writeLines("1+1\n", file)
-  expect_length(lint(file, linters, cache = TRUE), 1)
+  expect_length(lint(file, linters, cache = TRUE), 1L)
 
   writeLines("1+1 # nolint\n", file)
-  expect_length(lint(file, linters, cache = TRUE), 0)
+  expect_length(lint(file, linters, cache = TRUE), 0L)
 })
