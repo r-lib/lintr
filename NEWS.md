@@ -160,6 +160,7 @@
   caching). (#921, @michaelchirico)
 * New helper `xml_nodes_to_lints()` for converting `xml_node` objects obtained using linter logic expressed in XPath 
   into `Lint` objects (#1124, @michaelchirico)
+* New `use_lintr()` helper for creating a minimal `.lintr` configuration (#902, @AshesITR)
  
 ## Improvements and bug fixes
 
