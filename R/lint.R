@@ -393,7 +393,10 @@ validate_linter_object <- function(linter, name) {
 is_linter_factory <- function(fun) {
   # A linter factory is a function whose last call is to Linter()
   bdexpr <- body(fun)
-  while (is.call(bdexpr) && bdexpr[[1L]] == "{") bdexpr <- bdexpr[[length(bdexpr)]]
+  # covr internally transforms each call into if (TRUE) { covr::count(...); call }
+  while (is.call(bdexpr) && (bdexpr[[1L]] == "{" || (bdexpr[[1L]] == "if" && bdexpr[[2L]] == "TRUE"))) {
+    bdexpr <- bdexpr[[length(bdexpr)]]
+  }
   is.call(bdexpr) && identical(bdexpr[[1L]], as.name("Linter"))
 }
 
