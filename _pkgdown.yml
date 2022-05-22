@@ -5,3 +5,45 @@ template:
   includes:
     in_header: |
       <script defer data-domain="lintr.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
+
+reference:
+- title: Linting
+  contents:
+  - lint_dir
+  - lint_file
+  - lint_package
+  - linters_with_defaults
+  - linters_with_tags
+  - read_settings
+  - exclude
+  - modify_defaults
+  - checkstyle_output
+
+- title: Individual linters
+  contents:
+  - all_undesirable_functions
+  - ends_with("linter")
+
+- title: Linter bunldes
+  contents:
+  - ends_with("linters")
+
+
+- title: Pacakge development
+  contents:
+  - expect_lint
+  - expect_lint_free
+  - use_lintr
+
+- title: Internals
+  contents:
+  - Lint
+  - Linter
+  - clear_cache
+  - default_settings
+  - get_source_expressions
+  - ids_with_token
+  - is_lint_level
+  - parse_exclusions
+  - xml_nodes_to_lints
+
