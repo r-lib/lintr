@@ -1,108 +1,106 @@
 # Platform
 
-|field    |value                        |
-|:--------|:----------------------------|
-|version  |R version 4.1.0 (2021-05-18) |
-|os       |Arch Linux                   |
-|system   |x86_64, linux-gnu            |
-|ui       |RStudio                      |
-|language |(EN)                         |
-|collate  |en_DK.UTF-8                  |
-|ctype    |en_DK.UTF-8                  |
-|tz       |Europe/Berlin                |
-|date     |2021-07-09                   |
+|field    |value                                |
+|:--------|:------------------------------------|
+|version  |R version 4.2.0 (2022-04-22)         |
+|os       |Arch Linux                           |
+|system   |x86_64, linux-gnu                    |
+|ui       |RStudio                              |
+|language |(EN)                                 |
+|collate  |en_DK.UTF-8                          |
+|ctype    |en_DK.UTF-8                          |
+|tz       |Europe/Berlin                        |
+|date     |2022-05-22                           |
+|rstudio  |1.3.1056  (desktop)                  |
+|pandoc   |2.17.1.1 @ /usr/bin/ (via rmarkdown) |
 
 # Dependencies
 
 |package      |old    |new        |Δ  |
 |:------------|:------|:----------|:--|
 |lintr        |2.0.1  |2.0.1.9000 |*  |
-|askpass      |1.1    |1.1        |   |
-|brio         |1.1.2  |1.1.2      |   |
+|askpass      |1.1    |NA         |*  |
+|backports    |NA     |1.4.1      |*  |
+|brio         |1.1.3  |NA         |*  |
 |callr        |3.7.0  |3.7.0      |   |
-|cli          |3.0.0  |3.0.0      |   |
-|crayon       |1.4.1  |1.4.1      |   |
-|curl         |4.3.2  |4.3.2      |   |
+|cli          |3.3.0  |3.3.0      |   |
+|crayon       |1.5.1  |1.5.1      |   |
+|curl         |4.3.2  |NA         |*  |
 |cyclocomp    |1.1.0  |1.1.0      |   |
-|desc         |1.3.0  |1.3.0      |   |
-|diffobj      |0.3.4  |0.3.4      |   |
-|digest       |0.6.27 |0.6.27     |   |
-|ellipsis     |0.3.2  |0.3.2      |   |
-|evaluate     |0.14   |0.14       |   |
-|fansi        |0.5.0  |0.5.0      |   |
-|glue         |1.4.2  |1.4.2      |   |
+|desc         |1.4.1  |1.4.1      |   |
+|diffobj      |0.3.5  |NA         |*  |
+|digest       |0.6.29 |0.6.29     |   |
+|ellipsis     |0.3.2  |NA         |*  |
+|evaluate     |0.15   |0.15       |   |
+|fansi        |1.0.3  |NA         |*  |
+|glue         |1.6.2  |1.6.2      |   |
 |highr        |0.9    |0.9        |   |
-|httr         |1.4.2  |1.4.2      |   |
-|jsonlite     |1.7.2  |1.7.2      |   |
-|knitr        |1.33   |1.33       |   |
+|httr         |1.4.3  |NA         |*  |
+|jsonlite     |1.8.0  |1.8.0      |   |
+|knitr        |1.39   |1.39       |   |
 |lazyeval     |0.2.2  |0.2.2      |   |
-|lifecycle    |1.0.0  |1.0.0      |   |
-|magrittr     |2.0.1  |2.0.1      |   |
-|markdown     |1.1    |1.1        |   |
-|mime         |0.11   |0.11       |   |
-|openssl      |1.4.4  |1.4.4      |   |
-|pillar       |1.6.1  |1.6.1      |   |
-|pkgconfig    |2.0.3  |2.0.3      |   |
-|pkgload      |1.2.1  |1.2.1      |   |
-|praise       |1.0.0  |1.0.0      |   |
-|processx     |3.5.2  |3.5.2      |   |
-|ps           |1.6.0  |1.6.0      |   |
-|R6           |2.5.0  |2.5.0      |   |
-|rematch2     |2.1.2  |2.1.2      |   |
-|remotes      |2.4.0  |2.4.0      |   |
-|rex          |1.2.0  |1.2.0      |   |
-|rlang        |0.4.11 |0.4.11     |   |
-|rprojroot    |2.0.2  |2.0.2      |   |
-|rstudioapi   |0.13   |0.13       |   |
-|stringi      |1.6.2  |1.6.2      |   |
+|lifecycle    |1.0.1  |NA         |*  |
+|magrittr     |2.0.3  |2.0.3      |   |
+|mime         |0.12   |NA         |*  |
+|openssl      |2.0.1  |NA         |*  |
+|pillar       |1.7.0  |NA         |*  |
+|pkgconfig    |2.0.3  |NA         |*  |
+|pkgload      |1.2.4  |NA         |*  |
+|praise       |1.0.0  |NA         |*  |
+|processx     |3.5.3  |3.5.3      |   |
+|ps           |1.7.0  |1.7.0      |   |
+|R6           |2.5.1  |2.5.1      |   |
+|rematch2     |2.1.2  |NA         |*  |
+|remotes      |2.4.2  |2.4.2      |   |
+|rex          |1.2.1  |1.2.1      |   |
+|rlang        |1.0.2  |NA         |*  |
+|rprojroot    |2.0.3  |2.0.3      |   |
+|rstudioapi   |0.13   |NA         |*  |
+|stringi      |1.7.6  |1.7.6      |   |
 |stringr      |1.4.0  |1.4.0      |   |
-|sys          |3.4    |3.4        |   |
-|testthat     |3.0.4  |3.0.4      |   |
-|tibble       |3.1.2  |3.1.2      |   |
-|utf8         |1.2.1  |1.2.1      |   |
-|vctrs        |0.3.8  |0.3.8      |   |
-|waldo        |0.2.5  |0.2.5      |   |
-|withr        |2.4.2  |2.4.2      |   |
-|xfun         |0.24   |0.24       |   |
-|xml2         |1.3.2  |1.3.2      |   |
+|sys          |3.4    |NA         |*  |
+|testthat     |3.1.4  |NA         |*  |
+|tibble       |3.1.7  |NA         |*  |
+|utf8         |1.2.2  |NA         |*  |
+|vctrs        |0.4.1  |NA         |*  |
+|waldo        |0.4.0  |NA         |*  |
+|withr        |2.5.0  |2.5.0      |   |
+|xfun         |0.31   |0.31       |   |
+|xml2         |1.3.3  |1.3.3      |   |
 |xmlparsedata |1.0.5  |1.0.5      |   |
-|yaml         |2.2.1  |2.2.1      |   |
+|yaml         |2.3.5  |2.3.5      |   |
 
 # Revdeps
 
-## Failed to check (25)
+## Failed to check (27)
 
 |package             |version |error |warning |note |
 |:-------------------|:-------|:-----|:-------|:----|
 |ASSIGN              |?       |      |        |     |
-|autoharp            |?       |      |        |     |
 |babette             |?       |      |        |     |
 |beautier            |?       |      |        |     |
-|BiasCorrector       |?       |      |        |     |
 |BTYDplus            |?       |      |        |     |
-|caliver             |?       |      |        |     |
 |caretEnsemble       |?       |      |        |     |
 |chimeraviz          |?       |      |        |     |
-|crunch              |?       |      |        |     |
+|ConNEcT             |?       |      |        |     |
 |datarobot           |?       |      |        |     |
 |DepthProc           |?       |      |        |     |
-|DIZutils            |?       |      |        |     |
 |FSelectorRcpp       |?       |      |        |     |
+|geofacet            |?       |      |        |     |
+|geogrid             |?       |      |        |     |
 |ggfortify           |?       |      |        |     |
-|healthcareai        |2.5.0   |1     |        |     |
+|healthcareai        |?       |      |        |     |
+|INSPECTumours       |?       |      |        |     |
 |jpmesh              |?       |      |        |     |
 |mimager             |?       |      |        |     |
 |mlr                 |?       |      |        |     |
 |mlrCPO              |?       |      |        |     |
-|packager            |?       |      |        |     |
+|perturbatr          |1.12.0  |1     |        |     |
+|PosteriorBootstrap  |?       |      |        |     |
 |PWFSLSmoke          |?       |      |        |     |
+|RLSeq               |?       |      |        |     |
 |singleCellTK        |?       |      |        |     |
 |smerc               |?       |      |        |     |
 |TBSignatureProfiler |?       |      |        |     |
-
-## New problems (1)
-
-|package                              |version |error  |warning |note |
-|:------------------------------------|:-------|:------|:-------|:----|
-|[RestRserve](problems.md#restrserve) |0.4.1   |__+1__ |        |2    |
+|unifir              |?       |      |        |     |
 
