@@ -39,14 +39,14 @@ test_that("linter_names", {
     lints <- lint(test_file, linters = x[linter_name], parse_settings = FALSE)
     lint_df <- as.data.frame(lints)
     expect_true(
-      nrow(lint_df) > 0,
+      nrow(lint_df) > 0L,
       info = paste(
         "each default linter should throw a lint on",
         "'default_linter_testcode.R'"
       )
     )
     expect_equal(
-      lint_df[["linter"]][1], linter_name,
+      lint_df[["linter"]][1L], linter_name,
       info = paste(
         "the 'linter' name reported by lint() / Lint() should match the",
         "name of the corresponding linting function"
