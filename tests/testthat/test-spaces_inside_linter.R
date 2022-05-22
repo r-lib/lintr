@@ -12,20 +12,20 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "a[1 ]",
-    list(message = msg, line_number = 1, column_number = 4, type = "style"),
+    list(message = msg, line_number = 1L, column_number = 4L, type = "style"),
     linter
   )
 
   expect_lint(
     "\n\na[ 1]",
-    list(message = msg, line_number = 3, column_number = 3, type = "style"),
+    list(message = msg, line_number = 3L, column_number = 3L, type = "style"),
     linter
   )
 
   expect_lint(
     "a[ 1 ]",
-    list(list(message = msg, line_number = 1, column_number = 3, type = "style"),
-         list(message = msg, line_number = 1, column_number = 5, type = "style")),
+    list(list(message = msg, line_number = 1L, column_number = 3L, type = "style"),
+         list(message = msg, line_number = 1L, column_number = 5L, type = "style")),
     linter
   )
 
@@ -37,20 +37,20 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "a(1 )",
-    list(message = msg, line_number = 1, column_number = 4, type = "style"),
+    list(message = msg, line_number = 1L, column_number = 4L, type = "style"),
     linter
   )
 
   expect_lint(
     "a( 1)",
-    list(message = msg, line_number = 1, column_number = 3, type = "style"),
+    list(message = msg, line_number = 1L, column_number = 3L, type = "style"),
     linter
   )
 
   expect_lint(
     "a( 1 )",
-    list(list(message = msg, line_number = 1, column_number = 3, type = "style"),
-         list(message = msg, line_number = 1, column_number = 5, type = "style")),
+    list(list(message = msg, line_number = 1L, column_number = 3L, type = "style"),
+         list(message = msg, line_number = 1L, column_number = 5L, type = "style")),
     linter
   )
 
