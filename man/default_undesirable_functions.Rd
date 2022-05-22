@@ -41,7 +41,7 @@ The following functions are sometimes regarded as undesirable:
 \item \code{\link[=detach]{detach()}} modifies the global search path. Detaching environments from the search path is rarely necessary in
 production code.
 \item \code{\link[=ifelse]{ifelse()}} isn't type stable. Use an \code{if}/\verb{else} block for scalar logic, or use
-\code{\link[dplyr:if_else]{dplyr::if_else()}}/\code{\link[data.table:fifelse]{data.table::fifelse()}} for type stable vectorized logic.
+\code{dplyr::if_else()}/\code{data.table::fifelse()} for type stable vectorized logic.
 \item \code{\link[=.libPaths]{.libPaths()}} permanently modifies the library location. Use \code{\link[withr:with_libpaths]{withr::with_libpaths()}} for a temporary change
 instead.
 \item \code{\link[=library]{library()}} modifies the global search path. Use roxygen2's @importFrom statement in packages, or \code{::} in scripts.
