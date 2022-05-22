@@ -1,7 +1,8 @@
 #' Spaces inside linter
 #'
-#' Check that parentheses and square brackets do not have spaces directly inside them, i.e., directly following an
-#' opening delimiter or directly preceding a closing delimiter.
+#' Check that parentheses and square brackets do not have spaces directly
+#'   inside them, i.e., directly following an opening delimiter or directly
+#'   preceding a closing delimiter.
 #'
 #' @evalRd rd_tags("spaces_inside_linter")
 #' @seealso
@@ -10,59 +11,31 @@
 #' @export
 spaces_inside_linter <- function() {
   Linter(function(source_expression) {
-    tokens <- c(
-      "'('",
-      "')'",
-      "'['",
-      "']'")
+    if (!is_lint_level(source_expression, "file")) {
+      return(list())
+    }
 
-    # using a regex here as checking each token is horribly slow
-    re <- rex(
-      list(one_of("[("), one_or_more(" "), none_of(end %or% "#" %or% " ")) %or%
-        list(" " %if_prev_isnt% ",", one_of("])"))
-    )
-    all_matches <- re_matches(source_expression$lines, re, global = TRUE, locations = TRUE)
-    line_numbers <- as.integer(names(source_expression$lines))
+    xml <- source_expression$full_xml_parsed_content
 
-    Map(
-      function(line_matches, line_number) {
-        apply(
-          line_matches,
-          1L,
-          function(match) {
-            start <- match[["start"]]
-            if (is.na(start)) {
-              return()
-            }
-            end <- match[["end"]]
-            line <- source_expression$lines[[as.character(line_number)]]
-
-            # make sure that the closing is not at the start of a new line (which is valid).
-            start_of_line <- re_matches(line, rex(start, spaces, one_of("])")), locations = TRUE)
-
-            if (is.na(start_of_line$start) || start_of_line$end != end) {
-              pc <- source_expression$parsed_content
-              is_token <-
-                any(pc[["line1"]] == line_number &
-                      (pc[["col1"]] == end | pc[["col1"]] == start) &
-                      pc[["token"]] %in% tokens)
-
-              if (is_token) {
-                Lint(
-                  filename = source_expression$filename,
-                  line_number = line_number,
-                  column_number = if (substr(line, start, start) == " ") start else start + 1L,
-                  type = "style",
-                  message = "Do not place spaces around code in parentheses or square brackets.",
-                  line = line
-                )
-              }
-            }
-          }
-        )
-      },
-      all_matches,
-      line_numbers
+    xpath <- "//*[
+      (
+        (self::OP-RIGHT-BRACKET or self::OP-RIGHT-PAREN)
+        and not(preceding-sibling::*[1][self::OP-COMMA])
+        and @start != preceding-sibling::*[1]/@end + 1
+        and @line1 = preceding-sibling::*[1]/@line2
+      ) or (
+        (self::OP-LEFT-BRACKET or self::OP-LEFT-PAREN)
+        and not(following-sibling::*[1][self::COMMENT])
+        and @end != following-sibling::*[1]/@start - 1
+        and @line1 = following-sibling::*[1]/@line2
+      )
+    ]"
+    bad_expr <- xml2::xml_find_all(xml, xpath)
+    xml_nodes_to_lints(
+      bad_expr,
+      source_expression = source_expression,
+      lint_message = "Do not place spaces around code in parentheses or square brackets.",
+      type = "style"
     )
   })
 }
