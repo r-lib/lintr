@@ -2,11 +2,11 @@
 #'
 #' Checks adherence to a given style, syntax errors and possible semantic issues.
 #' Supports on the fly checking of R code edited with Emacs, Vim and Sublime Text.
-#' @name lintr
 #' @seealso [lint()], [lint_package()], [lint_dir()], [linters]
 #' @importFrom stats na.omit
 #' @importFrom utils capture.output getParseData relist
-NULL
+#' @keywords internal
+"_PACKAGE"
 
 #' Lint a file
 #'
