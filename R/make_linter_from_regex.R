@@ -11,10 +11,6 @@ make_linter_from_regex <- function(regex,
 
   function() {
     Linter(function(source_expression) {
-      if (!is_lint_level(source_expression, "expression")) {
-        return(list())
-      }
-
       all_matches <- re_matches(
         source_expression[["lines"]],
         regex,
@@ -24,40 +20,15 @@ make_linter_from_regex <- function(regex,
 
       line_numbers <- as.integer(names(source_expression[["lines"]]))
 
-      has_match <- vapply(
-        all_matches,
-        function(.match) nrow(.match) > 1L || !is.na(.match[, "start"]),
-        logical(1L)
-      )
-
-      all_matches <- all_matches[has_match]
-      line_numbers <- line_numbers[has_match]
-
-      if (ignore_strings) {
-        all_matches <- lapply(
-          seq_along(all_matches),
-          function(match_i) {
-            match_df <- all_matches[[match_i]]
-            line_number <- line_numbers[[match_i]]
-            match_df[
-              !vapply(
-                seq_len(nrow(match_df)),
-                function(ii) .in_ignorable_position(source_expression, line_number, match_df[ii, ]),
-                logical(1L)
-              ),
-            ]
-          }
-        )
-        has_match_outside_string <- vapply(all_matches, nrow, integer(1L)) > 0L
-        all_matches <- all_matches[has_match_outside_string]
-        line_numbers <- line_numbers[has_match_outside_string]
-      }
-
       Map(
         function(line_matches, line_number) {
           lapply(
             split(line_matches, seq_len(nrow(line_matches))),
             function(.match) {
+              if (is.na(.match[["start"]]) ||
+                .in_ignorable_position(source_expression, line_number, .match)) {
+                return()
+              }
               start <- .match[["start"]]
               end <- .match[["end"]]
               Lint(
