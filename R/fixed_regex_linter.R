@@ -66,17 +66,8 @@ fixed_regex_linter <- function() {
       patterns[is_not_regex(xml2::xml_text(patterns))],
       source_expression = source_expression,
       lint_message = paste(
-        "For static regular expression patterns, set `fixed = TRUE`.",
-        "Note that this includes regular expressions that can be expressed as",
-        "fixed patterns, e.g. [.] is really just . and \\$ is really just $",
-        "if there are no other regular expression specials. For functions from",
-        "the 'stringr' package, the way to declare a static string is to",
-        "wrap the pattern in stringr::fixed().",
-        "If this is being used in a dbplyr context (i.e., translated to sql),",
-        "replace the regular expression with the `LIKE` operator using the",
-        "`%LIKE%` infix function.",
-        "Lastly, take care to remember that the `replacement` argument of",
-        "`gsub()` is affected by the `fixed` argument as well."
+        "This regular expression is static, i.e., its matches can be expressed as a fixed substring expression, which",
+        "is faster to compute. For static regular expression patterns, set fixed = TRUE or use stringr::fixed()."
       ),
       type = "warning"
     )
