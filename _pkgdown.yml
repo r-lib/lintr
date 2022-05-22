@@ -13,13 +13,12 @@ reference:
   - lint_dir
   - lint_package
   - linters_with_defaults
-  - linters_with_tags
-  - checkstyle_output
 
 - title: Configuration
   contents:
   - read_settings
   - exclude
+  - linters_with_tags
   - modify_defaults
 
 - title: Individual linters
@@ -36,6 +35,7 @@ reference:
   - Linter
   - expect_lint
   - expect_lint_free
+  - ids_with_token
   - is_lint_level
   - use_lintr
   - xml_nodes_to_lints
@@ -43,9 +43,9 @@ reference:
 - title: Internals
   contents:
   - Lint
+  - checkstyle_output
   - clear_cache
   - default_settings
   - get_source_expressions
-  - ids_with_token
   - parse_exclusions
 
