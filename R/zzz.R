@@ -1,7 +1,8 @@
 #' Default linters
 #'
 #' @description List of default linters for [lint()]. Use
-#' [linters_with_defaults()] to customize it.
+#' [linters_with_defaults()] to customize it. Most of the default linters
+#' are based on [the tidyverse style guide](https://style.tidyverse.org/).
 #'
 #' The set of default linters is as follows (any parameterised linters, eg, `line_length_linter` use their default
 #' argument(s), see `?<linter_name>` for details):
