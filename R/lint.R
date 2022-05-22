@@ -370,7 +370,7 @@ define_linters <- function(linters = NULL) {
 validate_linter_object <- function(linter, name) {
   if (inherits(linter, "linter")) {
   } else if (is.function(linter)) {
-    if (is.null(formals(linter)) || is_linter_factory(linter)) {
+    if (is_linter_factory(linter)) {
       old <- "Passing linters as variables"
       new <- "a call to the linters (see ?linters)"
       lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
