@@ -30,7 +30,7 @@ reference:
   contents:
   - ends_with("linters")
 
-- title: Customer linteres
+- title: Customer linters
   contents:
   - Linter
   - expect_lint
