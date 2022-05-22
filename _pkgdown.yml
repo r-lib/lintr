@@ -24,10 +24,6 @@ reference:
   - all_undesirable_functions
   - ends_with("linter")
 
-- title: Linters by type
-  contents:
-  - ends_with("linters")
-
 - title: Customer linters
   contents:
   - Linter
@@ -38,12 +34,12 @@ reference:
   - use_lintr
   - xml_nodes_to_lints
 
-- title: Internals
+- title: internal
   contents:
+  - ends_with("linters")
   - Lint
   - checkstyle_output
   - clear_cache
   - default_settings
   - get_source_expressions
   - parse_exclusions
-
