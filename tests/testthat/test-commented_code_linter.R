@@ -9,13 +9,13 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "bleurgh <- fun_call(1) # other_call()",
-    list(message = msg, column_number = 26),
+    list(message = msg, column_number = 26L),
     linter
   )
 
   expect_lint(
     " #blah <- 1",
-    list(message = msg, column_number = 3),
+    list(message = msg, column_number = 3L),
     linter
   )
 

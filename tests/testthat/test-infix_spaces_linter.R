@@ -41,7 +41,7 @@ test_that("returns the correct linting", {
     expect_lint(paste0("1", op, "2"), msg, linter)
 
     # unary plus and minus can have no space before them
-    if (!op %in% ops[1:2]) {
+    if (!op %in% ops[1L:2L]) {
       expect_lint(paste0("1 ", op, "2"), msg, linter)
     }
 
