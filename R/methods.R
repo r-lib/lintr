@@ -59,7 +59,7 @@ print.lints <- function(x, ...) {
   github_annotation_project_dir <- getOption("lintr.github_annotation_project_dir", "")
 
   if (length(x)) {
-    inline_data <- x[[1]][["filename"]] == "<text>"
+    inline_data <- x[[1L]][["filename"]] == "<text>"
     if (!inline_data && use_rstudio_source_markers) {
       rstudio_source_markers(x)
     } else if (in_github_actions()) {
@@ -82,7 +82,7 @@ print.lints <- function(x, ...) {
     }
 
     if (isTRUE(settings$error_on_lint)) {
-      quit("no", 31, FALSE) # nocov
+      quit("no", 31L, FALSE) # nocov
     }
   } else if (use_rstudio_source_markers) {
     # Empty lints: clear RStudio source markers
@@ -91,15 +91,15 @@ print.lints <- function(x, ...) {
   invisible(x)
 }
 
-trim_output <- function(x, max = 65535) {
+trim_output <- function(x, max = 65535L) {
 
   # if x is less than the max, just return it
-  if (length(x) <= 0 || nchar(x) <= max) {
+  if (length(x) <= 0L || nchar(x) <= max) {
     return(x)
   }
 
   # otherwise trim x to the max, then search for the lint starts
-  x <- substr(x, 1, max)
+  x <- substr(x, 1L, max)
 
   re <- rex::rex("[", except_some_of(":"), ":", numbers, ":", numbers, ":", "]",
                  "(", except_some_of(")"), ")",
@@ -111,13 +111,13 @@ trim_output <- function(x, max = 65535) {
                  except_some_of("\r\n"), newline,
                  except_some_of("\r\n"), newline)
 
-  lint_starts <- rex::re_matches(x, re, global = TRUE, locations = TRUE)[[1]]
+  lint_starts <- rex::re_matches(x, re, global = TRUE, locations = TRUE)[[1L]]
 
   # if at least one lint ends before the cutoff, cutoff there, else just use
   # the cutoff
   last_end <- lint_starts[NROW(lint_starts), "end"]
   if (!is.na(last_end)) {
-    substr(x, 1, last_end)
+    substr(x, 1L, last_end)
   } else {
     x
   }
@@ -125,7 +125,7 @@ trim_output <- function(x, max = 65535) {
 
 #' @export
 names.lints <- function(x, ...) {
-  vapply(x, `[[`, character(1), "filename")
+  vapply(x, `[[`, character(1L), "filename")
 }
 
 #' @export
@@ -138,13 +138,13 @@ split.lints <- function(x, f = NULL, ...) {
 
 #' @export
 as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) { # nolint: object_name. (row.names)
-  data.frame(filename = vapply(x, `[[`, character(1), "filename"),
-             line_number = vapply(x, `[[`, numeric(1), "line_number"),
-             column_number = vapply(x, `[[`, numeric(1), "column_number"),
-             type = vapply(x, `[[`, character(1), "type"),
-             message = vapply(x, `[[`, character(1), "message"),
-             line = vapply(x, `[[`, character(1), "line"),
-             linter = vapply(x, `[[`, character(1), "linter"),
+  data.frame(filename = vapply(x, `[[`, character(1L), "filename"),
+             line_number = vapply(x, `[[`, numeric(1L), "line_number"),
+             column_number = vapply(x, `[[`, numeric(1L), "column_number"),
+             type = vapply(x, `[[`, character(1L), "type"),
+             message = vapply(x, `[[`, character(1L), "message"),
+             line = vapply(x, `[[`, character(1L), "line"),
+             linter = vapply(x, `[[`, character(1L), "linter"),
              stringsAsFactors = FALSE
   )
 }
@@ -160,8 +160,8 @@ as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) { # 
 
 #' @export
 summary.lints <- function(object, ...) {
-  filenames <- vapply(object, `[[`, character(1), "filename")
-  types <- factor(vapply(object, `[[`, character(1), "type"),
+  filenames <- vapply(object, `[[`, character(1L), "filename")
+  types <- factor(vapply(object, `[[`, character(1L), "type"),
     levels = c("style", "warning", "error"))
   tbl <- table(filenames, types)
   filenames <- rownames(tbl)

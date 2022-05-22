@@ -50,7 +50,7 @@ commas_linter <- function() {
             empty_comma <- substr(line, comma_loc - 2L, comma_loc - 1L) %==% ", "
 
             parent <- source_expression$parsed_content$parent
-            parent <- replace(parent, parent == 0, NA)
+            parent <- replace(parent, parent == 0L, NA)
 
             # a variable that is true for every node who has a grandchild that is switch,
             # i.e, any expression that starts with the function call to switch.
@@ -61,7 +61,7 @@ commas_linter <- function() {
 
             is_blank_switch <- any(comma_loc_filter &
                                      (source_expression$parsed_content$parent %in% switch_grandparents) &
-                                     c(NA, head(source_expression$parsed_content$token, -1)) == "EQ_SUB",
+                                     c(NA, head(source_expression$parsed_content$token, -1L)) == "EQ_SUB",
                                    na.rm = TRUE
             )
 
@@ -95,7 +95,7 @@ commas_linter <- function() {
               lints[[length(lints) + 1L]] <- Lint(
                 filename = source_expression$filename,
                 line_number = line_number,
-                column_number = comma_loc + 1,
+                column_number = comma_loc + 1L,
                 type = "style",
                 message = "Commas should always have a space after.",
                 line = line
