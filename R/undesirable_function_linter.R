@@ -14,12 +14,6 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   stopifnot(is.logical(symbol_is_undesirable))
 
-  if (symbol_is_undesirable) {
-    tokens <- c("SYMBOL_FUNCTION_CALL", "SYMBOL")
-  } else {
-    tokens <- "SYMBOL_FUNCTION_CALL"
-  }
-
   xp_condition <- xp_and(
     xp_text_in_table(names(fun)),
     paste0(
@@ -29,7 +23,13 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     ),
     "not(preceding-sibling::OP-DOLLAR)"
   )
-  xpath <- paste(glue::glue("//{tokens}[{xp_condition}]"), collapse = " | ")
+
+  if (symbol_is_undesirable) {
+    xpath <- glue::glue("//SYMBOL_FUNCTION_CALL[{xp_condition}] | //SYMBOL[{xp_condition}]")
+  } else {
+    xpath <- glue::glue("//SYMBOL_FUNCTION_CALL[{xp_condition}]")
+  }
+
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
