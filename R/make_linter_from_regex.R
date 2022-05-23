@@ -51,7 +51,7 @@ make_linter_from_regex <- function(regex,
         line_numbers
       )
 
-      lapply(lints, function(x) x[vapply(x, length, integer(1L)) > 0L])
+      lapply(lints, function(x) x[lengths(x) > 0L])
     })
   }
 }
