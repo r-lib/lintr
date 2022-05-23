@@ -540,7 +540,7 @@ rstudio_source_markers <- function(lints) {
   # workaround to avoid focusing an empty Markers pane
   # when possible, better solution is to delete the "lintr" source marker list
   # https://github.com/rstudio/rstudioapi/issues/209
-  if (length(lints) == 0) {
+  if (length(lints) == 0L) {
     Sys.sleep(0.1)
     rstudioapi::executeCommand("activateConsole")
   }
@@ -567,9 +567,9 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
   # output the style markers to the file
   lapply(split(lints, names(lints)), function(lints_per_file) {
     filename <- if (!is.null(package_path)) {
-      file.path(package_path, lints_per_file[[1]]$filename)
+      file.path(package_path, lints_per_file[[1L]]$filename)
     } else {
-      lints_per_file[[1]]$filename
+      lints_per_file[[1L]]$filename
     }
     f <- xml2::xml_add_child(n, "file", name = filename)
 
@@ -597,8 +597,8 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
   line <- fill_with(" ", maximum)
 
   lapply(ranges, function(range) {
-    substr(line, range[1], range[2]) <<-
-      fill_with("~", range[2] - range[1] + 1L)
+    substr(line, range[1L], range[2L]) <<-
+      fill_with("~", range[2L] - range[1L] + 1L)
   })
 
   substr(line, column_number, column_number + 1L) <- "^"

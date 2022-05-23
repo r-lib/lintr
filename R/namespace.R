@@ -8,7 +8,7 @@ namespace_imports <- function(path = find_package()) {
     list()
   })
 
-  full_imports <- lengths(imports) == 1
+  full_imports <- lengths(imports) == 1L
 
   # this loads the namespaces, but is the easiest way to do it
   imports[full_imports] <- lapply(imports[full_imports], function(x) list(x, getNamespaceExports(asNamespace(x))))
