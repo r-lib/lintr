@@ -78,7 +78,7 @@ get_source_expressions <- function(filename, lines = NULL) {
   )
   source_expression$content <- get_content(source_expression$lines)
   parsed_content <- get_source_expression(source_expression, error = function(e) lint_parse_error(e, source_expression))
-  tree <- generate_tree(parsed_content)
+  top_level_map <- generate_top_level_map(parsed_content)
 
   if (inherits(e, "lint") && !nzchar(e$line)) {
     # Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
@@ -90,7 +90,7 @@ get_source_expressions <- function(filename, lines = NULL) {
       parsed_content,
       source_expression,
       filename,
-      tree
+      top_level_map
     )
 
     # add global expression
@@ -370,15 +370,13 @@ get_single_source_expression <- function(loc,
                                          parsed_content,
                                          source_expression,
                                          filename,
-                                         tree) {
+                                         top_level_map) {
   line_nums <- parsed_content$line1[loc]:parsed_content$line2[loc]
   expr_lines <- source_expression$lines[line_nums]
   names(expr_lines) <- line_nums
   content <- get_content(expr_lines, parsed_content[loc, ])
-
-  id <- as.character(parsed_content$id[loc])
-  edges <- component_edges(tree, id)
-  pc <- parsed_content[c(loc, edges), ]
+  id <- parsed_content$id[loc]
+  pc <- parsed_content[which(top_level_map == id), ]
   list(
     filename = filename,
     line = parsed_content[loc, "line1"],

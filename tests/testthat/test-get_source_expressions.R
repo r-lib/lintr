@@ -170,20 +170,20 @@ test_that("Can extract line number from parser errors", {
 })
 
 test_that("1- or 2-width octal expressions give the right STR_CONST values", {
-  with_content_to_parse("'\\1'", expect_identical(pc[[1L]][2L, "text"], "'\\1'"))
-  with_content_to_parse('"\\1"', expect_identical(pc[[1L]][2L, "text"], '"\\1"'))
+  with_content_to_parse("'\\1'", expect_identical(pc[[1L]][1L, "text"], "'\\1'"))
+  with_content_to_parse('"\\1"', expect_identical(pc[[1L]][1L, "text"], '"\\1"'))
 
   # multiple literals
   with_content_to_parse("'\\1'\n'\\2'", {
-    expect_identical(pc[[1L]][2L, "text"], "'\\1'")
-    expect_identical(pc[[2L]][2L, "text"], "'\\2'")
+    expect_identical(pc[[1L]][1L, "text"], "'\\1'")
+    expect_identical(pc[[2L]][1L, "text"], "'\\2'")
   })
 
   # multiple escapes
-  with_content_to_parse("'\\1\\2'", expect_identical(pc[[1L]][2L, "text"], "'\\1\\2'"))
+  with_content_to_parse("'\\1\\2'", expect_identical(pc[[1L]][1L, "text"], "'\\1\\2'"))
 
   # multi-line strings
-  with_content_to_parse("'\n\\1\n'", expect_identical(pc[[1L]][2L, "text"], "'\n\\1\n'"))
+  with_content_to_parse("'\n\\1\n'", expect_identical(pc[[1L]][1L, "text"], "'\n\\1\n'"))
   with_content_to_parse("a <- '\\1\n\\2'", expect_identical(pc[[1L]][5L, "text"], "'\\1\n\\2'"))
 
   # mixed-length strings
