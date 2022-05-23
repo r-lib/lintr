@@ -368,9 +368,8 @@ define_linters <- function(linters = NULL) {
 }
 
 validate_linter_object <- function(linter, name) {
-  if (inherits(linter, "linter")) {
-  } else if (is.function(linter)) {
-    if (is.null(formals(linter))) {
+  if (!inherits(linter, "linter") && is.function(linter)) {
+    if (is_linter_factory(linter)) {
       old <- "Passing linters as variables"
       new <- "a call to the linters (see ?linters)"
       lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
@@ -383,11 +382,21 @@ validate_linter_object <- function(linter, name) {
                        type = "")
       linter <- Linter(linter, name = name)
     }
-  } else {
-    stop(gettextf("Expected '%s' to be of class 'linter', not '%s'",
-                  name, class(linter)[[1L]]))
+  } else if (!is.function(linter)) {
+    stop(gettextf("Expected '%s' to be a function of class 'linter', not a %s of class '%s'",
+                  name, typeof(linter), class(linter)[[1L]]))
   }
   linter
+}
+
+is_linter_factory <- function(fun) {
+  # A linter factory is a function whose last call is to Linter()
+  bdexpr <- body(fun)
+  # covr internally transforms each call into if (TRUE) { covr::count(...); call }
+  while (is.call(bdexpr) && (bdexpr[[1L]] == "{" || (bdexpr[[1L]] == "if" && bdexpr[[2L]] == "TRUE"))) {
+    bdexpr <- bdexpr[[length(bdexpr)]]
+  }
+  is.call(bdexpr) && identical(bdexpr[[1L]], as.name("Linter"))
 }
 
 reorder_lints <- function(lints) {
