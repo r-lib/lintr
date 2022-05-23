@@ -85,6 +85,8 @@ get_source_expressions <- function(filename, lines = NULL) {
     # Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
     expressions <- list()
   } else {
+    xml_parsed_content <- safe_parse_to_xml(parsed_content)
+
     expressions <- lapply(
       X = top_level_expressions(parsed_content),
       FUN = get_single_source_expression,
@@ -94,6 +96,16 @@ get_source_expressions <- function(filename, lines = NULL) {
       top_level_map
     )
 
+    if (!is.null(xml_parsed_content) && !is.na(xml_parsed_content)) {
+      expression_xmls <- lapply(
+        xml2::xml_find_all(xml_parsed_content, "/exprlist/*"),
+        function(top_level_expr) xml2::xml_add_parent(xml2::xml_new_root(top_level_expr), "exprlist")
+      )
+      for (i in seq_along(expressions)) {
+        expressions[[i]]$xml_parsed_content <- expression_xmls[[i]]
+      }
+    }
+
     # add global expression
     expressions[[length(expressions) + 1L]] <-
       list(
@@ -101,7 +113,7 @@ get_source_expressions <- function(filename, lines = NULL) {
         file_lines = source_expression$lines,
         content = source_expression$lines,
         full_parsed_content = parsed_content,
-        full_xml_parsed_content = safe_parse_to_xml(parsed_content),
+        full_xml_parsed_content = xml_parsed_content,
         terminal_newline = terminal_newline
       )
   }
@@ -384,7 +396,7 @@ get_single_source_expression <- function(loc,
     column = parsed_content[loc, "col1"],
     lines = expr_lines,
     parsed_content = pc,
-    xml_parsed_content = safe_parse_to_xml(pc),
+    xml_parsed_content = xml2::xml_missing(),
     content = content,
     find_line = find_line_fun(content),
     find_column = find_column_fun(content)
