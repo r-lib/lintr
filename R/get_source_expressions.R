@@ -495,7 +495,7 @@ fix_tab_indentations <- function(source_expression) {
 
   tab_cols <- gregexpr("\t", source_expression[["lines"]], fixed = TRUE)
   names(tab_cols) <- seq_along(tab_cols)
-  matched_lines <- vapply(tab_cols, function(line_match) !is.na(line_match) && line_match[[1L]] > 0L, logical(1L))
+  matched_lines <- vapply(tab_cols, function(line_match) !is.na(line_match[1L]) && line_match[1L] > 0L, logical(1L))
   if (!any(matched_lines)) {
     return(parse_data)
   }
