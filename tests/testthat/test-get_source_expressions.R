@@ -194,14 +194,14 @@ test_that("1- or 2-width octal expressions give the right STR_CONST values", {
 })
 
 test_that("returned data structure is complete", {
-  tmp <- withr::local_tempfile()
+  temp_file <- withr::local_tempfile()
 
   lines <- c("line_1", "line_2", "line_3")
   lines_with_attr <- setNames(lines, seq_along(lines))
   attr(lines_with_attr, "terminal_newline") <- TRUE
 
-  writeLines(lines, con = tmp)
-  exprs <- get_source_expressions(tmp)
+  writeLines(lines, con = temp_file)
+  exprs <- get_source_expressions(temp_file)
   expect_named(exprs, c("expressions", "error", "lines"))
   expect_length(exprs$expressions, length(lines) + 1L)
 
@@ -211,7 +211,7 @@ test_that("returned data structure is complete", {
       "filename", "line", "column", "lines", "parsed_content", "xml_parsed_content", "content", "find_line",
       "find_column"
     ))
-    expect_identical(expr$filename, tmp)
+    expect_identical(expr$filename, temp_file)
     expect_identical(expr$line, i)
     expect_identical(expr$column, 1L)
     expect_identical(expr$lines, setNames(lines[i], i))
@@ -225,7 +225,7 @@ test_that("returned data structure is complete", {
   expect_named(full_expr, c(
     "filename", "file_lines", "content", "full_parsed_content", "full_xml_parsed_content", "terminal_newline"
   ))
-  expect_identical(full_expr$filename, tmp)
+  expect_identical(full_expr$filename, temp_file)
   expect_identical(full_expr$file_lines, lines_with_attr)
   expect_identical(full_expr$content, lines_with_attr)
   expect_identical(nrow(full_expr$full_parsed_content), 2L * length(lines))
