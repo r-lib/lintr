@@ -24,8 +24,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       tokens <- "SYMBOL_FUNCTION_CALL"
     }
 
-    xpath <- paste0("//*[", xp_and(
-      paste0("self::", tokens, collapse = " or "),
+    xp_condition <- xp_and(
       xp_text_in_table(names(fun)),
       paste0(
         "not(parent::expr/preceding-sibling::expr[SYMBOL_FUNCTION_CALL[",
@@ -33,8 +32,8 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
         "]])"
       ),
       "not(preceding-sibling::OP-DOLLAR)"
-    ), "]")
-
+    )
+    xpath <- paste(glue::glue("//{tokens}[{xp_condition}]"), collapse = " | ")
     matched_nodes <- xml2::xml_find_all(source_expression$xml_parsed_content, xpath)
 
     lapply(

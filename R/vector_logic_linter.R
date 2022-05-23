@@ -31,21 +31,22 @@ vector_logic_linter <- function() {
     #     <expr> ... </expr>
     #  </expr>
     #  we _don't_ want to match anything on the second expr, hence this
-    xpath <- "//*[
-      (self::AND or self::OR)
-      and ancestor::expr[
+
+    xp_condition <- "
+      ancestor::expr[
         not(preceding-sibling::OP-RIGHT-PAREN)
-        and preceding-sibling::*[
-          self::IF
-          or self::WHILE
-          or self::expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']]
-        ]
+        and (
+          preceding-sibling::IF or
+          preceding-sibling::WHILE or
+          preceding-sibling::expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']]
+        )
       ]
       and not(ancestor::expr[
         preceding-sibling::expr[SYMBOL_FUNCTION_CALL[not(text() = 'expect_true' or text() = 'expect_false')]]
         or preceding-sibling::OP-LEFT-BRACKET
       ])
-    ]"
+    "
+    xpath <- glue::glue("//AND[{xp_condition}] | //OR[{xp_condition}]")
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(

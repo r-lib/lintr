@@ -91,10 +91,14 @@ package_hooks_linter <- function() {
     # NB: base only checks the SYMBOL_FUNCTION_CALL version, not SYMBOL.
     library_require_xpath <- "
     //expr[SYMBOL[text() = '.onAttach' or text() = '.onLoad']]
-    /following-sibling::expr//*[
-      (self::SYMBOL or self::SYMBOL_FUNCTION_CALL)
-      and (text() = 'require' or text() = 'library' or text() = 'installed.packages')
-    ]
+    /following-sibling::expr
+    /descendant::SYMBOL[text() = 'require' or text() = 'library' or text() = 'installed.packages']
+
+    |
+
+    //expr[SYMBOL[text() = '.onAttach' or text() = '.onLoad']]
+    /following-sibling::expr
+    /descendant::SYMBOL_FUNCTION_CALL[text() = 'require' or text() = 'library' or text() = 'installed.packages']
     "
 
     library_require_expr <- xml2::xml_find_all(xml, library_require_xpath)
