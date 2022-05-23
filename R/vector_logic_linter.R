@@ -12,41 +12,41 @@
 #'   <https://style.tidyverse.org/syntax.html#if-statements>
 #' @export
 vector_logic_linter <- function() {
+  # ensures the expr is in the cond part of `if/while (cond) expr` --
+  #   if on the XML parse tree is structured like
+  #   <expr>
+  #     <IF> | <expr><SYMBOL_FUNCTION_CALL>
+  #     <OP-LEFT-PAREN>
+  #     <expr> ... </expr> # <- loop condition
+  #     <OP-RIGHT-PAREN>
+  #     <expr> ... </expr> # <- evaluation; includes BRACEs if present
+  #     <ELSE>             # (here & below is optional)
+  #     <expr> ... </expr>
+  #  </expr>
+  #  we _don't_ want to match anything on the second expr, hence this
+
+  xp_condition <- "
+    ancestor::expr[
+      not(preceding-sibling::OP-RIGHT-PAREN)
+      and (
+        preceding-sibling::IF or
+        preceding-sibling::WHILE or
+        preceding-sibling::expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']]
+      )
+    ]
+    and not(ancestor::expr[
+      preceding-sibling::expr[SYMBOL_FUNCTION_CALL[not(text() = 'expect_true' or text() = 'expect_false')]]
+      or preceding-sibling::OP-LEFT-BRACKET
+    ])
+  "
+  xpath <- glue::glue("//AND[{xp_condition}] | //OR[{xp_condition}]")
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
 
     xml <- source_expression$xml_parsed_content
-
-    # ensures the expr is in the cond part of `if/while (cond) expr` --
-    #   if on the XML parse tree is structured like
-    #   <expr>
-    #     <IF> | <expr><SYMBOL_FUNCTION_CALL>
-    #     <OP-LEFT-PAREN>
-    #     <expr> ... </expr> # <- loop condition
-    #     <OP-RIGHT-PAREN>
-    #     <expr> ... </expr> # <- evaluation; includes BRACEs if present
-    #     <ELSE>             # (here & below is optional)
-    #     <expr> ... </expr>
-    #  </expr>
-    #  we _don't_ want to match anything on the second expr, hence this
-
-    xp_condition <- "
-      ancestor::expr[
-        not(preceding-sibling::OP-RIGHT-PAREN)
-        and (
-          preceding-sibling::IF or
-          preceding-sibling::WHILE or
-          preceding-sibling::expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']]
-        )
-      ]
-      and not(ancestor::expr[
-        preceding-sibling::expr[SYMBOL_FUNCTION_CALL[not(text() = 'expect_true' or text() = 'expect_false')]]
-        or preceding-sibling::OP-LEFT-BRACKET
-      ])
-    "
-    xpath <- glue::glue("//AND[{xp_condition}] | //OR[{xp_condition}]")
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(
