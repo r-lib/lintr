@@ -3,7 +3,7 @@
 \name{lint-s3}
 \alias{lint-s3}
 \alias{Lint}
-\title{Create al \code{lint} object}
+\title{Create a \code{lint} object}
 \usage{
 Lint(
   filename,
@@ -37,5 +37,5 @@ Lint(
 an object of class 'lint'.
 }
 \description{
-Create al \code{lint} object
+Create a \code{lint} object
 }

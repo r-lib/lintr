@@ -464,7 +464,7 @@ pkg_name <- function(path = find_package()) {
   }
 }
 
-#' Create al `lint` object
+#' Create a `lint` object
 #' @param filename path to the source file that was linted.
 #' @param line_number line number where the lint occurred.
 #' @param column_number column number where the lint occurred.
