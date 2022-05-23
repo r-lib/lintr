@@ -10,8 +10,10 @@
 #' @export
 undesirable_operator_linter <- function(op = default_undesirable_operators) {
   undesirable_operator_metadata <- merge(
-    # must be handled individually below
-    infix_metadata[infix_metadata$string_value != "%%", ],
+    # infix must be handled individually below; non-assignment `=` are always OK
+    infix_metadata[
+      infix_metadata$string_value != "%%" & !infix_metadata$xml_tag %in% c("EQ_SUB", "EQ_FORMALS"),
+    ],
     infix_overload,
     by = "xml_tag", all.x = TRUE
   )
