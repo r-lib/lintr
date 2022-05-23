@@ -95,7 +95,7 @@ get_source_expressions <- function(filename, lines = NULL) {
       top_level_map
     )
 
-    if (!is.null(xml_parsed_content)) {
+    if (!is.null(xml_parsed_content) && !is.na(xml_parsed_content)) {
       expression_xmls <- lapply(
         xml2::xml_find_all(xml_parsed_content, "/exprlist/*"),
         function(top_level_expr) xml2::xml_add_parent(xml2::xml_new_root(top_level_expr), "exprlist")
@@ -395,7 +395,7 @@ get_single_source_expression <- function(loc,
     column = parsed_content[loc, "col1"],
     lines = expr_lines,
     parsed_content = pc,
-    xml_parsed_content = NULL,
+    xml_parsed_content = xml2::xml_missing(),
     content = content,
     find_line = find_line_fun(content),
     find_column = find_column_fun(content)
