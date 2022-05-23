@@ -78,7 +78,7 @@ get_source_expressions <- function(filename, lines = NULL) {
   )
   source_expression$content <- get_content(source_expression$lines)
   parsed_content <- get_source_expression(source_expression, error = function(e) lint_parse_error(e, source_expression))
-  tree <- generate_tree(parsed_content)
+  top_level_map <- generate_top_level_map(parsed_content)
 
   if (inherits(e, "lint") && !nzchar(e$line)) {
     # Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
@@ -90,7 +90,7 @@ get_source_expressions <- function(filename, lines = NULL) {
       parsed_content,
       source_expression,
       filename,
-      tree
+      top_level_map
     )
 
     # add global expression
@@ -370,15 +370,13 @@ get_single_source_expression <- function(loc,
                                          parsed_content,
                                          source_expression,
                                          filename,
-                                         tree) {
+                                         top_level_map) {
   line_nums <- parsed_content$line1[loc]:parsed_content$line2[loc]
   expr_lines <- source_expression$lines[line_nums]
   names(expr_lines) <- line_nums
   content <- get_content(expr_lines, parsed_content[loc, ])
-
-  id <- as.character(parsed_content$id[loc])
-  edges <- component_edges(tree, id)
-  pc <- parsed_content[c(loc, edges), ]
+  id <- parsed_content$id[loc]
+  pc <- parsed_content[which(top_level_map == id), ]
   list(
     filename = filename,
     line = parsed_content[loc, "line1"],
@@ -487,41 +485,47 @@ find_column_fun <- function(content) {
 #   "123456789\t;"  --> "123456789       ;"
 #   "1234567890\t;" --> "1234567890      ;"
 fix_tab_indentations <- function(source_expression) {
-  pc <- getParseData(source_expression)
+  parse_data <- getParseData(source_expression)
 
-  if (is.null(pc)) {
+  if (is.null(parse_data)) {
     return(NULL)
   }
 
   tab_cols <- gregexpr("\t", source_expression[["lines"]], fixed = TRUE)
   names(tab_cols) <- seq_along(tab_cols)
-  tab_cols <- tab_cols[!is.na(tab_cols)]  # source lines from .Rmd and other files are NA
-  tab_cols <- lapply(tab_cols, function(x) if (x[[1L]] < 0L) NA else x)
-  tab_cols <- tab_cols[!is.na(tab_cols)]
-
-  if (!length(tab_cols)) {
-    return(pc)
+  matched_lines <- vapply(tab_cols, function(line_match) !is.na(line_match[1L]) && line_match[1L] > 0L, logical(1L))
+  if (!any(matched_lines)) {
+    return(parse_data)
   }
+  tab_cols <- tab_cols[matched_lines]
 
-  pc_cols <- c("line1", "line2", "col1", "col2")
-  dat <- matrix(data = unlist(pc[, pc_cols], use.names = FALSE), ncol = 2L)
+  fix_columns <- c("line1", "line2", "col1", "col2")
+  parse_data[, fix_columns] <- fix_tab_columns(parse_data[, fix_columns], tab_cols)
+  parse_data
+}
+
+fix_tab_columns <- function(parse_content, tab_cols) {
+  dat <- cbind(
+    c(parse_content$line1, parse_content$line2),
+    c(parse_content$col1, parse_content$col2)
+  )
   lines <- as.integer(names(tab_cols))
   for (i in seq_along(tab_cols)) {
     is_curr_line <- dat[, 1L] == lines[[i]]
-    if (any(is_curr_line)) {
-      line_tab_offsets <- tab_offsets(tab_cols[[i]])
-      for (j in seq_along(tab_cols[[i]])) {
-        is_line_to_change <- is_curr_line & dat[, 2L] > tab_cols[[i]][[j]]
-        if (any(is_line_to_change)) {
-          dat[is_line_to_change, 2L] <- dat[is_line_to_change, 2L] - line_tab_offsets[[j]]
-        }
+    if (!any(is_curr_line)) {
+      next
+    }
+    tab_col <- tab_cols[[i]]
+    line_tab_offsets <- tab_offsets(tab_col)
+    for (j in seq_along(tab_col)) {
+      is_line_to_change <- is_curr_line & dat[, 2L] > tab_col[[j]]
+      if (any(is_line_to_change)) {
+        dat[is_line_to_change, 2L] <- dat[is_line_to_change, 2L] - line_tab_offsets[[j]]
       }
     }
   }
-  pc[, pc_cols] <- dat
-  pc
+  dat
 }
-
 
 tab_offsets <- function(tab_columns) {
   cum_offset <- 0L
