@@ -193,6 +193,50 @@ test_that("1- or 2-width octal expressions give the right STR_CONST values", {
   })
 })
 
+test_that("returned data structure is complete", {
+  temp_file <- withr::local_tempfile()
+
+  lines <- c("line_1", "line_2", "line_3")
+  lines_with_attr <- setNames(lines, seq_along(lines))
+  attr(lines_with_attr, "terminal_newline") <- TRUE
+
+  writeLines(lines, con = temp_file)
+  exprs <- get_source_expressions(temp_file)
+  expect_named(exprs, c("expressions", "error", "lines"))
+  expect_length(exprs$expressions, length(lines) + 1L)
+
+  for (i in seq_along(lines)) {
+    expr <- exprs$expressions[[i]]
+    expect_named(expr, c(
+      "filename", "line", "column", "lines", "parsed_content", "xml_parsed_content", "content", "find_line",
+      "find_column"
+    ))
+    expect_identical(expr$filename, temp_file)
+    expect_identical(expr$line, i)
+    expect_identical(expr$column, 1L)
+    expect_identical(expr$lines, setNames(lines[i], i))
+    expect_identical(nrow(expr$parsed_content), 2L)
+    expect_true(xml2::xml_find_lgl(expr$xml_parsed_content, "count(//SYMBOL) > 0"))
+    expect_identical(expr$content, lines[i])
+    expect_type(expr$find_line, "closure")
+    expect_type(expr$find_column, "closure")
+  }
+  full_expr <- exprs$expressions[[length(lines) + 1L]]
+  expect_named(full_expr, c(
+    "filename", "file_lines", "content", "full_parsed_content", "full_xml_parsed_content", "terminal_newline"
+  ))
+  expect_identical(full_expr$filename, temp_file)
+  expect_identical(full_expr$file_lines, lines_with_attr)
+  expect_identical(full_expr$content, lines_with_attr)
+  expect_identical(nrow(full_expr$full_parsed_content), 2L * length(lines))
+  expect_identical(xml2::xml_find_num(full_expr$full_xml_parsed_content, "count(//SYMBOL)"),
+                    as.numeric(length(lines)))
+  expect_true(full_expr$terminal_newline)
+
+  expect_null(exprs$error)
+  expect_identical(exprs$lines, lines_with_attr)
+})
+
 skip_if_not_installed("patrick")
 # NB: this is just a cursory test for linters not to
 #   fail on files where the XML content is xml_missing;
