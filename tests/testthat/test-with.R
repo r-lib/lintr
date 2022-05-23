@@ -27,7 +27,7 @@ test_that("all default linters are tagged default", {
 
   # Check that above test also trips on default arguments.
   expect_equal(
-    all.equal(linters_with_tags("default"), linters_with_defaults(line_length_linter(120))),
+    all.equal(linters_with_tags("default"), linters_with_defaults(line_length_linter(120L))),
     'Component "line_length_linter": Component "length": Mean relative difference: 0.5'
   )
 })
@@ -53,11 +53,11 @@ test_that("with_defaults is supported with a deprecation warning", {
 })
 
 test_that("modify_defaults works", {
-  my_default <- list(a = 1, b = 2, c = 3)
+  my_default <- list(a = 1L, b = 2L, c = 3L)
   expect_equal(modify_defaults(defaults = my_default), my_default)
-  expect_equal(modify_defaults(defaults = my_default, a = 2), list(a = 2, b = 2, c = 3))
-  expect_equal(modify_defaults(defaults = my_default, c = NULL), list(a = 1, b = 2))
+  expect_equal(modify_defaults(defaults = my_default, a = 2L), list(a = 2L, b = 2L, c = 3L))
+  expect_equal(modify_defaults(defaults = my_default, c = NULL), list(a = 1L, b = 2L))
 
   # auto-sorts
-  expect_equal(modify_defaults(defaults = list(b = 2, a = 1), c = 3), my_default)
+  expect_equal(modify_defaults(defaults = list(b = 2L, a = 1L), c = 3L), my_default)
 })
