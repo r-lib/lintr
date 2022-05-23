@@ -29,54 +29,6 @@ component_edges <- function(graph, id) {
   which(graph$edges[, 1L] %in% sc)
 }
 
-children <- function(data, id, levels = Inf) {
-
-  child_ids <- function(ids) {
-    data$id[data$parent %in% ids]
-  }
-
-  ids <- list()
-  itr <- 0L
-  ids[[itr <- itr + 1L]] <- child_ids(id)
-  while (levels >= 1L && length(ids[[itr]]) != 0L) {
-    ids[[itr <- itr + 1L]] <- child_ids(ids[[itr]])
-    levels <- levels - 1L
-  }
-  ids <- ids[-length(ids)]
-
-  as.character(unlist(ids))
-}
-
-parents <- function(data, id, levels = Inf) {
-
-  parent_ids <- function(ids) {
-    data$parent[data$id %in% ids]
-  }
-
-  ids <- list()
-  itr <- 0L
-  ids[[itr <- itr + 1L]] <- parent_ids(id)
-  while (levels >= 1L && length(ids[[itr]]) != 0L) {
-    ids[[itr <- itr + 1L]] <- parent_ids(ids[[itr]])
-    levels <- levels - 1L
-  }
-  ids <- ids[-length(ids)]
-
-  as.character(unlist(ids))
-}
-
-siblings <- function(data, id, child_levels = Inf) {
-  parents <- parents(data, id, 1L)
-  res <- unlist(lapply(
-      parents,
-      children,
-      data = data,
-      levels = child_levels
-      )
-    )
-  res[res != id]
-}
-
 lag <- function(x) {
   c(NA, x[seq_len(length(x) - 1L)])
 }
