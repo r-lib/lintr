@@ -18,7 +18,6 @@ assignment_linter <- function(allow_cascading_assign = TRUE, allow_right_assign 
 
     xml <- source_expression$xml_parsed_content
 
-    # TODO: is there any performance consideration for //*[self::a or self::b] vs. //a|//b ?
     xpath <- paste(collapse = " | ", c(
       # always block = (NB: the parser differentiates EQ_ASSIGN, EQ_SUB, and EQ_FORMALS)
       "//EQ_ASSIGN",
