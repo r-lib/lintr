@@ -1,13 +1,3 @@
-op_types <- c(
-  "LEFT_ASSIGN", "EQ_ASSIGN", "EQ_SUB", "RIGHT_ASSIGN",            # <<- <- = -> ->>
-  "'$'", "'@'", "'['", "']'", "LBB",                               # $ @ [ ] [[
-  "'-'", "'+'", "'!'", "'~'", "'?'",                               # - + ! ~ ?
-  "':'", "'*'", "'/'", "'^'", "'~'", "'?'", "'%'", "SPECIAL",      # : * / ^ ~ ? % %*%
-  "GT", "GE", "LT", "LE", "EQ", "NE", "AND", "OR", "AND2", "OR2",  # > >= < <= == != & | && ||
-  "NS_GET", "NS_GET_INT"                                           # :: :::
-)
-
-
 #' Undesirable operator linter
 #'
 #' Report the use of undesirable operators, e.g. [`:::`][base::ns-dblcolon] or
