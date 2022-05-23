@@ -8,13 +8,13 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "x == NA",
-    list(message = msg, line_number = 1L, column_number = 3),
+    list(message = msg, line_number = 1L, column_number = 3L),
     linter
   )
 
   expect_lint(
     "x==NA",
-    list(message = msg, line_number = 1L, column_number = 2),
+    list(message = msg, line_number = 1L, column_number = 2L),
     linter
   )
 
@@ -39,7 +39,7 @@ test_that("returns the correct linting", {
   # correct line number for multiline code
   expect_lint(
     "x ==\nNA",
-    list(line_number = 1L, column_number = 3L, ranges = list(3:4)),
+    list(line_number = 1L, column_number = 3L, ranges = list(3L:4L)),
     linter
   )
 })

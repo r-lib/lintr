@@ -126,7 +126,7 @@ expect_lint_free <- function(...) {
   testthat::skip_on_covr()
 
   lints <- lint_package(...)
-  has_lints <- length(lints) > 0
+  has_lints <- length(lints) > 0L
 
   lint_output <- NULL
   if (has_lints) {
