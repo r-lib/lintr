@@ -50,7 +50,7 @@ directory.}
 \item{text}{Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
 linting is being done ad hoc.}
 
-\item{path}{For \code{lint_dir()} a directory full of \verb{.R/``.Rmd} files.
+\item{path}{For \code{lint_dir()} a directory full of \code{.R}/\code{.Rmd} files.
 For \code{lint_package()} the base directory of the package.}
 
 \item{relative_path}{if \code{TRUE}, file paths are printed using their path relative to the base directory.
