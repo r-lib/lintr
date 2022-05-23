@@ -212,7 +212,7 @@ test_that("compatibility warnings work", {
 
   expect_error(
     lint("a <- 1\n", linters = "equals_na_linter"),
-    regexp = rex("Expected '", anything, "' to be of class 'linter'")
+    regexp = rex("Expected '", anything, "' to be a function of class 'linter'")
   )
 })
 
