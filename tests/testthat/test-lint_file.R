@@ -171,6 +171,16 @@ test_that("compatibility warnings work", {
 
   expect_warning(
     expect_lint(
+      "a = 42",
+      "Use <-",
+      linters = assignment_linter
+    ),
+    regexp = "Passing linters as variables",
+    fixed = TRUE
+  )
+
+  expect_warning(
+    expect_lint(
       "a == NA",
       "Use is.na",
       linters = unclass(equals_na_linter())
@@ -202,7 +212,7 @@ test_that("compatibility warnings work", {
 
   expect_error(
     lint("a <- 1\n", linters = "equals_na_linter"),
-    regexp = rex("Expected '", anything, "' to be of class 'linter'")
+    regexp = rex("Expected '", anything, "' to be a function of class 'linter'")
   )
 })
 
