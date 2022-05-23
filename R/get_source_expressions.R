@@ -84,7 +84,7 @@ get_source_expressions <- function(filename, lines = NULL) {
     # Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
     expressions <- list()
   } else {
-     xml_parsed_content <- safe_parse_to_xml(parsed_content)
+    xml_parsed_content <- safe_parse_to_xml(parsed_content)
 
     expressions <- lapply(
       X = top_level_expressions(parsed_content),
@@ -95,14 +95,16 @@ get_source_expressions <- function(filename, lines = NULL) {
       top_level_map
     )
 
-    expression_xmls <- lapply(
-      xml2::xml_find_all(xml_parsed_content, "/exprlist/*"),
-      function(top_level_expr) xml2::xml_add_parent(xml2::xml_new_root(top_level_expr), "exprlist")
-    )
-    expressions[] <- Map(function(expr, xml) {
-      expr$xml_parsed_content <- xml
-      expr
-    }, expr = expressions, xml = expression_xmls)
+    if (!is.null(xml_parsed_content)) {
+      expression_xmls <- lapply(
+        xml2::xml_find_all(xml_parsed_content, "/exprlist/*"),
+        function(top_level_expr) xml2::xml_add_parent(xml2::xml_new_root(top_level_expr), "exprlist")
+      )
+      expressions[] <- Map(function(expr, xml) {
+        expr$xml_parsed_content <- xml
+        expr
+      }, expr = expressions, xml = expression_xmls)
+    }
 
     # add global expression
     expressions[[length(expressions) + 1L]] <-
