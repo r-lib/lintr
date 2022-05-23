@@ -100,10 +100,9 @@ get_source_expressions <- function(filename, lines = NULL) {
         xml2::xml_find_all(xml_parsed_content, "/exprlist/*"),
         function(top_level_expr) xml2::xml_add_parent(xml2::xml_new_root(top_level_expr), "exprlist")
       )
-      expressions[] <- Map(function(expr, xml) {
-        expr$xml_parsed_content <- xml
-        expr
-      }, expr = expressions, xml = expression_xmls)
+      for (i in seq_along(expressions)) {
+        expressions[[i]]$xml_parsed_content <- expression_xmls[[i]]
+      }
     }
 
     # add global expression
