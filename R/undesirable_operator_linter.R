@@ -9,8 +9,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 undesirable_operator_linter <- function(op = default_undesirable_operators) {
-  undesirable_operator_metadata <-
-    merge(infix_metadata, infix_overload, by = "xml_tag", all.x = TRUE)
+  undesirable_operator_metadata <- merge(
+    # must be handled individually below
+    infix_metadata[infix_metadata$string_value != "%%", ],
+    infix_overload,
+    by = "xml_tag", all.x = TRUE
+  )
 
   included_operators <- undesirable_operator_metadata$string_value %in% names(op) |
     undesirable_operator_metadata$exact_string_value %in% names(op)
