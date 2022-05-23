@@ -7,7 +7,7 @@ test_that("xml_nodes_to_lints handles >1-line nodes correctly", {
       filename = "test",
       line_number = 1L, column_number = 1L,
       type = "style", message = "foo",
-      line = source_expression$lines[1],
+      line = source_expression$lines[1L],
       ranges = list(c(1L, 7L))
     )
   )

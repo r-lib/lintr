@@ -9,13 +9,13 @@ addin_lint <- function() {
   }
 
   config_file <- (get("find_config", asNamespace("lintr")))(filename$path)
-  if (length(config_file) == 0) {
+  if (length(config_file) == 0L) {
     config_linters <- NULL
   } else {
     config <- read.dcf(config_file, all = TRUE)
     config_linters <- config[["linters"]]
   }
-  linters <- if (length(config_linters) == 0) {
+  linters <- if (length(config_linters) == 0L) {
     message("No configuration found. Using default linters.")
     default_linters
   } else {

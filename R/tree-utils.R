@@ -2,14 +2,14 @@ generate_tree <- function(pc) {
   if (is.null(pc)) {
     return(NULL)
   }
-  edges <- matrix(as.character(c(pc$parent, pc$id)), ncol = 2)
+  edges <- matrix(as.character(c(pc$parent, pc$id)), ncol = 2L)
   list(edges = edges, adjlist = adjlist_from_edgelist(edges))
 }
 
 ## Create an adjacency list from an edge list
 
 adjlist_from_edgelist <- function(edges) {
-  tapply(edges[, 2], edges[, 1], c, simplify = FALSE)
+  tapply(edges[, 2L], edges[, 1L], c, simplify = FALSE)
 }
 
 ## Take the subcomponent of id (mode out), and then all edges
@@ -26,7 +26,7 @@ component_edges <- function(graph, id) {
     size <- length(sc)
   }
 
-  which(graph$edges[, 1] %in% sc)
+  which(graph$edges[, 1L] %in% sc)
 }
 
 children <- function(data, id, levels = Inf) {

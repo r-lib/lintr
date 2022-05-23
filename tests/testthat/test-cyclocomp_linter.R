@@ -1,6 +1,6 @@
 test_that("returns the correct linting", {
-  cc_linter_1 <- cyclocomp_linter(1)
-  cc_linter_2 <- cyclocomp_linter(2)
+  cc_linter_1 <- cyclocomp_linter(1L)
+  cc_linter_2 <- cyclocomp_linter(2L)
   msg <- rex("functions should have cyclomatic complexity")
 
   expect_lint("if(TRUE) 1 else 2", NULL, cc_linter_2)
@@ -20,5 +20,5 @@ test_that("returns the correct linting", {
     "should have cyclomatic complexity of less than 2, this has 10",
     cc_linter_2
   )
-  expect_lint(complexity, NULL, cyclocomp_linter(10))
+  expect_lint(complexity, NULL, cyclocomp_linter(10L))
 })
