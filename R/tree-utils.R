@@ -1,32 +1,16 @@
-generate_tree <- function(pc) {
+generate_top_level_map <- function(pc) {
   if (is.null(pc)) {
     return(NULL)
   }
-  edges <- matrix(as.character(c(pc$parent, pc$id)), ncol = 2L)
-  list(edges = edges, adjlist = adjlist_from_edgelist(edges))
-}
-
-## Create an adjacency list from an edge list
-
-adjlist_from_edgelist <- function(edges) {
-  tapply(edges[, 2L], edges[, 1L], c, simplify = FALSE)
-}
-
-## Take the subcomponent of id (mode out), and then all edges
-## that start at these vertices
-
-component_edges <- function(graph, id) {
-  sc <- newv <- unique(id)
-  size <- length(sc)
-  repeat {
-    neis <- unlist(graph$adjlist[newv])
-    newv <- setdiff(neis, sc)
-    sc <- c(sc, newv)
-    if (length(sc) == size) break
-    size <- length(sc)
+  tl_ids <- pc$id[pc$parent <= 0L]
+  tl_parent <- pc$parent
+  tl_parent[pc$parent <= 0L] <- tl_ids
+  i_not_assigned <- which(!tl_parent %in% tl_ids)
+  while (length(i_not_assigned)) {
+    tl_parent[i_not_assigned] <- pc$parent[match(tl_parent[i_not_assigned], pc$id)]
+    i_not_assigned <- which(!tl_parent %in% tl_ids)
   }
-
-  which(graph$edges[, 1L] %in% sc)
+  tl_parent
 }
 
 lag <- function(x) {
