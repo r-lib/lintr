@@ -14,27 +14,27 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   stopifnot(is.logical(symbol_is_undesirable))
 
+  xp_condition <- xp_and(
+    xp_text_in_table(names(fun)),
+    paste0(
+      "not(parent::expr/preceding-sibling::expr[SYMBOL_FUNCTION_CALL[",
+      xp_text_in_table(c("library", "require")),
+      "]])"
+    ),
+    "not(preceding-sibling::OP-DOLLAR)"
+  )
+
+  if (symbol_is_undesirable) {
+    xpath <- glue::glue("//SYMBOL_FUNCTION_CALL[{xp_condition}] | //SYMBOL[{xp_condition}]")
+  } else {
+    xpath <- glue::glue("//SYMBOL_FUNCTION_CALL[{xp_condition}]")
+  }
+
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
-    if (symbol_is_undesirable) {
-      tokens <- c("SYMBOL_FUNCTION_CALL", "SYMBOL")
-    } else {
-      tokens <- "SYMBOL_FUNCTION_CALL"
-    }
-
-    xpath <- paste0("//*[", xp_and(
-      paste0("self::", tokens, collapse = " or "),
-      xp_text_in_table(names(fun)),
-      paste0(
-        "not(parent::expr/preceding-sibling::expr[SYMBOL_FUNCTION_CALL[",
-        xp_text_in_table(c("library", "require")),
-        "]])"
-      ),
-      "not(preceding-sibling::OP-DOLLAR)"
-    ), "]")
-
     matched_nodes <- xml2::xml_find_all(source_expression$xml_parsed_content, xpath)
 
     lapply(
