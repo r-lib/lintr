@@ -24,8 +24,7 @@ make_linter_from_regex <- function(regex,
 
       line_numbers <- as.integer(names(source_expression[["lines"]]))
 
-      # flatten_lints() to ensure this returns list() when there's no match
-      flatten_lints(Map(
+      lints <- Map(
         function(line_matches, line_number) {
           lapply(
             split(line_matches, seq_len(nrow(line_matches))),
@@ -50,7 +49,9 @@ make_linter_from_regex <- function(regex,
         },
         all_matches,
         line_numbers
-      ))
+      )
+
+      lapply(lints, function(x) x[vapply(x, length, integer(1L)) > 0L])
     })
   }
 }
