@@ -52,7 +52,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
                   column_number = col1,
                   type = "warning",
                   message = sprintf("'%s' is not exported from {%s}.", syms[[i]], pkgs[[i]]),
-                  line = source_expression$file_lines[line1],
+                  line = source_expression$file_lines[[line1]],
                   ranges = list(c(col1, col2))
                 ))
               }
@@ -72,7 +72,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
                     type = "style",
                     message = sprintf("'%s' is exported from {%s}. Use %s::%s instead.",
                       syms[[i]], pkgs[[i]], pkgs[[i]], syms[[i]]),
-                    line = source_expression$file_lines[line1],
+                    line = source_expression$file_lines[[line1]],
                     ranges = list(c(col1, col2))
                   ))
                 }
@@ -86,7 +86,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
                   column_number = col1,
                   type = "warning",
                   message = sprintf("'%s' does not exist in {%s}.", syms[[i]], pkgs[[i]]),
-                  line = source_expression$file_lines[line1],
+                  line = source_expression$file_lines[[line1]],
                   ranges = list(c(col1, col2))
                 ))
               }
@@ -102,7 +102,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
               column_number = col1,
               type = "warning",
               message = conditionMessage(ns),
-              line = source_expression$file_lines[line1],
+              line = source_expression$file_lines[[line1]],
               ranges = list(c(col1, col2))
             ))
             # nocov end
@@ -118,7 +118,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
           column_number = col1,
           type = "warning",
           message = sprintf("Package '%s' is not installed.", pkgs[[i]]),
-          line = source_expression$file_lines[line1],
+          line = source_expression$file_lines[[line1]],
           ranges = list(c(col1, col2))
         ))
       }

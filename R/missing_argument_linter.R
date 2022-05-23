@@ -37,7 +37,7 @@ missing_argument_linter <- function(except = c("switch", "alist")) {
           column_number = col1[[i]],
           type = "warning",
           message = "Missing argument in function call.",
-          line = source_expression$file_lines[line1[[i]]],
+          line = source_expression$file_lines[[line1[[i]]]],
           ranges = list(c(col1[[i]], col2[[i]]))
         )
       }
