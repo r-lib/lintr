@@ -16,18 +16,18 @@ knitr::opts_chunk$set(
 
 ## RStudio
 
-lintr lints are automatically displayed in the RStudio Markers pane, Rstudio versions (\> v0.99.206).
+lintr lints are automatically displayed in the RStudio Markers pane (RStudio versions \> v0.99.206).
 
 ![RStudio Example](http://i.imgur.com/PIKnpbn.png "Rstudio Example")
 
 In order to show the "Markers" pane in RStudio: Menu "Tools" -\> "Global Options...", a window with title "Options" will pop up.
-In that window: Click "Code" on the left; Click "Diagnostics" tab; check "Show diagnostics for R".
+In that window: click "Code" on the left; click "Diagnostics" tab; check "Show diagnostics for R".
 
 To lint a source file `test.R` type in the Console `lintr::lint("test.R")` and look at the result in the "Markers" pane.
 
 This package also includes two addins for linting the current source and package.
 To bind the addin to a keyboard shortcut navigate to Tools \> addins \> Browse Addins \> Keyboard Shortcuts.
-It's recommended to use Alt+Shift+L for linting the current source code and Ctrl+Shift+Alt+L to code the package.
+It's recommended to use Alt+Shift+L for linting the current source lint and Ctrl+Shift+Alt+L to code the package.
 These are easy to remember as you are Alt+Shift+L(int) ;)
 
 ## Emacs
@@ -48,7 +48,7 @@ e.g. using a different line length cutoff.
 
 ## Vim - syntastic
 
-lintr can be integrated with [syntastic](https://github.com/vim-syntastic/syntastic) for on the fly linting.
+lintr can be integrated with [syntastic](https://github.com/vim-syntastic/syntastic) for on-the-fly linting.
 
 ![Vim Example](http://i.imgur.com/fR6Os5M.gif "Vim Example")
 
@@ -80,8 +80,10 @@ lintr can be integrated with [ALE](https://github.com/dense-analysis/ale) for on
 ### Installation
 
 lintr is integrated with ALE and requires no additional installation.
-#### Configuration \#### You can configure what linters are used.
-e.g. using a different line length cutoff.
+
+### Configuration
+
+You can configure what linters are used, e.g. using a different line length cutoff.
 
 ``` vim
 let g:ale_r_lintr_options = "linters_with_defaults(line_length_linter(120))"
@@ -100,7 +102,7 @@ Note that configuration through `.lintr` files are not supported.
 
 ## Sublime Text 3
 
-lintr can be integrated with [Sublime Linter](https://github.com/SublimeLinter/SublimeLinter) for on the fly linting.
+lintr can be integrated with [Sublime Linter](https://github.com/SublimeLinter/SublimeLinter) for on-the-fly linting.
 
 ![Sublime Example](http://i.imgur.com/3pua2yz.gif "Sublime Example")
 
@@ -116,6 +118,7 @@ You can also configure what linters are used.
 e.g. disabling the assignment linter and using a different line length cutoff.
 In the SublimeLinter User Settings
 
+```json
     {
       "linters": {
         "lintr": {
@@ -123,6 +126,7 @@ In the SublimeLinter User Settings
         }
       }
     }
+```
 
 ## Atom
 
