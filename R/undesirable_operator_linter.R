@@ -22,6 +22,15 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
     undesirable_operator_metadata$exact_string_value[included_operators][needs_exact_string]
   )
 
+  is_infix <- startsWith(names(op), "%")
+  if (any(is_infix)) {
+    operator_nodes <- c(operator_nodes, sprintf("SPECIAL[text() = '%s']", names(op)[is_infix]))
+  }
+
+  if (length(operator_nodes) == 0L) {
+    stop("Did not recognize any valid operators in request for: ", toString(names(op)))
+  }
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
