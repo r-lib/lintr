@@ -383,8 +383,8 @@ validate_linter_object <- function(linter, name) {
       linter <- Linter(linter, name = name)
     }
   } else if (!is.function(linter)) {
-    stop(gettextf("Expected '%s' to be of class 'linter', not '%s'",
-                  name, class(linter)[[1L]]))
+    stop(gettextf("Expected '%s' to be a function of class 'linter', not a %s of class '%s'",
+                  name, typeof(linter), class(linter)[[1L]]))
   }
   linter
 }
