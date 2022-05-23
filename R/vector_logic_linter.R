@@ -12,6 +12,7 @@
 #'   <https://style.tidyverse.org/syntax.html#if-statements>
 #' @export
 vector_logic_linter <- function() {
+
   # ensures the expr is in the cond part of `if/while (cond) expr` --
   #   if on the XML parse tree is structured like
   #   <expr>
@@ -24,22 +25,21 @@ vector_logic_linter <- function() {
   #     <expr> ... </expr>
   #  </expr>
   #  we _don't_ want to match anything on the second expr, hence this
-
-  xp_condition <- "
-    ancestor::expr[
+  xpath <- "//*[
+    (self::AND or self::OR)
+    and ancestor::expr[
       not(preceding-sibling::OP-RIGHT-PAREN)
-      and (
-        preceding-sibling::IF or
-        preceding-sibling::WHILE or
-        preceding-sibling::expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']]
-      )
+      and preceding-sibling::*[
+        self::IF
+        or self::WHILE
+        or self::expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']]
+      ]
     ]
     and not(ancestor::expr[
       preceding-sibling::expr[SYMBOL_FUNCTION_CALL[not(text() = 'expect_true' or text() = 'expect_false')]]
       or preceding-sibling::OP-LEFT-BRACKET
     ])
-  "
-  xpath <- glue::glue("//AND[{xp_condition}] | //OR[{xp_condition}]")
+  ]"
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
