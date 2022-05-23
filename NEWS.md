@@ -180,6 +180,7 @@ function calls. (#850, #851, @renkun-ken)
 * `object_usage_linter()` now detects functions exported by packages that are explicitly attached using `library()` or `require()` calls (#1127, @AshesITR)
 * New helper `xml_nodes_to_lints()` for converting `xml_node` objects obtained using linter logic expressed in XPath into `Lint` objects (#1124, @michaelchirico)
 * Added more explanation why certain functions and operators might be undesirable and what alternatives to use (#1133, #1146, #1159, @AshesITR)
+* Improved S3 generic detection for non-standard S3 generics (#846, @jonkeane)
 
 # lintr 2.0.1
 
