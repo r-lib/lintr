@@ -38,6 +38,7 @@ infix_metadata <- data.frame(stringsAsFactors = FALSE, matrix(byrow = TRUE, ncol
   "LBB", "[[",
   "OP-LEFT-PAREN", "(",
   "OP-QUESTION", "?",
+  "OP-DOLLAR", "$",
   NULL
 )))
 names(infix_metadata) <- c("xml_tag", "string_value")
@@ -56,6 +57,13 @@ infix_metadata$low_precedence <- infix_metadata$string_value %in% c(
 )
 # comparators come up in several lints
 infix_metadata$comparator <- infix_metadata$string_value %in% c("<", "<=", ">", ">=", "==", "!=")
+
+# undesirable_operator_linter needs to distinguish
+infix_overload <- data.frame(
+  exact_string_value = c("<-", "<<-", "=", "->", "->>", "^", "**"),
+  xml_tag = rep(c("LEFT_ASSIGN", "RIGHT_ASSIGN", "OP-CARET"), c(3L, 2L, 2L)),
+  stringsAsFactors = FALSE
+)
 
 #' Infix spaces linter
 #'
