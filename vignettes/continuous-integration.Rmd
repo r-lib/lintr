@@ -22,21 +22,24 @@ You can configure `lintr` to run as part of continuous integration (either for a
 
 If your package is on GitHub, the easiest way to do this is with GitHub Actions.
 The workflow configuration files use YAML syntax.
-The `usethis` package has some great functionality, that can help you with workflow files.
-The most straightforward way to add a `lint` workflow to your package is to use the [r-lib/actions](https://github.com/r-lib/actions/tree/master/examples)'s `lint` example.
+The `usethis` package has some great functionality that can help you with workflow files.
+The most straightforward way to add a `lintr` workflow to your package is to use the [r-lib/actions](https://github.com/r-lib/actions/tree/master/examples)'s `lint` example.
 To do this with `usethis`, you need to call
 
-``` r
+```r
 usethis::use_github_action("lint")
 ```
 
 This will create a workflow file called `lint.yaml` and place it in the correct location, namely in the `.github/workflows` directory of your repository.
 This file configures all the steps required to run `lintr::lint_package()` on your package.
 
-[lintr-bot](https://github.com/lintr-bot) will then add comments to the commit or pull request with the lints found and they will also be printed as [annotations](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-status-checks#types-of-status-checks-on-github) along side the status check on GitHub.
+[lintr-bot](https://github.com/lintr-bot) will then add comments to the commit or pull request with the lints found and they will also be printed as
+[annotations](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-status-checks#types-of-status-checks-on-github)
+along side the status check on GitHub.
 If you want to disable the commenting you can set the environment variable `LINTR_COMMENT_BOT=false`.
 
-If your project is in a subdirectory and you would like to use GitHub Actions annotations, you can set `options(lintr.github_annotation_project_dir = "path/to/project")` which will make sure that the annotations point to the correct paths.
+If your project is in a subdirectory and you would like to use GitHub Actions annotations, you can set
+`options(lintr.github_annotation_project_dir = "path/to/project")` which will make sure that the annotations point to the correct paths.
 
 ### Travis CI
 
@@ -50,7 +53,8 @@ r_github_packages:
 
 We recommend running `lintr::lint_package()` as an [after_success step in your build process](#non-failing-lints)]
 
-Just like with GitHub Actions, [lintr-bot](https://github.com/lintr-bot) will then add comments to the commit or pull request with the lints found and they will also be printed on Travis-CI.
+Just like with GitHub Actions, [lintr-bot](https://github.com/lintr-bot) will then add comments to the commit or pull request with the lints found and
+they will also be printed on Travis-CI.
 If you want to disable the commenting you can set the environment variable `LINTR_COMMENT_BOT=false`.
 
 ##### Non-failing Lints {#non-failing-lints}
@@ -61,11 +65,13 @@ after_success:
   - Rscript -e 'lintr::lint_package()'
 ```
 
-Live example of a package using this setup: [`hibpwned`](https://github.com/lockedata/HIBPwned/blob/master/.travis.yml), [lintr-bot commenting on a PR](https://github.com/lockedata/HIBPwned/pull/30).
+Live example of a package using this setup:
+[`hibpwned`](https://github.com/lockedata/HIBPwned/blob/master/.travis.yml),
+[lintr-bot commenting on a PR](https://github.com/lockedata/HIBPwned/pull/30).
 
 ## For projects
 
-You are not limited you using `lintr` for packages only, you can use it in combination with continuous integration for any other project.
+You are not limited you using `lintr` for packages -- you can use it in combination with continuous integration for any other project.
 
 ### GitHub Actions
 
@@ -78,5 +84,6 @@ usethis::use_github_action("lint-project")
 
 ### Super-Linter
 
-`lintr` powers R lints for [Super-Linter](https://github.com/github/super-linter) and [MegaLinter](https://megalinter.github.io/latest/), which provide a unified linting experience across many languages.
+`lintr` powers R lints for [Super-Linter](https://github.com/github/super-linter) and [MegaLinter](https://megalinter.github.io/latest/),
+which provide a unified linting experience across many languages.
 Specifically, they execute `lintr::lint()` on the R and R Markdown files included in a given project.
