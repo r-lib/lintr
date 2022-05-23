@@ -15,7 +15,7 @@
 Install the stable version from CRAN:
 
 ```R
-install.packages("cli")
+install.packages("lintr")
 ```
 
 Or the development version from GitHub:
