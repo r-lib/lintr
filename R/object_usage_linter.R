@@ -195,6 +195,8 @@ get_assignment_symbols <- function(xml) {
 get_function_assignments <- function(xml) {
   # NB: difference across R versions in how EQ_ASSIGN is represented in the AST
   #   (under <expr_or_assign_or_help> or <equal_assign>)
+  # NB: the repeated expr[2][FUNCTION] XPath has no performance impact, so the different direct assignment XPaths are
+  #   split for better readability, see PR#1197
   # TODO(#1106): use //[...] to capture assignments in more scopes
   funs <- xml2::xml_find_all(
     xml,
