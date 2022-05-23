@@ -37,7 +37,7 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
     stop("Did not recognize any valid operators in request for: ", toString(names(op)))
   }
 
-  operator_nodes <- paste0("self::", operator_nodes)
+  xpath <- paste(paste0("//", operator_nodes), collapse = " | ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -46,7 +46,6 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
 
     xml <- source_expression$xml_parsed_content
 
-    xpath <- glue::glue("//*[ { xp_or(operator_nodes) } ]")
     bad_op <- xml2::xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(
