@@ -307,6 +307,8 @@ get_imported_symbols <- function(xml) {
 }
 
 get_used_symbols <- function(expr, interpret_glue) {
-  if (!isTRUE(interpret_glue)) return(character())
+  if (!isTRUE(interpret_glue)) {
+    return(character())
+  }
   extract_glued_symbols(expr)
 }
