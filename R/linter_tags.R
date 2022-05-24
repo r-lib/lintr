@@ -86,21 +86,25 @@ available_linters <- function(packages = "lintr", tags = NULL, exclude_tags = "d
     return(empty_linters)
   }
 
-  res <- data.frame(
+  build_available_linters(available, packages, tags, exclude_tags)
+}
+
+build_available_linters <- function(available, packages, tags, exclude_tags) {
+   available_df <- data.frame(
     linter = available[["linter"]],
     package = rep_len(packages, nrow(available)),
     stringsAsFactors = FALSE
   )
-  res$tags <- strsplit(available[["tags"]], split = " ", fixed = TRUE)
+  available_df$tags <- strsplit(available[["tags"]], split = " ", fixed = TRUE)
   if (!is.null(tags)) {
-    matches_tags <- vapply(res$tags, function(linter_tags) any(linter_tags %in% tags), logical(1L))
-    res <- res[matches_tags, ]
+    matches_tags <- vapply(available_df$tags, function(linter_tags) any(linter_tags %in% tags), logical(1L))
+    available_df <- available_df[matches_tags, ]
   }
   if (!is.null(exclude_tags)) {
-    matches_exclude <- vapply(res$tags, function(linter_tags) any(linter_tags %in% exclude_tags), logical(1L))
-    res <- res[!matches_exclude, ]
+    matches_exclude <- vapply(available_df$tags, function(linter_tags) any(linter_tags %in% exclude_tags), logical(1L))
+    available_df <- available_df[!matches_exclude, ]
   }
-  res
+  available_df
 }
 
 #' @rdname available_linters
