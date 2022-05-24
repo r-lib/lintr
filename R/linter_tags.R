@@ -72,10 +72,10 @@ available_linters <- function(packages = "lintr", tags = NULL, exclude_tags = "d
   build_available_linters(available, packages, tags, exclude_tags)
 }
 
-build_available_linters <- function(available, packages, tags, exclude_tags) {
+build_available_linters <- function(available, package, tags, exclude_tags) {
    available_df <- data.frame(
     linter = available[["linter"]],
-    package = rep_len(packages, nrow(available)),
+    package,
     stringsAsFactors = FALSE
   )
   available_df$tags <- strsplit(available[["tags"]], split = " ", fixed = TRUE)
@@ -100,21 +100,19 @@ empty_linters <- function() {
   empty_df
 }
 
-validate_linter_db <- function(available, packages) {
+validate_linter_db <- function(available, package) {
   # Check that the csv file contains two character columns, named 'linter' and 'tags'.
   # Otherwise, fallback to an empty data frame.
   if (!all(c("linter", "tags") %in% colnames(available))) {
     warning(
       "`linters.csv` must contain the columns 'linter' and 'tags'.\nPackage '",
-      packages, "' is missing ",
+      package, "' is missing ",
       paste0("'", setdiff(c("linter", "tags"), names(available)), "'", collapse = " and "),
       "."
     )
     return(FALSE)
-  } else if (nrow(available) == 0L) {
-    return(FALSE)
   }
-  TRUE
+  nrow(available) > 0L
 }
 
 #' @rdname available_linters
