@@ -269,9 +269,8 @@ patrick::with_parameters_test_that(
   {
     linter <- eval(call(linter))
     expression <- expressions[[expression_idx]]
-    # TODO(#1160): try and simplify this to expect_length(linter(.), 0L)
     expect_warning(lints <- linter(expression), NA)
-    expect_identical(length(flatten_lints(lints)), 0L)
+    expect_length(lints, 0L)
   },
   .test_name = param_df$.test_name,
   linter = param_df$linter,
