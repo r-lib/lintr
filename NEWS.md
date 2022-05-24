@@ -4,13 +4,15 @@
 
 * Exclusions specified in the `.lintr` file are now relative to the location of that file 
   and support excluding entire directories (#158, #438, @AshesITR)
-* Consistent access to linters through a function call, even for linters without parameters
+* Linters mConsistent access to linters through a function call, even for linters without parameters
   (#245, @fangly, @AshesITR, and @MichaelChirico)
 * Removed deprecated functions `absolute_paths_linter`, `camel_case_linter`, `multiple_dots_linter`,
   `snake_case_linter`, and `trailing_semicolons_linter`. They have been marked as deprecated since v1.0.1, which was
   released in 2017.
 * Removed `"return"` from `all_undesirable_functions`. Follow #1100 for an upcoming `return_linter()` to lint 
-  unnecessary `return()` statements (#1146, @AshesITR)
+  unnecessary `return()` statements (#1146, @AshesITR). Note that you can replicate old behavior by supplying
+  `return` as a custom undesirable function:
+  `undesirable_function_linter(c(all_undesirable_functions, list(return = NA)))`
   
 ## Deprecations
 
