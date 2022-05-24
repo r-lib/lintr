@@ -36,10 +36,11 @@ sprintf_linter <- function() {
       }
     }, character(1L))
 
+    has_message <- !is.na(message)
     xml_nodes_to_lints(
-      sprintf_calls[!is.na(message)],
+      sprintf_calls[has_message],
       source_expression = source_expression,
-      lint_message = message[!is.na(message)],
+      lint_message = message[has_message],
       type = "warning"
     )
   })
