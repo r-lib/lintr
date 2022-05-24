@@ -125,7 +125,7 @@ split_path <- function(dirs, prefix) {
   }
 
   # add // to protocols (like http, smb, ...)
-  if (length(dirs) > 0L && grepl(".:$", dirs[[1L]])) {
+  if (length(dirs) > 0L && grepl("..:$", dirs[[1L]])) {
     dirs[[1L]] <- paste0(dirs[[1L]], "//")
   }
 
