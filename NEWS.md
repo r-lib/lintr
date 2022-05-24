@@ -4,8 +4,17 @@
 
 * Exclusions specified in the `.lintr` file are now relative to the location of that file 
   and support excluding entire directories (#158, #438, @AshesITR)
-* Consistent access to linters through a function call, even for linters without parameters
-  (#245, @fangly, @AshesITR, and @MichaelChirico)
+* All linters are now function factories (i.e., functions that return functions) for consistency. Previously, only linters with customizable parameters were factories (#245, @fangly, @AshesITR, and @MichaelChirico)
+
+  This means that usage such as `lint("file.R", seq_linter)` should be updated to `lint("file.R", seq_linter())`, and
+  the following update for custom linters:
+  
+  ```r
+  my_custom_linter <- function(source_expression) { ... }
+  
+  # becomes
+  my_custom_linter <- function() Linter(function(source_expression) { ... })
+  ```
 * Removed deprecated functions `absolute_paths_linter`, `camel_case_linter`, `multiple_dots_linter`,
   `snake_case_linter`, and `trailing_semicolons_linter`. They have been marked as deprecated since v1.0.1, which was
   released in 2017.
