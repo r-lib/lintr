@@ -100,7 +100,7 @@ is_valid_long_path <- function(path, lax = FALSE) {
 }
 
 
-split_path <- function(path, sep = "/|\\\\") {
+split_paths <- function(path, sep = "/|\\\\") {
   if (!is.character(path)) {
     stop("argument 'path' should be a character vector")
   }
