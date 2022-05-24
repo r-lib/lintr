@@ -13,7 +13,7 @@
 #' @return Path to the generated configuration, invisibly.
 #'
 #' @export
-#' @seealso `vignette("using_lintr")` for detailed introduction to using and configuring lintr.
+#' @seealso `vignette("lintr")` for detailed introduction to using and configuring lintr.
 #' @examples
 #' \dontrun{
 #' # use the default set of linters
@@ -33,11 +33,11 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
   the_config <- switch(
     type,
     tidyverse = list(
-      linters = 'linters_with_defaults() # see vignette("using_lintr")',
+      linters = 'linters_with_defaults() # see vignette("lintr")',
       encoding = '"UTF-8"'
     ),
     full = list(
-      linters = 'linters_with_tags(tags = NULL, packages = "lintr") # see vignette("using_lintr")',
+      linters = 'linters_with_tags(tags = NULL, packages = "lintr") # see vignette("lintr")',
       encoding = '"UTF-8"',
       exclusions = 'list("renv", "packrat") # see ?lintr::exclude'
     )
