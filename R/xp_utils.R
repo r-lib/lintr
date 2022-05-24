@@ -27,7 +27,8 @@ xp_text_in_table <- function(table) {
 #'   to the `Lint` object. If `lint_message` is a `function`,
 #'   this function is first applied to `xml` (so it should be a
 #'   function taking an `xml_node` as input and must produce a
-#'   length-1 character as output).
+#'   length-1 character as output). If `lint_message` is a character vector the same length as `xml`,
+#'   the `i`-th lint will be given the `i`-th message
 #' @param match_after_end Logical, default `FALSE`. If `TRUE`,
 #'   The output `column_number` and `ranges[2L]` are set to _after_ the matched
 #'   symbol in `xml`. This can be convenient for setting the source marker
@@ -43,7 +44,13 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
     return(list())
   }
   if (inherits(xml, "xml_nodeset")) {
-    lints <- lapply(xml, xml_nodes_to_lints, source_expression, lint_message, type, match_after_end)
+    if (is.character(message) && length(message) > 1L) {
+      lints <- .mapply(xml_nodes_to_lints, list(xml = xml, lint_message = lint_message), list(
+        source_expression = source_expression, type = type, match_after_end = match_after_end
+      ))
+    } else {
+      lints <- lapply(xml, xml_nodes_to_lints, source_expression, lint_message, type, match_after_end)
+    }
     class(lints) <- "lints"
     return(lints)
   } else if (!inherits(xml, "xml_node")) {

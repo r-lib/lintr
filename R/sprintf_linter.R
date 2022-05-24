@@ -21,51 +21,51 @@ sprintf_linter <- function() {
 
     sprintf_calls <- xml2::xml_find_all(xml, xpath)
 
-    get_range_text <- function(content, line1, col1, line2, col2) {
-      lines <- content[line1:line2]
-      lines[length(lines)] <- substr(lines[length(lines)], 1L, col2)
-      lines[1L] <- substr(lines[1L], col1, nchar(lines[1L]))
-      lines
-    }
-
-    line1 <- as.integer(xml2::xml_attr(sprintf_calls, "line1"))
-    col1 <- as.integer(xml2::xml_attr(sprintf_calls, "col1"))
-    line2 <- as.integer(xml2::xml_attr(sprintf_calls, "line2"))
-    col2 <- as.integer(xml2::xml_attr(sprintf_calls, "col2"))
-
-    is_missing <- function(x) {
-      is.symbol(x) && !nzchar(x)
-    }
-
-    result <- .mapply(function(line1, col1, line2, col2) {
-      text <- get_range_text(source_expression$file_lines, line1, col1, line2, col2)
-      expr <- tryCatch(parse(text = text, keep.source = FALSE)[[1L]], error = function(e) NULL)
-      if (is.call(expr) &&
-        is.language(expr[[1L]]) &&
-        is.character(expr[[2L]])) {
-        if (length(expr) >= 3L) {
-          for (i in 3L:length(expr)) {
-            if (!is_missing(expr[[i]]) && !is.atomic(expr[[i]])) {
-              expr[[i]] <- 0L
-            }
-          }
-        }
-
-        res <- tryCatch(eval(expr, envir = baseenv()), warning = identity, error = identity)
-        if (inherits(res, "condition")) {
-          Lint(
-            filename = source_expression$filename,
-            line_number = line1,
-            column_number = col1,
-            type = "warning",
-            message = conditionMessage(res),
-            line = source_expression$file_lines[line1],
-            ranges = list(c(col1, col2))
-          )
-        }
+    message <- vapply(sprintf_calls, function(xml) {
+      text <- xml2::xml_text(xml)
+      parsed_expr <- try_silently(parse(text = text, keep.source = FALSE)[[1L]])
+      if (!is.character(parsed_expr[[2L]])) { # sprintf(fmt = "") must be a constant format
+        return(NA_character_)
       }
-    }, list(line1, col1, line2, col2), NULL)
+      parsed_expr <- zap_extra_args(parsed_expr)
+      res <- tryCatch(eval(parsed_expr, envir = baseenv()), warning = identity, error = identity)
+      if (inherits(res, "condition")) {
+        conditionMessage(res)
+      } else {
+        NA_character_
+      }
+    }, character(1L))
 
-    result[vapply(result, is.list, logical(1L))]
+    xml_nodes_to_lints(
+      sprintf_calls[!is.na(message)],
+      source_expression = source_expression,
+      lint_message = message[!is.na(message)],
+      type = "warning"
+    )
   })
+}
+
+#' Zap sprintf() call to contain only constants
+#'
+#' Set all extra arguments to 0L if they aren't a constant
+#'
+#' @param parsed_expr A parsed `sprintf()` call
+#'
+#' @return A `sprintf()` call with all non-constants replaced by `0L`
+#' (which is compatible with all sprintf format specifiers)
+#'
+#' @noRd
+zap_extra_args <- function(parsed_expr) {
+  is_missing <- function(x) {
+    is.symbol(x) && !nzchar(x)
+  }
+
+  if (length(parsed_expr) >= 3L) {
+    for (i in 3L:length(parsed_expr)) {
+      if (!is_missing(parsed_expr[[i]]) && !is.atomic(parsed_expr[[i]])) {
+        parsed_expr[[i]] <- 0L
+      }
+    }
+  }
+  parsed_expr
 }
