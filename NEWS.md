@@ -10,7 +10,9 @@
   `snake_case_linter`, and `trailing_semicolons_linter`. They have been marked as deprecated since v1.0.1, which was
   released in 2017.
 * Removed `"return"` from `all_undesirable_functions`. Follow #1100 for an upcoming `return_linter()` to lint 
-  unnecessary `return()` statements (#1146, @AshesITR)
+  unnecessary `return()` statements (#1146, @AshesITR). Note that you can replicate old behavior by supplying
+  `return` as a custom undesirable function:
+  `undesirable_function_linter(c(all_undesirable_functions, list(return = NA)))`
   
 ## Deprecations
 
