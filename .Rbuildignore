@@ -27,3 +27,6 @@
 ^tests/testthat/dummy_packages/clean/[.]lintr$
 ^tests/testthat/dummy_packages/clean_subdir/[.]lintr$
 ^tests/testthat/dummy_packages/cp1252/[.]Rbuildignore$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

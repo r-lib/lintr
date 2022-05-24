@@ -1,0 +1,45 @@
+url: https://lintr.r-lib.org
+template:
+  bootstrap: 5
+
+  includes:
+    in_header: |
+      <script defer data-domain="lintr.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
+
+reference:
+- title: Linting
+  contents:
+  - lint
+  - linters_with_defaults
+
+- title: Configuration
+  contents:
+  - read_settings
+  - exclude
+  - linters_with_tags
+  - modify_defaults
+
+- title: Individual linters
+  contents:
+  - all_undesirable_functions
+  - ends_with("linter")
+
+- title: Customer linters
+  contents:
+  - Linter
+  - expect_lint
+  - expect_lint_free
+  - ids_with_token
+  - is_lint_level
+  - use_lintr
+  - xml_nodes_to_lints
+
+- title: internal
+  contents:
+  - ends_with("linters")
+  - Lint
+  - checkstyle_output
+  - clear_cache
+  - default_settings
+  - get_source_expressions
+  - parse_exclusions

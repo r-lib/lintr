@@ -16,7 +16,7 @@ xp_text_in_table <- function(table) {
 #' Convenience function for converting nodes matched by XPath-based
 #'   linter logic into a [Lint()] object to return.
 #'
-#' @inheritParams Lint
+#' @inheritParams lint-s3
 #' @param xml An `xml_node` object (to generate one `Lint`) or an
 #'   `xml_nodeset` object (to generate several `Lint`s), e.g. as returned by
 #'   [xml2::xml_find_all()] or [xml2::xml_find_first()].
