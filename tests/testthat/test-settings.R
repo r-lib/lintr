@@ -75,7 +75,7 @@ test_that("it errors if the config file does not end in a newline", {
 })
 
 test_that("rot utility works as intended", {
-  expect_equal(lintr:::rot(letters), c(letters[14:26], LETTERS[1:13]))
+  expect_equal(lintr:::rot(letters), c(letters[14L:26L], LETTERS[1L:13L]))
 })
 
 test_that("logical_env utility works as intended", {

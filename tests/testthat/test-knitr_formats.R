@@ -18,10 +18,10 @@ test_that("it handles dir", {
 test_that("it handles markdown", {
   expect_lint(file = "knitr_formats/test.Rmd",
     checks = list(
-      list(regexes[["assign"]], line_number = 9),
-      list(regexes[["local_var"]], line_number = 22),
-      list(regexes[["assign"]], line_number = 22),
-      list(regexes[["trailing"]], line_number = 24)
+      list(regexes[["assign"]], line_number = 9L),
+      list(regexes[["local_var"]], line_number = 22L),
+      list(regexes[["assign"]], line_number = 22L),
+      list(regexes[["trailing"]], line_number = 24L)
     ),
     default_linters,
     parse_settings = FALSE
@@ -31,10 +31,10 @@ test_that("it handles markdown", {
 test_that("it handles Sweave", {
   expect_lint(file = "knitr_formats/test.Rnw",
     checks = list(
-      list(regexes[["assign"]], line_number = 12),
-      list(regexes[["local_var"]], line_number = 24),
-      list(regexes[["assign"]], line_number = 24),
-      list(regexes[["trailing"]], line_number = 26)
+      list(regexes[["assign"]], line_number = 12L),
+      list(regexes[["local_var"]], line_number = 24L),
+      list(regexes[["assign"]], line_number = 24L),
+      list(regexes[["trailing"]], line_number = 26L)
     ),
     default_linters,
     parse_settings = FALSE
@@ -44,10 +44,10 @@ test_that("it handles Sweave", {
 test_that("it handles reStructuredText", {
   expect_lint(file = "knitr_formats/test.Rrst",
     checks = list(
-      list(regexes[["assign"]], line_number = 10),
-      list(regexes[["local_var"]], line_number = 23),
-      list(regexes[["assign"]], line_number = 23),
-      list(regexes[["trailing"]], line_number = 25)
+      list(regexes[["assign"]], line_number = 10L),
+      list(regexes[["local_var"]], line_number = 23L),
+      list(regexes[["assign"]], line_number = 23L),
+      list(regexes[["trailing"]], line_number = 25L)
     ),
     default_linters,
     parse_settings = FALSE
@@ -57,10 +57,10 @@ test_that("it handles reStructuredText", {
 test_that("it handles HTML", {
   expect_lint(file = "knitr_formats/test.Rhtml",
     checks = list(
-      list(regexes[["assign"]], line_number = 15),
-      list(regexes[["local_var"]], line_number = 27),
-      list(regexes[["assign"]], line_number = 27),
-      list(regexes[["trailing"]], line_number = 29)
+      list(regexes[["assign"]], line_number = 15L),
+      list(regexes[["local_var"]], line_number = 27L),
+      list(regexes[["assign"]], line_number = 27L),
+      list(regexes[["trailing"]], line_number = 29L)
     ),
     default_linters,
     parse_settings = FALSE
@@ -70,11 +70,11 @@ test_that("it handles HTML", {
 test_that("it handles tex", {
   expect_lint(file = "knitr_formats/test.Rtex",
     checks = list(
-      list(regexes[["assign"]], line_number = 11),
-      list(regexes[["local_var"]], line_number = 23),
-      list(regexes[["assign"]], line_number = 23),
-      list(regexes[["trailing"]], line_number = 25),
-      list(regexes[["trailws"]], line_number = 25)
+      list(regexes[["assign"]], line_number = 11L),
+      list(regexes[["local_var"]], line_number = 23L),
+      list(regexes[["assign"]], line_number = 23L),
+      list(regexes[["trailing"]], line_number = 25L),
+      list(regexes[["trailws"]], line_number = 25L)
       # FIXME(AshesITR) #1043
       # file_lines contains a whitespace on the final line for Rtex, because that is used to mark the Rtex escape char
       # "%" as well.
@@ -88,10 +88,10 @@ test_that("it handles tex", {
 test_that("it handles asciidoc", {
   expect_lint(file = "knitr_formats/test.Rtxt",
     checks = list(
-      list(regexes[["assign"]], line_number = 9),
-      list(regexes[["local_var"]], line_number = 22),
-      list(regexes[["assign"]], line_number = 22),
-      list(regexes[["trailing"]], line_number = 24)
+      list(regexes[["assign"]], line_number = 9L),
+      list(regexes[["local_var"]], line_number = 22L),
+      list(regexes[["assign"]], line_number = 22L),
+      list(regexes[["trailing"]], line_number = 24L)
     ),
     default_linters,
     parse_settings = FALSE

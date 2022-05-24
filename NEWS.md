@@ -241,6 +241,14 @@
   This should allow snappier CI builds for usages not relying on some more "peripheral" features of the package.
 * `lintr` now uses the 3rd edition of `testthat` (@MichaelChirico, @AshesITR, #910, #967)
 * Special thanks to @bersbersbers for early testing on the 3.0.0 changes
+* `trailing_whitespace_linter()` ignores trailing whitespace in strings by default. 
+  This can be disabled using `allow_in_strings = FALSE` (#1045, @AshesITR)
+* Moved the default lintr cache directory from `~/.R/lintr_cache` to `R_user_dir("lintr", "cache")`. Note that this major version update invalidated the old cache anyway, so it can be safely deleted. (#1062, @AshesITR)
+* New `is_lint_level()` helper for readably explaining which type of expression is required for a custom linter. Some linters are written to either require the full file's parse tree (for example, `single_quotes_linter()`). Others only need single expressions, which is more cache-friendly (most linters are written this way to leverage caching). (#921, @michaelchirico)
+* `object_usage_linter()` now detects functions exported by packages that are explicitly attached using `library()` or `require()` calls (#1127, @AshesITR)
+* New helper `xml_nodes_to_lints()` for converting `xml_node` objects obtained using linter logic expressed in XPath into `Lint` objects (#1124, @michaelchirico)
+* Added more explanation why certain functions and operators might be undesirable and what alternatives to use (#1133, #1146, #1159, @AshesITR)
+* Improved S3 generic detection for non-standard S3 generics (#846, @jonkeane)
 
 # lintr 2.0.1
 

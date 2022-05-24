@@ -1,5 +1,5 @@
 test_that("returns the correct linting", {
-  linter <- line_length_linter(80)
+  linter <- line_length_linter(80L)
   msg <- rex("Lines should not be more than 80 characters")
 
   expect_lint("blah", NULL, linter)
@@ -27,7 +27,7 @@ test_that("returns the correct linting", {
     linter
   )
 
-  linter <- line_length_linter(20)
+  linter <- line_length_linter(20L)
   msg <- rex("Lines should not be more than 20 characters")
   expect_lint(strrep("a", 20L), NULL, linter)
   expect_lint(
