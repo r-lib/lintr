@@ -167,8 +167,8 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   res
 }
 
-#' @param path For `lint_dir()` a directory full of `.R`/`.Rmd` files.
-#'   For `lint_package()` the base directory of the package.
+#' @param path For the base directory of the project (for `lint_dir()`) or
+#'   package (for `lint_package()`).
 #' @param ... additional arguments passed to [lint()], e.g. `linters` or `cache`.
 #' @param relative_path if `TRUE`, file paths are printed using their path relative to the base directory.
 #'   If `FALSE`, use the full absolute path.
