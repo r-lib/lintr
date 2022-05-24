@@ -1,0 +1,13 @@
+pandoc: 2.14.2
+pkgdown: 2.0.3
+pkgdown_sha: ~
+articles:
+  continuous-integration: continuous-integration.html
+  creating_linters: creating_linters.html
+  editors: editors.html
+  lintr: lintr.html
+last_built: 2022-05-24T19:46Z
+urls:
+  reference: https://lintr.r-lib.org/reference
+  article: https://lintr.r-lib.org/articles
+
