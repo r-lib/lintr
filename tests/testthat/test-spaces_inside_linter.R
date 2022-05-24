@@ -1,7 +1,5 @@
 test_that("returns the correct linting", {
-
   linter <- spaces_inside_linter()
-  msg <- rex::rex("Do not place spaces around code in parentheses or square brackets.")
 
   expect_lint("blah", NULL, linter)
   expect_lint("print(blah)", NULL, linter)
@@ -12,20 +10,22 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "a[1 ]",
-    list(message = msg, line_number = 1L, column_number = 4L, type = "style"),
+    list(message = "Do not place spaces before square brackets", line_number = 1L, column_number = 5L, type = "style"),
     linter
   )
 
   expect_lint(
     "\n\na[ 1]",
-    list(message = msg, line_number = 3L, column_number = 3L, type = "style"),
+    list(message = "Do not place spaces after square brackets", line_number = 3L, column_number = 3L, type = "style"),
     linter
   )
 
   expect_lint(
     "a[ 1 ]",
-    list(list(message = msg, line_number = 1L, column_number = 3L, type = "style"),
-         list(message = msg, line_number = 1L, column_number = 5L, type = "style")),
+    list(
+      list(message = "Do not place spaces after square brackets", line_number = 1L, column_number = 3L, type = "style"),
+      list(message = "Do not place spaces before square brackets", line_number = 1L, column_number = 6L, type = "style")
+    ),
     linter
   )
 
@@ -37,20 +37,22 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "a(1 )",
-    list(message = msg, line_number = 1L, column_number = 4L, type = "style"),
+    list(message = "Do not place spaces before parentheses", line_number = 1L, column_number = 5L, type = "style"),
     linter
   )
 
   expect_lint(
     "a( 1)",
-    list(message = msg, line_number = 1L, column_number = 3L, type = "style"),
+    list(message = "Do not place spaces after parentheses", line_number = 1L, column_number = 3L, type = "style"),
     linter
   )
 
   expect_lint(
     "a( 1 )",
-    list(list(message = msg, line_number = 1L, column_number = 3L, type = "style"),
-         list(message = msg, line_number = 1L, column_number = 5L, type = "style")),
+    list(
+      list(message = "Do not place spaces after parentheses", line_number = 1L, column_number = 3L, type = "style"),
+      list(message = "Do not place spaces before parentheses", line_number = 1L, column_number = 6L, type = "style")
+    ),
     linter
   )
 
