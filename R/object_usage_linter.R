@@ -16,13 +16,7 @@ object_usage_linter <- function(interpret_glue = TRUE) {
     }
 
     pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
-    if (!is.null(pkg_name)) {
-      parent_env <- try_silently(getNamespace(pkg_name))
-    }
-    if (is.null(pkg_name) || inherits(parent_env, "try-error")) {
-      parent_env <- globalenv()
-    }
-    env <- new.env(parent = parent_env)
+    env <- make_check_env(pkg_name)
 
     declared_globals <- try_silently(utils::globalVariables(package = pkg_name %||% globalenv()))
 
@@ -42,32 +36,24 @@ object_usage_linter <- function(interpret_glue = TRUE) {
       info <- fun_info[i, ]
 
       code <- get_content(lines = source_expression$content[seq(info$line1, info$line2)], info)
-      fun <- try_silently(eval(envir = env,
-                               parse(
-                                 text = code,
-                                 keep.source = TRUE
-                               )
+      fun <- try_silently(eval(
+        envir = env,
+        parse(
+          text = code,
+          keep.source = TRUE
+        )
       ))
 
       if (inherits(fun, "try-error")) {
         return()
       }
-      if (isTRUE(interpret_glue)) {
-        known_used_symbols <- extract_glued_symbols(info$expr[[1L]])
-      } else {
-        known_used_symbols <- character()
-      }
-
-      res <- parse_check_usage(fun, known_used_symbols = known_used_symbols)
+      known_used_symbols <- get_used_symbols(info$expr[[1L]], interpret_glue = interpret_glue)
+      res <- parse_check_usage(fun, known_used_symbols = known_used_symbols, declared_globals = declared_globals)
 
       lapply(
         which(!is.na(res$message)),
         function(row_num) {
           row <- res[row_num, ]
-
-          if (row$name %in% declared_globals) {
-            return()
-          }
 
           org_line_num <- as.integer(row$line1) + info$line1 - 1L
           line <- source_expression$content[as.integer(org_line_num)]
@@ -108,6 +94,18 @@ object_usage_linter <- function(interpret_glue = TRUE) {
     })
   })
 }
+
+make_check_env <- function(pkg_name) {
+  if (!is.null(pkg_name)) {
+    parent_env <- try_silently(getNamespace(pkg_name))
+  }
+  if (is.null(pkg_name) || inherits(parent_env, "try-error")) {
+    parent_env <- globalenv()
+  }
+  env <- new.env(parent = parent_env)
+  return(env)
+}
+
 
 extract_glued_symbols <- function(expr) {
   # TODO support more glue functions
@@ -225,7 +223,7 @@ get_function_assignments <- function(xml) {
   res
 }
 
-parse_check_usage <- function(expression, known_used_symbols = character()) {
+parse_check_usage <- function(expression, known_used_symbols = character(), declared_globals = character()) {
 
   vals <- list()
 
@@ -236,7 +234,8 @@ parse_check_usage <- function(expression, known_used_symbols = character()) {
   try(codetools::checkUsage(
     expression,
     report = report,
-    suppressLocalUnused = known_used_symbols
+    suppressLocalUnused = known_used_symbols,
+    suppressUndefined = declared_globals
   ))
 
   function_name <- rex(anything, ": ")
@@ -305,4 +304,9 @@ get_imported_symbols <- function(xml) {
       }
     )
   }))
+}
+
+get_used_symbols <- function(expr, interpret_glue) {
+  if (!isTRUE(interpret_glue)) return(character())
+  extract_glued_symbols(expr)
 }
