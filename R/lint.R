@@ -2,17 +2,21 @@
 #'
 #' Checks adherence to a given style, syntax errors and possible semantic issues.
 #' Supports on the fly checking of R code edited with Emacs, Vim and Sublime Text.
-#' @name lintr
 #' @seealso [lint()], [lint_package()], [lint_dir()], [linters]
 #' @importFrom stats na.omit
 #' @importFrom utils capture.output getParseData relist
-NULL
+#' @keywords internal
+"_PACKAGE"
 
-#' Lint a file
+#' Lint a file, directory, or package
 #'
-#' Apply one or more linters to a file and return the lints found.
+#' * `lint()` lints a single file.
+#' * `lint_dir()` lints all files in a directory.
+#' * `line_pakage()` lints all likely locations for R files in a package, i.e.
+#'   `R/`, `tests/`, `inst/`, `vignettes/`, `data-raw/`, and `demo/`.
 #'
-#' @name lint_file
+#' Read `vigentte("lintr")` to learn how to configure which linters are run
+#' by default.
 #'
 #' @param filename either the filename for a file to lint, or a character string of inline R code for linting.
 #' The latter (inline data) applies whenever `filename` has a newline character (\\n).
@@ -163,20 +167,14 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   res
 }
 
-#' Lint a directory
-#'
-#' Apply one or more linters to all of the R files in a directory
-#'
-#' @param path the path to the base directory, by default, it will be searched in the parent directories of the current
-#' directory.
+#' @param path For the base directory of the project (for `lint_dir()`) or
+#'   package (for `lint_package()`).
 #' @param ... additional arguments passed to [lint()], e.g. `linters` or `cache`.
 #' @param relative_path if `TRUE`, file paths are printed using their path relative to the base directory.
 #'   If `FALSE`, use the full absolute path.
 #' @param exclusions exclusions for [exclude()], relative to the package path.
 #' @param pattern pattern for files, by default it will take files with any of the extensions .R, .Rmd, .Rnw, .Rhtml,
 #' .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...)
-#' @inherit lint_file return
-#' @inheritParams lint_file
 #' @examples
 #' \dontrun{
 #'   lint_dir()
@@ -187,6 +185,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 #'   )
 #' }
 #' @export
+#' @rdname lint
 lint_dir <- function(path = ".", ...,
                      relative_path = TRUE,
                      exclusions = list("renv", "packrat"),
@@ -273,16 +272,6 @@ lint_dir <- function(path = ".", ...,
 }
 
 
-#' Lint a package
-#'
-#' Apply one or more linters to all of the R files in a package. Specifically, [lint_dir()]
-#'   is run on the following sub-directories of the package found at `path`: R,
-#'   tests, inst, vignettes, data-raw, and demo.
-#'
-#' @param path the path to the base directory of the package, if `NULL`, it will be searched in the parent directories
-#' of the current directory.
-#' @inherit lint_file return
-#' @inheritParams lint_dir
 #' @examples
 #' \dontrun{
 #'   lint_package()
@@ -294,6 +283,7 @@ lint_dir <- function(path = ".", ...,
 #'   )
 #' }
 #' @export
+#' @rdname lint
 lint_package <- function(path = ".", ...,
                          relative_path = TRUE,
                          exclusions = list("R/RcppExports.R"),
@@ -484,6 +474,7 @@ pkg_name <- function(path = find_package()) {
 #' @param ranges a list of ranges on the line that should be emphasized.
 #' @param linter deprecated. No longer used.
 #' @return an object of class 'lint'.
+#' @name lint-s3
 #' @export
 Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name.
                  type = c("style", "warning", "error"),
