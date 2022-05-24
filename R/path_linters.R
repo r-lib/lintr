@@ -59,24 +59,23 @@ is_path <- function(path) {
   re_matches(path, path_regex)
 }
 
-is_valid_path <- function(path, lax = FALSE) {
+is_valid_path <- function(paths, lax = FALSE) {
   # Given a character vector of paths, return FALSE for directory or file having valid characters.
   # On Windows, invalid chars are all control chars and: * ? " < > | :
   # On Unix, all characters are valid, except when lax=TRUE (use same invalid chars as Windows).
   as.logical(
     Map(
       function(dirs, is_win32) {
-        if (is_win32 || lax) {
-          if (length(dirs) && is_root_path(dirs[[1L]])) {
-            dirs <- tail(dirs, -1L)  # remove root element ("/", "C:", or "\\")
-          }
-          !any(re_matches(dirs, unsafe_char_regex))
-        } else {
-          TRUE  # either Unix path or strict (lax=FALSE)
+        if (!is_win32 && !lax) {
+          return(TRUE)
         }
+        if (length(dirs) > 0L && is_root_path(dirs[[1L]])) {
+          dirs <- tail(dirs, -1L)  # remove root element ("/", "C:", or "\\")
+        }
+        !any(re_matches(dirs, unsafe_char_regex))
       },
-      split_path(path),
-      re_matches(path, rex(or(list(root_regex[["win32"]], root_regex[["unc"]], "\\"))))
+      split_paths(paths),
+      re_matches(paths, rex(or(list(root_regex[["win32"]], root_regex[["unc"]], "\\"))))
     )
   )
 }
@@ -108,34 +107,32 @@ split_path <- function(path, sep = "/|\\\\") {
   if (!is.character(sep) || length(sep) != 1L || !nzchar(sep)) {
     stop("argument 'sep' should be a non-empty regular expression character string")
   }
-  Map(
-    function(dirs, prefix) {
-      # add root dir if needed
-      i <- 1L
-      for (dir in seq_along(dirs)) {
-        if (!nzchar(dirs[[i]])) {
-          i <- i + 1L
-        } else {
-          break
-        }
-      }
-      i <- i - 1L
-      if (i > 0L) {
-        dirs <- c(paste0(rep(prefix, i), collapse = ""), tail(dirs, -i))
-      }
-      # add // to protocols (like http, smb, ...)
-      if (length(dirs)) {
-        l <- nchar(dirs[[1L]])
-        if (l > 2L && substr(dirs[[1L]], l, l) == ":") {
-          dirs[[1L]] <- paste0(dirs[[1L]], "//")
-        }
-      }
-      # remove empty dirs
-      dirs[nzchar(dirs)]
-    },
-    strsplit(path, sep),
-    substr(path, 1L, 1L)
-  )
+  Map(split_path, strsplit(path, sep), substr(path, 1L, 1L))
+}
+
+split_path <- function(dirs, prefix) {
+  # add root dir if needed
+  i <- 1L
+  for (dir in seq_along(dirs)) {
+    if (nzchar(dirs[[i]])) {
+      break
+    }
+    i <- i + 1L
+  }
+  i <- i - 1L
+  if (i > 0L) {
+    dirs <- c(strrep(prefix, i), tail(dirs, -i))
+  }
+
+  # add // to protocols (like http, smb, ...)
+  if (length(dirs) > 0L) {
+    if (nchar(dirs[[1L]]) > 2L && endsWith(dirs[[1L]], ":")) {
+      dirs[[1L]] <- paste0(dirs[[1L]], "//")
+    }
+  }
+
+  # remove empty dirs
+  dirs[nzchar(dirs)]
 }
 
 #' @include utils.R
