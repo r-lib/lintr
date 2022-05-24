@@ -8,7 +8,7 @@ namespace_imports <- function(path = find_package()) {
     list()
   })
 
-  full_imports <- lengths(imports) == 1
+  full_imports <- lengths(imports) == 1L
 
   # this loads the namespaces, but is the easiest way to do it
   imports[full_imports] <- lapply(imports[full_imports], function(x) list(x, getNamespaceExports(asNamespace(x))))
@@ -36,13 +36,14 @@ imported_s3_generics <- function(ns_imports) {
 }
 
 is_s3_generic <- function(fun) {
-  if (getRversion() >= "3.5.0") {
-    # Available in 3.4.0, but bugged there in multiple ways that cause errors
-    # throughout many base functions, e.g. `-`, `as.null.default`, `dontCheck`
-    utils::isS3stdGeneric(fun)
-  } else {
-    is.function(fun) # nocov
-  }
+  # Inspired by `utils::isS3stdGeneric`, though it will detect functions that
+  # have `useMethod()` in places other than the first expression.
+  bdexpr <- body(fun)
+  while (is.call(bdexpr) && bdexpr[[1L]] == "{") bdexpr <- bdexpr[[length(bdexpr)]]
+  ret <- is.call(bdexpr) && identical(bdexpr[[1L]], as.name("UseMethod"))
+  if (ret)
+    names(ret) <- bdexpr[[2L]]
+  ret
 }
 
 .base_s3_generics <- c(

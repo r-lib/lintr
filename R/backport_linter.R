@@ -19,7 +19,7 @@ backport_linter <- function(r_version = getRversion()) {
 
     xml <- source_expression$xml_parsed_content
 
-    names_xpath <- "//*[self::SYMBOL or self::SYMBOL_FUNCTION_CALL]"
+    names_xpath <- "//SYMBOL | //SYMBOL_FUNCTION_CALL"
     all_names_nodes <- xml2::xml_find_all(xml, names_xpath)
     all_names <- xml2::xml_text(all_names_nodes)
 

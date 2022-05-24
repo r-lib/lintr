@@ -368,9 +368,8 @@ define_linters <- function(linters = NULL) {
 }
 
 validate_linter_object <- function(linter, name) {
-  if (inherits(linter, "linter")) {
-  } else if (is.function(linter)) {
-    if (is.null(formals(linter))) {
+  if (!inherits(linter, "linter") && is.function(linter)) {
+    if (is_linter_factory(linter)) {
       old <- "Passing linters as variables"
       new <- "a call to the linters (see ?linters)"
       lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
@@ -383,11 +382,21 @@ validate_linter_object <- function(linter, name) {
                        type = "")
       linter <- Linter(linter, name = name)
     }
-  } else {
-    stop(gettextf("Expected '%s' to be of class 'linter', not '%s'",
-                  name, class(linter)[[1L]]))
+  } else if (!is.function(linter)) {
+    stop(gettextf("Expected '%s' to be a function of class 'linter', not a %s of class '%s'",
+                  name, typeof(linter), class(linter)[[1L]]))
   }
   linter
+}
+
+is_linter_factory <- function(fun) {
+  # A linter factory is a function whose last call is to Linter()
+  bdexpr <- body(fun)
+  # covr internally transforms each call into if (TRUE) { covr::count(...); call }
+  while (is.call(bdexpr) && (bdexpr[[1L]] == "{" || (bdexpr[[1L]] == "if" && bdexpr[[2L]] == "TRUE"))) {
+    bdexpr <- bdexpr[[length(bdexpr)]]
+  }
+  is.call(bdexpr) && identical(bdexpr[[1L]], as.name("Linter"))
 }
 
 reorder_lints <- function(lints) {
@@ -540,7 +549,7 @@ rstudio_source_markers <- function(lints) {
   # workaround to avoid focusing an empty Markers pane
   # when possible, better solution is to delete the "lintr" source marker list
   # https://github.com/rstudio/rstudioapi/issues/209
-  if (length(lints) == 0) {
+  if (length(lints) == 0L) {
     Sys.sleep(0.1)
     rstudioapi::executeCommand("activateConsole")
   }
@@ -567,9 +576,9 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
   # output the style markers to the file
   lapply(split(lints, names(lints)), function(lints_per_file) {
     filename <- if (!is.null(package_path)) {
-      file.path(package_path, lints_per_file[[1]]$filename)
+      file.path(package_path, lints_per_file[[1L]]$filename)
     } else {
-      lints_per_file[[1]]$filename
+      lints_per_file[[1L]]$filename
     }
     f <- xml2::xml_add_child(n, "file", name = filename)
 
@@ -597,8 +606,8 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
   line <- fill_with(" ", maximum)
 
   lapply(ranges, function(range) {
-    substr(line, range[1], range[2]) <<-
-      fill_with("~", range[2] - range[1] + 1L)
+    substr(line, range[1L], range[2L]) <<-
+      fill_with("~", range[2L] - range[1L] + 1L)
   })
 
   substr(line, column_number, column_number + 1L) <- "^"

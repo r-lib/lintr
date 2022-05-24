@@ -31,11 +31,11 @@ jenkins_build_info <- function() {
   }
   slug <- gsub(pattern, "\\2", git_url)
 
-  slug_info <- strsplit(slug, "/")[[1]]
+  slug_info <- strsplit(slug, "/")[[1L]]
 
   list(
-    user = slug_info[1],
-    repo = slug_info[2],
+    user = slug_info[1L],
+    repo = slug_info[2L],
     pull = Sys.getenv("CHANGE_ID", NA) %||% NULL,
     commit = Sys.getenv("GIT_COMMIT", NA) %||% NULL
   )
@@ -47,11 +47,11 @@ in_travis <- function() {
 
 travis_build_info <- function() {
   slug <- Sys.getenv("TRAVIS_REPO_SLUG")
-  slug_info <- strsplit(slug, "/", fixed = TRUE)[[1]]
+  slug_info <- strsplit(slug, "/", fixed = TRUE)[[1L]]
 
   list(
-    user = slug_info[1] %||% "",
-    repo = slug_info[2] %||% "",
+    user = slug_info[1L] %||% "",
+    repo = slug_info[2L] %||% "",
     pull = Sys.getenv("TRAVIS_PULL_REQUEST"),
     branch = Sys.getenv("TRAVIS_BRANCH"),
     commit = Sys.getenv("TRAVIS_COMMIT")
@@ -106,7 +106,7 @@ github_comment <- function(text, info = NULL, token = settings$comment_token) {
     encode = "json"
   )
 
-  if (httr::status_code(response) >= 300) {
+  if (httr::status_code(response) >= 300L) {
     message(httr::http_condition(response, "error", task = httr::content(response, as = "text")))
   }
 }

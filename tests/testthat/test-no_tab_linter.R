@@ -9,7 +9,7 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "\tblah",
-    list(message = msg, line_number = 1L, column_number = 1, ranges = list(c(1L, 1L))),
+    list(message = msg, line_number = 1L, column_number = 1L, ranges = list(c(1L, 1L))),
     linter
   )
 

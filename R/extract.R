@@ -13,15 +13,15 @@ extract_r_source <- function(filename, lines, error = identity) {
   }
 
   # no chunks found, so just return the lines
-  if (length(chunks[["starts"]]) == 0 || length(chunks[["ends"]]) == 0) {
+  if (length(chunks[["starts"]]) == 0L || length(chunks[["ends"]]) == 0L) {
     return(character())
   }
 
   # there is no need to worry about the lines after the last chunk end
-  output <- rep.int(NA_character_, max(chunks[["ends"]] - 1))
+  output <- rep.int(NA_character_, max(chunks[["ends"]] - 1L))
   Map(
     function(start, end) {
-      output[seq(start + 1, end - 1)] <<- lines[seq(start + 1, end - 1)]
+      output[seq(start + 1L, end - 1L)] <<- lines[seq(start + 1L, end - 1L)]
     },
     chunks[["starts"]],
     chunks[["ends"]]
@@ -48,7 +48,7 @@ get_chunk_positions <- function(pattern, lines) {
     ends = grep(pattern$chunk.end, lines, perl = TRUE)
   )
   # only keep those blocks that contain at least one line of code
-  keep <- which(ends - starts > 1)
+  keep <- which(ends - starts > 1L)
 
   list(starts = starts[keep], ends = ends[keep])
 }
@@ -69,14 +69,14 @@ filter_chunk_end_positions <- function(starts, ends) {
   # starts (1, 3, 5, 7,        11)  --> (1, 3, 5, 7, 11)
   # ends   (2, 4, 6, 8, 9, 10, 12)  --> (2, 4, 6, 8, 12) # return this
   length_difference <- length(ends) - length(starts)
-  if (length_difference == 0 && all(ends > starts)) {
+  if (length_difference == 0L && all(ends > starts)) {
     return(ends)
   }
 
   positions <- sort(c(starts = starts, ends = ends))
   code_start_indexes <- grep("starts", names(positions), fixed = TRUE)
 
-  code_ends <- positions[pmin(1 + code_start_indexes, length(positions))]
+  code_ends <- positions[pmin(1L + code_start_indexes, length(positions))]
 
   bad_end_indexes <- grep("starts", names(code_ends), fixed = TRUE)
   if (length(bad_end_indexes)) {
