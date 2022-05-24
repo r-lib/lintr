@@ -315,7 +315,7 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
                                  double_quotes, capture(name = "starting", anything), double_quotes))
 
   loc <- re_matches(source_expression$content, rex(message_info$starting), locations = TRUE)
-  line_location <- loc[!is.na(loc$start) & !is.na(loc$end),]
+  line_location <- loc[!is.na(loc$start) & !is.na(loc$end), ]
 
   if (nrow(line_location) == 0L) {
     if (grepl("attempt to use zero-length variable name", e$message, fixed = TRUE)) {
@@ -326,9 +326,9 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
                               list(or("(", ","), any_spaces, or("''", '""'), any_spaces, "=")),
                         options = "multi-line",
                         locations = TRUE)
-      loc <- loc[!is.na(loc$start) & !is.na(loc$end),]
+      loc <- loc[!is.na(loc$start) & !is.na(loc$end), ]
       if (nrow(loc) > 0L) {
-        line_location <- loc[1L,]
+        line_location <- loc[1L, ]
       }
     } else {
       # nocov start
