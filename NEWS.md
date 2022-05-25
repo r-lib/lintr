@@ -106,26 +106,31 @@
 
 ## New features
 
+### New linters
+
+* `missing_package_linter()` to check if packags in calls to `library()` and friends are missing (#536, #547, #1037, @renkun-ken and @michaelchirico)
+* `namespace_linter()` to check for common mistakes in `pkg::symbol` usages (#548, #551, @renkun-ken)
+* `missing_argument_linter()` to check for empty (missing) arguments in function calls (#563, #565, @renkun-ken)
+* `duplicate_argument_linter()` similarly checks that there are no duplicate arguments supplied to function calls (#850, @renkun-ken)
+* `sprintf_linter()` to check for common mistakes in `sprintf()` usage (#544, #578, #624, #625, @renkun-ken, @AshesITR)
+* `backport_linter()` for detecting mismatched R version dependencies (#506, @MichaelChirico)
+* `pipe_call_linter()` to enforce that all steps of `magrittr` pipelines use explicit calls instead of symbols,
+  e.g. `x %>% mean()` instead of `x %>% mean` (@michaelchirico)
+* `package_hooks_linter()` to run a series of checks also done by `R CMD check` on the `.onLoad()`, `.onAttach()`,
+  `.Last.lib()` and `.onDetach()` hooks (#882, @MichaelChirico)
+* `unused_import_linter()` to detect unnecessary `library()` calls in R scripts (#239, @jimhester, @AshesITR)
+
+### Improved linters
+
 * New styles `"symbols"` and `"SNAKE_CASE"` for `object_name_linter()`
   (#494, #495, #615, #670, @michaelchirico and @AshesITR)
-* New `missing_package_linter()` (#536, #547, #1037, @renkun-ken and @michaelchirico)
-* New `namespace_linter()` (#548, #551, @renkun-ken)
-* New `missing_argument_linter()` (#563, #565, @renkun-ken)
-* New `sprintf_linter()` (#544, #578, #624, #625, @renkun-ken, @AshesITR)
-* New `backport_linter()` for detecting mismatched R version dependencies (#506, @MichaelChirico)
 * New syntax to exclude only selected linters from linting lines or passages. Use `# nolint: linter_name, linter2_name.`
   or `# nolint start: linter_name, linter2_name.` in source files or named lists of line numbers in `.lintr`.
   Also allows for partial matching as long as the supplied prefix is unique. (#660, #872, @AshesITR)
 * `lint()` now has a new optional argument `text` for supplying a string or lines directly, e.g. if the file is already 
   in memory or linting is being done ad hoc. (#503, @renkun-ken)
-* New `pipe_call_linter()` enforces that all steps of `magrittr` pipelines use explicit calls instead of symbols,
-  e.g. `x %>% mean()` instead of `x %>% mean` (@michaelchirico)
 * lintr now supports non-system character Encodings. Auto-detects the correct encoding from .Rproj or DESCRIPTION 
   files in your project. Override the default in the `encoding` setting of lintr. (#752, #782, @AshesITR)
-* New `duplicate_argument_linter()` for checking that there are no duplicate arguments supplied to function calls.
-  (#850, #851, @renkun-ken)
-* New `package_hooks_linter()` runs a series of checks also done by `R CMD check` on the `.onLoad()`, `.onAttach()`,
-  `.Last.lib()` and `.onDetach()` hooks (#882, @MichaelChirico)
 * New tag based documentation pages for linters (#888, #1015, @AshesITR)
   + Each linter has its own help page
   + `?linters` also links to tag help pages, collecting linters with a similar goal
