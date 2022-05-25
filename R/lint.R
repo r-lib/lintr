@@ -42,7 +42,7 @@
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
   # TODO(next release after 3.0.0): remove this deprecated workaround
   dots <- list(...)
-  if (length(dots) > 0L && is.logical(dots[[1L]]) && !nzchar(names2(dots)[1L])) {
+  if (has_positional_logical(dots)) {
     warning(
       "'cache' is no longer available as a positional argument; please supply 'cache' as a named argument instead. ",
       "This warning will be upgraded to an error in the next release."
@@ -56,8 +56,10 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
       text <- gsub("\n$", "", filename)
       lines <- strsplit(text, "\n", fixed = TRUE)[[1L]]
       filename <- NULL
+      needs_tempfile <- TRUE
     } else {
       lines <- read_lines(filename)
+      needs_tempfile <- FALSE
     }
   } else {
     inline_data <- TRUE
@@ -65,11 +67,12 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
       text <- paste(text, collapse = "\n")
     }
     lines <- strsplit(text, "\n", fixed = TRUE)[[1L]]
+    needs_tempfile <- missing(filename)
   }
 
   no_filename <- missing(filename) || is.null(filename)
 
-  if (inline_data && no_filename) {
+  if (needs_tempfile) {
     filename <- tempfile()
     con <- file(filename, open = "w", encoding = settings$encoding)
     on.exit(unlink(filename), add = TRUE)
@@ -168,7 +171,7 @@ lint_dir <- function(path = ".", ...,
                      parse_settings = TRUE) {
   # TODO(next release after 3.0.0): remove this deprecated workaround
   dots <- list(...)
-  if (length(dots) > 0L && is.logical(dots[[1L]]) && !nzchar(names2(dots)[1L])) {
+  if (has_positional_logical(dots)) {
     warning(
       "'relative_path' is no longer available as a positional argument; ",
       "please supply 'relative_path' as a named argument instead. ",
@@ -206,18 +209,14 @@ lint_dir <- function(path = ".", ...,
   lints <- flatten_lints(lapply(
     files,
     function(file) {
-      if (interactive() && !identical(Sys.getenv("TESTTHAT"), "true")) {
-        message(".", appendLF = FALSE) # nocov
-      }
+      maybe_report_progress()
       # TODO: once relative_path= is fully deprecated as 2nd positional argument (see top of body), restore the cleaner:
       # > lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
       do.call(lint, c(list(file, parse_settings = FALSE, exclusions = exclusions), dots))
     }
   ))
 
-  if (interactive() && !identical(Sys.getenv("TESTTHAT"), "true")) {
-    message() # nocov. for a newline
-  }
+  maybe_report_progress(done = TRUE)
 
   lints <- reorder_lints(lints)
 
@@ -265,7 +264,7 @@ lint_package <- function(path = ".", ...,
                          parse_settings = TRUE) {
   # TODO(next release after 3.0.0): remove this deprecated workaround
   dots <- list(...)
-  if (length(dots) > 0L && is.logical(dots[[1L]]) && !nzchar(names2(dots)[1L])) {
+  if (has_positional_logical(dots)) {
     warning(
       "'relative_path' is no longer available as a positional argument; ",
       "please supply 'relative_path' as a named argument instead. ",
@@ -615,4 +614,22 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
 
 fill_with <- function(character = " ", length = 1L) {
   paste0(collapse = "", rep.int(character, length))
+}
+
+has_positional_logical <- function(dots) {
+  length(dots) > 0L &&
+    is.logical(dots[[1L]]) &&
+    !nzchar(names2(dots)[1L])
+}
+
+maybe_report_progress <- function(done = FALSE) {
+  if (interactive() && !identical(Sys.getenv("TESTTHAT"), "true")) {
+    # nocov start
+    if (done) {
+      message()
+    } else {
+      message(".", appendLF = FALSE)
+    }
+    # nocov end
+  }
 }
