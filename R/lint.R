@@ -117,14 +117,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     }
   }
 
-  if (inherits(source_expressions$error, "lint")) {
-    lints[[itr <- itr + 1L]] <- source_expressions$error
-
-    if (isTRUE(cache)) {
-      cache_lint(lint_cache, list(filename = filename, content = ""), "error", source_expressions$error)
-    }
-  }
-
+  lints <- maybe_append_error_lint(lints, source_expressions$error, lint_cache, filename)
   lints <- structure(reorder_lints(flatten_lints(lints)), class = "lints")
 
   if (isTRUE(cache)) {
@@ -632,4 +625,15 @@ maybe_report_progress <- function(done = FALSE) {
     }
     # nocov end
   }
+}
+
+maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
+  if (inherits(error, "lint")) {
+    lints <- append(lints, error)
+
+    if (!is.null(lint_cache)) {
+      cache_lint(lint_cache, list(filename = filename, content = ""), "error", error)
+    }
+  }
+  lints
 }
