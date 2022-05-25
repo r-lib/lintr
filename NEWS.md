@@ -16,11 +16,11 @@
   my_custom_linter <- function() Linter(function(source_expression) { ... })
   ```
 * Removed long-deprecated linters (they've been marked as deprecated since v1.0.1 in 2017):
-   + `absolute_paths_linter`
-   + `camel_case_linter`
-   + `multiple_dots_linter`
-   + `snake_case_linter`
-   + `trailing_semicolons_linter`
+   + `absolute_paths_linter()`
+   + `camel_case_linter()`
+   + `multiple_dots_linter()`
+   + `snake_case_linter()`
+   + `trailing_semicolons_linter()as calls`
 * Removed `"return"` from `all_undesirable_functions`. Follow #1100 for an upcoming `return_linter()` to lint 
   unnecessary `return()` statements (#1146, @AshesITR). Note that you can replicate old behavior by supplying
   `return` as a custom undesirable function:
