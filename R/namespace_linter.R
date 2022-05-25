@@ -45,7 +45,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     }
 
     if (!check_exports && !check_nonexports) {
-      return(uninstalled_lints)
+      return(lints)
     }
 
     namespaces <- lapply(packages, function(package) tryCatch(getNamespace(package), error = identity))
