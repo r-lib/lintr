@@ -82,9 +82,12 @@
    + Right assignments are now linted by default (`->` and `->>`)
    + New argument `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`
    + New argument `allow_right_assign` (`FALSE` by default) toggles whether to lint `->` and `->>`
-* `infix_spaces_linter()`: added argument `allow_multiple_spaces` (`TRUE` by default) which toggles
-  whether to generate a lint for operators used with multiple spaces, e.g. `x   +   2`. The default
-  setting allows extra spacing to be used to increase line-to-line alignment (#940, @f-ritter and @michaelchirico)
+* `infix_spaces_linter()`
+   + added argument `allow_multiple_spaces` (`TRUE` by default) which toggles
+     whether to generate a lint for operators used with multiple spaces, e.g. `x   +   2`.
+     The default setting allows extra spacing to be used to increase
+     line-to-line alignment (#940, @f-ritter and @michaelchirico)
+   + extended so that usages like `a~b` and `function(a=1) { ... }` are linted (#930, #michaelchirico)
 
 ### Other noteworthy changes
 
@@ -93,7 +96,6 @@
 * Set the default `complexity_limit` in `cyclocomp_linter()` to 15. This is the same complexity limit that is enforced
   via `default_linters` (#693, #695, @AshesITR).
 * `lint_package()` now lints files in the `demo` directory by default (#703, @dmurdoch).
-* `infix_spaces_linter()` now throws a lint on `a~b` and `function(a=1) {}` (#930, @michaelchirico)
 * `trailing_whitespace_linter()` now also lints completely blank lines by default. This can be disabled by setting the
   new argument `allow_empty_lines = TRUE` (#1044, @AshesITR)
 * `trailing_whitespace_linter()` ignores trailing whitespace in strings by default. 
