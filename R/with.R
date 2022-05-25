@@ -34,7 +34,7 @@ modify_defaults <- function(defaults, ...) {
           # Very long input might have newlines which are not caught
           #  by . in a perl regex; see #774
         re_substitutes(args, rex("(", anything), "", options = "s"),
-        rex(start, anything, '["'),
+        rex(start, anything, '["' %or% "::"),
         ""
       ),
       rex('"]', anything, end),

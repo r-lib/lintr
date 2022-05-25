@@ -35,5 +35,5 @@ lintr::lint_dir()
 }
 }
 \seealso{
-\code{vignette("using_lintr")} for detailed introduction to using and configuring lintr.
+\code{vignette("lintr")} for detailed introduction to using and configuring lintr.
 }
