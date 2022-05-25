@@ -1,0 +1,86 @@
+#' Convert an XML node or nodeset into a Lint
+#'
+#' Convenience function for converting nodes matched by XPath-based
+#'   linter logic into a [Lint()] object to return.
+#'
+#' @inheritParams lint-s3
+#' @param xml An `xml_node` object (to generate one `Lint`) or an
+#'   `xml_nodeset` object (to generate several `Lint`s), e.g. as returned by
+#'   [xml2::xml_find_all()] or [xml2::xml_find_first()].
+#' @param source_expression A source expression object, e.g. as
+#'   returned typically by [lint()], or more generally
+#'   by [get_source_expressions()].
+#' @param lint_message The message to be included as the `message`
+#'   to the `Lint` object. If `lint_message` is a `function`,
+#'   this function is first applied to `xml` (so it should be a
+#'   function taking an `xml_node` as input and must produce a
+#'   length-1 character as output). If `lint_message` is a character vector the same length as `xml`,
+#'   the `i`-th lint will be given the `i`-th message.
+#' @param column_number_xpath XPath expression to return the column number location of the lint.
+#'   Defaults to the start of the expression matched by `xml`.
+#' @param range_start_xpath XPath expression to return the range start location of the lint.
+#'   Defaults to the start of the expression matched by `xml`.
+#' @param range_end_xpath XPath expression to return the range end location of the lint.
+#'   Defaults to the end of the expression matched by `xml`.
+#' @return For `xml_node`s, a `lint`. For `xml_nodeset`s, `lints` (a list of `lint`s).
+#' @export
+xml_nodes_to_lints <- function(xml, source_expression, lint_message,
+                               type = c("style", "warning", "error"),
+                               column_number_xpath = "number(./@col1)",
+                               range_start_xpath = "number(./@col1)",
+                               range_end_xpath = "number(./@col2)") {
+  if (length(xml) == 0L) {
+    return(list())
+  }
+  if (inherits(xml, "xml_nodeset")) {
+    if (is.character(lint_message)) {
+      lints <- .mapply(
+        xml_nodes_to_lints,
+        dots = list(xml = xml, lint_message = lint_message),
+        MoreArgs = list(
+          source_expression = source_expression,
+          type = type,
+          column_number_xpath = column_number_xpath,
+          range_start_xpath = range_start_xpath,
+          range_end_xpath = range_end_xpath
+        )
+      )
+    } else {
+      lints <- lapply(
+        xml, xml_nodes_to_lints,
+        source_expression = source_expression, lint_message = lint_message, type = type,
+        column_number_xpath = column_number_xpath, range_start_xpath = range_start_xpath,
+        range_end_xpath = range_end_xpath
+      )
+    }
+    class(lints) <- "lints"
+    return(lints)
+  } else if (!inherits(xml, "xml_node")) {
+    stop("Expected an xml_nodeset or xml_node, got an object of class(es): ", toString(class(xml)))
+  }
+  type <- match.arg(type, c("style", "warning", "error"))
+  line1 <- xml2::xml_attr(xml, "line1")
+  col1 <- as.integer(xml2::xml_find_num(xml, range_start_xpath))
+
+  lines <- source_expression[["lines"]]
+  if (is.null(lines)) lines <- source_expression[["file_lines"]]
+
+  if (xml2::xml_attr(xml, "line2") == line1) {
+    col2 <- as.integer(xml2::xml_find_num(xml, range_end_xpath))
+  } else {
+    col2 <- nchar(lines[[line1]])
+  }
+
+  column_number <- as.integer(xml2::xml_find_num(xml, column_number_xpath))
+
+  if (is.function(lint_message)) lint_message <- lint_message(xml)
+  Lint(
+    filename = source_expression$filename,
+    line_number = as.integer(line1),
+    column_number = column_number,
+    type = type,
+    message = lint_message,
+    line = lines[line1],
+    ranges = list(c(col1, col2))
+  )
+}

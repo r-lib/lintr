@@ -50,7 +50,8 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
           sprintf(fmt, replacement_map[[symbol]], symbol)
         },
         type = "style",
-        match_after_end = TRUE
+        column_number_xpath = "number(./@col2 + 1)",
+        range_end_xpath = "number(./@col2 + 1)"
       )
     }
 
