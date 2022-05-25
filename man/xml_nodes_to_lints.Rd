@@ -25,7 +25,8 @@ by \code{\link[=get_source_expressions]{get_source_expressions()}}.}
 to the \code{Lint} object. If \code{lint_message} is a \code{function},
 this function is first applied to \code{xml} (so it should be a
 function taking an \code{xml_node} as input and must produce a
-length-1 character as output).}
+length-1 character as output). If \code{lint_message} is a character vector the same length as \code{xml},
+the \code{i}-th lint will be given the \code{i}-th message.}
 
 \item{type}{type of lint.}
 
