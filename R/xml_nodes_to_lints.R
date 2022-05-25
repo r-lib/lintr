@@ -69,7 +69,10 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
     class(lints) <- "lints"
     return(lints)
   } else if (!inherits(xml, "xml_node")) {
-    stop("Expected an xml_nodeset, a list of xml_nodes or an xml_node, got an object of class(es): ", toString(class(xml)))
+    stop(
+      "Expected an xml_nodeset, a list of xml_nodes or an xml_node, got an object of class(es): ",
+      toString(class(xml))
+    )
   }
   type <- match.arg(type, c("style", "warning", "error"))
   line1 <- xml2::xml_attr(xml, "line1")
