@@ -230,7 +230,7 @@ settings <- NULL
         "n71nn28")
       , 54L - 13L),
     comment_bot = logical_env("LINTR_COMMENT_BOT") %||% TRUE,
-    error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
+    error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% TRUE
   )
 
   settings <<- list2env(default_settings, parent = emptyenv())
