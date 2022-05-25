@@ -79,6 +79,10 @@
    + `debugonce()`
    + `trace()`
    + `untrace()`
+* Improved `assignment_linter` (#915, @michaelchirico)
+   + Right assignments are now linted by default (`->` and `->>`)
+   + New argument `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`
+   + New argument `allow_right_assign` (`FALSE` by default) toggles whether to lint `->` and `->>`
 
 ### Other noteworthy changes
 
@@ -87,9 +91,6 @@
 * Set the default `complexity_limit` in `cyclocomp_linter()` to 15. This is the same complexity limit that is enforced
   via `default_linters` (#693, #695, @AshesITR).
 * `lint_package()` now lints files in the `demo` directory by default (#703, @dmurdoch).
-* `assignment_linter()` now lints right assignment (`->` and `->>`) and gains two arguments. (#915, @michaelchirico)
-  + `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`
-  + `allow_right_assign` toggles whether to lint `->` and `->>`
 * `infix_spaces_linter()` gains argument `allow_multiple_spaces` to turn on lints for operators used with multiple
   spaces, e.g. `x  +  2`. Turned off by default to allow such usage to improve alignment from line to line. 
   (#940, @f-ritter and @michaelchirico)
