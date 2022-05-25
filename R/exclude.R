@@ -213,7 +213,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
   }
 
   x <- as.list(x)
-  unnamed <- names2(x) == ""
+  unnamed <- !nzchar(names2(x))
   if (any(unnamed)) {
 
     # must be character vectors of length 1
@@ -241,13 +241,8 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
   if (any(full_line_exclusions)) {
 
     # must be integer or numeric vectors
-    bad <- vapply(
-      seq_along(x),
-      function(i) {
-        full_line_exclusions[i] && !is.numeric(x[[i]])
-      },
-      logical(1L)
-    )
+    are_numeric <- vapply(x, is.numeric, logical(1L))
+    bad <- full_line_exclusions & !are_numeric
 
     if (any(bad)) {
       stop("Full line exclusions must be numeric or integer vectors. items: ",
