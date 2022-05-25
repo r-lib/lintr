@@ -169,32 +169,33 @@ of general interest to the broader R community. More will be included in future 
 
 ### Other features and improvements to existing linters
 
-* **Selective exclusion syntax** New syntax to exclude only selected linters from linting lines or passages.
+* **Selective exclusion syntax**: New syntax to exclude only selected linters from linting lines or passages.
   Use `# nolint: linter_name, linter2_name.` or `# nolint start: linter_name, linter2_name.`
   in source files or named lists of line numbers in `.lintr`.
   Also allows for partial matching as long as the supplied prefix is unique, e.g.
   `# nolint: infix_spaces` works to exclude `infix_spaces_linter` (#660, #872, @AshesITR)
 * `object_name_linter`: new styles `"symbols"` and `"SNAKE_CASE"`
   (#494, #495, #615, #670, @michaelchirico and @AshesITR)
-* `lint()` now has a new optional argument `text` for supplying a string or lines directly, e.g. if the file is already 
-  in memory or linting is being done ad hoc. (#503, @renkun-ken)
-* lintr now supports non-system character Encodings. Auto-detects the correct encoding from .Rproj or DESCRIPTION 
-  files in your project. Override the default in the `encoding` setting of lintr. (#752, #782, @AshesITR)
-* New tag based documentation pages for linters (#888, #1015, @AshesITR)
+* `lint()`: new optional argument `text` for supplying a string or lines directly, e.g. if the file is already 
+  in memory or linting is being done _ad hoc_. (#503, @renkun-ken)
+* **Encodings**: lintr now supports non-system character Encodings. The correct the correct encoding
+  is auto-detected from .Rproj or DESCRIPTION files in your project.
+  Override the default in the `encoding` setting of lintr. (#752, #782, @AshesITR)
+* Reorganize linter documentation into new tag-based Rd pages (#888, #1015, @AshesITR)
   + Each linter has its own help page
   + `?linters` also links to tag help pages, collecting linters with a similar goal
   + Each linter can have multiple tags
-  + New function `available_linters()` to list available linters and their tags 
+  + `available_linters()`: new function to list available linters and their tags 
     This feature is extensible by package authors providing add-on linters for {lintr}.
-  + New function `available_tags()` to list available tags
-  + New function `linters_with_tags()` to help build a list of linters using tags
-* New `is_lint_level()` helper for readably explaining which type of expression is required for a custom linter. 
-  Some linters are written to either require the full file's parse tree (for example, `single_quotes_linter()`).
+  + `available_tags()`: new function to list available tags
+  + `linters_with_tags()`: new function to help build a list of linters using tags
+* `is_lint_level()`: new exported helper for readably explaining which type of expression is required for a custom linter. 
+  Some linters are written to require the full file's parse tree (for example, `single_quotes_linter()`).
   Others only need single expressions, which is more cache-friendly (most linters are written this way to leverage 
   caching). (#921, @michaelchirico)
-* New helper `xml_nodes_to_lints()` for converting `xml_node` objects obtained using linter logic expressed in XPath 
-  into `Lint` objects (#1124, @michaelchirico)
-* New `use_lintr()` helper for creating a minimal `.lintr` configuration (#902, @AshesITR)
+* `xml_nodes_to_lints()`: new exported helper for converting `xml_node` objects obtained using linter logic
+  expressed in XPath into `Lint` objects (#1124, @michaelchirico)
+* `use_lintr()`: new exported helper for creating a minimal `.lintr` configuration (#902, @AshesITR)
  
 ## Improvements and bug fixes
 
