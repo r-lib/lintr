@@ -63,6 +63,9 @@ test_that("returns the correct linting", {
     linter
   )
 
+  # trailing whitespace _doesn't_ trigger a lint (it used to; leave that to trailing_whitespace_linter now)
+  expect_lint("a <- function() {  \n}", NULL, linter)
+
   expect_lint(
     "a <- function() { 1 }",
     rex::rex("Opening curly braces should always be followed by a new line"),
