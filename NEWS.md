@@ -40,7 +40,7 @@
    + `closed_curly_linter()`
    + `open_curly_linter()`
    + `paren_brace_linter()`
-* The `...` arguments for `lint()`, `lint_dir()`, and `lint_package()` have promoted to an earlier position to better
+* The `...` argument for `lint()`, `lint_dir()`, and `lint_package()` has been promoted to an earlier position to better
   match the [Tidyverse design principle](https://design.tidyverse.org/args-data-details.html) of
   data->descriptor->details. This change enables passing objects to `...` without needing to specify non-required
   arguments, e.g. `lint_dir("/path/to/dir", linter())` now works without the need to specify `relative_path`.
@@ -50,21 +50,23 @@
 * Argument `source_file` to exported functions `with_id()` and `ids_with_token()` has been renamed to
   `source_expression` to better reflect that this argument is typically the output of `get_source_expressions()`.
   It has also been renamed as the argument of the now-private functional versions of many linters, which has no direct
-  effect on packages importing linter, but is mentioned in case custom linters imitating `lintr` style have also
+  effect on packages importing lintr, but is mentioned in case custom linters imitating `lintr` style have also
   adopted the `source_file` naming and want to adapt to keep in sync.
 * Deprecated `with_defaults()` in favor of `linters_with_defaults()` (#1029, @AshesITR)
 
 ## Other changes to defaults
 
-* Combined several curly brace related linters into a new `brace_linter()`, deprecating the predecessors
-  (#1041, @AshesITR):
-  + `closed_curly_linter()`, also allowing `}]` in addition to `})` and `},` as exceptions.
-  + `open_curly_linter()`, no longer linting unnecessary trailing whitespace and also allowing `(`, `,` and `%>%` on
-    preceding lines as exceptions. (#487, #1028)
-  + `paren_brace_linter()`, also linting `if`/`else` and `repeat` with missing whitespace
-  + Require `else` to come on the same line as the preceding `}`, if present (#884, @michaelchirico)
-  + Require functions spanning multiple lines to use curly braces (@michaelchirico)
-  + Require balanced usage of `{}` in `if`/`else` conditions (@michaelchirico)
+* Combined several curly brace related linters into a new `brace_linter()` (part of `default_lintes`),
+  deprecating the following predecessors (#1041, @AshesITR):
+   + `closed_curly_linter()`; both now also allow `}]` in addition to `})` and `},` as exceptions.
+   + `open_curly_linter()`; both also no longer lint unnecessary trailing whitespace (use `trailing_whitespace_linter()` for this)
+     and also allow `(`, `,`, and `%>%` on preceding lines as exceptions. (#487, #1028)
+   + `paren_brace_linter()`; `brace_linter()` also lints `if`/`else` and `repeat` with missing whitespace
+  `brace_linter()` also newly enforces the following rules surrounding curly braces:
+   + Require `else` to come on the same line as the preceding `}`, if present (#884, @michaelchirico)
+   + Require functions spanning multiple lines to use curly braces (@michaelchirico)
+   + Require balanced usage of `{}` in `if`/`else` conditions, i.e., if the `if` branch uses braces,
+     then so must the `else` branch, and _vice versa_ (@michaelchirico)
 * `object_name_linter()` gains a new default style, `"symbols"`, which won't lint all-symbol object names 
   (in particular, that means operator names like `%+%` are skipped; #495, #615, #670, @michaelchirico and @AshesITR)
 * `T_and_F_symbol_linter()` and `semicolon_linter()` are now part of the default linters
