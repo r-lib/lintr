@@ -63,7 +63,7 @@
    + `open_curly_linter()`; both also no longer lint unnecessary trailing whitespace (use `trailing_whitespace_linter()` for this)
      and also allow `(`, `,`, and `%>%` on preceding lines as exceptions. (#487, #1028)
    + `paren_brace_linter()`; `brace_linter()` also lints `if`/`else` and `repeat` with missing whitespace
-  `brace_linter()` also newly enforces the following rules surrounding curly braces:
+  `brace_linter()` also newly enforces the following rules surrounding curly braces (originally Google linters, see below):
    + Require `else` to come on the same line as the preceding `}`, if present (#884, @michaelchirico)
    + Require functions spanning multiple lines to use curly braces (@michaelchirico)
    + Require balanced usage of `{}` in `if`/`else` conditions, i.e., if the `if` branch uses braces,
@@ -88,6 +88,9 @@
      The default setting allows extra spacing to be used to increase
      line-to-line alignment (#940, @f-ritter and @michaelchirico)
    + extended so that usages like `a~b` and `function(a=1) { ... }` are linted (#930, #michaelchirico)
+   + added argument `exclude_operators` to disable lints on selected infix operators.
+     By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these.
+     (#914, @michaelchirico)
 * `trailing_whitespace_linter()`
    + extended to also lint completely blank lines by default (#1044, @AshesITR)
    + added argument `allow_empty_lines` (`FALSE` by default) to toggle this behavior
@@ -183,10 +186,6 @@ of general interest to the broader R community. More will be included in future 
     This feature is extensible by package authors providing add-on linters for {lintr}.
   + New function `available_tags()` to list available tags
   + New function `linters_with_tags()` to help build a list of linters using tags
-* `infix_spaces_linter()` gains argument `exclude_operators` to disable lints on selected infix operators.
-  By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these.
-  (#914, @michaelchirico)
-* New `unused_import_linter()` to detect unnecessary `library()` calls in R scripts (#239, @jimhester, @AshesITR)
 * New `is_lint_level()` helper for readably explaining which type of expression is required for a custom linter. 
   Some linters are written to either require the full file's parse tree (for example, `single_quotes_linter()`).
   Others only need single expressions, which is more cache-friendly (most linters are written this way to leverage 
