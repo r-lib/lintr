@@ -28,7 +28,7 @@ testthat::test_that("paren_body_linter returns correct lints", {
       line_number = 1L,
       column_number = 11L,
       type = "style",
-      line = c("1" = "function()test"),
+      line = "function()test",
       ranges = list(c(11L, 14L))
     ),
     linter
