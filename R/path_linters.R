@@ -113,8 +113,7 @@ split_paths <- function(path, sep = "/|\\\\") {
 split_path <- function(dirs, prefix) {
   # add root dir if needed
   nonempty_dirs <- nzchar(dirs)
-  i <- match(TRUE, nonempty_dirs) - 1L
-  if (is.na(i)) i <- length(dirs)
+  i <- match(TRUE, nonempty_dirs, nomatch = length(dirs) + 1L) - 1L
   if (i > 0L) {
     dirs <- c(strrep(prefix, i), tail(dirs, -i))
   }
