@@ -55,8 +55,6 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   inline_data <- !is.null(text) || needs_tempfile
   lines <- get_lines(filename, text)
 
-  no_filename <- missing(filename) || (is.null(text) && inline_data)
-
   if (needs_tempfile) {
     filename <- tempfile()
     con <- file(filename, open = "w", encoding = settings$encoding)
