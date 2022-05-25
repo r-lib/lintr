@@ -74,39 +74,29 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   linters <- define_linters(linters)
   linters <- Map(validate_linter_object, linters, names(linters))
 
-  lints <- list()
-  itr <- 0L
-
   cache_path <- define_cache_path(cache)
 
-  if (length(cache_path)) {
-    lint_cache <- load_cache(filename, cache_path)
-    lint_obj <- define_cache_key(filename, inline_data, lines)
-    lints <- retrieve_file(lint_cache, lint_obj, linters)
-    if (!is.null(lints)) {
-      # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
-      # > exclude(lints, lines = lines, ...)
-      return(do.call(exclude, c(list(lints, lines = lines, linter_names = names(linters)), dots)))
-    }
-    cache <- TRUE
-  } else {
-    lint_cache <- NULL
-    cache <- FALSE
+  lint_cache <- load_cache(filename, cache_path)
+  lint_obj <- define_cache_key(filename, inline_data, lines)
+  lints <- retrieve_file(lint_cache, lint_obj, linters)
+  if (!is.null(lints)) {
+    # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
+    # > exclude(lints, lines = lines, ...)
+    return(do.call(exclude, c(list(lints, lines = lines, linter_names = names(linters)), dots)))
   }
 
+  lints <- list()
   for (expr in source_expressions$expressions) {
     for (linter in names(linters)) {
-      lints[[itr <- itr + 1L]] <- get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines)
+      lints[[length(lints) + 1L]] <- get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines)
     }
   }
 
   lints <- maybe_append_error_lint(lints, source_expressions$error, lint_cache, filename)
   lints <- structure(reorder_lints(flatten_lints(lints)), class = "lints")
 
-  if (isTRUE(cache)) {
-    cache_file(lint_cache, filename, linters, lints)
-    save_cache(lint_cache, filename, cache_path)
-  }
+  cache_file(lint_cache, filename, linters, lints)
+  save_cache(lint_cache, filename, cache_path)
 
   # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
   # > exclude(lints, lines = lines, ...)
@@ -297,7 +287,7 @@ lint_package <- function(path = ".", ...,
 #' @noRd
 get_lints <- function(expr, linter, linter_fun, lint_cache, lines) {
   expr_lints <- NULL
-  if (!is.null(lint_cache) && has_lint(lint_cache, expr, linter)) {
+  if (has_lint(lint_cache, expr, linter)) {
     # retrieve_lint() might return NULL if missing line number is encountered.
     # It could be caused by nolint comments.
     expr_lints <- retrieve_lint(lint_cache, expr, linter, lines)
@@ -310,9 +300,7 @@ get_lints <- function(expr, linter, linter_fun, lint_cache, lines) {
       expr_lints[[i]]$linter <- linter
     }
 
-    if (!is.null(lint_cache)) {
-      cache_lint(lint_cache, expr, linter, expr_lints)
-    }
+    cache_lint(lint_cache, expr, linter, expr_lints)
   }
   expr_lints
 }
