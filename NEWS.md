@@ -88,6 +88,11 @@
      The default setting allows extra spacing to be used to increase
      line-to-line alignment (#940, @f-ritter and @michaelchirico)
    + extended so that usages like `a~b` and `function(a=1) { ... }` are linted (#930, #michaelchirico)
+* `trailing_whitespace_linter()`
+   + extended to also lint completely blank lines by default (#1044, @AshesITR)
+   + added argument `allow_empty_lines` (`FALSE` by default) to toggle this behavior
+   + improved so that trailing whitespace inside string literals does not trigger a lint (#1045, @AshesITR)
+   * added argument `allow_in_strings` (`TRUE` by default) to toggle this behavior
 
 ### Other noteworthy changes
 
@@ -96,12 +101,8 @@
 * Set the default `complexity_limit` in `cyclocomp_linter()` to 15. This is the same complexity limit that is enforced
   via `default_linters` (#693, #695, @AshesITR).
 * `lint_package()` now lints files in the `demo` directory by default (#703, @dmurdoch).
-* `trailing_whitespace_linter()` now also lints completely blank lines by default. This can be disabled by setting the
-  new argument `allow_empty_lines = TRUE` (#1044, @AshesITR)
-* `trailing_whitespace_linter()` ignores trailing whitespace in strings by default. 
-  This can be disabled using `allow_in_strings = FALSE` (#1045, @AshesITR)
 * Moved the default lintr cache directory from `~/.R/lintr_cache` to `R_user_dir("lintr", "cache")`.
-  Note that this major version update invalidated the old cache anyway, so it can be safely deleted. (#1062, @AshesITR)
+  Note that this major version update invalidates the old cache anyway, so it can be safely deleted. (#1062, @AshesITR)
 
 ## New features
 
