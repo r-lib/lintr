@@ -95,7 +95,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   if (length(cache_path)) {
     lint_cache <- load_cache(filename, cache_path)
-    lint_obj <- define_cache_key(inline_data, filename, lines)
+    lint_obj <- define_cache_key(filename, inline_data, lines)
     lints <- retrieve_file(lint_cache, lint_obj, linters)
     if (!is.null(lints)) {
       # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
