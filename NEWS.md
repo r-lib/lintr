@@ -120,6 +120,50 @@
   `.Last.lib()` and `.onDetach()` hooks (#882, @MichaelChirico)
 * `unused_import_linter()` to detect unnecessary `library()` calls in R scripts (#239, @jimhester, @AshesITR)
 
+#### Google linters
+
+Google uses lintr heavily internally, and has developed a large set of linters improving code consistency
+and correcting common R usage mistakes. This release includes many of these linters that are
+of general interest to the broader R community. More will be included in future releases. See, e.g.
+#884, #979, #998, #1011, #1016, #1036, #1051, #1066, and #1067; special thanks to @michaelchirico and @michaelquinn32.
+
+* `expect_null_linter()` Require usage of `expect_null(x)` over `expect_equal(x, NULL)` and similar
+* `expect_type_linter()` Require usage of `expect_type(x, t)` over `expect_equal(typeof(x), t)` and similar
+* `expect_s3_class_linter()` Require usage of `expect_s3_class(x, k)` over `expect_equal(class(x), k)` and similar
+* `expect_s4_class_linter()` Require usage of `expect_s4_class(x, k)` over `expect_true(methods::is(x, k))`
+* `conjunct_test_linter()` Require usage of `expect_true(x); expect_true(y)` over `expect_true(x && y)` and similar
+* `expect_not_linter()` Require usage of `expect_false(x)` over `expect_true(!x)`, and _vice versa_.
+* `expect_true_false_linter()` Require usage of `expect_true(x)` over `expect_equal(x, TRUE)` and similar
+* `expect_named_linter()` Require usage of `expect_named(x, n)` over `expect_equal(names(x), n)` and similar
+* `expect_length_linter()` Require usage of `expect_length(x, n)` over `expect_equal(length(x), n)` and similar
+* `yoda_test_linter()` Require usage of `expect_identical(x, 1L)` over `expect_equal(1L, x)` and similar
+* `expect_identical_linter()` Require usage of `expect_identical()` by default, and `expect_equal()` only by exception
+* `expect_comparison_linter()` Require usage of `expect_gt(x, y)` over `expect_true(x > y)` and similar
+* `vector_logic_linter()` Require use of scalar logical operators (`&&` and `||`) inside `if()` conditions and similar
+* `any_is_na_linter()` Require usage of `anyNA(x)` over `any(is.na(x))`
+* `class_equals_linter()` Prevent comparing `class(x)` with `==`, `!=`, or `%in%`, where `inherits()` is typically preferred
+* `outer_negation_linter()` Require usage of `!any(x)` over `all(!x)` and `!all(x)` over `any(!x)`
+* `numeric_leading_zero_linter()` Require a leading `0` in fractional numeric constants, e.g. `0.1` instead of `.1`
+* `literal_coercion_linter()` Require using correctly-typed literals instead of direct coercion, e.g. `1L` instead of `as.numeric(1)`
+* `paste_linter()` lint for common mis-use of `paste()` and `paste0()`:
+   + `paste0()` encouraged instead of `paste(sep = "")`
+   + `toString()` or `glue::glue_collapse()` encouraged instead of `paste(x, collapse = ", ")`
+   + `sep=` passed to `paste0()` -- typically a mistake
+* `nested_ifelse_linter()` Prevent nested calls to `ifelse()` like `ifelse(A, x, ifelse(B, y, z))`, and similar
+* `condition_message_linter()` Prevent condition messages from being constructed like `stop(paste(...))`
+  (where just `stop(...)` is preferable)
+* `redundant_ifelse_linter()` Prevent usage like `ifelse(A & B, TRUE, FALSE)` or `ifelse(C, 0, 1)`
+  (the latter is `as.numeric(!C)`)
+* `unreachable_code_linter()` Prevent code after `return()` and `stop()` statements that will never be reached
+  (extended for #1051 thanks to early user testing, thanks @bersbersbers!)
+* `regex_subset_linter()` Require usage of `grep(ptn, x, value = TRUE)` over `x[grep(ptn, x)]` and similar
+* `consecutive_stopifnot_linter()` Require consecutive calls to `stopifnot()` to be unified into one
+* `ifelse_censor_linter()` Require usage of `pmax()` / `pmin()` where appropriate, e.g. `ifelse(x > y, x, y)` is `pmax(x, y)`
+* `system_file_linter()` Require file paths to be constructed by `system.file()` instead of calling `file.path()` directly
+* `strings_as_factors_linter()` Check for code designed to work before and after the new `stringsAsFactors = FALSE` default
+* `inner_combine_linter()` Require inputs to vectorized functions to be combined first rather than later,
+  e.g. `as.Date(c(x, y))` over `c(as.Date(x), as.Date(y))`
+
 ### Improved linters
 
 * New styles `"symbols"` and `"SNAKE_CASE"` for `object_name_linter()`
@@ -139,51 +183,6 @@
     This feature is extensible by package authors providing add-on linters for {lintr}.
   + New function `available_tags()` to list available tags
   + New function `linters_with_tags()` to help build a list of linters using tags
-* New set of linters provided as part of Google's extension to the tidyverse style guide
-  (#884, #979, #998, #1011, #1016, #1036, #1051, #1066, #1067, @michaelchirico)
-  + `expect_null_linter()` Require usage of `expect_null(x)` over `expect_equal(x, NULL)` and similar
-  + `expect_type_linter()` Require usage of `expect_type(x, t)` over `expect_equal(typeof(x), t)` and similar
-  + `expect_s3_class_linter()` Require usage of `expect_s3_class(x, k)` over `expect_equal(class(x), k)` and similar
-  + `expect_s4_class_linter()` Require usage of `expect_s4_class(x, k)` over `expect_true(methods::is(x, k))`
-  + `conjunct_test_linter()` Require usage of `expect_true(x); expect_true(y)` over `expect_true(x && y)` and similar
-  + `expect_not_linter()` Require usage of `expect_false(x)` over `expect_true(!x)`, and _vice versa_.
-  + `expect_true_false_linter()` Require usage of `expect_true(x)` over `expect_equal(x, TRUE)` and similar
-  + `expect_named_linter()` Require usage of `expect_named(x, n)` over `expect_equal(names(x), n)` and similar
-  + `expect_length_linter()` Require usage of `expect_length(x, n)` over `expect_equal(length(x), n)` and similar
-  + `yoda_test_linter()` Require usage of `expect_identical(x, 1L)` over `expect_equal(1L, x)` and similar
-  + `expect_identical_linter()` Require usage of `expect_identical()` by default, and `expect_equal()` only by
-    exception
-  + `expect_comparison_linter()` Require usage of `expect_gt(x, y)` over `expect_true(x > y)` and similar
-  + `vector_logic_linter()` Require use of scalar logical operators (`&&` and `||`) inside `if()` conditions and 
-    similar
-  + `any_is_na_linter()` Require usage of `anyNA(x)` over `any(is.na(x))`
-  + `class_equals_linter()` Prevent comparing `class(x)` with `==`, `!=`, or `%in%`, where `inherits()` is typically
-    preferred
-  + `outer_negation_linter()` Require usage of `!any(x)` over `all(!x)` and `!all(x)` over `any(!x)`
-  + `numeric_leading_zero_linter()` Require a leading `0` in fractional numeric constants, e.g. `0.1` instead of `.1`
-  + `literal_coercion_linter()` Require using correctly-typed literals instead of direct coercion, e.g. `1L` instead of
-    `as.numeric(1)`
-  + `paste_linter()` lint for common mis-use of `paste()` and `paste()`:
-    - `paste0()` encouraged instead of `paste(sep = "")`
-    - `toString()` or `glue::glue_collapse()` encouraged instead of `paste(x, collapse = ", ")`
-    - `sep=` passed to `paste0()` -- typically a mistake
-  + `nested_ifelse_linter()` Prevent nested calls to `ifelse()` like `ifelse(A, x, ifelse(B, y, z))`, and similar
-  + `condition_message_linter()` Prevent condition messages from being constructed like `stop(paste(...))`
-    (where just `stop(...)` is preferable)
-  + `redundant_ifelse_linter()` Prevent usage like `ifelse(A & B, TRUE, FALSE)` or `ifelse(C, 0, 1)`
-    (the latter is `as.numeric(!C)`)
-  + `unreachable_code_linter()` Prevent code after `return()` and `stop()` statements that will never be reached
-    (extended for  thanks to early user testing, !)
-  + `regex_subset_linter()` Require usage of `grep(ptn, x, value = TRUE)` over `x[grep(ptn, x)]` and similar
-  + `consecutive_stopifnot_linter()` Require consecutive calls to `stopifnot()` to be unified into one
-  + `ifelse_censor_linter()` Require usage of `pmax()` / `pmin()` where appropriate, e.g. `ifelse(x > y, x, y)` is
-    `pmax(x, y)`
-  + `system_file_linter()` Require file paths to be constructed by `system.file()` instead of calling `file.path()`
-    directly
-  + `strings_as_factors_linter()` Check for code designed to work before and after the new `stringsAsFactors = FALSE` 
-    default
-  + `inner_combine_linter()` Require inputs to vectorized functions to be combined first rather than later,
-    e.g. `as.Date(c(x, y))` over `c(as.Date(x), as.Date(y))`
 * `infix_spaces_linter()` gains argument `exclude_operators` to disable lints on selected infix operators.
   By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these.
   (#914, @michaelchirico)
