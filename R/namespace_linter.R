@@ -152,7 +152,7 @@ build_ns_get_lints <- function(packages, symbols, symbol_nodes, namespaces, sour
 
   unexported <- !vapply(
     seq_along(symbols),
-    function(ii) symbols[[ii]] %in% exports[[ii]],
+    function(ii) symbols[[ii]] %in% get_all_exports(namespaces[[ii]]),
     logical(1L)
   )
   if (any(unexported)) {
