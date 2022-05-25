@@ -13,7 +13,8 @@
 #' @inheritParams lint-s3
 #' @param xml An `xml_node` object (to generate one `Lint`) or an
 #'   `xml_nodeset` object (to generate several `Lint`s), e.g. as returned by
-#'   [xml2::xml_find_all()] or [xml2::xml_find_first()].
+#'   [xml2::xml_find_all()] or [xml2::xml_find_first()] or a
+#'   list of `xml_node` objects.
 #' @param source_expression A source expression object, e.g. as
 #'   returned typically by [lint()], or more generally
 #'   by [get_source_expressions()].
@@ -40,7 +41,7 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
   if (length(xml) == 0L) {
     return(list())
   }
-  if (inherits(xml, "xml_nodeset")) {
+  if (is_nodeset_like(xml)) {
     if (is.character(lint_message)) {
       lints <- .mapply(
         xml_nodes_to_lints,
@@ -67,7 +68,7 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
     class(lints) <- "lints"
     return(lints)
   } else if (!inherits(xml, "xml_node")) {
-    stop("Expected an xml_nodeset or xml_node, got an object of class(es): ", toString(class(xml)))
+    stop("Expected an xml_nodeset, a list of xml_nodes or an xml_node, got an object of class(es): ", toString(class(xml)))
   }
   type <- match.arg(type, c("style", "warning", "error"))
   line1 <- xml2::xml_attr(xml, "line1")
@@ -94,4 +95,9 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
     line = lines[[line1]],
     ranges = list(c(col1, col2))
   )
+}
+
+is_nodeset_like <- function(xml) {
+  inherits(xml, "xml_nodeset") ||
+    (is.list(xml) && all(vapply(xml, inherits, logical(1L), what = "xml_node")))
 }
