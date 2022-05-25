@@ -32,10 +32,11 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     installed <- packages %in% installed_packages
 
     if (!all(installed)) {
-      lints <- c(lints, build_uninstalled_lints(
-        packages[!installed],
+      lints <- c(lints, xml_nodes_to_lints(
         package_nodes[!installed],
-        source_expression
+        source_expression = source_expression,
+        lint_message = sprintf("Package '%s' is not installed.", packages[!installed]),
+        type = "warning"
       ))
 
       ns_nodes <- ns_nodes[installed]
@@ -51,10 +52,11 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     failed_namespace <- vapply(namespaces, inherits, "condition", FUN.VALUE = logical(1L))
 
     if (any(failed_namespace)) {
-      lints <- c(lints, build_failed_namespace_lints(
+      lints <- c(lints, xml_nodes_to_lints(
         package_nodes[failed_namespace],
-        vapply(namespaces[failed_namespace], conditionMessage, character(1L)),
-        source_expression
+        source_expression = source_expression,
+        lint_message = vapply(namespaces[failed_namespace], conditionMessage, character(1L)),
+        type = "warning"
       ))
 
       ns_nodes <- ns_nodes[!failed_namespace]
@@ -90,6 +92,10 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
   })
 }
 
+get_all_exports <- function(namespace) {
+  c(getNamespaceExports(namespace), names(.getNamespaceInfo(namespace, "lazydata")))
+}
+
 build_ns_get_int_lints <- function(packages, symbols, symbol_nodes, namespaces, source_expression) {
   lints <- list()
 
@@ -99,11 +105,11 @@ build_ns_get_int_lints <- function(packages, symbols, symbol_nodes, namespaces, 
     logical(1L)
   )
   if (any(non_symbols)) {
-    lints <- c(lints, build_unfound_symbol_lints(
-      packages[non_symbols],
-      symbols[non_symbols],
+    lints <- c(lints, xml_nodes_to_lints(
       symbol_nodes[non_symbols],
-      source_expression
+      source_expression = source_expression,
+      lint_message = sprintf("'%s' does not exist in {%s}.", symbols[non_symbols], packages[non_symbols]),
+      type = "warning"
     ))
 
     packages <- packages[!non_symbols]
@@ -117,11 +123,12 @@ build_ns_get_int_lints <- function(packages, symbols, symbol_nodes, namespaces, 
     logical(1L)
   )
   if (any(exported)) {
-    lints <- c(lints, build_unnecessary_private_lints(
-      packages[exported],
-      symbols[exported],
+    lints <- c(lints, xml_nodes_to_lints(
       symbol_nodes[exported],
-      source_expression
+      source_expression = source_expression,
+      lint_message =
+        sprintf("'%1$s' is exported from {%2$s}. Use %2$s::%1$s instead.", symbols[exported], packages[exported]),
+      type = "warning"
     ))
   }
 
@@ -138,134 +145,11 @@ build_ns_get_lints <- function(packages, symbols, symbol_nodes, namespaces, sour
     logical(1L)
   )
   if (any(unexported)) {
-    lints <- c(lints, build_unexported_lints(
-      packages[unexported],
-      symbols[unexported],
+    lints <- c(lints, xml_nodes_to_lints(
       symbol_nodes[unexported],
-      source_expression
+      source_expression = source_expression,
+      lint_message = sprintf("'%s' is not exported from {%s}.", symbols[unexported], packages[unexported]),
+      type = "warning"
     ))
   }
-}
-
-get_all_exports <- function(namespace) {
-  c(getNamespaceExports(namespace), names(.getNamespaceInfo(namespace, "lazydata")))
-}
-
-build_unexported_lints <- function(packages, symbols, symbol_nodes, source_expression) {
-  line1 <- as.integer(xml2::xml_attr(symbol_nodes, "line1"))
-  col1 <- as.integer(xml2::xml_attr(symbol_nodes, "col1"))
-  col2 <- as.integer(xml2::xml_attr(symbol_nodes, "col2"))
-
-  messages <- sprintf("'%s' is not exported from {%s}.", symbols, packages)
-  lapply(
-    seq_along(symbol_nodes),
-    function(ii) {
-      line1 <- line1[[ii]]
-      col1 <- col1[[ii]]
-      Lint(
-        filename = source_expression$filename,
-        line_number = line1,
-        column_number = col1,
-        type = "warning",
-        message = messages[[ii]],
-        line = source_expression$file_lines[[line1]],
-        ranges = list(c(col1, col2[[ii]]))
-      )
-    }
-  )
-}
-
-build_unnecessary_private_lints <- function(packages, symbols, symbol_nodes, source_expression) {
-  line1 <- as.integer(xml2::xml_attr(symbol_nodes, "line1"))
-  col1 <- as.integer(xml2::xml_attr(symbol_nodes, "col1"))
-  col2 <- as.integer(xml2::xml_attr(symbol_nodes, "col2"))
-
-  messages <- sprintf("'%1$s' is exported from {%2$s}. Use %2$s::%1$s instead.", symbols, packages)
-  lapply(
-    seq_along(symbol_nodes),
-    function(ii) {
-      line1 <- line1[[ii]]
-      col1 <- col1[[ii]]
-      Lint(
-        filename = source_expression$filename,
-        line_number = line1,
-        column_number = col1,
-        type = "warning",
-        message = messages[[ii]],
-        line = source_expression$file_lines[[line1]],
-        ranges = list(c(col1, col2[[ii]]))
-      )
-    }
-  )
-}
-
-build_unfound_symbol_lints <- function(packages, symbols, symbol_nodes, source_expression) {
-  line1 <- as.integer(xml2::xml_attr(symbol_nodes, "line1"))
-  col1 <- as.integer(xml2::xml_attr(symbol_nodes, "col1"))
-  col2 <- as.integer(xml2::xml_attr(symbol_nodes, "col2"))
-
-  messages <- sprintf("'%s' does not exist in {%s}.", symbols, packages)
-  lapply(
-    seq_along(symbol_nodes),
-    function(ii) {
-      line1 <- line1[[ii]]
-      col1 <- col1[[ii]]
-      Lint(
-        filename = source_expression$filename,
-        line_number = line1,
-        column_number = col1,
-        type = "warning",
-        message = messages[[ii]],
-        line = source_expression$file_lines[[line1]],
-        ranges = list(c(col1, col2[[ii]]))
-      )
-    }
-  )
-}
-
-build_failed_namespace_lints <- function(package_nodes, messages, source_expression) {
-  line1 <- as.integer(xml2::xml_attr(package_nodes, "line1"))
-  col1 <- as.integer(xml2::xml_attr(package_nodes, "col1"))
-  col2 <- as.integer(xml2::xml_attr(package_nodes, "col2"))
-
-  lapply(
-    seq_along(package_nodes),
-    function(ii) {
-      line1 <- line1[[ii]]
-      col1 <- col1[[ii]]
-      Lint(
-        filename = source_expression$filename,
-        line_number = line1,
-        column_number = col1,
-        type = "warning",
-        message = messages[[ii]],
-        line = source_expression$file_lines[[line1]],
-        ranges = list(c(col1, col2[[ii]]))
-      )
-    }
-  )
-}
-
-build_uninstalled_lints <- function(packages, package_nodes, source_expression) {
-  line1 <- as.integer(xml2::xml_attr(package_nodes, "line1"))
-  col1 <- as.integer(xml2::xml_attr(package_nodes, "col1"))
-  col2 <- as.integer(xml2::xml_attr(package_nodes, "col2"))
-
-  messages <- sprintf("Package '%s' is not installed.", packages)
-  lapply(
-    seq_along(packages),
-    function(ii) {
-      line1 <- line1[[ii]]
-      col1 <- col1[[ii]]
-      Lint(
-        filename = source_expression$filename,
-        line_number = line1,
-        column_number = col1,
-        type = "warning",
-        message = messages[[ii]],
-        line = source_expression$file_lines[[line1]],
-        ranges = list(c(col1, col2[[ii]]))
-      )
-    }
-  )
 }
