@@ -628,6 +628,9 @@ fix_eq_assigns <- function(pc) {
   for (i in seq_len(n_expr)) {
     start <- true_locs[i]
 
+    # TODO(michaelchirico): vectorize this loop away. the tricky part is,
+    #   this loop doesn't execute on most R versions (we tried 3.6.3 and 4.2.0).
+    #   so it likely requires some GHA print debugging -- tedious :)
     end <- true_locs[i]
     j <- end + 1L
     while (j <= length(expr_locs) && !expr_locs[j]) {
