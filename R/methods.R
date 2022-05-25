@@ -81,13 +81,20 @@ print.lints <- function(x, ...) {
       lapply(x, print, ...)
     }
 
-    if (isTRUE(settings$error_on_lint)) {
-      quit("no", 31L, FALSE) # nocov
-    }
   } else if (use_rstudio_source_markers) {
     # Empty lints: clear RStudio source markers
     rstudio_source_markers(x)
   }
+
+  if (isTRUE(settings$error_on_lint)) {
+    stop(sprintf(
+      ngettext(length(x),
+        "Linting failed with %i issue",
+        "Linting failed with %i issues"
+      ), length(x)
+    ), call. = FALSE)
+  }
+
   invisible(x)
 }
 
