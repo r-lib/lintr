@@ -212,12 +212,15 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     return(list())
   }
 
-  # no named parameters at all
-  if (is.null(names(x))) {
+  x <- as.list(x)
+  unnamed <- !nzchar(names2(x))
+  if (any(unnamed)) {
+
+    # must be character vectors of length 1
     bad <- vapply(
       seq_along(x),
       function(i) {
-        !is.character(x[[i]]) || length(x[[i]]) != 1L
+        unnamed[i] && (!is.character(x[[i]]) || length(x[[i]]) != 1L)
       },
       logical(1L)
     )
@@ -228,56 +231,29 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
            " are not!",
            call. = FALSE)
     }
-    # x is a character vector (or list) of file names
-    # Normalize to list(<filename> = list(Inf), ...)
-    x <- structure(rep(list(Inf), length(x)), names = x)
-  } else {
-    unnamed <- names(x) == ""
-    if (any(unnamed)) {
+    # Normalize unnamed entries to list(<filename> = list(Inf), ...)
+    names(x)[unnamed] <- x[unnamed]
+    x[unnamed] <- rep_len(list(list(Inf)), sum(unnamed))
+  }
 
-      # must be character vectors of length 1
-      bad <- vapply(
-        seq_along(x),
-        function(i) {
-          unnamed[i] && (!is.character(x[[i]]) || length(x[[i]]) != 1L)
-        },
-        logical(1L)
-      )
+  full_line_exclusions <- !vapply(x, is.list, logical(1L))
 
-      if (any(bad)) {
-        stop("Full file exclusions must be character vectors of length 1. items: ",
-             toString(which(bad)),
-             " are not!",
-             call. = FALSE)
-      }
-      names(x)[unnamed] <- x[unnamed]
-      x[unnamed] <- rep_len(list(list(Inf)), sum(unnamed))
+  if (any(full_line_exclusions)) {
+
+    # must be integer or numeric vectors
+    are_numeric <- vapply(x, is.numeric, logical(1L))
+    bad <- full_line_exclusions & !are_numeric
+
+    if (any(bad)) {
+      stop("Full line exclusions must be numeric or integer vectors. items: ",
+           toString(which(bad)),
+           " are not!",
+           call. = FALSE)
     }
 
-    full_line_exclusions <- !vapply(x, is.list, logical(1L))
-
-    if (any(full_line_exclusions)) {
-
-      # must be integer or numeric vectors
-      bad <- vapply(
-        seq_along(x),
-        function(i) {
-          full_line_exclusions[i] && !is.numeric(x[[i]])
-        },
-        logical(1L)
-      )
-
-      if (any(bad)) {
-        stop("Full line exclusions must be numeric or integer vectors. items: ",
-             toString(which(bad)),
-             " are not!",
-             call. = FALSE)
-      }
-
-      # Normalize list(<filename> = c(<lines>)) to
-      # list(<filename> = list(c(<lines>)))
-      x[full_line_exclusions] <- lapply(x[full_line_exclusions], list)
-    }
+    # Normalize list(<filename> = c(<lines>)) to
+    # list(<filename> = list(c(<lines>)))
+    x[full_line_exclusions] <- lapply(x[full_line_exclusions], list)
   }
 
   paths <- names(x)
