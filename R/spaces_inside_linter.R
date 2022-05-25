@@ -46,8 +46,8 @@ spaces_inside_linter <- function() {
           `(` = "Do not place spaces after parentheses."
         )
       },
-      range_start_xpath = "number(./@col1 + 1)",
-      range_end_xpath = "number(./following-sibling::*[1]/@col1 - 1)"
+      range_start_xpath = "number(./@col1 + 1)", # start after [
+      range_end_xpath = "number(./following-sibling::*[1]/@col1 - 1)" # end before next expression
     )
 
     right_expr <- xml2::xml_find_all(xml, right_xpath)
@@ -61,8 +61,8 @@ spaces_inside_linter <- function() {
           `)` = "Do not place spaces before parentheses."
         )
       },
-      range_start_xpath = "number(./@col2 + 1)",
-      range_end_xpath = "number(./following-sibling::*[1]/@col1 - 1)"
+      range_start_xpath = "number(./@col2 + 1)", # start after expression
+      range_end_xpath = "number(./following-sibling::*[1]/@col1 - 1)" # end before following ]
     )
 
     c(left_lints, right_lints)

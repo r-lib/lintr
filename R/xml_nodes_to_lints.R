@@ -3,6 +3,13 @@
 #' Convenience function for converting nodes matched by XPath-based
 #'   linter logic into a [Lint()] object to return.
 #'
+#' @details
+#' The location XPaths, `column_number_xpath`, `range_start_xpath` and `range_end_xpath` are evaluated using
+#' [xml2::xml_find_num()] and will usually be of the form
+#'   "number(./relative/xpath)"
+#' Note that the location line number cannot be changed and lints spanning multiple lines will ignore `range_end_xpath`.
+#' `column_number_xpath` and `range_start_xpath` must always refer to locations on the starting line of the `xml` node.
+#'
 #' @inheritParams lint-s3
 #' @param xml An `xml_node` object (to generate one `Lint`) or an
 #'   `xml_nodeset` object (to generate several `Lint`s), e.g. as returned by
@@ -17,11 +24,12 @@
 #'   length-1 character as output). If `lint_message` is a character vector the same length as `xml`,
 #'   the `i`-th lint will be given the `i`-th message.
 #' @param column_number_xpath XPath expression to return the column number location of the lint.
-#'   Defaults to the start of the expression matched by `xml`.
+#'   Defaults to the start of the range matched by `range_start_xpath`. See details for more information.
 #' @param range_start_xpath XPath expression to return the range start location of the lint.
-#'   Defaults to the start of the expression matched by `xml`.
+#'   Defaults to the start of the expression matched by `xml`. See details for more information.
 #' @param range_end_xpath XPath expression to return the range end location of the lint.
-#'   Defaults to the end of the expression matched by `xml`.
+#'   Defaults to the end of the expression matched by `xml`. See details for more information.
+#'
 #' @return For `xml_node`s, a `lint`. For `xml_nodeset`s, `lints` (a list of `lint`s).
 #' @export
 xml_nodes_to_lints <- function(xml, source_expression, lint_message,

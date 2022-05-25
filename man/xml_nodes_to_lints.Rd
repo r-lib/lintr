@@ -33,13 +33,13 @@ the \code{i}-th lint will be given the \code{i}-th message.}
 \item{type}{type of lint.}
 
 \item{column_number_xpath}{XPath expression to return the column number location of the lint.
-Defaults to the start of the expression matched by \code{xml}.}
+Defaults to the start of the range matched by \code{range_start_xpath}. See details for more information.}
 
 \item{range_start_xpath}{XPath expression to return the range start location of the lint.
-Defaults to the start of the expression matched by \code{xml}.}
+Defaults to the start of the expression matched by \code{xml}. See details for more information.}
 
 \item{range_end_xpath}{XPath expression to return the range end location of the lint.
-Defaults to the end of the expression matched by \code{xml}.}
+Defaults to the end of the expression matched by \code{xml}. See details for more information.}
 }
 \value{
 For \code{xml_node}s, a \code{lint}. For \code{xml_nodeset}s, \code{lints} (a list of \code{lint}s).
@@ -47,4 +47,11 @@ For \code{xml_node}s, a \code{lint}. For \code{xml_nodeset}s, \code{lints} (a li
 \description{
 Convenience function for converting nodes matched by XPath-based
 linter logic into a \code{\link[=Lint]{Lint()}} object to return.
+}
+\details{
+The location XPaths, \code{column_number_xpath}, \code{range_start_xpath} and \code{range_end_xpath} are evaluated using
+\code{\link[xml2:xml_find_all]{xml2::xml_find_num()}} and will usually be of the form
+"number(./relative/xpath)"
+Note that the location line number cannot be changed and lints spanning multiple lines will ignore \code{range_end_xpath}.
+\code{column_number_xpath} and \code{range_start_xpath} must always refer to locations on the starting line of the \code{xml} node.
 }
