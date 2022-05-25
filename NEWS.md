@@ -69,8 +69,16 @@
    + Require functions spanning multiple lines to use curly braces (@michaelchirico)
    + Require balanced usage of `{}` in `if`/`else` conditions, i.e., if the `if` branch uses braces,
      then so must the `else` branch, and _vice versa_ (@michaelchirico)
+* New `paren_body_linter()` checks that there is a space between a right parenthesis and a body expression. (#809, @kpagacz)
 * Added `T_and_F_symbol_linter()` (#517, @AshesITR)
 * Added `semicolon_linter()` (#683, @AshesITR)
+* Added new functions to the `undesirable_function_linter()` defaults related to debugging (#876, @michaelchirico):
+   + `browser()`
+   + `debug()`
+   + `debugcall()`
+   + `debugonce()`
+   + `trace()`
+   + `untrace()`
 
 ### Other noteworthy changes
 
@@ -79,11 +87,6 @@
 * Set the default `complexity_limit` in `cyclocomp_linter()` to 15. This is the same complexity limit that is enforced
   via `default_linters` (#693, #695, @AshesITR).
 * `lint_package()` now lints files in the `demo` directory by default (#703, @dmurdoch).
-* New default linter `paren_body_linter()` checks that there is a space between right parenthesis and a body 
-  expression. (#809, #830, @kpagacz)
-* Debugging functions (`browser()`, `debug()`, `debugcall()`, `debugonce()`, `trace()`, `undebug()`, `untrace()`) are 
-  now part of the default set of undesirable functions to help prevent them from being committed by mistake. 
-  (#876, @michaelchirico)
 * `assignment_linter()` now lints right assignment (`->` and `->>`) and gains two arguments. (#915, @michaelchirico)
   + `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`
   + `allow_right_assign` toggles whether to lint `->` and `->>`
