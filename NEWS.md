@@ -58,8 +58,7 @@
 
 ### Updates to `default_linters`
 
-* Added new `brace_linter()`, which combines several curly brace related linters,
-  deprecating the following predecessors (#1041, @AshesITR):
+* New `brace_linter()` which combines several curly brace related linters, deprecating the following predecessors (#1041, @AshesITR):
    + `closed_curly_linter()`; both now also allow `}]` in addition to `})` and `},` as exceptions.
    + `open_curly_linter()`; both also no longer lint unnecessary trailing whitespace (use `trailing_whitespace_linter()` for this)
      and also allow `(`, `,`, and `%>%` on preceding lines as exceptions. (#487, #1028)
@@ -72,18 +71,18 @@
 * New `paren_body_linter()` checks that there is a space between a right parenthesis and a body expression. (#809, @kpagacz)
 * Added `T_and_F_symbol_linter()` (#517, @AshesITR)
 * Added `semicolon_linter()` (#683, @AshesITR)
-* Added new functions to the `undesirable_function_linter()` defaults related to debugging (#876, @michaelchirico):
+* `undesirable_function_linter()`: Added new functions to the defaults related to debugging (#876, @michaelchirico):
    + `browser()`
    + `debug()`
    + `debugcall()`
    + `debugonce()`
    + `trace()`
    + `untrace()`
-* Improved `assignment_linter` (#915, @michaelchirico)
+* `assignment_linter()`: extended and add arguments (#915, @michaelchirico)
    + Right assignments are now linted by default (`->` and `->>`)
    + New argument `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`
    + New argument `allow_right_assign` (`FALSE` by default) toggles whether to lint `->` and `->>`
-* Added argument `allow_multiple_spaces` (`TRUE` by default) to `infix_spaces_linter()` which toggles
+* `infix_spaces_linter()`: added argument `allow_multiple_spaces` (`TRUE` by default) which toggles
   whether to generate a lint for operators used with multiple spaces, e.g. `x   +   2`. The default
   setting allows extra spacing to be used to increase line-to-line alignment (#940, @f-ritter and @michaelchirico)
 
