@@ -28,7 +28,7 @@ xp_text_in_table <- function(table) {
 #'   this function is first applied to `xml` (so it should be a
 #'   function taking an `xml_node` as input and must produce a
 #'   length-1 character as output). If `lint_message` is a character vector the same length as `xml`,
-#'   the `i`-th lint will be given the `i`-th message
+#'   the `i`-th lint will be given the `i`-th message.
 #' @param match_after_end Logical, default `FALSE`. If `TRUE`,
 #'   The output `column_number` and `ranges[2L]` are set to _after_ the matched
 #'   symbol in `xml`. This can be convenient for setting the source marker

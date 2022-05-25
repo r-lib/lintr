@@ -21,20 +21,7 @@ sprintf_linter <- function() {
 
     sprintf_calls <- xml2::xml_find_all(xml, xpath)
 
-    message <- vapply(sprintf_calls, function(xml) {
-      text <- xml2::xml_text(xml)
-      parsed_expr <- try_silently(parse(text = text, keep.source = FALSE)[[1L]])
-      if (!is.character(parsed_expr[[2L]])) { # sprintf(fmt = "") must be a constant format
-        return(NA_character_)
-      }
-      parsed_expr <- zap_extra_args(parsed_expr)
-      res <- tryCatch(eval(parsed_expr, envir = baseenv()), warning = identity, error = identity)
-      if (inherits(res, "condition")) {
-        conditionMessage(res)
-      } else {
-        NA_character_
-      }
-    }, character(1L))
+    message <- vapply(sprintf_calls, capture_sprintf_warning, character(1L))
 
     has_message <- !is.na(message)
     xml_nodes_to_lints(
@@ -69,4 +56,30 @@ zap_extra_args <- function(parsed_expr) {
     }
   }
   parsed_expr
+}
+
+#' Anticipate warnings of a sprintf() call
+#'
+#' Try running a static sprintf() call to determine whether it will produce warnings or errors due to format
+#' misspecification
+#'
+#' @param xml An XML node representing a `sprintf()` call (i.e. the `<expr>` node containing the call)
+#'
+#' @return A string, either `NA_character_` or the text of generated errors and warnings from the `sprintf()` call when
+#' replacing all dynamic components by 0, which is compatible with all format specifiers.
+#'
+#' @noRd
+capture_sprintf_warning <- function(xml) {
+  text <- xml2::xml_text(xml)
+  parsed_expr <- try_silently(parse(text = text, keep.source = FALSE)[[1L]])
+  if (!is.character(parsed_expr[[2L]])) { # sprintf(fmt = "") must be a constant format
+    return(NA_character_)
+  }
+  parsed_expr <- zap_extra_args(parsed_expr)
+  res <- tryCatch(eval(parsed_expr, envir = baseenv()), warning = identity, error = identity)
+  if (inherits(res, "condition")) {
+    conditionMessage(res)
+  } else {
+    NA_character_
+  }
 }
