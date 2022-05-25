@@ -3,6 +3,7 @@ linters: linters_with_defaults(
     line_length_linter = line_length_linter(120)
   )
 exclusions: list(
+  "tests/testthat/default_linter_testcode.R",
   "tests/testthat/dummy_packages",
   "tests/testthat/dummy_projects",
   "tests/testthat/knitr_formats",
