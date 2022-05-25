@@ -33,97 +33,124 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
 
     installed_packages <- .packages(all.available = TRUE)
 
-    results <- lapply(seq_along(ns_nodes), function(i) {
-      if (pkgs[[i]] %in% installed_packages) {
-        if (check_exports || check_nonexports) {
-          ns <- tryCatch(getNamespace(pkgs[[i]]), error = function(e) e)
-
-          if (isNamespace(ns)) {
-            if (check_exports && ops[[i]] == "::") {
-              exports <- getNamespaceExports(ns)
-              lazydata <- names(.getNamespaceInfo(ns, "lazydata"))
-              if (!(syms[[i]] %in% c(exports, lazydata))) {
-                line1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "line1"))
-                col1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col1"))
-                col2 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col2"))
-                return(Lint(
-                  filename = source_expression$filename,
-                  line_number = line1,
-                  column_number = col1,
-                  type = "warning",
-                  message = sprintf("'%s' is not exported from {%s}.", syms[[i]], pkgs[[i]]),
-                  line = source_expression$file_lines[[line1]],
-                  ranges = list(c(col1, col2))
-                ))
-              }
-            }
-
-            if (check_nonexports && ops[[i]] == ":::") {
-              if (exists(syms[[i]], ns, inherits = FALSE)) {
-                exports <- getNamespaceExports(ns)
-                if (syms[[i]] %in% exports) {
-                  line1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "line1"))
-                  col1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col1"))
-                  col2 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col2"))
-                  return(Lint(
-                    filename = source_expression$filename,
-                    line_number = line1,
-                    column_number = col1,
-                    type = "style",
-                    message = sprintf("'%s' is exported from {%s}. Use %s::%s instead.",
-                      syms[[i]], pkgs[[i]], pkgs[[i]], syms[[i]]),
-                    line = source_expression$file_lines[[line1]],
-                    ranges = list(c(col1, col2))
-                  ))
-                }
-              } else {
-                line1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "line1"))
-                col1 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col1"))
-                col2 <- as.integer(xml2::xml_attr(sym_nodes[[i]], "col2"))
-                return(Lint(
-                  filename = source_expression$filename,
-                  line_number = line1,
-                  column_number = col1,
-                  type = "warning",
-                  message = sprintf("'%s' does not exist in {%s}.", syms[[i]], pkgs[[i]]),
-                  line = source_expression$file_lines[[line1]],
-                  ranges = list(c(col1, col2))
-                ))
-              }
-            }
-          } else {
-            # nocov start: need getNamespace to fail. Could be done with {mockery} in principle
-            line1 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "line1"))
-            col1 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "col1"))
-            col2 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "col2"))
-            return(Lint(
-              filename = source_expression$filename,
-              line_number = line1,
-              column_number = col1,
-              type = "warning",
-              message = conditionMessage(ns),
-              line = source_expression$file_lines[[line1]],
-              ranges = list(c(col1, col2))
-            ))
-            # nocov end
-          }
-        }
-      } else {
-        line1 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "line1"))
-        col1 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "col1"))
-        col2 <- as.integer(xml2::xml_attr(pkg_nodes[[i]], "col2"))
-        return(Lint(
-          filename = source_expression$filename,
-          line_number = line1,
-          column_number = col1,
-          type = "warning",
-          message = sprintf("Package '%s' is not installed.", pkgs[[i]]),
-          line = source_expression$file_lines[[line1]],
-          ranges = list(c(col1, col2))
-        ))
+    results <- lapply(
+      seq_along(ns_nodes),
+      function(i) {
+        build_namespace_lint(pkgs[[i]], syms[[i]], pkg_nodes[[i]], sym_nodes[[i]], check_exports, check_nonexports)
       }
-    })
+    )
 
     results[!vapply(results, is.null, logical(1L))]
   })
+}
+
+build_namespace_lint <- function(package, symbol, package_node, symbol_node, check_exports, check_nonexports) {
+  if (!package %in% installed_packages) {
+    return(build_uninstalled_lint(package, package_node, source_expression))
+  }
+  if (!check_exports && !check_nonexports) {
+    return(NULL)
+  }
+
+  ns <- tryCatch(getNamespace(package), error = identity)
+
+  if (!isNamespace(ns)) {
+    return(build_non_namespace_lint(package_node, conditionMessage(ns), source_expression)) # nocov
+  }
+  if (check_exports && ops[[i]] == "::" && !is_exported_or_lazydata(symbol, ns)) {
+    return(build_unexported_lint(symbol, symbol_node, package, source_expression))
+  }
+
+  if (!check_nonexports && ops[[i]] == ":::") {
+    return(NULL)
+  }
+
+  if (exists(symbol, ns, inherits = FALSE)) {
+    if (symbol %in% getNamespaceExports(ns)) {
+      return(build_unnecessary_private_lint(symbol, symbol_node, package, source_expression))
+    }
+  } else {
+    return(build_unfound_symbol_lint(symbol, symbol_node, package, source_expression))
+  }
+}
+
+is_exported_or_lazydata <- function(symbol, namespace) {
+  exports <- getNamespaceExports(namespace)
+  lazydata <- names(.getNamespaceInfo(namespace, "lazydata"))
+  symbol %in% c(exports, lazydata)
+}
+
+build_unexported_lint <- function(symbol, symbol_node, package, source_expression) {
+  line1 <- as.integer(xml2::xml_attr(symbol_node, "line1"))
+  col1 <- as.integer(xml2::xml_attr(symbol_node, "col1"))
+  col2 <- as.integer(xml2::xml_attr(symbol_node, "col2"))
+  Lint(
+    filename = source_expression$filename,
+    line_number = line1,
+    column_number = col1,
+    type = "warning",
+    message = sprintf("'%s' is not exported from {%s}.", symbol, package),
+    line = source_expression$file_lines[[line1]],
+    ranges = list(c(col1, col2))
+  )
+}
+
+build_unnecessary_private_lint <- function(symbol, symbol_node, package, source_expression) {
+  line1 <- as.integer(xml2::xml_attr(symbol_node, "line1"))
+  col1 <- as.integer(xml2::xml_attr(symbol_node, "col1"))
+  col2 <- as.integer(xml2::xml_attr(symbol_node, "col2"))
+  Lint(
+    filename = source_expression$filename,
+    line_number = line1,
+    column_number = col1,
+    type = "style",
+    message = sprintf("'%s' is exported from {%s}. Use %s::%s instead.", symbol, package, package, symbol),
+    line = source_expression$file_lines[[line1]],
+    ranges = list(c(col1, col2))
+  )
+}
+
+build_unfound_symbol_lint <- function(symbol, symbol_node, package, source_expression) {
+  line1 <- as.integer(xml2::xml_attr(symbol_node, "line1"))
+  col1 <- as.integer(xml2::xml_attr(symbol_node, "col1"))
+  col2 <- as.integer(xml2::xml_attr(symbol_node, "col2"))
+  Lint(
+    filename = source_expression$filename,
+    line_number = line1,
+    column_number = col1,
+    type = "warning",
+    message = sprintf("'%s' does not exist in {%s}.", symbol, package),
+    line = source_expression$file_lines[[line1]],
+    ranges = list(c(col1, col2))
+  )
+}
+
+build_non_namespace_lint <- function(package_node, message, source_expression) {
+  line1 <- as.integer(xml2::xml_attr(package_node, "line1"))
+  col1 <- as.integer(xml2::xml_attr(package_node, "col1"))
+  col2 <- as.integer(xml2::xml_attr(package_node, "col2"))
+  Lint(
+    filename = source_expression$filename,
+    line_number = line1,
+    column_number = col1,
+    type = "warning",
+    message = message,
+    line = source_expression$file_lines[[line1]],
+    ranges = list(c(col1, col2))
+  )
+}
+
+build_uninstalled_lint <- function(package, package_node, source_expression) {
+  line1 <- as.integer(xml2::xml_attr(package_node, "line1"))
+  col1 <- as.integer(xml2::xml_attr(package_node, "col1"))
+  col2 <- as.integer(xml2::xml_attr(package_node, "col2"))
+  Lint(
+    filename = source_expression$filename,
+    line_number = line1,
+    column_number = col1,
+    type = "warning",
+    message = sprintf("Package '%s' is not installed.", package),
+    line = source_expression$file_lines[[line1]],
+    ranges = list(c(col1, col2))
+  )
 }
