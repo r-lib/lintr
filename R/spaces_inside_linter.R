@@ -46,7 +46,6 @@ spaces_inside_linter <- function() {
           `(` = "Do not place spaces after parentheses."
         )
       },
-      column_number_xpath = "number(./@col1 + 1)",
       range_start_xpath = "number(./@col1 + 1)",
       range_end_xpath = "number(./following-sibling::*[1]/@col1 - 1)"
     )
@@ -62,7 +61,6 @@ spaces_inside_linter <- function() {
           `)` = "Do not place spaces before parentheses."
         )
       },
-      column_number_xpath = "number(./@col2 + 1)",
       range_start_xpath = "number(./@col2 + 1)",
       range_end_xpath = "number(./following-sibling::*[1]/@col1 - 1)"
     )

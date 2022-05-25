@@ -25,7 +25,6 @@ commas_linter <- function() {
       xml2::xml_find_all(xml, xpath_before),
       source_expression = source_expression,
       lint_message = "Commas should never have a space before.",
-      column_number_xpath = "number(./preceding-sibling::*[1]/@col2 + 1)",
       range_start_xpath = "number(./preceding-sibling::*[1]/@col2 + 1)",
       range_end_xpath = "number(./@col1 - 1)"
     )
@@ -33,7 +32,6 @@ commas_linter <- function() {
       xml2::xml_find_all(xml, xpath_after),
       source_expression = source_expression,
       lint_message = "Commas should always have a space after.",
-      column_number_xpath = "number(./@col2 + 1)",
       range_start_xpath = "number(./@col2 + 1)",
       range_end_xpath = "number(./@col2 + 1)"
     )

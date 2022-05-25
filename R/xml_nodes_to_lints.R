@@ -26,7 +26,7 @@
 #' @export
 xml_nodes_to_lints <- function(xml, source_expression, lint_message,
                                type = c("style", "warning", "error"),
-                               column_number_xpath = "number(./@col1)",
+                               column_number_xpath = range_start_xpath,
                                range_start_xpath = "number(./@col1)",
                                range_end_xpath = "number(./@col2)") {
   if (length(xml) == 0L) {
@@ -48,8 +48,11 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
     } else {
       lints <- lapply(
         xml, xml_nodes_to_lints,
-        source_expression = source_expression, lint_message = lint_message, type = type,
-        column_number_xpath = column_number_xpath, range_start_xpath = range_start_xpath,
+        source_expression = source_expression,
+        lint_message = lint_message,
+        type = type,
+        column_number_xpath = column_number_xpath,
+        range_start_xpath = range_start_xpath,
         range_end_xpath = range_end_xpath
       )
     }
