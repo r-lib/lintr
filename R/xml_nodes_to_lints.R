@@ -8,7 +8,8 @@
 #' [xml2::xml_find_num()] and will usually be of the form
 #'   "number(./relative/xpath)"
 #' Note that the location line number cannot be changed and lints spanning multiple lines will ignore `range_end_xpath`.
-#' `column_number_xpath` and `range_start_xpath` must always refer to locations on the starting line of the `xml` node.
+#' `column_number_xpath` and `range_start_xpath` are assumed to always refer to locations on the starting line of the
+#' `xml` node.
 #'
 #' @inheritParams lint-s3
 #' @param xml An `xml_node` object (to generate one `Lint`) or an
