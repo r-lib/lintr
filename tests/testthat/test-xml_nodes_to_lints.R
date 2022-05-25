@@ -44,6 +44,16 @@ test_that("it creates basic lints", {
   expect_length(ll, 3L)
   expect_s3_class(ll[[1L]], "lint")
 
+  # Also for plain lists of xml_nodes, usually obtained by c(nodeset_a, nodeset_b)
+  ll_unclassed <- xml_nodes_to_lints(
+    xml = unclass(xml2::xml_find_all(xml, "//expr")),
+    source_expression = expr,
+    lint_message = "msg"
+  )
+  expect_s3_class(ll_unclassed, "lints")
+  expect_length(ll_unclassed, 3L)
+  expect_s3_class(ll_unclassed[[1L]], "lint")
+
   # lint_message as a function
   ll_msgfun <- xml_nodes_to_lints(
     xml = xml2::xml_find_all(xml, "//SYMBOL"),
