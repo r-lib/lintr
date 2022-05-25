@@ -167,13 +167,15 @@ of general interest to the broader R community. More will be included in future 
 * `inner_combine_linter()` Require inputs to vectorized functions to be combined first rather than later,
   e.g. `as.Date(c(x, y))` over `c(as.Date(x), as.Date(y))`
 
-### Improved linters
+### Other features and improvements to existing linters
 
-* New styles `"symbols"` and `"SNAKE_CASE"` for `object_name_linter()`
+* **Selective exclusion syntax** New syntax to exclude only selected linters from linting lines or passages.
+  Use `# nolint: linter_name, linter2_name.` or `# nolint start: linter_name, linter2_name.`
+  in source files or named lists of line numbers in `.lintr`.
+  Also allows for partial matching as long as the supplied prefix is unique, e.g.
+  `# nolint: infix_spaces` works to exclude `infix_spaces_linter` (#660, #872, @AshesITR)
+* `object_name_linter`: new styles `"symbols"` and `"SNAKE_CASE"`
   (#494, #495, #615, #670, @michaelchirico and @AshesITR)
-* New syntax to exclude only selected linters from linting lines or passages. Use `# nolint: linter_name, linter2_name.`
-  or `# nolint start: linter_name, linter2_name.` in source files or named lists of line numbers in `.lintr`.
-  Also allows for partial matching as long as the supplied prefix is unique. (#660, #872, @AshesITR)
 * `lint()` now has a new optional argument `text` for supplying a string or lines directly, e.g. if the file is already 
   in memory or linting is being done ad hoc. (#503, @renkun-ken)
 * lintr now supports non-system character Encodings. Auto-detects the correct encoding from .Rproj or DESCRIPTION 
