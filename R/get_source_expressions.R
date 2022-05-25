@@ -67,7 +67,7 @@ get_source_expressions <- function(filename, lines = NULL) {
   }
   names(source_expression$lines) <- seq_along(source_expression$lines)
 
-  # Only regard explict attribute terminal_newline=FALSE as FALSE and all other cases (e.g. NULL or TRUE) as TRUE.
+  # Only regard explicit attribute terminal_newline=FALSE as FALSE and all other cases (e.g. NULL or TRUE) as TRUE.
   # We don't use isFALSE since it is introduced in R 3.5.0.
   terminal_newline <- !identical(attr(source_expression$lines, "terminal_newline", exact = TRUE), FALSE)
 
