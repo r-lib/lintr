@@ -44,7 +44,7 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
     return(list())
   }
   if (inherits(xml, "xml_nodeset")) {
-    if (is.character(message) && length(message) > 1L) {
+    if (is.character(lint_message)) {
       lints <- .mapply(xml_nodes_to_lints, list(xml = xml, lint_message = lint_message), list(
         source_expression = source_expression, type = type, match_after_end = match_after_end
       ))
