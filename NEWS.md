@@ -265,7 +265,7 @@ of general interest to the broader R community. More will be included in future 
   `require()` calls (#1127, @AshesITR)
 * Added more explanation why certain functions and operators might be undesirable and what alternatives to use
   (#1133, #1146, #1159, @AshesITR)
-          
+
 ## Internals
 
 * Updated R CMD GitHub Actions workflow to check for R 3.6 on Ubuntu, instead of R 3.3, and for R 4.0 on Windows,
