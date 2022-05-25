@@ -36,8 +36,10 @@
   `semicolon_terminator_linter()` survives but is marked for deprecation. The new linter also has a new signature, 
   taking arguments `allow_compound` and `allow_trailing` to replace the old single argument `semicolon`, again for
   signature consistency with other linters.
-* Deprecated `closed_curly_linter()`, `open_curly_linter()` and `paren_brace_linter()` replaced by the new
-  `brace_linter()`.
+* The following linters were subsumed into `brace_linter()` and are now deprecated; see the item on `brace_linter()` below:
+   + `closed_curly_linter()`
+   + `open_curly_linter()`
+   + `paren_brace_linter()`
 * The `...` arguments for `lint()`, `lint_dir()`, and `lint_package()` have promoted to an earlier position to better
   match the [Tidyverse design principle](https://design.tidyverse.org/args-data-details.html) of
   data->descriptor->details. This change enables passing objects to `...` without needing to specify non-required
