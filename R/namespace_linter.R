@@ -23,6 +23,8 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
       return(list())
     }
 
+    ## Case 1: pkg is uninstalled in pkg::foo
+
     package_nodes <- xml2::xml_find_all(ns_nodes, "preceding-sibling::*[1]")
     packages <- get_r_string(package_nodes)
 
@@ -48,6 +50,8 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
       return(lints)
     }
 
+    ## Case 2 (rare?): pkg namespace is broken in pkg::foo
+
     namespaces <- lapply(packages, function(package) tryCatch(getNamespace(package), error = identity))
     failed_namespace <- vapply(namespaces, inherits, "condition", FUN.VALUE = logical(1L))
 
@@ -63,6 +67,8 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
       packages <- packages[!failed_namespace]
       namespaces <- namespaces[!failed_namespace]
     }
+
+    ## Case 3/4/5: problems with foo in pkg::foo / pkg:::foo
 
     ns_get <- xml2::xml_text(ns_nodes) == "::"
     symbol_nodes <- xml2::xml_find_all(ns_nodes, "following-sibling::*[1]")
@@ -99,6 +105,8 @@ get_all_exports <- function(namespace) {
 build_ns_get_int_lints <- function(packages, symbols, symbol_nodes, namespaces, source_expression) {
   lints <- list()
 
+  ## Case 3: foo does not exist in pkg:::foo
+
   non_symbols <- !vapply(
     seq_along(symbols),
     function(ii) symbols[[ii]] %in% ls(namespaces[[ii]], all = TRUE),
@@ -116,6 +124,8 @@ build_ns_get_int_lints <- function(packages, symbols, symbol_nodes, namespaces, 
     symbols <- symbols[!non_symbols]
     symbol_nodes <- symbol_nodes[!non_symbols]
   }
+
+  ## Case 4: foo is already exported pkg:::foo
 
   exported <- vapply(
     seq_along(symbols),
@@ -136,9 +146,10 @@ build_ns_get_int_lints <- function(packages, symbols, symbol_nodes, namespaces, 
 }
 
 build_ns_get_lints <- function(packages, symbols, symbol_nodes, namespaces, source_expression) {
-  exports <- lapply(namespaces, get_all_exports)
-
   lints <- list()
+
+  ## Case 5: foo is not an export in pkg::foo
+
   unexported <- !vapply(
     seq_along(symbols),
     function(ii) symbols[[ii]] %in% exports[[ii]],
@@ -152,4 +163,5 @@ build_ns_get_lints <- function(packages, symbols, symbol_nodes, namespaces, sour
       type = "warning"
     ))
   }
+  lints
 }
