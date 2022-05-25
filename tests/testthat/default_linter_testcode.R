@@ -22,12 +22,12 @@ f = function (x,y = 1){}
 # T_and_F_symbol
 someComplicatedFunctionWithALongCamelCaseName <- function(x)
 {
-  y <- 1
-  if (1 > 2 && 2 > 3 && 3 > 4 && 4 > 5 && 5*10 > 6 && 5 > 6 && 6 > 7 && x == NA) {T} else F
+  y <- 1L
+  if (1L > 2L && 2L > 3L && 3L > 4L && 4L > 5L && 5L*10L > 6L && 5L > 6L && 6L > 7L && x == NA) {T} else F
 }
 
 # vector_logic
-if (1 & 2) FALSE else TRUE
+if (1L & 2L) FALSE else TRUE
 
 # function_brace
 my_metric <- function(x)
@@ -37,9 +37,9 @@ my_metric <- function(x)
 # pipe_continuation
 # seq_linter
 # spaces_inside
-x <- 1:10
-x[ 2]
-1:length(x) %>% lapply(function(x) x*2) %>%
+x <- 1L:10L
+x[ 2L]
+1L:length(x) %>% lapply(function(x) x*2L) %>%
 	head()
 
 # single_quotes
@@ -48,7 +48,7 @@ message('single_quotes')
 # spaces_left_parentheses
 # trailing_whitespace
 # semicolon
-x <- 42; y <- 2 +(1:10) 
+x <- 42L; y <- 2L +(1L:10L)
 
 # trailing_blank_lines
 
