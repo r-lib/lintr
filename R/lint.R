@@ -50,33 +50,18 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     cache <- dots[[1L]]
     dots <- dots[-1L]
   }
-  if (is.null(text)) {
-    inline_data <- rex::re_matches(filename, rex::rex(newline))
-    if (inline_data) {
-      text <- gsub("\n$", "", filename)
-      lines <- strsplit(text, "\n", fixed = TRUE)[[1L]]
-      filename <- NULL
-      needs_tempfile <- TRUE
-    } else {
-      lines <- read_lines(filename)
-      needs_tempfile <- FALSE
-    }
-  } else {
-    inline_data <- TRUE
-    if (length(text) > 1L) {
-      text <- paste(text, collapse = "\n")
-    }
-    lines <- strsplit(text, "\n", fixed = TRUE)[[1L]]
-    needs_tempfile <- missing(filename)
-  }
 
-  no_filename <- missing(filename) || is.null(filename)
+  needs_tempfile <- missing(filename) || rex::re_matches(filename, rex::rex(newline))
+  inline_data <- !is.null(text) || needs_tempfile
+  lines <- get_lines(filename, text)
+
+  no_filename <- missing(filename) || (is.null(text) && inline_data)
 
   if (needs_tempfile) {
     filename <- tempfile()
     con <- file(filename, open = "w", encoding = settings$encoding)
     on.exit(unlink(filename), add = TRUE)
-    writeLines(text = text, con = con, sep = "\n")
+    writeLines(text = lines, con = con, sep = "\n")
     close(con)
   }
 
@@ -130,12 +115,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   res <- do.call(exclude, c(list(lints, lines = lines, linter_names = names(linters)), dots))
 
   # simplify filename if inline
-  if (no_filename) {
-    for (i in seq_along(res)) {
-      res[[i]][["filename"]] <- "<text>"
-    }
-  }
-  res
+  zap_temp_filename(res, needs_tempfile)
 }
 
 #' @param path For the base directory of the project (for `lint_dir()`) or
@@ -636,4 +616,23 @@ maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
     }
   }
   lints
+}
+
+get_lines <- function(filename, text) {
+  if (!is.null(text)) {
+    strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
+  } else if (rex::re_matches(filename, rex::rex(newline))) {
+    strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
+  } else {
+    read_lines(filename)
+  }
+}
+
+zap_temp_filename <- function(res, needs_tempfile) {
+  if (needs_tempfile) {
+    for (i in seq_along(res)) {
+      res[[i]][["filename"]] <- "<text>"
+    }
+  }
+  res
 }
