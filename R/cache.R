@@ -19,6 +19,20 @@ clear_cache <- function(file = NULL, path = NULL) {
   unlink(path, recursive = TRUE)
 }
 
+define_cache_path <- function(cache) {
+  if (isTRUE(cache)) {
+    settings$cache_directory
+  } else if (is.character(cache)) {
+    cache
+  } else {
+    character()
+  }
+}
+
+define_cache_key <- function(filename, inline_data, lines) {
+  if (inline_data) list(content = get_content(lines), TRUE) else filename
+}
+
 
 get_cache_file_path <- function(file, path) {
   # this assumes that a normalized absolute file path was given
