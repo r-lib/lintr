@@ -80,7 +80,7 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
     column_number = column_number,
     type = type,
     message = lint_message,
-    line = lines[line1],
+    line = lines[[line1]],
     ranges = list(c(col1, col2))
   )
 }

@@ -32,12 +32,14 @@ the \code{i}-th lint will be given the \code{i}-th message.}
 
 \item{type}{type of lint.}
 
-\item{match_after_end}{Logical, default \code{FALSE}. If \code{TRUE},
-The output \code{column_number} and \code{ranges[2L]} are set to \emph{after} the matched
-symbol in \code{xml}. This can be convenient for setting the source marker
-to land the editor's cursor exactly to the spot where corrected code can be
-entered. For example, in \code{\link[=T_and_F_symbol_linter]{T_and_F_symbol_linter()}}, in code using \code{T}, the
-cursor lands \emph{after} \code{T} so that \code{RUE} and be entered without further adjustment.}
+\item{column_number_xpath}{XPath expression to return the column number location of the lint.
+Defaults to the start of the expression matched by \code{xml}.}
+
+\item{range_start_xpath}{XPath expression to return the range start location of the lint.
+Defaults to the start of the expression matched by \code{xml}.}
+
+\item{range_end_xpath}{XPath expression to return the range end location of the lint.
+Defaults to the end of the expression matched by \code{xml}.}
 }
 \value{
 For \code{xml_node}s, a \code{lint}. For \code{xml_nodeset}s, \code{lints} (a list of \code{lint}s).
