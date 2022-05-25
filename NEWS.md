@@ -8,21 +8,24 @@
 
   This means that usage such as `lint("file.R", seq_linter)` should be updated to `lint("file.R", seq_linter())`, and
   the following update for custom linters:
-  
+
   ```r
   my_custom_linter <- function(source_expression) { ... }
   
   # becomes
   my_custom_linter <- function() Linter(function(source_expression) { ... })
   ```
-* Removed deprecated functions `absolute_paths_linter`, `camel_case_linter`, `multiple_dots_linter`,
-  `snake_case_linter`, and `trailing_semicolons_linter`. They have been marked as deprecated since v1.0.1, which was
-  released in 2017.
+* Removed long-deprecated linters (they've been marked as deprecated since v1.0.1 in 2017):
+   + `absolute_paths_linter()`
+   + `camel_case_linter()`
+   + `multiple_dots_linter()`
+   + `snake_case_linter()`
+   + `trailing_semicolons_linter()as calls`
 * Removed `"return"` from `all_undesirable_functions`. Follow #1100 for an upcoming `return_linter()` to lint 
   unnecessary `return()` statements (#1146, @AshesITR). Note that you can replicate old behavior by supplying
   `return` as a custom undesirable function:
   `undesirable_function_linter(c(all_undesirable_functions, list(return = NA)))`
-  
+
 ## Deprecations
 
 * Lints are now marked with the name of the `linter` that caused them instead of the name of their implementation
