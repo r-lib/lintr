@@ -54,7 +54,7 @@ linter logic into a Lint() object to return."><!-- mathjax --><script src="https
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Convert an XML node or nodeset into a Lint</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/lintr/blob/HEAD/R/xp_utils.R" class="external-link"><code>R/xp_utils.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/lintr/blob/HEAD/R/xml_nodes_to_lints.R" class="external-link"><code>R/xml_nodes_to_lints.R</code></a></small>
       <div class="d-none name"><code>xml_nodes_to_lints.Rd</code></div>
     </div>
 
@@ -70,7 +70,9 @@ linter logic into a <code><a href="lint-s3.html">Lint()</a></code> object to ret
   <span class="va">source_expression</span>,
   <span class="va">lint_message</span>,
   type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"style"</span>, <span class="st">"warning"</span>, <span class="st">"error"</span><span class="op">)</span>,
-  match_after_end <span class="op">=</span> <span class="cn">FALSE</span>
+  column_number_xpath <span class="op">=</span> <span class="va">range_start_xpath</span>,
+  range_start_xpath <span class="op">=</span> <span class="st">"number(./@col1)"</span>,
+  range_end_xpath <span class="op">=</span> <span class="st">"number(./@col2)"</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -79,7 +81,8 @@ linter logic into a <code><a href="lint-s3.html">Lint()</a></code> object to ret
     <dl><dt>xml</dt>
 <dd><p>An <code>xml_node</code> object (to generate one <code>Lint</code>) or an
 <code>xml_nodeset</code> object (to generate several <code>Lint</code>s), e.g. as returned by
-<code><a href="http://xml2.r-lib.org/reference/xml_find_all.html" class="external-link">xml2::xml_find_all()</a></code> or <code><a href="http://xml2.r-lib.org/reference/xml_find_all.html" class="external-link">xml2::xml_find_first()</a></code>.</p></dd>
+<code><a href="http://xml2.r-lib.org/reference/xml_find_all.html" class="external-link">xml2::xml_find_all()</a></code> or <code><a href="http://xml2.r-lib.org/reference/xml_find_all.html" class="external-link">xml2::xml_find_first()</a></code> or a
+list of <code>xml_node</code> objects.</p></dd>
 <dt>source_expression</dt>
 <dd><p>A source expression object, e.g. as
 returned typically by <code><a href="lint.html">lint()</a></code>, or more generally
@@ -93,17 +96,27 @@ length-1 character as output). If <code>lint_message</code> is a character vecto
 the <code>i</code>-th lint will be given the <code>i</code>-th message.</p></dd>
 <dt>type</dt>
 <dd><p>type of lint.</p></dd>
-<dt>match_after_end</dt>
-<dd><p>Logical, default <code>FALSE</code>. If <code>TRUE</code>,
-The output <code>column_number</code> and <code>ranges[2L]</code> are set to <em>after</em> the matched
-symbol in <code>xml</code>. This can be convenient for setting the source marker
-to land the editor's cursor exactly to the spot where corrected code can be
-entered. For example, in <code><a href="T_and_F_symbol_linter.html">T_and_F_symbol_linter()</a></code>, in code using <code>T</code>, the
-cursor lands <em>after</em> <code>T</code> so that <code>RUE</code> and be entered without further adjustment.</p></dd>
+<dt>column_number_xpath</dt>
+<dd><p>XPath expression to return the column number location of the lint.
+Defaults to the start of the range matched by <code>range_start_xpath</code>. See details for more information.</p></dd>
+<dt>range_start_xpath</dt>
+<dd><p>XPath expression to return the range start location of the lint.
+Defaults to the start of the expression matched by <code>xml</code>. See details for more information.</p></dd>
+<dt>range_end_xpath</dt>
+<dd><p>XPath expression to return the range end location of the lint.
+Defaults to the end of the expression matched by <code>xml</code>. See details for more information.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>For <code>xml_node</code>s, a <code>lint</code>. For <code>xml_nodeset</code>s, <code>lints</code> (a list of <code>lint</code>s).</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The location XPaths, <code>column_number_xpath</code>, <code>range_start_xpath</code> and <code>range_end_xpath</code> are evaluated using
+<code><a href="http://xml2.r-lib.org/reference/xml_find_all.html" class="external-link">xml2::xml_find_num()</a></code> and will usually be of the form <code>"number(./relative/xpath)"</code>.
+Note that the location line number cannot be changed and lints spanning multiple lines will ignore <code>range_end_xpath</code>.
+<code>column_number_xpath</code> and <code>range_start_xpath</code> are assumed to always refer to locations on the starting line of the
+<code>xml</code> node.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
