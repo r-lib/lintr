@@ -194,7 +194,7 @@ of general interest to the broader R community. More will be included in future 
   Others only need single expressions, which is more cache-friendly (most linters are written this way to leverage 
   caching). (#921, @michaelchirico)
 * `xml_nodes_to_lints()`: new exported helper for converting `xml_node` objects obtained using linter logic
-  expressed in XPath into `Lint` objects (#1124, @michaelchirico)
+  expressed in XPath into `Lint` objects (#1124, #1216, #1234, @michaelchirico and @AshesITR)
 * `use_lintr()`: new exported helper for creating a minimal `.lintr` configuration (#902, @AshesITR)
  
 ## Improvements and bug fixes
