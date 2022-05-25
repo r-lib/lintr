@@ -56,7 +56,9 @@
 
 ## Other changes to defaults
 
-* Combined several curly brace related linters into a new `brace_linter()` (part of `default_lintes`),
+### Updates to `default_linters`
+
+* Added new `brace_linter()`, which combines several curly brace related linters,
   deprecating the following predecessors (#1041, @AshesITR):
    + `closed_curly_linter()`; both now also allow `}]` in addition to `})` and `},` as exceptions.
    + `open_curly_linter()`; both also no longer lint unnecessary trailing whitespace (use `trailing_whitespace_linter()` for this)
@@ -67,10 +69,13 @@
    + Require functions spanning multiple lines to use curly braces (@michaelchirico)
    + Require balanced usage of `{}` in `if`/`else` conditions, i.e., if the `if` branch uses braces,
      then so must the `else` branch, and _vice versa_ (@michaelchirico)
-* `object_name_linter()` gains a new default style, `"symbols"`, which won't lint all-symbol object names 
-  (in particular, that means operator names like `%+%` are skipped; #495, #615, #670, @michaelchirico and @AshesITR)
-* `T_and_F_symbol_linter()` and `semicolon_linter()` are now part of the default linters
-  (#517, #612, #683, #684, @AshesITR)
+* Added `T_and_F_symbol_linter()` (#517, @AshesITR)
+* Added `semicolon_linter()` (#683, @AshesITR)
+
+### Other noteworthy changes
+
+* `object_name_linter()` gains a new default style, `"symbols"`, which won't lint all-symbol object names.
+  In particular, that means operator names like `%+%` are skipped (#495, #615, #670, @michaelchirico and @AshesITR)
 * Set the default `complexity_limit` in `cyclocomp_linter()` to 15. This is the same complexity limit that is enforced
   via `default_linters` (#693, #695, @AshesITR).
 * `lint_package()` now lints files in the `demo` directory by default (#703, @dmurdoch).
