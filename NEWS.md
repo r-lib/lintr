@@ -91,6 +91,7 @@
    + added argument `exclude_operators` to disable lints on selected infix operators.
      By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these.
      (#914, @michaelchirico)
+   + Add exception for `box::use()` declarations (#1087, @klmr)
 * `trailing_whitespace_linter()`
    + extended to also lint completely blank lines by default (#1044, @AshesITR)
    + added argument `allow_empty_lines` (`FALSE` by default) to toggle this behavior
@@ -201,7 +202,6 @@ of general interest to the broader R community. More will be included in future 
 
 * Optimized performance-critical functions in lintr, such as `get_source_expressions()` resulting in about 2x speedup 
   in our test suite and even more for complex files (#1169, #1197, #1200, #1201, #1214, @MichaelChirico and @AshesITR) 
-* Add exception for `box::use()` declarations to infix spaces linter (#1087, @klmr)
 * Support for writing comments to GitHub repo when running in Jenkins CI (#488, @fdlk)
 * `save_cache()` will now recursively create the cache directory; this avoids errors that could arise if any parent 
   directories do not exist (#60, @dankessler).
