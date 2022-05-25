@@ -9,7 +9,7 @@ xml_nodes_to_lints(
   source_expression,
   lint_message,
   type = c("style", "warning", "error"),
-  column_number_xpath = "number(./@col1)",
+  column_number_xpath = range_start_xpath,
   range_start_xpath = "number(./@col1)",
   range_end_xpath = "number(./@col2)"
 )
