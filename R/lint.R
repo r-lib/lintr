@@ -201,15 +201,7 @@ lint_dir <- function(path = ".", ...,
   ))
 
   # Remove fully ignored files to avoid reading & parsing
-  to_exclude <- vapply(
-    seq_len(length(files)),
-    function(i) {
-      file <- files[i]
-      file %in% names(exclusions) && is_excluded_file(exclusions[[file]])
-    },
-    logical(1L)
-  )
-  files <- files[!to_exclude]
+  files <- drop_excluded(files, exclusions)
 
   lints <- flatten_lints(lapply(
     files,
@@ -246,6 +238,14 @@ lint_dir <- function(path = ".", ...,
   lints
 }
 
+drop_excluded <- function(files, exclusions) {
+  to_exclude <- vapply(
+    files,
+    function(file) file %in% names(exclusions) && is_excluded_file(exclusions[[file]]),
+    logical(1L)
+  )
+  files[!to_exclude]
+}
 
 #' @examples
 #' \dontrun{
