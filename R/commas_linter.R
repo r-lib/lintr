@@ -35,7 +35,7 @@ commas_linter <- function() {
       lint_message = "Commas should always have a space after.",
       column_number_xpath = "number(./@col2 + 1)",
       range_start_xpath = "number(./@col2 + 1)",
-      range_end_xpath = "number(./following-sibling::*[1]/@col1 - 1)"
+      range_end_xpath = "number(./@col2 + 1)"
     )
 
     c(before_lints, after_lints)
