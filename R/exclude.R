@@ -6,7 +6,7 @@
 #' @param ... additional arguments passed to [parse_exclusions()]
 #' @eval c(
 #'   # we use @eval for the details section to avoid a literal nolint exclusion tag with non-existing linter names
-#'   # those produce a warning from [parse_exclusions()] otherwise.
+#'   # those produce a warning from [parse_exclusions()] otherwise. See #1219 for details.
 #'   "@details",
 #'   "Exclusions can be specified in three different ways.",
 #'   "",
