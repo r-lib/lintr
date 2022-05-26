@@ -10,9 +10,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bit64", "data.table", "tidyverse")) {
-  import_exprs <- xml2::xml_find_all(
-    xml,
-    "//expr[
+  import_xpath <- "//expr[
       expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
       and
       (
@@ -23,7 +21,6 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
         expr[2][STR_CONST]
       )
     ]"
-  )
 
   xp_used_symbols <- paste(
     "//SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]/text()",
@@ -38,6 +35,8 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
     }
 
     xml <- source_expression$full_xml_parsed_content
+
+    import_exprs <- xml2::xml_find_all(xml, import_xpath)
     if (length(import_exprs) == 0L) {
       return(list())
     }
