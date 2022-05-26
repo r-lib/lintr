@@ -63,6 +63,10 @@
    + `open_curly_linter()`; both also no longer lint unnecessary trailing whitespace (use `trailing_whitespace_linter()` for this)
      and also allow `(`, `,`, and `%>%` on preceding lines as exceptions. (#487, #1028)
    + `paren_brace_linter()`; `brace_linter()` also lints `if`/`else` and `repeat` with missing whitespace
+   + Improved lint metadata so that source markers land at the opening brace instead of the closing parenthesis
+     to improve the experience of fixing the lint (#583, @AshesITR)
+* `brace_linter()` now marks lints at the opening brace instead of the closing parenthesis, making fixing the lints
+  by jumping to source markers easier (#583, @AshesITR)
   `brace_linter()` also newly enforces the following rules surrounding curly braces (originally Google linters, see below):
    + require `else` to come on the same line as the preceding `}`, if present (#884, @michaelchirico)
    + require functions spanning multiple lines to use curly braces (@michaelchirico)
@@ -106,6 +110,7 @@
    + extended to lint `x != NA` (before, only `==` was caught) and `NA == x`(before, only `NA` on RHS was caught)
    + extended to skip usages in comments like `is.na(x) # use is.na(x), not x == NA`
 * `spaces_inside_linter()`: ignore spaces preceding trailing comments (#636, @michaelchirico)
+* `no_tab_linter()`: use more reliable matching (e.g., excluding matches found in comments; #441, @russHyde)
 
 ### Other noteworthy changes
 
@@ -225,10 +230,6 @@ of general interest to the broader R community. More will be included in future 
 * `linters_with_defaults()` (formerly `with_defaults()`)
    + No longer duplicates the `lintr_function` class when it is already present (#511, #612, @AshesITR)
    + Warns if a named argument is `NULL` but its name is not in `default` (#1049, @AshesITR)
-* `brace_linter()` and `no_tab_linter()` also use more reliable matching (e.g., excluding matches found in
-  comments; #441 and #545, @russHyde)
-* `brace_linter()` now marks lints at the opening brace instead of the closing parenthesis, making fixing the lints
-  by jumping to source markers easier (#583, @AshesITR)
 * Fixed `spaces_left_parentheses_linter()` sporadically causing warnings (#654, #674, @AshesITR)
 * Fixed `line_length_linter()` causing duplicate lints for lines containing multiple expressions (#681, #682, @AshesITR)
 * `line_length_linter()` now places the source marker at the margin of the affected line to improve user experience
