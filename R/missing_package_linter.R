@@ -41,23 +41,13 @@ missing_package_linter <- function() {
 
     # run here, not in the factory, to allow for run- vs. "compile"-time differences in available packages
     installed_packges <- .packages(all.available = TRUE)
-    missing_ids <- which(!(pkg_names %in% installed_packges))
+    missing_pkgs <- !(pkg_names %in% installed_packges)
 
-    # TODO(michaelchirico): move to xml_nodes_to_lints()
-    line1 <- as.integer(xml2::xml_attr(pkg_calls, "line1"))
-    col1 <- as.integer(xml2::xml_attr(pkg_calls, "col1"))
-    col2 <- as.integer(xml2::xml_attr(pkg_calls, "col2"))
-
-    lapply(missing_ids, function(i) {
-      Lint(
-        filename = source_expression$filename,
-        line_number = line1[[i]],
-        column_number = col1[[i]],
-        type = "warning",
-        message = sprintf("Package '%s' is not installed.", pkg_names[[i]]),
-        line = source_expression$file_lines[[line1[[i]]]],
-        ranges = list(c(col1[[i]], col2[[i]]))
-      )
-    })
+    xml_nodes_to_lints(
+      pkg_calls[missing_pkgs],
+      source_expression = source_expression,
+      lint_message = sprintf("Package '%s' is not installed.", pkg_names[missing_pkgs]),
+      type = "warning"
+    )
   })
 }
