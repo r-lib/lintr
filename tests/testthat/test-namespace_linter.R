@@ -12,13 +12,13 @@ test_that("returns the correct linting", {
   )
 
   expect_lint(
-    "\"stats\"::sd(c(1,2,3))",
+    '"stats"::sd(c(1,2,3))',
     NULL,
     namespace_linter()
   )
 
   expect_lint(
-    "stats::\"sd\"(c(1,2,3))",
+    'stats::"sd"(c(1,2,3))',
     NULL,
     namespace_linter()
   )
@@ -31,13 +31,13 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "statts::sd(c(1,2,3))",
-    list(message = rex("Package 'statts' is not installed.")),
+    list(message = rex::rex("Package 'statts' is not installed.")),
     namespace_linter()
   )
 
   expect_lint(
     "stats::ssd(c(1,2,3))",
-    list(message = rex("'ssd' is not exported from {stats}")),
+    list(message = rex::rex("'ssd' is not exported from {stats}")),
     namespace_linter()
   )
 
@@ -61,19 +61,19 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "stats:::sd(c(1,2,3))",
-    list(message = rex("'sd' is exported from {stats}. Use stats::sd instead.")),
+    list(message = rex::rex("'sd' is exported from {stats}. Use stats::sd instead.")),
     namespace_linter()
   )
 
   expect_lint(
     "statts:::sd(c(1,2,3))",
-    list(message = rex("Package 'statts' is not installed.")),
+    list(message = rex::rex("Package 'statts' is not installed.")),
     namespace_linter()
   )
 
   expect_lint(
     "stats:::sdd(c(1,2,3))",
-    list(message = rex("'sdd' does not exist in {stats}")),
+    list(message = rex::rex("'sdd' does not exist in {stats}")),
     namespace_linter()
   )
 

@@ -36,4 +36,13 @@ test_that("returns the correct linting", {
   expect_lint("switch(op , x = foo, y = bar)", msg_before, linter)
   expect_lint("switch(op, x = foo, y = bar(a = 4 , b = 5))", msg_before, linter)
   expect_lint("fun(op, x = foo , y = switch(bar, a = 4, b = 5))", msg_before, linter)
+
+  expect_lint(
+    "fun(op    ,bar)",
+    list(
+      list(message = msg_before, column_number = 7L, ranges = list(c(7L, 10L))),
+      list(message = msg_after, column_number = 12L, ranges = list(c(12L, 12L)))
+    ),
+    linter
+  )
 })

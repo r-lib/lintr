@@ -141,6 +141,7 @@ Collate:
     'vector_logic_linter.R'
     'with.R'
     'with_id.R'
+    'xml_nodes_to_lints.R'
     'xp_utils.R'
     'yoda_test_linter.R'
     'zzz.R'
