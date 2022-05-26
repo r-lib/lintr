@@ -64,9 +64,9 @@
      and also allow `(`, `,`, and `%>%` on preceding lines as exceptions. (#487, #1028)
    + `paren_brace_linter()`; `brace_linter()` also lints `if`/`else` and `repeat` with missing whitespace
   `brace_linter()` also newly enforces the following rules surrounding curly braces (originally Google linters, see below):
-   + Require `else` to come on the same line as the preceding `}`, if present (#884, @michaelchirico)
-   + Require functions spanning multiple lines to use curly braces (@michaelchirico)
-   + Require balanced usage of `{}` in `if`/`else` conditions, i.e., if the `if` branch uses braces,
+   + require `else` to come on the same line as the preceding `}`, if present (#884, @michaelchirico)
+   + require functions spanning multiple lines to use curly braces (@michaelchirico)
+   + require balanced usage of `{}` in `if`/`else` conditions, i.e., if the `if` branch uses braces,
      then so must the `else` branch, and _vice versa_ (@michaelchirico)
 * New `paren_body_linter()` checks that there is a space between a right parenthesis and a body expression. (#809, @kpagacz)
 * Added `T_and_F_symbol_linter()` (#517, @AshesITR)
@@ -79,9 +79,9 @@
    + `trace()`
    + `untrace()`
 * `assignment_linter()`: extended and add arguments (#915, @michaelchirico)
-   + Right assignments are now linted by default (`->` and `->>`)
-   + New argument `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`
-   + New argument `allow_right_assign` (`FALSE` by default) toggles whether to lint `->` and `->>`
+   + right assignments are now linted by default (`->` and `->>`)
+   + new argument `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`
+   + new argument `allow_right_assign` (`FALSE` by default) toggles whether to lint `->` and `->>`
 * `infix_spaces_linter()`
    + added argument `allow_multiple_spaces` (`TRUE` by default) which toggles
      whether to generate a lint for operators used with multiple spaces, e.g. `x   +   2`.
@@ -91,15 +91,17 @@
    + added argument `exclude_operators` to disable lints on selected infix operators.
      By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these.
      (#914, @michaelchirico)
-   + Add exception for `box::use()` declarations (#1087, @klmr)
+   + add exception for `box::use()` declarations (#1087, @klmr)
 * `trailing_whitespace_linter()`
    + extended to also lint completely blank lines by default (#1044, @AshesITR)
    + added argument `allow_empty_lines` (`FALSE` by default) to toggle this behavior
    + improved so that trailing whitespace inside string literals does not trigger a lint (#1045, @AshesITR)
    * added argument `allow_in_strings` (`TRUE` by default) to toggle this behavior
-* `object_name_linter()`: Improved generic detection -- in user-defined method `my_method.upstream.class`,
-  `upstream.class` no longer throws a lint because the generic (`my_method`) properly uses `snake_case` (#737, @AshesITR)
-
+* `object_name_linter()`
+   + improved generic detection -- in user-defined method `my_method.upstream.class`,
+     `upstream.class` no longer throws a lint because the generic (`my_method`)
+     properly uses `snake_case` (#737, @AshesITR)
+   + extended to exclude special R namespace hook functions such as `.onLoad` (#500, #614, @AshesITR and @michaelchirico)
 ### Other noteworthy changes
 
 * `object_name_linter()` gains a new default style, `"symbols"`, which won't lint all-symbol object names.
@@ -214,9 +216,6 @@ of general interest to the broader R community. More will be included in future 
 * `get_source_expressions()`:
    + Fix possible error on invalid XML produced by `xmlparsedata::xml_parse_data()` (#559, #560, @renkun-ken)
    + Fix handling zero-length variable name error (#566, #567, @renkun-ken)
-* `object_name_linter()` now excludes special R hook functions such as `.onLoad` 
-  (#500, #614, @AshesITR and @michaelchirico)
-* Improved generic detection for `object_name_linter()` (#737, @AshesITR)
 * `equals_na_linter()` now lints `x != NA` and `NA == x`, and skips usages in comments (#545, @michaelchirico)
 * Malformed Rmd files now cause a lint instead of an error (#571, #575, @AshesITR)
 * `spaces_inside_linter()` ignores spaces preceding trailing comments (#636, @michaelchirico)
