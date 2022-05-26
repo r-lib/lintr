@@ -16,6 +16,7 @@ object_usage_linter <- function(interpret_glue = TRUE) {
     }
 
     pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
+    # run the following at run-time, not "compile" time to allow package structure to change
     env <- make_check_env(pkg_name)
 
     declared_globals <- try_silently(utils::globalVariables(package = pkg_name %||% globalenv()))

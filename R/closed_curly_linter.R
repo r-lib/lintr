@@ -43,10 +43,7 @@ closed_curly_linter <- function(allow_single_line = FALSE) {
     xml_nodes_to_lints(
       xml2::xml_find_all(source_expression$xml_parsed_content, xpath),
       source_expression = source_expression,
-      lint_message = paste(
-        "Closing curly-braces should always be on their own line,",
-        "unless they are followed by an else."
-      )
+      lint_message = "Closing curly-braces should always be on their own line, unless they are followed by an else."
     )
   })
 }

@@ -1,7 +1,7 @@
 test_that("linter returns the correct linting", {
   linter <- extraction_operator_linter()
-  msg_b <- rex::escape("Use `[[` instead of `[`  to extract an element.")
-  msg_d <- rex::escape("Use `[[` instead of `$`  to extract an element.")
+  msg_b <- rex::escape("Use `[[` instead of `[` to extract an element.")
+  msg_d <- rex::escape("Use `[[` instead of `$` to extract an element.")
 
   expect_lint("x[[1]]", NULL, linter)
   expect_lint("x[-1]", NULL, linter)
