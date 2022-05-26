@@ -242,6 +242,8 @@ of general interest to the broader R community. More will be included in future 
 * `seq_linter()`: improve lint message to be clearer about the reason for linting. (#522, @michaelchirico)
 * `unneeded_concatenation_linter()`: correctly considers arguments piped in via magrittr `%>%` (#573, #585, @michaelquinn32)
 * **Raw strings**: Several linters tightened internal logic to allow for raw strings like `R"( a\string )"` (#1034, @michaelchirico)
+* Improved S3 generic detection for non-standard S3 generics where `UseMethod()` is called after several
+  preceding expressions (#846, @jonkeane)
 
 ## Bug fixes
 
@@ -283,9 +285,6 @@ of general interest to the broader R community. More will be included in future 
   This should allow snappier CI builds for usages not relying on some more "peripheral" features of the package.
 * `lintr` now uses the 3rd edition of `testthat` (@MichaelChirico, @AshesITR, #910, #967)
 * Special thanks to @bersbersbers for early testing on the 3.0.0 changes
-* New `is_lint_level()` helper for readably explaining which type of expression is required for a custom linter. Some linters are written to either require the full file's parse tree (for example, `single_quotes_linter()`). Others only need single expressions, which is more cache-friendly (most linters are written this way to leverage caching). (#921, @michaelchirico)
-* New helper `xml_nodes_to_lints()` for converting `xml_node` objects obtained using linter logic expressed in XPath into `Lint` objects (#1124, @michaelchirico)
-* Improved S3 generic detection for non-standard S3 generics (#846, @jonkeane)
 
 # lintr 2.0.1
 
