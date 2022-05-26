@@ -70,7 +70,7 @@ zap_extra_args <- function(parsed_expr) {
 #'
 #' @noRd
 capture_sprintf_warning <- function(xml) {
-  text <- xml2::xml_text(xml)
+  text <- get_r_code(xml)
   parsed_expr <- try_silently(parse(text = text, keep.source = FALSE)[[1L]])
   if (!is.character(parsed_expr[[2L]])) { # sprintf(fmt = "") must be a constant format
     return(NA_character_)
