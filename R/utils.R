@@ -254,7 +254,7 @@ get_r_code <- function(xml) {
   if (isTRUE(xml2::xml_attr(xml, "line1") == xml2::xml_attr(xml, "line2"))) {
     return(xml2::xml_text(xml))
   }
-  # find all unique line numbers of atoms (i.e. expressions
+  # find all unique line numbers
   line_numbers <- sort(unique(xml2::xml_find_num(
     xml2::xml_find_all(xml, "./descendant-or-self::*[@line1]"),
     "number(./@line1)"
