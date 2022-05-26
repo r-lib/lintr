@@ -111,6 +111,8 @@
    + extended to skip usages in comments like `is.na(x) # use is.na(x), not x == NA`
 * `spaces_inside_linter()`: ignore spaces preceding trailing comments (#636, @michaelchirico)
 * `no_tab_linter()`: use more reliable matching (e.g., excluding matches found in comments; #441, @russHyde)
+* `line_length_linter()`: place the source marker at the margin of the affected line to improve user experience
+  during de-linting -- just press <kbd>Return</kbd> (#735, @AshesITR)
 
 ### Other noteworthy changes
 
@@ -230,10 +232,9 @@ of general interest to the broader R community. More will be included in future 
 * `linters_with_defaults()` (formerly `with_defaults()`)
    + No longer duplicates the `lintr_function` class when it is already present (#511, #612, @AshesITR)
    + Warns if a named argument is `NULL` but its name is not in `default` (#1049, @AshesITR)
-* Fixed `spaces_left_parentheses_linter()` sporadically causing warnings (#654, #674, @AshesITR)
-* Fixed `line_length_linter()` causing duplicate lints for lines containing multiple expressions (#681, #682, @AshesITR)
-* `line_length_linter()` now places the source marker at the margin of the affected line to improve user experience
-  during de-linting -- just press <kbd>Return</kbd> (#735, @AshesITR)
+* `spaces_left_parentheses_linter()`: fix a bug causing warnings in nested expressions like
+  "In `parent == parent[before_operator_idx]` longer object length is not a multiple of shorter object length" (#654, @AshesITR)
+* `line_length_linter()`: fix a bug causing duplicate lints for lines containing multiple expressions (#681, #682, @AshesITR)
 * `unneeded_concatenation_linter()` now correctly considers arguments piped in via magrittr `%>%`
   (#573, #585, @michaelquinn32)
 * `object_usage_linter()` now correctly detects global variables if there are top-level dollar-assignments
