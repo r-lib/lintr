@@ -65,7 +65,6 @@ get_source_expressions <- function(filename, lines = NULL) {
   } else {
     lines
   }
-  names(source_expression$lines) <- seq_along(source_expression$lines)
 
   # Only regard explicit attribute terminal_newline=FALSE as FALSE and all other cases (e.g. NULL or TRUE) as TRUE.
   # We don't use isFALSE since it is introduced in R 3.5.0.
@@ -77,6 +76,7 @@ get_source_expressions <- function(filename, lines = NULL) {
     lines = source_expression$lines,
     error = function(e) lint_rmd_error(e, source_expression)
   )
+  names(source_expression$lines) <- seq_along(source_expression$lines)
   source_expression$content <- get_content(source_expression$lines)
   parsed_content <- get_source_expression(source_expression, error = function(e) lint_parse_error(e, source_expression))
   top_level_map <- generate_top_level_map(parsed_content)
