@@ -106,6 +106,8 @@
      `upstream.class` no longer throws a lint because the generic (`my_method`)
      properly uses `snake_case` (#737, @AshesITR)
    + extended to exclude special R namespace hook functions such as `.onLoad` (#500, #614, @AshesITR and @michaelchirico)
+* `object_usage_linter()` now correctly detects global variables if there are top-level dollar-assignments
+  (#666, #709, @AshesITR)
 * `equals_na_linter()` (#545, @michaelchirico)
    + extended to lint `x != NA` (before, only `==` was caught) and `NA == x`(before, only `NA` on RHS was caught)
    + extended to skip usages in comments like `is.na(x) # use is.na(x), not x == NA`
@@ -218,6 +220,7 @@ of general interest to the broader R community. More will be included in future 
   in our test suite and even more for complex files (#1169, #1197, #1200, #1201, #1214, @MichaelChirico and @AshesITR) 
 * **Jenkins CI**: Support for writing comments to GitHub repo when running in Jenkins CI (#488, @fdlk)
 * `seq_linter()`: improve lint message to be clearer about the reason for linting. (#522, @michaelchirico)
+* `unneeded_concatenation_linter()`: correctly considers arguments piped in via magrittr `%>%` (#573, #585, @michaelquinn32)
 
 ## Bug fixes
 
@@ -235,10 +238,6 @@ of general interest to the broader R community. More will be included in future 
 * `spaces_left_parentheses_linter()`: fix a bug causing warnings in nested expressions like
   "In `parent == parent[before_operator_idx]` longer object length is not a multiple of shorter object length" (#654, @AshesITR)
 * `line_length_linter()`: fix a bug causing duplicate lints for lines containing multiple expressions (#681, #682, @AshesITR)
-* `unneeded_concatenation_linter()` now correctly considers arguments piped in via magrittr `%>%`
-  (#573, #585, @michaelquinn32)
-* `object_usage_linter()` now correctly detects global variables if there are top-level dollar-assignments
-  (#666, #709, @AshesITR)
 * `commented_code_linter()` uses the parse tree to find comments, eliminating some false positives (#451, @AshesITR)
 * `trailing_blank_lines_linter()` now also lints files without a terminal newline (#675, @AshesITR)
 * `object_name_linter()` now correctly detects imported functions when linting packages (#642, @AshesITR)
