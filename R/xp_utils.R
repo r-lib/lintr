@@ -55,3 +55,13 @@ xp_call_name <- function(expr, depth = 1L, condition = NULL) {
 
   xml2::xml_find_chr(expr, xpath)
 }
+
+xp_find_location <- function(xml, xpath) {
+  if (identical(xpath, "number(./@col1)")) {
+    as.integer(xml2::xml_attr(xml, "col1"))
+  } else if (identical(xpath, "number(./@col2)")) {
+    as.integer(xml2::xml_attr(xml, "col2"))
+  } else {
+    as.integer(xml2::xml_find_num(xml, xpath))
+  }
+}
