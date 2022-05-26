@@ -101,13 +101,16 @@
    + added argument `allow_empty_lines` (`FALSE` by default) to toggle this behavior
    + improved so that trailing whitespace inside string literals does not trigger a lint (#1045, @AshesITR)
    * added argument `allow_in_strings` (`TRUE` by default) to toggle this behavior
+* `trailing_blank_lines_linter()`: extend to lint files without a terminal newline (#675, @AshesITR)
 * `object_name_linter()`
    + improved generic detection -- in user-defined method `my_method.upstream.class`,
      `upstream.class` no longer throws a lint because the generic (`my_method`)
      properly uses `snake_case` (#737, @AshesITR)
    + extended to exclude special R namespace hook functions such as `.onLoad` (#500, #614, @AshesITR and @michaelchirico)
-* `object_usage_linter()` now correctly detects global variables if there are top-level dollar-assignments
-  (#666, #709, @AshesITR)
+   + extended to correctly detect imported functions when linting packages (#642, @AshesITR)
+* `object_usage_linter()`
+   + correctly detect global variables if there are top-level dollar-assignments (#666, #709, @AshesITR)
+   + correctly report usage warnings spanning multiple lines (#507, @AshesITR)
 * `equals_na_linter()` (#545, @michaelchirico)
    + extended to lint `x != NA` (before, only `==` was caught) and `NA == x`(before, only `NA` on RHS was caught)
    + extended to skip usages in comments like `is.na(x) # use is.na(x), not x == NA`
@@ -115,6 +118,9 @@
 * `no_tab_linter()`: use more reliable matching (e.g., excluding matches found in comments; #441, @russHyde)
 * `line_length_linter()`: place the source marker at the margin of the affected line to improve user experience
   during de-linting -- just press <kbd>Return</kbd> (#735, @AshesITR)
+* `commented_code_linter()`: use the parse tree to find comments, eliminating some false positives (#451, @AshesITR)
+* `T_and_F_symbol_linter()`: no longer lint occurrences of `T` and `F` when used for subsetting and gives a better
+  message when used as variable names (#657, @AshesITR)
 
 ### Other noteworthy changes
 
@@ -238,12 +244,6 @@ of general interest to the broader R community. More will be included in future 
 * `spaces_left_parentheses_linter()`: fix a bug causing warnings in nested expressions like
   "In `parent == parent[before_operator_idx]` longer object length is not a multiple of shorter object length" (#654, @AshesITR)
 * `line_length_linter()`: fix a bug causing duplicate lints for lines containing multiple expressions (#681, #682, @AshesITR)
-* `commented_code_linter()` uses the parse tree to find comments, eliminating some false positives (#451, @AshesITR)
-* `trailing_blank_lines_linter()` now also lints files without a terminal newline (#675, @AshesITR)
-* `object_name_linter()` now correctly detects imported functions when linting packages (#642, @AshesITR)
-* `object_usage_linter()` now correctly reports usage warnings spanning multiple lines (#507, @AshesITR)
-* `T_and_F_symbol_linter()` no longer lints occurrences of `T` and `F` when used for subsetting and gives a better 
-  message when used as variable names (#657, @AshesITR)
 * `linters_with_defaults()` handles automatic naming of very long arguments correctly (#774, @michaelchirico)
 * `object_name_linter()` no longer lints names used for subsetting (#582, @AshesITR)
 * `lint_package()` warns and returns `NULL` if no package is found (instead of giving a peculiar error message)
