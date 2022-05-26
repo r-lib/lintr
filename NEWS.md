@@ -108,7 +108,7 @@
 * Moved the default lintr cache directory from `~/.R/lintr_cache` to `R_user_dir("lintr", "cache")`.
   Note that this major version update invalidates the old cache anyway, so it can be safely deleted. (#1062, @AshesITR)
 
-## New features
+## New and improved features
 
 ### New linters
 
@@ -168,7 +168,7 @@ of general interest to the broader R community. More will be included in future 
 * `inner_combine_linter()` Require inputs to vectorized functions to be combined first rather than later,
   e.g. `as.Date(c(x, y))` over `c(as.Date(x), as.Date(y))`
 
-### Other features and improvements to existing linters
+### Other features and improvements
 
 * **Selective exclusion syntax**: New syntax to exclude only selected linters from linting lines or passages.
   Use `# nolint: linter_name, linter2_name.` or `# nolint start: linter_name, linter2_name.`
@@ -179,6 +179,7 @@ of general interest to the broader R community. More will be included in future 
   (#494, #495, #615, #670, @michaelchirico and @AshesITR)
 * `lint()`: new optional argument `text` for supplying a string or lines directly, e.g. if the file is already 
   in memory or linting is being done _ad hoc_. (#503, @renkun-ken)
+* `lint_dir()` excludes the `renv` and `packrat` directories by default (#697, @AshesITR)
 * **Encodings**: lintr now supports non-system character Encodings. The correct the correct encoding
   is auto-detected from .Rproj or DESCRIPTION files in your project.
   Override the default in the `encoding` setting of lintr. (#752, #782, @AshesITR)
@@ -197,20 +198,20 @@ of general interest to the broader R community. More will be included in future 
 * `xml_nodes_to_lints()`: new exported helper for converting `xml_node` objects obtained using linter logic
   expressed in XPath into `Lint` objects (#1124, #1216, #1234, @michaelchirico and @AshesITR)
 * `use_lintr()`: new exported helper for creating a minimal `.lintr` configuration (#902, @AshesITR)
- 
-## Improvements and bug fixes
-
-* Optimized performance-critical functions in lintr, such as `get_source_expressions()` resulting in about 2x speedup 
+* **Performance**: Optimized performance-critical functions in lintr, such as `get_source_expressions()` resulting in about 2x speedup 
   in our test suite and even more for complex files (#1169, #1197, #1200, #1201, #1214, @MichaelChirico and @AshesITR) 
-* Support for writing comments to GitHub repo when running in Jenkins CI (#488, @fdlk)
+* **Jenkins CI**: Support for writing comments to GitHub repo when running in Jenkins CI (#488, @fdlk)
+* `seq_linter()`: improve lint message to be clearer about the reason for linting. (#522, @michaelchirico)
+
+## Bug fixes
+
 * `save_cache()` will now recursively create the cache directory; this avoids errors that could arise if any parent 
   directories do not exist (#60, @dankessler).
 * `extract_r_source()` handles Rmd containing unevaluated code blocks with named format specifiers (#472, @russHyde)
-* RStudio source markers are cleared when there are no lints (#520, @AshesITR)
-* `seq_linter()`'s lint message is clearer about the reason for linting. (#522, @michaelchirico)
-* Fix possible error on invalid XML produced by xmlparsedata (#559, #560, @renkun-ken)
-* Fix handling zero-length variable name error (#566, #567, @renkun-ken)
-* `lint_dir()` excludes the `renv` and `packrat` directories by default (#697, @AshesITR)
+* **RStudio**: Source markers are cleared when there are no lints (#520, @AshesITR)
+* `get_source_expressions()`:
+   + Fix possible error on invalid XML produced by `xmlparsedata::xml_parse_data()` (#559, #560, @renkun-ken)
+   + Fix handling zero-length variable name error (#566, #567, @renkun-ken)
 * `object_name_linter()` now excludes special R hook functions such as `.onLoad` 
   (#500, #614, @AshesITR and @michaelchirico)
 * Improved generic detection for `object_name_linter()` (#737, @AshesITR)
