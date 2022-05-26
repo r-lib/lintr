@@ -83,32 +83,23 @@ object_usage_linter <- function(interpret_glue = TRUE) {
       lintable_symbol_names <- get_r_string(lintable_symbols)
       lintable_symbol_lines <- as.integer(xml2::xml_attr(lintable_symbols, "line1"))
 
-
-      lapply(
+      matched_symbol <- vapply(
         seq_len(nrow(res)),
-        function(row_num) {
-          row <- res[row_num, ]
-
-          matched_node <- which(
-            lintable_symbol_names == row$name &
-              lintable_symbol_lines >= row$line1 &
-              lintable_symbol_lines <= row$line2
+        function(i) {
+          match(
+            TRUE,
+            lintable_symbol_names == res$name[i] &
+              lintable_symbol_lines >= res$line1[i] &
+              lintable_symbol_lines <= res$line2[i]
           )
-
-          if (length(matched_node)) {
-            linted_node <- lintable_symbols[[matched_node[1L]]]
-          } else {
-            linted_node <- fun_assignment
-          }
-
-          xml_nodes_to_lints(
-            linted_node,
-            source_expression = source_expression,
-            lint_message = row$message,
-            type = "warning"
-          )
-        }
+        },
+        integer(1L)
       )
+
+      nodes <- unclass(lintable_symbols)[matched_symbol]
+      nodes[is.na(matched_symbol)] <- list(fun_assignment)
+
+      xml_nodes_to_lints(nodes, source_expression = source_expression, lint_message = res$message, type = "warning")
     })
   })
 }
