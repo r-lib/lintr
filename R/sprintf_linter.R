@@ -7,17 +7,17 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 sprintf_linter <- function() {
+  xpath <- "//expr[
+    expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf'] and
+    OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST
+  ]"
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
       return(list())
     }
 
     xml <- source_expression$full_xml_parsed_content
-
-    xpath <- "//expr[
-      expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf'] and
-      OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST
-    ]"
 
     sprintf_calls <- xml2::xml_find_all(xml, xpath)
 

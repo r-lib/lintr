@@ -8,21 +8,20 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 seq_linter <- function() {
-  Linter(function(source_expression) {
+  bad_funcs <- c("length", "nrow", "ncol", "NROW", "NCOL", "dim")
 
+  xpath <- glue::glue("//expr[
+    expr[NUM_CONST[text() =  '1' or text() =  '1L']]
+    and OP-COLON
+    and expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]
+  ]")
+
+  Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
 
     xml <- source_expression$xml_parsed_content
-
-    bad_funcs <- c("length", "nrow", "ncol", "NROW", "NCOL", "dim")
-
-    xpath <- glue::glue("//expr[
-      expr[NUM_CONST[text() =  '1' or text() =  '1L']]
-      and OP-COLON
-      and expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]
-    ]")
 
     badx <- xml2::xml_find_all(xml, xpath)
 
@@ -34,6 +33,7 @@ seq_linter <- function() {
       if (fun %in% bad_funcs) paste0(fun, "(...)") else fun
     }
 
+    # TODO(michaelchirico): vectorize the message instead
     xml_nodes_to_lints(
       badx,
       source_expression = source_expression,
