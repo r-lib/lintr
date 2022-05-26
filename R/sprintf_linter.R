@@ -82,7 +82,7 @@ zap_extra_args <- function(parsed_expr) {
 capture_sprintf_warning <- function(xml) {
   text <- xml2::xml_text(xml)
   parsed_expr <- try_silently(parse(text = text, keep.source = FALSE)[[1L]])
-  parsed_expr <- zap_extra_args(parsed_expr, is_named)
+  parsed_expr <- zap_extra_args(parsed_expr)
   res <- tryCatch(eval(parsed_expr, envir = baseenv()), warning = identity, error = identity)
   if (inherits(res, "condition")) {
     conditionMessage(res)
