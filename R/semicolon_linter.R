@@ -20,12 +20,12 @@ semicolon_linter <- function(allow_compound = FALSE, allow_trailing = FALSE) {
   } else if (allow_compound && !allow_trailing) {
     # lint only trailing
     xpath <- "//OP-SEMICOLON[not(@line1 = following-sibling::*[1]/@line1)]"
-    msg <- msg_trailing
+    msg <- msg_trailing # nolint: object_usage. (usage in linter, since need_detection == FALSE)
     need_detection <- FALSE
   } else if (!allow_compound && allow_trailing) {
     # lint only compound
     xpath <- "//OP-SEMICOLON[@line1 = following-sibling::*[1]/@line1]"
-    msg <- msg_compound
+    msg <- msg_compound # nolint: object_usage. (usage in linter, since need_detection == FALSE)
     need_detection <- FALSE
   } else {
     # lint all
