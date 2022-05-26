@@ -111,9 +111,14 @@
      properly uses `snake_case` (#737, @AshesITR)
    + extended to exclude special R namespace hook functions such as `.onLoad` (#500, #614, @AshesITR and @michaelchirico)
    + extended to correctly detect imported functions when linting packages (#642, @AshesITR)
+   + correctly detect assignment generics like `names<-.class_name` (#843, @jonkeane)
 * `object_usage_linter()`
    + correctly detect global variables if there are top-level dollar-assignments (#666, #709, @AshesITR)
    + correctly report usage warnings spanning multiple lines (#507, @AshesITR)
+   + detects usages inside `glue::glue()` constructs (#942, @AshesITR)
+* `object_length_linter()`: correctly detect generics and only counts the implementation class towards the length.
+  This prevents false positive lints in the case of long generic names, e.g.
+  `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
 * `equals_na_linter()` (#545, @michaelchirico)
    + extended to lint `x != NA` (before, only `==` was caught) and `NA == x`(before, only `NA` on RHS was caught)
    + extended to skip usages in comments like `is.na(x) # use is.na(x), not x == NA`
@@ -256,11 +261,6 @@ of general interest to the broader R community. More will be included in future 
 * Error message for mismatched starts and ends of exclusion ranges is now more helpful.
   (#571, #860, @AshesITR and @danielinteractive)
 * Improved location information for R parse errors (#894, #892, @renkun-ken and @AshesITR)
-* `object_usage_linter()` now detects usages inside `glue::glue()` constructs (#942, @AshesITR)
-* `object_length_linter()` correctly detects generics and only counts the implementation class towards the length. 
-  This prevents false positive lints in the case of long generic names, e.g. 
-  `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
-* `object_name_linter()` now correctly detects assignment generics (#843, @jonkeane)
 * `get_source_expressions()` fixes the `text` value for `STR_CONST` nodes involving 1- or 2-width octal escapes
   (e.g. `"\1"`) to account for an R parser bug (https://bugs.r-project.org/show_bug.cgi?id=18323)
 * Several linters tightened internal logic to allow for raw strings like `R"( a\string )"` (#1034, @michaelchirico)
