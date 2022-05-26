@@ -115,28 +115,21 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         return(list())</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     xml &lt;- source_expression$xml_parsed_content</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     names_xpath &lt;- "//SYMBOL | //SYMBOL_FUNCTION_CALL"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     all_names_nodes &lt;- xml2::xml_find_all(xml, names_xpath)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     all_names &lt;- xml2::xml_text(all_names_nodes)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     backport_blacklist &lt;- backports[r_version &lt; R_system_version(names(backports))]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     needs_backport &lt;- do.call(cbind, lapply(backport_blacklist, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     needs_backport &lt;- do.call(rbind, lapply(backport_blacklist, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         function(nm) all_names %in% nm))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     bad_idx &lt;- rowSums(needs_backport) &gt; 0L</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     lapply(which(bad_idx), function(ii) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         node &lt;- all_names_nodes[[ii]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         line1 &lt;- xml2::xml_attr(node, "line1")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         col1 &lt;- as.integer(xml2::xml_attr(node, "col1"))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         col2 &lt;- as.integer(xml2::xml_attr(node, "col2"))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         stopifnot(xml2::xml_attr(node, "line2") == line1)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         Lint(filename = source_expression$filename, line_number = as.integer(line1), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             column_number = col1, type = "warning", message = sprintf("%s (R %s) is not available for dependency R &gt;= %s.", </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 all_names[ii], names(backport_blacklist)[which(needs_backport[ii, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   ])], r_version), line = source_expression$lines[[line1]], </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ranges = list(c(col1, col2)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     bad_idx &lt;- colSums(needs_backport) &gt; 0L</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     needs_backport_version_idx &lt;- ((which(needs_backport) - 1L)%%length(backport_blacklist)) + </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         1L</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     lint_message &lt;- sprintf("%s (R %s) is not available for dependency R &gt;= %s.", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         all_names[bad_idx], names(backport_blacklist)[needs_backport_version_idx], </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         r_version)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     xml_nodes_to_lints(all_names_nodes[bad_idx], source_expression = source_expression, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = lint_message, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e0dc40&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e9e56a28&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fc80d0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae5003e78&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -163,8 +156,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     xml_nodes_to_lints(bad_expr, source_expression, lint_message = lint_message, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e17e70&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e9ed6080&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fd1170&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae50aed88&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -190,8 +183,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             expectation, comparator)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e1be00&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e9f480c8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fd5100&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae5121668&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -210,8 +203,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             "e.g. when setting ignore_attr= or tolerance=."), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e20618&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e9fab278&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fd5b20&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae5188488&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -231,8 +224,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     xml_nodes_to_lints(bad_expr, source_expression, lint_message, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e242d0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646ea01b4c8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fd78f0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae1d2c6d8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -254,8 +247,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 matched_function)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e27cb0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646ea07fb68&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fd93b0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae1bd7850&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -274,8 +267,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = "expect_false(x) is better than expect_true(!x), and vice versa.", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e29620&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646ea0e32b8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fdeb50&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae1b80758&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -301,8 +294,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e2b118&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646ea14ad70&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fe0610&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae0b70540&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -330,8 +323,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         paste(lint_msg, "Note also expect_s4_class() available for testing S4 objects.")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e2f540&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e6b5bff8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fe2b60&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae1a1bc70&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -351,8 +344,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             "Note also expect_s3_class() available for testing S3 objects."), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e33d58&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e6b04800&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fe7378&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae1981618&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -380,8 +373,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e35498&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e693ee40&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fe8a80&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae1903a58&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -408,8 +401,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e396c8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e69a55b0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4feccb0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae1889f10&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -479,8 +472,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         load_arg_name_lints, library_require_lints, bad_unload_call_lints, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         unload_arg_name_lints))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e43690&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e6932b20&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4ff4bd0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae181db00&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -511,8 +504,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e515c0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e689c2f8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae5000930&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae17b16f0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -537,8 +530,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e6911290&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e6606b50&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae184c280&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae13bf150&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -565,8 +558,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(c(any_duplicated_lints, length_unique_lints))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e670b340&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e656ed70&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae157ad58&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae12e7c30&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -584,8 +577,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = "anyNA(x) is better than any(is.na(x)).", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e6709ea0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e648c9d0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae1574150&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae10f1a50&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -610,8 +603,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     xml_nodes_to_lints(bad_expr, source_expression, lint_message, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "style")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e8fbccd8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e63ffb88&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae418c190&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae0f68718&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -627,28 +620,21 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         return(list())</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     xml &lt;- source_expression$xml_parsed_content</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     names_xpath &lt;- "//SYMBOL | //SYMBOL_FUNCTION_CALL"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     all_names_nodes &lt;- xml2::xml_find_all(xml, names_xpath)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     all_names &lt;- xml2::xml_text(all_names_nodes)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     backport_blacklist &lt;- backports[r_version &lt; R_system_version(names(backports))]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     needs_backport &lt;- do.call(cbind, lapply(backport_blacklist, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     needs_backport &lt;- do.call(rbind, lapply(backport_blacklist, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         function(nm) all_names %in% nm))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     bad_idx &lt;- rowSums(needs_backport) &gt; 0L</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     lapply(which(bad_idx), function(ii) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         node &lt;- all_names_nodes[[ii]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         line1 &lt;- xml2::xml_attr(node, "line1")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         col1 &lt;- as.integer(xml2::xml_attr(node, "col1"))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         col2 &lt;- as.integer(xml2::xml_attr(node, "col2"))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         stopifnot(xml2::xml_attr(node, "line2") == line1)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         Lint(filename = source_expression$filename, line_number = as.integer(line1), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             column_number = col1, type = "warning", message = sprintf("%s (R %s) is not available for dependency R &gt;= %s.", </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 all_names[ii], names(backport_blacklist)[which(needs_backport[ii, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   ])], r_version), line = source_expression$lines[[line1]], </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ranges = list(c(col1, col2)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     bad_idx &lt;- colSums(needs_backport) &gt; 0L</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     needs_backport_version_idx &lt;- ((which(needs_backport) - 1L)%%length(backport_blacklist)) + </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         1L</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     lint_message &lt;- sprintf("%s (R %s) is not available for dependency R &gt;= %s.", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         all_names[bad_idx], names(backport_blacklist)[needs_backport_version_idx], </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         r_version)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     xml_nodes_to_lints(all_names_nodes[bad_idx], source_expression = source_expression, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = lint_message, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e0dc40&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e6276ff8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fc80d0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae0bc8780&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -699,8 +685,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = "Either both or neither branch in `if`/`else` should use curly braces."))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     lints</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e8fc0108&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e605f098&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4194900&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae0abb2c0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -723,8 +709,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             paste(message, "use inherits(x, 'class-name') or is.&lt;class&gt; or is(x, 'class')")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e6702578&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e5edee20&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae1572578&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae09e0d88&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -748,8 +734,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         range_start_xpath = "number(./@col2 + 1)", range_end_xpath = "number(./@col2 + 1)")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     c(before_lints, after_lints)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e8fd2528&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e5d63540&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4198da8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae08c02d8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -787,8 +773,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e8fd8228&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e5a7b6a0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae41a0858&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae07dbdb0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -816,8 +802,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             "(using \"\" as a separator). For translateable strings, prefer using gettextf().")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e67022c8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e59e0c28&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae156c7a8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae06b3588&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -844,8 +830,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     xml_nodes_to_lints(bad_expr, source_expression, lint_message = lint_message, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e17e70&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e59388f8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fd1170&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae06314f0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -864,8 +850,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = "Unify consecutive calls to stopifnot().", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e66fdf48&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e57d0e88&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae1568540&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae0547648&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -888,8 +874,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             complexity_limit, ", this has ", complexity, "."), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         ranges = list(rep(col1, 2L)), line = source_expression$lines[1L])</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e8fe3290&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e5707e60&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae41a7a90&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae04b3b40&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -932,8 +918,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     unlist(result, recursive = FALSE, use.names = FALSE)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e66f37a0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e561e390&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae1565a08&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae0428b38&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -956,8 +942,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     xml_nodes_to_lints(bad_expr, source_expression, lint_message = "Use is.na for comparisons to NA (not == or !=)", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e8fe5b28&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e5535360&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae41ac238&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae03ae150&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -983,8 +969,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             expectation, comparator)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e1be00&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e547e3a8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fd5100&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae031d500&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1003,8 +989,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             "e.g. when setting ignore_attr= or tolerance=."), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e20618&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e53f75c0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fd5b20&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae021efc0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1024,8 +1010,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     xml_nodes_to_lints(bad_expr, source_expression, lint_message, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e242d0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e534d2a0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fd78f0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae0077360&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1047,8 +1033,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 matched_function)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e27cb0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e52c9c60&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fd93b0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55badffb8038&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1067,8 +1053,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = "expect_false(x) is better than expect_true(!x), and vice versa.", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e29620&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e5233990&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fdeb50&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55badff222d8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1094,8 +1080,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e2b118&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e5058fe8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fe0610&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55badfe7d528&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1123,8 +1109,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         paste(lint_msg, "Note also expect_s4_class() available for testing S4 objects.")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e2f540&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e4f5d128&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fe2b60&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55badf8dc588&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1144,8 +1130,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             "Note also expect_s3_class() available for testing S3 objects."), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e33d58&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e4ed7ea8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fe7378&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55badf333db0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1173,8 +1159,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e35498&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e4e4ef20&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4fe8a80&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55badf1f2450&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1201,8 +1187,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e396c8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e4db21a8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4feccb0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55badf05e3e0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1230,8 +1216,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e66e9c00&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e43ba878&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae1554c08&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55baded4d560&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1266,8 +1252,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             "`gsub()` is affected by the `fixed` argument as well."), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e66e0418&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e4271148&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae1523ed8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55badeb25448&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1299,8 +1285,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e8fe9428&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e411bd70&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae41b1ab8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bade582a18&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1343,8 +1329,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e66d1e68&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e3e62708&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae151c450&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55badd142e38&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1363,8 +1349,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "style", column_number_xpath = "number(./@col2 + 1)", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         range_end_xpath = "number(./@col2 + 1)")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e66c8f40&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e3c3fc68&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae1517758&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55badd535ef0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1381,8 +1367,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     xml_nodes_to_lints(bad_expr, source_expression = source_expression, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = lint_message, type = "style")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e8ff3d58&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e3a3fc88&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae41b8548&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bade2843a0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1427,8 +1413,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 message)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e66c30c8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e347d1d8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae150e7d0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55badd9554b0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1451,8 +1437,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 line_lengths[long_line])))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e6c59340&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e1d01b08&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae13e5e80&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae2c90df8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1474,8 +1460,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             "c.f. 1L instead of as.integer(1), or NA_real_ instead of as.numeric(NA)."), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e66b8648&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e1fed448&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae150bf70&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae25dc308&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1506,8 +1492,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     result[vapply(result, is.list, logical(1L))]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e66a81a0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e3183a50&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae15034f0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae2c30880&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1535,8 +1521,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             ranges = list(c(col1[[i]], col2[[i]])))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e669c220&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e23ac098&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae14f70c8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae241e1c8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1596,8 +1582,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     lints</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e6691ff0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e7c3a640&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae14eb410&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae2d83638&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1620,8 +1606,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             paste(lint_message, "instead, try (1) data.table::fcase; (2) dplyr::case_when; or (3) using a lookup table.")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e66882c8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e6b916b8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae14ddad8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae2ddaf10&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1653,8 +1639,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }, all_matches, line_numbers)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Filter(function(x) any(lengths(x) &gt; 0L), lints)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e8ff8618&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e7bac7c0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae41bce08&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae2f32878&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1676,8 +1662,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e6911290&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e7c93a08&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae184c280&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae2f93d48&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1696,8 +1682,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = "Include the leading zero for fractional numeric constants.", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e6684b50&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e7ceb158&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae14da088&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae2ff31c0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1722,8 +1708,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     xml_nodes_to_lints(assignments[too_long], source_expression = source_expression, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = lint_message, type = "style")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e8ffd1f8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e7e42180&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae41cf9d0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae3056430&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1748,8 +1734,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     xml_nodes_to_lints(assignments[!matches_a_style], source_expression, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = lint_message, type = "style")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e6ad5868&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e7ea2250&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae19b6610&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae30b71e0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1816,8 +1802,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9009cb0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e7f05850&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae41da710&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae311c7e0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1843,8 +1829,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             paste(message, "The former applies negation only once after aggregation instead of many times for each element of x.")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e66834b8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e7f66b40&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae14d68b0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae317dc58&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1914,8 +1900,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         load_arg_name_lints, library_require_lints, bad_unload_call_lints, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         unload_arg_name_lints))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e43690&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e7fc6140&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4ff4bd0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae31df098&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1938,8 +1924,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     xml_nodes_to_lints(matched_expressions, source_expression = source_expression, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = "There should be a space between right parenthesis and a body expression.")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e901f8c0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e8025698&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae41f2198&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae32436f8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -1983,8 +1969,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     c(empty_sep_lints, to_string_lints, paste0_sep_lints)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e667d368&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e8086b10&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae14d3b48&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae32a49e8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2003,8 +1989,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = "Use explicit calls in magrittr pipes, i.e., `a %&gt;% foo` should be `a %&gt;% foo()`.", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e66768b0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e80e7d58&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae14cde58&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae3302138&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2028,8 +2014,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = paste("`%&gt;%` should always have a space before it and a new line after it,", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             "unless the full pipeline fits on one line."), type = "style")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e90216c8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e814c428&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae41f3fa0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae33635e8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2074,8 +2060,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(c(tf_lints, num_lints))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e666ae28&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e81ad8d8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae14c2878&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae33c4910&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2109,8 +2095,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(c(grep_lints, stringr_lints))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e665e280&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e820cf80&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae14b9800&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae3427d88&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2139,8 +2125,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             ranges = list(c(token[["col1"]], token[["col2"]])))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }, split(tokens, seq_len(nrow(tokens))), are_trailing)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9022430&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e826e1c8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae41f4d08&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae3489318&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2179,8 +2165,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 dot_expr1, dot_expr2, replacement)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9028318&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e82d1640&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae41fcb10&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae34ea828&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2209,8 +2195,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e902f7f0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e8332c08&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4205f30&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae354bd80&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2233,8 +2219,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = c(left_msg, right_msg), range_start_xpath = "number(./@col2 + 1)", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         range_end_xpath = "number(./following-sibling::*[1]/@col1 - 1)")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e90380a0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e8394198&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4208a68&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae35a9550&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2270,8 +2256,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     xml_nodes_to_lints(bad_paren, source_expression, lint_message = "Place a space before left parenthesis, except in a function call.", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "style")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e903be70&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e8418838&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae420c838&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae3635d00&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2292,8 +2278,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     xml_nodes_to_lints(sprintf_calls[has_message], source_expression = source_expression, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = message[has_message], type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e66563f0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e8479e00&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae14b5d08&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae3695338&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2318,8 +2304,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             "stringsAsFactors for this code to work with versions of R both before", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             "and after this switch."), type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e664bd60&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e84df3d8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae14b0d80&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae36f85c8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2348,8 +2334,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 bad_usage)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e664ab60&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e8544a20&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae14afde8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae375bab0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2385,8 +2371,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     c(make_lints(bad_exprs, "Use %s instead of the symbol %s."), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         make_lints(bad_assigns, "Don't use %2$s as a variable name, as it can break code relying on %2$s being %1$s."))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e90420d0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e85a3b18&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae42159b8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae37bcef0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2407,8 +2393,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             ranges = list(c(token[["col1"]], token[["col2"]])))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e6643500&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e8607208&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae14a6718&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae3820170&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2440,8 +2426,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     lints</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e4009b40&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e8668798&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55badee6d0f8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae3883710&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2481,8 +2467,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 res$end[[line]])))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e90576a8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e86cba18&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae421b088&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae38e88b0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2513,8 +2499,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 col2)))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e66384d0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e872ea68&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae147d138&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae3947e08&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2539,8 +2525,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             msg</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e662c888&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e87ac9b8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae142be10&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae39d85d0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2573,8 +2559,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         })</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e661cff8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e888fdd0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae140b9b0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae3addf08&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2593,8 +2579,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = "Code and comments coming after a top-level return() or stop() should be removed.", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e6619c38&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e88f5370&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae13df048&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae3b71890&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2646,8 +2632,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e6613928&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e898dc60&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae13d2c48&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae3bdd630&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2665,8 +2651,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>         lint_message = "Conditional expressions require scalar logical operators (&amp;&amp; and ||)", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9059e28&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e89f3548&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae4223520&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae3c40aa8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
@@ -2697,8 +2683,8 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span>             }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }, type = "warning")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5646e9e515c0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646e8a819b8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55bae5000930&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55bae3ca0ef0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linter"         "lintr_function"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"name")</span>
