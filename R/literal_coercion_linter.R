@@ -12,31 +12,31 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 literal_coercion_linter <- function() {
+  coercers <- xp_text_in_table(paste0(
+    "as.",
+    c("logical", "integer", "numeric", "double", "character")
+  ))
+  # notes for clarification:
+  #  - as.integer(1e6) is arguably easier to read than 1000000L
+  #  - in x$"abc", the "abc" STR_CONST is at the top level, so exclude OP-DOLLAR
+  #  - need condition against STR_CONST w/ EQ_SUB to skip quoted keyword arguments (see tests)
+  xpath <- glue::glue("//expr[
+    expr[SYMBOL_FUNCTION_CALL[ {coercers} ]]
+    and expr[2][
+      not(OP-DOLLAR)
+      and (
+        NUM_CONST[not(contains(translate(text(), 'E', 'e'), 'e'))]
+        or STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
+      )
+    ]
+  ]")
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
 
     xml <- source_expression$xml_parsed_content
-
-    coercers <- xp_text_in_table(paste0(
-      "as.",
-      c("logical", "integer", "numeric", "double", "character")
-    ))
-    # notes for clarification:
-    #  - as.integer(1e6) is arguably easier to read than 1000000L
-    #  - in x$"abc", the "abc" STR_CONST is at the top level, so exclude OP-DOLLAR
-    #  - need condition against STR_CONST w/ EQ_SUB to skip quoted keyword arguments (see tests)
-    xpath <- glue::glue("//expr[
-      expr[SYMBOL_FUNCTION_CALL[ {coercers} ]]
-      and expr[2][
-        not(OP-DOLLAR)
-        and (
-          NUM_CONST[not(contains(translate(text(), 'E', 'e'), 'e'))]
-          or STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
-        )
-      ]
-    ]")
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
