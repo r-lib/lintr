@@ -54,32 +54,34 @@ commented_code_linter <- function() {
     all_comment_nodes <- xml2::xml_find_all(source_expression$full_xml_parsed_content, "//COMMENT")
     all_comments <- xml2::xml_text(all_comment_nodes)
     code_candidates <- re_matches(all_comments, code_candidate_regex, global = FALSE, locations = TRUE)
+    is_parsable <- which(vapply(code_candidates[, "code"], parsable, logical(1L)))
 
-    # TODO(michaelchirico): convert this to xml_nodes_to_lint()?
-    lapply(rownames(na.omit(code_candidates)), function(code_candidate) {
-      is_parsable <- parsable(code_candidates[code_candidate, "code"])
-      if (is_parsable) {
-        comment_node <- all_comment_nodes[[as.integer(code_candidate)]]
-        line_number <- as.integer(xml2::xml_attr(comment_node, "line1"))
-        column_offset <- as.integer(xml2::xml_attr(comment_node, "col1")) - 1L
+    lint_list <- xml_nodes_to_lints(
+      all_comment_nodes[is_parsable],
+      source_expression = source_expression,
+      lint_message = "Commented code should be removed."
+    )
 
-        column_number <- column_offset + code_candidates[code_candidate, "code.start"]
-        Lint(
-          filename = source_expression$filename,
-          line_number = line_number,
-          column_number = column_number,
-          type = "style",
-          message = "Commented code should be removed.",
-          line = source_expression$file_lines[line_number],
-          ranges = list(c(column_number, column_offset + code_candidates[code_candidate, "code.end"]))
-        )
-      }
-    })
+    # Location info needs updating
+    for (i in seq_along(lint_list)) {
+      rng <- lint_list[[i]]$ranges[[1L]]
+
+      rng[2L] <- rng[1L] + code_candidates[is_parsable[i], "code.end"] - 1L
+      rng[1L] <- rng[1L] + code_candidates[is_parsable[i], "code.start"] - 1L
+
+      lint_list[[i]]$column_number <- rng[1L]
+      lint_list[[i]]$ranges <- list(rng)
+    }
+
+    lint_list
   })
 }
 
 # is given text parsable
 parsable <- function(x) {
+  if (is.na(x)) {
+    return(FALSE)
+  }
   res <- try_silently(parse(text = x))
   !inherits(res, "try-error")
 }
