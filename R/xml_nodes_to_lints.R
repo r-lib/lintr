@@ -19,10 +19,7 @@
 #'   returned typically by [lint()], or more generally
 #'   by [get_source_expressions()].
 #' @param lint_message The message to be included as the `message`
-#'   to the `Lint` object. If `lint_message` is a `function`,
-#'   this function is first applied to `xml` (so it should be a
-#'   function taking an `xml_node` as input and must produce a
-#'   length-1 character as output). If `lint_message` is a character vector the same length as `xml`,
+#'   to the `Lint` object. If `lint_message` is a character vector the same length as `xml`,
 #'   the `i`-th lint will be given the `i`-th message.
 #' @param column_number_xpath XPath expression to return the column number location of the lint.
 #'   Defaults to the start of the range matched by `range_start_xpath`. See details for more information.
@@ -88,7 +85,7 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
 
   column_number <- xp_find_location(xml, column_number_xpath)
 
-  if (is.function(lint_message)) lint_message <- lint_message(xml)
+  if (is.function(lint_message)) stop("found another linter using is.function(lint_message)")
   Lint(
     filename = source_expression$filename,
     line_number = as.integer(line1),
