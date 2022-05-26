@@ -9,7 +9,11 @@
 sprintf_linter <- function() {
   xpath <- "//expr[
     expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf'] and
-    OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST
+    (
+      OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST or
+      SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST
+    ) and
+    not(expr/SYMBOL[text() = '...'])
   ]"
 
   Linter(function(source_expression) {
@@ -48,8 +52,14 @@ zap_extra_args <- function(parsed_expr) {
     is.symbol(x) && !nzchar(x)
   }
 
+  if ("fmt" %in% names(parsed_expr)) {
+    fmt_loc <- which(names(parsed_expr) == "fmt")
+  } else {
+    fmt_loc <- 2L
+  }
+
   if (length(parsed_expr) >= 3L) {
-    for (i in 3L:length(parsed_expr)) {
+    for (i in setdiff(seq_along(parsed_expr), c(1L, fmt_loc))) {
       if (!is_missing(parsed_expr[[i]]) && !is.atomic(parsed_expr[[i]])) {
         parsed_expr[[i]] <- 0L
       }
@@ -72,9 +82,6 @@ zap_extra_args <- function(parsed_expr) {
 capture_sprintf_warning <- function(xml) {
   text <- get_r_code(xml)
   parsed_expr <- try_silently(parse(text = text, keep.source = FALSE)[[1L]])
-  if (!is.character(parsed_expr[[2L]])) { # sprintf(fmt = "") must be a constant format
-    return(NA_character_)
-  }
   parsed_expr <- zap_extra_args(parsed_expr)
   res <- tryCatch(eval(parsed_expr, envir = baseenv()), warning = identity, error = identity)
   if (inherits(res, "condition")) {
