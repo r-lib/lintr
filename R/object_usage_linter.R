@@ -78,7 +78,7 @@ object_usage_linter <- function(interpret_glue = TRUE) {
       res$name <- rex::re_substitutes(res$name, rex::rex("<-"), "")
 
       lapply(
-        which(!is.na(res$message)),
+        seq_len(nrow(res)),
         function(row_num) {
           row <- res[row_num, ]
 
@@ -256,7 +256,7 @@ parse_check_usage <- function(expression, known_used_symbols = character(), decl
     )
   }
 
-  res
+  res[!is.na(res$message), ]
 }
 
 get_imported_symbols <- function(xml) {
