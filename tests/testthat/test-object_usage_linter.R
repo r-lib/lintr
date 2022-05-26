@@ -406,3 +406,18 @@ test_that("package imports are detected if present in file", {
     object_usage_linter()
   )
 })
+
+test_that("fallback works", {
+  expect_lint(
+    trim_some("
+      f <- function() {
+        `non_existing_assign<-`(1, 2)
+      }
+    "),
+    list(
+      message = rex::rex("no visible global function definition for ", anything, "non_existing_assign<-"),
+      column_number = 6L
+    ),
+    object_usage_linter()
+  )
+})

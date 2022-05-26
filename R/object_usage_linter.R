@@ -77,9 +77,10 @@ object_usage_linter <- function(interpret_glue = TRUE) {
           } else {
             org_line_end <- as.integer(row$line2) + fun_start_line - 1L
           }
-          line <- source_expression$content[org_line_start]
 
-          row$name <- re_substitutes(row$name, rex("<-"), "")
+          # TODO handle assignment functions properly
+          # e.g. `not_existing<-`(a, b)
+          row$name <- rex::re_substitutes(row$name, rex::rex("<-"), "")
 
           linted_node <- xml2::xml_find_first(
             xml,
@@ -93,45 +94,16 @@ object_usage_linter <- function(interpret_glue = TRUE) {
               org_line_end
             )
           )
-          if (!is.na(linted_node)) {
-            return(
-              xml_nodes_to_lints(
-                linted_node,
-                source_expression = source_expression,
-                lint_message = row$message,
-                type = "warning"
-              )
-            )
+
+          if (is.na(linted_node)) {
+            linted_node <- fun_assignment
           }
 
-          location <- re_matches(line, rex(boundary, row$name, boundary), locations = TRUE)
-
-          # Handle multi-line lints where name occurs on subsequent lines (#507)
-          if (is.na(location$start) && nzchar(row$line2) && row$line2 != row$line1) {
-            lines <- source_expression$content[org_line_start:org_line_end]
-            locations <- re_matches(lines, rex(boundary, row$name, boundary), locations = TRUE)
-
-            matching_row <- (which(!is.na(locations$start)) %||% 1L)[[1L]] # first matching row or 1 (as a fallback)
-
-            org_line_start <- org_line_start + matching_row - 1L
-            location <- locations[matching_row, ]
-            line <- lines[matching_row]
-          }
-
-          # Fallback if name isn't found anywhere: lint the first line
-          if (is.na(location$start)) {
-            location$start <- 1L
-            location$end <- nchar(line)
-          }
-
-          Lint(
-            filename = source_expression$filename,
-            line_number = org_line_start,
-            column_number = location$start,
-            type = "warning",
-            message = row$message,
-            line = line,
-            ranges = list(c(location$start, location$end))
+          xml_nodes_to_lints(
+            linted_node,
+            source_expression = source_expression,
+            lint_message = row$message,
+            type = "warning"
           )
         }
       )
