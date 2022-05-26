@@ -182,26 +182,15 @@ extract_glued_symbols <- function(expr) {
 }
 
 get_assignment_symbols <- function(xml) {
-  left_assignment_symbols <-
-    xml2::xml_text(xml2::xml_find_all(xml, "expr[LEFT_ASSIGN]/expr[1]/SYMBOL[1]"))
-  equal_assignment_symbols <-
-    xml2::xml_text(xml2::xml_find_all(xml, "equal_assign/expr[1]/SYMBOL[1]"))
-  assign_fun_symbols <-
-    xml2::xml_text(xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/*"))
-  set_method_fun_symbols <-
-    xml2::xml_text(xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[2]/*"))
-
-  symbols <- c(
-    left_assignment_symbols,
-    equal_assignment_symbols,
-    assign_fun_symbols,
-    set_method_fun_symbols
-  )
-
-  # remove quotes or backticks from the beginning or the end
-  symbols <- gsub("^[`'\"]|['\"`]$", "", symbols)
-
-  symbols
+  get_r_string(xml2::xml_find_all(
+    xml,
+    "
+      expr[LEFT_ASSIGN]/expr[1]/SYMBOL[1] |
+      equal_assign/expr[1]/SYMBOL[1] |
+      expr[expr[SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/* |
+      expr[expr[SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[2]/*
+    "
+  ))
 }
 
 parse_check_usage <- function(expression, known_used_symbols = character(), declared_globals = character(),
@@ -255,12 +244,12 @@ parse_check_usage <- function(expression, known_used_symbols = character(), decl
     )
   }
 
-  res[!is.na(res$message), ]
+  res <- res[!is.na(res$message), ]
 
   res$line1 <- as.integer(res$line1) + start_line - 1L
   res$line2 <- ifelse(
     nzchar(res$line2),
-    as.integer(row$line2) + start_line - 1L,
+    as.integer(res$line2) + start_line - 1L,
     res$line1
   )
 
