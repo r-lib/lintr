@@ -110,6 +110,13 @@ get_content <- function(lines, info) {
   lines[is.na(lines)] <- ""
 
   if (!missing(info)) {
+    if (inherits(info, "xml_node")) {
+      info <- lapply(setNames(nm = c("col1", "col2", "line1", "line2")), function(attr) {
+        as.integer(xml2::xml_attr(info, attr))
+      })
+    }
+
+    lines <- lines[seq(info$line1, info$line2)]
     lines[length(lines)] <- substr(lines[length(lines)], 1L, info$col2)
     lines[1L] <- substr(lines[1L], info$col1, nchar(lines[1L]))
   }
