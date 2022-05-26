@@ -28,6 +28,8 @@ yoda_test_linter <- function() {
     and not(preceding-sibling::*[self::PIPE or self::SPECIAL[text() = '%>%']])
   ]")
 
+  second_const_xpath <- glue::glue("expr[position() = 3 and ({const_condition})]")
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -37,22 +39,17 @@ yoda_test_linter <- function() {
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    xml_nodes_to_lints(
-      bad_expr,
-      source_expression = source_expression,
-      lint_message = function(expr) {
-        matched_call <- xp_call_name(expr)
-        second_const <- xml2::xml_find_first(expr, glue::glue("expr[position() = 3 and ({const_condition})]"))
-        if (is.na(second_const)) {
-          paste(
-            "Tests should compare objects in the order 'actual', 'expected', not the reverse.",
-            sprintf("For example, do %1$s(foo(x), 2L) instead of %1$s(2L, foo(x)).", matched_call)
-          )
-        } else {
-          sprintf("Avoid storing placeholder tests like %s(1, 1)", matched_call)
-        }
-      },
-      type = "warning"
+    matched_call <- xp_call_name(bad_expr)
+    second_const <- xml2::xml_find_first(bad_expr, second_const_xpath)
+    lint_message <- ifelse(
+      is.na(second_const),
+      paste(
+        "Tests should compare objects in the order 'actual', 'expected', not the reverse.",
+        sprintf("For example, do %1$s(foo(x), 2L) instead of %1$s(2L, foo(x)).", matched_call)
+      ),
+      sprintf("Avoid storing placeholder tests like %s(1, 1)", matched_call)
     )
+
+    xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "warning")
   })
 }
