@@ -262,7 +262,7 @@ test_that("object_usage_linter finds lints spanning multiple lines", {
     object_usage_linter()
   )
 
-  # Kill regex match to enforce fallback to line 1 column 1 of the warning
+  # Even ugly names are found
   expect_lint(
     trim_some("
       foo <- function(x) {
@@ -272,7 +272,7 @@ test_that("object_usage_linter finds lints spanning multiple lines", {
         )
       }
     "),
-    list(line_number = 2L, column_number = 1L),
+    list(line_number = 4L, column_number = 5L),
     object_usage_linter()
   )
 })
@@ -403,6 +403,21 @@ test_that("package imports are detected if present in file", {
       }
     "),
     NULL,
+    object_usage_linter()
+  )
+})
+
+test_that("fallback works", {
+  expect_lint(
+    trim_some("
+      f <- function() {
+        `non_existing_assign<-`(1, 2)
+      }
+    "),
+    list(
+      message = rex::rex("no visible global function definition for ", anything, "non_existing_assign<-"),
+      column_number = 6L
+    ),
     object_usage_linter()
   )
 })
