@@ -75,18 +75,18 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
   }
   type <- match.arg(type, c("style", "warning", "error"))
   line1 <- xml2::xml_attr(xml, "line1")
-  col1 <- as.integer(xml2::xml_find_num(xml, range_start_xpath))
+  col1 <- xp_find_location(xml, range_start_xpath)
 
   lines <- source_expression[["lines"]]
   if (is.null(lines)) lines <- source_expression[["file_lines"]]
 
   if (xml2::xml_attr(xml, "line2") == line1) {
-    col2 <- as.integer(xml2::xml_find_num(xml, range_end_xpath))
+    col2 <- xp_find_location(xml, range_end_xpath)
   } else {
     col2 <- nchar(lines[[line1]])
   }
 
-  column_number <- as.integer(xml2::xml_find_num(xml, column_number_xpath))
+  column_number <- xp_find_location(xml, column_number_xpath)
 
   if (is.function(lint_message)) lint_message <- lint_message(xml)
   Lint(

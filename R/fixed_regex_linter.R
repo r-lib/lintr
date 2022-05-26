@@ -14,51 +14,51 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 fixed_regex_linter <- function() {
+  # regular expression pattern is the first argument
+  pos_1_regex_funs <- xp_text_in_table(c(
+    "grep", "gsub", "sub", "regexec", "grepl", "regexpr", "gregexpr"
+  ))
+
+  # regular expression pattern is the second argument
+  pos_2_regex_funs <- xp_text_in_table(c(
+    "strsplit", "tstrsplit",
+    # stringr functions. even though the user action is different
+    #   (setting fixed=TRUE vs. wrapping stringr::fixed()),
+    #   detection of the lint is the same
+    "str_count", "str_detect", "str_ends", "str_extract", "str_extract_all",
+    "str_locate", "str_locate_all", "str_match", "str_match_all",
+    "str_remove", "str_remove_all", "str_replace", "str_replace_all",
+    "str_split", "str_starts", "str_subset",
+    "str_view", "str_view_all", "str_which"
+  ))
+
+  # NB: strsplit doesn't have an ignore.case argument
+  # NB: we intentionally exclude cases like gsub(x, c("a" = "b")), where "b" is fixed
+  xpath <- glue::glue("//expr[
+    SYMBOL_FUNCTION_CALL[ {pos_1_regex_funs} ]
+    and not(following-sibling::SYMBOL_SUB[
+      (text() = 'fixed' or text() = 'ignore.case')
+      and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+    ])
+  ]
+  /following-sibling::expr[1][STR_CONST and not(EQ_SUB)]
+  |
+  //expr[
+    SYMBOL_FUNCTION_CALL[ {pos_2_regex_funs} ]
+    and not(following-sibling::SYMBOL_SUB[
+      text() = 'fixed'
+      and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+    ])
+  ]
+  /following-sibling::expr[2][STR_CONST and not(EQ_SUB)]
+  ")
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
 
     xml <- source_expression$xml_parsed_content
-
-    # regular expression pattern is the first argument
-    pos_1_regex_funs <- xp_text_in_table(c(
-      "grep", "gsub", "sub", "regexec", "grepl", "regexpr", "gregexpr"
-    ))
-
-    # regular expression pattern is the second argument
-    pos_2_regex_funs <- xp_text_in_table(c(
-      "strsplit", "tstrsplit",
-      # stringr functions. even though the user action is different
-      #   (setting fixed=TRUE vs. wrapping stringr::fixed()),
-      #   detection of the lint is the same
-      "str_count", "str_detect", "str_ends", "str_extract", "str_extract_all",
-      "str_locate", "str_locate_all", "str_match", "str_match_all",
-      "str_remove", "str_remove_all", "str_replace", "str_replace_all",
-      "str_split", "str_starts", "str_subset",
-      "str_view", "str_view_all", "str_which"
-    ))
-
-    # NB: strsplit doesn't have an ignore.case argument
-    # NB: we intentionally exclude cases like gsub(x, c("a" = "b")), where "b" is fixed
-    xpath <- glue::glue("//expr[
-      SYMBOL_FUNCTION_CALL[ {pos_1_regex_funs} ]
-      and not(following-sibling::SYMBOL_SUB[
-        (text() = 'fixed' or text() = 'ignore.case')
-        and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-      ])
-    ]
-    /following-sibling::expr[1][STR_CONST and not(EQ_SUB)]
-    |
-    //expr[
-      SYMBOL_FUNCTION_CALL[ {pos_2_regex_funs} ]
-      and not(following-sibling::SYMBOL_SUB[
-        text() = 'fixed'
-        and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-      ])
-    ]
-    /following-sibling::expr[2][STR_CONST and not(EQ_SUB)]
-    ")
 
     patterns <- xml2::xml_find_all(xml, xpath)
 
