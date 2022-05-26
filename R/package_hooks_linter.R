@@ -25,9 +25,6 @@ package_hooks_linter <- function() {
   #   this path returns to the corresponding namespace hook's name
   ns_calls <- xp_text_in_table(c(".onLoad", ".onAttach", ".onDetach", ".Last.lib"))
   hook_xpath <- sprintf("string(./ancestor::expr/expr/SYMBOL[%s])", ns_calls)
-  get_hook <- function(xml) {
-    xml2::xml_find_chr(xml, hook_xpath)
-  }
 
   bad_msg_calls <- c("cat", "message", "print", "writeLines")
   bad_calls <- list(
