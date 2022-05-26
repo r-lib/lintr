@@ -264,7 +264,7 @@ test_that("object_usage_linter finds lints spanning multiple lines", {
 
   # Even ugly names are found
   expected_location <- list(line_number = 4L, column_number = 5L)
-  if (.Platform$OS.type == "windows" && R.Version()[["crt"]] != "ucrt") {
+  if (.Platform$OS.type == "windows" && !hasName(R.Version(), "crt")) {
     # pre-UCRT on windows needs the fallback
     expected_location <- list(line_number = 1L, column_number = 8L)
   }
