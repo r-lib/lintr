@@ -1,7 +1,8 @@
 #' Default linters
 #'
 #' @description List of default linters for [lint()]. Use
-#' [linters_with_defaults()] to customize it.
+#' [linters_with_defaults()] to customize it. Most of the default linters
+#' are based on [the tidyverse style guide](https://style.tidyverse.org/).
 #'
 #' The set of default linters is as follows (any parameterised linters, eg, `line_length_linter` use their default
 #' argument(s), see `?<linter_name>` for details):
@@ -137,7 +138,7 @@ all_undesirable_functions <- modify_defaults(
 )
 
 #' @rdname default_undesirable_functions
-#' @format
+#' @format NULL
 #' @export
 default_undesirable_functions <- all_undesirable_functions[names(all_undesirable_functions) %in% c(
   "attach",
@@ -164,7 +165,7 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
 )]
 
 #' @rdname default_undesirable_functions
-#' @format
+#' @format NULL
 #' @export
 all_undesirable_operators <- modify_defaults(
   defaults = list(),
@@ -182,7 +183,7 @@ all_undesirable_operators <- modify_defaults(
 )
 
 #' @rdname default_undesirable_functions
-#' @format
+#' @format NULL
 #' @export
 default_undesirable_operators <- all_undesirable_operators[names(all_undesirable_operators) %in% c(
   ":::",

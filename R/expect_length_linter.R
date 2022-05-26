@@ -8,6 +8,16 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_length_linter <- function() {
+  # TODO(michaelchirico): also catch expect_true(length(x) == 1)
+  xpath <- sprintf("//expr[
+    expr[SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']]
+    and expr[
+      expr[SYMBOL_FUNCTION_CALL[text() = 'length']]
+      and (position() = 2 or preceding-sibling::expr[NUM_CONST])
+    ]
+    and not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])
+  ]")
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -15,25 +25,9 @@ expect_length_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    # TODO(michaelchirico): also catch expect_true(length(x) == 1)
-    xpath <- sprintf("//expr[
-      expr[SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']]
-      and expr[
-        expr[SYMBOL_FUNCTION_CALL[text() = 'length']]
-        and (position() = 2 or preceding-sibling::expr[NUM_CONST])
-      ]
-      and not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])
-    ]")
-
     bad_expr <- xml2::xml_find_all(xml, xpath)
-    xml_nodes_to_lints(
-      bad_expr,
-      source_expression,
-      function(expr) {
-        matched_function <- xp_call_name(expr)
-        sprintf("expect_length(x, n) is better than %s(length(x), n)", matched_function)
-      },
-      type = "warning"
-    )
+    matched_function <- xp_call_name(bad_expr)
+    lint_message <- sprintf("expect_length(x, n) is better than %s(length(x), n)", matched_function)
+    xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "warning")
   })
 }

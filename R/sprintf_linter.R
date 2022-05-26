@@ -7,6 +7,15 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 sprintf_linter <- function() {
+  xpath <- "//expr[
+    expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf'] and
+    (
+      OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST or
+      SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST
+    ) and
+    not(expr/SYMBOL[text() = '...'])
+  ]"
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
       return(list())
@@ -14,58 +23,70 @@ sprintf_linter <- function() {
 
     xml <- source_expression$full_xml_parsed_content
 
-    xpath <- "//expr[
-      expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf'] and
-      OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST
-    ]"
-
     sprintf_calls <- xml2::xml_find_all(xml, xpath)
 
-    get_range_text <- function(content, line1, col1, line2, col2) {
-      lines <- content[line1:line2]
-      lines[length(lines)] <- substr(lines[length(lines)], 1L, col2)
-      lines[1L] <- substr(lines[1L], col1, nchar(lines[1L]))
-      lines
-    }
+    message <- vapply(sprintf_calls, capture_sprintf_warning, character(1L))
 
-    line1 <- as.integer(xml2::xml_attr(sprintf_calls, "line1"))
-    col1 <- as.integer(xml2::xml_attr(sprintf_calls, "col1"))
-    line2 <- as.integer(xml2::xml_attr(sprintf_calls, "line2"))
-    col2 <- as.integer(xml2::xml_attr(sprintf_calls, "col2"))
-
-    is_missing <- function(x) {
-      is.symbol(x) && !nzchar(x)
-    }
-
-    result <- .mapply(function(line1, col1, line2, col2) {
-      text <- get_range_text(source_expression$file_lines, line1, col1, line2, col2)
-      expr <- tryCatch(parse(text = text, keep.source = FALSE)[[1L]], error = function(e) NULL)
-      if (is.call(expr) &&
-        is.language(expr[[1L]]) &&
-        is.character(expr[[2L]])) {
-        if (length(expr) >= 3L) {
-          for (i in 3L:length(expr)) {
-            if (!is_missing(expr[[i]]) && !is.atomic(expr[[i]])) {
-              expr[[i]] <- 0L
-            }
-          }
-        }
-
-        res <- tryCatch(eval(expr, envir = baseenv()), warning = identity, error = identity)
-        if (inherits(res, "condition")) {
-          Lint(
-            filename = source_expression$filename,
-            line_number = line1,
-            column_number = col1,
-            type = "warning",
-            message = conditionMessage(res),
-            line = source_expression$file_lines[line1],
-            ranges = list(c(col1, col2))
-          )
-        }
-      }
-    }, list(line1, col1, line2, col2), NULL)
-
-    result[vapply(result, is.list, logical(1L))]
+    has_message <- !is.na(message)
+    xml_nodes_to_lints(
+      sprintf_calls[has_message],
+      source_expression = source_expression,
+      lint_message = message[has_message],
+      type = "warning"
+    )
   })
+}
+
+#' Zap sprintf() call to contain only constants
+#'
+#' Set all extra arguments to 0L if they aren't a constant
+#'
+#' @param parsed_expr A parsed `sprintf()` call
+#'
+#' @return A `sprintf()` call with all non-constants replaced by `0L`
+#' (which is compatible with all sprintf format specifiers)
+#'
+#' @noRd
+zap_extra_args <- function(parsed_expr) {
+  is_missing <- function(x) {
+    is.symbol(x) && !nzchar(x)
+  }
+
+  if ("fmt" %in% names(parsed_expr)) {
+    fmt_loc <- which(names(parsed_expr) == "fmt")
+  } else {
+    fmt_loc <- 2L
+  }
+
+  if (length(parsed_expr) >= 3L) {
+    for (i in setdiff(seq_along(parsed_expr), c(1L, fmt_loc))) {
+      if (!is_missing(parsed_expr[[i]]) && !is.atomic(parsed_expr[[i]])) {
+        parsed_expr[[i]] <- 0L
+      }
+    }
+  }
+  parsed_expr
+}
+
+#' Anticipate warnings of a sprintf() call
+#'
+#' Try running a static sprintf() call to determine whether it will produce warnings or errors due to format
+#' misspecification
+#'
+#' @param xml An XML node representing a `sprintf()` call (i.e. the `<expr>` node containing the call)
+#'
+#' @return A string, either `NA_character_` or the text of generated errors and warnings from the `sprintf()` call when
+#' replacing all dynamic components by 0, which is compatible with all format specifiers.
+#'
+#' @noRd
+capture_sprintf_warning <- function(xml) {
+  text <- get_r_code(xml)
+  parsed_expr <- try_silently(parse(text = text, keep.source = FALSE)[[1L]])
+  parsed_expr <- zap_extra_args(parsed_expr)
+  res <- tryCatch(eval(parsed_expr, envir = baseenv()), warning = identity, error = identity)
+  if (inherits(res, "condition")) {
+    conditionMessage(res)
+  } else {
+    NA_character_
+  }
 }

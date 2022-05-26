@@ -23,6 +23,32 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 regex_subset_linter <- function() {
+  parent_expr_cond <- xp_and(
+    "OP-LEFT-BRACKET",
+    # parent::expr for LEFT_ASSIGN and RIGHT_ASSIGN, but, strangely,
+    #   parent::equal_assign for EQ_ASSIGN. So just use * as a catchall.
+    "not(parent::*[LEFT_ASSIGN or EQ_ASSIGN or RIGHT_ASSIGN])"
+  )
+  # See https://www.w3.org/TR/1999/REC-xpath-19991116/#booleans;
+  #   equality of nodes is based on the string value of the nodes, which
+  #   is basically what we need, i.e., whatever expression comes in
+  #   <expr>[grepl(pattern, <expr>)] matches exactly, e.g. names(x)[grepl(ptn, names(x))].
+  subset_cond_fmt <- xp_and(
+    "expr[SYMBOL_FUNCTION_CALL[%s]]",
+    "expr[position() = %d] = parent::expr/expr[1]"
+  )
+  grep_xpath <- sprintf(
+    "//expr[%s]/expr[%s]",
+    parent_expr_cond,
+    sprintf(subset_cond_fmt, xp_text_in_table(c("grep", "grepl")), 3L)
+  )
+
+  stringr_xpath <- sprintf(
+    "//expr[%s]/expr[%s]",
+    parent_expr_cond,
+    sprintf(subset_cond_fmt, xp_text_in_table(c("str_detect", "str_which")), 2L)
+  )
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -30,42 +56,14 @@ regex_subset_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    parent_expr_cond <- xp_and(
-      "OP-LEFT-BRACKET",
-      # parent::expr for LEFT_ASSIGN and RIGHT_ASSIGN, but, strangely,
-      #   parent::equal_assign for EQ_ASSIGN. So just use * as a catchall.
-      "not(parent::*[LEFT_ASSIGN or EQ_ASSIGN or RIGHT_ASSIGN])"
-    )
-    # See https://www.w3.org/TR/1999/REC-xpath-19991116/#booleans;
-    #   equality of nodes is based on the string value of the nodes, which
-    #   is basically what we need, i.e., whatever expression comes in
-    #   <expr>[grepl(pattern, <expr>)] matches exactly, e.g. names(x)[grepl(ptn, names(x))].
-    subset_cond_fmt <- xp_and(
-      "expr[SYMBOL_FUNCTION_CALL[%s]]",
-      "expr[position() = %d] = parent::expr/expr[1]"
-    )
-    grep_xpath <- sprintf(
-      "//expr[%s]/expr[%s]",
-      parent_expr_cond,
-      sprintf(subset_cond_fmt, xp_text_in_table(c("grep", "grepl")), 3L)
-    )
-
     grep_expr <- xml2::xml_find_all(xml, grep_xpath)
 
     grep_lints <- xml_nodes_to_lints(
       grep_expr,
       source_expression = source_expression,
-      lint_message = paste(
-        "Prefer grep(pattern, x, ..., value = TRUE) over",
-        "x[grep(pattern, x, ...)] and x[grepl(pattern, x, ...)]."
-      ),
+      lint_message =
+        "Prefer grep(pattern, x, ..., value = TRUE) over x[grep(pattern, x, ...)] and x[grepl(pattern, x, ...)].",
       type = "warning"
-    )
-
-    stringr_xpath <- sprintf(
-      "//expr[%s]/expr[%s]",
-      parent_expr_cond,
-      sprintf(subset_cond_fmt, xp_text_in_table(c("str_detect", "str_which")), 2L)
     )
 
     stringr_expr <- xml2::xml_find_all(xml, stringr_xpath)
@@ -73,10 +71,8 @@ regex_subset_linter <- function() {
     stringr_lints <- xml_nodes_to_lints(
       stringr_expr,
       source_expression = source_expression,
-      lint_message = paste(
-        "Prefer stringr::str_subset(x, pattern) over",
-        "x[str_detect(x, pattern)] and x[str_which(x, pattern)]."
-      ),
+      lint_message =
+        "Prefer stringr::str_subset(x, pattern) over x[str_detect(x, pattern)] and x[str_which(x, pattern)].",
       type = "warning"
     )
 

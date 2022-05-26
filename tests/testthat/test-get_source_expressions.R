@@ -237,6 +237,15 @@ test_that("returned data structure is complete", {
   expect_identical(exprs$lines, lines_with_attr)
 })
 
+test_that("#1262: xml_parsed_content gets returned as missing even if there's no parsed_content", {
+  tempfile <- withr::local_tempfile()
+  writeLines('"\\R"', tempfile)
+
+  source_expressions <- get_source_expressions(tempfile)
+  expect_null(source_expressions$expressions[[1L]]$full_parsed_content)
+  expect_identical(source_expressions$expressions[[1L]]$full_xml_parsed_content, xml2::xml_missing())
+})
+
 skip_if_not_installed("patrick")
 # NB: this is just a cursory test for linters not to
 #   fail on files where the XML content is xml_missing;
@@ -269,9 +278,8 @@ patrick::with_parameters_test_that(
   {
     linter <- eval(call(linter))
     expression <- expressions[[expression_idx]]
-    # TODO(#1160): try and simplify this to expect_length(linter(.), 0L)
     expect_warning(lints <- linter(expression), NA)
-    expect_identical(length(flatten_lints(lints)), 0L)
+    expect_length(lints, 0L)
   },
   .test_name = param_df$.test_name,
   linter = param_df$linter,
