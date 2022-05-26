@@ -60,6 +60,8 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
       logical(1L)
     )
 
+    # TODO(michaelchirico): instead of vectorizing over packages,
+    #   xml_find_all SYMBOL_PACKAGE namespaces and check imported_pkgs %in%
     is_ns_used <- vapply(
       imported_pkgs,
       function(pkg) {
@@ -74,21 +76,17 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
       is_unused[is_ns_used] <- FALSE
     }
 
-    xml_nodes_to_lints(
-      import_exprs[is_unused],
-      source_expression = source_expression,
-      lint_message = function(import_expr) {
-        pkg <- get_r_string(import_expr, xpath = "expr[STR_CONST|SYMBOL]")
-        if (is_ns_used[match(pkg, imported_pkgs)]) {
-          paste0(
-            "package '", pkg, "' is only used by namespace. ",
-            "Check that it is installed using loadNamespace() instead."
-          )
-        } else {
-          paste0("package '", pkg, "' is attached but never used.")
-        }
-      },
-      type = "warning"
+    import_exprs <- import_exprs[is_unused]
+
+    unused_packages <- get_r_string(import_exprs, xpath = "expr[STR_CONST | SYMBOL]")
+    lint_message <- ifelse(
+      is_ns_used[is_unused][unused_packages],
+      paste0(
+        "Package '", unused_packages, "' is only used by namespace. ",
+        "Check that it is installed using loadNamespace() instead."
+      ),
+      paste0("Package '", unused_packages, "' is attached but never used.")
     )
+    xml_nodes_to_lints(import_exprs, source_expression, lint_message, type = "warning")
   })
 }
