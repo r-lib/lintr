@@ -35,15 +35,15 @@ expect_null_linter <- function() {
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
     matched_function <- xp_call_name(bad_expr, depth = 0L)
-    lint_message_fmt <- ifelse(
+    msg <- ifelse(
       matched_function %in% c("expect_equal", "expect_identical"),
-      "expect_null(x) is better than %s(x, NULL)",
+      sprintf("expect_null(x) is better than %s(x, NULL)", matched_function),
       "expect_null(x) is better than expect_true(is.null(x))"
     )
     xml_nodes_to_lints(
       bad_expr,
       source_expression,
-      lint_message = sprintf(lint_message_fmt, matched_function),
+      lint_message = msg,
       type = "warning"
     )
   })
