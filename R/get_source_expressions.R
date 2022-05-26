@@ -422,7 +422,7 @@ get_single_source_expression <- function(loc,
   line_nums <- parsed_content$line1[loc]:parsed_content$line2[loc]
   expr_lines <- source_expression$lines[line_nums]
   names(expr_lines) <- line_nums
-  content <- get_content(expr_lines, parsed_content[loc, ])
+  content <- get_content(source_expression$lines, parsed_content[loc, ])
   id <- parsed_content$id[loc]
   pc <- parsed_content[which(top_level_map == id), ]
   list(
