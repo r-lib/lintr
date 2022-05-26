@@ -8,21 +8,21 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 any_is_na_linter <- function() {
+  xpath <- "//expr[
+    expr[SYMBOL_FUNCTION_CALL[text() = 'any']]
+    and expr[expr[SYMBOL_FUNCTION_CALL[text() = 'is.na']]]
+    and (
+      count(expr) = 2
+      or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm'])
+    )
+  ]"
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
 
     xml <- source_expression$xml_parsed_content
-
-    xpath <- "//expr[
-      expr[SYMBOL_FUNCTION_CALL[text() = 'any']]
-      and expr[expr[SYMBOL_FUNCTION_CALL[text() = 'is.na']]]
-      and (
-        count(expr) = 2
-        or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm'])
-      )
-    ]"
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
