@@ -75,13 +75,16 @@
 * New `paren_body_linter()` checks that there is a space between a right parenthesis and a body expression. (#809, @kpagacz)
 * Added `T_and_F_symbol_linter()` (#517, @AshesITR)
 * Added `semicolon_linter()` (#683, @AshesITR)
-* `undesirable_function_linter()`: Added new functions to the defaults related to debugging (#876, @michaelchirico):
-   + `browser()`
-   + `debug()`
-   + `debugcall()`
-   + `debugonce()`
-   + `trace()`
-   + `untrace()`
+* `undesirable_function_linter()`
+   + Added new functions to the defaults related to debugging (#876, @michaelchirico):
+     - `browser()`
+     - `debug()`
+     - `debugcall()`
+     - `debugonce()`
+     - `trace()`
+     - `untrace()`
+   + No longer lints `library()` and `require()` calls attaching a package with an undesired name,
+     e.g. `library(foo)` (#814, @kpagacz and @michaelchirico)
 * `assignment_linter()`: extended and add arguments (#915, @michaelchirico)
    + right assignments are now linted by default (`->` and `->>`)
    + new argument `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`
@@ -238,6 +241,7 @@ of general interest to the broader R community. More will be included in future 
    + Fix possible error on invalid XML produced by `xmlparsedata::xml_parse_data()` (#559, #560, @renkun-ken)
    + Fix handling zero-length variable name error (#566, #567, @renkun-ken)
    + Malformed Rmd files now cause a lint instead of an error (#571, #575, @AshesITR)
+   + No longer fails if `getParseData()` returns a truncated (invalid) Unicode character as parsed text (#815, #816, @leogama)
 * `linters_with_defaults()` (formerly `with_defaults()`)
    + No longer duplicates the `lintr_function` class when it is already present (#511, #612, @AshesITR)
    + Warns if a named argument is `NULL` but its name is not in `default` (#1049, @AshesITR)
@@ -246,14 +250,9 @@ of general interest to the broader R community. More will be included in future 
 * `line_length_linter()`: fix a bug causing duplicate lints for lines containing multiple expressions (#681, #682, @AshesITR)
 * `linters_with_defaults()` handles automatic naming of very long arguments correctly (#774, @michaelchirico)
 * `object_name_linter()` no longer lints names used for subsetting (#582, @AshesITR)
-* `lint_package()` warns and returns `NULL` if no package is found (instead of giving a peculiar error message)
-  (#776, @michaelchirico)
-* `lint_package()` is also stricter about what it considers to be a package -- folders named `DESCRIPTION` are ignored
-  (#702, @michaelchirico)
-* `get_source_expressions()` no longer fails if `getParseData()` returns a truncated (invalid) Unicode character as
-  parsed text (#815, #816, @leogama)
-* `undesirable_function_linter()` no longer lints `library()` and `require()` calls attaching a package with an 
-  undesired name, e.g. `library(foo)` (#814, @kpagacz and @michaelchirico)
+* `lint_package()`
+   + warns and returns `NULL` if no package is found (instead of giving a peculiar error message; #776, @michaelchirico)
+   + stricter about what is considered to be a package -- folders named `DESCRIPTION` are ignored (#702, @michaelchirico)
 * Error message for mismatched starts and ends of exclusion ranges is now more helpful.
   (#571, #860, @AshesITR and @danielinteractive)
 * Improved location information for R parse errors (#894, #892, @renkun-ken and @AshesITR)
