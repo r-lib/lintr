@@ -112,10 +112,10 @@ package_hooks_linter <- function() {
     library_require_bad_call <- xml2::xml_text(library_require_expr)
     library_require_hook <- xml2::xml_find_chr(library_require_expr, hook_xpath)
     library_require_message <- character(length(library_require_bad_call))
-    is_install_packages <- library_require_bad_call == "installed.packages"
-    library_require_message[is_install_packages] <-
+    is_installed_packages <- library_require_bad_call == "installed.packages"
+    library_require_message[is_installed_packages] <-
       sprintf("Don't slow down package load by running installed.packages() in %s().", library_require_hook)
-    library_require_message[!is_install_packages] <-
+    library_require_message[!is_installed_packages] <-
       sprintf("Don't alter the search() path in %s() by calling %s().", library_require_hook, library_require_bad_call)
     library_require_lints <-
       xml_nodes_to_lints(library_require_expr, source_expression, library_require_message, type = "warning")
