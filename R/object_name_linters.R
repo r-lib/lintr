@@ -52,6 +52,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
       xml2::xml_text(assignments)
     )
 
+    # run namespace_imports at run-time, not "compile" time to allow package structure to change
     generics <- c(
       declared_s3_generics(xml),
       imported_s3_generics(namespace_imports(find_package(source_expression$filename)))$fun,
@@ -171,6 +172,7 @@ object_length_linter <- function(length = 30L) {
       xml2::xml_text(assignments)
     )
 
+    # run namespace_imports at run-time, not "compile" time to allow package structure to change
     ns_imports <- namespace_imports(find_package(source_expression$filename))
     generics <- strip_names(c(
       declared_s3_generics(xml),
