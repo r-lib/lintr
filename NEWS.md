@@ -85,6 +85,9 @@
      - `untrace()`
    + No longer lints `library()` and `require()` calls attaching a package with an undesired name,
      e.g. `library(foo)` (#814, @kpagacz and @michaelchirico)
+   + No longer lints undesirable symbols if they are used as names in `$` extractions (#1050, @AshesITR)
+   + Added more explanation why certain functions might be undesirable and what alternatives to use;
+     ditto for `undesirable_operator_linter()` (#1133, #1146, #1159, @AshesITR)
 * `assignment_linter()`: extended and add arguments (#915, @michaelchirico)
    + right assignments are now linted by default (`->` and `->>`)
    + new argument `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`
@@ -113,9 +116,12 @@
    + extended to correctly detect imported functions when linting packages (#642, @AshesITR)
    + correctly detect assignment generics like `names<-.class_name` (#843, @jonkeane)
 * `object_usage_linter()`
-   + correctly detect global variables if there are top-level dollar-assignments (#666, #709, @AshesITR)
-   + correctly report usage warnings spanning multiple lines (#507, @AshesITR)
-   + detects usages inside `glue::glue()` constructs (#942, @AshesITR)
+   + detect global variables if there are top-level dollar-assignments (#666, #709, @AshesITR)
+   + report usage warnings spanning multiple lines (#507, @AshesITR)
+   + detect usages inside `glue::glue()` constructs (#942, @AshesITR)
+   + detect within functions assigned with `=` instead of `<-` (#1081, @michaelchirico)
+   + detect functions exported by packages that are explicitly attached using `library()` or
+     `require()` calls (#1127, @AshesITR)
 * `object_length_linter()`: correctly detect generics and only counts the implementation class towards the length.
   This prevents false positive lints in the case of long generic names, e.g.
   `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
@@ -235,6 +241,7 @@ of general interest to the broader R community. More will be included in future 
 * **Jenkins CI**: Support for writing comments to GitHub repo when running in Jenkins CI (#488, @fdlk)
 * `seq_linter()`: improve lint message to be clearer about the reason for linting. (#522, @michaelchirico)
 * `unneeded_concatenation_linter()`: correctly considers arguments piped in via magrittr `%>%` (#573, #585, @michaelquinn32)
+* **Raw strings**: Several linters tightened internal logic to allow for raw strings like `R"( a\string )"` (#1034, @michaelchirico)
 
 ## Bug fixes
 
@@ -247,6 +254,8 @@ of general interest to the broader R community. More will be included in future 
    + Fix handling zero-length variable name error (#566, #567, @renkun-ken)
    + Malformed Rmd files now cause a lint instead of an error (#571, #575, @AshesITR)
    + No longer fails if `getParseData()` returns a truncated (invalid) Unicode character as parsed text (#815, #816, @leogama)
+   + Fixes the `text` value for `STR_CONST` nodes involving 1- or 2-width octal escapes
+    (e.g. `"\1"`) to account for an R parser bug (https://bugs.r-project.org/show_bug.cgi?id=18323; #1056, @michaelchirico)
 * `linters_with_defaults()` (formerly `with_defaults()`)
    + No longer duplicates the `lintr_function` class when it is already present (#511, #612, @AshesITR)
    + Warns if a named argument is `NULL` but its name is not in `default` (#1049, @AshesITR)
@@ -261,15 +270,6 @@ of general interest to the broader R community. More will be included in future 
 * Error message for mismatched starts and ends of exclusion ranges is now more helpful.
   (#571, #860, @AshesITR and @danielinteractive)
 * Improved location information for R parse errors (#894, #892, @renkun-ken and @AshesITR)
-* `get_source_expressions()` fixes the `text` value for `STR_CONST` nodes involving 1- or 2-width octal escapes
-  (e.g. `"\1"`) to account for an R parser bug (https://bugs.r-project.org/show_bug.cgi?id=18323)
-* Several linters tightened internal logic to allow for raw strings like `R"( a\string )"` (#1034, @michaelchirico)
-* `object_usage_linter()` correctly detects functions assigned with `=` instead of `<-` (#1081, @michaelchirico)
-* `undesirable_function_linter()` no longer lints undesirable symbols if they are used as names (#1050, @AshesITR)
-* `object_usage_linter()` now detects functions exported by packages that are explicitly attached using `library()` or
-  `require()` calls (#1127, @AshesITR)
-* Added more explanation why certain functions and operators might be undesirable and what alternatives to use
-  (#1133, #1146, #1159, @AshesITR)
 
 ## Internals
 
