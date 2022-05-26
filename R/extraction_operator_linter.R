@@ -26,7 +26,7 @@ extraction_operator_linter <- function() {
             line_number = line_num,
             column_number = start_col_num,
             type = "warning",
-            message = sprintf("Use `[[` instead of `%s`  to extract an element.", token[["text"]]),
+            message = sprintf("Use `[[` instead of `%s` to extract an element.", token[["text"]]),
             line = line,
             ranges = list(c(start_col_num, end_col_num))
           )
