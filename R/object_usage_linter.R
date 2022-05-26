@@ -75,27 +75,29 @@ object_usage_linter <- function(interpret_glue = TRUE) {
       # e.g. `not_existing<-`(a, b)
       res$name <- rex::re_substitutes(res$name, rex::rex("<-"), "")
 
-      linted_symbol_xpath <- sprintf(
-        "
-        descendant::SYMBOL[(%1$s) and %2$s] |
-        descendant::SYMBOL_FUNCTION_CALL[(%1$s) and %2$s]
-        ",
-        xp_text_in_table(paste0(c("", "`", "'", '"'), res$name, c("", "`", "'", '"'))),
-        ifelse(
-          res$line1 == res$line2,
-          sprintf("@line1 = %d", res$line1),
-          sprintf("@line1 >= %d and @line1 <= %d", res$line1, res$line2)
-        )
+      lintable_symbols <- xml2::xml_find_all(
+        fun_assignment,
+        "descendant::SYMBOL | descendant::SYMBOL_FUNCTION_CALL"
       )
+
+      lintable_symbol_names <- get_r_string(lintable_symbols)
+      lintable_symbol_lines <- as.integer(xml2::xml_attr(lintable_symbols, "line1"))
+
 
       lapply(
         seq_len(nrow(res)),
         function(row_num) {
           row <- res[row_num, ]
 
-          linted_node <- xml2::xml_find_first(fun_assignment, linted_symbol_xpath[row_num])
+          matched_node <- which(
+            lintable_symbol_names == row$name &
+              lintable_symbol_lines >= row$line1 &
+              lintable_symbol_lines <= row$line2
+          )
 
-          if (is.na(linted_node)) {
+          if (length(matched_node)) {
+            linted_node <- lintable_symbols[[matched_node[1L]]]
+          } else {
             linted_node <- fun_assignment
           }
 
