@@ -213,7 +213,7 @@ of general interest to the broader R community. More will be included in future 
   in source files or named lists of line numbers in `.lintr`.
   Also allows for partial matching as long as the supplied prefix is unique, e.g.
   `# nolint: infix_spaces` works to exclude `infix_spaces_linter` (#660, #872, @AshesITR)
-* `object_name_linter`: new styles `"symbols"` and `"SNAKE_CASE"`
+* `object_name_linter()`: new styles `"symbols"` and `"SNAKE_CASE"`
   (#494, #495, #615, #670, @michaelchirico and @AshesITR)
 * `lint()`: new optional argument `text` for supplying a string or lines directly, e.g. if the file is already 
   in memory or linting is being done _ad hoc_. (#503, @renkun-ken)
@@ -241,7 +241,11 @@ of general interest to the broader R community. More will be included in future 
 * **Jenkins CI**: Support for writing comments to GitHub repo when running in Jenkins CI (#488, @fdlk)
 * `seq_linter()`: improve lint message to be clearer about the reason for linting. (#522, @michaelchirico)
 * `unneeded_concatenation_linter()`: correctly considers arguments piped in via magrittr `%>%` (#573, #585, @michaelquinn32)
-* **Raw strings**: Several linters tightened internal logic to allow for raw strings like `R"( a\string )"` (#1034, @michaelchirico)
+* `unneeded_concatenation_linter()`: added support for the native pipe `|>` (#1270, #1271, @AshesITR)
+* `function_left_parentheses_linter()`: improved location information (#1266, #1267, @AshesITR)
+* `object_usage_linter()`: improved location information in some cases (#1285, @AshesITR)
+* **Raw strings**: Several linters tightened internal logic to allow for raw strings like `R"( a\string )"` 
+  (#1034, #1285, @michaelchirico and @AshesITR)
 * Improved S3 generic detection for non-standard S3 generics where `UseMethod()` is called after several
   preceding expressions (#846, @jonkeane)
 
@@ -272,6 +276,7 @@ of general interest to the broader R community. More will be included in future 
 * Error message for mismatched starts and ends of exclusion ranges is now more helpful.
   (#571, #860, @AshesITR and @danielinteractive)
 * Improved location information for R parse errors (#894, #892, @renkun-ken and @AshesITR)
+* `extraction_operator_linter()` no longer lints `x[NULL]` (#1273, #1286, @AshesITR)
 
 ## Internals
 
@@ -279,6 +284,8 @@ of general interest to the broader R community. More will be included in future 
   instead of R 3.6 (#803, @ dragosmg)
 * Added a secondary, more restrictive lint workflow - `lint-changed-files` - for newly written / modified code
   (#641, @dragosmg) 
+* Added a new, more restrictive test workflow - `test-package` - that fails on warnings emitted by tests 
+  (#1263, #1272, @AshesITR)
 * Switched CI from Travis to GitHub Actions, using the full tidyverse recommended R CMD check. Code coverage and linting 
   are implemented using separate GitHub Actions workflows (#572, @dragosmg)
 * Several optional `Imported` packages have become `Suggested` dependencies: `httr`, `testthat`, and `rstudioapi`.
