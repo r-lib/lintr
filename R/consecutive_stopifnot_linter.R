@@ -9,11 +9,9 @@
 consecutive_stopifnot_linter <- function() {
   # match on the expr, not the SYMBOL_FUNCTION_CALL, to ensure
   #   namespace-qualified calls only match if the namespaces do.
-  xpath <- glue::glue("
-  //expr[
+  xpath <- glue::glue("//expr[
     expr[SYMBOL_FUNCTION_CALL[text() = 'stopifnot']] = following-sibling::expr[1]/expr
-  ]
-  ")
+  ]")
 
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level
