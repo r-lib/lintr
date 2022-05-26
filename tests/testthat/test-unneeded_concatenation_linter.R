@@ -24,7 +24,7 @@ test_that("returns the correct linting", {
   )
 })
 
-test_that("Correctly handles concatenation within pipes", {
+test_that("Correctly handles concatenation within magrittr pipes", {
   linter <- unneeded_concatenation_linter()
   expect_lint('"a" %>% c("b")', NULL, linter)
   expect_lint(
@@ -37,7 +37,9 @@ test_that("Correctly handles concatenation within pipes", {
     "Unneeded concatenation without arguments",
     linter
   )
+})
 
+test_that("Correctly handles concatenation within native pipes" , {
   skip_if_not_r_version("4.1.0")
   expect_lint('"a" |> c("b")', NULL, linter)
   expect_lint(

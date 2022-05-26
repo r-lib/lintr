@@ -40,12 +40,15 @@ unneeded_concatenation_linter <- function() {
     c_calls <- xml2::xml_find_all(xml, xpath_call)
     num_args <- as.integer(!is.na(xml2::xml_find_first(c_calls, to_pipe_xpath))) +
       as.integer(xml2::xml_find_num(c_calls, num_args_xpath))
+    is_unneeded <- num_args <= 1L
+    c_calls <- c_calls[is_unneeded]
+    num_args <- num_args[is_unneeded]
     msg <- ifelse(num_args == 0L, msg_empty, msg_const)
 
     xml_nodes_to_lints(
-      c_calls[num_args <= 1L],
+      c_calls,
       source_expression = source_expression,
-      lint_message = msg[num_args <= 1L]
+      lint_message = msg
     )
   })
 }
