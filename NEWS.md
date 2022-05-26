@@ -105,6 +105,7 @@
 * `equals_na_linter()` (#545, @michaelchirico)
    + extended to lint `x != NA` (before, only `==` was caught) and `NA == x`(before, only `NA` on RHS was caught)
    + extended to skip usages in comments like `is.na(x) # use is.na(x), not x == NA`
+* `spaces_inside_linter()`: ignore spaces preceding trailing comments (#636, @michaelchirico)
 
 ### Other noteworthy changes
 
@@ -220,9 +221,7 @@ of general interest to the broader R community. More will be included in future 
 * `get_source_expressions()`:
    + Fix possible error on invalid XML produced by `xmlparsedata::xml_parse_data()` (#559, #560, @renkun-ken)
    + Fix handling zero-length variable name error (#566, #567, @renkun-ken)
-* `equals_na_linter()` now lints `x != NA` and `NA == x`, and skips usages in comments (#545, @michaelchirico)
-* Malformed Rmd files now cause a lint instead of an error (#571, #575, @AshesITR)
-* `spaces_inside_linter()` ignores spaces preceding trailing comments (#636, @michaelchirico)
+   + Malformed Rmd files now cause a lint instead of an error (#571, #575, @AshesITR)
 * `linters_with_defaults()` no longer duplicates the `lintr_function` class when it is already present 
   (#511, #612, @AshesITR)
 * `linters_with_defaults()` now warns if a named argument is `NULL` but its name is not in `default` (#1049, @AshesITR)
