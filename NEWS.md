@@ -218,13 +218,13 @@ of general interest to the broader R community. More will be included in future 
   directories do not exist (#60, @dankessler).
 * `extract_r_source()` handles Rmd containing unevaluated code blocks with named format specifiers (#472, @russHyde)
 * **RStudio**: Source markers are cleared when there are no lints (#520, @AshesITR)
-* `get_source_expressions()`:
+* `get_source_expressions()`
    + Fix possible error on invalid XML produced by `xmlparsedata::xml_parse_data()` (#559, #560, @renkun-ken)
    + Fix handling zero-length variable name error (#566, #567, @renkun-ken)
    + Malformed Rmd files now cause a lint instead of an error (#571, #575, @AshesITR)
-* `linters_with_defaults()` no longer duplicates the `lintr_function` class when it is already present 
-  (#511, #612, @AshesITR)
-* `linters_with_defaults()` now warns if a named argument is `NULL` but its name is not in `default` (#1049, @AshesITR)
+* `linters_with_defaults()` (formerly `with_defaults()`)
+   + No longer duplicates the `lintr_function` class when it is already present (#511, #612, @AshesITR)
+   + Warns if a named argument is `NULL` but its name is not in `default` (#1049, @AshesITR)
 * `brace_linter()` and `no_tab_linter()` also use more reliable matching (e.g., excluding matches found in
   comments; #441 and #545, @russHyde)
 * `brace_linter()` now marks lints at the opening brace instead of the closing parenthesis, making fixing the lints
