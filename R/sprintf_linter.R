@@ -7,6 +7,15 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 sprintf_linter <- function() {
+  xpath_positional <- "//expr[
+    expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf'] and
+    (
+      OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST or
+      SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST
+    ) and
+    not(expr/SYMBOL[text() = '...'])
+  ]"
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
       return(list())
@@ -14,12 +23,7 @@ sprintf_linter <- function() {
 
     xml <- source_expression$full_xml_parsed_content
 
-    xpath <- "//expr[
-      expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf'] and
-      OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST
-    ]"
-
-    sprintf_calls <- xml2::xml_find_all(xml, xpath)
+    sprintf_calls <- xml2::xml_find_all(xml, xpath_positional)
 
     message <- vapply(sprintf_calls, capture_sprintf_warning, character(1L))
 
@@ -48,8 +52,14 @@ zap_extra_args <- function(parsed_expr) {
     is.symbol(x) && !nzchar(x)
   }
 
+  if ("fmt" %in% names(parsed_expr)) {
+    fmt_loc <- which(names(parsed_expr) == "fmt")
+  } else {
+    fmt_loc <- 2L
+  }
+
   if (length(parsed_expr) >= 3L) {
-    for (i in 3L:length(parsed_expr)) {
+    for (i in setdiff(seq_along(parsed_expr), c(1L, fmt_loc))) {
       if (!is_missing(parsed_expr[[i]]) && !is.atomic(parsed_expr[[i]])) {
         parsed_expr[[i]] <- 0L
       }
@@ -72,10 +82,7 @@ zap_extra_args <- function(parsed_expr) {
 capture_sprintf_warning <- function(xml) {
   text <- xml2::xml_text(xml)
   parsed_expr <- try_silently(parse(text = text, keep.source = FALSE)[[1L]])
-  if (!is.character(parsed_expr[[2L]])) { # sprintf(fmt = "") must be a constant format
-    return(NA_character_)
-  }
-  parsed_expr <- zap_extra_args(parsed_expr)
+  parsed_expr <- zap_extra_args(parsed_expr, is_named)
   res <- tryCatch(eval(parsed_expr, envir = baseenv()), warning = identity, error = identity)
   if (inherits(res, "condition")) {
     conditionMessage(res)
