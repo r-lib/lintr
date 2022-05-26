@@ -5,6 +5,8 @@
 #' @param linter_names character vector of names of the active linters, used for parsing inline exclusions.
 #' @param ... additional arguments passed to [parse_exclusions()]
 #' @eval c(
+#'   # we use @eval for the details section to avoid a literal nolint exclusion tag with non-existing linter names
+#'   # those produce a warning from [parse_exclusions()] otherwise.
 #'   "@details",
 #'   "Exclusions can be specified in three different ways.",
 #'   "",
