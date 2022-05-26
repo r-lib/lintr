@@ -76,6 +76,23 @@ object_usage_linter <- function(interpret_glue = TRUE) {
 
           row$name <- re_substitutes(row$name, rex("<-"), "")
 
+          if (!nzchar(row$line2) || row$line2 == row$line1) {
+            linted_node <- xml2::xml_find_first(
+              xml,
+              sprintf("//SYMBOL[text() = '%s' and @line1 = %d]", row$name, org_line_num)
+            )
+            if (!is.na(linted_node)) {
+              return(
+                xml_nodes_to_lints(
+                  linted_node,
+                  source_expression = source_expression,
+                  lint_message = row$message,
+                  type = "warning"
+                )
+              )
+            }
+          }
+
           location <- re_matches(line, rex(boundary, row$name, boundary), locations = TRUE)
 
           # Handle multi-line lints where name occurs on subsequent lines (#507)
