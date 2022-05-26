@@ -8,13 +8,13 @@
 #' @export
 extraction_operator_linter <- function() {
   constant_nodes_in_brackets <- paste0("self::", c("expr", "OP-PLUS", "NUM_CONST", "STR_CONST", "NULL_CONST"))
-  xpath <- "
+  xpath <- glue::glue("
     //OP-DOLLAR[not(preceding-sibling::expr[1]/SYMBOL[text() = 'self' or text() = '.self'])] |
     //OP-LEFT-BRACKET[
       not(following-sibling::expr[1]/descendant::*[not({xp_or(constant_nodes_in_brackets)})]) and
       not(following-sibling::OP-COMMA)
     ]
-  "
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
