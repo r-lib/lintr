@@ -81,11 +81,11 @@ object_usage_linter <- function(interpret_glue = TRUE) {
           row <- res[row_num, ]
 
           linted_node <- xml2::xml_find_first(
-            xml,
+            fun_assignment,
             sprintf(
               "
-              //SYMBOL[(%1$s) and @line1 >= %2$d and @line1 <= %3$d] |
-              //SYMBOL_FUNCTION_CALL[(%1$s) and @line1 >= %2$d and @line1 <= %3$d]
+              descendant::SYMBOL[(%1$s) and @line1 >= %2$d and @line1 <= %3$d] |
+              descendant::SYMBOL_FUNCTION_CALL[(%1$s) and @line1 >= %2$d and @line1 <= %3$d]
               ",
               xp_text_in_table(paste0(c("", "`", "'", '"'), row$name, c("", "`", "'", '"'))),
               row$line1,
