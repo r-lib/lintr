@@ -102,6 +102,10 @@
      `upstream.class` no longer throws a lint because the generic (`my_method`)
      properly uses `snake_case` (#737, @AshesITR)
    + extended to exclude special R namespace hook functions such as `.onLoad` (#500, #614, @AshesITR and @michaelchirico)
+* `equals_na_linter()` (#545, @michaelchirico)
+   + extended to lint `x != NA` (before, only `==` was caught) and `NA == x`(before, only `NA` on RHS was caught)
+   + extended to skip usages in comments like `is.na(x) # use is.na(x), not x == NA`
+
 ### Other noteworthy changes
 
 * `object_name_linter()` gains a new default style, `"symbols"`, which won't lint all-symbol object names.
