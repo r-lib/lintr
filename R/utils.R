@@ -96,7 +96,7 @@ names2 <- function(x) {
 }
 
 safe_parse_to_xml <- function(parsed_content) {
-  if (is.null(parsed_content)) return(xml2::xml_missing())
+  if (is.null(parsed_content)) return(NULL)
   tryCatch(
     xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)),
     # use xml_missing so that code doesn't always need to condition on XML existing

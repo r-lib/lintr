@@ -9,7 +9,6 @@
 #' @export
 spaces_left_parentheses_linter <- function() {
   Linter(function(source_expression) {
-    # browser()
     # else/if structure for trees that are missing XML content (both global & local)
     if (is_lint_level(source_expression, "file")) {
       # 'x = 1;(x + 2)' can't be detected from the expression-level tree
