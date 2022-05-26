@@ -97,6 +97,8 @@
    + added argument `allow_empty_lines` (`FALSE` by default) to toggle this behavior
    + improved so that trailing whitespace inside string literals does not trigger a lint (#1045, @AshesITR)
    * added argument `allow_in_strings` (`TRUE` by default) to toggle this behavior
+* `object_name_linter()`: Improved generic detection -- in user-defined method `my_method.upstream.class`,
+  `upstream.class` no longer throws a lint because the generic (`my_method`) properly uses `snake_case` (#737, @AshesITR)
 
 ### Other noteworthy changes
 
