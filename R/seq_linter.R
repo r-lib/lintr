@@ -16,6 +16,16 @@ seq_linter <- function() {
     and expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]
   ]")
 
+  ## The actual order of the nodes is document order
+  ## In practice we need to handle length(x):1
+  get_fun <- function(expr, n) {
+    funcall <- xml2::xml_find_chr(expr, sprintf("string(./expr[%d])", n))
+    fun <- gsub("\\(.*\\)", "(...)", trimws(funcall))
+    bad_fun <- fun %in% bad_funcs
+    fun[bad_fun] <- paste0(fun[bad_fun], "(...)")
+    fun
+  }
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -25,34 +35,20 @@ seq_linter <- function() {
 
     badx <- xml2::xml_find_all(xml, xpath)
 
-    ## The actual order of the nodes is document order
-    ## In practice we need to handle length(x):1
-    get_fun <- function(x, n) {
-      funcall <- xml2::xml_children(xml2::xml_children(x)[[n]])
-      fun <- gsub("\\(.*\\)", "(...)", trimws(xml2::xml_text(funcall[[1L]])))
-      if (fun %in% bad_funcs) paste0(fun, "(...)") else fun
-    }
-
-    # TODO(michaelchirico): vectorize the message instead
-    xml_nodes_to_lints(
-      badx,
-      source_expression = source_expression,
-      # TODO: better message customization. For example, length(x):1
-      #   would get rev(seq_along(x)) as the preferred replacement.
-      lint_message = function(expr) {
-        dot_expr1 <- get_fun(expr, 1L)
-        dot_expr2 <- get_fun(expr, 3L)
-        if (any(grepl("length(", c(dot_expr1, dot_expr2), fixed = TRUE))) {
-          replacement <- "seq_along"
-        } else {
-          replacement <- "seq_len"
-        }
-        sprintf(
-          "%s:%s is likely to be wrong in the empty edge case. Use %s() instead.",
-          dot_expr1, dot_expr2, replacement
-        )
-      },
-      type = "warning"
+    # TODO: better message customization. For example, length(x):1
+    #   would get rev(seq_along(x)) as the preferred replacement.
+    dot_expr1 <- get_fun(badx, 1L)
+    dot_expr2 <- get_fun(badx, 2L)
+    replacement <- ifelse(
+      grepl("length(", dot_expr1, fixed = TRUE) | grepl("length(", dot_expr2, fixed = TRUE),
+      "seq_along",
+      "seq_len"
     )
+    lint_message <- sprintf(
+      "%s:%s is likely to be wrong in the empty edge case. Use %s() instead.",
+      dot_expr1, dot_expr2, replacement
+    )
+
+    xml_nodes_to_lints(badx, source_expression, lint_message, type = "warning")
   })
 }
