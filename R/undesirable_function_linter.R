@@ -36,29 +36,25 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       return(list())
     }
     matched_nodes <- xml2::xml_find_all(source_expression$xml_parsed_content, xpath)
+    fun_names <- get_r_string(matched_nodes)
 
-    lapply(
-      matched_nodes,
-      function(node) {
-        fun_name <- xml2::xml_text(node)
+    msgs <- vapply(
+      setNames(nm = unique(fun_names)),
+      function(fun_name) {
         msg <- sprintf('Function "%s" is undesirable.', fun_name)
         alternative <- fun[[fun_name]]
         if (!is.na(alternative)) {
           msg <- paste(msg, sprintf("As an alternative, %s.", alternative))
         }
-        line <- xml2::xml_attr(node, "line1")
-        col1 <- as.integer(xml2::xml_attr(node, "col1"))
-        col2 <- as.integer(xml2::xml_attr(node, "col2"))
-        Lint(
-          filename = source_expression$filename,
-          line_number = as.integer(line),
-          column_number = col1,
-          type = "style",
-          message = msg,
-          line = source_expression$lines[[line]],
-          ranges = list(c(col1, col2))
-        )
-      }
+        msg
+      },
+      character(1L)
+    )
+
+    xml_nodes_to_lints(
+      matched_nodes,
+      source_expression = source_expression,
+      lint_message = unname(msgs[fun_names])
     )
   })
 }
