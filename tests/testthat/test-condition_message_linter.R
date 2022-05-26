@@ -107,3 +107,19 @@ test_that("R>=4.0.0 raw strings are handled", {
     condition_message_linter()
   )
 })
+
+test_that("message vectorization works", {
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        warning(paste('uh oh!', 'spaghettios'))
+        stop(paste0('look out ', 'below!'))
+      }
+    "),
+    list(
+      rex::rex("Don't use paste to build warning strings"),
+      rex::rex("Don't use paste0 to build stop strings")
+    ),
+    condition_message_linter()
+  )
+})
