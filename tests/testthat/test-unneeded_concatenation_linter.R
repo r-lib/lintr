@@ -39,7 +39,7 @@ test_that("Correctly handles concatenation within magrittr pipes", {
   )
 })
 
-test_that("Correctly handles concatenation within native pipes" , {
+test_that("Correctly handles concatenation within native pipes", {
   skip_if_not_r_version("4.1.0")
   linter <- unneeded_concatenation_linter()
   expect_lint('"a" |> c("b")', NULL, linter)
