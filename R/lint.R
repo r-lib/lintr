@@ -42,7 +42,7 @@
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
   # TODO(next release after 3.0.0): remove this deprecated workaround
   dots <- list(...)
-  if (length(dots) > 0L && is.logical(dots[[1L]]) && !nzchar(names2(dots)[1L])) {
+  if (has_positional_logical(dots)) {
     warning(
       "'cache' is no longer available as a positional argument; please supply 'cache' as a named argument instead. ",
       "This warning will be upgraded to an error in the next release."
@@ -50,30 +50,16 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     cache <- dots[[1L]]
     dots <- dots[-1L]
   }
-  if (is.null(text)) {
-    inline_data <- rex::re_matches(filename, rex::rex(newline))
-    if (inline_data) {
-      text <- gsub("\n$", "", filename)
-      lines <- strsplit(text, "\n", fixed = TRUE)[[1L]]
-      filename <- NULL
-    } else {
-      lines <- read_lines(filename)
-    }
-  } else {
-    inline_data <- TRUE
-    if (length(text) > 1L) {
-      text <- paste(text, collapse = "\n")
-    }
-    lines <- strsplit(text, "\n", fixed = TRUE)[[1L]]
-  }
 
-  no_filename <- missing(filename) || is.null(filename)
+  needs_tempfile <- missing(filename) || rex::re_matches(filename, rex::rex(newline))
+  inline_data <- !is.null(text) || needs_tempfile
+  lines <- get_lines(filename, text)
 
-  if (inline_data && no_filename) {
+  if (needs_tempfile) {
     filename <- tempfile()
     con <- file(filename, open = "w", encoding = settings$encoding)
     on.exit(unlink(filename), add = TRUE)
-    writeLines(text = text, con = con, sep = "\n")
+    writeLines(text = lines, con = con, sep = "\n")
     close(con)
   }
 
@@ -88,58 +74,36 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   linters <- define_linters(linters)
   linters <- Map(validate_linter_object, linters, names(linters))
 
-  lints <- list()
-  itr <- 0L
-
   cache_path <- define_cache_path(cache)
 
-  if (length(cache_path)) {
-    lint_cache <- load_cache(filename, cache_path)
-    lint_obj <- define_cache_key(filename, inline_data, lines)
-    lints <- retrieve_file(lint_cache, lint_obj, linters)
-    if (!is.null(lints)) {
-      # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
-      # > exclude(lints, lines = lines, ...)
-      return(do.call(exclude, c(list(lints, lines = lines, linter_names = names(linters)), dots)))
-    }
-    cache <- TRUE
-  } else {
-    lint_cache <- NULL
-    cache <- FALSE
+  lint_cache <- load_cache(filename, cache_path)
+  lint_obj <- define_cache_key(filename, inline_data, lines)
+  lints <- retrieve_file(lint_cache, lint_obj, linters)
+  if (!is.null(lints)) {
+    # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
+    # > exclude(lints, lines = lines, ...)
+    return(do.call(exclude, c(list(lints, lines = lines, linter_names = names(linters)), dots)))
   }
 
+  lints <- list()
   for (expr in source_expressions$expressions) {
     for (linter in names(linters)) {
-      lints[[itr <- itr + 1L]] <- get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines)
+      lints[[length(lints) + 1L]] <- get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines)
     }
   }
 
-  if (inherits(source_expressions$error, "lint")) {
-    lints[[itr <- itr + 1L]] <- source_expressions$error
-
-    if (isTRUE(cache)) {
-      cache_lint(lint_cache, list(filename = filename, content = ""), "error", source_expressions$error)
-    }
-  }
-
+  lints <- maybe_append_error_lint(lints, source_expressions$error, lint_cache, filename)
   lints <- structure(reorder_lints(flatten_lints(lints)), class = "lints")
 
-  if (isTRUE(cache)) {
-    cache_file(lint_cache, filename, linters, lints)
-    save_cache(lint_cache, filename, cache_path)
-  }
+  cache_file(lint_cache, filename, linters, lints)
+  save_cache(lint_cache, filename, cache_path)
 
   # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
   # > exclude(lints, lines = lines, ...)
   res <- do.call(exclude, c(list(lints, lines = lines, linter_names = names(linters)), dots))
 
   # simplify filename if inline
-  if (no_filename) {
-    for (i in seq_along(res)) {
-      res[[i]][["filename"]] <- "<text>"
-    }
-  }
-  res
+  zap_temp_filename(res, needs_tempfile)
 }
 
 #' @param path For the base directory of the project (for `lint_dir()`) or
@@ -168,7 +132,7 @@ lint_dir <- function(path = ".", ...,
                      parse_settings = TRUE) {
   # TODO(next release after 3.0.0): remove this deprecated workaround
   dots <- list(...)
-  if (length(dots) > 0L && is.logical(dots[[1L]]) && !nzchar(names2(dots)[1L])) {
+  if (has_positional_logical(dots)) {
     warning(
       "'relative_path' is no longer available as a positional argument; ",
       "please supply 'relative_path' as a named argument instead. ",
@@ -206,18 +170,14 @@ lint_dir <- function(path = ".", ...,
   lints <- flatten_lints(lapply(
     files,
     function(file) {
-      if (interactive() && !identical(Sys.getenv("TESTTHAT"), "true")) {
-        message(".", appendLF = FALSE) # nocov
-      }
+      maybe_report_progress()
       # TODO: once relative_path= is fully deprecated as 2nd positional argument (see top of body), restore the cleaner:
       # > lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
       do.call(lint, c(list(file, parse_settings = FALSE, exclusions = exclusions), dots))
     }
   ))
 
-  if (interactive() && !identical(Sys.getenv("TESTTHAT"), "true")) {
-    message() # nocov. for a newline
-  }
+  maybe_report_progress(done = TRUE)
 
   lints <- reorder_lints(lints)
 
@@ -265,7 +225,7 @@ lint_package <- function(path = ".", ...,
                          parse_settings = TRUE) {
   # TODO(next release after 3.0.0): remove this deprecated workaround
   dots <- list(...)
-  if (length(dots) > 0L && is.logical(dots[[1L]]) && !nzchar(names2(dots)[1L])) {
+  if (has_positional_logical(dots)) {
     warning(
       "'relative_path' is no longer available as a positional argument; ",
       "please supply 'relative_path' as a named argument instead. ",
@@ -327,7 +287,7 @@ lint_package <- function(path = ".", ...,
 #' @noRd
 get_lints <- function(expr, linter, linter_fun, lint_cache, lines) {
   expr_lints <- NULL
-  if (!is.null(lint_cache) && has_lint(lint_cache, expr, linter)) {
+  if (has_lint(lint_cache, expr, linter)) {
     # retrieve_lint() might return NULL if missing line number is encountered.
     # It could be caused by nolint comments.
     expr_lints <- retrieve_lint(lint_cache, expr, linter, lines)
@@ -340,9 +300,7 @@ get_lints <- function(expr, linter, linter_fun, lint_cache, lines) {
       expr_lints[[i]]$linter <- linter
     }
 
-    if (!is.null(lint_cache)) {
-      cache_lint(lint_cache, expr, linter, expr_lints)
-    }
+    cache_lint(lint_cache, expr, linter, expr_lints)
   }
   expr_lints
 }
@@ -615,4 +573,52 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
 
 fill_with <- function(character = " ", length = 1L) {
   paste0(collapse = "", rep.int(character, length))
+}
+
+has_positional_logical <- function(dots) {
+  length(dots) > 0L &&
+    is.logical(dots[[1L]]) &&
+    !nzchar(names2(dots)[1L])
+}
+
+maybe_report_progress <- function(done = FALSE) {
+  if (interactive() && !identical(Sys.getenv("TESTTHAT"), "true")) {
+    # nocov start
+    if (done) {
+      message()
+    } else {
+      message(".", appendLF = FALSE)
+    }
+    # nocov end
+  }
+}
+
+maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
+  if (inherits(error, "lint")) {
+    lints[[length(lints) + 1L]] <- error
+
+    if (!is.null(lint_cache)) {
+      cache_lint(lint_cache, list(filename = filename, content = ""), "error", error)
+    }
+  }
+  lints
+}
+
+get_lines <- function(filename, text) {
+  if (!is.null(text)) {
+    strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
+  } else if (rex::re_matches(filename, rex::rex(newline))) {
+    strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
+  } else {
+    read_lines(filename)
+  }
+}
+
+zap_temp_filename <- function(res, needs_tempfile) {
+  if (needs_tempfile) {
+    for (i in seq_along(res)) {
+      res[[i]][["filename"]] <- "<text>"
+    }
+  }
+  res
 }
