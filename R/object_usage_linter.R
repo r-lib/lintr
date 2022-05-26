@@ -71,38 +71,49 @@ object_usage_linter <- function(interpret_glue = TRUE) {
         which(!is.na(res$message)),
         function(row_num) {
           row <- res[row_num, ]
-          org_line_num <- as.integer(row$line1) + fun_start_line - 1L
-          line <- source_expression$content[as.integer(org_line_num)]
+          org_line_start <- as.integer(row$line1) + fun_start_line - 1L
+          if (!nzchar(row$line2) || row$line2 == row$line1) {
+            org_line_end <- org_line_start
+          } else {
+            org_line_end <- as.integer(row$line2) + fun_start_line - 1L
+          }
+          line <- source_expression$content[org_line_start]
 
           row$name <- re_substitutes(row$name, rex("<-"), "")
 
-          if (!nzchar(row$line2) || row$line2 == row$line1) {
-            linted_node <- xml2::xml_find_first(
-              xml,
-              sprintf("//SYMBOL[text() = '%s' and @line1 = %d]", row$name, org_line_num)
+          linted_node <- xml2::xml_find_first(
+            xml,
+            sprintf(
+              "
+              //SYMBOL[(%1$s) and @line1 >= %2$d and @line1 <= %3$d] |
+              //SYMBOL_FUNCTION_CALL[(%1$s) and @line1 >= %2$d and @line1 <= %3$d]
+              ",
+              xp_text_in_table(paste0(c("", "`", "'", '"'), row$name, c("", "`", "'", '"'))),
+              org_line_start,
+              org_line_end
             )
-            if (!is.na(linted_node)) {
-              return(
-                xml_nodes_to_lints(
-                  linted_node,
-                  source_expression = source_expression,
-                  lint_message = row$message,
-                  type = "warning"
-                )
+          )
+          if (!is.na(linted_node)) {
+            return(
+              xml_nodes_to_lints(
+                linted_node,
+                source_expression = source_expression,
+                lint_message = row$message,
+                type = "warning"
               )
-            }
+            )
           }
 
           location <- re_matches(line, rex(boundary, row$name, boundary), locations = TRUE)
 
           # Handle multi-line lints where name occurs on subsequent lines (#507)
           if (is.na(location$start) && nzchar(row$line2) && row$line2 != row$line1) {
-            lines <- source_expression$content[org_line_num:(as.integer(row$line2) + fun_start_line - 1L)]
+            lines <- source_expression$content[org_line_start:org_line_end]
             locations <- re_matches(lines, rex(boundary, row$name, boundary), locations = TRUE)
 
             matching_row <- (which(!is.na(locations$start)) %||% 1L)[[1L]] # first matching row or 1 (as a fallback)
 
-            org_line_num <- org_line_num + matching_row - 1L
+            org_line_start <- org_line_start + matching_row - 1L
             location <- locations[matching_row, ]
             line <- lines[matching_row]
           }
@@ -115,7 +126,7 @@ object_usage_linter <- function(interpret_glue = TRUE) {
 
           Lint(
             filename = source_expression$filename,
-            line_number = org_line_num,
+            line_number = org_line_start,
             column_number = location$start,
             type = "warning",
             message = row$message,
