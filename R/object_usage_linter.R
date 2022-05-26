@@ -73,14 +73,14 @@ object_usage_linter <- function(interpret_glue = TRUE) {
         res$line1
       )
 
+      # TODO handle assignment functions properly
+      # e.g. `not_existing<-`(a, b)
+      res$name <- rex::re_substitutes(res$name, rex::rex("<-"), "")
+
       lapply(
         which(!is.na(res$message)),
         function(row_num) {
           row <- res[row_num, ]
-
-          # TODO handle assignment functions properly
-          # e.g. `not_existing<-`(a, b)
-          row$name <- rex::re_substitutes(row$name, rex::rex("<-"), "")
 
           linted_node <- xml2::xml_find_first(
             xml,
