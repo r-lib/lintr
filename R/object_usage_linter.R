@@ -52,7 +52,6 @@ object_usage_linter <- function(interpret_glue = TRUE) {
 
     lapply(fun_assignments, function(fun_assignment) {
       code <- get_content(lines = source_expression$content, fun_assignment)
-      fun_start_line <- as.integer(xml2::xml_attr(fun_assignment, "line1"))
       fun <- try_silently(eval(
         envir = env,
         parse(
@@ -65,12 +64,11 @@ object_usage_linter <- function(interpret_glue = TRUE) {
         return()
       }
       known_used_symbols <- get_used_symbols(fun_assignment, interpret_glue = interpret_glue)
-      res <- parse_check_usage(fun, known_used_symbols = known_used_symbols, declared_globals = declared_globals)
-      res$line1 <- as.integer(res$line1) + fun_start_line - 1L
-      res$line2 <- ifelse(
-        nzchar(res$line2),
-        as.integer(row$line2) + fun_start_line - 1L,
-        res$line1
+      res <- parse_check_usage(
+        fun,
+        known_used_symbols = known_used_symbols,
+        declared_globals = declared_globals,
+        start_line = as.integer(xml2::xml_attr(fun_assignment, "line1"))
       )
 
       # TODO handle assignment functions properly
@@ -206,7 +204,8 @@ get_assignment_symbols <- function(xml) {
   symbols
 }
 
-parse_check_usage <- function(expression, known_used_symbols = character(), declared_globals = character()) {
+parse_check_usage <- function(expression, known_used_symbols = character(), declared_globals = character(),
+                              start_line = 1L) {
 
   vals <- list()
 
@@ -257,6 +256,15 @@ parse_check_usage <- function(expression, known_used_symbols = character(), decl
   }
 
   res[!is.na(res$message), ]
+
+  res$line1 <- as.integer(res$line1) + start_line - 1L
+  res$line2 <- ifelse(
+    nzchar(res$line2),
+    as.integer(row$line2) + start_line - 1L,
+    res$line1
+  )
+
+  res
 }
 
 get_imported_symbols <- function(xml) {
