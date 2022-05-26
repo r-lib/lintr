@@ -6,6 +6,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 missing_argument_linter <- function(except = c("switch", "alist")) {
+  xpath <- "//expr[expr[SYMBOL_FUNCTION_CALL]]/*[
+    self::OP-COMMA[preceding-sibling::*[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-COMMA]] or
+    self::OP-COMMA[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN]] or
+    self::EQ_SUB[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN or self::OP-COMMA]]
+  ]"
+
   Linter(function(source_expression) {
 
     if (!is_lint_level(source_expression, "file")) {
@@ -14,14 +20,9 @@ missing_argument_linter <- function(except = c("switch", "alist")) {
 
     xml <- source_expression$full_xml_parsed_content
 
-    xpath <- "//expr[expr[SYMBOL_FUNCTION_CALL]]/*[
-      self::OP-COMMA[preceding-sibling::*[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-COMMA]] or
-      self::OP-COMMA[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN]] or
-      self::EQ_SUB[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN or self::OP-COMMA]]
-    ]"
-
     missing_args <- xml2::xml_find_all(xml, xpath)
 
+    # TODO(michaelchirico): this should be xml_nodes_to_lint()
     line1 <- as.integer(xml2::xml_attr(missing_args, "line1"))
     col1 <- as.integer(xml2::xml_attr(missing_args, "col1"))
     col2 <- as.integer(xml2::xml_attr(missing_args, "col2"))

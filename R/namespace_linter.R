@@ -30,6 +30,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
 
     lints <- list()
 
+    # run here, not in the factory, to allow for run- vs. "compile"-time differences in available packages
     installed_packages <- .packages(all.available = TRUE)
     installed <- packages %in% installed_packages
 
@@ -52,6 +53,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
 
     ## Case 2 (rare?): pkg namespace is broken in pkg::foo
 
+    # run here, not in the factory, to allow for run- vs. "compile"-time differences in package structure
     namespaces <- lapply(packages, function(package) tryCatch(getNamespace(package), error = identity))
     failed_namespace <- vapply(namespaces, inherits, "condition", FUN.VALUE = logical(1L))
 
