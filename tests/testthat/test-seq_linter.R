@@ -66,3 +66,14 @@ test_that("reverse seq is ok", {
     seq_linter()
   )
 })
+
+test_that("Message vectorization works for multiple lints", {
+  expect_lint(
+    "c(1:length(x), 1:nrow(y))",
+    list(
+      rex::rex("1:length(...)", anything, "seq_along()"),
+      rex::rex("1:nrow(...)", anything, "seq_len()")
+    ),
+    seq_linter()
+  )
+})
