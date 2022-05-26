@@ -7,7 +7,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 sprintf_linter <- function() {
-  xpath_positional <- "//expr[
+  xpath <- "//expr[
     expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf'] and
     (
       OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST or
@@ -23,7 +23,7 @@ sprintf_linter <- function() {
 
     xml <- source_expression$full_xml_parsed_content
 
-    sprintf_calls <- xml2::xml_find_all(xml, xpath_positional)
+    sprintf_calls <- xml2::xml_find_all(xml, xpath)
 
     message <- vapply(sprintf_calls, capture_sprintf_warning, character(1L))
 
