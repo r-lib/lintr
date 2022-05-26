@@ -24,12 +24,10 @@ duplicate_argument_linter <- function(except = character()) {
       calls <- calls[!(calls_text %in% except)]
     }
 
+    # TODO(michaelchirico): Use xml_nodes_to_lints(), and better vectorize
     result <- lapply(calls, function(call) {
       args <- xml2::xml_find_all(call, "EQ_SUB/preceding-sibling::*[1]")
-      args_text <- vapply(
-        parse(text = xml2::xml_text(args), keep.source = FALSE),
-        as.character, character(1L)
-      )
+      args_text <- get_r_string(args)
       is_dup_arg <- duplicated(args_text)
       dup_args <- args[is_dup_arg]
       if (length(dup_args)) {
