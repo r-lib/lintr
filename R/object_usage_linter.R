@@ -80,7 +80,7 @@ object_usage_linter <- function(interpret_glue = TRUE) {
         "descendant::SYMBOL | descendant::SYMBOL_FUNCTION_CALL"
       )
 
-      lintable_symbol_names <- get_r_string(lintable_symbols)
+      lintable_symbol_names <- gsub("^`|`$", "", get_r_string(lintable_symbols))
       lintable_symbol_lines <- as.integer(xml2::xml_attr(lintable_symbols, "line1"))
 
       matched_symbol <- vapply(
