@@ -8,6 +8,9 @@
 #' @export
 backport_linter <- function(r_version = getRversion()) {
   r_version <- normalize_r_version(r_version)
+  backport_blacklist <- backports[r_version < R_system_version(names(backports))]
+
+  names_xpath <- "//SYMBOL | //SYMBOL_FUNCTION_CALL"
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -19,36 +22,30 @@ backport_linter <- function(r_version = getRversion()) {
 
     xml <- source_expression$xml_parsed_content
 
-    names_xpath <- "//SYMBOL | //SYMBOL_FUNCTION_CALL"
     all_names_nodes <- xml2::xml_find_all(xml, names_xpath)
     all_names <- xml2::xml_text(all_names_nodes)
 
-    backport_blacklist <- backports[r_version < R_system_version(names(backports))]
+    # not sapply/vapply, which may over-simplify to vector
+    # rbind makes sure we have a matrix with dimensions [n_versions x n_names]
+    # so that colSums() works to tell us which names are in an unavailable version
+    # rbind not cbind because R is column-major --> which() below will be in column order
+    needs_backport <- do.call(rbind, lapply(backport_blacklist, function(nm) all_names %in% nm))
+    bad_idx <- colSums(needs_backport) > 0L
 
-    # not sapply/vapply, which may over-simplify to vector -- cbind makes sure we have a matrix so rowSums works
-    needs_backport <- do.call(cbind, lapply(backport_blacklist, function(nm) all_names %in% nm))
-    bad_idx <- rowSums(needs_backport) > 0L
-
-    lapply(which(bad_idx), function(ii) {
-      node <- all_names_nodes[[ii]]
-      line1 <- xml2::xml_attr(node, "line1")
-      col1 <- as.integer(xml2::xml_attr(node, "col1"))
-      col2 <- as.integer(xml2::xml_attr(node, "col2"))
-      # line1 != line2 can't happen because function symbols cannot span multiple lines
-      stopifnot(xml2::xml_attr(node, "line2") == line1)
-      Lint(
-        filename = source_expression$filename,
-        line_number = as.integer(line1),
-        column_number = col1,
-        type = "warning",
-        message = sprintf(
-          "%s (R %s) is not available for dependency R >= %s.",
-          all_names[ii], names(backport_blacklist)[which(needs_backport[ii, ])], r_version
-        ),
-        line = source_expression$lines[[line1]],
-        ranges = list(c(col1, col2))
-      )
-    })
+    # which(arr.ind) returns things in the same order as which()
+    needs_backport_version_idx <- ((which(needs_backport) - 1L) %% length(backport_blacklist)) + 1L
+    lint_message <- sprintf(
+      "%s (R %s) is not available for dependency R >= %s.",
+      all_names[bad_idx],
+      names(backport_blacklist)[needs_backport_version_idx],
+      r_version
+    )
+    xml_nodes_to_lints(
+      all_names_nodes[bad_idx],
+      source_expression = source_expression,
+      lint_message = lint_message,
+      type = "warning"
+    )
   })
 }
 
