@@ -40,6 +40,9 @@ get_cache_file_path <- function(file, path) {
 }
 
 load_cache <- function(file, path = NULL) {
+  if (is.null(path) || length(path) == 0L) {
+    return()
+  }
   env <- new.env(parent = emptyenv())
 
   file <- get_cache_file_path(file, path)
@@ -62,6 +65,9 @@ load_cache <- function(file, path = NULL) {
 }
 
 save_cache <- function(cache, file, path = NULL) {
+  if (is.null(cache)) {
+    return()
+  }
   if (!file.exists(path)) {
     dir.create(path, recursive = TRUE)
   }
@@ -70,6 +76,9 @@ save_cache <- function(cache, file, path = NULL) {
 }
 
 cache_file <- function(cache, filename, linters, lints) {
+  if (is.null(cache)) {
+    return()
+  }
   assign(
     envir = cache,
     x = digest_content(linters, filename),
@@ -79,6 +88,9 @@ cache_file <- function(cache, filename, linters, lints) {
 }
 
 retrieve_file <- function(cache, filename, linters) {
+  if (is.null(cache)) {
+    return(NULL)
+  }
   mget(
     envir = cache,
     x = digest_content(linters, filename),
@@ -89,11 +101,15 @@ retrieve_file <- function(cache, filename, linters) {
 }
 
 cache_lint <- function(cache, expr, linter, lints) {
+  if (is.null(cache)) {
+    return()
+  }
   assign(
     envir = cache,
     x = digest_content(linter, expr),
     value = lints,
-    inherits = FALSE)
+    inherits = FALSE
+  )
 }
 
 retrieve_lint <- function(cache, expr, linter, lines) {
@@ -120,6 +136,9 @@ retrieve_lint <- function(cache, expr, linter, lines) {
 }
 
 has_lint <- function(cache, expr, linter) {
+  if (is.null(cache)) {
+    return(FALSE)
+  }
   exists(
     envir = cache,
     x = digest_content(linter, expr),
