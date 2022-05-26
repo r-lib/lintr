@@ -29,3 +29,15 @@ test_that("undesirable_operator_linter handles infixes correctly", {
     undesirable_operator_linter(list("%%" = NA))
   )
 })
+
+test_that("undesirable_operator_linter vectorizes messages", {
+  expect_lint(
+    "x <<- c(pkg:::foo, bar %oo% baz)",
+    list(
+      rex::rex("`<<-` is undesirable. It assigns"),
+      rex::rex("`:::` is undesirable. It accesses"),
+      rex::rex("`%oo%` is undesirable.", end)
+    ),
+    undesirable_operator_linter(c(default_undesirable_operators, list("%oo%" = NA)))
+  )
+})
