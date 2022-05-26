@@ -7,8 +7,9 @@
 spaces_inside_linter()
 }
 \description{
-Check that parentheses and square brackets do not have spaces directly inside them, i.e., directly following an
-opening delimiter or directly preceding a closing delimiter.
+Check that parentheses and square brackets do not have spaces directly
+inside them, i.e., directly following an opening delimiter or directly
+preceding a closing delimiter.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr

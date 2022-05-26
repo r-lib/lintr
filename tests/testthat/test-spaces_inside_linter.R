@@ -10,7 +10,7 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "a[1 ]",
-    list(message = "Do not place spaces before square brackets", line_number = 1L, column_number = 5L, type = "style"),
+    list(message = "Do not place spaces before square brackets", line_number = 1L, column_number = 4L, type = "style"),
     linter
   )
 
@@ -24,7 +24,7 @@ test_that("returns the correct linting", {
     "a[ 1 ]",
     list(
       list(message = "Do not place spaces after square brackets", line_number = 1L, column_number = 3L, type = "style"),
-      list(message = "Do not place spaces before square brackets", line_number = 1L, column_number = 6L, type = "style")
+      list(message = "Do not place spaces before square brackets", line_number = 1L, column_number = 5L, type = "style")
     ),
     linter
   )
@@ -37,7 +37,7 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "a(1 )",
-    list(message = "Do not place spaces before parentheses", line_number = 1L, column_number = 5L, type = "style"),
+    list(message = "Do not place spaces before parentheses", line_number = 1L, column_number = 4L, type = "style"),
     linter
   )
 
@@ -51,7 +51,19 @@ test_that("returns the correct linting", {
     "a( 1 )",
     list(
       list(message = "Do not place spaces after parentheses", line_number = 1L, column_number = 3L, type = "style"),
-      list(message = "Do not place spaces before parentheses", line_number = 1L, column_number = 6L, type = "style")
+      list(message = "Do not place spaces before parentheses", line_number = 1L, column_number = 5L, type = "style")
+    ),
+    linter
+  )
+
+  # range covers all whitespace
+  expect_lint(
+    "a(  blah  )",
+    list(
+      list(message = "Do not place spaces after parentheses", line_number = 1L, column_number = 3L,
+           ranges = list(c(3L, 4L)), type = "style"),
+      list(message = "Do not place spaces before parentheses", line_number = 1L, column_number = 9L,
+           ranges = list(c(9L, 10L)), type = "style")
     ),
     linter
   )
