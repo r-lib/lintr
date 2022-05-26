@@ -66,17 +66,17 @@ object_usage_linter <- function(interpret_glue = TRUE) {
       }
       known_used_symbols <- get_used_symbols(fun_assignment, interpret_glue = interpret_glue)
       res <- parse_check_usage(fun, known_used_symbols = known_used_symbols, declared_globals = declared_globals)
+      res$line1 <- as.integer(res$line1) + fun_start_line - 1L
+      res$line2 <- ifelse(
+        nzchar(res$line2),
+        as.integer(row$line2) + fun_start_line - 1L,
+        res$line1
+      )
 
       lapply(
         which(!is.na(res$message)),
         function(row_num) {
           row <- res[row_num, ]
-          org_line_start <- as.integer(row$line1) + fun_start_line - 1L
-          if (!nzchar(row$line2) || row$line2 == row$line1) {
-            org_line_end <- org_line_start
-          } else {
-            org_line_end <- as.integer(row$line2) + fun_start_line - 1L
-          }
 
           # TODO handle assignment functions properly
           # e.g. `not_existing<-`(a, b)
@@ -90,8 +90,8 @@ object_usage_linter <- function(interpret_glue = TRUE) {
               //SYMBOL_FUNCTION_CALL[(%1$s) and @line1 >= %2$d and @line1 <= %3$d]
               ",
               xp_text_in_table(paste0(c("", "`", "'", '"'), row$name, c("", "`", "'", '"'))),
-              org_line_start,
-              org_line_end
+              row$line1,
+              row$line2
             )
           )
 
