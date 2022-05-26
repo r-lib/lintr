@@ -37,18 +37,15 @@ expect_s3_class_linter <- function() {
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
     matched_function <- xp_call_name(bad_expr)
-    lint_message_fmt <- ifelse(
+    msg <- ifelse(
       matched_function %in% c("expect_equal", "expect_identical"),
-      "expect_s3_class(x, k) is better than %s(class(x), k).",
+      sprintf("expect_s3_class(x, k) is better than %s(class(x), k).", matched_function),
       "expect_s3_class(x, k) is better than expect_true(is.<k>(x)) or expect_true(inherits(x, k))."
     )
     xml_nodes_to_lints(
       bad_expr,
       source_expression,
-      lint_message = paste(
-        sprintf(lint_message_fmt, matched_function),
-        "Note also expect_s4_class() available for testing S4 objects."
-      ),
+      lint_message = paste(msg, "Note also expect_s4_class() available for testing S4 objects."),
       type = "warning"
     )
   })
