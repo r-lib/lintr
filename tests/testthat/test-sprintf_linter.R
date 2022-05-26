@@ -96,4 +96,16 @@ test_that("returns the correct linting", {
     NULL,
     linter
   )
+
+  # works with multi-line sprintf and comments
+  expect_lint(
+    trim_some("
+      sprintf(
+        'test fmt %s', # this is a comment
+        2
+      )
+    "),
+    NULL,
+    linter
+  )
 })
