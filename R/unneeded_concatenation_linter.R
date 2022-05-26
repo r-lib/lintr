@@ -6,15 +6,16 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unneeded_concatenation_linter <- function() {
+  msg_empty <- paste(
+    "Unneeded concatenation without arguments.",
+    'Replace the "c" call by NULL or, whenever possible,',
+    "vector() seeded with the correct type and/or length."
+  )
+  msg_const <- 'Unneeded concatenation of a constant. Remove the "c" call.'
+
   Linter(function(source_expression) {
     tokens <- source_expression[["parsed_content"]] <-
       filter_out_token_type(source_expression[["parsed_content"]], "expr")
-    msg_empty <- paste(
-      "Unneeded concatenation without arguments.",
-      'Replace the "c" call by NULL or, whenever possible,',
-      "vector() seeded with the correct type and/or length."
-    )
-    msg_const <- 'Unneeded concatenation of a constant. Remove the "c" call.'
     lapply(
       ids_with_token(source_expression, "SYMBOL_FUNCTION_CALL"),
       function(token_num) {

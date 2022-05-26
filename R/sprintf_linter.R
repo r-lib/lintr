@@ -80,7 +80,7 @@ zap_extra_args <- function(parsed_expr) {
 #'
 #' @noRd
 capture_sprintf_warning <- function(xml) {
-  text <- xml2::xml_text(xml)
+  text <- get_r_code(xml)
   parsed_expr <- try_silently(parse(text = text, keep.source = FALSE)[[1L]])
   parsed_expr <- zap_extra_args(parsed_expr)
   res <- tryCatch(eval(parsed_expr, envir = baseenv()), warning = identity, error = identity)

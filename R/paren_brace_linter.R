@@ -7,20 +7,21 @@
 #' @export
 paren_brace_linter <- function() {
   lintr_deprecated("paren_brace_linter", new = "brace_linter", version = "2.0.1.9001", type = "Linter")
+
+  xpath <- paste(
+    "//OP-LEFT-BRACE[",
+    "@line1 = parent::expr/preceding-sibling::OP-RIGHT-PAREN/@line1",
+    "and",
+    "@col1 = parent::expr/preceding-sibling::OP-RIGHT-PAREN/@col1 + 1",
+    "]"
+  )
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
 
     xml <- source_expression$xml_parsed_content
-
-    xpath <- paste(
-      "//OP-LEFT-BRACE[",
-      "@line1 = parent::expr/preceding-sibling::OP-RIGHT-PAREN/@line1",
-      "and",
-      "@col1 = parent::expr/preceding-sibling::OP-RIGHT-PAREN/@col1 + 1",
-      "]"
-    )
 
     match_exprs <- xml2::xml_find_all(xml, xpath)
 
