@@ -36,6 +36,7 @@ test_that("linter_names", {
   test_file <- "default_linter_testcode.R"
   x <- default_linters
   for (linter_name in names(x)) {
+    read_settings(NULL)
     lints <- lint(test_file, linters = x[linter_name], parse_settings = FALSE)
     lint_df <- as.data.frame(lints)
     expect_true(

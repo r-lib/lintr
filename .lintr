@@ -1,5 +1,5 @@
 linters: linters_with_defaults(
-   line_length_linter = line_length_linter(120),
+   line_length_linter(120),
    implicit_integer_linter()
  )
 exclusions: list(
