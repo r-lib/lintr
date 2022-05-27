@@ -11,7 +11,9 @@ undesirable_function_linter(
 }
 \arguments{
 \item{fun}{Named character vector, where the names are the names of the undesirable functions, and the values are
-the text for the alternative function to use (or \code{NA}).}
+the text for the alternative function to use (or \code{NA}). Defaults to
+\link{default_undesirable_functions}. To make small customizations to this list,
+use \code{\link[=modify_defaults]{modify_defaults()}}.}
 
 \item{symbol_is_undesirable}{Whether to consider the use of an undesirable function name as a symbol undesirable
 or not.}

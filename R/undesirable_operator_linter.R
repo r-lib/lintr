@@ -4,7 +4,9 @@
 #' [`<<-`][base::assignOps] and suggest an alternative.
 #'
 #' @param op Named character vector, where the names are the names of the undesirable operators, and the values are
-#'   the text for the alternative operator to use (or `NA`).
+#'   the text for the alternative operator to use (or `NA`). Defaults to
+#'   [default_undesirable_operators]. To make small customizations to this list,
+#'   use [modify_defaults()].
 #' @evalRd rd_tags("undesirable_operator_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

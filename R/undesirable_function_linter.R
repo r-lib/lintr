@@ -4,7 +4,9 @@
 #' [base::sapply()] and suggest an alternative.
 #'
 #' @param fun Named character vector, where the names are the names of the undesirable functions, and the values are
-#'   the text for the alternative function to use (or `NA`).
+#'   the text for the alternative function to use (or `NA`). Defaults to
+#'   [default_undesirable_functions]. To make small customizations to this list,
+#'   use [modify_defaults()].
 #' @param symbol_is_undesirable Whether to consider the use of an undesirable function name as a symbol undesirable
 #'   or not.
 #' @evalRd rd_tags("undesirable_function_linter")

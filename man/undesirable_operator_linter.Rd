@@ -8,7 +8,9 @@ undesirable_operator_linter(op = default_undesirable_operators)
 }
 \arguments{
 \item{op}{Named character vector, where the names are the names of the undesirable operators, and the values are
-the text for the alternative operator to use (or \code{NA}).}
+the text for the alternative operator to use (or \code{NA}). Defaults to
+\link{default_undesirable_operators}. To make small customizations to this list,
+use \code{\link[=modify_defaults]{modify_defaults()}}.}
 }
 \description{
 Report the use of undesirable operators, e.g. \code{\link[base:ns-dblcolon]{:::}} or
