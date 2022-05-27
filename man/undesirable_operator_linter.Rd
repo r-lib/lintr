@@ -7,8 +7,9 @@
 undesirable_operator_linter(op = default_undesirable_operators)
 }
 \arguments{
-\item{op}{Named character vector, where the names are the names of the undesirable operators, and the values are
-the text for the alternative operator to use (or \code{NA}). Defaults to
+\item{op}{Named character vector. \code{names(op)} correspond to undesirable operators,
+while the values give a description of why the operator is undesirable.
+If \code{NA}, no alternative is specified in the lint message. Defaults to
 \link{default_undesirable_operators}. To make small customizations to this list,
 use \code{\link[=modify_defaults]{modify_defaults()}}.}
 }

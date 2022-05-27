@@ -3,8 +3,9 @@
 #' Report the use of undesirable operators, e.g. [`:::`][base::ns-dblcolon] or
 #' [`<<-`][base::assignOps] and suggest an alternative.
 #'
-#' @param op Named character vector, where the names are the names of the undesirable operators, and the values are
-#'   the text for the alternative operator to use (or `NA`). Defaults to
+#' @param op Named character vector. `names(op)` correspond to undesirable operators,
+#'   while the values give a description of why the operator is undesirable.
+#'   If `NA`, no alternative is specified in the lint message. Defaults to
 #'   [default_undesirable_operators]. To make small customizations to this list,
 #'   use [modify_defaults()].
 #' @evalRd rd_tags("undesirable_operator_linter")
