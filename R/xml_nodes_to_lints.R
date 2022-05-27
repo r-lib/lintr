@@ -85,7 +85,6 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
 
   column_number <- xp_find_location(xml, column_number_xpath)
 
-  if (is.function(lint_message)) stop("found another linter using is.function(lint_message)")
   Lint(
     filename = source_expression$filename,
     line_number = as.integer(line1),
