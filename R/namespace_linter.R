@@ -111,7 +111,7 @@ build_ns_get_int_lints <- function(packages, symbols, symbol_nodes, namespaces, 
 
   non_symbols <- !vapply(
     seq_along(symbols),
-    function(ii) symbols[[ii]] %in% ls(namespaces[[ii]], all = TRUE),
+    function(ii) symbols[[ii]] %in% ls(namespaces[[ii]], all.names = TRUE),
     logical(1L)
   )
   if (any(non_symbols)) {
