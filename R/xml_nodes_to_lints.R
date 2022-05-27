@@ -39,29 +39,17 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
     return(list())
   }
   if (is_nodeset_like(xml)) {
-    if (is.character(lint_message)) {
-      lints <- .mapply(
-        xml_nodes_to_lints,
-        dots = list(xml = xml, lint_message = lint_message),
-        MoreArgs = list(
-          source_expression = source_expression,
-          type = type,
-          column_number_xpath = column_number_xpath,
-          range_start_xpath = range_start_xpath,
-          range_end_xpath = range_end_xpath
-        )
-      )
-    } else {
-      lints <- lapply(
-        xml, xml_nodes_to_lints,
+    lints <- .mapply(
+      xml_nodes_to_lints,
+      dots = list(xml = xml, lint_message = lint_message),
+      MoreArgs = list(
         source_expression = source_expression,
-        lint_message = lint_message,
         type = type,
         column_number_xpath = column_number_xpath,
         range_start_xpath = range_start_xpath,
         range_end_xpath = range_end_xpath
       )
-    }
+    )
     class(lints) <- "lints"
     return(lints)
   } else if (!inherits(xml, "xml_node")) {
