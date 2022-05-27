@@ -132,8 +132,10 @@ expect_lint_free <- function(...) {
   if (has_lints) {
     lint_output <- paste(collapse = "\n", capture.output(print(lints)))
   }
-  result <- testthat::expect(!has_lints,
-                             paste(sep = "\n", "Not lint free", lint_output))
+  result <- testthat::expect(
+    !has_lints,
+    paste0("Not lint free\n", lint_output)
+  )
 
   invisible(result)
 }
