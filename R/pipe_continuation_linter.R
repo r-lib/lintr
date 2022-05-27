@@ -51,10 +51,10 @@ pipe_continuation_linter <- function() {
   )
 
   Linter(function(source_expression) {
-    x <- global_xml_parsed_content(source_expression)
-    if (is.null(x)) {
-      return()
+    if (!is_lint_level(source_expression, "file")) {
+      return(list())
     }
+    x <- source_expression$full_xml_parsed_content
 
     pipe_exprs <- xml_find_all(x, multiline_pipe_test)
 

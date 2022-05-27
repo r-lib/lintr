@@ -24,7 +24,9 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
 
   xp_used_symbols <- paste(
     "//SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]/text()",
-    "//SYMBOL/text()",
+    "//SYMBOL[not(
+      parent::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
+    )]/text()",
     "//SPECIAL/text()",
     sep = " | "
   )
@@ -81,11 +83,11 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
         pkg <- get_r_string(import_expr, xpath = "expr[STR_CONST|SYMBOL]")
         if (is_ns_used[match(pkg, imported_pkgs)]) {
           paste0(
-            "package '", pkg, "' is only used by namespace. ",
+            "Package '", pkg, "' is only used by namespace. ",
             "Check that it is installed using loadNamespace() instead."
           )
         } else {
-          paste0("package '", pkg, "' is attached but never used.")
+          paste0("Package '", pkg, "' is attached but never used.")
         }
       },
       type = "warning"

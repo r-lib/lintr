@@ -10,10 +10,6 @@
   identical(x, y)
 }
 
-`%!=%` <- function(x, y) {
-  !identical(x, y)
-}
-
 "%:::%" <- function(p, f) {
   get(f, envir = asNamespace(p))
 }
@@ -54,10 +50,6 @@ fix_names <- function(x, default) {
   }
   names(x) <- nms
   x
-}
-
-names2 <- function(x) {
-  names(x) %||% rep("", length(x))
 }
 
 linter_auto_name <- function(which = -3L) {
@@ -150,16 +142,6 @@ base_backport("trimws", function(x) {
   sub("^\\s+", "", sub("\\s+$", "", x))
 })
 
-global_xml_parsed_content <- function(source_expression) {
-  if (exists("file_lines", source_expression)) {
-    source_expression$full_xml_parsed_content
-  }
-}
-
-get_file_line <- function(source_expression, line) {
-  unname(source_expression$file_lines[[as.numeric(line)]])
-}
-
 base_backport("lengths", function(x) vapply(x, length, integer(1L)))
 
 try_silently <- function(expr) {
@@ -220,7 +202,6 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
 # nocov start
 # support for usethis::use_release_issue(). Make sure to use devtools::load_all() beforehand!
 release_bullets <- function() {
-  "Make sure README.md lists all available linters"
 }
 # nocov end
 
