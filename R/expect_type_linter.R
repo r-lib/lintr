@@ -9,6 +9,23 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_type_linter <- function() {
+  base_type_tests <- xp_text_in_table(paste0("is.", base_types))
+  xpath <- glue::glue("//expr[
+    (
+      (
+        expr[SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']]
+        and expr[
+          expr[SYMBOL_FUNCTION_CALL[text() = 'typeof']]
+          and (position() = 2 or preceding-sibling::expr[STR_CONST])
+        ]
+      ) or (
+        expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
+        and expr[2][expr[SYMBOL_FUNCTION_CALL[ {base_type_tests} ]]]
+      )
+    )
+    and not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])
+  ]")
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -16,35 +33,17 @@ expect_type_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    base_type_tests <- xp_text_in_table(paste0("is.", base_types))
-    xpath <- glue::glue("//expr[
-      (
-        (
-          expr[SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']]
-          and expr[
-            expr[SYMBOL_FUNCTION_CALL[text() = 'typeof']]
-            and (position() = 2 or preceding-sibling::expr[STR_CONST])
-          ]
-        ) or (
-          expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
-          and expr[2][expr[SYMBOL_FUNCTION_CALL[ {base_type_tests} ]]]
-        )
-      )
-      and not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])
-    ]")
-
     bad_expr <- xml2::xml_find_all(xml, xpath)
+    matched_function <- xp_call_name(bad_expr)
+    msg <- ifelse(
+      matched_function %in% c("expect_equal", "expect_identical"),
+      sprintf("expect_type(x, t) is better than %s(typeof(x), t)", matched_function),
+      "expect_type(x, t) is better than expect_true(is.<t>(x))"
+    )
     xml_nodes_to_lints(
       bad_expr,
       source_expression,
-      function(expr) {
-        matched_function <- xp_call_name(expr)
-        if (matched_function %in% c("expect_equal", "expect_identical")) {
-          sprintf("expect_type(x, t) is better than %s(typeof(x), t)", matched_function)
-        } else {
-          "expect_type(x, t) is better than expect_true(is.<t>(x))"
-        }
-      },
+      lint_message = msg,
       type = "warning"
     )
   })

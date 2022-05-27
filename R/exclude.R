@@ -4,18 +4,25 @@
 #' @param exclusions manually specified exclusions
 #' @param linter_names character vector of names of the active linters, used for parsing inline exclusions.
 #' @param ... additional arguments passed to [parse_exclusions()]
-#' @details
-#' Exclusions can be specified in three different ways.
-#'
-#'  1. single line in the source file. default: `# nolint`, possibly followed by a listing of linters to exclude.
-#'     If the listing is missing, all linters are excluded on that line. The default listing format is
-#'     `# nolint: linter_name, linter2_name.`. There may not be anything between the colon and the line exclusion tag
-#'     and the listing must be terminated with a full stop (`.`) for the linter list to be respected.
-#'  2. line range in the source file. default: `# nolint start`, `# nolint end`. `# nolint start` accepts linter
-#'     lists in the same form as `# nolint`.
-#'  3. exclusions parameter, a named list of files with named lists of linters and lines to exclude them on, a named
-#'     list of the files and lines to exclude, or just the filenames if you want to exclude the entire file, or the
-#'     directory names if you want to exclude all files in a directory.
+#' @eval c(
+#'   # we use @eval for the details section to avoid a literal nolint exclusion tag with non-existing linter names
+#'   # those produce a warning from [parse_exclusions()] otherwise. See #1219 for details.
+#'   "@details",
+#'   "Exclusions can be specified in three different ways.",
+#'   "",
+#'   "1. single line in the source file. default: `# nolint`, possibly followed by a listing of linters to exclude.",
+#'   "   If the listing is missing, all linters are excluded on that line. The default listing format is",
+#'   paste(
+#'     "   `#",
+#'     "nolint: linter_name, linter2_name.`. There may not be anything between the colon and the line exclusion tag"
+#'   ),
+#'   "   and the listing must be terminated with a full stop (`.`) for the linter list to be respected.",
+#'   "2. line range in the source file. default: `# nolint start`, `# nolint end`. `# nolint start` accepts linter",
+#'   "   lists in the same form as `# nolint`.",
+#'   "3. exclusions parameter, a named list of files with named lists of linters and lines to exclude them on, a named",
+#'   "   list of the files and lines to exclude, or just the filenames if you want to exclude the entire file, or the",
+#'   "   directory names if you want to exclude all files in a directory."
+#' )
 exclude <- function(lints, exclusions = settings$exclusions, linter_names = NULL, ...) {
   if (length(lints) <= 0L) {
     return(lints)
@@ -212,12 +219,15 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     return(list())
   }
 
-  # no named parameters at all
-  if (is.null(names(x))) {
+  x <- as.list(x)
+  unnamed <- !nzchar(names2(x))
+  if (any(unnamed)) {
+
+    # must be character vectors of length 1
     bad <- vapply(
       seq_along(x),
       function(i) {
-        !is.character(x[[i]]) || length(x[[i]]) != 1L
+        unnamed[i] && (!is.character(x[[i]]) || length(x[[i]]) != 1L)
       },
       logical(1L)
     )
@@ -228,56 +238,29 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
            " are not!",
            call. = FALSE)
     }
-    # x is a character vector (or list) of file names
-    # Normalize to list(<filename> = list(Inf), ...)
-    x <- structure(rep(list(Inf), length(x)), names = x)
-  } else {
-    unnamed <- names(x) == ""
-    if (any(unnamed)) {
+    # Normalize unnamed entries to list(<filename> = list(Inf), ...)
+    names(x)[unnamed] <- x[unnamed]
+    x[unnamed] <- rep_len(list(list(Inf)), sum(unnamed))
+  }
 
-      # must be character vectors of length 1
-      bad <- vapply(
-        seq_along(x),
-        function(i) {
-          unnamed[i] && (!is.character(x[[i]]) || length(x[[i]]) != 1L)
-        },
-        logical(1L)
-      )
+  full_line_exclusions <- !vapply(x, is.list, logical(1L))
 
-      if (any(bad)) {
-        stop("Full file exclusions must be character vectors of length 1. items: ",
-             toString(which(bad)),
-             " are not!",
-             call. = FALSE)
-      }
-      names(x)[unnamed] <- x[unnamed]
-      x[unnamed] <- rep_len(list(list(Inf)), sum(unnamed))
+  if (any(full_line_exclusions)) {
+
+    # must be integer or numeric vectors
+    are_numeric <- vapply(x, is.numeric, logical(1L))
+    bad <- full_line_exclusions & !are_numeric
+
+    if (any(bad)) {
+      stop("Full line exclusions must be numeric or integer vectors. items: ",
+           toString(which(bad)),
+           " are not!",
+           call. = FALSE)
     }
 
-    full_line_exclusions <- !vapply(x, is.list, logical(1L))
-
-    if (any(full_line_exclusions)) {
-
-      # must be integer or numeric vectors
-      bad <- vapply(
-        seq_along(x),
-        function(i) {
-          full_line_exclusions[i] && !is.numeric(x[[i]])
-        },
-        logical(1L)
-      )
-
-      if (any(bad)) {
-        stop("Full line exclusions must be numeric or integer vectors. items: ",
-             toString(which(bad)),
-             " are not!",
-             call. = FALSE)
-      }
-
-      # Normalize list(<filename> = c(<lines>)) to
-      # list(<filename> = list(c(<lines>)))
-      x[full_line_exclusions] <- lapply(x[full_line_exclusions], list)
-    }
+    # Normalize list(<filename> = c(<lines>)) to
+    # list(<filename> = list(c(<lines>)))
+    x[full_line_exclusions] <- lapply(x[full_line_exclusions], list)
   }
 
   paths <- names(x)

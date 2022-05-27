@@ -10,39 +10,39 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bit64", "data.table", "tidyverse")) {
+  import_xpath <- "//expr[
+      expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
+      and
+      (
+        not(SYMBOL_SUB[
+          text() = 'character.only' and
+          following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+        ]) or
+        expr[2][STR_CONST]
+      )
+    ]"
+
+  xp_used_symbols <- paste(
+    "//SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]/text()",
+    "//SYMBOL/text()",
+    "//SPECIAL/text()",
+    sep = " | "
+  )
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
       return(list())
     }
 
     xml <- source_expression$full_xml_parsed_content
-    import_exprs <- xml2::xml_find_all(
-      xml,
-      "//expr[
-        expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
-        and
-        (
-          not(SYMBOL_SUB[
-            text() = 'character.only' and
-            following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-          ]) or
-          expr[2][STR_CONST]
-        )
-      ]"
-    )
+
+    import_exprs <- xml2::xml_find_all(xml, import_xpath)
     if (length(import_exprs) == 0L) {
       return(list())
     }
     imported_pkgs <- xml2::xml_find_chr(import_exprs, "string(expr[STR_CONST|SYMBOL])")
     # as.character(parse(...)) returns one entry per expression
     imported_pkgs <- as.character(parse(text = imported_pkgs, keep.source = FALSE))
-
-    xp_used_symbols <- paste(
-      "//SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]/text()",
-      "//SYMBOL/text()",
-      "//SPECIAL/text()",
-      sep = " | "
-    )
 
     used_symbols <- xml2::xml_text(xml2::xml_find_all(xml, xp_used_symbols))
 

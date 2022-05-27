@@ -17,6 +17,11 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 nested_ifelse_linter <- function() {
+  xpath <- glue::glue("
+  //expr[expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]]
+  /expr[expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]]
+  ")
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -24,23 +29,14 @@ nested_ifelse_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    xpath <- glue::glue("
-    //expr[expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]]
-    /expr[expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]]
-    ")
-
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    xml_nodes_to_lints(
-      bad_expr,
-      source_expression = source_expression,
-      lint_message = function(expr) {
-        matched_call <- xp_call_name(expr)
-        lint_message <- sprintf("Don't use nested %s() calls;", matched_call)
-        paste(lint_message, "instead, try (1) data.table::fcase; (2) dplyr::case_when; or (3) using a lookup table.")
-      },
-      type = "warning"
+    matched_call <- xp_call_name(bad_expr)
+    lint_message <- paste(
+      sprintf("Don't use nested %s() calls;", matched_call),
+      "instead, try (1) data.table::fcase; (2) dplyr::case_when; or (3) using a lookup table."
     )
+    xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "warning")
   })
 }
 

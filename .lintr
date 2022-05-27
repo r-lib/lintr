@@ -1,7 +1,6 @@
 linters: linters_with_defaults(
    line_length_linter = line_length_linter(120),
-   implicit_integer_linter(),
-   cyclocomp_linter = cyclocomp_linter(37) # TODO(#1186) reduce to 15
+   implicit_integer_linter()
  )
 exclusions: list(
   "inst/doc/creating_linters.R" = 1,

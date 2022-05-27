@@ -12,24 +12,60 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 any_duplicated_linter <- function() {
+  any_duplicated_xpath <- "//expr[
+    expr[SYMBOL_FUNCTION_CALL[text() = 'any']]
+    and expr[expr[SYMBOL_FUNCTION_CALL[text() = 'duplicated']]]
+    and (
+      not(OP-COMMA)
+      or OP-COMMA[
+        not(preceding-sibling::OP-COMMA)
+        and following-sibling::SYMBOL_SUB[1][text() = 'na.rm']
+      ]
+    )
+  ]"
+
+  # outline:
+  #   EQ/NE/GT/LT: ensure we're in a comparison clause
+  #   check for length(unique()) matching:
+  #     - length(unique( _ )) == length( _ )
+  #     - length(unique( << _$col or _[["col"]] >> )) == nrow( _ )
+  # NB: parent::expr/.../following-sibling::expr is the path from
+  #  the expr of the unique() call to the call that needs to match.
+  #  the final parent::expr/expr gets us to the expr on the other side of EQ;
+  #  this lets us match on either side of EQ, where following-sibling
+  #  assumes we are before EQ, preceding-sibling assumes we are after EQ.
+  length_unique_xpath <- "
+  //expr[EQ or NE or GT or LT]
+  /expr[
+    expr[SYMBOL_FUNCTION_CALL[text() = 'length']]
+    and expr[expr[
+      SYMBOL_FUNCTION_CALL[text() = 'unique']
+      and (
+        following-sibling::expr =
+          parent::expr
+          /parent::expr
+          /parent::expr
+          /expr
+          /expr[SYMBOL_FUNCTION_CALL[text()= 'length']]
+          /following-sibling::expr
+        or
+        following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
+          parent::expr
+          /parent::expr
+          /parent::expr
+          /expr
+          /expr[SYMBOL_FUNCTION_CALL[text()= 'nrow']]
+          /following-sibling::expr
+      )
+    ]]
+  ]"
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
 
     xml <- source_expression$xml_parsed_content
-
-    any_duplicated_xpath <- "//expr[
-      expr[SYMBOL_FUNCTION_CALL[text() = 'any']]
-      and expr[expr[SYMBOL_FUNCTION_CALL[text() = 'duplicated']]]
-      and (
-        not(OP-COMMA)
-        or OP-COMMA[
-          not(preceding-sibling::OP-COMMA)
-          and following-sibling::SYMBOL_SUB[1][text() = 'na.rm']
-        ]
-      )
-    ]"
 
     any_duplicated_expr <- xml2::xml_find_all(xml, any_duplicated_xpath)
     any_duplicated_lints <- xml_nodes_to_lints(
@@ -39,73 +75,16 @@ any_duplicated_linter <- function() {
       type = "warning"
     )
 
-    # path from the expr of the unique() call to the call that needs to match.
-    #  the final parent::expr/expr gets us to the expr on the other side of EQ;
-    #  this lets us match on either side of EQ, where following-sibling
-    #  assumes we are before EQ, preceding-sibling assumes we are after EQ.
-    path_to_neighbor_call_expr_fmt <- file.path(
-      "parent::expr",
-      "parent::expr",
-      "parent::expr",
-      "expr",
-      "expr[SYMBOL_FUNCTION_CALL[text()= '%s']]",
-      "following-sibling::expr"
-    )
-    unique_expr_xpath <- xp_and(
-      "SYMBOL_FUNCTION_CALL[text() = 'unique']",
-      # ensure the expr matches to avoid spurious match like
-      # >  length(unique(x)) == length(y)
-      xp_or(
-        # > length(unique(x)) == length(x).
-        sprintf(
-          "following-sibling::expr = %s",
-          sprintf(path_to_neighbor_call_expr_fmt, "length")
-        ),
-        # > length(unique( << DF$col or DF[["col"]] >> )) == nrow(DF)
-        sprintf(
-          "following-sibling::expr[OP-DOLLAR or LBB]/expr[1] = %s",
-          sprintf(path_to_neighbor_call_expr_fmt, "nrow")
-        )
-      )
-    )
-    length_unique_call_xpath <- xp_and(
-      "expr[SYMBOL_FUNCTION_CALL[text() = 'length']]",
-      sprintf("expr[expr[%s]]", unique_expr_xpath)
-    )
-    # EQ ensures we're in an ==, !=, <, or > clause
-    length_unique_xpath <-
-      sprintf("//expr[EQ or NE or GT or LT]/expr[%s]", length_unique_call_xpath)
-    length_unique_xpath <- "
-    //expr[EQ or NE or GT or LT]
-    /expr[
-      expr[SYMBOL_FUNCTION_CALL[text() = 'length']]
-      and expr[expr[
-        SYMBOL_FUNCTION_CALL[text() = 'unique']
-        and (
-          following-sibling::expr =
-            parent::expr
-            /parent::expr
-            /parent::expr
-            /expr
-            /expr[SYMBOL_FUNCTION_CALL[text()= 'length']]
-            /following-sibling::expr
-          or
-          following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
-            parent::expr
-            /parent::expr
-            /parent::expr
-            /expr
-            /expr[SYMBOL_FUNCTION_CALL[text()= 'nrow']]
-            /following-sibling::expr
-        )
-      ]]
-    ]"
     length_unique_expr <- xml2::xml_find_all(xml, length_unique_xpath)
+    lint_message <- ifelse(
+      is.na(xml2::xml_find_first(length_unique_expr, "./parent::expr/expr/expr/SYMBOL_FUNCTION_CALL[text() = 'nrow']")),
+      "anyDuplicated(x) == 0L is better than length(unique(x)) == length(x).",
+      "anyDuplicated(DF$col) == 0L is better than length(unique(DF$col)) == nrow(DF)"
+    )
     length_unique_lints <- xml_nodes_to_lints(
       length_unique_expr,
       source_expression = source_expression,
-      lint_message =
-        "anyDuplicated(x) == 0L is better than length(unique(x)) == length(x) and length(unique(DF$col)) == nrow(DF)",
+      lint_message = lint_message,
       type = "warning"
     )
 

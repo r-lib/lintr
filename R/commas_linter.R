@@ -21,15 +21,21 @@ commas_linter <- function() {
       return(list())
     }
     xml <- source_expression$xml_parsed_content
+
     before_lints <- xml_nodes_to_lints(
       xml2::xml_find_all(xml, xpath_before),
       source_expression = source_expression,
-      lint_message = "Commas should never have a space before."
+      lint_message = "Commas should never have a space before.",
+      range_start_xpath = "number(./preceding-sibling::*[1]/@col2 + 1)", # start after preceding expression
+      range_end_xpath = "number(./@col1 - 1)" # end before comma
     )
+
     after_lints <- xml_nodes_to_lints(
       xml2::xml_find_all(xml, xpath_after),
       source_expression = source_expression,
-      lint_message = "Commas should always have a space after."
+      lint_message = "Commas should always have a space after.",
+      range_start_xpath = "number(./@col2 + 1)", # start and end after comma
+      range_end_xpath = "number(./@col2 + 1)"
     )
 
     c(before_lints, after_lints)
