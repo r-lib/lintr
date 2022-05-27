@@ -39,7 +39,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     fun_names <- get_r_string(matched_nodes)
 
     msgs <- vapply(
-      setNames(nm = unique(fun_names)),
+      stats::setNames(nm = unique(fun_names)),
       function(fun_name) {
         msg <- sprintf('Function "%s" is undesirable.', fun_name)
         alternative <- fun[[fun_name]]
