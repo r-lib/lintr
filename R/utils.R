@@ -103,7 +103,7 @@ get_content <- function(lines, info) {
 
   if (!missing(info)) {
     if (inherits(info, "xml_node")) {
-      info <- lapply(setNames(nm = c("col1", "col2", "line1", "line2")), function(attr) {
+      info <- lapply(stats::setNames(nm = c("col1", "col2", "line1", "line2")), function(attr) {
         as.integer(xml2::xml_attr(info, attr))
       })
     }
