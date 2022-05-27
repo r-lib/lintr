@@ -50,19 +50,12 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
 
     bad_op <- xml2::xml_find_all(xml, xpath)
 
-    xml_nodes_to_lints(
-      bad_op,
-      source_expression = source_expression,
-      lint_message = function(expr) {
-        op_name <- xml2::xml_text(expr)
-        msg <- sprintf("Operator `%s` is undesirable.", op_name)
-        alt_op <- op[[op_name]]
-        if (!is.na(alt_op)) {
-          msg <- paste(msg, alt_op)
-        }
-        msg
-      },
-      type = "warning"
-    )
+    operator <- xml2::xml_text(bad_op)
+    lint_message <- sprintf("Operator `%s` is undesirable.", operator)
+    alternative <- op[operator]
+    has_alternative <- !is.na(alternative)
+    lint_message[has_alternative] <- paste(lint_message[has_alternative], alternative[has_alternative])
+
+    xml_nodes_to_lints(bad_op, source_expression, lint_message, type = "warning")
   })
 }
