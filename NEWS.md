@@ -73,7 +73,6 @@
    + require balanced usage of `{}` in `if`/`else` conditions, i.e., if the `if` branch uses braces,
      then so must the `else` branch, and _vice versa_ (@michaelchirico)
 * New `paren_body_linter()` checks that there is a space between a right parenthesis and a body expression. (#809, @kpagacz)
-* Added `T_and_F_symbol_linter()` (#517, @AshesITR)
 * Added `semicolon_linter()` (#683, @AshesITR)
 * `undesirable_function_linter()`
    + Added new functions to the defaults related to debugging (#876, @michaelchirico):
@@ -115,6 +114,7 @@
    + extended to exclude special R namespace hook functions such as `.onLoad` (#500, #614, @AshesITR and @michaelchirico)
    + extended to correctly detect imported functions when linting packages (#642, @AshesITR)
    + correctly detect assignment generics like `names<-.class_name` (#843, @jonkeane)
+   + added new styles `"symbols"` and `"SNAKE_CASE"` (#494, #495, #615, #670, @michaelchirico and @AshesITR)
 * `object_usage_linter()`
    + detect global variables if there are top-level dollar-assignments (#666, #709, @AshesITR)
    + report usage warnings spanning multiple lines (#507, @AshesITR)
@@ -122,6 +122,7 @@
    + detect within functions assigned with `=` instead of `<-` (#1081, @michaelchirico)
    + detect functions exported by packages that are explicitly attached using `library()` or
      `require()` calls (#1127, @AshesITR)
+   + improved location information in some cases (#1285, @AshesITR)
 * `object_length_linter()`: correctly detect generics and only counts the implementation class towards the length.
   This prevents false positive lints in the case of long generic names, e.g.
   `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
@@ -133,8 +134,11 @@
 * `line_length_linter()`: place the source marker at the margin of the affected line to improve user experience
   during de-linting -- just press <kbd>Return</kbd> (#735, @AshesITR)
 * `commented_code_linter()`: use the parse tree to find comments, eliminating some false positives (#451, @AshesITR)
-* `T_and_F_symbol_linter()`: no longer lint occurrences of `T` and `F` when used for subsetting and gives a better
-  message when used as variable names (#657, @AshesITR)
+* `T_and_F_symbol_linter()`
+   + Newly included in `default_linters` (#517, @AshesITR)
+   + no longer lint occurrences of `T` and `F` when used for subsetting and gives a better
+     message when used as variable names (#657, @AshesITR)
+* `function_left_parentheses_linter()`: improved location information (#1266, #1267, @AshesITR)
 
 ### Other noteworthy changes
 
@@ -213,8 +217,6 @@ of general interest to the broader R community. More will be included in future 
   in source files or named lists of line numbers in `.lintr`.
   Also allows for partial matching as long as the supplied prefix is unique, e.g.
   `# nolint: infix_spaces` works to exclude `infix_spaces_linter` (#660, #872, @AshesITR)
-* `object_name_linter()`: new styles `"symbols"` and `"SNAKE_CASE"`
-  (#494, #495, #615, #670, @michaelchirico and @AshesITR)
 * `lint()`: new optional argument `text` for supplying a string or lines directly, e.g. if the file is already 
   in memory or linting is being done _ad hoc_. (#503, @renkun-ken)
 * `lint_dir()` excludes the `renv` and `packrat` directories by default (#697, @AshesITR)
@@ -240,10 +242,7 @@ of general interest to the broader R community. More will be included in future 
   in our test suite and even more for complex files (#1169, #1197, #1200, #1201, #1214, @MichaelChirico and @AshesITR) 
 * **Jenkins CI**: Support for writing comments to GitHub repo when running in Jenkins CI (#488, @fdlk)
 * `seq_linter()`: improve lint message to be clearer about the reason for linting. (#522, @michaelchirico)
-* `unneeded_concatenation_linter()`: correctly considers arguments piped in via magrittr `%>%` (#573, #585, @michaelquinn32)
-* `unneeded_concatenation_linter()`: added support for the native pipe `|>` (#1270, #1271, @AshesITR)
-* `function_left_parentheses_linter()`: improved location information (#1266, #1267, @AshesITR)
-* `object_usage_linter()`: improved location information in some cases (#1285, @AshesITR)
+* `unneeded_concatenation_linter()` correctly considers arguments in pipelines (`%>%` or `|>`; #573, #1270, @michaelquinn32 and @AshesITR)
 * **Raw strings**: Several linters tightened internal logic to allow for raw strings like `R"( a\string )"` 
   (#1034, #1285, @michaelchirico and @AshesITR)
 * Improved S3 generic detection for non-standard S3 generics where `UseMethod()` is called after several
