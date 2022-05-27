@@ -38,6 +38,6 @@ test_that("undesirable_operator_linter vectorizes messages", {
       rex::rex("`:::` is undesirable. It accesses"),
       rex::rex("`%oo%` is undesirable.", end)
     ),
-    undesirable_operator_linter(c(default_undesirable_operators, list("%oo%" = NA)))
+    undesirable_operator_linter(modify_defaults(default_undesirable_operators, "%oo%" = NA))
   )
 })
