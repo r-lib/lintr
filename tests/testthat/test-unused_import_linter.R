@@ -43,3 +43,15 @@ test_that("unused_import_linter handles message vectorization", {
     unused_import_linter()
   )
 })
+
+test_that("unused_import_linter lints packages with exports like pkg::pkg", {
+  # glue::glue is an export, so don't get thrown off by the 'glue' symbol in library()
+  expect_lint(
+    trim_some("
+      library(glue)
+      1 + 1
+    "),
+    rex::rex("Package 'glue' is attached but never used."),
+    unused_import_linter()
+  )
+})
