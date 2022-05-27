@@ -10,10 +10,6 @@
   identical(x, y)
 }
 
-`%!=%` <- function(x, y) {
-  !identical(x, y)
-}
-
 "%:::%" <- function(p, f) {
   get(f, envir = asNamespace(p))
 }
@@ -54,10 +50,6 @@ fix_names <- function(x, default) {
   }
   names(x) <- nms
   x
-}
-
-names2 <- function(x) {
-  names(x) %||% rep("", length(x))
 }
 
 linter_auto_name <- function(which = -3L) {
@@ -110,6 +102,13 @@ get_content <- function(lines, info) {
   lines[is.na(lines)] <- ""
 
   if (!missing(info)) {
+    if (inherits(info, "xml_node")) {
+      info <- lapply(stats::setNames(nm = c("col1", "col2", "line1", "line2")), function(attr) {
+        as.integer(xml2::xml_attr(info, attr))
+      })
+    }
+
+    lines <- lines[seq(info$line1, info$line2)]
     lines[length(lines)] <- substr(lines[length(lines)], 1L, info$col2)
     lines[1L] <- substr(lines[1L], info$col1, nchar(lines[1L]))
   }
@@ -142,16 +141,6 @@ base_backport <- function(name, replacement) {
 base_backport("trimws", function(x) {
   sub("^\\s+", "", sub("\\s+$", "", x))
 })
-
-global_xml_parsed_content <- function(source_expression) {
-  if (exists("file_lines", source_expression)) {
-    source_expression$full_xml_parsed_content
-  }
-}
-
-get_file_line <- function(source_expression, line) {
-  unname(source_expression$file_lines[[as.numeric(line)]])
-}
 
 base_backport("lengths", function(x) vapply(x, length, integer(1L)))
 
@@ -213,7 +202,6 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
 # nocov start
 # support for usethis::use_release_issue(). Make sure to use devtools::load_all() beforehand!
 release_bullets <- function() {
-  "Make sure README.md lists all available linters"
 }
 # nocov end
 
