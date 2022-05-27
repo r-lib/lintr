@@ -9,7 +9,7 @@ lint_assignments <- function(filename) {
 test_that("lint() results do not depend on the working directory", {
 
   # a dummy package for use in the test
-  pkg_path <- file.path("dummy_packages", "assignmentLinter")
+  pkg_path <- test_path("dummy_packages", "assignmentLinter")
 
   # put a .lintr in the package root that excludes the first line of `R/jkl.R`
   config_path <- file.path(pkg_path, ".lintr")
