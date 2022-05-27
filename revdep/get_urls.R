@@ -10,19 +10,26 @@ lintr_pkg = cran_db[
   "Package"
 ]
 
-urls = vector("list", length(lintr_pkg))
+# simple retry mechanism
 url_fmt = "https://cran.r-project.org/web/packages/%s/index.html"
-for (ii in seq_along(urls)) {
-  # simple retry mechanism
-  read_pkg = function() xml2::read_html(sprintf(url_fmt, lintr_pkg[ii]))
-  retry_read = function(cond) {
+retry_read = function(pkg, initial_sleep = 1, retry_sleep = 60) {
+  url = sprintf(url_fmt, pkg)
+  retry = function(cond) {
     message("Sleepy... 😴")
-    Sys.sleep(60)
-    read_pkg()
+    Sys.sleep(retry_sleep)
+    xml2::read_html(url)
   }
-  cran_pg = tryCatch(read_pkg(), error = retry_read)
-  urls[[ii]] <- xml2::xml_find_chr(cran_pg, "string(//tr[td[starts-with(text(), 'URL')]]/td/a)")
-  Sys.sleep(1)
+  Sys.sleep(initial_sleep)
+  tryCatch(xml2::read_html(url), error = retry)
+}
+
+urls = vector("list", length(lintr_pkg))
+url_xpath = "string(//tr[td[starts-with(text(), 'URL')]]/td/a)"
+# for loop makes debugging easier
+for (ii in seq_along(urls)) {
+  urls[[ii]] <- lintr_pkg[[ii]] %>%
+    retry_read() %>%
+    xml2::xml_find_chr(cran_pg, url_xpath)
 }
 
 urls = unlist(urls)
