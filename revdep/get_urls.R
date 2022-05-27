@@ -15,7 +15,12 @@ url_fmt = "https://cran.r-project.org/web/packages/%s/index.html"
 for (ii in seq_along(urls)) {
   # simple retry mechanism
   read_pkg = function() xml2::read_html(sprintf(url_fmt, lintr_pkg[ii]))
-  cran_pg = tryCatch(read_pkg(), error = function(cond) { message("Sleepy... 😴"); Sys.sleep(60); read_pkg() })
+  retry_read = function(cond) {
+    message("Sleepy... 😴")
+    Sys.sleep(60)
+    read_pkg()
+  }
+  cran_pg = tryCatch(read_pkg(), error = retry_read)
   urls[[ii]] <- xml2::xml_find_chr(cran_pg, "string(//tr[td[starts-with(text(), 'URL')]]/td/a)")
   Sys.sleep(1)
 }
