@@ -129,6 +129,16 @@ test_that("substr inverted tests are caught as well", {
   )
 })
 
+test_that("R>=4 raw strings are detected", {
+  skip_if_not_r_version("4.0.0")
+  expect_lint('grepl(R"(^.{3})", x)', NULL, string_boundary_linter())
+  expect_lint(
+    'grepl(R"(^abc)", x)',
+    rex::rex("Use startsWith to detect a fixed initial substring"),
+    string_boundary_linter()
+  )
+})
+
 # TODO(chiricom): extend to inversion cases too:
 #  !grepl("^abc", x) --> !startsWith(x, "abc")
 

@@ -13,8 +13,8 @@
 string_boundary_linter <- function() {
   regex_xpath <- "//STR_CONST[
     (
-      substring(text(), 2, 1) = '^'
-      or substring(text(), string-length(text()) - 1, 1) = '$'
+      contains(text(), '^')
+      or contains(text(), '$')
     )
     and string-length(text()) > 3
     and (
