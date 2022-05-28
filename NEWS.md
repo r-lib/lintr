@@ -173,6 +173,8 @@ and correcting common R usage mistakes. This release includes many of these lint
 of general interest to the broader R community. More will be included in future releases. See, e.g.
 #884, #979, #998, #1011, #1016, #1036, #1051, #1066, and #1067; special thanks to @michaelchirico and @michaelquinn32.
 
+* `fixed_regex_linter()` Require `fixed = TRUE` or `stringr::fixed()` for regular expressions that can be
+  expressed statically, e.g. `strsplit(x, "[.]")` can be `strsplit(x, ".", fixed = TRUE)`
 * `expect_null_linter()` Require usage of `expect_null(x)` over `expect_equal(x, NULL)` and similar
 * `expect_type_linter()` Require usage of `expect_type(x, t)` over `expect_equal(typeof(x), t)` and similar
 * `expect_s3_class_linter()` Require usage of `expect_s3_class(x, k)` over `expect_equal(class(x), k)` and similar
