@@ -145,8 +145,5 @@ test_that("R>=4 raw strings are detected", {
   )
 })
 
-# TODO(chiricom): extend to inversion cases too:
-#  !grepl("^abc", x) --> !startsWith(x, "abc")
-
 # TODO(chiricom): fixed=TRUE should be skipped.
 #  grepl("^a", x, fixed = TRUE) is not equivalent to startsWith(x, "a")
