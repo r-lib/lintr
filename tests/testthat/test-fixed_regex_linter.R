@@ -207,16 +207,27 @@ test_that("fixed replacement is correct", {
   expect_lint(
     trim_some("
       c(
-        grepl('[\\U{1D4D7}]', x),
         grepl('abcdefg', x),
         grepl('a[.]\\\\.b\\n', x)
       )
     "),
     list(
-      rex::rex('Here, you can use "\U1D4D7"'),
       rex::rex('Here, you can use "abcdefg"'),
       rex::rex('Here, you can use "a..b\\n"')
     ),
+    fixed_regex_linter()
+  )
+})
+
+test_that("fixed replacement is correct with UTF-8", {
+  skip_if(
+    .Platform$OS.type == "windows" && !hasName(R.Version(), "crt"),
+    message = "UTF-8 support is required"
+  )
+
+  expect_lint(
+    "grepl('[\\U{1D4D7}]', x)",
+    rex::rex('Here, you can use "\U1D4D7"'),
     fixed_regex_linter()
   )
 })
