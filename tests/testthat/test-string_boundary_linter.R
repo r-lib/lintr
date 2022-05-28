@@ -144,7 +144,7 @@ test_that("R>=4 raw strings are detected", {
   expect_lint('grepl(R"(^.{3})", x)', NULL, string_boundary_linter())
   expect_lint(
     'grepl(R"(^abc)", x)',
-    rex::rex("Use startsWith to detect a fixed initial substring"),
+    rex::rex("Use startsWith() to detect a fixed initial substring"),
     string_boundary_linter()
   )
 })
