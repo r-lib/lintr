@@ -10,6 +10,10 @@ test_that("StringBoundaryLinter skips allowed grepl() usages", {
   # ignore.case --> no lint
   expect_lint("grepl('^abc', x, ignore.case = TRUE)", NULL, string_boundary_linter())
   expect_lint("grepl('^abc', x, ignore.case = ignore.case)", NULL, string_boundary_linter())
+
+  # fixed --> no lint
+  expect_lint("grepl('^abc', x, fixed = TRUE)", NULL, string_boundary_linter())
+  expect_lint("grepl('^abc', x, fixed = fixed)", NULL, string_boundary_linter())
 })
 
 test_that("string_boundary_linter skips allowed str_detect() usages", {
@@ -59,15 +63,15 @@ test_that("string_boundary_linter blocks simple disallowed grepl() usages", {
     string_boundary_linter()
   )
 
-  # options besides ignore.case also don't matter
+  # perl = TRUE doesn't matter
   expect_lint(
-    "grepl('^a', x, perl = TRUE, fixed = TRUE)",
+    "grepl('^a', x, perl = TRUE)",
     rex::rex("Use startsWith() to detect a fixed initial substring."),
     string_boundary_linter()
   )
   # explicit FALSE (i.e., an explicit default) is ignored
   expect_lint(
-    "grepl('^a', x, ignore.case = FALSE)",
+    "grepl('^a', x, fixed = FALSE)",
     rex::rex("Use startsWith() to detect a fixed initial substring."),
     string_boundary_linter()
   )

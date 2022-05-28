@@ -21,6 +21,10 @@ string_boundary_linter <- function() {
       text() = 'ignore.case'
       and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE']])
     ])
+    and not(SYMBOL_SUB[
+      text() = 'fixed'
+      and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE']])
+    ])
   ]/expr[2]/STR_CONST[ {str_cond} ]")
   str_detect_xpath <- glue::glue("//expr[
     expr[SYMBOL_FUNCTION_CALL[text() = 'str_detect']]
