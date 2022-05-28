@@ -22,11 +22,13 @@ test_that(
     # from abc.R
     "abc = 123",
     # from jkl.R
-    "jkl = 456", "mno = 789"
+    "jkl = 456",
+    "mno = 789"
   )
   read_settings(NULL)
   lints_from_outside <- lint_package(
-    pkg_path, linters = list(assignment_linter()), parse_settings = FALSE
+    pkg_path, linters = list(assignment_linter()),
+    parse_settings = FALSE
   )
   lints_from_pkg_root <- withr::with_dir(
     pkg_path,
