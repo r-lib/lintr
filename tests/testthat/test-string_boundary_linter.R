@@ -148,6 +148,3 @@ test_that("R>=4 raw strings are detected", {
     string_boundary_linter()
   )
 })
-
-# TODO(chiricom): fixed=TRUE should be skipped.
-#  grepl("^a", x, fixed = TRUE) is not equivalent to startsWith(x, "a")
