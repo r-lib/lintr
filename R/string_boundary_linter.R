@@ -11,28 +11,26 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 string_boundary_linter <- function() {
-  anchor_expr <- xp_or(
-    "substring(text(), 2, 1) = '^'",
-    "substring(text(), string-length(text()) - 1, 1) = '$'"
-  )
-  ignore_case_expr <- xp_and(
-    "text() = 'ignore.case'",
-    "not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE']])"
-  )
-  grepl_expr <- xp_and(
-    "preceding-sibling::expr[1][SYMBOL_FUNCTION_CALL[text() = 'grepl']]",
-    sprintf("not(parent::expr[SYMBOL_SUB[%s]])", ignore_case_expr)
-  )
-  str_detect_expr <- file.path(
-    "parent::expr",
-    "preceding-sibling::expr[2][SYMBOL_FUNCTION_CALL[text() = 'str_detect']]"
-  )
-  str_const_cond <- xp_and(
-    anchor_expr,
-    "string-length(text()) > 3",
-    xp_or(sprintf("parent::expr[%s]", grepl_expr), str_detect_expr)
-  )
-  regex_xpath <- sprintf("//STR_CONST[%s]", str_const_cond)
+  regex_xpath <- "//STR_CONST[
+    (
+      substring(text(), 2, 1) = '^'
+      or substring(text(), string-length(text()) - 1, 1) = '$'
+    )
+    and string-length(text()) > 3
+    and (
+      parent::expr[
+        preceding-sibling::expr[1][SYMBOL_FUNCTION_CALL[text() = 'grepl']]
+        and not(parent::expr[SYMBOL_SUB[
+          text() = 'ignore.case'
+          and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE']])
+        ]])
+      ]
+      or parent::expr[
+        preceding-sibling::expr[2][SYMBOL_FUNCTION_CALL[text() = 'str_detect']]
+      ]
+    )
+  ]"
+
 
   substr_xpath <- "//expr[
     (EQ or NE)
