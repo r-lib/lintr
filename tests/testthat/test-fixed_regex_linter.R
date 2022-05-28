@@ -203,6 +203,24 @@ test_that("single expression with multiple regexes is OK", {
   expect_lint('c(grep("^a", x), grep("b$", x))', NULL, fixed_regex_linter())
 })
 
+test_that("fixed replacement is correct", {
+  expect_lint(
+    trim_some("
+      c(
+        grepl('[\\U{1D4D7}]', x),
+        grepl('abcdefg', x),
+        grepl('a[.]\\\\.b\\n', x)
+      )
+    "),
+    list(
+      rex::rex('Here, you can use "\U1D4D7"'),
+      rex::rex('Here, you can use "abcdefg"'),
+      rex::rex('Here, you can use "a..b\\n"')
+    ),
+    fixed_regex_linter()
+  )
+})
+
 # TODO(michaelchirico): one difference for stringr functions vs. base is that
 #   stringr is much friendlier to piping, so that
 #   > str %>% str_replace_all("x$", "y")
