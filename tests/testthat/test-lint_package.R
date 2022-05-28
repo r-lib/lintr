@@ -38,7 +38,8 @@ test_that(
   )
 
   expect_equal(
-    as.data.frame(lints_from_outside)[["line"]], expected_lines
+    as.data.frame(lints_from_outside)[["line"]],
+    expected_lines
   )
   expect_equal(
     as.data.frame(lints_from_outside),
