@@ -60,10 +60,11 @@ fixed_regex_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    patterns <- xml2::xml_find_all(xml, xpath)
+    pattern_expr <- xml2::xml_find_all(xml, xpath)
+    patterns <- get_r_string(pattern_expr)
 
     xml_nodes_to_lints(
-      patterns[is_not_regex(xml2::xml_text(patterns))],
+      pattern_expr[is_not_regex(patterns)],
       source_expression = source_expression,
       lint_message = paste(
         "For static regular expression patterns, set `fixed = TRUE`.",
@@ -97,9 +98,6 @@ fixed_regex_linter <- function() {
 #'   string with `fixed = TRUE`.
 #' @noRd
 is_not_regex <- function(str) {
-  # Handle string quoting and escaping using R directly
-  str <- as.character(parse(text = str, keep.source = FALSE))
-
   rx_non_active_char <- rex::rex(none_of("^${(.*+?|[\\"))
   rx_char_escape <- rex::rex(or(
     group("\\", none_of(alnum)),
