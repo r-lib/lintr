@@ -96,13 +96,13 @@ test_that("Multi-byte character truncated by parser is ignored", {
 })
 
 test_that("Can read non UTF-8 file", {
-  file <- "dummy_projects/project/cp1252.R"
+  file <- test_path("dummy_projects", "project", "cp1252.R")
   read_settings(file)
   expect_null(get_source_expressions(file)$error)
 })
 
 test_that("Warns if encoding is misspecified", {
-  file <- "dummy_projects/project/cp1252.R"
+  file <- test_path("dummy_projects", "project", "cp1252.R")
   read_settings(NULL)
   the_lint <- get_source_expressions(file)$error
   expect_s3_class(the_lint, "lint")
@@ -118,7 +118,7 @@ test_that("Warns if encoding is misspecified", {
   expect_equal(the_lint$message, msg)
   expect_equal(the_lint$line_number, 4L)
 
-  file <- "dummy_projects/project/cp1252_parseable.R"
+  file <- test_path("dummy_projects", "project", "cp1252_parseable.R")
   read_settings(NULL)
   the_lint <- get_source_expressions(file)$error
   expect_s3_class(the_lint, "lint")
