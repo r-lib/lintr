@@ -39,13 +39,16 @@ test_that("lint() results do not depend on the working directory", {
   )
 
   expect_equal(
-    as.data.frame(lints_from_pkg_root)[["line"]], expected_lines
+    as.data.frame(lints_from_pkg_root)[["line"]],
+    expected_lines
   )
   expect_equal(
-    as.data.frame(lints_from_outside), as.data.frame(lints_from_pkg_root)
+    as.data.frame(lints_from_outside),
+    as.data.frame(lints_from_pkg_root)
   )
   expect_equal(
-    as.data.frame(lints_from_a_subdir), as.data.frame(lints_from_pkg_root)
+    as.data.frame(lints_from_a_subdir),
+    as.data.frame(lints_from_pkg_root)
   )
 })
 
@@ -58,9 +61,7 @@ test_that("lint() results do not depend on the position of the .lintr", {
   # - the same directory as filepath
   # - the project directory
   # - the user's home directory
-  lint_with_config <- function(
-    config_path, config_string, filename
-  ) {
+  lint_with_config <- function(config_path, config_string, filename) {
     cat(config_string, file = config_path)
     on.exit(unlink(config_path))
     lint_assignments(filename)
