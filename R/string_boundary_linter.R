@@ -11,26 +11,21 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 string_boundary_linter <- function() {
-  regex_xpath <- "//STR_CONST[
-    (
-      contains(text(), '^')
-      or contains(text(), '$')
-    )
-    and string-length(text()) > 3
-    and (
-      parent::expr[
-        preceding-sibling::expr[1][SYMBOL_FUNCTION_CALL[text() = 'grepl']]
-        and not(parent::expr[SYMBOL_SUB[
-          text() = 'ignore.case'
-          and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE']])
-        ]])
-      ]
-      or parent::expr[
-        preceding-sibling::expr[2][SYMBOL_FUNCTION_CALL[text() = 'str_detect']]
-      ]
-    )
-  ]"
-
+  str_cond <- xp_and(
+    "string-length(text()) > 3",
+    "contains(text(), '^') or contains(text(), '$')"
+  )
+  grepl_xpath <- glue::glue("//expr[
+    expr[SYMBOL_FUNCTION_CALL[text() = 'grepl']]
+    and not(SYMBOL_SUB[
+      text() = 'ignore.case'
+      and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE']])
+    ])
+  ]/expr[2]/STR_CONST[ {str_cond} ]")
+  str_detect_xpath <- glue::glue("//expr[
+    expr[SYMBOL_FUNCTION_CALL[text() = 'str_detect']]
+  ]/expr[3]/STR_CONST[ {str_cond} ]")
+  regex_xpath <- paste(grepl_xpath, "|", str_detect_xpath)
 
   substr_xpath <- "//expr[
     (EQ or NE)
