@@ -15,3 +15,9 @@ c.f. \code{startsWith(x, "abc")}, \code{grepl("^abc", x)},
 \details{
 Ditto for using \code{\link[=endsWith]{endsWith()}} to detect fixed terminal substrings.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
+\section{Tags}{
+\link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
+}

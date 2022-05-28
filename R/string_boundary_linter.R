@@ -7,6 +7,8 @@
 #'
 #' Ditto for using [endsWith()] to detect fixed terminal substrings.
 #'
+#' @evalRd rd_tags("string_boundary_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 string_boundary_linter <- function() {
   anchor_expr <- xp_or(
