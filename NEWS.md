@@ -122,7 +122,8 @@
    + detect within functions assigned with `=` instead of `<-` (#1081, @michaelchirico)
    + detect functions exported by packages that are explicitly attached using `library()` or
      `require()` calls (#1127, @AshesITR)
-   + improved location information in some cases (#1285, @AshesITR)
+   + improved location information in some cases where the previous regex-based approach didn't work, e.g. unicode 
+     characters in variable names (#1285, @AshesITR)
 * `object_length_linter()`: correctly detect generics and only counts the implementation class towards the length.
   This prevents false positive lints in the case of long generic names, e.g.
   `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
