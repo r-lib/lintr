@@ -52,6 +52,12 @@ test_that("string_boundary_linter blocks simple disallowed grepl() usages", {
     rex::rex("Use endsWith() to detect a fixed terminal substring."),
     string_boundary_linter()
   )
+  # also get negation for free
+  expect_lint(
+    "!grepl('a$', x)",
+    rex::rex("Use endsWith() to detect a fixed terminal substring."),
+    string_boundary_linter()
+  )
 
   # options besides ignore.case also don't matter
   expect_lint(
