@@ -21,7 +21,7 @@ object_usage_linter <- function(interpret_glue = TRUE) {
     "expr_or_assign_or_help[EQ_ASSIGN]/expr[2][FUNCTION]",
     "equal_assign[EQ_ASSIGN]/expr[2][FUNCTION]",
     # assign() and setMethod() assignments
-    "//expr[expr[SYMBOL_FUNCTION_CALL[text() = 'assign' or text() = 'setMethod']]]/expr[3]",
+    "//expr[expr[SYMBOL_FUNCTION_CALL[text() = 'assign' or text() = 'setMethod']]]/expr[3][FUNCTION]",
     sep = " | "
   )
 
