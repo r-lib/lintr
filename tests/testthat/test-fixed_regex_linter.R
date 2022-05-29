@@ -253,7 +253,9 @@ test_that("fixed replacement is correct with UTF-8", {
 skip_if_not_installed("patrick")
 patrick::with_parameters_test_that("fixed replacements are correct", {
   skip_if(
-    regex_expr == "abc\\U{A0DEF}ghi" && .Platform$OS.type == "windows" && !hasName(R.Version(), "crt"),
+    regex_expr %in% c("abc\\U{A0DEF}ghi", "[\\U1d4d7]", "[\\U{1D4D7}]", "\\u{A0}\\U{0001d4d7}") &&
+      .Platform$OS.type == "windows" &&
+      !hasName(R.Version(), "crt"),
     message = "UTF-8 support is required"
   )
   expect_lint(
