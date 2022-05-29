@@ -1,38 +1,47 @@
 #!/usr/bin/Rscript
 # Script to get URL keys from CRAN
 #   of packags that Suggest or Import lintr
-library(xml2)
 
 cran_db = as.data.frame(available.packages())
-lintr_re = "(^|\\s)lintr(,|\\s+\\(|$)"
+lintr_re = "\\blintr\\b"
 lintr_pkg = cran_db[
   with(cran_db, grepl(lintr_re, Suggests) | grepl(lintr_re, Imports)),
   "Package"
 ]
 
 # simple retry mechanism
-url_fmt = "https://cran.r-project.org/web/packages/%s/index.html"
-retry_read = function(pkg, initial_sleep = 1, retry_sleep = 60) {
-  url = sprintf(url_fmt, pkg)
+desc_url_fmt = "https://cran.r-project.org/web/packages/%s/DESCRIPTION"
+extract_url = function(pkg, initial_sleep = 1, retry_sleep = 60) {
+  desc_url = sprintf(desc_url_fmt, pkg)
   retry = function(cond) {
     message("Sleepy... 😴")
     Sys.sleep(retry_sleep)
-    xml2::read_html(url)
+    url(desc_url, open = "r")
   }
   Sys.sleep(initial_sleep)
-  tryCatch(xml2::read_html(url), error = retry)
+  url_conn = tryCatch(url(desc_url, open = "r"), error = retry, warning = retry)
+  pkg_data = read.dcf(url_conn, "URL")
+  drop(pkg_data)
 }
 
-urls = vector("list", length(lintr_pkg))
-url_xpath = "string(//tr[td[starts-with(text(), 'URL')]]/td/a)"
+extract_github_repo = function(urls) {
+  matches = gregexpr("https?://git(hub|lab).com/[a-zA-Z0-9_-]+/[a-zA-Z0-9._-]+", urls)
+  starts = sapply(matches, `[[`, 1L)
+  matched = starts > 0L
+
+  urls = urls[matched]
+  starts = starts[matched]
+  matches = matches[matched]
+
+  unname(substr(urls, starts, starts + sapply(matches, attr, "match.length") - 1L))
+}
+
+urls = character(length(lintr_pkg))
 # for loop makes debugging easier
 for (ii in seq_along(urls)) {
-  urls[[ii]] <- lintr_pkg[[ii]] %>%
-    retry_read() %>%
-    xml2::xml_find_chr(cran_pg, url_xpath)
+  urls[ii] <- extract_url(lintr_pkg[ii])
 }
 
-urls = unlist(urls)
-urls = grep("^https?://github", urls, value = TRUE)
+urls = sort(extract_github_repo(urls[!is.na(urls)]))
 
 writeLines(urls, "reverse-imports-urls")
