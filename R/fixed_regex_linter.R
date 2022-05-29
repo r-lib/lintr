@@ -65,11 +65,14 @@ fixed_regex_linter <- function() {
     is_static <- is_not_regex(pattern_strings)
 
     fixed_equivalent <- get_fixed_string(pattern_strings[is_static])
+    call_name <- xp_call_name(patterns[is_static])
+
     msg <- paste(
       "This regular expression is static, i.e., its matches can be expressed as a fixed substring expression, which",
       "is faster to compute.",
       "Here, you can use", encodeString(fixed_equivalent, quote = '"', justify = "none"), "as a fixed substring.",
-      "For static regular expression patterns, set fixed = TRUE or use stringr::fixed()."
+      "For static regular expression patterns,",
+      ifelse(startsWith(call_name, "str_"), "use stringr::fixed().", "set fixed = TRUE.")
     )
 
     xml_nodes_to_lints(
