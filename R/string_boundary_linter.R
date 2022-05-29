@@ -19,11 +19,11 @@ string_boundary_linter <- function() {
     expr[SYMBOL_FUNCTION_CALL[text() = 'grepl']]
     and not(SYMBOL_SUB[
       text() = 'ignore.case'
-      and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE']])
+      and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE' or text() = 'F']])
     ])
     and not(SYMBOL_SUB[
       text() = 'fixed'
-      and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE']])
+      and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE' or text() = 'F']])
     ])
   ]/expr[2]/STR_CONST[ {str_cond} ]")
   str_detect_xpath <- glue::glue("//expr[

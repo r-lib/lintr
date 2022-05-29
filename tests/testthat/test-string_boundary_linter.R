@@ -75,6 +75,11 @@ test_that("string_boundary_linter blocks simple disallowed grepl() usages", {
     rex::rex("Use startsWith() to detect a fixed initial substring."),
     string_boundary_linter()
   )
+  expect_lint(
+    "grepl('^a', x, fixed = F)",
+    rex::rex("Use startsWith() to detect a fixed initial substring."),
+    string_boundary_linter()
+  )
 })
 
 test_that("string_boundary_linter blocks simple disallowed str_detect() usages", {
