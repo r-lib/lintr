@@ -272,7 +272,7 @@ patrick::with_parameters_test_that("fixed replacements are correct", {
   "[\\123]", "[\\123]", "S",
   "a[*]b", "a[*]b", "a*b",
   "abcdefg", "abcdefg", "abcdefg",
-  "abc\\U{A0DEF}ghi", "abc\\U{A0DEF}ghi", if (getRversion() < "4.1") "abc\U0a0defghi" else "abc\\U{0a0def}ghi",
+  "abc\\U{A0DEF}ghi", "abc\\U{A0DEF}ghi", if (getRversion() < "4.1") "abc\\U000a0defghi" else "abc\\U{0a0def}ghi",
   "a-z", "a-z", "a-z",
   "[\\n]", "[\\n]", "\\n",
   "\\n", "\n", "\\n",
