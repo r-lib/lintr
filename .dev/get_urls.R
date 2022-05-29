@@ -25,15 +25,16 @@ extract_url = function(pkg, initial_sleep = 1, retry_sleep = 60) {
 }
 
 extract_github_repo = function(urls) {
-  matches = gregexpr("https?://git(hub|lab).com/[a-zA-Z0-9_-]+/[a-zA-Z0-9._-]+", urls)
-  starts = sapply(matches, `[[`, 1L)
-  matched = starts > 0L
+  matches = regexpr("https?://git(hub|lab).com/[a-zA-Z0-9_-]+/[a-zA-Z0-9._-]+", urls)
+  matched = !is.na(matches) & matches > 0L
 
-  urls = urls[matched]
-  starts = starts[matched]
-  matches = matches[matched]
-
-  unname(substr(urls, starts, starts + sapply(matches, attr, "match.length") - 1L))
+  out = character(length(urls))
+  out[matched] = substr(
+    urls[matched],
+    matches[matched],
+    matches[matched] + attr(matches, "match.length")[matched] - 1L
+  )
+  out
 }
 
 urls = character(length(lintr_pkg))
@@ -42,6 +43,8 @@ for (ii in seq_along(urls)) {
   urls[ii] <- extract_url(lintr_pkg[ii])
 }
 
-urls = sort(extract_github_repo(urls[!is.na(urls)]))
+git_urls = extract_github_repo(urls)
+unmatched <- is.na(git_urls)
 
-writeLines(urls, "reverse-imports-urls")
+writeLines(lintr_pkg[unmatched], "reverse-imports-no-repos")
+writeLines(sort(git_urls[!unmatched]), "reverse-imports-repos")
