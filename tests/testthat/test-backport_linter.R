@@ -44,7 +44,7 @@ test_that("backport_linter detects backwards-incompatibility", {
   expect_lint(
     "numToBits(2)",
     rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 3.6.3."),
-    backport_linter("oldrel-2")
+    backport_linter("oldrel-3")
   )
 
   # except is honored
