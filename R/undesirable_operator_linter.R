@@ -3,8 +3,11 @@
 #' Report the use of undesirable operators, e.g. [`:::`][base::ns-dblcolon] or
 #' [`<<-`][base::assignOps] and suggest an alternative.
 #'
-#' @param op Named character vector, where the names are the names of the undesirable operators, and the values are
-#'   the text for the alternative operator to use (or `NA`).
+#' @param op Named character vector. `names(op)` correspond to undesirable operators,
+#'   while the values give a description of why the operator is undesirable.
+#'   If `NA`, no additional information is given in the lint message. Defaults to
+#'   [default_undesirable_operators]. To make small customizations to this list,
+#'   use [modify_defaults()].
 #' @evalRd rd_tags("undesirable_operator_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -48,19 +51,12 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
 
     bad_op <- xml2::xml_find_all(xml, xpath)
 
-    xml_nodes_to_lints(
-      bad_op,
-      source_expression = source_expression,
-      lint_message = function(expr) {
-        op_name <- xml2::xml_text(expr)
-        msg <- sprintf("Operator `%s` is undesirable.", op_name)
-        alt_op <- op[[op_name]]
-        if (!is.na(alt_op)) {
-          msg <- paste(msg, alt_op)
-        }
-        msg
-      },
-      type = "warning"
-    )
+    operator <- xml2::xml_text(bad_op)
+    lint_message <- sprintf("Operator `%s` is undesirable.", operator)
+    alternative <- op[operator]
+    has_alternative <- !is.na(alternative)
+    lint_message[has_alternative] <- paste(lint_message[has_alternative], alternative[has_alternative])
+
+    xml_nodes_to_lints(bad_op, source_expression, lint_message, type = "warning")
   })
 }
