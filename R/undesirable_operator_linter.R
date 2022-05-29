@@ -5,7 +5,7 @@
 #'
 #' @param op Named character vector. `names(op)` correspond to undesirable operators,
 #'   while the values give a description of why the operator is undesirable.
-#'   If `NA`, no alternative is specified in the lint message. Defaults to
+#'   If `NA`, no additional information is given in the lint message. Defaults to
 #'   [default_undesirable_operators]. To make small customizations to this list,
 #'   use [modify_defaults()].
 #' @evalRd rd_tags("undesirable_operator_linter")

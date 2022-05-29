@@ -12,7 +12,7 @@ undesirable_function_linter(
 \arguments{
 \item{fun}{Named character vector. \code{names(fun)} correspond to undesirable functions,
 while the values give a description of why the function is undesirable.
-If \code{NA}, no alternative is specified in the lint message. Defaults to
+If \code{NA}, no additional information is given in the lint message. Defaults to
 \link{default_undesirable_functions}. To make small customizations to this list,
 use \code{\link[=modify_defaults]{modify_defaults()}}.}
 
