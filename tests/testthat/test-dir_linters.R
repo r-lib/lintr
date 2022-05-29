@@ -1,4 +1,5 @@
 test_that("lint all files in a directory", {
+  withr::local_options(lintr.linter_file = "lintr_test_config")
   the_dir <- file.path("dummy_packages", "package", "vignettes")
   files <- list.files(the_dir)
 
@@ -10,10 +11,11 @@ test_that("lint all files in a directory", {
 })
 
 test_that("lint all relevant directories in a package", {
+  withr::local_options(lintr.linter_file = "lintr_test_config")
   the_pkg <- file.path("dummy_packages", "package")
   files <- setdiff(
     list.files(the_pkg, recursive = TRUE),
-    c("package.Rproj", "DESCRIPTION", "NAMESPACE")
+    c("package.Rproj", "DESCRIPTION", "NAMESPACE", "lintr_test_config")
   )
 
   read_settings(NULL)
@@ -42,9 +44,7 @@ test_that("lint all relevant directories in a package", {
 })
 
 test_that("respects directory exclusions", {
-  the_dir <- tempfile()
-  dir.create(the_dir, recursive = TRUE)
-  on.exit(unlink(the_dir, recursive = TRUE))
+  the_dir <- withr::local_tempdir()
 
   the_excluded_dir <- file.path(the_dir, "exclude-me")
   dir.create(the_excluded_dir)
@@ -66,9 +66,7 @@ test_that("respects directory exclusions", {
 })
 
 test_that("respect directory exclusions from settings", {
-  the_dir <- tempfile()
-  dir.create(the_dir, recursive = TRUE)
-  on.exit(unlink(the_dir, recursive = TRUE))
+  the_dir <- withr::local_tempdir()
 
   the_excluded_dir <- file.path(the_dir, "exclude-me")
   dir.create(the_excluded_dir)
@@ -84,6 +82,7 @@ test_that("respect directory exclusions from settings", {
 })
 
 test_that("lint_dir works with specific linters without specifying other arguments", {
+  withr::local_options(lintr.linter_file = "lintr_test_config")
   the_dir <- file.path("dummy_packages", "package", "vignettes")
   expect_length(lint_dir(the_dir, assignment_linter(), parse_settings = FALSE), 12L)
   expect_length(lint_dir(the_dir, commented_code_linter(), parse_settings = FALSE), 0L)

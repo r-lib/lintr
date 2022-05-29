@@ -35,6 +35,9 @@ test_that("returns the correct linting", {
   expect_lint("x**(y + z)", NULL, linter)
   expect_lint("a <- -(b)", NULL, linter)
 
+  expect_lint("(3^(3 + 2))", NULL, linter)
+  expect_lint("-(!!!symb)", NULL, linter)
+
   # more complicated cases for parse tree
   expect_lint("y1<-(abs(yn)>90)*1", msg, linter)
   expect_lint("c(a,(a+b))", msg, linter)
