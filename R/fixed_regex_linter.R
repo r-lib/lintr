@@ -117,8 +117,8 @@ rx_static_token <- local({
   ))
 })
 
-rx_static_regex <- rex::rex(start, zero_or_more(rx_static_token), end)
-rx_first_static_token <- rex::rex(start, zero_or_more(rx_non_active_char), rx_static_escape)
+rx_static_regex <- paste0("(?s)", rex::rex(start, zero_or_more(rx_static_token), end))
+rx_first_static_token <- paste0("(?s)", rex::rex(start, zero_or_more(rx_non_active_char), rx_static_escape))
 
 #' Determine whether a regex pattern actually uses regex patterns
 #'
@@ -135,7 +135,7 @@ rx_first_static_token <- rex::rex(start, zero_or_more(rx_non_active_char), rx_st
 #' @noRd
 is_not_regex <- function(str) {
   # need to add single-line option to allow literal newlines
-  grepl(paste0("(?s)", rx_static_regex), str, perl = TRUE)
+  grepl(rx_static_regex, str, perl = TRUE)
 }
 
 #' Compute a fixed string equivalent to a static regular expression

@@ -203,7 +203,9 @@ test_that("single expression with multiple regexes is OK", {
   expect_lint('c(grep("^a", x), grep("b$", x))', NULL, fixed_regex_linter())
 })
 
-test_that("fixed replacement is correct", {
+test_that("fixed replacements vectorize and recognize str_detect", {
+  linter <- fixed_regex_linter()
+  # properly vectorized
   expect_lint(
     trim_some("
       c(
@@ -212,11 +214,14 @@ test_that("fixed replacement is correct", {
       )
     "),
     list(
-      rex::rex('Here, you can use "abcdefg"'),
-      rex::rex('Here, you can use "a..b\\n"')
+      rex::rex('Here, you can use "abcdefg" with fixed = TRUE'),
+      rex::rex('Here, you can use "a..b\\n" with fixed = TRUE')
     ),
-    fixed_regex_linter()
+    linter
   )
+
+  # stringr hint works
+  expect_lint("str_detect(x, 'abc')", rex::rex('Here, you can use stringr::fixed("abc") as the pattern'), linter)
 })
 
 test_that("fixed replacement is correct with UTF-8", {
@@ -227,7 +232,7 @@ test_that("fixed replacement is correct with UTF-8", {
 
   expect_lint(
     "grepl('[\\U{1D4D7}]', x)",
-    rex::rex('Here, you can use "\U1D4D7"'),
+    rex::rex('Here, you can use "\U1D4D7" with fixed = TRUE'),
     fixed_regex_linter()
   )
 })
@@ -244,3 +249,44 @@ test_that("fixed replacement is correct with UTF-8", {
 #   perl=TRUE and interpret "regex or not" accordingly. One place
 #   up in practice is for '\<', which is a special character in default
 #   regex but not in PCRE. Empirically relevant for HTML-related regex e.g. \\<li\\>
+
+skip_if_not_installed("patrick")
+patrick::with_parameters_test_that("fixed replacements are correct", {
+  expect_lint(
+    sprintf("grepl('%s', x)", regex_expr),
+    rex::rex(sprintf('Here, you can use "%s" with fixed = TRUE', fixed_expr)),
+    fixed_regex_linter()
+  )
+}, .cases = tibble::tribble(
+  ~.test_name, ~regex_expr, ~fixed_expr,
+  "[.]", "[.]", ".", 
+  '[\\\"]', '[\\\"]', '\\"',
+  "[]]", "[]]", "]",
+  "\\\\.", "\\\\.", ".",
+  "\\\\:", "\\\\:", ":",
+  "\\\\<", "\\\\<", "<",
+  "\\\\$", "\\\\$", "$",
+  "[\\1]", "[\\1]", "\\001",
+  "\\1", "\\1", "\\001",
+  "[\\12]", "[\\12]", "\\n",
+  "[\\123]", "[\\123]", "S",
+  "a[*]b", "a[*]b", "a*b",
+  "abcdefg", "abcdefg", "abcdefg",
+  "abc\\U{A0DEF}ghi", "abc\\U{A0DEF}ghi", "abc\\U{0a0def}ghi",
+  "a-z", "a-z", "a-z",
+  "[\\n]", "[\\n]", "\\n",
+  "\\n", "\n", "\\n",
+  "[\\u01]", "[\\u01]", "\\001",
+  "[\\u012]", "[\\u012]", "\\022",
+  "[\\u0123]", "[\\u0123]", "\u0123",
+  "[\\u{1}]", "[\\u{1}]", "\\001",
+  "[\\U1d4d7]", "[\\U1d4d7]", "\U1D4D7",
+  "[\\U{1D4D7}]", "[\\U{1D4D7}]", "\U1D4D7",
+  "[\\U8]", "[\\U8]", "\\b",
+  "\\u{A0}", "\\u{A0}", "\uA0",
+  "\\u{A0}\\U{0001d4d7}", "\\u{A0}\\U{0001d4d7}", "\uA0\U1D4D7",
+  "[\\uF]", "[\\uF]", "\\017",
+  "[\\U{F7D5}]", "[\\U{F7D5}]", "\UF7D5",
+  "[\\x32]", "[\\x32]", "2",
+  "[\\xa]", "[\\xa]", "\\n"
+))
