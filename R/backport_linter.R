@@ -61,10 +61,13 @@ normalize_r_version <- function(r_version) {
       list("oldrel", maybe("-", digits)) %or%
       "devel", end))) {
     # Support devel, release, oldrel, oldrel-1, ...
+    if (r_version == "oldrel") {
+      r_version <- "oldrel-1"
+    }
 
     all_versions <- names(backports)
     minor_versions <- unique(re_substitutes(all_versions, rex(".", digits, end), ""))
-    version_names <- c("devel", "release", "oldrel", paste0("oldrel-", seq_len(length(minor_versions) - 3L)))
+    version_names <- c("devel", "release", paste0("oldrel-", seq_len(length(minor_versions) - 2L)))
     if (!r_version %in% version_names) {
       # This can only trip if e.g. oldrel-99 is requested
       stop("`r_version` must be a version number or one of ", toString(sQuote(version_names)))
