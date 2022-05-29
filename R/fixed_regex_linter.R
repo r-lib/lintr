@@ -141,7 +141,8 @@ is_not_regex <- function(str) {
 #' Compute a fixed string equivalent to a static regular expression
 #'
 #' @param static_regex A regex for which `is_not_regex()` returns `TRUE`
-#' @return A string such that `grepl(static_regex, x)` is equivalent to `grepl(get_fixed_string(static_regex), x, fixed = TRUE)`
+#' @return A string such that `grepl(static_regex, x)` is equivalent to
+#' `grepl(get_fixed_string(static_regex), x, fixed = TRUE)`
 #'
 #' @noRd
 get_fixed_string <- function(static_regex) {
