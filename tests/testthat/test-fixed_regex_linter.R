@@ -252,6 +252,10 @@ test_that("fixed replacement is correct with UTF-8", {
 
 skip_if_not_installed("patrick")
 patrick::with_parameters_test_that("fixed replacements are correct", {
+  skip_if(
+    regex_expr == "abc\\U{A0DEF}ghi" && .Platform$OS.type == "windows" && !hasName(R.Version(), "crt"),
+    message = "UTF-8 support is required"
+  )
   expect_lint(
     sprintf("grepl('%s', x)", regex_expr),
     rex::rex(sprintf('Here, you can use "%s" with fixed = TRUE', fixed_expr)),
@@ -272,7 +276,18 @@ patrick::with_parameters_test_that("fixed replacements are correct", {
   "[\\123]", "[\\123]", "S",
   "a[*]b", "a[*]b", "a*b",
   "abcdefg", "abcdefg", "abcdefg",
-  "abc\\U{A0DEF}ghi", "abc\\U{A0DEF}ghi", if (getRversion() < "4.1") "abc\\U000a0defghi" else "abc\\U{0a0def}ghi",
+  "abc\\U{A0DEF}ghi", "abc\\U{A0DEF}ghi",
+  {
+    # non-printable unicode behaves wildly different with encodeString() across R versions and platforms.
+    # nonetheless, all of these expressions are valid replacements.
+    if (getRversion() < "4.1") {
+      "abc\\U000a0defghi"
+    } else if (.Platform$OS.type == "windows") {
+      "abc\U{0a0def}ghi"
+    } else {
+      "abc\\U{0a0def}ghi"
+    }
+  },
   "a-z", "a-z", "a-z",
   "[\\n]", "[\\n]", "\\n",
   "\\n", "\n", "\\n",
