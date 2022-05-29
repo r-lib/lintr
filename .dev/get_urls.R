@@ -2,7 +2,7 @@
 # Script to get URL keys from CRAN
 #   of packags that Suggest or Import lintr
 
-cran_db <- as.data.frame(available.packages())
+cran_db <- as.data.frame(available.packages(), stringsAsFactors = FALSE)
 lintr_re <- "\\blintr\\b"
 lintr_pkg <- cran_db[
   with(cran_db, grepl(lintr_re, Suggests) | grepl(lintr_re, Imports)),
@@ -44,7 +44,7 @@ for (ii in seq_along(urls)) {
 }
 
 git_urls <- extract_github_repo(urls)
-unmatched <- is.na(git_urls)
+matched <- nzchar(git_urls)
 
-writeLines(lintr_pkg[unmatched], "reverse-imports-no-repos")
-writeLines(sort(git_urls[!unmatched]), "reverse-imports-repos")
+writeLines(lintr_pkg[!matched], "reverse-imports-no-repos")
+writeLines(sort(git_urls[matched]), "reverse-imports-repos")
