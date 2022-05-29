@@ -1,6 +1,4 @@
 ^CRAN-RELEASE$
-^.*\.png$
-^.*\.gif$
 ^\.travis\.yml$
 ^[^/]+\.R$
 ^travis-tool\.sh$
