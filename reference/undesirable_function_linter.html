@@ -74,8 +74,11 @@ base::sapply() and suggest an alternative."><!-- mathjax --><script src="https:/
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>fun</dt>
-<dd><p>Named character vector, where the names are the names of the undesirable functions, and the values are
-the text for the alternative function to use (or <code>NA</code>).</p></dd>
+<dd><p>Named character vector. <code>names(fun)</code> correspond to undesirable functions,
+while the values give a description of why the function is undesirable.
+If <code>NA</code>, no additional information is given in the lint message. Defaults to
+<a href="default_undesirable_functions.html">default_undesirable_functions</a>. To make small customizations to this list,
+use <code><a href="modify_defaults.html">modify_defaults()</a></code>.</p></dd>
 <dt>symbol_is_undesirable</dt>
 <dd><p>Whether to consider the use of an undesirable function name as a symbol undesirable
 or not.</p></dd>
