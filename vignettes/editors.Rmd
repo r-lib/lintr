@@ -12,13 +12,21 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+maybe_still <- function(url) {
+  if (pkgdown::in_pkgdown()) {
+    url
+  } else {
+    gsub("\\.gif$", "-still.gif", url)
+  }
+}
 ```
 
 ## RStudio
 
 lintr lints are automatically displayed in the RStudio Markers pane (RStudio versions \> v0.99.206).
 
-![RStudio Example](http://i.imgur.com/PIKnpbn.png "Rstudio Example")
+![RStudio Example](man/figures/rstudio.png "Rstudio Example")
 
 In order to show the "Markers" pane in RStudio: Menu "Tools" -\> "Global Options...", a window with title "Options" will pop up.
 In that window: click "Code" on the left; click "Diagnostics" tab; check "Show diagnostics for R".
@@ -33,7 +41,7 @@ These are easy to remember as you are Alt+Shift+L(int) ;)
 ## Emacs
 
 lintr has [built-in integration](http://www.flycheck.org/en/latest/languages.html#r) with [flycheck](https://github.com/flycheck/flycheck) versions greater than `0.23`.
-![Emacs Example](http://i.imgur.com/vquPht3.gif "Emacs Example")
+![Emacs Example](`r maybe_still("man/figures/emacs.gif")` "Emacs Example")
 
 ### Installation
 
@@ -50,7 +58,7 @@ e.g. using a different line length cutoff.
 
 lintr can be integrated with [syntastic](https://github.com/vim-syntastic/syntastic) for on-the-fly linting.
 
-![Vim Example](http://i.imgur.com/fR6Os5M.gif "Vim Example")
+![Vim Example](`r maybe_still("man/figures/vim-syntastic.gif")` "Vim Example")
 
 ### Installation
 
@@ -104,7 +112,7 @@ Note that configuration through `.lintr` files are not supported.
 
 lintr can be integrated with [Sublime Linter](https://github.com/SublimeLinter/SublimeLinter) for on-the-fly linting.
 
-![Sublime Example](http://i.imgur.com/3pua2yz.gif "Sublime Example")
+![Sublime Example](`r maybe_still("man/figures/sublime.gif")` "Sublime Example")
 
 ### Installation
 
@@ -132,7 +140,7 @@ In the SublimeLinter User Settings
 
 lintr can be integrated with [Linter](https://github.com/steelbrain/linter) for on the fly linting.
 
-![Atom Example](http://i.imgur.com/E1Isi4T.png "Atom Example")
+![Atom Example](man/figures/atom.png "Atom Example")
 
 ### Installation
 
@@ -148,7 +156,7 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
 
 In Visual Studio Code, [vscode-R](https://marketplace.visualstudio.com/items?itemName=Ikuyadeu.r) presents the lintr diagnostics from [languageserver](https://github.com/REditorSupport/languageserver).
 
-![VS Code Example](https://user-images.githubusercontent.com/4662568/75946154-3e095500-5ed7-11ea-88e4-2afe09284362.png "VS Code Example")
+![VS Code Example](man/figures/vscode.png "VS Code Example")
 
 ### Installation
 
