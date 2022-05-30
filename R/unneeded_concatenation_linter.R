@@ -25,7 +25,7 @@ unneeded_concatenation_linter <- function() {
   xpath_call <- glue::glue("
     //expr[
       expr[SYMBOL_FUNCTION_CALL[text() = 'c']]
-      and not(SYMBOL_SUB)
+      and not(EQ_SUB)
       and not(expr[position() > 1 and {non_constant_cond}])
       and not({to_pipe_xpath}/preceding-sibling::expr[1][{non_constant_cond}])
     ]

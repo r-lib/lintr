@@ -34,7 +34,7 @@ condition_message_linter <- function() {
     lint_message <- paste(
       "Don't use", inner_call, "to build", outer_call, "strings.",
       "Instead use the fact that these functions build condition message strings from their input",
-      '(using "" as a separator). For translateable strings, prefer using gettextf().'
+      '(using "" as a separator). For translatable strings, prefer using gettextf().'
     )
     xml_nodes_to_lints(bad_expr, source_expression = source_expression, lint_message = lint_message, type = "warning")
   })
