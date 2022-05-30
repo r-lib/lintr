@@ -1,0 +1,3 @@
+# This file tracks manually-supplied GitHub repos for packages
+#   where {lintr} is not in Suggests or Imports
+https://github.com/microsoft/LightGBM
