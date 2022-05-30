@@ -20,13 +20,14 @@ extract_url <- function(pkg, initial_sleep = 1, retry_sleep = 60) {
   }
   Sys.sleep(initial_sleep)
   url_conn <- tryCatch(url(desc_url, open = "r"), error = retry, warning = retry)
-  pkg_data <- read.dcf(url_conn, "URL")
-  drop(pkg_data)
+  pkg_data <- read.dcf(url_conn, c("URL", "BugReports"))
+  # NB: NA --> "NA", which is fine -- no matches below
+  toString(pkg_data)
 }
 
 extract_github_repo <- function(urls) {
   matches <- regexpr("https?://git(hub|lab).com/[a-zA-Z0-9_-]+/[a-zA-Z0-9._-]+", urls)
-  matched <- !is.na(matches) & matches > 0L
+  matched <- matches > 0L
 
   out <- character(length(urls))
   out[matched] <- substr(
