@@ -11,7 +11,7 @@ lintr_pkg <- cran_db[
 
 # simple retry mechanism
 desc_url_fmt <- "https://cran.r-project.org/web/packages/%s/DESCRIPTION"
-extract_url <- function(pkg, initial_sleep = 1, retry_sleep = 60) {
+extract_desc_fields <- function(pkg, keys, initial_sleep = 1, retry_sleep = 60) {
   desc_url <- sprintf(desc_url_fmt, pkg)
   retry <- function(cond) {
     message("Sleepy... 😴")
@@ -20,7 +20,9 @@ extract_url <- function(pkg, initial_sleep = 1, retry_sleep = 60) {
   }
   Sys.sleep(initial_sleep)
   url_conn <- tryCatch(url(desc_url, open = "r"), error = retry, warning = retry)
-  pkg_data <- read.dcf(url_conn, c("URL", "BugReports"))
+  on.exit(close(url_conn))
+
+  pkg_data <- read.dcf(url_conn, keys)
   # NB: NA --> "NA", which is fine -- no matches below
   toString(pkg_data)
 }
@@ -41,11 +43,22 @@ extract_github_repo <- function(urls) {
 urls <- character(length(lintr_pkg))
 # for loop makes debugging easier
 for (ii in seq_along(urls)) {
-  urls[ii] <- extract_url(lintr_pkg[ii])
+  urls[ii] <- extract_desc_fields(lintr_pkg[ii], c("URL", "BugReports"))
 }
 
 git_urls <- extract_github_repo(urls)
 matched <- nzchar(git_urls)
 
-writeLines(sort(lintr_pkg[!matched]), "reverse-imports-no-repos")
+no_repo_pkg <- sort(lintr_pkg[!matched])
+maintainer <- character(length(no_repo_pkg))
+for (ii in seq_along(no_repo_pkg)) {
+  maintainer[ii] <- extract_desc_fields(no_repo_pkg[ii], "Maintainer")
+}
+maintainer <- gsub(".*<(.*)>$", "\\1", maintainer)
+
+write.csv(
+  data.frame(package = no_repo_pkg, maintainer),
+  "reverse-imports-no-repos",
+  row.names = FALSE, quote = FALSE
+)
 writeLines(sort(git_urls[matched]), "reverse-imports-repos")
