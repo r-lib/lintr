@@ -137,7 +137,7 @@ split.lints <- function(x, f = NULL, ...) {
 }
 
 #' @export
-as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) { # nolint: object_name. (row.names)
+as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) { # nolint: object_name. (row.names, #764)
   data.frame(filename = vapply(x, `[[`, character(1L), "filename"),
              line_number = vapply(x, `[[`, numeric(1L), "line_number"),
              column_number = vapply(x, `[[`, numeric(1L), "column_number"),
