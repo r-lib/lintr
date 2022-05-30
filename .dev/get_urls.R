@@ -46,5 +46,5 @@ for (ii in seq_along(urls)) {
 git_urls <- extract_github_repo(urls)
 matched <- nzchar(git_urls)
 
-writeLines(lintr_pkg[!matched], "reverse-imports-no-repos")
+writeLines(sort(lintr_pkg[!matched]), "reverse-imports-no-repos")
 writeLines(sort(git_urls[matched]), "reverse-imports-repos")
