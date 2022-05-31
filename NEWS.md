@@ -111,8 +111,8 @@
    + improved generic detection -- in user-defined method `my_method.upstream.class`,
      `upstream.class` no longer throws a lint because the generic (`my_method`)
      properly uses `snake_case` (#737, @AshesITR)
-   + extended to exclude special R namespace hook functions such as `.onLoad` (#500, #614, @AshesITR and @michaelchirico)
-   + extended to correctly detect imported functions when linting packages (#642, @AshesITR)
+   + exclude special R namespace hook functions such as `.onLoad` (#500, #614, @AshesITR and @michaelchirico)
+   + correctly detect imported functions when linting packages (#642, @AshesITR)
    + correctly detect assignment generics like `names<-.class_name` (#843, @jonkeane)
    + added new styles `"symbols"` and `"SNAKE_CASE"` (#494, #495, #615, #670, @michaelchirico and @AshesITR)
 * `object_usage_linter()`
@@ -124,6 +124,7 @@
      `require()` calls (#1127, @AshesITR)
    + improved location information in some cases where the previous regex-based approach didn't work, e.g. unicode 
      characters in variable names (#1285, @AshesITR)
+   + correctly detect functions declared within `assign()` and `setMethod()` (#1322, @AshesITR)
 * `object_length_linter()`: correctly detect generics and only counts the implementation class towards the length.
   This prevents false positive lints in the case of long generic names, e.g.
   `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
