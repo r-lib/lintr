@@ -25,3 +25,5 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^vignettes/[^-]+.gif$
+^man/figures$
