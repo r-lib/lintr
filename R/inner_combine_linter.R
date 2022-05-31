@@ -111,7 +111,7 @@ arg_match_condition <- function(arg) {
 build_arg_condition <- function(calls, arguments) {
   xp_or(
     sprintf("not(expr[SYMBOL_FUNCTION_CALL[%s]])", xp_text_in_table(calls)),
-    "not(SYMBOL_SUB) and not(following-sibling::expr/SYMBOL_SUB)",
+    "not(EQ_SUB) and not(following-sibling::expr/EQ_SUB)",
    xp_and(vapply(arguments, arg_match_condition, character(1L)))
   )
 }
