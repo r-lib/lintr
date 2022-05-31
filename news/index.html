@@ -226,6 +226,8 @@
 <code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> Require <code>fixed = TRUE</code> or <code><a href="https://stringr.tidyverse.org/reference/modifiers.html" class="external-link">stringr::fixed()</a></code> for regular expressions that can be expressed statically, e.g. <code>strsplit(x, "[.]")</code> can be <code>strsplit(x, ".", fixed = TRUE)</code>
 </li>
 <li>
+<code><a href="../reference/string_boundary_linter.html">string_boundary_linter()</a></code> Require usage of <code>startsWith(x, ptn)</code> over <code>grepl("^ptn", x)</code> or <code>substr(x, 1, 3) == ptn</code> and similar</li>
+<li>
 <code><a href="../reference/expect_null_linter.html">expect_null_linter()</a></code> Require usage of <code>expect_null(x)</code> over <code>expect_equal(x, NULL)</code> and similar</li>
 <li>
 <code><a href="../reference/expect_type_linter.html">expect_type_linter()</a></code> Require usage of <code>expect_type(x, t)</code> over <code>expect_equal(typeof(x), t)</code> and similar</li>

@@ -319,6 +319,9 @@
     <loc>https://lintr.r-lib.org/reference/sprintf_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/reference/string_boundary_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/reference/strings_as_factors_linter.html</loc>
   </url>
   <url>
