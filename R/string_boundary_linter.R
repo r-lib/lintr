@@ -64,10 +64,13 @@ string_boundary_linter <- function() {
     search_end <- nchar(patterns) - 1L + initial_anchor
     can_replace <- is_not_regex(substr(patterns, search_start, search_end))
     regex_expr <- regex_expr[can_replace]
-    regex_lint_message <- ifelse(
-      initial_anchor[can_replace],
-      "Use startsWith() to detect a fixed initial substring.",
-      "Use endsWith() to detect a fixed terminal substring."
+    regex_lint_message <- paste(
+      ifelse(
+        initial_anchor[can_replace],
+        "Use startsWith() to detect a fixed initial substring.",
+        "Use endsWith() to detect a fixed terminal substring."
+      ),
+      "Doing so is more readable and more efficient.
     )
 
     regex_lints <- xml_nodes_to_lints(regex_expr, source_expression, regex_lint_message, type = "warning")
