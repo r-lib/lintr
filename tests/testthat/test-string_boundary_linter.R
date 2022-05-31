@@ -51,6 +51,12 @@ test_that("string_boundary_linter blocks simple disallowed grepl() usages", {
     rex::rex("Use startsWith() to detect a fixed initial substring."),
     string_boundary_linter()
   )
+  # non-trivially equivalent (but still same as startsWith())
+  expect_lint(
+    "grepl('^[.]', x)",
+    rex::rex("Use startsWith() to detect a fixed initial substring."),
+    string_boundary_linter()
+  )
   expect_lint(
     "grepl('a$', x)",
     rex::rex("Use endsWith() to detect a fixed terminal substring."),
