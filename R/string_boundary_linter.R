@@ -77,10 +77,13 @@ string_boundary_linter <- function() {
 
     substr_expr <- xml2::xml_find_all(xml, substr_xpath)
     substr_one <- xml2::xml_find_chr(substr_expr, substr_arg2_xpath) %in% c("1", "1L")
-    substr_lint_message <- ifelse(
-      substr_one,
-      "Use startsWith() to detect an initial substring.",
-      "Use endsWith() to detect a terminal substring."
+    substr_lint_message <- paste(
+      ifelse(
+        substr_one,
+        "Use startsWith() to detect an initial substring.",
+        "Use endsWith() to detect a terminal substring."
+      ),
+      "Doing so is more readable and more efficient."
     )
 
     substr_lints <- xml_nodes_to_lints(substr_expr, source_expression, substr_lint_message, type = "warning")
