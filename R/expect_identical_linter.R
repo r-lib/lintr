@@ -38,7 +38,7 @@ expect_identical_linter <- function() {
     (
       SYMBOL_FUNCTION_CALL[text() = 'expect_equal']
       and not(
-        following-sibling::SYMBOL_SUB
+        following-sibling::EQ_SUB
         or following-sibling::expr[
           expr[SYMBOL_FUNCTION_CALL[text() = 'c']]
           and expr[NUM_CONST[contains(text(), '.')]]
