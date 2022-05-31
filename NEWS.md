@@ -156,7 +156,7 @@
 
 ### New linters
 
-* `missing_package_linter()` to check if packags in calls to `library()` and friends are missing (#536, #547, #1037, @renkun-ken and @michaelchirico)
+* `missing_package_linter()` to check if packages in calls to `library()` and friends are missing (#536, #547, #1037, @renkun-ken and @michaelchirico)
 * `namespace_linter()` to check for common mistakes in `pkg::symbol` usages (#548, #551, @renkun-ken)
 * `missing_argument_linter()` to check for empty (missing) arguments in function calls (#563, #565, @renkun-ken)
 * `duplicate_argument_linter()` similarly checks that there are no duplicate arguments supplied to function calls (#850, @renkun-ken)
