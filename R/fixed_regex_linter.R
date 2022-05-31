@@ -64,15 +64,19 @@ fixed_regex_linter <- function() {
     pattern_strings <- get_r_string(patterns)
     is_static <- is_not_regex(pattern_strings)
 
-    fixed_equivalent <- get_fixed_string(pattern_strings[is_static])
+    fixed_equivalent <- encodeString(get_fixed_string(pattern_strings[is_static]), quote = '"', justify = "none")
     call_name <- xml2::xml_find_chr(patterns[is_static], "string(preceding-sibling::expr/SYMBOL_FUNCTION_CALL)")
 
+    is_stringr <- startsWith(call_name, "str_")
+    replacement <- ifelse(
+      is_stringr,
+      sprintf("stringr::fixed(%s)", fixed_equivalent),
+      fixed_equivalent
+    )
     msg <- paste0(
       "This regular expression is static, i.e., its matches can be expressed as a fixed substring expression, which ",
-      "is faster to compute. ",
-      "Here, you can use ", ifelse(startsWith(call_name, "str_"), "stringr::fixed(", ""),
-      encodeString(fixed_equivalent, quote = '"', justify = "none"),
-      ifelse(startsWith(call_name, "str_"), ") as the pattern.", " with fixed = TRUE.")
+      "is faster to compute. Here, you can use ",
+      replacement, ifelse(is_stringr, "as the pattern.", "with fixed = TRUE.")
     )
 
     xml_nodes_to_lints(
