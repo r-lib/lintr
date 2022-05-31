@@ -265,7 +265,7 @@ patrick::with_parameters_test_that("fixed replacements are correct", {
   )
 }, .cases = tibble::tribble(
   ~.test_name, ~regex_expr, ~fixed_expr,
-  "[.]", "[.]", ".", 
+  "[.]", "[.]", ".",
   '[\\\"]', '[\\\"]', '\\"',
   "[]]", "[]]", "]",
   "\\\\.", "\\\\.", ".",
