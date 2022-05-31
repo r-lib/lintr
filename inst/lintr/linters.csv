@@ -61,6 +61,7 @@ single_quotes_linter,style consistency readability default
 spaces_inside_linter,style readability default
 spaces_left_parentheses_linter,style readability default
 sprintf_linter,correctness common_mistakes
+string_boundary_linter,readability efficiency
 strings_as_factors_linter,robustness
 system_file_linter,consistency readability best_practices
 T_and_F_symbol_linter,style readability robustness consistency best_practices default
