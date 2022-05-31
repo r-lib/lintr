@@ -9,6 +9,8 @@ test_that("returns the correct linting", {
   expect_lint("c(x, recursive = TRUE)", NULL, linter)
   expect_lint("c(1, recursive = FALSE)", NULL, linter)
   expect_lint("lapply(1, c)", NULL, linter)
+  expect_lint("c(a = 1)", NULL, linter)
+  expect_lint("c('a' = 1)", NULL, linter)
 
   expect_lint("c()", list(message = msg_e, line_number = 1L, column_number = 1L), linter)
   expect_lint("c(NULL)", list(message = msg_c, line_number = 1L, column_number = 1L), linter)

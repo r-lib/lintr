@@ -104,6 +104,30 @@ test_that("returns the correct linting", {
     rex("no visible global function definition for ", anything),
     linter
   )
+
+  # setMethod and assign also checked
+
+  expect_lint(
+    trim_some("
+      assign('fun', function() {
+        a <- 1
+        1
+      })
+    "),
+    rex("local variable", anything, "assigned but may not be used"),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      setMethod('plot', 'numeric', function() {
+        a <- 1
+        1
+      })
+    "),
+    rex("local variable", anything, "assigned but may not be used"),
+    linter
+  )
 })
 
 test_that("replace_functions_stripped", {
@@ -227,6 +251,11 @@ test_that("used symbols are detected correctly", {
     NULL,
     object_usage_linter()
   )
+
+
+
+  # regression #1322
+  expect_silent(expect_lint("assign('x', 42)", NULL, object_usage_linter()))
 })
 
 test_that("object_usage_linter finds lints spanning multiple lines", {

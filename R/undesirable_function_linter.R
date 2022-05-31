@@ -3,8 +3,11 @@
 #' Report the use of undesirable functions, e.g. [base::return()], [base::options()], or
 #' [base::sapply()] and suggest an alternative.
 #'
-#' @param fun Named character vector, where the names are the names of the undesirable functions, and the values are
-#'   the text for the alternative function to use (or `NA`).
+#' @param fun Named character vector. `names(fun)` correspond to undesirable functions,
+#'   while the values give a description of why the function is undesirable.
+#'   If `NA`, no additional information is given in the lint message. Defaults to
+#'   [default_undesirable_functions]. To make small customizations to this list,
+#'   use [modify_defaults()].
 #' @param symbol_is_undesirable Whether to consider the use of an undesirable function name as a symbol undesirable
 #'   or not.
 #' @evalRd rd_tags("undesirable_function_linter")

@@ -13,23 +13,24 @@ unneeded_concatenation_linter <- function() {
   )
   msg_const <- 'Unneeded concatenation of a constant. Remove the "c" call.'
 
-  constant_nodes_in_c <- paste0("self::", c("STR_CONST", "NUM_CONST", "NULL_CONST"))
-  non_constant_cond <- glue::glue("not(descendant::*[{xp_or(constant_nodes_in_c)}])")
+  constant_nodes_in_c <- paste0("descendant::", c("STR_CONST", "NUM_CONST", "NULL_CONST"))
+  non_constant_cond <- glue::glue("not( {xp_or(constant_nodes_in_c)} )")
 
   to_pipe_xpath <- "
-    ./parent::expr/preceding-sibling::*[1][
+    ./preceding-sibling::*[1][
       self::PIPE or
       self::SPECIAL[text() = '%>%']
     ]
   "
   xpath_call <- glue::glue("
     //expr[
-      SYMBOL_FUNCTION_CALL[text() = 'c'] and
-      not(following-sibling::expr[{non_constant_cond}]) and
-      not({to_pipe_xpath}/preceding-sibling::expr[1][{non_constant_cond}])
+      expr[SYMBOL_FUNCTION_CALL[text() = 'c']]
+      and not(EQ_SUB)
+      and not(expr[position() > 1 and {non_constant_cond}])
+      and not({to_pipe_xpath}/preceding-sibling::expr[1][{non_constant_cond}])
     ]
   ")
-  num_args_xpath <- "count(./following-sibling::expr)"
+  num_args_xpath <- "count(./expr) - 1"
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
