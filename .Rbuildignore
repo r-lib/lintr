@@ -26,4 +26,3 @@
 ^docs$
 ^pkgdown$
 ^vignettes/[^-]+.gif$
-^man/figures$
