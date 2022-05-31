@@ -13,6 +13,8 @@
 
 test_that(
   "`lint_package` does not depend on path to pkg - no excluded files", {
+  
+  withr::local_options(lintr.linter_file = "lintr_test_config")
 
   # This dummy package does not have a .lintr file, so no files / lines should
   # be excluded from analysis
@@ -27,8 +29,8 @@ test_that(
   )
   read_settings(NULL)
   lints_from_outside <- lint_package(
-    pkg_path, linters = list(assignment_linter()),
-    parse_settings = FALSE
+    pkg_path, 
+    linters = list(assignment_linter())
   )
   lints_from_pkg_root <- withr::with_dir(
     pkg_path,
@@ -83,7 +85,8 @@ test_that(
 
   expected_lines <- "mno = 789"
   lints_from_outside <- lint_package(
-    pkg_path, linters = list(assignment_linter())
+    pkg_path,
+    linters = list(assignment_linter())
   )
   lints_from_pkg_root <- withr::with_dir(
     pkg_path,
@@ -95,7 +98,8 @@ test_that(
   )
 
   expect_equal(
-    as.data.frame(lints_from_outside)[["line"]], expected_lines
+    as.data.frame(lints_from_outside)[["line"]], 
+    expected_lines
   )
   expect_equal(
     as.data.frame(lints_from_outside),
@@ -126,6 +130,7 @@ test_that("lint_package returns early if no package is found", {
 
   expect_warning(
     lint_package(file.path(temp_pkg, "desc_dir_pkg", "DESCRIPTION", "R")),
-    "Didn't find any R package", fixed = TRUE
+    "Didn't find any R package", 
+    fixed = TRUE
   )
 })
