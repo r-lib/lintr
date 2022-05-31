@@ -73,9 +73,9 @@ fixed_regex_linter <- function() {
       sprintf("stringr::fixed(%s)", fixed_equivalent),
       fixed_equivalent
     )
-    msg <- paste0(
-      "This regular expression is static, i.e., its matches can be expressed as a fixed substring expression, which ",
-      "is faster to compute. Here, you can use ",
+    msg <- paste(
+      "This regular expression is static, i.e., its matches can be expressed as a fixed substring expression, which",
+      "is faster to compute. Here, you can use",
       replacement, ifelse(is_stringr, "as the pattern.", "with fixed = TRUE.")
     )
 
