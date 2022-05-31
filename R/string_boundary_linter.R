@@ -70,7 +70,7 @@ string_boundary_linter <- function() {
         "Use startsWith() to detect a fixed initial substring.",
         "Use endsWith() to detect a fixed terminal substring."
       ),
-      "Doing so is more readable and more efficient.
+      "Doing so is more readable and more efficient."
     )
 
     regex_lints <- xml_nodes_to_lints(regex_expr, source_expression, regex_lint_message, type = "warning")
