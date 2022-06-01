@@ -25,6 +25,8 @@ A good example of a simple linter is the `pipe_call_linter`.
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 pipe_call_linter <- function() {
+  xpath <- "//expr[preceding-sibling::SPECIAL[text() = '%>%'] and *[1][self::SYMBOL]]"
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -32,7 +34,6 @@ pipe_call_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    xpath <- "//expr[preceding-sibling::SPECIAL[text() = '%>%'] and *[1][self::SYMBOL]]"
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(
@@ -43,6 +44,7 @@ pipe_call_linter <- function() {
     )
   })
 }
+
 ```
 
 Let's walk through the parts of the linter individually.
@@ -75,6 +77,41 @@ linter names with `_linter`. All `_linter` functions are function factories that
 closure that will do the actual linting function. We could define additional parameters
 that are useful for the linter in this function declaration (see, e.g. `assignment_linter`), but
 `pipe_call_linter` requires no additional arguments.
+
+```r
+xpath <- "//expr[preceding-sibling::SPECIAL[text() = '%>%'] and *[1][self::SYMBOL]]"
+```
+
+Here is the core linter logic. `xpath` is an XPath expression for expressions matching the discouraged usage.
+`xpath` is saved inside the factory code (as opposed to inside the linter itself) for efficiency. Often,
+the `xpath` will be somewhat complicated / involve some assembly code using `paste()` or `glue::glue()`[^See
+`infix_spaces_linter()` for an example of this], in which case it is preferable to execute this code only
+once when creating the linter; the cached XPath is then re-used on each expression in each file where the
+linter is run.
+
+Let's examine the XPath a bit more closely:
+
+```xpath
+//expr                  # global search (//) for 'expr' nodes (R expressions), at any nesting level
+[                       # node[...] looks for any 'node' satisfying conditions in ...
+  preceding-sibling::   # "siblings" are at the same nesting level in XML
+    SPECIAL[            # 'SPECIAL' is the parse token for infix operators like %% or %+%
+      text() = '%>%'    # text() returns the string associated with this node
+    ]                   #
+  and                   # combine conditions with 'and'
+  *                     # match any node
+  [1]                   # match the first such node
+  [self::SYMBOL]        # match if the current node is a 'SYMBOL' (i.e., a 'name' in R)
+]                       #
+```
+
+Taken together, that means we want to match `expr` nodes preceded by the `%>%` infix operator whose first child node is a `name`.
+That maps pretty closely to the description of what the `pipe_call_linter` is looking for, but there is subtlety in mapping
+between the R code you're used to and how they show up in the XML representation. `expr` nodes in particular take some practice
+to get accustomed to -- use the plentiful XPath-based linters in `lintr` as a guide to get extra
+practice^[The W3schools tutorials are also quite helpful; see https://www.w3schools.com/xml/xpath_intro.asp]. Note: `xml2`
+implements XPath 1.0, which lacks some helpful features available in XPath 2.0.
+
 
 ```r
 Linter(function(source_expression) {
@@ -125,37 +162,15 @@ use `is_lint_level(source_expression, "file")`.
 ```r
 xml <- source_expression$xml_parsed_content
 
-xpath <- "//expr[preceding-sibling::SPECIAL[text() = '%>%'] and *[1][self::SYMBOL]]"
 bad_expr <- xml2::xml_find_all(xml, xpath)
 ```
 
-Here is the core linter logic. `source_expression$xml_parsed_content` is copied to a local variable
-(this is not strictly necessary but facilitates debugging). `xpath` is an XPath expression
-for expressions matching the discouraged usage. `bad_expr` is the result of executing this logic
-on the expression's XML representation.
-
-Let's examine the XPath a bit more closely:
-
-```xpath
-//expr                  # global search (//) for 'expr' nodes (R expressions), at any nesting level
-[                       # node[...] looks for any 'node' satisfying conditions in ...
-  preceding-sibling::   # "siblings" are at the same nesting level in XML
-    SPECIAL[            # 'SPECIAL' is the parse token for infix operators like %% or %+%
-      text() = '%>%'    # text() returns the string associated with this node
-    ]                   #
-  and                   # combine conditions with 'and'
-  *                     # match any node
-  [1]                   # match the first such node
-  [self::SYMBOL]        # match if the current node is a 'SYMBOL' (i.e., a 'name' in R)
-]                       #
-```
-
-Taken together, that means we want to match `expr` nodes preceded by the `%>%` infix operator whose first child node is a `name`.
-That maps pretty closely to the description of what the `pipe_call_linter` is looking for, but there is subtlety in mapping
-between the R code you're used to and how they show up in the XML representation. `expr` nodes in particular take some practice
-to get accustomed to -- use the plentiful XPath-based linters in `lintr` as a guide to get extra
-practice^[The W3schools tutorials are also quite helpful; see https://www.w3schools.com/xml/xpath_intro.asp]. Note: `xml2`
-implements XPath 1.0, which lacks some helpful features available in XPath 2.0.
+`source_expression$xml_parsed_content` is copied to a local variable
+(this is not strictly necessary but facilitates debugging). Then `xml2::xml_find_all()` is used to execute the XPath on
+this particular expression. Keep in mind that it is typically possible for a single expression to generate more than one
+lint -- for example, `x %>% na.omit %>% sum` will trigger the `pipe_call_linter()` twice^[This is particularly important
+if you want the `message` field in the resulting `Lint()` to vary depending on the exact violation that's found. For
+`pipe_call_linter()`, the message is always the same. See `assignment_linter()` for an example where the `message` can vary.].
 
 ```r
 xml_nodes_to_lints(
