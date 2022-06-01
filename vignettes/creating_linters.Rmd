@@ -44,7 +44,6 @@ pipe_call_linter <- function() {
     )
   })
 }
-
 ```
 
 Let's walk through the parts of the linter individually.
