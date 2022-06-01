@@ -24,9 +24,21 @@ modify_defaults <- function(defaults, ...) {
   }
   vals <- list(...)
   nms <- names2(vals)
+  if ("default" %in% nms) {
+    warning(
+      "'default' is not an argument to linters_with_defaults(). Did you mean 'defaults'? ",
+      "This warning will be removed when with_defaults() is fully deprecated."
+    )
+    defaults <- vals$default
+    vals$default <- NULL
+    valid_idx <- nms != "default"
+    nms <- nms[valid_idx]
+  } else {
+    valid_idx <- TRUE
+  }
   missing <- !nzchar(nms, keepNA = TRUE)
   if (any(missing)) {
-    args <- as.character(eval(substitute(alist(...)[missing])))
+    args <- as.character(eval(substitute(alist(...)[missing])))[valid_idx]
     # foo_linter(x=1) => "foo"
     # var[["foo"]]    => "foo"
     nms[missing] <- re_substitutes(
