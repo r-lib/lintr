@@ -1,6 +1,4 @@
 ^CRAN-RELEASE$
-^.*\.png$
-^.*\.gif$
 ^\.travis\.yml$
 ^[^/]+\.R$
 ^travis-tool\.sh$
@@ -27,3 +25,4 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^vignettes/[^-]+.gif$
