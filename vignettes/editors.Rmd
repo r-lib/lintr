@@ -163,7 +163,7 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
 
 ## Visual Studio Code
 
-In Visual Studio Code, [vscode-R](https://marketplace.visualstudio.com/items?itemName=Ikuyadeu.r) presents the lintr diagnostics from [languageserver](https://github.com/REditorSupport/languageserver).
+In Visual Studio Code, [vscode-R](https://marketplace.visualstudio.com/items?itemName=REditorSupport.r) presents the lintr diagnostics from [languageserver](https://github.com/REditorSupport/languageserver).
 
 ![VS Code Example](vscode.png "VS Code Example")
 

@@ -45,8 +45,8 @@ patrick::with_parameters_test_that(
     rex::rex("Combine inputs to vectorized functions first"),
     inner_combine_linter()
   ),
-  .test_name = c("format", "origin", "tz", "tryFormats", "non-literal"),
-  arg = c("format = '%F'", "origin = '1900-01-01'", "tz = 'Asia/Jakarta'", "tryFormats = '%F'", "tz = tz")
+  .test_name = c("format", "origin", "tz", "tryFormats", "non-literal", "quoted arg name"),
+  arg = c("format = '%F'", "origin = '1900-01-01'", "tz = 'Asia/Jakarta'", "tryFormats = '%F'", "tz = tz", "'tz' = tz")
 )
 
 patrick::with_parameters_test_that(
