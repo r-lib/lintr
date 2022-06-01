@@ -25,14 +25,27 @@ modify_defaults <- function(defaults, ...) {
   vals <- list(...)
   nms <- names2(vals)
   if ("default" %in% nms) {
-    warning(
-      "'default' is not an argument to linters_with_defaults(). Did you mean 'defaults'? ",
-      "This warning will be removed when with_defaults() is fully deprecated."
-    )
-    defaults <- vals$default
-    vals$default <- NULL
-    valid_idx <- nms != "default"
-    nms <- nms[valid_idx]
+    sys_calls <- sys.calls()
+    prev_call_id <- length(sys_calls) - 1L
+    # getting default= is a lot harder for modify_defaults() because defaults= is a required
+    #   argument. so assume that this was intentional and restrict focus to linters_with_defaults calls
+    if (
+      prev_call_id > 0L && (
+        (is.name(prev_call <- sys_calls[[prev_call_id]][[1L]]) && identical(prev_call, quote(linters_with_defaults))) ||
+        (is.call(prev_call) && identical(prev_call, quote(lintr::linters_with_defaults)))
+      )
+    ) {
+      warning(
+        "'default' is not an argument to linters_with_defaults(). Did you mean 'defaults'? ",
+        "This warning will be removed when with_defaults() is fully deprecated."
+      )
+      defaults <- vals$default
+      vals$default <- NULL
+      valid_idx <- nms != "default"
+      nms <- nms[valid_idx]
+    } else {
+      valid_idx <- TRUE
+    }
   } else {
     valid_idx <- TRUE
   }
