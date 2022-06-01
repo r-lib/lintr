@@ -22,6 +22,15 @@ maybe_still <- function(url) {
 }
 ```
 
+```{r, echo = FALSE, results = 'asis'}
+if (!pkgdown::in_pkgdown()) {
+  cat(paste(
+    "Note: This vignette is best viewed [online](https://lintr.r-lib.org/articles/editors.html),",
+    "where we can render full animations of editor flows.\n"
+  ))
+}
+```
+
 ## RStudio
 
 lintr lints are automatically displayed in the RStudio Markers pane (RStudio versions \> v0.99.206).
