@@ -24,10 +24,10 @@ maybe_still <- function(url) {
 
 ```{r, echo = FALSE, results = 'asis'}
 if (!pkgdown::in_pkgdown()) {
-  cat(paste(
+  cat(
     "Note: This vignette is best viewed [online](https://lintr.r-lib.org/articles/editors.html),",
     "where we can render full animations of editor flows.\n"
-  ))
+  )
 }
 ```
 
