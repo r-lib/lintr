@@ -35,6 +35,7 @@ find_r_package_below <- function(top_dir) {
 }
 
 clone_and_lint <- function(repo) {
+  message("Cloning repo ", repo, " and running lint_package()...")
   repo_dir <- withr::local_tempdir(basename(repo))
   # gert::git_clone() doesn't support shallow clones -- gert#101
   system2(
