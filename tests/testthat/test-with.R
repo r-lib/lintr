@@ -61,3 +61,8 @@ test_that("modify_defaults works", {
   # auto-sorts
   expect_equal(modify_defaults(defaults = list(b = 2L, a = 1L), c = 3L), my_default)
 })
+
+test_that("linters_with_defaults(default = .) is supported with a deprecation warning", {
+  expect_warning(linters <- linters_with_defaults(default = list(), no_tab_linter()))
+  expect_named(linters, "no_tab_linter")
+})
