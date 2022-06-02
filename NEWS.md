@@ -52,7 +52,9 @@
   It has also been renamed as the argument of the now-private functional versions of many linters, which has no direct
   effect on packages importing lintr, but is mentioned in case custom linters imitating `lintr` style have also
   adopted the `source_file` naming and want to adapt to keep in sync.
-* Deprecated `with_defaults()` in favor of `linters_with_defaults()` (#1029, @AshesITR)
+* Deprecated `with_defaults()` in favor of `linters_with_defaults()`, and add `modify_defaults()` which is intended to be used
+  more generally to modify (i.e., extend, trim, and/or update) a list of defaults. Note that the argument corresponding to
+  `with_defaults()`'s `default=` is called `defaults=` (i.e., pluralized) in both of these (#1029, #1336, @AshesITR and @michaelchirico)
 
 ## Other changes to defaults
 
