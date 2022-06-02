@@ -66,8 +66,12 @@ test_that("linters_with_defaults(default = .) is supported with a deprecation wa
   expect_warning(linters <- linters_with_defaults(default = list(), no_tab_linter()), "'default'")
   expect_named(linters, "no_tab_linter")
 
-  # avoid triggering the same warning in modify_defaults, even though the warning is implemented
-  #   there, because getting default= passed takes more effort
+  # the same warning is not triggered in modify_defaults
   expect_silent(linters <- modify_defaults(defaults = list(), default = list(), no_tab_linter()))
   expect_named(linters, c("default", "no_tab_linter"))
+
+  # if default= is explicitly provided alongside defaults=, assume that was intentional
+  default <- Linter(function(.) list())
+  expect_silent(linters <- linters_with_defaults(defaults = list(), default = default))
+  expect_named(linters, "default")
 })

@@ -24,47 +24,9 @@ modify_defaults <- function(defaults, ...) {
   }
   vals <- list(...)
   nms <- names2(vals)
-  if ("default" %in% nms) {
-    sys_calls <- sys.calls()
-    prev_call_id <- length(sys_calls) - 1L
-    # getting default= is a lot harder for modify_defaults() because defaults= is a required
-    #   argument. so assume that this was intentional and restrict focus to linters_with_defaults calls
-    if (
-      prev_call_id > 0L && (
-        (is.name(prev_call <- sys_calls[[prev_call_id]][[1L]]) && identical(prev_call, quote(linters_with_defaults))) ||
-        (is.call(prev_call) && identical(prev_call, quote(lintr::linters_with_defaults)))
-      )
-    ) {
-      warning(
-        "'default' is not an argument to linters_with_defaults(). Did you mean 'defaults'? ",
-        "This warning will be removed when with_defaults() is fully deprecated."
-      )
-      defaults <- vals$default
-      vals$default <- NULL
-      valid_idx <- nms != "default"
-      nms <- nms[valid_idx]
-    } else {
-      valid_idx <- TRUE
-    }
-  } else {
-    valid_idx <- TRUE
-  }
-  missing <- !nzchar(nms, keepNA = TRUE)
-  if (any(missing)) {
-    args <- as.character(eval(substitute(alist(...)[missing])))[valid_idx]
-    # foo_linter(x=1) => "foo"
-    # var[["foo"]]    => "foo"
-    nms[missing] <- re_substitutes(
-      re_substitutes(
-          # Very long input might have newlines which are not caught
-          #  by . in a perl regex; see #774
-        re_substitutes(args, rex("(", anything), "", options = "s"),
-        rex(start, anything, '["' %or% "::"),
-        ""
-      ),
-      rex('"]', anything, end),
-      ""
-    )
+  missing_index <- !nzchar(nms, keepNA = TRUE)
+  if (any(missing_index)) {
+    nms[missing_index] <- guess_names(..., missing_index = missing_index)
   }
 
   to_null <- vapply(vals, is.null, logical(1L))
@@ -185,6 +147,22 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
 #'   absolute_path_linter()
 #' )
 linters_with_defaults <- function(..., defaults = default_linters) {
+  dots <- list(...)
+  if (missing(defaults) && "default" %in% names(dots)) {
+    warning(
+      "'default' is not an argument to linters_with_defaults(). Did you mean 'defaults'? ",
+      "This warning will be removed when with_defaults() is fully deprecated."
+    )
+    defaults <- dots$default
+    nms <- names2(dots)
+    missing_index <- !nzchar(nms, keepNA = TRUE)
+    if (any(missing_index)) {
+      names(dots)[missing_index] <- guess_names(..., missing_index = missing_index)
+    }
+    dots$default <- NULL
+    dots <- c(dots, list(defaults = defaults))
+    return(do.call(modify_defaults, dots))
+  }
   modify_defaults(..., defaults = defaults)
 }
 
@@ -205,4 +183,17 @@ call_linter_factory <- function(linter_factory, linter_name, package) {
   # Otherwise, all linters would be called "linter_factory".
   attr(linter, "name") <- linter_name
   linter
+}
+
+guess_names <- function(..., missing_index) {
+  args <- as.character(eval(substitute(alist(...)[missing_index])))
+  # foo_linter(x=1) => "foo"
+  # var[["foo"]]    => "foo"
+  # strip call: foo_linter(x=1) --> foo_linter
+  # NB: Very long input might have newlines which are not caught
+  #  by . in a perl regex; see #774
+  args <- re_substitutes(args, rex("(", anything), "", options = "s")
+  # strip extractors: pkg::foo_linter, var[["foo_linter"]] --> foo_linter
+  args <- re_substitutes(args, rex(start, anything, '["' %or% "::"), "")
+  re_substitutes(args, rex('"]', anything, end), "")
 }
