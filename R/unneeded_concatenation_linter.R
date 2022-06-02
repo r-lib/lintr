@@ -1,20 +1,34 @@
 #' Unneeded concatenation linter
 #'
-#' Check that the `c` function is not used without arguments nor with a single constant.
+#' Check that the [c()] function is not used without arguments nor with a single constant.
+#'
+#' @param allow_single_expression Logical, default `TRUE`. If `FALSE`, one-expression
+#'   usages of `c()` are always linted, e.g. `c(x)` and `c(matrix(...))`. In some such
+#'   cases, `c()` is being used for its side-effect of stripping non-name attributes;
+#'   it is usually preferable to use [as.vector()] to accomplish the same more readably.
 #'
 #' @evalRd rd_tags("unneeded_concatenation_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-unneeded_concatenation_linter <- function() {
+unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
   msg_empty <- paste(
     "Unneeded concatenation without arguments.",
     'Replace the "c" call by NULL or, whenever possible,',
     "vector() seeded with the correct type and/or length."
   )
+
   msg_const <- 'Unneeded concatenation of a constant. Remove the "c" call.'
 
-  constant_nodes_in_c <- paste0("descendant::", c("STR_CONST", "NUM_CONST", "NULL_CONST"))
-  non_constant_cond <- glue::glue("not( {xp_or(constant_nodes_in_c)} )")
+  non_constant_cond <- "SYMBOL or (expr and not(OP-COLON))"
+  if (!allow_single_expression) {
+    path_to_non_constant <- glue::glue("./expr[2][ {non_constant_cond} ]")
+    non_constant_cond <- "1 = 0"
+
+    msg_const_expr <- paste(
+      'Unneeded concatenation of a simple expression. Remove the "c" call,',
+      'replacing with "as.vector" if using "c" to string attributes, e.g. in converting an array to a vector.'
+    )
+  }
 
   to_pipe_xpath <- "
     ./preceding-sibling::*[1][
@@ -26,8 +40,15 @@ unneeded_concatenation_linter <- function() {
     //expr[
       expr[SYMBOL_FUNCTION_CALL[text() = 'c']]
       and not(EQ_SUB)
-      and not(expr[position() > 1 and {non_constant_cond}])
-      and not({to_pipe_xpath}/preceding-sibling::expr[1][{non_constant_cond}])
+      and (
+        (
+          count(expr) = 2
+          and not(expr[2][ {non_constant_cond} ])
+        ) or (
+          count(expr) = 1
+          and not( {to_pipe_xpath} / preceding-sibling::expr[ {non_constant_cond} ] )
+        )
+      )
     ]
   ")
   num_args_xpath <- "count(./expr) - 1"
@@ -38,13 +59,23 @@ unneeded_concatenation_linter <- function() {
     }
 
     xml <- source_expression$xml_parsed_content
+
     c_calls <- xml2::xml_find_all(xml, xpath_call)
-    num_args <- as.integer(!is.na(xml2::xml_find_first(c_calls, to_pipe_xpath))) +
-      as.integer(xml2::xml_find_num(c_calls, num_args_xpath))
+
+    # bump count(args) by 1 if inside a pipeline
+    num_args <- as.integer(xml2::xml_find_num(c_calls, num_args_xpath)) +
+      as.integer(!is.na(xml2::xml_find_first(c_calls, to_pipe_xpath)))
+    # NB: the xpath guarantees num_args is 0, 1, or 2. 2 comes
+    #   in "a" %>% c("b").
+    # TODO(michaelchirico): can we handle this all inside the XPath with reasonable concision?
     is_unneeded <- num_args <= 1L
     c_calls <- c_calls[is_unneeded]
     num_args <- num_args[is_unneeded]
     msg <- ifelse(num_args == 0L, msg_empty, msg_const)
+    if (!allow_single_expression) {
+      is_single_expression <- !is.na(xml2::xml_find_first(c_calls, path_to_non_constant))
+      msg[is_single_expression] <- msg_const_expr
+    }
 
     xml_nodes_to_lints(
       c_calls,

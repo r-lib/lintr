@@ -56,3 +56,22 @@ test_that("Correctly handles concatenation within native pipes", {
     linter
   )
 })
+
+test_that("sequences with : are linted", {
+  linter <- unneeded_concatenation_linter()
+  expect_lint("c(1:10)", "Unneeded concatenation of a constant", linter)
+  expect_lint("c(1:sum(x))", "Unneeded concatenation of a constant", linter)
+})
+
+test_that("symbolic expressions are allowed, except by request", {
+  expect_lint("c(alpha / 2)", NULL, unneeded_concatenation_linter())
+  expect_lint("c(paste0('.', 1:2))", NULL, unneeded_concatenation_linter())
+  expect_lint("c(DF[cond > 1, col])", NULL, unneeded_concatenation_linter())
+
+  # allow_single_expression = FALSE turns both into lints
+  linter <- unneeded_concatenation_linter(allow_single_expression = FALSE)
+  message <- "Unneeded concatenation of a simple expression"
+  expect_lint("c(alpha / 2)", message, linter)
+  expect_lint("c(paste0('.', 1:2))", message, linter)
+  expect_lint("c(DF[cond > 1, col])", message, linter)
+})

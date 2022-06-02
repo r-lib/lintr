@@ -249,7 +249,9 @@ of general interest to the broader R community. More will be included in future 
   in our test suite and even more for complex files (#1169, #1197, #1200, #1201, #1214, @MichaelChirico and @AshesITR) 
 * **Jenkins CI**: Support for writing comments to GitHub repo when running in Jenkins CI (#488, @fdlk)
 * `seq_linter()`: improve lint message to be clearer about the reason for linting. (#522, @michaelchirico)
-* `unneeded_concatenation_linter()` correctly considers arguments in pipelines (`%>%` or `|>`; #573, #1270, @michaelquinn32 and @AshesITR)
+* `unneeded_concatenation_linter()`
+  + Correctly considers arguments in pipelines (`%>%` or `|>`; #573, #1270, @michaelquinn32 and @AshesITR)
+  + New argument `allow_single_expression`, default `TRUE`, toggling whether `c(x)` should be linted (#1344, @MichaelChirico)
 * **Raw strings**: Several linters tightened internal logic to allow for raw strings like `R"( a\string )"` 
   (#1034, #1285, @michaelchirico and @AshesITR)
 * Improved S3 generic detection for non-standard S3 generics where `UseMethod()` is called after several
