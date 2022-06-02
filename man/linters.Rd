@@ -24,9 +24,9 @@ The following tags exist:
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (24 linters)}
 \item{\link[=deprecated_linters]{deprecated} (4 linters)}
-\item{\link[=efficiency_linters]{efficiency} (15 linters)}
+\item{\link[=efficiency_linters]{efficiency} (16 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
-\item{\link[=readability_linters]{readability} (36 linters)}
+\item{\link[=readability_linters]{readability} (37 linters)}
 \item{\link[=robustness_linters]{robustness} (12 linters)}
 \item{\link[=style_linters]{style} (35 linters)}
 }
@@ -96,6 +96,7 @@ The following linters exist:
 \item{\code{\link{spaces_inside_linter}} (tags: default, readability, style)}
 \item{\code{\link{spaces_left_parentheses_linter}} (tags: default, readability, style)}
 \item{\code{\link{sprintf_linter}} (tags: common_mistakes, correctness)}
+\item{\code{\link{string_boundary_linter}} (tags: efficiency, readability)}
 \item{\code{\link{strings_as_factors_linter}} (tags: robustness)}
 \item{\code{\link{system_file_linter}} (tags: best_practices, consistency, readability)}
 \item{\code{\link{T_and_F_symbol_linter}} (tags: best_practices, consistency, default, readability, robustness, style)}
