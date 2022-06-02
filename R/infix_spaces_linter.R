@@ -107,11 +107,11 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
     and position() > 1
     and (
       (
-        @line1 = preceding-sibling::*[1]/@line1
-        and @col1 {op} preceding-sibling::*[1]/@col2 + 2
+        @line1 = preceding-sibling::*[1]/@line2
+        and @start {op} preceding-sibling::*[1]/@end + 2
       ) or (
         @line1 = following-sibling::*[1]/@line1
-        and following-sibling::*[1]/@col1 {op} @col2 + 2
+        and following-sibling::*[1]/@start {op} @end + 2
       )
     )
     and not(
