@@ -154,3 +154,15 @@ test_that("exception for box::use()", {
     linter
   )
 })
+
+test_that("multi-line, multi-expression case is caught", {
+  expect_lint(
+    trim_some("
+      x +
+        y+
+        z
+    "),
+    rex::rex("Put spaces around all infix operators."),
+    infix_spaces_linter()
+  )
+})
