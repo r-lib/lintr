@@ -19,7 +19,7 @@ unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
 
   msg_const <- 'Unneeded concatenation of a constant. Remove the "c" call.'
 
-  non_constant_cond <- "SYMBOL or (expr and not(OP-COLON))"
+  non_constant_cond <- "SYMBOL or (expr and not(OP-COLON and count(expr[SYMBOL or expr]) != 2))"
   if (!allow_single_expression) {
     path_to_non_constant <- glue::glue("./expr[2][ {non_constant_cond} ]")
     non_constant_cond <- "1 = 0"
@@ -59,7 +59,6 @@ unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
     }
 
     xml <- source_expression$xml_parsed_content
-
     c_calls <- xml2::xml_find_all(xml, xpath_call)
 
     # bump count(args) by 1 if inside a pipeline

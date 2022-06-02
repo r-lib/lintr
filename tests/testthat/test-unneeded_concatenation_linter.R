@@ -57,12 +57,6 @@ test_that("Correctly handles concatenation within native pipes", {
   )
 })
 
-test_that("sequences with : are linted", {
-  linter <- unneeded_concatenation_linter()
-  expect_lint("c(1:10)", "Unneeded concatenation of a constant", linter)
-  expect_lint("c(1:sum(x))", "Unneeded concatenation of a constant", linter)
-})
-
 test_that("symbolic expressions are allowed, except by request", {
   expect_lint("c(alpha / 2)", NULL, unneeded_concatenation_linter())
   expect_lint("c(paste0('.', 1:2))", NULL, unneeded_concatenation_linter())
@@ -74,4 +68,25 @@ test_that("symbolic expressions are allowed, except by request", {
   expect_lint("c(alpha / 2)", message, linter)
   expect_lint("c(paste0('.', 1:2))", message, linter)
   expect_lint("c(DF[cond > 1, col])", message, linter)
+})
+
+test_that("sequences with : are linted whenever a constant is involved", {
+  linter <- unneeded_concatenation_linter()
+  expect_lint("c(1:10)", "Unneeded concatenation of a constant", linter)
+  expect_lint("c(1:sum(x))", "Unneeded concatenation of a constant", linter)
+
+  # this is slightly different if a,b are factors, in which case : does
+  #   something like interaction
+  expect_lint("c(a:b)", NULL, linter)
+  expect_lint("c(a:foo(b))", NULL, linter)
+  expect_lint(
+    "c(a:b)",
+    "Unneeded concatenation of a simple expression",
+    unneeded_concatenation_linter(allow_single_expression = FALSE)
+  )
+  expect_lint(
+    "c(a:foo(b))",
+    "Unneeded concatenation of a simple expression",
+    unneeded_concatenation_linter(allow_single_expression = FALSE)
+  )
 })
