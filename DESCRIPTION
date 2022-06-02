@@ -36,6 +36,7 @@ Suggests:
     httr (>= 1.2.1),
     mockery,
     patrick,
+    pkgdown,
     rmarkdown,
     rstudioapi (>= 0.2),
     testthat (>= 3.0.0),
