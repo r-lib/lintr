@@ -163,7 +163,7 @@
 * `missing_argument_linter()` to check for empty (missing) arguments in function calls (#563, #565, @renkun-ken)
 * `duplicate_argument_linter()` similarly checks that there are no duplicate arguments supplied to function calls (#850, @renkun-ken)
 * `sprintf_linter()` to check for common mistakes in `sprintf()` usage (#544, #578, #624, #625, @renkun-ken, @AshesITR)
-* `backport_linter()` for detecting mismatched R version dependencies (#506, @MichaelChirico)
+* `backport_linter()` for detecting mismatched R version dependencies (#506, #1316, #1318, #1319, @MichaelChirico and @AshesITR)
 * `pipe_call_linter()` to enforce that all steps of `magrittr` pipelines use explicit calls instead of symbols,
   e.g. `x %>% mean()` instead of `x %>% mean` (@michaelchirico)
 * `package_hooks_linter()` to run a series of checks also done by `R CMD check` on the `.onLoad()`, `.onAttach()`,
