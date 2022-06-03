@@ -3,12 +3,17 @@
 #' Check for usage of unavailable functions. Not reliable for testing r-devel dependencies.
 #'
 #' @param r_version Minimum R version to test for compatibility
+#' @param except Character vector of functions to be excluded from linting.
+#'  Use this to list explicitly defined backports, e.g. those imported from the {backports} package or manually
+#'  defined in your package.
+#'
 #' @evalRd rd_tags("backport_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-backport_linter <- function(r_version = getRversion()) {
+backport_linter <- function(r_version = getRversion(), except = character()) {
   r_version <- normalize_r_version(r_version)
   backport_blacklist <- backports[r_version < R_system_version(names(backports))]
+  backport_blacklist <- lapply(backport_blacklist, function(nm) setdiff(nm, except))
 
   names_xpath <- "//SYMBOL | //SYMBOL_FUNCTION_CALL"
 
@@ -35,7 +40,8 @@ backport_linter <- function(r_version = getRversion()) {
     # which(arr.ind) returns things in the same order as which()
     needs_backport_version_idx <- ((which(needs_backport) - 1L) %% length(backport_blacklist)) + 1L
     lint_message <- sprintf(
-      "%s (R %s) is not available for dependency R >= %s.",
+      paste("%s (R %s) is not available for dependency R >= %s.",
+            "Use the `except` argument of `backport_linter()` to configure available backports."),
       all_names[bad_idx],
       names(backport_blacklist)[needs_backport_version_idx],
       r_version
@@ -55,10 +61,13 @@ normalize_r_version <- function(r_version) {
       list("oldrel", maybe("-", digits)) %or%
       "devel", end))) {
     # Support devel, release, oldrel, oldrel-1, ...
+    if (r_version == "oldrel") {
+      r_version <- "oldrel-1"
+    }
 
     all_versions <- names(backports)
     minor_versions <- unique(re_substitutes(all_versions, rex(".", digits, end), ""))
-    version_names <- c("devel", "release", "oldrel", paste0("oldrel-", seq_len(length(minor_versions) - 3L)))
+    version_names <- c("devel", "release", paste0("oldrel-", seq_len(length(minor_versions) - 2L)))
     if (!r_version %in% version_names) {
       # This can only trip if e.g. oldrel-99 is requested
       stop("`r_version` must be a version number or one of ", toString(sQuote(version_names)))
@@ -86,25 +95,33 @@ normalize_r_version <- function(r_version) {
 # devel NEWS https://cran.rstudio.com/doc/manuals/r-devel/NEWS.html
 # release NEWS https://cran.r-project.org/doc/manuals/r-release/NEWS.html
 backports <- list(
-  `4.2.0` = c(".pretty", ".LC.categories", "Sys.setLanguage()"), # R devel needs to be ahead of all other versions
+  `4.3.0` = character(), # R devel needs to be ahead of all other versions
+  `4.2.0` = c(".pretty", ".LC.categories", "Sys.setLanguage()"),
+  `4.1.3` = character(), # need these for oldrel specifications
   `4.1.0` = c("numToBits", "numToInts", "gregexec", "charClass", "checkRdContents", "...names"),
+  `4.0.5` = character(), # need these for oldrel specifications
   `4.0.0` = c(
     ".class2", ".S3method", "activeBindingFunction", "deparse1", "globalCallingHandlers",
     "infoRDS", "list2DF", "marginSums", "proportions", "R_user_dir", "socketTimeout", "tryInvokeRestart"
   ),
+  `3.6.3` = character(), # need these for oldrel specifications
   `3.6.0` = c(
     "asplit", "hcl.colors", "hcl.pals", "mem.maxNsize", "mem.maxVsize", "nullfile", "str2lang",
     "str2expression", "update_PACKAGES"
   ),
+  `3.5.3` = character(), # need these for oldrel specifications
   `3.5.0` = c("...elt", "...length", "askYesNo", "getDefaultCluster", "isFALSE", "packageDate", "warnErrList"),
+  `3.4.4` = character(), # need these for oldrel specifications
   `3.4.0` = c(
     "check_packages_in_dir_details", "CRAN_package_db", "debugcall", "hasName",
     "isS3stdgeneric", "strcapture", "Sys.setFileTime", "undebugcall"
   ),
+  `3.3.3` = character(), # need these for oldrel specifications
   `3.3.0` = c(
     ".traceback", "chkDots", "curlGetHeaders", "endsWith", "grouping", "isS3method",
     "makevars_site", "makevars_user", "Rcmd", "sigma", "startsWith", "strrep", "validEnc", "validUTF8"
   ),
+  `3.2.5` = character(), # need these for oldrel specifications
   `3.2.0` = c(
     ".getNamespaceInfo", "check_packages_in_dir_changes", "debuggingState",
     "dir.exists", "dynGet", "extSoftVersion", "get0", "grSoftVersion", "hsearch_db",

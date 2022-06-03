@@ -1,6 +1,7 @@
 linters: linters_with_defaults(
     implicit_integer_linter(),
-    line_length_linter(120)
+    line_length_linter(120),
+    backport_linter("oldrel-4", except = "R_user_dir")
   )
 exclusions: list(
   "inst/doc/creating_linters.R" = 1,
