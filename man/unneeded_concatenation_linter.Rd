@@ -19,5 +19,5 @@ Check that the \code{\link[=c]{c()}} function is not used without arguments nor 
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=configurable_linters]{configurable}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }
