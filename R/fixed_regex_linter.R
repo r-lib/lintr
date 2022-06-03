@@ -34,7 +34,7 @@ fixed_regex_linter <- function() {
 
   # NB: strsplit doesn't have an ignore.case argument
   # NB: we intentionally exclude cases like gsub(x, c("a" = "b")), where "b" is fixed
-  xpath <- glue::glue("//expr[
+  xpath <- glue::glue("//expr[1][
     SYMBOL_FUNCTION_CALL[ {pos_1_regex_funs} ]
     and not(following-sibling::SYMBOL_SUB[
       (text() = 'fixed' or text() = 'ignore.case')
@@ -43,7 +43,7 @@ fixed_regex_linter <- function() {
   ]
   /following-sibling::expr[1][STR_CONST and not(EQ_SUB)]
   |
-  //expr[
+  //expr[1][
     SYMBOL_FUNCTION_CALL[ {pos_2_regex_funs} ]
     and not(following-sibling::SYMBOL_SUB[
       text() = 'fixed'

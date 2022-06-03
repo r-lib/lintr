@@ -20,7 +20,7 @@ unreachable_code_linter <- function() {
   /following-sibling::expr
   /*[
     self::expr
-    and expr[not(OP-DOLLAR) and SYMBOL_FUNCTION_CALL[1][text() = 'return' or text() = 'stop']]
+    and expr[1][not(OP-DOLLAR) and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]
     and (position() != last() - 1 or not(following-sibling::OP-RIGHT-BRACE))
     and @line2 < following-sibling::*[1]/@line2
   ]
