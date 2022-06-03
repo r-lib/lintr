@@ -65,7 +65,7 @@ fixed_regex_linter <- function() {
     is_static <- is_not_regex(pattern_strings)
 
     fixed_equivalent <- encodeString(get_fixed_string(pattern_strings[is_static]), quote = '"', justify = "none")
-    call_name <- xml2::xml_find_chr(patterns[is_static], "string(preceding-sibling::expr/SYMBOL_FUNCTION_CALL)")
+    call_name <- xml2::xml_find_chr(patterns[is_static], "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")
 
     is_stringr <- startsWith(call_name, "str_")
     replacement <- ifelse(

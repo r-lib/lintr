@@ -11,7 +11,7 @@ missing_argument_linter <- function(except = c("switch", "alist")) {
     self::OP-COMMA[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN]] or
     self::EQ_SUB[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN or self::OP-COMMA]]
   ]"
-  to_function_xpath <- "string(./preceding-sibling::expr/SYMBOL_FUNCTION_CALL)"
+  to_function_xpath <- "string(./preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)"
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
