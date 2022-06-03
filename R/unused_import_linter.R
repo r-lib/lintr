@@ -11,7 +11,7 @@
 #' @export
 unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bit64", "data.table", "tidyverse")) {
   import_xpath <- "//expr[
-      expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
       and
       (
         not(SYMBOL_SUB[

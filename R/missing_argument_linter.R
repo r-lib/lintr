@@ -6,7 +6,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 missing_argument_linter <- function(except = c("switch", "alist")) {
-  xpath <- "//expr[expr[SYMBOL_FUNCTION_CALL]]/*[
+  xpath <- "//expr[expr[1][SYMBOL_FUNCTION_CALL]]/*[
     self::OP-COMMA[preceding-sibling::*[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-COMMA]] or
     self::OP-COMMA[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN]] or
     self::EQ_SUB[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN or self::OP-COMMA]]

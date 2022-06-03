@@ -13,7 +13,7 @@ expect_comparison_linter <- function() {
   # != doesn't have a clean replacement
   comparator_nodes <- setdiff(as.list(infix_metadata$xml_tag[infix_metadata$comparator]), "NE")
   xpath <- glue::glue("//expr[
-    expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
     and expr[2][ {xp_or(comparator_nodes)} ]
     and not(SYMBOL_SUB[text() = 'info'])
   ]")

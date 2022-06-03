@@ -13,8 +13,8 @@
 #' @export
 any_duplicated_linter <- function() {
   any_duplicated_xpath <- "//expr[
-    expr[SYMBOL_FUNCTION_CALL[text() = 'any']]
-    and expr[expr[SYMBOL_FUNCTION_CALL[text() = 'duplicated']]]
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'any']]
+    and expr[expr[1][SYMBOL_FUNCTION_CALL[text() = 'duplicated']]]
     and (
       not(OP-COMMA)
       or OP-COMMA[
@@ -37,8 +37,8 @@ any_duplicated_linter <- function() {
   length_unique_xpath <- "
   //expr[EQ or NE or GT or LT]
   /expr[
-    expr[SYMBOL_FUNCTION_CALL[text() = 'length']]
-    and expr[expr[
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
+    and expr[expr[1][
       SYMBOL_FUNCTION_CALL[text() = 'unique']
       and (
         following-sibling::expr =
@@ -46,7 +46,7 @@ any_duplicated_linter <- function() {
           /parent::expr
           /parent::expr
           /expr
-          /expr[SYMBOL_FUNCTION_CALL[text()= 'length']]
+          /expr[1][SYMBOL_FUNCTION_CALL[text()= 'length']]
           /following-sibling::expr
         or
         following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
@@ -54,11 +54,13 @@ any_duplicated_linter <- function() {
           /parent::expr
           /parent::expr
           /expr
-          /expr[SYMBOL_FUNCTION_CALL[text()= 'nrow']]
+          /expr[1][SYMBOL_FUNCTION_CALL[text()= 'nrow']]
           /following-sibling::expr
       )
     ]]
   ]"
+
+  uses_nrow_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'nrow']"
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -77,7 +79,7 @@ any_duplicated_linter <- function() {
 
     length_unique_expr <- xml2::xml_find_all(xml, length_unique_xpath)
     lint_message <- ifelse(
-      is.na(xml2::xml_find_first(length_unique_expr, "./parent::expr/expr/expr/SYMBOL_FUNCTION_CALL[text() = 'nrow']")),
+      is.na(xml2::xml_find_first(length_unique_expr, uses_nrow_xpath)),
       "anyDuplicated(x) == 0L is better than length(unique(x)) == length(x).",
       "anyDuplicated(DF$col) == 0L is better than length(unique(DF$col)) == nrow(DF)"
     )

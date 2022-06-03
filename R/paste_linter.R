@@ -18,18 +18,18 @@
 #' @export
 paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
   sep_xpath <- "//expr[
-    expr[SYMBOL_FUNCTION_CALL[text() = 'paste']]
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'paste']]
     and SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1][STR_CONST]
   ]"
 
   to_string_xpath <- glue::glue("//expr[
-  expr[SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']]
+  expr[1][SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']]
     and count(expr) = 3
     and SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1][STR_CONST]
   ]")
 
   paste0_sep_xpath <- "//expr[
-    expr[SYMBOL_FUNCTION_CALL[text() = 'paste0']]
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'paste0']]
     and SYMBOL_SUB[text() = 'sep']
   ]"
 

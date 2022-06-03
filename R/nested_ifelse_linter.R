@@ -18,8 +18,8 @@
 #' @export
 nested_ifelse_linter <- function() {
   xpath <- glue::glue("
-  //expr[expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]]
-  /expr[expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]]
+  //expr[expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]]
+  /expr[expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]]
   ")
 
   Linter(function(source_expression) {

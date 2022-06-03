@@ -16,13 +16,13 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
   named_stopifnot_condition <- if (allow_named_stopifnot) "and not(preceding-sibling::*[1][self::EQ_SUB])" else ""
   xpath <- glue::glue("//expr[
     (
-      expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'assert_that']]
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'assert_that']]
       and expr[2][AND2]
     ) or (
-      expr[SYMBOL_FUNCTION_CALL[text() = 'stopifnot']]
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'stopifnot']]
       and expr[2][AND2 {named_stopifnot_condition}]
     ) or (
-      expr[SYMBOL_FUNCTION_CALL[text() = 'expect_false']]
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_false']]
       and expr[2][OR2]
     )
   ]")
