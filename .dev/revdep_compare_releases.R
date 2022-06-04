@@ -1,6 +1,7 @@
 #!/usr/bin/env Rscript
 library(withr)
 library(pkgload)
+library(data.table)
 
 dev_dir <- getwd()
 old_branch <- system2("git", c("rev-parse", "--abbrev-ref", "HEAD"), stdout = TRUE)
@@ -10,12 +11,23 @@ main <- "main"
 all_repos <- c(readLines("revdep-repos"), readLines("revdep-extra-repos"))
 all_repos <- grep("^#", all_repos, invert = TRUE, value = TRUE)
 
+lint_timings <- new.env()
+lint_timings$repo_timing <- vector("list", length(all_repos))
+names(lint_timings$repo_timing) <- all_repos
+
 setup <- function(version) {
+  message("Checking out & loading ", version)
   system2("git", c("checkout", "--quiet", version))
-  pkgload::load_all()
+  pkgload::load_all(quiet = TRUE)
   out_dir <- file.path(dev_dir, "revdep_comparison", version)
   dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+  message("Cloning repos and running lint_package()...")
   out_dir
+}
+
+cleanup <- function(version) {
+  lint_timings[[version]] <- lint_timings$repo_timing
+  lint_timings$repo_timing <- NULL
 }
 
 find_r_package_below <- function(top_dir) {
@@ -35,7 +47,7 @@ find_r_package_below <- function(top_dir) {
 }
 
 clone_and_lint <- function(repo) {
-  message("Cloning repo ", repo, " and running lint_package()...")
+  message("  * ", repo)
   repo_dir <- withr::local_tempdir(basename(repo))
   # gert::git_clone() doesn't support shallow clones -- gert#101
   system2(
@@ -45,12 +57,18 @@ clone_and_lint <- function(repo) {
   withr::local_dir(find_r_package_below(repo_dir))
   package <- read.dcf("DESCRIPTION", "Package")
 
+  start_time <- proc.time()
+  on.exit(lint_timings$repo_timing[[repo]] <- proc.time() - start_time)
   warnings <- character()
   withCallingHandlers(
     tryCatch(
       {
         lints <- lintr::lint_package()
-        utils::write.csv(as.data.frame(lints), file.path(out_dir, paste0(package, ".csv")))
+        utils::write.csv(
+          as.data.frame(lints),
+          file.path(out_dir, paste0(package, ".csv")),
+          row.names = FALSE
+        )
       },
       error = function(cond) {
         writeLines(conditionMessage(cond), file.path(out_dir, paste0(package, ".failure")))
@@ -66,10 +84,26 @@ clone_and_lint <- function(repo) {
   }
 }
 
+load_lints <- function(version, filter_errors = TRUE) {
+  csv_files <- list.files(file.path(dev_dir, "revdep_comparison", version), pattern = "\\.csv$", full.names = TRUE)
+  names(csv_files) <- gsub("\\.csv$", "", basename(csv_files))
+  lints <- data.table::rbindlist(lapply(csv_files, utils::read.csv), idcol = "repo")
+  if (filter_errors) lints <- lints[, if (!any(type == "error")) .SD, by = .(repo, filename)]
+  lints
+}
+
 out_dir <- setup(main)
 for (repo in all_repos) clone_and_lint(repo)
+cleanup(main)
 
 out_dir <- setup(old_release)
 for (repo in all_repos) clone_and_lint(repo)
+cleanup(old_release)
 
 system2("git", c("checkout", "--quiet", old_branch))
+
+main_lints <- load_lints(main)
+old_lints <- load_lints(old_release)
+
+main_lints[!old_lints, on = c("repo", "filename", "line_number")]
+old_lints[!main_lints, on = c("repo", "filename", "line_number")]
