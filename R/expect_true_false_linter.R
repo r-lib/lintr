@@ -9,7 +9,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_true_false_linter <- function() {
-  xpath <- "//expr[expr[
+  xpath <- "//expr[expr[1][
     SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
     and following-sibling::expr[position() <= 2 and NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]
   ]]"

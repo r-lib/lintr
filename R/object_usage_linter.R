@@ -21,8 +21,8 @@ object_usage_linter <- function(interpret_glue = TRUE) {
     "expr_or_assign_or_help[EQ_ASSIGN]/expr[2][FUNCTION]",
     "equal_assign[EQ_ASSIGN]/expr[2][FUNCTION]",
     # assign() and setMethod() assignments
-    "//expr[expr[SYMBOL_FUNCTION_CALL[text() = 'assign']]]/expr[3][FUNCTION]",
-    "//expr[expr[SYMBOL_FUNCTION_CALL[text() = 'setMethod']]]/expr[4][FUNCTION]",
+    "//expr[expr[1][SYMBOL_FUNCTION_CALL[text() = 'assign']]]/expr[3][FUNCTION]",
+    "//expr[expr[1][SYMBOL_FUNCTION_CALL[text() = 'setMethod']]]/expr[4][FUNCTION]",
     sep = " | "
   )
 
@@ -183,8 +183,8 @@ get_assignment_symbols <- function(xml) {
     "
       expr[LEFT_ASSIGN]/expr[1]/SYMBOL[1] |
       equal_assign/expr[1]/SYMBOL[1] |
-      expr[expr[SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/* |
-      expr[expr[SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[2]/*
+      expr[expr[1][SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/* |
+      expr[expr[1][SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[2]/*
     "
   ))
 }
@@ -256,7 +256,7 @@ get_imported_symbols <- function(xml) {
   import_exprs <- xml2::xml_find_all(
     xml,
     "//expr[
-      expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
       and
       (
         not(SYMBOL_SUB[

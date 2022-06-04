@@ -34,7 +34,7 @@ regex_subset_linter <- function() {
   #   is basically what we need, i.e., whatever expression comes in
   #   <expr>[grepl(pattern, <expr>)] matches exactly, e.g. names(x)[grepl(ptn, names(x))].
   subset_cond_fmt <- xp_and(
-    "expr[SYMBOL_FUNCTION_CALL[%s]]",
+    "expr[1][SYMBOL_FUNCTION_CALL[%s]]",
     "expr[position() = %d] = parent::expr/expr[1]"
   )
   grep_xpath <- sprintf(

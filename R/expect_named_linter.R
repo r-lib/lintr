@@ -11,7 +11,7 @@ expect_named_linter <- function() {
    xpath <- "//expr[
     SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
     and following-sibling::expr[
-      expr[SYMBOL_FUNCTION_CALL[text() = 'names']]
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'names']]
       and (position() = 1 or preceding-sibling::expr[STR_CONST])
     ]
   ]"

@@ -21,7 +21,7 @@ literal_coercion_linter <- function() {
   #  - in x$"abc", the "abc" STR_CONST is at the top level, so exclude OP-DOLLAR
   #  - need condition against STR_CONST w/ EQ_SUB to skip quoted keyword arguments (see tests)
   xpath <- glue::glue("//expr[
-    expr[SYMBOL_FUNCTION_CALL[ {coercers} ]]
+    expr[1][SYMBOL_FUNCTION_CALL[ {coercers} ]]
     and expr[2][
       not(OP-DOLLAR)
       and (
