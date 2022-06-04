@@ -20,7 +20,7 @@ strings_as_factors_linter <- function() {
   # a call to c() with only literal string inputs,
   #   e.g. c("a") or c("a", "b"), but not c("a", b)
   c_combine_strings <- "
-    expr[SYMBOL_FUNCTION_CALL[text() = 'c']]
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'c']]
     and expr[STR_CONST]
     and not(expr[SYMBOL or expr])
   "
@@ -40,16 +40,16 @@ strings_as_factors_linter <- function() {
   #   (1) above argument is to row.names=
   #   (2) stringsAsFactors is manually supplied (with any value)
   xpath <- glue::glue("//expr[
-    expr[SYMBOL_FUNCTION_CALL[text() = 'data.frame']]
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'data.frame']]
     and expr[
       (
         STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
         or ( {c_combine_strings} )
-        or expr[
+        or expr[1][
           SYMBOL_FUNCTION_CALL[text() = 'rep']
           and following-sibling::expr[1][STR_CONST or ({c_combine_strings})]
         ]
-        or expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(known_character_funs)} ]]
+        or expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(known_character_funs)} ]]
       )
       and not(preceding-sibling::*[2][self::SYMBOL_SUB and text() = 'row.names'])
     ]

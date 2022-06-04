@@ -49,18 +49,18 @@ inner_combine_linter <- function() {
 
   c_expr_cond <- xp_and(
     sprintf(
-      "expr[SYMBOL_FUNCTION_CALL[%s]]",
+      "expr[1][SYMBOL_FUNCTION_CALL[%s]]",
       xp_text_in_table(c(no_arg_vectorized_funs, date_funs, log_funs, lubridate_funs))
     ),
-    "not(following-sibling::expr[not(expr[SYMBOL_FUNCTION_CALL])])",
-    "not(expr/SYMBOL_FUNCTION_CALL != following-sibling::expr/expr/SYMBOL_FUNCTION_CALL)",
+    "not(following-sibling::expr[not(expr[1][SYMBOL_FUNCTION_CALL])])",
+    "not(expr[1]/SYMBOL_FUNCTION_CALL != following-sibling::expr/expr[1]/SYMBOL_FUNCTION_CALL)",
     date_args_cond,
     log_args_cond,
     lubridate_args_cond
   )
   xpath <- glue::glue("//expr[
     count(expr) > 2
-    and expr[
+    and expr[1][
       SYMBOL_FUNCTION_CALL[text() = 'c']
       and following-sibling::expr[1][ {c_expr_cond} ]
     ]
@@ -110,7 +110,7 @@ arg_match_condition <- function(arg) {
 
 build_arg_condition <- function(calls, arguments) {
   xp_or(
-    sprintf("not(expr[SYMBOL_FUNCTION_CALL[%s]])", xp_text_in_table(calls)),
+    sprintf("not(expr[1][SYMBOL_FUNCTION_CALL[%s]])", xp_text_in_table(calls)),
     "not(EQ_SUB) and not(following-sibling::expr/EQ_SUB)",
    xp_and(vapply(arguments, arg_match_condition, character(1L)))
   )

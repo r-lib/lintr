@@ -13,13 +13,13 @@
 #' @export
 redundant_ifelse_linter <- function(allow10 = FALSE) {
   tf_xpath <- glue::glue("//expr[
-    expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
+    expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
     and expr[NUM_CONST[text() = 'TRUE']]
     and expr[NUM_CONST[text() = 'FALSE']]
   ]")
 
   num_xpath <- glue::glue("//expr[
-    expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
+    expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
     and expr[NUM_CONST[text() = '1' or text() = '1L']]
     and expr[NUM_CONST[text() = '0' or text() = '0L']]
   ]")

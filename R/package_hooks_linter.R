@@ -63,7 +63,7 @@ package_hooks_linter <- function() {
 
   library_require_xpath <- "
   //expr[SYMBOL[text() = '.onAttach' or text() = '.onLoad']]
-  /following-sibling::expr//*[
+  /following-sibling::expr//*[1][
     (self::SYMBOL or self::SYMBOL_FUNCTION_CALL)
     and (text() = 'require' or text() = 'library' or text() = 'installed.packages')
   ]

@@ -9,8 +9,8 @@
 #' @export
 any_is_na_linter <- function() {
   xpath <- "//expr[
-    expr[SYMBOL_FUNCTION_CALL[text() = 'any']]
-    and expr[expr[SYMBOL_FUNCTION_CALL[text() = 'is.na']]]
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'any']]
+    and expr[expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.na']]]
     and (
       count(expr) = 2
       or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm'])

@@ -11,7 +11,7 @@
 #' @export
 unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bit64", "data.table", "tidyverse")) {
   import_xpath <- "//expr[
-      expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
       and
       (
         not(SYMBOL_SUB[
@@ -25,7 +25,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
   xp_used_symbols <- paste(
     "//SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]/text()",
     "//SYMBOL[not(
-      parent::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
+      parent::expr/preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
     )]/text()",
     "//SPECIAL/text()",
     sep = " | "

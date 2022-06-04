@@ -6,12 +6,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 missing_argument_linter <- function(except = c("switch", "alist")) {
-  xpath <- "//expr[expr[SYMBOL_FUNCTION_CALL]]/*[
+  xpath <- "//expr[expr[1][SYMBOL_FUNCTION_CALL]]/*[
     self::OP-COMMA[preceding-sibling::*[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-COMMA]] or
     self::OP-COMMA[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN]] or
     self::EQ_SUB[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN or self::OP-COMMA]]
   ]"
-  to_function_xpath <- "string(./preceding-sibling::expr/SYMBOL_FUNCTION_CALL)"
+  to_function_xpath <- "string(./preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)"
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {

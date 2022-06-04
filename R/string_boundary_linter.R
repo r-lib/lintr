@@ -16,7 +16,7 @@ string_boundary_linter <- function() {
     "contains(text(), '^') or contains(text(), '$')"
   )
   grepl_xpath <- glue::glue("//expr[
-    expr[SYMBOL_FUNCTION_CALL[text() = 'grepl']]
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'grepl']]
     and not(SYMBOL_SUB[
       text() = 'ignore.case'
       and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
@@ -27,7 +27,7 @@ string_boundary_linter <- function() {
     ])
   ]/expr[2]/STR_CONST[ {str_cond} ]")
   str_detect_xpath <- glue::glue("//expr[
-    expr[SYMBOL_FUNCTION_CALL[text() = 'str_detect']]
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'str_detect']]
   ]/expr[3]/STR_CONST[ {str_cond} ]")
   regex_xpath <- paste(grepl_xpath, "|", str_detect_xpath)
 
@@ -35,20 +35,20 @@ string_boundary_linter <- function() {
     (EQ or NE)
     and expr[STR_CONST]
     and expr[
-      expr[SYMBOL_FUNCTION_CALL[text() = 'substr' or text() = 'substring']]
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'substr' or text() = 'substring']]
       and expr[
         (
           position() = 3
           and NUM_CONST[text() = '1' or text() = '1L']
         ) or (
           position() = 4
-          and expr[SYMBOL_FUNCTION_CALL[text() = 'nchar']]
+          and expr[1][SYMBOL_FUNCTION_CALL[text() = 'nchar']]
           and expr[position() = 2] = preceding-sibling::expr[2]
         )
       ]
     ]
   ]"
-  substr_arg2_xpath <- "string(./expr[expr[SYMBOL_FUNCTION_CALL]]/expr[3])"
+  substr_arg2_xpath <- "string(./expr[expr[1][SYMBOL_FUNCTION_CALL]]/expr[3])"
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

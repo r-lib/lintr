@@ -23,7 +23,7 @@ yoda_test_linter <- function() {
     or ((OP-PLUS or OP-MINUS) and count(expr[NUM_CONST]) = 2)
   "
   xpath <- glue::glue("//expr[
-    expr[SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical' or text() = 'expect_setequal']]
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical' or text() = 'expect_setequal']]
     and expr[2][ {const_condition} ]
     and not(preceding-sibling::*[self::PIPE or self::SPECIAL[text() = '%>%']])
   ]")

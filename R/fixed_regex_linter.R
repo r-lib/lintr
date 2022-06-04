@@ -34,7 +34,7 @@ fixed_regex_linter <- function() {
 
   # NB: strsplit doesn't have an ignore.case argument
   # NB: we intentionally exclude cases like gsub(x, c("a" = "b")), where "b" is fixed
-  xpath <- glue::glue("//expr[
+  xpath <- glue::glue("//expr[1][
     SYMBOL_FUNCTION_CALL[ {pos_1_regex_funs} ]
     and not(following-sibling::SYMBOL_SUB[
       (text() = 'fixed' or text() = 'ignore.case')
@@ -43,7 +43,7 @@ fixed_regex_linter <- function() {
   ]
   /following-sibling::expr[1][STR_CONST and not(EQ_SUB)]
   |
-  //expr[
+  //expr[1][
     SYMBOL_FUNCTION_CALL[ {pos_2_regex_funs} ]
     and not(following-sibling::SYMBOL_SUB[
       text() = 'fixed'
@@ -65,7 +65,7 @@ fixed_regex_linter <- function() {
     is_static <- is_not_regex(pattern_strings)
 
     fixed_equivalent <- encodeString(get_fixed_string(pattern_strings[is_static]), quote = '"', justify = "none")
-    call_name <- xml2::xml_find_chr(patterns[is_static], "string(preceding-sibling::expr/SYMBOL_FUNCTION_CALL)")
+    call_name <- xml2::xml_find_chr(patterns[is_static], "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")
 
     is_stringr <- startsWith(call_name, "str_")
     replacement <- ifelse(

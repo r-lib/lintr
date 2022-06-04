@@ -15,14 +15,14 @@ expect_s3_class_linter <- function() {
   xpath <- glue::glue("//expr[
     (
       (
-        expr[SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']]
+        expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']]
         and expr[
-          expr[SYMBOL_FUNCTION_CALL[text() = 'class']]
+          expr[1][SYMBOL_FUNCTION_CALL[text() = 'class']]
           and (position() = 2 or preceding-sibling::expr[STR_CONST])
         ]
       ) or (
-        expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
-        and expr[2][expr[SYMBOL_FUNCTION_CALL[ {is_class_call} ]]]
+        expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
+        and expr[2][expr[1][SYMBOL_FUNCTION_CALL[ {is_class_call} ]]]
       )
     )
     and not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])
@@ -82,8 +82,8 @@ expect_s4_class_linter <- function() {
   # require 2 expressions because methods::is(x) alone is a valid call, even
   #   though the character output wouldn't make any sense for expect_true().
   xpath <- "//expr[
-    expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
-    and expr[2][count(expr) = 3 and expr[SYMBOL_FUNCTION_CALL[text() = 'is']]]
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
+    and expr[2][count(expr) = 3 and expr[1][SYMBOL_FUNCTION_CALL[text() = 'is']]]
     and not(SYMBOL_SUB[text() = 'info' or text() = 'label'])
   ]"
 
