@@ -163,7 +163,7 @@
 * `missing_argument_linter()` to check for empty (missing) arguments in function calls (#563, #565, @renkun-ken)
 * `duplicate_argument_linter()` similarly checks that there are no duplicate arguments supplied to function calls (#850, @renkun-ken)
 * `sprintf_linter()` to check for common mistakes in `sprintf()` usage (#544, #578, #624, #625, @renkun-ken, @AshesITR)
-* `backport_linter()` for detecting mismatched R version dependencies (#506, @MichaelChirico)
+* `backport_linter()` for detecting mismatched R version dependencies (#506, #1316, #1318, #1319, @MichaelChirico and @AshesITR)
 * `pipe_call_linter()` to enforce that all steps of `magrittr` pipelines use explicit calls instead of symbols,
   e.g. `x %>% mean()` instead of `x %>% mean` (@michaelchirico)
 * `package_hooks_linter()` to run a series of checks also done by `R CMD check` on the `.onLoad()`, `.onAttach()`,
@@ -249,7 +249,16 @@ of general interest to the broader R community. More will be included in future 
   in our test suite and even more for complex files (#1169, #1197, #1200, #1201, #1214, @MichaelChirico and @AshesITR) 
 * **Jenkins CI**: Support for writing comments to GitHub repo when running in Jenkins CI (#488, @fdlk)
 * `seq_linter()`: improve lint message to be clearer about the reason for linting. (#522, @michaelchirico)
-* `unneeded_concatenation_linter()` correctly considers arguments in pipelines (`%>%` or `|>`; #573, #1270, @michaelquinn32 and @AshesITR)
+* `unneeded_concatenation_linter()`
+  + Correctly considers arguments in pipelines (`%>%` or `|>`; #573, #1270, @michaelquinn32 and @AshesITR)
+  + New argument `allow_single_expression`, default `TRUE`, toggling whether `c(x)` should be linted, i.e.,
+    a call to `c()` with only one entry which is not a constant. In some such cases, `c()` can simply be dropped,
+    e.g. `c(a:b)`; in others, the parentheses are still needed, e.g. `-c(a:b)` should be `-(a:b)`;
+    and in still others, `c()` is used for the side-effect of stripping attributes, e.g.
+    `c(factor(letters))` or `c(matrix(1:10, 5, 2))`. In this last case, `c()` can (and should) in most cases
+    be replaced by `as.vector()` or `as.integer()` for readability. In fact, we suspect it is _always_
+    preferable to do so, and may change the default to `allow_single_expression = FALSE` in the future. Please
+    report your use case if `as.vector()` does not suit your needs. (#1344, @MichaelChirico)
 * **Raw strings**: Several linters tightened internal logic to allow for raw strings like `R"( a\string )"` 
   (#1034, #1285, @michaelchirico and @AshesITR)
 * Improved S3 generic detection for non-standard S3 generics where `UseMethod()` is called after several

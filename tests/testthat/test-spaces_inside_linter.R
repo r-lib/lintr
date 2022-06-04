@@ -92,3 +92,17 @@ test_that("returns the correct linting", {
     linter
   )
 })
+
+test_that("mutli-line expressions have good markers", {
+  expect_lint(
+    trim_some("
+      ( x |
+        y )
+    "),
+    list(
+      list(line_number = 1L, ranges = list(c(2L, 2L)), message = "Do not place spaces after parentheses"),
+      list(line_number = 2L, ranges = list(c(4L, 4L)), message = "Do not place spaces before parentheses")
+    ),
+    spaces_inside_linter()
+  )
+})

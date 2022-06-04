@@ -11,9 +11,9 @@
 condition_message_linter <- function() {
   translators <- c("packageStartupMessage", "message", "warning", "stop")
   xpath <- glue::glue("//expr[
-    expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(translators)} ]]
+    expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(translators)} ]]
     and expr[
-      expr[SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']]
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']]
       and not(SYMBOL_SUB[text() = 'collapse'])
     ]
   ]")

@@ -13,7 +13,7 @@
 class_equals_linter <- function() {
   xpath <- "//expr[
     not(preceding-sibling::OP-LEFT-BRACKET)
-    and expr[expr[SYMBOL_FUNCTION_CALL[text() = 'class']]]
+    and expr[expr[1][SYMBOL_FUNCTION_CALL[text() = 'class']]]
     and (EQ or NE or SPECIAL[text() = '%in%'])
   ]"
 
