@@ -171,13 +171,23 @@ summarize_lint_delta <- function(new, old) {
   message("Count of these by linter:")
   print(new_only[, .N, by = linter][order(-N)])
   message("Sample of <=10 hits from each linter:")
-  print(new_only[sample(.N), head(.SD, 10L), by = linter][, .(package, filename, linter, line)])
+  new_only[
+    sample(.N),
+    head(.SD, 10L),
+    by = linter
+  ][, .(line, linter, location = paste0(package, ":", filename))
+  ][, print(.SD)]
 
   message("Count of lints found on ", old_version, " but not on ", new_version, ": ", nrow(old_only))
   message("Count of these by linter:")
   print(old_only[, .N, by = linter][order(-N)])
   message("Sample of <=10 hits from each linter:")
-  print(old_only[sample(.N), head(.SD, 10L), by = linter][, .(package, filename, linter, line)])
+  old_only[
+    sample(.N),
+    head(.SD, 10L),
+    by = linter
+  ][, .(line, linter, location = paste0(package, ":", filename))
+  ][, print(.SD)]
 }
 
 # ---- Main linting execution ----
@@ -288,7 +298,7 @@ for (ii in seq_len(nrow(repo_data))) {
   main_only_lints <- main_lints[package == PKG][!old_lints, on = c("package", "filename", "line_number")]
   if (nrow(main_only_lints) > 0L) {
     utils::write.csv(
-      main_only_lints[c("filename", "line_number", "column_number", "type", "message", "line", "linter")],
+      main_only_lints[, c("filename", "line_number", "column_number", "type", "message", "line", "linter")],
       file.path(attachments_dir, "lints_in_devel_not_cran.csv"),
       row.names = FALSE
     )
@@ -297,7 +307,7 @@ for (ii in seq_len(nrow(repo_data))) {
   old_only_lints <- old_lints[package == PKG][!main_lints, on = c("package", "filename", "line_number")]
   if (nrow(old_only_lints) > 0L) {
     utils::write.csv(
-      old_only_lints[c("filename", "line_number", "column_number", "type", "message", "line", "linter")],
+      old_only_lints[, c("filename", "line_number", "column_number", "type", "message", "line", "linter")],
       file.path(attachments_dir, "lints_in_cran_not_devel.csv"),
       row.names = FALSE
     )
