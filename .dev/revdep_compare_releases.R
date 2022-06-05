@@ -15,7 +15,7 @@ old_branch <- system2("git", c("rev-parse", "--abbrev-ref", "HEAD"), stdout = TR
 old_release <- "v2.0.1"
 main <- "main"
 
-all_repos <- c(readLines("revdep-repos"), readLines("revdep-extra-repos"))
+all_repos <- c(readLines("revdep-repos"), readLines("revdep-extra-repos"))[1:10]
 all_repos <- grep("^#", all_repos, invert = TRUE, value = TRUE)
 
 lint_timings <- new.env()
