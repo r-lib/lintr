@@ -9,6 +9,8 @@ lintr_pkg <- cran_db[
   "Package"
 ]
 
+writeLines(lintr_pkg, "revdep-packages")
+
 # simple retry mechanism
 desc_url_fmt <- "https://cran.r-project.org/web/packages/%s/DESCRIPTION"
 extract_desc_fields <- function(pkg, keys, initial_sleep = 1, retry_sleep = 60) {

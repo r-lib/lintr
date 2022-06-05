@@ -3,6 +3,13 @@ library(withr)
 library(pkgload)
 library(data.table)
 
+new_packages <- setdiff(readLines("revdep-packages"), rownames(installed.packages()))
+install.packages(new_packages, repos = "https://cran.rstudio.com")
+failed_install <- setdiff(new_packages, rownames(installed.packages()))
+if (length(failed_install) > 0L) {
+  warning("Failed to install some dependencies; please install these packages manually: ", toString(failed_install))
+}
+
 dev_dir <- getwd()
 old_branch <- system2("git", c("rev-parse", "--abbrev-ref", "HEAD"), stdout = TRUE)
 old_release <- "v2.0.1"
@@ -56,6 +63,8 @@ clone_and_lint <- function(repo) {
   )
   withr::local_dir(find_r_package_below(repo_dir))
   package <- read.dcf("DESCRIPTION", "Package")
+
+  # if (package %in% failed_install) return()
 
   start_time <- proc.time()
   on.exit(lint_timings$repo_timing[[repo]] <- proc.time() - start_time)
