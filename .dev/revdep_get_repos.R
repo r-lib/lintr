@@ -51,16 +51,5 @@ for (ii in seq_along(urls)) {
 git_urls <- extract_github_repo(urls)
 matched <- nzchar(git_urls)
 
-no_repo_pkg <- sort(lintr_pkg[!matched])
-maintainer <- character(length(no_repo_pkg))
-for (ii in seq_along(no_repo_pkg)) {
-  maintainer[ii] <- extract_desc_fields(no_repo_pkg[ii], "Maintainer")
-}
-maintainer <- gsub(".*<(.*)>$", "\\1", maintainer)
-
-write.csv(
-  data.frame(package = no_repo_pkg, maintainer),
-  "reverse-imports-no-repos",
-  row.names = FALSE, quote = FALSE
-)
-writeLines(sort(git_urls[matched]), "reverse-imports-repos")
+writeLines(file.path("https://github.com/cran", sort(lintr_pkg[!matched])), "revdep-no-repos")
+writeLines(sort(git_urls[matched]), "revdep-repos")
