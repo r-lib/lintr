@@ -399,15 +399,15 @@
   <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="../reference/lint.html">lint</a></span><span class="op">(</span><span class="va">tmp</span>, linters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/call.html" class="external-link">call</a></span><span class="op">(</span><span class="va">linter_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt;                           filename line_number column_number  type</span>
-<span class="co">#&gt; 1 /tmp/RtmpWt8a68/file2db731f2e947           1             3 style</span>
+<span class="co">#&gt; 1 /tmp/RtmpmYsW7K/file2de7652acf41           1             3 style</span>
 <span class="co">#&gt;                          message  line linter</span>
 <span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1    get</span>
 <span class="co">#&gt;                           filename line_number column_number  type</span>
-<span class="co">#&gt; 1 /tmp/RtmpWt8a68/file2db731f2e947           1             3 style</span>
+<span class="co">#&gt; 1 /tmp/RtmpmYsW7K/file2de7652acf41           1             3 style</span>
 <span class="co">#&gt;                          message  line            linter</span>
 <span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span>
 <span class="co">#&gt;                           filename line_number column_number  type</span>
-<span class="co">#&gt; 1 /tmp/RtmpWt8a68/file2db731f2e947           1             3 style</span>
+<span class="co">#&gt; 1 /tmp/RtmpmYsW7K/file2de7652acf41           1             3 style</span>
 <span class="co">#&gt;                          message  line            linter</span>
 <span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></code></pre></div>
 </div>
@@ -429,9 +429,9 @@
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">X</span> <span class="op">=</span> <span class="fl">42L</span> <span class="co"># -------------- this comment overflows the default 80 chars line length.</span></code></pre></div>
 <p><code>&gt; lint("file.R")</code></p>
-<pre><code><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,Variable and function name style should be snake_case or symbols.</span>
-<span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,Use &lt;-, not =, for assignment.</span>
-<span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=81::file=&lt;text&gt;,line=1,col=81,Lines should not be more than 80 characters.</span></code></pre>
+<pre><code><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[object_name_linter] Variable and function name style should be snake_case or symbols.</span>
+<span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[assignment_linter] Use &lt;-, not =, for assignment.</span>
+<span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=81::file=&lt;text&gt;,line=1,col=81,[line_length_linter] Lines should not be more than 80 characters.</span></code></pre>
 <p><strong>file2.R</strong></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">X</span> <span class="op">=</span> <span class="fl">42L</span> <span class="co"># nolint ------ this comment overflows the default 80 chars line length.</span></code></pre></div>
@@ -445,21 +445,21 @@
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">X</span> <span class="op">=</span> <span class="fl">42L</span> <span class="co"># nolint: object_name_linter. this comment overflows the default 80 chars line length.</span></code></pre></div>
 <p><code>&gt; lint("file3.R")</code></p>
-<pre><code><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,Use &lt;-, not =, for assignment.</span>
-<span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=81::file=&lt;text&gt;,line=1,col=81,Lines should not be more than 80 characters.</span></code></pre>
+<pre><code><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[assignment_linter] Use &lt;-, not =, for assignment.</span>
+<span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=81::file=&lt;text&gt;,line=1,col=81,[line_length_linter] Lines should not be more than 80 characters.</span></code></pre>
 <p>Observe how only the <code>object_name_linter</code> was suppressed. This is preferable to blanket <code># nolint</code> statements because blanket exclusions may accidentally silence a linter that was not intentionally suppressed.</p>
 <p>Multiple linters can be specified by listing them with a comma as a separator:</p>
 <p><strong>file4.R</strong></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">X</span> <span class="op">=</span> <span class="fl">42L</span> <span class="co"># nolint: object_name_linter, line_length_linter. this comment overflows the default 80 chars line length.</span></code></pre></div>
 <p><code>&gt; lint("file4.R")</code></p>
-<pre><code><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,Use &lt;-, not =, for assignment.</span></code></pre>
+<pre><code><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[assignment_linter] Use &lt;-, not =, for assignment.</span></code></pre>
 <p>You can also specify the linter names by a unique prefix instead of their full name:</p>
 <p><strong>file5.R</strong></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">X</span> <span class="op">=</span> <span class="fl">42L</span> <span class="co"># nolint: object_name, line_len. this comment still overflows the default 80 chars line length.</span></code></pre></div>
 <p><code>&gt; lint("file5.R")</code></p>
-<pre><code><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,Use &lt;-, not =, for assignment.</span></code></pre>
+<pre><code><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[assignment_linter] Use &lt;-, not =, for assignment.</span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="excluding-multiple-lines-of-codes">Excluding multiple lines of codes<a class="anchor" aria-label="anchor" href="#excluding-multiple-lines-of-codes"></a>
@@ -469,8 +469,8 @@
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># x &lt;- 42L</span>
 <span class="co"># print(x)</span></code></pre></div>
-<pre><code><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,Commented code should be removed.</span>
-<span class="co">#&gt; ::warning file=&lt;text&gt;,line=2,col=3::file=&lt;text&gt;,line=2,col=3,Commented code should be removed.</span></code></pre>
+<pre><code><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[commented_code_linter] Commented code should be removed.</span>
+<span class="co">#&gt; ::warning file=&lt;text&gt;,line=2,col=3::file=&lt;text&gt;,line=2,col=3,[commented_code_linter] Commented code should be removed.</span></code></pre>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># nolint start: commented_code_linter.</span>
 <span class="co"># x &lt;- 42L</span>
