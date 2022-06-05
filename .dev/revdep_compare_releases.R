@@ -11,11 +11,11 @@ if (length(failed_install) > 0L) {
 }
 
 dev_dir <- getwd()
-old_branch <- system2("git", c("rev-parse", "--abbrev-ref", "HEAD"), stdout = TRUE)
+dev_branch <- system2("git", c("rev-parse", "--abbrev-ref", "HEAD"), stdout = TRUE)
 old_release <- "v2.0.1"
 main <- "main"
 
-all_repos <- c(readLines("revdep-repos"), readLines("revdep-extra-repos"))[1:10]
+all_repos <- c(readLines("revdep-repos"), readLines("revdep-extra-repos"))
 all_repos <- grep("^#", all_repos, invert = TRUE, value = TRUE)
 
 lint_timings <- new.env()
@@ -35,6 +35,9 @@ setup <- function(version) {
 cleanup <- function(version) {
   lint_timings[[version]] <- lint_timings$repo_timing
   lint_timings$repo_timing <- NULL
+
+  setwd(dev_dir)
+  system2("git", c("checkout", "--quiet", dev_branch))
 }
 
 find_r_package_below <- function(top_dir) {
@@ -108,8 +111,6 @@ cleanup(main)
 out_dir <- setup(old_release)
 for (repo in all_repos) clone_and_lint(repo)
 cleanup(old_release)
-
-system2("git", c("checkout", "--quiet", old_branch))
 
 main_lints <- load_lints(main)
 old_lints <- load_lints(old_release)
