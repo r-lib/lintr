@@ -1,0 +1,27 @@
+Hello Aaron Wolen! Thank you for using {lintr} in your package {biolink}!
+
+{lintr} will soon be releasing an update to CRAN -- be sure to check the latest NEWS to get an overview
+of the upcoming improvements and bug fixes.
+
+We checked the results of running lint_package() on your package as found at https://github.com/cran/biolink using
+the CRAN version v2.0.1 and the current version in development (commit hash e4e908158d7f5be8f1cbe16c780a19f42cd3efe2).
+We do this ourselves because of {lintr}'s position as a developer tool --
+normal CRAN revdep checking is not as helpful for detecting breakages.
+
+On your package, lint_package() took NAs on CRAN vs. NAs in our latest version. This
+includes applying your .lintr config if one is available.
+
+I am also attaching the following, if they exist:
+
+ * Hard breaking changes: any error generated from lint_package() using the latest version, if none existed using v2.0.1
+ * Soft breaking changes: any warnings generated from lint_package() using the latest version, if none existed using v2.0.1
+ * Change in linting state: one or two .csv files containing the lints found using one version of {lintr}, but not the other
+
+We have given a more-than-cursory glance at these changes and are satisfied they mark an acceptable step forward when
+trading off back-compatibility with package quality, as well as improving precision and/or recall of the linters themselves.
+Please don't hesitate to reach out if we've missed something, or if you've got other suggestions for further improvements
+to {lintr}.
+
+Thanks again!
+{lintr} development team
+

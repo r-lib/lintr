@@ -1,0 +1,2 @@
+"filename","line_number","column_number","type","message","line","linter"
+"R/makelists.R",78,31,"style","Any function spanning multiple lines should use curly braces.","    index <- which(sapply(ml, function(x) target %in% x[[""prerequisites""]] ||","brace_linter"

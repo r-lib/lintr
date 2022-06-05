@@ -1,0 +1,2 @@
+"filename","line_number","column_number","type","message","line","linter"
+"R/tsviz.R",12,20,"style","There should be a space between right parenthesis and an opening curly brace.","#' if(interactive()){","paren_brace_linter"

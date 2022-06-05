@@ -1,0 +1,5 @@
+"filename","line_number","column_number","type","message","line","linter"
+"R/discretize_transform.R",47,1,"style","Variable and function names should not be longer than 30 characters.","discretize_transform.FsDiscretizeTransformer <-","object_length_linter"
+"R/discretize.R",183,1,"style","Variable and function name style should be snake_case.","discretize.data.frame <- function(x, y,","object_name_linter"
+"R/relief.R",82,13,"style","Place a space before left parenthesis, except in a function call.","        next()","spaces_left_parentheses_linter"
+"R/relief.R",85,13,"style","Place a space before left parenthesis, except in a function call.","        next()","spaces_left_parentheses_linter"

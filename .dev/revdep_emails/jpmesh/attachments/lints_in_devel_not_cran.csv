@@ -1,0 +1,3 @@
+"filename","line_number","column_number","type","message","line","linter"
+"R/administration_mesh.R",54,44,"warning","Conditional expressions require scalar logical operators (&& and ||)","  } else if (to_mesh_size <= mesh_units[5] & to_mesh_size >= mesh_units[7]) {","vector_logic_linter"
+"R/coords_to_mesh.R",48,39,"warning","Conditional expressions require scalar logical operators (&& and ||)","    if (!rlang::is_missing(longitude) | !rlang::is_missing(latitude))","vector_logic_linter"

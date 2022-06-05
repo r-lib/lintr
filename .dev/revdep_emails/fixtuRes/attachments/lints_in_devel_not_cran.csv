@@ -1,0 +1,3 @@
+"filename","line_number","column_number","type","message","line","linter"
+"R/vectors.R",202,3,"warning","local variable ‘differences_conversion_function’ assigned but may not be used","  differences_conversion_function <- switch(","object_usage_linter"
+"vignettes/configuration.R",1,1,"style","Trailing blank lines are superfluous.","","trailing_blank_lines_linter"

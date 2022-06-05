@@ -1,0 +1,4 @@
+"filename","line_number","column_number","type","message","line","linter"
+"R/makeCPO.R",110,28,"style","Variable and function name style should be snake_case.","                           predict.type.map = c(response = ""response""),","object_name_linter"
+"R/makeCPO.R",140,28,"style","Variable and function name style should be snake_case.","                           predict.type.map = c(response = ""response""),","object_name_linter"
+"tests/testthat/test_core_datasplit.R",400,11,"style","Opening curly braces should never go on their own line and should always be followed by a new line.","          {","open_curly_linter"

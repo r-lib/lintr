@@ -1,0 +1,8 @@
+"filename","line_number","column_number","type","message","line","linter"
+"vignettes/unifir-asset-guide.Rmd",108,63,"style","Trailing whitespace is superfluous.","                             prefab_path = file.path(""Assets"", ","trailing_whitespace_linter"
+"vignettes/unifir-dev-guide.Rmd",127,41,"style","Opening curly braces should never go on their own line and should always be followed by a new line.","  build = function(script, prop, debug) {},","brace_linter"
+"vignettes/unifir-user-guide.Rmd",232,45,"style","Trailing whitespace is superfluous.","  terrainr::transform_elevation(raster_file, ","trailing_whitespace_linter"
+"vignettes/unifir-user-guide.Rmd",247,59,"style","Trailing whitespace is superfluous.","  # Where should the ""top-left"" corner of the terrain sit? ","trailing_whitespace_linter"
+"vignettes/unifir-user-guide.Rmd",248,62,"style","Trailing whitespace is superfluous.","  # Note that Unity uses a left-handed Y-up coordinate system ","trailing_whitespace_linter"
+"vignettes/unifir-user-guide.Rmd",256,81,"style","Lines should not be more than 80 characters.","  height = as.numeric(terra::global(r, max)), # Max height of the terrain (Y axis)","line_length_linter"
+"vignettes/unifir-user-guide.Rmd",258,38,"style","Trailing whitespace is superfluous.","  heightmap_resolution = terrain_size ","trailing_whitespace_linter"
