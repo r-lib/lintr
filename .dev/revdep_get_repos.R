@@ -1,4 +1,4 @@
-#!/usr/bin/Rscript
+#!/usr/bin/env Rscript
 # Script to get URL keys from CRAN
 #   of packags that Suggest or Import lintr
 
