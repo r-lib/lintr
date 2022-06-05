@@ -12,8 +12,8 @@ github_actions_log_lints <- function(lints, project_dir = "") {
       "file=%s,line=%s,col=%s", x$filename, x$line_number, x$column_number
     )
     cat(sprintf(
-      "::warning %s::%s,%s\n",
-      file_line_col, file_line_col, paste0("[", x$linter, "] ", x$message)
+      "::warning %s::%s,[%s] %s\n",
+      file_line_col, file_line_col, x$linter, x$message
     ), sep = "")
   }
 }
