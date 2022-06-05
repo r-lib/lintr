@@ -4,15 +4,17 @@ library(pkgload)
 library(data.table)
 
 repo_data <- rbind(
-  utils::read.csv("revdep-repos"),
-  utils::read.csv("revdep-extra-repos", skip = 2L),
-  utils::read.csv("revdep-no-repos")
+  data.table::fread("revdep-repos"),
+  data.table::fread("revdep-extra-repos", skip = 2L),
+  data.table::fread("revdep-no-repos")
 )
-new_packages <- setdiff(readLines("revdep-packages"), rownames(installed.packages()))
+setkey(repo_data, repo)
+
+new_packages <- setdiff(repo_data$package, rownames(installed.packages()))
 install.packages(new_packages, repos = "https://cran.rstudio.com")
 failed_install <- setdiff(new_packages, rownames(installed.packages()))
 if (length(failed_install) > 0L) {
-  warning("Failed to install some dependencies; please install these packages manually: ", toString(failed_install))
+  stop("Failed to install some dependencies; please install these packages manually: ", toString(failed_install))
 }
 
 dev_dir <- getwd()
@@ -20,19 +22,13 @@ dev_branch <- system2("git", c("rev-parse", "--abbrev-ref", "HEAD"), stdout = TR
 old_release <- "v2.0.1"
 main <- "main"
 
-all_repos <- c(
-  readLines("revdep-repos"),
-  readLines("revdep-extra-repos"),
-  readLines("revdep-no-repos")
-)
-all_repos <- grep("^#", all_repos, invert = TRUE, value = TRUE)
+all_repos <- repo_data$repo
 
 lint_timings <- new.env()
 lint_timings$repo_timing <- vector("list", length(all_repos))
 names(lint_timings$repo_timing) <- all_repos
 
 # ---- Helpers ----
-
 result_path <- function(...) file.path(dev_dir, "revdep_comparison", ...)
 
 setup <- function(version) {
@@ -46,8 +42,8 @@ setup <- function(version) {
 }
 
 cleanup <- function(version) {
-  lint_timings[[version]] <- lint_timings$repo_timing
-  lint_timings$repo_timing <- NULL
+  repo_data[, paste0("elapsed_", version) := elapsed]
+  repo_data[, elapsed := NULL]
 
   setwd(dev_dir)
   system2("git", c("checkout", "--quiet", dev_branch))
@@ -69,21 +65,19 @@ find_r_package_below <- function(top_dir) {
   dirname(desc_file)
 }
 
-clone_and_lint <- function(repo) {
-  message("  * ", repo)
-  repo_dir <- withr::local_tempdir(basename(repo))
+clone_and_lint <- function(repo_url) {
+  message("  * ", repo_url)
+  repo_dir <- withr::local_tempdir(basename(repo_url))
   # gert::git_clone() doesn't support shallow clones -- gert#101
   system2(
     "git",
-    c("clone", "--depth=1", "--quiet", repo, repo_dir)
+    c("clone", "--depth=1", "--quiet", repo_url, repo_dir)
   )
   withr::local_dir(find_r_package_below(repo_dir))
   package <- read.dcf("DESCRIPTION", "Package")
 
-  # if (package %in% failed_install) return()
-
   start_time <- proc.time()
-  on.exit(lint_timings$repo_timing[[repo]] <- proc.time() - start_time)
+  on.exit(repo_data[.(repo_url), elapsed := (proc.time() - start_time)["elapsed"]])
   warnings <- character()
   withCallingHandlers(
     tryCatch(
@@ -229,27 +223,19 @@ old_lints[, package := gsub("\\.csv$", "", package)]
 summarize_lint_delta(main_lints, old_lints)
 
 # ---- Timing comparison ----
-main_timings <- data.table::rbindlist(lapply(lint_timings[[main]], as.data.table), idcol = "repo")
-old_timings <- data.table::rbindlist(lapply(lint_timings[[old_release]], as.data.table), idcol = "repo")
+elapsed_main <- repo_data[[paste0("elapsed_", main)]]
+elapsed_old <- repo_data[[paste0("elapsed_", old_release)]]
 
 message("Comparison of total time to run lint_packages() across all repos:")
 message(sprintf(
   "  %.0fm to run on %s, %.0fm to run on %s",
-  main_timings[, sum(elapsed)], main, old_timings[, sum(elapsed)], old_release
+  sum(elapsed_main), main, sum(elapsed_old), old_release
 ))
 
+repo_data[, delta := elapsed_main - elapsed_old]
+repo_data[, delta_pct := 100 * delta / elapsed_old]
 message("Comparison of time to run lint_package() on each repo (new - old; negative -> faster)")
-main_timings[
-  old_timings,
-  on = "repo",
-  .(
-    repo,
-    new = x.elapsed,
-    old = i.elapsed,
-    delta = x.elapsed - i.elapsed,
-    delta_pct = 100 * (x.elapsed - i.elapsed) / i.elapsed
-  )
-][
+repo_data[
   order(delta),
   { print(.SD); quantile(delta, 0:10/10) }
 ]
