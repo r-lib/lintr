@@ -13,7 +13,7 @@ github_actions_log_lints <- function(lints, project_dir = "") {
     )
     cat(sprintf(
       "::warning %s::%s,%s\n",
-      file_line_col, file_line_col, x$message
+      file_line_col, file_line_col, paste0("[", x$linter, "] ", x$message)
     ), sep = "")
   }
 }

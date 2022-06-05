@@ -8,11 +8,13 @@ print.lint <- function(x, ...) {
     crayon::bold
   )
 
-  cat(sep = "",
+  cat(
+    sep = "",
     crayon::bold(x$filename, ":",
     as.character(x$line_number), ":",
     as.character(x$column_number), ": ", sep = ""),
     color(x$type, ": ", sep = ""),
+    "[", x$linter, "]",
     crayon::bold(x$message), "\n",
     # swap tabs for spaces for #528 (sorry Richard Hendricks)
     chartr("\t", " ", x$line), "\n",
@@ -24,25 +26,27 @@ print.lint <- function(x, ...) {
 
 markdown <- function(x, info, ...) {
 
-  cat(sep = "",
-      "[", x$filename, ":",
-      as.character(x$line_number), ":",
-      as.character(x$column_number), ":", "]",
-      "(",
-        paste(sep = "/",
+  cat(
+    sep = "",
+    "[", x$filename, ":",
+    as.character(x$line_number), ":",
+    as.character(x$column_number), ":", "]",
+    "(",
+    paste(sep = "/",
           "https://github.com",
           info$user,
           info$repo,
           "blob",
           info$commit,
           x$filename
-        ), "#L", x$line_number,
-      ")",
+    ), "#L", x$line_number,
+    ")",
     " ",
     "*", x$type, ":", "* ",
+    "[", x$linter, "] ",
     "**", x$message, "**\n",
     "```r\n\U200B", # we use a zero width unicode character here so that Github
-                    # does not strip the leading whitespace
+    # does not strip the leading whitespace
     x$line, "\n",
     highlight_string(x$message, x$column_number, x$ranges),
     "\n```\n"
