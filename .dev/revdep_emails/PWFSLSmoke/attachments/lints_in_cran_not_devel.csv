@@ -1,3 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"R/addMarker.R",91,24,"style","Place a space before left parenthesis, except in a function call.","    top <- newXY$newY[-(seq_along(latitude))]","spaces_left_parentheses_linter"
-"R/addMarker.R",93,26,"style","Place a space before left parenthesis, except in a function call.","    right <- newXY$newX[-(seq_along(longitude))]","spaces_left_parentheses_linter"

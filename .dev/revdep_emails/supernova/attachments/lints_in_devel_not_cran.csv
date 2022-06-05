@@ -1,4 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"data-raw/class_data.R",18,3,"warning","local variable ‘number_of_teachers’ assigned but may not be used","  number_of_teachers <- 3","object_usage_linter"
-"R/equation.R",9,3,"warning","local variable ‘format_term’ assigned but may not be used","  format_term <- function(value, name, digits) {","object_usage_linter"
-"R/supernova.R",436,33,"warning","Conditional expressions require scalar logical operators (&& and ||)","  bar_col <- if (!is_lmer_model & is_verbose) ""description"" else ""term""","vector_logic_linter"

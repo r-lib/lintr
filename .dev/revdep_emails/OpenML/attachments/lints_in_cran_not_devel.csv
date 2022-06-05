@@ -1,3 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"R/uploadOMLFlow.R",79,52,"style","There should be a space between right parenthesis and an opening curly brace.","#   if (!(is.null(sourcefile) || is.na(sourcefile))){","paren_brace_linter"
-"R/uploadOMLFlow.R",110,39,"style","There should be a space between right parenthesis and an opening curly brace.","# createLearnerSourcefile = function(x){","paren_brace_linter"

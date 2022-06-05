@@ -1,2 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"R/makelists.R",16,28,"style","Commas should never have a space before.","                 testing = ,","commas_linter"

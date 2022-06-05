@@ -1,5 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"R/associate_coordinates.R",52,33,"style","Place a space before left parenthesis, except in a function call.","  stopifnot(side_length %in% (2^(5:12) + 1))","spaces_left_parentheses_linter"
-"R/associate_coordinates.R",68,10,"style","Variable and function name style should be snake_case.","  coords$X <- (side_length *","object_name_linter"
-"R/associate_coordinates.R",71,10,"style","Variable and function name style should be snake_case.","  coords$Y <- bounds[[4]] - coords$Y","object_name_linter"
-"tests/testthat/test-find_unity.R",68,5,"style","Opening curly braces should never go on their own line and should always be followed by a new line.","    {","open_curly_linter"

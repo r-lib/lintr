@@ -1,5 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"inst/templates/zzz.R",1,1,"style","Variable and function name style should be snake_case.",".onLoad <- function(libname, pkgname) {","object_name_linter"
-"R/devtools.R",395,7,"style","Variable and function name style should be snake_case.","  pkg$Rmd <- TRUE","object_name_linter"
-"R/remotes_modified.R",2,1,"style","Variable and function name style should be snake_case.","`%::%` <- function(p, f) get(f, envir = asNamespace(p))","object_name_linter"
-"R/zzz.R",1,1,"style","Variable and function name style should be snake_case.",".onLoad <- function(libname, pkgname) {","object_name_linter"

@@ -1,2 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"vignettes/nltt_diff.Rmd",84,45,"style","Compound semicolons are discouraged. Replace them by a newline.","nLTT::nltt_plot(phylogeny_1, ylim = c(0, 1)); nLTT::nltt_lines(phylogeny_2)","semicolon_linter"

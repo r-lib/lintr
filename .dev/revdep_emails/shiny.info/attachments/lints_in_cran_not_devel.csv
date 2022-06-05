@@ -1,3 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"R/display.R",14,3,"warning","local variable ‘fixed_layout’ assigned but may not be used","  fixed_layout <- ""fixed""","object_usage_linter"
-"R/hide.R",73,3,"warning","local variable ‘shortcut_condition’ assigned but may not be used","  shortcut_condition <- .shortcut_condition(shortcut)","object_usage_linter"

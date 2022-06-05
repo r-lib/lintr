@@ -1,8 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"R/menu_item.R",51,3,"style","`else` should come on the same line as the previous `}`.","  else if (is.null(href)) {","brace_linter"
-"R/menu_item.R",54,3,"style","`else` should come on the same line as the previous `}`.","  else if (newtab) {","brace_linter"
-"vignettes/intro.Rmd",52,1,"style","Trailing whitespace is superfluous.","  ","trailing_whitespace_linter"
-"vignettes/intro.Rmd",73,81,"style","Lines should not be more than 80 characters.","                               taskItem(""Project progress..."", 50.777, color = ""red"")))","line_length_linter"
-"vignettes/intro.Rmd",128,81,"style","Lines should not be more than 80 characters.","                               taskItem(""Project progress..."", 50.777, color = ""red""))),","line_length_linter"
-"vignettes/intro.Rmd",151,44,"style","Opening curly braces should never go on their own line and should always be followed by a new line.","server <- function(input, output, session) {}","brace_linter"
-"vignettes/intro.Rmd",151,45,"style","Closing curly-braces should always be on their own line, unless they are followed by an else.","server <- function(input, output, session) {}","brace_linter"
