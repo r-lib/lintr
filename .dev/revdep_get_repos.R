@@ -2,7 +2,7 @@
 # Script to get URL keys from CRAN
 #   of packags that Suggest or Import lintr
 
-cran_db <- as.data.frame(available.packages(), stringsAsFactors = FALSE)
+cran_db <- as.data.frame(available.packages(repos = "https://cran.r-project.org"), stringsAsFactors = FALSE)
 lintr_re <- "\\blintr\\b"
 lintr_pkg <- cran_db[
   with(cran_db, grepl(lintr_re, Suggests) | grepl(lintr_re, Imports)),
