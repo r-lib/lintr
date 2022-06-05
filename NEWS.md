@@ -54,7 +54,9 @@
   adopted the `source_file` naming and want to adapt to keep in sync.
 * Deprecated `with_defaults()` in favor of `linters_with_defaults()`, and add `modify_defaults()` which is intended to be used
   more generally to modify (i.e., extend, trim, and/or update) a list of defaults. Note that the argument corresponding to
-  `with_defaults()`'s `default=` is called `defaults=` (i.e., pluralized) in both of these (#1029, #1336, @AshesITR and @michaelchirico)
+  `with_defaults()`'s `default=` is called `defaults=` (i.e., pluralized) in both of these, and that usage like
+  `with_defaults(default = NULL, ...)` should be converted to `linters_with_defaults(defaults = list(), ...)`
+  (#1029, #1336, #1361, @AshesITR and @michaelchirico)
 
 ## Other changes to defaults
 
