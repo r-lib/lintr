@@ -14,7 +14,7 @@ print.lint <- function(x, ...) {
     as.character(x$line_number), ":",
     as.character(x$column_number), ": ", sep = ""),
     color(x$type, ": ", sep = ""),
-    "[", x$linter, "]",
+    "[", x$linter, "] ",
     crayon::bold(x$message), "\n",
     # swap tabs for spaces for #528 (sorry Richard Hendricks)
     chartr("\t", " ", x$line), "\n",
