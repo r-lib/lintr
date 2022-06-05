@@ -1,0 +1,3 @@
+"filename","line_number","column_number","type","message","line","linter"
+"tests/testthat/test-tags-go.r",13,1,"style","Trailing semicolons are not needed.",";})","semicolon_linter"
+"tests/testthat/test-tags-go.r",27,1,"style","Trailing semicolons are not needed.",";})","semicolon_linter"

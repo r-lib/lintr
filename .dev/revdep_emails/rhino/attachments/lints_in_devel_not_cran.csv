@@ -1,0 +1,2 @@
+"filename","line_number","column_number","type","message","line","linter"
+"R/config.R",17,21,"style","Any function spanning multiple lines should use curly braces.","option_validator <- function(...) list(","brace_linter"

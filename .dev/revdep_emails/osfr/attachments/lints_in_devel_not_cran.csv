@@ -1,0 +1,8 @@
+"filename","line_number","column_number","type","message","line","linter"
+"data-raw/create-test-project.R",40,1,"style","Variable and function name style should be snake_case or symbols.","dev.null <- mapply(","object_name_linter"
+"R/osf_tbl-compat.R",9,32,"style","Variable and function name style should be snake_case or symbols.","rbind.osf_tbl <- function(..., deparse.level = 1)  {","object_name_linter"
+"R/osf_tbl.R",77,23,"style","Any function spanning multiple lines should use curly braces.","as_osf_tbl.default <- function(x, subclass = NULL)","brace_linter"
+"R/osf_tbl.R",92,3,"warning","local variable ‘name_field’ assigned but may not be used","  name_field <- switch(subclass,","object_usage_linter"
+"R/utils-file-operations.R",34,15,"warning","Conditional expressions require scalar logical operators (&& and ||)","  if (verbose & action == ""move"") message(sprintf(""Moved '%s' to '%s'."", x$name, to$name))","vector_logic_linter"
+"R/utils-file-operations.R",35,15,"warning","Conditional expressions require scalar logical operators (&& and ||)","  if (verbose & action == ""copy"") message(sprintf(""Copied '%s' to '%s'."", x$name, to$name))","vector_logic_linter"
+"R/utils-uploads.R",21,3,"warning","local variable ‘msg’ assigned but may not be used","  msg <- bullet_msg(","object_usage_linter"

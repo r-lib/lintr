@@ -1,0 +1,17 @@
+"filename","line_number","column_number","type","message","line","linter"
+"inst/hooks/exported/deps-in-desc.R",9,3,"style","Use <-, not ->, for assignment.",""" -> doc","assignment_linter"
+"inst/hooks/exported/lintr.R",11,3,"style","Use <-, not ->, for assignment.",""" -> doc","assignment_linter"
+"inst/hooks/exported/readme-rmd-rendered.R",2,31,"warning","Conditional expressions require scalar logical operators (&& and ||)","if (file.exists(""README.Rmd"") & file.exists(""README.md"")) {","vector_logic_linter"
+"inst/hooks/exported/roxygenize.R",22,3,"style","Use <-, not ->, for assignment.",""" -> doc","assignment_linter"
+"inst/hooks/exported/spell-check.R",10,3,"style","Use <-, not ->, for assignment.",""" -> doc","assignment_linter"
+"inst/hooks/exported/style-files.R",13,3,"style","Use <-, not ->, for assignment.","' -> doc","assignment_linter"
+"inst/hooks/local/consistent-release-tag.R",8,3,"style","Use <-, not ->, for assignment.",""" -> doc","assignment_linter"
+"R/call.R",13,28,"warning","Conditional expressions require scalar logical operators (&& and ||)","  if (length(command) != 1 | !inherits(command, ""character"")) {","vector_logic_linter"
+"R/config.R",43,49,"warning","Conditional expressions require scalar logical operators (&& and ||)","  if (!file_exists(fs::path(root, name_target)) | force) {","vector_logic_linter"
+"R/install.R",3,23,"warning","Conditional expressions require scalar logical operators (&& and ||)","  if (!is_installed() | force) {","vector_logic_linter"
+"tests/testthat/in/parsable-R-fail.Rmd",7,3,"error","unexpected numeric constant","1 1j1j öj1 ",NA
+"tests/testthat/in/parsable-R-fail.Rmd",7,11,"style","Trailing whitespace is superfluous.","1 1j1j öj1 ","trailing_whitespace_linter"
+"tests/testthat/in/parsable-R-success.Rmd",16,11,"error","unexpected numeric constant"," fas / fk 12 -",NA
+"tests/testthat/in/parsable-R-success.Rmd",21,8,"style","Trailing whitespace is superfluous.","this is ","trailing_whitespace_linter"
+"tests/testthat/in/parsable-R-success.Rmd",25,8,"style","Trailing whitespace is superfluous.","this is ","trailing_whitespace_linter"
+"tests/testthat/in/parsable-R-success.Rmd",29,8,"style","Trailing whitespace is superfluous.","this is ","trailing_whitespace_linter"

@@ -1,0 +1,7 @@
+"filename","line_number","column_number","type","message","line","linter"
+"R/address.R",273,7,"warning","no visible binding for global variable ‘.Generic’","  get(.Generic)(raw(e1), raw(e2))","object_usage_linter"
+"R/attachment.R",31,56,"style","Use FALSE instead of the symbol F.","    stop(""Must be precisely one attachment."", call. = F)","T_and_F_symbol_linter"
+"R/encodable.R",52,7,"warning","no visible binding for global variable ‘.Generic’","  get(.Generic)(as.character(e1), as.character(e2))","object_usage_linter"
+"R/render.R",12,7,"warning","local variable ‘plain’ assigned but may not be used","  if (plain <- attr(markdown, ""plain"")) {","object_usage_linter"
+"R/utils.R",88,48,"style","Put spaces around all infix operators.","hexkey <- function(object = runif(1), algorithm=""crc32"") {","infix_spaces_linter"
+"R/utils.R",239,41,"warning","Conditional expressions require scalar logical operators (&& and ||)","    inherits(content, ""shiny.tag.list"") |","vector_logic_linter"

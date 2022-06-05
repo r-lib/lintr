@@ -1,0 +1,8 @@
+"filename","line_number","column_number","type","message","line","linter"
+"R/caretEnsemble.R",235,12,"style","Variable and function name style should be snake_case.","    object$modelType <- extractModelTypes(object$models)[1]","object_name_linter"
+"R/caretEnsemble.R",355,7,"style","Variable and function name style should be snake_case.","  dat$metricSD <- dat[[paste0(metricLab, ""SD"")]]","object_name_linter"
+"R/caretList.R",95,7,"style","Variable and function name style should be snake_case.","    x$savePredictions <- ""final""","object_name_linter"
+"R/caretList.R",100,7,"style","Variable and function name style should be snake_case.","    x$savePredictions <- ""final""","object_name_linter"
+"tests/testthat/test-caretList.R",143,15,"style","Variable and function name style should be snake_case.","  models[[1]]$modelType <- ""Bogus""","object_name_linter"
+"tests/testthat/test-caretList.R",202,3,"style","There should be a space between right parenthesis and an opening curly brace.","  ){","paren_brace_linter"
+"tests/testthat/test-caretList.R",252,3,"style","There should be a space between right parenthesis and an opening curly brace.","  ){","paren_brace_linter"
