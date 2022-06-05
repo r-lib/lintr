@@ -175,7 +175,7 @@ summarize_lint_delta <- function(new, old) {
     sample(.N),
     head(.SD, 10L),
     by = linter
-  ][, .(line, linter, location = paste0(package, ":", filename))
+  ][, .(line = sprintf("%s [%s]", line, linter), location = paste0(package, ":", filename))
   ][, print(.SD)]
 
   message("Count of lints found on ", old_version, " but not on ", new_version, ": ", nrow(old_only))
@@ -186,8 +186,10 @@ summarize_lint_delta <- function(new, old) {
     sample(.N),
     head(.SD, 10L),
     by = linter
-  ][, .(line, linter, location = paste0(package, ":", filename))
+  ][, .(line = sprintf("%s [%s]", line, linter), location = paste0(package, ":", filename))
   ][, print(.SD)]
+
+  NULL
 }
 
 # ---- Main linting execution ----
@@ -252,7 +254,7 @@ repo_data[, delta_pct := 100 * delta / elapsed_old]
 message("Comparison of time to run lint_package() on each repo (new - old; negative -> faster)")
 repo_data[
   order(delta),
-  { print(.SD); quantile(delta, 0:10/10) }
+  { print(.SD, nrows = Inf); quantile(delta, 0:10/10) }
 ]
 
 # ---- Prepare e-mails for maintainers ----
