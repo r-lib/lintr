@@ -3,6 +3,11 @@ library(withr)
 library(pkgload)
 library(data.table)
 
+repo_data <- rbind(
+  utils::read.csv("revdep-repos"),
+  utils::read.csv("revdep-extra-repos", skip = 2L),
+  utils::read.csv("revdep-no-repos")
+)
 new_packages <- setdiff(readLines("revdep-packages"), rownames(installed.packages()))
 install.packages(new_packages, repos = "https://cran.rstudio.com")
 failed_install <- setdiff(new_packages, rownames(installed.packages()))
@@ -248,3 +253,5 @@ main_timings[
   order(delta),
   { print(.SD); quantile(delta, 0:10/10) }
 ]
+
+# ---- Prepare e-mails for maintainers ----

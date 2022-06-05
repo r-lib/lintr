@@ -51,5 +51,13 @@ for (ii in seq_along(urls)) {
 git_urls <- extract_github_repo(urls)
 matched <- nzchar(git_urls)
 
-writeLines(file.path("https://github.com/cran", sort(lintr_pkg[!matched])), "revdep-no-repos")
-writeLines(sort(git_urls[matched]), "revdep-repos")
+utils::write.csv(
+  data.frame(package = lintr_pkg[!matched], repo = file.path("https://github.com/cran", lintr_pkg[!matched])),
+  "revdep-no-repos",
+  row.names = FALSE, quote = FALSE
+)
+utils::write.csv(
+  data.frame(package = lintr_pkg[matched], repo = git_urls[matched]),
+  "revdep-no-repos",
+  row.names = FALSE, quote = FALSE
+)
