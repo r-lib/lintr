@@ -2,6 +2,7 @@
 library(withr)
 library(pkgload)
 library(data.table)
+library(glue)
 
 repo_data <- rbind(
   data.table::fread("revdep-repos"),
@@ -29,6 +30,8 @@ lint_timings$repo_timing <- vector("list", length(all_repos))
 names(lint_timings$repo_timing) <- all_repos
 
 # ---- Helpers ----
+get_hash <- function() system2("git", c("rev-parse", "HEAD"), stdout = TRUE)
+
 result_path <- function(...) file.path(dev_dir, "revdep_comparison", ...)
 
 setup <- function(version) {
@@ -74,6 +77,7 @@ clone_and_lint <- function(repo_url) {
     c("clone", "--depth=1", "--quiet", repo_url, repo_dir)
   )
   withr::local_dir(find_r_package_below(repo_dir))
+  repo_data[.(repo_url), git_hash := get_hash()]
   package <- read.dcf("DESCRIPTION", "Package")
 
   start_time <- proc.time()
@@ -178,6 +182,7 @@ summarize_lint_delta <- function(new, old) {
 
 # ---- Main linting execution ----
 out_dir <- setup(main)
+main_hash <- get_hash()
 for (repo in all_repos) clone_and_lint(repo)
 cleanup(main)
 
@@ -241,3 +246,60 @@ repo_data[
 ]
 
 # ---- Prepare e-mails for maintainers ----
+email_dir <- file.path(dev_dir, "revdep_emails")
+dir.create(email_dir, showWarnings = FALSE)
+email_template <- readChar("revdep-email-template", file.size("revdep-email-template"))
+for (ii in seq_len(nrow(repo_data))) {
+  package <- repo_data$package[ii]
+  repo_url <- repo_data$repo[ii]
+  git_hash <- repo_data$git_hash[ii]
+
+  maintainer_email <- utils::maintainer(package)
+  maintainer <- sub(" <.*$", "", maintainer_email)
+  email <- gsub("^[^<]*<|>$", "", maintainer_email)
+
+  main_duration <- round(elapsed_main[ii])
+  old_duration <- round(elapsed_old[ii])
+
+  dir.create(file.path(email_dir, package), showWarnings = FALSE)
+  writeLines(glue::glue(email_template), file.path(email_dir, package, "email-body"))
+
+  attachments_dir <- file.path(email_dir, package, "attachments")
+  dir.create(attachments_dir, showWarnings = FALSE)
+  failure_file <- result_path(main, paste0(package, ".failure"))
+  if (failure_file %in% main_results) {
+    if (paste0(package, ".failure") %in% basename(old_results)) next
+
+    file.copy(failure_file, file.path(attachments_dir, basename(failure_file)))
+  }
+
+  warning_file <- result_path(main, paste0(package, ".warnings"))
+  if (warning_file %in% main_results) {
+    old_warning_file <- result_path(old_release, paste0(package, ".warnings"))
+    if (old_warning_file %in% old_results) {
+      new_warnings <- setdiff(readLines(warning_file), readLines(old_warning_file))
+      writeLines(new_warnings, file.path(attachments_dir, basename(warning_file)))
+    } else {
+      file.copy(warning_file, file.path(attachments_dir, basename(warning_file)))
+    }
+  }
+
+  PKG = package
+  main_only_lints <- main_lints[package == PKG][!old_lints, on = c("package", "filename", "line_number")]
+  if (nrow(main_only_lints) > 0L) {
+    utils::write.csv(
+      main_only_lints[c("filename", "line_number", "column_number", "type", "message", "line", "linter")],
+      file.path(attachments_dir, "lints_in_devel_not_cran.csv"),
+      row.names = FALSE
+    )
+  }
+
+  old_only_lints <- old_lints[package == PKG][!main_lints, on = c("package", "filename", "line_number")]
+  if (nrow(old_only_lints) > 0L) {
+    utils::write.csv(
+      old_only_lints[c("filename", "line_number", "column_number", "type", "message", "line", "linter")],
+      file.path(attachments_dir, "lints_in_cran_not_devel.csv"),
+      row.names = FALSE
+    )
+  }
+}
