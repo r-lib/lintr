@@ -56,6 +56,6 @@ utils::write.csv(
 )
 utils::write.csv(
   data.frame(package = lintr_pkg[matched], repo = git_urls[matched]),
-  "revdep-no-repos",
+  "revdep-repos",
   row.names = FALSE, quote = FALSE
 )

@@ -1,0 +1,17 @@
+package,repo
+adaptalint,https://github.com/cran/adaptalint
+autoharp,https://github.com/cran/autoharp
+aws.alexa,https://github.com/cran/aws.alexa
+biolink,https://github.com/cran/biolink
+ConNEcT,https://github.com/cran/ConNEcT
+DataFakeR,https://github.com/cran/DataFakeR
+datarobot,https://github.com/cran/datarobot
+DominoDataCapture,https://github.com/cran/DominoDataCapture
+INSPECTumours,https://github.com/cran/INSPECTumours
+NHSRplotthedots,https://github.com/cran/NHSRplotthedots
+Plasmidprofiler,https://github.com/cran/Plasmidprofiler
+rdomains,https://github.com/cran/rdomains
+SamplerCompare,https://github.com/cran/SamplerCompare
+shiny.react,https://github.com/cran/shiny.react
+TDA,https://github.com/cran/TDA
+wavefunction,https://github.com/cran/wavefunction
