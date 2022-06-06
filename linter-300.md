@@ -148,6 +148,16 @@ This is a big release -- almost 2 years in the making -- and there has been a pl
 but nonetheless important changes to lintr. Please check the NEWS for a complete enumeration of these;
 here are a few more highlights:
 
+ - `sprintf_linter()`: a new linter for detecting potentially problematic calls to `sprintf()` (e.g.
+   using too many or too few arguments as compared to the number of template fields)
+ - `package_hooks_linter()`: a new linter to check consistency of `.onLoad()` functions and
+   other namespace hooks, as required by `R CMD check`
+ - `namespace_linter()`: a new linter to check for common mistakes in `pkg::symbol` usage, e.g.
+   if `symbol` is not an exported object from `pkg`
+ - `is_lint_level`: a new helper to increase the readability of custom linters
+ - `use_lintr`: a usethis-esque helper to set up an initial configuration file to start using
+   lintr with your project
+
 # What's next in lintr
 
 ## Hosting linters for non-tidyverse style guides?
