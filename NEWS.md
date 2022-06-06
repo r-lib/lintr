@@ -161,14 +161,15 @@
 
 ### New linters
 
-* `missing_package_linter()` to check if packages in calls to `library()` and friends are missing (#536, #547, #1037, @renkun-ken and @michaelchirico)
-* `namespace_linter()` to check for common mistakes in `pkg::symbol` usages (#548, #551, @renkun-ken)
-* `missing_argument_linter()` to check for empty (missing) arguments in function calls (#563, #565, @renkun-ken)
+* `missing_package_linter()` to check if packages in calls to `library()` and friends
+  are missing (#536, #1037, @renkun-ken and @michaelchirico)
+* `namespace_linter()` to check for common mistakes in `pkg::symbol` usages (#548, @renkun-ken)
+* `missing_argument_linter()` to check for empty (missing) arguments in function calls (#563, @renkun-ken)
 * `duplicate_argument_linter()` similarly checks that there are no duplicate arguments supplied to function calls (#850, @renkun-ken)
-* `sprintf_linter()` to check for common mistakes in `sprintf()` usage (#544, #578, #624, #625, @renkun-ken, @AshesITR)
+* `sprintf_linter()` to check for common mistakes in `sprintf()` usage (#544, #624, @renkun-ken, @AshesITR)
 * `backport_linter()` for detecting mismatched R version dependencies (#506, #1316, #1318, #1319, @MichaelChirico and @AshesITR)
 * `pipe_call_linter()` to enforce that all steps of `magrittr` pipelines use explicit calls instead of symbols,
-  e.g. `x %>% mean()` instead of `x %>% mean` (@michaelchirico)
+  e.g. `x %>% mean()` instead of `x %>% mean` (#801, @MichaelChirico)
 * `package_hooks_linter()` to run a series of checks also done by `R CMD check` on the `.onLoad()`, `.onAttach()`,
   `.Last.lib()` and `.onDetach()` hooks (#882, @MichaelChirico)
 * `unused_import_linter()` to detect unnecessary `library()` calls in R scripts (#239, @jimhester, @AshesITR)
