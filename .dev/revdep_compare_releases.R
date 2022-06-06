@@ -110,6 +110,7 @@ clone_and_lint <- function(repo_url) {
 load_lints <- function(version, filter_errors = TRUE) {
   csv_files <- list.files(result_path(version), pattern = "\\.csv$", full.names = TRUE)
   names(csv_files) <- gsub("\\.csv$", "", basename(csv_files))
+  # fread mangles quotes: data.table#1109
   lints <- data.table::rbindlist(lapply(csv_files, utils::read.csv), idcol = "repo")
   if (filter_errors) lints <- lints[, if (!any(type == "error")) .SD, by = .(repo, filename)]
   lints
@@ -254,7 +255,8 @@ repo_data[, delta_pct := 100 * delta / elapsed_old]
 message("Comparison of time to run lint_package() on each repo (new - old; negative -> faster)")
 repo_data[
   order(delta),
-  { print(.SD, nrows = Inf); quantile(delta, 0:10/10) }
+  { print(.SD, nrows = Inf); quantile(delta, 0:10/10) },
+  .SDcols = patterns("^elapsed|package|^delta")
 ]
 
 # ---- Prepare e-mails for maintainers ----
