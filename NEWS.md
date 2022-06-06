@@ -54,7 +54,9 @@
   adopted the `source_file` naming and want to adapt to keep in sync.
 * Deprecated `with_defaults()` in favor of `linters_with_defaults()`, and add `modify_defaults()` which is intended to be used
   more generally to modify (i.e., extend, trim, and/or update) a list of defaults. Note that the argument corresponding to
-  `with_defaults()`'s `default=` is called `defaults=` (i.e., pluralized) in both of these (#1029, #1336, @AshesITR and @michaelchirico)
+  `with_defaults()`'s `default=` is called `defaults=` (i.e., pluralized) in both of these, and that usage like
+  `with_defaults(default = NULL, ...)` should be converted to `linters_with_defaults(defaults = list(), ...)`
+  (#1029, #1336, #1361, @AshesITR and @michaelchirico)
 
 ## Other changes to defaults
 
@@ -224,6 +226,7 @@ of general interest to the broader R community. More will be included in future 
   in source files or named lists of line numbers in `.lintr`.
   Also allows for partial matching as long as the supplied prefix is unique, e.g.
   `# nolint: infix_spaces` works to exclude `infix_spaces_linter` (#660, #872, @AshesITR)
+* Added the linter name to lintrs output to facilitate discovery of the correct name (#1357, @AshesITR)
 * `lint()`: new optional argument `text` for supplying a string or lines directly, e.g. if the file is already 
   in memory or linting is being done _ad hoc_. (#503, @renkun-ken)
 * `lint_dir()` excludes the `renv` and `packrat` directories by default (#697, @AshesITR)
