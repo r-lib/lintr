@@ -23,6 +23,81 @@ cascading assignment operators `<<-`/`->>` and right assignment operators `->`/`
 (3) performance -- factories can run some fixed computations at declaration and store them in the function environment,
 whereas previously the calculation would need to be repeated on every expression of every file being linted.
 
+This has two significant practical implications and are the main reason this is a major release.
+
+First, lintr invocations should always use the call form, so old usages like:
+
+```r
+lint_package(linters = assignment_linter)
+```
+
+should be replaced with:
+
+```r
+lint_package(linters = assignment_linter())
+```
+
+We expect this to show up in most cases through users' .lintr configuration files.
+
+Second, users implementing custom linters need to convert to function factories.
+
+That means replacing:
+
+```r
+my_custom_linter <- function(source_expression) { ... }
+```
+
+With:
+
+```r
+my_custom_linter <- function() Linter(function(source_expression) { ... }))
+```
+
+## Linter metadatabase, linter documentation, and pkgdown
+
+We have also overhauled how linters are documented. Previously, all linters
+were documented on a single page and described in a quick blurb. This has
+grown unwieldy as lintr now exports 72 linters! Now, each linter gets its own
+page, which will make it easier to document any parameters, enumerate edge cases/
+known false positives, add links to external resources, etc.
+
+To make this even more navigable, we've also added some metadata to a database
+in the form of tags for each linter. For example, 
+
 ## Google linters
 
+This release also features more than 30 new linters originally authored by Google developers.
+Google adheres mostly to the tidyverse style guide and uses lintr to improve the consistency
+of R code in its considerable internal R code base. These linters detect common issues with
+readability, consistency, and performance. Here are some examples:
+
+ - `any_is_na_linter` detects the usage of `any(is.na(x))`; `anyNA(x)` is nearly always a better choice,
+   both for performance and for readability
+ - `expect_named_linter` detects usage in [testthat](http://testthat.r-lib.org/) suites like
+   `expect_equal(names(x), c("a", "b", "c"))`; `testthat` also exports `expect_named()` which is
+   tailor made to make more readable tests like `expect_named(x, c("a", "b", "c"))`
+ - `vector_logic_linter` detects usage of vector logic operators `|` and `&` in situations where
+   scalar logic applies, e.g. `if (x | y) { ... }` should be `if (x || y) { ... }`. The latter
+   is more efficient and less error-prone.
+ - `strings_as_factors_linter` helps developers maintaining code that straddles the R 4.0.0 boundary,
+   where the default value of `stringsAsFactors`
+   [changed from `TRUE` to `FALSE`](https://developer.r-project.org/Blog/public/2020/02/16/stringsasfactors/),
+   by identifying usages of `data.frame()` that (1) have known string columns and (2) don't declare
+   a value for `stringsAsFactors`, and thus rely on the default.
+
+See the NEWS for the complete list.
+
+## Other improvements
+
+This is a big release -- almost 2 years in the making -- and there has been a plethora of smaller
+but nonetheless important changes to lintr. Please check the NEWS for a complete enumeration of these;
+here are a few more highlights:
+
 # What's next in lintr
+
+## Hosting linters for non-tidyverse style guides?
+
+With the decision to accept a bevy of linters from Google that are not strictly related to the tidyverse
+style guide, we also opened the door to hosting linters for enforcing other style guides, for example
+the [Bioconductor R code guide](https://contributions.bioconductor.org/r-code.html). We look forward to
+community contributions in this vein.
