@@ -49,9 +49,9 @@
   + For `lint_dir()` and `lint_package()`, `...` is now the 2nd argument, where earlier this was `relative_path`
 * Argument `source_file` to exported functions `with_id()` and `ids_with_token()` has been renamed to
   `source_expression` to better reflect that this argument is typically the output of `get_source_expressions()`.
-  It has also been renamed as the argument of the now-private functional versions of many linters, which has no direct
-  effect on packages importing lintr, but is mentioned in case custom linters imitating `lintr` style have also
-  adopted the `source_file` naming and want to adapt to keep in sync.
+  For now, `source_file` can still be used (with warning). It has also been renamed as the argument of the now-private
+  functional versions of many linters, which has no direct effect on packages importing lintr, but is mentioned in case
+  custom linters imitating `lintr` style have also adopted the `source_file` naming and want to adapt to keep in sync.
 * Deprecated `with_defaults()` in favor of `linters_with_defaults()`, and add `modify_defaults()` which is intended to be used
   more generally to modify (i.e., extend, trim, and/or update) a list of defaults. Note that the argument corresponding to
   `with_defaults()`'s `default=` is called `defaults=` (i.e., pluralized) in both of these, and that usage like
