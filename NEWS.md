@@ -274,6 +274,7 @@ of general interest to the broader R community. More will be included in future 
   (#1034, #1285, @MichaelChirico and @AshesITR)
 * Improved S3 generic detection for non-standard S3 generics where `UseMethod()` is called after several
   preceding expressions (#846, @jonkeane)
+* `extraction_operator_linter()`: no longer lint `x[NULL]` (#1273, @AshesITR)
 
 ## Bug fixes
 
@@ -301,7 +302,6 @@ of general interest to the broader R community. More will be included in future 
 * Error message for mismatched starts and ends of exclusion ranges is now more helpful.
   (#571, #860, @AshesITR and @danielinteractive)
 * Improved location information for R parse errors (#894, #892, @renkun-ken and @AshesITR)
-* `extraction_operator_linter()` no longer lints `x[NULL]` (#1273, #1286, @AshesITR)
 
 ## Internals
 
@@ -311,7 +311,7 @@ of general interest to the broader R community. More will be included in future 
   (#641, @dragosmg) 
 * Added a new, more restrictive test workflow - `test-package` - that fails on warnings emitted by tests 
   (#1263, #1272, @AshesITR)
-* Switched CI from Travis to GitHub Actions, using the full tidyverse recommended R CMD check. Code coverage and linting 
+* Switched CI from Travis to GitHub Actions, using the full tidyverse recommended `R CMD check`. Code coverage and linting 
   are implemented using separate GitHub Actions workflows (#572, @dragosmg)
 * Several optional `Imported` packages have become `Suggested` dependencies: `httr`, `testthat`, and `rstudioapi`.
   This should allow snappier CI builds for usages not relying on some more "peripheral" features of the package.
