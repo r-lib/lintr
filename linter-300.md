@@ -113,6 +113,13 @@ style guide, we also opened the door to hosting linters for enforcing other styl
 the [Bioconductor R code guide](https://contributions.bioconductor.org/r-code.html). We look forward to
 community contributions in this vein.
 
+## More Google linters
+
+Google has developed and tested many more broad-purpose linters that it plans to share, e.g. for
+detecting `length(which(x == y)) > 0` (i.e., `any(x == y)`), `lapply(x, function(xi) sum(xi))`
+(i.e., `lapply(x, sum)`), `c("key_name" = "value_name")` (i.e., `c(key_name = "value_name")`),
+and more! Follow [#884](https://github.com/r-lib/lintr/issues/884) for updates.
+
 # Acknowledgements
 
 Welcome [Kun Ren](@renkun-ken), Michael Chirico(@MichaelChirico),
