@@ -21,7 +21,7 @@ namespace_imports <- function(path = find_package()) {
 }
 
 # this loads the namespaces, but is the easiest way to do it
-# test package available packages to avoid failing out as in #1360
+# test package availablity to avoid failing out as in #1360
 #   typically, users are running this on their own package directories and thus
 #   will have the namespace dependencies installed, but we can't guarantee this.
 safe_get_exports <- function(ns) {
