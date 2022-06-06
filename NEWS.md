@@ -311,7 +311,7 @@ of general interest to the broader R community. More will be included in future 
   (#641, @dragosmg) 
 * Added a new, more restrictive test workflow - `test-package` - that fails on warnings emitted by tests 
   (#1263, #1272, @AshesITR)
-* Switched CI from Travis to GitHub Actions, using the full tidyverse recommended `R CMD check`. Code coverage and linting 
+* Switched CI from Travis to GitHub Actions, using the full tidyverse recommended `R CMD check`. Code coverage and linting
   are implemented using separate GitHub Actions workflows (#572, @dragosmg)
 * Several optional `Imported` packages have become `Suggested` dependencies: `httr`, `testthat`, and `rstudioapi`.
   This should allow snappier CI builds for usages not relying on some more "peripheral" features of the package.
