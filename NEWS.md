@@ -63,19 +63,18 @@
 ### Updates to `default_linters`
 
 * New `brace_linter()` which combines several curly brace related linters, deprecating the following predecessors (#1041, @AshesITR):
-   + `closed_curly_linter()`; both now also allow `}]` in addition to `})` and `},` as exceptions.
+   + `closed_curly_linter()`; both now also allow `}]` in addition to `})` and `},` as exceptions, i.e., `}` doesn't need
+     to be on its own line if paired with a closing square bracket, a closing parenthesis, or a comma. Also improved lint metadata
+     so that source markers land at the opening brace instead of the closing parenthesis to improve the experience of fixing the lint (#583, @AshesITR)
    + `open_curly_linter()`; both also no longer lint unnecessary trailing whitespace (use `trailing_whitespace_linter()` for this)
-     and also allow `(`, `,`, and `%>%` on preceding lines as exceptions. (#487, #1028)
+     and also allow `(`, `,`, and `%>%` on preceding lines as exceptions, i.e., `{` can be alone on a line if the previous line
+     is terminated with an opening parenthesis, a comma, or a pipe (`%>%`). (#487, #1028, @AshesITR)
    + `paren_brace_linter()`; `brace_linter()` also lints `if`/`else` and `repeat` with missing whitespace
-   + Improved lint metadata so that source markers land at the opening brace instead of the closing parenthesis
-     to improve the experience of fixing the lint (#583, @AshesITR)
-* `brace_linter()` now marks lints at the opening brace instead of the closing parenthesis, making fixing the lints
-  by jumping to source markers easier (#583, @AshesITR)
-  `brace_linter()` also newly enforces the following rules surrounding curly braces (originally Google linters, see below):
-   + require `else` to come on the same line as the preceding `}`, if present (#884, @michaelchirico)
-   + require functions spanning multiple lines to use curly braces (@michaelchirico)
-   + require balanced usage of `{}` in `if`/`else` conditions, i.e., if the `if` branch uses braces,
-     then so must the `else` branch, and _vice versa_ (@michaelchirico)
+   + `brace_linter()` also newly enforces the following rules surrounding curly braces (originally Google linters, see below):
+     - require `else` to come on the same line as the preceding `}`, if present (#884, @michaelchirico)
+     - require functions spanning multiple lines to use curly braces (#987, @michaelchirico)
+     - require balanced usage of `{}` in `if`/`else` conditions, i.e., if the `if` branch uses braces,
+       then so must the `else` branch, and _vice versa_ (#983, @michaelchirico)
 * New `paren_body_linter()` checks that there is a space between a right parenthesis and a body expression. (#809, @kpagacz)
 * Added `semicolon_linter()` (#683, @AshesITR)
 * `undesirable_function_linter()`
