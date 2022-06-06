@@ -153,8 +153,9 @@
 * `cyclocomp_linter()`: set the default `complexity_limit` to 15. This brings the default into sync with what
   is enforced via `default_linters` (#693, @AshesITR).
 * `lint_package()` now lints files in the `demo` directory by default (#703, @dmurdoch).
-* Moved the default lintr cache directory from `~/.R/lintr_cache` to `R_user_dir("lintr", "cache")`.
-  Note that this major version update invalidates the old cache anyway, so it can be safely deleted. (#1062, @AshesITR)
+* Moved the default lintr cache directory from `~/.R/lintr_cache` (which was a violation of
+  CRAN policy) to `R_user_dir("lintr", "cache")`. Note that 3.0.0 is a major version update and invalidates
+  the old cache anyway, so it can be safely deleted. (#1062, @AshesITR)
 
 ## New and improved features
 
