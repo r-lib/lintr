@@ -62,7 +62,17 @@ page, which will make it easier to document any parameters, enumerate edge cases
 known false positives, add links to external resources, etc.
 
 To make this even more navigable, we've also added some metadata to a database
-in the form of tags for each linter. For example, 
+in the form of tags for each linter. For example, `brace_linter` has tags
+style, readability, default, and configurable. Each tag gets its own documentation
+page (e.g. `?readability_linters`) which describes the tag and lists all of the
+associated linters exported by lintr.
+
+To further facilitate discoverability, we've added `available_linters()` and
+`available_tags()` to list registered linters (including custom linters not
+exported by lintr itself; see `?available_linters`).
+
+Moreover, lintr's documentation is now available as a website thanks to
+Hadley Wickham's contribution to create a pkgdown website for the package: lintr.r-lib.org.
 
 ## Google linters
 
