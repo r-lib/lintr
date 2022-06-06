@@ -28,9 +28,11 @@ which makes available its exported function
 Then, if \code{upstream} is not installed when this linter runs, a lint
 will be thrown on this object (even though you don't "own" its name).
 
-There are three workarounds: (1) always namespace-qualify usages,
-because this linter ignores names in \code{pkg::foo()} form; (2) use
-\verb{@importFrom(pkg, foo)} instead of a blanket \code{import(pkg)} in your
+There are three options to get lintr to work correctly:
+(1) install the package so that it's available in
+the session where this linter is running; (2) always namespace-qualify
+usages, because this linter ignores names in \code{pkg::foo()} form; and
+(3) use \code{importFrom(pkg, foo)} instead of a blanket \code{import(pkg)} in your
 NAMESPACE, because this linter takes these imported names as given;
 and of course (3) install the package so that it's available in
 the session where this linter is running.

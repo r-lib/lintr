@@ -25,10 +25,10 @@ namespace_imports <- function(path = find_package()) {
 #   typically, users are running this on their own package directories and thus
 #   will have the namespace dependencies installed, but we can't guarantee this.
 safe_get_exports <- function(ns) {
-  exports <- tryCatch(
-    getNamespaceExports(asNamespace(ns)),
-    error = function(cond) character()
-  )
+  exports <- character()
+  if (requireNamespace(ns, quietly = TRUE)) {
+    exports <- getNamespaceExports(asNamespace(ns))
+  }
 
   list(ns, exports)
 }
