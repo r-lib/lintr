@@ -219,13 +219,15 @@ of general interest to the broader R community. More will be included in future 
 * `ifelse_censor_linter()` Require usage of `pmax()` / `pmin()` where appropriate, e.g. `ifelse(x > y, x, y)` is `pmax(x, y)`
 * `system_file_linter()` Prevent usage like `file.path(system.file("A", package = "pkg"), "B")` where simply
   `system.file("A", "B", package = "pkg") is more concise and readable
-* `strings_as_factors_linter()` Check for code designed to work before and after the new `stringsAsFactors = FALSE` default
-* `inner_combine_linter()` Require inputs to vectorized functions to be combined first rather than later,
+* `strings_as_factors_linter()` Check for code designed to work before and after the `stringsAsFactors = FALSE` default
+  change in R 4.0 by examining code for `data.frame()` usages susceptible to assumptions about the default value
+  of `stringsAsFactors=`
+* `inner_combine_linter()` Require inputs to known-vectorized functions to be combined first rather than later,
   e.g. `as.Date(c(x, y))` over `c(as.Date(x), as.Date(y))`
 
 ### Other features and improvements
 
-* **Selective exclusion syntax**: New syntax to exclude only selected linters from linting lines or passages.
+* **Selective exclusion syntax**: New syntax to exclude only selected linters from certain lines or passages.
   Use `# nolint: linter_name, linter2_name.` or `# nolint start: linter_name, linter2_name.`
   in source files or named lists of line numbers in `.lintr`.
   Also allows for partial matching as long as the supplied prefix is unique, e.g.
