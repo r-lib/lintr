@@ -72,7 +72,8 @@ To further facilitate discoverability, we've added `available_linters()` and
 exported by lintr itself; see `?available_linters`).
 
 Moreover, lintr's documentation is now available as a website thanks to
-Hadley Wickham's contribution to create a pkgdown website for the package: lintr.r-lib.org.
+Hadley Wickham's contribution to create a pkgdown website for the package:
+[lintr.r-lib.org](https://lintr.r-lib.org).
 
 ## Google linters
 
