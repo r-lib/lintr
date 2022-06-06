@@ -10,6 +10,12 @@ install.packages("lintr")
 
 This blog post will highlight the biggest changes coming in this update which drove us to declare it a major release.
 
+# Release highlights
+
+## Selective exclusions
+
+`< # nolint: linter. > `
+
 ## Linter factories
 
 As of lintr 3.0.0, _all_ linters must be [function factories](https://adv-r.hadley.nz/function-factories.html).
