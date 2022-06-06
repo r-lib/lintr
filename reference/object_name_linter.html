@@ -77,6 +77,23 @@ The default naming styles are "snake_case" and "symbols".</p>
 match at least one of these styles.</p></dd>
 </dl></div>
     <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Note when used in a package, in order to ignore objects imported
+from other namespaces, this linter will attempt <code><a href="https://rdrr.io/r/base/ns-reflect.html" class="external-link">getNamespaceExports()</a></code>
+whenever an <code>import(PKG)</code> or <code>importFrom(PKG, ...)</code> statement is found
+in your NAMESPACE file. If <code><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace()</a></code> fails (e.g., the package
+is not yet installed), the linter won't be able to ignore some usages
+that would otherwise be allowed.</p>
+<p>Suppose, for example, you have <code>import(upstream)</code> in your NAMESPACE,
+which makes available its exported S3 generic function
+<code>a_really_quite_long_function_name</code> that you then extend in your package
+by defining a corresponding method for your class <code>my_class</code>.
+Then, if <code>upstream</code> is not installed when this linter runs, a lint
+will be thrown on this object (even though you don't "own" its full name).</p>
+<p>The best way to get lintr to work correctly is to install the package so
+that it's available in the session where this linter is running.</p>
+    </div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><a href="linters.html">linters</a> for a complete list of linters available in lintr.</p></div>
     </div>
