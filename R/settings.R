@@ -2,16 +2,14 @@
 #' Read lintr settings
 #'
 #' Lintr searches for settings for a given source file in the following order.
-#' \enumerate{
-#'   \item options defined as \code{linter.setting}.
-#'   \item \code{linter_file} in the same directory
-#'   \item \code{linter_file} in the project directory
-#'   \item \code{linter_file} in the user home directory
-#'   \item \code{\link{default_settings}}
-#' }
+#'  1. options defined as `linter.setting`.
+#'  2. `linter_file` in the same directory
+#'  3. `linter_file` in the project directory
+#'  4. `linter_file` in the user home directory
+#'  5. [default_settings()]
 #'
-#' The default linter_file name is \code{.lintr} but it can be changed with option
-#' \code{lintr.linter_file}.  This file is a dcf file, see \code{\link[base]{read.dcf}} for details.
+#' The default linter_file name is `.lintr` but it can be changed with option `lintr.linter_file`.
+#' This file is a dcf file, see [base::read.dcf()] for details.
 #' @param filename source file to be linted
 read_settings <- function(filename) {
   clear_settings()
@@ -135,7 +133,10 @@ get_encoding_from_dcf <- function(file) {
     warning = function(e) NULL
   )
 
-  encodings <- encodings[!is.na(encodings)]
+  if (!is.null(encodings)) {
+    # Produces a warning in R <= 3.5 if encodings is NULL
+    encodings <- encodings[!is.na(encodings)]
+  }
   if (length(encodings) > 0L) {
     return(encodings[1L])
   }

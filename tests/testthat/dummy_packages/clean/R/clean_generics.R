@@ -25,3 +25,15 @@ drink_me.list <- function(x, ...) {
 drink_me.data.frame <- function(x, ...) {
   NULL
 }
+
+#' head on my_s3_object
+#' @export
+head.my_s3_object <- function(x, ...) {
+  NULL
+}
+
+#' assign names for my_custom_class
+#' @export
+`names<-.my_custom_class` <- function(x, value) {
+  NULL
+}

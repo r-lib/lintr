@@ -9,12 +9,6 @@
 \title{Default undesirable functions and operators}
 \format{
 A named list of character strings.
-
-An object of class \code{list} of length 14.
-
-An object of class \code{list} of length 3.
-
-An object of class \code{list} of length 3.
 }
 \usage{
 all_undesirable_functions
@@ -26,8 +20,58 @@ all_undesirable_operators
 default_undesirable_operators
 }
 \description{
-Lists of function names and operators for \code{\link{undesirable_function_linter}} and
-\code{\link{undesirable_operator_linter}}. There is a list for the default elements and another
-that contains all available elements. Use \code{\link{with_defaults}} to produce a custom list.
+Lists of function names and operators for \code{\link[=undesirable_function_linter]{undesirable_function_linter()}} and \code{\link[=undesirable_operator_linter]{undesirable_operator_linter()}}.
+There is a list for the default elements and another that contains all available elements.
+Use \code{\link[=modify_defaults]{modify_defaults()}} to produce a custom list.
+}
+\details{
+The following functions are sometimes regarded as undesirable:
+\itemize{
+\item \code{\link[=attach]{attach()}} modifies the global search path. Use roxygen2's @importFrom statement in packages, or \code{::} in scripts.
+\item \code{\link[=browser]{browser()}} pauses execution when run and is likely a leftover from debugging. It should be removed.
+\item \code{\link[=debug]{debug()}} traps a function and causes execution to pause when that function is run. It should be removed.
+\item \code{\link[=debugcall]{debugcall()}} works similarly to \code{\link[=debug]{debug()}}, causing execution to pause. It should be removed.
+\item \code{\link[=debugonce]{debugonce()}} is only useful for interactive debugging. It should be removed.
+\item \code{\link[=detach]{detach()}} modifies the global search path. Detaching environments from the search path is rarely necessary in
+production code.
+\item \code{\link[=ifelse]{ifelse()}} isn't type stable. Use an \code{if}/\verb{else} block for scalar logic, or use
+\code{dplyr::if_else()}/\code{data.table::fifelse()} for type stable vectorized logic.
+\item \code{\link[=.libPaths]{.libPaths()}} permanently modifies the library location. Use \code{\link[withr:with_libpaths]{withr::with_libpaths()}} for a temporary change
+instead.
+\item \code{\link[=library]{library()}} modifies the global search path. Use roxygen2's @importFrom statement in packages, or \code{::} in scripts.
+\item \code{\link[=loadNamespace]{loadNamespace()}} doesn't provide an easy way to signal failures. Use the return value of \code{\link[=requireNamespace]{requireNamespace()}}
+instead.
+\item \code{\link[=mapply]{mapply()}} isn't type stable. Use \code{\link[=Map]{Map()}} to guarantee a list is returned and simplify accordingly.
+\item \code{\link[=options]{options()}} permanently modifies the session options. Use \code{\link[withr:with_options]{withr::with_options()}} for a temporary change instead.
+\item \code{\link[=par]{par()}} permanently modifies the graphics device parameters. Use \code{\link[withr:with_par]{withr::with_par()}} for a temporary change
+instead.
+\item \code{\link[=require]{require()}} modifies the global search path. Use roxygen2's @importFrom statement in packages, and \code{\link[=library]{library()}}
+or \code{::} in scripts.
+\item \code{\link[=sapply]{sapply()}} isn't type stable. Use \code{\link[=vapply]{vapply()}} with an appropriate \verb{FUN.VALUE=} argument to obtain type stable
+simplification.
+\item \code{\link[=setwd]{setwd()}} modifies the global working directory. Use \code{\link[withr:with_dir]{withr::with_dir()}} for a temporary change instead.
+\item \code{\link[=sink]{sink()}} permanently redirects output. Use \code{\link[withr:with_sink]{withr::with_sink()}} for a temporary redirection instead.
+\item \code{\link[=source]{source()}} loads code into the global environment unless \code{local = TRUE} is used, which can cause unexpected
+behaviour.
+\item \code{\link[=substring]{substring()}} should be replaced by \code{\link[=substr]{substr()}} with appropriate \verb{stop=} value.
+\item \code{\link[=Sys.setenv]{Sys.setenv()}} permanently modifies the global environment variables. Use \code{\link[withr:with_envvar]{withr::with_envvar()}} for a temporary
+change instead.
+\item \code{\link[=Sys.setlocale]{Sys.setlocale()}} permanently modifies the session locale. Use \code{\link[withr:with_locale]{withr::with_locale()}} for a temporary change
+instead.
+\item \code{\link[=trace]{trace()}} traps a function and causes execution of arbitrary code when that function is run. It should be removed.
+\item \code{\link[=undebug]{undebug()}} is only useful for interactive debugging with \code{\link[=debug]{debug()}}. It should be removed.
+\item \code{\link[=untrace]{untrace()}} is only useful for interactive debugging with \code{\link[=trace]{trace()}}. It should be removed.
+}
+
+The following operators are sometimes regarded as undesirable:
+\itemize{
+\item \code{\link[base:ns-dblcolon]{:::}} accesses non-exported functions inside packages. Code relying on these is likely to
+break in future versions of the package because the functions are not part of the public interface and may be
+changed or removed by the maintainers without notice.
+Use public functions via \code{::} instead.
+\item \code{\link[base:assignOps]{<<-}} and \verb{->>} assign outside the current environment in a way that can be hard to reason
+about. Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific environment
+with \code{\link[=assign]{assign()}}. Recall that you can create an environment at the desired scope with \code{\link[=new.env]{new.env()}}.
+}
 }
 \keyword{datasets}

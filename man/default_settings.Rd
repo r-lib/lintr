@@ -14,6 +14,6 @@ default_settings
 Default lintr settings
 }
 \seealso{
-\code{\link{read_settings}}, \code{\link{default_linters}}
+\code{\link[=read_settings]{read_settings()}}, \link{default_linters}
 }
 \keyword{datasets}

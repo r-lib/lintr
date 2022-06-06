@@ -58,6 +58,17 @@ test_that("returns the correct linting", {
     linter
   )
 
+  # same, using = for assignment
+  expect_lint(
+    trim_some("
+      fun = function() {
+        a = 1
+      }
+    "),
+    rex("local variable", anything, "assigned but may not be used"),
+    linter
+  )
+
   expect_lint(
     trim_some("
       fun <- function() {
@@ -82,13 +93,39 @@ test_that("returns the correct linting", {
     linter
   )
 
+  # earlier we used n(1) but this might conflict with dplyr::n(),
+  #   so switch to use an obscure symbol
   expect_lint(
     trim_some("
       fun <- function(x) {
-        n(1)
+        `__lintr_obj`(1)
       }
     "),
     rex("no visible global function definition for ", anything),
+    linter
+  )
+
+  # setMethod and assign also checked
+
+  expect_lint(
+    trim_some("
+      assign('fun', function() {
+        a <- 1
+        1
+      })
+    "),
+    rex("local variable", anything, "assigned but may not be used"),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      setMethod('plot', 'numeric', function() {
+        a <- 1
+        1
+      })
+    "),
+    rex("local variable", anything, "assigned but may not be used"),
     linter
   )
 })
@@ -97,7 +134,7 @@ test_that("replace_functions_stripped", {
   expect_lint(
     trim_some("
       fun <- function(x) {
-        n(x) = 1
+        `__lintr_obj`(x) = 1
       }
     "),
     rex("no visible global function definition for ", anything),
@@ -107,7 +144,7 @@ test_that("replace_functions_stripped", {
   expect_lint(
     trim_some("
       fun <- function(x) {
-        n(x) <- 1
+        `__lintr_obj`(x) <- 1
       }
     "),
     rex("no visible global function definition for ", anything),
@@ -214,6 +251,11 @@ test_that("used symbols are detected correctly", {
     NULL,
     object_usage_linter()
   )
+
+
+
+  # regression #1322
+  expect_silent(expect_lint("assign('x', 42)", NULL, object_usage_linter()))
 })
 
 test_that("object_usage_linter finds lints spanning multiple lines", {
@@ -249,7 +291,7 @@ test_that("object_usage_linter finds lints spanning multiple lines", {
     object_usage_linter()
   )
 
-  # Kill regex match to enforce fallback to line 1 column 1 of the warning
+  # Even ugly names are found
   expect_lint(
     trim_some("
       foo <- function(x) {
@@ -259,7 +301,7 @@ test_that("object_usage_linter finds lints spanning multiple lines", {
         )
       }
     "),
-    list(line_number = 2L, column_number = 1L),
+    list(line_number = 4L, column_number = 5L),
     object_usage_linter()
   )
 })
@@ -286,7 +328,7 @@ test_that("global variable detection works", {
 
 test_that("package detection works", {
   expect_length(
-    lint_package("dummy_packages/package", linters = object_usage_linter(), parse_settings = FALSE),
+    lint_package(test_path("dummy_packages", "package"), linters = object_usage_linter(), parse_settings = FALSE),
     9L
   )
 })
@@ -295,6 +337,116 @@ test_that("robust against errors", {
   expect_lint(
     "assign(\"x\", unknown_function)",
     NULL,
+    object_usage_linter()
+  )
+})
+
+test_that("interprets glue expressions", {
+  linter <- object_usage_linter()
+
+  expect_lint(trim_some("
+    fun <- function() {
+      local_var <- 42
+      glue::glue('The answer is {local_var}.')
+    }
+  "), NULL, linter)
+
+  # Check non-standard .open and .close
+  expect_lint(trim_some("
+    fun <- function() {
+      local_var <- 42
+      glue::glue('The answer is $[local_var].', .open = '$[', .close = ']')
+    }
+  "), NULL, linter)
+
+  # Steer clear of custom .transformer and .envir constructs
+  expect_lint(trim_some("
+    fun <- function() {
+      local_var <- 42
+      glue::glue('The answer is {local_var}.', .transformer = glue::identity_transformer)
+    }
+  "), "local_var", linter)
+
+  expect_lint(trim_some("
+    fun <- function() {
+      local_var <- 42
+      e <- new.env()
+      glue::glue('The answer is {local_var}.', .envir = e)
+    }
+  "), "local_var", linter)
+
+  # unused is caught, glue-used is not
+  expect_lint(trim_some("
+    fun <- function() {
+      local_var <- 42
+      unused_var <- 3
+      glue::glue('The answer is {local_var}.')
+    }
+  "), "unused_var", linter)
+
+  # glue-only is caught with option off
+  expect_lint(trim_some("
+    fun <- function() {
+      local_var <- 42
+      glue::glue('The answer is {local_var}.')
+    }
+  "), "local_var", object_usage_linter(interpret_glue = FALSE))
+})
+
+# reported as #1088
+test_that("definitions below top level are ignored (for now)", {
+  expect_lint(
+    trim_some("
+      local({
+        x <- 1
+        f <- function() {
+          x
+        }
+      })
+    "),
+    NULL,
+    object_usage_linter()
+  )
+})
+
+# reported as #1127
+test_that("package imports are detected if present in file", {
+  expect_lint(
+    trim_some("
+      dog <- function() {
+        a <- iris %>% summarise(m = 42)
+        a
+      }
+    "),
+    rex::rex("no visible global function definition for ", anything, "summarise"),
+    object_usage_linter()
+  )
+
+  expect_lint(
+    trim_some("
+      library(dplyr)
+
+      dog <- function() {
+        a <- iris %>% summarise(m = 42)
+        a
+      }
+    "),
+    NULL,
+    object_usage_linter()
+  )
+})
+
+test_that("fallback works", {
+  expect_lint(
+    trim_some("
+      f <- function() {
+        `non_existing_assign<-`(1, 2)
+      }
+    "),
+    list(
+      message = rex::rex("no visible global function definition for ", anything, "non_existing_assign<-"),
+      column_number = 6L
+    ),
     object_usage_linter()
   )
 })

@@ -9,7 +9,7 @@ lint_assignments <- function(filename) {
 test_that("lint() results do not depend on the working directory", {
 
   # a dummy package for use in the test
-  pkg_path <- file.path("dummy_packages", "assignmentLinter")
+  pkg_path <- test_path("dummy_packages", "assignmentLinter")
 
   # put a .lintr in the package root that excludes the first line of `R/jkl.R`
   config_path <- file.path(pkg_path, ".lintr")
@@ -39,13 +39,16 @@ test_that("lint() results do not depend on the working directory", {
   )
 
   expect_equal(
-    as.data.frame(lints_from_pkg_root)[["line"]], expected_lines
+    as.data.frame(lints_from_pkg_root)[["line"]],
+    expected_lines
   )
   expect_equal(
-    as.data.frame(lints_from_outside), as.data.frame(lints_from_pkg_root)
+    as.data.frame(lints_from_outside),
+    as.data.frame(lints_from_pkg_root)
   )
   expect_equal(
-    as.data.frame(lints_from_a_subdir), as.data.frame(lints_from_pkg_root)
+    as.data.frame(lints_from_a_subdir),
+    as.data.frame(lints_from_pkg_root)
   )
 })
 
@@ -58,9 +61,7 @@ test_that("lint() results do not depend on the position of the .lintr", {
   # - the same directory as filepath
   # - the project directory
   # - the user's home directory
-  lint_with_config <- function(
-    config_path, config_string, filename
-  ) {
+  lint_with_config <- function(config_path, config_string, filename) {
     cat(config_string, file = config_path)
     on.exit(unlink(config_path))
     lint_assignments(filename)
@@ -132,10 +133,10 @@ test_that("lint() results from file or text should be consistent", {
   unlink(file)
   lint_from_text2 <- lint(file, linters = linters, text = text)
 
-  expect_equal(length(lint_from_file), 2)
-  expect_equal(length(lint_from_lines), 2)
-  expect_equal(length(lint_from_text), 2)
-  expect_equal(length(lint_from_text2), 2)
+  expect_length(lint_from_file, 2L)
+  expect_length(lint_from_lines, 2L)
+  expect_length(lint_from_text, 2L)
+  expect_length(lint_from_text2, 2L)
 
   expect_equal(lint_from_file, lint_from_text2)
 
@@ -171,6 +172,16 @@ test_that("compatibility warnings work", {
 
   expect_warning(
     expect_lint(
+      "a = 42",
+      "Use <-",
+      linters = assignment_linter
+    ),
+    regexp = "Passing linters as variables",
+    fixed = TRUE
+  )
+
+  expect_warning(
+    expect_lint(
       "a == NA",
       "Use is.na",
       linters = unclass(equals_na_linter())
@@ -186,7 +197,8 @@ test_that("compatibility warnings work", {
       "Use is.na",
       linters = list(unclass(equals_na_linter()))
     ),
-    fixed = "The use of linters of class 'function'"
+    "The use of linters of class 'function'",
+    fixed = TRUE
   )
 
   expect_error(
@@ -201,6 +213,15 @@ test_that("compatibility warnings work", {
 
   expect_error(
     lint("a <- 1\n", linters = "equals_na_linter"),
-    regexp = rex("Expected '", anything, "' to be of class 'linter'")
+    regexp = rex("Expected '", anything, "' to be a function of class 'linter'")
   )
+})
+
+test_that("Deprecated positional usage of cache= works, with warning", {
+  expect_warning(
+    l <- lint("a = 2\n", FALSE, linters = assignment_linter()),
+    "'cache' is no longer available as a positional argument",
+    fixed = TRUE
+  )
+  expect_identical(l, lint("a = 2\n", assignment_linter(), cache = FALSE))
 })

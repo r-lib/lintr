@@ -27,4 +27,15 @@ test_that("returns the correct linting", {
   expect_lint("base::print(blah, f (1))", msg, linter)
   expect_lint("`+` (1, 1)", msg, linter)
   expect_lint("test <- function (x) { }", msg, linter)
+
+  expect_lint(
+    "blah  (1)",
+    list(message = msg, column_number = 5L, ranges = list(c(5L, 6L))),
+    linter
+  )
+  expect_lint(
+    "test <- function  (x) { }",
+    list(message = msg, column_number = 17L, ranges = list(c(17L, 18L))),
+    linter
+  )
 })

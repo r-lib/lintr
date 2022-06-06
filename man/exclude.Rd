@@ -4,14 +4,16 @@
 \alias{exclude}
 \title{Exclude lines or files from linting}
 \usage{
-exclude(lints, exclusions = settings$exclusions, ...)
+exclude(lints, exclusions = settings$exclusions, linter_names = NULL, ...)
 }
 \arguments{
 \item{lints}{that need to be filtered.}
 
 \item{exclusions}{manually specified exclusions}
 
-\item{...}{additional arguments passed to \code{\link{parse_exclusions}}}
+\item{linter_names}{character vector of names of the active linters, used for parsing inline exclusions.}
+
+\item{...}{additional arguments passed to \code{\link[=parse_exclusions]{parse_exclusions()}}}
 }
 \description{
 Exclude lines or files from linting
@@ -19,14 +21,14 @@ Exclude lines or files from linting
 \details{
 Exclusions can be specified in three different ways.
 \enumerate{
-\item{single line in the source file. default: \code{# nolint}, possibly followed by a listing of linters to exclude.
+\item single line in the source file. default: \verb{# nolint}, possibly followed by a listing of linters to exclude.
 If the listing is missing, all linters are excluded on that line. The default listing format is
-\code{# nolint: linter_name, linter2_name.}. There may not be anything between the colon and the line exclusion tag
-and the listing must be terminated with a full stop (\code{.}) for the linter list to be respected.}
-\item{line range in the source file. default: \code{# nolint start}, \code{# nolint end}.
-\code{#}\code{ nolint start} accepts linter lists in the same form as code{# nolint}.}
-\item{exclusions parameter, a named list of files with named lists of linters and lines to exclude them on,
-a named list of the files and lines to exclude, or just the filenames if you want to exclude the entire file,
-or the directory names if you want to exclude all files in a directory.}
+\verb{# nolint: linter_name, linter2_name.}. There may not be anything between the colon and the line exclusion tag
+and the listing must be terminated with a full stop (\code{.}) for the linter list to be respected.
+\item line range in the source file. default: \verb{# nolint start}, \verb{# nolint end}. \verb{# nolint start} accepts linter
+lists in the same form as \verb{# nolint}.
+\item exclusions parameter, a named list of files with named lists of linters and lines to exclude them on, a named
+list of the files and lines to exclude, or just the filenames if you want to exclude the entire file, or the
+directory names if you want to exclude all files in a directory.
 }
 }

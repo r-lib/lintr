@@ -1,28 +1,25 @@
 #' Lint expectation
 #'
-#' This is an expectation function to test that the lints produced by \code{lint} satisfy a number
-#' of checks.
+#' This is an expectation function to test that the lints produced by `lint` satisfy a number of checks.
 #'
-#' @param content a character vector for the file content to be linted, each vector element
-#' representing a line of text.
+#' @param content a character vector for the file content to be linted, each vector element representing a line of
+#' text.
 #' @param checks checks to be performed:
 #' \describe{
 #'   \item{NULL}{check that no lints are returned.}
-#'   \item{single string or regex object}{check that the single lint returned has a matching
-#'   message.}
-#'   \item{named list}{check that the single lint returned has fields that match. Accepted fields
-#'   are the same as those taken by \code{\link{Lint}}.}
-#'   \item{list of named lists}{for each of the multiple lints returned, check that it matches
-#'   the checks in the corresponding named list (as described in the point above).}
+#'   \item{single string or regex object}{check that the single lint returned has a matching message.}
+#'   \item{named list}{check that the single lint returned has fields that match. Accepted fields are the same as those
+#'     taken by [Lint()].}
+#'   \item{list of named lists}{for each of the multiple lints returned, check that it matches the checks in the
+#'     corresponding named list (as described in the point above).}
 #' }
 #' Named vectors are also accepted instead of named lists, but this is a compatibility feature that
 #' is not recommended for new code.
-#' @param ... arguments passed to \code{\link{lint}}, e.g. the linters or cache to use.
-#' @param file if not \code{NULL}, read content from the specified file rather than from \code{content}.
-#' @param language temporarily override Rs \code{LANGUAGE} envvar, controlling localisation of base
-#' R error messages. This makes testing them reproducible on all systems irrespective of their
-#' native R language setting.
-#' @return \code{NULL}, invisibly.
+#' @param ... arguments passed to [lint()], e.g. the linters or cache to use.
+#' @param file if not `NULL`, read content from the specified file rather than from `content`.
+#' @param language temporarily override Rs `LANGUAGE` envvar, controlling localisation of base R error messages.
+#' This makes testing them reproducible on all systems irrespective of their native R language setting.
+#' @return `NULL`, invisibly.
 #' @examples
 #' # no expected lint
 #' expect_lint("a", NULL, trailing_blank_lines_linter)
@@ -40,6 +37,11 @@
 #' )
 #' @export
 expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
+  if (!requireNamespace("testthat", quietly = TRUE)) {
+    stop( # nocov start
+      "'expect_lint' is designed to work within the 'testthat' testing framework, but 'testthat' is not installed."
+    ) # nocov end
+  }
   old_lang <- set_lang(language)
   on.exit(reset_lang(old_lang))
 
@@ -61,7 +63,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
     return(testthat::expect(n_lints %==% 0L, msg))
   }
 
-  if (!is.list(checks) | !is.null(names(checks))) { # vector or named list
+  if (!is.list(checks) || !is.null(names(checks))) { # vector or named list
     checks <- list(checks)
   }
   checks[] <- lapply(checks, fix_names, "message")
@@ -117,21 +119,23 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
 #' lints in the package.  It can be used to ensure that your tests fail if the package
 #' contains lints.
 #'
-#' @param ... arguments passed to \code{\link{lint_package}}
+#' @param ... arguments passed to [lint_package()]
 #' @export
 expect_lint_free <- function(...) {
   testthat::skip_on_cran()
   testthat::skip_on_covr()
 
   lints <- lint_package(...)
-  has_lints <- length(lints) > 0
+  has_lints <- length(lints) > 0L
 
   lint_output <- NULL
   if (has_lints) {
     lint_output <- paste(collapse = "\n", capture.output(print(lints)))
   }
-  result <- testthat::expect(!has_lints,
-                             paste(sep = "\n", "Not lint free", lint_output))
+  result <- testthat::expect(
+    !has_lints,
+    paste0("Not lint free\n", lint_output)
+  )
 
   invisible(result)
 }

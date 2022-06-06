@@ -1,61 +1,66 @@
-#' @describeIn linters Check that parentheses and square brackets do not have
-#' spaces directly inside them.
+#' Spaces inside linter
+#'
+#' Check that parentheses and square brackets do not have spaces directly
+#'   inside them, i.e., directly following an opening delimiter or directly
+#'   preceding a closing delimiter.
+#'
+#' @evalRd rd_tags("spaces_inside_linter")
+#' @seealso
+#'   [linters] for a complete list of linters available in lintr. \cr
+#'   <https://style.tidyverse.org/syntax.html#parentheses>
 #' @export
 spaces_inside_linter <- function() {
-  Linter(function(source_file) {
-    tokens <- c(
-      "'('",
-      "')'",
-      "'['",
-      "']'")
+  left_xpath_condition <- "
+    not(following-sibling::*[1][self::COMMENT])
+    and @end != following-sibling::*[1]/@start - 1
+    and @line1 = following-sibling::*[1]/@line1
+  "
+  left_xpath <- glue::glue("//OP-LEFT-BRACKET[{left_xpath_condition}] | //OP-LEFT-PAREN[{left_xpath_condition}]")
 
-    # using a regex here as checking each token is horribly slow
-    re <- rex(
-      list(one_of("[("), one_or_more(" "), none_of(end %or% "#" %or% " ")) %or%
-        list(" " %if_prev_isnt% ",", one_of("])"))
+  right_xpath_condition <- "
+    not(preceding-sibling::*[1][self::OP-COMMA])
+    and @start != preceding-sibling::*[1]/@end + 1
+    and @line1 = preceding-sibling::*[1]/@line2
+  "
+  right_xpath <- glue::glue("//OP-RIGHT-BRACKET[{right_xpath_condition}] | //OP-RIGHT-PAREN[{right_xpath_condition}]")
+
+  Linter(function(source_expression) {
+    if (!is_lint_level(source_expression, "file")) {
+      return(list())
+    }
+
+    xml <- source_expression$full_xml_parsed_content
+
+    left_expr <- xml2::xml_find_all(xml, left_xpath)
+    left_msg <- ifelse(
+      xml2::xml_text(left_expr) == "[",
+      "Do not place spaces after square brackets.",
+      "Do not place spaces after parentheses."
     )
-    all_matches <- re_matches(source_file$lines, re, global = TRUE, locations = TRUE)
-    line_numbers <- as.integer(names(source_file$lines))
 
-    Map(
-      function(line_matches, line_number) {
-        apply(
-          line_matches,
-          1L,
-          function(match) {
-            start <- match[["start"]]
-            if (is.na(start)) {
-              return()
-            }
-            end <- match[["end"]]
-            line <- source_file$lines[[as.character(line_number)]]
-
-            # make sure that the closing is not at the start of a new line (which is valid).
-            start_of_line <- re_matches(line, rex(start, spaces, one_of("])")), locations = TRUE)
-
-            if (is.na(start_of_line$start) || start_of_line$end != end) {
-              pc <- source_file$parsed_content
-              is_token <-
-                any(pc[["line1"]] == line_number &
-                      (pc[["col1"]] == end | pc[["col1"]] == start) &
-                      pc[["token"]] %in% tokens)
-
-              if (is_token) {
-                Lint(
-                  filename = source_file$filename,
-                  line_number = line_number,
-                  column_number = if (substr(line, start, start) == " ") start else start + 1L,
-                  type = "style",
-                  message = "Do not place spaces around code in parentheses or square brackets.",
-                  line = line
-                )
-              }
-            }
-          }
-        )
-      },
-      all_matches,
-      line_numbers
+    left_lints <- xml_nodes_to_lints(
+      left_expr,
+      source_expression = source_expression,
+      lint_message = left_msg,
+      range_start_xpath = "number(./@col2 + 1)", # start after ( or [
+      range_end_xpath = "number(./following-sibling::*[1]/@col1 - 1)" # end before following expr
     )
+
+    right_expr <- xml2::xml_find_all(xml, right_xpath)
+    right_msg <- ifelse(
+      xml2::xml_text(right_expr) == "]",
+      "Do not place spaces before square brackets.",
+      "Do not place spaces before parentheses."
+    )
+
+    right_lints <- xml_nodes_to_lints(
+      right_expr,
+      source_expression = source_expression,
+      lint_message = right_msg,
+      range_start_xpath = "number(./preceding-sibling::*[1]/@col2 + 1)", # start after preceding expression
+      range_end_xpath = "number(./@col1 - 1)" # end before ) or ]
+    )
+
+    c(left_lints, right_lints)
   })
 }

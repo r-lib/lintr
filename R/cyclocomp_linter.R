@@ -1,31 +1,36 @@
-#' @describeIn linters Check for overly complicated expressions. See
-#'   \code{\link[cyclocomp]{cyclocomp}}.
-#' @param complexity_limit expressions with a cyclomatic complexity higher than
-#'   this are linted, defaults to 25. See \code{\link[cyclocomp]{cyclocomp}}.
+#' Cyclomatic complexity linter
+#'
+#' Check for overly complicated expressions. See [cyclocomp::cyclocomp()].
+#'
+#' @param complexity_limit expressions with a cyclomatic complexity higher than this are linted, defaults to 15.
+#' See [cyclocomp::cyclocomp()].
+#' @evalRd rd_tags("cyclocomp_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @importFrom cyclocomp cyclocomp
 #' @export
 cyclocomp_linter <- function(complexity_limit = 15L) {
-  Linter(function(source_file) {
-    if (!is.null(source_file[["file_lines"]])) {
-      # abort if source_file is entire file, not a top level expression.
-      return(NULL)
+  Linter(function(source_expression) {
+    if (!is_lint_level(source_expression, "expression")) {
+      return(list())
     }
     complexity <- try_silently(
-      cyclocomp::cyclocomp(parse(text = source_file$content))
+      cyclocomp::cyclocomp(parse(text = source_expression$content))
     )
-    if (inherits(complexity, "try-error")) return(NULL)
-    if (complexity <= complexity_limit) return(NULL)
+    if (inherits(complexity, "try-error") || complexity <= complexity_limit) {
+      return(list())
+    }
+    col1 <- source_expression[["column"]][1L]
     Lint(
-      filename = source_file[["filename"]],
-      line_number = source_file[["line"]][1],
-      column_number = source_file[["column"]][1],
+      filename = source_expression[["filename"]],
+      line_number = source_expression[["line"]][1L],
+      column_number = source_expression[["column"]][1L],
       type = "style",
-      message = paste0(
-        "functions should have cyclomatic complexity of less than ",
-        complexity_limit, ", this has ", complexity, "."
+      message = sprintf(
+        "Functions should have cyclomatic complexity of less than %d, this has %d.",
+        complexity_limit, complexity
       ),
-      ranges = list(c(source_file[["column"]][1], source_file[["column"]][1])),
-      line = source_file$lines[1]
+      ranges = list(rep(col1, 2L)),
+      line = source_expression$lines[1L]
     )
   })
 }

@@ -1,42 +1,35 @@
-#' @describeIn linters check that there is a space between right
-#' parenthesis and an opening curly brace.
+#' Parentheses before brace linter
 #'
+#' Check that there is a space between right parentheses and an opening curly brace.
+#'
+#' @evalRd rd_tags("paren_brace_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-
 paren_brace_linter <- function() {
-  Linter(function(source_file) {
-    if (is.null(source_file$xml_parsed_content)) {
-      return(NULL)
+  lintr_deprecated("paren_brace_linter", new = "brace_linter", version = "2.0.1.9001", type = "Linter")
+
+  xpath <- paste(
+    "//OP-LEFT-BRACE[",
+    "@line1 = parent::expr/preceding-sibling::OP-RIGHT-PAREN/@line1",
+    "and",
+    "@col1 = parent::expr/preceding-sibling::OP-RIGHT-PAREN/@col1 + 1",
+    "]"
+  )
+
+  Linter(function(source_expression) {
+    if (!is_lint_level(source_expression, "expression")) {
+      return(list())
     }
 
-    xml <- source_file$xml_parsed_content
-
-    xpath <- paste(
-      "//OP-LEFT-BRACE[",
-      "@line1 = parent::expr/preceding-sibling::OP-RIGHT-PAREN/@line1",
-      "and",
-      "@col1 = parent::expr/preceding-sibling::OP-RIGHT-PAREN/@col1 + 1",
-      "]"
-    )
+    xml <- source_expression$xml_parsed_content
 
     match_exprs <- xml2::xml_find_all(xml, xpath)
 
-    lapply(
+    xml_nodes_to_lints(
       match_exprs,
-      function(expr) {
-        x <- xml2::as_list(expr)
-        line_num <- x@line1
-        line <- source_file$lines[[as.character(line_num)]]
-        Lint(
-          filename = source_file$filename,
-          line_number = line_num,
-          column_number = x@col1,
-          type = "style",
-          message = "There should be a space between right parenthesis and an opening curly brace.",
-          line = line,
-          ranges = list(as.numeric(c(x@col1, x@col2)))
-        )
-      }
+      source_expression = source_expression,
+      lint_message = "There should be a space between right parenthesis and an opening curly brace.",
+      type = "style"
     )
   })
 }

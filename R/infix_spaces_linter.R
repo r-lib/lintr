@@ -1,77 +1,137 @@
-# names: xml tags; values: getParseData tokens
-# these can be used as unary operators; treat separately
-unary_infix_tokens <- c(
-  "OP-PLUS" = "'+'",               # +        : unary plus
-  "OP-MINUS" = "'-'",              # -        : unary minus
+# some metadata about infix operators on the R parse tree.
+#   xml_tag gives the XML tag as returned by xmlparsedata::xml_parse_data().
+#   r_string gives the operator as you would write it in R code.
+# NB: this metadata is used elsewhere in lintr, e.g. spaces_left_parentheses_linter.
+#   because of that, even though some rows of this table are currently unused, but
+#   we keep them around because it's useful to keep this info in one place.
+infix_metadata <- data.frame(stringsAsFactors = FALSE, matrix(byrow = TRUE, ncol = 2L, c(
+  "OP-PLUS", "+",
+  "OP-MINUS", "-",
+  "OP-TILDE", "~",
+  "GT", ">",
+  "GE", ">=",
+  "LT", "<",
+  "LE", "<=",
+  "EQ", "==",
+  "NE", "!=",
+  "AND", "&",
+  "OR", "|",
+  "AND2", "&&",
+  "OR2", "||",
+  "LEFT_ASSIGN", "<-",  # also includes := and <<-
+  "RIGHT_ASSIGN", "->", # also includes ->>
+  "EQ_ASSIGN", "=",
+  "EQ_SUB", "=",        # in calls: foo(x = 1)
+  "EQ_FORMALS", "=",    # in definitions: function(x = 1)
+  "SPECIAL", "%%",
+  "OP-SLASH", "/",
+  "OP-STAR", "*",
+  "OP-COMMA", ",",
+  "OP-CARET", "^",      # also includes **
+  "OP-AT", "@",
+  "OP-EXCLAMATION", "!",
+  "OP-COLON", ":",
+  "NS_GET", "::",
+  "NS_GET_INT", ":::",
+  "OP-LEFT-BRACE", "{",
+  "OP-LEFT-BRACKET", "[",
+  "LBB", "[[",
+  "OP-LEFT-PAREN", "(",
+  "OP-QUESTION", "?",
+  "OP-DOLLAR", "$",
   NULL
+)))
+names(infix_metadata) <- c("xml_tag", "string_value")
+# utils::getParseData()'s designation for the tokens wouldn't be valid as XML tags
+infix_metadata$parse_tag <- ifelse(
+  startsWith(infix_metadata$xml_tag, "OP-"),
+  quote_wrap(infix_metadata$string_value, "'"),
+  infix_metadata$xml_tag
 )
-binary_infix_tokens <- c(
-
-  "GT" = "GT",                     # >        : greater than
-  "GE" = "GE",                     # <=       : greater than or equal to
-  "LT" = "LT",                     # <        : less than
-  "LE" = "LE",                     # <=       : less than or equal to
-  "EQ" = "EQ",                     # ==       : vector equality
-  "NE" = "NE",                     # !=       : not equal
-  "AND" = "AND",                   # &        : vector boolean and
-  "OR" = "OR",                     # |        : vector boolean or
-  "AND2" = "AND2",                 # &&       : scalar boolean and
-  "OR2" = "OR2",                   # ||       : scalar boolean or
-  "LEFT_ASSIGN" = "LEFT_ASSIGN",   # <- or := : left assignment
-  "RIGHT_ASSIGN" = "RIGHT_ASSIGN", # ->       : right assignment
-  "EQ_ASSIGN" = "EQ_ASSIGN",       # =        : equal assignment
-  "EQ_SUB" = "EQ_SUB",             # =        : keyword assignment
-  "SPECIAL" = "SPECIAL",           # %[^%]*%  : infix operators
-  "OP-SLASH" = "'/'",              # /        : unary division
-  "OP-STAR" = "'*'",               # *        : unary multiplication
-
-  NULL
+# treated separately because spacing rules are different for unary operators
+infix_metadata$unary <- infix_metadata$xml_tag %in% c("OP-PLUS", "OP-MINUS", "OP-TILDE")
+# high-precedence operators are ignored by this linter; see
+#   https://style.tidyverse.org/syntax.html#infix-operators
+infix_metadata$low_precedence <- infix_metadata$string_value %in% c(
+  "+", "-", "~", ">", ">=", "<", "<=", "==", "!=", "&", "&&", "|", "||", "<-", "->", "=", "%%", "/", "*"
 )
-infix_tokens <- c(unary_infix_tokens, binary_infix_tokens)
+# comparators come up in several lints
+infix_metadata$comparator <- infix_metadata$string_value %in% c("<", "<=", ">", ">=", "==", "!=")
 
-#' @describeIn linters  Check that infix operators are surrounded by spaces.
+# undesirable_operator_linter needs to distinguish
+infix_overload <- data.frame(
+  exact_string_value = c("<-", "<<-", "=", "->", "->>", "^", "**"),
+  xml_tag = rep(c("LEFT_ASSIGN", "RIGHT_ASSIGN", "OP-CARET"), c(3L, 2L, 2L)),
+  stringsAsFactors = FALSE
+)
+
+#' Infix spaces linter
+#'
+#' Check that infix operators are surrounded by spaces. Enforces the corresponding Tidyverse style guide rule;
+#'   see <https://style.tidyverse.org/syntax.html#infix-operators>.
+#'
+#' @param exclude_operators Character vector of operators to exlude from consideration for linting.
+#'   Default is to include the following "low-precedence" operators:
+#'   `+`, `-`, `~`, `>`, `>=`, `<`, `<=`, `==`, `!=`, `&`, `&&`, `|`, `||`, `<-`, `:=`, `<<-`, `->`, `->>`,
+#'   `=`, `/`, `*`, and any infix operator (exclude infixes by passing `"%%"`). Note that `<-`, `:=`, and `<<-`
+#'   are included/excluded as a group (indicated by passing `"<-"`), as are `->` and `->>` (_viz_, `"->"`),
+#'   and that `=` for assignment and for setting arguments in calls are treated the same.
+#' @param allow_multiple_spaces Logical, default `TRUE`. If `FALSE`, usage like `x  =  2` will also be linted;
+#'   excluded by default because such usage can sometimes be used for better code alignment, as is allowed
+#'   by the style guide.
+#' @evalRd rd_tags("infix_spaces_linter")
+#' @seealso
+#'   [linters] for a complete list of linters available in lintr. \cr
+#'   <https://style.tidyverse.org/syntax.html#infix-operators>
 #' @export
-infix_spaces_linter <- function() {
-  Linter(function(source_file) {
-    lapply(
-      ids_with_token(source_file, infix_tokens, fun = `%in%`),
-      function(id) {
-        parsed <- with_id(source_file, id)
+infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces = TRUE) {
+  if (allow_multiple_spaces) {
+    op <- "<"
+    lint_message <- "Put spaces around all infix operators."
+  } else {
+    op <- "!="
+    lint_message <- "Put exactly one space on each side of infix operators."
+  }
 
-        line <- source_file$lines[as.character(parsed$line1)]
+  infix_tokens <- infix_metadata[
+    infix_metadata$low_precedence & !infix_metadata$string_value %in% exclude_operators,
+    "xml_tag"
+  ]
 
-        around_operator <- substr(line, parsed$col1 - 1L, parsed$col2 + 1L)
-        non_space_before <- re_matches(around_operator, rex(start, non_space))
-        newline_after <- unname(nchar(line)) %==% parsed$col2
-        non_space_after <- re_matches(around_operator, rex(non_space, end))
+  # NB: preceding-sibling::* and not preceding-sibling::expr because
+  #   of the foo(a=1) case, where the tree is <SYMBOL_SUB><EQ_SUB><expr>
+  # NB: position() > 1 for the unary case, e.g. x[-1]
+  # NB: the last not() disables lints inside box::use() declarations
+  xpath <- glue::glue("//*[
+    ({xp_or(paste0('self::', infix_tokens))})
+    and position() > 1
+    and (
+      (
+        @line1 = preceding-sibling::*[1]/@line2
+        and @start {op} preceding-sibling::*[1]/@end + 2
+      ) or (
+        @line1 = following-sibling::*[1]/@line1
+        and following-sibling::*[1]/@start {op} @end + 2
+      )
+    )
+    and not(
+      self::OP-SLASH[
+        ancestor::expr/preceding-sibling::OP-LEFT-PAREN/preceding-sibling::expr[
+          ./SYMBOL_PACKAGE[text() = 'box'] and
+          ./SYMBOL_FUNCTION_CALL[text() = 'use']
+        ]
+      ]
+    )
+  ]")
 
-        if (non_space_before || (!newline_after && non_space_after)) {
+  Linter(function(source_expression) {
+    if (!is_lint_level(source_expression, "expression")) {
+      return(list())
+    }
 
-          # we only should check spacing if the operator is infix,
-          # which only happens if there is more than one sibling
-          is_infix <- length(siblings(source_file$parsed_content, parsed$id, 1)) > 1L
+    xml <- source_expression$xml_parsed_content
+    bad_expr <- xml2::xml_find_all(xml, xpath)
 
-          start <- end <- parsed$col1
-
-          if (is_infix) {
-            if (non_space_before) {
-              start <- parsed$col1 - 1L
-            }
-            if (non_space_after) {
-              end <- parsed$col2 + 1L
-            }
-
-            Lint(
-              filename = source_file$filename,
-              line_number = parsed$line1,
-              column_number = parsed$col1,
-              type = "style",
-              message = "Put spaces around all infix operators.",
-              line = line,
-              ranges = list(c(start, end))
-            )
-          }
-        }
-      })
+    xml_nodes_to_lints(bad_expr, source_expression = source_expression, lint_message = lint_message, type = "style")
   })
 }

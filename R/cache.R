@@ -1,9 +1,7 @@
 #' Clear the lintr cache
 #'
-#' @param file filename whose cache to clear.  If you pass \code{NULL}, it will
-#' delete all of the caches.
-#' @param path directory to store caches.  Reads option 'lintr.cache_directory'
-#' as the default.
+#' @param file filename whose cache to clear. If you pass `NULL`, it will delete all of the caches.
+#' @param path directory to store caches. Reads option 'lintr.cache_directory' as the default.
 #' @return 0 for success, 1 for failure, invisibly.
 #' @export
 clear_cache <- function(file = NULL, path = NULL) {
@@ -21,6 +19,20 @@ clear_cache <- function(file = NULL, path = NULL) {
   unlink(path, recursive = TRUE)
 }
 
+define_cache_path <- function(cache) {
+  if (isTRUE(cache)) {
+    settings$cache_directory
+  } else if (is.character(cache)) {
+    cache
+  } else {
+    character()
+  }
+}
+
+define_cache_key <- function(filename, inline_data, lines) {
+  if (inline_data) list(content = get_content(lines), TRUE) else filename
+}
+
 
 get_cache_file_path <- function(file, path) {
   # this assumes that a normalized absolute file path was given
@@ -28,12 +40,18 @@ get_cache_file_path <- function(file, path) {
 }
 
 load_cache <- function(file, path = NULL) {
+  if (is.null(path) || length(path) == 0L) {
+    return()
+  }
   env <- new.env(parent = emptyenv())
 
   file <- get_cache_file_path(file, path)
   if (file.exists(file)) {
     tryCatch(
       load(file = file, envir = env),
+      warning = function(w) {
+        invokeRestart("muffleWarning")
+      },
       error = function(e) {
         warning(
           "Could not load cache file '", file, "':\n",
@@ -47,6 +65,9 @@ load_cache <- function(file, path = NULL) {
 }
 
 save_cache <- function(cache, file, path = NULL) {
+  if (is.null(cache)) {
+    return()
+  }
   if (!file.exists(path)) {
     dir.create(path, recursive = TRUE)
   }
@@ -55,6 +76,9 @@ save_cache <- function(cache, file, path = NULL) {
 }
 
 cache_file <- function(cache, filename, linters, lints) {
+  if (is.null(cache)) {
+    return()
+  }
   assign(
     envir = cache,
     x = digest_content(linters, filename),
@@ -64,6 +88,9 @@ cache_file <- function(cache, filename, linters, lints) {
 }
 
 retrieve_file <- function(cache, filename, linters) {
+  if (is.null(cache)) {
+    return(NULL)
+  }
   mget(
     envir = cache,
     x = digest_content(linters, filename),
@@ -74,11 +101,15 @@ retrieve_file <- function(cache, filename, linters) {
 }
 
 cache_lint <- function(cache, expr, linter, lints) {
+  if (is.null(cache)) {
+    return()
+  }
   assign(
     envir = cache,
     x = digest_content(linter, expr),
     value = lints,
-    inherits = FALSE)
+    inherits = FALSE
+  )
 }
 
 retrieve_lint <- function(cache, expr, linter, lines) {
@@ -105,6 +136,9 @@ retrieve_lint <- function(cache, expr, linter, lines) {
 }
 
 has_lint <- function(cache, expr, linter) {
+  if (is.null(cache)) {
+    return(FALSE)
+  }
   exists(
     envir = cache,
     x = digest_content(linter, expr),

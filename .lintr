@@ -1,6 +1,7 @@
-linters: with_defaults( # The following TODOs are part of an effort to have {lintr} lint-free (#584)
-   line_length_linter = line_length_linter(120),
-   cyclocomp_linter = cyclocomp_linter(28) # TODO reduce to 15
+linters: linters_with_defaults(
+   line_length_linter(120),
+   implicit_integer_linter(),
+   backport_linter("oldrel-4", except = "R_user_dir")
  )
 exclusions: list(
   "inst/doc/creating_linters.R" = 1,

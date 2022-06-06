@@ -1,19 +1,23 @@
 test_that("lint all files in a directory", {
-  the_dir <- file.path("dummy_packages", "package", "vignettes")
+  # NB: not using .lintr in the the test packages because
+  #   R CMD check doesn't like hidden files in any subdirectory
+  withr::local_options(lintr.linter_file = "lintr_test_config")
+  the_dir <- test_path("dummy_packages", "package", "vignettes")
   files <- list.files(the_dir)
 
   lints <- lint_dir(the_dir, parse_settings = FALSE)
   linted_files <- unique(names(lints))
 
   expect_s3_class(lints, "lints")
-  expect_setequal(linted_files, files)
+  expect_identical(sort(linted_files), sort(files))
 })
 
 test_that("lint all relevant directories in a package", {
-  the_pkg <- file.path("dummy_packages", "package")
+  withr::local_options(lintr.linter_file = "lintr_test_config")
+  the_pkg <- test_path("dummy_packages", "package")
   files <- setdiff(
     list.files(the_pkg, recursive = TRUE),
-    c("package.Rproj", "DESCRIPTION", "NAMESPACE")
+    c("package.Rproj", "DESCRIPTION", "NAMESPACE", "lintr_test_config")
   )
 
   read_settings(NULL)
@@ -24,7 +28,7 @@ test_that("lint all relevant directories in a package", {
   linted_files <- gsub("\\", "/", linted_files, fixed = TRUE)
 
   expect_s3_class(lints, "lints")
-  expect_setequal(linted_files, files)
+  expect_identical(sort(linted_files), sort(files))
 
   # Code coverage is not detected for default_linters.
   # We want to ensure that object_name_linter uses namespace_imports correctly.
@@ -38,20 +42,20 @@ test_that("lint all relevant directories in a package", {
   linted_files <- gsub("\\", "/", linted_files, fixed = TRUE)
 
   expect_s3_class(lints, "lints")
-  expect_setequal(linted_files, files)
+  expect_identical(sort(linted_files), sort(files))
 })
 
 test_that("respects directory exclusions", {
-  the_dir <- tempfile()
-  dir.create(the_dir, recursive = TRUE)
-  on.exit(unlink(the_dir, recursive = TRUE))
+  the_dir <- withr::local_tempdir()
 
   the_excluded_dir <- file.path(the_dir, "exclude-me")
   dir.create(the_excluded_dir)
 
-  file.copy("default_linter_testcode.R", the_dir)
-  file.copy("default_linter_testcode.R", the_excluded_dir)
-  file.copy("default_linter_testcode.R", file.path(the_excluded_dir, "bad2.R"))
+  defaults_path <- test_path("default_linter_testcode.R")
+
+  file.copy(defaults_path, the_dir)
+  file.copy(defaults_path, the_excluded_dir)
+  file.copy(defaults_path, file.path(the_excluded_dir, "bad2.R"))
 
   lints <- lint_dir(the_dir, exclusions = "exclude-me")
   linted_files <- unique(names(lints))
@@ -62,23 +66,39 @@ test_that("respects directory exclusions", {
   linted_files <- unique(names(lints_norm))
   expect_length(linted_files, 1L)
   expect_identical(linted_files, normalizePath(file.path(the_dir, "default_linter_testcode.R")))
-
 })
 
 test_that("respect directory exclusions from settings", {
-  the_dir <- tempfile()
-  dir.create(the_dir, recursive = TRUE)
-  on.exit(unlink(the_dir, recursive = TRUE))
+  the_dir <- withr::local_tempdir()
 
   the_excluded_dir <- file.path(the_dir, "exclude-me")
   dir.create(the_excluded_dir)
 
-  file.copy("default_linter_testcode.R", the_dir)
-  file.copy("default_linter_testcode.R", the_excluded_dir)
-  file.copy("default_linter_testcode.R", file.path(the_excluded_dir, "bad2.R"))
+  defaults_path <- test_path("default_linter_testcode.R")
+
+  file.copy(defaults_path, the_dir)
+  file.copy(defaults_path, the_excluded_dir)
+  file.copy(defaults_path, file.path(the_excluded_dir, "bad2.R"))
   cat("exclusions:\n  'exclude-me'\n", file = file.path(the_dir, ".lintr"))
 
   lints <- lint_dir(the_dir)
   linted_files <- unique(names(lints))
   expect_length(linted_files, 1L)
+})
+
+test_that("lint_dir works with specific linters without specifying other arguments", {
+  withr::local_options(lintr.linter_file = "lintr_test_config")
+  the_dir <- test_path("dummy_packages", "package", "vignettes")
+  expect_length(lint_dir(the_dir, assignment_linter(), parse_settings = FALSE), 12L)
+  expect_length(lint_dir(the_dir, commented_code_linter(), parse_settings = FALSE), 0L)
+})
+
+test_that("lint_dir continues to accept relative_path= in 2nd positional argument, with a warning", {
+  the_dir <- test_path("dummy_packages", "package", "vignettes")
+  expect_warning(
+    positional_lints <- lint_dir(the_dir, FALSE),
+    "'relative_path' is no longer available as a positional argument",
+    fixed = TRUE
+  )
+  expect_identical(positional_lints, lint_dir(the_dir, relative_path = FALSE))
 })

@@ -67,22 +67,15 @@ test_that("it uses config home directory settings if provided", {
 test_that("it errors if the config file does not end in a newline", {
 
   f <- tempfile()
-  cat("linters: with_defaults(closed_curly_linter = NULL)", file = f)
+  cat("linters: linters_with_defaults(closed_curly_linter = NULL)", file = f)
   old <- options()
   on.exit(options(old))
   options("lintr.linter_file" = f)
   expect_error(read_settings("foo"), "Malformed config file")
 })
 
-test_that("with_defaults works as expected", {
-  # test capturing unnamed args
-  defaults <- with_defaults(assignment_linter)
-  # assignment_linter is in defaults, so output doesn't change
-  expect_equal(names(defaults), names(with_defaults()))
-})
-
 test_that("rot utility works as intended", {
-  expect_equal(lintr:::rot(letters), c(letters[14:26], LETTERS[1:13]))
+  expect_equal(lintr:::rot(letters), c(letters[14L:26L], LETTERS[1L:13L]))
 })
 
 test_that("logical_env utility works as intended", {
@@ -92,10 +85,10 @@ test_that("logical_env utility works as intended", {
   on.exit(if (is.na(old)) Sys.unsetenv(test_env) else sym_set_env(test_env, old))
 
   sym_set_env(test_env, "true")
-  expect_equal(lintr:::logical_env(test_env), TRUE)
+  expect_true(lintr:::logical_env(test_env))
 
   sym_set_env(test_env, "F")
-  expect_equal(lintr:::logical_env(test_env), FALSE)
+  expect_false(lintr:::logical_env(test_env))
 
   sym_set_env(test_env, "")
   expect_null(lintr:::logical_env(test_env))
@@ -105,10 +98,10 @@ test_that("logical_env utility works as intended", {
 })
 
 # fixing #774
-test_that("with_defaults doesn't break on very long input", {
-  expect_equal(
-    names(with_defaults(
-      default = list(),
+test_that("linters_with_defaults doesn't break on very long input", {
+  expect_named(
+    linters_with_defaults(
+      defaults = list(),
       lintr::undesirable_function_linter(c(
         detach = paste(
           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
@@ -120,8 +113,8 @@ test_that("with_defaults doesn't break on very long input", {
           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         )
       ))
-    )),
-    "lintr::undesirable_function_linter"
+    ),
+    "undesirable_function_linter"
   )
 })
 

@@ -1,11 +1,11 @@
 test_that("it returns the input if less than the max", {
-  expect_equal(trim_output(character(0)), character(0))
+  expect_equal(trim_output(character()), character())
 
-  expect_equal(trim_output("test", max = 10), "test")
+  expect_equal(trim_output("test", max = 10L), "test")
 })
 
 test_that("it returns the input trimmed strictly to max if no lints found", {
-  expect_equal(trim_output("testing a longer non_lint string", max = 7), "testing")
+  expect_equal(trim_output("testing a longer non_lint string", max = 7L), "testing")
 })
 
 test_that("it returns the input trimmed to the last full lint if one exists within the max", {
@@ -14,14 +14,14 @@ test_that("it returns the input trimmed to the last full lint if one exists with
     # Magic numbers expect newlines to be 1 character
     t1 <- gsub("\r\n", "\n", t1, fixed = TRUE)
   }
-  expect_equal(trim_output(t1, max = 200), substr(t1, 1, 195))
-  expect_equal(trim_output(t1, max = 400), substr(t1, 1, 380))
-  expect_equal(trim_output(t1, max = 2000), substr(t1, 1, 1930))
+  expect_equal(trim_output(t1, max = 200L), substr(t1, 1L, 195L))
+  expect_equal(trim_output(t1, max = 400L), substr(t1, 1L, 380L))
+  expect_equal(trim_output(t1, max = 2000L), substr(t1, 1L, 1930L))
 })
 
 test_that("as.data.frame.lints", {
   # A minimum lint
-  expect_is(
+  expect_s3_class(
     l1 <- Lint(
       "dummy.R",
       line_number = 1L,
@@ -33,7 +33,7 @@ test_that("as.data.frame.lints", {
   )
 
   # A larger lint
-  expect_is(
+  expect_s3_class(
     l2 <- Lint(
       "dummy.R",
       line_number = 2L,
@@ -41,7 +41,7 @@ test_that("as.data.frame.lints", {
       type = "error",
       message = "Under no circumstances is the use of foobar allowed.",
       line = "a <- 1",
-      ranges = list(c(1, 2), c(10, 20))),
+      ranges = list(c(1L, 2L), c(10L, 20L))),
     "lint"
   )
 
@@ -53,15 +53,15 @@ test_that("as.data.frame.lints", {
 
   # Convert lints to data.frame
   lints <- structure(list(l1, l2), class = "lints")
-  expect_is(
+  expect_s3_class(
     df <- as.data.frame.lints(lints),
     "data.frame"
   )
 
   exp <- data.frame(
-    filename = rep("dummy.R", 2),
-    line_number = c(1, 2),
-    column_number = c(1, 6),
+    filename = rep("dummy.R", 2L),
+    line_number = c(1L, 2L),
+    column_number = c(1L, 6L),
     type = c("style", "error"),
     message = c("", "Under no circumstances is the use of foobar allowed."),
     line = c("", "a <- 1"),
@@ -80,8 +80,8 @@ test_that("summary.lints() works (no lints)", {
     "x <- 1\n",
     linters = assignment_linter())
   no_lint_summary <- summary(no_lints)
-  expect_true(is.data.frame(no_lint_summary))
-  expect_equal(nrow(no_lint_summary), 0)
+  expect_s3_class(no_lint_summary, "data.frame")
+  expect_equal(nrow(no_lint_summary), 0L)
 })
 
 test_that("summary.lints() works (lints found)", {
@@ -89,11 +89,11 @@ test_that("summary.lints() works (lints found)", {
     "x = 1\n",
     linters = assignment_linter())
   has_lint_summary <- summary(has_lints)
-  expect_true(is.data.frame(has_lint_summary))
-  expect_equal(nrow(has_lint_summary), 1)
-  expect_true(has_lint_summary$style > 0)
-  expect_equal(has_lint_summary$warning, 0)
-  expect_equal(has_lint_summary$error, 0)
+  expect_s3_class(has_lint_summary, "data.frame")
+  expect_equal(nrow(has_lint_summary), 1L)
+  expect_gt(has_lint_summary$style, 0L)
+  expect_equal(has_lint_summary$warning, 0L)
+  expect_equal(has_lint_summary$error, 0L)
 })
 
 test_that("print.lint works", {
@@ -109,21 +109,27 @@ test_that("print.lint works", {
 test_that("print.lint works for inline data, even in RStudio", {
   l <- lint("x = 1\n")
 
+  # Make sure lints print to console.
+  # The full output is:
+  #
+  # > <text>:1:3: style: Use <-, not =, for assignment.
+  # > x = 1
+  # >   ^
+
   withr::with_options(
     list("lintr.rstudio_source_markers" = FALSE),
     expect_output(print(l), "not =")
   )
 
+  mockery::stub(print.lints, "rstudioapi::hasFun", function(...) FALSE)
   withr::with_options(
     list("lintr.rstudio_source_markers" = TRUE),
-    with_mock(
-      `rstudioapi::hasFun` = function(...) TRUE,
-      expect_output(print(l), "not =")
-    )
+    expect_output(print(l), "not =")
   )
 })
 
 test_that("print.lints works", {
+  withr::local_options(lintr.rstudio_source_markers = FALSE)
   tmp <- tempfile()
   file.create(tmp)
   on.exit(unlink(tmp))

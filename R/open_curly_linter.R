@@ -1,65 +1,64 @@
-#' @describeIn linters  Check that opening curly braces are never on their own
-#' line and are always followed by a newline.
+#' Open curly linter
+#'
+#' Check that opening curly braces are never on their own line and are always followed by a newline.
+#'
+#' @param allow_single_line if `TRUE`, allow an open and closed curly pair on the same line.
+#' @evalRd rd_tags("open_curly_linter")
+#' @seealso
+#'   [linters] for a complete list of linters available in lintr. \cr
+#'   <https://style.tidyverse.org/syntax.html#indenting>
 #' @export
 open_curly_linter <- function(allow_single_line = FALSE) {
-  Linter(function(source_file) {
-    lapply(
-      ids_with_token(source_file, "'{'"),
-      function(id) {
+  lintr_deprecated("open_curly_linter", new = "brace_linter", version = "2.0.1.9001", type = "Linter")
 
-        parsed <- with_id(source_file, id)
-
-        tokens_before <- source_file$parsed_content$token[
-          source_file$parsed_content$line1 == parsed$line1 &
-            source_file$parsed_content$col1 < parsed$col1]
-
-        tokens_after <- source_file$parsed_content$token[
-          source_file$parsed_content$line1 == parsed$line1 &
-            source_file$parsed_content$col1 > parsed$col1 &
-            source_file$parsed_content$token != "COMMENT"]
-
-        if (isTRUE(allow_single_line) &&
-            "'}'" %in% tokens_after) {
-          return()
-        }
-
-        line <- source_file$lines[as.character(parsed$line1)]
-
-        # the only tokens should be the { and the start of the expression.
-        some_before <- length(tokens_before) %!=% 0L
-        some_after <- length(tokens_after) %!=% 0L
-
-        content_after <- unname(substr(line, parsed$col1 + 1L, nchar(line)))
-        content_before <- unname(substr(line, 1, parsed$col1 - 1L))
-
-        only_comment <- rex::re_matches(content_after, rex::rex(any_spaces, "#", something, end))
-
-        double_curly <- rex::re_matches(content_after, rex::rex(start, "{")) ||
-          rex::re_matches(content_before, rex::rex("{", end))
-
-        if (double_curly) {
-          return()
-        }
-
-        whitespace_after <-
-          unname(substr(line, parsed$col1 + 1L, parsed$col1 + 1L)) %!=% ""
-
-        if (!some_before ||
-          some_after ||
-          (whitespace_after && !only_comment)) {
-          Lint(
-            filename = source_file$filename,
-            line_number = parsed$line1,
-            column_number = parsed$col1,
-            type = "style",
-            message = paste(
-              "Opening curly braces should never go on their own line and",
-              "should always be followed by a new line."
-            ),
-            line = line
-          )
-        }
-      }
+  xpath_before <- "//OP-LEFT-BRACE[
+    not(following-sibling::expr[1][OP-LEFT-BRACE])
+    and not(parent::expr/preceding-sibling::*[1][OP-LEFT-BRACE])
+    and @line1 != parent::expr/preceding-sibling::*[1][not(self::ELSE)]/@line2
+  ]"
+  if (allow_single_line) {
+    xpath_after <- "//OP-LEFT-BRACE[
+      not(following-sibling::expr[1][OP-LEFT-BRACE])
+      and not(parent::expr/preceding-sibling::OP-LEFT-BRACE)
+      and not(@line2 = following-sibling::OP-RIGHT-BRACE/@line1)
+      and @line2 = following-sibling::expr[position() = 1 and not(OP-LEFT-BRACE)]/@line1
+    ]"
+    message_after <- paste(
+      "Opening curly braces should always be followed by a new line",
+      "unless the paired closing brace is on the same line."
     )
+  } else {
+    xpath_after <- "//OP-LEFT-BRACE[
+      not(following-sibling::expr[1][OP-LEFT-BRACE])
+      and not(parent::expr/preceding-sibling::OP-LEFT-BRACE)
+      and @line2 = following-sibling::expr[1]/@line1
+    ]"
+    message_after <- "Opening curly braces should always be followed by a new line."
+  }
+
+  Linter(function(source_expression) {
+    if (!is_lint_level(source_expression, "expression")) {
+      return(list())
+    }
+
+    xml <- source_expression$xml_parsed_content
+
+    expr_before <- xml2::xml_find_all(xml, xpath_before)
+    lints_before <- xml_nodes_to_lints(
+      expr_before,
+      source_expression = source_expression,
+      lint_message = "Opening curly braces should never go on their own line.",
+      type = "style"
+    )
+
+    expr_after <- xml2::xml_find_all(xml, xpath_after)
+    lints_after <- xml_nodes_to_lints(
+      expr_after,
+      source_expression = source_expression,
+      lint_message = message_after,
+      type = "style"
+    )
+
+    return(c(lints_before, lints_after))
   })
 }

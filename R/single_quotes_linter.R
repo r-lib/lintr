@@ -1,27 +1,31 @@
-#' @describeIn linters Check that only single quotes are used to delimit
-#' string constants.
+#' Single quotes linter
+#'
+#' Check that only double quotes are used to delimit string constants.
+#'
+#' @evalRd rd_tags("single_quotes_linter")
+#' @seealso
+#'   [linters] for a complete list of linters available in lintr. \cr
+#'   <https://style.tidyverse.org/syntax.html#character-vectors>
 #' @export
 single_quotes_linter <- function() {
-  Linter(function(source_file) {
-    if (is.null(source_file$full_parsed_content)) {
+  squote_regex <- rex(start, zero_or_one(character_class("rR")), single_quote, any_non_double_quotes, single_quote, end)
+  Linter(function(source_expression) {
+    if (!is_lint_level(source_expression, "file")) {
       return(list())
     }
 
-    content <- source_file$full_parsed_content
+    content <- source_expression$full_parsed_content
     str_idx <- which(content$token == "STR_CONST")
-    squote_matches <- which(re_matches(
-      content[str_idx, "text"],
-      rex(start, single_quote, any_non_double_quotes, single_quote, end)
-    ))
+    squote_matches <- which(re_matches(content[str_idx, "text"], squote_regex))
 
     lapply(
       squote_matches,
       function(id) {
         with(content[str_idx[id], ], {
-          line <- source_file$file_lines[line1]
+          line <- source_expression$file_lines[[line1]]
           col2 <- if (line1 == line2) col2 else nchar(line)
           Lint(
-            filename = source_file$filename,
+            filename = source_expression$filename,
             line_number = line1,
             column_number = col1,
             type = "style",

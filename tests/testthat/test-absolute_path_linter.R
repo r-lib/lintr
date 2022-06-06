@@ -1,29 +1,3 @@
-test_that("unquote", {
-  f <- lintr:::unquote
-  expect_equal(f(character()), character())
-  expect_equal(f("foo"), "foo")
-  expect_equal(
-    f(c("'f", "\"f'", "\"f\""), q = "\""),
-      c("'f", "\"f'",   "f"))
-  expect_equal(
-    f(c("\"f\"", "'f'", "`f`", "`'f'`"), q = "'"),
-      c("\"f\"",  "f",  "`f`", "`'f'`"))
-  expect_equal(f("`a\\`b`", q = c("`")), "a`b")
-  x <- c("\"x\"", "\"\\n\"", "\"\\\\\"", "\"\\\\y\"", "\"\\ny\"", "\"\\\\ny\"", "\"\\\\\\ny\"",
-         "\"\\\\\\\\ny\"", "\"'\"", "\"\\\"\"", "\"`\"")
-  y <- c("x", "\n", "\\", "\\y", "\ny", "\\ny", "\\\ny", "\\\\ny", "'", "\"", "`")
-  expect_equal(f(x, q = "\""), y)
-})
-
-test_that("unescape", {
-  f <- lintr:::unescape
-  expect_equal(f(character()), character())
-  expect_equal(f("n"), "n")
-  x <- c("x", "x\\n", "x\\\\", "x\\\\y", "x\\ny", "x\\\\ny",  "x\\\\\\ny", "x\\\\\\\\ny")
-  y <- c("x", "x\n",  "x\\",   "x\\y",   "x\ny",  "x\\ny",    "x\\\ny",    "x\\\\ny")
-  expect_equal(f(x), y)
-})
-
 test_that("is_root_path", {
   f <- lintr:::is_root_path
 
@@ -199,4 +173,14 @@ test_that("returns the correct linting", {
     expect_lint(single_quote(path), NULL, linter)
     expect_lint(double_quote(path), NULL, linter)
   }
+})
+
+test_that("raw strings are handled correctly", {
+  skip_if_not_r_version("4.0.0")
+  expect_lint('R"(./blah)"', NULL, absolute_path_linter(lax = FALSE))
+  expect_lint(
+    "R'--[/blah/file.txt]--'",
+    rex::rex("Do not use absolute paths."),
+    absolute_path_linter(lax = FALSE)
+  )
 })

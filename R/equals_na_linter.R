@@ -1,24 +1,33 @@
-#' @describeIn linters that checks for x == NA and x != NA
+#' Equality check with NA linter
+#'
+#' Check for `x == NA` and `x != NA`
+#'
+#' @evalRd rd_tags("equals_na_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 equals_na_linter <- function() {
-  Linter(function(source_file) {
+  comparators <- c("EQ", "NE")
+  comparator_table <- paste0("self::", comparators, collapse = " or ")
+  na_table <- xp_text_in_table(c("NA", "NA_integer_", "NA_real_", "NA_complex_", "NA_character_"))
 
-    if (is.null(source_file$xml_parsed_content)) return(list())
+  xpath_fmt <- "//expr[expr[NUM_CONST[%s]]]/*[%s]"
+  xpath <- sprintf(xpath_fmt, na_table, comparator_table)
 
-    xml <- source_file$xml_parsed_content
+  Linter(function(source_expression) {
 
-    comparators <- c("EQ", "NE")
-    comparator_table <- paste0("self::", comparators, collapse = " or ")
-    na_values <- c("NA", "NA_integer_", "NA_real_", "NA_complex_", "NA_character_")
-    na_table <- paste("text() =", quote_wrap(na_values, "'"), collapse = " or ")
+    if (!is_lint_level(source_expression, "expression")) {
+      return(list())
+    }
 
-    xpath_fmt <- "//expr[expr[NUM_CONST[%s]]]/*[%s]"
-    xpath <- sprintf(xpath_fmt, na_table, comparator_table)
+    xml <- source_expression$xml_parsed_content
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    lapply(bad_expr, xml_nodes_to_lint, source_file,
-           message = "Use is.na for comparisons to NA (not == or !=)",
-           type = "warning")
+    xml_nodes_to_lints(
+      bad_expr,
+      source_expression,
+      lint_message = "Use is.na for comparisons to NA (not == or !=)",
+      type = "warning"
+    )
   })
 }

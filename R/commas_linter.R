@@ -1,104 +1,50 @@
-#' @describeIn linters check that all commas are followed by spaces, but do not
-#' have spaces before them.
+#' Commas linter
+#'
+#' Check that all commas are followed by spaces, but do not have spaces before them.
+#'
+#' @evalRd rd_tags("commas_linter")
+#' @seealso
+#'   [linters] for a complete list of linters available in lintr. \cr
+#'   <https://style.tidyverse.org/syntax.html#commas>
 #' @importFrom utils head
 #' @export
 commas_linter <- function() {
-  Linter(function(source_file) {
+  # conditions are in carefully-chosen order for performance --
+  #   an expression like c(a,b,c,....) with many elements can have
+  #   a huge number of preceding-siblings and the performance of
+  #   preceding-sibling::*[1][not(self::OP-COMMA)] is terrible.
+  #   This approach exits early on most nodes ('and' condition)
+  #   to avoid this. See #1340.
+  xpath_before <- "
+  //OP-COMMA[
+    @col1 != preceding-sibling::*[1]/@col2 + 1 and
+    @line1 = preceding-sibling::*[1]/@line1 and
+    not(preceding-sibling::*[1][self::OP-COMMA or self::EQ_SUB])
+  ]"
+  xpath_after <- "//OP-COMMA[@line1 = following-sibling::*[1]/@line1 and @col1 = following-sibling::*[1]/@col1 - 1]"
 
-    re <- rex(list(one_or_more(" "), ",") %or% list(",", non_space))
+  Linter(function(source_expression) {
+    if (!is_lint_level(source_expression, "expression")) {
+      return(list())
+    }
+    xml <- source_expression$xml_parsed_content
 
-    res <- re_matches(source_file$lines, re, global = TRUE, locations = TRUE)
+    before_lints <- xml_nodes_to_lints(
+      xml2::xml_find_all(xml, xpath_before),
+      source_expression = source_expression,
+      lint_message = "Commas should never have a space before.",
+      range_start_xpath = "number(./preceding-sibling::*[1]/@col2 + 1)", # start after preceding expression
+      range_end_xpath = "number(./@col1 - 1)" # end before comma
+    )
 
-    lapply(seq_along(res), function(id) {
-      line_number <- names(source_file$lines)[id]
+    after_lints <- xml_nodes_to_lints(
+      xml2::xml_find_all(xml, xpath_after),
+      source_expression = source_expression,
+      lint_message = "Commas should always have a space after.",
+      range_start_xpath = "number(./@col2 + 1)", # start and end after comma
+      range_end_xpath = "number(./@col2 + 1)"
+    )
 
-      mapply(
-        FUN = function(start, end) {
-          if (is.na(start)) {
-            return()
-          }
-
-          lints <- list()
-
-          line <- unname(source_file$lines[[id]])
-
-          comma_loc <- start + re_matches(substr(line, start, end), rex(","), locations = TRUE)$start - 1L
-
-          space_before <- substr(line, comma_loc - 1L, comma_loc - 1L) %==% " "
-
-          if (space_before) {
-
-            comma_loc_filter <- source_file$parsed_content$line1 == line_number &
-              source_file$parsed_content$col1 == comma_loc
-
-            has_token <- any(comma_loc_filter &
-                               source_file$parsed_content$token == "','")
-
-            start_of_line <- re_matches(line, rex(start, spaces, ","))
-
-            empty_comma <- substr(line, comma_loc - 2L, comma_loc - 1L) %==% ", "
-
-            parent <- source_file$parsed_content$parent
-            parent <- replace(parent, parent == 0, NA)
-
-            # a variable that is true for every node who has a grandchild that is switch,
-            # i.e, any expression that starts with the function call to switch.
-            switch_grandparents <- source_file$parsed_content[
-              # as.character allows interpretation as row indexes rather than row numbers
-              as.character(parent[source_file$parsed_content$text == "switch"]),
-            ]$parent
-
-            is_blank_switch <- any(comma_loc_filter &
-                                     (source_file$parsed_content$parent %in% switch_grandparents) &
-                                     c(NA, head(source_file$parsed_content$token, -1)) == "EQ_SUB",
-                                   na.rm = TRUE
-            )
-
-            if (has_token &&
-              !start_of_line &&
-              !empty_comma &&
-              !is_blank_switch) {
-
-              lints[[length(lints) + 1L]] <- Lint(
-                filename = source_file$filename,
-                line_number = line_number,
-                column_number = comma_loc,
-                type = "style",
-                message = "Commas should never have a space before.",
-                line = line,
-                ranges = list(c(start, end))
-              )
-            }
-          }
-
-          # we still need to check if there is a non-space after
-          non_space_after <- re_matches(substr(line, comma_loc + 1L, comma_loc + 1L), rex(non_space))
-
-          if (non_space_after) {
-
-            has_token <- any(source_file$parsed_content$line1 == line_number &
-                               source_file$parsed_content$col1 == comma_loc &
-                               source_file$parsed_content$token == "','")
-
-            if (has_token) {
-              lints[[length(lints) + 1L]] <- Lint(
-                filename = source_file$filename,
-                line_number = line_number,
-                column_number = comma_loc + 1,
-                type = "style",
-                message = "Commas should always have a space after.",
-                line = line
-              )
-            }
-
-          }
-
-          lints
-        },
-        start = res[[id]]$start,
-        end = res[[id]]$end,
-        SIMPLIFY = FALSE
-      )
-    })
+    c(before_lints, after_lints)
   })
 }

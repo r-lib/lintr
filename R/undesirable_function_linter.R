@@ -1,46 +1,63 @@
-#' @describeIn linters Report the use of undesirable functions, e.g.
-#'   \code{return}, \code{options}, or \code{sapply} and suggest an alternative.
-#' @param fun Named character vector, where the names are the names of the
-#'   undesirable functions, and the values are the text for the alternative
-#'   function to use (or \code{NA}).
-#' @param symbol_is_undesirable Whether to consider the use of an undesirable
-#'   function name as a symbol undesirable or not.
+#' Undesirable function linter
+#'
+#' Report the use of undesirable functions, e.g. [base::return()], [base::options()], or
+#' [base::sapply()] and suggest an alternative.
+#'
+#' @param fun Named character vector. `names(fun)` correspond to undesirable functions,
+#'   while the values give a description of why the function is undesirable.
+#'   If `NA`, no additional information is given in the lint message. Defaults to
+#'   [default_undesirable_functions]. To make small customizations to this list,
+#'   use [modify_defaults()].
+#' @param symbol_is_undesirable Whether to consider the use of an undesirable function name as a symbol undesirable
+#'   or not.
+#' @evalRd rd_tags("undesirable_function_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   stopifnot(is.logical(symbol_is_undesirable))
-  Linter(function(source_file) {
-    if (symbol_is_undesirable) {
-      vals <- c("SYMBOL_FUNCTION_CALL", "SYMBOL")
-    } else {
-      vals <- "SYMBOL_FUNCTION_CALL"
-    }
-    lapply(
-      ids_with_token(source_file, vals, fun = `%in%`),
-      function(id) {
-        token <- with_id(source_file, id)
-        fun_name <- token[["text"]]
-        if (fun_name %in% names(fun)) {
-          line_num <- token[["line1"]]
-          start_col_num <- token[["col1"]]
-          end_col_num <- token[["col2"]]
-          msg <- sprintf("Function \"%s\" is undesirable.", fun_name)
-          alt_fun <- fun[[fun_name]]
-          if (!is.na(alt_fun)) {
-            msg <- c(msg, sprintf("As an alternative, %s.", alt_fun))
-          }
 
-          Lint(
-            filename = source_file[["filename"]],
-            line_number = line_num,
-            column_number = start_col_num,
-            type = "warning",
-            message = paste0(msg, collapse = " "),
-            line = source_file[["lines"]][[as.character(line_num)]],
-            ranges = list(c(start_col_num, end_col_num))
-          )
+  xp_condition <- xp_and(
+    xp_text_in_table(names(fun)),
+    paste0(
+      "not(parent::expr/preceding-sibling::expr[last()][SYMBOL_FUNCTION_CALL[",
+      xp_text_in_table(c("library", "require")),
+      "]])"
+    ),
+    "not(preceding-sibling::OP-DOLLAR)"
+  )
+
+  if (symbol_is_undesirable) {
+    xpath <- glue::glue("//SYMBOL_FUNCTION_CALL[{xp_condition}] | //SYMBOL[{xp_condition}]")
+  } else {
+    xpath <- glue::glue("//SYMBOL_FUNCTION_CALL[{xp_condition}]")
+  }
+
+
+  Linter(function(source_expression) {
+    if (!is_lint_level(source_expression, "expression")) {
+      return(list())
+    }
+    matched_nodes <- xml2::xml_find_all(source_expression$xml_parsed_content, xpath)
+    fun_names <- get_r_string(matched_nodes)
+
+    msgs <- vapply(
+      stats::setNames(nm = unique(fun_names)),
+      function(fun_name) {
+        msg <- sprintf('Function "%s" is undesirable.', fun_name)
+        alternative <- fun[[fun_name]]
+        if (!is.na(alternative)) {
+          msg <- paste(msg, sprintf("As an alternative, %s.", alternative))
         }
-      }
+        msg
+      },
+      character(1L)
+    )
+
+    xml_nodes_to_lints(
+      matched_nodes,
+      source_expression = source_expression,
+      lint_message = unname(msgs[fun_names])
     )
   })
 }

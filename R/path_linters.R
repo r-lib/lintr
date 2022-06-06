@@ -59,24 +59,23 @@ is_path <- function(path) {
   re_matches(path, path_regex)
 }
 
-is_valid_path <- function(path, lax=FALSE) {
+is_valid_path <- function(paths, lax = FALSE) {
   # Given a character vector of paths, return FALSE for directory or file having valid characters.
   # On Windows, invalid chars are all control chars and: * ? " < > | :
   # On Unix, all characters are valid, except when lax=TRUE (use same invalid chars as Windows).
   as.logical(
     Map(
       function(dirs, is_win32) {
-        if (is_win32 || lax) {
-          if (length(dirs) && is_root_path(dirs[[1L]])) {
-            dirs <- tail(dirs, -1L)  # remove root element ("/", "C:", or "\\")
-          }
-          !any(re_matches(dirs, unsafe_char_regex))
-        } else {
-          TRUE  # either Unix path or strict (lax=FALSE)
+        if (!is_win32 && !lax) {
+          return(TRUE)
         }
+        if (length(dirs) > 0L && is_root_path(dirs[[1L]])) {
+          dirs <- tail(dirs, -1L)  # remove root element ("/", "C:", or "\\")
+        }
+        !any(re_matches(dirs, unsafe_char_regex))
       },
-      split_path(path),
-      re_matches(path, rex(or(list(root_regex[["win32"]], root_regex[["unc"]], "\\"))))
+      split_paths(paths),
+      re_matches(paths, rex(or(list(root_regex[["win32"]], root_regex[["unc"]], "\\"))))
     )
   )
 }
@@ -91,7 +90,7 @@ is_long_path <- function(path) {
   )
 }
 
-is_valid_long_path <- function(path, lax=FALSE) {
+is_valid_long_path <- function(path, lax = FALSE) {
   # Convenience function to avoid linting short paths and those unlikely to be valid paths
   ret <- is_valid_path(path, lax)
   if (lax) {
@@ -101,67 +100,52 @@ is_valid_long_path <- function(path, lax=FALSE) {
 }
 
 
-split_path <- function(path, sep="/|\\\\") {
+split_paths <- function(path, sep = "/|\\\\") {
   if (!is.character(path)) {
     stop("argument 'path' should be a character vector")
   }
   if (!is.character(sep) || length(sep) != 1L || !nzchar(sep)) {
     stop("argument 'sep' should be a non-empty regular expression character string")
   }
-  Map(
-    function(dirs, prefix) {
-      # add root dir if needed
-      i <- 1L
-      for (dir in seq_along(dirs)) {
-        if (!nzchar(dirs[[i]])) {
-          i <- i + 1L
-        } else {
-          break
-        }
-      }
-      i <- i - 1L
-      if (i > 0L) {
-        dirs <- c(paste0(rep(prefix, i), collapse = ""), tail(dirs, -i))
-      }
-      # add // to protocols (like http, smb, ...)
-      if (length(dirs)) {
-        l <- nchar(dirs[[1L]])
-        if (l > 2L && substr(dirs[[1L]], l, l) == ":") {
-          dirs[[1L]] <- paste0(dirs[[1L]], "//")
-        }
-      }
-      # remove empty dirs
-      dirs[nzchar(dirs)]
-    },
-    strsplit(path, sep),
-    substr(path, 1L, 1L)
-  )
+  Map(split_path, strsplit(path, sep), substr(path, 1L, 1L))
+}
+
+split_path <- function(dirs, prefix) {
+  # add root dir if needed
+  nonempty_dirs <- nzchar(dirs)
+  i <- match(TRUE, nonempty_dirs, nomatch = length(dirs) + 1L) - 1L
+  if (i > 0L) {
+    dirs <- c(strrep(prefix, i), tail(dirs, -i))
+  }
+
+  # add // to protocols (like http, smb, ...)
+  if (length(dirs) > 0L && grepl("..:$", dirs[[1L]])) {
+    dirs[[1L]] <- paste0(dirs[[1L]], "//")
+  }
+
+  # remove empty dirs
+  dirs[nzchar(dirs)]
 }
 
 #' @include utils.R
-make_path_linter <- function(path_function, message, linter, name = linter_auto_name()) {
+path_linter_factory <- function(path_function, message, linter, name = linter_auto_name()) {
   force(name)
-  Linter(function(source_file) {
+  Linter(function(source_expression) {
     lapply(
-      ids_with_token(source_file, "STR_CONST"),
+      ids_with_token(source_expression, "STR_CONST"),
       function(id) {
-        token <- with_id(source_file, id)
-        quote_char <- if (substr(token[["text"]], 1, 1) == '"') {
-          '"'
-        } else {
-          "'"
-        }
-        path <- unquote(token[["text"]], q = quote_char)
+        token <- with_id(source_expression, id)
+        path <- get_r_string(token$text)
         if (path_function(path)) {
           start <- token[["col1"]] + 1L
           end <- token[["col2"]] - 1L
           Lint(
-            filename = source_file[["filename"]],
+            filename = source_expression[["filename"]],
             line_number = token[["line1"]],
             column_number = start,
             type = "warning",
             message = message,
-            line = source_file[["lines"]][[as.character(token[["line1"]])]],
+            line = source_expression[["lines"]][[as.character(token[["line1"]])]],
             ranges = list(c(start, end))
           )
         }
@@ -170,11 +154,21 @@ make_path_linter <- function(path_function, message, linter, name = linter_auto_
   }, name = name)
 }
 
-#' @describeIn linters  Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
-#' @param lax  Less stringent linting, leading to fewer false positives.
+#' Absolute path linter
+#'
+#' Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
+#'
+#' @param lax Less stringent linting, leading to fewer false positives.
+#' If `TRUE`, only lint path strings, which
+#'
+#' * contain at least two path elements, with one having at least two characters and
+#' * contain only alphanumeric chars (including UTF-8), spaces, and win32-allowed punctuation
+#'
+#' @evalRd rd_tags("absolute_path_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 absolute_path_linter <- function(lax = TRUE) {
-  make_path_linter(
+  path_linter_factory(
     path_function = function(path) {
       is_absolute_path(path) && is_valid_long_path(path, lax)
     },
@@ -182,10 +176,16 @@ absolute_path_linter <- function(lax = TRUE) {
   )
 }
 
-#' @describeIn linters  Check that file.path() is used to construct safe and portable paths.
+#' Non-portable path linter
+#'
+#' Check that [file.path()] is used to construct safe and portable paths.
+#'
+#' @inheritParams absolute_path_linter
+#' @evalRd rd_tags("nonportable_path_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 nonportable_path_linter <- function(lax = TRUE) {
-  make_path_linter(
+  path_linter_factory(
     path_function = function(path) {
       is_path(path) && is_valid_long_path(path, lax) && path != "/" &&
         re_matches(path, rex(one_of("/", "\\")))

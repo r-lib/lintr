@@ -1,31 +1,31 @@
-#' @describeIn linters  Check that integers are explicitly typed using the form \code{1L} instead of
-#'                      \code{1}.
+#' Implicit integer linter
+#'
+#' Check that integers are explicitly typed using the form `1L` instead of `1`.
+#'
+#' @evalRd rd_tags("implicit_integer_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 implicit_integer_linter <- function() {
-  Linter(function(source_file) {
-    lapply(
-      ids_with_token(source_file, "NUM_CONST"),  # for numbers (finite/Inf/NaN) and logicals
-      function(id) {
-        token <- with_id(source_file, id)
-        if (is_implicit_integer(token[["text"]])) {
-          line_num <- token[["line2"]]
-          end_col_num <- token[["col2"]]
-          start_col_num <- token[["col1"]]
-          Lint(
-            filename = source_file[["filename"]],
-            line_number = line_num,
-            column_number = end_col_num + 1L,
-            type = "style",
-            message =
-              "Integers should not be implicit. Use the form 1L for integers or 1.0 for doubles.",
-            line = source_file[["lines"]][[as.character(line_num)]],
-            ranges = list(c(start_col_num, end_col_num))
-          )
-        }
-      }
+  Linter(function(source_expression) {
+    if (!is_lint_level(source_expression, "file")) {
+      return(list())
+    }
+
+    xml <- source_expression$full_xml_parsed_content
+
+    numbers <- xml2::xml_find_all(xml, "//NUM_CONST")
+
+    xml_nodes_to_lints(
+      numbers[is_implicit_integer(xml2::xml_text(numbers))],
+      source_expression = source_expression,
+      lint_message = "Integers should not be implicit. Use the form 1L for integers or 1.0 for doubles.",
+      type = "style",
+      column_number_xpath = "number(./@col2 + 1)", # mark at end
+      range_end_xpath = "number(./@col2 + 1)" # end after number for easy fixing (enter "L" or ".0")
     )
   })
 }
+
 is_implicit_integer <- function(s) {
   is_implicit <- !re_matches(s, rex(or(
     group(start, upper),  # Inf, NaN and logicals (TRUE, FALSE, NA, NA_*)

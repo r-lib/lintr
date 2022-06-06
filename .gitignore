@@ -5,6 +5,16 @@
 .idea
 bad.R
 script.R
+*~
+\#*\#
+
+*.o
+*.so
 
 *.Rcheck
 lintr_*.tar.gz
+testthat-problems.rds
+
+.dev/*.csv
+docs
+inst/doc
