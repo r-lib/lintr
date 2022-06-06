@@ -76,7 +76,7 @@
 <li><code>camel_case_linter()</code></li>
 <li><code>multiple_dots_linter()</code></li>
 <li><code>snake_case_linter()</code></li>
-<li><code>trailing_semicolons_linter()as calls</code></li>
+<li><code>trailing_semicolons_linter()</code></li>
 </ul></li>
 <li><p>Removed <code>"return"</code> from <code>all_undesirable_functions</code>. Follow <a href="https://github.com/r-lib/lintr/issues/1100" class="external-link">#1100</a> for an upcoming <code>return_linter()</code> to lint unnecessary <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> statements (<a href="https://github.com/r-lib/lintr/issues/1146" class="external-link">#1146</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>). Note that you can replicate old behavior by supplying <code>return</code> as a custom undesirable function: <code>undesirable_function_linter(c(all_undesirable_functions, list(return = NA)))</code></p></li>
 </ul></div>
