@@ -148,6 +148,6 @@ test_that("assignment targets of compound lhs are correctly identified", {
 test_that("object_name_linter won't fail if an imported namespace is unavailable", {
   expect_length(
     lint_package(test_path("dummy_packages", "missing_dep"), linters = object_name_linter(), parse_settings = FALSE),
-    1L
+    3L
   )
 })

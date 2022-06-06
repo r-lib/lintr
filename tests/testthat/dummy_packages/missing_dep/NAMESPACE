@@ -1,3 +1,4 @@
 import(myFancyUpstream)
+importFrom(aGemOfAPackage, a_veritably_dilettantish_function,
+                           sPoNgEbOb_cAsE.FuNcTiOn)
 export(downstream)
-
