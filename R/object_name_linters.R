@@ -26,24 +26,20 @@ object_name_xpath <- local({
 #'
 #' Note when used in a package, in order to ignore objects imported
 #'   from other namespaces, this linter will attempt [getNamespaceExports()]
-#'   whenever an `import(PKG)` statement is found in your NAMESPACE file.
-#'   If this fails (e.g., the package is not yet installed), the linter
-#'   won't be able to ignore such usages.
+#'   whenever an `import(PKG)` or `importFrom(PKG, ...)` statement is found
+#'   in your NAMESPACE file. If [requireNamespace()] fails (e.g., the package
+#'   is not yet installed), the linter won't be able to ignore some usages
+#'   that would otherwise be allowed.
 #'
 #' Suppose, for example, you have `import(upstream)` in your NAMESPACE,
-#'   which makes available its exported function
-#'   `a_really_quite_long_function_name` that you then use in your package.
+#'   which makes available its exported S3 generic function
+#'   `a_really_quite_long_function_name` that you then extend in your package
+#'   by defining a corresponding method for your class `my_class`.
 #'   Then, if `upstream` is not installed when this linter runs, a lint
-#'   will be thrown on this object (even though you don't "own" its name).
+#'   will be thrown on this object (even though you don't "own" its full name).
 #'
-#' There are three options to get lintr to work correctly:
-#'   (1) install the package so that it's available in
-#'   the session where this linter is running; (2) always namespace-qualify
-#'   usages, because this linter ignores names in `pkg::foo()` form; and
-#'   (3) use `importFrom(pkg, foo)` instead of a blanket `import(pkg)` in your
-#'   NAMESPACE, because this linter takes these imported names as given;
-#'   and of course (3) install the package so that it's available in
-#'   the session where this linter is running.
+#' The best way to get lintr to work correctly is to install the package so
+#'   that it's available in the session where this linter is running.
 #'
 #' @param styles A subset of
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
