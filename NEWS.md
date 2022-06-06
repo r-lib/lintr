@@ -288,11 +288,11 @@ of general interest to the broader R community. More will be included in future 
     (e.g. `"\1"`) to account for an R parser bug (https://bugs.r-project.org/show_bug.cgi?id=18323; #1056, @MichaelChirico)
    + Handle Rmd inputs containing unevaluated code blocks with named format specifiers (#472, @russHyde)
 * `linters_with_defaults()` (formerly `with_defaults()`)
-   + No longer duplicates the `lintr_function` class when it is already present (#511, #612, @AshesITR)
-   + Warns if a named argument is `NULL` but its name is not in `default` (#1049, @AshesITR)
-* `spaces_left_parentheses_linter()`: fix a bug causing warnings in nested expressions like
-  "In `parent == parent[before_operator_idx]` longer object length is not a multiple of shorter object length" (#654, @AshesITR)
-* `line_length_linter()`: fix a bug causing duplicate lints for lines containing multiple expressions (#681, #682, @AshesITR)
+   + No longer duplicates the `lintr_function` class when it is already present (#511, @AshesITR)
+   + Warns if a named argument is `NULL` but its name is not in `defaults` (#1049, @AshesITR)
+* `spaces_left_parentheses_linter()`: fix a bug causing warnings like "In `parent == parent[before_operator_idx]`
+  longer object length is not a multiple of shorter object length" in nested expressions (#654, @AshesITR)
+* `line_length_linter()`: fix a bug causing duplicate lints for lines containing multiple expressions (#681, @AshesITR)
 * `linters_with_defaults()` handles automatic naming of very long arguments correctly (#774, @MichaelChirico)
 * `object_name_linter()` no longer lints names used for subsetting (#582, @AshesITR)
 * `lint_package()`
