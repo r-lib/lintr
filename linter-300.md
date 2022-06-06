@@ -111,3 +111,20 @@ With the decision to accept a bevy of linters from Google that are not strictly 
 style guide, we also opened the door to hosting linters for enforcing other style guides, for example
 the [Bioconductor R code guide](https://contributions.bioconductor.org/r-code.html). We look forward to
 community contributions in this vein.
+
+# Acknowledgements
+
+A great big thanks to all 23 authors who have contributed to this release of lintr:
+
+[@1beb](https://github.com/1beb), [@AshesITR](https://github.com/AshesITR),
+[@danielinteractive](https://github.com/danielinteractive), [@dmurdoch](https://github.com/dmurdoch),
+[@dpprdan](https://github.com/dpprdan), [@dragosmg](https://github.com/dragosmg),
+[@eitsupi](https://github.com/eitsupi), [@fabian-s](https://github.com/fabian-s),
+[@fdlk](https://github.com/fdlk), [@frederic-mahe](https://github.com/frederic-mahe),
+[@hadley](https://github.com/hadley), [@huisman](https://github.com/huisman),
+[@jimhester](https://github.com/jimhester), [@jonkeane](https://github.com/jonkeane),
+[@klmr](https://github.com/klmr), [@kpagacz](https://github.com/kpagacz),
+[@leogama](https://github.com/leogama), [@MichaelChirico](https://github.com/MichaelChirico),
+[@michaelquinn32](https://github.com/michaelquinn32), [@renkun-ken](https://github.com/renkun-ken),
+[@russHyde](https://github.com/russHyde), [@thisisnic](https://github.com/thisisnic),
+[@yutannihilation](https://github.com/yutannihilation)
