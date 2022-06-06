@@ -229,11 +229,11 @@ of general interest to the broader R community. More will be included in future 
 
 * **Selective exclusion syntax**: New syntax to exclude only selected linters from certain lines or passages.
   Use `# nolint: linter_name, linter2_name.` or `# nolint start: linter_name, linter2_name.`
-  in source files or named lists of line numbers in `.lintr`.
+  in source files or named lists of line numbers in `.lintr`. Note the terminal `.` is required.
   Also allows for partial matching as long as the supplied prefix is unique, e.g.
-  `# nolint: infix_spaces` works to exclude `infix_spaces_linter` (#660, #872, @AshesITR)
-* Added the linter name to lintrs output to facilitate discovery of the correct name (#1357, @AshesITR)
-* `lint()`: new optional argument `text` for supplying a string or lines directly, e.g. if the file is already 
+  `# nolint: infix_spaces.` works to exclude `infix_spaces_linter` (#605, #872, @AshesITR)
+  + Added the linter name to lintrs output to facilitate discovery of the correct name (#1357, @AshesITR)
+* `lint()`: new optional argument `text` for supplying a line or lines directly, e.g. if the file is already 
   in memory or linting is being done _ad hoc_. (#503, @renkun-ken)
 * `lint_dir()` excludes the `renv` and `packrat` directories by default (#697, @AshesITR)
 * **Encodings**: lintr now supports non-system character Encodings. The correct the correct encoding
@@ -255,7 +255,8 @@ of general interest to the broader R community. More will be included in future 
   expressed in XPath into `Lint` objects (#1124, #1216, #1234, @MichaelChirico and @AshesITR)
 * `use_lintr()`: new exported helper for creating a minimal `.lintr` configuration (#902, @AshesITR)
 * **Performance**: Optimized performance-critical functions in lintr, such as `get_source_expressions()` resulting in about 2x speedup 
-  in our test suite and even more for complex files (#1169, #1197, #1200, #1201, #1214, @MichaelChirico and @AshesITR) 
+  in our test suite and even more for complex files (#1169, #1197, #1200, #1201, #1214, @MichaelChirico and @AshesITR). Average
+  `lint_package()` execution time is down about 30% and the median package sees about 40% improvement.
 * **Jenkins CI**: Support for writing comments to GitHub repo when running in Jenkins CI (#488, @fdlk)
 * `seq_linter()`: improve lint message to be clearer about the reason for linting. (#522, @MichaelChirico)
 * `unneeded_concatenation_linter()`
