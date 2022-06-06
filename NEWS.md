@@ -198,6 +198,7 @@ of general interest to the broader R community. More will be included in future 
 * `expect_comparison_linter()` Require usage of `expect_gt(x, y)` over `expect_true(x > y)` and similar
 * `vector_logic_linter()` Require use of scalar logical operators (`&&` and `||`) inside `if()` conditions and similar
 * `any_is_na_linter()` Require usage of `anyNA(x)` over `any(is.na(x))`
+* `any_duplicated_linter()` Require usage of `anyDuplicated(x) > 0L` over `any(duplicated(x))` and similar
 * `class_equals_linter()` Prevent comparing `class(x)` with `==`, `!=`, or `%in%`, where `inherits()` is typically preferred
 * `outer_negation_linter()` Require usage of `!any(x)` over `all(!x)` and `!all(x)` over `any(!x)`
 * `numeric_leading_zero_linter()` Require a leading `0` in fractional numeric constants, e.g. `0.1` instead of `.1`
