@@ -206,7 +206,7 @@ of general interest to the broader R community. More will be included in future 
 * `paste_linter()` lint for common mis-use of `paste()` and `paste0()`:
    + `paste0()` encouraged instead of `paste(sep = "")`
    + `toString()` or `glue::glue_collapse()` encouraged instead of `paste(x, collapse = ", ")`
-   + `sep=` passed to `paste0()` -- typically a mistake
+   + lint `sep=` passed to `paste0()` -- typically a mistake
 * `nested_ifelse_linter()` Prevent nested calls to `ifelse()` like `ifelse(A, x, ifelse(B, y, z))`, and similar
 * `condition_message_linter()` Prevent condition messages from being constructed like `stop(paste(...))`
   (where just `stop(...)` is preferable)
@@ -217,7 +217,8 @@ of general interest to the broader R community. More will be included in future 
 * `regex_subset_linter()` Require usage of `grep(ptn, x, value = TRUE)` over `x[grep(ptn, x)]` and similar
 * `consecutive_stopifnot_linter()` Require consecutive calls to `stopifnot()` to be unified into one
 * `ifelse_censor_linter()` Require usage of `pmax()` / `pmin()` where appropriate, e.g. `ifelse(x > y, x, y)` is `pmax(x, y)`
-* `system_file_linter()` Require file paths to be constructed by `system.file()` instead of calling `file.path()` directly
+* `system_file_linter()` Prevent usage like `file.path(system.file("A", package = "pkg"), "B")` where simply
+  `system.file("A", "B", package = "pkg") is more concise and readable
 * `strings_as_factors_linter()` Check for code designed to work before and after the new `stringsAsFactors = FALSE` default
 * `inner_combine_linter()` Require inputs to vectorized functions to be combined first rather than later,
   e.g. `as.Date(c(x, y))` over `c(as.Date(x), as.Date(y))`
