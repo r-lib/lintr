@@ -1,0 +1,3 @@
+import(myFancyUpstream)
+export(downstream)
+

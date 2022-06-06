@@ -10,14 +10,27 @@ namespace_imports <- function(path = find_package()) {
 
   full_imports <- lengths(imports) == 1L
 
-  # this loads the namespaces, but is the easiest way to do it
-  imports[full_imports] <- lapply(imports[full_imports], function(x) list(x, getNamespaceExports(asNamespace(x))))
+  imports[full_imports] <- lapply(imports[full_imports], safe_get_exports)
 
+  funs <- lapply(imports, `[[`, 2L)
   data.frame(
-    pkg = unlist(lapply(imports, function(x) rep(x[[1L]], length(x[[2L]])))),
-    fun = unlist(lapply(imports, `[[`, 2L)),
+    pkg = rep(unlist(lapply(imports, `[[`, 1L)), lengths(funs)),
+    fun = unlist(funs),
     stringsAsFactors = FALSE
   )
+}
+
+# this loads the namespaces, but is the easiest way to do it
+# test package available packages to avoid failing out as in #1360
+#   typically, users are running this on their own package directories and thus
+#   will have the namespace dependencies installed, but we can't guarantee this.
+safe_get_exports <- function(ns) {
+  exports <- tryCatch(
+    getNamespaceExports(asNamespace(ns)),
+    error = function(cond) character()
+  )
+
+  list(ns, exports)
 }
 
 # filter namespace_imports() for S3 generics

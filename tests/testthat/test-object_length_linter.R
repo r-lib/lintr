@@ -40,3 +40,10 @@ test_that("lints S3 generics correctly", {
     list(line_number = 9L)
   ), linter)
 })
+
+test_that("object_length_linter won't fail if an imported namespace is unavailable", {
+  expect_length(
+    lint_package(test_path("dummy_packages", "missing_dep"), linters = object_length_linter(), parse_settings = FALSE),
+    1L
+  )
+})
