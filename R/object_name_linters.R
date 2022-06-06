@@ -24,6 +24,25 @@ object_name_xpath <- local({
 #' Check that object names conform to a naming style.
 #' The default naming styles are "snake_case" and "symbols".
 #'
+#' Note when used in a package, in order to ignore objects imported
+#'   from other namespaces, this linter will attempt [getNamespaceExports()]
+#'   whenever an `import(PKG)` statement is found in your NAMESPACE file.
+#'   If this fails (e.g., the package is not yet installed), the linter
+#'   won't be able to ignore such usages.
+#'
+#' Suppose, for example, you have `import(upstream)` in your NAMESPACE,
+#'   which makes available its exported function
+#'   `a_really_quite_long_function_name` that you then use in your package.
+#'   Then, if `upstream` is not installed when this linter runs, a lint
+#'   will be thrown on this object (even though you don't "own" its name).
+#'
+#' There are three workarounds: (1) always namespace-qualify usages,
+#'   because this linter ignores names in `pkg::foo()` form; (2) use
+#'   `@importFrom(pkg, foo)` instead of a blanket `import(pkg)` in your
+#'   NAMESPACE, because this linter takes these imported names as given;
+#'   and of course (3) install the package so that it's available in
+#'   the session where this linter is running.
+#'
 #' @param styles A subset of
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
 #'   match at least one of these styles.
@@ -150,6 +169,9 @@ regexes_rd <- toString(paste0("\\sQuote{", names(style_regexes), "}"))
 #'  * leading `.`, e.g. `.my_hidden_function` has length 18.
 #'  * "%%" for infix operators, e.g. `%my_op%` has length 5.
 #'  * trailing `<-` for assignment functions, e.g. `my_attr<-` has length 7.
+#'
+#' Note that this behavior relies in part on having packages in your Imports available;
+#'   see the detailed note in [object_name_linter()] for more details.
 #'
 #' @param length maximum variable name length allowed.
 #' @evalRd rd_tags("object_length_linter")
