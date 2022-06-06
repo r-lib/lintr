@@ -14,7 +14,45 @@ This blog post will highlight the biggest changes coming in this update which dr
 
 ## Selective exclusions
 
-`< # nolint: linter. > `
+lintr now supports targeted exclusions of specific linters through an extension of the `# nolint` syntax.
+
+Consider the following example:
+
+```r
+T_and_F_symbol_linter=function(){
+  list()
+}
+```
+
+This snippet generates 5 lints: `object_name_linter()` because of the uppercase `T` and `F`;
+`brace_linter()` because `{` should be separated from `)` by a space; `paren_body_linter`
+because the function body should be separated from `)` by a space; `infix_spaces_linter` because
+`=` should be surrounded by spaces on both sides; and `assignment_linter` because `<-` should
+be used for assignment.
+
+The first lint is spurious because `t` and `f` do not correctly convey that this linter targets
+the symbols `T` and `F`, so we want to ignore it. Prior to this release, we would have to
+"throw the baby out with the bathwater" by suppressing _all five lints_ like so:
+
+```r
+T_and_F_symbol_linter=function(){ # nolint. T and F are OK here.
+  list()
+}
+```
+
+This hides the other four lints and prevents any new lints from being detected on this line in the future,
+which on average allows the overall quality of your projects/scripts to dip.
+
+With the new feature, you'd write the exclusion like this instead:
+
+```r
+T_and_F_symbol_linter=function(){ # nolint: object_name_linter. T and F are OK here.
+  list()
+}
+```
+
+By qualifying the exclusion, the other 4 lints will be detected and exposed by `lint()` so
+that you can fix them! See `?exclude` for more details.
 
 ## Linter factories
 
