@@ -121,6 +121,7 @@
    + Added new styles `"symbols"` and `"SNAKE_CASE"` (#494, #495, #615, #670, @MichaelChirico and @AshesITR)
      - `"symbols"` is a new default style which won't lint all-symbol object names. In particular, that means
        operator names like `%+%` are skipped.
+   + No longer lints names used in `$` extractions (#582, @AshesITR)
 * `object_usage_linter()`
    + Detect global variables if there are top-level dollar-assignments (#666, @AshesITR)
    + Report usage warnings spanning multiple lines (#507, @AshesITR)
@@ -294,7 +295,6 @@ of general interest to the broader R community. More will be included in future 
   longer object length is not a multiple of shorter object length" in nested expressions (#654, @AshesITR)
 * `line_length_linter()`: fix a bug causing duplicate lints for lines containing multiple expressions (#681, @AshesITR)
 * `linters_with_defaults()` handles automatic naming of very long arguments correctly (#774, @MichaelChirico)
-* `object_name_linter()` no longer lints names used for subsetting (#582, @AshesITR)
 * `lint_package()`
    + warns and returns `NULL` if no package is found (instead of giving a peculiar error message; #776, @MichaelChirico)
    + stricter about what is considered to be a package -- folders named `DESCRIPTION` are ignored (#702, @MichaelChirico)
