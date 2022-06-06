@@ -233,7 +233,7 @@ of general interest to the broader R community. More will be included in future 
   Also allows for partial matching as long as the supplied prefix is unique, e.g.
   `# nolint: infix_spaces.` works to exclude `infix_spaces_linter` (#605, #872, @AshesITR)
   + Added the linter name to lintrs output to facilitate discovery of the correct name (#1357, @AshesITR)
-* `lint()`: new optional argument `text` for supplying a line or lines directly, e.g. if the file is already 
+* `lint()`: new optional argument `text` for supplying a line or lines directly, e.g. if the file is already
   in memory or linting is being done _ad hoc_. (#503, @renkun-ken)
 * `lint_dir()` excludes the `renv` and `packrat` directories by default (#697, @AshesITR)
 * **Encodings**: lintr now supports non-system character Encodings. The correct the correct encoding
@@ -278,15 +278,15 @@ of general interest to the broader R community. More will be included in future 
 
 * `save_cache()` will now recursively create the cache directory; this avoids errors that could arise if any parent 
   directories do not exist (#60, @dankessler).
-* `extract_r_source()` handles Rmd containing unevaluated code blocks with named format specifiers (#472, @russHyde)
 * **RStudio**: Source markers are cleared when there are no lints (#520, @AshesITR)
 * `get_source_expressions()`
-   + Fix possible error on invalid XML produced by `xmlparsedata::xml_parse_data()` (#559, #560, @renkun-ken)
-   + Fix handling zero-length variable name error (#566, #567, @renkun-ken)
-   + Malformed Rmd files now cause a lint instead of an error (#571, #575, @AshesITR)
-   + No longer fails if `getParseData()` returns a truncated (invalid) Unicode character as parsed text (#815, #816, @leogama)
+   + Fix possible error on invalid XML produced by `xmlparsedata::xml_parse_data()` (#559, @renkun-ken)
+   + Fix handling zero-length variable name error (#566, @renkun-ken)
+   + Malformed Rmd files now cause a lint instead of an error (#571, @AshesITR)
+   + No longer fails if `getParseData()` returns a truncated (invalid) Unicode character as parsed text (#815, @leogama)
    + Fixes the `text` value for `STR_CONST` nodes involving 1- or 2-width octal escapes
     (e.g. `"\1"`) to account for an R parser bug (https://bugs.r-project.org/show_bug.cgi?id=18323; #1056, @MichaelChirico)
+   + Handle Rmd inputs containing unevaluated code blocks with named format specifiers (#472, @russHyde)
 * `linters_with_defaults()` (formerly `with_defaults()`)
    + No longer duplicates the `lintr_function` class when it is already present (#511, #612, @AshesITR)
    + Warns if a named argument is `NULL` but its name is not in `default` (#1049, @AshesITR)
