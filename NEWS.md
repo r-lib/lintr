@@ -71,14 +71,14 @@
      is terminated with an opening parenthesis, a comma, or a pipe (`%>%`). (#487, #1028, @AshesITR)
    + `paren_brace_linter()`; `brace_linter()` also lints `if`/`else` and `repeat` with missing whitespace
    + `brace_linter()` also newly enforces the following rules surrounding curly braces (originally Google linters, see below):
-     - require `else` to come on the same line as the preceding `}`, if present (#884, @michaelchirico)
-     - require functions spanning multiple lines to use curly braces (#987, @michaelchirico)
-     - require balanced usage of `{}` in `if`/`else` conditions, i.e., if the `if` branch uses braces,
+     - Require `else` to come on the same line as the preceding `}`, if present (#884, @michaelchirico)
+     - Require functions spanning multiple lines to use curly braces (#987, @michaelchirico)
+     - Require balanced usage of `{}` in `if`/`else` conditions, i.e., if the `if` branch uses braces,
        then so must the `else` branch, and _vice versa_ (#983, @michaelchirico)
 * New `paren_body_linter()` checks that there is a space between a right parenthesis and a body expression. (#809, @kpagacz)
-* Added `semicolon_linter()` (#683, @AshesITR)
+* Added `semicolon_linter()` as a default because it enforces a tidyverse style guide rule(#683, @AshesITR)
 * `undesirable_function_linter()`
-   + Added new functions to the defaults related to debugging (#876, @michaelchirico):
+   + Added new functions to `default_undesirable_functions` related to debugging (#876, @michaelchirico):
      - `browser()`
      - `debug()`
      - `debugcall()`
@@ -90,20 +90,20 @@
    + No longer lints undesirable symbols if they are used as names in `$` extractions (#1050, @AshesITR)
    + Added more explanation why certain functions might be undesirable and what alternatives to use;
      ditto for `undesirable_operator_linter()` (#1133, #1146, #1159, @AshesITR)
-* `assignment_linter()`: extended and add arguments (#915, @michaelchirico)
-   + right assignments are now linted by default (`->` and `->>`)
-   + new argument `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`
-   + new argument `allow_right_assign` (`FALSE` by default) toggles whether to lint `->` and `->>`
+* `assignment_linter()` (#915, @michaelchirico)
+   + Right assignments are now linted by default (`->` and `->>`)
+   + New argument `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`
+   + New argument `allow_right_assign` (`FALSE` by default) toggles whether to lint `->` and `->>`
 * `infix_spaces_linter()`
-   + added argument `allow_multiple_spaces` (`TRUE` by default) which toggles
+   + Added argument `allow_multiple_spaces` (`TRUE` by default) which toggles
      whether to generate a lint for operators used with multiple spaces, e.g. `x   +   2`.
      The default setting allows extra spacing to be used to increase
      line-to-line alignment (#940, @f-ritter and @michaelchirico)
-   + extended so that usages like `a~b` and `function(a=1) { ... }` are linted (#930, #michaelchirico)
-   + added argument `exclude_operators` to disable lints on selected infix operators.
+   + Extended so that usages like `a~b` and `function(a=1) { ... }` are linted (#930, #michaelchirico)
+   + Added argument `exclude_operators` to disable lints on selected infix operators.
      By default, all "low-precedence" operators throw lints; see `?infix_spaces_linter` for an enumeration of these.
      (#914, @michaelchirico)
-   + add exception for `box::use()` declarations (#1087, @klmr)
+   + Add an exception for `/` usage in `box::use()` declarations (#1087, @klmr)
 * `trailing_whitespace_linter()`
    + extended to also lint completely blank lines by default (#1044, @AshesITR)
    + added argument `allow_empty_lines` (`FALSE` by default) to toggle this behavior
