@@ -20,7 +20,7 @@
    + `camel_case_linter()`
    + `multiple_dots_linter()`
    + `snake_case_linter()`
-   + `trailing_semicolons_linter()as calls`
+   + `trailing_semicolons_linter()`
 * Removed `return()` from `all_undesirable_functions because early returns (which often improve
   readability and reduce code complexity) require explicit use of `return()`. Follow #1100 for
   an upcoming `return_linter()` to lint unnecessary `return()` statements (#1146, @AshesITR).
