@@ -76,7 +76,7 @@
      - Require balanced usage of `{}` in `if`/`else` conditions, i.e., if the `if` branch uses braces,
        then so must the `else` branch, and _vice versa_ (#983, @michaelchirico)
 * New `paren_body_linter()` checks that there is a space between a right parenthesis and a body expression. (#809, @kpagacz)
-* Added `semicolon_linter()` as a default because it enforces a tidyverse style guide rule(#683, @AshesITR)
+* Added `semicolon_linter()` as a default because it enforces a tidyverse style guide rule (#683, @AshesITR)
 * `undesirable_function_linter()`
    + Added new functions to `default_undesirable_functions` related to debugging (#876, @michaelchirico):
      - `browser()`
@@ -108,8 +108,9 @@
    + Extended to also lint completely blank lines by default (#1044, @AshesITR)
    + Added argument `allow_empty_lines` (`FALSE` by default) to toggle this behavior
    + Improved so that trailing whitespace inside string literals does not trigger a lint (#1045, @AshesITR)
-   * Added argument `allow_in_strings` (`TRUE` by default) to toggle this behavior
+   + Added argument `allow_in_strings` (`TRUE` by default) to toggle this behavior
 * `trailing_blank_lines_linter()`: extend to lint files without a terminal newline (#675, @AshesITR)
+   + Also, running `lint()` on a file without a terminal newline no longer throws a `warning()`
 * `object_name_linter()`
    + Improved generic detection -- in user-defined method `my_method.upstream.class`,
      `upstream.class` no longer throws a lint because the generic (`my_method`)
@@ -119,7 +120,7 @@
    + Correctly detect assignment generics like `names<-.class_name` (#843, @jonkeane)
    + Added new styles `"symbols"` and `"SNAKE_CASE"` (#494, #495, #615, #670, @michaelchirico and @AshesITR)
 * `object_usage_linter()`
-   + Detect global variables if there are top-level dollar-assignments (#666, #709, @AshesITR)
+   + Detect global variables if there are top-level dollar-assignments (#666, @AshesITR)
    + Report usage warnings spanning multiple lines (#507, @AshesITR)
    + Detect usages inside `glue::glue()` constructs (#942, @AshesITR)
    + Detect within functions assigned with `=` instead of `<-` (#1081, @michaelchirico)
@@ -128,11 +129,11 @@
    + Improved location information in some cases where the previous regex-based approach didn't work, e.g. unicode 
      characters in variable names (#1285, @AshesITR)
    + Correctly detect functions declared within `assign()` and `setMethod()` (#1322, @AshesITR)
-* `object_length_linter()`: correctly detect generics and only counts the implementation class towards the length.
+* `object_length_linter()`: correctly detect generics and only count the implementation class towards the length.
   This prevents false positive lints in the case of long generic names, e.g.
   `very_very_very_long_generic_name.short_class` no longer produces a lint (#871, @AshesITR)
 * `equals_na_linter()` (#545, @michaelchirico)
-   + Extended to lint `x != NA` (before, only `==` was caught) and `NA == x`(before, only `NA` on RHS was caught)
+   + Extended to lint `x != NA` (before, only `==` was caught) and `NA == x` (before, only `NA` on RHS was caught)
    + Extended to skip usages in comments like `is.na(x) # use is.na(x), not x == NA`
 * `spaces_inside_linter()`: ignore spaces preceding trailing comments (#636, @michaelchirico)
 * `no_tab_linter()`: use more reliable matching (e.g., excluding matches found in comments; #441, @russHyde)
@@ -140,8 +141,8 @@
   during de-linting -- just press <kbd>Return</kbd> (#735, @AshesITR)
 * `commented_code_linter()`: use the parse tree to find comments, eliminating some false positives (#451, @AshesITR)
 * `T_and_F_symbol_linter()`
-   + Newly included in `default_linters` (#517, @AshesITR)
-   + No longer lint occurrences of `T` and `F` when used for subsetting and gives a better
+   + Added as a default because it enforces a tidyverse style guide rule (#517, @AshesITR)
+   + No longer lint occurrences of `T` and `F` when used for subsetting, and give a better
      message when used as variable names (#657, @AshesITR)
 * `function_left_parentheses_linter()`: improved location information (#1266, #1267, @AshesITR)
 
