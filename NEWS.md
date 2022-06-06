@@ -119,6 +119,8 @@
    + Correctly detect imported functions when linting packages (#642, @AshesITR)
    + Correctly detect assignment generics like `names<-.class_name` (#843, @jonkeane)
    + Added new styles `"symbols"` and `"SNAKE_CASE"` (#494, #495, #615, #670, @michaelchirico and @AshesITR)
+     - `"symbols"` is a new default style which won't lint all-symbol object names. In particular, that means
+       operator names like `%+%` are skipped.
 * `object_usage_linter()`
    + Detect global variables if there are top-level dollar-assignments (#666, @AshesITR)
    + Report usage warnings spanning multiple lines (#507, @AshesITR)
@@ -148,10 +150,8 @@
 
 ### Other noteworthy changes
 
-* `object_name_linter()` gains a new default style, `"symbols"`, which won't lint all-symbol object names.
-  In particular, that means operator names like `%+%` are skipped (#495, #615, #670, @michaelchirico and @AshesITR)
-* Set the default `complexity_limit` in `cyclocomp_linter()` to 15. This is the same complexity limit that is enforced
-  via `default_linters` (#693, #695, @AshesITR).
+* `cyclocomp_linter()`: set the default `complexity_limit` to 15. This brings the default into sync with what
+  is enforced via `default_linters` (#693, @AshesITR).
 * `lint_package()` now lints files in the `demo` directory by default (#703, @dmurdoch).
 * Moved the default lintr cache directory from `~/.R/lintr_cache` to `R_user_dir("lintr", "cache")`.
   Note that this major version update invalidates the old cache anyway, so it can be safely deleted. (#1062, @AshesITR)
