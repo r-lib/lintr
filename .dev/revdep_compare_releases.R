@@ -29,6 +29,20 @@ lint_timings <- new.env()
 lint_timings$repo_timing <- vector("list", length(all_repos))
 names(lint_timings$repo_timing) <- all_repos
 
+# ---- Shims of deleted linters ----
+# these help unearth issues in packages which are using the deleted functions,
+#   by ensuring lint_package() at least gets past parsing .lintr (with warning)
+absolute_paths_linter <-
+camel_case_linter <-
+multiple_dots_linter <-
+snake_case_linter <-
+trailing_semicolons_linter <- function(...) {
+  # .call=TRUE means the linter name will be displayed in the warning
+  warning("Using deleted linter")
+  Linter(function(...) list())
+}
+
+
 # ---- Helpers ----
 get_hash <- function() system2("git", c("rev-parse", "HEAD"), stdout = TRUE)
 
