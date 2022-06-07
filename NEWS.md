@@ -2,7 +2,7 @@
 
 ## Breaking changes
 
-* Exclusions specified in the `.lintr` file are now relative to the location of that file 
+* Exclusions specified in the `.lintr` file are now relative to the location of that file
   and support excluding entire directories (#158, #438, @AshesITR)
 * All linters are now function factories (i.e., functions that return functions) for consistency. Previously, only linters with customizable parameters were factories (#245, @fangly, @AshesITR, and @MichaelChirico)
 
@@ -11,7 +11,7 @@
 
   ```r
   my_custom_linter <- function(source_expression) { ... }
-  
+
   # becomes
   my_custom_linter <- function() Linter(function(source_expression) { ... })
   ```
@@ -34,7 +34,7 @@
   Deprecated the obsolete `linter` argument of `Lint()`. (#664, #673, #746, @AshesITR)
   Downstream custom linters should follow suit.
 * Rename `semicolon_terminator_linter()` to `semicolon_linter()` for better consistency.
-  `semicolon_terminator_linter()` survives but is marked for deprecation. The new linter also has a new signature, 
+  `semicolon_terminator_linter()` survives but is marked for deprecation. The new linter also has a new signature,
   taking arguments `allow_compound` and `allow_trailing` to replace the old single argument `semicolon`, again for
   signature consistency with other linters.
 * The following linters were subsumed into `brace_linter()` and are now deprecated; see the item on `brace_linter()` below:
@@ -130,7 +130,7 @@
    + Detect within functions assigned with `=` instead of `<-` (#1081, @MichaelChirico)
    + Detect functions exported by packages that are explicitly attached using `library()` or
      `require()` calls (#1127, @AshesITR)
-   + Improved location information in some cases where the previous regex-based approach didn't work, e.g. unicode 
+   + Improved location information in some cases where the previous regex-based approach didn't work, e.g. unicode
      characters in variable names (#1285, @AshesITR)
    + Correctly detect functions declared within `assign()` and `setMethod()` (#1322, @AshesITR)
 * `object_length_linter()`: correctly detect generics and only count the implementation class towards the length.
@@ -245,18 +245,18 @@ of general interest to the broader R community. More will be included in future 
   + Each linter has its own help page
   + `?linters` also links to tag help pages, collecting linters with a similar goal
   + Each linter can have multiple tags
-  + `available_linters()`: new function to list available linters and their tags 
+  + `available_linters()`: new function to list available linters and their tags
     This feature is extensible by package authors providing add-on linters for {lintr}.
   + `available_tags()`: new function to list available tags
   + `linters_with_tags()`: new function to help build a list of linters using tags
-* `is_lint_level()`: new exported helper for readably explaining which type of expression is required for a custom linter. 
+* `is_lint_level()`: new exported helper for readably explaining which type of expression is required for a custom linter.
   Some linters are written to require the full file's parse tree (for example, `single_quotes_linter()`).
-  Others only need single expressions, which is more cache-friendly (most linters are written this way to leverage 
+  Others only need single expressions, which is more cache-friendly (most linters are written this way to leverage
   caching). (#921, @MichaelChirico)
 * `xml_nodes_to_lints()`: new exported helper for converting `xml_node` objects obtained using linter logic
   expressed in XPath into `Lint` objects (#1124, #1216, #1234, @MichaelChirico and @AshesITR)
 * `use_lintr()`: new exported helper for creating a minimal `.lintr` configuration (#902, @AshesITR)
-* **Performance**: Optimized performance-critical functions in lintr, such as `get_source_expressions()` resulting in about 2x speedup 
+* **Performance**: Optimized performance-critical functions in lintr, such as `get_source_expressions()` resulting in about 2x speedup
   in our test suite and even more for complex files (#1169, #1197, #1200, #1201, #1214, @MichaelChirico and @AshesITR). Average
   `lint_package()` execution time is down about 30% and the median package sees about 40% improvement.
 * **Jenkins CI**: Support for writing comments to GitHub repo when running in Jenkins CI (#488, @fdlk)
@@ -271,7 +271,7 @@ of general interest to the broader R community. More will be included in future 
     be replaced by `as.vector()` or `as.integer()` for readability. In fact, we suspect it is _always_
     preferable to do so, and may change the default to `allow_single_expression = FALSE` in the future. Please
     report your use case if `as.vector()` does not suit your needs. (#1344, @MichaelChirico)
-* **Raw strings**: Several linters tightened internal logic to allow for raw strings like `R"( a\string )"` 
+* **Raw strings**: Several linters tightened internal logic to allow for raw strings like `R"( a\string )"`
   (#1034, #1285, @MichaelChirico and @AshesITR)
 * Improved S3 generic detection for non-standard S3 generics where `UseMethod()` is called after several
   preceding expressions (#846, @jonkeane)
@@ -279,7 +279,7 @@ of general interest to the broader R community. More will be included in future 
 
 ## Bug fixes
 
-* `save_cache()` will now recursively create the cache directory; this avoids errors that could arise if any parent 
+* `save_cache()` will now recursively create the cache directory; this avoids errors that could arise if any parent
   directories do not exist (#60, @dankessler).
 * **RStudio**: Source markers are cleared when there are no lints (#520, @AshesITR)
 * `get_source_expressions()`
@@ -309,8 +309,8 @@ of general interest to the broader R community. More will be included in future 
 * Updated R CMD GitHub Actions workflow to check for R 3.6 on Ubuntu, instead of R 3.3, and for R 4.0 on Windows,
   instead of R 3.6 (#803, @ dragosmg)
 * Added a secondary, more restrictive lint workflow - `lint-changed-files` - for newly written / modified code
-  (#641, @dragosmg) 
-* Added a new, more restrictive test workflow - `test-package` - that fails on warnings emitted by tests 
+  (#641, @dragosmg)
+* Added a new, more restrictive test workflow - `test-package` - that fails on warnings emitted by tests
   (#1263, #1272, @AshesITR)
 * Switched CI from Travis to GitHub Actions, using the full tidyverse recommended `R CMD check`. Code coverage and linting
   are implemented using separate GitHub Actions workflows (#572, @dragosmg)
@@ -339,7 +339,7 @@ of general interest to the broader R community. More will be included in future 
 * `object_usage_linter` has been changed to ensure lint-position is indicated
   relative to the start of the file, rather than the start of a defining
   function (#432, @russHyde).
-* `commas_linter` now allows spaces to come before a comma when used to denote a 
+* `commas_linter` now allows spaces to come before a comma when used to denote a
   fall-through in a switch statement (#499, @MrMallIronmaker)
 
 # lintr 2.0.0
