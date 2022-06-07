@@ -142,6 +142,7 @@ if (interactive()) {
 
 if (params$benchmark) {
   library(microbenchmark)
+  recorded_timings <- new.env()
 }
 
 linter_names <- strsplit(params$linters, ",", fixed = TRUE)[[1L]]
@@ -248,6 +249,10 @@ get_deps <- function(pkg) {
 lint_one_package <- function(package, linters, out_dir, check_deps) {
   package_is_dir <- file.info(package)$isdir
   package_name <- gsub("_.*", "", basename(package))
+  if (params$benchmark) {
+    recorded_timings$current_package <- package_name
+    on.exit(recorded_timings$current_package <- NULL)
+  }
 
   if (!package_is_dir) {
     tmp <- file.path(tempdir(), package_name)
@@ -259,7 +264,7 @@ lint_one_package <- function(package, linters, out_dir, check_deps) {
     # --strip-components makes sure the output structure is
     # /path/to/tmp/pkg/ instead of /path/to/tmp/pkg/pkg
     utils::untar(package, exdir = tmp, extras = "--strip-components=1")
-    on.exit(unlink(tmp, recursive = TRUE))
+    on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
     package <- tmp
   }
   if (!test_encoding(package)) {
@@ -322,7 +327,28 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
   pkgload::load_all()
 
   check_deps <- any(c("object_usage_linter", "object_name_linter") %in% linter_names)
-  linters <- lapply(linter_names, function(linter_name) eval(call(linter_name)))
+  linters <- lapply(linter_names, function(linter_name) {
+    linter <- eval(call(linter_name))
+    if (params$benchmark) {
+      old_class <- class(linter)
+      this_environment <- environment()
+      class(linter) <- NULL
+      trace(linter, where = this_environment, print = FALSE, tracer = bquote({
+        t0 <- microbenchmark::get_nanotime()
+        # get first positional argument value (argument name may differ over time)
+        filename <- paste0(recorded_timings$current_package, ":", eval(match.call()[[2L]])$filename)
+        on.exit({
+          duration <- microbenchmark::get_nanotime() - t0
+          recorded_timings[[.(linter_name)]] <- c(
+            recorded_timings[[.(linter_name)]],
+            list(filename, duration)
+          )
+        })
+      }))
+      class(linter) <- old_class
+    }
+    linter
+  })
   # accumulate results sequentially to allow for interruptions of long-running executions without losing progress
   out_temp_dir <- file.path(old_wd, params$outdir, ".partial", if (what == "pr") paste0("pr", number) else branch)
   dir.create(out_temp_dir, recursive = TRUE, showWarnings = FALSE)
