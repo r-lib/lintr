@@ -22,10 +22,6 @@
 #  - support an interface for ad hoc download of packages to support running
 #    the script without needing a CRAN mirror more easily/friendly
 
-# TODO
-#  - make sure this works for comparing tags to facilitate release testing
-#  - handle the case when working directory is not the lintr directory
-
 suppressPackageStartupMessages({
   library(optparse)
   library(data.table, include.only = "fwrite")
@@ -123,6 +119,12 @@ param_list <- list(
     "--outfile",
     default = file.path(".dev", sprintf("lintr_compare_branches_%d.csv", as.integer(Sys.time()))),
     help = "Destination file to which to write the output"
+  ),
+  optparse::make_option(
+    "--benchmark",
+    default = FALSE,
+    type = "logical",
+    help = "Whether to run performance diagnostics of the branch(es)"
   )
 )
 
@@ -136,6 +138,10 @@ if (interactive()) {
     if (isTRUE(is.na(params[[opt]]) || params[[opt]] == "")) params[[opt]] <- NULL
   }
   if (isTRUE(is.na(params$base_branch) || params$base_branch == "")) params$base_branch <- "master"
+}
+
+if (params$benchmark) {
+  library(microbenchmark)
 }
 
 linter_names <- strsplit(params$linters, ",", fixed = TRUE)[[1L]]
