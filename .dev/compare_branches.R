@@ -28,7 +28,6 @@ suppressPackageStartupMessages({
   library(dplyr)
   library(purrr)
   library(tibble)
-  library(usethis)
   library(gert)
   library(pkgload)
 })
@@ -65,18 +64,18 @@ param_list <- list(
   optparse::make_option(
     "--base_branch",
     default = if (interactive()) {
-      readline("Name a branch to use as base (skip to use main): ")
+      readline("Name a branch/tag to use as base (skip to use main): ")
     } else {
       "main"
     },
-    help = "Compare to this branch"
+    help = "Compare to this branch/tag"
   ),
   optparse::make_option(
     "--branch",
     default = if (interactive()) {
-      readline("Name a branch to compare to the base branch (or skip to enter a PR# or to run only on base_branch): ")
+      readline("Name a branch/tag to compare to base_branch (or skip to enter a PR# or to run only on base_branch): ")
     },
-    help = "Run the comparison for base vs. this branch"
+    help = "Run the comparison for base vs. this branch/tag"
   ),
   optparse::make_option(
     "--pr",
@@ -85,7 +84,7 @@ param_list <- list(
       readline("Name a PR # to compare to the base branch (skip if you've entered a branch or to run only on base_branch): ")
     },
     type = "integer",
-    help = "Run the comparison for base vs. this PR"
+    help = "Run the comparison for base_branch vs. this PR"
   ),
   optparse::make_option(
     "--pkg_dir",
@@ -318,9 +317,8 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
 
   # safe to use force=TRUE because we're in temp_repo
   if (what == "pr") {
-    # pr_fetch doesn't expose this so use this to reset
     gert::git_branch_checkout("main", force = TRUE)
-    usethis::pr_fetch(number)
+    gert::git_checkout_pull_request(number)
   } else {
     # gert::git_branch_checkout() doesn't support checking out tags
     #   directly (like CLI 'git checkout' flexibly does); use this workaround instead
@@ -331,16 +329,19 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
         if (length(tag_hash) == 0L) {
           stop("Unable to find branch or tag '", branch, "'")
         }
+        # if an actual tag is provided, we'll get 0 or 1 results. but
+        #   git_tag_list() supports wildcards too, e.g. git_tag_list("v2*"), so safeguard:
         if (length(tag_hash) > 1L) {
           warning("Matched more than one tag! Selecting the first of: ", toString(tag_hash))
           tag_hash <- tag_hash[1L]
         }
-        gert::git_branch_checkout(tag_hash, force = TRUE)
+        # no way to checkout a commit directly, so create a branch based to it instead -- gert#147
+        browser()
+        gert::git_branch_create(paste(sample(letters), collapse = ""), ref = tag_hash)
       }
     )
   }
   pkgload::load_all()
-  browser()
 
   check_deps <- any(c("object_usage_linter", "object_name_linter") %in% linter_names)
   linters <- lapply(linter_names, function(linter_name) {
