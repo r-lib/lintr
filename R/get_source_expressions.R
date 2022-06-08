@@ -29,6 +29,8 @@
 #'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of this
 #'          expression as given by [xmlparsedata::xml_parse_data()]}
 #'     \item{`content` (`character`) the same as `lines` as a single string (not split across lines)}
+#'     \item{(**Deprecated**) `find_line` (`function`) a function for returning lines in this expression}
+#'     \item{(**Deprecated**) `find_column` (`function`) a similar function for columns}
 #'   }
 #'
 #'   The final element of `expressions` is a list corresponding to the full file
@@ -425,6 +427,7 @@ get_single_source_expression <- function(loc,
   content <- get_content(source_expression$lines, parsed_content[loc, ])
   id <- parsed_content$id[loc]
   pc <- parsed_content[which(top_level_map == id), ]
+  newline_locs <- get_newline_locs(content)
   list(
     filename = filename,
     line = parsed_content[loc, "line1"],
@@ -432,7 +435,9 @@ get_single_source_expression <- function(loc,
     lines = expr_lines,
     parsed_content = pc,
     xml_parsed_content = xml2::xml_missing(),
-    content = content
+    content = content,
+    find_line = find_line_fun(content, newline_locs),
+    find_column = find_column_fun(content, newline_locs)
   )
 }
 
@@ -487,6 +492,20 @@ get_newline_locs <- function(x) {
   )
 }
 
+find_line_fun <- function(content, newline_locs) {
+  function(line_number) {
+    warning("find_line is deprecated and will soon be removed. XPath logic and xml_nodes_to_lints() are usually preferable")
+    which(newline_locs >= line_number)[1L] - 1L
+  }
+}
+
+find_column_fun <- function(content, newline_locs) {
+  function(line_number) {
+    warning("find_column is deprecated and will soon be removed. XPath logic and xml_nodes_to_lints() are usually preferable")
+    matched_line_number <- which(newline_locs >= line_number)[1L] - 1L
+    line_number - newline_locs[matched_line_number]
+  }
+}
 # Fix column numbers when there are tabs
 # getParseData() counts 1 tab as a variable number of spaces instead of one:
 # https://github.com/wch/r-source/blame/e7401b68ab0e032fce3e376aaca9a5431619b2b4/src/main/gram.y#L512
