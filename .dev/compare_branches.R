@@ -218,14 +218,16 @@ if (is.null(params$sample_size)) {
 test_encoding <- function(dir) {
   tryCatch(
     {
-      lapply(
-        list.files(dir, pattern = "(?i)\\.r(?:md)?$", recursive = TRUE, full.names = TRUE),
-        function(x) {
-          con <- file(x, encoding = lintr:::find_default_encoding(x) %||% "UTF-8")
+      for (r_file in list.files(dir, pattern = "(?i)\\.r(?:md)?$", recursive = TRUE, full.names = TRUE)) {
+        # lintr has better encoding support since 8cd6ad~linter>2.0.1~Jul 2021; use
+        #   the accompanying helper if possible. clunkier default otherwise.
+        encoding <- tryCatch(lintr:::find_default_encoding(r_file), error = function(...) NULL)
+        local({
+          con <- file(r_file, encoding = encoding %||% "UTF-8")
           on.exit(close(con))
           nchar(readLines(con, warn = FALSE))
-        }
-      )
+        })
+      }
       TRUE
     },
     error = function(x) FALSE
@@ -348,6 +350,7 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
   linters <- lapply(linter_names, function(linter_name) {
     # since 2d76469~lintr>2.0.1~Feb 2021, all linters are function factories.
     #   but we also want to support the earlier 'simple' linters for robustness:
+    # TODO: special-case line_length_linter under v2.0.1 which didn't have a default length= argument
     linter <- tryCatch(
       eval(call(linter_name)),
       error = function(cond) {
