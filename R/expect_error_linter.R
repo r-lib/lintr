@@ -10,8 +10,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_error_linter <- function() {
-  # one case to match:
-  #  - expect_that(x, throws_error())
+  # one case to match: expect_that(x, throws_error())
   xpath <- glue::glue("//expr[
     (
       SYMBOL_FUNCTION_CALL[text() = 'expect_that']
