@@ -49,11 +49,9 @@ dir.create(temp_repo)
 invisible(file.copy(".", temp_repo, recursive = TRUE))
 message("Executing from copy of repo at ", temp_repo)
 old_wd <- setwd(temp_repo)
-if (!interactive()) {
-  .Last <- function() {
-    setwd(old_wd)
-    unlink(temp_repo, recursive = TRUE)
-  }
+.Last <- function() {
+  setwd(old_wd)
+  unlink(temp_repo, recursive = TRUE)
 }
 
 param_list <- list(
@@ -327,7 +325,7 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
     gert::git_branch_checkout(branch, force = TRUE)
   }
   pkgload::load_all()
-
+  debug(lintr:::auto_names)
   check_deps <- any(c("object_usage_linter", "object_name_linter") %in% linter_names)
   linters <- lapply(linter_names, function(linter_name) {
     linter <- eval(call(linter_name))
