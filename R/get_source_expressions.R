@@ -29,8 +29,6 @@
 #'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of this
 #'          expression as given by [xmlparsedata::xml_parse_data()]}
 #'     \item{`content` (`character`) the same as `lines` as a single string (not split across lines)}
-#'     \item{`find_line` (`function`) a function for returning lines in this expression}
-#'     \item{`find_column` (`function`) a similar function for columns}
 #'   }
 #'
 #'   The final element of `expressions` is a list corresponding to the full file
@@ -373,8 +371,10 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
     }
   }
 
-  line_number <- find_line_fun(source_expression$content)(line_location$start)
-  column_number <- find_column_fun(source_expression$content)(line_location$start)
+  newline_locs <- get_newline_locs(source_expression$content)
+  line_number <- which(newline_locs >= line_location$start)[1L] - 1L
+  column_number <- line_location$start - newline_locs[line_number]
+
   Lint(
     filename = source_expression$filename,
     line_number = line_number,
@@ -432,16 +432,14 @@ get_single_source_expression <- function(loc,
     lines = expr_lines,
     parsed_content = pc,
     xml_parsed_content = xml2::xml_missing(),
-    content = content,
-    find_line = find_line_fun(content),
-    find_column = find_column_fun(content)
+    content = content
   )
 }
 
 get_source_expression <- function(source_expression, error = identity) {
   parse_error <- FALSE
 
-  e <- tryCatch(
+  tryCatch(
     source_expression$parsed_content <- parse(
       text = source_expression$content,
       srcfile = source_expression,
@@ -461,8 +459,8 @@ get_source_expression <- function(source_expression, error = identity) {
     error = error
   )
 
-  if (inherits(e, "error") || inherits(e, "lint")) {
-    assign("e", e,  envir = parent.frame())
+  if (inherits(e, c("error", "lint"))) {
+    assign("e", e, envir = parent.frame())
     parse_error <- TRUE
   }
 
@@ -472,50 +470,21 @@ get_source_expression <- function(source_expression, error = identity) {
     error = error
   )
 
-  if (inherits(e, "error") || inherits(e, "lint")) {
+  if (inherits(e, c("error", "lint"))) {
     # Let parse errors take precedence over encoding problems
-    if (!parse_error) assign("e", e,  envir = parent.frame())
+    if (!parse_error) assign("e", e, envir = parent.frame())
     return() # parsed_content is unreliable if encoding is invalid
   }
 
   fix_octal_escapes(fix_eq_assigns(fix_tab_indentations(source_expression)), source_expression$lines)
 }
 
-find_line_fun <- function(content) {
-  newline_search <-
-    re_matches(content,
-      rex("\n"),
-      locations = TRUE,
-      global = TRUE
-    )[[1L]]$start
-
-  newline_locs <- c(0L,
+get_newline_locs <- function(x) {
+  newline_search <- re_matches(x, rex("\n"), locations = TRUE, global = TRUE)[[1L]]$start
+  c(0L,
     if (!is.na(newline_search[1L])) newline_search,
-    nchar(content) + 1L
+    nchar(x) + 1L
   )
-
-  function(x) {
-    which(newline_locs >= x)[1L] - 1L
-  }
-}
-
-find_column_fun <- function(content) {
-  newline_search <-
-    re_matches(content,
-      rex("\n"),
-      locations = TRUE,
-      global = TRUE
-    )[[1L]]$start
-
-  newline_locs <- c(0L,
-    if (!is.na(newline_search[1L])) newline_search,
-    nchar(content) + 1L
-  )
-
-  function(x) {
-    line_number <- which(newline_locs >= x)[1L] - 1L
-    x - newline_locs[line_number]
-  }
 }
 
 # Fix column numbers when there are tabs
