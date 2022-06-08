@@ -322,9 +322,25 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
     gert::git_branch_checkout("main", force = TRUE)
     usethis::pr_fetch(number)
   } else {
-    gert::git_branch_checkout(branch, force = TRUE)
+    # gert::git_branch_checkout() doesn't support checking out tags
+    #   directly (like CLI 'git checkout' flexibly does); use this workaround instead
+    tryCatch(
+      gert::git_branch_checkout(branch, force = TRUE),
+      error = function(cond) {
+        tag_hash <- gert::git_tag_list(branch)$commit
+        if (length(tag_hash) == 0L) {
+          stop("Unable to find branch or tag '", branch, "'")
+        }
+        if (length(tag_hash) > 1L) {
+          warning("Matched more than one tag! Selecting the first of: ", toString(tag_hash))
+          tag_hash <- tag_hash[1L]
+        }
+        gert::git_branch_checkout(tag_hash, force = TRUE)
+      }
+    )
   }
   pkgload::load_all()
+  browser()
 
   check_deps <- any(c("object_usage_linter", "object_name_linter") %in% linter_names)
   linters <- lapply(linter_names, function(linter_name) {
