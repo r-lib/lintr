@@ -1,6 +1,6 @@
 #!/usr/local/bin/Rscript
 
-# compare the lints obtained before/after a given PR/branch vs a base branch (default master).
+# compare the lints obtained before/after a given PR/branch vs a base branch (default main).
 #
 # How to use:
 #   See below (param_list <-) for documentation of the script's arguments.
@@ -67,9 +67,9 @@ param_list <- list(
   optparse::make_option(
     "--base_branch",
     default = if (interactive()) {
-      readline("Name a branch to use as base (skip to use master): ")
+      readline("Name a branch to use as base (skip to use main): ")
     } else {
-      "master"
+      "main"
     },
     help = "Compare to this branch"
   ),
@@ -137,7 +137,7 @@ if (interactive()) {
     # typed arguments get cast even when missing, probably to NA
     if (isTRUE(is.na(params[[opt]]) || params[[opt]] == "")) params[[opt]] <- NULL
   }
-  if (isTRUE(is.na(params$base_branch) || params$base_branch == "")) params$base_branch <- "master"
+  if (isTRUE(is.na(params$base_branch) || params$base_branch == "")) params$base_branch <- "main"
 }
 
 if (params$benchmark) {
@@ -319,7 +319,7 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
   # safe to use force=TRUE because we're in temp_repo
   if (what == "pr") {
     # pr_fetch doesn't expose this so use this to reset
-    gert::git_branch_checkout("master", force = TRUE)
+    gert::git_branch_checkout("main", force = TRUE)
     usethis::pr_fetch(number)
   } else {
     gert::git_branch_checkout(branch, force = TRUE)
