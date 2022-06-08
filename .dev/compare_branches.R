@@ -336,7 +336,8 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
           tag_hash <- tag_hash[1L]
         }
         # no way to checkout a commit directly, so create a branch based to it instead -- gert#147
-        browser()
+        # also don't have checkout --force, so just reset to prevent that from blocking -- gert#177
+        gert::git_reset_hard()
         gert::git_branch_create(paste(sample(letters), collapse = ""), ref = tag_hash)
       }
     )
