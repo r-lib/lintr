@@ -325,27 +325,33 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
     gert::git_branch_checkout(branch, force = TRUE)
   }
   pkgload::load_all()
-  debug(lintr:::auto_names)
+
   check_deps <- any(c("object_usage_linter", "object_name_linter") %in% linter_names)
   linters <- lapply(linter_names, function(linter_name) {
     linter <- eval(call(linter_name))
     if (params$benchmark) {
       old_class <- class(linter)
+      old_name <- attr(linter, "name")
       this_environment <- environment()
       class(linter) <- NULL
       suppressMessages(trace(linter, where = this_environment, print = FALSE, tracer = bquote({
         t0 <- microbenchmark::get_nanotime()
         # get first positional argument value (argument name may differ over time)
-        filename <- paste0(recorded_timings$current_package, ":", eval(match.call()[[2L]])$filename)
+        filename <- paste0(
+          recorded_timings$current_package,
+          ":",
+          eval(as.name(names(match.call())[2L]))$filename
+        )
         on.exit({
           duration <- microbenchmark::get_nanotime() - t0
           recorded_timings[[.(linter_name)]] <- c(
             recorded_timings[[.(linter_name)]],
-            list(filename, duration)
+            list(list(filename, duration))
           )
         })
       })))
       class(linter) <- old_class
+      attr(linter, "name") <- old_name
     }
     linter
   })
