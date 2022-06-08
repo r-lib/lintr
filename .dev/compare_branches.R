@@ -346,7 +346,14 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
 
   check_deps <- any(c("object_usage_linter", "object_name_linter") %in% linter_names)
   linters <- lapply(linter_names, function(linter_name) {
-    linter <- eval(call(linter_name))
+    # since 2d76469~lintr>2.0.1~Feb 2021, all linters are function factories.
+    #   but we also want to support the earlier 'simple' linters for robustness:
+    linter <- tryCatch(
+      eval(call(linter_name)),
+      error = function(cond) {
+        eval(as.name(linter_name))
+      }
+    )
     if (params$benchmark) {
       old_class <- class(linter)
       old_name <- attr(linter, "name")
