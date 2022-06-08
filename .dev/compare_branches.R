@@ -122,7 +122,9 @@ param_list <- list(
   ),
   optparse::make_option(
     "--benchmark",
-    default = FALSE,
+    default = if (interactive()) {
+      askYesNo("Benchmark the timing of linter execution?")
+    },
     type = "logical",
     help = "Whether to run performance diagnostics of the branch(es)"
   )
@@ -333,7 +335,7 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
       old_class <- class(linter)
       this_environment <- environment()
       class(linter) <- NULL
-      trace(linter, where = this_environment, print = FALSE, tracer = bquote({
+      suppressMessages(trace(linter, where = this_environment, print = FALSE, tracer = bquote({
         t0 <- microbenchmark::get_nanotime()
         # get first positional argument value (argument name may differ over time)
         filename <- paste0(recorded_timings$current_package, ":", eval(match.call()[[2L]])$filename)
@@ -344,7 +346,7 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
             list(filename, duration)
           )
         })
-      }))
+      })))
       class(linter) <- old_class
     }
     linter
@@ -404,7 +406,8 @@ if (length(packages) > 50L) {
   )
 } else {
   message(
-    "Comparing output of lint_dir run for the following packages: ",
+    "Comparing output ", if (params$benchmark) "and performance ",
+    "of lint_dir run for the following packages: ",
     toString(basename(packages))
   )
 }
