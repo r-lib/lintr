@@ -506,6 +506,7 @@ find_column_fun <- function(content, newline_locs) {
     line_number - newline_locs[matched_line_number]
   }
 }
+
 # Fix column numbers when there are tabs
 # getParseData() counts 1 tab as a variable number of spaces instead of one:
 # https://github.com/wch/r-source/blame/e7401b68ab0e032fce3e376aaca9a5431619b2b4/src/main/gram.y#L512
