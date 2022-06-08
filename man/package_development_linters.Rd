@@ -15,6 +15,7 @@ The following linters are tagged with 'package_development':
 \item{\code{\link{backport_linter}}}
 \item{\code{\link{conjunct_test_linter}}}
 \item{\code{\link{expect_comparison_linter}}}
+\item{\code{\link{expect_error_linter}}}
 \item{\code{\link{expect_identical_linter}}}
 \item{\code{\link{expect_length_linter}}}
 \item{\code{\link{expect_named_linter}}}

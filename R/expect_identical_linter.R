@@ -17,7 +17,7 @@
 #'   1. A named argument is set (e.g. `ignore_attr` or `tolerance`)
 #'   2. Comparison is made to an explicit decimal, e.g.
 #'      `expect_equal(x, 1.0)` (implicitly setting `tolerance`)
-#'   3. `...` is passed (wrapper functions whcih might set
+#'   3. `...` is passed (wrapper functions which might set
 #'      arguments such as `ignore_attr` or `tolerance`)
 #'
 #' @evalRd rd_tags("expect_identical_linter")
