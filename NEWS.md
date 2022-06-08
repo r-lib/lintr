@@ -175,7 +175,7 @@
 * `package_hooks_linter()` to run a series of checks also done by `R CMD check` on the `.onLoad()`, `.onAttach()`,
   `.Last.lib()` and `.onDetach()` hooks (#882, @MichaelChirico)
 * `unused_import_linter()` to detect unnecessary `library()` calls in R scripts (#239, @jimhester, @AshesITR)
-* `expect_error_linter()` promotes usage of `expect_error()` over `expect_that(x, throws_error())` (@patilindrajeets).
+* `expect_error_linter()` promotes usage of `expect_error()` over `expect_that(x, throws_error())` (#1377, @patilindrajeets).
 
 #### Google linters
 
