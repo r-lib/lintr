@@ -562,7 +562,10 @@ if (params$benchmark) {
           branch,
           function(linter) rbindlist(
             idcol = "package",
-            lapply(linter, function(package) data.table(filename = names(package), duration = unlist(package)))
+            lapply(
+              linter,
+              function(package) data.table::data.table(filename = names(package), duration = unlist(package))
+            )
           )
         )
       )
