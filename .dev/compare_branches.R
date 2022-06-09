@@ -17,7 +17,6 @@
 #   And then compare the results found in the new CSV file in .dev
 
 # TODO
-#  - make sure this works for comparing tags to facilitate release testing
 #  - handle the case when working directory is not the lintr directory
 #  - support an interface for ad hoc download of packages to support running
 #    the script without needing a CRAN mirror more easily/friendly
@@ -324,6 +323,71 @@ lint_one_package <- function(package, linters, out_dir, check_deps) {
   TRUE
 }
 
+# available_linters is the preferred way to do this, but only
+#   available since aafba4~lintr>2.0.1~Mar 2022. relying on
+#   'exports ending in _linter' seems to work for v2.0.1,
+#   but not clear how robust it is in general.
+get_all_linters <- function() {
+  lintr_exports <- getNamespaceExports("lintr")
+  if ("available_linters" %in% lintr_exports) {
+    linter_names <- available_linters(tags = NULL)$linter
+  } else {
+    linter_names <- grep("_linter$", lintr_exports, value = TRUE)
+  }
+}
+
+# since 2d76469~lintr>2.0.1~Feb 2021, all linters are function factories.
+#   but we also want to support the earlier 'simple' linters for robustness
+get_linter_from_name <- function(linter_name) {
+  tryCatch(
+    # apparently v2.0.1 does not have a default because somehow a0fff5~linter<v2.0.1~May 2017
+    #   did not make it into the release?
+    if (linter_name == "line_length_linter" && !is.integer(formals(linter_name)$length)) {
+      eval(call(linter_name, 80L))
+    } else {
+      eval(call(linter_name))
+    },
+    error = function(cond) eval(as.name(linter_name))
+  )
+}
+
+get_benchmarked_linter <- function(linter, branch, linter_name) {
+  old_class <- class(linter)
+  old_name <- attr(linter, "name")
+  this_environment <- environment()
+  class(linter) <- NULL
+  suppressMessages(trace(linter, where = this_environment, print = FALSE, tracer = bquote({
+    t0 <- microbenchmark::get_nanotime()
+    # get first positional argument value (argument name may differ over time)
+    filename <- paste0(
+      recorded_timings$current_package,
+      "*:::*",
+      eval(as.name(names(match.call())[2L]))$filename
+    )
+    # TODO(michaelchirico): alter the structure here a bit to write a duration
+    #   recorded_timings[[branch]][[linter]][[package]][[filename]],
+    #   and _sum_ timings in a single file. this will save space and minimize
+    #   the problem where many executions will just exit immediately, i.e.,
+    #   it's better to measure file-level than expression-level timing. I guess
+    #   there are also issues where one branch will use an expression-level
+    #   version of a linter and we want to compare to the file-level version
+    #   to see what the raw overhead is (regardless of caching). We could also
+    #   sum later (as we do now), but the CSV can only realistically work locally
+    #   for ~2-3K packages at expression-level timing. The file-level timing
+    #   requires 1/35 as many observations, roughly, so it can scale to all of CRAN.
+    on.exit({
+      duration <- microbenchmark::get_nanotime() - t0
+      recorded_timings[[.(branch)]][[.(linter_name)]] <- c(
+        recorded_timings[[.(branch)]][[.(linter_name)]],
+        list(list(filename, duration))
+      )
+    })
+  })))
+  class(linter) <- old_class
+  attr(linter, "name") <- old_name
+  linter
+}
+
 run_workflow <- function(what, packages, linter_names, branch, number) {
   t0 <- Sys.time()
   old_branch <- gert::git_branch()
@@ -363,70 +427,19 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
   }
   pkgload::load_all(export_all = FALSE)
 
+  if (param$benchmark) {
+    recorded_timings[[branch]] <- list()
+  }
+
   if (identical(linter_names, "_all_")) {
-    lintr_exports <- getNamespaceExports("lintr")
-    # available_linters is the preferred way to do this, but only
-    #   available since aafba4~lintr>2.0.1~Mar 2022. relying on
-    #   'exports ending in _linter' seems to work for v2.0.1,
-    #   but not clear how robust it is in general.
-    if ("available_linters" %in% lintr_exports) {
-      linter_names <- available_linters(tags = NULL)$linter
-    } else {
-      linter_names <- grep("_linter$", lintr_exports, value = TRUE)
-    }
+    linter_names <- get_all_linters()
   }
   check_deps <- any(c("object_usage_linter", "object_name_linter") %in% linter_names)
   linters <- lapply(linter_names, function(linter_name) {
-    # since 2d76469~lintr>2.0.1~Feb 2021, all linters are function factories.
-    #   but we also want to support the earlier 'simple' linters for robustness:
-    linter <- tryCatch(
-      # apparently v2.0.1 does not have a default because somehow a0fff5~linter<v2.0.1~May 2017
-      #   did not make it into the release?
-      if (linter_name == "line_length_linter" && !is.integer(formals(linter_name)$length)) {
-        eval(call(linter_name, 80L))
-      } else {
-        eval(call(linter_name))
-      },
-      error = function(cond) {
-        eval(as.name(linter_name))
-      }
-    )
+    linter <- get_linter_from_name(linter_name)
     if (params$benchmark) {
-      recorded_timings[[branch]] <- list()
-
-      old_class <- class(linter)
-      old_name <- attr(linter, "name")
-      this_environment <- environment()
-      class(linter) <- NULL
-      suppressMessages(trace(linter, where = this_environment, print = FALSE, tracer = bquote({
-        t0 <- microbenchmark::get_nanotime()
-        # get first positional argument value (argument name may differ over time)
-        filename <- paste0(
-          recorded_timings$current_package,
-          "*:::*",
-          eval(as.name(names(match.call())[2L]))$filename
-        )
-        # TODO(michaelchirico): alter the structure here a bit to write a duration
-        #   recorded_timings[[branch]][[linter]][[package]][[filename]],
-        #   and _sum_ timings in a single file. this will save space and minimize
-        #   the problem where many executions will just exit immediately, i.e.,
-        #   it's better to measure file-level than expression-level timing. I guess
-        #   there are also issues where one branch will use an expression-level
-        #   version of a linter and we want to compare to the file-level version
-        #   to see what the raw overhead is (regardless of caching). We could also
-        #   sum later (as we do now), but the CSV can only realistically work locally
-        #   for ~2-3K packages at expression-level timing. The file-level timing
-        #   requires 1/35 as many observations, roughly, so it can scale to all of CRAN.
-        on.exit({
-          duration <- microbenchmark::get_nanotime() - t0
-          recorded_timings[[.(branch)]][[.(linter_name)]] <- c(
-            recorded_timings[[.(branch)]][[.(linter_name)]],
-            list(list(filename, duration))
-          )
-        })
-      })))
-      class(linter) <- old_class
-      attr(linter, "name") <- old_name
+      recorded_timings[[branch]][[linter_name]] <- list()
+      linter <- get_benchmarked_linter(linter, branch, linter_name)
     }
     linter
   })
