@@ -136,7 +136,7 @@ params$outdir <- dirname(params$outfile)
 
 # treat any skipped arguments from the prompt as missing
 if (interactive()) {
-  for (opt in c("branch", "pr", "packages", "pkg_dir", "sample_size")) {
+  for (opt in c("linters", "branch", "pr", "packages", "pkg_dir", "sample_size")) {
     # typed arguments get cast even when missing, probably to NA
     if (isTRUE(is.na(params[[opt]]) || params[[opt]] == "")) params[[opt]] <- NULL
   }
@@ -221,22 +221,21 @@ if (is.null(params$sample_size)) {
 # test if nchar(., "chars") works as intended
 #   for all files in dir (see #541)
 test_encoding <- function(dir) {
-  tryCatch(
-    {
-      for (r_file in list.files(dir, pattern = "(?i)\\.r(?:md)?$", recursive = TRUE, full.names = TRUE)) {
-        # lintr has better encoding support since 8cd6ad~linter>2.0.1~Jul 2021; use
-        #   the accompanying helper if possible. clunkier default otherwise.
-        encoding <- tryCatch(lintr:::find_default_encoding(r_file), error = function(...) NULL)
-        local({
-          con <- file(r_file, encoding = encoding %||% "UTF-8")
-          on.exit(close(con))
-          nchar(readLines(con, warn = FALSE))
-        })
-      }
-      TRUE
+  !inherits(what = "error", tryCatch(
+    for (r_file in list.files(dir, pattern = "(?i)\\.r(?:md)?$", recursive = TRUE, full.names = TRUE)) {
+      # lintr has better encoding support since 8cd6ad~linter>2.0.1~Jul 2021; use
+      #   the accompanying helper if possible. clunkier default otherwise.
+      encoding <- tryCatch(lintr:::find_default_encoding(r_file), error = function(...) NULL)
+      local({
+        con <- file(r_file, encoding = encoding %||% "UTF-8")
+        on.exit(close(con))
+        lines <- readLines(con, warn = FALSE)
+        nchar(lines)
+        nchar(lines, "chars")
+      })
     },
-    error = function(x) FALSE
-  )
+    error = identity
+  ))
 }
 
 # read Depends from DESCRIPTION
@@ -257,7 +256,7 @@ lint_one_package <- function(package, linters, out_dir, check_deps) {
   package_name <- gsub("_.*", "", basename(package))
   if (params$benchmark) {
     recorded_timings$current_package <- package_name
-    on.exit(recorded_timings$current_package <- NULL)
+    on.exit(rm("current_package", envir = recorded_timings))
   }
 
   if (!package_is_dir) {
@@ -312,7 +311,7 @@ lint_one_package <- function(package, linters, out_dir, check_deps) {
   #   in d20768a~lintr>2.0.1~Feb 2021; prior to that, we get a ton of those warnings.
   #   ignore them because they're innocuous.
   # also ignore lintr's deprecations to make including all linters easier
-  withCallingHandlers(
+  suppressMessages(withCallingHandlers(
     lints <- as.data.frame(lint_dir(package, linters = linters, parse_settings = FALSE)),
     warning = function(cond) {
       if (!grepl("ncomplete final line found|Function.*was deprecated in lintr", cond$message)) {
@@ -320,7 +319,7 @@ lint_one_package <- function(package, linters, out_dir, check_deps) {
       }
       invokeRestart("muffleWarning")
     }
-  )
+  ))
   if (nrow(lints) > 0L) data.table::fwrite(lints, file.path(out_dir, paste0(package_name, ".csv")))
   TRUE
 }
@@ -393,6 +392,8 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
       }
     )
     if (params$benchmark) {
+      recorded_timings[[branch]] <- list()
+
       old_class <- class(linter)
       old_name <- attr(linter, "name")
       this_environment <- environment()
@@ -407,8 +408,8 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
         )
         on.exit({
           duration <- microbenchmark::get_nanotime() - t0
-          recorded_timings[[.(linter_name)]] <- c(
-            recorded_timings[[.(linter_name)]],
+          recorded_timings[[.(branch)]][[.(linter_name)]] <- c(
+            recorded_timings[[.(branch)]][[.(linter_name)]],
             list(list(filename, duration))
           )
         })
@@ -500,7 +501,7 @@ if (has_target) {
 }
 
 setwd(old_wd)
-message("Writing output to ", params$outfile)
+message("Writing lint comparison output to ", params$outfile)
 
 load_partial_results <- function(target, is_branch) {
   directory <- file.path(params$outdir, ".partial", if (is_branch) target else paste0("pr", target))
@@ -520,6 +521,10 @@ if (has_target) {
 }
 unlink(file.path(params$outdir, ".partial"), recursive = TRUE)
 data.table::fwrite(lints, params$outfile, row.names = FALSE)
+
+if (params$benchmark) {
+
+}
 
 if (interactive()) {
   unlink(temp_repo, recursive = TRUE)
