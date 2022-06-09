@@ -56,7 +56,7 @@ default_linters <- modify_defaults(
 #'  * [debugonce()] is only useful for interactive debugging. It should be removed.
 #'  * [detach()] modifies the global search path. Detaching environments from the search path is rarely necessary in
 #'    production code.
-#'  * [expect_that()] This style of testing is no longer encouraged by `{testthat}` package. Using a more specific expect_ function (e.g. `expect_equal()`, `expect_s3_class()`, etc.) is recommended.
+#'  * [testthat::expect_that()] This style of testing is no longer encouraged by `{testthat}` package. Using a more specific expect_ function (e.g. `expect_equal()`, `expect_s3_class()`, etc.) is recommended.
 #'  * [ifelse()] isn't type stable. Use an `if`/`else` block for scalar logic, or use
 #'    `dplyr::if_else()`/`data.table::fifelse()` for type stable vectorized logic.
 #'  * [.libPaths()] permanently modifies the library location. Use [withr::with_libpaths()] for a temporary change
