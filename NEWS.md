@@ -58,6 +58,11 @@
   `with_defaults()`'s `default=` is called `defaults=` (i.e., pluralized) in both of these, and that usage like
   `with_defaults(default = NULL, ...)` should be converted to `linters_with_defaults(defaults = list(), ...)`
   (#1029, #1336, #1361, @AshesITR and @MichaelChirico)
+  (#1029, #1336, #1361, @AshesITR and @michaelchirico)
+* Deprecated the `find_line()` and `find_column()` helpers from the item-level `expressions` returned with
+  `get_source_expressions()`. These helpers were typically associated with regex-based logic for building linters,
+  which is rarely needed and prone to false positives; now that lintr almost exclusively uses XPath-based
+  logic for linters, these are no longer necessary. (#1373, @MichaelChirico)
 
 ## Other changes to defaults
 
