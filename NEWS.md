@@ -132,7 +132,7 @@
    + Detect global variables if there are top-level dollar-assignments (#666, @AshesITR)
    + Report usage warnings spanning multiple lines (#507, @AshesITR)
    + Detect usages inside `glue::glue()` constructs (#942, @AshesITR)
-   + Detect usages inside functions assigned with `=` instead of `<-` (#1081, @MichaelChirico)
+   + Extended to include functions assigned with `=` instead of `<-` (#1081, @MichaelChirico)
    + Detect functions exported by packages that are explicitly attached using `library()` or
      `require()` calls (#1127, @AshesITR)
    + Improved location information in some cases where the previous regex-based approach didn't work, e.g. unicode
