@@ -463,7 +463,7 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
     package_str <- gsub("_.*", "", basename(package))
     success <- lint_one_package(package, linters, out_temp_dir, check_deps)
     linted_packages <- linted_packages + success
-    # TODO(michaelchirico): this stopped working (only dumps at the end of the loop) -- why?
+    # TODO(michaelchirico): this stopped working interactively (only dumps at the end of the loop) -- why?
     cat(sprintf(
       "\r[%0*s : %0*s / %d] %s%s",
       pkgs_width, package_i, done_width, linted_packages, n_packages, package_str,
