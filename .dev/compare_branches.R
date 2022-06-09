@@ -307,7 +307,18 @@ lint_one_package <- function(package, linters, out_dir, check_deps) {
     }
   }
 
-  lints <- as.data.frame(lint_dir(package, linters = linters, parse_settings = FALSE))
+  # terminal_blank_lines_linter() started suppressing terminal newline warning
+  #   in d20768a~lintr>2.0.1~Feb 2021; prior to that, we get a ton of those warnings.
+  #   ignore them because they're innocuous.
+  withCallingHandlers(
+    lints <- as.data.frame(lint_dir(package, linters = linters, parse_settings = FALSE)),
+    warning = function(cond) {
+      if (!grepl("ncomplete final line found", cond$message, fixed = TRUE)) {
+        warning(cond$message, call. = FALSE)
+      }
+      invokeRestart("muffleWarning")
+    }
+  )
   if (nrow(lints) > 0L) data.table::fwrite(lints, file.path(out_dir, paste0(package_name, ".csv")))
   TRUE
 }
@@ -354,9 +365,14 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
   linters <- lapply(linter_names, function(linter_name) {
     # since 2d76469~lintr>2.0.1~Feb 2021, all linters are function factories.
     #   but we also want to support the earlier 'simple' linters for robustness:
-    # TODO: special-case line_length_linter under v2.0.1 which didn't have a default length= argument
     linter <- tryCatch(
-      eval(call(linter_name)),
+      # apparently v2.0.1 does not have a default because somehow a0fff5~linter<v2.0.1~May 2017
+      #   did not make it into the release?
+      if (linter_name == "line_length_linter" && !is.integer(formals(linter_name)$length)) {
+        eval(call(linter_name, 80L))
+      } else {
+        eval(call(linter_name))
+      },
       error = function(cond) {
         eval(as.name(linter_name))
       }
