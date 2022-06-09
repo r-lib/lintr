@@ -353,25 +353,30 @@ get_linter_from_name <- function(linter_name) {
 
 max_digits <- function(n) as.integer(ceiling(log10(n)))
 
+# might be better to pre-initialize everything to seed at 0,
+#   but it requires knowing all the filenames in advance, which
+#   aren't revealed until inside of lint_dir().
 set_duration <- function(t0, branch, linter, package, file) {
   duration <- microbenchmark::get_nanotime() - t0
   current_total <- recorded_timings[[branch]][[linter]][[package]][[file]]
   if (is.null(current_total)) current_total <- 0
-  recorded_timings[[branch]][[linter]][[package]][[file]] <- duration
+  recorded_timings[[branch]][[linter]][[package]][[file]] <- current_total + duration
 }
 
-get_tracer <- function(branch, linter_name, package) {
+get_tracer <- function(branch, linter_name) {
+  # leave recorded_timings$current_package unevaluated -- needs to be read at execution time
   bquote({
     t0 <- microbenchmark::get_nanotime()
     # get first positional argument value (argument name may differ over time)
     filename <- eval(as.name(names(match.call())[2L]))$filename
-    on.exit(set_duration(t0, .(branch), .(linter_name), package, filename))
+    on.exit(set_duration(t0, .(branch), .(linter_name), recorded_timings$current_package, filename))
   })
 }
 
 get_benchmarked_linter <- function(linter_name, branch) {
   linter <- get_linter_from_name(linter_name)
 
+  # workaround for apparent R bugs. See r-devel#18354 and r-devel#18355.
   old_class <- class(linter)
   old_name <- attr(linter, "name")
   this_environment <- environment()
@@ -379,7 +384,7 @@ get_benchmarked_linter <- function(linter_name, branch) {
   suppressMessages(trace(
     what = linter,
     where = this_environment,
-    tracer = get_tracer(branch, linter_name, recorded_timings$current_package),
+    tracer = get_tracer(branch, linter_name),
     print = FALSE
   ))
   class(linter) <- old_class
@@ -542,6 +547,7 @@ unlink(file.path(params$outdir, ".partial"), recursive = TRUE)
 data.table::fwrite(lints, params$outfile, row.names = FALSE)
 
 if (params$benchmark) {
+  browser()
   benchmark_file <- gsub("\\.csv$", "_benchmark_timings.csv", params$outfile)
   message("Writing benchmark timing output to ", benchmark_file)
   timings_data <- data.table::rbindlist(idcol = "branch", lapply(
