@@ -48,7 +48,7 @@
   This affects some code that uses positional arguments. (#935, @MichaelChirico)
   + For `lint()`, `...` is now the 3rd argument, where earlier this was `cache`
   + For `lint_dir()` and `lint_package()`, `...` is now the 2nd argument, where earlier this was `relative_path`
-* Argument `source_file` to exported functions `with_id()` and `ids_with_token()` has been renamed to
+* Deprecated argument `source_file` to exported functions `with_id()` and `ids_with_token()`. It has been renamed to
   `source_expression` to better reflect that this argument is typically the output of `get_source_expressions()`.
   For now, the old argument `source_file` can still be used (with warning). The now-private functional versions of many linters
   also underwent the same renaming (`source_file` -> `source_expression`). This has no direct effect on packages importing lintr,
