@@ -4,9 +4,8 @@
 #' [linters_with_defaults()] to customize it. Most of the default linters
 #' are based on [the tidyverse style guide](https://style.tidyverse.org/).
 #'
-#' The set of default linters is as follows (any parameterised linters, eg,
-#' `line_length_linter` use their default argument(s), see `?<linter_name>` for
-#' details):
+#' The set of default linters is as follows (any parameterised linters, eg, `line_length_linter` use their default
+#' argument(s), see `?<linter_name>` for details):
 #'
 #' @evalRd rd_linters("default")
 #' @seealso [linters] for a complete list of linters available in lintr.
