@@ -351,7 +351,9 @@ get_linter_from_name <- function(linter_name) {
   )
 }
 
-get_benchmarked_linter <- function(linter, branch, linter_name) {
+get_benchmarked_linter <- function(linter_name, branch) {
+  linter <- get_linter_from_name(linter_name)
+
   old_class <- class(linter)
   old_name <- attr(linter, "name")
   this_environment <- environment()
@@ -427,22 +429,18 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
   }
   pkgload::load_all(export_all = FALSE)
 
-  if (param$benchmark) {
-    recorded_timings[[branch]] <- list()
-  }
-
   if (identical(linter_names, "_all_")) {
     linter_names <- get_all_linters()
   }
   check_deps <- any(c("object_usage_linter", "object_name_linter") %in% linter_names)
-  linters <- lapply(linter_names, function(linter_name) {
-    linter <- get_linter_from_name(linter_name)
-    if (params$benchmark) {
-      recorded_timings[[branch]][[linter_name]] <- list()
-      linter <- get_benchmarked_linter(linter, branch, linter_name)
-    }
-    linter
-  })
+
+  if (params$benchmark) {
+    recorded_timings[[branch]] <- list()
+    linters <- lapply(linter_names, get_benchmarked_linter, branch)
+  } else {
+    linters <- lapply(linter_names, get_linter_from_name)
+  }
+
   # accumulate results sequentially to allow for interruptions of long-running executions without losing progress
   out_temp_dir <- file.path(old_wd, params$outdir, ".partial", if (what == "pr") paste0("pr", number) else branch)
   dir.create(out_temp_dir, recursive = TRUE, showWarnings = FALSE)
