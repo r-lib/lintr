@@ -26,7 +26,7 @@ The linter allows \code{expect_equal()} in three circumstances:
 \item A named argument is set (e.g. \code{ignore_attr} or \code{tolerance})
 \item Comparison is made to an explicit decimal, e.g.
 \code{expect_equal(x, 1.0)} (implicitly setting \code{tolerance})
-\item \code{...} is passed (wrapper functions whcih might set
+\item \code{...} is passed (wrapper functions which might set
 arguments such as \code{ignore_attr} or \code{tolerance})
 }
 }

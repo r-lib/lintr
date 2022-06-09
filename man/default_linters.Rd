@@ -15,8 +15,9 @@ List of default linters for \code{\link[=lint]{lint()}}. Use
 \code{\link[=linters_with_defaults]{linters_with_defaults()}} to customize it. Most of the default linters
 are based on \href{https://style.tidyverse.org/}{the tidyverse style guide}.
 
-The set of default linters is as follows (any parameterised linters, eg, \code{line_length_linter} use their default
-argument(s), see \verb{?<linter_name>} for details):
+The set of default linters is as follows (any parameterised linters, eg,
+\code{line_length_linter} use their default argument(s), see \verb{?<linter_name>} for
+details):
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

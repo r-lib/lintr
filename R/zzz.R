@@ -4,8 +4,9 @@
 #' [linters_with_defaults()] to customize it. Most of the default linters
 #' are based on [the tidyverse style guide](https://style.tidyverse.org/).
 #'
-#' The set of default linters is as follows (any parameterised linters, eg, `line_length_linter` use their default
-#' argument(s), see `?<linter_name>` for details):
+#' The set of default linters is as follows (any parameterised linters, eg,
+#' `line_length_linter` use their default argument(s), see `?<linter_name>` for
+#' details):
 #'
 #' @evalRd rd_linters("default")
 #' @seealso [linters] for a complete list of linters available in lintr.
@@ -55,6 +56,7 @@ default_linters <- modify_defaults(
 #'  * [debugonce()] is only useful for interactive debugging. It should be removed.
 #'  * [detach()] modifies the global search path. Detaching environments from the search path is rarely necessary in
 #'    production code.
+#'  * [expect_that()] This style of testing is no longer encouraged by `{testthat}` package. Using a more specific expect_ function (e.g. `expect_equal()`, `expect_s3_class()`, etc.) is recommended.
 #'  * [ifelse()] isn't type stable. Use an `if`/`else` block for scalar logic, or use
 #'    `dplyr::if_else()`/`data.table::fifelse()` for type stable vectorized logic.
 #'  * [.libPaths()] permanently modifies the library location. Use [withr::with_libpaths()] for a temporary change
@@ -106,6 +108,8 @@ all_undesirable_functions <- modify_defaults(
   "debugonce" = "It is only useful for interactive debugging. It should be removed.",
   "detach" = paste("It modifies the global search path. Detaching environments from the search path",
                    "is rarely necessary in production code."),
+  "expect_that" = paste("This style of testing is no longer encouraged by `{testthat}` package.
+                        Using a more specific expect_ function (e.g. `expect_equal()`, `expect_s3_class()`, etc.) is recommended."),
   "ifelse" = paste("It isn't type stable. Use an `if`/`else` block for scalar logic, or use",
                    "dplyr::if_else()/data.table::fifelse() for type stable vectorized logic."),
   ".libPaths" = paste("It permanently modifies the library location. Use withr::with_libpaths()",
@@ -147,6 +151,7 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
   "debugcall",
   "debugonce",
   "detach",
+  "expect_that",
   ".libPaths",
   "library",
   "mapply",

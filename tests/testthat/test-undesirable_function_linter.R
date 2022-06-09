@@ -1,4 +1,4 @@
-test_that("linter returns correct linting", {
+test_that("linter returns correct linting for undesirable functions", {
   linter <- undesirable_function_linter(fun = c("return" = NA, "log10" = "use log()"))
   msg_return <- "Function \"return\" is undesirable.$"
   msg_log10 <- "Function \"log10\" is undesirable. As an alternative, use log\\(\\)."

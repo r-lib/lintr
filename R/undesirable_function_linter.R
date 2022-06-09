@@ -1,15 +1,15 @@
 #' Undesirable function linter
 #'
-#' Report the use of undesirable functions, e.g. [base::return()], [base::options()], or
-#' [base::sapply()] and suggest an alternative.
+#' Report the use of undesirable functions, e.g. [base::return()],
+#' [base::options()], or [base::sapply()] and suggest an alternative.
 #'
-#' @param fun Named character vector. `names(fun)` correspond to undesirable functions,
-#'   while the values give a description of why the function is undesirable.
-#'   If `NA`, no additional information is given in the lint message. Defaults to
-#'   [default_undesirable_functions]. To make small customizations to this list,
-#'   use [modify_defaults()].
-#' @param symbol_is_undesirable Whether to consider the use of an undesirable function name as a symbol undesirable
-#'   or not.
+#' @param fun Named character vector. `names(fun)` correspond to undesirable
+#'   functions, while the values give a description of why the function is
+#'   undesirable. If `NA`, no additional information is given in the lint
+#'   message. Defaults to [default_undesirable_functions]. To make small
+#'   customizations to this list, use [modify_defaults()].
+#' @param symbol_is_undesirable Whether to consider the use of an undesirable
+#'   function name as a symbol undesirable or not.
 #' @evalRd rd_tags("undesirable_function_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
