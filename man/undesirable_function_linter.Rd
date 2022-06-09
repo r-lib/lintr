@@ -10,18 +10,18 @@ undesirable_function_linter(
 )
 }
 \arguments{
-\item{fun}{Named character vector. \code{names(fun)} correspond to undesirable
-functions, while the values give a description of why the function is
-undesirable. If \code{NA}, no additional information is given in the lint
-message. Defaults to \link{default_undesirable_functions}. To make small
-customizations to this list, use \code{\link[=modify_defaults]{modify_defaults()}}.}
+\item{fun}{Named character vector. \code{names(fun)} correspond to undesirable functions,
+while the values give a description of why the function is undesirable.
+If \code{NA}, no additional information is given in the lint message. Defaults to
+\link{default_undesirable_functions}. To make small customizations to this list,
+use \code{\link[=modify_defaults]{modify_defaults()}}.}
 
-\item{symbol_is_undesirable}{Whether to consider the use of an undesirable
-function name as a symbol undesirable or not.}
+\item{symbol_is_undesirable}{Whether to consider the use of an undesirable function name as a symbol undesirable
+or not.}
 }
 \description{
-Report the use of undesirable functions, e.g. \code{\link[base:function]{base::return()}},
-\code{\link[base:options]{base::options()}}, or \code{\link[base:lapply]{base::sapply()}} and suggest an alternative.
+Report the use of undesirable functions, e.g. \code{\link[base:function]{base::return()}}, \code{\link[base:options]{base::options()}}, or
+\code{\link[base:lapply]{base::sapply()}} and suggest an alternative.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
