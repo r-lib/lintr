@@ -24,7 +24,7 @@
 
 suppressPackageStartupMessages({
   library(optparse)
-  library(data.table, include.only = c("fwrite", "rbindlist", "tstrsplit", "setnames"))
+  library(data.table, include.only = c("fwrite", "rbindlist", "tstrsplit", "rowid", "dcast"))
   library(dplyr)
   library(purrr)
   library(tibble)
