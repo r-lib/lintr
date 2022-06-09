@@ -550,16 +550,28 @@ if (params$benchmark) {
   browser()
   benchmark_file <- gsub("\\.csv$", "_benchmark_timings.csv", params$outfile)
   message("Writing benchmark timing output to ", benchmark_file)
-  timings_data <- data.table::rbindlist(idcol = "branch", lapply(
-    recorded_timings,
-    function(branch) data.table::rbindlist(lapply(branch, data.table::rbindlist), idcol = "linter")
-  ))
-  timings_data[, c("package", "file") := data.table::tstrsplit(V1, "*:::*", fixed = TRUE)]
-  # linter gets run multiple times on a given file (corresponding to each expression + the whole file)
-  timings_data[, expr_id := data.table::rowid(branch, linter, package, file)]
+  # lots of nesting, fun
+  timings_data <- rbindlist(
+    idcol = "branch",
+    lapply(
+      recorded_timings,
+      function(branch) rbindlist(
+        idcol = "linter",
+        lapply(
+          branch,
+          function(linter) rbindlist(
+            idcol = "package",
+            lapply(linter, function(package) data.table(filename = names(package), duration = unlist(package)))
+          )
+        )
+      )
+    )
+  )
+  # delete noisy/redundant information from filename
+  timings_data[, filename := sub(file.path(tempdir(), .BY$package, ""), "", filename), by = package]
   # save data in wide format to save some space (data gets saved as column names)
   timings_data[,
-    data.table::dcast(.SD, linter + package + file ~ branch, value.var = "V2", fun.aggregate = sum)
+    data.table::dcast(.SD, linter + package + filename ~ branch, value.var = "duration")
   ][,
     data.table::fwrite(timings_data, benchmark_file)
   ]
