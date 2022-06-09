@@ -552,7 +552,6 @@ unlink(file.path(params$outdir, ".partial"), recursive = TRUE)
 data.table::fwrite(lints, params$outfile, row.names = FALSE)
 
 if (params$benchmark) {
-  browser()
   benchmark_file <- gsub("\\.csv$", "_benchmark_timings.csv", params$outfile)
   message("Writing benchmark timing output to ", benchmark_file)
   # lots of nesting, fun
