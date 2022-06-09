@@ -530,9 +530,13 @@ if (params$benchmark) {
     function(branch) data.table::rbindlist(lapply(branch, data.table::rbindlist), idcol = "linter")
   ))
   timings_data[, c("package", "file") := data.table::tstrsplit(V1, "*:::*", fixed = TRUE)]
-  timings_data[, "V1" := NULL]
-  data.table::setnames(timings_data, "V2", "execution_time_ns")
-  data.table::fwrite(timings_data, benchmark_file)
+  timings_data[, expr_id := data.table::rowid(branch, linter, package, file)]
+  # save data in wide format to save some space (data gets saved as column names)
+  timings_data[,
+    data.table::dcast(.SD, linter + package + file + expr_id ~ branch, value.var = "V2")
+  ][,
+    data.table::fwrite(timings_data, benchmark_file)
+  ]
 }
 
 if (interactive()) {
