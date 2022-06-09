@@ -351,6 +351,8 @@ get_linter_from_name <- function(linter_name) {
   )
 }
 
+max_digits <- function(n) as.integer(ceiling(log10(n)))
+
 get_benchmarked_linter <- function(linter_name, branch) {
   linter <- get_linter_from_name(linter_name)
 
@@ -447,8 +449,8 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
 
   linted_packages <- 0L
   package_i <- 0L
-  pkgs_width <- as.integer(ceiling(log10(length(packages))))
-  done_width <- as.integer(ceiling(log10(n_packages)))
+  pkgs_width <- max_digits(length(packages))
+  done_width <- max_digits(n_packages)
   stdout_width <- getOption("width")
   # given how common it can be to skip packages (e.g. due to uninstalled
   #   dependencies), use a while loop to try and reach n_packages instead
