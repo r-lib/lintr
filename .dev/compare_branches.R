@@ -413,7 +413,10 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
         #   it's better to measure file-level than expression-level timing. I guess
         #   there are also issues where one branch will use an expression-level
         #   version of a linter and we want to compare to the file-level version
-        #   to see what the raw overhead is (regardless of caching).
+        #   to see what the raw overhead is (regardless of caching). We could also
+        #   sum later (as we do now), but the CSV can only realistically work locally
+        #   for ~2-3K packages at expression-level timing. The file-level timing
+        #   requires 1/35 as many observations, roughly, so it can scale to all of CRAN.
         on.exit({
           duration <- microbenchmark::get_nanotime() - t0
           recorded_timings[[.(branch)]][[.(linter_name)]] <- c(
@@ -542,7 +545,7 @@ if (params$benchmark) {
   timings_data[, expr_id := data.table::rowid(branch, linter, package, file)]
   # save data in wide format to save some space (data gets saved as column names)
   timings_data[,
-    data.table::dcast(.SD, linter + package + file + expr_id ~ branch, value.var = "V2")
+    data.table::dcast(.SD, linter + package + file ~ branch, value.var = "V2", fun.aggregate = sum)
   ][,
     data.table::fwrite(timings_data, benchmark_file)
   ]
