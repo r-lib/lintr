@@ -24,7 +24,7 @@
 
 suppressPackageStartupMessages({
   library(optparse)
-  library(data.table, include.only = "fwrite")
+  library(data.table, include.only = c("fwrite", "rbindlist", "tstrsplit", "setnames"))
   library(dplyr)
   library(purrr)
   library(tibble)
@@ -403,7 +403,7 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
         # get first positional argument value (argument name may differ over time)
         filename <- paste0(
           recorded_timings$current_package,
-          ":",
+          "*:::*",
           eval(as.name(names(match.call())[2L]))$filename
         )
         on.exit({
@@ -523,7 +523,16 @@ unlink(file.path(params$outdir, ".partial"), recursive = TRUE)
 data.table::fwrite(lints, params$outfile, row.names = FALSE)
 
 if (params$benchmark) {
-
+  benchmark_file <- gsub("\\.csv$", "_benchmark_timings.csv", params$outfile)
+  message("Writing benchmark timing output to ", params$outfile)
+  timings_data <- data.table::rbindlist(idcol = "branch", lapply(
+    recorded_timings,
+    function(branch) data.table::rbindlist(lapply(branch, data.table::rbindlist), idcol = "linter")
+  ))
+  timings_data[, c("package", "file") := data.table::tstrsplit(V1, "*:::*", fixed = TRUE)]
+  timings_data[, "V1" := NULL]
+  data.table::setnames(timings_data, "V2", "execution_time_ns")
+  data.table::fwrite(timings_data, benchmark_file)
 }
 
 if (interactive()) {
