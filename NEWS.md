@@ -21,7 +21,7 @@
    + `multiple_dots_linter()`
    + `snake_case_linter()`
    + `trailing_semicolons_linter()`
-* Removed `return()` from `all_undesirable_functions because early returns (which often improve
+* Removed `return()` from `all_undesirable_functions` because early returns (which often improve
   readability and reduce code complexity) require explicit use of `return()`. Follow #1100 for
   an upcoming `return_linter()` to lint unnecessary `return()` statements (#1146, @AshesITR).
   Note that you can replicate old behavior by supplying `return` as a custom undesirable function:
@@ -50,9 +50,9 @@
   + For `lint_dir()` and `lint_package()`, `...` is now the 2nd argument, where earlier this was `relative_path`
 * Argument `source_file` to exported functions `with_id()` and `ids_with_token()` has been renamed to
   `source_expression` to better reflect that this argument is typically the output of `get_source_expressions()`.
-  For now, `source_file` can still be used (with warning). It has also been renamed as the argument of the now-private
-  functional versions of many linters, which has no direct effect on packages importing lintr, but is mentioned in case
-  custom linters imitating `lintr` style have also adopted the `source_file` naming and want to adapt to keep in sync.
+  For now, the old argument `source_file` can still be used (with warning). The now-private functional versions of many linters
+  also underwent the same renaming (`source_file` -> `source_expression`). This has no direct effect on packages importing lintr,
+  but is mentioned in case custom linters imitating `lintr` style had also adopted the `source_file` naming and want to adapt to keep in sync.
 * Deprecated `with_defaults()` in favor of `linters_with_defaults()`, and add `modify_defaults()` which is intended to be used
   more generally to modify (i.e., extend, trim, and/or update) a list of defaults. Note that the argument corresponding to
   `with_defaults()`'s `default=` is called `defaults=` (i.e., pluralized) in both of these, and that usage like
@@ -66,7 +66,7 @@
 * New `brace_linter()` which combines several curly brace related linters, deprecating the following predecessors (#1041, @AshesITR):
    + `closed_curly_linter()`; both now also allow `}]` in addition to `})` and `},` as exceptions, i.e., `}` doesn't need
      to be on its own line if paired with a closing square bracket, a closing parenthesis, or a comma. Also improved lint metadata
-     so that source markers land at the opening brace instead of the closing parenthesis to improve the experience of fixing the lint (#583, @AshesITR)
+     so that source markers land at the closing brace instead of the closing parenthesis to improve the experience of fixing the lint (#583, @AshesITR)
    + `open_curly_linter()`; both also no longer lint unnecessary trailing whitespace (use `trailing_whitespace_linter()` for this)
      and also allow `(`, `,`, and `%>%` on preceding lines as exceptions, i.e., `{` can be alone on a line if the previous line
      is terminated with an opening parenthesis, a comma, or a pipe (`%>%`). (#487, #1028, @AshesITR)
@@ -110,24 +110,24 @@
    + Added argument `allow_empty_lines` (`FALSE` by default) to toggle this behavior
    + Improved so that trailing whitespace inside string literals does not trigger a lint (#1045, @AshesITR)
    + Added argument `allow_in_strings` (`TRUE` by default) to toggle this behavior
-* `trailing_blank_lines_linter()`: extend to lint files without a terminal newline (#675, @AshesITR)
+* `trailing_blank_lines_linter()`: extended to lint files without a terminal newline (#675, @AshesITR)
    + Also, running `lint()` on a file without a terminal newline no longer throws a `warning()`
 * `object_name_linter()`
    + Improved generic detection -- in user-defined method `my_method.upstream.class`,
      `upstream.class` no longer throws a lint because the generic (`my_method`)
      properly uses `snake_case` (#737, @AshesITR)
-   + Exclude special R namespace hook functions such as `.onLoad` (#500, #614, @AshesITR and @MichaelChirico)
+   + Exclude special R namespace hook functions such as `.onLoad()` (#500, #614, @AshesITR and @MichaelChirico)
    + Correctly detect imported functions when linting packages (#642, @AshesITR)
    + Correctly detect assignment generics like `names<-.class_name` (#843, @jonkeane)
    + Added new styles `"symbols"` and `"SNAKE_CASE"` (#494, #495, #615, #670, @MichaelChirico and @AshesITR)
      - `"symbols"` is a new default style which won't lint all-symbol object names. In particular, that means
-       operator names like `%+%` are skipped.
+       operator names like `%+%` are allowed.
    + No longer lints names used in `$` extractions (#582, @AshesITR)
 * `object_usage_linter()`
    + Detect global variables if there are top-level dollar-assignments (#666, @AshesITR)
    + Report usage warnings spanning multiple lines (#507, @AshesITR)
    + Detect usages inside `glue::glue()` constructs (#942, @AshesITR)
-   + Detect within functions assigned with `=` instead of `<-` (#1081, @MichaelChirico)
+   + Detect usages inside functions assigned with `=` instead of `<-` (#1081, @MichaelChirico)
    + Detect functions exported by packages that are explicitly attached using `library()` or
      `require()` calls (#1127, @AshesITR)
    + Improved location information in some cases where the previous regex-based approach didn't work, e.g. unicode
@@ -168,7 +168,7 @@
 * `namespace_linter()` to check for common mistakes in `pkg::symbol` usages (#548, @renkun-ken)
 * `missing_argument_linter()` to check for empty (missing) arguments in function calls (#563, @renkun-ken)
 * `duplicate_argument_linter()` similarly checks that there are no duplicate arguments supplied to function calls (#850, @renkun-ken)
-* `sprintf_linter()` to check for common mistakes in `sprintf()` usage (#544, #624, @renkun-ken, @AshesITR)
+* `sprintf_linter()` to check for common mistakes in `sprintf()` usage (#544, #624, @renkun-ken and @AshesITR)
 * `backport_linter()` for detecting mismatched R version dependencies (#506, #1316, #1318, #1319, @MichaelChirico and @AshesITR)
 * `pipe_call_linter()` to enforce that all steps of `magrittr` pipelines use explicit calls instead of symbols,
   e.g. `x %>% mean()` instead of `x %>% mean` (#801, @MichaelChirico)
@@ -178,7 +178,7 @@
 
 #### Google linters
 
-Google uses lintr heavily internally, and has developed a large set of linters improving code consistency
+Google is a heavy user of lintr internally, and has developed a large set of linters improving code consistency
 and correcting common R usage mistakes. This release includes many of these linters that are
 of general interest to the broader R community. More will be included in future releases. See, e.g.
 #884, #979, #998, #1011, #1016, #1036, #1051, #1066, and #1067; special thanks to @MichaelChirico and @michaelquinn32.
@@ -220,7 +220,7 @@ of general interest to the broader R community. More will be included in future 
 * `consecutive_stopifnot_linter()` Require consecutive calls to `stopifnot()` to be unified into one
 * `ifelse_censor_linter()` Require usage of `pmax()` / `pmin()` where appropriate, e.g. `ifelse(x > y, x, y)` is `pmax(x, y)`
 * `system_file_linter()` Prevent usage like `file.path(system.file("A", package = "pkg"), "B")` where simply
-  `system.file("A", "B", package = "pkg") is more concise and readable
+  `system.file("A", "B", package = "pkg")` is more concise and readable
 * `strings_as_factors_linter()` Check for code designed to work before and after the `stringsAsFactors = FALSE` default
   change in R 4.0 by examining code for `data.frame()` usages susceptible to assumptions about the default value
   of `stringsAsFactors=`
