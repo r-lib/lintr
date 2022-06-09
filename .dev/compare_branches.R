@@ -530,6 +530,7 @@ if (params$benchmark) {
     function(branch) data.table::rbindlist(lapply(branch, data.table::rbindlist), idcol = "linter")
   ))
   timings_data[, c("package", "file") := data.table::tstrsplit(V1, "*:::*", fixed = TRUE)]
+  # linter gets run multiple times on a given file (corresponding to each expression + the whole file)
   timings_data[, expr_id := data.table::rowid(branch, linter, package, file)]
   # save data in wide format to save some space (data gets saved as column names)
   timings_data[,
