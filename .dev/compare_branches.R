@@ -392,6 +392,31 @@ get_benchmarked_linter <- function(linter_name, branch) {
   linter
 }
 
+# gert::git_branch_checkout() doesn't support checking out tags directly
+#   (like CLI 'git checkout' flexibly does); use this workaround instead
+switch_to_ref <- function(ref) {
+  tryCatch(
+    gert::git_branch_checkout(ref, force = TRUE),
+    error = function(cond) {
+      tag_metadata <- gert::git_tag_list(ref)
+      tag_hash <- tag_metadata$commit
+      if (length(tag_hash) == 0L) {
+        stop("Unable to find branch or tag '", ref, "'")
+      }
+      # if an actual tag is provided, we'll get 0 or 1 results. but
+      #   git_tag_list() supports wildcards too, e.g. git_tag_list("v2*"), so safeguard:
+      if (length(tag_hash) > 1L) {
+        warning("Matched more than one tag! Selecting the first of: ", toString(tag_metadata$name))
+        tag_hash <- tag_hash[1L]
+      }
+      # no way to checkout a commit directly, so create a branch based to it instead -- gert#147
+      # also don't have checkout --force, so just reset to prevent that from blocking -- gert#177
+      gert::git_reset_hard()
+      gert::git_branch_create(paste(sample(letters), collapse = ""), ref = tag_hash)
+    }
+  )
+}
+
 run_workflow <- function(what, packages, linter_names, branch, number) {
   t0 <- Sys.time()
   old_branch <- gert::git_branch()
@@ -406,28 +431,7 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
     gert::git_branch_checkout("main", force = TRUE)
     gert::git_checkout_pull_request(number)
   } else {
-    # gert::git_branch_checkout() doesn't support checking out tags
-    #   directly (like CLI 'git checkout' flexibly does); use this workaround instead
-    tryCatch(
-      gert::git_branch_checkout(branch, force = TRUE),
-      error = function(cond) {
-        tag_metadata <- gert::git_tag_list(branch)
-        tag_hash <- tag_metadata$commit
-        if (length(tag_hash) == 0L) {
-          stop("Unable to find branch or tag '", branch, "'")
-        }
-        # if an actual tag is provided, we'll get 0 or 1 results. but
-        #   git_tag_list() supports wildcards too, e.g. git_tag_list("v2*"), so safeguard:
-        if (length(tag_hash) > 1L) {
-          warning("Matched more than one tag! Selecting the first of: ", toString(tag_metadata$name))
-          tag_hash <- tag_hash[1L]
-        }
-        # no way to checkout a commit directly, so create a branch based to it instead -- gert#147
-        # also don't have checkout --force, so just reset to prevent that from blocking -- gert#177
-        gert::git_reset_hard()
-        gert::git_branch_create(paste(sample(letters), collapse = ""), ref = tag_hash)
-      }
-    )
+    switch_to_ref(branch)
   }
   pkgload::load_all(export_all = FALSE)
 
