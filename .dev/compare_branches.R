@@ -313,7 +313,7 @@ lint_one_package <- function(package, linters, out_dir, check_deps) {
   suppressMessages(withCallingHandlers(
     lints <- as.data.frame(lint_dir(package, linters = linters, parse_settings = FALSE)),
     warning = function(cond) {
-      if (!grepl("ncomplete final line found|Function.*was deprecated in lintr", cond$message)) {
+      if (!grepl("ncomplete final line found|was deprecated in lintr", cond$message)) {
         warning(cond$message, call. = FALSE)
       }
       invokeRestart("muffleWarning")
