@@ -406,6 +406,14 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
           "*:::*",
           eval(as.name(names(match.call())[2L]))$filename
         )
+        # TODO(michaelchirico): alter the structure here a bit to write a duration
+        #   recorded_timings[[branch]][[linter]][[package]][[filename]],
+        #   and _sum_ timings in a single file. this will save space and minimize
+        #   the problem where many executions will just exit immediately, i.e.,
+        #   it's better to measure file-level than expression-level timing. I guess
+        #   there are also issues where one branch will use an expression-level
+        #   version of a linter and we want to compare to the file-level version
+        #   to see what the raw overhead is (regardless of caching).
         on.exit({
           duration <- microbenchmark::get_nanotime() - t0
           recorded_timings[[.(branch)]][[.(linter_name)]] <- c(
