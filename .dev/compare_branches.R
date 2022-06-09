@@ -61,7 +61,7 @@ param_list <- list(
   optparse::make_option(
     "--linters",
     default = if (interactive()) {
-      readline("Provide a comma-separated list of linters to compare: ")
+      readline("Provide a comma-separated list of linters to compare (skip to include all linters on each branch): ")
     },
     help = "Run the comparison for these linter(s) (comma-separated)"
   ),
@@ -148,9 +148,10 @@ if (params$benchmark) {
   recorded_timings <- new.env()
 }
 
-linter_names <- strsplit(params$linters, ",", fixed = TRUE)[[1L]]
-if (length(linter_names) == 0L) {
-  stop("Please supply linters (--linters)")
+if (is.null(params$linters)) {
+  linter_names <- "_all_"
+} else {
+  linter_names <- strsplit(params$linters, ",", fixed = TRUE)[[1L]]
 }
 
 base_branch <- params$base_branch
@@ -310,10 +311,11 @@ lint_one_package <- function(package, linters, out_dir, check_deps) {
   # terminal_blank_lines_linter() started suppressing terminal newline warning
   #   in d20768a~lintr>2.0.1~Feb 2021; prior to that, we get a ton of those warnings.
   #   ignore them because they're innocuous.
+  # also ignore lintr's deprecations to make including all linters easier
   withCallingHandlers(
     lints <- as.data.frame(lint_dir(package, linters = linters, parse_settings = FALSE)),
     warning = function(cond) {
-      if (!grepl("ncomplete final line found", cond$message, fixed = TRUE)) {
+      if (!grepl("ncomplete final line found|Function.*was deprecated in lintr", cond$message)) {
         warning(cond$message, call. = FALSE)
       }
       invokeRestart("muffleWarning")
@@ -360,8 +362,20 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
       }
     )
   }
-  pkgload::load_all()
+  pkgload::load_all(export_all = FALSE)
 
+  if (identical(linter_names, "_all_")) {
+    lintr_exports <- getNamespaceExports("lintr")
+    # available_linters is the preferred way to do this, but only
+    #   available since aafba4~lintr>2.0.1~Mar 2022. relying on
+    #   'exports ending in _linter' seems to work for v2.0.1,
+    #   but not clear how robust it is in general.
+    if ("available_linters" %in% lintr_exports) {
+      linter_names <- available_linters(tags = NULL)$linter
+    } else {
+      linter_names <- grep("_linter$", lintr_exports, value = TRUE)
+    }
+  }
   check_deps <- any(c("object_usage_linter", "object_name_linter") %in% linter_names)
   linters <- lapply(linter_names, function(linter_name) {
     # since 2d76469~lintr>2.0.1~Feb 2021, all linters are function factories.
