@@ -524,7 +524,7 @@ data.table::fwrite(lints, params$outfile, row.names = FALSE)
 
 if (params$benchmark) {
   benchmark_file <- gsub("\\.csv$", "_benchmark_timings.csv", params$outfile)
-  message("Writing benchmark timing output to ", params$outfile)
+  message("Writing benchmark timing output to ", benchmark_file)
   timings_data <- data.table::rbindlist(idcol = "branch", lapply(
     recorded_timings,
     function(branch) data.table::rbindlist(lapply(branch, data.table::rbindlist), idcol = "linter")
