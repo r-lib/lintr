@@ -43,11 +43,15 @@ if (!file.exists("lintr.Rproj")) {
 #   all current edits must be checked in before running)
 # named lintr_repo in case this script happens to be run against
 #   a tar of lintr itself...
+# TODO(michaelchirico): use git clone instead to just clone a single commit to tempdir()
 temp_repo <- file.path(tempdir(), "lintr_repo")
 dir.create(temp_repo)
 invisible(file.copy(".", temp_repo, recursive = TRUE))
 message("Executing from copy of repo at ", temp_repo)
 old_wd <- setwd(temp_repo)
+# ensure no accidental pushes to any remote from this temp repo, so we can abuse it safely
+remotes <- system2("git", "remote", stdout = TRUE)
+for (remote in remotes) system2("git", c("remote", "remove", remote))
 .Last <- function() {
   setwd(old_wd)
   unlink(temp_repo, recursive = TRUE)
