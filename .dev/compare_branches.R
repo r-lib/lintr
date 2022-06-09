@@ -353,6 +353,22 @@ get_linter_from_name <- function(linter_name) {
 
 max_digits <- function(n) as.integer(ceiling(log10(n)))
 
+set_duration <- function(t0, branch, linter, package, file) {
+  duration <- microbenchmark::get_nanotime() - t0
+  current_total <- recorded_timings[[branch]][[linter]][[package]][[file]]
+  if (is.null(current_total)) current_total <- 0
+  recorded_timings[[branch]][[linter]][[package]][[file]] <- duration
+}
+
+get_tracer <- function(branch, linter_name, package) {
+  bquote({
+    t0 <- microbenchmark::get_nanotime()
+    # get first positional argument value (argument name may differ over time)
+    filename <- eval(as.name(names(match.call())[2L]))$filename
+    on.exit(set_duration(t0, .(branch), .(linter_name), package, filename))
+  })
+}
+
 get_benchmarked_linter <- function(linter_name, branch) {
   linter <- get_linter_from_name(linter_name)
 
@@ -360,33 +376,12 @@ get_benchmarked_linter <- function(linter_name, branch) {
   old_name <- attr(linter, "name")
   this_environment <- environment()
   class(linter) <- NULL
-  suppressMessages(trace(linter, where = this_environment, print = FALSE, tracer = bquote({
-    t0 <- microbenchmark::get_nanotime()
-    # get first positional argument value (argument name may differ over time)
-    filename <- paste0(
-      recorded_timings$current_package,
-      "*:::*",
-      eval(as.name(names(match.call())[2L]))$filename
-    )
-    # TODO(michaelchirico): alter the structure here a bit to write a duration
-    #   recorded_timings[[branch]][[linter]][[package]][[filename]],
-    #   and _sum_ timings in a single file. this will save space and minimize
-    #   the problem where many executions will just exit immediately, i.e.,
-    #   it's better to measure file-level than expression-level timing. I guess
-    #   there are also issues where one branch will use an expression-level
-    #   version of a linter and we want to compare to the file-level version
-    #   to see what the raw overhead is (regardless of caching). We could also
-    #   sum later (as we do now), but the CSV can only realistically work locally
-    #   for ~2-3K packages at expression-level timing. The file-level timing
-    #   requires 1/35 as many observations, roughly, so it can scale to all of CRAN.
-    on.exit({
-      duration <- microbenchmark::get_nanotime() - t0
-      recorded_timings[[.(branch)]][[.(linter_name)]] <- c(
-        recorded_timings[[.(branch)]][[.(linter_name)]],
-        list(list(filename, duration))
-      )
-    })
-  })))
+  suppressMessages(trace(
+    what = linter,
+    where = this_environment,
+    tracer = get_tracer(branch, linter_name, recorded_timings$current_package),
+    print = FALSE
+  ))
   class(linter) <- old_class
   attr(linter, "name") <- old_name
   linter
