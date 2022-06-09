@@ -494,14 +494,20 @@ get_newline_locs <- function(x) {
 
 find_line_fun <- function(content, newline_locs) {
   function(line_number) {
-    warning("find_line is deprecated and will soon be removed. XPath logic and xml_nodes_to_lints() are usually preferable")
+    warning(
+      "find_line is deprecated and will soon be removed. ",
+      "XPath logic and xml_nodes_to_lints() are usually preferable"
+    )
     which(newline_locs >= line_number)[1L] - 1L
   }
 }
 
 find_column_fun <- function(content, newline_locs) {
   function(line_number) {
-    warning("find_column is deprecated and will soon be removed. XPath logic and xml_nodes_to_lints() are usually preferable")
+    warning(
+      "find_column is deprecated and will soon be removed. ",
+      "XPath logic and xml_nodes_to_lints() are usually preferable"
+    )
     matched_line_number <- which(newline_locs >= line_number)[1L] - 1L
     line_number - newline_locs[matched_line_number]
   }
