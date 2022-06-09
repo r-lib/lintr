@@ -342,14 +342,15 @@ run_workflow <- function(what, packages, linter_names, branch, number) {
     tryCatch(
       gert::git_branch_checkout(branch, force = TRUE),
       error = function(cond) {
-        tag_hash <- gert::git_tag_list(branch)$commit
+        tag_metadata <- gert::git_tag_list(branch)
+        tag_hash <- tag_metadata$commit
         if (length(tag_hash) == 0L) {
           stop("Unable to find branch or tag '", branch, "'")
         }
         # if an actual tag is provided, we'll get 0 or 1 results. but
         #   git_tag_list() supports wildcards too, e.g. git_tag_list("v2*"), so safeguard:
         if (length(tag_hash) > 1L) {
-          warning("Matched more than one tag! Selecting the first of: ", toString(tag_hash))
+          warning("Matched more than one tag! Selecting the first of: ", toString(tag_metadata$name))
           tag_hash <- tag_hash[1L]
         }
         # no way to checkout a commit directly, so create a branch based to it instead -- gert#147
