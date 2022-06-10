@@ -135,8 +135,8 @@ Hadley Wickham's contribution to create a pkgdown website for the package:
 ## Google linters
 
 This release also features more than 30 new linters originally authored by Google developers.
-Google adheres mostly to the tidyverse style guide and uses lintr to improve the consistency
-of R code in its considerable internal R code base. These linters detect common issues with
+Google adheres mostly to the tidyverse style guide and uses lintr to improve the quality
+of its considerable internal R code base. These linters detect common issues with
 readability, consistency, and performance. Here are some examples:
 
  - `any_is_na_linter()` detects the usage of `any(is.na(x))`; `anyNA(x)` is nearly always a better choice,
