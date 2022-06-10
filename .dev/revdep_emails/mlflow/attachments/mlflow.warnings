@@ -1,2 +1,0 @@
-Function with_defaults was deprecated in lintr version 2.0.9001. Use linters_with_defaults instead.
-Trying to remove ‘closed_curly_linter’, ‘open_curly_linter’ and ‘absolute_paths_linter’, which are not in `defaults`.

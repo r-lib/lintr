@@ -1,6 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"R/experimental.R",2,3,"style","Any function spanning multiple lines should use curly braces.","  function(...) reactElement(","brace_linter"
-"R/reactData.R",14,24,"style","Any function spanning multiple lines should use curly braces.","asReactData.default <- function(x) ReactData(","brace_linter"
-"R/reactData.R",21,32,"style","Any function spanning multiple lines should use curly braces.","asReactData.html_dependency <- function(x) ReactData(","brace_linter"
-"R/reactData.R",28,24,"style","Any function spanning multiple lines should use curly braces.","asReactData.JS_EVAL <- function(x) ReactData(","brace_linter"
-"R/reactData.R",69,3,"style","Either both or neither branch in `if`/`else` should use curly braces.","  if (is.null(data)) {","brace_linter"

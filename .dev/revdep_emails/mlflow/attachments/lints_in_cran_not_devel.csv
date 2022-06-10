@@ -1,3 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"R/tracking-rest.R",34,13,"style","Variable and function name style should be snake_case.","    headers$Authorization <- auth_header","object_name_linter"
-"R/tracking-rest.R",36,11,"style","Variable and function name style should be snake_case.","  headers$`User-Agent` <- paste(""mlflow-r-client"", utils::packageVersion(""mlflow""), sep = ""/"")","object_name_linter"

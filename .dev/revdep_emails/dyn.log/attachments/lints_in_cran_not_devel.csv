@@ -1,2 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"R/dispatch.R",123,39,"style","Commas should never have a space before.","        args = rlang::pairlist2(msg = ,","commas_linter"

@@ -1,2 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"R/utils.R",10,1,"style","Variable and function name style should be snake_case.","""%||%"" <- function(a, b) {","object_name_linter"

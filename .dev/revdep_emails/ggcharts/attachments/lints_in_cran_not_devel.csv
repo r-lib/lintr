@@ -1,3 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"R/zzz.R",1,1,"style","Variable and function name style should be snake_case.",".onLoad <- function(libname, pkgname) {","object_name_linter"
-"R/zzz.R",43,1,"style","Variable and function name style should be snake_case.",".onUnload <- function(libpath) {","object_name_linter"

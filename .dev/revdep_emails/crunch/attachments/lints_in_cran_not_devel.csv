@@ -1,2 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"tests/testthat/test-misc.R",203,9,"style","Opening curly braces should never go on their own line and should always be followed by a new line.","        {","open_curly_linter"

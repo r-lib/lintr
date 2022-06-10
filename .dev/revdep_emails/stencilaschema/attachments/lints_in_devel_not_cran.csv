@@ -1,3 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"R/typing.R",196,3,"style","`else` should come on the same line as the previous `}`.","  else if (is_class(type, ""Array"")) {","brace_linter"
-"R/typing.R",205,5,"style","`else` should come on the same line as the previous `}`.","    else if (","brace_linter"

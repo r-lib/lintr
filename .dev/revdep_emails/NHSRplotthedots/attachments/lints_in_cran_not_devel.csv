@@ -1,3 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"R/ptd_calculate_point_type.R",60,26,"style","Place a space before left parenthesis, except in a function call.","    vapply(seq_along(y)[-(1:6)], function(i) { # Exclude Linting","spaces_left_parentheses_linter"
-"R/ZZZ.R",18,1,"style","Variable and function name style should be snake_case.","`%||%` <- function(a, b) {","object_name_linter"

@@ -1,5 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"vignettes/nested_sampling.Rmd",122,4,"style","Trailing whitespace is superfluous.","  )  ","trailing_whitespace_linter"
-"vignettes/step_by_step.Rmd",51,45,"style","Trailing whitespace is superfluous.","    pattern = ""treelog_"", fileext = "".trees""  ","trailing_whitespace_linter"
-"vignettes/step_by_step.Rmd",145,81,"style","Lines should not be more than 80 characters.","  knitr::kable(head(parse_beast_tracelog_file(inference_model$mcmc$tracelog$filename)))","line_length_linter"
-"vignettes/step_by_step.Rmd",161,81,"style","Lines should not be more than 80 characters.","  knitr::kable(head(parse_beast_state_operators(beast2_options$output_state_filename)))","line_length_linter"

@@ -1,5 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"R/box.R",44,3,"warning","local variable ‘icon_selector’ assigned but may not be used","  icon_selector <- glue::glue(""'#{title_id} > .label > .icon'"")","object_usage_linter"
-"R/semantic_dashboard.R",135,20,"style","There should be a space between right parenthesis and an opening curly brace.","#' if(interactive()){","paren_brace_linter"
-"R/semantic_dashboard.R",202,20,"style","There should be a space between right parenthesis and an opening curly brace.","#' if(interactive()){","paren_brace_linter"
-"R/semantic_dashboard.R",249,20,"style","There should be a space between right parenthesis and an opening curly brace.","#' if(interactive()){","paren_brace_linter"

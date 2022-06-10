@@ -1,5 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"R/aaa.R",6,6,"style","Variable and function name style should be snake_case.","  ns$.__rlang_hook__. <- c(ns$.__rlang_hook__., list(callback))","object_name_linter"
-"R/aaa.R",21,6,"style","Variable and function name style should be snake_case.","  ns$.__rlang_hook__. <- NULL","object_name_linter"
-"R/lifecycle-package.R",11,1,"style","Variable and function name style should be snake_case.",".onLoad <- function(lib, pkg) {","object_name_linter"
-"R/warning.R",48,1,"style","Variable and function names should not be longer than 30 characters.","conditionMessage.lifecycle_warning_deprecated <- function(c) {","object_length_linter"

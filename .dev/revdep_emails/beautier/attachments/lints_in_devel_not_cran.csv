@@ -1,3 +1,0 @@
-"filename","line_number","column_number","type","message","line","linter"
-"R/create_branch_rate_model_xml.R",106,3,"style","`else` should come on the same line as the previous `}`.","  else {","brace_linter"
-"R/remove_empty_lines.R",13,3,"style","`else` should come on the same line as the previous `}`.","  else {","brace_linter"
