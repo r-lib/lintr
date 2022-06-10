@@ -153,13 +153,14 @@ readability, consistency, and performance. Here are some examples:
    by identifying usages of `data.frame()` that (1) have known string columns and (2) don't declare
    a value for `stringsAsFactors`, and thus rely on the R version-dependent default.
 
-See the NEWS for the complete list.
+See the [NEWS](https://lintr.r-lib.org/news/index.html#google-linters-development-version) for the complete list.
 
 ## Other improvements
 
 This is a big release -- almost 2 years in the making -- and there has been a plethora of smaller
-but nonetheless important changes to lintr. Please check the NEWS for a complete enumeration of these;
-here are a few more highlights:
+but nonetheless important changes to lintr. Please check the
+[NEWS](https://lintr.r-lib.org/news/index.html#lintr-development-version)
+for a complete enumeration of these. Here are a few more new linters as a highlight:
 
  - `sprintf_linter()`: a new linter for detecting potentially problematic calls to `sprintf()` (e.g.
    using too many or too few arguments as compared to the number of template fields)
