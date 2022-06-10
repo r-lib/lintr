@@ -110,6 +110,8 @@ With:
 my_custom_linter <- function() Linter(function(source_expression) { ... }))
 ```
 
+`Linter()` is a wrapper to construct the `linter` S3 class.
+
 ## Linter metadatabase, linter documentation, and pkgdown
 
 We have also overhauled how linters are documented. Previously, all linters
