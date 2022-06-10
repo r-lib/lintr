@@ -9,10 +9,17 @@
 #' @importFrom utils head
 #' @export
 commas_linter <- function() {
+  # conditions are in carefully-chosen order for performance --
+  #   an expression like c(a,b,c,....) with many elements can have
+  #   a huge number of preceding-siblings and the performance of
+  #   preceding-sibling::*[1][not(self::OP-COMMA)] is terrible.
+  #   This approach exits early on most nodes ('and' condition)
+  #   to avoid this. See #1340.
   xpath_before <- "
   //OP-COMMA[
-    @line1 = preceding-sibling::*[1][not(self::OP-COMMA or self::EQ_SUB)]/@line1 and
-    @col1 != preceding-sibling::*[1]/@col2 + 1
+    @col1 != preceding-sibling::*[1]/@col2 + 1 and
+    @line1 = preceding-sibling::*[1]/@line1 and
+    not(preceding-sibling::*[1][self::OP-COMMA or self::EQ_SUB])
   ]"
   xpath_after <- "//OP-COMMA[@line1 = following-sibling::*[1]/@line1 and @col1 = following-sibling::*[1]/@col1 - 1]"
 

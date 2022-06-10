@@ -24,22 +24,9 @@ modify_defaults <- function(defaults, ...) {
   }
   vals <- list(...)
   nms <- names2(vals)
-  missing <- !nzchar(nms, keepNA = TRUE)
-  if (any(missing)) {
-    args <- as.character(eval(substitute(alist(...)[missing])))
-    # foo_linter(x=1) => "foo"
-    # var[["foo"]]    => "foo"
-    nms[missing] <- re_substitutes(
-      re_substitutes(
-          # Very long input might have newlines which are not caught
-          #  by . in a perl regex; see #774
-        re_substitutes(args, rex("(", anything), "", options = "s"),
-        rex(start, anything, '["' %or% "::"),
-        ""
-      ),
-      rex('"]', anything, end),
-      ""
-    )
+  missing_index <- !nzchar(nms, keepNA = TRUE)
+  if (any(missing_index)) {
+    nms[missing_index] <- guess_names(..., missing_index = missing_index)
   }
 
   to_null <- vapply(vals, is.null, logical(1L))
@@ -160,6 +147,22 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
 #'   absolute_path_linter()
 #' )
 linters_with_defaults <- function(..., defaults = default_linters) {
+  dots <- list(...)
+  if (missing(defaults) && "default" %in% names(dots)) {
+    warning(
+      "'default' is not an argument to linters_with_defaults(). Did you mean 'defaults'? ",
+      "This warning will be removed when with_defaults() is fully deprecated."
+    )
+    defaults <- dots$default
+    nms <- names2(dots)
+    missing_index <- !nzchar(nms, keepNA = TRUE)
+    if (any(missing_index)) {
+      names(dots)[missing_index] <- guess_names(..., missing_index = missing_index)
+    }
+    dots$default <- NULL
+    dots <- c(dots, list(defaults = defaults))
+    return(do.call(modify_defaults, dots))
+  }
   modify_defaults(..., defaults = defaults)
 }
 
@@ -167,6 +170,8 @@ linters_with_defaults <- function(..., defaults = default_linters) {
 #' @export
 with_defaults <- function(..., default = default_linters) {
   lintr_deprecated("with_defaults", "linters_with_defaults", "2.0.9001")
+  # to ease the burden of transition -- default = NULL used to behave like defaults = list() now does
+  if (is.null(default)) default <- list()
   linters_with_defaults(..., defaults = default)
 }
 
@@ -180,4 +185,17 @@ call_linter_factory <- function(linter_factory, linter_name, package) {
   # Otherwise, all linters would be called "linter_factory".
   attr(linter, "name") <- linter_name
   linter
+}
+
+guess_names <- function(..., missing_index) {
+  args <- as.character(eval(substitute(alist(...)[missing_index])))
+  # foo_linter(x=1) => "foo"
+  # var[["foo"]]    => "foo"
+  # strip call: foo_linter(x=1) --> foo_linter
+  # NB: Very long input might have newlines which are not caught
+  #  by . in a perl regex; see #774
+  args <- re_substitutes(args, rex("(", anything), "", options = "s")
+  # strip extractors: pkg::foo_linter, var[["foo_linter"]] --> foo_linter
+  args <- re_substitutes(args, rex(start, anything, '["' %or% "::"), "")
+  re_substitutes(args, rex('"]', anything, end), "")
 }

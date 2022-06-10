@@ -21,7 +21,7 @@ expect_null_linter <- function() {
       and following-sibling::expr[position() <= 2 and NULL_CONST]
     ) or (
       SYMBOL_FUNCTION_CALL[text() = 'expect_true']
-      and following-sibling::expr[1][expr[SYMBOL_FUNCTION_CALL[text() = 'is.null']]]
+      and following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.null']]]
     )
   ]"
 

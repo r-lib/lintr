@@ -328,7 +328,7 @@ test_that("global variable detection works", {
 
 test_that("package detection works", {
   expect_length(
-    lint_package("dummy_packages/package", linters = object_usage_linter(), parse_settings = FALSE),
+    lint_package(test_path("dummy_packages", "package"), linters = object_usage_linter(), parse_settings = FALSE),
     9L
   )
 })

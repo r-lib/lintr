@@ -489,7 +489,7 @@ rstudio_source_markers <- function(lints) {
     marker$file <- filename
     marker$line <- x$line_number
     marker$column <- x$column_number
-    marker$message <- x$message
+    marker$message <- paste0("[", x$linter, "] ", x$message)
     marker
   })
 

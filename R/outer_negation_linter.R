@@ -16,12 +16,12 @@ outer_negation_linter <- function() {
   # NB: requirement that count(expr)>1 is to prevent any() from linting
   #   e.g. in magrittr pipelines.
   xpath <- "//expr[
-    expr[SYMBOL_FUNCTION_CALL[text() = 'any' or text() = 'all']]
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'any' or text() = 'all']]
     and count(expr) > 1
     and not(expr[
       position() > 1
       and not(OP-EXCLAMATION)
-      and not(preceding-sibling::*[2][self::SYMBOL_SUB])
+      and not(preceding-sibling::*[1][self::EQ_SUB])
     ])
   ]"
 

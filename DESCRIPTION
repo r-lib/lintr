@@ -36,6 +36,7 @@ Suggests:
     httr (>= 1.2.1),
     mockery,
     patrick,
+    pkgdown,
     rmarkdown,
     rstudioapi (>= 0.2),
     testthat (>= 3.0.0),
@@ -127,6 +128,7 @@ Collate:
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'
     'sprintf_linter.R'
+    'string_boundary_linter.R'
     'strings_as_factors_linter.R'
     'system_file_linter.R'
     'trailing_blank_lines_linter.R'

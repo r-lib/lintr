@@ -1,0 +1,3 @@
+Package: downstream
+Version: 0.0.1
+Imports: myFancyUpstream

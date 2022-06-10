@@ -96,13 +96,13 @@ test_that("Multi-byte character truncated by parser is ignored", {
 })
 
 test_that("Can read non UTF-8 file", {
-  file <- "dummy_projects/project/cp1252.R"
+  file <- test_path("dummy_projects", "project", "cp1252.R")
   read_settings(file)
   expect_null(get_source_expressions(file)$error)
 })
 
 test_that("Warns if encoding is misspecified", {
-  file <- "dummy_projects/project/cp1252.R"
+  file <- test_path("dummy_projects", "project", "cp1252.R")
   read_settings(NULL)
   the_lint <- get_source_expressions(file)$error
   expect_s3_class(the_lint, "lint")
@@ -118,7 +118,7 @@ test_that("Warns if encoding is misspecified", {
   expect_equal(the_lint$message, msg)
   expect_equal(the_lint$line_number, 4L)
 
-  file <- "dummy_projects/project/cp1252_parseable.R"
+  file <- test_path("dummy_projects", "project", "cp1252_parseable.R")
   read_settings(NULL)
   the_lint <- get_source_expressions(file)$error
   expect_s3_class(the_lint, "lint")
@@ -220,6 +220,9 @@ test_that("returned data structure is complete", {
     expect_identical(expr$content, lines[i])
     expect_type(expr$find_line, "closure")
     expect_type(expr$find_column, "closure")
+    # find_line() and find_column() are deprecated
+    expect_warning(expr$find_line(1L), "find_line.*deprecated")
+    expect_warning(expr$find_column(1L), "find_column.*deprecated")
   }
   full_expr <- exprs$expressions[[length(lines) + 1L]]
   expect_named(full_expr, c(

@@ -43,6 +43,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{single_quotes_linter}}}
 \item{\code{\link{spaces_inside_linter}}}
 \item{\code{\link{spaces_left_parentheses_linter}}}
+\item{\code{\link{string_boundary_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{unneeded_concatenation_linter}}}

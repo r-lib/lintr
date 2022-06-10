@@ -11,8 +11,8 @@
 #' @export
 expect_not_linter <- function() {
   xpath <- "//expr[
-    SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']
-    and following-sibling::expr[1][OP-EXCLAMATION]
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']]
+    and expr[2][OP-EXCLAMATION]
   ]"
 
   Linter(function(source_expression) {

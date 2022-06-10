@@ -13,14 +13,14 @@ expect_type_linter <- function() {
   xpath <- glue::glue("//expr[
     (
       (
-        expr[SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']]
+        expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']]
         and expr[
-          expr[SYMBOL_FUNCTION_CALL[text() = 'typeof']]
+          expr[1][SYMBOL_FUNCTION_CALL[text() = 'typeof']]
           and (position() = 2 or preceding-sibling::expr[STR_CONST])
         ]
       ) or (
-        expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
-        and expr[2][expr[SYMBOL_FUNCTION_CALL[ {base_type_tests} ]]]
+        expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
+        and expr[2][expr[1][SYMBOL_FUNCTION_CALL[ {base_type_tests} ]]]
       )
     )
     and not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])

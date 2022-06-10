@@ -8,7 +8,7 @@
 missing_package_linter <- function() {
   call_xpath <- "//expr[
     (
-      expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
       and (
         expr[2][STR_CONST]
         or (
@@ -21,7 +21,7 @@ missing_package_linter <- function() {
         )
       )
     ) or (
-      expr[SYMBOL_FUNCTION_CALL[text() = 'loadNamespace' or text() = 'requireNamespace']]
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'loadNamespace' or text() = 'requireNamespace']]
       and expr[2][STR_CONST]
     )
   ]"

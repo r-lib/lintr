@@ -13,7 +13,7 @@
 #' @export
 ifelse_censor_linter <- function() {
   xpath <- glue::glue("//expr[
-    expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
+    expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
     and expr[2][
       (LT or GT or LE or GE)
       and expr[1] = following-sibling::expr
