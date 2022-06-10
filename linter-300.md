@@ -151,7 +151,7 @@ readability, consistency, and performance. Here are some examples:
    where the default value of `stringsAsFactors`
    [changed from `TRUE` to `FALSE`](https://developer.r-project.org/Blog/public/2020/02/16/stringsasfactors/),
    by identifying usages of `data.frame()` that (1) have known string columns and (2) don't declare
-   a value for `stringsAsFactors`, and thus rely on the default.
+   a value for `stringsAsFactors`, and thus rely on the R version-dependent default.
 
 See the NEWS for the complete list.
 
