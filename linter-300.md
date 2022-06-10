@@ -17,6 +17,50 @@ interactive tool to configure lintr for your package/repo.
 
 This blog post will highlight the biggest changes coming in this update which drove us to declare it a major release.
 
+# Release highlights
+
+## Selective exclusions
+
+lintr now supports targeted exclusions of specific linters through an extension of the `# nolint` syntax.
+
+Consider the following example:
+
+```r
+T_and_F_symbol_linter=function(){
+  list()
+}
+```
+
+This snippet generates 5 lints: `object_name_linter()` because of the uppercase `T` and `F`;
+`brace_linter()` because `{` should be separated from `)` by a space; `paren_body_linter`
+because the function body should be separated from `)` by a space; `infix_spaces_linter` because
+`=` should be surrounded by spaces on both sides; and `assignment_linter` because `<-` should
+be used for assignment.
+
+The first lint is spurious because `t` and `f` do not correctly convey that this linter targets
+the symbols `T` and `F`, so we want to ignore it. Prior to this release, we would have to
+"throw the baby out with the bathwater" by suppressing _all five lints_ like so:
+
+```r
+T_and_F_symbol_linter=function(){ # nolint. T and F are OK here.
+  list()
+}
+```
+
+This hides the other four lints and prevents any new lints from being detected on this line in the future,
+which on average allows the overall quality of your projects/scripts to dip.
+
+With the new feature, you'd write the exclusion like this instead:
+
+```r
+T_and_F_symbol_linter=function(){ # nolint: object_name_linter. T and F are OK here.
+  list()
+}
+```
+
+By qualifying the exclusion, the other 4 lints will be detected and exposed by `lint()` so
+that you can fix them! See `?exclude` for more details.
+
 ## Linter factories
 
 As of lintr 3.0.0, _all_ linters must be [function factories](https://adv-r.hadley.nz/function-factories.html).
@@ -111,6 +155,16 @@ This is a big release -- almost 2 years in the making -- and there has been a pl
 but nonetheless important changes to lintr. Please check the NEWS for a complete enumeration of these;
 here are a few more highlights:
 
+ - `sprintf_linter()`: a new linter for detecting potentially problematic calls to `sprintf()` (e.g.
+   using too many or too few arguments as compared to the number of template fields)
+ - `package_hooks_linter()`: a new linter to check consistency of `.onLoad()` functions and
+   other namespace hooks, as required by `R CMD check`
+ - `namespace_linter()`: a new linter to check for common mistakes in `pkg::symbol` usage, e.g.
+   if `symbol` is not an exported object from `pkg`
+ - `is_lint_level`: a new helper to increase the readability of custom linters
+ - `use_lintr`: a usethis-esque helper to set up an initial configuration file to start using
+   lintr with your project
+
 # What's next in lintr
 
 ## Hosting linters for non-tidyverse style guides?
@@ -119,6 +173,13 @@ With the decision to accept a bevy of linters from Google that are not strictly 
 style guide, we also opened the door to hosting linters for enforcing other style guides, for example
 the [Bioconductor R code guide](https://contributions.bioconductor.org/r-code.html). We look forward to
 community contributions in this vein.
+
+## More Google linters
+
+Google has developed and tested many more broad-purpose linters that it plans to share, e.g. for
+detecting `length(which(x == y)) > 0` (i.e., `any(x == y)`), `lapply(x, function(xi) sum(xi))`
+(i.e., `lapply(x, sum)`), `c("key_name" = "value_name")` (i.e., `c(key_name = "value_name")`),
+and more! Follow [#884](https://github.com/r-lib/lintr/issues/884) for updates.
 
 # Acknowledgements
 
