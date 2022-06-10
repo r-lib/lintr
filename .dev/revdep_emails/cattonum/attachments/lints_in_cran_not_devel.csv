@@ -1,0 +1,2 @@
+"filename","line_number","column_number","type","message","line","linter"
+"R/cattonum.R",18,1,"style","Variable and function name style should be snake_case.",".onAttach <- function(libname, pkgname) {","object_name_linter"

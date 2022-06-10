@@ -1,0 +1,8 @@
+"filename","line_number","column_number","type","message","line","linter"
+"inst/hooks/exported/style-files.R",77,3,"style","Opening curly braces should never go on their own line and should always be followed by a new line.","  {","open_curly_linter"
+"R/exec.R",207,5,"style","Opening curly braces should never go on their own line and should always be followed by a new line.","    {","open_curly_linter"
+"R/release.R",46,3,"warning","local variable ‘last_release’ assigned but may not be used","  last_release <- call_and_capture(""git"", ""tag -l --sort=-taggerdate"")$stdout[1]","object_usage_linter"
+"R/release.R",49,3,"warning","local variable ‘msg1’ assigned but may not be used","  msg1 <- glue::glue(""Release {new_version}, see NEWS.md for details."")","object_usage_linter"
+"R/setup.R",193,7,"style","Opening curly braces should never go on their own line and should always be followed by a new line.","      {","open_curly_linter"
+"R/zzz.R",1,1,"style","Variable and function name style should be snake_case.",".onLoad <- function(libname, pkgname) {","object_name_linter"
+"tests/testthat/test-conda.R",157,7,"style","Opening curly braces should never go on their own line and should always be followed by a new line.","      {","open_curly_linter"

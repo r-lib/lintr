@@ -1,0 +1,3 @@
+"filename","line_number","column_number","type","message","line","linter"
+"vignettes/using_dashboardthemes.Rmd",70,3,"error","unexpected symbol","  ...",NA
+"vignettes/using_dashboardthemes.Rmd",267,1,"style","Trailing blank lines are superfluous.","","trailing_blank_lines_linter"

@@ -16,5 +16,6 @@ lintr_*.tar.gz
 testthat-problems.rds
 
 .dev/*.csv
+.dev/revdep_comparison
 docs
 inst/doc

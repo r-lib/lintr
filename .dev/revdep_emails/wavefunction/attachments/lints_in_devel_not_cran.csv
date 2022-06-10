@@ -1,0 +1,4 @@
+"filename","line_number","column_number","type","message","line","linter"
+"R/wavefunction.R",23,3,"style","Variable and function name style should be snake_case or symbols.","  H[, 1] <- 1.0","object_name_linter"
+"R/wavefunction.R",27,3,"style","Variable and function name style should be snake_case or symbols.","  H[, 2] <- 2.0 * x","object_name_linter"
+"R/wavefunction.R",32,5,"style","Variable and function name style should be snake_case or symbols.","    H[, d + 1] <- 2 * x * H[, d] - 2 * (d - 1) * H[, d - 1]","object_name_linter"

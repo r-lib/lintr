@@ -1,0 +1,2 @@
+"filename","line_number","column_number","type","message","line","linter"
+"data-raw/rhub_check.R",3,3,"style","Commented code should be removed.","# validate_email()","commented_code_linter"

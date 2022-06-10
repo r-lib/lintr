@@ -1,0 +1,7 @@
+"filename","line_number","column_number","type","message","line","linter"
+"R/schema_deps.R",52,3,"warning","local variable ‘plur’ assigned but may not be used","  plur <- """"","object_usage_linter"
+"R/schema_deps.R",53,3,"warning","local variable ‘plur_do’ assigned but may not be used","  plur_do <- ""doesn't""","object_usage_linter"
+"R/schema_deps.R",54,3,"warning","local variable ‘plur_them’ assigned but may not be used","  plur_them <- ""it""","object_usage_linter"
+"R/schema_utils.R",44,5,"warning","local variable ‘indent’ assigned but may not be used","    indent <- paste0(c(rep("" "", ind), rep(""="", 5 - ind)), collapse = """")","object_usage_linter"
+"R/simulate_num_col.R",51,18,"style","Place a space before left parenthesis, except in a function call.","        round(10^(precision - scale) * stats::runif(n), scale),","spaces_left_parentheses_linter"
+"R/simulate_num_col.R",64,16,"style","Place a space before left parenthesis, except in a function call.","      round(10^(precision - scale) * stats::runif(n), scale),","spaces_left_parentheses_linter"

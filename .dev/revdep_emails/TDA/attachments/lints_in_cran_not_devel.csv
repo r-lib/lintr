@@ -1,0 +1,5 @@
+"filename","line_number","column_number","type","message","line","linter"
+"R/maxPersistence.R",94,36,"style","There should be a space between right parenthesis and an opening curly brace.","  for (i in seq(along = parameters)){","paren_brace_linter"
+"R/plot.maxPersistence.R",40,32,"style","There should be a space between right parenthesis and an opening curly brace.","    for (j in seq(along = symb)){","paren_brace_linter"
+"R/print.summary.diagram.R",1,1,"style","Variable and function name style should be snake_case.","print.summary.diagram <-","object_name_linter"
+"R/print.summary.maxPersistence.R",1,1,"style","Variable and function name style should be snake_case.","print.summary.maxPersistence <-","object_name_linter"

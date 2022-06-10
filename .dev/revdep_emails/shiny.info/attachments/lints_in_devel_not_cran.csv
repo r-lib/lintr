@@ -1,0 +1,3 @@
+"filename","line_number","column_number","type","message","line","linter"
+"R/display.R",74,29,"warning","Conditional expressions require scalar logical operators (&& and ||)","  if (is.null(company_name) & is.null(logo)) {","vector_logic_linter"
+"tests/testthat/test_powered_by.R",10,3,"style","Missing terminal newline.","})","trailing_blank_lines_linter"

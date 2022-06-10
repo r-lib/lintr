@@ -1,0 +1,7 @@
+"filename","line_number","column_number","type","message","line","linter"
+"R/DataFrame.R",64,1,"style","Variable and function name style should be snake_case.","as.DataFrame.data.frame <- function(x, ...) {","object_name_linter"
+"R/dataTableBackend.R",44,7,"style","Variable and function name style should be snake_case.","  env$.__x__ <- x","object_name_linter"
+"R/helper.R",20,13,"style","Variable and function name style should be snake_case.","      .self$classOfX <- class(xS3)","object_name_linter"
+"R/helper.R",23,13,"style","Variable and function name style should be snake_case.","      .self$s4Object <- x","object_name_linter"
+"R/helper.R",28,13,"style","Variable and function name style should be snake_case.","      .self$classOfX <- class(x)","object_name_linter"
+"R/useDplyr.R",12,1,"style","Variable and function name style should be snake_case.",".onAttach <- function(libname, pkgname) {","object_name_linter"
