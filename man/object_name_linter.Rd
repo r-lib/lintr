@@ -15,6 +15,24 @@ match at least one of these styles.}
 Check that object names conform to a naming style.
 The default naming styles are "snake_case" and "symbols".
 }
+\details{
+Note when used in a package, in order to ignore objects imported
+from other namespaces, this linter will attempt \code{\link[=getNamespaceExports]{getNamespaceExports()}}
+whenever an \code{import(PKG)} or \code{importFrom(PKG, ...)} statement is found
+in your NAMESPACE file. If \code{\link[=requireNamespace]{requireNamespace()}} fails (e.g., the package
+is not yet installed), the linter won't be able to ignore some usages
+that would otherwise be allowed.
+
+Suppose, for example, you have \code{import(upstream)} in your NAMESPACE,
+which makes available its exported S3 generic function
+\code{a_really_quite_long_function_name} that you then extend in your package
+by defining a corresponding method for your class \code{my_class}.
+Then, if \code{upstream} is not installed when this linter runs, a lint
+will be thrown on this object (even though you don't "own" its full name).
+
+The best way to get lintr to work correctly is to install the package so
+that it's available in the session where this linter is running.
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
