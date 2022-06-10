@@ -1,6 +1,6 @@
 We are very excited to announce the release of [lintr](https://lintr.r-lib.org) 3.0.0! lintr provides
 both a framework for [static analysis](https://www.perforce.com/blog/sca/what-static-analysis) of R packages
-and scripts and a variety of linters designed to enforce the [tidyverse style guide](https://style.tidyverse.org/).
+and scripts and a variety of linters, e.g. to enforce the [tidyverse style guide](https://style.tidyverse.org/).
 
 You can install it from CRAN with:
 
@@ -68,13 +68,17 @@ that you can fix them! See `?exclude` for more details.
 As of lintr 3.0.0, _all_ linters must be [function factories](https://adv-r.hadley.nz/function-factories.html).
 
 Previously, only parameterizable linters (such as `line_length_linter`, which takes a parameter controlling how
-wide lines are allowed to be without triggering a lint) were factories, but this led to (1) inconsistency -- some
-linters were designated as calls like `line_length_linter(120)` while others were designated as names like
-`no_tab_linter`; (2) brittleness -- some linters evolve to gain (or lose) parameters over time  (e.g. `assignment_linter`
-gained two arguments, `allow_cascading_assign` and `allow_right_assign`, to fine-tune the handling of the
-cascading assignment operators `<<-`/`->>` and right assignment operators `->`/`->>`, respectively); and
-(3) performance -- factories can run some fixed computations at declaration and store them in the function environment,
-whereas previously the calculation would need to be repeated on every expression of every file being linted.
+wide lines are allowed to be without triggering a lint) were factories, but this led to some problems:
+
+ 1. Inconsistency -- some linters were designated as calls like `line_length_linter(120)` while others were
+    designated as names like `no_tab_linter`
+ 2. Brittleness -- some linters evolve to gain (or lose) parameters over time, e.g. in this release
+    `assignment_linter` gained two arguments, `allow_cascading_assign` and `allow_right_assign`,
+    to fine-tune the handling of the cascading assignment operators `<<-`/`->>` and
+    right assignment operators `->`/`->>`, respectively)
+ 3. Performance -- factories can run some fixed computations at declaration and store them in the
+    function environment, whereas previously the calculation would need to be repeated on every
+    expression of every file being linted
 
 This has two significant practical implications and are the main reason this is a major release.
 
