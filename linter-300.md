@@ -120,15 +120,13 @@ grown unwieldy as lintr has grown to export 72 linters! Now, each linter gets it
 page, which will make it easier to document any parameters, enumerate edge cases/
 known false positives, add links to external resources, etc.
 
-To make this even more navigable, we've also added some metadata to a database
-in the form of tags for each linter. For example, `brace_linter` has tags
-style, readability, default, and configurable. Each tag gets its own documentation
-page (e.g. `?readability_linters`) which describes the tag and lists all of the
-associated linters exported by lintr.
-
-To further facilitate discoverability, we've added `available_linters()` and
-`available_tags()` to list registered linters (including custom linters not
-exported by lintr itself; see `?available_linters`).
+To make this even more navigable, we've also added `available_linters()`, a
+database with known linters and some associated metadata tags for each.
+For example, `brace_linter` has tags `style`, `readability`, `default`, and `configurable`.
+Each tag also gets its own documentation page (e.g. `?readability_linters`) which describes the tag
+and lists all of the known associated linters. The tags are available in another database:
+`available_tags()`. These databases can be extended to include custom linters in your package;
+see `?available_linters`.
 
 Moreover, lintr's documentation is now available as a website thanks to
 Hadley Wickham's contribution to create a pkgdown website for the package:
