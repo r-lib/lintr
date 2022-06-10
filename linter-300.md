@@ -120,7 +120,7 @@ gotten unwieldy as lintr has grown to export 72 linters! Now, each linter gets i
 page, which will make it easier to document any parameters, enumerate edge cases/
 known false positives, add links to external resources, etc.
 
-To make this even more navigable, we've also added `available_linters()`, a
+To make linter discovery even more navigable, we've also added `available_linters()`, a
 database with known linters and some associated metadata tags for each.
 For example, `brace_linter` has tags `style`, `readability`, `default`, and `configurable`.
 Each tag also gets its own documentation page (e.g. `?readability_linters`) which describes the tag
