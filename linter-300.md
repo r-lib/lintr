@@ -8,12 +8,12 @@ You can install it from CRAN with:
 install.packages("lintr")
 ```
 
-Check our vignettes on integrating lintr with your preferred IDE
-([`vignette("editors")`](https://lintr.r-lib.org/articles/editors.html))
-and your preferred CI tools
-([`vignette("continuous-integration")`](https://lintr.r-lib.org/articles/continuous-integration.html))
-to get started using lintr. We've also added `lintr::use_lintr()` for a usethis-inspired
-interactive tool to configure lintr for your package/repo.
+Check our vignettes for a quick introduction to the package:
+ - Getting started ([`vignette("lintr")`](https://lintr.r-lib.org/articles/lintr.html))
+ - Integrating lintr with your preferred IDE ([`vignette("editors")`](https://lintr.r-lib.org/articles/editors.html))
+ - Integrating lintr with your preferred CI tools ([`vignette("continuous-integration")`](https://lintr.r-lib.org/articles/continuous-integration.html))
+
+We've also added `lintr::use_lintr()` for a usethis-inspired interactive tool to configure lintr for your package/repo.
 
 This blog post will highlight the biggest changes coming in this update which drove us to declare it a major release.
 
@@ -161,9 +161,6 @@ here are a few more highlights:
    other namespace hooks, as required by `R CMD check`
  - `namespace_linter()`: a new linter to check for common mistakes in `pkg::symbol` usage, e.g.
    if `symbol` is not an exported object from `pkg`
- - `is_lint_level`: a new helper to increase the readability of custom linters
- - `use_lintr`: a usethis-esque helper to set up an initial configuration file to start using
-   lintr with your project
 
 # What's next in lintr
 
