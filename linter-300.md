@@ -187,8 +187,8 @@ and more! Follow [#884](https://github.com/r-lib/lintr/issues/884) for updates.
 
 # Acknowledgements
 
-Welcome [Kun Ren](@renkun-ken), [Michael Chirico](@MichaelChirico),
-and [Alexander Rosenstock](@AshesITR) to the lintr authors team!
+Welcome [Alexander Rosenstock](@AshesITR), [Kun Ren](@renkun-ken),
+and [Michael Chirico](@MichaelChirico) to the lintr authors team!
 
 And a great big thanks to the other 20 authors who have contributed to this release of lintr:
 
