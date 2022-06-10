@@ -8,6 +8,13 @@ You can install it from CRAN with:
 install.packages("lintr")
 ```
 
+Check our vignettes on integrating lintr with your preferred IDE
+([`vignette("editors")`](https://lintr.r-lib.org/articles/editors.html))
+and your preferred CI tools
+([`vignette("continuous-integration")`](https://lintr.r-lib.org/articles/continuous-integration.html))
+to get started using lintr. We've also added `lintr::use_lintr()` for a usethis-inspired
+interactive tool to configure lintr for your package/repo.
+
 This blog post will highlight the biggest changes coming in this update which drove us to declare it a major release.
 
 ## Linter factories
