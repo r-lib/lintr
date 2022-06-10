@@ -133,15 +133,15 @@ Google adheres mostly to the tidyverse style guide and uses lintr to improve the
 of R code in its considerable internal R code base. These linters detect common issues with
 readability, consistency, and performance. Here are some examples:
 
- - `any_is_na_linter` detects the usage of `any(is.na(x))`; `anyNA(x)` is nearly always a better choice,
+ - `any_is_na_linter()` detects the usage of `any(is.na(x))`; `anyNA(x)` is nearly always a better choice,
    both for performance and for readability
- - `expect_named_linter` detects usage in [testthat](http://testthat.r-lib.org/) suites like
+ - `expect_named_linter()` detects usage in [testthat](http://testthat.r-lib.org/) suites like
    `expect_equal(names(x), c("a", "b", "c"))`; `testthat` also exports `expect_named()` which is
    tailor made to make more readable tests like `expect_named(x, c("a", "b", "c"))`
- - `vector_logic_linter` detects usage of vector logic operators `|` and `&` in situations where
+ - `vector_logic_linter()` detects usage of vector logic operators `|` and `&` in situations where
    scalar logic applies, e.g. `if (x | y) { ... }` should be `if (x || y) { ... }`. The latter
    is more efficient and less error-prone.
- - `strings_as_factors_linter` helps developers maintaining code that straddles the R 4.0.0 boundary,
+ - `strings_as_factors_linter()` helps developers maintaining code that straddles the R 4.0.0 boundary,
    where the default value of `stringsAsFactors`
    [changed from `TRUE` to `FALSE`](https://developer.r-project.org/Blog/public/2020/02/16/stringsasfactors/),
    by identifying usages of `data.frame()` that (1) have known string columns and (2) don't declare
@@ -180,7 +180,7 @@ and more! Follow [#884](https://github.com/r-lib/lintr/issues/884) for updates.
 
 # Acknowledgements
 
-Welcome [Kun Ren](@renkun-ken), Michael Chirico(@MichaelChirico),
+Welcome [Kun Ren](@renkun-ken), [Michael Chirico](@MichaelChirico),
 and [Alexander Rosenstock](@AshesITR) to the lintr authors team!
 
 And a great big thanks to the other 20 authors who have contributed to this release of lintr:
