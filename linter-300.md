@@ -116,7 +116,7 @@ my_custom_linter <- function() Linter(function(source_expression) { ... }))
 
 We have also overhauled how linters are documented. Previously, all linters
 were documented on a single page and described in a quick blurb. This has
-grown unwieldy as lintr now exports 72 linters! Now, each linter gets its own
+grown unwieldy as lintr has grown to export 72 linters! Now, each linter gets its own
 page, which will make it easier to document any parameters, enumerate edge cases/
 known false positives, add links to external resources, etc.
 
