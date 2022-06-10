@@ -31,11 +31,13 @@ T_and_F_symbol_linter=function(){
 }
 ```
 
-This snippet generates 5 lints: `object_name_linter()` because of the uppercase `T` and `F`;
-`brace_linter()` because `{` should be separated from `)` by a space; `paren_body_linter`
-because the function body should be separated from `)` by a space; `infix_spaces_linter` because
-`=` should be surrounded by spaces on both sides; and `assignment_linter` because `<-` should
-be used for assignment.
+This snippet generates 5 lints:
+
+ 1. `object_name_linter()` because the uppercase `T` and `F` do not match `lower_snake_case`
+ 2. `brace_linter()` because `{` should be separated from `)` by a space
+ 3. `paren_body_linter()` because `)` should be separated from the function body (starting at `{`) by a space
+ 4. `infix_spaces_linter()` because `=` should be surrounded by spaces on both sides
+ 5. `assignment_linter()` because `<-` should be used for assignment
 
 The first lint is spurious because `t` and `f` do not correctly convey that this linter targets
 the symbols `T` and `F`, so we want to ignore it. Prior to this release, we would have to
