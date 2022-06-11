@@ -96,6 +96,8 @@
    + No longer lints undesirable symbols if they are used as names in `$` extractions (#1050, @AshesITR)
    + Added more explanation why certain functions might be undesirable and what alternatives to use;
      ditto for `undesirable_operator_linter()` (#1133, #1146, #1159, @AshesITR)
+   + Added `testthat::expect_that()`, which has been deprecated since the 3rd edition of `{testthat}` 
+     package (#1377, @patilindrajeets)
 * `assignment_linter()` (#915, @MichaelChirico)
    + Right assignments are now linted by default (`->` and `->>`)
    + New argument `allow_cascading_assign` (`TRUE` by default) toggles whether to lint `<<-` and `->>`
