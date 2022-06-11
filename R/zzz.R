@@ -56,8 +56,9 @@ default_linters <- modify_defaults(
 #'  * [detach()] modifies the global search path. Detaching environments from the search path is rarely necessary in
 #'    production code.
 #'  * [testthat::expect_that()] is an old style of writing tests that is no
-#'  longer encouraged by the {testthat} package. Use specific expect_ functions,
-#'  e.g. [testthat::expect_equal()] or [testthat::expect_s3_class()], instead.
+#'  longer encouraged, and is deprecated in the 3rd edition of {testthat}
+#'  package. Use specific expect_ functions, e.g. [testthat::expect_equal()] or
+#'  [testthat::expect_s3_class()], instead.
 #'  * [ifelse()] isn't type stable. Use an `if`/`else` block for scalar logic, or use
 #'    `dplyr::if_else()`/`data.table::fifelse()` for type stable vectorized logic.
 #'  * [.libPaths()] permanently modifies the library location. Use [withr::with_libpaths()] for a temporary change
@@ -110,7 +111,8 @@ all_undesirable_functions <- modify_defaults(
   "detach" = paste("It modifies the global search path. Detaching environments from the search path",
                    "is rarely necessary in production code."),
   "expect_that" = paste("testthat::expect_that() is an old style of writing tests",
-                        "that is no longer encouraged by the {testthat} package.",
+                        "that is no longer encouraged, and is deprecated",
+                        "in the 3rd edition of {testthat} package.",
                         "Use specific expect_ functions, e.g. testthat::expect_equal() or",
                         "testthat::expect_s3_class(), instead."),
   "ifelse" = paste("It isn't type stable. Use an `if`/`else` block for scalar logic, or use",

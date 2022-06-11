@@ -35,8 +35,9 @@ The following functions are sometimes regarded as undesirable:
 \item \code{\link[=detach]{detach()}} modifies the global search path. Detaching environments from the search path is rarely necessary in
 production code.
 \item \code{\link[testthat:expect_that]{testthat::expect_that()}} is an old style of writing tests that is no
-longer encouraged by the {testthat} package. Use specific expect_ functions,
-e.g. \code{\link[testthat:equality-expectations]{testthat::expect_equal()}} or \code{\link[testthat:inheritance-expectations]{testthat::expect_s3_class()}}, instead.
+longer encouraged, and is deprecated in the 3rd edition of {testthat}
+package. Use specific expect_ functions, e.g. \code{\link[testthat:equality-expectations]{testthat::expect_equal()}} or
+\code{\link[testthat:inheritance-expectations]{testthat::expect_s3_class()}}, instead.
 \item \code{\link[=ifelse]{ifelse()}} isn't type stable. Use an \code{if}/\verb{else} block for scalar logic, or use
 \code{dplyr::if_else()}/\code{data.table::fifelse()} for type stable vectorized logic.
 \item \code{\link[=.libPaths]{.libPaths()}} permanently modifies the library location. Use \code{\link[withr:with_libpaths]{withr::with_libpaths()}} for a temporary change
