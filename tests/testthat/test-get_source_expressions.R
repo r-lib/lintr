@@ -96,13 +96,13 @@ test_that("Multi-byte character truncated by parser is ignored", {
 })
 
 test_that("Can read non UTF-8 file", {
-  file <- "dummy_projects/project/cp1252.R"
+  file <- test_path("dummy_projects", "project", "cp1252.R")
   read_settings(file)
   expect_null(get_source_expressions(file)$error)
 })
 
 test_that("Warns if encoding is misspecified", {
-  file <- "dummy_projects/project/cp1252.R"
+  file <- test_path("dummy_projects", "project", "cp1252.R")
   read_settings(NULL)
   the_lint <- get_source_expressions(file)$error
   expect_s3_class(the_lint, "lint")
@@ -118,7 +118,7 @@ test_that("Warns if encoding is misspecified", {
   expect_equal(the_lint$message, msg)
   expect_equal(the_lint$line_number, 4L)
 
-  file <- "dummy_projects/project/cp1252_parseable.R"
+  file <- test_path("dummy_projects", "project", "cp1252_parseable.R")
   read_settings(NULL)
   the_lint <- get_source_expressions(file)$error
   expect_s3_class(the_lint, "lint")
@@ -170,20 +170,20 @@ test_that("Can extract line number from parser errors", {
 })
 
 test_that("1- or 2-width octal expressions give the right STR_CONST values", {
-  with_content_to_parse("'\\1'", expect_identical(pc[[1L]][2L, "text"], "'\\1'"))
-  with_content_to_parse('"\\1"', expect_identical(pc[[1L]][2L, "text"], '"\\1"'))
+  with_content_to_parse("'\\1'", expect_identical(pc[[1L]][1L, "text"], "'\\1'"))
+  with_content_to_parse('"\\1"', expect_identical(pc[[1L]][1L, "text"], '"\\1"'))
 
   # multiple literals
   with_content_to_parse("'\\1'\n'\\2'", {
-    expect_identical(pc[[1L]][2L, "text"], "'\\1'")
-    expect_identical(pc[[2L]][2L, "text"], "'\\2'")
+    expect_identical(pc[[1L]][1L, "text"], "'\\1'")
+    expect_identical(pc[[2L]][1L, "text"], "'\\2'")
   })
 
   # multiple escapes
-  with_content_to_parse("'\\1\\2'", expect_identical(pc[[1L]][2L, "text"], "'\\1\\2'"))
+  with_content_to_parse("'\\1\\2'", expect_identical(pc[[1L]][1L, "text"], "'\\1\\2'"))
 
   # multi-line strings
-  with_content_to_parse("'\n\\1\n'", expect_identical(pc[[1L]][2L, "text"], "'\n\\1\n'"))
+  with_content_to_parse("'\n\\1\n'", expect_identical(pc[[1L]][1L, "text"], "'\n\\1\n'"))
   with_content_to_parse("a <- '\\1\n\\2'", expect_identical(pc[[1L]][5L, "text"], "'\\1\n\\2'"))
 
   # mixed-length strings
@@ -191,6 +191,62 @@ test_that("1- or 2-width octal expressions give the right STR_CONST values", {
     expect_identical(pc[[1L]][5L, "text"], "'\\1'")
     expect_identical(pc[[1L]][8L, "text"], "'\n\\2\n'")
   })
+})
+
+test_that("returned data structure is complete", {
+  temp_file <- withr::local_tempfile()
+
+  lines <- c("line_1", "line_2", "line_3")
+  lines_with_attr <- setNames(lines, seq_along(lines))
+  attr(lines_with_attr, "terminal_newline") <- TRUE
+
+  writeLines(lines, con = temp_file)
+  exprs <- get_source_expressions(temp_file)
+  expect_named(exprs, c("expressions", "error", "lines"))
+  expect_length(exprs$expressions, length(lines) + 1L)
+
+  for (i in seq_along(lines)) {
+    expr <- exprs$expressions[[i]]
+    expect_named(expr, c(
+      "filename", "line", "column", "lines", "parsed_content", "xml_parsed_content", "content", "find_line",
+      "find_column"
+    ))
+    expect_identical(expr$filename, temp_file)
+    expect_identical(expr$line, i)
+    expect_identical(expr$column, 1L)
+    expect_identical(expr$lines, setNames(lines[i], i))
+    expect_identical(nrow(expr$parsed_content), 2L)
+    expect_true(xml2::xml_find_lgl(expr$xml_parsed_content, "count(//SYMBOL) > 0"))
+    expect_identical(expr$content, lines[i])
+    expect_type(expr$find_line, "closure")
+    expect_type(expr$find_column, "closure")
+    # find_line() and find_column() are deprecated
+    expect_warning(expr$find_line(1L), "find_line.*deprecated")
+    expect_warning(expr$find_column(1L), "find_column.*deprecated")
+  }
+  full_expr <- exprs$expressions[[length(lines) + 1L]]
+  expect_named(full_expr, c(
+    "filename", "file_lines", "content", "full_parsed_content", "full_xml_parsed_content", "terminal_newline"
+  ))
+  expect_identical(full_expr$filename, temp_file)
+  expect_identical(full_expr$file_lines, lines_with_attr)
+  expect_identical(full_expr$content, lines_with_attr)
+  expect_identical(nrow(full_expr$full_parsed_content), 2L * length(lines))
+  expect_identical(xml2::xml_find_num(full_expr$full_xml_parsed_content, "count(//SYMBOL)"),
+                    as.numeric(length(lines)))
+  expect_true(full_expr$terminal_newline)
+
+  expect_null(exprs$error)
+  expect_identical(exprs$lines, lines_with_attr)
+})
+
+test_that("#1262: xml_parsed_content gets returned as missing even if there's no parsed_content", {
+  tempfile <- withr::local_tempfile()
+  writeLines('"\\R"', tempfile)
+
+  source_expressions <- get_source_expressions(tempfile)
+  expect_null(source_expressions$expressions[[1L]]$full_parsed_content)
+  expect_identical(source_expressions$expressions[[1L]]$full_xml_parsed_content, xml2::xml_missing())
 })
 
 skip_if_not_installed("patrick")
@@ -225,9 +281,8 @@ patrick::with_parameters_test_that(
   {
     linter <- eval(call(linter))
     expression <- expressions[[expression_idx]]
-    # TODO(#1160): try and simplify this to expect_length(linter(.), 0L)
     expect_warning(lints <- linter(expression), NA)
-    expect_identical(length(flatten_lints(lints)), 0L)
+    expect_length(lints, 0L)
   },
   .test_name = param_df$.test_name,
   linter = param_df$linter,

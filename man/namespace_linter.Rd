@@ -20,5 +20,5 @@ potentially change the global state.
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=configurable_linters]{configurable}, \link[=correctness_linters]{correctness}, \link[=robustness_linters]{robustness}
+\link[=configurable_linters]{configurable}, \link[=correctness_linters]{correctness}, \link[=executing_linters]{executing}, \link[=robustness_linters]{robustness}
 }

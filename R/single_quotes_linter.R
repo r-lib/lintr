@@ -8,6 +8,7 @@
 #'   <https://style.tidyverse.org/syntax.html#character-vectors>
 #' @export
 single_quotes_linter <- function() {
+  squote_regex <- rex(start, zero_or_one(character_class("rR")), single_quote, any_non_double_quotes, single_quote, end)
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
       return(list())
@@ -15,16 +16,13 @@ single_quotes_linter <- function() {
 
     content <- source_expression$full_parsed_content
     str_idx <- which(content$token == "STR_CONST")
-    squote_matches <- which(re_matches(
-      content[str_idx, "text"],
-      rex(start, zero_or_one(character_class("rR")), single_quote, any_non_double_quotes, single_quote, end)
-    ))
+    squote_matches <- which(re_matches(content[str_idx, "text"], squote_regex))
 
     lapply(
       squote_matches,
       function(id) {
         with(content[str_idx[id], ], {
-          line <- source_expression$file_lines[line1]
+          line <- source_expression$file_lines[[line1]]
           col2 <- if (line1 == line2) col2 else nchar(line)
           Lint(
             filename = source_expression$filename,

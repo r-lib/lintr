@@ -11,6 +11,10 @@ make_linter_from_regex <- function(regex,
 
   function() {
     Linter(function(source_expression) {
+      if (!is_lint_level(source_expression, "expression")) {
+        return(list())
+      }
+
       all_matches <- re_matches(
         source_expression[["lines"]],
         regex,
@@ -20,7 +24,7 @@ make_linter_from_regex <- function(regex,
 
       line_numbers <- as.integer(names(source_expression[["lines"]]))
 
-      Map(
+      lints <- Map(
         function(line_matches, line_number) {
           lapply(
             split(line_matches, seq_len(nrow(line_matches))),
@@ -46,6 +50,8 @@ make_linter_from_regex <- function(regex,
         all_matches,
         line_numbers
       )
+
+      Filter(function(x) any(lengths(x) > 0L), lints)
     })
   }
 }

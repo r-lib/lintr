@@ -10,25 +10,38 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 object_usage_linter <- function(interpret_glue = TRUE) {
+  # NB: difference across R versions in how EQ_ASSIGN is represented in the AST
+  #   (under <expr_or_assign_or_help> or <equal_assign>)
+  # NB: the repeated expr[2][FUNCTION] XPath has no performance impact, so the different direct assignment XPaths are
+  #   split for better readability, see PR#1197
+  # TODO(#1106): use //[...] to capture assignments in more scopes
+  xpath_function_assignment <- paste(
+    # direct assignments
+    "expr[LEFT_ASSIGN or EQ_ASSIGN]/expr[2][FUNCTION]",
+    "expr_or_assign_or_help[EQ_ASSIGN]/expr[2][FUNCTION]",
+    "equal_assign[EQ_ASSIGN]/expr[2][FUNCTION]",
+    # assign() and setMethod() assignments
+    "//expr[expr[1][SYMBOL_FUNCTION_CALL[text() = 'assign']]]/expr[3][FUNCTION]",
+    "//expr[expr[1][SYMBOL_FUNCTION_CALL[text() = 'setMethod']]]/expr[4][FUNCTION]",
+    sep = " | "
+  )
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
       return(list())
     }
 
     pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
-    if (!is.null(pkg_name)) {
-      parent_env <- try_silently(getNamespace(pkg_name))
-    }
-    if (is.null(pkg_name) || inherits(parent_env, "try-error")) {
-      parent_env <- globalenv()
-    }
-    env <- new.env(parent = parent_env)
+    # run the following at run-time, not "compile" time to allow package structure to change
+    env <- make_check_env(pkg_name)
 
     declared_globals <- try_silently(utils::globalVariables(package = pkg_name %||% globalenv()))
 
+    xml <- source_expression$full_xml_parsed_content
+
     symbols <- c(
-      get_assignment_symbols(source_expression$full_xml_parsed_content),
-      get_imported_symbols(source_expression$full_xml_parsed_content)
+      get_assignment_symbols(xml),
+      get_imported_symbols(xml)
     )
 
     # Just assign them an empty function
@@ -36,78 +49,73 @@ object_usage_linter <- function(interpret_glue = TRUE) {
       assign(symbol, function(...) invisible(), envir = env)
     }
 
-    fun_info <- get_function_assignments(source_expression$full_xml_parsed_content)
+    fun_assignments <- xml2::xml_find_all(xml, xpath_function_assignment)
 
-    lapply(seq_len(NROW(fun_info)), function(i) {
-      info <- fun_info[i, ]
-
-      code <- get_content(lines = source_expression$content[seq(info$line1, info$line2)], info)
-      fun <- try_silently(eval(envir = env,
-                               parse(
-                                 text = code,
-                                 keep.source = TRUE
-                               )
+    lapply(fun_assignments, function(fun_assignment) {
+      code <- get_content(lines = source_expression$content, fun_assignment)
+      fun <- try_silently(eval(
+        envir = env,
+        parse(
+          text = code,
+          keep.source = TRUE
+        )
       ))
 
       if (inherits(fun, "try-error")) {
         return()
       }
-      if (isTRUE(interpret_glue)) {
-        known_used_symbols <- extract_glued_symbols(info$expr[[1L]])
-      } else {
-        known_used_symbols <- character()
-      }
-
-      res <- parse_check_usage(fun, known_used_symbols = known_used_symbols)
-
-      lapply(
-        which(!is.na(res$message)),
-        function(row_num) {
-          row <- res[row_num, ]
-
-          if (row$name %in% declared_globals) {
-            return()
-          }
-
-          org_line_num <- as.integer(row$line1) + info$line1 - 1L
-          line <- source_expression$content[as.integer(org_line_num)]
-
-          row$name <- re_substitutes(row$name, rex("<-"), "")
-
-          location <- re_matches(line, rex(boundary, row$name, boundary), locations = TRUE)
-
-          # Handle multi-line lints where name occurs on subsequent lines (#507)
-          if (is.na(location$start) && nzchar(row$line2) && row$line2 != row$line1) {
-            lines <- source_expression$content[org_line_num:(as.integer(row$line2) + info$line1 - 1L)]
-            locations <- re_matches(lines, rex(boundary, row$name, boundary), locations = TRUE)
-
-            matching_row <- (which(!is.na(locations$start)) %||% 1L)[[1L]] # first matching row or 1 (as a fallback)
-
-            org_line_num <- org_line_num + matching_row - 1L
-            location <- locations[matching_row, ]
-            line <- lines[matching_row]
-          }
-
-          # Fallback if name isn't found anywhere: lint the first line
-          if (is.na(location$start)) {
-            location$start <- 1L
-            location$end <- nchar(line)
-          }
-
-          Lint(
-            filename = source_expression$filename,
-            line_number = org_line_num,
-            column_number = location$start,
-            type = "warning",
-            message = row$message,
-            line = line,
-            ranges = list(c(location$start, location$end))
-          )
-        }
+      known_used_symbols <- get_used_symbols(fun_assignment, interpret_glue = interpret_glue)
+      res <- parse_check_usage(
+        fun,
+        known_used_symbols = known_used_symbols,
+        declared_globals = declared_globals,
+        start_line = as.integer(xml2::xml_attr(fun_assignment, "line1"))
       )
+
+      # TODO handle assignment functions properly
+      # e.g. `not_existing<-`(a, b)
+      res$name <- rex::re_substitutes(res$name, rex::rex("<-"), "")
+
+      lintable_symbols <- xml2::xml_find_all(
+        fun_assignment,
+        "descendant::SYMBOL | descendant::SYMBOL_FUNCTION_CALL"
+      )
+
+      lintable_symbol_names <- gsub("^`|`$", "", get_r_string(lintable_symbols))
+      lintable_symbol_lines <- as.integer(xml2::xml_attr(lintable_symbols, "line1"))
+
+      matched_symbol <- vapply(
+        seq_len(nrow(res)),
+        function(i) {
+          match(
+            TRUE,
+            lintable_symbol_names == res$name[i] &
+              lintable_symbol_lines >= res$line1[i] &
+              lintable_symbol_lines <= res$line2[i]
+          )
+        },
+        integer(1L)
+      )
+
+      nodes <- unclass(lintable_symbols)[matched_symbol]
+      nodes[is.na(matched_symbol)] <- list(fun_assignment)
+
+      xml_nodes_to_lints(nodes, source_expression = source_expression, lint_message = res$message, type = "warning")
     })
   })
 }
+
+make_check_env <- function(pkg_name) {
+  if (!is.null(pkg_name)) {
+    parent_env <- try_silently(getNamespace(pkg_name))
+  }
+  if (is.null(pkg_name) || inherits(parent_env, "try-error")) {
+    parent_env <- globalenv()
+  }
+  env <- new.env(parent = parent_env)
+  return(env)
+}
+
 
 extract_glued_symbols <- function(expr) {
   # TODO support more glue functions
@@ -170,66 +178,19 @@ extract_glued_symbols <- function(expr) {
 }
 
 get_assignment_symbols <- function(xml) {
-  left_assignment_symbols <-
-    xml2::xml_text(xml2::xml_find_all(xml, "expr[LEFT_ASSIGN]/expr[1]/SYMBOL[1]"))
-  equal_assignment_symbols <-
-    xml2::xml_text(xml2::xml_find_all(xml, "equal_assign/expr[1]/SYMBOL[1]"))
-  assign_fun_symbols <-
-    xml2::xml_text(xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/*"))
-  set_method_fun_symbols <-
-    xml2::xml_text(xml2::xml_find_all(xml, "expr[expr[SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[2]/*"))
-
-  symbols <- c(
-    left_assignment_symbols,
-    equal_assignment_symbols,
-    assign_fun_symbols,
-    set_method_fun_symbols
-  )
-
-  # remove quotes or backticks from the beginning or the end
-  symbols <- gsub("^[`'\"]|['\"`]$", "", symbols)
-
-  symbols
-}
-
-get_function_assignments <- function(xml) {
-  # NB: difference across R versions in how EQ_ASSIGN is represented in the AST
-  #   (under <expr_or_assign_or_help> or <equal_assign>)
-  # TODO(#1106): use //*[...] to capture assignments in more scopes
-  funs <- xml2::xml_find_all(
+  get_r_string(xml2::xml_find_all(
     xml,
-    paste(
-      # direct assignments
-      "*[
-        (
-          (self::expr and (LEFT_ASSIGN or EQ_ASSIGN))
-          or ((self::expr_or_assign_or_help or self::equal_assign) and EQ_ASSIGN)
-        )
-        and expr[2][FUNCTION]
-      ]
-      /expr[2]
-      ",
-      # assign() and setMethod() assignments
-      "//expr[expr[SYMBOL_FUNCTION_CALL[text() = 'assign' or text() = 'setMethod']]]/expr[3]",
-      sep = " | "
-    )
-  )
-
-   if (length(funs) == 0L) {
-    res <- data.frame(line1 = integer(), line2 = integer(), col1 = integer(), col2 = integer())
-  } else {
-    res <- data.frame(
-      line1 = as.integer(vapply(funs, xml2::xml_attr, attr = "line1", "")),
-      line2 = as.integer(vapply(funs, xml2::xml_attr, attr = "line2", "")),
-      col1 = as.integer(vapply(funs, xml2::xml_attr, attr = "col1", "")),
-      col2 = as.integer(vapply(funs, xml2::xml_attr, attr = "col2", ""))
-    )
-  }
-  res[["expr"]] <- funs
-  res
+    "
+      expr[LEFT_ASSIGN]/expr[1]/SYMBOL[1] |
+      equal_assign/expr[1]/SYMBOL[1] |
+      expr[expr[1][SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/* |
+      expr[expr[1][SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[2]/*
+    "
+  ))
 }
 
-parse_check_usage <- function(expression, known_used_symbols = character()) {
+parse_check_usage <- function(expression, known_used_symbols = character(), declared_globals = character(),
+                              start_line = 1L) {
 
   vals <- list()
 
@@ -240,7 +201,8 @@ parse_check_usage <- function(expression, known_used_symbols = character()) {
   try(codetools::checkUsage(
     expression,
     report = report,
-    suppressLocalUnused = known_used_symbols
+    suppressLocalUnused = known_used_symbols,
+    suppressUndefined = declared_globals
   ))
 
   function_name <- rex(anything, ": ")
@@ -278,6 +240,15 @@ parse_check_usage <- function(expression, known_used_symbols = character()) {
     )
   }
 
+  res <- res[!is.na(res$message), ]
+
+  res$line1 <- as.integer(res$line1) + start_line - 1L
+  res$line2 <- ifelse(
+    nzchar(res$line2),
+    as.integer(res$line2) + start_line - 1L,
+    res$line1
+  )
+
   res
 }
 
@@ -285,7 +256,7 @@ get_imported_symbols <- function(xml) {
   import_exprs <- xml2::xml_find_all(
     xml,
     "//expr[
-      expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
       and
       (
         not(SYMBOL_SUB[
@@ -309,4 +280,11 @@ get_imported_symbols <- function(xml) {
       }
     )
   }))
+}
+
+get_used_symbols <- function(expr, interpret_glue) {
+  if (!isTRUE(interpret_glue)) {
+    return(character())
+  }
+  extract_glued_symbols(expr)
 }

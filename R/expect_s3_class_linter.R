@@ -9,6 +9,25 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_s3_class_linter <- function() {
+  # (1) expect_{equal,identical}(class(x), C)
+  # (2) expect_true(is.<class>(x)) and expect_true(inherits(x, C))
+  is_class_call <- xp_text_in_table(c(is_s3_class_calls, "inherits"))
+  xpath <- glue::glue("//expr[
+    (
+      (
+        expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']]
+        and expr[
+          expr[1][SYMBOL_FUNCTION_CALL[text() = 'class']]
+          and (position() = 2 or preceding-sibling::expr[STR_CONST])
+        ]
+      ) or (
+        expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
+        and expr[2][expr[1][SYMBOL_FUNCTION_CALL[ {is_class_call} ]]]
+      )
+    )
+    and not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])
+  ]")
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -16,38 +35,17 @@ expect_s3_class_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    # (1) expect_{equal,identical}(class(x), C)
-    # (2) expect_true(is.<class>(x)) and expect_true(inherits(x, C))
-    is_class_call <- xp_text_in_table(c(is_s3_class_calls, "inherits"))
-    xpath <- glue::glue("//expr[
-      (
-        (
-          expr[SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']]
-          and expr[
-            expr[SYMBOL_FUNCTION_CALL[text() = 'class']]
-            and (position() = 2 or preceding-sibling::expr[STR_CONST])
-          ]
-        ) or (
-          expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
-          and expr[2][expr[SYMBOL_FUNCTION_CALL[ {is_class_call} ]]]
-        )
-      )
-      and not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])
-    ]")
-
     bad_expr <- xml2::xml_find_all(xml, xpath)
+    matched_function <- xp_call_name(bad_expr)
+    msg <- ifelse(
+      matched_function %in% c("expect_equal", "expect_identical"),
+      sprintf("expect_s3_class(x, k) is better than %s(class(x), k).", matched_function),
+      "expect_s3_class(x, k) is better than expect_true(is.<k>(x)) or expect_true(inherits(x, k))."
+    )
     xml_nodes_to_lints(
       bad_expr,
       source_expression,
-      function(expr) {
-        matched_function <- xp_call_name(expr)
-        if (matched_function %in% c("expect_equal", "expect_identical")) {
-          lint_msg <- sprintf("expect_s3_class(x, k) is better than %s(class(x), k).", matched_function)
-        } else {
-          lint_msg <- "expect_s3_class(x, k) is better than expect_true(is.<k>(x)) or expect_true(inherits(x, k))."
-        }
-        paste(lint_msg, "Note also expect_s4_class() available for testing S4 objects.")
-      },
+      lint_message = paste(msg, "Note also expect_s4_class() available for testing S4 objects."),
       type = "warning"
     )
   })
@@ -81,6 +79,14 @@ is_s3_class_calls <- paste0("is.", c(
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_s4_class_linter <- function() {
+  # require 2 expressions because methods::is(x) alone is a valid call, even
+  #   though the character output wouldn't make any sense for expect_true().
+  xpath <- "//expr[
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
+    and expr[2][count(expr) = 3 and expr[1][SYMBOL_FUNCTION_CALL[text() = 'is']]]
+    and not(SYMBOL_SUB[text() = 'info' or text() = 'label'])
+  ]"
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -89,15 +95,7 @@ expect_s4_class_linter <- function() {
     xml <- source_expression$xml_parsed_content
 
     # TODO(michaelchirico): also catch expect_{equal,identical}(methods::is(x), k).
-    #   there are no hits for this on google3 as of now.
-
-    # require 2 expressions because methods::is(x) alone is a valid call, even
-    #   though the character output wouldn't make any sense for expect_true().
-    xpath <- "//expr[
-      expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
-      and expr[2][count(expr) = 3 and expr[SYMBOL_FUNCTION_CALL[text() = 'is']]]
-      and not(SYMBOL_SUB[text() = 'info' or text() = 'label'])
-    ]"
+    #   this seems empirically rare, but didn't check many S4-heavy packages.
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
     xml_nodes_to_lints(

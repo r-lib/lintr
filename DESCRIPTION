@@ -9,7 +9,8 @@ Authors@R: c(
     person("Kun", "Ren", role = "aut"),
     person("Alexander", "Rosenstock", role = "aut")
     )
-URL: https://github.com/r-lib/lintr
+URL: https://github.com/r-lib/lintr,
+    https://lintr.r-lib.org
 BugReports: https://github.com/r-lib/lintr/issues
 Description: Checks adherence to a given style, syntax errors and possible semantic issues.
     Supports on the fly checking of R code edited with 'RStudio IDE', 'Emacs', 'Vim', 'Sublime Text',
@@ -35,6 +36,7 @@ Suggests:
     httr (>= 1.2.1),
     mockery,
     patrick,
+    pkgdown,
     rmarkdown,
     rstudioapi (>= 0.2),
     testthat (>= 3.0.0),
@@ -43,7 +45,7 @@ Suggests:
 License: MIT + file LICENSE
 Encoding: UTF-8
 VignetteBuilder: knitr
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Config/testthat/edition: 3
 Collate:
     'T_and_F_symbol_linter.R'
@@ -84,7 +86,7 @@ Collate:
     'extract.R'
     'extraction_operator_linter.R'
     'fixed_regex_linter.R'
-    'function_left_parentheses.R'
+    'function_left_parentheses_linter.R'
     'get_source_expressions.R'
     'ids_with_token.R'
     'ifelse_censor_linter.R'
@@ -126,6 +128,7 @@ Collate:
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'
     'sprintf_linter.R'
+    'string_boundary_linter.R'
     'strings_as_factors_linter.R'
     'system_file_linter.R'
     'trailing_blank_lines_linter.R'
@@ -140,7 +143,9 @@ Collate:
     'vector_logic_linter.R'
     'with.R'
     'with_id.R'
+    'xml_nodes_to_lints.R'
     'xp_utils.R'
     'yoda_test_linter.R'
     'zzz.R'
 Roxygen: list(markdown = TRUE)
+Config/Needs/website: tidyverse/tidytemplate

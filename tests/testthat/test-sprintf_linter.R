@@ -96,4 +96,42 @@ test_that("returns the correct linting", {
     NULL,
     linter
   )
+
+  # works with multi-line sprintf and comments
+  expect_lint(
+    trim_some("
+      sprintf(
+        'test fmt %s', # this is a comment
+        2
+      )
+    "),
+    NULL,
+    linter
+  )
+})
+
+test_that("edge cases are detected correctly", {
+  linter <- sprintf_linter()
+
+  # dots
+  expect_lint(
+    "sprintf('%d %d, %d', id, ...)",
+    NULL,
+    linter
+  )
+
+  # TODO (@AshesITR) extend ... detection to at least test for too many arguments.
+
+  # named argument fmt
+  expect_lint(
+    "sprintf(x, fmt = 'hello %1$s %1$s')",
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    "sprintf(x, fmt = 'hello %1$s %1$s %3$d', y)",
+    list(message = rex("reference to non-existent argument 3")),
+    linter
+  )
 })

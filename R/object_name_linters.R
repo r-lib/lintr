@@ -24,6 +24,23 @@ object_name_xpath <- local({
 #' Check that object names conform to a naming style.
 #' The default naming styles are "snake_case" and "symbols".
 #'
+#' Note when used in a package, in order to ignore objects imported
+#'   from other namespaces, this linter will attempt [getNamespaceExports()]
+#'   whenever an `import(PKG)` or `importFrom(PKG, ...)` statement is found
+#'   in your NAMESPACE file. If [requireNamespace()] fails (e.g., the package
+#'   is not yet installed), the linter won't be able to ignore some usages
+#'   that would otherwise be allowed.
+#'
+#' Suppose, for example, you have `import(upstream)` in your NAMESPACE,
+#'   which makes available its exported S3 generic function
+#'   `a_really_quite_long_function_name` that you then extend in your package
+#'   by defining a corresponding method for your class `my_class`.
+#'   Then, if `upstream` is not installed when this linter runs, a lint
+#'   will be thrown on this object (even though you don't "own" its full name).
+#'
+#' The best way to get lintr to work correctly is to install the package so
+#'   that it's available in the session where this linter is running.
+#'
 #' @param styles A subset of
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
 #'   match at least one of these styles.
@@ -52,6 +69,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
       xml2::xml_text(assignments)
     )
 
+    # run namespace_imports at run-time, not "compile" time to allow package structure to change
     generics <- c(
       declared_s3_generics(xml),
       imported_s3_generics(namespace_imports(find_package(source_expression$filename)))$fun,
@@ -150,6 +168,9 @@ regexes_rd <- toString(paste0("\\sQuote{", names(style_regexes), "}"))
 #'  * "%%" for infix operators, e.g. `%my_op%` has length 5.
 #'  * trailing `<-` for assignment functions, e.g. `my_attr<-` has length 7.
 #'
+#' Note that this behavior relies in part on having packages in your Imports available;
+#'   see the detailed note in [object_name_linter()] for more details.
+#'
 #' @param length maximum variable name length allowed.
 #' @evalRd rd_tags("object_length_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
@@ -171,6 +192,7 @@ object_length_linter <- function(length = 30L) {
       xml2::xml_text(assignments)
     )
 
+    # run namespace_imports at run-time, not "compile" time to allow package structure to change
     ns_imports <- namespace_imports(find_package(source_expression$filename))
     generics <- strip_names(c(
       declared_s3_generics(xml),

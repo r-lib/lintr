@@ -11,6 +11,8 @@ test_that("outer_negation_linter skips allowed usages", {
   expect_lint("any(!a, b)", NULL, outer_negation_linter())
   expect_lint("all(a, !b)", NULL, outer_negation_linter())
   expect_lint("any(a, !b, na.rm = TRUE)", NULL, outer_negation_linter())
+  # ditto when na.rm is passed quoted
+  expect_lint("any(a, !b, 'na.rm' = TRUE)", NULL, outer_negation_linter())
 })
 
 test_that("outer_negation_linter blocks simple disallowed usages", {

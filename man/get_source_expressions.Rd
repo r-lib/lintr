@@ -28,8 +28,8 @@ expression, named with the line number corresponding to \code{filename}}
 \item{\code{xml_parsed_content} (\code{xml_document}) the XML parse tree of this
 expression as given by \code{\link[xmlparsedata:xml_parse_data]{xmlparsedata::xml_parse_data()}}}
 \item{\code{content} (\code{character}) the same as \code{lines} as a single string (not split across lines)}
-\item{\code{find_line} (\code{function}) a function for returning lines in this expression}
-\item{\code{find_column} (\code{function}) a similar function for columns}
+\item{(\strong{Deprecated}) \code{find_line} (\code{function}) a function for returning lines in this expression}
+\item{(\strong{Deprecated}) \code{find_column} (\code{function}) a similar function for columns}
 }
 
 The final element of \code{expressions} is a list corresponding to the full file

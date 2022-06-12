@@ -4,10 +4,12 @@
 \alias{missing_argument_linter}
 \title{Missing argument linter}
 \usage{
-missing_argument_linter(except = c("switch", "alist"))
+missing_argument_linter(except = c("switch", "alist"), allow_trailing = FALSE)
 }
 \arguments{
 \item{except}{a character vector of function names as exceptions.}
+
+\item{allow_trailing}{always allow trailing empty arguments?}
 }
 \description{
 Check for missing arguments in function calls.

@@ -9,12 +9,6 @@
 \title{Default undesirable functions and operators}
 \format{
 A named list of character strings.
-
-
-
-
-
-
 }
 \usage{
 all_undesirable_functions

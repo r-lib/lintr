@@ -1,6 +1,6 @@
 testthat::test_that("paren_body_linter returns correct lints", {
   linter <- paren_body_linter()
-  msg <- "There should be a space between right parenthesis and a body expression."
+  msg <- "There should be a space between a right parenthesis and a body expression."
 
   # No space after the closing parenthesis prompts a lint
   expect_lint("function()test", msg, linter)
@@ -28,7 +28,7 @@ testthat::test_that("paren_body_linter returns correct lints", {
       line_number = 1L,
       column_number = 11L,
       type = "style",
-      line = c("1" = "function()test"),
+      line = "function()test",
       ranges = list(c(11L, 14L))
     ),
     linter
@@ -46,4 +46,41 @@ testthat::test_that("paren_body_linter returns correct lints", {
   # No space after the closing parenthesis of an anonymous function prompts a lint
   skip_if_not_r_version("4.1.0")
   expect_lint("\\()test", msg, linter)
+})
+
+test_that("multi-line versions are caught", {
+  expect_lint(
+    trim_some("
+      function(var
+                  )x
+    "),
+    rex::rex("There should be a space between a right parenthesis and a body expression."),
+    paren_body_linter()
+  )
+  expect_lint(
+    trim_some("
+      if (cond
+              )x
+    "),
+    rex::rex("There should be a space between a right parenthesis and a body expression."),
+    paren_body_linter()
+  )
+  expect_lint(
+    trim_some("
+      while (cond
+                 )x
+    "),
+    rex::rex("There should be a space between a right parenthesis and a body expression."),
+    paren_body_linter()
+  )
+
+  skip_if_not_r_version("4.1.0")
+  expect_lint(
+    trim_some("
+      \\(var
+            )x
+    "),
+    rex::rex("There should be a space between a right parenthesis and a body expression."),
+    paren_body_linter()
+  )
 })

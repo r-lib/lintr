@@ -20,10 +20,13 @@ The length of an object name is defined as the length in characters, after remov
 \item "\%\%" for infix operators, e.g. \verb{\%my_op\%} has length 5.
 \item trailing \verb{<-} for assignment functions, e.g. \verb{my_attr<-} has length 7.
 }
+
+Note that this behavior relies in part on having packages in your Imports available;
+see the detailed note in \code{\link[=object_name_linter]{object_name_linter()}} for more details.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=executing_linters]{executing}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }

@@ -10,7 +10,7 @@ closed_curly_linter(allow_single_line = FALSE)
 \item{allow_single_line}{if \code{TRUE}, allow an open and closed curly pair on the same line.}
 }
 \description{
-Check that closed curly braces are on their own line unless they follow an else.
+Check that closed curly braces are on their own line unless they follow an else, comma, or closing bracket.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr

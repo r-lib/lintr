@@ -12,7 +12,7 @@ test_that("GitHub Actions functionality works", {
 
 test_that("GitHub Actions functionality works in a subdirectory", {
   # imitate being on GHA whether or not we are
-  pkg_path <- file.path("dummy_packages", "assignmentLinter")
+  pkg_path <- test_path("dummy_packages", "assignmentLinter")
   withr::local_envvar(list(GITHUB_ACTIONS = "true"))
   withr::local_options(lintr.rstudio_source_markers = FALSE, lintr.github_annotation_project_dir = pkg_path)
 
