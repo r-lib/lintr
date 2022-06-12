@@ -9,7 +9,7 @@
 #'   <https://style.tidyverse.org/syntax.html#indenting>
 #' @export
 closed_curly_linter <- function(allow_single_line = FALSE) {
-  lintr_deprecated("closed_curly_linter", new = "brace_linter", version = "2.0.1.9001", type = "Linter")
+  lintr_deprecated("closed_curly_linter", new = "brace_linter", version = "3.0.0", type = "Linter")
   xp_cond_closed <- xp_and(c(
     # matching { is on same line
     if (isTRUE(allow_single_line)) {
