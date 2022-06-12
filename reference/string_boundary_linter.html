@@ -71,12 +71,29 @@ c.f. <code>startsWith(x, "abc")</code>, <code>grepl("^abc", x)</code>,
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">string_boundary_linter</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">string_boundary_linter</span><span class="op">(</span>allow_grepl <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div class="section level2">
+    <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
+    <dl><dt>allow_grepl</dt>
+<dd><p>Logical, default <code>FALSE</code>. If <code>TRUE</code>, usages with <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl()</a></code>
+are ignored. Some authors may prefer the <code>NA</code> input to <code>FALSE</code> output
+conciseness offered by <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl()</a></code>, which doesn't have a direct equivalent
+with <code><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">startsWith()</a></code> or <code><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">endsWith()</a></code>.</p></dd>
+
+</dl></div>
+    <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Ditto for using <code><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">endsWith()</a></code> to detect fixed terminal substrings.</p>
+<p>Note that there is a difference in behavior between how <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl()</a></code> and <code><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">startsWith()</a></code>
+(and <code><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">endsWith()</a></code>) handle missing values. In particular, for <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl()</a></code>, <code>NA</code> inputs
+are considered <code>FALSE</code>, while for <code><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">startsWith()</a></code>, <code>NA</code> inputs have <code>NA</code> outputs.
+That means the strict equivalent of <code>grepl("^abc", x)</code> is
+<code>!is.na(x) &amp; startsWith(x, "abc")</code>.</p>
+<p>We lint <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl()</a></code> usages by default because the <code>!is.na()</code> version is more explicit
+with respect to <code>NA</code> handling -- though documented, the way <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl()</a></code> handles
+missing inputs may be surprising to some readers.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
