@@ -178,7 +178,8 @@
   @AshesITR).
 * `duplicate_argument_linter()` similarly checks that there are no duplicate arguments supplied to function calls (#850,
   @renkun-ken).
-* `missing_argument_linter()` to check for empty (missing) arguments in function calls (#563, @renkun-ken).
+* `missing_argument_linter()` to check for empty (missing) arguments in function calls (#563, #1152, @renkun-ken and 
+  @AshesITR).
 * `missing_package_linter()` to check if packages in calls to `library()` and friends
   are missing (#536, #1037, @renkun-ken and @MichaelChirico).
 * `namespace_linter()` to check for common mistakes in `pkg::symbol` usages (#548, @renkun-ken).
