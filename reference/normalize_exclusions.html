@@ -72,23 +72,36 @@
 <li><p>A named list of integers specifying lines to be excluded per file</p></li>
 <li><p>A named list of named lists specifying linters and lines to be excluded for the linters per file.</p></li>
 </ul></dd>
+
+
 <dt>normalize_path</dt>
 <dd><p>Should the names of the returned exclusion list be normalized paths?
 If no, they will be relative to <code>root</code>.</p></dd>
+
+
 <dt>root</dt>
 <dd><p>Base directory for relative filename resolution.</p></dd>
+
+
 <dt>pattern</dt>
 <dd><p>If non-NULL, only exclude files in excluded directories if they match
 <code>pattern</code>. Passed to <a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a> if a directory is excluded.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A named list of file exclusions.
-The names of the list specify the filenames to be excluded.
-Each file exclusion is a possibly named list containing line numbers to exclude, or the sentinel <code>Inf</code> for
+    
+
+<p>A named list of file exclusions.
+The names of the list specify the filenames to be excluded.</p>
+
+
+<p>Each file exclusion is a possibly named list containing line numbers to exclude, or the sentinel <code>Inf</code> for
 completely excluded files. If the an entry is named, the exclusions only take effect for the linter with the same
-name.
-If <code>normalize_path</code> is <code>TRUE</code>, file names will be normalized relative to <code>root</code>.
+name.</p>
+
+
+<p>If <code>normalize_path</code> is <code>TRUE</code>, file names will be normalized relative to <code>root</code>.
 Otherwise the paths are left as provided (relative to <code>root</code> or absolute).</p>
     </div>
 
@@ -101,7 +114,7 @@ Otherwise the paths are left as provided (relative to <code>root</code> or absol
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
     </footer></div>

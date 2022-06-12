@@ -72,6 +72,8 @@
     <dl><dt>source_expression</dt>
 <dd><p>A list of source expressions, the result of a call to <code><a href="get_source_expressions.html">get_source_expressions()</a></code>,
 for the desired filename.</p></dd>
+
+
 <dt>value</dt>
 <dd><p>Character. String corresponding to the token to search for.
 For example:</p><ul><li><p>"SYMBOL"</p></li>
@@ -80,21 +82,32 @@ For example:</p><ul><li><p>"SYMBOL"</p></li>
 <li><p>"$"</p></li>
 <li><p>"("</p></li>
 </ul></dd>
+
+
 <dt>fun</dt>
 <dd><p>For additional flexibility, a function to search for in
 the <code>token</code> column of <code>parsed_content</code>. Typically <code>==</code> or <code>%in%</code>.</p></dd>
+
+
 <dt>source_file</dt>
 <dd><p>(DEPRECATED) Same as <code>source_expression</code>. Will be removed.</p></dd>
+
+
 <dt>id</dt>
 <dd><p>Integer. The index corresponding to the desired row
 of <code>parsed_content</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p><code>ids_with_token</code>: The indices of the <code>parsed_content</code> data frame
+    
+
+<p><code>ids_with_token</code>: The indices of the <code>parsed_content</code> data frame
 entry of the list of source expressions. Indices correspond to the
-<em>rows</em> where <code>fun</code> evaluates to <code>TRUE</code> for the <code>value</code> in the <em>token</em> column.
-<code>with_id</code>: A data frame corresponding to the row(s) specified in <code>id</code>.</p>
+<em>rows</em> where <code>fun</code> evaluates to <code>TRUE</code> for the <code>value</code> in the <em>token</em> column.</p>
+
+
+<p><code>with_id</code>: A data frame corresponding to the row(s) specified in <code>id</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a></h2>
@@ -112,7 +125,7 @@ conjunction with <code>ids_with_token</code> to iterate over rows containing des
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
     </footer></div>

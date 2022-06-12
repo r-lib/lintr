@@ -75,7 +75,7 @@
 
 
 <div class="row">
-  <main id="main"><div class="page-header">
+  <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Using lintr</h1>
                         <h4 data-toc-skip class="author">Alexander Rosenstock</h4>
             
@@ -398,16 +398,16 @@
   <span class="co"># more concise alternative: use eval(call(.))</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="../reference/lint.html">lint</a></span><span class="op">(</span><span class="va">tmp</span>, linters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/call.html" class="external-link">call</a></span><span class="op">(</span><span class="va">linter_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
-<span class="co">#&gt;                           filename line_number column_number  type</span>
-<span class="co">#&gt; 1 /tmp/Rtmpl0BQA8/file2daa4b20155b           1             3 style</span>
+<span class="co">#&gt;                         filename line_number column_number  type</span>
+<span class="co">#&gt; 1 /tmp/RtmpqPhXdc/file33a9b7c6b8           1             3 style</span>
 <span class="co">#&gt;                          message  line linter</span>
 <span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1    get</span>
-<span class="co">#&gt;                           filename line_number column_number  type</span>
-<span class="co">#&gt; 1 /tmp/Rtmpl0BQA8/file2daa4b20155b           1             3 style</span>
+<span class="co">#&gt;                         filename line_number column_number  type</span>
+<span class="co">#&gt; 1 /tmp/RtmpqPhXdc/file33a9b7c6b8           1             3 style</span>
 <span class="co">#&gt;                          message  line            linter</span>
 <span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span>
-<span class="co">#&gt;                           filename line_number column_number  type</span>
-<span class="co">#&gt; 1 /tmp/Rtmpl0BQA8/file2daa4b20155b           1             3 style</span>
+<span class="co">#&gt;                         filename line_number column_number  type</span>
+<span class="co">#&gt; 1 /tmp/RtmpqPhXdc/file33a9b7c6b8           1             3 style</span>
 <span class="co">#&gt;                          message  line            linter</span>
 <span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></code></pre></div>
 </div>
@@ -531,7 +531,7 @@
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
     </footer>
