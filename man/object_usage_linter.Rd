@@ -18,5 +18,5 @@ Note that this runs \code{\link[base:eval]{base::eval()}} on the code, so do not
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=correctness_linters]{correctness}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=correctness_linters]{correctness}, \link[=default_linters]{default}, \link[=executing_linters]{executing}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }
