@@ -46,44 +46,47 @@ test_that("string_boundary_linter skips allowed substr()/substring() usages", {
 })
 
 test_that("string_boundary_linter blocks simple disallowed grepl() usages", {
+  starts_message <- rex::rex("Use !is.na(x) & startsWith(x, string) to detect a fixed initial substring,")
+  ends_message <- rex::rex("Use !is.na(x) & endsWith(x, string) to detect a fixed terminal substring,")
+
   expect_lint(
     "grepl('^a', x)",
-    rex::rex("Use startsWith() to detect a fixed initial substring."),
+    starts_message,
     string_boundary_linter()
   )
   # non-trivially equivalent (but still same as startsWith())
   expect_lint(
     "grepl('^[.]', x)",
-    rex::rex("Use startsWith() to detect a fixed initial substring."),
+    starts_message,
     string_boundary_linter()
   )
   expect_lint(
     "grepl('a$', x)",
-    rex::rex("Use endsWith() to detect a fixed terminal substring."),
+    ends_message,
     string_boundary_linter()
   )
   # also get negation for free
   expect_lint(
     "!grepl('a$', x)",
-    rex::rex("Use endsWith() to detect a fixed terminal substring."),
+    ends_message,
     string_boundary_linter()
   )
 
   # perl = TRUE doesn't matter
   expect_lint(
     "grepl('^a', x, perl = TRUE)",
-    rex::rex("Use startsWith() to detect a fixed initial substring."),
+    starts_message,
     string_boundary_linter()
   )
   # explicit FALSE (i.e., an explicit default) is ignored
   expect_lint(
     "grepl('^a', x, fixed = FALSE)",
-    rex::rex("Use startsWith() to detect a fixed initial substring."),
+    starts_message,
     string_boundary_linter()
   )
   expect_lint(
     "grepl('^a', x, fixed = F)",
-    rex::rex("Use startsWith() to detect a fixed initial substring."),
+    starts_message,
     string_boundary_linter()
   )
 })
@@ -155,7 +158,12 @@ test_that("R>=4 raw strings are detected", {
   expect_lint('grepl(R"(^.{3})", x)', NULL, string_boundary_linter())
   expect_lint(
     'grepl(R"(^abc)", x)',
-    rex::rex("Use startsWith() to detect a fixed initial substring"),
+    rex::rex("Use !is.na(x) & startsWith(x, string) to detect a fixed initial substring,"),
     string_boundary_linter()
   )
+})
+
+test_that("grepl() can optionally be ignored", {
+  expect_lint("grepl('^abc', x)", NULL, string_boundary_linter(allow_grepl = TRUE))
+  expect_lint("grepl('xyz$', x)", NULL, string_boundary_linter(allow_grepl = TRUE))
 })
