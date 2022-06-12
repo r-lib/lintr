@@ -217,6 +217,9 @@ of general interest to the broader R community. More will be included in future 
 * `expect_type_linter()` Require usage of `expect_type(x, t)` over `expect_equal(typeof(x), t)` and similar.
 * `fixed_regex_linter()` Require `fixed = TRUE` or `stringr::fixed()` for regular expressions that can be
   expressed statically, e.g. `strsplit(x, "[.]")` can be `strsplit(x, ".", fixed = TRUE)`.
+   + Added parameter `allow_grepl` (default `FALSE`) to toggle whether `grepl()` usages should be linted.
+     These might be treated separately because `grepl("^x", NA)` is `FALSE`; the `startsWith()` equivalent to
+     get `FALSE` for missing input is clunkier, but more explicit: `!is.na(x) & startsWith(x, string)` (#1376, @MichaelChirico).
 * `ifelse_censor_linter()` Require usage of `pmax()` / `pmin()` where appropriate, e.g. `ifelse(x > y, x, y)` is
   `pmax(x, y)`.
 * `inner_combine_linter()` Require inputs to known-vectorized functions to be combined first rather than later,
