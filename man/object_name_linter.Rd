@@ -37,5 +37,5 @@ that it's available in the session where this linter is running.
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=style_linters]{style}
+\link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=executing_linters]{executing}, \link[=style_linters]{style}
 }

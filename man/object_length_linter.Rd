@@ -28,5 +28,5 @@ see the detailed note in \code{\link[=object_name_linter]{object_name_linter()}}
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=executing_linters]{executing}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }
