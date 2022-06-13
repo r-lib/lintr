@@ -207,6 +207,9 @@ settings <- NULL
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
+  # This is just here to quiet R CMD check
+  if (FALSE) backports::import
+
   default_settings <<- list(
     linters = default_linters,
     encoding = "UTF-8",
