@@ -71,7 +71,7 @@ lintr can be integrated with [syntastic](https://github.com/vim-syntastic/syntas
 
 ### Installation
 
-Put the file [syntastic/lintr.vim](inst/syntastic/lintr.vim) in `syntastic/syntax_checkers/r`.
+Put the file [syntastic/lintr.vim](https://raw.githubusercontent.com/r-lib/lintr/v2.0.1/inst/syntastic/lintr.vim) in `syntastic/syntax_checkers/r`.
 If you are using [pathogen](https://github.com/tpope/vim-pathogen) this directory is `~/.vim/bundles/syntastic/syntax_checkers/r`.
 
 You will also need to add the following lines to your `.vimrc`.
