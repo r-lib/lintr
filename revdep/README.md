@@ -10,7 +10,7 @@
 |collate  |en_DK.UTF-8                          |
 |ctype    |en_DK.UTF-8                          |
 |tz       |Europe/Berlin                        |
-|date     |2022-05-22                           |
+|date     |2022-06-13                           |
 |rstudio  |1.3.1056  (desktop)                  |
 |pandoc   |2.17.1.1 @ /usr/bin/ (via rmarkdown) |
 
@@ -42,12 +42,12 @@
 |lifecycle    |1.0.1  |NA         |*  |
 |magrittr     |2.0.3  |2.0.3      |   |
 |mime         |0.12   |NA         |*  |
-|openssl      |2.0.1  |NA         |*  |
+|openssl      |2.0.2  |NA         |*  |
 |pillar       |1.7.0  |NA         |*  |
 |pkgconfig    |2.0.3  |NA         |*  |
 |pkgload      |1.2.4  |NA         |*  |
 |praise       |1.0.0  |NA         |*  |
-|processx     |3.5.3  |3.5.3      |   |
+|processx     |3.6.0  |3.6.0      |   |
 |ps           |1.7.0  |1.7.0      |   |
 |R6           |2.5.1  |2.5.1      |   |
 |rematch2     |2.1.2  |NA         |*  |
@@ -72,35 +72,17 @@
 
 # Revdeps
 
-## Failed to check (27)
+## Failed to check (3)
 
-|package             |version |error |warning |note |
-|:-------------------|:-------|:-----|:-------|:----|
-|ASSIGN              |?       |      |        |     |
-|babette             |?       |      |        |     |
-|beautier            |?       |      |        |     |
-|BTYDplus            |?       |      |        |     |
-|caretEnsemble       |?       |      |        |     |
-|chimeraviz          |?       |      |        |     |
-|ConNEcT             |?       |      |        |     |
-|datarobot           |?       |      |        |     |
-|DepthProc           |?       |      |        |     |
-|FSelectorRcpp       |?       |      |        |     |
-|geofacet            |?       |      |        |     |
-|geogrid             |?       |      |        |     |
-|ggfortify           |?       |      |        |     |
-|healthcareai        |?       |      |        |     |
-|INSPECTumours       |?       |      |        |     |
-|jpmesh              |?       |      |        |     |
-|mimager             |?       |      |        |     |
-|mlr                 |?       |      |        |     |
-|mlrCPO              |?       |      |        |     |
-|perturbatr          |1.12.0  |1     |        |     |
-|PosteriorBootstrap  |?       |      |        |     |
-|PWFSLSmoke          |?       |      |        |     |
-|RLSeq               |?       |      |        |     |
-|singleCellTK        |?       |      |        |     |
-|smerc               |?       |      |        |     |
-|TBSignatureProfiler |?       |      |        |     |
-|unifir              |?       |      |        |     |
+|package      |version |error |warning |note |
+|:------------|:-------|:-----|:-------|:----|
+|chimeraviz   |?       |      |        |     |
+|mlr          |?       |      |        |     |
+|singleCellTK |?       |      |        |     |
+
+## New problems (1)
+
+|package                          |version |error |warning |note |
+|:--------------------------------|:-------|:-----|:-------|:----|
+|[devtools](problems.md#devtools) |2.4.3   |      |__+1__  |     |
 
