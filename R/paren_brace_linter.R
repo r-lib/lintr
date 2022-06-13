@@ -6,7 +6,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 paren_brace_linter <- function() {
-  lintr_deprecated("paren_brace_linter", new = "brace_linter", version = "2.0.1.9001", type = "Linter")
+  lintr_deprecated("paren_brace_linter", new = "brace_linter", version = "3.0.0", type = "Linter")
 
   xpath <- paste(
     "//OP-LEFT-BRACE[",

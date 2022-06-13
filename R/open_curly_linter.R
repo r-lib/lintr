@@ -9,7 +9,7 @@
 #'   <https://style.tidyverse.org/syntax.html#indenting>
 #' @export
 open_curly_linter <- function(allow_single_line = FALSE) {
-  lintr_deprecated("open_curly_linter", new = "brace_linter", version = "2.0.1.9001", type = "Linter")
+  lintr_deprecated("open_curly_linter", new = "brace_linter", version = "3.0.0", type = "Linter")
 
   xpath_before <- "//OP-LEFT-BRACE[
     not(following-sibling::expr[1][OP-LEFT-BRACE])

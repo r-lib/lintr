@@ -169,7 +169,7 @@ linters_with_defaults <- function(..., defaults = default_linters) {
 #' @rdname linters_with_defaults
 #' @export
 with_defaults <- function(..., default = default_linters) {
-  lintr_deprecated("with_defaults", "linters_with_defaults", "2.0.9001")
+  lintr_deprecated("with_defaults", "linters_with_defaults", "3.0.0")
   # to ease the burden of transition -- default = NULL used to behave like defaults = list() now does
   if (is.null(default)) default <- list()
   linters_with_defaults(..., defaults = default)

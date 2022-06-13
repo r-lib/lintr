@@ -65,7 +65,7 @@ semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
   lintr_deprecated(
     old = "semicolon_terminator_linter",
     new = "semicolon_linter",
-    version = "2.0.1.9001",
+    version = "3.0.0",
     type = "Linter"
   )
   semicolon <- match.arg(semicolon, several.ok = TRUE)

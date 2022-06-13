@@ -329,13 +329,13 @@ validate_linter_object <- function(linter, name) {
     if (is_linter_factory(linter)) {
       old <- "Passing linters as variables"
       new <- "a call to the linters (see ?linters)"
-      lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
+      lintr_deprecated(old = old, new = new, version = "3.0.0",
                        type = "")
       linter <- linter()
     } else {
       old <- "The use of linters of class 'function'"
       new <- "linters classed as 'linter' (see ?Linter)"
-      lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
+      lintr_deprecated(old = old, new = new, version = "3.0.0",
                        type = "")
       linter <- Linter(linter, name = name)
     }
@@ -449,7 +449,7 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
   if (!missing(linter)) {
     lintr_deprecated(
       old = "Using the `linter` argument of `Lint()`",
-      version = "2.0.1.9001",
+      version = "3.0.0",
       type = ""
     )
   }
