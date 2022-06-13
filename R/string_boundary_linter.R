@@ -7,29 +7,55 @@
 #'
 #' Ditto for using [endsWith()] to detect fixed terminal substrings.
 #'
+#' Note that there is a difference in behavior between how `grepl()` and `startsWith()`
+#'   (and `endsWith()`) handle missing values. In particular, for `grepl()`, `NA` inputs
+#'   are considered `FALSE`, while for `startsWith()`, `NA` inputs have `NA` outputs.
+#'   That means the strict equivalent of `grepl("^abc", x)` is
+#'   `!is.na(x) & startsWith(x, "abc")`.
+#'
+#' We lint `grepl()` usages by default because the `!is.na()` version is more explicit
+#'   with respect to `NA` handling -- though documented, the way `grepl()` handles
+#'   missing inputs may be surprising to some readers.
+#'
+#' @param allow_grepl Logical, default `FALSE`. If `TRUE`, usages with `grepl()`
+#'   are ignored. Some authors may prefer the `NA` input to `FALSE` output
+#'   conciseness offered by `grepl()`, which doesn't have a direct equivalent
+#'   with `startsWith()` or `endsWith()`.
 #' @evalRd rd_tags("string_boundary_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-string_boundary_linter <- function() {
+string_boundary_linter <- function(allow_grepl = FALSE) {
   str_cond <- xp_and(
     "string-length(text()) > 3",
     "contains(text(), '^') or contains(text(), '$')"
   )
-  grepl_xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'grepl']]
-    and not(SYMBOL_SUB[
-      text() = 'ignore.case'
-      and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
-    ])
-    and not(SYMBOL_SUB[
-      text() = 'fixed'
-      and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
-    ])
-  ]/expr[2]/STR_CONST[ {str_cond} ]")
   str_detect_xpath <- glue::glue("//expr[
     expr[1][SYMBOL_FUNCTION_CALL[text() = 'str_detect']]
   ]/expr[3]/STR_CONST[ {str_cond} ]")
-  regex_xpath <- paste(grepl_xpath, "|", str_detect_xpath)
+
+  if (!allow_grepl) {
+    grepl_xpath <- glue::glue("//expr[
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'grepl']]
+      and not(SYMBOL_SUB[
+        text() = 'ignore.case'
+        and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
+      ])
+      and not(SYMBOL_SUB[
+        text() = 'fixed'
+        and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
+      ])
+    ]/expr[2]/STR_CONST[ {str_cond} ]")
+  }
+
+  get_regex_lint_data <- function(xml, xpath) {
+    expr <- xml2::xml_find_all(xml, xpath)
+    patterns <- get_r_string(expr)
+    initial_anchor <- startsWith(patterns, "^")
+    search_start <- 1L + initial_anchor
+    search_end <- nchar(patterns) - 1L + initial_anchor
+    can_replace <- is_not_regex(substr(patterns, search_start, search_end))
+    list(lint_expr = expr[can_replace], initial_anchor = initial_anchor[can_replace])
+  }
 
   substr_xpath <- "//expr[
     (EQ or NE)
@@ -56,24 +82,44 @@ string_boundary_linter <- function() {
     }
 
     xml <- source_expression$xml_parsed_content
+    lints <- list()
 
-    regex_expr <- xml2::xml_find_all(xml, regex_xpath)
-    patterns <- get_r_string(regex_expr)
-    initial_anchor <- startsWith(patterns, "^")
-    search_start <- 1L + initial_anchor
-    search_end <- nchar(patterns) - 1L + initial_anchor
-    can_replace <- is_not_regex(substr(patterns, search_start, search_end))
-    regex_expr <- regex_expr[can_replace]
-    regex_lint_message <- paste(
+    str_detect_lint_data <- get_regex_lint_data(xml, str_detect_xpath)
+    str_detect_lint_message <- paste(
       ifelse(
-        initial_anchor[can_replace],
+        str_detect_lint_data$initial_anchor,
         "Use startsWith() to detect a fixed initial substring.",
         "Use endsWith() to detect a fixed terminal substring."
       ),
       "Doing so is more readable and more efficient."
     )
 
-    regex_lints <- xml_nodes_to_lints(regex_expr, source_expression, regex_lint_message, type = "warning")
+    lints <- c(lints, xml_nodes_to_lints(
+      str_detect_lint_data$lint_expr,
+      source_expression = source_expression,
+      lint_message = str_detect_lint_message,
+      type = "warning"
+    ))
+
+    if (!allow_grepl) {
+      grepl_lint_data <- get_regex_lint_data(xml, grepl_xpath)
+      grepl_replacement <- ifelse(grepl_lint_data$initial_anchor, "startsWith", "endsWith")
+      grepl_type <- ifelse(grepl_lint_data$initial_anchor, "initial", "terminal")
+      grepl_lint_message <- paste(
+        sprintf(
+          "Use !is.na(x) & %s(x, string) to detect a fixed %s substring, or, if missingness is not a concern, just %s.",
+          grepl_replacement, grepl_type, grepl_replacement
+        ),
+        "Doing so is more readable and more efficient."
+      )
+
+      lints <- c(lints, xml_nodes_to_lints(
+        grepl_lint_data$lint_expr,
+        source_expression = source_expression,
+        lint_message = grepl_lint_message,
+        type = "warning"
+      ))
+    }
 
     substr_expr <- xml2::xml_find_all(xml, substr_xpath)
     substr_one <- xml2::xml_find_chr(substr_expr, substr_arg2_xpath) %in% c("1", "1L")
@@ -86,7 +132,7 @@ string_boundary_linter <- function() {
       "Doing so is more readable and more efficient."
     )
 
-    substr_lints <- xml_nodes_to_lints(substr_expr, source_expression, substr_lint_message, type = "warning")
-    return(c(regex_lints, substr_lints))
+    lints <- c(lints, xml_nodes_to_lints(substr_expr, source_expression, substr_lint_message, type = "warning"))
+    lints
   })
 }
