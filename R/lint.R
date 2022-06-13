@@ -517,7 +517,7 @@ rstudio_source_markers <- function(lints) {
 
 #' Checkstyle Report for lint results
 #'
-#' Generate a report of the linting results using the [Checkstyle](http://checkstyle.sourceforge.net/) XML format.
+#' Generate a report of the linting results using the [Checkstyle](https://checkstyle.sourceforge.io) XML format.
 #'
 #' @param lints the linting results.
 #' @param filename the name of the output report
