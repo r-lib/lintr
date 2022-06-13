@@ -4,9 +4,13 @@ library(pkgload)
 library(data.table)
 library(glue)
 
+if (!file.exists("revdep-repos")) {
+  stop("Please run .dev/revdep_get_repos.R first before running this")
+}
 repo_data <- rbind(
   data.table::fread("revdep-repos"),
-  data.table::fread("revdep-extra-repos", skip = 2L),
+  # land after the initial lines of comments on the header line
+  data.table::fread("revdep-extra-repos", skip = "package,repo"),
   data.table::fread("revdep-no-repos")
 )
 setkey(repo_data, repo)
