@@ -89,3 +89,13 @@ NULL
 #' @evalRd rd_linters("deprecated")
 #' @seealso [linters] for a complete list of linters available in lintr.
 NULL
+
+#' Code executing linters
+#' @name executing_linters
+#' @description
+#' Linters that evaluate parts of the linted code, such as loading referenced packages.
+#' These linters should not be used with untrusted code, and may need dependencies of the linted package or project to
+#' be available in order to function correctly.
+#' @evalRd rd_linters("executing")
+#' @seealso [linters] for a complete list of linters available in lintr.
+NULL

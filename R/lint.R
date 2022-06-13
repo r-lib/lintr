@@ -29,6 +29,8 @@
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
 #' linting is being done ad hoc.
 #'
+#' @aliases lint_file
+#' @evalRd # TODO(next release after 3.0.0) remove the alias
 #' @return A list of lint objects.
 #'
 #' @examples

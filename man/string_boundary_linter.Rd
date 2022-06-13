@@ -4,7 +4,13 @@
 \alias{string_boundary_linter}
 \title{Require usage of startsWith() and endsWith() over grepl()/substr() versions}
 \usage{
-string_boundary_linter()
+string_boundary_linter(allow_grepl = FALSE)
+}
+\arguments{
+\item{allow_grepl}{Logical, default \code{FALSE}. If \code{TRUE}, usages with \code{grepl()}
+are ignored. Some authors may prefer the \code{NA} input to \code{FALSE} output
+conciseness offered by \code{grepl()}, which doesn't have a direct equivalent
+with \code{startsWith()} or \code{endsWith()}.}
 }
 \description{
 \code{\link[=startsWith]{startsWith()}} is used to detect fixed initial substrings; it is more
@@ -14,6 +20,16 @@ c.f. \code{startsWith(x, "abc")}, \code{grepl("^abc", x)},
 }
 \details{
 Ditto for using \code{\link[=endsWith]{endsWith()}} to detect fixed terminal substrings.
+
+Note that there is a difference in behavior between how \code{grepl()} and \code{startsWith()}
+(and \code{endsWith()}) handle missing values. In particular, for \code{grepl()}, \code{NA} inputs
+are considered \code{FALSE}, while for \code{startsWith()}, \code{NA} inputs have \code{NA} outputs.
+That means the strict equivalent of \code{grepl("^abc", x)} is
+\code{!is.na(x) & startsWith(x, "abc")}.
+
+We lint \code{grepl()} usages by default because the \code{!is.na()} version is more explicit
+with respect to \code{NA} handling -- though documented, the way \code{grepl()} handles
+missing inputs may be surprising to some readers.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

@@ -25,6 +25,7 @@ The following tags exist:
 \item{\link[=default_linters]{default} (24 linters)}
 \item{\link[=deprecated_linters]{deprecated} (4 linters)}
 \item{\link[=efficiency_linters]{efficiency} (16 linters)}
+\item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=readability_linters]{readability} (37 linters)}
 \item{\link[=robustness_linters]{robustness} (12 linters)}
@@ -71,14 +72,14 @@ The following linters exist:
 \item{\code{\link{literal_coercion_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{missing_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{missing_package_linter}} (tags: common_mistakes, robustness)}
-\item{\code{\link{namespace_linter}} (tags: configurable, correctness, robustness)}
+\item{\code{\link{namespace_linter}} (tags: configurable, correctness, executing, robustness)}
 \item{\code{\link{nested_ifelse_linter}} (tags: efficiency, readability)}
 \item{\code{\link{no_tab_linter}} (tags: consistency, default, style)}
 \item{\code{\link{nonportable_path_linter}} (tags: best_practices, configurable, robustness)}
 \item{\code{\link{numeric_leading_zero_linter}} (tags: consistency, readability, style)}
-\item{\code{\link{object_length_linter}} (tags: configurable, default, readability, style)}
-\item{\code{\link{object_name_linter}} (tags: configurable, consistency, default, style)}
-\item{\code{\link{object_usage_linter}} (tags: correctness, default, readability, style)}
+\item{\code{\link{object_length_linter}} (tags: configurable, default, executing, readability, style)}
+\item{\code{\link{object_name_linter}} (tags: configurable, consistency, default, executing, style)}
+\item{\code{\link{object_usage_linter}} (tags: correctness, default, executing, readability, style)}
 \item{\code{\link{open_curly_linter}} (tags: configurable, deprecated, readability, style)}
 \item{\code{\link{outer_negation_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{package_hooks_linter}} (tags: correctness, package_development, style)}
@@ -107,7 +108,7 @@ The following linters exist:
 \item{\code{\link{undesirable_operator_linter}} (tags: best_practices, configurable, efficiency, robustness, style)}
 \item{\code{\link{unneeded_concatenation_linter}} (tags: configurable, efficiency, readability, style)}
 \item{\code{\link{unreachable_code_linter}} (tags: best_practices, readability)}
-\item{\code{\link{unused_import_linter}} (tags: best_practices, common_mistakes, configurable)}
+\item{\code{\link{unused_import_linter}} (tags: best_practices, common_mistakes, configurable, executing)}
 \item{\code{\link{vector_logic_linter}} (tags: best_practices, default, efficiency)}
 \item{\code{\link{yoda_test_linter}} (tags: best_practices, package_development, readability)}
 }

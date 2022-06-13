@@ -2,6 +2,7 @@
 % Please edit documentation in R/lint.R
 \name{lint}
 \alias{lint}
+\alias{lint_file}
 \alias{lint_dir}
 \alias{lint_package}
 \title{Lint a file, directory, or package}
