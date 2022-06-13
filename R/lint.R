@@ -30,7 +30,7 @@
 #' linting is being done ad hoc.
 #'
 #' @aliases lint_file
-#' @evalRd # TODO(next release after 3.0.0) remove the alias
+# TODO(next release after 3.0.0): remove the alias
 #' @return A list of lint objects.
 #'
 #' @examples
