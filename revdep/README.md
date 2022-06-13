@@ -80,9 +80,3 @@
 |mlr          |?       |      |        |     |
 |singleCellTK |?       |      |        |     |
 
-## New problems (1)
-
-|package                          |version |error |warning |note |
-|:--------------------------------|:-------|:-----|:-------|:----|
-|[devtools](problems.md#devtools) |2.4.3   |      |__+1__  |     |
-
