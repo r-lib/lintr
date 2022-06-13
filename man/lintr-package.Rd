@@ -17,11 +17,11 @@ Supports on the fly checking of R code edited with Emacs, Vim and Sublime Text.
 
 Authors:
 \itemize{
-  \item Florent Angly
+  \item Florent Angly (fangly)
   \item Russ Hyde
   \item Michael Chirico
   \item Kun Ren
-  \item Alexander Rosenstock
+  \item Alexander Rosenstock (AshesITR)
 }
 
 }
