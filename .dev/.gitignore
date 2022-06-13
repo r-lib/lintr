@@ -1,0 +1,8 @@
+# these are artefacts, so skip storing them on .git.
+#   moreover, revdep-no-repos contains e-mail addresses
+*.csv
+revdep-repos
+revdep-no-repos
+revdep_comparison
+revdep_emails
+

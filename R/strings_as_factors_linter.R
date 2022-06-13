@@ -11,7 +11,7 @@
 #'   output will unambiguously be affected. We can instead supply
 #'   `stringsAsFactors = TRUE`, which will make this code backwards-compatible.
 #'
-#' See <https://developer.r-project.org/Blog/public/2020/02/16/stringsasfactors>.
+#' See <https://developer.r-project.org/Blog/public/2020/02/16/stringsasfactors/>.
 #'
 #' @evalRd rd_tags("strings_as_factors_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.

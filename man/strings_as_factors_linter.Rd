@@ -19,7 +19,7 @@ this code will be unaffected. However, in \code{data.frame(x = 'a')}, the
 output will unambiguously be affected. We can instead supply
 \code{stringsAsFactors = TRUE}, which will make this code backwards-compatible.
 
-See \url{https://developer.r-project.org/Blog/public/2020/02/16/stringsasfactors}.
+See \url{https://developer.r-project.org/Blog/public/2020/02/16/stringsasfactors/}.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

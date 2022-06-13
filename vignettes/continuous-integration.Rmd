@@ -66,8 +66,8 @@ after_success:
 ```
 
 Live example of a package using this setup:
-[`hibpwned`](https://github.com/lockedata/HIBPwned/blob/master/.travis.yml),
-[lintr-bot commenting on a PR](https://github.com/lockedata/HIBPwned/pull/30).
+[`hibpwned`](https://github.com/jumpingrivers/HIBPwned/blob/master/.travis.yml),
+[lintr-bot commenting on a PR](https://github.com/jumpingrivers/HIBPwned/pull/30).
 
 ## For projects
 
