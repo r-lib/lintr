@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -116,17 +116,17 @@ This makes testing them reproducible on all systems irrespective of their native
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># no expected lint</span></span>
 <span class="r-in"><span class="fu">expect_lint</span><span class="op">(</span><span class="st">"a"</span>, <span class="cn">NULL</span>, <span class="va">trailing_blank_lines_linter</span><span class="op">)</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span> Passing linters as variables was deprecated in lintr version 2.0.1.9001. Use a call to the linters (see ?linters) instead.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span> Passing linters as variables was deprecated in lintr version 3.0.0. Use a call to the linters (see ?linters) instead.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># one expected lint</span></span>
 <span class="r-in"><span class="fu">expect_lint</span><span class="op">(</span><span class="st">"a\n"</span>, <span class="st">"superfluous"</span>, <span class="va">trailing_blank_lines_linter</span><span class="op">)</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span> Passing linters as variables was deprecated in lintr version 2.0.1.9001. Use a call to the linters (see ?linters) instead.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span> Passing linters as variables was deprecated in lintr version 3.0.0. Use a call to the linters (see ?linters) instead.</span>
 <span class="r-in"><span class="fu">expect_lint</span><span class="op">(</span><span class="st">"a\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>message<span class="op">=</span><span class="st">"superfluous"</span>, line_number<span class="op">=</span><span class="fl">2</span><span class="op">)</span>, <span class="va">trailing_blank_lines_linter</span><span class="op">)</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span> Passing linters as variables was deprecated in lintr version 2.0.1.9001. Use a call to the linters (see ?linters) instead.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span> Passing linters as variables was deprecated in lintr version 3.0.0. Use a call to the linters (see ?linters) instead.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># several expected lints</span></span>
 <span class="r-in"><span class="fu">expect_lint</span><span class="op">(</span><span class="st">"a\n\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"superfluous"</span>, <span class="st">"superfluous"</span><span class="op">)</span>, <span class="va">trailing_blank_lines_linter</span><span class="op">)</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span> Passing linters as variables was deprecated in lintr version 2.0.1.9001. Use a call to the linters (see ?linters) instead.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span> Passing linters as variables was deprecated in lintr version 3.0.0. Use a call to the linters (see ?linters) instead.</span>
 <span class="r-in"><span class="fu">expect_lint</span><span class="op">(</span></span>
 <span class="r-in">  <span class="st">"a\n\n"</span>,</span>
 <span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>message<span class="op">=</span><span class="st">"superfluous"</span>, line_number<span class="op">=</span><span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>message<span class="op">=</span><span class="st">"superfluous"</span>, line_number<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>

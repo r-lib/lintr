@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,9 +56,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="lintr-development-version">lintr (development version)<a class="anchor" aria-label="anchor" href="#lintr-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="3.0.0" id="lintr-300">lintr 3.0.0<a class="anchor" aria-label="anchor" href="#lintr-300"></a></h2>
 <div class="section level3">
-<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<h3 id="breaking-changes-3-0-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-3-0-0"></a></h3>
 <ul><li>
 <p>All linters are now function factories (i.e., functions that return functions) for consistency. Previously, only linters with customizable parameters were factories (<a href="https://github.com/r-lib/lintr/issues/245" class="external-link">#245</a>, <a href="https://github.com/fangly" class="external-link">@fangly</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>, and <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</p>
 <p>This means that usage such as <code>lint("file.R", seq_linter)</code> should be updated to <code>lint("file.R", seq_linter())</code>, and the following update for custom linters:</p>
@@ -82,7 +82,7 @@
 Note that you can replicate old behavior by supplying <code>return</code> as a custom undesirable function: <code>undesirable_function_linter(c(all_undesirable_functions, list(return = NA)))</code></p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="deprecations-development-version">Deprecations<a class="anchor" aria-label="anchor" href="#deprecations-development-version"></a></h3>
+<h3 id="deprecations-3-0-0">Deprecations<a class="anchor" aria-label="anchor" href="#deprecations-3-0-0"></a></h3>
 <ul><li>Lints are now marked with the name of the <code>linter</code> that caused them instead of the name of their implementation function. Deprecated the obsolete <code>linter</code> argument of <code><a href="../reference/lint-s3.html">Lint()</a></code> (<a href="https://github.com/r-lib/lintr/issues/664" class="external-link">#664</a>, <a href="https://github.com/r-lib/lintr/issues/673" class="external-link">#673</a>, <a href="https://github.com/r-lib/lintr/issues/746" class="external-link">#746</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>). Downstream custom linters should follow suit.</li>
 <li>Renamed <code><a href="../reference/semicolon_linter.html">semicolon_terminator_linter()</a></code> to <code><a href="../reference/semicolon_linter.html">semicolon_linter()</a></code> for better consistency. <code><a href="../reference/semicolon_linter.html">semicolon_terminator_linter()</a></code> survives but is marked for deprecation. The new linter also has a new signature, taking arguments <code>allow_compound</code> and <code>allow_trailing</code> to replace the old single argument <code>semicolon</code>, again for signature consistency with other linters.</li>
 <li>The following linters were subsumed into <code><a href="../reference/brace_linter.html">brace_linter()</a></code> and are now deprecated; see the item on <code><a href="../reference/brace_linter.html">brace_linter()</a></code> below:<ul><li><code><a href="../reference/closed_curly_linter.html">closed_curly_linter()</a></code></li>
@@ -97,10 +97,10 @@ Note that you can replicate old behavior by supplying <code>return</code> as a c
 <li>Deprecated the <code>find_line()</code> and <code>find_column()</code> helpers from the item-level <code>expressions</code> returned with <code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code>. These helpers were typically associated with regex-based logic for building linters, which is rarely needed and prone to false positives; now that lintr almost exclusively uses XPath-based logic for linters, these are no longer necessary (<a href="https://github.com/r-lib/lintr/issues/1373" class="external-link">#1373</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="other-changes-to-defaults-development-version">Other changes to defaults<a class="anchor" aria-label="anchor" href="#other-changes-to-defaults-development-version"></a></h3>
+<h3 id="other-changes-to-defaults-3-0-0">Other changes to defaults<a class="anchor" aria-label="anchor" href="#other-changes-to-defaults-3-0-0"></a></h3>
 <div class="section level4">
-<h4 id="updates-to-default_linters-development-version">Updates to <code>default_linters</code>
-<a class="anchor" aria-label="anchor" href="#updates-to-default_linters-development-version"></a></h4>
+<h4 id="updates-to-default_linters-3-0-0">Updates to <code>default_linters</code>
+<a class="anchor" aria-label="anchor" href="#updates-to-default_linters-3-0-0"></a></h4>
 <ul><li>New <code><a href="../reference/brace_linter.html">brace_linter()</a></code> which combines several curly brace related linters, deprecating the following predecessors (<a href="https://github.com/r-lib/lintr/issues/1041" class="external-link">#1041</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>):<ul><li>
 <code><a href="../reference/closed_curly_linter.html">closed_curly_linter()</a></code>; both now also allow <code>}]</code> in addition to <code>})</code> and <code>},</code> as exceptions, i.e., <code>}</code> doesn’t need to be on its own line if paired with a closing square bracket, a closing parenthesis, or a comma. Also improved lint metadata so that source markers land at the closing brace instead of the closing parenthesis to improve the experience of fixing the lint (<a href="https://github.com/r-lib/lintr/issues/583" class="external-link">#583</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>
@@ -188,7 +188,7 @@ Note that you can replicate old behavior by supplying <code>return</code> as a c
 </ul></li>
 </ul></div>
 <div class="section level4">
-<h4 id="other-noteworthy-changes-development-version">Other noteworthy changes<a class="anchor" aria-label="anchor" href="#other-noteworthy-changes-development-version"></a></h4>
+<h4 id="other-noteworthy-changes-3-0-0">Other noteworthy changes<a class="anchor" aria-label="anchor" href="#other-noteworthy-changes-3-0-0"></a></h4>
 <ul><li>
 <code><a href="../reference/cyclocomp_linter.html">cyclocomp_linter()</a></code>: set the default <code>complexity_limit</code> to 15. This brings the default into sync with what is enforced via <code>default_linters</code> (<a href="https://github.com/r-lib/lintr/issues/693" class="external-link">#693</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>
@@ -197,9 +197,9 @@ Note that you can replicate old behavior by supplying <code>return</code> as a c
 </ul></div>
 </div>
 <div class="section level3">
-<h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
+<h3 id="new-and-improved-features-3-0-0">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-3-0-0"></a></h3>
 <div class="section level4">
-<h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
+<h4 id="new-linters-3-0-0">New linters<a class="anchor" aria-label="anchor" href="#new-linters-3-0-0"></a></h4>
 <ul><li>
 <code><a href="../reference/backport_linter.html">backport_linter()</a></code> for detecting mismatched R version dependencies (<a href="https://github.com/r-lib/lintr/issues/506" class="external-link">#506</a>, <a href="https://github.com/r-lib/lintr/issues/1316" class="external-link">#1316</a>, <a href="https://github.com/r-lib/lintr/issues/1318" class="external-link">#1318</a>, <a href="https://github.com/r-lib/lintr/issues/1319" class="external-link">#1319</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a> and <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>
@@ -219,7 +219,7 @@ Note that you can replicate old behavior by supplying <code>return</code> as a c
 <li>
 <code><a href="../reference/unused_import_linter.html">unused_import_linter()</a></code> to detect unnecessary <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code> calls in R scripts (<a href="https://github.com/r-lib/lintr/issues/239" class="external-link">#239</a>, <a href="https://github.com/jimhester" class="external-link">@jimhester</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 </ul><div class="section level5">
-<h5 id="google-linters-development-version">Google linters<a class="anchor" aria-label="anchor" href="#google-linters-development-version"></a></h5>
+<h5 id="google-linters-3-0-0">Google linters<a class="anchor" aria-label="anchor" href="#google-linters-3-0-0"></a></h5>
 <p>Google is a heavy user of lintr internally, and has developed a large set of linters improving code consistency and correcting common R usage mistakes. This release includes many of these linters that are of general interest to the broader R community. More will be included in future releases. See, e.g. <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/r-lib/lintr/issues/979" class="external-link">#979</a>, <a href="https://github.com/r-lib/lintr/issues/998" class="external-link">#998</a>, <a href="https://github.com/r-lib/lintr/issues/1011" class="external-link">#1011</a>, <a href="https://github.com/r-lib/lintr/issues/1016" class="external-link">#1016</a>, <a href="https://github.com/r-lib/lintr/issues/1036" class="external-link">#1036</a>, <a href="https://github.com/r-lib/lintr/issues/1051" class="external-link">#1051</a>, <a href="https://github.com/r-lib/lintr/issues/1066" class="external-link">#1066</a>, and <a href="https://github.com/r-lib/lintr/issues/1067" class="external-link">#1067</a>; special thanks to <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a> and <a href="https://github.com/michaelquinn32" class="external-link">@michaelquinn32</a>.</p>
 <ul><li>
 <code><a href="../reference/any_duplicated_linter.html">any_duplicated_linter()</a></code> Require usage of <code>anyDuplicated(x) &gt; 0L</code> over <code>any(duplicated(x))</code> and similar.</li>
@@ -293,7 +293,7 @@ Note that you can replicate old behavior by supplying <code>return</code> as a c
 </ul></div>
 </div>
 <div class="section level4">
-<h4 id="other-features-and-improvements-development-version">Other features and improvements<a class="anchor" aria-label="anchor" href="#other-features-and-improvements-development-version"></a></h4>
+<h4 id="other-features-and-improvements-3-0-0">Other features and improvements<a class="anchor" aria-label="anchor" href="#other-features-and-improvements-3-0-0"></a></h4>
 <ul><li>
 <strong>Documentation</strong>: Reorganize linter documentation into new tag-based Rd pages (<a href="https://github.com/r-lib/lintr/issues/888" class="external-link">#888</a>, <a href="https://github.com/r-lib/lintr/issues/1015" class="external-link">#1015</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).<ul><li>Each linter has its own help page.</li>
 <li>
@@ -338,7 +338,7 @@ Note that you can replicate old behavior by supplying <code>return</code> as a c
 </ul></div>
 </div>
 <div class="section level3">
-<h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<h3 id="bug-fixes-3-0-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-3-0-0"></a></h3>
 <ul><li>
 <strong>RStudio</strong>: Source markers are cleared when there are no lints (<a href="https://github.com/r-lib/lintr/issues/520" class="external-link">#520</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>Error message for mismatched starts and ends of exclusion ranges is now more helpful. (<a href="https://github.com/r-lib/lintr/issues/571" class="external-link">#571</a>, <a href="https://github.com/r-lib/lintr/issues/860" class="external-link">#860</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a> and <a href="https://github.com/danielinteractive" class="external-link">@danielinteractive</a>).</li>
@@ -369,7 +369,7 @@ Note that you can replicate old behavior by supplying <code>return</code> as a c
 <code><a href="../reference/spaces_left_parentheses_linter.html">spaces_left_parentheses_linter()</a></code>: fix a bug causing warnings like “In <code>parent == parent[before_operator_idx]</code> longer object length is not a multiple of shorter object length” in nested expressions (<a href="https://github.com/r-lib/lintr/issues/654" class="external-link">#654</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="internals-development-version">Internals<a class="anchor" aria-label="anchor" href="#internals-development-version"></a></h3>
+<h3 id="internals-3-0-0">Internals<a class="anchor" aria-label="anchor" href="#internals-3-0-0"></a></h3>
 <ul><li>Added a new, more restrictive test workflow - <code>test-package</code> - that fails on warnings emitted by tests (<a href="https://github.com/r-lib/lintr/issues/1263" class="external-link">#1263</a>, <a href="https://github.com/r-lib/lintr/issues/1272" class="external-link">#1272</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>Added a secondary, more restrictive lint workflow - <code>lint-changed-files</code> - for newly written / modified code (<a href="https://github.com/r-lib/lintr/issues/641" class="external-link">#641</a>, <a href="https://github.com/dragosmg" class="external-link">@dragosmg</a>).</li>
 <li>Several optional <code>Imported</code> packages have become <code>Suggested</code> dependencies: <code>httr</code>, <code>testthat</code>, and <code>rstudioapi</code>. This should allow snappier CI builds for usages not relying on some more “peripheral” features of the package.</li>
