@@ -12,7 +12,7 @@
 #'
 #' * `lint()` lints a single file.
 #' * `lint_dir()` lints all files in a directory.
-#' * `line_pakage()` lints all likely locations for R files in a package, i.e.
+#' * `lint_package()` lints all likely locations for R files in a package, i.e.
 #'   `R/`, `tests/`, `inst/`, `vignettes/`, `data-raw/`, and `demo/`.
 #'
 #' Read `vigentte("lintr")` to learn how to configure which linters are run
