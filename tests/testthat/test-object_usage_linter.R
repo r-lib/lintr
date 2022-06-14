@@ -413,8 +413,8 @@ test_that("definitions below top level are ignored (for now)", {
 test_that("package imports are detected if present in file", {
   expect_lint(
     trim_some("
-      dog <- function() {
-        a <- iris %>% summarise(m = 42)
+      dog <- function(url) {
+        a <- read_xml(url)
         a
       }
     "),
