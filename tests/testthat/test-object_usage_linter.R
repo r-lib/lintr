@@ -418,7 +418,7 @@ test_that("package imports are detected if present in file", {
         a
       }
     "),
-    rex::rex("no visible global function definition for ", anything, "summarise"),
+    rex::rex("no visible global function definition for ", anything, "read_xml"),
     object_usage_linter()
   )
 
