@@ -424,10 +424,10 @@ test_that("package imports are detected if present in file", {
 
   expect_lint(
     trim_some("
-      library(dplyr)
+      library(xml2)
 
-      dog <- function() {
-        a <- iris %>% summarise(m = 42)
+      dog <- function(url) {
+        a <- read_xml(url)
         a
       }
     "),
