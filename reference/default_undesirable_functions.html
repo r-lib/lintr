@@ -117,9 +117,9 @@ instead.</p></li>
 <li><p><code><a href="https://rdrr.io/r/base/trace.html" class="external-link">trace()</a></code> traps a function and causes execution of arbitrary code when that function is run. It should be removed.</p></li>
 <li><p><code><a href="https://rdrr.io/r/base/debug.html" class="external-link">undebug()</a></code> is only useful for interactive debugging with <code><a href="https://rdrr.io/r/base/debug.html" class="external-link">debug()</a></code>. It should be removed.</p></li>
 <li><p><code><a href="https://rdrr.io/r/base/trace.html" class="external-link">untrace()</a></code> is only useful for interactive debugging with <code><a href="https://rdrr.io/r/base/trace.html" class="external-link">trace()</a></code>. It should be removed.</p></li>
-</ul><p>The following operators are sometimes regarded as undesirable:</p><ul><li><p><code>:::</code> accesses non-exported functions inside packages. Code relying on these is likely to
-break in future versions of the package because the functions are not part of the public interface and may be
-changed or removed by the maintainers without notice.
+</ul><p>The following operators are sometimes regarded as undesirable:</p><ul><li><p><code>:::</code> accesses non-exported functions inside packages. Code relying on these is
+likely to break in future versions of the package because the functions are not part of the public interface and
+may be changed or removed by the maintainers without notice.
 Use public functions via <code>::</code> instead.</p></li>
 <li><p><code><a href="https://rdrr.io/r/base/assignOps.html" class="external-link">&lt;&lt;-</a></code> and <code>-&gt;&gt;</code> assign outside the current environment in a way that can be hard to reason
 about. Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific environment
