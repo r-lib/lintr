@@ -85,9 +85,9 @@ default_linters <- modify_defaults(
 #'
 #' The following operators are sometimes regarded as undesirable:
 #'
-#'  * \code{\link[base:ns-dblcolon]{:::}} accesses non-exported functions inside packages. Code relying on these is likely to
-#'    break in future versions of the package because the functions are not part of the public interface and may be
-#'    changed or removed by the maintainers without notice.
+#'  * \code{\link[base:ns-dblcolon]{:::}} accesses non-exported functions inside packages. Code relying on these is
+#'    likely to break in future versions of the package because the functions are not part of the public interface and
+#'    may be changed or removed by the maintainers without notice.
 #'    Use public functions via `::` instead.
 #'  * [`<<-`][base::assignOps] and `->>` assign outside the current environment in a way that can be hard to reason
 #'    about. Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific environment
