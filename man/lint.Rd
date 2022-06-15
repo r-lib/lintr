@@ -69,7 +69,7 @@ A list of lint objects.
 \itemize{
 \item \code{lint()} lints a single file.
 \item \code{lint_dir()} lints all files in a directory.
-\item \code{line_pakage()} lints all likely locations for R files in a package, i.e.
+\item \code{lint_package()} lints all likely locations for R files in a package, i.e.
 \verb{R/}, \verb{tests/}, \verb{inst/}, \verb{vignettes/}, \verb{data-raw/}, and \verb{demo/}.
 }
 }
