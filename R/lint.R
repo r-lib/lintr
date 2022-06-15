@@ -311,7 +311,7 @@ define_linters <- function(linters = NULL) {
   if (is.null(linters)) {
     linters <- settings$linters
     names(linters) <- auto_names(linters)
-  } else if (inherits(linters, "linter")) {
+  } else if (is_linter(linters)) {
     linters <- list(linters)
     names(linters) <- attr(linters[[1L]], "name", exact = TRUE)
   } else if (!is.list(linters)) {
@@ -325,7 +325,7 @@ define_linters <- function(linters = NULL) {
 }
 
 validate_linter_object <- function(linter, name) {
-  if (!inherits(linter, "linter") && is.function(linter)) {
+  if (!is_linter(linter) && is.function(linter)) {
     if (is_linter_factory(linter)) {
       old <- "Passing linters as variables"
       new <- "a call to the linters (see ?linters)"

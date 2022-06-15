@@ -46,8 +46,8 @@ modify_defaults <- function(defaults, ...) {
 
   res[] <- lapply(res, function(x) {
     prev_class <- class(x)
-    if (is.function(x) && !inherits(x, "lintr_function")) {
-      class(x) <- c(prev_class, "lintr_function")
+    if (is.function(x) && !is_linter(x)) {
+      class(x) <- c("linter", prev_class)
     }
     x
   })
