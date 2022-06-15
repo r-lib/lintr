@@ -411,6 +411,7 @@ test_that("definitions below top level are ignored (for now)", {
 
 # reported as #1127
 test_that("package imports are detected if present in file", {
+  skip_if("package:xml2" %in% search())
   expect_lint(
     trim_some("
       dog <- function(url) {
