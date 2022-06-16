@@ -18,7 +18,7 @@ seq_linter <- function() {
     and (
           expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]
           or
-          expr[SYMBOL='.N']
+          expr[SYMBOL = '.N']
         )
   ]")
 
