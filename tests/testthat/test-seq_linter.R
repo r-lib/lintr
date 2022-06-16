@@ -57,7 +57,7 @@ test_that("finds 1:length(...) expressions", {
   )
 
   # `dplyr::n()` takes no arguments, so the message shouldn't have `n(...)`
-  expect_error(expect_lint(
+  expect_failure(expect_lint(
     "function(x) { mutate(x, .id = 1:n()) }",
     rex("n(...)", anything, "Use seq_len"),
     linter
@@ -70,7 +70,7 @@ test_that("finds 1:length(...) expressions", {
   )
 
   # `.N` is a symbol, so the message should not print it as a function
-  expect_error(expect_lint(
+  expect_failure(expect_lint(
     "function(x) { x[, .id := 1:.N] }",
     rex(".N()", anything, "Use seq_len"),
     linter
