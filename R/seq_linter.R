@@ -26,6 +26,13 @@ seq_linter <- function() {
   ## In practice we need to handle length(x):1
   get_fun <- function(expr, n) {
     funcall <- xml2::xml_find_chr(expr, sprintf("string(./expr[%d])", n))
+
+    # `dplyr::n()` is special because it has no arguments, so the lint message
+    # should mention `n()`, and not `n(...)`
+    if (n == 2L && length(funcall) == 1L && funcall == "n()") {
+      return(funcall)
+    }
+
     fun <- gsub("\\(.*\\)", "(...)", trimws(funcall))
     bad_fun <- fun %in% bad_funcs
     fun[bad_fun] <- paste0(fun[bad_fun], "(...)")

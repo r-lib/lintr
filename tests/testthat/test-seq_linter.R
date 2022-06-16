@@ -52,7 +52,7 @@ test_that("finds 1:length(...) expressions", {
 
   expect_lint(
     "function(x) { mutate(x, .id = 1:n()) }",
-    rex("n(...)", anything, "Use seq_len"),
+    rex("n()", anything, "Use seq_len"),
     linter
   )
 
