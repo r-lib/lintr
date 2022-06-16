@@ -5,8 +5,6 @@
 * `seq_linter()` additionally lints on `1:n()` (from dplyr package) 
   and `1:.N` (from data.table package)  (#1396, @IndrajeetPatil).
 
-### Updates to `default_linters`
-
 # lintr 3.0.0
 
 ## Breaking changes
