@@ -1,6 +1,7 @@
 #' Sequence linter
 #'
-#' Check for `1:length(...)`, `1:nrow(...)`, `1:ncol(...)`, `1:NROW(...)` and `1:NCOL(...)` expressions.
+#' Check for `1:length(...)`, `1:nrow(...)`, `1:ncol(...)`, `1:NROW(...)` and `1:NCOL(...)` expressions in base-R.
+#' Additionally, `1:n()` (from dplyr package) and `1:.N` (from data.table package) are also checked.
 #' These often cause bugs when the right-hand side is zero.
 #' It is safer to use [base::seq_len()] or [base::seq_along()] instead.
 #'
@@ -8,12 +9,17 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 seq_linter <- function() {
-  bad_funcs <- c("length", "nrow", "ncol", "NROW", "NCOL", "dim")
+  bad_funcs <- c("length", "n", "nrow", "ncol", "NROW", "NCOL", "dim")
 
+  # `.N` from {data.table} is special since it's not a function but a symbol
   xpath <- glue::glue("//expr[
     expr[NUM_CONST[text() =  '1' or text() =  '1L']]
     and OP-COLON
-    and expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]
+    and (
+          expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]
+          or
+          expr[SYMBOL='.N']
+        )
   ]")
 
   ## The actual order of the nodes is document order
