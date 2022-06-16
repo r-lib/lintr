@@ -29,7 +29,7 @@ seq_linter <- function() {
 
     # `dplyr::n()` is special because it has no arguments, so the lint message
     # should mention `n()`, and not `n(...)`
-    if (n == 2L && length(funcall) == 1L && funcall == "n()") {
+    if (identical(funcall, "n()")) {
       return(funcall)
     }
 
