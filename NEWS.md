@@ -1,5 +1,10 @@
 # lintr (development version)
 
+## Changes to defaults
+
+* `seq_linter()` additionally lints on `1:n()` (from dplyr) 
+  and `1:.N` (from data.table)  (#1396, @IndrajeetPatil).
+
 # lintr 3.0.0
 
 ## Breaking changes
