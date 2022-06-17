@@ -17,7 +17,7 @@ extract_r_source <- function(filename, lines, error = identity) {
     return(character())
   }
 
-  # mask non-source lines by NA, but keep total line count identical
+  # mask non-source lines by NA, but keep total line count identical so the line number for EOF is correct, see #1400
   output <- rep.int(NA_character_, length(lines))
   Map(
     function(start, end) {
