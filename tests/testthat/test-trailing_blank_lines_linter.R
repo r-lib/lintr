@@ -31,17 +31,18 @@ test_that("returns the correct linting", {
 
   # Construct an Rmd file without terminal newline
   tmp3 <- withr::local_tempfile()
-  # TODO (@AshesITR): Remove \n escapes when #1406 is fixed
   cat(
     trim_some(
       '---
       title: "Some file"
       ---
 
-      ```{r}\nabc = 123
+      ```{r}
+      abc = 123
       ```
 
-      ```{r child="some-file.Rmd"}\n```'
+      ```{r child="some-file.Rmd"}
+      ```'
     ),
     file = tmp3
   )
