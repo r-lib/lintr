@@ -37,12 +37,10 @@ test_that("returns the correct linting", {
       title: "Some file"
       ---
 
-      ```{r}
-      abc = 123
+      ```{r}\nabc = 123
       ```
 
-      ```{r child="some-file.Rmd"}
-      ```'
+      ```{r child="some-file.Rmd"}\n```'
     ),
     file = tmp3
   )
