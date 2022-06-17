@@ -17,6 +17,8 @@
 #'
 #' Read `vigentte("lintr")` to learn how to configure which linters are run
 #' by default.
+#' Note that if files contain unparseable encoding problems, only the encoding problem will be linted to avoid
+#' unintelligible error messages from other linters.
 #'
 #' @param filename either the filename for a file to lint, or a character string of inline R code for linting.
 #' The latter (inline data) applies whenever `filename` has a newline character (\\n).

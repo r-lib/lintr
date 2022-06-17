@@ -76,6 +76,8 @@ A list of lint objects.
 \details{
 Read \code{vigentte("lintr")} to learn how to configure which linters are run
 by default.
+Note that if files contain unparseable encoding problems, only the encoding problem will be linted to avoid
+unintelligible error messages from other linters.
 }
 \examples{
 \dontrun{
