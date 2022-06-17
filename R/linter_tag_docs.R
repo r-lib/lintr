@@ -60,7 +60,7 @@ NULL
 #' Efficiency linters
 #' @name efficiency_linters
 #' @description
-#' Linters highlighting code efficiency problems, such as unneccessary function calls.
+#' Linters highlighting code efficiency problems, such as unnecessary function calls.
 #' @evalRd rd_linters("efficiency")
 #' @seealso [linters] for a complete list of linters available in lintr.
 NULL
