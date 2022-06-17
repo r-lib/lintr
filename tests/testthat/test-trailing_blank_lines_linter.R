@@ -31,6 +31,7 @@ test_that("returns the correct linting", {
 
   # Construct an Rmd file without terminal newline
   tmp3 <- withr::local_tempfile()
+  # TODO (@AshesITR): Remove \n escapes when #1406 is fixed
   cat(
     trim_some(
       '---
