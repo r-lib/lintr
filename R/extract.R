@@ -17,8 +17,8 @@ extract_r_source <- function(filename, lines, error = identity) {
     return(character())
   }
 
-  # there is no need to worry about the lines after the last chunk end
-  output <- rep.int(NA_character_, max(chunks[["ends"]] - 1L))
+  # mask non-source lines by NA, but keep total line count identical
+  output <- rep.int(NA_character_, length(lines))
   Map(
     function(start, end) {
       output[seq(start + 1L, end - 1L)] <<- lines[seq(start + 1L, end - 1L)]

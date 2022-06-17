@@ -5,6 +5,10 @@
 * `seq_linter()` additionally lints on `1:n()` (from dplyr) 
   and `1:.N` (from data.table)  (#1396, @IndrajeetPatil).
 
+## Bug fixes
+
+* `get_source_expression()` no longer omits trailing non-code lines from knitr files (#1400, @AshesITR).
+
 # lintr 3.0.0
 
 ## Breaking changes
