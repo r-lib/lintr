@@ -115,6 +115,7 @@ test_that("Warns if encoding is misspecified", {
     msg <- "unexpected '<'"
   }
 
+  expect_equal(the_lint$linter, "error")
   expect_equal(the_lint$message, msg)
   expect_equal(the_lint$line_number, 4L)
 
@@ -122,6 +123,7 @@ test_that("Warns if encoding is misspecified", {
   read_settings(NULL)
   the_lint <- get_source_expressions(file)$error
   expect_s3_class(the_lint, "lint")
+  expect_equal(the_lint$linter, "error")
   expect_equal(the_lint$message, "Invalid multibyte string. Is the encoding correct?")
   expect_equal(the_lint$line_number, 1L)
 })
