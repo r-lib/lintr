@@ -30,6 +30,10 @@ extract_r_source <- function(filename, lines, error = identity) {
 }
 
 get_knitr_pattern <- function(filename, lines) {
+  # Early return if the source code is parseable as plain R code.
+  # Otherwise, R code containing a line which matches any knitr pattern will be treated as a knitr file.
+  # See #1406 for details.
+  if (parsable(lines)) return(NULL)
   pattern <- ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename)))
   if (!is.null(pattern)) {
     knitr::all_patterns[[pattern]]

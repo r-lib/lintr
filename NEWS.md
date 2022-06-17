@@ -5,6 +5,10 @@
 * `seq_linter()` additionally lints on `1:n()` (from dplyr) 
   and `1:.N` (from data.table)  (#1396, @IndrajeetPatil).
 
+## Bug fixes
+
+* `get_source_expressions()` no longer fails on R files that match a knitr pattern (#1406, @AshesITR).
+
 # lintr 3.0.0
 
 ## Breaking changes
