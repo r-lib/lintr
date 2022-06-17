@@ -261,3 +261,7 @@ get_r_code <- function(xml) {
   }, character(1L))
   paste(lines, collapse = "\n")
 }
+
+is_tainted <- function(lines) {
+  inherits(tryCatch(nchar(lines), error = identity), "error")
+}

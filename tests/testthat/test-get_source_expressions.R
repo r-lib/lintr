@@ -104,7 +104,7 @@ test_that("Can read non UTF-8 file", {
 test_that("Warns if encoding is misspecified", {
   file <- test_path("dummy_projects", "project", "cp1252.R")
   read_settings(NULL)
-  the_lint <- get_source_expressions(file)$error
+  the_lint <- lint(filename = file, parse_settings = FALSE)[[1L]]
   expect_s3_class(the_lint, "lint")
 
   msg <- "Invalid multibyte character in parser. Is the encoding correct?"
@@ -121,7 +121,7 @@ test_that("Warns if encoding is misspecified", {
 
   file <- test_path("dummy_projects", "project", "cp1252_parseable.R")
   read_settings(NULL)
-  the_lint <- get_source_expressions(file)$error
+  the_lint <- lint(filename = file, parse_settings = FALSE)[[1L]]
   expect_s3_class(the_lint, "lint")
   expect_equal(the_lint$linter, "error")
   expect_equal(the_lint$message, "Invalid multibyte string. Is the encoding correct?")

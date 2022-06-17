@@ -88,9 +88,11 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   }
 
   lints <- list()
-  for (expr in source_expressions$expressions) {
-    for (linter in names(linters)) {
-      lints[[length(lints) + 1L]] <- get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines)
+  if (!is_tainted(source_expressions$lines)) {
+    for (expr in source_expressions$expressions) {
+      for (linter in names(linters)) {
+        lints[[length(lints) + 1L]] <- get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines)
+      }
     }
   }
 
