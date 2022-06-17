@@ -13,6 +13,8 @@
 * `get_source_expressions()` no longer omits trailing non-code lines from knitr files (#1400, @AshesITR).  
   This fixes the location information for `trailing_blank_lines_linter()` in RMarkdown documents without terminal
   newlines.
+* The `vignette("lintr")` incorrectly cited `exclude` as the key for setting file exclusions in `.lintr` when it is 
+  actually `exclusions`. (#1401, @AshesITR)
 
 # lintr 3.0.0
 

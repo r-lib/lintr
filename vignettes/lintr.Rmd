@@ -353,11 +353,11 @@ lintr::lint("# nolint start: commented_code_linter.\n# x <- 42L\n# print(x)\n# n
 
 ### Excluding lines via the config file
 
-Individual lines can also be excluded via the config file by setting the key `exclude` to a list with elements corresponding to different files.
+Individual lines can also be excluded via the config file by setting the key `exclusions` to a list with elements corresponding to different files.
 To exclude all lints for line 1 of file `R/bad.R` and `line_length_linter` for lines 4 to 6 of the same file, one can set
 
 ``` r
-exclude: list(
+exclusions: list(
     "R/bad.R" = list(
       1, # global exclusions are unnamed
       line_length_linter = 4:6
@@ -374,7 +374,7 @@ Use the sentinel line number `Inf` to mark all lines as excluded within a file.
 If a file is only given as a character vector, full exclusion is implied.
 
 ``` r
-exclude: list(
+exclusions: list(
     # excluded from all lints:
     "R/excluded1.R",
     "R/excluded2.R" = Inf,
@@ -388,11 +388,11 @@ exclude: list(
 
 ### Excluding directories completely
 
-Entire directories are also recognized when supplied as strings in the `exclude` key.
+Entire directories are also recognized when supplied as strings in the `exclusions` key.
 For example, to exclude the `renv` folder from linting in a R project using `renv`, set
 
 ``` r
-exclude: list(
+exclusions: list(
     "renv"
   )
 ```
