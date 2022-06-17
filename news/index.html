@@ -65,7 +65,9 @@
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> no longer omits trailing non-code lines from knitr files (<a href="https://github.com/r-lib/lintr/issues/1400" class="external-link">#1400</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).<br>
-This fixes the location information for <code><a href="../reference/trailing_blank_lines_linter.html">trailing_blank_lines_linter()</a></code> in RMarkdown documents without terminal newlines.</li></ul></div>
+This fixes the location information for <code><a href="../reference/trailing_blank_lines_linter.html">trailing_blank_lines_linter()</a></code> in RMarkdown documents without terminal newlines.</li>
+<li>The <code><a href="../articles/lintr.html">vignette("lintr")</a></code> incorrectly cited <code>exclude</code> as the key for setting file exclusions in <code>.lintr</code> when it is actually <code>exclusions</code>. (<a href="https://github.com/r-lib/lintr/issues/1401" class="external-link">#1401</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>)</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.0.0" id="lintr-300">lintr 3.0.0<a class="anchor" aria-label="anchor" href="#lintr-300"></a></h2><p class="text-muted">CRAN release: 2022-06-13</p>
