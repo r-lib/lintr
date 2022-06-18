@@ -103,7 +103,7 @@ indentation_linter <- function(indent = 2L) {
           type = "style",
           message = sprintf(msg, expected, actual),
           line = source_expression$lines[[line]],
-          ranges = list(sort(c(expected, actual)))
+          ranges = list(sort(c(expected, actual)) + c(1L, 0L))
         )
       },
       line = bad,
