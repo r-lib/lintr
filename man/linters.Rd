@@ -22,14 +22,14 @@ The following tags exist:
 \item{\link[=configurable_linters]{configurable} (20 linters)}
 \item{\link[=consistency_linters]{consistency} (16 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
-\item{\link[=default_linters]{default} (24 linters)}
+\item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=deprecated_linters]{deprecated} (4 linters)}
 \item{\link[=efficiency_linters]{efficiency} (16 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
-\item{\link[=readability_linters]{readability} (37 linters)}
+\item{\link[=readability_linters]{readability} (38 linters)}
 \item{\link[=robustness_linters]{robustness} (12 linters)}
-\item{\link[=style_linters]{style} (35 linters)}
+\item{\link[=style_linters]{style} (36 linters)}
 }
 }
 \section{Linters}{
@@ -66,6 +66,7 @@ The following linters exist:
 \item{\code{\link{function_left_parentheses_linter}} (tags: default, readability, style)}
 \item{\code{\link{ifelse_censor_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{implicit_integer_linter}} (tags: best_practices, consistency, style)}
+\item{\code{\link{indentation_linter}} (tags: default, readability, style)}
 \item{\code{\link{infix_spaces_linter}} (tags: default, readability, style)}
 \item{\code{\link{inner_combine_linter}} (tags: consistency, efficiency, readability)}
 \item{\code{\link{line_length_linter}} (tags: configurable, default, readability, style)}

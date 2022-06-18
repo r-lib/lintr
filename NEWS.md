@@ -2,6 +2,7 @@
 
 ## Changes to defaults
 
+* New default linter `indentation_linter()` enforcing tidyverse style 2-space indentation (@AshesITR and @dgkf, #1411).
 * `seq_linter()` additionally lints on `1:n()` (from dplyr) 
   and `1:.N` (from data.table)  (#1396, @IndrajeetPatil).
 

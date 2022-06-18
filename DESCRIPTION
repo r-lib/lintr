@@ -91,6 +91,7 @@ Collate:
     'ids_with_token.R'
     'ifelse_censor_linter.R'
     'implicit_integer_linter.R'
+    'indentation_linter.R'
     'infix_spaces_linter.R'
     'inner_combine_linter.R'
     'is_lint_level.R'

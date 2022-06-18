@@ -30,6 +30,7 @@ fixed_regex_linter,best_practices readability efficiency
 function_left_parentheses_linter,style readability default
 ifelse_censor_linter,best_practices efficiency
 implicit_integer_linter,style consistency best_practices
+indentation_linter,style readability default
 infix_spaces_linter,style readability default
 inner_combine_linter,efficiency consistency readability
 line_length_linter,style readability default configurable
