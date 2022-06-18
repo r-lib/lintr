@@ -63,7 +63,9 @@
 <code><a href="../reference/seq_linter.html">seq_linter()</a></code> additionally lints on <code>1:n()</code> (from dplyr) and <code>1:.N</code> (from data.table) (<a href="https://github.com/r-lib/lintr/issues/1396" class="external-link">#1396</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</li></ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
-<ul><li>Parse error lints now appear with the linter name <code>"error"</code> instead of <code>NA</code> (<a href="https://github.com/r-lib/lintr/issues/1405" class="external-link">#1405</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).<br>
+<ul><li>
+<code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> no longer fails on R files that match a knitr pattern (<a href="https://github.com/r-lib/lintr/issues/743" class="external-link">#743</a>, <a href="https://github.com/r-lib/lintr/issues/879" class="external-link">#879</a>, <a href="https://github.com/r-lib/lintr/issues/1406" class="external-link">#1406</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
+<li>Parse error lints now appear with the linter name <code>"error"</code> instead of <code>NA</code> (<a href="https://github.com/r-lib/lintr/issues/1405" class="external-link">#1405</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).<br>
 Also, linting no longer runs if the <code>source_expressions</code> contain invalid string data that would cause error messages in other linters.</li>
 <li>
 <code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> no longer omits trailing non-code lines from knitr files (<a href="https://github.com/r-lib/lintr/issues/1400" class="external-link">#1400</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).<br>
