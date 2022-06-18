@@ -48,41 +48,41 @@ indentation_linter <- function(indent = 2L) {
     #  - binary operators where the second arguments starts on a new line
 
     # 1. find block indents
-    brace_blocks <- xml_find_all(xml, "//OP-LEFT-BRACE/parent::expr[@line1 + 1 < @line2]")
+    brace_blocks <- xml2::xml_find_all(xml, "//OP-LEFT-BRACE/parent::expr[@line1 + 1 < @line2]")
     for (block in brace_blocks) {
       to_indent <- seq(
-        from = as.integer(xml_attr(block, "line1")) + 1L,
-        to = as.integer(xml_attr(block, "line2")) - 1L
+        from = as.integer(xml2::xml_attr(block, "line1")) + 1L,
+        to = as.integer(xml2::xml_attr(block, "line2")) - 1L
       ) - source_expression$line + 1L
       expected_indent_levels[to_indent] <- expected_indent_levels[to_indent] + 1L
     }
 
     for (i in seq_along(xp_paren_blocks)) {
-      paren_blocks <- xml_find_all(xml, xp_paren_blocks[i])
+      paren_blocks <- xml2::xml_find_all(xml, xp_paren_blocks[i])
       for (block in paren_blocks) {
         to_indent <- seq(
-          from = as.integer(xml_attr(block, "line1")) + 1L,
-          to = as.integer(xml_find_num(block, xp_paren_block_ends[i])) - 1L
+          from = as.integer(xml2::xml_attr(block, "line1")) + 1L,
+          to = as.integer(xml2::xml_find_num(block, xp_paren_block_ends[i])) - 1L
         ) - source_expression$line + 1L
         expected_indent_levels[to_indent] <- expected_indent_levels[to_indent] + 1L
       }
     }
 
-    operator_blocks <- xml_find_all(xml, xp_operator_blocks)
-    to_indent <- xml_find_num(operator_blocks, "number(./@line1 + 1)")
+    operator_blocks <- xml2::xml_find_all(xml, xp_operator_blocks)
+    to_indent <- xml2::xml_find_num(operator_blocks, "number(./@line1 + 1)")
     expected_indent_levels[to_indent] <- expected_indent_levels[to_indent] + 1L
 
     expected_indent_levels <- expected_indent_levels * indent
 
     # 2. find hanging indents
     for (i in seq_along(xp_hanging_blocks)) {
-      hanging_parens <- xml_find_all(xml, xp_hanging_blocks[i])
+      hanging_parens <- xml2::xml_find_all(xml, xp_hanging_blocks[i])
       for (block in hanging_parens) {
         to_indent <- seq(
-          from = as.integer(xml_attr(block, "line1")) + 1L,
-          to = as.integer(xml_find_num(block, xp_hanging_block_ends[i]))
+          from = as.integer(xml2::xml_attr(block, "line1")) + 1L,
+          to = as.integer(xml2::xml_find_num(block, xp_hanging_block_ends[i]))
         ) - source_expression$line + 1L
-        expected_indent_levels[to_indent] <- as.integer(xml_attr(block, "col2"))
+        expected_indent_levels[to_indent] <- as.integer(xml2::xml_attr(block, "col2"))
         is_hanging[to_indent] <- TRUE
       }
     }
