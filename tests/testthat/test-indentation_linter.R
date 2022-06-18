@@ -40,6 +40,62 @@ test_that("indentation linter flags unindented expressions", {
     "Indentation",
     indentation_linter(indent = 4L)
   )
+
+  # ugly code, but still correctly indented
+  expect_lint(
+    trim_some("
+      list(
+        1,
+        2)
+    "),
+    NULL,
+    linter
+  )
+
+  # comments do not trigger hanging indent rule
+  expect_lint(
+    trim_some("
+      list( # comment
+        ok
+      )
+    "),
+    NULL,
+    linter
+  )
+
+  # assignment triggers indent
+  expect_lint(
+    trim_some("
+      a <-
+        expr(
+          42
+        )
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (cond)
+        code
+
+      if (cond) code else code2
+
+      if (cond) {
+        code
+      } else
+        code
+
+      if (cond) {
+        code
+      } else {
+        code
+      }
+    "),
+    NULL,
+    linter
+  )
 })
 
 test_that("indentation linter flags improper closing curly braces", {
@@ -233,5 +289,31 @@ test_that("indentation within string constants is ignored", {
     "),
     NULL,
     indentation_linter()
+  )
+})
+
+test_that("combined hanging and block indent works", {
+  linter <- indentation_linter()
+  expect_lint(
+    trim_some("
+      func(hang, and,
+           block(
+             combined
+           ))
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      func(ha,
+           func2(ab,
+                 block(
+                   indented
+                 )))
+    "),
+    NULL,
+    linter
   )
 })

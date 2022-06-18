@@ -89,7 +89,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
         value <- lint[[field]]
         msg <- sprintf("check #%d: %s %s did not match %s",
                        itr, field, deparse(value), deparse(check))
-               # deparse ensures that NULL, list(), etc are handled gracefully
+        # deparse ensures that NULL, list(), etc are handled gracefully
         exp <- if (field == "message") {
           re_matches(value, check)
         } else {
@@ -103,11 +103,11 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
           )
         }
         testthat::expect(exp, msg)
-        })
-      },
-      lints,
-      checks)
-    })
+      })
+    },
+    lints,
+    checks)
+  })
 
   invisible(NULL)
 }

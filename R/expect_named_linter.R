@@ -8,7 +8,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_named_linter <- function() {
-   xpath <- "//expr[
+  xpath <- "//expr[
     SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
     and following-sibling::expr[
       expr[1][SYMBOL_FUNCTION_CALL[text() = 'names']]

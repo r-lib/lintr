@@ -7,29 +7,37 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 indentation_linter <- function(indent = 2L) {
-  paren_tokens <- c("OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
-  paren_tokens_right <- c("OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
+  paren_tokens <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
+  paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
   infix_tokens <- setdiff(infix_metadata$xml_tag, c("OP-LEFT-BRACE", "OP-COMMA", paren_tokens))
+  no_paren_keywords <- c("ELSE", "REPEAT")
+  keyword_tokens <- c("FUNCTION", "IF", "FOR", "WHILE")
 
-  xp_paren_blocks <- glue::glue(
-    "//{paren_tokens}[
-      @line1 != following-sibling::*[1]/@line1 and
-      @line1 + 1 < following-sibling::{paren_tokens_right}/@line1
-    ]"
+  xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
+
+  xp_self_is_last_on_line <- glue::glue("self::*[{xp_last_on_line}]")
+
+  xp_block_ends <- paste0(
+    "number(",
+    paste(
+      c(
+        glue::glue("self::{paren_tokens}/following-sibling::{paren_tokens_right}/preceding-sibling::*[1]/@line2"),
+        glue::glue("self::*[
+                      {xp_and(paste0('not(self::', paren_tokens, ')'))}
+                    ]/following-sibling::*[1]/@line2")
+      ),
+      collapse = " | "
+    ),
+    ")"
   )
-  xp_paren_block_ends <- glue::glue("number(following-sibling::{paren_tokens_right}/@line1)")
 
-  xp_hanging_blocks <- glue::glue(
-    "//{paren_tokens}[
-      @line1 = following-sibling::*[1]/@line1 and
-      not(@line1 = following-sibling::*[@line2 > @line1]/@line1) and
-      @line1 < following-sibling::{paren_tokens_right}/@line1
-    ]"
-  )
-  xp_hanging_block_ends <- glue::glue("number(following-sibling::{paren_tokens_right}/preceding-sibling::*[1]/@line2)")
-
-  xp_operator_blocks <- paste(
-    glue::glue("//{infix_tokens}[@line1 != following-sibling::*[1]/@line1]"),
+  xp_indent_changes <- paste(
+    c(
+      glue::glue("//{paren_tokens}[not(@line1 = following-sibling::*[@line2 > @line1]/@line1)]"),
+      glue::glue("//{infix_tokens}[{xp_last_on_line}]"),
+      glue::glue("//{no_paren_keywords}[{xp_last_on_line}]"),
+      glue::glue("//{keyword_tokens}/following-sibling::OP-RIGHT-PAREN[{xp_last_on_line}]")
+    ),
     collapse = " | "
   )
 
@@ -52,43 +60,20 @@ indentation_linter <- function(indent = 2L) {
     expected_indent_levels <- integer(length(indent_levels))
     is_hanging <- logical(length(indent_levels))
 
-    # 1. find block indents
-    brace_blocks <- xml2::xml_find_all(xml, "//OP-LEFT-BRACE/parent::expr[@line1 + 1 < @line2]")
-    for (block in brace_blocks) {
-      to_indent <- seq(
-        from = as.integer(xml2::xml_attr(block, "line1")) + 1L,
-        to = as.integer(xml2::xml_attr(block, "line2")) - 1L
-      ) - source_expression$line + 1L
-      expected_indent_levels[to_indent] <- expected_indent_levels[to_indent] + 1L
-    }
-
-    for (i in seq_along(xp_paren_blocks)) {
-      paren_blocks <- xml2::xml_find_all(xml, xp_paren_blocks[i])
-      for (block in paren_blocks) {
-        to_indent <- seq(
-          from = as.integer(xml2::xml_attr(block, "line1")) + 1L,
-          to = as.integer(xml2::xml_find_num(block, xp_paren_block_ends[i])) - 1L
-        ) - source_expression$line + 1L
-        expected_indent_levels[to_indent] <- expected_indent_levels[to_indent] + 1L
-      }
-    }
-
-    operator_blocks <- xml2::xml_find_all(xml, xp_operator_blocks)
-    to_indent <- xml2::xml_find_num(operator_blocks, "number(./@line1 + 1)") - source_expression$line + 1L
-    expected_indent_levels[to_indent] <- expected_indent_levels[to_indent] + 1L
-
-    expected_indent_levels <- expected_indent_levels * indent
-
-    # 2. find hanging indents
-    for (i in seq_along(xp_hanging_blocks)) {
-      hanging_parens <- xml2::xml_find_all(xml, xp_hanging_blocks[i])
-      for (block in hanging_parens) {
-        to_indent <- seq(
-          from = as.integer(xml2::xml_attr(block, "line1")) + 1L,
-          to = as.integer(xml2::xml_find_num(block, xp_hanging_block_ends[i]))
-        ) - source_expression$line + 1L
-        expected_indent_levels[to_indent] <- as.integer(xml2::xml_attr(block, "col2"))
-        is_hanging[to_indent] <- TRUE
+    indent_changes <- xml2::xml_find_all(xml, xp_indent_changes)
+    for (change in indent_changes) {
+      change_starts_hanging <- length(xml2::xml_find_first(change, xp_self_is_last_on_line)) == 0L
+      change_begin <- as.integer(xml2::xml_attr(change, "line1")) + 1L
+      change_end <- xml2::xml_find_num(change, xp_block_ends)
+      if (change_begin <= change_end) {
+        to_indent <- seq(from = change_begin, to = change_end) - source_expression$line + 1L
+        if (change_starts_hanging) {
+          expected_indent_levels[to_indent] <- as.integer(xml2::xml_attr(change, "col2"))
+          is_hanging[to_indent] <- TRUE
+        } else {
+          expected_indent_levels[to_indent] <- expected_indent_levels[to_indent] + indent
+          is_hanging[to_indent] <- FALSE
+        }
       }
     }
 
@@ -103,29 +88,27 @@ indentation_linter <- function(indent = 2L) {
     }
 
     # Only lint non-empty lines if the indentation level doesn't match.
-    bad <- which(indent_levels != expected_indent_levels & nzchar(source_expression$lines) & !in_str_const)
-    mapply(
-      function(line, actual, expected, is_hanging) {
-        msg <- if (is_hanging) {
-          "Hanging indent should be %d spaces but is %d spaces."
-        } else {
-          "Indentation should be %d spaces but is %d spaces."
-        }
-        Lint(
-          filename = source_expression$filename,
-          line_number = as.integer(names(source_expression$lines)[[line]]),
-          column_number = actual,
-          type = "style",
-          message = sprintf(msg, expected, actual),
-          line = source_expression$lines[[line]],
-          ranges = list(sort(c(expected, actual)) + c(1L, 0L))
-        )
-      },
-      line = bad,
-      actual = indent_levels[bad],
-      expected = expected_indent_levels[bad],
-      is_hanging = is_hanging[bad],
-      SIMPLIFY = FALSE
+    bad_lines <- which(indent_levels != expected_indent_levels & nzchar(source_expression$lines) & !in_str_const)
+    lint_messages <- sprintf(
+      "%s should be %d spaces but is %d spaces.",
+      ifelse(is_hanging[bad_lines], "Hanging indent", "Indentation"),
+      expected_indent_levels[bad_lines],
+      indent_levels[bad_lines]
+    )
+    lint_lines <- unname(as.integer(names(source_expression$lines)[bad_lines]))
+    lint_ranges <- cbind(
+      pmin(expected_indent_levels[bad_lines] + 1L, indent_levels[bad_lines]),
+      pmax(expected_indent_levels[bad_lines], indent_levels[bad_lines])
+    )
+    Map(
+      Lint,
+      filename = source_expression$filename,
+      line_number = lint_lines,
+      column_number = indent_levels[bad_lines],
+      type = "style",
+      message = lint_messages,
+      line = unname(source_expression$lines[bad_lines]),
+      ranges = apply(lint_ranges, 1L, list, simplify = FALSE)
     )
   })
 }

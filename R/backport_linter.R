@@ -56,10 +56,14 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
 }
 
 normalize_r_version <- function(r_version) {
-  if (is.character(r_version) &&
-    re_matches(r_version, rex(start, "release" %or%
+  rx_release_spec <- rex(
+    start,
+    "release" %or%
       list("oldrel", maybe("-", digits)) %or%
-      "devel", end))) {
+      "devel",
+    end
+  )
+  if (is.character(r_version) && re_matches(r_version, rx_release_spec)) {
     # Support devel, release, oldrel, oldrel-1, ...
     if (r_version == "oldrel") {
       r_version <- "oldrel-1"

@@ -115,15 +115,8 @@ replace_prefix <- function(lines, prefix_pattern) {
   m <- gregexpr(prefix_pattern, lines)
   non_na <- !is.na(m)
 
-  blanks <- function(n) {
-    vapply(Map(rep.int, rep.int(" ", length(n)), n, USE.NAMES = FALSE),
-      paste, "",
-      collapse = ""
-    )
-  }
-
-  regmatches(lines[non_na], m[non_na]) <-
-    Map(blanks, lapply(regmatches(lines[non_na], m[non_na]), nchar))
+  prefix_lengths <- lapply(regmatches(lines[non_na], m[non_na]), nchar)
+  regmatches(lines[non_na], m[non_na]) <- lapply(prefix_lengths, strrep, x = " ")
 
   lines
 }

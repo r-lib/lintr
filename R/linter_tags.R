@@ -73,7 +73,7 @@ available_linters <- function(packages = "lintr", tags = NULL, exclude_tags = "d
 }
 
 build_available_linters <- function(available, package, tags, exclude_tags) {
-   available_df <- data.frame(
+  available_df <- data.frame(
     linter = available[["linter"]],
     package,
     stringsAsFactors = FALSE

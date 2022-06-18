@@ -1,8 +1,9 @@
 test_that("returns the correct linting", {
   linter <- unneeded_concatenation_linter()
-  msg_c <- rex::escape("Unneeded concatenation of a constant. Remove the \"c\" call.")
-  msg_e <- rex::escape(
-    "Unneeded concatenation without arguments. Replace the \"c\" call by NULL or, whenever possible, vector()")
+  msg_c <- rex::rex("Unneeded concatenation of a constant. Remove the \"c\" call.")
+  msg_e <- rex::rex(
+    "Unneeded concatenation without arguments. Replace the \"c\" call by NULL or, whenever possible, vector()"
+  )
 
   expect_lint("c(x)", NULL, linter)
   expect_lint("c(1, 2)", NULL, linter)

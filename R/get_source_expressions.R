@@ -107,15 +107,14 @@ get_source_expressions <- function(filename, lines = NULL) {
     }
 
     # add global expression
-    expressions[[length(expressions) + 1L]] <-
-      list(
-        filename = filename,
-        file_lines = source_expression$lines,
-        content = source_expression$lines,
-        full_parsed_content = parsed_content,
-        full_xml_parsed_content = xml_parsed_content,
-        terminal_newline = terminal_newline
-      )
+    expressions[[length(expressions) + 1L]] <- list(
+      filename = filename,
+      file_lines = source_expression$lines,
+      content = source_expression$lines,
+      full_parsed_content = parsed_content,
+      full_xml_parsed_content = xml_parsed_content,
+      terminal_newline = terminal_newline
+    )
   }
 
   list(expressions = expressions, error = e, lines = source_expression$lines)
@@ -388,20 +387,20 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
 }
 
 lint_rmd_error <- function(e, source_expression) {
-  message_info <- re_matches(e$message,
-    rex(except_some_of(":"),
+  message_info <- re_matches(
+    e$message,
+    rex(
+      except_some_of(":"),
       ":",
-      capture(name = "line",
-        digits),
+      capture(name = "line", digits),
       ":",
-      capture(name = "column",
-        digits),
+      capture(name = "column", digits),
       ":",
       space,
-      capture(name = "message",
-        anything),
-      "\n")
+      capture(name = "message", anything),
+      "\n"
     )
+  )
 
   line_number <- as.integer(message_info$line)
   column_number <- as.integer(message_info$column)

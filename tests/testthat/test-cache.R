@@ -243,8 +243,7 @@ test_that("retrieve_lint returns the same lints if nothing has changed", {
   expect_equal(t1, test_data[["lints"]])
 })
 
-test_that(
-  "retrieve_lint returns the same lints with fixed line numbers if lines added above", {
+test_that("retrieve_lint returns the same lints with fixed line numbers if lines added above", {
   test_data <- fixtures$retrieve_lint()
 
   e1 <- new.env(parent = emptyenv())
@@ -297,8 +296,7 @@ test_that("retrieve_lint returns the same lints with lines added below", {
   expect_equal(t1, test_data[["lints"]])
 })
 
-test_that(
-  "retrieve_lint returns the same lints with fixed line numbers if lines added between", {
+test_that("retrieve_lint returns the same lints with fixed line numbers if lines added between", {
   test_data <- fixtures$retrieve_lint()
 
   e1 <- new.env(parent = emptyenv())

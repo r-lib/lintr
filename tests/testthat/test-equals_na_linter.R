@@ -24,7 +24,7 @@ test_that("returns the correct linting", {
     linter
   )
 
- # equals_na_linter should ignore strings and comments
+  # equals_na_linter should ignore strings and comments
   expect_lint(
     "is.na(x) # dont flag x == NA if inside a comment",
     NULL,

@@ -1,7 +1,8 @@
 #' @export
 print.lint <- function(x, ...) {
 
-  color <- switch(x$type,
+  color <- switch(
+    x$type,
     "warning" = crayon::magenta,
     "error" = crayon::red,
     "style" = crayon::blue,
@@ -10,9 +11,11 @@ print.lint <- function(x, ...) {
 
   cat(
     sep = "",
-    crayon::bold(x$filename, ":",
-    as.character(x$line_number), ":",
-    as.character(x$column_number), ": ", sep = ""),
+    crayon::bold(
+      x$filename, ":",
+      as.character(x$line_number), ":",
+      as.character(x$column_number), ": ", sep = ""
+    ),
     color(x$type, ": ", sep = ""),
     "[", x$linter, "] ",
     crayon::bold(x$message), "\n",
@@ -20,7 +23,7 @@ print.lint <- function(x, ...) {
     chartr("\t", " ", x$line), "\n",
     highlight_string(x$message, x$column_number, x$ranges),
     "\n"
-    )
+  )
   invisible(x)
 }
 
@@ -165,8 +168,10 @@ as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) { # 
 #' @export
 summary.lints <- function(object, ...) {
   filenames <- vapply(object, `[[`, character(1L), "filename")
-  types <- factor(vapply(object, `[[`, character(1L), "type"),
-    levels = c("style", "warning", "error"))
+  types <- factor(
+    vapply(object, `[[`, character(1L), "type"),
+    levels = c("style", "warning", "error")
+  )
   tbl <- table(filenames, types)
   filenames <- rownames(tbl)
   res <- as.data.frame.matrix(tbl, stringsAsFactors = FALSE, row.names = NULL)

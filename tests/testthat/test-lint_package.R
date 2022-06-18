@@ -11,8 +11,7 @@
 # hidden files, but can't be added to RBuildIgnore since they should be
 # available during `R CMD check` tests)
 
-test_that(
-  "`lint_package` does not depend on path to pkg - no excluded files", {
+test_that("`lint_package` does not depend on path to pkg - no excluded files", {
 
   withr::local_options(lintr.linter_file = "lintr_test_config")
 
@@ -63,8 +62,7 @@ test_that(
   )
 })
 
-test_that(
-  "`lint_package` does not depend on path to pkg - with excluded files", {
+test_that("`lint_package` does not depend on path to pkg - with excluded files", {
   # Since excluded regions can be specified in two ways
   # list(
   #   filename = line_numbers, # approach 1
