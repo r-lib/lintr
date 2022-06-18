@@ -196,13 +196,12 @@ test_that("1- or 2-width octal expressions give the right STR_CONST values", {
 })
 
 test_that("returned data structure is complete", {
-  temp_file <- withr::local_tempfile()
-
   lines <- c("line_1", "line_2", "line_3")
+  temp_file <- withr::local_tempfile(lines = lines)
+
   lines_with_attr <- setNames(lines, seq_along(lines))
   attr(lines_with_attr, "terminal_newline") <- TRUE
 
-  writeLines(lines, con = temp_file)
   exprs <- get_source_expressions(temp_file)
   expect_named(exprs, c("expressions", "error", "lines"))
   expect_length(exprs$expressions, length(lines) + 1L)
@@ -243,8 +242,7 @@ test_that("returned data structure is complete", {
 })
 
 test_that("#1262: xml_parsed_content gets returned as missing even if there's no parsed_content", {
-  tempfile <- withr::local_tempfile()
-  writeLines('"\\R"', tempfile)
+  tempfile <- withr::local_tempfile(lines = '"\\R"')
 
   source_expressions <- get_source_expressions(tempfile)
   expect_null(source_expressions$expressions[[1L]]$full_parsed_content)
@@ -256,8 +254,7 @@ skip_if_not_installed("patrick")
 #   fail on files where the XML content is xml_missing;
 #   the main linter test files provide more thorough
 #   evidence that things are working as intended.
-bad_source <- withr::local_tempfile()
-writeLines("a <- 1L\nb <- 2L", bad_source)
+bad_source <- withr::local_tempfile(lines = "a <- 1L\nb <- 2L")
 expressions <- get_source_expressions(bad_source)$expressions
 
 # "zap" the xml_parsed_content to be xml_missing -- this gets

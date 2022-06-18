@@ -3,7 +3,7 @@
 ## Changes to defaults
 
 * `seq_linter()` additionally lints on `1:n()` (from dplyr) 
-  and `1:.N` (from data.table)  (#1396, @IndrajeetPatil).
+  and `1:.N` (from data.table) (#1396, @IndrajeetPatil).
 
 ## Bug fixes
 
@@ -15,6 +15,11 @@
   newlines.
 * The `vignette("lintr")` incorrectly cited `exclude` as the key for setting file exclusions in `.lintr` when it is 
   actually `exclusions`. (#1401, @AshesITR)
+
+## Other changes
+
+* The minimum needed version for soft dependency `{withr}` has been bumped to `2.5.0`
+  (#1404, @IndrajeetPatil).
 
 # lintr 3.0.0
 
