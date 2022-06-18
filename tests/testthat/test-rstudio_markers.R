@@ -102,7 +102,7 @@ test_that("rstudio_source_markers apply to print within rstudio", {
   withr::local_options(lintr.rstudio_source_markers = TRUE)
 
   tmp <- withr::local_tempfile(lines = "1:ncol(x)")
-  empty <- withr::local_tempfile(lines = "")
+  empty <- withr::local_tempfile(lines = character(0L))
 
   mockery::stub(print.lints, "rstudioapi::hasFun", function(x, ...) TRUE)
   mockery::stub(print.lints, "rstudio_source_markers", function(x) cat("matched\n"))
