@@ -7,7 +7,7 @@
 
 ## Bug fixes
 
-* `get_source_expressions()` no longer fails on R files that match a knitr pattern (#1406, @AshesITR).
+* `get_source_expressions()` no longer fails on R files that match a knitr pattern (#743, #879, #1406, @AshesITR).
 * Parse error lints now appear with the linter name `"error"` instead of `NA` (#1405, @AshesITR).  
   Also, linting no longer runs if the `source_expressions` contain invalid string data that would cause error messages
   in other linters. 
