@@ -223,3 +223,15 @@ test_that("indentation works with control flow statements", {
     linter
   )
 })
+
+test_that("indentation within string constants is ignored", {
+  expect_lint(
+    trim_some("
+      x <- '
+        an indented string
+      '
+    "),
+    NULL,
+    indentation_linter()
+  )
+})

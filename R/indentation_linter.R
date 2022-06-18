@@ -28,16 +28,17 @@ indentation_linter <- function(indent = 2L) {
   )
   xp_hanging_block_ends <- glue::glue("number(following-sibling::{paren_tokens_right}/preceding-sibling::*[1]/@line2)")
 
-  xp_operator_blocks <- paste(glue::glue("//{infix_tokens}[@line1 != following-sibling::*[1]/@line1]"), collapse = " | ")
+  xp_operator_blocks <- paste(
+    glue::glue("//{infix_tokens}[@line1 != following-sibling::*[1]/@line1]"),
+    collapse = " | "
+  )
+
+  xp_multiline_string <- "//STR_CONST[@line1 < @line2]"
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
-
-    indent_levels <- rex::re_matches(source_expression$lines, rex::rex(start, any_spaces), locations = TRUE)[, "end"]
-    expected_indent_levels <- integer(length(indent_levels))
-    is_hanging <- logical(length(indent_levels))
 
     xml <- source_expression$xml_parsed_content
     # Indentation increases by 1 for:
@@ -46,6 +47,10 @@ indentation_linter <- function(indent = 2L) {
     #     + if a token follows (, a hanging indent is required until )
     #     + if there is no token following ( on the same line, a block indent is required until )
     #  - binary operators where the second arguments starts on a new line
+
+    indent_levels <- rex::re_matches(source_expression$lines, rex::rex(start, any_spaces), locations = TRUE)[, "end"]
+    expected_indent_levels <- integer(length(indent_levels))
+    is_hanging <- logical(length(indent_levels))
 
     # 1. find block indents
     brace_blocks <- xml2::xml_find_all(xml, "//OP-LEFT-BRACE/parent::expr[@line1 + 1 < @line2]")
@@ -87,8 +92,18 @@ indentation_linter <- function(indent = 2L) {
       }
     }
 
+    in_str_const <- logical(length(indent_levels))
+    multiline_strings <- xml2::xml_find_all(xml, xp_multiline_string)
+    for (string in multiline_strings) {
+      is_in_str <- seq(
+        from = as.integer(xml2::xml_attr(string, "line1")) + 1L,
+        to = as.integer(xml2::xml_attr(string, "line2"))
+      ) - source_expression$line + 1L
+      in_str_const[is_in_str] <- TRUE
+    }
+
     # Only lint non-empty lines if the indentation level doesn't match.
-    bad <- which(indent_levels != expected_indent_levels & nzchar(source_expression$lines))
+    bad <- which(indent_levels != expected_indent_levels & nzchar(source_expression$lines) & !in_str_const)
     mapply(
       function(line, actual, expected, is_hanging) {
         msg <- if (is_hanging) {
