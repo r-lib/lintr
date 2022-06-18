@@ -89,26 +89,30 @@ indentation_linter <- function(indent = 2L) {
 
     # Only lint non-empty lines if the indentation level doesn't match.
     bad_lines <- which(indent_levels != expected_indent_levels & nzchar(source_expression$lines) & !in_str_const)
-    lint_messages <- sprintf(
-      "%s should be %d spaces but is %d spaces.",
-      ifelse(is_hanging[bad_lines], "Hanging indent", "Indentation"),
-      expected_indent_levels[bad_lines],
-      indent_levels[bad_lines]
-    )
-    lint_lines <- unname(as.integer(names(source_expression$lines)[bad_lines]))
-    lint_ranges <- cbind(
-      pmin(expected_indent_levels[bad_lines] + 1L, indent_levels[bad_lines]),
-      pmax(expected_indent_levels[bad_lines], indent_levels[bad_lines])
-    )
-    Map(
-      Lint,
-      filename = source_expression$filename,
-      line_number = lint_lines,
-      column_number = indent_levels[bad_lines],
-      type = "style",
-      message = lint_messages,
-      line = unname(source_expression$lines[bad_lines]),
-      ranges = apply(lint_ranges, 1L, list, simplify = FALSE)
-    )
+    if (length(bad_lines)) {
+      lint_messages <- sprintf(
+        "%s should be %d spaces but is %d spaces.",
+        ifelse(is_hanging[bad_lines], "Hanging indent", "Indentation"),
+        expected_indent_levels[bad_lines],
+        indent_levels[bad_lines]
+      )
+      lint_lines <- unname(as.integer(names(source_expression$lines)[bad_lines]))
+      lint_ranges <- cbind(
+        pmin(expected_indent_levels[bad_lines] + 1L, indent_levels[bad_lines]),
+        pmax(expected_indent_levels[bad_lines], indent_levels[bad_lines])
+      )
+      Map(
+        Lint,
+        filename = source_expression$filename,
+        line_number = lint_lines,
+        column_number = indent_levels[bad_lines],
+        type = "style",
+        message = lint_messages,
+        line = unname(source_expression$lines[bad_lines]),
+        ranges = apply(lint_ranges, 1L, list, simplify = FALSE)
+      )
+    } else {
+      list()
+    }
   })
 }

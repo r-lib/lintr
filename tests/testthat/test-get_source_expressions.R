@@ -12,19 +12,23 @@ with_content_to_parse <- function(content, code) {
 }
 
 test_that("tab positions have been corrected", {
-  with_content_to_parse("1\n\t",
+  with_content_to_parse(
+    "1\n\t",
     expect_length(pc, 2L)
   )
 
-  with_content_to_parse("TRUE",
+  with_content_to_parse(
+    "TRUE",
     expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(1L, 4L))
   )
 
-  with_content_to_parse("\tTRUE",
+  with_content_to_parse(
+    "\tTRUE",
     expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(2L, 5L))
   )
 
-  with_content_to_parse("\t\tTRUE",
+  with_content_to_parse(
+    "\t\tTRUE",
     expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(3L, 6L))
   )
 
@@ -136,10 +140,12 @@ test_that("Can extract line number from parser errors", {
     trim_some('
       "ok"
       R"---a---"
-    '), {
-    expect_equal(error$message, "Malformed raw string literal.")
-    expect_equal(error$line_number, 2L)
-  })
+    '),
+    {
+      expect_equal(error$message, "Malformed raw string literal.")
+      expect_equal(error$line_number, 2L)
+    }
+  )
 
   # invalid \u{xxxx} sequence (line 3)
   with_content_to_parse(
@@ -147,10 +153,12 @@ test_that("Can extract line number from parser errors", {
       ok
       ok
       "\\u{9999"
-    '), {
-    expect_equal(error$message, "Invalid \\u{xxxx} sequence.")
-    expect_equal(error$line_number, 3L)
-  })
+    '),
+    {
+      expect_equal(error$message, "Invalid \\u{xxxx} sequence.")
+      expect_equal(error$line_number, 3L)
+    }
+  )
 
   # invalid \u{xxxx} sequence (line 4)
   with_content_to_parse(
@@ -158,11 +166,13 @@ test_that("Can extract line number from parser errors", {
       ok
       ok
       "\\u{9999
-    '), {
-    # parser erroneously reports line 4
-    expect_equal(error$message, "Invalid \\u{xxxx} sequence.")
-    expect_equal(error$line_number, 3L)
-  })
+    '),
+    {
+      # parser erroneously reports line 4
+      expect_equal(error$message, "Invalid \\u{xxxx} sequence.")
+      expect_equal(error$line_number, 3L)
+    }
+  )
 
   # repeated formal argument 'a' on line 1
   with_content_to_parse("function(a, a) {}", {
@@ -235,7 +245,7 @@ test_that("returned data structure is complete", {
   expect_identical(full_expr$content, lines_with_attr)
   expect_identical(nrow(full_expr$full_parsed_content), 2L * length(lines))
   expect_identical(xml2::xml_find_num(full_expr$full_xml_parsed_content, "count(//SYMBOL)"),
-                    as.numeric(length(lines)))
+                   as.numeric(length(lines)))
   expect_true(full_expr$terminal_newline)
 
   expect_null(exprs$error)
@@ -275,8 +285,7 @@ param_df <- expand.grid(
   expression_idx = seq_along(expressions),
   stringsAsFactors = FALSE
 )
-param_df$.test_name <-
- with(param_df, sprintf("%s on expression %d", linter, expression_idx))
+param_df$.test_name <- with(param_df, sprintf("%s on expression %d", linter, expression_idx))
 
 patrick::with_parameters_test_that(
   "linters pass with xml_missing() content",

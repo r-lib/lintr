@@ -145,7 +145,7 @@ test_that("function argument indentation works in tidyverse-style", {
       }
     "),
     NULL,
-     linter
+    linter
   )
 
   expect_lint(

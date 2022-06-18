@@ -29,19 +29,19 @@ patrick::with_parameters_test_that(
     literal_coercion_linter()
   ),
   .cases = tibble::tribble(
-        ~.test_name,   ~out_type,   ~input,
-    "lgl, from int",   "logical",     "1L",
-    "lgl, from num",   "logical",      "1",
-    "lgl, from chr",   "logical", '"true"',
-    "int, from num",   "integer",      "1",
-    "num, from num",   "numeric",      "1",
-    "dbl, from num",    "double",      "1",
-    "chr, from num", "character",      "1",
+    ~.test_name,     ~out_type,   ~input,
+    "lgl, from int", "logical",   "1L",
+    "lgl, from num", "logical",   "1",
+    "lgl, from chr", "logical",   '"true"',
+    "int, from num", "integer",   "1",
+    "num, from num", "numeric",   "1",
+    "dbl, from num", "double",    "1",
+    "chr, from num", "character", "1",
     # affirmatively lint as.<type>(NA) should be NA_<type>_
-    "int, from NA",    "integer",     "NA",
-    "num, from NA",    "numeric",     "NA",
-    "dbl, from NA",     "double",     "NA",
-    "chr, from NA",  "character",     "NA",
+    "int, from NA",  "integer",   "NA",
+    "num, from NA",  "numeric",   "NA",
+    "dbl, from NA",  "double",    "NA",
+    "chr, from NA",  "character", "NA",
   )
 )
 
