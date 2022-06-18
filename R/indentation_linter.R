@@ -69,7 +69,7 @@ indentation_linter <- function(indent = 2L) {
     }
 
     operator_blocks <- xml2::xml_find_all(xml, xp_operator_blocks)
-    to_indent <- xml2::xml_find_num(operator_blocks, "number(./@line1 + 1)")
+    to_indent <- xml2::xml_find_num(operator_blocks, "number(./@line1 + 1)") - source_expression$line + 1L
     expected_indent_levels[to_indent] <- expected_indent_levels[to_indent] + 1L
 
     expected_indent_levels <- expected_indent_levels * indent
@@ -87,7 +87,8 @@ indentation_linter <- function(indent = 2L) {
       }
     }
 
-    bad <- which(indent_levels != expected_indent_levels)
+    # Only lint non-empty lines if the indentation level doesn't match.
+    bad <- which(indent_levels != expected_indent_levels & nzchar(source_expression$lines))
     mapply(
       function(line, actual, expected, is_hanging) {
         msg <- if (is_hanging) {
