@@ -101,8 +101,7 @@ parse_exclusions <- function(file, exclude = settings$exclude,
 
   exclusions <- list()
 
-  e <- tryCatch(nchar(lines), error = identity)
-  if (inherits(e, "error")) {
+  if (is_tainted(lines)) {
     # Invalid encoding. Don't parse exclusions.
     return(list())
   }
