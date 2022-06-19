@@ -68,7 +68,7 @@
 <li>Parse error lints now appear with the linter name <code>"error"</code> instead of <code>NA</code> (<a href="https://github.com/r-lib/lintr/issues/1405" class="external-link">#1405</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).<br>
 Also, linting no longer runs if the <code>source_expressions</code> contain invalid string data that would cause error messages in other linters.</li>
 <li>
-<code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> no longer omits trailing non-code lines from knitr files (<a href="https://github.com/r-lib/lintr/issues/1400" class="external-link">#1400</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).<br>
+<code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> no longer omits trailing non-code lines from knitr files (<a href="https://github.com/r-lib/lintr/issues/1400" class="external-link">#1400</a>, <a href="https://github.com/r-lib/lintr/issues/1415" class="external-link">#1415</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).<br>
 This fixes the location information for <code><a href="../reference/trailing_blank_lines_linter.html">trailing_blank_lines_linter()</a></code> in RMarkdown documents without terminal newlines.</li>
 <li>The <code><a href="../articles/lintr.html">vignette("lintr")</a></code> incorrectly cited <code>exclude</code> as the key for setting file exclusions in <code>.lintr</code> when it is actually <code>exclusions</code>. (<a href="https://github.com/r-lib/lintr/issues/1401" class="external-link">#1401</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>)</li>
 </ul></div>
