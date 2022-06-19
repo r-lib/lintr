@@ -54,9 +54,9 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
   if (length(styles) > 0L) {
     # Allow `object_name_linter(NULL, "my_regex")`
     styles <- match.arg(styles, names(style_regexes), several.ok = TRUE)
-    styles <- style_regexes[styles]
+    style_list <- style_regexes[styles]
   } else {
-    styles <- list()
+    style_list <- list()
   }
   if (length(regexes) > 0L) {
     if (!is.character(regexes)) {
@@ -65,15 +65,15 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
     if (is.null(names(regexes))) {
       names(regexes) <- "custom"
     }
-    styles <- c(styles, as.list(regexes))
+    style_list <- c(style_list, as.list(regexes))
   }
-  if (length(styles) == 0L) {
+  if (length(style_list) == 0L) {
     stop("At least one style must be specified using `styles` or `regexes`.")
   }
 
   lint_message <- paste0(
     "Variable and function name style should be ",
-    glue::glue_collapse(unique(names(styles)), sep = ", ", last = " or "), "."
+    glue::glue_collapse(unique(names(style_list)), sep = ", ", last = " or "), "."
   )
 
   Linter(function(source_expression) {
@@ -98,7 +98,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
     )
     generics <- unique(generics[nzchar(generics)])
 
-    style_matches <- lapply(styles, function(style) {
+    style_matches <- lapply(style_list, function(style) {
       check_style(nms, style, generics)
     })
 
