@@ -49,10 +49,11 @@ object_name_xpath <- local({
 #' @export
 object_name_linter <- function(styles = c("snake_case", "symbols")) {
   styles <- match.arg(styles, names(style_regexes), several.ok = TRUE)
+  styles <- style_regexes[styles]
 
   lint_message <- paste0(
     "Variable and function name style should be ",
-    glue::glue_collapse(styles, sep = ", ", last = " or "), "."
+    glue::glue_collapse(unique(names(styles)), sep = ", ", last = " or "), "."
   )
 
   Linter(function(source_expression) {
@@ -93,7 +94,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
 }
 
 check_style <- function(nms, style, generics = character()) {
-  conforming <- re_matches(nms, style_regexes[[style]])
+  conforming <- re_matches(nms, style)
 
   # mark empty names and NA names as conforming
   conforming[!nzchar(nms) | is.na(conforming)] <- TRUE
