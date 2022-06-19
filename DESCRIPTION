@@ -41,7 +41,7 @@ Suggests:
     rstudioapi (>= 0.2),
     testthat (>= 3.0.0),
     tibble,
-    withr
+    withr (>= 2.5.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 VignetteBuilder: knitr

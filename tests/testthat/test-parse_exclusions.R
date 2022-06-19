@@ -4,14 +4,12 @@ old_ops <- options(lintr.exclude = "#TeSt_NoLiNt",
 
 test_that("it returns an empty list if there are no exclusions", {
   read_settings(NULL)
-  t1 <- tempfile()
-  on.exit(unlink(t1))
-  writeLines(trim_some("
+  t1 <- withr::local_tempfile(lines = trim_some("
     this
     is
     a
     test
-  "), t1)
+   "))
   expect_equal(parse_exclusions(t1), list())
 })
 
