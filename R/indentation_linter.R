@@ -33,7 +33,10 @@ indentation_linter <- function(indent = 2L) {
 
   xp_indent_changes <- paste(
     c(
-      glue::glue("//{paren_tokens}[not(@line1 = following-sibling::*[@line2 > @line1]/@line1)]"),
+      glue::glue("//{paren_tokens}[not(@line1 = following-sibling::expr[
+                    @line2 > @line1 and
+                    ({xp_or(paste0('descendant::', paren_tokens, '[', xp_last_on_line, ']'))})
+                  ]/@line1)]"),
       glue::glue("//{infix_tokens}[{xp_last_on_line}]"),
       glue::glue("//{no_paren_keywords}[{xp_last_on_line}]"),
       glue::glue("//{keyword_tokens}/following-sibling::OP-RIGHT-PAREN[{xp_last_on_line}]")

@@ -30,7 +30,7 @@ make_linter_from_regex <- function(regex,
             split(line_matches, seq_len(nrow(line_matches))),
             function(.match) {
               if (is.na(.match[["start"]]) ||
-                .in_ignorable_position(source_expression, line_number, .match)) {
+                    .in_ignorable_position(source_expression, line_number, .match)) {
                 return()
               }
               start <- .match[["start"]]

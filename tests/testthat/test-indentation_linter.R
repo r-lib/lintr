@@ -316,4 +316,26 @@ test_that("combined hanging and block indent works", {
     NULL,
     linter
   )
+
+  expect_lint(
+    trim_some("
+      func(func2(
+        a = 42
+      ))
+    "),
+    NULL,
+    linter
+  )
+
+  # Adapted from cli R/ansi.R L231-234
+  expect_lint(
+    trim_some("
+      stopifnot(is.character(style) && length(style) == 1 ||
+                  is_rgb_matrix(style) && ncol(style) == 1,
+                is.logical(bg) && length(bg) == 1,
+                is.numeric(colors) && length(colors) == 1)
+    "),
+    NULL,
+    linter
+  )
 })
