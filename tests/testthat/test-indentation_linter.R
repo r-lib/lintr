@@ -338,4 +338,24 @@ test_that("combined hanging and block indent works", {
     NULL,
     linter
   )
+
+  # Adapted from cli inst/scripts/up.R L26-37
+  expect_lint(
+    trim_some("
+      http_head(url, ...)$
+        then(function(res) {
+          if (res$status_code < 300) {
+            cli_alert_success()
+          } else {
+            cli_alert_danger()
+          }
+        })$
+        catch(error = function(err) {
+          e <- if (grepl('timed out', err$message)) 'timed out' else 'error'
+          cli_alert_danger()
+        })
+    "),
+    NULL,
+    linter
+  )
 })

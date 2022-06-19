@@ -22,8 +22,11 @@ indentation_linter <- function(indent = 2L) {
     paste(
       c(
         glue::glue("self::{paren_tokens}/following-sibling::{paren_tokens_right}/preceding-sibling::*[1]/@line2"),
+        glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens, ')'))}]/following-sibling::SYMBOL_FUNCTION_CALL/
+                      parent::expr/following-sibling::expr[1]/@line2"),
         glue::glue("self::*[
-                      {xp_and(paste0('not(self::', paren_tokens, ')'))}
+                      {xp_and(paste0('not(self::', paren_tokens, ')'))} and
+                      not(following-sibling::SYMBOL_FUNCTION_CALL)
                     ]/following-sibling::*[1]/@line2")
       ),
       collapse = " | "
