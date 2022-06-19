@@ -59,7 +59,7 @@ is_excluded <- function(line_number, linter, file_exclusion) {
 }
 
 is_excluded_file <- function(file_exclusion) {
-  Inf %in% file_exclusion[[names2(file_exclusion) == ""]]
+  Inf %in% file_exclusion[[which(names2(file_exclusion) == "")]]
 }
 
 line_info <- function(line_numbers, type = c("start", "end")) {

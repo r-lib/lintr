@@ -92,3 +92,38 @@ test_that("partial matching works for exclusions but warns if no linter found", 
     rex::rex("Could not find linters named ", anything, "hocus_pocus", anything, "bogus")
   )
 })
+
+test_that("#1413: lint_dir properly excludes files", {
+  withr::local_options(lintr.linter_file = "lintr_test_config")
+  tmp <- withr::local_tempdir()
+  writeLines(
+    trim_some("
+      linters: linters_with_defaults(
+          line_length_linter(10)
+        )
+      exclusions: list(
+          'bad.R' = list(
+            1, # global exclusions are unnamed
+            line_length_linter = 4:6
+          )
+        )
+    "),
+    file.path(tmp, "lintr_test_config")
+  )
+
+  writeLines(
+    trim_some("
+      tmp = 'value'
+
+      # comment
+      # long comment
+      # long comment
+      # long comment
+      # comment
+    "),
+    file.path(tmp, "bad.R")
+  )
+
+  expect_length(lint(file.path(tmp, "bad.R")), 0L)
+  expect_length(lint_dir(tmp), 0L)
+})
