@@ -5,20 +5,21 @@ extract_r_source <- function(filename, lines, error = identity) {
     return(lines)
   }
 
+  # mask non-source lines by NA, but keep total line count identical so the line number for EOF is correct, see #1400
+  output <- rep.int(NA_character_, length(lines))
+
   chunks <- tryCatch(get_chunk_positions(pattern = pattern, lines = lines), error = error)
   if (inherits(chunks, "error") || inherits(chunks, "lint")) {
     assign("e", chunks,  envir = parent.frame())
     # error, so return empty code
-    return(character())
+    return(output)
   }
 
   # no chunks found, so just return the lines
   if (length(chunks[["starts"]]) == 0L || length(chunks[["ends"]]) == 0L) {
-    return(character())
+    return(output)
   }
 
-  # mask non-source lines by NA, but keep total line count identical so the line number for EOF is correct, see #1400
-  output <- rep.int(NA_character_, length(lines))
   Map(
     function(start, end) {
       output[seq(start + 1L, end - 1L)] <<- lines[seq(start + 1L, end - 1L)]
