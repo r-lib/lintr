@@ -5,12 +5,17 @@
 #' @param use_hybrid_indent Require a block indent for multi-line function calls if there are only unnamed arguments
 #'   in the first line?
 #'   ```r
-#'   # complies with use_hybrid_indent = TRUE:
+#'   # complies only with use_hybrid_indent = TRUE:
 #'   map(x, f,
 #'     additional_arg = 42
 #'   )
 #'
-#'   # complies with use_hybrid_indent = FALSE:
+#'   # complies only with use_hybrid_indent = FALSE:
+#'   map(x, f,
+#'       additional_arg = 42
+#'   )
+#'
+#'   # always complies
 #'   map(x, f,
 #'       additional_arg = 42)
 #'   ```
@@ -28,8 +33,14 @@ indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
 
   if (use_hybrid_indent) {
-    xp_is_not_hanging <- glue::glue(
-      "self::*[{xp_last_on_line} or (self::OP-LEFT-PAREN and @line1 != following-sibling::EQ_SUB/@line1)]"
+    xp_is_not_hanging <- paste(
+      c(
+        glue::glue(
+          "self::{paren_tokens}/following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]"
+        ),
+        glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens, ')'))} and {xp_last_on_line}]")
+      ),
+      collapse = " | "
     )
   } else {
     xp_is_not_hanging <- glue::glue("self::*[{xp_last_on_line}]")

@@ -13,12 +13,17 @@ extractions (\verb{[ ... ]}, \verb{[[ ... ]]}).}
 \item{use_hybrid_indent}{Require a block indent for multi-line function calls if there are only unnamed arguments
 in the first line?
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{# complies with use_hybrid_indent = TRUE:
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# complies only with use_hybrid_indent = TRUE:
 map(x, f,
   additional_arg = 42
 )
 
-# complies with use_hybrid_indent = FALSE:
+# complies only with use_hybrid_indent = FALSE:
+map(x, f,
+    additional_arg = 42
+)
+
+# always complies
 map(x, f,
     additional_arg = 42)
 }\if{html}{\out{</div>}}}
