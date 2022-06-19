@@ -261,6 +261,42 @@ test_that("#1262: xml_parsed_content gets returned as missing even if there's no
   expect_identical(source_expressions$expressions[[1L]]$full_xml_parsed_content, xml2::xml_missing())
 })
 
+test_that("#743, #879, #1406: get_source_expressions works on R files matching a knitr pattern", {
+  # from #743
+  tempfile <- withr::local_tempfile()
+  writeLines(
+    trim_some('
+      create_template <- function(x) {
+        sprintf("
+      ```{r code}
+      foo <- function(x) x+%d
+      foo(5)
+      ```", x)
+      }'),
+    tempfile
+  )
+  source_expressions <- get_source_expressions(tempfile)
+  expect_null(source_expressions$error)
+
+  # from #879
+  tempfile <- withr::local_tempfile()
+  writeLines(
+    trim_some('
+      # `r print("7")`
+      function() 2<=3
+    '),
+    tempfile
+  )
+  source_expressions <- get_source_expressions(tempfile)
+  expect_null(source_expressions$error)
+
+  # from #1406
+  tempfile <- withr::local_tempfile()
+  writeLines(c("x <- '", "```{r}", "'"), con = tempfile)
+  source_expressions <- get_source_expressions(tempfile)
+  expect_null(source_expressions$error)
+})
+
 skip_if_not_installed("patrick")
 # NB: this is just a cursory test for linters not to
 #   fail on files where the XML content is xml_missing;

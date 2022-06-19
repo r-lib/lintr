@@ -80,7 +80,7 @@ commented_code_linter <- function() {
 
 # is given text parsable
 parsable <- function(x) {
-  if (is.na(x)) {
+  if (anyNA(x)) {
     return(FALSE)
   }
   res <- try_silently(parse(text = x))
