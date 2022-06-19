@@ -150,3 +150,67 @@ test_that("object_name_linter won't fail if an imported namespace is unavailable
     3L
   )
 })
+
+test_that("object_name_linter supports custom regexes", {
+  # snake_case and symbols also allowed
+  linter <- object_name_linter(
+    regexes = c("shinyModule" = rex(start, lower, zero_or_more(alnum), "UI" %or% "Server", end))
+  )
+  msg <- rex::rex("Variable and function name style should be snake_case, symbols or shinyModule.")
+  linter2 <- object_name_linter(
+    styles = NULL,
+    regexes = c("shinyModule" = rex(start, lower, zero_or_more(alnum), "UI" %or% "Server", end))
+  )
+  msg2 <- rex::rex("Variable and function name style should be shinyModule.")
+
+  # Can't allow 0 styles
+  expect_error(
+    object_name_linter(NULL),
+    rex::rex("At least one style must be specified using `styles` or `regexes`.")
+  )
+
+  expect_lint(
+    trim_some("
+      snake_case <- 42L
+      \"%+%\" <- function(...) ..1 + ..2
+
+      myModuleUI <- function(id) {
+        # blah
+      }
+
+      myModuleServer <- function(id) {
+        # blah
+      }
+
+      myBadName <- 20L
+    "),
+    list(line_number = 12L, message = msg),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      snake_case <- 42L
+      \"%+%\" <- function(...) ..1 + ..2
+
+      myModuleUI <- function(id) {
+        # blah
+      }
+
+      myModuleServer <- function(id) {
+        # blah
+      }
+
+      myBadName <- 20L
+    "),
+    list(
+      list(line_number = 1L, message = msg2),
+      list(line_number = 2L, message = msg2),
+      # argument "id" is linted if we only allow shinyModule names
+      list(line_number = 4L, column_number = 24L, message = msg2),
+      list(line_number = 8L, column_number = 28L, message = msg2),
+      list(line_number = 12L, message = msg2)
+    ),
+    linter2
+  )
+})

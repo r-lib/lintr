@@ -44,12 +44,32 @@ object_name_xpath <- local({
 #' @param styles A subset of
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
 #'   match at least one of these styles.
+#' @param regexes A (possibly named) character vector specifying a custom naming convention.
+#'   If named, the names will be used in the lint message. Otherwise, "custom" will be used as a name for the style.
+#'   Quotes (`` `"' ``) and the specials (`%` and trailing `<-`) are not considered part of the name to be matched.
 #' @evalRd rd_tags("object_name_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-object_name_linter <- function(styles = c("snake_case", "symbols")) {
-  styles <- match.arg(styles, names(style_regexes), several.ok = TRUE)
-  styles <- style_regexes[styles]
+object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = character()) {
+  if (length(styles) > 0L) {
+    # Allow `object_name_linter(NULL, "my_regex")`
+    styles <- match.arg(styles, names(style_regexes), several.ok = TRUE)
+    styles <- style_regexes[styles]
+  } else {
+    styles <- list()
+  }
+  if (length(regexes) > 0L) {
+    if (!is.character(regexes)) {
+      stop("`regexes` must be a character vector.")
+    }
+    if (is.null(names(regexes))) {
+      names(regexes) <- "custom"
+    }
+    styles <- c(styles, as.list(regexes))
+  }
+  if (length(styles) == 0L) {
+    stop("At least one style must be specified using `styles` or `regexes`.")
+  }
 
   lint_message <- paste0(
     "Variable and function name style should be ",
@@ -110,8 +130,8 @@ check_style <- function(nms, style, generics = character()) {
       # If they are not conforming, but are S3 methods then ignore them
       conforming[!conforming][has_generic] <- TRUE
     }
-    # exclude namespace hooks like .onLoad, .Last.lib, etc (#500)
-    is_special <- is_special_function(nms[!conforming])
+    # exclude namespace hooks like .onLoad, .Last.lib, etc (#500) and ...
+    is_special <- is_special_function(nms[!conforming]) | nms[!conforming] == "..."
     conforming[!conforming][is_special] <- TRUE
   }
   conforming
@@ -119,8 +139,8 @@ check_style <- function(nms, style, generics = character()) {
 
 # Remove quotes or other things from names
 strip_names <- function(x) {
-  x <- re_substitutes(x, rex(start, some_of(".", quote, "`", "%", "$", "@")), "")
-  x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%", "$", "@"), end), "")
+  x <- re_substitutes(x, rex(start, some_of(quote, "`", "%")), "")
+  x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%"), end), "")
   x
 }
 
@@ -130,13 +150,13 @@ strip_names <- function(x) {
 #   (they don't strictly _have_ to be defined in base, so could in principle be removed).
 #   .Last.sys and .First.sys are part of base itself, so aren't included here.
 special_funs <- c(
-  "onLoad",
-  "onAttach",
-  "onUnload",
-  "onDetach",
-  "Last.lib",
-  "First",
-  "Last"
+  ".onLoad",
+  ".onAttach",
+  ".onUnload",
+  ".onDetach",
+  ".Last.lib",
+  ".First",
+  ".Last"
 )
 
 is_special_function <- function(x) {

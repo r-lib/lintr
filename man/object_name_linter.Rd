@@ -4,12 +4,16 @@
 \alias{object_name_linter}
 \title{Object name linter}
 \usage{
-object_name_linter(styles = c("snake_case", "symbols"))
+object_name_linter(styles = c("snake_case", "symbols"), regexes = character())
 }
 \arguments{
 \item{styles}{A subset of
 \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
 match at least one of these styles.}
+
+\item{regexes}{A (possibly named) character vector specifying a custom naming convention.
+If named, the names will be used in the lint message. Otherwise, "custom" will be used as a name for the style.
+Quotes (\verb{`"'}) and the specials (\verb{\%} and trailing \verb{<-}) are not considered part of the name to be matched.}
 }
 \description{
 Check that object names conform to a naming style.
