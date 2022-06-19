@@ -4,11 +4,24 @@
 \alias{indentation_linter}
 \title{Check that indentation is consistent}
 \usage{
-indentation_linter(indent = 2L)
+indentation_linter(indent = 2L, use_hybrid_indent = TRUE)
 }
 \arguments{
 \item{indent}{Block indentation level, used for multi-line code blocks (\code{{ ... }}), function calls (\code{( ... )}) and
 extractions (\verb{[ ... ]}, \verb{[[ ... ]]}).}
+
+\item{use_hybrid_indent}{Require a block indent for multi-line function calls if there are only unnamed arguments
+in the first line?
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# complies with use_hybrid_indent = TRUE:
+map(x, f,
+  additional_arg = 42
+)
+
+# complies with use_hybrid_indent = FALSE:
+map(x, f,
+    additional_arg = 42)
+}\if{html}{\out{</div>}}}
 }
 \description{
 Check that indentation is consistent

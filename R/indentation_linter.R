@@ -1,12 +1,24 @@
 #' Check that indentation is consistent
 #'
 #' @param indent Block indentation level, used for multi-line code blocks (`{ ... }`), function calls (`( ... )`) and
-#' extractions (`[ ... ]`, `[[ ... ]]`).
+#'   extractions (`[ ... ]`, `[[ ... ]]`).
+#' @param use_hybrid_indent Require a block indent for multi-line function calls if there are only unnamed arguments
+#'   in the first line?
+#'   ```r
+#'   # complies with use_hybrid_indent = TRUE:
+#'   map(x, f,
+#'     additional_arg = 42
+#'   )
+#'
+#'   # complies with use_hybrid_indent = FALSE:
+#'   map(x, f,
+#'       additional_arg = 42)
+#'   ```
 #'
 #' @evalRd rd_tags("indentation_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-indentation_linter <- function(indent = 2L) {
+indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
   paren_tokens <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
   infix_tokens <- setdiff(infix_metadata$xml_tag, c("OP-LEFT-BRACE", "OP-COMMA", paren_tokens))
@@ -15,7 +27,13 @@ indentation_linter <- function(indent = 2L) {
 
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
 
-  xp_self_is_last_on_line <- glue::glue("self::*[{xp_last_on_line}]")
+  if (use_hybrid_indent) {
+    xp_is_not_hanging <- glue::glue(
+      "self::*[{xp_last_on_line} or (self::OP-LEFT-PAREN and @line1 != following-sibling::EQ_SUB/@line1)]"
+    )
+  } else {
+    xp_is_not_hanging <- glue::glue("self::*[{xp_last_on_line}]")
+  }
 
   xp_block_ends <- paste0(
     "number(",
@@ -68,7 +86,7 @@ indentation_linter <- function(indent = 2L) {
 
     indent_changes <- xml2::xml_find_all(xml, xp_indent_changes)
     for (change in indent_changes) {
-      change_starts_hanging <- length(xml2::xml_find_first(change, xp_self_is_last_on_line)) == 0L
+      change_starts_hanging <- length(xml2::xml_find_first(change, xp_is_not_hanging)) == 0L
       change_begin <- as.integer(xml2::xml_attr(change, "line1")) + 1L
       change_end <- xml2::xml_find_num(change, xp_block_ends)
       if (change_begin <= change_end) {

@@ -359,3 +359,14 @@ test_that("combined hanging and block indent works", {
     linter
   )
 })
+
+test_that("use_hybrid_indent works", {
+  code_hybrid <- "map(x, f,\n  extra_arg = 42\n)"
+  code_non_hybrid <- "map(x, f,\n    extra_arg = 42)"
+
+  expect_lint(code_hybrid, NULL, indentation_linter())
+  expect_lint(code_hybrid, "Hanging indent", indentation_linter(use_hybrid_indent = FALSE))
+
+  expect_lint(code_non_hybrid, "Indent", indentation_linter())
+  expect_lint(code_non_hybrid, NULL, indentation_linter(use_hybrid_indent = FALSE))
+})
