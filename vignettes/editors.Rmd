@@ -117,6 +117,17 @@ See `:h ale_r_lintr` for more information.
 
 Note that configuration through `.lintr` files are not supported.
 
+There is a work around that can be used to read the contents of a `.lintr` file
+in the root of the working directory. This would allow the use of configuration
+through `.lintr` files.
+
+``` vim
+if filereadable(".lintr")
+  let g:ale_r_lintr_options = join(readfile('.lintr'))
+endif
+```
+
+
 ## Sublime Text 3
 
 lintr can be integrated with [Sublime Linter](https://github.com/SublimeLinter/SublimeLinter) for on-the-fly linting.
