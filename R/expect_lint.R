@@ -83,7 +83,8 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
         if (!field %in% lint_fields) {
           stop(sprintf(
             "check #%d had an invalid field: \"%s\"\nValid fields are: %s\n",
-            itr, field, toString(lint_fields)))
+            itr, field, toString(lint_fields)
+          ))
         }
         check <- check[[field]]
         value <- lint[[field]]

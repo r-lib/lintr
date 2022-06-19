@@ -471,7 +471,8 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
       ranges = ranges,
       linter = NA_character_
     ),
-    class = "lint")
+    class = "lint"
+  )
 }
 
 rstudio_source_markers <- function(lints) {
@@ -554,7 +555,8 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
           style = "info",
           x$type
         ),
-        message = x$message)
+        message = x$message
+      )
     })
   })
 

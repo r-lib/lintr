@@ -72,7 +72,7 @@ test_that("it handles tex", {
   expect_lint(file = "knitr_formats/test.Rtex",
     checks = list(
       list(regexes[["indent"]], line_number = 11L),
-      # FIXME(AshesITR)
+      # FIXME(AshesITR):
       # masking the Rtex escape char by whitespace causes false-positive indentation lints
       list(regexes[["assign"]], line_number = 11L),
       list(regexes[["indent"]], line_number = 22L),
@@ -80,7 +80,7 @@ test_that("it handles tex", {
       list(regexes[["assign"]], line_number = 23L),
       list(regexes[["trailing"]], line_number = 25L),
       list(regexes[["trailws"]], line_number = 25L)
-      # FIXME(AshesITR) #1043
+      # FIXME(AshesITR): #1043
       # file_lines contains a whitespace on the final line for Rtex, because that is used to mark the Rtex escape char
       # "%" as well.
       # cf. get_source_expressions("tests/testthat/knitr_formats/test.Rtex")$lines[[25]]

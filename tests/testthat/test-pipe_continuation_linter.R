@@ -1,8 +1,7 @@
-pipe_error <- rex(
-  paste(
-    "`%>%` should always have a space before it and a new line after it,",
-    "unless the full pipeline fits on one line."
-  ))
+pipe_error <- rex(paste(
+  "`%>%` should always have a space before it and a new line after it,",
+  "unless the full pipeline fits on one line."
+))
 
 test_that("pipe-continuation correctly handles stand-alone expressions", {
   linter <- pipe_continuation_linter()

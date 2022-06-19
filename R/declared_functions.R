@@ -12,7 +12,8 @@ declared_s3_generics <- function(x) {
     "[.//SYMBOL_FUNCTION_CALL[text()='UseMethod']]",
 
     # Retrieve assigned name of the function
-    "/expr/SYMBOL/text()")
+    "/expr/SYMBOL/text()"
+  )
 
   as.character(xml2::xml_find_all(x, xpath))
 }

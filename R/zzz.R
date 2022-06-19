@@ -231,8 +231,10 @@ settings <- NULL
         "0n12nn72507",
         "r6273qnnp34",
         "43qno7q42n1",
-        "n71nn28")
-      , 54L - 13L),
+        "n71nn28"
+      ),
+      54L - 13L
+    ),
     comment_bot = logical_env("LINTR_COMMENT_BOT") %||% TRUE,
     error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
   )

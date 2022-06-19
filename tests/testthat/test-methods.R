@@ -41,7 +41,8 @@ test_that("as.data.frame.lints", {
       type = "error",
       message = "Under no circumstances is the use of foobar allowed.",
       line = "a <- 1",
-      ranges = list(c(1L, 2L), c(10L, 20L))),
+      ranges = list(c(1L, 2L), c(10L, 20L))
+    ),
     "lint"
   )
 
@@ -78,7 +79,8 @@ test_that("as.data.frame.lints", {
 test_that("summary.lints() works (no lints)", {
   no_lints <- lint(
     "x <- 1\n",
-    linters = assignment_linter())
+    linters = assignment_linter()
+  )
   no_lint_summary <- summary(no_lints)
   expect_s3_class(no_lint_summary, "data.frame")
   expect_equal(nrow(no_lint_summary), 0L)
@@ -87,7 +89,8 @@ test_that("summary.lints() works (no lints)", {
 test_that("summary.lints() works (lints found)", {
   has_lints <- lint(
     "x = 1\n",
-    linters = assignment_linter())
+    linters = assignment_linter()
+  )
   has_lint_summary <- summary(has_lints)
   expect_s3_class(has_lint_summary, "data.frame")
   expect_equal(nrow(has_lint_summary), 1L)

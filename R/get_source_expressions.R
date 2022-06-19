@@ -264,10 +264,11 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
   } else if (grepl("repeated formal argument", e$message, fixed = TRUE)) {
     matches <- re_matches(
       e$message,
-      rex("repeated formal argument '",
-          capture(name = "symbol", anything),
-          "' on line ",
-          capture(name = "line", digits)
+      rex(
+        "repeated formal argument '",
+        capture(name = "symbol", anything),
+        "' on line ",
+        capture(name = "line", digits)
       )
     )
     sym <- matches$symbol

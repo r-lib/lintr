@@ -41,12 +41,14 @@ test_that("returns the correct linting", {
   expect_lint(
     c("a <- 1", "# comment without code"),
     NULL,
-    linter)
+    linter
+  )
 
   expect_lint(
     c("a <- 1", "## whatever"),
     NULL,
-    linter)
+    linter
+  )
 
   test_ops <- append(ops[ops != "%[^%]*%"], values = c("%>%", "%anything%"))
   for (op in test_ops) {
