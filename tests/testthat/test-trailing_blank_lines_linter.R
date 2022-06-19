@@ -52,4 +52,23 @@ test_that("returns the correct linting", {
     # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
     column_number = 1L
   ), linter)
+
+  # Construct an Rmd file without R code (#1415)
+  tmp4 <- withr::local_tempfile()
+  cat(
+    trim_some(
+      '---
+      title: "Some file"
+      ---
+
+      No code and no terminal newline'
+    ),
+    file = tmp4
+  )
+  expect_lint(content = NULL, file = tmp4, list(
+    message = msg2,
+    line_number = 5L,
+    # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
+    column_number = 1L
+  ), linter)
 })
