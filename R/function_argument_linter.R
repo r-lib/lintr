@@ -7,7 +7,7 @@
 #'   [linters] for a complete list of linters available in lintr.
 #' @export
 function_argument_linter <- function() {
-  xpath <- "//EQ_FORMALS[last()]/following-sibling::SYMBOL_FORMALS[1]"
+  xpath <- "//FUNCTION/following-sibling::EQ_FORMALS[1]/following-sibling::SYMBOL_FORMALS[1]"
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
