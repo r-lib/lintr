@@ -158,6 +158,19 @@ test_that("function argument indentation works in tidyverse-style", {
     "Hanging",
     linter
   )
+
+  # This is a case for brace_linter
+  expect_lint(
+    trim_some("
+      function(a = 1L,
+               b = 2L)
+      {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
 })
 
 test_that("indentation with operators works", {

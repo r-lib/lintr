@@ -60,7 +60,10 @@ indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
                   ]/@line1)]"),
       glue::glue("//{infix_tokens}[{xp_last_on_line}]"),
       glue::glue("//{no_paren_keywords}[{xp_last_on_line}]"),
-      glue::glue("//{keyword_tokens}/following-sibling::OP-RIGHT-PAREN[{xp_last_on_line}]")
+      glue::glue("//{keyword_tokens}/following-sibling::OP-RIGHT-PAREN[
+                    {xp_last_on_line} and
+                    not(following-sibling::expr[1][OP-LEFT-BRACE])
+                  ]")
     ),
     collapse = " | "
   )
