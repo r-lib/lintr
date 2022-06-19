@@ -127,7 +127,6 @@ if filereadable(".lintr")
 endif
 ```
 
-
 ## Sublime Text 3
 
 lintr can be integrated with [Sublime Linter](https://github.com/SublimeLinter/SublimeLinter) for on-the-fly linting.
