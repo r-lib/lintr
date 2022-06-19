@@ -30,7 +30,7 @@ test_that("returns the correct linting", {
   ), linter)
 
   # Construct an Rmd file without terminal newline
-  tmp3 <- withr::local_tempfile(fileext = "Rmd")
+  tmp3 <- withr::local_tempfile(fileext = ".Rmd")
   cat(
     trim_some(
       '---
@@ -54,7 +54,7 @@ test_that("returns the correct linting", {
   ), linter)
 
   # Construct an Rmd file without R code (#1415)
-  tmp4 <- withr::local_tempfile(fileext = "Rmd")
+  tmp4 <- withr::local_tempfile(fileext = ".Rmd")
   cat(
     trim_some(
       '---
