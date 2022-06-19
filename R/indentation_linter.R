@@ -128,6 +128,13 @@ indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
     # Only lint non-empty lines if the indentation level doesn't match.
     bad_lines <- which(indent_levels != expected_indent_levels & nzchar(source_expression$lines) & !in_str_const)
     if (length(bad_lines)) {
+      # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
+      is_consecutive_lint <- c(FALSE, diff(bad_lines) == 1L)
+      indent_diff <- expected_indent_levels[bad_lines] - indent_levels[bad_lines]
+      is_same_diff <- c(FALSE, diff(indent_diff) == 0L)
+
+      bad_lines <- bad_lines[!(is_consecutive_lint & is_same_diff)]
+
       lint_messages <- sprintf(
         "%s should be %d spaces but is %d spaces.",
         ifelse(is_hanging[bad_lines], "Hanging indent", "Indentation"),

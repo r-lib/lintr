@@ -387,3 +387,37 @@ test_that("use_hybrid_indent works", {
   expect_lint(code_always_ok, NULL, indentation_linter())
   expect_lint(code_always_ok, NULL, indentation_linter(use_hybrid_indent = FALSE))
 })
+
+test_that("consecutive same-level lints are suppressed", {
+  bad_code <- trim_some("
+    ok_code <- 42
+
+    wrong_hanging <- fun(a, b, c,
+                           d, e %>%
+                             f())
+
+    wrong_block <- function() {
+        a + b
+        c + d
+        if (a == 24)
+          boo
+    }
+
+    wrong_hanging_args <- function(a = 1, b = 2,
+      c = 3, d = 4,
+      e = 5, f = 6)
+    {
+      a + b + c + d + e + f
+    }
+  ")
+
+  expect_lint(
+    bad_code,
+    list(
+      list(line_number = 4L, message = "Hanging indent"),
+      list(line_number = 8L, message = "Indentation"),
+      list(line_number = 15L, message = "Hanging indent")
+    ),
+    indentation_linter()
+  )
+})
