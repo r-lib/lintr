@@ -17,8 +17,10 @@ test_that("returns the correct linting", {
 
   # Construct a test file without terminal newline
   # cf. test-get_source_expressions.R
-  tmp <- withr::local_tempfile(lines = c("lm(y ~ x)", character(0L)))
-  tmp2 <- withr::local_tempfile(lines = "lm(y ~ x)")
+  tmp <- withr::local_tempfile()
+  tmp2 <- withr::local_tempfile()
+  cat("lm(y ~ x)\n", file = tmp)
+  cat("lm(y ~ x)", file = tmp2)
 
   expect_lint(content = NULL, file = tmp, NULL, linter)
   expect_lint(content = NULL, file = tmp2, list(
@@ -28,9 +30,9 @@ test_that("returns the correct linting", {
   ), linter)
 
   # Construct an Rmd file without terminal newline
-  tmp3 <- withr::local_tempfile(
-    fileext = ".Rmd",
-    lines = trim_some(
+  tmp3 <- withr::local_tempfile(fileext = ".Rmd")
+  cat(
+    trim_some(
       '---
       title: "Some file"
       ---
@@ -41,7 +43,8 @@ test_that("returns the correct linting", {
 
       ```{r child="some-file.Rmd"}
       ```'
-    )
+    ),
+    file = tmp3
   )
   expect_lint(content = NULL, file = tmp3, list(
     message = msg2,
@@ -51,15 +54,16 @@ test_that("returns the correct linting", {
   ), linter)
 
   # Construct an Rmd file without R code (#1415)
-  tmp4 <- withr::local_tempfile(
-    fileext = ".Rmd",
-    lines = trim_some(
+  tmp4 <- withr::local_tempfile(fileext = ".Rmd")
+  cat(
+    trim_some(
       '---
       title: "Some file"
       ---
 
       No code and no terminal newline'
-    )
+    ),
+    file = tmp4
   )
   expect_lint(content = NULL, file = tmp4, list(
     message = msg2,
