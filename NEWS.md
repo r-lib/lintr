@@ -16,6 +16,7 @@
   newlines.
 * The `vignette("lintr")` incorrectly cited `exclude` as the key for setting file exclusions in `.lintr` when it is 
   actually `exclusions`. (#1401, @AshesITR)
+* `lint_dir()` no longer errors if there are multiple configured exclusions for a single file (#1413, @AshesITR).
 
 # lintr 3.0.0
 
