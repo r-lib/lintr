@@ -289,7 +289,7 @@ skip_if_not_installed("patrick")
 #   fail on files where the XML content is xml_missing;
 #   the main linter test files provide more thorough
 #   evidence that things are working as intended.
-bad_source <- withr::local_tempfile(lines = "a <- 1L\nb <- 2L")
+bad_source <- withr::local_tempfile(lines = c("a <- 1L", "b <- 2L"))
 expressions <- get_source_expressions(bad_source)$expressions
 
 # "zap" the xml_parsed_content to be xml_missing -- this gets
