@@ -19,7 +19,6 @@ test_that("tab positions have been corrected", {
   with_content_to_parse("TRUE",
     expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(1L, 4L))
   )
-
   with_content_to_parse("\tTRUE",
     expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(2L, 5L))
   )
