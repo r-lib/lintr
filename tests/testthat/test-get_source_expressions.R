@@ -250,20 +250,23 @@ test_that("#1262: xml_parsed_content gets returned as missing even if there's no
 
 test_that("#743, #879, #1406: get_source_expressions works on R files matching a knitr pattern", {
   # from #743
-  tempfile <- withr::local_tempfile(lines = trim_some('
+  tempfile <- withr::local_tempfile(
+    lines = trim_some('
       create_template <- function(x) {
         sprintf("
       ```{r code}
       foo <- function(x) x+%d
       foo(5)
       ```", x)
-      }')
+      }
+    ')
   )
   source_expressions <- get_source_expressions(tempfile)
   expect_null(source_expressions$error)
 
   # from #879
-  tempfile <- withr::local_tempfile(lines = trim_some('
+  tempfile <- withr::local_tempfile(
+    lines = trim_some('
       # `r print("7")`
       function() 2<=3
     ')
