@@ -76,10 +76,8 @@ test_that("it handles tex", {
       # masking the Rtex escape char by whitespace causes false-positive indentation lints
       list(regexes[["assign"]], line_number = 11L),
       list(regexes[["indent"]], line_number = 22L),
-      list(regexes[["indent"]], line_number = 23L),
       list(regexes[["local_var"]], line_number = 23L),
       list(regexes[["assign"]], line_number = 23L),
-      list(regexes[["indent"]], line_number = 24L),
       list(regexes[["trailing"]], line_number = 25L),
       list(regexes[["trailws"]], line_number = 25L)
       # FIXME(AshesITR) #1043
