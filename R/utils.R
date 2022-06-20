@@ -263,3 +263,7 @@ get_r_code <- function(xml) {
 }
 
 is_linter <- function(x) inherits(x, "linter")
+
+is_tainted <- function(lines) {
+  inherits(tryCatch(nchar(lines), error = identity), "error")
+}

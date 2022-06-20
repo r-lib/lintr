@@ -3,6 +3,28 @@
 * `modify_defaults()` no longer uses the mistaken `"lintr_function"` S3 class, instead applying the
   `"linter"` class also common to `Linter()`. `Linter()` also includes `"function"` in the S3
   class of its output to facilitate S3 dispatch to `function` methods where appropriate (#1392, @MichaelChirico).
+## Changes to defaults
+
+* `seq_linter()` additionally lints on `1:n()` (from dplyr) 
+  and `1:.N` (from data.table) (#1396, @IndrajeetPatil).
+
+## Bug fixes
+
+* `get_source_expressions()` no longer fails on R files that match a knitr pattern (#743, #879, #1406, @AshesITR).
+* Parse error lints now appear with the linter name `"error"` instead of `NA` (#1405, @AshesITR).  
+  Also, linting no longer runs if the `source_expressions` contain invalid string data that would cause error messages
+  in other linters. 
+* `get_source_expressions()` no longer omits trailing non-code lines from knitr files (#1400, #1415, @AshesITR).  
+  This fixes the location information for `trailing_blank_lines_linter()` in RMarkdown documents without terminal
+  newlines.
+* The `vignette("lintr")` incorrectly cited `exclude` as the key for setting file exclusions in `.lintr` when it is 
+  actually `exclusions`. (#1401, @AshesITR)
+* `lint_dir()` no longer errors if there are multiple configured exclusions for a single file (#1413, @AshesITR).
+
+## Other changes
+
+* The minimum needed version for soft dependency `{withr}` has been bumped to `2.5.0`
+  (#1404, @IndrajeetPatil).
 
 # lintr 3.0.0
 

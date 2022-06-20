@@ -4,7 +4,7 @@
 \alias{efficiency_linters}
 \title{Efficiency linters}
 \description{
-Linters highlighting code efficiency problems, such as unneccessary function calls.
+Linters highlighting code efficiency problems, such as unnecessary function calls.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

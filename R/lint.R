@@ -12,11 +12,13 @@
 #'
 #' * `lint()` lints a single file.
 #' * `lint_dir()` lints all files in a directory.
-#' * `line_pakage()` lints all likely locations for R files in a package, i.e.
+#' * `lint_package()` lints all likely locations for R files in a package, i.e.
 #'   `R/`, `tests/`, `inst/`, `vignettes/`, `data-raw/`, and `demo/`.
 #'
 #' Read `vigentte("lintr")` to learn how to configure which linters are run
 #' by default.
+#' Note that if files contain unparseable encoding problems, only the encoding problem will be linted to avoid
+#' unintelligible error messages from other linters.
 #'
 #' @param filename either the filename for a file to lint, or a character string of inline R code for linting.
 #' The latter (inline data) applies whenever `filename` has a newline character (\\n).
@@ -88,9 +90,11 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   }
 
   lints <- list()
-  for (expr in source_expressions$expressions) {
-    for (linter in names(linters)) {
-      lints[[length(lints) + 1L]] <- get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines)
+  if (!is_tainted(source_expressions$lines)) {
+    for (expr in source_expressions$expressions) {
+      for (linter in names(linters)) {
+        lints[[length(lints) + 1L]] <- get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines)
+      }
     }
   }
 
@@ -597,6 +601,7 @@ maybe_report_progress <- function(done = FALSE) {
 
 maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
   if (inherits(error, "lint")) {
+    error$linter <- "error"
     lints[[length(lints) + 1L]] <- error
 
     if (!is.null(lint_cache)) {

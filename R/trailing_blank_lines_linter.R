@@ -31,7 +31,7 @@ trailing_blank_lines_linter <- function() {
       lints[[length(lints) + 1L]] <- Lint(
         filename = source_expression$filename,
         line_number = length(source_expression$file_lines),
-        column_number = nchar(last_line) + 1L,
+        column_number = nchar(last_line) %||% 0L + 1L,
         type = "style",
         message = "Missing terminal newline.",
         line = last_line

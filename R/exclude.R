@@ -59,7 +59,7 @@ is_excluded <- function(line_number, linter, file_exclusion) {
 }
 
 is_excluded_file <- function(file_exclusion) {
-  Inf %in% file_exclusion[[names2(file_exclusion) == ""]]
+  Inf %in% file_exclusion[[which(names2(file_exclusion) == "")]]
 }
 
 line_info <- function(line_numbers, type = c("start", "end")) {
@@ -101,8 +101,7 @@ parse_exclusions <- function(file, exclude = settings$exclude,
 
   exclusions <- list()
 
-  e <- tryCatch(nchar(lines), error = identity)
-  if (inherits(e, "error")) {
+  if (is_tainted(lines)) {
     # Invalid encoding. Don't parse exclusions.
     return(list())
   }

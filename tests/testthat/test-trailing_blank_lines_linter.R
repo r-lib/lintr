@@ -17,22 +17,58 @@ test_that("returns the correct linting", {
 
   # Construct a test file without terminal newline
   # cf. test-get_source_expressions.R
-  writeLines("lm(y ~ x)", tmp <- tempfile())
-  on.exit(unlink(tmp), add = TRUE)
-  writeBin(
-    # strip the last (two) element(s) (\r\n or \n)
-    head(
-      readBin(tmp, raw(), file.size(tmp)),
-      if (.Platform$OS.type == "windows") -2L else -1L
-    ),
-    tmp2 <- tempfile()
-  )
-  on.exit(unlink(tmp2), add = TRUE)
+  tmp <- withr::local_tempfile()
+  tmp2 <- withr::local_tempfile()
+  cat("lm(y ~ x)\n", file = tmp)
+  cat("lm(y ~ x)", file = tmp2)
 
   expect_lint(content = NULL, file = tmp, NULL, linter)
   expect_lint(content = NULL, file = tmp2, list(
     message = msg2,
     line_number = 1L,
     column_number = 10L
+  ), linter)
+
+  # Construct an Rmd file without terminal newline
+  tmp3 <- withr::local_tempfile(fileext = ".Rmd")
+  cat(
+    trim_some(
+      '---
+      title: "Some file"
+      ---
+
+      ```{r}
+      abc = 123
+      ```
+
+      ```{r child="some-file.Rmd"}
+      ```'
+    ),
+    file = tmp3
+  )
+  expect_lint(content = NULL, file = tmp3, list(
+    message = msg2,
+    line_number = 10L,
+    # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
+    column_number = 1L
+  ), linter)
+
+  # Construct an Rmd file without R code (#1415)
+  tmp4 <- withr::local_tempfile(fileext = ".Rmd")
+  cat(
+    trim_some(
+      '---
+      title: "Some file"
+      ---
+
+      No code and no terminal newline'
+    ),
+    file = tmp4
+  )
+  expect_lint(content = NULL, file = tmp4, list(
+    message = msg2,
+    line_number = 5L,
+    # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
+    column_number = 1L
   ), linter)
 })
