@@ -36,7 +36,6 @@ commented_code_linter <- function() {
     any_spaces,
     capture(
       name = "code",
-      # except("'"),
       anything,
       or(
         some_of("{}[]"), # code-like parentheses

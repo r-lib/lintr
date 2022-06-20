@@ -7,7 +7,8 @@
 
 ## New features
 
-* `commented_code_linter()` now lints commented argument code as well (#386, @AshesITR).
+* `commented_code_linter()` now lints commented argument code, containing a trailing comma, as well (#386, @AshesITR).
+  For example a comment containing `#  na.rm = TRUE,` now triggers a lint.
 
 ## Bug fixes
 
