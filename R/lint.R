@@ -561,6 +561,161 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
   xml2::write_xml(d, filename)
 }
 
+#' SARIF Report for lint results
+#'
+#' Generate a report of the linting results using the [SARIF](https://sarifweb.azurewebsites.net/) format.
+#'
+#' @param lints the linting results.
+#' @param filename the name of the output report
+#' @export
+sarif_output <- function(lints, filename = "lintr_results.sarif") {
+
+  # package path will be NULL unless it is a relative path
+  package_path <- attr(lints, "path")
+
+  # setup template
+  sarif <- jsonlite::fromJSON(
+    '{
+      "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+      "version": "2.1.0",
+      "runs": [
+        {
+          "tool": {
+            "driver": {
+              "name": "lintr",
+              "informationUri": "https://lintr.r-lib.org/",
+              "version": "2.0.1",
+              "rules": [
+                {
+                  "id": "trailing_whitespace_linter",
+                  "fullDescription": {
+                    "text": "Trailing whitespace is superfluous."
+                  },
+                  "defaultConfiguration": {
+                    "level": "note"
+                  }
+                }
+              ]
+            }
+          },
+          "results": [
+            {
+              "ruleId": "trailing_whitespace_linter",
+              "ruleIndex": 0,
+              "message": {
+                "text": "Trailing blank lines are superfluous."
+              },
+              "locations": [
+                {
+                  "physicalLocation": {
+                    "artifactLocation": {
+                      "uri": "TestFileFolder/hello.r",
+                      "uriBaseId": "ROOTPATH"
+                    },
+                    "region": {
+                      "startLine": 2,
+                      "startColumn": 22,
+                      "snippet": {
+                        "text": "print(Hello World!) "
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "columnKind": "utf16CodeUnits",
+          "originalUriBaseIds": {
+            "ROOTPATH": {
+              "uri": "file:///C:/repos/repototest/"
+            }
+          }
+        }
+      ]
+    }',
+    simplifyVector = TRUE,
+    simplifyDataFrame = FALSE,
+    simplifyMatrix = FALSE
+  )
+
+  # assign values
+  sarif$runs[[1L]]$results <- NULL
+  sarif$runs[[1L]]$tool$driver$rules <- NULL
+  sarif$runs[[1L]]$tool$driver$version <-
+    as.character(utils::packageVersion("lintr"))
+  sarif$runs[[1L]]$originalUriBaseIds$ROOTPATH$uri <- ""
+  rule_index_exists <- FALSE
+  root_path_uri <- gsub("\\\\", "/", package_path)
+
+  if (startsWith(root_path_uri, "/")) {
+    root_path_uri <- paste("file://", root_path_uri, sep = "")
+  } else {
+    root_path_uri <- paste("file:///", root_path_uri, sep = "")
+  }
+
+  if (!endsWith(root_path_uri, "/")) {
+    root_path_uri <- paste(root_path_uri, "/", sep = "")
+  }
+
+  sarif$runs[[1L]]$originalUriBaseIds$ROOTPATH$uri <- root_path_uri
+
+  # loop and assign result values
+  for (lint in lints) {
+    one_result <- list()
+
+    if (is.null(sarif$runs[[1L]]$tool$driver$rules)) {
+      rule_index_exists <- 0L
+    } else {
+      rule_index_exists <-
+        which(sapply(sarif$runs[[1L]]$tool$driver$rules,
+                     function(x) x$id == lint$linter))
+      if (length(rule_index_exists) == 0L ||
+          is.na(rule_index_exists[1L])) {
+        rule_index_exists <- 0L
+      }
+    }
+
+    if (rule_index_exists == 0L) {
+      new_rule <- list(
+        id = lint$linter,
+        fullDescription = list(text = lint$message),
+        defaultConfiguration = list(level = switch(lint$type,
+                                                   style = "note",
+                                                   lint$type))
+      )
+      sarif$runs[[1L]]$tool$driver$rules <-
+        append(sarif$runs[[1L]]$tool$driver$rules, list(new_rule))
+      rule_index <- length(sarif$runs[[1L]]$tool$driver$rules) - 1L
+    } else {
+      rule_index <- rule_index_exists - 1L
+    }
+
+    one_result <- append(one_result, c(ruleId = lint$linter))
+    one_result <- append(one_result, c(ruleIndex = rule_index))
+    one_result <-
+      append(one_result, list(message = list(text = lint$message)))
+    one_location <- list(physicalLocation = list(
+      artifactLocation = list(
+        uri = gsub("\\\\", "/", lint$filename),
+        uriBaseId = "ROOTPATH"
+      ),
+      region = list(
+        startLine = lint$line_number,
+        startColumn = lint$column_number,
+        snippet = list(text = lint$line)
+      )
+    ))
+    one_result <-
+      append(one_result, c(locations = list(list(one_location))))
+
+    sarif$runs[[1L]]$results <-
+      append(sarif$runs[[1L]]$results, list(one_result))
+  }
+
+  write(jsonlite::toJSON(sarif, pretty = TRUE, auto_unbox = TRUE),
+        filename)
+}
+
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {
 
   maximum <- max(column_number, unlist(ranges))
