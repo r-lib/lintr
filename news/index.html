@@ -57,11 +57,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="lintr-development-version">lintr (development version)<a class="anchor" aria-label="anchor" href="#lintr-development-version"></a></h2>
-<div class="section level3">
-<h3 id="changes-to-defaults-development-version">Changes to defaults<a class="anchor" aria-label="anchor" href="#changes-to-defaults-development-version"></a></h3>
-<ul><li>
-<code><a href="../reference/seq_linter.html">seq_linter()</a></code> additionally lints on <code>1:n()</code> (from dplyr) and <code>1:.N</code> (from data.table) (<a href="https://github.com/r-lib/lintr/issues/1396" class="external-link">#1396</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</li></ul></div>
-<div class="section level3">
+<ul><li><p><code><a href="../reference/modify_defaults.html">modify_defaults()</a></code> no longer uses the mistaken <code>"lintr_function"</code> S3 class, instead applying the <code>"linter"</code> class also common to <code><a href="../reference/Linter.html">Linter()</a></code>. <code><a href="../reference/Linter.html">Linter()</a></code> also includes <code>"function"</code> in the S3 class of its output to facilitate S3 dispatch to <code>function</code> methods where appropriate (<a href="https://github.com/r-lib/lintr/issues/1392" class="external-link">#1392</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). ## Changes to defaults</p></li>
+<li><p><code><a href="../reference/seq_linter.html">seq_linter()</a></code> additionally lints on <code>1:n()</code> (from dplyr) and <code>1:.N</code> (from data.table) (<a href="https://github.com/r-lib/lintr/issues/1396" class="external-link">#1396</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</p></li>
+</ul><div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> no longer fails on R files that match a knitr pattern (<a href="https://github.com/r-lib/lintr/issues/743" class="external-link">#743</a>, <a href="https://github.com/r-lib/lintr/issues/879" class="external-link">#879</a>, <a href="https://github.com/r-lib/lintr/issues/1406" class="external-link">#1406</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
@@ -101,8 +99,10 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <li><code>snake_case_linter()</code></li>
 <li><code>trailing_semicolons_linter()</code></li>
 </ul></li>
-<li><p>Removed <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> from <code>all_undesirable_functions</code> because early returns (which often improve readability and reduce code complexity) require explicit use of <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code>. Follow <a href="https://github.com/r-lib/lintr/issues/1100" class="external-link">#1100</a> for an upcoming <code>return_linter()</code> to lint unnecessary <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> statements (<a href="https://github.com/r-lib/lintr/issues/1146" class="external-link">#1146</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).<br>
-Note that you can replicate old behavior by supplying <code>return</code> as a custom undesirable function: <code>undesirable_function_linter(c(all_undesirable_functions, list(return = NA)))</code></p></li>
+<li>
+<p>Removed <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> from <code>all_undesirable_functions</code> because early returns (which often improve readability and reduce code complexity) require explicit use of <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code>. Follow <a href="https://github.com/r-lib/lintr/issues/1100" class="external-link">#1100</a> for an upcoming <code>return_linter()</code> to lint unnecessary <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> statements (<a href="https://github.com/r-lib/lintr/issues/1146" class="external-link">#1146</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</p>
+<p>Note that you can replicate old behavior by supplying <code>return</code> as a custom undesirable function: <code>undesirable_function_linter(c(all_undesirable_functions, list(return = NA)))</code></p>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="deprecations-3-0-0">Deprecations<a class="anchor" aria-label="anchor" href="#deprecations-3-0-0"></a></h3>
