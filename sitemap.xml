@@ -304,6 +304,9 @@
     <loc>https://lintr.r-lib.org/reference/robustness_linters.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/reference/sarif_output.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/reference/semicolon_linter.html</loc>
   </url>
   <url>
