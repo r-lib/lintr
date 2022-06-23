@@ -63,6 +63,19 @@ test_that("returns the correct linting", {
     linter
   )
 
+  expect_lint(
+    trim_some("
+      d <- t.test(
+        x = dplyr::starwars$height
+        #, var.equal = TRUE
+        , conf.level = .99
+        , mu = 175
+      )
+    "),
+    list(message = msg, line_number  = 3L),
+    linter
+  )
+
   test_ops <- append(ops[ops != "%[^%]*%"], values = c("%>%", "%anything%"))
   for (op in test_ops) {
     expect_lint(paste("i", op, "1", collapse = ""), NULL, linter)
