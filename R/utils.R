@@ -70,7 +70,7 @@ auto_names <- function(x) {
   if (!any(missing)) return(nms)
 
   default_name <- function(x) {
-    if (inherits(x, "linter")) {
+    if (is_linter(x)) {
       attr(x, "name", exact = TRUE)
     } else {
       paste(deparse(x, 500L), collapse = " ")
@@ -178,7 +178,7 @@ Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name.
     stop("`fun` must be a function taking exactly one argument.", call. = FALSE)
   }
   force(name)
-  structure(fun, class = "linter", name = name)
+  structure(fun, class = c("linter", "function"), name = name)
 }
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
@@ -261,6 +261,8 @@ get_r_code <- function(xml) {
   }, character(1L))
   paste(lines, collapse = "\n")
 }
+
+is_linter <- function(x) inherits(x, "linter")
 
 is_tainted <- function(lines) {
   inherits(tryCatch(nchar(lines), error = identity), "error")

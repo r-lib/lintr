@@ -1,5 +1,8 @@
 # lintr (development version)
 
+* `modify_defaults()` no longer uses the mistaken `"lintr_function"` S3 class, instead applying the
+  `"linter"` class also common to `Linter()`. `Linter()` also includes `"function"` in the S3
+  class of its output to facilitate S3 dispatch to `function` methods where appropriate (#1392, @MichaelChirico).
 ## Changes to defaults
 
 * `seq_linter()` additionally lints on `1:n()` (from dplyr) 
@@ -49,7 +52,8 @@
    + `trailing_semicolons_linter()`
 * Removed `return()` from `all_undesirable_functions` because early returns (which often improve
   readability and reduce code complexity) require explicit use of `return()`. Follow #1100 for
-  an upcoming `return_linter()` to lint unnecessary `return()` statements (#1146, @AshesITR).  
+  an upcoming `return_linter()` to lint unnecessary `return()` statements (#1146, @AshesITR).
+
   Note that you can replicate old behavior by supplying `return` as a custom undesirable function:
   `undesirable_function_linter(c(all_undesirable_functions, list(return = NA)))`
 
@@ -301,6 +305,7 @@ of general interest to the broader R community. More will be included in future 
    + Added the linter name to lintrs output to facilitate discovery of the correct name (#1357, @AshesITR).
 * Improved S3 generic detection for non-standard S3 generics where `UseMethod()` is called after several
   preceding expressions (#846, @jonkeane).
+* New `sarif_output()` function to output lints to SARIF output (#1424, @shaopeng-gh)
 * `extraction_operator_linter()`: no longer lint `x[NULL]` (#1273, @AshesITR).
 * `is_lint_level()`: new exported helper for readably explaining which type of expression is required for a custom
   linter. Some linters are written to require the full file's parse tree (for example, `single_quotes_linter()`).
