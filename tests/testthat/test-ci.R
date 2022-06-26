@@ -34,7 +34,7 @@ test_that("GitHub Actions - linting on error works", {
 
   l <- lint(tmp)
 
-  mockery::stub(print.lints, "base::quit", function(...) { cat("Tried to quit.\n") })
+  mockery::stub(print.lints, "base::quit", function(...) cat("Tried to quit.\n"))
   expect_output(print(l), "::warning file", fixed = TRUE)
 })
 

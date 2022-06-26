@@ -38,6 +38,7 @@ This file configures all the steps required to run `lintr::lint_package()` on yo
 along side the status check on GitHub.
 If you want to disable the commenting you can set the environment variable `LINTR_COMMENT_BOT=false`.
 Additionally, if you want the builds to produce an error instead of just a warning, you can set the environment variable `LINTR_ERROR_ON_LINT=true`.
+Note that this will kill the R process in case of a lint.
 
 If your project is in a subdirectory and you would like to use GitHub Actions annotations, you can set
 `options(lintr.github_annotation_project_dir = "path/to/project")` which will make sure that the annotations point to the correct paths.
