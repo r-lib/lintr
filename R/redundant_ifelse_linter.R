@@ -51,12 +51,11 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
       second_arg <- xml2::xml_find_chr(num_expr, "string(expr[4]/NUM_CONST)")
       replacement <- ifelse(
         first_arg %in% c("0", "1") | second_arg %in% c("0", "1"),
-        "as.numeric",
-        "as.integer"
+        "as.numeric(!x)",
+        "as.integer(x)"
       )
       lint_message <- paste(
-        sprintf("Prefer %s(x) to %s(x, %s, %s) if really needed,", replacement, matched_call, first_arg, second_arg),
-        "but do note that R will usually convert logical vectors to 0/1 on the fly when needed."
+        sprintf("Prefer %s to %s(x, %s, %s) if really needed.", replacement, matched_call, first_arg, second_arg)
       )
       lints <- c(lints, xml_nodes_to_lints(num_expr, source_expression, lint_message, type = "warning"))
     }
