@@ -46,12 +46,12 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
     if (!allow10) {
       num_expr <- xml2::xml_find_all(xml, num_xpath)
       matched_call <- xp_call_name(num_expr)
-      # [1] call; [2] logical condiditon
+      # [1] call; [2] logical condition
       first_arg <- xml2::xml_find_chr(num_expr, "string(expr[3]/NUM_CONST)")
       second_arg <- xml2::xml_find_chr(num_expr, "string(expr[4]/NUM_CONST)")
       replacement <- ifelse(
         first_arg %in% c("0", "1") | second_arg %in% c("0", "1"),
-        "as.numeric(!x)",
+        ifelse(first_arg == "0" & second_arg == "1", "as.numeric(!x)", "as.numeric(x)"),
         "as.integer(x)"
       )
       lint_message <- paste(
