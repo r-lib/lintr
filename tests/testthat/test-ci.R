@@ -26,6 +26,18 @@ test_that("GitHub Actions functionality works in a subdirectory", {
   )
 })
 
+test_that("GitHub Actions - linting on error works", {
+  # imitate being on GHA whether or not we are
+  withr::local_envvar(list(GITHUB_ACTIONS = "true", LINTR_ERROR_ON_LINT = "true"))
+  withr::local_options(lintr.rstudio_source_markers = FALSE)
+  tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
+
+  l <- lint(tmp)
+
+  mockery::stub(print.lints, "base::quit", function(...) cat("Tried to quit.\n"))
+  expect_output(print(l), "::warning file", fixed = TRUE)
+})
+
 test_that("Printing works for Travis", {
   withr::local_envvar(list(GITHUB_ACTIONS = "false", TRAVIS_REPO_SLUG = "test/repo", LINTR_COMMENT_BOT = "true"))
   withr::local_options(lintr.rstudio_source_markers = FALSE)
