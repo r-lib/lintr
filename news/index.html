@@ -84,11 +84,11 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <p>All linters are now function factories (i.e., functions that return functions) for consistency. Previously, only linters with customizable parameters were factories (<a href="https://github.com/r-lib/lintr/issues/245" class="external-link">#245</a>, <a href="https://github.com/fangly" class="external-link">@fangly</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>, and <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</p>
 <p>This means that usage such as <code>lint("file.R", seq_linter)</code> should be updated to <code>lint("file.R", seq_linter())</code>, and the following update for custom linters:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="va">my_custom_linter</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">source_expression</span><span class="op">)</span> <span class="op">{</span> <span class="va">...</span> <span class="op">}</span>
-
-<span class="co"># becomes</span>
-<span class="va">my_custom_linter</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu"><a href="../reference/Linter.html">Linter</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">source_expression</span><span class="op">)</span> <span class="op">{</span> <span class="va">...</span> <span class="op">}</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span></span>
+<span><span class="va">my_custom_linter</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">source_expression</span><span class="op">)</span> <span class="op">{</span> <span class="va">...</span> <span class="op">}</span></span>
+<span></span>
+<span><span class="co"># becomes</span></span>
+<span><span class="va">my_custom_linter</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu"><a href="../reference/Linter.html">Linter</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">source_expression</span><span class="op">)</span> <span class="op">{</span> <span class="va">...</span> <span class="op">}</span><span class="op">)</span></span></code></pre></div>
 </li>
 <li><p>Exclusions specified in the <code>.lintr</code> file are now relative to the location of that file and support excluding entire directories (<a href="https://github.com/r-lib/lintr/issues/158" class="external-link">#158</a>, <a href="https://github.com/r-lib/lintr/issues/438" class="external-link">#438</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</p></li>
 <li>
@@ -165,7 +165,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <code><a href="../reference/object_length_linter.html">object_length_linter()</a></code>: correctly detect generics and only count the implementation class towards the length. This prevents false positive lints in the case of long generic names, e.g. <code>very_very_very_long_generic_name.short_class</code> no longer produces a lint (<a href="https://github.com/r-lib/lintr/issues/871" class="external-link">#871</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>
 <code><a href="../reference/object_name_linter.html">object_name_linter()</a></code>:<ul><li>Improved generic detection – in user-defined method <code>my_method.upstream.class</code>, <code>upstream.class</code> no longer throws a lint because the generic (<code>my_method</code>) properly uses <code>snake_case</code> (<a href="https://github.com/r-lib/lintr/issues/737" class="external-link">#737</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
-<li>Exclude special R namespace hook functions such as <code><a href="https://rdrr.io/r/base/ns-hooks.html" class="external-link">.onLoad()</a></code> (<a href="https://github.com/r-lib/lintr/issues/500" class="external-link">#500</a>, <a href="https://github.com/r-lib/lintr/issues/614" class="external-link">#614</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a> and <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>Exclude special R namespace hook functions such as <code>.onLoad()</code> (<a href="https://github.com/r-lib/lintr/issues/500" class="external-link">#500</a>, <a href="https://github.com/r-lib/lintr/issues/614" class="external-link">#614</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a> and <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>Correctly detect imported functions when linting packages (<a href="https://github.com/r-lib/lintr/issues/642" class="external-link">#642</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>Correctly detect assignment generics like <code>names&lt;-.class_name</code> (<a href="https://github.com/r-lib/lintr/issues/843" class="external-link">#843</a>, <a href="https://github.com/jonkeane" class="external-link">@jonkeane</a>).</li>
 <li>Added new styles <code>"symbols"</code> and <code>"SNAKE_CASE"</code> (<a href="https://github.com/r-lib/lintr/issues/494" class="external-link">#494</a>, <a href="https://github.com/r-lib/lintr/issues/495" class="external-link">#495</a>, <a href="https://github.com/r-lib/lintr/issues/615" class="external-link">#615</a>, <a href="https://github.com/r-lib/lintr/issues/670" class="external-link">#670</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a> and <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).<ul><li>
@@ -234,7 +234,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <li>
 <code><a href="../reference/namespace_linter.html">namespace_linter()</a></code> to check for common mistakes in <code>pkg::symbol</code> usages (<a href="https://github.com/r-lib/lintr/issues/548" class="external-link">#548</a>, <a href="https://github.com/renkun-ken" class="external-link">@renkun-ken</a>).</li>
 <li>
-<code><a href="../reference/package_hooks_linter.html">package_hooks_linter()</a></code> to run a series of checks also done by <code>R CMD check</code> on the <code><a href="https://rdrr.io/r/base/ns-hooks.html" class="external-link">.onLoad()</a></code>, <code><a href="https://rdrr.io/r/base/ns-hooks.html" class="external-link">.onAttach()</a></code>, <code><a href="https://rdrr.io/r/base/ns-hooks.html" class="external-link">.Last.lib()</a></code> and <code><a href="https://rdrr.io/r/base/ns-hooks.html" class="external-link">.onDetach()</a></code> hooks (<a href="https://github.com/r-lib/lintr/issues/882" class="external-link">#882</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<code><a href="../reference/package_hooks_linter.html">package_hooks_linter()</a></code> to run a series of checks also done by <code>R CMD check</code> on the <code>.onLoad()</code>, <code>.onAttach()</code>, <code>.Last.lib()</code> and <code>.onDetach()</code> hooks (<a href="https://github.com/r-lib/lintr/issues/882" class="external-link">#882</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/pipe_call_linter.html">pipe_call_linter()</a></code> to enforce that all steps of <code>magrittr</code> pipelines use explicit calls instead of symbols, e.g. <code>x %&gt;% mean()</code> instead of <code>x %&gt;% mean</code> (<a href="https://github.com/r-lib/lintr/issues/801" class="external-link">#801</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
@@ -589,7 +589,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

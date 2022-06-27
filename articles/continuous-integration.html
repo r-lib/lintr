@@ -94,9 +94,9 @@
 </h3>
 <p>If your package is on GitHub, the easiest way to do this is with GitHub Actions. The workflow configuration files use YAML syntax. The <code>usethis</code> package has some great functionality that can help you with workflow files. The most straightforward way to add a <code>lintr</code> workflow to your package is to use the <a href="https://github.com/r-lib/actions/tree/master/examples" class="external-link">r-lib/actions</a>’s <code>lint</code> example. To do this with <code>usethis</code>, you need to call</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_github_action</span><span class="op">(</span><span class="st">"lint"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_github_action</span><span class="op">(</span><span class="st">"lint"</span><span class="op">)</span></span></code></pre></div>
 <p>This will create a workflow file called <code>lint.yaml</code> and place it in the correct location, namely in the <code>.github/workflows</code> directory of your repository. This file configures all the steps required to run <code><a href="../reference/lint.html">lintr::lint_package()</a></code> on your package.</p>
-<p><a href="https://github.com/lintr-bot" class="external-link">lintr-bot</a> will then add comments to the commit or pull request with the lints found and they will also be printed as <a href="https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-status-checks#types-of-status-checks-on-github" class="external-link">annotations</a> along side the status check on GitHub. If you want to disable the commenting you can set the environment variable <code>LINTR_COMMENT_BOT=false</code>.</p>
+<p><a href="https://github.com/lintr-bot" class="external-link">lintr-bot</a> will then add comments to the commit or pull request with the lints found and they will also be printed as <a href="https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-status-checks#types-of-status-checks-on-github" class="external-link">annotations</a> along side the status check on GitHub. If you want to disable the commenting you can set the environment variable <code>LINTR_COMMENT_BOT=false</code>. Additionally, if you want the builds to produce an error instead of just a warning, you can set the environment variable <code>LINTR_ERROR_ON_LINT=true</code>. Note that this will kill the R process in case of a lint.</p>
 <p>If your project is in a subdirectory and you would like to use GitHub Actions annotations, you can set <code>options(lintr.github_annotation_project_dir = "path/to/project")</code> which will make sure that the annotations point to the correct paths.</p>
 </div>
 <div class="section level3">
@@ -106,7 +106,7 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">r_github_packages</span><span class="kw">:</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> r-lib/lintr</span></span></code></pre></div>
 <p>We recommend running <code><a href="../reference/lint.html">lintr::lint_package()</a></code> as an <a href="#non-failing-lints">after_success step in your build process</a>]</p>
-<p>Just like with GitHub Actions, <a href="https://github.com/lintr-bot" class="external-link">lintr-bot</a> will then add comments to the commit or pull request with the lints found and they will also be printed on Travis-CI. If you want to disable the commenting you can set the environment variable <code>LINTR_COMMENT_BOT=false</code>.</p>
+<p>Just like with GitHub Actions, <a href="https://github.com/lintr-bot" class="external-link">lintr-bot</a> will then add comments to the commit or pull request with the lints found and they will also be printed on Travis-CI. The environment variables <code>LINTR_COMMENT_BOT</code> and <code>LINTR_ERROR_ON_LINT</code> mentioned for GitHub actions also work with Travis CI builds.</p>
 <div class="section level5">
 <h5 id="non-failing-lints">Non-failing Lints<a class="anchor" aria-label="anchor" href="#non-failing-lints"></a>
 </h5>
@@ -126,7 +126,7 @@
 </h3>
 <p>If your project is on GitHub, you could take advantage of GitHub Actions and the <code>usethis</code> functionality. <a href="https://github.com/r-lib/actions/tree/master/examples" class="external-link">r-lib/actions</a> includes a <code>lint-project</code> example, which you can use by calling:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_github_action</span><span class="op">(</span><span class="st">"lint-project"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_github_action</span><span class="op">(</span><span class="st">"lint-project"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="super-linter">Super-Linter<a class="anchor" aria-label="anchor" href="#super-linter"></a>
@@ -147,7 +147,7 @@
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer>

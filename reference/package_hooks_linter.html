@@ -65,19 +65,19 @@ namespace hooks that will cause <code>R CMD check</code> issues. See Writing R E
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">package_hooks_linter</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">package_hooks_linter</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     
-<ol><li><p><code><a href="https://rdrr.io/r/base/ns-hooks.html" class="external-link">.onLoad()</a></code> shouldn't call <code><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat()</a></code>, <code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code>, <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines()</a></code>, <code><a href="https://rdrr.io/r/base/message.html" class="external-link">packageStartupMessage()</a></code>,
+<ol><li><p><code>.onLoad()</code> shouldn't call <code><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat()</a></code>, <code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code>, <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines()</a></code>, <code><a href="https://rdrr.io/r/base/message.html" class="external-link">packageStartupMessage()</a></code>,
 <code><a href="https://rdrr.io/r/base/library.html" class="external-link">require()</a></code>, <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code>, or <code><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages()</a></code>.</p></li>
-<li><p><code><a href="https://rdrr.io/r/base/ns-hooks.html" class="external-link">.onAttach()</a></code> shouldn't call <code><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat()</a></code>, <code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code>, <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines()</a></code>, <code><a href="https://rdrr.io/r/base/library.dynam.html" class="external-link">library.dynam()</a></code>,
+<li><p><code>.onAttach()</code> shouldn't call <code><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat()</a></code>, <code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code>, <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines()</a></code>, <code><a href="https://rdrr.io/r/base/library.dynam.html" class="external-link">library.dynam()</a></code>,
 <code><a href="https://rdrr.io/r/base/library.html" class="external-link">require()</a></code>, <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code>, or <code><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages()</a></code>.</p></li>
-<li><p><code><a href="https://rdrr.io/r/base/ns-hooks.html" class="external-link">.Last.lib()</a></code> and <code><a href="https://rdrr.io/r/base/ns-hooks.html" class="external-link">.onDetach()</a></code> shouldn't call <code><a href="https://rdrr.io/r/base/library.dynam.html" class="external-link">library.dynam.unload()</a></code>.</p></li>
-<li><p><code><a href="https://rdrr.io/r/base/ns-hooks.html" class="external-link">.onLoad()</a></code> and <code><a href="https://rdrr.io/r/base/ns-hooks.html" class="external-link">.onAttach()</a></code> should take two arguments, with names matching <code>^lib</code> and <code>^pkg</code>;
-<code><a href="https://rdrr.io/r/base/ns-hooks.html" class="external-link">.Last.lib()</a></code> and <code><a href="https://rdrr.io/r/base/ns-hooks.html" class="external-link">.onDetach()</a></code> should take one argument with name matching <code>^lib</code>.</p></li>
+<li><p><code>.Last.lib()</code> and <code>.onDetach()</code> shouldn't call <code><a href="https://rdrr.io/r/base/library.dynam.html" class="external-link">library.dynam.unload()</a></code>.</p></li>
+<li><p><code>.onLoad()</code> and <code>.onAttach()</code> should take two arguments, with names matching <code>^lib</code> and <code>^pkg</code>;
+<code>.Last.lib()</code> and <code>.onDetach()</code> should take one argument with name matching <code>^lib</code>.</p></li>
 </ol></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -97,7 +97,7 @@ namespace hooks that will cause <code>R CMD check</code> issues. See Writing R E
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

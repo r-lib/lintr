@@ -62,7 +62,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">modify_defaults</span><span class="op">(</span><span class="va">defaults</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">modify_defaults</span><span class="op">(</span><span class="va">defaults</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -91,13 +91,13 @@ transformations are applied to the names: (1) replace <code>_</code> with <code>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># custom list of undesirable functions:</span></span>
-<span class="r-in"><span class="co">#    remove sapply (using NULL)</span></span>
-<span class="r-in"><span class="co">#    add cat (with a accompanying message),</span></span>
-<span class="r-in"><span class="co">#    add print (unnamed, i.e. with no accompanying message)</span></span>
-<span class="r-in"><span class="co">#    add return (as taken from all_undesirable_functions)</span></span>
-<span class="r-in"><span class="va">my_undesirable_functions</span> <span class="op">&lt;-</span> <span class="fu">modify_defaults</span><span class="op">(</span>defaults <span class="op">=</span> <span class="va">default_undesirable_functions</span>,</span>
-<span class="r-in">  sapply<span class="op">=</span><span class="cn">NULL</span>, <span class="st">"cat"</span><span class="op">=</span><span class="st">"No cat allowed"</span>, <span class="st">"print"</span>, <span class="va">all_undesirable_functions</span><span class="op">[[</span><span class="st">"return"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># custom list of undesirable functions:</span></span></span>
+<span class="r-in"><span><span class="co">#    remove sapply (using NULL)</span></span></span>
+<span class="r-in"><span><span class="co">#    add cat (with a accompanying message),</span></span></span>
+<span class="r-in"><span><span class="co">#    add print (unnamed, i.e. with no accompanying message)</span></span></span>
+<span class="r-in"><span><span class="co">#    add return (as taken from all_undesirable_functions)</span></span></span>
+<span class="r-in"><span><span class="va">my_undesirable_functions</span> <span class="op">&lt;-</span> <span class="fu">modify_defaults</span><span class="op">(</span>defaults <span class="op">=</span> <span class="va">default_undesirable_functions</span>,</span></span>
+<span class="r-in"><span>  sapply<span class="op">=</span><span class="cn">NULL</span>, <span class="st">"cat"</span><span class="op">=</span><span class="st">"No cat allowed"</span>, <span class="st">"print"</span>, <span class="va">all_undesirable_functions</span><span class="op">[[</span><span class="st">"return"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Trying to remove ‘return’, which is not in `defaults`.</span>
 </code></pre></div>
     </div>
@@ -110,7 +110,7 @@ transformations are applied to the names: (1) replace <code>_</code> with <code>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

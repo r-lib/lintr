@@ -65,15 +65,15 @@ linter logic into a <code><a href="lint-s3.html">Lint()</a></code> object to ret
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">xml_nodes_to_lints</span><span class="op">(</span>
-  <span class="va">xml</span>,
-  <span class="va">source_expression</span>,
-  <span class="va">lint_message</span>,
-  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"style"</span>, <span class="st">"warning"</span>, <span class="st">"error"</span><span class="op">)</span>,
-  column_number_xpath <span class="op">=</span> <span class="va">range_start_xpath</span>,
-  range_start_xpath <span class="op">=</span> <span class="st">"number(./@col1)"</span>,
-  range_end_xpath <span class="op">=</span> <span class="st">"number(./@col2)"</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xml_nodes_to_lints</span><span class="op">(</span></span>
+<span>  <span class="va">xml</span>,</span>
+<span>  <span class="va">source_expression</span>,</span>
+<span>  <span class="va">lint_message</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"style"</span>, <span class="st">"warning"</span>, <span class="st">"error"</span><span class="op">)</span>,</span>
+<span>  column_number_xpath <span class="op">=</span> <span class="va">range_start_xpath</span>,</span>
+<span>  range_start_xpath <span class="op">=</span> <span class="st">"number(./@col1)"</span>,</span>
+<span>  range_end_xpath <span class="op">=</span> <span class="st">"number(./@col2)"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -140,7 +140,7 @@ Note that the location line number cannot be changed and lints spanning multiple
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

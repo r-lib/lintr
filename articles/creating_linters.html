@@ -79,7 +79,7 @@
       <img src="" class="logo" alt=""><h1>Creating new linters</h1>
                         <h4 data-toc-skip class="author">lintr maintainers</h4>
             
-            <h4 data-toc-skip class="date">2022-06-23</h4>
+            <h4 data-toc-skip class="date">2022-06-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/lintr/blob/HEAD/vignettes/creating_linters.Rmd" class="external-link"><code>vignettes/creating_linters.Rmd</code></a></small>
       <div class="d-none name"><code>creating_linters.Rmd</code></div>
@@ -91,53 +91,53 @@
 <p>See the last section for some details specific to writing new linters for <a href="https://github.com/r-lib/lintr" class="external-link">lintr</a>.</p>
 <p>A good example of a simple linter is the <code>pipe_call_linter</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#' Pipe call linter</span>
-<span class="co">#'</span>
-<span class="co">#' Force explicit calls in magrittr pipes, e.g.,</span>
-<span class="co">#' `1:3 %&gt;% sum()` instead of `1:3 %&gt;% sum`.</span>
-<span class="co">#'</span>
-<span class="co">#' @evalRd rd_tags("pipe_call_linter")</span>
-<span class="co">#' @seealso [linters] for a complete list of linters available in lintr.</span>
-<span class="co">#' @export</span>
-<span class="va">pipe_call_linter</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">xpath</span> <span class="op">&lt;-</span> <span class="st">"//expr[preceding-sibling::SPECIAL[text() = '%&gt;%'] and *[1][self::SYMBOL]]"</span>
-
-  <span class="fu"><a href="../reference/Linter.html">Linter</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">source_expression</span><span class="op">)</span> <span class="op">{</span>
-    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="../reference/is_lint_level.html">is_lint_level</a></span><span class="op">(</span><span class="va">source_expression</span>, <span class="st">"expression"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-      <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-    <span class="op">}</span>
-
-    <span class="va">xml</span> <span class="op">&lt;-</span> <span class="va">source_expression</span><span class="op">$</span><span class="va">xml_parsed_content</span>
-
-    <span class="va">bad_expr</span> <span class="op">&lt;-</span> <span class="fu">xml2</span><span class="fu">::</span><span class="fu"><a href="http://xml2.r-lib.org/reference/xml_find_all.html" class="external-link">xml_find_all</a></span><span class="op">(</span><span class="va">xml</span>, <span class="va">xpath</span><span class="op">)</span>
-
-    <span class="fu"><a href="../reference/xml_nodes_to_lints.html">xml_nodes_to_lints</a></span><span class="op">(</span>
-      <span class="va">bad_expr</span>,
-      source_expression <span class="op">=</span> <span class="va">source_expression</span>,
-      lint_message <span class="op">=</span> <span class="st">"Use explicit calls in magrittr pipes, i.e., `a %&gt;% foo` should be `a %&gt;% foo()`."</span>,
-      type <span class="op">=</span> <span class="st">"warning"</span>
-    <span class="op">)</span>
-  <span class="op">}</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">#' Pipe call linter</span></span>
+<span><span class="co">#'</span></span>
+<span><span class="co">#' Force explicit calls in magrittr pipes, e.g.,</span></span>
+<span><span class="co">#' `1:3 %&gt;% sum()` instead of `1:3 %&gt;% sum`.</span></span>
+<span><span class="co">#'</span></span>
+<span><span class="co">#' @evalRd rd_tags("pipe_call_linter")</span></span>
+<span><span class="co">#' @seealso [linters] for a complete list of linters available in lintr.</span></span>
+<span><span class="co">#' @export</span></span>
+<span><span class="va">pipe_call_linter</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">xpath</span> <span class="op">&lt;-</span> <span class="st">"//expr[preceding-sibling::SPECIAL[text() = '%&gt;%'] and *[1][self::SYMBOL]]"</span></span>
+<span></span>
+<span>  <span class="fu"><a href="../reference/Linter.html">Linter</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">source_expression</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="../reference/is_lint_level.html">is_lint_level</a></span><span class="op">(</span><span class="va">source_expression</span>, <span class="st">"expression"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="va">xml</span> <span class="op">&lt;-</span> <span class="va">source_expression</span><span class="op">$</span><span class="va">xml_parsed_content</span></span>
+<span></span>
+<span>    <span class="va">bad_expr</span> <span class="op">&lt;-</span> <span class="fu">xml2</span><span class="fu">::</span><span class="fu"><a href="http://xml2.r-lib.org/reference/xml_find_all.html" class="external-link">xml_find_all</a></span><span class="op">(</span><span class="va">xml</span>, <span class="va">xpath</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="fu"><a href="../reference/xml_nodes_to_lints.html">xml_nodes_to_lints</a></span><span class="op">(</span></span>
+<span>      <span class="va">bad_expr</span>,</span>
+<span>      source_expression <span class="op">=</span> <span class="va">source_expression</span>,</span>
+<span>      lint_message <span class="op">=</span> <span class="st">"Use explicit calls in magrittr pipes, i.e., `a %&gt;% foo` should be `a %&gt;% foo()`."</span>,</span>
+<span>      type <span class="op">=</span> <span class="st">"warning"</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 <p>Let’s walk through the parts of the linter individually.</p>
 <div class="section level2">
 <h2 id="writing-the-linter">Writing the linter<a class="anchor" aria-label="anchor" href="#writing-the-linter"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#' Pipe call linter</span>
-<span class="co">#'</span>
-<span class="co">#' Force explicit calls in magrittr pipes, e.g.,</span>
-<span class="co">#' `1:3 %&gt;% sum()` instead of `1:3 %&gt;% sum`.</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">#' Pipe call linter</span></span>
+<span><span class="co">#'</span></span>
+<span><span class="co">#' Force explicit calls in magrittr pipes, e.g.,</span></span>
+<span><span class="co">#' `1:3 %&gt;% sum()` instead of `1:3 %&gt;% sum`.</span></span></code></pre></div>
 <p>Describe the linter, giving it a title and briefly covering the usages that are discouraged when the linter is active.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#' @evalRd rd_tags("pipe_call_linter")</span>
-<span class="co">#' @seealso [linters] for a complete list of linters available in lintr.</span>
-<span class="co">#' @export</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">#' @evalRd rd_tags("pipe_call_linter")</span></span>
+<span><span class="co">#' @seealso [linters] for a complete list of linters available in lintr.</span></span>
+<span><span class="co">#' @export</span></span></code></pre></div>
 <p>These lines (1) generate a Tags section in the documentation for the linter<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;NB: this is a helper function for generating custom Rd styling. See R/linter_tags.R.&lt;/p&gt;"><sup>1</sup></a>; (2) link to the full table of available linters; and (3) mark the function for export. The most unfamiliar here is probably (1), which can be skipped outside of <code>lintr</code> itself.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pipe_call_linter <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span></code></pre></div>
 <p>Next, we define the name of the new linter. The convention is to suffix all linter names with <code>_linter</code>. All <code>_linter</code> functions are function factories that return a closure that will do the actual linting function. We could define additional parameters that are useful for the linter in this function declaration (see, e.g. <code>assignment_linter</code>), but <code>pipe_call_linter</code> requires no additional arguments.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">xpath</span> <span class="op">&lt;-</span> <span class="st">"//expr[preceding-sibling::SPECIAL[text() = '%&gt;%'] and *[1][self::SYMBOL]]"</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">xpath</span> <span class="op">&lt;-</span> <span class="st">"//expr[preceding-sibling::SPECIAL[text() = '%&gt;%'] and *[1][self::SYMBOL]]"</span></span></code></pre></div>
 <p>Here is the core linter logic. <code>xpath</code> is an XPath expression for expressions matching the discouraged usage. <code>xpath</code> is saved inside the factory code (as opposed to inside the linter itself) for efficiency. Often, the <code>xpath</code> will be somewhat complicated / involve some assembly code using <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste()</a></code> or <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code>[^See <code><a href="../reference/infix_spaces_linter.html">infix_spaces_linter()</a></code> for an example of this], in which case it is preferable to execute this code only once when creating the linter; the cached XPath is then re-used on each expression in each file where the linter is run.</p>
 <p>Let’s examine the XPath a bit more closely:</p>
 <pre class="xpath"><code>//expr                  # global search (//) for 'expr' nodes (R expressions), at any nesting level
@@ -158,23 +158,23 @@
 <p>Therefore it is recommended to work with the tokens from <code>source_file$parsed_content</code> or <code>source_file$xml_parsed_content</code>, as they are tokenized from the <code>R</code> parser. These tokens are obtained from <code><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse()</a></code> and <code><a href="https://rdrr.io/r/utils/getParseData.html" class="external-link">utils::getParseData()</a></code> calls done prior to calling the new linter. <code><a href="https://rdrr.io/r/utils/getParseData.html" class="external-link">getParseData()</a></code> returns a <code>data.frame</code> with information from the source parse tree of the file being linted. A list of tokens is available from <a href="https://github.com/r-devel/r-svn/blob/master/src/main/gram.y#L395-L412" class="external-link">r-source/src/main/gram.y</a>.</p>
 <p><code>source_file$xml_parsed_content</code> uses <code><a href="https://rdrr.io/pkg/xmlparsedata/man/xml_parse_data.html" class="external-link">xmlparsedata::xml_parse_data()</a></code> to convert the <code><a href="https://rdrr.io/r/utils/getParseData.html" class="external-link">getParseData()</a></code> output into an XML tree, which enables writing linter logic in <a href="https://www.w3schools.com/xml/xpath_intro.asp" class="external-link">XPath</a>, a powerful language for expressing paths within the nested XML data structure. Most linters in <code>lintr</code> are built using XPath because it is a powerful language for computation on the abstract syntax tree / parse tree.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="../reference/is_lint_level.html">is_lint_level</a></span><span class="op">(</span><span class="va">source_expression</span>, <span class="st">"expression"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="../reference/is_lint_level.html">is_lint_level</a></span><span class="op">(</span><span class="va">source_expression</span>, <span class="st">"expression"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 <p>Here, we return early if <code>source_expression</code> is not the expression-level object. <code>get_source_expression()</code> returns an object that parses the input file in two ways – once is done expression-by-expression, the other contains all of the expressions in the file. This is done to facilitate caching. Suppose your package has a long source file (e.g., 100s of expressions) – rather than run linters on every expression every time the file is updated, when caching is activated <code>lintr</code> will only run the linter again on expressions that have changed.</p>
 <p>Therefore, it is preferable to write expression-level linters whenever possible. Two types of exceptions observed in <code>lintr</code> are (1) when several or all expressions are <em>required</em> to ensure the linter logic applies (e.g., <code>conjunct_test_linter</code> looks for consecutive calls to <code><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot()</a></code>, which will typically appear on consecutive expressions) or (2) when the linter logic is very simple &amp; fast to compute, so that the overhead of re-running the linter is low (e.g., <code>single_quotes_linter</code>). In those cases, use <code>is_lint_level(source_expression, "file")</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">xml</span> <span class="op">&lt;-</span> <span class="va">source_expression</span><span class="op">$</span><span class="va">xml_parsed_content</span>
-
-<span class="va">bad_expr</span> <span class="op">&lt;-</span> <span class="fu">xml2</span><span class="fu">::</span><span class="fu"><a href="http://xml2.r-lib.org/reference/xml_find_all.html" class="external-link">xml_find_all</a></span><span class="op">(</span><span class="va">xml</span>, <span class="va">xpath</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">xml</span> <span class="op">&lt;-</span> <span class="va">source_expression</span><span class="op">$</span><span class="va">xml_parsed_content</span></span>
+<span></span>
+<span><span class="va">bad_expr</span> <span class="op">&lt;-</span> <span class="fu">xml2</span><span class="fu">::</span><span class="fu"><a href="http://xml2.r-lib.org/reference/xml_find_all.html" class="external-link">xml_find_all</a></span><span class="op">(</span><span class="va">xml</span>, <span class="va">xpath</span><span class="op">)</span></span></code></pre></div>
 <p><code>source_expression$xml_parsed_content</code> is copied to a local variable (this is not strictly necessary but facilitates debugging). Then <code><a href="http://xml2.r-lib.org/reference/xml_find_all.html" class="external-link">xml2::xml_find_all()</a></code> is used to execute the XPath on this particular expression. Keep in mind that it is typically possible for a single expression to generate more than one lint – for example, <code>x %&gt;% na.omit %&gt;% sum</code> will trigger the <code><a href="../reference/pipe_call_linter.html">pipe_call_linter()</a></code> twice<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;This is particularly important if you want the &lt;code&gt;message&lt;/code&gt; field in the resulting &lt;code&gt;&lt;a href="../reference/lint-s3.html"&gt;Lint()&lt;/a&gt;&lt;/code&gt; to vary depending on the exact violation that’s found. For &lt;code&gt;&lt;a href="../reference/pipe_call_linter.html"&gt;pipe_call_linter()&lt;/a&gt;&lt;/code&gt;, the message is always the same. See &lt;code&gt;&lt;a href="../reference/assignment_linter.html"&gt;assignment_linter()&lt;/a&gt;&lt;/code&gt; for an example where the &lt;code&gt;message&lt;/code&gt; can vary.&lt;/p&gt;'><sup>3</sup></a>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/xml_nodes_to_lints.html">xml_nodes_to_lints</a></span><span class="op">(</span>
-  <span class="va">bad_expr</span>,
-  source_expression <span class="op">=</span> <span class="va">source_expression</span>,
-  lint_message <span class="op">=</span> <span class="st">"Use explicit calls in magrittr pipes, i.e., `a %&gt;% foo` should be `a %&gt;% foo()`."</span>,
-  type <span class="op">=</span> <span class="st">"warning"</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/xml_nodes_to_lints.html">xml_nodes_to_lints</a></span><span class="op">(</span></span>
+<span>  <span class="va">bad_expr</span>,</span>
+<span>  source_expression <span class="op">=</span> <span class="va">source_expression</span>,</span>
+<span>  lint_message <span class="op">=</span> <span class="st">"Use explicit calls in magrittr pipes, i.e., `a %&gt;% foo` should be `a %&gt;% foo()`."</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"warning"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>Finally, we pass the matching XML node(s) to <code><a href="../reference/xml_nodes_to_lints.html">xml_nodes_to_lints()</a></code>, which returns <code>Lint</code> objects corresponding to any “bad” usages found in <code>source_expression</code>. See <code><a href="../reference/lint-s3.html">?Lint</a></code> and <code><a href="../reference/xml_nodes_to_lints.html">?xml_nodes_to_lints</a></code> for details about the arguments. Note that here, the <code>message</code> for the lint is always the same, but for many linters, the message is customized to more closely match the observed usage. In such cases, <code>xml_nodes_to_lint()</code> can conveniently accept a function in <code>lint_message</code> which takes a node as input and converts it to a customized message. See, for example, <code>seq_linter</code>.</p>
 </div>
 <div class="section level2">
@@ -190,29 +190,29 @@
 <li>Linter returns no lints when there is nothing to lint, e.g.</li>
 </ol>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/expect_lint.html">expect_lint</a></span><span class="op">(</span><span class="st">"blah"</span>, <span class="cn">NULL</span>, <span class="fu"><a href="../reference/assignment_linter.html">assignment_linter</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/expect_lint.html">expect_lint</a></span><span class="op">(</span><span class="st">"blah"</span>, <span class="cn">NULL</span>, <span class="fu"><a href="../reference/assignment_linter.html">assignment_linter</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Linter returns a lint when there is something to lint, e.g.</li>
 </ol>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/expect_lint.html">expect_lint</a></span><span class="op">(</span><span class="st">"blah=1"</span>,
-  <span class="fu">rex</span><span class="op">(</span><span class="st">"Use &lt;-, not =, for assignment."</span><span class="op">)</span>,
-  <span class="fu"><a href="../reference/assignment_linter.html">assignment_linter</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/expect_lint.html">expect_lint</a></span><span class="op">(</span><span class="st">"blah=1"</span>,</span>
+<span>  <span class="fu">rex</span><span class="op">(</span><span class="st">"Use &lt;-, not =, for assignment."</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/assignment_linter.html">assignment_linter</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <ol start="3" style="list-style-type: decimal">
 <li>As many edge cases as you can think of that might break it, e.g.</li>
 </ol>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/expect_lint.html">expect_lint</a></span><span class="op">(</span><span class="st">"fun((blah = fun(1)))"</span>,
-  <span class="fu">rex</span><span class="op">(</span><span class="st">"Use &lt;-, not =, for assignment."</span><span class="op">)</span>,
-  <span class="fu"><a href="../reference/assignment_linter.html">assignment_linter</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/expect_lint.html">expect_lint</a></span><span class="op">(</span><span class="st">"fun((blah = fun(1)))"</span>,</span>
+<span>  <span class="fu">rex</span><span class="op">(</span><span class="st">"Use &lt;-, not =, for assignment."</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/assignment_linter.html">assignment_linter</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>You may want to test that additional <code>lint</code> attributes are correct, such as the type, line number, column number, e.g.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/expect_lint.html">expect_lint</a></span><span class="op">(</span><span class="st">"blah=1"</span>,
-  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>message <span class="op">=</span> <span class="st">"assignment"</span>, line_number <span class="op">=</span> <span class="fl">1</span>, column_number <span class="op">=</span> <span class="fl">5</span>, type <span class="op">=</span> <span class="st">"style"</span><span class="op">)</span>,
-  <span class="fu"><a href="../reference/assignment_linter.html">assignment_linter</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/expect_lint.html">expect_lint</a></span><span class="op">(</span><span class="st">"blah=1"</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>message <span class="op">=</span> <span class="st">"assignment"</span>, line_number <span class="op">=</span> <span class="fl">1</span>, column_number <span class="op">=</span> <span class="fl">5</span>, type <span class="op">=</span> <span class="st">"style"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/assignment_linter.html">assignment_linter</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>Finally, it is a good idea to test that your linter reports multiple lints if needed, e.g.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_lint</span>(<span class="st">"blah=1; blah=2"</span>,</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
@@ -257,7 +257,7 @@
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer>
