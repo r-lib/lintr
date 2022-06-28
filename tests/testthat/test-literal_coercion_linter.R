@@ -21,10 +21,10 @@ test_that("literal_coercion_linter skips allowed usages", {
 
 test_that("literal_coercion_linter skips allowed rlang usages", {
   expect_lint("int(1, 2.0, 3)", NULL, literal_coercion_linter())
-  expect_lint("chr('x', 'xy', 'xyz')", NULL, literal_coercion_linter())
+  expect_lint("chr('e', 'ab', 'xyz')", NULL, literal_coercion_linter())
   expect_lint("lgl(0, 1)", NULL, literal_coercion_linter())
   expect_lint("lgl(0L, 1)", NULL, literal_coercion_linter())
-  expect_lint("dbl(1.2, 2.3, 3L)", NULL, literal_coercion_linter())
+  expect_lint("dbl(1.2, 1e5, 3L, 2E4)", NULL, literal_coercion_linter())
   # make sure using namespace (`rlang::`) doesn't create problems
   expect_lint("rlang::int(1, 2, 3)", NULL, literal_coercion_linter())
 })
@@ -39,19 +39,19 @@ patrick::with_parameters_test_that(
     literal_coercion_linter()
   ),
   .cases = tibble::tribble(
-        ~.test_name,   ~out_type,   ~input,
-    "lgl, from int",   "logical",     "1L",
-    "lgl, from num",   "logical",      "1",
-    "lgl, from chr",   "logical", '"true"',
-    "int, from num",   "integer",      "1",
-    "num, from num",   "numeric",      "1",
-    "dbl, from num",    "double",      "1",
-    "chr, from num", "character",      "1",
+    ~.test_name, ~out_type, ~input,
+    "lgl, from int", "logical", "1L",
+    "lgl, from num", "logical", "1",
+    "lgl, from chr", "logical", '"true"',
+    "int, from num", "integer", "1",
+    "num, from num", "numeric", "1",
+    "dbl, from num", "double", "1",
+    "chr, from num", "character", "1",
     # affirmatively lint as.<type>(NA) should be NA_<type>_
-    "int, from NA",    "integer",     "NA",
-    "num, from NA",    "numeric",     "NA",
-    "dbl, from NA",     "double",     "NA",
-    "chr, from NA",  "character",     "NA",
+    "int, from NA", "integer", "NA",
+    "num, from NA", "numeric", "NA",
+    "dbl, from NA", "double", "NA",
+    "chr, from NA", "character", "NA",
   )
 )
 
@@ -66,10 +66,21 @@ patrick::with_parameters_test_that(
     ~.test_name,  ~out_type, ~input,
     "rlang::lgl", "lgl",     "1L",
     "rlang::int", "int",     "1.0",
+    "rlang::int", "int",     "1.0e-2",
     "rlang::dbl", "dbl",     "1L",
-    "rlang::chr", "chr",     "1",
+    "rlang::dbl", "dbl",     "1E5",
+    "rlang::chr", "chr",     "e",
+    "rlang::chr", "chr",     "E",
   )
 )
+
+test_that("literal_coercion_linter blocks scalar rlang list2 construction", {
+  expect_lint(
+    "int(1, )",
+    "Use literals directly where possible, instead of coercion.",
+    literal_coercion_linter()
+  )
+})
 
 test_that("literal_coercion_linter skips quoted keyword arguments", {
   expect_lint("as.numeric(foo('a' = 1))", NULL, literal_coercion_linter())
