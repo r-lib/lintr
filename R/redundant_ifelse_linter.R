@@ -49,12 +49,10 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
       # [1] call; [2] logical condition
       first_arg <- xml2::xml_find_chr(num_expr, "string(expr[3]/NUM_CONST)")
       second_arg <- xml2::xml_find_chr(num_expr, "string(expr[4]/NUM_CONST)")
+      is_numeric_01 <- first_arg %in% c("0", "1") | second_arg %in% c("0", "1")
       replacement_numeric <- ifelse(first_arg == "0" & second_arg == "1", "as.numeric(!x)", "as.numeric(x)")
-      replacement <- ifelse(
-        first_arg %in% c("0", "1") | second_arg %in% c("0", "1"),
-        replacement_numeric,
-        "as.integer(x)"
-      )
+      replacement_integer <- ifelse(first_arg == "0L" & second_arg == "1L", "as.integer(!x)", "as.integer(x)")
+      replacement <- ifelse(is_numeric_01, replacement_numeric, replacement_integer)
       lint_message <- paste(
         sprintf("Prefer %s to %s(x, %s, %s) if really needed.", replacement, matched_call, first_arg, second_arg)
       )
