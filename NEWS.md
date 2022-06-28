@@ -3,10 +3,14 @@
 * `modify_defaults()` no longer uses the mistaken `"lintr_function"` S3 class, instead applying the
   `"linter"` class also common to `Linter()`. `Linter()` also includes `"function"` in the S3
   class of its output to facilitate S3 dispatch to `function` methods where appropriate (#1392, @MichaelChirico).
+
 ## Changes to defaults
 
-* `seq_linter()` additionally lints on `1:n()` (from dplyr) 
-  and `1:.N` (from data.table) (#1396, @IndrajeetPatil).
+* `seq_linter()` additionally lints on `1:n()` (from {dplyr}) 
+  and `1:.N` (from {data.table}) (#1396, @IndrajeetPatil).
+
+* `literal_coercion_linter()` lints {rlang}'s atomic vector constructors if 
+  the argument is a scalar (#1437, @IndrajeetPatil).
 
 ## Bug fixes
 
