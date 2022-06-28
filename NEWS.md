@@ -8,7 +8,7 @@
 * `seq_linter()` additionally lints on `1:n()` (from dplyr) 
   and `1:.N` (from data.table) (#1396, @IndrajeetPatil).
 
-* `redundant_ifelse_linter()` correctly suggests negation when 
+* `redundant_ifelse_linter()`'s lint message correctly suggests negation when 
   the `yes` condition is `0` (#1432, @IndrajeetPatil).
 
 ## Bug fixes
