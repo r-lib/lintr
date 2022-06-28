@@ -50,13 +50,13 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
       first_arg <- xml2::xml_find_chr(num_expr, "string(expr[3]/NUM_CONST)")
       second_arg <- xml2::xml_find_chr(num_expr, "string(expr[4]/NUM_CONST)")
       is_numeric_01 <- first_arg %in% c("0", "1") | second_arg %in% c("0", "1")
-      replacement_is_numeric <- ifelse(is_numeric_01, "as.numeric", "as.integer")
+      coercion_function <- ifelse(is_numeric_01, "as.numeric", "as.integer")
       is_negated <- first_arg %in% c("0", "0L")
-      replacement_is_negated <- ifelse(is_negated, "!x", "x")
+      replacement_argument <- ifelse(is_negated, "!x", "x")
       lint_message <- paste(
         sprintf(
           "Prefer %s(%s) to %s(x, %s, %s) if really needed.",
-          replacement_is_numeric, replacement_is_negated, matched_call, first_arg, second_arg)
+          coercion_function, replacement_argument, matched_call, first_arg, second_arg)
       )
       lints <- c(lints, xml_nodes_to_lints(num_expr, source_expression, lint_message, type = "warning"))
     }
