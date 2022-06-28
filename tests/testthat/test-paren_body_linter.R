@@ -45,8 +45,6 @@ testthat::test_that("paren_body_linter returns correct lints", {
 
   # No space after the closing parenthesis of an anonymous function prompts a lint
   skip_if_not_r_version("4.1.0")
-  # OP-LAMBDA support added in 1.0.5
-  skip_if_not_installed("xmlparsedata", "1.0.5")
   expect_lint("\\()test", msg, linter)
 })
 
@@ -77,7 +75,6 @@ test_that("multi-line versions are caught", {
   )
 
   skip_if_not_r_version("4.1.0")
-  skip_if_not_installed("xmlparsedata", "1.0.5")
   expect_lint(
     trim_some("
       \\(var
