@@ -12,6 +12,9 @@
 * `literal_coercion_linter()` lints {rlang}'s atomic vector constructors if 
   the argument is a scalar (#1437, @IndrajeetPatil).
 
+* `redundant_ifelse_linter()`'s lint message correctly suggests negation when 
+  the `yes` condition is `0` (#1432, @IndrajeetPatil).
+
 ## Bug fixes
 
 * `get_source_expressions()` no longer fails on R files that match a knitr pattern (#743, #879, #1406, @AshesITR).

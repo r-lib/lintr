@@ -46,17 +46,17 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
     if (!allow10) {
       num_expr <- xml2::xml_find_all(xml, num_xpath)
       matched_call <- xp_call_name(num_expr)
-      # [1] call; [2] logical condiditon
+      # [1] call; [2] logical condition
       first_arg <- xml2::xml_find_chr(num_expr, "string(expr[3]/NUM_CONST)")
       second_arg <- xml2::xml_find_chr(num_expr, "string(expr[4]/NUM_CONST)")
-      replacement <- ifelse(
-        first_arg %in% c("0", "1") | second_arg %in% c("0", "1"),
-        "as.numeric",
-        "as.integer"
-      )
+      is_numeric_01 <- first_arg %in% c("0", "1") | second_arg %in% c("0", "1")
+      coercion_function <- ifelse(is_numeric_01, "as.numeric", "as.integer")
+      is_negated <- first_arg %in% c("0", "0L")
+      replacement_argument <- ifelse(is_negated, "!x", "x")
       lint_message <- paste(
-        sprintf("Prefer %s(x) to %s(x, %s, %s) if really needed,", replacement, matched_call, first_arg, second_arg),
-        "but do note that R will usually convert logical vectors to 0/1 on the fly when needed."
+        sprintf(
+          "Prefer %s(%s) to %s(x, %s, %s) if really needed.",
+          coercion_function, replacement_argument, matched_call, first_arg, second_arg)
       )
       lints <- c(lints, xml_nodes_to_lints(num_expr, source_expression, lint_message, type = "warning"))
     }
