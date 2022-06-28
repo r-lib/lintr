@@ -56,6 +56,18 @@ test_that("redundant_ifelse_linter blocks usages equivalent to as.numeric, optio
     redundant_ifelse_linter()
   )
 
+  # mixing int and num
+  expect_lint(
+    "ifelse(x > 5, 0, 1L)",
+    rex::rex("Prefer as.numeric(!x) to ifelse(x, 0, 1L)"),
+    redundant_ifelse_linter()
+  )
+  expect_lint(
+    "ifelse(x > 5, 0L, 1)",
+    rex::rex("Prefer as.numeric(!x) to ifelse(x, 0L, 1)"),
+    redundant_ifelse_linter()
+  )
+
   # data.table/dplyr equivalents
   expect_lint(
     "dplyr::if_else(x > 5, 1L, 0L)",
