@@ -8,7 +8,9 @@
 * `seq_linter()` additionally lints on `1:n()` (from dplyr) 
   and `1:.N` (from data.table) (#1396, @IndrajeetPatil).
 
-* `redundant_ifelse_linter()` produces correct message (#1432, @IndrajeetPatil).
+* `redundant_ifelse_linter()` produces correct message in the cases 
+  where the `yes` condition for `ifelse()` is `0`/`0L`, and `no` condition 
+  is `1`/`1L` (#1432, @IndrajeetPatil).
 
 ## Bug fixes
 
