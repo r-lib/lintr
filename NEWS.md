@@ -11,6 +11,10 @@
 * `redundant_ifelse_linter()`'s lint message correctly suggests negation when 
   the `yes` condition is `0` (#1432, @IndrajeetPatil).
 
+## New and improved features
+
+* `unreachable_code_linter()` ignores trailing comments if they match a closing nolint block (#1347, @AshesITR).
+
 ## Bug fixes
 
 * `get_source_expressions()` no longer fails on R files that match a knitr pattern (#743, #879, #1406, @AshesITR).
