@@ -1,7 +1,6 @@
 test_that("it creates basic lints", {
-  tmpfile <- withr::local_tempfile()
   code <- "before   %+%   after"
-  writeLines(code, tmpfile)
+  tmpfile <- withr::local_tempfile(lines = code)
   expr <- get_source_expressions(tmpfile)$expressions[[2L]]
   xml <- expr$full_xml_parsed_content
   node <- xml2::xml_find_first(xml, "//SPECIAL")
@@ -65,9 +64,8 @@ test_that("it creates basic lints", {
 })
 
 test_that("it handles multi-line lints correctly", {
-  tmpfile <- withr::local_tempfile()
   code <- c("before %+%", "  after")
-  writeLines(code, tmpfile)
+  tmpfile <- withr::local_tempfile(lines = code)
   expr <- get_source_expressions(tmpfile)$expressions[[2L]]
   xml <- expr$full_xml_parsed_content
   node <- xml2::xml_find_first(xml, "/exprlist/expr")
