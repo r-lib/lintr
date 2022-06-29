@@ -39,6 +39,7 @@ reference:
   - ends_with("linters")
   - Lint
   - checkstyle_output
+  - sarif_output
   - clear_cache
   - default_settings
   - get_source_expressions
