@@ -20,7 +20,7 @@ test_that("all default linters are tagged default", {
   # covr modifies package functions causing differing deparse() results even for identical anonymous functions.
   # This happens because default_linters is generated at build time and thus not modifiable by covr, whereas
   # linters_with_tags() constructs the linters at runtime.
-  skip_if(covr::in_covr())
+  skip_if(requireNamespace("covr", quietly = TRUE) && covr::in_covr())
 
   # all.equal.default warns on some releases of R if the input is a function, see #1392
   expect_silent(result <- all.equal(linters_with_tags("default"), linters_with_defaults()))
