@@ -13,38 +13,47 @@ test_that("backport_linter detects backwards-incompatibility", {
 
   expect_lint(
     "numToBits(2)",
-    rex("numToBits (R 4.1.0) is not available for dependency R >= 4.0.0."),
+    rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 4.0.0."),
     backport_linter("4.0.0")
   )
   # symbols as well as calls
   expect_lint(
     "lapply(1:10, numToBits)",
-    rex("numToBits (R 4.1.0) is not available for dependency R >= 4.0.0."),
+    rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 4.0.0."),
     backport_linter("4.0.0")
   )
 
   expect_lint(
     "trimws(...names())",
     list(
-      rex("trimws (R 3.2.0) is not available for dependency R >= 3.0.0."),
-      rex("...names (R 4.1.0) is not available for dependency R >= 3.0.0.")
+      rex::rex("trimws (R 3.2.0) is not available for dependency R >= 3.0.0."),
+      rex::rex("...names (R 4.1.0) is not available for dependency R >= 3.0.0.")
     ),
     backport_linter("3.0.0")
   )
 
   # oldrel specification
   expect_lint(
-    "numToBits(2)",
-    rex("numToBits (R 4.1.0) is not available for dependency R >= 4.0.0."),
+    ".pretty(2)",
+    rex::rex(".pretty (R 4.2.0) is not available for dependency R >= 4.1.3."),
     backport_linter("oldrel")
   )
 
   expect_error(backport_linter("oldrel-99"), "`r_version` must be a version number or one of")
 
-  # NB: oldrel-1 could be 3.6.3, but we don't have any backports listed for 3.6.3
   expect_lint(
     "numToBits(2)",
-    rex("numToBits (R 4.1.0) is not available for dependency R >= 3.6.0."),
-    backport_linter("oldrel-1")
+    rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 3.6.3."),
+    backport_linter("oldrel-3")
+  )
+
+  # except is honored
+  expect_lint(
+    trim_some("
+      numToBits(2)
+      R_user_dir('mypkg')
+    "),
+    NULL,
+    backport_linter("3.0.0", except = c("numToBits", "R_user_dir"))
   )
 })

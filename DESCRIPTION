@@ -1,13 +1,13 @@
 Package: lintr
 Title: A 'Linter' for R Code
-Version: 2.0.1.9000
+Version: 3.0.0.9000
 Authors@R: c(
     person("Jim", "Hester", email = "james.f.hester@gmail.com", role = c("aut", "cre")),
-    person("Florent", "Angly", role = "aut"),
+    person("Florent", "Angly", role = "aut", comment = "fangly"),
     person("Russ", "Hyde", role = "aut"),
     person("Michael", "Chirico", role = "aut"),
     person("Kun", "Ren", role = "aut"),
-    person("Alexander", "Rosenstock", role = "aut")
+    person("Alexander", "Rosenstock", role = "aut", comment = "AshesITR")
     )
 URL: https://github.com/r-lib/lintr,
     https://lintr.r-lib.org
@@ -29,18 +29,19 @@ Imports:
     stats,
     utils,
     xml2 (>= 1.0.0),
-    xmlparsedata (>= 1.0.3),
+    xmlparsedata (>= 1.0.5),
     backports
 Suggests:
     covr,
     httr (>= 1.2.1),
     mockery,
     patrick,
+    pkgdown,
     rmarkdown,
     rstudioapi (>= 0.2),
     testthat (>= 3.0.0),
     tibble,
-    withr
+    withr (>= 2.5.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 VignetteBuilder: knitr
@@ -85,7 +86,7 @@ Collate:
     'extract.R'
     'extraction_operator_linter.R'
     'fixed_regex_linter.R'
-    'function_left_parentheses.R'
+    'function_left_parentheses_linter.R'
     'get_source_expressions.R'
     'ids_with_token.R'
     'ifelse_censor_linter.R'
@@ -127,6 +128,7 @@ Collate:
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'
     'sprintf_linter.R'
+    'string_boundary_linter.R'
     'strings_as_factors_linter.R'
     'system_file_linter.R'
     'trailing_blank_lines_linter.R'
@@ -141,6 +143,7 @@ Collate:
     'vector_logic_linter.R'
     'with.R'
     'with_id.R'
+    'xml_nodes_to_lints.R'
     'xp_utils.R'
     'yoda_test_linter.R'
     'zzz.R'

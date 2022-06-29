@@ -29,8 +29,8 @@
 #'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of this
 #'          expression as given by [xmlparsedata::xml_parse_data()]}
 #'     \item{`content` (`character`) the same as `lines` as a single string (not split across lines)}
-#'     \item{`find_line` (`function`) a function for returning lines in this expression}
-#'     \item{`find_column` (`function`) a similar function for columns}
+#'     \item{(**Deprecated**) `find_line` (`function`) a function for returning lines in this expression}
+#'     \item{(**Deprecated**) `find_column` (`function`) a similar function for columns}
 #'   }
 #'
 #'   The final element of `expressions` is a list corresponding to the full file
@@ -65,9 +65,8 @@ get_source_expressions <- function(filename, lines = NULL) {
   } else {
     lines
   }
-  names(source_expression$lines) <- seq_along(source_expression$lines)
 
-  # Only regard explict attribute terminal_newline=FALSE as FALSE and all other cases (e.g. NULL or TRUE) as TRUE.
+  # Only regard explicit attribute terminal_newline=FALSE as FALSE and all other cases (e.g. NULL or TRUE) as TRUE.
   # We don't use isFALSE since it is introduced in R 3.5.0.
   terminal_newline <- !identical(attr(source_expression$lines, "terminal_newline", exact = TRUE), FALSE)
 
@@ -77,6 +76,7 @@ get_source_expressions <- function(filename, lines = NULL) {
     lines = source_expression$lines,
     error = function(e) lint_rmd_error(e, source_expression)
   )
+  names(source_expression$lines) <- seq_along(source_expression$lines)
   source_expression$content <- get_content(source_expression$lines)
   parsed_content <- get_source_expression(source_expression, error = function(e) lint_parse_error(e, source_expression))
   top_level_map <- generate_top_level_map(parsed_content)
@@ -373,8 +373,10 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
     }
   }
 
-  line_number <- find_line_fun(source_expression$content)(line_location$start)
-  column_number <- find_column_fun(source_expression$content)(line_location$start)
+  newline_locs <- get_newline_locs(source_expression$content)
+  line_number <- which(newline_locs >= line_location$start)[1L] - 1L
+  column_number <- line_location$start - newline_locs[line_number]
+
   Lint(
     filename = source_expression$filename,
     line_number = line_number,
@@ -422,9 +424,10 @@ get_single_source_expression <- function(loc,
   line_nums <- parsed_content$line1[loc]:parsed_content$line2[loc]
   expr_lines <- source_expression$lines[line_nums]
   names(expr_lines) <- line_nums
-  content <- get_content(expr_lines, parsed_content[loc, ])
+  content <- get_content(source_expression$lines, parsed_content[loc, ])
   id <- parsed_content$id[loc]
   pc <- parsed_content[which(top_level_map == id), ]
+  newline_locs <- get_newline_locs(content)
   list(
     filename = filename,
     line = parsed_content[loc, "line1"],
@@ -433,15 +436,15 @@ get_single_source_expression <- function(loc,
     parsed_content = pc,
     xml_parsed_content = xml2::xml_missing(),
     content = content,
-    find_line = find_line_fun(content),
-    find_column = find_column_fun(content)
+    find_line = find_line_fun(content, newline_locs),
+    find_column = find_column_fun(content, newline_locs)
   )
 }
 
 get_source_expression <- function(source_expression, error = identity) {
   parse_error <- FALSE
 
-  e <- tryCatch(
+  tryCatch(
     source_expression$parsed_content <- parse(
       text = source_expression$content,
       srcfile = source_expression,
@@ -461,8 +464,8 @@ get_source_expression <- function(source_expression, error = identity) {
     error = error
   )
 
-  if (inherits(e, "error") || inherits(e, "lint")) {
-    assign("e", e,  envir = parent.frame())
+  if (inherits(e, c("error", "lint"))) {
+    assign("e", e, envir = parent.frame())
     parse_error <- TRUE
   }
 
@@ -472,49 +475,41 @@ get_source_expression <- function(source_expression, error = identity) {
     error = error
   )
 
-  if (inherits(e, "error") || inherits(e, "lint")) {
+  if (inherits(e, c("error", "lint"))) {
     # Let parse errors take precedence over encoding problems
-    if (!parse_error) assign("e", e,  envir = parent.frame())
+    if (!parse_error) assign("e", e, envir = parent.frame())
     return() # parsed_content is unreliable if encoding is invalid
   }
 
   fix_octal_escapes(fix_eq_assigns(fix_tab_indentations(source_expression)), source_expression$lines)
 }
 
-find_line_fun <- function(content) {
-  newline_search <-
-    re_matches(content,
-      rex("\n"),
-      locations = TRUE,
-      global = TRUE
-    )[[1L]]$start
-
-  newline_locs <- c(0L,
+get_newline_locs <- function(x) {
+  newline_search <- re_matches(x, rex("\n"), locations = TRUE, global = TRUE)[[1L]]$start
+  c(0L,
     if (!is.na(newline_search[1L])) newline_search,
-    nchar(content) + 1L
+    nchar(x) + 1L
   )
+}
 
-  function(x) {
-    which(newline_locs >= x)[1L] - 1L
+find_line_fun <- function(content, newline_locs) {
+  function(line_number) {
+    warning(
+      "find_line is deprecated and will soon be removed. ",
+      "XPath logic and xml_nodes_to_lints() are usually preferable"
+    )
+    which(newline_locs >= line_number)[1L] - 1L
   }
 }
 
-find_column_fun <- function(content) {
-  newline_search <-
-    re_matches(content,
-      rex("\n"),
-      locations = TRUE,
-      global = TRUE
-    )[[1L]]$start
-
-  newline_locs <- c(0L,
-    if (!is.na(newline_search[1L])) newline_search,
-    nchar(content) + 1L
-  )
-
-  function(x) {
-    line_number <- which(newline_locs >= x)[1L] - 1L
-    x - newline_locs[line_number]
+find_column_fun <- function(content, newline_locs) {
+  function(line_number) {
+    warning(
+      "find_column is deprecated and will soon be removed. ",
+      "XPath logic and xml_nodes_to_lints() are usually preferable"
+    )
+    matched_line_number <- which(newline_locs >= line_number)[1L] - 1L
+    line_number - newline_locs[matched_line_number]
   }
 }
 
@@ -592,51 +587,48 @@ tab_offsets <- function(tab_columns) {
 # This function wraps equal assign expressions in a parent expression so they
 # are the same as the corresponding <- expression
 fix_eq_assigns <- function(pc) {
-  if (is.null(pc)) {
-    return(NULL)
+  if (is.null(pc) || any(c("equal_assign", "expr_or_assign_or_help") %in% pc$token)) {
+    return(pc)
   }
 
   eq_assign_locs <- which(pc$token == "EQ_ASSIGN")
-  if (length(eq_assign_locs) == 0L ||
-    nrow(pc) %in% eq_assign_locs || # check whether the equal-assignment is the final entry
-    any(c("equal_assign", "expr_or_assign_or_help") %in% pc$token)) {
+  # check whether the equal-assignment is the final entry
+  if (length(eq_assign_locs) == 0L || utils::tail(eq_assign_locs, 1L) == nrow(pc)) {
     return(pc)
   }
 
   prev_locs <- vapply(eq_assign_locs, prev_with_parent, pc = pc, integer(1L))
   next_locs <- vapply(eq_assign_locs, next_with_parent, pc = pc, integer(1L))
-  expr_locs <- (function(x) {
-    x[is.na(x)] <- FALSE
-    !x
-    })(prev_locs == lag(next_locs))
+  expr_locs <- prev_locs != lag(next_locs)
+  expr_locs[is.na(expr_locs)] <- TRUE
 
   id_itr <- max(pc$id)
 
-  n_expr <- sum(expr_locs)
+  true_locs <- which(expr_locs)
+  n_expr <- length(true_locs)
 
-  line1 <- integer(n_expr)
-  col1 <- integer(n_expr)
+  supplemental_content <- data.frame(
+    line1 = integer(n_expr),
+    col1 = integer(n_expr),
+    line2 = integer(n_expr),
+    col2 = integer(n_expr),
+    id = integer(n_expr),
+    parent = integer(n_expr),
+    token = character(n_expr),
+    terminal = logical(n_expr),
+    text = character(n_expr),
+    stringsAsFactors = FALSE
+  )
 
-  line2 <- integer(n_expr)
-  col2 <- integer(n_expr)
-
-  id <- integer(n_expr)
-
-  parent <- integer(n_expr)
-
-  token <- character(n_expr)
-
-  terminal <- logical(n_expr)
-
-  text <- character(n_expr)
-
-  true_locs <- which(expr_locs == TRUE)
-  for (i in seq_along(true_locs)) {
+  for (i in seq_len(n_expr)) {
     start <- true_locs[i]
 
+    # TODO(michaelchirico): vectorize this loop away. the tricky part is,
+    #   this loop doesn't execute on most R versions (we tried 3.6.3 and 4.2.0).
+    #   so it likely requires some GHA print debugging -- tedious :)
     end <- true_locs[i]
     j <- end + 1L
-    while (j <= length(expr_locs) && expr_locs[j] == FALSE) {
+    while (j <= length(expr_locs) && !expr_locs[j]) {
       end <- j
       j <- j + 1L
     }
@@ -644,36 +636,32 @@ fix_eq_assigns <- function(pc) {
     prev_loc <- prev_locs[start]
     next_loc <- next_locs[end]
 
-    line1[i] <- pc[prev_loc, "line1"]
-    col1[i] <- pc[prev_loc, "col1"]
+    supplemental_content[i, ] <- list(
+      pc[prev_loc, "line1"],
+      pc[prev_loc, "col1"],
+      pc[next_loc, "line2"],
+      pc[next_loc, "col2"],
+      id_itr <- id_itr + 1L,
+      pc[eq_assign_locs[true_locs[i]], "parent"],
+      "expr", # R now uses "equal_assign"
+      FALSE,
+      ""
+    )
 
-    line2[i] <- pc[next_loc, "line2"]
-    col2[i] <- pc[next_loc, "col2"]
-
-    id[i] <- id_itr <- id_itr + 1L
-
-    parent[i] <- pc[eq_assign_locs[true_locs[i]], "parent"]
-
-    token[i] <- "expr" # R now uses "equal_assign"
-
-    terminal[i] <- FALSE
-
-    text[i] <- ""
-
-    pc[eq_assign_locs[true_locs[i]], "parent"] <- id[i]
-    for (j in start:end) {
-      pc[prev_locs[j], "parent"] <- id[i]
-      pc[eq_assign_locs[j], "parent"] <- id[i]
-      pc[next_locs[j], "parent"] <- id[i]
-    }
-    pc[next_loc, "parent"] <- id[i]
+    new_parent_locs <- c(
+      prev_locs[start:end],
+      eq_assign_locs[start:end],
+      next_locs[start:end],
+      next_loc
+    )
+    pc[new_parent_locs, "parent"] <- id_itr
   }
-  res <- rbind(pc, data.frame(line1, col1, line2, col2, id, parent, token, terminal, text, row.names = id))
+  rownames(supplemental_content) <- supplemental_content$id
+  res <- rbind(pc, supplemental_content)
   res[order(res$line1, res$col1, res$line2, res$col2, res$id), ]
 }
 
-prev_with_parent <- function(pc, loc) {
-
+step_with_parent <- function(pc, loc, offset) {
   id <- pc$id[loc]
   parent_id <- pc$parent[loc]
 
@@ -682,21 +670,11 @@ prev_with_parent <- function(pc, loc) {
 
   loc <- which(with_parent$id == id)
 
-  which(pc$id == with_parent$id[loc - 1L])
+  which(pc$id == with_parent$id[loc + offset])
 }
 
-next_with_parent <- function(pc, loc) {
-
-  id <- pc$id[loc]
-  parent_id <- pc$parent[loc]
-
-  with_parent <- pc[pc$parent == parent_id, ]
-  with_parent <- with_parent[order(with_parent$line1, with_parent$col1, with_parent$line2, with_parent$col2), ]
-
-  loc <- which(with_parent$id == id)
-
-  which(pc$id == with_parent$id[loc + 1L])
-}
+prev_with_parent <- function(pc, loc) step_with_parent(pc, loc, offset = -1L)
+next_with_parent <- function(pc, loc) step_with_parent(pc, loc, offset = 1L)
 
 top_level_expressions <- function(pc) {
   if (is.null(pc)) {

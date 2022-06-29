@@ -2,6 +2,7 @@
 % Please edit documentation in R/lint.R
 \name{lint}
 \alias{lint}
+\alias{lint_file}
 \alias{lint_dir}
 \alias{lint_package}
 \title{Lint a file, directory, or package}
@@ -68,13 +69,15 @@ A list of lint objects.
 \itemize{
 \item \code{lint()} lints a single file.
 \item \code{lint_dir()} lints all files in a directory.
-\item \code{line_pakage()} lints all likely locations for R files in a package, i.e.
+\item \code{lint_package()} lints all likely locations for R files in a package, i.e.
 \verb{R/}, \verb{tests/}, \verb{inst/}, \verb{vignettes/}, \verb{data-raw/}, and \verb{demo/}.
 }
 }
 \details{
 Read \code{vigentte("lintr")} to learn how to configure which linters are run
 by default.
+Note that if files contain unparseable encoding problems, only the encoding problem will be linted to avoid
+unintelligible error messages from other linters.
 }
 \examples{
 \dontrun{

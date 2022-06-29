@@ -12,36 +12,44 @@
 #'   <https://style.tidyverse.org/syntax.html#semicolons>
 #' @export
 semicolon_linter <- function(allow_compound = FALSE, allow_trailing = FALSE) {
+  msg_trailing <- "Trailing semicolons are not needed."
+  msg_compound <- "Compound semicolons are discouraged. Replace them by a newline."
+
+  if (allow_compound && allow_trailing) {
+    stop("At least one of `allow_compound` or `allow_trailing` must be FALSE, otherwise no lints can be generated.")
+  } else if (allow_compound && !allow_trailing) {
+    # lint only trailing
+    xpath <- "//OP-SEMICOLON[not(@line1 = following-sibling::*[1]/@line1)]"
+    msg <- msg_trailing # nolint: object_usage. (usage in linter, since need_detection == FALSE)
+    need_detection <- FALSE
+  } else if (!allow_compound && allow_trailing) {
+    # lint only compound
+    xpath <- "//OP-SEMICOLON[@line1 = following-sibling::*[1]/@line1]"
+    msg <- msg_compound # nolint: object_usage. (usage in linter, since need_detection == FALSE)
+    need_detection <- FALSE
+  } else {
+    # lint all
+    xpath <- "//OP-SEMICOLON"
+    need_detection <- TRUE
+  }
+  compound_xpath <- "self::*[@line1 = following-sibling::*[1]/@line1]"
+
   Linter(function(source_expression) {
-    tokens <- with_id(source_expression, ids_with_token(source_expression, "';'"))
-    is_trailing <- is_trailing_sc(tokens, source_expression)
+    if (!is_lint_level(source_expression, "file")) {
+      return(list())
+    }
 
-    to_keep <- (is_trailing & !allow_trailing) |
-               (!is_trailing & !allow_compound)
+    xml <- source_expression$full_xml_parsed_content
+    bad_exprs <- xml2::xml_find_all(xml, xpath)
+    if (need_detection) {
+      is_trailing <- is.na(xml2::xml_find_first(bad_exprs, compound_xpath))
+      msg <- ifelse(is_trailing, msg_trailing, msg_compound)
+    }
 
-    tokens <- tokens[to_keep, ]
-    are_trailing <- is_trailing[to_keep]
-
-    Map(
-      function(token, is_trailing) {
-        msg <- if (is_trailing) {
-          "Trailing semicolons are not needed."
-        } else  {
-          "Compound semicolons are discouraged. Replace them by a newline."
-        }
-
-        Lint(
-          filename = source_expression[["filename"]],
-          line_number = token[["line1"]],
-          column_number = token[["col1"]],
-          type = "style",
-          message = msg,
-          line = source_expression[["lines"]][[as.character(token[["line1"]])]],
-          ranges = list(c(token[["col1"]], token[["col2"]]))
-        )
-      },
-      split(tokens, seq_len(nrow(tokens))),
-      are_trailing
+    xml_nodes_to_lints(
+      bad_exprs,
+      source_expression = source_expression,
+      lint_message = msg
     )
   })
 }
@@ -57,17 +65,11 @@ semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
   lintr_deprecated(
     old = "semicolon_terminator_linter",
     new = "semicolon_linter",
-    version = "2.0.1.9001",
+    version = "3.0.0",
     type = "Linter"
   )
   semicolon <- match.arg(semicolon, several.ok = TRUE)
   allow_compound <- !"compound" %in% semicolon
   allow_trailing <- !"trailing" %in% semicolon
   semicolon_linter(allow_compound, allow_trailing)
-}
-
-is_trailing_sc <- function(sc_tokens, source_expression) {
-  line_str <- source_expression[["lines"]][as.character(sc_tokens[["line1"]])]
-  tail_str <- substr(line_str, sc_tokens[["col1"]] + 1L, nchar(line_str))
-  grepl("^\\s*(#|}|\\z)", tail_str, perl = TRUE)
 }

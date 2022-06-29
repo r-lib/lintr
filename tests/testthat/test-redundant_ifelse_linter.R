@@ -41,7 +41,7 @@ test_that("redundant_ifelse_linter blocks usages equivalent to as.numeric, optio
   )
   expect_lint(
     "ifelse(x > 5, 0L, 1L)",
-    rex::rex("Prefer as.integer(x) to ifelse(x, 0L, 1L)"),
+    rex::rex("Prefer as.integer(!x) to ifelse(x, 0L, 1L)"),
     redundant_ifelse_linter()
   )
 
@@ -52,7 +52,29 @@ test_that("redundant_ifelse_linter blocks usages equivalent to as.numeric, optio
   )
   expect_lint(
     "ifelse(x > 5, 0, 1)",
-    rex::rex("Prefer as.numeric(x) to ifelse(x, 0, 1)"),
+    rex::rex("Prefer as.numeric(!x) to ifelse(x, 0, 1)"),
+    redundant_ifelse_linter()
+  )
+
+  # mixing int and num
+  expect_lint(
+    "ifelse(x > 5, 0, 1L)",
+    rex::rex("Prefer as.numeric(!x) to ifelse(x, 0, 1L)"),
+    redundant_ifelse_linter()
+  )
+  expect_lint(
+    "ifelse(x > 5, 0L, 1)",
+    rex::rex("Prefer as.numeric(!x) to ifelse(x, 0L, 1)"),
+    redundant_ifelse_linter()
+  )
+  expect_lint(
+    "ifelse(x > 5, 1, 0L)",
+    rex::rex("Prefer as.numeric(x) to ifelse(x, 1, 0L)"),
+    redundant_ifelse_linter()
+  )
+  expect_lint(
+    "ifelse(x > 5, 1L, 0)",
+    rex::rex("Prefer as.numeric(x) to ifelse(x, 1L, 0)"),
     redundant_ifelse_linter()
   )
 
@@ -64,7 +86,7 @@ test_that("redundant_ifelse_linter blocks usages equivalent to as.numeric, optio
   )
   expect_lint(
     "data.table::fifelse(x > 5, 0L, 1L)",
-    rex::rex("Prefer as.integer(x) to fifelse(x, 0L, 1L)"),
+    rex::rex("Prefer as.integer(!x) to fifelse(x, 0L, 1L)"),
     redundant_ifelse_linter()
   )
 
@@ -75,7 +97,7 @@ test_that("redundant_ifelse_linter blocks usages equivalent to as.numeric, optio
   )
   expect_lint(
     "fifelse(x > 5, 0, 1)",
-    rex::rex("Prefer as.numeric(x) to fifelse(x, 0, 1)"),
+    rex::rex("Prefer as.numeric(!x) to fifelse(x, 0, 1)"),
     redundant_ifelse_linter()
   )
 

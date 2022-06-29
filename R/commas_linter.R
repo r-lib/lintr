@@ -9,10 +9,17 @@
 #' @importFrom utils head
 #' @export
 commas_linter <- function() {
+  # conditions are in carefully-chosen order for performance --
+  #   an expression like c(a,b,c,....) with many elements can have
+  #   a huge number of preceding-siblings and the performance of
+  #   preceding-sibling::*[1][not(self::OP-COMMA)] is terrible.
+  #   This approach exits early on most nodes ('and' condition)
+  #   to avoid this. See #1340.
   xpath_before <- "
   //OP-COMMA[
-    @line1 = preceding-sibling::*[1][not(self::OP-COMMA or self::EQ_SUB)]/@line1 and
-    @col1 != preceding-sibling::*[1]/@col2 + 1
+    @col1 != preceding-sibling::*[1]/@col2 + 1 and
+    @line1 = preceding-sibling::*[1]/@line1 and
+    not(preceding-sibling::*[1][self::OP-COMMA or self::EQ_SUB])
   ]"
   xpath_after <- "//OP-COMMA[@line1 = following-sibling::*[1]/@line1 and @col1 = following-sibling::*[1]/@col1 - 1]"
 
@@ -21,15 +28,21 @@ commas_linter <- function() {
       return(list())
     }
     xml <- source_expression$xml_parsed_content
+
     before_lints <- xml_nodes_to_lints(
       xml2::xml_find_all(xml, xpath_before),
       source_expression = source_expression,
-      lint_message = "Commas should never have a space before."
+      lint_message = "Commas should never have a space before.",
+      range_start_xpath = "number(./preceding-sibling::*[1]/@col2 + 1)", # start after preceding expression
+      range_end_xpath = "number(./@col1 - 1)" # end before comma
     )
+
     after_lints <- xml_nodes_to_lints(
       xml2::xml_find_all(xml, xpath_after),
       source_expression = source_expression,
-      lint_message = "Commas should always have a space after."
+      lint_message = "Commas should always have a space after.",
+      range_start_xpath = "number(./@col2 + 1)", # start and end after comma
+      range_end_xpath = "number(./@col2 + 1)"
     )
 
     c(before_lints, after_lints)

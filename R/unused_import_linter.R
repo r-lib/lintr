@@ -10,39 +10,41 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bit64", "data.table", "tidyverse")) {
+  import_xpath <- "//expr[
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
+      and
+      (
+        not(SYMBOL_SUB[
+          text() = 'character.only' and
+          following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+        ]) or
+        expr[2][STR_CONST]
+      )
+    ]"
+
+  xp_used_symbols <- paste(
+    "//SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]/text()",
+    "//SYMBOL[not(
+      parent::expr/preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
+    )]/text()",
+    "//SPECIAL/text()",
+    sep = " | "
+  )
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
       return(list())
     }
 
     xml <- source_expression$full_xml_parsed_content
-    import_exprs <- xml2::xml_find_all(
-      xml,
-      "//expr[
-        expr[SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
-        and
-        (
-          not(SYMBOL_SUB[
-            text() = 'character.only' and
-            following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-          ]) or
-          expr[2][STR_CONST]
-        )
-      ]"
-    )
+
+    import_exprs <- xml2::xml_find_all(xml, import_xpath)
     if (length(import_exprs) == 0L) {
       return(list())
     }
     imported_pkgs <- xml2::xml_find_chr(import_exprs, "string(expr[STR_CONST|SYMBOL])")
     # as.character(parse(...)) returns one entry per expression
     imported_pkgs <- as.character(parse(text = imported_pkgs, keep.source = FALSE))
-
-    xp_used_symbols <- paste(
-      "//SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]/text()",
-      "//SYMBOL/text()",
-      "//SPECIAL/text()",
-      sep = " | "
-    )
 
     used_symbols <- xml2::xml_text(xml2::xml_find_all(xml, xp_used_symbols))
 
@@ -60,6 +62,8 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
       logical(1L)
     )
 
+    # TODO(michaelchirico): instead of vectorizing over packages,
+    #   xml_find_all SYMBOL_PACKAGE namespaces and check imported_pkgs %in%
     is_ns_used <- vapply(
       imported_pkgs,
       function(pkg) {
@@ -74,21 +78,17 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
       is_unused[is_ns_used] <- FALSE
     }
 
-    xml_nodes_to_lints(
-      import_exprs[is_unused],
-      source_expression = source_expression,
-      lint_message = function(import_expr) {
-        pkg <- get_r_string(import_expr, xpath = "expr[STR_CONST|SYMBOL]")
-        if (is_ns_used[match(pkg, imported_pkgs)]) {
-          paste0(
-            "package '", pkg, "' is only used by namespace. ",
-            "Check that it is installed using loadNamespace() instead."
-          )
-        } else {
-          paste0("package '", pkg, "' is attached but never used.")
-        }
-      },
-      type = "warning"
+    import_exprs <- import_exprs[is_unused]
+
+    unused_packages <- get_r_string(import_exprs, xpath = "expr[STR_CONST | SYMBOL]")
+    lint_message <- ifelse(
+      is_ns_used[is_unused][unused_packages],
+      paste0(
+        "Package '", unused_packages, "' is only used by namespace. ",
+        "Check that it is installed using loadNamespace() instead."
+      ),
+      paste0("Package '", unused_packages, "' is attached but never used.")
     )
+    xml_nodes_to_lints(import_exprs, source_expression, lint_message, type = "warning")
   })
 }

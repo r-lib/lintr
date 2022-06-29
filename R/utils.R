@@ -10,10 +10,6 @@
   identical(x, y)
 }
 
-`%!=%` <- function(x, y) {
-  !identical(x, y)
-}
-
 "%:::%" <- function(p, f) {
   get(f, envir = asNamespace(p))
 }
@@ -56,10 +52,6 @@ fix_names <- function(x, default) {
   x
 }
 
-names2 <- function(x) {
-  names(x) %||% rep("", length(x))
-}
-
 linter_auto_name <- function(which = -3L) {
   call <- sys.call(which = which)
   nm <- paste(deparse(call, 500L), collapse = " ")
@@ -78,7 +70,7 @@ auto_names <- function(x) {
   if (!any(missing)) return(nms)
 
   default_name <- function(x) {
-    if (inherits(x, "linter")) {
+    if (is_linter(x)) {
       attr(x, "name", exact = TRUE)
     } else {
       paste(deparse(x, 500L), collapse = " ")
@@ -96,7 +88,9 @@ names2 <- function(x) {
 }
 
 safe_parse_to_xml <- function(parsed_content) {
-  if (is.null(parsed_content)) return(NULL)
+  if (is.null(parsed_content)) {
+    return(xml2::xml_missing())
+  }
   tryCatch(
     xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)),
     # use xml_missing so that code doesn't always need to condition on XML existing
@@ -108,6 +102,13 @@ get_content <- function(lines, info) {
   lines[is.na(lines)] <- ""
 
   if (!missing(info)) {
+    if (inherits(info, "xml_node")) {
+      info <- lapply(stats::setNames(nm = c("col1", "col2", "line1", "line2")), function(attr) {
+        as.integer(xml2::xml_attr(info, attr))
+      })
+    }
+
+    lines <- lines[seq(info$line1, info$line2)]
     lines[length(lines)] <- substr(lines[length(lines)], 1L, info$col2)
     lines[1L] <- substr(lines[1L], info$col1, nchar(lines[1L]))
   }
@@ -140,16 +141,6 @@ base_backport <- function(name, replacement) {
 base_backport("trimws", function(x) {
   sub("^\\s+", "", sub("\\s+$", "", x))
 })
-
-global_xml_parsed_content <- function(source_expression) {
-  if (exists("file_lines", source_expression)) {
-    source_expression$full_xml_parsed_content
-  }
-}
-
-get_file_line <- function(source_expression, line) {
-  unname(source_expression$file_lines[[as.numeric(line)]])
-}
 
 base_backport("lengths", function(x) vapply(x, length, integer(1L)))
 
@@ -187,7 +178,7 @@ Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name.
     stop("`fun` must be a function taking exactly one argument.", call. = FALSE)
   }
   force(name)
-  structure(fun, class = "linter", name = name)
+  structure(fun, class = c("linter", "function"), name = name)
 }
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
@@ -211,7 +202,6 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
 # nocov start
 # support for usethis::use_release_issue(). Make sure to use devtools::load_all() beforehand!
 release_bullets <- function() {
-  "Make sure README.md lists all available linters"
 }
 # nocov end
 
@@ -237,4 +227,43 @@ get_r_string <- function(s, xpath = NULL) {
   out <- as.character(parse(text = s, keep.source = FALSE))
   is.na(out) <- is.na(s)
   out
+}
+
+#' Convert XML node to R code within
+#'
+#' NB this is not equivalent to `xml2::xml_text(xml)` in the presence of line breaks
+#'
+#' @param xml An `xml_node`.
+#'
+#' @return A source-code equivalent of `xml` with unnecessary whitespace removed.
+#'
+#' @noRd
+get_r_code <- function(xml) {
+  # shortcut if xml has line1 and line2 attrs and they are equal
+  # if they are missing, xml_attr() returns NA, so we continue
+  if (isTRUE(xml2::xml_attr(xml, "line1") == xml2::xml_attr(xml, "line2"))) {
+    return(xml2::xml_text(xml))
+  }
+  # find all unique line numbers
+  line_numbers <- sort(unique(xml2::xml_find_num(
+    xml2::xml_find_all(xml, "./descendant-or-self::*[@line1]"),
+    "number(./@line1)"
+  )))
+  if (length(line_numbers) <= 1L) {
+    # no line breaks necessary
+    return(xml2::xml_text(xml))
+  }
+  lines <- vapply(line_numbers, function(line_num) {
+    # all terminal nodes starting on line_num
+    paste(xml2::xml_text(
+      xml2::xml_find_all(xml, sprintf("./descendant-or-self::*[@line1 = %d and not(*)]", line_num))
+    ), collapse = "")
+  }, character(1L))
+  paste(lines, collapse = "\n")
+}
+
+is_linter <- function(x) inherits(x, "linter")
+
+is_tainted <- function(lines) {
+  inherits(tryCatch(nchar(lines), error = identity), "error")
 }

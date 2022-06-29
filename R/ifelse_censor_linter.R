@@ -12,6 +12,15 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 ifelse_censor_linter <- function() {
+  xpath <- glue::glue("//expr[
+    expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
+    and expr[2][
+      (LT or GT or LE or GE)
+      and expr[1] = following-sibling::expr
+      and expr[2] = following-sibling::expr
+    ]
+  ]")
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -19,37 +28,24 @@ ifelse_censor_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    xpath <- glue::glue("//expr[
-      expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
-      and expr[2][
-        (LT or GT or LE or GE)
-        and expr[1] = following-sibling::expr
-        and expr[2] = following-sibling::expr
-      ]
-    ]")
     bad_expr <- xml2::xml_find_all(xml, xpath)
+
+    matched_call <- xp_call_name(bad_expr)
+    operator <- xml2::xml_find_chr(bad_expr, "string(expr[2]/*[2])")
+    match_first <- !is.na(xml2::xml_find_first(bad_expr, "expr[2][expr[1] = following-sibling::expr[1]]"))
+    optimizer <- ifelse((operator %in% c("<", "<=")) == match_first, "pmin", "pmax")
+    first_var <- rep_len("x", length(match_first))
+    second_var <- rep_len("y", length(match_first))
+    first_var[!match_first] <- "y"
+    second_var[!match_first] <- "x"
 
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = function(expr) {
-        matched_call <- xp_call_name(expr)
-        op <- xml2::xml_find_chr(expr, "string(expr[2]/*[2])")
-        match_first <- !is.na(xml2::xml_find_first(expr, "expr[2][expr[1] = following-sibling::expr[1]]"))
-        if (op %in% c("<", "<=")) {
-          if (match_first) {
-            sprintf("pmin(x, y) is preferable to %s(x %s y, x, y).", matched_call, op)
-          } else {
-            sprintf("pmax(x, y) is preferable to %s(x %s y, y, x).", matched_call, op)
-          }
-        } else {
-          if (match_first) {
-            sprintf("pmax(x, y) is preferable to %s(x %s y, x, y).", matched_call, op)
-          } else {
-            sprintf("pmin(x, y) is preferable to %s(x %s y, y, x).", matched_call, op)
-          }
-        }
-      },
+      lint_message = sprintf(
+        "%s(x, y) is preferable to %s(x %s y, %s, %s).",
+        optimizer, matched_call, operator, first_var, second_var
+      ),
       type = "warning"
     )
   })

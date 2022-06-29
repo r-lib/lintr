@@ -19,7 +19,6 @@ test_that("tab positions have been corrected", {
   with_content_to_parse("TRUE",
     expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(1L, 4L))
   )
-
   with_content_to_parse("\tTRUE",
     expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(2L, 5L))
   )
@@ -96,15 +95,15 @@ test_that("Multi-byte character truncated by parser is ignored", {
 })
 
 test_that("Can read non UTF-8 file", {
-  file <- "dummy_projects/project/cp1252.R"
+  file <- test_path("dummy_projects", "project", "cp1252.R")
   read_settings(file)
   expect_null(get_source_expressions(file)$error)
 })
 
 test_that("Warns if encoding is misspecified", {
-  file <- "dummy_projects/project/cp1252.R"
+  file <- test_path("dummy_projects", "project", "cp1252.R")
   read_settings(NULL)
-  the_lint <- get_source_expressions(file)$error
+  the_lint <- lint(filename = file, parse_settings = FALSE)[[1L]]
   expect_s3_class(the_lint, "lint")
 
   msg <- "Invalid multibyte character in parser. Is the encoding correct?"
@@ -115,13 +114,15 @@ test_that("Warns if encoding is misspecified", {
     msg <- "unexpected '<'"
   }
 
+  expect_equal(the_lint$linter, "error")
   expect_equal(the_lint$message, msg)
   expect_equal(the_lint$line_number, 4L)
 
-  file <- "dummy_projects/project/cp1252_parseable.R"
+  file <- test_path("dummy_projects", "project", "cp1252_parseable.R")
   read_settings(NULL)
-  the_lint <- get_source_expressions(file)$error
+  the_lint <- lint(filename = file, parse_settings = FALSE)[[1L]]
   expect_s3_class(the_lint, "lint")
+  expect_equal(the_lint$linter, "error")
   expect_equal(the_lint$message, "Invalid multibyte string. Is the encoding correct?")
   expect_equal(the_lint$line_number, 1L)
 })
@@ -194,13 +195,12 @@ test_that("1- or 2-width octal expressions give the right STR_CONST values", {
 })
 
 test_that("returned data structure is complete", {
-  temp_file <- withr::local_tempfile()
-
   lines <- c("line_1", "line_2", "line_3")
+  temp_file <- withr::local_tempfile(lines = lines)
+
   lines_with_attr <- setNames(lines, seq_along(lines))
   attr(lines_with_attr, "terminal_newline") <- TRUE
 
-  writeLines(lines, con = temp_file)
   exprs <- get_source_expressions(temp_file)
   expect_named(exprs, c("expressions", "error", "lines"))
   expect_length(exprs$expressions, length(lines) + 1L)
@@ -220,6 +220,9 @@ test_that("returned data structure is complete", {
     expect_identical(expr$content, lines[i])
     expect_type(expr$find_line, "closure")
     expect_type(expr$find_column, "closure")
+    # find_line() and find_column() are deprecated
+    expect_warning(expr$find_line(1L), "find_line.*deprecated")
+    expect_warning(expr$find_column(1L), "find_column.*deprecated")
   }
   full_expr <- exprs$expressions[[length(lines) + 1L]]
   expect_named(full_expr, c(
@@ -237,13 +240,53 @@ test_that("returned data structure is complete", {
   expect_identical(exprs$lines, lines_with_attr)
 })
 
+test_that("#1262: xml_parsed_content gets returned as missing even if there's no parsed_content", {
+  tempfile <- withr::local_tempfile(lines = '"\\R"')
+
+  source_expressions <- get_source_expressions(tempfile)
+  expect_null(source_expressions$expressions[[1L]]$full_parsed_content)
+  expect_identical(source_expressions$expressions[[1L]]$full_xml_parsed_content, xml2::xml_missing())
+})
+
+test_that("#743, #879, #1406: get_source_expressions works on R files matching a knitr pattern", {
+  # from #743
+  tempfile <- withr::local_tempfile(
+    lines = trim_some('
+      create_template <- function(x) {
+        sprintf("
+      ```{r code}
+      foo <- function(x) x+%d
+      foo(5)
+      ```", x)
+      }
+    ')
+  )
+  source_expressions <- get_source_expressions(tempfile)
+  expect_null(source_expressions$error)
+
+  # from #879
+  tempfile <- withr::local_tempfile(
+    lines = trim_some('
+      # `r print("7")`
+      function() 2<=3
+    ')
+  )
+  source_expressions <- get_source_expressions(tempfile)
+  expect_null(source_expressions$error)
+
+  # from #1406
+  tempfile <- withr::local_tempfile()
+  writeLines(c("x <- '", "```{r}", "'"), con = tempfile)
+  source_expressions <- get_source_expressions(tempfile)
+  expect_null(source_expressions$error)
+})
+
 skip_if_not_installed("patrick")
 # NB: this is just a cursory test for linters not to
 #   fail on files where the XML content is xml_missing;
 #   the main linter test files provide more thorough
 #   evidence that things are working as intended.
-bad_source <- withr::local_tempfile()
-writeLines("a <- 1L\nb <- 2L", bad_source)
+bad_source <- withr::local_tempfile(lines = c("a <- 1L", "b <- 2L"))
 expressions <- get_source_expressions(bad_source)$expressions
 
 # "zap" the xml_parsed_content to be xml_missing -- this gets

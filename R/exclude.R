@@ -4,18 +4,25 @@
 #' @param exclusions manually specified exclusions
 #' @param linter_names character vector of names of the active linters, used for parsing inline exclusions.
 #' @param ... additional arguments passed to [parse_exclusions()]
-#' @details
-#' Exclusions can be specified in three different ways.
-#'
-#'  1. single line in the source file. default: `# nolint`, possibly followed by a listing of linters to exclude.
-#'     If the listing is missing, all linters are excluded on that line. The default listing format is
-#'     `# nolint: linter_name, linter2_name.`. There may not be anything between the colon and the line exclusion tag
-#'     and the listing must be terminated with a full stop (`.`) for the linter list to be respected.
-#'  2. line range in the source file. default: `# nolint start`, `# nolint end`. `# nolint start` accepts linter
-#'     lists in the same form as `# nolint`.
-#'  3. exclusions parameter, a named list of files with named lists of linters and lines to exclude them on, a named
-#'     list of the files and lines to exclude, or just the filenames if you want to exclude the entire file, or the
-#'     directory names if you want to exclude all files in a directory.
+#' @eval c(
+#'   # we use @eval for the details section to avoid a literal nolint exclusion tag with non-existing linter names
+#'   # those produce a warning from [parse_exclusions()] otherwise. See #1219 for details.
+#'   "@details",
+#'   "Exclusions can be specified in three different ways.",
+#'   "",
+#'   "1. single line in the source file. default: `# nolint`, possibly followed by a listing of linters to exclude.",
+#'   "   If the listing is missing, all linters are excluded on that line. The default listing format is",
+#'   paste(
+#'     "   `#",
+#'     "nolint: linter_name, linter2_name.`. There may not be anything between the colon and the line exclusion tag"
+#'   ),
+#'   "   and the listing must be terminated with a full stop (`.`) for the linter list to be respected.",
+#'   "2. line range in the source file. default: `# nolint start`, `# nolint end`. `# nolint start` accepts linter",
+#'   "   lists in the same form as `# nolint`.",
+#'   "3. exclusions parameter, a named list of files with named lists of linters and lines to exclude them on, a named",
+#'   "   list of the files and lines to exclude, or just the filenames if you want to exclude the entire file, or the",
+#'   "   directory names if you want to exclude all files in a directory."
+#' )
 exclude <- function(lints, exclusions = settings$exclusions, linter_names = NULL, ...) {
   if (length(lints) <= 0L) {
     return(lints)
@@ -52,7 +59,7 @@ is_excluded <- function(line_number, linter, file_exclusion) {
 }
 
 is_excluded_file <- function(file_exclusion) {
-  Inf %in% file_exclusion[[names2(file_exclusion) == ""]]
+  Inf %in% file_exclusion[[which(names2(file_exclusion) == "")]]
 }
 
 line_info <- function(line_numbers, type = c("start", "end")) {
@@ -94,8 +101,7 @@ parse_exclusions <- function(file, exclude = settings$exclude,
 
   exclusions <- list()
 
-  e <- tryCatch(nchar(lines), error = identity)
-  if (inherits(e, "error")) {
+  if (is_tainted(lines)) {
     # Invalid encoding. Don't parse exclusions.
     return(list())
   }

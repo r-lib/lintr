@@ -1,6 +1,4 @@
 ^CRAN-RELEASE$
-^.*\.png$
-^.*\.gif$
 ^\.travis\.yml$
 ^[^/]+\.R$
 ^travis-tool\.sh$
@@ -23,10 +21,9 @@
 ^script[.]R$
 ^bench$
 ^tests/testthat/dummy_packages/package/[.]Rbuildignore$
-^tests/testthat/dummy_packages/package/[.]lintr$
-^tests/testthat/dummy_packages/clean/[.]lintr$
-^tests/testthat/dummy_packages/clean_subdir/[.]lintr$
 ^tests/testthat/dummy_packages/cp1252/[.]Rbuildignore$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^vignettes/[^-]+.gif$
+^CRAN-SUBMISSION$

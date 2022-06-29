@@ -1,0 +1,5 @@
+# This file tracks manually-supplied GitHub repos for packages
+#   where {lintr} is not in Suggests or Imports
+package,repo
+arrow,https://github.com/apache/arrow
+lightgbm,https://github.com/microsoft/LightGBM

@@ -6,6 +6,8 @@ test_that("expect_identical_linter skips allowed usages", {
 
   # expect_equal calls with explicit tolerance= are OK
   expect_lint("expect_equal(x, y, tolerance = 1e-6)", NULL, expect_identical_linter())
+  # ditto if the argument is passed quoted
+  expect_lint("expect_equal(x, y, 'tolerance' = 1e-6)", NULL, expect_identical_linter())
 
   # ditto for check.attributes = FALSE
   expect_lint("expect_equal(x, y, check.attributes = FALSE)", NULL, expect_identical_linter())

@@ -60,7 +60,7 @@ NULL
 #' Efficiency linters
 #' @name efficiency_linters
 #' @description
-#' Linters highlighting code efficiency problems, such as unneccessary function calls.
+#' Linters highlighting code efficiency problems, such as unnecessary function calls.
 #' @evalRd rd_linters("efficiency")
 #' @seealso [linters] for a complete list of linters available in lintr.
 NULL
@@ -87,5 +87,15 @@ NULL
 #' Linters that are deprecated and provided for backwards compatiblility only.
 #' These linters will be excluded from `linters_with_tags()` by default.
 #' @evalRd rd_linters("deprecated")
+#' @seealso [linters] for a complete list of linters available in lintr.
+NULL
+
+#' Code executing linters
+#' @name executing_linters
+#' @description
+#' Linters that evaluate parts of the linted code, such as loading referenced packages.
+#' These linters should not be used with untrusted code, and may need dependencies of the linted package or project to
+#' be available in order to function correctly.
+#' @evalRd rd_linters("executing")
 #' @seealso [linters] for a complete list of linters available in lintr.
 NULL

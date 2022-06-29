@@ -13,7 +13,7 @@ spaces_inside_linter <- function() {
   left_xpath_condition <- "
     not(following-sibling::*[1][self::COMMENT])
     and @end != following-sibling::*[1]/@start - 1
-    and @line1 = following-sibling::*[1]/@line2
+    and @line1 = following-sibling::*[1]/@line1
   "
   left_xpath <- glue::glue("//OP-LEFT-BRACKET[{left_xpath_condition}] | //OP-LEFT-PAREN[{left_xpath_condition}]")
 
@@ -22,10 +22,7 @@ spaces_inside_linter <- function() {
     and @start != preceding-sibling::*[1]/@end + 1
     and @line1 = preceding-sibling::*[1]/@line2
   "
-  right_xpath <- glue::glue("
-    //OP-RIGHT-BRACKET[{right_xpath_condition}]/preceding-sibling::*[1] |
-    //OP-RIGHT-PAREN[{right_xpath_condition}]/preceding-sibling::*[1]
-  ")
+  right_xpath <- glue::glue("//OP-RIGHT-BRACKET[{right_xpath_condition}] | //OP-RIGHT-PAREN[{right_xpath_condition}]")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
@@ -35,42 +32,34 @@ spaces_inside_linter <- function() {
     xml <- source_expression$full_xml_parsed_content
 
     left_expr <- xml2::xml_find_all(xml, left_xpath)
-    left_lints <- lapply(left_expr, function(expr) {
-      line1 <- as.integer(xml2::xml_attr(expr, "line1"))
-      col1 <- as.integer(xml2::xml_attr(expr, "col1")) + 1L
-      col2 <- as.integer(xml2::xml_find_num(expr, "number(./following-sibling::*[1]/@col1)")) - 1L
-      Lint(
-        filename = source_expression$filename,
-        line_number = line1,
-        column_number = col1,
-        message = switch(
-          xml2::xml_text(expr),
-          `[` = "Do not place spaces after square brackets.",
-          `(` = "Do not place spaces after parentheses."
-        ),
-        line = source_expression$file_lines[[line1]],
-        ranges = list(c(col1, col2))
-      )
-    })
+    left_msg <- ifelse(
+      xml2::xml_text(left_expr) == "[",
+      "Do not place spaces after square brackets.",
+      "Do not place spaces after parentheses."
+    )
+
+    left_lints <- xml_nodes_to_lints(
+      left_expr,
+      source_expression = source_expression,
+      lint_message = left_msg,
+      range_start_xpath = "number(./@col2 + 1)", # start after ( or [
+      range_end_xpath = "number(./following-sibling::*[1]/@col1 - 1)" # end before following expr
+    )
 
     right_expr <- xml2::xml_find_all(xml, right_xpath)
-    right_lints <- lapply(right_expr, function(expr) {
-      line1 <- as.integer(xml2::xml_attr(expr, "line1"))
-      col1 <- as.integer(xml2::xml_attr(expr, "col2")) + 1L
-      col2 <- as.integer(xml2::xml_find_num(expr, "number(./following-sibling::*[1]/@col1)")) - 1L
-      Lint(
-        filename = source_expression$filename,
-        line_number = line1,
-        column_number = col1,
-        message = switch(
-          xml2::xml_find_chr(expr, "string(./following-sibling::*[1])"),
-          `]` = "Do not place spaces before square brackets.",
-          `)` = "Do not place spaces before parentheses."
-        ),
-        line = source_expression$file_lines[[line1]],
-        ranges = list(c(col1, col2))
-      )
-    })
+    right_msg <- ifelse(
+      xml2::xml_text(right_expr) == "]",
+      "Do not place spaces before square brackets.",
+      "Do not place spaces before parentheses."
+    )
+
+    right_lints <- xml_nodes_to_lints(
+      right_expr,
+      source_expression = source_expression,
+      lint_message = right_msg,
+      range_start_xpath = "number(./preceding-sibling::*[1]/@col2 + 1)", # start after preceding expression
+      range_end_xpath = "number(./@col1 - 1)" # end before ) or ]
+    )
 
     c(left_lints, right_lints)
   })

@@ -4,7 +4,7 @@
 \alias{efficiency_linters}
 \title{Efficiency linters}
 \description{
-Linters highlighting code efficiency problems, such as unneccessary function calls.
+Linters highlighting code efficiency problems, such as unnecessary function calls.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
@@ -23,6 +23,7 @@ The following linters are tagged with 'efficiency':
 \item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{regex_subset_linter}}}
 \item{\code{\link{seq_linter}}}
+\item{\code{\link{string_boundary_linter}}}
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
 \item{\code{\link{unneeded_concatenation_linter}}}

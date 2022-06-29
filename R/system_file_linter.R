@@ -7,6 +7,16 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 system_file_linter <- function() {
+  xpath <- "//expr[
+    (
+      expr/SYMBOL_FUNCTION_CALL[text() = 'system.file']
+      and expr/expr/SYMBOL_FUNCTION_CALL[text() = 'file.path']
+    ) or (
+      expr/SYMBOL_FUNCTION_CALL[text() = 'file.path']
+      and expr/expr/SYMBOL_FUNCTION_CALL[text() = 'system.file']
+    )
+  ]"
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -14,34 +24,19 @@ system_file_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    xpath <- "//expr[
-      (
-        expr/SYMBOL_FUNCTION_CALL[text() = 'system.file']
-        and expr/expr/SYMBOL_FUNCTION_CALL[text() = 'file.path']
-      ) or (
-        expr/SYMBOL_FUNCTION_CALL[text() = 'file.path']
-        and expr/expr/SYMBOL_FUNCTION_CALL[text() = 'system.file']
-      )
-    ]"
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    xml_nodes_to_lints(
-      bad_expr,
-      source_expression = source_expression,
-      lint_message = function(expr) {
-        outer_call <- xp_call_name(expr)
-        if (outer_call == "system.file") {
-          bad_usage <- 'system.file(file.path("data", "model.csv"), package = "myrf")'
-        } else {
-          bad_usage <- 'file.path(system.file(package = "myrf"), "data", "model.csv")'
-        }
-        paste(
-          "Use the `...` argument of system.file() to expand paths,",
-          'e.g. system.file("data", "model.csv", package = "myrf") instead of',
-          bad_usage
-        )
-      },
-      type = "warning"
+    outer_call <- xp_call_name(bad_expr)
+    lint_message <- paste(
+      "Use the `...` argument of system.file() to expand paths,",
+      'e.g. system.file("data", "model.csv", package = "myrf") instead of',
+      ifelse(
+        outer_call == "system.file",
+        'system.file(file.path("data", "model.csv"), package = "myrf")',
+        'file.path(system.file(package = "myrf"), "data", "model.csv")'
+      )
     )
+
+    xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "warning")
   })
 }

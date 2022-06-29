@@ -36,7 +36,7 @@ vector_logic_linter <- function() {
       ]
     ]
     and not(ancestor::expr[
-      preceding-sibling::expr[SYMBOL_FUNCTION_CALL[not(text() = 'expect_true' or text() = 'expect_false')]]
+      preceding-sibling::expr[last()][SYMBOL_FUNCTION_CALL[not(text() = 'expect_true' or text() = 'expect_false')]]
       or preceding-sibling::OP-LEFT-BRACKET
     ])
   ]"

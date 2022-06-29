@@ -1,0 +1,29 @@
+Hello {maintainer}! Thank you for using {{lintr}} in your package {{{package}}}!
+
+{{lintr}} will soon be releasing an update to CRAN -- be sure to check the latest NEWS to get an overview
+of the upcoming improvements and bug fixes: https://lintr.r-lib.org/news/index.html.
+
+We checked the results of running lint_package() on your package as found at {repo_url} (hash: {git_hash}) using
+the CRAN version {old_release} and the current version in development (commit hash {main_hash}).
+We do this ourselves because of {{lintr}}'s role as a developer tool --
+normal CRAN revdep checking is not as helpful for detecting breakages.
+
+On your package, lint_package() took {old_duration}s on CRAN vs. {main_duration}s in our latest version. This
+includes applying your .lintr config if one is available.
+
+We are also attaching the following, if they exist:
+
+ * Hard breaking changes (.failure file):
+   any error generated from lint_package() using the latest version, if none existed using {old_release}
+ * Soft breaking changes (.warnings file):
+   any warnings generated from lint_package() using the latest version not found using {old_release}
+ * Change in linting state: one or two .csv files containing the lints found using one version of {{lintr}}, but not the other
+
+We have given a more-than-cursory glance at these changes and are satisfied they mark an acceptable step forward when
+trading off back-compatibility with package quality, as well as improving precision and/or recall of the linters themselves.
+Please don't hesitate to reach out if we've missed something, or if you've got other suggestions for further improvements
+to {{lintr}}.
+
+Thanks again!
+{{lintr}} development team
+
