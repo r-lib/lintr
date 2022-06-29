@@ -121,6 +121,22 @@ test_that("unreachable_code_linter ignores code after foo$stop(), which might be
   )
 })
 
+test_that("unreachable_code_linter ignores terminal nolint end comments", {
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        do_something
+        # nolint start: one_linter.
+        a = 42
+        return(a)
+        # nolint end
+      }
+    "),
+    NULL,
+    list(unreachable_code_linter(), one_linter = assignment_linter())
+  )
+})
+
 # nolint start: commented_code_linter.
 # TODO(michaelchirico): extend to work on switch() statements
 # test_that("unreachable_code_linter interacts with switch() as expected", {
