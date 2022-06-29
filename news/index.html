@@ -61,6 +61,10 @@
 <li><p><code><a href="../reference/seq_linter.html">seq_linter()</a></code> additionally lints on <code>1:n()</code> (from dplyr) and <code>1:.N</code> (from data.table) (<a href="https://github.com/r-lib/lintr/issues/1396" class="external-link">#1396</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</p></li>
 <li><p><code><a href="../reference/redundant_ifelse_linter.html">redundant_ifelse_linter()</a></code>’s lint message correctly suggests negation when the <code>yes</code> condition is <code>0</code> (<a href="https://github.com/r-lib/lintr/issues/1432" class="external-link">#1432</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</p></li>
 </ul><div class="section level3">
+<h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code> ignores trailing comments if they match a closing nolint block (<a href="https://github.com/r-lib/lintr/issues/1347" class="external-link">#1347</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li></ul></div>
+<div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> no longer fails on R files that match a knitr pattern (<a href="https://github.com/r-lib/lintr/issues/743" class="external-link">#743</a>, <a href="https://github.com/r-lib/lintr/issues/879" class="external-link">#879</a>, <a href="https://github.com/r-lib/lintr/issues/1406" class="external-link">#1406</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
