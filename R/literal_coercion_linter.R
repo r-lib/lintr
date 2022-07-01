@@ -24,7 +24,7 @@ literal_coercion_linter <- function() {
   #  - in x$"abc", the "abc" STR_CONST is at the top level, so exclude OP-DOLLAR
   #  - need condition against STR_CONST w/ EQ_SUB to skip quoted keyword arguments (see tests)
   #  - for {rlang} coercers, both `int(1)` and `int(1, )` need to be linted
-  xpath_e <- "expr[2][
+  not_extraction_or_scientific <- "expr[2][
     not(OP-DOLLAR)
     and (
       NUM_CONST[not(contains(translate(text(), 'E', 'e'), 'e'))]
@@ -33,9 +33,9 @@ literal_coercion_linter <- function() {
   ]"
   xpath <- glue::glue("//expr[
     (
-      expr[1][SYMBOL_FUNCTION_CALL[ {base_coercers} ]] and {xpath_e}
+      expr[1][SYMBOL_FUNCTION_CALL[ {base_coercers} ]] and {not_extraction_or_scientific}
     ) or (
-      expr[1][SYMBOL_FUNCTION_CALL[ {rlang_coercers} ]] and {xpath_e} and count(expr) = 2
+      expr[1][SYMBOL_FUNCTION_CALL[ {rlang_coercers} ]] and {not_extraction_or_scientific} and count(expr) = 2
     )
   ]")
 
