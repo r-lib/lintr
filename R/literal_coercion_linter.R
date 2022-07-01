@@ -18,32 +18,24 @@ literal_coercion_linter <- function() {
   base_coercers <- xp_text_in_table(
       paste0("as.", c("logical", "integer", "numeric", "double", "character"))
   )
+
   # notes for clarification:
   #  - as.integer(1e6) is arguably easier to read than 1000000L
   #  - in x$"abc", the "abc" STR_CONST is at the top level, so exclude OP-DOLLAR
   #  - need condition against STR_CONST w/ EQ_SUB to skip quoted keyword arguments (see tests)
   #  - for {rlang} coercers, both `int(1)` and `int(1, )` need to be linted
+  xpath_e <- "expr[2][
+    not(OP-DOLLAR)
+    and (
+      NUM_CONST[not(contains(translate(text(), 'E', 'e'), 'e'))]
+      or STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
+    )
+  ]"
   xpath <- glue::glue("//expr[
     (
-      expr[1][SYMBOL_FUNCTION_CALL[ {base_coercers} ]]
-      and expr[2][
-        not(OP-DOLLAR)
-        and (
-          NUM_CONST[not(contains(translate(text(), 'E', 'e'), 'e'))]
-          or STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
-        )
-      ]
+      expr[1][SYMBOL_FUNCTION_CALL[ {base_coercers} ]] and {xpath_e}
     ) or (
-    (
-      expr[1][SYMBOL_FUNCTION_CALL[ {rlang_coercers} ]]
-      and expr[2][
-      not(OP-DOLLAR)
-      and (
-        NUM_CONST[not(contains(translate(text(), 'E', 'e'), 'e'))]
-        or STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
-      )]
-    ) and
-      count(expr) = 2
+      expr[1][SYMBOL_FUNCTION_CALL[ {rlang_coercers} ]] and {xpath_e} and count(expr) = 2
     )
   ]")
 
