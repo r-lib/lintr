@@ -1,7 +1,7 @@
 #' Require usage of correctly-typed literals over literal coercions
 #'
-#' `as.integer(1)` is the same as `1L` but the latter is more concise and
-#'   gets typed correctly at compilation.
+#' `as.integer(1)` (or `rlang::int(1)`) is the same as `1L` but the latter is
+#' more concise and gets typed correctly at compilation.
 #'
 #' The same applies to missing sentinels like `NA` -- typically, it is not
 #'   necessary to specify the storage type of `NA`, but when it is, prefer
