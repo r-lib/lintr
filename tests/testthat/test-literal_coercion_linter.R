@@ -49,6 +49,8 @@ patrick::with_parameters_test_that(
     "num, from num", "numeric", "1",
     "dbl, from num", "double", "1",
     "chr, from num", "character", "1",
+    "chr, from chr", "character", "e",
+    "chr, from chr", "character", "E",
     # affirmatively lint as.<type>(NA) should be NA_<type>_
     "int, from NA", "integer", "NA",
     "num, from NA", "numeric", "NA",
@@ -70,6 +72,8 @@ patrick::with_parameters_test_that(
     "rlang::lgl", "lgl",     "1L",
     "rlang::int", "int",     "1.0",
     "rlang::dbl", "dbl",     "1L",
+    "rlang::chr", "chr",     "e",
+    "rlang::chr", "chr",     "E",
   )
 )
 
