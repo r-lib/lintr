@@ -22,6 +22,7 @@ literal_coercion_linter <- function() {
   #  - as.integer(1e6) is arguably easier to read than 1000000L
   #  - in x$"abc", the "abc" STR_CONST is at the top level, so exclude OP-DOLLAR
   #  - need condition against STR_CONST w/ EQ_SUB to skip quoted keyword arguments (see tests)
+  #  - for {rlang} coercers, both `int(1)` and `int(1, )` need to be linted
   xpath <- glue::glue("//expr[
     (
       expr[1][SYMBOL_FUNCTION_CALL[ {base_coercers} ]]
@@ -35,7 +36,7 @@ literal_coercion_linter <- function() {
     ) or
     (
       expr[1][SYMBOL_FUNCTION_CALL[ {rlang_coercers} ]]
-      and not(OP-COMMA)
+      and count(expr) = 2
     )
   ]")
 
