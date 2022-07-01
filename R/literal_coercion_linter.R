@@ -34,7 +34,9 @@ literal_coercion_linter <- function() {
     )
   ]"
   xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[ {coercers} ]] and {not_extraction_or_scientific} and count(expr) = 2
+    expr[1][SYMBOL_FUNCTION_CALL[ {coercers} ]]
+    and {not_extraction_or_scientific}
+    and count(expr) = 2
   ]")
 
   Linter(function(source_expression) {
