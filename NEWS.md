@@ -9,8 +9,9 @@
 * `seq_linter()` additionally lints on `1:n()` (from {dplyr}) 
   and `1:.N` (from {data.table}) (#1396, @IndrajeetPatil).
 
-* `literal_coercion_linter()` lints {rlang}'s atomic vector constructors if 
-  the argument is a scalar (#1437, @IndrajeetPatil).
+* `literal_coercion_linter()` lints {rlang}'s atomic vector constructors 
+  (`int()`, `chr()`, `lgl()`, `dbl()`) if the argument is a scalar 
+  (#1437, @IndrajeetPatil).
 
 * `redundant_ifelse_linter()`'s lint message correctly suggests negation when 
   the `yes` condition is `0` (#1432, @IndrajeetPatil).
