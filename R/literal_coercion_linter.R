@@ -35,8 +35,17 @@ literal_coercion_linter <- function() {
       ]
     ) or
     (
-      expr[1][SYMBOL_FUNCTION_CALL[ {rlang_coercers} ]]
-      and count(expr) = 2
+        (
+          expr[1][SYMBOL_FUNCTION_CALL[ {rlang_coercers} ]]
+          and expr[2][
+          not(OP-DOLLAR)
+          and (
+            NUM_CONST[not(contains(translate(text(), 'E', 'e'), 'e'))]
+            or STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
+          )]
+        )
+      and
+       count(expr) = 2
     )
   ]")
 

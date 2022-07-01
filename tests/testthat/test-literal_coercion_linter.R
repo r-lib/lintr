@@ -27,6 +27,8 @@ test_that("literal_coercion_linter skips allowed rlang usages", {
   expect_lint("dbl(1.2, 1e5, 3L, 2E4)", NULL, literal_coercion_linter())
   # make sure using namespace (`rlang::`) doesn't create problems
   expect_lint("rlang::int(1, 2, 3)", NULL, literal_coercion_linter())
+  # even if scalar, carve out exceptions for the following
+  expect_lint("int(1.0e6)", NULL, literal_coercion_linter())
 })
 
 skip_if_not_installed("tibble")
@@ -62,15 +64,12 @@ patrick::with_parameters_test_that(
     rex::rex("Use literals directly where possible, instead of coercion."),
     literal_coercion_linter()
   ),
+  # even if `as.character(1)` works, `chr(1)` doesn't, so no corresponding test case
   .cases = tibble::tribble(
     ~.test_name,  ~out_type, ~input,
     "rlang::lgl", "lgl",     "1L",
     "rlang::int", "int",     "1.0",
-    "rlang::int", "int",     "1.0e-2",
     "rlang::dbl", "dbl",     "1L",
-    "rlang::dbl", "dbl",     "1E5",
-    "rlang::chr", "chr",     "e",
-    "rlang::chr", "chr",     "E",
   )
 )
 
