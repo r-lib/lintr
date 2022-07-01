@@ -12,12 +12,14 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 literal_coercion_linter <- function() {
-  rlang_coercers <- xp_text_in_table(
-    c("lgl", "int", "dbl", "chr")
-  )
-  base_coercers <- xp_text_in_table(
-      paste0("as.", c("logical", "integer", "numeric", "double", "character"))
-  )
+ coercers <- xp_text_in_table(
+   c(
+     # base coercers
+     paste0("as.", c("logical", "integer", "numeric", "double", "character")),
+     # rlang coercers
+     c("lgl", "int", "dbl", "chr")
+   )
+ )
 
   # notes for clarification:
   #  - as.integer(1e6) is arguably easier to read than 1000000L
@@ -32,11 +34,7 @@ literal_coercion_linter <- function() {
     )
   ]"
   xpath <- glue::glue("//expr[
-    (
-      expr[1][SYMBOL_FUNCTION_CALL[ {base_coercers} ]] and {not_extraction_or_scientific}
-    ) or (
-      expr[1][SYMBOL_FUNCTION_CALL[ {rlang_coercers} ]] and {not_extraction_or_scientific} and count(expr) = 2
-    )
+    expr[1][SYMBOL_FUNCTION_CALL[ {coercers} ]] and {not_extraction_or_scientific} and count(expr) = 2
   ]")
 
   Linter(function(source_expression) {
