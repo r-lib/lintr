@@ -7,8 +7,8 @@
 literal_coercion_linter()
 }
 \description{
-\code{as.integer(1)} is the same as \code{1L} but the latter is more concise and
-gets typed correctly at compilation.
+\code{as.integer(1)} (or \code{rlang::int(1)}) is the same as \code{1L} but the latter is
+more concise and gets typed correctly at compilation.
 }
 \details{
 The same applies to missing sentinels like \code{NA} -- typically, it is not
