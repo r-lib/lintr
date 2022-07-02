@@ -46,7 +46,7 @@ object_name_xpath <- local({
 #'   match at least one of these styles.
 #' @param regexes A (possibly named) character vector specifying a custom naming convention.
 #'   If named, the names will be used in the lint message. Otherwise, "custom" will be used as a name for the style.
-#'   Quotes (`` `"' ``) and the specials (`%` and trailing `<-`) are not considered part of the name to be matched.
+#'   Quotes (`` `"' ``) and specials (`%` and trailing `<-`) are not considered part of the name to be matched.
 #' @evalRd rd_tags("object_name_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
