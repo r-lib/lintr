@@ -69,6 +69,10 @@
 <ul><li>
 <code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code> ignores trailing comments if they match a closing nolint block (<a href="https://github.com/r-lib/lintr/issues/1347" class="external-link">#1347</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li></ul></div>
 <div class="section level3">
+<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/commented_code_linter.html">commented_code_linter()</a></code> now lints commented argument code, containing a trailing comma, as well (<a href="https://github.com/r-lib/lintr/issues/386" class="external-link">#386</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>). For example a comment containing <code>#  na.rm = TRUE,</code> now triggers a lint.</li></ul></div>
+<div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> no longer fails on R files that match a knitr pattern (<a href="https://github.com/r-lib/lintr/issues/743" class="external-link">#743</a>, <a href="https://github.com/r-lib/lintr/issues/879" class="external-link">#879</a>, <a href="https://github.com/r-lib/lintr/issues/1406" class="external-link">#1406</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
