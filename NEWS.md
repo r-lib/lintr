@@ -20,6 +20,11 @@
 
 * `unreachable_code_linter()` ignores trailing comments if they match a closing nolint block (#1347, @AshesITR).
 
+## New features
+
+* `commented_code_linter()` now lints commented argument code, containing a trailing comma, as well (#386, @AshesITR).
+  For example a comment containing `#  na.rm = TRUE,` now triggers a lint.
+
 ## Bug fixes
 
 * `get_source_expressions()` no longer fails on R files that match a knitr pattern (#743, #879, #1406, @AshesITR).
