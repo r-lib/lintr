@@ -7,10 +7,11 @@
 function_argument_linter()
 }
 \description{
-Check that arguments with defaults come last in all function declarations.
+Check that arguments with defaults come last in all function declarations, as per the tidyverse design guide.
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr. \cr
+\url{https://design.tidyverse.org/args-data-details.html}
 }
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=consistency_linters]{consistency}, \link[=style_linters]{style}

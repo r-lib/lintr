@@ -20,8 +20,8 @@
 
 * `unreachable_code_linter()` ignores trailing comments if they match a closing nolint block (#1347, @AshesITR).
 
-* New `function_argument_linter()` to enforce that arguments with defaults appear last in function declarations 
-  (#450, @AshesITR).
+* New `function_argument_linter()` to enforce that arguments with defaults appear last in function declarations,
+  see the [Tidyverse design guide](https://design.tidyverse.org/args-data-details.html) (#450, @AshesITR).
 
 ## Bug fixes
 
