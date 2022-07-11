@@ -47,11 +47,13 @@ object_name_xpath <- local({
 #' @param regexes A (possibly named) character vector specifying a custom naming convention.
 #'   If named, the names will be used in the lint message. Otherwise, "custom" will be used as a name for the style.
 #'   Quotes (`` `"' ``) and specials (`%` and trailing `<-`) are not considered part of the name to be matched.
+#'   Note that specifying `regexes` overrides the default `styles`. So if you want to combine `regexes` and `styles`,
+#'   both need to be explicitly specified.
 #' @evalRd rd_tags("object_name_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = character()) {
-  if (length(styles) > 0L) {
+  if ((!missing(styles) || missing(regexes)) && length(styles) > 0L) {
     # Allow `object_name_linter(NULL, "my_regex")`
     styles <- match.arg(styles, names(style_regexes), several.ok = TRUE)
     style_list <- style_regexes[styles]
@@ -62,9 +64,10 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
     if (!is.character(regexes)) {
       stop("`regexes` must be a character vector.")
     }
-    if (is.null(names(regexes))) {
-      names(regexes) <- "custom"
-    }
+    rx_names <- names2(regexes)
+    rx_names[!nzchar(rx_names)] <- "custom"
+    names(regexes) <- rx_names
+
     style_list <- c(style_list, as.list(regexes))
   }
   if (length(style_list) == 0L) {

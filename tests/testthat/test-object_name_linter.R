@@ -152,16 +152,16 @@ test_that("object_name_linter won't fail if an imported namespace is unavailable
 })
 
 test_that("object_name_linter supports custom regexes", {
-  # snake_case and symbols also allowed
+  # disables default styles
   linter <- object_name_linter(
     regexes = c("shinyModule" = rex(start, lower, zero_or_more(alnum), "UI" %or% "Server", end))
   )
-  msg <- rex::rex("Variable and function name style should be snake_case, symbols or shinyModule.")
+  msg <- rex::rex("Variable and function name style should be shinyModule.")
   linter2 <- object_name_linter(
-    styles = NULL,
+    styles = c("snake_case", "symbols"),
     regexes = c("shinyModule" = rex(start, lower, zero_or_more(alnum), "UI" %or% "Server", end))
   )
-  msg2 <- rex::rex("Variable and function name style should be shinyModule.")
+  msg2 <- rex::rex("Variable and function name style should be snake_case, symbols or shinyModule.")
 
   # Can't allow 0 styles
   expect_error(
@@ -184,7 +184,14 @@ test_that("object_name_linter supports custom regexes", {
 
       myBadName <- 20L
     "),
-    list(line_number = 12L, message = msg),
+    list(
+      list(line_number = 1L, message = msg),
+      list(line_number = 2L, message = msg),
+      # argument "id" is linted if we only allow shinyModule names
+      list(line_number = 4L, column_number = 24L, message = msg),
+      list(line_number = 8L, column_number = 28L, message = msg),
+      list(line_number = 12L, message = msg)
+    ),
     linter
   )
 
@@ -203,14 +210,28 @@ test_that("object_name_linter supports custom regexes", {
 
       myBadName <- 20L
     "),
-    list(
-      list(line_number = 1L, message = msg2),
-      list(line_number = 2L, message = msg2),
-      # argument "id" is linted if we only allow shinyModule names
-      list(line_number = 4L, column_number = 24L, message = msg2),
-      list(line_number = 8L, column_number = 28L, message = msg2),
-      list(line_number = 12L, message = msg2)
-    ),
+    list(line_number = 12L, message = msg2),
     linter2
+  )
+
+  # Default regex naming works
+  expect_lint(
+    trim_some("
+      a <- 42L
+      b <- 1L
+      c <- 2L
+    "),
+    list(line_number = 3L, message = rex::rex("Variable and function name style should be custom.")),
+    object_name_linter(regexes = c("^a$", "^b$"))
+  )
+
+  expect_lint(
+    trim_some("
+      a <- 42L
+      b <- 1L
+      c <- 2L
+    "),
+    list(line_number = 3L, message = rex::rex("Variable and function name style should be a or custom.")),
+    object_name_linter(regexes = c(a = "^a$", "^b$"))
   )
 })

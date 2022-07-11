@@ -13,7 +13,9 @@ match at least one of these styles.}
 
 \item{regexes}{A (possibly named) character vector specifying a custom naming convention.
 If named, the names will be used in the lint message. Otherwise, "custom" will be used as a name for the style.
-Quotes (\verb{`"'}) and the specials (\verb{\%} and trailing \verb{<-}) are not considered part of the name to be matched.}
+Quotes (\verb{`"'}) and specials (\verb{\%} and trailing \verb{<-}) are not considered part of the name to be matched.
+Note that specifying \code{regexes} overrides the default \code{styles}. So if you want to combine \code{regexes} and \code{styles},
+both need to be explicitly specified.}
 }
 \description{
 Check that object names conform to a naming style.
