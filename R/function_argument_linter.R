@@ -9,8 +9,10 @@
 #' @export
 function_argument_linter <- function() {
   xpath <- paste(glue::glue(
-    "//{c('FUNCTION', 'OP-LAMBDA')}/following-sibling::EQ_FORMALS[1]/
-              following-sibling::SYMBOL_FORMALS[not(following-sibling::*[not(self::COMMENT)][1][self::EQ_FORMALS])]"
+    "//{c('FUNCTION', 'OP-LAMBDA')}/following-sibling::EQ_FORMALS[1]/following-sibling::SYMBOL_FORMALS[
+      text() != '...' and
+      not(following-sibling::*[not(self::COMMENT)][1][self::EQ_FORMALS])
+    ]"
   ), collapse = " | ")
 
   Linter(function(source_expression) {
