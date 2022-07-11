@@ -49,7 +49,7 @@ test_that("with_defaults is supported with a deprecation warning", {
   defaults <- linters_with_defaults()
   expect_warning(
     old_defaults <- with_defaults(),
-    rex::rex("Use linters_with_defaults instead.")
+    rex::rex("Use linters_with_defaults or modify_defaults instead.")
   )
   expect_identical(defaults, old_defaults)
 
@@ -57,7 +57,7 @@ test_that("with_defaults is supported with a deprecation warning", {
   defaults <- linters_with_defaults(defaults = list(), no_tab_linter())
   expect_warning(
     old_defaults <- with_defaults(default = NULL, no_tab_linter()),
-    rex::rex("Use linters_with_defaults instead.")
+    rex::rex("Use linters_with_defaults or modify_defaults instead.")
   )
   expect_identical(defaults, old_defaults)
 })
