@@ -22,6 +22,10 @@
 
 * New `function_argument_linter()` to enforce that arguments with defaults appear last in function declarations,
   see the [Tidyverse design guide](https://design.tidyverse.org/args-data-details.html) (#450, @AshesITR).
+## New features
+
+* `commented_code_linter()` now lints commented argument code, containing a trailing comma, as well (#386, @AshesITR).
+  For example a comment containing `#  na.rm = TRUE,` now triggers a lint.
 
 ## Bug fixes
 
