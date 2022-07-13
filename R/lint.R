@@ -458,6 +458,8 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
     )
   }
 
+  stopifnot(!is.na(line))
+
   type <- match.arg(type)
 
   structure(
