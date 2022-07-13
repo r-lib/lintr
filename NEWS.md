@@ -37,12 +37,14 @@
   newlines.
 * The `vignette("lintr")` incorrectly cited `exclude` as the key for setting file exclusions in `.lintr` when it is 
   actually `exclusions`. (#1401, @AshesITR)
-* `lint_dir()` no longer errors if there are multiple configured exclusions for a single file (#1413, @AshesITR).
+* Fixed file exclusion detection in `lint_dir()` so it no longer errors if there are multiple exclusions or no global
+  exclusions configured for a single file (#1413, #1442, @AshesITR).
 
 ## Other changes
 
 * The minimum needed version for soft dependency `{withr}` has been bumped to `2.5.0`
   (#1404, @IndrajeetPatil).
+* Changed the deprecation warning for `with_defaults()` to also mention `modify_defaults()` (#1438, @AshesITR).
 
 # lintr 3.0.0
 
