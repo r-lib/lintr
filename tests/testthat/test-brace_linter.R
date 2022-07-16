@@ -100,6 +100,43 @@ test_that("brace_linter lints braces correctly", {
     linter
   )
 
+  # , #comment<\n>{ is allowed
+  expect_lint(
+    trim_some("
+      switch(
+        x,
+        'a' = do_something(x),
+        'b' = do_another(x), # comment
+        {
+          do_first(x)
+          do_second(x)
+        }
+      )
+    "),
+    NULL,
+    linter
+  )
+
+  # #comment<\n>{ is allowed
+  expect_lint(
+    trim_some("
+      switch(stat,
+      o = {
+        x <- 0.01
+      },
+      s = {
+        x <- 0.005
+      },
+      # else
+      {
+        x <- 2
+      }
+    )
+    "),
+    NULL,
+    linter
+  )
+
   expect_lint(
     trim_some("
       fun(
@@ -233,7 +270,7 @@ test_that("brace_linter lints spaces before open braces", {
     list(
       rex::rex("Opening curly braces should never go on their own line and should always be followed by a new line."),
       rex::rex("Closing curly-braces should always be on their own line, unless they are followed by an else.")
-    ), #, but not msg
+    ), # , but not msg
     linter
   )
 })
