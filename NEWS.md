@@ -7,7 +7,7 @@
 ## Changes to defaults
 
 * `brace_linter()` allows opening curly braces on a new line when there is 
-  a comment on the preceding line (#1396, @IndrajeetPatil).
+  a comment on the preceding line (#1451, @IndrajeetPatil).
 
 * `seq_linter()` additionally lints on `1:n()` (from {dplyr}) 
   and `1:.N` (from {data.table}) (#1396, @IndrajeetPatil).
