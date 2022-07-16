@@ -100,7 +100,7 @@ test_that("brace_linter lints braces correctly", {
     linter
   )
 
-  # , #comment<\n>{ is allowed
+  # a comment before ,<\n>{ is allowed
   expect_lint(
     trim_some("
       switch(
@@ -117,7 +117,7 @@ test_that("brace_linter lints braces correctly", {
     linter
   )
 
-  # #comment<\n>{ is allowed
+  # a comment before <\n>{ is allowed
   expect_lint(
     trim_some("
       switch(stat,
