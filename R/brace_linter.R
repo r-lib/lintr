@@ -29,6 +29,9 @@ brace_linter <- function(allow_single_line = FALSE) {
       (@line1 = following-sibling::expr/OP-LEFT-BRACE/@line1)
     )",
     # allow `(`, `,` and `%>%` on preceding line
+    #
+    # note that '{' is not supported in RHS call of base-R's native pipe (`|>`),
+    # so this doesn't need to be supported
     "not(
       @line1 = parent::expr/preceding-sibling::*[1][
         self::OP-LEFT-PAREN or
