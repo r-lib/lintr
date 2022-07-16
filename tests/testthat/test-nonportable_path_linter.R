@@ -50,4 +50,11 @@ test_that("Non-portable path linter", {
     expect_lint(single_quote(path), NULL, linter)
     expect_lint(double_quote(path), NULL, linter)
   }
+
+  # #1356
+  expect_lint(
+    "grepl('[a/b] c', x, fixed = TRUE)",
+    NULL,
+    linter
+  )
 })
