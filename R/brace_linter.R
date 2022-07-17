@@ -31,12 +31,11 @@ brace_linter <- function(allow_single_line = FALSE) {
     # allow `(`, `,` and `%>%` on preceding line
     #
     # note that '{' is not supported in RHS call of base-R's native pipe (`|>`),
-    # so this doesn't need to be supported
+    # so no exception needs to be made for this operator
     "not(
-      @line1 = parent::expr/preceding-sibling::*[1][
+      @line1 = parent::expr/preceding-sibling::*[not(self::COMMENT)][1][
         self::OP-LEFT-PAREN or
         self::OP-COMMA or
-        self::COMMENT or
         (self::SPECIAL and text() = '%>%')
       ]/@line2 + 1
     )"

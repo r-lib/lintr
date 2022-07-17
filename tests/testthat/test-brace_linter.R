@@ -124,9 +124,6 @@ test_that("brace_linter lints braces correctly", {
       o = {
         x <- 0.01
       },
-      s = {
-        x <- 0.005
-      },
       # else
       {
         x <- 2
