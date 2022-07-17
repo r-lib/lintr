@@ -199,6 +199,16 @@ test_that("brace_linter lints braces correctly", {
     linter
   )
 
+  expect_lint(
+    "a <- function()
+     # comment
+    {
+      1
+    }",
+    open_curly_msg,
+    linter
+  )
+
   expect_lint("a <- function()\n{\n  1 \n}", open_curly_msg, linter)
   expect_lint("a <- function()\n    {\n  1 \n}", open_curly_msg, linter)
   expect_lint("a <- function()\n\t{\n  1 \n}", open_curly_msg, linter)
