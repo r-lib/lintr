@@ -14,6 +14,10 @@ case \code{&&} is to be preferred. Ditto for \code{|} vs. \code{||}.
 \details{
 This linter covers inputs to \verb{if()} and \verb{while()} conditions and to
 \code{\link[testthat:logical-expectations]{testthat::expect_true()}} and \code{\link[testthat:logical-expectations]{testthat::expect_false()}}.
+
+Note that because \code{&} and \code{|} are generics, it is possible that
+\code{&&} / \code{||} are not perfect substitutes because \code{&} is doing
+method dispatch in an incompatible way.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr

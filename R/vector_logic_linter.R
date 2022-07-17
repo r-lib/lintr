@@ -6,6 +6,11 @@
 #'
 #' This linter covers inputs to `if()` and `while()` conditions and to
 #'   [testthat::expect_true()] and [testthat::expect_false()].
+#'
+#' Note that because `&` and `|` are generics, it is possible that
+#'   `&&` / `||` are not perfect substitutes because `&` is doing
+#'   method dispatch in an incompatible way.
+#'
 #' @evalRd rd_tags("vector_logic_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
