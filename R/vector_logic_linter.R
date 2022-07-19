@@ -17,7 +17,7 @@
 #'   early, if `a` is `TRUE`,  the second condition will never be evaluated
 #'   and `b` will not be assigned. Such usage is not allowed by the Tidyverse
 #'   style guide, and the code can easily be refactored by pulling the
-#'   assignment outside of the condition, so using `||` is still preferable.
+#'   assignment outside the condition, so using `||` is still preferable.
 #'
 #' @evalRd rd_tags("vector_logic_linter")
 #' @seealso
