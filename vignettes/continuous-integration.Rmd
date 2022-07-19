@@ -45,7 +45,7 @@ If your project is in a subdirectory and you would like to use GitHub Actions an
 
 ### Travis CI
 
-If you want to run `lintr` on [Travis-CI](https://travis-ci.org), you will need to have Travis install the package first.
+If you want to run `lintr` on [Travis-CI](https://www.travis-ci.com/), you will need to have Travis install the package first.
 This can be done by adding the following line to your `.travis.yml`
 
 ``` yaml
