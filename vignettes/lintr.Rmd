@@ -52,7 +52,7 @@ Checking an R project for lints can be done with three different functions:
     -   `vignettes` containing package vignettes.
     -   `data-raw` containing code to produce `data` files.
 
-For more information about the assumed package structure, see [R Packages](https://r-pkgs.org/package-structure-state.html).
+For more information about the assumed package structure, see [R Packages](https://r-pkgs.org/structure.html).
 
 ## Configuring linters
 
