@@ -1,0 +1,19 @@
+test_that("assignment_eol_linter skips assignments mid-line", {
+  expect_lint("x <- y", NULL, assignment_eol_linter())
+  expect_lint("foo(bar = 1)", NULL, assignment_eol_linter())
+})
+
+test_that("assignment_eol_linter flags assignments end of line", {
+  expect_lint("x <<-\ny", "<<-", assignment_eol_linter())
+  expect_lint("foo(bar =\n1)", "=", assignment_eol_linter())
+})
+
+test_that("assignment_eol_linter flags commented end of line assignments by default", {
+  expect_lint("# x <<-\n# y", "<<-", assignment_eol_linter())
+  expect_lint("# foo(bar =\n# 1)", "=", assignment_eol_linter())
+})
+
+test_that("assignment_eol_linter skips commented end of line assignments", {
+  expect_lint("# x <<-\n# y", NULL, assignment_eol_linter(allow_comments = TRUE))
+  expect_lint("# foo(bar =\n# 1)", NULL, assignment_eol_linter(allow_comments = TRUE))
+})
