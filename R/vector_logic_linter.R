@@ -11,6 +11,14 @@
 #'   `&&` / `||` are not perfect substitutes because `&` is doing
 #'   method dispatch in an incompatible way.
 #'
+#' Moreover, be wary of code that may have side effects, most commonly
+#'   assignments. Consider `if ((a <- foo(x)) | (b <- bar(y))) { ... }`
+#'   vs. `if ((a <- foo(x)) || (b <- bar(y))) { ... }`. Because `||` exits
+#'   early, if `a` is `TRUE`,  the second condition will never be evaluated
+#'   and `b` will not be assigned. Such usage is not allowed by the Tidyverse
+#'   style guide, and the code can easily be refactored by pulling the
+#'   assignment outside the condition, so using `||` is still preferable.
+#'
 #' @evalRd rd_tags("vector_logic_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
