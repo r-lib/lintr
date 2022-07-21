@@ -78,6 +78,13 @@ case <code>&amp;&amp;</code> is to be preferred. Ditto for <code>|</code> vs. <c
 <p>Note that because <code>&amp;</code> and <code>|</code> are generics, it is possible that
 <code>&amp;&amp;</code> / <code>||</code> are not perfect substitutes because <code>&amp;</code> is doing
 method dispatch in an incompatible way.</p>
+<p>Moreover, be wary of code that may have side effects, most commonly
+assignments. Consider <code>if ((a &lt;- foo(x)) | (b &lt;- bar(y))) { ... }</code>
+vs. <code>if ((a &lt;- foo(x)) || (b &lt;- bar(y))) { ... }</code>. Because <code>||</code> exits
+early, if <code>a</code> is <code>TRUE</code>,  the second condition will never be evaluated
+and <code>b</code> will not be assigned. Such usage is not allowed by the Tidyverse
+style guide, and the code can easily be refactored by pulling the
+assignment outside of the condition, so using <code>||</code> is still preferable.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
