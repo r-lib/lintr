@@ -15,7 +15,7 @@ assignment_eol_linter <- function(allow_comments = FALSE) {
 
     res <- re_matches(
       source_expression$file_lines,
-      rex(capture(or("<<-", "<-", "=", "->", "-->")), end)
+      rex(capture(or("<<-", "<-", "=", "->", "-->")), any_space, end)
     )
     bad_lines <- which(!vapply(res[, 1], is.na, logical(1), USE.NAMES = FALSE))
 
