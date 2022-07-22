@@ -17,3 +17,14 @@ test_that("assignment_eol_linter skips commented end of line assignments", {
   expect_lint("# x <<-\n# y", NULL, assignment_eol_linter(allow_comments = TRUE))
   expect_lint("# foo(bar =\n# 1)", NULL, assignment_eol_linter(allow_comments = TRUE))
 })
+
+test_that("assignment_eol_linter flags multiple instances in a file", {
+  lintr::expect_lint(
+    "\n\nblah=\n42\nblh2<-\n54",
+    list(
+      list(message = "=", line_number = 3, column_number = 1, type = "style"),
+      list(message = "<-", line_number = 5, column_number = 1, type = "style")
+    ),
+    assignment_eol_linter
+  )
+})
