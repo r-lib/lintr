@@ -106,7 +106,7 @@ all_undesirable_functions <- modify_defaults(
     "remove this likely leftover from debugging.",
     "It traps a function and causes execution to pause when that function is run"
   ),
-  "debugcall" =paste(
+  "debugcall" = paste(
     "remove this likely leftover from debugging.",
     "It traps a function and causes execution to pause when that function is run"
   ),
