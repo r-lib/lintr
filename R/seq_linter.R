@@ -1,11 +1,10 @@
 #' Sequence linter
 #'
 #' This linter checks for `1:length(...)`, `1:nrow(...)`, `1:ncol(...)`,
-#' `1:NROW(...)` and `1:NCOL(...)` expressions in base-R, or their alternative
-#' usage in conjunction with `seq()` (e.g., `seq(length(...))`,
-#' `seq(nrow(...))`, etc.).
+#' `1:NROW(...)` and `1:NCOL(...)` expressions in base-R, or their usage in
+#' conjunction with `seq()` (e.g., `seq(length(...))`, `seq(nrow(...))`, etc.).
 #'
-#' Additionally, checks for `1:n()` (from dplyr) and `1:.N` (from data.table).
+#' Additionally, it checks for `1:n()` (from dplyr) and `1:.N` (from data.table).
 #'
 #' These often cause bugs when the right-hand side is zero.
 #' It is safer to use [base::seq_len()] or [base::seq_along()] instead.
