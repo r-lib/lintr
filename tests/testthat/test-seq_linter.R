@@ -19,6 +19,12 @@ test_that("finds seq(...) expressions", {
     rex("seq:length(...)", anything, "Use seq_along"),
     linter
   )
+
+  expect_lint(
+    "function(x) { seq(nrow(x)) }",
+    rex("seq:nrow(...)", anything, "Use seq_len"),
+    linter
+  )
 })
 
 test_that("finds 1:length(...) expressions", {
