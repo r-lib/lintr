@@ -6,8 +6,7 @@
 
 ## Changes to defaults
 
-* `seq_linter()` does not produce lints for `1:seq_len(length(x))` and 
-  `1:seq_along(length(x))`, since `seq_len()` and `eq_along()` can properly 
+* `seq_linter()` produces lint for `seq(...)`, since it also cannot properly 
   handle empty edge cases (#1468, @IndrajeetPatil).
 
 * `seq_linter()` additionally lints on `1:n()` (from {dplyr}) 

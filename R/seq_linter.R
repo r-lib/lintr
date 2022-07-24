@@ -10,21 +10,16 @@
 #' @export
 seq_linter <- function() {
   bad_funcs <- c("length", "n", "nrow", "ncol", "NROW", "NCOL", "dim")
-  good_funcs <- c("seq_len", "seq_along")
 
   # `.N` from {data.table} is special since it's not a function but a symbol
   xpath <- glue::glue("//expr[
     expr[NUM_CONST[text() =  '1' or text() =  '1L']]
     and OP-COLON
     and (
-        not(expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(good_funcs)} ]]]])
-        and
-        (
           expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]
           or
           expr[SYMBOL = '.N']
         )
-    )
   ]")
 
   ## The actual order of the nodes is document order

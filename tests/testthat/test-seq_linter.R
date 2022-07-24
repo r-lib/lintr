@@ -5,14 +5,20 @@ test_that("other : expressions are fine", {
   expect_lint("function(x) { 1:(length(x) || 1) }", NULL, linter)
 })
 
-test_that("1:seq_len(...) or 1:seq_along(...) expressions are fine", {
+test_that("seq_len(...) or seq_along(...) expressions are fine", {
+  linter <- seq_linter()
+  expect_lint("function(x) { seq_len(x) }", NULL, linter)
+  expect_lint("function(x) { seq_along(x) }", NULL, linter)
+})
+
+test_that("finds seq(...) expressions", {
   linter <- seq_linter()
 
-  expect_lint("1:seq_len(x)", NULL, linter)
-  expect_lint("1:seq_along(x)", NULL, linter)
-
-  expect_lint("1:seq_len(length(x))", NULL, linter)
-  expect_lint("1:seq_along(length(x))", NULL, linter)
+  expect_lint(
+    "function(x) { seq(x) }",
+    rex("seq(...)", anything, "Use seq_len"),
+    linter
+  )
 })
 
 test_that("finds 1:length(...) expressions", {
