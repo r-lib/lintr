@@ -7,8 +7,14 @@
 seq_linter()
 }
 \description{
-Check for \code{1:length(...)}, \code{1:nrow(...)}, \code{1:ncol(...)}, \code{1:NROW(...)} and \code{1:NCOL(...)} expressions in base-R.
-Additionally check \code{1:n()} (from dplyr) and \code{1:.N} (from data.table).
+This linter checks for \code{1:length(...)}, \code{1:nrow(...)}, \code{1:ncol(...)},
+\code{1:NROW(...)} and \code{1:NCOL(...)} expressions in base-R, or their alternative
+usage in conjunction with \code{seq()} (e.g., \code{seq(length(...))},
+\code{seq(nrow(...))}, etc.).
+}
+\details{
+Additionally, checks for \code{1:n()} (from dplyr) and \code{1:.N} (from data.table).
+
 These often cause bugs when the right-hand side is zero.
 It is safer to use \code{\link[base:seq]{base::seq_len()}} or \code{\link[base:seq]{base::seq_along()}} instead.
 }
