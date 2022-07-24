@@ -13,13 +13,19 @@ seq_linter <- function() {
 
   # `.N` from {data.table} is special since it's not a function but a symbol
   xpath <- glue::glue("//expr[
-    expr[NUM_CONST[text() =  '1' or text() =  '1L']]
-    and OP-COLON
-    and (
-          expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]
-          or
-          expr[SYMBOL = '.N']
-        )
+    (
+      expr[SYMBOL_FUNCTION_CALL[text() = 'seq']] and
+      expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]
+    )
+    or (
+      expr[NUM_CONST[text() =  '1' or text() =  '1L']]
+      and OP-COLON
+      and (
+            expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]
+            or
+            expr[SYMBOL = '.N']
+          )
+    )
   ]")
 
   ## The actual order of the nodes is document order

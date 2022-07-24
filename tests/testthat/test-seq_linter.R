@@ -15,8 +15,8 @@ test_that("finds seq(...) expressions", {
   linter <- seq_linter()
 
   expect_lint(
-    "function(x) { seq(x) }",
-    rex("seq(...)", anything, "Use seq_len"),
+    "function(x) { seq(length(x)) }",
+    rex("seq:length(...)", anything, "Use seq_along"),
     linter
   )
 })
@@ -27,12 +27,6 @@ test_that("finds 1:length(...) expressions", {
   expect_lint(
     "function(x) { 1:length(x) }",
     rex("length(...)", anything, "Use seq_along"),
-    linter
-  )
-
-  expect_lint(
-    "function(x) { 1:seq(length(x)) }",
-    rex("seq(...)", anything, "Use seq_len"),
     linter
   )
 
