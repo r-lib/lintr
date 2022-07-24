@@ -14,6 +14,18 @@ case \code{&&} is to be preferred. Ditto for \code{|} vs. \code{||}.
 \details{
 This linter covers inputs to \verb{if()} and \verb{while()} conditions and to
 \code{\link[testthat:logical-expectations]{testthat::expect_true()}} and \code{\link[testthat:logical-expectations]{testthat::expect_false()}}.
+
+Note that because \code{&} and \code{|} are generics, it is possible that
+\code{&&} / \code{||} are not perfect substitutes because \code{&} is doing
+method dispatch in an incompatible way.
+
+Moreover, be wary of code that may have side effects, most commonly
+assignments. Consider \code{if ((a <- foo(x)) | (b <- bar(y))) { ... }}
+vs. \code{if ((a <- foo(x)) || (b <- bar(y))) { ... }}. Because \code{||} exits
+early, if \code{a} is \code{TRUE},  the second condition will never be evaluated
+and \code{b} will not be assigned. Such usage is not allowed by the Tidyverse
+style guide, and the code can easily be refactored by pulling the
+assignment outside of the condition, so using \code{||} is still preferable.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr
