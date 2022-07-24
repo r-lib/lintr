@@ -16,13 +16,13 @@ test_that("finds seq(...) expressions", {
 
   expect_lint(
     "function(x) { seq(length(x)) }",
-    rex("seq:length(...)", anything, "Use seq_along"),
+    rex("seq(length(...))", anything, "Use seq(seq_along(...))"),
     linter
   )
 
   expect_lint(
     "function(x) { seq(nrow(x)) }",
-    rex("seq:nrow(...)", anything, "Use seq_len"),
+    rex("seq(nrow(...))", anything, "Use seq(seq_len(...))"),
     linter
   )
 })
