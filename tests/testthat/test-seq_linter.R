@@ -16,13 +16,13 @@ test_that("finds seq(...) expressions", {
 
   expect_lint(
     "function(x) { seq(length(x)) }",
-    rex("seq(length(...))", anything, "Use seq(seq_along(...))"),
+    rex("seq(length(...))", anything, "Use seq_along(...)"),
     linter
   )
 
   expect_lint(
     "function(x) { seq(nrow(x)) }",
-    rex("seq(nrow(...))", anything, "Use seq(seq_len(...))"),
+    rex("seq(nrow(...))", anything, "Use seq_len(...)"),
     linter
   )
 })
@@ -108,6 +108,15 @@ test_that("Message vectorization works for multiple lints", {
     list(
       rex::rex("1:length(...)", anything, "seq_along()"),
       rex::rex("1:nrow(...)", anything, "seq_len()")
+    ),
+    seq_linter()
+  )
+
+  expect_lint(
+    "c(seq(length(x)), seq(nrow(y)))",
+    list(
+      rex::rex("seq(length(...))", anything, "seq_along(...)"),
+      rex::rex("seq(nrow(...))", anything, "seq_len(...)")
     ),
     seq_linter()
   )

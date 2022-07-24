@@ -66,8 +66,8 @@ seq_linter <- function() {
 
     if (any(grepl("seq", dot_expr1, fixed = TRUE))) {
       lint_message <- sprintf(
-        "%s(%s) is likely to be wrong in the empty edge case. Use %s(%s(...)) instead.",
-        dot_expr1, dot_expr2, dot_expr1, replacement
+        "%s(%s) is likely to be wrong in the empty edge case. Use %s(...) instead.",
+        dot_expr1, dot_expr2, replacement
       )
     } else {
       lint_message <- sprintf(
