@@ -10,7 +10,7 @@ generate_top_level_map <- function(pc) {
     tl_parent[i_not_assigned] <- pc$parent[match(tl_parent[i_not_assigned], pc$id)]
     i_not_assigned <- which(!tl_parent %in% tl_ids)
     if (length(i_not_assigned) >= prev_length) {
-      stop("Logical error: unassigned set did not shrink. Check file syntax and please report as a bug.")
+      stop("Logical error: unassigned set did not shrink. Check file syntax and please report as a lintr bug.")
     }
   }
   tl_parent
