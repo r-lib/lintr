@@ -7,8 +7,12 @@ test_that("other : expressions are fine", {
 
 test_that("seq_len(...) or seq_along(...) expressions are fine", {
   linter <- seq_linter()
+
   expect_lint("function(x) { seq_len(x) }", NULL, linter)
   expect_lint("function(x) { seq_along(x) }", NULL, linter)
+
+  expect_lint("function(x) { seq(2, length(x)) }", NULL, linter)
+  expect_lint("function(x) { seq(length(x), 2) }", NULL, linter)
 })
 
 test_that("finds seq(...) expressions", {
