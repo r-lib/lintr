@@ -113,6 +113,15 @@ test_that("Message vectorization works for multiple lints", {
   )
 
   expect_lint(
+    "c(seq(length(x)), 1:nrow(y))",
+    list(
+      rex::rex("seq(length(...))", anything, "seq_along(...)"),
+      rex::rex("1:nrow(...)", anything, "seq_len()")
+    ),
+    seq_linter()
+  )
+
+  expect_lint(
     "c(seq(length(x)), seq(nrow(y)))",
     list(
       rex::rex("seq(length(...))", anything, "seq_along(...)"),

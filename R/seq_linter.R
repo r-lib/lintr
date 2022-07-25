@@ -66,17 +66,17 @@ seq_linter <- function() {
       "seq_len"
     )
 
-    if (any(grepl("seq", dot_expr1, fixed = TRUE))) {
-      lint_message <- sprintf(
+    lint_message <- ifelse(
+      grepl("seq", dot_expr1, fixed = TRUE),
+       sprintf(
         "%s(%s) is likely to be wrong in the empty edge case. Use %s(...) instead.",
         dot_expr1, dot_expr2, replacement
-      )
-    } else {
-      lint_message <- sprintf(
+      ),
+      sprintf(
         "%s:%s is likely to be wrong in the empty edge case. Use %s() instead.",
         dot_expr1, dot_expr2, replacement
       )
-    }
+    )
 
     xml_nodes_to_lints(badx, source_expression, lint_message, type = "warning")
   })
