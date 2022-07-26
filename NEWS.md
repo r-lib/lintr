@@ -19,6 +19,9 @@
 * `redundant_ifelse_linter()`'s lint message correctly suggests negation when 
   the `yes` condition is `0` (#1432, @IndrajeetPatil).
 
+* `seq_linter()` provides more specific replacement code in lint message 
+  (#1475, @IndrajeetPatil).
+
 ## New and improved features
 
 * `unreachable_code_linter()` ignores trailing comments if they match a closing nolint block (#1347, @AshesITR).

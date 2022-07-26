@@ -133,4 +133,13 @@ test_that("Message vectorization works for multiple lints", {
     ),
     seq_linter()
   )
+
+  expect_lint(
+    "c(1:NROW(x), seq(NCOL(y)))",
+    list(
+      rex::rex("1:NROW(...)", anything, "seq_len(NROW(...)"),
+      rex::rex("seq(NCOL(...))", anything, "seq_len(NCOL(...))")
+    ),
+    seq_linter()
+  )
 })
