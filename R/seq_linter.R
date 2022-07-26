@@ -14,8 +14,10 @@
 #' @export
 seq_linter <- function() {
   bad_funcs <- c("length", "n", "nrow", "ncol", "NROW", "NCOL", "dim")
+
+  # Exact `xpath` depends on whether bad function was used in conjunction with `seq()`
   bad_func_xpath_with_seq <- glue::glue(
-    "expr[1][SYMBOL_FUNCTION_CALL[text() = 'seq']]/following::expr[1]/expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(bad_funcs)}]]"
+    "expr[1][SYMBOL_FUNCTION_CALL[text() = 'seq']]/following::expr[1]/expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]"
   )
   bad_func_xpath_without_seq <- glue::glue(
     "expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]"
@@ -24,9 +26,10 @@ seq_linter <- function() {
   # `.N` from {data.table} is special since it's not a function but a symbol
   xpath <- glue::glue("//expr[
     (
-      { bad_func_xpath_with_seq }
+      {bad_func_xpath_with_seq}
       and count(expr) = 2
-    ) or (
+    ) or
+    (
       expr[NUM_CONST[text() = '1' or text() = '1L']]
       and OP-COLON
       and ( {bad_func_xpath_without_seq} or expr[SYMBOL = '.N'] )
