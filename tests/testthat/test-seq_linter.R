@@ -29,13 +29,6 @@ test_that("finds seq(...) expressions", {
     rex("seq(nrow(...))", anything, "Use seq_len(...)"),
     linter
   )
-
-  # FIXME: This test should pass
-  # expect_lint(
-  #   "function(x) { seq(dim(x)[1]) }",
-  #   rex("seq(dim(...))", anything, "Use seq_len(...)"),
-  #   linter
-  # )
 })
 
 test_that("finds 1:length(...) expressions", {
