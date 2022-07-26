@@ -8,6 +8,9 @@
 
 * `brace_linter()` allows opening curly braces on a new line when there is 
   a comment on the preceding line (#1451, @IndrajeetPatil).
+  
+* `seq_linter()` produces lint for `seq(...)`, since it also cannot properly 
+  handle empty edge cases (#1468, @IndrajeetPatil).
 
 * `seq_linter()` additionally lints on `1:n()` (from {dplyr}) 
   and `1:.N` (from {data.table}) (#1396, @IndrajeetPatil).

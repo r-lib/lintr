@@ -5,6 +5,32 @@ test_that("other : expressions are fine", {
   expect_lint("function(x) { 1:(length(x) || 1) }", NULL, linter)
 })
 
+test_that("seq_len(...) or seq_along(...) expressions are fine", {
+  linter <- seq_linter()
+
+  expect_lint("function(x) { seq_len(x) }", NULL, linter)
+  expect_lint("function(x) { seq_along(x) }", NULL, linter)
+
+  expect_lint("function(x) { seq(2, length(x)) }", NULL, linter)
+  expect_lint("function(x) { seq(length(x), 2) }", NULL, linter)
+})
+
+test_that("finds seq(...) expressions", {
+  linter <- seq_linter()
+
+  expect_lint(
+    "function(x) { seq(length(x)) }",
+    rex("seq(length(...))", anything, "Use seq_along(...)"),
+    linter
+  )
+
+  expect_lint(
+    "function(x) { seq(nrow(x)) }",
+    rex("seq(nrow(...))", anything, "Use seq_len(...)"),
+    linter
+  )
+})
+
 test_that("finds 1:length(...) expressions", {
   linter <- seq_linter()
 
@@ -86,6 +112,24 @@ test_that("Message vectorization works for multiple lints", {
     list(
       rex::rex("1:length(...)", anything, "seq_along()"),
       rex::rex("1:nrow(...)", anything, "seq_len()")
+    ),
+    seq_linter()
+  )
+
+  expect_lint(
+    "c(seq(length(x)), 1:nrow(y))",
+    list(
+      rex::rex("seq(length(...))", anything, "seq_along(...)"),
+      rex::rex("1:nrow(...)", anything, "seq_len()")
+    ),
+    seq_linter()
+  )
+
+  expect_lint(
+    "c(seq(length(x)), seq(nrow(y)))",
+    list(
+      rex::rex("seq(length(...))", anything, "seq_along(...)"),
+      rex::rex("seq(nrow(...))", anything, "seq_len(...)")
     ),
     seq_linter()
   )
