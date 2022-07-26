@@ -17,7 +17,9 @@ seq_linter <- function() {
 
   # Exact `xpath` depends on whether bad function was used in conjunction with `seq()`
   bad_func_xpath_with_seq <- glue::glue(
-    "expr[1][SYMBOL_FUNCTION_CALL[text() = 'seq']]/following::expr[1]/expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]"
+    "expr[1][SYMBOL_FUNCTION_CALL[text() = 'seq']]
+    /following::expr[1]
+    /expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]"
   )
   bad_func_xpath_without_seq <- glue::glue(
     "expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]"
