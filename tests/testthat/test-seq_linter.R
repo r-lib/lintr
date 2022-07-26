@@ -13,8 +13,6 @@ test_that("seq_len(...) or seq_along(...) expressions are fine", {
 
   expect_lint("function(x) { seq(2, length(x)) }", NULL, linter)
   expect_lint("function(x) { seq(length(x), 2) }", NULL, linter)
-
-  expect_lint("function(x) { seq(dim(x)[1]) }", NULL, linter)
 })
 
 test_that("finds seq(...) expressions", {
@@ -31,6 +29,13 @@ test_that("finds seq(...) expressions", {
     rex("seq(nrow(...))", anything, "Use seq_len(...)"),
     linter
   )
+
+  # FIXME: This test should pass
+  # expect_lint(
+  #   "function(x) { seq(dim(x)[1]) }",
+  #   rex("seq(dim(...))", anything, "Use seq_len(...)"),
+  #   linter
+  # )
 })
 
 test_that("finds 1:length(...) expressions", {
