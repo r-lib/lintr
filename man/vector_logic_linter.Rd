@@ -25,7 +25,7 @@ vs. \code{if ((a <- foo(x)) || (b <- bar(y))) { ... }}. Because \code{||} exits
 early, if \code{a} is \code{TRUE},  the second condition will never be evaluated
 and \code{b} will not be assigned. Such usage is not allowed by the Tidyverse
 style guide, and the code can easily be refactored by pulling the
-assignment outside of the condition, so using \code{||} is still preferable.
+assignment outside the condition, so using \code{||} is still preferable.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr

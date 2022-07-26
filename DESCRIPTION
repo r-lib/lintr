@@ -45,7 +45,7 @@ Suggests:
 License: MIT + file LICENSE
 Encoding: UTF-8
 VignetteBuilder: knitr
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 Config/testthat/edition: 3
 Collate:
     'T_and_F_symbol_linter.R'
