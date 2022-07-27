@@ -44,3 +44,8 @@ reference:
   - default_settings
   - get_source_expressions
   - parse_exclusions
+
+news:
+  releases:
+  - text: "Version 3.0.0"
+    href: https://www.tidyverse.org/blog/2022/07/lintr-3-0-0/

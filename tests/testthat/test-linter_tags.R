@@ -59,7 +59,7 @@ test_that("available_linters matches the set of linters available from lintr", {
   # ensure that the contents of inst/lintr/linters.csv covers all _linter objects in our namespace
   expect_identical(sort(lintr_db$linter), sort(linters_in_namespace))
   # ensure that all _linter objects in our namespace are also exported
-  exported_linters <- grep("_linter$", getNamespaceExports("lintr"), value = TRUE)
+  exported_linters <- setdiff(grep("_linter$", getNamespaceExports("lintr"), value = TRUE), "is_linter")
   expect_identical(sort(linters_in_namespace), sort(exported_linters))
 })
 

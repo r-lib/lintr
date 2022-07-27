@@ -75,7 +75,7 @@ test_that("it handles tex", {
       list(regexes[["assign"]], line_number = 23L),
       list(regexes[["trailing"]], line_number = 25L),
       list(regexes[["trailws"]], line_number = 25L)
-      # FIXME(AshesITR) #1043
+      # FIXME(AshesITR): #1043
       # file_lines contains a whitespace on the final line for Rtex, because that is used to mark the Rtex escape char
       # "%" as well.
       # cf. get_source_expressions("tests/testthat/knitr_formats/test.Rtex")$lines[[25]]
