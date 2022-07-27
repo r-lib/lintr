@@ -29,6 +29,18 @@ test_that("finds seq(...) expressions", {
     rex("seq(nrow(...))", anything, "Use seq_len(nrow(...))"),
     linter
   )
+
+  expect_lint(
+    "function(x) { rev(seq(length(x))) }",
+    rex("seq(length(...))", anything, "Use seq_along(...)"),
+    linter
+  )
+
+  expect_lint(
+    "function(x) { rev(seq(nrow(x))) }",
+    rex("seq(nrow(...))", anything, "Use seq_len(nrow(...))"),
+    linter
+  )
 })
 
 test_that("finds 1:length(...) expressions", {
@@ -99,6 +111,10 @@ test_that("1L is also bad", {
 })
 
 test_that("reverse seq is ok", {
+  linter <- seq_linter()
+  expect_lint("function(x) { rev(seq_along(x)) }", NULL, linter)
+  expect_lint("function(x) { rev(seq_len(nrow(x))) }", NULL, linter)
+
   expect_lint(
     "function(x) { length(x):1 }",
     rex("length(...):1", anything, "Use seq_along"),
