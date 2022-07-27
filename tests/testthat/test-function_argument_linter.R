@@ -51,7 +51,7 @@ test_that("function_argument_linter also lints lambda expressions", {
   skip_if_not_r_version("4.1.0")
   linter <- function_argument_linter()
   msg <- rex::rex("Arguments without defaults should come before arguments with defaults.")
-  
+
   expect_lint("\\(x, y = 1, z) {}", list(message = msg, column_number = 13L), linter)
   expect_lint("\\(x, y = 1, z, w = 2) {}", list(message = msg, column_number = 13L), linter)
   expect_lint("\\(x, y = 1, z = 2) {}", NULL, linter)
