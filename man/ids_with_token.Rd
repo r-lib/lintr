@@ -43,7 +43,7 @@ Gets the source IDs (row indices) corresponding to given token.
 }
 \section{Functions}{
 \itemize{
-\item \code{with_id}: Return the row of the \code{parsed_content} entry of the \verb{[get_source_expressions]()} object. Typically used in
+\item \code{with_id()}: Return the row of the \code{parsed_content} entry of the \verb{[get_source_expressions]()} object. Typically used in
 conjunction with \code{ids_with_token} to iterate over rows containing desired tokens.
-}}
 
+}}
