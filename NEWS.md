@@ -6,6 +6,9 @@
 
 ## Changes to defaults
 
+* `seq_linter()` produces lint for `seq(...)`, since it also cannot properly 
+  handle empty edge cases (#1468, @IndrajeetPatil).
+
 * `seq_linter()` additionally lints on `1:n()` (from {dplyr}) 
   and `1:.N` (from {data.table}) (#1396, @IndrajeetPatil).
 
@@ -20,6 +23,8 @@
 
 * `unreachable_code_linter()` ignores trailing comments if they match a closing nolint block (#1347, @AshesITR).
 
+* New `function_argument_linter()` to enforce that arguments with defaults appear last in function declarations,
+  see the [Tidyverse design guide](https://design.tidyverse.org/args-data-details.html) (#450, @AshesITR).
 ## New features
 
 * `commented_code_linter()` now lints commented argument code, containing a trailing comma, as well (#386, @AshesITR).
