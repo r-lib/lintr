@@ -126,4 +126,48 @@ test_that("#1413: lint_dir properly excludes files", {
 
   expect_length(lint(file.path(tmp, "bad.R")), 0L)
   expect_length(lint_dir(tmp), 0L)
+
+})
+
+test_that("#1442: is_excluded_files works if no global exclusions are specified", {
+  withr::local_options(lintr.linter_file = "lintr_test_config")
+  tmp <- withr::local_tempdir()
+
+  writeLines(
+    trim_some("
+      linters: linters_with_defaults(
+          line_length_linter(10)
+        )
+      exclusions: list(
+          'bad.R' = list(
+            line_length_linter = 4:6
+          )
+        )
+    "),
+    file.path(tmp, "lintr_test_config")
+  )
+
+  writeLines(
+    trim_some("
+      tmp = 'value'
+
+      # comment
+      # long comment
+      # long comment
+      # long comment
+      # comment
+    "),
+    file.path(tmp, "bad.R")
+  )
+
+  # 3 lints: assignment_linter(), single_quotes_linter() and line_length_linter()
+  expect_lint(
+    file = file.path(tmp, "bad.R"),
+    checks = list(
+      list(linter = "assignment_linter", line_number = 1L),
+      list(linter = "single_quotes_linter", line_number = 1L),
+      list(linter = "line_length_linter", line_number = 1L)
+    )
+  )
+  expect_length(lint_dir(tmp), 3L)
 })

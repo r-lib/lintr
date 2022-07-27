@@ -45,7 +45,7 @@ If your project is in a subdirectory and you would like to use GitHub Actions an
 
 ### Travis CI
 
-If you want to run `lintr` on [Travis-CI](https://travis-ci.org), you will need to have Travis install the package first.
+If you want to run `lintr` on [Travis-CI](https://www.travis-ci.com/), you will need to have Travis install the package first.
 This can be done by adding the following line to your `.travis.yml`
 
 ``` yaml
@@ -86,6 +86,6 @@ usethis::use_github_action("lint-project")
 
 ### Super-Linter
 
-`lintr` powers R lints for [Super-Linter](https://github.com/github/super-linter) and [MegaLinter](https://megalinter.github.io/latest/),
+`lintr` powers R lints for [Super-Linter](https://github.com/github/super-linter) and [MegaLinter](https://oxsecurity.github.io/megalinter/latest/),
 which provide a unified linting experience across many languages.
 Specifically, they execute `lintr::lint()` on the R and R Markdown files included in a given project.

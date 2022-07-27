@@ -1,7 +1,11 @@
 #' Sequence linter
 #'
-#' Check for `1:length(...)`, `1:nrow(...)`, `1:ncol(...)`, `1:NROW(...)` and `1:NCOL(...)` expressions in base-R.
-#' Additionally check `1:n()` (from dplyr) and `1:.N` (from data.table).
+#' This linter checks for `1:length(...)`, `1:nrow(...)`, `1:ncol(...)`,
+#' `1:NROW(...)` and `1:NCOL(...)` expressions in base-R, or their usage in
+#' conjunction with `seq()` (e.g., `seq(length(...))`, `seq(nrow(...))`, etc.).
+#'
+#' Additionally, it checks for `1:n()` (from dplyr) and `1:.N` (from data.table).
+#'
 #' These often cause bugs when the right-hand side is zero.
 #' It is safer to use [base::seq_len()] or [base::seq_along()] instead.
 #'
@@ -11,15 +15,27 @@
 seq_linter <- function() {
   bad_funcs <- c("length", "n", "nrow", "ncol", "NROW", "NCOL", "dim")
 
+  # Exact `xpath` depends on whether bad function was used in conjunction with `seq()`
+  bad_func_xpath_with_seq <- glue::glue(
+    "expr[1][SYMBOL_FUNCTION_CALL[text() = 'seq']]
+    /following::expr[1]
+    /expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]"
+  )
+  bad_func_xpath_without_seq <- glue::glue(
+    "expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]"
+  )
+
   # `.N` from {data.table} is special since it's not a function but a symbol
   xpath <- glue::glue("//expr[
-    expr[NUM_CONST[text() =  '1' or text() =  '1L']]
-    and OP-COLON
-    and (
-          expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]
-          or
-          expr[SYMBOL = '.N']
-        )
+    (
+      {bad_func_xpath_with_seq}
+      and count(expr) = 2
+    ) or
+    (
+      expr[NUM_CONST[text() = '1' or text() = '1L']]
+      and OP-COLON
+      and ( {bad_func_xpath_without_seq} or expr[SYMBOL = '.N'] )
+    )
   ]")
 
   ## The actual order of the nodes is document order
@@ -57,9 +73,17 @@ seq_linter <- function() {
       "seq_along",
       "seq_len"
     )
-    lint_message <- sprintf(
-      "%s:%s is likely to be wrong in the empty edge case. Use %s() instead.",
-      dot_expr1, dot_expr2, replacement
+
+    lint_message <- ifelse(
+      grepl("seq", dot_expr1, fixed = TRUE),
+       sprintf(
+        "%s(%s) is likely to be wrong in the empty edge case. Use %s(...) instead.",
+        dot_expr1, dot_expr2, replacement
+      ),
+      sprintf(
+        "%s:%s is likely to be wrong in the empty edge case. Use %s() instead.",
+        dot_expr1, dot_expr2, replacement
+      )
     )
 
     xml_nodes_to_lints(badx, source_expression, lint_message, type = "warning")
