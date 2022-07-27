@@ -172,6 +172,9 @@
     <loc>https://lintr.r-lib.org/reference/fixed_regex_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/reference/function_argument_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/reference/function_left_parentheses_linter.html</loc>
   </url>
   <url>
