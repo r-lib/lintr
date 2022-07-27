@@ -281,6 +281,19 @@ test_that("#743, #879, #1406: get_source_expressions works on R files matching a
   expect_null(source_expressions$error)
 })
 
+test_that("Syntax errors in Rmd don't choke lintr", {
+  tmp <- withr::local_tempfile(lines = c(
+    "```{r}",
+    "if (TRUE) {",
+    "  1",
+    # missing `}` here
+    "if (TRUE) {",
+    "}",
+    "```"
+  ))
+  expect_silent(get_source_expressions(tmp))
+})
+
 skip_if_not_installed("patrick")
 # NB: this is just a cursory test for linters not to
 #   fail on files where the XML content is xml_missing;

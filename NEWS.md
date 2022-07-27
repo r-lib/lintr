@@ -6,6 +6,9 @@
 
 ## Changes to defaults
 
+* `seq_linter()` produces lint for `seq(...)`, since it also cannot properly 
+  handle empty edge cases (#1468, @IndrajeetPatil).
+
 * `seq_linter()` additionally lints on `1:n()` (from {dplyr}) 
   and `1:.N` (from {data.table}) (#1396, @IndrajeetPatil).
 
@@ -32,18 +35,21 @@
 * `get_source_expressions()` no longer fails on R files that match a knitr pattern (#743, #879, #1406, @AshesITR).
 * Parse error lints now appear with the linter name `"error"` instead of `NA` (#1405, @AshesITR).  
   Also, linting no longer runs if the `source_expressions` contain invalid string data that would cause error messages
-  in other linters. 
+  in other linters.
+* Prevent `lint()` from hanging on Rmd files with some syntax errors (#1443, @MichaelChirico).
 * `get_source_expressions()` no longer omits trailing non-code lines from knitr files (#1400, #1415, @AshesITR).  
   This fixes the location information for `trailing_blank_lines_linter()` in RMarkdown documents without terminal
   newlines.
 * The `vignette("lintr")` incorrectly cited `exclude` as the key for setting file exclusions in `.lintr` when it is 
   actually `exclusions`. (#1401, @AshesITR)
-* `lint_dir()` no longer errors if there are multiple configured exclusions for a single file (#1413, @AshesITR).
+* Fixed file exclusion detection in `lint_dir()` so it no longer errors if there are multiple exclusions or no global
+  exclusions configured for a single file (#1413, #1442, @AshesITR).
 
 ## Other changes
 
 * The minimum needed version for soft dependency `{withr}` has been bumped to `2.5.0`
   (#1404, @IndrajeetPatil).
+* Changed the deprecation warning for `with_defaults()` to also mention `modify_defaults()` (#1438, @AshesITR).
 
 # lintr 3.0.0
 
