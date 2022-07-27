@@ -98,7 +98,7 @@ default_linters <- modify_defaults(
 #' @export
 all_undesirable_functions <- modify_defaults(
   defaults = list(),
-  "attach" = 
+  "attach" =
     "use roxygen2's @importFrom statement in packages, or `::` in scripts. attach() modifies the global search path",
   "browser" =
     "remove this likely leftover from debugging. It pauses execution when run",
