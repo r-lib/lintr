@@ -2,7 +2,7 @@
 % Please edit documentation in R/expect_length_linter.R
 \name{expect_length_linter}
 \alias{expect_length_linter}
-\title{Require usage of expect_length(x, n) over expect_equal(length(x), n)}
+\title{Require usage of \code{expect_length(x, n)} over \code{expect_equal(length(x), n)}}
 \usage{
 expect_length_linter()
 }

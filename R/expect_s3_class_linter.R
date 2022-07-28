@@ -1,4 +1,4 @@
-#' Require usage of expect_s3_class()
+#' Require usage of `expect_s3_class()`
 #'
 #' [testthat::expect_s3_class()] exists specifically for testing the class
 #'   of S3 objects. [testthat::expect_equal()], [testthat::expect_identical()],
@@ -69,7 +69,7 @@ is_s3_class_calls <- paste0("is.", c(
   "mts", "stepfun", "ts", "tskernel"
 ))
 
-#' Require usage of expect_s4_class(x, k) over expect_true(is(x, k))
+#' Require usage of `expect_s4_class(x, k)` over `expect_true(is(x, k))`
 #'
 #' [testthat::expect_s4_class()] exists specifically for testing the class
 #'   of S4 objects. [testthat::expect_true()] can also be used for such tests,

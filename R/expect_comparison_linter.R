@@ -1,4 +1,4 @@
-#' Require usage of expect_gt(x, y) over expect_true(x > y) (and similar)
+#' Require usage of `expect_gt(x, y)` over `expect_true(x > y)` (and similar)
 #'
 #' [testthat::expect_gt()], [testthat::expect_gte()], [testthat::expect_lt()],
 #'   [testthat::expect_lte()], and [testthat::expect_equal()] exist specifically

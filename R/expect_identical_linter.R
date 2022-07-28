@@ -1,6 +1,6 @@
-#' Require usage of expect_identical(x, y) where appropriate
+#' Require usage of `expect_identical(x, y)` where appropriate
 #'
-#' At Google, [testthat::expect_identical()] should be the default/go-to function for
+#' [testthat::expect_identical()] should be the default/go-to function for
 #'   comparing an output to an expected value. `expect_true(identical(x, y))`
 #'   is an equivalent but unadvised method of the same test. Further,
 #'   [testthat::expect_equal()] should only be used when `expect_identical()`
@@ -17,7 +17,7 @@
 #'   1. A named argument is set (e.g. `ignore_attr` or `tolerance`)
 #'   2. Comparison is made to an explicit decimal, e.g.
 #'      `expect_equal(x, 1.0)` (implicitly setting `tolerance`)
-#'   3. `...` is passed (wrapper functions whcih might set
+#'   3. `...` is passed (wrapper functions which might set
 #'      arguments such as `ignore_attr` or `tolerance`)
 #'
 #' @evalRd rd_tags("expect_identical_linter")

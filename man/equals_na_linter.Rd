@@ -7,7 +7,8 @@
 equals_na_linter()
 }
 \description{
-Check for \code{x == NA} and \code{x != NA}
+Check for \code{x == NA} and \code{x != NA}. One should instead use \code{is.na()} function
+for such comparisons.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

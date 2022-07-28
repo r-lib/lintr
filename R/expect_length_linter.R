@@ -1,4 +1,4 @@
-#' Require usage of expect_length(x, n) over expect_equal(length(x), n)
+#' Require usage of `expect_length(x, n)` over `expect_equal(length(x), n)`
 #'
 #' [testthat::expect_length()] exists specifically for testing the [length()] of
 #'   an object. [testthat::expect_equal()] can also be used for such tests,

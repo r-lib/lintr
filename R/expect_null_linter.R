@@ -1,4 +1,4 @@
-#' expect_null Linter
+#' Require usage of `expect_null` for checking `NULL`
 #'
 #' Require usage of `expect_null(x)` over `expect_equal(x, NULL)` and similar
 #' usages.

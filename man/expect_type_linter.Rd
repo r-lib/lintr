@@ -2,7 +2,7 @@
 % Please edit documentation in R/expect_type_linter.R
 \name{expect_type_linter}
 \alias{expect_type_linter}
-\title{Require usage of expect_type(x, type) over expect_equal(typeof(x), type)}
+\title{Require usage of \code{expect_type(x, type)} over \code{expect_equal(typeof(x), type)}}
 \usage{
 expect_type_linter()
 }

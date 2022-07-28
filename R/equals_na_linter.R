@@ -1,6 +1,7 @@
 #' Equality check with NA linter
 #'
-#' Check for `x == NA` and `x != NA`
+#' Check for `x == NA` and `x != NA`. One should instead use `is.na()` function
+#' for such comparisons.
 #'
 #' @evalRd rd_tags("equals_na_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.

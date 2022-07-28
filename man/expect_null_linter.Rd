@@ -2,7 +2,7 @@
 % Please edit documentation in R/expect_null_linter.R
 \name{expect_null_linter}
 \alias{expect_null_linter}
-\title{expect_null Linter}
+\title{Require usage of \code{expect_null} for checking \code{NULL}}
 \usage{
 expect_null_linter()
 }

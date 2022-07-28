@@ -2,7 +2,7 @@
 % Please edit documentation in R/expect_not_linter.R
 \name{expect_not_linter}
 \alias{expect_not_linter}
-\title{Require usage of expect_false(.) over expect_true(!.)}
+\title{Require usage of \code{expect_false(x)} over \code{expect_true(!x)}}
 \usage{
 expect_not_linter()
 }

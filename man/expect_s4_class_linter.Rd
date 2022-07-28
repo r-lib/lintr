@@ -2,7 +2,7 @@
 % Please edit documentation in R/expect_s3_class_linter.R
 \name{expect_s4_class_linter}
 \alias{expect_s4_class_linter}
-\title{Require usage of expect_s4_class(x, k) over expect_true(is(x, k))}
+\title{Require usage of \code{expect_s4_class(x, k)} over \code{expect_true(is(x, k))}}
 \usage{
 expect_s4_class_linter()
 }

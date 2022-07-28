@@ -2,12 +2,12 @@
 % Please edit documentation in R/expect_identical_linter.R
 \name{expect_identical_linter}
 \alias{expect_identical_linter}
-\title{Require usage of expect_identical(x, y) where appropriate}
+\title{Require usage of \code{expect_identical(x, y)} where appropriate}
 \usage{
 expect_identical_linter()
 }
 \description{
-At Google, \code{\link[testthat:equality-expectations]{testthat::expect_identical()}} should be the default/go-to function for
+\code{\link[testthat:equality-expectations]{testthat::expect_identical()}} should be the default/go-to function for
 comparing an output to an expected value. \code{expect_true(identical(x, y))}
 is an equivalent but unadvised method of the same test. Further,
 \code{\link[testthat:equality-expectations]{testthat::expect_equal()}} should only be used when \code{expect_identical()}
@@ -26,7 +26,7 @@ The linter allows \code{expect_equal()} in three circumstances:
 \item A named argument is set (e.g. \code{ignore_attr} or \code{tolerance})
 \item Comparison is made to an explicit decimal, e.g.
 \code{expect_equal(x, 1.0)} (implicitly setting \code{tolerance})
-\item \code{...} is passed (wrapper functions whcih might set
+\item \code{...} is passed (wrapper functions which might set
 arguments such as \code{ignore_attr} or \code{tolerance})
 }
 }

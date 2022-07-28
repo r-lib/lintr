@@ -2,7 +2,7 @@
 % Please edit documentation in R/expect_true_false_linter.R
 \name{expect_true_false_linter}
 \alias{expect_true_false_linter}
-\title{Require usage of expect_true(x) over expect_equal(x, TRUE)}
+\title{Require usage of \code{expect_true(x)} over \code{expect_equal(x, TRUE)}}
 \usage{
 expect_true_false_linter()
 }
