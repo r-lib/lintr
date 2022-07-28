@@ -1,7 +1,7 @@
-#' Require c() to be applied before relatively expensive vectorized functions
+#' Require `c()` to be applied before relatively expensive vectorized functions
 #'
-#' `as.Date(c(a, b))` is logically equivalent to `c(as.Date(a), as.Date(b))`;
-#'   ditto for the equivalence of several other vectorized functions like
+#' `as.Date(c(a, b))` is logically equivalent to `c(as.Date(a), as.Date(b))`.
+#'   The same equivalence holds for several other vectorized functions like
 #'   [as.POSIXct()] and math functions like [sin()]. The former is to be
 #'   preferred so that the most expensive part of the operation ([as.Date()])
 #'   is applied only once.

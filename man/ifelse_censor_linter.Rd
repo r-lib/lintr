@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifelse_censor_linter.R
 \name{ifelse_censor_linter}
 \alias{ifelse_censor_linter}
-\title{Block usage of ifelse where pmin or pmax is more appropriate}
+\title{Block usage of \code{ifelse()} where \code{pmin()} or \code{pmax()} is more appropriate}
 \usage{
 ifelse_censor_linter()
 }

@@ -3,7 +3,7 @@
 #' Invoking a regular expression engine is overkill for cases when the search
 #'   pattern only involves static patterns.
 #'
-#' NB: for `stringr` functions, that means wrapping the pattern in `stringr::fixed()`.
+#' NB: For `stringr` functions, that means wrapping the pattern in `stringr::fixed()`.
 #'
 #' NB: This linter is likely not able to distinguish every possible case when
 #'   a fixed regular expression is preferable, rather it seeks to identify

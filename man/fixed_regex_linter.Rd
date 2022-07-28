@@ -11,7 +11,7 @@ Invoking a regular expression engine is overkill for cases when the search
 pattern only involves static patterns.
 }
 \details{
-NB: for \code{stringr} functions, that means wrapping the pattern in \code{stringr::fixed()}.
+NB: For \code{stringr} functions, that means wrapping the pattern in \code{stringr::fixed()}.
 
 NB: This linter is likely not able to distinguish every possible case when
 a fixed regular expression is preferable, rather it seeks to identify

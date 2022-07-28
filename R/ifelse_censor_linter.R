@@ -1,4 +1,4 @@
-#' Block usage of ifelse where pmin or pmax is more appropriate
+#' Block usage of `ifelse()` where `pmin()` or `pmax()` is more appropriate
 #'
 #' `ifelse(x > M, M, x)` is the same as `pmin(x, M)`, but harder
 #'   to read and requires several passes over the vector.

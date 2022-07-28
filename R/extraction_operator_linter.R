@@ -1,7 +1,7 @@
 #' Extraction operator linter
 #'
-#' Check that the `[[` operator is used when extracting a single element from an object, not `[` (subsetting) nor `$`
-#' (interactive use).
+#' Check that the `[[` operator is used when extracting a single element from an object,
+#' and not `[` (subsetting) or `$` (interactive use).
 #'
 #' @evalRd rd_tags("extraction_operator_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.

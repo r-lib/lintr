@@ -2,13 +2,13 @@
 % Please edit documentation in R/inner_combine_linter.R
 \name{inner_combine_linter}
 \alias{inner_combine_linter}
-\title{Require c() to be applied before relatively expensive vectorized functions}
+\title{Require \code{c()} to be applied before relatively expensive vectorized functions}
 \usage{
 inner_combine_linter()
 }
 \description{
-\code{as.Date(c(a, b))} is logically equivalent to \code{c(as.Date(a), as.Date(b))};
-ditto for the equivalence of several other vectorized functions like
+\code{as.Date(c(a, b))} is logically equivalent to \code{c(as.Date(a), as.Date(b))}.
+The same equivalence holds for several other vectorized functions like
 \code{\link[=as.POSIXct]{as.POSIXct()}} and math functions like \code{\link[=sin]{sin()}}. The former is to be
 preferred so that the most expensive part of the operation (\code{\link[=as.Date]{as.Date()}})
 is applied only once.
