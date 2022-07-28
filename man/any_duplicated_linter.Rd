@@ -7,10 +7,9 @@
 any_duplicated_linter()
 }
 \description{
-\code{\link[=anyDuplicated]{anyDuplicated()}} exists as a replacement for \code{any(duplicated(.))} which is
-more efficient for simple objects, and in the worst case is the same
-efficiency. Therefore it should be used in all situations instead of the
-latter.
+\code{\link[=anyDuplicated]{anyDuplicated()}} exists as a replacement for \code{any(duplicated(.))}, which is
+more efficient for simple objects, and is equally efficient in the worst case scenario.
+Therefore, it should be used in all situations instead of the latter.
 }
 \details{
 Also match usage like \code{length(unique(x$col)) == nrow(x)}, which can

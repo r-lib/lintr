@@ -5,7 +5,7 @@
 #'      for such code can be a messy task/require a lot of mental bandwidth,
 #'      especially for code that nests more than once
 #'   2. It is inefficient -- `ifelse` can evaluate _all_ of its arguments at
-#'      both yes and no (see https://stackoverflow.com/q/16275149); this issue
+#'      both yes and no (see <https://stackoverflow.com/q/16275149>); this issue
 #'      is exacerbated for nested calls
 #'
 #' Users can instead rely on a more readable alternative modeled after SQL

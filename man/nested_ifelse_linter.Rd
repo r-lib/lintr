@@ -13,7 +13,7 @@ Calling \code{ifelse} in nested calls is problematic for two main reasons:
 for such code can be a messy task/require a lot of mental bandwidth,
 especially for code that nests more than once
 \item It is inefficient -- \code{ifelse} can evaluate \emph{all} of its arguments at
-both yes and no (see https://stackoverflow.com/q/16275149); this issue
+both yes and no (see \url{https://stackoverflow.com/q/16275149}); this issue
 is exacerbated for nested calls
 }
 }

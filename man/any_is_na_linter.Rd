@@ -8,8 +8,8 @@ any_is_na_linter()
 }
 \description{
 \code{\link[=anyNA]{anyNA()}} exists as a replacement for \code{any(is.na(.))} which is more efficient
-for simple objects, and in the worst case is the same efficiency. Therefore
-it should be used in all situations instead of the latter.
+for simple objects, and has the same efficiency in the worst case scenario.
+Therefore, it should be used in all situations instead of the latter.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

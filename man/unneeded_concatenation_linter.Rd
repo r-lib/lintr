@@ -10,7 +10,7 @@ unneeded_concatenation_linter(allow_single_expression = TRUE)
 \item{allow_single_expression}{Logical, default \code{TRUE}. If \code{FALSE}, one-expression
 usages of \code{c()} are always linted, e.g. \code{c(x)} and \code{c(matrix(...))}. In some such
 cases, \code{c()} is being used for its side-effect of stripping non-name attributes;
-it is usually preferable to use \code{\link[=as.vector]{as.vector()}} to accomplish the same more readably.}
+it is usually preferable to use the more readable \code{\link[=as.vector]{as.vector()}} instead.}
 }
 \description{
 Check that the \code{\link[=c]{c()}} function is not used without arguments nor with a single constant.
