@@ -1,7 +1,7 @@
 url: https://lintr.r-lib.org
+
 template:
   bootstrap: 5
-
   includes:
     in_header: |
       <script defer data-domain="lintr.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
@@ -21,27 +21,29 @@ reference:
 
 - title: Individual linters
   contents:
-  - all_undesirable_functions
   - ends_with("linter")
 
-- title: Customer linters
+- title: Lists of defaults
+  contents:
+  - all_undesirable_functions
+  - starts_with("default_")
+
+- title: Utilities
   contents:
   - Linter
-  - expect_lint
-  - expect_lint_free
+  - starts_with("expect_")
   - ids_with_token
   - is_lint_level
   - use_lintr
   - xml_nodes_to_lints
 
-- title: internal
+- title: Internal
   contents:
   - ends_with("linters")
   - Lint
   - checkstyle_output
   - sarif_output
   - clear_cache
-  - default_settings
   - get_source_expressions
   - parse_exclusions
 
