@@ -2,7 +2,7 @@
 % Please edit documentation in R/outer_negation_linter.R
 \name{outer_negation_linter}
 \alias{outer_negation_linter}
-\title{Require usage of !any(.) over all(!.), !all(.) over any(!.)}
+\title{Require usage of \code{!any(x)} over \code{all(!x)}, \code{!all(x)} over \code{any(!x)}}
 \usage{
 outer_negation_linter()
 }

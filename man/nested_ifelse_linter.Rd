@@ -2,24 +2,24 @@
 % Please edit documentation in R/nested_ifelse_linter.R
 \name{nested_ifelse_linter}
 \alias{nested_ifelse_linter}
-\title{Block usage of nested ifelse() calls}
+\title{Block usage of nested \code{ifelse()} calls}
 \usage{
 nested_ifelse_linter()
 }
 \description{
-Calling \code{ifelse} in nested calls is problematic for two main reasons:
+Calling \code{ifelse()} in nested calls is problematic for two main reasons:
 \enumerate{
 \item It can be hard to read -- mapping the code to the expected output
 for such code can be a messy task/require a lot of mental bandwidth,
 especially for code that nests more than once
-\item It is inefficient -- \code{ifelse} can evaluate \emph{all} of its arguments at
+\item It is inefficient -- \code{ifelse()} can evaluate \emph{all} of its arguments at
 both yes and no (see \url{https://stackoverflow.com/q/16275149}); this issue
 is exacerbated for nested calls
 }
 }
 \details{
 Users can instead rely on a more readable alternative modeled after SQL
-CASE WHEN statements, such as \code{data.table::fcase} or \code{dplyr::case_when},
+CASE WHEN statements, such as \code{data.table::fcase()} or \code{dplyr::case_when()},
 or use a look-up-and-merge approach (build a mapping table between values
 and outputs and merge this to the input).
 }

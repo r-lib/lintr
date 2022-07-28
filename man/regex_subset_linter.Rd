@@ -2,7 +2,7 @@
 % Please edit documentation in R/regex_subset_linter.R
 \name{regex_subset_linter}
 \alias{regex_subset_linter}
-\title{Require usage of direct methods for subsetting strings via regex.}
+\title{Require usage of direct methods for subsetting strings via regex}
 \usage{
 regex_subset_linter()
 }

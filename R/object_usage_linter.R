@@ -1,9 +1,9 @@
 #' Object usage linter
 #'
 #' Check that closures have the proper usage using [codetools::checkUsage()].
-#' Note that this runs [base::eval()] on the code, so do not use with untrusted code.
+#' Note that this runs [base::eval()] on the code, so **do not use with untrusted code**.
 #'
-#' @param interpret_glue If TRUE, interpret [glue::glue()] calls to avoid false positives caused by local variables
+#' @param interpret_glue If `TRUE`, interpret [glue::glue()] calls to avoid false positives caused by local variables
 #' which are only used in a glue expression.
 #'
 #' @evalRd rd_tags("object_usage_linter")

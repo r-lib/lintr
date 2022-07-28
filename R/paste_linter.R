@@ -1,4 +1,4 @@
-#' Raise lints for several common poor usages of paste()
+#' Raise lints for several common poor usages of `paste()`
 #'
 #' The following issues are linted by default by this linter
 #'   (and each can be turned off optionally):

@@ -2,7 +2,7 @@
 % Please edit documentation in R/string_boundary_linter.R
 \name{string_boundary_linter}
 \alias{string_boundary_linter}
-\title{Require usage of startsWith() and endsWith() over grepl()/substr() versions}
+\title{Require usage of \code{startsWith()} and \code{endsWith()} over \code{grepl()}/\code{substr()} versions}
 \usage{
 string_boundary_linter(allow_grepl = FALSE)
 }
@@ -29,7 +29,7 @@ That means the strict equivalent of \code{grepl("^abc", x)} is
 
 We lint \code{grepl()} usages by default because the \code{!is.na()} version is more explicit
 with respect to \code{NA} handling -- though documented, the way \code{grepl()} handles
-missing inputs may be surprising to some readers.
+missing inputs may be surprising to some users.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

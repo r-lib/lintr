@@ -2,13 +2,13 @@
 % Please edit documentation in R/sprintf_linter.R
 \name{sprintf_linter}
 \alias{sprintf_linter}
-\title{\code{sprintf} linter}
+\title{Require correct usage of \code{sprintf()}}
 \usage{
 sprintf_linter()
 }
 \description{
 Check for an inconsistent number of arguments or arguments with incompatible types (for literal arguments) in
-\code{sprintf} calls.
+\code{sprintf()} calls.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

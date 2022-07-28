@@ -1,7 +1,7 @@
-#' `sprintf` linter
+#' Require correct `sprintf()` calls
 #'
 #' Check for an inconsistent number of arguments or arguments with incompatible types (for literal arguments) in
-#' `sprintf` calls.
+#' `sprintf()` calls.
 #'
 #' @evalRd rd_tags("sprintf_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.

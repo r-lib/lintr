@@ -7,12 +7,12 @@
 object_usage_linter(interpret_glue = TRUE)
 }
 \arguments{
-\item{interpret_glue}{If TRUE, interpret \code{\link[glue:glue]{glue::glue()}} calls to avoid false positives caused by local variables
+\item{interpret_glue}{If \code{TRUE}, interpret \code{\link[glue:glue]{glue::glue()}} calls to avoid false positives caused by local variables
 which are only used in a glue expression.}
 }
 \description{
 Check that closures have the proper usage using \code{\link[codetools:checkUsage]{codetools::checkUsage()}}.
-Note that this runs \code{\link[base:eval]{base::eval()}} on the code, so do not use with untrusted code.
+Note that this runs \code{\link[base:eval]{base::eval()}} on the code, so \strong{do not use with untrusted code}.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

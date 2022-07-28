@@ -2,7 +2,7 @@
 % Please edit documentation in R/redundant_ifelse_linter.R
 \name{redundant_ifelse_linter}
 \alias{redundant_ifelse_linter}
-\title{Prevent ifelse() from being used to produce TRUE/FALSE or 1/0}
+\title{Prevent \code{ifelse()} from being used to produce \code{TRUE/FALSE} or \code{1/0}}
 \usage{
 redundant_ifelse_linter(allow10 = FALSE)
 }
@@ -15,7 +15,7 @@ redundant_ifelse_linter(allow10 = FALSE)
 Expressions like \code{ifelse(x, TRUE, FALSE)} and \code{ifelse(x, FALSE, TRUE)} are
 redundant; just \code{x} or \code{!x} suffice in R code where logical vectors are a
 core data structure. \code{ifelse(x, 1, 0)} is also \code{as.numeric(x)}, but even
-this should only be needed rarely.
+this should be needed only rarely.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

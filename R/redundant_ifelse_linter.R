@@ -1,9 +1,9 @@
-#' Prevent ifelse() from being used to produce TRUE/FALSE or 1/0
+#' Prevent `ifelse()` from being used to produce `TRUE/FALSE` or `1/0`
 #'
 #' Expressions like `ifelse(x, TRUE, FALSE)` and `ifelse(x, FALSE, TRUE)` are
 #'   redundant; just `x` or `!x` suffice in R code where logical vectors are a
 #'   core data structure. `ifelse(x, 1, 0)` is also `as.numeric(x)`, but even
-#'   this should only be needed rarely.
+#'   this should be needed only rarely.
 #'
 #' @evalRd rd_tags("redundant_ifelse_linter")
 #' @param allow10 Logical, default `FALSE`. If `TRUE`, usage like
