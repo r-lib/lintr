@@ -7,7 +7,8 @@
 commas_linter()
 }
 \description{
-Check that all commas are followed by spaces, but do not have spaces before them.
+Check that all commas are followed by spaces (e.g. \code{c(a = 4, b = 5)}),
+but do not have spaces before them (e.g. \code{c(a = 4 , b = 5)}).
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr
