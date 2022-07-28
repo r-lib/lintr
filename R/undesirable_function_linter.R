@@ -1,7 +1,7 @@
 #' Undesirable function linter
 #'
-#' Report the use of undesirable functions, e.g. [base::return()], [base::options()], or
-#' [base::sapply()] and suggest an alternative.
+#' Report the use of undesirable functions (e.g. [base::return()], [base::options()], or
+#' [base::sapply()]) and suggest an alternative.
 #'
 #' @param fun Named character vector. `names(fun)` correspond to undesirable functions,
 #'   while the values give a description of why the function is undesirable.

@@ -12,7 +12,8 @@ usages of \code{c()} are always linted, e.g. \code{c(x)} and \code{c(matrix(...)
 cases, \code{c()} is being used for its side-effect of stripping non-name attributes;
 it is usually preferable to use the more readable \code{\link[=as.vector]{as.vector()}} instead. But the
 latter may not always be a suitable replacement (e.g., if \code{c(r6_object)}
-is used to convert an \code{R6} class instance to a list).}
+is used to convert an \code{R6} class instance to a list; in this case
+\code{list(r6_object)} would be the preferred replacement).}
 }
 \description{
 Check that the \code{\link[=c]{c()}} function is not used without arguments nor with a single constant.

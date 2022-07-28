@@ -7,7 +7,8 @@
 #'   cases, `c()` is being used for its side-effect of stripping non-name attributes;
 #'   it is usually preferable to use the more readable [as.vector()] instead. But the
 #'   latter may not always be a suitable replacement (e.g., if `c(r6_object)`
-#'   is used to convert an `R6` class instance to a list).
+#'   is used to convert an `R6` class instance to a list; in this case
+#'   `list(r6_object)` would be the preferred replacement).
 #'
 #' @evalRd rd_tags("unneeded_concatenation_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
