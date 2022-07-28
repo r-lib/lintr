@@ -2,7 +2,7 @@
 % Please edit documentation in R/condition_message_linter.R
 \name{condition_message_linter}
 \alias{condition_message_linter}
-\title{Block usage of paste() and paste0() with messaging functions using ...}
+\title{Block usage of \code{paste()} and \code{paste0()} with messaging functions using \code{...}}
 \usage{
 condition_message_linter()
 }

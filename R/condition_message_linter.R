@@ -1,4 +1,4 @@
-#' Block usage of paste() and paste0() with messaging functions using ...
+#' Block usage of `paste()` and `paste0()` with messaging functions using `...`
 #'
 #' `stop(paste0(...))` is strictly redundant -- `stop(...)` is equivalent.
 #'   `stop(...)` is also preferable to `stop(paste(...))`. The same applies to

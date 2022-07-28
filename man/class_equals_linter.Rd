@@ -2,7 +2,7 @@
 % Please edit documentation in R/class_equals_linter.R
 \name{class_equals_linter}
 \alias{class_equals_linter}
-\title{Block comparison of class with ==}
+\title{Block comparison of class with \code{==}}
 \usage{
 class_equals_linter()
 }

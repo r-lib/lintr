@@ -2,7 +2,7 @@
 % Please edit documentation in R/sprintf_linter.R
 \name{sprintf_linter}
 \alias{sprintf_linter}
-\title{Require correct usage of \code{sprintf()}}
+\title{Require correct \code{sprintf()} calls}
 \usage{
 sprintf_linter()
 }

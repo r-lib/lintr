@@ -1,4 +1,4 @@
-#' Block comparison of class with ==
+#' Block comparison of class with `==`
 #'
 #' Usage like `class(x) == "character"` is prone to error since class in R
 #'   is in general a vector. The correct version for S3 classes is [inherits()]:

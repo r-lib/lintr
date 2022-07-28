@@ -1,4 +1,4 @@
-#' Require usage of anyNA over any(is.na(.))
+#' Require usage of `anyNA()` over `any(is.na(.))`
 #'
 #' [anyNA()] exists as a replacement for `any(is.na(.))` which is more efficient
 #'   for simple objects, and has the same efficiency in the worst case scenario.

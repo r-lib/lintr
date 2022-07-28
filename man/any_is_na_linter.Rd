@@ -2,7 +2,7 @@
 % Please edit documentation in R/any_is_na_linter.R
 \name{any_is_na_linter}
 \alias{any_is_na_linter}
-\title{Require usage of anyNA over any(is.na(.))}
+\title{Require usage of \code{anyNA()} over \code{any(is.na(.))}}
 \usage{
 any_is_na_linter()
 }
