@@ -72,7 +72,7 @@ test_that("returns the correct linting", {
     column_number = 1L
   ), linter)
 
-  # Construct an qmd file without terminal newline
+  # Construct a qmd file without terminal newline
   tmp5 <- withr::local_tempfile(fileext = ".qmd")
   cat(
     trim_some(
@@ -96,7 +96,7 @@ test_that("returns the correct linting", {
     column_number = 1L
   ), linter)
 
-  # Construct an qmd file without R code
+  # Construct a qmd file without R code
   tmp6 <- withr::local_tempfile(fileext = ".qmd")
   cat(
     trim_some(
