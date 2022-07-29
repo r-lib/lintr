@@ -96,22 +96,18 @@ test_that("returns the correct linting", {
     column_number = 1L
   ), linter)
 
-  # Construct a qmd file without R code
-  tmp6 <- withr::local_tempfile(fileext = ".qmd")
-  cat(
-    trim_some(
-      '---
-      title: "Some file"
-      ---
-
-      No code and no terminal newline
-    '),
-    file = tmp6
-  )
-  expect_lint(content = NULL, file = tmp6, list(
-    message = msg2,
-    line_number = 5L,
-    # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
-    column_number = 1L
-  ), linter)
+  # Unlike .Rmd files, the following produces an error for .qmd files, and so need not
+  # be tested.
+  #
+  # tmp6 <- withr::local_tempfile(fileext = ".qmd")
+  # cat(
+  #   trim_some(
+  #     '---
+  #     title: "Some file"
+  #     ---
+  #
+  #     No code and no terminal newline
+  #     '
+  #   )
+  # )
 })
