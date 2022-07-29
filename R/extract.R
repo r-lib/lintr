@@ -67,7 +67,7 @@ filter_chunk_start_positions <- function(starts, lines) {
 filter_chunk_end_positions <- function(starts, ends) {
   # In a valid file, possibly with plain-code-blocks,
   # - there should be at least as many ends as starts
-  # In Rmarkdown, unevaluated blocks may open & close with the same ``` pattern
+  # In Rmarkdown and Quarto, unevaluated blocks may open & close with the same ``` pattern
   # that defines the end-pattern for an evaluated block
 
   # This returns the first end-position that succeeds each start-position

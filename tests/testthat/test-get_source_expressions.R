@@ -281,7 +281,7 @@ test_that("#743, #879, #1406: get_source_expressions works on R files matching a
   expect_null(source_expressions$error)
 })
 
-test_that("Syntax errors in Rmd don't choke lintr", {
+test_that("Syntax errors in Rmd or qmd don't choke lintr", {
   tmp <- withr::local_tempfile(lines = c(
     "```{r}",
     "if (TRUE) {",
