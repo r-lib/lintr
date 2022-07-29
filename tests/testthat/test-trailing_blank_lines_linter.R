@@ -104,8 +104,8 @@ test_that("returns the correct linting", {
       title: "Some file"
       ---
 
-      No code and no terminal newline'
-    ),
+      No code and no terminal newline
+    '),
     file = tmp6
   )
   expect_lint(content = NULL, file = tmp6, list(
