@@ -12,7 +12,7 @@ NULL
 #' Available linters
 #' @name linters
 #'
-#' @description A variety of linters is available in \pkg{lintr}. The most popular ones are readily
+#' @description A variety of linters are available in \pkg{lintr}. The most popular ones are readily
 #' accessible through [default_linters()].
 #'
 #' Within a [lint()] function call, the linters in use are initialized with the provided

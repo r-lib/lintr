@@ -4,7 +4,7 @@
 \alias{linters}
 \title{Available linters}
 \description{
-A variety of linters is available in \pkg{lintr}. The most popular ones are readily
+A variety of linters are available in \pkg{lintr}. The most popular ones are readily
 accessible through \code{\link[=default_linters]{default_linters()}}.
 
 Within a \code{\link[=lint]{lint()}} function call, the linters in use are initialized with the provided
