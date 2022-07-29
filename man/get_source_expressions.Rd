@@ -38,7 +38,7 @@ consisting of 6 elements:
 \item{\code{filename} (\code{character})}
 \item{\code{file_lines} (\code{character}) the \code{\link[=readLines]{readLines()}} output for this file}
 \item{\code{content} (\code{character}) for .R files, the same as \code{file_lines};
-for .Rmd/.qmd scripts, this is the extracted R source code (as text)}
+for .Rmd or .qmd scripts, this is the extracted R source code (as text)}
 \item{\code{full_parsed_content} (\code{data.frame}) as given by
 \code{\link[utils:getParseData]{utils::getParseData()}} for the full content}
 \item{\code{full_xml_parsed_content} (\code{xml_document}) the XML parse tree of all
