@@ -38,7 +38,7 @@ reference:
   - use_lintr
   - xml_nodes_to_lints
 
-- title: Internal
+- title: Meta-tooling
   contents:
   - ends_with("linters")
   - Lint
