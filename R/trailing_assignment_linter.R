@@ -7,7 +7,7 @@
 #' @evalRd rd_tags("trailing_whitespace_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-assignment_eol_linter <- function(allow_comments = FALSE) {
+trailing_assignment_linter <- function(allow_comments = FALSE) {
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
       return(list())

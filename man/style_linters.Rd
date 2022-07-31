@@ -42,6 +42,7 @@ The following linters are tagged with 'style':
 \item{\code{\link{spaces_left_parentheses_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{todo_comment_linter}}}
+\item{\code{\link{trailing_assignment_linter}}}
 \item{\code{\link{trailing_blank_lines_linter}}}
 \item{\code{\link{trailing_whitespace_linter}}}
 \item{\code{\link{undesirable_function_linter}}}

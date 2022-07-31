@@ -2,7 +2,6 @@ linter,tags
 absolute_path_linter,robustness best_practices configurable
 any_duplicated_linter,efficiency best_practices
 any_is_na_linter,efficiency best_practices
-assignment_eol_linter,style readability
 assignment_linter,style consistency default
 backport_linter,robustness configurable package_development
 brace_linter,style readability default configurable
@@ -67,6 +66,7 @@ strings_as_factors_linter,robustness
 system_file_linter,consistency readability best_practices
 T_and_F_symbol_linter,style readability robustness consistency best_practices default
 todo_comment_linter,style configurable
+trailing_assignment_linter,style readability
 trailing_blank_lines_linter,style default
 trailing_whitespace_linter,style default
 undesirable_function_linter,style efficiency configurable robustness best_practices

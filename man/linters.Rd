@@ -27,9 +27,9 @@ The following tags exist:
 \item{\link[=efficiency_linters]{efficiency} (16 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
-\item{\link[=readability_linters]{readability} (37 linters)}
+\item{\link[=readability_linters]{readability} (38 linters)}
 \item{\link[=robustness_linters]{robustness} (12 linters)}
-\item{\link[=style_linters]{style} (35 linters)}
+\item{\link[=style_linters]{style} (36 linters)}
 }
 }
 \section{Linters}{
@@ -102,6 +102,7 @@ The following linters exist:
 \item{\code{\link{system_file_linter}} (tags: best_practices, consistency, readability)}
 \item{\code{\link{T_and_F_symbol_linter}} (tags: best_practices, consistency, default, readability, robustness, style)}
 \item{\code{\link{todo_comment_linter}} (tags: configurable, style)}
+\item{\code{\link{trailing_assignment_linter}} (tags: readability, style)}
 \item{\code{\link{trailing_blank_lines_linter}} (tags: default, style)}
 \item{\code{\link{trailing_whitespace_linter}} (tags: default, style)}
 \item{\code{\link{undesirable_function_linter}} (tags: best_practices, configurable, efficiency, robustness, style)}
