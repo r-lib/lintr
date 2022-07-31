@@ -2,7 +2,7 @@
 % Please edit documentation in R/trailing_assignment_linter.R
 \name{trailing_assignment_linter}
 \alias{trailing_assignment_linter}
-\title{Assignment End of Line linter}
+\title{Trailing assignment linter}
 \usage{
 trailing_assignment_linter(allow_comments = FALSE)
 }

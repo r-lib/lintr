@@ -1,4 +1,4 @@
-#' Assignment End of Line linter
+#' Trailing assignment linter
 #'
 #' Check that there are no assignment operators at the end of source lines.
 #'
