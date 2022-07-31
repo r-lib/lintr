@@ -2,7 +2,7 @@
 % Please edit documentation in R/redundant_ifelse_linter.R
 \name{redundant_ifelse_linter}
 \alias{redundant_ifelse_linter}
-\title{Prevent \code{ifelse()} from being used to produce \code{TRUE/FALSE} or \code{1/0}}
+\title{Prevent \code{ifelse()} from being used to produce \code{TRUE}/\code{FALSE} or \code{1}/\code{0}}
 \usage{
 redundant_ifelse_linter(allow10 = FALSE)
 }

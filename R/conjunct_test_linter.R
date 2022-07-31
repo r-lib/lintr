@@ -1,4 +1,4 @@
-#' Force `&&` conditions in `expect_true()`, `expect_false()` to be written separately
+#' Force `&&` conditions in `expect_true()` and `expect_false()` to be written separately
 #'
 #' For readability of test outputs, testing only one thing per call to
 #'   [testthat::expect_true()] is preferable, i.e.,

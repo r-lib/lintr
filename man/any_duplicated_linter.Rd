@@ -8,7 +8,7 @@ any_duplicated_linter()
 }
 \description{
 \code{\link[=anyDuplicated]{anyDuplicated()}} exists as a replacement for \code{any(duplicated(.))}, which is
-more efficient for simple objects, and is equally efficient in the worst case scenario.
+more efficient for simple objects, and is at worst equally efficient.
 Therefore, it should be used in all situations instead of the latter.
 }
 \details{

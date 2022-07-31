@@ -2,7 +2,7 @@
 % Please edit documentation in R/conjunct_test_linter.R
 \name{conjunct_test_linter}
 \alias{conjunct_test_linter}
-\title{Force \code{&&} conditions in \code{expect_true()}, \code{expect_false()} to be written separately}
+\title{Force \code{&&} conditions in \code{expect_true()} and \code{expect_false()} to be written separately}
 \usage{
 conjunct_test_linter(allow_named_stopifnot = TRUE)
 }

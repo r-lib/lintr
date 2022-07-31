@@ -1,7 +1,6 @@
 #' Commas linter
 #'
-#' Check that all commas are followed by spaces (e.g. `c(a = 4, b = 5)`),
-#' but do not have spaces before them (e.g. `c(a = 4 , b = 5)`).
+#' Check that all commas are followed by spaces, but do not have spaces before them.
 #'
 #' @evalRd rd_tags("commas_linter")
 #' @seealso

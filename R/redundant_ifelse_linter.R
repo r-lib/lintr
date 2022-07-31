@@ -1,4 +1,4 @@
-#' Prevent `ifelse()` from being used to produce `TRUE/FALSE` or `1/0`
+#' Prevent `ifelse()` from being used to produce `TRUE`/`FALSE` or `1`/`0`
 #'
 #' Expressions like `ifelse(x, TRUE, FALSE)` and `ifelse(x, FALSE, TRUE)` are
 #'   redundant; just `x` or `!x` suffice in R code where logical vectors are a

@@ -1,6 +1,6 @@
 #' Missing argument linter
 #'
-#' Check for missing arguments in function calls (e.g. `stats::median(1:10, na.rm =)`).
+#' Check for missing arguments in function calls (e.g. `stats::median(1:10, )`).
 #'
 #' @param except a character vector of function names as exceptions.
 #' @param allow_trailing always allow trailing empty arguments?

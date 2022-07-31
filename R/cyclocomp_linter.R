@@ -2,9 +2,8 @@
 #'
 #' Check for overly complicated expressions. See [cyclocomp::cyclocomp()].
 #'
-#' @param complexity_limit expressions with a cyclomatic complexity higher than
-#' this limit are linted, defaults to 15.
-#' See [cyclocomp::cyclocomp()].
+#' @param complexity_limit Maximum cyclomatic complexity, default 15. Expressions more complex
+#' than this are linted. See [cyclocomp::cyclocomp()].
 #' @evalRd rd_tags("cyclocomp_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @importFrom cyclocomp cyclocomp

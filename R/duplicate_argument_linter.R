@@ -1,9 +1,6 @@
 #' Duplicate argument linter
 #'
-#' Check for duplicate arguments in function calls. Some of these cases will be
-#' blocked by R's syntax itself (e.g. `mean(x = 1:5, x = 2:3)`), but even when
-#' such usage *is* allowed, it is rarely desirable and should be used sparingly
-#' (e.g. `data.frame(x = 1, x = 2)`).
+#' Check for duplicate arguments in function calls.
 #'
 #' @param except a character vector of function names as exceptions.
 #' @evalRd rd_tags("duplicate_argument_linter")

@@ -2,12 +2,12 @@
 % Please edit documentation in R/any_is_na_linter.R
 \name{any_is_na_linter}
 \alias{any_is_na_linter}
-\title{Require usage of \code{anyNA()} over \code{any(is.na(.))}}
+\title{Require usage of \code{anyNA(x)} over \code{any(is.na(x))}}
 \usage{
 any_is_na_linter()
 }
 \description{
-\code{\link[=anyNA]{anyNA()}} exists as a replacement for \code{any(is.na(.))} which is more efficient
+\link{anyNA(x)} exists as a replacement for \code{any(is.na(x))} which is more efficient
 for simple objects, and has the same efficiency in the worst case scenario.
 Therefore, it should be used in all situations instead of the latter.
 }

@@ -12,7 +12,7 @@ missing_argument_linter(except = c("switch", "alist"), allow_trailing = FALSE)
 \item{allow_trailing}{always allow trailing empty arguments?}
 }
 \description{
-Check for missing arguments in function calls (e.g. \code{stats::median(1:10, na.rm =)}).
+Check for missing arguments in function calls (e.g. \code{stats::median(1:10, )}).
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

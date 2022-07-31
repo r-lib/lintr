@@ -10,10 +10,7 @@ duplicate_argument_linter(except = character())
 \item{except}{a character vector of function names as exceptions.}
 }
 \description{
-Check for duplicate arguments in function calls. Some of these cases will be
-blocked by R's syntax itself (e.g. \code{mean(x = 1:5, x = 2:3)}), but even when
-such usage \emph{is} allowed, it is rarely desirable and should be used sparingly
-(e.g. \code{data.frame(x = 1, x = 2)}).
+Check for duplicate arguments in function calls.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

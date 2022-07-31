@@ -1,6 +1,6 @@
-#' Require usage of `anyNA()` over `any(is.na(.))`
+#' Require usage of `anyNA(x)` over `any(is.na(x))`
 #'
-#' [anyNA()] exists as a replacement for `any(is.na(.))` which is more efficient
+#' [anyNA(x)] exists as a replacement for `any(is.na(x))` which is more efficient
 #'   for simple objects, and has the same efficiency in the worst case scenario.
 #'   Therefore, it should be used in all situations instead of the latter.
 #'
