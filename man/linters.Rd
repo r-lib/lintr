@@ -29,7 +29,7 @@ The following tags exist:
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=readability_linters]{readability} (38 linters)}
 \item{\link[=robustness_linters]{robustness} (12 linters)}
-\item{\link[=style_linters]{style} (36 linters)}
+\item{\link[=style_linters]{style} (37 linters)}
 }
 }
 \section{Linters}{

@@ -17,7 +17,7 @@ trailing_assignment_linter <- function(allow_comments = FALSE) {
       source_expression$file_lines,
       rex(capture(or("<<-", "<-", "=", "->", "-->")), any_spaces, end)
     )
-    bad_lines <- which(!vapply(res[, 1], is.na, logical(1), USE.NAMES = FALSE))
+    bad_lines <- which(!vapply(res[, 1L], is.na, logical(1L), USE.NAMES = FALSE))
 
     if (allow_comments) {
       comment_lines <- grep("#", source_expression$file_lines, fixed = TRUE)
@@ -31,10 +31,10 @@ trailing_assignment_linter <- function(allow_comments = FALSE) {
         Lint(
           filename = source_expression$filename,
           line_number = line,
-          column_number = 1,
+          column_number = 1L,
           type = "style",
           message = paste0(
-            "Assignment `", res[line, 1], "` should not be trailing at end of line"
+            "Assignment `", res[line, 1L], "` should not be trailing at end of line"
           ),
           line = source_expression$file_lines[[line]]
         )
