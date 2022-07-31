@@ -15,7 +15,7 @@ assignment_eol_linter <- function(allow_comments = FALSE) {
 
     res <- re_matches(
       source_expression$file_lines,
-      rex(capture(or("<<-", "<-", "=", "->", "-->")), any_space, end)
+      rex(capture(or("<<-", "<-", "=", "->", "-->")), any_spaces, end)
     )
     bad_lines <- which(!vapply(res[, 1], is.na, logical(1), USE.NAMES = FALSE))
 
@@ -34,7 +34,7 @@ assignment_eol_linter <- function(allow_comments = FALSE) {
           column_number = 1,
           type = "style",
           message = paste0(
-            "Assignment `", res[x, 1], "` should not be trailing at end of line"
+            "Assignment `", res[line, 1], "` should not be trailing at end of line"
           ),
           line = source_expression$file_lines[[line]]
         )

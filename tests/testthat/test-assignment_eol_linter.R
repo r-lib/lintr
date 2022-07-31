@@ -8,6 +8,11 @@ test_that("assignment_eol_linter flags assignments end of line", {
   expect_lint("foo(bar =\n1)", "=", assignment_eol_linter())
 })
 
+test_that("assignment_eol_linter flags assignments end of line with trailing spaces", {
+  expect_lint("x <<-  \ny", "<<-", assignment_eol_linter())
+  expect_lint("foo(bar =\t\n1)", "=", assignment_eol_linter())
+})
+
 test_that("assignment_eol_linter flags commented end of line assignments by default", {
   expect_lint("# x <<-\n# y", "<<-", assignment_eol_linter())
   expect_lint("# foo(bar =\n# 1)", "=", assignment_eol_linter())
@@ -25,6 +30,6 @@ test_that("assignment_eol_linter flags multiple instances in a file", {
       list(message = "=", line_number = 3L, column_number = 1L),
       list(message = "<-", line_number = 5L, column_number = 1L)
     ),
-    assignment_eol_linter
+    assignment_eol_linter()
   )
 })
