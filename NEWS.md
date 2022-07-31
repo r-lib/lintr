@@ -6,6 +6,12 @@
 
 ## Changes to defaults
 
+* `brace_linter()` allows opening curly braces on a new line when there is 
+  a comment ending the preceding line (#1433 and #1434, @IndrajeetPatil).
+  
+* `seq_linter()` produces lint for `seq(...)`, since it also cannot properly 
+  handle empty edge cases (#1468, @IndrajeetPatil).
+
 * `seq_linter()` additionally lints on `1:n()` (from {dplyr}) 
   and `1:.N` (from {data.table}) (#1396, @IndrajeetPatil).
 
@@ -16,10 +22,15 @@
 * `redundant_ifelse_linter()`'s lint message correctly suggests negation when 
   the `yes` condition is `0` (#1432, @IndrajeetPatil).
 
+* `seq_linter()` provides more specific replacement code in lint message 
+  (#1475, @IndrajeetPatil).
+
 ## New and improved features
 
 * `unreachable_code_linter()` ignores trailing comments if they match a closing nolint block (#1347, @AshesITR).
 
+* New `function_argument_linter()` to enforce that arguments with defaults appear last in function declarations,
+  see the [Tidyverse design guide](https://design.tidyverse.org/args-data-details.html) (#450, @AshesITR).
 ## New features
 
 * `commented_code_linter()` now lints commented argument code, containing a trailing comma, as well (#386, @AshesITR).
@@ -30,7 +41,8 @@
 * `get_source_expressions()` no longer fails on R files that match a knitr pattern (#743, #879, #1406, @AshesITR).
 * Parse error lints now appear with the linter name `"error"` instead of `NA` (#1405, @AshesITR).  
   Also, linting no longer runs if the `source_expressions` contain invalid string data that would cause error messages
-  in other linters. 
+  in other linters.
+* Prevent `lint()` from hanging on Rmd files with some syntax errors (#1443, @MichaelChirico).
 * `get_source_expressions()` no longer omits trailing non-code lines from knitr files (#1400, #1415, @AshesITR).  
   This fixes the location information for `trailing_blank_lines_linter()` in RMarkdown documents without terminal
   newlines.

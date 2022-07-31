@@ -2,35 +2,38 @@ Package: lintr
 Title: A 'Linter' for R Code
 Version: 3.0.0.9000
 Authors@R: c(
-    person("Jim", "Hester", email = "james.f.hester@gmail.com", role = c("aut", "cre")),
-    person("Florent", "Angly", role = "aut", comment = "fangly"),
+    person("Jim", "Hester", , "james.f.hester@gmail.com", role = c("aut", "cre")),
+    person("Florent", "Angly", role = "aut",
+           comment = "fangly"),
     person("Russ", "Hyde", role = "aut"),
     person("Michael", "Chirico", role = "aut"),
     person("Kun", "Ren", role = "aut"),
-    person("Alexander", "Rosenstock", role = "aut", comment = "AshesITR")
-    )
-URL: https://github.com/r-lib/lintr,
-    https://lintr.r-lib.org
+    person("Alexander", "Rosenstock", role = "aut",
+           comment = "AshesITR")
+  )
+Description: Checks adherence to a given style, syntax errors and possible
+    semantic issues.  Supports on the fly checking of R code edited with
+    'RStudio IDE', 'Emacs', 'Vim', 'Sublime Text', 'Atom' and 'Visual
+    Studio Code'.
+License: MIT + file LICENSE
+URL: https://github.com/r-lib/lintr, https://lintr.r-lib.org
 BugReports: https://github.com/r-lib/lintr/issues
-Description: Checks adherence to a given style, syntax errors and possible semantic issues.
-    Supports on the fly checking of R code edited with 'RStudio IDE', 'Emacs', 'Vim', 'Sublime Text',
-    'Atom' and 'Visual Studio Code'.
 Depends:
     R (>= 3.2)
 Imports:
-    rex,
-    crayon,
+    backports,
     codetools,
+    crayon,
     cyclocomp,
     digest,
     glue,
     jsonlite,
     knitr,
+    rex,
     stats,
     utils,
     xml2 (>= 1.0.0),
-    xmlparsedata (>= 1.0.5),
-    backports
+    xmlparsedata (>= 1.0.5)
 Suggests:
     covr,
     httr (>= 1.2.1),
@@ -42,11 +45,13 @@ Suggests:
     testthat (>= 3.0.0),
     tibble,
     withr (>= 2.5.0)
-License: MIT + file LICENSE
-Encoding: UTF-8
-VignetteBuilder: knitr
-RoxygenNote: 7.2.0
+VignetteBuilder: 
+    knitr
+Config/Needs/website: tidyverse/tidytemplate
 Config/testthat/edition: 3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.1
 Collate:
     'T_and_F_symbol_linter.R'
     'utils.R'
@@ -86,6 +91,7 @@ Collate:
     'extract.R'
     'extraction_operator_linter.R'
     'fixed_regex_linter.R'
+    'function_argument_linter.R'
     'function_left_parentheses_linter.R'
     'get_source_expressions.R'
     'ids_with_token.R'
@@ -148,5 +154,3 @@ Collate:
     'xp_utils.R'
     'yoda_test_linter.R'
     'zzz.R'
-Roxygen: list(markdown = TRUE)
-Config/Needs/website: tidyverse/tidytemplate
