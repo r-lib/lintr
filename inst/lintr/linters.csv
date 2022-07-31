@@ -2,6 +2,7 @@ linter,tags
 absolute_path_linter,robustness best_practices configurable
 any_duplicated_linter,efficiency best_practices
 any_is_na_linter,efficiency best_practices
+assignment_eol_linter,style readability
 assignment_linter,style consistency default
 backport_linter,robustness configurable package_development
 brace_linter,style readability default configurable
