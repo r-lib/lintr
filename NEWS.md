@@ -27,9 +27,6 @@
 
 ## New and improved features
 
-* Quarto files (`.qmd`) were supported out of the box. The documentation and the 
-  testing infrastructure are updated to ascertain this (#1486, @IndrajeetPatil).
-
 * `unreachable_code_linter()` ignores trailing comments if they match a closing nolint block (#1347, @AshesITR).
 
 * New `function_argument_linter()` to enforce that arguments with defaults appear last in function declarations,
@@ -60,7 +57,9 @@
 * The minimum needed version for soft dependency `{withr}` has been bumped to `2.5.0`
   (#1404, @IndrajeetPatil).
 * Changed the deprecation warning for `with_defaults()` to also mention `modify_defaults()` (#1438, @AshesITR).
-
+* Quarto files (`.qmd`) were supported out of the box. The documentation and the 
+  testing infrastructure are updated to reflect this (#1486, @IndrajeetPatil).
+  
 # lintr 3.0.0
 
 ## Breaking changes
