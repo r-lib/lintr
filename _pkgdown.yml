@@ -31,7 +31,7 @@ reference:
 - title: Utilities
   contents:
   - Linter
-  - starts_with("expect_")
+  - starts_with("expect_lint")
   - ids_with_token
   - is_lint_level
   - use_lintr
