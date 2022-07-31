@@ -4,9 +4,11 @@
 \alias{trailing_assignment_linter}
 \title{Trailing assignment linter}
 \usage{
-trailing_assignment_linter(allow_comments = FALSE)
+trailing_assignment_linter(allow_piping = TRUE, allow_comments = FALSE)
 }
 \arguments{
+\item{allow_piping}{Suppress lints when assignment begins/ends a pipe}
+
 \item{allow_comments}{Suppress lints for commented out lines}
 }
 \description{
