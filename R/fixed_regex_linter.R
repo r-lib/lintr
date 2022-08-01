@@ -3,9 +3,9 @@
 #' Invoking a regular expression engine is overkill for cases when the search
 #'   pattern only involves static patterns.
 #'
-#' NB: For `stringr` functions, that means wrapping the pattern in `stringr::fixed()`.
+#' NB: for `stringr` functions, that means wrapping the pattern in `stringr::fixed()`.
 #'
-#' NB: This linter is likely not able to distinguish every possible case when
+#' NB: this linter is likely not able to distinguish every possible case when
 #'   a fixed regular expression is preferable, rather it seeks to identify
 #'   likely cases. It should _never_ report false positives, however; please
 #'   report false positives as an error.

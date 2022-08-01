@@ -8,7 +8,7 @@ any_is_na_linter()
 }
 \description{
 \code{\link[=anyNA]{anyNA()}} exists as a replacement for \code{any(is.na(x))} which is more efficient
-for simple objects, and has the same efficiency in the worst case scenario.
+for simple objects, and is at worst equally efficient.
 Therefore, it should be used in all situations instead of the latter.
 }
 \seealso{

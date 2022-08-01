@@ -1,7 +1,7 @@
 #' Require usage of `anyNA(x)` over `any(is.na(x))`
 #'
 #' [anyNA()] exists as a replacement for `any(is.na(x))` which is more efficient
-#'   for simple objects, and has the same efficiency in the worst case scenario.
+#'   for simple objects, and is at worst equally efficient.
 #'   Therefore, it should be used in all situations instead of the latter.
 #'
 #' @evalRd rd_tags("any_is_na_linter")
