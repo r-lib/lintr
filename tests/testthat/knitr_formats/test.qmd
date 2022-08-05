@@ -61,3 +61,20 @@ a = []
 a.append(2)
 print(a)
 ```
+
+The following are only supported by Quarto and shouldn't lint either.
+
+```{.r}
+1+1
+```
+
+```{{r}}
+1+1
+```
+
+```{.python}
+# Python that's definitely not R
+a = []
+a.append(2)
+print(a)
+```
