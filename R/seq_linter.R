@@ -68,21 +68,19 @@ seq_linter <- function() {
     #   would get rev(seq_along(x)) as the preferred replacement.
     dot_expr1 <- get_fun(badx, 1L)
     dot_expr2 <- get_fun(badx, 2L)
-    replacement <- ifelse(
-      grepl("length(", dot_expr1, fixed = TRUE) | grepl("length(", dot_expr2, fixed = TRUE),
-      "seq_along",
-      "seq_len"
-    )
+    seq_along_idx <- grepl("length(", dot_expr1, fixed = TRUE) | grepl("length(", dot_expr2, fixed = TRUE)
+    replacement <- ifelse(seq_along_idx, "seq_along", "seq_len")
 
+    dot_expr3 <- ifelse(seq_along_idx, "...", dot_expr2)
     lint_message <- ifelse(
       grepl("seq", dot_expr1, fixed = TRUE),
-       sprintf(
-        "%s(%s) is likely to be wrong in the empty edge case. Use %s(...) instead.",
-        dot_expr1, dot_expr2, replacement
+      sprintf(
+        "%s(%s) is likely to be wrong in the empty edge case. Use %s(%s) instead.",
+        dot_expr1, dot_expr2, replacement, dot_expr3
       ),
       sprintf(
-        "%s:%s is likely to be wrong in the empty edge case. Use %s() instead.",
-        dot_expr1, dot_expr2, replacement
+        "%s:%s is likely to be wrong in the empty edge case. Use %s(%s) instead.",
+        dot_expr1, dot_expr2, replacement, dot_expr3
       )
     )
 

@@ -6,6 +6,9 @@
 
 ## Changes to defaults
 
+* `brace_linter()` allows opening curly braces on a new line when there is 
+  a comment ending the preceding line (#1433 and #1434, @IndrajeetPatil).
+  
 * `seq_linter()` produces lint for `seq(...)`, since it also cannot properly 
   handle empty edge cases (#1468, @IndrajeetPatil).
 
@@ -18,6 +21,9 @@
 
 * `redundant_ifelse_linter()`'s lint message correctly suggests negation when 
   the `yes` condition is `0` (#1432, @IndrajeetPatil).
+
+* `seq_linter()` provides more specific replacement code in lint message 
+  (#1475, @IndrajeetPatil).
 
 ## New and improved features
 
