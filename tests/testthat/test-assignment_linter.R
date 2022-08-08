@@ -44,3 +44,47 @@ test_that("arguments handle <<- and ->/->> correctly", {
     assignment_linter(allow_cascading_assign = FALSE, allow_right_assign = TRUE)
   )
 })
+
+test_that("arguments handle trailing assignment operators correctly", {
+  expect_lint("x <- y", NULL, assignment_linter(allow_trailing = FALSE))
+  expect_lint("foo(bar = 1)", NULL, assignment_linter(allow_trailing = FALSE))
+
+  expect_lint("x <<-\ny", "<<-", assignment_linter(allow_trailing = FALSE))
+  expect_lint("foo(bar =\n1)", "=", assignment_linter(allow_trailing = FALSE))
+
+  expect_lint("x <<-  \ny", "<<-", assignment_linter(allow_trailing = FALSE))
+  expect_lint("foo(bar =\t\n1)", "=", assignment_linter(allow_trailing = FALSE))
+
+  expect_lint(
+    "iris_long <-\n  iris %>%\n  gather(measure, value, -Species) %>%\n  arrange(-value)",
+    NULL,
+    assignment_linter(allow_trailing = FALSE)
+  )
+
+  expect_lint(
+    "iris %>%\n  gather(measure, value, -Species) %>%\n  arrange(-value) ->\n  iris_long",
+    NULL,
+    assignment_linter(allow_right_assign = TRUE, allow_trailing = FALSE)
+  )
+
+  expect_lint(
+    "iris %>%\n  gather(measure, value, -Species) %>%\n  arrange(\n    -value\n    ) ->>\n  iris_long",
+    NULL,
+    assignment_linter(allow_right_assign = TRUE, allow_trailing = FALSE)
+  )
+
+  expect_lint(
+    "iris %>%\n  gather(measure, value, -Species) %>%\n  arrange(\n    -value\n    ) ->>\n  iris_long",
+    "->>",
+    assignment_linter(allow_right_assign = FALSE, allow_trailing = FALSE)
+  )
+
+  expect_lint(
+    "\n\nblah=\n42\nblh2<-\n54",
+    list(
+      list(message = "=", line_number = 3L, column_number = 5L),
+      list(message = "<-", line_number = 5L, column_number = 5L)
+    ),
+    assignment_linter(allow_trailing = FALSE)
+  )
+})

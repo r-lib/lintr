@@ -32,8 +32,8 @@
 * New `function_argument_linter()` to enforce that arguments with defaults appear last in function declarations,
   see the [Tidyverse design guide](https://design.tidyverse.org/args-data-details.html) (#450, @AshesITR).
   
-* New `trailing_assignment_linter()` to check when assignment operators are at the end of a line, and the value
-  is on the following line (#1491, @ashbaldry) 
+* New `allow_trailing` argument added to `assignment_linter()` to check when assignment operators are at the 
+  end of a line, and the value is on the following line (#1491, @ashbaldry) 
  
 ## New features
 
