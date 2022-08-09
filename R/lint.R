@@ -15,7 +15,7 @@
 #' * `lint_package()` lints all likely locations for R files in a package, i.e.
 #'   `R/`, `tests/`, `inst/`, `vignettes/`, `data-raw/`, and `demo/`.
 #'
-#' Read `vigentte("lintr")` to learn how to configure which linters are run
+#' Read `vignette("lintr")` to learn how to configure which linters are run
 #' by default.
 #' Note that if files contain unparseable encoding problems, only the encoding problem will be linted to avoid
 #' unintelligible error messages from other linters.

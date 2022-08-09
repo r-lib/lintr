@@ -22,6 +22,7 @@ Authors:
   \item Michael Chirico
   \item Kun Ren
   \item Alexander Rosenstock (AshesITR)
+  \item Indrajeet Patil \email{patilindrajeet.science@gmail.com} (\href{https://orcid.org/0000-0003-1995-6531}{ORCID}) (@patilindrajeets)
 }
 
 }
