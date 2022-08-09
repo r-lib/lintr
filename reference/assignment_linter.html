@@ -68,7 +68,11 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">assignment_linter</span><span class="op">(</span>allow_cascading_assign <span class="op">=</span> <span class="cn">TRUE</span>, allow_right_assign <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">assignment_linter</span><span class="op">(</span></span>
+<span>  allow_cascading_assign <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  allow_right_assign <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  allow_trailing <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -80,6 +84,10 @@ If <code>FALSE</code>, <code><a href="https://rdrr.io/r/base/assignOps.html" cla
 
 <dt>allow_right_assign</dt>
 <dd><p>Logical, default <code>FALSE</code>. If <code>TRUE</code>, <code>-&gt;</code> and <code>-&gt;&gt;</code> are allowed.</p></dd>
+
+
+<dt>allow_trailing</dt>
+<dd><p>Logical, default <code>TRUE</code>. If <code>FALSE</code> then assignments aren't allowed at end of lines.</p></dd>
 
 </dl></div>
     <div class="section level2">
