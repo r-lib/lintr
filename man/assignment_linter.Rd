@@ -4,13 +4,19 @@
 \alias{assignment_linter}
 \title{Assignment linter}
 \usage{
-assignment_linter(allow_cascading_assign = TRUE, allow_right_assign = FALSE)
+assignment_linter(
+  allow_cascading_assign = TRUE,
+  allow_right_assign = FALSE,
+  allow_trailing = TRUE
+)
 }
 \arguments{
 \item{allow_cascading_assign}{Logical, default \code{TRUE}.
 If \code{FALSE}, \code{\link[base:assignOps]{<<-}} and \verb{->>} are not allowed.}
 
 \item{allow_right_assign}{Logical, default \code{FALSE}. If \code{TRUE}, \verb{->} and \verb{->>} are allowed.}
+
+\item{allow_trailing}{Logical, default \code{TRUE}. If \code{FALSE} then assignments aren't allowed at end of lines.}
 }
 \description{
 Check that \verb{<-} is always used for assignment.
