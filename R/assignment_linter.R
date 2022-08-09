@@ -12,17 +12,15 @@
 #'   <https://style.tidyverse.org/syntax.html#assignment-1>
 #' @export
 assignment_linter <- function(allow_cascading_assign = TRUE, allow_right_assign = FALSE, allow_trailing = TRUE) {
-  # Trailing left/right assign allowed at beginning/end of pipe
   trailing_assign_xpath <- paste(
     collapse = " | ",
     c(
-      "//LEFT_ASSIGN[not(following-sibling::*/descendant-or-self::SPECIAL[text() = '%>%'])]",
-      "//RIGHT_ASSIGN[not(preceding-sibling::*/descendant-or-self::SPECIAL[text() = '%>%'])]",
-      "//EQ_ASSIGN",
+      paste0("//LEFT_ASSIGN", if (allow_cascading_assign) "" else "[text() = '<-']"),
+      if (allow_right_assign) paste0("//RIGHT_ASSIGN", if (allow_cascading_assign) "" else "[text() = '->']"),
       "//EQ_SUB",
       "//EQ_FORMALS"
     ),
-    "[@line1 < following-sibling::*[1]/@line1]"
+    "[@line1 < following-sibling::*[1]/@line1 or //COMMENT]"
   )
 
   xpath <- paste(collapse = " | ", c(
