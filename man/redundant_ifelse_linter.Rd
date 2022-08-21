@@ -14,7 +14,7 @@ redundant_ifelse_linter(allow10 = FALSE)
 \description{
 Expressions like \code{ifelse(x, TRUE, FALSE)} and \code{ifelse(x, FALSE, TRUE)} are
 redundant; just \code{x} or \code{!x} suffice in R code where logical vectors are a
-core data structure. \code{ifelse(x, 1, 0)} is also \code{as.numeric(x)}, but even
+core data structure. \code{ifelse(x, 1, 0)} is also \code{as.logical(x)}, but even
 this should only be needed rarely.
 }
 \seealso{

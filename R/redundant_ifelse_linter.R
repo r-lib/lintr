@@ -2,7 +2,7 @@
 #'
 #' Expressions like `ifelse(x, TRUE, FALSE)` and `ifelse(x, FALSE, TRUE)` are
 #'   redundant; just `x` or `!x` suffice in R code where logical vectors are a
-#'   core data structure. `ifelse(x, 1, 0)` is also `as.numeric(x)`, but even
+#'   core data structure. `ifelse(x, 1, 0)` is also `as.logical(x)`, but even
 #'   this should only be needed rarely.
 #'
 #' @evalRd rd_tags("redundant_ifelse_linter")
