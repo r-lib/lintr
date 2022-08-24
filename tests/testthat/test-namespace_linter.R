@@ -1,44 +1,46 @@
 test_that("returns the correct linting", {
+  linter <- namespace_linter()
+
   expect_lint(
     "stats::sd",
     NULL,
-    namespace_linter()
+    linter
   )
 
   expect_lint(
     "stats::sd(c(1,2,3))",
     NULL,
-    namespace_linter()
+    linter
   )
 
   expect_lint(
     '"stats"::sd(c(1,2,3))',
     NULL,
-    namespace_linter()
+    linter
   )
 
   expect_lint(
     'stats::"sd"(c(1,2,3))',
     NULL,
-    namespace_linter()
+    linter
   )
 
   expect_lint(
     "stats::`sd`(c(1,2,3))",
     NULL,
-    namespace_linter()
+    linter
   )
 
   expect_lint(
     "statts::sd(c(1,2,3))",
     list(message = rex::rex("Package 'statts' is not installed.")),
-    namespace_linter()
+    linter
   )
 
   expect_lint(
     "stats::ssd(c(1,2,3))",
     list(message = rex::rex("'ssd' is not exported from {stats}")),
-    namespace_linter()
+    linter
   )
 
   expect_lint(
@@ -50,31 +52,31 @@ test_that("returns the correct linting", {
   expect_lint(
     "datasets::mtcars",
     NULL,
-    namespace_linter()
+    linter
   )
 
   expect_lint(
     "stats:::print.formula",
     NULL,
-    namespace_linter()
+    linter
   )
 
   expect_lint(
     "stats:::sd(c(1,2,3))",
     list(message = rex::rex("'sd' is exported from {stats}. Use stats::sd instead.")),
-    namespace_linter()
+    linter
   )
 
   expect_lint(
     "statts:::sd(c(1,2,3))",
     list(message = rex::rex("Package 'statts' is not installed.")),
-    namespace_linter()
+    linter
   )
 
   expect_lint(
     "stats:::sdd(c(1,2,3))",
     list(message = rex::rex("'sdd' does not exist in {stats}")),
-    namespace_linter()
+    linter
   )
 
   expect_lint(
@@ -86,6 +88,6 @@ test_that("returns the correct linting", {
   expect_lint(
     "stats::sd(c(1,2,3))\nstats::sdd(c(1,2,3))",
     list(line = "stats::sdd(c(1,2,3))"),
-    namespace_linter()
+    linter
   )
 })
