@@ -43,7 +43,22 @@ test_that("lints S3 generics correctly", {
 
 test_that("object_length_linter won't fail if an imported namespace is unavailable", {
   expect_length(
-    lint_package(test_path("dummy_packages", "missing_dep"), linters = object_length_linter(), parse_settings = FALSE),
+    lint_package(
+      test_path("dummy_packages", "missing_dep"),
+      linters = object_length_linter(),
+      parse_settings = FALSE
+    ),
     3L
+  )
+})
+
+test_that("object_length_linter won't fail if dependency has no exports", {
+  expect_length(
+    lint_package(
+      test_path("dummy_packages", "no_export_dep"),
+      linters = object_length_linter(),
+      parse_settings = FALSE
+    ),
+    1L
   )
 })
