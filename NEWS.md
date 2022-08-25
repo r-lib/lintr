@@ -90,13 +90,15 @@
   for consistency. Previously, only linters with customizable parameters were
   factories (#245, @fangly, @AshesITR, and @MichaelChirico).
 
-This means that usage such as `lint("file.R", seq_linter)` should be updated to
-`lint("file.R", seq_linter())`, and the following update for custom linters:
-
-```r my_custom_linter <- function(source_expression) { ... }
-
-# becomes my_custom_linter <- function() Linter(function(source_expression) {
-... }) ```
+  This means that usage such as `lint("file.R", seq_linter)` should be updated to
+  `lint("file.R", seq_linter())`, and the following update for custom linters:
+  
+  ```r 
+  my_custom_linter <- function(source_expression) { ... }
+  
+  # becomes my_custom_linter <- function() Linter(function(source_expression) {
+  ... }) 
+  ```
 
 * Exclusions specified in the `.lintr` file are now relative to the location of
   that file and support excluding entire directories (#158, #438, @AshesITR).
@@ -119,9 +121,9 @@ This means that usage such as `lint("file.R", seq_linter)` should be updated to
   use of `return()`. Follow #1100 for an upcoming `return_linter()` to lint
   unnecessary `return()` statements (#1146, @AshesITR).
 
-Note that you can replicate old behavior by supplying `return` as a custom
-undesirable function: `undesirable_function_linter(c(all_undesirable_functions,
-list(return = NA)))`
+  Note that you can replicate old behavior by supplying `return` as a custom
+  undesirable function: `undesirable_function_linter(c(all_undesirable_functions,
+  list(return = NA)))`
 
 ## Deprecations
 
