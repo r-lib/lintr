@@ -41,18 +41,17 @@ empty_namespace_data <- function() {
 # filter namespace_imports() for S3 generics
 # this loads all imported namespaces
 imported_s3_generics <- function(ns_imports) {
-  is_generic <- logical(0L)
-
-  if (!is.null(ns_imports)) {
+  # `NROW()` is preferred over `nrow()` because, for dependencies with no exports,
+  # `ns_import` argument can be `NULL`.
+  # `nrow(NULL)`: `NULL`, while `NROW(NULL)`: `0`
     is_generic <- vapply(
-      seq_len(nrow(ns_imports)),
+      seq_len(NROW(ns_imports)),
       function(i) {
         fun_obj <- get(ns_imports$fun[i], envir = asNamespace(ns_imports$pkg[i]))
         is.function(fun_obj) && is_s3_generic(fun_obj)
       },
       logical(1L)
     )
-  }
 
   ns_imports[is_generic, ]
 }
