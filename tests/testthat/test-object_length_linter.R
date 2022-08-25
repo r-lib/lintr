@@ -59,6 +59,6 @@ test_that("object_length_linter won't fail if dependency has no exports", {
       linters = object_length_linter(),
       parse_settings = FALSE
     ),
-    0L
+    1L
   )
 })
