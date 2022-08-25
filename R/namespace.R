@@ -41,9 +41,7 @@ empty_namespace_data <- function() {
 # filter namespace_imports() for S3 generics
 # this loads all imported namespaces
 imported_s3_generics <- function(ns_imports) {
-  # `NROW()` is preferred over `nrow()` because, for dependencies with no exports,
-  # `ns_import` argument can be `NULL`.
-  # `nrow(NULL)`: `NULL`, while `NROW(NULL)`: `0`
+  # `NROW()` for the `NULL` case of 0-export dependencies (cf. #1503)
     is_generic <- vapply(
       seq_len(NROW(ns_imports)),
       function(i) {
