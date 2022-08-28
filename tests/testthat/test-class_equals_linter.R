@@ -10,38 +10,40 @@ test_that("class_equals_linter skips allowed usages", {
 
 test_that("class_equals_linter blocks simple disallowed usages", {
   linter <- class_equals_linter()
+  msg <- rex::rex("Instead of comparing class(x) with ==")
 
   expect_lint(
     "if (class(x) == 'character') stop('no')",
-    rex::rex("Instead of comparing class(x) with =="),
+    msg,
     linter
   )
 
   expect_lint(
     "is_regression <- class(x) == 'lm'",
-    rex::rex("Instead of comparing class(x) with =="),
+    msg,
     linter
   )
 
   expect_lint(
     "is_regression <- 'lm' == class(x)",
-    rex::rex("Instead of comparing class(x) with =="),
+    msg,
     linter
   )
 })
 
 test_that("class_equals_linter blocks usage of %in% for checking class", {
   linter <- class_equals_linter()
+  msg <- rex::rex("Instead of comparing class(x) with %in%")
 
   expect_lint(
     "if ('character' %in% class(x)) stop('no')",
-    rex::rex("Instead of comparing class(x) with %in%"),
+    msg,
     linter
   )
 
   expect_lint(
     "if (class(x) %in% 'character') stop('no')",
-    rex::rex("Instead of comparing class(x) with %in%"),
+    msg,
     linter
   )
 })
