@@ -1,56 +1,44 @@
 test_that("expect_identical_linter skips allowed usages", {
+  linter <- expect_identical_linter()
+
   # expect_type doesn't have an inverted version
-  expect_lint("expect_true(identical(x, y) || identical(y, z))", NULL, expect_identical_linter())
+  expect_lint("expect_true(identical(x, y) || identical(y, z))", NULL, linter)
   # NB: also applies to tinytest, but it's sufficient to test testthat
-  expect_lint("testthat::expect_true(identical(x, y) || identical(y, z))", NULL, expect_identical_linter())
+  expect_lint("testthat::expect_true(identical(x, y) || identical(y, z))", NULL, linter)
 
   # expect_equal calls with explicit tolerance= are OK
-  expect_lint("expect_equal(x, y, tolerance = 1e-6)", NULL, expect_identical_linter())
+  expect_lint("expect_equal(x, y, tolerance = 1e-6)", NULL, linter)
   # ditto if the argument is passed quoted
-  expect_lint("expect_equal(x, y, 'tolerance' = 1e-6)", NULL, expect_identical_linter())
+  expect_lint("expect_equal(x, y, 'tolerance' = 1e-6)", NULL, linter)
 
   # ditto for check.attributes = FALSE
-  expect_lint("expect_equal(x, y, check.attributes = FALSE)", NULL, expect_identical_linter())
+  expect_lint("expect_equal(x, y, check.attributes = FALSE)", NULL, linter)
 })
 
 test_that("expect_identical_linter blocks simple disallowed usages", {
-  expect_lint(
-    "expect_equal(x, y)",
-    rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed"),
-    expect_identical_linter()
-  )
+  linter <- expect_identical_linter()
+  msg <- rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed")
+
+  expect_lint("expect_equal(x, y)", msg, linter)
 
   # different usage to redirect to expect_identical
-  expect_lint(
-    "expect_true(identical(x, y))",
-    rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed"),
-    expect_identical_linter()
-  )
+  expect_lint("expect_true(identical(x, y))", msg, linter)
 })
 
 test_that("expect_identical_linter skips cases likely testing numeric equality", {
-  expect_lint("expect_equal(x, 1.034)", NULL, expect_identical_linter())
-  expect_lint("expect_equal(x, c(1.01, 1.02))", NULL, expect_identical_linter())
+  linter <- expect_identical_linter()
+  msg <- rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed")
+
+  expect_lint("expect_equal(x, 1.034)", NULL, linter)
+  expect_lint("expect_equal(x, c(1.01, 1.02))", NULL, linter)
   # whole numbers with explicit decimals are OK, even in mixed scenarios
-  expect_lint("expect_equal(x, c(1.0, 2))", NULL, expect_identical_linter())
+  expect_lint("expect_equal(x, c(1.0, 2))", NULL, linter)
   # plain numbers are still caught, however
-  expect_lint(
-    "expect_equal(x, 1L)",
-    rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed"),
-    expect_identical_linter()
-  )
-  expect_lint(
-    "expect_equal(x, 1)",
-    rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed"),
-    expect_identical_linter()
-  )
+  expect_lint("expect_equal(x, 1L)", msg, linter)
+  expect_lint("expect_equal(x, 1)", msg, linter)
   # NB: TRUE is a NUM_CONST so we want test matching it, even though this test is
   #   also a violation of expect_true_false_linter()
-  expect_lint(
-    "expect_equal(x, TRUE)",
-    rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed"),
-    expect_identical_linter()
-  )
+  expect_lint("expect_equal(x, TRUE)", msg, linter)
 })
 
 test_that("expect_identical_linter skips 3e cases needing expect_equal", {
