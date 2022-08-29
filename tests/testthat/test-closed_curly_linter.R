@@ -1,3 +1,5 @@
+x = 5 # Just to check if the workflow fails
+
 test_that("returns the correct linting", {
   closed_curly_message_regex <- rex(
     paste(
