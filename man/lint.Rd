@@ -43,7 +43,7 @@ linters.}
 
 \item{...}{Provide additional arguments to be passed to:
 \itemize{
-\item \code{\link[=exclude]{exclude()}} (in case of \code{lintr()}; e.g. \code{lints} or \code{exclusions})
+\item \code{\link[=exclude]{exclude()}} (in case of \code{lint()}; e.g. \code{lints} or \code{exclusions})
 \item \code{\link[=lint]{lint()}} (in case of \code{lint_dir()} and \code{lint_package()}; e.g. \code{linters} or \code{cache})
 }}
 

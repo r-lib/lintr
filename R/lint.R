@@ -25,7 +25,7 @@
 #' @param linters a named list of linter functions to apply. See [linters] for a full list of default and available
 #' linters.
 #' @param ... Provide additional arguments to be passed to:
-#' - [exclude()] (in case of `lintr()`; e.g. `lints` or `exclusions`)
+#' - [exclude()] (in case of `lint()`; e.g. `lints` or `exclusions`)
 #' - [lint()] (in case of `lint_dir()` and `lint_package()`; e.g. `linters` or `cache`)
 #' @param cache given a logical, toggle caching of lint results. If passed a character string, store the cache in this
 #' directory.
