@@ -24,7 +24,9 @@
 #' The latter (inline data) applies whenever `filename` has a newline character (\\n).
 #' @param linters a named list of linter functions to apply. See [linters] for a full list of default and available
 #' linters.
-#' @param ... additional arguments passed to [exclude()].
+#' @param ... Provide additional arguments to be passed to:
+#' - [exclude()] (in case of `lintr()`; e.g. `lints` or `exclusions`)
+#' - [lint()] (in case of `lint_dir()` and `lint_package()`; e.g. `linters` or `cache`)
 #' @param cache given a logical, toggle caching of lint results. If passed a character string, store the cache in this
 #' directory.
 #' @param parse_settings whether to try and parse the settings.
@@ -114,7 +116,6 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
 #' @param path For the base directory of the project (for `lint_dir()`) or
 #'   package (for `lint_package()`).
-#' @param ... additional arguments passed to [lint()], e.g. `linters` or `cache`.
 #' @param relative_path if `TRUE`, file paths are printed using their path relative to the base directory.
 #'   If `FALSE`, use the full absolute path.
 #' @param exclusions exclusions for [exclude()], relative to the package path.
