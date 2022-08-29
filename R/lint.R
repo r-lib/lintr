@@ -31,8 +31,6 @@
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
 #' linting is being done ad hoc.
 #'
-#' @aliases lint_file
-# TODO(next release after 3.0.0): remove the alias
 #' @return A list of lint objects.
 #'
 #' @examples
@@ -44,17 +42,6 @@
 #'
 #' @export
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
-  # TODO(next release after 3.0.0): remove this deprecated workaround
-  dots <- list(...)
-  if (has_positional_logical(dots)) {
-    warning(
-      "'cache' is no longer available as a positional argument; please supply 'cache' as a named argument instead. ",
-      "This warning will be upgraded to an error in the next release."
-    )
-    cache <- dots[[1L]]
-    dots <- dots[-1L]
-  }
-
   needs_tempfile <- missing(filename) || rex::re_matches(filename, rex::rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
   lines <- get_lines(filename, text)
@@ -84,9 +71,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   lint_obj <- define_cache_key(filename, inline_data, lines)
   lints <- retrieve_file(lint_cache, lint_obj, linters)
   if (!is.null(lints)) {
-    # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
-    # > exclude(lints, lines = lines, ...)
-    return(do.call(exclude, c(list(lints, lines = lines, linter_names = names(linters)), dots)))
+    return(exclude(lints, lines = lines, ...))
   }
 
   lints <- list()
@@ -104,9 +89,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   cache_file(lint_cache, filename, linters, lints)
   save_cache(lint_cache, filename, cache_path)
 
-  # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
-  # > exclude(lints, lines = lines, ...)
-  res <- do.call(exclude, c(list(lints, lines = lines, linter_names = names(linters)), dots))
+  res <- exclude(lints, lines = lines, ...)
 
   # simplify filename if inline
   zap_temp_filename(res, needs_tempfile)
@@ -136,18 +119,6 @@ lint_dir <- function(path = ".", ...,
                      exclusions = list("renv", "packrat"),
                      pattern = rex::rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"), end),
                      parse_settings = TRUE) {
-  # TODO(next release after 3.0.0): remove this deprecated workaround
-  dots <- list(...)
-  if (has_positional_logical(dots)) {
-    warning(
-      "'relative_path' is no longer available as a positional argument; ",
-      "please supply 'relative_path' as a named argument instead. ",
-      "This warning will be upgraded to an error in the next release."
-    )
-    relative_path <- dots[[1L]]
-    dots <- dots[-1L]
-  }
-
   if (isTRUE(parse_settings)) {
     read_settings(path)
     on.exit(clear_settings, add = TRUE)
@@ -177,9 +148,7 @@ lint_dir <- function(path = ".", ...,
     files,
     function(file) {
       maybe_report_progress()
-      # TODO: once relative_path= is fully deprecated as 2nd positional argument (see top of body), restore the cleaner:
-      # > lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
-      do.call(lint, c(list(file, parse_settings = FALSE, exclusions = exclusions), dots))
+      lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
     }
   ))
 
@@ -229,18 +198,6 @@ lint_package <- function(path = ".", ...,
                          relative_path = TRUE,
                          exclusions = list("R/RcppExports.R"),
                          parse_settings = TRUE) {
-  # TODO(next release after 3.0.0): remove this deprecated workaround
-  dots <- list(...)
-  if (has_positional_logical(dots)) {
-    warning(
-      "'relative_path' is no longer available as a positional argument; ",
-      "please supply 'relative_path' as a named argument instead. ",
-      "This warning will be upgraded to an error in the next release."
-    )
-    relative_path <- dots[[1L]]
-    dots <- dots[-1L]
-  }
-
   pkg_path <- find_package(path)
 
   if (is.null(pkg_path)) {
@@ -259,12 +216,8 @@ lint_package <- function(path = ".", ...,
   )
 
   r_directories <- file.path(pkg_path, c("R", "tests", "inst", "vignettes", "data-raw", "demo"))
-  # TODO: once relative_path= is fully deprecated as 2nd positional argument (see top of body), restore the cleaner:
-  # > lints <- lint_dir(r_directories, relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
-  lints <- do.call(
-    lint_dir,
-    c(list(r_directories, relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE), dots)
-  )
+
+  lints <- lint_dir(r_directories, relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
 
   if (isTRUE(relative_path)) {
     path <- normalizePath(pkg_path, mustWork = FALSE)
@@ -734,12 +687,6 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
 
 fill_with <- function(character = " ", length = 1L) {
   paste0(collapse = "", rep.int(character, length))
-}
-
-has_positional_logical <- function(dots) {
-  length(dots) > 0L &&
-    is.logical(dots[[1L]]) &&
-    !nzchar(names2(dots)[1L])
 }
 
 maybe_report_progress <- function(done = FALSE) {
