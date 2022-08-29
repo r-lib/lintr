@@ -37,6 +37,8 @@
 * New `allow_trailing` argument added to `assignment_linter()` to check when assignment operators are at the 
   end of a line, and the value is on the following line (#1491, @ashbaldry) 
  
+* `object_usage_linter()` improves lint metadata when detecting undefined infix operators, e.g. `%>%` or `:=` (#1497, @MichaelChirico)
+
 ## New features
 
 * `commented_code_linter()` now lints commented argument code, containing a trailing comma, as well (#386, @AshesITR).
