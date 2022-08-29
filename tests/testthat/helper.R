@@ -52,5 +52,5 @@ skip_if_not_r_version <- function(min_version) {
 }
 
 skip_if_not_utf8_locale <- function() {
-  skip_if_not(l10n_info()[["UTF-8"]], "Not a UTF-8 locale")
+  testthat::skip_if_not(l10n_info()[["UTF-8"]], "Not a UTF-8 locale")
 }
