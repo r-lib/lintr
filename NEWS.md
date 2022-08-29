@@ -1,5 +1,7 @@
 # lintr (development version)
 
+* Skip multi-byte tests in non UTF-8 locales (#1504)
+
 * `modify_defaults()` no longer uses the mistaken `"lintr_function"` S3 class, instead applying the
   `"linter"` class also common to `Linter()`. `Linter()` also includes `"function"` in the S3
   class of its output to facilitate S3 dispatch to `function` methods where appropriate (#1392, @MichaelChirico).
