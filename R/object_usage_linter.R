@@ -78,7 +78,12 @@ object_usage_linter <- function(interpret_glue = TRUE) {
 
       lintable_symbols <- xml2::xml_find_all(
         fun_assignment,
-        "descendant::SYMBOL | descendant::SYMBOL_FUNCTION_CALL | descendant::SPECIAL | descendant::LEFT_ASSIGN[text() = ':=']"
+        "
+        descendant::SYMBOL
+        | descendant::SYMBOL_FUNCTION_CALL
+        | descendant::SPECIAL
+        | descendant::LEFT_ASSIGN[text() = ':=']
+        "
       )
 
       lintable_symbol_names <- gsub("^`|`$", "", xml2::xml_text(lintable_symbols))
