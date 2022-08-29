@@ -79,6 +79,8 @@ test_that("Terminal newlines are detected correctly", {
 })
 
 test_that("Multi-byte characters correct columns", {
+  skip_if_not_utf8_locale()
+
   with_content_to_parse("`\U2020` <- 1", {
     # fix_column_numbers corrects the start of <-
     expect_equal(pc[[1L]]$col1[4L], pc[[1L]]$col1[2L] + 4L)
@@ -86,6 +88,7 @@ test_that("Multi-byte characters correct columns", {
 })
 
 test_that("Multi-byte character truncated by parser is ignored", {
+  skip_if_not_utf8_locale()
   # \U2013 is the Unicode character 'en dash', which is
   # almost identical to a minus sign in monospaced fonts.
   with_content_to_parse("y <- x \U2013 42", {
