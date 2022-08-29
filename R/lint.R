@@ -126,7 +126,6 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 #'   lint_dir()
 #'   lint_dir(
 #'     linters = list(semicolon_linter())
-#'     cache = TRUE,
 #'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "renv")
 #'   )
 #' }
@@ -220,7 +219,6 @@ drop_excluded <- function(files, exclusions) {
 #'
 #'   lint_package(
 #'     linters = linters_with_defaults(semicolon_linter = semicolon_linter())
-#'     cache = TRUE,
 #'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
 #'   )
 #' }
