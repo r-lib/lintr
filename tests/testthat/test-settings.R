@@ -122,16 +122,16 @@ test_that("it has a smart default for encodings", {
   read_settings(NULL)
   expect_equal(settings$encoding, "UTF-8")
 
-  proj_file <- file.path("dummy_projects", "project", "metropolis-hastings-rho.R")
-  pkg_file <- file.path("dummy_packages", "cp1252", "R", "metropolis-hastings-rho.R")
+  proj_file <- test_path("dummy_projects", "project", "metropolis-hastings-rho.R")
+  pkg_file <- test_path("dummy_packages", "cp1252", "R", "metropolis-hastings-rho.R")
 
   expect_equal(
-    normalizePath(find_rproj(proj_file), winslash = "/"),
-    normalizePath(file.path("dummy_projects", "project", "project.Rproj"), winslash = "/")
+    normalizePath(find_rproj_at(find_rproj_or_package(proj_file)), winslash = "/"),
+    normalizePath(test_path("dummy_projects", "project", "project.Rproj"), winslash = "/")
   )
   expect_equal(
     normalizePath(find_package(pkg_file), winslash = "/"),
-    normalizePath(file.path("dummy_packages", "cp1252"), winslash = "/")
+    normalizePath(test_path("dummy_packages", "cp1252"), winslash = "/")
   )
 
   expect_equal(find_default_encoding(proj_file), "ISO8859-1")

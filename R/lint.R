@@ -370,39 +370,28 @@ reorder_lints <- function(lints) {
   )]
 }
 
-has_description <- function(path) {
-  desc_info <- file.info(file.path(path, "DESCRIPTION"))
-  !is.na(desc_info$size) && desc_info$size > 0.0 && !desc_info$isdir
+find_package <- function(path) {
+  if (!dir.exists(path)) {
+    path <- dirname(path)
+  }
+  tryCatch(
+    rprojroot::find_root(path = path, criterion = rprojroot::is_r_package),
+    error = function(e) NULL
+  )
 }
 
-find_package <- function(path) {
-  path <- normalizePath(path, mustWork = FALSE)
-
-  while (!has_description(path)) {
+find_rproj_or_package <- function(path) {
+  if (!dir.exists(path)) {
     path <- dirname(path)
-    if (is_root(path)) {
-      return(NULL)
-    }
   }
-
-  path
+  tryCatch(
+    rprojroot::find_root(path = path, criterion = rprojroot::is_rstudio_project | rprojroot::is_r_package),
+    error = function(e) NULL
+  )
 }
 
 find_rproj_at <- function(path) {
-  head(list.files(path = path, pattern = "\\.Rproj$", full.names = TRUE), 1L)
-}
-
-find_rproj <- function(path) {
-  path <- normalizePath(path, mustWork = FALSE)
-
-  while (length(res <- find_rproj_at(path)) == 0L) {
-    path <- dirname(path)
-    if (is_root(path)) {
-      return(NULL)
-    }
-  }
-
-  res
+  head(Sys.glob(file.path(path, "*.Rproj")), n = 1L)
 }
 
 is_root <- function(path) {

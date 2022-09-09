@@ -108,20 +108,12 @@ find_default_encoding <- function(filename) {
     return(NULL)
   }
 
-  pkg_path <- find_package(filename)
-  rproj_file <- find_rproj(filename)
-  pkg_enc <- get_encoding_from_dcf(file.path(pkg_path, "DESCRIPTION"))
-  rproj_enc <- get_encoding_from_dcf(rproj_file)
-
-  if (!is.null(rproj_file) && !is.null(pkg_path) && startsWith(rproj_file, pkg_path)) {
-    # Check precedence via directory hierarchy.
-    # Both paths are normalized so checking if rproj_file is within pkg_path is sufficient.
-    # Let Rproj file take precedence
-    return(rproj_enc %||% pkg_enc)
-  } else {
-    # Let DESCRIPTION file take precedence if .Rproj file is further up the directory hierarchy
-    return(pkg_enc %||% rproj_enc)
+  root_path <- find_rproj_or_package(filename)
+  rproj_enc <- get_encoding_from_dcf(find_rproj_at(root_path))
+  if (!is.null(rproj_enc)) {
+    return(rproj_enc)
   }
+  rproj_enc
 }
 
 get_encoding_from_dcf <- function(file) {
