@@ -1,5 +1,7 @@
 # lintr (development version)
 
+# lintr 3.0.1
+
 * Skip multi-byte tests in non UTF-8 locales (#1504)
 
 * `modify_defaults()` no longer uses the mistaken `"lintr_function"` S3 class, instead applying the

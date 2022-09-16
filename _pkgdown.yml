@@ -6,6 +6,11 @@ template:
     in_header: |
       <script defer data-domain="lintr.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 
+development:
+  mode: "auto"
+  version_label: "default"
+  version_tooltip: "Version"
+
 reference:
 - title: Linting
   contents:
