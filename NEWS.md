@@ -1,5 +1,9 @@
 # lintr (development version)
 
+# lintr 3.0.1
+
+* Skip multi-byte tests in non UTF-8 locales (#1504)
+
 * `modify_defaults()` no longer uses the mistaken `"lintr_function"` S3 class, instead applying the
   `"linter"` class also common to `Linter()`. `Linter()` also includes `"function"` in the S3
   class of its output to facilitate S3 dispatch to `function` methods where appropriate (#1392, @MichaelChirico).
@@ -42,6 +46,7 @@
 
 ## Bug fixes
 
+* `object_length_linter()` does not fail in case there are dependencies with no exports (e.g. data-only packages) (#1509, @IndrajeetPatil).
 * `get_source_expressions()` no longer fails on R files that match a knitr pattern (#743, #879, #1406, @AshesITR).
 * Parse error lints now appear with the linter name `"error"` instead of `NA` (#1405, @AshesITR).  
   Also, linting no longer runs if the `source_expressions` contain invalid string data that would cause error messages
