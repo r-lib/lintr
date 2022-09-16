@@ -13,7 +13,7 @@ namespace_imports <- function(path = find_package()) {
 }
 
 # this loads the namespaces, but is the easiest way to do it
-# test package availablity to avoid failing out as in #1360
+# test package availability to avoid failing out as in #1360
 #   typically, users are running this on their own package directories and thus
 #   will have the namespace dependencies installed, but we can't guarantee this.
 safe_get_exports <- function(ns) {
@@ -21,12 +21,17 @@ safe_get_exports <- function(ns) {
   if (!requireNamespace(ns[[1L]], quietly = TRUE)) {
     return(empty_namespace_data())
   }
+
   # importFrom directives appear as list(ns, imported_funs)
   if (length(ns) > 1L) {
     return(data.frame(pkg = ns[[1L]], fun = ns[[2L]], stringsAsFactors = FALSE))
   }
 
-  data.frame(pkg = ns, fun = getNamespaceExports(ns), stringsAsFactors = FALSE)
+  # relevant only if there are any exported objects
+  fun <- getNamespaceExports(ns)
+  if (length(fun) > 0L) {
+    data.frame(pkg = ns, fun = fun, stringsAsFactors = FALSE)
+  }
 }
 
 empty_namespace_data <- function() {
@@ -36,14 +41,15 @@ empty_namespace_data <- function() {
 # filter namespace_imports() for S3 generics
 # this loads all imported namespaces
 imported_s3_generics <- function(ns_imports) {
-  is_generic <- vapply(
-    seq_len(nrow(ns_imports)),
-    function(i) {
-      fun_obj <- get(ns_imports$fun[i], envir = asNamespace(ns_imports$pkg[i]))
-      is.function(fun_obj) && is_s3_generic(fun_obj)
-    },
-    logical(1L)
-  )
+  # `NROW()` for the `NULL` case of 0-export dependencies (cf. #1503)
+    is_generic <- vapply(
+      seq_len(NROW(ns_imports)),
+      function(i) {
+        fun_obj <- get(ns_imports$fun[i], envir = asNamespace(ns_imports$pkg[i]))
+        is.function(fun_obj) && is_s3_generic(fun_obj)
+      },
+      logical(1L)
+    )
 
   ns_imports[is_generic, ]
 }
