@@ -1,3 +1,5 @@
+# lintr (development version)
+
 # lintr 3.0.1
 
 * Skip multi-byte tests in non UTF-8 locales (#1504)
