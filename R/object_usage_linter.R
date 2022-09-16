@@ -198,12 +198,17 @@ parse_check_usage <- function(expression, known_used_symbols = character(), decl
     vals[[length(vals) + 1L]] <<- x
   }
 
-  try(codetools::checkUsage(
-    expression,
-    report = report,
-    suppressLocalUnused = known_used_symbols,
-    suppressUndefined = declared_globals
-  ))
+  withr::with_options(
+    list(useFancyQuotes = FALSE),
+    code = {
+      try(codetools::checkUsage(
+        expression,
+        report = report,
+        suppressLocalUnused = known_used_symbols,
+        suppressUndefined = declared_globals
+      ))
+    }
+  )
 
   function_name <- rex(anything, ": ")
   line_info <- rex(" ", "(", capture(name = "path", non_spaces), ":",
