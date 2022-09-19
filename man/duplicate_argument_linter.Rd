@@ -10,7 +10,11 @@ duplicate_argument_linter(except = character())
 \item{except}{a character vector of function names as exceptions.}
 }
 \description{
-Check for duplicate arguments in function calls.
+Check for duplicate arguments in function calls. Some cases are run-time errors
+(e.g. \code{mean(x = 1:5, x = 2:3)}), otherwise this linter is used to discourage
+explicitly providing duplicate names to objects (e.g. \code{c(a = 1, a = 2)}).
+Duplicate-named objects are hard to work with programmatically and
+should typically be avoided.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

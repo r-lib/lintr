@@ -1,4 +1,4 @@
-#' Require usage of direct methods for subsetting strings via regex.
+#' Require usage of direct methods for subsetting strings via regex
 #'
 #' Using `value = TRUE` in [grep()] returns the subset of the input that matches
 #'   the pattern, e.g. `grep("[a-m]", letters, value = TRUE)` will return the

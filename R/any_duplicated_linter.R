@@ -1,9 +1,8 @@
-#' Require usage of anyDuplicated() > 0 over any(duplicated(.))
+#' Require usage of `anyDuplicated(x) > 0` over `any(duplicated(x))`
 #'
-#' [anyDuplicated()] exists as a replacement for `any(duplicated(.))` which is
-#'   more efficient for simple objects, and in the worst case is the same
-#'   efficiency. Therefore it should be used in all situations instead of the
-#'   latter.
+#' [anyDuplicated()] exists as a replacement for `any(duplicated(.))`, which is
+#'   more efficient for simple objects, and is at worst equally efficient.
+#'   Therefore, it should be used in all situations instead of the latter.
 #'
 #' Also match usage like `length(unique(x$col)) == nrow(x)`, which can
 #'   be replaced by `anyDuplicated(x$col) == 0L`.

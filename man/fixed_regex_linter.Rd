@@ -13,7 +13,7 @@ pattern only involves static patterns.
 \details{
 NB: for \code{stringr} functions, that means wrapping the pattern in \code{stringr::fixed()}.
 
-NB: This linter is likely not able to distinguish every possible case when
+NB: this linter is likely not able to distinguish every possible case when
 a fixed regular expression is preferable, rather it seeks to identify
 likely cases. It should \emph{never} report false positives, however; please
 report false positives as an error.

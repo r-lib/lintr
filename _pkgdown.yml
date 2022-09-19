@@ -8,8 +8,6 @@ template:
 
 development:
   mode: "auto"
-  version_label: "default"
-  version_tooltip: "Version"
 
 reference:
 - title: Linting
