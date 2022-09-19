@@ -1,4 +1,4 @@
-#' Require usage of startsWith() and endsWith() over grepl()/substr() versions
+#' Require usage of `startsWith()` and `endsWith()` over `grepl()`/`substr()` versions
 #'
 #' [startsWith()] is used to detect fixed initial substrings; it is more
 #'   readable and more efficient than equivalents using [grepl()] or [substr()].
@@ -15,7 +15,7 @@
 #'
 #' We lint `grepl()` usages by default because the `!is.na()` version is more explicit
 #'   with respect to `NA` handling -- though documented, the way `grepl()` handles
-#'   missing inputs may be surprising to some readers.
+#'   missing inputs may be surprising to some users.
 #'
 #' @param allow_grepl Logical, default `FALSE`. If `TRUE`, usages with `grepl()`
 #'   are ignored. Some authors may prefer the `NA` input to `FALSE` output
