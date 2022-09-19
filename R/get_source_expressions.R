@@ -399,21 +399,12 @@ lint_rmd_error <- function(e, source_expression) {
     rex(
       except_some_of(":"),
       ":",
-      capture(
-        name = "line",
-        digits
-      ),
+      capture(name = "line", digits),
       ":",
-      capture(
-        name = "column",
-        digits
-      ),
+      capture(name = "column", digits),
       ":",
       space,
-      capture(
-        name = "message",
-        anything
-      ),
+      capture(name = "message", anything),
       "\n"
     )
   )

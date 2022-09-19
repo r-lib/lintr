@@ -9,7 +9,8 @@ print.lint <- function(x, ...) {
 
   cat(
     sep = "",
-    crayon::bold(x$filename, ":",
+    crayon::bold(
+      x$filename, ":",
       as.character(x$line_number), ":",
       as.character(x$column_number), ": ",
       sep = ""

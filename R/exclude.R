@@ -235,7 +235,8 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     )
 
     if (any(bad)) {
-      stop("Full file exclusions must be character vectors of length 1. items: ",
+      stop(
+        "Full file exclusions must be character vectors of length 1. items: ",
         toString(which(bad)),
         " are not!",
         call. = FALSE
@@ -254,7 +255,8 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     bad <- full_line_exclusions & !are_numeric
 
     if (any(bad)) {
-      stop("Full line exclusions must be numeric or integer vectors. items: ",
+      stop(
+        "Full line exclusions must be numeric or integer vectors. items: ",
         toString(which(bad)),
         " are not!",
         call. = FALSE
