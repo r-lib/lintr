@@ -1,6 +1,6 @@
 ops <- list(
   "+",
-  #"-",
+  # "-",
   "=",
   "==",
   "!=",
@@ -21,7 +21,8 @@ ops <- list(
   "||",
   "&",
   "&&",
-  rex("%", except_any_of("%"), "%"))
+  rex("%", except_any_of("%"), "%")
+)
 
 #' Commented code linter
 #'

@@ -146,7 +146,9 @@ extract_glued_symbols <- function(expr) {
     )
   )
 
-  if (length(glue_calls) == 0L) return(character())
+  if (length(glue_calls) == 0L) {
+    return(character())
+  }
   glued_symbols <- new.env(parent = emptyenv())
   for (cl in glue_calls) {
     parsed_cl <- tryCatch(
@@ -191,7 +193,6 @@ get_assignment_symbols <- function(xml) {
 
 parse_check_usage <- function(expression, known_used_symbols = character(), declared_globals = character(),
                               start_line = 1L) {
-
   vals <- list()
 
   report <- function(x) {
@@ -211,8 +212,10 @@ parse_check_usage <- function(expression, known_used_symbols = character(), decl
   )
 
   function_name <- rex(anything, ": ")
-  line_info <- rex(" ", "(", capture(name = "path", non_spaces), ":",
-                   capture(name = "line1", digits), maybe("-", capture(name = "line2", digits)), ")")
+  line_info <- rex(
+    " ", "(", capture(name = "path", non_spaces), ":",
+    capture(name = "line1", digits), maybe("-", capture(name = "line2", digits)), ")"
+  )
 
   res <- re_matches(
     vals,
