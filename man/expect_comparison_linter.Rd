@@ -2,7 +2,7 @@
 % Please edit documentation in R/expect_comparison_linter.R
 \name{expect_comparison_linter}
 \alias{expect_comparison_linter}
-\title{Require usage of expect_gt(x, y) over expect_true(x > y) (and similar)}
+\title{Require usage of \code{expect_gt(x, y)} over \code{expect_true(x > y)} (and similar)}
 \usage{
 expect_comparison_linter()
 }

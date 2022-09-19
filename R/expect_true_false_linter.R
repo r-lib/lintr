@@ -1,4 +1,4 @@
-#' Require usage of expect_true(x) over expect_equal(x, TRUE)
+#' Require usage of `expect_true(x)` over `expect_equal(x, TRUE)`
 #'
 #' [testthat::expect_true()] and [testthat::expect_false()] exist specifically
 #'   for testing the `TRUE`/`FALSE` value of an object.

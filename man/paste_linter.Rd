@@ -2,7 +2,7 @@
 % Please edit documentation in R/paste_linter.R
 \name{paste_linter}
 \alias{paste_linter}
-\title{Raise lints for several common poor usages of paste()}
+\title{Raise lints for several common poor usages of \code{paste()}}
 \usage{
 paste_linter(allow_empty_sep = FALSE, allow_to_string = FALSE)
 }

@@ -1,4 +1,4 @@
-#' Require usage of expect_type(x, type) over expect_equal(typeof(x), type)
+#' Require usage of `expect_type(x, type)` over `expect_equal(typeof(x), type)`
 #'
 #' [testthat::expect_type()] exists specifically for testing the storage type
 #'   of objects. [testthat::expect_equal()], [testthat::expect_identical()], and
