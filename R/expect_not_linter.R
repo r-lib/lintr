@@ -1,4 +1,4 @@
-#' Require usage of expect_false(.) over expect_true(!.)
+#' Require usage of `expect_false(x)` over `expect_true(!x)`
 #'
 #' [testthat::expect_false()] exists specifically for testing that an output is
 #'   `FALSE`. [testthat::expect_true()] can also be used for such tests by

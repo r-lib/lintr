@@ -1,4 +1,4 @@
-#' Block usage of file.path() with system.file()
+#' Block usage of `file.path()` with `system.file()`
 #'
 #' [system.file()] has a `...` argument which, internally, is passed to
 #'   [file.path()], so including it in user code is repetitive.
