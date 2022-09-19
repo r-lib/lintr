@@ -14,7 +14,6 @@ equals_na_linter <- function() {
   xpath <- sprintf(xpath_fmt, na_table, comparator_table)
 
   Linter(function(source_expression) {
-
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }

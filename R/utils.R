@@ -24,7 +24,6 @@ flatten_lints <- function(x) {
 # any function using unlist or c was dropping the classnames,
 # so need to brute force copy the objects
 flatten_list <- function(x, class) {
-
   res <- list()
   itr <- 1L
   assign_item <- function(x) {
@@ -37,7 +36,6 @@ flatten_list <- function(x, class) {
   }
   assign_item(x)
   res
-
 }
 
 fix_names <- function(x, default) {
@@ -67,7 +65,9 @@ linter_auto_name <- function(which = -3L) {
 auto_names <- function(x) {
   nms <- names2(x)
   missing <- nms == ""
-  if (!any(missing)) return(nms)
+  if (!any(missing)) {
+    return(nms)
+  }
 
   default_name <- function(x) {
     if (is_linter(x)) {
@@ -183,15 +183,17 @@ Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name.
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
   terminal_newline <- TRUE
-  lines <- withCallingHandlers({
-    readLines(file, warn = TRUE, ...)
-  },
-  warning = function(w) {
-    if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
-      terminal_newline <<- FALSE
-      invokeRestart("muffleWarning")
+  lines <- withCallingHandlers(
+    {
+      readLines(file, warn = TRUE, ...)
+    },
+    warning = function(w) {
+      if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
+        terminal_newline <<- FALSE
+        invokeRestart("muffleWarning")
+      }
     }
-  })
+  )
   lines_conv <- iconv(lines, from = encoding, to = "UTF-8")
   lines[!is.na(lines_conv)] <- lines_conv[!is.na(lines_conv)]
   Encoding(lines) <- "UTF-8"

@@ -46,7 +46,6 @@ spaces_left_parentheses_linter <- function() {
       xml <- source_expression$full_xml_parsed_content
       xpath <- file_level_xpath
     } else {
-
       xml <- source_expression$xml_parsed_content
       xpath <- expression_level_xpath
     }
