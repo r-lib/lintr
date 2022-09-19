@@ -14,8 +14,7 @@ test_that("linters_with_defaults warns on unused NULLs", {
 test_that("all default linters are tagged default", {
   expect_named(linters_with_defaults(), available_linters(tags = "default")$linter)
 
-  # needed for {waldo} 0.4.0 (containing waldo#133)
-  skip_if_not_installed("testthat", "3.1.4")
+  skip_if_not_installed("waldo", "0.4.0") # needs waldo#133
   # covr modifies package functions causing differing deparse() results even for identical anonymous functions.
   # This happens because default_linters is generated at build time and thus not modifiable by covr, whereas
   # linters_with_tags() constructs the linters at runtime.
