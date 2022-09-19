@@ -8,6 +8,7 @@ paren_brace_linter()
 }
 \description{
 Check that there is a space between right parentheses and an opening curly brace.
+For example, \code{function(){}} doesn't have a space, while \code{function() {}} does.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

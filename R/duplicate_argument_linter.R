@@ -1,6 +1,10 @@
 #' Duplicate argument linter
 #'
-#' Check for duplicate arguments in function calls.
+#' Check for duplicate arguments in function calls. Some cases are run-time errors
+#' (e.g. `mean(x = 1:5, x = 2:3)`), otherwise this linter is used to discourage
+#'  explicitly providing duplicate names to objects (e.g. `c(a = 1, a = 2)`).
+#'  Duplicate-named objects are hard to work with programmatically and
+#'  should typically be avoided.
 #'
 #' @param except a character vector of function names as exceptions.
 #' @evalRd rd_tags("duplicate_argument_linter")

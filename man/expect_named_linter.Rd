@@ -2,7 +2,7 @@
 % Please edit documentation in R/expect_named_linter.R
 \name{expect_named_linter}
 \alias{expect_named_linter}
-\title{Require usage of expect_named(x, n) over expect_equal(names(x), n)}
+\title{Require usage of \code{expect_named(x, n)} over \code{expect_equal(names(x), n)}}
 \usage{
 expect_named_linter()
 }

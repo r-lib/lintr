@@ -2,7 +2,7 @@
 % Please edit documentation in R/expect_s3_class_linter.R
 \name{expect_s3_class_linter}
 \alias{expect_s3_class_linter}
-\title{Require usage of expect_s3_class()}
+\title{Require usage of \code{expect_s3_class()}}
 \usage{
 expect_s3_class_linter()
 }
