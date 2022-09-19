@@ -137,12 +137,12 @@
           
           <code><a href="any_duplicated_linter.html">any_duplicated_linter()</a></code> 
         </dt>
-        <dd>Require usage of anyDuplicated() &gt; 0 over any(duplicated(.))</dd>
+        <dd>Require usage of <code>anyDuplicated(x) &gt; 0</code> over <code>any(duplicated(x))</code></dd>
       </dl><dl><dt>
           
           <code><a href="any_is_na_linter.html">any_is_na_linter()</a></code> 
         </dt>
-        <dd>Require usage of anyNA over any(is.na(.))</dd>
+        <dd>Require usage of <code>anyNA(x)</code> over <code>any(is.na(x))</code></dd>
       </dl><dl><dt>
           
           <code><a href="assignment_linter.html">assignment_linter()</a></code> 
@@ -162,7 +162,7 @@
           
           <code><a href="class_equals_linter.html">class_equals_linter()</a></code> 
         </dt>
-        <dd>Block comparison of class with ==</dd>
+        <dd>Block comparison of class with <code>==</code></dd>
       </dl><dl><dt>
           
           <code><a href="closed_curly_linter.html">closed_curly_linter()</a></code> 
@@ -182,12 +182,12 @@
           
           <code><a href="condition_message_linter.html">condition_message_linter()</a></code> 
         </dt>
-        <dd>Block usage of paste() and paste0() with messaging functions using ...</dd>
+        <dd>Block usage of <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste()</a></code> and <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0()</a></code> with messaging functions using <code>...</code></dd>
       </dl><dl><dt>
           
           <code><a href="conjunct_test_linter.html">conjunct_test_linter()</a></code> 
         </dt>
-        <dd>Force &amp;&amp; conditions in expect_true(), expect_false() to be written separately</dd>
+        <dd>Force <code>&amp;&amp;</code> conditions in <code>expect_true()</code> and <code>expect_false()</code> to be written separately</dd>
       </dl><dl><dt>
           
           <code><a href="consecutive_stopifnot_linter.html">consecutive_stopifnot_linter()</a></code> 
@@ -212,52 +212,52 @@
           
           <code><a href="expect_comparison_linter.html">expect_comparison_linter()</a></code> 
         </dt>
-        <dd>Require usage of expect_gt(x, y) over expect_true(x &gt; y) (and similar)</dd>
+        <dd>Require usage of <code>expect_gt(x, y)</code> over <code>expect_true(x &gt; y)</code> (and similar)</dd>
       </dl><dl><dt>
           
           <code><a href="expect_identical_linter.html">expect_identical_linter()</a></code> 
         </dt>
-        <dd>Require usage of expect_identical(x, y) where appropriate</dd>
+        <dd>Require usage of <code>expect_identical(x, y)</code> where appropriate</dd>
       </dl><dl><dt>
           
           <code><a href="expect_length_linter.html">expect_length_linter()</a></code> 
         </dt>
-        <dd>Require usage of expect_length(x, n) over expect_equal(length(x), n)</dd>
+        <dd>Require usage of <code>expect_length(x, n)</code> over <code>expect_equal(length(x), n)</code></dd>
       </dl><dl><dt>
           
           <code><a href="expect_named_linter.html">expect_named_linter()</a></code> 
         </dt>
-        <dd>Require usage of expect_named(x, n) over expect_equal(names(x), n)</dd>
+        <dd>Require usage of <code>expect_named(x, n)</code> over <code>expect_equal(names(x), n)</code></dd>
       </dl><dl><dt>
           
           <code><a href="expect_not_linter.html">expect_not_linter()</a></code> 
         </dt>
-        <dd>Require usage of expect_false(.) over expect_true(!.)</dd>
+        <dd>Require usage of <code>expect_false(x)</code> over <code>expect_true(!x)</code></dd>
       </dl><dl><dt>
           
           <code><a href="expect_null_linter.html">expect_null_linter()</a></code> 
         </dt>
-        <dd>expect_null Linter</dd>
+        <dd>Require usage of <code>expect_null</code> for checking <code>NULL</code></dd>
       </dl><dl><dt>
           
           <code><a href="expect_s3_class_linter.html">expect_s3_class_linter()</a></code> 
         </dt>
-        <dd>Require usage of expect_s3_class()</dd>
+        <dd>Require usage of <code>expect_s3_class()</code></dd>
       </dl><dl><dt>
           
           <code><a href="expect_s4_class_linter.html">expect_s4_class_linter()</a></code> 
         </dt>
-        <dd>Require usage of expect_s4_class(x, k) over expect_true(is(x, k))</dd>
+        <dd>Require usage of <code>expect_s4_class(x, k)</code> over <code>expect_true(is(x, k))</code></dd>
       </dl><dl><dt>
           
           <code><a href="expect_true_false_linter.html">expect_true_false_linter()</a></code> 
         </dt>
-        <dd>Require usage of expect_true(x) over expect_equal(x, TRUE)</dd>
+        <dd>Require usage of <code>expect_true(x)</code> over <code>expect_equal(x, TRUE)</code></dd>
       </dl><dl><dt>
           
           <code><a href="expect_type_linter.html">expect_type_linter()</a></code> 
         </dt>
-        <dd>Require usage of expect_type(x, type) over expect_equal(typeof(x), type)</dd>
+        <dd>Require usage of <code>expect_type(x, type)</code> over <code>expect_equal(typeof(x), type)</code></dd>
       </dl><dl><dt>
           
           <code><a href="extraction_operator_linter.html">extraction_operator_linter()</a></code> 
@@ -282,7 +282,7 @@
           
           <code><a href="ifelse_censor_linter.html">ifelse_censor_linter()</a></code> 
         </dt>
-        <dd>Block usage of ifelse where pmin or pmax is more appropriate</dd>
+        <dd>Block usage of <code><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse()</a></code> where <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin()</a></code> or <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax()</a></code> is more appropriate</dd>
       </dl><dl><dt>
           
           <code><a href="implicit_integer_linter.html">implicit_integer_linter()</a></code> 
@@ -297,7 +297,7 @@
           
           <code><a href="inner_combine_linter.html">inner_combine_linter()</a></code> 
         </dt>
-        <dd>Require c() to be applied before relatively expensive vectorized functions</dd>
+        <dd>Require <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> to be applied before relatively expensive vectorized functions</dd>
       </dl><dl><dt>
           
           <code><a href="line_length_linter.html">line_length_linter()</a></code> 
@@ -327,7 +327,7 @@
           
           <code><a href="nested_ifelse_linter.html">nested_ifelse_linter()</a></code> 
         </dt>
-        <dd>Block usage of nested ifelse() calls</dd>
+        <dd>Block usage of nested <code><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse()</a></code> calls</dd>
       </dl><dl><dt>
           
           <code><a href="no_tab_linter.html">no_tab_linter()</a></code> 
@@ -367,7 +367,7 @@
           
           <code><a href="outer_negation_linter.html">outer_negation_linter()</a></code> 
         </dt>
-        <dd>Require usage of !any(.) over all(!.), !all(.) over any(!.)</dd>
+        <dd>Require usage of <code>!any(x)</code> over <code>all(!x)</code>, <code>!all(x)</code> over <code>any(!x)</code></dd>
       </dl><dl><dt>
           
           <code><a href="package_hooks_linter.html">package_hooks_linter()</a></code> 
@@ -387,7 +387,7 @@
           
           <code><a href="paste_linter.html">paste_linter()</a></code> 
         </dt>
-        <dd>Raise lints for several common poor usages of paste()</dd>
+        <dd>Raise lints for several common poor usages of <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste()</a></code></dd>
       </dl><dl><dt>
           
           <code><a href="pipe_call_linter.html">pipe_call_linter()</a></code> 
@@ -402,12 +402,12 @@
           
           <code><a href="redundant_ifelse_linter.html">redundant_ifelse_linter()</a></code> 
         </dt>
-        <dd>Prevent ifelse() from being used to produce TRUE/FALSE or 1/0</dd>
+        <dd>Prevent <code><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse()</a></code> from being used to produce <code>TRUE</code>/<code>FALSE</code> or <code>1</code>/<code>0</code></dd>
       </dl><dl><dt>
           
           <code><a href="regex_subset_linter.html">regex_subset_linter()</a></code> 
         </dt>
-        <dd>Require usage of direct methods for subsetting strings via regex.</dd>
+        <dd>Require usage of direct methods for subsetting strings via regex</dd>
       </dl><dl><dt>
           
           <code><a href="semicolon_linter.html">semicolon_linter()</a></code> <code><a href="semicolon_linter.html">semicolon_terminator_linter()</a></code> 
@@ -437,22 +437,22 @@
           
           <code><a href="sprintf_linter.html">sprintf_linter()</a></code> 
         </dt>
-        <dd><code>sprintf</code> linter</dd>
+        <dd>Require correct <code><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf()</a></code> calls</dd>
       </dl><dl><dt>
           
           <code><a href="string_boundary_linter.html">string_boundary_linter()</a></code> 
         </dt>
-        <dd>Require usage of startsWith() and endsWith() over grepl()/substr() versions</dd>
+        <dd>Require usage of <code><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">startsWith()</a></code> and <code><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">endsWith()</a></code> over <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl()</a></code>/<code><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr()</a></code> versions</dd>
       </dl><dl><dt>
           
           <code><a href="strings_as_factors_linter.html">strings_as_factors_linter()</a></code> 
         </dt>
-        <dd>Identify cases where stringsAsFactors should be supplied explicitly</dd>
+        <dd>Identify cases where <code>stringsAsFactors</code> should be supplied explicitly</dd>
       </dl><dl><dt>
           
           <code><a href="system_file_linter.html">system_file_linter()</a></code> 
         </dt>
-        <dd>Block usage of file.path() with system.file()</dd>
+        <dd>Block usage of <code><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path()</a></code> with <code><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file()</a></code></dd>
       </dl><dl><dt>
           
           <code><a href="todo_comment_linter.html">todo_comment_linter()</a></code> 

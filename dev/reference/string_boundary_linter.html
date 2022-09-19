@@ -63,7 +63,7 @@ substr(x, 1L, 3L) == "abc".'><meta name="robots" content="noindex"><!-- mathjax 
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Require usage of startsWith() and endsWith() over grepl()/substr() versions</h1>
+      <img src="" class="logo" alt=""><h1>Require usage of <code>startsWith()</code> and <code>endsWith()</code> over <code>grepl()</code>/<code>substr()</code> versions</h1>
       <small class="dont-index">Source: <a href="https://github.com/r-lib/lintr/blob/HEAD/R/string_boundary_linter.R" class="external-link"><code>R/string_boundary_linter.R</code></a></small>
       <div class="d-none name"><code>string_boundary_linter.Rd</code></div>
     </div>
@@ -99,7 +99,7 @@ That means the strict equivalent of <code>grepl("^abc", x)</code> is
 <code>!is.na(x) &amp; startsWith(x, "abc")</code>.</p>
 <p>We lint <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl()</a></code> usages by default because the <code>!is.na()</code> version is more explicit
 with respect to <code>NA</code> handling -- though documented, the way <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl()</a></code> handles
-missing inputs may be surprising to some readers.</p>
+missing inputs may be surprising to some users.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

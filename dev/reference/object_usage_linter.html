@@ -66,7 +66,7 @@ Note that this runs base::eval() on the code, so do not use with untrusted code.
 
     <div class="ref-description section level2">
     <p>Check that closures have the proper usage using <code><a href="https://rdrr.io/pkg/codetools/man/checkUsage.html" class="external-link">codetools::checkUsage()</a></code>.
-Note that this runs <code><a href="https://rdrr.io/r/base/eval.html" class="external-link">base::eval()</a></code> on the code, so do not use with untrusted code.</p>
+Note that this runs <code><a href="https://rdrr.io/r/base/eval.html" class="external-link">base::eval()</a></code> on the code, so <strong>do not use with untrusted code</strong>.</p>
     </div>
 
     <div class="section level2">
@@ -77,7 +77,7 @@ Note that this runs <code><a href="https://rdrr.io/r/base/eval.html" class="exte
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>interpret_glue</dt>
-<dd><p>If TRUE, interpret <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code> calls to avoid false positives caused by local variables
+<dd><p>If <code>TRUE</code>, interpret <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code> calls to avoid false positives caused by local variables
 which are only used in a glue expression.</p></dd>
 
 </dl></div>

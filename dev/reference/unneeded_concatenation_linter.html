@@ -77,7 +77,9 @@
 <dd><p>Logical, default <code>TRUE</code>. If <code>FALSE</code>, one-expression
 usages of <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> are always linted, e.g. <code>c(x)</code> and <code>c(matrix(...))</code>. In some such
 cases, <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> is being used for its side-effect of stripping non-name attributes;
-it is usually preferable to use <code><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector()</a></code> to accomplish the same more readably.</p></dd>
+it is usually preferable to use the more readable <code><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector()</a></code> instead.
+<code><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector()</a></code> is not always preferable, for example with environments
+(especially, <code>R6</code> objects), in which case <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code> is the better alternative.</p></dd>
 
 </dl></div>
     <div class="section level2">
