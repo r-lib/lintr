@@ -41,8 +41,6 @@
 
 * New `sarif_output()` function to output lints to SARIF output (#1424, @shaopeng-gh)
 
-## New features
-
 * `commented_code_linter()` now lints commented argument code, containing a trailing comma, as well (#386, @AshesITR).
   For example a comment containing `#  na.rm = TRUE,` now triggers a lint.
 
