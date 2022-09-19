@@ -73,7 +73,7 @@ available_linters <- function(packages = "lintr", tags = NULL, exclude_tags = "d
 }
 
 build_available_linters <- function(available, package, tags, exclude_tags) {
-   available_df <- data.frame(
+  available_df <- data.frame(
     linter = available[["linter"]],
     package,
     stringsAsFactors = FALSE
@@ -165,7 +165,7 @@ rd_linters <- function(tag_name) {
     "\\itemize{",
     paste0("\\item{\\code{\\link{", tagged, "}}}"),
     "}", # itemize
-    "}"  # section
+    "}" # section
   )
 }
 
@@ -188,7 +188,7 @@ rd_taglist <- function() {
       paste0("\\item{\\link[=", tag, "_linters]{", tag, "} (", tag_table[[tag]], " linters)}")
     }, character(1L)),
     "}", # itemize
-    "}"  # section
+    "}" # section
   )
 }
 

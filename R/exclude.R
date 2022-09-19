@@ -225,7 +225,6 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
   x <- as.list(x)
   unnamed <- !nzchar(names2(x))
   if (any(unnamed)) {
-
     # must be character vectors of length 1
     bad <- vapply(
       seq_along(x),
@@ -236,10 +235,12 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     )
 
     if (any(bad)) {
-      stop("Full file exclusions must be character vectors of length 1. items: ",
-           toString(which(bad)),
-           " are not!",
-           call. = FALSE)
+      stop(
+        "Full file exclusions must be character vectors of length 1. items: ",
+        toString(which(bad)),
+        " are not!",
+        call. = FALSE
+      )
     }
     # Normalize unnamed entries to list(<filename> = list(Inf), ...)
     names(x)[unnamed] <- x[unnamed]
@@ -249,16 +250,17 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
   full_line_exclusions <- !vapply(x, is.list, logical(1L))
 
   if (any(full_line_exclusions)) {
-
     # must be integer or numeric vectors
     are_numeric <- vapply(x, is.numeric, logical(1L))
     bad <- full_line_exclusions & !are_numeric
 
     if (any(bad)) {
-      stop("Full line exclusions must be numeric or integer vectors. items: ",
-           toString(which(bad)),
-           " are not!",
-           call. = FALSE)
+      stop(
+        "Full line exclusions must be numeric or integer vectors. items: ",
+        toString(which(bad)),
+        " are not!",
+        call. = FALSE
+      )
     }
 
     # Normalize list(<filename> = c(<lines>)) to
@@ -301,7 +303,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     rel_path <- !is_absolute_path(paths)
     paths[rel_path] <- file.path(root, paths[rel_path])
     names(x) <- paths
-    x <- x[file.exists(paths)]       # remove exclusions for non-existing files
+    x <- x[file.exists(paths)] # remove exclusions for non-existing files
     names(x) <- normalizePath(names(x)) # get full path for remaining files
   }
 

@@ -56,7 +56,8 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
       lint_message <- paste(
         sprintf(
           "Prefer %s(%s) to %s(x, %s, %s) if really needed.",
-          coercion_function, replacement_argument, matched_call, first_arg, second_arg)
+          coercion_function, replacement_argument, matched_call, first_arg, second_arg
+        )
       )
       lints <- c(lints, xml_nodes_to_lints(num_expr, source_expression, lint_message, type = "warning"))
     }
