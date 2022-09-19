@@ -15,7 +15,6 @@ duplicate_argument_linter <- function(except = character()) {
   xpath_arg_name <- "./EQ_SUB/preceding-sibling::*[1]"
 
   Linter(function(source_expression) {
-
     if (!is_lint_level(source_expression, "file")) {
       return(list())
     }

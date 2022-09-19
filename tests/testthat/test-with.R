@@ -14,20 +14,17 @@ test_that("linters_with_defaults warns on unused NULLs", {
 test_that("all default linters are tagged default", {
   expect_named(linters_with_defaults(), available_linters(tags = "default")$linter)
 
-  # TODO(michaelchirico): use plain expect_equal after waldo#133 makes it into a CRAN release
-  # Here, the environment()s are different because factories use them.
-  skip_if_not_r_version("4.1.0") # Desired all.equal behaviour only available in >= 4.1
+  skip_if_not_installed("waldo", "0.4.0") # needs waldo#133
   # covr modifies package functions causing differing deparse() results even for identical anonymous functions.
   # This happens because default_linters is generated at build time and thus not modifiable by covr, whereas
   # linters_with_tags() constructs the linters at runtime.
   skip_if(requireNamespace("covr", quietly = TRUE) && covr::in_covr())
 
-  # all.equal.default warns on some releases of R if the input is a function, see #1392
-  expect_silent(result <- all.equal(linters_with_tags("default"), linters_with_defaults()))
-  expect_true(result)
+  expect_equal(linters_with_tags("default"), linters_with_defaults())
   expect_length(linters_with_tags("default", exclude_tags = "default"), 0L)
 
   # Check that above test also trips on default arguments.
+  skip_if_not_r_version("4.1.0") # Desired all.equal behaviour only available in >= 4.1
   expect_equal(
     all.equal(linters_with_tags("default"), linters_with_defaults(line_length_linter(120L))),
     'Component "line_length_linter": Component "length": Mean relative difference: 0.5'
