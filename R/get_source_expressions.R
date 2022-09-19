@@ -265,10 +265,11 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
   } else if (grepl("repeated formal argument", e$message, fixed = TRUE)) {
     matches <- re_matches(
       e$message,
-      rex("repeated formal argument '",
-          capture(name = "symbol", anything),
-          "' on line ",
-          capture(name = "line", digits)
+      rex(
+        "repeated formal argument '",
+        capture(name = "symbol", anything),
+        "' on line ",
+        capture(name = "line", digits)
       )
     )
     sym <- matches$symbol
@@ -336,10 +337,14 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
     )
   }
 
-  message_info <- re_matches(e$message,
-                             rex(single_quotes, capture(name = "name", anything), single_quotes,
-                                 anything,
-                                 double_quotes, capture(name = "starting", anything), double_quotes))
+  message_info <- re_matches(
+    e$message,
+    rex(
+      single_quotes, capture(name = "name", anything), single_quotes,
+      anything,
+      double_quotes, capture(name = "starting", anything), double_quotes
+    )
+  )
 
   loc <- re_matches(source_expression$content, rex(message_info$starting), locations = TRUE)
   line_location <- loc[!is.na(loc$start) & !is.na(loc$end), ]
@@ -348,11 +353,13 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
     if (grepl("attempt to use zero-length variable name", e$message, fixed = TRUE)) {
       # empty symbol: ``, ``(), ''(), ""(), fun(''=42), fun(""=42), fun(a=1,""=42)
       loc <- re_matches(source_expression$content,
-                        rex("``" %or%
-                              list(or("''", '""'), any_spaces, "(") %or%
-                              list(or("(", ","), any_spaces, or("''", '""'), any_spaces, "=")),
-                        options = "multi-line",
-                        locations = TRUE)
+        rex(
+          "``" %or%
+          list(or("''", '""'), any_spaces, "(") %or%
+          list(or("(", ","), any_spaces, or("''", '""'), any_spaces, "=")),
+        options = "multi-line",
+        locations = TRUE
+      )
       loc <- loc[!is.na(loc$start) & !is.na(loc$end), ]
       if (nrow(loc) > 0L) {
         line_location <- loc[1L, ]
@@ -388,20 +395,20 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
 }
 
 lint_rmd_error <- function(e, source_expression) {
-  message_info <- re_matches(e$message,
-    rex(except_some_of(":"),
+  message_info <- re_matches(
+    e$message,
+    rex(
+      except_some_of(":"),
       ":",
-      capture(name = "line",
-        digits),
+      capture(name = "line", digits),
       ":",
-      capture(name = "column",
-        digits),
+      capture(name = "column", digits),
       ":",
       space,
-      capture(name = "message",
-        anything),
-      "\n")
+      capture(name = "message", anything),
+      "\n"
     )
+  )
 
   line_number <- as.integer(message_info$line)
   column_number <- as.integer(message_info$column)
@@ -486,7 +493,8 @@ get_source_expression <- function(source_expression, error = identity) {
 
 get_newline_locs <- function(x) {
   newline_search <- re_matches(x, rex("\n"), locations = TRUE, global = TRUE)[[1L]]$start
-  c(0L,
+  c(
+    0L,
     if (!is.na(newline_search[1L])) newline_search,
     nchar(x) + 1L
   )
@@ -575,7 +583,7 @@ tab_offsets <- function(tab_columns) {
   vapply(
     tab_columns - 1L,
     function(tab_idx) {
-      offset <- 7L - (tab_idx + cum_offset) %% 8L  # using a tab width of 8 characters
+      offset <- 7L - (tab_idx + cum_offset) %% 8L # using a tab width of 8 characters
       cum_offset <<- cum_offset + offset
       offset
     },

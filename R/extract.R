@@ -10,7 +10,7 @@ extract_r_source <- function(filename, lines, error = identity) {
 
   chunks <- tryCatch(get_chunk_positions(pattern = pattern, lines = lines), error = error)
   if (inherits(chunks, "error") || inherits(chunks, "lint")) {
-    assign("e", chunks,  envir = parent.frame())
+    assign("e", chunks, envir = parent.frame())
     # error, so return empty code
     return(output)
   }
@@ -34,7 +34,9 @@ get_knitr_pattern <- function(filename, lines) {
   # Early return if the source code is parseable as plain R code.
   # Otherwise, R code containing a line which matches any knitr pattern will be treated as a knitr file.
   # See #1406 for details.
-  if (parsable(lines)) return(NULL)
+  if (parsable(lines)) {
+    return(NULL)
+  }
   pattern <- ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename)))
   if (!is.null(pattern)) {
     knitr::all_patterns[[pattern]]

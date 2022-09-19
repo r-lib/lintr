@@ -7,8 +7,10 @@
 #' @export
 trailing_blank_lines_linter <- function() {
   Linter(function(source_expression) {
-    blanks <- re_matches(source_expression$file_lines,
-                         rex(start, any_spaces, end))
+    blanks <- re_matches(
+      source_expression$file_lines,
+      rex(start, any_spaces, end)
+    )
 
     line_number <- length(source_expression$file_lines)
     lints <- list()
