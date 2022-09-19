@@ -353,7 +353,8 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
     if (grepl("attempt to use zero-length variable name", e$message, fixed = TRUE)) {
       # empty symbol: ``, ``(), ''(), ""(), fun(''=42), fun(""=42), fun(a=1,""=42)
       loc <- re_matches(source_expression$content,
-        rex("``" %or%
+        rex(
+          "``" %or%
           list(or("''", '""'), any_spaces, "(") %or%
           list(or("(", ","), any_spaces, or("''", '""'), any_spaces, "=")),
         options = "multi-line",
