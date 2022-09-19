@@ -1,6 +1,7 @@
 #' Closed curly linter
 #'
-#' Check that closed curly braces are on their own line unless they follow an else, comma, or closing bracket.
+#' Check that closed curly braces are on their own line unless they follow
+#' an else, a comma, or a closing bracket.
 #'
 #' @param allow_single_line if `TRUE`, allow an open and closed curly pair on the same line.
 #' @evalRd rd_tags("closed_curly_linter")

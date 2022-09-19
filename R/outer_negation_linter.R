@@ -1,4 +1,4 @@
-#' Require usage of !any(.) over all(!.), !all(.) over any(!.)
+#' Require usage of `!any(x)` over `all(!x)`, `!all(x)` over `any(!x)`
 #'
 #' `any(!x)` is logically equivalent to `!any(x)`; ditto for the equivalence of
 #'   `all(!x)` and `!any(x)`. Negating after aggregation only requires inverting
