@@ -17,17 +17,17 @@ see also \code{\link[=available_tags]{available_tags()}}.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (37 linters)}
+\item{\link[=best_practices_linters]{best_practices} (38 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (6 linters)}
 \item{\link[=configurable_linters]{configurable} (20 linters)}
 \item{\link[=consistency_linters]{consistency} (17 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (24 linters)}
 \item{\link[=deprecated_linters]{deprecated} (4 linters)}
-\item{\link[=efficiency_linters]{efficiency} (16 linters)}
+\item{\link[=efficiency_linters]{efficiency} (17 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
-\item{\link[=readability_linters]{readability} (37 linters)}
+\item{\link[=readability_linters]{readability} (38 linters)}
 \item{\link[=robustness_linters]{robustness} (12 linters)}
 \item{\link[=style_linters]{style} (36 linters)}
 }
@@ -107,6 +107,7 @@ The following linters exist:
 \item{\code{\link{trailing_whitespace_linter}} (tags: default, style)}
 \item{\code{\link{undesirable_function_linter}} (tags: best_practices, configurable, efficiency, robustness, style)}
 \item{\code{\link{undesirable_operator_linter}} (tags: best_practices, configurable, efficiency, robustness, style)}
+\item{\code{\link{unnecessary_anonymous_function_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{unneeded_concatenation_linter}} (tags: configurable, efficiency, readability, style)}
 \item{\code{\link{unreachable_code_linter}} (tags: best_practices, readability)}
 \item{\code{\link{unused_import_linter}} (tags: best_practices, common_mistakes, configurable, executing)}
