@@ -1,5 +1,9 @@
 # lintr (development version)
 
+## Bug fixes
+
+* `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
+
 # lintr 3.0.1
 
 * Skip multi-byte tests in non UTF-8 locales (#1504)
