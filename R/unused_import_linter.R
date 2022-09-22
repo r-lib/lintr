@@ -57,7 +57,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
         }
 
         package_exports <- getNamespaceExports(pkg) # functions
-        dataset_exports <- getDatasets(pkg) # datasets
+        dataset_exports <- get_datasets(pkg) # datasets
 
         any(package_exports %in% used_symbols) || any(dataset_exports %in% used_symbols)
       },
@@ -97,7 +97,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
 
 #' Get dataset names lazy-loaded by imported packages
 #' @noRd
-getDatasets <- function(pkg) {
+get_datasets <- function(pkg) {
   res <- utils::data(package = pkg)
   as.data.frame(res$results)[["Item"]]
 }
