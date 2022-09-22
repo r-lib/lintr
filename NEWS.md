@@ -4,6 +4,10 @@
 
 * `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
 
+## Changes to defaults
+
+* `object_usage_linter()` gains `skip_with` argument to skip code in `with()` expressions (#1458, @IndrajeetPatil).
+
 # lintr 3.0.1
 
 * Skip multi-byte tests in non UTF-8 locales (#1504)

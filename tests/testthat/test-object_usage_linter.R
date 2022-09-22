@@ -451,3 +451,15 @@ test_that("fallback works", {
     object_usage_linter()
   )
 })
+
+test_that("respects `skip_with` argument for `with()` expressions", {
+  f <- tempfile()
+  writeLines(
+    "test_fun <- function(df) {
+      with(df, first_var + second_var)
+     }",
+    f
+  )
+  expect_true(length(lint(f, object_usage_linter(skip_with = TRUE))) == 0L)
+  expect_true(length(lint(f, object_usage_linter(skip_with = FALSE))) == 2L)
+})

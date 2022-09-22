@@ -5,11 +5,12 @@
 #'
 #' @param interpret_glue If `TRUE`, interpret [glue::glue()] calls to avoid false positives caused by local variables
 #' which are only used in a glue expression.
+#' @param skip_with A logical. If `TRUE`, code in `with()` expressions will be skipped.
 #'
 #' @evalRd rd_tags("object_usage_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-object_usage_linter <- function(interpret_glue = TRUE) {
+object_usage_linter <- function(interpret_glue = TRUE, skip_with = FALSE) {
   # NB: difference across R versions in how EQ_ASSIGN is represented in the AST
   #   (under <expr_or_assign_or_help> or <equal_assign>)
   # NB: the repeated expr[2][FUNCTION] XPath has no performance impact, so the different direct assignment XPaths are
@@ -69,7 +70,8 @@ object_usage_linter <- function(interpret_glue = TRUE) {
         fun,
         known_used_symbols = known_used_symbols,
         declared_globals = declared_globals,
-        start_line = as.integer(xml2::xml_attr(fun_assignment, "line1"))
+        start_line = as.integer(xml2::xml_attr(fun_assignment, "line1")),
+        skip_with = skip_with
       )
 
       # TODO handle assignment functions properly
@@ -192,7 +194,7 @@ get_assignment_symbols <- function(xml) {
 }
 
 parse_check_usage <- function(expression, known_used_symbols = character(), declared_globals = character(),
-                              start_line = 1L) {
+                              start_line = 1L, skip_with = FALSE) {
   vals <- list()
 
   report <- function(x) {
@@ -206,7 +208,8 @@ parse_check_usage <- function(expression, known_used_symbols = character(), decl
         expression,
         report = report,
         suppressLocalUnused = known_used_symbols,
-        suppressUndefined = declared_globals
+        suppressUndefined = declared_globals,
+        skipWith = skip_with
       ))
     }
   )
