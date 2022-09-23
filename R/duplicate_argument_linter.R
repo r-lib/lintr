@@ -14,6 +14,11 @@ duplicate_argument_linter <- function(except = character()) {
   xpath_call_with_args <- "//expr[EQ_SUB]"
   xpath_arg_name <- "./EQ_SUB/preceding-sibling::*[1]"
 
+  # Functions that allow sequential updates to variables (#1345)
+  allow_list <- c("mutate", "transmute")
+
+  except <- unique(c(allow_list, except))
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
       return(list())
@@ -22,11 +27,8 @@ duplicate_argument_linter <- function(except = character()) {
     xml <- source_expression$full_xml_parsed_content
 
     calls <- xml2::xml_find_all(xml, xpath_call_with_args)
-
-    if (length(except)) {
-      calls_text <- get_r_string(xp_call_name(calls))
-      calls <- calls[!(calls_text %in% except)]
-    }
+    calls_text <- get_r_string(xp_call_name(calls))
+    calls <- calls[!(calls_text %in% except)]
 
     all_arg_nodes <- lapply(calls, function(call_node) {
       xml2::xml_find_all(call_node, xpath_arg_name)

@@ -4,6 +4,12 @@
 
 * `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
 
+## Changes to defaults
+
+* `duplicate_argument_linter()` no longer produces warnings for functions that allow 
+  sequential updates (currently, `dplyr::mutate()` and  `dplyr::transmute()`) to variables
+  (#1345, @IndrajeetPatil).
+
 # lintr 3.0.1
 
 * Skip multi-byte tests in non UTF-8 locales (#1504)
