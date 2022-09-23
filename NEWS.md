@@ -10,6 +10,9 @@
   sequential updates (currently, `dplyr::mutate()` and  `dplyr::transmute()`) to variables
   (#1345, @IndrajeetPatil).
 
+* `unused_import_linter()` can detect datasets from imported packages and no longer
+  warns when a package is imported only for its datasets (#1545, @IndrajeetPatil).
+
 # lintr 3.0.1
 
 * Skip multi-byte tests in non UTF-8 locales (#1504)
