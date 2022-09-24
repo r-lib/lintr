@@ -4,7 +4,7 @@
 
 ### New linters
 
-* `unnecessary_anonymous_function_linter()`: detect unnecessary anonymous functions, e.g.
+* `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
   `lapply(x, function(xi) sum(xi))` can be `lapply(x, sum)` and `purrr::map(x, ~quantile(.x, 0.75, na.rm = TRUE))`
   can be `purrr::map(x, quantile, 0.75, na.rm = TRUE)`. Naming `probs = 0.75` can further improve readability.
 
