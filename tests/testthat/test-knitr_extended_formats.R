@@ -16,3 +16,14 @@ test_that("marginfigure engine from tufte package doesn't cause problems", {
     parse_settings = FALSE
   )
 })
+
+test_that("engines from bookdown package cause no problems", {
+  expect_lint(
+    file = "knitr_extended_formats/bookdown.Rmd",
+    checks = list(
+      list(regexes[["assign"]], line_number = 14L)
+    ),
+    default_linters,
+    parse_settings = FALSE
+  )
+})
