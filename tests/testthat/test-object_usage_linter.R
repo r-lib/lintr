@@ -452,6 +452,35 @@ test_that("fallback works", {
   )
 })
 
+test_that("unknown infix operators give good lint metadata", {
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        x %unknown-operator% 1
+      }
+    "),
+    list(
+      message = rex::rex("no visible global function definition for '%unknown-operator%'"),
+      line_number = 2L, column_number = 5L
+    ),
+    object_usage_linter()
+  )
+
+  skip_if(any(c("package:rlang", "package:data.table") %in% search()))
+  expect_lint(
+    trim_some('
+      foo <- function(x) {
+        x[, "new_col" := 2L]
+      }
+    '),
+    list(
+      message = rex::rex("no visible global function definition for ':='"),
+      line_number = 2L, column_number = 17L
+    ),
+    object_usage_linter()
+  )
+})
+
 test_that("respects `skip_with` argument for `with()` expressions", {
   f <- tempfile()
   writeLines(
