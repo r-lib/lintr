@@ -13,6 +13,10 @@
 * `unused_import_linter()` can detect datasets from imported packages and no longer
   warns when a package is imported only for its datasets (#1545, @IndrajeetPatil).
 
+## New and improved features
+
+* `object_usage_linter()` improves lint metadata when detecting undefined infix operators, e.g. `%>%` or `:=` (#1497, @MichaelChirico)
+
 # lintr 3.0.1
 
 * Skip multi-byte tests in non UTF-8 locales (#1504)
