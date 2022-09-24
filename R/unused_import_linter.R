@@ -98,6 +98,8 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
 #' Get dataset names lazy-loaded by imported packages
 #' @noRd
 get_datasets <- function(pkg) {
-  res <- utils::data(package = pkg)
-  as.data.frame(res$results)[["Item"]]
+  results <- utils::data(package = pkg)$results
+  items <- results[, "Item"]
+  # e.g. 'state.abb (state)' in 'datasets'
+  gsub("\\s*\\([^)]*\\)$", "", items)
 }

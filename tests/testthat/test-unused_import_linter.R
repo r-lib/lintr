@@ -9,6 +9,7 @@ test_that("unused_import_linter lints as expected", {
   expect_lint("library(magrittr)\n1:3 %>% mean()", NULL, linter)
   # dataset is detected
   expect_lint("library(dplyr)\nstarwars", NULL, linter)
+  expect_lint("library(datasets)\nstate.center", NULL, linter)
 
   # Missing packages are ignored
   expect_lint("library(not.a.package)\ntibble(a = 1)", NULL, linter)
