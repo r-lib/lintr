@@ -5,12 +5,12 @@
 #'
 #' @param interpret_glue If `TRUE`, interpret [glue::glue()] calls to avoid false positives caused by local variables
 #' which are only used in a glue expression.
-#' @param skip_with A logical. If `TRUE`, code in `with()` expressions will be skipped.
+#' @param skip_with A logical. If `TRUE` (default), code in `with()` expressions will be skipped.
 #'
-#' @evalRd rd_tags("object_usage_linter")
+#' @evalRd rd_linters("package_development")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-object_usage_linter <- function(interpret_glue = TRUE, skip_with = FALSE) {
+object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
   # NB: difference across R versions in how EQ_ASSIGN is represented in the AST
   #   (under <expr_or_assign_or_help> or <equal_assign>)
   # NB: the repeated expr[2][FUNCTION] XPath has no performance impact, so the different direct assignment XPaths are

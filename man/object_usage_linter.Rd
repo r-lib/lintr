@@ -4,13 +4,13 @@
 \alias{object_usage_linter}
 \title{Object usage linter}
 \usage{
-object_usage_linter(interpret_glue = TRUE, skip_with = FALSE)
+object_usage_linter(interpret_glue = TRUE, skip_with = TRUE)
 }
 \arguments{
 \item{interpret_glue}{If \code{TRUE}, interpret \code{\link[glue:glue]{glue::glue()}} calls to avoid false positives caused by local variables
 which are only used in a glue expression.}
 
-\item{skip_with}{A logical. If \code{TRUE}, code in \code{with()} expressions will be skipped.}
+\item{skip_with}{A logical. If \code{TRUE} (default), code in \code{with()} expressions will be skipped.}
 }
 \description{
 Check that closures have the proper usage using \code{\link[codetools:checkUsage]{codetools::checkUsage()}}.
@@ -19,6 +19,22 @@ Note that this runs \code{\link[base:eval]{base::eval()}} on the code, so \stron
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
-\section{Tags}{
-\link[=correctness_linters]{correctness}, \link[=default_linters]{default}, \link[=executing_linters]{executing}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\section{Linters}{
+The following linters are tagged with 'package_development':
+\itemize{
+\item{\code{\link{backport_linter}}}
+\item{\code{\link{conjunct_test_linter}}}
+\item{\code{\link{expect_comparison_linter}}}
+\item{\code{\link{expect_identical_linter}}}
+\item{\code{\link{expect_length_linter}}}
+\item{\code{\link{expect_named_linter}}}
+\item{\code{\link{expect_not_linter}}}
+\item{\code{\link{expect_null_linter}}}
+\item{\code{\link{expect_s3_class_linter}}}
+\item{\code{\link{expect_s4_class_linter}}}
+\item{\code{\link{expect_true_false_linter}}}
+\item{\code{\link{expect_type_linter}}}
+\item{\code{\link{package_hooks_linter}}}
+\item{\code{\link{yoda_test_linter}}}
+}
 }

@@ -288,7 +288,7 @@ test_that("object_usage_linter finds lints spanning multiple lines", {
       }
     "),
     list(message = "unknown_symbol", line_number = 4L, column_number = 5L),
-    object_usage_linter()
+    object_usage_linter(skip_with = FALSE)
   )
 
   # Even ugly names are found
@@ -302,7 +302,7 @@ test_that("object_usage_linter finds lints spanning multiple lines", {
       }
     "),
     list(line_number = 4L, column_number = 5L),
-    object_usage_linter()
+    object_usage_linter(skip_with = FALSE)
   )
 })
 

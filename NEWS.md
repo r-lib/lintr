@@ -6,7 +6,8 @@
 
 ## Changes to defaults
 
-* `object_usage_linter()` gains `skip_with` argument to skip code in `with()` expressions (#1458, @IndrajeetPatil).
+* `object_usage_linter()` gains `skip_with` argument to skip code in `with()` expressions.
+  To be consistent with `R CMD check`, it defaults to `TRUE` (#941, #1458, @IndrajeetPatil).
 
 * `unused_import_linter()` can detect datasets from imported packages and no longer
   warns when a package is imported only for its datasets (#1545, @IndrajeetPatil).
