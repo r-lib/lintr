@@ -179,4 +179,3 @@ test_that("it does lint with malformed input", {
     expect_lint(contents[[i]], expected[[i]], linters = list())
   }
 })
-
