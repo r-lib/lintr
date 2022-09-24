@@ -4,10 +4,10 @@
 #'   e.g. `lapply(DF, sum)` is the same as `lapply(DF, function(x) sum(x))` and
 #'   the former is more readable.
 #'
-#' @evalRd rd_tags("unnecessary_anonymous_function_linter")
+#' @evalRd rd_tags("unnecessary_lambda_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-unnecessary_anonymous_function_linter <- function() {
+unnecessary_lambda_linter <- function() {
   # TODO(michaelchirico): is there any way to extend this to all (base?) functions
   #   accepting FUN as an argument? Reduce, Filter, mapply, outer, combn, ...
   apply_funs <- xp_text_in_table(c(
