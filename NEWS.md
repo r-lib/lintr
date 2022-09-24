@@ -14,6 +14,8 @@
 * New `get_r_string()` helper to get the R-equivalent value of a string, especially useful for R-4-style raw strings.
   Previously an internal `lintr` helper, now exported to facilitate writing custom linters (#1493, @MichaelChirico).
 
+* `object_usage_linter()` improves lint metadata when detecting undefined infix operators, e.g. `%>%` or `:=` (#1497, @MichaelChirico)
+
 # lintr 3.0.1
 
 * Skip multi-byte tests in non UTF-8 locales (#1504)
