@@ -12,11 +12,15 @@ test_that("it handles dir", {
   lints <- lint_dir(path = "knitr_formats", pattern = file_pattern, parse_settings = FALSE)
 
   # For every file there should be at least 1 lint
-  expect_identical(sort(unique(names(lints))), sort(list.files("knitr_formats", pattern = file_pattern)))
+  expect_identical(
+    sort(unique(names(lints))),
+    sort(list.files("knitr_formats", pattern = file_pattern))
+  )
 })
 
 test_that("it handles markdown", {
-  expect_lint(file = "knitr_formats/test.Rmd",
+  expect_lint(
+    file = "knitr_formats/test.Rmd",
     checks = list(
       list(regexes[["assign"]], line_number = 9L),
       list(regexes[["local_var"]], line_number = 22L),
@@ -29,7 +33,8 @@ test_that("it handles markdown", {
 })
 
 test_that("it handles Sweave", {
-  expect_lint(file = "knitr_formats/test.Rnw",
+  expect_lint(
+    file = "knitr_formats/test.Rnw",
     checks = list(
       list(regexes[["assign"]], line_number = 12L),
       list(regexes[["local_var"]], line_number = 24L),
@@ -42,7 +47,8 @@ test_that("it handles Sweave", {
 })
 
 test_that("it handles reStructuredText", {
-  expect_lint(file = "knitr_formats/test.Rrst",
+  expect_lint(
+    file = "knitr_formats/test.Rrst",
     checks = list(
       list(regexes[["assign"]], line_number = 10L),
       list(regexes[["local_var"]], line_number = 23L),
@@ -55,7 +61,8 @@ test_that("it handles reStructuredText", {
 })
 
 test_that("it handles HTML", {
-  expect_lint(file = "knitr_formats/test.Rhtml",
+  expect_lint(
+    file = "knitr_formats/test.Rhtml",
     checks = list(
       list(regexes[["assign"]], line_number = 15L),
       list(regexes[["local_var"]], line_number = 27L),
@@ -68,7 +75,8 @@ test_that("it handles HTML", {
 })
 
 test_that("it handles tex", {
-  expect_lint(file = "knitr_formats/test.Rtex",
+  expect_lint(
+    file = "knitr_formats/test.Rtex",
     checks = list(
       list(regexes[["assign"]], line_number = 11L),
       list(regexes[["local_var"]], line_number = 23L),
@@ -86,7 +94,8 @@ test_that("it handles tex", {
 })
 
 test_that("it handles asciidoc", {
-  expect_lint(file = "knitr_formats/test.Rtxt",
+  expect_lint(
+    file = "knitr_formats/test.Rtxt",
     checks = list(
       list(regexes[["assign"]], line_number = 9L),
       list(regexes[["local_var"]], line_number = 22L),
@@ -109,7 +118,8 @@ test_that("it does _not_ handle brew", {
 })
 
 test_that("it does _not_ error with inline \\Sexpr", {
-  expect_lint("#' text \\Sexpr{1 + 1} more text",
+  expect_lint(
+    "#' text \\Sexpr{1 + 1} more text",
     NULL,
     default_linters
   )
@@ -168,4 +178,15 @@ test_that("it does lint with malformed input", {
   for (i in seq_along(contents)) {
     expect_lint(contents[[i]], expected[[i]], linters = list())
   }
+})
+
+test_that("marginfigure engine doesn't cause problems", {
+  expect_lint(
+    file = "knitr_malformed/tufte.Rmd",
+    checks = list(
+      list(regexes[["assign"]], line_number = 11L)
+    ),
+    default_linters,
+    parse_settings = FALSE
+  )
 })

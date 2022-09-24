@@ -99,7 +99,10 @@ filter_chunk_end_positions <- function(starts, ends) {
 }
 
 defines_knitr_engine <- function(start_lines) {
-  engines <- names(knitr::knit_engines$get())
+  engines <- c(
+    names(knitr::knit_engines$get()), # knitr
+    "marginfigure"                    # tufte
+  )
 
   # {some_engine}, {some_engine label, ...} or {some_engine, ...}
   bare_engine_pattern <- rex::rex(

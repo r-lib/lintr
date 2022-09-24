@@ -4,6 +4,9 @@
 
 * `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
 
+* `lint()` no longer produces error on encountering raw HTML included in `marginfigure` code blocks 
+  from `{tufte}` package (#796, @IndrajeetPatil).
+
 ## Changes to defaults
 
 * `unused_import_linter()` can detect datasets from imported packages and no longer
