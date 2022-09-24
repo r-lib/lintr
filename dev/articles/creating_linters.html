@@ -231,6 +231,15 @@
 <p>It is always better to write too many tests rather than too few.</p>
 </div>
 <div class="section level2">
+<h2 id="other-utilities-for-writing-custom-linters">Other utilities for writing custom linters<a class="anchor" aria-label="anchor" href="#other-utilities-for-writing-custom-linters"></a>
+</h2>
+<p>Besides <code><a href="../reference/is_lint_level.html">is_lint_level()</a></code>, <a href="https://github.com/r-lib/lintr" class="external-link">lintr</a> also exports some other helpers generally useful for writing custom linters; these are used a lot in the internals of our own helpers, and so they’ve been tested and demonstrated their utility already.</p>
+<ul>
+<li>
+<code><a href="../reference/get_r_string.html">get_r_string()</a></code>: Whenever your linter needs to examine the value of a character literal (e.g., whether an argument value is set to some string), use this to extract the string exactly as R will see it. This is especially important to make your logic robust to R-4-style raw strings like <code>R"-(hello)-"</code>, which is otherwise difficult to express, for example as an XPath.</li>
+</ul>
+</div>
+<div class="section level2">
 <h2 id="contributing-to-lintr">Contributing to <code>{lintr}</code><a class="anchor" aria-label="anchor" href="#contributing-to-lintr"></a>
 </h2>
 <div class="section level3">

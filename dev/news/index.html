@@ -73,8 +73,9 @@
 <code><a href="../reference/unused_import_linter.html">unused_import_linter()</a></code> can detect datasets from imported packages and no longer warns when a package is imported only for its datasets (<a href="https://github.com/r-lib/lintr/issues/1545" class="external-link">#1545</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</li></ul></div>
 <div class="section level3">
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
-<ul><li>
-<code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code> improves lint metadata when detecting undefined infix operators, e.g. <code>%&gt;%</code> or <code>:=</code> (<a href="https://github.com/r-lib/lintr/issues/1497" class="external-link">#1497</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</li></ul></div>
+<ul><li><p>New <code><a href="../reference/get_r_string.html">get_r_string()</a></code> helper to get the R-equivalent value of a string, especially useful for R-4-style raw strings. Previously an internal <code>lintr</code> helper, now exported to facilitate writing custom linters (<a href="https://github.com/r-lib/lintr/issues/1493" class="external-link">#1493</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</p></li>
+<li><p><code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code> improves lint metadata when detecting undefined infix operators, e.g. <code>%&gt;%</code> or <code>:=</code> (<a href="https://github.com/r-lib/lintr/issues/1497" class="external-link">#1497</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.0.1" id="lintr-301">lintr 3.0.1<a class="anchor" aria-label="anchor" href="#lintr-301"></a></h2><p class="text-muted">CRAN release: 2022-09-13</p>
