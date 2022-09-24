@@ -98,9 +98,23 @@ filter_chunk_end_positions <- function(starts, ends) {
   code_ends
 }
 
+bookdown_engines <- c(
+  # full name    # supported abbreviation
+  "theorem",     "thm",
+  "lemma",       "lem",
+  "corollary",   "cor",
+  "proposition", "prp",
+  "conjecture",  "cnj",
+  "definition",  "def",
+  "example",     "exm",
+  "exercise",    "exr",
+  "hypothesis",  "hyp"
+)
+
 defines_knitr_engine <- function(start_lines) {
   engines <- c(
     names(knitr::knit_engines$get()), # knitr
+    bookdown_engines,                 # bookdown
     "marginfigure"                    # tufte
   )
 
