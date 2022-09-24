@@ -180,13 +180,3 @@ test_that("it does lint with malformed input", {
   }
 })
 
-test_that("marginfigure engine doesn't cause problems", {
-  expect_lint(
-    file = "knitr_malformed/tufte.Rmd",
-    checks = list(
-      list(regexes[["assign"]], line_number = 11L)
-    ),
-    default_linters,
-    parse_settings = FALSE
-  )
-})
