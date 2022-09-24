@@ -8,13 +8,23 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unnecessary_lambda_linter <- function() {
-  # TODO(michaelchirico): is there any way to extend this to all (base?) functions
-  #   accepting FUN as an argument? Reduce, Filter, mapply, outer, combn, ...
+  # include any base function like those where FUN is an argument
+  #   and ... follows positionally directly afterwards (with ...
+  #   being passed on to FUN). That excludes functions like
+  #   Filter/Reduce (which don't accept ...), as well as functions
+  #   like sweep() (where check.margin comes between FUN and ...,
+  #   and thus would need to be supplied in order to replicate
+  #   positional arguments). Technically, these latter could
+  #   be part of the linter logic (e.g., detect if the anonymous
+  #   call is using positional or keyword arguments -- we can
+  #   throw a lint for sweep() lambdas where the following arguments
+  #   are all named) but for now it seems like overkill.
   apply_funs <- xp_text_in_table(c(
     "lapply", "sapply", "vapply", "apply",
     "tapply", "rapply", "eapply", "dendrapply",
-    "mclapply", "mcmapply", "parCapply", "parLapply",
-    "parLapplyLB", "parRapply", "parSapply", "parSapplyLB",
+    "mapply", "by", "outer",
+    "mclapply", "mcmapply", "parApply", "parCapply", "parLapply",
+    "parLapplyLB", "parRapply", "parSapply", "parSapplyLB", "pvec",
     purrr_mappers
   ))
 
