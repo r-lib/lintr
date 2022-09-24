@@ -1,5 +1,14 @@
 # lintr (development version)
 
+## Bug fixes
+
+* `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
+
+## Changes to defaults
+
+* `unused_import_linter()` can detect datasets from imported packages and no longer
+  warns when a package is imported only for its datasets (#1545, @IndrajeetPatil).
+
 ## New and improved features
 
 ### New linters
