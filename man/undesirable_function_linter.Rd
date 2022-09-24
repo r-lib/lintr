@@ -20,8 +20,8 @@ use \code{\link[=modify_defaults]{modify_defaults()}}.}
 or not.}
 }
 \description{
-Report the use of undesirable functions, e.g. \code{\link[base:function]{base::return()}}, \code{\link[base:options]{base::options()}}, or
-\code{\link[base:lapply]{base::sapply()}} and suggest an alternative.
+Report the use of undesirable functions (e.g. \code{\link[base:function]{base::return()}}, \code{\link[base:options]{base::options()}}, or
+\code{\link[base:lapply]{base::sapply()}}) and suggest an alternative.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

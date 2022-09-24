@@ -5,7 +5,7 @@
 #'
 #' NB: for `stringr` functions, that means wrapping the pattern in `stringr::fixed()`.
 #'
-#' NB: This linter is likely not able to distinguish every possible case when
+#' NB: this linter is likely not able to distinguish every possible case when
 #'   a fixed regular expression is preferable, rather it seeks to identify
 #'   likely cases. It should _never_ report false positives, however; please
 #'   report false positives as an error.
@@ -181,7 +181,7 @@ get_token_replacement <- function(token_content, token_type) {
       token_content
     }
   } else { # char_escape token
-    if (rex::re_matches(token_content, rex::rex("\\", one_of("^${}().*+?|[]\\<>:")))) {
+    if (rex::re_matches(token_content, rex::rex("\\", one_of("^${}().*+?|[]\\<>:;")))) {
       substr(token_content, start = 2L, stop = nchar(token_content))
     } else {
       eval(parse(text = paste0('"', token_content, '"')))

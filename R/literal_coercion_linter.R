@@ -12,14 +12,14 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 literal_coercion_linter <- function() {
- coercers <- xp_text_in_table(
-   c(
-     # base coercers
-     paste0("as.", c("logical", "integer", "numeric", "double", "character")),
-     # rlang coercers
-     c("lgl", "int", "dbl", "chr")
-   )
- )
+  coercers <- xp_text_in_table(
+    c(
+      # base coercers
+      paste0("as.", c("logical", "integer", "numeric", "double", "character")),
+      # rlang coercers
+      c("lgl", "int", "dbl", "chr")
+    )
+  )
 
   # notes for clarification:
   #  - as.integer(1e6) is arguably easier to read than 1000000L

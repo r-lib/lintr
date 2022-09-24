@@ -1,9 +1,9 @@
 #' Object usage linter
 #'
 #' Check that closures have the proper usage using [codetools::checkUsage()].
-#' Note that this runs [base::eval()] on the code, so do not use with untrusted code.
+#' Note that this runs [base::eval()] on the code, so **do not use with untrusted code**.
 #'
-#' @param interpret_glue If TRUE, interpret [glue::glue()] calls to avoid false positives caused by local variables
+#' @param interpret_glue If `TRUE`, interpret [glue::glue()] calls to avoid false positives caused by local variables
 #' which are only used in a glue expression.
 #'
 #' @evalRd rd_tags("object_usage_linter")
@@ -151,7 +151,9 @@ extract_glued_symbols <- function(expr) {
     )
   )
 
-  if (length(glue_calls) == 0L) return(character())
+  if (length(glue_calls) == 0L) {
+    return(character())
+  }
   glued_symbols <- new.env(parent = emptyenv())
   for (cl in glue_calls) {
     parsed_cl <- tryCatch(
@@ -196,7 +198,6 @@ get_assignment_symbols <- function(xml) {
 
 parse_check_usage <- function(expression, known_used_symbols = character(), declared_globals = character(),
                               start_line = 1L) {
-
   vals <- list()
 
   report <- function(x) {
@@ -216,8 +217,10 @@ parse_check_usage <- function(expression, known_used_symbols = character(), decl
   )
 
   function_name <- rex(anything, ": ")
-  line_info <- rex(" ", "(", capture(name = "path", non_spaces), ":",
-                   capture(name = "line1", digits), maybe("-", capture(name = "line2", digits)), ")")
+  line_info <- rex(
+    " ", "(", capture(name = "path", non_spaces), ":",
+    capture(name = "line1", digits), maybe("-", capture(name = "line2", digits)), ")"
+  )
 
   res <- re_matches(
     vals,

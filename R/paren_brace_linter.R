@@ -1,6 +1,7 @@
 #' Parentheses before brace linter
 #'
 #' Check that there is a space between right parentheses and an opening curly brace.
+#' For example, `function(){}` doesn't have a space, while `function() {}` does.
 #'
 #' @evalRd rd_tags("paren_brace_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.

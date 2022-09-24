@@ -56,8 +56,10 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
           return(TRUE)
         }
 
-        package_exports <- getNamespaceExports(pkg)
-        any(package_exports %in% used_symbols)
+        package_exports <- getNamespaceExports(pkg) # functions
+        dataset_exports <- get_datasets(pkg) # datasets
+
+        any(package_exports %in% used_symbols) || any(dataset_exports %in% used_symbols)
       },
       logical(1L)
     )
@@ -91,4 +93,11 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
     )
     xml_nodes_to_lints(import_exprs, source_expression, lint_message, type = "warning")
   })
+}
+
+#' Get dataset names lazy-loaded by imported packages
+#' @noRd
+get_datasets <- function(pkg) {
+  res <- utils::data(package = pkg)
+  as.data.frame(res$results)[["Item"]]
 }

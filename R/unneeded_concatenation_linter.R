@@ -5,7 +5,9 @@
 #' @param allow_single_expression Logical, default `TRUE`. If `FALSE`, one-expression
 #'   usages of `c()` are always linted, e.g. `c(x)` and `c(matrix(...))`. In some such
 #'   cases, `c()` is being used for its side-effect of stripping non-name attributes;
-#'   it is usually preferable to use [as.vector()] to accomplish the same more readably.
+#'   it is usually preferable to use the more readable [as.vector()] instead.
+#'   [as.vector()] is not always preferable, for example with environments
+#'   (especially, `R6` objects), in which case `list()` is the better alternative.
 #'
 #' @evalRd rd_tags("unneeded_concatenation_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.

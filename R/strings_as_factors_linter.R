@@ -1,4 +1,4 @@
-#' Identify cases where stringsAsFactors should be supplied explicitly
+#' Identify cases where `stringsAsFactors` should be supplied explicitly
 #'
 #' Designed for code bases written for versions of R before 4.0 seeking to upgrade to R >= 4.0, where
 #'   one of the biggest pain points will surely be the flipping of the
