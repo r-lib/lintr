@@ -8,8 +8,8 @@ duplicate_argument_linter(except = c("mutate", "transmute"))
 }
 \arguments{
 \item{except}{A character vector of function names as exceptions. Defaults to
-functions that allow sequential updates (currently, \code{dplyr::mutate()} and
-\code{dplyr::transmute()}) to variables.}
+functions that allow sequential updates to variables, currently \code{dplyr::mutate()}
+and \code{dplyr::transmute()}.}
 }
 \description{
 Check for duplicate arguments in function calls. Some cases are run-time errors
