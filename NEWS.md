@@ -65,7 +65,7 @@
 
 ## Bug fixes
 
-* `object_length_linter()` does not fail in case there are dependencies with no exports (e.g. data-only packages) (#1509, @IndrajeetPatil).
+* `object_length_linter()` does not fail in case there are dependencies with no exports (e.g. data-only packages) (#1424, #1509, @IndrajeetPatil).
 * `get_source_expressions()` no longer fails on R files that match a knitr pattern (#743, #879, #1406, @AshesITR).
 * Parse error lints now appear with the linter name `"error"` instead of `NA` (#1405, @AshesITR).  
   Also, linting no longer runs if the `source_expressions` contain invalid string data that would cause error messages
