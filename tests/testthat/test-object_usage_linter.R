@@ -482,13 +482,13 @@ test_that("unknown infix operators give good lint metadata", {
 })
 
 test_that("respects `skip_with` argument for `with()` expressions", {
-  f <- tempfile()
-  writeLines(
-    "test_fun <- function(df) {
-      with(df, first_var + second_var)
-     }",
-    f
+  f <- withr::local_tempfile(
+    lines =
+      "test_fun <- function(df) {
+         with(df, first_var + second_var)
+       }"
   )
-  expect_true(length(lint(f, object_usage_linter(skip_with = TRUE))) == 0L)
-  expect_true(length(lint(f, object_usage_linter(skip_with = FALSE))) == 2L)
+
+  expect_length(lint(f, object_usage_linter(skip_with = TRUE)), 0L)
+  expect_length(lint(f, object_usage_linter(skip_with = FALSE)), 2L)
 })

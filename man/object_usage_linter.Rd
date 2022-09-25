@@ -10,7 +10,9 @@ object_usage_linter(interpret_glue = TRUE, skip_with = TRUE)
 \item{interpret_glue}{If \code{TRUE}, interpret \code{\link[glue:glue]{glue::glue()}} calls to avoid false positives caused by local variables
 which are only used in a glue expression.}
 
-\item{skip_with}{A logical. If \code{TRUE} (default), code in \code{with()} expressions will be skipped.}
+\item{skip_with}{A logical. If \code{TRUE} (default), code in \code{with()} expressions
+will be skipped. This argument will be passed to \code{skipWith} argument of
+\code{codetools::checkUsage()}.}
 }
 \description{
 Check that closures have the proper usage using \code{\link[codetools:checkUsage]{codetools::checkUsage()}}.

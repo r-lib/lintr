@@ -5,7 +5,9 @@
 #'
 #' @param interpret_glue If `TRUE`, interpret [glue::glue()] calls to avoid false positives caused by local variables
 #' which are only used in a glue expression.
-#' @param skip_with A logical. If `TRUE` (default), code in `with()` expressions will be skipped.
+#' @param skip_with A logical. If `TRUE` (default), code in `with()` expressions
+#'   will be skipped. This argument will be passed to `skipWith` argument of
+#'   `codetools::checkUsage()`.
 #'
 #' @evalRd rd_linters("package_development")
 #' @seealso [linters] for a complete list of linters available in lintr.
@@ -198,8 +200,11 @@ get_assignment_symbols <- function(xml) {
   ))
 }
 
-parse_check_usage <- function(expression, known_used_symbols = character(), declared_globals = character(),
-                              start_line = 1L, skip_with = FALSE) {
+parse_check_usage <- function(expression,
+                              known_used_symbols = character(),
+                              declared_globals = character(),
+                              start_line = 1L,
+                              skip_with = TRUE) {
   vals <- list()
 
   report <- function(x) {
