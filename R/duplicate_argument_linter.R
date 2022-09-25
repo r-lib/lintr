@@ -7,8 +7,8 @@
 #'  should typically be avoided.
 #'
 #' @param except A character vector of function names as exceptions. Defaults to
-#'   functions that allow sequential updates (currently, `dplyr::mutate()` and
-#'   `dplyr::transmute()`) to variables.
+#'   functions that allow sequential updates to variables, currently `dplyr::mutate()`
+#'   and `dplyr::transmute()`) to variable.
 #' @evalRd rd_tags("duplicate_argument_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
