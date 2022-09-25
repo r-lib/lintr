@@ -28,7 +28,7 @@ redundant_equals_linter <- function() {
       lint_message = paste(
         "Using", op, "on a logical vector is redundant.",
         "Well-named logical vectors can be used directly in filtering.",
-        "For data.table's `i` argument, wrap the column name in (), like DT[(is_treatment)]."
+        "For data.table's `i` argument, wrap the column name in (), like `DT[(is_treatment)]`."
       ),
       type = "warning"
     )
