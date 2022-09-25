@@ -8,7 +8,7 @@
 #'
 #' @param except A character vector of function names as exceptions. Defaults to
 #'   functions that allow sequential updates to variables, currently `dplyr::mutate()`
-#'   and `dplyr::transmute()`) to variable.
+#'   and `dplyr::transmute()`.
 #' @evalRd rd_tags("duplicate_argument_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
