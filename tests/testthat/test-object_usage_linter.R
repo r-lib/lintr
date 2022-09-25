@@ -288,7 +288,7 @@ test_that("object_usage_linter finds lints spanning multiple lines", {
       }
     "),
     list(message = "unknown_symbol", line_number = 4L, column_number = 5L),
-    object_usage_linter()
+    object_usage_linter(skip_with = FALSE)
   )
 
   # Even ugly names are found
@@ -302,7 +302,7 @@ test_that("object_usage_linter finds lints spanning multiple lines", {
       }
     "),
     list(line_number = 4L, column_number = 5L),
-    object_usage_linter()
+    object_usage_linter(skip_with = FALSE)
   )
 })
 
@@ -479,4 +479,17 @@ test_that("unknown infix operators give good lint metadata", {
     ),
     object_usage_linter()
   )
+})
+
+test_that("respects `skip_with` argument for `with()` expressions", {
+  f <- withr::local_tempfile(
+    lines = c(
+      "test_fun <- function(df) {",
+      "  with(df, first_var + second_var)",
+      "}"
+    )
+  )
+
+  expect_length(lint(f, object_usage_linter(skip_with = TRUE)), 0L)
+  expect_length(lint(f, object_usage_linter(skip_with = FALSE)), 2L)
 })

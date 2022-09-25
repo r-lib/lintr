@@ -15,7 +15,7 @@ and \code{xpath} is specified, it is extracted with \code{\link[xml2:xml_find_al
 }
 \description{
 Convert \code{STR_CONST} \code{text()} values into R strings. This is useful to account for arbitrary
-character literals valid since R 4.0, e.g. \verb{R"------[hello]------"}, which is parsed in
+character literals valid since R 4.0, e.g. \code{R"------[hello]------"}, which is parsed in
 R as \code{"hello"}. It is quite cumbersome to write XPaths allowing for strings like this,
 so whenever your linter logic requires testing a \code{STR_CONST} node's value, use this
 function.
