@@ -71,7 +71,7 @@ Note that this runs <code><a href="https://rdrr.io/r/base/eval.html" class="exte
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">object_usage_linter</span><span class="op">(</span>interpret_glue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">object_usage_linter</span><span class="op">(</span>interpret_glue <span class="op">=</span> <span class="cn">TRUE</span>, skip_with <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -80,15 +80,34 @@ Note that this runs <code><a href="https://rdrr.io/r/base/eval.html" class="exte
 <dd><p>If <code>TRUE</code>, interpret <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code> calls to avoid false positives caused by local variables
 which are only used in a glue expression.</p></dd>
 
+
+<dt>skip_with</dt>
+<dd><p>A logical. If <code>TRUE</code> (default), code in <code><a href="https://rdrr.io/r/base/with.html" class="external-link">with()</a></code> expressions
+will be skipped. This argument will be passed to <code>skipWith</code> argument of
+<code><a href="https://rdrr.io/pkg/codetools/man/checkUsage.html" class="external-link">codetools::checkUsage()</a></code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><a href="linters.html">linters</a> for a complete list of linters available in lintr.</p></div>
     </div>
     <div class="section level2">
-    <h2 id="tags">Tags<a class="anchor" aria-label="anchor" href="#tags"></a></h2>
-    <p><a href="correctness_linters.html">correctness</a>, <a href="default_linters.html">default</a>, <a href="executing_linters.html">executing</a>, <a href="readability_linters.html">readability</a>, <a href="style_linters.html">style</a></p>
-    </div>
+    <h2 id="linters">Linters<a class="anchor" aria-label="anchor" href="#linters"></a></h2>
+    <p>The following linters are tagged with 'package_development':</p><ul><li><p><code><a href="backport_linter.html">backport_linter</a></code></p></li>
+<li><p><code><a href="conjunct_test_linter.html">conjunct_test_linter</a></code></p></li>
+<li><p><code><a href="expect_comparison_linter.html">expect_comparison_linter</a></code></p></li>
+<li><p><code><a href="expect_identical_linter.html">expect_identical_linter</a></code></p></li>
+<li><p><code><a href="expect_length_linter.html">expect_length_linter</a></code></p></li>
+<li><p><code><a href="expect_named_linter.html">expect_named_linter</a></code></p></li>
+<li><p><code><a href="expect_not_linter.html">expect_not_linter</a></code></p></li>
+<li><p><code><a href="expect_null_linter.html">expect_null_linter</a></code></p></li>
+<li><p><code><a href="expect_s3_class_linter.html">expect_s3_class_linter</a></code></p></li>
+<li><p><code><a href="expect_s4_class_linter.html">expect_s4_class_linter</a></code></p></li>
+<li><p><code><a href="expect_true_false_linter.html">expect_true_false_linter</a></code></p></li>
+<li><p><code><a href="expect_type_linter.html">expect_type_linter</a></code></p></li>
+<li><p><code><a href="package_hooks_linter.html">package_hooks_linter</a></code></p></li>
+<li><p><code><a href="yoda_test_linter.html">yoda_test_linter</a></code></p></li>
+</ul></div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
