@@ -38,6 +38,7 @@ reference:
   - expect_lint_free
   - ids_with_token
   - is_lint_level
+  - get_r_string
   - use_lintr
   - xml_nodes_to_lints
 
