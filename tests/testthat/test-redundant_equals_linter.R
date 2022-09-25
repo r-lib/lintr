@@ -5,19 +5,6 @@ test_that("redundant_equals_linter skips allowed usages", {
   expect_lint("x != 'TRUE'", NULL, redundant_equals_linter())
 })
 
-test_that("redundant_equals_linter blocks simple disallowed usages", {
-  linter <- redundant_equals_linter()
-  eq_msg <- rex::rex("Using == on a logical vector is redundant.")
-  ne_msg <- rex::rex("Using != on a logical vector is redundant.")
-  expect_lint("x == TRUE", eq_msg, linter)
-  expect_lint("x != TRUE", ne_msg, linter)
-  expect_lint("x == FALSE", eq_msg, linter)
-  expect_lint("x != FALSE", ne_msg, linter)
-
-  # order doesn't matter
-  expect_lint("TRUE == x", eq_msg, linter)
-})
-
 test_that("mutliple lints return correct custom messages", {
   expect_lint(
     "list(x == TRUE, y != TRUE)",
@@ -28,3 +15,25 @@ test_that("mutliple lints return correct custom messages", {
     redundant_equals_linter()
   )
 })
+
+test_that("Order doesn't matter", {
+  expect_lint("TRUE == x", rex::rex("Using == on a logical vector is redundant."), redundant_equals_linter())
+})
+
+skip_if_not_installed("patrick")
+
+with_parameters_test_that(
+  "redundant_equals_linter blocks simple disallowed usages",
+  {
+    msg <- rex::rex(paste("Using", op, "on a logical vector is redundant."))
+    code <- paste("x", op, bool)
+    expect_lint(code, msg, redundant_equals_linter())
+  },
+  .cases = tibble::tribble(
+    ~.test_name, ~op, ~bool,
+    "==, TRUE", "==", "TRUE",
+    "==, FALSE", "==", "FALSE",
+    "!=, TRUE", "!=", "TRUE",
+    "!=, FALSE", "!=", "FALSE"
+  )
+)
