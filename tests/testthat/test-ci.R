@@ -59,3 +59,5 @@ test_that("Printing works for Wercker", {
   mockery::stub(print.lints, "github_comment", function(x, ...) cat(x, "\n"))
   expect_output(print(l), "*warning:*", fixed = TRUE)
 })
+
+x = 1
