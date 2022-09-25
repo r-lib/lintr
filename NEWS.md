@@ -6,9 +6,8 @@
 
 ## Changes to defaults
 
-* `duplicate_argument_linter()` no longer produces warnings for functions that allow 
-  sequential updates (currently, `dplyr::mutate()` and  `dplyr::transmute()`) to variables
-  (#1345, @IndrajeetPatil).
+* `duplicate_argument_linter()` defaults to `except = c("mutate", "transmute")`.
+  This is because these functions allow sequential updates to variables (#1345, @IndrajeetPatil).
 
 * `unused_import_linter()` can detect datasets from imported packages and no longer
   warns when a package is imported only for its datasets (#1545, @IndrajeetPatil).

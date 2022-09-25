@@ -24,8 +24,11 @@ duplicate_argument_linter <- function(except = c("mutate", "transmute")) {
     xml <- source_expression$full_xml_parsed_content
 
     calls <- xml2::xml_find_all(xml, xpath_call_with_args)
-    calls_text <- get_r_string(xp_call_name(calls))
-    calls <- calls[!(calls_text %in% except)]
+
+    if (length(except)) {
+      calls_text <- get_r_string(xp_call_name(calls))
+      calls <- calls[!(calls_text %in% except)]
+    }
 
     all_arg_nodes <- lapply(calls, function(call_node) {
       xml2::xml_find_all(call_node, xpath_arg_name)

@@ -98,8 +98,8 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "fun(`
-     ` = 1, `
-     ` = 2)",
+` = 1, `
+` = 2)",
     list(message = rex("Duplicate arguments in function call.")),
     duplicate_argument_linter()
   )
