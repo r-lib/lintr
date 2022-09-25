@@ -210,9 +210,21 @@ release_bullets <- function() {
 platform_independent_order <- function(x) order(tolower(gsub("_", "0", x, fixed = TRUE)))
 platform_independent_sort <- function(x) x[platform_independent_order(x)]
 
-# convert STR_CONST text() values into R strings. mainly to account for arbitrary
-#   character literals valid since R 4.0, e.g. R"------[ hello ]------".
-# NB: this is also properly vectorized.
+#' Extract text from `STR_CONST` nodes
+#'
+#' Convert `STR_CONST` `text()` values into R strings. This is useful to account for arbitrary
+#'  character literals valid since R 4.0, e.g. `R"------[hello]------"`, which is parsed in
+#'  R as `"hello"`. It is quite cumbersome to write XPaths allowing for strings like this,
+#'  so whenever your linter logic requires testing a `STR_CONST` node's value, use this
+#'  function.
+#' NB: this is also properly vectorized on `s`, and accepts a variety of inputs. Empty inputs
+#'  will become `NA` outputs, which helps ensure that `length(get_r_string(s)) == length(s)`.
+#'
+#' @param s An input string or strings. If `s` is an `xml_node` or `xml_nodeset` and `xpath` is `NULL`,
+#'   extract its string value with [xml2::xml_text()]. If `s` is an `xml_node` or `xml_nodeset`
+#'   and `xpath` is specified, it is extracted with [xml2::xml_find_chr()].
+#' @param xpath An XPath, passed on to [xml2::xml_find_chr()] after wrapping with `string()`.
+#' @export
 get_r_string <- function(s, xpath = NULL) {
   if (inherits(s, c("xml_node", "xml_nodeset"))) {
     if (is.null(xpath)) {
