@@ -30,12 +30,13 @@ jobs:
 
           # Use older ubuntu to maximise backward compatibility
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
+          - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release', locale: 'en_US'}
           - {os: ubuntu-latest,  r: 'release'}
           - {os: ubuntu-latest,  r: 'oldrel-1'}
           - {os: ubuntu-latest,  r: 'oldrel-2'}
           - {os: ubuntu-latest,  r: 'oldrel-3'}
           - {os: ubuntu-latest,  r: 'oldrel-4'}
-          - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release', locale: 'en_US'}
+          - {os: ubuntu-latest,  r: '3.4'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
