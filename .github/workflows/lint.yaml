@@ -31,5 +31,7 @@ jobs:
         run: R CMD INSTALL .
 
       - name: Lint
-        run: lintr::lint_package()
+        run: |
+          Sys.setenv("LINTR_COMMENT_BOT" = TRUE)
+          lintr::lint_package()
         shell: Rscript {0}
