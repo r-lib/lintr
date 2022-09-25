@@ -39,6 +39,7 @@ test_that("fixed_regex_linter blocks simple disallowed usages", {
   expect_lint("gregexpr('a-z', y)", msg, linter)
   expect_lint("regexec('\\\\$', x)", msg, linter)
   expect_lint("grep('\n', x)", msg, linter)
+  expect_lint("grep('\\\\;', x)", msg, linter)
 
   # naming the argument doesn't matter (if it's still used positionally)
   expect_lint("gregexpr(pattern = 'a-z', y)", msg, linter)
@@ -76,6 +77,7 @@ test_that("fixed_regex_linter catches calls to strsplit as well", {
   linter <- fixed_regex_linter()
   msg <- rex::rex("This regular expression is static")
 
+  expect_lint("strsplit('a;b', '\\\\;')", msg, linter)
   expect_lint("strsplit(x, '\\\\.')", msg, linter)
   expect_lint("tstrsplit(x, 'abcdefg')", msg, linter)
   expect_lint("strsplit(x, '[.]')", msg, linter)

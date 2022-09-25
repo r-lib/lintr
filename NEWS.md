@@ -1,5 +1,24 @@
 # lintr (development version)
 
+## Bug fixes
+
+* `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
+
+## Changes to defaults
+
+* `object_usage_linter()` gains `skip_with` argument to skip code in `with()` expressions.
+  To be consistent with `R CMD check`, it defaults to `TRUE` (#941, #1458, @IndrajeetPatil).
+
+* `unused_import_linter()` can detect datasets from imported packages and no longer
+  warns when a package is imported only for its datasets (#1545, @IndrajeetPatil).
+
+## New and improved features
+
+* New `get_r_string()` helper to get the R-equivalent value of a string, especially useful for R-4-style raw strings.
+  Previously an internal `lintr` helper, now exported to facilitate writing custom linters (#1493, @MichaelChirico).
+
+* `object_usage_linter()` improves lint metadata when detecting undefined infix operators, e.g. `%>%` or `:=` (#1497, @MichaelChirico)
+
 # lintr 3.0.1
 
 * Skip multi-byte tests in non UTF-8 locales (#1504)
@@ -12,7 +31,7 @@
 
 * `brace_linter()` allows opening curly braces on a new line when there is 
   a comment ending the preceding line (#1433 and #1434, @IndrajeetPatil).
-  
+
 * `seq_linter()` produces lint for `seq(...)`, since it also cannot properly 
   handle empty edge cases (#1468, @IndrajeetPatil).
 
@@ -35,7 +54,7 @@
 
 * New `function_argument_linter()` to enforce that arguments with defaults appear last in function declarations,
   see the [Tidyverse design guide](https://design.tidyverse.org/args-data-details.html) (#450, @AshesITR).
-  
+
 * New `allow_trailing` argument added to `assignment_linter()` to check when assignment operators are at the 
   end of a line, and the value is on the following line (#1491, @ashbaldry) 
 
@@ -46,7 +65,7 @@
 
 ## Bug fixes
 
-* `object_length_linter()` does not fail in case there are dependencies with no exports (e.g. data-only packages) (#1509, @IndrajeetPatil).
+* `object_length_linter()` does not fail in case there are dependencies with no exports (e.g. data-only packages) (#1424, #1509, @IndrajeetPatil).
 * `get_source_expressions()` no longer fails on R files that match a knitr pattern (#743, #879, #1406, @AshesITR).
 * Parse error lints now appear with the linter name `"error"` instead of `NA` (#1405, @AshesITR).  
   Also, linting no longer runs if the `source_expressions` contain invalid string data that would cause error messages
