@@ -38,6 +38,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{paren_brace_linter}}}
 \item{\code{\link{pipe_call_linter}}}
 \item{\code{\link{pipe_continuation_linter}}}
+\item{\code{\link{redundant_equals_linter}}}
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{semicolon_terminator_linter}}}
 \item{\code{\link{single_quotes_linter}}}
