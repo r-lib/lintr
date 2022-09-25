@@ -1,11 +1,12 @@
 test_that("any_duplicated_linter skips allowed usages", {
-  expect_lint("x <- any(y)", NULL, any_duplicated_linter())
+  linter <- any_duplicated_linter()
 
-  expect_lint("y <- duplicated(z)", NULL, any_duplicated_linter())
+  expect_lint("x <- any(y)", NULL, linter)
+  expect_lint("y <- duplicated(z)", NULL, linter)
 
   # extended usage of any is not covered
-  expect_lint("any(duplicated(y), b)", NULL, any_duplicated_linter())
-  expect_lint("any(b, duplicated(y))", NULL, any_duplicated_linter())
+  expect_lint("any(duplicated(y), b)", NULL, linter)
+  expect_lint("any(b, duplicated(y))", NULL, linter)
 })
 
 test_that("any_duplicated_linter blocks simple disallowed usages", {
