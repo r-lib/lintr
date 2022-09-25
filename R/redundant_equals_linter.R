@@ -1,4 +1,4 @@
-#' Block usage of ==, != on logical vectors
+#' Block usage of `==`, `!=` on logical vectors
 #'
 #' Testing `x == TRUE` is redundant if `x` is a logical vector. Wherever this
 #'   is used to improve readability, the solution should instead be to improve
