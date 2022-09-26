@@ -284,7 +284,7 @@ patrick::with_parameters_test_that("fixed replacements are correct", {
   {
     # non-printable unicode behaves wildly different with encodeString() across R versions and platforms.
     # nonetheless, all of these expressions are valid replacements.
-    if (getRversion() < "4.1") {
+    if (getRversion() < "4.1.0") {
       "abc\\U000a0defghi"
     } else if (.Platform$OS.type == "windows") {
       "abc\U{0a0def}ghi"

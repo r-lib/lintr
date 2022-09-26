@@ -2,7 +2,6 @@ linters: linters_with_defaults(
     implicit_integer_linter(),
     line_length_linter(120),
     expect_comparison_linter(),
-    expect_identical_linter(),
     expect_length_linter(),
     expect_named_linter(),
     expect_not_linter(),
