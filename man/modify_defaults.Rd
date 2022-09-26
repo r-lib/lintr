@@ -26,8 +26,10 @@ Modify a list of defaults by name, allowing for replacement, deletion and additi
 #    add cat (with a accompanying message),
 #    add print (unnamed, i.e. with no accompanying message)
 #    add return (as taken from all_undesirable_functions)
-my_undesirable_functions <- modify_defaults(defaults = default_undesirable_functions,
-  sapply=NULL, "cat"="No cat allowed", "print", all_undesirable_functions[["return"]])
+my_undesirable_functions <- modify_defaults(
+  defaults = default_undesirable_functions,
+  sapply = NULL, "cat" = "No cat allowed", "print", all_undesirable_functions[["return"]]
+)
 }
 \seealso{
 \link{linters_with_tags}, \link{linters_with_defaults} for creating linter lists.

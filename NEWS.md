@@ -6,6 +6,12 @@
 
 ## Changes to defaults
 
+* Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
+  This allows sequential updates like `x |> mutate(a = b + 1, a = log(a))` (#1345, @IndrajeetPatil).
+
+* `object_usage_linter()` gains `skip_with` argument to skip code in `with()` expressions.
+  To be consistent with `R CMD check`, it defaults to `TRUE` (#941, #1458, @IndrajeetPatil).
+
 * `unused_import_linter()` can detect datasets from imported packages and no longer
   warns when a package is imported only for its datasets (#1545, @IndrajeetPatil).
 
@@ -66,7 +72,7 @@
 
 ## Bug fixes
 
-* `object_length_linter()` does not fail in case there are dependencies with no exports (e.g. data-only packages) (#1509, @IndrajeetPatil).
+* `object_length_linter()` does not fail in case there are dependencies with no exports (e.g. data-only packages) (#1424, #1509, @IndrajeetPatil).
 * `get_source_expressions()` no longer fails on R files that match a knitr pattern (#743, #879, #1406, @AshesITR).
 * Parse error lints now appear with the linter name `"error"` instead of `NA` (#1405, @AshesITR).  
   Also, linting no longer runs if the `source_expressions` contain invalid string data that would cause error messages
