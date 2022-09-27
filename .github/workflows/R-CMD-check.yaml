@@ -31,6 +31,7 @@ jobs:
           # Use older ubuntu to maximise backward compatibility
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release', locale: 'en_US'}
+          - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release', locale: 'zh_CN'}
           - {os: ubuntu-latest,  r: 'release'}
           - {os: ubuntu-latest,  r: 'oldrel-1'}
           - {os: ubuntu-latest,  r: 'oldrel-2'}
@@ -48,6 +49,12 @@ jobs:
         run: |
           sudo locale-gen en_US
           echo "LC_ALL=en_US" >> $GITHUB_ENV
+
+      - name: Set locale
+        if: matrix.config.locale == 'zh_CN'
+        run: |
+          sudo locale-gen zh_CN
+          echo "LC_ALL=zh_CN" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
 
