@@ -18,7 +18,7 @@ test_that("all default linters are tagged default", {
   # covr modifies package functions causing differing deparse() results even for identical anonymous functions.
   # This happens because default_linters is generated at build time and thus not modifiable by covr, whereas
   # linters_with_tags() constructs the linters at runtime.
-  skip_if(requireNamespace("covr", quietly = TRUE) && covr::in_covr())
+  skip_on_covr()
 
   expect_equal(linters_with_tags("default"), linters_with_defaults())
   expect_length(linters_with_tags("default", exclude_tags = "default"), 0L)
