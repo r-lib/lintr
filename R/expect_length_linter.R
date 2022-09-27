@@ -9,13 +9,17 @@
 #' @export
 expect_length_linter <- function() {
   xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical' or text() = 'expect_true']]
-    and expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
-      and
-      position() = 2 or EQ or preceding-sibling::expr[NUM_CONST]
-    ]
-    and not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or
+                                 text() = 'expect_identical' or
+                                 text() = 'expect_true']]
+    and
+      expr[
+        (expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']] and position() = 2)
+        or
+        (EQ or preceding-sibling::expr[NUM_CONST])
+      ]
+    and
+      not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])
   ]")
 
   Linter(function(source_expression) {
