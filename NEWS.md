@@ -466,6 +466,7 @@ of general interest to the broader R community. More will be included in future 
 lintr 2.0.0 is a major release, and incorporates development changes since the last major release (1.0.0) in 2016-04-16.
 
 ## Deprecated functions
+
 * Deprecated `camel_case_linter()`, `snake_case_linter()` and `multiple_dots_linter()`
   in favor of `object_name_linter()` which enforce the given style: snake_case,
   dotted.case, lowerCamelCalse, UpperCamelCase, alllowercase or ALLUPPERCASE
@@ -474,6 +475,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
   with a lax mode for fewer false positive lints (#199, fangly).
 
 ## New linters
+
 * New `cyclocomp_linter()` identifies overly complex functions (#361, @fabian-s)
 * New `equals_na_linter()` (#143, #326, @jabranham)
 * New `extraction_operator_linter()` checks that the `[[` operator is used when
@@ -500,17 +502,20 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
   arguments (@fangly).
 
 ## New functions for writing linters
+
 * Export `expect_lint()` (#178, #210)
 * Export `ids_with_token()` and `with_id()` (#297 @stufield)
 * linters can use the XML parse tree as well now, via the
   https://github.com/MangoTheCat/xmlparsedata package (#154, @gaborcsardi)
 
 ## New functions for users
+
 * New `lint_dir()` function to lint files under a given directory (@arekbee, #360)
 * New `summary.lints()` function to summarize the linter results (#260, #262, @wlandau).
 * New `checkstyle_output()` function to output lints to checkstyle XML output (#156, @joshkgold)
 
 ## Linter fixes
+
 * `closed_curly_linter()` now allows closing parenthesis or comma after closing curly brace (#167, @Enchufa2)
 * `commas_linter()` now handles missing arguments calls properly (#145)
 * `commented_code_linter()` now relaxed, it no longer lints comments within roxygen blocks
@@ -530,6 +535,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * `space_inside_linter()` now reports proper line and column numbers (#203, @fangly)
 
 ## General improvements and fixes
+
 * `expect_lint()` now no longer shows Rstudio markers and error messages are correctly preserved (#180, #211, @fangly)
 * `Lint()` / `as.data.frame()` error now fixed (#179, @fangly).
 * `lint()` no longer errors with inline `\\Sexpr` (#127).
@@ -561,22 +567,27 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
   `xmlparsedata`; ensure vectors are length-1 when compared using `&&` and `||`
   (#363 #377 #384 #391, @russHyde).
 
-# lintr 1.0.3 #
+# lintr 1.0.3
+
 * Fix tests to work with changes in the parser in R 3.6
 
-# lintr 1.0.2 #
+# lintr 1.0.2
+
 * Fix tests to work with upcoming testthat release.
 
-# lintr 1.0.1 #
+# lintr 1.0.1
+
 * bugfix to work with knitr 1.16.7
 * `expect_lint_free()` now is always skipped on CRAN. This is necessary because
   the non-binary R source may not be available when running tests on CRAN, and
   those tests may not be run in the package directory.
 
-# lintr 1.0.0 #
+# lintr 1.0.0
+
 * bugfix to work with testthat 1.0.0
 
-# lintr 0.3.3 #
+# lintr 0.3.3
+
 * infix_spaces_linter now properly checks `=` in named arguments. (#130, @saurfang).
 * commas_linter now properly recognizes lints when preceded by a blank line and
   points to the missing space rather than the comma (#111, #129, @saurfang).
@@ -601,6 +612,6 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * Allow for (( when linting (#259, @nathaneastwood)
 * Remove ^ from infix spaces to conform with tidyverse. (#302, @nathaneastwood)
 
-# lintr 0.2.0 #
+# lintr 0.2.0
 
 * Initial release
