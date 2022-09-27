@@ -55,3 +55,8 @@ test_that("expect_length_linter blocks expect_true usage as well", {
     expect_length_linter()
   )
 })
+
+test_that("expect_length_linter doesn't block valid expect_identical and expect_true usages", {
+  expect_lint("expect_true(1 == 1)", NULL, expect_length_linter())
+  expect_lint("expect_identical(1, 1)", NULL, expect_length_linter())
+})
