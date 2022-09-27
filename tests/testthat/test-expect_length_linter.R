@@ -47,3 +47,11 @@ test_that("expect_length_linter blocks expect_identical usage as well", {
     expect_length_linter()
   )
 })
+
+test_that("expect_length_linter blocks expect_true usage as well", {
+  expect_lint(
+    "expect_true(length(x) == 1L)",
+    rex::rex("expect_length(x, n) is better than expect_true(length(x) == n)"),
+    expect_length_linter()
+  )
+})

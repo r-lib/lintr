@@ -15,6 +15,8 @@
 * `unused_import_linter()` can detect datasets from imported packages and no longer
   warns when a package is imported only for its datasets (#1545, @IndrajeetPatil).
 
+* `expect_length_linter()` requires usage of `expect_length(x, n)` over `expect_true(length(x) == n)` (#1545, @IndrajeetPatil).
+
 ## New and improved features
 
 * New `get_r_string()` helper to get the R-equivalent value of a string, especially useful for R-4-style raw strings.
