@@ -7,11 +7,10 @@
 redundant_equals_linter()
 }
 \description{
-Testing \code{x == TRUE} is redundant if \code{x} is a logical vector. Wherever this
-is used to improve readability, the solution should instead be to improve
-the naming of the object to better indicate that its contents are logical.
-This can be done using prefixes (is, has, can, etc.). For example,
-\code{is_child}, \code{has_parent_supervision}, \code{can_watch_horror_movie} clarify their
-logical nature, while \code{child}, \code{parent_supervision}, \code{watch_horror_movie}
-don't.
+Testing \code{x == TRUE} is redundant if \code{x} is a logical vector. Wherever this is
+used to improve readability, the solution should instead be to improve the
+naming of the object to better indicate that its contents are logical. This
+can be done using prefixes (is, has, can, etc.). For example, \code{is_child},
+\code{has_parent_supervision}, \code{can_watch_horror_movie} clarify their logical
+nature, while \code{child}, \code{parent_supervision}, \code{watch_horror_movie} don't.
 }
