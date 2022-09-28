@@ -37,7 +37,6 @@ Imports:
     xml2 (>= 1.0.0),
     xmlparsedata (>= 1.0.5)
 Suggests:
-    covr,
     httr (>= 1.2.1),
     mockery,
     patrick,
