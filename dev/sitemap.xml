@@ -298,6 +298,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/readability_linters.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/redundant_equals_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/redundant_ifelse_linter.html</loc>
   </url>
   <url>

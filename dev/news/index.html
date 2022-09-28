@@ -77,7 +77,11 @@
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
 <ul><li><p>New <code><a href="../reference/get_r_string.html">get_r_string()</a></code> helper to get the R-equivalent value of a string, especially useful for R-4-style raw strings. Previously an internal <code>lintr</code> helper, now exported to facilitate writing custom linters (<a href="https://github.com/r-lib/lintr/issues/1493" class="external-link">#1493</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</p></li>
 <li><p><code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code> improves lint metadata when detecting undefined infix operators, e.g. <code>%&gt;%</code> or <code>:=</code> (<a href="https://github.com/r-lib/lintr/issues/1497" class="external-link">#1497</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
-</ul></div>
+</ul><div class="section level4">
+<h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
+<ul><li>
+<code><a href="../reference/redundant_equals_linter.html">redundant_equals_linter()</a></code> for redundant comparisons to <code>TRUE</code> or <code>FALSE</code> like <code>is_treatment == TRUE</code> (<a href="https://github.com/r-lib/lintr/issues/1500" class="external-link">#1500</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</li></ul></div>
+</div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.0.1" id="lintr-301">lintr 3.0.1<a class="anchor" aria-label="anchor" href="#lintr-301"></a></h2><p class="text-muted">CRAN release: 2022-09-13</p>
