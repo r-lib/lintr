@@ -101,7 +101,7 @@ unnecessary_lambda_linter <- function() {
       purrr_fun_expr,
       source_expression = source_expression,
       lint_message = paste0(
-        "Pass ", purrr_symbol, " directly as a symbol to ", purrr_calll_fun, "() ",
+        "Pass ", purrr_symbol, " directly as a symbol to ", purrr_call_fun, "() ",
         "instead of wrapping it in an unnecessary anonymous function. ",
         "For example, prefer purrr::map(DF, sum) to purrr::map(DF, ~sum(.x))."
       ),
