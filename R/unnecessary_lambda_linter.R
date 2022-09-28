@@ -61,7 +61,7 @@ unnecessary_lambda_linter <- function() {
     and not(expr/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//{purrr_symbol})
   ]")
 
-  return(Linter(function(source_expression) {
+  Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
@@ -93,8 +93,8 @@ unnecessary_lambda_linter <- function() {
       type = "warning"
     )
 
-    return(c(default_fun_lints, purrr_fun_lints))
-  }))
+    c(default_fun_lints, purrr_fun_lints)
+  })
 }
 
 purrr_mappers <- c(
