@@ -1,16 +1,39 @@
 test_that("unnecessary_lambda_linter skips allowed usages", {
-  expect_lint("lapply(DF, sum)", NULL, unnecessary_lambda_linter())
-
-  expect_lint("apply(M, 1, sum, na.rm = TRUE)", NULL, unnecessary_lambda_linter())
+  linter <- unnecessary_lambda_linter()
+  expect_lint("lapply(DF, sum)", NULL, linter)
+  expect_lint("apply(M, 1, sum, na.rm = TRUE)", NULL, linter)
 
   # the first argument may be ... or have a cumbersome name, so an anonymous
   #   function may be preferable (e.g. this is often the case for grep() calls)
-  expect_lint("sapply(x, function(xi) foo(1, xi))", NULL, unnecessary_lambda_linter())
+  expect_lint("sapply(x, function(xi) foo(1, xi))", NULL, linter)
 
   # if the argument is re-used, that's also a no-go
-  expect_lint("dendrapply(x, function(xi) foo(xi, xi))", NULL, unnecessary_lambda_linter())
+  expect_lint("dendrapply(x, function(xi) foo(xi, xi))", NULL, linter)
   # at any nesting level
-  expect_lint("parLapply(cl, x, function(xi) foo(xi, 2, bar(baz(xi))))", NULL, unnecessary_lambda_linter())
+  expect_lint("parLapply(cl, x, function(xi) foo(xi, 2, bar(baz(xi))))", NULL, linter)
+
+  # multi-expression case
+  expect_lint("lapply(x, function(xi) { print(xi); xi^2 })", NULL, linter)
+  # multi-expression, multi-line cases
+  expect_lint(
+    trim_some("
+      lapply(x, function(xi) {
+        print(xi); xi^2
+      })
+    "),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+      lapply(x, function(xi) {
+        print(xi)
+        xi^2
+      })
+    "),
+    NULL,
+    linter
+  )
   # TODO(michaelchirico): I believe there's cases where it's impossible to avoid an anonymous function due to a
   #   conflict where you have to pass FUN= to an inner *apply function but it gets interpreted as the outer *apply's FUN
   #   argument... but it's escaping me now.
@@ -58,3 +81,49 @@ test_that("purrr-style anonymous functions are also caught", {
     unnecessary_lambda_linter()
   )
 })
+
+# TODO(#1567): tighten linter logic for these cases
+## test_that("cases with braces are caught", {
+##   linter <- unnecessary_lambda_linter()
+##   expect_lint(
+##     "lapply(x, function(xi) { print(xi) })",
+##     "xxx",
+##     linter
+##   )
+##   # same, but with newline
+##   expect_lint(
+##     trim_some("
+##       lapply(x, function(xi) {
+##         print(xi)
+##       })
+##     "),
+##     "xxx",
+##     linter
+##   )
+##   # same, but with explicit return
+##   expect_lint(
+##     "lapply(x, function(xi) { return(print(xi)) })",
+##     "xxx",
+##     linter
+##   )
+##   # same, but with newline
+##   expect_lint(
+##     trim_some("
+##       lapply(x, function(xi) {
+##         print(xi)
+##       })
+##     "),
+##     "xxx",
+##     linter
+##   )
+##   # same, but with newline and explicit return
+##   expect_lint(
+##     trim_some("
+##       lapply(x, function(xi) {
+##         return(print(xi))
+##       })
+##     "),
+##     "xxx",
+##     linter
+##   )
+## })
