@@ -80,13 +80,13 @@ unnecessary_lambda_linter <- function() {
     #   whether arguments need to be subsumed in '...' or not. The trouble is in
     #   keeping track of which argument the anonymous function is supplied (2nd
     #   argument for many calls, but 3rd e.g. for apply())
-    default_FUN <- xml2::xml_text(xml2::xml_find_first(default_fun_expr, fun_xpath))
+    default_call_fun <- xml2::xml_text(xml2::xml_find_first(default_fun_expr, fun_xpath))
     default_symbol <- xml2::xml_text(xml2::xml_find_first(default_fun_expr, symbol_xpath))
     default_fun_lints <- xml_nodes_to_lints(
       default_fun_expr,
       source_expression = source_expression,
       lint_message = paste0(
-        "Pass ", default_symbol, " directly as a symbol to ", default_FUN, "() ",
+        "Pass ", default_symbol, " directly as a symbol to ", default_call_fun, "() ",
         "instead of wrapping it in an unnecessary anonymous function. ",
         "For example, prefer lapply(DF, sum) to lapply(DF, function(x) sum(x))."
       ),
@@ -95,13 +95,13 @@ unnecessary_lambda_linter <- function() {
 
     purrr_fun_expr <- xml2::xml_find_all(xml, purrr_fun_xpath)
 
-    purrr_FUN <- xml2::xml_text(xml2::xml_find_first(purrr_fun_expr, fun_xpath))
+    purrr_call_fun <- xml2::xml_text(xml2::xml_find_first(purrr_fun_expr, fun_xpath))
     purrr_symbol <- xml2::xml_text(xml2::xml_find_first(purrr_fun_expr, symbol_xpath))
     purrr_fun_lints <- xml_nodes_to_lints(
       purrr_fun_expr,
       source_expression = source_expression,
       lint_message = paste0(
-        "Pass ", purrr_symbol, " directly as a symbol to ", purrr_FUN, "() ",
+        "Pass ", purrr_symbol, " directly as a symbol to ", purrr_calll_fun, "() ",
         "instead of wrapping it in an unnecessary anonymous function. ",
         "For example, prefer purrr::map(DF, sum) to purrr::map(DF, ~sum(.x))."
       ),
