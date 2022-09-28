@@ -22,7 +22,7 @@ test_that("Order doesn't matter", {
 
 skip_if_not_installed("patrick")
 
-with_parameters_test_that(
+patrick::with_parameters_test_that(
   "redundant_equals_linter blocks simple disallowed usages",
   {
     msg <- rex::rex(paste("Using", op, "on a logical vector is redundant."))
