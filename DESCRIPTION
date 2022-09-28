@@ -127,6 +127,7 @@ Collate:
     'path_linters.R'
     'pipe_call_linter.R'
     'pipe_continuation_linter.R'
+    'redundant_equals_linter.R'
     'redundant_ifelse_linter.R'
     'regex_subset_linter.R'
     'semicolon_linter.R'
