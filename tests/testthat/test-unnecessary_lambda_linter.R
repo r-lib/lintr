@@ -42,19 +42,19 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
   expect_lint(
     "lapply(DF, function(x) sum(x))",
-    rex::rex("Avoid unnecessary anonymous functions in iterator function calls"),
+    rex::rex("Pass the function directly as a symbol to lapply()"),
     unnecessary_lambda_linter()
   )
 
   expect_lint(
     "rapply(l, function(x) is.data.frame(x))",
-    rex::rex("Avoid unnecessary anonymous functions in iterator function calls"),
+    rex::rex("Pass the function directly as a symbol to rapply()"),
     unnecessary_lambda_linter()
   )
 
   expect_lint(
     "eapply(env, function(x) sum(x, na.rm = TRUE))",
-    rex::rex("Avoid unnecessary anonymous functions in iterator function calls"),
+    rex::rex("Pass the function directly as a symbol to eapply()"),
     unnecessary_lambda_linter()
   )
 })

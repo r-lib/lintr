@@ -70,13 +70,16 @@ unnecessary_lambda_linter <- function() {
 
     default_fun_expr <- xml2::xml_find_all(xml, default_fun_xpath)
 
-    # TODO(michaelchirico): customize the error message to reflect the function actually used.
+    mapper <- xml2::xml_text(
+      xml2::xml_find_first(default_fun_expr, "./parent::expr/expr/SYMBOL_FUNCTION_CALL")
+    )
     default_fun_lints <- xml_nodes_to_lints(
       default_fun_expr,
       source_expression = source_expression,
-      lint_message = paste(
-        "Avoid unnecessary anonymous functions in iterator function calls, e.g.,",
-        "prefer lapply(DF, sum) to lapply(DF, function(x) sum(x))."
+      lint_message = paste0(
+        "Pass the function directly as a symbol to ", mapper, "() ",
+        "instead of using an unnecessary anonymous function. ",
+        "For example, prefer lapply(DF, sum) to lapply(DF, function(x) sum(x))."
       ),
       type = "warning"
     )
