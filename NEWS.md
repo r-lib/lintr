@@ -25,6 +25,7 @@
 ### New linters
 
 * `redundant_equals_linter()` for redundant comparisons to `TRUE` or `FALSE` like `is_treatment == TRUE` (#1500, @MichaelChirico)
+* `lengths_linter()` for encouraging usage of `lengths(x)` instead of `sapply(x, length)` (and similar)
 
 # lintr 3.0.1
 

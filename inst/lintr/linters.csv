@@ -33,6 +33,7 @@ ifelse_censor_linter,best_practices efficiency
 implicit_integer_linter,style consistency best_practices
 infix_spaces_linter,style readability default
 inner_combine_linter,efficiency consistency readability
+lengths_linter,efficiency readability best_practices
 line_length_linter,style readability default configurable
 literal_coercion_linter,best_practices consistency efficiency
 missing_argument_linter,correctness common_mistakes configurable
