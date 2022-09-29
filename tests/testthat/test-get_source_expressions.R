@@ -12,18 +12,22 @@ with_content_to_parse <- function(content, code) {
 }
 
 test_that("tab positions have been corrected", {
-  with_content_to_parse("1\n\t",
+  with_content_to_parse(
+    "1\n\t",
     expect_length(pc, 2L)
   )
 
-  with_content_to_parse("TRUE",
+  with_content_to_parse(
+    "TRUE",
     expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(1L, 4L))
   )
-  with_content_to_parse("\tTRUE",
+  with_content_to_parse(
+    "\tTRUE",
     expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(2L, 5L))
   )
 
-  with_content_to_parse("\t\tTRUE",
+  with_content_to_parse(
+    "\t\tTRUE",
     expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(3L, 6L))
   )
 
@@ -83,7 +87,7 @@ test_that("Multi-byte characters correct columns", {
 
   with_content_to_parse("`\U2020` <- 1", {
     # fix_column_numbers corrects the start of <-
-    expect_equal(pc[[1L]]$col1[4L], pc[[1L]]$col1[2L] + 4L)
+    expect_identical(pc[[1L]]$col1[4L], pc[[1L]]$col1[2L] + 4L)
   })
 })
 
@@ -92,8 +96,8 @@ test_that("Multi-byte character truncated by parser is ignored", {
   # \U2013 is the Unicode character 'en dash', which is
   # almost identical to a minus sign in monospaced fonts.
   with_content_to_parse("y <- x \U2013 42", {
-    expect_equal(error$message, "unexpected input")
-    expect_equal(error$column_number, 8L)
+    expect_identical(error$message, "unexpected input")
+    expect_identical(error$column_number, 8L)
   })
 })
 
@@ -117,17 +121,17 @@ test_that("Warns if encoding is misspecified", {
     msg <- "unexpected '<'"
   }
 
-  expect_equal(the_lint$linter, "error")
-  expect_equal(the_lint$message, msg)
-  expect_equal(the_lint$line_number, 4L)
+  expect_identical(the_lint$linter, "error")
+  expect_identical(the_lint$message, msg)
+  expect_identical(the_lint$line_number, 4L)
 
   file <- test_path("dummy_projects", "project", "cp1252_parseable.R")
   read_settings(NULL)
   the_lint <- lint(filename = file, parse_settings = FALSE)[[1L]]
   expect_s3_class(the_lint, "lint")
-  expect_equal(the_lint$linter, "error")
-  expect_equal(the_lint$message, "Invalid multibyte string. Is the encoding correct?")
-  expect_equal(the_lint$line_number, 1L)
+  expect_identical(the_lint$linter, "error")
+  expect_identical(the_lint$message, "Invalid multibyte string. Is the encoding correct?")
+  expect_identical(the_lint$line_number, 1L)
 })
 
 test_that("Can extract line number from parser errors", {
@@ -138,10 +142,12 @@ test_that("Can extract line number from parser errors", {
     trim_some('
       "ok"
       R"---a---"
-    '), {
-    expect_equal(error$message, "Malformed raw string literal.")
-    expect_equal(error$line_number, 2L)
-  })
+    '),
+    {
+      expect_identical(error$message, "Malformed raw string literal.")
+      expect_identical(error$line_number, 2L)
+    }
+  )
 
   # invalid \u{xxxx} sequence (line 3)
   with_content_to_parse(
@@ -149,10 +155,12 @@ test_that("Can extract line number from parser errors", {
       ok
       ok
       "\\u{9999"
-    '), {
-    expect_equal(error$message, "Invalid \\u{xxxx} sequence.")
-    expect_equal(error$line_number, 3L)
-  })
+    '),
+    {
+      expect_identical(error$message, "Invalid \\u{xxxx} sequence.")
+      expect_identical(error$line_number, 3L)
+    }
+  )
 
   # invalid \u{xxxx} sequence (line 4)
   with_content_to_parse(
@@ -160,16 +168,18 @@ test_that("Can extract line number from parser errors", {
       ok
       ok
       "\\u{9999
-    '), {
-    # parser erroneously reports line 4
-    expect_equal(error$message, "Invalid \\u{xxxx} sequence.")
-    expect_equal(error$line_number, 3L)
-  })
+    '),
+    {
+      # parser erroneously reports line 4
+      expect_identical(error$message, "Invalid \\u{xxxx} sequence.")
+      expect_identical(error$line_number, 3L)
+    }
+  )
 
   # repeated formal argument 'a' on line 1
   with_content_to_parse("function(a, a) {}", {
-    expect_equal(error$message, "Repeated formal argument 'a'.")
-    expect_equal(error$line_number, 1L)
+    expect_identical(error$message, "Repeated formal argument 'a'.")
+    expect_identical(error$line_number, 1L)
   })
 })
 
@@ -235,8 +245,10 @@ test_that("returned data structure is complete", {
   expect_identical(full_expr$file_lines, lines_with_attr)
   expect_identical(full_expr$content, lines_with_attr)
   expect_identical(nrow(full_expr$full_parsed_content), 2L * length(lines))
-  expect_identical(xml2::xml_find_num(full_expr$full_xml_parsed_content, "count(//SYMBOL)"),
-                    as.numeric(length(lines)))
+  expect_identical(
+    xml2::xml_find_num(full_expr$full_xml_parsed_content, "count(//SYMBOL)"),
+    as.numeric(length(lines))
+  )
   expect_true(full_expr$terminal_newline)
 
   expect_null(exprs$error)
@@ -284,7 +296,7 @@ test_that("#743, #879, #1406: get_source_expressions works on R files matching a
   expect_null(source_expressions$error)
 })
 
-test_that("Syntax errors in Rmd don't choke lintr", {
+test_that("Syntax errors in Rmd or qmd don't choke lintr", {
   tmp <- withr::local_tempfile(lines = c(
     "```{r}",
     "if (TRUE) {",
@@ -321,7 +333,7 @@ param_df <- expand.grid(
   stringsAsFactors = FALSE
 )
 param_df$.test_name <-
- with(param_df, sprintf("%s on expression %d", linter, expression_idx))
+  with(param_df, sprintf("%s on expression %d", linter, expression_idx))
 
 patrick::with_parameters_test_that(
   "linters pass with xml_missing() content",
