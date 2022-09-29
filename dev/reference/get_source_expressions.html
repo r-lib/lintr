@@ -104,7 +104,7 @@ expression as given by <code><a href="https://rdrr.io/pkg/xmlparsedata/man/xml_p
 consisting of 6 elements:</p><ul><li><p><code>filename</code> (<code>character</code>)</p></li>
 <li><p><code>file_lines</code> (<code>character</code>) the <code><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines()</a></code> output for this file</p></li>
 <li><p><code>content</code> (<code>character</code>) for .R files, the same as <code>file_lines</code>;
-for .Rmd scripts, this is the extracted R source code (as text)</p></li>
+for .Rmd or .qmd scripts, this is the extracted R source code (as text)</p></li>
 <li><p><code>full_parsed_content</code> (<code>data.frame</code>) as given by
 <code><a href="https://rdrr.io/r/utils/getParseData.html" class="external-link">utils::getParseData()</a></code> for the full content</p></li>
 <li><p><code>full_xml_parsed_content</code> (<code>xml_document</code>) the XML parse tree of all
