@@ -129,6 +129,7 @@ Collate:
     'redundant_equals_linter.R'
     'redundant_ifelse_linter.R'
     'regex_subset_linter.R'
+    'return_assignment_linter.R'
     'semicolon_linter.R'
     'seq_linter.R'
     'settings.R'

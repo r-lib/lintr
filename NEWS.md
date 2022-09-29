@@ -26,6 +26,8 @@
 
 * `redundant_equals_linter()` for redundant comparisons to `TRUE` or `FALSE` like `is_treatment == TRUE` (#1500, @MichaelChirico)
 
+* `return_assignment_linter()` for assignments within the `return()` clause of a function, e.g. `return(x <- foo())` (@MichaelChirico)
+
 # lintr 3.0.1
 
 * Skip multi-byte tests in non UTF-8 locales (#1504)
