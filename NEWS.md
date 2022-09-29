@@ -91,7 +91,9 @@
 * The minimum needed version for soft dependency `{withr}` has been bumped to `2.5.0`
   (#1404, @IndrajeetPatil).
 * Changed the deprecation warning for `with_defaults()` to also mention `modify_defaults()` (#1438, @AshesITR).
-
+* Quarto files (`.qmd`) were supported out of the box. The documentation and the 
+  testing infrastructure are updated to reflect this (#1486, @IndrajeetPatil).
+  
 # lintr 3.0.0
 
 ## Breaking changes
