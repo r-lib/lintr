@@ -42,14 +42,14 @@ empty_namespace_data <- function() {
 # this loads all imported namespaces
 imported_s3_generics <- function(ns_imports) {
   # `NROW()` for the `NULL` case of 0-export dependencies (cf. #1503)
-    is_generic <- vapply(
-      seq_len(NROW(ns_imports)),
-      function(i) {
-        fun_obj <- get(ns_imports$fun[i], envir = asNamespace(ns_imports$pkg[i]))
-        is.function(fun_obj) && is_s3_generic(fun_obj)
-      },
-      logical(1L)
-    )
+  is_generic <- vapply(
+    seq_len(NROW(ns_imports)),
+    function(i) {
+      fun_obj <- get(ns_imports$fun[i], envir = asNamespace(ns_imports$pkg[i]))
+      is.function(fun_obj) && is_s3_generic(fun_obj)
+    },
+    logical(1L)
+  )
 
   ns_imports[is_generic, ]
 }
@@ -60,8 +60,9 @@ is_s3_generic <- function(fun) {
   bdexpr <- body(fun)
   while (is.call(bdexpr) && bdexpr[[1L]] == "{") bdexpr <- bdexpr[[length(bdexpr)]]
   ret <- is.call(bdexpr) && identical(bdexpr[[1L]], as.name("UseMethod"))
-  if (ret)
+  if (ret) {
     names(ret) <- bdexpr[[2L]]
+  }
   ret
 }
 

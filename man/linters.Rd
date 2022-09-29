@@ -4,7 +4,7 @@
 \alias{linters}
 \title{Available linters}
 \description{
-A variety of linters is available in \pkg{lintr}. The most popular ones are readily
+A variety of linters are available in \pkg{lintr}. The most popular ones are readily
 accessible through \code{\link[=default_linters]{default_linters()}}.
 
 Within a \code{\link[=lint]{lint()}} function call, the linters in use are initialized with the provided
@@ -18,7 +18,7 @@ see also \code{\link[=available_tags]{available_tags()}}.
 The following tags exist:
 \itemize{
 \item{\link[=best_practices_linters]{best_practices} (38 linters)}
-\item{\link[=common_mistakes_linters]{common_mistakes} (6 linters)}
+\item{\link[=common_mistakes_linters]{common_mistakes} (7 linters)}
 \item{\link[=configurable_linters]{configurable} (20 linters)}
 \item{\link[=consistency_linters]{consistency} (17 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
@@ -89,6 +89,7 @@ The following linters exist:
 \item{\code{\link{paste_linter}} (tags: best_practices, consistency)}
 \item{\code{\link{pipe_call_linter}} (tags: readability, style)}
 \item{\code{\link{pipe_continuation_linter}} (tags: default, readability, style)}
+\item{\code{\link{redundant_equals_linter}} (tags: best_practices, common_mistakes, efficiency, readability)}
 \item{\code{\link{redundant_ifelse_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{regex_subset_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{semicolon_linter}} (tags: configurable, default, readability, style)}

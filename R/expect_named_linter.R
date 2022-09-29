@@ -1,4 +1,4 @@
-#' Require usage of expect_named(x, n) over expect_equal(names(x), n)
+#' Require usage of `expect_named(x, n)` over `expect_equal(names(x), n)`
 #'
 #' [testthat::expect_named()] exists specifically for testing the [names()] of
 #'   an object. [testthat::expect_equal()] can also be used for such tests,
@@ -8,7 +8,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_named_linter <- function() {
-   xpath <- "//expr[
+  xpath <- "//expr[
     SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
     and following-sibling::expr[
       expr[1][SYMBOL_FUNCTION_CALL[text() = 'names']]

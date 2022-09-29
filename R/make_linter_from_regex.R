@@ -2,7 +2,6 @@ make_linter_from_regex <- function(regex,
                                    lint_type,
                                    lint_msg,
                                    ignore_strings = TRUE) {
-
   # If a regex-based linter is found, only flag those lints that occur within
   # a relevant section of source code
   .in_ignorable_position <- function(source_expression, line_number, match) {

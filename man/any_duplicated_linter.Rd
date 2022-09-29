@@ -2,15 +2,14 @@
 % Please edit documentation in R/any_duplicated_linter.R
 \name{any_duplicated_linter}
 \alias{any_duplicated_linter}
-\title{Require usage of anyDuplicated() > 0 over any(duplicated(.))}
+\title{Require usage of \code{anyDuplicated(x) > 0} over \code{any(duplicated(x))}}
 \usage{
 any_duplicated_linter()
 }
 \description{
-\code{\link[=anyDuplicated]{anyDuplicated()}} exists as a replacement for \code{any(duplicated(.))} which is
-more efficient for simple objects, and in the worst case is the same
-efficiency. Therefore it should be used in all situations instead of the
-latter.
+\code{\link[=anyDuplicated]{anyDuplicated()}} exists as a replacement for \code{any(duplicated(.))}, which is
+more efficient for simple objects, and is at worst equally efficient.
+Therefore, it should be used in all situations instead of the latter.
 }
 \details{
 Also match usage like \code{length(unique(x$col)) == nrow(x)}, which can

@@ -2,7 +2,7 @@
 % Please edit documentation in R/system_file_linter.R
 \name{system_file_linter}
 \alias{system_file_linter}
-\title{Block usage of file.path() with system.file()}
+\title{Block usage of \code{file.path()} with \code{system.file()}}
 \usage{
 system_file_linter()
 }

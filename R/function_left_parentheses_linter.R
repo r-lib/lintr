@@ -1,6 +1,8 @@
 #' Function left parentheses linter
 #'
-#' Check that all left parentheses in a function call do not have spaces before them.
+#' Check that all left parentheses in a function call do not have spaces before them
+#' (e.g. `mean  (1:3)`). Although this is syntactically valid, it makes the code
+#' difficult to read.
 #'
 #' @evalRd rd_tags("function_left_parentheses_linter")
 #' @seealso

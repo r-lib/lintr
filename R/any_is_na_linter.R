@@ -1,8 +1,8 @@
-#' Require usage of anyNA over any(is.na(.))
+#' Require usage of `anyNA(x)` over `any(is.na(x))`
 #'
-#' [anyNA()] exists as a replacement for `any(is.na(.))` which is more efficient
-#'   for simple objects, and in the worst case is the same efficiency. Therefore
-#'   it should be used in all situations instead of the latter.
+#' [anyNA()] exists as a replacement for `any(is.na(x))` which is more efficient
+#'   for simple objects, and is at worst equally efficient.
+#'   Therefore, it should be used in all situations instead of the latter.
 #'
 #' @evalRd rd_tags("any_is_na_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
