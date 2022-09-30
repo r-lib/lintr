@@ -73,6 +73,7 @@ trailing_blank_lines_linter,style default
 trailing_whitespace_linter,style default
 undesirable_function_linter,style efficiency configurable robustness best_practices
 undesirable_operator_linter,style efficiency configurable robustness best_practices
+unnecessary_lambda_linter,best_practices efficiency readability
 unneeded_concatenation_linter,style readability efficiency configurable
 unreachable_code_linter,best_practices readability
 unused_import_linter,best_practices common_mistakes configurable executing

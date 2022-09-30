@@ -145,6 +145,7 @@ Collate:
     'tree-utils.R'
     'undesirable_function_linter.R'
     'undesirable_operator_linter.R'
+    'unnecessary_lambda_linter.R'
     'unneeded_concatenation_linter.R'
     'unreachable_code_linter.R'
     'unused_import_linter.R'

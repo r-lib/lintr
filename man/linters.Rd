@@ -24,7 +24,7 @@ The following tags exist:
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (24 linters)}
 \item{\link[=deprecated_linters]{deprecated} (4 linters)}
-\item{\link[=efficiency_linters]{efficiency} (17 linters)}
+\item{\link[=efficiency_linters]{efficiency} (18 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=readability_linters]{readability} (39 linters)}
@@ -109,6 +109,7 @@ The following linters exist:
 \item{\code{\link{trailing_whitespace_linter}} (tags: default, style)}
 \item{\code{\link{undesirable_function_linter}} (tags: best_practices, configurable, efficiency, robustness, style)}
 \item{\code{\link{undesirable_operator_linter}} (tags: best_practices, configurable, efficiency, robustness, style)}
+\item{\code{\link{unnecessary_lambda_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{unneeded_concatenation_linter}} (tags: configurable, efficiency, readability, style)}
 \item{\code{\link{unreachable_code_linter}} (tags: best_practices, readability)}
 \item{\code{\link{unused_import_linter}} (tags: best_practices, common_mistakes, configurable, executing)}
