@@ -7,9 +7,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 boolean_arithmetic_linter <- function() {
-  # TODO(michaelchirico): consider sum(x %in% y)
-  # TODO(michaelchirico): consider sum(A & B), sum(A | B), and sum(!A)
-  # TODO(michaelchirico): consider is.na, is.nan, is.finite, is.infinite, is.element
+  # TODO(#1580): sum() cases x %in% y, A [&|] B, !A, is.na/is.nan/is.finite/is.infinite/is.element
   # TODO(michaelchirico): stringr equivalents to regex functions
   zero_expr <-
     "(EQ or NE or GT or LE) and expr[NUM_CONST[text() = '0' or text() = '0L']]"
