@@ -32,6 +32,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{extraction_operator_linter}}}
 \item{\code{\link{fixed_regex_linter}}}
 \item{\code{\link{function_argument_linter}}}
+\item{\code{\link{function_return_linter}}}
 \item{\code{\link{ifelse_censor_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{lengths_linter}}}

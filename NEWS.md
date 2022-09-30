@@ -30,6 +30,9 @@
 * `redundant_equals_linter()` for redundant comparisons to `TRUE` or `FALSE` like `is_treatment == TRUE` (#1500, @MichaelChirico)
 * `lengths_linter()` for encouraging usage of `lengths(x)` instead of `sapply(x, length)` (and similar)
 
+* `function_return_linter()` for handling issues in function `return()` statements. Currently handles assignments within the `return()`
+  clause, e.g. `return(x <- foo())` (@MichaelChirico)
+
 # lintr 3.0.1
 
 * Skip multi-byte tests in non UTF-8 locales (#1504)
