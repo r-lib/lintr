@@ -358,6 +358,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/undesirable_operator_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/unnecessary_lambda_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/unneeded_concatenation_linter.html</loc>
   </url>
   <url>
