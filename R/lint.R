@@ -1,13 +1,3 @@
-#' Lintr
-#'
-#' Checks adherence to a given style, syntax errors and possible semantic issues.
-#' Supports on the fly checking of R code edited with Emacs, Vim and Sublime Text.
-#' @seealso [lint()], [lint_package()], [lint_dir()], [linters]
-#' @importFrom stats na.omit
-#' @importFrom utils capture.output getParseData relist
-#' @keywords internal
-"_PACKAGE"
-
 #' Lint a file, directory, or package
 #'
 #' * `lint()` lints a single file.
