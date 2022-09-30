@@ -47,6 +47,16 @@ test_that("function_return_linter blocks simple disallowed usages", {
   expect_lint(
     trim_some("
       foo <- function(x) {
+        return(x + 1 ->> x)
+      }
+    "),
+    lint_msg,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
         return(x + 1 -> x)
       }
     "),
