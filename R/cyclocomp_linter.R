@@ -6,7 +6,6 @@
 #' than this are linted. See [cyclocomp::cyclocomp()].
 #' @evalRd rd_tags("cyclocomp_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
-#' @importFrom cyclocomp cyclocomp
 #' @export
 cyclocomp_linter <- function(complexity_limit = 15L) {
   Linter(function(source_expression) {
