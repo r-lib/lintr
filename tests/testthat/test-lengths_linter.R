@@ -1,8 +1,5 @@
 test_that("lengths_linter skips allowed usages", {
-  # TODO(michaelchirico): this probably should be lengths(), but let it pass for now.
-  #   Seen twice as a usage like lapply(x, length) > 0 which does as.integer()
-  #   conversion and thus is equivalent to sapply(x, length). Check whether
-  #   there are any real use cases for lapply(x, length)...
+  # TODO(#1570): also throw a lint here, and for map(x, length)
   expect_lint("lapply(x, length)", NULL, lengths_linter())
 })
 
