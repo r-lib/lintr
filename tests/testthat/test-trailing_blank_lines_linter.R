@@ -71,4 +71,28 @@ test_that("returns the correct linting", {
     # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
     column_number = 1L
   ), linter)
+
+  # Construct a qmd file without terminal newline
+  tmp5 <- withr::local_tempfile(fileext = ".qmd")
+  cat(
+    trim_some(
+      '---
+      title: "Some file"
+      ---
+
+      ```{r}
+      abc = 123
+      ```
+
+      ```{r child="some-file.qmd"}
+      ```'
+    ),
+    file = tmp5
+  )
+  expect_lint(content = NULL, file = tmp5, list(
+    message = msg2,
+    line_number = 10L,
+    # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
+    column_number = 1L
+  ), linter)
 })

@@ -24,6 +24,9 @@
 
 ### New linters
 
+* `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
+  `lapply(x, function(xi) sum(xi))` can be `lapply(x, sum)` and `purrr::map(x, ~quantile(.x, 0.75, na.rm = TRUE))`
+  can be `purrr::map(x, quantile, 0.75, na.rm = TRUE)`. Naming `probs = 0.75` can further improve readability.
 * `redundant_equals_linter()` for redundant comparisons to `TRUE` or `FALSE` like `is_treatment == TRUE` (#1500, @MichaelChirico)
 * `lengths_linter()` for encouraging usage of `lengths(x)` instead of `sapply(x, length)` (and similar)
 
@@ -92,7 +95,9 @@
 * The minimum needed version for soft dependency `{withr}` has been bumped to `2.5.0`
   (#1404, @IndrajeetPatil).
 * Changed the deprecation warning for `with_defaults()` to also mention `modify_defaults()` (#1438, @AshesITR).
-
+* Quarto files (`.qmd`) were supported out of the box. The documentation and the 
+  testing infrastructure are updated to reflect this (#1486, @IndrajeetPatil).
+  
 # lintr 3.0.0
 
 ## Breaking changes

@@ -39,7 +39,7 @@
 #'     \item{`filename` (`character`)}
 #'     \item{`file_lines` (`character`) the [readLines()] output for this file}
 #'     \item{`content` (`character`) for .R files, the same as `file_lines`;
-#'           for .Rmd scripts, this is the extracted R source code (as text)}
+#'           for .Rmd or .qmd scripts, this is the extracted R source code (as text)}
 #'     \item{`full_parsed_content` (`data.frame`) as given by
 #'           [utils::getParseData()] for the full content}
 #'     \item{`full_xml_parsed_content` (`xml_document`) the XML parse tree of all
