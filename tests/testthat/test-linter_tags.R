@@ -1,7 +1,7 @@
 test_that("input validation for available_linters works as expected", {
-  expect_error(available_linters(1), "`packages` must be a character vector.")
-  expect_error(available_linters(tags = 1), "`tags` must be a character vector.")
-  expect_error(available_linters(exclude_tags = 1), "`exclude_tags` must be a character vector.")
+  expect_error(available_linters(1L), "`packages` must be a character vector.")
+  expect_error(available_linters(tags = 1L), "`tags` must be a character vector.")
+  expect_error(available_linters(exclude_tags = 1L), "`exclude_tags` must be a character vector.")
 })
 
 test_that("available_linters returns a data frame", {
