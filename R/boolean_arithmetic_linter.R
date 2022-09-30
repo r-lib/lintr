@@ -8,7 +8,7 @@
 #' @export
 boolean_arithmetic_linter <- function() {
   # TODO(#1580): sum() cases x %in% y, A [&|] B, !A, is.na/is.nan/is.finite/is.infinite/is.element
-  # TODO(michaelchirico): stringr equivalents to regex functions
+  # TODO(#1581): extend to include all()-alike expressions
   zero_expr <-
     "(EQ or NE or GT or LE) and expr[NUM_CONST[text() = '0' or text() = '0L']]"
   one_expr <-
@@ -42,18 +42,6 @@ boolean_arithmetic_linter <- function() {
     xml <- source_expression$xml_parsed_content
 
     any_expr <- xml2::xml_find_all(xml, any_xpath)
-
-    # TODO(michaelchirico): extend to include all()-alike expressions like
-    #   sum(x == y) == length(x) --> all(x == y). The issues are (1) we can't
-    #   just test for length() on the RHS (e.g. `sum(x == y) == length(z)` could
-    #   be totally different); (2) looking for sum(x == y) == length(x == y)
-    #   will only find a particularly silly manifestation of the issue; and
-    #   (3) there is a bit of a combinatorial explosion if we have to look for
-    #   _any_ symbol found inside the logical expression on the RHS
-    #   (e.g. sum(x == y) == [length(x) _or_ length(y)]).
-    # A first pass would be to check how many hits there are for the naive
-    #   version (i.e., condition 1), to see how worth investing in this
-    #   complicated logic is to begin with.
 
     xml_nodes_to_lints(
       any_expr,
