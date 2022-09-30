@@ -29,6 +29,7 @@ extraction_operator_linter,style best_practices
 fixed_regex_linter,best_practices readability efficiency
 function_argument_linter,style consistency best_practices
 function_left_parentheses_linter,style readability default
+function_return_linter,readability best_practices
 ifelse_censor_linter,best_practices efficiency
 implicit_integer_linter,style consistency best_practices
 infix_spaces_linter,style readability default
