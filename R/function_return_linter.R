@@ -1,13 +1,13 @@
-#' Block assignments inside function returns
+#' Lint common mistakes/style issues cropping up from return statements
 #'
 #' `return(x <- ...)` is either distracting (because `x` is ignored), or
 #'   confusing (because assigning to `x` has some side effect that is muddled
 #'   by the dual-purpose expression).
 #'
-#' @evalRd rd_tags("return_assignment_linter")
+#' @evalRd rd_tags("function_return_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-return_assignment_linter <- function() {
+function_return_linter <- function() {
   xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'return']
   /parent::expr/parent::expr/expr[LEFT_ASSIGN or RIGHT_ASSIGN]
