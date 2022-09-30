@@ -192,6 +192,32 @@ defaults_table <- data.frame(
 knitr::kable(defaults_table)
 ```
 
+#### Using all available linters
+
+The default lintr configuration includes only linters relevant to the tidyverse style guide, but there are many other linters available in `{lintr}`. You can see a list of all available linters using-
+
+```{r}
+names(lintr::linters_with_tags(tags = NULL))
+```
+
+If you want to use all available linters, you can include this in your `.lintr` file:
+
+```r
+linters: linters_with_defaults(
+    defaults = linters_with_tags(tags = NULL)
+  )
+```
+
+If you want to use all available linters *except* a few, you can exclude them using `NULL`:
+
+```r
+linters: linters_with_defaults(
+    commented_code_linter = NULL,
+    implicit_integer_linter = NULL,
+    defaults = linters_with_tags(tags = NULL)
+  )
+```
+
 #### Advanced: programmatic retrieval of linters
 
 For some use cases, it may be useful to specify linters by string instead of by name, i.e. `"assignment_linter"` instead of writing out `assignment_linter()`.
