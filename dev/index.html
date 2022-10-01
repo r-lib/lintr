@@ -114,6 +114,13 @@
 <span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="reference/use_lintr.html">use_lintr</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"tidyverse"</span><span class="op">)</span></span>
 <span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_github_action</span><span class="op">(</span><span class="st">"lint"</span><span class="op">)</span></span>
 <span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="reference/lint.html">lint_package</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>To see a list of linters included for each configuration:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># tidyverse (default)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="reference/linters_with_defaults.html">linters_with_defaults</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># full</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="reference/linters_with_tags.html">linters_with_tags</a></span><span class="op">(</span>tags <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>You can also run lintr during continuous integration or within your IDE or text editor. See <code><a href="articles/continuous-integration.html">vignette("continuous-integration")</a></code> and <code><a href="articles/editors.html">vignette("editors")</a></code> for more details.</p>
 <p>Without further configuration, this will run the <a href="https://lintr.r-lib.org/reference/default_linters.html">default linters</a>. See <code><a href="articles/lintr.html">vignette("lintr")</a></code> to learn how to modify these defaults.</p>
 </div>
@@ -162,9 +169,8 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/r-lib/lintr/actions" class="external-link"><img src="https://github.com/r-lib/lintr/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-<li><a href="https://codecov.io/github/r-lib/lintr?branch=master" class="external-link"><img src="https://codecov.io/github/r-lib/lintr/coverage.svg?branch=master" alt="codecov.io"></a></li>
+<li><a href="https://codecov.io/github/r-lib/lintr?branch=main" class="external-link"><img src="https://codecov.io/github/r-lib/lintr/coverage.svg?branch=main" alt="codecov.io"></a></li>
 <li><a href="https://cran.r-project.org/package=lintr" class="external-link"><img src="https://www.r-pkg.org/badges/version/lintr" alt="CRAN_Status_Badge"></a></li>
-<li><a href="https://gitter.im/jimhester-lintr/Lobby?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge" class="external-link"><img src="https://badges.gitter.im/jimhester-lintr/Lobby.svg" alt="Join the chat at https://gitter.im/jimhester-lintr/Lobby"></a></li>
 </ul>
 </div>
 

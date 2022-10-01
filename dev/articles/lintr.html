@@ -378,11 +378,69 @@
 </table>
 </div>
 <div class="section level4">
+<h4 id="using-all-available-linters">Using all available linters<a class="anchor" aria-label="anchor" href="#using-all-available-linters"></a>
+</h4>
+<p>The default lintr configuration includes only linters relevant to the tidyverse style guide, but there are many other linters available in <a href="https://github.com/r-lib/lintr" class="external-link">lintr</a>. You can see a list of all available linters using</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="../reference/linters_with_tags.html">linters_with_tags</a></span><span class="op">(</span>tags <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "absolute_path_linter"             "any_duplicated_linter"           </span></span>
+<span><span class="co">#&gt;  [3] "any_is_na_linter"                 "assignment_linter"               </span></span>
+<span><span class="co">#&gt;  [5] "backport_linter"                  "brace_linter"                    </span></span>
+<span><span class="co">#&gt;  [7] "class_equals_linter"              "commas_linter"                   </span></span>
+<span><span class="co">#&gt;  [9] "commented_code_linter"            "condition_message_linter"        </span></span>
+<span><span class="co">#&gt; [11] "conjunct_test_linter"             "consecutive_stopifnot_linter"    </span></span>
+<span><span class="co">#&gt; [13] "cyclocomp_linter"                 "duplicate_argument_linter"       </span></span>
+<span><span class="co">#&gt; [15] "equals_na_linter"                 "expect_comparison_linter"        </span></span>
+<span><span class="co">#&gt; [17] "expect_identical_linter"          "expect_length_linter"            </span></span>
+<span><span class="co">#&gt; [19] "expect_named_linter"              "expect_not_linter"               </span></span>
+<span><span class="co">#&gt; [21] "expect_null_linter"               "expect_s3_class_linter"          </span></span>
+<span><span class="co">#&gt; [23] "expect_s4_class_linter"           "expect_true_false_linter"        </span></span>
+<span><span class="co">#&gt; [25] "expect_type_linter"               "extraction_operator_linter"      </span></span>
+<span><span class="co">#&gt; [27] "fixed_regex_linter"               "function_argument_linter"        </span></span>
+<span><span class="co">#&gt; [29] "function_left_parentheses_linter" "function_return_linter"          </span></span>
+<span><span class="co">#&gt; [31] "ifelse_censor_linter"             "implicit_integer_linter"         </span></span>
+<span><span class="co">#&gt; [33] "infix_spaces_linter"              "inner_combine_linter"            </span></span>
+<span><span class="co">#&gt; [35] "lengths_linter"                   "line_length_linter"              </span></span>
+<span><span class="co">#&gt; [37] "literal_coercion_linter"          "missing_argument_linter"         </span></span>
+<span><span class="co">#&gt; [39] "missing_package_linter"           "namespace_linter"                </span></span>
+<span><span class="co">#&gt; [41] "nested_ifelse_linter"             "no_tab_linter"                   </span></span>
+<span><span class="co">#&gt; [43] "nonportable_path_linter"          "numeric_leading_zero_linter"     </span></span>
+<span><span class="co">#&gt; [45] "object_length_linter"             "object_name_linter"              </span></span>
+<span><span class="co">#&gt; [47] "object_usage_linter"              "outer_negation_linter"           </span></span>
+<span><span class="co">#&gt; [49] "package_hooks_linter"             "paren_body_linter"               </span></span>
+<span><span class="co">#&gt; [51] "paste_linter"                     "pipe_call_linter"                </span></span>
+<span><span class="co">#&gt; [53] "pipe_continuation_linter"         "redundant_equals_linter"         </span></span>
+<span><span class="co">#&gt; [55] "redundant_ifelse_linter"          "regex_subset_linter"             </span></span>
+<span><span class="co">#&gt; [57] "semicolon_linter"                 "seq_linter"                      </span></span>
+<span><span class="co">#&gt; [59] "single_quotes_linter"             "spaces_inside_linter"            </span></span>
+<span><span class="co">#&gt; [61] "spaces_left_parentheses_linter"   "sprintf_linter"                  </span></span>
+<span><span class="co">#&gt; [63] "string_boundary_linter"           "strings_as_factors_linter"       </span></span>
+<span><span class="co">#&gt; [65] "system_file_linter"               "T_and_F_symbol_linter"           </span></span>
+<span><span class="co">#&gt; [67] "todo_comment_linter"              "trailing_blank_lines_linter"     </span></span>
+<span><span class="co">#&gt; [69] "trailing_whitespace_linter"       "undesirable_function_linter"     </span></span>
+<span><span class="co">#&gt; [71] "undesirable_operator_linter"      "unnecessary_lambda_linter"       </span></span>
+<span><span class="co">#&gt; [73] "unneeded_concatenation_linter"    "unreachable_code_linter"         </span></span>
+<span><span class="co">#&gt; [75] "unused_import_linter"             "vector_logic_linter"             </span></span>
+<span><span class="co">#&gt; [77] "yoda_test_linter"</span></span></code></pre></div>
+<p>If you want to use all available linters, you can include this in your <code>.lintr</code> file:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">linters</span><span class="op">:</span> <span class="fu"><a href="../reference/linters_with_defaults.html">linters_with_defaults</a></span><span class="op">(</span></span>
+<span>    defaults <span class="op">=</span> <span class="fu"><a href="../reference/linters_with_tags.html">linters_with_tags</a></span><span class="op">(</span>tags <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<p>If you want to use all available linters <em>except</em> a few, you can exclude them using <code>NULL</code>:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">linters</span><span class="op">:</span> <span class="fu"><a href="../reference/linters_with_defaults.html">linters_with_defaults</a></span><span class="op">(</span></span>
+<span>    commented_code_linter <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    implicit_integer_linter <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    defaults <span class="op">=</span> <span class="fu"><a href="../reference/linters_with_tags.html">linters_with_tags</a></span><span class="op">(</span>tags <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level4">
 <h4 id="advanced-programmatic-retrieval-of-linters">Advanced: programmatic retrieval of linters<a class="anchor" aria-label="anchor" href="#advanced-programmatic-retrieval-of-linters"></a>
 </h4>
 <p>For some use cases, it may be useful to specify linters by string instead of by name, i.e. <code>"assignment_linter"</code> instead of writing out <code><a href="../reference/assignment_linter.html">assignment_linter()</a></code>.</p>
 <p>Beware that in such cases, a simple <code><a href="https://rdrr.io/r/base/get.html" class="external-link">get()</a></code> is not enough:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lib/lintr" class="external-link">lintr</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'lintr'</span></span>
@@ -406,15 +464,15 @@
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="../reference/lint.html">lint</a></span><span class="op">(</span><span class="va">tmp</span>, linters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/call.html" class="external-link">call</a></span><span class="op">(</span><span class="va">linter_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmphWNLMn/file33274851adcc           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmpmCSXvy/file33511c2a8014           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1    get</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmphWNLMn/file33274851adcc           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmpmCSXvy/file33511c2a8014           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmphWNLMn/file33274851adcc           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmpmCSXvy/file33511c2a8014           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span></code></pre></div>
 </div>
@@ -433,14 +491,14 @@
 <p>Within source files, special comments can be used to exclude single lines of code from linting. All lints produced on the marked line are excluded from the results.</p>
 <p>By default, this special comment is <code># nolint</code>:</p>
 <p><strong>file.R</strong></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">X</span> <span class="op">=</span> <span class="fl">42L</span> <span class="co"># -------------- this comment overflows the default 80 chars line length.</span></span></code></pre></div>
 <p><code>&gt; lint("file.R")</code></p>
 <pre><code><span><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[object_name_linter] Variable and function name style should be snake_case or symbols.</span></span>
 <span><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[assignment_linter] Use &lt;-, not =, for assignment.</span></span>
 <span><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=81::file=&lt;text&gt;,line=1,col=81,[line_length_linter] Lines should not be more than 80 characters.</span></span></code></pre>
 <p><strong>file2.R</strong></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">X</span> <span class="op">=</span> <span class="fl">42L</span> <span class="co"># nolint ------ this comment overflows the default 80 chars line length.</span></span></code></pre></div>
 <p><code>&gt; lint("file2.R")</code></p>
 <p>Observe how all lints were suppressed and no output is shown. Sometimes, only a specific linter needs to be excluded. In this case, the <em>name</em> of the linter can be appended to the <code># nolint</code> comment preceded by a colon and terminated by a dot.</p>
@@ -449,7 +507,7 @@
 <h3 id="excluding-only-some-linters">Excluding only some linters<a class="anchor" aria-label="anchor" href="#excluding-only-some-linters"></a>
 </h3>
 <p><strong>file3.R</strong></p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">X</span> <span class="op">=</span> <span class="fl">42L</span> <span class="co"># nolint: object_name_linter. this comment overflows the default 80 chars line length.</span></span></code></pre></div>
 <p><code>&gt; lint("file3.R")</code></p>
 <pre><code><span><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[assignment_linter] Use &lt;-, not =, for assignment.</span></span>
@@ -457,13 +515,13 @@
 <p>Observe how only the <code>object_name_linter</code> was suppressed. This is preferable to blanket <code># nolint</code> statements because blanket exclusions may accidentally silence a linter that was not intentionally suppressed.</p>
 <p>Multiple linters can be specified by listing them with a comma as a separator:</p>
 <p><strong>file4.R</strong></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">X</span> <span class="op">=</span> <span class="fl">42L</span> <span class="co"># nolint: object_name_linter, line_length_linter. this comment overflows the default 80 chars line length.</span></span></code></pre></div>
 <p><code>&gt; lint("file4.R")</code></p>
 <pre><code><span><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[assignment_linter] Use &lt;-, not =, for assignment.</span></span></code></pre>
 <p>You can also specify the linter names by a unique prefix instead of their full name:</p>
 <p><strong>file5.R</strong></p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">X</span> <span class="op">=</span> <span class="fl">42L</span> <span class="co"># nolint: object_name, line_len. this comment still overflows the default 80 chars line length.</span></span></code></pre></div>
 <p><code>&gt; lint("file5.R")</code></p>
 <pre><code><span><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[assignment_linter] Use &lt;-, not =, for assignment.</span></span></code></pre>
@@ -473,12 +531,12 @@
 </h3>
 <p>If any or all linters should be disabled for a contiguous block of code, the <code>exclude_start</code> and <code>exclude_end</code> patterns can be used. They default to <code># nolint start</code> and <code># nolint end</code> respectively.</p>
 <p><code># nolint start</code> accepts the same syntax as <code># nolint</code> to disable specific linters in the following lines until a <code># nolint end</code> is encountered.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># x &lt;- 42L</span></span>
 <span><span class="co"># print(x)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[commented_code_linter] Commented code should be removed.</span></span>
 <span><span class="co">#&gt; ::warning file=&lt;text&gt;,line=2,col=3::file=&lt;text&gt;,line=2,col=3,[commented_code_linter] Commented code should be removed.</span></span></code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># nolint start: commented_code_linter.</span></span>
 <span><span class="co"># x &lt;- 42L</span></span>
 <span><span class="co"># print(x)</span></span>
@@ -489,7 +547,7 @@
 <h3 id="excluding-lines-via-the-config-file">Excluding lines via the config file<a class="anchor" aria-label="anchor" href="#excluding-lines-via-the-config-file"></a>
 </h3>
 <p>Individual lines can also be excluded via the config file by setting the key <code>exclusions</code> to a list with elements corresponding to different files. To exclude all lints for line 1 of file <code>R/bad.R</code> and <code>line_length_linter</code> for lines 4 to 6 of the same file, one can set</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exclusions</span><span class="op">:</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="st">"R/bad.R"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>      <span class="fl">1</span>, <span class="co"># global exclusions are unnamed</span></span>
@@ -502,7 +560,7 @@
 <h3 id="excluding-files-completely">Excluding files completely<a class="anchor" aria-label="anchor" href="#excluding-files-completely"></a>
 </h3>
 <p>The linter configuration can also be used to exclude a file entirely, or a linter for a file entirely. Use the sentinel line number <code>Inf</code> to mark all lines as excluded within a file. If a file is only given as a character vector, full exclusion is implied.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exclusions</span><span class="op">:</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="co"># excluded from all lints:</span></span>
 <span>    <span class="st">"R/excluded1.R"</span>,</span>
@@ -518,7 +576,7 @@
 <h3 id="excluding-directories-completely">Excluding directories completely<a class="anchor" aria-label="anchor" href="#excluding-directories-completely"></a>
 </h3>
 <p>Entire directories are also recognized when supplied as strings in the <code>exclusions</code> key. For example, to exclude the <code>renv</code> folder from linting in a R project using <code>renv</code>, set</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exclusions</span><span class="op">:</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="st">"renv"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
