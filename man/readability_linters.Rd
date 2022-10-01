@@ -25,8 +25,10 @@ The following linters are tagged with 'readability':
 \item{\code{\link{expect_true_false_linter}}}
 \item{\code{\link{fixed_regex_linter}}}
 \item{\code{\link{function_left_parentheses_linter}}}
+\item{\code{\link{function_return_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{inner_combine_linter}}}
+\item{\code{\link{lengths_linter}}}
 \item{\code{\link{line_length_linter}}}
 \item{\code{\link{nested_ifelse_linter}}}
 \item{\code{\link{numeric_leading_zero_linter}}}

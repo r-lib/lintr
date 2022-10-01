@@ -32,7 +32,10 @@
 #' expect_lint("a\n\n", list("superfluous", "superfluous"), trailing_blank_lines_linter)
 #' expect_lint(
 #'   "a\n\n",
-#'   list(list(message = "superfluous", line_number = 2), list(message = "superfluous", line_number = 3)),
+#'   list(
+#'     list(message = "superfluous", line_number = 2),
+#'     list(message = "superfluous", line_number = 3)
+#'   ),
 #'   trailing_blank_lines_linter()
 #' )
 #' @export
