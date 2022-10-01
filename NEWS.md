@@ -28,6 +28,7 @@
   `lapply(x, function(xi) sum(xi))` can be `lapply(x, sum)` and `purrr::map(x, ~quantile(.x, 0.75, na.rm = TRUE))`
   can be `purrr::map(x, quantile, 0.75, na.rm = TRUE)`. Naming `probs = 0.75` can further improve readability.
 * `redundant_equals_linter()` for redundant comparisons to `TRUE` or `FALSE` like `is_treatment == TRUE` (#1500, @MichaelChirico)
+* `lengths_linter()` for encouraging usage of `lengths(x)` instead of `sapply(x, length)` (and similar)
 
 * `function_return_linter()` for handling issues in function `return()` statements. Currently handles assignments within the `return()`
   clause, e.g. `return(x <- foo())` (@MichaelChirico)
