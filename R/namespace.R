@@ -16,29 +16,32 @@ namespace_imports <- function(path = find_package()) {
 #' `getNamespaceImports()` makes sure that `except` directives are respected.
 #'
 #' @examples
-#' extract_namespace_df()
-#' extract_namespace_df("base")
-#' extract_namespace_df("dplyr")
+#' lintr:::extract_namespace_df()
+#' lintr:::extract_namespace_df("base")
+#' lintr:::extract_namespace_df("rex")
 #'
 #' @keywords internal
 #' @noRd
 extract_namespace_imports_df <- function(pkg = NULL) {
   if (!is.null(pkg)) {
-    ns <- tryCatch(
+    ns_imports <- tryCatch(
       getNamespaceImports(pkg),
       error = function(e) NULL # if an imported namespace is unavailable
     )
   }
 
-  if (is.null(pkg) || length(ns) == 0L) {
+  if (is.null(pkg) || length(ns_imports) == 0L) {
     return(empty_namespace_data())
   }
 
-  ns[["base"]] <- NULL
-
+  ns_imports[["base"]] <- NULL
+  pkg_names <- names(ns_imports)
   df <- do.call(
     rbind,
-    c(mapply(named_list_to_df, ns, names(ns), SIMPLIFY = FALSE), stringsAsFactors = FALSE)
+    c(
+      mapply(ns_imports_list_to_df, ns_imports, pkg_names, SIMPLIFY = FALSE),
+      stringsAsFactors = FALSE
+    )
   )
 
   rownames(df) <- NULL
@@ -50,14 +53,16 @@ extract_namespace_imports_df <- function(pkg = NULL) {
 
 #' @keywords internal
 #' @noRd
-named_list_to_df <- function(x, name) {
-  x <- unname(x)
-  df <- as.data.frame(x, make.names = FALSE, stringsAsFactors = FALSE)
+ns_imports_list_to_df <- function(ns_imports, pkg_name) {
+  ns_imports <- unname(ns_imports)
+  df <- as.data.frame(ns_imports, make.names = FALSE, stringsAsFactors = FALSE)
   if (length(df) > 1L) {
+    # for directives like: #' @importFrom xml2 xml_find_all as_list
     colnames(df) <- c("pkg", "fun")
   } else {
+    # for directives like: #' @import rex
     colnames(df) <- "fun"
-    df <- transform(df, pkg = name)
+    df <- transform(df, pkg = pkg_name)
   }
 
   df
