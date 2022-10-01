@@ -60,7 +60,9 @@ test_that("expect_lint_free works", {
   )
   withr::local_envvar(c(NOT_CRAN = "true", R_COVR = "false"))
 
-  # expect_lint_free(test_path("dummy_packages", "clean"))
-  # expect_lint_free(test_path("dummy_packages", "clean_subdir", "r"))
+  #' expect_lint_free(test_path("dummy_packages", "clean"))
+  #' expect_lint_free(test_path("dummy_packages", "clean_subdir", "r"))
   expect_failure(expect_lint_free(test_path("dummy_packages", "package")))
 })
+
+lintr::lint(text = "#' c()", linters =  commented_code_linter())
