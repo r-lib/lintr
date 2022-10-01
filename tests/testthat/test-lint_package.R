@@ -134,3 +134,13 @@ test_that("lint_package returns early if no package is found", {
     fixed = TRUE
   )
 })
+
+test_that("lint_package gives helpful failure when package has syntax issues", {
+  pkg_path <- test_path("dummy_packages", "err_pkg")  
+  withr::local_options(lintr.linter_file = "lintr_test_config")
+
+  expect_error(
+    lint_package(pkg_path, linters = list(object_usage_linter(), assignment_linter())),
+    "Linter object_usage_linter\\(\\) failed in.*glue_error.R: Expecting '}'"
+  )
+})
