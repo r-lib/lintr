@@ -276,7 +276,7 @@ testing. You can run all of the currently available tests using
 `filter` argument to `devtools::test()`.
 
 Linter tests should be put in the
-[tests/testthat/](https://github.com/r-lib/lintr/tree/master/tests/testthat)
+[tests/testthat/](https://github.com/r-lib/lintr/tree/main/tests/testthat)
 folder.  The test filename should be the linter name prefixed by `test-`, e.g.
 `test-pipe_continuation_linter.R`.
 

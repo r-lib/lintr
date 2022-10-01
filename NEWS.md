@@ -12,15 +12,15 @@
 * `object_usage_linter()` gains `skip_with` argument to skip code in `with()` expressions.
   To be consistent with `R CMD check`, it defaults to `TRUE` (#941, #1458, @IndrajeetPatil).
 
-* `unused_import_linter()` can detect datasets from imported packages and no longer
-  warns when a package is imported only for its datasets (#1545, @IndrajeetPatil).
-
 ## New and improved features
 
 * New `get_r_string()` helper to get the R-equivalent value of a string, especially useful for R-4-style raw strings.
   Previously an internal `lintr` helper, now exported to facilitate writing custom linters (#1493, @MichaelChirico).
 
 * `object_usage_linter()` improves lint metadata when detecting undefined infix operators, e.g. `%>%` or `:=` (#1497, @MichaelChirico)
+
+* `unused_import_linter()` can detect datasets from imported packages and no longer
+  warns when a package is imported only for its datasets (#1545, @IndrajeetPatil).
 
 ### New linters
 
