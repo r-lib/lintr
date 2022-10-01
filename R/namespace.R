@@ -60,7 +60,7 @@ ns_imports_list_to_df <- function(ns_imports, pkg_name) {
     # for directives like: #' @importFrom xml2 xml_find_all as_list
     colnames(df) <- c("pkg", "fun")
   } else {
-    # for directives like: #' @import rex
+    # for directives like: #' @import xml2
     colnames(df) <- "fun"
     df <- transform(df, pkg = pkg_name)
   }
