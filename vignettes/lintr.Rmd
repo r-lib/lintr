@@ -194,7 +194,7 @@ knitr::kable(defaults_table)
 
 #### Using all available linters
 
-The default lintr configuration includes only linters relevant to the tidyverse style guide, but there are many other linters available in `{lintr}`. You can see a list of all available linters using-
+The default lintr configuration includes only linters relevant to the tidyverse style guide, but there are many other linters available in `{lintr}`. You can see a list of all available linters using
 
 ```{r}
 names(lintr::linters_with_tags(tags = NULL))
