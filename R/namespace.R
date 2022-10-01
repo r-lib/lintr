@@ -1,15 +1,54 @@
-# Parse namespace files and return imports exports, methods
+#' Extract `NAMESPACE` imports data frame from package path
+#'
+#' @keywords internal
+#' @noRd
 namespace_imports <- function(path = find_package()) {
-  namespace_data <- tryCatch(
-    parseNamespaceFile(basename(path), package.lib = file.path(path, "..")),
+  pkg <- tryCatch(
+    basename(path),
     error = function(e) NULL
   )
 
-  if (length(namespace_data$imports) == 0L) {
+  extract_namespace_imports_df(pkg)
+}
+
+#' Extract `NAMESPACE` imports into a data frame
+#'
+#' `getNamespaceImports()` makes sure that `except` directives are respected.
+#'
+#' @examples
+#' extract_namespace_df()
+#' extract_namespace_df("base")
+#' extract_namespace_df("dplyr")
+#'
+#' @keywords internal
+#' @noRd
+extract_namespace_imports_df <- function(pkg = NULL) {
+  if (!is.null(pkg)) {
+    ns <- tryCatch(
+      getNamespaceImports(pkg),
+      error = function(e) NULL # if an imported namespace is unavailable
+    )
+  }
+
+  if (is.null(pkg) || length(ns) == 0L) {
     return(empty_namespace_data())
   }
 
-  do.call(rbind, lapply(namespace_data$imports, safe_get_exports))
+  ns[["base"]] <- NULL
+  x <- lapply(ns, named_list_to_df)
+  df <- do.call(rbind.data.frame, c(x, stringsAsFactors = FALSE))
+  df$pkg <- rownames(df)
+  rownames(df) <- NULL
+  transform(df, pkg = gsub(".[[:digit:]]+", "", pkg))
+}
+
+#' @keywords internal
+#' @noRd
+named_list_to_df <- function(x) {
+  x <- unname(x)
+  x <- as.data.frame(x, make.names = FALSE, stringsAsFactors = FALSE)
+  colnames(x) <- "fun"
+  x
 }
 
 # this loads the namespaces, but is the easiest way to do it
