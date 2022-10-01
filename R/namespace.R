@@ -35,20 +35,32 @@ extract_namespace_imports_df <- function(pkg = NULL) {
   }
 
   ns[["base"]] <- NULL
-  x <- lapply(ns, named_list_to_df)
-  df <- do.call(rbind.data.frame, c(x, stringsAsFactors = FALSE))
-  df$pkg <- rownames(df)
+
+  df <- do.call(
+    rbind,
+    c(mapply(named_list_to_df, ns, names(ns), SIMPLIFY = FALSE), stringsAsFactors = FALSE)
+  )
+
   rownames(df) <- NULL
-  transform(df, pkg = gsub(".[[:digit:]]+", "", pkg))
+  df <- subset(df, pkg != "", fun != "")
+  df <- df[!duplicated(df), ]
+
+  df
 }
 
 #' @keywords internal
 #' @noRd
-named_list_to_df <- function(x) {
+named_list_to_df <- function(x, name) {
   x <- unname(x)
-  x <- as.data.frame(x, make.names = FALSE, stringsAsFactors = FALSE)
-  colnames(x) <- "fun"
-  x
+  df <- as.data.frame(x, make.names = FALSE, stringsAsFactors = FALSE)
+  if (length(df) > 1L) {
+    colnames(df) <- c("pkg", "fun")
+  } else {
+    colnames(df) <- "fun"
+    df <- transform(df, pkg = name)
+  }
+
+  df
 }
 
 # this loads the namespaces, but is the easiest way to do it
