@@ -21,6 +21,9 @@
 
 * `unused_import_linter()` can detect datasets from imported packages and no longer
   warns when a package is imported only for its datasets (#1545, @IndrajeetPatil).
+  
+* `object_name_linter()` uses improved logic to detect namespace imports, and can now
+  respect import exception directives (#1397, @IndrajeetPatil).
 
 ### New linters
 
