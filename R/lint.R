@@ -85,7 +85,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   if (!is_tainted(source_expressions$lines)) {
     for (expr in source_expressions$expressions) {
       for (linter in names(linters)) {
-        lints[[length(lints) + 1L]] <- tryCatch(
+        lints[[length(lints) + 1L]] <- withCallingHandlers(
           get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
           error = function(cond) {
             stop("Linter ", linter, "() failed in ", filename, ": ", conditionMessage(cond), call. = FALSE)
