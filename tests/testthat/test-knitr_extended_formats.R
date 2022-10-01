@@ -9,7 +9,7 @@ test_that("marginfigure engine from tufte package doesn't cause problems", {
 
 test_that("engines from bookdown package cause no problems", {
   skip_if_not_installed("bookdown")
-  library(bookdown) # to register additional engines
+  loadNamespace("bookdown") # to register additional engines
 
   expect_lint(
     file = "knitr_extended_formats/bookdown.Rmd",
