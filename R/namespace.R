@@ -42,10 +42,10 @@ extract_namespace_imports_df <- function(pkg = NULL) {
   )
 
   rownames(df) <- NULL
-  df <- subset(df, pkg != "", fun != "")
+  df <- subset(df, pkg != "", fun != "") # nolint: object_usage_linter
   df <- df[!duplicated(df), ]
 
-  df
+  df[c("pkg", "fun")]
 }
 
 #' @keywords internal
