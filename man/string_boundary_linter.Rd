@@ -8,8 +8,8 @@ string_boundary_linter(allow_grepl = FALSE)
 }
 \arguments{
 \item{allow_grepl}{Logical, default \code{FALSE}. If \code{TRUE}, usages with \code{grepl()}
-are ignored. Some authors may prefer the \code{NA} input to \code{FALSE} output
-conciseness offered by \code{grepl()}, which doesn't have a direct equivalent
+are ignored. Some authors may prefer the conciseness offered by \code{grepl()} whereby
+\code{NA} input maps to \code{FALSE} output, which doesn't have a direct equivalent
 with \code{startsWith()} or \code{endsWith()}.}
 }
 \description{
