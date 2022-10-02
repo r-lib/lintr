@@ -3,7 +3,7 @@
 #' `length(which(x == y)) == 0` is the same as `!any(x == y)`, but the latter
 #'   is more readable and more efficient.
 #'
-#' #' @evalRd rd_tags("boolean_arithmetic_linter")
+#' @evalRd rd_tags("boolean_arithmetic_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 boolean_arithmetic_linter <- function() {
