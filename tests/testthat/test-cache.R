@@ -60,8 +60,7 @@ test_that("load_cache loads the saved file in a new empty environment", {
   save_cache(cache = e1, file = f1, path = d1)
   e2 <- load_cache(file = f1, path = d1)
 
-  # TODO(michaelchirico): use plain expect_equal after waldo#133 makes it into a CRAN release
-  expect_equal(as.list(e2, all.names = TRUE), as.list(e1, all.names = TRUE))
+  expect_equal(e2, e1)
 })
 
 test_that("load_cache returns an empty environment if no cache file exists", {
@@ -73,8 +72,7 @@ test_that("load_cache returns an empty environment if no cache file exists", {
   save_cache(cache = e1, file = f1, path = d1)
   e2 <- load_cache(file = f2, path = d1)
 
-  # TODO(michaelchirico): use plain expect_equal after waldo#133 makes it into a CRAN release
-  expect_equal(as.list(e2, all.names = TRUE), as.list(e1, all.names = TRUE))
+  expect_equal(e2, e1)
 })
 
 test_that("load_cache returns an empty environment if reading cache file fails", {
@@ -141,8 +139,7 @@ test_that("save_cache saves all non-hidden objects from the environment", {
   e2 <- new.env(parent = emptyenv())
   load(file = file.path(d1, fhash(f1)), envir = e2)
 
-  # TODO(michaelchirico): use plain expect_equal after waldo#133 makes it into a CRAN release
-  expect_equal(as.list(e1, all.names = TRUE), as.list(e2, all.names = TRUE))
+  expect_equal(e2, e1)
 })
 
 # `cache_file`

@@ -32,12 +32,15 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{extraction_operator_linter}}}
 \item{\code{\link{fixed_regex_linter}}}
 \item{\code{\link{function_argument_linter}}}
+\item{\code{\link{function_return_linter}}}
 \item{\code{\link{ifelse_censor_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
+\item{\code{\link{lengths_linter}}}
 \item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
 \item{\code{\link{outer_negation_linter}}}
 \item{\code{\link{paste_linter}}}
+\item{\code{\link{redundant_equals_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{regex_subset_linter}}}
 \item{\code{\link{seq_linter}}}
@@ -45,6 +48,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
+\item{\code{\link{unnecessary_lambda_linter}}}
 \item{\code{\link{unreachable_code_linter}}}
 \item{\code{\link{unused_import_linter}}}
 \item{\code{\link{vector_logic_linter}}}

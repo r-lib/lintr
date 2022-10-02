@@ -6,7 +6,6 @@
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
 #'   <https://style.tidyverse.org/pipes.html#long-lines-2>
-#' @importFrom xml2 xml_find_all as_list
 #' @export
 pipe_continuation_linter <- function() {
   # For pipelines, either the whole expression should fit on a single line, or,

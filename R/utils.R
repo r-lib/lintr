@@ -24,7 +24,6 @@ flatten_lints <- function(x) {
 # any function using unlist or c was dropping the classnames,
 # so need to brute force copy the objects
 flatten_list <- function(x, class) {
-
   res <- list()
   itr <- 1L
   assign_item <- function(x) {
@@ -37,7 +36,6 @@ flatten_list <- function(x, class) {
   }
   assign_item(x)
   res
-
 }
 
 fix_names <- function(x, default) {
@@ -67,7 +65,9 @@ linter_auto_name <- function(which = -3L) {
 auto_names <- function(x) {
   nms <- names2(x)
   missing <- nms == ""
-  if (!any(missing)) return(nms)
+  if (!any(missing)) {
+    return(nms)
+  }
 
   default_name <- function(x) {
     if (is_linter(x)) {
@@ -183,15 +183,15 @@ Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name.
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
   terminal_newline <- TRUE
-  lines <- withCallingHandlers({
-    readLines(file, warn = TRUE, ...)
-  },
-  warning = function(w) {
-    if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
-      terminal_newline <<- FALSE
-      invokeRestart("muffleWarning")
+  lines <- withCallingHandlers(
+    readLines(file, warn = TRUE, ...),
+    warning = function(w) {
+      if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
+        terminal_newline <<- FALSE
+        invokeRestart("muffleWarning")
+      }
     }
-  })
+  )
   lines_conv <- iconv(lines, from = encoding, to = "UTF-8")
   lines[!is.na(lines_conv)] <- lines_conv[!is.na(lines_conv)]
   Encoding(lines) <- "UTF-8"
@@ -210,9 +210,21 @@ release_bullets <- function() {
 platform_independent_order <- function(x) order(tolower(gsub("_", "0", x, fixed = TRUE)))
 platform_independent_sort <- function(x) x[platform_independent_order(x)]
 
-# convert STR_CONST text() values into R strings. mainly to account for arbitrary
-#   character literals valid since R 4.0, e.g. R"------[ hello ]------".
-# NB: this is also properly vectorized.
+#' Extract text from `STR_CONST` nodes
+#'
+#' Convert `STR_CONST` `text()` values into R strings. This is useful to account for arbitrary
+#'  character literals valid since R 4.0, e.g. `R"------[hello]------"`, which is parsed in
+#'  R as `"hello"`. It is quite cumbersome to write XPaths allowing for strings like this,
+#'  so whenever your linter logic requires testing a `STR_CONST` node's value, use this
+#'  function.
+#' NB: this is also properly vectorized on `s`, and accepts a variety of inputs. Empty inputs
+#'  will become `NA` outputs, which helps ensure that `length(get_r_string(s)) == length(s)`.
+#'
+#' @param s An input string or strings. If `s` is an `xml_node` or `xml_nodeset` and `xpath` is `NULL`,
+#'   extract its string value with [xml2::xml_text()]. If `s` is an `xml_node` or `xml_nodeset`
+#'   and `xpath` is specified, it is extracted with [xml2::xml_find_chr()].
+#' @param xpath An XPath, passed on to [xml2::xml_find_chr()] after wrapping with `string()`.
+#' @export
 get_r_string <- function(s, xpath = NULL) {
   if (inherits(s, c("xml_node", "xml_nodeset"))) {
     if (is.null(xpath)) {

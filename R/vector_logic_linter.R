@@ -25,7 +25,6 @@
 #'   <https://style.tidyverse.org/syntax.html#if-statements>
 #' @export
 vector_logic_linter <- function() {
-
   # ensures the expr is in the cond part of `if/while (cond) expr` --
   #   if on the XML parse tree is structured like
   #   <expr>
