@@ -4,6 +4,31 @@
 #'   for simple objects, and is at worst equally efficient.
 #'   Therefore, it should be used in all situations instead of the latter.
 #'
+#' @examples
+#' library(lintr)
+#'
+#' # will produce lints
+#' lint(
+#'   text = "any(is.na(x), na.rm = TRUE)",
+#'   linters = any_is_na_linter()
+#' )
+#'
+#' lint(
+#'   text = "any(is.na(foo(x)))",
+#'   linters = any_is_na_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "anyNA(x)",
+#'   linters = any_is_na_linter()
+#' )
+#'
+#' lint(
+#'   text = "anyNA(foo(x))",
+#'   linters = any_is_na_linter()
+#' )
+#'
 #' @evalRd rd_tags("any_is_na_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
