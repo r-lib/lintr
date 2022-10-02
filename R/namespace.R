@@ -16,9 +16,9 @@ namespace_imports <- function(path = find_package()) {
 #' `getNamespaceImports()` makes sure that `except` directives are respected.
 #'
 #' @examples
-#' lintr:::extract_namespace_df()
-#' lintr:::extract_namespace_df("base")
-#' lintr:::extract_namespace_df("rex")
+#' lintr:::extract_namespace_imports_df()
+#' lintr:::extract_namespace_imports_df("base")
+#' lintr:::extract_namespace_imports_df("rex")
 #'
 #' @keywords internal
 #' @noRd
@@ -45,6 +45,8 @@ extract_namespace_imports_df <- function(pkg = NULL) {
   )
 
   rownames(df) <- NULL
+  df[["pkg"]] <- as.character(df[["pkg"]])
+  df[["fun"]] <- as.character(df[["fun"]])
   df <- subset(df, pkg != "", fun != "") # nolint: object_usage_linter
   df <- df[!duplicated(df), ]
 
