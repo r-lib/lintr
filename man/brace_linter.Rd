@@ -23,6 +23,37 @@ does.
 \item Functions spanning multiple lines use curly braces.
 }
 }
+\examples{
+library(lintr)
+
+# will produce lints
+lint(
+  text = "f <- function() { 1 }",
+  linters = brace_linter()
+)
+
+lint(
+  text = "if (TRUE) {
+          return(1) }",
+  linters = brace_linter()
+)
+
+# okay
+lint(
+  text = "f <- function() {
+                 1
+               }",
+  linters = brace_linter()
+)
+
+lint(
+  text = "if (TRUE) {
+            return(1)
+          }",
+  linters = brace_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr
 \url{https://style.tidyverse.org/syntax.html#indenting} \cr

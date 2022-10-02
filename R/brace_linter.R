@@ -12,6 +12,36 @@
 #'
 #' @param allow_single_line if `TRUE`, allow an open and closed curly pair on the same line.
 #'
+#' @examples
+#' library(lintr)
+#'
+#' # will produce lints
+#' lint(
+#'   text = "f <- function() { 1 }",
+#'   linters = brace_linter()
+#' )
+#'
+#' lint(
+#'   text = "if (TRUE) {
+#'           return(1) }",
+#'   linters = brace_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "f <- function() {
+#'                  1
+#'                }",
+#'   linters = brace_linter()
+#' )
+#'
+#' lint(
+#'   text = "if (TRUE) {
+#'             return(1)
+#'           }",
+#'   linters = brace_linter()
+#' )
+#'
 #' @evalRd rd_tags("brace_linter")
 #' @seealso [linters] for a complete list of linters available in lintr. \cr
 #'   <https://style.tidyverse.org/syntax.html#indenting> \cr
