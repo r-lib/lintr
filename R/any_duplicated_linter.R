@@ -7,6 +7,31 @@
 #' Also match usage like `length(unique(x$col)) == nrow(x)`, which can
 #'   be replaced by `anyDuplicated(x$col) == 0L`.
 #'
+#' @examples
+#' library(lintr)
+#'
+#' # will produce lints
+#' lint(
+#'   text = "any(duplicated(x), na.rm = TRUE)",
+#'   linters = any_duplicated_linter()
+#' )
+#'
+#' lint(
+#'   text = "length(unique(x)) == length(x)",
+#'   linters = any_duplicated_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "anyDuplicated(x)",
+#'   linters = any_duplicated_linter()
+#' )
+#'
+#' lint(
+#'   text = "anyDuplicated(x) == 0L",
+#'   linters = any_duplicated_linter()
+#' )
+#'
 #' @evalRd rd_tags("any_duplicated_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
