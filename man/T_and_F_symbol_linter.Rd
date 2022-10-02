@@ -12,7 +12,7 @@ Avoid the symbols \code{T} and \code{F}, and use \code{TRUE} and \code{FALSE} in
 \examples{
 library(lintr)
 
-# will produce a lint
+# will produce lints
 lint(
   text = "x <- T; y <- F",
   linters = T_and_F_symbol_linter()
@@ -23,7 +23,7 @@ lint(
   linters = T_and_F_symbol_linter()
 )
 
-# recommended
+# okay
 lint(
   text = "x <- c(TRUE, FALSE)",
   linters = T_and_F_symbol_linter()

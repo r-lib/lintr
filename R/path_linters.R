@@ -169,17 +169,18 @@ path_linter_factory <- function(path_function, message, linter, name = linter_au
 #'
 #' # Following examples use raw character constant syntax introduced in R 4.0.
 #'
-#' # will produce a lint
+#' # will produce lints
 #' lint(
 #'   text = "R'--[/blah/file.txt]--'",
 #'   linters = absolute_path_linter()
 #' )
 #'
-#' # recommended
+#' # okay
 #' lint(
 #'   text = "R'(./blah)'",
 #'   linters = absolute_path_linter()
 #' )
+#'
 #' @evalRd rd_tags("absolute_path_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

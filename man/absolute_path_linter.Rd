@@ -23,13 +23,13 @@ library(lintr)
 
 # Following examples use raw character constant syntax introduced in R 4.0.
 
-# will produce a lint
+# will produce lints
 lint(
   text = "R'--[/blah/file.txt]--'",
   linters = absolute_path_linter()
 )
 
-# recommended
+# okay
 lint(
   text = "R'(./blah)'",
   linters = absolute_path_linter()
