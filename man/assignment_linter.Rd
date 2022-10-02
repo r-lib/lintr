@@ -21,6 +21,32 @@ If \code{FALSE}, \code{\link[base:assignOps]{<<-}} and \verb{->>} are not allowe
 \description{
 Check that \verb{<-} is always used for assignment.
 }
+\examples{
+library(lintr)
+
+# will produce lints
+lint(
+  text = "x = mean(x)",
+  linters = assignment_linter()
+)
+
+lint(
+  text = "1 -> x; 2 ->> y",
+  linters = assignment_linter()
+)
+
+# okay
+lint(
+  text = "x <- mean(x)",
+  linters = assignment_linter()
+)
+
+lint(
+  text = "x <- 1; y <<- 2",
+  linters = assignment_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr
 \url{https://style.tidyverse.org/syntax.html#assignment-1}
