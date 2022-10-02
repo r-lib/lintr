@@ -17,6 +17,25 @@ If \code{TRUE}, only lint path strings, which
 \description{
 Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
 }
+\examples{
+\dontshow{if (getRversion() >= "4.0") (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+library(lintr)
+
+# Following examples use raw character constant syntax introduced in R 4.0.
+
+# will produce a lint
+lint(
+  text = "R'--[/blah/file.txt]--'",
+  linters = absolute_path_linter()
+)
+
+# recommended
+lint(
+  text = "R'(./blah)'",
+  linters = absolute_path_linter()
+)
+\dontshow{\}) # examplesIf}
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
