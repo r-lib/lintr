@@ -71,6 +71,7 @@ The following linters exist:
 \item{\code{\link{implicit_integer_linter}} (tags: best_practices, consistency, style)}
 \item{\code{\link{infix_spaces_linter}} (tags: default, readability, style)}
 \item{\code{\link{inner_combine_linter}} (tags: consistency, efficiency, readability)}
+\item{\code{\link{lengths_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{line_length_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{literal_coercion_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{missing_argument_linter}} (tags: common_mistakes, configurable, correctness)}
