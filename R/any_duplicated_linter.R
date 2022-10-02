@@ -11,16 +11,13 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 any_duplicated_linter <- function() {
-  any_duplicated_xpath <- "//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'any']]
-    and expr[expr[1][SYMBOL_FUNCTION_CALL[text() = 'duplicated']]]
-    and (
-      not(OP-COMMA)
-      or OP-COMMA[
-        not(preceding-sibling::OP-COMMA)
-        and following-sibling::SYMBOL_SUB[1][text() = 'na.rm']
-      ]
-    )
+  any_duplicated_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'any']
+  /parent::expr
+  /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'duplicated']]]
+  /parent::expr[
+    count(expr) = 2
+    or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm'])
   ]"
 
   # outline:

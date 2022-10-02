@@ -7,15 +7,14 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 system_file_linter <- function() {
-  xpath <- "//expr[
-    (
-      expr/SYMBOL_FUNCTION_CALL[text() = 'system.file']
-      and expr/expr/SYMBOL_FUNCTION_CALL[text() = 'file.path']
-    ) or (
-      expr/SYMBOL_FUNCTION_CALL[text() = 'file.path']
-      and expr/expr/SYMBOL_FUNCTION_CALL[text() = 'system.file']
-    )
-  ]"
+  funs <- c("system.file", "file.path")
+  # either system.file(file.path(...)) or file.path(system.file(...))
+  xpath_parts <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[text() = '{funs}']
+  /parent::expr[following-sibling::expr/expr/SYMBOL_FUNCTION_CALL[text() = '{rev(funs)}']]
+  /parent::expr
+  ")
+  xpath <- paste(xpath_parts, collapse = " | ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
