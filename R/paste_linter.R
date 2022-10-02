@@ -17,21 +17,27 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
-  sep_xpath <- "//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'paste']]
-    and SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1][STR_CONST]
-  ]"
+  sep_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'paste']
+  /parent::expr
+  /following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST]]
+  /parent::expr
+  "
 
-  to_string_xpath <- glue::glue("//expr[
-  expr[1][SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']]
-    and count(expr) = 3
+  to_string_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']
+  /parent::expr
+  /parent::expr[
+    count(expr) = 3
     and SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1][STR_CONST]
-  ]")
-
-  paste0_sep_xpath <- "//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'paste0']]
-    and SYMBOL_SUB[text() = 'sep']
   ]"
+
+  paste0_sep_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'paste0']
+  /parent::expr
+  /following-sibling::SYMBOL_SUB[text() = 'sep']
+  /parent::expr
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

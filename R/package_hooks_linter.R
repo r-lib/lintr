@@ -21,9 +21,9 @@ package_hooks_linter <- function() {
     ".onAttach" = c(bad_msg_calls, "library.dynam")
   )
   bad_msg_call_xpath_fmt <- "
-    //expr[SYMBOL[text() = '%s']]
-    /following-sibling::expr[FUNCTION]
-    //SYMBOL_FUNCTION_CALL[%s]
+  //FUNCTION
+  /parent::expr[preceding-sibling::expr/SYMBOL[text() = '%s']]
+  //SYMBOL_FUNCTION_CALL[%s]
   "
   bad_call_xpaths <- vapply(
     seq_along(bad_calls),
@@ -48,9 +48,9 @@ package_hooks_linter <- function() {
   hook_xpath <- sprintf("string(./ancestor::expr/expr/SYMBOL[%s])", ns_calls)
 
   load_arg_name_xpath <- "
-  //expr[SYMBOL[text() = '.onAttach' or text() = '.onLoad']]
-  /following-sibling::expr[
-    FUNCTION
+  //FUNCTION
+  /parent::expr[
+    preceding-sibling::expr/SYMBOL[text() = '.onAttach' or text() = '.onLoad']
     and (
       count(SYMBOL_FORMALS) != 2
       or SYMBOL_FORMALS[
@@ -62,23 +62,24 @@ package_hooks_linter <- function() {
   "
 
   library_require_xpath <- "
-  //expr[SYMBOL[text() = '.onAttach' or text() = '.onLoad']]
-  /following-sibling::expr//*[1][
+  //FUNCTION
+  /parent::expr[preceding-sibling::expr/SYMBOL[text() = '.onAttach' or text() = '.onLoad']]
+  //*[1][
     (self::SYMBOL or self::SYMBOL_FUNCTION_CALL)
     and (text() = 'require' or text() = 'library' or text() = 'installed.packages')
   ]
   "
 
   bad_unload_call_xpath <- "
-    //expr[SYMBOL[text() = '.Last.lib' or text() = '.onDetach']]
-    /following-sibling::expr[FUNCTION]
-    //SYMBOL_FUNCTION_CALL[text() = 'library.dynam.unload']
+  //FUNCTION
+  /parent::expr[preceding-sibling::expr/SYMBOL[text() = '.Last.lib' or text() = '.onDetach']]
+  //SYMBOL_FUNCTION_CALL[text() = 'library.dynam.unload']
   "
 
   unload_arg_name_xpath <- "
-  //expr[SYMBOL[text() = '.onDetach' or text() = '.Last.lib']]
-  /following-sibling::expr[
-    FUNCTION
+  //FUNCTION
+  /parent::expr[
+    preceding-sibling::expr/SYMBOL[text() = '.onDetach' or text() = '.Last.lib']
     and (
       count(SYMBOL_FORMALS) != 1
       or SYMBOL_FORMALS[not(starts-with(text(), 'lib'))]
