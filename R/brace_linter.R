@@ -89,7 +89,7 @@ brace_linter <- function(allow_single_line = FALSE) {
   # TODO (AshesITR): if c_style_braces is TRUE, this needs to be @line2 + 1
   xp_else_same_line <- glue::glue("//ELSE[{xp_else_closed_curly} and @line1 != {xp_else_closed_curly}/@line2]")
 
-  xp_function_brace <- "//expr[FUNCTION and @line1 != @line2 and not(expr[OP-LEFT-BRACE])]"
+  xp_function_brace <- "//FUNCTION/parent::expr[@line1 != @line2 and not(expr[OP-LEFT-BRACE])]"
 
   # if (x) { ... } else if (y) { ... } else { ... } is OK; fully exact pairing
   #   of if/else would require this to be
