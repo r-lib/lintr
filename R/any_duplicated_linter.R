@@ -30,8 +30,9 @@ any_duplicated_linter <- function() {
   #  the final parent::expr/expr gets us to the expr on the other side of EQ;
   #  this lets us match on either side of EQ, where following-sibling
   #  assumes we are before EQ, preceding-sibling assumes we are after EQ.
-  length_unique_xpath <- "
-  //expr[EQ or NE or GT or LT]
+  length_unique_xpath_parts <- glue::glue("
+  //{ c('EQ', 'NE', 'GT', 'LT') }
+  /parent::expr
   /expr[
     expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
     and expr[expr[1][
@@ -54,7 +55,8 @@ any_duplicated_linter <- function() {
           /following-sibling::expr
       )
     ]]
-  ]"
+  ]")
+  length_unique_xpath <- paste(length_unique_xpath_parts, collapse = " | ")
 
   uses_nrow_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'nrow']"
 
