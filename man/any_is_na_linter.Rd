@@ -36,6 +36,11 @@ lint(
   linters = any_is_na_linter()
 )
 
+lint(
+  text = "any(!is.na(x), na.rm = TRUE)",
+  linters = any_is_na_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

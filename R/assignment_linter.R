@@ -32,6 +32,23 @@
 #'   linters = assignment_linter()
 #' )
 #'
+#' # customizing using arguments
+#' lint(
+#'   text = "1 -> x; 2 ->> y",
+#'   linters = assignment_linter(allow_right_assign = TRUE)
+#' )
+#'
+#' lint(
+#'   text = "x <<- 1",
+#'   linters = assignment_linter(allow_cascading_assign = FALSE)
+#' )
+#'
+#' lint(
+#'   text = "foo(bar =
+#'                    1)",
+#'   linters = assignment_linter(allow_trailing = FALSE)
+#' )
+#'
 #' @evalRd rd_tags("assignment_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
