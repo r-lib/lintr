@@ -7,6 +7,31 @@
 #'  Use this to list explicitly defined backports, e.g. those imported from the {backports} package or manually
 #'  defined in your package.
 #'
+#' @examples
+#' library(lintr)
+#'
+#' # will produce lints
+#' lint(
+#'   text = "trimws(x)",
+#'   linters = backport_linter("3.0.0")
+#' )
+#'
+#' lint(
+#'   text = "str2lang(x)",
+#'   linters = backport_linter("3.2.0")
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "trimws(x)",
+#'   linters = backport_linter("3.6.0")
+#' )
+#'
+#' lint(
+#'   text = "str2lang(x)",
+#'   linters = backport_linter("4.0.0")
+#' )
+#'
 #' @evalRd rd_tags("backport_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
