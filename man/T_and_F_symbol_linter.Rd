@@ -7,7 +7,33 @@
 T_and_F_symbol_linter()
 }
 \description{
-Avoid the symbols \code{T} and \code{F} (for \code{TRUE} and \code{FALSE}).
+Avoid the symbols \code{T} and \code{F}, and use \code{TRUE} and \code{FALSE} instead.
+}
+\examples{
+library(lintr)
+
+# will produce a lint
+lint(
+  text = "x <- T; y <- F",
+  linters = T_and_F_symbol_linter()
+)
+
+lint(
+  text = "T = 1.2, F = 2.4",
+  linters = T_and_F_symbol_linter()
+)
+
+# recommended
+lint(
+  text = "x <- c(TRUE, FALSE)",
+  linters = T_and_F_symbol_linter()
+)
+
+lint(
+  text = "t = 1.2; f = 2.4",
+  linters = T_and_F_symbol_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr
