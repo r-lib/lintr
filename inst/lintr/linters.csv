@@ -29,10 +29,12 @@ extraction_operator_linter,style best_practices
 fixed_regex_linter,best_practices readability efficiency
 function_argument_linter,style consistency best_practices
 function_left_parentheses_linter,style readability default
+function_return_linter,readability best_practices
 ifelse_censor_linter,best_practices efficiency
 implicit_integer_linter,style consistency best_practices
 infix_spaces_linter,style readability default
 inner_combine_linter,efficiency consistency readability
+lengths_linter,efficiency readability best_practices
 line_length_linter,style readability default configurable
 literal_coercion_linter,best_practices consistency efficiency
 missing_argument_linter,correctness common_mistakes configurable
@@ -53,6 +55,7 @@ paren_brace_linter,style readability deprecated
 paste_linter,best_practices consistency
 pipe_call_linter,style readability
 pipe_continuation_linter,style readability default
+redundant_equals_linter,best_practices readability efficiency common_mistakes
 redundant_ifelse_linter,best_practices efficiency consistency
 regex_subset_linter,best_practices efficiency
 semicolon_linter,style readability default configurable
@@ -71,6 +74,7 @@ trailing_blank_lines_linter,style default
 trailing_whitespace_linter,style default
 undesirable_function_linter,style efficiency configurable robustness best_practices
 undesirable_operator_linter,style efficiency configurable robustness best_practices
+unnecessary_lambda_linter,best_practices efficiency readability
 unneeded_concatenation_linter,style readability efficiency configurable
 unreachable_code_linter,best_practices readability
 unused_import_linter,best_practices common_mistakes configurable executing

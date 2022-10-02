@@ -37,7 +37,6 @@ Imports:
     xml2 (>= 1.0.0),
     xmlparsedata (>= 1.0.5)
 Suggests:
-    covr,
     httr (>= 1.2.1),
     mockery,
     patrick,
@@ -95,6 +94,7 @@ Collate:
     'fixed_regex_linter.R'
     'function_argument_linter.R'
     'function_left_parentheses_linter.R'
+    'function_return_linter.R'
     'get_source_expressions.R'
     'ids_with_token.R'
     'ifelse_censor_linter.R'
@@ -102,10 +102,12 @@ Collate:
     'infix_spaces_linter.R'
     'inner_combine_linter.R'
     'is_lint_level.R'
+    'lengths_linter.R'
     'line_length_linter.R'
     'lint.R'
     'linter_tag_docs.R'
     'linter_tags.R'
+    'lintr-package.R'
     'literal_coercion_linter.R'
     'make_linter_from_regex.R'
     'methods.R'
@@ -127,6 +129,7 @@ Collate:
     'path_linters.R'
     'pipe_call_linter.R'
     'pipe_continuation_linter.R'
+    'redundant_equals_linter.R'
     'redundant_ifelse_linter.R'
     'regex_subset_linter.R'
     'semicolon_linter.R'
@@ -144,6 +147,7 @@ Collate:
     'tree-utils.R'
     'undesirable_function_linter.R'
     'undesirable_operator_linter.R'
+    'unnecessary_lambda_linter.R'
     'unneeded_concatenation_linter.R'
     'unreachable_code_linter.R'
     'unused_import_linter.R'

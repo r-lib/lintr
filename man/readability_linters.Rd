@@ -25,8 +25,10 @@ The following linters are tagged with 'readability':
 \item{\code{\link{expect_true_false_linter}}}
 \item{\code{\link{fixed_regex_linter}}}
 \item{\code{\link{function_left_parentheses_linter}}}
+\item{\code{\link{function_return_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{inner_combine_linter}}}
+\item{\code{\link{lengths_linter}}}
 \item{\code{\link{line_length_linter}}}
 \item{\code{\link{nested_ifelse_linter}}}
 \item{\code{\link{numeric_leading_zero_linter}}}
@@ -38,6 +40,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{paren_brace_linter}}}
 \item{\code{\link{pipe_call_linter}}}
 \item{\code{\link{pipe_continuation_linter}}}
+\item{\code{\link{redundant_equals_linter}}}
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{semicolon_terminator_linter}}}
 \item{\code{\link{single_quotes_linter}}}
@@ -46,6 +49,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{string_boundary_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
+\item{\code{\link{unnecessary_lambda_linter}}}
 \item{\code{\link{unneeded_concatenation_linter}}}
 \item{\code{\link{unreachable_code_linter}}}
 \item{\code{\link{yoda_test_linter}}}

@@ -1,13 +1,3 @@
-#' Lintr
-#'
-#' Checks adherence to a given style, syntax errors and possible semantic issues.
-#' Supports on the fly checking of R code edited with Emacs, Vim and Sublime Text.
-#' @seealso [lint()], [lint_package()], [lint_dir()], [linters]
-#' @importFrom stats na.omit
-#' @importFrom utils capture.output getParseData relist
-#' @keywords internal
-"_PACKAGE"
-
 #' Lint a file, directory, or package
 #'
 #' * `lint()` lints a single file.
@@ -119,8 +109,8 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 #' @param relative_path if `TRUE`, file paths are printed using their path relative to the base directory.
 #'   If `FALSE`, use the full absolute path.
 #' @param exclusions exclusions for [exclude()], relative to the package path.
-#' @param pattern pattern for files, by default it will take files with any of the extensions .R, .Rmd, .Rnw, .Rhtml,
-#' .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...)
+#' @param pattern pattern for files, by default it will take files with any of the extensions
+#' .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...)
 #' @examples
 #' \dontrun{
 #'   lint_dir()

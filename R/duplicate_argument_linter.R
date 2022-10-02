@@ -6,16 +6,17 @@
 #'  Duplicate-named objects are hard to work with programmatically and
 #'  should typically be avoided.
 #'
-#' @param except a character vector of function names as exceptions.
+#' @param except A character vector of function names as exceptions. Defaults to
+#'   functions that allow sequential updates to variables, currently `dplyr::mutate()`
+#'   and `dplyr::transmute()`.
 #' @evalRd rd_tags("duplicate_argument_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-duplicate_argument_linter <- function(except = character()) {
+duplicate_argument_linter <- function(except = c("mutate", "transmute")) {
   xpath_call_with_args <- "//expr[EQ_SUB]"
   xpath_arg_name <- "./EQ_SUB/preceding-sibling::*[1]"
 
   Linter(function(source_expression) {
-
     if (!is_lint_level(source_expression, "file")) {
       return(list())
     }

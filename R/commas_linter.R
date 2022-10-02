@@ -6,7 +6,6 @@
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
 #'   <https://style.tidyverse.org/syntax.html#commas>
-#' @importFrom utils head
 #' @export
 commas_linter <- function() {
   # conditions are in carefully-chosen order for performance --
