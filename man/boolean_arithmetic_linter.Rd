@@ -10,9 +10,9 @@ boolean_arithmetic_linter()
 \code{length(which(x == y)) == 0} is the same as \code{!any(x == y)}, but the latter
 is more readable and more efficient.
 }
-\details{
-#' @evalRd rd_tags("boolean_arithmetic_linter")
-}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
+}
+\section{Tags}{
+\link[=best_practices_linters]{best_practices}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
 }
