@@ -3,6 +3,29 @@
 #' `length(which(x == y)) == 0` is the same as `!any(x == y)`, but the latter
 #'   is more readable and more efficient.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "length(which(x == y)) == 0L",
+#'   linters = boolean_arithmetic_linter()
+#' )
+#'
+#' lint(
+#'   text = "sum(grepl(pattern, x)) == 0",
+#'   linters = boolean_arithmetic_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "!any(x == y)",
+#'   linters = boolean_arithmetic_linter()
+#' )
+#'
+#' lint(
+#'   text = "!any(grepl(pattern, x))",
+#'   linters = boolean_arithmetic_linter()
+#' )
+#'
 #' @evalRd rd_tags("boolean_arithmetic_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
