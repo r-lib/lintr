@@ -183,7 +183,8 @@ extract_glued_symbols <- function(expr) {
       }
       ""
     }
-    eval(parsed_cl)
+    # #1459: syntax errors in glue'd code are simply ignored, rather than crashing lint()
+    tryCatch(eval(parsed_cl), error = function(cond) NULL)
   }
   ls(envir = glued_symbols, all.names = TRUE)
 }
