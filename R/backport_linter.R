@@ -13,7 +13,7 @@
 backport_linter <- function(r_version = getRversion(), except = character()) {
   r_version <- normalize_r_version(r_version)
   backport_blacklist <- backports[r_version < R_system_version(names(backports))]
-  backport_blacklist <- lapply(backport_blacklist, function(nm) setdiff(nm, except)) # nolint: unnecessary_lambda_linter
+  backport_blacklist <- lapply(backport_blacklist, setdiff, except)
 
   names_xpath <- "//SYMBOL | //SYMBOL_FUNCTION_CALL"
 
