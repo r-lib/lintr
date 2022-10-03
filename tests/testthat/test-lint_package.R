@@ -141,6 +141,6 @@ test_that("lint_package gives helpful failure when package has syntax issues", {
 
   expect_error(
     lint_package(pkg_path, linters = list(object_usage_linter(), assignment_linter())),
-    "Linter object_usage_linter\\(\\) failed in.*glue_error.R: Expecting '}'"
+    "Linter 'object_usage_linter' failed in.*glue_error.R: Expecting '}'"
   )
 })

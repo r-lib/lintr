@@ -22,6 +22,13 @@
 * `unused_import_linter()` can detect datasets from imported packages and no longer
   warns when a package is imported only for its datasets (#1545, @IndrajeetPatil).
 
+* When a linter triggers an error, `lint()` will provide a more actionable summary of where the
+  error occurred, particularly useful for cases like `lint_package()` where both the responsible file
+  and the responsible linter would be unknown (@MichaelChirico).
+
+  Typically, linters should not themselves cause R to stop -- syntax errors lead to error lints,
+  for example. Please report such failures as they are likely bugs.
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
