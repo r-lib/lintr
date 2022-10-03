@@ -10,13 +10,15 @@
 #' @export
 condition_message_linter <- function() {
   translators <- c("packageStartupMessage", "message", "warning", "stop")
-  xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(translators)} ]]
-    and expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']]
-      and not(SYMBOL_SUB[text() = 'collapse'])
-    ]
-  ]")
+  xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(translators)} ]
+  /parent::expr
+  /following-sibling::expr[
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']]
+    and not(SYMBOL_SUB[text() = 'collapse'])
+  ]
+  /parent::expr
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
