@@ -41,9 +41,9 @@
 #'   linters = assignment_linter(allow_cascading_assign = FALSE)
 #' )
 #'
+#' cat("foo(bar = \n 1)")
 #' lint(
-#'   text = "foo(bar =
-#'                    1)",
+#'   text = "foo(bar = \n 1)",
 #'   linters = assignment_linter(allow_trailing = FALSE)
 #' )
 #'

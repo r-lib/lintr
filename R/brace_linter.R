@@ -19,27 +19,31 @@
 #'   linters = brace_linter()
 #' )
 #'
+#' cat("if (TRUE) {\n return(1) }")
 #' lint(
-#'   text = "if (TRUE) {
-#'           return(1) }",
+#'   text = "if (TRUE) {\n return(1) }",
 #'   linters = brace_linter()
 #' )
 #'
 #' # okay
+#' cat("f <- function() {\n  1\n}")
 #' lint(
-#'   text = "f <- function() {
-#'                  1
-#'                }",
+#'   text = "f <- function() {\n  1\n}",
 #'   linters = brace_linter()
 #' )
 #'
+#' cat("if (TRUE) { \n return(1) \n}")
 #' lint(
-#'   text = "if (TRUE) {
-#'             return(1)
-#'           }",
+#'   text = "if (TRUE) { \n return(1) \n}",
 #'   linters = brace_linter()
 #' )
 #'
+#' # customizing using arguments
+#' cat("if (TRUE) { return(1) }")
+#' lint(
+#'   text = "if (TRUE) { return(1) }",
+#'   linters = brace_linter(allow_single_line = TRUE)
+#' )
 #' @evalRd rd_tags("brace_linter")
 #' @seealso [linters] for a complete list of linters available in lintr. \cr
 #'   <https://style.tidyverse.org/syntax.html#indenting> \cr
