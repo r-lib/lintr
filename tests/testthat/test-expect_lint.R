@@ -53,6 +53,9 @@ test_that("multiple checks", {
 })
 
 test_that("expect_lint_free works", {
+  skip_if_not_installed("callr")
+  skip_if_not_installed("withr")
+
   withr::local_options(
     lintr.rstudio_source_markers = FALSE,
     lintr.linter_file = "lintr_test_config"
