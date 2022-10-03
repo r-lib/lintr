@@ -18,8 +18,6 @@ test_that("is_s3_generic doesn't error for namespace-qualified calls", {
 
 
 test_that("namespace_imports respects except directives", {
-  skip_if_not_installed("callr")
-
   withr::with_dir(
     test_path("dummy_packages", "importsexcept"),
     {

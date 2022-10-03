@@ -36,13 +36,8 @@ extract_namespace_imports_df <- function(pkg = NULL) {
 
   ns_imports[["base"]] <- NULL
   pkg_names <- names(ns_imports)
-  df <- do.call(
-    rbind.data.frame,
-    c(
-      mapply(ns_imports_list_to_df, ns_imports, pkg_names, SIMPLIFY = FALSE),
-      stringsAsFactors = FALSE
-    )
-  )
+  ns_imports_df_list <- mapply(ns_imports_list_to_df, ns_imports, pkg_names, SIMPLIFY = FALSE)
+  df <- do.call(rbind, c(ns_imports_df_list, stringsAsFactors = FALSE))
 
   rownames(df) <- NULL
   df[["pkg"]] <- as.character(df[["pkg"]])
