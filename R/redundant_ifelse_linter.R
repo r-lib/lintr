@@ -12,15 +12,19 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 redundant_ifelse_linter <- function(allow10 = FALSE) {
-  tf_xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
-    and expr[NUM_CONST[text() = 'TRUE']]
+  tf_xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
+  /parent::expr
+  /parent::expr[
+    expr[NUM_CONST[text() = 'TRUE']]
     and expr[NUM_CONST[text() = 'FALSE']]
   ]")
 
-  num_xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
-    and expr[NUM_CONST[text() = '1' or text() = '1L']]
+  num_xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
+  /parent::expr
+  /parent::expr[
+    expr[NUM_CONST[text() = '1' or text() = '1L']]
     and expr[NUM_CONST[text() = '0' or text() = '0L']]
   ]")
 
