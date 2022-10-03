@@ -1,9 +1,36 @@
 #' Block usage of `paste()` and `paste0()` with messaging functions using `...`
 #'
-#' `stop(paste0(...))` is strictly redundant -- `stop(...)` is equivalent.
-#'   `stop(...)` is also preferable to `stop(paste(...))`. The same applies to
-#'   all default condition functions, i.e., [stop()], [warning()], [message()],
-#'   and [packageStartupMessage()].
+#' Both `stop(paste0(...))` and `stop(paste(...))` are strictly redundant -- `stop(...)` is
+#'   equivalent. The same applies to all default condition functions, i.e., [stop()], [warning()],
+#'   [message()], and [packageStartupMessage()].
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "stop(paste('a string', 'another'))",
+#'   linters = condition_message_linter()
+#' )
+#'
+#' lint(
+#'   text = "warning(paste0('a string', ' another'))",
+#'   linters = condition_message_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "stop('a string', 'another')",
+#'   linters = condition_message_linter()
+#' )
+#'
+#' lint(
+#'   text = "warning('a string', 'another')",
+#'   linters = condition_message_linter()
+#' )
+#'
+#' lint(
+#'   text = "warning(paste('a string', 'another', sep = '-'))",
+#'   linters = condition_message_linter()
+#' )
 #'
 #' @evalRd rd_tags("condition_message_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.

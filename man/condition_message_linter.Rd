@@ -7,10 +7,38 @@
 condition_message_linter()
 }
 \description{
-\code{stop(paste0(...))} is strictly redundant -- \code{stop(...)} is equivalent.
-\code{stop(...)} is also preferable to \code{stop(paste(...))}. The same applies to
-all default condition functions, i.e., \code{\link[=stop]{stop()}}, \code{\link[=warning]{warning()}}, \code{\link[=message]{message()}},
-and \code{\link[=packageStartupMessage]{packageStartupMessage()}}.
+Both \code{stop(paste0(...))} and \code{stop(paste(...))} are strictly redundant -- \code{stop(...)} is
+equivalent. The same applies to all default condition functions, i.e., \code{\link[=stop]{stop()}}, \code{\link[=warning]{warning()}},
+\code{\link[=message]{message()}}, and \code{\link[=packageStartupMessage]{packageStartupMessage()}}.
+}
+\examples{
+# will produce lints
+lint(
+  text = "stop(paste('a string', 'another'))",
+  linters = condition_message_linter()
+)
+
+lint(
+  text = "warning(paste0('a string', ' another'))",
+  linters = condition_message_linter()
+)
+
+# okay
+lint(
+  text = "stop('a string', 'another')",
+  linters = condition_message_linter()
+)
+
+lint(
+  text = "warning('a string', 'another')",
+  linters = condition_message_linter()
+)
+
+lint(
+  text = "warning(paste('a string', 'another', sep = '-'))",
+  linters = condition_message_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
