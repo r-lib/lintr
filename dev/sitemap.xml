@@ -70,9 +70,6 @@
     <loc>https://lintr.r-lib.org/dev/reference/clear_cache.html</loc>
   </url>
   <url>
-    <loc>https://lintr.r-lib.org/dev/reference/closed_curly_linter.html</loc>
-  </url>
-  <url>
     <loc>https://lintr.r-lib.org/dev/reference/commas_linter.html</loc>
   </url>
   <url>
@@ -229,6 +226,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/linters_with_tags.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/lintr-deprecated.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/lintr-package.html</loc>
   </url>
   <url>
@@ -271,9 +271,6 @@
     <loc>https://lintr.r-lib.org/dev/reference/object_usage_linter.html</loc>
   </url>
   <url>
-    <loc>https://lintr.r-lib.org/dev/reference/open_curly_linter.html</loc>
-  </url>
-  <url>
     <loc>https://lintr.r-lib.org/dev/reference/outer_negation_linter.html</loc>
   </url>
   <url>
@@ -284,9 +281,6 @@
   </url>
   <url>
     <loc>https://lintr.r-lib.org/dev/reference/paren_body_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/paren_brace_linter.html</loc>
   </url>
   <url>
     <loc>https://lintr.r-lib.org/dev/reference/parse_exclusions.html</loc>
