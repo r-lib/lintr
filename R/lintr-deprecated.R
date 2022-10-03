@@ -1,22 +1,35 @@
-#' Deprecated functions in lintr
+#' @name lintr-deprecated
+#' @title Deprecated functions in lintr
 #'
-#' These functions have either been deprecated from lintr.
+#' @description
 #'
+#' These functions have been deprecated from lintr.
+#'
+#' - `open_curly_linter()` and `closed_curly_linter()` check that open and closed curly braces
+#'   are on their own line unless they follow an else, a comma, or a closing bracket.
+#'   Deprecated in favour of `brace_linter()`.
+#'
+#' - `paren_brace_linter()` checks that there is a space between right parentheses and an opening
+#'    curly brace. E.g., `function(){}` doesn't have a space, while `function() {}` does.
+#'    Deprecated in favour of `brace_linter()`.
+#'
+#' - `semicolon_terminator_linter()` checks that no semicolons terminate expressions.
+#'    Deprecated in favour of `semicolon_linter()`.
+#'
+#' @param allow_single_line if `TRUE`, allow an open and closed curly pair on the same line.
+#' @param semicolon A character vector defining which semicolons to report:
+#' \describe{
+#'   \item{compound}{Semicolons that separate two statements on the same line.}
+#'   \item{trailing}{Semicolons following the last statement on the line.}
+#' }
+#'
+#' @seealso [linters] for a complete list of linters available in lintr.
+#' @evalRd rd_tags("closed_curly_linter")
 #' @keywords internal
-#' @noRd
 NULL
 
 #' Closed curly linter
-#'
-#' Check that closed curly braces are on their own line unless they follow
-#' an else, a comma, or a closing bracket.
-#'
-#' @param allow_single_line if `TRUE`, allow an open and closed curly pair on the same line.
-#' @evalRd rd_tags("closed_curly_linter")
-#' @seealso
-#'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#indenting>
-#' @keywords internal
+#' @rdname lintr-deprecated
 #' @export
 closed_curly_linter <- function(allow_single_line = FALSE) {
   lintr_deprecated("closed_curly_linter", new = "brace_linter", version = "3.0.0", type = "Linter")
@@ -59,15 +72,7 @@ closed_curly_linter <- function(allow_single_line = FALSE) {
 }
 
 #' Open curly linter
-#'
-#' Check that opening curly braces are never on their own line and are always followed by a newline.
-#'
-#' @param allow_single_line if `TRUE`, allow an open and closed curly pair on the same line.
-#' @evalRd rd_tags("open_curly_linter")
-#' @seealso
-#'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#indenting>
-#' @keywords internal
+#' @rdname lintr-deprecated
 #' @export
 open_curly_linter <- function(allow_single_line = FALSE) {
   lintr_deprecated("open_curly_linter", new = "brace_linter", version = "3.0.0", type = "Linter")
@@ -125,13 +130,7 @@ open_curly_linter <- function(allow_single_line = FALSE) {
 }
 
 #' Parentheses before brace linter
-#'
-#' Check that there is a space between right parentheses and an opening curly brace.
-#' For example, `function(){}` doesn't have a space, while `function() {}` does.
-#'
-#' @evalRd rd_tags("paren_brace_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
-#' @keywords internal
+#' @rdname lintr-deprecated
 #' @export
 paren_brace_linter <- function() {
   lintr_deprecated("paren_brace_linter", new = "brace_linter", version = "3.0.0", type = "Linter")
@@ -163,14 +162,7 @@ paren_brace_linter <- function() {
 }
 
 #' Semicolon linter
-#'
-#' Check that no semicolons terminate expressions.
-#' @param semicolon A character vector defining which semicolons to report:
-#' \describe{
-#'   \item{compound}{Semicolons that separate two statements on the same line.}
-#'   \item{trailing}{Semicolons following the last statement on the line.}
-#' }
-#' @keywords internal
+#' @rdname lintr-deprecated
 #' @export
 semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
   lintr_deprecated(
