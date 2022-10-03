@@ -55,7 +55,7 @@ patrick::with_parameters_test_that(
     "int, from NA",  "integer",   "NA",
     "num, from NA",  "numeric",   "NA",
     "dbl, from NA",  "double",    "NA",
-    "chr, from NA",  "character", "NA",
+    "chr, from NA",  "character", "NA"
   )
 )
 
@@ -73,7 +73,7 @@ patrick::with_parameters_test_that(
     "rlang::int", "int",     "1.0",
     "rlang::dbl", "dbl",     "1L",
     "rlang::chr", "chr",     '"e"',
-    "rlang::chr", "chr",     '"E"',
+    "rlang::chr", "chr",     '"E"'
   )
 )
 

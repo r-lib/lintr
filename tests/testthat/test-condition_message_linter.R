@@ -42,7 +42,7 @@ patrick::with_parameters_test_that(
     "message, paste0 and collapse = '|'",  "message",  "paste0", "collapse",  "|",
     "stop, paste and sep = '-'",           "stop",     "paste",  "sep",       "-",
     "warning, paste and sep = '\n'",       "warning",  "paste",  "sep",       "\n",
-    "message, paste and sep = '|'",        "message",  "paste",  "sep",       "|",
+    "message, paste and sep = '|'",        "message",  "paste",  "sep",       "|"
   )
 )
 
