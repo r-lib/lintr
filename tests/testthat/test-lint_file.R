@@ -229,12 +229,14 @@ test_that("Deprecated positional usage of cache= works, with warning", {
 test_that("Linters throwing an error give a helpful error", {
   tmp_file <- withr::local_tempfile(lines = "a <- 1")
   linter <- function() Linter(function(source_expression) stop("a broken linter"))
+  # NB: Some systems/setups may use e.g. symlinked files when creating under tempfile();
+  #   we don't care much about that, so just check basename()
   expect_error(
     lint(tmp_file, linter()),
-    paste0("Linter 'linter' failed in ", tmp_file, ": a broken linter")
+    paste0("Linter 'linter' failed in .*", basename(tmp_file), ": a broken linter")
   )
   expect_error(
     lint(tmp_file, list(broken_linter = linter())),
-    paste0("Linter 'broken_linter' failed in ", tmp_file, ": a broken linter")
+    paste0("Linter 'broken_linter' failed in .*", basename(tmp_file), ": a broken linter")
   )
 })
