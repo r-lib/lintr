@@ -21,9 +21,19 @@ lint(
   linters = commas_linter()
 )
 
+lint(
+  text = "x[ ,, drop=TRUE]",
+  linters = commas_linter()
+)
+
 # okay
 lint(
   text = "switch(op, x = foo, y = bar)",
+  linters = commas_linter()
+)
+
+lint(
+  text = "switch(op, x = , y = bar)",
   linters = commas_linter()
 )
 

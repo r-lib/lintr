@@ -15,7 +15,7 @@
 #' )
 #'
 #' lint(
-#'   text = "if ('character' %in% class(x)) stop('no')",
+#'   text = "if ('lm' %in% class(x)) is_lm <- TRUE",
 #'   linters = class_equals_linter()
 #' )
 #'
@@ -26,7 +26,7 @@
 #' )
 #'
 #' lint(
-#'   text = "if (inherits(x, 'character')) stop('no')",
+#'   text = "if (inherits(x, 'lm')) is_lm <- TRUE",
 #'   linters = class_equals_linter()
 #' )
 #'
