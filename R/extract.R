@@ -99,12 +99,9 @@ filter_chunk_end_positions <- function(starts, ends) {
 }
 
 defines_knitr_engine <- function(start_lines) {
-  # if any package that provides its own `{knitr}` engine is loaded (e.g. `{bookdown}`, `{cpp11}`),
+  # If any package that provides its own `{knitr}` engine is loaded (e.g. `{bookdown}`, `{tufte}`),
   # these additional engines will also be captured by `knitr::knit_engines$get()`.
-  engines <- c(
-    names(knitr::knit_engines$get()), # knitr
-    "marginfigure"                    # tufte
-  )
+  engines <- names(knitr::knit_engines$get())
 
   # {some_engine}, {some_engine label, ...} or {some_engine, ...}
   bare_engine_pattern <- rex::rex(

@@ -1,4 +1,7 @@
 test_that("marginfigure engine from tufte package doesn't cause problems", {
+  skip_if_not_installed("tufte", minimum_version = "0.12.4") # for rstudio/tufte#117
+  loadNamespace("tufte") # to register additional engines
+
   expect_lint(
     file = "knitr_extended_formats/tufte.Rmd",
     checks = list(rex("Use <-, not =, for assignment."), line_number = 11L),
