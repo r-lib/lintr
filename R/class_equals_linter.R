@@ -5,7 +5,30 @@
 #'   `inherits(x, "character")`. Often, class `k` will have an `is.` equivalent,
 #'   for example [is.character()] or [is.data.frame()].
 #'
-#' Similar reasoning applies for `class(x) %in% "character"`
+#' Similar reasoning applies for `class(x) %in% "character"`.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "is_lm <- class(x) == 'lm'",
+#'   linters = class_equals_linter()
+#' )
+#'
+#' lint(
+#'   text = "if ('character' %in% class(x)) stop('no')",
+#'   linters = class_equals_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "is_lm <- inherits(x, 'lm')",
+#'   linters = class_equals_linter()
+#' )
+#'
+#' lint(
+#'   text = "if (inherits(x, 'character')) stop('no')",
+#'   linters = class_equals_linter()
+#' )
 #'
 #' @evalRd rd_tags("class_equals_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.

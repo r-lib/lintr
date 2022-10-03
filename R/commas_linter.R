@@ -2,6 +2,34 @@
 #'
 #' Check that all commas are followed by spaces, but do not have spaces before them.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "switch(op , x = foo, y = bar)",
+#'   linters = commas_linter()
+#' )
+#'
+#' lint(
+#'   text = "mean(x,trim = 0.2,na.rm = TRUE)",
+#'   linters = commas_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "switch(op, x = foo, y = bar)",
+#'   linters = commas_linter()
+#' )
+#'
+#' lint(
+#'   text = "mean(x, trim = 0.2, na.rm = TRUE)",
+#'   linters = commas_linter()
+#' )
+#'
+#' lint(
+#'   text = "a[1, , 2, , 3]",
+#'   linters = commas_linter()
+#' )
+#'
 #' @evalRd rd_tags("commas_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
