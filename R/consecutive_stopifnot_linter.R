@@ -3,6 +3,19 @@
 #' [stopifnot()] accepts any number of tests, so sequences like
 #'   `stopifnot(x); stopifnot(y)` are redundant.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "stopifnot(x); stopifnot(y)",
+#'   linters = consecutive_stopifnot_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "stopifnot(x, y)",
+#'   linters = consecutive_stopifnot_linter()
+#' )
+#'
 #' @evalRd rd_tags("consecutive_stopifnot_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

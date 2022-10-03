@@ -6,6 +6,7 @@ test_that("class_equals_linter skips allowed usages", {
 
   # proper way to test exact class
   expect_lint("identical(class(x), c('glue', 'character'))", NULL, linter)
+  expect_lint("is_lm <- inherits(x, 'lm')", NULL, linter)
 })
 
 test_that("class_equals_linter blocks simple disallowed usages", {

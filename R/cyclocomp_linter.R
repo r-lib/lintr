@@ -4,6 +4,20 @@
 #'
 #' @param complexity_limit Maximum cyclomatic complexity, default 15. Expressions more complex
 #' than this are linted. See [cyclocomp::cyclocomp()].
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "if (TRUE) 1 else 2",
+#'   linters = cyclocomp_linter(complexity_limit = 1L)
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "if (TRUE) 1 else 2",
+#'   linters = cyclocomp_linter(complexity_limit = 2L)
+#' )
+#'
 #' @evalRd rd_tags("cyclocomp_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

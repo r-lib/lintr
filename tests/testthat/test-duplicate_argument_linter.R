@@ -1,85 +1,36 @@
-test_that("returns the correct linting", {
-  expect_lint(
-    "fun(arg = 1)",
-    NULL,
-    duplicate_argument_linter()
-  )
+test_that("duplicate_argument_linter doesn't block allowed usages", {
+  linter <- duplicate_argument_linter()
 
-  expect_lint(
-    "fun('arg' = 1)",
-    NULL,
-    duplicate_argument_linter()
-  )
+  expect_lint("fun(arg = 1)", NULL, linter)
+  expect_lint("fun('arg' = 1)", NULL, linter)
+  expect_lint("fun(`arg` = 1)", NULL, linter)
+  expect_lint("'fun'(arg = 1)", NULL, linter)
+  expect_lint("(function(x, y) x + y)(x = 1)", NULL, linter)
+  expect_lint("dt[i = 1]", NULL, linter)
+})
 
-  expect_lint(
-    "fun(`arg` = 1)",
-    NULL,
-    duplicate_argument_linter()
-  )
+test_that("duplicate_argument_linter blocks disallowed usages", {
+  linter <- duplicate_argument_linter()
+  msg <- rex("Duplicate arguments in function call.")
 
-  expect_lint(
-    "'fun'(arg = 1)",
-    NULL,
-    duplicate_argument_linter()
-  )
-
-  expect_lint(
-    "(function(x, y) x + y)(x = 1)",
-    NULL,
-    duplicate_argument_linter()
-  )
-
-  expect_lint(
-    "dt[i = 1]",
-    NULL,
-    duplicate_argument_linter()
-  )
-
-  expect_lint(
-    "fun(arg = 1, arg = 2)",
-    list(message = rex("Duplicate arguments in function call.")),
-    duplicate_argument_linter()
-  )
-
-  expect_lint(
-    "fun(arg = 1, 'arg' = 2)",
-    list(message = rex("Duplicate arguments in function call.")),
-    duplicate_argument_linter()
-  )
-
-  expect_lint(
-    "fun(arg = 1, `arg` = 2)",
-    list(message = rex("Duplicate arguments in function call.")),
-    duplicate_argument_linter()
-  )
-
-  expect_lint(
-    "'fun'(arg = 1, arg = 2)",
-    list(message = rex("Duplicate arguments in function call.")),
-    duplicate_argument_linter()
-  )
-
-  expect_lint(
-    "(function(x, y) x + y)(x = 1, x = 2)",
-    list(message = rex("Duplicate arguments in function call.")),
-    duplicate_argument_linter()
-  )
-
-  expect_lint(
-    "dt[i = 1, i = 2]",
-    list(message = rex("Duplicate arguments in function call.")),
-    duplicate_argument_linter()
-  )
+  expect_lint("fun(arg = 1, arg = 2)", msg, linter)
+  expect_lint("fun(arg = 1, 'arg' = 2)", msg, linter)
+  expect_lint("fun(arg = 1, `arg` = 2)", msg, linter)
+  expect_lint("'fun'(arg = 1, arg = 2)", msg, linter)
+  expect_lint("(function(x, y) x + y)(x = 1, x = 2)", msg, linter)
+  expect_lint("dt[i = 1, i = 2]", msg, linter)
 
   expect_lint(
     "list(
       var = 1,
       var = 2
     )",
-    list(message = rex("Duplicate arguments in function call.")),
-    duplicate_argument_linter()
+    msg,
+    linter
   )
+})
 
+test_that("duplicate_argument_linter respects except argument", {
   expect_lint(
     "list(
       var = 1,
@@ -112,6 +63,8 @@ test_that("returns the correct linting", {
 })
 
 test_that("doesn't lint duplicated arguments in allowed functions", {
+  linter <- duplicate_argument_linter()
+
   expect_lint(
     "x %>%
      dplyr::mutate(
@@ -119,7 +72,7 @@ test_that("doesn't lint duplicated arguments in allowed functions", {
        col = col + d
      )",
     NULL,
-    duplicate_argument_linter()
+    linter
   )
 
   expect_lint(
@@ -129,7 +82,7 @@ test_that("doesn't lint duplicated arguments in allowed functions", {
        col = col / 2.5
      )",
     NULL,
-    duplicate_argument_linter()
+    linter
   )
 
   skip_if_not_r_version("4.1")
@@ -139,6 +92,6 @@ test_that("doesn't lint duplicated arguments in allowed functions", {
       col = col |> str_replace('t', '') |> str_replace('\\\\s+$', 'xxx')
     )",
     NULL,
-    duplicate_argument_linter()
+    linter
   )
 })

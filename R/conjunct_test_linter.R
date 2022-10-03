@@ -9,6 +9,35 @@
 #'
 #' @param allow_named_stopifnot Logical, `TRUE` by default. If `FALSE`, "named" calls to `stopifnot()`,
 #'   available since R 4.0.0 to provide helpful messages for test failures, are also linted.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "expect_true(x && y)",
+#'   linters = conjunct_test_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_false(x || (y && z))",
+#'   linters = conjunct_test_linter()
+#' )
+#'
+#' lint(
+#'   text = "stopifnot('x must be a logical scalar' = length(x) == 1 && is.logical(x) && !is.na(x))",
+#'   linters = conjunct_test_linter(allow_named_stopifnot = FALSE)
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "expect_true(x || (y && z))",
+#'   linters = conjunct_test_linter()
+#' )
+#'
+#' lint(
+#'   text = "stopifnot('x must be a logical scalar' = length(x) == 1 && is.logical(x) && !is.na(x))",
+#'   linters = conjunct_test_linter(allow_named_stopifnot = TRUE)
+#' )
+#'
 #' @evalRd rd_tags("conjunct_test_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
