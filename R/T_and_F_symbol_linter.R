@@ -1,6 +1,29 @@
 #' `T` and `F` symbol linter
 #'
-#' Avoid the symbols `T` and `F` (for `TRUE` and `FALSE`).
+#' Avoid the symbols `T` and `F`, and use `TRUE` and `FALSE` instead.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "x <- T; y <- F",
+#'   linters = T_and_F_symbol_linter()
+#' )
+#'
+#' lint(
+#'   text = "T = 1.2, F = 2.4",
+#'   linters = T_and_F_symbol_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "x <- c(TRUE, FALSE)",
+#'   linters = T_and_F_symbol_linter()
+#' )
+#'
+#' lint(
+#'   text = "t = 1.2; f = 2.4",
+#'   linters = T_and_F_symbol_linter()
+#' )
 #'
 #' @evalRd rd_tags("T_and_F_symbol_linter")
 #' @seealso

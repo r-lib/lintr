@@ -11,6 +11,35 @@ any_is_na_linter()
 for simple objects, and is at worst equally efficient.
 Therefore, it should be used in all situations instead of the latter.
 }
+\examples{
+# will produce lints
+lint(
+  text = "any(is.na(x), na.rm = TRUE)",
+  linters = any_is_na_linter()
+)
+
+lint(
+  text = "any(is.na(foo(x)))",
+  linters = any_is_na_linter()
+)
+
+# okay
+lint(
+  text = "anyNA(x)",
+  linters = any_is_na_linter()
+)
+
+lint(
+  text = "anyNA(foo(x))",
+  linters = any_is_na_linter()
+)
+
+lint(
+  text = "any(!is.na(x), na.rm = TRUE)",
+  linters = any_is_na_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

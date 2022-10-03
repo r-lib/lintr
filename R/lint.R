@@ -85,7 +85,13 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   if (!is_tainted(source_expressions$lines)) {
     for (expr in source_expressions$expressions) {
       for (linter in names(linters)) {
-        lints[[length(lints) + 1L]] <- get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines)
+        # use withCallingHandlers for friendlier failures on unexpected linter errors
+        lints[[length(lints) + 1L]] <- withCallingHandlers(
+          get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
+          error = function(cond) {
+            stop("Linter '", linter, "' failed in ", filename, ": ", conditionMessage(cond), call. = FALSE)
+          }
+        )
       }
     }
   }
@@ -177,7 +183,7 @@ lint_dir <- function(path = ".", ...,
 
   lints <- reorder_lints(lints)
 
-  if (relative_path == TRUE) {
+  if (relative_path) {
     path <- normalizePath(path, mustWork = FALSE)
     lints[] <- lapply(
       lints,
@@ -634,16 +640,16 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
     as.character(utils::packageVersion("lintr"))
   sarif$runs[[1L]]$originalUriBaseIds$ROOTPATH$uri <- ""
   rule_index_exists <- FALSE
-  root_path_uri <- gsub("\\\\", "/", package_path)
+  root_path_uri <- gsub("\\", "/", package_path, fixed = TRUE)
 
   if (startsWith(root_path_uri, "/")) {
-    root_path_uri <- paste("file://", root_path_uri, sep = "")
+    root_path_uri <- paste0("file://", root_path_uri)
   } else {
-    root_path_uri <- paste("file:///", root_path_uri, sep = "")
+    root_path_uri <- paste0("file:///", root_path_uri)
   }
 
   if (!endsWith(root_path_uri, "/")) {
-    root_path_uri <- paste(root_path_uri, "/", sep = "")
+    root_path_uri <- paste0(root_path_uri, "/")
   }
 
   sarif$runs[[1L]]$originalUriBaseIds$ROOTPATH$uri <- root_path_uri
@@ -685,7 +691,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
       append(one_result, list(message = list(text = lint$message)))
     one_location <- list(physicalLocation = list(
       artifactLocation = list(
-        uri = gsub("\\\\", "/", lint$filename),
+        uri = gsub("\\", "/", lint$filename, fixed = TRUE),
         uriBaseId = "ROOTPATH"
       ),
       region = list(
