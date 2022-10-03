@@ -31,7 +31,7 @@ jenkins_build_info <- function() {
   }
   slug <- gsub(pattern, "\\2", git_url)
 
-  slug_info <- strsplit(slug, "/")[[1L]]
+  slug_info <- strsplit(slug, "/", fixed = TRUE)[[1L]]
 
   list(
     user = slug_info[1L],

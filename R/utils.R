@@ -142,7 +142,7 @@ base_backport("trimws", function(x) {
   sub("^\\s+", "", sub("\\s+$", "", x))
 })
 
-base_backport("lengths", function(x) vapply(x, length, integer(1L)))
+base_backport("lengths", function(x) vapply(x, length, integer(1L))) # nolint: lengths_linter
 
 try_silently <- function(expr) {
   suppressWarnings(
