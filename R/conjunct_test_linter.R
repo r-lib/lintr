@@ -13,19 +13,27 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
+  expect_true_assert_that_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'assert_that']
+  /parent::expr
+  /following-sibling::expr[1][AND2]
+  "
   named_stopifnot_condition <- if (allow_named_stopifnot) "and not(preceding-sibling::*[1][self::EQ_SUB])" else ""
-  xpath <- glue::glue("//expr[
-    (
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'assert_that']]
-      and expr[2][AND2]
-    ) or (
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'stopifnot']]
-      and expr[2][AND2 {named_stopifnot_condition}]
-    ) or (
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_false']]
-      and expr[2][OR2]
-    )
-  ]")
+  stopifnot_xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[text() = 'stopifnot']
+  /parent::expr
+  /following-sibling::expr[1][AND2 {named_stopifnot_condition}]
+  ")
+  expect_false_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_false']
+  /parent::expr
+  /following-sibling::expr[1][OR2]
+  "
+  xpath <- paste0(
+    c(expect_true_assert_that_xpath, stopifnot_xpath, expect_false_xpath),
+    "/parent::expr",
+    collapse = " | "
+  )
 
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level
