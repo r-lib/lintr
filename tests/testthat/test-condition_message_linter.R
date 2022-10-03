@@ -5,14 +5,6 @@ test_that("condition_message_linter skips allowed usages", {
   expect_lint("warning('a string', 'another')", NULL, linter)
   expect_lint("message('a string', 'another')", NULL, linter)
 
-  # paste/paste0 allowed when using other seps and/or collapse
-  expect_lint("stop(paste(x, collapse = ''))", NULL, linter)
-  expect_lint("message(paste(x, sep = '-'))", NULL, linter)
-  expect_lint("warning(paste(x, collapse = '|'))", NULL, linter)
-  expect_lint("stop(paste0(x, collapse = ''))", NULL, linter)
-  expect_lint("message(paste0(x, sep = '-'))", NULL, linter)
-  expect_lint("warning(paste0(x, collapse = '|'))", NULL, linter)
-
   # sprintf is OK (really should be gettextf but offering translations
   #   at google internally is not likely to happen any time soon)
   expect_lint("stop(sprintf('A %s!', 'string'))", NULL, linter)
@@ -30,6 +22,29 @@ test_that("condition_message_linter skips allowed usages", {
     linter
   )
 })
+
+skip_if_not_installed("tibble")
+skip_if_not_installed("patrick")
+patrick::with_parameters_test_that(
+  "paste/paste0 allowed by condition_message_linter when using other seps and/or collapse",
+  expect_lint(
+    sprintf("%s(%s(x, %s = %s))", condition, fun, parameter, arg),
+    NULL,
+    condition_message_linter()
+  ),
+  .cases = tibble::tribble(
+    ~.test_name,                           ~condition, ~fun,     ~ parameter, ~arg,
+    "stop, paste and collapse = ''",       "stop",     "paste",  "collapse",  "''",
+    "warning, paste and collapse = '\n'",  "warning",  "paste",  "collapse",  "'\n'",
+    "message, paste and collapse = '|'",   "message",  "paste",  "collapse",  "'|'",
+    "stop, paste0 and collapse = ''",      "stop",     "paste0", "collapse",  "''",
+    "warning, paste0 and collapse = '\n'", "warning",  "paste0", "collapse",  "'\n'",
+    "message, paste0 and collapse = '|'",  "message",  "paste0", "collapse",  "'|'",
+    "stop, paste and sep = '-'",           "stop",     "paste",  "sep",       "'-'",
+    "warning, paste and sep = '\n'",       "warning",  "paste",  "sep",       "'\n'",
+    "message, paste and sep = '|'",        "message",  "paste",  "sep",       "'|'",
+  )
+)
 
 test_that("condition_message_linter blocks simple disallowed usages", {
   expect_lint(
