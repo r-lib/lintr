@@ -24,8 +24,8 @@ consecutive_stopifnot_linter <- function() {
   #   namespace-qualified calls only match if the namespaces do.
   xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'stopifnot']
-  /parent::expr
-  /parent::expr[expr[1] = following-sibling::expr[1]/expr]
+    /parent::expr
+    /parent::expr[expr[1] = following-sibling::expr[1]/expr]
   "
 
   Linter(function(source_expression) {

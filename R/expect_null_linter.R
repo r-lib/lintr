@@ -17,15 +17,15 @@ expect_null_linter <- function() {
   #  (2) expect_true(is.null(x))
   expect_equal_identical_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
-  /parent::expr
-  /following-sibling::expr[position() <= 2 and NULL_CONST]
-  /parent::expr
+    /parent::expr
+    /following-sibling::expr[position() <= 2 and NULL_CONST]
+    /parent::expr
   "
   expect_true_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
-  /parent::expr
-  /following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.null']]
-  /parent::expr
+    /parent::expr
+    /following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.null']]
+    /parent::expr
   "
   xpath <- paste(expect_equal_identical_xpath, "|", expect_true_xpath)
 

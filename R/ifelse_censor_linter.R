@@ -14,13 +14,13 @@
 ifelse_censor_linter <- function() {
   xpath <- glue::glue("
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
-  /parent::expr
-  /following-sibling::expr[
-    (LT or GT or LE or GE)
-    and expr[1] = following-sibling::expr
-    and expr[2] = following-sibling::expr
-  ]
-  /parent::expr
+    /parent::expr
+    /following-sibling::expr[
+      (LT or GT or LE or GE)
+      and expr[1] = following-sibling::expr
+      and expr[2] = following-sibling::expr
+    ]
+    /parent::expr
   ")
 
   Linter(function(source_expression) {

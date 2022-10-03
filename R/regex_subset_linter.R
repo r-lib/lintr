@@ -31,14 +31,14 @@ regex_subset_linter <- function() {
   #   <expr>[grepl(pattern, <expr>)] matches exactly, e.g. names(x)[grepl(ptn, names(x))].
   xpath_fmt <- "
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(calls)} ]
-  /parent::expr
-  /parent::expr[
-    parent::expr[
-      OP-LEFT-BRACKET
-      and not(parent::*[LEFT_ASSIGN or EQ_ASSIGN or RIGHT_ASSIGN])
+    /parent::expr
+    /parent::expr[
+      parent::expr[
+        OP-LEFT-BRACKET
+        and not(parent::*[LEFT_ASSIGN or EQ_ASSIGN or RIGHT_ASSIGN])
+      ]
+      and expr[position() = {arg_pos} ] = parent::expr/expr[1]
     ]
-    and expr[position() = {arg_pos} ] = parent::expr/expr[1]
-  ]
   "
   grep_xpath <- glue::glue(xpath_fmt, calls = c("grepl", "grep"), arg_pos = 3L)
   stringr_xpath <- glue::glue(xpath_fmt, calls = c("str_detect", "str_which"), arg_pos = 2L)

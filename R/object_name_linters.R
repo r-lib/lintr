@@ -12,10 +12,11 @@ object_name_xpath <- local({
     "])"
   )
 
-  paste0(
-    "//SYMBOL[", xp_assignment_target, "] | ",
-    "//STR_CONST[", xp_assignment_target, "] | ",
-    "//SYMBOL_FORMALS"
+  paste(
+    "//SYMBOL[", xp_assignment_target, "]",
+    "//STR_CONST[", xp_assignment_target, "]",
+    "//SYMBOL_FORMALS",
+    sep = " | "
   )
 })
 

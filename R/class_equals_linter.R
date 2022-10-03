@@ -36,12 +36,13 @@
 class_equals_linter <- function() {
   xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'class']
-  /parent::expr
-  /parent::expr
-  /parent::expr[
-    not(preceding-sibling::OP-LEFT-BRACKET)
-    and (EQ or NE or SPECIAL[text() = '%in%'])
-  ]"
+    /parent::expr
+    /parent::expr
+    /parent::expr[
+      not(preceding-sibling::OP-LEFT-BRACKET)
+      and (EQ or NE or SPECIAL[text() = '%in%'])
+    ]
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
