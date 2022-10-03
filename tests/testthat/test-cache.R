@@ -241,33 +241,35 @@ test_that("retrieve_lint returns the same lints if nothing has changed", {
 })
 
 test_that(
-  "retrieve_lint returns the same lints with fixed line numbers if lines added above", {
-  test_data <- fixtures$retrieve_lint()
+  "retrieve_lint returns the same lints with fixed line numbers if lines added above",
+  {
+    test_data <- fixtures$retrieve_lint()
 
-  e1 <- new.env(parent = emptyenv())
+    e1 <- new.env(parent = emptyenv())
 
-  lines1 <- test_data[["lines"]]
-  lines2 <- c("", lines1)
-  lints <- test_data[["lints"]]
+    lines1 <- test_data[["lines"]]
+    lines2 <- c("", lines1)
+    lints <- test_data[["lints"]]
 
-  cache_lint(
-    cache = e1,
-    expr = test_data[["expr"]],
-    linter = test_data[["linters"]],
-    lints = lints
-  )
+    cache_lint(
+      cache = e1,
+      expr = test_data[["expr"]],
+      linter = test_data[["linters"]],
+      lints = lints
+    )
 
-  t1 <- retrieve_lint(
-    cache = e1,
-    expr = test_data[["expr"]],
-    linter = test_data[["linters"]],
-    lines = lines2
-  )
+    t1 <- retrieve_lint(
+      cache = e1,
+      expr = test_data[["expr"]],
+      linter = test_data[["linters"]],
+      lines = lines2
+    )
 
-  expect_equal(t1[[1L]]$line_number, lints[[1L]]$line_number + 1L)
-  expect_equal(t1[[2L]]$line_number, lints[[2L]]$line_number + 1L)
-  expect_equal(t1[[3L]]$line_number, lints[[3L]]$line_number + 1L)
-})
+    expect_equal(t1[[1L]]$line_number, lints[[1L]]$line_number + 1L)
+    expect_equal(t1[[2L]]$line_number, lints[[2L]]$line_number + 1L)
+    expect_equal(t1[[3L]]$line_number, lints[[3L]]$line_number + 1L)
+  }
+)
 
 test_that("retrieve_lint returns the same lints with lines added below", {
   test_data <- fixtures$retrieve_lint()
@@ -295,34 +297,36 @@ test_that("retrieve_lint returns the same lints with lines added below", {
 })
 
 test_that(
-  "retrieve_lint returns the same lints with fixed line numbers if lines added between", {
-  test_data <- fixtures$retrieve_lint()
+  "retrieve_lint returns the same lints with fixed line numbers if lines added between",
+  {
+    test_data <- fixtures$retrieve_lint()
 
-  e1 <- new.env(parent = emptyenv())
+    e1 <- new.env(parent = emptyenv())
 
-  lines1 <- test_data[["lines"]]
-  lines2 <- c(lines1[1L], "", lines1[2L:3L], "")
+    lines1 <- test_data[["lines"]]
+    lines2 <- c(lines1[1L], "", lines1[2L:3L], "")
 
-  lints1 <- test_data[["lints"]]
+    lints1 <- test_data[["lints"]]
 
-  cache_lint(
-    cache = e1,
-    expr = test_data[["expr"]],
-    linter = test_data[["linters"]],
-    lints = lints1
-  )
+    cache_lint(
+      cache = e1,
+      expr = test_data[["expr"]],
+      linter = test_data[["linters"]],
+      lints = lints1
+    )
 
-  t1 <- retrieve_lint(
-    cache = e1,
-    expr = test_data[["expr"]],
-    linter = test_data[["linters"]],
-    lines = lines2
-  )
+    t1 <- retrieve_lint(
+      cache = e1,
+      expr = test_data[["expr"]],
+      linter = test_data[["linters"]],
+      lines = lines2
+    )
 
-  expect_equal(t1[[1L]]$line_number, lints1[[1L]]$line_number)
-  expect_equal(t1[[2L]]$line_number, lints1[[2L]]$line_number + 1L)
-  expect_equal(t1[[3L]]$line_number, lints1[[3L]]$line_number + 1L)
-})
+    expect_equal(t1[[1L]]$line_number, lints1[[1L]]$line_number)
+    expect_equal(t1[[2L]]$line_number, lints1[[2L]]$line_number + 1L)
+    expect_equal(t1[[3L]]$line_number, lints1[[3L]]$line_number + 1L)
+  }
+)
 
 # `has_lint`
 
@@ -346,7 +350,7 @@ test_that("has_lint distinguishes global expressions from line expression with s
 
   same_content <- "foobar"
 
-  line_expr   <- list(content = same_content, parsed_content = data.frame())
+  line_expr <- list(content = same_content, parsed_content = data.frame())
   cache_lint(e1, line_expr, list(), list())
 
   global_expr <- list(content = same_content, file_lines = character())
@@ -356,9 +360,11 @@ test_that("has_lint distinguishes global expressions from line expression with s
 # `find_new_line`
 
 test_that("find_new_line returns the same if the line is the same", {
-  t1 <- c("foobar1",
-          "foobar2",
-          "foobar3")
+  t1 <- c(
+    "foobar1",
+    "foobar2",
+    "foobar3"
+  )
   expect_equal(find_new_line(1L, "foobar1", t1), 1L)
 
   expect_equal(find_new_line(2L, "foobar2", t1), 2L)
@@ -367,9 +373,11 @@ test_that("find_new_line returns the same if the line is the same", {
 })
 
 test_that("find_new_line returns the correct line if it is before the current line", {
-  t1 <- c("foobar1",
-          "foobar2",
-          "foobar3")
+  t1 <- c(
+    "foobar1",
+    "foobar2",
+    "foobar3"
+  )
   expect_equal(find_new_line(1L, "foobar1", t1), 1L)
 
   expect_equal(find_new_line(2L, "foobar1", t1), 1L)
@@ -378,9 +386,11 @@ test_that("find_new_line returns the correct line if it is before the current li
 })
 
 test_that("find_new_line returns the correct line if it is after the current line", {
-  t1 <- c("foobar1",
-          "foobar2",
-          "foobar3")
+  t1 <- c(
+    "foobar1",
+    "foobar2",
+    "foobar3"
+  )
   expect_equal(find_new_line(1L, "foobar3", t1), 3L)
 
   expect_equal(find_new_line(2L, "foobar3", t1), 3L)
