@@ -85,7 +85,13 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   if (!is_tainted(source_expressions$lines)) {
     for (expr in source_expressions$expressions) {
       for (linter in names(linters)) {
-        lints[[length(lints) + 1L]] <- get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines)
+        # use withCallingHandlers for friendlier failures on unexpected linter errors
+        lints[[length(lints) + 1L]] <- withCallingHandlers(
+          get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
+          error = function(cond) {
+            stop("Linter '", linter, "' failed in ", filename, ": ", conditionMessage(cond), call. = FALSE)
+          }
+        )
       }
     }
   }
@@ -177,7 +183,7 @@ lint_dir <- function(path = ".", ...,
 
   lints <- reorder_lints(lints)
 
-  if (relative_path == TRUE) {
+  if (relative_path) {
     path <- normalizePath(path, mustWork = FALSE)
     lints[] <- lapply(
       lints,

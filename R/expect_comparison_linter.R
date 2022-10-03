@@ -12,11 +12,12 @@
 expect_comparison_linter <- function() {
   # != doesn't have a clean replacement
   comparator_nodes <- setdiff(as.list(infix_metadata$xml_tag[infix_metadata$comparator]), "NE")
-  xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
-    and expr[2][ {xp_or(comparator_nodes)} ]
-    and not(SYMBOL_SUB[text() = 'info'])
-  ]")
+  xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
+  /parent::expr
+  /following-sibling::expr[ {xp_or(comparator_nodes)} ]
+  /parent::expr[not(SYMBOL_SUB[text() = 'info'])]
+  ")
 
   comparator_expectation_map <- c(
     `>` = "expect_gt", `>=` = "expect_gte",
