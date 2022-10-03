@@ -12,17 +12,8 @@ test_that("returns the correct linting", {
     fixed = TRUE
   )
 
-  expect_lint(
-    "blah",
-    NULL,
-    linter
-  )
-
-  expect_lint(
-    "a <- function() {\n}",
-    NULL,
-    linter
-  )
+  expect_lint("blah", NULL, linter)
+  expect_lint("a <- function() {\n}", NULL, linter)
 
   expect_lint(
     "a <- function() { 1 }",

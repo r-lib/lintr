@@ -64,15 +64,14 @@ test_that("function_return_linter blocks simple disallowed usages", {
     linter
   )
 
-  side_effect_lines <-
-    expect_lint(
-      trim_some("
+  side_effect_lines <- expect_lint(
+    trim_some("
       e <- new.env()
       foo <- function(x) {
         return(e$val <- x + 1)
       }
     "),
-      lint_msg,
-      linter
-    )
+    lint_msg,
+    linter
+  )
 })
