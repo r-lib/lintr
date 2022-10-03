@@ -10,8 +10,10 @@ test_that("linters", {
 
 test_that("undesirable functions and operators", {
   # non-empty named list of NAs and character strings
-  vars <- list(all_undesirable_functions, default_undesirable_functions,
-               all_undesirable_operators, default_undesirable_operators)
+  vars <- list(
+    all_undesirable_functions, default_undesirable_functions,
+    all_undesirable_operators, default_undesirable_operators
+  )
 
   for (x in vars) {
     expect_type(x, "list")

@@ -126,7 +126,6 @@ test_that("#1413: lint_dir properly excludes files", {
 
   expect_length(lint(file.path(tmp, "bad.R")), 0L)
   expect_length(lint_dir(tmp), 0L)
-
 })
 
 test_that("#1442: is_excluded_files works if no global exclusions are specified", {

@@ -50,7 +50,6 @@ test_that("multiple checks", {
   expect_success(
     expect_lint("\t1\n\t2", list("tabs", list(column_number = 1L, ranges = list(c(1L, 1L)))), no_tab_linter())
   )
-
 })
 
 test_that("expect_lint_free works", {
