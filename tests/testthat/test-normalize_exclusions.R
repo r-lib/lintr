@@ -1,6 +1,8 @@
-old_ops <- options(lintr.exclude = "#TeSt_NoLiNt",
-                   lintr.exclude_start = "#TeSt_NoLiNt_StArT",
-                   lintr.exclude_end = "#TeSt_NoLiNt_EnD")
+old_ops <- options(
+  lintr.exclude = "#TeSt_NoLiNt",
+  lintr.exclude_start = "#TeSt_NoLiNt_StArT",
+  lintr.exclude_end = "#TeSt_NoLiNt_EnD"
+)
 
 a <- tempfile()
 b <- tempfile()

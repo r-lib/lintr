@@ -7,7 +7,6 @@ lint_assignments <- function(filename) {
 }
 
 test_that("lint() results do not depend on the working directory", {
-
   # a dummy package for use in the test
   pkg_path <- test_path("dummy_packages", "assignmentLinter")
 

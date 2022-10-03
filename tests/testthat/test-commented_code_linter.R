@@ -59,7 +59,7 @@ test_that("returns the correct linting", {
         mu = 175
       )
     "),
-    list(message = msg, line_number  = 3L),
+    list(message = msg, line_number = 3L),
     linter
   )
 
@@ -72,7 +72,7 @@ test_that("returns the correct linting", {
         , mu = 175
       )
     "),
-    list(message = msg, line_number  = 3L),
+    list(message = msg, line_number = 3L),
     linter
   )
 
