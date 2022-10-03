@@ -1,6 +1,8 @@
 linters: linters_with_defaults(
-    implicit_integer_linter(),
-    line_length_linter(120),
+    any_duplicated_linter(),
+    any_is_na_linter(),
+    backport_linter("oldrel-4", except = "R_user_dir"),
+    consecutive_stopifnot_linter(),
     expect_comparison_linter(),
     expect_length_linter(),
     expect_named_linter(),
@@ -10,7 +12,13 @@ linters: linters_with_defaults(
     expect_s4_class_linter(),
     expect_true_false_linter(),
     expect_type_linter(),
-    backport_linter("oldrel-4", except = "R_user_dir")
+    implicit_integer_linter(),
+    line_length_linter(120),
+    missing_argument_linter(),
+    nested_ifelse_linter(),
+    numeric_leading_zero_linter(),
+    redundant_equals_linter(),
+    redundant_ifelse_linter()
   )
 exclusions: list(
   "inst/doc/creating_linters.R" = 1,
