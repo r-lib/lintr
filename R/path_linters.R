@@ -164,6 +164,21 @@ path_linter_factory <- function(path_function, message, linter, name = linter_au
 #' * contain at least two path elements, with one having at least two characters and
 #' * contain only alphanumeric chars (including UTF-8), spaces, and win32-allowed punctuation
 #'
+#' @examplesIf getRversion() >= "4.0"
+#' # Following examples use raw character constant syntax introduced in R 4.0.
+#'
+#' # will produce lints
+#' lint(
+#'   text = "R'--[/blah/file.txt]--'",
+#'   linters = absolute_path_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "R'(./blah)'",
+#'   linters = absolute_path_linter()
+#' )
+#'
 #' @evalRd rd_tags("absolute_path_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

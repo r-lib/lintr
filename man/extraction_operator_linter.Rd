@@ -31,8 +31,6 @@ For data frames (and tibbles), irrespective of the size, the \code{[[} operator 
 For lists, however, the reverse is true.
 }
 \examples{
-library(lintr)
-
 # will produce lints
 lint(
   text = "iris['Species']",
