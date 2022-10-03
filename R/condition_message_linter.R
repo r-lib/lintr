@@ -6,8 +6,8 @@
 #'  - `stop(paste0(...))` is redundant as it is exactly equivalent to `stop(...)`
 #'  - `stop(paste(...))` is similarly equivalent to `stop(...)` with separators (see examples)
 #'
-#'   The same applies to all default condition functions, i.e., [warning()], [message()], and
-#'   [packageStartupMessage()].
+#'   The same applies to the other default condition functions as well, i.e., [warning()], [message()],
+#'   and [packageStartupMessage()].
 #'
 #' @examples
 #' # will produce lints
@@ -42,13 +42,15 @@
 #' @export
 condition_message_linter <- function() {
   translators <- c("packageStartupMessage", "message", "warning", "stop")
-  xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(translators)} ]]
-    and expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']]
-      and not(SYMBOL_SUB[text() = 'collapse'])
-    ]
-  ]")
+  xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(translators)} ]
+  /parent::expr
+  /following-sibling::expr[
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']]
+    and not(SYMBOL_SUB[text() = 'collapse'])
+  ]
+  /parent::expr
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

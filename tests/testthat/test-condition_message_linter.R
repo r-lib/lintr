@@ -66,18 +66,6 @@ test_that("condition_message_linter blocks simple disallowed usages", {
     condition_message_linter()
   )
 
-  expect_lint(
-    "warning(paste(x, sep = ' '))",
-    rex::rex("Don't use paste to build warning strings."),
-    condition_message_linter()
-  )
-
-  expect_lint(
-    "message(paste(x, sep = ' '))",
-    rex::rex("Don't use paste to build message strings."),
-    condition_message_linter()
-  )
-
   # not thrown off by named arguments
   expect_lint(
     "stop(paste('a', 'b'), call. = FALSE)",

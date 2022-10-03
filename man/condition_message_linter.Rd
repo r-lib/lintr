@@ -16,8 +16,8 @@ functions \code{\link[=paste]{paste()}} and \code{\link[=paste0]{paste0()}}. Thi
 \item \code{stop(paste(...))} is similarly equivalent to \code{stop(...)} with separators (see examples)
 }
 
-The same applies to all default condition functions, i.e., \code{\link[=warning]{warning()}}, \code{\link[=message]{message()}}, and
-\code{\link[=packageStartupMessage]{packageStartupMessage()}}.
+The same applies to the other default condition functions as well, i.e., \code{\link[=warning]{warning()}}, \code{\link[=message]{message()}},
+and \code{\link[=packageStartupMessage]{packageStartupMessage()}}.
 }
 \examples{
 # will produce lints
