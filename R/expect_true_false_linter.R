@@ -9,10 +9,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_true_false_linter <- function() {
-  xpath <- "//expr[expr[1][
-    SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
-    and following-sibling::expr[position() <= 2 and NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]
-  ]]"
+  xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
+  /parent::expr
+  /following-sibling::expr[position() <= 2 and NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]
+  /parent::expr
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

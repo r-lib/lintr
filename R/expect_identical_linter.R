@@ -25,34 +25,33 @@
 #' @export
 expect_identical_linter <- function() {
   # outline:
-  #   1. conditions for expect_equal()
-  #     - skip when any named argument is set. most commonly this
-  #       is check.attributes (for 2e tests) or one of the ignore_*
-  #       arguments (for 3e tests). This will generate some false
-  #       negatives, but will be much easier to maintain.
-  #     - skip cases like expect_equal(x, 1.02) or the constant vector version
-  #       where a numeric constant indicates inexact testing is preferable
-  #     - skip calls using dots (`...`); see tests
-  #   2. conditions for expect_true()
-  xpath <- glue::glue("//expr[
-    (
-      SYMBOL_FUNCTION_CALL[text() = 'expect_equal']
-      and not(
-        following-sibling::EQ_SUB
-        or following-sibling::expr[
-          expr[1][SYMBOL_FUNCTION_CALL[text() = 'c']]
-          and expr[NUM_CONST[contains(text(), '.')]]
-        ]
-        or following-sibling::expr[NUM_CONST[contains(text(), '.')]]
-        or following-sibling::expr[SYMBOL[text() = '...']]
-      )
-    ) or (
-      SYMBOL_FUNCTION_CALL[text() = 'expect_true']
-      and following-sibling::expr[1][
-        expr[1][SYMBOL_FUNCTION_CALL[text() = 'identical']]
-      ]
-    )
-  ]")
+  #   - skip when any named argument is set. most commonly this
+  #     is check.attributes (for 2e tests) or one of the ignore_*
+  #     arguments (for 3e tests). This will generate some false
+  #     negatives, but will be much easier to maintain.
+  #   - skip cases like expect_equal(x, 1.02) or the constant vector version
+  #     where a numeric constant indicates inexact testing is preferable
+  #   - skip calls using dots (`...`); see tests
+  expect_equal_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_equal']
+  /parent::expr[not(
+    following-sibling::EQ_SUB
+    or following-sibling::expr[
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'c']]
+      and expr[NUM_CONST[contains(text(), '.')]]
+    ]
+    or following-sibling::expr[NUM_CONST[contains(text(), '.')]]
+    or following-sibling::expr[SYMBOL[text() = '...']]
+  )]
+  /parent::expr
+  "
+  expect_true_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
+  /parent::expr
+  /following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'identical']]
+  /parent::expr
+  "
+  xpath <- paste(expect_equal_xpath, "|", expect_true_xpath)
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

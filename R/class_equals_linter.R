@@ -11,9 +11,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 class_equals_linter <- function() {
-  xpath <- "//expr[
+  xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'class']
+  /parent::expr
+  /parent::expr
+  /parent::expr[
     not(preceding-sibling::OP-LEFT-BRACKET)
-    and expr[expr[1][SYMBOL_FUNCTION_CALL[text() = 'class']]]
     and (EQ or NE or SPECIAL[text() = '%in%'])
   ]"
 
