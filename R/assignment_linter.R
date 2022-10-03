@@ -8,8 +8,6 @@
 #' @param allow_trailing Logical, default `TRUE`. If `FALSE` then assignments aren't allowed at end of lines.
 #'
 #' @examples
-#' library(lintr)
-#'
 #' # will produce lints
 #' lint(
 #'   text = "x = mean(x)",

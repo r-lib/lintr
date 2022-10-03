@@ -13,8 +13,6 @@
 #' @param allow_single_line if `TRUE`, allow an open and closed curly pair on the same line.
 #'
 #' @examples
-#' library(lintr)
-#'
 #' # will produce lints
 #' lint(
 #'   text = "f <- function() { 1 }",

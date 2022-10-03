@@ -17,8 +17,6 @@ defined in your package.}
 Check for usage of unavailable functions. Not reliable for testing r-devel dependencies.
 }
 \examples{
-library(lintr)
-
 # will produce lints
 lint(
   text = "trimws(x)",

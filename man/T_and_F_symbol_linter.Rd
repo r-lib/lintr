@@ -10,8 +10,6 @@ T_and_F_symbol_linter()
 Avoid the symbols \code{T} and \code{F}, and use \code{TRUE} and \code{FALSE} instead.
 }
 \examples{
-library(lintr)
-
 # will produce lints
 lint(
   text = "x <- T; y <- F",

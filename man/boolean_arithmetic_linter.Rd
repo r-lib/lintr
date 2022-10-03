@@ -11,8 +11,6 @@ boolean_arithmetic_linter()
 is more readable and more efficient.
 }
 \examples{
-library(lintr)
-
 # will produce lints
 lint(
   text = "length(which(x == y)) == 0L",

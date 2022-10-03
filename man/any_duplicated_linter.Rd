@@ -16,8 +16,6 @@ Also match usage like \code{length(unique(x$col)) == nrow(x)}, which can
 be replaced by \code{anyDuplicated(x$col) == 0L}.
 }
 \examples{
-library(lintr)
-
 # will produce lints
 lint(
   text = "any(duplicated(x), na.rm = TRUE)",

@@ -165,8 +165,6 @@ path_linter_factory <- function(path_function, message, linter, name = linter_au
 #' * contain only alphanumeric chars (including UTF-8), spaces, and win32-allowed punctuation
 #'
 #' @examplesIf getRversion() >= "4.0"
-#' library(lintr)
-#'
 #' # Following examples use raw character constant syntax introduced in R 4.0.
 #'
 #' # will produce lints

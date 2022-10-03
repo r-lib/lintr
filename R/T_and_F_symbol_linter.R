@@ -3,8 +3,6 @@
 #' Avoid the symbols `T` and `F`, and use `TRUE` and `FALSE` instead.
 #'
 #' @examples
-#' library(lintr)
-#'
 #' # will produce lints
 #' lint(
 #'   text = "x <- T; y <- F",

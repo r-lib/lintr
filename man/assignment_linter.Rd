@@ -22,8 +22,6 @@ If \code{FALSE}, \code{\link[base:assignOps]{<<-}} and \verb{->>} are not allowe
 Check that \verb{<-} is always used for assignment.
 }
 \examples{
-library(lintr)
-
 # will produce lints
 lint(
   text = "x = mean(x)",

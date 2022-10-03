@@ -27,8 +27,6 @@
 #' For lists, however, the reverse is true.
 #'
 #' @examples
-#' library(lintr)
-#'
 #' # will produce lints
 #' lint(
 #'   text = "iris['Species']",

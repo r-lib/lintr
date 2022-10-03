@@ -8,8 +8,6 @@
 #'   be replaced by `anyDuplicated(x$col) == 0L`.
 #'
 #' @examples
-#' library(lintr)
-#'
 #' # will produce lints
 #' lint(
 #'   text = "any(duplicated(x), na.rm = TRUE)",

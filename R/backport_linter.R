@@ -8,8 +8,6 @@
 #'  defined in your package.
 #'
 #' @examples
-#' library(lintr)
-#'
 #' # will produce lints
 #' lint(
 #'   text = "trimws(x)",

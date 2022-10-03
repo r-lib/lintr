@@ -5,8 +5,6 @@
 #'   Therefore, it should be used in all situations instead of the latter.
 #'
 #' @examples
-#' library(lintr)
-#'
 #' # will produce lints
 #' lint(
 #'   text = "any(is.na(x), na.rm = TRUE)",

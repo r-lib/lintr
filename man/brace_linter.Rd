@@ -24,8 +24,6 @@ does.
 }
 }
 \examples{
-library(lintr)
-
 # will produce lints
 lint(
   text = "f <- function() { 1 }",

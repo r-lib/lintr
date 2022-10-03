@@ -19,8 +19,6 @@ Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
 }
 \examples{
 \dontshow{if (getRversion() >= "4.0") (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-library(lintr)
-
 # Following examples use raw character constant syntax introduced in R 4.0.
 
 # will produce lints
