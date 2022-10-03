@@ -640,16 +640,16 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
     as.character(utils::packageVersion("lintr"))
   sarif$runs[[1L]]$originalUriBaseIds$ROOTPATH$uri <- ""
   rule_index_exists <- FALSE
-  root_path_uri <- gsub("\\\\", "/", package_path)
+  root_path_uri <- gsub("\\", "/", package_path, fixed = TRUE)
 
   if (startsWith(root_path_uri, "/")) {
-    root_path_uri <- paste("file://", root_path_uri, sep = "")
+    root_path_uri <- paste0("file://", root_path_uri)
   } else {
-    root_path_uri <- paste("file:///", root_path_uri, sep = "")
+    root_path_uri <- paste0("file:///", root_path_uri)
   }
 
   if (!endsWith(root_path_uri, "/")) {
-    root_path_uri <- paste(root_path_uri, "/", sep = "")
+    root_path_uri <- paste0(root_path_uri, "/")
   }
 
   sarif$runs[[1L]]$originalUriBaseIds$ROOTPATH$uri <- root_path_uri
@@ -691,7 +691,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
       append(one_result, list(message = list(text = lint$message)))
     one_location <- list(physicalLocation = list(
       artifactLocation = list(
-        uri = gsub("\\\\", "/", lint$filename),
+        uri = gsub("\\", "/", lint$filename, fixed = TRUE),
         uriBaseId = "ROOTPATH"
       ),
       region = list(
