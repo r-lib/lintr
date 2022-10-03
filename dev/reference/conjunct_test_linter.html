@@ -100,6 +100,40 @@ available since R 4.0.0 to provide helpful messages for test failures, are also 
     <p><a href="best_practices_linters.html">best_practices</a>, <a href="package_development_linters.html">package_development</a>, <a href="readability_linters.html">readability</a></p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># will produce lints</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"expect_true(x &amp;&amp; y)"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">conjunct_test_linter</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[conjunct_test_linter] Instead of expect_true(A &amp;&amp; B), write multiple expectations like expect_true(A) and expect_true(B) The latter will produce better error messages in the case of failure.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"expect_false(x || (y &amp;&amp; z))"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">conjunct_test_linter</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[conjunct_test_linter] Instead of expect_false(A || B), write multiple expectations like expect_false(A) and expect_false(B) The latter will produce better error messages in the case of failure.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"stopifnot('x must be a logical scalar' = length(x) == 1 &amp;&amp; is.logical(x) &amp;&amp; !is.na(x))"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">conjunct_test_linter</span><span class="op">(</span>allow_named_stopifnot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[conjunct_test_linter] Instead of stopifnot(A &amp;&amp; B), write multiple conditions like stopifnot(A, B). The latter will produce better error messages in the case of failure.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># okay</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"expect_true(x || (y &amp;&amp; z))"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">conjunct_test_linter</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"stopifnot('x must be a logical scalar' = length(x) == 1 &amp;&amp; is.logical(x) &amp;&amp; !is.na(x))"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">conjunct_test_linter</span><span class="op">(</span>allow_named_stopifnot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
