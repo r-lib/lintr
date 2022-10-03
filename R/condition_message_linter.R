@@ -6,8 +6,8 @@
 #'  - `stop(paste0(...))` is redundant as it is exactly equivalent to `stop(...)`
 #'  - `stop(paste(...))` is similarly equivalent to `stop(...)` with separators (see examples)
 #'
-#'   The same applies to all default condition functions, i.e., [warning()], [message()], and
-#'   [packageStartupMessage()].
+#'   The same applies to the other default condition functions as well, i.e., [warning()], [message()],
+#'   and [packageStartupMessage()].
 #'
 #' @examples
 #' # will produce lints
