@@ -24,8 +24,8 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
     "expr_or_assign_or_help[EQ_ASSIGN]/expr[2][FUNCTION]",
     "equal_assign[EQ_ASSIGN]/expr[2][FUNCTION]",
     # assign() and setMethod() assignments
-    "//expr[expr[1][SYMBOL_FUNCTION_CALL[text() = 'assign']]]/expr[3][FUNCTION]",
-    "//expr[expr[1][SYMBOL_FUNCTION_CALL[text() = 'setMethod']]]/expr[4][FUNCTION]",
+    "//SYMBOL_FUNCTION_CALL[text() = 'assign']/parent::expr/following-sibling::expr[2][FUNCTION]",
+    "//SYMBOL_FUNCTION_CALL[text() = 'setMethod']/parent::expr/following-sibling::expr[3][FUNCTION]",
     sep = " | "
   )
 
@@ -274,20 +274,19 @@ parse_check_usage <- function(expression,
 }
 
 get_imported_symbols <- function(xml) {
-  import_exprs <- xml2::xml_find_all(
-    xml,
-    "//expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
-      and
-      (
-        not(SYMBOL_SUB[
-          text() = 'character.only' and
-          following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-        ]) or
-        expr[2][STR_CONST]
-      )
-    ]/expr[STR_CONST|SYMBOL][1]"
-  )
+  import_exprs_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
+  /parent::expr
+  /parent::expr[
+    not(SYMBOL_SUB[
+      text() = 'character.only' and
+      following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+    ])
+    or expr[2][STR_CONST]
+  ]
+  /expr[STR_CONST or SYMBOL][1]
+  "
+  import_exprs <- xml2::xml_find_all(xml, import_exprs_xpath)
   if (length(import_exprs) == 0L) {
     return(character())
   }
