@@ -12,9 +12,6 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
   # at any nesting level
   expect_lint("parLapply(cl, x, function(xi) foo(xi, 2, bar(baz(xi))))", NULL, linter)
 
-  # multi-argument case
-  expect_lint("lapply(l, function(x, y) setdiff(x, y))", NULL, linter)
-
   # multi-expression case
   expect_lint("lapply(x, function(xi) { print(xi); xi^2 })", NULL, linter)
   # multi-expression, multi-line cases
