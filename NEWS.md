@@ -25,16 +25,27 @@
 * `unused_import_linter()` can detect datasets from imported packages and no longer
   warns when a package is imported only for its datasets (#1545, @IndrajeetPatil).
 
+* When a linter triggers an error, `lint()` will provide a more actionable summary of where the
+  error occurred, particularly useful for cases like `lint_package()` where both the responsible file
+  and the responsible linter would be unknown (@MichaelChirico).
+
+  Typically, linters should not themselves cause R to stop -- syntax errors lead to error lints,
+  for example. Please report such failures as they are likely bugs.
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
   `lapply(x, function(xi) sum(xi))` can be `lapply(x, sum)` and `purrr::map(x, ~quantile(.x, 0.75, na.rm = TRUE))`
-  can be `purrr::map(x, quantile, 0.75, na.rm = TRUE)`. Naming `probs = 0.75` can further improve readability.
+  can be `purrr::map(x, quantile, 0.75, na.rm = TRUE)`. Naming `probs = 0.75` can further improve readability (#1531, @MichaelChirico).
+
 * `redundant_equals_linter()` for redundant comparisons to `TRUE` or `FALSE` like `is_treatment == TRUE` (#1500, @MichaelChirico)
 * `lengths_linter()` for encouraging usage of `lengths(x)` instead of `sapply(x, length)` (and similar)
 
 * `function_return_linter()` for handling issues in function `return()` statements. Currently handles assignments within the `return()`
   clause, e.g. `return(x <- foo())` (@MichaelChirico)
+
+* `boolean_arithmetic_linter()` for identifying places where logical aggregations are more appropriate, e.g.
+  `length(which(x == y)) == 0` is the same as `!any(x == y)` or even `all(x != y)` (@MichaelChirico)
 
 # lintr 3.0.1
 

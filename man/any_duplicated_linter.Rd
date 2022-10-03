@@ -15,6 +15,30 @@ Therefore, it should be used in all situations instead of the latter.
 Also match usage like \code{length(unique(x$col)) == nrow(x)}, which can
 be replaced by \code{anyDuplicated(x$col) == 0L}.
 }
+\examples{
+# will produce lints
+lint(
+  text = "any(duplicated(x), na.rm = TRUE)",
+  linters = any_duplicated_linter()
+)
+
+lint(
+  text = "length(unique(x)) == length(x)",
+  linters = any_duplicated_linter()
+)
+
+# okay
+lint(
+  text = "anyDuplicated(x)",
+  linters = any_duplicated_linter()
+)
+
+lint(
+  text = "anyDuplicated(x) == 0L",
+  linters = any_duplicated_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

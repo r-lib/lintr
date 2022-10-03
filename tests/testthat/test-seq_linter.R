@@ -99,7 +99,6 @@ test_that("finds 1:length(...) expressions", {
     rex(".N is", anything, "Use seq_len"),
     linter
   )
-
 })
 
 test_that("1L is also bad", {

@@ -7,20 +7,40 @@
 #' Also match usage like `length(unique(x$col)) == nrow(x)`, which can
 #'   be replaced by `anyDuplicated(x$col) == 0L`.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "any(duplicated(x), na.rm = TRUE)",
+#'   linters = any_duplicated_linter()
+#' )
+#'
+#' lint(
+#'   text = "length(unique(x)) == length(x)",
+#'   linters = any_duplicated_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "anyDuplicated(x)",
+#'   linters = any_duplicated_linter()
+#' )
+#'
+#' lint(
+#'   text = "anyDuplicated(x) == 0L",
+#'   linters = any_duplicated_linter()
+#' )
+#'
 #' @evalRd rd_tags("any_duplicated_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 any_duplicated_linter <- function() {
-  any_duplicated_xpath <- "//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'any']]
-    and expr[expr[1][SYMBOL_FUNCTION_CALL[text() = 'duplicated']]]
-    and (
-      not(OP-COMMA)
-      or OP-COMMA[
-        not(preceding-sibling::OP-COMMA)
-        and following-sibling::SYMBOL_SUB[1][text() = 'na.rm']
-      ]
-    )
+  any_duplicated_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'any']
+  /parent::expr
+  /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'duplicated']]]
+  /parent::expr[
+    count(expr) = 2
+    or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm'])
   ]"
 
   # outline:
@@ -33,8 +53,9 @@ any_duplicated_linter <- function() {
   #  the final parent::expr/expr gets us to the expr on the other side of EQ;
   #  this lets us match on either side of EQ, where following-sibling
   #  assumes we are before EQ, preceding-sibling assumes we are after EQ.
-  length_unique_xpath <- "
-  //expr[EQ or NE or GT or LT]
+  length_unique_xpath_parts <- glue::glue("
+  //{ c('EQ', 'NE', 'GT', 'LT') }
+  /parent::expr
   /expr[
     expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
     and expr[expr[1][
@@ -57,7 +78,8 @@ any_duplicated_linter <- function() {
           /following-sibling::expr
       )
     ]]
-  ]"
+  ]")
+  length_unique_xpath <- paste(length_unique_xpath_parts, collapse = " | ")
 
   uses_nrow_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'nrow']"
 

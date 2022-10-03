@@ -53,23 +53,3 @@ semicolon_linter <- function(allow_compound = FALSE, allow_trailing = FALSE) {
     )
   })
 }
-
-#' @rdname semicolon_linter
-#' @param semicolon A character vector defining which semicolons to report:
-#' \describe{
-#'   \item{compound}{Semicolons that separate two statements on the same line.}
-#'   \item{trailing}{Semicolons following the last statement on the line.}
-#' }
-#' @export
-semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
-  lintr_deprecated(
-    old = "semicolon_terminator_linter",
-    new = "semicolon_linter",
-    version = "3.0.0",
-    type = "Linter"
-  )
-  semicolon <- match.arg(semicolon, several.ok = TRUE)
-  allow_compound <- !"compound" %in% semicolon
-  allow_trailing <- !"trailing" %in% semicolon
-  semicolon_linter(allow_compound, allow_trailing)
-}

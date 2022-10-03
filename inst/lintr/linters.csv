@@ -4,6 +4,7 @@ any_duplicated_linter,efficiency best_practices
 any_is_na_linter,efficiency best_practices
 assignment_linter,style consistency default
 backport_linter,robustness configurable package_development
+boolean_arithmetic_linter,efficiency best_practices readability
 brace_linter,style readability default configurable
 class_equals_linter,best_practices robustness consistency
 closed_curly_linter,style readability deprecated configurable

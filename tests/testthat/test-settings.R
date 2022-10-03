@@ -1,5 +1,4 @@
 test_that("it uses default settings if none provided", {
-
   read_settings(NULL)
 
   lapply(ls(settings), function(setting) {
@@ -8,7 +7,6 @@ test_that("it uses default settings if none provided", {
 })
 
 test_that("it uses option settings if provided", {
-
   old_opts <- options("lintr.exclude" = "test")
   on.exit(options(old_opts))
 
@@ -18,16 +16,17 @@ test_that("it uses option settings if provided", {
 })
 
 test_that("it uses config settings in same directory if provided", {
-
   path <- tempdir()
   file <- tempfile(tmpdir = path)
   config_file <- file.path(path, ".lintr")
   writeLines("exclude: \"test\"", config_file)
-  on.exit({
-    unlink(file)
-    unlink(config_file)
-  },
-  add = TRUE)
+  on.exit(
+    {
+      unlink(file)
+      unlink(config_file)
+    },
+    add = TRUE
+  )
 
   read_settings(file)
 
@@ -39,7 +38,6 @@ test_that("it uses config settings in same directory if provided", {
 })
 
 test_that("it uses config home directory settings if provided", {
-
   path <- tempfile()
   home_path <- tempfile()
   dir.create(path)
@@ -47,13 +45,15 @@ test_that("it uses config home directory settings if provided", {
   file <- tempfile(tmpdir = path)
   config_file <- file.path(home_path, ".lintr")
   writeLines("exclude: \"test\"", config_file)
-  on.exit({
-    unlink(file)
-    unlink(config_file)
-    unlink(path)
-    unlink(home_path)
-  },
-  add = TRUE)
+  on.exit(
+    {
+      unlink(file)
+      unlink(config_file)
+      unlink(path)
+      unlink(home_path)
+    },
+    add = TRUE
+  )
 
   withr::with_envvar(c(HOME = home_path), read_settings(file))
 
@@ -65,7 +65,6 @@ test_that("it uses config home directory settings if provided", {
 })
 
 test_that("it errors if the config file does not end in a newline", {
-
   f <- tempfile()
   cat("linters: linters_with_defaults(closed_curly_linter = NULL)", file = f)
   old <- options()

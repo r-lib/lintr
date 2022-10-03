@@ -393,6 +393,39 @@ test_that("interprets glue expressions", {
   "), "local_var", object_usage_linter(interpret_glue = FALSE))
 })
 
+test_that("errors in glue syntax don't fail lint()", {
+  # no lint & no error, despite glue error
+  expect_warning(
+    expect_lint(
+      trim_some("
+        fun <- function() {
+          a <- 2
+          a + 1
+          glue::glue('The answer is {a')
+        }
+      "),
+      NULL,
+      object_usage_linter()
+    ),
+    "Evaluating glue expression.*failed: Expecting '\\}'"
+  )
+
+  # generates a lint because the "usage" inside glue() is not detected
+  expect_warning(
+    expect_lint(
+      trim_some("
+        fun <- function() {
+          a <- 2
+          glue::glue('The answer is {a')
+        }
+      "),
+      "local variable 'a'",
+      object_usage_linter()
+    ),
+    "Evaluating glue expression.*failed: Expecting '\\}'"
+  )
+})
+
 # reported as #1088
 test_that("definitions below top level are ignored (for now)", {
   expect_lint(
