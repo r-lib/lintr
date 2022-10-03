@@ -40,8 +40,8 @@ regex_subset_linter <- function() {
     and expr[position() = {arg_pos} ] = parent::expr/expr[1]
   ]
   "
-  grep_xpath <- glue::glue(xpath_fmt, calls = c("grepl", "grep"), arg_pos = 3)
-  stringr_xpath <- glue::glue(xpath_fmt, calls = c("str_detect", "str_which"), arg_pos = 2)
+  grep_xpath <- glue::glue(xpath_fmt, calls = c("grepl", "grep"), arg_pos = 3L)
+  stringr_xpath <- glue::glue(xpath_fmt, calls = c("str_detect", "str_which"), arg_pos = 2L)
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
