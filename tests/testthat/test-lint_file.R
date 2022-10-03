@@ -225,3 +225,16 @@ test_that("Deprecated positional usage of cache= works, with warning", {
   )
   expect_identical(l, lint("a = 2\n", assignment_linter(), cache = FALSE))
 })
+
+test_that("Linters throwing an error give a helpful error", {
+  tmp_file <- withr::local_tempfile(lines = "a <- 1")
+  linter <- function() Linter(function(source_expression) stop("a broken linter"))
+  expect_error(
+    lint(tmp_file, linter()),
+    paste0("Linter 'linter' failed in ", tmp_file, ": a broken linter")
+  )
+  expect_error(
+    lint(tmp_file, list(broken_linter = linter())),
+    paste0("Linter 'broken_linter' failed in ", tmp_file, ": a broken linter")
+  )
+})

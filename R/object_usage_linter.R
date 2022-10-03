@@ -183,8 +183,18 @@ extract_glued_symbols <- function(expr) {
       }
       ""
     }
-    # #1459: syntax errors in glue'd code are simply ignored, rather than crashing lint()
-    tryCatch(eval(parsed_cl), error = function(cond) NULL)
+    # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint()
+    tryCatch(
+      eval(parsed_cl),
+      error = function(cond) {
+        warning(
+          "Evaluating glue expression while testing for local variable usage failed: ",
+          conditionMessage(cond),
+          call. = FALSE
+        )
+        NULL
+      }
+    )
   }
   ls(envir = glued_symbols, all.names = TRUE)
 }
