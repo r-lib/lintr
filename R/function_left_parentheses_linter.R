@@ -12,7 +12,7 @@
 function_left_parentheses_linter <- function() { # nolint: object_length.
   xpath <- "
     //FUNCTION[@col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1] |
-    //expr[1][SYMBOL_FUNCTION_CALL and @col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1]
+    //SYMBOL_FUNCTION_CALL/parent::expr[@col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1]
   "
 
   Linter(function(source_expression) {
