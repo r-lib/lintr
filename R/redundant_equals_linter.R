@@ -1,11 +1,11 @@
 #' Block usage of `==`, `!=` on logical vectors
 #'
 #' Testing `x == TRUE` is redundant if `x` is a logical vector. Wherever this is
-#' used to improve readability, the solution should instead be to improve the
-#' naming of the object to better indicate that its contents are logical. This
-#' can be done using prefixes (is, has, can, etc.). For example, `is_child`,
-#' `has_parent_supervision`, `can_watch_horror_movie` clarify their logical
-#' nature, while `child`, `parent_supervision`, `watch_horror_movie` don't.
+#'   used to improve readability, the solution should instead be to improve the
+#'   naming of the object to better indicate that its contents are logical. This
+#'   can be done using prefixes (is, has, can, etc.). For example, `is_child`,
+#'   `has_parent_supervision`, `can_watch_horror_movie` clarify their logical
+#'   nature, while `child`, `parent_supervision`, `watch_horror_movie` don't.
 #' @export
 redundant_equals_linter <- function() {
   xpath <- paste0(

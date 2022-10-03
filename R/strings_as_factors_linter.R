@@ -39,9 +39,11 @@ strings_as_factors_linter <- function() {
   # two exclusions
   #   (1) above argument is to row.names=
   #   (2) stringsAsFactors is manually supplied (with any value)
-  xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'data.frame']]
-    and expr[
+  xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[text() = 'data.frame']
+  /parent::expr
+  /parent::expr[
+    expr[
       (
         STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
         or ( {c_combine_strings} )
