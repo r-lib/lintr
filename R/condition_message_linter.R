@@ -1,7 +1,10 @@
 #' Block usage of `paste()` and `paste0()` with messaging functions using `...`
 #'
-#' Both `stop(paste0(...))` and `stop(paste(...))` are strictly redundant -- `stop(...)` is
-#'   equivalent. The same applies to all default condition functions, i.e., [stop()], [warning()],
+#' This is because
+#'  - `stop(paste0(...))` is redundant because it is exactly equivalent to `stop(...)`
+#'  - `stop(paste(...))` is also equivalent to `stop(...)` with separators (see examples)
+#'
+#'   The same applies to all default condition functions, i.e., [stop()], [warning()],
 #'   [message()], and [packageStartupMessage()].
 #'
 #' @examples
@@ -18,12 +21,12 @@
 #'
 #' # okay
 #' lint(
-#'   text = "stop('a string', 'another')",
+#'   text = "stop('a string', ' another')",
 #'   linters = condition_message_linter()
 #' )
 #'
 #' lint(
-#'   text = "warning('a string', 'another')",
+#'   text = "warning('a string', ' another')",
 #'   linters = condition_message_linter()
 #' )
 #'

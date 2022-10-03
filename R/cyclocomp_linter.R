@@ -8,13 +8,13 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "if(TRUE) 1 else 2",
+#'   text = "if (TRUE) 1 else 2",
 #'   linters = cyclocomp_linter(complexity_limit = 1L)
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "if(TRUE) 1 else 2",
+#'   text = "if (TRUE) 1 else 2",
 #'   linters = cyclocomp_linter(complexity_limit = 2L)
 #' )
 #'

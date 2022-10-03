@@ -7,8 +7,14 @@
 condition_message_linter()
 }
 \description{
-Both \code{stop(paste0(...))} and \code{stop(paste(...))} are strictly redundant -- \code{stop(...)} is
-equivalent. The same applies to all default condition functions, i.e., \code{\link[=stop]{stop()}}, \code{\link[=warning]{warning()}},
+This is because
+\itemize{
+\item \code{stop(paste0(...))} is redundant because it is exactly equivalent to \code{stop(...)}
+\item \code{stop(paste(...))} is also equivalent to \code{stop(...)} with separators (see examples)
+}
+}
+\details{
+The same applies to all default condition functions, i.e., \code{\link[=stop]{stop()}}, \code{\link[=warning]{warning()}},
 \code{\link[=message]{message()}}, and \code{\link[=packageStartupMessage]{packageStartupMessage()}}.
 }
 \examples{
@@ -25,12 +31,12 @@ lint(
 
 # okay
 lint(
-  text = "stop('a string', 'another')",
+  text = "stop('a string', ' another')",
   linters = condition_message_linter()
 )
 
 lint(
-  text = "warning('a string', 'another')",
+  text = "warning('a string', ' another')",
   linters = condition_message_linter()
 )
 
