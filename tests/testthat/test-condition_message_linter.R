@@ -28,21 +28,21 @@ skip_if_not_installed("patrick")
 patrick::with_parameters_test_that(
   "paste/paste0 allowed by condition_message_linter when using other seps and/or collapse",
   expect_lint(
-    sprintf("%s(%s(x, %s = %s))", condition, fun, parameter, arg),
+    sprintf("%s(%s(x, %s = '%s'))", condition, fun, parameter, arg),
     NULL,
     condition_message_linter()
   ),
   .cases = tibble::tribble(
     ~.test_name,                           ~condition, ~fun,     ~ parameter, ~arg,
-    "stop, paste and collapse = ''",       "stop",     "paste",  "collapse",  "''",
-    "warning, paste and collapse = '\n'",  "warning",  "paste",  "collapse",  "'\n'",
-    "message, paste and collapse = '|'",   "message",  "paste",  "collapse",  "'|'",
-    "stop, paste0 and collapse = ''",      "stop",     "paste0", "collapse",  "''",
-    "warning, paste0 and collapse = '\n'", "warning",  "paste0", "collapse",  "'\n'",
-    "message, paste0 and collapse = '|'",  "message",  "paste0", "collapse",  "'|'",
-    "stop, paste and sep = '-'",           "stop",     "paste",  "sep",       "'-'",
-    "warning, paste and sep = '\n'",       "warning",  "paste",  "sep",       "'\n'",
-    "message, paste and sep = '|'",        "message",  "paste",  "sep",       "'|'",
+    "stop, paste and collapse = ''",       "stop",     "paste",  "collapse",  "",
+    "warning, paste and collapse = '\n'",  "warning",  "paste",  "collapse",  "\n",
+    "message, paste and collapse = '|'",   "message",  "paste",  "collapse",  "|",
+    "stop, paste0 and collapse = ''",      "stop",     "paste0", "collapse",  "",
+    "warning, paste0 and collapse = '\n'", "warning",  "paste0", "collapse",  "\n",
+    "message, paste0 and collapse = '|'",  "message",  "paste0", "collapse",  "|",
+    "stop, paste and sep = '-'",           "stop",     "paste",  "sep",       "-",
+    "warning, paste and sep = '\n'",       "warning",  "paste",  "sep",       "\n",
+    "message, paste and sep = '|'",        "message",  "paste",  "sep",       "|",
   )
 )
 
