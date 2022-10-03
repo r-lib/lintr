@@ -1,8 +1,6 @@
 on:
   pull_request:
-    branches:
-      - main
-      - master
+    branches: [main, master]
 
 name: lint-changed-files
 
@@ -19,6 +17,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
+            r-lib/lintr
             any::gh
             any::purrr
           needs: check
