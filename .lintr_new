@@ -17,6 +17,7 @@ linters: linters_with_defaults(
     missing_argument_linter(),
     nested_ifelse_linter(),
     numeric_leading_zero_linter(),
+    paste_linter(),
     redundant_equals_linter(),
     redundant_ifelse_linter()
   )
