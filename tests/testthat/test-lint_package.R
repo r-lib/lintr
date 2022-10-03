@@ -134,4 +134,3 @@ test_that("lint_package returns early if no package is found", {
     fixed = TRUE
   )
 })
-
