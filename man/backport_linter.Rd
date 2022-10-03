@@ -16,6 +16,30 @@ defined in your package.}
 \description{
 Check for usage of unavailable functions. Not reliable for testing r-devel dependencies.
 }
+\examples{
+# will produce lints
+lint(
+  text = "trimws(x)",
+  linters = backport_linter("3.0.0")
+)
+
+lint(
+  text = "str2lang(x)",
+  linters = backport_linter("3.2.0")
+)
+
+# okay
+lint(
+  text = "trimws(x)",
+  linters = backport_linter("3.6.0")
+)
+
+lint(
+  text = "str2lang(x)",
+  linters = backport_linter("4.0.0")
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
