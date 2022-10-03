@@ -13,7 +13,7 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
   expect_lint("parLapply(cl, x, function(xi) foo(xi, 2, bar(baz(xi))))", NULL, linter)
 
   # multi-argument case
-  expect_lint("lapply(l, function(x, y) setdiff(x, y))", NULL, linter)
+  expect_lint("lapply(l, function(x, na.rm = TRUE) mean(x, na.rm = na.rm))", NULL, linter)
 
   # multi-expression case
   expect_lint("lapply(x, function(xi) { print(xi); xi^2 })", NULL, linter)
