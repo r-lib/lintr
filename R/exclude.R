@@ -271,7 +271,6 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
   paths <- names(x)
   rel_path <- !is_absolute_path(paths)
   paths[rel_path] <- file.path(root, paths[rel_path])
-  paths <- Sys.glob(paths, dirmark = TRUE)
 
   is_dir <- dir.exists(paths)
   if (any(is_dir)) {
@@ -299,6 +298,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
   }
 
   if (normalize_path) {
+    paths <- Sys.glob(paths, dirmark = TRUE)
     paths <- names(x)
     # specify relative paths w.r.t. root
     rel_path <- !is_absolute_path(paths)

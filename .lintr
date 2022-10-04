@@ -1,13 +1,13 @@
 linters: linters_with_defaults(
-   line_length_linter(120),
-   implicit_integer_linter(),
-   backport_linter("oldrel-4", except = "R_user_dir")
- )
+    line_length_linter(120),
+    implicit_integer_linter(),
+    backport_linter("oldrel-4", except = "R_user_dir")
+  )
 exclusions: list(
-  "inst/doc/creating_linters.R" = 1,
-  "inst/example/bad.R",
-  "tests/testthat/default_linter_testcode.R",
-  "tests/testthat/dummy_*",
-  "tests/testthat/exclusions-test",
-  "tests/testthat/knitr_*"
- )
+    "inst/doc/creating_linters.R" = 1,
+    "inst/example/bad.R",
+    "tests/testthat/default_linter_testcode.R",
+    "tests/testthat/dummy_*",
+    "tests/testthat/exclusions-test",
+    "tests/testthat/knitr_*"
+  )
