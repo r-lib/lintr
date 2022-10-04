@@ -6,9 +6,8 @@ test_that("trailing_blank_lines_linter doesn't block allowed usages", {
   expect_lint("blah <- 1\nblah", NULL, linter)
   expect_lint("blah <- 1\nblah\n \n blah", NULL, linter)
 
-  tmp <- withr::local_tempfile()
-  cat("lm(y ~ x)\n", file = tmp)
-  expect_lint(content = NULL, file = tmp, NULL, linter)
+  tmp <- withr::local_tempfile(lines = "lm(y ~ x)")
+  expect_lint(content = tmp, file = tmp, NULL, linter)
 })
 
 test_that("trailing_blank_lines_linter detects disallowed usages", {
@@ -21,7 +20,7 @@ test_that("trailing_blank_lines_linter detects disallowed usages", {
   tmp2 <- withr::local_tempfile()
   cat("lm(y ~ x)", file = tmp2)
   expect_lint(
-    content = NULL,
+    content = tmp2,
     file = tmp2,
     list(
       message = msg2,
@@ -56,7 +55,7 @@ test_that("trailing_blank_lines_linter detects disallowed usages", {
     file = tmp3
   )
   expect_lint(
-    content = NULL,
+    content = tmp3,
     file = tmp3,
     list(
       message = msg2,
@@ -80,7 +79,7 @@ test_that("trailing_blank_lines_linter detects disallowed usages", {
     file = tmp4
   )
   expect_lint(
-    content = NULL,
+    content = tmp4,
     file = tmp4,
     list(
       message = msg2,
@@ -109,7 +108,7 @@ test_that("trailing_blank_lines_linter detects disallowed usages", {
     file = tmp5
   )
   expect_lint(
-    content = NULL,
+    content = tmp5,
     file = tmp5,
     list(
       message = msg2,
@@ -124,9 +123,10 @@ test_that("trailing_blank_lines_linter detects disallowed usages", {
 test_that("blank lines in knitr chunks produce lints", {
   linter <- trailing_blank_lines_linter()
 
-  tmp6 <- withr::local_tempfile(fileext = ".Rmd")
-  cat(
-    '---
+  tmp6 <- withr::local_tempfile(
+    fileext = ".Rmd",
+    lines =
+      '---
       title: "Some file"
       ---
 
@@ -134,20 +134,20 @@ test_that("blank lines in knitr chunks produce lints", {
       abc = 123
 
       ```
-      \n',
-    file = tmp6
+      \n'
   )
 
   expect_lint(
-    content = NULL,
+    content = tmp6,
     file = tmp6,
     list(message = rex("Trailing blank lines are superfluous."), line_number = 7L, column_number = 1L),
     linter
   )
 
-  tmp7 <- withr::local_tempfile(fileext = ".qmd")
-  cat(
-    '---
+  tmp7 <- withr::local_tempfile(
+    fileext = ".qmd",
+    lines =
+      '---
       title: "Some file"
       ---
 
@@ -157,12 +157,11 @@ test_that("blank lines in knitr chunks produce lints", {
 
 
       ```
-      \n',
-    file = tmp7
+      \n'
   )
 
   expect_lint(
-    content = NULL,
+    content = tmp7,
     file = tmp7,
     list(
       list(message = rex("Trailing blank lines are superfluous."), line_number = 7L, column_number = 1L),
