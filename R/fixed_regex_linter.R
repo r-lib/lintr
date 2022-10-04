@@ -36,22 +36,22 @@ fixed_regex_linter <- function() {
   # NB: we intentionally exclude cases like gsub(x, c("a" = "b")), where "b" is fixed
   xpath <- glue::glue("
   //SYMBOL_FUNCTION_CALL[ {pos_1_regex_funs} ]
-  /parent::expr[
-    not(following-sibling::SYMBOL_SUB[
-      (text() = 'fixed' or text() = 'ignore.case')
-      and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-    ])
-  ]
-  /following-sibling::expr[1][STR_CONST and not(EQ_SUB)]
+    /parent::expr[
+      not(following-sibling::SYMBOL_SUB[
+        (text() = 'fixed' or text() = 'ignore.case')
+        and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+      ])
+    ]
+    /following-sibling::expr[1][STR_CONST and not(EQ_SUB)]
   |
   //SYMBOL_FUNCTION_CALL[ {pos_2_regex_funs} ]
-  /parent::expr[
-    not(following-sibling::SYMBOL_SUB[
-      text() = 'fixed'
-      and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-    ])
-  ]
-  /following-sibling::expr[2][STR_CONST and not(EQ_SUB)]
+    /parent::expr[
+      not(following-sibling::SYMBOL_SUB[
+        text() = 'fixed'
+        and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+      ])
+    ]
+    /following-sibling::expr[2][STR_CONST and not(EQ_SUB)]
   ")
 
   Linter(function(source_expression) {

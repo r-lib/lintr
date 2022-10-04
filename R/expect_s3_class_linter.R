@@ -13,19 +13,19 @@ expect_s3_class_linter <- function() {
   # (2) expect_true(is.<class>(x)) and expect_true(inherits(x, C))
   expect_equal_identical_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
-  /parent::expr
-  /following-sibling::expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'class']]
-    and (position() = 1 or preceding-sibling::expr[STR_CONST])
-  ]
-  /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label' or text() = 'expected.label'])]
+    /parent::expr
+    /following-sibling::expr[
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'class']]
+      and (position() = 1 or preceding-sibling::expr[STR_CONST])
+    ]
+    /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label' or text() = 'expected.label'])]
   "
   is_class_call <- xp_text_in_table(c(is_s3_class_calls, "inherits"))
   expect_true_xpath <- glue::glue("
   //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
-  /parent::expr
-  /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[ {is_class_call} ]]]
-  /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label'])]
+    /parent::expr
+    /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[ {is_class_call} ]]]
+    /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label'])]
   ")
   xpath <- paste(expect_equal_identical_xpath, "|", expect_true_xpath)
 
@@ -82,9 +82,9 @@ expect_s4_class_linter <- function() {
   #   though the character output wouldn't make any sense for expect_true().
   xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
-  /parent::expr
-  /following-sibling::expr[1][count(expr) = 3 and expr[1][SYMBOL_FUNCTION_CALL[text() = 'is']]]
-  /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label'])]
+    /parent::expr
+    /following-sibling::expr[1][count(expr) = 3 and expr[1][SYMBOL_FUNCTION_CALL[text() = 'is']]]
+    /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label'])]
   "
 
   Linter(function(source_expression) {

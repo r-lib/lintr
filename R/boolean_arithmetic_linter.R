@@ -32,12 +32,10 @@
 boolean_arithmetic_linter <- function() {
   # TODO(#1580): sum() cases x %in% y, A [&|] B, !A, is.na/is.nan/is.finite/is.infinite/is.element
   # TODO(#1581): extend to include all()-alike expressions
-  zero_expr <-
-    "(EQ or NE or GT or LE) and expr[NUM_CONST[text() = '0' or text() = '0L']]"
-  one_expr <-
-    "(LT or GE) and expr[NUM_CONST[text() = '1' or text() = '1L']]"
+  zero_expr <- "(EQ or NE or GT or LE) and expr[NUM_CONST[text() = '0' or text() = '0L']]"
+  one_expr <- "(LT or GE) and expr[NUM_CONST[text() = '1' or text() = '1L']]"
   length_xpath <- glue::glue("
-    //SYMBOL_FUNCTION_CALL[text() = 'which' or text() = 'grep']
+  //SYMBOL_FUNCTION_CALL[text() = 'which' or text() = 'grep']
     /parent::expr
     /parent::expr
     /parent::expr[
@@ -46,7 +44,7 @@ boolean_arithmetic_linter <- function() {
     ]
   ")
   sum_xpath <- glue::glue("
-    //SYMBOL_FUNCTION_CALL[text() = 'sum']
+  //SYMBOL_FUNCTION_CALL[text() = 'sum']
     /parent::expr
     /parent::expr[
       expr[

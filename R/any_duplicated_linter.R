@@ -36,12 +36,13 @@
 any_duplicated_linter <- function() {
   any_duplicated_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'any']
-  /parent::expr
-  /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'duplicated']]]
-  /parent::expr[
-    count(expr) = 2
-    or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm'])
-  ]"
+    /parent::expr
+    /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'duplicated']]]
+    /parent::expr[
+      count(expr) = 2
+      or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm'])
+    ]
+  "
 
   # outline:
   #   EQ/NE/GT/LT: ensure we're in a comparison clause
@@ -55,30 +56,31 @@ any_duplicated_linter <- function() {
   #  assumes we are before EQ, preceding-sibling assumes we are after EQ.
   length_unique_xpath_parts <- glue::glue("
   //{ c('EQ', 'NE', 'GT', 'LT') }
-  /parent::expr
-  /expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
-    and expr[expr[1][
-      SYMBOL_FUNCTION_CALL[text() = 'unique']
-      and (
-        following-sibling::expr =
-          parent::expr
-          /parent::expr
-          /parent::expr
-          /expr
-          /expr[1][SYMBOL_FUNCTION_CALL[text()= 'length']]
-          /following-sibling::expr
-        or
-        following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
-          parent::expr
-          /parent::expr
-          /parent::expr
-          /expr
-          /expr[1][SYMBOL_FUNCTION_CALL[text()= 'nrow']]
-          /following-sibling::expr
-      )
-    ]]
-  ]")
+    /parent::expr
+    /expr[
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
+      and expr[expr[1][
+        SYMBOL_FUNCTION_CALL[text() = 'unique']
+        and (
+          following-sibling::expr =
+            parent::expr
+            /parent::expr
+            /parent::expr
+            /expr
+            /expr[1][SYMBOL_FUNCTION_CALL[text()= 'length']]
+            /following-sibling::expr
+          or
+          following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
+            parent::expr
+            /parent::expr
+            /parent::expr
+            /expr
+            /expr[1][SYMBOL_FUNCTION_CALL[text()= 'nrow']]
+            /following-sibling::expr
+        )
+      ]]
+    ]
+  ")
   length_unique_xpath <- paste(length_unique_xpath_parts, collapse = " | ")
 
   uses_nrow_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'nrow']"

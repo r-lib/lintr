@@ -33,25 +33,25 @@
 T_and_F_symbol_linter <- function() { # nolint: object_name.
   xpath <- paste0(
     "//SYMBOL[",
-    "(text() = 'T' or text() = 'F')", # T or F symbol
-    " and not(preceding-sibling::OP-DOLLAR)", # not part of a $-subset expression
-    " and not(parent::expr[",
-    "  following-sibling::LEFT_ASSIGN", # not target of left assignment
-    "  or preceding-sibling::RIGHT_ASSIGN", # not target of right assignment
-    "  or following-sibling::EQ_ASSIGN", # not target of equals assignment
-    "])",
+    "  (text() = 'T' or text() = 'F')", # T or F symbol
+    "  and not(preceding-sibling::OP-DOLLAR)", # not part of a $-subset expression
+    "  and not(parent::expr[",
+    "    following-sibling::LEFT_ASSIGN", # not target of left assignment
+    "    or preceding-sibling::RIGHT_ASSIGN", # not target of right assignment
+    "    or following-sibling::EQ_ASSIGN", # not target of equals assignment
+    "  ])",
     "]"
   )
 
   xpath_assignment <- paste0(
     "//SYMBOL[",
-    "(text() = 'T' or text() = 'F')", # T or F symbol
-    " and not(preceding-sibling::OP-DOLLAR)", # not part of a $-subset expression
-    " and parent::expr[", #, but ...
-    "  following-sibling::LEFT_ASSIGN", # target of left assignment
-    "  or preceding-sibling::RIGHT_ASSIGN", # target of right assignment
-    "  or following-sibling::EQ_ASSIGN", # target of equals assignment
-    " ]",
+    "  (text() = 'T' or text() = 'F')", # T or F symbol
+    "  and not(preceding-sibling::OP-DOLLAR)", # not part of a $-subset expression
+    "  and parent::expr[", #, but ...
+    "    following-sibling::LEFT_ASSIGN", # target of left assignment
+    "    or preceding-sibling::RIGHT_ASSIGN", # target of right assignment
+    "    or following-sibling::EQ_ASSIGN", # target of equals assignment
+    "  ]",
     "]"
   )
 

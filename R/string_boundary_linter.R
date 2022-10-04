@@ -31,27 +31,27 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
   )
   str_detect_xpath <- glue::glue("
   //SYMBOL_FUNCTION_CALL[text() = 'str_detect']
-  /parent::expr
-  /following-sibling::expr[2]
-  /STR_CONST[ {str_cond} ]
+    /parent::expr
+    /following-sibling::expr[2]
+    /STR_CONST[ {str_cond} ]
   ")
 
   if (!allow_grepl) {
     grepl_xpath <- glue::glue("
     //SYMBOL_FUNCTION_CALL[text() = 'grepl']
-    /parent::expr
-    /parent::expr[
-      not(SYMBOL_SUB[
-        text() = 'ignore.case'
-        and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
-      ])
-      and not(SYMBOL_SUB[
-        text() = 'fixed'
-        and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
-      ])
-    ]
-    /expr[2]
-    /STR_CONST[ {str_cond} ]
+      /parent::expr
+      /parent::expr[
+        not(SYMBOL_SUB[
+          text() = 'ignore.case'
+          and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
+        ])
+        and not(SYMBOL_SUB[
+          text() = 'fixed'
+          and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
+        ])
+      ]
+      /expr[2]
+      /STR_CONST[ {str_cond} ]
     ")
   }
 
@@ -67,22 +67,23 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
 
   substr_xpath_parts <- glue::glue("
   //{ c('EQ', 'NE') }
-  /parent::expr[
-    expr[STR_CONST]
-    and expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'substr' or text() = 'substring']]
+    /parent::expr[
+      expr[STR_CONST]
       and expr[
-        (
-          position() = 3
-          and NUM_CONST[text() = '1' or text() = '1L']
-        ) or (
-          position() = 4
-          and expr[1][SYMBOL_FUNCTION_CALL[text() = 'nchar']]
-          and expr[position() = 2] = preceding-sibling::expr[2]
-        )
+        expr[1][SYMBOL_FUNCTION_CALL[text() = 'substr' or text() = 'substring']]
+        and expr[
+          (
+            position() = 3
+            and NUM_CONST[text() = '1' or text() = '1L']
+          ) or (
+            position() = 4
+            and expr[1][SYMBOL_FUNCTION_CALL[text() = 'nchar']]
+            and expr[position() = 2] = preceding-sibling::expr[2]
+          )
+        ]
       ]
     ]
-  ]")
+  ")
   substr_xpath <- paste(substr_xpath_parts, collapse = " | ")
 
   substr_arg2_xpath <- "string(./expr[expr[1][SYMBOL_FUNCTION_CALL]]/expr[3])"

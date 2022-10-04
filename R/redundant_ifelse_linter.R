@@ -14,19 +14,21 @@
 redundant_ifelse_linter <- function(allow10 = FALSE) {
   tf_xpath <- glue::glue("
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
-  /parent::expr
-  /parent::expr[
-    expr[NUM_CONST[text() = 'TRUE']]
-    and expr[NUM_CONST[text() = 'FALSE']]
-  ]")
+    /parent::expr
+    /parent::expr[
+      expr[NUM_CONST[text() = 'TRUE']]
+      and expr[NUM_CONST[text() = 'FALSE']]
+    ]
+  ")
 
   num_xpath <- glue::glue("
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
-  /parent::expr
-  /parent::expr[
-    expr[NUM_CONST[text() = '1' or text() = '1L']]
-    and expr[NUM_CONST[text() = '0' or text() = '0L']]
-  ]")
+    /parent::expr
+    /parent::expr[
+      expr[NUM_CONST[text() = '1' or text() = '1L']]
+      and expr[NUM_CONST[text() = '0' or text() = '0L']]
+    ]
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
