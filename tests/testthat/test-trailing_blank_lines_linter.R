@@ -1,5 +1,3 @@
-skip_if_not_installed("withr")
-
 test_that("returns the correct linting", {
   linter <- trailing_blank_lines_linter()
   msg <- rex("Trailing blank lines are superfluous.")
