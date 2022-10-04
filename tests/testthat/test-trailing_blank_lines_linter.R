@@ -23,11 +23,16 @@ test_that("returns the correct linting", {
   cat("lm(y ~ x)", file = tmp2)
 
   expect_lint(content = NULL, file = tmp, NULL, linter)
-  expect_lint(content = NULL, file = tmp2, list(
-    message = msg2,
-    line_number = 1L,
-    column_number = 10L
-  ), linter)
+  expect_lint(
+    content = NULL,
+    file = tmp2,
+    list(
+      message = msg2,
+      line_number = 1L,
+      column_number = 10L
+    ),
+    linter
+  )
 
   # Construct an Rmd file without terminal newline
   tmp3 <- withr::local_tempfile(fileext = ".Rmd")
@@ -46,12 +51,17 @@ test_that("returns the correct linting", {
     ),
     file = tmp3
   )
-  expect_lint(content = NULL, file = tmp3, list(
-    message = msg2,
-    line_number = 10L,
-    # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
-    column_number = 1L
-  ), linter)
+  expect_lint(
+    content = NULL,
+    file = tmp3,
+    list(
+      message = msg2,
+      line_number = 10L,
+      # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
+      column_number = 1L
+    ),
+    linter
+  )
 
   # Construct an Rmd file without R code (#1415)
   tmp4 <- withr::local_tempfile(fileext = ".Rmd")
@@ -65,12 +75,17 @@ test_that("returns the correct linting", {
     ),
     file = tmp4
   )
-  expect_lint(content = NULL, file = tmp4, list(
-    message = msg2,
-    line_number = 5L,
-    # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
-    column_number = 1L
-  ), linter)
+  expect_lint(
+    content = NULL,
+    file = tmp4,
+    list(
+      message = msg2,
+      line_number = 5L,
+      # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
+      column_number = 1L
+    ),
+    linter
+  )
 
   # Construct a qmd file without terminal newline
   tmp5 <- withr::local_tempfile(fileext = ".qmd")
@@ -89,12 +104,17 @@ test_that("returns the correct linting", {
     ),
     file = tmp5
   )
-  expect_lint(content = NULL, file = tmp5, list(
-    message = msg2,
-    line_number = 10L,
-    # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
-    column_number = 1L
-  ), linter)
+  expect_lint(
+    content = NULL,
+    file = tmp5,
+    list(
+      message = msg2,
+      line_number = 10L,
+      # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
+      column_number = 1L
+    ),
+    linter
+  )
 })
 
 test_that("blank lines in chunks produce lints", {
