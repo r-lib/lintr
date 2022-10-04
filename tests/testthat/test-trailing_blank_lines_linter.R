@@ -1,3 +1,5 @@
+skip_if_not_installed("withr")
+
 test_that("returns the correct linting", {
   linter <- trailing_blank_lines_linter()
   msg <- rex("Trailing blank lines are superfluous.")
@@ -95,4 +97,56 @@ test_that("returns the correct linting", {
     # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
     column_number = 1L
   ), linter)
+})
+
+test_that("blank lines in chunks produce lints", {
+  linter <- trailing_blank_lines_linter()
+
+  tmp6 <- withr::local_tempfile(fileext = ".Rmd")
+  cat(
+    '---
+      title: "Some file"
+      ---
+
+      ```{r}
+      abc = 123
+
+      ```
+      \n',
+    file = tmp6
+  )
+
+  expect_lint(
+    content = NULL,
+    file = tmp6,
+    list(message = rex("Trailing blank lines are superfluous."), line_number = 7L, column_number = 1L),
+    linter
+  )
+
+  tmp7 <- withr::local_tempfile(fileext = ".qmd")
+  cat(
+    '---
+      title: "Some file"
+      ---
+
+      ```{r}
+      abc = 123
+
+
+
+      ```
+      \n',
+    file = tmp7
+  )
+
+  expect_lint(
+    content = NULL,
+    file = tmp7,
+    list(
+      list(message = rex("Trailing blank lines are superfluous."), line_number = 7L, column_number = 1L),
+      list(message = rex("Trailing blank lines are superfluous."), line_number = 8L, column_number = 1L),
+      list(message = rex("Trailing blank lines are superfluous."), line_number = 9L, column_number = 1L)
+    ),
+    linter
+  )
 })

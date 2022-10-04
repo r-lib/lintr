@@ -27,6 +27,7 @@ trailing_blank_lines_linter <- function() {
       }
       line_number <- line_number - 1L
     }
+
     if (identical(source_expression$terminal_newline, FALSE)) { # could use isFALSE, but needs backports
       last_line <- tail(source_expression$file_lines, 1L)
 
@@ -39,6 +40,7 @@ trailing_blank_lines_linter <- function() {
         line = last_line
       )
     }
+
     lints
   })
 }
