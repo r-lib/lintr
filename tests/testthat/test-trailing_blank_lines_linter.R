@@ -1,28 +1,25 @@
-test_that("returns the correct linting", {
+test_that("trailing_blank_lines_linter doesn't block allowed usages", {
   linter <- trailing_blank_lines_linter()
-  msg <- rex("Trailing blank lines are superfluous.")
-  msg2 <- rex("Missing terminal newline.")
 
   expect_lint("blah", NULL, linter)
   expect_lint("blah <- 1  ", NULL, linter)
   expect_lint("blah <- 1\nblah", NULL, linter)
   expect_lint("blah <- 1\nblah\n \n blah", NULL, linter)
 
-  expect_lint("blah <- 1\n", msg, linter)
-  expect_lint("blah <- 1\n  ", msg, linter)
+  tmp <- withr::local_tempfile()
+  cat("lm(y ~ x)\n", file = tmp)
+  expect_lint(content = NULL, file = tmp, NULL, linter)
+})
 
-  expect_lint("blah <- 1\n \n ", list(msg, msg), linter)
-  expect_lint("blah <- 1\n\n", list(msg, msg), linter)
-  expect_lint("blah <- 1\n\t\n", list(msg, msg), linter)
+test_that("trailing_blank_lines_linter detects disallowed usages", {
+  linter <- trailing_blank_lines_linter()
+  msg <- rex("Trailing blank lines are superfluous.")
+  msg2 <- rex("Missing terminal newline.")
 
   # Construct a test file without terminal newline
   # cf. test-get_source_expressions.R
-  tmp <- withr::local_tempfile()
   tmp2 <- withr::local_tempfile()
-  cat("lm(y ~ x)\n", file = tmp)
   cat("lm(y ~ x)", file = tmp2)
-
-  expect_lint(content = NULL, file = tmp, NULL, linter)
   expect_lint(
     content = NULL,
     file = tmp2,
@@ -33,6 +30,13 @@ test_that("returns the correct linting", {
     ),
     linter
   )
+
+  expect_lint("blah <- 1\n", msg, linter)
+  expect_lint("blah <- 1\n  ", msg, linter)
+
+  expect_lint("blah <- 1\n \n ", list(msg, msg), linter)
+  expect_lint("blah <- 1\n\n", list(msg, msg), linter)
+  expect_lint("blah <- 1\n\t\n", list(msg, msg), linter)
 
   # Construct an Rmd file without terminal newline
   tmp3 <- withr::local_tempfile(fileext = ".Rmd")
@@ -117,7 +121,7 @@ test_that("returns the correct linting", {
   )
 })
 
-test_that("blank lines in chunks produce lints", {
+test_that("blank lines in knitr chunks produce lints", {
   linter <- trailing_blank_lines_linter()
 
   tmp6 <- withr::local_tempfile(fileext = ".Rmd")
