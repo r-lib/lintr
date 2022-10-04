@@ -1,5 +1,5 @@
 object_name_xpath <- local({
-  xp_assignment_target <- paste(
+  xp_assignment_target <- paste0(
     "not(preceding-sibling::OP-DOLLAR)",
     "and ancestor::expr[",
     " following-sibling::LEFT_ASSIGN",
@@ -12,12 +12,11 @@ object_name_xpath <- local({
     "])"
   )
 
-  paste(
-    "//SYMBOL[", xp_assignment_target, "]",
-    "//STR_CONST[", xp_assignment_target, "]",
-    "//SYMBOL_FORMALS",
-    sep = " | "
-  )
+  glue::glue("
+  //SYMBOL[ {xp_assignment_target} ]
+  |  //STR_CONST[ {xp_assignment_target} ]
+  |  //SYMBOL_FORMALS
+  ")
 })
 
 #' Object name linter
