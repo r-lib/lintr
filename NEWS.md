@@ -4,8 +4,9 @@
 
 * `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
 
-* `lint()` no longer produces error on encountering raw HTML included in `marginfigure` code blocks 
-  from the `{tufte}` package (#796, @IndrajeetPatil).
+* `lint()` for Rmarkdown docs becomes more robust to encountering custom knitr engines 
+  (e.g. `marginfigure` from `{tufte}`, cf. #796). The adopted heuristic here is that packages 
+  providing custom engines register them via namespace hooks (#1552, @IndrajeetPatil).
 
 ## Changes to defaults
 
