@@ -29,6 +29,8 @@
   Typically, linters should not themselves cause R to stop -- syntax errors lead to error lints,
   for example. Please report such failures as they are likely bugs.
 
+* The settings file (`.lintr`) supports wildcards in file paths to exclude (#1554, @IndrajeetPatil).
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
