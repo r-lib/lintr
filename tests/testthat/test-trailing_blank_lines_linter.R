@@ -13,7 +13,6 @@ test_that("trailing_blank_lines_linter doesn't block allowed usages", {
 test_that("trailing_blank_lines_linter detects disallowed usages", {
   linter <- trailing_blank_lines_linter()
   msg <- rex("Trailing blank lines are superfluous.")
-  msg2 <- rex("Missing terminal newline.")
 
   # Construct a test file without terminal newline
   # cf. test-get_source_expressions.R
@@ -23,7 +22,7 @@ test_that("trailing_blank_lines_linter detects disallowed usages", {
     content = tmp2,
     file = tmp2,
     list(
-      message = msg2,
+      message = rex("Missing terminal newline."),
       line_number = 1L,
       column_number = 10L
     ),
@@ -36,8 +35,11 @@ test_that("trailing_blank_lines_linter detects disallowed usages", {
   expect_lint("blah <- 1\n \n ", list(msg, msg), linter)
   expect_lint("blah <- 1\n\n", list(msg, msg), linter)
   expect_lint("blah <- 1\n\t\n", list(msg, msg), linter)
+})
 
-  # Construct an Rmd file without terminal newline
+test_that("trailing_blank_lines_linter detects missing terminal newlines in Rmd/qmd docs", {
+  linter <- trailing_blank_lines_linter()
+
   tmp3 <- withr::local_tempfile(fileext = ".Rmd")
   cat(
     trim_some(
@@ -58,7 +60,7 @@ test_that("trailing_blank_lines_linter detects disallowed usages", {
     content = tmp3,
     file = tmp3,
     list(
-      message = msg2,
+      message = rex("Missing terminal newline."),
       line_number = 10L,
       # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
       column_number = 1L
@@ -82,7 +84,7 @@ test_that("trailing_blank_lines_linter detects disallowed usages", {
     content = tmp4,
     file = tmp4,
     list(
-      message = msg2,
+      message = rex("Missing terminal newline."),
       line_number = 5L,
       # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
       column_number = 1L
@@ -111,7 +113,7 @@ test_that("trailing_blank_lines_linter detects disallowed usages", {
     content = tmp5,
     file = tmp5,
     list(
-      message = msg2,
+      message = rex("Missing terminal newline."),
       line_number = 10L,
       # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
       column_number = 1L
