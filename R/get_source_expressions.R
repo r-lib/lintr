@@ -1,10 +1,10 @@
 #' Parsed sourced file from a filename
 #'
-#' This object is given as input to each linter
+#' This object is given as input to each linter.
 #'
 #' @details
-#' The file is read in using the `encoding` setting.
-#' This setting found by taking the first valid result from the following locations
+#' The file is read using the `encoding` setting.
+#' This setting is found by taking the first valid result from the following locations
 #'
 #' 1. The `encoding` key from the usual lintr configuration settings.
 #' 2. The `Encoding` field from a Package `DESCRIPTION` file in a parent directory.
