@@ -18,3 +18,10 @@ in the current file are available.}
 Helper for determining whether the current \code{source_expression} contains
 all expressions in the current file, or just a single expression.
 }
+\examples{
+tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
+source_exprs <- get_source_expressions(tmp)
+is_lint_level(source_exprs, level = "expression")
+is_lint_level(source_exprs$expressions[[1L]], level = "expression")
+
+}

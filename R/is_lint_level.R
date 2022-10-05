@@ -9,6 +9,12 @@
 #'   means an individual expression, while `"file"` means all expressions
 #'   in the current file are available.
 #'
+#' @examples
+#' tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
+#' source_exprs <- get_source_expressions(tmp)
+#' is_lint_level(source_exprs, level = "expression")
+#' is_lint_level(source_exprs$expressions[[1L]], level = "expression")
+#'
 #' @export
 is_lint_level <- function(source_expression, level = c("expression", "file")) {
   stopifnot(!missing(level))
