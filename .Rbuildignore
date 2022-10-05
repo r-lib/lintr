@@ -16,13 +16,13 @@
 ^COPYING$
 ^bad\.R$
 ^\.github$
-^codecov\.yml$
+^codecov\.yaml$
 ^\.covrignore$
 ^script[.]R$
 ^bench$
 ^tests/testthat/dummy_packages/package/[.]Rbuildignore$
 ^tests/testthat/dummy_packages/cp1252/[.]Rbuildignore$
-^_pkgdown\.yml$
+^_pkgdown\.yaml$
 ^docs$
 ^pkgdown$
 ^vignettes/[^-]+.gif$
