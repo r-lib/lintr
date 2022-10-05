@@ -1,10 +1,10 @@
 #' Parsed sourced file from a filename
 #'
-#' This object is given as input to each linter
+#' This object is given as input to each linter.
 #'
 #' @details
-#' The file is read in using the `encoding` setting.
-#' This setting found by taking the first valid result from the following locations
+#' The file is read using the `encoding` setting.
+#' This setting is found by taking the first valid result from the following locations
 #'
 #' 1. The `encoding` key from the usual lintr configuration settings.
 #' 2. The `Encoding` field from a Package `DESCRIPTION` file in a parent directory.
@@ -51,8 +51,11 @@
 #'   \item{error}{A `Lint` object describing any parsing error.}
 #'   \item{lines}{The [readLines()] output for this file.}
 #' }
+#'
+#' @examples
+#' tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
+#' get_source_expressions(tmp)
 #' @export
-#' @md
 get_source_expressions <- function(filename, lines = NULL) {
   source_expression <- srcfile(filename, encoding = settings$encoding)
 
@@ -355,8 +358,9 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
       loc <- re_matches(source_expression$content,
         rex(
           "``" %or%
-          list(or("''", '""'), any_spaces, "(") %or%
-          list(or("(", ","), any_spaces, or("''", '""'), any_spaces, "=")),
+            list(or("''", '""'), any_spaces, "(") %or%
+            list(or("(", ","), any_spaces, or("''", '""'), any_spaces, "=")
+        ),
         options = "multi-line",
         locations = TRUE
       )

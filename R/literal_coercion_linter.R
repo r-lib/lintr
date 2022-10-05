@@ -35,11 +35,12 @@ literal_coercion_linter <- function() {
   "
   xpath <- glue::glue("
   //SYMBOL_FUNCTION_CALL[ {coercers} ]
-  /parent::expr
-  /parent::expr[
-    count(expr) = 2
-    and expr[2][ {not_extraction_or_scientific} ]
-  ]")
+    /parent::expr
+    /parent::expr[
+      count(expr) = 2
+      and expr[2][ {not_extraction_or_scientific} ]
+    ]
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
