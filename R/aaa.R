@@ -22,7 +22,9 @@ NULL
 rex::register_shortcuts("lintr")
 
 utils::globalVariables(
-  c("line1", "col1", "line2", "col2", # columns of parsed_content
-    "id", "parent", "token", "terminal", "text"), # ditto
+  c(
+    "line1", "col1", "line2", "col2", # columns of parsed_content
+    "id", "parent", "token", "terminal", "text" # ditto
+  ),
   "lintr"
 )
