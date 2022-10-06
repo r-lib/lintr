@@ -12,7 +12,7 @@ test_that("trailing_blank_lines_linter doesn't block allowed usages", {
 
 test_that("trailing_blank_lines_linter detects disallowed usages", {
   linter <- trailing_blank_lines_linter()
-  msg <- rex("Trailing blank lines are superfluous.")
+  msg <- rex::rex("Trailing blank lines are superfluous.")
 
   expect_lint("blah <- 1\n", msg, linter)
   expect_lint("blah <- 1\n  ", msg, linter)
@@ -28,7 +28,7 @@ test_that("trailing_blank_lines_linter detects disallowed usages", {
     content = tmp2,
     file = tmp2,
     list(
-      message = rex("Missing terminal newline."),
+      message = rex::rex("Missing terminal newline."),
       line_number = 1L,
       column_number = 10L
     ),
@@ -59,7 +59,7 @@ test_that("trailing_blank_lines_linter detects missing terminal newlines in Rmd/
     content = tmp3,
     file = tmp3,
     list(
-      message = rex("Missing terminal newline."),
+      message = rex::rex("Missing terminal newline."),
       line_number = 10L,
       # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
       column_number = 1L
@@ -83,7 +83,7 @@ test_that("trailing_blank_lines_linter detects missing terminal newlines in Rmd/
     content = tmp4,
     file = tmp4,
     list(
-      message = rex("Missing terminal newline."),
+      message = rex::rex("Missing terminal newline."),
       line_number = 5L,
       # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
       column_number = 1L
@@ -112,7 +112,7 @@ test_that("trailing_blank_lines_linter detects missing terminal newlines in Rmd/
     content = tmp5,
     file = tmp5,
     list(
-      message = rex("Missing terminal newline."),
+      message = rex::rex("Missing terminal newline."),
       line_number = 10L,
       # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
       column_number = 1L
@@ -141,7 +141,7 @@ test_that("blank lines in knitr chunks produce lints", {
   expect_lint(
     content = tmp6,
     file = tmp6,
-    list(message = rex("Trailing blank lines are superfluous."), line_number = 7L, column_number = 1L),
+    list(message = rex::rex("Trailing blank lines are superfluous."), line_number = 7L, column_number = 1L),
     linter
   )
 
@@ -165,9 +165,9 @@ test_that("blank lines in knitr chunks produce lints", {
     content = tmp7,
     file = tmp7,
     list(
-      list(message = rex("Trailing blank lines are superfluous."), line_number = 7L, column_number = 1L),
-      list(message = rex("Trailing blank lines are superfluous."), line_number = 8L, column_number = 1L),
-      list(message = rex("Trailing blank lines are superfluous."), line_number = 9L, column_number = 1L)
+      list(message = rex::rex("Trailing blank lines are superfluous."), line_number = 7L, column_number = 1L),
+      list(message = rex::rex("Trailing blank lines are superfluous."), line_number = 8L, column_number = 1L),
+      list(message = rex::rex("Trailing blank lines are superfluous."), line_number = 9L, column_number = 1L)
     ),
     linter
   )
