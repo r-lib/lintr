@@ -1,7 +1,7 @@
 test_that("returns the correct linting", {
   linter <- commas_linter()
-  msg_after <- rex("Commas should always have a space after.")
-  msg_before <- rex("Commas should never have a space before.")
+  msg_after <- rex::rex("Commas should always have a space after.")
+  msg_before <- rex::rex("Commas should never have a space before.")
 
   expect_lint("blah", NULL, linter)
   expect_lint("fun(1, 1)", NULL, linter)
