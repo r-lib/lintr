@@ -1,6 +1,6 @@
 test_that("returns the correct linting", {
   linter <- function_left_parentheses_linter()
-  msg <- rex("Remove spaces before the left parenthesis in a function call.")
+  msg <- rex::rex("Remove spaces before the left parenthesis in a function call.")
 
   expect_lint("blah", NULL, linter)
   expect_lint("print(blah)", NULL, linter)

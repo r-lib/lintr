@@ -1,11 +1,11 @@
 test_that("it returns the input if less than the max", {
-  expect_equal(trim_output(character()), character())
+  expect_equal(lintr:::trim_output(character()), character())
 
-  expect_equal(trim_output("test", max = 10L), "test")
+  expect_equal(lintr:::trim_output("test", max = 10L), "test")
 })
 
 test_that("it returns the input trimmed strictly to max if no lints found", {
-  expect_equal(trim_output("testing a longer non_lint string", max = 7L), "testing")
+  expect_equal(lintr:::trim_output("testing a longer non_lint string", max = 7L), "testing")
 })
 
 test_that("it returns the input trimmed to the last full lint if one exists within the max", {
@@ -14,9 +14,9 @@ test_that("it returns the input trimmed to the last full lint if one exists with
     # Magic numbers expect newlines to be 1 character
     t1 <- gsub("\r\n", "\n", t1, fixed = TRUE)
   }
-  expect_equal(trim_output(t1, max = 200L), substr(t1, 1L, 195L))
-  expect_equal(trim_output(t1, max = 400L), substr(t1, 1L, 380L))
-  expect_equal(trim_output(t1, max = 2000L), substr(t1, 1L, 1930L))
+  expect_equal(lintr:::trim_output(t1, max = 200L), substr(t1, 1L, 195L))
+  expect_equal(lintr:::trim_output(t1, max = 400L), substr(t1, 1L, 380L))
+  expect_equal(lintr:::trim_output(t1, max = 2000L), substr(t1, 1L, 1930L))
 })
 
 test_that("as.data.frame.lints", {
@@ -55,7 +55,7 @@ test_that("as.data.frame.lints", {
   # Convert lints to data.frame
   lints <- structure(list(l1, l2), class = "lints")
   expect_s3_class(
-    df <- as.data.frame.lints(lints),
+    df <- lintr:::as.data.frame.lints(lints),
     "data.frame"
   )
 

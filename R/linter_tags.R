@@ -128,6 +128,8 @@ available_tags <- function(packages = "lintr") {
   platform_independent_sort(unique(unlist(available_linters(packages = packages, exclude_tags = NULL)[["tags"]])))
 }
 
+# nocov start
+
 #' Generate Rd fragment for the Tags section of a linter
 #'
 #' @param linter_name Name of the linter to generate Rd code for.
@@ -211,3 +213,5 @@ rd_linterlist <- function() {
     "}" # section
   )
 }
+
+# nocov end
