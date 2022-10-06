@@ -1,4 +1,4 @@
-pipe_error <- rex(
+pipe_error <- rex::rex(
   paste(
     "`%>%` should always have a space before it and a new line after it,",
     "unless the full pipeline fits on one line."

@@ -11,7 +11,7 @@ test_that("duplicate_argument_linter doesn't block allowed usages", {
 
 test_that("duplicate_argument_linter blocks disallowed usages", {
   linter <- duplicate_argument_linter()
-  msg <- rex("Duplicate arguments in function call.")
+  msg <- rex::rex("Duplicate arguments in function call.")
 
   expect_lint("fun(arg = 1, arg = 2)", msg, linter)
   expect_lint("fun(arg = 1, 'arg' = 2)", msg, linter)
@@ -51,13 +51,13 @@ test_that("duplicate_argument_linter respects except argument", {
     "fun(`
 ` = 1, `
 ` = 2)",
-    list(message = rex("Duplicate arguments in function call.")),
+    list(message = rex::rex("Duplicate arguments in function call.")),
     duplicate_argument_linter(except = character())
   )
 
   expect_lint(
     "function(arg = 1, arg = 1) {}",
-    list(message = rex("Repeated formal argument 'arg'.")),
+    list(message = rex::rex("Repeated formal argument 'arg'.")),
     duplicate_argument_linter(except = character())
   )
 })
