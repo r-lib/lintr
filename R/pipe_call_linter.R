@@ -10,7 +10,7 @@ pipe_call_linter <- function() {
   # NB: the text() here shows up as %&gt;% but that's not matched, %>% is
   # NB: use *[1][self::SYMBOL] to ensure the first element is SYMBOL, otherwise
   #       we include expressions like x %>% .$col
-  xpath <- "//expr[preceding-sibling::SPECIAL[text() = '%>%'] and *[1][self::SYMBOL]]"
+  xpath <- "//SPECIAL[text() = '%>%']/following-sibling::expr[*[1][self::SYMBOL]]"
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

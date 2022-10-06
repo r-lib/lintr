@@ -8,13 +8,13 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "x == NA",
-    list(message = msg, line_number = 1L, column_number = 3L),
+    list(message = msg, line_number = 1L, column_number = 1L),
     linter
   )
 
   expect_lint(
     "x==NA",
-    list(message = msg, line_number = 1L, column_number = 2L),
+    list(message = msg, line_number = 1L, column_number = 1L),
     linter
   )
 
@@ -24,7 +24,7 @@ test_that("returns the correct linting", {
     linter
   )
 
- # equals_na_linter should ignore strings and comments
+  # equals_na_linter should ignore strings and comments
   expect_lint(
     "is.na(x) # dont flag x == NA if inside a comment",
     NULL,
@@ -39,7 +39,7 @@ test_that("returns the correct linting", {
   # correct line number for multiline code
   expect_lint(
     "x ==\nNA",
-    list(line_number = 1L, column_number = 3L, ranges = list(3L:4L)),
+    list(line_number = 1L, column_number = 1L, ranges = list(c(1L, 4L))),
     linter
   )
 })

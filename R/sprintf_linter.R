@@ -7,14 +7,17 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 sprintf_linter <- function() {
-  xpath <- "//expr[
-    expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf'] and
-    (
-      OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST or
-      SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST
-    ) and
-    not(expr/SYMBOL[text() = '...'])
-  ]"
+  xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'sprintf']
+    /parent::expr
+    /parent::expr[
+      (
+        OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST or
+        SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST
+      ) and
+      not(expr/SYMBOL[text() = '...'])
+    ]
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {

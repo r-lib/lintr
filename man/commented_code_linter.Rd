@@ -9,6 +9,35 @@ commented_code_linter()
 \description{
 Check that there is no commented code outside roxygen blocks.
 }
+\examples{
+# will produce lints
+lint(
+  text = "# x <- 1",
+  linters = commented_code_linter()
+)
+
+lint(
+  text = "x <- f() # g()",
+  linters = commented_code_linter()
+)
+
+lint(
+  text = "x + y # + z[1, 2]",
+  linters = commented_code_linter()
+)
+
+# okay
+lint(
+  text = "x <- 1; x <- f(); x + y",
+  linters = commented_code_linter()
+)
+
+lint(
+  text = "#' x <- 1",
+  linters = commented_code_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

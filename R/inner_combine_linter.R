@@ -58,13 +58,12 @@ inner_combine_linter <- function() {
     log_args_cond,
     lubridate_args_cond
   )
-  xpath <- glue::glue("//expr[
-    count(expr) > 2
-    and expr[1][
-      SYMBOL_FUNCTION_CALL[text() = 'c']
-      and following-sibling::expr[1][ {c_expr_cond} ]
-    ]
-  ]")
+  xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[text() = 'c']
+    /parent::expr
+    /following-sibling::expr[1][ {c_expr_cond} ]
+    /parent::expr
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

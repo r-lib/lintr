@@ -1,6 +1,8 @@
-old_ops <- options(lintr.exclude = "#TeSt_NoLiNt",
-                   lintr.exclude_start = "#TeSt_NoLiNt_StArT",
-                   lintr.exclude_end = "#TeSt_NoLiNt_EnD")
+old_ops <- options(
+  lintr.exclude = "#TeSt_NoLiNt",
+  lintr.exclude_start = "#TeSt_NoLiNt_StArT",
+  lintr.exclude_end = "#TeSt_NoLiNt_EnD"
+)
 
 test_that("it returns an empty list if there are no exclusions", {
   read_settings(NULL)
@@ -148,13 +150,16 @@ test_that("it returns all lines between start and end", {
 test_that("it ignores exclude coverage lines within start and end", {
   read_settings(NULL)
 
-    t1 <- tempfile()
+  t1 <- tempfile()
   on.exit(unlink(t1))
   writeLines(
-    c("this #TeSt_NoLiNt_StArT",
+    c(
+      "this #TeSt_NoLiNt_StArT",
       "is #TeSt_NoLiNt",
       "a #TeSt_NoLiNt_EnD",
-      "test"), t1)
+      "test"
+    ), t1
+  )
   expect_equal(parse_exclusions(t1), list(c(1L, 2L, 3L)))
 })
 

@@ -39,22 +39,25 @@ strings_as_factors_linter <- function() {
   # two exclusions
   #   (1) above argument is to row.names=
   #   (2) stringsAsFactors is manually supplied (with any value)
-  xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'data.frame']]
-    and expr[
-      (
-        STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
-        or ( {c_combine_strings} )
-        or expr[1][
-          SYMBOL_FUNCTION_CALL[text() = 'rep']
-          and following-sibling::expr[1][STR_CONST or ({c_combine_strings})]
-        ]
-        or expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(known_character_funs)} ]]
-      )
-      and not(preceding-sibling::*[2][self::SYMBOL_SUB and text() = 'row.names'])
+  xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[text() = 'data.frame']
+    /parent::expr
+    /parent::expr[
+      expr[
+        (
+          STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
+          or ( {c_combine_strings} )
+          or expr[1][
+            SYMBOL_FUNCTION_CALL[text() = 'rep']
+            and following-sibling::expr[1][STR_CONST or ({c_combine_strings})]
+          ]
+          or expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(known_character_funs)} ]]
+        )
+        and not(preceding-sibling::*[2][self::SYMBOL_SUB and text() = 'row.names'])
+      ]
+      and not(SYMBOL_SUB[text() = 'stringsAsFactors'])
     ]
-    and not(SYMBOL_SUB[text() = 'stringsAsFactors'])
-  ]")
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

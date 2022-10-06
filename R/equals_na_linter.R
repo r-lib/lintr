@@ -6,12 +6,13 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 equals_na_linter <- function() {
-  comparators <- c("EQ", "NE")
-  comparator_table <- paste0("self::", comparators, collapse = " or ")
   na_table <- xp_text_in_table(c("NA", "NA_integer_", "NA_real_", "NA_complex_", "NA_character_"))
 
-  xpath_fmt <- "//expr[expr[NUM_CONST[%s]]]/*[%s]"
-  xpath <- sprintf(xpath_fmt, na_table, comparator_table)
+  xpath <- glue::glue("
+  //NUM_CONST[ {na_table} ]
+    /parent::expr
+    /parent::expr[EQ or NE]
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

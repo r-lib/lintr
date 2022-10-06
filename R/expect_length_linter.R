@@ -9,14 +9,15 @@
 #' @export
 expect_length_linter <- function() {
   # TODO(michaelchirico): also catch expect_true(length(x) == 1)
-  xpath <- sprintf("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']]
-    and expr[
+  xpath <- sprintf("
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
+    /parent::expr
+    /following-sibling::expr[
       expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
-      and (position() = 2 or preceding-sibling::expr[NUM_CONST])
+      and (position() = 1 or preceding-sibling::expr[NUM_CONST])
     ]
-    and not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])
-  ]")
+    /parent::expr[not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])]
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

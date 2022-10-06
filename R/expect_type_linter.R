@@ -10,21 +10,22 @@
 #' @export
 expect_type_linter <- function() {
   base_type_tests <- xp_text_in_table(paste0("is.", base_types))
-  xpath <- glue::glue("//expr[
-    (
-      (
-        expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']]
-        and expr[
-          expr[1][SYMBOL_FUNCTION_CALL[text() = 'typeof']]
-          and (position() = 2 or preceding-sibling::expr[STR_CONST])
-        ]
-      ) or (
-        expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
-        and expr[2][expr[1][SYMBOL_FUNCTION_CALL[ {base_type_tests} ]]]
-      )
-    )
-    and not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])
-  ]")
+  expect_equal_identical_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
+    /parent::expr
+    /following-sibling::expr[
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'typeof']]
+      and (position() = 1 or preceding-sibling::expr[STR_CONST])
+    ]
+    /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label' or text() = 'expected.label'])]
+  "
+  expect_true_xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
+    /parent::expr
+    /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[ {base_type_tests} ]]]
+    /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label'])]
+  ")
+  xpath <- paste(expect_equal_identical_xpath, "|", expect_true_xpath)
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

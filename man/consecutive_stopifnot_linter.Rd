@@ -10,6 +10,20 @@ consecutive_stopifnot_linter()
 \code{\link[=stopifnot]{stopifnot()}} accepts any number of tests, so sequences like
 \verb{stopifnot(x); stopifnot(y)} are redundant.
 }
+\examples{
+# will produce lints
+lint(
+  text = "stopifnot(x); stopifnot(y)",
+  linters = consecutive_stopifnot_linter()
+)
+
+# okay
+lint(
+  text = "stopifnot(x, y)",
+  linters = consecutive_stopifnot_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
