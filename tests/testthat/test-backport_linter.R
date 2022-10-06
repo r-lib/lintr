@@ -1,3 +1,11 @@
+test_that("backport_linter produces error when R version misspecified", {
+  expect_error(
+    lint(text = "numToBits(2)", linters = backport_linter(420L)),
+    "`r_version` must be a R version number, returned by R_system_version(), or a string.",
+    fixed = TRUE
+  )
+})
+
 test_that("backport_linter detects backwards-incompatibility", {
   # default should be current R version; all of these are included on our dependency
   expect_lint(".getNamespaceInfo(dir.exists(lapply(x, toTitleCase)))", NULL, backport_linter())
