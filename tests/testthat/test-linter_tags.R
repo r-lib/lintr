@@ -69,6 +69,22 @@ test_that("available_linters matches the set of linters available from lintr", {
   expect_identical(sort(linters_in_namespace), sort(exported_linters))
 })
 
+test_that("Generated Rd fragments are as expected for rd_tags", {
+  expect_snapshot(rd_tags("assignment_linter"))
+})
+
+test_that("Generated Rd fragments are as expected for rd_linters", {
+  expect_snapshot(rd_linters("robustness"))
+})
+
+test_that("Generated Rd fragments are as expected for rd_taglist", {
+  expect_snapshot(rd_taglist())
+})
+
+test_that("Generated Rd fragments are as expected for rd_linterlist", {
+  expect_snapshot(rd_linterlist())
+})
+
 # See the roxygen helpers in R/linter_tags.R for the code used to generate the docs.
 #   This test helps ensure the documentation is up to date with the available_linters() database
 test_that("lintr help files are up to date", {
