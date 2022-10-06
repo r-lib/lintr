@@ -565,8 +565,12 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 #' @export
 sarif_output <- function(lints, filename = "lintr_results.sarif") {
 
-  # package path will be NULL unless it is a relative path
+  # package path will be `NULL` unless it is a relative path
   package_path <- attr(lints, "path")
+
+  if (is.null(package_path)) {
+    stop("Package path needs to be a relative path.", call. = FALSE)
+  }
 
   # setup template
   sarif <- jsonlite::fromJSON(
