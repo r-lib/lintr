@@ -351,6 +351,24 @@ test_that("interprets glue expressions", {
     }
   "), NULL, linter)
 
+  # multiple variables in different interpolations
+  expect_lint(trim_some("
+    fun <- function() {
+      local_key <- 'a'
+      local_value <- 123
+      glue::glue('Key-value pair: {local_key}={local_value}.')
+    }
+  "), NULL, linter)
+
+  # multiple variables in single interpolation
+  expect_lint(trim_some("
+    fun <- function() {
+      local_str1 <- 'a'
+      local_str2 <- 'b'
+      glue::glue('With our powers combined: {paste(local_str1, local_str2)}.')
+    }
+  "), NULL, linter)
+
   # Check non-standard .open and .close
   expect_lint(trim_some("
     fun <- function() {
