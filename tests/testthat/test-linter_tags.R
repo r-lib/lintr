@@ -4,6 +4,19 @@ test_that("input validation for available_linters works as expected", {
   expect_error(available_linters(exclude_tags = 1L), "`exclude_tags` must be a character vector.")
 })
 
+test_that("validate_linter_db works as expected", {
+  df_empty <- data.frame()
+  expect_warning(
+    validate_linter_db(df_empty, "mypkg"),
+    "`linters.csv` must contain the columns 'linter' and 'tags'.",
+    fixed = TRUE
+  )
+  expect_false(suppressWarnings(validate_linter_db(df_empty, "mypkg")))
+
+  df <- data.frame(linter = "absolute_path_linter", tags = "robustness")
+  expect_true(validate_linter_db(df, "mypkg"))
+})
+
 test_that("available_linters returns a data frame", {
   avail <- available_linters()
   avail2 <- available_linters(c("lintr", "not-a-package"))
