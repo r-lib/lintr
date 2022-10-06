@@ -1,7 +1,7 @@
 test_that("returns the correct linting", {
   linter <- trailing_blank_lines_linter()
-  msg <- rex("Trailing blank lines are superfluous.")
-  msg2 <- rex("Missing terminal newline.")
+  msg <- rex::rex("Trailing blank lines are superfluous.")
+  msg2 <- rex::rex("Missing terminal newline.")
 
   expect_lint("blah", NULL, linter)
   expect_lint("blah <- 1  ", NULL, linter)

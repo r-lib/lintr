@@ -1,6 +1,6 @@
 test_that("returns the correct linting", {
   linter <- equals_na_linter()
-  msg <- rex("Use is.na for comparisons to NA (not == or !=)")
+  msg <- rex::rex("Use is.na for comparisons to NA (not == or !=)")
   expect_lint("blah", NULL, linter)
   expect_lint("  blah", NULL, linter)
   expect_lint("  blah", NULL, linter)
