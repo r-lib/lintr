@@ -420,7 +420,7 @@ test_that("lint with cache uses the provided relative cache directory", {
 test_that("it works outside of a package", {
   linter <- assignment_linter()
 
-  mockery::stub(lintr:::find_default_encoding, "find_package", function(...) NULL)
+  mockery::stub(find_default_encoding, "find_package", function(...) NULL)
   path <- tempfile(pattern = "my_cache_dir_")
   expect_false(dir.exists(path))
   expect_lint("a <- 1", NULL, linter, cache = path)

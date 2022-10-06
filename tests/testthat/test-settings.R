@@ -74,7 +74,7 @@ test_that("it errors if the config file does not end in a newline", {
 })
 
 test_that("rot utility works as intended", {
-  expect_equal(lintr:::rot(letters), c(letters[14L:26L], LETTERS[1L:13L]))
+  expect_equal(rot(letters), c(letters[14L:26L], LETTERS[1L:13L]))
 })
 
 test_that("logical_env utility works as intended", {
@@ -84,16 +84,16 @@ test_that("logical_env utility works as intended", {
   on.exit(if (is.na(old)) Sys.unsetenv(test_env) else sym_set_env(test_env, old))
 
   sym_set_env(test_env, "true")
-  expect_true(lintr:::logical_env(test_env))
+  expect_true(logical_env(test_env))
 
   sym_set_env(test_env, "F")
-  expect_false(lintr:::logical_env(test_env))
+  expect_false(logical_env(test_env))
 
   sym_set_env(test_env, "")
-  expect_null(lintr:::logical_env(test_env))
+  expect_null(logical_env(test_env))
 
   Sys.unsetenv(test_env)
-  expect_null(lintr:::logical_env(test_env))
+  expect_null(logical_env(test_env))
 })
 
 # fixing #774

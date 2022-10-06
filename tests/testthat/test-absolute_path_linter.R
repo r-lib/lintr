@@ -1,5 +1,5 @@
 test_that("is_root_path", {
-  f <- lintr:::is_root_path
+  f <- is_root_path
 
   x <- character()
   y <- logical()
@@ -28,7 +28,7 @@ test_that("is_root_path", {
 
 
 test_that("is_absolute_path", {
-  f <- lintr:::is_absolute_path
+  f <- is_absolute_path
 
   x <- character()
   y <- logical()
@@ -53,7 +53,7 @@ test_that("is_absolute_path", {
 
 
 test_that("is_relative_path", {
-  f <- lintr:::is_relative_path
+  f <- is_relative_path
 
   x <- character()
   y <- logical()
@@ -74,7 +74,7 @@ test_that("is_relative_path", {
 
 
 test_that("is_path", {
-  f <- lintr:::is_path
+  f <- is_path
 
   x <- character()
   y <- logical()
@@ -91,7 +91,7 @@ test_that("is_path", {
 
 
 test_that("is_valid_path", {
-  f <- lintr:::is_valid_path
+  f <- is_valid_path
 
   x <- character()
   y <- logical()
@@ -116,7 +116,7 @@ test_that("is_valid_path", {
 
 
 test_that("is_long_path", {
-  f <- lintr:::is_long_path
+  f <- is_long_path
 
   x <- character()
   y <- logical()

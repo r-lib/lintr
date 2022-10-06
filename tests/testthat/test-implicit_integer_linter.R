@@ -1,6 +1,6 @@
 test_that("single numerical constants are properly identified ", {
   # Test single numerical constants
-  is_implicit <- lintr:::is_implicit_integer
+  is_implicit <- is_implicit_integer
 
   x <- c("Inf", "NaN", "TRUE", "FALSE", "NA",  "NA_character")
   y <- c(FALSE, FALSE, FALSE,  FALSE,   FALSE, FALSE)
