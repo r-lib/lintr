@@ -10,12 +10,12 @@
 expect_named_linter <- function() {
   xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
-  /parent::expr
-  /following-sibling::expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'names']]
-    and (position() = 1 or preceding-sibling::expr[STR_CONST])
-  ]
-  /parent::expr
+    /parent::expr
+    /following-sibling::expr[
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'names']]
+      and (position() = 1 or preceding-sibling::expr[STR_CONST])
+    ]
+    /parent::expr
   "
 
   Linter(function(source_expression) {

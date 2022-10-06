@@ -24,9 +24,9 @@ yoda_test_linter <- function() {
   "
   xpath <- glue::glue("
   //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical' or text() = 'expect_setequal']
-  /parent::expr
-  /following-sibling::expr[1][ {const_condition} ]
-  /parent::expr[not(preceding-sibling::*[self::PIPE or self::SPECIAL[text() = '%>%']])]
+    /parent::expr
+    /following-sibling::expr[1][ {const_condition} ]
+    /parent::expr[not(preceding-sibling::*[self::PIPE or self::SPECIAL[text() = '%>%']])]
   ")
 
   second_const_xpath <- glue::glue("expr[position() = 3 and ({const_condition})]")

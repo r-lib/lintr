@@ -17,14 +17,14 @@ unreachable_code_linter <- function() {
   #  - land on the culprit expression
   xpath <- "
   //FUNCTION
-  /following-sibling::expr
-  /*[
-    self::expr
-    and expr[1][not(OP-DOLLAR) and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]
-    and (position() != last() - 1 or not(following-sibling::OP-RIGHT-BRACE))
-    and @line2 < following-sibling::*[1]/@line2
-  ]
-  /following-sibling::*[1]
+    /following-sibling::expr
+    /*[
+      self::expr
+      and expr[1][not(OP-DOLLAR) and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]
+      and (position() != last() - 1 or not(following-sibling::OP-RIGHT-BRACE))
+      and @line2 < following-sibling::*[1]/@line2
+    ]
+    /following-sibling::*[1]
   "
 
   Linter(function(source_expression) {

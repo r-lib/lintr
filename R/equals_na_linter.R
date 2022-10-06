@@ -10,8 +10,8 @@ equals_na_linter <- function() {
 
   xpath <- glue::glue("
   //NUM_CONST[ {na_table} ]
-  /parent::expr
-  /parent::expr[EQ or NE]
+    /parent::expr
+    /parent::expr[EQ or NE]
   ")
 
   Linter(function(source_expression) {

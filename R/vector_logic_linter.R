@@ -37,9 +37,9 @@ vector_logic_linter <- function() {
   #     <expr> ... </expr>
   #  </expr>
   #  we _don't_ want to match anything on the second expr, hence this
-  xpath <- "//*[
-    (self::AND or self::OR)
-    and ancestor::expr[
+  xpath_parts <- glue::glue("
+  //{ c('AND', 'OR') }[
+    ancestor::expr[
       not(preceding-sibling::OP-RIGHT-PAREN)
       and preceding-sibling::*[
         self::IF
@@ -51,7 +51,9 @@ vector_logic_linter <- function() {
       preceding-sibling::expr[last()][SYMBOL_FUNCTION_CALL[not(text() = 'expect_true' or text() = 'expect_false')]]
       or preceding-sibling::OP-LEFT-BRACKET
     ])
-  ]"
+  ]
+  ")
+  xpath <- paste(xpath_parts, collapse = " | ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

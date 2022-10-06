@@ -34,22 +34,22 @@ expect_identical_linter <- function() {
   #   - skip calls using dots (`...`); see tests
   expect_equal_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'expect_equal']
-  /parent::expr[not(
-    following-sibling::EQ_SUB
-    or following-sibling::expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'c']]
-      and expr[NUM_CONST[contains(text(), '.')]]
-    ]
-    or following-sibling::expr[NUM_CONST[contains(text(), '.')]]
-    or following-sibling::expr[SYMBOL[text() = '...']]
-  )]
-  /parent::expr
+    /parent::expr[not(
+      following-sibling::EQ_SUB
+      or following-sibling::expr[
+        expr[1][SYMBOL_FUNCTION_CALL[text() = 'c']]
+        and expr[NUM_CONST[contains(text(), '.')]]
+      ]
+      or following-sibling::expr[NUM_CONST[contains(text(), '.')]]
+      or following-sibling::expr[SYMBOL[text() = '...']]
+    )]
+    /parent::expr
   "
   expect_true_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
-  /parent::expr
-  /following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'identical']]
-  /parent::expr
+    /parent::expr
+    /following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'identical']]
+    /parent::expr
   "
   xpath <- paste(expect_equal_xpath, "|", expect_true_xpath)
 

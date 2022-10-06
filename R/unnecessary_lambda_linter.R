@@ -39,14 +39,15 @@ unnecessary_lambda_linter <- function() {
   # TODO(#1567): This misses some common cases, e.g. function(x) { foo(x) }
   default_fun_xpath <- glue::glue("
   //SYMBOL_FUNCTION_CALL[ {apply_funs} ]
-  /parent::expr
-  /following-sibling::expr[
-    FUNCTION
-    and count(SYMBOL_FORMALS) = 1
-    and expr/OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[2][self::SYMBOL_SUB])]/SYMBOL
-    and SYMBOL_FORMALS/text() = expr/OP-LEFT-PAREN/following-sibling::expr[1]/SYMBOL/text()
-    and not(SYMBOL_FORMALS/text() = expr/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//SYMBOL/text())
-  ]")
+    /parent::expr
+    /following-sibling::expr[
+      FUNCTION
+      and count(SYMBOL_FORMALS) = 1
+      and expr/OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[2][self::SYMBOL_SUB])]/SYMBOL
+      and SYMBOL_FORMALS/text() = expr/OP-LEFT-PAREN/following-sibling::expr[1]/SYMBOL/text()
+      and not(SYMBOL_FORMALS/text() = expr/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//SYMBOL/text())
+    ]
+  ")
 
   # purrr-style inline formulas-as-functions, e.g. ~foo(.x)
   # logic is basically the same as that above, except we need
@@ -55,12 +56,13 @@ unnecessary_lambda_linter <- function() {
   purrr_symbol <- "SYMBOL[text() = '.x' or text() = '.']"
   purrr_fun_xpath <- glue::glue("
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(purrr_mappers)} ]
-  /parent::expr
-  /following-sibling::expr[
-    OP-TILDE
-    and expr[OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[2][self::SYMBOL_SUB])]/{purrr_symbol}]
-    and not(expr/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//{purrr_symbol})
-  ]")
+    /parent::expr
+    /following-sibling::expr[
+      OP-TILDE
+      and expr[OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[2][self::SYMBOL_SUB])]/{purrr_symbol}]
+      and not(expr/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//{purrr_symbol})
+    ]
+  ")
 
   # path to calling function symbol from the matched expressions
   fun_xpath <- "./parent::expr/expr/SYMBOL_FUNCTION_CALL"

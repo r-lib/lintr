@@ -38,12 +38,13 @@
 any_is_na_linter <- function() {
   xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'any']
-  /parent::expr
-  /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.na']]]
-  /parent::expr[
-    count(expr) = 2
-    or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm'])
-  ]"
+    /parent::expr
+    /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.na']]]
+    /parent::expr[
+      count(expr) = 2
+      or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm'])
+    ]
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

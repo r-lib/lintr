@@ -22,8 +22,8 @@ package_hooks_linter <- function() {
   )
   bad_msg_call_xpath_fmt <- "
   //FUNCTION
-  /parent::expr[preceding-sibling::expr/SYMBOL[text() = '%s']]
-  //SYMBOL_FUNCTION_CALL[%s]
+    /parent::expr[preceding-sibling::expr/SYMBOL[text() = '%s']]
+    //SYMBOL_FUNCTION_CALL[%s]
   "
   bad_call_xpaths <- vapply(
     seq_along(bad_calls),
@@ -49,42 +49,42 @@ package_hooks_linter <- function() {
 
   load_arg_name_xpath <- "
   //FUNCTION
-  /parent::expr[
-    preceding-sibling::expr/SYMBOL[text() = '.onAttach' or text() = '.onLoad']
-    and (
-      count(SYMBOL_FORMALS) != 2
-      or SYMBOL_FORMALS[
-        (position() = 1 and not(starts-with(text(), 'lib')))
-        or (position() = 2 and not(starts-with(text(), 'pkg')))
-      ]
-    )
-  ]
+    /parent::expr[
+      preceding-sibling::expr/SYMBOL[text() = '.onAttach' or text() = '.onLoad']
+      and (
+        count(SYMBOL_FORMALS) != 2
+        or SYMBOL_FORMALS[
+          (position() = 1 and not(starts-with(text(), 'lib')))
+          or (position() = 2 and not(starts-with(text(), 'pkg')))
+        ]
+      )
+    ]
   "
 
   library_require_xpath <- "
   //FUNCTION
-  /parent::expr[preceding-sibling::expr/SYMBOL[text() = '.onAttach' or text() = '.onLoad']]
-  //*[1][
-    (self::SYMBOL or self::SYMBOL_FUNCTION_CALL)
-    and (text() = 'require' or text() = 'library' or text() = 'installed.packages')
-  ]
+    /parent::expr[preceding-sibling::expr/SYMBOL[text() = '.onAttach' or text() = '.onLoad']]
+    //*[1][
+      (self::SYMBOL or self::SYMBOL_FUNCTION_CALL)
+      and (text() = 'require' or text() = 'library' or text() = 'installed.packages')
+    ]
   "
 
   bad_unload_call_xpath <- "
   //FUNCTION
-  /parent::expr[preceding-sibling::expr/SYMBOL[text() = '.Last.lib' or text() = '.onDetach']]
-  //SYMBOL_FUNCTION_CALL[text() = 'library.dynam.unload']
+    /parent::expr[preceding-sibling::expr/SYMBOL[text() = '.Last.lib' or text() = '.onDetach']]
+    //SYMBOL_FUNCTION_CALL[text() = 'library.dynam.unload']
   "
 
   unload_arg_name_xpath <- "
   //FUNCTION
-  /parent::expr[
-    preceding-sibling::expr/SYMBOL[text() = '.onDetach' or text() = '.Last.lib']
-    and (
-      count(SYMBOL_FORMALS) != 1
-      or SYMBOL_FORMALS[not(starts-with(text(), 'lib'))]
-    )
-  ]
+    /parent::expr[
+      preceding-sibling::expr/SYMBOL[text() = '.onDetach' or text() = '.Last.lib']
+      and (
+        count(SYMBOL_FORMALS) != 1
+        or SYMBOL_FORMALS[not(starts-with(text(), 'lib'))]
+      )
+    ]
   "
 
   Linter(function(source_expression) {

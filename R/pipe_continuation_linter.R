@@ -15,7 +15,7 @@ pipe_continuation_linter <- function() {
   # inside a function definition), the outer expression can span multiple lines
   # without a pipe-continuation lint being thrown.
 
-  multiline_pipe_test <- paste(
+  multiline_pipe_test <- paste0(
     # In xml derived from the expression `E1 %>% E2`:
     # `E1`, the pipe and `E2` are sibling expressions of the parent expression
 
@@ -27,25 +27,25 @@ pipe_continuation_linter <- function() {
     # rather than all ancestors.
 
     # select all pipes
-    "//SPECIAL[text() = '%>%'",
+    # TODO(#1609): Include native pipes
+    "//SPECIAL[",
+    "  text() = '%>%'",
     # that are nested in a parent-expression that spans multiple lines
-    "and parent::expr[@line1 < @line2]",
+    "  and parent::expr[@line1 < @line2]",
     # where the parent contains pipes that precede the pipe under scrutiny
-    "and preceding-sibling::*/descendant-or-self::SPECIAL[text() = '%>%']",
-    "and (",
+    "  and preceding-sibling::*/descendant-or-self::SPECIAL[text() = '%>%']",
+    "  and (",
     # where a preceding sibling 'expr' [...] ends on the same line that a
     # succeeding 'expr' starts {...}
     # either "[a %>%\n b()] %>% {c(...)}"
     # or     "[a %>% b(...\n)] %>% {c(...)}"
-    "(preceding-sibling::*/descendant-or-self::expr/@line2 = ",
-    "  following-sibling::*/descendant-or-self::expr/@line1)",
-
+    "    (preceding-sibling::*/descendant-or-self::expr/@line2 = following-sibling::*/descendant-or-self::expr/@line1)",
     # or, (if the post-pipe expression starts on a subsequent line) where a
     # preceding sibling 'expr' [...] contains a pipe character on the
     # same line as the original pipe character |...|
     # [a %>% b] |%>%| \n c
-    "or (@line1 = preceding-sibling::*/descendant-or-self::SPECIAL[text() = '%>%']/@line1)",
-    ")",
+    "    or (@line1 = preceding-sibling::*/descendant-or-self::SPECIAL[text() = '%>%']/@line1)",
+    "  )",
     "]"
   )
 

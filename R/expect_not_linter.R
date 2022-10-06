@@ -12,9 +12,9 @@
 expect_not_linter <- function() {
   xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']
-  /parent::expr
-  /following-sibling::expr[OP-EXCLAMATION]
-  /parent::expr
+    /parent::expr
+    /following-sibling::expr[OP-EXCLAMATION]
+    /parent::expr
   "
 
   Linter(function(source_expression) {

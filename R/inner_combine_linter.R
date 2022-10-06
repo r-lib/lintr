@@ -60,9 +60,9 @@ inner_combine_linter <- function() {
   )
   xpath <- glue::glue("
   //SYMBOL_FUNCTION_CALL[text() = 'c']
-  /parent::expr
-  /following-sibling::expr[1][ {c_expr_cond} ]
-  /parent::expr
+    /parent::expr
+    /following-sibling::expr[1][ {c_expr_cond} ]
+    /parent::expr
   ")
 
   Linter(function(source_expression) {

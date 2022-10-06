@@ -19,24 +19,25 @@
 paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
   sep_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'paste']
-  /parent::expr
-  /following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST]]
-  /parent::expr
+    /parent::expr
+    /following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST]]
+    /parent::expr
   "
 
   to_string_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']
-  /parent::expr
-  /parent::expr[
-    count(expr) = 3
-    and SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1][STR_CONST]
-  ]"
+    /parent::expr
+    /parent::expr[
+      count(expr) = 3
+      and SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1][STR_CONST]
+    ]
+  "
 
   paste0_sep_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'paste0']
-  /parent::expr
-  /following-sibling::SYMBOL_SUB[text() = 'sep']
-  /parent::expr
+    /parent::expr
+    /following-sibling::SYMBOL_SUB[text() = 'sep']
+    /parent::expr
   "
 
   Linter(function(source_expression) {

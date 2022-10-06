@@ -12,14 +12,15 @@
 unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bit64", "data.table", "tidyverse")) {
   import_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
-  /parent::expr
-  /parent::expr[
-    expr[2][STR_CONST]
-    or not(SYMBOL_SUB[
-      text() = 'character.only' and
-      following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-    ])
-  ]"
+    /parent::expr
+    /parent::expr[
+      expr[2][STR_CONST]
+      or not(SYMBOL_SUB[
+        text() = 'character.only' and
+        following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+      ])
+    ]
+  "
 
   xp_used_symbols <- paste(
     "//SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]/text()",
