@@ -1,3 +1,8 @@
+test_that("modify_defaults produces error with missing or incorrect defaults", {
+  expect_error(modify_defaults(), "`defaults` must be a named list.", fixed = TRUE)
+  expect_error(modify_defaults("assignment_linter"), "`defaults` must be a named list.", fixed = TRUE)
+})
+
 test_that("linters_with_defaults works as expected with unnamed args", {
   # assignment_linter is in defaults, so output doesn't change
   expect_named(linters_with_defaults(assignment_linter), names(linters_with_defaults()))
