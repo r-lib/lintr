@@ -29,6 +29,12 @@ test_that("it returns NULL if GIT_URL is not on github", {
   expect_false(in_ci())
 })
 
+
+test_that("it returns NULL for Jenkins PR build info when git URL is missing", {
+  clear_ci_info()
+  expect_null(jenkins_build_info())
+})
+
 test_that("it determines Jenkins PR build info", {
   clear_ci_info()
   Sys.setenv(
