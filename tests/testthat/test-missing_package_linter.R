@@ -1,6 +1,6 @@
 test_that("returns the correct linting", {
   linter <- missing_package_linter()
-  msg <- list(message = rex("Package 'statts' is not installed."))
+  msg <- list(message = rex::rex("Package 'statts' is not installed."))
 
   expect_lint("library(stats)", NULL, linter)
   expect_lint('library("stats")', NULL, linter)

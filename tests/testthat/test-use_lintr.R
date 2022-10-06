@@ -8,11 +8,11 @@ test_that("use_lintr works as expected", {
   expect_error(use_lintr(path = tmp), "Found an existing configuration")
 
   # read_settings() works with the generated file
-  expect_silent(read_settings(tmp))
-  read_settings(NULL)
+  expect_silent(lintr:::read_settings(tmp))
+  lintr:::read_settings(NULL)
 
   expect_equal(
-    normalizePath(find_config(tmp)),
+    normalizePath(lintr:::find_config(tmp)),
     normalizePath(lintr_file)
   )
 })
@@ -22,6 +22,6 @@ test_that("use_lintr with type = full also works", {
 
   # type = "full" also works with read_settings()
   use_lintr(path = tmp, type = "full")
-  expect_silent(read_settings(tmp))
-  read_settings(NULL)
+  expect_silent(lintr:::read_settings(tmp))
+  lintr:::read_settings(NULL)
 })
