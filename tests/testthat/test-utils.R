@@ -2,9 +2,9 @@ test_that("set_lang and reset_lang work as expected", {
   old_lang <- Sys.getenv("LANGUAGE")
   new_lang <- "en"
 
-  set_lang(new_lang)
+  lintr:::set_lang(new_lang)
   expect_identical(Sys.getenv("LANGUAGE"), new_lang)
 
-  reset_lang(old_lang)
+  lintr:::reset_lang(old_lang)
   expect_identical(Sys.getenv("LANGUAGE"), old_lang)
 })
