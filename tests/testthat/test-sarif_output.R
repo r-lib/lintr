@@ -1,6 +1,6 @@
-test_that("`sarif_output` produces expected warning", {
+test_that("`sarif_output` produces expected error", {
   l <- lint(text = "x = 1", linters = assignment_linter())
-  expect_error(sarif_output(l), "Package path needs to be a relative path")
+  expect_error(sarif_output(l), "Package path needs to be a relative path", fixed = TRUE)
 })
 
 test_that("`sarif_output` writes expected files", {
