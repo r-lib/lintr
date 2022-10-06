@@ -19,3 +19,13 @@ test_that("sort_linter blocks simple disallowed usages", {
   # ...even in disorder
   expect_lint("x[order(decreasing = TRUE, x)]", lint_message, sort_linter())
 })
+
+test_that("sort_linter produces customized warning message", {
+
+  expect_lint(
+    "y[order(y)]",
+    rex::rex("sort(y) is better than y[order(y)]."),
+    sort_linter()
+  )
+
+})
