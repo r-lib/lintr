@@ -1,5 +1,6 @@
 library(testthat)
 library(lintr)
-library(withr)
+loadNamespace("rex")
+loadNamespace("withr")
 
 test_check("lintr")
