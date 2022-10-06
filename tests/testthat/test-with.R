@@ -1,6 +1,11 @@
 test_that("modify_defaults produces error with missing or incorrect defaults", {
-  expect_error(modify_defaults(), "`defaults` must be a named list.", fixed = TRUE)
-  expect_error(modify_defaults("assignment_linter"), "`defaults` must be a named list.", fixed = TRUE)
+  msg <- "`defaults` must be a named list."
+  expect_error(modify_defaults(), msg, fixed = TRUE)
+  expect_error(modify_defaults("assignment_linter"), msg, fixed = TRUE)
+})
+
+test_that("linters_with_tags produces error with incorrect tags", {
+  expect_error(linters_with_tags(1L:4L), "`tags` must be a character vector, or NULL.", fixed = TRUE)
 })
 
 test_that("linters_with_defaults works as expected with unnamed args", {
