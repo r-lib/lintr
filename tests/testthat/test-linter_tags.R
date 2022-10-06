@@ -7,14 +7,14 @@ test_that("input validation for available_linters works as expected", {
 test_that("validate_linter_db works as expected", {
   df_empty <- data.frame()
   expect_warning(
-    validate_linter_db(df_empty, "mypkg"),
+    lintr:::validate_linter_db(df_empty, "mypkg"),
     "`linters.csv` must contain the columns 'linter' and 'tags'.",
     fixed = TRUE
   )
-  expect_false(suppressWarnings(validate_linter_db(df_empty, "mypkg")))
+  expect_false(suppressWarnings(lintr:::validate_linter_db(df_empty, "mypkg")))
 
   df <- data.frame(linter = "absolute_path_linter", tags = "robustness")
-  expect_true(validate_linter_db(df, "mypkg"))
+  expect_true(lintr:::validate_linter_db(df, "mypkg"))
 })
 
 test_that("available_linters returns a data frame", {

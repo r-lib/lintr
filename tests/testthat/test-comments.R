@@ -32,7 +32,7 @@ test_that("it returns NULL if GIT_URL is not on github", {
 
 test_that("it returns NULL for Jenkins PR build info when git URL is missing", {
   clear_ci_info()
-  expect_null(jenkins_build_info())
+  expect_null(lintr:::jenkins_build_info())
 })
 
 test_that("it determines Jenkins PR build info", {
