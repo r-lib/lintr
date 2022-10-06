@@ -8,9 +8,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 sort_linter <- function() {
-  xpath <- "//expr[
-    OP-LEFT-BRACKET
-    and expr[
+  xpath <- "//OP-LEFT-BRACKET/following-sibling::expr[
       expr[1][SYMBOL_FUNCTION_CALL[text() = 'order']
         and following-sibling::expr =
           parent::expr
@@ -18,7 +16,7 @@ sort_linter <- function() {
           /expr
       ]
     ]
-  ]"
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
