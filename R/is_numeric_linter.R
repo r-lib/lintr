@@ -3,6 +3,8 @@
 #' [is.numeric()] returns `TRUE` when `typeof(x)` is `double` or `integer` --
 #'   testing `is.numeric(x) || is.integer(x)` is thus redundant.
 #'
+#' @evalRd rd_tags("is_numeric_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 is_numeric_linter <- function() {
   # TODO(michaelchirico): this should also cover is.double(x) || is.integer(x), ditto below

@@ -10,3 +10,9 @@ is_numeric_linter()
 \code{\link[=is.numeric]{is.numeric()}} returns \code{TRUE} when \code{typeof(x)} is \code{double} or \code{integer} --
 testing \code{is.numeric(x) || is.integer(x)} is thus redundant.
 }
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
+\section{Tags}{
+\link[=best_practices_linters]{best_practices}, \link[=consistency_linters]{consistency}, \link[=readability_linters]{readability}
+}
