@@ -10,10 +10,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_not_linter <- function() {
-  xpath <- "//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']]
-    and expr[2][OP-EXCLAMATION]
-  ]"
+  xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']
+    /parent::expr
+    /following-sibling::expr[OP-EXCLAMATION]
+    /parent::expr
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

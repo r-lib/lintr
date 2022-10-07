@@ -13,30 +13,28 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 seq_linter <- function() {
-  bad_funcs <- c("length", "n", "nrow", "ncol", "NROW", "NCOL", "dim")
+  bad_funcs <- xp_text_in_table(c("length", "n", "nrow", "ncol", "NROW", "NCOL", "dim"))
 
   # Exact `xpath` depends on whether bad function was used in conjunction with `seq()`
-  bad_func_xpath_with_seq <- glue::glue(
-    "expr[1][SYMBOL_FUNCTION_CALL[text() = 'seq']]
-    /following::expr[1]
-    /expr[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]"
-  )
-  bad_func_xpath_without_seq <- glue::glue(
-    "expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {xp_text_in_table(bad_funcs)} ]]]]"
-  )
-
+  seq_xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[text() = 'seq']
+    /parent::expr
+    /following-sibling::expr[1][expr/SYMBOL_FUNCTION_CALL[ {bad_funcs} ]]
+    /parent::expr[count(expr) = 2]
+  ")
   # `.N` from {data.table} is special since it's not a function but a symbol
-  xpath <- glue::glue("//expr[
-    (
-      {bad_func_xpath_with_seq}
-      and count(expr) = 2
-    ) or
-    (
+  colon_xpath <- glue::glue("
+  //OP-COLON
+    /parent::expr[
       expr[NUM_CONST[text() = '1' or text() = '1L']]
-      and OP-COLON
-      and ( {bad_func_xpath_without_seq} or expr[SYMBOL = '.N'] )
-    )
-  ]")
+      and (
+        expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {bad_funcs} ]]]]
+        or expr[SYMBOL = '.N']
+      )
+    ]
+  ")
+
+  xpath <- paste(seq_xpath, "|", colon_xpath)
 
   ## The actual order of the nodes is document order
   ## In practice we need to handle length(x):1

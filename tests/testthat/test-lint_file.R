@@ -212,7 +212,7 @@ test_that("compatibility warnings work", {
 
   expect_error(
     lint("a <- 1\n", linters = "equals_na_linter"),
-    regexp = rex("Expected '", anything, "' to be a function of class 'linter'")
+    regexp = rex::rex("Expected '", anything, "' to be a function of class 'linter'")
   )
 })
 
@@ -223,4 +223,19 @@ test_that("Deprecated positional usage of cache= works, with warning", {
     fixed = TRUE
   )
   expect_identical(l, lint("a = 2\n", assignment_linter(), cache = FALSE))
+})
+
+test_that("Linters throwing an error give a helpful error", {
+  tmp_file <- withr::local_tempfile(lines = "a <- 1")
+  linter <- function() Linter(function(source_expression) stop("a broken linter"))
+  # NB: Some systems/setups may use e.g. symlinked files when creating under tempfile();
+  #   we don't care much about that, so just check basename()
+  expect_error(
+    lint(tmp_file, linter()),
+    rex::rex("Linter 'linter' failed in ", anything, basename(tmp_file), ": a broken linter")
+  )
+  expect_error(
+    lint(tmp_file, list(broken_linter = linter())),
+    rex::rex("Linter 'broken_linter' failed in ", anything, basename(tmp_file), ": a broken linter")
+  )
 })

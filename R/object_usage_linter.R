@@ -159,6 +159,7 @@ extract_glued_symbols <- function(expr) {
     return(character())
   }
   glued_symbols <- new.env(parent = emptyenv())
+
   for (cl in glue_calls) {
     parsed_cl <- tryCatch(
       parse(text = xml2::xml_text(cl)),
@@ -166,26 +167,43 @@ extract_glued_symbols <- function(expr) {
       warning = function(...) NULL
     )[[1L]]
     if (is.null(parsed_cl)) next
-    parsed_cl[[".transformer"]] <- function(text, envir) {
-      parsed_text <- tryCatch(
-        parse(text = text, keep.source = TRUE),
-        error = function(...) NULL,
-        warning = function(...) NULL
-      )
-      parsed_xml <- safe_parse_to_xml(parsed_text)
-      # covers NULL & NA cases
-      if (length(parsed_xml) == 0L) {
-        return("")
+    parsed_cl[[".envir"]] <- glued_symbols
+    parsed_cl[[".transformer"]] <- symbol_extractor
+    # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint
+    tryCatch(
+      eval(parsed_cl),
+      error = function(cond) {
+        warning(
+          "Evaluating glue expression while testing for local variable usage failed: ",
+          conditionMessage(cond),
+          call. = FALSE
+        )
+        NULL
       }
-      symbols <- xml2::xml_text(xml2::xml_find_all(parsed_xml, "//SYMBOL"))
-      for (sym in symbols) {
-        assign(sym, NULL, envir = glued_symbols)
-      }
-      ""
-    }
-    eval(parsed_cl)
+    )
   }
-  ls(envir = glued_symbols, all.names = TRUE)
+  names(glued_symbols)
+}
+
+symbol_extractor <- function(text, envir, data) {
+  parsed_text <- tryCatch(
+    parse(text = text, keep.source = TRUE),
+    error = function(...) NULL,
+    warning = function(...) NULL
+  )
+  if (is.null(parsed_text)) {
+    return("")
+  }
+  parse_data <- utils::getParseData(parsed_text)
+  # covers NULL & NA cases
+  if (nrow(parse_data) == 0L) {
+    return("")
+  }
+  symbols <- parse_data$text[parse_data$token == "SYMBOL"]
+  for (sym in symbols) {
+    assign(sym, NULL, envir = envir)
+  }
+  ""
 }
 
 get_assignment_symbols <- function(xml) {

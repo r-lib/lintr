@@ -39,9 +39,10 @@ unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
     ]
   "
   xpath_call <- glue::glue("
-    //expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'c']]
-      and not(EQ_SUB)
+  //SYMBOL_FUNCTION_CALL[text() = 'c']
+    /parent::expr
+    /parent::expr[
+      not(EQ_SUB)
       and (
         (
           count(expr) = 2

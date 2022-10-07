@@ -4,7 +4,7 @@ test_that("is_s3_generic", {
     UseMethod("func")
   }
 
-  expect_true(is_s3_generic(func))
+  expect_true(lintr:::is_s3_generic(func))
 })
 
 test_that("is_s3_generic doesn't error for namespace-qualified calls", {
@@ -12,7 +12,7 @@ test_that("is_s3_generic doesn't error for namespace-qualified calls", {
     pkg::call()
   }
 
-  expect_warning(result <- is_s3_generic(func), NA)
+  expect_warning(result <- lintr:::is_s3_generic(func), NA)
   expect_false(result)
 })
 

@@ -27,7 +27,7 @@ test_that(
       "jkl = 456",
       "mno = 789"
     )
-    read_settings(NULL)
+    lintr:::read_settings(NULL)
     lints_from_outside <- lint_package(
       pkg_path,
       linters = list(assignment_linter())
@@ -135,15 +135,5 @@ test_that("lint_package returns early if no package is found", {
     lint_package(file.path(temp_pkg, "desc_dir_pkg", "DESCRIPTION", "R")),
     "Didn't find any R package",
     fixed = TRUE
-  )
-})
-
-test_that("lint_package gives helpful failure when package has syntax issues", {
-  pkg_path <- test_path("dummy_packages", "err_pkg")
-  withr::local_options(lintr.linter_file = "lintr_test_config")
-
-  expect_error(
-    lint_package(pkg_path, linters = list(object_usage_linter(), assignment_linter())),
-    "Linter 'object_usage_linter' failed in.*glue_error.R: Expecting '}'"
   )
 })

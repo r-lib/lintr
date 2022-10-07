@@ -17,14 +17,15 @@ outer_negation_linter <- function() {
   #   e.g. in magrittr pipelines.
   xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'any' or text() = 'all']
-  /parent::expr[following-sibling::expr]
-  /parent::expr[
-    not(expr[
-      position() > 1
-      and not(OP-EXCLAMATION)
-      and not(preceding-sibling::*[1][self::EQ_SUB])
-    ])
-  ]"
+    /parent::expr[following-sibling::expr]
+    /parent::expr[
+      not(expr[
+        position() > 1
+        and not(OP-EXCLAMATION)
+        and not(preceding-sibling::*[1][self::EQ_SUB])
+      ])
+    ]
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

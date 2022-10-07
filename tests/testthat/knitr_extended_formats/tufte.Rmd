@@ -1,0 +1,12 @@
+---
+output: tufte::tufte_html
+---
+
+```{marginfigure}
+"Hi"
+<span>- X</span>
+```
+
+```{r}
+a = 1
+```

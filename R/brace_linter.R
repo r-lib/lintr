@@ -130,7 +130,8 @@ brace_linter <- function(allow_single_line = FALSE) {
   xp_if_else_match_brace <- "
   //IF[
     following-sibling::expr[2][OP-LEFT-BRACE]
-    and following-sibling::ELSE
+    and
+      following-sibling::ELSE
         /following-sibling::expr[1][not(OP-LEFT-BRACE or IF/following-sibling::expr[2][OP-LEFT-BRACE])]
   ]
 

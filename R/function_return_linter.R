@@ -10,7 +10,7 @@
 function_return_linter <- function() {
   xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'return']
-  /parent::expr/parent::expr/expr[LEFT_ASSIGN or RIGHT_ASSIGN]
+    /parent::expr/parent::expr/expr[LEFT_ASSIGN or RIGHT_ASSIGN]
   "
 
   Linter(function(source_expression) {

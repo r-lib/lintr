@@ -84,7 +84,7 @@ wercker_build_info <- function() {
 # nocov start
 github_comment <- function(text, info = NULL, token = settings$comment_token) {
   if (!requireNamespace("httr", quietly = TRUE)) {
-    stop("Package 'httr' is required to post comments with github_comment().") # nocov
+    stop("Package 'httr' is required to post comments with github_comment().")
   }
 
   if (is.null(info)) {

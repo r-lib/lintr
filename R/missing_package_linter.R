@@ -8,24 +8,24 @@
 missing_package_linter <- function() {
   library_require_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
-  /parent::expr
-  /parent::expr[
-    expr[2][STR_CONST]
-    or (
-      expr[2][SYMBOL]
-      and not(
-        SYMBOL_SUB[text() = 'character.only']
-        /following-sibling::expr[1]
-        /NUM_CONST[text() = 'TRUE' or text() = 'T']
+    /parent::expr
+    /parent::expr[
+      expr[2][STR_CONST]
+      or (
+        expr[2][SYMBOL]
+        and not(
+          SYMBOL_SUB[text() = 'character.only']
+          /following-sibling::expr[1]
+          /NUM_CONST[text() = 'TRUE' or text() = 'T']
+        )
       )
-    )
-  ]
+    ]
   "
   load_require_namespace_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'loadNamespace' or text() = 'requireNamespace']
-  /parent::expr
-  /following-sibling::expr[1][STR_CONST]
-  /parent::expr
+    /parent::expr
+    /following-sibling::expr[1][STR_CONST]
+    /parent::expr
   "
   call_xpath <- paste(library_require_xpath, "|", load_require_namespace_xpath)
 

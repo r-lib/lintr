@@ -11,12 +11,12 @@ expect_length_linter <- function() {
   # TODO(michaelchirico): also catch expect_true(length(x) == 1)
   xpath <- sprintf("
   //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
-  /parent::expr
-  /following-sibling::expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
-    and (position() = 1 or preceding-sibling::expr[NUM_CONST])
-  ]
-  /parent::expr[not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])]
+    /parent::expr
+    /following-sibling::expr[
+      expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
+      and (position() = 1 or preceding-sibling::expr[NUM_CONST])
+    ]
+    /parent::expr[not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])]
   ")
 
   Linter(function(source_expression) {

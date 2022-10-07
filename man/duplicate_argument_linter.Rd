@@ -18,6 +18,30 @@ explicitly providing duplicate names to objects (e.g. \code{c(a = 1, a = 2)}).
 Duplicate-named objects are hard to work with programmatically and
 should typically be avoided.
 }
+\examples{
+# will produce lints
+lint(
+  text = "list(x = 1, x = 2)",
+  linters = duplicate_argument_linter()
+)
+
+lint(
+  text = "fun(arg = 1, arg = 2)",
+  linters = duplicate_argument_linter()
+)
+
+# okay
+lint(
+  text = "list(x = 1, x = 2)",
+  linters = duplicate_argument_linter(except = "list")
+)
+
+lint(
+  text = "df \%>\% dplyr::mutate(x = a + b, x = x + d)",
+  linters = duplicate_argument_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
