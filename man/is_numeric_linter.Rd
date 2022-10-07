@@ -10,6 +10,30 @@ is_numeric_linter()
 \code{\link[=is.numeric]{is.numeric()}} returns \code{TRUE} when \code{typeof(x)} is \code{double} or \code{integer} --
 testing \code{is.numeric(x) || is.integer(x)} is thus redundant.
 }
+\examples{
+# will produce lints
+lint(
+  text = "is.numeric(y) || is.integer(y)",
+  linters = is_numeric_linter()
+)
+
+lint(
+  text = "class(z) \%in\% c('numeric', 'integer')",
+  linters = is_numeric_linter()
+)
+
+# okay
+lint(
+  text = "is.numeric(y) || is.factor(y)",
+  linters = is_numeric_linter()
+)
+
+lint(
+  text = "class(z) \%in\% c('numeric', 'integer', 'factor')",
+  linters = is_numeric_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

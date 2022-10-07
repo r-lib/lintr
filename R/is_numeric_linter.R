@@ -3,6 +3,29 @@
 #' [is.numeric()] returns `TRUE` when `typeof(x)` is `double` or `integer` --
 #'   testing `is.numeric(x) || is.integer(x)` is thus redundant.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "is.numeric(y) || is.integer(y)",
+#'   linters = is_numeric_linter()
+#' )
+#'
+#' lint(
+#'   text = "class(z) %in% c('numeric', 'integer')",
+#'   linters = is_numeric_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "is.numeric(y) || is.factor(y)",
+#'   linters = is_numeric_linter()
+#' )
+#'
+#' lint(
+#'   text = "class(z) %in% c('numeric', 'integer', 'factor')",
+#'   linters = is_numeric_linter()
+#' )
+#'
 #' @evalRd rd_tags("is_numeric_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
