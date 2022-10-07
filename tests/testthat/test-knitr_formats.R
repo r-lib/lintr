@@ -1,9 +1,9 @@
 regexes <- list(
-  assign = rex("Use <-, not =, for assignment."),
-  local_var = rex("local variable"),
-  quotes = rex("Only use double-quotes."),
-  trailing = rex("Trailing blank lines are superfluous."),
-  trailws = rex("Trailing whitespace is superfluous.")
+  assign = rex::rex("Use <-, not =, for assignment."),
+  local_var = rex::rex("local variable"),
+  quotes = rex::rex("Only use double-quotes."),
+  trailing = rex::rex("Trailing blank lines are superfluous."),
+  trailws = rex::rex("Trailing whitespace is superfluous.")
 )
 
 test_that("it handles dir", {

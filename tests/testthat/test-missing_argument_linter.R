@@ -1,6 +1,6 @@
 test_that("returns the correct linting", {
   linter <- missing_argument_linter()
-  msg <- rex("Missing argument in function call.")
+  msg <- rex::rex("Missing argument in function call.")
 
   expect_lint("fun(x, a = 1)", NULL, linter)
   expect_lint("fun(x = 1, a = 1)", NULL, linter)

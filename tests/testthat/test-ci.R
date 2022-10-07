@@ -14,7 +14,7 @@ test_that("GitHub Actions functionality works in a subdirectory", {
   withr::local_envvar(list(GITHUB_ACTIONS = "true"))
   withr::local_options(lintr.rstudio_source_markers = FALSE, lintr.github_annotation_project_dir = pkg_path)
 
-  read_settings(NULL)
+  lintr:::read_settings(NULL)
   l <- lint_package(
     pkg_path,
     linters = list(assignment_linter()),

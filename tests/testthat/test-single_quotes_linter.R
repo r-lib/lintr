@@ -1,6 +1,6 @@
 test_that("returns the correct linting", {
   linter <- single_quotes_linter()
-  msg <- rex("Only use double-quotes.")
+  msg <- rex::rex("Only use double-quotes.")
 
   expect_lint("blah", NULL, linter)
   expect_lint("\"blah\"", NULL, linter)

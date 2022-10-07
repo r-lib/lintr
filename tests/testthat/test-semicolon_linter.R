@@ -96,6 +96,15 @@ test_that("Trailing semicolons only", {
   expect_lint("function(){\nf <-\n 1 ;f <- 1.23\n}", NULL, linter)
 })
 
+
+test_that("Compound semicolons only", {
+  expect_error(
+    lint(text = "a <- 1;", linters = semicolon_linter(allow_trailing = TRUE, allow_compound = TRUE)),
+    "At least one of `allow_compound` or `allow_trailing` must be FALSE, otherwise no lints can be generated.",
+    fixed = TRUE
+  )
+})
+
 test_that("deprecation notices for semicolon_terminator_linter succeed, and the deprecated version works", {
   expect_warning(
     linter <- semicolon_terminator_linter(),

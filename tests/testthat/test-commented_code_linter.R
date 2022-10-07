@@ -1,5 +1,5 @@
 test_that("returns the correct linting", {
-  msg <- rex("Commented code should be removed.")
+  msg <- rex::rex("Commented code should be removed.")
   linter <- commented_code_linter()
   expect_s3_class(linter, "linter")
 
@@ -76,7 +76,7 @@ test_that("returns the correct linting", {
     linter
   )
 
-  test_ops <- append(ops[ops != "%[^%]*%"], values = c("%>%", "%anything%"))
+  test_ops <- append(lintr:::ops[lintr:::ops != "%[^%]*%"], values = c("%>%", "%anything%"))
   for (op in test_ops) {
     expect_lint(paste("i", op, "1", collapse = ""), NULL, linter)
     expect_lint(paste("# something like i", op, "1", collapse = ""), NULL, linter)

@@ -1,6 +1,6 @@
 test_that("returns the correct linting", {
   linter <- no_tab_linter()
-  msg <- rex("Use spaces to indent, not tabs.")
+  msg <- rex::rex("Use spaces to indent, not tabs.")
 
   expect_lint("blah", NULL, linter)
   expect_lint("  blah", NULL, linter)

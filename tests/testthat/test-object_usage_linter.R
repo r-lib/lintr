@@ -33,7 +33,7 @@ test_that("returns the correct linting", {
         a <- 1
       }
     "),
-    rex("local variable", anything, "assigned but may not be used"),
+    rex::rex("local variable", anything, "assigned but may not be used"),
     linter
   )
 
@@ -44,7 +44,7 @@ test_that("returns the correct linting", {
         1
       }
     "),
-    rex("local variable", anything, "assigned but may not be used"),
+    rex::rex("local variable", anything, "assigned but may not be used"),
     linter
   )
 
@@ -54,7 +54,7 @@ test_that("returns the correct linting", {
         a <- 1
       }
     "),
-    rex("local variable", anything, "assigned but may not be used"),
+    rex::rex("local variable", anything, "assigned but may not be used"),
     linter
   )
 
@@ -65,7 +65,7 @@ test_that("returns the correct linting", {
         a = 1
       }
     "),
-    rex("local variable", anything, "assigned but may not be used"),
+    rex::rex("local variable", anything, "assigned but may not be used"),
     linter
   )
 
@@ -77,8 +77,8 @@ test_that("returns the correct linting", {
       }
     "),
     list(
-      rex("local variable", anything, "assigned but may not be used"),
-      rex("no visible binding for global variable ", anything)
+      rex::rex("local variable", anything, "assigned but may not be used"),
+      rex::rex("no visible binding for global variable ", anything)
     ),
     linter
   )
@@ -89,7 +89,7 @@ test_that("returns the correct linting", {
         fnu(1)
       }
     "),
-    rex("no visible global function definition for ", anything),
+    rex::rex("no visible global function definition for ", anything),
     linter
   )
 
@@ -101,7 +101,7 @@ test_that("returns the correct linting", {
         `__lintr_obj`(1)
       }
     "),
-    rex("no visible global function definition for ", anything),
+    rex::rex("no visible global function definition for ", anything),
     linter
   )
 
@@ -114,7 +114,7 @@ test_that("returns the correct linting", {
         1
       })
     "),
-    rex("local variable", anything, "assigned but may not be used"),
+    rex::rex("local variable", anything, "assigned but may not be used"),
     linter
   )
 
@@ -125,7 +125,7 @@ test_that("returns the correct linting", {
         1
       })
     "),
-    rex("local variable", anything, "assigned but may not be used"),
+    rex::rex("local variable", anything, "assigned but may not be used"),
     linter
   )
 })
@@ -137,7 +137,7 @@ test_that("replace_functions_stripped", {
         `__lintr_obj`(x) = 1
       }
     "),
-    rex("no visible global function definition for ", anything),
+    rex::rex("no visible global function definition for ", anything),
     object_usage_linter()
   )
 
@@ -147,7 +147,7 @@ test_that("replace_functions_stripped", {
         `__lintr_obj`(x) <- 1
       }
     "),
-    rex("no visible global function definition for ", anything),
+    rex::rex("no visible global function definition for ", anything),
     object_usage_linter()
   )
 })
@@ -348,6 +348,24 @@ test_that("interprets glue expressions", {
     fun <- function() {
       local_var <- 42
       glue::glue('The answer is {local_var}.')
+    }
+  "), NULL, linter)
+
+  # multiple variables in different interpolations
+  expect_lint(trim_some("
+    fun <- function() {
+      local_key <- 'a'
+      local_value <- 123
+      glue::glue('Key-value pair: {local_key}={local_value}.')
+    }
+  "), NULL, linter)
+
+  # multiple variables in single interpolation
+  expect_lint(trim_some("
+    fun <- function() {
+      local_str1 <- 'a'
+      local_str2 <- 'b'
+      glue::glue('With our powers combined: {paste(local_str1, local_str2)}.')
     }
   "), NULL, linter)
 
