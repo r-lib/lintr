@@ -158,20 +158,20 @@ extract_glued_symbols <- function(expr) {
   if (length(glue_calls) == 0L) {
     return(character())
   }
-  glued_symbols <- new.env(parent = emptyenv())
 
-  for (cl in glue_calls) {
-    parsed_cl <- tryCatch(
-      parse(text = xml2::xml_text(cl)),
+  glued_symbols <- new.env(parent = emptyenv())
+  for (call_text in xml2::xml_text(glue_calls)) {
+    parsed_call <- tryCatch(
+      str2lang(call_text),
       error = function(...) NULL,
       warning = function(...) NULL
-    )[[1L]]
-    if (is.null(parsed_cl)) next
-    parsed_cl[[".envir"]] <- glued_symbols
-    parsed_cl[[".transformer"]] <- symbol_extractor
+    )
+    if (is.null(parsed_call)) next
+    parsed_call[[".envir"]] <- glued_symbols
+    parsed_call[[".transformer"]] <- symbol_extractor
     # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint
     tryCatch(
-      eval(parsed_cl),
+      eval(parsed_call),
       error = function(cond) {
         warning(
           "Evaluating glue expression while testing for local variable usage failed: ",
@@ -199,7 +199,8 @@ symbol_extractor <- function(text, envir, data) {
   if (nrow(parse_data) == 0L) {
     return("")
   }
-  symbols <- parse_data$text[parse_data$token == "SYMBOL"]
+  # strip backticked symbols; `x` is the same as x.
+  symbols <- gsub("^`(.*)`$", "\\1", parse_data$text[parse_data$token == "SYMBOL"])
   for (sym in symbols) {
     assign(sym, NULL, envir = envir)
   }
