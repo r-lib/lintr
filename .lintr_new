@@ -12,13 +12,17 @@ linters: linters_with_defaults(
     expect_s4_class_linter(),
     expect_true_false_linter(),
     expect_type_linter(),
+    for_loop_index_linter(),
     implicit_integer_linter(),
     line_length_linter(120),
     missing_argument_linter(),
     nested_ifelse_linter(),
     numeric_leading_zero_linter(),
+    paste_linter(),
     redundant_equals_linter(),
-    redundant_ifelse_linter()
+    redundant_ifelse_linter(),
+    unnecessary_lambda_linter(),
+    unneeded_concatenation_linter()
   )
 exclusions: list(
     "inst/doc/creating_linters.R" = 1,
