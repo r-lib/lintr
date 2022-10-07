@@ -90,6 +90,14 @@
 <li><p><code><a href="../reference/boolean_arithmetic_linter.html">boolean_arithmetic_linter()</a></code> for identifying places where logical aggregations are more appropriate, e.g. <code>length(which(x == y)) == 0</code> is the same as <code>!any(x == y)</code> or even <code>all(x != y)</code> (<a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
 </ul></div>
 </div>
+<div class="section level3">
+<h3 id="notes-development-version">Notes<a class="anchor" aria-label="anchor" href="#notes-development-version"></a></h3>
+<ul><li>
+<p><code><a href="../reference/lint.html">lint()</a></code> continues to support Rmarkdown documents. For users of custom .Rmd engines, e.g. <code>marginformat</code> from {tufte} or <code>theorem</code> from {bookdown}, note that those engines must be registered in {knitr} prior to running <code><a href="../reference/lint.html">lint()</a></code> in order for {lintr} to behave as expected, i.e., they should be shown as part of <code>knitr::knit_engines$get()</code>.</p>
+<p>For {tufte} and {bookdown} in particular, one only needs to load the package namespace to accomplish this (i.e., minimally <code>loadNamespace("tufte")</code> or <code>loadNamespace("bookdown")</code>, respectively, will register those packages’ custom engines; since <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code> also runs <code><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">loadNamespace()</a></code>, running <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code> will also work). Note further that {tufte} only added this code to their <code>.onLoad()</code> recently after our request to do so (see <a href="https://github.com/rstudio/tufte/issues/117" class="external-link uri">https://github.com/rstudio/tufte/issues/117</a>). Therefore, ensure you’re using a more recent version to get the behavior described here for {tufte}.</p>
+<p>However, there is no requirement that <code><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">loadNamespace()</a></code> will register a package’s custom {knitr} engines, so you may need to work with other package authors to figure out a solution for other engines.</p>
+<p>Thanks to Yihui and other developers for their helpful discussions around this issue (<a href="https://github.com/r-lib/lintr/issues/797" class="external-link">#797</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</p>
+</li></ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.0.1" id="lintr-301">lintr 3.0.1<a class="anchor" aria-label="anchor" href="#lintr-301"></a></h2><p class="text-muted">CRAN release: 2022-09-13</p>
