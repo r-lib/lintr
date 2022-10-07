@@ -83,7 +83,7 @@ is_numeric_linter <- function() {
     class_expr <- xml2::xml_find_all(xml, class_xpath)
     if (length(class_expr) > 0L) {
       class_strings <- c(
-       get_r_string(class_expr, "expr[2]/expr[2]/STR_CONST"),
+        get_r_string(class_expr, "expr[2]/expr[2]/STR_CONST"),
         get_r_string(class_expr, "expr[2]/expr[3]/STR_CONST")
       )
       is_lintable <- "integer" %in% class_strings && "numeric" %in% class_strings
