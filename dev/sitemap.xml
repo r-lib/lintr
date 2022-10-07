@@ -169,6 +169,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/fixed_regex_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/for_loop_index_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/function_argument_linter.html</loc>
   </url>
   <url>
