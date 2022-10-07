@@ -38,13 +38,13 @@ is_numeric_linter <- function() {
   # testing things like is.numeric(x) || is.integer(x)
   or_xpath <- glue::glue("
   //OR2
-  /parent::expr[
-    expr/{is_numeric_expr}
-    and expr/{is_integer_expr}
-    and
-      expr/{is_numeric_expr}/following-sibling::expr[1]
-      = expr/{is_integer_expr}/following-sibling::expr[1]
-  ]
+    /parent::expr[
+      expr/{is_numeric_expr}
+      and expr/{is_integer_expr}
+      and
+        expr/{is_numeric_expr}/following-sibling::expr[1]
+        = expr/{is_integer_expr}/following-sibling::expr[1]
+    ]
   ")
 
   # testing class(x) %in% c("numeric", "integer")
@@ -57,9 +57,9 @@ is_numeric_linter <- function() {
       and count(expr/STR_CONST) = 2
       and count(expr) = 3
     ]
+    and preceding-sibling::expr/expr/SYMBOL_FUNCTION_CALL[text() = 'class']
   ]
-  /preceding-sibling::expr[expr/SYMBOL_FUNCTION_CALL[text() = 'class']]
-  /parent::expr
+    /parent::expr
   "
 
   Linter(function(source_expression) {
