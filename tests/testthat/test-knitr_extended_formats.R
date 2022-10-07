@@ -3,8 +3,8 @@ test_that("marginfigure engine from tufte package doesn't cause problems", {
   loadNamespace("tufte") # to register additional engines
 
   expect_lint(
-    file = "knitr_extended_formats/tufte.Rmd",
-    checks = list(rex("Use <-, not =, for assignment."), line_number = 11L),
+    file = test_path("knitr_extended_formats", "tufte.Rmd"),
+    checks = list(rex::rex("Use <-, not =, for assignment."), line_number = 11L),
     default_linters,
     parse_settings = FALSE
   )
@@ -15,8 +15,8 @@ test_that("engines from bookdown package cause no problems", {
   loadNamespace("bookdown") # to register additional engines
 
   expect_lint(
-    file = "knitr_extended_formats/bookdown.Rmd",
-    checks = list(rex("Use <-, not =, for assignment."), line_number = 14L),
+    file = test_path("knitr_extended_formats", "bookdown.Rmd"),
+    checks = list(rex::rex("Use <-, not =, for assignment."), line_number = 14L),
     default_linters,
     parse_settings = FALSE
   )
