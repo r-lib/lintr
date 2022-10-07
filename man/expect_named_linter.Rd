@@ -15,23 +15,23 @@ but it is better to use the tailored function instead.
 # will produce lints
 lint(
   text = "expect_equal(names(x), 'a')",
-  linters = expect_length_linter()
+  linters = expect_named_linter()
 )
 
 # okay
 lint(
   text = "expect_named(x, 'a')",
-  linters = expect_length_linter()
+  linters = expect_named_linter()
 )
 
 lint(
   text = "expect_equal(colnames(x), 'a')",
-  linters = expect_length_linter()
+  linters = expect_named_linter()
 )
 
 lint(
   text = "expect_equal(dimnames(x), 'a')",
-  linters = expect_length_linter()
+  linters = expect_named_linter()
 )
 
 }

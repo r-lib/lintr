@@ -6,6 +6,19 @@
 #'   The reverse is also true -- use `expect_false(A)` instead of
 #'   `expect_true(!A)`.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "expect_true(!x)",
+#'   linters = expect_not_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "expect_false(x)",
+#'   linters = expect_not_linter()
+#' )
+#'
 #' @evalRd rd_tags("expect_not_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

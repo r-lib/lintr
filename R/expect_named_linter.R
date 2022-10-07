@@ -8,23 +8,23 @@
 #' # will produce lints
 #' lint(
 #'   text = "expect_equal(names(x), 'a')",
-#'   linters = expect_length_linter()
+#'   linters = expect_named_linter()
 #' )
 #'
 #' # okay
 #' lint(
 #'   text = "expect_named(x, 'a')",
-#'   linters = expect_length_linter()
+#'   linters = expect_named_linter()
 #' )
 #'
 #' lint(
 #'   text = "expect_equal(colnames(x), 'a')",
-#'   linters = expect_length_linter()
+#'   linters = expect_named_linter()
 #' )
 #'
 #' lint(
 #'   text = "expect_equal(dimnames(x), 'a')",
-#'   linters = expect_length_linter()
+#'   linters = expect_named_linter()
 #' )
 #'
 #' @evalRd rd_tags("expect_named_linter")
