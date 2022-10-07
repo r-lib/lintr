@@ -234,6 +234,26 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 )]
 
 #' Default lintr settings
+#'
+#' @description
+#' The default settings consist of
+#'
+#'  - `linters`: a list of default linters (see [default_linters()])
+#'  - `encoding`:
+#'  - `exclude`:
+#'  - `exclude_start`:
+#'  - `exclude_end`:
+#'  - `exclude_linter`:
+#'  - `exclude_linter_sep`:
+#'  - `exclusions`:
+#'  - `cache_directory`:
+#'  - `comment_token`:
+#'  - `comment_bot`:
+#'  - `error_on_lint`:
+#'
+#' @examples
+#' names(default_settings)
+#'
 #' @seealso [read_settings()], [default_linters]
 #' @export
 default_settings <- NULL

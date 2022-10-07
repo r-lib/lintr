@@ -11,7 +11,25 @@ An object of class \code{list} of length 12.
 default_settings
 }
 \description{
-Default lintr settings
+The default settings consist of
+\itemize{
+\item \code{linters}: a list of default linters (see \code{\link[=default_linters]{default_linters()}})
+\item \code{encoding}:
+\item \code{exclude}:
+\item \code{exclude_start}:
+\item \code{exclude_end}:
+\item \code{exclude_linter}:
+\item \code{exclude_linter_sep}:
+\item \code{exclusions}:
+\item \code{cache_directory}:
+\item \code{comment_token}:
+\item \code{comment_bot}:
+\item \code{error_on_lint}:
+}
+}
+\examples{
+names(default_settings)
+
 }
 \seealso{
 \code{\link[=read_settings]{read_settings()}}, \link{default_linters}
