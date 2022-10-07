@@ -17,77 +17,77 @@ test_that("it handles dir", {
 
 test_that("it handles markdown", {
   expect_lint(
-    file = "knitr_formats/test.Rmd",
+    file = test_path("knitr_formats", "test.Rmd"),
     checks = list(
       list(regexes[["assign"]], line_number = 9L),
       list(regexes[["local_var"]], line_number = 22L),
       list(regexes[["assign"]], line_number = 22L),
       list(regexes[["trailing"]], line_number = 24L)
     ),
-    default_linters,
+    linters = default_linters,
     parse_settings = FALSE
   )
 })
 
 test_that("it handles quarto", {
   expect_lint(
-    file = "knitr_formats/test.qmd",
+    file = test_path("knitr_formats", "test.qmd"),
     checks = list(
       list(regexes[["assign"]], line_number = 9L),
       list(regexes[["local_var"]], line_number = 22L),
       list(regexes[["assign"]], line_number = 22L),
       list(regexes[["trailing"]], line_number = 24L)
     ),
-    default_linters,
+    linters = default_linters,
     parse_settings = FALSE
   )
 })
 
 test_that("it handles Sweave", {
   expect_lint(
-    file = "knitr_formats/test.Rnw",
+    file = test_path("knitr_formats", "test.Rnw"),
     checks = list(
       list(regexes[["assign"]], line_number = 12L),
       list(regexes[["local_var"]], line_number = 24L),
       list(regexes[["assign"]], line_number = 24L),
       list(regexes[["trailing"]], line_number = 26L)
     ),
-    default_linters,
+    linters = default_linters,
     parse_settings = FALSE
   )
 })
 
 test_that("it handles reStructuredText", {
   expect_lint(
-    file = "knitr_formats/test.Rrst",
+    file = test_path("knitr_formats", "test.Rrst"),
     checks = list(
       list(regexes[["assign"]], line_number = 10L),
       list(regexes[["local_var"]], line_number = 23L),
       list(regexes[["assign"]], line_number = 23L),
       list(regexes[["trailing"]], line_number = 25L)
     ),
-    default_linters,
+    linters = default_linters,
     parse_settings = FALSE
   )
 })
 
 test_that("it handles HTML", {
   expect_lint(
-    file = "knitr_formats/test.Rhtml",
+    file = test_path("knitr_formats", "test.Rhtml"),
     checks = list(
       list(regexes[["assign"]], line_number = 15L),
       list(regexes[["local_var"]], line_number = 27L),
       list(regexes[["assign"]], line_number = 27L),
       list(regexes[["trailing"]], line_number = 29L)
     ),
-    default_linters,
+    linters = default_linters,
     parse_settings = FALSE
   )
 })
 
 test_that("it handles tex", {
   expect_lint(
-    file = "knitr_formats/test.Rtex",
+    file = test_path("knitr_formats", "test.Rtex"),
     checks = list(
       list(regexes[["assign"]], line_number = 11L),
       list(regexes[["local_var"]], line_number = 23L),
@@ -99,21 +99,21 @@ test_that("it handles tex", {
       # "%" as well.
       # cf. get_source_expressions("tests/testthat/knitr_formats/test.Rtex")$lines[[25]]
     ),
-    default_linters,
+    linters = default_linters,
     parse_settings = FALSE
   )
 })
 
 test_that("it handles asciidoc", {
   expect_lint(
-    file = "knitr_formats/test.Rtxt",
+    file = test_path("knitr_formats", "test.Rtxt"),
     checks = list(
       list(regexes[["assign"]], line_number = 9L),
       list(regexes[["local_var"]], line_number = 22L),
       list(regexes[["assign"]], line_number = 22L),
       list(regexes[["trailing"]], line_number = 24L)
     ),
-    default_linters,
+    linters = default_linters,
     parse_settings = FALSE
   )
 })
@@ -138,16 +138,16 @@ test_that("it does _not_ error with inline \\Sexpr", {
 
 test_that("it does lint .Rmd or .qmd file with malformed input", {
   expect_lint(
-    file = "knitr_malformed/incomplete_r_block.Rmd",
+    file = test_path("knitr_malformed", "incomplete_r_block.Rmd"),
     checks = "Missing chunk end",
-    default_linters,
+    linters = default_linters,
     parse_settings = FALSE
   )
 
   expect_lint(
-    file = "knitr_malformed/incomplete_r_block.qmd",
+    file = test_path("knitr_malformed", "incomplete_r_block.qmd"),
     checks = "Missing chunk end",
-    default_linters,
+    linters = default_linters,
     parse_settings = FALSE
   )
 
