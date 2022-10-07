@@ -4,10 +4,6 @@
 
 * `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
 
-* `lint()` for Rmarkdown docs becomes more robust to encountering custom knitr engines 
-  (e.g. `marginfigure` from `{tufte}`, cf. #796). The adopted heuristic here is that packages 
-  providing custom engines register them via namespace hooks (#1552, @IndrajeetPatil).
-
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
@@ -47,6 +43,25 @@
 
 * `boolean_arithmetic_linter()` for identifying places where logical aggregations are more appropriate, e.g.
   `length(which(x == y)) == 0` is the same as `!any(x == y)` or even `all(x != y)` (@MichaelChirico)
+
+## Notes
+
+* `lint()` continues to support Rmarkdown documents. For users of custom .Rmd engines, e.g.
+  `marginformat` from {tufte} or `theorem` from {bookdown}, note that those engines must be registered
+  in {knitr} prior to running `lint()` in order for {lintr} to behave as expected, i.e., they should be
+  shown as part of `knitr::knit_engines$get()`.
+  
+  For {tufte} and {bookdown} in particular, one only needs to load the package namespace to accomplish
+  this (i.e., minimally `loadNamespace("tufte")` or `loadNamespace("bookdown")`, respectively, will
+  register those packages' custom engines; since `library()` also runs `loadNamespace()`, running
+  `library()` will also work). Note further that {tufte} only added this code to their `.onLoad()` recently
+  after our request to do so, see https://github.com/rstudio/tufte/issues/117 & ensure you're using a
+  more recent version to get the behavior described here for {tufte}.
+  
+  However, there is no requirement that `loadNamespace()` will register a package's custom {knitr}
+  engines, so you may need to work with other package authors to figure out a solution for other engines.
+  
+  Thanks to Yihui and other developers for their helpful discussions around this issue (#797, @IndrajeetPatil).
 
 # lintr 3.0.1
 
