@@ -30,7 +30,8 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 is_numeric_linter <- function() {
-  # TODO(michaelchirico): this should also cover is.double(x) || is.integer(x), ditto below
+  # TODO(michaelchirico): this should also cover is.double(x) || is.integer(x)
+  # TODO(#1636): is.numeric(x) || is.integer(x) || is.factor(x) is also redundant
   is_numeric_expr <- "expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.numeric']]"
   is_integer_expr <- "expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.integer']]"
 

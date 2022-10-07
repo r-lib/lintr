@@ -40,15 +40,6 @@ test_that("is_numeric_linter blocks disallowed usages involving ||", {
 
   # implicit nesting
   expect_lint("is.integer(x) || is.numeric(x) || is.logical(x)", lint_msg, linter)
-
-  # TODO(michaelchirico): generalize to handle this. hopefully, by doing so we get
-  #   cases like is.numeric(x) || is.logical(x) || is.integer(x) free as well.
-  #   probably just need to crib some logic from VectorLogicLinter().
-  # expect_lint(
-  #   "is.logical(x) || is.integer(x) || is.numeric(x)",
-  #   lint_msg,
-  #   is_numeric_linter
-  # )
 })
 
 test_that("is_numeric_linter blocks disallowed usages involving %in%", {
