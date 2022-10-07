@@ -17,7 +17,6 @@ test_that("equals_na_linter skips allowed usages", {
 
   # nested NAs are okay
   expect_lint("x==f(1, ignore = NA)", NULL, linter)
-
 })
 
 skip_if_not_installed("tibble")
