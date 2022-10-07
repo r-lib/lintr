@@ -24,15 +24,13 @@ is_numeric_linter <- function() {
   ")
 
   # testing class(x) %in% c("numeric", "integer")
-  # TODO(michaelchirico): use get_r_string here
   # TODO(michaelchirico): include typeof(x) %in% c("integer", "double")
   class_xpath <- "
   //SPECIAL[
     text() = '%in%'
     and following-sibling::expr[
       expr/SYMBOL_FUNCTION_CALL[text() = 'c']
-      and expr/STR_CONST[substring(text(), 2, 7) = 'integer']
-      and expr/STR_CONST[substring(text(), 2, 7) = 'numeric']
+      and count(expr/STR_CONST) = 2
       and count(expr) = 3
     ]
   ]
@@ -59,6 +57,14 @@ is_numeric_linter <- function() {
     )
 
     class_expr <- xml2::xml_find_all(xml, class_xpath)
+    if (length(class_expr) > 0L) {
+      class_strings <- c(
+       get_r_string(class_expr, "expr[2]/expr[2]/STR_CONST"),
+        get_r_string(class_expr, "expr[2]/expr[3]/STR_CONST")
+      )
+      is_lintable <- "integer" %in% class_strings && "numeric" %in% class_strings
+      class_expr <- class_expr[is_lintable]
+    }
     class_lints <- xml_nodes_to_lints(
       class_expr,
       source_expression = source_expression,
