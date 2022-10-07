@@ -30,6 +30,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{function_return_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{inner_combine_linter}}}
+\item{\code{\link{is_numeric_linter}}}
 \item{\code{\link{lengths_linter}}}
 \item{\code{\link{line_length_linter}}}
 \item{\code{\link{nested_ifelse_linter}}}
