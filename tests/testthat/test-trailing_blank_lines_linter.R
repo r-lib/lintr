@@ -7,7 +7,7 @@ test_that("trailing_blank_lines_linter doesn't block allowed usages", {
   expect_lint("blah <- 1\nblah\n \n blah", NULL, linter)
 
   tmp <- withr::local_tempfile(lines = "lm(y ~ x)")
-  expect_lint(file = tmp, checks = NULL, linter)
+  expect_lint(file = tmp, checks = NULL, linters = linter)
 })
 
 test_that("trailing_blank_lines_linter detects disallowed usages", {
@@ -25,14 +25,13 @@ test_that("trailing_blank_lines_linter detects disallowed usages", {
   tmp2 <- withr::local_tempfile()
   cat("lm(y ~ x)", file = tmp2)
   expect_lint(
-    content = tmp2,
     file = tmp2,
-    list(
+    checks = list(
       message = rex::rex("Missing terminal newline."),
       line_number = 1L,
       column_number = 10L
     ),
-    linter
+    linters = linter
   )
 })
 
@@ -56,15 +55,14 @@ test_that("trailing_blank_lines_linter detects missing terminal newlines in Rmd/
     file = tmp3
   )
   expect_lint(
-    content = tmp3,
     file = tmp3,
-    list(
+    checks = list(
       message = rex::rex("Missing terminal newline."),
       line_number = 10L,
       # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
       column_number = 1L
     ),
-    linter
+    linters = linter
   )
 
   # Construct an Rmd file without R code (#1415)
@@ -80,15 +78,14 @@ test_that("trailing_blank_lines_linter detects missing terminal newlines in Rmd/
     file = tmp4
   )
   expect_lint(
-    content = tmp4,
     file = tmp4,
-    list(
+    checks = list(
       message = rex::rex("Missing terminal newline."),
       line_number = 5L,
       # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
       column_number = 1L
     ),
-    linter
+    linters = linter
   )
 
   # Construct a qmd file without terminal newline
@@ -109,15 +106,14 @@ test_that("trailing_blank_lines_linter detects missing terminal newlines in Rmd/
     file = tmp5
   )
   expect_lint(
-    content = tmp5,
     file = tmp5,
-    list(
+    checks = list(
       message = rex::rex("Missing terminal newline."),
       line_number = 10L,
       # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
       column_number = 1L
     ),
-    linter
+    linters = linter
   )
 })
 
@@ -139,10 +135,9 @@ test_that("blank lines in knitr chunks produce lints", {
   )
 
   expect_lint(
-    content = tmp6,
     file = tmp6,
-    list(message = rex::rex("Trailing blank lines are superfluous."), line_number = 7L, column_number = 1L),
-    linter
+    checks = list(message = rex::rex("Trailing blank lines are superfluous."), line_number = 7L, column_number = 1L),
+    linters = linter
   )
 
   tmp7 <- withr::local_tempfile(
@@ -162,13 +157,12 @@ test_that("blank lines in knitr chunks produce lints", {
   )
 
   expect_lint(
-    content = tmp7,
     file = tmp7,
-    list(
+    checks = list(
       list(message = rex::rex("Trailing blank lines are superfluous."), line_number = 7L, column_number = 1L),
       list(message = rex::rex("Trailing blank lines are superfluous."), line_number = 8L, column_number = 1L),
       list(message = rex::rex("Trailing blank lines are superfluous."), line_number = 9L, column_number = 1L)
     ),
-    linter
+    linters = linter
   )
 })
