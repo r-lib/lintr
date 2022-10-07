@@ -4,6 +4,29 @@
 #'   an object. [testthat::expect_equal()] can also be used for such tests,
 #'   but it is better to use the tailored function instead.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "expect_equal(names(x), 'a')",
+#'   linters = expect_length_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "expect_named(x, 'a')",
+#'   linters = expect_length_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_equal(colnames(x), 'a')",
+#'   linters = expect_length_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_equal(dimnames(x), 'a')",
+#'   linters = expect_length_linter()
+#' )
+#'
 #' @evalRd rd_tags("expect_named_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

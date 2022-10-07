@@ -51,6 +51,9 @@ test_that("equals_na_linter blocks disallowed usages in edge cases", {
   expect_lint("x==NA", list(message = msg, line_number = 1L, column_number = 1L), linter)
   expect_lint("x!=NA", list(message = msg, line_number = 1L, column_number = 1L), linter)
 
+  # order doesn't matter
+  expect_lint("NA == x", list(message = msg, line_number = 1L, column_number = 1L), linter)
+
   # correct line number for multiline code
   expect_lint("x ==\nNA", list(line_number = 1L, column_number = 1L, ranges = list(c(1L, 4L))), linter)
 })
