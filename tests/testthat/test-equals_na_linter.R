@@ -39,7 +39,7 @@ patrick::with_parameters_test_that(
     "inequality, integer NA",   "!=",       "NA_integer_",
     "inequality, real NA",      "!=",       "NA_real_",
     "inequality, complex NA",   "!=",       "NA_complex_",
-    "inequality, character NA", "!=",       "NA_character_",
+    "inequality, character NA", "!=",       "NA_character_"
   )
 )
 
