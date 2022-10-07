@@ -8,6 +8,30 @@
 #' [testthat::expect_true()] can also be used for such tests,
 #' but it is better to use the tailored function instead.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "expect_equal(x, NULL)",
+#'   linters = expect_null_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_identical(x, NULL)",
+#'   linters = expect_null_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_true(is.null(x))",
+#'   linters = expect_null_linter()
+#' )
+#'
+#'
+#' # okay
+#' lint(
+#'   text = "expect_null(x)",
+#'   linters = expect_null_linter()
+#' )
+#'
 #' @evalRd rd_tags("expect_null_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
