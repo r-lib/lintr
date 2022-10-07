@@ -14,7 +14,7 @@ test_that("it handles dir", {
   # For every file there should be at least 1 lint
   expect_identical(
     sort(unique(names(lints))),
-    sort(list.files("knitr_formats", pattern = file_pattern))
+    sort(list.files(test_path("knitr_formats"), pattern = file_pattern))
   )
 })
 
