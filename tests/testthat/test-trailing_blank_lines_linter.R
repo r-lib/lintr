@@ -122,7 +122,7 @@ test_that("blank lines in knitr chunks produce lints", {
 
   tmp6 <- withr::local_tempfile(
     fileext = ".Rmd",
-    lines =
+    lines = trim_some(
       '---
       title: "Some file"
       ---
@@ -132,6 +132,7 @@ test_that("blank lines in knitr chunks produce lints", {
 
       ```
       \n'
+    )
   )
 
   expect_lint(
@@ -142,7 +143,7 @@ test_that("blank lines in knitr chunks produce lints", {
 
   tmp7 <- withr::local_tempfile(
     fileext = ".qmd",
-    lines =
+    lines = trim_some(
       '---
       title: "Some file"
       ---
@@ -154,6 +155,7 @@ test_that("blank lines in knitr chunks produce lints", {
 
       ```
       \n'
+    )
   )
 
   expect_lint(
