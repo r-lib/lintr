@@ -46,6 +46,9 @@
 
 * `for_loop_index_linter()` to prevent overwriting local variables in a `for` loop declared like `for (x in x) { ... }` (@MichaelChirico)
 
+* `is_numeric_linter()` for redundant checks equivalent to `is.numeric(x)` such as `is.numeric(x) || is.integer(x)` or
+  `class(x) %in% c("numeric", "integer")` (@MichaelChirico)
+
 ## Notes
 
 * `lint()` continues to support Rmarkdown documents. For users of custom .Rmd engines, e.g.
