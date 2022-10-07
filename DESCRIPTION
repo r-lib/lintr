@@ -94,6 +94,7 @@ Collate:
     'extract.R'
     'extraction_operator_linter.R'
     'fixed_regex_linter.R'
+    'for_loop_index_linter.R'
     'function_argument_linter.R'
     'function_left_parentheses_linter.R'
     'function_return_linter.R'
