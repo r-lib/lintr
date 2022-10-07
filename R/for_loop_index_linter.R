@@ -3,6 +3,29 @@
 #' `for (x in x)` is a poor choice of indexing variable. This overwrites
 #'   `x` in the calling scope and is confusing to read.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "for (x in x) { TRUE }",
+#'   linters = for_loop_index_linter()
+#' )
+#'
+#' lint(
+#'   text = "for (x in foo(x, y)) { TRUE }",
+#'   linters = for_loop_index_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "for (xi in x) { TRUE }",
+#'   linters = for_loop_index_linter()
+#' )
+#'
+#' lint(
+#'   text = "for (col in DF$col) { TRUE }",
+#'   linters = for_loop_index_linter()
+#' )
+#'
 #' @evalRd rd_tags("for_loop_index_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
