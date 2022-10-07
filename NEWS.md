@@ -55,7 +55,7 @@
   this (i.e., minimally `loadNamespace("tufte")` or `loadNamespace("bookdown")`, respectively, will
   register those packages' custom engines; since `library()` also runs `loadNamespace()`, running
   `library()` will also work). Note further that {tufte} only added this code to their `.onLoad()` recently
-  after our request to do so, see https://github.com/rstudio/tufte/issues/117 & ensure you're using a
+  after our request to do so (see https://github.com/rstudio/tufte/issues/117). Therefore, ensure you're using a
   more recent version to get the behavior described here for {tufte}.
   
   However, there is no requirement that `loadNamespace()` will register a package's custom {knitr}
