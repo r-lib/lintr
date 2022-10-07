@@ -35,8 +35,8 @@ empty_assignment_linter <- function() {
   # TODO(michaelchirico): include right-assignment
   xpath <- "
   //OP-LEFT-BRACE[following-sibling::*[1][self::OP-RIGHT-BRACE]]
-  /parent::expr[preceding-sibling::LEFT_ASSIGN or preceding-sibling::EQ_ASSIGN]
-  /parent::*
+    /parent::expr[preceding-sibling::LEFT_ASSIGN or preceding-sibling::EQ_ASSIGN]
+    /parent::*
   "
 
   Linter(function(source_expression) {
