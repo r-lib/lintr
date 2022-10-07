@@ -17,7 +17,7 @@ see also \code{\link[=available_tags]{available_tags()}}.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (43 linters)}
+\item{\link[=best_practices_linters]{best_practices} (44 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (7 linters)}
 \item{\link[=configurable_linters]{configurable} (20 linters)}
 \item{\link[=consistency_linters]{consistency} (17 linters)}
@@ -27,7 +27,7 @@ The following tags exist:
 \item{\link[=efficiency_linters]{efficiency} (20 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
-\item{\link[=readability_linters]{readability} (43 linters)}
+\item{\link[=readability_linters]{readability} (44 linters)}
 \item{\link[=robustness_linters]{robustness} (13 linters)}
 \item{\link[=style_linters]{style} (36 linters)}
 }
@@ -51,6 +51,7 @@ The following linters exist:
 \item{\code{\link{consecutive_stopifnot_linter}} (tags: consistency, readability, style)}
 \item{\code{\link{cyclocomp_linter}} (tags: best_practices, configurable, default, readability, style)}
 \item{\code{\link{duplicate_argument_linter}} (tags: common_mistakes, configurable, correctness)}
+\item{\code{\link{empty_assignment_linter}} (tags: best_practices, readability)}
 \item{\code{\link{equals_na_linter}} (tags: common_mistakes, correctness, default, robustness)}
 \item{\code{\link{expect_comparison_linter}} (tags: best_practices, package_development)}
 \item{\code{\link{expect_identical_linter}} (tags: package_development)}
