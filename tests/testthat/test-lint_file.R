@@ -11,7 +11,7 @@ test_that("lint() results do not depend on the working directory", {
   pkg_path <- test_path("dummy_packages", "assignmentLinter")
 
   # put a .lintr in the package root that excludes the first line of `R/jkl.R`
-  local_config(pkg_path, "exclusions: list('R/jkl.R' = 1)\n")
+  local_config(pkg_path, "exclusions: list('R/jkl.R' = 1)")
 
   # linting the `R/jkl.R` should identify the following assignment lint on the
   # second line of the file
@@ -77,7 +77,7 @@ test_that("lint() results do not depend on the position of the .lintr", {
     pkg_path,
     lint_with_config(
       config_dir = ".",
-      config_string = "exclusions: list('R/jkl.R' = 1)\n",
+      config_string = "exclusions: list('R/jkl.R' = 1)",
       filename = file.path("R", "jkl.R")
     )
   )
@@ -86,7 +86,7 @@ test_that("lint() results do not depend on the position of the .lintr", {
     pkg_path,
     lint_with_config(
       config_dir = "R",
-      config_string = "exclusions: list('jkl.R' = 1)\n",
+      config_string = "exclusions: list('jkl.R' = 1)",
       filename = file.path("R", "jkl.R")
     )
   )

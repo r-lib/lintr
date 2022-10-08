@@ -47,7 +47,7 @@ trim_some <- function(x, num = NULL) {
 
 local_config <- function(config_dir, contents, .local_envir = parent.frame()) {
   config_path <- file.path(config_dir, ".lintr")
-  cat(contents, file = config_path)
+  writeLines(contents, config_path)
   withr::defer(unlink(config_path), envir = .local_envir)
   config_path
 }

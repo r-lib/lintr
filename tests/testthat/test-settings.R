@@ -17,7 +17,7 @@ test_that("it uses option settings if provided", {
 test_that("it uses config settings in same directory if provided", {
   test_dir <- tempdir()
   file <- withr::local_tempfile(tmpdir = test_dir)
-  local_config(test_dir, 'exclude: "test"\n')
+  local_config(test_dir, 'exclude: "test"')
 
   read_settings(file)
 
@@ -32,7 +32,7 @@ test_that("it uses config home directory settings if provided", {
   path <- withr::local_tempdir()
   home_path <- withr::local_tempdir()
   file <- withr::local_tempfile(tmpdir = path)
-  local_config(home_path, 'exclude: "test"\n')
+  local_config(home_path, 'exclude: "test"')
 
   withr::with_envvar(c(HOME = home_path), read_settings(file))
 

@@ -78,7 +78,7 @@ test_that(
 
     # Add a .lintr that excludes the whole of `abc.R` and the first line of
     # `jkl.R` (and remove it on finishing this test)
-    local_config(pkg_path, "exclusions: list('R/abc.R', 'R/jkl.R' = 1)\n")
+    local_config(pkg_path, "exclusions: list('R/abc.R', 'R/jkl.R' = 1)")
 
     expected_lines <- "mno = 789"
     lints_from_outside <- lint_package(
