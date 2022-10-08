@@ -4,6 +4,9 @@
 
 * `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
 
+* `get_source_expressions()` can handle Sweave/Rmarkdown documents with reference chunks like `<<ref_file>>` (#779, @MichaelChirico).
+  Note that these are simply skipped, rather than attempting to retrieve the reference and also lint it.
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
@@ -11,6 +14,8 @@
 
 * `object_usage_linter()` gains `skip_with` argument to skip code in `with()` expressions.
   To be consistent with `R CMD check`, it defaults to `TRUE` (#941, #1458, @IndrajeetPatil).
+
+* `spaces_inside_linter()` allows terminal missing keyword arguments (e.g. `alist(arg = )`; #540, @MichaelChirico)
 
 ## New and improved features
 
@@ -48,6 +53,8 @@
 
 * `for_loop_index_linter()` to prevent overwriting local variables in a `for` loop declared like `for (x in x) { ... }` (@MichaelChirico)
 
+* `empty_assignment_linter()` for identifying empty assignments like `x = {}` that are more clearly written as `x = NULL` (@MichaelChirico)
+
 ## Notes
 
 * `lint()` continues to support Rmarkdown documents. For users of custom .Rmd engines, e.g.
@@ -66,6 +73,8 @@
   engines, so you may need to work with other package authors to figure out a solution for other engines.
   
   Thanks to Yihui and other developers for their helpful discussions around this issue (#797, @IndrajeetPatil).
+
+* The output of `lint()` and `Lint()` gain S3 class `"list"` to assist with S3 dispatch (#1494, @MichaelChirico)
 
 # lintr 3.0.1
 
