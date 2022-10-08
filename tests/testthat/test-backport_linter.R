@@ -13,8 +13,7 @@ test_that("backport_linter detects backwards-incompatibility", {
   expect_lint(".getNamespaceInfo(dir.exists(lapply(x, toTitleCase)))", NULL, backport_linter("devel"))
 
   # don't allow dependencies older than we've recorded
-  writeLines("x <- x + 1", tmp <- tempfile())
-  on.exit(unlink(tmp))
+  tmp <- withr::local_tempfile(lines = "x <- x + 1")
 
   expect_warning(l <- lint(tmp, backport_linter("2.0.0")), "version older than 3.0.0", fixed = TRUE)
   expect_identical(l, lint(tmp, backport_linter("3.0.0")))
