@@ -65,8 +65,9 @@
 <h2 class="pkg-version" data-toc-text="development version" id="lintr-development-version">lintr (development version)<a class="anchor" aria-label="anchor" href="#lintr-development-version"></a></h2>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
-<ul><li>
-<code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> no longer fails with regular expression pattern <code>"\\;"</code> (<a href="https://github.com/r-lib/lintr/issues/1545" class="external-link">#1545</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</li></ul></div>
+<ul><li><p><code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> no longer fails with regular expression pattern <code>"\\;"</code> (<a href="https://github.com/r-lib/lintr/issues/1545" class="external-link">#1545</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</p></li>
+<li><p><code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> can handle Sweave/Rmarkdown documents with reference chunks like <code>&lt;&lt;ref_file&gt;&gt;</code> (<a href="https://github.com/r-lib/lintr/issues/779" class="external-link">#779</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Note that these are simply skipped, rather than attempting to retrieve the reference and also lint it.</p></li>
+</ul></div>
 <div class="section level3">
 <h3 id="changes-to-defaults-development-version">Changes to defaults<a class="anchor" aria-label="anchor" href="#changes-to-defaults-development-version"></a></h3>
 <ul><li><p>Set the default for the <code>except</code> argument in <code><a href="../reference/duplicate_argument_linter.html">duplicate_argument_linter()</a></code> to <code>c("mutate", "transmute")</code>. This allows sequential updates like <code>x |&gt; mutate(a = b + 1, a = log(a))</code> (<a href="https://github.com/r-lib/lintr/issues/1345" class="external-link">#1345</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</p></li>
