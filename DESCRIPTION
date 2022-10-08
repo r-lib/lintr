@@ -1,6 +1,6 @@
 Package: lintr
 Title: A 'Linter' for R Code
-Version: 3.0.0.9000
+Version: 3.0.1.9000
 Authors@R: c(
     person("Jim", "Hester", , "james.f.hester@gmail.com", role = c("aut", "cre")),
     person("Florent", "Angly", role = "aut",
@@ -37,7 +37,7 @@ Imports:
     xml2 (>= 1.0.0),
     xmlparsedata (>= 1.0.5)
 Suggests:
-    covr,
+    bookdown,
     httr (>= 1.2.1),
     mockery,
     patrick,
@@ -46,6 +46,7 @@ Suggests:
     rstudioapi (>= 0.2),
     testthat (>= 3.0.0),
     tibble,
+    tufte,
     withr (>= 2.5.0)
 VignetteBuilder: 
     knitr
@@ -64,10 +65,10 @@ Collate:
     'any_is_na_linter.R'
     'assignment_linter.R'
     'backport_linter.R'
+    'boolean_arithmetic_linter.R'
     'brace_linter.R'
     'cache.R'
     'class_equals_linter.R'
-    'closed_curly_linter.R'
     'commas_linter.R'
     'comment_linters.R'
     'comments.R'
@@ -78,6 +79,7 @@ Collate:
     'declared_functions.R'
     'deprecated.R'
     'duplicate_argument_linter.R'
+    'empty_assignment_linter.R'
     'equals_na_linter.R'
     'exclude.R'
     'expect_comparison_linter.R'
@@ -93,8 +95,10 @@ Collate:
     'extract.R'
     'extraction_operator_linter.R'
     'fixed_regex_linter.R'
+    'for_loop_index_linter.R'
     'function_argument_linter.R'
     'function_left_parentheses_linter.R'
+    'function_return_linter.R'
     'get_source_expressions.R'
     'ids_with_token.R'
     'ifelse_censor_linter.R'
@@ -102,10 +106,13 @@ Collate:
     'infix_spaces_linter.R'
     'inner_combine_linter.R'
     'is_lint_level.R'
+    'lengths_linter.R'
     'line_length_linter.R'
     'lint.R'
     'linter_tag_docs.R'
     'linter_tags.R'
+    'lintr-deprecated.R'
+    'lintr-package.R'
     'literal_coercion_linter.R'
     'make_linter_from_regex.R'
     'methods.R'
@@ -118,15 +125,14 @@ Collate:
     'numeric_leading_zero_linter.R'
     'object_name_linters.R'
     'object_usage_linter.R'
-    'open_curly_linter.R'
     'outer_negation_linter.R'
     'package_hooks_linter.R'
     'paren_body_linter.R'
-    'paren_brace_linter.R'
     'paste_linter.R'
     'path_linters.R'
     'pipe_call_linter.R'
     'pipe_continuation_linter.R'
+    'redundant_equals_linter.R'
     'redundant_ifelse_linter.R'
     'regex_subset_linter.R'
     'semicolon_linter.R'
@@ -144,6 +150,7 @@ Collate:
     'tree-utils.R'
     'undesirable_function_linter.R'
     'undesirable_operator_linter.R'
+    'unnecessary_lambda_linter.R'
     'unneeded_concatenation_linter.R'
     'unreachable_code_linter.R'
     'unused_import_linter.R'

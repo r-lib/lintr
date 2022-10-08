@@ -1,4 +1,4 @@
-#' Require usage of startsWith() and endsWith() over grepl()/substr() versions
+#' Require usage of `startsWith()` and `endsWith()` over `grepl()`/`substr()` versions
 #'
 #' [startsWith()] is used to detect fixed initial substrings; it is more
 #'   readable and more efficient than equivalents using [grepl()] or [substr()].
@@ -15,11 +15,11 @@
 #'
 #' We lint `grepl()` usages by default because the `!is.na()` version is more explicit
 #'   with respect to `NA` handling -- though documented, the way `grepl()` handles
-#'   missing inputs may be surprising to some readers.
+#'   missing inputs may be surprising to some users.
 #'
 #' @param allow_grepl Logical, default `FALSE`. If `TRUE`, usages with `grepl()`
-#'   are ignored. Some authors may prefer the `NA` input to `FALSE` output
-#'   conciseness offered by `grepl()`, which doesn't have a direct equivalent
+#'   are ignored. Some authors may prefer the conciseness offered by `grepl()` whereby
+#'   `NA` input maps to `FALSE` output, which doesn't have a direct equivalent
 #'   with `startsWith()` or `endsWith()`.
 #' @evalRd rd_tags("string_boundary_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
@@ -29,22 +29,30 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     "string-length(text()) > 3",
     "contains(text(), '^') or contains(text(), '$')"
   )
-  str_detect_xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'str_detect']]
-  ]/expr[3]/STR_CONST[ {str_cond} ]")
+  str_detect_xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[text() = 'str_detect']
+    /parent::expr
+    /following-sibling::expr[2]
+    /STR_CONST[ {str_cond} ]
+  ")
 
   if (!allow_grepl) {
-    grepl_xpath <- glue::glue("//expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'grepl']]
-      and not(SYMBOL_SUB[
-        text() = 'ignore.case'
-        and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
-      ])
-      and not(SYMBOL_SUB[
-        text() = 'fixed'
-        and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
-      ])
-    ]/expr[2]/STR_CONST[ {str_cond} ]")
+    grepl_xpath <- glue::glue("
+    //SYMBOL_FUNCTION_CALL[text() = 'grepl']
+      /parent::expr
+      /parent::expr[
+        not(SYMBOL_SUB[
+          text() = 'ignore.case'
+          and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
+        ])
+        and not(SYMBOL_SUB[
+          text() = 'fixed'
+          and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
+        ])
+      ]
+      /expr[2]
+      /STR_CONST[ {str_cond} ]
+    ")
   }
 
   get_regex_lint_data <- function(xml, xpath) {
@@ -57,23 +65,27 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     list(lint_expr = expr[can_replace], initial_anchor = initial_anchor[can_replace])
   }
 
-  substr_xpath <- "//expr[
-    (EQ or NE)
-    and expr[STR_CONST]
-    and expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'substr' or text() = 'substring']]
+  substr_xpath_parts <- glue::glue("
+  //{ c('EQ', 'NE') }
+    /parent::expr[
+      expr[STR_CONST]
       and expr[
-        (
-          position() = 3
-          and NUM_CONST[text() = '1' or text() = '1L']
-        ) or (
-          position() = 4
-          and expr[1][SYMBOL_FUNCTION_CALL[text() = 'nchar']]
-          and expr[position() = 2] = preceding-sibling::expr[2]
-        )
+        expr[1][SYMBOL_FUNCTION_CALL[text() = 'substr' or text() = 'substring']]
+        and expr[
+          (
+            position() = 3
+            and NUM_CONST[text() = '1' or text() = '1L']
+          ) or (
+            position() = 4
+            and expr[1][SYMBOL_FUNCTION_CALL[text() = 'nchar']]
+            and expr[position() = 2] = preceding-sibling::expr[2]
+          )
+        ]
       ]
     ]
-  ]"
+  ")
+  substr_xpath <- paste(substr_xpath_parts, collapse = " | ")
+
   substr_arg2_xpath <- "string(./expr[expr[1][SYMBOL_FUNCTION_CALL]]/expr[3])"
 
   Linter(function(source_expression) {

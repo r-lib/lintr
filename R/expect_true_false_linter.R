@@ -1,18 +1,43 @@
-#' Require usage of expect_true(x) over expect_equal(x, TRUE)
+#' Require usage of `expect_true(x)` over `expect_equal(x, TRUE)`
 #'
 #' [testthat::expect_true()] and [testthat::expect_false()] exist specifically
 #'   for testing the `TRUE`/`FALSE` value of an object.
 #'   [testthat::expect_equal()] and [testthat::expect_identical()] can also be
 #'   used for such tests, but it is better to use the tailored function instead.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "expect_equal(x, TRUE)",
+#'   linters = expect_true_false_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_equal(x, FALSE)",
+#'   linters = expect_true_false_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "expect_true(x)",
+#'   linters = expect_true_false_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_false(x)",
+#'   linters = expect_true_false_linter()
+#' )
+#'
 #' @evalRd rd_tags("expect_true_false_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_true_false_linter <- function() {
-  xpath <- "//expr[expr[1][
-    SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
-    and following-sibling::expr[position() <= 2 and NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]
-  ]]"
+  xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
+    /parent::expr
+    /following-sibling::expr[position() <= 2 and NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]
+    /parent::expr
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

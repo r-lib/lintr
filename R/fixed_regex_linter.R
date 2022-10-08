@@ -5,7 +5,7 @@
 #'
 #' NB: for `stringr` functions, that means wrapping the pattern in `stringr::fixed()`.
 #'
-#' NB: This linter is likely not able to distinguish every possible case when
+#' NB: this linter is likely not able to distinguish every possible case when
 #'   a fixed regular expression is preferable, rather it seeks to identify
 #'   likely cases. It should _never_ report false positives, however; please
 #'   report false positives as an error.
@@ -34,23 +34,24 @@ fixed_regex_linter <- function() {
 
   # NB: strsplit doesn't have an ignore.case argument
   # NB: we intentionally exclude cases like gsub(x, c("a" = "b")), where "b" is fixed
-  xpath <- glue::glue("//expr[1][
-    SYMBOL_FUNCTION_CALL[ {pos_1_regex_funs} ]
-    and not(following-sibling::SYMBOL_SUB[
-      (text() = 'fixed' or text() = 'ignore.case')
-      and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-    ])
-  ]
-  /following-sibling::expr[1][STR_CONST and not(EQ_SUB)]
+  xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[ {pos_1_regex_funs} ]
+    /parent::expr[
+      not(following-sibling::SYMBOL_SUB[
+        (text() = 'fixed' or text() = 'ignore.case')
+        and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+      ])
+    ]
+    /following-sibling::expr[1][STR_CONST and not(EQ_SUB)]
   |
-  //expr[1][
-    SYMBOL_FUNCTION_CALL[ {pos_2_regex_funs} ]
-    and not(following-sibling::SYMBOL_SUB[
-      text() = 'fixed'
-      and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-    ])
-  ]
-  /following-sibling::expr[2][STR_CONST and not(EQ_SUB)]
+  //SYMBOL_FUNCTION_CALL[ {pos_2_regex_funs} ]
+    /parent::expr[
+      not(following-sibling::SYMBOL_SUB[
+        text() = 'fixed'
+        and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+      ])
+    ]
+    /following-sibling::expr[2][STR_CONST and not(EQ_SUB)]
   ")
 
   Linter(function(source_expression) {
@@ -181,7 +182,7 @@ get_token_replacement <- function(token_content, token_type) {
       token_content
     }
   } else { # char_escape token
-    if (rex::re_matches(token_content, rex::rex("\\", one_of("^${}().*+?|[]\\<>:")))) {
+    if (rex::re_matches(token_content, rex::rex("\\", one_of("^${}().*+?|[]\\<>:;")))) {
       substr(token_content, start = 2L, stop = nchar(token_content))
     } else {
       eval(parse(text = paste0('"', token_content, '"')))

@@ -7,7 +7,9 @@
 function_left_parentheses_linter()
 }
 \description{
-Check that all left parentheses in a function call do not have spaces before them.
+Check that all left parentheses in a function call do not have spaces before them
+(e.g. \code{mean  (1:3)}). Although this is syntactically valid, it makes the code
+difficult to read.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr

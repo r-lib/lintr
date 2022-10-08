@@ -2,7 +2,7 @@
 % Please edit documentation in R/expect_comparison_linter.R
 \name{expect_comparison_linter}
 \alias{expect_comparison_linter}
-\title{Require usage of expect_gt(x, y) over expect_true(x > y) (and similar)}
+\title{Require usage of \code{expect_gt(x, y)} over \code{expect_true(x > y)} (and similar)}
 \usage{
 expect_comparison_linter()
 }
@@ -12,6 +12,45 @@ expect_comparison_linter()
 for testing comparisons between two objects. \code{\link[testthat:logical-expectations]{testthat::expect_true()}} can
 also be used for such tests, but it is better to use the tailored function
 instead.
+}
+\examples{
+# will produce lints
+lint(
+  text = "expect_true(x > y)",
+  linters = expect_comparison_linter()
+)
+
+lint(
+  text = "expect_true(x <= y)",
+  linters = expect_comparison_linter()
+)
+
+lint(
+  text = "expect_true(x == (y == 2))",
+  linters = expect_comparison_linter()
+)
+
+# okay
+lint(
+  text = "expect_gt(x, y)",
+  linters = expect_comparison_linter()
+)
+
+lint(
+  text = "expect_lte(x, y)",
+  linters = expect_comparison_linter()
+)
+
+lint(
+  text = "expect_identical(x, y == 2)",
+  linters = expect_comparison_linter()
+)
+
+lint(
+  text = "expect_true(x < y | x > y^2)",
+  linters = expect_comparison_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

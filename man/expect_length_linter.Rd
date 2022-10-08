@@ -2,7 +2,7 @@
 % Please edit documentation in R/expect_length_linter.R
 \name{expect_length_linter}
 \alias{expect_length_linter}
-\title{Require usage of expect_length(x, n) over expect_equal(length(x), n)}
+\title{Require usage of \code{expect_length(x, n)} over \code{expect_equal(length(x), n)}}
 \usage{
 expect_length_linter()
 }
@@ -10,6 +10,20 @@ expect_length_linter()
 \code{\link[testthat:expect_length]{testthat::expect_length()}} exists specifically for testing the \code{\link[=length]{length()}} of
 an object. \code{\link[testthat:equality-expectations]{testthat::expect_equal()}} can also be used for such tests,
 but it is better to use the tailored function instead.
+}
+\examples{
+# will produce lints
+lint(
+  text = "expect_equal(length(x), 2L)",
+  linters = expect_length_linter()
+)
+
+# okay
+lint(
+  text = "expect_length(x, 2L)",
+  linters = expect_length_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

@@ -1,7 +1,7 @@
-#' Require c() to be applied before relatively expensive vectorized functions
+#' Require `c()` to be applied before relatively expensive vectorized functions
 #'
-#' `as.Date(c(a, b))` is logically equivalent to `c(as.Date(a), as.Date(b))`;
-#'   ditto for the equivalence of several other vectorized functions like
+#' `as.Date(c(a, b))` is logically equivalent to `c(as.Date(a), as.Date(b))`.
+#'   The same equivalence holds for several other vectorized functions like
 #'   [as.POSIXct()] and math functions like [sin()]. The former is to be
 #'   preferred so that the most expensive part of the operation ([as.Date()])
 #'   is applied only once.
@@ -58,13 +58,12 @@ inner_combine_linter <- function() {
     log_args_cond,
     lubridate_args_cond
   )
-  xpath <- glue::glue("//expr[
-    count(expr) > 2
-    and expr[1][
-      SYMBOL_FUNCTION_CALL[text() = 'c']
-      and following-sibling::expr[1][ {c_expr_cond} ]
-    ]
-  ]")
+  xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[text() = 'c']
+    /parent::expr
+    /following-sibling::expr[1][ {c_expr_cond} ]
+    /parent::expr
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -112,6 +111,6 @@ build_arg_condition <- function(calls, arguments) {
   xp_or(
     sprintf("not(expr[1][SYMBOL_FUNCTION_CALL[%s]])", xp_text_in_table(calls)),
     "not(EQ_SUB) and not(following-sibling::expr/EQ_SUB)",
-   xp_and(vapply(arguments, arg_match_condition, character(1L)))
+    xp_and(vapply(arguments, arg_match_condition, character(1L)))
   )
 }

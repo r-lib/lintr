@@ -6,6 +6,9 @@ template:
     in_header: |
       <script defer data-domain="lintr.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 
+development:
+  mode: "auto"
+
 reference:
 - title: Linting
   contents:
@@ -35,6 +38,7 @@ reference:
   - expect_lint_free
   - ids_with_token
   - is_lint_level
+  - get_r_string
   - use_lintr
   - xml_nodes_to_lints
 

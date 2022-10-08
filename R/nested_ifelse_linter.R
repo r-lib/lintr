@@ -1,15 +1,15 @@
-#' Block usage of nested ifelse() calls
+#' Block usage of nested `ifelse()` calls
 #'
-#' Calling `ifelse` in nested calls is problematic for two main reasons:
+#' Calling [ifelse()] in nested calls is problematic for two main reasons:
 #'   1. It can be hard to read -- mapping the code to the expected output
 #'      for such code can be a messy task/require a lot of mental bandwidth,
 #'      especially for code that nests more than once
-#'   2. It is inefficient -- `ifelse` can evaluate _all_ of its arguments at
-#'      both yes and no (see https://stackoverflow.com/q/16275149); this issue
+#'   2. It is inefficient -- `ifelse()` can evaluate _all_ of its arguments at
+#'      both yes and no (see <https://stackoverflow.com/q/16275149>); this issue
 #'      is exacerbated for nested calls
 #'
 #' Users can instead rely on a more readable alternative modeled after SQL
-#'   CASE WHEN statements, such as `data.table::fcase` or `dplyr::case_when`,
+#'   CASE WHEN statements, such as `data.table::fcase()` or `dplyr::case_when()`,
 #'   or use a look-up-and-merge approach (build a mapping table between values
 #'   and outputs and merge this to the input).
 #'
@@ -17,9 +17,11 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 nested_ifelse_linter <- function() {
+  # NB: land on the nested (inner) call, not the outer call, and throw a lint with the inner call's name
   xpath <- glue::glue("
-  //expr[expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]]
-  /expr[expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]]
+  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)}]
+    /parent::expr
+    /following-sibling::expr[expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]]
   ")
 
   Linter(function(source_expression) {

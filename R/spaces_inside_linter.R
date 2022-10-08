@@ -22,7 +22,9 @@ spaces_inside_linter <- function() {
     and @start != preceding-sibling::*[1]/@end + 1
     and @line1 = preceding-sibling::*[1]/@line2
   "
-  right_xpath <- glue::glue("//OP-RIGHT-BRACKET[{right_xpath_condition}] | //OP-RIGHT-PAREN[{right_xpath_condition}]")
+  right_xpath <- glue::glue("
+  //OP-RIGHT-BRACKET[{right_xpath_condition}]
+  | //OP-RIGHT-PAREN[{right_xpath_condition} and not(preceding-sibling::*[1][self::EQ_SUB])]")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {

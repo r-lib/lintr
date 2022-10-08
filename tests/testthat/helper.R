@@ -45,8 +45,19 @@ trim_some <- function(x, num = NULL) {
   rex::re_substitutes(x, rex::rex(start, n_times(any, num)), "", global = TRUE, options = "multi-line")
 }
 
+local_config <- function(config_dir, contents, .local_envir = parent.frame()) {
+  config_path <- file.path(config_dir, ".lintr")
+  writeLines(contents, config_path)
+  withr::defer(unlink(config_path), envir = .local_envir)
+  config_path
+}
+
 skip_if_not_r_version <- function(min_version) {
   if (getRversion() < min_version) {
     testthat::skip(paste("R version at least", min_version, "is required"))
   }
+}
+
+skip_if_not_utf8_locale <- function() {
+  testthat::skip_if_not(l10n_info()[["UTF-8"]], "Not a UTF-8 locale")
 }

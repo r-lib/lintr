@@ -10,7 +10,7 @@ extract_r_source <- function(filename, lines, error = identity) {
 
   chunks <- tryCatch(get_chunk_positions(pattern = pattern, lines = lines), error = error)
   if (inherits(chunks, "error") || inherits(chunks, "lint")) {
-    assign("e", chunks,  envir = parent.frame())
+    assign("e", chunks, envir = parent.frame())
     # error, so return empty code
     return(output)
   }
@@ -20,13 +20,17 @@ extract_r_source <- function(filename, lines, error = identity) {
     return(output)
   }
 
+  output_env <- environment() # nolint: object_usage_linter. False positive-ish -- used below.
   Map(
     function(start, end) {
-      output[seq(start + 1L, end - 1L)] <<- lines[seq(start + 1L, end - 1L)]
+      line_seq <- seq(start + 1L, end - 1L)
+      output_env$output[line_seq] <- lines[line_seq]
     },
     chunks[["starts"]],
     chunks[["ends"]]
   )
+  # drop <<chunk>> references, too
+  is.na(output) <- grep(pattern$ref.chunk, output)
   replace_prefix(output, pattern$chunk.code)
 }
 
@@ -34,7 +38,9 @@ get_knitr_pattern <- function(filename, lines) {
   # Early return if the source code is parseable as plain R code.
   # Otherwise, R code containing a line which matches any knitr pattern will be treated as a knitr file.
   # See #1406 for details.
-  if (parsable(lines)) return(NULL)
+  if (parsable(lines)) {
+    return(NULL)
+  }
   pattern <- ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename)))
   if (!is.null(pattern)) {
     knitr::all_patterns[[pattern]]
@@ -67,7 +73,7 @@ filter_chunk_start_positions <- function(starts, lines) {
 filter_chunk_end_positions <- function(starts, ends) {
   # In a valid file, possibly with plain-code-blocks,
   # - there should be at least as many ends as starts
-  # In Rmarkdown, unevaluated blocks may open & close with the same ``` pattern
+  # In Rmarkdown and Quarto, unevaluated blocks may open & close with the same ``` pattern
   # that defines the end-pattern for an evaluated block
 
   # This returns the first end-position that succeeds each start-position
@@ -97,6 +103,12 @@ filter_chunk_end_positions <- function(starts, ends) {
 }
 
 defines_knitr_engine <- function(start_lines) {
+  # Other packages defining custom engines should have them loaded and thus visible
+  #   via knitr_engines$get() below. It seems the simplest way to accomplish this is
+  #   for those packages to set some code in their .onLoad() hook, but that's not
+  #   always done (nor quite recommended as a "best practice" by knitr).
+  #   See the discussion on #1552.
+  # TODO(#1617): explore running loadNamespace() automatically.
   engines <- names(knitr::knit_engines$get())
 
   # {some_engine}, {some_engine label, ...} or {some_engine, ...}

@@ -33,7 +33,7 @@ test_that("returns the correct linting", {
         a <- 1
       }
     "),
-    rex("local variable", anything, "assigned but may not be used"),
+    rex::rex("local variable", anything, "assigned but may not be used"),
     linter
   )
 
@@ -44,7 +44,7 @@ test_that("returns the correct linting", {
         1
       }
     "),
-    rex("local variable", anything, "assigned but may not be used"),
+    rex::rex("local variable", anything, "assigned but may not be used"),
     linter
   )
 
@@ -54,7 +54,7 @@ test_that("returns the correct linting", {
         a <- 1
       }
     "),
-    rex("local variable", anything, "assigned but may not be used"),
+    rex::rex("local variable", anything, "assigned but may not be used"),
     linter
   )
 
@@ -65,7 +65,7 @@ test_that("returns the correct linting", {
         a = 1
       }
     "),
-    rex("local variable", anything, "assigned but may not be used"),
+    rex::rex("local variable", anything, "assigned but may not be used"),
     linter
   )
 
@@ -77,8 +77,8 @@ test_that("returns the correct linting", {
       }
     "),
     list(
-      rex("local variable", anything, "assigned but may not be used"),
-      rex("no visible binding for global variable ", anything)
+      rex::rex("local variable", anything, "assigned but may not be used"),
+      rex::rex("no visible binding for global variable ", anything)
     ),
     linter
   )
@@ -89,7 +89,7 @@ test_that("returns the correct linting", {
         fnu(1)
       }
     "),
-    rex("no visible global function definition for ", anything),
+    rex::rex("no visible global function definition for ", anything),
     linter
   )
 
@@ -101,7 +101,7 @@ test_that("returns the correct linting", {
         `__lintr_obj`(1)
       }
     "),
-    rex("no visible global function definition for ", anything),
+    rex::rex("no visible global function definition for ", anything),
     linter
   )
 
@@ -114,7 +114,7 @@ test_that("returns the correct linting", {
         1
       })
     "),
-    rex("local variable", anything, "assigned but may not be used"),
+    rex::rex("local variable", anything, "assigned but may not be used"),
     linter
   )
 
@@ -125,7 +125,7 @@ test_that("returns the correct linting", {
         1
       })
     "),
-    rex("local variable", anything, "assigned but may not be used"),
+    rex::rex("local variable", anything, "assigned but may not be used"),
     linter
   )
 })
@@ -137,7 +137,7 @@ test_that("replace_functions_stripped", {
         `__lintr_obj`(x) = 1
       }
     "),
-    rex("no visible global function definition for ", anything),
+    rex::rex("no visible global function definition for ", anything),
     object_usage_linter()
   )
 
@@ -147,7 +147,7 @@ test_that("replace_functions_stripped", {
         `__lintr_obj`(x) <- 1
       }
     "),
-    rex("no visible global function definition for ", anything),
+    rex::rex("no visible global function definition for ", anything),
     object_usage_linter()
   )
 })
@@ -288,7 +288,7 @@ test_that("object_usage_linter finds lints spanning multiple lines", {
       }
     "),
     list(message = "unknown_symbol", line_number = 4L, column_number = 5L),
-    object_usage_linter()
+    object_usage_linter(skip_with = FALSE)
   )
 
   # Even ugly names are found
@@ -302,7 +302,7 @@ test_that("object_usage_linter finds lints spanning multiple lines", {
       }
     "),
     list(line_number = 4L, column_number = 5L),
-    object_usage_linter()
+    object_usage_linter(skip_with = FALSE)
   )
 })
 
@@ -351,6 +351,24 @@ test_that("interprets glue expressions", {
     }
   "), NULL, linter)
 
+  # multiple variables in different interpolations
+  expect_lint(trim_some("
+    fun <- function() {
+      local_key <- 'a'
+      local_value <- 123
+      glue::glue('Key-value pair: {local_key}={local_value}.')
+    }
+  "), NULL, linter)
+
+  # multiple variables in single interpolation
+  expect_lint(trim_some("
+    fun <- function() {
+      local_str1 <- 'a'
+      local_str2 <- 'b'
+      glue::glue('With our powers combined: {paste(local_str1, local_str2)}.')
+    }
+  "), NULL, linter)
+
   # Check non-standard .open and .close
   expect_lint(trim_some("
     fun <- function() {
@@ -391,6 +409,39 @@ test_that("interprets glue expressions", {
       glue::glue('The answer is {local_var}.')
     }
   "), "local_var", object_usage_linter(interpret_glue = FALSE))
+})
+
+test_that("errors in glue syntax don't fail lint()", {
+  # no lint & no error, despite glue error
+  expect_warning(
+    expect_lint(
+      trim_some("
+        fun <- function() {
+          a <- 2
+          a + 1
+          glue::glue('The answer is {a')
+        }
+      "),
+      NULL,
+      object_usage_linter()
+    ),
+    "Evaluating glue expression.*failed: Expecting '\\}'"
+  )
+
+  # generates a lint because the "usage" inside glue() is not detected
+  expect_warning(
+    expect_lint(
+      trim_some("
+        fun <- function() {
+          a <- 2
+          glue::glue('The answer is {a')
+        }
+      "),
+      "local variable 'a'",
+      object_usage_linter()
+    ),
+    "Evaluating glue expression.*failed: Expecting '\\}'"
+  )
 })
 
 # reported as #1088
@@ -450,4 +501,46 @@ test_that("fallback works", {
     ),
     object_usage_linter()
   )
+})
+
+test_that("unknown infix operators give good lint metadata", {
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        x %unknown-operator% 1
+      }
+    "),
+    list(
+      message = rex::rex("no visible global function definition for '%unknown-operator%'"),
+      line_number = 2L, column_number = 5L
+    ),
+    object_usage_linter()
+  )
+
+  skip_if(any(c("package:rlang", "package:data.table") %in% search()))
+  expect_lint(
+    trim_some('
+      foo <- function(x) {
+        x[, "new_col" := 2L]
+      }
+    '),
+    list(
+      message = rex::rex("no visible global function definition for ':='"),
+      line_number = 2L, column_number = 17L
+    ),
+    object_usage_linter()
+  )
+})
+
+test_that("respects `skip_with` argument for `with()` expressions", {
+  f <- withr::local_tempfile(
+    lines = c(
+      "test_fun <- function(df) {",
+      "  with(df, first_var + second_var)",
+      "}"
+    )
+  )
+
+  expect_length(lint(f, object_usage_linter(skip_with = TRUE)), 0L)
+  expect_length(lint(f, object_usage_linter(skip_with = FALSE)), 2L)
 })

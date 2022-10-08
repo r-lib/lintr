@@ -2,15 +2,51 @@
 % Please edit documentation in R/condition_message_linter.R
 \name{condition_message_linter}
 \alias{condition_message_linter}
-\title{Block usage of paste() and paste0() with messaging functions using ...}
+\title{Block usage of \code{paste()} and \code{paste0()} with messaging functions using \code{...}}
 \usage{
 condition_message_linter()
 }
 \description{
-\code{stop(paste0(...))} is strictly redundant -- \code{stop(...)} is equivalent.
-\code{stop(...)} is also preferable to \code{stop(paste(...))}. The same applies to
-all default condition functions, i.e., \code{\link[=stop]{stop()}}, \code{\link[=warning]{warning()}}, \code{\link[=message]{message()}},
+This linter discourages combining condition functions like \code{\link[=stop]{stop()}} with string concatenation
+functions \code{\link[=paste]{paste()}} and \code{\link[=paste0]{paste0()}}. This is because
+}
+\details{
+\itemize{
+\item \code{stop(paste0(...))} is redundant as it is exactly equivalent to \code{stop(...)}
+\item \code{stop(paste(...))} is similarly equivalent to \code{stop(...)} with separators (see examples)
+}
+
+The same applies to the other default condition functions as well, i.e., \code{\link[=warning]{warning()}}, \code{\link[=message]{message()}},
 and \code{\link[=packageStartupMessage]{packageStartupMessage()}}.
+}
+\examples{
+# will produce lints
+lint(
+  text = "stop(paste('a string', 'another'))",
+  linters = condition_message_linter()
+)
+
+lint(
+  text = "warning(paste0('a string', ' another'))",
+  linters = condition_message_linter()
+)
+
+# okay
+lint(
+  text = "stop('a string', ' another')",
+  linters = condition_message_linter()
+)
+
+lint(
+  text = "warning('a string', ' another')",
+  linters = condition_message_linter()
+)
+
+lint(
+  text = "warning(paste('a string', 'another', sep = '-'))",
+  linters = condition_message_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

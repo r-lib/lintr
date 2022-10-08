@@ -1,9 +1,9 @@
-#' Prevent ifelse() from being used to produce TRUE/FALSE or 1/0
+#' Prevent `ifelse()` from being used to produce `TRUE`/`FALSE` or `1`/`0`
 #'
 #' Expressions like `ifelse(x, TRUE, FALSE)` and `ifelse(x, FALSE, TRUE)` are
 #'   redundant; just `x` or `!x` suffice in R code where logical vectors are a
 #'   core data structure. `ifelse(x, 1, 0)` is also `as.numeric(x)`, but even
-#'   this should only be needed rarely.
+#'   this should be needed only rarely.
 #'
 #' @evalRd rd_tags("redundant_ifelse_linter")
 #' @param allow10 Logical, default `FALSE`. If `TRUE`, usage like
@@ -12,17 +12,23 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 redundant_ifelse_linter <- function(allow10 = FALSE) {
-  tf_xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
-    and expr[NUM_CONST[text() = 'TRUE']]
-    and expr[NUM_CONST[text() = 'FALSE']]
-  ]")
+  tf_xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
+    /parent::expr
+    /parent::expr[
+      expr[NUM_CONST[text() = 'TRUE']]
+      and expr[NUM_CONST[text() = 'FALSE']]
+    ]
+  ")
 
-  num_xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
-    and expr[NUM_CONST[text() = '1' or text() = '1L']]
-    and expr[NUM_CONST[text() = '0' or text() = '0L']]
-  ]")
+  num_xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
+    /parent::expr
+    /parent::expr[
+      expr[NUM_CONST[text() = '1' or text() = '1L']]
+      and expr[NUM_CONST[text() = '0' or text() = '0L']]
+    ]
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -56,7 +62,8 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
       lint_message <- paste(
         sprintf(
           "Prefer %s(%s) to %s(x, %s, %s) if really needed.",
-          coercion_function, replacement_argument, matched_call, first_arg, second_arg)
+          coercion_function, replacement_argument, matched_call, first_arg, second_arg
+        )
       )
       lints <- c(lints, xml_nodes_to_lints(num_expr, source_expression, lint_message, type = "warning"))
     }

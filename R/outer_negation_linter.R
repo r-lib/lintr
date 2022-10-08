@@ -1,4 +1,4 @@
-#' Require usage of !any(.) over all(!.), !all(.) over any(!.)
+#' Require usage of `!any(x)` over `all(!x)`, `!all(x)` over `any(!x)`
 #'
 #' `any(!x)` is logically equivalent to `!any(x)`; ditto for the equivalence of
 #'   `all(!x)` and `!any(x)`. Negating after aggregation only requires inverting
@@ -15,15 +15,17 @@ outer_negation_linter <- function() {
   #   coming after any( and before na.rm= .
   # NB: requirement that count(expr)>1 is to prevent any() from linting
   #   e.g. in magrittr pipelines.
-  xpath <- "//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'any' or text() = 'all']]
-    and count(expr) > 1
-    and not(expr[
-      position() > 1
-      and not(OP-EXCLAMATION)
-      and not(preceding-sibling::*[1][self::EQ_SUB])
-    ])
-  ]"
+  xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'any' or text() = 'all']
+    /parent::expr[following-sibling::expr]
+    /parent::expr[
+      not(expr[
+        position() > 1
+        and not(OP-EXCLAMATION)
+        and not(preceding-sibling::*[1][self::EQ_SUB])
+      ])
+    ]
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

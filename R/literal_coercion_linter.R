@@ -12,32 +12,35 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 literal_coercion_linter <- function() {
- coercers <- xp_text_in_table(
-   c(
-     # base coercers
-     paste0("as.", c("logical", "integer", "numeric", "double", "character")),
-     # rlang coercers
-     c("lgl", "int", "dbl", "chr")
-   )
- )
+  coercers <- xp_text_in_table(
+    c(
+      # base coercers
+      paste0("as.", c("logical", "integer", "numeric", "double", "character")),
+      # rlang coercers
+      c("lgl", "int", "dbl", "chr")
+    )
+  )
 
   # notes for clarification:
   #  - as.integer(1e6) is arguably easier to read than 1000000L
   #  - in x$"abc", the "abc" STR_CONST is at the top level, so exclude OP-DOLLAR
   #  - need condition against STR_CONST w/ EQ_SUB to skip quoted keyword arguments (see tests)
   #  - for {rlang} coercers, both `int(1)` and `int(1, )` need to be linted
-  not_extraction_or_scientific <- "expr[2][
+  not_extraction_or_scientific <- "
     not(OP-DOLLAR)
     and (
       NUM_CONST[not(contains(translate(text(), 'E', 'e'), 'e'))]
       or STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
     )
-  ]"
-  xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[ {coercers} ]]
-    and {not_extraction_or_scientific}
-    and count(expr) = 2
-  ]")
+  "
+  xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[ {coercers} ]
+    /parent::expr
+    /parent::expr[
+      count(expr) = 2
+      and expr[2][ {not_extraction_or_scientific} ]
+    ]
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

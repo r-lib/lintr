@@ -1,0 +1,16 @@
+---
+documentclass: book
+output: bookdown::html_document2
+---
+
+# Examples
+
+```{definition}
+The characteristic function of a random variable $X$ is defined by
+$$\varphi _{X}(t)=\operatorname {E} \left[e^{itX}\right], \; t\in\mathcal{R}$$
+```
+
+```{r}
+a = 1
+```
+

@@ -2,7 +2,7 @@
 % Please edit documentation in R/expect_s3_class_linter.R
 \name{expect_s3_class_linter}
 \alias{expect_s3_class_linter}
-\title{Require usage of expect_s3_class()}
+\title{Require usage of \code{expect_s3_class()}}
 \usage{
 expect_s3_class_linter()
 }
@@ -11,6 +11,30 @@ expect_s3_class_linter()
 of S3 objects. \code{\link[testthat:equality-expectations]{testthat::expect_equal()}}, \code{\link[testthat:equality-expectations]{testthat::expect_identical()}},
 and \code{\link[testthat:logical-expectations]{testthat::expect_true()}} can also be used for such tests,
 but it is better to use the tailored function instead.
+}
+\examples{
+# will produce lints
+lint(
+  text = "expect_equal(class(x), 'data.frame')",
+  linters = expect_s3_class_linter()
+)
+
+lint(
+  text = "expect_equal(class(x), 'numeric')",
+  linters = expect_s3_class_linter()
+)
+
+# okay
+lint(
+  text = "expect_s3_class(x, 'data.frame')",
+  linters = expect_s3_class_linter()
+)
+
+lint(
+  text = "expect_type(x, 'double')",
+  linters = expect_s3_class_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

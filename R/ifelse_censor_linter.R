@@ -1,4 +1,4 @@
-#' Block usage of ifelse where pmin or pmax is more appropriate
+#' Block usage of `ifelse()` where `pmin()` or `pmax()` is more appropriate
 #'
 #' `ifelse(x > M, M, x)` is the same as `pmin(x, M)`, but harder
 #'   to read and requires several passes over the vector.
@@ -12,14 +12,16 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 ifelse_censor_linter <- function() {
-  xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
-    and expr[2][
+  xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
+    /parent::expr
+    /following-sibling::expr[
       (LT or GT or LE or GE)
       and expr[1] = following-sibling::expr
       and expr[2] = following-sibling::expr
     ]
-  ]")
+    /parent::expr
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

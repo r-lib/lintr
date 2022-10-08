@@ -60,10 +60,14 @@ test_that("returns the correct linting", {
   expect_lint(
     "a(  blah  )",
     list(
-      list(message = "Do not place spaces after parentheses", line_number = 1L, column_number = 3L,
-           ranges = list(c(3L, 4L)), type = "style"),
-      list(message = "Do not place spaces before parentheses", line_number = 1L, column_number = 9L,
-           ranges = list(c(9L, 10L)), type = "style")
+      list(
+        message = "Do not place spaces after parentheses", line_number = 1L, column_number = 3L,
+        ranges = list(c(3L, 4L)), type = "style"
+      ),
+      list(
+        message = "Do not place spaces before parentheses", line_number = 1L, column_number = 9L,
+        ranges = list(c(9L, 10L)), type = "style"
+      )
     ),
     linter
   )
@@ -105,4 +109,8 @@ test_that("mutli-line expressions have good markers", {
     ),
     spaces_inside_linter()
   )
+})
+
+test_that("terminal missing keyword arguments are OK", {
+  expect_lint("alist(missing_arg = )", NULL, spaces_inside_linter())
 })

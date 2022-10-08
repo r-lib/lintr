@@ -2,7 +2,7 @@
 % Please edit documentation in R/strings_as_factors_linter.R
 \name{strings_as_factors_linter}
 \alias{strings_as_factors_linter}
-\title{Identify cases where stringsAsFactors should be supplied explicitly}
+\title{Identify cases where \code{stringsAsFactors} should be supplied explicitly}
 \usage{
 strings_as_factors_linter()
 }
