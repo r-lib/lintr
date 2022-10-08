@@ -70,7 +70,7 @@ infix_overload <- data.frame(
 #' Check that infix operators are surrounded by spaces. Enforces the corresponding Tidyverse style guide rule;
 #'   see <https://style.tidyverse.org/syntax.html#infix-operators>.
 #'
-#' @param exclude_operators Character vector of operators to exlude from consideration for linting.
+#' @param exclude_operators Character vector of operators to exclude from consideration for linting.
 #'   Default is to include the following "low-precedence" operators:
 #'   `+`, `-`, `~`, `>`, `>=`, `<`, `<=`, `==`, `!=`, `&`, `&&`, `|`, `||`, `<-`, `:=`, `<<-`, `->`, `->>`,
 #'   `=`, `/`, `*`, and any infix operator (exclude infixes by passing `"%%"`). Note that `<-`, `:=`, and `<<-`
@@ -79,6 +79,40 @@ infix_overload <- data.frame(
 #' @param allow_multiple_spaces Logical, default `TRUE`. If `FALSE`, usage like `x  =  2` will also be linted;
 #'   excluded by default because such usage can sometimes be used for better code alignment, as is allowed
 #'   by the style guide.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "x<-1L",
+#'   linters = infix_spaces_linter()
+#' )
+#'
+#' lint(
+#'   text = "1:4 %>%sum()",
+#'   linters = infix_spaces_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "x <- 1L",
+#'   linters = infix_spaces_linter()
+#' )
+#'
+#' lint(
+#'   text = "1:4 %>% sum()",
+#'   linters = infix_spaces_linter()
+#' )
+#'
+#' lint(
+#'   text = "x <-      2.4",
+#'   linters = infix_spaces_linter(allow_multiple_spaces = TRUE)
+#' )
+#'
+#' lint(
+#'   text = "a||b",
+#'   linters = infix_spaces_linter(exclude_operators = "||")
+#' )
+#'
 #' @evalRd rd_tags("infix_spaces_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
@@ -132,6 +166,11 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
     xml <- source_expression$xml_parsed_content
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    xml_nodes_to_lints(bad_expr, source_expression = source_expression, lint_message = lint_message, type = "style")
+    xml_nodes_to_lints(
+      bad_expr,
+      source_expression = source_expression,
+      lint_message = lint_message,
+      type = "style"
+    )
   })
 }
