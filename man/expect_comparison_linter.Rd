@@ -46,6 +46,11 @@ lint(
   linters = expect_comparison_linter()
 )
 
+lint(
+  text = "expect_true(x < y | x > y^2)",
+  linters = expect_comparison_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

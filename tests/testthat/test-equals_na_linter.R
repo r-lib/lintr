@@ -24,7 +24,7 @@ skip_if_not_installed("patrick")
 patrick::with_parameters_test_that(
   "equals_na_linter blocks disallowed usages for all combinations of operators and types of NAs",
   expect_lint(
-    sprintf("x %s %s", operation, type_na),
+    paste("x", operation, type_na),
     rex::rex("Use is.na for comparisons to NA (not == or !=)"),
     equals_na_linter()
   ),
