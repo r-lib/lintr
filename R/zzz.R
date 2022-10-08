@@ -250,7 +250,9 @@ settings <- NULL
   if (any(toset)) options(op_lintr[toset])
 
   # requires R>=3.6.0
-  backports::import(pkgname, "str2lang")
+  if (!exists("str2lang", getNamespace("base"))) {
+    assign("str2lang", backports::str2lang, getNamespace(pkgname))
+  }
 
   default_settings <<- list(
     linters = default_linters,
