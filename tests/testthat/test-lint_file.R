@@ -110,12 +110,7 @@ test_that("lint uses linter names", {
 
 test_that("lint() results from file or text should be consistent", {
   linters <- list(assignment_linter(), infix_spaces_linter())
-  file <- tempfile()
-  lines <- c(
-    "x<-1",
-    "x+1"
-  )
-  writeLines(lines, file)
+  file <- withr::local_tempfile(lines = c("x<-1", "x+1"))
   text <- paste0(lines, collapse = "\n")
   file <- normalizePath(file)
 
@@ -125,7 +120,7 @@ test_that("lint() results from file or text should be consistent", {
 
   # Remove file before linting to ensure that lint works and do not
   # assume that file exists when both filename and text are supplied.
-  unlink(file)
+  expect_identical(unlink(file), 0L)
   lint_from_text2 <- lint(file, linters = linters, text = text)
 
   expect_length(lint_from_file, 2L)
