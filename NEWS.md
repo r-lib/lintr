@@ -51,6 +51,8 @@
 
 * `for_loop_index_linter()` to prevent overwriting local variables in a `for` loop declared like `for (x in x) { ... }` (@MichaelChirico)
 
+* `empty_assignment_linter()` for identifying empty assignments like `x = {}` that are more clearly written as `x = NULL` (@MichaelChirico)
+
 ## Notes
 
 * `lint()` continues to support Rmarkdown documents. For users of custom .Rmd engines, e.g.
