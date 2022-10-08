@@ -64,6 +64,17 @@ test_that("pipe-continuation linter correctly handles nesting", {
     list(list(message = lint_msg, line_number = 3L)),
     linter
   )
+
+  # but no lints here
+  expect_lint(
+    trim_some("
+      1:4 %>% {
+       (.) %>% sum()
+      }
+    "),
+    NULL,
+    linter
+  )
 })
 
 test_that("pipe-continuation linter handles native pipe", {
