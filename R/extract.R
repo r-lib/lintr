@@ -20,7 +20,7 @@ extract_r_source <- function(filename, lines, error = identity) {
     return(output)
   }
 
-  output_env <- environment()
+  output_env <- environment() # nolint: object_usage_linter. False positive-ish -- used below.
   Map(
     function(start, end) {
       line_seq <- seq(start + 1L, end - 1L)
