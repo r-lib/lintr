@@ -37,6 +37,7 @@ Imports:
     xml2 (>= 1.0.0),
     xmlparsedata (>= 1.0.5)
 Suggests:
+    bookdown,
     httr (>= 1.2.1),
     mockery,
     patrick,
@@ -45,6 +46,7 @@ Suggests:
     rstudioapi (>= 0.2),
     testthat (>= 3.0.0),
     tibble,
+    tufte,
     withr (>= 2.5.0)
 VignetteBuilder: 
     knitr
@@ -92,6 +94,7 @@ Collate:
     'extract.R'
     'extraction_operator_linter.R'
     'fixed_regex_linter.R'
+    'for_loop_index_linter.R'
     'function_argument_linter.R'
     'function_left_parentheses_linter.R'
     'function_return_linter.R'
