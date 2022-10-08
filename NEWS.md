@@ -53,6 +53,7 @@
 
 * `is_numeric_linter()` for redundant checks equivalent to `is.numeric(x)` such as `is.numeric(x) || is.integer(x)` or
   `class(x) %in% c("numeric", "integer")` (@MichaelChirico)
+
 * `empty_assignment_linter()` for identifying empty assignments like `x = {}` that are more clearly written as `x = NULL` (@MichaelChirico)
 
 ## Notes
