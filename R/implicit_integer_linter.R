@@ -2,6 +2,24 @@
 #'
 #' Check that integers are explicitly typed using the form `1L` instead of `1`.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "x <- 1",
+#'   linters = implicit_integer_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "x <- 1.0",
+#'   linters = implicit_integer_linter()
+#' )
+#'
+#' lint(
+#'   text = "x <- 1L",
+#'   linters = implicit_integer_linter()
+#' )
+#'
 #' @evalRd rd_tags("implicit_integer_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
