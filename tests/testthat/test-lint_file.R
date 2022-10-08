@@ -1,12 +1,12 @@
 # The lints for a given file should be the same regardless of the working
 # directory
 
-# Helper function: run assignment_linter on a given file
-lint_assignments <- function(filename) {
-  lint(filename, linters = list(assignment_linter()))
-}
-
 test_that("lint() results do not depend on the working directory", {
+  # Helper function: run assignment_linter on a given file
+  lint_assignments <- function(filename) {
+    lint(filename, linters = list(assignment_linter()))
+  }
+
   # a dummy package for use in the test
   pkg_path <- test_path("dummy_packages", "assignmentLinter")
 
@@ -63,7 +63,7 @@ test_that("lint() results do not depend on the position of the .lintr", {
   lint_with_config <- function(config_path, config_string, filename) {
     cat(config_string, file = config_path)
     on.exit(unlink(config_path))
-    lint_assignments(filename)
+    lint(filename, linters = assignment_linter())
   }
 
   # a dummy package for use in the test
