@@ -249,7 +249,9 @@ settings <- NULL
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  # requires R>=3.6.0
+  # This is just here to quiet R CMD check
+  if (FALSE) backports::import
+  # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
   if (!exists("str2lang", getNamespace("base"))) {
     assign("str2lang", get("str2lang", getNamespace("backports")), getNamespace(pkgname))
   }
