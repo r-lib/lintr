@@ -11,6 +11,20 @@ function_return_linter()
 confusing (because assigning to \code{x} has some side effect that is muddled
 by the dual-purpose expression).
 }
+\examples{
+# will produce lints
+lint(
+  text = "foo <- function(x) return(y <- x + 1)",
+  linters = function_return_linter()
+)
+
+# okay
+lint(
+  text = "foo <- function(x) return(x + 1)",
+  linters = function_return_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
