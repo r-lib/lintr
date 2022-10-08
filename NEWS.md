@@ -29,6 +29,8 @@
   Typically, linters should not themselves cause R to stop -- syntax errors lead to error lints,
   for example. Please report such failures as they are likely bugs.
 
+* `pipe_continuation_linter()` recognizes violations involving the native R pipe `|>` (#1609, @MichaelChirico)
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
