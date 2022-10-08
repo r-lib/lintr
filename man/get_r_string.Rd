@@ -30,12 +30,11 @@ get_r_string(expr_as_xml, "expr[2]") # "a"
 get_r_string(expr_as_xml, "expr[3]") # "b"
 
 # more importantly, extract strings under R>=4 raw strings
-if (getRversion() >= "4.0.0") {
-  tmp4.0 <- withr::local_tempfile(lines = "c(R'(a\\\\b)', R'--[a\\\\\"\'\"\\\\b]--')")
-  expr_as_xml4.0 <- get_source_expressions(tmp4.0)$expressions[[1L]]$xml_parsed_content
-  writeLines(as.character(expr_as_xml4.0))
-  get_r_string(expr_as_xml4.0, "expr[2]") # "a\\b"
-  get_r_string(expr_as_xml4.0, "expr[3]") # "a\\\"'\"\\b"
-}
-
+\dontshow{if (getRversion() >= "4.0.0") (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+tmp4.0 <- withr::local_tempfile(lines = "c(R'(a\\\\b)', R'--[a\\\\\"\'\"\\\\b]--')")
+expr_as_xml4.0 <- get_source_expressions(tmp4.0)$expressions[[1L]]$xml_parsed_content
+writeLines(as.character(expr_as_xml4.0))
+get_r_string(expr_as_xml4.0, "expr[2]") # "a\\b"
+get_r_string(expr_as_xml4.0, "expr[3]") # "a\\\"'\"\\b"
+\dontshow{\}) # examplesIf}
 }
