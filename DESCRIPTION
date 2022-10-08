@@ -80,6 +80,7 @@ Collate:
     'declared_functions.R'
     'deprecated.R'
     'duplicate_argument_linter.R'
+    'empty_assignment_linter.R'
     'equals_na_linter.R'
     'exclude.R'
     'expect_comparison_linter.R'

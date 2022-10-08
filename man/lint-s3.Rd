@@ -34,7 +34,7 @@ Lint(
 \item{linter}{deprecated. No longer used.}
 }
 \value{
-an object of class 'lint'.
+an object of class \code{c("lint", "list")}.
 }
 \description{
 Create a \code{lint} object

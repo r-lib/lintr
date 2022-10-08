@@ -5,6 +5,29 @@
 #'   [testthat::expect_equal()] and [testthat::expect_identical()] can also be
 #'   used for such tests, but it is better to use the tailored function instead.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "expect_equal(x, TRUE)",
+#'   linters = expect_true_false_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_equal(x, FALSE)",
+#'   linters = expect_true_false_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "expect_true(x)",
+#'   linters = expect_true_false_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_false(x)",
+#'   linters = expect_true_false_linter()
+#' )
+#'
 #' @evalRd rd_tags("expect_true_false_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

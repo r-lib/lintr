@@ -166,3 +166,14 @@ test_that("multi-line, multi-expression case is caught", {
     infix_spaces_linter()
   )
 })
+
+test_that("Rules around missing arguments are respected", {
+  linter <- infix_spaces_linter()
+  lint_msg <- rex::rex("Put spaces around all infix operators.")
+
+  expect_lint("switch(a = , b = 2)", NULL, linter)
+  expect_lint("alist(missing_arg = )", NULL, linter)
+
+  expect_lint("switch(a =, b = 2)", lint_msg, linter)
+  expect_lint("alist(missing_arg =)", lint_msg, linter)
+})

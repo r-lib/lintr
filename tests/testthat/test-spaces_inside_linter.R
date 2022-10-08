@@ -110,3 +110,7 @@ test_that("mutli-line expressions have good markers", {
     spaces_inside_linter()
   )
 })
+
+test_that("terminal missing keyword arguments are OK", {
+  expect_lint("alist(missing_arg = )", NULL, spaces_inside_linter())
+})
