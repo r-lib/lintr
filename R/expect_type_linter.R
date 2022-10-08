@@ -5,6 +5,24 @@
 #'   [testthat::expect_true()] can also be used for such tests,
 #'   but it is better to use the tailored function instead.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "expect_equal(typeof(x), 'double')",
+#'   linters = expect_type_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_identical(typeof(x), 'double')",
+#'   linters = expect_type_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "expect_type(x, 'double')",
+#'   linters = expect_type_linter()
+#' )
+#'
 #' @evalRd rd_tags("expect_type_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

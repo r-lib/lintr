@@ -11,27 +11,11 @@ test_that("expect_not_linter skips allowed usages", {
 })
 
 test_that("expect_not_linter blocks simple disallowed usages", {
-  expect_lint(
-    "expect_true(!x)",
-    "expect_false\\(x\\) is better than expect_true\\(!x\\)",
-    expect_not_linter()
-  )
+  linter <- expect_not_linter()
+  lint_msg <- rex::rex("expect_false(x) is better than expect_true(!x), and vice versa.")
 
-  expect_lint(
-    "testthat::expect_true(!x)",
-    "expect_false\\(x\\) is better than expect_true\\(!x\\)",
-    expect_not_linter()
-  )
-
-  expect_lint(
-    "expect_false(!foo(x))",
-    "expect_false\\(x\\) is better than expect_true\\(!x\\)",
-    expect_not_linter()
-  )
-
-  expect_lint(
-    "testthat::expect_true(!(x && y))",
-    "expect_false\\(x\\) is better than expect_true\\(!x\\)",
-    expect_not_linter()
-  )
+  expect_lint("expect_true(!x)", lint_msg, linter)
+  expect_lint("testthat::expect_true(!x)", lint_msg, linter)
+  expect_lint("expect_false(!foo(x))", lint_msg, linter)
+  expect_lint("testthat::expect_true(!(x && y))", lint_msg, linter)
 })
