@@ -31,6 +31,7 @@ test_that("as.data.frame.lints", {
     ),
     "lint"
   )
+  expect_type(l1, "list")
 
   # A larger lint
   expect_s3_class(

@@ -97,7 +97,8 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   }
 
   lints <- maybe_append_error_lint(lints, source_expressions$error, lint_cache, filename)
-  lints <- structure(reorder_lints(flatten_lints(lints)), class = "lints")
+  lints <- reorder_lints(flatten_lints(lints))
+  class(lints) <- c("lints", "list")
 
   cache_file(lint_cache, filename, linters, lints)
   save_cache(lint_cache, filename, cache_path)
@@ -455,18 +456,18 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
 
   type <- match.arg(type)
 
-  structure(
-    list(
-      filename = filename,
-      line_number = as.integer(line_number),
-      column_number = as.integer(column_number),
-      type = type,
-      message = message,
-      line = line,
-      ranges = ranges,
-      linter = NA_character_
-    ),
-    class = "lint")
+  obj <- list(
+    filename = filename,
+    line_number = as.integer(line_number),
+    column_number = as.integer(column_number),
+    type = type,
+    message = message,
+    line = line,
+    ranges = ranges,
+    linter = NA_character_
+  )
+  class(obj) <- c("lint", "list")
+  obj
 }
 
 rstudio_source_markers <- function(lints) {
