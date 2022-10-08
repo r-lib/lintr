@@ -239,20 +239,32 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #' The default settings consist of
 #'
 #'  - `linters`: a list of default linters (see [default_linters()])
-#'  - `encoding`:
-#'  - `exclude`:
-#'  - `exclude_start`:
-#'  - `exclude_end`:
-#'  - `exclude_linter`:
-#'  - `exclude_linter_sep`:
-#'  - `exclusions`:
-#'  - `cache_directory`:
-#'  - `comment_token`:
-#'  - `comment_bot`:
-#'  - `error_on_lint`:
+#'  - `encoding`: the character encoding assumed for the file
+#'  - `exclude`: pattern used to exclude a line of code
+#'  - `exclude_start`, `exclude_end`: patterns used to mark start and of the code block to exclude
+#'  - `exclude_linter`, `exclude_linter_sep`: patterns used to exclude linters
+#'  - `exclusions`:a list of files to exclude
+#'  - `cache_directory`: location of cache directory
+#'  - `comment_token`: a GitHub token character
+#'  - `comment_bot`: decides if lintr comment bot on GitHub can comment on commits
+#'  - `error_on_lint`: decides if error should be produced when any lints are found
 #'
 #' @examples
+#' # available settings
 #' names(default_settings)
+#'
+#' # linters included by default
+#' names(default_settings$linters)
+#'
+#' # default values for a few of the other settings
+#' default_settings$encoding
+#' default_settings$exclude
+#' default_settings$exclude_start
+#' default_settings$exclude_end
+#' default_settings$exclude_linter
+#' default_settings$exclude_linter_sep
+#' default_settings$exclusions
+#' default_settings$error_on_lint
 #'
 #' @seealso [read_settings()], [default_linters]
 #' @export

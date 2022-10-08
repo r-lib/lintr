@@ -14,21 +14,33 @@ default_settings
 The default settings consist of
 \itemize{
 \item \code{linters}: a list of default linters (see \code{\link[=default_linters]{default_linters()}})
-\item \code{encoding}:
-\item \code{exclude}:
-\item \code{exclude_start}:
-\item \code{exclude_end}:
-\item \code{exclude_linter}:
-\item \code{exclude_linter_sep}:
-\item \code{exclusions}:
-\item \code{cache_directory}:
-\item \code{comment_token}:
-\item \code{comment_bot}:
-\item \code{error_on_lint}:
+\item \code{encoding}: the character encoding assumed for the file
+\item \code{exclude}: pattern used to exclude a line of code
+\item \code{exclude_start}, \code{exclude_end}: patterns used to mark start and of the code block to exclude
+\item \code{exclude_linter}, \code{exclude_linter_sep}: patterns used to exclude linters
+\item \code{exclusions}:a list of files to exclude
+\item \code{cache_directory}: location of cache directory
+\item \code{comment_token}: a GitHub token character
+\item \code{comment_bot}: decides if lintr comment bot on GitHub can comment on commits
+\item \code{error_on_lint}: decides if error should be produced when any lints are found
 }
 }
 \examples{
+# available settings
 names(default_settings)
+
+# linters included by default
+names(default_settings$linters)
+
+# default values for a few of the other settings
+default_settings$encoding
+default_settings$exclude
+default_settings$exclude_start
+default_settings$exclude_end
+default_settings$exclude_linter
+default_settings$exclude_linter_sep
+default_settings$exclusions
+default_settings$error_on_lint
 
 }
 \seealso{
