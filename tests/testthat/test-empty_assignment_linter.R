@@ -15,6 +15,13 @@ test_that("empty_assignment_linter blocks disallowed usages", {
   # assignment with equal works as well, and white space doesn't matter
   expect_lint("x = {   }", lint_msg, linter)
 
+  # ditto right assignments
+  expect_lint("{} -> x", lint_msg, linter)
+  expect_lint("{} ->> x", lint_msg, linter)
+
+  # ditto data.table-style walrus assignments
+  expect_lint("x[, col := {}]", lint_msg, linter)
+
   # newlines also don't matter
   expect_lint("x <- {\n}", lint_msg, linter)
 

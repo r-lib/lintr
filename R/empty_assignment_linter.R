@@ -32,10 +32,13 @@
 #' @export
 empty_assignment_linter <- function() {
   # for some reason, the parent in the `=` case is <equal_assign>, not <expr>, hence parent::expr
-  # TODO(michaelchirico): include right-assignment
   xpath <- "
   //OP-LEFT-BRACE[following-sibling::*[1][self::OP-RIGHT-BRACE]]
-    /parent::expr[preceding-sibling::LEFT_ASSIGN or preceding-sibling::EQ_ASSIGN]
+    /parent::expr[
+      preceding-sibling::LEFT_ASSIGN
+      or preceding-sibling::EQ_ASSIGN
+      or following-sibling::RIGHT_ASSIGN
+    ]
     /parent::*
   "
 
