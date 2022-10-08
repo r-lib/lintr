@@ -241,7 +241,7 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #'  - `linters`: a list of default linters (see [default_linters()])
 #'  - `encoding`: the character encoding assumed for the file
 #'  - `exclude`: pattern used to exclude a line of code
-#'  - `exclude_start`, `exclude_end`: patterns used to mark start and of the code block to exclude
+#'  - `exclude_start`, `exclude_end`: patterns used to mark start and end of the code block to exclude
 #'  - `exclude_linter`, `exclude_linter_sep`: patterns used to exclude linters
 #'  - `exclusions`:a list of files to exclude
 #'  - `cache_directory`: location of cache directory

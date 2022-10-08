@@ -16,7 +16,7 @@ The default settings consist of
 \item \code{linters}: a list of default linters (see \code{\link[=default_linters]{default_linters()}})
 \item \code{encoding}: the character encoding assumed for the file
 \item \code{exclude}: pattern used to exclude a line of code
-\item \code{exclude_start}, \code{exclude_end}: patterns used to mark start and of the code block to exclude
+\item \code{exclude_start}, \code{exclude_end}: patterns used to mark start and end of the code block to exclude
 \item \code{exclude_linter}, \code{exclude_linter_sep}: patterns used to exclude linters
 \item \code{exclusions}:a list of files to exclude
 \item \code{cache_directory}: location of cache directory
