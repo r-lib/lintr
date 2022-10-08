@@ -251,7 +251,7 @@ settings <- NULL
 
   # requires R>=3.6.0
   if (!exists("str2lang", getNamespace("base"))) {
-    assign("str2lang", backports::str2lang, getNamespace(pkgname))
+    assign("str2lang", get("str2lang", getNamespace("backports")), getNamespace(pkgname))
   }
 
   default_settings <<- list(
