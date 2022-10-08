@@ -22,3 +22,20 @@ function.
 NB: this is also properly vectorized on \code{s}, and accepts a variety of inputs. Empty inputs
 will become \code{NA} outputs, which helps ensure that \code{length(get_r_string(s)) == length(s)}.
 }
+\examples{
+tmp <- withr::local_tempfile(lines = "c('a', 'b')")
+source_expr <- get_source_expressions(tmp)
+writeLines(as.character(source_expr$expressions[[1L]]$xml_parsed_content))
+get_r_string(source_expr$expressions[[1L]]$xml_parsed_content, "expr[2]") # "a"
+get_r_string(source_expr$expressions[[1L]]$xml_parsed_content, "expr[3]") # "b"
+
+# more importantly, extract strings under R>=4 raw strings
+if (getRversion() >= "4.0.0") {
+  tmp4.0 <- withr::local_tempfile(lines = "c(R'(a\\\\b)', R'--[a\\\\\"\'\"\\\\b]--')")
+  writeLines(as.character(source_expr$expressions[[1L]]$xml_parsed_content))
+  source_expr4.0 <- get_source_expressions(tmp4.0)
+  get_r_string(source_expr4.0$expressions[[1L]]$xml_parsed_content, "expr[2]") # "a\\b"
+  get_r_string(source_expr4.0$expressions[[1L]]$xml_parsed_content, "expr[3]") # "a\\\"'\"\\b"
+}
+
+}
