@@ -31,6 +31,7 @@ test_that("as.data.frame.lints", {
     ),
     "lint"
   )
+  expect_type(l1, "list")
 
   # A larger lint
   expect_s3_class(
@@ -146,4 +147,10 @@ test_that("split.lint works as intended", {
 
   l <- lint(tmp, seq_linter())
   expect_true(all(vapply(split(l), inherits, logical(1L), "lints")))
+})
+
+test_that("within.list is dispatched", {
+  l <- lint(text = "a=1\nb=2", linters = infix_spaces_linter())
+  expect_silent(l <- lapply(l, within, line_number <- line_number + 1L))
+  expect_identical(vapply(l, `[[`, integer(1L), "line_number"), 2L:3L)
 })
