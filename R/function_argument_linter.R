@@ -1,6 +1,30 @@
 #' Function argument linter
 #'
-#' Check that arguments with defaults come last in all function declarations, as per the tidyverse design guide.
+#' Check that arguments with defaults come last in all function declarations,
+#' as per the tidyverse design guide.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "function(y = 1, z = 2, x) {}",
+#'   linters = function_argument_linter()
+#' )
+#'
+#' lint(
+#'   text = "function(x, y, z = 1, ..., w) {}",
+#'   linters = function_argument_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "function(x, y = 1, z = 2) {}",
+#'   linters = function_argument_linter()
+#' )
+#'
+#' lint(
+#'   text = "function(x, y, w, z = 1, ...) {}",
+#'   linters = function_argument_linter()
+#' )
 #'
 #' @evalRd rd_tags("function_argument_linter")
 #' @seealso
