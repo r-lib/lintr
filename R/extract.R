@@ -20,13 +20,17 @@ extract_r_source <- function(filename, lines, error = identity) {
     return(output)
   }
 
+  output_env <- environment() # nolint: object_usage_linter. False positive-ish -- used below.
   Map(
     function(start, end) {
-      output[seq(start + 1L, end - 1L)] <<- lines[seq(start + 1L, end - 1L)]
+      line_seq <- seq(start + 1L, end - 1L)
+      output_env$output[line_seq] <- lines[line_seq]
     },
     chunks[["starts"]],
     chunks[["ends"]]
   )
+  # drop <<chunk>> references, too
+  is.na(output) <- grep(pattern$ref.chunk, output)
   replace_prefix(output, pattern$chunk.code)
 }
 
