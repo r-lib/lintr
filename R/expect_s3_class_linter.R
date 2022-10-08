@@ -100,13 +100,13 @@ is_s3_class_calls <- paste0("is.", c(
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "expect_true(is(x, 'data.frame'))",
+#'   text = "expect_true(is(x, 'Matrix'))",
 #'   linters = expect_s4_class_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "expect_s4_class(x, 'data.frame')",
+#'   text = "expect_s4_class(x, 'Matrix')",
 #'   linters = expect_s4_class_linter()
 #' )
 #'
