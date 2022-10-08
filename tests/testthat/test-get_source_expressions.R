@@ -309,6 +309,13 @@ test_that("Syntax errors in Rmd or qmd don't choke lintr", {
   expect_silent(get_source_expressions(tmp))
 })
 
+test_that("Reference chunks in Sweave/Rmd are ignored", {
+  example_rnw <- system.file("Sweave", "example-1.Rnw", package = "utils")
+  # ensure such a chunk continues to exist upstream
+  expect_true(any(grepl("^\\s*<<[^>]*>>\\s*$", readLines(example_rnw))))
+  expect_silent(lint(example_rnw))
+})
+
 skip_if_not_installed("patrick")
 # NB: this is just a cursory test for linters not to
 #   fail on files where the XML content is xml_missing;
