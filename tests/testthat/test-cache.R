@@ -147,9 +147,7 @@ test_that("save_cache saves all non-hidden objects from the environment", {
 test_that("cache_file generates the same cache with different lints", {
   e1 <- new.env(parent = emptyenv())
 
-  f1 <- tempfile()
-  writeLines("foobar", f1)
-  on.exit(unlink(f1))
+  f1 <- withr::local_tempfile(lines = "foobar")
 
   lintr:::cache_file(e1, f1, list(), list())
   lintr:::cache_file(e1, f1, list(), list(1L))
@@ -160,9 +158,7 @@ test_that("cache_file generates the same cache with different lints", {
 test_that("cache_file generates different caches for different linters", {
   e1 <- new.env(parent = emptyenv())
 
-  f1 <- tempfile()
-  writeLines("foobar", f1)
-  on.exit(unlink(f1))
+  f1 <- withr::local_tempfile(lines = "foobar")
 
   lintr:::cache_file(e1, f1, list(), list())
   lintr:::cache_file(e1, f1, list(1L), list())
@@ -175,9 +171,7 @@ test_that("cache_file generates different caches for different linters", {
 test_that("retrieve_file returns NULL if there is no cached result", {
   e1 <- new.env(parent = emptyenv())
 
-  f1 <- tempfile()
-  writeLines("foobar", f1)
-  on.exit(unlink(f1))
+  f1 <- withr::local_tempfile(lines = "foobar")
 
   expect_null(lintr:::retrieve_file(e1, f1, list()))
 })
@@ -185,9 +179,7 @@ test_that("retrieve_file returns NULL if there is no cached result", {
 test_that("retrieve_file returns the cached result if found", {
   e1 <- new.env(parent = emptyenv())
 
-  f1 <- tempfile()
-  writeLines("foobar", f1)
-  on.exit(unlink(f1))
+  f1 <- withr::local_tempfile(lines = "foobar")
 
   lintr:::cache_file(e1, f1, list(), list("foobar"))
   expect_equal(lintr:::retrieve_file(e1, f1, list()), list("foobar"))
@@ -446,8 +438,7 @@ test_that("cache = TRUE workflow works", {
 
 test_that("cache = TRUE works with nolint", {
   linters <- list(infix_spaces_linter())
-  file <- tempfile()
-  on.exit(unlink(file))
+  file <- withr::local_tempfile()
 
   writeLines("1+1\n", file)
   expect_length(lint(file, linters, cache = TRUE), 1L)

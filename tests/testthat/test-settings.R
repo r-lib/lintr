@@ -7,8 +7,7 @@ test_that("it uses default settings if none provided", {
 })
 
 test_that("it uses option settings if provided", {
-  old_opts <- options("lintr.exclude" = "test")
-  on.exit(options(old_opts))
+  withr::local_options(list(lintr.exclude = "test"))
 
   read_settings(NULL)
 
@@ -16,17 +15,9 @@ test_that("it uses option settings if provided", {
 })
 
 test_that("it uses config settings in same directory if provided", {
-  path <- tempdir()
-  file <- tempfile(tmpdir = path)
-  config_file <- file.path(path, ".lintr")
-  writeLines("exclude: \"test\"", config_file)
-  on.exit(
-    {
-      unlink(file)
-      unlink(config_file)
-    },
-    add = TRUE
-  )
+  test_dir <- tempdir()
+  file <- withr::local_tempfile(tmpdir = test_dir)
+  local_config(test_dir, 'exclude: "test"\n')
 
   read_settings(file)
 
@@ -38,22 +29,10 @@ test_that("it uses config settings in same directory if provided", {
 })
 
 test_that("it uses config home directory settings if provided", {
-  path <- tempfile()
-  home_path <- tempfile()
-  dir.create(path)
-  dir.create(home_path)
-  file <- tempfile(tmpdir = path)
-  config_file <- file.path(home_path, ".lintr")
-  writeLines("exclude: \"test\"", config_file)
-  on.exit(
-    {
-      unlink(file)
-      unlink(config_file)
-      unlink(path)
-      unlink(home_path)
-    },
-    add = TRUE
-  )
+  path <- withr::local_tempdir()
+  home_path <- withr::local_tempdir()
+  file <- withr::local_tempfile(tmpdir = path)
+  local_config(home_path, 'exclude: "test"\n')
 
   withr::with_envvar(c(HOME = home_path), read_settings(file))
 
@@ -65,11 +44,9 @@ test_that("it uses config home directory settings if provided", {
 })
 
 test_that("it errors if the config file does not end in a newline", {
-  f <- tempfile()
+  f <- withr::local_tempfile()
   cat("linters: linters_with_defaults(closed_curly_linter = NULL)", file = f)
-  old <- options()
-  on.exit(options(old))
-  options("lintr.linter_file" = f)
+  withr::local_options(list(lintr.linter_file = f))
   expect_error(read_settings("foo"), "Malformed config file")
 })
 
