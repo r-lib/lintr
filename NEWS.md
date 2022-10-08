@@ -4,6 +4,8 @@
 
 * `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
 
+* `get_source_expressions()` can handle reference chunks in Sweave and Rmd files like `<<ref_file>>` (#779, @MichaelChirico)
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
