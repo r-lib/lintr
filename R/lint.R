@@ -25,7 +25,7 @@
 #'
 #' @aliases lint_file
 # TODO(next release after 3.0.0): remove the alias
-#' @return A list of lint objects.
+#' @return An object of class `c("lints", "list")`, each element of which is a `"list"` object.
 #'
 #' @examples
 #' \dontrun{
@@ -440,7 +440,7 @@ pkg_name <- function(path = find_package()) {
 #' @param line code source where the lint occurred
 #' @param ranges a list of ranges on the line that should be emphasized.
 #' @param linter deprecated. No longer used.
-#' @return an object of class 'lint'.
+#' @return an object of class `c("lint", "list")`.
 #' @name lint-s3
 #' @export
 Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name.

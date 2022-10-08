@@ -67,7 +67,7 @@ If \code{FALSE}, use the full absolute path.}
 .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...)}
 }
 \value{
-A list of lint objects.
+An object of class \code{c("lints", "list")}, each element of which is a \code{"list"} object.
 }
 \description{
 \itemize{
