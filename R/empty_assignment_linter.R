@@ -55,7 +55,7 @@ empty_assignment_linter <- function() {
       bad_expr,
       source_expression = source_expression,
       lint_message =
-        "Assign NULL explicitly or, whenever possible, allocate the empty object with the right type & size.",
+        "Assign NULL explicitly or, whenever possible, allocate the empty object with the right type and size.",
       type = "warning"
     )
   })
