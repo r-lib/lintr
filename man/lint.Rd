@@ -93,8 +93,12 @@ unintelligible error messages from other linters.
 \dontrun{
   lint_dir()
   lint_dir(
-    linters = list(semicolon_linter())
-    exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "renv")
+    linters = list(semicolon_linter()),
+    exclusions = list(
+      "inst/doc/creating_linters.R" = 1,
+      "inst/example/bad.R",
+      "renv"
+    )
   )
 }
 \dontrun{
