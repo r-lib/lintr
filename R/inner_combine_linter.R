@@ -6,6 +6,19 @@
 #'   preferred so that the most expensive part of the operation ([as.Date()])
 #'   is applied only once.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "c(log10(x), log10(y), log10(z))",
+#'   linters = inner_combine_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "log10(c(x, y, z))",
+#'   linters = inner_combine_linter()
+#' )
+#'
 #' @evalRd rd_tags("inner_combine_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
