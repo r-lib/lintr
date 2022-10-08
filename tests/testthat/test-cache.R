@@ -34,7 +34,7 @@ test_that("clear_cache deletes the file if a file is given", {
   mockery::stub(clear_cache, "unlink", function(...) list(...))
 
   e1 <- new.env(parent = emptyenv())
-  d1 <- tempfile(pattern = "lintr_cache_")
+  d1 <- withr::local_tempfile(pattern = "lintr_cache_")
   f1 <- "R/test.R"
   lintr:::save_cache(cache = e1, file = f1, path = d1)
 
@@ -55,7 +55,7 @@ test_that("clear_cache deletes the directory if no file is given", {
 test_that("load_cache loads the saved file in a new empty environment", {
   e1 <- new.env(parent = emptyenv())
   e1[["x"]] <- "foobar"
-  d1 <- tempfile(pattern = "lintr_cache_")
+  d1 <- withr::local_tempfile(pattern = "lintr_cache_")
   f1 <- "R/test.R"
   lintr:::save_cache(cache = e1, file = f1, path = d1)
   e2 <- lintr:::load_cache(file = f1, path = d1)
@@ -65,7 +65,7 @@ test_that("load_cache loads the saved file in a new empty environment", {
 
 test_that("load_cache returns an empty environment if no cache file exists", {
   e1 <- new.env(parent = emptyenv())
-  d1 <- tempfile(pattern = "lintr_cache_")
+  d1 <- withr::local_tempfile(pattern = "lintr_cache_")
   f1 <- "R/test.R"
   f2 <- "test.R"
 
@@ -78,7 +78,7 @@ test_that("load_cache returns an empty environment if no cache file exists", {
 test_that("load_cache returns an empty environment if reading cache file fails", {
   e1 <- new.env(parent = emptyenv())
   e1[["x"]] <- "foobar"
-  d1 <- tempfile(pattern = "lintr_cache_")
+  d1 <- withr::local_tempfile(pattern = "lintr_cache_")
   f1 <- "R/test.R"
   lintr:::save_cache(cache = e1, file = f1, path = d1)
   cache_f1 <- file.path(d1, fhash(f1))
@@ -96,7 +96,7 @@ test_that("load_cache returns an empty environment if reading cache file fails",
 
 test_that("save_cache creates a directory if needed", {
   e1 <- new.env(parent = emptyenv())
-  d1 <- tempfile(pattern = "lintr_cache_")
+  d1 <- withr::local_tempfile(pattern = "lintr_cache_")
   f1 <- "R/test.R"
 
   expect_false(file.exists(d1))
@@ -111,7 +111,7 @@ test_that("save_cache creates a directory if needed", {
 
 test_that("save_cache uses unambiguous cache file names", {
   e1 <- new.env(parent = emptyenv())
-  d1 <- tempfile(pattern = "lintr_cache_")
+  d1 <- withr::local_tempfile(pattern = "lintr_cache_")
   f1 <- "R/test.R"
   f2 <- "test.R"
 
@@ -131,7 +131,7 @@ test_that("save_cache saves all non-hidden objects from the environment", {
   e1$t1 <- 1L
   e1$t2 <- 2L
 
-  d1 <- tempfile(pattern = "lintr_cache_")
+  d1 <- withr::local_tempfile(pattern = "lintr_cache_")
   f1 <- "R/test.R"
 
   lintr:::save_cache(cache = e1, file = f1, path = d1)
@@ -147,9 +147,7 @@ test_that("save_cache saves all non-hidden objects from the environment", {
 test_that("cache_file generates the same cache with different lints", {
   e1 <- new.env(parent = emptyenv())
 
-  f1 <- tempfile()
-  writeLines("foobar", f1)
-  on.exit(unlink(f1))
+  f1 <- withr::local_tempfile(lines = "foobar")
 
   lintr:::cache_file(e1, f1, list(), list())
   lintr:::cache_file(e1, f1, list(), list(1L))
@@ -160,9 +158,7 @@ test_that("cache_file generates the same cache with different lints", {
 test_that("cache_file generates different caches for different linters", {
   e1 <- new.env(parent = emptyenv())
 
-  f1 <- tempfile()
-  writeLines("foobar", f1)
-  on.exit(unlink(f1))
+  f1 <- withr::local_tempfile(lines = "foobar")
 
   lintr:::cache_file(e1, f1, list(), list())
   lintr:::cache_file(e1, f1, list(1L), list())
@@ -175,9 +171,7 @@ test_that("cache_file generates different caches for different linters", {
 test_that("retrieve_file returns NULL if there is no cached result", {
   e1 <- new.env(parent = emptyenv())
 
-  f1 <- tempfile()
-  writeLines("foobar", f1)
-  on.exit(unlink(f1))
+  f1 <- withr::local_tempfile(lines = "foobar")
 
   expect_null(lintr:::retrieve_file(e1, f1, list()))
 })
@@ -185,9 +179,7 @@ test_that("retrieve_file returns NULL if there is no cached result", {
 test_that("retrieve_file returns the cached result if found", {
   e1 <- new.env(parent = emptyenv())
 
-  f1 <- tempfile()
-  writeLines("foobar", f1)
-  on.exit(unlink(f1))
+  f1 <- withr::local_tempfile(lines = "foobar")
 
   lintr:::cache_file(e1, f1, list(), list("foobar"))
   expect_equal(lintr:::retrieve_file(e1, f1, list()), list("foobar"))
@@ -401,8 +393,7 @@ test_that("find_new_line returns the correct line if it is after the current lin
 #
 
 test_that("lint with cache uses the provided relative cache directory", {
-  path <- "./my_cache_dir"
-  expect_false(dir.exists(path))
+  path <- withr::local_tempdir("my_cache_dir")
   linter <- assignment_linter()
 
   # create the cache
@@ -413,15 +404,13 @@ test_that("lint with cache uses the provided relative cache directory", {
   # read the cache
   expect_lint("a <- 1", NULL, linter, cache = path)
   expect_true(dir.exists(path))
-
-  unlink(path, recursive = TRUE)
 })
 
 test_that("it works outside of a package", {
   linter <- assignment_linter()
 
   mockery::stub(lintr:::find_default_encoding, "find_package", function(...) NULL)
-  path <- tempfile(pattern = "my_cache_dir_")
+  path <- withr::local_tempfile(pattern = "my_cache_dir_")
   expect_false(dir.exists(path))
   expect_lint("a <- 1", NULL, linter, cache = path)
   expect_true(dir.exists(path))
@@ -446,8 +435,7 @@ test_that("cache = TRUE workflow works", {
 
 test_that("cache = TRUE works with nolint", {
   linters <- list(infix_spaces_linter())
-  file <- tempfile()
-  on.exit(unlink(file))
+  file <- withr::local_tempfile()
 
   writeLines("1+1\n", file)
   expect_length(lint(file, linters, cache = TRUE), 1L)

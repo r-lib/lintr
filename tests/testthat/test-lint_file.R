@@ -11,10 +11,7 @@ test_that("lint() results do not depend on the working directory", {
   pkg_path <- test_path("dummy_packages", "assignmentLinter")
 
   # put a .lintr in the package root that excludes the first line of `R/jkl.R`
-  config_path <- file.path(pkg_path, ".lintr")
-  config_string <- "exclusions: list('R/jkl.R' = 1)\n"
-  cat(config_string, file = config_path)
-  on.exit(unlink(config_path))
+  local_config(pkg_path, "exclusions: list('R/jkl.R' = 1)")
 
   # linting the `R/jkl.R` should identify the following assignment lint on the
   # second line of the file
@@ -60,9 +57,8 @@ test_that("lint() results do not depend on the position of the .lintr", {
   # - the same directory as filepath
   # - the project directory
   # - the user's home directory
-  lint_with_config <- function(config_path, config_string, filename) {
-    cat(config_string, file = config_path)
-    on.exit(unlink(config_path))
+  lint_with_config <- function(config_dir, config_string, filename) {
+    local_config(config_dir, config_string)
     lint(filename, linters = assignment_linter())
   }
 
@@ -80,8 +76,8 @@ test_that("lint() results do not depend on the position of the .lintr", {
   lints_with_config_at_pkg_root <- withr::with_dir(
     pkg_path,
     lint_with_config(
-      config_path = ".lintr",
-      config_string = "exclusions: list('R/jkl.R' = 1)\n",
+      config_dir = ".",
+      config_string = "exclusions: list('R/jkl.R' = 1)",
       filename = file.path("R", "jkl.R")
     )
   )
@@ -89,8 +85,8 @@ test_that("lint() results do not depend on the position of the .lintr", {
   lints_with_config_in_r_dir <- withr::with_dir(
     pkg_path,
     lint_with_config(
-      config_path = "R/.lintr",
-      config_string = "exclusions: list('jkl.R' = 1)\n",
+      config_dir = "R",
+      config_string = "exclusions: list('jkl.R' = 1)",
       filename = file.path("R", "jkl.R")
     )
   )
@@ -114,12 +110,8 @@ test_that("lint uses linter names", {
 
 test_that("lint() results from file or text should be consistent", {
   linters <- list(assignment_linter(), infix_spaces_linter())
-  file <- tempfile()
-  lines <- c(
-    "x<-1",
-    "x+1"
-  )
-  writeLines(lines, file)
+  lines <- c("x<-1", "x+1")
+  file <- withr::local_tempfile(lines = lines)
   text <- paste0(lines, collapse = "\n")
   file <- normalizePath(file)
 
@@ -129,7 +121,7 @@ test_that("lint() results from file or text should be consistent", {
 
   # Remove file before linting to ensure that lint works and do not
   # assume that file exists when both filename and text are supplied.
-  unlink(file)
+  expect_identical(unlink(file), 0L)
   lint_from_text2 <- lint(file, linters = linters, text = text)
 
   expect_length(lint_from_file, 2L)
