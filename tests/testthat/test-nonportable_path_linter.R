@@ -1,6 +1,6 @@
 test_that("Non-portable path linter", {
   linter <- nonportable_path_linter(lax = FALSE)
-  msg <- rex::escape("Use file.path() to construct portable file paths.")
+  lint_msg <- rex::escape("Use file.path() to construct portable file paths.")
 
   # various strings
   non_path_strings <- c(
@@ -36,8 +36,8 @@ test_that("Non-portable path linter", {
     encodeString("/a\nsdf")
   )
   for (path in slash_path_strings) {
-    expect_lint(single_quote(path), msg, linter)
-    expect_lint(double_quote(path), msg, linter)
+    expect_lint(single_quote(path), lint_msg, linter)
+    expect_lint(double_quote(path), lint_msg, linter)
   }
 
   # lax mode: no check for strings that are likely not paths (too short or with special characters)

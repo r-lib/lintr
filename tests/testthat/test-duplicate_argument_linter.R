@@ -11,21 +11,21 @@ test_that("duplicate_argument_linter doesn't block allowed usages", {
 
 test_that("duplicate_argument_linter blocks disallowed usages", {
   linter <- duplicate_argument_linter()
-  msg <- rex::rex("Duplicate arguments in function call.")
+  lint_msg <- rex::rex("Duplicate arguments in function call.")
 
-  expect_lint("fun(arg = 1, arg = 2)", msg, linter)
-  expect_lint("fun(arg = 1, 'arg' = 2)", msg, linter)
-  expect_lint("fun(arg = 1, `arg` = 2)", msg, linter)
-  expect_lint("'fun'(arg = 1, arg = 2)", msg, linter)
-  expect_lint("(function(x, y) x + y)(x = 1, x = 2)", msg, linter)
-  expect_lint("dt[i = 1, i = 2]", msg, linter)
+  expect_lint("fun(arg = 1, arg = 2)", lint_msg, linter)
+  expect_lint("fun(arg = 1, 'arg' = 2)", lint_msg, linter)
+  expect_lint("fun(arg = 1, `arg` = 2)", lint_msg, linter)
+  expect_lint("'fun'(arg = 1, arg = 2)", lint_msg, linter)
+  expect_lint("(function(x, y) x + y)(x = 1, x = 2)", lint_msg, linter)
+  expect_lint("dt[i = 1, i = 2]", lint_msg, linter)
 
   expect_lint(
     "list(
       var = 1,
       var = 2
     )",
-    msg,
+    lint_msg,
     linter
   )
 })

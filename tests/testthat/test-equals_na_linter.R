@@ -13,7 +13,7 @@ test_that("equals_na_linter skips allowed usages", {
 
   # equals_na_linter should ignore strings and comments
   expect_lint("is.na(x) # dont flag x == NA if inside a comment", NULL, linter)
-  expect_lint("msg <- 'dont flag x == NA if inside a string'", NULL, linter)
+  expect_lint("lint_msg <- 'dont flag x == NA if inside a string'", NULL, linter)
 
   # nested NAs are okay
   expect_lint("x==f(1, ignore = NA)", NULL, linter)
@@ -45,14 +45,14 @@ patrick::with_parameters_test_that(
 
 test_that("equals_na_linter blocks disallowed usages in edge cases", {
   linter <- equals_na_linter()
-  msg <- rex::rex("Use is.na for comparisons to NA (not == or !=)")
+  lint_msg <- rex::rex("Use is.na for comparisons to NA (not == or !=)")
 
   # missing spaces around operators
-  expect_lint("x==NA", list(message = msg, line_number = 1L, column_number = 1L), linter)
-  expect_lint("x!=NA", list(message = msg, line_number = 1L, column_number = 1L), linter)
+  expect_lint("x==NA", list(message = lint_msg, line_number = 1L, column_number = 1L), linter)
+  expect_lint("x!=NA", list(message = lint_msg, line_number = 1L, column_number = 1L), linter)
 
   # order doesn't matter
-  expect_lint("NA == x", list(message = msg, line_number = 1L, column_number = 1L), linter)
+  expect_lint("NA == x", list(message = lint_msg, line_number = 1L, column_number = 1L), linter)
 
   # correct line number for multiline code
   expect_lint("x ==\nNA", list(line_number = 1L, column_number = 1L, ranges = list(c(1L, 4L))), linter)

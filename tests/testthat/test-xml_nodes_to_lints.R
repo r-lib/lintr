@@ -8,7 +8,7 @@ test_that("it creates basic lints", {
   l <- xml_nodes_to_lints(
     xml = node,
     source_expression = expr,
-    lint_message = "msg",
+    lint_message = "lint_msg",
     type = "warning"
   )
 
@@ -17,7 +17,7 @@ test_that("it creates basic lints", {
   expect_identical(l$line_number, 1L)
   expect_identical(l$column_number, as.integer(xml2::xml_attr(node, "col1")))
   expect_identical(l$type, "warning")
-  expect_identical(l$message, "msg")
+  expect_identical(l$message, "lint_msg")
   expect_identical(l$line, code)
   expect_identical(l$ranges, list(as.integer(c(xml2::xml_attr(node, "col1"), xml2::xml_attr(node, "col2")))))
 
@@ -25,7 +25,7 @@ test_that("it creates basic lints", {
   l_before_col <- xml_nodes_to_lints(
     xml = node,
     source_expression = expr,
-    lint_message = "msg",
+    lint_message = "lint_msg",
     column_number_xpath = "number(./preceding-sibling::*[1]/@col2 + 1)",
     range_start_xpath = "number(./preceding-sibling::*[1]/@col1)",
     range_end_xpath = "number(./following-sibling::*[1]/@col2)"
@@ -37,7 +37,7 @@ test_that("it creates basic lints", {
   ll <- xml_nodes_to_lints(
     xml = xml2::xml_find_all(xml, "//expr"),
     source_expression = expr,
-    lint_message = "msg"
+    lint_message = "lint_msg"
   )
   expect_s3_class(ll, "lints")
   expect_length(ll, 3L)
@@ -47,7 +47,7 @@ test_that("it creates basic lints", {
   ll_unclassed <- xml_nodes_to_lints(
     xml = unclass(xml2::xml_find_all(xml, "//expr")),
     source_expression = expr,
-    lint_message = "msg"
+    lint_message = "lint_msg"
   )
   expect_s3_class(ll_unclassed, "lints")
   expect_length(ll_unclassed, 3L)
@@ -73,7 +73,7 @@ test_that("it handles multi-line lints correctly", {
   l <- xml_nodes_to_lints(
     xml = node,
     source_expression = expr,
-    lint_message = "msg"
+    lint_message = "lint_msg"
   )
 
   expect_s3_class(l, "lint")
@@ -81,7 +81,7 @@ test_that("it handles multi-line lints correctly", {
   expect_identical(l$line_number, 1L)
   expect_identical(l$column_number, as.integer(xml2::xml_attr(node, "col1")))
   expect_identical(l$type, "style")
-  expect_identical(l$message, "msg")
+  expect_identical(l$message, "lint_msg")
   expect_identical(l$line, code[[1L]])
   expect_identical(l$ranges, list(as.integer(c(xml2::xml_attr(node, "col1"), nchar(code[1L])))))
 })
