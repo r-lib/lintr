@@ -257,14 +257,16 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #' names(default_settings$linters)
 #'
 #' # default values for a few of the other settings
-#' default_settings$encoding
-#' default_settings$exclude
-#' default_settings$exclude_start
-#' default_settings$exclude_end
-#' default_settings$exclude_linter
-#' default_settings$exclude_linter_sep
-#' default_settings$exclusions
-#' default_settings$error_on_lint
+#' default_settings[c(
+#'   "encoding",
+#'   "exclude",
+#'   "exclude_start",
+#'   "exclude_end",
+#'   "exclude_linter",
+#'   "exclude_linter_sep",
+#'   "exclusions",
+#'   "error_on_lint"
+#' )]
 #'
 #' @seealso [read_settings()], [default_linters]
 #' @export
