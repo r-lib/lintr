@@ -54,7 +54,12 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     ## Case 2/3/4: problems with foo in pkg::foo / pkg:::foo
 
     # run here, not in the factory, to allow for run- vs. "compile"-time differences in package structure
-    namespaces <- lapply(packages, function(package) tryCatch(getNamespace(package), error = identity))
+    namespaces <- lapply(packages, getNamespace, package)
+    failed_namespace <- vapply(namespaces, inherits, "condition", FUN.VALUE = logical(1L))
+    if (any(failed_namespace)) {
+      stop("Failed to retrieve namespaces for one or more of the packages.", call. = FALSE)
+    }
+
     ns_get <- xml2::xml_text(ns_nodes) == "::"
     symbol_nodes <- xml2::xml_find_all(ns_nodes, "following-sibling::*[1]")
     symbols <- get_r_string(symbol_nodes)
