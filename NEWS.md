@@ -36,6 +36,9 @@
 
 * `pipe_continuation_linter()` recognizes violations involving the native R pipe `|>` (#1609, @MichaelChirico)
 
+* `paste_linter()` also catches usages like `paste(rep("*", 10L), collapse = "")` that can be written more
+  concisely as `strrep("*", 10L)` (#1108, @MichaelChirico)
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.

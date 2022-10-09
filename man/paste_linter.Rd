@@ -15,7 +15,7 @@ paste_linter(allow_empty_sep = FALSE, allow_to_string = FALSE)
 }
 \description{
 The following issues are linted by default by this linter
-(and each can be turned off optionally):
+(see options for which can be de-activated optionally):
 }
 \details{
 \enumerate{
@@ -24,6 +24,13 @@ The following issues are linted by default by this linter
 wrapper for this, and alternatives like \code{\link[glue:glue_collapse]{glue::glue_collapse()}} might give better messages for humans.
 \item Block usage of \code{paste0()} that supplies \verb{sep=} -- this is not a formal argument to \code{paste0}, and
 is likely to be a mistake.
+\item Block usage of \code{paste()} / \code{paste0()} combined with \code{\link[=rep]{rep()}} that could be replaced by
+\code{\link[=strrep]{strrep()}}. \code{strrep()} can handle the task of building a block of repeated strings
+(e.g. often used to build "horizontal lines" for messages). This is both more readable and
+skips the (likely small) overhead of putting two strings into the global string cache when only one is needed.
+
+Only target scalar usages -- \code{strrep} can handle more complicated cases (e.g. \code{strrep(letters, 26:1)},
+but those aren't as easily translated from a \code{paste(collapse=)} call.
 }
 }
 \seealso{

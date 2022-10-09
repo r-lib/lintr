@@ -89,3 +89,18 @@ test_that("paste_linter catches use of paste0 with sep=", {
     paste_linter()
   )
 })
+
+test_that("paste_linter skips allowed usages for strrep()", {
+  expect_lint("paste(x, collapse = '')", NULL, paste_linter())
+  expect_lint("paste(rep('*', 10), collapse = '+')", NULL, paste_linter())
+  expect_lint("paste(rep(c('a', 'b'), 2), collapse = '')", NULL, paste_linter())
+  expect_lint("paste0(rep('a', 2), 'b', collapse = '')", NULL, paste_linter())
+})
+
+test_that("paste_linter blocks simple disallowed usages", {
+  linter <- paste_linter()
+  lint_msg <- rex::rex("strrep(x, times) is better than paste")
+
+  expect_lint("paste0(rep('*', 20L), collapse='')", lint_msg, linter)
+  expect_lint("paste(rep('#', width), collapse='')", lint_msg, linter)
+})
