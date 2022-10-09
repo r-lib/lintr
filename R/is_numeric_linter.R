@@ -3,6 +3,10 @@
 #' [is.numeric()] returns `TRUE` when `typeof(x)` is `double` or `integer` --
 #'   testing `is.numeric(x) || is.integer(x)` is thus redundant.
 #'
+#' NB: This linter plays well with [class_equals_linter()], which can help
+#'   avoid further `is.numeric()` equivalents like
+#'   any(class(x) == c("numeric", "integer"))`.
+#'
 #' @examples
 #' # will produce lints
 #' lint(
@@ -32,6 +36,9 @@
 is_numeric_linter <- function() {
   # TODO(michaelchirico): this should also cover is.double(x) || is.integer(x)
   # TODO(#1636): is.numeric(x) || is.integer(x) || is.factor(x) is also redundant
+  # TODO(michaelchirico): consdier capturing any(class(x) == "numeric/integer")
+  #   here directly; currently we rely on class_equals_linter() also active
+  # TODO(michaelchirico): inherits(x, c("numeric", "integer"))
   is_numeric_expr <- "expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.numeric']]"
   is_integer_expr <- "expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.integer']]"
 

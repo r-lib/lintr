@@ -10,6 +10,11 @@ is_numeric_linter()
 \code{\link[=is.numeric]{is.numeric()}} returns \code{TRUE} when \code{typeof(x)} is \code{double} or \code{integer} --
 testing \code{is.numeric(x) || is.integer(x)} is thus redundant.
 }
+\details{
+NB: This linter plays well with \code{\link[=class_equals_linter]{class_equals_linter()}}, which can help
+avoid further \code{is.numeric()} equivalents like
+any(class(x) == c("numeric", "integer"))`.
+}
 \examples{
 # will produce lints
 lint(
