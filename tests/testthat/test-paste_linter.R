@@ -95,6 +95,10 @@ test_that("paste_linter skips allowed usages for strrep()", {
   expect_lint("paste(rep('*', 10), collapse = '+')", NULL, paste_linter())
   expect_lint("paste(rep(c('a', 'b'), 2), collapse = '')", NULL, paste_linter())
   expect_lint("paste0(rep('a', 2), 'b', collapse = '')", NULL, paste_linter())
+  # no collapse
+  expect_lint("paste(rep('*', 10))", NULL, paste_linter())
+  # combined before aggregating
+  expect_lint("paste(rep('*', 10), rep('x', 10), collapse = '')", NULL, paste_linter())
 })
 
 test_that("paste_linter blocks simple disallowed usages", {
