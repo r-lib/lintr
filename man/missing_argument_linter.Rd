@@ -14,6 +14,35 @@ missing_argument_linter(except = c("switch", "alist"), allow_trailing = FALSE)
 \description{
 Check for missing arguments in function calls (e.g. \code{stats::median(1:10, )}).
 }
+\examples{
+# will produce lints
+lint(
+  text = "mean(x, )",
+  linters = missing_argument_linter()
+)
+
+# okay
+lint(
+  text = "mean(x, na.rm = FALSE)",
+  linters = missing_argument_linter()
+)
+
+lint(
+  text = "mean(x)",
+  linters = missing_argument_linter()
+)
+
+lint(
+  text = "mean(x, )",
+  linters = missing_argument_linter(except = "mean")
+)
+
+lint(
+  text = "mean(x, )",
+  linters = missing_argument_linter(allow_trailing = TRUE)
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
