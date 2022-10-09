@@ -28,8 +28,9 @@
 #'   linters = function_return_linter()
 #' )
 #'
+#' cat("foo <- function(x) { return(x + 1) }; x <- foo(x)")
 #' lint(
-#'   text = "foo <- function(x) return(x + 1); x <- x + 1",
+#'   text = "foo <- function(x) { return(x + 1) }; x <- foo(x)",
 #'   linters = function_return_linter()
 #' )
 #'
