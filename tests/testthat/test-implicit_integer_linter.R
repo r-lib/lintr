@@ -1,3 +1,4 @@
+# styler: off
 test_that("single numerical constants are properly identified ", {
   # Test single numerical constants
   is_implicit <- lintr:::is_implicit_integer
@@ -32,21 +33,23 @@ test_that("single numerical constants are properly identified ", {
   # Note: cases indicated by "*" should be TRUE but they are complicated to handle, and it is not
   # clear how users could keep these whole numbers represented as doubles without a lint.
 })
+# styler: on
 
 test_that("linter returns the correct linting", {
-  msg <- "Integers should not be implicit. Use the form 1L for integers or 1.0 for doubles."
+  lint_msg <- "Integers should not be implicit. Use the form 1L for integers or 1.0 for doubles."
   linter <- implicit_integer_linter()
-  expect_s3_class(linter, "linter")
 
   expect_lint("x <<- 1L", NULL, linter)
   expect_lint("1.0/-Inf -> y", NULL, linter)
-  expect_lint("y <- 1+i", list(message = msg, line_number = 1L, column_number = 7L), linter)
-  expect_lint("z <- 1e5", list(message = msg, line_number = 1L, column_number = 9L), linter)
-  expect_lint("cat(1:n)", list(message = msg, line_number = 1L, column_number = 6L), linter)
-  expect_lint("552^9",
-              list(
-                list(message = msg, line_number = 1L, column_number = 4L),
-                list(message = msg, line_number = 1L, column_number = 6L)
-              ),
-              linter)
+  expect_lint("y <- 1+i", list(message = lint_msg, line_number = 1L, column_number = 7L), linter)
+  expect_lint("z <- 1e5", list(message = lint_msg, line_number = 1L, column_number = 9L), linter)
+  expect_lint("cat(1:n)", list(message = lint_msg, line_number = 1L, column_number = 6L), linter)
+  expect_lint(
+    "552^9",
+    list(
+      list(message = lint_msg, line_number = 1L, column_number = 4L),
+      list(message = lint_msg, line_number = 1L, column_number = 6L)
+    ),
+    linter
+  )
 })

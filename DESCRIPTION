@@ -106,6 +106,7 @@ Collate:
     'infix_spaces_linter.R'
     'inner_combine_linter.R'
     'is_lint_level.R'
+    'is_numeric_linter.R'
     'lengths_linter.R'
     'line_length_linter.R'
     'lint.R'

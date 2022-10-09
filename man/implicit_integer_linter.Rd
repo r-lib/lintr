@@ -9,6 +9,35 @@ implicit_integer_linter()
 \description{
 Check that integers are explicitly typed using the form \code{1L} instead of \code{1}.
 }
+\examples{
+# will produce lints
+lint(
+  text = "x <- 1",
+  linters = implicit_integer_linter()
+)
+
+lint(
+  text = "x[2]",
+  linters = implicit_integer_linter()
+)
+
+# okay
+lint(
+  text = "x <- 1.0",
+  linters = implicit_integer_linter()
+)
+
+lint(
+  text = "x <- 1L",
+  linters = implicit_integer_linter()
+)
+
+lint(
+  text = "x[2L]",
+  linters = implicit_integer_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

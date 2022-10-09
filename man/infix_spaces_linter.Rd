@@ -7,7 +7,7 @@
 infix_spaces_linter(exclude_operators = NULL, allow_multiple_spaces = TRUE)
 }
 \arguments{
-\item{exclude_operators}{Character vector of operators to exlude from consideration for linting.
+\item{exclude_operators}{Character vector of operators to exclude from consideration for linting.
 Default is to include the following "low-precedence" operators:
 \code{+}, \code{-}, \code{~}, \code{>}, \code{>=}, \code{<}, \code{<=}, \code{==}, \code{!=}, \code{&}, \code{&&}, \code{|}, \code{||}, \verb{<-}, \verb{:=}, \verb{<<-}, \verb{->}, \verb{->>},
 \code{=}, \code{/}, \code{*}, and any infix operator (exclude infixes by passing \code{"\%\%"}). Note that \verb{<-}, \verb{:=}, and \verb{<<-}
@@ -21,6 +21,45 @@ by the style guide.}
 \description{
 Check that infix operators are surrounded by spaces. Enforces the corresponding Tidyverse style guide rule;
 see \url{https://style.tidyverse.org/syntax.html#infix-operators}.
+}
+\examples{
+# will produce lints
+lint(
+  text = "x<-1L",
+  linters = infix_spaces_linter()
+)
+
+lint(
+  text = "1:4 \%>\%sum()",
+  linters = infix_spaces_linter()
+)
+
+# okay
+lint(
+  text = "x <- 1L",
+  linters = infix_spaces_linter()
+)
+
+lint(
+  text = "1:4 \%>\% sum()",
+  linters = infix_spaces_linter()
+)
+
+code_lines <- "
+ab     <- 1L
+abcdef <- 2L
+"
+cat(code_lines)
+lint(
+  text = code_lines,
+  linters = infix_spaces_linter(allow_multiple_spaces = TRUE)
+)
+
+lint(
+  text = "a||b",
+  linters = infix_spaces_linter(exclude_operators = "||")
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr
