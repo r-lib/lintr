@@ -45,9 +45,13 @@ lint(
   linters = infix_spaces_linter()
 )
 
+code_lines <- "
+ab     <- 1L
+abcdef <- 2L
+"
+cat(code_lines)
 lint(
-  text = "ab     <- 1L
-          abcdef <- 2L",
+  text = code_lines,
   linters = infix_spaces_linter(allow_multiple_spaces = TRUE)
 )
 

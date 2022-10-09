@@ -28,6 +28,24 @@
 #'   linters = function_return_linter()
 #' )
 #'
+#' lint(
+#'   text = "foo <- function(x) return(x + 1); x <- x + 1",
+#'   linters = function_return_linter()
+#' )
+#'
+#' code_lines <- "
+#' e <- new.env()
+#' foo <- function(x) {
+#'   e$val <- x + 1
+#'   return(e$val)
+#' }
+#' "
+#' cat(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = function_return_linter()
+#' )
+#'
 #' @evalRd rd_tags("function_return_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

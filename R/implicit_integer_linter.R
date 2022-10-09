@@ -10,7 +10,7 @@
 #' )
 #'
 #' lint(
-#'   text = "x[c(1, 2)]",
+#'   text = "x[2]",
 #'   linters = implicit_integer_linter()
 #' )
 #'
@@ -26,7 +26,7 @@
 #' )
 #'
 #' lint(
-#'   text = "x[c(1L, 2L)]",
+#'   text = "x[2L]",
 #'   linters = implicit_integer_linter()
 #' )
 #'
