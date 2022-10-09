@@ -9,6 +9,11 @@
 #'   linters = implicit_integer_linter()
 #' )
 #'
+#' lint(
+#'   text = "x[c(1, 2)]",
+#'   linters = implicit_integer_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "x <- 1.0",
@@ -17,6 +22,11 @@
 #'
 #' lint(
 #'   text = "x <- 1L",
+#'   linters = implicit_integer_linter()
+#' )
+#'
+#' lint(
+#'   text = "x[c(1L, 2L)]",
 #'   linters = implicit_integer_linter()
 #' )
 #'

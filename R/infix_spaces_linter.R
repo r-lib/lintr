@@ -4,43 +4,47 @@
 # NB: this metadata is used elsewhere in lintr, e.g. spaces_left_parentheses_linter.
 #   because of that, even though some rows of this table are currently unused, but
 #   we keep them around because it's useful to keep this info in one place.
+
+# styler: off
 infix_metadata <- data.frame(stringsAsFactors = FALSE, matrix(byrow = TRUE, ncol = 2L, c(
-  "OP-PLUS", "+",
-  "OP-MINUS", "-",
-  "OP-TILDE", "~",
-  "GT", ">",
-  "GE", ">=",
-  "LT", "<",
-  "LE", "<=",
-  "EQ", "==",
-  "NE", "!=",
-  "AND", "&",
-  "OR", "|",
-  "AND2", "&&",
-  "OR2", "||",
-  "LEFT_ASSIGN", "<-",  # also includes := and <<-
-  "RIGHT_ASSIGN", "->", # also includes ->>
-  "EQ_ASSIGN", "=",
-  "EQ_SUB", "=",        # in calls: foo(x = 1)
-  "EQ_FORMALS", "=",    # in definitions: function(x = 1)
-  "SPECIAL", "%%",
-  "OP-SLASH", "/",
-  "OP-STAR", "*",
-  "OP-COMMA", ",",
-  "OP-CARET", "^",      # also includes **
-  "OP-AT", "@",
-  "OP-EXCLAMATION", "!",
-  "OP-COLON", ":",
-  "NS_GET", "::",
-  "NS_GET_INT", ":::",
-  "OP-LEFT-BRACE", "{",
+  "OP-PLUS",         "+",
+  "OP-MINUS",        "-",
+  "OP-TILDE",        "~",
+  "GT",              ">",
+  "GE",              ">=",
+  "LT",              "<",
+  "LE",              "<=",
+  "EQ",              "==",
+  "NE",              "!=",
+  "AND",              "&",
+  "OR",              "|",
+  "AND2",            "&&",
+  "OR2",             "||",
+  "LEFT_ASSIGN",     "<-",  # also includes := and <<-
+  "RIGHT_ASSIGN",    "->",  # also includes ->>
+  "EQ_ASSIGN",       "=",
+  "EQ_SUB",          "=",   # in calls: foo(x = 1)
+  "EQ_FORMALS",      "=",   # in definitions: function(x = 1)
+  "SPECIAL",         "%%",
+  "OP-SLASH",        "/",
+  "OP-STAR",         "*",
+  "OP-COMMA",        ",",
+  "OP-CARET",        "^",   # also includes **
+  "OP-AT",           "@",
+  "OP-EXCLAMATION",  "!",
+  "OP-COLON",        ":",
+  "NS_GET",          "::",
+  "NS_GET_INT",      ":::",
+  "OP-LEFT-BRACE",   "{",
   "OP-LEFT-BRACKET", "[",
-  "LBB", "[[",
-  "OP-LEFT-PAREN", "(",
-  "OP-QUESTION", "?",
-  "OP-DOLLAR", "$",
+  "LBB",             "[[",
+  "OP-LEFT-PAREN",   "(",
+  "OP-QUESTION",     "?",
+  "OP-DOLLAR",       "$",
   NULL
 )))
+# styler: on
+
 names(infix_metadata) <- c("xml_tag", "string_value")
 # utils::getParseData()'s designation for the tokens wouldn't be valid as XML tags
 infix_metadata$parse_tag <- ifelse(
@@ -104,7 +108,8 @@ infix_overload <- data.frame(
 #' )
 #'
 #' lint(
-#'   text = "x <-      2.4",
+#'   text = "ab     <- 1L
+#'           abcdef <- 2L",
 #'   linters = infix_spaces_linter(allow_multiple_spaces = TRUE)
 #' )
 #'

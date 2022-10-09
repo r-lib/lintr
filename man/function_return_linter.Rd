@@ -18,6 +18,17 @@ lint(
   linters = function_return_linter()
 )
 
+lint(
+  text = "foo <- function(x) return(x <<- x + 1)",
+  linters = function_return_linter()
+)
+
+cat("e <- new.env() \nfoo <- function(x) return(e$val <- x + 1)")
+lint(
+  text = "e <- new.env() \nfoo <- function(x) return(e$val <- x + 1)",
+  linters = function_return_linter()
+)
+
 # okay
 lint(
   text = "foo <- function(x) return(x + 1)",

@@ -9,6 +9,9 @@ function_argument_linter()
 \description{
 Check that arguments with defaults come last in all function declarations,
 as per the tidyverse design guide.
+
+Changing the argument order can be a breaking change. An alternative to changing the argument order
+is to instead set the default for such arguments to \code{NULL}.
 }
 \examples{
 # will produce lints
@@ -30,6 +33,16 @@ lint(
 
 lint(
   text = "function(x, y, w, z = 1, ...) {}",
+  linters = function_argument_linter()
+)
+
+lint(
+  text = "function(y = 1, z = 2, x = NULL) {}",
+  linters = function_argument_linter()
+)
+
+lint(
+  text = "function(x, y, z = 1, ..., w = NULL) {}",
   linters = function_argument_linter()
 )
 

@@ -26,6 +26,11 @@ lint(
   linters = inner_combine_linter()
 )
 
+lint(
+  text = "c(log(x, base = 10), log10(x, base = 2))",
+  linters = inner_combine_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

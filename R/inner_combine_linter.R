@@ -19,6 +19,11 @@
 #'   linters = inner_combine_linter()
 #' )
 #'
+#' lint(
+#'   text = "c(log(x, base = 10), log10(x, base = 2))",
+#'   linters = inner_combine_linter()
+#' )
+#'
 #' @evalRd rd_tags("inner_combine_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

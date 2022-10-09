@@ -46,7 +46,8 @@ lint(
 )
 
 lint(
-  text = "x <-      2.4",
+  text = "ab     <- 1L
+          abcdef <- 2L",
   linters = infix_spaces_linter(allow_multiple_spaces = TRUE)
 )
 
