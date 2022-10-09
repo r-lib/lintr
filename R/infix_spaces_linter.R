@@ -4,43 +4,47 @@
 # NB: this metadata is used elsewhere in lintr, e.g. spaces_left_parentheses_linter.
 #   because of that, even though some rows of this table are currently unused, but
 #   we keep them around because it's useful to keep this info in one place.
+
+# styler: off
 infix_metadata <- data.frame(stringsAsFactors = FALSE, matrix(byrow = TRUE, ncol = 2L, c(
-  "OP-PLUS", "+",
-  "OP-MINUS", "-",
-  "OP-TILDE", "~",
-  "GT", ">",
-  "GE", ">=",
-  "LT", "<",
-  "LE", "<=",
-  "EQ", "==",
-  "NE", "!=",
-  "AND", "&",
-  "OR", "|",
-  "AND2", "&&",
-  "OR2", "||",
-  "LEFT_ASSIGN", "<-",  # also includes := and <<-
-  "RIGHT_ASSIGN", "->", # also includes ->>
-  "EQ_ASSIGN", "=",
-  "EQ_SUB", "=",        # in calls: foo(x = 1)
-  "EQ_FORMALS", "=",    # in definitions: function(x = 1)
-  "SPECIAL", "%%",
-  "OP-SLASH", "/",
-  "OP-STAR", "*",
-  "OP-COMMA", ",",
-  "OP-CARET", "^",      # also includes **
-  "OP-AT", "@",
-  "OP-EXCLAMATION", "!",
-  "OP-COLON", ":",
-  "NS_GET", "::",
-  "NS_GET_INT", ":::",
-  "OP-LEFT-BRACE", "{",
+  "OP-PLUS",         "+",
+  "OP-MINUS",        "-",
+  "OP-TILDE",        "~",
+  "GT",              ">",
+  "GE",              ">=",
+  "LT",              "<",
+  "LE",              "<=",
+  "EQ",              "==",
+  "NE",              "!=",
+  "AND",              "&",
+  "OR",              "|",
+  "AND2",            "&&",
+  "OR2",             "||",
+  "LEFT_ASSIGN",     "<-",  # also includes := and <<-
+  "RIGHT_ASSIGN",    "->",  # also includes ->>
+  "EQ_ASSIGN",       "=",
+  "EQ_SUB",          "=",   # in calls: foo(x = 1)
+  "EQ_FORMALS",      "=",   # in definitions: function(x = 1)
+  "SPECIAL",         "%%",
+  "OP-SLASH",        "/",
+  "OP-STAR",         "*",
+  "OP-COMMA",        ",",
+  "OP-CARET",        "^",   # also includes **
+  "OP-AT",           "@",
+  "OP-EXCLAMATION",  "!",
+  "OP-COLON",        ":",
+  "NS_GET",          "::",
+  "NS_GET_INT",      ":::",
+  "OP-LEFT-BRACE",   "{",
   "OP-LEFT-BRACKET", "[",
-  "LBB", "[[",
-  "OP-LEFT-PAREN", "(",
-  "OP-QUESTION", "?",
-  "OP-DOLLAR", "$",
+  "LBB",             "[[",
+  "OP-LEFT-PAREN",   "(",
+  "OP-QUESTION",     "?",
+  "OP-DOLLAR",       "$",
   NULL
 )))
+# styler: on
+
 names(infix_metadata) <- c("xml_tag", "string_value")
 # utils::getParseData()'s designation for the tokens wouldn't be valid as XML tags
 infix_metadata$parse_tag <- ifelse(
@@ -70,7 +74,7 @@ infix_overload <- data.frame(
 #' Check that infix operators are surrounded by spaces. Enforces the corresponding Tidyverse style guide rule;
 #'   see <https://style.tidyverse.org/syntax.html#infix-operators>.
 #'
-#' @param exclude_operators Character vector of operators to exlude from consideration for linting.
+#' @param exclude_operators Character vector of operators to exclude from consideration for linting.
 #'   Default is to include the following "low-precedence" operators:
 #'   `+`, `-`, `~`, `>`, `>=`, `<`, `<=`, `==`, `!=`, `&`, `&&`, `|`, `||`, `<-`, `:=`, `<<-`, `->`, `->>`,
 #'   `=`, `/`, `*`, and any infix operator (exclude infixes by passing `"%%"`). Note that `<-`, `:=`, and `<<-`
@@ -79,6 +83,45 @@ infix_overload <- data.frame(
 #' @param allow_multiple_spaces Logical, default `TRUE`. If `FALSE`, usage like `x  =  2` will also be linted;
 #'   excluded by default because such usage can sometimes be used for better code alignment, as is allowed
 #'   by the style guide.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "x<-1L",
+#'   linters = infix_spaces_linter()
+#' )
+#'
+#' lint(
+#'   text = "1:4 %>%sum()",
+#'   linters = infix_spaces_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "x <- 1L",
+#'   linters = infix_spaces_linter()
+#' )
+#'
+#' lint(
+#'   text = "1:4 %>% sum()",
+#'   linters = infix_spaces_linter()
+#' )
+#'
+#' code_lines <- "
+#' ab     <- 1L
+#' abcdef <- 2L
+#' "
+#' cat(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = infix_spaces_linter(allow_multiple_spaces = TRUE)
+#' )
+#'
+#' lint(
+#'   text = "a||b",
+#'   linters = infix_spaces_linter(exclude_operators = "||")
+#' )
+#'
 #' @evalRd rd_tags("infix_spaces_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
@@ -132,6 +175,11 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
     xml <- source_expression$xml_parsed_content
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    xml_nodes_to_lints(bad_expr, source_expression = source_expression, lint_message = lint_message, type = "style")
+    xml_nodes_to_lints(
+      bad_expr,
+      source_expression = source_expression,
+      lint_message = lint_message,
+      type = "style"
+    )
   })
 }
