@@ -15,7 +15,7 @@ paste_linter(allow_empty_sep = FALSE, allow_to_string = FALSE)
 }
 \description{
 The following issues are linted by default by this linter
-(see options for which can be de-activated optionally):
+(see arguments for which can be de-activated optionally):
 }
 \details{
 \enumerate{
