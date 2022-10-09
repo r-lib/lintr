@@ -1,8 +1,7 @@
-trail_msg <- "Trailing semicolons are not needed."
-comp_msg <- "Compound semicolons are discouraged. Replace them by a newline."
-
 test_that("Lint all semicolons", {
   linter <- semicolon_linter()
+  trail_msg <- "Trailing semicolons are not needed."
+  comp_msg <- "Compound semicolons are discouraged. Replace them by a newline."
 
   # No semicolon
   expect_lint("", NULL, linter)
