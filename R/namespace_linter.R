@@ -54,7 +54,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     ## Case 2/3/4: problems with foo in pkg::foo / pkg:::foo
 
     # run here, not in the factory, to allow for run- vs. "compile"-time differences in package structure
-    namespaces <- lapply(packages, getNamespace)
+    namespaces <- lapply(packages, function(package) tryCatch(getNamespace(package), error = identity))
     failed_namespace <- vapply(namespaces, inherits, "condition", FUN.VALUE = logical(1L))
     if (any(failed_namespace)) {
       stop("Failed to retrieve namespaces for one or more of the packages.", call. = FALSE)
