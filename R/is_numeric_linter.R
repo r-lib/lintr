@@ -38,7 +38,7 @@ is_numeric_linter <- function() {
   # TODO(#1636): is.numeric(x) || is.integer(x) || is.factor(x) is also redundant
   # TODO(michaelchirico): consdier capturing any(class(x) == "numeric/integer")
   #   here directly; currently we rely on class_equals_linter() also active
-  # TODO(michaelchirico): inherits(x, c("numeric", "integer"))
+  # TODO(michaelchirico): also catch inherits(x, c("numeric", "integer"))
   is_numeric_expr <- "expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.numeric']]"
   is_integer_expr <- "expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.integer']]"
 
