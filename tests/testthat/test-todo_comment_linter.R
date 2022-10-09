@@ -19,6 +19,7 @@ test_that("returns the correct linting", {
     list(
       list(message = lint_msg, line_number = 2L, column_number = 1L),
       list(message = lint_msg, line_number = 4L, column_number = 3L)
-    ), linter
+    ),
+    linter
   )
 })
