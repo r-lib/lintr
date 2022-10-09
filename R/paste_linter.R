@@ -1,7 +1,7 @@
 #' Raise lints for several common poor usages of `paste()`
 #'
 #' The following issues are linted by default by this linter
-#'   (see options for which can be de-activated optionally):
+#'   (see arguments for which can be de-activated optionally):
 #'
 #'  1. Block usage of [paste()] with `sep = ""`. [paste0()] is a faster, more concise alternative.
 #'  2. Block usage of `paste()` or `paste0()` with `collapse = ", "`. [toString()] is a direct
