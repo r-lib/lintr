@@ -5,6 +5,29 @@
 #'   and [testthat::expect_true()] can also be used for such tests,
 #'   but it is better to use the tailored function instead.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "expect_equal(class(x), 'data.frame')",
+#'   linters = expect_s3_class_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_equal(class(x), 'numeric')",
+#'   linters = expect_s3_class_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "expect_s3_class(x, 'data.frame')",
+#'   linters = expect_s3_class_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_type(x, 'double')",
+#'   linters = expect_s3_class_linter()
+#' )
+#'
 #' @evalRd rd_tags("expect_s3_class_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -73,6 +96,19 @@ is_s3_class_calls <- paste0("is.", c(
 #' [testthat::expect_s4_class()] exists specifically for testing the class
 #'   of S4 objects. [testthat::expect_true()] can also be used for such tests,
 #'   but it is better to use the tailored function instead.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "expect_true(is(x, 'Matrix'))",
+#'   linters = expect_s4_class_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "expect_s4_class(x, 'Matrix')",
+#'   linters = expect_s4_class_linter()
+#' )
 #'
 #' @evalRd rd_tags("expect_s4_class_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.

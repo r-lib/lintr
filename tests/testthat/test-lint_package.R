@@ -75,15 +75,10 @@ test_that(
     # the test checks both approaches
 
     pkg_path <- test_path("dummy_packages", "assignmentLinter")
-    config_path <- file.path(pkg_path, ".lintr")
 
     # Add a .lintr that excludes the whole of `abc.R` and the first line of
     # `jkl.R` (and remove it on finishing this test)
-    cat(
-      "exclusions: list('R/abc.R', 'R/jkl.R' = 1)\n",
-      file = config_path
-    )
-    on.exit(unlink(config_path))
+    local_config(pkg_path, "exclusions: list('R/abc.R', 'R/jkl.R' = 1)")
 
     expected_lines <- "mno = 789"
     lints_from_outside <- lint_package(

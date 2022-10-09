@@ -13,6 +13,20 @@ negating the output, but it is better to use the tailored function instead.
 The reverse is also true -- use \code{expect_false(A)} instead of
 \code{expect_true(!A)}.
 }
+\examples{
+# will produce lints
+lint(
+  text = "expect_true(!x)",
+  linters = expect_not_linter()
+)
+
+# okay
+lint(
+  text = "expect_false(x)",
+  linters = expect_not_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
