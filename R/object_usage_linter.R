@@ -161,7 +161,7 @@ extract_glued_symbols <- function(expr) {
   glued_symbols <- new.env(parent = emptyenv())
 
   unexpected_error <- function(cond) {
-    stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond))
+    stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond)) # nocov
   }
   for (cl in glue_calls) {
     # TODO(michaelchirico): consider dropping tryCatch() here if we're more confident in our logic
