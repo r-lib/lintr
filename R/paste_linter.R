@@ -21,6 +21,40 @@
 #'   `paste()` with `sep = ""` is not linted.
 #' @param allow_to_string Logical, default `FALSE`. If `TRUE`, usage of
 #'   `paste()` and `paste0()` with `collapse = ", "` is not linted.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "paste('a', 'b', sep = '')",
+#'   linters = paste_linter()
+#' )
+#'
+#' lint(
+#'   text = "paste(c('a', 'b'), collapse = ', ')",
+#'   linters = paste_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "paste0('a', 'b')",
+#'   linters = paste_linter()
+#' )
+#'
+#' lint(
+#'   text = "paste('a', 'b', sep = '')",
+#'   linters = paste_linter(allow_empty_sep = TRUE)
+#' )
+#'
+#' lint(
+#'   text = "toString(c('x', 'y'))",
+#'   linters = paste_linter()
+#' )
+#'
+#' lint(
+#'   text = "paste(c('a', 'b'), collapse = ', ')",
+#'   linters = paste_linter(allow_to_string = TRUE)
+#' )
+#'
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {

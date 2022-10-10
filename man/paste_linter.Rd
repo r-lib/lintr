@@ -33,6 +33,40 @@ Only target scalar usages -- \code{strrep} can handle more complicated cases (e.
 but those aren't as easily translated from a \code{paste(collapse=)} call.
 }
 }
+\examples{
+# will produce lints
+lint(
+  text = "paste('a', 'b', sep = '')",
+  linters = paste_linter()
+)
+
+lint(
+  text = "paste(c('a', 'b'), collapse = ', ')",
+  linters = paste_linter()
+)
+
+# okay
+lint(
+  text = "paste0('a', 'b')",
+  linters = paste_linter()
+)
+
+lint(
+  text = "paste('a', 'b', sep = '')",
+  linters = paste_linter(allow_empty_sep = TRUE)
+)
+
+lint(
+  text = "toString(c('x', 'y'))",
+  linters = paste_linter()
+)
+
+lint(
+  text = "paste(c('a', 'b'), collapse = ', ')",
+  linters = paste_linter(allow_to_string = TRUE)
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
