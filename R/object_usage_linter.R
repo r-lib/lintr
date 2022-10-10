@@ -191,7 +191,7 @@ symbol_extractor <- function(text, envir, data) {
     error = function(...) NULL,
     warning = function(...) NULL
   )
-  if (length(parsed_text) == 0) {
+  if (length(parsed_text) == 0L) {
     return("")
   }
   parse_data <- utils::getParseData(parsed_text)
