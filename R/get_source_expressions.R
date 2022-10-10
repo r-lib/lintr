@@ -640,10 +640,12 @@ fix_eq_assigns <- function(pc) {
     #   so it likely requires some GHA print debugging -- tedious :)
     end <- true_locs[i]
     j <- end + 1L
+    # nocov start: only runs on certain R versions
     while (j <= length(expr_locs) && !expr_locs[j]) {
       end <- j
       j <- j + 1L
     }
+    # nocov end
 
     prev_loc <- prev_locs[start]
     next_loc <- next_locs[end]
