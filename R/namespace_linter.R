@@ -6,6 +6,35 @@
 #'
 #' @param check_exports Check if `symbol` is exported from `namespace` in `namespace::symbol` calls.
 #' @param check_nonexports Check if `symbol` exists in `namespace` in `namespace:::symbol` calls.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "xyzxyz::sd(c(1, 2, 3))",
+#'   linters = namespace_linter()
+#' )
+#'
+#' lint(
+#'   text = "stats::ssd(c(1, 2, 3))",
+#'   linters = namespace_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "stats::sd(c(1, 2, 3))",
+#'   linters = namespace_linter()
+#' )
+#'
+#' lint(
+#'   text = "stats::ssd(c(1, 2, 3))",
+#'   linters = namespace_linter(check_exports = FALSE)
+#' )
+#'
+#' lint(
+#'   text = "stats:::ssd(c(1, 2, 3))",
+#'   linters = namespace_linter(check_nonexports = FALSE)
+#' )
+#'
 #' @evalRd rd_tags("namespace_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

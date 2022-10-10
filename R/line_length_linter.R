@@ -2,7 +2,21 @@
 #'
 #' Check that the line length of both comments and code is less than `length`.
 #'
-#' @param length maximum line length allowed.
+#' @param length maximum line length allowed. Default is 80L (Hollerith limit).
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = strrep("x", 23L),
+#'   linters = line_length_linter(length = 20L)
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = strrep("x", 21L),
+#'   linters = line_length_linter(length = 40L)
+#' )
+#'
 #' @evalRd rd_tags("line_length_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr

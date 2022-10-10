@@ -1,11 +1,15 @@
-test_that("returns the correct linting", {
+test_that("no_tab_linter skips allowed usages", {
   linter <- no_tab_linter()
-  lint_msg <- rex::rex("Use spaces to indent, not tabs.")
 
   expect_lint("blah", NULL, linter)
   expect_lint("  blah", NULL, linter)
   expect_lint("  blah", NULL, linter)
   expect_lint("#\tblah", NULL, linter)
+})
+
+test_that("no_tab_linter blocks disallowed usages", {
+  linter <- no_tab_linter()
+  lint_msg <- rex::rex("Use spaces to indent, not tabs.")
 
   expect_lint(
     "\tblah",

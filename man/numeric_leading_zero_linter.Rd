@@ -10,6 +10,30 @@ numeric_leading_zero_linter()
 While .1 and 0.1 mean the same thing, the latter is easier to read due
 to the small size of the '.' glyph.
 }
+\examples{
+# will produce lints
+lint(
+  text = "x <- .1",
+  linters = numeric_leading_zero_linter()
+)
+
+lint(
+  text = "x <- -.1",
+  linters = numeric_leading_zero_linter()
+)
+
+# okay
+lint(
+  text = "x <- 0.1",
+  linters = numeric_leading_zero_linter()
+)
+
+lint(
+  text = "x <- -0.1",
+  linters = numeric_leading_zero_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

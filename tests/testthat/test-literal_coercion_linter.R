@@ -1,34 +1,38 @@
 test_that("literal_coercion_linter skips allowed usages", {
+  linter <- line_length_linter()
+
   # naive xpath includes the "_f0" here as a literal
-  expect_lint('as.numeric(x$"_f0")', NULL, literal_coercion_linter())
+  expect_lint('as.numeric(x$"_f0")', NULL, linter)
   # only examine the first method for as.<type> methods
-  expect_lint("as.character(as.Date(x), '%Y%m%d')", NULL, literal_coercion_linter())
+  expect_lint("as.character(as.Date(x), '%Y%m%d')", NULL, linter)
 
   # we are as yet agnostic on whether to prefer literals over coerced vectors
-  expect_lint("as.integer(c(1, 2, 3))", NULL, literal_coercion_linter())
+  expect_lint("as.integer(c(1, 2, 3))", NULL, linter)
   # even more ambiguous for character vectors like here, where quotes are much
   #   more awkward to type than a sequence of numbers
-  expect_lint("as.character(c(1, 2, 3))", NULL, literal_coercion_linter())
+  expect_lint("as.character(c(1, 2, 3))", NULL, linter)
   # not possible to declare raw literals
-  expect_lint("as.raw(c(1, 2, 3))", NULL, literal_coercion_linter())
+  expect_lint("as.raw(c(1, 2, 3))", NULL, linter)
   # also not taking a stand on as.complex(0) vs. 0 + 0i
-  expect_lint("as.complex(0)", NULL, literal_coercion_linter())
+  expect_lint("as.complex(0)", NULL, linter)
   # ditto for as.integer(1e6) vs. 1000000L
-  expect_lint("as.integer(1e6)", NULL, literal_coercion_linter())
+  expect_lint("as.integer(1e6)", NULL, linter)
   # ditto for as.numeric(1:3) vs. c(1, 2, 3)
-  expect_lint("as.numeric(1:3)", NULL, literal_coercion_linter())
+  expect_lint("as.numeric(1:3)", NULL, linter)
 })
 
 test_that("literal_coercion_linter skips allowed rlang usages", {
-  expect_lint("int(1, 2.0, 3)", NULL, literal_coercion_linter())
-  expect_lint("chr('e', 'ab', 'xyz')", NULL, literal_coercion_linter())
-  expect_lint("lgl(0, 1)", NULL, literal_coercion_linter())
-  expect_lint("lgl(0L, 1)", NULL, literal_coercion_linter())
-  expect_lint("dbl(1.2, 1e5, 3L, 2E4)", NULL, literal_coercion_linter())
+  linter <- line_length_linter()
+
+  expect_lint("int(1, 2.0, 3)", NULL, linter)
+  expect_lint("chr('e', 'ab', 'xyz')", NULL, linter)
+  expect_lint("lgl(0, 1)", NULL, linter)
+  expect_lint("lgl(0L, 1)", NULL, linter)
+  expect_lint("dbl(1.2, 1e5, 3L, 2E4)", NULL, linter)
   # make sure using namespace (`rlang::`) doesn't create problems
-  expect_lint("rlang::int(1, 2, 3)", NULL, literal_coercion_linter())
+  expect_lint("rlang::int(1, 2, 3)", NULL, linter)
   # even if scalar, carve out exceptions for the following
-  expect_lint("int(1.0e6)", NULL, literal_coercion_linter())
+  expect_lint("int(1.0e6)", NULL, linter)
 })
 
 skip_if_not_installed("tibble")
