@@ -166,7 +166,7 @@ extract_glued_symbols <- function(expr) {
       error = function(...) NULL,
       warning = function(...) NULL
     )[[1L]]
-    if (is.null(parsed_cl)) next
+    if (is.null(parsed_cl)) next # nocov: requires a logic flaw capturing glue expressions
     parsed_cl[[".envir"]] <- glued_symbols
     parsed_cl[[".transformer"]] <- symbol_extractor
     # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint
