@@ -46,7 +46,7 @@
 #'   return(e$val)
 #' }
 #' "
-#' cat(code_lines)
+#' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
 #'   linters = function_return_linter()

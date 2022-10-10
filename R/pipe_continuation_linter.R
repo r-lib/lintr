@@ -7,14 +7,14 @@
 #' @examples
 #' # will produce lints
 #' code_lines <- "1:3 %>%\n mean() %>% as.character()"
-#' cat(code_lines)
+#' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
 #'   linters = pipe_continuation_linter()
 #' )
 #'
-#' code_lines <- "1:3 |> mean() |>\n     as.character()"
-#' cat(code_lines)
+#' code_lines <- "1:3 |> mean() |>\n as.character()"
+#' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
 #'   linters = pipe_continuation_linter()
@@ -27,7 +27,7 @@
 #' )
 #'
 #' code_lines <- "1:3 %>%\n mean() %>%\n as.character()"
-#' cat(code_lines)
+#' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
 #'   linters = pipe_continuation_linter()
@@ -39,7 +39,7 @@
 #' )
 #'
 #' code_lines <- "1:3 |>\n mean() |>\n as.character()"
-#' cat(code_lines)
+#' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
 #'   linters = pipe_continuation_linter()

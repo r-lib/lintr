@@ -45,6 +45,16 @@ lint(
   linters = paste_linter()
 )
 
+lint(
+  text = "paste0(c('a', 'b'), sep = ' ')",
+  linters = paste_linter()
+)
+
+lint(
+  text = "paste0(rep('*', 10L), collapse='')",
+  linters = paste_linter()
+)
+
 # okay
 lint(
   text = "paste0('a', 'b')",
@@ -64,6 +74,16 @@ lint(
 lint(
   text = "paste(c('a', 'b'), collapse = ', ')",
   linters = paste_linter(allow_to_string = TRUE)
+)
+
+lint(
+  text = "paste(c('a', 'b'))",
+  linters = paste_linter()
+)
+
+lint(
+  text = "strrep('*', 10L)",
+  linters = paste_linter()
 )
 
 }
