@@ -9,6 +9,48 @@ pipe_continuation_linter()
 \description{
 Check that each step in a pipeline is on a new line, or the entire pipe fits on one line.
 }
+\examples{
+# will produce lints
+code_lines <- "1:3 \%>\%\n mean() \%>\% as.character()"
+cat(code_lines)
+lint(
+  text = code_lines,
+  linters = pipe_continuation_linter()
+)
+
+code_lines <- "1:3 |> mean() |>\n     as.character()"
+cat(code_lines)
+lint(
+  text = code_lines,
+  linters = pipe_continuation_linter()
+)
+
+# okay
+lint(
+  text = "1:3 \%>\% mean() \%>\% as.character()",
+  linters = pipe_continuation_linter()
+)
+
+code_lines <- "1:3 \%>\%\n mean() \%>\%\n as.character()"
+cat(code_lines)
+lint(
+  text = code_lines,
+  linters = pipe_continuation_linter()
+)
+
+lint(
+  text = "1:3 |> mean() |> as.character()",
+  linters = pipe_continuation_linter()
+)
+
+code_lines <- "1:3 |>\n mean() |>\n as.character()"
+cat(code_lines)
+lint(
+  text = code_lines,
+  linters = pipe_continuation_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr
 \url{https://style.tidyverse.org/pipes.html#long-lines-2}
