@@ -191,14 +191,10 @@ symbol_extractor <- function(text, envir, data) {
     error = function(...) NULL,
     warning = function(...) NULL
   )
-  if (is.null(parsed_text)) {
+  if (length(parsed_text) == 0) {
     return("")
   }
   parse_data <- utils::getParseData(parsed_text)
-  # covers NULL & NA cases
-  if (nrow(parse_data) == 0L) {
-    return("")
-  }
   symbols <- parse_data$text[parse_data$token == "SYMBOL"]
   for (sym in symbols) {
     assign(sym, NULL, envir = envir)

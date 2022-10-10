@@ -411,7 +411,9 @@ test_that("interprets glue expressions", {
   "), "local_var", object_usage_linter(interpret_glue = FALSE))
 })
 
-test_that("errors in glue syntax don't fail lint()", {
+test_that("errors/edge cases in glue syntax don't fail lint()", {
+  linter <- object_usage_linter()
+
   # no lint & no error, despite glue error
   expect_warning(
     expect_lint(
@@ -423,7 +425,7 @@ test_that("errors in glue syntax don't fail lint()", {
         }
       "),
       NULL,
-      object_usage_linter()
+      linter
     ),
     "Evaluating glue expression.*failed: Expecting '\\}'"
   )
@@ -438,9 +440,21 @@ test_that("errors in glue syntax don't fail lint()", {
         }
       "),
       "local variable 'a'",
-      object_usage_linter()
+      linter
     ),
     "Evaluating glue expression.*failed: Expecting '\\}'"
+  )
+
+  # empty glue expression {}
+  expect_lint(
+    trim_some("
+      fun <- function() {
+        a <- 2
+        glue::glue('The answer is {}: {a}')
+      }
+    "),
+    NULL,
+    linter
   )
 })
 
