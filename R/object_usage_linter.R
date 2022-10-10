@@ -265,6 +265,7 @@ parse_check_usage <- function(expression,
   )
 
   missing <- is.na(res$message)
+  # nocov start
   if (any(missing)) {
     res[missing, ] <- re_matches(
       vals[missing],
@@ -278,6 +279,7 @@ parse_check_usage <- function(expression,
       )
     )
   }
+  # nocov end
 
   res <- res[!is.na(res$message), ]
 
