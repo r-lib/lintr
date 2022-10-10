@@ -1,5 +1,6 @@
 test_that("returns the correct linting", {
   linter <- object_usage_linter()
+  local_var_msg <- rex::rex("local variable", anything, "assigned but may not be used")
 
   expect_lint("blah", NULL, linter)
 
@@ -33,7 +34,7 @@ test_that("returns the correct linting", {
         a <- 1
       }
     "),
-    rex::rex("local variable", anything, "assigned but may not be used"),
+    local_var_msg,
     linter
   )
 
@@ -44,7 +45,7 @@ test_that("returns the correct linting", {
         1
       }
     "),
-    rex::rex("local variable", anything, "assigned but may not be used"),
+    local_var_msg,
     linter
   )
 
@@ -54,7 +55,7 @@ test_that("returns the correct linting", {
         a <- 1
       }
     "),
-    rex::rex("local variable", anything, "assigned but may not be used"),
+    local_var_msg,
     linter
   )
 
@@ -65,7 +66,7 @@ test_that("returns the correct linting", {
         a = 1
       }
     "),
-    rex::rex("local variable", anything, "assigned but may not be used"),
+    local_var_msg,
     linter
   )
 
@@ -77,7 +78,7 @@ test_that("returns the correct linting", {
       }
     "),
     list(
-      rex::rex("local variable", anything, "assigned but may not be used"),
+      local_var_msg,
       rex::rex("no visible binding for global variable ", anything)
     ),
     linter
@@ -114,7 +115,7 @@ test_that("returns the correct linting", {
         1
       })
     "),
-    rex::rex("local variable", anything, "assigned but may not be used"),
+    local_var_msg,
     linter
   )
 
@@ -125,7 +126,7 @@ test_that("returns the correct linting", {
         1
       })
     "),
-    rex::rex("local variable", anything, "assigned but may not be used"),
+    local_var_msg,
     linter
   )
 })
@@ -154,12 +155,12 @@ test_that("replace_functions_stripped", {
 
 test_that("eval errors are ignored", {
   expect_lint(
-    trim_some("
-    setMethod(\"[[<-\", c(\"stampedEnv\", \"character\", \"missing\"),
+    trim_some('
+    setMethod("[[<-", c("stampedEnv", "character", "missing"),
       function(x) {
         x
       })
-    "),
+    '),
     NULL,
     object_usage_linter()
   )
@@ -191,14 +192,14 @@ test_that("object-usage line-numbers are relative to start-of-file", {
 test_that("used symbols are detected correctly", {
   # From #666
   expect_lint(
-    trim_some("
+    trim_some('
       foo <- data.frame(0)
       foo$bar <- 1
       zero <- function() {
-        file.info(\"/dev/null\")$size
+        file.info("/dev/null")$size
       }
       message(zero())
-    "),
+    '),
     NULL,
     object_usage_linter()
   )
@@ -217,37 +218,37 @@ test_that("used symbols are detected correctly", {
 
   # Also test deeper nesting
   expect_lint(
-    trim_some("
+    trim_some('
       foo <- list(0)
       foo$bar$baz$goo <- 1
       zero <- function() {
-        file.info(\"/dev/null\")$size
+        file.info("/dev/null")$size
         foo$bar
         foo$bar$baz
         foo$bar$baz$goo
       }
       message(zero())
-    "),
+    '),
     NULL,
     object_usage_linter()
   )
 
   # Test alternative assignment and access methods
   expect_lint(
-    trim_some("
+    trim_some('
       foo <- list(0)
-      foo[['bar']][['baz']][['goo']] <- 1
+      foo[["bar"]][["baz"]][["goo"]] <- 1
       zero <- function() {
-        file.info(\"/dev/null\")$size
+        file.info("/dev/null")$size
         foo$bar
         foo$bar$baz
         foo$bar$baz$goo
-        foo[[\"bar\"]]
-        foo[[c(\"bar\", \"baz\")]]
-        foo[[\"bar\"]]$baz$goo
+        foo[["bar"]]
+        foo[[c("bar", "baz")]]
+        foo[["bar"]]$baz$goo
       }
       message(zero())
-    "),
+    '),
     NULL,
     object_usage_linter()
   )
@@ -335,7 +336,7 @@ test_that("package detection works", {
 
 test_that("robust against errors", {
   expect_lint(
-    "assign(\"x\", unknown_function)",
+    'assign("x", unknown_function)',
     NULL,
     object_usage_linter()
   )
@@ -411,7 +412,9 @@ test_that("interprets glue expressions", {
   "), "local_var", object_usage_linter(interpret_glue = FALSE))
 })
 
-test_that("errors in glue syntax don't fail lint()", {
+test_that("errors/edge cases in glue syntax don't fail lint()", {
+  linter <- object_usage_linter()
+
   # no lint & no error, despite glue error
   expect_warning(
     expect_lint(
@@ -423,7 +426,7 @@ test_that("errors in glue syntax don't fail lint()", {
         }
       "),
       NULL,
-      object_usage_linter()
+      linter
     ),
     "Evaluating glue expression.*failed: Expecting '\\}'"
   )
@@ -438,9 +441,33 @@ test_that("errors in glue syntax don't fail lint()", {
         }
       "),
       "local variable 'a'",
-      object_usage_linter()
+      linter
     ),
     "Evaluating glue expression.*failed: Expecting '\\}'"
+  )
+
+  # complete {...}, but syntax error in code -> ignore
+  expect_lint(
+    trim_some("
+      fun <- function() {
+        a <- 2
+        glue::glue('The answer is {a + }')
+      }
+    "),
+    "local variable 'a'",
+    linter
+  )
+
+  # empty glue expression {}
+  expect_lint(
+    trim_some("
+      fun <- function() {
+        a <- 2
+        glue::glue('The answer is {}: {a}')
+      }
+    "),
+    NULL,
+    linter
   )
 })
 
@@ -543,4 +570,18 @@ test_that("respects `skip_with` argument for `with()` expressions", {
 
   expect_length(lint(f, object_usage_linter(skip_with = TRUE)), 0L)
   expect_length(lint(f, object_usage_linter(skip_with = FALSE)), 2L)
+})
+
+test_that("missing libraries don't cause issue", {
+  expect_lint(
+    trim_some("
+      library(a.a.a.z.z.z)
+      foo <- function() {
+        a <- 1
+        a
+      }
+    "),
+    NULL,
+    object_usage_linter()
+  )
 })
