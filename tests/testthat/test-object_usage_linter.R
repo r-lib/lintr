@@ -445,6 +445,18 @@ test_that("errors/edge cases in glue syntax don't fail lint()", {
     "Evaluating glue expression.*failed: Expecting '\\}'"
   )
 
+  # complete {...}, but syntax error in code -> ignore
+  expect_lint(
+    trim_some("
+      fun <- function() {
+        a <- 2
+        glue::glue('The answer is {a + }')
+      }
+    "),
+    "local variable 'a'",
+    linter
+  )
+
   # empty glue expression {}
   expect_lint(
     trim_some("
