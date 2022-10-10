@@ -11,3 +11,33 @@ The argument placeholder \code{.} in magrittr pipelines is unnecessary if
 passed as the first positional argument; using it can cause confusion
 and impacts readability.
 }
+\examples{
+# will produce lints
+lint(
+  text = "x \%>\% sum(., na.rm = TRUE)",
+  linters = unnecessary_placeholder_linter()
+)
+
+# okay
+lint(
+  text = "x \%>\% sum(na.rm = TRUE)",
+  linters = unnecessary_placeholder_linter()
+)
+
+lint(
+  text = "x \%>\% lm(data = ., y ~ z)",
+  linters = unnecessary_placeholder_linter()
+)
+
+lint(
+  text = "x \%>\% outer(., .)",
+  linters = unnecessary_placeholder_linter()
+)
+
+}
+\seealso{
+\link{linters} for a complete list of linters available in lintr.
+}
+\section{Tags}{
+\link[=best_practices_linters]{best_practices}, \link[=readability_linters]{readability}
+}
