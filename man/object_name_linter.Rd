@@ -33,6 +33,40 @@ will be thrown on this object (even though you don't "own" its full name).
 The best way to get lintr to work correctly is to install the package so
 that it's available in the session where this linter is running.
 }
+\examples{
+# will produce lints
+lint(
+  text = "my_var <- 1L",
+  linters = object_name_linter(styles = "CamelCase")
+)
+
+lint(
+  text = "xYz <- 1L",
+  linters = object_name_linter(styles = "UPPERCASE")
+)
+
+lint(
+  text = "MyVar <- 1L",
+  linters = object_name_linter(styles = "dotted.case")
+)
+
+# okay
+lint(
+  text = "my_var <- 1L",
+  linters = object_name_linter(styles = "snake_case")
+)
+
+lint(
+  text = "xyz <- 1L",
+  linters = object_name_linter(styles = "lowercase")
+)
+
+lint(
+  text = "my.var <- 1L",
+  linters = object_name_linter(styles = "dotted.case")
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

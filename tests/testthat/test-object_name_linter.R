@@ -1,3 +1,4 @@
+# styler: off
 test_that("styles are correctly identified", {
   styles <- names(lintr:::style_regexes)
   do_style_check <- function(nms) lapply(styles, lintr:::check_style, nms = nms)
@@ -35,6 +36,7 @@ test_that("styles are correctly identified", {
   expect_identical(do_style_check("."),             list(TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
   expect_identical(do_style_check("%^%"),           list(TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
 })
+# styler: on
 
 test_that("linter ignores some objects", {
   # names for which style check is ignored
