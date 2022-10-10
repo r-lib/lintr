@@ -85,3 +85,7 @@ test_that("it handles multi-line lints correctly", {
   expect_identical(l$line, code[[1L]])
   expect_identical(l$ranges, list(as.integer(c(xml2::xml_attr(node, "col1"), nchar(code[1L])))))
 })
+
+test_that("erroneous input errors", {
+  expect_error(xml_nodes_to_lints(1L), "Expected an xml_nodeset", fixed = TRUE)
+})
