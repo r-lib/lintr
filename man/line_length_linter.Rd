@@ -7,10 +7,24 @@
 line_length_linter(length = 80L)
 }
 \arguments{
-\item{length}{maximum line length allowed.}
+\item{length}{maximum line length allowed. Default is 80L (Hollerith limit).}
 }
 \description{
 Check that the line length of both comments and code is less than \code{length}.
+}
+\examples{
+# will produce lints
+lint(
+  text = strrep("x", 23L),
+  linters = line_length_linter(length = 20L)
+)
+
+# okay
+lint(
+  text = strrep("x", 21L),
+  linters = line_length_linter(length = 40L)
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr

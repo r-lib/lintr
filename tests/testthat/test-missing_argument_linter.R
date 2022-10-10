@@ -1,6 +1,5 @@
-test_that("returns the correct linting", {
+test_that("missing_argument_linter skips allowed usages", {
   linter <- missing_argument_linter()
-  lint_msg <- rex::rex("Missing argument in function call.")
 
   expect_lint("fun(x, a = 1)", NULL, linter)
   expect_lint("fun(x = 1, a = 1)", NULL, linter)
@@ -11,6 +10,11 @@ test_that("returns the correct linting", {
   expect_lint("alist(a =, b =, c = 1, 0)", NULL, linter)
 
   expect_lint("test(a =, b =, c = 1, 0)", NULL, missing_argument_linter("test"))
+})
+
+test_that("missing_argument_linter blocks disallowed usages", {
+  linter <- missing_argument_linter()
+  lint_msg <- rex::rex("Missing argument in function call.")
 
   expect_lint("fun(, a = 1)", list(message = lint_msg), linter)
   expect_lint("f <- function(x, y) x\nf(, y = 1)\n", list(line = "f(, y = 1)"), linter)
@@ -50,7 +54,11 @@ test_that("returns the correct linting", {
     missing_argument_linter(allow_trailing = TRUE)
   )
   # ... but not if the final argument is named
-  expect_lint("fun(a = 1, b = )", list(message = lint_msg), missing_argument_linter(allow_trailing = TRUE))
+  expect_lint(
+    "fun(a = 1, b = )",
+    list(message = lint_msg),
+    missing_argument_linter(allow_trailing = TRUE)
+  )
 
   # Fixes https://github.com/r-lib/lintr/issues/906
   # Comments should be ignored so that missing arguments could be
