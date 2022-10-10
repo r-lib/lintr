@@ -11,6 +11,30 @@ sort_linter()
 and around twice as fast as \code{.[order(.)]}, with the gap in performance
 growing with the vector size.
 }
+\examples{
+# will produce lints
+lint(
+  text = "x[order(x)]",
+  linters = sort_linter()
+)
+
+lint(
+  text = "x[order(x, decreasing = TRUE)]",
+  linters = sort_linter()
+)
+
+# okay
+lint(
+  text = "x[sample(order(x))]",
+  linters = sort_linter()
+)
+
+lint(
+  text = "y[order(x)]",
+  linters = sort_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
