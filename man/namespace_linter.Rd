@@ -19,7 +19,7 @@ potentially change the global state.
 \examples{
 # will produce lints
 lint(
-  text = "statts::sd(c(1, 2, 3))",
+  text = "xyzxyz::sd(c(1, 2, 3))",
   linters = namespace_linter()
 )
 

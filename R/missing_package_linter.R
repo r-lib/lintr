@@ -5,7 +5,7 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "library(statts)",
+#'   text = "library(xyzxyz)",
 #'   linters = missing_package_linter()
 #' )
 #'

@@ -12,7 +12,7 @@ Check for missing packages in \code{library()}, \code{require()}, \code{loadName
 \examples{
 # will produce lints
 lint(
-  text = "library(statts)",
+  text = "library(xyzxyz)",
   linters = missing_package_linter()
 )
 
