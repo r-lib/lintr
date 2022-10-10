@@ -224,6 +224,22 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #'   extract its string value with [xml2::xml_text()]. If `s` is an `xml_node` or `xml_nodeset`
 #'   and `xpath` is specified, it is extracted with [xml2::xml_find_chr()].
 #' @param xpath An XPath, passed on to [xml2::xml_find_chr()] after wrapping with `string()`.
+#'
+#' @examples
+#' tmp <- withr::local_tempfile(lines = "c('a', 'b')")
+#' expr_as_xml <- get_source_expressions(tmp)$expressions[[1L]]$xml_parsed_content
+#' writeLines(as.character(expr_as_xml))
+#' get_r_string(expr_as_xml, "expr[2]") # "a"
+#' get_r_string(expr_as_xml, "expr[3]") # "b"
+#'
+#' # more importantly, extract strings under R>=4 raw strings
+#' @examplesIf getRversion() >= "4.0.0"
+#' tmp4.0 <- withr::local_tempfile(lines = "c(R'(a\\b)', R'--[a\\\"\'\"\\b]--')")
+#' expr_as_xml4.0 <- get_source_expressions(tmp4.0)$expressions[[1L]]$xml_parsed_content
+#' writeLines(as.character(expr_as_xml4.0))
+#' get_r_string(expr_as_xml4.0, "expr[2]") # "a\\b"
+#' get_r_string(expr_as_xml4.0, "expr[3]") # "a\\\"'\"\\b"
+#'
 #' @export
 get_r_string <- function(s, xpath = NULL) {
   if (inherits(s, c("xml_node", "xml_nodeset"))) {

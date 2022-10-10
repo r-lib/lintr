@@ -159,16 +159,15 @@ extract_glued_symbols <- function(expr) {
     return(character())
   }
 
+  unexpected_error <- function(cond) {
+    stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond)) # nocov
+  }
   glued_symbols <- new.env(parent = emptyenv())
   for (call_text in xml2::xml_text(glue_calls)) {
-    parsed_call <- tryCatch(
-      str2lang(call_text),
-      error = function(...) NULL,
-      warning = function(...) NULL
-    )
-    if (is.null(parsed_call)) next
-    parsed_call[[".envir"]] <- glued_symbols
-    parsed_call[[".transformer"]] <- symbol_extractor
+    # TODO(michaelchirico): consider dropping tryCatch() here if we're more confident in our logic
+    parsed_cl <- tryCatch(str2lang(call_text), error = unexpected_error, warning = unexpected_error)
+    parsed_cl[[".envir"]] <- glued_symbols
+    parsed_cl[[".transformer"]] <- symbol_extractor
     # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint
     tryCatch(
       eval(parsed_call),
@@ -191,14 +190,11 @@ symbol_extractor <- function(text, envir, data) {
     error = function(...) NULL,
     warning = function(...) NULL
   )
-  if (is.null(parsed_text)) {
+  if (length(parsed_text) == 0L) {
     return("")
   }
   parse_data <- utils::getParseData(parsed_text)
-  # covers NULL & NA cases
-  if (nrow(parse_data) == 0L) {
-    return("")
-  }
+
   # strip backticked symbols; `x` is the same as x.
   symbols <- gsub("^`(.*)`$", "\\1", parse_data$text[parse_data$token == "SYMBOL"])
   for (sym in symbols) {

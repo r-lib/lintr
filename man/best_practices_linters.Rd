@@ -21,6 +21,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{condition_message_linter}}}
 \item{\code{\link{conjunct_test_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
+\item{\code{\link{empty_assignment_linter}}}
 \item{\code{\link{expect_comparison_linter}}}
 \item{\code{\link{expect_length_linter}}}
 \item{\code{\link{expect_named_linter}}}
@@ -37,6 +38,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{function_return_linter}}}
 \item{\code{\link{ifelse_censor_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
+\item{\code{\link{is_numeric_linter}}}
 \item{\code{\link{lengths_linter}}}
 \item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
@@ -51,6 +53,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
 \item{\code{\link{unnecessary_lambda_linter}}}
+\item{\code{\link{unnecessary_placeholder_linter}}}
 \item{\code{\link{unreachable_code_linter}}}
 \item{\code{\link{unused_import_linter}}}
 \item{\code{\link{vector_logic_linter}}}

@@ -31,6 +31,7 @@ test_that("as.data.frame.lints", {
     ),
     "lint"
   )
+  expect_type(l1, "list")
 
   # A larger lint
   expect_s3_class(
@@ -133,17 +134,21 @@ test_that("print.lint works for inline data, even in RStudio", {
 
 test_that("print.lints works", {
   withr::local_options(lintr.rstudio_source_markers = FALSE)
-  tmp <- tempfile()
-  file.create(tmp)
-  on.exit(unlink(tmp))
+  tmp <- withr::local_tempfile()
 
+  expect_true(file.create(tmp))
   expect_invisible(print(lint(tmp)))
 })
 
 test_that("split.lint works as intended", {
-  writeLines("1:nrow(x)\n1:ncol(x)", tmp <- tempfile())
-  on.exit(unlink(tmp))
+  tmp <- withr::local_tempfile(lines = c("1:nrow(x)", "1:ncol(x)"))
 
   l <- lint(tmp, seq_linter())
   expect_true(all(vapply(split(l), inherits, logical(1L), "lints")))
+})
+
+test_that("within.list is dispatched", {
+  l <- lint(text = "a=1\nb=2", linters = infix_spaces_linter())
+  expect_silent(l <- lapply(l, within, line_number <- line_number + 1L))
+  expect_identical(vapply(l, `[[`, integer(1L), "line_number"), 2L:3L)
 })

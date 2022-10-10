@@ -29,7 +29,7 @@ test_that("returns the correct linting", {
   )
 
   linter <- infix_spaces_linter()
-  msg <- rex::rex("Put spaces around all infix operators.")
+  lint_msg <- rex::rex("Put spaces around all infix operators.")
 
   expect_lint("blah", NULL, linter)
 
@@ -38,14 +38,14 @@ test_that("returns the correct linting", {
     expect_lint(paste0("1 ", op, "\n2"), NULL, linter)
     expect_lint(paste0("1 ", op, "\n 2"), NULL, linter)
 
-    expect_lint(paste0("1", op, "2"), msg, linter)
+    expect_lint(paste0("1", op, "2"), lint_msg, linter)
 
     # unary plus and minus can have no space before them
     if (!op %in% ops[1L:2L]) {
-      expect_lint(paste0("1 ", op, "2"), msg, linter)
+      expect_lint(paste0("1 ", op, "2"), lint_msg, linter)
     }
 
-    expect_lint(paste0("1", op, " 2"), msg, linter)
+    expect_lint(paste0("1", op, " 2"), lint_msg, linter)
   }
 
   expect_lint("b <- 2E+4", NULL, linter)
@@ -54,19 +54,19 @@ test_that("returns the correct linting", {
   expect_lint("a[-1 + 1]", NULL, linter)
   expect_lint("a[1 + -1]", NULL, linter)
 
-  expect_lint("fun(a=1)", msg, linter)
+  expect_lint("fun(a=1)", lint_msg, linter)
 })
 
 test_that("The three `=` are all linted", {
   linter <- infix_spaces_linter()
-  msg <- rex::rex("Put spaces around all infix operators.")
+  lint_msg <- rex::rex("Put spaces around all infix operators.")
 
   # EQ_ASSIGN in the parse data
-  expect_lint("a=1", msg, linter)
+  expect_lint("a=1", lint_msg, linter)
   # EQ_FORMALS in the parse data
-  expect_lint("foo <- function(x=1) {}", msg, linter)
+  expect_lint("foo <- function(x=1) {}", lint_msg, linter)
   # EQ_SUB in the parse data
-  expect_lint("foo(x=1)", msg, linter)
+  expect_lint("foo(x=1)", lint_msg, linter)
 })
 
 test_that("exclude_operators works", {
@@ -92,7 +92,7 @@ test_that("exclude_operators works", {
 # more tests specifically for assignment
 test_that("assignment cases return the correct linting", {
   linter <- infix_spaces_linter()
-  msg <- rex::rex("Put spaces around all infix operators.")
+  lint_msg <- rex::rex("Put spaces around all infix operators.")
 
   expect_lint("fun(blah =  1)", NULL, linter)
 
@@ -112,10 +112,10 @@ test_that("assignment cases return the correct linting", {
   )
   expect_lint("my = bad = variable = name <- 2.0", NULL, linter)
 
-  expect_lint("blah<-  1", msg, linter)
-  expect_lint("blah  <-1", msg, linter)
-  expect_lint("blah=  1", msg, linter)
-  expect_lint("blah  =1", msg, linter)
+  expect_lint("blah<-  1", lint_msg, linter)
+  expect_lint("blah  <-1", lint_msg, linter)
+  expect_lint("blah=  1", lint_msg, linter)
+  expect_lint("blah  =1", lint_msg, linter)
 })
 
 test_that("infix_spaces_linter can allow >1 spaces optionally", {
@@ -165,4 +165,15 @@ test_that("multi-line, multi-expression case is caught", {
     rex::rex("Put spaces around all infix operators."),
     infix_spaces_linter()
   )
+})
+
+test_that("Rules around missing arguments are respected", {
+  linter <- infix_spaces_linter()
+  lint_msg <- rex::rex("Put spaces around all infix operators.")
+
+  expect_lint("switch(a = , b = 2)", NULL, linter)
+  expect_lint("alist(missing_arg = )", NULL, linter)
+
+  expect_lint("switch(a =, b = 2)", lint_msg, linter)
+  expect_lint("alist(missing_arg =)", lint_msg, linter)
 })

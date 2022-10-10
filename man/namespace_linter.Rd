@@ -16,6 +16,35 @@ Check for missing packages and symbols in namespace calls.
 Note that using \code{check_exports=TRUE} or \code{check_nonexports=TRUE} will load packages used in user code so it could
 potentially change the global state.
 }
+\examples{
+# will produce lints
+lint(
+  text = "xyzxyz::sd(c(1, 2, 3))",
+  linters = namespace_linter()
+)
+
+lint(
+  text = "stats::ssd(c(1, 2, 3))",
+  linters = namespace_linter()
+)
+
+# okay
+lint(
+  text = "stats::sd(c(1, 2, 3))",
+  linters = namespace_linter()
+)
+
+lint(
+  text = "stats::ssd(c(1, 2, 3))",
+  linters = namespace_linter(check_exports = FALSE)
+)
+
+lint(
+  text = "stats:::ssd(c(1, 2, 3))",
+  linters = namespace_linter(check_nonexports = FALSE)
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

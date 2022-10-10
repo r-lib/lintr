@@ -20,6 +20,34 @@
 #'   3. `...` is passed (wrapper functions which might set
 #'      arguments such as `ignore_attr` or `tolerance`)
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "expect_equal(x, y)",
+#'   linters = expect_identical_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_true(identical(x, y))",
+#'   linters = expect_identical_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "expect_identical(x, y)",
+#'   linters = expect_identical_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_equal(x, y, check.attributes = FALSE)",
+#'   linters = expect_identical_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_equal(x, y, tolerance = 1e-6)",
+#'   linters = expect_identical_linter()
+#' )
+#'
 #' @evalRd rd_tags("expect_identical_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

@@ -14,6 +14,30 @@ missing_argument_linter(except = c("switch", "alist"), allow_trailing = FALSE)
 \description{
 Check for missing arguments in function calls (e.g. \code{stats::median(1:10, )}).
 }
+\examples{
+# will produce lints
+lint(
+  text = "tibble(x = 'a', )",
+  linters = missing_argument_linter()
+)
+
+# okay
+lint(
+  text = "tibble(x = 'a')",
+  linters = missing_argument_linter()
+)
+
+lint(
+  text = "tibble(x = 'a', )",
+  linters = missing_argument_linter(except = "tibble")
+)
+
+lint(
+  text = "tibble(x = 'a', )",
+  linters = missing_argument_linter(allow_trailing = TRUE)
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

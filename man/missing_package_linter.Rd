@@ -7,7 +7,21 @@
 missing_package_linter()
 }
 \description{
-Check for missing packages in \code{library()}, \code{require()}, \code{loadNamespace()} and \code{requireNamespace()} calls.
+Check for missing packages in \code{library()}, \code{require()}, \code{loadNamespace()}, and \code{requireNamespace()} calls.
+}
+\examples{
+# will produce lints
+lint(
+  text = "library(xyzxyz)",
+  linters = missing_package_linter()
+)
+
+# okay
+lint(
+  text = "library(stats)",
+  linters = missing_package_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

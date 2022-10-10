@@ -1,12 +1,12 @@
-old_ops <- options(
+withr::local_options(list(
   lintr.exclude = "#TeSt_NoLiNt",
   lintr.exclude_start = "#TeSt_NoLiNt_StArT",
   lintr.exclude_end = "#TeSt_NoLiNt_EnD"
-)
+))
 
-a <- tempfile()
-b <- tempfile()
-c <- tempfile(tmpdir = ".")
+a <- withr::local_tempfile()
+b <- withr::local_tempfile()
+c <- withr::local_tempfile(tmpdir = ".")
 file.create(a, b, c)
 a <- normalizePath(a)
 b <- normalizePath(b)
@@ -149,6 +149,3 @@ test_that("it errors for invalid specifications", {
   msg_full_lines <- "Full line exclusions must be numeric or integer vectors."
   expect_error(lintr:::normalize_exclusions(list("a.R" = "Inf")), msg_full_lines)
 })
-
-unlink(c(a, b, c))
-options(old_ops)

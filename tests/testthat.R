@@ -1,6 +1,9 @@
 library(testthat)
 library(lintr)
-loadNamespace("rex")
-loadNamespace("withr")
+# suppress printing environment name (noisy)
+invisible({
+  loadNamespace("rex")
+  loadNamespace("withr")
+})
 
 test_check("lintr")
