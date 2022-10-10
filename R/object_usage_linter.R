@@ -169,7 +169,7 @@ extract_glued_symbols <- function(expr) {
       parse(text = xml2::xml_text(cl)),
       error = unexpected_error,
       warning = unexpected_error
-    )
+    )[[1L]]
     parsed_cl[[".envir"]] <- glued_symbols
     parsed_cl[[".transformer"]] <- symbol_extractor
     # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint
