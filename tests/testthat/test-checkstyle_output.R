@@ -24,5 +24,7 @@ test_that("return lint report as checkstyle xml", {
   tmp <- tempfile()
   checkstyle_output(lints, tmp)
 
-  expect_equal(readLines(tmp), readLines("checkstyle.xml"))
+  # The second line is the checkstyle version, so we ignore it during the
+  # check, so we don't have to update the version every release.
+  expect_equal(readLines(tmp)[-2], readLines("checkstyle.xml")[-2])
 })
