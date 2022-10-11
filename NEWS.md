@@ -63,6 +63,8 @@
 
 * `unnecessary_placeholder_linter()` for identifying where usage of the {magrittr} placeholder `.` could be omitted (@MichaelChirico)
 
+* `routine_registration_linter()` for identifying native routines that don't use registration (`useDynLib` in the `NAMESPACE`; @MichaelChirico)
+
 ## Notes
 
 * `lint()` continues to support Rmarkdown documents. For users of custom .Rmd engines, e.g.
