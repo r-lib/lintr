@@ -35,9 +35,9 @@ lint(
   linters = redundant_ifelse_linter()
 )
 
-# note that this is just to show the strict equivalent of the example above;
+# Note that this is just to show the strict equivalent of the example above;
 # converting to integer is often unnecessary and the logical vector itself
-# should suffice
+# should suffice.
 lint(
   text = "as.integer(x < 2.5)",
   linters = redundant_ifelse_linter()

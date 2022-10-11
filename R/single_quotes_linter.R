@@ -15,8 +15,10 @@
 #'   linters = single_quotes_linter()
 #' )
 #'
+#' code_lines <- "paste0(x, '\"this is fine\"')"
+#' writeLines(code_lines)
 #' lint(
-#'   text = "\"'this is fine'\"",
+#'   text = code_lines,
 #'   linters = single_quotes_linter()
 #' )
 #'

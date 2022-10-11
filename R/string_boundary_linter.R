@@ -45,6 +45,8 @@
 #'   linters = string_boundary_linter()
 #' )
 #'
+#' # If missing values are present, the suggested alternative wouldn't be strictly
+#' # equivalent, so this linter can also be turned off in such cases.
 #' lint(
 #'   text = 'grepl("z$", x)',
 #'   linters = string_boundary_linter(allow_grepl = TRUE)
