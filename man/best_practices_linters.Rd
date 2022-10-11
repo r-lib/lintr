@@ -47,6 +47,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{redundant_equals_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{regex_subset_linter}}}
+\item{\code{\link{routine_registration_linter}}}
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
