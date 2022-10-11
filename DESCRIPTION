@@ -25,7 +25,6 @@ Depends:
 Imports:
     backports,
     codetools,
-    crayon,
     cyclocomp,
     digest,
     glue,
@@ -38,6 +37,7 @@ Imports:
     xmlparsedata (>= 1.0.5)
 Suggests:
     bookdown,
+    crayon,
     httr (>= 1.2.1),
     mockery,
     patrick,
