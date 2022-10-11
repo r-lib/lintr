@@ -322,6 +322,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/robustness_linters.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/routine_registration_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/sarif_output.html</loc>
   </url>
   <url>
