@@ -19,7 +19,7 @@
 #'
 #' @evalRd rd_tags("expect_s4_class_linter")
 #' @seealso [linters] for a complete list of linters available in lintr. \cr
-#'   [expect_s3_class()]
+#'   [expect_s3_class_linter()]
 #' @export
 expect_s4_class_linter <- function() {
   # require 2 expressions because methods::is(x) alone is a valid call, even
