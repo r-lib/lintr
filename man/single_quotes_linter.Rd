@@ -22,6 +22,11 @@ lint(
   linters = single_quotes_linter()
 )
 
+lint(
+  text = "\"'this is fine'\"",
+  linters = single_quotes_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr

@@ -17,6 +17,11 @@ lint(
   linters = system_file_linter()
 )
 
+lint(
+  text = 'file.path(system.file(package = "foo"), "path", "to", "data")',
+  linters = system_file_linter()
+)
+
 # okay
 lint(
   text = 'system.file("path", "to", "data", package = "foo")',

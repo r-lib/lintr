@@ -28,6 +28,11 @@ lint(
   linters = semicolon_linter()
 )
 
+lint(
+  text = "function() { a <- 1; b <- 1 }",
+  linters = semicolon_linter()
+)
+
 # okay
 lint(
   text = "a <- 1",
@@ -49,6 +54,13 @@ lint(
 lint(
   text = "a <- 1; b <- 1",
   linters = semicolon_linter(allow_compound = TRUE)
+)
+
+code_lines <- "function() { \n  a <- 1\n  b <- 1\n}"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = semicolon_linter()
 )
 
 }

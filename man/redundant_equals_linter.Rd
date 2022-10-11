@@ -22,7 +22,7 @@ lint(
 )
 
 lint(
-  text = "if (any(x != TRUE)) 0",
+  text = "if (any(x != FALSE)) 0",
   linters = redundant_equals_linter()
 )
 
@@ -39,7 +39,8 @@ lint(
 
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr. \cr
+\code{\link[=outer_negation_linter]{outer_negation_linter()}}
 }
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=common_mistakes_linters]{common_mistakes}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}

@@ -79,20 +79,12 @@ test_that("edge cases are detected correctly", {
   )
 
   # dots
-  expect_lint(
-    "sprintf('%d %d, %d', id, ...)",
-    NULL,
-    linter
-  )
+  expect_lint("sprintf('%d %d, %d', id, ...)", NULL, linter)
 
   # TODO (@AshesITR) extend ... detection to at least test for too many arguments.
 
   # named argument fmt
-  expect_lint(
-    "sprintf(x, fmt = 'hello %1$s %1$s')",
-    NULL,
-    linter
-  )
+  expect_lint("sprintf(x, fmt = 'hello %1$s %1$s')", NULL, linter)
 
   expect_lint(
     "sprintf(x, fmt = 'hello %1$s %1$s %3$d', y)",

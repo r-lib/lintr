@@ -6,18 +6,18 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "sprintf('hello %1$s %1$s %3$d', x, y, z)",
-#'   linters = sprintf_linter()
-#' )
-#'
-#' lint(
-#'   text = "sprintf('hello %1$s %2$s %3$d', x, y)",
+#'   text = "sprintf('hello %s %s %d', x, y)",
 #'   linters = sprintf_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "sprintf('hello %1$s %2$s %3$d', x, y, z)",
+#'   text = "sprintf('hello %s %s %d', x, y, z)",
+#'   linters = sprintf_linter()
+#' )
+#'
+#' lint(
+#'   text = "sprintf('hello %s %s %d', x, y, ...)",
 #'   linters = sprintf_linter()
 #' )
 #'

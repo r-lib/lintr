@@ -15,6 +15,11 @@
 #'   linters = single_quotes_linter()
 #' )
 #'
+#' lint(
+#'   text = "\"'this is fine'\"",
+#'   linters = single_quotes_linter()
+#' )
+#'
 #' @evalRd rd_tags("single_quotes_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr

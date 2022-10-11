@@ -15,7 +15,7 @@
 #' )
 #'
 #' lint(
-#'   text = "if (any(x != TRUE)) 0",
+#'   text = "if (any(x != FALSE)) 0",
 #'   linters = redundant_equals_linter()
 #' )
 #'
@@ -31,7 +31,8 @@
 #' )
 #'
 #' @evalRd rd_tags("redundant_equals_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso [linters] for a complete list of linters available in lintr. \cr
+#'   [outer_negation_linter()]
 #' @export
 redundant_equals_linter <- function() {
   xpath <- paste0(
