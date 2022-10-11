@@ -6,6 +6,32 @@
 #'   can be done using prefixes (is, has, can, etc.). For example, `is_child`,
 #'   `has_parent_supervision`, `can_watch_horror_movie` clarify their logical
 #'   nature, while `child`, `parent_supervision`, `watch_horror_movie` don't.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "if (any(x == TRUE)) 1",
+#'   linters = redundant_equals_linter()
+#' )
+#'
+#' lint(
+#'   text = "if (any(x != TRUE)) 0",
+#'   linters = redundant_equals_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "if (any(x)) 1",
+#'   linters = redundant_equals_linter()
+#' )
+#'
+#' lint(
+#'   text = "if (!all(x)) 0",
+#'   linters = redundant_equals_linter()
+#' )
+#'
+#' @evalRd rd_tags("redundant_equals_linter")
+#' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 redundant_equals_linter <- function() {
   xpath <- paste0(
