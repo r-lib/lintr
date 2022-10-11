@@ -64,7 +64,7 @@ sort_linter <- function() {
     orig_call <- sprintf(
       "%s[order(%s)]",
       var,
-      toString(c(var, paste(arg_names, arg_values, sep = ' = ')))
+      toString(c(var, paste(arg_names, arg_values, sep = " = ")))
     )
 
     if (!"na.last" %in% arg_names) {
