@@ -16,6 +16,42 @@ semicolons (i.e., those that terminate lines of code) are allowed.}
 \description{
 Check that no semicolons terminate expressions.
 }
+\examples{
+# will produce lints
+lint(
+  text = "a <- 1;",
+  linters = semicolon_linter()
+)
+
+lint(
+  text = "a <- 1; b <- 1",
+  linters = semicolon_linter()
+)
+
+# okay
+lint(
+  text = "a <- 1",
+  linters = semicolon_linter()
+)
+
+lint(
+  text = "a <- 1;",
+  linters = semicolon_linter(allow_trailing = TRUE)
+)
+
+code_lines <- "a <- 1\nb <- 1"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = semicolon_linter()
+)
+
+lint(
+  text = "a <- 1; b <- 1",
+  linters = semicolon_linter(allow_compound = TRUE)
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr
 \url{https://style.tidyverse.org/syntax.html#semicolons}
