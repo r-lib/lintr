@@ -82,7 +82,7 @@ default value of <code>stringsAsFactors</code> from <code>TRUE</code> to <code>F
     <p>It's not always possible to tell statically whether the change will break
 existing code because R is dynamically typed -- e.g. in <code>data.frame(x)</code>
 if <code>x</code> is a string, this code will be affected, but if <code>x</code> is a number,
-this code will be unaffected. However, in <code>data.frame(x = 'a')</code>, the
+this code will be unaffected. However, in <code>data.frame(x = "a")</code>, the
 output will unambiguously be affected. We can instead supply
 <code>stringsAsFactors = TRUE</code>, which will make this code backwards-compatible.</p>
 <p>See <a href="https://developer.r-project.org/Blog/public/2020/02/16/stringsasfactors/" class="external-link">https://developer.r-project.org/Blog/public/2020/02/16/stringsasfactors/</a>.</p>
@@ -96,6 +96,33 @@ output will unambiguously be affected. We can instead supply
     <p><a href="robustness_linters.html">robustness</a></p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># will produce lints</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">'data.frame(x = "a")'</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">strings_as_factors_linter</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[strings_as_factors_linter] This code relies on the default value of stringsAsFactors, which changed in version R 4.0. Please supply an explicit value for stringsAsFactors for this code to work with versions of R both before and after this switch.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># okay</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">'data.frame(x = "a", stringsAsFactors = TRUE)'</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">strings_as_factors_linter</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">'data.frame(x = "a", stringsAsFactors = FALSE)'</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">strings_as_factors_linter</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">'data.frame(x = 1.2)'</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">strings_as_factors_linter</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
