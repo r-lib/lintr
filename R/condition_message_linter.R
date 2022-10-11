@@ -1,22 +1,56 @@
-#' Block usage of paste() and paste0() with messaging functions using ...
+#' Block usage of `paste()` and `paste0()` with messaging functions using `...`
 #'
-#' `stop(paste0(...))` is strictly redundant -- `stop(...)` is equivalent.
-#'   `stop(...)` is also preferable to `stop(paste(...))`. The same applies to
-#'   all default condition functions, i.e., [stop()], [warning()], [message()],
+#' This linter discourages combining condition functions like [stop()] with string concatenation
+#' functions [paste()] and [paste0()]. This is because
+#'
+#'  - `stop(paste0(...))` is redundant as it is exactly equivalent to `stop(...)`
+#'  - `stop(paste(...))` is similarly equivalent to `stop(...)` with separators (see examples)
+#'
+#'   The same applies to the other default condition functions as well, i.e., [warning()], [message()],
 #'   and [packageStartupMessage()].
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "stop(paste('a string', 'another'))",
+#'   linters = condition_message_linter()
+#' )
+#'
+#' lint(
+#'   text = "warning(paste0('a string', ' another'))",
+#'   linters = condition_message_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "stop('a string', ' another')",
+#'   linters = condition_message_linter()
+#' )
+#'
+#' lint(
+#'   text = "warning('a string', ' another')",
+#'   linters = condition_message_linter()
+#' )
+#'
+#' lint(
+#'   text = "warning(paste('a string', 'another', sep = '-'))",
+#'   linters = condition_message_linter()
+#' )
 #'
 #' @evalRd rd_tags("condition_message_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 condition_message_linter <- function() {
   translators <- c("packageStartupMessage", "message", "warning", "stop")
-  xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(translators)} ]]
-    and expr[
+  xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(translators)} ]
+    /parent::expr
+    /following-sibling::expr[
       expr[1][SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']]
       and not(SYMBOL_SUB[text() = 'collapse'])
     ]
-  ]")
+    /parent::expr
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

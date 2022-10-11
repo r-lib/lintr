@@ -129,7 +129,7 @@ test_that("is_long_path", {
 
 
 test_that("returns the correct linting", {
-  msg <- rex::escape("Do not use absolute paths.")
+  lint_msg <- rex::escape("Do not use absolute paths.")
 
   # strict mode
   linter <- absolute_path_linter(lax = FALSE)
@@ -158,8 +158,8 @@ test_that("returns the correct linting", {
     "/as:df"
   )
   for (path in absolute_path_strings) {
-    expect_lint(single_quote(path), msg, linter)
-    expect_lint(double_quote(path), msg, linter)
+    expect_lint(single_quote(path), lint_msg, linter)
+    expect_lint(double_quote(path), lint_msg, linter)
   }
 
   # lax mode: no check for strings that are likely not paths (too short or with special characters)

@@ -7,8 +7,10 @@
 #' @export
 trailing_blank_lines_linter <- function() {
   Linter(function(source_expression) {
-    blanks <- re_matches(source_expression$file_lines,
-                         rex(start, any_spaces, end))
+    blanks <- re_matches(
+      source_expression$file_lines,
+      rex(start, any_spaces, end)
+    )
 
     line_number <- length(source_expression$file_lines)
     lints <- list()
@@ -25,6 +27,7 @@ trailing_blank_lines_linter <- function() {
       }
       line_number <- line_number - 1L
     }
+
     if (identical(source_expression$terminal_newline, FALSE)) { # could use isFALSE, but needs backports
       last_line <- tail(source_expression$file_lines, 1L)
 
@@ -37,6 +40,7 @@ trailing_blank_lines_linter <- function() {
         line = last_line
       )
     }
+
     lints
   })
 }

@@ -1,6 +1,44 @@
 #' Function argument linter
 #'
-#' Check that arguments with defaults come last in all function declarations, as per the tidyverse design guide.
+#' @description
+#' Check that arguments with defaults come last in all function declarations,
+#' as per the tidyverse design guide.
+#'
+#' Changing the argument order can be a breaking change. An alternative to changing the argument order
+#' is to instead set the default for such arguments to `NULL`.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "function(y = 1, z = 2, x) {}",
+#'   linters = function_argument_linter()
+#' )
+#'
+#' lint(
+#'   text = "function(x, y, z = 1, ..., w) {}",
+#'   linters = function_argument_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "function(x, y = 1, z = 2) {}",
+#'   linters = function_argument_linter()
+#' )
+#'
+#' lint(
+#'   text = "function(x, y, w, z = 1, ...) {}",
+#'   linters = function_argument_linter()
+#' )
+#'
+#' lint(
+#'   text = "function(y = 1, z = 2, x = NULL) {}",
+#'   linters = function_argument_linter()
+#' )
+#'
+#' lint(
+#'   text = "function(x, y, z = 1, ..., w = NULL) {}",
+#'   linters = function_argument_linter()
+#' )
 #'
 #' @evalRd rd_tags("function_argument_linter")
 #' @seealso
@@ -9,7 +47,7 @@
 #' @export
 function_argument_linter <- function() {
   xpath <- paste(collapse = " | ", glue::glue("
-    //{c('FUNCTION', 'OP-LAMBDA')}
+  //{c('FUNCTION', 'OP-LAMBDA')}
     /following-sibling::EQ_FORMALS[1]
     /following-sibling::SYMBOL_FORMALS[
       text() != '...'

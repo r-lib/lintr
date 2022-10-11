@@ -1,6 +1,43 @@
 #' Function left parentheses linter
 #'
-#' Check that all left parentheses in a function call do not have spaces before them.
+#' Check that all left parentheses in a function call do not have spaces before them
+#'  (e.g. `mean  (1:3)`). Although this is syntactically valid, it makes the code
+#'  difficult to read.
+#'
+#' Exceptions are made for control flow functions (`if`, `for`, etc.).
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "mean (x)",
+#'   linters = function_left_parentheses_linter()
+#' )
+#'
+#' lint(
+#'   text = "stats::sd(c (x, y, z))",
+#'   linters = function_left_parentheses_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "mean(x)",
+#'   linters = function_left_parentheses_linter()
+#' )
+#'
+#' lint(
+#'   text =  "stats::sd(c(x, y, z))",
+#'   linters = function_left_parentheses_linter()
+#' )
+#'
+#' lint(
+#'   text =  "if (TRUE) x else y",
+#'   linters = function_left_parentheses_linter()
+#' )
+#'
+#' lint(
+#'   text =  "foo <- function(x) (x + 1)",
+#'   linters = function_left_parentheses_linter()
+#' )
 #'
 #' @evalRd rd_tags("function_left_parentheses_linter")
 #' @seealso
@@ -9,8 +46,9 @@
 #' @export
 function_left_parentheses_linter <- function() { # nolint: object_length.
   xpath <- "
-    //FUNCTION[@col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1] |
-    //expr[1][SYMBOL_FUNCTION_CALL and @col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1]
+  //FUNCTION[@col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1]
+  |
+  //SYMBOL_FUNCTION_CALL/parent::expr[@col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1]
   "
 
   Linter(function(source_expression) {

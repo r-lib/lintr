@@ -1,3 +1,91 @@
+# lintr (development version)
+
+## Bug fixes
+
+* `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
+
+* `get_source_expressions()` can handle Sweave/Rmarkdown documents with reference chunks like `<<ref_file>>` (#779, @MichaelChirico).
+  Note that these are simply skipped, rather than attempting to retrieve the reference and also lint it.
+
+## Changes to defaults
+
+* Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
+  This allows sequential updates like `x |> mutate(a = b + 1, a = log(a))` (#1345, @IndrajeetPatil).
+
+* `object_usage_linter()` gains `skip_with` argument to skip code in `with()` expressions.
+  To be consistent with `R CMD check`, it defaults to `TRUE` (#941, #1458, @IndrajeetPatil).
+
+* `spaces_inside_linter()` allows terminal missing keyword arguments (e.g. `alist(arg = )`; #540, @MichaelChirico)
+
+## New and improved features
+
+* New `get_r_string()` helper to get the R-equivalent value of a string, especially useful for R-4-style raw strings.
+  Previously an internal `lintr` helper, now exported to facilitate writing custom linters (#1493, @MichaelChirico).
+
+* `object_usage_linter()` improves lint metadata when detecting undefined infix operators, e.g. `%>%` or `:=` (#1497, @MichaelChirico)
+
+* `unused_import_linter()` can detect datasets from imported packages and no longer
+  warns when a package is imported only for its datasets (#1545, @IndrajeetPatil).
+
+* When a linter triggers an error, `lint()` will provide a more actionable summary of where the
+  error occurred, particularly useful for cases like `lint_package()` where both the responsible file
+  and the responsible linter would be unknown (@MichaelChirico).
+
+  Typically, linters should not themselves cause R to stop -- syntax errors lead to error lints,
+  for example. Please report such failures as they are likely bugs.
+
+* `pipe_continuation_linter()` recognizes violations involving the native R pipe `|>` (#1609, @MichaelChirico)
+
+* `paste_linter()` also catches usages like `paste(rep("*", 10L), collapse = "")` that can be written more
+  concisely as `strrep("*", 10L)` (#1108, @MichaelChirico)
+
+### New linters
+
+* `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
+  `lapply(x, function(xi) sum(xi))` can be `lapply(x, sum)` and `purrr::map(x, ~quantile(.x, 0.75, na.rm = TRUE))`
+  can be `purrr::map(x, quantile, 0.75, na.rm = TRUE)`. Naming `probs = 0.75` can further improve readability (#1531, @MichaelChirico).
+
+* `redundant_equals_linter()` for redundant comparisons to `TRUE` or `FALSE` like `is_treatment == TRUE` (#1500, @MichaelChirico)
+* `lengths_linter()` for encouraging usage of `lengths(x)` instead of `sapply(x, length)` (and similar)
+
+* `function_return_linter()` for handling issues in function `return()` statements. Currently handles assignments within the `return()`
+  clause, e.g. `return(x <- foo())` (@MichaelChirico)
+
+* `boolean_arithmetic_linter()` for identifying places where logical aggregations are more appropriate, e.g.
+  `length(which(x == y)) == 0` is the same as `!any(x == y)` or even `all(x != y)` (@MichaelChirico)
+
+* `for_loop_index_linter()` to prevent overwriting local variables in a `for` loop declared like `for (x in x) { ... }` (@MichaelChirico)
+
+* `is_numeric_linter()` for redundant checks equivalent to `is.numeric(x)` such as `is.numeric(x) || is.integer(x)` or
+  `class(x) %in% c("numeric", "integer")` (@MichaelChirico)
+
+* `empty_assignment_linter()` for identifying empty assignments like `x = {}` that are more clearly written as `x = NULL` (@MichaelChirico)
+
+* `unnecessary_placeholder_linter()` for identifying where usage of the {magrittr} placeholder `.` could be omitted (@MichaelChirico)
+
+* `routine_registration_linter()` for identifying native routines that don't use registration (`useDynLib` in the `NAMESPACE`; @MichaelChirico)
+
+## Notes
+
+* `lint()` continues to support Rmarkdown documents. For users of custom .Rmd engines, e.g.
+  `marginformat` from {tufte} or `theorem` from {bookdown}, note that those engines must be registered
+  in {knitr} prior to running `lint()` in order for {lintr} to behave as expected, i.e., they should be
+  shown as part of `knitr::knit_engines$get()`.
+  
+  For {tufte} and {bookdown} in particular, one only needs to load the package namespace to accomplish
+  this (i.e., minimally `loadNamespace("tufte")` or `loadNamespace("bookdown")`, respectively, will
+  register those packages' custom engines; since `library()` also runs `loadNamespace()`, running
+  `library()` will also work). Note further that {tufte} only added this code to their `.onLoad()` recently
+  after our request to do so (see https://github.com/rstudio/tufte/issues/117). Therefore, ensure you're using a
+  more recent version to get the behavior described here for {tufte}.
+  
+  However, there is no requirement that `loadNamespace()` will register a package's custom {knitr}
+  engines, so you may need to work with other package authors to figure out a solution for other engines.
+  
+  Thanks to Yihui and other developers for their helpful discussions around this issue (#797, @IndrajeetPatil).
+
+* The output of `lint()` and `Lint()` gain S3 class `"list"` to assist with S3 dispatch (#1494, @MichaelChirico)
+
 # lintr 3.0.1
 
 * Skip multi-byte tests in non UTF-8 locales (#1504)
@@ -10,7 +98,7 @@
 
 * `brace_linter()` allows opening curly braces on a new line when there is 
   a comment ending the preceding line (#1433 and #1434, @IndrajeetPatil).
-  
+
 * `seq_linter()` produces lint for `seq(...)`, since it also cannot properly 
   handle empty edge cases (#1468, @IndrajeetPatil).
 
@@ -33,18 +121,18 @@
 
 * New `function_argument_linter()` to enforce that arguments with defaults appear last in function declarations,
   see the [Tidyverse design guide](https://design.tidyverse.org/args-data-details.html) (#450, @AshesITR).
-  
+
 * New `allow_trailing` argument added to `assignment_linter()` to check when assignment operators are at the 
   end of a line, and the value is on the following line (#1491, @ashbaldry) 
- 
-## New features
+
+* New `sarif_output()` function to output lints to SARIF output (#1424, @shaopeng-gh)
 
 * `commented_code_linter()` now lints commented argument code, containing a trailing comma, as well (#386, @AshesITR).
   For example a comment containing `#  na.rm = TRUE,` now triggers a lint.
 
 ## Bug fixes
 
-* `object_length_linter()` does not fail in case there are dependencies with no exports (e.g. data-only packages) (#1509, @IndrajeetPatil).
+* `object_length_linter()` does not fail in case there are dependencies with no exports (e.g. data-only packages) (#1424, #1509, @IndrajeetPatil).
 * `get_source_expressions()` no longer fails on R files that match a knitr pattern (#743, #879, #1406, @AshesITR).
 * Parse error lints now appear with the linter name `"error"` instead of `NA` (#1405, @AshesITR).  
   Also, linting no longer runs if the `source_expressions` contain invalid string data that would cause error messages
@@ -63,7 +151,9 @@
 * The minimum needed version for soft dependency `{withr}` has been bumped to `2.5.0`
   (#1404, @IndrajeetPatil).
 * Changed the deprecation warning for `with_defaults()` to also mention `modify_defaults()` (#1438, @AshesITR).
-
+* Quarto files (`.qmd`) were supported out of the box. The documentation and the 
+  testing infrastructure are updated to reflect this (#1486, @IndrajeetPatil).
+  
 # lintr 3.0.0
 
 ## Breaking changes
@@ -343,7 +433,6 @@ of general interest to the broader R community. More will be included in future 
    + Added the linter name to lintrs output to facilitate discovery of the correct name (#1357, @AshesITR).
 * Improved S3 generic detection for non-standard S3 generics where `UseMethod()` is called after several
   preceding expressions (#846, @jonkeane).
-* New `sarif_output()` function to output lints to SARIF output (#1424, @shaopeng-gh)
 * `extraction_operator_linter()`: no longer lint `x[NULL]` (#1273, @AshesITR).
 * `is_lint_level()`: new exported helper for readably explaining which type of expression is required for a custom
   linter. Some linters are written to require the full file's parse tree (for example, `single_quotes_linter()`).
@@ -441,6 +530,7 @@ of general interest to the broader R community. More will be included in future 
 lintr 2.0.0 is a major release, and incorporates development changes since the last major release (1.0.0) in 2016-04-16.
 
 ## Deprecated functions
+
 * Deprecated `camel_case_linter()`, `snake_case_linter()` and `multiple_dots_linter()`
   in favor of `object_name_linter()` which enforce the given style: snake_case,
   dotted.case, lowerCamelCalse, UpperCamelCase, alllowercase or ALLUPPERCASE
@@ -449,6 +539,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
   with a lax mode for fewer false positive lints (#199, fangly).
 
 ## New linters
+
 * New `cyclocomp_linter()` identifies overly complex functions (#361, @fabian-s)
 * New `equals_na_linter()` (#143, #326, @jabranham)
 * New `extraction_operator_linter()` checks that the `[[` operator is used when
@@ -475,17 +566,20 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
   arguments (@fangly).
 
 ## New functions for writing linters
+
 * Export `expect_lint()` (#178, #210)
 * Export `ids_with_token()` and `with_id()` (#297 @stufield)
 * linters can use the XML parse tree as well now, via the
   https://github.com/MangoTheCat/xmlparsedata package (#154, @gaborcsardi)
 
 ## New functions for users
+
 * New `lint_dir()` function to lint files under a given directory (@arekbee, #360)
 * New `summary.lints()` function to summarize the linter results (#260, #262, @wlandau).
 * New `checkstyle_output()` function to output lints to checkstyle XML output (#156, @joshkgold)
 
 ## Linter fixes
+
 * `closed_curly_linter()` now allows closing parenthesis or comma after closing curly brace (#167, @Enchufa2)
 * `commas_linter()` now handles missing arguments calls properly (#145)
 * `commented_code_linter()` now relaxed, it no longer lints comments within roxygen blocks
@@ -505,6 +599,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * `space_inside_linter()` now reports proper line and column numbers (#203, @fangly)
 
 ## General improvements and fixes
+
 * `expect_lint()` now no longer shows Rstudio markers and error messages are correctly preserved (#180, #211, @fangly)
 * `Lint()` / `as.data.frame()` error now fixed (#179, @fangly).
 * `lint()` no longer errors with inline `\\Sexpr` (#127).
@@ -536,22 +631,27 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
   `xmlparsedata`; ensure vectors are length-1 when compared using `&&` and `||`
   (#363 #377 #384 #391, @russHyde).
 
-# lintr 1.0.3 #
+# lintr 1.0.3
+
 * Fix tests to work with changes in the parser in R 3.6
 
-# lintr 1.0.2 #
+# lintr 1.0.2
+
 * Fix tests to work with upcoming testthat release.
 
-# lintr 1.0.1 #
+# lintr 1.0.1
+
 * bugfix to work with knitr 1.16.7
 * `expect_lint_free()` now is always skipped on CRAN. This is necessary because
   the non-binary R source may not be available when running tests on CRAN, and
   those tests may not be run in the package directory.
 
-# lintr 1.0.0 #
+# lintr 1.0.0
+
 * bugfix to work with testthat 1.0.0
 
-# lintr 0.3.3 #
+# lintr 0.3.3
+
 * infix_spaces_linter now properly checks `=` in named arguments. (#130, @saurfang).
 * commas_linter now properly recognizes lints when preceded by a blank line and
   points to the missing space rather than the comma (#111, #129, @saurfang).
@@ -576,6 +676,6 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * Allow for (( when linting (#259, @nathaneastwood)
 * Remove ^ from infix spaces to conform with tidyverse. (#302, @nathaneastwood)
 
-# lintr 0.2.0 #
+# lintr 0.2.0
 
 * Initial release

@@ -1,11 +1,11 @@
 test_that("it returns the input if less than the max", {
-  expect_equal(trim_output(character()), character())
+  expect_equal(lintr:::trim_output(character()), character())
 
-  expect_equal(trim_output("test", max = 10L), "test")
+  expect_equal(lintr:::trim_output("test", max = 10L), "test")
 })
 
 test_that("it returns the input trimmed strictly to max if no lints found", {
-  expect_equal(trim_output("testing a longer non_lint string", max = 7L), "testing")
+  expect_equal(lintr:::trim_output("testing a longer non_lint string", max = 7L), "testing")
 })
 
 test_that("it returns the input trimmed to the last full lint if one exists within the max", {
@@ -14,9 +14,9 @@ test_that("it returns the input trimmed to the last full lint if one exists with
     # Magic numbers expect newlines to be 1 character
     t1 <- gsub("\r\n", "\n", t1, fixed = TRUE)
   }
-  expect_equal(trim_output(t1, max = 200L), substr(t1, 1L, 195L))
-  expect_equal(trim_output(t1, max = 400L), substr(t1, 1L, 380L))
-  expect_equal(trim_output(t1, max = 2000L), substr(t1, 1L, 1930L))
+  expect_equal(lintr:::trim_output(t1, max = 200L), substr(t1, 1L, 195L))
+  expect_equal(lintr:::trim_output(t1, max = 400L), substr(t1, 1L, 380L))
+  expect_equal(lintr:::trim_output(t1, max = 2000L), substr(t1, 1L, 1930L))
 })
 
 test_that("as.data.frame.lints", {
@@ -31,6 +31,7 @@ test_that("as.data.frame.lints", {
     ),
     "lint"
   )
+  expect_type(l1, "list")
 
   # A larger lint
   expect_s3_class(
@@ -41,7 +42,8 @@ test_that("as.data.frame.lints", {
       type = "error",
       message = "Under no circumstances is the use of foobar allowed.",
       line = "a <- 1",
-      ranges = list(c(1L, 2L), c(10L, 20L))),
+      ranges = list(c(1L, 2L), c(10L, 20L))
+    ),
     "lint"
   )
 
@@ -54,7 +56,7 @@ test_that("as.data.frame.lints", {
   # Convert lints to data.frame
   lints <- structure(list(l1, l2), class = "lints")
   expect_s3_class(
-    df <- as.data.frame.lints(lints),
+    df <- lintr:::as.data.frame.lints(lints),
     "data.frame"
   )
 
@@ -78,7 +80,8 @@ test_that("as.data.frame.lints", {
 test_that("summary.lints() works (no lints)", {
   no_lints <- lint(
     "x <- 1\n",
-    linters = assignment_linter())
+    linters = assignment_linter()
+  )
   no_lint_summary <- summary(no_lints)
   expect_s3_class(no_lint_summary, "data.frame")
   expect_equal(nrow(no_lint_summary), 0L)
@@ -87,7 +90,8 @@ test_that("summary.lints() works (no lints)", {
 test_that("summary.lints() works (lints found)", {
   has_lints <- lint(
     "x = 1\n",
-    linters = assignment_linter())
+    linters = assignment_linter()
+  )
   has_lint_summary <- summary(has_lints)
   expect_s3_class(has_lint_summary, "data.frame")
   expect_equal(nrow(has_lint_summary), 1L)
@@ -130,17 +134,21 @@ test_that("print.lint works for inline data, even in RStudio", {
 
 test_that("print.lints works", {
   withr::local_options(lintr.rstudio_source_markers = FALSE)
-  tmp <- tempfile()
-  file.create(tmp)
-  on.exit(unlink(tmp))
+  tmp <- withr::local_tempfile()
 
+  expect_true(file.create(tmp))
   expect_invisible(print(lint(tmp)))
 })
 
 test_that("split.lint works as intended", {
-  writeLines("1:nrow(x)\n1:ncol(x)", tmp <- tempfile())
-  on.exit(unlink(tmp))
+  tmp <- withr::local_tempfile(lines = c("1:nrow(x)", "1:ncol(x)"))
 
   l <- lint(tmp, seq_linter())
   expect_true(all(vapply(split(l), inherits, logical(1L), "lints")))
+})
+
+test_that("within.list is dispatched", {
+  l <- lint(text = "a=1\nb=2", linters = infix_spaces_linter())
+  expect_silent(l <- lapply(l, within, line_number <- line_number + 1L))
+  expect_identical(vapply(l, `[[`, integer(1L), "line_number"), 2L:3L)
 })

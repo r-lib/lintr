@@ -3,6 +3,20 @@
 #' Check that there is a space between right parenthesis and a body expression.
 #'
 #' @evalRd rd_tags("paren_body_linter")
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "function(x)x + 1",
+#'   linters = paren_body_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "function(x) x + 1",
+#'   linters = paren_body_linter()
+#' )
+#'
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
 #'   <https://style.tidyverse.org/syntax.html#parentheses>
@@ -13,7 +27,8 @@ paren_body_linter <- function() {
   #   be O(100K) <expr> nodes but in all but pathological examples,
   #   these other nodes will only be a small fraction of this amount.
   # note also that <forcond> only has one following-sibling::expr.
-  xpath <- "//OP-RIGHT-PAREN[
+  xpath <- "
+  //OP-RIGHT-PAREN[
     @end = following-sibling::expr[1]/@start - 1
     and @line1 = following-sibling::expr[1]/@line1
     and (
@@ -22,12 +37,14 @@ paren_body_linter <- function() {
       or preceding-sibling::WHILE
       or preceding-sibling::OP-LAMBDA
     )
-  ]/following-sibling::expr[1]
+  ]
+    /following-sibling::expr[1]
   |
   //forcond[
     @line1 = following-sibling::expr/@line2
     and OP-RIGHT-PAREN/@col1 = following-sibling::expr/@col1 - 1
-  ]/following-sibling::expr
+  ]
+    /following-sibling::expr
   "
 
   Linter(function(source_expression) {

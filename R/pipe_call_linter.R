@@ -1,7 +1,20 @@
 #' Pipe call linter
 #'
-#' Force explicit calls in magrittr pipes, e.g.,
-#' `1:3 %>% sum()` instead of `1:3 %>% sum`.
+#' Force explicit calls in magrittr pipes, e.g., `1:3 %>% sum()` instead of `1:3 %>% sum`.
+#' Note that native pipe always requires a function call, i.e. `1:3 |> sum` will produce an error.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "1:3 %>% mean %>% as.character",
+#'   linters = pipe_call_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "1:3 %>% mean() %>% as.character()",
+#'   linters = pipe_call_linter()
+#' )
 #'
 #' @evalRd rd_tags("pipe_call_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
@@ -10,7 +23,7 @@ pipe_call_linter <- function() {
   # NB: the text() here shows up as %&gt;% but that's not matched, %>% is
   # NB: use *[1][self::SYMBOL] to ensure the first element is SYMBOL, otherwise
   #       we include expressions like x %>% .$col
-  xpath <- "//expr[preceding-sibling::SPECIAL[text() = '%>%'] and *[1][self::SYMBOL]]"
+  xpath <- "//SPECIAL[text() = '%>%']/following-sibling::expr[*[1][self::SYMBOL]]"
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

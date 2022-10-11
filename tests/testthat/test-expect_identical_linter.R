@@ -17,28 +17,28 @@ test_that("expect_identical_linter skips allowed usages", {
 
 test_that("expect_identical_linter blocks simple disallowed usages", {
   linter <- expect_identical_linter()
-  msg <- rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed")
+  lint_msg <- rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed")
 
-  expect_lint("expect_equal(x, y)", msg, linter)
+  expect_lint("expect_equal(x, y)", lint_msg, linter)
 
   # different usage to redirect to expect_identical
-  expect_lint("expect_true(identical(x, y))", msg, linter)
+  expect_lint("expect_true(identical(x, y))", lint_msg, linter)
 })
 
 test_that("expect_identical_linter skips cases likely testing numeric equality", {
   linter <- expect_identical_linter()
-  msg <- rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed")
+  lint_msg <- rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed")
 
   expect_lint("expect_equal(x, 1.034)", NULL, linter)
   expect_lint("expect_equal(x, c(1.01, 1.02))", NULL, linter)
   # whole numbers with explicit decimals are OK, even in mixed scenarios
   expect_lint("expect_equal(x, c(1.0, 2))", NULL, linter)
   # plain numbers are still caught, however
-  expect_lint("expect_equal(x, 1L)", msg, linter)
-  expect_lint("expect_equal(x, 1)", msg, linter)
+  expect_lint("expect_equal(x, 1L)", lint_msg, linter)
+  expect_lint("expect_equal(x, 1)", lint_msg, linter)
   # NB: TRUE is a NUM_CONST so we want test matching it, even though this test is
   #   also a violation of expect_true_false_linter()
-  expect_lint("expect_equal(x, TRUE)", msg, linter)
+  expect_lint("expect_equal(x, TRUE)", lint_msg, linter)
 })
 
 test_that("expect_identical_linter skips 3e cases needing expect_equal", {

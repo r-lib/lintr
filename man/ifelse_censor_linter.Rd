@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifelse_censor_linter.R
 \name{ifelse_censor_linter}
 \alias{ifelse_censor_linter}
-\title{Block usage of ifelse where pmin or pmax is more appropriate}
+\title{Block usage of \code{ifelse()} where \code{pmin()} or \code{pmax()} is more appropriate}
 \usage{
 ifelse_censor_linter()
 }
@@ -15,6 +15,30 @@ The same goes for other similar ways to censor a vector, e.g.
 \code{ifelse(x <= M, x, M)} is \code{pmin(x, M)},
 \code{ifelse(x < m, m, x)} is \code{pmax(x, m)}, and
 \code{ifelse(x >= m, x, m)} is \code{pmax(x, m)}.
+}
+\examples{
+# will produce lints
+lint(
+  text = "ifelse(5:1 < pi, 5:1, pi)",
+  linters = ifelse_censor_linter()
+)
+
+lint(
+  text = "ifelse(x > 0, x, 0)",
+  linters = ifelse_censor_linter()
+)
+
+# okay
+lint(
+  text = "pmin(5:1, pi)",
+  linters = ifelse_censor_linter()
+)
+
+lint(
+  text = "pmax(x, 0)",
+  linters = ifelse_censor_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

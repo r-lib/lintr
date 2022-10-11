@@ -63,11 +63,11 @@ If \code{FALSE}, use the full absolute path.}
 
 \item{exclusions}{exclusions for \code{\link[=exclude]{exclude()}}, relative to the package path.}
 
-\item{pattern}{pattern for files, by default it will take files with any of the extensions .R, .Rmd, .Rnw, .Rhtml,
-.Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...)}
+\item{pattern}{pattern for files, by default it will take files with any of the extensions
+.R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...)}
 }
 \value{
-A list of lint objects.
+An object of class \code{c("lints", "list")}, each element of which is a \code{"list"} object.
 }
 \description{
 \itemize{
@@ -93,8 +93,12 @@ unintelligible error messages from other linters.
 \dontrun{
   lint_dir()
   lint_dir(
-    linters = list(semicolon_linter())
-    exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "renv")
+    linters = list(semicolon_linter()),
+    exclusions = list(
+      "inst/doc/creating_linters.R" = 1,
+      "inst/example/bad.R",
+      "renv"
+    )
   )
 }
 \dontrun{

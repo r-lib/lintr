@@ -10,17 +10,17 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bit64", "data.table", "tidyverse")) {
-  import_xpath <- "//expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
-      and
-      (
-        not(SYMBOL_SUB[
-          text() = 'character.only' and
-          following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-        ]) or
-        expr[2][STR_CONST]
-      )
-    ]"
+  import_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
+    /parent::expr
+    /parent::expr[
+      expr[2][STR_CONST]
+      or not(SYMBOL_SUB[
+        text() = 'character.only' and
+        following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+      ])
+    ]
+  "
 
   xp_used_symbols <- paste(
     "//SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]/text()",
@@ -56,8 +56,10 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
           return(TRUE)
         }
 
-        package_exports <- getNamespaceExports(pkg)
-        any(package_exports %in% used_symbols)
+        package_exports <- getNamespaceExports(pkg) # functions
+        dataset_exports <- get_datasets(pkg) # datasets
+
+        any(package_exports %in% used_symbols) || any(dataset_exports %in% used_symbols)
       },
       logical(1L)
     )
@@ -91,4 +93,13 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
     )
     xml_nodes_to_lints(import_exprs, source_expression, lint_message, type = "warning")
   })
+}
+
+#' Get dataset names lazy-loaded by imported packages
+#' @noRd
+get_datasets <- function(pkg) {
+  results <- utils::data(package = pkg)$results
+  items <- results[, "Item"]
+  # e.g. 'state.abb (state)' in 'datasets'
+  gsub("\\s*\\([^)]*\\)$", "", items)
 }

@@ -1,4 +1,4 @@
-#' Require usage of expect_false(.) over expect_true(!.)
+#' Require usage of `expect_false(x)` over `expect_true(!x)`
 #'
 #' [testthat::expect_false()] exists specifically for testing that an output is
 #'   `FALSE`. [testthat::expect_true()] can also be used for such tests by
@@ -6,14 +6,29 @@
 #'   The reverse is also true -- use `expect_false(A)` instead of
 #'   `expect_true(!A)`.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "expect_true(!x)",
+#'   linters = expect_not_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "expect_false(x)",
+#'   linters = expect_not_linter()
+#' )
+#'
 #' @evalRd rd_tags("expect_not_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_not_linter <- function() {
-  xpath <- "//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']]
-    and expr[2][OP-EXCLAMATION]
-  ]"
+  xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']
+    /parent::expr
+    /following-sibling::expr[OP-EXCLAMATION]
+    /parent::expr
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

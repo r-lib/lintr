@@ -2,14 +2,43 @@
 % Please edit documentation in R/any_is_na_linter.R
 \name{any_is_na_linter}
 \alias{any_is_na_linter}
-\title{Require usage of anyNA over any(is.na(.))}
+\title{Require usage of \code{anyNA(x)} over \code{any(is.na(x))}}
 \usage{
 any_is_na_linter()
 }
 \description{
-\code{\link[=anyNA]{anyNA()}} exists as a replacement for \code{any(is.na(.))} which is more efficient
-for simple objects, and in the worst case is the same efficiency. Therefore
-it should be used in all situations instead of the latter.
+\code{\link[=anyNA]{anyNA()}} exists as a replacement for \code{any(is.na(x))} which is more efficient
+for simple objects, and is at worst equally efficient.
+Therefore, it should be used in all situations instead of the latter.
+}
+\examples{
+# will produce lints
+lint(
+  text = "any(is.na(x), na.rm = TRUE)",
+  linters = any_is_na_linter()
+)
+
+lint(
+  text = "any(is.na(foo(x)))",
+  linters = any_is_na_linter()
+)
+
+# okay
+lint(
+  text = "anyNA(x)",
+  linters = any_is_na_linter()
+)
+
+lint(
+  text = "anyNA(foo(x))",
+  linters = any_is_na_linter()
+)
+
+lint(
+  text = "any(!is.na(x), na.rm = TRUE)",
+  linters = any_is_na_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

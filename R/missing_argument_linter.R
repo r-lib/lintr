@@ -1,13 +1,37 @@
 #' Missing argument linter
 #'
-#' Check for missing arguments in function calls.
+#' Check for missing arguments in function calls (e.g. `stats::median(1:10, )`).
+#'
 #' @param except a character vector of function names as exceptions.
 #' @param allow_trailing always allow trailing empty arguments?
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "tibble(x = 'a', )",
+#'   linters = missing_argument_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "tibble(x = 'a')",
+#'   linters = missing_argument_linter()
+#' )
+#'
+#' lint(
+#'   text = "tibble(x = 'a', )",
+#'   linters = missing_argument_linter(except = "tibble")
+#' )
+#'
+#' lint(
+#'   text = "tibble(x = 'a', )",
+#'   linters = missing_argument_linter(allow_trailing = TRUE)
+#' )
+#'
 #' @evalRd rd_tags("missing_argument_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 missing_argument_linter <- function(except = c("switch", "alist"), allow_trailing = FALSE) {
-
   conds <- c(
     "self::OP-COMMA[preceding-sibling::*[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-COMMA]]",
     "self::EQ_SUB[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN or self::OP-COMMA]]"

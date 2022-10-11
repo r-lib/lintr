@@ -224,12 +224,12 @@ test_that("brace_linter lints braces correctly", {
 
 test_that("brace_linter lints spaces before open braces", {
   linter <- brace_linter()
-  msg <- rex::rex("There should be a space before an opening curly brace.")
+  lint_msg <- rex::rex("There should be a space before an opening curly brace.")
 
   expect_lint(
     "blah <- function(){\n}",
     list(
-      message = msg,
+      message = lint_msg,
       column_number = 19L
     ),
     linter
@@ -238,7 +238,7 @@ test_that("brace_linter lints spaces before open braces", {
   expect_lint(
     "\nblah <- function(){\n\n\n}",
     list(
-      message = msg,
+      message = lint_msg,
       column_number = 19L
     ),
     linter
@@ -248,8 +248,8 @@ test_that("brace_linter lints spaces before open braces", {
   expect_lint(
     "a <- if (a){\n} else{\n}",
     list(
-      list(message = msg, line_number = 1L, column_number = 12L),
-      list(message = msg, line_number = 2L, column_number = 7L)
+      list(message = lint_msg, line_number = 1L, column_number = 12L),
+      list(message = lint_msg, line_number = 2L, column_number = 7L)
     ),
     linter
   )
@@ -257,7 +257,7 @@ test_that("brace_linter lints spaces before open braces", {
   # should lint repeat{
   expect_lint(
     "repeat{\nblah\n}",
-    list(message = msg, line_number = 1L, column_number = 7L),
+    list(message = lint_msg, line_number = 1L, column_number = 7L),
     linter
   )
 
@@ -277,7 +277,7 @@ test_that("brace_linter lints spaces before open braces", {
     list(
       rex::rex("Opening curly braces should never go on their own line and should always be followed by a new line."),
       rex::rex("Closing curly-braces should always be on their own line, unless they are followed by an else.")
-    ), # , but not msg
+    ), # , but not lint_msg
     linter
   )
 })

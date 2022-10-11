@@ -17,3 +17,4 @@ testthat-problems.rds
 
 docs
 inst/doc
+.DS_Store

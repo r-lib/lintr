@@ -39,19 +39,19 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "sprintf('hello %d', 'a')",
-    list(message = rex("invalid format '%d'; use format %s for character objects")),
+    list(message = rex::rex("invalid format '%d'; use format %s for character objects")),
     linter
   )
 
   expect_lint(
     "sprintf('hello %d', 1.5)",
-    list(message = rex("invalid format '%d'; use format %f, %e, %g or %a for numeric objects")),
+    list(message = rex::rex("invalid format '%d'; use format %f, %e, %g or %a for numeric objects")),
     linter
   )
 
   expect_lint(
     "sprintf('hello %d',)",
-    list(message = rex("argument is missing, with no default")),
+    list(message = rex::rex("argument is missing, with no default")),
     linter
   )
 
@@ -81,13 +81,13 @@ test_that("returns the correct linting", {
 
   expect_lint(
     "sprintf('hello %1$s %1$s %3$d', x, y)",
-    list(message = rex("reference to non-existent argument 3")),
+    list(message = rex::rex("reference to non-existent argument 3")),
     linter
   )
 
   expect_lint(
     "sprintf('hello %1$s %1$s %2$d %3$d', x, y, 1.5)",
-    list(message = rex("invalid format '%d'; use format %f, %e, %g or %a for numeric objects")),
+    list(message = rex::rex("invalid format '%d'; use format %f, %e, %g or %a for numeric objects")),
     linter
   )
 
@@ -131,7 +131,7 @@ test_that("edge cases are detected correctly", {
 
   expect_lint(
     "sprintf(x, fmt = 'hello %1$s %1$s %3$d', y)",
-    list(message = rex("reference to non-existent argument 3")),
+    list(message = rex::rex("reference to non-existent argument 3")),
     linter
   )
 })

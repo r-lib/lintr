@@ -205,17 +205,23 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
 #' @export
 all_undesirable_operators <- modify_defaults(
   defaults = list(),
-  ":::" = paste("It accesses non-exported functions inside packages. Code relying on these is likely to break in",
-                "future versions of the package because the functions are not part of the public interface and may be",
-                "changed or removed by the maintainers without notice. Use public functions via :: instead."),
-  "<<-" = paste("It assigns outside the current environment in a way that can be hard to reason about.",
-                "Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific",
-                "environment with assign(). Recall that you can create an environment at the desired scope with",
-                "new.env()."),
-  "->>" = paste("It assigns outside the current environment in a way that can be hard to reason about.",
-                "Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific",
-                "environment with assign(). Recall that you can create an environment at the desired scope with",
-                "new.env().")
+  ":::" = paste(
+    "It accesses non-exported functions inside packages. Code relying on these is likely to break in",
+    "future versions of the package because the functions are not part of the public interface and may be",
+    "changed or removed by the maintainers without notice. Use public functions via :: instead."
+  ),
+  "<<-" = paste(
+    "It assigns outside the current environment in a way that can be hard to reason about.",
+    "Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific",
+    "environment with assign(). Recall that you can create an environment at the desired scope with",
+    "new.env()."
+  ),
+  "->>" = paste(
+    "It assigns outside the current environment in a way that can be hard to reason about.",
+    "Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific",
+    "environment with assign(). Recall that you can create an environment at the desired scope with",
+    "new.env()."
+  )
 )
 
 #' @rdname default_undesirable_functions
@@ -228,6 +234,40 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 )]
 
 #' Default lintr settings
+#'
+#' @description
+#' The default settings consist of
+#'
+#'  - `linters`: a list of default linters (see [default_linters()])
+#'  - `encoding`: the character encoding assumed for the file
+#'  - `exclude`: pattern used to exclude a line of code
+#'  - `exclude_start`, `exclude_end`: patterns used to mark start and end of the code block to exclude
+#'  - `exclude_linter`, `exclude_linter_sep`: patterns used to exclude linters
+#'  - `exclusions`:a list of files to exclude
+#'  - `cache_directory`: location of cache directory
+#'  - `comment_token`: a GitHub token character
+#'  - `comment_bot`: decides if lintr comment bot on GitHub can comment on commits
+#'  - `error_on_lint`: decides if error should be produced when any lints are found
+#'
+#' @examples
+#' # available settings
+#' names(default_settings)
+#'
+#' # linters included by default
+#' names(default_settings$linters)
+#'
+#' # default values for a few of the other settings
+#' default_settings[c(
+#'   "encoding",
+#'   "exclude",
+#'   "exclude_start",
+#'   "exclude_end",
+#'   "exclude_linter",
+#'   "exclude_linter_sep",
+#'   "exclusions",
+#'   "error_on_lint"
+#' )]
+#'
 #' @seealso [read_settings()], [default_linters]
 #' @export
 default_settings <- NULL
@@ -252,12 +292,14 @@ settings <- NULL
     exclude = rex::rex("#", any_spaces, "nolint"),
     exclude_start = rex::rex("#", any_spaces, "nolint start"),
     exclude_end = rex::rex("#", any_spaces, "nolint end"),
-    exclude_linter = rex::rex(start, any_spaces, ":", any_spaces,
-                              capture(
-                                name = "linters",
-                                zero_or_more(one_or_more(none_of(",.")), any_spaces, ",", any_spaces),
-                                one_or_more(none_of(",."))
-                              ), "."),
+    exclude_linter = rex::rex(
+      start, any_spaces, ":", any_spaces,
+      capture(
+        name = "linters",
+        zero_or_more(one_or_more(none_of(",.")), any_spaces, ",", any_spaces),
+        one_or_more(none_of(",."))
+      ), "."
+    ),
     exclude_linter_sep = rex::rex(any_spaces, ",", any_spaces),
     exclusions = list(),
     cache_directory = R_user_dir("lintr", "cache"),
@@ -266,8 +308,10 @@ settings <- NULL
         "0n12nn72507",
         "r6273qnnp34",
         "43qno7q42n1",
-        "n71nn28")
-      , 54L - 13L),
+        "n71nn28"
+      ),
+      54L - 13L
+    ),
     comment_bot = logical_env("LINTR_COMMENT_BOT") %||% TRUE,
     error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
   )

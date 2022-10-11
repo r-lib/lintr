@@ -23,7 +23,7 @@ read_settings <- function(filename) {
 
   if (!is.null(config_file)) {
     f <- function(e) {
-        stop("Malformed config file, ensure it ends in a newline\n  ", conditionMessage(e), call. = FALSE)
+      stop("Malformed config file, ensure it ends in a newline\n  ", conditionMessage(e), call. = FALSE)
     }
     tryCatch(
       config <- read.dcf(config_file, all = TRUE),
@@ -65,14 +65,15 @@ clear_settings <- function() {
 }
 
 find_config <- function(filename) {
-
   if (is.null(filename)) {
     return(NULL)
   }
   linter_file <- getOption("lintr.linter_file")
 
   ## if users changed lintr.linter_file, return immediately.
-  if (is_absolute_path(linter_file) && file.exists(linter_file)) return(linter_file)
+  if (is_absolute_path(linter_file) && file.exists(linter_file)) {
+    return(linter_file)
+  }
 
   path <- if (is_directory(filename)) {
     filename
@@ -117,7 +118,9 @@ find_default_encoding <- function(filename) {
 }
 
 get_encoding_from_dcf <- function(file) {
-  if (is.null(file)) return(NULL)
+  if (is.null(file)) {
+    return(NULL)
+  }
 
   encodings <- tryCatch(
     unname(drop(read.dcf(file, "Encoding"))),
@@ -126,7 +129,7 @@ get_encoding_from_dcf <- function(file) {
   )
 
   if (!is.null(encodings)) {
-    # Produces a warning in R <= 3.5 if encodings is NULL
+    # Produces a warning in R <= 3.5 if encoding is NULL
     encodings <- encodings[!is.na(encodings)]
   }
   if (length(encodings) > 0L) {

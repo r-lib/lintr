@@ -1,6 +1,29 @@
 #' `T` and `F` symbol linter
 #'
-#' Avoid the symbols `T` and `F` (for `TRUE` and `FALSE`).
+#' Avoid the symbols `T` and `F`, and use `TRUE` and `FALSE` instead.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "x <- T; y <- F",
+#'   linters = T_and_F_symbol_linter()
+#' )
+#'
+#' lint(
+#'   text = "T = 1.2, F = 2.4",
+#'   linters = T_and_F_symbol_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "x <- c(TRUE, FALSE)",
+#'   linters = T_and_F_symbol_linter()
+#' )
+#'
+#' lint(
+#'   text = "t = 1.2; f = 2.4",
+#'   linters = T_and_F_symbol_linter()
+#' )
 #'
 #' @evalRd rd_tags("T_and_F_symbol_linter")
 #' @seealso
@@ -10,25 +33,25 @@
 T_and_F_symbol_linter <- function() { # nolint: object_name.
   xpath <- paste0(
     "//SYMBOL[",
-    "(text() = 'T' or text() = 'F')", # T or F symbol
-    " and not(preceding-sibling::OP-DOLLAR)", # not part of a $-subset expression
-    " and not(parent::expr[",
-    "  following-sibling::LEFT_ASSIGN", # not target of left assignment
-    "  or preceding-sibling::RIGHT_ASSIGN", # not target of right assignment
-    "  or following-sibling::EQ_ASSIGN", # not target of equals assignment
-    "])",
+    "  (text() = 'T' or text() = 'F')", # T or F symbol
+    "  and not(preceding-sibling::OP-DOLLAR)", # not part of a $-subset expression
+    "  and not(parent::expr[",
+    "    following-sibling::LEFT_ASSIGN", # not target of left assignment
+    "    or preceding-sibling::RIGHT_ASSIGN", # not target of right assignment
+    "    or following-sibling::EQ_ASSIGN", # not target of equals assignment
+    "  ])",
     "]"
   )
 
   xpath_assignment <- paste0(
     "//SYMBOL[",
-    "(text() = 'T' or text() = 'F')", # T or F symbol
-    " and not(preceding-sibling::OP-DOLLAR)", # not part of a $-subset expression
-    " and parent::expr[", #, but ...
-    "  following-sibling::LEFT_ASSIGN", # target of left assignment
-    "  or preceding-sibling::RIGHT_ASSIGN", # target of right assignment
-    "  or following-sibling::EQ_ASSIGN", # target of equals assignment
-    " ]",
+    "  (text() = 'T' or text() = 'F')", # T or F symbol
+    "  and not(preceding-sibling::OP-DOLLAR)", # not part of a $-subset expression
+    "  and parent::expr[", #, but ...
+    "    following-sibling::LEFT_ASSIGN", # target of left assignment
+    "    or preceding-sibling::RIGHT_ASSIGN", # target of right assignment
+    "    or following-sibling::EQ_ASSIGN", # target of equals assignment
+    "  ]",
     "]"
   )
 

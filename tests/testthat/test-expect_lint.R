@@ -3,7 +3,7 @@
 # for failure, always put the lint check or lint field that must fail first.
 
 linter <- assignment_linter()
-msg <- "Use <-, not ="
+lint_msg <- "Use <-, not ="
 
 test_that("no checks", {
   expect_success(expect_lint("a", NULL, linter))
@@ -12,36 +12,36 @@ test_that("no checks", {
 })
 
 test_that("single check", {
-  expect_failure(expect_lint(character(), msg, linter))
-  expect_failure(expect_lint("", msg, linter))
+  expect_failure(expect_lint(character(), lint_msg, linter))
+  expect_failure(expect_lint("", lint_msg, linter))
 
-  expect_success(expect_lint(content = "a=1", checks = msg, linters = linter))
-  expect_success(expect_lint("a=1", msg, linter))
+  expect_success(expect_lint(content = "a=1", checks = lint_msg, linters = linter))
+  expect_success(expect_lint("a=1", lint_msg, linter))
   expect_failure(expect_lint("a=1", "asdf", linter))
-  expect_success(expect_lint("a=1", c(message = msg), linter))
+  expect_success(expect_lint("a=1", c(message = lint_msg), linter))
   expect_failure(expect_lint("a=1", c(message = NULL), linter))
-  expect_success(expect_lint("a=1", c(message = msg, line_number = 1L), linter))
-  expect_failure(expect_lint("a=1", c(line_number = 2L, message = msg), linter))
+  expect_success(expect_lint("a=1", c(message = lint_msg, line_number = 1L), linter))
+  expect_failure(expect_lint("a=1", c(line_number = 2L, message = lint_msg), linter))
 
-  expect_error(expect_lint("a=1", c(message = msg, lineXXX = 1L), linter), "invalid field")
+  expect_error(expect_lint("a=1", c(message = lint_msg, lineXXX = 1L), linter), "invalid field")
 
   expect_failure(expect_lint("foo ()", list(ranges = list(c(2L, 2L))), function_left_parentheses_linter()))
   expect_success(expect_lint("\t1", list(ranges = list(c(1L, 1L))), no_tab_linter()))
-  expect_success(expect_lint("a=1", list(message = msg, line_number = 1L), linter))
-  expect_failure(expect_lint("a=1", list(2L, msg), linter))
+  expect_success(expect_lint("a=1", list(message = lint_msg, line_number = 1L), linter))
+  expect_failure(expect_lint("a=1", list(2L, lint_msg), linter))
 
   expect_error(expect_lint("1:nrow(x)", "(group)", seq_linter()), "Invalid regex result", fixed = TRUE)
 })
 
 test_that("multiple checks", {
   expect_success(
-    expect_lint(file = "exclusions-test", checks = as.list(rep(msg, 9L)), linters = linter, parse_settings = FALSE)
+    expect_lint(file = "exclusions-test", checks = as.list(rep(lint_msg, 9L)), linters = linter, parse_settings = FALSE)
   )
 
-  expect_success(expect_lint("a=1; b=2", list(msg, msg), linter))
-  expect_success(expect_lint("a=1; b=2", list(c(message = msg), c(message = msg)), linter))
+  expect_success(expect_lint("a=1; b=2", list(lint_msg, lint_msg), linter))
+  expect_success(expect_lint("a=1; b=2", list(c(message = lint_msg), c(message = lint_msg)), linter))
   expect_success(expect_lint("a=1; b=2", list(c(line_number = 1L), c(linter = "assignment_linter")), linter))
-  expect_success(expect_lint("a=1; b=2", list(msg, c(line = "a=1; b=2", type = "warning")), linter))
+  expect_success(expect_lint("a=1; b=2", list(lint_msg, c(line = "a=1; b=2", type = "warning")), linter))
   expect_success(expect_lint(c("a=1", "b=2"), list(c(line_number = 1L), c(line_number = 2L)), linter))
   expect_failure(expect_lint(c("a=1", "b=2"), list(c(line_number = 2L), c(line_number = 2L)), linter))
 
@@ -50,7 +50,6 @@ test_that("multiple checks", {
   expect_success(
     expect_lint("\t1\n\t2", list("tabs", list(column_number = 1L, ranges = list(c(1L, 1L)))), no_tab_linter())
   )
-
 })
 
 test_that("expect_lint_free works", {

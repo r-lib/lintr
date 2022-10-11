@@ -31,7 +31,7 @@ jenkins_build_info <- function() {
   }
   slug <- gsub(pattern, "\\2", git_url)
 
-  slug_info <- strsplit(slug, "/")[[1L]]
+  slug_info <- strsplit(slug, "/", fixed = TRUE)[[1L]]
 
   list(
     user = slug_info[1L],
@@ -84,7 +84,10 @@ wercker_build_info <- function() {
 # nocov start
 github_comment <- function(text, info = NULL, token = settings$comment_token) {
   if (!requireNamespace("httr", quietly = TRUE)) {
-    stop("Package 'httr' is required to post comments with github_comment().") # nocov
+    stop("Package 'httr' is required to post comments with github_comment().")
+  }
+  if (!requireNamespace("jsonlite", quietly = TRUE)) {
+    stop("Package 'jsonlite' is required to post comments with github_comment().")
   }
 
   if (is.null(info)) {

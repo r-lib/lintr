@@ -12,6 +12,9 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 undesirable_operator_linter <- function(op = default_undesirable_operators) {
+  if (is.null(names(op)) || !all(nzchar(names(op)))) {
+    stop("'op' should be a named character vector; use missing elements to indicate default messages.")
+  }
   undesirable_operator_metadata <- merge(
     # infix must be handled individually below; non-assignment `=` are always OK
     infix_metadata[

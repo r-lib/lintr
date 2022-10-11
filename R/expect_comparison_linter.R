@@ -1,4 +1,4 @@
-#' Require usage of expect_gt(x, y) over expect_true(x > y) (and similar)
+#' Require usage of `expect_gt(x, y)` over `expect_true(x > y)` (and similar)
 #'
 #' [testthat::expect_gt()], [testthat::expect_gte()], [testthat::expect_lt()],
 #'   [testthat::expect_lte()], and [testthat::expect_equal()] exist specifically
@@ -6,17 +6,56 @@
 #'   also be used for such tests, but it is better to use the tailored function
 #'   instead.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "expect_true(x > y)",
+#'   linters = expect_comparison_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_true(x <= y)",
+#'   linters = expect_comparison_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_true(x == (y == 2))",
+#'   linters = expect_comparison_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "expect_gt(x, y)",
+#'   linters = expect_comparison_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_lte(x, y)",
+#'   linters = expect_comparison_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_identical(x, y == 2)",
+#'   linters = expect_comparison_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_true(x < y | x > y^2)",
+#'   linters = expect_comparison_linter()
+#' )
+#'
 #' @evalRd rd_tags("expect_comparison_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_comparison_linter <- function() {
   # != doesn't have a clean replacement
   comparator_nodes <- setdiff(as.list(infix_metadata$xml_tag[infix_metadata$comparator]), "NE")
-  xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_true']]
-    and expr[2][ {xp_or(comparator_nodes)} ]
-    and not(SYMBOL_SUB[text() = 'info'])
-  ]")
+  xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
+    /parent::expr
+    /following-sibling::expr[ {xp_or(comparator_nodes)} ]
+    /parent::expr[not(SYMBOL_SUB[text() = 'info'])]
+  ")
 
   comparator_expectation_map <- c(
     `>` = "expect_gt", `>=` = "expect_gte",

@@ -1,10 +1,10 @@
 #' Parsed sourced file from a filename
 #'
-#' This object is given as input to each linter
+#' This object is given as input to each linter.
 #'
 #' @details
-#' The file is read in using the `encoding` setting.
-#' This setting found by taking the first valid result from the following locations
+#' The file is read using the `encoding` setting.
+#' This setting is found by taking the first valid result from the following locations
 #'
 #' 1. The `encoding` key from the usual lintr configuration settings.
 #' 2. The `Encoding` field from a Package `DESCRIPTION` file in a parent directory.
@@ -39,7 +39,7 @@
 #'     \item{`filename` (`character`)}
 #'     \item{`file_lines` (`character`) the [readLines()] output for this file}
 #'     \item{`content` (`character`) for .R files, the same as `file_lines`;
-#'           for .Rmd scripts, this is the extracted R source code (as text)}
+#'           for .Rmd or .qmd scripts, this is the extracted R source code (as text)}
 #'     \item{`full_parsed_content` (`data.frame`) as given by
 #'           [utils::getParseData()] for the full content}
 #'     \item{`full_xml_parsed_content` (`xml_document`) the XML parse tree of all
@@ -51,8 +51,11 @@
 #'   \item{error}{A `Lint` object describing any parsing error.}
 #'   \item{lines}{The [readLines()] output for this file.}
 #' }
+#'
+#' @examples
+#' tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
+#' get_source_expressions(tmp)
 #' @export
-#' @md
 get_source_expressions <- function(filename, lines = NULL) {
   source_expression <- srcfile(filename, encoding = settings$encoding)
 
@@ -265,10 +268,11 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
   } else if (grepl("repeated formal argument", e$message, fixed = TRUE)) {
     matches <- re_matches(
       e$message,
-      rex("repeated formal argument '",
-          capture(name = "symbol", anything),
-          "' on line ",
-          capture(name = "line", digits)
+      rex(
+        "repeated formal argument '",
+        capture(name = "symbol", anything),
+        "' on line ",
+        capture(name = "line", digits)
       )
     )
     sym <- matches$symbol
@@ -336,10 +340,14 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
     )
   }
 
-  message_info <- re_matches(e$message,
-                             rex(single_quotes, capture(name = "name", anything), single_quotes,
-                                 anything,
-                                 double_quotes, capture(name = "starting", anything), double_quotes))
+  message_info <- re_matches(
+    e$message,
+    rex(
+      single_quotes, capture(name = "name", anything), single_quotes,
+      anything,
+      double_quotes, capture(name = "starting", anything), double_quotes
+    )
+  )
 
   loc <- re_matches(source_expression$content, rex(message_info$starting), locations = TRUE)
   line_location <- loc[!is.na(loc$start) & !is.na(loc$end), ]
@@ -348,11 +356,14 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
     if (grepl("attempt to use zero-length variable name", e$message, fixed = TRUE)) {
       # empty symbol: ``, ``(), ''(), ""(), fun(''=42), fun(""=42), fun(a=1,""=42)
       loc <- re_matches(source_expression$content,
-                        rex("``" %or%
-                              list(or("''", '""'), any_spaces, "(") %or%
-                              list(or("(", ","), any_spaces, or("''", '""'), any_spaces, "=")),
-                        options = "multi-line",
-                        locations = TRUE)
+        rex(
+          "``" %or%
+            list(or("''", '""'), any_spaces, "(") %or%
+            list(or("(", ","), any_spaces, or("''", '""'), any_spaces, "=")
+        ),
+        options = "multi-line",
+        locations = TRUE
+      )
       loc <- loc[!is.na(loc$start) & !is.na(loc$end), ]
       if (nrow(loc) > 0L) {
         line_location <- loc[1L, ]
@@ -388,20 +399,20 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
 }
 
 lint_rmd_error <- function(e, source_expression) {
-  message_info <- re_matches(e$message,
-    rex(except_some_of(":"),
+  message_info <- re_matches(
+    e$message,
+    rex(
+      except_some_of(":"),
       ":",
-      capture(name = "line",
-        digits),
+      capture(name = "line", digits),
       ":",
-      capture(name = "column",
-        digits),
+      capture(name = "column", digits),
       ":",
       space,
-      capture(name = "message",
-        anything),
-      "\n")
+      capture(name = "message", anything),
+      "\n"
     )
+  )
 
   line_number <- as.integer(message_info$line)
   column_number <- as.integer(message_info$column)
@@ -486,7 +497,8 @@ get_source_expression <- function(source_expression, error = identity) {
 
 get_newline_locs <- function(x) {
   newline_search <- re_matches(x, rex("\n"), locations = TRUE, global = TRUE)[[1L]]$start
-  c(0L,
+  c(
+    0L,
     if (!is.na(newline_search[1L])) newline_search,
     nchar(x) + 1L
   )
@@ -575,7 +587,7 @@ tab_offsets <- function(tab_columns) {
   vapply(
     tab_columns - 1L,
     function(tab_idx) {
-      offset <- 7L - (tab_idx + cum_offset) %% 8L  # using a tab width of 8 characters
+      offset <- 7L - (tab_idx + cum_offset) %% 8L # using a tab width of 8 characters
       cum_offset <<- cum_offset + offset
       offset
     },
@@ -628,10 +640,12 @@ fix_eq_assigns <- function(pc) {
     #   so it likely requires some GHA print debugging -- tedious :)
     end <- true_locs[i]
     j <- end + 1L
+    # nocov start: only runs on certain R versions
     while (j <= length(expr_locs) && !expr_locs[j]) {
       end <- j
       j <- j + 1L
     }
+    # nocov end
 
     prev_loc <- prev_locs[start]
     next_loc <- next_locs[end]

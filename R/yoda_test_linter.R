@@ -22,11 +22,12 @@ yoda_test_linter <- function() {
     or (STR_CONST and not(OP-DOLLAR))
     or ((OP-PLUS or OP-MINUS) and count(expr[NUM_CONST]) = 2)
   "
-  xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical' or text() = 'expect_setequal']]
-    and expr[2][ {const_condition} ]
-    and not(preceding-sibling::*[self::PIPE or self::SPECIAL[text() = '%>%']])
-  ]")
+  xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical' or text() = 'expect_setequal']
+    /parent::expr
+    /following-sibling::expr[1][ {const_condition} ]
+    /parent::expr[not(preceding-sibling::*[self::PIPE or self::SPECIAL[text() = '%>%']])]
+  ")
 
   second_const_xpath <- glue::glue("expr[position() = 3 and ({const_condition})]")
 

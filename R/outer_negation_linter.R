@@ -1,8 +1,31 @@
-#' Require usage of !any(.) over all(!.), !all(.) over any(!.)
+#' Require usage of `!any(x)` over `all(!x)`, `!all(x)` over `any(!x)`
 #'
 #' `any(!x)` is logically equivalent to `!any(x)`; ditto for the equivalence of
 #'   `all(!x)` and `!any(x)`. Negating after aggregation only requires inverting
 #'   one logical value, and is typically more readable.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "all(!x)",
+#'   linters = outer_negation_linter()
+#' )
+#'
+#' lint(
+#'   text = "any(!x)",
+#'   linters = outer_negation_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "!any(x)",
+#'   linters = outer_negation_linter()
+#' )
+#'
+#' lint(
+#'   text = "!all(x)",
+#'   linters = outer_negation_linter()
+#' )
 #'
 #' @evalRd rd_tags("outer_negation_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
@@ -15,15 +38,17 @@ outer_negation_linter <- function() {
   #   coming after any( and before na.rm= .
   # NB: requirement that count(expr)>1 is to prevent any() from linting
   #   e.g. in magrittr pipelines.
-  xpath <- "//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'any' or text() = 'all']]
-    and count(expr) > 1
-    and not(expr[
-      position() > 1
-      and not(OP-EXCLAMATION)
-      and not(preceding-sibling::*[1][self::EQ_SUB])
-    ])
-  ]"
+  xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'any' or text() = 'all']
+    /parent::expr[following-sibling::expr]
+    /parent::expr[
+      not(expr[
+        position() > 1
+        and not(OP-EXCLAMATION)
+        and not(preceding-sibling::*[1][self::EQ_SUB])
+      ])
+    ]
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
