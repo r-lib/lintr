@@ -1,15 +1,21 @@
 #' @export
 print.lint <- function(x, ...) {
-  color <- switch(x$type,
-    "warning" = crayon::magenta,
-    "error" = crayon::red,
-    "style" = crayon::blue,
-    crayon::bold
-  )
+  if (requireNamespace("crayon", quietly = TRUE)) {
+    color <- switch(x$type,
+      warning = crayon::magenta,
+      error = crayon::red,
+      style = crayon::blue,
+      crayon::bold
+    )
+    emph <- crayon::bold
+  } else {
+    color <- identity
+    emph <- identity
+  }
 
   cat(
     sep = "",
-    crayon::bold(
+    emph(
       x$filename, ":",
       as.character(x$line_number), ":",
       as.character(x$column_number), ": ",
@@ -17,7 +23,7 @@ print.lint <- function(x, ...) {
     ),
     color(x$type, ": ", sep = ""),
     "[", x$linter, "] ",
-    crayon::bold(x$message), "\n",
+    emph(x$message), "\n",
     # swap tabs for spaces for #528 (sorry Richard Hendricks)
     chartr("\t", " ", x$line), "\n",
     highlight_string(x$message, x$column_number, x$ranges),
