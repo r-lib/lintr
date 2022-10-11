@@ -68,9 +68,6 @@ test_that("expect_s3_class_linter blocks simple disallowed usages", {
   #> )
 })
 
-
-
-skip_if_not_installed("patrick")
 local({
   # test for lint errors appropriately raised for all is.<class> calls
   is_classes <- c(

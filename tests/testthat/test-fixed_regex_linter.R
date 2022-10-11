@@ -252,7 +252,6 @@ test_that("fixed replacement is correct with UTF-8", {
 #   up in practice is for '\<', which is a special character in default
 #   regex but not in PCRE. Empirically relevant for HTML-related regex e.g. \\<li\\>
 
-skip_if_not_installed("patrick")
 patrick::with_parameters_test_that("fixed replacements are correct", {
   skip_if(
     regex_expr %in% c("abc\\U{A0DEF}ghi", "[\\U1d4d7]", "[\\U{1D4D7}]", "\\u{A0}\\U{0001d4d7}") &&
