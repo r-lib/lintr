@@ -36,7 +36,6 @@ test_that("literal_coercion_linter skips allowed rlang usages", {
 })
 
 skip_if_not_installed("tibble")
-skip_if_not_installed("patrick")
 patrick::with_parameters_test_that(
   "literal_coercion_linter blocks simple disallowed usages",
   expect_lint(

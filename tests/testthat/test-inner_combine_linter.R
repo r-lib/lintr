@@ -13,7 +13,6 @@ test_that("inner_combine_linter lints a false positive-ish usage", {
   )
 })
 
-skip_if_not_installed("patrick")
 local({
   vector_funs <- c(
     "as.Date", "as.POSIXct", "as.POSIXlt",
