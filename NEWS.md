@@ -1,3 +1,7 @@
+# lintr 3.0.2
+
+* Fix test to avoid leaving behind cache files in the global cache directory.
+
 # lintr 3.0.1
 
 * Skip multi-byte tests in non UTF-8 locales (#1504)
