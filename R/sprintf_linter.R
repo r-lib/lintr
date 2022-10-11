@@ -5,6 +5,24 @@
 #'
 #' [gettextf()] calls are also included, since `gettextf()` is a thin wrapper around `sprintf()`.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "sprintf('hello %s %s %d', x, y)",
+#'   linters = sprintf_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "sprintf('hello %s %s %d', x, y, z)",
+#'   linters = sprintf_linter()
+#' )
+#'
+#' lint(
+#'   text = "sprintf('hello %s %s %d', x, y, ...)",
+#'   linters = sprintf_linter()
+#' )
+#'
 #' @evalRd rd_tags("sprintf_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

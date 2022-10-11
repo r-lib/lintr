@@ -7,8 +7,27 @@
 sprintf_linter()
 }
 \description{
-Check for an inconsistent number of arguments or arguments with incompatible types (for literal arguments) in
-\code{sprintf()} calls.
+Check for an inconsistent number of arguments or arguments with incompatible types
+(for literal arguments) in \code{sprintf()} calls.
+}
+\examples{
+# will produce lints
+lint(
+  text = "sprintf('hello \%s \%s \%d', x, y)",
+  linters = sprintf_linter()
+)
+
+# okay
+lint(
+  text = "sprintf('hello \%s \%s \%d', x, y, z)",
+  linters = sprintf_linter()
+)
+
+lint(
+  text = "sprintf('hello \%s \%s \%d', x, y, ...)",
+  linters = sprintf_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

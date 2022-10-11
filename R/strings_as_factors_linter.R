@@ -7,11 +7,34 @@
 #' It's not always possible to tell statically whether the change will break
 #'   existing code because R is dynamically typed -- e.g. in `data.frame(x)`
 #'   if `x` is a string, this code will be affected, but if `x` is a number,
-#'   this code will be unaffected. However, in `data.frame(x = 'a')`, the
+#'   this code will be unaffected. However, in `data.frame(x = "a")`, the
 #'   output will unambiguously be affected. We can instead supply
 #'   `stringsAsFactors = TRUE`, which will make this code backwards-compatible.
 #'
 #' See <https://developer.r-project.org/Blog/public/2020/02/16/stringsasfactors/>.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = 'data.frame(x = "a")',
+#'   linters = strings_as_factors_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = 'data.frame(x = "a", stringsAsFactors = TRUE)',
+#'   linters = strings_as_factors_linter()
+#' )
+#'
+#' lint(
+#'   text = 'data.frame(x = "a", stringsAsFactors = FALSE)',
+#'   linters = strings_as_factors_linter()
+#' )
+#'
+#' lint(
+#'   text = 'data.frame(x = 1.2)',
+#'   linters = strings_as_factors_linter()
+#' )
 #'
 #' @evalRd rd_tags("strings_as_factors_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
