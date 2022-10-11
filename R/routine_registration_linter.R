@@ -51,7 +51,7 @@ routine_registration_linter <- function() {
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = "Register your native code routines with useDynLib.",
+      lint_message = "Register your native code routines with useDynLib and R_registerRoutines().",
       type = "warning"
     )
   })
