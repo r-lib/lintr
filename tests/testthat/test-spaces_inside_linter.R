@@ -50,6 +50,17 @@ test_that("spaces_inside_linter blocks diallowed usages", {
   )
 
   expect_lint(
+    "a[[1 ]]",
+    list(
+      message = "Do not place spaces before square brackets",
+      line_number = 1L,
+      column_number = 5L,
+      type = "style"
+    ),
+    linter
+  )
+
+  expect_lint(
     "\n\na[ 1]",
     list(
       message = "Do not place spaces after square brackets",
