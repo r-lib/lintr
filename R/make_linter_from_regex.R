@@ -64,7 +64,6 @@ make_linter_from_regex <- function(regex,
 #'   with token_type = "STR_CONST" you can check that a regex match occurs
 #'   within a string
 #' @noRd
-
 is_match_covered <- function(source_expression, line_number, match, token_type = NULL) {
   pc <- source_expression[["parsed_content"]]
   if (!is.null(token_type)) {

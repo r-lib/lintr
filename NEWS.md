@@ -39,6 +39,9 @@
 
 * `pipe_continuation_linter()` recognizes violations involving the native R pipe `|>` (#1609, @MichaelChirico)
 
+* `paste_linter()` also catches usages like `paste(rep("*", 10L), collapse = "")` that can be written more
+  concisely as `strrep("*", 10L)` (#1108, @MichaelChirico)
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
@@ -56,7 +59,12 @@
 
 * `for_loop_index_linter()` to prevent overwriting local variables in a `for` loop declared like `for (x in x) { ... }` (@MichaelChirico)
 
+* `is_numeric_linter()` for redundant checks equivalent to `is.numeric(x)` such as `is.numeric(x) || is.integer(x)` or
+  `class(x) %in% c("numeric", "integer")` (@MichaelChirico)
+
 * `empty_assignment_linter()` for identifying empty assignments like `x = {}` that are more clearly written as `x = NULL` (@MichaelChirico)
+
+* `unnecessary_placeholder_linter()` for identifying where usage of the {magrittr} placeholder `.` could be omitted (@MichaelChirico)
 
 ## Notes
 

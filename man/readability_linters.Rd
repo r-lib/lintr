@@ -31,6 +31,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{function_return_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{inner_combine_linter}}}
+\item{\code{\link{is_numeric_linter}}}
 \item{\code{\link{lengths_linter}}}
 \item{\code{\link{line_length_linter}}}
 \item{\code{\link{nested_ifelse_linter}}}
@@ -53,6 +54,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{unnecessary_lambda_linter}}}
+\item{\code{\link{unnecessary_placeholder_linter}}}
 \item{\code{\link{unneeded_concatenation_linter}}}
 \item{\code{\link{unreachable_code_linter}}}
 \item{\code{\link{yoda_test_linter}}}

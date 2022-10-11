@@ -2,6 +2,20 @@
 #'
 #' Check that only spaces are used for indentation, not tabs.
 #' @include make_linter_from_regex.R
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "\tx",
+#'   linters = no_tab_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "  x",
+#'   linters = no_tab_linter()
+#' )
+#'
 #' @evalRd rd_tags("no_tab_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

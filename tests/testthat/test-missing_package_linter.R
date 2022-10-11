@@ -1,6 +1,6 @@
 test_that("returns the correct linting", {
   linter <- missing_package_linter()
-  msg <- list(message = rex::rex("Package 'statts' is not installed."))
+  lint_msg <- list(message = rex::rex("Package 'statts' is not installed."))
 
   expect_lint("library(stats)", NULL, linter)
   expect_lint('library("stats")', NULL, linter)
@@ -9,7 +9,7 @@ test_that("returns the correct linting", {
   expect_lint("library(stats, quietly)", NULL, linter)
   expect_lint("library(stats, quietly = TRUE)", NULL, linter)
 
-  expect_lint("library(statts, quietly = TRUE)", msg, linter)
+  expect_lint("library(statts, quietly = TRUE)", lint_msg, linter)
 
   expect_lint(
     trim_some("
@@ -20,17 +20,17 @@ test_that("returns the correct linting", {
     linter
   )
 
-  expect_lint("library(statts, quietly = TRUE)", msg, linter)
+  expect_lint("library(statts, quietly = TRUE)", lint_msg, linter)
 
   expect_lint("require(stats)", NULL, linter)
   expect_lint("require(stats, quietly = TRUE)", NULL, linter)
-  expect_lint("require(statts)", msg, linter)
+  expect_lint("require(statts)", lint_msg, linter)
 
   expect_lint('loadNamespace("stats")', NULL, linter)
-  expect_lint('loadNamespace("statts")', msg, linter)
+  expect_lint('loadNamespace("statts")', lint_msg, linter)
 
   expect_lint('requireNamespace("stats")', NULL, linter)
-  expect_lint('requireNamespace("statts")', msg, linter)
+  expect_lint('requireNamespace("statts")', lint_msg, linter)
 })
 
 test_that("loadNamespace and requireNamespace allow plain symbols", {

@@ -12,13 +12,13 @@ test_that("trailing_blank_lines_linter doesn't block allowed usages", {
 
 test_that("trailing_blank_lines_linter detects disallowed usages", {
   linter <- trailing_blank_lines_linter()
-  msg <- rex::rex("Trailing blank lines are superfluous.")
+  lint_msg <- rex::rex("Trailing blank lines are superfluous.")
 
-  expect_lint("blah <- 1\n", msg, linter)
-  expect_lint("blah <- 1\n  ", msg, linter)
-  expect_lint("blah <- 1\n \n ", list(msg, msg), linter)
-  expect_lint("blah <- 1\n\n", list(msg, msg), linter)
-  expect_lint("blah <- 1\n\t\n", list(msg, msg), linter)
+  expect_lint("blah <- 1\n", lint_msg, linter)
+  expect_lint("blah <- 1\n  ", lint_msg, linter)
+  expect_lint("blah <- 1\n \n ", list(lint_msg, lint_msg), linter)
+  expect_lint("blah <- 1\n\n", list(lint_msg, lint_msg), linter)
+  expect_lint("blah <- 1\n\t\n", list(lint_msg, lint_msg), linter)
 
   # Construct a test file without terminal newline
   # cf. test-get_source_expressions.R

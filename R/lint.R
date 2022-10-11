@@ -122,8 +122,12 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 #' \dontrun{
 #'   lint_dir()
 #'   lint_dir(
-#'     linters = list(semicolon_linter())
-#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "renv")
+#'     linters = list(semicolon_linter()),
+#'     exclusions = list(
+#'       "inst/doc/creating_linters.R" = 1,
+#'       "inst/example/bad.R",
+#'       "renv"
+#'     )
 #'   )
 #' }
 #' @export

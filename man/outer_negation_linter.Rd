@@ -11,6 +11,30 @@ outer_negation_linter()
 \code{all(!x)} and \code{!any(x)}. Negating after aggregation only requires inverting
 one logical value, and is typically more readable.
 }
+\examples{
+# will produce lints
+lint(
+  text = "all(!x)",
+  linters = outer_negation_linter()
+)
+
+lint(
+  text = "any(!x)",
+  linters = outer_negation_linter()
+)
+
+# okay
+lint(
+  text = "!any(x)",
+  linters = outer_negation_linter()
+)
+
+lint(
+  text = "!all(x)",
+  linters = outer_negation_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

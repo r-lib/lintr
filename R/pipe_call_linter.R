@@ -1,7 +1,20 @@
 #' Pipe call linter
 #'
-#' Force explicit calls in magrittr pipes, e.g.,
-#' `1:3 %>% sum()` instead of `1:3 %>% sum`.
+#' Force explicit calls in magrittr pipes, e.g., `1:3 %>% sum()` instead of `1:3 %>% sum`.
+#' Note that native pipe always requires a function call, i.e. `1:3 |> sum` will produce an error.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "1:3 %>% mean %>% as.character",
+#'   linters = pipe_call_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "1:3 %>% mean() %>% as.character()",
+#'   linters = pipe_call_linter()
+#' )
 #'
 #' @evalRd rd_tags("pipe_call_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.

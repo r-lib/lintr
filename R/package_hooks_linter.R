@@ -11,6 +11,39 @@
 #' 4. `.onLoad()` and `.onAttach()` should take two arguments, with names matching `^lib` and `^pkg`;
 #'    `.Last.lib()` and `.onDetach()` should take one argument with name matching `^lib`.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = ".onLoad <- function(lib, ...) { }",
+#'   linters = package_hooks_linter()
+#' )
+#'
+#' lint(
+#'   text = ".onAttach <- function(lib, pkg) { require(foo) }",
+#'   linters = package_hooks_linter()
+#' )
+#'
+#' lint(
+#'   text = ".onDetach <- function(pkg) { }",
+#'   linters = package_hooks_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = ".onLoad <- function(lib, pkg) { }",
+#'   linters = package_hooks_linter()
+#' )
+#'
+#' lint(
+#'   text = ".onAttach <- function(lib, pkg) { loadNamespace('foo') }",
+#'   linters = package_hooks_linter()
+#' )
+#'
+#' lint(
+#'   text = ".onDetach <- function(lib) { }",
+#'   linters = package_hooks_linter()
+#' )
+#'
 #' @evalRd rd_tags("package_hooks_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

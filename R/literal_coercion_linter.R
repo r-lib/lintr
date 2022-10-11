@@ -8,6 +8,39 @@
 #'   using the typed version (e.g. `NA_real_`) instead of a coercion
 #'   (like `as.numeric(NA)`).
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "int(1)",
+#'   linters = literal_coercion_linter()
+#' )
+#'
+#' lint(
+#'   text = "as.character(NA)",
+#'   linters = literal_coercion_linter()
+#' )
+#'
+#' lint(
+#'   text = "rlang::lgl(1L)",
+#'   linters = literal_coercion_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "1L",
+#'   linters = literal_coercion_linter()
+#' )
+#'
+#' lint(
+#'   text = "NA_character_",
+#'   linters = literal_coercion_linter()
+#' )
+#'
+#' lint(
+#'   text = "TRUE",
+#'   linters = literal_coercion_linter()
+#' )
+#'
 #' @evalRd rd_tags("literal_coercion_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

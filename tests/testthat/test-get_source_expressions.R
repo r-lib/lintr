@@ -1,9 +1,10 @@
 with_content_to_parse <- function(content, code) {
-  f <- tempfile()
-  con <- file(f, open = "w", encoding = "UTF-8")
-  on.exit(unlink(f))
-  writeLines(content, con)
-  close(con)
+  f <- withr::local_tempfile()
+  local({
+    con <- file(f, open = "w", encoding = "UTF-8")
+    on.exit(close(con))
+    writeLines(content, con)
+  })
   source_expressions <- get_source_expressions(f)
   content_env <- new.env()
   content_env$pc <- lapply(source_expressions[["expressions"]], `[[`, "parsed_content")
@@ -69,14 +70,11 @@ test_that("tab positions have been corrected", {
 })
 
 test_that("Terminal newlines are detected correctly", {
-  writeLines("lm(y ~ x)", tmp <- tempfile())
-  on.exit(unlink(tmp), add = TRUE)
-  writeBin(
-    # strip the last (two) element(s) (\r\n or \n)
-    head(readBin(tmp, raw(), file.size(tmp)), if (.Platform$OS.type == "windows") -2L else -1L),
-    tmp2 <- tempfile()
-  )
-  on.exit(unlink(tmp2), add = TRUE)
+  content <- "lm(y ~ x)"
+  # NB: need to specify terminal newline explicitly with cat, not writeLines()
+  tmp <- withr::local_tempfile(lines = content)
+  tmp2 <- withr::local_tempfile()
+  cat(content, file = tmp2)
 
   expect_true(get_source_expressions(tmp)$expressions[[2L]]$terminal_newline)
   expect_false(get_source_expressions(tmp2)$expressions[[2L]]$terminal_newline)
@@ -113,16 +111,16 @@ test_that("Warns if encoding is misspecified", {
   the_lint <- lint(filename = file, parse_settings = FALSE)[[1L]]
   expect_s3_class(the_lint, "lint")
 
-  msg <- "Invalid multibyte character in parser. Is the encoding correct?"
+  lint_msg <- "Invalid multibyte character in parser. Is the encoding correct?"
   if (!isTRUE(l10n_info()[["UTF-8"]])) {
     # Prior to R 4.2.0, the Windows parser throws a different error message because the source code is converted to
     # native encoding.
     # This results in line 4 becoming <fc> <- 42 before the parser sees it.
-    msg <- "unexpected '<'"
+    lint_msg <- "unexpected '<'"
   }
 
   expect_identical(the_lint$linter, "error")
-  expect_identical(the_lint$message, msg)
+  expect_identical(the_lint$message, lint_msg)
   expect_identical(the_lint$line_number, 4L)
 
   file <- test_path("dummy_projects", "project", "cp1252_parseable.R")

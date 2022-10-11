@@ -28,8 +28,8 @@ test_that("return lint report as checkstyle xml", {
     ),
     class = "lints"
   )
-  tmp <- tempfile()
+  tmp <- withr::local_tempfile()
   checkstyle_output(lints, tmp)
 
-  expect_equal(readLines(tmp), readLines("checkstyle.xml"))
+  expect_identical(readLines(tmp), readLines(test_path("checkstyle.xml")))
 })

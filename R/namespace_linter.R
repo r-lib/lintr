@@ -6,6 +6,35 @@
 #'
 #' @param check_exports Check if `symbol` is exported from `namespace` in `namespace::symbol` calls.
 #' @param check_nonexports Check if `symbol` exists in `namespace` in `namespace:::symbol` calls.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "xyzxyz::sd(c(1, 2, 3))",
+#'   linters = namespace_linter()
+#' )
+#'
+#' lint(
+#'   text = "stats::ssd(c(1, 2, 3))",
+#'   linters = namespace_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "stats::sd(c(1, 2, 3))",
+#'   linters = namespace_linter()
+#' )
+#'
+#' lint(
+#'   text = "stats::ssd(c(1, 2, 3))",
+#'   linters = namespace_linter(check_exports = FALSE)
+#' )
+#'
+#' lint(
+#'   text = "stats:::ssd(c(1, 2, 3))",
+#'   linters = namespace_linter(check_nonexports = FALSE)
+#' )
+#'
 #' @evalRd rd_tags("namespace_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -51,26 +80,14 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
       return(lints)
     }
 
-    ## Case 2 (rare?): pkg namespace is broken in pkg::foo
+    ## Case 2/3/4: problems with foo in pkg::foo / pkg:::foo
 
     # run here, not in the factory, to allow for run- vs. "compile"-time differences in package structure
     namespaces <- lapply(packages, function(package) tryCatch(getNamespace(package), error = identity))
     failed_namespace <- vapply(namespaces, inherits, "condition", FUN.VALUE = logical(1L))
-
     if (any(failed_namespace)) {
-      lints <- c(lints, xml_nodes_to_lints(
-        package_nodes[failed_namespace],
-        source_expression = source_expression,
-        lint_message = vapply(namespaces[failed_namespace], conditionMessage, character(1L)),
-        type = "warning"
-      ))
-
-      ns_nodes <- ns_nodes[!failed_namespace]
-      packages <- packages[!failed_namespace]
-      namespaces <- namespaces[!failed_namespace]
+      stop("Failed to retrieve namespaces for one or more of the packages. Please report this issue.", call. = FALSE)
     }
-
-    ## Case 3/4/5: problems with foo in pkg::foo / pkg:::foo
 
     ns_get <- xml2::xml_text(ns_nodes) == "::"
     symbol_nodes <- xml2::xml_find_all(ns_nodes, "following-sibling::*[1]")
@@ -107,7 +124,7 @@ get_all_exports <- function(namespace) {
 build_ns_get_int_lints <- function(packages, symbols, symbol_nodes, namespaces, source_expression) {
   lints <- list()
 
-  ## Case 3: foo does not exist in pkg:::foo
+  ## Case 2: foo does not exist in pkg:::foo
 
   non_symbols <- !vapply(
     seq_along(symbols),
@@ -127,7 +144,7 @@ build_ns_get_int_lints <- function(packages, symbols, symbol_nodes, namespaces, 
     symbol_nodes <- symbol_nodes[!non_symbols]
   }
 
-  ## Case 4: foo is already exported pkg:::foo
+  ## Case 3: foo is already exported pkg:::foo
 
   exported <- vapply(
     seq_along(symbols),
@@ -150,7 +167,7 @@ build_ns_get_int_lints <- function(packages, symbols, symbol_nodes, namespaces, 
 build_ns_get_lints <- function(packages, symbols, symbol_nodes, namespaces, source_expression) {
   lints <- list()
 
-  ## Case 5: foo is not an export in pkg::foo
+  ## Case 4: foo is not an export in pkg::foo
 
   unexported <- !vapply(
     seq_along(symbols),
@@ -165,5 +182,6 @@ build_ns_get_lints <- function(packages, symbols, symbol_nodes, namespaces, sour
       type = "warning"
     ))
   }
+
   lints
 }
