@@ -29,6 +29,30 @@ It still may be preferable to refactor such code, as it may be faster
 to match the pattern on \code{levels(x)} and use that to subset instead.
 }
 
+\examples{
+# will produce lints
+lint(
+  text = "x[grep(pattern, x)]",
+  linters = regex_subset_linter()
+)
+
+lint(
+  text = "x[stringr::str_which(x, pattern)]",
+  linters = regex_subset_linter()
+)
+
+# okay
+lint(
+  text = "grep(pattern, x, value = TRUE)",
+  linters = regex_subset_linter()
+)
+
+lint(
+  text = "stringr::str_subset(x, pattern)",
+  linters = regex_subset_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

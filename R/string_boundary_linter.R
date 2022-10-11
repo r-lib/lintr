@@ -21,6 +21,37 @@
 #'   are ignored. Some authors may prefer the conciseness offered by `grepl()` whereby
 #'   `NA` input maps to `FALSE` output, which doesn't have a direct equivalent
 #'   with `startsWith()` or `endsWith()`.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = 'grepl("^a", x)',
+#'   linters = string_boundary_linter()
+#' )
+#'
+#' lint(
+#'   text = 'grepl("z$", x)',
+#'   linters = string_boundary_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = 'startsWith(x, "a")',
+#'   linters = string_boundary_linter()
+#' )
+#'
+#' lint(
+#'   text = 'endsWith(x, "z")',
+#'   linters = string_boundary_linter()
+#' )
+#'
+#' # If missing values are present, the suggested alternative wouldn't be strictly
+#' # equivalent, so this linter can also be turned off in such cases.
+#' lint(
+#'   text = 'grepl("z$", x)',
+#'   linters = string_boundary_linter(allow_grepl = TRUE)
+#' )
+#'
 #' @evalRd rd_tags("string_boundary_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

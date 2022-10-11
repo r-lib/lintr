@@ -6,6 +6,54 @@
 #'   semicolons (e.g. as in `x; y`, i.e., on the same line of code) are allowed.
 #' @param allow_trailing Logical, default `FALSE`. If `TRUE`, "trailing"
 #'   semicolons (i.e., those that terminate lines of code) are allowed.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "a <- 1;",
+#'   linters = semicolon_linter()
+#' )
+#'
+#' lint(
+#'   text = "a <- 1; b <- 1",
+#'   linters = semicolon_linter()
+#' )
+#'
+#' lint(
+#'   text = "function() { a <- 1; b <- 1 }",
+#'   linters = semicolon_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "a <- 1",
+#'   linters = semicolon_linter()
+#' )
+#'
+#' lint(
+#'   text = "a <- 1;",
+#'   linters = semicolon_linter(allow_trailing = TRUE)
+#' )
+#'
+#' code_lines <- "a <- 1\nb <- 1"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = semicolon_linter()
+#' )
+#'
+#' lint(
+#'   text = "a <- 1; b <- 1",
+#'   linters = semicolon_linter(allow_compound = TRUE)
+#' )
+#'
+#' code_lines <- "function() { \n  a <- 1\n  b <- 1\n}"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = semicolon_linter()
+#' )
+#'
 #' @evalRd rd_tags("semicolon_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
