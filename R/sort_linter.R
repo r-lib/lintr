@@ -52,12 +52,34 @@ sort_linter <- function() {
 
     var <- xml2::xml_text(xml2::xml_find_first(bad_expr, ".//SYMBOL"))
 
-    msg <- glue::glue("sort({var}) is better than {var}[order({var})].")
+    args <- ".//SYMBOL_SUB[text() = 'method' or
+                           text() = 'decreasing' or
+                           text() = 'na.last']"
+
+    arg_names <- xml2::xml_text(xml2::xml_find_all(bad_expr, args))
+    arg_values <- xml2::xml_text(
+      xml2::xml_find_all(bad_expr, glue::glue("{args}/following-sibling::expr[1]"))
+    )
+
+    orig_call <- sprintf(
+      "%s[order(%s)]",
+      var,
+      toString(c(var, paste(arg_names, arg_values, sep = ' = ')))
+    )
+
+    if (!"na.last" %in% arg_names) {
+      arg_names <- c(arg_names, "na.last")
+      arg_values <- c(arg_values, "TRUE")
+    }
+
+    new_call <- glue::glue(
+      "sort({toString(c(var, paste(arg_names, arg_values, sep = ' = ')))})"
+    )
 
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = msg,
+      lint_message = paste0(new_call, " is better than ", orig_call, "."),
       type = "warning"
     )
   })
