@@ -3,6 +3,19 @@
 #' [system.file()] has a `...` argument which, internally, is passed to
 #'   [file.path()], so including it in user code is repetitive.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = 'system.file(file.path("path", "to", "data"), package = "foo")',
+#'   linters = system_file_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = 'system.file("path", "to", "data", package = "foo")',
+#'   linters = system_file_linter()
+#' )
+#'
 #' @evalRd rd_tags("system_file_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

@@ -10,6 +10,20 @@ system_file_linter()
 \code{\link[=system.file]{system.file()}} has a \code{...} argument which, internally, is passed to
 \code{\link[=file.path]{file.path()}}, so including it in user code is repetitive.
 }
+\examples{
+# will produce lints
+lint(
+  text = 'system.file(file.path("path", "to", "data"), package = "foo")',
+  linters = system_file_linter()
+)
+
+# okay
+lint(
+  text = 'system.file("path", "to", "data", package = "foo")',
+  linters = system_file_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
