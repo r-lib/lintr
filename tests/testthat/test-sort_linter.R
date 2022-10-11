@@ -9,7 +9,7 @@ test_that("sort_linter skips allowed usages", {
 
 
 test_that("sort_linter blocks simple disallowed usages", {
-  lint_message <- "sort\\(.*\\) is better than"
+  lint_message <- rex::rex("sort(", anything, ") is better than")
 
   expect_lint("x[order(x)]", lint_message, sort_linter())
 
