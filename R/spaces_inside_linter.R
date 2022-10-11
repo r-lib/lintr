@@ -4,6 +4,29 @@
 #'   inside them, i.e., directly following an opening delimiter or directly
 #'   preceding a closing delimiter.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "c( TRUE, FALSE )",
+#'   linters = spaces_inside_linter()
+#' )
+#'
+#' lint(
+#'   text = "x[ 1L ]",
+#'   linters = spaces_inside_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "c(TRUE, FALSE)",
+#'   linters = spaces_inside_linter()
+#' )
+#'
+#' lint(
+#'   text = "x[1L]",
+#'   linters = spaces_inside_linter()
+#' )
+#'
 #' @evalRd rd_tags("spaces_inside_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
