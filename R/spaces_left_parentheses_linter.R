@@ -2,6 +2,19 @@
 #'
 #' Check that all left parentheses have a space before them unless they are in a function call.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "for(i in j) { }",
+#'   linters = spaces_left_parentheses_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "for (i in j) { }",
+#'   linters = spaces_left_parentheses_linter()
+#' )
+#'
 #' @evalRd rd_tags("spaces_left_parentheses_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
