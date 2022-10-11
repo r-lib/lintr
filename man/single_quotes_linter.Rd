@@ -9,6 +9,20 @@ single_quotes_linter()
 \description{
 Check that only double quotes are used to delimit string constants.
 }
+\examples{
+# will produce lints
+lint(
+  text = "c('a', 'b')",
+  linters = single_quotes_linter()
+)
+
+# okay
+lint(
+  text = 'c("a", "b")',
+  linters = single_quotes_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr
 \url{https://style.tidyverse.org/syntax.html#character-vectors}
