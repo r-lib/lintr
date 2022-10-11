@@ -50,7 +50,7 @@ sort_linter <- function() {
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    var <- xml2::xml_text(xml2::xml_find_first(bad_expr, "//SYMBOL"))
+    var <- xml2::xml_text(xml2::xml_find_first(bad_expr, ".//SYMBOL"))
 
     msg <- glue::glue("sort({var}) is better than {var}[order({var})].")
 

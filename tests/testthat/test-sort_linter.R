@@ -24,7 +24,13 @@ test_that("sort_linter produces customized warning message", {
 
   expect_lint(
     "y[order(y)]",
-    rex::rex("sort(y) is better than y[order(y)]."),
+    "sort\\(y\\) is better than y\\[order\\(y\\)\\]\\.",
+    sort_linter()
+  )
+
+  expect_lint(
+    "y + x[order(x)]",
+    "sort\\(x\\) is better than x\\[order\\(x\\)\\]\\.",
     sort_linter()
   )
 
