@@ -7,8 +7,11 @@
 sprintf_linter()
 }
 \description{
-Check for an inconsistent number of arguments or arguments with incompatible types
-(for literal arguments) in \code{sprintf()} calls.
+Check for an inconsistent number of arguments or arguments with incompatible types (for literal arguments) in
+\code{\link[=sprintf]{sprintf()}} calls.
+}
+\details{
+\code{\link[=gettextf]{gettextf()}} calls are also included, since \code{gettextf()} is a thin wrapper around \code{sprintf()}.
 }
 \examples{
 # will produce lints

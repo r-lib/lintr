@@ -4,6 +4,8 @@
 #'   passed as the first positional argument; using it can cause confusion
 #'   and impacts readability.
 #'
+#' This is true for forward (`%>%`), assignment (`%<>%`), and tee (`%T>%`) operators.
+#'
 #' @examples
 #' # will produce lints
 #' lint(

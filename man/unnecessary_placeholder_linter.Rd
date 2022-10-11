@@ -11,6 +11,9 @@ The argument placeholder \code{.} in magrittr pipelines is unnecessary if
 passed as the first positional argument; using it can cause confusion
 and impacts readability.
 }
+\details{
+This is true for forward (\verb{\%>\%}), assignment (\verb{\%<>\%}), and tee (\verb{\%T>\%}) operators.
+}
 \examples{
 # will produce lints
 lint(
