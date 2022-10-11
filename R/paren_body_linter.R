@@ -3,6 +3,20 @@
 #' Check that there is a space between right parenthesis and a body expression.
 #'
 #' @evalRd rd_tags("paren_body_linter")
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "function(x)x + 1",
+#'   linters = paren_body_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "function(x) x + 1",
+#'   linters = paren_body_linter()
+#' )
+#'
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
 #'   <https://style.tidyverse.org/syntax.html#parentheses>

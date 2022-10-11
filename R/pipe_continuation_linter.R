@@ -3,6 +3,48 @@
 #' Check that each step in a pipeline is on a new line, or the entire pipe fits on one line.
 #'
 #' @evalRd rd_tags("pipe_continuation_linter")
+#'
+#' @examples
+#' # will produce lints
+#' code_lines <- "1:3 %>%\n mean() %>% as.character()"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = pipe_continuation_linter()
+#' )
+#'
+#' code_lines <- "1:3 |> mean() |>\n as.character()"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = pipe_continuation_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "1:3 %>% mean() %>% as.character()",
+#'   linters = pipe_continuation_linter()
+#' )
+#'
+#' code_lines <- "1:3 %>%\n mean() %>%\n as.character()"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = pipe_continuation_linter()
+#' )
+#'
+#' lint(
+#'   text = "1:3 |> mean() |> as.character()",
+#'   linters = pipe_continuation_linter()
+#' )
+#'
+#' code_lines <- "1:3 |>\n mean() |>\n as.character()"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = pipe_continuation_linter()
+#' )
+#'
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
 #'   <https://style.tidyverse.org/pipes.html#long-lines-2>
@@ -10,7 +52,7 @@
 pipe_continuation_linter <- function() {
   # Where a single-line pipeline is nested inside a larger expression
   #   e.g. inside a function definition), the outer expression can span multiple lines
-  #   without throwning a lint.
+  #   without throwing a lint.
 
   pipe_conditions <- "
     parent::expr[@line1 < @line2]

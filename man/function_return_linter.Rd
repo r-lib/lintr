@@ -23,7 +23,7 @@ lint(
   linters = function_return_linter()
 )
 
-cat("e <- new.env() \nfoo <- function(x) return(e$val <- x + 1)")
+writeLines("e <- new.env() \nfoo <- function(x) return(e$val <- x + 1)")
 lint(
   text = "e <- new.env() \nfoo <- function(x) return(e$val <- x + 1)",
   linters = function_return_linter()
@@ -53,7 +53,7 @@ foo <- function(x) {
   return(e$val)
 }
 "
-cat(code_lines)
+writeLines(code_lines)
 lint(
   text = code_lines,
   linters = function_return_linter()

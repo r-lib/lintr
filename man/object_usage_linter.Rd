@@ -18,6 +18,24 @@ will be skipped. This argument will be passed to \code{skipWith} argument of
 Check that closures have the proper usage using \code{\link[codetools:checkUsage]{codetools::checkUsage()}}.
 Note that this runs \code{\link[base:eval]{base::eval()}} on the code, so \strong{do not use with untrusted code}.
 }
+\examples{
+# will produce lints
+lint(
+  text = "foo <- function() { x <- 1 }",
+  linters = object_usage_linter()
+)
+
+# okay
+lint(
+  text = "foo <- function(x) { x <- 1 }",
+  linters = object_usage_linter()
+)
+
+lint(
+  text = "foo <- function() { x <- 1; return(x) }",
+  linters = object_usage_linter()
+)
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

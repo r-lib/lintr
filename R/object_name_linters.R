@@ -44,6 +44,40 @@ object_name_xpath <- local({
 #' @param styles A subset of
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
 #'   match at least one of these styles.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "my_var <- 1L",
+#'   linters = object_name_linter(styles = "CamelCase")
+#' )
+#'
+#' lint(
+#'   text = "xYz <- 1L",
+#'   linters = object_name_linter(styles = c("UPPERCASE", "lowercase"))
+#' )
+#'
+#' lint(
+#'   text = "MyVar <- 1L",
+#'   linters = object_name_linter(styles = "dotted.case")
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "my_var <- 1L",
+#'   linters = object_name_linter(styles = "snake_case")
+#' )
+#'
+#' lint(
+#'   text = "xyz <- 1L",
+#'   linters = object_name_linter(styles = "lowercase")
+#' )
+#'
+#' lint(
+#'   text = "my.var <- 1L; myvar <- 2L",
+#'   linters = object_name_linter(styles = c("dotted.case", "lowercase"))
+#' )
+#'
 #' @evalRd rd_tags("object_name_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -172,6 +206,25 @@ regexes_rd <- toString(paste0("\\sQuote{", names(style_regexes), "}"))
 #'   see the detailed note in [object_name_linter()] for more details.
 #'
 #' @param length maximum variable name length allowed.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "very_very_long_variable_name <- 1L",
+#'   linters = object_length_linter(length = 10L)
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "very_very_long_variable_name <- 1L",
+#'   linters = object_length_linter(length = 30L)
+#' )
+#'
+#' lint(
+#'   text = "var <- 1L",
+#'   linters = object_length_linter(length = 10L)
+#' )
+#'
 #' @evalRd rd_tags("object_length_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
