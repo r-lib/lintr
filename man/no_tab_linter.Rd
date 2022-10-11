@@ -9,6 +9,20 @@ no_tab_linter()
 \description{
 Check that only spaces are used for indentation, not tabs.
 }
+\examples{
+# will produce lints
+lint(
+  text = "\tx",
+  linters = no_tab_linter()
+)
+
+# okay
+lint(
+  text = "  x",
+  linters = no_tab_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

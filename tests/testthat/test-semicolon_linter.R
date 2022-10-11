@@ -1,8 +1,7 @@
-trail_msg <- "Trailing semicolons are not needed."
-comp_msg <- "Compound semicolons are discouraged. Replace them by a newline."
-
 test_that("Lint all semicolons", {
   linter <- semicolon_linter()
+  trail_msg <- "Trailing semicolons are not needed."
+  comp_msg <- "Compound semicolons are discouraged. Replace them by a newline."
 
   # No semicolon
   expect_lint("", NULL, linter)
@@ -94,6 +93,15 @@ test_that("Trailing semicolons only", {
   expect_lint("function() {a <- 1;b <- 2}\n", NULL, linter)
   expect_lint("f <-\n 1 ;f <- 1.23", NULL, linter)
   expect_lint("function(){\nf <-\n 1 ;f <- 1.23\n}", NULL, linter)
+})
+
+
+test_that("Compound semicolons only", {
+  expect_error(
+    lint(text = "a <- 1;", linters = semicolon_linter(allow_trailing = TRUE, allow_compound = TRUE)),
+    "At least one of `allow_compound` or `allow_trailing` must be FALSE, otherwise no lints can be generated.",
+    fixed = TRUE
+  )
 })
 
 test_that("deprecation notices for semicolon_terminator_linter succeed, and the deprecated version works", {

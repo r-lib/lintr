@@ -1,5 +1,5 @@
 test_that("ifelse_censor_linter skips allowed usages", {
-  expect_lint("ifelse(x > 2, x, y)", NULL, ifelse_censor_linter())
+  expect_lint("ifelse(x == 2, x, y)", NULL, ifelse_censor_linter())
   expect_lint("ifelse(x > 2, x, y)", NULL, ifelse_censor_linter())
 })
 
@@ -9,6 +9,7 @@ test_that("ifelse_censor_linter blocks simple disallowed usages", {
     rex::rex("pmax(x, y) is preferable to ifelse(x < y, y, x)"),
     ifelse_censor_linter()
   )
+
   # other equivalents to base::ifelse()
   expect_lint(
     "if_else(x < 0, 0, x)",

@@ -1,8 +1,10 @@
 test_that("pipe_call_linter skips allowed usages", {
-  expect_lint("a %>% foo()", NULL, pipe_call_linter())
-  expect_lint("a %>% foo(x)", NULL, pipe_call_linter())
-  expect_lint("b %>% { foo(., ., .) }", NULL, pipe_call_linter())
-  expect_lint("a %>% foo() %>% bar()", NULL, pipe_call_linter())
+  linter <- pipe_call_linter()
+
+  expect_lint("a %>% foo()", NULL, linter)
+  expect_lint("a %>% foo(x)", NULL, linter)
+  expect_lint("b %>% { foo(., ., .) }", NULL, linter)
+  expect_lint("a %>% foo() %>% bar()", NULL, linter)
 
   # ensure it works across lines too
   lines <- trim_some("
@@ -10,10 +12,10 @@ test_that("pipe_call_linter skips allowed usages", {
     foo() %>%
     bar()
   ")
-  expect_lint(lines, NULL, pipe_call_linter())
+  expect_lint(lines, NULL, linter)
 
   # symbol extraction is OK (don't force extract2(), e.g.)
-  expect_lint("a %>% .$y %>% mean()", NULL, pipe_call_linter())
+  expect_lint("a %>% .$y %>% mean()", NULL, linter)
 
   # more complicated expressions don't pick up on nested symbols
   lines <- trim_some("
@@ -23,7 +25,7 @@ test_that("pipe_call_linter skips allowed usages", {
     my_combination_fun(tmp, bla)
   }
   ")
-  expect_lint(lines, NULL, pipe_call_linter())
+  expect_lint(lines, NULL, linter)
 })
 
 test_that("pipe_call_linter blocks simple disallowed usages", {

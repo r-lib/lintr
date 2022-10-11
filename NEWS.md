@@ -4,6 +4,9 @@
 
 * `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
 
+* `get_source_expressions()` can handle Sweave/Rmarkdown documents with reference chunks like `<<ref_file>>` (#779, @MichaelChirico).
+  Note that these are simply skipped, rather than attempting to retrieve the reference and also lint it.
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
@@ -11,6 +14,8 @@
 
 * `object_usage_linter()` gains `skip_with` argument to skip code in `with()` expressions.
   To be consistent with `R CMD check`, it defaults to `TRUE` (#941, #1458, @IndrajeetPatil).
+
+* `spaces_inside_linter()` allows terminal missing keyword arguments (e.g. `alist(arg = )`; #540, @MichaelChirico)
 
 ## New and improved features
 
@@ -29,6 +34,11 @@
   Typically, linters should not themselves cause R to stop -- syntax errors lead to error lints,
   for example. Please report such failures as they are likely bugs.
 
+* `pipe_continuation_linter()` recognizes violations involving the native R pipe `|>` (#1609, @MichaelChirico)
+
+* `paste_linter()` also catches usages like `paste(rep("*", 10L), collapse = "")` that can be written more
+  concisely as `strrep("*", 10L)` (#1108, @MichaelChirico)
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
@@ -43,6 +53,36 @@
 
 * `boolean_arithmetic_linter()` for identifying places where logical aggregations are more appropriate, e.g.
   `length(which(x == y)) == 0` is the same as `!any(x == y)` or even `all(x != y)` (@MichaelChirico)
+
+* `for_loop_index_linter()` to prevent overwriting local variables in a `for` loop declared like `for (x in x) { ... }` (@MichaelChirico)
+
+* `is_numeric_linter()` for redundant checks equivalent to `is.numeric(x)` such as `is.numeric(x) || is.integer(x)` or
+  `class(x) %in% c("numeric", "integer")` (@MichaelChirico)
+
+* `empty_assignment_linter()` for identifying empty assignments like `x = {}` that are more clearly written as `x = NULL` (@MichaelChirico)
+
+* `unnecessary_placeholder_linter()` for identifying where usage of the {magrittr} placeholder `.` could be omitted (@MichaelChirico)
+
+## Notes
+
+* `lint()` continues to support Rmarkdown documents. For users of custom .Rmd engines, e.g.
+  `marginformat` from {tufte} or `theorem` from {bookdown}, note that those engines must be registered
+  in {knitr} prior to running `lint()` in order for {lintr} to behave as expected, i.e., they should be
+  shown as part of `knitr::knit_engines$get()`.
+  
+  For {tufte} and {bookdown} in particular, one only needs to load the package namespace to accomplish
+  this (i.e., minimally `loadNamespace("tufte")` or `loadNamespace("bookdown")`, respectively, will
+  register those packages' custom engines; since `library()` also runs `loadNamespace()`, running
+  `library()` will also work). Note further that {tufte} only added this code to their `.onLoad()` recently
+  after our request to do so (see https://github.com/rstudio/tufte/issues/117). Therefore, ensure you're using a
+  more recent version to get the behavior described here for {tufte}.
+  
+  However, there is no requirement that `loadNamespace()` will register a package's custom {knitr}
+  engines, so you may need to work with other package authors to figure out a solution for other engines.
+  
+  Thanks to Yihui and other developers for their helpful discussions around this issue (#797, @IndrajeetPatil).
+
+* The output of `lint()` and `Lint()` gain S3 class `"list"` to assist with S3 dispatch (#1494, @MichaelChirico)
 
 # lintr 3.0.1
 

@@ -41,3 +41,18 @@ test_that("undesirable_operator_linter vectorizes messages", {
     undesirable_operator_linter(modify_defaults(default_undesirable_operators, "%oo%" = NA))
   )
 })
+
+test_that("invalid inputs fail correctly", {
+  expect_error(undesirable_operator_linter("***"), "'op' should be a named character vector", fixed = TRUE)
+  expect_error(undesirable_operator_linter(c("***" = NA, NA)), "'op' should be a named character vector", fixed = TRUE)
+  expect_error(
+    undesirable_operator_linter(c("***" = NA)),
+    "Did not recognize any valid operators in request for: ***",
+    fixed = TRUE
+  )
+  expect_error(
+    undesirable_operator_linter(c("***" = NA, "///" = NA)),
+    "Did not recognize any valid operators in request for: ***, ///",
+    fixed = TRUE
+  )
+})

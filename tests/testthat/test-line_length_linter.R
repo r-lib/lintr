@@ -1,12 +1,18 @@
-test_that("returns the correct linting", {
+test_that("line_length_linter skips allowed usages", {
   linter <- line_length_linter(80L)
-  msg <- rex("Lines should not be more than 80 characters")
 
   expect_lint("blah", NULL, linter)
   expect_lint(strrep("x", 80L), NULL, linter)
+})
+
+test_that("line_length_linter blocks disallowed usages", {
+  linter <- line_length_linter(80L)
+  lint_msg <- rex::rex("Lines should not be more than 80 characters")
+
   expect_lint(
-    strrep("x", 81L), list(
-      message = msg,
+    strrep("x", 81L),
+    list(
+      message = lint_msg,
       column_number = 81L
     ),
     linter
@@ -16,11 +22,11 @@ test_that("returns the correct linting", {
     paste(rep(strrep("x", 81L), 2L), collapse = "\n"),
     list(
       list(
-        message = msg,
+        message = lint_msg,
         column_number = 81L
       ),
       list(
-        message = msg,
+        message = lint_msg,
         column_number = 81L
       )
     ),
@@ -28,11 +34,12 @@ test_that("returns the correct linting", {
   )
 
   linter <- line_length_linter(20L)
-  msg <- rex("Lines should not be more than 20 characters")
+  lint_msg <- rex::rex("Lines should not be more than 20 characters")
   expect_lint(strrep("a", 20L), NULL, linter)
   expect_lint(
-    strrep("a", 22L), list(
-      message = msg,
+    strrep("a", 22L),
+    list(
+      message = lint_msg,
       column_number = 21L
     ),
     linter

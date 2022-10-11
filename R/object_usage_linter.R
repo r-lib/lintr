@@ -9,6 +9,23 @@
 #'   will be skipped. This argument will be passed to `skipWith` argument of
 #'   `codetools::checkUsage()`.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "foo <- function() { x <- 1 }",
+#'   linters = object_usage_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "foo <- function(x) { x <- 1 }",
+#'   linters = object_usage_linter()
+#' )
+#'
+#' lint(
+#'   text = "foo <- function() { x <- 1; return(x) }",
+#'   linters = object_usage_linter()
+#' )
 #' @evalRd rd_linters("package_development")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -160,13 +177,16 @@ extract_glued_symbols <- function(expr) {
   }
   glued_symbols <- new.env(parent = emptyenv())
 
+  unexpected_error <- function(cond) {
+    stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond)) # nocov
+  }
   for (cl in glue_calls) {
+    # TODO(michaelchirico): consider dropping tryCatch() here if we're more confident in our logic
     parsed_cl <- tryCatch(
       parse(text = xml2::xml_text(cl)),
-      error = function(...) NULL,
-      warning = function(...) NULL
+      error = unexpected_error,
+      warning = unexpected_error
     )[[1L]]
-    if (is.null(parsed_cl)) next
     parsed_cl[[".envir"]] <- glued_symbols
     parsed_cl[[".transformer"]] <- symbol_extractor
     # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint
@@ -191,14 +211,10 @@ symbol_extractor <- function(text, envir, data) {
     error = function(...) NULL,
     warning = function(...) NULL
   )
-  if (is.null(parsed_text)) {
+  if (length(parsed_text) == 0L) {
     return("")
   }
   parse_data <- utils::getParseData(parsed_text)
-  # covers NULL & NA cases
-  if (nrow(parse_data) == 0L) {
-    return("")
-  }
   symbols <- parse_data$text[parse_data$token == "SYMBOL"]
   for (sym in symbols) {
     assign(sym, NULL, envir = envir)

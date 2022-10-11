@@ -4,7 +4,7 @@ test_that("returns the correct linting", {
     "Linter paren_brace_linter was deprecated",
     fixed = TRUE
   )
-  msg <- rex("There should be a space between right parenthesis and an opening curly brace.")
+  lint_msg <- rex::rex("There should be a space between right parenthesis and an opening curly brace.")
 
   expect_lint("blah", NULL, linter)
   expect_lint("blah <- function() {}", NULL, linter)
@@ -13,7 +13,7 @@ test_that("returns the correct linting", {
   expect_lint(
     "blah <- function(){}",
     list(
-      message = msg,
+      message = lint_msg,
       column_number = 19L
     ),
     linter
@@ -22,7 +22,7 @@ test_that("returns the correct linting", {
   expect_lint(
     "\nblah <- function(){\n\n\n}",
     list(
-      message = msg,
+      message = lint_msg,
       column_number = 19L
     ),
     linter

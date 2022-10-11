@@ -15,6 +15,7 @@ conjunct_test_linter,package_development best_practices readability
 consecutive_stopifnot_linter,style readability consistency
 cyclocomp_linter,style readability best_practices default configurable
 duplicate_argument_linter,correctness common_mistakes configurable
+empty_assignment_linter,readability best_practices
 equals_na_linter,robustness correctness common_mistakes default
 expect_comparison_linter,package_development best_practices
 expect_identical_linter,package_development
@@ -28,6 +29,7 @@ expect_true_false_linter,package_development best_practices readability
 expect_type_linter,package_development best_practices
 extraction_operator_linter,style best_practices
 fixed_regex_linter,best_practices readability efficiency
+for_loop_index_linter,best_practices readability robustness
 function_argument_linter,style consistency best_practices
 function_left_parentheses_linter,style readability default
 function_return_linter,readability best_practices
@@ -35,6 +37,7 @@ ifelse_censor_linter,best_practices efficiency
 implicit_integer_linter,style consistency best_practices
 infix_spaces_linter,style readability default
 inner_combine_linter,efficiency consistency readability
+is_numeric_linter,readability best_practices consistency
 lengths_linter,efficiency readability best_practices
 line_length_linter,style readability default configurable
 literal_coercion_linter,best_practices consistency efficiency
@@ -77,6 +80,7 @@ trailing_whitespace_linter,style default
 undesirable_function_linter,style efficiency configurable robustness best_practices
 undesirable_operator_linter,style efficiency configurable robustness best_practices
 unnecessary_lambda_linter,best_practices efficiency readability
+unnecessary_placeholder_linter,readability best_practices
 unneeded_concatenation_linter,style readability efficiency configurable
 unreachable_code_linter,best_practices readability
 unused_import_linter,best_practices common_mistakes configurable executing

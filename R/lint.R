@@ -25,7 +25,7 @@
 #'
 #' @aliases lint_file
 # TODO(next release after 3.0.0): remove the alias
-#' @return A list of lint objects.
+#' @return An object of class `c("lints", "list")`, each element of which is a `"list"` object.
 #'
 #' @examples
 #' \dontrun{
@@ -97,7 +97,8 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   }
 
   lints <- maybe_append_error_lint(lints, source_expressions$error, lint_cache, filename)
-  lints <- structure(reorder_lints(flatten_lints(lints)), class = "lints")
+  lints <- reorder_lints(flatten_lints(lints))
+  class(lints) <- c("lints", "list")
 
   cache_file(lint_cache, filename, linters, lints)
   save_cache(lint_cache, filename, cache_path)
@@ -121,8 +122,12 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 #' \dontrun{
 #'   lint_dir()
 #'   lint_dir(
-#'     linters = list(semicolon_linter())
-#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "renv")
+#'     linters = list(semicolon_linter()),
+#'     exclusions = list(
+#'       "inst/doc/creating_linters.R" = 1,
+#'       "inst/example/bad.R",
+#'       "renv"
+#'     )
 #'   )
 #' }
 #' @export
@@ -439,7 +444,7 @@ pkg_name <- function(path = find_package()) {
 #' @param line code source where the lint occurred
 #' @param ranges a list of ranges on the line that should be emphasized.
 #' @param linter deprecated. No longer used.
-#' @return an object of class 'lint'.
+#' @return an object of class `c("lint", "list")`.
 #' @name lint-s3
 #' @export
 Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name.
@@ -455,18 +460,18 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
 
   type <- match.arg(type)
 
-  structure(
-    list(
-      filename = filename,
-      line_number = as.integer(line_number),
-      column_number = as.integer(column_number),
-      type = type,
-      message = message,
-      line = line,
-      ranges = ranges,
-      linter = NA_character_
-    ),
-    class = "lint")
+  obj <- list(
+    filename = filename,
+    line_number = as.integer(line_number),
+    column_number = as.integer(column_number),
+    type = type,
+    message = message,
+    line = line,
+    ranges = ranges,
+    linter = NA_character_
+  )
+  class(obj) <- c("lint", "list")
+  obj
 }
 
 rstudio_source_markers <- function(lints) {
@@ -565,8 +570,12 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 #' @export
 sarif_output <- function(lints, filename = "lintr_results.sarif") {
 
-  # package path will be NULL unless it is a relative path
+  # package path will be `NULL` unless it is a relative path
   package_path <- attr(lints, "path")
+
+  if (is.null(package_path)) {
+    stop("Package path needs to be a relative path.", call. = FALSE)
+  }
 
   # setup template
   sarif <- jsonlite::fromJSON(

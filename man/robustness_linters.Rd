@@ -16,6 +16,7 @@ The following linters are tagged with 'robustness':
 \item{\code{\link{backport_linter}}}
 \item{\code{\link{class_equals_linter}}}
 \item{\code{\link{equals_na_linter}}}
+\item{\code{\link{for_loop_index_linter}}}
 \item{\code{\link{missing_package_linter}}}
 \item{\code{\link{namespace_linter}}}
 \item{\code{\link{nonportable_path_linter}}}

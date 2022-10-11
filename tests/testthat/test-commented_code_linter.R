@@ -1,21 +1,21 @@
 test_that("returns the correct linting", {
-  msg <- rex("Commented code should be removed.")
+  lint_msg <- rex::rex("Commented code should be removed.")
   linter <- commented_code_linter()
   expect_s3_class(linter, "linter")
 
   expect_lint("blah", NULL, linter)
 
-  expect_lint("# blah <- 1", msg, linter)
+  expect_lint("# blah <- 1", lint_msg, linter)
 
   expect_lint(
     "bleurgh <- fun_call(1) # other_call()",
-    list(message = msg, column_number = 26L),
+    list(message = lint_msg, column_number = 26L),
     linter
   )
 
   expect_lint(
     " #blah <- 1",
-    list(message = msg, column_number = 3L),
+    list(message = lint_msg, column_number = 3L),
     linter
   )
 
@@ -26,7 +26,7 @@ test_that("returns the correct linting", {
     line_without_comment <- 42L
      #blah <- 1
     "),
-    list(message = msg, line_number = 3L, column_number = 3L),
+    list(message = lint_msg, line_number = 3L, column_number = 3L),
     linter
   )
 
@@ -59,7 +59,7 @@ test_that("returns the correct linting", {
         mu = 175
       )
     "),
-    list(message = msg, line_number = 3L),
+    list(message = lint_msg, line_number = 3L),
     linter
   )
 
@@ -72,15 +72,15 @@ test_that("returns the correct linting", {
         , mu = 175
       )
     "),
-    list(message = msg, line_number = 3L),
+    list(message = lint_msg, line_number = 3L),
     linter
   )
 
-  test_ops <- append(ops[ops != "%[^%]*%"], values = c("%>%", "%anything%"))
+  test_ops <- append(lintr:::ops[lintr:::ops != "%[^%]*%"], values = c("%>%", "%anything%"))
   for (op in test_ops) {
     expect_lint(paste("i", op, "1", collapse = ""), NULL, linter)
     expect_lint(paste("# something like i", op, "1", collapse = ""), NULL, linter)
-    expect_lint(paste("# i", op, "1", collapse = ""), msg, linter)
+    expect_lint(paste("# i", op, "1", collapse = ""), lint_msg, linter)
   }
 
   expect_lint("TRUE", NULL, linter)
@@ -93,8 +93,8 @@ test_that("returns the correct linting", {
 
   expect_lint("1+1  # for example cat(\"123\")", NULL, linter)
 
-  expect_lint("1+1 # cat('123')", msg, linter)
-  expect_lint("#expect_ftype(1e-12 , t)", msg, linter)
+  expect_lint("1+1 # cat('123')", lint_msg, linter)
+  expect_lint("#expect_ftype(1e-12 , t)", lint_msg, linter)
 
   # regression test for #451
   expect_lint("c('#a#' = 1)", NULL, linter)

@@ -13,6 +13,45 @@ for testing comparisons between two objects. \code{\link[testthat:logical-expect
 also be used for such tests, but it is better to use the tailored function
 instead.
 }
+\examples{
+# will produce lints
+lint(
+  text = "expect_true(x > y)",
+  linters = expect_comparison_linter()
+)
+
+lint(
+  text = "expect_true(x <= y)",
+  linters = expect_comparison_linter()
+)
+
+lint(
+  text = "expect_true(x == (y == 2))",
+  linters = expect_comparison_linter()
+)
+
+# okay
+lint(
+  text = "expect_gt(x, y)",
+  linters = expect_comparison_linter()
+)
+
+lint(
+  text = "expect_lte(x, y)",
+  linters = expect_comparison_linter()
+)
+
+lint(
+  text = "expect_identical(x, y == 2)",
+  linters = expect_comparison_linter()
+)
+
+lint(
+  text = "expect_true(x < y | x > y^2)",
+  linters = expect_comparison_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
