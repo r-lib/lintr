@@ -25,53 +25,53 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "paste('a', 'b', sep = '')",
+#'   text = 'paste("a", "b", sep = "")',
 #'   linters = paste_linter()
 #' )
 #'
 #' lint(
-#'   text = "paste(c('a', 'b'), collapse = ', ')",
+#'   text = 'paste(c("a", "b"), collapse = ", ")',
 #'   linters = paste_linter()
 #' )
 #'
 #' lint(
-#'   text = "paste0(c('a', 'b'), sep = ' ')",
+#'   text = 'paste0(c("a", "b"), sep = " ")',
 #'   linters = paste_linter()
 #' )
 #'
 #' lint(
-#'   text = "paste0(rep('*', 10L), collapse = '')",
+#'   text = 'paste0(rep("*", 10L), collapse = "")',
 #'   linters = paste_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "paste0('a', 'b')",
+#'   text = 'paste0("a", "b")',
 #'   linters = paste_linter()
 #' )
 #'
 #' lint(
-#'   text = "paste('a', 'b', sep = '')",
+#'   text = 'paste("a", "b", sep = "")',
 #'   linters = paste_linter(allow_empty_sep = TRUE)
 #' )
 #'
 #' lint(
-#'   text = "toString(c('x', 'y'))",
+#'   text = 'toString(c("a", "b"))',
 #'   linters = paste_linter()
 #' )
 #'
 #' lint(
-#'   text = "paste(c('a', 'b'), collapse = ', ')",
+#'   text = 'paste(c("a", "b"), collapse = ", ")',
 #'   linters = paste_linter(allow_to_string = TRUE)
 #' )
 #'
 #' lint(
-#'   text = "paste(c('a', 'b'))",
+#'   text = 'paste(c("a", "b"))',
 #'   linters = paste_linter()
 #' )
 #'
 #' lint(
-#'   text = "strrep('*', 10L)",
+#'   text = 'strrep("*", 10L)',
 #'   linters = paste_linter()
 #' )
 #'
