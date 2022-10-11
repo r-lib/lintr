@@ -17,6 +17,40 @@ Additionally, it checks for \code{1:n()} (from dplyr) and \code{1:.N} (from data
 These often cause bugs when the right-hand side is zero.
 It is safer to use \code{\link[base:seq]{base::seq_len()}} or \code{\link[base:seq]{base::seq_along()}} instead.
 }
+\examples{
+# will produce lints
+lint(
+  text = "seq(length(x))",
+  linters = seq_linter()
+)
+
+lint(
+  text = "1:nrow(x)",
+  linters = seq_linter()
+)
+
+lint(
+  text = "dplyr::mutate(x, .id = 1:n())",
+  linters = seq_linter()
+)
+
+# okay
+lint(
+  text = "seq_along(x)",
+  linters = seq_linter()
+)
+
+lint(
+  text = "seq_len(nrow(x))",
+  linters = seq_linter()
+)
+
+lint(
+  text = "dplyr::mutate(x, .id = seq_len(n()))",
+  linters = seq_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
