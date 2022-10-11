@@ -62,6 +62,7 @@ pipe_continuation_linter,style readability default
 redundant_equals_linter,best_practices readability efficiency common_mistakes
 redundant_ifelse_linter,best_practices efficiency consistency
 regex_subset_linter,best_practices efficiency
+routine_registration_linter,best_practices efficiency robustness
 semicolon_linter,style readability default configurable
 semicolon_terminator_linter,style readability deprecated configurable
 seq_linter,robustness efficiency consistency best_practices default
