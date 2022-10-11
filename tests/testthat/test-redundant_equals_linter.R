@@ -20,8 +20,6 @@ test_that("Order doesn't matter", {
   expect_lint("TRUE == x", rex::rex("Using == on a logical vector is redundant."), redundant_equals_linter())
 })
 
-skip_if_not_installed("patrick")
-
 patrick::with_parameters_test_that(
   "redundant_equals_linter blocks simple disallowed usages",
   {
