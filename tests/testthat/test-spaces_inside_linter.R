@@ -102,12 +102,42 @@ test_that("spaces_inside_linter blocks diallowed usages", {
   )
 
   expect_lint(
+    "a[[ 1]]",
+    list(
+      message = "Do not place spaces after square brackets",
+      line_number = 1L,
+      column_number = 4L,
+      type = "style"
+    ),
+    linter
+  )
+
+  expect_lint(
     "a( 1)",
     list(
       message = "Do not place spaces after parentheses",
       line_number = 1L,
       column_number = 3L,
       type = "style"
+    ),
+    linter
+  )
+
+  expect_lint(
+    "x[[ 1L ]]",
+    list(
+      list(
+        message = "Do not place spaces after square brackets",
+        line_number = 1L,
+        column_number = 4L,
+        type = "style"
+      ),
+      list(
+        message = "Do not place spaces before square brackets",
+        line_number = 1L,
+        column_number = 7L,
+        type = "style"
+      )
     ),
     linter
   )
