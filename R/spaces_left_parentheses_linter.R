@@ -5,20 +5,21 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "for(i in j) { }",
+#'   text = "if(TRUE) x else y",
 #'   linters = spaces_left_parentheses_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "for (i in j) { }",
+#'   text = "if (TRUE) x else y",
 #'   linters = spaces_left_parentheses_linter()
 #' )
 #'
 #' @evalRd rd_tags("spaces_left_parentheses_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#parentheses>
+#'   <https://style.tidyverse.org/syntax.html#parentheses> \cr
+#'   [function_left_parentheses_linter()]
 #' @export
 spaces_left_parentheses_linter <- function() {
   file_level_xpath <- "//OP-LEFT-PAREN[@start - 1 = ancestor::expr/preceding-sibling::OP-SEMICOLON/@end]"

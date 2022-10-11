@@ -38,11 +38,6 @@ lint(
 )
 
 lint(
-  text =  "if (TRUE) x else y",
-  linters = function_left_parentheses_linter()
-)
-
-lint(
   text =  "foo <- function(x) (x + 1)",
   linters = function_left_parentheses_linter()
 )
@@ -50,7 +45,8 @@ lint(
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr
-\url{https://style.tidyverse.org/syntax.html#parentheses}
+\url{https://style.tidyverse.org/syntax.html#parentheses} \cr
+\code{\link[=spaces_left_parentheses_linter]{spaces_left_parentheses_linter()}}
 }
 \section{Tags}{
 \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
