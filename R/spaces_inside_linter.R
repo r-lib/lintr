@@ -38,7 +38,10 @@ spaces_inside_linter <- function() {
     and @end != following-sibling::*[1]/@start - 1
     and @line1 = following-sibling::*[1]/@line1
   "
-  left_xpath <- glue::glue("//OP-LEFT-BRACKET[{left_xpath_condition}] | //OP-LEFT-PAREN[{left_xpath_condition}]")
+  left_xpath <- glue::glue("
+  //OP-LEFT-BRACKET[{left_xpath_condition}]
+  | //LBB[{left_xpath_condition}]
+  | //OP-LEFT-PAREN[{left_xpath_condition}]")
 
   right_xpath_condition <- "
     not(preceding-sibling::*[1][self::OP-COMMA])
@@ -58,7 +61,7 @@ spaces_inside_linter <- function() {
 
     left_expr <- xml2::xml_find_all(xml, left_xpath)
     left_msg <- ifelse(
-      xml2::xml_text(left_expr) == "[",
+      xml2::xml_text(left_expr) %in% c("[", "[["),
       "Do not place spaces after square brackets.",
       "Do not place spaces after parentheses."
     )

@@ -39,6 +39,8 @@
 * `paste_linter()` also catches usages like `paste(rep("*", 10L), collapse = "")` that can be written more
   concisely as `strrep("*", 10L)` (#1108, @MichaelChirico)
 
+* `spaces_inside_linter()` produces lints for spaces inside `[[` (#1673, @IndrajeetPatil).
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
