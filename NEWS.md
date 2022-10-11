@@ -39,6 +39,8 @@
 * `paste_linter()` also catches usages like `paste(rep("*", 10L), collapse = "")` that can be written more
   concisely as `strrep("*", 10L)` (#1108, @MichaelChirico)
 
+* `sprintf_linter()` also applies to `gettextf()` (#1677, @MichaelChirico)
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
