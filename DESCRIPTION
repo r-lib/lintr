@@ -32,7 +32,6 @@ Imports:
     jsonlite,
     knitr,
     rex,
-    rprojroot,
     stats,
     utils,
     xml2 (>= 1.0.0),
