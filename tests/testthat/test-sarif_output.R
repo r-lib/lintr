@@ -1,3 +1,5 @@
+skip_if_not_installed("jsonlite")
+
 test_that("`sarif_output` produces expected error", {
   l <- lint(text = "x = 1", linters = assignment_linter())
   expect_error(sarif_output(l), "Package path needs to be a relative path", fixed = TRUE)
