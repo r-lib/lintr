@@ -9,8 +9,10 @@ print.lint <- function(x, ...) {
     )
     emph <- crayon::bold
   } else {
+    # nocov start
     color <- identity
     emph <- identity
+    # nocov end
   }
 
   cat(
