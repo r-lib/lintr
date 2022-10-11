@@ -569,6 +569,9 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 #' @param filename the name of the output report
 #' @export
 sarif_output <- function(lints, filename = "lintr_results.sarif") {
+  if (!requireNamespace("jsonlite", quietly = TRUE)) {
+    stop("'jsonlite' is required to produce SARIF reports, please install to continue.")
+  }
 
   # package path will be `NULL` unless it is a relative path
   package_path <- attr(lints, "path")
@@ -716,8 +719,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
       append(sarif$runs[[1L]]$results, list(one_result))
   }
 
-  write(jsonlite::toJSON(sarif, pretty = TRUE, auto_unbox = TRUE),
-        filename)
+  write(jsonlite::toJSON(sarif, pretty = TRUE, auto_unbox = TRUE), filename)
 }
 
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {

@@ -29,7 +29,6 @@ Imports:
     cyclocomp,
     digest,
     glue,
-    jsonlite,
     knitr,
     rex,
     stats,
@@ -39,6 +38,7 @@ Imports:
 Suggests:
     bookdown,
     httr (>= 1.2.1),
+    jsonlite,
     mockery,
     patrick,
     pkgdown,
