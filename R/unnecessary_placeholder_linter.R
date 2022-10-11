@@ -33,7 +33,7 @@
 unnecessary_placeholder_linter <- function() {
   # TODO(michaelchirico): handle R4.2.0 native placeholder _ as well
   xpath <- "
-  //SPECIAL[text() = '%>%']
+  //SPECIAL[text() = '%>%' or text() = '%T>%' or text() = '%<>%']
     /following-sibling::expr[
       expr/SYMBOL_FUNCTION_CALL
       and not(expr[
