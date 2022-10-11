@@ -1,7 +1,9 @@
 #' Require correct `sprintf()` calls
 #'
-#' Check for an inconsistent number of arguments or arguments with incompatible types
-#' (for literal arguments) in `sprintf()` calls.
+#' Check for an inconsistent number of arguments or arguments with incompatible types (for literal arguments) in
+#' [sprintf()] calls.
+#'
+#' [gettextf()] calls are also included, since `gettextf()` is a thin wrapper around `sprintf()`.
 #'
 #' @examples
 #' # will produce lints
@@ -26,7 +28,7 @@
 #' @export
 sprintf_linter <- function() {
   xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'sprintf']
+  //SYMBOL_FUNCTION_CALL[text() = 'sprintf' or text() = 'gettextf']
     /parent::expr
     /parent::expr[
       (

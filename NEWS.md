@@ -41,6 +41,8 @@
 
 * `spaces_inside_linter()` produces lints for spaces inside `[[` (#1673, @IndrajeetPatil).
 
+* `sprintf_linter()` also applies to `gettextf()` (#1677, @MichaelChirico)
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
