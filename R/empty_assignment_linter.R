@@ -10,7 +10,7 @@
 #'   linters = empty_assignment_linter()
 #' )
 #'
-#' cat("x = {\n}")
+#' writeLines("x = {\n}")
 #' lint(
 #'   text = "x = {\n}",
 #'   linters = empty_assignment_linter()

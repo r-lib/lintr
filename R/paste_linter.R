@@ -40,7 +40,7 @@
 #' )
 #'
 #' lint(
-#'   text = "paste0(rep('*', 10L), collapse='')",
+#'   text = "paste0(rep('*', 10L), collapse = '')",
 #'   linters = paste_linter()
 #' )
 #'
