@@ -27,7 +27,6 @@ lint(
 }
 \references{
 \itemize{
-\item https://softwareengineering.stackexchange.com/questions/57/tabs-versus-spaces-what-is-the-proper-indentation-character-for-everything-in-e
 \item https://www.jwz.org/doc/tabs-vs-spaces.html
 \item https://blog.codinghorror.com/death-to-the-space-infidels/
 }
