@@ -21,8 +21,10 @@ linters: linters_with_defaults(
     paste_linter(),
     redundant_equals_linter(),
     redundant_ifelse_linter(),
+    sprintf_linter(),
     unnecessary_lambda_linter(),
-    unneeded_concatenation_linter()
+    unneeded_concatenation_linter(allow_single_expression = FALSE),
+    yoda_test_linter()
   )
 exclusions: list(
     "inst/doc/creating_linters.R" = 1,
