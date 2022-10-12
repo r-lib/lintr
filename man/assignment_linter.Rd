@@ -67,5 +67,5 @@ lint(
 \url{https://style.tidyverse.org/syntax.html#assignment-1}
 }
 \section{Tags}{
-\link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=style_linters]{style}
+\link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=style_linters]{style}
 }
