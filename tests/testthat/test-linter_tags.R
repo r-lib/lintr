@@ -97,13 +97,14 @@ test_that("lintr help files are up to date", {
   lintr_db$package <- NULL
   lintr_db$tags <- lapply(lintr_db$tags, sort)
 
-  expect_true(exists("linters", envir = help_env), info = "?linters exists")
+  expect_true(exists("linters", envir = help_env), info = "?linters exist")
   # objects in help_env are class Rd, see ?as.character.Rd (part of 'tools')
   linter_help_text <- paste(as.character(help_env$linters), collapse = "")
 
-  # Test two things about ?linters
+  # Test three things about ?linters
   #   (1) the complete list of linters and tags matches that in available_linters()
   #   (2) the tabulation of tags & corresponding count of linters matches that in available_linters()
+  #   (3) the 'configurable' tag applies if and only if the linter has parameters
 
   # Rd markup for items looks like \item{\code{\link{...}} (tags: ...)}
   help_linters <- rex::re_matches(
@@ -120,7 +121,7 @@ test_that("lintr help files are up to date", {
   help_linters$tags <- lapply(strsplit(help_linters$tags, ", ", fixed = TRUE), sort)
 
 
-  # (1) from above
+  # (1) the complete list of linters and tags matches that in available_linters()
   expect_identical(
     help_linters[order(help_linters$linter), ],
     lintr_db[order(lintr_db$linter), ],
@@ -150,7 +151,7 @@ test_that("lintr help files are up to date", {
   help_tag_table$tag_page <- NULL
   help_tag_table$n_linters <- as.integer(help_tag_table$n_linters)
 
-  # (2) from above
+  # (2) the tabulation of tags & corresponding count of linters matches that in available_linters()
   expect_identical(
     help_tag_table[order(help_tag_table$tag), ],
     db_tag_table[order(db_tag_table$tag), ],
@@ -178,4 +179,10 @@ test_that("lintr help files are up to date", {
       info = paste0("?", tag, "_linters lists all linters with that tag in available_linters()")
     )
   }
+
+  # (3) the 'configurable' tag applies if and only if the linter has parameters
+  has_args <- lengths(lapply(lintr_db$linter, function(linter) formals(match.fun(linter)))) > 0L
+  has_configurable_tag <- vapply(lintr_db$tags, function(tags) "configurable" %in% tags, logical(1L))
+
+  expect_identical(has_configurable_tag, has_args)
 })
