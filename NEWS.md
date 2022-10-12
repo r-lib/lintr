@@ -17,6 +17,11 @@
 
 * `spaces_inside_linter()` allows terminal missing keyword arguments (e.g. `alist(arg = )`; #540, @MichaelChirico)
 
+* `brace_linter()` allows empty braced expression on the same line (e.g. `while (updating_condition()) { }`)
+  regardless of `allow_single_line` to match the corresponding behavior in {styler}. This is an expedient while
+  the style guide on handling this case awaits clarification: https://github.com/tidyverse/style/issues/191.
+  (#1346, @MichaelChirico)
+
 ## New and improved features
 
 * New `get_r_string()` helper to get the R-equivalent value of a string, especially useful for R-4-style raw strings.
