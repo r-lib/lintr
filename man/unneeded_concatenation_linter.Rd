@@ -29,6 +29,11 @@ lint(
   linters = unneeded_concatenation_linter()
 )
 
+lint(
+  text = "x <- c(1.5 + 2.5)",
+  linters = unneeded_concatenation_linter(allow_single_expression = FALSE)
+)
+
 # okay
 lint(
   text = "x <- NULL",
@@ -43,6 +48,11 @@ lint(
 lint(
   text = "x <- TRUE",
   linters = unneeded_concatenation_linter()
+)
+
+lint(
+  text = "x <- c(1.5 + 2.5)",
+  linters = unneeded_concatenation_linter(allow_single_expression = TRUE)
 )
 
 }
