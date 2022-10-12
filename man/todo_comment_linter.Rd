@@ -31,7 +31,7 @@ lint(
 
 # okay
 lint(
-  text = "x + y",
+  text = "x + y # my informative comment",
   linters = todo_comment_linter()
 )
 

@@ -29,6 +29,10 @@
 #'   text = "a <- log(10)",
 #'   linters = undesirable_operator_linter()
 #' )
+#' lint(
+#'   text = 'mtcars[["wt"]]',
+#'   linters = undesirable_operator_linter(op = c("$" = NA))
+#' )
 #'
 #' lint(
 #'   text = 'mtcars[["wt"]]',

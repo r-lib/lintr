@@ -8,7 +8,7 @@ vector_logic_linter()
 }
 \description{
 Usage of \code{&} in conditional statements is error-prone and inefficient.
-\code{condition} in \code{if (condition) expr} must always be length of 1, in which
+\code{condition} in \code{if (condition) expr} must always be of length 1, in which
 case \code{&&} is to be preferred. Ditto for \code{|} vs. \code{||}.
 }
 \details{

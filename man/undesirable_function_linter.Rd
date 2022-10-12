@@ -35,7 +35,17 @@ lint(
 
 lint(
   text = "log10(x)",
+  linters = undesirable_function_linter(fun = c("log10" = NA))
+)
+
+lint(
+  text = "log10(x)",
   linters = undesirable_function_linter(fun = c("log10" = "use log()"))
+)
+
+lint(
+  text = 'dir <- "path/to/a/directory"',
+  linters = undesirable_function_linter(fun = c("dir" = NA))
 )
 
 # okay
@@ -47,6 +57,11 @@ lint(
 lint(
   text = "log(x, base = 10)",
   linters = undesirable_function_linter(fun = c("log10" = "use log()"))
+)
+
+lint(
+  text = 'dir <- "path/to/a/directory"',
+  linters = undesirable_function_linter(fun = c("dir" = NA), symbol_is_undesirable = FALSE)
 )
 
 }

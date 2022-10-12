@@ -1,7 +1,7 @@
 #' Enforce usage of scalar logical operators in conditional statements
 #'
 #' Usage of `&` in conditional statements is error-prone and inefficient.
-#'   `condition` in `if (condition) expr` must always be length of 1, in which
+#'   `condition` in `if (condition) expr` must always be of length 1, in which
 #'   case `&&` is to be preferred. Ditto for `|` vs. `||`.
 #'
 #' This linter covers inputs to `if()` and `while()` conditions and to

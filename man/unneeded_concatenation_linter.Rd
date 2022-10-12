@@ -29,11 +29,6 @@ lint(
   linters = unneeded_concatenation_linter()
 )
 
-lint(
-  text = "c(a:b)",
-  linters = unneeded_concatenation_linter(allow_single_expression = FALSE)
-)
-
 # okay
 lint(
   text = "x <- NULL",
@@ -41,12 +36,12 @@ lint(
 )
 
 lint(
-  text = "x <- TRUE",
+  text = "x <- integer(4L)",
   linters = unneeded_concatenation_linter()
 )
 
 lint(
-  text = "c(a:b)",
+  text = "x <- TRUE",
   linters = unneeded_concatenation_linter()
 )
 

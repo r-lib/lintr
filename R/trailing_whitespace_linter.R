@@ -25,6 +25,11 @@
 #'   linters = trailing_whitespace_linter()
 #' )
 #'
+#' lint(
+#'   text = "x <- 1.2  # comment about this assignment",
+#'   linters = trailing_whitespace_linter()
+#' )
+#'
 #' code_lines <- "a <- TRUE\n \nb <- FALSE"
 #' writeLines(code_lines)
 #' lint(
