@@ -8,7 +8,7 @@ vector_logic_linter()
 }
 \description{
 Usage of \code{&} in conditional statements is error-prone and inefficient.
-\code{condition} in \code{if (condition) expr} must always be length-1, in which
+\code{condition} in \code{if (condition) expr} must always be length of 1, in which
 case \code{&&} is to be preferred. Ditto for \code{|} vs. \code{||}.
 }
 \details{
@@ -26,6 +26,30 @@ early, if \code{a} is \code{TRUE},  the second condition will never be evaluated
 and \code{b} will not be assigned. Such usage is not allowed by the Tidyverse
 style guide, and the code can easily be refactored by pulling the
 assignment outside the condition, so using \code{||} is still preferable.
+}
+\examples{
+# will produce lints
+lint(
+  text ="if (TRUE & FALSE) 1",
+  linters = vector_logic_linter()
+)
+
+lint(
+  text = "if (TRUE && (TRUE | FALSE)) 4",
+  linters = vector_logic_linter()
+)
+
+# okay
+lint(
+  text ="if (TRUE && FALSE) 1",
+  linters = vector_logic_linter()
+)
+
+lint(
+  text = "if (TRUE && (TRUE || FALSE)) 4",
+  linters = vector_logic_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr
