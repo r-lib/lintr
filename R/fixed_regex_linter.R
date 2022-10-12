@@ -12,8 +12,10 @@
 #'
 #' @examples
 #' # will produce lints
+#' code_lines <- 'gsub("\\\\.", "", x)'
+#' writeLines(code_lines)
 #' lint(
-#'   text = 'gsub("\\\\.", "", x)',
+#'   text = code_lines,
 #'   linters = fixed_regex_linter()
 #' )
 #'
@@ -22,14 +24,28 @@
 #'   linters = fixed_regex_linter()
 #' )
 #'
-#' # okay
+#' code_lines <- 'stringr::str_subset(x, "\\\\$")'
+#' writeLines(code_lines)
 #' lint(
-#'   text = 'gsub("\\\\.", "", x, fixed = TRUE)',
+#'   text = code_lines,
+#'   linters = fixed_regex_linter()
+#' )
+#'
+#' # okay
+#' code_lines <- 'gsub("\\\\.", "", x, fixed = TRUE)'
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
 #'   linters = fixed_regex_linter()
 #' )
 #'
 #' lint(
-#'   text = 'grepl("a[*]b", x, fixed = TRUE)',
+#'   text = 'grepl("a*b", x, fixed = TRUE)',
+#'   linters = fixed_regex_linter()
+#' )
+#'
+#' lint(
+#'   text = 'stringr::str_subset(x, stringr::fixed("$"))',
 #'   linters = fixed_regex_linter()
 #' )
 #'
