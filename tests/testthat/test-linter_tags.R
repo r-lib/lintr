@@ -85,6 +85,14 @@ test_that("available_linters matches the set of linters available from lintr", {
 # See the roxygen helpers in R/linter_tags.R for the code used to generate the docs.
 #   This test helps ensure the documentation is up to date with the available_linters() database
 test_that("lintr help files are up to date", {
+  # You need to run these tests from the installed package, since we need the package help file to
+  # be available, which is retrieved from the installed location.
+  #
+  # So, to test it locally:
+  #
+  # 1. `R CMD INSTALL .`
+  # 2. `library(lintr); testthat::test_file('tests/testthat/test-linter_tags.R')`
+
   helper_db_dir <- system.file("help", package = "lintr")
   skip_if_not(dir.exists(helper_db_dir))
   skip_if_not(file.exists(file.path(helper_db_dir, "lintr.rdb")))
