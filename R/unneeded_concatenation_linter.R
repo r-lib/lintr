@@ -32,6 +32,7 @@
 #'   linters = unneeded_concatenation_linter()
 #' )
 #'
+#' # In case the intent here was to seed a vector of known size
 #' lint(
 #'   text = "x <- integer(4L)",
 #'   linters = unneeded_concatenation_linter()
