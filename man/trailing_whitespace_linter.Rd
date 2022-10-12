@@ -18,5 +18,5 @@ Check that there are no space characters at the end of source lines.
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=default_linters]{default}, \link[=style_linters]{style}
+\link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=style_linters]{style}
 }
