@@ -30,7 +30,7 @@ assignment outside the condition, so using \code{||} is still preferable.
 \examples{
 # will produce lints
 lint(
-  text ="if (TRUE & FALSE) 1",
+  text = "if (TRUE & FALSE) 1",
   linters = vector_logic_linter()
 )
 
@@ -41,7 +41,7 @@ lint(
 
 # okay
 lint(
-  text ="if (TRUE && FALSE) 1",
+  text = "if (TRUE && FALSE) 1",
   linters = vector_logic_linter()
 )
 
