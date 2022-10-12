@@ -16,18 +16,18 @@ Check for an inconsistent number of arguments or arguments with incompatible typ
 \examples{
 # will produce lints
 lint(
-  text = "sprintf('hello \%s \%s \%d', x, y)",
+  text = 'sprintf("hello \%s \%s \%d", x, y)',
   linters = sprintf_linter()
 )
 
 # okay
 lint(
-  text = "sprintf('hello \%s \%s \%d', x, y, z)",
+  text = 'sprintf("hello \%s \%s \%d", x, y, z)',
   linters = sprintf_linter()
 )
 
 lint(
-  text = "sprintf('hello \%s \%s \%d', x, y, ...)",
+  text = 'sprintf("hello \%s \%s \%d", x, y, ...)',
   linters = sprintf_linter()
 )
 
