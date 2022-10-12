@@ -39,6 +39,11 @@ lint(
   linters = fixed_regex_linter()
 )
 
+lint(
+  text = 'grepl("Munich", address)',
+  linters = fixed_regex_linter()
+)
+
 # okay
 code_lines <- 'gsub("\\\\\\\\.", "", x, fixed = TRUE)'
 writeLines(code_lines)
@@ -54,6 +59,11 @@ lint(
 
 lint(
   text = 'stringr::str_subset(x, stringr::fixed("$"))',
+  linters = fixed_regex_linter()
+)
+
+lint(
+  text = 'grepl("Munich", address, fixed = TRUE)',
   linters = fixed_regex_linter()
 )
 
