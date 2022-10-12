@@ -18,6 +18,30 @@ a fixed regular expression is preferable, rather it seeks to identify
 likely cases. It should \emph{never} report false positives, however; please
 report false positives as an error.
 }
+\examples{
+# will produce lints
+lint(
+  text = 'gsub("\\\\\\\\.", "", x)',
+  linters = fixed_regex_linter()
+)
+
+lint(
+  text = 'grepl("a[*]b", x)',
+  linters = fixed_regex_linter()
+)
+
+# okay
+lint(
+  text = 'gsub("\\\\\\\\.", "", x, fixed = TRUE)',
+  linters = fixed_regex_linter()
+)
+
+lint(
+  text = 'grepl("a[*]b", x, fixed = TRUE)',
+  linters = fixed_regex_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

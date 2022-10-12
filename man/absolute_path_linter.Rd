@@ -35,7 +35,8 @@ lint(
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr. \cr
+\code{\link[=nonportable_path_linter]{nonportable_path_linter()}}
 }
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=robustness_linters]{robustness}

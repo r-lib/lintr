@@ -18,7 +18,8 @@ If \code{TRUE}, only lint path strings, which
 Check that \code{\link[=file.path]{file.path()}} is used to construct safe and portable paths.
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr.  \cr
+\code{\link[=absolute_path_linter]{absolute_path_linter()}}
 }
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=robustness_linters]{robustness}
