@@ -39,5 +39,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=best_practices_linters]{best_practices}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
 }

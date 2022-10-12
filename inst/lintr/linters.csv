@@ -66,7 +66,7 @@ semicolon_linter,style readability default configurable
 semicolon_terminator_linter,style readability deprecated configurable
 seq_linter,robustness efficiency consistency best_practices default
 single_quotes_linter,style consistency readability default
-sort_linter,style readability best_practices efficiency
+sort_linter,readability best_practices efficiency
 spaces_inside_linter,style readability default
 spaces_left_parentheses_linter,style readability default
 sprintf_linter,correctness common_mistakes

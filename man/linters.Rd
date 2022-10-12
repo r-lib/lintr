@@ -29,7 +29,7 @@ The following tags exist:
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=readability_linters]{readability} (47 linters)}
 \item{\link[=robustness_linters]{robustness} (13 linters)}
-\item{\link[=style_linters]{style} (37 linters)}
+\item{\link[=style_linters]{style} (36 linters)}
 }
 }
 \section{Linters}{
@@ -102,7 +102,7 @@ The following linters exist:
 \item{\code{\link{semicolon_terminator_linter}} (tags: configurable, deprecated, readability, style)}
 \item{\code{\link{seq_linter}} (tags: best_practices, consistency, default, efficiency, robustness)}
 \item{\code{\link{single_quotes_linter}} (tags: consistency, default, readability, style)}
-\item{\code{\link{sort_linter}} (tags: best_practices, efficiency, readability, style)}
+\item{\code{\link{sort_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{spaces_inside_linter}} (tags: default, readability, style)}
 \item{\code{\link{spaces_left_parentheses_linter}} (tags: default, readability, style)}
 \item{\code{\link{sprintf_linter}} (tags: common_mistakes, correctness)}
