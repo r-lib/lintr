@@ -7,13 +7,13 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "expect_true(is(x, 'Matrix'))",
+#'   text = 'expect_true(is(x, "Matrix"))',
 #'   linters = expect_s4_class_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "expect_s4_class(x, 'Matrix')",
+#'   text = 'expect_s4_class(x, "Matrix")',
 #'   linters = expect_s4_class_linter()
 #' )
 #'

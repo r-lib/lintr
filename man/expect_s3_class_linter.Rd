@@ -15,23 +15,23 @@ but it is better to use the tailored function instead.
 \examples{
 # will produce lints
 lint(
-  text = "expect_equal(class(x), 'data.frame')",
+  text = 'expect_equal(class(x), "data.frame")',
   linters = expect_s3_class_linter()
 )
 
 lint(
-  text = "expect_equal(class(x), 'numeric')",
+  text = 'expect_equal(class(x), "numeric")',
   linters = expect_s3_class_linter()
 )
 
 # okay
 lint(
-  text = "expect_s3_class(x, 'data.frame')",
+  text = 'expect_s3_class(x, "data.frame")',
   linters = expect_s3_class_linter()
 )
 
 lint(
-  text = "expect_type(x, 'double')",
+  text = 'expect_type(x, "double")',
   linters = expect_s3_class_linter()
 )
 

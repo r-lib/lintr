@@ -175,13 +175,13 @@ path_linter_factory <- function(path_function, message, linter, name = linter_au
 #'
 #' # will produce lints
 #' lint(
-#'   text = "R'--[/blah/file.txt]--'",
+#'   text = 'R"--[/blah/file.txt]--"',
 #'   linters = absolute_path_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "R'(./blah)'",
+#'   text = 'R"(./blah)"',
 #'   linters = absolute_path_linter()
 #' )
 #'

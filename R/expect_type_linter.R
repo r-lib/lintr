@@ -8,18 +8,18 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "expect_equal(typeof(x), 'double')",
+#'   text = 'expect_equal(typeof(x), "double")',
 #'   linters = expect_type_linter()
 #' )
 #'
 #' lint(
-#'   text = "expect_identical(typeof(x), 'double')",
+#'   text = 'expect_identical(typeof(x), "double")',
 #'   linters = expect_type_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "expect_type(x, 'double')",
+#'   text = 'expect_type(x, "double")',
 #'   linters = expect_type_linter()
 #' )
 #'

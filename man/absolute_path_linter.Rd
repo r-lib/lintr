@@ -23,13 +23,13 @@ Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
 
 # will produce lints
 lint(
-  text = "R'--[/blah/file.txt]--'",
+  text = 'R"--[/blah/file.txt]--"',
   linters = absolute_path_linter()
 )
 
 # okay
 lint(
-  text = "R'(./blah)'",
+  text = 'R"(./blah)"',
   linters = absolute_path_linter()
 )
 \dontshow{\}) # examplesIf}
