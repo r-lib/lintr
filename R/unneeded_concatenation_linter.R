@@ -9,6 +9,39 @@
 #'   [as.vector()] is not always preferable, for example with environments
 #'   (especially, `R6` objects), in which case `list()` is the better alternative.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "x <- c()",
+#'   linters = unneeded_concatenation_linter()
+#' )
+#'
+#' lint(
+#'   text = "x <- c(TRUE)",
+#'   linters = unneeded_concatenation_linter()
+#' )
+#'
+#' lint(
+#'   text = "c(a:b)",
+#'   linters = unneeded_concatenation_linter(allow_single_expression = FALSE)
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "x <- NULL",
+#'   linters = unneeded_concatenation_linter()
+#' )
+#'
+#' lint(
+#'   text = "x <- TRUE",
+#'   linters = unneeded_concatenation_linter()
+#' )
+#'
+#' lint(
+#'   text = "c(a:b)",
+#'   linters = unneeded_concatenation_linter()
+#' )
+#'
 #' @evalRd rd_tags("unneeded_concatenation_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

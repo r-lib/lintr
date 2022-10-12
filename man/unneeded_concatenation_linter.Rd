@@ -17,6 +17,40 @@ it is usually preferable to use the more readable \code{\link[=as.vector]{as.vec
 \description{
 Check that the \code{\link[=c]{c()}} function is not used without arguments nor with a single constant.
 }
+\examples{
+# will produce lints
+lint(
+  text = "x <- c()",
+  linters = unneeded_concatenation_linter()
+)
+
+lint(
+  text = "x <- c(TRUE)",
+  linters = unneeded_concatenation_linter()
+)
+
+lint(
+  text = "c(a:b)",
+  linters = unneeded_concatenation_linter(allow_single_expression = FALSE)
+)
+
+# okay
+lint(
+  text = "x <- NULL",
+  linters = unneeded_concatenation_linter()
+)
+
+lint(
+  text = "x <- TRUE",
+  linters = unneeded_concatenation_linter()
+)
+
+lint(
+  text = "c(a:b)",
+  linters = unneeded_concatenation_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
