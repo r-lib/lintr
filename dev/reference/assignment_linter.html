@@ -108,12 +108,16 @@ If <code>FALSE</code>, <code><a href="https://rdrr.io/r/base/assignOps.html" cla
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[assignment_linter] Use &lt;-, not =, for assignment.</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">code_lines</span> <span class="op">&lt;-</span> <span class="st">"1 -&gt; x\n2 -&gt;&gt; y"</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code_lines</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -&gt; x</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -&gt;&gt; y</span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"1 -&gt; x; 2 -&gt;&gt; y"</span>,</span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="va">code_lines</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">assignment_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[assignment_linter] Use &lt;-, not -&gt;, for assignment.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=11::file=&lt;text&gt;,line=1,col=11,[assignment_linter] -&gt;&gt; can have hard-to-predict behavior; prefer assigning to a specific environment instead (with assign() or &lt;-).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=2,col=3::file=&lt;text&gt;,line=2,col=3,[assignment_linter] -&gt;&gt; can have hard-to-predict behavior; prefer assigning to a specific environment instead (with assign() or &lt;-).</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
@@ -121,14 +125,22 @@ If <code>FALSE</code>, <code><a href="https://rdrr.io/r/base/assignOps.html" cla
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">assignment_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">code_lines</span> <span class="op">&lt;-</span> <span class="st">"x &lt;- 1\ny &lt;&lt;- 2"</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code_lines</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x &lt;- 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> y &lt;&lt;- 2</span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"x &lt;- 1; y &lt;&lt;- 2"</span>,</span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="va">code_lines</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">assignment_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># customizing using arguments</span></span></span>
+<span class="r-in"><span><span class="va">code_lines</span> <span class="op">&lt;-</span> <span class="st">"1 -&gt; x\n2 -&gt;&gt; y"</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code_lines</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -&gt; x</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -&gt;&gt; y</span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"1 -&gt; x; 2 -&gt;&gt; y"</span>,</span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="va">code_lines</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">assignment_linter</span><span class="op">(</span>allow_right_assign <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
