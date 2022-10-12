@@ -24,29 +24,27 @@ test_that("sort_linter produces customized warning message", {
 
   expect_lint(
     "y[order(y)]",
-    "sort\\(y, na\\.last = TRUE\\) is better than y\\[order\\(y\\)\\]\\.",
+    rex::rex("sort(y, na.last = TRUE) is better than y[order(y)]."),
     sort_linter()
   )
 
   # We capture the correct variable symbol
   expect_lint(
     "y + x[order(x)]",
-    "sort\\(x\\, na\\.last = TRUE\\) is better than x\\[order\\(x\\)\\]\\.",
+    rex::rex("sort(x, na.last = TRUE) is better than x[order(x)]."),
     sort_linter()
   )
 
   # Default na.last = TRUE is overwritten if na.last is already provided
   expect_lint(
     "x[order(x, na.last = FALSE)]",
-    paste("sort\\(x, na\\.last = FALSE\\) is better than",
-          "x\\[order\\(x, na\\.last = FALSE\\)\\]\\."),
+    rex::rex("sort(x, na.last = FALSE) is better than x[order(x, na.last = FALSE)]."),
     sort_linter()
   )
 
   expect_lint(
     "x[order(x, decreasing = FALSE)]",
-    paste("sort\\(x, decreasing = FALSE, na\\.last = TRUE\\) is better than",
-          "x\\[order\\(x, decreasing = FALSE\\)\\]\\."),
+    rex::rex("sort(x, decreasing = FALSE, na.last = TRUE) is better than x[order(x, decreasing = FALSE)]."),
     sort_linter()
   )
 
