@@ -10,23 +10,23 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "is_lm <- class(x) == 'lm'",
+#'   text = 'is_lm <- class(x) == "lm"',
 #'   linters = class_equals_linter()
 #' )
 #'
 #' lint(
-#'   text = "if ('lm' %in% class(x)) is_lm <- TRUE",
+#'   text = 'if ("lm" %in% class(x)) is_lm <- TRUE',
 #'   linters = class_equals_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "is_lm <- inherits(x, 'lm')",
+#'   text = 'is_lm <- inherits(x, "lm")',
 #'   linters = class_equals_linter()
 #' )
 #'
 #' lint(
-#'   text = "if (inherits(x, 'lm')) is_lm <- TRUE",
+#'   text = 'if (inherits(x, "lm")) is_lm <- TRUE',
 #'   linters = class_equals_linter()
 #' )
 #'

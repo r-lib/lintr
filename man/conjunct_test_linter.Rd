@@ -43,7 +43,7 @@ lint(
 )
 
 lint(
-  text = "stopifnot('x must be a logical scalar' = length(x) == 1 && is.logical(x) && !is.na(x))",
+  text = 'stopifnot("x must be a logical scalar" = length(x) == 1 && is.logical(x) && !is.na(x))',
   linters = conjunct_test_linter(allow_named_stopifnot = TRUE)
 )
 

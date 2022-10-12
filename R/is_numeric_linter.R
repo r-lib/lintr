@@ -5,28 +5,28 @@
 #'
 #' NB: This linter plays well with [class_equals_linter()], which can help
 #'   avoid further `is.numeric()` equivalents like
-#'   any(class(x) == c("numeric", "integer"))`.
+#'   `any(class(x) == c("numeric", "integer"))`.
 #'
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "is.numeric(y) || is.integer(y)",
+#'   text = 'is.numeric(y) || is.integer(y)',
 #'   linters = is_numeric_linter()
 #' )
 #'
 #' lint(
-#'   text = "class(z) %in% c('numeric', 'integer')",
+#'   text = 'class(z) %in% c("numeric", "integer")',
 #'   linters = is_numeric_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "is.numeric(y) || is.factor(y)",
+#'   text = 'is.numeric(y) || is.factor(y)',
 #'   linters = is_numeric_linter()
 #' )
 #'
 #' lint(
-#'   text = "class(z) %in% c('numeric', 'integer', 'factor')",
+#'   text = 'class(z) %in% c("numeric", "integer", "factor")',
 #'   linters = is_numeric_linter()
 #' )
 #'

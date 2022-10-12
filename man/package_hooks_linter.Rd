@@ -45,7 +45,7 @@ lint(
 )
 
 lint(
-  text = ".onAttach <- function(lib, pkg) { loadNamespace('foo') }",
+  text = '.onAttach <- function(lib, pkg) { loadNamespace("foo") }',
   linters = package_hooks_linter()
 )
 

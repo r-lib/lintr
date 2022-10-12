@@ -48,6 +48,8 @@
 
 * `sprintf_linter()` also applies to `gettextf()` (#1677, @MichaelChirico)
 
+* Documentation for all linters contains examples of code that does and does not produce lints (#1492, @IndrajeetPatil).
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
