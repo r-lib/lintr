@@ -273,6 +273,10 @@
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>By default, the following linters are enabled. Where applicable, the default settings are also shown.</p>
 <table class="table">
+<colgroup>
+<col width="28%">
+<col width="71%">
+</colgroup>
 <thead><tr class="header">
 <th align="left"></th>
 <th align="left">settings</th>
@@ -280,7 +284,7 @@
 <tbody>
 <tr class="odd">
 <td align="left">assignment_linter</td>
-<td align="left"></td>
+<td align="left">allow_cascading_assign = TRUE, allow_right_assign = FALSE, allow_trailing = TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">brace_linter</td>
@@ -308,7 +312,7 @@
 </tr>
 <tr class="even">
 <td align="left">infix_spaces_linter</td>
-<td align="left"></td>
+<td align="left">exclude_operators = NULL, allow_multiple_spaces = TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">line_length_linter</td>
@@ -328,7 +332,7 @@
 </tr>
 <tr class="odd">
 <td align="left">object_usage_linter</td>
-<td align="left"></td>
+<td align="left">interpret_glue = TRUE, skip_with = TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">paren_body_linter</td>
@@ -368,7 +372,7 @@
 </tr>
 <tr class="odd">
 <td align="left">trailing_whitespace_linter</td>
-<td align="left"></td>
+<td align="left">allow_empty_lines = FALSE, allow_in_strings = TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">vector_logic_linter</td>
@@ -467,15 +471,15 @@
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="../reference/lint.html">lint</a></span><span class="op">(</span><span class="va">tmp</span>, linters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/call.html" class="external-link">call</a></span><span class="op">(</span><span class="va">linter_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/Rtmp7yCqfu/file34247af13590           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmplveL0E/file33e41bd69e9d           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1    get</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/Rtmp7yCqfu/file34247af13590           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmplveL0E/file33e41bd69e9d           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/Rtmp7yCqfu/file34247af13590           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmplveL0E/file33e41bd69e9d           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span></code></pre></div>
 </div>
