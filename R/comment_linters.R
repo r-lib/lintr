@@ -125,6 +125,39 @@ parsable <- function(x) {
 #'
 #' @param todo Vector of strings that identify TODO comments.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "x + y # TODO",
+#'   linters = todo_comment_linter()
+#' )
+#'
+#' lint(
+#'   text = "pi <- 1.0 # FIXME",
+#'   linters = todo_comment_linter()
+#' )
+#'
+#' lint(
+#'   text = "x <- TRUE # hack",
+#'   linters = todo_comment_linter(todo = c("todo", "fixme", "hack"))
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "x + y # my informative comment",
+#'   linters = todo_comment_linter()
+#' )
+#'
+#' lint(
+#'   text = "pi <- 3.14",
+#'   linters = todo_comment_linter()
+#' )
+#'
+#' lint(
+#'   text = "x <- TRUE",
+#'   linters = todo_comment_linter()
+#' )
+#'
 #' @evalRd rd_tags("todo_comment_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

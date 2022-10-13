@@ -25,13 +25,12 @@ Depends:
 Imports:
     backports,
     codetools,
-    crayon,
     cyclocomp,
     digest,
     glue,
-    jsonlite,
     knitr,
     rex,
+    rprojroot,
     stats,
     utils,
     xml2 (>= 1.0.0),
@@ -39,7 +38,9 @@ Imports:
 Suggests:
     bookdown,
     callr,
+    crayon,
     httr (>= 1.2.1),
+    jsonlite,
     mockery,
     patrick,
     pkgdown,
@@ -91,6 +92,7 @@ Collate:
     'expect_not_linter.R'
     'expect_null_linter.R'
     'expect_s3_class_linter.R'
+    'expect_s4_class_linter.R'
     'expect_true_false_linter.R'
     'expect_type_linter.R'
     'extract.R'
@@ -137,6 +139,7 @@ Collate:
     'redundant_equals_linter.R'
     'redundant_ifelse_linter.R'
     'regex_subset_linter.R'
+    'routine_registration_linter.R'
     'semicolon_linter.R'
     'seq_linter.R'
     'settings.R'

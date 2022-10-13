@@ -20,8 +20,6 @@ test_that("Order doesn't matter", {
   expect_lint("TRUE == x", rex::rex("Using == on a logical vector is redundant."), redundant_equals_linter())
 })
 
-skip_if_not_installed("patrick")
-
 patrick::with_parameters_test_that(
   "redundant_equals_linter blocks simple disallowed usages",
   {
@@ -30,10 +28,10 @@ patrick::with_parameters_test_that(
     expect_lint(code, lint_msg, redundant_equals_linter())
   },
   .cases = tibble::tribble(
-    ~.test_name, ~op, ~bool,
-    "==, TRUE", "==", "TRUE",
+    ~.test_name, ~op,  ~bool,
+    "==, TRUE",  "==", "TRUE",
     "==, FALSE", "==", "FALSE",
-    "!=, TRUE", "!=", "TRUE",
+    "!=, TRUE",  "!=", "TRUE",
     "!=, FALSE", "!=", "FALSE"
   )
 )

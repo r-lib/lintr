@@ -23,19 +23,20 @@ Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
 
 # will produce lints
 lint(
-  text = "R'--[/blah/file.txt]--'",
+  text = 'R"--[/blah/file.txt]--"',
   linters = absolute_path_linter()
 )
 
 # okay
 lint(
-  text = "R'(./blah)'",
+  text = 'R"(./blah)"',
   linters = absolute_path_linter()
 )
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr. \cr
+\code{\link[=nonportable_path_linter]{nonportable_path_linter()}}
 }
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=robustness_linters]{robustness}

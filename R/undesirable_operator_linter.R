@@ -8,6 +8,37 @@
 #'   If `NA`, no additional information is given in the lint message. Defaults to
 #'   [default_undesirable_operators]. To make small customizations to this list,
 #'   use [modify_defaults()].
+#'
+#' @examples
+#' # defaults for which functions are considered undesirable
+#' names(default_undesirable_operators)
+#'
+#' # will produce lints
+#' lint(
+#'   text = "a <<- log(10)",
+#'   linters = undesirable_operator_linter()
+#' )
+#'
+#' lint(
+#'   text = "mtcars$wt",
+#'   linters = undesirable_operator_linter(op = c("$" = "As an alternative, use the `[[` accessor."))
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "a <- log(10)",
+#'   linters = undesirable_operator_linter()
+#' )
+#' lint(
+#'   text = 'mtcars[["wt"]]',
+#'   linters = undesirable_operator_linter(op = c("$" = NA))
+#' )
+#'
+#' lint(
+#'   text = 'mtcars[["wt"]]',
+#'   linters = undesirable_operator_linter(op = c("$" = "As an alternative, use the `[[` accessor."))
+#' )
+#'
 #' @evalRd rd_tags("undesirable_operator_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

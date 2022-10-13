@@ -283,8 +283,11 @@ settings <- NULL
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  # This is just here to quiet R CMD check
-  if (FALSE) backports::import
+  backports::import(pkgname, c("trimws", "lengths"))
+  # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
+  if (!exists("str2lang", getNamespace("base"))) {
+    assign("str2lang", get("str2lang", getNamespace("backports")), getNamespace(pkgname))
+  }
 
   default_settings <<- list(
     linters = default_linters,

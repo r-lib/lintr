@@ -32,7 +32,6 @@ test_that("settings", {
   expect_true(all(nzchar(names(default_settings))))
 })
 
-skip_if_not_installed("patrick")
 patrick::with_parameters_test_that(
   "all default linters throw lints with their name on 'default_linter_testcode.R'",
   {

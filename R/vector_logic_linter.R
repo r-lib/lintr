@@ -1,7 +1,7 @@
 #' Enforce usage of scalar logical operators in conditional statements
 #'
 #' Usage of `&` in conditional statements is error-prone and inefficient.
-#'   `condition` in `if (condition) expr` must always be length-1, in which
+#'   `condition` in `if (condition) expr` must always be of length 1, in which
 #'   case `&&` is to be preferred. Ditto for `|` vs. `||`.
 #'
 #' This linter covers inputs to `if()` and `while()` conditions and to
@@ -18,6 +18,29 @@
 #'   and `b` will not be assigned. Such usage is not allowed by the Tidyverse
 #'   style guide, and the code can easily be refactored by pulling the
 #'   assignment outside the condition, so using `||` is still preferable.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "if (TRUE & FALSE) 1",
+#'   linters = vector_logic_linter()
+#' )
+#'
+#' lint(
+#'   text = "if (TRUE && (TRUE | FALSE)) 4",
+#'   linters = vector_logic_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "if (TRUE && FALSE) 1",
+#'   linters = vector_logic_linter()
+#' )
+#'
+#' lint(
+#'   text = "if (TRUE && (TRUE || FALSE)) 4",
+#'   linters = vector_logic_linter()
+#' )
 #'
 #' @evalRd rd_tags("vector_logic_linter")
 #' @seealso

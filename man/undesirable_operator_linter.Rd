@@ -17,6 +17,37 @@ use \code{\link[=modify_defaults]{modify_defaults()}}.}
 Report the use of undesirable operators, e.g. \code{\link[base:ns-dblcolon]{:::}} or
 \code{\link[base:assignOps]{<<-}} and suggest an alternative.
 }
+\examples{
+# defaults for which functions are considered undesirable
+names(default_undesirable_operators)
+
+# will produce lints
+lint(
+  text = "a <<- log(10)",
+  linters = undesirable_operator_linter()
+)
+
+lint(
+  text = "mtcars$wt",
+  linters = undesirable_operator_linter(op = c("$" = "As an alternative, use the `[[` accessor."))
+)
+
+# okay
+lint(
+  text = "a <- log(10)",
+  linters = undesirable_operator_linter()
+)
+lint(
+  text = 'mtcars[["wt"]]',
+  linters = undesirable_operator_linter(op = c("$" = NA))
+)
+
+lint(
+  text = 'mtcars[["wt"]]',
+  linters = undesirable_operator_linter(op = c("$" = "As an alternative, use the `[[` accessor."))
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

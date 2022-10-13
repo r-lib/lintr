@@ -16,18 +16,18 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "ifelse(x == 'a', 1L, ifelse(x == 'b', 2L, 3L))",
+#'   text = 'ifelse(x == "a", 1L, ifelse(x == "b", 2L, 3L))',
 #'   linters = nested_ifelse_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "dplyr::case_when(x == 'a' ~ 1L, x == 'b' ~ 2L, TRUE ~ 3L)",
+#'   text = 'dplyr::case_when(x == "a" ~ 1L, x == "b" ~ 2L, TRUE ~ 3L)',
 #'   linters = nested_ifelse_linter()
 #' )
 #'
 #' lint(
-#'   text = "data.table::fcase(x == 'a', 1L, x == 'b', 2L, default = 3L)",
+#'   text = 'data.table::fcase(x == "a", 1L, x == "b", 2L, default = 3L)',
 #'   linters = nested_ifelse_linter()
 #' )
 #'

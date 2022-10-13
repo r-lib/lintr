@@ -24,7 +24,6 @@ test_that("condition_message_linter skips allowed usages", {
 })
 
 skip_if_not_installed("tibble")
-skip_if_not_installed("patrick")
 patrick::with_parameters_test_that(
   "paste/paste0 allowed by condition_message_linter when using other seps and/or collapse",
   expect_lint(
