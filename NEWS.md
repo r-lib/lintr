@@ -50,6 +50,8 @@
 
 * Documentation for all linters contains examples of code that does and does not produce lints (#1492, @IndrajeetPatil).
 
+* `implicit_integer_linter()` gains parameter `allow_colon` to skip lints on expressions like `1:10` (#1155, @MichaelChirico)
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.

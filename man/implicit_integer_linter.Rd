@@ -4,7 +4,11 @@
 \alias{implicit_integer_linter}
 \title{Implicit integer linter}
 \usage{
-implicit_integer_linter()
+implicit_integer_linter(allow_colon = FALSE)
+}
+\arguments{
+\item{allow_colon}{Logical, default \code{FALSE}. If \code{TRUE}, expressions involving \code{:}
+won't throw a lint regardless of whether the inputs are implicitly integers.}
 }
 \description{
 Check that integers are explicitly typed using the form \code{1L} instead of \code{1}.
@@ -18,6 +22,11 @@ lint(
 
 lint(
   text = "x[2]",
+  linters = implicit_integer_linter()
+)
+
+lint(
+  text = "1:10",
   linters = implicit_integer_linter()
 )
 
@@ -37,10 +46,15 @@ lint(
   linters = implicit_integer_linter()
 )
 
+lint(
+  text = "1:10",
+  linters = implicit_integer_linter(allow_colon = TRUE)
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=consistency_linters]{consistency}, \link[=style_linters]{style}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=style_linters]{style}
 }
