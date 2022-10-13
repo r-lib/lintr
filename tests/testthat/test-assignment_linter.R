@@ -109,19 +109,19 @@ test_that("arguments handle trailing assignment operators correctly", {
   )
 
   expect_lint(
-    "{x <- 'foo' \n #foo \n y <- 'bar'}",
+    "{x <- 'foo' \n#foo \ny <- 'bar'}",
     NULL,
     assignment_linter(allow_trailing = FALSE)
   )
 
   expect_lint(
-    "{x <- '#foo' \n y <- '#bar'}",
+    "{x <- '#foo' \ny <- '#bar'}",
     NULL,
     assignment_linter(allow_trailing = FALSE)
   )
 
   expect_lint(
-    "{x <- #foo \n '#bar'}",
+    "{x <- #foo \n'#bar'}",
     list(message = "<-", line_number = 1L, column_number = 4L),
     assignment_linter(allow_trailing = FALSE)
   )
