@@ -109,20 +109,36 @@ test_that("arguments handle trailing assignment operators correctly", {
   )
 
   expect_lint(
-    "{x<-1\n#blah\ny<-2}",
+    trim_some("
+    {
+      x <- 1
+      # blah
+      y <- 2
+    }
+    "),
     NULL,
     assignment_linter(allow_trailing = FALSE)
   )
 
   expect_lint(
-    "{x<-'#x'\ny<-'#y'}",
+    trim_some("
+    {
+      x <- '#x'
+      y <- '#y'
+    }
+    "),
     NULL,
     assignment_linter(allow_trailing = FALSE)
   )
 
   expect_lint(
-    "{x<-#blah\n'#x'}",
-    list(message = "<-", line_number = 1L, column_number = 3L),
+    trim_some("
+    {
+      x <- # blah
+        'x'
+    }
+    "),
+    list(message = "<-", line_number = 2L),
     assignment_linter(allow_trailing = FALSE)
   )
 })
