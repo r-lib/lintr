@@ -9,6 +9,23 @@
 #'   will be skipped. This argument will be passed to `skipWith` argument of
 #'   `codetools::checkUsage()`.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "foo <- function() { x <- 1 }",
+#'   linters = object_usage_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "foo <- function(x) { x <- 1 }",
+#'   linters = object_usage_linter()
+#' )
+#'
+#' lint(
+#'   text = "foo <- function() { x <- 1; return(x) }",
+#'   linters = object_usage_linter()
+#' )
 #' @evalRd rd_linters("package_development")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

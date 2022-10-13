@@ -4,6 +4,8 @@
 #'   passed as the first positional argument; using it can cause confusion
 #'   and impacts readability.
 #'
+#' This is true for forward (`%>%`), assignment (`%<>%`), and tee (`%T>%`) operators.
+#'
 #' @examples
 #' # will produce lints
 #' lint(
@@ -33,7 +35,7 @@
 unnecessary_placeholder_linter <- function() {
   # TODO(michaelchirico): handle R4.2.0 native placeholder _ as well
   xpath <- "
-  //SPECIAL[text() = '%>%']
+  //SPECIAL[text() = '%>%' or text() = '%T>%' or text() = '%<>%']
     /following-sibling::expr[
       expr/SYMBOL_FUNCTION_CALL
       and not(expr[

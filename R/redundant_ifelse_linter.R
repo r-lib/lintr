@@ -9,6 +9,38 @@
 #' @param allow10 Logical, default `FALSE`. If `TRUE`, usage like
 #'   `ifelse(x, 1, 0)` is allowed, i.e., only usage like
 #'   `ifelse(x, TRUE, FALSE)` is linted.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "ifelse(x >= 2.5, TRUE, FALSE)",
+#'   linters = redundant_ifelse_linter()
+#' )
+#'
+#' lint(
+#'   text = "ifelse(x < 2.5, 1L, 0L)",
+#'   linters = redundant_ifelse_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "x >= 2.5",
+#'   linters = redundant_ifelse_linter()
+#' )
+#'
+#' # Note that this is just to show the strict equivalent of the example above;
+#' # converting to integer is often unnecessary and the logical vector itself
+#' # should suffice.
+#' lint(
+#'   text = "as.integer(x < 2.5)",
+#'   linters = redundant_ifelse_linter()
+#' )
+#'
+#' lint(
+#'   text = "ifelse(x < 2.5, 1L, 0L)",
+#'   linters = redundant_ifelse_linter(allow10 = TRUE)
+#' )
+#'
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 redundant_ifelse_linter <- function(allow10 = FALSE) {

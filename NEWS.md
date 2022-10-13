@@ -20,6 +20,11 @@
 
 * `spaces_inside_linter()` allows terminal missing keyword arguments (e.g. `alist(arg = )`; #540, @MichaelChirico)
 
+* `brace_linter()` allows empty braced expression on the same line (e.g. `while (updating_condition()) { }`)
+  regardless of `allow_single_line` to match the corresponding behavior in {styler}. This is an expedient while
+  the style guide on handling this case awaits clarification: https://github.com/tidyverse/style/issues/191.
+  (#1346, @MichaelChirico)
+
 ## New and improved features
 
 * New `get_r_string()` helper to get the R-equivalent value of a string, especially useful for R-4-style raw strings.
@@ -41,6 +46,14 @@
 
 * `paste_linter()` also catches usages like `paste(rep("*", 10L), collapse = "")` that can be written more
   concisely as `strrep("*", 10L)` (#1108, @MichaelChirico)
+
+* `spaces_inside_linter()` produces lints for spaces inside `[[` (#1673, @IndrajeetPatil).
+
+* `sprintf_linter()` also applies to `gettextf()` (#1677, @MichaelChirico)
+
+* Documentation for all linters contains examples of code that does and does not produce lints (#1492, @IndrajeetPatil).
+
+* `implicit_integer_linter()` gains parameter `allow_colon` to skip lints on expressions like `1:10` (#1155, @MichaelChirico)
 
 ### New linters
 
@@ -65,6 +78,8 @@
 * `empty_assignment_linter()` for identifying empty assignments like `x = {}` that are more clearly written as `x = NULL` (@MichaelChirico)
 
 * `unnecessary_placeholder_linter()` for identifying where usage of the {magrittr} placeholder `.` could be omitted (@MichaelChirico)
+
+* `routine_registration_linter()` for identifying native routines that don't use registration (`useDynLib` in the `NAMESPACE`; @MichaelChirico)
 
 ## Notes
 

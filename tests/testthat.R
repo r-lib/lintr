@@ -4,6 +4,7 @@ library(lintr)
 invisible({
   loadNamespace("rex")
   loadNamespace("withr")
+  loadNamespace("patrick")
 })
 
 test_check("lintr")

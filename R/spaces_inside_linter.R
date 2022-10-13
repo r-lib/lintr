@@ -4,6 +4,29 @@
 #'   inside them, i.e., directly following an opening delimiter or directly
 #'   preceding a closing delimiter.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "c( TRUE, FALSE )",
+#'   linters = spaces_inside_linter()
+#' )
+#'
+#' lint(
+#'   text = "x[ 1L ]",
+#'   linters = spaces_inside_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "c(TRUE, FALSE)",
+#'   linters = spaces_inside_linter()
+#' )
+#'
+#' lint(
+#'   text = "x[1L]",
+#'   linters = spaces_inside_linter()
+#' )
+#'
 #' @evalRd rd_tags("spaces_inside_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
@@ -15,7 +38,10 @@ spaces_inside_linter <- function() {
     and @end != following-sibling::*[1]/@start - 1
     and @line1 = following-sibling::*[1]/@line1
   "
-  left_xpath <- glue::glue("//OP-LEFT-BRACKET[{left_xpath_condition}] | //OP-LEFT-PAREN[{left_xpath_condition}]")
+  left_xpath <- glue::glue("
+  //OP-LEFT-BRACKET[{left_xpath_condition}]
+  | //LBB[{left_xpath_condition}]
+  | //OP-LEFT-PAREN[{left_xpath_condition}]")
 
   right_xpath_condition <- "
     not(preceding-sibling::*[1][self::OP-COMMA])
@@ -35,7 +61,7 @@ spaces_inside_linter <- function() {
 
     left_expr <- xml2::xml_find_all(xml, left_xpath)
     left_msg <- ifelse(
-      xml2::xml_text(left_expr) == "[",
+      xml2::xml_text(left_expr) %in% c("[", "[["),
       "Do not place spaces after square brackets.",
       "Do not place spaces after parentheses."
     )

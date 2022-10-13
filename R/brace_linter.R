@@ -19,27 +19,27 @@
 #'   linters = brace_linter()
 #' )
 #'
-#' cat("if (TRUE) {\n return(1) }")
+#' writeLines("if (TRUE) {\n return(1) }")
 #' lint(
 #'   text = "if (TRUE) {\n return(1) }",
 #'   linters = brace_linter()
 #' )
 #'
 #' # okay
-#' cat("f <- function() {\n  1\n}")
+#' writeLines("f <- function() {\n  1\n}")
 #' lint(
 #'   text = "f <- function() {\n  1\n}",
 #'   linters = brace_linter()
 #' )
 #'
-#' cat("if (TRUE) { \n return(1) \n}")
+#' writeLines("if (TRUE) { \n return(1) \n}")
 #' lint(
 #'   text = "if (TRUE) { \n return(1) \n}",
 #'   linters = brace_linter()
 #' )
 #'
 #' # customizing using arguments
-#' cat("if (TRUE) { return(1) }")
+#' writeLines("if (TRUE) { return(1) }")
 #' lint(
 #'   text = "if (TRUE) { return(1) }",
 #'   linters = brace_linter(allow_single_line = TRUE)
@@ -57,8 +57,8 @@ brace_linter <- function(allow_single_line = FALSE) {
     },
     # double curly
     "not(
-      (@line1 = parent::expr/preceding-sibling::OP-LEFT-BRACE/@line1) or
-      (@line1 = following-sibling::expr/OP-LEFT-BRACE/@line1)
+      (@line1 = parent::expr/preceding-sibling::OP-LEFT-BRACE/@line1)
+      or (@line1 = following-sibling::expr/OP-LEFT-BRACE/@line1)
     )",
     # allow `(`, `,` and `%>%` on preceding line
     #
@@ -66,18 +66,19 @@ brace_linter <- function(allow_single_line = FALSE) {
     # so no exception needs to be made for this operator
     "not(
       @line1 > parent::expr/preceding-sibling::*[not(self::COMMENT)][1][
-        self::OP-LEFT-PAREN or
-        self::OP-COMMA or
-        (self::SPECIAL and text() = '%>%')
+        self::OP-LEFT-PAREN
+        or self::OP-COMMA
+        or (self::SPECIAL and text() = '%>%')
       ]/@line2
     )"
   ))
 
   # TODO (AshesITR): if c_style_braces is TRUE, invert the preceding-sibling condition
   xp_open_curly <- glue::glue("//OP-LEFT-BRACE[
-    { xp_cond_open } and (
-      not(@line1 = parent::expr/preceding-sibling::*/@line2) or
-      @line1 = following-sibling::*[1][not(self::COMMENT)]/@line1
+    { xp_cond_open }
+    and (
+      not(@line1 = parent::expr/preceding-sibling::*/@line2)
+      or @line1 = following-sibling::*[1][not(self::COMMENT or self::OP-RIGHT-BRACE)]/@line1
     )
   ]")
 
@@ -85,8 +86,7 @@ brace_linter <- function(allow_single_line = FALSE) {
 
   xp_paren_brace <- glue::glue("//OP-LEFT-BRACE[
     @line1 = { xp_open_preceding }/@line1
-    and
-    @col1 = { xp_open_preceding }/@col2 + 1
+    and @col1 = { xp_open_preceding }/@col2 + 1
   ]")
 
   xp_cond_closed <- xp_and(c(
@@ -98,20 +98,22 @@ brace_linter <- function(allow_single_line = FALSE) {
     "not(
       @line1 = ancestor::expr/following-sibling::*[1][
         self::OP-COMMA or self::OP-RIGHT-BRACKET or self::OP-RIGHT-PAREN
-      ]/@line1
+      ]
+        /@line1
     )",
     # double curly
     "not(
-      (@line1 = parent::expr/following-sibling::OP-RIGHT-BRACE/@line1) or
-      (@line1 = preceding-sibling::expr/OP-RIGHT-BRACE/@line1)
+      (@line1 = parent::expr/following-sibling::OP-RIGHT-BRACE/@line1)
+      or (@line1 = preceding-sibling::expr/OP-RIGHT-BRACE/@line1)
     )"
   ))
 
   # TODO (AshesITR): if c_style_braces is TRUE, skip the not(ELSE) condition
   xp_closed_curly <- glue::glue("//OP-RIGHT-BRACE[
-    { xp_cond_closed } and (
-      (@line1 = preceding-sibling::*[1]/@line2) or
-      (@line1 = parent::expr/following-sibling::*[1][not(self::ELSE)]/@line1)
+    { xp_cond_closed }
+    and (
+      (@line1 = preceding-sibling::*[1][not(self::OP-LEFT-BRACE)]/@line2)
+      or (@line1 = parent::expr/following-sibling::*[1][not(self::ELSE)]/@line1)
     )
   ]")
 

@@ -12,6 +12,24 @@ this is vestigial code left after refactoring or sandboxing code, which is
 fine for exploration, but shouldn't ultimately be checked in. Comments
 meant for posterity should be placed \emph{before} the final \code{return()}.
 }
+\examples{
+# will produce lints
+code_lines <- "f <- function() {\n  return(1 + 1)\n  2 + 2\n}"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = unreachable_code_linter()
+)
+
+# okay
+code_lines <- "f <- function() {\n  return(1 + 1)\n}"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = unreachable_code_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

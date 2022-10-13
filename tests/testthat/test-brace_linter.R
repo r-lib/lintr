@@ -409,3 +409,14 @@ test_that("brace_linter lints if/else matching braces correctly", {
     linter
   )
 })
+
+# Keep up to date with https://github.com/tidyverse/style/issues/191
+test_that("empty brace expressions are always allowed inline", {
+  expect_lint("while (FALSE) {}", NULL, brace_linter())
+  expect_lint("while (FALSE) { }", NULL, brace_linter())
+  # only applies when `{` is "attached" to the preceding token on the same line
+  expect_lint("while (FALSE)\n{}", rex::rex("Opening curly braces"), brace_linter())
+  expect_lint("while (FALSE)\n{ }", rex::rex("Opening curly braces"), brace_linter())
+  expect_lint("while (FALSE) {}", NULL, brace_linter(allow_single_line = TRUE))
+  expect_lint("while (FALSE) { }", NULL, brace_linter(allow_single_line = TRUE))
+})

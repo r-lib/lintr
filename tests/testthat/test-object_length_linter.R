@@ -21,7 +21,8 @@ test_that("lints S3 generics correctly", {
   expect_lint("print.very_very_long_class_name <- 1", NULL, linter)
   expect_lint("print.very_very_very_very_long_class_name <- 1", lint_msg, linter)
 
-  expect_lint(trim_some("
+  expect_lint(
+    trim_some("
     very_very_very_long_generic_name <- function(x, ...) {
       UseMethod(\"very_very_very_long_generic_name\")
     }
@@ -33,10 +34,13 @@ test_that("lints S3 generics correctly", {
     very_very_very_long_generic_name.very_very_very_very_long_class_name <- function(x, ...) {
       2L
     }
-  "), list(
-    list(line_number = 1L),
-    list(line_number = 9L)
-  ), linter)
+  "),
+    list(
+      list(line_number = 1L),
+      list(line_number = 9L)
+    ),
+    linter
+  )
 })
 
 test_that("object_length_linter won't fail if an imported namespace is unavailable", {

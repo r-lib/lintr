@@ -136,7 +136,6 @@ test_that("pipe-continuation linter handles native pipe", {
   )
 })
 
-skip_if_not_installed("patrick")
 local({
   linter <- pipe_continuation_linter()
   valid_code <- c(

@@ -24,16 +24,24 @@ test_that("regex_subset_linter blocks simple disallowed usages", {
 })
 
 test_that("regex_subset_linter skips grep/grepl subassignment", {
-  expect_lint("x[grep(ptn, x)] <- ''", NULL, regex_subset_linter())
-  expect_lint("x[grepl(ptn, x)] <- ''", NULL, regex_subset_linter())
-  expect_lint("x[grep(ptn, x, perl = TRUE)] = ''", NULL, regex_subset_linter())
-  expect_lint("'' -> x[grep(ptn, x, ignore.case = TRUE)] = ''", NULL, regex_subset_linter())
+  linter <- regex_subset_linter()
+
+  expect_lint("x[grep(ptn, x)] <- ''", NULL, linter)
+  expect_lint("x[grepl(ptn, x)] <- ''", NULL, linter)
+  expect_lint("x[grep(ptn, x, perl = TRUE)] = ''", NULL, linter)
+  expect_lint("'' -> x[grep(ptn, x, ignore.case = TRUE)] = ''", NULL, linter)
 })
 
-test_that("regex_subset_linter works for stringr equivalents", {
-  expect_lint("y[str_detect(x, ptn)]", NULL, regex_subset_linter())
-  expect_lint("x[str_detect(foo(x), ptn)]", NULL, regex_subset_linter())
+test_that("regex_subset_linter skips allowed usages for stringr equivalents", {
+  linter <- regex_subset_linter()
 
+  expect_lint("y[str_detect(x, ptn)]", NULL, linter)
+  expect_lint("x[str_detect(foo(x), ptn)]", NULL, linter)
+  expect_lint("x[str_detect(x, ptn)] <- ''", NULL, linter)
+  expect_lint("x[str_detect(x, ptn)] <- ''", NULL, linter)
+})
+
+test_that("regex_subset_linter blocks disallowed usages for stringr equivalents", {
   expect_lint(
     "x[str_which(x, ptn)]",
     rex::rex("Prefer stringr::str_subset(x, pattern) over"),
@@ -45,6 +53,4 @@ test_that("regex_subset_linter works for stringr equivalents", {
     rex::rex("Prefer stringr::str_subset(x, pattern) over"),
     regex_subset_linter()
   )
-  expect_lint("x[str_detect(x, ptn)] <- ''", NULL, regex_subset_linter())
-  expect_lint("x[str_detect(x, ptn)] <- ''", NULL, regex_subset_linter())
 })

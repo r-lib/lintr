@@ -33,6 +33,7 @@ test_that("unused_import_linter lints as expected", {
 })
 
 test_that("unused_import_linter handles message vectorization", {
+  skip_if_not_installed("crayon")
   expect_lint(
     trim_some("
       library(crayon)

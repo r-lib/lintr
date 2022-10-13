@@ -86,6 +86,9 @@ github_comment <- function(text, info = NULL, token = settings$comment_token) {
   if (!requireNamespace("httr", quietly = TRUE)) {
     stop("Package 'httr' is required to post comments with github_comment().")
   }
+  if (!requireNamespace("jsonlite", quietly = TRUE)) {
+    stop("Package 'jsonlite' is required to post comments with github_comment().")
+  }
 
   if (is.null(info)) {
     info <- ci_build_info()

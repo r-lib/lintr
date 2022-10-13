@@ -29,18 +29,18 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "iris['Species']",
+#'   text = 'iris["Species"]',
 #'   linters = extraction_operator_linter()
 #' )
 #'
 #' lint(
-#'   text = "iris$Species",
+#'   text = 'iris$Species',
 #'   linters = extraction_operator_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "iris[['Species']]",
+#'   text = 'iris[["Species"]]',
 #'   linters = extraction_operator_linter()
 #' )
 #'

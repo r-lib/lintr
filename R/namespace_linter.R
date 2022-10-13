@@ -86,7 +86,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     namespaces <- lapply(packages, function(package) tryCatch(getNamespace(package), error = identity))
     failed_namespace <- vapply(namespaces, inherits, "condition", FUN.VALUE = logical(1L))
     if (any(failed_namespace)) {
-      stop("Failed to retrieve namespaces for one or more of the packages. Please report this issue.", call. = FALSE)
+      stop("Failed to retrieve namespaces for one or more of the packages. Please report this issue.") # nocov
     }
 
     ns_get <- xml2::xml_text(ns_nodes) == "::"
