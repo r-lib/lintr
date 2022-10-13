@@ -53,3 +53,24 @@ test_that("linter returns the correct linting", {
     linter
   )
 })
+
+skip_if_not_installed("tibble")
+patrick::with_parameters_test_that(
+  "numbers in a:b input are optionally not linted",
+  expect_lint(
+    paste0(left, ":", right),
+    if (n_lints > 0L) rep(list("Integers should not be implicit"), n_lints),
+    implicit_integer_linter(allow_colon = allow_colon)
+  ),
+  .cases = tibble::tribble(
+     ~left,  ~right, ~n_lints, ~allow_colon,            ~.test_name,
+       "1",     "1",       2L,        FALSE,    "1:1, !allow_colon",
+       "1",     "1",       0L,         TRUE,     "1:1, allow_colon",
+       "1",    "1L",       1L,        FALSE,   "1:1L, !allow_colon",
+       "1",    "1L",       0L,         TRUE,    "1:1L, allow_colon",
+      "1L",     "1",       1L,        FALSE,   "1L:1, !allow_colon",
+      "1L",     "1",       0L,         TRUE,    "1L:1, allow_colon",
+      "1L",    "1L",       0L,        FALSE,  "1L:1L, !allow_colon",
+      "1L",    "1L",       0L,         TRUE,   "1L:1L, allow_colon",
+  )
+)
