@@ -52,10 +52,10 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
     file <- tempfile()
     con <- base::file(file, encoding = "UTF-8")
     on.exit(unlink(file), add = TRUE)
-    local({
-      on.exit(close(con))
+    withr::with_connection(
+      list(con = con),
       writeLines(content, con = con, sep = "\n")
-    })
+    )
   }
 
   lints <- lint(file, ...)
