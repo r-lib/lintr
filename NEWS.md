@@ -6,6 +6,8 @@
 
 * `get_source_expressions()` can handle Sweave/Rmarkdown documents with reference chunks like `<<ref_file>>` (#779, @MichaelChirico).
   Note that these are simply skipped, rather than attempting to retrieve the reference and also lint it.
+  
+* `assignment_linter()` no longer lints assignments in braces that include comments when `allow_trailing = FALSE` (#1701, @ashbaldry)
 
 ## Changes to defaults
 
