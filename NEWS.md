@@ -55,6 +55,9 @@
 
 * `implicit_integer_linter()` gains parameter `allow_colon` to skip lints on expressions like `1:10` (#1155, @MichaelChirico)
 
+* `unneeded_concatenation_linter()` no longer lints on `c(...)` (i.e., passing `...` in a function call)
+  when `allow_single_expression = FALSE` (#1696, @MichaelChirico)
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
