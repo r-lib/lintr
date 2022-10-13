@@ -144,4 +144,18 @@ test_that("allow_trailing interacts correctly with comments in braced expression
     list(message = "<-", line_number = 2L),
     linter
   )
+
+  expect_lint(
+    trim_some("
+    {
+      x <- '
+        a string
+        with an assignment <-
+        at the end of the line
+      '
+    }
+    "),
+    NULL,
+    linter
+  )
 })
