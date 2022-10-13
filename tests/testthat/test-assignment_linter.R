@@ -107,7 +107,10 @@ test_that("arguments handle trailing assignment operators correctly", {
     ),
     assignment_linter(allow_trailing = FALSE)
   )
+})
 
+test_that("allow_trailing interacts correctly with comments in braced expressions", {
+  linter <- assignment_linter(allow_trailing = FALSE)
   expect_lint(
     trim_some("
     {
@@ -117,7 +120,7 @@ test_that("arguments handle trailing assignment operators correctly", {
     }
     "),
     NULL,
-    assignment_linter(allow_trailing = FALSE)
+    linter
   )
 
   expect_lint(
@@ -128,7 +131,7 @@ test_that("arguments handle trailing assignment operators correctly", {
     }
     "),
     NULL,
-    assignment_linter(allow_trailing = FALSE)
+    linter
   )
 
   expect_lint(
@@ -139,6 +142,6 @@ test_that("arguments handle trailing assignment operators correctly", {
     }
     "),
     list(message = "<-", line_number = 2L),
-    assignment_linter(allow_trailing = FALSE)
+    linter
   )
 })
