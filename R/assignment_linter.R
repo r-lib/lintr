@@ -67,7 +67,7 @@ assignment_linter <- function(allow_cascading_assign = TRUE, allow_right_assign 
       "//EQ_SUB",
       "//EQ_FORMALS"
     ),
-    "[@line1 < following-sibling::*[1]/@line1 or @line1 = following-sibling::*[1][self::COMMENT]/@line1]"
+    "[@line1 < following-sibling::expr[1]/@line1]"
   )
 
   xpath <- paste(collapse = " | ", c(
