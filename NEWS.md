@@ -12,8 +12,11 @@
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
   This allows sequential updates like `x |> mutate(a = b + 1, a = log(a))` (#1345, @IndrajeetPatil).
 
-* `object_usage_linter()` gains `skip_with` argument to skip code in `with()` expressions.
-  To be consistent with `R CMD check`, it defaults to `TRUE` (#941, #1458, @IndrajeetPatil).
+* `object_usage_linter()`
+   + gains `skip_with` argument to skip code in `with()` expressions. To be consistent with
+     `R CMD check`, it defaults to `TRUE` (#941, #1458, @IndrajeetPatil).
+   + Handles backticked symbols inside {glue} expressions correctly, e.g. ``glue("{`x`}")`` correctly
+     determines `x` was used (#1619, @MichaelChirico)
 
 * `spaces_inside_linter()` allows terminal missing keyword arguments (e.g. `alist(arg = )`; #540, @MichaelChirico)
 
