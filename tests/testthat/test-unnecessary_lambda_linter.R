@@ -106,9 +106,10 @@ test_that("cases with braces are caught", {
     trim_some("
       lapply(x, function(xi) {
         print(xi)
+        xi
       })
     "),
-    print_msg,
+    NULL,
     linter
   )
 })
