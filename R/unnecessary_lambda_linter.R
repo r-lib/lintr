@@ -19,7 +19,7 @@ unnecessary_lambda_linter <- function() {
   #   call is using positional or keyword arguments -- we can
   #   throw a lint for sweep() lambdas where the following arguments
   #   are all named) but for now it seems like overkill.
-  apply_funs <- xp_text_in_table(c(
+  apply_funs <- xp_text_in_table(c( # nolint: object_usage_linter. Used in glue call below.
     "lapply", "sapply", "vapply", "apply",
     "tapply", "rapply", "eapply", "dendrapply",
     "mapply", "by", "outer",
