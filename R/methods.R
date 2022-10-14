@@ -154,8 +154,8 @@ split.lints <- function(x, f = NULL, ...) {
 as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) { # nolint: object_name. (row.names, #764)
   data.frame(
     filename = vapply(x, `[[`, character(1L), "filename"),
-    line_number = vapply(x, `[[`, numeric(1L), "line_number"),
-    column_number = vapply(x, `[[`, numeric(1L), "column_number"),
+    line_number = vapply(x, `[[`, integer(1L), "line_number"),
+    column_number = vapply(x, `[[`, integer(1L), "column_number"),
     type = vapply(x, `[[`, character(1L), "type"),
     message = vapply(x, `[[`, character(1L), "message"),
     line = vapply(x, `[[`, character(1L), "line"),

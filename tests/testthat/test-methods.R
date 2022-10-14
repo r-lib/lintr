@@ -71,7 +71,7 @@ test_that("as.data.frame.lints", {
     stringsAsFactors = FALSE
   )
 
-  expect_equal(df, exp)
+  expect_identical(df, exp)
 })
 
 test_that("summary.lints() works (no lints)", {
