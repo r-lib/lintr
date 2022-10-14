@@ -61,8 +61,10 @@ test_that("linter returns correct linting", {
   expect_lint("`myObject` <- 123", NULL, linter)
   expect_lint("my.confused_NAME <- 1;", list(message = lint_msg, line_number = 1L, column_number = 1L), linter)
   expect_lint("1 ->> read.data.frame;", list(message = lint_msg, line_number = 1L, column_number = 7L), linter)
-  expect_lint("object_name_linter <- function(...) {}",
-              list(message = lint_msg, line_number = 1L, column_number = 1L), linter)
+  expect_lint(
+    "object_name_linter <- function(...) {}",
+    list(message = lint_msg, line_number = 1L, column_number = 1L), linter
+  )
 
   expect_lint(
     "Z = sapply('function', function(x=function(x){1}, b.a.z=F, ...){identity(b.a.z)}, USE.NAMES=TRUE)",

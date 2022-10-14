@@ -1,3 +1,4 @@
+# styler: off
 skip_if_not_installed("tibble")
 local({
   # Note: cases indicated by "*" are whole numbers, but don't lint because the user has
@@ -51,6 +52,7 @@ local({
     .cases = cases
   )
 })
+# styler: on
 
 test_that("linter returns the correct linting", {
   lint_msg <- "Integers should not be implicit. Use the form 1L for integers or 1.0 for doubles."
@@ -58,9 +60,21 @@ test_that("linter returns the correct linting", {
 
   expect_lint("x <<- 1L", NULL, linter)
   expect_lint("1.0/-Inf -> y", NULL, linter)
-  expect_lint("y <- 1+i", list(message = lint_msg, line_number = 1L, column_number = 7L), linter)
-  expect_lint("z <- 1e5", list(message = lint_msg, line_number = 1L, column_number = 9L), linter)
-  expect_lint("cat(1:n)", list(message = lint_msg, line_number = 1L, column_number = 6L), linter)
+  expect_lint(
+    "y <- 1+i",
+    list(message = lint_msg, line_number = 1L, column_number = 7L),
+    linter
+  )
+  expect_lint(
+    "z <- 1e5",
+    list(message = lint_msg, line_number = 1L, column_number = 9L),
+    linter
+  )
+  expect_lint(
+    "cat(1:n)",
+    list(message = lint_msg, line_number = 1L, column_number = 6L),
+    linter
+  )
   expect_lint(
     "552^9",
     list(

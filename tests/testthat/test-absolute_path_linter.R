@@ -1,3 +1,4 @@
+# styler: off
 test_that("is_root_path", {
   f <- lintr:::is_root_path
 
@@ -126,7 +127,7 @@ test_that("is_long_path", {
   y <- c(FALSE,  FALSE,  FALSE, TRUE,      TRUE,      TRUE,    TRUE)
   expect_equal(f(x), y)
 })
-
+# styler: on
 
 test_that("returns the correct linting", {
   lint_msg <- rex::escape("Do not use absolute paths.")
