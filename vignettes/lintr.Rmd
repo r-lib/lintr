@@ -173,7 +173,9 @@ linters_with_args <- lapply(
 
 make_setting_string <- function(linter_name) {
   args <- linters_with_args[[linter_name]]
-  if (is.null(args)) return("")
+  if (is.null(args)) {
+    return("")
+  }
 
   arglist <- vapply(args, function(arg) {
     env <- environment(default_linters[[linter_name]])
@@ -269,7 +271,8 @@ X = 42L # -------------- this comment overflows the default 80 chars line length
 
 ```{r, echo = FALSE}
 lintr::lint("X = 42L # -------------- this comment overflows the default 80 chars line length.\n",
-            parse_settings = FALSE)
+  parse_settings = FALSE
+)
 ```
 
 **file2.R**
@@ -282,7 +285,8 @@ X = 42L # nolint ------ this comment overflows the default 80 chars line length.
 
 ```{r, echo = FALSE}
 lintr::lint("X = 42L # nolint ------ this comment overflows the default 80 chars line length.\n",
-            parse_settings = FALSE)
+  parse_settings = FALSE
+)
 ```
 
 Observe how all lints were suppressed and no output is shown.
@@ -301,7 +305,8 @@ X = 42L # nolint: object_name_linter. this comment overflows the default 80 char
 
 ```{r, echo = FALSE}
 lintr::lint("X = 42L # nolint: object_name_linter. this comment overflows the default 80 chars line length.\n",
-            parse_settings = FALSE)
+  parse_settings = FALSE
+)
 ```
 
 Observe how only the `object_name_linter` was suppressed.
@@ -372,7 +377,8 @@ lintr::lint("# x <- 42L\n# print(x)\n", parse_settings = FALSE)
 
 ```{r, echo = FALSE}
 lintr::lint("# nolint start: commented_code_linter.\n# x <- 42L\n# print(x)\n# nolint end\n",
-            parse_settings = FALSE)
+  parse_settings = FALSE
+)
 ```
 
 (No lints)

@@ -29,7 +29,7 @@ names(default_undesirable_functions)
 
 # will produce lints
 lint(
-  text = 'sapply(x, mean)',
+  text = "sapply(x, mean)",
   linters = undesirable_function_linter()
 )
 
@@ -50,7 +50,7 @@ lint(
 
 # okay
 lint(
-  text = 'vapply(x, mean, FUN.VALUE = numeric(1))',
+  text = "vapply(x, mean, FUN.VALUE = numeric(1))",
   linters = undesirable_function_linter()
 )
 

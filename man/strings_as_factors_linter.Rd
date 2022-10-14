@@ -40,7 +40,7 @@ lint(
 )
 
 lint(
-  text = 'data.frame(x = 1.2)',
+  text = "data.frame(x = 1.2)",
   linters = strings_as_factors_linter()
 )
 
