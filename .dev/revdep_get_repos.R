@@ -50,12 +50,20 @@ git_urls <- extract_github_repo(urls)
 matched <- nzchar(git_urls)
 
 utils::write.csv(
-  data.frame(package = lintr_pkg[!matched], repo = file.path("https://github.com/cran", lintr_pkg[!matched])),
+  data.frame(
+    package = lintr_pkg[!matched],
+    repo = file.path("https://github.com/cran", lintr_pkg[!matched]),
+    stringsAsFactors = FALSE
+  ),
   "revdep-no-repos",
   row.names = FALSE, quote = FALSE
 )
 utils::write.csv(
-  data.frame(package = lintr_pkg[matched], repo = git_urls[matched]),
+  data.frame(
+    package = lintr_pkg[matched],
+    repo = git_urls[matched],
+    stringsAsFactors = FALSE
+  ),
   "revdep-repos",
   row.names = FALSE, quote = FALSE
 )
