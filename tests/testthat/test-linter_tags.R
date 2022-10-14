@@ -13,7 +13,11 @@ test_that("validate_linter_db works as expected", {
   )
   expect_false(suppressWarnings(lintr:::validate_linter_db(df_empty, "mypkg")))
 
-  df <- data.frame(linter = "absolute_path_linter", tags = "robustness")
+  df <- data.frame(
+    linter = "absolute_path_linter",
+    tags = "robustness",
+    stringsAsFactors = FALSE
+  )
   expect_true(lintr:::validate_linter_db(df, "mypkg"))
 })
 
