@@ -81,3 +81,34 @@ test_that("purrr-style anonymous functions are also caught", {
     unnecessary_lambda_linter()
   )
 })
+
+test_that("cases with braces are caught", {
+  linter <- unnecessary_lambda_linter()
+  print_msg <- rex::rex("Pass print directly as a symbol to lapply()")
+
+  expect_lint(
+    "lapply(x, function(xi) { print(xi) })",
+    print_msg,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      lapply(x, function(xi) {
+        print(xi)
+      })
+    "),
+    print_msg,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      lapply(x, function(xi) {
+        print(xi)
+      })
+    "),
+    print_msg,
+    linter
+  )
+})
