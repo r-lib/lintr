@@ -1,9 +1,11 @@
 test_that("for_loop_index_linter skips allowed usages", {
-  expect_lint("for (xi in x) {}", NULL, for_loop_index_linter())
+  linter <- for_loop_index_linter()
+
+  expect_lint("for (xi in x) {}", NULL, linter)
 
   # this is OK, so not every symbol is problematic
-  expect_lint("for (col in DF$col) {}", NULL, for_loop_index_linter())
-  expect_lint("for (col in DT[, col]) {}", NULL, for_loop_index_linter())
+  expect_lint("for (col in DF$col) {}", NULL, linter)
+  expect_lint("for (col in DT[, col]) {}", NULL, linter)
 })
 
 test_that("for_loop_index_linter blocks simple disallowed usages", {
