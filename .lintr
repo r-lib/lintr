@@ -1,16 +1,18 @@
 linters: linters_with_defaults(
-   line_length_linter(120),
-   implicit_integer_linter(),
-   backport_linter("oldrel-4", except = c("R_user_dir", "str2lang"))
- )
+    line_length_linter(120),
+    backport_linter("oldrel-4", except = c("R_user_dir", "str2lang")),
+    todo_comment_linter = NULL,
+    extraction_operator_linter = NULL,
+    defaults = linters_with_tags(tags = NULL)
+  )
 exclusions: list(
-  "inst/doc/creating_linters.R" = 1,
-  "inst/example/bad.R",
-  "tests/testthat/default_linter_testcode.R",
-  "tests/testthat/dummy_packages",
-  "tests/testthat/dummy_projects",
-  "tests/testthat/exclusions-test",
-  "tests/testthat/knitr_extended_formats",
-  "tests/testthat/knitr_formats",
-  "tests/testthat/knitr_malformed"
- )
+    "inst/doc/creating_linters.R" = 1,
+    "inst/example/bad.R",
+    "tests/testthat/default_linter_testcode.R",
+    "tests/testthat/dummy_packages",
+    "tests/testthat/dummy_projects",
+    "tests/testthat/exclusions-test",
+    "tests/testthat/knitr_extended_formats",
+    "tests/testthat/knitr_formats",
+    "tests/testthat/knitr_malformed"
+  )
