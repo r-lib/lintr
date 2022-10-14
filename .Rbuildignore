@@ -27,3 +27,4 @@
 ^pkgdown$
 ^vignettes/[^-]+.gif$
 ^CRAN-SUBMISSION$
+^paper.*$
