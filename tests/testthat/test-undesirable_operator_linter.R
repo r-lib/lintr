@@ -5,8 +5,16 @@ test_that("linter returns correct linting", {
 
   expect_lint("x <- foo:::getObj()", NULL, linter)
   expect_lint("cat(\"10$\")", NULL, linter)
-  expect_lint("a <<- log(10)", list(message = msg_assign, line_number = 1L, column_number = 3L), linter)
-  expect_lint("data$parsed == c(1, 2)", list(message = msg_dollar, line_number = 1L, column_number = 5L), linter)
+  expect_lint(
+    "a <<- log(10)",
+    list(message = msg_assign, line_number = 1L, column_number = 3L),
+    linter
+  )
+  expect_lint(
+    "data$parsed == c(1, 2)",
+    list(message = msg_dollar, line_number = 1L, column_number = 5L),
+    linter
+  )
 })
 
 test_that("undesirable_operator_linter handles '=' consistently", {
@@ -43,8 +51,16 @@ test_that("undesirable_operator_linter vectorizes messages", {
 })
 
 test_that("invalid inputs fail correctly", {
-  expect_error(undesirable_operator_linter("***"), "'op' should be a named character vector", fixed = TRUE)
-  expect_error(undesirable_operator_linter(c("***" = NA, NA)), "'op' should be a named character vector", fixed = TRUE)
+  expect_error(
+    undesirable_operator_linter("***"),
+    "'op' should be a named character vector",
+    fixed = TRUE
+  )
+  expect_error(
+    undesirable_operator_linter(c("***" = NA, NA)),
+    "'op' should be a named character vector",
+    fixed = TRUE
+  )
   expect_error(
     undesirable_operator_linter(c("***" = NA)),
     "Did not recognize any valid operators in request for: ***",
