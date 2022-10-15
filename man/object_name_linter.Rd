@@ -12,8 +12,8 @@ object_name_linter(styles = c("snake_case", "symbols"), regexes = character())
 match at least one of these styles.}
 
 \item{regexes}{A (possibly named) character vector specifying a custom naming convention.
-If named, the names will be used in the lint message. Otherwise, "custom" will be used as a name for the style.
-Quotes (\verb{`"'}) and specials (\verb{\%} and trailing \verb{<-}) are not considered part of the name to be matched.
+If named, the names will be used in the lint message. Otherwise, the regexes enclosed by \code{/} will be used in the
+lint message.
 Note that specifying \code{regexes} overrides the default \code{styles}. So if you want to combine \code{regexes} and \code{styles},
 both need to be explicitly specified.}
 }
@@ -22,6 +22,8 @@ Check that object names conform to a naming style.
 The default naming styles are "snake_case" and "symbols".
 }
 \details{
+Quotes (\verb{`"'}) and specials (\verb{\%} and trailing \verb{<-}) are not considered part of the object name.
+
 Note when used in a package, in order to ignore objects imported
 from other namespaces, this linter will attempt \code{\link[=getNamespaceExports]{getNamespaceExports()}}
 whenever an \code{import(PKG)} or \code{importFrom(PKG, ...)} statement is found

@@ -24,6 +24,8 @@ object_name_xpath <- local({
 #' Check that object names conform to a naming style.
 #' The default naming styles are "snake_case" and "symbols".
 #'
+#' Quotes (`` `"' ``) and specials (`%` and trailing `<-`) are not considered part of the object name.
+#'
 #' Note when used in a package, in order to ignore objects imported
 #'   from other namespaces, this linter will attempt [getNamespaceExports()]
 #'   whenever an `import(PKG)` or `importFrom(PKG, ...)` statement is found
@@ -45,8 +47,8 @@ object_name_xpath <- local({
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
 #'   match at least one of these styles.
 #' @param regexes A (possibly named) character vector specifying a custom naming convention.
-#'   If named, the names will be used in the lint message. Otherwise, "custom" will be used as a name for the style.
-#'   Quotes (`` `"' ``) and specials (`%` and trailing `<-`) are not considered part of the name to be matched.
+#'   If named, the names will be used in the lint message. Otherwise, the regexes enclosed by `/` will be used in the
+#'   lint message.
 #'   Note that specifying `regexes` overrides the default `styles`. So if you want to combine `regexes` and `styles`,
 #'   both need to be explicitly specified.
 #'
