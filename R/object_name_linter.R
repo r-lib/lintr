@@ -67,6 +67,11 @@ object_name_xpath <- local({
 #'   linters = object_name_linter(styles = "dotted.case")
 #' )
 #'
+#' lint(
+#'   text = "asd <- 1L",
+#'   linters = object_name_linter(regexes = c(my_style = "F$", "f$"))
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "my_var <- 1L",
@@ -81,6 +86,11 @@ object_name_xpath <- local({
 #' lint(
 #'   text = "my.var <- 1L; myvar <- 2L",
 #'   linters = object_name_linter(styles = c("dotted.case", "lowercase"))
+#' )
+#'
+#' lint(
+#'   text = "asdf <- 1L; asdF <- 1L",
+#'   linters = object_name_linter(regexes = c(my_style = "F$", "f$"))
 #' )
 #'
 #' @evalRd rd_tags("object_name_linter")

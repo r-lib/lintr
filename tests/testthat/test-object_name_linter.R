@@ -54,7 +54,7 @@ test_that("linter ignores some objects", {
 })
 
 test_that("linter returns correct linting", {
-  lint_msg <- "Variable and function name style should be camelCase."
+  lint_msg <- "Variable and function name style should match camelCase."
   linter <- object_name_linter("camelCase")
 
   expect_lint("myObject <- 123", NULL, linter)
@@ -86,7 +86,7 @@ test_that("linter returns correct linting", {
 })
 
 test_that("linter accepts vector of styles", {
-  lint_msg <- "Variable and function name style should be camelCase or dotted.case."
+  lint_msg <- "Variable and function name style should match camelCase or dotted.case."
   linter <- object_name_linter(styles = c("camelCase", "dotted.case"))
 
   expect_lint(
@@ -99,7 +99,7 @@ test_that("linter accepts vector of styles", {
 test_that("dollar subsetting only lints the first expression", {
   # Regression test for #582
   linter <- object_name_linter()
-  lint_msg <- "Variable and function name style should be snake_case or symbols."
+  lint_msg <- "Variable and function name style should match snake_case or symbols."
 
   expect_lint("my_var$MY_COL <- 42L", NULL, linter)
   expect_lint("MY_VAR$MY_COL <- 42L", lint_msg, linter)
@@ -109,7 +109,7 @@ test_that("dollar subsetting only lints the first expression", {
 
 test_that("assignment targets of compound lhs are correctly identified", {
   linter <- object_name_linter()
-  lint_msg <- "Variable and function name style should be snake_case or symbols."
+  lint_msg <- "Variable and function name style should match snake_case or symbols."
 
   # (recursive) [, $, and [[ subsetting
   expect_lint("good_name[badName] <- badName2", NULL, linter)
@@ -161,12 +161,12 @@ test_that("object_name_linter supports custom regexes", {
   linter <- object_name_linter(
     regexes = c("shinyModule" = rex(start, lower, zero_or_more(alnum), "UI" %or% "Server", end))
   )
-  msg <- rex::rex("Variable and function name style should be shinyModule.")
+  msg <- rex::rex("Variable and function name style should match shinyModule.")
   linter2 <- object_name_linter(
     styles = c("snake_case", "symbols"),
     regexes = c("shinyModule" = rex(start, lower, zero_or_more(alnum), "UI" %or% "Server", end))
   )
-  msg2 <- rex::rex("Variable and function name style should be snake_case, symbols or shinyModule.")
+  msg2 <- rex::rex("Variable and function name style should match snake_case, symbols or shinyModule.")
 
   # Can't allow 0 styles
   expect_error(
@@ -226,7 +226,7 @@ test_that("object_name_linter supports custom regexes", {
       b <- 1L
       c <- 2L
     "),
-    list(line_number = 3L, message = rex::rex("Variable and function name style should be custom.")),
+    list(line_number = 3L, message = rex::rex("Variable and function name style should match /^a$/ or /^b$/.")),
     object_name_linter(regexes = c("^a$", "^b$"))
   )
 
@@ -236,7 +236,7 @@ test_that("object_name_linter supports custom regexes", {
       b <- 1L
       c <- 2L
     "),
-    list(line_number = 3L, message = rex::rex("Variable and function name style should be a or custom.")),
+    list(line_number = 3L, message = rex::rex("Variable and function name style should match a or /^b$/.")),
     object_name_linter(regexes = c(a = "^a$", "^b$"))
   )
 })
