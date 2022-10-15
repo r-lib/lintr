@@ -122,9 +122,16 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
         },
         integer(1L)
       )
-
       nodes <- unclass(lintable_symbols)[matched_symbol]
-      nodes[is.na(matched_symbol)] <- list(fun_assignment)
+
+      # fallback to line based matching if no symbol is found
+      nodes[is.na(matched_symbol)] <- lapply(which(is.na(matched_symbol)), function(i) {
+        line_based_match <- xml2::xml_find_first(
+          fun_assignment,
+          glue::glue("descendant::expr[@line1 = {res$line1[i]} and @line2 = {res$line2[i]}]")
+        )
+        if (is.na(line_based_match)) fun_assignment else line_based_match
+      })
 
       xml_nodes_to_lints(nodes, source_expression = source_expression, lint_message = res$message, type = "warning")
     })
@@ -268,30 +275,26 @@ parse_check_usage <- function(expression,
       function_name,
       capture(
         name = "message",
-        anything,
-        one_of(quote, "\u2018"),
-        capture(name = "name", anything),
-        one_of(quote, "\u2019"),
-        anything
+        zero_or_more(any, type = "lazy"),
+        maybe(
+          one_of(quote, "\u2018"),
+          capture(name = "name", anything),
+          one_of(quote, "\u2019"),
+          anything
+        )
       ),
       line_info
     )
   )
 
+  # nocov start
   missing <- is.na(res$message)
   if (any(missing)) {
-    res[missing, ] <- re_matches(
-      vals[missing],
-      rex(
-        function_name,
-        capture(
-          name = "message",
-          "possible error in ", capture(name = "name", anything), ": ", anything
-        ),
-        line_info
-      )
-    )
+    warning("Possible bug in lintr: Couldn't parse usage message ", sQuote(vals[missing][[1L]]), ". ",
+            "Ignoring ", sum(missing), " usage warnings.")
+    res <- res[!missing, ]
   }
+  # nocov end
 
   res <- res[!is.na(res$message), ]
 
