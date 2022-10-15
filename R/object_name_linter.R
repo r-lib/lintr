@@ -99,7 +99,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
       stop("`regexes` must be a character vector.")
     }
     rx_names <- names2(regexes)
-    rx_names[!nzchar(rx_names)] <- "custom"
+    rx_names[!nzchar(rx_names)] <- paste0("/", regexes[!nzchar(rx_names)], "/") # auto-name regex "asd" -> /asd/
     names(regexes) <- rx_names
 
     style_list <- c(style_list, as.list(regexes))
@@ -109,7 +109,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
   }
 
   lint_message <- paste0(
-    "Variable and function name style should be ",
+    "Variable and function name style should match ",
     glue::glue_collapse(unique(names(style_list)), sep = ", ", last = " or "), "."
   )
 
@@ -215,80 +215,3 @@ style_regexes <- list(
 )
 
 regexes_rd <- toString(paste0("\\sQuote{", names(style_regexes), "}"))
-
-#' Object length linter
-#'
-#' Check that object names are not too long.
-#' The length of an object name is defined as the length in characters, after removing extraneous parts:
-#'
-#'  * generic prefixes for implementations of S3 generics, e.g. `as.data.frame.my_class` has length 8.
-#'  * leading `.`, e.g. `.my_hidden_function` has length 18.
-#'  * "%%" for infix operators, e.g. `%my_op%` has length 5.
-#'  * trailing `<-` for assignment functions, e.g. `my_attr<-` has length 7.
-#'
-#' Note that this behavior relies in part on having packages in your Imports available;
-#'   see the detailed note in [object_name_linter()] for more details.
-#'
-#' @param length maximum variable name length allowed.
-#'
-#' @examples
-#' # will produce lints
-#' lint(
-#'   text = "very_very_long_variable_name <- 1L",
-#'   linters = object_length_linter(length = 10L)
-#' )
-#'
-#' # okay
-#' lint(
-#'   text = "very_very_long_variable_name <- 1L",
-#'   linters = object_length_linter(length = 30L)
-#' )
-#'
-#' lint(
-#'   text = "var <- 1L",
-#'   linters = object_length_linter(length = 10L)
-#' )
-#'
-#' @evalRd rd_tags("object_length_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
-#' @export
-object_length_linter <- function(length = 30L) {
-  lint_message <- paste("Variable and function names should not be longer than", length, "characters.")
-
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
-    xml <- source_expression$full_xml_parsed_content
-
-    assignments <- xml2::xml_find_all(xml, object_name_xpath)
-
-    # Retrieve assigned name
-    nms <- strip_names(
-      xml2::xml_text(assignments)
-    )
-
-    # run namespace_imports at run-time, not "compile" time to allow package structure to change
-    ns_imports <- namespace_imports(find_package(source_expression$filename))
-    generics <- strip_names(c(
-      declared_s3_generics(xml),
-      imported_s3_generics(ns_imports)$fun,
-      .base_s3_generics
-    ))
-    generics <- unique(generics[nzchar(generics)])
-
-    # Remove generic function names from generic implementations
-    # This only lints S3 implementations if the class names are too long, still lints generics if they are too long.
-    nms_stripped <- re_substitutes(nms, rex(start, or(generics), "."), "")
-
-    too_long <- nchar(nms_stripped) > length
-
-    xml_nodes_to_lints(
-      assignments[too_long],
-      source_expression = source_expression,
-      lint_message = lint_message,
-      type = "style"
-    )
-  })
-}
