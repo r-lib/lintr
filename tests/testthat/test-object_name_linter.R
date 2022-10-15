@@ -175,9 +175,9 @@ test_that("object_name_linter supports custom regexes", {
   )
 
   expect_lint(
-    trim_some("
+    trim_some('
       snake_case <- 42L
-      \"%+%\" <- function(...) ..1 + ..2
+      "%+%" <- function(...) ..1 + ..2
 
       myModuleUI <- function(id) {
         # blah
@@ -188,7 +188,7 @@ test_that("object_name_linter supports custom regexes", {
       }
 
       myBadName <- 20L
-    "),
+    '),
     list(
       list(line_number = 1L, message = msg),
       list(line_number = 2L, message = msg),
