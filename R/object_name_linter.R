@@ -111,7 +111,8 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
       stop("`regexes` must be a character vector.")
     }
     rx_names <- names2(regexes)
-    rx_names[!nzchar(rx_names)] <- paste0("/", regexes[!nzchar(rx_names)], "/") # auto-name regex "asd" -> /asd/
+    missing_name <- !nzchar(rx_names)
+    rx_names[missing_name] <- paste0("/", regexes[missing_name], "/") # auto-name regex "asd" -> /asd/
     names(regexes) <- rx_names
 
     style_list <- c(style_list, as.list(regexes))
