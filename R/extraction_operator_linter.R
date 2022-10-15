@@ -34,7 +34,7 @@
 #' )
 #'
 #' lint(
-#'   text = 'iris$Species',
+#'   text = "iris$Species",
 #'   linters = extraction_operator_linter()
 #' )
 #'

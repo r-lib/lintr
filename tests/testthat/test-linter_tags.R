@@ -13,7 +13,11 @@ test_that("validate_linter_db works as expected", {
   )
   expect_false(suppressWarnings(lintr:::validate_linter_db(df_empty, "mypkg")))
 
-  df <- data.frame(linter = "absolute_path_linter", tags = "robustness")
+  df <- data.frame(
+    linter = "absolute_path_linter",
+    tags = "robustness",
+    stringsAsFactors = FALSE
+  )
   expect_true(lintr:::validate_linter_db(df, "mypkg"))
 })
 
@@ -69,7 +73,7 @@ test_that("warnings occur only for deprecated linters", {
       }
     )
   })
-  expect_equal(deprecation_warns_seen, num_deprecated_linters)
+  expect_identical(deprecation_warns_seen, num_deprecated_linters)
 })
 
 test_that("available_linters matches the set of linters available from lintr", {

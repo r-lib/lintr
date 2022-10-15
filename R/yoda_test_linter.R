@@ -8,7 +8,7 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text ="expect_equal(2, x)",
+#'   text = "expect_equal(2, x)",
 #'   linters = yoda_test_linter()
 #' )
 #'

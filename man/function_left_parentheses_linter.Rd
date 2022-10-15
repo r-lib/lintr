@@ -33,12 +33,12 @@ lint(
 )
 
 lint(
-  text =  "stats::sd(c(x, y, z))",
+  text = "stats::sd(c(x, y, z))",
   linters = function_left_parentheses_linter()
 )
 
 lint(
-  text =  "foo <- function(x) (x + 1)",
+  text = "foo <- function(x) (x + 1)",
   linters = function_left_parentheses_linter()
 )
 

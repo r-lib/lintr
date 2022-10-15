@@ -6,6 +6,8 @@
 
 * `get_source_expressions()` can handle Sweave/Rmarkdown documents with reference chunks like `<<ref_file>>` (#779, @MichaelChirico).
   Note that these are simply skipped, rather than attempting to retrieve the reference and also lint it.
+  
+* `assignment_linter()` no longer lints assignments in braces that include comments when `allow_trailing = FALSE` (#1701, @ashbaldry)
 
 ## Changes to defaults
 
@@ -60,6 +62,8 @@
 
 * `unneeded_concatenation_linter()` no longer lints on `c(...)` (i.e., passing `...` in a function call)
   when `allow_single_expression = FALSE` (#1696, @MichaelChirico)
+
+* `object_name_linter()` gains parameter `regexes` to allow custom naming conventions (#822, #1421, @AshesITR)
 
 ### New linters
 

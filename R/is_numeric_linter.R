@@ -10,7 +10,7 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = 'is.numeric(y) || is.integer(y)',
+#'   text = "is.numeric(y) || is.integer(y)",
 #'   linters = is_numeric_linter()
 #' )
 #'
@@ -21,7 +21,7 @@
 #'
 #' # okay
 #' lint(
-#'   text = 'is.numeric(y) || is.factor(y)',
+#'   text = "is.numeric(y) || is.factor(y)",
 #'   linters = is_numeric_linter()
 #' )
 #'
