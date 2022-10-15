@@ -1,11 +1,5 @@
 # lintr (development version)
 
-## Changes to defaults
-
-* New default linter `indentation_linter()` enforcing tidyverse style 2-space indentation (@AshesITR and @dgkf, #1411).
-* `seq_linter()` additionally lints on `1:n()` (from dplyr) 
-  and `1:.N` (from data.table)  (#1396, @IndrajeetPatil).
-
 ## Bug fixes
 
 * `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
@@ -32,6 +26,8 @@
   regardless of `allow_single_line` to match the corresponding behavior in {styler}. This is an expedient while
   the style guide on handling this case awaits clarification: https://github.com/tidyverse/style/issues/191.
   (#1346, @MichaelChirico)
+
+* New default linter `indentation_linter()` enforcing Tidyverse-style 2-space indentation (@AshesITR and @dgkf, #1411).
 
 ## New and improved features
 
@@ -93,6 +89,8 @@
 * `unnecessary_placeholder_linter()` for identifying where usage of the {magrittr} placeholder `.` could be omitted (@MichaelChirico)
 
 * `routine_registration_linter()` for identifying native routines that don't use registration (`useDynLib` in the `NAMESPACE`; @MichaelChirico)
+
+*  `indentation_linter()`: see above in 'Changes to defaults'
 
 ## Notes
 
