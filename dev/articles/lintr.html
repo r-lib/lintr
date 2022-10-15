@@ -328,7 +328,7 @@
 </tr>
 <tr class="even">
 <td align="left">object_name_linter</td>
-<td align="left">styles = c(“snake_case”, “symbols”)</td>
+<td align="left">styles = c(“snake_case”, “symbols”), regexes = character(0)</td>
 </tr>
 <tr class="odd">
 <td align="left">object_usage_linter</td>
@@ -471,15 +471,15 @@
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="../reference/lint.html">lint</a></span><span class="op">(</span><span class="va">tmp</span>, linters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/call.html" class="external-link">call</a></span><span class="op">(</span><span class="va">linter_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpiWIcJu/file348079fbaedd           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/Rtmpe3yV0v/file33c72a7531a2           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1    get</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpiWIcJu/file348079fbaedd           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/Rtmpe3yV0v/file33c72a7531a2           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpiWIcJu/file348079fbaedd           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/Rtmpe3yV0v/file33c72a7531a2           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span></code></pre></div>
 </div>
@@ -501,7 +501,7 @@
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">X</span> <span class="op">=</span> <span class="fl">42L</span> <span class="co"># -------------- this comment overflows the default 80 chars line length.</span></span></code></pre></div>
 <p><code>&gt; lint("file.R")</code></p>
-<pre><code><span><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[object_name_linter] Variable and function name style should be snake_case or symbols.</span></span>
+<pre><code><span><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[object_name_linter] Variable and function name style should match snake_case or symbols.</span></span>
 <span><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[assignment_linter] Use &lt;-, not =, for assignment.</span></span>
 <span><span class="co">#&gt; ::warning file=&lt;text&gt;,line=1,col=81::file=&lt;text&gt;,line=1,col=81,[line_length_linter] Lines should not be more than 80 characters.</span></span></code></pre>
 <p><strong>file2.R</strong></p>
