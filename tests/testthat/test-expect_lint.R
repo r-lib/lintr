@@ -35,7 +35,12 @@ test_that("single check", {
 
 test_that("multiple checks", {
   expect_success(
-    expect_lint(file = "exclusions-test", checks = as.list(rep(lint_msg, 9L)), linters = linter, parse_settings = FALSE)
+    expect_lint(
+      file = "exclusions-test",
+      checks = as.list(rep(lint_msg, 9L)),
+      linters = linter,
+      parse_settings = FALSE
+    )
   )
 
   expect_success(expect_lint("a=1; b=2", list(lint_msg, lint_msg), linter))
@@ -52,9 +57,18 @@ test_that("multiple checks", {
   )
 })
 
-test_that("expect_lint_free works", {
+test_that("expect_lint_free fails in presence of lints", {
+  withr::local_options(
+    lintr.rstudio_source_markers = FALSE,
+    lintr.linter_file = "lintr_test_config"
+  )
+  withr::local_envvar(c(NOT_CRAN = "true", R_COVR = "false"))
+
+  expect_failure(expect_lint_free(test_path("dummy_packages", "package")))
+})
+
+test_that("expect_lint_free succeeds in absence of lints", {
   skip_if_not_installed("callr")
-  skip_if_not_installed("withr")
 
   withr::local_options(
     lintr.rstudio_source_markers = FALSE,
@@ -62,23 +76,30 @@ test_that("expect_lint_free works", {
   )
   withr::local_envvar(c(NOT_CRAN = "true", R_COVR = "false"))
 
-  withr::with_dir(
-    test_path("dummy_packages", "clean"),
+  pkg_clean <- test_path("dummy_packages", "clean")
+  pkg_clean_subdir <- test_path("dummy_packages", "clean_subdir", "r")
+
+  # temporary library to install dummy packages
+  # this will avoid polluting development environment
+  temp_lib <- test_path("dummy_library")
+  dir.create(temp_lib)
+
+  withr::with_libpaths(
+    temp_lib,
     {
-      callr::rcmd("INSTALL", ".", echo = FALSE, show = FALSE)
-      expect_lint_free(".")
+      callr::rcmd("INSTALL", pkg_clean, echo = FALSE, show = FALSE)
+      expect_lint_free(pkg_clean)
+      unloadNamespace("clean")
+
+      callr::rcmd("INSTALL", pkg_clean_subdir, echo = FALSE, show = FALSE)
+      expect_lint_free(pkg_clean_subdir)
+      unloadNamespace("clean")
     }
   )
 
-  withr::with_dir(
-    test_path("dummy_packages", "clean_subdir", "r"),
-    {
-      callr::rcmd("INSTALL", ".", echo = FALSE, show = FALSE)
-      expect_lint_free(".")
-    }
-  )
+  unlink(temp_lib, recursive = TRUE)
 
-  expect_failure(expect_lint_free(test_path("dummy_packages", "package")))
+  # check cleanup
+  expect_false("clean" %in% loadedNamespaces())
+  expect_false(dir.exists(temp_lib))
 })
-
-lintr::lint(text = "#' c()", linters = commented_code_linter())
