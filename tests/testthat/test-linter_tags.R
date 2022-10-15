@@ -73,7 +73,7 @@ test_that("warnings occur only for deprecated linters", {
       }
     )
   })
-  expect_equal(deprecation_warns_seen, num_deprecated_linters)
+  expect_identical(deprecation_warns_seen, num_deprecated_linters)
 })
 
 test_that("available_linters matches the set of linters available from lintr", {
