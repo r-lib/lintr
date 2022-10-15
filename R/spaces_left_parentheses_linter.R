@@ -2,10 +2,24 @@
 #'
 #' Check that all left parentheses have a space before them unless they are in a function call.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "if(TRUE) x else y",
+#'   linters = spaces_left_parentheses_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "if (TRUE) x else y",
+#'   linters = spaces_left_parentheses_linter()
+#' )
+#'
 #' @evalRd rd_tags("spaces_left_parentheses_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#parentheses>
+#'   <https://style.tidyverse.org/syntax.html#parentheses> \cr
+#'   [function_left_parentheses_linter()]
 #' @export
 spaces_left_parentheses_linter <- function() {
   file_level_xpath <- "//OP-LEFT-PAREN[@start - 1 = ancestor::expr/preceding-sibling::OP-SEMICOLON/@end]"
@@ -46,7 +60,6 @@ spaces_left_parentheses_linter <- function() {
       xml <- source_expression$full_xml_parsed_content
       xpath <- file_level_xpath
     } else {
-
       xml <- source_expression$xml_parsed_content
       xpath <- expression_level_xpath
     }

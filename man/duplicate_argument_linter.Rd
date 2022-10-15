@@ -4,13 +4,43 @@
 \alias{duplicate_argument_linter}
 \title{Duplicate argument linter}
 \usage{
-duplicate_argument_linter(except = character())
+duplicate_argument_linter(except = c("mutate", "transmute"))
 }
 \arguments{
-\item{except}{a character vector of function names as exceptions.}
+\item{except}{A character vector of function names as exceptions. Defaults to
+functions that allow sequential updates to variables, currently \code{dplyr::mutate()}
+and \code{dplyr::transmute()}.}
 }
 \description{
-Check for duplicate arguments in function calls.
+Check for duplicate arguments in function calls. Some cases are run-time errors
+(e.g. \code{mean(x = 1:5, x = 2:3)}), otherwise this linter is used to discourage
+explicitly providing duplicate names to objects (e.g. \code{c(a = 1, a = 2)}).
+Duplicate-named objects are hard to work with programmatically and
+should typically be avoided.
+}
+\examples{
+# will produce lints
+lint(
+  text = "list(x = 1, x = 2)",
+  linters = duplicate_argument_linter()
+)
+
+lint(
+  text = "fun(arg = 1, arg = 2)",
+  linters = duplicate_argument_linter()
+)
+
+# okay
+lint(
+  text = "list(x = 1, x = 2)",
+  linters = duplicate_argument_linter(except = "list")
+)
+
+lint(
+  text = "df \%>\% dplyr::mutate(x = a + b, x = x + d)",
+  linters = duplicate_argument_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

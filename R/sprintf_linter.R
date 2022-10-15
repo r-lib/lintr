@@ -1,20 +1,43 @@
-#' `sprintf` linter
+#' Require correct `sprintf()` calls
 #'
 #' Check for an inconsistent number of arguments or arguments with incompatible types (for literal arguments) in
-#' `sprintf` calls.
+#' [sprintf()] calls.
+#'
+#' [gettextf()] calls are also included, since `gettextf()` is a thin wrapper around `sprintf()`.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = 'sprintf("hello %s %s %d", x, y)',
+#'   linters = sprintf_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = 'sprintf("hello %s %s %d", x, y, z)',
+#'   linters = sprintf_linter()
+#' )
+#'
+#' lint(
+#'   text = 'sprintf("hello %s %s %d", x, y, ...)',
+#'   linters = sprintf_linter()
+#' )
 #'
 #' @evalRd rd_tags("sprintf_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 sprintf_linter <- function() {
-  xpath <- "//expr[
-    expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf'] and
-    (
-      OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST or
-      SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST
-    ) and
-    not(expr/SYMBOL[text() = '...'])
-  ]"
+  xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'sprintf' or text() = 'gettextf']
+    /parent::expr
+    /parent::expr[
+      (
+        OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST or
+        SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST
+      ) and
+      not(expr/SYMBOL[text() = '...'])
+    ]
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {

@@ -254,6 +254,18 @@ expect_lint("blah=1; blah=2",
 
 It is always better to write too many tests rather than too few.
 
+## Other utilities for writing custom linters
+
+Besides `is_lint_level()`, `{lintr}` also exports some other helpers generally useful
+for writing custom linters; these are used a lot in the internals of our own helpers,
+and so they've been tested and demonstrated their utility already.
+
+ * `get_r_string()`: Whenever your linter needs to examine the value of a character
+   literal (e.g., whether an argument value is set to some string), use this to
+   extract the string exactly as R will see it. This is especially important to make
+   your logic robust to R-4-style raw strings like `R"-(hello)-"`, which is otherwise
+   difficult to express, for example as an XPath.
+
 ## Contributing to `{lintr}`
 
 ### More details about writing tests for new `{lintr}` linters
@@ -264,7 +276,7 @@ testing. You can run all of the currently available tests using
 `filter` argument to `devtools::test()`.
 
 Linter tests should be put in the
-[tests/testthat/](https://github.com/r-lib/lintr/tree/master/tests/testthat)
+[tests/testthat/](https://github.com/r-lib/lintr/tree/main/tests/testthat)
 folder.  The test filename should be the linter name prefixed by `test-`, e.g.
 `test-pipe_continuation_linter.R`.
 

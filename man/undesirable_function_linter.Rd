@@ -16,12 +16,54 @@ If \code{NA}, no additional information is given in the lint message. Defaults t
 \link{default_undesirable_functions}. To make small customizations to this list,
 use \code{\link[=modify_defaults]{modify_defaults()}}.}
 
-\item{symbol_is_undesirable}{Whether to consider the use of an undesirable function name as a symbol undesirable
-or not.}
+\item{symbol_is_undesirable}{Whether to consider the use of an undesirable function
+name as a symbol undesirable or not.}
 }
 \description{
-Report the use of undesirable functions, e.g. \code{\link[base:function]{base::return()}}, \code{\link[base:options]{base::options()}}, or
-\code{\link[base:lapply]{base::sapply()}} and suggest an alternative.
+Report the use of undesirable functions (e.g. \code{\link[base:function]{base::return()}}, \code{\link[base:options]{base::options()}}, or
+\code{\link[base:lapply]{base::sapply()}}) and suggest an alternative.
+}
+\examples{
+# defaults for which functions are considered undesirable
+names(default_undesirable_functions)
+
+# will produce lints
+lint(
+  text = "sapply(x, mean)",
+  linters = undesirable_function_linter()
+)
+
+lint(
+  text = "log10(x)",
+  linters = undesirable_function_linter(fun = c("log10" = NA))
+)
+
+lint(
+  text = "log10(x)",
+  linters = undesirable_function_linter(fun = c("log10" = "use log()"))
+)
+
+lint(
+  text = 'dir <- "path/to/a/directory"',
+  linters = undesirable_function_linter(fun = c("dir" = NA))
+)
+
+# okay
+lint(
+  text = "vapply(x, mean, FUN.VALUE = numeric(1))",
+  linters = undesirable_function_linter()
+)
+
+lint(
+  text = "log(x, base = 10)",
+  linters = undesirable_function_linter(fun = c("log10" = "use log()"))
+)
+
+lint(
+  text = 'dir <- "path/to/a/directory"',
+  linters = undesirable_function_linter(fun = c("dir" = NA), symbol_is_undesirable = FALSE)
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

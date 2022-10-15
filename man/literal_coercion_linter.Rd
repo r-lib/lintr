@@ -7,14 +7,48 @@
 literal_coercion_linter()
 }
 \description{
-\code{as.integer(1)} is the same as \code{1L} but the latter is more concise and
-gets typed correctly at compilation.
+\code{as.integer(1)} (or \code{rlang::int(1)}) is the same as \code{1L} but the latter is
+more concise and gets typed correctly at compilation.
 }
 \details{
 The same applies to missing sentinels like \code{NA} -- typically, it is not
 necessary to specify the storage type of \code{NA}, but when it is, prefer
 using the typed version (e.g. \code{NA_real_}) instead of a coercion
 (like \code{as.numeric(NA)}).
+}
+\examples{
+# will produce lints
+lint(
+  text = "int(1)",
+  linters = literal_coercion_linter()
+)
+
+lint(
+  text = "as.character(NA)",
+  linters = literal_coercion_linter()
+)
+
+lint(
+  text = "rlang::lgl(1L)",
+  linters = literal_coercion_linter()
+)
+
+# okay
+lint(
+  text = "1L",
+  linters = literal_coercion_linter()
+)
+
+lint(
+  text = "NA_character_",
+  linters = literal_coercion_linter()
+)
+
+lint(
+  text = "TRUE",
+  linters = literal_coercion_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

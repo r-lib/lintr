@@ -2,12 +2,9 @@
 % Please edit documentation in R/semicolon_linter.R
 \name{semicolon_linter}
 \alias{semicolon_linter}
-\alias{semicolon_terminator_linter}
 \title{Semicolon linter}
 \usage{
 semicolon_linter(allow_compound = FALSE, allow_trailing = FALSE)
-
-semicolon_terminator_linter(semicolon = c("compound", "trailing"))
 }
 \arguments{
 \item{allow_compound}{Logical, default \code{FALSE}. If \code{TRUE}, "compound"
@@ -15,15 +12,57 @@ semicolons (e.g. as in \verb{x; y}, i.e., on the same line of code) are allowed.
 
 \item{allow_trailing}{Logical, default \code{FALSE}. If \code{TRUE}, "trailing"
 semicolons (i.e., those that terminate lines of code) are allowed.}
-
-\item{semicolon}{A character vector defining which semicolons to report:
-\describe{
-\item{compound}{Semicolons that separate two statements on the same line.}
-\item{trailing}{Semicolons following the last statement on the line.}
-}}
 }
 \description{
 Check that no semicolons terminate expressions.
+}
+\examples{
+# will produce lints
+lint(
+  text = "a <- 1;",
+  linters = semicolon_linter()
+)
+
+lint(
+  text = "a <- 1; b <- 1",
+  linters = semicolon_linter()
+)
+
+lint(
+  text = "function() { a <- 1; b <- 1 }",
+  linters = semicolon_linter()
+)
+
+# okay
+lint(
+  text = "a <- 1",
+  linters = semicolon_linter()
+)
+
+lint(
+  text = "a <- 1;",
+  linters = semicolon_linter(allow_trailing = TRUE)
+)
+
+code_lines <- "a <- 1\nb <- 1"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = semicolon_linter()
+)
+
+lint(
+  text = "a <- 1; b <- 1",
+  linters = semicolon_linter(allow_compound = TRUE)
+)
+
+code_lines <- "function() { \n  a <- 1\n  b <- 1\n}"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = semicolon_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr

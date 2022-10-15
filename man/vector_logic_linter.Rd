@@ -8,12 +8,48 @@ vector_logic_linter()
 }
 \description{
 Usage of \code{&} in conditional statements is error-prone and inefficient.
-\code{condition} in \code{if (condition) expr} must always be length-1, in which
+\code{condition} in \code{if (condition) expr} must always be of length 1, in which
 case \code{&&} is to be preferred. Ditto for \code{|} vs. \code{||}.
 }
 \details{
 This linter covers inputs to \verb{if()} and \verb{while()} conditions and to
 \code{\link[testthat:logical-expectations]{testthat::expect_true()}} and \code{\link[testthat:logical-expectations]{testthat::expect_false()}}.
+
+Note that because \code{&} and \code{|} are generics, it is possible that
+\code{&&} / \code{||} are not perfect substitutes because \code{&} is doing
+method dispatch in an incompatible way.
+
+Moreover, be wary of code that may have side effects, most commonly
+assignments. Consider \code{if ((a <- foo(x)) | (b <- bar(y))) { ... }}
+vs. \code{if ((a <- foo(x)) || (b <- bar(y))) { ... }}. Because \code{||} exits
+early, if \code{a} is \code{TRUE},  the second condition will never be evaluated
+and \code{b} will not be assigned. Such usage is not allowed by the Tidyverse
+style guide, and the code can easily be refactored by pulling the
+assignment outside the condition, so using \code{||} is still preferable.
+}
+\examples{
+# will produce lints
+lint(
+  text = "if (TRUE & FALSE) 1",
+  linters = vector_logic_linter()
+)
+
+lint(
+  text = "if (TRUE && (TRUE | FALSE)) 4",
+  linters = vector_logic_linter()
+)
+
+# okay
+lint(
+  text = "if (TRUE && FALSE) 1",
+  linters = vector_logic_linter()
+)
+
+lint(
+  text = "if (TRUE && (TRUE || FALSE)) 4",
+  linters = vector_logic_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr. \cr

@@ -1,30 +1,46 @@
 #' Missing package linter
 #'
-#' Check for missing packages in `library()`, `require()`, `loadNamespace()` and `requireNamespace()` calls.
+#' Check for missing packages in `library()`, `require()`, `loadNamespace()`, and `requireNamespace()` calls.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "library(xyzxyz)",
+#'   linters = missing_package_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "library(stats)",
+#'   linters = missing_package_linter()
+#' )
 #'
 #' @evalRd rd_tags("missing_package_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 missing_package_linter <- function() {
-  call_xpath <- "//expr[
-    (
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
-      and (
-        expr[2][STR_CONST]
-        or (
-          expr[2][SYMBOL]
-          and not(
-            SYMBOL_SUB[text() = 'character.only']
-            /following-sibling::expr[1]
-            /NUM_CONST[text() = 'TRUE' or text() = 'T']
-          )
+  library_require_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
+    /parent::expr
+    /parent::expr[
+      expr[2][STR_CONST]
+      or (
+        expr[2][SYMBOL]
+        and not(
+          SYMBOL_SUB[text() = 'character.only']
+          /following-sibling::expr[1]
+          /NUM_CONST[text() = 'TRUE' or text() = 'T']
         )
       )
-    ) or (
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'loadNamespace' or text() = 'requireNamespace']]
-      and expr[2][STR_CONST]
-    )
-  ]"
+    ]
+  "
+  load_require_namespace_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'loadNamespace' or text() = 'requireNamespace']
+    /parent::expr
+    /following-sibling::expr[1][STR_CONST]
+    /parent::expr
+  "
+  call_xpath <- paste(library_require_xpath, "|", load_require_namespace_xpath)
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {

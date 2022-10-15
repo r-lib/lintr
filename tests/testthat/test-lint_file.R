@@ -1,21 +1,17 @@
 # The lints for a given file should be the same regardless of the working
 # directory
 
-# Helper function: run assignment_linter on a given file
-lint_assignments <- function(filename) {
-  lint(filename, linters = list(assignment_linter()))
-}
-
 test_that("lint() results do not depend on the working directory", {
+  # Helper function: run assignment_linter on a given file
+  lint_assignments <- function(filename) {
+    lint(filename, linters = list(assignment_linter()))
+  }
 
   # a dummy package for use in the test
   pkg_path <- test_path("dummy_packages", "assignmentLinter")
 
   # put a .lintr in the package root that excludes the first line of `R/jkl.R`
-  config_path <- file.path(pkg_path, ".lintr")
-  config_string <- "exclusions: list('R/jkl.R' = 1)\n"
-  cat(config_string, file = config_path)
-  on.exit(unlink(config_path))
+  local_config(pkg_path, "exclusions: list('R/jkl.R' = 1)")
 
   # linting the `R/jkl.R` should identify the following assignment lint on the
   # second line of the file
@@ -38,15 +34,15 @@ test_that("lint() results do not depend on the working directory", {
     lint_assignments("jkl.R")
   )
 
-  expect_equal(
+  expect_identical(
     as.data.frame(lints_from_pkg_root)[["line"]],
     expected_lines
   )
-  expect_equal(
+  expect_identical(
     as.data.frame(lints_from_outside),
     as.data.frame(lints_from_pkg_root)
   )
-  expect_equal(
+  expect_identical(
     as.data.frame(lints_from_a_subdir),
     as.data.frame(lints_from_pkg_root)
   )
@@ -61,10 +57,9 @@ test_that("lint() results do not depend on the position of the .lintr", {
   # - the same directory as filepath
   # - the project directory
   # - the user's home directory
-  lint_with_config <- function(config_path, config_string, filename) {
-    cat(config_string, file = config_path)
-    on.exit(unlink(config_path))
-    lint_assignments(filename)
+  lint_with_config <- function(config_dir, config_string, filename) {
+    local_config(config_dir, config_string)
+    lint(filename, linters = assignment_linter())
   }
 
   # a dummy package for use in the test
@@ -81,8 +76,8 @@ test_that("lint() results do not depend on the position of the .lintr", {
   lints_with_config_at_pkg_root <- withr::with_dir(
     pkg_path,
     lint_with_config(
-      config_path = ".lintr",
-      config_string = "exclusions: list('R/jkl.R' = 1)\n",
+      config_dir = ".",
+      config_string = "exclusions: list('R/jkl.R' = 1)",
       filename = file.path("R", "jkl.R")
     )
   )
@@ -90,16 +85,16 @@ test_that("lint() results do not depend on the position of the .lintr", {
   lints_with_config_in_r_dir <- withr::with_dir(
     pkg_path,
     lint_with_config(
-      config_path = "R/.lintr",
-      config_string = "exclusions: list('jkl.R' = 1)\n",
+      config_dir = "R",
+      config_string = "exclusions: list('jkl.R' = 1)",
       filename = file.path("R", "jkl.R")
     )
   )
 
-  expect_equal(
+  expect_identical(
     as.data.frame(lints_with_config_at_pkg_root)[["line"]], expected_lines
   )
-  expect_equal(
+  expect_identical(
     as.data.frame(lints_with_config_at_pkg_root),
     as.data.frame(lints_with_config_in_r_dir),
     info = paste(
@@ -115,12 +110,8 @@ test_that("lint uses linter names", {
 
 test_that("lint() results from file or text should be consistent", {
   linters <- list(assignment_linter(), infix_spaces_linter())
-  file <- tempfile()
-  lines <- c(
-    "x<-1",
-    "x+1"
-  )
-  writeLines(lines, file)
+  lines <- c("x<-1", "x+1")
+  file <- withr::local_tempfile(lines = lines)
   text <- paste0(lines, collapse = "\n")
   file <- normalizePath(file)
 
@@ -130,7 +121,7 @@ test_that("lint() results from file or text should be consistent", {
 
   # Remove file before linting to ensure that lint works and do not
   # assume that file exists when both filename and text are supplied.
-  unlink(file)
+  expect_identical(unlink(file), 0L)
   lint_from_text2 <- lint(file, linters = linters, text = text)
 
   expect_length(lint_from_file, 2L)
@@ -138,7 +129,7 @@ test_that("lint() results from file or text should be consistent", {
   expect_length(lint_from_text, 2L)
   expect_length(lint_from_text2, 2L)
 
-  expect_equal(lint_from_file, lint_from_text2)
+  expect_identical(lint_from_file, lint_from_text2)
 
   for (i in seq_along(lint_from_lines)) {
     lint_from_file[[i]]$filename <- ""
@@ -146,8 +137,8 @@ test_that("lint() results from file or text should be consistent", {
     lint_from_text[[i]]$filename <- ""
   }
 
-  expect_equal(lint_from_file, lint_from_lines)
-  expect_equal(lint_from_file, lint_from_text)
+  expect_identical(lint_from_file, lint_from_lines)
+  expect_identical(lint_from_file, lint_from_text)
 })
 
 test_that("exclusions work with custom linter names", {
@@ -213,7 +204,7 @@ test_that("compatibility warnings work", {
 
   expect_error(
     lint("a <- 1\n", linters = "equals_na_linter"),
-    regexp = rex("Expected '", anything, "' to be a function of class 'linter'")
+    regexp = rex::rex("Expected '", anything, "' to be a function of class 'linter'")
   )
 })
 
@@ -224,4 +215,19 @@ test_that("Deprecated positional usage of cache= works, with warning", {
     fixed = TRUE
   )
   expect_identical(l, lint("a = 2\n", assignment_linter(), cache = FALSE))
+})
+
+test_that("Linters throwing an error give a helpful error", {
+  tmp_file <- withr::local_tempfile(lines = "a <- 1")
+  linter <- function() Linter(function(source_expression) stop("a broken linter"))
+  # NB: Some systems/setups may use e.g. symlinked files when creating under tempfile();
+  #   we don't care much about that, so just check basename()
+  expect_error(
+    lint(tmp_file, linter()),
+    rex::rex("Linter 'linter' failed in ", anything, basename(tmp_file), ": a broken linter")
+  )
+  expect_error(
+    lint(tmp_file, list(broken_linter = linter())),
+    rex::rex("Linter 'broken_linter' failed in ", anything, basename(tmp_file), ": a broken linter")
+  )
 })

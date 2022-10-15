@@ -7,19 +7,22 @@ test_that("unused_import_linter lints as expected", {
   expect_lint("library(dplyr)\ndo.call(tibble, args = list(a = 1))", NULL, linter)
   # SPECIAL usage is detected
   expect_lint("library(magrittr)\n1:3 %>% mean()", NULL, linter)
+  # dataset is detected
+  expect_lint("library(dplyr)\nstarwars", NULL, linter)
+  expect_lint("library(datasets)\nstate.center", NULL, linter)
 
   # Missing packages are ignored
   expect_lint("library(not.a.package)\ntibble(a = 1)", NULL, linter)
   # SYMBOL calls with character.only = TRUE are ignored, even if the argument is a package name
   expect_lint("library(dplyr, character.only = TRUE)\n1 + 1", NULL, linter)
 
-  msg <- rex::rex("Package 'dplyr' is attached but never used")
+  lint_msg <- rex::rex("Package 'dplyr' is attached but never used")
   msg_ns <- rex::rex("Package 'dplyr' is only used by namespace")
 
-  expect_lint("library(dplyr)\n1 + 1", msg, linter)
-  expect_lint("require(dplyr)\n1 + 1", msg, linter)
-  expect_lint("library('dplyr')\n1 + 1", msg, linter)
-  expect_lint("library('dplyr', character.only = TRUE)\n1 + 1", msg, linter)
+  expect_lint("library(dplyr)\n1 + 1", lint_msg, linter)
+  expect_lint("require(dplyr)\n1 + 1", lint_msg, linter)
+  expect_lint("library('dplyr')\n1 + 1", lint_msg, linter)
+  expect_lint("library('dplyr', character.only = TRUE)\n1 + 1", lint_msg, linter)
   # ignore namespaced usages by default, but provide custom lint message
   expect_lint("library(dplyr)\ndplyr::tibble(a = 1)", msg_ns, linter)
   expect_lint("library(dplyr)\ndplyr::tibble(a = 1)", NULL, unused_import_linter(allow_ns_usage = TRUE))
@@ -30,6 +33,7 @@ test_that("unused_import_linter lints as expected", {
 })
 
 test_that("unused_import_linter handles message vectorization", {
+  skip_if_not_installed("crayon")
   expect_lint(
     trim_some("
       library(crayon)

@@ -15,8 +15,10 @@
 #' #    add cat (with a accompanying message),
 #' #    add print (unnamed, i.e. with no accompanying message)
 #' #    add return (as taken from all_undesirable_functions)
-#' my_undesirable_functions <- modify_defaults(defaults = default_undesirable_functions,
-#'   sapply=NULL, "cat"="No cat allowed", "print", all_undesirable_functions[["return"]])
+#' my_undesirable_functions <- modify_defaults(
+#'   defaults = default_undesirable_functions,
+#'   sapply = NULL, "cat" = "No cat allowed", "print", all_undesirable_functions[["return"]]
+#' )
 #' @export
 modify_defaults <- function(defaults, ...) {
   if (missing(defaults) || !is.list(defaults) || !all(nzchar(names2(defaults)))) {
@@ -46,8 +48,8 @@ modify_defaults <- function(defaults, ...) {
 
   res[] <- lapply(res, function(x) {
     prev_class <- class(x)
-    if (is.function(x) && !inherits(x, "lintr_function")) {
-      class(x) <- c(prev_class, "lintr_function")
+    if (is.function(x) && !is_linter(x)) {
+      class(x) <- c("linter", prev_class)
     }
     x
   })
@@ -82,7 +84,9 @@ modify_defaults <- function(defaults, ...) {
 #' linters_with_tags(tags = NULL)
 #'
 #' # Get all linters tagged as "default" from lintr and mypkg
-#' \dontrun{linters_with_tags("default", packages = c("lintr", "mypkg"))}
+#' \dontrun{
+#' linters_with_tags("default", packages = c("lintr", "mypkg"))
+#' }
 #' @export
 linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "deprecated") {
   if (!is.character(tags) && !is.null(tags)) {
@@ -169,7 +173,7 @@ linters_with_defaults <- function(..., defaults = default_linters) {
 #' @rdname linters_with_defaults
 #' @export
 with_defaults <- function(..., default = default_linters) {
-  lintr_deprecated("with_defaults", "linters_with_defaults", "3.0.0")
+  lintr_deprecated("with_defaults", "linters_with_defaults or modify_defaults", "3.0.0")
   # to ease the burden of transition -- default = NULL used to behave like defaults = list() now does
   if (is.null(default)) default <- list()
   linters_with_defaults(..., defaults = default)

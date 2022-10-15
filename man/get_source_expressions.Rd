@@ -38,7 +38,7 @@ consisting of 6 elements:
 \item{\code{filename} (\code{character})}
 \item{\code{file_lines} (\code{character}) the \code{\link[=readLines]{readLines()}} output for this file}
 \item{\code{content} (\code{character}) for .R files, the same as \code{file_lines};
-for .Rmd scripts, this is the extracted R source code (as text)}
+for .Rmd or .qmd scripts, this is the extracted R source code (as text)}
 \item{\code{full_parsed_content} (\code{data.frame}) as given by
 \code{\link[utils:getParseData]{utils::getParseData()}} for the full content}
 \item{\code{full_xml_parsed_content} (\code{xml_document}) the XML parse tree of all
@@ -52,15 +52,19 @@ newline (as determined by \code{\link[=readLines]{readLines()}} producing a corr
 }
 }
 \description{
-This object is given as input to each linter
+This object is given as input to each linter.
 }
 \details{
-The file is read in using the \code{encoding} setting.
-This setting found by taking the first valid result from the following locations
+The file is read using the \code{encoding} setting.
+This setting is found by taking the first valid result from the following locations
 \enumerate{
 \item The \code{encoding} key from the usual lintr configuration settings.
 \item The \code{Encoding} field from a Package \code{DESCRIPTION} file in a parent directory.
 \item The \code{Encoding} field from an R Project \code{.Rproj} file in a parent directory.
 \item \code{"UTF-8"} as a fallback.
 }
+}
+\examples{
+tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
+get_source_expressions(tmp)
 }

@@ -159,7 +159,6 @@ digest_content <- function(linters, obj) {
 }
 
 find_new_line <- function(line_number, line, lines) {
-
   if (lines[line_number] %==% line) {
     return(line_number)
   }

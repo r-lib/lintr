@@ -13,10 +13,60 @@ pattern only involves static patterns.
 \details{
 NB: for \code{stringr} functions, that means wrapping the pattern in \code{stringr::fixed()}.
 
-NB: This linter is likely not able to distinguish every possible case when
+NB: this linter is likely not able to distinguish every possible case when
 a fixed regular expression is preferable, rather it seeks to identify
 likely cases. It should \emph{never} report false positives, however; please
 report false positives as an error.
+}
+\examples{
+# will produce lints
+code_lines <- 'gsub("\\\\\\\\.", "", x)'
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = fixed_regex_linter()
+)
+
+lint(
+  text = 'grepl("a[*]b", x)',
+  linters = fixed_regex_linter()
+)
+
+code_lines <- 'stringr::str_subset(x, "\\\\\\\\$")'
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = fixed_regex_linter()
+)
+
+lint(
+  text = 'grepl("Munich", address)',
+  linters = fixed_regex_linter()
+)
+
+# okay
+code_lines <- 'gsub("\\\\\\\\.", "", x, fixed = TRUE)'
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = fixed_regex_linter()
+)
+
+lint(
+  text = 'grepl("a*b", x, fixed = TRUE)',
+  linters = fixed_regex_linter()
+)
+
+lint(
+  text = 'stringr::str_subset(x, stringr::fixed("$"))',
+  linters = fixed_regex_linter()
+)
+
+lint(
+  text = 'grepl("Munich", address, fixed = TRUE)',
+  linters = fixed_regex_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

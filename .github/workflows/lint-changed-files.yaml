@@ -1,14 +1,12 @@
 on:
   pull_request:
-    branches:
-      - main
-      - master
+    branches: [main, master]
 
 name: lint-changed-files
 
 jobs:
   lint-changed-files:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -19,6 +17,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
+            r-lib/lintr
             any::gh
             any::purrr
           needs: check
@@ -32,6 +31,7 @@ jobs:
 
       - name: Extract and lint files changed by this PR
         run: |
+          Sys.setenv("LINTR_ERROR_ON_LINT" = TRUE)
           files <- gh::gh("GET https://api.github.com/repos/r-lib/lintr/pulls/${{ github.event.pull_request.number }}/files")
           changed_files <- purrr::map_chr(files, "filename")
           all_files <- list.files(recursive = TRUE)

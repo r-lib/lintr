@@ -12,6 +12,7 @@ Linters highlighting readability issues, such as missing whitespace.
 \section{Linters}{
 The following linters are tagged with 'readability':
 \itemize{
+\item{\code{\link{boolean_arithmetic_linter}}}
 \item{\code{\link{brace_linter}}}
 \item{\code{\link{closed_curly_linter}}}
 \item{\code{\link{commas_linter}}}
@@ -19,15 +20,20 @@ The following linters are tagged with 'readability':
 \item{\code{\link{conjunct_test_linter}}}
 \item{\code{\link{consecutive_stopifnot_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
+\item{\code{\link{empty_assignment_linter}}}
 \item{\code{\link{expect_length_linter}}}
 \item{\code{\link{expect_named_linter}}}
 \item{\code{\link{expect_not_linter}}}
 \item{\code{\link{expect_true_false_linter}}}
 \item{\code{\link{fixed_regex_linter}}}
+\item{\code{\link{for_loop_index_linter}}}
 \item{\code{\link{function_left_parentheses_linter}}}
+\item{\code{\link{function_return_linter}}}
 \item{\code{\link{indentation_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{inner_combine_linter}}}
+\item{\code{\link{is_numeric_linter}}}
+\item{\code{\link{lengths_linter}}}
 \item{\code{\link{line_length_linter}}}
 \item{\code{\link{nested_ifelse_linter}}}
 \item{\code{\link{numeric_leading_zero_linter}}}
@@ -39,6 +45,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{paren_brace_linter}}}
 \item{\code{\link{pipe_call_linter}}}
 \item{\code{\link{pipe_continuation_linter}}}
+\item{\code{\link{redundant_equals_linter}}}
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{semicolon_terminator_linter}}}
 \item{\code{\link{single_quotes_linter}}}
@@ -47,6 +54,8 @@ The following linters are tagged with 'readability':
 \item{\code{\link{string_boundary_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
+\item{\code{\link{unnecessary_lambda_linter}}}
+\item{\code{\link{unnecessary_placeholder_linter}}}
 \item{\code{\link{unneeded_concatenation_linter}}}
 \item{\code{\link{unreachable_code_linter}}}
 \item{\code{\link{yoda_test_linter}}}

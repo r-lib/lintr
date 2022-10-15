@@ -1,3 +1,11 @@
+test_that("backport_linter produces error when R version misspecified", {
+  expect_error(
+    lint(text = "numToBits(2)", linters = backport_linter(420L)),
+    "`r_version` must be a R version number, returned by R_system_version(), or a string.",
+    fixed = TRUE
+  )
+})
+
 test_that("backport_linter detects backwards-incompatibility", {
   # default should be current R version; all of these are included on our dependency
   expect_lint(".getNamespaceInfo(dir.exists(lapply(x, toTitleCase)))", NULL, backport_linter())
@@ -5,8 +13,7 @@ test_that("backport_linter detects backwards-incompatibility", {
   expect_lint(".getNamespaceInfo(dir.exists(lapply(x, toTitleCase)))", NULL, backport_linter("devel"))
 
   # don't allow dependencies older than we've recorded
-  writeLines("x <- x + 1", tmp <- tempfile())
-  on.exit(unlink(tmp))
+  tmp <- withr::local_tempfile(lines = "x <- x + 1")
 
   expect_warning(l <- lint(tmp, backport_linter("2.0.0")), "version older than 3.0.0", fixed = TRUE)
   expect_identical(l, lint(tmp, backport_linter("3.0.0")))

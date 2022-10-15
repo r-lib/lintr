@@ -1,9 +1,10 @@
 with_content_to_parse <- function(content, code) {
-  f <- tempfile()
-  con <- file(f, open = "w", encoding = "UTF-8")
-  on.exit(unlink(f))
-  writeLines(content, con)
-  close(con)
+  f <- withr::local_tempfile()
+  local({
+    con <- file(f, open = "w", encoding = "UTF-8")
+    on.exit(close(con))
+    writeLines(content, con)
+  })
   source_expressions <- get_source_expressions(f)
   content_env <- new.env()
   content_env$pc <- lapply(source_expressions[["expressions"]], `[[`, "parsed_content")
@@ -21,7 +22,6 @@ test_that("tab positions have been corrected", {
     "TRUE",
     expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(1L, 4L))
   )
-
   with_content_to_parse(
     "\tTRUE",
     expect_identical(unlist(pc[[1L]][pc[[1L]][["text"]] == "TRUE", c("col1", "col2")], use.names = FALSE), c(2L, 5L))
@@ -70,66 +70,66 @@ test_that("tab positions have been corrected", {
 })
 
 test_that("Terminal newlines are detected correctly", {
-  writeLines("lm(y ~ x)", tmp <- tempfile())
-  on.exit(unlink(tmp), add = TRUE)
-  writeBin(
-    # strip the last (two) element(s) (\r\n or \n)
-    head(readBin(tmp, raw(), file.size(tmp)), if (.Platform$OS.type == "windows") -2L else -1L),
-    tmp2 <- tempfile()
-  )
-  on.exit(unlink(tmp2), add = TRUE)
+  content <- "lm(y ~ x)"
+  # NB: need to specify terminal newline explicitly with cat, not writeLines()
+  tmp <- withr::local_tempfile(lines = content)
+  tmp2 <- withr::local_tempfile()
+  cat(content, file = tmp2)
 
   expect_true(get_source_expressions(tmp)$expressions[[2L]]$terminal_newline)
   expect_false(get_source_expressions(tmp2)$expressions[[2L]]$terminal_newline)
 })
 
 test_that("Multi-byte characters correct columns", {
+  skip_if_not_utf8_locale()
+
   with_content_to_parse("`\U2020` <- 1", {
     # fix_column_numbers corrects the start of <-
-    expect_equal(pc[[1L]]$col1[4L], pc[[1L]]$col1[2L] + 4L)
+    expect_identical(pc[[1L]]$col1[4L], pc[[1L]]$col1[2L] + 4L)
   })
 })
 
 test_that("Multi-byte character truncated by parser is ignored", {
+  skip_if_not_utf8_locale()
   # \U2013 is the Unicode character 'en dash', which is
   # almost identical to a minus sign in monospaced fonts.
   with_content_to_parse("y <- x \U2013 42", {
-    expect_equal(error$message, "unexpected input")
-    expect_equal(error$column_number, 8L)
+    expect_identical(error$message, "unexpected input")
+    expect_identical(error$column_number, 8L)
   })
 })
 
 test_that("Can read non UTF-8 file", {
   file <- test_path("dummy_projects", "project", "cp1252.R")
-  read_settings(file)
+  lintr:::read_settings(file)
   expect_null(get_source_expressions(file)$error)
 })
 
 test_that("Warns if encoding is misspecified", {
   file <- test_path("dummy_projects", "project", "cp1252.R")
-  read_settings(NULL)
+  lintr:::read_settings(NULL)
   the_lint <- lint(filename = file, parse_settings = FALSE)[[1L]]
   expect_s3_class(the_lint, "lint")
 
-  msg <- "Invalid multibyte character in parser. Is the encoding correct?"
+  lint_msg <- "Invalid multibyte character in parser. Is the encoding correct?"
   if (!isTRUE(l10n_info()[["UTF-8"]])) {
     # Prior to R 4.2.0, the Windows parser throws a different error message because the source code is converted to
     # native encoding.
     # This results in line 4 becoming <fc> <- 42 before the parser sees it.
-    msg <- "unexpected '<'"
+    lint_msg <- "unexpected '<'"
   }
 
-  expect_equal(the_lint$linter, "error")
-  expect_equal(the_lint$message, msg)
-  expect_equal(the_lint$line_number, 4L)
+  expect_identical(the_lint$linter, "error")
+  expect_identical(the_lint$message, lint_msg)
+  expect_identical(the_lint$line_number, 4L)
 
   file <- test_path("dummy_projects", "project", "cp1252_parseable.R")
-  read_settings(NULL)
+  lintr:::read_settings(NULL)
   the_lint <- lint(filename = file, parse_settings = FALSE)[[1L]]
   expect_s3_class(the_lint, "lint")
-  expect_equal(the_lint$linter, "error")
-  expect_equal(the_lint$message, "Invalid multibyte string. Is the encoding correct?")
-  expect_equal(the_lint$line_number, 1L)
+  expect_identical(the_lint$linter, "error")
+  expect_identical(the_lint$message, "Invalid multibyte string. Is the encoding correct?")
+  expect_identical(the_lint$line_number, 1L)
 })
 
 test_that("Can extract line number from parser errors", {
@@ -142,8 +142,8 @@ test_that("Can extract line number from parser errors", {
       R"---a---"
     '),
     {
-      expect_equal(error$message, "Malformed raw string literal.")
-      expect_equal(error$line_number, 2L)
+      expect_identical(error$message, "Malformed raw string literal.")
+      expect_identical(error$line_number, 2L)
     }
   )
 
@@ -155,8 +155,8 @@ test_that("Can extract line number from parser errors", {
       "\\u{9999"
     '),
     {
-      expect_equal(error$message, "Invalid \\u{xxxx} sequence.")
-      expect_equal(error$line_number, 3L)
+      expect_identical(error$message, "Invalid \\u{xxxx} sequence.")
+      expect_identical(error$line_number, 3L)
     }
   )
 
@@ -169,15 +169,15 @@ test_that("Can extract line number from parser errors", {
     '),
     {
       # parser erroneously reports line 4
-      expect_equal(error$message, "Invalid \\u{xxxx} sequence.")
-      expect_equal(error$line_number, 3L)
+      expect_identical(error$message, "Invalid \\u{xxxx} sequence.")
+      expect_identical(error$line_number, 3L)
     }
   )
 
   # repeated formal argument 'a' on line 1
   with_content_to_parse("function(a, a) {}", {
-    expect_equal(error$message, "Repeated formal argument 'a'.")
-    expect_equal(error$line_number, 1L)
+    expect_identical(error$message, "Repeated formal argument 'a'.")
+    expect_identical(error$line_number, 1L)
   })
 })
 
@@ -206,13 +206,12 @@ test_that("1- or 2-width octal expressions give the right STR_CONST values", {
 })
 
 test_that("returned data structure is complete", {
-  temp_file <- withr::local_tempfile()
-
   lines <- c("line_1", "line_2", "line_3")
+  temp_file <- withr::local_tempfile(lines = lines)
+
   lines_with_attr <- setNames(lines, seq_along(lines))
   attr(lines_with_attr, "terminal_newline") <- TRUE
 
-  writeLines(lines, con = temp_file)
   exprs <- get_source_expressions(temp_file)
   expect_named(exprs, c("expressions", "error", "lines"))
   expect_length(exprs$expressions, length(lines) + 1L)
@@ -244,8 +243,10 @@ test_that("returned data structure is complete", {
   expect_identical(full_expr$file_lines, lines_with_attr)
   expect_identical(full_expr$content, lines_with_attr)
   expect_identical(nrow(full_expr$full_parsed_content), 2L * length(lines))
-  expect_identical(xml2::xml_find_num(full_expr$full_xml_parsed_content, "count(//SYMBOL)"),
-                   as.numeric(length(lines)))
+  expect_identical(
+    xml2::xml_find_num(full_expr$full_xml_parsed_content, "count(//SYMBOL)"),
+    as.numeric(length(lines))
+  )
   expect_true(full_expr$terminal_newline)
 
   expect_null(exprs$error)
@@ -253,8 +254,7 @@ test_that("returned data structure is complete", {
 })
 
 test_that("#1262: xml_parsed_content gets returned as missing even if there's no parsed_content", {
-  tempfile <- withr::local_tempfile()
-  writeLines('"\\R"', tempfile)
+  tempfile <- withr::local_tempfile(lines = '"\\R"')
 
   source_expressions <- get_source_expressions(tempfile)
   expect_null(source_expressions$expressions[[1L]]$full_parsed_content)
@@ -263,29 +263,26 @@ test_that("#1262: xml_parsed_content gets returned as missing even if there's no
 
 test_that("#743, #879, #1406: get_source_expressions works on R files matching a knitr pattern", {
   # from #743
-  tempfile <- withr::local_tempfile()
-  writeLines(
-    trim_some('
+  tempfile <- withr::local_tempfile(
+    lines = trim_some('
       create_template <- function(x) {
         sprintf("
       ```{r code}
       foo <- function(x) x+%d
       foo(5)
       ```", x)
-      }'),
-    tempfile
+      }
+    ')
   )
   source_expressions <- get_source_expressions(tempfile)
   expect_null(source_expressions$error)
 
   # from #879
-  tempfile <- withr::local_tempfile()
-  writeLines(
-    trim_some('
+  tempfile <- withr::local_tempfile(
+    lines = trim_some('
       # `r print("7")`
       function() 2<=3
-    '),
-    tempfile
+    ')
   )
   source_expressions <- get_source_expressions(tempfile)
   expect_null(source_expressions$error)
@@ -297,13 +294,31 @@ test_that("#743, #879, #1406: get_source_expressions works on R files matching a
   expect_null(source_expressions$error)
 })
 
-skip_if_not_installed("patrick")
+test_that("Syntax errors in Rmd or qmd don't choke lintr", {
+  tmp <- withr::local_tempfile(lines = c(
+    "```{r}",
+    "if (TRUE) {",
+    "  1",
+    # missing `}` here
+    "if (TRUE) {",
+    "}",
+    "```"
+  ))
+  expect_silent(get_source_expressions(tmp))
+})
+
+test_that("Reference chunks in Sweave/Rmd are ignored", {
+  example_rnw <- system.file("Sweave", "example-1.Rnw", package = "utils")
+  # ensure such a chunk continues to exist upstream
+  expect_true(any(grepl("^\\s*<<[^>]*>>\\s*$", readLines(example_rnw))))
+  expect_silent(lint(example_rnw))
+})
+
 # NB: this is just a cursory test for linters not to
 #   fail on files where the XML content is xml_missing;
 #   the main linter test files provide more thorough
 #   evidence that things are working as intended.
-bad_source <- withr::local_tempfile()
-writeLines("a <- 1L\nb <- 2L", bad_source)
+bad_source <- withr::local_tempfile(lines = c("a <- 1L", "b <- 2L"))
 expressions <- get_source_expressions(bad_source)$expressions
 
 # "zap" the xml_parsed_content to be xml_missing -- this gets
@@ -321,7 +336,8 @@ param_df <- expand.grid(
   expression_idx = seq_along(expressions),
   stringsAsFactors = FALSE
 )
-param_df$.test_name <- with(param_df, sprintf("%s on expression %d", linter, expression_idx))
+param_df$.test_name <-
+  with(param_df, sprintf("%s on expression %d", linter, expression_idx))
 
 patrick::with_parameters_test_that(
   "linters pass with xml_missing() content",

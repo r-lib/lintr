@@ -1,4 +1,4 @@
-#' Block usage of ifelse where pmin or pmax is more appropriate
+#' Block usage of `ifelse()` where `pmin()` or `pmax()` is more appropriate
 #'
 #' `ifelse(x > M, M, x)` is the same as `pmin(x, M)`, but harder
 #'   to read and requires several passes over the vector.
@@ -8,18 +8,43 @@
 #'   `ifelse(x < m, m, x)` is `pmax(x, m)`, and
 #'   `ifelse(x >= m, x, m)` is `pmax(x, m)`.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "ifelse(5:1 < pi, 5:1, pi)",
+#'   linters = ifelse_censor_linter()
+#' )
+#'
+#' lint(
+#'   text = "ifelse(x > 0, x, 0)",
+#'   linters = ifelse_censor_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "pmin(5:1, pi)",
+#'   linters = ifelse_censor_linter()
+#' )
+#'
+#' lint(
+#'   text = "pmax(x, 0)",
+#'   linters = ifelse_censor_linter()
+#' )
+#'
 #' @evalRd rd_tags("ifelse_censor_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 ifelse_censor_linter <- function() {
-  xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
-    and expr[2][
+  xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
+    /parent::expr
+    /following-sibling::expr[
       (LT or GT or LE or GE)
       and expr[1] = following-sibling::expr
       and expr[2] = following-sibling::expr
     ]
-  ]")
+    /parent::expr
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

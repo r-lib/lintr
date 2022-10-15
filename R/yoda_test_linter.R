@@ -5,6 +5,29 @@
 #'   the simple case of testing an expression against a literal value, e.g.
 #'   `(1L, foo(x))` should be `(foo(x), 1L)`.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "expect_equal(2, x)",
+#'   linters = yoda_test_linter()
+#' )
+#'
+#' lint(
+#'   text = 'expect_identical("a", x)',
+#'   linters = yoda_test_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "expect_equal(x, 2)",
+#'   linters = yoda_test_linter()
+#' )
+#'
+#' lint(
+#'   text = 'expect_identical(x, "a")',
+#'   linters = yoda_test_linter()
+#' )
+#'
 #' @evalRd rd_tags("yoda_test_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr.
@@ -22,11 +45,12 @@ yoda_test_linter <- function() {
     or (STR_CONST and not(OP-DOLLAR))
     or ((OP-PLUS or OP-MINUS) and count(expr[NUM_CONST]) = 2)
   "
-  xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical' or text() = 'expect_setequal']]
-    and expr[2][ {const_condition} ]
-    and not(preceding-sibling::*[self::PIPE or self::SPECIAL[text() = '%>%']])
-  ]")
+  xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical' or text() = 'expect_setequal']
+    /parent::expr
+    /following-sibling::expr[1][ {const_condition} ]
+    /parent::expr[not(preceding-sibling::*[self::PIPE or self::SPECIAL[text() = '%>%']])]
+  ")
 
   second_const_xpath <- glue::glue("expr[position() = 3 and ({const_condition})]")
 

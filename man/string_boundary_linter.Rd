@@ -2,14 +2,14 @@
 % Please edit documentation in R/string_boundary_linter.R
 \name{string_boundary_linter}
 \alias{string_boundary_linter}
-\title{Require usage of startsWith() and endsWith() over grepl()/substr() versions}
+\title{Require usage of \code{startsWith()} and \code{endsWith()} over \code{grepl()}/\code{substr()} versions}
 \usage{
 string_boundary_linter(allow_grepl = FALSE)
 }
 \arguments{
 \item{allow_grepl}{Logical, default \code{FALSE}. If \code{TRUE}, usages with \code{grepl()}
-are ignored. Some authors may prefer the \code{NA} input to \code{FALSE} output
-conciseness offered by \code{grepl()}, which doesn't have a direct equivalent
+are ignored. Some authors may prefer the conciseness offered by \code{grepl()} whereby
+\code{NA} input maps to \code{FALSE} output, which doesn't have a direct equivalent
 with \code{startsWith()} or \code{endsWith()}.}
 }
 \description{
@@ -29,11 +29,42 @@ That means the strict equivalent of \code{grepl("^abc", x)} is
 
 We lint \code{grepl()} usages by default because the \code{!is.na()} version is more explicit
 with respect to \code{NA} handling -- though documented, the way \code{grepl()} handles
-missing inputs may be surprising to some readers.
+missing inputs may be surprising to some users.
+}
+\examples{
+# will produce lints
+lint(
+  text = 'grepl("^a", x)',
+  linters = string_boundary_linter()
+)
+
+lint(
+  text = 'grepl("z$", x)',
+  linters = string_boundary_linter()
+)
+
+# okay
+lint(
+  text = 'startsWith(x, "a")',
+  linters = string_boundary_linter()
+)
+
+lint(
+  text = 'endsWith(x, "z")',
+  linters = string_boundary_linter()
+)
+
+# If missing values are present, the suggested alternative wouldn't be strictly
+# equivalent, so this linter can also be turned off in such cases.
+lint(
+  text = 'grepl("z$", x)',
+  linters = string_boundary_linter(allow_grepl = TRUE)
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
+\link[=configurable_linters]{configurable}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
 }

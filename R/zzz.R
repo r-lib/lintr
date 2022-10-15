@@ -99,43 +99,79 @@ default_linters <- modify_defaults(
 #' @export
 all_undesirable_functions <- modify_defaults(
   defaults = list(),
-  "attach" = paste("It modifies the global search path. Use roxygen2's @importFrom statement in packages,",
-                   "or `::` in scripts."),
-  "browser" = "It pauses execution when run and is likely a leftover from debugging. It should be removed.",
-  "debug" = "It traps a function and causes execution to pause when that function is run. It should be removed.",
-  "debugcall" = "It works similarly to debug(), causing execution to pause. It should be removed.",
-  "debugonce" = "It is only useful for interactive debugging. It should be removed.",
-  "detach" = paste("It modifies the global search path. Detaching environments from the search path",
-                   "is rarely necessary in production code."),
-  "ifelse" = paste("It isn't type stable. Use an `if`/`else` block for scalar logic, or use",
-                   "dplyr::if_else()/data.table::fifelse() for type stable vectorized logic."),
-  ".libPaths" = paste("It permanently modifies the library location. Use withr::with_libpaths()",
-                      "for a temporary change instead."),
-  "library" = paste("It modifies the global search path. Use roxygen2's @importFrom statement in packages,",
-                    "or `::` in scripts."),
-  "loadNamespace" = paste("It doesn't provide an easy way to signal failures.",
-                          "Use the return value of requireNamespace() instead."),
-  "mapply" = "It isn't type stable. Use Map() to guarantee a list is returned and simplify accordingly.",
-  "options" = "It permanently modifies the session options. Use withr::with_options() for a temporary change instead.",
-  "par" = paste("It permanently modifies the graphics device parameters.",
-                "Use withr::with_par() for a temporary change instead."),
-  "require" = paste("It modifies the global search path. Use roxygen2's @importFrom statement in packages,",
-                    "and library() or `::` in scripts."),
-  "sapply" = paste("It isn't type stable.",
-                   "Use vapply() with an appropriate `FUN.VALUE=` argument to obtain type stable simplification."),
-  "setwd" = "It modifies the global working directory. Use withr::with_dir() for a temporary change instead.",
-  "sink" = "It permanently redirects output. Use withr::with_sink() for a temporary redirection instead.",
-  "source" = paste("It loads code into the global environment unless `local = TRUE` is used,",
-                   "which can cause unexpected behaviour."),
-  "substring" = "It should be replaced by substr() with appropriate `stop=` value.",
-  "Sys.setenv" = paste("It permanently modifies the global environment variables.",
-                       "Use withr::with_envvar() for a temporary change instead."),
-  "Sys.setlocale" = paste("It permanently modifies the session locale.",
-                          "Use withr::with_locale() for a temporary change instead."),
-  "trace" = paste("It traps a function and causes execution of arbitrary code when that function is run.",
-                  "It should be removed."),
-  "undebug" = "It is only useful for interactive debugging with debug(). It should be removed.",
-  "untrace" = "It is only useful for interactive debugging with trace(). It should be removed."
+  "attach" =
+    "use roxygen2's @importFrom statement in packages, or `::` in scripts. attach() modifies the global search path",
+  "browser" =
+    "remove this likely leftover from debugging. It pauses execution when run",
+  "debug" = paste(
+    "remove this likely leftover from debugging.",
+    "It traps a function and causes execution to pause when that function is run"
+  ),
+  "debugcall" = paste(
+    "remove this likely leftover from debugging.",
+    "It traps a function and causes execution to pause when that function is run"
+  ),
+  "debugonce" = paste(
+    "remove this likely leftover from debugging.",
+    "It traps a function and causes execution to pause when that function is run"
+  ),
+  "detach" = paste(
+    "avoid modifying the global search path.",
+    "Detaching environments from the search path is rarely necessary in production code"
+  ),
+  "ifelse" = paste(
+    "use an `if`/`else` block for scalar logic,",
+    "or use dplyr::if_else()/data.table::fifelse() for type-stable vectorized logic"
+  ),
+  ".libPaths" = paste(
+    "use withr::with_libpaths() for a temporary change",
+    "instead of permanently modifying the library location"
+  ),
+  "library" = paste(
+    "use roxygen2's @importFrom statement in packages and `::` in scripts,",
+    "instead of modifying the global search path"
+  ),
+  "loadNamespace" =
+    "use the return value of requireNamespace() instead to provide an easy way to signal failures",
+  "mapply" =
+    "use Map() to guarantee a list is returned and simplify accordingly",
+  "options" =
+    "use withr::with_options() for a temporary change instead of permanently modifying the session options",
+  "par" =
+    "use withr::with_par() for a temporary change instead of permanently modifying the graphics device parameters",
+  "require" = paste(
+    "use roxygen2's @importFrom statement in packages and library() or `::` in scripts,",
+    "instead of modifying the global search path"
+  ),
+  "sapply" =
+    "use vapply() with an appropriate `FUN.VALUE=` argument to obtain type-stable simplification",
+  "setwd" =
+    "use withr::with_dir() for a temporary change instead of modifying the global working directory",
+  "sink" =
+    "use withr::with_sink() for a temporary redirection instead of permanently redirecting output",
+  "source" = paste(
+    "manage dependencies through packages.",
+    "source() loads code into the global environment unless `local = TRUE` is used,",
+    "which can cause hard-to-predict behaviour"
+  ),
+  "substring" =
+    "use substr() with appropriate `stop=` value.",
+  "Sys.setenv" =
+    "use withr::with_envvar() for a temporary change instead of permanently modifying global environment variables",
+  "Sys.setlocale" =
+    "use withr::with_locale() for a temporary change instead of permanently modifying the session locale",
+  "trace" = paste(
+    "remove this likely leftover from debugging.",
+    "It traps a function and causes execution of arbitrary code when that function is run"
+  ),
+  "undebug" = paste(
+    "remove this likely leftover from debugging.",
+    "It is only useful for interactive debugging with debug()"
+  ),
+  "untrace" = paste(
+    "remove this likely leftover from debugging.",
+    "It is only useful for interactive debugging with trace()"
+  )
 )
 
 #' @rdname default_undesirable_functions
@@ -170,17 +206,23 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
 #' @export
 all_undesirable_operators <- modify_defaults(
   defaults = list(),
-  ":::" = paste("It accesses non-exported functions inside packages. Code relying on these is likely to break in",
-                "future versions of the package because the functions are not part of the public interface and may be",
-                "changed or removed by the maintainers without notice. Use public functions via :: instead."),
-  "<<-" = paste("It assigns outside the current environment in a way that can be hard to reason about.",
-                "Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific",
-                "environment with assign(). Recall that you can create an environment at the desired scope with",
-                "new.env()."),
-  "->>" = paste("It assigns outside the current environment in a way that can be hard to reason about.",
-                "Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific",
-                "environment with assign(). Recall that you can create an environment at the desired scope with",
-                "new.env().")
+  ":::" = paste(
+    "It accesses non-exported functions inside packages. Code relying on these is likely to break in",
+    "future versions of the package because the functions are not part of the public interface and may be",
+    "changed or removed by the maintainers without notice. Use public functions via :: instead."
+  ),
+  "<<-" = paste(
+    "It assigns outside the current environment in a way that can be hard to reason about.",
+    "Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific",
+    "environment with assign(). Recall that you can create an environment at the desired scope with",
+    "new.env()."
+  ),
+  "->>" = paste(
+    "It assigns outside the current environment in a way that can be hard to reason about.",
+    "Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific",
+    "environment with assign(). Recall that you can create an environment at the desired scope with",
+    "new.env()."
+  )
 )
 
 #' @rdname default_undesirable_functions
@@ -193,6 +235,40 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 )]
 
 #' Default lintr settings
+#'
+#' @description
+#' The default settings consist of
+#'
+#'  - `linters`: a list of default linters (see [default_linters()])
+#'  - `encoding`: the character encoding assumed for the file
+#'  - `exclude`: pattern used to exclude a line of code
+#'  - `exclude_start`, `exclude_end`: patterns used to mark start and end of the code block to exclude
+#'  - `exclude_linter`, `exclude_linter_sep`: patterns used to exclude linters
+#'  - `exclusions`:a list of files to exclude
+#'  - `cache_directory`: location of cache directory
+#'  - `comment_token`: a GitHub token character
+#'  - `comment_bot`: decides if lintr comment bot on GitHub can comment on commits
+#'  - `error_on_lint`: decides if error should be produced when any lints are found
+#'
+#' @examples
+#' # available settings
+#' names(default_settings)
+#'
+#' # linters included by default
+#' names(default_settings$linters)
+#'
+#' # default values for a few of the other settings
+#' default_settings[c(
+#'   "encoding",
+#'   "exclude",
+#'   "exclude_start",
+#'   "exclude_end",
+#'   "exclude_linter",
+#'   "exclude_linter_sep",
+#'   "exclusions",
+#'   "error_on_lint"
+#' )]
+#'
 #' @seealso [read_settings()], [default_linters]
 #' @export
 default_settings <- NULL
@@ -208,8 +284,11 @@ settings <- NULL
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  # This is just here to quiet R CMD check
-  if (FALSE) backports::import
+  backports::import(pkgname, c("trimws", "lengths"))
+  # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
+  if (!exists("str2lang", getNamespace("base"))) {
+    assign("str2lang", get("str2lang", getNamespace("backports")), getNamespace(pkgname))
+  }
 
   default_settings <<- list(
     linters = default_linters,
@@ -217,12 +296,14 @@ settings <- NULL
     exclude = rex::rex("#", any_spaces, "nolint"),
     exclude_start = rex::rex("#", any_spaces, "nolint start"),
     exclude_end = rex::rex("#", any_spaces, "nolint end"),
-    exclude_linter = rex::rex(start, any_spaces, ":", any_spaces,
-                              capture(
-                                name = "linters",
-                                zero_or_more(one_or_more(none_of(",.")), any_spaces, ",", any_spaces),
-                                one_or_more(none_of(",."))
-                              ), "."),
+    exclude_linter = rex::rex(
+      start, any_spaces, ":", any_spaces,
+      capture(
+        name = "linters",
+        zero_or_more(one_or_more(none_of(",.")), any_spaces, ",", any_spaces),
+        one_or_more(none_of(",."))
+      ), "."
+    ),
     exclude_linter_sep = rex::rex(any_spaces, ",", any_spaces),
     exclusions = list(),
     cache_directory = R_user_dir("lintr", "cache"),

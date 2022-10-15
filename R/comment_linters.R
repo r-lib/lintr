@@ -1,6 +1,6 @@
 ops <- list(
   "+",
-  #"-",
+  # "-",
   "=",
   "==",
   "!=",
@@ -28,6 +28,34 @@ ops <- list(
 #'
 #' Check that there is no commented code outside roxygen blocks.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "# x <- 1",
+#'   linters = commented_code_linter()
+#' )
+#'
+#' lint(
+#'   text = "x <- f() # g()",
+#'   linters = commented_code_linter()
+#' )
+#'
+#' lint(
+#'   text = "x + y # + z[1, 2]",
+#'   linters = commented_code_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "x <- 1; x <- f(); x + y",
+#'   linters = commented_code_linter()
+#' )
+#'
+#' lint(
+#'   text = "#' x <- 1",
+#'   linters = commented_code_linter()
+#' )
+#'
 #' @evalRd rd_tags("commented_code_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -37,7 +65,6 @@ commented_code_linter <- function() {
     any_spaces,
     capture(
       name = "code",
-      # except("'"),
       anything,
       or(
         some_of("{}[]"), # code-like parentheses
@@ -55,7 +82,11 @@ commented_code_linter <- function() {
     all_comment_nodes <- xml2::xml_find_all(source_expression$full_xml_parsed_content, "//COMMENT")
     all_comments <- xml2::xml_text(all_comment_nodes)
     code_candidates <- re_matches(all_comments, code_candidate_regex, global = FALSE, locations = TRUE)
-    is_parsable <- which(vapply(code_candidates[, "code"], parsable, logical(1L)))
+    extracted_code <- code_candidates[, "code"]
+    # ignore trailing ',' when testing for parsability
+    extracted_code <- rex::re_substitutes(extracted_code, rex::rex(",", any_spaces, end), "")
+    extracted_code <- rex::re_substitutes(extracted_code, rex::rex(start, any_spaces, ","), "")
+    is_parsable <- which(vapply(extracted_code, parsable, logical(1L)))
 
     lint_list <- xml_nodes_to_lints(
       all_comment_nodes[is_parsable],
@@ -93,6 +124,39 @@ parsable <- function(x) {
 #' Check that the source contains no TODO comments (case-insensitive).
 #'
 #' @param todo Vector of strings that identify TODO comments.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "x + y # TODO",
+#'   linters = todo_comment_linter()
+#' )
+#'
+#' lint(
+#'   text = "pi <- 1.0 # FIXME",
+#'   linters = todo_comment_linter()
+#' )
+#'
+#' lint(
+#'   text = "x <- TRUE # hack",
+#'   linters = todo_comment_linter(todo = c("todo", "fixme", "hack"))
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "x + y # my informative comment",
+#'   linters = todo_comment_linter()
+#' )
+#'
+#' lint(
+#'   text = "pi <- 3.14",
+#'   linters = todo_comment_linter()
+#' )
+#'
+#' lint(
+#'   text = "x <- TRUE",
+#'   linters = todo_comment_linter()
+#' )
 #'
 #' @evalRd rd_tags("todo_comment_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.

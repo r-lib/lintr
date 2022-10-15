@@ -1,28 +1,66 @@
-#' Prevent ifelse() from being used to produce TRUE/FALSE or 1/0
+#' Prevent `ifelse()` from being used to produce `TRUE`/`FALSE` or `1`/`0`
 #'
 #' Expressions like `ifelse(x, TRUE, FALSE)` and `ifelse(x, FALSE, TRUE)` are
 #'   redundant; just `x` or `!x` suffice in R code where logical vectors are a
 #'   core data structure. `ifelse(x, 1, 0)` is also `as.numeric(x)`, but even
-#'   this should only be needed rarely.
+#'   this should be needed only rarely.
 #'
 #' @evalRd rd_tags("redundant_ifelse_linter")
 #' @param allow10 Logical, default `FALSE`. If `TRUE`, usage like
 #'   `ifelse(x, 1, 0)` is allowed, i.e., only usage like
 #'   `ifelse(x, TRUE, FALSE)` is linted.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "ifelse(x >= 2.5, TRUE, FALSE)",
+#'   linters = redundant_ifelse_linter()
+#' )
+#'
+#' lint(
+#'   text = "ifelse(x < 2.5, 1L, 0L)",
+#'   linters = redundant_ifelse_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "x >= 2.5",
+#'   linters = redundant_ifelse_linter()
+#' )
+#'
+#' # Note that this is just to show the strict equivalent of the example above;
+#' # converting to integer is often unnecessary and the logical vector itself
+#' # should suffice.
+#' lint(
+#'   text = "as.integer(x < 2.5)",
+#'   linters = redundant_ifelse_linter()
+#' )
+#'
+#' lint(
+#'   text = "ifelse(x < 2.5, 1L, 0L)",
+#'   linters = redundant_ifelse_linter(allow10 = TRUE)
+#' )
+#'
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 redundant_ifelse_linter <- function(allow10 = FALSE) {
-  tf_xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
-    and expr[NUM_CONST[text() = 'TRUE']]
-    and expr[NUM_CONST[text() = 'FALSE']]
-  ]")
+  tf_xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
+    /parent::expr
+    /parent::expr[
+      expr[NUM_CONST[text() = 'TRUE']]
+      and expr[NUM_CONST[text() = 'FALSE']]
+    ]
+  ")
 
-  num_xpath <- glue::glue("//expr[
-    expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]
-    and expr[NUM_CONST[text() = '1' or text() = '1L']]
-    and expr[NUM_CONST[text() = '0' or text() = '0L']]
-  ]")
+  num_xpath <- glue::glue("
+  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
+    /parent::expr
+    /parent::expr[
+      expr[NUM_CONST[text() = '1' or text() = '1L']]
+      and expr[NUM_CONST[text() = '0' or text() = '0L']]
+    ]
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -46,17 +84,18 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
     if (!allow10) {
       num_expr <- xml2::xml_find_all(xml, num_xpath)
       matched_call <- xp_call_name(num_expr)
-      # [1] call; [2] logical condiditon
+      # [1] call; [2] logical condition
       first_arg <- xml2::xml_find_chr(num_expr, "string(expr[3]/NUM_CONST)")
       second_arg <- xml2::xml_find_chr(num_expr, "string(expr[4]/NUM_CONST)")
-      replacement <- ifelse(
-        first_arg %in% c("0", "1") | second_arg %in% c("0", "1"),
-        "as.numeric",
-        "as.integer"
-      )
+      is_numeric_01 <- first_arg %in% c("0", "1") | second_arg %in% c("0", "1")
+      coercion_function <- ifelse(is_numeric_01, "as.numeric", "as.integer")
+      is_negated <- first_arg %in% c("0", "0L")
+      replacement_argument <- ifelse(is_negated, "!x", "x")
       lint_message <- paste(
-        sprintf("Prefer %s(x) to %s(x, %s, %s) if really needed,", replacement, matched_call, first_arg, second_arg),
-        "but do note that R will usually convert logical vectors to 0/1 on the fly when needed."
+        sprintf(
+          "Prefer %s(%s) to %s(x, %s, %s) if really needed.",
+          coercion_function, replacement_argument, matched_call, first_arg, second_arg
+        )
       )
       lints <- c(lints, xml_nodes_to_lints(num_expr, source_expression, lint_message, type = "warning"))
     }

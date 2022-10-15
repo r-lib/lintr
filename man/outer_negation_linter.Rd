@@ -2,7 +2,7 @@
 % Please edit documentation in R/outer_negation_linter.R
 \name{outer_negation_linter}
 \alias{outer_negation_linter}
-\title{Require usage of !any(.) over all(!.), !all(.) over any(!.)}
+\title{Require usage of \code{!any(x)} over \code{all(!x)}, \code{!all(x)} over \code{any(!x)}}
 \usage{
 outer_negation_linter()
 }
@@ -10,6 +10,30 @@ outer_negation_linter()
 \code{any(!x)} is logically equivalent to \code{!any(x)}; ditto for the equivalence of
 \code{all(!x)} and \code{!any(x)}. Negating after aggregation only requires inverting
 one logical value, and is typically more readable.
+}
+\examples{
+# will produce lints
+lint(
+  text = "all(!x)",
+  linters = outer_negation_linter()
+)
+
+lint(
+  text = "any(!x)",
+  linters = outer_negation_linter()
+)
+
+# okay
+lint(
+  text = "!any(x)",
+  linters = outer_negation_linter()
+)
+
+lint(
+  text = "!all(x)",
+  linters = outer_negation_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

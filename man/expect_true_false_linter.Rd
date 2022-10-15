@@ -2,7 +2,7 @@
 % Please edit documentation in R/expect_true_false_linter.R
 \name{expect_true_false_linter}
 \alias{expect_true_false_linter}
-\title{Require usage of expect_true(x) over expect_equal(x, TRUE)}
+\title{Require usage of \code{expect_true(x)} over \code{expect_equal(x, TRUE)}}
 \usage{
 expect_true_false_linter()
 }
@@ -11,6 +11,30 @@ expect_true_false_linter()
 for testing the \code{TRUE}/\code{FALSE} value of an object.
 \code{\link[testthat:equality-expectations]{testthat::expect_equal()}} and \code{\link[testthat:equality-expectations]{testthat::expect_identical()}} can also be
 used for such tests, but it is better to use the tailored function instead.
+}
+\examples{
+# will produce lints
+lint(
+  text = "expect_equal(x, TRUE)",
+  linters = expect_true_false_linter()
+)
+
+lint(
+  text = "expect_equal(x, FALSE)",
+  linters = expect_true_false_linter()
+)
+
+# okay
+lint(
+  text = "expect_true(x)",
+  linters = expect_true_false_linter()
+)
+
+lint(
+  text = "expect_false(x)",
+  linters = expect_true_false_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

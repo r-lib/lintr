@@ -1,3 +1,13 @@
+test_that("modify_defaults produces error with missing or incorrect defaults", {
+  lint_msg <- "`defaults` must be a named list."
+  expect_error(modify_defaults(), lint_msg, fixed = TRUE)
+  expect_error(modify_defaults("assignment_linter"), lint_msg, fixed = TRUE)
+})
+
+test_that("linters_with_tags produces error with incorrect tags", {
+  expect_error(linters_with_tags(1L:4L), "`tags` must be a character vector, or NULL.", fixed = TRUE)
+})
+
 test_that("linters_with_defaults works as expected with unnamed args", {
   # assignment_linter is in defaults, so output doesn't change
   expect_named(linters_with_defaults(assignment_linter), names(linters_with_defaults()))
@@ -14,19 +24,18 @@ test_that("linters_with_defaults warns on unused NULLs", {
 test_that("all default linters are tagged default", {
   expect_named(linters_with_defaults(), available_linters(tags = "default")$linter)
 
-  # TODO(michaelchirico): use plain expect_equal after waldo#133 makes it into a CRAN release
-  # Here, the environment()s are different because factories use them.
-  skip_if_not_r_version("4.1.0") # Desired all.equal behaviour only available in >= 4.1
+  skip_if_not_installed("waldo", "0.4.0") # needs waldo#133
   # covr modifies package functions causing differing deparse() results even for identical anonymous functions.
   # This happens because default_linters is generated at build time and thus not modifiable by covr, whereas
   # linters_with_tags() constructs the linters at runtime.
-  skip_if(covr::in_covr())
+  skip_on_covr()
 
-  expect_true(all.equal(linters_with_tags("default"), linters_with_defaults()))
+  expect_identical(linters_with_tags("default"), linters_with_defaults())
   expect_length(linters_with_tags("default", exclude_tags = "default"), 0L)
 
   # Check that above test also trips on default arguments.
-  expect_equal(
+  skip_if_not_r_version("4.1.0") # Desired all.equal behaviour only available in >= 4.1
+  expect_identical(
     all.equal(linters_with_tags("default"), linters_with_defaults(line_length_linter(120L))),
     'Component "line_length_linter": Component "length": Mean relative difference: 0.5'
   )
@@ -47,7 +56,7 @@ test_that("with_defaults is supported with a deprecation warning", {
   defaults <- linters_with_defaults()
   expect_warning(
     old_defaults <- with_defaults(),
-    rex::rex("Use linters_with_defaults instead.")
+    rex::rex("Use linters_with_defaults or modify_defaults instead.")
   )
   expect_identical(defaults, old_defaults)
 
@@ -55,19 +64,19 @@ test_that("with_defaults is supported with a deprecation warning", {
   defaults <- linters_with_defaults(defaults = list(), no_tab_linter())
   expect_warning(
     old_defaults <- with_defaults(default = NULL, no_tab_linter()),
-    rex::rex("Use linters_with_defaults instead.")
+    rex::rex("Use linters_with_defaults or modify_defaults instead.")
   )
   expect_identical(defaults, old_defaults)
 })
 
 test_that("modify_defaults works", {
   my_default <- list(a = 1L, b = 2L, c = 3L)
-  expect_equal(modify_defaults(defaults = my_default), my_default)
-  expect_equal(modify_defaults(defaults = my_default, a = 2L), list(a = 2L, b = 2L, c = 3L))
-  expect_equal(modify_defaults(defaults = my_default, c = NULL), list(a = 1L, b = 2L))
+  expect_identical(modify_defaults(defaults = my_default), my_default)
+  expect_identical(modify_defaults(defaults = my_default, a = 2L), list(a = 2L, b = 2L, c = 3L))
+  expect_identical(modify_defaults(defaults = my_default, c = NULL), list(a = 1L, b = 2L))
 
   # auto-sorts
-  expect_equal(modify_defaults(defaults = list(b = 2L, a = 1L), c = 3L), my_default)
+  expect_identical(modify_defaults(defaults = list(b = 2L, a = 1L), c = 3L), my_default)
 })
 
 test_that("linters_with_defaults(default = .) is supported with a deprecation warning", {

@@ -7,7 +7,29 @@
 no_tab_linter()
 }
 \description{
-Check that only spaces are used for indentation, not tabs.
+Check that only spaces are used for indentation, not tabs. Much ink has been
+spilt on this topic, and we encourage you to check out references for more
+information.
+}
+\examples{
+# will produce lints
+lint(
+  text = "\tx",
+  linters = no_tab_linter()
+)
+
+# okay
+lint(
+  text = "  x",
+  linters = no_tab_linter()
+)
+
+}
+\references{
+\itemize{
+\item https://www.jwz.org/doc/tabs-vs-spaces.html
+\item https://blog.codinghorror.com/death-to-the-space-infidels/
+}
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

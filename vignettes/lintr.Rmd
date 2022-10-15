@@ -52,7 +52,7 @@ Checking an R project for lints can be done with three different functions:
     -   `vignettes` containing package vignettes.
     -   `data-raw` containing code to produce `data` files.
 
-For more information about the assumed package structure, see [R Packages](https://r-pkgs.org/package-structure-state.html).
+For more information about the assumed package structure, see [R Packages](https://r-pkgs.org/structure.html).
 
 ## Configuring linters
 
@@ -173,7 +173,9 @@ linters_with_args <- lapply(
 
 make_setting_string <- function(linter_name) {
   args <- linters_with_args[[linter_name]]
-  if (is.null(args)) return("")
+  if (is.null(args)) {
+    return("")
+  }
 
   arglist <- vapply(args, function(arg) {
     env <- environment(default_linters[[linter_name]])
@@ -190,6 +192,32 @@ defaults_table <- data.frame(
 )
 
 knitr::kable(defaults_table)
+```
+
+#### Using all available linters
+
+The default lintr configuration includes only linters relevant to the tidyverse style guide, but there are many other linters available in `{lintr}`. You can see a list of all available linters using
+
+```{r}
+names(lintr::linters_with_tags(tags = NULL))
+```
+
+If you want to use all available linters, you can include this in your `.lintr` file:
+
+```r
+linters: linters_with_defaults(
+    defaults = linters_with_tags(tags = NULL)
+  )
+```
+
+If you want to use all available linters *except* a few, you can exclude them using `NULL`:
+
+```r
+linters: linters_with_defaults(
+    commented_code_linter = NULL,
+    implicit_integer_linter = NULL,
+    defaults = linters_with_tags(tags = NULL)
+  )
 ```
 
 #### Advanced: programmatic retrieval of linters
@@ -243,7 +271,8 @@ X = 42L # -------------- this comment overflows the default 80 chars line length
 
 ```{r, echo = FALSE}
 lintr::lint("X = 42L # -------------- this comment overflows the default 80 chars line length.\n",
-            parse_settings = FALSE)
+  parse_settings = FALSE
+)
 ```
 
 **file2.R**
@@ -256,7 +285,8 @@ X = 42L # nolint ------ this comment overflows the default 80 chars line length.
 
 ```{r, echo = FALSE}
 lintr::lint("X = 42L # nolint ------ this comment overflows the default 80 chars line length.\n",
-            parse_settings = FALSE)
+  parse_settings = FALSE
+)
 ```
 
 Observe how all lints were suppressed and no output is shown.
@@ -275,7 +305,8 @@ X = 42L # nolint: object_name_linter. this comment overflows the default 80 char
 
 ```{r, echo = FALSE}
 lintr::lint("X = 42L # nolint: object_name_linter. this comment overflows the default 80 chars line length.\n",
-            parse_settings = FALSE)
+  parse_settings = FALSE
+)
 ```
 
 Observe how only the `object_name_linter` was suppressed.
@@ -346,7 +377,8 @@ lintr::lint("# x <- 42L\n# print(x)\n", parse_settings = FALSE)
 
 ```{r, echo = FALSE}
 lintr::lint("# nolint start: commented_code_linter.\n# x <- 42L\n# print(x)\n# nolint end\n",
-            parse_settings = FALSE)
+  parse_settings = FALSE
+)
 ```
 
 (No lints)

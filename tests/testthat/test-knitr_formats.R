@@ -1,9 +1,9 @@
 regexes <- list(
-  assign = rex("Use <-, not =, for assignment."),
-  local_var = rex("local variable"),
-  quotes = rex("Only use double-quotes."),
-  trailing = rex("Trailing blank lines are superfluous."),
-  trailws = rex("Trailing whitespace is superfluous."),
+  assign = rex::rex("Use <-, not =, for assignment."),
+  local_var = rex::rex("local variable"),
+  quotes = rex::rex("Only use double-quotes."),
+  trailing = rex::rex("Trailing blank lines are superfluous."),
+  trailws = rex::rex("Trailing whitespace is superfluous."),
   indent = rex("Indentation should be")
 )
 
@@ -13,63 +13,85 @@ test_that("it handles dir", {
   lints <- lint_dir(path = "knitr_formats", pattern = file_pattern, parse_settings = FALSE)
 
   # For every file there should be at least 1 lint
-  expect_identical(sort(unique(names(lints))), sort(list.files("knitr_formats", pattern = file_pattern)))
+  expect_identical(
+    sort(unique(names(lints))),
+    sort(list.files(test_path("knitr_formats"), pattern = file_pattern))
+  )
 })
 
 test_that("it handles markdown", {
-  expect_lint(file = "knitr_formats/test.Rmd",
+  expect_lint(
+    file = test_path("knitr_formats", "test.Rmd"),
     checks = list(
       list(regexes[["assign"]], line_number = 9L),
       list(regexes[["local_var"]], line_number = 22L),
       list(regexes[["assign"]], line_number = 22L),
       list(regexes[["trailing"]], line_number = 24L)
     ),
-    default_linters,
+    linters = default_linters,
+    parse_settings = FALSE
+  )
+})
+
+test_that("it handles quarto", {
+  expect_lint(
+    file = test_path("knitr_formats", "test.qmd"),
+    checks = list(
+      list(regexes[["assign"]], line_number = 9L),
+      list(regexes[["local_var"]], line_number = 22L),
+      list(regexes[["assign"]], line_number = 22L),
+      list(regexes[["trailing"]], line_number = 24L)
+    ),
+    linters = default_linters,
     parse_settings = FALSE
   )
 })
 
 test_that("it handles Sweave", {
-  expect_lint(file = "knitr_formats/test.Rnw",
+  expect_lint(
+    file = test_path("knitr_formats", "test.Rnw"),
     checks = list(
       list(regexes[["assign"]], line_number = 12L),
       list(regexes[["local_var"]], line_number = 24L),
       list(regexes[["assign"]], line_number = 24L),
       list(regexes[["trailing"]], line_number = 26L)
     ),
-    default_linters,
+    linters = default_linters,
     parse_settings = FALSE
   )
 })
 
 test_that("it handles reStructuredText", {
-  expect_lint(file = "knitr_formats/test.Rrst",
+  expect_lint(
+    file = test_path("knitr_formats", "test.Rrst"),
     checks = list(
       list(regexes[["assign"]], line_number = 10L),
       list(regexes[["local_var"]], line_number = 23L),
       list(regexes[["assign"]], line_number = 23L),
       list(regexes[["trailing"]], line_number = 25L)
     ),
-    default_linters,
+    linters = default_linters,
     parse_settings = FALSE
   )
 })
 
 test_that("it handles HTML", {
-  expect_lint(file = "knitr_formats/test.Rhtml",
+  expect_lint(
+    file = test_path("knitr_formats", "test.Rhtml"),
     checks = list(
       list(regexes[["assign"]], line_number = 15L),
       list(regexes[["local_var"]], line_number = 27L),
       list(regexes[["assign"]], line_number = 27L),
       list(regexes[["trailing"]], line_number = 29L)
     ),
-    default_linters,
+    linters = default_linters,
     parse_settings = FALSE
   )
 })
 
 test_that("it handles tex", {
-  expect_lint(file = "knitr_formats/test.Rtex",
+  expect_lint(
+    file = test_path("knitr_formats", "test.Rtex"),
     checks = list(
       list(regexes[["indent"]], line_number = 11L),
       # FIXME(AshesITR):
@@ -85,20 +107,21 @@ test_that("it handles tex", {
       # "%" as well.
       # cf. get_source_expressions("tests/testthat/knitr_formats/test.Rtex")$lines[[25]]
     ),
-    default_linters,
+    linters = default_linters,
     parse_settings = FALSE
   )
 })
 
 test_that("it handles asciidoc", {
-  expect_lint(file = "knitr_formats/test.Rtxt",
+  expect_lint(
+    file = test_path("knitr_formats", "test.Rtxt"),
     checks = list(
       list(regexes[["assign"]], line_number = 9L),
       list(regexes[["local_var"]], line_number = 22L),
       list(regexes[["assign"]], line_number = 22L),
       list(regexes[["trailing"]], line_number = 24L)
     ),
-    default_linters,
+    linters = default_linters,
     parse_settings = FALSE
   )
 })
@@ -114,17 +137,25 @@ test_that("it does _not_ handle brew", {
 })
 
 test_that("it does _not_ error with inline \\Sexpr", {
-  expect_lint("#' text \\Sexpr{1 + 1} more text",
+  expect_lint(
+    "#' text \\Sexpr{1 + 1} more text",
     NULL,
     default_linters
   )
 })
 
-test_that("it does lint with malformed input", {
+test_that("it does lint .Rmd or .qmd file with malformed input", {
   expect_lint(
-    file = "knitr_malformed/incomplete_r_block.Rmd",
+    file = test_path("knitr_malformed", "incomplete_r_block.Rmd"),
     checks = "Missing chunk end",
-    default_linters,
+    linters = default_linters,
+    parse_settings = FALSE
+  )
+
+  expect_lint(
+    file = test_path("knitr_malformed", "incomplete_r_block.qmd"),
+    checks = "Missing chunk end",
+    linters = default_linters,
     parse_settings = FALSE
   )
 

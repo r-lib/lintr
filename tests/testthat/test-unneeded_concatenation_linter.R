@@ -1,7 +1,7 @@
 test_that("returns the correct linting", {
   linter <- unneeded_concatenation_linter()
-  msg_c <- rex::rex("Unneeded concatenation of a constant. Remove the \"c\" call.")
-  msg_e <- rex::rex(
+  msg_c <- rex::escape("Unneeded concatenation of a constant. Remove the \"c\" call.")
+  msg_e <- rex::escape(
     "Unneeded concatenation without arguments. Replace the \"c\" call by NULL or, whenever possible, vector()"
   )
 
@@ -90,4 +90,8 @@ test_that("sequences with : are linted whenever a constant is involved", {
     "Unneeded concatenation of a simple expression",
     unneeded_concatenation_linter(allow_single_expression = FALSE)
   )
+})
+
+test_that("c(...) does not lint under !allow_single_expression", {
+  expect_lint("c(...)", NULL, unneeded_concatenation_linter(allow_single_expression = FALSE))
 })

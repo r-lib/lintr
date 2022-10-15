@@ -2,7 +2,7 @@
 % Please edit documentation in R/expect_named_linter.R
 \name{expect_named_linter}
 \alias{expect_named_linter}
-\title{Require usage of expect_named(x, n) over expect_equal(names(x), n)}
+\title{Require usage of \code{expect_named(x, n)} over \code{expect_equal(names(x), n)}}
 \usage{
 expect_named_linter()
 }
@@ -10,6 +10,30 @@ expect_named_linter()
 \code{\link[testthat:expect_named]{testthat::expect_named()}} exists specifically for testing the \code{\link[=names]{names()}} of
 an object. \code{\link[testthat:equality-expectations]{testthat::expect_equal()}} can also be used for such tests,
 but it is better to use the tailored function instead.
+}
+\examples{
+# will produce lints
+lint(
+  text = 'expect_equal(names(x), "a")',
+  linters = expect_named_linter()
+)
+
+# okay
+lint(
+  text = 'expect_named(x, "a")',
+  linters = expect_named_linter()
+)
+
+lint(
+  text = 'expect_equal(colnames(x), "a")',
+  linters = expect_named_linter()
+)
+
+lint(
+  text = 'expect_equal(dimnames(x), "a")',
+  linters = expect_named_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

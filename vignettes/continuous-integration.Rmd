@@ -37,13 +37,15 @@ This file configures all the steps required to run `lintr::lint_package()` on yo
 [annotations](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-status-checks#types-of-status-checks-on-github)
 along side the status check on GitHub.
 If you want to disable the commenting you can set the environment variable `LINTR_COMMENT_BOT=false`.
+Additionally, if you want the builds to produce an error instead of just a warning, you can set the environment variable `LINTR_ERROR_ON_LINT=true`.
+Note that this will kill the R process in case of a lint.
 
 If your project is in a subdirectory and you would like to use GitHub Actions annotations, you can set
 `options(lintr.github_annotation_project_dir = "path/to/project")` which will make sure that the annotations point to the correct paths.
 
 ### Travis CI
 
-If you want to run `lintr` on [Travis-CI](https://travis-ci.org), you will need to have Travis install the package first.
+If you want to run `lintr` on [Travis-CI](https://www.travis-ci.com/), you will need to have Travis install the package first.
 This can be done by adding the following line to your `.travis.yml`
 
 ``` yaml
@@ -55,7 +57,7 @@ We recommend running `lintr::lint_package()` as an [after_success step in your b
 
 Just like with GitHub Actions, [lintr-bot](https://github.com/lintr-bot) will then add comments to the commit or pull request with the lints found and
 they will also be printed on Travis-CI.
-If you want to disable the commenting you can set the environment variable `LINTR_COMMENT_BOT=false`.
+The environment variables `LINTR_COMMENT_BOT` and `LINTR_ERROR_ON_LINT` mentioned for GitHub actions also work with Travis CI builds.
 
 ##### Non-failing Lints {#non-failing-lints}
 
@@ -84,6 +86,6 @@ usethis::use_github_action("lint-project")
 
 ### Super-Linter
 
-`lintr` powers R lints for [Super-Linter](https://github.com/github/super-linter) and [MegaLinter](https://megalinter.github.io/latest/),
+`lintr` powers R lints for [Super-Linter](https://github.com/github/super-linter) and [MegaLinter](https://oxsecurity.github.io/megalinter/latest/),
 which provide a unified linting experience across many languages.
 Specifically, they execute `lintr::lint()` on the R and R Markdown files included in a given project.

@@ -21,8 +21,8 @@ lint_dir(
   ...,
   relative_path = TRUE,
   exclusions = list("renv", "packrat"),
-  pattern = rex::rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex",
-    "txt"), end),
+  pattern = rex::rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"),
+    end),
   parse_settings = TRUE
 )
 
@@ -41,7 +41,11 @@ The latter (inline data) applies whenever \code{filename} has a newline characte
 \item{linters}{a named list of linter functions to apply. See \link{linters} for a full list of default and available
 linters.}
 
-\item{...}{additional arguments passed to \code{\link[=lint]{lint()}}, e.g. \code{linters} or \code{cache}.}
+\item{...}{Provide additional arguments to be passed to:
+\itemize{
+\item \code{\link[=exclude]{exclude()}} (in case of \code{lint()}; e.g. \code{lints} or \code{exclusions})
+\item \code{\link[=lint]{lint()}} (in case of \code{lint_dir()} and \code{lint_package()}; e.g. \code{linters} or \code{cache})
+}}
 
 \item{cache}{given a logical, toggle caching of lint results. If passed a character string, store the cache in this
 directory.}
@@ -59,11 +63,11 @@ If \code{FALSE}, use the full absolute path.}
 
 \item{exclusions}{exclusions for \code{\link[=exclude]{exclude()}}, relative to the package path.}
 
-\item{pattern}{pattern for files, by default it will take files with any of the extensions .R, .Rmd, .Rnw, .Rhtml,
-.Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...)}
+\item{pattern}{pattern for files, by default it will take files with any of the extensions
+.R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...)}
 }
 \value{
-A list of lint objects.
+An object of class \code{c("lints", "list")}, each element of which is a \code{"list"} object.
 }
 \description{
 \itemize{
@@ -74,7 +78,7 @@ A list of lint objects.
 }
 }
 \details{
-Read \code{vigentte("lintr")} to learn how to configure which linters are run
+Read \code{vignette("lintr")} to learn how to configure which linters are run
 by default.
 Note that if files contain unparseable encoding problems, only the encoding problem will be linted to avoid
 unintelligible error messages from other linters.
@@ -89,9 +93,12 @@ unintelligible error messages from other linters.
 \dontrun{
   lint_dir()
   lint_dir(
-    linters = list(semicolon_linter())
-    cache = TRUE,
-    exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R", "renv")
+    linters = list(semicolon_linter()),
+    exclusions = list(
+      "inst/doc/creating_linters.R" = 1,
+      "inst/example/bad.R",
+      "renv"
+    )
   )
 }
 \dontrun{
@@ -99,7 +106,6 @@ unintelligible error messages from other linters.
 
   lint_package(
     linters = linters_with_defaults(semicolon_linter = semicolon_linter())
-    cache = TRUE,
     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
   )
 }

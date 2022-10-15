@@ -7,7 +7,32 @@
 equals_na_linter()
 }
 \description{
-Check for \code{x == NA} and \code{x != NA}
+Check for \code{x == NA} and \code{x != NA}. Such usage is almost surely incorrect --
+checks for missing values should be done with \code{\link[=is.na]{is.na()}}.
+}
+\examples{
+# will produce lints
+lint(
+  text = "x == NA",
+  linters = equals_na_linter()
+)
+
+lint(
+  text = "x != NA",
+  linters = equals_na_linter()
+)
+
+# okay
+lint(
+  text = "is.na(x)",
+  linters = equals_na_linter()
+)
+
+lint(
+  text = "!is.na(x)",
+  linters = equals_na_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

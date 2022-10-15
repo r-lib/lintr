@@ -2,26 +2,45 @@
 % Please edit documentation in R/nested_ifelse_linter.R
 \name{nested_ifelse_linter}
 \alias{nested_ifelse_linter}
-\title{Block usage of nested ifelse() calls}
+\title{Block usage of nested \code{ifelse()} calls}
 \usage{
 nested_ifelse_linter()
 }
 \description{
-Calling \code{ifelse} in nested calls is problematic for two main reasons:
+Calling \code{\link[=ifelse]{ifelse()}} in nested calls is problematic for two main reasons:
 \enumerate{
 \item It can be hard to read -- mapping the code to the expected output
 for such code can be a messy task/require a lot of mental bandwidth,
 especially for code that nests more than once
-\item It is inefficient -- \code{ifelse} can evaluate \emph{all} of its arguments at
-both yes and no (see https://stackoverflow.com/q/16275149); this issue
+\item It is inefficient -- \code{ifelse()} can evaluate \emph{all} of its arguments at
+both yes and no (see \url{https://stackoverflow.com/q/16275149}); this issue
 is exacerbated for nested calls
 }
 }
 \details{
 Users can instead rely on a more readable alternative modeled after SQL
-CASE WHEN statements, such as \code{data.table::fcase} or \code{dplyr::case_when},
+CASE WHEN statements, such as \code{data.table::fcase()} or \code{dplyr::case_when()},
 or use a look-up-and-merge approach (build a mapping table between values
 and outputs and merge this to the input).
+}
+\examples{
+# will produce lints
+lint(
+  text = 'ifelse(x == "a", 1L, ifelse(x == "b", 2L, 3L))',
+  linters = nested_ifelse_linter()
+)
+
+# okay
+lint(
+  text = 'dplyr::case_when(x == "a" ~ 1L, x == "b" ~ 2L, TRUE ~ 3L)',
+  linters = nested_ifelse_linter()
+)
+
+lint(
+  text = 'data.table::fcase(x == "a", 1L, x == "b", 2L, default = 3L)',
+  linters = nested_ifelse_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

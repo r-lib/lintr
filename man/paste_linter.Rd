@@ -2,7 +2,7 @@
 % Please edit documentation in R/paste_linter.R
 \name{paste_linter}
 \alias{paste_linter}
-\title{Raise lints for several common poor usages of paste()}
+\title{Raise lints for several common poor usages of \code{paste()}}
 \usage{
 paste_linter(allow_empty_sep = FALSE, allow_to_string = FALSE)
 }
@@ -15,7 +15,7 @@ paste_linter(allow_empty_sep = FALSE, allow_to_string = FALSE)
 }
 \description{
 The following issues are linted by default by this linter
-(and each can be turned off optionally):
+(see arguments for which can be de-activated optionally):
 }
 \details{
 \enumerate{
@@ -24,11 +24,72 @@ The following issues are linted by default by this linter
 wrapper for this, and alternatives like \code{\link[glue:glue_collapse]{glue::glue_collapse()}} might give better messages for humans.
 \item Block usage of \code{paste0()} that supplies \verb{sep=} -- this is not a formal argument to \code{paste0}, and
 is likely to be a mistake.
+\item Block usage of \code{paste()} / \code{paste0()} combined with \code{\link[=rep]{rep()}} that could be replaced by
+\code{\link[=strrep]{strrep()}}. \code{strrep()} can handle the task of building a block of repeated strings
+(e.g. often used to build "horizontal lines" for messages). This is both more readable and
+skips the (likely small) overhead of putting two strings into the global string cache when only one is needed.
+
+Only target scalar usages -- \code{strrep} can handle more complicated cases (e.g. \code{strrep(letters, 26:1)},
+but those aren't as easily translated from a \code{paste(collapse=)} call.
 }
+}
+\examples{
+# will produce lints
+lint(
+  text = 'paste("a", "b", sep = "")',
+  linters = paste_linter()
+)
+
+lint(
+  text = 'paste(c("a", "b"), collapse = ", ")',
+  linters = paste_linter()
+)
+
+lint(
+  text = 'paste0(c("a", "b"), sep = " ")',
+  linters = paste_linter()
+)
+
+lint(
+  text = 'paste0(rep("*", 10L), collapse = "")',
+  linters = paste_linter()
+)
+
+# okay
+lint(
+  text = 'paste0("a", "b")',
+  linters = paste_linter()
+)
+
+lint(
+  text = 'paste("a", "b", sep = "")',
+  linters = paste_linter(allow_empty_sep = TRUE)
+)
+
+lint(
+  text = 'toString(c("a", "b"))',
+  linters = paste_linter()
+)
+
+lint(
+  text = 'paste(c("a", "b"), collapse = ", ")',
+  linters = paste_linter(allow_to_string = TRUE)
+)
+
+lint(
+  text = 'paste(c("a", "b"))',
+  linters = paste_linter()
+)
+
+lint(
+  text = 'strrep("*", 10L)',
+  linters = paste_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=consistency_linters]{consistency}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}
 }

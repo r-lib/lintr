@@ -2,7 +2,7 @@
 % Please edit documentation in R/expect_null_linter.R
 \name{expect_null_linter}
 \alias{expect_null_linter}
-\title{expect_null Linter}
+\title{Require usage of \code{expect_null} for checking \code{NULL}}
 \usage{
 expect_null_linter()
 }
@@ -15,6 +15,31 @@ usages.
 \code{\link[testthat:equality-expectations]{testthat::expect_equal()}}, \code{\link[testthat:equality-expectations]{testthat::expect_identical()}}, and
 \code{\link[testthat:logical-expectations]{testthat::expect_true()}} can also be used for such tests,
 but it is better to use the tailored function instead.
+}
+\examples{
+# will produce lints
+lint(
+  text = "expect_equal(x, NULL)",
+  linters = expect_null_linter()
+)
+
+lint(
+  text = "expect_identical(x, NULL)",
+  linters = expect_null_linter()
+)
+
+lint(
+  text = "expect_true(is.null(x))",
+  linters = expect_null_linter()
+)
+
+
+# okay
+lint(
+  text = "expect_null(x)",
+  linters = expect_null_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

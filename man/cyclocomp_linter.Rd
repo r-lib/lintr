@@ -7,11 +7,25 @@
 cyclocomp_linter(complexity_limit = 15L)
 }
 \arguments{
-\item{complexity_limit}{expressions with a cyclomatic complexity higher than this are linted, defaults to 15.
-See \code{\link[cyclocomp:cyclocomp]{cyclocomp::cyclocomp()}}.}
+\item{complexity_limit}{Maximum cyclomatic complexity, default 15. Expressions more complex
+than this are linted. See \code{\link[cyclocomp:cyclocomp]{cyclocomp::cyclocomp()}}.}
 }
 \description{
 Check for overly complicated expressions. See \code{\link[cyclocomp:cyclocomp]{cyclocomp::cyclocomp()}}.
+}
+\examples{
+# will produce lints
+lint(
+  text = "if (TRUE) 1 else 2",
+  linters = cyclocomp_linter(complexity_limit = 1L)
+)
+
+# okay
+lint(
+  text = "if (TRUE) 1 else 2",
+  linters = cyclocomp_linter(complexity_limit = 2L)
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

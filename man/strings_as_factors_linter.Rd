@@ -2,7 +2,7 @@
 % Please edit documentation in R/strings_as_factors_linter.R
 \name{strings_as_factors_linter}
 \alias{strings_as_factors_linter}
-\title{Identify cases where stringsAsFactors should be supplied explicitly}
+\title{Identify cases where \code{stringsAsFactors} should be supplied explicitly}
 \usage{
 strings_as_factors_linter()
 }
@@ -15,11 +15,35 @@ default value of \code{stringsAsFactors} from \code{TRUE} to \code{FALSE}.
 It's not always possible to tell statically whether the change will break
 existing code because R is dynamically typed -- e.g. in \code{data.frame(x)}
 if \code{x} is a string, this code will be affected, but if \code{x} is a number,
-this code will be unaffected. However, in \code{data.frame(x = 'a')}, the
+this code will be unaffected. However, in \code{data.frame(x = "a")}, the
 output will unambiguously be affected. We can instead supply
 \code{stringsAsFactors = TRUE}, which will make this code backwards-compatible.
 
 See \url{https://developer.r-project.org/Blog/public/2020/02/16/stringsasfactors/}.
+}
+\examples{
+# will produce lints
+lint(
+  text = 'data.frame(x = "a")',
+  linters = strings_as_factors_linter()
+)
+
+# okay
+lint(
+  text = 'data.frame(x = "a", stringsAsFactors = TRUE)',
+  linters = strings_as_factors_linter()
+)
+
+lint(
+  text = 'data.frame(x = "a", stringsAsFactors = FALSE)',
+  linters = strings_as_factors_linter()
+)
+
+lint(
+  text = "data.frame(x = 1.2)",
+  linters = strings_as_factors_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

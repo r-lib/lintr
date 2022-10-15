@@ -35,5 +35,5 @@ Check that indentation is consistent
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }

@@ -24,6 +24,25 @@ The length of an object name is defined as the length in characters, after remov
 Note that this behavior relies in part on having packages in your Imports available;
 see the detailed note in \code{\link[=object_name_linter]{object_name_linter()}} for more details.
 }
+\examples{
+# will produce lints
+lint(
+  text = "very_very_long_variable_name <- 1L",
+  linters = object_length_linter(length = 10L)
+)
+
+# okay
+lint(
+  text = "very_very_long_variable_name <- 1L",
+  linters = object_length_linter(length = 30L)
+)
+
+lint(
+  text = "var <- 1L",
+  linters = object_length_linter(length = 10L)
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

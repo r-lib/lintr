@@ -1,4 +1,4 @@
-#' expect_null Linter
+#' Require usage of `expect_null` for checking `NULL`
 #'
 #' Require usage of `expect_null(x)` over `expect_equal(x, NULL)` and similar
 #' usages.
@@ -8,6 +8,30 @@
 #' [testthat::expect_true()] can also be used for such tests,
 #' but it is better to use the tailored function instead.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "expect_equal(x, NULL)",
+#'   linters = expect_null_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_identical(x, NULL)",
+#'   linters = expect_null_linter()
+#' )
+#'
+#' lint(
+#'   text = "expect_true(is.null(x))",
+#'   linters = expect_null_linter()
+#' )
+#'
+#'
+#' # okay
+#' lint(
+#'   text = "expect_null(x)",
+#'   linters = expect_null_linter()
+#' )
+#'
 #' @evalRd rd_tags("expect_null_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -15,15 +39,19 @@ expect_null_linter <- function() {
   # two cases two match:
   #  (1) expect_{equal,identical}(x, NULL) (or NULL, x)
   #  (2) expect_true(is.null(x))
-  xpath <- "//expr[
-    (
-      SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
-      and following-sibling::expr[position() <= 2 and NULL_CONST]
-    ) or (
-      SYMBOL_FUNCTION_CALL[text() = 'expect_true']
-      and following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.null']]]
-    )
-  ]"
+  expect_equal_identical_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
+    /parent::expr
+    /following-sibling::expr[position() <= 2 and NULL_CONST]
+    /parent::expr
+  "
+  expect_true_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
+    /parent::expr
+    /following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.null']]
+    /parent::expr
+  "
+  xpath <- paste(expect_equal_identical_xpath, "|", expect_true_xpath)
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -34,7 +62,7 @@ expect_null_linter <- function() {
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    matched_function <- xp_call_name(bad_expr, depth = 0L)
+    matched_function <- xp_call_name(bad_expr)
     msg <- ifelse(
       matched_function %in% c("expect_equal", "expect_identical"),
       sprintf("expect_null(x) is better than %s(x, NULL)", matched_function),

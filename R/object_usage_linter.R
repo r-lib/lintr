@@ -1,15 +1,35 @@
 #' Object usage linter
 #'
 #' Check that closures have the proper usage using [codetools::checkUsage()].
-#' Note that this runs [base::eval()] on the code, so do not use with untrusted code.
+#' Note that this runs [base::eval()] on the code, so **do not use with untrusted code**.
 #'
-#' @param interpret_glue If TRUE, interpret [glue::glue()] calls to avoid false positives caused by local variables
+#' @param interpret_glue If `TRUE`, interpret [glue::glue()] calls to avoid false positives caused by local variables
 #' which are only used in a glue expression.
+#' @param skip_with A logical. If `TRUE` (default), code in `with()` expressions
+#'   will be skipped. This argument will be passed to `skipWith` argument of
+#'   `codetools::checkUsage()`.
 #'
-#' @evalRd rd_tags("object_usage_linter")
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "foo <- function() { x <- 1 }",
+#'   linters = object_usage_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "foo <- function(x) { x <- 1 }",
+#'   linters = object_usage_linter()
+#' )
+#'
+#' lint(
+#'   text = "foo <- function() { x <- 1; return(x) }",
+#'   linters = object_usage_linter()
+#' )
+#' @evalRd rd_linters("package_development")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-object_usage_linter <- function(interpret_glue = TRUE) {
+object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
   # NB: difference across R versions in how EQ_ASSIGN is represented in the AST
   #   (under <expr_or_assign_or_help> or <equal_assign>)
   # NB: the repeated expr[2][FUNCTION] XPath has no performance impact, so the different direct assignment XPaths are
@@ -21,8 +41,8 @@ object_usage_linter <- function(interpret_glue = TRUE) {
     "expr_or_assign_or_help[EQ_ASSIGN]/expr[2][FUNCTION]",
     "equal_assign[EQ_ASSIGN]/expr[2][FUNCTION]",
     # assign() and setMethod() assignments
-    "//expr[expr[1][SYMBOL_FUNCTION_CALL[text() = 'assign']]]/expr[3][FUNCTION]",
-    "//expr[expr[1][SYMBOL_FUNCTION_CALL[text() = 'setMethod']]]/expr[4][FUNCTION]",
+    "//SYMBOL_FUNCTION_CALL[text() = 'assign']/parent::expr/following-sibling::expr[2][FUNCTION]",
+    "//SYMBOL_FUNCTION_CALL[text() = 'setMethod']/parent::expr/following-sibling::expr[3][FUNCTION]",
     sep = " | "
   )
 
@@ -69,7 +89,8 @@ object_usage_linter <- function(interpret_glue = TRUE) {
         fun,
         known_used_symbols = known_used_symbols,
         declared_globals = declared_globals,
-        start_line = as.integer(xml2::xml_attr(fun_assignment, "line1"))
+        start_line = as.integer(xml2::xml_attr(fun_assignment, "line1")),
+        skip_with = skip_with
       )
 
       # TODO handle assignment functions properly
@@ -78,10 +99,15 @@ object_usage_linter <- function(interpret_glue = TRUE) {
 
       lintable_symbols <- xml2::xml_find_all(
         fun_assignment,
-        "descendant::SYMBOL | descendant::SYMBOL_FUNCTION_CALL"
+        "
+        descendant::SYMBOL
+        | descendant::SYMBOL_FUNCTION_CALL
+        | descendant::SPECIAL
+        | descendant::LEFT_ASSIGN[text() = ':=']
+        "
       )
 
-      lintable_symbol_names <- gsub("^`|`$", "", get_r_string(lintable_symbols))
+      lintable_symbol_names <- gsub("^`|`$", "", xml2::xml_text(lintable_symbols))
       lintable_symbol_lines <- as.integer(xml2::xml_attr(lintable_symbols, "line1"))
 
       matched_symbol <- vapply(
@@ -146,35 +172,52 @@ extract_glued_symbols <- function(expr) {
     )
   )
 
-  if (length(glue_calls) == 0L) return(character())
-  glued_symbols <- new.env(parent = emptyenv())
-  for (cl in glue_calls) {
-    parsed_cl <- tryCatch(
-      parse(text = xml2::xml_text(cl)),
-      error = function(...) NULL,
-      warning = function(...) NULL
-    )[[1L]]
-    if (is.null(parsed_cl)) next
-    parsed_cl[[".transformer"]] <- function(text, envir) {
-      parsed_text <- tryCatch(
-        parse(text = text, keep.source = TRUE),
-        error = function(...) NULL,
-        warning = function(...) NULL
-      )
-      parsed_xml <- safe_parse_to_xml(parsed_text)
-      # covers NULL & NA cases
-      if (length(parsed_xml) == 0L) {
-        return("")
-      }
-      symbols <- xml2::xml_text(xml2::xml_find_all(parsed_xml, "//SYMBOL"))
-      for (sym in symbols) {
-        assign(sym, NULL, envir = glued_symbols)
-      }
-      ""
-    }
-    eval(parsed_cl)
+  if (length(glue_calls) == 0L) {
+    return(character())
   }
-  ls(envir = glued_symbols, all.names = TRUE)
+
+  unexpected_error <- function(cond) {
+    stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond)) # nocov
+  }
+  glued_symbols <- new.env(parent = emptyenv())
+  for (call_text in xml2::xml_text(glue_calls)) {
+    # TODO(michaelchirico): consider dropping tryCatch() here if we're more confident in our logic
+    parsed_call <- tryCatch(str2lang(call_text), error = unexpected_error, warning = unexpected_error)
+    parsed_call[[".envir"]] <- glued_symbols
+    parsed_call[[".transformer"]] <- symbol_extractor
+    # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint
+    tryCatch(
+      eval(parsed_call),
+      error = function(cond) {
+        warning(
+          "Evaluating glue expression while testing for local variable usage failed: ",
+          conditionMessage(cond),
+          call. = FALSE
+        )
+        NULL
+      }
+    )
+  }
+  names(glued_symbols)
+}
+
+symbol_extractor <- function(text, envir, data) {
+  parsed_text <- tryCatch(
+    parse(text = text, keep.source = TRUE),
+    error = function(...) NULL,
+    warning = function(...) NULL
+  )
+  if (length(parsed_text) == 0L) {
+    return("")
+  }
+  parse_data <- utils::getParseData(parsed_text)
+
+  # strip backticked symbols; `x` is the same as x.
+  symbols <- gsub("^`(.*)`$", "\\1", parse_data$text[parse_data$token == "SYMBOL"])
+  for (sym in symbols) {
+    assign(sym, NULL, envir = envir)
+  }
+  ""
 }
 
 get_assignment_symbols <- function(xml) {
@@ -189,25 +232,35 @@ get_assignment_symbols <- function(xml) {
   ))
 }
 
-parse_check_usage <- function(expression, known_used_symbols = character(), declared_globals = character(),
-                              start_line = 1L) {
-
+parse_check_usage <- function(expression,
+                              known_used_symbols = character(),
+                              declared_globals = character(),
+                              start_line = 1L,
+                              skip_with = TRUE) {
   vals <- list()
 
   report <- function(x) {
     vals[[length(vals) + 1L]] <<- x
   }
 
-  try(codetools::checkUsage(
-    expression,
-    report = report,
-    suppressLocalUnused = known_used_symbols,
-    suppressUndefined = declared_globals
-  ))
+  withr::with_options(
+    list(useFancyQuotes = FALSE),
+    code = {
+      try(codetools::checkUsage(
+        expression,
+        report = report,
+        suppressLocalUnused = known_used_symbols,
+        suppressUndefined = declared_globals,
+        skipWith = skip_with
+      ))
+    }
+  )
 
   function_name <- rex(anything, ": ")
-  line_info <- rex(" ", "(", capture(name = "path", non_spaces), ":",
-                   capture(name = "line1", digits), maybe("-", capture(name = "line2", digits)), ")")
+  line_info <- rex(
+    " ", "(", capture(name = "path", non_spaces), ":",
+    capture(name = "line1", digits), maybe("-", capture(name = "line2", digits)), ")"
+  )
 
   res <- re_matches(
     vals,
@@ -253,20 +306,19 @@ parse_check_usage <- function(expression, known_used_symbols = character(), decl
 }
 
 get_imported_symbols <- function(xml) {
-  import_exprs <- xml2::xml_find_all(
-    xml,
-    "//expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']]
-      and
-      (
-        not(SYMBOL_SUB[
-          text() = 'character.only' and
-          following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-        ]) or
-        expr[2][STR_CONST]
-      )
-    ]/expr[STR_CONST|SYMBOL][1]"
-  )
+  import_exprs_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
+  /parent::expr
+  /parent::expr[
+    not(SYMBOL_SUB[
+      text() = 'character.only' and
+      following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+    ])
+    or expr[2][STR_CONST]
+  ]
+  /expr[STR_CONST or SYMBOL][1]
+  "
+  import_exprs <- xml2::xml_find_all(xml, import_exprs_xpath)
   if (length(import_exprs) == 0L) {
     return(character())
   }

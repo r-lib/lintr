@@ -14,9 +14,9 @@ clear_ci_info <- function() {
 test_that("it detects CI environments", {
   clear_ci_info()
   Sys.setenv(TRAVIS_REPO_SLUG = "foo/bar")
-  expect_true(in_ci())
+  expect_true(lintr:::in_ci())
   Sys.setenv(TRAVIS_REPO_SLUG = "")
-  expect_false(in_ci())
+  expect_false(lintr:::in_ci())
 })
 
 test_that("it returns NULL if GIT_URL is not on github", {
@@ -26,7 +26,13 @@ test_that("it returns NULL if GIT_URL is not on github", {
     GIT_URL = "https://example.com/user/repo.git",
     CHANGE_ID = "123"
   )
-  expect_false(in_ci())
+  expect_false(lintr:::in_ci())
+})
+
+
+test_that("it returns NULL for Jenkins PR build info when git URL is missing", {
+  clear_ci_info()
+  expect_null(lintr:::jenkins_build_info())
 })
 
 test_that("it determines Jenkins PR build info", {
@@ -36,9 +42,9 @@ test_that("it determines Jenkins PR build info", {
     GIT_URL = "https://github.com/user/repo.git",
     CHANGE_ID = "123"
   )
-  expect_true(in_ci())
+  expect_true(lintr:::in_ci())
 
-  expect_equal(ci_build_info(), list(
+  expect_identical(lintr:::ci_build_info(), list(
     user = "user",
     repo = "repo",
     pull = "123",
@@ -46,7 +52,7 @@ test_that("it determines Jenkins PR build info", {
   ))
 
   Sys.unsetenv(c("JENKINS_URL", "GIT_URL", "CHANGE_ID"))
-  expect_false(in_ci())
+  expect_false(lintr:::in_ci())
 })
 
 test_that("it determines Jenkins commit build info", {
@@ -57,8 +63,8 @@ test_that("it determines Jenkins commit build info", {
     GIT_COMMIT = "abcde"
   )
 
-  expect_true(in_ci())
-  expect_equal(ci_build_info(), list(
+  expect_true(lintr:::in_ci())
+  expect_identical(lintr:::ci_build_info(), list(
     user = "user",
     repo = "repo",
     pull = NULL,

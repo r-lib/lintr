@@ -18,12 +18,12 @@ test_that("it returns markers which match lints", {
   lint1[[1L]]$linter <- "linter_name"
 
   marker1 <- rstudio_source_markers(lint1)
-  expect_equal(marker1$name, "lintr")
-  expect_equal(marker1$markers[[1L]]$type, lint1[[1L]]$type)
-  expect_equal(marker1$markers[[1L]]$file, lint1[[1L]]$filename)
-  expect_equal(marker1$markers[[1L]]$line, lint1[[1L]]$line_number)
-  expect_equal(marker1$markers[[1L]]$column, lint1[[1L]]$column_number)
-  expect_equal(marker1$markers[[1L]]$message, paste0("[", lint1[[1L]]$linter, "] ", lint1[[1L]]$message))
+  expect_identical(marker1$name, "lintr")
+  expect_identical(marker1$markers[[1L]]$type, lint1[[1L]]$type)
+  expect_identical(marker1$markers[[1L]]$file, lint1[[1L]]$filename)
+  expect_identical(marker1$markers[[1L]]$line, lint1[[1L]]$line_number)
+  expect_identical(marker1$markers[[1L]]$column, lint1[[1L]]$column_number)
+  expect_identical(marker1$markers[[1L]]$message, paste0("[", lint1[[1L]]$linter, "] ", lint1[[1L]]$message))
 
   lint2 <- structure(
     list(
@@ -48,12 +48,12 @@ test_that("it returns markers which match lints", {
   lint2[[1L]]$linter <- "linter_name"
   lint2[[2L]]$linter <- "linter_name"
   marker2 <- rstudio_source_markers(lint2)
-  expect_equal(marker2$name, "lintr")
-  expect_equal(marker2$markers[[1L]]$type, lint2[[1L]]$type)
-  expect_equal(marker2$markers[[1L]]$file, lint2[[1L]]$filename)
-  expect_equal(marker2$markers[[1L]]$line, lint2[[1L]]$line_number)
-  expect_equal(marker2$markers[[1L]]$column, lint2[[1L]]$column_number)
-  expect_equal(marker2$markers[[1L]]$message, paste0("[", lint2[[1L]]$linter, "] ", lint2[[1L]]$message))
+  expect_identical(marker2$name, "lintr")
+  expect_identical(marker2$markers[[1L]]$type, lint2[[1L]]$type)
+  expect_identical(marker2$markers[[1L]]$file, lint2[[1L]]$filename)
+  expect_identical(marker2$markers[[1L]]$line, lint2[[1L]]$line_number)
+  expect_identical(marker2$markers[[1L]]$column, lint2[[1L]]$column_number)
+  expect_identical(marker2$markers[[1L]]$message, paste0("[", lint2[[1L]]$linter, "] ", lint2[[1L]]$message))
 })
 
 test_that("it prepends the package path if it exists", {
@@ -76,13 +76,13 @@ test_that("it prepends the package path if it exists", {
   )
   lint3[[1L]]$linter <- "linter_name"
   marker3 <- rstudio_source_markers(lint3)
-  expect_equal(marker3$name, "lintr")
-  expect_equal(marker3$basePath, "test")
-  expect_equal(marker3$markers[[1L]]$type, lint3[[1L]]$type)
-  expect_equal(marker3$markers[[1L]]$file, file.path("test", lint3[[1L]]$filename))
-  expect_equal(marker3$markers[[1L]]$line, lint3[[1L]]$line_number)
-  expect_equal(marker3$markers[[1L]]$column, lint3[[1L]]$column_number)
-  expect_equal(marker3$markers[[1L]]$message, paste0("[", lint3[[1L]]$linter, "] ", lint3[[1L]]$message))
+  expect_identical(marker3$name, "lintr")
+  expect_identical(marker3$basePath, "test")
+  expect_identical(marker3$markers[[1L]]$type, lint3[[1L]]$type)
+  expect_identical(marker3$markers[[1L]]$file, file.path("test", lint3[[1L]]$filename))
+  expect_identical(marker3$markers[[1L]]$line, lint3[[1L]]$line_number)
+  expect_identical(marker3$markers[[1L]]$column, lint3[[1L]]$column_number)
+  expect_identical(marker3$markers[[1L]]$message, paste0("[", lint3[[1L]]$linter, "] ", lint3[[1L]]$message))
 })
 
 test_that("it returns an empty list of markers if there are no lints", {
@@ -94,17 +94,15 @@ test_that("it returns an empty list of markers if there are no lints", {
     class = "lints"
   )
   marker4 <- rstudio_source_markers(lint4)
-  expect_equal(marker4$name, "lintr")
-  expect_equal(marker4$markers, list())
+  expect_identical(marker4$name, "lintr")
+  expect_identical(marker4$markers, list())
 })
 
 test_that("rstudio_source_markers apply to print within rstudio", {
   withr::local_options(lintr.rstudio_source_markers = TRUE)
-  # TODO(@michaelchirico): Recent (as of this writing) withr v2.5.0 supports local_tempfile(lines = l) to simplify this
-  tmp <- withr::local_tempfile()
-  writeLines("1:ncol(x)", tmp)
-  empty <- withr::local_tempfile()
-  file.create(empty)
+
+  tmp <- withr::local_tempfile(lines = "1:ncol(x)")
+  empty <- withr::local_tempfile(lines = character(0L))
 
   mockery::stub(print.lints, "rstudioapi::hasFun", function(x, ...) TRUE)
   mockery::stub(print.lints, "rstudio_source_markers", function(x) cat("matched\n"))

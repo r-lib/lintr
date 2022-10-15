@@ -2,7 +2,7 @@
 % Please edit documentation in R/class_equals_linter.R
 \name{class_equals_linter}
 \alias{class_equals_linter}
-\title{Block comparison of class with ==}
+\title{Block comparison of class with \code{==}}
 \usage{
 class_equals_linter()
 }
@@ -13,7 +13,31 @@ is in general a vector. The correct version for S3 classes is \code{\link[=inher
 for example \code{\link[=is.character]{is.character()}} or \code{\link[=is.data.frame]{is.data.frame()}}.
 }
 \details{
-Similar reasoning applies for \code{class(x) \%in\% "character"}
+Similar reasoning applies for \code{class(x) \%in\% "character"}.
+}
+\examples{
+# will produce lints
+lint(
+  text = 'is_lm <- class(x) == "lm"',
+  linters = class_equals_linter()
+)
+
+lint(
+  text = 'if ("lm" \%in\% class(x)) is_lm <- TRUE',
+  linters = class_equals_linter()
+)
+
+# okay
+lint(
+  text = 'is_lm <- inherits(x, "lm")',
+  linters = class_equals_linter()
+)
+
+lint(
+  text = 'if (inherits(x, "lm")) is_lm <- TRUE',
+  linters = class_equals_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

@@ -1,34 +1,29 @@
 on:
   push:
-    branches:
-      - main
-      - master
+    branches: [main, master]
   pull_request:
-    branches:
-      - main
-      - master
+    branches: [main, master]
 
 name: lint
 
 jobs:
   lint:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
 
       - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            any::gh
-            any::purrr
-          needs: check
-
-      - name: Install package
-        run: R CMD INSTALL .
+            r-lib/lintr
+            local::.
+          needs: lint
 
       - name: Lint
         run: lintr::lint_package()

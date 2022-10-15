@@ -2,7 +2,7 @@
 % Please edit documentation in R/conjunct_test_linter.R
 \name{conjunct_test_linter}
 \alias{conjunct_test_linter}
-\title{Force && conditions in expect_true(), expect_false() to be written separately}
+\title{Force \code{&&} conditions in \code{expect_true()} and \code{expect_false()} to be written separately}
 \usage{
 conjunct_test_linter(allow_named_stopifnot = TRUE)
 }
@@ -19,9 +19,38 @@ For readability of test outputs, testing only one thing per call to
 \details{
 Similar reasoning applies to \code{&&} usage inside \code{\link[=stopifnot]{stopifnot()}} and \code{assertthat::assert_that()} calls.
 }
+\examples{
+# will produce lints
+lint(
+  text = "expect_true(x && y)",
+  linters = conjunct_test_linter()
+)
+
+lint(
+  text = "expect_false(x || (y && z))",
+  linters = conjunct_test_linter()
+)
+
+lint(
+  text = "stopifnot('x must be a logical scalar' = length(x) == 1 && is.logical(x) && !is.na(x))",
+  linters = conjunct_test_linter(allow_named_stopifnot = FALSE)
+)
+
+# okay
+lint(
+  text = "expect_true(x || (y && z))",
+  linters = conjunct_test_linter()
+)
+
+lint(
+  text = 'stopifnot("x must be a logical scalar" = length(x) == 1 && is.logical(x) && !is.na(x))',
+  linters = conjunct_test_linter(allow_named_stopifnot = TRUE)
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=package_development_linters]{package_development}, \link[=readability_linters]{readability}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=package_development_linters]{package_development}, \link[=readability_linters]{readability}
 }

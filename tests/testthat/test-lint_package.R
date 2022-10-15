@@ -11,111 +11,111 @@
 # hidden files, but can't be added to RBuildIgnore since they should be
 # available during `R CMD check` tests)
 
-test_that("`lint_package` does not depend on path to pkg - no excluded files", {
+test_that(
+  "`lint_package` does not depend on path to pkg - no excluded files",
+  {
+    withr::local_options(lintr.linter_file = "lintr_test_config")
 
-  withr::local_options(lintr.linter_file = "lintr_test_config")
+    # This dummy package does not have a .lintr file, so no files / lines should
+    # be excluded from analysis
+    pkg_path <- test_path("dummy_packages", "assignmentLinter")
 
-  # This dummy package does not have a .lintr file, so no files / lines should
-  # be excluded from analysis
-  pkg_path <- test_path("dummy_packages", "assignmentLinter")
-
-  expected_lines <- c(
-    # from abc.R
-    "abc = 123",
-    # from jkl.R
-    "jkl = 456",
-    "mno = 789"
-  )
-  read_settings(NULL)
-  lints_from_outside <- lint_package(
-    pkg_path,
-    linters = list(assignment_linter())
-  )
-  lints_from_pkg_root <- withr::with_dir(
-    pkg_path,
-    lint_package(".", linters = list(assignment_linter()), parse_settings = FALSE)
-  )
-  lints_from_a_subdir <- withr::with_dir(
-    file.path(pkg_path, "R"),
-    lint_package("..", linters = list(assignment_linter()), parse_settings = FALSE)
-  )
-
-  expect_equal(
-    as.data.frame(lints_from_outside)[["line"]],
-    expected_lines
-  )
-  expect_equal(
-    as.data.frame(lints_from_outside),
-    as.data.frame(lints_from_pkg_root),
-    info = paste(
-      "lint_package() finds the same lints from pkg-root as from outside a pkg",
-      "(no .lintr config present)"
+    expected_lines <- c(
+      # from abc.R
+      "abc = 123",
+      # from jkl.R
+      "jkl = 456",
+      "mno = 789"
     )
-  )
-  expect_equal(
-    as.data.frame(lints_from_outside),
-    as.data.frame(lints_from_a_subdir),
-    info = paste(
-      "lint_package() finds the same lints from a subdir as from outside a pkg",
-      "(no .lintr config present)"
+    lintr:::read_settings(NULL)
+    lints_from_outside <- lint_package(
+      pkg_path,
+      linters = list(assignment_linter())
     )
-  )
-})
-
-test_that("`lint_package` does not depend on path to pkg - with excluded files", {
-  # Since excluded regions can be specified in two ways
-  # list(
-  #   filename = line_numbers, # approach 1
-  #   filename                 # approach 2
-  # ),
-  # the test checks both approaches
-
-  pkg_path <- test_path("dummy_packages", "assignmentLinter")
-  config_path <- file.path(pkg_path, ".lintr")
-
-  # Add a .lintr that excludes the whole of `abc.R` and the first line of
-  # `jkl.R` (and remove it on finishing this test)
-  cat(
-    "exclusions: list('R/abc.R', 'R/jkl.R' = 1)\n",
-    file = config_path
-  )
-  on.exit(unlink(config_path))
-
-  expected_lines <- "mno = 789"
-  lints_from_outside <- lint_package(
-    pkg_path,
-    linters = list(assignment_linter())
-  )
-  lints_from_pkg_root <- withr::with_dir(
-    pkg_path,
-    lint_package(".", linters = list(assignment_linter()))
-  )
-  lints_from_a_subdir <- withr::with_dir(
-    file.path(pkg_path, "R"),
-    lint_package("..", linters = list(assignment_linter()))
-  )
-
-  expect_equal(
-    as.data.frame(lints_from_outside)[["line"]],
-    expected_lines
-  )
-  expect_equal(
-    as.data.frame(lints_from_outside),
-    as.data.frame(lints_from_pkg_root),
-    info = paste(
-      "lint_package() finds the same lints from pkg-root as from outside a pkg",
-      "(.lintr config present)"
+    lints_from_pkg_root <- withr::with_dir(
+      pkg_path,
+      lint_package(".", linters = list(assignment_linter()), parse_settings = FALSE)
     )
-  )
-  expect_equal(
-    as.data.frame(lints_from_outside),
-    as.data.frame(lints_from_a_subdir),
-    info = paste(
-      "lint_package() finds the same lints from a subdir as from outside a pkg",
-      "(.lintr config present)"
+    lints_from_a_subdir <- withr::with_dir(
+      file.path(pkg_path, "R"),
+      lint_package("..", linters = list(assignment_linter()), parse_settings = FALSE)
     )
-  )
-})
+
+    expect_identical(
+      as.data.frame(lints_from_outside)[["line"]],
+      expected_lines
+    )
+    expect_identical(
+      as.data.frame(lints_from_outside),
+      as.data.frame(lints_from_pkg_root),
+      info = paste(
+        "lint_package() finds the same lints from pkg-root as from outside a pkg",
+        "(no .lintr config present)"
+      )
+    )
+    expect_identical(
+      as.data.frame(lints_from_outside),
+      as.data.frame(lints_from_a_subdir),
+      info = paste(
+        "lint_package() finds the same lints from a subdir as from outside a pkg",
+        "(no .lintr config present)"
+      )
+    )
+  }
+)
+
+test_that(
+  "`lint_package` does not depend on path to pkg - with excluded files",
+  {
+    # Since excluded regions can be specified in two ways
+    # list(
+    #   filename = line_numbers, # approach 1
+    #   filename                 # approach 2
+    # ),
+    # the test checks both approaches
+
+    pkg_path <- test_path("dummy_packages", "assignmentLinter")
+
+    # Add a .lintr that excludes the whole of `abc.R` and the first line of
+    # `jkl.R` (and remove it on finishing this test)
+    local_config(pkg_path, "exclusions: list('R/abc.R', 'R/jkl.R' = 1)")
+
+    expected_lines <- "mno = 789"
+    lints_from_outside <- lint_package(
+      pkg_path,
+      linters = list(assignment_linter())
+    )
+    lints_from_pkg_root <- withr::with_dir(
+      pkg_path,
+      lint_package(".", linters = list(assignment_linter()))
+    )
+    lints_from_a_subdir <- withr::with_dir(
+      file.path(pkg_path, "R"),
+      lint_package("..", linters = list(assignment_linter()))
+    )
+
+    expect_identical(
+      as.data.frame(lints_from_outside)[["line"]],
+      expected_lines
+    )
+    expect_identical(
+      as.data.frame(lints_from_outside),
+      as.data.frame(lints_from_pkg_root),
+      info = paste(
+        "lint_package() finds the same lints from pkg-root as from outside a pkg",
+        "(.lintr config present)"
+      )
+    )
+    expect_identical(
+      as.data.frame(lints_from_outside),
+      as.data.frame(lints_from_a_subdir),
+      info = paste(
+        "lint_package() finds the same lints from a subdir as from outside a pkg",
+        "(.lintr config present)"
+      )
+    )
+  }
+)
 
 test_that("lint_package returns early if no package is found", {
   temp_pkg <- withr::local_tempdir("dir")
