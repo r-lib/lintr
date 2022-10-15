@@ -54,9 +54,7 @@ duplicate_argument_linter <- function(except = c("mutate", "transmute")) {
       calls <- calls[!(calls_text %in% except)]
     }
 
-    all_arg_nodes <- lapply(calls, function(call_node) {
-      xml2::xml_find_all(call_node, xpath_arg_name)
-    })
+    all_arg_nodes <- lapply(calls, xml2::xml_find_all, xpath_arg_name)
     arg_names <- lapply(all_arg_nodes, get_r_string)
     is_duplicated <- lapply(arg_names, duplicated)
 

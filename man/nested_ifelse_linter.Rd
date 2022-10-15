@@ -23,6 +23,25 @@ CASE WHEN statements, such as \code{data.table::fcase()} or \code{dplyr::case_wh
 or use a look-up-and-merge approach (build a mapping table between values
 and outputs and merge this to the input).
 }
+\examples{
+# will produce lints
+lint(
+  text = 'ifelse(x == "a", 1L, ifelse(x == "b", 2L, 3L))',
+  linters = nested_ifelse_linter()
+)
+
+# okay
+lint(
+  text = 'dplyr::case_when(x == "a" ~ 1L, x == "b" ~ 2L, TRUE ~ 3L)',
+  linters = nested_ifelse_linter()
+)
+
+lint(
+  text = 'data.table::fcase(x == "a", 1L, x == "b", 2L, default = 3L)',
+  linters = nested_ifelse_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

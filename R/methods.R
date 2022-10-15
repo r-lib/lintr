@@ -1,15 +1,23 @@
 #' @export
 print.lint <- function(x, ...) {
-  color <- switch(x$type,
-    "warning" = crayon::magenta,
-    "error" = crayon::red,
-    "style" = crayon::blue,
-    crayon::bold
-  )
+  if (requireNamespace("crayon", quietly = TRUE)) {
+    color <- switch(x$type,
+      warning = crayon::magenta,
+      error = crayon::red,
+      style = crayon::blue,
+      crayon::bold
+    )
+    emph <- crayon::bold
+  } else {
+    # nocov start
+    color <- identity
+    emph <- identity
+    # nocov end
+  }
 
   cat(
     sep = "",
-    crayon::bold(
+    emph(
       x$filename, ":",
       as.character(x$line_number), ":",
       as.character(x$column_number), ": ",
@@ -17,7 +25,7 @@ print.lint <- function(x, ...) {
     ),
     color(x$type, ": ", sep = ""),
     "[", x$linter, "] ",
-    crayon::bold(x$message), "\n",
+    emph(x$message), "\n",
     # swap tabs for spaces for #528 (sorry Richard Hendricks)
     chartr("\t", " ", x$line), "\n",
     highlight_string(x$message, x$column_number, x$ranges),
@@ -146,8 +154,8 @@ split.lints <- function(x, f = NULL, ...) {
 as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) { # nolint: object_name. (row.names, #764)
   data.frame(
     filename = vapply(x, `[[`, character(1L), "filename"),
-    line_number = vapply(x, `[[`, numeric(1L), "line_number"),
-    column_number = vapply(x, `[[`, numeric(1L), "column_number"),
+    line_number = vapply(x, `[[`, integer(1L), "line_number"),
+    column_number = vapply(x, `[[`, integer(1L), "column_number"),
     type = vapply(x, `[[`, character(1L), "type"),
     message = vapply(x, `[[`, character(1L), "message"),
     line = vapply(x, `[[`, character(1L), "line"),

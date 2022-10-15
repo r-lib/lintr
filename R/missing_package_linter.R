@@ -1,6 +1,19 @@
 #' Missing package linter
 #'
-#' Check for missing packages in `library()`, `require()`, `loadNamespace()` and `requireNamespace()` calls.
+#' Check for missing packages in `library()`, `require()`, `loadNamespace()`, and `requireNamespace()` calls.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "library(xyzxyz)",
+#'   linters = missing_package_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "library(stats)",
+#'   linters = missing_package_linter()
+#' )
 #'
 #' @evalRd rd_tags("missing_package_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.

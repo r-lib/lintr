@@ -33,7 +33,7 @@ For lists, however, the reverse is true.
 \examples{
 # will produce lints
 lint(
-  text = "iris['Species']",
+  text = 'iris["Species"]',
   linters = extraction_operator_linter()
 )
 
@@ -44,7 +44,7 @@ lint(
 
 # okay
 lint(
-  text = "iris[['Species']]",
+  text = 'iris[["Species"]]',
   linters = extraction_operator_linter()
 )
 

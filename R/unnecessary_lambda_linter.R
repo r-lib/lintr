@@ -19,7 +19,7 @@ unnecessary_lambda_linter <- function() {
   #   call is using positional or keyword arguments -- we can
   #   throw a lint for sweep() lambdas where the following arguments
   #   are all named) but for now it seems like overkill.
-  apply_funs <- xp_text_in_table(c(
+  apply_funs <- xp_text_in_table(c( # nolint: object_usage_linter. Used in glue call below.
     "lapply", "sapply", "vapply", "apply",
     "tapply", "rapply", "eapply", "dendrapply",
     "mapply", "by", "outer",
@@ -36,18 +36,23 @@ unnecessary_lambda_linter <- function() {
   #     c. that call's _first_ argument is just the function argument (a SYMBOL)
   #       - and it has to be passed positionally (not as a keyword)
   #     d. the function argument doesn't appear elsewhere in the call
-  # TODO(#1567): This misses some common cases, e.g. function(x) { foo(x) }
-  default_fun_xpath <- glue::glue("
+  # TODO(#1703): handle explicit returns too: function(x) return(x)
+  default_fun_xpath_fmt <- "
   //SYMBOL_FUNCTION_CALL[ {apply_funs} ]
     /parent::expr
     /following-sibling::expr[
       FUNCTION
       and count(SYMBOL_FORMALS) = 1
-      and expr/OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[2][self::SYMBOL_SUB])]/SYMBOL
-      and SYMBOL_FORMALS/text() = expr/OP-LEFT-PAREN/following-sibling::expr[1]/SYMBOL/text()
-      and not(SYMBOL_FORMALS/text() = expr/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//SYMBOL/text())
+      and {paren_path}/OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[1][self::EQ_SUB])]/SYMBOL
+      and SYMBOL_FORMALS = {paren_path}/OP-LEFT-PAREN/following-sibling::expr[1]/SYMBOL
+      and not(SYMBOL_FORMALS = {paren_path}/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//SYMBOL)
     ]
-  ")
+  "
+  default_fun_xpath <- paste(
+    sep = "|",
+    glue::glue(default_fun_xpath_fmt, paren_path = "expr"),
+    glue::glue(default_fun_xpath_fmt, paren_path = "expr[OP-LEFT-BRACE and count(expr) = 1]/expr[1]")
+  )
 
   # purrr-style inline formulas-as-functions, e.g. ~foo(.x)
   # logic is basically the same as that above, except we need
@@ -67,7 +72,7 @@ unnecessary_lambda_linter <- function() {
   # path to calling function symbol from the matched expressions
   fun_xpath <- "./parent::expr/expr/SYMBOL_FUNCTION_CALL"
   # path to the symbol of the simpler function that avoids a lambda
-  symbol_xpath <- "expr/expr[SYMBOL_FUNCTION_CALL]"
+  symbol_xpath <- glue::glue("(expr|expr[OP-LEFT-BRACE]/expr[1])/expr[SYMBOL_FUNCTION_CALL]")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

@@ -32,28 +32,28 @@ test_that("fixed_regex_linter skips allowed usages", {
 
 test_that("fixed_regex_linter blocks simple disallowed usages", {
   linter <- fixed_regex_linter()
-  msg <- rex::rex("This regular expression is static")
+  lint_msg <- rex::rex("This regular expression is static")
 
-  expect_lint("gsub('\\\\.', '', x)", msg, linter)
-  expect_lint("grepl('abcdefg', x)", msg, linter)
-  expect_lint("gregexpr('a-z', y)", msg, linter)
-  expect_lint("regexec('\\\\$', x)", msg, linter)
-  expect_lint("grep('\n', x)", msg, linter)
-  expect_lint("grep('\\\\;', x)", msg, linter)
+  expect_lint("gsub('\\\\.', '', x)", lint_msg, linter)
+  expect_lint("grepl('abcdefg', x)", lint_msg, linter)
+  expect_lint("gregexpr('a-z', y)", lint_msg, linter)
+  expect_lint("regexec('\\\\$', x)", lint_msg, linter)
+  expect_lint("grep('\n', x)", lint_msg, linter)
+  expect_lint("grep('\\\\;', x)", lint_msg, linter)
 
   # naming the argument doesn't matter (if it's still used positionally)
-  expect_lint("gregexpr(pattern = 'a-z', y)", msg, linter)
+  expect_lint("gregexpr(pattern = 'a-z', y)", lint_msg, linter)
 })
 
 test_that("fixed_regex_linter catches regex like [.] or [$]", {
   linter <- fixed_regex_linter()
-  msg <- rex::rex("This regular expression is static")
+  lint_msg <- rex::rex("This regular expression is static")
 
-  expect_lint("grep('[.]', x)", msg, linter)
-  expect_lint("grepl('a[*]b', x)", msg, linter)
+  expect_lint("grep('[.]', x)", lint_msg, linter)
+  expect_lint("grepl('a[*]b', x)", lint_msg, linter)
 
   # also catch char classes for [ and ]
-  expect_lint("gregexpr('[]]', x)", msg, linter)
+  expect_lint("gregexpr('[]]', x)", lint_msg, linter)
 })
 
 test_that("fixed_regex_linter catches null calls to strsplit as well", {
@@ -75,20 +75,20 @@ test_that("fixed_regex_linter catches null calls to strsplit as well", {
 
 test_that("fixed_regex_linter catches calls to strsplit as well", {
   linter <- fixed_regex_linter()
-  msg <- rex::rex("This regular expression is static")
+  lint_msg <- rex::rex("This regular expression is static")
 
-  expect_lint("strsplit('a;b', '\\\\;')", msg, linter)
-  expect_lint("strsplit(x, '\\\\.')", msg, linter)
-  expect_lint("tstrsplit(x, 'abcdefg')", msg, linter)
-  expect_lint("strsplit(x, '[.]')", msg, linter)
+  expect_lint("strsplit('a;b', '\\\\;')", lint_msg, linter)
+  expect_lint("strsplit(x, '\\\\.')", lint_msg, linter)
+  expect_lint("tstrsplit(x, 'abcdefg')", lint_msg, linter)
+  expect_lint("strsplit(x, '[.]')", lint_msg, linter)
 })
 
 test_that("fixed_regex_linter is more exact about distinguishing \\s from \\:", {
   linter <- fixed_regex_linter()
-  msg <- rex::rex("This regular expression is static")
+  lint_msg <- rex::rex("This regular expression is static")
 
   expect_lint("grep('\\\\s', '', x)", NULL, linter)
-  expect_lint("grep('\\\\:', '', x)", msg, linter)
+  expect_lint("grep('\\\\:', '', x)", lint_msg, linter)
 })
 
 ## tests for stringr functions
@@ -111,31 +111,31 @@ test_that("fixed_regex_linter skips allowed stringr usages", {
 
 test_that("fixed_regex_linter blocks simple disallowed usages of stringr functions", {
   linter <- fixed_regex_linter()
-  msg <- rex::rex("This regular expression is static")
+  lint_msg <- rex::rex("This regular expression is static")
 
-  expect_lint("str_replace_all(x, '\\\\.', '')", msg, linter)
-  expect_lint("str_detect(x, 'abcdefg')", msg, linter)
-  expect_lint("str_locate(y, 'a-z')", msg, linter)
-  expect_lint("str_subset(x, '\\\\$')", msg, linter)
-  expect_lint("str_which(x, '\n')", msg, linter)
+  expect_lint("str_replace_all(x, '\\\\.', '')", lint_msg, linter)
+  expect_lint("str_detect(x, 'abcdefg')", lint_msg, linter)
+  expect_lint("str_locate(y, 'a-z')", lint_msg, linter)
+  expect_lint("str_subset(x, '\\\\$')", lint_msg, linter)
+  expect_lint("str_which(x, '\n')", lint_msg, linter)
 
   # named, positional arguments are still caught
-  expect_lint("str_locate(y, pattern = 'a-z')", msg, linter)
+  expect_lint("str_locate(y, pattern = 'a-z')", lint_msg, linter)
   # nor do other named arguments throw things off
-  expect_lint("str_starts(x, '\\\\.', negate = TRUE)", msg, linter)
+  expect_lint("str_starts(x, '\\\\.', negate = TRUE)", lint_msg, linter)
 })
 
 test_that("fixed_regex_linter catches calls to str_split as well", {
   linter <- fixed_regex_linter()
-  msg <- rex::rex("This regular expression is static")
+  lint_msg <- rex::rex("This regular expression is static")
 
   expect_lint("str_split(x, '^x')", NULL, linter)
   expect_lint("str_split(x, fmt)", NULL, linter)
 
   # if fixed() is already set, regex patterns don't matter
   expect_lint("str_split(x, fixed('\\\\.'))", NULL, linter)
-  expect_lint("str_split(x, '\\\\.')", msg, linter)
-  expect_lint("str_split(x, '[.]')", msg, linter)
+  expect_lint("str_split(x, '\\\\.')", lint_msg, linter)
+  expect_lint("str_split(x, '[.]')", lint_msg, linter)
 })
 
 test_that("str_replace_all's multi-replacement version is handled", {
@@ -150,41 +150,41 @@ test_that("str_replace_all's multi-replacement version is handled", {
 
 test_that("1- or 2-width octal escape sequences are handled", {
   linter <- fixed_regex_linter()
-  msg <- rex::rex("This regular expression is static")
+  lint_msg <- rex::rex("This regular expression is static")
 
-  expect_lint('strsplit(x, "\\1")', msg, linter)
+  expect_lint('strsplit(x, "\\1")', lint_msg, linter)
 })
 
 test_that("one-character character classes with escaped characters are caught", {
   linter <- fixed_regex_linter()
-  msg <- rex::rex("This regular expression is static")
+  lint_msg <- rex::rex("This regular expression is static")
 
-  expect_lint("gsub('[\\n]', '', x)", msg, linter)
-  expect_lint("gsub('[\\\"]', '', x)", msg, linter)
-  expect_lint("str_split(x, '[\\1]')", msg, linter)
-  expect_lint("str_split(x, '[\\12]')", msg, linter)
-  expect_lint("str_split(x, '[\\123]')", msg, linter)
-  expect_lint("str_split(x, '[\\xa]')", msg, linter)
-  expect_lint("str_split(x, '[\\x32]')", msg, linter)
-  expect_lint("str_split(x, '[\\uF]')", msg, linter)
-  expect_lint("str_split(x, '[\\u01]')", msg, linter)
-  expect_lint("str_split(x, '[\\u012]')", msg, linter)
-  expect_lint("str_split(x, '[\\u0123]')", msg, linter)
-  expect_lint("str_split(x, '[\\U8]')", msg, linter)
-  expect_lint("str_split(x, '[\\U1d4d7]')", msg, linter)
-  expect_lint("str_split(x, '[\\u{1}]')", msg, linter)
-  expect_lint("str_split(x, '[\\U{F7D5}]')", msg, linter)
-  expect_lint("str_split(x, '[\\U{1D4D7}]')", msg, linter)
-  expect_lint('gsub("\\\\<", "x", x, perl = TRUE)', msg, linter)
+  expect_lint("gsub('[\\n]', '', x)", lint_msg, linter)
+  expect_lint("gsub('[\\\"]', '', x)", lint_msg, linter)
+  expect_lint("str_split(x, '[\\1]')", lint_msg, linter)
+  expect_lint("str_split(x, '[\\12]')", lint_msg, linter)
+  expect_lint("str_split(x, '[\\123]')", lint_msg, linter)
+  expect_lint("str_split(x, '[\\xa]')", lint_msg, linter)
+  expect_lint("str_split(x, '[\\x32]')", lint_msg, linter)
+  expect_lint("str_split(x, '[\\uF]')", lint_msg, linter)
+  expect_lint("str_split(x, '[\\u01]')", lint_msg, linter)
+  expect_lint("str_split(x, '[\\u012]')", lint_msg, linter)
+  expect_lint("str_split(x, '[\\u0123]')", lint_msg, linter)
+  expect_lint("str_split(x, '[\\U8]')", lint_msg, linter)
+  expect_lint("str_split(x, '[\\U1d4d7]')", lint_msg, linter)
+  expect_lint("str_split(x, '[\\u{1}]')", lint_msg, linter)
+  expect_lint("str_split(x, '[\\U{F7D5}]')", lint_msg, linter)
+  expect_lint("str_split(x, '[\\U{1D4D7}]')", lint_msg, linter)
+  expect_lint('gsub("\\\\<", "x", x, perl = TRUE)', lint_msg, linter)
 })
 
 test_that("bracketed unicode escapes are caught", {
   linter <- fixed_regex_linter()
-  msg <- rex::rex("This regular expression is static")
+  lint_msg <- rex::rex("This regular expression is static")
 
-  expect_lint('gsub("\\u{A0}", " ", out, useBytes = TRUE)', msg, linter)
-  expect_lint('gsub("abc\\U{A0DEF}ghi", " ", out, useBytes = TRUE)', msg, linter)
-  expect_lint('gsub("\\u{A0}\\U{0001d4d7}", " ", out, useBytes = TRUE)', msg, linter)
+  expect_lint('gsub("\\u{A0}", " ", out, useBytes = TRUE)', lint_msg, linter)
+  expect_lint('gsub("abc\\U{A0DEF}ghi", " ", out, useBytes = TRUE)', lint_msg, linter)
+  expect_lint('gsub("\\u{A0}\\U{0001d4d7}", " ", out, useBytes = TRUE)', lint_msg, linter)
 })
 
 test_that("escaped characters are handled correctly", {
@@ -252,7 +252,7 @@ test_that("fixed replacement is correct with UTF-8", {
 #   up in practice is for '\<', which is a special character in default
 #   regex but not in PCRE. Empirically relevant for HTML-related regex e.g. \\<li\\>
 
-skip_if_not_installed("patrick")
+# styler: off
 patrick::with_parameters_test_that("fixed replacements are correct", {
   skip_if(
     regex_expr %in% c("abc\\U{A0DEF}ghi", "[\\U1d4d7]", "[\\U{1D4D7}]", "\\u{A0}\\U{0001d4d7}") &&
@@ -309,3 +309,4 @@ patrick::with_parameters_test_that("fixed replacements are correct", {
   "[\\x32]", "[\\x32]", "2",
   "[\\xa]", "[\\xa]", "\\n"
 ))
+# styler: on

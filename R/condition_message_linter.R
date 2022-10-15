@@ -12,28 +12,28 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "stop(paste('a string', 'another'))",
+#'   text = 'stop(paste("a string", "another")"',
 #'   linters = condition_message_linter()
 #' )
 #'
 #' lint(
-#'   text = "warning(paste0('a string', ' another'))",
+#'   text = 'warning(paste0("a string", " another")',
 #'   linters = condition_message_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "stop('a string', ' another')",
+#'   text = 'stop("a string", " another")',
 #'   linters = condition_message_linter()
 #' )
 #'
 #' lint(
-#'   text = "warning('a string', ' another')",
+#'   text = 'warning("a string", " another")',
 #'   linters = condition_message_linter()
 #' )
 #'
 #' lint(
-#'   text = "warning(paste('a string', 'another', sep = '-'))",
+#'   text = 'warning(paste("a string", "another", sep = "-"))',
 #'   linters = condition_message_linter()
 #' )
 #'

@@ -1,3 +1,4 @@
+# styler: off
 test_that("styles are correctly identified", {
   do_style_check <- function(nms) lapply(unname(style_regexes), check_style, nms = nms)
 
@@ -35,6 +36,7 @@ test_that("styles are correctly identified", {
   expect_identical(do_style_check("."),             list(TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
   expect_identical(do_style_check("%^%"),           list(TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
 })
+# styler: on
 
 test_that("linter ignores some objects", {
   # names for which style check is ignored
@@ -52,21 +54,23 @@ test_that("linter ignores some objects", {
 })
 
 test_that("linter returns correct linting", {
-  msg <- "Variable and function name style should be camelCase."
+  lint_msg <- "Variable and function name style should be camelCase."
   linter <- object_name_linter("camelCase")
 
   expect_lint("myObject <- 123", NULL, linter)
   expect_lint("`myObject` <- 123", NULL, linter)
-  expect_lint("my.confused_NAME <- 1;", list(message = msg, line_number = 1L, column_number = 1L), linter)
-  expect_lint("1 ->> read.data.frame;", list(message = msg, line_number = 1L, column_number = 7L), linter)
-  expect_lint("object_name_linter <- function(...) {}",
-              list(message = msg, line_number = 1L, column_number = 1L), linter)
+  expect_lint("my.confused_NAME <- 1;", list(message = lint_msg, line_number = 1L, column_number = 1L), linter)
+  expect_lint("1 ->> read.data.frame;", list(message = lint_msg, line_number = 1L, column_number = 7L), linter)
+  expect_lint(
+    "object_name_linter <- function(...) {}",
+    list(message = lint_msg, line_number = 1L, column_number = 1L), linter
+  )
 
   expect_lint(
     "Z = sapply('function', function(x=function(x){1}, b.a.z=F, ...){identity(b.a.z)}, USE.NAMES=TRUE)",
     list(
-      list(message = msg, line_number = 1L, column_number = 1L),
-      list(message = msg, line_number = 1L, column_number = 51L)
+      list(message = lint_msg, line_number = 1L, column_number = 1L),
+      list(message = lint_msg, line_number = 1L, column_number = 51L)
     ),
     linter
   )
@@ -82,12 +86,12 @@ test_that("linter returns correct linting", {
 })
 
 test_that("linter accepts vector of styles", {
-  msg <- "Variable and function name style should be camelCase or dotted.case."
+  lint_msg <- "Variable and function name style should be camelCase or dotted.case."
   linter <- object_name_linter(styles = c("camelCase", "dotted.case"))
 
   expect_lint(
     c("var.one <- 1", "varTwo <- 2", "var_three <- 3"),
-    list(message = msg, line_number = 3L, column_number = 1L),
+    list(message = lint_msg, line_number = 3L, column_number = 1L),
     linter
   )
 })
@@ -95,17 +99,17 @@ test_that("linter accepts vector of styles", {
 test_that("dollar subsetting only lints the first expression", {
   # Regression test for #582
   linter <- object_name_linter()
-  msg <- "Variable and function name style should be snake_case or symbols."
+  lint_msg <- "Variable and function name style should be snake_case or symbols."
 
   expect_lint("my_var$MY_COL <- 42L", NULL, linter)
-  expect_lint("MY_VAR$MY_COL <- 42L", msg, linter)
+  expect_lint("MY_VAR$MY_COL <- 42L", lint_msg, linter)
   expect_lint("my_var$MY_SUB$MY_COL <- 42L", NULL, linter)
-  expect_lint("MY_VAR$MY_SUB$MY_COL <- 42L", msg, linter)
+  expect_lint("MY_VAR$MY_SUB$MY_COL <- 42L", lint_msg, linter)
 })
 
 test_that("assignment targets of compound lhs are correctly identified", {
   linter <- object_name_linter()
-  msg <- "Variable and function name style should be snake_case or symbols."
+  lint_msg <- "Variable and function name style should be snake_case or symbols."
 
   # (recursive) [, $, and [[ subsetting
   expect_lint("good_name[badName] <- badName2", NULL, linter)
@@ -116,33 +120,33 @@ test_that("assignment targets of compound lhs are correctly identified", {
   expect_lint("good_name[[badName]]$badName2 <- badName3", NULL, linter)
   expect_lint("good_name$badName[[badName2]][badName3]$badName4 <- badName5", NULL, linter)
 
-  expect_lint("badName[badName] <- badName2", msg, linter)
-  expect_lint("badName[1L][badName] <- badName2", msg, linter)
-  expect_lint("badName[[badName]] <- badName2", msg, linter)
-  expect_lint("badName[[1L]][[badName]] <- badName2", msg, linter)
-  expect_lint("badName[[fun(badName)]] <- badName2", msg, linter)
-  expect_lint("badName[[badName]]$badName2 <- badName3", msg, linter)
-  expect_lint("badName$badName[[badName2]][badName3]$badName4 <- badName5", msg, linter)
+  expect_lint("badName[badName] <- badName2", lint_msg, linter)
+  expect_lint("badName[1L][badName] <- badName2", lint_msg, linter)
+  expect_lint("badName[[badName]] <- badName2", lint_msg, linter)
+  expect_lint("badName[[1L]][[badName]] <- badName2", lint_msg, linter)
+  expect_lint("badName[[fun(badName)]] <- badName2", lint_msg, linter)
+  expect_lint("badName[[badName]]$badName2 <- badName3", lint_msg, linter)
+  expect_lint("badName$badName[[badName2]][badName3]$badName4 <- badName5", lint_msg, linter)
 
   # setters
-  expect_lint("setter(badName) <- good_name", msg, linter)
+  expect_lint("setter(badName) <- good_name", lint_msg, linter)
   expect_lint("setter(good_name[[badName]]) <- good_name2", NULL, linter)
 
   # quotation
   expect_lint("\"good_name\" <- 42", NULL, linter)
-  expect_lint("\"badName\" <- 42", msg, linter)
+  expect_lint("\"badName\" <- 42", lint_msg, linter)
   expect_lint("'good_name' <- 42", NULL, linter)
-  expect_lint("'badName' <- 42", msg, linter)
+  expect_lint("'badName' <- 42", lint_msg, linter)
   expect_lint("`good_name` <- 42", NULL, linter)
-  expect_lint("`badName` <- 42", msg, linter)
+  expect_lint("`badName` <- 42", lint_msg, linter)
 
   # subsetting with quotation
   expect_lint("good_name$\"badName\" <- 42", NULL, linter)
   expect_lint("good_name$'badName' <- 42", NULL, linter)
-  expect_lint("badName$\"good_name\" <- 42", msg, linter)
-  expect_lint("badName$'good_name' <- 42", msg, linter)
-  expect_lint("`badName`$\"good_name\" <- 42", msg, linter)
-  expect_lint("`badName`$'good_name' <- 42", msg, linter)
+  expect_lint("badName$\"good_name\" <- 42", lint_msg, linter)
+  expect_lint("badName$'good_name' <- 42", lint_msg, linter)
+  expect_lint("`badName`$\"good_name\" <- 42", lint_msg, linter)
+  expect_lint("`badName`$'good_name' <- 42", lint_msg, linter)
 })
 
 test_that("object_name_linter won't fail if an imported namespace is unavailable", {

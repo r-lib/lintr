@@ -8,7 +8,29 @@ sprintf_linter()
 }
 \description{
 Check for an inconsistent number of arguments or arguments with incompatible types (for literal arguments) in
-\code{sprintf()} calls.
+\code{\link[=sprintf]{sprintf()}} calls.
+}
+\details{
+\code{\link[=gettextf]{gettextf()}} calls are also included, since \code{gettextf()} is a thin wrapper around \code{sprintf()}.
+}
+\examples{
+# will produce lints
+lint(
+  text = 'sprintf("hello \%s \%s \%d", x, y)',
+  linters = sprintf_linter()
+)
+
+# okay
+lint(
+  text = 'sprintf("hello \%s \%s \%d", x, y, z)',
+  linters = sprintf_linter()
+)
+
+lint(
+  text = 'sprintf("hello \%s \%s \%d", x, y, ...)',
+  linters = sprintf_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

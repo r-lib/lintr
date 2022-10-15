@@ -111,16 +111,16 @@ test_that("Warns if encoding is misspecified", {
   the_lint <- lint(filename = file, parse_settings = FALSE)[[1L]]
   expect_s3_class(the_lint, "lint")
 
-  msg <- "Invalid multibyte character in parser. Is the encoding correct?"
+  lint_msg <- "Invalid multibyte character in parser. Is the encoding correct?"
   if (!isTRUE(l10n_info()[["UTF-8"]])) {
     # Prior to R 4.2.0, the Windows parser throws a different error message because the source code is converted to
     # native encoding.
     # This results in line 4 becoming <fc> <- 42 before the parser sees it.
-    msg <- "unexpected '<'"
+    lint_msg <- "unexpected '<'"
   }
 
   expect_identical(the_lint$linter, "error")
-  expect_identical(the_lint$message, msg)
+  expect_identical(the_lint$message, lint_msg)
   expect_identical(the_lint$line_number, 4L)
 
   file <- test_path("dummy_projects", "project", "cp1252_parseable.R")
@@ -314,7 +314,6 @@ test_that("Reference chunks in Sweave/Rmd are ignored", {
   expect_silent(lint(example_rnw))
 })
 
-skip_if_not_installed("patrick")
 # NB: this is just a cursory test for linters not to
 #   fail on files where the XML content is xml_missing;
 #   the main linter test files provide more thorough

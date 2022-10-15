@@ -21,6 +21,40 @@ namespace hooks that will cause \verb{R CMD check} issues. See Writing R Extensi
 \code{.Last.lib()} and \code{.onDetach()} should take one argument with name matching \verb{^lib}.
 }
 }
+\examples{
+# will produce lints
+lint(
+  text = ".onLoad <- function(lib, ...) { }",
+  linters = package_hooks_linter()
+)
+
+lint(
+  text = ".onAttach <- function(lib, pkg) { require(foo) }",
+  linters = package_hooks_linter()
+)
+
+lint(
+  text = ".onDetach <- function(pkg) { }",
+  linters = package_hooks_linter()
+)
+
+# okay
+lint(
+  text = ".onLoad <- function(lib, pkg) { }",
+  linters = package_hooks_linter()
+)
+
+lint(
+  text = '.onAttach <- function(lib, pkg) { loadNamespace("foo") }',
+  linters = package_hooks_linter()
+)
+
+lint(
+  text = ".onDetach <- function(lib) { }",
+  linters = package_hooks_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

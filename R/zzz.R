@@ -234,6 +234,40 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 )]
 
 #' Default lintr settings
+#'
+#' @description
+#' The default settings consist of
+#'
+#'  - `linters`: a list of default linters (see [default_linters()])
+#'  - `encoding`: the character encoding assumed for the file
+#'  - `exclude`: pattern used to exclude a line of code
+#'  - `exclude_start`, `exclude_end`: patterns used to mark start and end of the code block to exclude
+#'  - `exclude_linter`, `exclude_linter_sep`: patterns used to exclude linters
+#'  - `exclusions`:a list of files to exclude
+#'  - `cache_directory`: location of cache directory
+#'  - `comment_token`: a GitHub token character
+#'  - `comment_bot`: decides if lintr comment bot on GitHub can comment on commits
+#'  - `error_on_lint`: decides if error should be produced when any lints are found
+#'
+#' @examples
+#' # available settings
+#' names(default_settings)
+#'
+#' # linters included by default
+#' names(default_settings$linters)
+#'
+#' # default values for a few of the other settings
+#' default_settings[c(
+#'   "encoding",
+#'   "exclude",
+#'   "exclude_start",
+#'   "exclude_end",
+#'   "exclude_linter",
+#'   "exclude_linter_sep",
+#'   "exclusions",
+#'   "error_on_lint"
+#' )]
+#'
 #' @seealso [read_settings()], [default_linters]
 #' @export
 default_settings <- NULL
@@ -249,8 +283,11 @@ settings <- NULL
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  # This is just here to quiet R CMD check
-  if (FALSE) backports::import
+  backports::import(pkgname, c("trimws", "lengths"))
+  # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
+  if (!exists("str2lang", getNamespace("base"))) {
+    assign("str2lang", get("str2lang", getNamespace("backports")), getNamespace(pkgname))
+  }
 
   default_settings <<- list(
     linters = default_linters,

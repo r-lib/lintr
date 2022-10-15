@@ -1,13 +1,13 @@
 testthat::test_that("paren_body_linter returns correct lints", {
   linter <- paren_body_linter()
-  msg <- "There should be a space between a right parenthesis and a body expression."
+  lint_msg <- "There should be a space between a right parenthesis and a body expression."
 
   # No space after the closing parenthesis prompts a lint
-  expect_lint("function()test", msg, linter)
-  expect_lint("print('hello')\nx <- function(x)NULL\nprint('hello')", msg, linter)
-  expect_lint("if (TRUE)test", msg, linter)
-  expect_lint("while (TRUE)test", msg, linter)
-  expect_lint("for (i in seq_along(1))test", msg, linter)
+  expect_lint("function()test", lint_msg, linter)
+  expect_lint("print('hello')\nx <- function(x)NULL\nprint('hello')", lint_msg, linter)
+  expect_lint("if (TRUE)test", lint_msg, linter)
+  expect_lint("while (TRUE)test", lint_msg, linter)
+  expect_lint("for (i in seq_along(1))test", lint_msg, linter)
 
   # A space after the closing parenthesis does not prompt a lint
   expect_lint("function() test", NULL, linter)
@@ -41,11 +41,11 @@ testthat::test_that("paren_body_linter returns correct lints", {
   expect_lint("#function()test", NULL, linter)
 
   # multiple lints on the same line
-  expect_lint("function()if(TRUE)while(TRUE)test", list(msg, msg, msg), linter)
+  expect_lint("function()if(TRUE)while(TRUE)test", list(lint_msg, lint_msg, lint_msg), linter)
 
   # No space after the closing parenthesis of an anonymous function prompts a lint
   skip_if_not_r_version("4.1.0")
-  expect_lint("\\()test", msg, linter)
+  expect_lint("\\()test", lint_msg, linter)
 })
 
 test_that("multi-line versions are caught", {
