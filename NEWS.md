@@ -9,6 +9,8 @@
   
 * `assignment_linter()` no longer lints assignments in braces that include comments when `allow_trailing = FALSE` (#1701, @ashbaldry)
 
+* `object_usage_linter()` no longer silently ignores usage warnings that don't contain a quoted name (#1714, @AshesITR)
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
