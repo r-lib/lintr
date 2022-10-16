@@ -27,7 +27,7 @@
   the style guide on handling this case awaits clarification: https://github.com/tidyverse/style/issues/191.
   (#1346, @MichaelChirico)
 
-* The new `indentation_linter()` is part of the default linters. See new linters for more detail.
+* The new `indentation_linter()` is part of the default linters. See "New linters" for more details.
 
 ## New and improved features
 
