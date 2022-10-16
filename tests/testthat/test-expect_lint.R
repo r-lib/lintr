@@ -90,16 +90,21 @@ test_that("expect_lint_free succeeds in absence of lints", {
       callr::rcmd("INSTALL", pkg_clean, echo = FALSE, show = FALSE)
       expect_lint_free(pkg_clean)
       unloadNamespace("clean")
-
-      callr::rcmd("INSTALL", pkg_clean_subdir, echo = FALSE, show = FALSE)
-      expect_lint_free(pkg_clean_subdir)
-      unloadNamespace("clean")
+      expect_false("clean" %in% loadedNamespaces())
     }
   )
 
-  unlink(temp_lib, recursive = TRUE)
+  withr::with_libpaths(
+    temp_lib,
+    {
+      callr::rcmd("INSTALL", pkg_clean_subdir, echo = FALSE, show = FALSE)
+      expect_lint_free(pkg_clean_subdir)
+      unloadNamespace("clean")
+      expect_false("clean" %in% loadedNamespaces())
+    }
+  )
 
   # check cleanup
-  expect_false("clean" %in% loadedNamespaces())
+  unlink(temp_lib, recursive = TRUE)
   expect_false(dir.exists(temp_lib))
 })
