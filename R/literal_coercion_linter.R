@@ -84,13 +84,18 @@ literal_coercion_linter <- function() {
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
+    coercion_str <- xml2::xml_text(bad_expr)
+    # the linter logic should ensure that it's safe to run eval() here
+    literal_equivalent_str <- vapply(str2expression(coercion_str), function(expr) deparse1(eval(expr)), character(1L))
+    lint_message <- sprintf(
+      "Use %s instead of %s, i.e., use literals directly where possible, instead of coercion.",
+      literal_equivalent_str, coercion_str
+    )
+
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = paste(
-        "Use literals directly where possible, instead of coercion.",
-        "c.f. 1L instead of as.integer(1) or rlang::int(1), or NA_real_ instead of as.numeric(NA)."
-      ),
+      lint_message = lint_message,
       type = "warning"
     )
   })
