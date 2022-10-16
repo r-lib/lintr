@@ -1,7 +1,8 @@
 #' Check that indentation is consistent
 #'
-#' @param indent Block indentation level, used for multi-line code blocks (`{ ... }`), function calls (`( ... )`) and
-#'   extractions (`[ ... ]`, `[[ ... ]]`).
+#' @param indent Number of spaces, that a code block should be indented by relative to its parent code block.
+#'   Used for multi-line code blocks (`{ ... }`), function calls (`( ... )`) and extractions (`[ ... ]`, `[[ ... ]]`).
+#'   Defaults to 2.
 #' @param use_hybrid_indent Require a block indent for multi-line function calls if there are only unnamed arguments
 #'   in the first line?
 #'   ```r
@@ -20,13 +21,43 @@
 #'       additional_arg = 42)
 #'   ```
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "if (TRUE) {\n1 + 1\n}",
+#'   linters = indentation_linter()
+#' )
+#'
+#' lint(
+#'   text = "if (TRUE) {\n    1 + 1\n}",
+#'   linters = indentation_linter()
+#' )
+#'
+#' lint(
+#'   text = "map(x, f,\n  additional_arg = 42\n)",
+#'   linters = indentation_linter(use_hybrid_indent = FALSE)
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "map(x, f,\n  additional_arg = 42\n)",
+#'   linters = indentation_linter()
+#' )
+#'
+#' lint(
+#'   text = "if (TRUE) {\n    1 + 1\n}",
+#'   linters = indentation_linter(indent = 4)
+#' )
+#'
 #' @evalRd rd_tags("indentation_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso [linters] for a complete list of linters available in lintr. \cr
+#' <https://style.tidyverse.org/syntax.html#indenting>
+#'
 #' @export
 indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
-  paren_tokens <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
+  paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
-  infix_tokens <- setdiff(infix_metadata$xml_tag, c("OP-LEFT-BRACE", "OP-COMMA", paren_tokens))
+  infix_tokens <- setdiff(infix_metadata$xml_tag, c("OP-LEFT-BRACE", "OP-COMMA", paren_tokens_left))
   no_paren_keywords <- c("ELSE", "REPEAT")
   keyword_tokens <- c("FUNCTION", "IF", "FOR", "WHILE")
 
@@ -36,9 +67,9 @@ indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
     xp_is_not_hanging <- paste(
       c(
         glue::glue(
-          "self::{paren_tokens}/following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]"
+          "self::{paren_tokens_left}/following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]"
         ),
-        glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens, ')'))} and {xp_last_on_line}]")
+        glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
       ),
       collapse = " | "
     )
@@ -50,11 +81,11 @@ indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
     "number(",
     paste(
       c(
-        glue::glue("self::{paren_tokens}/following-sibling::{paren_tokens_right}/preceding-sibling::*[1]/@line2"),
-        glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens, ')'))}]/following-sibling::SYMBOL_FUNCTION_CALL/
+        glue::glue("self::{paren_tokens_left}/following-sibling::{paren_tokens_right}/preceding-sibling::*[1]/@line2"),
+        glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))}]/following-sibling::SYMBOL_FUNCTION_CALL/
                       parent::expr/following-sibling::expr[1]/@line2"),
         glue::glue("self::*[
-                      {xp_and(paste0('not(self::', paren_tokens, ')'))} and
+                      {xp_and(paste0('not(self::', paren_tokens_left, ')'))} and
                       not(following-sibling::SYMBOL_FUNCTION_CALL)
                     ]/following-sibling::*[1]/@line2")
       ),
@@ -65,9 +96,9 @@ indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
 
   xp_indent_changes <- paste(
     c(
-      glue::glue("//{paren_tokens}[not(@line1 = following-sibling::expr[
+      glue::glue("//{paren_tokens_left}[not(@line1 = following-sibling::expr[
                     @line2 > @line1 and
-                    ({xp_or(paste0('descendant::', paren_tokens, '[', xp_last_on_line, ']'))})
+                    ({xp_or(paste0('descendant::', paren_tokens_left, '[', xp_last_on_line, ']'))})
                   ]/@line1)]"),
       glue::glue("//{infix_tokens}[{xp_last_on_line}]"),
       glue::glue("//{no_paren_keywords}[{xp_last_on_line}]"),

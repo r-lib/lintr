@@ -27,7 +27,7 @@
   the style guide on handling this case awaits clarification: https://github.com/tidyverse/style/issues/191.
   (#1346, @MichaelChirico)
 
-* New default linter `indentation_linter()` enforcing Tidyverse-style 2-space indentation (@AshesITR and @dgkf, #1411).
+* The new `indentation_linter()` is part of the default linters. See new linters for more detail.
 
 ## New and improved features
 
@@ -90,7 +90,8 @@
 
 * `routine_registration_linter()` for identifying native routines that don't use registration (`useDynLib` in the `NAMESPACE`; @MichaelChirico)
 
-*  `indentation_linter()`: see above in 'Changes to defaults'
+* `indentation_linter()` for checking that the indentation conforms to 2-space Tidyverse-style (@AshesITR and @dgkf, #1411).
+
 
 ## Notes
 

@@ -7,8 +7,9 @@
 indentation_linter(indent = 2L, use_hybrid_indent = TRUE)
 }
 \arguments{
-\item{indent}{Block indentation level, used for multi-line code blocks (\code{{ ... }}), function calls (\code{( ... )}) and
-extractions (\verb{[ ... ]}, \verb{[[ ... ]]}).}
+\item{indent}{Number of spaces, that a code block should be indented by relative to its parent code block.
+Used for multi-line code blocks (\code{{ ... }}), function calls (\code{( ... )}) and extractions (\verb{[ ... ]}, \verb{[[ ... ]]}).
+Defaults to 2.}
 
 \item{use_hybrid_indent}{Require a block indent for multi-line function calls if there are only unnamed arguments
 in the first line?
@@ -31,8 +32,38 @@ map(x, f,
 \description{
 Check that indentation is consistent
 }
+\examples{
+# will produce lints
+lint(
+  text = "if (TRUE) {\n1 + 1\n}",
+  linters = indentation_linter()
+)
+
+lint(
+  text = "if (TRUE) {\n    1 + 1\n}",
+  linters = indentation_linter()
+)
+
+lint(
+  text = "map(x, f,\n  additional_arg = 42\n)",
+  linters = indentation_linter(use_hybrid_indent = FALSE)
+)
+
+# okay
+lint(
+  text = "map(x, f,\n  additional_arg = 42\n)",
+  linters = indentation_linter()
+)
+
+lint(
+  text = "if (TRUE) {\n    1 + 1\n}",
+  linters = indentation_linter(indent = 4)
+)
+
+}
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\link{linters} for a complete list of linters available in lintr. \cr
+\url{https://style.tidyverse.org/syntax.html#indenting}
 }
 \section{Tags}{
 \link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}

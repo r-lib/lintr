@@ -24,6 +24,17 @@ test_that("indentation linter flags unindented expressions", {
   expect_lint(
     trim_some("
       lapply(1:10, function(i) {
+       # indentation is only 1 character
+        i %% 2
+      })
+    "),
+    "Indentation",
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      lapply(1:10, function(i) {
           i %% 2
       })
     "),
@@ -137,6 +148,7 @@ test_that("function argument indentation works in tidyverse-style", {
     linter
   )
 
+  # anchor is correctly found with assignments as well
   expect_lint(
     trim_some("
       test <- function(a = 1L,
@@ -298,6 +310,16 @@ test_that("indentation within string constants is ignored", {
     trim_some("
       x <- '
         an indented string
+      '
+    "),
+    NULL,
+    indentation_linter()
+  )
+
+  expect_lint(
+    trim_some("
+      x <- '
+         an indented string with 3 spaces indentation
       '
     "),
     NULL,
