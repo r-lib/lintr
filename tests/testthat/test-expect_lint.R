@@ -66,7 +66,7 @@ test_that("expect_lint_free works", {
 
 test_that("expect_lint doesn't change language", {
   withr::with_envvar(c("LANGUAGE" = "mr"), {
-    expect_lint("a=1", lint_msg, linter, language = "da")
+    expect_success(expect_lint("a=1", lint_msg, linter))
     expect_equal(Sys.getenv("LANGUAGE"), "mr")
   })
 })
