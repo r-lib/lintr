@@ -129,7 +129,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
       nodes[missing_symbol] <- lapply(which(missing_symbol), function(i) {
         line_based_match <- xml2::xml_find_first(
           fun_assignment,
-          glue::glue("descendant::expr[@line1 = {res$line1[i]} and @line2 = {res$line2[i]}]")
+          glue::glue_data(res[i, ], "descendant::expr[@line1 = {line1} and @line2 = {line2}]")
         )
         if (is.na(line_based_match)) fun_assignment else line_based_match
       })
@@ -278,9 +278,9 @@ parse_check_usage <- function(expression,
         name = "message",
         zero_or_more(any, type = "lazy"),
         maybe(
-          one_of(quote, "\u2018"),
+          "'",
           capture(name = "name", anything),
-          one_of(quote, "\u2019"),
+          "'",
           anything
         )
       ),
@@ -291,15 +291,14 @@ parse_check_usage <- function(expression,
   # nocov start
   missing <- is.na(res$message)
   if (any(missing)) {
+    # TODO (AshesITR): Remove this in the future, if no bugs arise from this safeguard
     warning(
       "Possible bug in lintr: Couldn't parse usage message ", sQuote(vals[missing][[1L]]), ". ",
-      "Ignoring ", sum(missing), " usage warnings. Please report."
+      "Ignoring ", sum(missing), " usage warnings. Please report an issue at https://github.com/r-lib/lintr/issues."
     )
-    res <- res[!missing, ]
   }
   # nocov end
-
-  res <- res[!is.na(res$message), ]
+  res <- res[!missing, ]
 
   res$line1 <- as.integer(res$line1) + start_line - 1L
   res$line2 <- ifelse(
