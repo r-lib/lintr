@@ -51,6 +51,12 @@ test_that("sort_linter produces customized warning message", {
     rex::rex("sort(x, decreasing = FALSE, na.last = TRUE) is better than x[order(x, decreasing = FALSE)]."),
     linter
   )
+
+  expect_lint(
+    "f()[order(f())]",
+    rex::rex("sort(f(), na.last = TRUE) is better than f()[order(f())]"),
+    linter
+  )
 })
 
 test_that("sort_linter works with expression with lint > 1", {
