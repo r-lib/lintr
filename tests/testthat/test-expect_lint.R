@@ -67,6 +67,12 @@ test_that("expect_lint_free fails in presence of lints", {
   expect_failure(expect_lint_free(test_path("dummy_packages", "package")))
 })
 
+test_that("expect_lint doesn't change language", {
+  withr::with_envvar(c("LANGUAGE" = "mr"), {
+    expect_success(expect_lint("a=1", lint_msg, linter))
+    expect_equal(Sys.getenv("LANGUAGE"), "mr")
+})
+
 test_that("expect_lint_free succeeds in absence of lints", {
   skip_if_not_installed("callr")
 
