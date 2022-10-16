@@ -125,7 +125,8 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
       nodes <- unclass(lintable_symbols)[matched_symbol]
 
       # fallback to line based matching if no symbol is found
-      nodes[is.na(matched_symbol)] <- lapply(which(is.na(matched_symbol)), function(i) {
+      missing_symbol <- is.na(matched_symbol)
+      nodes[missing_symbol] <- lapply(which(missing_symbol), function(i) {
         line_based_match <- xml2::xml_find_first(
           fun_assignment,
           glue::glue("descendant::expr[@line1 = {res$line1[i]} and @line2 = {res$line2[i]}]")
@@ -290,8 +291,10 @@ parse_check_usage <- function(expression,
   # nocov start
   missing <- is.na(res$message)
   if (any(missing)) {
-    warning("Possible bug in lintr: Couldn't parse usage message ", sQuote(vals[missing][[1L]]), ". ",
-            "Ignoring ", sum(missing), " usage warnings.")
+    warning(
+      "Possible bug in lintr: Couldn't parse usage message ", sQuote(vals[missing][[1L]]), ". ",
+      "Ignoring ", sum(missing), " usage warnings. Please report."
+    )
     res <- res[!missing, ]
   }
   # nocov end
