@@ -24,6 +24,8 @@ object_name_xpath <- local({
 #' Check that object names conform to a naming style.
 #' The default naming styles are "snake_case" and "symbols".
 #'
+#' Quotes (`` `"' ``) and specials (`%` and trailing `<-`) are not considered part of the object name.
+#'
 #' Note when used in a package, in order to ignore objects imported
 #'   from other namespaces, this linter will attempt [getNamespaceExports()]
 #'   whenever an `import(PKG)` or `importFrom(PKG, ...)` statement is found
@@ -44,6 +46,11 @@ object_name_xpath <- local({
 #' @param styles A subset of
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
 #'   match at least one of these styles.
+#' @param regexes A (possibly named) character vector specifying a custom naming convention.
+#'   If named, the names will be used in the lint message. Otherwise, the regexes enclosed by `/` will be used in the
+#'   lint message.
+#'   Note that specifying `regexes` overrides the default `styles`. So if you want to combine `regexes` and `styles`,
+#'   both need to be explicitly specified.
 #'
 #' @examples
 #' # will produce lints
@@ -62,6 +69,11 @@ object_name_xpath <- local({
 #'   linters = object_name_linter(styles = "dotted.case")
 #' )
 #'
+#' lint(
+#'   text = "asd <- 1L",
+#'   linters = object_name_linter(regexes = c(my_style = "F$", "f$"))
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "my_var <- 1L",
@@ -78,15 +90,40 @@ object_name_xpath <- local({
 #'   linters = object_name_linter(styles = c("dotted.case", "lowercase"))
 #' )
 #'
+#' lint(
+#'   text = "asdf <- 1L; asdF <- 1L",
+#'   linters = object_name_linter(regexes = c(my_style = "F$", "f$"))
+#' )
+#'
 #' @evalRd rd_tags("object_name_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-object_name_linter <- function(styles = c("snake_case", "symbols")) {
-  styles <- match.arg(styles, names(style_regexes), several.ok = TRUE)
+object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = character()) {
+  if ((!missing(styles) || missing(regexes)) && length(styles) > 0L) {
+    # Allow `object_name_linter(NULL, "my_regex")`
+    styles <- match.arg(styles, names(style_regexes), several.ok = TRUE)
+    style_list <- style_regexes[styles]
+  } else {
+    style_list <- list()
+  }
+  if (length(regexes) > 0L) {
+    if (!is.character(regexes)) {
+      stop("`regexes` must be a character vector.")
+    }
+    rx_names <- names2(regexes)
+    missing_name <- !nzchar(rx_names)
+    rx_names[missing_name] <- paste0("/", regexes[missing_name], "/") # auto-name regex "asd" -> /asd/
+    names(regexes) <- rx_names
+
+    style_list <- c(style_list, as.list(regexes))
+  }
+  if (length(style_list) == 0L) {
+    stop("At least one style must be specified using `styles` or `regexes`.")
+  }
 
   lint_message <- paste0(
-    "Variable and function name style should be ",
-    glue::glue_collapse(styles, sep = ", ", last = " or "), "."
+    "Variable and function name style should match ",
+    glue::glue_collapse(unique(names(style_list)), sep = ", ", last = " or "), "."
   )
 
   Linter(function(source_expression) {
@@ -111,7 +148,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
     )
     generics <- unique(generics[nzchar(generics)])
 
-    style_matches <- lapply(styles, function(style) {
+    style_matches <- lapply(style_list, function(style) {
       check_style(nms, style, generics)
     })
 
@@ -127,7 +164,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols")) {
 }
 
 check_style <- function(nms, style, generics = character()) {
-  conforming <- re_matches(nms, style_regexes[[style]])
+  conforming <- re_matches(nms, style)
 
   # mark empty names and NA names as conforming
   conforming[!nzchar(nms) | is.na(conforming)] <- TRUE
@@ -143,8 +180,8 @@ check_style <- function(nms, style, generics = character()) {
       # If they are not conforming, but are S3 methods then ignore them
       conforming[!conforming][has_generic] <- TRUE
     }
-    # exclude namespace hooks like .onLoad, .Last.lib, etc (#500)
-    is_special <- is_special_function(nms[!conforming])
+    # exclude namespace hooks like .onLoad, .Last.lib, etc (#500) and ...
+    is_special <- is_special_function(nms[!conforming]) | nms[!conforming] == "..."
     conforming[!conforming][is_special] <- TRUE
   }
   conforming
@@ -152,8 +189,8 @@ check_style <- function(nms, style, generics = character()) {
 
 # Remove quotes or other things from names
 strip_names <- function(x) {
-  x <- re_substitutes(x, rex(start, some_of(".", quote, "`", "%", "$", "@")), "")
-  x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%", "$", "@"), end), "")
+  x <- re_substitutes(x, rex(start, some_of(quote, "`", "%")), "")
+  x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%"), end), "")
   x
 }
 
@@ -163,13 +200,13 @@ strip_names <- function(x) {
 #   (they don't strictly _have_ to be defined in base, so could in principle be removed).
 #   .Last.sys and .First.sys are part of base itself, so aren't included here.
 special_funs <- c(
-  "onLoad",
-  "onAttach",
-  "onUnload",
-  "onDetach",
-  "Last.lib",
-  "First",
-  "Last"
+  ".onLoad",
+  ".onAttach",
+  ".onUnload",
+  ".onDetach",
+  ".Last.lib",
+  ".First",
+  ".Last"
 )
 
 is_special_function <- function(x) {
@@ -191,80 +228,3 @@ style_regexes <- list(
 )
 
 regexes_rd <- toString(paste0("\\sQuote{", names(style_regexes), "}"))
-
-#' Object length linter
-#'
-#' Check that object names are not too long.
-#' The length of an object name is defined as the length in characters, after removing extraneous parts:
-#'
-#'  * generic prefixes for implementations of S3 generics, e.g. `as.data.frame.my_class` has length 8.
-#'  * leading `.`, e.g. `.my_hidden_function` has length 18.
-#'  * "%%" for infix operators, e.g. `%my_op%` has length 5.
-#'  * trailing `<-` for assignment functions, e.g. `my_attr<-` has length 7.
-#'
-#' Note that this behavior relies in part on having packages in your Imports available;
-#'   see the detailed note in [object_name_linter()] for more details.
-#'
-#' @param length maximum variable name length allowed.
-#'
-#' @examples
-#' # will produce lints
-#' lint(
-#'   text = "very_very_long_variable_name <- 1L",
-#'   linters = object_length_linter(length = 10L)
-#' )
-#'
-#' # okay
-#' lint(
-#'   text = "very_very_long_variable_name <- 1L",
-#'   linters = object_length_linter(length = 30L)
-#' )
-#'
-#' lint(
-#'   text = "var <- 1L",
-#'   linters = object_length_linter(length = 10L)
-#' )
-#'
-#' @evalRd rd_tags("object_length_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
-#' @export
-object_length_linter <- function(length = 30L) {
-  lint_message <- paste("Variable and function names should not be longer than", length, "characters.")
-
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
-    xml <- source_expression$full_xml_parsed_content
-
-    assignments <- xml2::xml_find_all(xml, object_name_xpath)
-
-    # Retrieve assigned name
-    nms <- strip_names(
-      xml2::xml_text(assignments)
-    )
-
-    # run namespace_imports at run-time, not "compile" time to allow package structure to change
-    ns_imports <- namespace_imports(find_package(source_expression$filename))
-    generics <- strip_names(c(
-      declared_s3_generics(xml),
-      imported_s3_generics(ns_imports)$fun,
-      .base_s3_generics
-    ))
-    generics <- unique(generics[nzchar(generics)])
-
-    # Remove generic function names from generic implementations
-    # This only lints S3 implementations if the class names are too long, still lints generics if they are too long.
-    nms_stripped <- re_substitutes(nms, rex(start, or(generics), "."), "")
-
-    too_long <- nchar(nms_stripped) > length
-
-    xml_nodes_to_lints(
-      assignments[too_long],
-      source_expression = source_expression,
-      lint_message = lint_message,
-      type = "style"
-    )
-  })
-}
