@@ -33,13 +33,13 @@
 sort_linter <- function() {
   xpath <- "
   //OP-LEFT-BRACKET
-    /following-sibling::expr[
+    /following-sibling::expr[1][
       expr[1][
         SYMBOL_FUNCTION_CALL[text() = 'order']
         and following-sibling::expr =
-          parent::expr
-            /parent::expr
-            /expr
+          parent::expr[1]
+            /parent::expr[1]
+            /expr[1]
       ]
     ]
   "
@@ -53,14 +53,14 @@ sort_linter <- function() {
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-
     args <- ".//SYMBOL_SUB[text() = 'method' or
                            text() = 'decreasing' or
                            text() = 'na.last']"
+
     var <- xml2::xml_text(
       xml2::xml_find_first(
         bad_expr,
-        ".//SYMBOL_FUNCTION_CALL[text() = 'order']/parent::expr/following-sibling::expr[1]"
+        ".//SYMBOL_FUNCTION_CALL[text() = 'order']/parent::expr[1]/following-sibling::expr[1]"
       )
     )
 
