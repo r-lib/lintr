@@ -66,6 +66,7 @@ patrick::with_parameters_test_that(
   )
 )
 
+skip_if_not_installed("rlang")
 test_that("multiple lints return custom messages", {
   expect_lint(
     "c(as.integer(1), lgl(1L))",
@@ -77,7 +78,6 @@ test_that("multiple lints return custom messages", {
   )
 })
 
-skip_if_not_installed("rlang")
 patrick::with_parameters_test_that(
   "literal_coercion_linter blocks rlang disallowed usages",
   expect_lint(
