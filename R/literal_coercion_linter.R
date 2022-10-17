@@ -96,7 +96,7 @@ literal_coercion_linter <- function() {
       )
     } else {
       coercion_str <- xml2::xml_text(bad_expr)
-      if (any(is_rlang_coercer) & !("package:rlang" %in% search())) {
+      if (any(is_rlang_coercer) && !("package:rlang" %in% search())) {
         needs_prefix <- is_rlang_coercer & !startsWith(coercion_str, "rlang::")
         coercion_str[needs_prefix] <- paste0("rlang::", coercion_str[needs_prefix])
       }
