@@ -45,14 +45,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 literal_coercion_linter <- function() {
-  coercers <- xp_text_in_table(
-    c(
-      # base coercers
-      paste0("as.", c("logical", "integer", "numeric", "double", "character")),
-      # rlang coercers
-      c("lgl", "int", "dbl", "chr")
-    )
-  )
+  rlang_coercers <- c("lgl", "int", "dbl", "chr")
+  coercers <- xp_text_in_table(c(
+    # base coercers
+    paste0("as.", c("logical", "integer", "numeric", "double", "character")),
+    rlang_coercers
+  ))
 
   # notes for clarification:
   #  - as.integer(1e6) is arguably easier to read than 1000000L
@@ -84,13 +82,26 @@ literal_coercion_linter <- function() {
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    coercion_str <- xml2::xml_text(bad_expr)
-    # the linter logic should ensure that it's safe to run eval() here
-    literal_equivalent_str <- vapply(str2expression(coercion_str), function(expr) deparse1(eval(expr)), character(1L))
-    lint_message <- sprintf(
-      "Use %s instead of %s, i.e., use literals directly where possible, instead of coercion.",
-      literal_equivalent_str, coercion_str
-    )
+    coercer <- xp_call_name(bad_expr)
+    # tiptoe around the fact that we don't require {rlang}
+    if (any(coercer %in% rlang_coercers) && !requireNamespace("rlang", quietly = TRUE)) {
+      # NB: we _could_ do some extreme customization where each lint
+      #   gets a message according to whether the coercer is from rlang,
+      #   but this seems like overkill. Just use a generic message and move on.
+      lint_message <- lint_message = paste(
+        "Use literals directly where possible, instead of coercion.",
+        "c.f. 1L instead of as.integer(1) or rlang::int(1), or NA_real_ instead of as.numeric(NA).",
+        "NB: this message can be improved to show a specific replacement if 'rlang' is installed."
+      )
+    } else {
+      coercion_str <- xml2::xml_text(bad_expr)
+      # the linter logic & rlang requirement should ensure that it's safe to run eval() here
+      literal_equivalent_str <- vapply(str2expression(coercion_str), function(expr) deparse1(eval(expr)), character(1L))
+      lint_message <- sprintf(
+        "Use %s instead of %s, i.e., use literals directly where possible, instead of coercion.",
+        literal_equivalent_str, coercion_str
+      )
+    }
 
     xml_nodes_to_lints(
       bad_expr,
