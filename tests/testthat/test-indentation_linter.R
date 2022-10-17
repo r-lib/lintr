@@ -433,19 +433,31 @@ test_that("combined hanging and block indent works", {
   )
 })
 
-test_that("use_hybrid_indent works", {
-  code_hybrid <- "map(x, f,\n  extra_arg = 42\n)"
-  code_non_hybrid <- "map(x, f,\n    extra_arg = 42\n)"
-  code_always_ok <- "map(x, f,\n    extra_arg = 42)"
+test_that("hanging_indent_stlye works", {
+  code_block_multi_line <- "map(x, f,\n  extra_arg = 42\n)"
+  code_hanging_multi_line <- "map(x, f,\n    extra_arg = 42\n)"
+  code_block_same_line <- "map(x, f,\n  extra_arg = 42)"
+  code_hanging_same_line <- "map(x, f,\n    extra_arg = 42)"
 
-  expect_lint(code_hybrid, NULL, indentation_linter())
-  expect_lint(code_hybrid, "Hanging indent", indentation_linter(use_hybrid_indent = FALSE))
+  tidy_linter <- indentation_linter()
+  hanging_linter <- indentation_linter(hanging_indent_style = "always")
+  non_hanging_linter <- indentation_linter(hanging_indent_style = "never")
 
-  expect_lint(code_non_hybrid, "Indent", indentation_linter())
-  expect_lint(code_non_hybrid, NULL, indentation_linter(use_hybrid_indent = FALSE))
+  expect_lint(code_block_multi_line, NULL, tidy_linter)
+  expect_lint(code_block_multi_line, "Hanging indent", hanging_linter)
+  expect_lint(code_block_multi_line, NULL, non_hanging_linter)
 
-  expect_lint(code_always_ok, NULL, indentation_linter())
-  expect_lint(code_always_ok, NULL, indentation_linter(use_hybrid_indent = FALSE))
+  expect_lint(code_hanging_multi_line, "Indent", tidy_linter)
+  expect_lint(code_hanging_multi_line, NULL, hanging_linter)
+  expect_lint(code_hanging_multi_line, "Indent", non_hanging_linter)
+
+  expect_lint(code_block_same_line, "Hanging indent", tidy_linter)
+  expect_lint(code_block_same_line, "Hanging indent", hanging_linter)
+  expect_lint(code_block_same_line, NULL, non_hanging_linter)
+
+  expect_lint(code_hanging_same_line, NULL, tidy_linter)
+  expect_lint(code_hanging_same_line, NULL, hanging_linter)
+  expect_lint(code_hanging_same_line, "Indent", non_hanging_linter)
 })
 
 test_that("consecutive same-level lints are suppressed", {

@@ -4,29 +4,37 @@
 \alias{indentation_linter}
 \title{Check that indentation is consistent}
 \usage{
-indentation_linter(indent = 2L, use_hybrid_indent = TRUE)
+indentation_linter(
+  indent = 2L,
+  hanging_indent_style = c("tidy", "always", "never")
+)
 }
 \arguments{
 \item{indent}{Number of spaces, that a code block should be indented by relative to its parent code block.
 Used for multi-line code blocks (\code{{ ... }}), function calls (\code{( ... )}) and extractions (\verb{[ ... ]}, \verb{[[ ... ]]}).
 Defaults to 2.}
 
-\item{use_hybrid_indent}{Require a block indent for multi-line function calls if there are only unnamed arguments
-in the first line?
+\item{hanging_indent_style}{Indentation style for multi-line function calls with arguments in their first line.
+Defaults to tidyverse style, i.e. a block indent is used if the function call terminates with \verb{)} on a separate
+line and a hanging indent if not
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{# complies only with use_hybrid_indent = TRUE:
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# complies to "tidy" and "never"
 map(x, f,
   additional_arg = 42
 )
 
-# complies only with use_hybrid_indent = FALSE:
+# complies to "always"
 map(x, f,
     additional_arg = 42
 )
 
-# always complies
+# complies to "tidy" and "always"
 map(x, f,
     additional_arg = 42)
+
+# complies to "never"
+map(x, f,
+  additional_arg = 42)
 }\if{html}{\out{</div>}}}
 }
 \description{
@@ -46,7 +54,12 @@ lint(
 
 lint(
   text = "map(x, f,\n  additional_arg = 42\n)",
-  linters = indentation_linter(use_hybrid_indent = FALSE)
+  linters = indentation_linter(hanging_indent_style = "always")
+)
+
+lint(
+  text = "map(x, f,\n    additional_arg = 42)",
+  linters = indentation_linter(hanging_indent_style = "never")
 )
 
 # okay

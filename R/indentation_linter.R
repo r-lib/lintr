@@ -3,22 +3,27 @@
 #' @param indent Number of spaces, that a code block should be indented by relative to its parent code block.
 #'   Used for multi-line code blocks (`{ ... }`), function calls (`( ... )`) and extractions (`[ ... ]`, `[[ ... ]]`).
 #'   Defaults to 2.
-#' @param use_hybrid_indent Require a block indent for multi-line function calls if there are only unnamed arguments
-#'   in the first line?
+#' @param hanging_indent_style Indentation style for multi-line function calls with arguments in their first line.
+#'   Defaults to tidyverse style, i.e. a block indent is used if the function call terminates with `)` on a separate
+#'   line and a hanging indent if not
 #'   ```r
-#'   # complies only with use_hybrid_indent = TRUE:
+#'   # complies to "tidy" and "never"
 #'   map(x, f,
 #'     additional_arg = 42
 #'   )
 #'
-#'   # complies only with use_hybrid_indent = FALSE:
+#'   # complies to "always"
 #'   map(x, f,
 #'       additional_arg = 42
 #'   )
 #'
-#'   # always complies
+#'   # complies to "tidy" and "always"
 #'   map(x, f,
 #'       additional_arg = 42)
+#'
+#'   # complies to "never"
+#'   map(x, f,
+#'     additional_arg = 42)
 #'   ```
 #'
 #' @examples
@@ -35,7 +40,12 @@
 #'
 #' lint(
 #'   text = "map(x, f,\n  additional_arg = 42\n)",
-#'   linters = indentation_linter(use_hybrid_indent = FALSE)
+#'   linters = indentation_linter(hanging_indent_style = "always")
+#' )
+#'
+#' lint(
+#'   text = "map(x, f,\n    additional_arg = 42)",
+#'   linters = indentation_linter(hanging_indent_style = "never")
 #' )
 #'
 #' # okay
@@ -54,7 +64,7 @@
 #' <https://style.tidyverse.org/syntax.html#indenting>
 #'
 #' @export
-indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
+indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "always", "never")) {
   paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
   infix_tokens <- setdiff(infix_metadata$xml_tag, c("OP-LEFT-BRACE", "OP-COMMA", paren_tokens_left))
@@ -63,7 +73,9 @@ indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
 
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
 
-  if (use_hybrid_indent) {
+  hanging_indent_style <- match.arg(hanging_indent_style)
+
+  if (hanging_indent_style == "tidy") {
     xp_is_not_hanging <- paste(
       c(
         glue::glue(
@@ -73,9 +85,9 @@ indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
       ),
       collapse = " | "
     )
-  } else {
+  } else if (hanging_indent_style == "always") {
     xp_is_not_hanging <- glue::glue("self::*[{xp_last_on_line}]")
-  }
+  } # "never" makes no use of xp_is_not_hanging, so no definition is necessary
 
   xp_block_ends <- paste0(
     "number(",
@@ -137,7 +149,11 @@ indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
 
     indent_changes <- xml2::xml_find_all(xml, xp_indent_changes)
     for (change in indent_changes) {
-      change_starts_hanging <- length(xml2::xml_find_first(change, xp_is_not_hanging)) == 0L
+      if (hanging_indent_style != "never") {
+        change_starts_hanging <- length(xml2::xml_find_first(change, xp_is_not_hanging)) == 0L
+      } else {
+        change_starts_hanging <- FALSE
+      }
       change_begin <- as.integer(xml2::xml_attr(change, "line1")) + 1L
       change_end <- xml2::xml_find_num(change, xp_block_ends)
       if (change_begin <= change_end) {
