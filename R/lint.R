@@ -64,7 +64,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   if (isTRUE(parse_settings)) {
     read_settings(filename)
-    on.exit(clear_settings, add = TRUE)
+    on.exit(clear_settings(), add = TRUE)
   }
 
   linters <- define_linters(linters)
@@ -151,7 +151,7 @@ lint_dir <- function(path = ".", ...,
 
   if (isTRUE(parse_settings)) {
     read_settings(path)
-    on.exit(clear_settings, add = TRUE)
+    on.exit(clear_settings(), add = TRUE)
 
     exclusions <- c(exclusions, settings$exclusions)
   }
@@ -250,7 +250,7 @@ lint_package <- function(path = ".", ...,
 
   if (parse_settings) {
     read_settings(pkg_path)
-    on.exit(clear_settings, add = TRUE)
+    on.exit(clear_settings(), add = TRUE)
   }
 
   exclusions <- normalize_exclusions(
