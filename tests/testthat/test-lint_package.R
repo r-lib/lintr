@@ -27,7 +27,7 @@ test_that(
       "jkl = 456",
       "mno = 789"
     )
-    lintr:::read_settings(NULL)
+
     lints_from_outside <- lint_package(
       pkg_path,
       linters = list(assignment_linter())

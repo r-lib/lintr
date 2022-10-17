@@ -284,10 +284,15 @@ settings <- NULL
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  backports::import(pkgname, c("trimws", "lengths"))
+  backports::import(pkgname, c("trimws", "lengths", "deparse1"))
   # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
-  if (!exists("str2lang", getNamespace("base"))) {
-    assign("str2lang", get("str2lang", getNamespace("backports")), getNamespace(pkgname))
+  base_ns <- getNamespace("base")
+  backports_ns <- getNamespace("backports")
+  lintr_ns <- getNamespace(pkgname)
+  for (base_fun in c("str2lang", "str2expression")) {
+    if (!exists(base_fun, base_ns)) {
+      assign(base_fun, get(base_fun, backports_ns), lintr_ns)
+    }
   }
 
   default_settings <<- list(

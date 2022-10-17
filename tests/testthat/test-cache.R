@@ -357,10 +357,9 @@ test_that("find_new_line returns the same if the line is the same", {
     "foobar2",
     "foobar3"
   )
+
   expect_identical(lintr:::find_new_line(1L, "foobar1", t1), 1L)
-
   expect_identical(lintr:::find_new_line(2L, "foobar2", t1), 2L)
-
   expect_identical(lintr:::find_new_line(3L, "foobar3", t1), 3L)
 })
 
@@ -370,10 +369,9 @@ test_that("find_new_line returns the correct line if it is before the current li
     "foobar2",
     "foobar3"
   )
+
   expect_identical(lintr:::find_new_line(1L, "foobar1", t1), 1L)
-
   expect_identical(lintr:::find_new_line(2L, "foobar1", t1), 1L)
-
   expect_identical(lintr:::find_new_line(3L, "foobar1", t1), 1L)
 })
 
@@ -383,10 +381,9 @@ test_that("find_new_line returns the correct line if it is after the current lin
     "foobar2",
     "foobar3"
   )
+
   expect_identical(lintr:::find_new_line(1L, "foobar3", t1), 3L)
-
   expect_identical(lintr:::find_new_line(2L, "foobar3", t1), 3L)
-
   expect_identical(lintr:::find_new_line(3L, "foobar3", t1), 3L)
 })
 
