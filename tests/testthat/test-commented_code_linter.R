@@ -13,7 +13,7 @@ test_that("commented_code_linter skips allowed usages", {
   expect_lint("1+1 # gives 2", NULL, linter)
   expect_lint("# Non-existent:", NULL, linter)
   expect_lint("# 1-a", NULL, linter) # "-" removed from code operators
-  expect_lint("1+1  # for example cat(\"123\")", NULL, linter)
+  expect_lint('1+1  # for example cat("123")', NULL, linter)
 
   # regression test for #451
   expect_lint("c('#a#' = 1)", NULL, linter)
