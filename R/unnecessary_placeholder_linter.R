@@ -34,10 +34,11 @@
 #' @export
 unnecessary_placeholder_linter <- function() {
   magrittr_pipes <- c("%>%", "%T>%", "%<>%")
+  magrittr_pipes_xpath <- xp_text_in_table(magrittr_pipes)
 
   # TODO(michaelchirico): handle R4.2.0 native placeholder _ as well
   xpath <- glue::glue("
-  //SPECIAL[ { xp_text_in_table(magrittr_pipes) } ]
+  //SPECIAL[ { magrittr_pipes_xpath } ]
     /following-sibling::expr[
       expr/SYMBOL_FUNCTION_CALL
       and not(expr[

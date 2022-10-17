@@ -46,9 +46,10 @@ yoda_test_linter <- function() {
     or ((OP-PLUS or OP-MINUS) and count(expr[NUM_CONST]) = 2)
   "
   expectations <- c("expect_equal", "expect_identical", "expect_setequal")
+  expectations_xpath <- xp_text_in_table(expectations)
 
   xpath <- glue::glue("
-  //SYMBOL_FUNCTION_CALL[ { xp_text_in_table(expectations) } ]
+  //SYMBOL_FUNCTION_CALL[ { expectations_xpath } ]
     /parent::expr
     /following-sibling::expr[1][ {const_condition} ]
     /parent::expr[not(preceding-sibling::*[self::PIPE or self::SPECIAL[text() = '%>%']])]
