@@ -545,7 +545,8 @@ test_that("fallback works", {
     "),
     list(
       message = rex::rex("no visible global function definition for ", anything, "non_existing_assign<-"),
-      column_number = 6L
+      line_number = 2L,
+      column_number = 3L
     ),
     object_usage_linter()
   )
@@ -603,6 +604,23 @@ test_that("missing libraries don't cause issue", {
       }
     "),
     NULL,
+    object_usage_linter()
+  )
+})
+
+test_that("messages without a quoted name are caught", {
+  # regression test for #1714
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        a <- ...
+        a
+      }
+    "),
+    list(
+      message = "... may be used in an incorrect context",
+      line_number = 2L
+    ),
     object_usage_linter()
   )
 })

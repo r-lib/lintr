@@ -1,6 +1,6 @@
 linters: linters_with_defaults(
     absolute_path_linter = NULL,
-    backport_linter("oldrel-4", except = c("R_user_dir", "str2lang")),
+    backport_linter("oldrel-4", except = c("R_user_dir", "str2lang", "str2expression", "deparse1")),
     commented_code_linter = NULL,
     extraction_operator_linter = NULL,
     line_length_linter(120),

@@ -9,6 +9,8 @@
   
 * `assignment_linter()` no longer lints assignments in braces that include comments when `allow_trailing = FALSE` (#1701, @ashbaldry)
 
+* `object_usage_linter()` no longer silently ignores usage warnings that don't contain a quoted name (#1714, @AshesITR)
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
@@ -59,6 +61,11 @@
 
 * `unneeded_concatenation_linter()` no longer lints on `c(...)` (i.e., passing `...` in a function call)
   when `allow_single_expression = FALSE` (#1696, @MichaelChirico)
+
+* `object_name_linter()` gains parameter `regexes` to allow custom naming conventions (#822, #1421, @AshesITR)
+
+* `literal_coercion_linter()` reports a replacement in the lint message, e.g. code like `as.integer(1)` will
+  suggest using `1L` instead, and code like `as.numeric(NA)` will suggest using `NA_real_` instead (#1439, @MichaelChirico)
 
 ### New linters
 

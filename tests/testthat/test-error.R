@@ -18,15 +18,7 @@ test_that("returns the correct linting", {
   expect_lint("x = ;", rex::rex("unexpected ';'"), linter)
 
   # no parsing error is expected for the equals-assignment in this code
-  expect_lint(
-    "purrr::partial(list, 1, ... = , 2)",
-    NULL,
-    linter
-  )
-
-  # Error message changed in R-devel as of 2020/12
-  old_lang <- lintr:::set_lang("en")
-  on.exit(lintr:::reset_lang(old_lang), add = TRUE)
+  expect_lint("purrr::partial(list, 1, ... = , 2)", NULL, linter)
 
   # trigger error with base only, and extract it to match against
   #   what comes out from expect_lint.
