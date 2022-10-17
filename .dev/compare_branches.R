@@ -344,6 +344,9 @@ get_linter_from_name <- function(linter_name) {
     #   did not make it into the release?
     if (linter_name == "line_length_linter" && !is.integer(formals(linter_name)$length)) {
       eval(call(linter_name, 80L))
+    } else if (endsWith(linter_name, ")")) {
+      # allow custom parameters
+      eval(parse(text = linter_name))
     } else {
       eval(call(linter_name))
     },
