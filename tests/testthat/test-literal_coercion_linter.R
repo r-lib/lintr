@@ -35,6 +35,10 @@ test_that("literal_coercion_linter skips allowed rlang usages", {
   expect_lint("int(1.0e6)", NULL, linter)
 })
 
+test_that("literal_coercion_linter skips quoted keyword arguments", {
+  expect_lint("as.numeric(foo('a' = 1))", NULL, literal_coercion_linter())
+})
+
 skip_if_not_installed("tibble")
 patrick::with_parameters_test_that(
   "literal_coercion_linter blocks simple disallowed usages",
@@ -62,6 +66,18 @@ patrick::with_parameters_test_that(
   )
 )
 
+test_that("multiple lints return custom messages", {
+  expect_lint(
+    "c(as.integer(1), lgl(1L))",
+    list(
+      rex::rex("Use 1L instead of as.integer(1)"),
+      rex::rex("Use TRUE instead of lgl(1L)")
+    ),
+    literal_coercion_linter()
+  )
+})
+
+skip_if_not_installed("rlang")
 patrick::with_parameters_test_that(
   "literal_coercion_linter blocks rlang disallowed usages",
   expect_lint(
@@ -87,8 +103,4 @@ test_that("literal_coercion_linter blocks scalar rlang list2 construction", {
     rex::rex("Use 1L instead of int(1,)"),
     literal_coercion_linter()
   )
-})
-
-test_that("literal_coercion_linter skips quoted keyword arguments", {
-  expect_lint("as.numeric(foo('a' = 1))", NULL, literal_coercion_linter())
 })
