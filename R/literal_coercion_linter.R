@@ -84,7 +84,8 @@ literal_coercion_linter <- function() {
 
     coercer <- xp_call_name(bad_expr)
     # tiptoe around the fact that we don't require {rlang}
-    if (any(coercer %in% rlang_coercers) && !requireNamespace("rlang", quietly = TRUE)) {
+    is_rlang_coercer <- coercer %in% rlang_coercers
+    if (any(is_rlang_coercer) && !requireNamespace("rlang", quietly = TRUE)) {
       # NB: we _could_ do some extreme customization where each lint
       #   gets a message according to whether the coercer is from rlang,
       #   but this seems like overkill. Just use a generic message and move on.
@@ -95,6 +96,10 @@ literal_coercion_linter <- function() {
       )
     } else {
       coercion_str <- xml2::xml_text(bad_expr)
+      if (any(is_rlang_coercer) & !("package:rlang" %in% search())) {
+        needs_prefix <- is_rlang_coercer & !startsWith(coercion_str, "rlang::")
+        coercion_str[needs_prefix] <- paste0("rlang::", coercion_str[needs_prefix])
+      }
       # the linter logic & rlang requirement should ensure that it's safe to run eval() here
       literal_equivalent_str <- vapply(str2expression(coercion_str), function(expr) deparse1(eval(expr)), character(1L))
       lint_message <- sprintf(
