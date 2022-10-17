@@ -95,7 +95,8 @@ literal_coercion_linter <- function() {
         "NB: this message can be improved to show a specific replacement if 'rlang' is installed."
       )
     } else {
-      coercion_str <- xml2::xml_text(bad_expr)
+      # duplicate, unless we add 'rlang::' and it wasn't there originally
+      coercion_str <- report_str <- xml2::xml_text(bad_expr)
       if (any(is_rlang_coercer) && !("package:rlang" %in% search())) {
         needs_prefix <- is_rlang_coercer & !startsWith(coercion_str, "rlang::")
         coercion_str[needs_prefix] <- paste0("rlang::", coercion_str[needs_prefix])
@@ -107,7 +108,7 @@ literal_coercion_linter <- function() {
       literal_equivalent_str <- vapply(str2expression(coercion_str), function(expr) deparse1(eval(expr)), character(1L))
       lint_message <- sprintf(
         "Use %s instead of %s, i.e., use literals directly where possible, instead of coercion.",
-        literal_equivalent_str, coercion_str
+        literal_equivalent_str, report_str
       )
     }
 
