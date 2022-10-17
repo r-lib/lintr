@@ -5,8 +5,18 @@
 #'   Defaults to 2.
 #' @param hanging_indent_style Indentation style for multi-line function calls with arguments in their first line.
 #'   Defaults to tidyverse style, i.e. a block indent is used if the function call terminates with `)` on a separate
-#'   line and a hanging indent if not
+#'   line and a hanging indent if not.
+#'   Note that function multi-line function calls without arguments on their first line will always be expected to have
+#'   block-indented arguments.
+#'
 #'   ```r
+#'   # complies to any style
+#'   map(
+#'     x,
+#'     f,
+#'     additional_arg = 42
+#'   )
+#'
 #'   # complies to "tidy" and "never"
 #'   map(x, f,
 #'     additional_arg = 42
@@ -143,7 +153,10 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     #     + if there is no token following ( on the same line, a block indent is required until )
     #  - binary operators where the second arguments starts on a new line
 
-    indent_levels <- rex::re_matches(source_expression$file_lines, rex::rex(start, any_spaces), locations = TRUE)[, "end"]
+    indent_levels <- rex::re_matches(
+      source_expression$file_lines,
+      rex::rex(start, any_spaces), locations = TRUE
+    )[, "end"]
     expected_indent_levels <- integer(length(indent_levels))
     is_hanging <- logical(length(indent_levels))
 
@@ -179,7 +192,9 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     }
 
     # Only lint non-empty lines if the indentation level doesn't match.
-    bad_lines <- which(indent_levels != expected_indent_levels & nzchar(trimws(source_expression$file_lines)) & !in_str_const)
+    bad_lines <- which(indent_levels != expected_indent_levels &
+                         nzchar(trimws(source_expression$file_lines)) &
+                         !in_str_const)
     if (length(bad_lines)) {
       # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
       is_consecutive_lint <- c(FALSE, diff(bad_lines) == 1L)
