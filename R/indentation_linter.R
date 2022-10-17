@@ -82,8 +82,8 @@ indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
     paste(
       c(
         glue::glue("self::{paren_tokens_left}/following-sibling::{paren_tokens_right}/preceding-sibling::*[1]/@line2"),
-        glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))}]/following-sibling::SYMBOL_FUNCTION_CALL/
-                      parent::expr/following-sibling::expr[1]/@line2"),
+        glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))}]
+                      /following-sibling::SYMBOL_FUNCTION_CALL/parent::expr/following-sibling::expr[1]/@line2"),
         glue::glue("self::*[
                       {xp_and(paste0('not(self::', paren_tokens_left, ')'))} and
                       not(following-sibling::SYMBOL_FUNCTION_CALL)
@@ -113,11 +113,17 @@ indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
   xp_multiline_string <- "//STR_CONST[@line1 < @line2]"
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
+    # must run on file level because a line can contain multiple expressions, losing indentation information, e.g.
+    #
+    #> fun(
+    #    a) # comment
+    #
+    # will have "# comment" as a separate expression
+    if (!is_lint_level(source_expression, "file")) {
       return(list())
     }
 
-    xml <- source_expression$xml_parsed_content
+    xml <- source_expression$full_xml_parsed_content
     # Indentation increases by 1 for:
     #  - { } blocks that span multiple lines
     #  - ( ), [ ], or [[ ]] calls that span multiple lines
@@ -125,7 +131,7 @@ indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
     #     + if there is no token following ( on the same line, a block indent is required until )
     #  - binary operators where the second arguments starts on a new line
 
-    indent_levels <- rex::re_matches(source_expression$lines, rex::rex(start, any_spaces), locations = TRUE)[, "end"]
+    indent_levels <- rex::re_matches(source_expression$file_lines, rex::rex(start, any_spaces), locations = TRUE)[, "end"]
     expected_indent_levels <- integer(length(indent_levels))
     is_hanging <- logical(length(indent_levels))
 
@@ -135,7 +141,7 @@ indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
       change_begin <- as.integer(xml2::xml_attr(change, "line1")) + 1L
       change_end <- xml2::xml_find_num(change, xp_block_ends)
       if (change_begin <= change_end) {
-        to_indent <- seq(from = change_begin, to = change_end) - source_expression$line + 1L
+        to_indent <- seq(from = change_begin, to = change_end)
         if (change_starts_hanging) {
           expected_indent_levels[to_indent] <- as.integer(xml2::xml_attr(change, "col2"))
           is_hanging[to_indent] <- TRUE
@@ -152,12 +158,12 @@ indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
       is_in_str <- seq(
         from = as.integer(xml2::xml_attr(string, "line1")) + 1L,
         to = as.integer(xml2::xml_attr(string, "line2"))
-      ) - source_expression$line + 1L
+      )
       in_str_const[is_in_str] <- TRUE
     }
 
     # Only lint non-empty lines if the indentation level doesn't match.
-    bad_lines <- which(indent_levels != expected_indent_levels & nzchar(source_expression$lines) & !in_str_const)
+    bad_lines <- which(indent_levels != expected_indent_levels & nzchar(trimws(source_expression$file_lines)) & !in_str_const)
     if (length(bad_lines)) {
       # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
       is_consecutive_lint <- c(FALSE, diff(bad_lines) == 1L)
@@ -172,7 +178,7 @@ indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
         expected_indent_levels[bad_lines],
         indent_levels[bad_lines]
       )
-      lint_lines <- unname(as.integer(names(source_expression$lines)[bad_lines]))
+      lint_lines <- unname(as.integer(names(source_expression$file_lines)[bad_lines]))
       lint_ranges <- cbind(
         pmin(expected_indent_levels[bad_lines] + 1L, indent_levels[bad_lines]),
         pmax(expected_indent_levels[bad_lines], indent_levels[bad_lines])
@@ -184,7 +190,7 @@ indentation_linter <- function(indent = 2L, use_hybrid_indent = TRUE) {
         column_number = indent_levels[bad_lines],
         type = "style",
         message = lint_messages,
-        line = unname(source_expression$lines[bad_lines]),
+        line = unname(source_expression$file_lines[bad_lines]),
         ranges = apply(lint_ranges, 1L, list, simplify = FALSE)
       )
     } else {

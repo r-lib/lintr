@@ -32,6 +32,21 @@ test_that("indentation linter flags unindented expressions", {
     linter
   )
 
+  # no double-block indents even if the indentation-starting tokens are immediately next to each other
+  expect_lint(
+    trim_some("
+      local({
+        # no lint
+      })
+
+      local({
+          # must lint
+      })
+    "),
+    list(line_number = 6L, message = "Indentation"),
+    linter
+  )
+
   expect_lint(
     trim_some("
       lapply(1:10, function(i) {
@@ -301,6 +316,29 @@ test_that("indentation works with control flow statements", {
       }
     "),
     "Indentation",
+    linter
+  )
+})
+
+test_that("indentation lint messages are dynamic", {
+  linter <- indentation_linter()
+
+  expect_lint(
+    trim_some("
+      local({
+          # should be 2
+      })
+    "),
+    rex::rex("Indentation should be 2 spaces but is 4 spaces."),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      fun(
+        3) # should be 4
+    "),
+    rex::rex("Hanging indent should be 4 spaces but is 2 spaces."),
     linter
   )
 })
