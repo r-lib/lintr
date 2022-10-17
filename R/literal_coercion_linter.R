@@ -103,7 +103,7 @@ literal_coercion_linter <- function() {
       }
       # the linter logic & rlang requirement should ensure that it's safe to run eval() here
       # TODO(michaelchirico): this recommends '1' to replace as.numeric(1), where our
-      #   own literal_coercion_linter(), if active, would require this to be 1.0. Should
+      #   own implicit_integer_linter(), if active, would require this to be 1.0. Should
       #   we recommend this instead, or offer it as an alternative?
       literal_equivalent_str <- vapply(str2expression(coercion_str), function(expr) deparse1(eval(expr)), character(1L))
       lint_message <- sprintf(
