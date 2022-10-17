@@ -290,7 +290,7 @@ settings <- NULL
   lintr_ns <- getNamespace(pkgname)
   for (base_fun in c("str2lang", "str2expression")) {
     if (!exists(base_fun, base_ns)) {
-      assign(base_fun, get(base_fun, backports_ns), linter_ns)
+      assign(base_fun, get(base_fun, backports_ns), lintr_ns)
     }
   }
 
