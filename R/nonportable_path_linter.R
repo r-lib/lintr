@@ -2,8 +2,6 @@
 #'
 #' Check that [file.path()] is used to construct safe and portable paths.
 #'
-#' @include utils_path_linters.R
-#'
 #' @inheritParams absolute_path_linter
 #' @evalRd rd_tags("nonportable_path_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.  \cr
