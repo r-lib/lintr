@@ -33,9 +33,11 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unnecessary_placeholder_linter <- function() {
+  magrittr_pipes <- c("%>%", "%T>%", "%<>%")
+
   # TODO(michaelchirico): handle R4.2.0 native placeholder _ as well
-  xpath <- "
-  //SPECIAL[text() = '%>%' or text() = '%T>%' or text() = '%<>%']
+  xpath <- glue::glue("
+  //SPECIAL[ { xp_text_in_table(magrittr_pipes) } ]
     /following-sibling::expr[
       expr/SYMBOL_FUNCTION_CALL
       and not(expr[
@@ -47,7 +49,7 @@ unnecessary_placeholder_linter <- function() {
       SYMBOL[text() = '.']
       and not(preceding-sibling::*[1][self::EQ_SUB])
     ]
-  "
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
