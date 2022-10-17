@@ -1,7 +1,7 @@
 linters: linters_with_defaults(
     any_duplicated_linter(),
     any_is_na_linter(),
-    backport_linter("oldrel-4", except = c("R_user_dir", "str2lang")),
+    backport_linter("oldrel-4", except = c("R_user_dir", "str2lang", "str2expression", "deparse1")),
     consecutive_stopifnot_linter(),
     expect_comparison_linter(),
     expect_length_linter(),
