@@ -80,6 +80,7 @@
 </ul></li>
 <li><p><code><a href="../reference/spaces_inside_linter.html">spaces_inside_linter()</a></code> allows terminal missing keyword arguments (e.g. <code>alist(arg = )</code>; <a href="https://github.com/r-lib/lintr/issues/540" class="external-link">#540</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
 <li><p><code><a href="../reference/brace_linter.html">brace_linter()</a></code> allows empty braced expression on the same line (e.g. <code>while (updating_condition()) { }</code>) regardless of <code>allow_single_line</code> to match the corresponding behavior in {styler}. This is an expedient while the style guide on handling this case awaits clarification: <a href="https://github.com/tidyverse/style/issues/191" class="external-link uri">https://github.com/tidyverse/style/issues/191</a>. (<a href="https://github.com/r-lib/lintr/issues/1346" class="external-link">#1346</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
+<li><p>The new <code><a href="../reference/indentation_linter.html">indentation_linter()</a></code> is part of the default linters. See “New linters” for more details.</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
@@ -111,6 +112,7 @@
 <li><p><code><a href="../reference/empty_assignment_linter.html">empty_assignment_linter()</a></code> for identifying empty assignments like <code>x = {}</code> that are more clearly written as <code>x = NULL</code> (<a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
 <li><p><code><a href="../reference/unnecessary_placeholder_linter.html">unnecessary_placeholder_linter()</a></code> for identifying where usage of the {magrittr} placeholder <code>.</code> could be omitted (<a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
 <li><p><code><a href="../reference/routine_registration_linter.html">routine_registration_linter()</a></code> for identifying native routines that don’t use registration (<code>useDynLib</code> in the <code>NAMESPACE</code>; <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
+<li><p><code><a href="../reference/indentation_linter.html">indentation_linter()</a></code> for checking that the indentation conforms to 2-space Tidyverse-style (<a href="https://github.com/AshesITR" class="external-link">@AshesITR</a> and <a href="https://github.com/dgkf" class="external-link">@dgkf</a>, <a href="https://github.com/r-lib/lintr/issues/1411" class="external-link">#1411</a>).</p></li>
 </ul></div>
 </div>
 <div class="section level3">
@@ -152,7 +154,7 @@
 <li>
 <code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> no longer fails on R files that match a knitr pattern (<a href="https://github.com/r-lib/lintr/issues/743" class="external-link">#743</a>, <a href="https://github.com/r-lib/lintr/issues/879" class="external-link">#879</a>, <a href="https://github.com/r-lib/lintr/issues/1406" class="external-link">#1406</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>Parse error lints now appear with the linter name <code>"error"</code> instead of <code>NA</code> (<a href="https://github.com/r-lib/lintr/issues/1405" class="external-link">#1405</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).<br>
-Also, linting no longer runs if the <code>source_expressions</code> contain invalid string data that would cause error messages in other linters.</li>
+Also, linting no longer runs if the <code>source_expressions</code> contain invalid string data that would cause error messages in other linters. in other linters.</li>
 <li>Prevent <code><a href="../reference/lint.html">lint()</a></code> from hanging on Rmd files with some syntax errors (<a href="https://github.com/r-lib/lintr/issues/1443" class="external-link">#1443</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> no longer omits trailing non-code lines from knitr files (<a href="https://github.com/r-lib/lintr/issues/1400" class="external-link">#1400</a>, <a href="https://github.com/r-lib/lintr/issues/1415" class="external-link">#1415</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).<br>
