@@ -44,6 +44,12 @@ sort_linter <- function() {
     ]
   "
 
+  args_xpath <- ".//SYMBOL_SUB[text() = 'method' or
+                               text() = 'decreasing' or
+                               text() = 'na.last']"
+
+  arg_values_xpath <- glue::glue("{args}/following-sibling::expr[1]")
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -53,10 +59,6 @@ sort_linter <- function() {
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
-    args <- ".//SYMBOL_SUB[text() = 'method' or
-                           text() = 'decreasing' or
-                           text() = 'na.last']"
-
     var <- xml2::xml_text(
       xml2::xml_find_first(
         bad_expr,
@@ -64,9 +66,9 @@ sort_linter <- function() {
       )
     )
 
-    arg_names <- xml2::xml_text(xml2::xml_find_all(bad_expr, args))
+    arg_names <- xml2::xml_text(xml2::xml_find_all(bad_expr, args_xpath))
     arg_values <- xml2::xml_text(
-      xml2::xml_find_all(bad_expr, glue::glue("{args}/following-sibling::expr[1]"))
+      xml2::xml_find_all(bad_expr, arg_values_xpath)
     )
 
     orig_call <- sprintf(
