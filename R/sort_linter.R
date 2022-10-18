@@ -61,7 +61,7 @@ sort_linter <- function() {
                                text() = 'decreasing' or
                                text() = 'na.last']"
 
-  arg_values_xpath <- glue::glue("{args}/following-sibling::expr[1]")
+  arg_values_xpath <- glue::glue("{args_xpath}/following-sibling::expr[1]")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
