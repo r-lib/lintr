@@ -27,7 +27,7 @@ test_that(
       "jkl = 456",
       "mno = 789"
     )
-    lintr:::read_settings(NULL)
+
     lints_from_outside <- lint_package(
       pkg_path,
       linters = list(assignment_linter())
@@ -41,11 +41,11 @@ test_that(
       lint_package("..", linters = list(assignment_linter()), parse_settings = FALSE)
     )
 
-    expect_equal(
+    expect_identical(
       as.data.frame(lints_from_outside)[["line"]],
       expected_lines
     )
-    expect_equal(
+    expect_identical(
       as.data.frame(lints_from_outside),
       as.data.frame(lints_from_pkg_root),
       info = paste(
@@ -53,7 +53,7 @@ test_that(
         "(no .lintr config present)"
       )
     )
-    expect_equal(
+    expect_identical(
       as.data.frame(lints_from_outside),
       as.data.frame(lints_from_a_subdir),
       info = paste(
@@ -94,11 +94,11 @@ test_that(
       lint_package("..", linters = list(assignment_linter()))
     )
 
-    expect_equal(
+    expect_identical(
       as.data.frame(lints_from_outside)[["line"]],
       expected_lines
     )
-    expect_equal(
+    expect_identical(
       as.data.frame(lints_from_outside),
       as.data.frame(lints_from_pkg_root),
       info = paste(
@@ -106,7 +106,7 @@ test_that(
         "(.lintr config present)"
       )
     )
-    expect_equal(
+    expect_identical(
       as.data.frame(lints_from_outside),
       as.data.frame(lints_from_a_subdir),
       info = paste(

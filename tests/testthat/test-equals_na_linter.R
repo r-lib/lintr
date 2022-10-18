@@ -20,7 +20,6 @@ test_that("equals_na_linter skips allowed usages", {
 })
 
 skip_if_not_installed("tibble")
-skip_if_not_installed("patrick")
 patrick::with_parameters_test_that(
   "equals_na_linter blocks disallowed usages for all combinations of operators and types of NAs",
   expect_lint(

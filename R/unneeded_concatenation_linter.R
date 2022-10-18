@@ -9,6 +9,45 @@
 #'   [as.vector()] is not always preferable, for example with environments
 #'   (especially, `R6` objects), in which case `list()` is the better alternative.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "x <- c()",
+#'   linters = unneeded_concatenation_linter()
+#' )
+#'
+#' lint(
+#'   text = "x <- c(TRUE)",
+#'   linters = unneeded_concatenation_linter()
+#' )
+#'
+#' lint(
+#'   text = "x <- c(1.5 + 2.5)",
+#'   linters = unneeded_concatenation_linter(allow_single_expression = FALSE)
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "x <- NULL",
+#'   linters = unneeded_concatenation_linter()
+#' )
+#'
+#' # In case the intent here was to seed a vector of known size
+#' lint(
+#'   text = "x <- integer(4L)",
+#'   linters = unneeded_concatenation_linter()
+#' )
+#'
+#' lint(
+#'   text = "x <- TRUE",
+#'   linters = unneeded_concatenation_linter()
+#' )
+#'
+#' lint(
+#'   text = "x <- c(1.5 + 2.5)",
+#'   linters = unneeded_concatenation_linter(allow_single_expression = TRUE)
+#' )
+#'
 #' @evalRd rd_tags("unneeded_concatenation_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -22,15 +61,6 @@ unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
   msg_const <- 'Unneeded concatenation of a constant. Remove the "c" call.'
 
   non_constant_cond <- "SYMBOL or (expr and not(OP-COLON and count(expr[SYMBOL or expr]) != 2))"
-  if (!allow_single_expression) {
-    path_to_non_constant <- glue::glue("./expr[2][ {non_constant_cond} ]")
-    non_constant_cond <- "1 = 0"
-
-    msg_const_expr <- paste(
-      'Unneeded concatenation of a simple expression. Remove the "c" call,',
-      'replacing with "as.vector" if using "c" to string attributes, e.g. in converting an array to a vector.'
-    )
-  }
 
   to_pipe_xpath <- "
     ./preceding-sibling::*[1][
@@ -38,20 +68,27 @@ unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
       self::SPECIAL[text() = '%>%']
     ]
   "
-  xpath_call <- glue::glue("
+  if (allow_single_expression) {
+    zero_arg_cond <-
+      glue::glue("count(expr) = 1 and not( {to_pipe_xpath} / preceding-sibling::expr[ {non_constant_cond} ])")
+    one_arg_cond <-
+      glue::glue("count(expr) = 2 and not(expr[2][ {non_constant_cond} ])")
+  } else {
+    zero_arg_cond <- glue::glue("count(expr) = 1 and not( {to_pipe_xpath} )")
+    one_arg_cond <- "count(expr) = 2 and not(expr[2]/SYMBOL[text() = '...'])"
+    path_to_non_constant <- glue::glue("./expr[2][ {non_constant_cond} ]")
+
+    msg_const_expr <- paste(
+      'Unneeded concatenation of a simple expression. Remove the "c" call,',
+      'replacing with "as.vector" if using "c" to string attributes, e.g. in converting an array to a vector.'
+    )
+  }
+  call_xpath <- glue::glue("
   //SYMBOL_FUNCTION_CALL[text() = 'c']
     /parent::expr
     /parent::expr[
       not(EQ_SUB)
-      and (
-        (
-          count(expr) = 2
-          and not(expr[2][ {non_constant_cond} ])
-        ) or (
-          count(expr) = 1
-          and not( {to_pipe_xpath} / preceding-sibling::expr[ {non_constant_cond} ] )
-        )
-      )
+      and ( {xp_or(zero_arg_cond, one_arg_cond)} )
     ]
   ")
   num_args_xpath <- "count(./expr) - 1"
@@ -62,7 +99,7 @@ unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
     }
 
     xml <- source_expression$xml_parsed_content
-    c_calls <- xml2::xml_find_all(xml, xpath_call)
+    c_calls <- xml2::xml_find_all(xml, call_xpath)
 
     # bump count(args) by 1 if inside a pipeline
     num_args <- as.integer(xml2::xml_find_num(c_calls, num_args_xpath)) +

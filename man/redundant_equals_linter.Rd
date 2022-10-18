@@ -14,3 +14,34 @@ can be done using prefixes (is, has, can, etc.). For example, \code{is_child},
 \code{has_parent_supervision}, \code{can_watch_horror_movie} clarify their logical
 nature, while \code{child}, \code{parent_supervision}, \code{watch_horror_movie} don't.
 }
+\examples{
+# will produce lints
+lint(
+  text = "if (any(x == TRUE)) 1",
+  linters = redundant_equals_linter()
+)
+
+lint(
+  text = "if (any(x != FALSE)) 0",
+  linters = redundant_equals_linter()
+)
+
+# okay
+lint(
+  text = "if (any(x)) 1",
+  linters = redundant_equals_linter()
+)
+
+lint(
+  text = "if (!all(x)) 0",
+  linters = redundant_equals_linter()
+)
+
+}
+\seealso{
+\link{linters} for a complete list of linters available in lintr. \cr
+\code{\link[=outer_negation_linter]{outer_negation_linter()}}
+}
+\section{Tags}{
+\link[=best_practices_linters]{best_practices}, \link[=common_mistakes_linters]{common_mistakes}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
+}

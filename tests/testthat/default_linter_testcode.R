@@ -13,6 +13,7 @@ f = function (x,y = 1){}
 # cyclocomp
 # equals_na
 # brace_linter
+# indentation
 # infix_spaces
 # line_length
 # object_length
@@ -22,7 +23,7 @@ f = function (x,y = 1){}
 # T_and_F_symbol
 someComplicatedFunctionWithALongCamelCaseName <- function(x)
 {
-  y <- 1
+    y <- 1
   if (1 > 2 && 2 > 3 && 3 > 4 && 4 > 5 && 5*10 > 6 && 5 > 6 && 6 > 7 && x == NA) {T} else F
 }
 
@@ -37,6 +38,7 @@ my_metric <- function(x)
 # pipe_continuation
 # seq_linter
 # spaces_inside
+# indentation
 x <- 1:10
 x[ 2]
 1:length(x) %>% lapply(function(x) x*2) %>%

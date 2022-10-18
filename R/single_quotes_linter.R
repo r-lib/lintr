@@ -2,13 +2,41 @@
 #'
 #' Check that only double quotes are used to delimit string constants.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "c('a', 'b')",
+#'   linters = single_quotes_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = 'c("a", "b")',
+#'   linters = single_quotes_linter()
+#' )
+#'
+#' code_lines <- "paste0(x, '\"this is fine\"')"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = single_quotes_linter()
+#' )
+#'
 #' @evalRd rd_tags("single_quotes_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
 #'   <https://style.tidyverse.org/syntax.html#character-vectors>
 #' @export
 single_quotes_linter <- function() {
-  squote_regex <- rex(start, zero_or_one(character_class("rR")), single_quote, any_non_double_quotes, single_quote, end)
+  squote_regex <- rex(
+    start,
+    zero_or_one(character_class("rR")),
+    single_quote,
+    any_non_double_quotes,
+    single_quote,
+    end
+  )
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
       return(list())

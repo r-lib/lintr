@@ -87,7 +87,7 @@ line_info <- function(line_numbers, type = c("start", "end")) {
 #' @param exclude_end regular expression used to mark the end of an excluded range
 #' @param exclude_linter regular expression used to capture a list of to-be-excluded linters immediately following a
 #' `exclude` or `exclude_start` marker.
-#' @param exclude_linter_sep regular expression used to split a linter list into indivdual linter names for exclusion.
+#' @param exclude_linter_sep regular expression used to split a linter list into individual linter names for exclusion.
 #' @param lines a character vector of the content lines of `file`
 #' @param linter_names Names of active linters
 #'

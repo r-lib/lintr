@@ -17,23 +17,23 @@ Check for missing arguments in function calls (e.g. \code{stats::median(1:10, )}
 \examples{
 # will produce lints
 lint(
-  text = "tibble(x = 'a', )",
+  text = 'tibble(x = "a", )',
   linters = missing_argument_linter()
 )
 
 # okay
 lint(
-  text = "tibble(x = 'a')",
+  text = 'tibble(x = "a")',
   linters = missing_argument_linter()
 )
 
 lint(
-  text = "tibble(x = 'a', )",
+  text = 'tibble(x = "a", )',
   linters = missing_argument_linter(except = "tibble")
 )
 
 lint(
-  text = "tibble(x = 'a', )",
+  text = 'tibble(x = "a", )',
   linters = missing_argument_linter(allow_trailing = TRUE)
 )
 

@@ -131,19 +131,6 @@ rot <- function(ch, k = 13L) {
   chartr(p0(alphabet), p0(c(alphabet[-idx], alphabet[idx])), ch)
 }
 
-base_backport <- function(name, replacement) {
-  if (exists(name, asNamespace("base"))) {
-    return(NULL)
-  }
-  assign(name, replacement, parent.frame())
-}
-
-base_backport("trimws", function(x) {
-  sub("^\\s+", "", sub("\\s+$", "", x))
-})
-
-base_backport("lengths", function(x) vapply(x, length, integer(1L))) # nolint: lengths_linter
-
 try_silently <- function(expr) {
   suppressWarnings(
     suppressMessages(

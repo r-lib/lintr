@@ -371,39 +371,28 @@ reorder_lints <- function(lints) {
   )]
 }
 
-has_description <- function(path) {
-  desc_info <- file.info(file.path(path, "DESCRIPTION"))
-  !is.na(desc_info$size) && desc_info$size > 0.0 && !desc_info$isdir
+find_package <- function(path) {
+  if (!dir.exists(path)) {
+    path <- dirname(path)
+  }
+  tryCatch(
+    rprojroot::find_root(path = path, criterion = rprojroot::is_r_package),
+    error = function(e) NULL
+  )
 }
 
-find_package <- function(path) {
-  path <- normalizePath(path, mustWork = FALSE)
-
-  while (!has_description(path)) {
+find_rproj_or_package <- function(path) {
+  if (!dir.exists(path)) {
     path <- dirname(path)
-    if (is_root(path)) {
-      return(NULL)
-    }
   }
-
-  path
+  tryCatch(
+    rprojroot::find_root(path = path, criterion = rprojroot::is_rstudio_project | rprojroot::is_r_package),
+    error = function(e) NULL
+  )
 }
 
 find_rproj_at <- function(path) {
-  head(list.files(path = path, pattern = "\\.Rproj$", full.names = TRUE), 1L)
-}
-
-find_rproj <- function(path) {
-  path <- normalizePath(path, mustWork = FALSE)
-
-  while (length(res <- find_rproj_at(path)) == 0L) {
-    path <- dirname(path)
-    if (is_root(path)) {
-      return(NULL)
-    }
-  }
-
-  res
+  head(Sys.glob(file.path(path, "*.Rproj")), n = 1L)
 }
 
 is_root <- function(path) {
@@ -554,7 +543,8 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
           style = "info",
           x$type
         ),
-        message = x$message)
+        message = x$message
+      )
     })
   })
 
@@ -676,8 +666,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
       rule_index_exists <-
         which(sapply(sarif$runs[[1L]]$tool$driver$rules,
                      function(x) x$id == lint$linter))
-      if (length(rule_index_exists) == 0L ||
-          is.na(rule_index_exists[1L])) {
+      if (length(rule_index_exists) == 0L || is.na(rule_index_exists[1L])) {
         rule_index_exists <- 0L
       }
     }

@@ -20,6 +20,7 @@ default_linters <- modify_defaults(
   cyclocomp_linter(),
   equals_na_linter(),
   function_left_parentheses_linter(),
+  indentation_linter(),
   infix_spaces_linter(),
   line_length_linter(),
   no_tab_linter(),
@@ -283,8 +284,16 @@ settings <- NULL
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  # This is just here to quiet R CMD check
-  if (FALSE) backports::import
+  backports::import(pkgname, c("trimws", "lengths", "deparse1"))
+  # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
+  base_ns <- getNamespace("base")
+  backports_ns <- getNamespace("backports")
+  lintr_ns <- getNamespace(pkgname)
+  for (base_fun in c("str2lang", "str2expression")) {
+    if (!exists(base_fun, base_ns)) {
+      assign(base_fun, get(base_fun, backports_ns), lintr_ns)
+    }
+  }
 
   default_settings <<- list(
     linters = default_linters,

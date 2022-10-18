@@ -3,7 +3,8 @@ regexes <- list(
   local_var = rex::rex("local variable"),
   quotes = rex::rex("Only use double-quotes."),
   trailing = rex::rex("Trailing blank lines are superfluous."),
-  trailws = rex::rex("Trailing whitespace is superfluous.")
+  trailws = rex::rex("Trailing whitespace is superfluous."),
+  indent = rex("Indentation should be")
 )
 
 test_that("it handles dir", {
@@ -92,12 +93,16 @@ test_that("it handles tex", {
   expect_lint(
     file = test_path("knitr_formats", "test.Rtex"),
     checks = list(
+      list(regexes[["indent"]], line_number = 11L),
+      # TODO(AshesITR):
+      # masking the Rtex escape char by whitespace causes false-positive indentation lints
       list(regexes[["assign"]], line_number = 11L),
+      list(regexes[["indent"]], line_number = 22L),
       list(regexes[["local_var"]], line_number = 23L),
       list(regexes[["assign"]], line_number = 23L),
       list(regexes[["trailing"]], line_number = 25L),
       list(regexes[["trailws"]], line_number = 25L)
-      # FIXME(AshesITR): #1043
+      # TODO(AshesITR): #1043
       # file_lines contains a whitespace on the final line for Rtex, because that is used to mark the Rtex escape char
       # "%" as well.
       # cf. get_source_expressions("tests/testthat/knitr_formats/test.Rtex")$lines[[25]]

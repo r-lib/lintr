@@ -24,7 +24,6 @@ test_that("condition_message_linter skips allowed usages", {
 })
 
 skip_if_not_installed("tibble")
-skip_if_not_installed("patrick")
 patrick::with_parameters_test_that(
   "paste/paste0 allowed by condition_message_linter when using other seps and/or collapse",
   expect_lint(
@@ -33,7 +32,7 @@ patrick::with_parameters_test_that(
     condition_message_linter()
   ),
   .cases = tibble::tribble(
-    ~.test_name,                           ~condition, ~fun,     ~ parameter, ~arg,
+    ~.test_name,                           ~condition, ~fun,     ~parameter, ~arg,
     "stop, paste and collapse = ''",       "stop",     "paste",  "collapse",  "",
     "warning, paste and collapse = '\n'",  "warning",  "paste",  "collapse",  "\n",
     "message, paste and collapse = '|'",   "message",  "paste",  "collapse",  "|",

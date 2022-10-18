@@ -63,3 +63,10 @@ test_that("expect_lint_free works", {
   expect_lint_free(test_path("dummy_packages", "clean_subdir", "r"))
   expect_failure(expect_lint_free(test_path("dummy_packages", "package")))
 })
+
+test_that("expect_lint doesn't change language", {
+  withr::with_envvar(c("LANGUAGE" = "mr"), {
+    expect_success(expect_lint("a=1", lint_msg, linter))
+    expect_equal(Sys.getenv("LANGUAGE"), "mr")
+  })
+})

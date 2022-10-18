@@ -43,7 +43,7 @@ lint(
 )
 
 lint(
-  text = "stopifnot('x must be a logical scalar' = length(x) == 1 && is.logical(x) && !is.na(x))",
+  text = 'stopifnot("x must be a logical scalar" = length(x) == 1 && is.logical(x) && !is.na(x))',
   linters = conjunct_test_linter(allow_named_stopifnot = TRUE)
 )
 
@@ -52,5 +52,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=package_development_linters]{package_development}, \link[=readability_linters]{readability}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=package_development_linters]{package_development}, \link[=readability_linters]{readability}
 }

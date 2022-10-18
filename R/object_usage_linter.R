@@ -122,9 +122,17 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
         },
         integer(1L)
       )
-
       nodes <- unclass(lintable_symbols)[matched_symbol]
-      nodes[is.na(matched_symbol)] <- list(fun_assignment)
+
+      # fallback to line based matching if no symbol is found
+      missing_symbol <- is.na(matched_symbol)
+      nodes[missing_symbol] <- lapply(which(missing_symbol), function(i) {
+        line_based_match <- xml2::xml_find_first(
+          fun_assignment,
+          glue::glue_data(res[i, ], "descendant::expr[@line1 = {line1} and @line2 = {line2}]")
+        )
+        if (is.na(line_based_match)) fun_assignment else line_based_match
+      })
 
       xml_nodes_to_lints(nodes, source_expression = source_expression, lint_message = res$message, type = "warning")
     })
@@ -175,23 +183,19 @@ extract_glued_symbols <- function(expr) {
   if (length(glue_calls) == 0L) {
     return(character())
   }
-  glued_symbols <- new.env(parent = emptyenv())
 
   unexpected_error <- function(cond) {
     stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond)) # nocov
   }
-  for (cl in glue_calls) {
+  glued_symbols <- new.env(parent = emptyenv())
+  for (call_text in xml2::xml_text(glue_calls)) {
     # TODO(michaelchirico): consider dropping tryCatch() here if we're more confident in our logic
-    parsed_cl <- tryCatch(
-      parse(text = xml2::xml_text(cl)),
-      error = unexpected_error,
-      warning = unexpected_error
-    )[[1L]]
-    parsed_cl[[".envir"]] <- glued_symbols
-    parsed_cl[[".transformer"]] <- symbol_extractor
+    parsed_call <- tryCatch(str2lang(call_text), error = unexpected_error, warning = unexpected_error)
+    parsed_call[[".envir"]] <- glued_symbols
+    parsed_call[[".transformer"]] <- symbol_extractor
     # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint
     tryCatch(
-      eval(parsed_cl),
+      eval(parsed_call),
       error = function(cond) {
         warning(
           "Evaluating glue expression while testing for local variable usage failed: ",
@@ -215,7 +219,9 @@ symbol_extractor <- function(text, envir, data) {
     return("")
   }
   parse_data <- utils::getParseData(parsed_text)
-  symbols <- parse_data$text[parse_data$token == "SYMBOL"]
+
+  # strip backticked symbols; `x` is the same as x.
+  symbols <- gsub("^`(.*)`$", "\\1", parse_data$text[parse_data$token == "SYMBOL"])
   for (sym in symbols) {
     assign(sym, NULL, envir = envir)
   }
@@ -270,32 +276,29 @@ parse_check_usage <- function(expression,
       function_name,
       capture(
         name = "message",
-        anything,
-        one_of(quote, "\u2018"),
-        capture(name = "name", anything),
-        one_of(quote, "\u2019"),
-        anything
+        zero_or_more(any, type = "lazy"),
+        maybe(
+          "'",
+          capture(name = "name", anything),
+          "'",
+          anything
+        )
       ),
       line_info
     )
   )
 
+  # nocov start
   missing <- is.na(res$message)
   if (any(missing)) {
-    res[missing, ] <- re_matches(
-      vals[missing],
-      rex(
-        function_name,
-        capture(
-          name = "message",
-          "possible error in ", capture(name = "name", anything), ": ", anything
-        ),
-        line_info
-      )
+    # TODO (AshesITR): Remove this in the future, if no bugs arise from this safeguard
+    warning(
+      "Possible bug in lintr: Couldn't parse usage message ", sQuote(vals[missing][[1L]]), ". ",
+      "Ignoring ", sum(missing), " usage warnings. Please report an issue at https://github.com/r-lib/lintr/issues."
     )
   }
-
-  res <- res[!is.na(res$message), ]
+  # nocov end
+  res <- res[!missing, ]
 
   res$line1 <- as.integer(res$line1) + start_line - 1L
   res$line2 <- ifelse(

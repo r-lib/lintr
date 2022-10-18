@@ -91,3 +91,7 @@ test_that("sequences with : are linted whenever a constant is involved", {
     unneeded_concatenation_linter(allow_single_expression = FALSE)
   )
 })
+
+test_that("c(...) does not lint under !allow_single_expression", {
+  expect_lint("c(...)", NULL, unneeded_concatenation_linter(allow_single_expression = FALSE))
+})

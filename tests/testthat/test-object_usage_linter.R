@@ -471,6 +471,27 @@ test_that("errors/edge cases in glue syntax don't fail lint()", {
   )
 })
 
+test_that("backtick'd names in glue are handled", {
+  expect_lint(
+    trim_some("
+      fun <- function() {
+        `w` <- 2
+        x <- 3
+        y <- -4
+        `\\`y` <- 4
+        z <- -5
+        `z\\`` <- 5
+        glue::glue('{w}{`x`}{y}{z}')
+      }
+    "),
+    list(
+      rex::rex("local variable '`y'"),
+      rex::rex("local variable 'z`'")
+    ),
+    object_usage_linter()
+  )
+})
+
 # reported as #1088
 test_that("definitions below top level are ignored (for now)", {
   expect_lint(
@@ -524,7 +545,8 @@ test_that("fallback works", {
     "),
     list(
       message = rex::rex("no visible global function definition for ", anything, "non_existing_assign<-"),
-      column_number = 6L
+      line_number = 2L,
+      column_number = 3L
     ),
     object_usage_linter()
   )
@@ -582,6 +604,23 @@ test_that("missing libraries don't cause issue", {
       }
     "),
     NULL,
+    object_usage_linter()
+  )
+})
+
+test_that("messages without a quoted name are caught", {
+  # regression test for #1714
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        a <- ...
+        a
+      }
+    "),
+    list(
+      message = "... may be used in an incorrect context",
+      line_number = 2L
+    ),
     object_usage_linter()
   )
 })

@@ -25,24 +25,20 @@
 #' )
 #'
 #' lint(
-#'   text =  "stats::sd(c(x, y, z))",
+#'   text = "stats::sd(c(x, y, z))",
 #'   linters = function_left_parentheses_linter()
 #' )
 #'
 #' lint(
-#'   text =  "if (TRUE) x else y",
-#'   linters = function_left_parentheses_linter()
-#' )
-#'
-#' lint(
-#'   text =  "foo <- function(x) (x + 1)",
+#'   text = "foo <- function(x) (x + 1)",
 #'   linters = function_left_parentheses_linter()
 #' )
 #'
 #' @evalRd rd_tags("function_left_parentheses_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#parentheses>
+#'   <https://style.tidyverse.org/syntax.html#parentheses> \cr
+#'   [spaces_left_parentheses_linter()]
 #' @export
 function_left_parentheses_linter <- function() { # nolint: object_length.
   xpath <- "

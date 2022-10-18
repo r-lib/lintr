@@ -31,9 +31,40 @@ We lint \code{grepl()} usages by default because the \code{!is.na()} version is 
 with respect to \code{NA} handling -- though documented, the way \code{grepl()} handles
 missing inputs may be surprising to some users.
 }
+\examples{
+# will produce lints
+lint(
+  text = 'grepl("^a", x)',
+  linters = string_boundary_linter()
+)
+
+lint(
+  text = 'grepl("z$", x)',
+  linters = string_boundary_linter()
+)
+
+# okay
+lint(
+  text = 'startsWith(x, "a")',
+  linters = string_boundary_linter()
+)
+
+lint(
+  text = 'endsWith(x, "z")',
+  linters = string_boundary_linter()
+)
+
+# If missing values are present, the suggested alternative wouldn't be strictly
+# equivalent, so this linter can also be turned off in such cases.
+lint(
+  text = 'grepl("z$", x)',
+  linters = string_boundary_linter(allow_grepl = TRUE)
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
+\link[=configurable_linters]{configurable}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
 }

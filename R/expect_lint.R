@@ -22,14 +22,14 @@
 #' @return `NULL`, invisibly.
 #' @examples
 #' # no expected lint
-#' expect_lint("a", NULL, trailing_blank_lines_linter)
+#' expect_lint("a", NULL, trailing_blank_lines_linter())
 #'
 #' # one expected lint
-#' expect_lint("a\n", "superfluous", trailing_blank_lines_linter)
-#' expect_lint("a\n", list(message = "superfluous", line_number = 2), trailing_blank_lines_linter)
+#' expect_lint("a\n", "superfluous", trailing_blank_lines_linter())
+#' expect_lint("a\n", list(message = "superfluous", line_number = 2), trailing_blank_lines_linter())
 #'
 #' # several expected lints
-#' expect_lint("a\n\n", list("superfluous", "superfluous"), trailing_blank_lines_linter)
+#' expect_lint("a\n\n", list("superfluous", "superfluous"), trailing_blank_lines_linter())
 #' expect_lint(
 #'   "a\n\n",
 #'   list(
@@ -52,8 +52,10 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
     file <- tempfile()
     con <- base::file(file, encoding = "UTF-8")
     on.exit(unlink(file), add = TRUE)
-    writeLines(content, con = con, sep = "\n")
-    close(con)
+    withr::with_connection(
+      list(con = con),
+      writeLines(content, con = con, sep = "\n")
+    )
   }
 
   lints <- lint(file, ...)

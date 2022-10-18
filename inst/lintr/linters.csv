@@ -2,7 +2,7 @@ linter,tags
 absolute_path_linter,robustness best_practices configurable
 any_duplicated_linter,efficiency best_practices
 any_is_na_linter,efficiency best_practices
-assignment_linter,style consistency default
+assignment_linter,style consistency default configurable
 backport_linter,robustness configurable package_development
 boolean_arithmetic_linter,efficiency best_practices readability
 brace_linter,style readability default configurable
@@ -11,7 +11,7 @@ closed_curly_linter,style readability deprecated configurable
 commas_linter,style readability default
 commented_code_linter,style readability best_practices default
 condition_message_linter,best_practices consistency
-conjunct_test_linter,package_development best_practices readability
+conjunct_test_linter,package_development best_practices readability configurable
 consecutive_stopifnot_linter,style readability consistency
 cyclocomp_linter,style readability best_practices default configurable
 duplicate_argument_linter,correctness common_mistakes configurable
@@ -34,8 +34,9 @@ function_argument_linter,style consistency best_practices
 function_left_parentheses_linter,style readability default
 function_return_linter,readability best_practices
 ifelse_censor_linter,best_practices efficiency
-implicit_integer_linter,style consistency best_practices
-infix_spaces_linter,style readability default
+implicit_integer_linter,style consistency best_practices configurable
+indentation_linter,style readability default configurable
+infix_spaces_linter,style readability default configurable
 inner_combine_linter,efficiency consistency readability
 is_numeric_linter,readability best_practices consistency
 lengths_linter,efficiency readability best_practices
@@ -50,18 +51,19 @@ nonportable_path_linter,robustness best_practices configurable
 numeric_leading_zero_linter,style consistency readability
 object_length_linter,style readability default configurable executing
 object_name_linter,style consistency default configurable executing
-object_usage_linter,style readability correctness default executing
+object_usage_linter,style readability correctness default executing configurable
 open_curly_linter,style readability deprecated configurable
 outer_negation_linter,readability efficiency best_practices
 package_hooks_linter,style correctness package_development
 paren_body_linter,style readability default
 paren_brace_linter,style readability deprecated
-paste_linter,best_practices consistency
+paste_linter,best_practices consistency configurable
 pipe_call_linter,style readability
 pipe_continuation_linter,style readability default
 redundant_equals_linter,best_practices readability efficiency common_mistakes
-redundant_ifelse_linter,best_practices efficiency consistency
+redundant_ifelse_linter,best_practices efficiency consistency configurable
 regex_subset_linter,best_practices efficiency
+routine_registration_linter,best_practices efficiency robustness
 semicolon_linter,style readability default configurable
 semicolon_terminator_linter,style readability deprecated configurable
 seq_linter,robustness efficiency consistency best_practices default
@@ -70,13 +72,13 @@ sort_linter,readability best_practices efficiency
 spaces_inside_linter,style readability default
 spaces_left_parentheses_linter,style readability default
 sprintf_linter,correctness common_mistakes
-string_boundary_linter,readability efficiency
+string_boundary_linter,readability efficiency configurable
 strings_as_factors_linter,robustness
 system_file_linter,consistency readability best_practices
 T_and_F_symbol_linter,style readability robustness consistency best_practices default
 todo_comment_linter,style configurable
 trailing_blank_lines_linter,style default
-trailing_whitespace_linter,style default
+trailing_whitespace_linter,style default configurable
 undesirable_function_linter,style efficiency configurable robustness best_practices
 undesirable_operator_linter,style efficiency configurable robustness best_practices
 unnecessary_lambda_linter,best_practices efficiency readability

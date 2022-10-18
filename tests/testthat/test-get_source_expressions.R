@@ -314,7 +314,6 @@ test_that("Reference chunks in Sweave/Rmd are ignored", {
   expect_silent(lint(example_rnw))
 })
 
-skip_if_not_installed("patrick")
 # NB: this is just a cursory test for linters not to
 #   fail on files where the XML content is xml_missing;
 #   the main linter test files provide more thorough

@@ -5,6 +5,38 @@
 #' @param allow_empty_lines Suppress lints for lines that contain only whitespace.
 #' @param allow_in_strings Suppress lints for trailing whitespace in string constants.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "x <- 1.2  ",
+#'   linters = trailing_whitespace_linter()
+#' )
+#'
+#' code_lines <- "a <- TRUE\n \nb <- FALSE"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = trailing_whitespace_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "x <- 1.2",
+#'   linters = trailing_whitespace_linter()
+#' )
+#'
+#' lint(
+#'   text = "x <- 1.2  # comment about this assignment",
+#'   linters = trailing_whitespace_linter()
+#' )
+#'
+#' code_lines <- "a <- TRUE\n \nb <- FALSE"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = trailing_whitespace_linter(allow_empty_lines = TRUE)
+#' )
+#'
 #' @evalRd rd_tags("trailing_whitespace_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -31,9 +63,7 @@ trailing_whitespace_linter <- function(allow_empty_lines = FALSE, allow_in_strin
       start_lines <- as.integer(xml2::xml_attr(all_str_consts, "line1"))
       end_lines <- as.integer(xml2::xml_attr(all_str_consts, "line2"))
 
-      is_in_str <- vapply(bad_lines, function(ln) {
-        any(start_lines <= ln & ln < end_lines)
-      }, logical(1L))
+      is_in_str <- vapply(bad_lines, function(ln) any(start_lines <= ln & ln < end_lines), logical(1L))
       bad_lines <- bad_lines[!is_in_str]
     }
 

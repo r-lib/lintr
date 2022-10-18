@@ -1,18 +1,3 @@
-test_that("line_info works as expected", {
-  expect_identical(
-    lintr:::line_info(integer(), type = "end"),
-    "0 range ends"
-  )
-  expect_identical(
-    lintr:::line_info(2L, type = "start"),
-    "1 range start (line 2)"
-  )
-  expect_identical(
-    lintr:::line_info(c(2L, 5L), type = "end"),
-    "2 range ends (lines 2, 5)"
-  )
-})
-
 test_that("it excludes properly", {
   withr::local_options(
     lintr.exclude = "#TeSt_NoLiNt",
@@ -23,15 +8,12 @@ test_that("it excludes properly", {
   lintr:::read_settings(NULL)
 
   t1 <- lint("exclusions-test", parse_settings = FALSE)
-
   expect_length(t1, 8L)
 
   t2 <- lint("exclusions-test", exclusions = list("exclusions-test" = 4L), parse_settings = FALSE)
-
   expect_length(t2, 7L)
 
   t3 <- lint("exclusions-test", exclusions = list("exclusions-test"), parse_settings = FALSE)
-
   expect_length(t3, 0L)
 
   cache_path <- file.path(tempdir(), "lintr_cache")
@@ -39,7 +21,7 @@ test_that("it excludes properly", {
   for (info in sprintf("caching: pass %s", 1L:4L)) {
     t4 <- lint("exclusions-test", cache = cache_path, parse_settings = FALSE)
 
-    expect_equal(length(t4), 8L, info = info)
+    expect_identical(length(t4), 8L, info = info)
   }
 })
 

@@ -39,15 +39,15 @@ test_that("clear_cache deletes the file if a file is given", {
   lintr:::save_cache(cache = e1, file = f1, path = d1)
 
   want <- list(file.path(d1, fhash("R/test.R")), recursive = TRUE)
-  expect_equal(clear_cache(f1, d1), want)
-  expect_equal(clear_cache(file = f1, path = d1), want)
+  expect_identical(clear_cache(f1, d1), want)
+  expect_identical(clear_cache(file = f1, path = d1), want)
 })
 
 test_that("clear_cache deletes the directory if no file is given", {
   mockery::stub(clear_cache, "read_settings", function(...) invisible(...))
   mockery::stub(clear_cache, "unlink", function(...) list(...))
 
-  expect_equal(clear_cache(file = NULL, path = "."), list(".", recursive = TRUE))
+  expect_identical(clear_cache(file = NULL, path = "."), list(".", recursive = TRUE))
 })
 
 # `load_cache`
@@ -60,7 +60,7 @@ test_that("load_cache loads the saved file in a new empty environment", {
   lintr:::save_cache(cache = e1, file = f1, path = d1)
   e2 <- lintr:::load_cache(file = f1, path = d1)
 
-  expect_equal(e2, e1)
+  expect_identical(e2, e1)
 })
 
 test_that("load_cache returns an empty environment if no cache file exists", {
@@ -72,7 +72,7 @@ test_that("load_cache returns an empty environment if no cache file exists", {
   lintr:::save_cache(cache = e1, file = f1, path = d1)
   e2 <- lintr:::load_cache(file = f2, path = d1)
 
-  expect_equal(e2, e1)
+  expect_identical(e2, e1)
 })
 
 test_that("load_cache returns an empty environment if reading cache file fails", {
@@ -88,8 +88,8 @@ test_that("load_cache returns an empty environment if reading cache file fails",
   saveRDS(e1, cache_f1)
   expect_warning(e3 <- lintr:::load_cache(file = f1, path = d1), "Could not load cache file")
 
-  expect_equal(ls(e2), character())
-  expect_equal(ls(e3), character())
+  expect_identical(ls(e2), character())
+  expect_identical(ls(e3), character())
 })
 
 # `save_cache`
@@ -139,7 +139,7 @@ test_that("save_cache saves all non-hidden objects from the environment", {
   e2 <- new.env(parent = emptyenv())
   load(file = file.path(d1, fhash(f1)), envir = e2)
 
-  expect_equal(e2, e1)
+  expect_identical(e2, e1)
 })
 
 # `cache_file`
@@ -182,7 +182,7 @@ test_that("retrieve_file returns the cached result if found", {
   f1 <- withr::local_tempfile(lines = "foobar")
 
   lintr:::cache_file(e1, f1, list(), list("foobar"))
-  expect_equal(lintr:::retrieve_file(e1, f1, list()), list("foobar"))
+  expect_identical(lintr:::retrieve_file(e1, f1, list()), list("foobar"))
 })
 
 # `cache_lint`
@@ -229,7 +229,7 @@ test_that("retrieve_lint returns the same lints if nothing has changed", {
     lines = test_data[["lines"]]
   )
 
-  expect_equal(t1, test_data[["lints"]])
+  expect_identical(t1, test_data[["lints"]])
 })
 
 test_that(
@@ -257,9 +257,9 @@ test_that(
       lines = lines2
     )
 
-    expect_equal(t1[[1L]]$line_number, lints[[1L]]$line_number + 1L)
-    expect_equal(t1[[2L]]$line_number, lints[[2L]]$line_number + 1L)
-    expect_equal(t1[[3L]]$line_number, lints[[3L]]$line_number + 1L)
+    expect_identical(t1[[1L]]$line_number, lints[[1L]]$line_number + 1L)
+    expect_identical(t1[[2L]]$line_number, lints[[2L]]$line_number + 1L)
+    expect_identical(t1[[3L]]$line_number, lints[[3L]]$line_number + 1L)
   }
 )
 
@@ -285,7 +285,7 @@ test_that("retrieve_lint returns the same lints with lines added below", {
     lines = lines2
   )
 
-  expect_equal(t1, test_data[["lints"]])
+  expect_identical(t1, test_data[["lints"]])
 })
 
 test_that(
@@ -314,9 +314,9 @@ test_that(
       lines = lines2
     )
 
-    expect_equal(t1[[1L]]$line_number, lints1[[1L]]$line_number)
-    expect_equal(t1[[2L]]$line_number, lints1[[2L]]$line_number + 1L)
-    expect_equal(t1[[3L]]$line_number, lints1[[3L]]$line_number + 1L)
+    expect_identical(t1[[1L]]$line_number, lints1[[1L]]$line_number)
+    expect_identical(t1[[2L]]$line_number, lints1[[2L]]$line_number + 1L)
+    expect_identical(t1[[3L]]$line_number, lints1[[3L]]$line_number + 1L)
   }
 )
 
@@ -357,11 +357,10 @@ test_that("find_new_line returns the same if the line is the same", {
     "foobar2",
     "foobar3"
   )
-  expect_equal(lintr:::find_new_line(1L, "foobar1", t1), 1L)
 
-  expect_equal(lintr:::find_new_line(2L, "foobar2", t1), 2L)
-
-  expect_equal(lintr:::find_new_line(3L, "foobar3", t1), 3L)
+  expect_identical(lintr:::find_new_line(1L, "foobar1", t1), 1L)
+  expect_identical(lintr:::find_new_line(2L, "foobar2", t1), 2L)
+  expect_identical(lintr:::find_new_line(3L, "foobar3", t1), 3L)
 })
 
 test_that("find_new_line returns the correct line if it is before the current line", {
@@ -370,11 +369,10 @@ test_that("find_new_line returns the correct line if it is before the current li
     "foobar2",
     "foobar3"
   )
-  expect_equal(lintr:::find_new_line(1L, "foobar1", t1), 1L)
 
-  expect_equal(lintr:::find_new_line(2L, "foobar1", t1), 1L)
-
-  expect_equal(lintr:::find_new_line(3L, "foobar1", t1), 1L)
+  expect_identical(lintr:::find_new_line(1L, "foobar1", t1), 1L)
+  expect_identical(lintr:::find_new_line(2L, "foobar1", t1), 1L)
+  expect_identical(lintr:::find_new_line(3L, "foobar1", t1), 1L)
 })
 
 test_that("find_new_line returns the correct line if it is after the current line", {
@@ -383,11 +381,10 @@ test_that("find_new_line returns the correct line if it is after the current lin
     "foobar2",
     "foobar3"
   )
-  expect_equal(lintr:::find_new_line(1L, "foobar3", t1), 3L)
 
-  expect_equal(lintr:::find_new_line(2L, "foobar3", t1), 3L)
-
-  expect_equal(lintr:::find_new_line(3L, "foobar3", t1), 3L)
+  expect_identical(lintr:::find_new_line(1L, "foobar3", t1), 3L)
+  expect_identical(lintr:::find_new_line(2L, "foobar3", t1), 3L)
+  expect_identical(lintr:::find_new_line(3L, "foobar3", t1), 3L)
 })
 
 #

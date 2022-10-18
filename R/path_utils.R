@@ -1,9 +1,13 @@
 control_char_regex <- rex(one_of(intToUtf8(seq.int(0L, 31L), multiple = TRUE)))
 # control chars (non-printing)
 
-win32_bad_punct_regex <- rex(one_of("*", "?", "\"", "<", ">", "|", ":", "/", "\\"))
-win32_good_punct_regex <- rex(one_of("!", "#", "$", "%", "&", "'", "(", ")", "+", ",", "-", ".", ";",
-                                     "=", "@", "[", "]", "^", "_", "`", "{", "}", "~"))
+win32_bad_punct_regex <- rex(one_of(
+  "*", "?", "\"", "<", ">", "|", ":", "/", "\\"
+))
+win32_good_punct_regex <- rex(one_of(
+  "!", "#", "$", "%", "&", "'", "(", ")", "+", ",", "-", ".", ";",
+  "=", "@", "[", "]", "^", "_", "`", "{", "}", "~"
+))
 # win32BadPunct + win32AllowedPunct = [:punct:]
 
 unsafe_char_regex <- rex(or(control_char_regex, win32_bad_punct_regex))
@@ -25,6 +29,7 @@ root_regex <- list(
 
 root_path_regex <- rex(start, or(root_regex), end)
 
+# styler: off
 absolute_path_regex <- rex(or(
   root_regex[["unix"]]  %if_next_isnt% one_of(space, "/"),
   root_regex[["tilde"]] %if_next_isnt% one_of(space, quote),
@@ -34,12 +39,13 @@ absolute_path_regex <- rex(or(
 
 relative_path_regex <- rex(
   start %if_next_isnt% or(quote, absolute_path_regex, protocol_regex),
-  or(                                                  # not an absolute path or protocol, and then
+  or(                                                    # not an absolute path or protocol, and then
     group(one_or_more(safe_char_regex), or("/", "\\")),  # (back)slash-separated paths
-    group(dot, maybe(dot), end)                        # or single or double dot
-  )                                                    # (paths without slash or dots left out)
+    group(dot, maybe(dot), end)                          # or single or double dot
+  )                                                      # (paths without slash or dots left out)
   %if_next_isnt% quote
 )
+# styler: on
 
 path_regex <- rex(or(absolute_path_regex, relative_path_regex))
 
@@ -70,7 +76,7 @@ is_valid_path <- function(paths, lax = FALSE) {
           return(TRUE)
         }
         if (length(dirs) > 0L && is_root_path(dirs[[1L]])) {
-          dirs <- tail(dirs, -1L)  # remove root element ("/", "C:", or "\\")
+          dirs <- tail(dirs, -1L) # remove root element ("/", "C:", or "\\")
         }
         !any(re_matches(dirs, unsafe_char_regex))
       },
@@ -152,59 +158,4 @@ path_linter_factory <- function(path_function, message, linter, name = linter_au
       }
     )
   }, name = name)
-}
-
-#' Absolute path linter
-#'
-#' Check that no absolute paths are used (e.g. "/var", "C:\\System", "~/docs").
-#'
-#' @param lax Less stringent linting, leading to fewer false positives.
-#' If `TRUE`, only lint path strings, which
-#'
-#' * contain at least two path elements, with one having at least two characters and
-#' * contain only alphanumeric chars (including UTF-8), spaces, and win32-allowed punctuation
-#'
-#' @examplesIf getRversion() >= "4.0"
-#' # Following examples use raw character constant syntax introduced in R 4.0.
-#'
-#' # will produce lints
-#' lint(
-#'   text = "R'--[/blah/file.txt]--'",
-#'   linters = absolute_path_linter()
-#' )
-#'
-#' # okay
-#' lint(
-#'   text = "R'(./blah)'",
-#'   linters = absolute_path_linter()
-#' )
-#'
-#' @evalRd rd_tags("absolute_path_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
-#' @export
-absolute_path_linter <- function(lax = TRUE) {
-  path_linter_factory(
-    path_function = function(path) {
-      is_absolute_path(path) && is_valid_long_path(path, lax)
-    },
-    message = "Do not use absolute paths."
-  )
-}
-
-#' Non-portable path linter
-#'
-#' Check that [file.path()] is used to construct safe and portable paths.
-#'
-#' @inheritParams absolute_path_linter
-#' @evalRd rd_tags("nonportable_path_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
-#' @export
-nonportable_path_linter <- function(lax = TRUE) {
-  path_linter_factory(
-    path_function = function(path) {
-      is_path(path) && is_valid_long_path(path, lax) && path != "/" &&
-        re_matches(path, rex(one_of("/", "\\")))
-    },
-    message = "Use file.path() to construct portable file paths."
-  )
 }

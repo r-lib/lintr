@@ -5,6 +5,29 @@
 #'   the simple case of testing an expression against a literal value, e.g.
 #'   `(1L, foo(x))` should be `(foo(x), 1L)`.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "expect_equal(2, x)",
+#'   linters = yoda_test_linter()
+#' )
+#'
+#' lint(
+#'   text = 'expect_identical("a", x)',
+#'   linters = yoda_test_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "expect_equal(x, 2)",
+#'   linters = yoda_test_linter()
+#' )
+#'
+#' lint(
+#'   text = 'expect_identical(x, "a")',
+#'   linters = yoda_test_linter()
+#' )
+#'
 #' @evalRd rd_tags("yoda_test_linter")
 #' @seealso
 #'   [linters] for a complete list of linters available in lintr.

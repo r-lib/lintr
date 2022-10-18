@@ -23,6 +23,7 @@ The following linters are tagged with 'style':
 \item{\code{\link{function_argument_linter}}}
 \item{\code{\link{function_left_parentheses_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
+\item{\code{\link{indentation_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{line_length_linter}}}
 \item{\code{\link{no_tab_linter}}}

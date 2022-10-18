@@ -28,8 +28,10 @@ lint(
   linters = assignment_linter()
 )
 
+code_lines <- "1 -> x\n2 ->> y"
+writeLines(code_lines)
 lint(
-  text = "1 -> x; 2 ->> y",
+  text = code_lines,
   linters = assignment_linter()
 )
 
@@ -39,14 +41,18 @@ lint(
   linters = assignment_linter()
 )
 
+code_lines <- "x <- 1\ny <<- 2"
+writeLines(code_lines)
 lint(
-  text = "x <- 1; y <<- 2",
+  text = code_lines,
   linters = assignment_linter()
 )
 
 # customizing using arguments
+code_lines <- "1 -> x\n2 ->> y"
+writeLines(code_lines)
 lint(
-  text = "1 -> x; 2 ->> y",
+  text = code_lines,
   linters = assignment_linter(allow_right_assign = TRUE)
 )
 
@@ -67,5 +73,5 @@ lint(
 \url{https://style.tidyverse.org/syntax.html#assignment-1}
 }
 \section{Tags}{
-\link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=style_linters]{style}
+\link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=style_linters]{style}
 }

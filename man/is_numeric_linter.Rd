@@ -13,7 +13,7 @@ testing \code{is.numeric(x) || is.integer(x)} is thus redundant.
 \details{
 NB: This linter plays well with \code{\link[=class_equals_linter]{class_equals_linter()}}, which can help
 avoid further \code{is.numeric()} equivalents like
-any(class(x) == c("numeric", "integer"))`.
+\code{any(class(x) == c("numeric", "integer"))}.
 }
 \examples{
 # will produce lints
@@ -23,7 +23,7 @@ lint(
 )
 
 lint(
-  text = "class(z) \%in\% c('numeric', 'integer')",
+  text = 'class(z) \%in\% c("numeric", "integer")',
   linters = is_numeric_linter()
 )
 
@@ -34,7 +34,7 @@ lint(
 )
 
 lint(
-  text = "class(z) \%in\% c('numeric', 'integer', 'factor')",
+  text = 'class(z) \%in\% c("numeric", "integer", "factor")',
   linters = is_numeric_linter()
 )
 

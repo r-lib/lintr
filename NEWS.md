@@ -6,16 +6,30 @@
 
 * `get_source_expressions()` can handle Sweave/Rmarkdown documents with reference chunks like `<<ref_file>>` (#779, @MichaelChirico).
   Note that these are simply skipped, rather than attempting to retrieve the reference and also lint it.
+  
+* `assignment_linter()` no longer lints assignments in braces that include comments when `allow_trailing = FALSE` (#1701, @ashbaldry)
+
+* `object_usage_linter()` no longer silently ignores usage warnings that don't contain a quoted name (#1714, @AshesITR)
 
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
   This allows sequential updates like `x |> mutate(a = b + 1, a = log(a))` (#1345, @IndrajeetPatil).
 
-* `object_usage_linter()` gains `skip_with` argument to skip code in `with()` expressions.
-  To be consistent with `R CMD check`, it defaults to `TRUE` (#941, #1458, @IndrajeetPatil).
+* `object_usage_linter()`
+   + gains `skip_with` argument to skip code in `with()` expressions. To be consistent with
+     `R CMD check`, it defaults to `TRUE` (#941, #1458, @IndrajeetPatil).
+   + Handles backticked symbols inside {glue} expressions correctly, e.g. ``glue("{`x`}")`` correctly
+     determines `x` was used (#1619, @MichaelChirico)
 
 * `spaces_inside_linter()` allows terminal missing keyword arguments (e.g. `alist(arg = )`; #540, @MichaelChirico)
+
+* `brace_linter()` allows empty braced expression on the same line (e.g. `while (updating_condition()) { }`)
+  regardless of `allow_single_line` to match the corresponding behavior in {styler}. This is an expedient while
+  the style guide on handling this case awaits clarification: https://github.com/tidyverse/style/issues/191.
+  (#1346, @MichaelChirico)
+
+* The new `indentation_linter()` is part of the default linters. See "New linters" for more details.
 
 ## New and improved features
 
@@ -38,6 +52,22 @@
 
 * `paste_linter()` also catches usages like `paste(rep("*", 10L), collapse = "")` that can be written more
   concisely as `strrep("*", 10L)` (#1108, @MichaelChirico)
+
+* `spaces_inside_linter()` produces lints for spaces inside `[[` (#1673, @IndrajeetPatil).
+
+* `sprintf_linter()` also applies to `gettextf()` (#1677, @MichaelChirico)
+
+* Documentation for all linters contains examples of code that does and does not produce lints (#1492, @IndrajeetPatil).
+
+* `implicit_integer_linter()` gains parameter `allow_colon` to skip lints on expressions like `1:10` (#1155, @MichaelChirico)
+
+* `unneeded_concatenation_linter()` no longer lints on `c(...)` (i.e., passing `...` in a function call)
+  when `allow_single_expression = FALSE` (#1696, @MichaelChirico)
+
+* `object_name_linter()` gains parameter `regexes` to allow custom naming conventions (#822, #1421, @AshesITR)
+
+* `literal_coercion_linter()` reports a replacement in the lint message, e.g. code like `as.integer(1)` will
+  suggest using `1L` instead, and code like `as.numeric(NA)` will suggest using `NA_real_` instead (#1439, @MichaelChirico)
 
 ### New linters
 
@@ -62,6 +92,11 @@
 * `empty_assignment_linter()` for identifying empty assignments like `x = {}` that are more clearly written as `x = NULL` (@MichaelChirico)
 
 * `unnecessary_placeholder_linter()` for identifying where usage of the {magrittr} placeholder `.` could be omitted (@MichaelChirico)
+
+* `routine_registration_linter()` for identifying native routines that don't use registration (`useDynLib` in the `NAMESPACE`; @MichaelChirico)
+
+* `indentation_linter()` for checking that the indentation conforms to 2-space Tidyverse-style (@AshesITR and @dgkf, #1411).
+
 
 ## Notes
 
@@ -136,6 +171,7 @@
 * `get_source_expressions()` no longer fails on R files that match a knitr pattern (#743, #879, #1406, @AshesITR).
 * Parse error lints now appear with the linter name `"error"` instead of `NA` (#1405, @AshesITR).  
   Also, linting no longer runs if the `source_expressions` contain invalid string data that would cause error messages
+  in other linters. 
   in other linters.
 * Prevent `lint()` from hanging on Rmd files with some syntax errors (#1443, @MichaelChirico).
 * `get_source_expressions()` no longer omits trailing non-code lines from knitr files (#1400, #1415, @AshesITR).  

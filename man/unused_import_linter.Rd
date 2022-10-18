@@ -12,13 +12,46 @@ unused_import_linter(
 \arguments{
 \item{allow_ns_usage}{Suppress lints for packages only used via namespace.
 This is \code{FALSE} by default because \code{pkg::fun()} doesn't require \code{library(pkg)}.
-You can use \link[=requireNamespace]{requireNamespace("pkg")} to ensure a package is installed without loading it.}
+You can use \link[=requireNamespace]{requireNamespace("pkg")} to ensure a package is
+installed without loading it.}
 
 \item{except_packages}{Character vector of packages that are ignored.
 These are usually attached for their side effects.}
 }
 \description{
 Check that imported packages are actually used
+}
+\examples{
+# will produce lints
+code_lines <- "library(dplyr)\n1 + 1"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = unused_import_linter()
+)
+
+code_lines <- "library(dplyr)\ndplyr::tibble(a = 1)"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = unused_import_linter()
+)
+
+# okay
+code_lines <- "library(dplyr)\ntibble(a = 1)"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = unused_import_linter()
+)
+
+code_lines <- "library(dplyr)\ndplyr::tibble(a = 1)"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = unused_import_linter(allow_ns_usage = TRUE)
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
