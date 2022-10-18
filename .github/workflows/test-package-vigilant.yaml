@@ -22,7 +22,9 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: local::.
+          extra-packages: |
+            local::.
+            any::devtools
 
       - name: Run Tests
         run: |
@@ -30,4 +32,5 @@ jobs:
           options(crayon.enabled = TRUE, warn = 2L)
           if (Sys.getenv("_R_CHECK_FORCE_SUGGESTS_", "") == "") Sys.setenv("_R_CHECK_FORCE_SUGGESTS_" = "false")
           testthat::test_dir("tests")
+          devtools::run_examples(fresh = TRUE)
         shell: Rscript {0}
