@@ -85,7 +85,7 @@ unintelligible error messages from other linters.
 }
 \examples{
 \dontrun{
-  f <- withr::local_tempfile(lines = "a=1")
+  f <- withr::local_tempfile(lines = "a=1", fileext = "R")
   lint(f)                  # linting a file
   lint("a = 123\n")        # linting inline-code
   lint(text = "a = 123")   # linting inline-code

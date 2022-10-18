@@ -22,13 +22,13 @@ Modify a list of defaults by name, allowing for replacement, deletion and additi
 }
 \examples{
 # custom list of undesirable functions:
-#    remove sapply (using NULL)
-#    add cat (with a accompanying message),
-#    add print (unnamed, i.e. with no accompanying message)
-#    add return (as taken from all_undesirable_functions)
+#    remove `sapply` (using `NULL`)
+#    add `cat` (with an accompanying message),
+#    add `print` (unnamed, i.e. with no accompanying message)
+#    add `source` (as taken from `all_undesirable_functions`)
 my_undesirable_functions <- modify_defaults(
   defaults = default_undesirable_functions,
-  sapply = NULL, "cat" = "No cat allowed", "print", all_undesirable_functions[["return"]]
+  sapply = NULL, "cat" = "No cat allowed", "print", all_undesirable_functions[["source"]]
 )
 }
 \seealso{
