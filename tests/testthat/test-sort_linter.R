@@ -58,16 +58,3 @@ test_that("sort_linter produces customized warning message", {
     linter
   )
 })
-
-test_that("sort_linter works with expression with lint > 1", {
-  linter <- sort_linter()
-
-  expect_lint(
-    "c(
-      x[order(x, decreasing = TRUE)],
-      y[order(y, decreasing = TRUE, na.last = FALSE)]
-    )",
-    lint_message <- rex::rex("sort(", anything, ") is better than"),
-    linter
-  )
-})
