@@ -29,7 +29,8 @@
 #'
 #' @examples
 #' \dontrun{
-#'   lint("some/file-name.R") # linting a file
+#'   f <- withr::local_tempfile(lines = "a=1")
+#'   lint(f)                  # linting a file
 #'   lint("a = 123\n")        # linting inline-code
 #'   lint(text = "a = 123")   # linting inline-code
 #' }
@@ -117,10 +118,12 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 #'   If `FALSE`, use the full absolute path.
 #' @param exclusions exclusions for [exclude()], relative to the package path.
 #' @param pattern pattern for files, by default it will take files with any of the extensions
-#' .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...)
+#' .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...).
+#'
 #' @examples
 #' \dontrun{
 #'   lint_dir()
+#'
 #'   lint_dir(
 #'     linters = list(semicolon_linter()),
 #'     exclusions = list(
@@ -219,7 +222,7 @@ drop_excluded <- function(files, exclusions) {
 #'   lint_package()
 #'
 #'   lint_package(
-#'     linters = linters_with_defaults(semicolon_linter = semicolon_linter())
+#'     linters = linters_with_defaults(semicolon_linter = semicolon_linter()),
 #'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
 #'   )
 #' }
