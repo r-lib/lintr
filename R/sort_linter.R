@@ -1,6 +1,6 @@
 #' Require usage of `sort()` over `.[order(.)]`
 #'
-#' `sort()` is the dedicated option to sort a list or vector. It is more legible
+#' [sort()] is the dedicated option to sort a list or vector. It is more legible
 #' and around twice as fast as `.[order(.)]`, with the gap in performance
 #' growing with the vector size.
 #'
