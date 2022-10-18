@@ -38,34 +38,46 @@
 #'
 #' @examples
 #' # will produce lints
+#' code_lines <- "if (TRUE) {\n1 + 1\n}"
+#' writeLines(code_lines)
 #' lint(
-#'   text = "if (TRUE) {\n1 + 1\n}",
+#'   text = code_lines,
 #'   linters = indentation_linter()
 #' )
 #'
+#' code_lines <- "if (TRUE) {\n    1 + 1\n}"
+#' writeLines(code_lines)
 #' lint(
-#'   text = "if (TRUE) {\n    1 + 1\n}",
+#'   text = code_lines,
 #'   linters = indentation_linter()
 #' )
 #'
+#' code_lines <- "map(x, f,\n  additional_arg = 42\n)"
+#' writeLines(code_lines)
 #' lint(
-#'   text = "map(x, f,\n  additional_arg = 42\n)",
+#'   text = code_lines,
 #'   linters = indentation_linter(hanging_indent_style = "always")
 #' )
 #'
+#' code_lines <- "map(x, f,\n    additional_arg = 42)"
+#' writeLines(code_lines)
 #' lint(
-#'   text = "map(x, f,\n    additional_arg = 42)",
+#'   text = code_lines,
 #'   linters = indentation_linter(hanging_indent_style = "never")
 #' )
 #'
 #' # okay
+#' code_lines <- "map(x, f,\n  additional_arg = 42\n)"
+#' writeLines(code_lines)
 #' lint(
-#'   text = "map(x, f,\n  additional_arg = 42\n)",
+#'   text = code_lines,
 #'   linters = indentation_linter()
 #' )
 #'
+#' code_lines <- "if (TRUE) {\n    1 + 1\n}"
+#' writeLines(code_lines)
 #' lint(
-#'   text = "if (TRUE) {\n    1 + 1\n}",
+#'   text = code_lines,
 #'   linters = indentation_linter(indent = 4)
 #' )
 #'
