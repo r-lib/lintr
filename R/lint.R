@@ -543,7 +543,8 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
           style = "info",
           x$type
         ),
-        message = x$message)
+        message = x$message
+      )
     })
   })
 
@@ -665,8 +666,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
       rule_index_exists <-
         which(sapply(sarif$runs[[1L]]$tool$driver$rules,
                      function(x) x$id == lint$linter))
-      if (length(rule_index_exists) == 0L ||
-          is.na(rule_index_exists[1L])) {
+      if (length(rule_index_exists) == 0L || is.na(rule_index_exists[1L])) {
         rule_index_exists <- 0L
       }
     }

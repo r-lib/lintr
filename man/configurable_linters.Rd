@@ -21,6 +21,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{duplicate_argument_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
+\item{\code{\link{indentation_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{line_length_linter}}}
 \item{\code{\link{missing_argument_linter}}}

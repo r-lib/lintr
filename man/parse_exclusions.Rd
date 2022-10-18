@@ -27,7 +27,7 @@ parse_exclusions(
 \item{exclude_linter}{regular expression used to capture a list of to-be-excluded linters immediately following a
 \code{exclude} or \code{exclude_start} marker.}
 
-\item{exclude_linter_sep}{regular expression used to split a linter list into indivdual linter names for exclusion.}
+\item{exclude_linter_sep}{regular expression used to split a linter list into individual linter names for exclusion.}
 
 \item{lines}{a character vector of the content lines of \code{file}}
 

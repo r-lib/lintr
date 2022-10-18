@@ -110,15 +110,14 @@ get_source_expressions <- function(filename, lines = NULL) {
     }
 
     # add global expression
-    expressions[[length(expressions) + 1L]] <-
-      list(
-        filename = filename,
-        file_lines = source_expression$lines,
-        content = source_expression$lines,
-        full_parsed_content = parsed_content,
-        full_xml_parsed_content = xml_parsed_content,
-        terminal_newline = terminal_newline
-      )
+    expressions[[length(expressions) + 1L]] <- list(
+      filename = filename,
+      file_lines = source_expression$lines,
+      content = source_expression$lines,
+      full_parsed_content = parsed_content,
+      full_xml_parsed_content = xml_parsed_content,
+      terminal_newline = terminal_newline
+    )
   }
 
   list(expressions = expressions, error = e, lines = source_expression$lines)
@@ -355,7 +354,8 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
   if (nrow(line_location) == 0L) {
     if (grepl("attempt to use zero-length variable name", e$message, fixed = TRUE)) {
       # empty symbol: ``, ``(), ''(), ""(), fun(''=42), fun(""=42), fun(a=1,""=42)
-      loc <- re_matches(source_expression$content,
+      loc <- re_matches(
+        source_expression$content,
         rex(
           "``" %or%
             list(or("''", '""'), any_spaces, "(") %or%

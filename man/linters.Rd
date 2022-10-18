@@ -19,17 +19,17 @@ The following tags exist:
 \itemize{
 \item{\link[=best_practices_linters]{best_practices} (47 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (7 linters)}
-\item{\link[=configurable_linters]{configurable} (29 linters)}
+\item{\link[=configurable_linters]{configurable} (30 linters)}
 \item{\link[=consistency_linters]{consistency} (18 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
-\item{\link[=default_linters]{default} (24 linters)}
+\item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=deprecated_linters]{deprecated} (4 linters)}
 \item{\link[=efficiency_linters]{efficiency} (21 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
-\item{\link[=readability_linters]{readability} (46 linters)}
+\item{\link[=readability_linters]{readability} (47 linters)}
 \item{\link[=robustness_linters]{robustness} (14 linters)}
-\item{\link[=style_linters]{style} (36 linters)}
+\item{\link[=style_linters]{style} (37 linters)}
 }
 }
 \section{Linters}{
@@ -71,6 +71,7 @@ The following linters exist:
 \item{\code{\link{function_return_linter}} (tags: best_practices, readability)}
 \item{\code{\link{ifelse_censor_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{implicit_integer_linter}} (tags: best_practices, configurable, consistency, style)}
+\item{\code{\link{indentation_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{infix_spaces_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{inner_combine_linter}} (tags: consistency, efficiency, readability)}
 \item{\code{\link{is_numeric_linter}} (tags: best_practices, consistency, readability)}

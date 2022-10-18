@@ -29,6 +29,8 @@
   the style guide on handling this case awaits clarification: https://github.com/tidyverse/style/issues/191.
   (#1346, @MichaelChirico)
 
+* The new `indentation_linter()` is part of the default linters. See "New linters" for more details.
+
 ## New and improved features
 
 * New `get_r_string()` helper to get the R-equivalent value of a string, especially useful for R-4-style raw strings.
@@ -92,6 +94,9 @@
 * `unnecessary_placeholder_linter()` for identifying where usage of the {magrittr} placeholder `.` could be omitted (@MichaelChirico)
 
 * `routine_registration_linter()` for identifying native routines that don't use registration (`useDynLib` in the `NAMESPACE`; @MichaelChirico)
+
+* `indentation_linter()` for checking that the indentation conforms to 2-space Tidyverse-style (@AshesITR and @dgkf, #1411).
+
 
 ## Notes
 
@@ -164,6 +169,7 @@
 * `get_source_expressions()` no longer fails on R files that match a knitr pattern (#743, #879, #1406, @AshesITR).
 * Parse error lints now appear with the linter name `"error"` instead of `NA` (#1405, @AshesITR).  
   Also, linting no longer runs if the `source_expressions` contain invalid string data that would cause error messages
+  in other linters. 
   in other linters.
 * Prevent `lint()` from hanging on Rmd files with some syntax errors (#1443, @MichaelChirico).
 * `get_source_expressions()` no longer omits trailing non-code lines from knitr files (#1400, #1415, @AshesITR).  
