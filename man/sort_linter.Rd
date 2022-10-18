@@ -7,7 +7,7 @@
 sort_linter()
 }
 \description{
-\code{sort()} is the dedicated option to sort a list or vector. It is more legible
+\code{\link[=sort]{sort()}} is the dedicated option to sort a list or vector. It is more legible
 and around twice as fast as \code{.[order(.)]}, with the gap in performance
 growing with the vector size.
 }
@@ -33,6 +33,17 @@ lint(
   text = "y[order(x)]",
   linters = sort_linter()
 )
+
+# If you are sorting several objects based on the order of one of them, such
+# as:
+newx <- x[order(x)]
+newy <- y[order(x)]
+# This will be flagged by the linter. However, in this very specific case,
+# it would be clearer and more efficient to run order() once and assign it
+# to an object, rather than mix and match order() and sort()
+index <- order(x)
+newx <- x[index]
+newy <- y[index]
 
 }
 \seealso{
