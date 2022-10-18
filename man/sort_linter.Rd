@@ -36,6 +36,8 @@ lint(
 
 # If you are sorting several objects based on the order of one of them, such
 # as:
+x <- sample(1:26)
+y <- letters
 newx <- x[order(x)]
 newy <- y[order(x)]
 # This will be flagged by the linter. However, in this very specific case,
