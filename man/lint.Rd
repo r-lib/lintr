@@ -84,31 +84,29 @@ Note that if files contain unparseable encoding problems, only the encoding prob
 unintelligible error messages from other linters.
 }
 \examples{
-\dontrun{
-  f <- withr::local_tempfile(lines = "a=1", fileext = "R")
-  lint(f)                  # linting a file
-  lint("a = 123\n")        # linting inline-code
-  lint(text = "a = 123")   # linting inline-code
-}
+f <- withr::local_tempfile(lines = "a=1", fileext = "R")
+lint(f)                # linting a file
+lint("a = 123\n")      # linting inline-code
+lint(text = "a = 123") # linting inline-code
 
 \dontrun{
-  lint_dir()
+lint_dir()
 
-  lint_dir(
-    linters = list(semicolon_linter()),
-    exclusions = list(
-      "inst/doc/creating_linters.R" = 1,
-      "inst/example/bad.R",
-      "renv"
-    )
+lint_dir(
+  linters = list(semicolon_linter()),
+  exclusions = list(
+    "inst/doc/creating_linters.R" = 1,
+    "inst/example/bad.R",
+    "renv"
   )
+)
 }
 \dontrun{
-  lint_package()
+lint_package()
 
-  lint_package(
-    linters = linters_with_defaults(semicolon_linter = semicolon_linter()),
-    exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
-  )
+lint_package(
+  linters = linters_with_defaults(semicolon_linter = semicolon_linter()),
+  exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
+)
 }
 }
