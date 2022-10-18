@@ -27,6 +27,17 @@
 #'   linters = sort_linter()
 #' )
 #'
+#' # If you are sorting several objects based on the order of one of them, such
+#' # as:
+#' newx <- x[order(x)]
+#' newy <- y[order(x)]
+#' # This will be flagged by the linter. However, in this very specific case,
+#' # it would be clearer and more efficient to run order() once and assign it
+#' # to an object, rather than mix and match order() and sort()
+#' index <- order(x)
+#' newx <- x[index]
+#' newy <- y[index]
+#'
 #' @evalRd rd_tags("sort_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
