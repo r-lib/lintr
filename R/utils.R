@@ -212,7 +212,7 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #'   and `xpath` is specified, it is extracted with [xml2::xml_find_chr()].
 #' @param xpath An XPath, passed on to [xml2::xml_find_chr()] after wrapping with `string()`.
 #'
-#' @examples
+#' @examplesIf requireNamespace("withr", quietly = TRUE)
 #' tmp <- withr::local_tempfile(lines = "c('a', 'b')")
 #' expr_as_xml <- get_source_expressions(tmp)$expressions[[1L]]$xml_parsed_content
 #' writeLines(as.character(expr_as_xml))

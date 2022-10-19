@@ -128,17 +128,10 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
 #'
 #' @param defaults,default Default list of linters to modify. Must be named.
 #' @inheritParams linters_with_tags
-#' @seealso
-#' [linters_with_tags] for basing off tags attached to linters, possibly across multiple packages.
-#' [available_linters] to get a data frame of available linters.
-#' [linters] for a complete list of linters available in lintr.
-#' @export
-#' @examples
+#' @examplesIf requireNamespace("withr", quietly = TRUE)
 #' # When using interactively you will usually pass the result onto `lint` or `lint_package()`
-#' \dontrun{
 #' f <- withr::local_tempfile(lines = "my_slightly_long_variable_name <- 2.3", fileext = "R")
 #' lint(f, linters = linters_with_defaults(line_length_linter = line_length_linter(120)))
-#' }
 #'
 #' # the default linter list with a different line length cutoff
 #' my_linters <- linters_with_defaults(line_length_linter = line_length_linter(120))
@@ -152,6 +145,15 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
 #'   assignment_linter = NULL,
 #'   absolute_path_linter()
 #' )
+#'
+#' # checking the included linters
+#' names(my_linters)
+#'
+#' @seealso
+#' - [linters_with_tags] for basing off tags attached to linters, possibly across multiple packages.
+#' - [available_linters] to get a data frame of available linters.
+#' - [linters] for a complete list of linters available in lintr.
+#' @export
 linters_with_defaults <- function(..., defaults = default_linters) {
   dots <- list(...)
   if (missing(defaults) && "default" %in% names(dots)) {

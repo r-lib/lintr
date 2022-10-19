@@ -84,11 +84,12 @@ Note that if files contain unparseable encoding problems, only the encoding prob
 unintelligible error messages from other linters.
 }
 \examples{
+\dontshow{if (requireNamespace("withr", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 f <- withr::local_tempfile(lines = "a=1", fileext = "R")
 lint(f)                # linting a file
 lint("a = 123\n")      # linting inline-code
 lint(text = "a = 123") # linting inline-code
-
+\dontshow{\}) # examplesIf}
 \dontrun{
 lint_dir()
 

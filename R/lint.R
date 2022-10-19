@@ -27,7 +27,7 @@
 # TODO(next release after 3.0.0): remove the alias
 #' @return An object of class `c("lints", "list")`, each element of which is a `"list"` object.
 #'
-#' @examples
+#' @examplesIf requireNamespace("withr", quietly = TRUE)
 #' f <- withr::local_tempfile(lines = "a=1", fileext = "R")
 #' lint(f)                # linting a file
 #' lint("a = 123\n")      # linting inline-code
