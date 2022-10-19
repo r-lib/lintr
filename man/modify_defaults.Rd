@@ -30,6 +30,9 @@ my_undesirable_functions <- modify_defaults(
   defaults = default_undesirable_functions,
   sapply = NULL, "cat" = "No cat allowed", "print", all_undesirable_functions[["source"]]
 )
+
+# enlist names of functions specified as undesirable
+names(my_undesirable_functions)
 }
 \seealso{
 \link{linters_with_tags}, \link{linters_with_defaults} for creating linter lists.

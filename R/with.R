@@ -19,6 +19,9 @@
 #'   defaults = default_undesirable_functions,
 #'   sapply = NULL, "cat" = "No cat allowed", "print", all_undesirable_functions[["source"]]
 #' )
+#'
+#' # enlist names of functions specified as undesirable
+#' names(my_undesirable_functions)
 #' @export
 modify_defaults <- function(defaults, ...) {
   if (missing(defaults) || !is.list(defaults) || !all(nzchar(names2(defaults)))) {
