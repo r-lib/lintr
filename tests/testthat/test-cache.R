@@ -19,6 +19,10 @@ fixtures$retrieve_lint <- function() {
   )
 }
 
+# Run tests with a temporary cache directory, so we don't leave files behind
+# after running
+withr::local_options(lintr.cache_directory = withr::local_tempdir())
+
 # Helper functions
 
 fhash <- function(filename) {
