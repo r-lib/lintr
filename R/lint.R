@@ -385,13 +385,13 @@ has_description <- function(path) {
 }
 
 find_package <- function(path) {
-  depth <- 2
-  while(!has_description(path)) {
+  depth <- 2L
+  while (!has_description(path)) {
     path <- dirname(path)
-    if (is_root(path) || depth <= 0) {
+    if (is_root(path) || depth <= 0L) {
       return(NULL)
     }
-    depth <- depth - 1
+    depth <- depth - 1L
   }
   path
 }
@@ -399,19 +399,19 @@ find_package <- function(path) {
 find_rproj_or_package <- function(path) {
   path <- normalizePath(path, mustWork = FALSE)
 
-  depth <- 2
-  while(!(has_description(path) || has_rproj(path))) {
+  depth <- 2L
+  while (!(has_description(path) || has_rproj(path))) {
     path <- dirname(path)
-    if (is_root(path) || depth <= 0) {
+    if (is_root(path) || depth <= 0L) {
       return(NULL)
     }
-    depth <- depth - 1
+    depth <- depth - 1L
   }
   path
 }
 
 has_rproj <- function(path) {
-  length(head(Sys.glob(file.path(path, "*.Rproj")), n = 1L)) == 1
+  length(head(Sys.glob(file.path(path, "*.Rproj")), n = 1L)) == 1L
 }
 
 find_rproj_at <- function(path) {
@@ -658,8 +658,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   # assign values
   sarif$runs[[1L]]$results <- NULL
   sarif$runs[[1L]]$tool$driver$rules <- NULL
-  sarif$runs[[1L]]$tool$driver$version <-
-    as.character(utils::packageVersion("lintr"))
+  sarif$runs[[1L]]$tool$driver$version <- as.character(utils::packageVersion("lintr"))
   sarif$runs[[1L]]$originalUriBaseIds$ROOTPATH$uri <- ""
   rule_index_exists <- FALSE
   root_path_uri <- gsub("\\", "/", package_path, fixed = TRUE)
@@ -701,8 +700,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
           level = switch(lint$type, style = "note", lint$type)
         )
       )
-      sarif$runs[[1L]]$tool$driver$rules <-
-        append(sarif$runs[[1L]]$tool$driver$rules, list(new_rule))
+      sarif$runs[[1L]]$tool$driver$rules <- append(sarif$runs[[1L]]$tool$driver$rules, list(new_rule))
       rule_index <- length(sarif$runs[[1L]]$tool$driver$rules) - 1L
     } else {
       rule_index <- rule_index_exists - 1L
