@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 lintr lints are automatically displayed in the RStudio Markers pane (RStudio versions \> v0.99.206).
 
 ```{r, echo=FALSE, fig.cap="RStudio Example"}
-knitr::include_graphics("rstudio.png")
+knitr::include_graphics("../man/figures/rstudio.png")
 ```
 
 In order to show the "Markers" pane in RStudio: Menu "Tools" -\> "Global Options...", a window with title "Options" will pop up.
@@ -38,7 +38,7 @@ These are easy to remember as you are Alt+Shift+L(int) ;)
 lintr has [built-in integration](http://www.flycheck.org/en/latest/languages.html#r) with [flycheck](https://github.com/flycheck/flycheck) versions greater than `0.23`.
 
 ```{r, echo=FALSE, fig.cap="Emacs Example"}
-knitr::include_graphics("emacs.gif")
+knitr::include_graphics("../man/figures/emacs.gif")
 ```
 
 ### Installation
@@ -57,7 +57,7 @@ e.g. using a different line length cutoff.
 lintr can be integrated with [syntastic](https://github.com/vim-syntastic/syntastic) for on-the-fly linting.
 
 ```{r, echo=FALSE, fig.cap="Vim Example"}
-knitr::include_graphics("vim-syntastic.gif")
+knitr::include_graphics("../man/figures/vim-syntastic.gif")
 ```
 
 ### Installation
@@ -123,7 +123,7 @@ endif
 lintr can be integrated with [Sublime Linter](https://github.com/SublimeLinter/SublimeLinter) for on-the-fly linting.
 
 ```{r, echo=FALSE, fig.cap="Sublime Example"}
-knitr::include_graphics("sublime.gif")
+knitr::include_graphics("../man/figures/sublime.gif")
 ```
 
 ### Installation
@@ -153,7 +153,7 @@ In the SublimeLinter User Settings
 lintr can be integrated with [Linter](https://github.com/steelbrain/linter) for on the fly linting.
 
 ```{r, echo=FALSE, fig.cap="Atom Example"}
-knitr::include_graphics("atom.png")
+knitr::include_graphics("../man/figures/atom.png")
 ```
 
 ### Installation
@@ -171,7 +171,7 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
 In Visual Studio Code, [vscode-R](https://github.com/REditorSupport/vscode-R#r-extension-for-visual-studio-code) presents the lintr diagnostics from [languageserver](https://github.com/REditorSupport/languageserver).
 
 ```{r, echo=FALSE, fig.cap="VS Code Example"}
-knitr::include_graphics("vscode.png")
+knitr::include_graphics("../man/figures/vscode.png")
 ```
 
 ### Installation
