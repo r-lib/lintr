@@ -27,12 +27,11 @@
 # TODO(next release after 3.0.0): remove the alias
 #' @return An object of class `c("lints", "list")`, each element of which is a `"list"` object.
 #'
-#' @examples
-#' \dontrun{
-#'   lint("some/file-name.R") # linting a file
-#'   lint("a = 123\n")        # linting inline-code
-#'   lint(text = "a = 123")   # linting inline-code
-#' }
+#' @examplesIf requireNamespace("withr", quietly = TRUE)
+#' f <- withr::local_tempfile(lines = "a=1", fileext = "R")
+#' lint(f)                # linting a file
+#' lint("a = 123\n")      # linting inline-code
+#' lint(text = "a = 123") # linting inline-code
 #'
 #' @export
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
@@ -59,7 +58,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     close(con)
   }
 
-  filename <- normalizePath(filename, mustWork = !inline_data)  # to ensure a unique file in cache
+  filename <- normalizePath(filename, mustWork = !inline_data) # to ensure a unique file in cache
   source_expressions <- get_source_expressions(filename, lines)
 
   if (isTRUE(parse_settings)) {
@@ -117,18 +116,20 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 #'   If `FALSE`, use the full absolute path.
 #' @param exclusions exclusions for [exclude()], relative to the package path.
 #' @param pattern pattern for files, by default it will take files with any of the extensions
-#' .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...)
+#' .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...).
+#'
 #' @examples
 #' \dontrun{
-#'   lint_dir()
-#'   lint_dir(
-#'     linters = list(semicolon_linter()),
-#'     exclusions = list(
-#'       "inst/doc/creating_linters.R" = 1,
-#'       "inst/example/bad.R",
-#'       "renv"
-#'     )
+#' lint_dir()
+#'
+#' lint_dir(
+#'   linters = list(semicolon_linter()),
+#'   exclusions = list(
+#'     "inst/doc/creating_linters.R" = 1,
+#'     "inst/example/bad.R",
+#'     "renv"
 #'   )
+#' )
 #' }
 #' @export
 #' @rdname lint
@@ -216,12 +217,12 @@ drop_excluded <- function(files, exclusions) {
 
 #' @examples
 #' \dontrun{
-#'   lint_package()
+#' lint_package()
 #'
-#'   lint_package(
-#'     linters = linters_with_defaults(semicolon_linter = semicolon_linter())
-#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
-#'   )
+#' lint_package(
+#'   linters = linters_with_defaults(semicolon_linter = semicolon_linter()),
+#'   exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
+#' )
 #' }
 #' @export
 #' @rdname lint
@@ -333,19 +334,25 @@ validate_linter_object <- function(linter, name) {
     if (is_linter_factory(linter)) {
       old <- "Passing linters as variables"
       new <- "a call to the linters (see ?linters)"
-      lintr_deprecated(old = old, new = new, version = "3.0.0",
-                       type = "")
+      lintr_deprecated(
+        old = old, new = new, version = "3.0.0",
+        type = ""
+      )
       linter <- linter()
     } else {
       old <- "The use of linters of class 'function'"
       new <- "linters classed as 'linter' (see ?Linter)"
-      lintr_deprecated(old = old, new = new, version = "3.0.0",
-                       type = "")
+      lintr_deprecated(
+        old = old, new = new, version = "3.0.0",
+        type = ""
+      )
       linter <- Linter(linter, name = name)
     }
   } else if (!is.function(linter)) {
-    stop(gettextf("Expected '%s' to be a function of class 'linter', not a %s of class '%s'",
-                  name, typeof(linter), class(linter)[[1L]]))
+    stop(gettextf(
+      "Expected '%s' to be a function of class 'linter', not a %s of class '%s'",
+      name, typeof(linter), class(linter)[[1L]]
+    ))
   }
   linter
 }
@@ -378,13 +385,13 @@ has_description <- function(path) {
 }
 
 find_package <- function(path) {
-  depth <- 2
-  while(!has_description(path)) {
+  depth <- 2L
+  while (!has_description(path)) {
     path <- dirname(path)
-    if (is_root(path) || depth <= 0) {
+    if (is_root(path) || depth <= 0L) {
       return(NULL)
     }
-    depth <- depth - 1
+    depth <- depth - 1L
   }
   path
 }
@@ -392,19 +399,19 @@ find_package <- function(path) {
 find_rproj_or_package <- function(path) {
   path <- normalizePath(path, mustWork = FALSE)
 
-  depth <- 2
-  while(!(has_description(path) || has_rproj(path))) {
+  depth <- 2L
+  while (!(has_description(path) || has_rproj(path))) {
     path <- dirname(path)
-    if (is_root(path) || depth <= 0) {
+    if (is_root(path) || depth <= 0L) {
       return(NULL)
     }
-    depth <- depth - 1
+    depth <- depth - 1L
   }
   path
 }
 
 has_rproj <- function(path) {
-  length(head(Sys.glob(file.path(path, "*.Rproj")), n = 1L)) == 1
+  length(head(Sys.glob(file.path(path, "*.Rproj")), n = 1L)) == 1L
 }
 
 find_rproj_at <- function(path) {
@@ -531,7 +538,6 @@ rstudio_source_markers <- function(lints) {
 #' @param filename the name of the output report
 #' @export
 checkstyle_output <- function(lints, filename = "lintr_results.xml") {
-
   # package path will be NULL unless it is a relative path
   package_path <- attr(lints, "path")
 
@@ -553,8 +559,7 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
         f, "error",
         line = as.character(x$line_number),
         column = as.character(x$column_number),
-        severity = switch(
-          x$type,
+        severity = switch(x$type,
           style = "info",
           x$type
         ),
@@ -653,8 +658,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   # assign values
   sarif$runs[[1L]]$results <- NULL
   sarif$runs[[1L]]$tool$driver$rules <- NULL
-  sarif$runs[[1L]]$tool$driver$version <-
-    as.character(utils::packageVersion("lintr"))
+  sarif$runs[[1L]]$tool$driver$version <- as.character(utils::packageVersion("lintr"))
   sarif$runs[[1L]]$originalUriBaseIds$ROOTPATH$uri <- ""
   rule_index_exists <- FALSE
   root_path_uri <- gsub("\\", "/", package_path, fixed = TRUE)
@@ -679,8 +683,10 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
       rule_index_exists <- 0L
     } else {
       rule_index_exists <-
-        which(sapply(sarif$runs[[1L]]$tool$driver$rules,
-                     function(x) x$id == lint$linter))
+        which(sapply(
+          sarif$runs[[1L]]$tool$driver$rules,
+          function(x) x$id == lint$linter
+        ))
       if (length(rule_index_exists) == 0L || is.na(rule_index_exists[1L])) {
         rule_index_exists <- 0L
       }
@@ -690,12 +696,11 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
       new_rule <- list(
         id = lint$linter,
         fullDescription = list(text = lint$message),
-        defaultConfiguration = list(level = switch(lint$type,
-                                                   style = "note",
-                                                   lint$type))
+        defaultConfiguration = list(
+          level = switch(lint$type, style = "note", lint$type)
+        )
       )
-      sarif$runs[[1L]]$tool$driver$rules <-
-        append(sarif$runs[[1L]]$tool$driver$rules, list(new_rule))
+      sarif$runs[[1L]]$tool$driver$rules <- append(sarif$runs[[1L]]$tool$driver$rules, list(new_rule))
       rule_index <- length(sarif$runs[[1L]]$tool$driver$rules) - 1L
     } else {
       rule_index <- rule_index_exists - 1L
@@ -727,7 +732,6 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
 }
 
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {
-
   maximum <- max(column_number, unlist(ranges))
 
   line <- fill_with(" ", maximum)
