@@ -74,5 +74,5 @@ jobs:
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
-        with:
-          error-on: '"note"'
+        # with:
+        #   error-on: '"note"'
