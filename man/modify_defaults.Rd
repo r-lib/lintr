@@ -31,7 +31,7 @@ my_undesirable_functions <- modify_defaults(
   sapply = NULL, "cat" = "No cat allowed", "print", all_undesirable_functions[["source"]]
 )
 
-# enlist names of functions specified as undesirable
+# list names of functions specified as undesirable
 names(my_undesirable_functions)
 }
 \seealso{
