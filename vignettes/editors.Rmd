@@ -10,32 +10,18 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  out.width = "100%"
 )
-
-maybe_still <- function(url) {
-  if (pkgdown::in_pkgdown()) {
-    url
-  } else {
-    gsub("\\.gif$", "-still.gif", url)
-  }
-}
-```
-
-```{r, echo = FALSE, results = 'asis'}
-if (!pkgdown::in_pkgdown()) {
-  cat(
-    "Note: This vignette is best viewed [online](https://lintr.r-lib.org/articles/editors.html),",
-    "where we can render full animations of editor flows.\n"
-  )
-}
 ```
 
 ## RStudio
 
 lintr lints are automatically displayed in the RStudio Markers pane (RStudio versions \> v0.99.206).
 
-![RStudio Example](rstudio.png "Rstudio Example")
+```{r, echo=FALSE, fig.cap="RStudio Example"}
+knitr::include_graphics("rstudio.png")
+```
 
 In order to show the "Markers" pane in RStudio: Menu "Tools" -\> "Global Options...", a window with title "Options" will pop up.
 In that window: click "Code" on the left; click "Diagnostics" tab; check "Show diagnostics for R".
@@ -50,7 +36,10 @@ These are easy to remember as you are Alt+Shift+L(int) ;)
 ## Emacs
 
 lintr has [built-in integration](http://www.flycheck.org/en/latest/languages.html#r) with [flycheck](https://github.com/flycheck/flycheck) versions greater than `0.23`.
-![Emacs Example](`r maybe_still("emacs.gif")` "Emacs Example")
+
+```{r, echo=FALSE, fig.cap="Emacs Example"}
+knitr::include_graphics("emacs.gif")
+```
 
 ### Installation
 
@@ -67,7 +56,9 @@ e.g. using a different line length cutoff.
 
 lintr can be integrated with [syntastic](https://github.com/vim-syntastic/syntastic) for on-the-fly linting.
 
-![Vim Example](`r maybe_still("vim-syntastic.gif")` "Vim Example")
+```{r, echo=FALSE, fig.cap="Vim Example"}
+knitr::include_graphics("vim-syntastic.gif")
+```
 
 ### Installation
 
@@ -131,7 +122,9 @@ endif
 
 lintr can be integrated with [Sublime Linter](https://github.com/SublimeLinter/SublimeLinter) for on-the-fly linting.
 
-![Sublime Example](`r maybe_still("sublime.gif")` "Sublime Example")
+```{r, echo=FALSE, fig.cap="Sublime Example"}
+knitr::include_graphics("sublime.gif")
+```
 
 ### Installation
 
@@ -159,7 +152,9 @@ In the SublimeLinter User Settings
 
 lintr can be integrated with [Linter](https://github.com/steelbrain/linter) for on the fly linting.
 
-![Atom Example](atom.png "Atom Example")
+```{r, echo=FALSE, fig.cap="Atom Example"}
+knitr::include_graphics("atom.png")
+```
 
 ### Installation
 
@@ -175,7 +170,9 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
 
 In Visual Studio Code, [vscode-R](https://github.com/REditorSupport/vscode-R#r-extension-for-visual-studio-code) presents the lintr diagnostics from [languageserver](https://github.com/REditorSupport/languageserver).
 
-![VS Code Example](vscode.png "VS Code Example")
+```{r, echo=FALSE, fig.cap="VS Code Example"}
+knitr::include_graphics("vscode.png")
+```
 
 ### Installation
 
