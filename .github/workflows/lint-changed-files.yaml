@@ -10,7 +10,7 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: r-lib/actions/setup-r@v2
 
@@ -31,10 +31,11 @@ jobs:
 
       - name: Extract and lint files changed by this PR
         run: |
-          Sys.setenv("LINTR_ERROR_ON_LINT" = TRUE)
           files <- gh::gh("GET https://api.github.com/repos/r-lib/lintr/pulls/${{ github.event.pull_request.number }}/files")
           changed_files <- purrr::map_chr(files, "filename")
           all_files <- list.files(recursive = TRUE)
           exclusions_list <- as.list(setdiff(all_files, changed_files))
           lintr::lint_package(exclusions = exclusions_list)
         shell: Rscript {0}
+        env:
+          LINTR_ERROR_ON_LINT: true

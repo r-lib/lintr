@@ -2,7 +2,7 @@
 #'
 #' Check that there are no trailing blank lines in source code.
 #'
-#' @examples
+#' @examplesIf requireNamespace("withr", quietly = TRUE)
 #' # will produce lints
 #' f <- withr::local_tempfile(lines = "x <- 1\n")
 #' readLines(f)
