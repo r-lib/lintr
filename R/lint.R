@@ -733,7 +733,7 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
   line <- fill_with(" ", maximum)
 
   lapply(ranges, function(range) {
-    substr(line, range[1L], range[2L]) <<- # nolint: undesirable_operator_linter.
+    substr(line, range[1L], range[2L]) <<- # nolint: undesirable_operator.
       fill_with("~", range[2L] - range[1L] + 1L)
   })
 
