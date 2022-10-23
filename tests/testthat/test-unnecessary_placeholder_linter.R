@@ -1,4 +1,3 @@
-skip_if_not_installed("patrick")
 patrick::with_parameters_test_that(
   "unnecessary_placeholder_linter skips allowed usages",
   {
