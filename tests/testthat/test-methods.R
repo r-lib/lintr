@@ -108,6 +108,8 @@ test_that("print.lint works", {
 })
 
 test_that("print.lint works for inline data, even in RStudio", {
+  skip_if_not_installed("mockery")
+
   l <- lint("x = 1\n")
 
   # Make sure lints print to console.
