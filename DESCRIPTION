@@ -41,7 +41,6 @@ Suggests:
     jsonlite,
     mockery,
     patrick,
-    pkgdown,
     rlang,
     rmarkdown,
     rstudioapi (>= 0.2),
