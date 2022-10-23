@@ -34,7 +34,7 @@ lengths_linter <- function() {
   loop_funs <- c("sapply", "vapply", "map_int", "map_dbl")
   xpath <- glue::glue("
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(loop_funs)} ]
-    /parent::expr/parent::expr[expr[position() = 3 and SYMBOL[text() = 'length']]]
+    /parent::expr/parent::expr[expr[SYMBOL[text() = 'length']]]
   ")
 
   Linter(function(source_expression) {
