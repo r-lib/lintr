@@ -295,7 +295,7 @@ settings <- NULL
     }
   }
 
-  default_settings <<- list(
+  default_settings <<- list( # nolint: undesirable_operator_linter.
     linters = default_linters,
     encoding = "UTF-8",
     exclude = rex::rex("#", any_spaces, "nolint"),
@@ -325,7 +325,7 @@ settings <- NULL
     error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
   )
 
-  settings <<- list2env(default_settings, parent = emptyenv())
+  settings <<- list2env(default_settings, parent = emptyenv()) # nolint: undesirable_operator_linter.
   invisible()
 }
 # nocov end

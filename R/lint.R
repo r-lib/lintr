@@ -708,8 +708,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
 
     one_result <- append(one_result, c(ruleId = lint$linter))
     one_result <- append(one_result, c(ruleIndex = rule_index))
-    one_result <-
-      append(one_result, list(message = list(text = lint$message)))
+    one_result <- append(one_result, list(message = list(text = lint$message)))
     one_location <- list(physicalLocation = list(
       artifactLocation = list(
         uri = gsub("\\", "/", lint$filename, fixed = TRUE),
@@ -721,11 +720,8 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
         snippet = list(text = lint$line)
       )
     ))
-    one_result <-
-      append(one_result, c(locations = list(list(one_location))))
-
-    sarif$runs[[1L]]$results <-
-      append(sarif$runs[[1L]]$results, list(one_result))
+    one_result <- append(one_result, c(locations = list(list(one_location))))
+    sarif$runs[[1L]]$results <- append(sarif$runs[[1L]]$results, list(one_result))
   }
 
   write(jsonlite::toJSON(sarif, pretty = TRUE, auto_unbox = TRUE), filename)
@@ -737,8 +733,7 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
   line <- fill_with(" ", maximum)
 
   lapply(ranges, function(range) {
-    substr(line, range[1L], range[2L]) <<-
-      fill_with("~", range[2L] - range[1L] + 1L)
+    substr(line, range[1L], range[2L]) <<- fill_with("~", range[2L] - range[1L] + 1L) # nolint: undesirable_operator_linter.
   })
 
   substr(line, column_number, column_number + 1L) <- "^"

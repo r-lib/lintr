@@ -588,7 +588,7 @@ tab_offsets <- function(tab_columns) {
     tab_columns - 1L,
     function(tab_idx) {
       offset <- 7L - (tab_idx + cum_offset) %% 8L # using a tab width of 8 characters
-      cum_offset <<- cum_offset + offset
+      cum_offset <<- cum_offset + offset # nolint: undesirable_operator_linter.
       offset
     },
     integer(1L),
