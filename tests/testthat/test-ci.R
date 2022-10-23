@@ -27,6 +27,8 @@ test_that("GitHub Actions functionality works in a subdirectory", {
 })
 
 test_that("GitHub Actions - linting on error works", {
+  skip_if_not_installed("mockery")
+
   # imitate being on GHA whether or not we are
   withr::local_envvar(list(GITHUB_ACTIONS = "true", LINTR_ERROR_ON_LINT = "true"))
   withr::local_options(lintr.rstudio_source_markers = FALSE)
@@ -39,6 +41,8 @@ test_that("GitHub Actions - linting on error works", {
 })
 
 test_that("Printing works for Travis", {
+  skip_if_not_installed("mockery")
+
   withr::local_envvar(list(GITHUB_ACTIONS = "false", TRAVIS_REPO_SLUG = "test/repo", LINTR_COMMENT_BOT = "true"))
   withr::local_options(lintr.rstudio_source_markers = FALSE)
   tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
@@ -50,6 +54,8 @@ test_that("Printing works for Travis", {
 })
 
 test_that("Printing works for Wercker", {
+  skip_if_not_installed("mockery")
+
   withr::local_envvar(list(GITHUB_ACTIONS = "false", WERCKER_GIT_BRANCH = "test/repo", LINTR_COMMENT_BOT = "true"))
   withr::local_options(lintr.rstudio_source_markers = FALSE)
   tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
