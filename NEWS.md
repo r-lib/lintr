@@ -11,6 +11,8 @@
 
 * `object_usage_linter()` no longer silently ignores usage warnings that don't contain a quoted name (#1714, @AshesITR)
 
+* `namespace_linter()` correctly recognizes backticked operators to be exported from respectives namespaces (like `` rlang::`%||%` ``) (#1752, @IndrajeetPatil)
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
