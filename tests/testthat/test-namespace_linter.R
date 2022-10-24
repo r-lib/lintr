@@ -18,7 +18,7 @@ test_that("namespace_linter respects check_exports and check_nonexports argument
   expect_lint("stats:::ssd(c(1,2,3))", NULL, namespace_linter(check_exports = FALSE, check_nonexports = FALSE))
 })
 
-test_that("namespace_linter respects check_exports and check_nonexports arguments", {
+test_that("namespace_linter can work with backticked symbols", {
   skip_if_not_installed("rlang")
   linter <- namespace_linter()
 
@@ -27,6 +27,9 @@ test_that("namespace_linter respects check_exports and check_nonexports argument
 
   expect_lint("rlang::'%||%'", NULL, linter)
   expect_lint("rlang::'%||%'()", NULL, linter)
+
+  expect_lint("rlang::`%>%`", "'%>%' is not exported from {rlang}.", linter)
+  expect_lint("rlang::'%>%'()", "'%>%' is not exported from {rlang}.", linter)
 })
 
 test_that("namespace_linter blocks disallowed usages", {
