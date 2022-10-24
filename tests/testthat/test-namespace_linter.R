@@ -23,7 +23,10 @@ test_that("namespace_linter respects check_exports and check_nonexports argument
   linter <- namespace_linter()
 
   expect_lint("rlang::`%||%`", NULL, linter)
+  expect_lint("rlang::`%||%`()", NULL, linter)
+
   expect_lint("rlang::'%||%'", NULL, linter)
+  expect_lint("rlang::'%||%'()", NULL, linter)
 })
 
 test_that("namespace_linter blocks disallowed usages", {
