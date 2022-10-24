@@ -98,4 +98,3 @@ get_encoding_from_dcf <- function(file) {
 
   NULL
 }
-
