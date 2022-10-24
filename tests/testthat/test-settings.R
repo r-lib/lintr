@@ -110,8 +110,8 @@ test_that("it has a smart default for encodings", {
     normalizePath(test_path("dummy_packages", "cp1252"), winslash = "/")
   )
 
-  expect_identical(find_default_encoding(proj_file), "ISO8859-1")
-  expect_identical(find_default_encoding(pkg_file), "ISO8859-1")
+  expect_identical(lintr:::find_default_encoding(proj_file), "ISO8859-1")
+  expect_identical(lintr:::find_default_encoding(pkg_file), "ISO8859-1")
 
   lintr:::read_settings(proj_file)
   expect_identical(settings$encoding, "ISO8859-1")
