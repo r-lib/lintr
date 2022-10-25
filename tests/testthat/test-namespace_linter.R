@@ -27,9 +27,12 @@ test_that("namespace_linter can work with backticked symbols", {
 
   expect_lint("rlang::'%||%'", NULL, linter)
   expect_lint("rlang::'%||%'()", NULL, linter)
+  expect_lint('rlang::"%||%"', NULL, linter)
+  expect_lint('rlang::"%||%"()', NULL, linter)
 
   expect_lint("rlang::`%>%`", "'%>%' is not exported from {rlang}.", linter)
   expect_lint("rlang::'%>%'()", "'%>%' is not exported from {rlang}.", linter)
+  expect_lint('rlang::"%>%"()', "'%>%' is not exported from {rlang}.", linter)
 })
 
 test_that("namespace_linter blocks disallowed usages", {
