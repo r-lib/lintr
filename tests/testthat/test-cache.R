@@ -34,6 +34,8 @@ fhash <- function(filename) {
 # `clear_cache`
 
 test_that("clear_cache deletes the file if a file is given", {
+  skip_if_not_installed("mockery")
+
   mockery::stub(clear_cache, "read_settings", function(...) invisible(...))
   mockery::stub(clear_cache, "unlink", function(...) list(...))
 
@@ -48,6 +50,8 @@ test_that("clear_cache deletes the file if a file is given", {
 })
 
 test_that("clear_cache deletes the directory if no file is given", {
+  skip_if_not_installed("mockery")
+
   mockery::stub(clear_cache, "read_settings", function(...) invisible(...))
   mockery::stub(clear_cache, "unlink", function(...) list(...))
 
@@ -408,6 +412,7 @@ test_that("lint with cache uses the provided relative cache directory", {
 })
 
 test_that("it works outside of a package", {
+  skip_if_not_installed("mockery")
   linter <- assignment_linter()
 
   mockery::stub(lintr:::find_default_encoding, "find_package", function(...) NULL)
