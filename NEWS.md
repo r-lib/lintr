@@ -11,6 +11,8 @@
 
 * `object_usage_linter()` no longer silently ignores usage warnings that don't contain a quoted name (#1714, @AshesITR)
 
+* `namespace_linter()` correctly recognizes backticked operators to be exported from respectives namespaces (like `` rlang::`%||%` ``) (#1752, @IndrajeetPatil)
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
@@ -118,6 +120,9 @@
   Thanks to Yihui and other developers for their helpful discussions around this issue (#797, @IndrajeetPatil).
 
 * The output of `lint()` and `Lint()` gain S3 class `"list"` to assist with S3 dispatch (#1494, @MichaelChirico)
+# lintr 3.0.2
+
+* Fix test to avoid leaving behind cache files in the global cache directory.
 
 # lintr 3.0.1
 
