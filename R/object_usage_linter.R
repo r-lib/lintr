@@ -248,7 +248,7 @@ parse_check_usage <- function(expression,
   vals <- list()
 
   report <- function(x) {
-    vals[[length(vals) + 1L]] <<- x
+    vals[[length(vals) + 1L]] <<- x # nolint: undesirable_operator.
   }
 
   withr::with_options(
