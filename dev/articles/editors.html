@@ -95,70 +95,101 @@
 <div class="section level2">
 <h2 id="rstudio">RStudio<a class="anchor" aria-label="anchor" href="#rstudio"></a>
 </h2>
-<p>lintr lints are automatically displayed in the RStudio Markers pane (RStudio versions &gt; v0.99.206).</p>
+<p>lintr lints are automatically displayed in the RStudio Markers pane
+(RStudio versions &gt; v0.99.206).</p>
 <div class="figure">
 <img src="rstudio.png" title="Rstudio Example" alt=""><p class="caption">RStudio Example</p>
 </div>
-<p>In order to show the “Markers” pane in RStudio: Menu “Tools” -&gt; “Global Options…”, a window with title “Options” will pop up. In that window: click “Code” on the left; click “Diagnostics” tab; check “Show diagnostics for R”.</p>
-<p>To lint a source file <code>test.R</code> type in the Console <code>lintr::lint("test.R")</code> and look at the result in the “Markers” pane.</p>
-<p>This package also includes two addins for linting the current source and package. To bind the addin to a keyboard shortcut navigate to Tools &gt; addins &gt; Browse Addins &gt; Keyboard Shortcuts. It’s recommended to use Alt+Shift+L for linting the current source lint and Ctrl+Shift+Alt+L to code the package. These are easy to remember as you are Alt+Shift+L(int) ;)</p>
+<p>In order to show the “Markers” pane in RStudio: Menu “Tools” -&gt;
+“Global Options…”, a window with title “Options” will pop up. In that
+window: click “Code” on the left; click “Diagnostics” tab; check “Show
+diagnostics for R”.</p>
+<p>To lint a source file <code>test.R</code> type in the Console
+<code>lintr::lint("test.R")</code> and look at the result in the
+“Markers” pane.</p>
+<p>This package also includes two addins for linting the current source
+and package. To bind the addin to a keyboard shortcut navigate to Tools
+&gt; addins &gt; Browse Addins &gt; Keyboard Shortcuts. It’s recommended
+to use Alt+Shift+L for linting the current source lint and
+Ctrl+Shift+Alt+L to code the package. These are easy to remember as you
+are Alt+Shift+L(int) ;)</p>
 </div>
 <div class="section level2">
 <h2 id="emacs">Emacs<a class="anchor" aria-label="anchor" href="#emacs"></a>
 </h2>
-<p>lintr has <a href="http://www.flycheck.org/en/latest/languages.html#r" class="external-link">built-in integration</a> with <a href="https://github.com/flycheck/flycheck" class="external-link">flycheck</a> versions greater than <code>0.23</code>. <img src="emacs.gif" title="Emacs Example" alt="Emacs Example"></p>
+<p>lintr has <a href="http://www.flycheck.org/en/latest/languages.html#r" class="external-link">built-in
+integration</a> with <a href="https://github.com/flycheck/flycheck" class="external-link">flycheck</a> versions
+greater than <code>0.23</code>. <img src="emacs.gif" title="Emacs Example" alt="Emacs Example"></p>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
-<p>lintr is fully integrated into flycheck when using <a href="http://ess.r-project.org/" class="external-link">ESS</a>. See the installation documentation for those packages for more information.</p>
+<p>lintr is fully integrated into flycheck when using <a href="http://ess.r-project.org/" class="external-link">ESS</a>. See the installation
+documentation for those packages for more information.</p>
 </div>
 <div class="section level3">
 <h3 id="configuration">Configuration<a class="anchor" aria-label="anchor" href="#configuration"></a>
 </h3>
-<p>You can also configure what linters are used. e.g. using a different line length cutoff. - <code>M-x customize-option</code> -&gt; <code>flycheck-lintr-linters</code> -&gt; <code>linters_with_defaults(line_length_linter(120))</code></p>
+<p>You can also configure what linters are used. e.g. using a different
+line length cutoff. - <code>M-x customize-option</code> -&gt;
+<code>flycheck-lintr-linters</code> -&gt;
+<code>linters_with_defaults(line_length_linter(120))</code></p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="vim---syntastic">Vim - syntastic<a class="anchor" aria-label="anchor" href="#vim---syntastic"></a>
 </h2>
-<p>lintr can be integrated with <a href="https://github.com/vim-syntastic/syntastic" class="external-link">syntastic</a> for on-the-fly linting.</p>
+<p>lintr can be integrated with <a href="https://github.com/vim-syntastic/syntastic" class="external-link">syntastic</a> for
+on-the-fly linting.</p>
 <div class="figure">
 <img src="vim-syntastic.gif" title="Vim Example" alt=""><p class="caption">Vim Example</p>
 </div>
 <div class="section level3">
 <h3 id="installation-1">Installation<a class="anchor" aria-label="anchor" href="#installation-1"></a>
 </h3>
-<p>Put the file <a href="https://raw.githubusercontent.com/r-lib/lintr/v2.0.1/inst/syntastic/lintr.vim" class="external-link">syntastic/lintr.vim</a> in <code>syntastic/syntax_checkers/r</code>. If you are using <a href="https://github.com/tpope/vim-pathogen" class="external-link">pathogen</a> this directory is <code>~/.vim/bundles/syntastic/syntax_checkers/r</code>.</p>
-<p>You will also need to add the following lines to your <code>.vimrc</code>.</p>
+<p>Put the file <a href="https://raw.githubusercontent.com/r-lib/lintr/v2.0.1/inst/syntastic/lintr.vim" class="external-link">syntastic/lintr.vim</a>
+in <code>syntastic/syntax_checkers/r</code>. If you are using <a href="https://github.com/tpope/vim-pathogen" class="external-link">pathogen</a> this directory
+is <code>~/.vim/bundles/syntastic/syntax_checkers/r</code>.</p>
+<p>You will also need to add the following lines to your
+<code>.vimrc</code>.</p>
 <pre class="vim"><code>let g:syntastic_enable_r_lintr_checker = 1
 let g:syntastic_r_checkers = ['lintr']</code></pre>
 </div>
 <div class="section level3">
 <h3 id="configuration-1">Configuration<a class="anchor" aria-label="anchor" href="#configuration-1"></a>
 </h3>
-<p>You can also configure what linters are used. e.g. using a different line length cutoff.</p>
+<p>You can also configure what linters are used. e.g. using a different
+line length cutoff.</p>
 <pre class="vim"><code>let g:syntastic_r_lintr_linters = "linters_with_defaults(line_length_linter(120))"</code></pre>
 </div>
 </div>
 <div class="section level2">
 <h2 id="vim---ale">Vim - ALE<a class="anchor" aria-label="anchor" href="#vim---ale"></a>
 </h2>
-<p>lintr can be integrated with <a href="https://github.com/dense-analysis/ale" class="external-link">ALE</a> for on the fly linting.</p>
+<p>lintr can be integrated with <a href="https://github.com/dense-analysis/ale" class="external-link">ALE</a> for on the fly
+linting.</p>
 <div class="section level3">
 <h3 id="installation-2">Installation<a class="anchor" aria-label="anchor" href="#installation-2"></a>
 </h3>
-<p>lintr is integrated with ALE and requires no additional installation.</p>
+<p>lintr is integrated with ALE and requires no additional
+installation.</p>
 </div>
 <div class="section level3">
 <h3 id="configuration-2">Configuration<a class="anchor" aria-label="anchor" href="#configuration-2"></a>
 </h3>
-<p>You can configure what linters are used, e.g. using a different line length cutoff.</p>
+<p>You can configure what linters are used, e.g. using a different line
+length cutoff.</p>
 <pre class="vim"><code>let g:ale_r_lintr_options = "linters_with_defaults(line_length_linter(120))"</code></pre>
-<p>You can also configure whether <code>lint</code> or <code>lint_package</code> is used. Set to 1 for <code>lint_package</code> and 0 (default) for <code>lint</code>.</p>
+<p>You can also configure whether <code>lint</code> or
+<code>lint_package</code> is used. Set to 1 for
+<code>lint_package</code> and 0 (default) for <code>lint</code>.</p>
 <pre class="vim"><code>let g:ale_r_lintr_lint_package = 1</code></pre>
 <p>See <code>:h ale_r_lintr</code> for more information.</p>
-<p>Note that configuration through <code>.lintr</code> files are not supported.</p>
-<p>There is a work around that can be used to read the contents of a <code>.lintr</code> file in the root of the working directory. This would allow the use of configuration through <code>.lintr</code> files.</p>
+<p>Note that configuration through <code>.lintr</code> files are not
+supported.</p>
+<p>There is a work around that can be used to read the contents of a
+<code>.lintr</code> file in the root of the working directory. This
+would allow the use of configuration through <code>.lintr</code>
+files.</p>
 <pre class="vim"><code>if filereadable(".lintr")
   let g:ale_r_lintr_options = join(readfile('.lintr'))
 endif</code></pre>
@@ -167,7 +198,8 @@ endif</code></pre>
 <div class="section level2">
 <h2 id="sublime-text-3">Sublime Text 3<a class="anchor" aria-label="anchor" href="#sublime-text-3"></a>
 </h2>
-<p>lintr can be integrated with <a href="https://github.com/SublimeLinter/SublimeLinter" class="external-link">Sublime Linter</a> for on-the-fly linting.</p>
+<p>lintr can be integrated with <a href="https://github.com/SublimeLinter/SublimeLinter" class="external-link">Sublime Linter</a>
+for on-the-fly linting.</p>
 <div class="figure">
 <img src="sublime.gif" title="Sublime Example" alt=""><p class="caption">Sublime Example</p>
 </div>
@@ -175,12 +207,15 @@ endif</code></pre>
 <h3 id="installation-3">Installation<a class="anchor" aria-label="anchor" href="#installation-3"></a>
 </h3>
 <p>Simply install <code>sublimeLinter-contrib-lintr</code> using <a href="https://packagecontrol.io/" class="external-link">Package Control</a>.</p>
-<p>For more information see <a href="http://sublimelinter.readthedocs.io/en/latest/installation.html#installing-via-pc" class="external-link">Sublime Linter Docs</a></p>
+<p>For more information see <a href="http://sublimelinter.readthedocs.io/en/latest/installation.html#installing-via-pc" class="external-link">Sublime
+Linter Docs</a></p>
 </div>
 <div class="section level3">
 <h3 id="configuration-3">Configuration<a class="anchor" aria-label="anchor" href="#configuration-3"></a>
 </h3>
-<p>You can also configure what linters are used. e.g. disabling the assignment linter and using a different line length cutoff. In the SublimeLinter User Settings</p>
+<p>You can also configure what linters are used. e.g. disabling the
+assignment linter and using a different line length cutoff. In the
+SublimeLinter User Settings</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"linters"</span><span class="fu">:</span> <span class="fu">{</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"lintr"</span><span class="fu">:</span> <span class="fu">{</span></span>
@@ -193,29 +228,35 @@ endif</code></pre>
 <div class="section level2">
 <h2 id="atom">Atom<a class="anchor" aria-label="anchor" href="#atom"></a>
 </h2>
-<p>lintr can be integrated with <a href="https://github.com/steelbrain/linter" class="external-link">Linter</a> for on the fly linting.</p>
+<p>lintr can be integrated with <a href="https://github.com/steelbrain/linter" class="external-link">Linter</a> for on the fly
+linting.</p>
 <div class="figure">
 <img src="atom.png" title="Atom Example" alt=""><p class="caption">Atom Example</p>
 </div>
 <div class="section level3">
 <h3 id="installation-4">Installation<a class="anchor" aria-label="anchor" href="#installation-4"></a>
 </h3>
-<p>Simply install <code>linter-lintr</code> from within Atom or on the command line with:</p>
+<p>Simply install <code>linter-lintr</code> from within Atom or on the
+command line with:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apm</span> install linter-lintr</span></code></pre></div>
-<p>For more information and bug reports see <a href="https://github.com/AtomLinter/linter-lintr" class="external-link">Atom linter-lintr</a>.</p>
+<p>For more information and bug reports see <a href="https://github.com/AtomLinter/linter-lintr" class="external-link">Atom
+linter-lintr</a>.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="visual-studio-code">Visual Studio Code<a class="anchor" aria-label="anchor" href="#visual-studio-code"></a>
 </h2>
-<p>In Visual Studio Code, <a href="https://github.com/REditorSupport/vscode-R#r-extension-for-visual-studio-code" class="external-link">vscode-R</a> presents the lintr diagnostics from <a href="https://github.com/REditorSupport/languageserver" class="external-link">languageserver</a>.</p>
+<p>In Visual Studio Code, <a href="https://github.com/REditorSupport/vscode-R#r-extension-for-visual-studio-code" class="external-link">vscode-R</a>
+presents the lintr diagnostics from <a href="https://github.com/REditorSupport/languageserver" class="external-link">languageserver</a>.</p>
 <div class="figure">
 <img src="vscode.png" title="VS Code Example" alt=""><p class="caption">VS Code Example</p>
 </div>
 <div class="section level3">
 <h3 id="installation-5">Installation<a class="anchor" aria-label="anchor" href="#installation-5"></a>
 </h3>
-<p>Installing <code>languageserver</code> package in R and <code>vscode-R</code> extension in VS Code will enable lintr in VS Code by default or run the following command lines:</p>
+<p>Installing <code>languageserver</code> package in R and
+<code>vscode-R</code> extension in VS Code will enable lintr in VS Code
+by default or run the following command lines:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'install.packages("languageserver")'</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">code</span> <span class="at">--install-extension</span> reditorsupport.r</span></code></pre></div>
 </div>
