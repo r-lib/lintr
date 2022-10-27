@@ -28,8 +28,8 @@ flatten_list <- function(x, class) {
   itr <- 1L
   assign_item <- function(x) {
     if (inherits(x, class)) {
-      res[[itr]] <<- x
-      itr <<- itr + 1L
+      res[[itr]] <<- x # nolint: undesirable_operator.
+      itr <<- itr + 1L # nolint: undesirable_operator.
     } else if (is.list(x)) {
       lapply(x, assign_item)
     }
@@ -174,7 +174,7 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
     readLines(file, warn = TRUE, ...),
     warning = function(w) {
       if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
-        terminal_newline <<- FALSE
+        terminal_newline <<- FALSE # nolint: undesirable_operator.
         invokeRestart("muffleWarning")
       }
     }

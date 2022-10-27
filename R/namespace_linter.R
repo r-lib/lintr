@@ -167,6 +167,9 @@ build_ns_get_int_lints <- function(packages, symbols, symbol_nodes, namespaces, 
 build_ns_get_lints <- function(packages, symbols, symbol_nodes, namespaces, source_expression) {
   lints <- list()
 
+  # strip backticked symbols; `%>%` is the same as %>% (#1752).
+  symbols <- gsub("^`(.*)`$", "\\1", symbols)
+
   ## Case 4: foo is not an export in pkg::foo
 
   unexported <- !vapply(
