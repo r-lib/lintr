@@ -4,6 +4,7 @@ test_that("lengths_linter skips allowed usages", {
   expect_lint("length(x)", NULL, linter)
   expect_lint("function(x) length(x) + 1L", NULL, linter)
   expect_lint("vapply(x, fun, integer(length(y)))", NULL, linter)
+  expect_lint("sapply(x, sqrt, simplify = length(x))", NULL, linter)
 
   # TODO(#1570): also throw a lint here, and for map(x, length)
   expect_lint("lapply(x, length)", NULL, linter)
