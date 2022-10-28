@@ -95,6 +95,7 @@ The first one found, if any, will be used.
 2.  A linter file (that is a file named like `lintr.linter_file`) in the currently searched directory, i.e. the directory of the file passed to `lint()`. When run from `lint_package()`, this directory can differ for each linted file.
 3.  A linter file in a parent directory of the currently-searched directory, starting from the deepest path, moving upwards one level at a time.
 4.  A linter file in the user's `HOME` directory.
+5.  A linter file in the `.github/linters` child directory of the currently-search directory.
 
 If no linter file is found, only default settings take effect (see [defaults](#defaults)).
 
