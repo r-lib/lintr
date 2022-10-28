@@ -88,6 +88,12 @@ find_config <- function(filename) {
     return(linter_config)
   }
 
+  ## next check for a file in the .github/linters directory
+  linter_config <- file.path(path, ".github/linters", linter_file)
+  if (isTRUE(file.exists(linter_config))) {
+    return(linter_config)
+  }
+
   NULL
 }
 
