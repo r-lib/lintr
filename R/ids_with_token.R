@@ -27,7 +27,7 @@
 #' entry of the list of source expressions. Indices correspond to the
 #' *rows* where `fun` evaluates to `TRUE` for the `value` in the *token* column.
 #' @export
-ids_with_token <- function(source_expression, value, fun = `==`, source_file) { # nolint: function_argument_linter.
+ids_with_token <- function(source_expression, value, fun = `==`, source_file = NULL) {
   if (!missing(source_file)) {
     lintr_deprecated(old = "source_file", new = "source_expression", version = "3.0.0", type = "Argument")
     source_expression <- source_file
