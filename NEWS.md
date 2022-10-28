@@ -70,6 +70,9 @@
 
 * `literal_coercion_linter()` reports a replacement in the lint message, e.g. code like `as.integer(1)` will
   suggest using `1L` instead, and code like `as.numeric(NA)` will suggest using `NA_real_` instead (#1439, @MichaelChirico)
+  
+* Added check for `.lintr` configuration file in the `.github/linters` project sub folder. This is to improve 
+  compatibility with Super-Linter(#1746, @tonyk7440)
 
 ### New linters
 
