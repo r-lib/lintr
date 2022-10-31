@@ -173,6 +173,19 @@ test_that("function argument indentation works in tidyverse-style", {
     linter
   )
 
+  # new style (#1754)
+  expect_lint(
+    trim_some("
+      function(
+          a = 1L,
+          b = 2L) {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
+
   # anchor is correctly found with assignments as well
   expect_lint(
     trim_some("

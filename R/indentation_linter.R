@@ -8,6 +8,8 @@
 #'   line and a hanging indent if not.
 #'   Note that function multi-line function calls without arguments on their first line will always be expected to have
 #'   block-indented arguments.
+#'   If `hanging_indent_style` is `"tidy"`, multi-line function definitions are expected to be double-indented if the
+#'   first line of the function definition contains no arguments and the closing parenthesis is not on its own line.
 #'
 #'   ```r
 #'   # complies to any style
@@ -34,6 +36,13 @@
 #'   # complies to "never"
 #'   map(x, f,
 #'     additional_arg = 42)
+#'
+#'   # complies to "tidy"
+#'   function(
+#'       a,
+#'       b) {
+#'     # body
+#'   }
 #'   ```
 #'
 #' @examples
@@ -82,8 +91,10 @@
 #' )
 #'
 #' @evalRd rd_tags("indentation_linter")
-#' @seealso [linters] for a complete list of linters available in lintr. \cr
-#' <https://style.tidyverse.org/syntax.html#indenting>
+#' @seealso
+#' - [linters] for a complete list of linters available in lintr. \cr
+#' - <https://style.tidyverse.org/syntax.html#indenting>
+#' - <https://style.tidyverse.org/functions.html#long-lines-1>
 #'
 #' @export
 indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "always", "never")) {
@@ -98,6 +109,27 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
   hanging_indent_style <- match.arg(hanging_indent_style)
 
   if (hanging_indent_style == "tidy") {
+    # double indent is tidyverse style for function definitions
+    # triggered only if the closing parenthesis of the function definition is not on its own line and the opening
+    # parenthesis has no arguments behind it.
+    # this allows both of these styles:
+    #
+    #> function(
+    #>     a,
+    #>     b) {
+    #>   body
+    #> }
+    #
+    #> function(
+    #>   a,
+    #>   b
+    #> ) {
+    #>   body
+    #> }
+    xp_is_double_indent <- "
+      parent::expr[FUNCTION and not(@line1 = SYMBOL_FORMALS/@line1)]
+        /OP-RIGHT-PAREN[@line1 = preceding-sibling::*[not(self::COMMENT)][1]/@line2]
+    "
     xp_is_not_hanging <- paste(
       c(
         glue::glue(
@@ -174,20 +206,31 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
     indent_changes <- xml2::xml_find_all(xml, xp_indent_changes)
     for (change in indent_changes) {
-      if (hanging_indent_style != "never") {
+      if (hanging_indent_style == "tidy" && length(xml2::xml_find_first(change, xp_is_double_indent)) > 0L) {
+        change_type <- "double"
+      } else if (hanging_indent_style != "never") {
         change_starts_hanging <- length(xml2::xml_find_first(change, xp_is_not_hanging)) == 0L
+        if (change_starts_hanging) {
+          change_type <- "hanging"
+        } else {
+          change_type <- "block"
+        }
       } else {
-        change_starts_hanging <- FALSE
+        change_type <- "block"
       }
       change_begin <- as.integer(xml2::xml_attr(change, "line1")) + 1L
       change_end <- xml2::xml_find_num(change, xp_block_ends)
       if (change_begin <= change_end) {
         to_indent <- seq(from = change_begin, to = change_end)
-        if (change_starts_hanging) {
+        if (change_type == "hanging") {
           expected_indent_levels[to_indent] <- as.integer(xml2::xml_attr(change, "col2"))
           is_hanging[to_indent] <- TRUE
-        } else {
-          expected_indent_levels[to_indent] <- expected_indent_levels[to_indent] + indent
+        } else { # block or double
+          if (change_type == "double") {
+            expected_indent_levels[to_indent] <- expected_indent_levels[to_indent] + 2L * indent
+          } else {
+            expected_indent_levels[to_indent] <- expected_indent_levels[to_indent] + indent
+          }
           is_hanging[to_indent] <- FALSE
         }
       }
