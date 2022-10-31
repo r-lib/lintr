@@ -121,7 +121,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         glue::glue("self::*[
                       {xp_and(paste0('not(self::', paren_tokens_left, ')'))} and
                       not(following-sibling::SYMBOL_FUNCTION_CALL)
-                    ]/following-sibling::*[1]/@line2")
+                    ]/following-sibling::*[not(self::COMMENT)][1]/@line2")
       ),
       collapse = " | "
     ),

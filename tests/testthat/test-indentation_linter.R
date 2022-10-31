@@ -89,6 +89,16 @@ test_that("indentation linter flags unindented expressions", {
     linter
   )
 
+  # comments do not suppress block indents (#1751)
+  expect_lint(
+    trim_some("
+      a <- # comment
+        42L
+    "),
+    NULL,
+    linter
+  )
+
   # assignment triggers indent
   expect_lint(
     trim_some("
