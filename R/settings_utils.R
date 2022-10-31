@@ -68,30 +68,24 @@ find_config <- function(filename) {
     dirname(filename)
   }
 
-  ## check for a file in the current directory
-  linter_config <- file.path(path, linter_file)
-  if (isTRUE(file.exists(linter_config))) {
-    return(linter_config)
-  }
+  # List possible .lintr file locations
+  file_locations <- list(
+    # Check for a file in the current directory
+    file.path(path, linter_file),
+    # Next check for a file in the .github/linters directory
+    file.path(path, ".github/linters", linter_file),
+    # Next check for a file in higher directories
+    find_config2(path),
+    # Next check for a file in the user directory
+    # cf: rstudio@bc9b6a5 SessionRSConnect.R#L32
+    file.path(Sys.getenv("HOME", unset = "~"), linter_file)
+  )
 
-  ## next check for a file higher directories
-  linter_config <- find_config2(path)
-  if (isTRUE(file.exists(linter_config))) {
-    return(linter_config)
-  }
-
-  ## next check for a file in the user directory
-  # cf: rstudio@bc9b6a5 SessionRSConnect.R#L32
-  home_dir <- Sys.getenv("HOME", unset = "~")
-  linter_config <- file.path(home_dir, linter_file)
-  if (isTRUE(file.exists(linter_config))) {
-    return(linter_config)
-  }
-
-  ## next check for a file in the .github/linters directory
-  linter_config <- file.path(path, ".github/linters", linter_file)
-  if (isTRUE(file.exists(linter_config))) {
-    return(linter_config)
+  # Search through locations, return first valid result
+  for (loc in file_locations) {
+    if (isTRUE(file.exists(eval(loc)))) {
+      return(eval(loc))
+    }
   }
 
   NULL
