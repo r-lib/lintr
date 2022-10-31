@@ -106,7 +106,7 @@ lint(
 }
 \seealso{
 \itemize{
-\item \link{linters} for a complete list of linters available in lintr. \cr
+\item \link{linters} for a complete list of linters available in lintr.
 \item \url{https://style.tidyverse.org/syntax.html#indenting}
 \item \url{https://style.tidyverse.org/functions.html#long-lines-1}
 }

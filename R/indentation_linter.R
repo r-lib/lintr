@@ -92,7 +92,7 @@
 #'
 #' @evalRd rd_tags("indentation_linter")
 #' @seealso
-#' - [linters] for a complete list of linters available in lintr. \cr
+#' - [linters] for a complete list of linters available in lintr.
 #' - <https://style.tidyverse.org/syntax.html#indenting>
 #' - <https://style.tidyverse.org/functions.html#long-lines-1>
 #'
