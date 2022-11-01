@@ -69,7 +69,7 @@ find_config <- function(filename) {
   }
 
   # List possible .lintr file locations
-  file_locations <- list(
+  file_locations <- c(
     # Check for a file in the current directory
     file.path(path, linter_file),
     # Next check for a file in the .github/linters directory
@@ -83,8 +83,8 @@ find_config <- function(filename) {
 
   # Search through locations, return first valid result
   for (loc in file_locations) {
-    if (isTRUE(file.exists(eval(loc)))) {
-      return(eval(loc))
+    if (isTRUE(file.exists(loc))) {
+      return(loc)
     }
   }
 
