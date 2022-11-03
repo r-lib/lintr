@@ -248,7 +248,6 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     }
   })
 }
-# nolint end
 
 build_indentation_style_tidy <- function() {
   paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
