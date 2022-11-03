@@ -109,39 +109,14 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
   hanging_indent_style <- match.arg(hanging_indent_style)
 
   if (hanging_indent_style == "tidy") {
-    # double indent is tidyverse style for function definitions
-    # triggered only if the closing parenthesis of the function definition is not on its own line and the opening
-    # parenthesis has no arguments behind it.
-    # this allows both of these styles:
-    #
-    #> function(
-    #>     a,
-    #>     b) {
-    #>   body
-    #> }
-    #
-    #> function(
-    #>   a,
-    #>   b
-    #> ) {
-    #>   body
-    #> }
-    xp_is_double_indent <- "
-      parent::expr[FUNCTION and not(@line1 = SYMBOL_FORMALS/@line1)]
-        /OP-RIGHT-PAREN[@line1 = preceding-sibling::*[not(self::COMMENT)][1]/@line2]
-    "
-    xp_is_not_hanging <- paste(
-      c(
-        glue::glue(
-          "self::{paren_tokens_left}/following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]"
-        ),
-        glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
-      ),
-      collapse = " | "
-    )
+    find_indent_type <- build_indentation_style_tidy()
   } else if (hanging_indent_style == "always") {
-    xp_is_not_hanging <- glue::glue("self::*[{xp_last_on_line}]")
-  } # "never" makes no use of xp_is_not_hanging, so no definition is necessary
+    find_indent_type <- build_indentation_style_always()
+  } else { # "never"
+    find_indent_type <- function(change) {
+      "block"
+    }
+  }
 
   xp_block_ends <- paste0(
     "number(",
@@ -206,18 +181,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
     indent_changes <- xml2::xml_find_all(xml, xp_indent_changes)
     for (change in indent_changes) {
-      if (hanging_indent_style == "tidy" && length(xml2::xml_find_first(change, xp_is_double_indent)) > 0L) {
-        change_type <- "double"
-      } else if (hanging_indent_style != "never") {
-        change_starts_hanging <- length(xml2::xml_find_first(change, xp_is_not_hanging)) == 0L
-        if (change_starts_hanging) {
-          change_type <- "hanging"
-        } else {
-          change_type <- "block"
-        }
-      } else {
-        change_type <- "block"
-      }
+      change_type <- find_indent_type(change)
       change_begin <- as.integer(xml2::xml_attr(change, "line1")) + 1L
       change_end <- xml2::xml_find_num(change, xp_block_ends)
       if (change_begin <= change_end) {
@@ -283,4 +247,67 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       list()
     }
   })
+}
+# nolint end
+
+#' Tidyverse indentation style function
+#'
+#' XPaths are pre-compiled at build time to improve performance.
+build_indentation_style_tidy <- function() {
+  paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
+  paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
+  xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
+
+  # double indent is tidyverse style for function definitions
+  # triggered only if the closing parenthesis of the function definition is not on its own line and the opening
+  # parenthesis has no arguments behind it.
+  # this allows both of these styles:
+  #
+  #> function(
+  #>     a,
+  #>     b) {
+  #>   body
+  #> }
+  #
+  #> function(
+  #>   a,
+  #>   b
+  #> ) {
+  #>   body
+  #> }
+  xp_is_double_indent <- "
+    parent::expr[FUNCTION and not(@line1 = SYMBOL_FORMALS/@line1)]
+      /OP-RIGHT-PAREN[@line1 = preceding-sibling::*[not(self::COMMENT)][1]/@line2]
+  "
+  xp_is_not_hanging <- paste(
+    c(
+      glue::glue(
+        "self::{paren_tokens_left}/following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]"
+      ),
+      glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
+    ),
+    collapse = " | "
+  )
+
+  function(change) {
+    if (length(xml2::xml_find_first(change, xp_is_double_indent)) > 0L) {
+      "double"
+    } else if (length(xml2::xml_find_first(change, xp_is_not_hanging)) == 0L) {
+      "hanging"
+    } else {
+      "block"
+    }
+  }
+}
+
+build_indentation_style_always <- function() {
+  xp_is_not_hanging <- "self::*[@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1]"
+
+  function(change) {
+    if (length(xml2::xml_find_first(change, xp_is_not_hanging)) == 0L) {
+      "hanging"
+    } else {
+      "block"
+    }
+  }
 }
