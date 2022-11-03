@@ -250,9 +250,6 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 }
 # nolint end
 
-#' Tidyverse indentation style function
-#'
-#' XPaths are pre-compiled at build time to improve performance.
 build_indentation_style_tidy <- function() {
   paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
