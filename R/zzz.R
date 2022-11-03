@@ -279,7 +279,7 @@ settings <- NULL
 .onLoad <- function(libname, pkgname) {
   op <- options()
   op_lintr <- list(
-    lintr.linter_file = ".lintr"
+    lintr.linter_file = Sys.getenv("R_LINTR_LINTER_FILE", ".lintr")
   )
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
