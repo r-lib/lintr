@@ -186,6 +186,57 @@ test_that("function argument indentation works in tidyverse-style", {
     linter
   )
 
+  expect_lint(
+    trim_some("
+      function(
+            a = 1L,
+            b = 2L) {
+        a + b
+      }
+    "),
+    "Indentation should be 4",
+    linter
+  )
+
+  # Hanging is only allowed if there is an argument next to "("
+  expect_lint(
+    trim_some("
+      function(
+               a = 1L,
+               b = 2L) {
+        a + b
+      }
+    "),
+    "Indentation should be 4",
+    linter
+  )
+
+  # Block is only allowed if there is no argument next to ")"
+  expect_lint(
+    trim_some("
+      function(
+        a = 1L,
+        b = 2L) {
+        a + b
+      }
+    "),
+    "Indentation should be 4",
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(
+        a = 1L,
+        b = 2L
+      ) {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
+
   # anchor is correctly found with assignments as well
   expect_lint(
     trim_some("
