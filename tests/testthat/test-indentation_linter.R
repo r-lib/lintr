@@ -274,6 +274,106 @@ test_that("function argument indentation works in tidyverse-style", {
   )
 })
 
+test_that("function argument indentation works in always-hanging-style", {
+  linter <- indentation_linter(hanging_indent_style = "always")
+  expect_lint(
+    trim_some("
+      function(a = 1L,
+               b = 2L) {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(
+          a = 1L,
+          b = 2L) {
+        a + b
+      }
+    "),
+    "Hanging",
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(
+               a = 1L,
+               b = 2L) {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  # Block is only allowed if there is no argument next to ")"
+  expect_lint(
+    trim_some("
+      function(
+        a = 1L,
+        b = 2L) {
+        a + b
+      }
+    "),
+    "Hanging",
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(
+        a = 1L,
+        b = 2L
+      ) {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  # anchor is correctly found with assignments as well
+  expect_lint(
+    trim_some("
+      test <- function(a = 1L,
+                       b = 2L) {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(a = 1L,
+         b = 2L) {
+        a + b
+      }
+    "),
+    "Hanging",
+    linter
+  )
+
+  # This is a case for brace_linter
+  expect_lint(
+    trim_some("
+      function(a = 1L,
+               b = 2L)
+      {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
+})
+
 test_that("indentation with operators works", {
   linter <- indentation_linter()
   expect_lint(

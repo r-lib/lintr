@@ -297,7 +297,19 @@ build_indentation_style_tidy <- function() {
 }
 
 build_indentation_style_always <- function() {
-  xp_is_not_hanging <- "self::*[@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1]"
+  paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
+  paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
+  xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
+
+  xp_is_not_hanging <- paste(
+    c(
+      glue::glue(
+        "self::{paren_tokens_left}[{xp_last_on_line}]/following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]"
+      ),
+      glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
+    ),
+    collapse = " | "
+  )
 
   function(change) {
     if (length(xml2::xml_find_first(change, xp_is_not_hanging)) == 0L) {
