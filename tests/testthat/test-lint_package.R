@@ -136,8 +136,14 @@ test_that("lint_package returns early if no package is found", {
 test_that(
   "`lint_package` will use a `.lintr` file in `.github/linters/` directory the same as the package root",
   {
+    withr::local_options(lintr.linter_file = "lintr_test_config")
 
     pkg_path <- test_path("dummy_packages", "github_lintr_file")
+
+    dir.create(
+      path = file.path(pkg_path, ".github/linters/"),
+      recursive = TRUE
+    )
 
     # In `github/linters`add a `.lintr` file that excludes the whole of `abc.R`
     # and the first line of `jkl.R` (and remove it on finishing this test)
