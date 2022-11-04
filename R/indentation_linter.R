@@ -303,9 +303,10 @@ build_indentation_style_always <- function() {
 
   xp_is_not_hanging <- paste(
     c(
-      glue::glue(
-        "self::{paren_tokens_left}[{xp_last_on_line}]/following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]"
-      ),
+      glue::glue("
+        self::{paren_tokens_left}[{xp_last_on_line}]/
+          following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]
+      "),
       glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
     ),
     collapse = " | "
