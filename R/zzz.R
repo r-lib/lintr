@@ -277,12 +277,12 @@ settings <- NULL
 
 # nocov start
 .onLoad <- function(libname, pkgname) {
-  op <- options()
+  op <- options() # nolint: undesirable_function_linter.
   op_lintr <- list(
     lintr.linter_file = ".lintr"
   )
   toset <- !(names(op_lintr) %in% names(op))
-  if (any(toset)) options(op_lintr[toset])
+  if (any(toset)) options(op_lintr[toset]) # nolint: undesirable_function_linter.
 
   backports::import(pkgname, c("trimws", "lengths", "deparse1"))
   # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
