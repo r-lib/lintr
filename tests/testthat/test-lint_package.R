@@ -132,3 +132,37 @@ test_that("lint_package returns early if no package is found", {
     fixed = TRUE
   )
 })
+
+test_that(
+  "`lint_package` will use a `.lintr` file in `.github/linters/` directory the same as the package root",
+  {
+
+    pkg_path <- test_path("dummy_packages", "github_lintr_file")
+
+    # In `github/linters`add a `.lintr` file that excludes the whole of `abc.R`
+    # and the first line of `jkl.R` (and remove it on finishing this test)
+    local_config(file.path(pkg_path, ".github/linters"), "exclusions: list('R/abc.R', 'R/jkl.R' = 1)")
+
+    lints_using_github_lintr <- withr::with_dir(
+      pkg_path,
+      lint_package(".", linters = list(assignment_linter()))
+    )
+
+    # Now add the same file to the package root
+    local_config(pkg_path, "exclusions: list('R/abc.R', 'R/jkl.R' = 1)")
+
+    lints_using_lintr_in_pkg_root <- withr::with_dir(
+      pkg_path,
+      lint_package(".", linters = list(assignment_linter()))
+    )
+
+    expect_identical(
+      as.data.frame(lints_using_github_lintr),
+      as.data.frame(lints_using_lintr_in_pkg_root),
+      info = paste(
+        "lint_package() finds the same lints with a `.lintr` file in `.github/linters` as the package root",
+        "(.lintr config present)"
+      )
+    )
+  }
+)
