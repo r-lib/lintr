@@ -140,21 +140,22 @@ test_that(
 
     pkg_path <- test_path("dummy_packages", "github_lintr_file")
 
+    # In `github/linters`add a `.lintr` file that excludes the whole of `abc.R`
+    # and the first line of `jkl.R` (and remove it on finishing this test)
     dir.create(
-      path = file.path(pkg_path, ".github/linters/"),
+      path = file.path(pkg_path, ".github", "linters/"),
       recursive = TRUE
     )
 
-    # In `github/linters`add a `.lintr` file that excludes the whole of `abc.R`
-    # and the first line of `jkl.R` (and remove it on finishing this test)
-    local_config(file.path(pkg_path, ".github/linters"), "exclusions: list('R/abc.R', 'R/jkl.R' = 1)")
+    local_config(file.path(pkg_path, ".github", "linters"), "exclusions: list('R/abc.R', 'R/jkl.R' = 1)")
 
     lints_using_github_lintr <- withr::with_dir(
       pkg_path,
       lint_package(".", linters = list(assignment_linter()))
     )
 
-    file.remove(paste0(pkg_path, "/.github/linters/.lintr"))
+    # Cleanup directory and files created above
+    unlink(file.path(pkg_path, ".github"), recursive = TRUE)
 
     # Now add the same file to the package root
     local_config(pkg_path, "exclusions: list('R/abc.R', 'R/jkl.R' = 1)")
