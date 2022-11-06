@@ -69,7 +69,7 @@ test_that("sort_linter works with multiple lints in a single expression", {
     )",
     list(
       rex::rex("sort(x, na.last = TRUE) is better than x[order(x)]."),
-      rex::rex("sort(y, decreasing = TRUE, na.last = FALSE) is better than x[order(x, decreasing = TRUE, na.last = FALSE)].")
+      rex::rex("sort(y, decreasing = TRUE, na.last = FALSE) is better than y[order(y, decreasing = TRUE, na.last = FALSE)].")
     ),
     linter
   )
