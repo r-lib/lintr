@@ -91,13 +91,12 @@ sort_linter <- function() {
       arg_values <- xml2::xml_text(
         xml2::xml_find_all(e, arg_values_xpath)
       )
-      orig_args <- toString(paste(arg_names, "=", arg_values))
       if (!"na.last" %in% arg_names) {
         arg_names <- c(arg_names, "na.last")
         arg_values <- c(arg_values, "TRUE")
       }
       toString(paste(arg_names, "=", arg_values))
-    }, character(1))
+    }, character(1L))
 
     new_call <- sprintf(
       "sort(%1$s, %2$s)",
