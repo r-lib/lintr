@@ -79,24 +79,30 @@ sort_linter <- function() {
       )
     )
 
-    arg_names <- xml2::xml_text(xml2::xml_find_all(bad_expr, args_xpath))
-    arg_values <- xml2::xml_text(
-      xml2::xml_find_all(bad_expr, arg_values_xpath)
-    )
-
     orig_call <- sprintf(
-      "%s[order(%s)]",
+      "%1$s[%2$s]",
       var,
-      toString(c(var, paste(arg_names, arg_values, sep = " = ")))
+      get_r_string(bad_expr)
     )
 
-    if (!"na.last" %in% arg_names) {
-      arg_names <- c(arg_names, "na.last")
-      arg_values <- c(arg_values, "TRUE")
-    }
+    # Reconstruct new argument call for each expression separately
+    args <- vapply(bad_expr, function(e) {
+      arg_names <- xml2::xml_text(xml2::xml_find_all(e, args_xpath))
+      arg_values <- xml2::xml_text(
+        xml2::xml_find_all(e, arg_values_xpath)
+      )
+      orig_args <- toString(paste(arg_names, "=", arg_values))
+      if (!"na.last" %in% arg_names) {
+        arg_names <- c(arg_names, "na.last")
+        arg_values <- c(arg_values, "TRUE")
+      }
+      toString(paste(arg_names, "=", arg_values))
+    }, character(1))
 
-    new_call <- glue::glue(
-      "sort({toString(c(var, paste(arg_names, arg_values, sep = ' = ')))})"
+    new_call <- sprintf(
+      "sort(%1$s, %2$s)",
+      var,
+      args
     )
 
     xml_nodes_to_lints(
