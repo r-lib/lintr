@@ -73,7 +73,7 @@ find_config <- function(filename) {
     # Check for a file in the current directory
     file.path(path, linter_file),
     # Next check for a file in the .github/linters directory
-    file.path(path, ".github/linters", linter_file),
+    file.path(path, ".github", "linters", linter_file),
     # Next check for a file in higher directories
     find_config2(path),
     # Next check for a file in the user directory
