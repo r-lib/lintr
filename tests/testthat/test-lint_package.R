@@ -154,6 +154,8 @@ test_that(
       lint_package(".", linters = list(assignment_linter()))
     )
 
+    file.remove(paste0(pkg_path, "/.github/linters/.lintr"))
+
     # Now add the same file to the package root
     local_config(pkg_path, "exclusions: list('R/abc.R', 'R/jkl.R' = 1)")
 
