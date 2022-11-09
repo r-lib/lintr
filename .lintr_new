@@ -23,7 +23,6 @@ linters: linters_with_defaults(
     redundant_ifelse_linter(),
     sprintf_linter(),
     strings_as_factors_linter(),
-    undesirable_operator_linter(),
     unnecessary_lambda_linter(),
     unneeded_concatenation_linter(allow_single_expression = FALSE),
     yoda_test_linter()
