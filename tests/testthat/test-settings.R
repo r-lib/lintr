@@ -1,3 +1,5 @@
+# nolint start: undesirable_operator.
+# This test file tests multiple internal lintr functions, so we need to allow lintr:::*
 test_that("it uses default settings if none provided", {
   lintr:::read_settings(NULL)
 
@@ -98,8 +100,8 @@ test_that("it has a smart default for encodings", {
   lintr:::read_settings(NULL)
   expect_identical(settings$encoding, "UTF-8")
 
-  proj_file <- test_path("dummy_projects", "project", "metropolis-hastings-rho.R")
-  pkg_file <- test_path("dummy_packages", "cp1252", "R", "metropolis-hastings-rho.R")
+  proj_file <- test_path("dummy_projects", "project", "cp1252.R")
+  pkg_file <- test_path("dummy_packages", "cp1252", "R", "cp1252.R")
 
   expect_identical(
     normalizePath(find_rproj_at(find_rproj_or_package(proj_file)), winslash = "/"),
@@ -119,3 +121,4 @@ test_that("it has a smart default for encodings", {
   lintr:::read_settings(pkg_file)
   expect_identical(settings$encoding, "ISO8859-1")
 })
+# nolint end
