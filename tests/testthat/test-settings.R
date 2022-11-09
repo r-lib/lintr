@@ -98,8 +98,8 @@ test_that("it has a smart default for encodings", {
   lintr:::read_settings(NULL)
   expect_identical(settings$encoding, "UTF-8")
 
-  proj_file <- test_path("dummy_projects", "project", "metropolis-hastings-rho.R")
-  pkg_file <- test_path("dummy_packages", "cp1252", "R", "metropolis-hastings-rho.R")
+  proj_file <- test_path("dummy_projects", "project", "cp1252.R")
+  pkg_file <- test_path("dummy_packages", "cp1252", "R", "cp1252.R")
 
   expect_identical(
     normalizePath(find_rproj_at(find_rproj_or_package(proj_file)), winslash = "/"),
