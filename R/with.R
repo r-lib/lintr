@@ -110,7 +110,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
         )
       }
       linter_factories <- mget(available$linter, envir = pkg_ns)
-      linters <- mapply(
+      linters <- Map(
         call_linter_factory,
         linter_factory = linter_factories,
         linter_name = names(linter_factories),
