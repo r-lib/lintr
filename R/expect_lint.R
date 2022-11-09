@@ -84,7 +84,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
     lint_fields <- unique(c(names(formals(Lint)), "linter"))
     Map(
       function(lint, check) {
-        itr <<- itr + 1L # nolint: undesirable_operator.
+        itr <<- itr + 1L
         lapply(names(check), function(field) {
           if (!field %in% lint_fields) {
             stop(sprintf(
