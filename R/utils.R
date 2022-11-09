@@ -145,7 +145,7 @@ quote_wrap <- function(x, q) paste0(q, x, q)
 # interface to work like options() or setwd() -- returns the old value for convenience
 set_lang <- function(new_lang) {
   old_lang <- Sys.getenv("LANGUAGE", unset = NA)
-  Sys.setenv(LANGUAGE = new_lang) # nolint: undesirable_function_linter.
+  Sys.setenv(LANGUAGE = new_lang) 
   old_lang
 }
 # handle the logic of either unsetting if it was previously unset, or resetting
@@ -153,7 +153,7 @@ reset_lang <- function(old_lang) {
   if (is.na(old_lang)) {
     Sys.unsetenv("LANGUAGE")
   } else {
-    Sys.setenv(LANGUAGE = old_lang) # nolint: undesirable_function_linter.
+    Sys.setenv(LANGUAGE = old_lang) 
   }
 }
 
