@@ -1,3 +1,5 @@
+# nolint start: undesirable_operator.
+# This test file tests multiple internal lintr functions, so we need to allow lintr:::*
 test_that("it uses default settings if none provided", {
   lintr:::read_settings(NULL)
 
@@ -119,3 +121,4 @@ test_that("it has a smart default for encodings", {
   lintr:::read_settings(pkg_file)
   expect_identical(settings$encoding, "ISO8859-1")
 })
+# nolint stop
