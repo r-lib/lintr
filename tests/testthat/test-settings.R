@@ -121,4 +121,4 @@ test_that("it has a smart default for encodings", {
   lintr:::read_settings(pkg_file)
   expect_identical(settings$encoding, "ISO8859-1")
 })
-# nolint stop
+# nolint end
