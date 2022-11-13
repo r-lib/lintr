@@ -43,6 +43,23 @@ test_that("it uses config home directory settings if provided", {
   expect_identical(settings$exclude, "test")
 })
 
+test_that("it uses system config directory settings if provided", {
+  path <- withr::local_tempdir()
+  config_parent_path <- withr::local_tempdir("config")
+  config_path <- file.path(config_parent_path, "R", "lintr")
+  dir.create(config_path, recursive = TRUE)
+  file <- withr::local_tempfile(tmpdir = path)
+  local_config(config_path, 'exclude: "test"', filename = "config")
+
+  withr::with_envvar(c(R_USER_CONFIG_DIR = config_parent_path), lintr:::read_settings(file))
+
+  lapply(setdiff(ls(settings), "exclude"), function(setting) {
+    expect_identical(settings[[setting]], default_settings[[setting]])
+  })
+
+  expect_identical(settings$exclude, "test")
+})
+
 test_that("it errors if the config file does not end in a newline", {
   f <- withr::local_tempfile()
   cat("linters: linters_with_defaults(closed_curly_linter = NULL)", file = f)
