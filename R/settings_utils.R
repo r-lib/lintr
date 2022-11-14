@@ -4,6 +4,7 @@ has_description <- function(path) {
 }
 
 find_package <- function(path) {
+  path <- normalizePath(path)
   depth <- 2L
   while (!has_description(path)) {
     path <- dirname(path)
