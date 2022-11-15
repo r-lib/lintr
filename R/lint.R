@@ -616,9 +616,10 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
       rule_index_exists <- 0L
     } else {
       rule_index_exists <-
-        which(sapply(
+        which(vapply(
           sarif$runs[[1L]]$tool$driver$rules,
-          function(x) x$id == lint$linter
+          function(x) x$id == lint$linter,
+          logical(1L)
         ))
       if (length(rule_index_exists) == 0L || is.na(rule_index_exists[1L])) {
         rule_index_exists <- 0L
@@ -666,7 +667,7 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
   line <- fill_with(" ", maximum)
 
   lapply(ranges, function(range) {
-    substr(line, range[1L], range[2L]) <<- fill_with("~", range[2L] - range[1L] + 1L) # nolint: undesirable_operator.
+    substr(line, range[1L], range[2L]) <<- fill_with("~", range[2L] - range[1L] + 1L)
   })
 
   substr(line, column_number, column_number + 1L) <- "^"
