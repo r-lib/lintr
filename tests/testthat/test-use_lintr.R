@@ -10,7 +10,7 @@ test_that("use_lintr works as expected", {
   # check that `read_settings()` works with the generated file
   # this can be checked by checking lintr runs successfully
   lints <- lint_dir(tmp)
-  expect_identical(length(lints), 0L)
+  expect_length(lints, 0L)
 })
 
 test_that("use_lintr with type = full also works", {
@@ -21,5 +21,5 @@ test_that("use_lintr with type = full also works", {
   expect_true(file.exists(lintr_file))
 
   lints <- lint_dir(tmp)
-  expect_identical(length(lints), 0L)
+  expect_length(lints, 0L)
 })
