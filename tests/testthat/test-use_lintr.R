@@ -2,13 +2,14 @@ test_that("use_lintr works as expected", {
   tmp <- withr::local_tempdir()
 
   lintr_file <- use_lintr(path = tmp)
+  expect_true(file.exists(lintr_file))
 
   # check that newly created file is in the root directory
-  expect_true(file.exists(lintr_file))
-  expect_identical(
-    file.path(normalizePath(tmp), ".lintr"),
-    normalizePath(lintr_file)
+  expected_lintr_file_path <- file.path(
+    normalizePath(tmp), ".lintr",
+    fsep = if (.Platform$OS.type == "unix") "/" else "\\"
   )
+  expect_identical(normalizePath(lintr_file), expected_lintr_file_path)
 
   # can't generate if a .lintr already exists
   expect_error(use_lintr(path = tmp), "Found an existing configuration")
@@ -24,13 +25,14 @@ test_that("use_lintr with type = full also works", {
 
   # type = "full" also works with read_settings()
   lintr_file <- use_lintr(path = tmp, type = "full")
+  expect_true(file.exists(lintr_file))
 
   # check that newly created file is in the root directory
-  expect_true(file.exists(lintr_file))
-  expect_identical(
-    file.path(normalizePath(tmp), ".lintr"),
-    normalizePath(lintr_file)
+  expected_lintr_file_path <- file.path(
+    normalizePath(tmp), ".lintr",
+    fsep = if (.Platform$OS.type == "unix") "/" else "\\"
   )
+  expect_identical(normalizePath(lintr_file), expected_lintr_file_path)
 
   lints <- lint_dir(tmp)
   expect_length(lints, 0L)
