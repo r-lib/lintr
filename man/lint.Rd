@@ -90,24 +90,24 @@ lint(f)                # linting a file
 lint("a = 123\n")      # linting inline-code
 lint(text = "a = 123") # linting inline-code
 \dontshow{\}) # examplesIf}
-\dontrun{
-lint_dir()
+if (FALSE) {
+  lint_dir()
 
-lint_dir(
-  linters = list(semicolon_linter()),
-  exclusions = list(
-    "inst/doc/creating_linters.R" = 1,
-    "inst/example/bad.R",
-    "renv"
+  lint_dir(
+    linters = list(semicolon_linter()),
+    exclusions = list(
+      "inst/doc/creating_linters.R" = 1,
+      "inst/example/bad.R",
+      "renv"
+    )
   )
-)
 }
-\dontrun{
-lint_package()
+if (FALSE) {
+  lint_package()
 
-lint_package(
-  linters = linters_with_defaults(semicolon_linter = semicolon_linter()),
-  exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
-)
+  lint_package(
+    linters = linters_with_defaults(semicolon_linter = semicolon_linter()),
+    exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
+  )
 }
 }

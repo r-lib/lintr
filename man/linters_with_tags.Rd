@@ -38,8 +38,8 @@ linters_with_tags(tags = "package_development")
 linters_with_tags(tags = NULL)
 
 # Get all linters tagged as "default" from lintr and mypkg
-\dontrun{
-linters_with_tags("default", packages = c("lintr", "mypkg"))
+if (FALSE) {
+  linters_with_tags("default", packages = c("lintr", "mypkg"))
 }
 }
 \seealso{

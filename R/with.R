@@ -87,8 +87,8 @@ modify_defaults <- function(defaults, ...) {
 #' linters_with_tags(tags = NULL)
 #'
 #' # Get all linters tagged as "default" from lintr and mypkg
-#' \dontrun{
-#' linters_with_tags("default", packages = c("lintr", "mypkg"))
+#' if (FALSE) {
+#'   linters_with_tags("default", packages = c("lintr", "mypkg"))
 #' }
 #' @export
 linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "deprecated") {
