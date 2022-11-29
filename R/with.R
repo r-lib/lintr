@@ -81,10 +81,12 @@ modify_defaults <- function(defaults, ...) {
 #' all.equal(linters_with_defaults(), linters_with_tags("default"))
 #'
 #' # Get names of all linters useful for package development
-#' names(linters_with_tags(tags = "package_development"))
+#' linters <- linters_with_tags(tags = "package_development")
+#' names(linters)
 #'
 #' # Get names of all linters provided by lintr
-#' names(linters_with_tags(tags = NULL))
+#' linters <- linters_with_tags(tags = NULL)
+#' names(linters)
 #'
 #' # Get all linters tagged as "default" from lintr and mypkg
 #' if (FALSE) {
