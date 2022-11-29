@@ -31,11 +31,11 @@ or to be put in your configuration file.
 # `linters_with_defaults()` and `linters_with_tags("default")` are the same:
 all.equal(linters_with_defaults(), linters_with_tags("default"))
 
-# Get all linters useful for package development
-linters_with_tags(tags = "package_development")
+# Get names of all linters useful for package development
+names(linters_with_tags(tags = "package_development"))
 
-# Get all linters provided by lintr
-linters_with_tags(tags = NULL)
+# Get names of all linters provided by lintr
+names(linters_with_tags(tags = NULL))
 
 # Get all linters tagged as "default" from lintr and mypkg
 if (FALSE) {
