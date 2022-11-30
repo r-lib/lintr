@@ -2,12 +2,12 @@
 % Please edit documentation in R/unnecessary_nested_if_linter.R
 \name{unnecessary_nested_if_linter}
 \alias{unnecessary_nested_if_linter}
-\title{Avoid unnecessary nested if conditional statements}
+\title{Avoid unnecessary nested \code{if} conditional statements}
 \usage{
 unnecessary_nested_if_linter()
 }
 \description{
-Avoid unnecessary nested if conditional statements
+Avoid unnecessary nested \code{if} conditional statements
 }
 \examples{
 # will produce lints

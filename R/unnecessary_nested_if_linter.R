@@ -1,4 +1,4 @@
-#' Avoid unnecessary nested if conditional statements
+#' Avoid unnecessary nested `if` conditional statements
 #'
 #' @examples
 #' # will produce lints
@@ -43,8 +43,8 @@ unnecessary_nested_if_linter <- function() {
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
     lint_message <- paste(
-      "Don't use nested `if()` statements,",
-      "where a single `if()` with the combined conditional expression will do.",
+      "Don't use nested `if` statements,",
+      "where a single `if` with the combined conditional expression will do.",
       "For example, instead of `if (x) { if (y) { ... }}`, use `if (x && y) { ... }`."
     )
 

@@ -51,7 +51,7 @@ test_that("unnecessary_nested_if_linter skips allowed usages", {
 })
 
 test_that("unnecessary_nested_if_linter blocks simple disallowed usages", {
-  lint_message <- rex::rex("Don't use nested `if()` statements")
+  lint_message <- rex::rex("Don't use nested `if` statements")
 
   expect_lint(
     trim_some("
