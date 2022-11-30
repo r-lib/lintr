@@ -31,11 +31,11 @@ or to be put in your configuration file.
 # `linters_with_defaults()` and `linters_with_tags("default")` are the same:
 all.equal(linters_with_defaults(), linters_with_tags("default"))
 
-# Get names of all linters useful for package development
+# Get all linters useful for package development
 linters <- linters_with_tags(tags = "package_development")
 names(linters)
 
-# Get names of all linters provided by lintr
+# Get all linters provided by lintr
 linters <- linters_with_tags(tags = NULL)
 names(linters)
 
