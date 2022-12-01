@@ -1,0 +1,40 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+name: test-coverage
+
+jobs:
+  test-coverage:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::covr
+            local::.
+          needs: coverage
+
+      - name: Test coverage
+        run: |
+          options(crayon.enabled = TRUE)
+          library(covr)
+          coverage <- covr::package_coverage(type = "examples", quiet = TRUE)
+          print(coverage)
+          if (covr::percent_coverage(coverage) != 100) {
+            warning("Not all functionality is illustrated in examples.", call. = FALSE)
+          }
+        shell: Rscript {0}
