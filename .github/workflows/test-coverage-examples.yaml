@@ -6,10 +6,10 @@ on:
   pull_request:
     branches: [main, master]
 
-name: test-coverage
+name: test-coverage-examples
 
 jobs:
-  test-coverage:
+  test-coverage-examples:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -28,7 +28,7 @@ jobs:
             local::.
           needs: coverage
 
-      - name: Test coverage
+      - name: Test example coverage
         run: |
           options(crayon.enabled = TRUE)
           library(covr)
