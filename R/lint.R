@@ -412,19 +412,7 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
   if (is.na(line_number) || line_number < 1L) {
     stop(sprintf("`line_number` must be a positive integer. It was %s.", line_number))
   }
-  if (!is.null(ranges)) {
-    if (!is.list(ranges)) {
-      stop("`ranges` must be NULL or a list.")
-    } else if (!all(lengths(ranges) == 2L) || !all(vapply(ranges, is.numeric, logical(1L)))) {
-      stop("`ranges` must only contain length 2 integer vectors.")
-    } else if (any(vapply(ranges, anyNA, logical(1L)))) {
-      stop("`ranges` must not contain NAs.")
-    } else if (!all(vapply(ranges, is_valid_range, logical(1L), max_col = max_col))) {
-      stop(sprintf(
-        "All entries in `ranges` must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 (%d).", max_col
-      ))
-    }
-  }
+  check_ranges(max_col, ranges)
 
   type <- match.arg(type)
 
@@ -491,6 +479,23 @@ rstudio_source_markers <- function(lints) {
   }
 
   out
+}
+
+check_ranges <- function(max_col, ranges) {
+  if (is.null(ranges)) {
+    return()
+  }
+  if (!is.list(ranges)) {
+    stop("`ranges` must be NULL or a list.")
+  } else if (!all(lengths(ranges) == 2L) || !all(vapply(ranges, is.numeric, logical(1L)))) {
+    stop("`ranges` must only contain length 2 integer vectors.")
+  } else if (any(vapply(ranges, anyNA, logical(1L)))) {
+    stop("`ranges` must not contain NAs.")
+  } else if (!all(vapply(ranges, is_valid_range, logical(1L), max_col = max_col))) {
+    stop(sprintf(
+      "All entries in `ranges` must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 (%d).", max_col
+    ))
+  }
 }
 
 #' Checkstyle Report for lint results
