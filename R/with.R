@@ -81,14 +81,16 @@ modify_defaults <- function(defaults, ...) {
 #' all.equal(linters_with_defaults(), linters_with_tags("default"))
 #'
 #' # Get all linters useful for package development
-#' linters_with_tags(tags = "package_development")
+#' linters <- linters_with_tags(tags = "package_development")
+#' names(linters)
 #'
 #' # Get all linters provided by lintr
-#' linters_with_tags(tags = NULL)
+#' linters <- linters_with_tags(tags = NULL)
+#' names(linters)
 #'
 #' # Get all linters tagged as "default" from lintr and mypkg
-#' \dontrun{
-#' linters_with_tags("default", packages = c("lintr", "mypkg"))
+#' if (FALSE) {
+#'   linters_with_tags("default", packages = c("lintr", "mypkg"))
 #' }
 #' @export
 linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "deprecated") {

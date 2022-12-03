@@ -119,17 +119,17 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 #' .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...).
 #'
 #' @examples
-#' \dontrun{
-#' lint_dir()
+#' if (FALSE) {
+#'   lint_dir()
 #'
-#' lint_dir(
-#'   linters = list(semicolon_linter()),
-#'   exclusions = list(
-#'     "inst/doc/creating_linters.R" = 1,
-#'     "inst/example/bad.R",
-#'     "renv"
+#'   lint_dir(
+#'     linters = list(semicolon_linter()),
+#'     exclusions = list(
+#'       "inst/doc/creating_linters.R" = 1,
+#'       "inst/example/bad.R",
+#'       "renv"
+#'     )
 #'   )
-#' )
 #' }
 #' @export
 #' @rdname lint
@@ -216,13 +216,13 @@ drop_excluded <- function(files, exclusions) {
 }
 
 #' @examples
-#' \dontrun{
-#' lint_package()
+#' if (FALSE) {
+#'   lint_package()
 #'
-#' lint_package(
-#'   linters = linters_with_defaults(semicolon_linter = semicolon_linter()),
-#'   exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
-#' )
+#'   lint_package(
+#'     linters = linters_with_defaults(semicolon_linter = semicolon_linter()),
+#'     exclusions = list("inst/doc/creating_linters.R" = 1, "inst/example/bad.R")
+#'   )
 #' }
 #' @export
 #' @rdname lint
@@ -671,7 +671,7 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
   line <- fill_with(" ", maximum)
 
   lapply(ranges, function(range) {
-    substr(line, range[1L], range[2L]) <<- fill_with("~", range[2L] - range[1L] + 1L) # nolint: undesirable_operator.
+    substr(line, range[1L], range[2L]) <<- fill_with("~", range[2L] - range[1L] + 1L)
   })
 
   substr(line, column_number, column_number + 1L) <- "^"
