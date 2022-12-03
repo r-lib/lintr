@@ -167,7 +167,7 @@ lint_parse_error_r43 <- function(e, source_expression) {
   substr(msg, 1L, 1L) <- toupper(substr(msg, 1L, 1L))
   msg <- paste0(msg, ".")
 
-  line <- source_expression$lines[[line]]
+  line <- source_expression$lines[[line_number]]
   if (is.na(line)) {
     line <- ""
   }
