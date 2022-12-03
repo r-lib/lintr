@@ -179,7 +179,6 @@ lint_parse_error_r43 <- function(e, source_expression) {
   column <- e$colno
   substr(msg, 1L, 1L) <- toupper(substr(msg, 1L, 1L))
   msg <- paste0(msg, ".")
-  line <- fixup_line(source_expression$lines[[line_number]])
 
   if (inherits(e, "invalidMBCS")) {
     msg <- paste(msg, "Is the encoding correct?")
@@ -187,13 +186,17 @@ lint_parse_error_r43 <- function(e, source_expression) {
 
   if (column == 0L) {
     line_number <- line_number - 1L
-    column <- nchar(line)
   }
 
   if (line_number < 1L || line_number > length(source_expression$lines)) {
     # Safely handle invalid location info
     line_number <- 1L
     column <- 1L
+  }
+
+  line <- fixup_line(source_expression$lines[[line_number]])
+  if (column == 0L) {
+    column <- nchar(line)
   }
 
   Lint(
@@ -225,7 +228,7 @@ lint_parse_error_r42 <- function(message_info, source_expression) {
     line <- fixup_line(source_expression$lines[[line_number]])
     column_number <- nchar(line)
   } else {
-    line <- source_expression$lines[[line_number]]
+    line <- fixup_line(source_expression$lines[[line_number]])
   }
 
   Lint(
