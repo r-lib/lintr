@@ -42,7 +42,7 @@ test_that("as.data.frame.lints", {
       type = "error",
       message = "Under no circumstances is the use of foobar allowed.",
       line = "a <- 1",
-      ranges = list(c(1L, 2L), c(10L, 20L))
+      ranges = list(c(1L, 2L), c(6L, 7L))
     ),
     "lint"
   )

@@ -231,7 +231,10 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       lint_lines <- unname(as.integer(names(source_expression$file_lines)[bad_lines]))
       lint_ranges <- cbind(
         pmin(expected_indent_levels[bad_lines] + 1L, indent_levels[bad_lines]),
-        pmax(expected_indent_levels[bad_lines], indent_levels[bad_lines])
+        pmin(
+          pmax(expected_indent_levels[bad_lines], indent_levels[bad_lines]),
+          nchar(source_expression$file_lines[bad_lines]) + 1L
+        )
       )
       Map(
         Lint,

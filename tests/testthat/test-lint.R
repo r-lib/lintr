@@ -2,7 +2,7 @@ test_that("Lint() errors on invalid input", {
   dummy_line <- "abc"
   expect_error(
     Lint("dummy.R", line = dummy_line, column_number = NA_integer_),
-    rex::rex("`column_number` must be an integer between 1 and nchar(line) + 1 (4). It was NA.")
+    rex::rex("`column_number` must be an integer between 0 and nchar(line) + 1 (4). It was NA.")
   )
   expect_error(
     Lint("dummy.R", line = dummy_line, line_number = 0L),
@@ -21,7 +21,7 @@ test_that("Lint() errors on invalid input", {
     rex::rex("`ranges` must not contain NAs.")
   )
   expect_error(
-    Lint("dummy.R", ranges = list(c(1L, 2L), c(1L, 5L))),
-    rex::rex("All entries in `ranges` must satisfy 1 <= range[1L] <= range[2L] <= nchar(line) + 1 (4).")
+    Lint("dummy.R", line = dummy_line, ranges = list(c(1L, 2L), c(1L, 5L))),
+    rex::rex("All entries in `ranges` must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 (4).")
   )
 })

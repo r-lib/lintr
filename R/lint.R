@@ -402,10 +402,10 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
     )
   }
 
-  max_col <- nchar(line) + 1L
-  if (is.na(column_number) || column_number < 1L || column_number > max_col) {
+  max_col <- max(nchar(line) + 1L, 1L, na.rm = TRUE)
+  if (is.na(column_number) || column_number < 0L || column_number > max_col) {
     stop(sprintf(
-      "`column_number` must be an integer between 1 and nchar(line) + 1 (%d). It was %s.",
+      "`column_number` must be an integer between 0 and nchar(line) + 1 (%d). It was %s.",
       max_col, column_number
     ))
   }
@@ -421,7 +421,7 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
       stop("`ranges` must not contain NAs.")
     } else if (!all(vapply(ranges, is_valid_range, logical(1L), max_col = max_col))) {
       stop(sprintf(
-        "All entries in `ranges` must satisfy 1 <= range[1L] <= range[2L] <= nchar(line) + 1 (%d).", max_col
+        "All entries in `ranges` must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 (%d).", max_col
       ))
     }
   }
@@ -443,7 +443,7 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
 }
 
 is_valid_range <- function(range, max_col) {
-  1L <= range[[1L]] &&
+  0L <= range[[1L]] &&
     range[[1L]] <= range[[2L]] &&
     range[[2L]] <= max_col
 }

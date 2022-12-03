@@ -209,6 +209,9 @@ lint_parse_error_r42 <- function(message_info, source_expression) {
   if (column_number %==% 0L) {
     line_number <- line_number - 1L
     line <- source_expression$lines[[line_number]]
+    if (is.na(line)) {
+      line <- ""
+    }
     column_number <- nchar(line)
   } else {
     line <- source_expression$lines[[line_number]]
@@ -249,7 +252,7 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
         column_number = 1L,
         type = "error",
         message = "Invalid multibyte character in parser. Is the encoding correct?",
-        line = source_expression$lines[[l]]
+        line = ""
       )
     )
   } else if (grepl("invalid multibyte string, element", e$message, fixed = TRUE)) {
