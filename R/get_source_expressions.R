@@ -195,8 +195,8 @@ lint_parse_error_r43 <- function(e, source_expression) {
   }
 
   line <- fixup_line(source_expression$lines[[line_number]])
-  if (column == 0L) {
-    column <- nchar(line)
+  if (column == 0L || column > nchar(line) + 1L) {
+    column <- nchar(line) + 1L
   }
 
   Lint(
@@ -226,7 +226,7 @@ lint_parse_error_r42 <- function(message_info, source_expression) {
   if (column_number %==% 0L) {
     line_number <- line_number - 1L
     line <- fixup_line(source_expression$lines[[line_number]])
-    column_number <- nchar(line)
+    column_number <- nchar(line) + 1L
   } else {
     line <- fixup_line(source_expression$lines[[line_number]])
   }
