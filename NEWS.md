@@ -15,6 +15,8 @@
 
 * `lint_package()` correctly finds a package from within a subdir if the `path` points to anywhere within the package (#1759, @AshesITR)
 
+* `linters_with_defaults()` no longer erroneously marks linter factories as linters (#1725, @AshesITR).
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.

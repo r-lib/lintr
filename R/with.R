@@ -51,7 +51,7 @@ modify_defaults <- function(defaults, ...) {
 
   res[] <- lapply(res, function(x) {
     prev_class <- class(x)
-    if (is.function(x) && !is_linter(x)) {
+    if (is.function(x) && !is_linter_factory(x) && !is_linter(x)) {
       class(x) <- c("linter", prev_class)
     }
     x
