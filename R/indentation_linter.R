@@ -244,7 +244,12 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         type = "style",
         message = lint_messages,
         line = unname(source_expression$file_lines[bad_lines]),
-        ranges = lapply(seq_along(bad_lines), function(i) { list(lint_ranges[i, ]) })
+        ranges = lapply(
+          seq_along(bad_lines),
+          function(i) {
+            list(lint_ranges[i, ])
+          }
+        )
       )
     } else {
       list()
