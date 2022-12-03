@@ -181,7 +181,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       }
       change_begin <- as.integer(xml2::xml_attr(change, "line1")) + 1L
       change_end <- xml2::xml_find_num(change, xp_block_ends)
-      if (change_begin <= change_end) {
+      if (isTRUE(change_begin <= change_end)) {
         to_indent <- seq(from = change_begin, to = change_end)
         if (change_starts_hanging) {
           expected_indent_levels[to_indent] <- as.integer(xml2::xml_attr(change, "col2"))

@@ -402,6 +402,10 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
     )
   }
 
+  if (!is.null(ranges) && any(vapply(ranges, anyNA, logical(1L)))) {
+    stop("`ranges` must not contain NAs.")
+  }
+
   type <- match.arg(type)
 
   obj <- list(

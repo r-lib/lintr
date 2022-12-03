@@ -493,3 +493,8 @@ test_that("consecutive same-level lints are suppressed", {
     indentation_linter()
   )
 })
+
+test_that("it doesn't error on invalid code", {
+  # Part of #1427
+  expect_lint("function() {)", list(linter = "error", message = rex::rex("unexpected ')'")), indentation_linter())
+})

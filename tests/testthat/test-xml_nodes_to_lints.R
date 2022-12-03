@@ -86,6 +86,48 @@ test_that("it handles multi-line lints correctly", {
   expect_identical(l$ranges, list(as.integer(c(xml2::xml_attr(node, "col1"), nchar(code[1L])))))
 })
 
+test_that("it doesn't produce invalid lints", {
+  # Part of #1427
+  code <- "before   %+%   after"
+  tmpfile <- withr::local_tempfile(lines = code)
+  expr <- get_source_expressions(tmpfile)$expressions[[2L]]
+  xml <- expr$full_xml_parsed_content
+  node <- xml2::xml_find_first(xml, "//SPECIAL")
+
+  expect_warning(l_invalid_loc1 <- xml_nodes_to_lints(
+    xml = node,
+    source_expression = expr,
+    lint_message = "lint_msg",
+    column_number_xpath = "number(./preceding-sibling::*[1]/@col2 + 1)",
+    range_start_xpath = "number(./preceding-sibling::SPECIAL[1]/@col1)",
+    range_end_xpath = "number(./following-sibling::*[1]/@col2)"
+  ), rex::rex("Could not find range start for lint. Defaulting to start of line."))
+  expect_identical(l_invalid_loc1$column_number, nchar("before") + 1L)
+  expect_identical(l_invalid_loc1$ranges, list(c(1L, nchar(code))))
+
+  expect_warning(l_invalid_loc2 <- xml_nodes_to_lints(
+    xml = node,
+    source_expression = expr,
+    lint_message = "lint_msg",
+    column_number_xpath = "number(./preceding-sibling::*[1]/@col2 + 1)",
+    range_start_xpath = "number(./preceding-sibling::*[1]/@col1)",
+    range_end_xpath = "number(./following-sibling::SPECIAL[1]/@col2)"
+  ), rex::rex("Could not find range end for lint. Defaulting to width 1."))
+  expect_identical(l_invalid_loc2$column_number, nchar("before") + 1L)
+  expect_identical(l_invalid_loc2$ranges, list(c(1L, 1L)))
+
+  expect_warning(l_invalid_col <- xml_nodes_to_lints(
+    xml = node,
+    source_expression = expr,
+    lint_message = "lint_msg",
+    column_number_xpath = "number(./preceding-sibling::SPECIAL[1]/@col2 + 1)",
+    range_start_xpath = "number(./preceding-sibling::*[1]/@col1)",
+    range_end_xpath = "number(./following-sibling::*[1]/@col2)"
+  ), rex::rex("Could not find location for lint. Defaulting to start of range."))
+  expect_identical(l_invalid_col$column_number, 1L)
+  expect_identical(l_invalid_col$ranges, list(c(1L, nchar(code))))
+})
+
 test_that("erroneous input errors", {
   expect_error(xml_nodes_to_lints(1L), "Expected an xml_nodeset", fixed = TRUE)
 })

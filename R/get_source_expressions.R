@@ -83,7 +83,7 @@ get_source_expressions <- function(filename, lines = NULL) {
   source_expression$content <- get_content(source_expression$lines)
   parsed_content <- get_source_expression(source_expression, error = function(e) lint_parse_error(e, source_expression))
 
-  if (inherits(e, "lint") && (is.na(e$line) || !nzchar(e$line))) {
+  if (inherits(e, "lint") && (is.na(e$line) || !nzchar(e$line) || e$message == "unexpected end of input")) {
     # Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
     expressions <- list()
   } else {
