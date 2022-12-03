@@ -8,6 +8,8 @@ if (getRversion() >= "4.0.0") {
 }
 S3method("[",lints)
 S3method(as.data.frame,lints)
+S3method(format,lint)
+S3method(format,lints)
 S3method(names,lints)
 S3method(print,lint)
 S3method(print,lints)
