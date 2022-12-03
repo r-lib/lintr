@@ -20,6 +20,8 @@
   + `lint()` no longer tries to create an expression tree with unexpected end of input errors, because they can be broken.
   + `xml_nodes_to_lints()` warns if it can't find lint locations and uses dummy locations as a fallback.
 
+* `linters_with_defaults()` no longer erroneously marks linter factories as linters (#1725, @AshesITR).
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
