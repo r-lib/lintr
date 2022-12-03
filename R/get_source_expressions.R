@@ -162,33 +162,39 @@ lint_parse_error <- function(e, source_expression) {
 #' @noRd
 lint_parse_error_r43 <- function(e, source_expression) {
   msg <- rex::re_substitutes(e$message, rex::rex(" (", except_some_of(")"), ")", end), "")
-  line <- e$lineno
+  line_number <- e$lineno
   column <- e$colno
   substr(msg, 1L, 1L) <- toupper(substr(msg, 1L, 1L))
   msg <- paste0(msg, ".")
 
+  line <- source_expression$lines[[line]]
+  if (is.na(line)) {
+    line <- ""
+  }
+
   if (inherits(e, "invalidMBCS")) {
     msg <- paste(msg, "Is the encoding correct?")
+    line <- ""
   }
 
   if (column == 0L) {
-    line <- line - 1L
-    column <- nchar(source_expression$lines[[line]])
+    line_number <- line_number - 1L
+    column <- nchar(line)
   }
 
-  if (line < 1L || line > length(source_expression$lines)) {
+  if (line_number < 1L || line_number > length(source_expression$lines)) {
     # Safely handle invalid location info
-    line <- 1L
+    line_number <- 1L
     column <- 1L
   }
 
   Lint(
     filename = source_expression$filename,
-    line_number = line,
+    line_number = line_number,
     column_number = column,
     type = "error",
     message = msg,
-    line = source_expression$lines[[line]]
+    line = line
   )
 }
 
