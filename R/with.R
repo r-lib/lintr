@@ -48,14 +48,6 @@ modify_defaults <- function(defaults, ...) {
   defaults[nms] <- vals
 
   res <- defaults[!vapply(defaults, is.null, logical(1L))]
-
-  res[] <- lapply(res, function(x) {
-    prev_class <- class(x)
-    if (is.function(x) && !is_linter_factory(x) && !is_linter(x)) {
-      class(x) <- c("linter", prev_class)
-    }
-    x
-  })
   res <- res[platform_independent_order(names(res))]
   res
 }
