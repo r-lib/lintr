@@ -402,8 +402,28 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
     )
   }
 
-  if (!is.null(ranges) && any(vapply(ranges, anyNA, logical(1L)))) {
-    stop("`ranges` must not contain NAs.")
+  max_col <- nchar(line) + 1L
+  if (is.na(column_number) || column_number < 1L || column_number > max_col) {
+    stop(sprintf(
+      "`column_number` must be an integer between 1 and nchar(line) + 1 (%d). It was %s.",
+      max_col, column_number
+    ))
+  }
+  if (is.na(line_number) || line_number < 1L) {
+    stop(sprintf("`line_number` must be a positive integer. It was %s.", line_number))
+  }
+  if (!is.null(ranges)) {
+    if (!is.list(ranges)) {
+      stop("`ranges` must be NULL or a list.")
+    } else if (!all(lengths(ranges) == 2L) || !all(vapply(ranges, is.numeric, logical(1L)))) {
+      stop("`ranges` must only contain length 2 integer vectors.")
+    } else if (any(vapply(ranges, anyNA, logical(1L)))) {
+      stop("`ranges` must not contain NAs.")
+    } else if (!all(vapply(ranges, is_valid_range, logical(1L), max_col = max_col))) {
+      stop(sprintf(
+        "All entries in `ranges` must satisfy 1 <= range[1L] <= range[2L] <= nchar(line) + 1 (%d).", max_col
+      ))
+    }
   }
 
   type <- match.arg(type)
@@ -420,6 +440,12 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
   )
   class(obj) <- c("lint", "list")
   obj
+}
+
+is_valid_range <- function(range, max_col) {
+  1L <= range[[1L]] &&
+    range[[1L]] <= range[[2L]] &&
+    range[[2L]] <= max_col
 }
 
 rstudio_source_markers <- function(lints) {
