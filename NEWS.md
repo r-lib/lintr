@@ -159,6 +159,8 @@
 
 ## New and improved features
 
+* New `sort_linter()` to detect `x[order(x)]` and recommend the faster and clearer alternative: `sort(x)` (#1528, @Bisaloo)
+
 * `unreachable_code_linter()` ignores trailing comments if they match a closing nolint block (#1347, @AshesITR).
 
 * New `function_argument_linter()` to enforce that arguments with defaults appear last in function declarations,

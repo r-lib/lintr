@@ -49,6 +49,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{semicolon_terminator_linter}}}
 \item{\code{\link{single_quotes_linter}}}
+\item{\code{\link{sort_linter}}}
 \item{\code{\link{spaces_inside_linter}}}
 \item{\code{\link{spaces_left_parentheses_linter}}}
 \item{\code{\link{string_boundary_linter}}}
