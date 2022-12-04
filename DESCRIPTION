@@ -147,6 +147,7 @@ Collate:
     'settings.R'
     'settings_utils.R'
     'single_quotes_linter.R'
+    'sort_linter.R'
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'
     'sprintf_linter.R'
