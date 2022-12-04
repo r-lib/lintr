@@ -24,14 +24,14 @@ Path to the generated configuration, invisibly.
 Create a minimal lintr config file as a starting point for customization
 }
 \examples{
-\dontrun{
-# use the default set of linters
-lintr::use_lintr()
-# or try all linters
-lintr::use_lintr(type = "full")
+if (FALSE) {
+  # use the default set of linters
+  lintr::use_lintr()
+  # or try all linters
+  lintr::use_lintr(type = "full")
 
-# then
-lintr::lint_dir()
+  # then
+  lintr::lint_dir()
 }
 }
 \seealso{

@@ -5,7 +5,7 @@
 \alias{with_id}
 \title{Get parsed IDs by token}
 \usage{
-ids_with_token(source_expression, value, fun = `==`, source_file)
+ids_with_token(source_expression, value, fun = `==`, source_file = NULL)
 
 with_id(source_expression, id, source_file)
 }

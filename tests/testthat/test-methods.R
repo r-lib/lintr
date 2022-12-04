@@ -56,7 +56,7 @@ test_that("as.data.frame.lints", {
   # Convert lints to data.frame
   lints <- structure(list(l1, l2), class = "lints")
   expect_s3_class(
-    df <- lintr:::as.data.frame.lints(lints),
+    df <- as.data.frame(lints),
     "data.frame"
   )
 
@@ -108,6 +108,8 @@ test_that("print.lint works", {
 })
 
 test_that("print.lint works for inline data, even in RStudio", {
+  skip_if_not_installed("mockery")
+
   l <- lint("x = 1\n")
 
   # Make sure lints print to console.

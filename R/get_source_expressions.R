@@ -52,7 +52,7 @@
 #'   \item{lines}{The [readLines()] output for this file.}
 #' }
 #'
-#' @examples
+#' @examplesIf requireNamespace("withr", quietly = TRUE)
 #' tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
 #' get_source_expressions(tmp)
 #' @export
