@@ -26,8 +26,10 @@
 #' @export
 unnecessary_nested_if_linter <- function() {
   xpath <- glue::glue("
-                    //*[1][IF and not(ELSE)]
-                    /*/expr[1]
+                    //IF
+                    /parent::expr[not(ELSE)]
+                    /parent::expr[count(expr) = 1]
+                    /parent::expr[not(ELSE)]
                     /IF
                     ")
 
