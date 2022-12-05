@@ -20,7 +20,8 @@ install.packages("lintr")
 Or the development version from GitHub:
 
 ```R
-devtools::install_github("r-lib/lintr")
+# install.packages("remotes")
+remotes::install_github("r-lib/lintr")
 ```
 
 ## Usage
