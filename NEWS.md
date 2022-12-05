@@ -67,6 +67,8 @@
 
 * `implicit_integer_linter()` gains parameter `allow_colon` to skip lints on expressions like `1:10` (#1155, @MichaelChirico)
 
+* `infix_spaces_linter()` supports the native R pipe `|>` (#1793, @AshesITR)
+
 * `unneeded_concatenation_linter()` no longer lints on `c(...)` (i.e., passing `...` in a function call)
   when `allow_single_expression = FALSE` (#1696, @MichaelChirico)
 
@@ -101,7 +103,7 @@
 
 * `routine_registration_linter()` for identifying native routines that don't use registration (`useDynLib` in the `NAMESPACE`; @MichaelChirico)
 
-* `indentation_linter()` for checking that the indentation conforms to 2-space Tidyverse-style (@AshesITR and @dgkf, #1411).
+* `indentation_linter()` for checking that the indentation conforms to 2-space Tidyverse-style (@AshesITR and @dgkf, #1411, #1792).
 
 
 ## Notes
