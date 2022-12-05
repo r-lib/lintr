@@ -85,7 +85,7 @@ test_that("commented_code_linter can detect operators in comments and lint corre
   test_ops <- c(
     "+", "=", "==", "!=", "<=", ">=", "<-", "<<-", "<", ">", "->",
     "->>", "%%", "%||%", "/", "^", "*", "**", "|", "||", "&", "&&",
-    "%>%", "%<>%", "%T>%", "%anything%"
+    "%>%", "%<>%", "%T>%", "%$%", "%!>%", "%anything%"
   )
 
   for (op in test_ops) {
