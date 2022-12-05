@@ -111,25 +111,6 @@ test_that("indentation linter flags unindented expressions", {
     linter
   )
 
-  # native pipe indents
-  expect_lint(
-    trim_some("
-      a |>
-        foo()
-    "),
-    NULL,
-    linter
-  )
-
-  expect_lint(
-    trim_some("
-      b <- a |>
-        foo()
-    "),
-    NULL,
-    linter
-  )
-
   expect_lint(
     trim_some("
       if (cond)
@@ -684,5 +665,28 @@ test_that("consecutive same-level lints are suppressed", {
       list(line_number = 15L, message = "Hanging indent")
     ),
     indentation_linter()
+  )
+})
+
+test_that("native pipe is supported", {
+  skip_if_not_r_version("4.1")
+  linter <- indentation_linter()
+
+  expect_lint(
+    trim_some("
+      a |>
+        foo()
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      b <- a |>
+        foo()
+    "),
+    NULL,
+    linter
   )
 })
