@@ -26,7 +26,7 @@
 #' @export
 unnecessary_nested_if_linter <- function() {
   xpath <- paste0(
-    "//IF/parent::expr[not(ELSE)]/OP-RIGHT-PAREN/", 
+    "//IF/parent::expr[not(ELSE)]/OP-RIGHT-PAREN/",
     c(
       "following-sibling::expr[IF and not(ELSE)]", # catch if (cond) if (other_cond) { ... }
       "following-sibling::expr[OP-LEFT-BRACE and count(expr) = 1]
