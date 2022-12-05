@@ -148,10 +148,4 @@ test_that("unnecessary_nested_if_linter blocks disallowed usages", {
     lint_message,
     linter
   )
-
-  expect_lint(
-    "if (x) if (y) 1L",
-    lint_message,
-    linter
-  )
 })
