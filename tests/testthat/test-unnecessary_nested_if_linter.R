@@ -115,6 +115,50 @@ test_that("unnecessary_nested_if_linter skips allowed usages", {
     NULL,
     linter
   )
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        {
+           y <- x + 1L
+           if (y) {
+             1L
+           }
+        }
+      }"),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        {
+          if (y) {
+            1L
+          }
+        }
+        y <- x + 1L
+      }"),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        {
+          y <- x + 1L
+          {
+            if (y) {
+              1L
+            }
+          }
+        }
+      }"),
+    NULL,
+    linter
+  )
 })
 
 test_that("unnecessary_nested_if_linter blocks disallowed usages", {
