@@ -502,10 +502,10 @@ using</p>
 <span><span class="co">#&gt; [73] "T_and_F_symbol_linter"            "todo_comment_linter"             </span></span>
 <span><span class="co">#&gt; [75] "trailing_blank_lines_linter"      "trailing_whitespace_linter"      </span></span>
 <span><span class="co">#&gt; [77] "undesirable_function_linter"      "undesirable_operator_linter"     </span></span>
-<span><span class="co">#&gt; [79] "unnecessary_lambda_linter"        "unnecessary_placeholder_linter"  </span></span>
-<span><span class="co">#&gt; [81] "unneeded_concatenation_linter"    "unreachable_code_linter"         </span></span>
-<span><span class="co">#&gt; [83] "unused_import_linter"             "vector_logic_linter"             </span></span>
-<span><span class="co">#&gt; [85] "yoda_test_linter"</span></span></code></pre></div>
+<span><span class="co">#&gt; [79] "unnecessary_lambda_linter"        "unnecessary_nested_if_linter"    </span></span>
+<span><span class="co">#&gt; [81] "unnecessary_placeholder_linter"   "unneeded_concatenation_linter"   </span></span>
+<span><span class="co">#&gt; [83] "unreachable_code_linter"          "unused_import_linter"            </span></span>
+<span><span class="co">#&gt; [85] "vector_logic_linter"              "yoda_test_linter"</span></span></code></pre></div>
 <p>If you want to use all available linters, you can include this in
 your <code>.lintr</code> file:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -553,15 +553,15 @@ enough:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="../reference/lint.html">lint</a></span><span class="op">(</span><span class="va">tmp</span>, linters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/call.html" class="external-link">call</a></span><span class="op">(</span><span class="va">linter_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpF71znj/file1f7b525a41cd           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmpTOjEE0/file200b4ed1e901           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1    get</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpF71znj/file1f7b525a41cd           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmpTOjEE0/file200b4ed1e901           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpF71znj/file1f7b525a41cd           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmpTOjEE0/file200b4ed1e901           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span></code></pre></div>
 </div>
