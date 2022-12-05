@@ -25,6 +25,7 @@ infix_metadata <- data.frame(stringsAsFactors = FALSE, matrix(byrow = TRUE, ncol
   "EQ_ASSIGN",       "=",
   "EQ_SUB",          "=",   # in calls: foo(x = 1)
   "EQ_FORMALS",      "=",   # in definitions: function(x = 1)
+  "PIPE",            "|>",
   "SPECIAL",         "%%",
   "OP-SLASH",        "/",
   "OP-STAR",         "*",
@@ -57,7 +58,7 @@ infix_metadata$unary <- infix_metadata$xml_tag %in% c("OP-PLUS", "OP-MINUS", "OP
 # high-precedence operators are ignored by this linter; see
 #   https://style.tidyverse.org/syntax.html#infix-operators
 infix_metadata$low_precedence <- infix_metadata$string_value %in% c(
-  "+", "-", "~", ">", ">=", "<", "<=", "==", "!=", "&", "&&", "|", "||", "<-", "->", "=", "%%", "/", "*"
+  "+", "-", "~", ">", ">=", "<", "<=", "==", "!=", "&", "&&", "|", "||", "<-", "->", "=", "%%", "/", "*", "|>"
 )
 # comparators come up in several lints
 infix_metadata$comparator <- infix_metadata$string_value %in% c("<", "<=", ">", ">=", "==", "!=")

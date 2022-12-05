@@ -177,3 +177,11 @@ test_that("Rules around missing arguments are respected", {
   expect_lint("switch(a =, b = 2)", lint_msg, linter)
   expect_lint("alist(missing_arg =)", lint_msg, linter)
 })
+
+test_that("native pipe is supported", {
+  skip_if_not_r_version("4.1")
+  linter <- infix_spaces_linter()
+
+  expect_lint("a |> foo()", NULL, linter)
+  expect_lint("a|>foo()", rex::rex("Put spaces around all infix operators."), linter)
+})
