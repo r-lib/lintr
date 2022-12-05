@@ -25,20 +25,15 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unnecessary_nested_if_linter <- function() {
-  xpath <- "
-  (
-    //IF/
-    parent::expr[not(ELSE)]/
-    OP-RIGHT-PAREN/
-    following-sibling::expr[IF and not(ELSE)]
-  ) |
-  (
-    //IF/parent::expr[not(ELSE)]/
-    OP-RIGHT-PAREN/
-    following-sibling::expr[OP-LEFT-BRACE and count(expr) = 1]/
-    expr[IF and not(ELSE)]
+  xpath <- paste0(
+    "//IF/parent::expr[not(ELSE)]/OP-RIGHT-PAREN/", 
+    c(
+      "following-sibling::expr[IF and not(ELSE)]", # catch if (cond) if (other_cond) { ... }
+      "following-sibling::expr[OP-LEFT-BRACE and count(expr) = 1]
+         /expr[IF and not(ELSE)]" # catch if (cond) { if (other_cond) { ... } }
+    ),
+    collapse = " | "
   )
-  "
 
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level
