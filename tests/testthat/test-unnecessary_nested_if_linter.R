@@ -57,6 +57,18 @@ test_that("unnecessary_nested_if_linter skips allowed usages", {
 
   expect_lint(
     trim_some("
+      if (x) {
+        if (y) {
+          return(1L)
+        }
+        y <- x + 1L
+      }"),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
       if ((x && y) || (if (x) TRUE else FALSE)) {
         return(1L)
       }"),
