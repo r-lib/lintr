@@ -84,8 +84,8 @@ test_that("commented_code_linter can detect operators in comments and lint corre
 
   test_ops <- c(
     "+", "=", "==", "!=", "<=", ">=", "<-", "<<-", "<", ">", "->",
-    "->>", "%%", "/", "^", "*", "**", "|", "||", "&", "&&", "%>%",
-    "%anything%"
+    "->>", "%%", "%||%", "/", "^", "*", "**", "|", "||", "&", "&&",
+    "%>%", "%<>%", "%T>%", "%anything%"
   )
 
   for (op in test_ops) {
@@ -93,4 +93,6 @@ test_that("commented_code_linter can detect operators in comments and lint corre
     expect_lint(paste("# something like i", op, "1", collapse = ""), NULL, linter)
     expect_lint(paste("# i", op, "1", collapse = ""), lint_msg, linter)
   }
+
+  expect_lint("# 1:3 |> sum()", lint_msg, linter)
 })
