@@ -106,7 +106,7 @@
 * `indentation_linter()` for checking that the indentation conforms to 2-space Tidyverse-style (@AshesITR and @dgkf, #1411, #1792).
 
 * `unnecessary_nested_if_linter()` for checking unnecessary nested `if` statements where a single 
-  `if` statement with appropriate conditional expression would suffice (@IndrajeetPatil, #1778).
+  `if` statement with appropriate conditional expression would suffice (@IndrajeetPatil and @AshesITR, #1778).
 
 ## Notes
 

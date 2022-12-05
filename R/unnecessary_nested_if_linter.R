@@ -26,11 +26,18 @@
 #' @export
 unnecessary_nested_if_linter <- function() {
   xpath <- "
-  //IF
-  /parent::expr[not(ELSE)]
-  /parent::expr[not(OP-LEFT-BRACE) or count(expr) = 1]
-  /ancestor-or-self::expr[IF and not(ELSE)]
-  /IF
+  (
+    //IF/
+    parent::expr[not(ELSE)]/
+    OP-RIGHT-PAREN/
+    following-sibling::expr[IF and not(ELSE)]
+  ) |
+  (
+    //IF/parent::expr[not(ELSE)]/
+    OP-RIGHT-PAREN/
+    following-sibling::expr[OP-LEFT-BRACE and count(expr) = 1]/
+    expr[IF and not(ELSE)]
+  )
   "
 
   Linter(function(source_expression) {
