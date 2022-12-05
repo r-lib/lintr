@@ -101,7 +101,7 @@
 
 * `routine_registration_linter()` for identifying native routines that don't use registration (`useDynLib` in the `NAMESPACE`; @MichaelChirico)
 
-* `indentation_linter()` for checking that the indentation conforms to 2-space Tidyverse-style (@AshesITR and @dgkf, #1411).
+* `indentation_linter()` for checking that the indentation conforms to 2-space Tidyverse-style (@AshesITR and @dgkf, #1411, #1792).
 
 
 ## Notes

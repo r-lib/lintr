@@ -25,6 +25,7 @@ infix_metadata <- data.frame(stringsAsFactors = FALSE, matrix(byrow = TRUE, ncol
   "EQ_ASSIGN",       "=",
   "EQ_SUB",          "=",   # in calls: foo(x = 1)
   "EQ_FORMALS",      "=",   # in definitions: function(x = 1)
+  "PIPE",            "|>",
   "SPECIAL",         "%%",
   "OP-SLASH",        "/",
   "OP-STAR",         "*",

@@ -111,6 +111,25 @@ test_that("indentation linter flags unindented expressions", {
     linter
   )
 
+  # native pipe indents
+  expect_lint(
+    trim_some("
+      a |>
+        foo()
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      b <- a |>
+        foo()
+    "),
+    NULL,
+    linter
+  )
+
   expect_lint(
     trim_some("
       if (cond)
