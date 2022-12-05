@@ -94,8 +94,8 @@ test_that("lintr help files are up to date", {
   #
   # So, to test it locally:
   #
-  # 1. `R CMD INSTALL .`
-  # 2. `library(lintr); testthat::test_file('tests/testthat/test-linter_tags.R')`
+  # 1. R CMD INSTALL .
+  # 2. Rscript -e "library(lintr); testthat::test_file('tests/testthat/test-linter_tags.R')"
 
   helper_db_dir <- system.file("help", package = "lintr")
   skip_if_not(dir.exists(helper_db_dir))
