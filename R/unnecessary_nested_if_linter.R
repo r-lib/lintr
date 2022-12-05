@@ -25,13 +25,13 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unnecessary_nested_if_linter <- function() {
-  xpath <- glue::glue("
-                    //IF
-                    /parent::expr[not(ELSE)]
-                    /parent::expr[count(expr) = 1]
-                    /parent::expr[not(ELSE)]
-                    /IF
-                    ")
+  xpath <- "
+  //IF
+  /parent::expr[not(ELSE)]
+  /parent::expr[not(OP-LEFT-BRACE) or count(expr) = 1]
+  /ancestor-or-self::expr[IF and not(ELSE)]
+  /IF
+  "
 
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level

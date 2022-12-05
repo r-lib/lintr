@@ -101,6 +101,20 @@ test_that("unnecessary_nested_if_linter skips allowed usages", {
     NULL,
     linter
   )
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        y <- x + 1L
+        {
+          if (y) {
+            1L
+          }
+        }
+      }"),
+    NULL,
+    linter
+  )
 })
 
 test_that("unnecessary_nested_if_linter blocks disallowed usages", {
@@ -145,6 +159,12 @@ test_that("unnecessary_nested_if_linter blocks disallowed usages", {
           1L
         }
       }"),
+    lint_message,
+    linter
+  )
+
+  expect_lint(
+    "if (x) if (y) 1L",
     lint_message,
     linter
   )
