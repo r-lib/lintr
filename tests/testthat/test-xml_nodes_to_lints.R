@@ -94,13 +94,19 @@ test_that("it doesn't produce invalid lints", {
   xml <- expr$full_xml_parsed_content
   node <- xml2::xml_find_first(xml, "//SPECIAL")
 
+  # We can produce invalid location xpaths by requiring any non-existent node
+  xp_column_number <- "number(./preceding-sibling::*[1]/@col2 + 1)"
+  xp_range_start <- "number(./preceding-sibling::*[1]/@col1)"
+  xp_range_end <- "number(./following-sibling::*[1]/@col2)"
+  xp_invalid <- "number(./DOES-NOT-EXIST/@col1)"
+
   expect_warning(l_invalid_loc1 <- xml_nodes_to_lints(
     xml = node,
     source_expression = expr,
     lint_message = "lint_msg",
-    column_number_xpath = "number(./preceding-sibling::*[1]/@col2 + 1)",
-    range_start_xpath = "number(./preceding-sibling::SPECIAL[1]/@col1)",
-    range_end_xpath = "number(./following-sibling::*[1]/@col2)"
+    column_number_xpath = xp_column_number,
+    range_start_xpath = xp_invalid,
+    range_end_xpath = xp_range_end
   ), rex::rex("Could not find range start for lint. Defaulting to start of line."))
   expect_identical(l_invalid_loc1$column_number, nchar("before") + 1L)
   expect_identical(l_invalid_loc1$ranges, list(c(1L, nchar(code))))
@@ -109,9 +115,9 @@ test_that("it doesn't produce invalid lints", {
     xml = node,
     source_expression = expr,
     lint_message = "lint_msg",
-    column_number_xpath = "number(./preceding-sibling::*[1]/@col2 + 1)",
-    range_start_xpath = "number(./preceding-sibling::*[1]/@col1)",
-    range_end_xpath = "number(./following-sibling::SPECIAL[1]/@col2)"
+    column_number_xpath = xp_column_number,
+    range_start_xpath = xp_range_start,
+    range_end_xpath = xp_invalid
   ), rex::rex("Could not find range end for lint. Defaulting to width 1."))
   expect_identical(l_invalid_loc2$column_number, nchar("before") + 1L)
   expect_identical(l_invalid_loc2$ranges, list(c(1L, 1L)))
@@ -120,9 +126,9 @@ test_that("it doesn't produce invalid lints", {
     xml = node,
     source_expression = expr,
     lint_message = "lint_msg",
-    column_number_xpath = "number(./preceding-sibling::SPECIAL[1]/@col2 + 1)",
-    range_start_xpath = "number(./preceding-sibling::*[1]/@col1)",
-    range_end_xpath = "number(./following-sibling::*[1]/@col2)"
+    column_number_xpath = xp_invalid,
+    range_start_xpath = xp_range_start,
+    range_end_xpath = xp_range_end
   ), rex::rex("Could not find location for lint. Defaulting to start of range."))
   expect_identical(l_invalid_col$column_number, 1L)
   expect_identical(l_invalid_col$ranges, list(c(1L, nchar(code))))
