@@ -14,11 +14,11 @@ test_that("Lint() errors on invalid input", {
   )
   expect_error(
     Lint("dummy.R", ranges = list(1L)),
-    rex::rex("`ranges` must only contain length 2 integer vectors.")
+    rex::rex("`ranges` must only contain length 2 integer vectors without NAs.")
   )
   expect_error(
     Lint("dummy.R", ranges = list(c(1L, NA_integer_))),
-    rex::rex("`ranges` must not contain NAs.")
+    rex::rex("`ranges` must only contain length 2 integer vectors without NAs.")
   )
   expect_error(
     Lint("dummy.R", line = dummy_line, ranges = list(c(1L, 2L), c(1L, 5L))),
