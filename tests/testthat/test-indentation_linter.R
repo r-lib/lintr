@@ -668,6 +668,29 @@ test_that("consecutive same-level lints are suppressed", {
   )
 })
 
+test_that("native pipe is supported", {
+  skip_if_not_r_version("4.1")
+  linter <- indentation_linter()
+
+  expect_lint(
+    trim_some("
+      a |>
+        foo()
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      b <- a |>
+        foo()
+    "),
+    NULL,
+    linter
+  )
+})
+
 test_that("it doesn't error on invalid code", {
   # Part of #1427
   expect_lint("function() {)", list(linter = "error", message = rex::rex("unexpected ')'")), indentation_linter())
