@@ -21,8 +21,10 @@ linters: linters_with_defaults(
     paste_linter(),
     redundant_equals_linter(),
     redundant_ifelse_linter(),
+    sort_linter(),
     sprintf_linter(),
     strings_as_factors_linter(),
+    unnecessary_nested_if_linter(),
     unnecessary_lambda_linter(),
     unneeded_concatenation_linter(allow_single_expression = FALSE),
     yoda_test_linter()
