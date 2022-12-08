@@ -142,7 +142,13 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
   if (isTRUE(assignment_as_infix)) {
     infix_condition <- glue::glue("
-      and (not(ancestor::expr/preceding-sibling::LEFT_ASSIGN[{xp_last_on_line}]) or ancestor::expr[expr[SYMBOL_FUNCTION_CALL]])
+      and not(
+        ancestor::expr[
+          preceding-sibling::LEFT_ASSIGN[{xp_last_on_line}] or expr[SYMBOL_FUNCTION_CALL]
+        ][1][
+          preceding-sibling::LEFT_ASSIGN[{xp_last_on_line}]
+        ]
+      )
     ")
     # suppress only infix operators that are not inside of a function call
   } else {
@@ -217,17 +223,13 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       change_end <- xml2::xml_find_num(change, xp_block_ends)
       if (isTRUE(change_begin <= change_end)) {
         to_indent <- seq(from = change_begin, to = change_end)
-        if (change_type == "hanging") {
-          expected_indent_levels[to_indent] <- as.integer(xml2::xml_attr(change, "col2"))
-          is_hanging[to_indent] <- TRUE
-        } else { # block or double
-          if (change_type == "double") {
-            expected_indent_levels[to_indent] <- expected_indent_levels[to_indent] + 2L * indent
-          } else {
-            expected_indent_levels[to_indent] <- expected_indent_levels[to_indent] + indent
-          }
-          is_hanging[to_indent] <- FALSE
-        }
+        expected_indent_levels[to_indent] <- find_new_indent(
+          expected_indent_levels[to_indent],
+          change_type,
+          indent,
+          as.integer(xml2::xml_attr(change, "col2"))
+        )
+        is_hanging[to_indent] <- change_type == "hanging"
       }
     }
 
@@ -290,6 +292,16 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       list()
     }
   })
+}
+
+find_new_indent <- function(current_indent, change_type, indent, hanging_indent) {
+  if (change_type == "hanging") {
+    hanging_indent
+  } else if (change_type == "double") {
+    current_indent + 2L * indent
+  } else {
+    current_indent + indent
+  }
 }
 
 build_indentation_style_tidy <- function() {

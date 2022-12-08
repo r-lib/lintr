@@ -645,6 +645,16 @@ test_that("assignment_as_infix works", {
       var4
   ")
 
+  code_infix_2 <- trim_some("
+    lapply(x,
+      function(e) {
+        temp_var <-
+          e +
+          42
+      }
+    )
+  ")
+
   code_no_infix <- trim_some("
     ok_code <-
       var1 +
@@ -659,9 +669,11 @@ test_that("assignment_as_infix works", {
   no_infix_linter <- indentation_linter(assignment_as_infix = FALSE)
 
   expect_lint(code_infix, NULL, tidy_linter)
+  expect_lint(code_infix_2, NULL, tidy_linter)
   expect_lint(code_no_infix, rex::rex("Indentation should be 2 spaces but is 4 spaces."), tidy_linter)
 
   expect_lint(code_infix, rex::rex("Indentation should be 4 spaces but is 2 spaces."), no_infix_linter)
+  expect_lint(code_infix_2, rex::rex("Indentation should be 8 spaces but is 6 spaces."), no_infix_linter)
   expect_lint(code_no_infix, NULL, no_infix_linter)
 })
 
