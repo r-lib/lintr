@@ -71,6 +71,15 @@
 <li><p><code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code> no longer silently ignores usage warnings that don’t contain a quoted name (<a href="https://github.com/r-lib/lintr/issues/1714" class="external-link">#1714</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>)</p></li>
 <li><p><code><a href="../reference/namespace_linter.html">namespace_linter()</a></code> correctly recognizes backticked operators to be exported from respectives namespaces (like <code><a href="https://rlang.r-lib.org/reference/op-null-default.html" class="external-link">rlang::`%||%`</a></code>) (<a href="https://github.com/r-lib/lintr/issues/1752" class="external-link">#1752</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>)</p></li>
 <li><p><code><a href="../reference/lint.html">lint_package()</a></code> correctly finds a package from within a subdir if the <code>path</code> points to anywhere within the package (<a href="https://github.com/r-lib/lintr/issues/1759" class="external-link">#1759</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>)</p></li>
+<li>
+<p>Improved error behavior in <code><a href="../reference/lint-s3.html">Lint()</a></code>, <code><a href="../reference/lint.html">lint()</a></code> and <code><a href="../reference/xml_nodes_to_lints.html">xml_nodes_to_lints()</a></code> (<a href="https://github.com/r-lib/lintr/issues/1427" class="external-link">#1427</a>, <a href="https://github.com/r-lib/lintr/issues/763" class="external-link">#763</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>)</p>
+<ul><li>
+<code><a href="../reference/lint-s3.html">Lint()</a></code> validates its inputs more thoroughly, preventing errors during <code>print.Lints</code> like “Error in rep.int(character, length) : invalid ‘times’ value:”.</li>
+<li>
+<code><a href="../reference/lint.html">lint()</a></code> no longer tries to create an expression tree with unexpected end of input errors, because they can be broken.</li>
+<li>
+<code><a href="../reference/xml_nodes_to_lints.html">xml_nodes_to_lints()</a></code> warns if it can’t find lint locations and uses dummy locations as a fallback.</li>
+</ul></li>
 <li><p><code><a href="../reference/linters_with_defaults.html">linters_with_defaults()</a></code> no longer erroneously marks linter factories as linters (<a href="https://github.com/r-lib/lintr/issues/1725" class="external-link">#1725</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</p></li>
 </ul></div>
 <div class="section level3">
