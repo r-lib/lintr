@@ -68,6 +68,7 @@ semicolon_linter,style readability default configurable
 semicolon_terminator_linter,style readability deprecated configurable
 seq_linter,robustness efficiency consistency best_practices default
 single_quotes_linter,style consistency readability default
+sort_linter,readability best_practices efficiency
 spaces_inside_linter,style readability default
 spaces_left_parentheses_linter,style readability default
 sprintf_linter,correctness common_mistakes
@@ -81,6 +82,7 @@ trailing_whitespace_linter,style default configurable
 undesirable_function_linter,style efficiency configurable robustness best_practices
 undesirable_operator_linter,style efficiency configurable robustness best_practices
 unnecessary_lambda_linter,best_practices efficiency readability
+unnecessary_nested_if_linter,readability best_practices
 unnecessary_placeholder_linter,readability best_practices
 unneeded_concatenation_linter,style readability efficiency configurable
 unreachable_code_linter,best_practices readability

@@ -49,12 +49,14 @@ The following linters are tagged with 'readability':
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{semicolon_terminator_linter}}}
 \item{\code{\link{single_quotes_linter}}}
+\item{\code{\link{sort_linter}}}
 \item{\code{\link{spaces_inside_linter}}}
 \item{\code{\link{spaces_left_parentheses_linter}}}
 \item{\code{\link{string_boundary_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{unnecessary_lambda_linter}}}
+\item{\code{\link{unnecessary_nested_if_linter}}}
 \item{\code{\link{unnecessary_placeholder_linter}}}
 \item{\code{\link{unneeded_concatenation_linter}}}
 \item{\code{\link{unreachable_code_linter}}}

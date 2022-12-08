@@ -10,7 +10,7 @@ Authors@R: c(
     person("Kun", "Ren", role = "aut"),
     person("Alexander", "Rosenstock", role = "aut",
            comment = "AshesITR"),
-    person("Indrajeet", "Patil", role = "aut", email = "patilindrajeet.science@gmail.com",
+    person("Indrajeet", "Patil", , "patilindrajeet.science@gmail.com", role = "aut",
            comment = c(ORCID = "0000-0003-1995-6531", Twitter = "@patilindrajeets"))
   )
 Description: Checks adherence to a given style, syntax errors and possible
@@ -147,6 +147,7 @@ Collate:
     'settings.R'
     'settings_utils.R'
     'single_quotes_linter.R'
+    'sort_linter.R'
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'
     'sprintf_linter.R'
@@ -159,6 +160,7 @@ Collate:
     'undesirable_function_linter.R'
     'undesirable_operator_linter.R'
     'unnecessary_lambda_linter.R'
+    'unnecessary_nested_if_linter.R'
     'unnecessary_placeholder_linter.R'
     'unneeded_concatenation_linter.R'
     'unreachable_code_linter.R'
