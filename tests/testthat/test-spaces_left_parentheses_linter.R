@@ -73,3 +73,15 @@ test_that("doesn't produce a warning", {
     )
   )
 })
+
+test_that("it doesn't produce invalid lints", {
+  # Part of #1427
+  expect_warning(
+    expect_lint(
+      "function() {)",
+      list(list(linter = "function_left_parentheses_linter", ranges = list(c(9L, 9L))), list(linter = "error")),
+      function_left_parentheses_linter()
+    ),
+    rex::rex("Could not find range end for lint. Defaulting to width 1.")
+  )
+})
