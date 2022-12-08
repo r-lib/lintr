@@ -38,9 +38,11 @@
 #' @export
 implicit_assignment_linter <- function(except = c(
                                          "bquote", "capture.output", "expression", "expr",
-                                         "expect_error", "expect_warning", "expect_message", "expect_condition",
-                                         "expect_no_error", "expect_no_warning", "expect_no_message", "expect_no_condition",
-                                         "expect_invisible", "expect_visible", "expect_output", "expect_silent",
+                                         "expect_error", "expect_warning", "expect_message",
+                                         "expect_no_error", "expect_no_warning", "expect_no_message",
+                                         "expect_condition", "expect_no_condition",
+                                         "expect_invisible", "expect_visible",
+                                         "expect_output", "expect_silent",
                                          "local", "quo", "quos", "quote", "test_that"
                                        )) {
   exceptions <- xp_text_in_table(except)
