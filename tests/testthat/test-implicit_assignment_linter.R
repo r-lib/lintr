@@ -14,7 +14,6 @@ test_that("implicit_assignment_linter skips allowed usages", {
     linter
   )
 
-
   expect_lint(
     trim_some("
     x <- 1L
@@ -42,6 +41,11 @@ test_that("implicit_assignment_linter skips allowed usages", {
     NULL,
     linter
   )
+})
+
+test_that("implicit_assignment_linter makes exceptions for functions that capture side-effects", {
+  linter <- implicit_assignment_linter()
+  expect_lint("output <- capture.output(x <- f())", NULL, linter)
 })
 
 test_that("implicit_assignment_linter blocks disallowed usages", {

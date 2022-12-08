@@ -34,7 +34,9 @@ implicit_assignment_linter <- function() {
     "RIGHT_ASSIGN" # e.g. mean(1:4 -> x)
   )
   xpath_fun_call <- paste0(
-    "//SYMBOL_FUNCTION_CALL/parent::expr/following::expr[1]/",
+    "//SYMBOL_FUNCTION_CALL[not(text() = 'capture.output')]
+    /parent::expr
+    /following::expr[1]/",
     assignments,
     collapse = " | "
   )
