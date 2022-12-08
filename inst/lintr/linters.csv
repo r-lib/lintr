@@ -34,7 +34,7 @@ function_argument_linter,style consistency best_practices
 function_left_parentheses_linter,style readability default
 function_return_linter,readability best_practices
 ifelse_censor_linter,best_practices efficiency
-implicit_assignment_linter,style best_practices readability
+implicit_assignment_linter,style best_practices readability configurable
 implicit_integer_linter,style consistency best_practices configurable
 indentation_linter,style readability default configurable
 infix_spaces_linter,style readability default configurable
