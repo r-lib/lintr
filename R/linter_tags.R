@@ -90,7 +90,7 @@ build_available_linters <- function(available, package, tags, exclude_tags) {
 
   # Due to removal of deprecated linters in the returned data frame, there can be gaps in row numbers.
   # To avoid this inconsistency, regenerate row names.
-  rownames(available_df) <- seq(1L:nrow(available_df))
+  rownames(available_df) <- seq_len(nrow(available_df))
   available_df
 }
 
