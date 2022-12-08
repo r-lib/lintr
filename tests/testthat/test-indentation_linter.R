@@ -634,6 +634,37 @@ test_that("hanging_indent_stlye works", {
   expect_lint(code_hanging_same_line, "Indent", non_hanging_linter)
 })
 
+test_that("assignment_as_infix works", {
+  code_infix <- trim_some("
+    ok_code <-
+      var1 +
+      f(
+        var2 +
+          var3
+      ) +
+      var4
+  ")
+
+  code_no_infix <- trim_some("
+    ok_code <-
+      var1 +
+        f(
+          var2 +
+            var3
+        ) +
+        var4
+  ")
+
+  tidy_linter <- indentation_linter()
+  no_infix_linter <- indentation_linter(assignment_as_infix = FALSE)
+
+  expect_lint(code_infix, NULL, tidy_linter)
+  expect_lint(code_no_infix, rex::rex("Indentation should be 2 spaces but is 4 spaces."), tidy_linter)
+
+  expect_lint(code_infix, rex::rex("Indentation should be 4 spaces but is 2 spaces."), no_infix_linter)
+  expect_lint(code_no_infix, NULL, no_infix_linter)
+})
+
 test_that("consecutive same-level lints are suppressed", {
   bad_code <- trim_some("
     ok_code <- 42

@@ -44,6 +44,27 @@
 #'     # body
 #'   }
 #'   ```
+#' @param assignment_as_infix Treat `<-` as a regular (i.e. left-associative) infix operator?
+#'   This means, that infix operators on the right hand side of an assignment do not trigger a second level of
+#'   indentation:
+#'   ```r
+#'   # complies to any style
+#'   variable <- a %+%
+#'     b %+%
+#'     c
+#'
+#'   # complies to assignment_as_infix = TRUE
+#'   variable <-
+#'     a %+%
+#'     b %+%
+#'     c
+#'
+#'   # complies to assignment_as_infix = FALSE
+#'   variable <-
+#'     a %+%
+#'       b %+%
+#'       c
+#'   ```
 #'
 #' @examples
 #' # will produce lints
@@ -97,7 +118,8 @@
 #' - <https://style.tidyverse.org/functions.html#long-lines-1>
 #'
 #' @export
-indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "always", "never")) {
+indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "always", "never"),
+                               assignment_as_infix = TRUE) {
   paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
   infix_tokens <- setdiff(infix_metadata$xml_tag, c("OP-LEFT-BRACE", "OP-COMMA", paren_tokens_left))
@@ -116,6 +138,15 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     find_indent_type <- function(change) {
       "block"
     }
+  }
+
+  if (isTRUE(assignment_as_infix)) {
+    infix_condition <- glue::glue("
+      and (not(ancestor::expr/preceding-sibling::LEFT_ASSIGN[{xp_last_on_line}]) or ancestor::expr[expr[SYMBOL_FUNCTION_CALL]])
+    ")
+    # suppress only infix operators that are not inside of a function call
+  } else {
+    infix_condition <- ""
   }
 
   xp_block_ends <- paste0(
@@ -141,7 +172,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
                     @line2 > @line1 and
                     ({xp_or(paste0('descendant::', paren_tokens_left, '[', xp_last_on_line, ']'))})
                   ]/@line1)]"),
-      glue::glue("//{infix_tokens}[{xp_last_on_line}]"),
+      glue::glue("//{infix_tokens}[{xp_last_on_line}{infix_condition}]"),
       glue::glue("//{no_paren_keywords}[{xp_last_on_line}]"),
       glue::glue("//{keyword_tokens}/following-sibling::OP-RIGHT-PAREN[
                     {xp_last_on_line} and
