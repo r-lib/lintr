@@ -199,6 +199,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/ifelse_censor_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/implicit_assignment_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/implicit_integer_linter.html</loc>
   </url>
   <url>

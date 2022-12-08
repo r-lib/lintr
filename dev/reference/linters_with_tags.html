@@ -149,32 +149,33 @@ If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> [29] "fixed_regex_linter"               "for_loop_index_linter"           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [31] "function_argument_linter"         "function_left_parentheses_linter"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [33] "function_return_linter"           "ifelse_censor_linter"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [35] "implicit_integer_linter"          "indentation_linter"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [37] "infix_spaces_linter"              "inner_combine_linter"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [39] "is_numeric_linter"                "lengths_linter"                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [41] "line_length_linter"               "literal_coercion_linter"         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [43] "missing_argument_linter"          "missing_package_linter"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [45] "namespace_linter"                 "nested_ifelse_linter"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [47] "no_tab_linter"                    "nonportable_path_linter"         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [49] "numeric_leading_zero_linter"      "object_length_linter"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [51] "object_name_linter"               "object_usage_linter"             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [53] "outer_negation_linter"            "package_hooks_linter"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [55] "paren_body_linter"                "paste_linter"                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [57] "pipe_call_linter"                 "pipe_continuation_linter"        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [59] "redundant_equals_linter"          "redundant_ifelse_linter"         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [61] "regex_subset_linter"              "routine_registration_linter"     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [63] "semicolon_linter"                 "seq_linter"                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [65] "single_quotes_linter"             "sort_linter"                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [67] "spaces_inside_linter"             "spaces_left_parentheses_linter"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [69] "sprintf_linter"                   "string_boundary_linter"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [71] "strings_as_factors_linter"        "system_file_linter"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [73] "T_and_F_symbol_linter"            "todo_comment_linter"             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [75] "trailing_blank_lines_linter"      "trailing_whitespace_linter"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [77] "undesirable_function_linter"      "undesirable_operator_linter"     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [79] "unnecessary_lambda_linter"        "unnecessary_nested_if_linter"    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [81] "unnecessary_placeholder_linter"   "unneeded_concatenation_linter"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [83] "unreachable_code_linter"          "unused_import_linter"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [85] "vector_logic_linter"              "yoda_test_linter"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [35] "implicit_assignment_linter"       "implicit_integer_linter"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [37] "indentation_linter"               "infix_spaces_linter"             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [39] "inner_combine_linter"             "is_numeric_linter"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [41] "lengths_linter"                   "line_length_linter"              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [43] "literal_coercion_linter"          "missing_argument_linter"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [45] "missing_package_linter"           "namespace_linter"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [47] "nested_ifelse_linter"             "no_tab_linter"                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [49] "nonportable_path_linter"          "numeric_leading_zero_linter"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [51] "object_length_linter"             "object_name_linter"              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [53] "object_usage_linter"              "outer_negation_linter"           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [55] "package_hooks_linter"             "paren_body_linter"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [57] "paste_linter"                     "pipe_call_linter"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [59] "pipe_continuation_linter"         "redundant_equals_linter"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [61] "redundant_ifelse_linter"          "regex_subset_linter"             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [63] "routine_registration_linter"      "semicolon_linter"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [65] "seq_linter"                       "single_quotes_linter"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [67] "sort_linter"                      "spaces_inside_linter"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [69] "spaces_left_parentheses_linter"   "sprintf_linter"                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [71] "string_boundary_linter"           "strings_as_factors_linter"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [73] "system_file_linter"               "T_and_F_symbol_linter"           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [75] "todo_comment_linter"              "trailing_blank_lines_linter"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [77] "trailing_whitespace_linter"       "undesirable_function_linter"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [79] "undesirable_operator_linter"      "unnecessary_lambda_linter"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [81] "unnecessary_nested_if_linter"     "unnecessary_placeholder_linter"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [83] "unneeded_concatenation_linter"    "unreachable_code_linter"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [85] "unused_import_linter"             "vector_logic_linter"             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [87] "yoda_test_linter"                </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get all linters tagged as "default" from lintr and mypkg</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
