@@ -43,7 +43,7 @@ implicit_assignment_linter <- function() {
     "
     //SYMBOL_FUNCTION_CALL[not(text() = 'capture.output')]
     /parent::expr
-    /following::expr[1]
+    /following-sibling::expr[1]
     /",
     assignments,
     collapse = " | "
@@ -53,12 +53,12 @@ implicit_assignment_linter <- function() {
     # e.g. if (x <- 1L) { ... }
     "
     //IF
-    /following::expr[1]
+    /following-sibling::expr[1]
     /",
     # e.g. while (x <- 0L) { ... }
     "
     //WHILE
-    /following::expr[1]
+    /following-sibling::expr[1]
     /"
   )
   xpath_controls <- paste0(rep(controls, each = length(assignments)), assignments, collapse = " | ")
