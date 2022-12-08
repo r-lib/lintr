@@ -83,14 +83,7 @@ test_that("implicit_assignment_linter makes exceptions for functions that captur
   expect_lint("quote(a <- 1L)", NULL, linter)
   expect_lint("bquote(a <- 1L)", NULL, linter)
   expect_lint("expression(a <- 1L)", NULL, linter)
-  expect_lint(
-    trim_some("
-    local({
-      a <- 1L
-    })"),
-    NULL,
-    linter
-  )
+  expect_lint("local({ a <- 1L })", NULL, linter)
 
   # rlang
   expect_lint("expr(a <- 1L)", NULL, linter)
@@ -101,15 +94,6 @@ test_that("implicit_assignment_linter makes exceptions for functions that captur
   expect_lint("with_options(list(digits = 3L), x <- getOption('digits'))", NULL, linter)
 
   # testthat
-  expect_lint(
-    trim_some("
-    test_that('my test', {
-      a <- 1L
-      expect_equal(a, 1L)
-    })"),
-    NULL,
-    linter
-  )
   expect_lint("expect_warning(out <- f(-1))", NULL, linter)
   expect_lint("expect_message(out <- f(-1))", NULL, linter)
   expect_lint("expect_error(out <- f(-1))", NULL, linter)
@@ -122,6 +106,15 @@ test_that("implicit_assignment_linter makes exceptions for functions that captur
   expect_lint("expect_visible(out <- f(-1))", NULL, linter)
   expect_lint("expect_silent(out <- f(-1))", NULL, linter)
   expect_lint("expect_output(out <- f(-1))", NULL, linter)
+  expect_lint(
+    trim_some("
+    test_that('my test', {
+      a <- 1L
+      expect_equal(a, 1L)
+    })"),
+    NULL,
+    linter
+  )
 })
 
 test_that("implicit_assignment_linter blocks disallowed usages", {
@@ -135,6 +128,8 @@ test_that("implicit_assignment_linter blocks disallowed usages", {
 
   expect_lint("mean(x <- 1:4)", lint_message, linter)
   expect_lint("y <- median(x <- 1:4)", lint_message, linter)
+  expect_lint("lapply(x, function(x) return(x <- x + 1))", lint_message, linter)
+  expect_lint("map(x, function(x) return(x <- x + 1))", lint_message, linter)
   expect_lint(
     trim_some("
     foo <- function(x) {
