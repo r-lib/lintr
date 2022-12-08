@@ -15,6 +15,11 @@
 
 * `lint_package()` correctly finds a package from within a subdir if the `path` points to anywhere within the package (#1759, @AshesITR)
 
+* Improved error behavior in `Lint()`, `lint()` and `xml_nodes_to_lints()` (#1427, #763, @AshesITR)
+  + `Lint()` validates its inputs more thoroughly, preventing errors during `print.Lints` like "Error in rep.int(character, length) : invalid 'times' value:".
+  + `lint()` no longer tries to create an expression tree with unexpected end of input errors, because they can be broken.
+  + `xml_nodes_to_lints()` warns if it can't find lint locations and uses dummy locations as a fallback.
+
 * `linters_with_defaults()` no longer erroneously marks linter factories as linters (#1725, @AshesITR).
 
 ## Changes to defaults
