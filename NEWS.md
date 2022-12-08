@@ -115,6 +115,8 @@
 * `unnecessary_nested_if_linter()` for checking unnecessary nested `if` statements where a single 
   `if` statement with appropriate conditional expression would suffice (@IndrajeetPatil and @AshesITR, #1778).
 
+* `implicit_assignment_linter()` for checking implicit assignments in function calls (@IndrajeetPatil and @AshesITR, #1777).
+
 ## Notes
 
 * `lint()` continues to support Rmarkdown documents. For users of custom .Rmd engines, e.g.
