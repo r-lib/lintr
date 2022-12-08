@@ -22,6 +22,8 @@
 
 * `linters_with_defaults()` no longer erroneously marks linter factories as linters (#1725, @AshesITR).
 
+* Row names for `available_linters()` data frame no longer have missing entries (#1781, @IndrajeetPatil).
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.

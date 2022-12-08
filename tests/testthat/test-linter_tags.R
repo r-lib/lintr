@@ -86,6 +86,14 @@ test_that("available_linters matches the set of linters available from lintr", {
   expect_identical(sort(linters_in_namespace), sort(exported_linters))
 })
 
+test_that("rownames for available_linters data frame doesn't have missing entries", {
+  lintr_db <- available_linters()
+  expect_identical(
+    tail(rownames(lintr_db), 1L),
+    as.character(nrow(lintr_db))
+  )
+})
+
 # See the roxygen helpers in R/linter_tags.R for the code used to generate the docs.
 #   This test helps ensure the documentation is up to date with the available_linters() database
 test_that("lintr help files are up to date", {

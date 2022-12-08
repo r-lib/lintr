@@ -87,6 +87,10 @@ build_available_linters <- function(available, package, tags, exclude_tags) {
     matches_exclude <- vapply(available_df$tags, function(linter_tags) any(linter_tags %in% exclude_tags), logical(1L))
     available_df <- available_df[!matches_exclude, ]
   }
+
+  # Due to removal of deprecated linters in the returned data frame, there can be gaps in row numbers.
+  # To avoid this inconsistency, regenerate row names.
+  rownames(available_df) <- seq(1L:nrow(available_df))
   available_df
 }
 
