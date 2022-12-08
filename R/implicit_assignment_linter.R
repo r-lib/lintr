@@ -3,7 +3,7 @@
 #' Assigning inside function calls makes the code difficult to read, and should
 #' be avoided, except for functions that capture side-effects (e.g. [capture.output()]).
 #'
-#' @inheritParams backport_linter
+#' @param except A character vector of functions to be excluded from linting.
 #'
 #' @examples
 #' # will produce lints

@@ -12,9 +12,7 @@ implicit_assignment_linter(
 )
 }
 \arguments{
-\item{except}{Character vector of functions to be excluded from linting.
-Use this to list explicitly defined backports, e.g. those imported from the {backports} package or manually
-defined in your package.}
+\item{except}{A character vector of functions to be excluded from linting.}
 }
 \description{
 Assigning inside function calls makes the code difficult to read, and should

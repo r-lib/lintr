@@ -79,7 +79,28 @@ test_that("implicit_assignment_linter makes exceptions for functions that captur
   linter <- implicit_assignment_linter()
 
   expect_lint("output <- capture.output(x <- f())", NULL, linter)
-  expect_lint("output <- capture.output(x <- f())", NULL, linter)
+
+  expect_lint("quote(a <- 1L)", NULL, linter)
+  expect_lint("bquote(a <- 1L)", NULL, linter)
+  expect_lint("expression(a <- 1L)", NULL, linter)
+
+  expect_lint(
+    trim_some("
+    test_that('my test', {
+      a <- 1L
+      expect_equal(a, 1L)
+    })"),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+    local({
+      a <- 1L
+    })"),
+    NULL,
+    linter
+  )
 
   expect_lint("expect_warning(out <- f(-1))", NULL, linter)
   expect_lint("expect_message(out <- f(-1))", NULL, linter)
@@ -89,6 +110,11 @@ test_that("implicit_assignment_linter makes exceptions for functions that captur
   expect_lint("expect_no_message(out <- f(-1))", NULL, linter)
   expect_lint("expect_no_error(out <- f(-1))", NULL, linter)
   expect_lint("expect_no_condition(out <- f(-1))", NULL, linter)
+
+  expect_lint("expect_invisible(out <- f(-1))", NULL, linter)
+  expect_lint("expect_visible(out <- f(-1))", NULL, linter)
+  expect_lint("expect_silent(out <- f(-1))", NULL, linter)
+  expect_lint("expect_output(out <- f(-1))", NULL, linter)
 })
 
 test_that("implicit_assignment_linter blocks disallowed usages", {
