@@ -42,8 +42,10 @@ implicit_assignment_linter <- function(except = c(
   "expect_no_error", "expect_no_warning", "expect_no_message",
   "expect_condition", "expect_no_condition",
   "expect_invisible", "expect_visible",
+  "expect_snapshot", "expect_snapshot_error", "expect_snapshot_file",
+  "expect_snapshot_output", "expect_snapshot_value", "expect_snapshot_warning",
   "expect_output", "expect_silent",
-  "local", "quo", "quos", "quote", "test_that"
+  "local", "quo", "quos", "quote", "test_that", "tryCatch"
 )) {
   exceptions <- xp_text_in_table(except)
   xpath_exceptions <- glue::glue("
