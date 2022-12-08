@@ -92,6 +92,12 @@ test_that("rownames for available_linters data frame doesn't have missing entrie
     tail(rownames(lintr_db), 1L),
     as.character(nrow(lintr_db))
   )
+
+  lintr_db2 <- available_linters(exclude_tags = NULL)
+  expect_identical(
+    tail(rownames(lintr_db2), 1L),
+    as.character(nrow(lintr_db2))
+  )
 })
 
 # See the roxygen helpers in R/linter_tags.R for the code used to generate the docs.
