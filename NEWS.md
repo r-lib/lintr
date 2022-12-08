@@ -22,7 +22,7 @@
 
 * `linters_with_defaults()` no longer erroneously marks linter factories as linters (#1725, @AshesITR).
 
-* Row names for `available_linters()` data frame no longer have missing entries (#1781, @IndrajeetPatil).
+* Row names for `available_linters()` data frame are now contiguous (#1781, @IndrajeetPatil).
 
 ## Changes to defaults
 
