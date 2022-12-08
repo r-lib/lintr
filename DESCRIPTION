@@ -104,6 +104,7 @@ Collate:
     'get_source_expressions.R'
     'ids_with_token.R'
     'ifelse_censor_linter.R'
+    'implicit_assignment_linter.R'
     'implicit_integer_linter.R'
     'indentation_linter.R'
     'infix_spaces_linter.R'
