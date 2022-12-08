@@ -36,7 +36,10 @@ lint(
 
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\itemize{
+\item \link{linters} for a complete list of linters available in lintr.
+\item \url{https://style.tidyverse.org/syntax.html#assignment}
+}
 }
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=readability_linters]{readability}, \link[=style_linters]{style}

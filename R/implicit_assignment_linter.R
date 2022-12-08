@@ -26,7 +26,10 @@
 #' )
 #'
 #' @evalRd rd_tags("implicit_assignment_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso
+#' - [linters] for a complete list of linters available in lintr.
+#' - <https://style.tidyverse.org/syntax.html#assignment>
+#'
 #' @export
 implicit_assignment_linter <- function() {
   assignments <- c(
