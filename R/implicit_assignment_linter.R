@@ -3,6 +3,8 @@
 #' Assigning inside function calls makes the code difficult to read, and should
 #' be avoided, except for functions that capture side-effects (e.g. [capture.output()]).
 #'
+#' @inheritParams backport_linter
+#'
 #' @examples
 #' # will produce lints
 #' lint(
@@ -34,17 +36,31 @@
 #' - <https://style.tidyverse.org/syntax.html#assignment>
 #'
 #' @export
-implicit_assignment_linter <- function() {
+implicit_assignment_linter <- function(except = c(
+                                         "bquote", "capture.output", "expression",
+                                         "expect_error", "expect_warning", "expect_message", "expect_condition",
+                                         "expect_no_error", "expect_no_warning", "expect_no_message", "expect_no_condition",
+                                         "expect_invisible", "expect_visible", "expect_output", "expect_silent",
+                                         "local", "quote", "test_that"
+                                       )) {
+  exceptions <- xp_text_in_table(except)
+  xpath_exceptions <- glue::glue("
+    //SYMBOL_FUNCTION_CALL[ not({exceptions}) ]")
+
   assignments <- c(
     "LEFT_ASSIGN", # e.g. mean(x <- 1:4)
     "RIGHT_ASSIGN" # e.g. mean(1:4 -> x)
   )
+
   xpath_fun_call <- paste0(
+    xpath_exceptions,
     "
-    //SYMBOL_FUNCTION_CALL[not(text() = 'capture.output')]
     /parent::expr
     /following-sibling::expr[1]
-    /",
+    /"
+  )
+  xpath_fun_assigment <- paste0(
+    xpath_fun_call,
     assignments,
     collapse = " | "
   )
@@ -61,9 +77,13 @@ implicit_assignment_linter <- function() {
     /following-sibling::expr[1]
     /"
   )
-  xpath_controls <- paste0(rep(controls, each = length(assignments)), assignments, collapse = " | ")
+  xpath_controls_assignment <- paste0(
+    rep(controls, each = length(assignments)),
+    assignments,
+    collapse = " | "
+  )
 
-  xpath <- paste0(c(xpath_controls, xpath_fun_call), collapse = " | ")
+  xpath <- paste0(c(xpath_controls_assignment, xpath_fun_assigment), collapse = " | ")
 
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level

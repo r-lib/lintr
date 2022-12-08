@@ -79,6 +79,16 @@ test_that("implicit_assignment_linter makes exceptions for functions that captur
   linter <- implicit_assignment_linter()
 
   expect_lint("output <- capture.output(x <- f())", NULL, linter)
+  expect_lint("output <- capture.output(x <- f())", NULL, linter)
+
+  expect_lint("expect_warning(out <- f(-1))", NULL, linter)
+  expect_lint("expect_message(out <- f(-1))", NULL, linter)
+  expect_lint("expect_error(out <- f(-1))", NULL, linter)
+  expect_lint("expect_condition(out <- f(-1))", NULL, linter)
+  expect_lint("expect_no_warning(out <- f(-1))", NULL, linter)
+  expect_lint("expect_no_message(out <- f(-1))", NULL, linter)
+  expect_lint("expect_no_error(out <- f(-1))", NULL, linter)
+  expect_lint("expect_no_condition(out <- f(-1))", NULL, linter)
 })
 
 test_that("implicit_assignment_linter blocks disallowed usages", {

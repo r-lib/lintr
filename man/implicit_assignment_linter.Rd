@@ -4,7 +4,17 @@
 \alias{implicit_assignment_linter}
 \title{Avoid implicit assignment in function calls}
 \usage{
-implicit_assignment_linter()
+implicit_assignment_linter(
+  except = c("bquote", "capture.output", "expression", "expect_error", "expect_warning",
+    "expect_message", "expect_condition", "expect_no_error", "expect_no_warning",
+    "expect_no_message", "expect_no_condition", "expect_invisible", "expect_visible",
+    "expect_output", "expect_silent", "local", "quote", "test_that")
+)
+}
+\arguments{
+\item{except}{Character vector of functions to be excluded from linting.
+Use this to list explicitly defined backports, e.g. those imported from the {backports} package or manually
+defined in your package.}
 }
 \description{
 Assigning inside function calls makes the code difficult to read, and should
