@@ -13,6 +13,7 @@ linters: linters_with_defaults(
     expect_true_false_linter(),
     expect_type_linter(),
     for_loop_index_linter(),
+    implicit_assignment_linter(),
     implicit_integer_linter(),
     line_length_linter(120),
     missing_argument_linter(),
