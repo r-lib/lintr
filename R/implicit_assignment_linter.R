@@ -40,16 +40,26 @@ implicit_assignment_linter <- function() {
     "RIGHT_ASSIGN" # e.g. mean(1:4 -> x)
   )
   xpath_fun_call <- paste0(
-    "//SYMBOL_FUNCTION_CALL[not(text() = 'capture.output')]
+    "
+    //SYMBOL_FUNCTION_CALL[not(text() = 'capture.output')]
     /parent::expr
-    /following::expr[1]/",
+    /following::expr[1]
+    /",
     assignments,
     collapse = " | "
   )
 
   controls <- c(
-    "//IF/following::expr[1]/", # e.g. if (x <- 1L) { ... }
-    "//WHILE/following::expr[1]/" # e.g. while (x <- 0L) { ... }
+    # e.g. if (x <- 1L) { ... }
+    "
+    //IF
+    /following::expr[1]
+    /",
+    # e.g. while (x <- 0L) { ... }
+    "
+    //WHILE
+    /following::expr[1]
+    /"
   )
   xpath_controls <- paste0(rep(controls, each = length(assignments)), assignments, collapse = " | ")
 

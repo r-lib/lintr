@@ -3,8 +3,10 @@ test_that("implicit_assignment_linter skips allowed usages", {
 
   expect_lint("x <- 1L", NULL, linter)
   expect_lint("1L -> x", NULL, linter)
+  expect_lint("y <- if (is.null(x)) z else x", NULL, linter)
 
-  expect_lint("x <- mean(1:4)", NULL, linter)
+  expect_lint("abc <- mean(1:4)", NULL, linter)
+  expect_lint("mean(1:4) -> abc", NULL, linter)
 
   expect_lint(
     trim_some("
@@ -57,6 +59,16 @@ test_that("implicit_assignment_linter skips allowed usages", {
     foo <- function(x) {
       x <- x + 1
       return(x)
+    }"),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+    f <- function() {
+      p <- g()
+      p <- if (is.null(p)) x else p
     }"),
     NULL,
     linter
