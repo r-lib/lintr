@@ -7,7 +7,8 @@
 implicit_assignment_linter()
 }
 \description{
-Avoid implicit assignment in function calls
+Assigning inside function calls makes the code difficult to read, and should
+be avoided, except for functions that capture side-effects (e.g. \code{\link[=capture.output]{capture.output()}}).
 }
 \examples{
 # will produce lints
