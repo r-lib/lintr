@@ -36,7 +36,7 @@ test_that("implicit_assignment_linter skips allowed usages", {
   expect_lint(
     trim_some("
     foo <- function(x) {
-    x <- x + 1
+      x <- x + 1
       return(x)
     }"),
     NULL,

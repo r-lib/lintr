@@ -30,21 +30,20 @@
 #' @export
 implicit_assignment_linter <- function() {
   assignments <- c(
-    "LEFT_ASSIGN", # mean(x <- 1:4)
-    "RIGHT_ASSIGN" # mean(1:4 -> x)
+    "LEFT_ASSIGN", # e.g. mean(x <- 1:4)
+    "RIGHT_ASSIGN" # e.g. mean(1:4 -> x)
   )
-
-  controls <- c(
-    "//IF/following::expr/", # if (x <- 1L) { ... }
-    "//WHILE/following::expr/" # while (x <- 0L) { ... }
-  )
-  xpath_controls <- paste0(rep(controls, each = length(assignments)), assignments, collapse = " | ")
-
   xpath_fun_call <- paste0(
     "//SYMBOL_FUNCTION_CALL/parent::expr/following::expr[1]/",
     assignments,
     collapse = " | "
   )
+
+  controls <- c(
+    "//IF/following::expr/", # e.g. if (x <- 1L) { ... }
+    "//WHILE/following::expr/" # e.g. while (x <- 0L) { ... }
+  )
+  xpath_controls <- paste0(rep(controls, each = length(assignments)), assignments, collapse = " | ")
 
   xpath <- paste0(c(xpath_controls, xpath_fun_call), collapse = " | ")
 
