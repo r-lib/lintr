@@ -94,6 +94,11 @@ test_that("implicit_assignment_linter makes exceptions for functions that captur
 
   # rlang
   expect_lint("expr(a <- 1L)", NULL, linter)
+  expect_lint("quo(a <- 1L)", NULL, linter)
+  expect_lint("quos(a <- 1L)", NULL, linter)
+
+  # withr
+  expect_lint("with_options(list(digits = 3L), x <- getOption('digits'))", NULL, linter)
 
   # testthat
   expect_lint(
