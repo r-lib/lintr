@@ -4,6 +4,7 @@ test_that("implicit_assignment_linter skips allowed usages", {
   expect_lint("x <- 1L", NULL, linter)
   expect_lint("1L -> x", NULL, linter)
   expect_lint("y <- if (is.null(x)) z else x", NULL, linter)
+  expect_lint("for (x in 1:10) x <- x + 1", NULL, linter)
 
   expect_lint("abc <- mean(1:4)", NULL, linter)
   expect_lint("mean(1:4) -> abc", NULL, linter)
@@ -125,6 +126,8 @@ test_that("implicit_assignment_linter blocks disallowed usages", {
   expect_lint("if (1L -> x) TRUE", lint_message, linter)
   expect_lint("while (x <- 0L) FALSE", lint_message, linter)
   expect_lint("while (0L -> x) FALSE", lint_message, linter)
+  expect_lint("for (x in y <- 1:10) print(x)", lint_message, linter)
+  expect_lint("for (x in 1:10 -> y) print(x)", lint_message, linter)
 
   expect_lint("mean(x <- 1:4)", lint_message, linter)
   expect_lint("y <- median(x <- 1:4)", lint_message, linter)

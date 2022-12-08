@@ -77,6 +77,11 @@ implicit_assignment_linter <- function(except = c(
     "
     //WHILE
     /following-sibling::expr[1]
+    /",
+    # e.g. for (x in y <- 1:10) { ... }
+    "
+    //forcond
+    /expr[1]
     /"
   )
   xpath_controls_assignment <- paste0(
