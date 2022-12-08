@@ -34,6 +34,26 @@ test_that("implicit_assignment_linter skips allowed usages", {
 
   expect_lint(
     trim_some("
+    if (x > 20L) {
+      x <- x / 2.0
+    }"),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+    i <- 1
+    while (i < 6L) {
+      print(i)
+      i <- i + 1
+    }"),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
     foo <- function(x) {
       x <- x + 1
       return(x)
@@ -45,6 +65,7 @@ test_that("implicit_assignment_linter skips allowed usages", {
 
 test_that("implicit_assignment_linter makes exceptions for functions that capture side-effects", {
   linter <- implicit_assignment_linter()
+
   expect_lint("output <- capture.output(x <- f())", NULL, linter)
 })
 
@@ -58,6 +79,7 @@ test_that("implicit_assignment_linter blocks disallowed usages", {
   expect_lint("while (0L -> x) FALSE", lint_message, linter)
 
   expect_lint("mean(x <- 1:4)", lint_message, linter)
+  expect_lint("y <- median(x <- 1:4)", lint_message, linter)
   expect_lint(
     trim_some("
     foo <- function(x) {

@@ -48,8 +48,8 @@ implicit_assignment_linter <- function() {
   )
 
   controls <- c(
-    "//IF/following::expr/", # e.g. if (x <- 1L) { ... }
-    "//WHILE/following::expr/" # e.g. while (x <- 0L) { ... }
+    "//IF/following::expr[1]/", # e.g. if (x <- 1L) { ... }
+    "//WHILE/following::expr[1]/" # e.g. while (x <- 0L) { ... }
   )
   xpath_controls <- paste0(rep(controls, each = length(assignments)), assignments, collapse = " | ")
 
