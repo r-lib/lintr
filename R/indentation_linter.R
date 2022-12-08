@@ -141,16 +141,19 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
   }
 
   if (isTRUE(assignment_as_infix)) {
+    suppressing_tokens <- c("LEFT_ASSIGN", "EQ_ASSIGN", "EQ_SUB", "EQ_FORMALS")
+    xp_suppress <- glue::glue("preceding-sibling::{suppressing_tokens}[{xp_last_on_line}]")
+
+    restoring_tokens <- c("expr[SYMBOL_FUNCTION_CALL]", "OP-LEFT-BRACE")
+    xp_restore <- glue::glue("preceding-sibling::{restoring_tokens}")
+
+    # match the first ancestor expr that is either
+    #  * a suppressing token (<- or =) or
+    #  * a restoring token (braces or a function call)
+    # suppress the indent if the matched ancestor is a suppressing token
     infix_condition <- glue::glue("
-      and not(
-        ancestor::expr[
-          preceding-sibling::LEFT_ASSIGN[{xp_last_on_line}] or expr[SYMBOL_FUNCTION_CALL]
-        ][1][
-          preceding-sibling::LEFT_ASSIGN[{xp_last_on_line}]
-        ]
-      )
+      and not(ancestor::expr[{xp_or(c(xp_suppress, xp_restore))}][1][{xp_or(xp_suppress)}])
     ")
-    # suppress only infix operators that are not inside of a function call
   } else {
     infix_condition <- ""
   }
@@ -224,10 +227,10 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       if (isTRUE(change_begin <= change_end)) {
         to_indent <- seq(from = change_begin, to = change_end)
         expected_indent_levels[to_indent] <- find_new_indent(
-          expected_indent_levels[to_indent],
-          change_type,
-          indent,
-          as.integer(xml2::xml_attr(change, "col2"))
+          current_indent = expected_indent_levels[to_indent],
+          change_type = change_type,
+          indent = indent,
+          hanging_indent = as.integer(xml2::xml_attr(change, "col2"))
         )
         is_hanging[to_indent] <- change_type == "hanging"
       }
