@@ -45,9 +45,16 @@ implicit_assignment_linter <- function(except = c(
   "expect_output", "expect_silent",
   "local", "quo", "quos", "quote", "test_that"
 )) {
-  exceptions <- xp_text_in_table(except)
-  xpath_exceptions <- glue::glue("
+  stopifnot(is.character(except))
+
+  if (length(except) > 0L) {
+    exceptions <- xp_text_in_table(except)
+    xpath_exceptions <- glue::glue("
     //SYMBOL_FUNCTION_CALL[ not({exceptions}) ]")
+  } else {
+    xpath_exceptions <- "
+    //SYMBOL_FUNCTION_CALL"
+  }
 
   assignments <- c(
     "LEFT_ASSIGN", # e.g. mean(x <- 1:4)
