@@ -16,7 +16,7 @@ You can include code that doesn't lint as expected with the linter in question.
 For example,
 
 ```r
-lint(
+lintr::lint(
   text = "x = 1",
   linters = assignment_linter()
 )
@@ -34,19 +34,16 @@ and/or StackOverflow. There are more people there to answer questions.
 If it's a bug, you can create an issue with a reprex.
 
 If it's a false positive or false negative lint, you can either create an issue 
-with a reprex in `{lintr}` repository, or discuss the underlying style guide
-itself in the respective [repository](https://github.com/tidyverse/style/issues/).
+with a reprex in `{lintr}` repository, or discuss the underlying 
+[style guide](https://style.tidyverse.org/) itself in the respective
+[repository](https://github.com/tidyverse/style/issues/).
 
-Before opening a new issue, be sure to [search issues and pull requests](https://github.com/tidyverse/lintr/issues) to make sure the 
-bug hasn't been reported and/or already fixed in the development version. By 
+Before opening a new issue, be sure to 
+[search issues and pull requests](https://github.com/r-lib/lintr/issues/) to make 
+sure the bug hasn't been reported and/or already fixed in the development version. By 
 default, the search will be pre-populated with `is:issue is:open`. You can 
 [edit the qualifiers](https://help.github.com/articles/searching-issues-and-pull-requests/) 
 (e.g. `is:pr`, `is:closed`) as needed. For example, you'd simply
 remove `is:open` to search _all_ issues in the repo, open or closed.
-
-
-If you _are_ in the right place, and need to file an issue, please review the 
-["File issues"](https://www.tidyverse.org/contribute/#issues) paragraph from 
-the tidyverse contributing guidelines.
 
 Thanks for your help!
