@@ -22,6 +22,8 @@
 
 * `linters_with_defaults()` no longer erroneously marks linter factories as linters (#1725, @AshesITR).
 
+* Row names for `available_linters()` data frame are now contiguous (#1781, @IndrajeetPatil).
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
@@ -114,6 +116,8 @@
 
 * `unnecessary_nested_if_linter()` for checking unnecessary nested `if` statements where a single 
   `if` statement with appropriate conditional expression would suffice (@IndrajeetPatil and @AshesITR, #1778).
+
+* `implicit_assignment_linter()` for checking implicit assignments in function calls (@IndrajeetPatil and @AshesITR, #1777).
 
 ## Notes
 
