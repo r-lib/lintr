@@ -76,6 +76,26 @@ test_that("implicit_assignment_linter skips allowed usages", {
   )
 })
 
+test_that("implicit_assignment_linter respects except argument", {
+  expect_lint(
+    "local({ a <- 1L })",
+    NULL,
+    implicit_assignment_linter(except = character(0L))
+  )
+
+  expect_lint(
+    "local(a <- 1L)",
+    rex::rex("Avoid implicit assignments in function calls."),
+    implicit_assignment_linter(except = character(0L))
+  )
+
+  expect_lint(
+    "local(a <- 1L)",
+    NULL,
+    implicit_assignment_linter(except = "local")
+  )
+})
+
 test_that("implicit_assignment_linter makes exceptions for functions that capture side-effects", {
   linter <- implicit_assignment_linter()
 
