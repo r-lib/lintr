@@ -11,14 +11,31 @@ ten minutes it'll take you to learn what it's all about). For additional reprex
 pointers, check out the [Get help!](https://www.tidyverse.org/help/) section of
 the tidyverse site.
 
+The most useful function to create reprexes for `{lintr}` issues is `lint()`.
+You can include code that doesn't lint as expected with the linter in question.
+For example,
+
+```r
+lint(
+  text = "x = 1",
+  linters = assignment_linter()
+)
+```
+
+If code in question contains characters that need to be escaped, consider using
+raw strings instead.
+
 Armed with your reprex, the next step is to figure out [where to ask](https://www.tidyverse.org/help/#where-to-ask). 
 
-  * If it's a question: start with [community.rstudio.com](https://community.rstudio.com/), 
-    and/or StackOverflow. There are more people there to answer questions.  
-  * If it's a bug: you're in the right place, file an issue.  
-  * If you're not sure: let the community help you figure it out! If your 
-    problem _is_ a bug or a feature request, you can easily return here and 
-    report it. 
+If it's a clarification question (e.g. you don't know how to exclude certain 
+files from lint workflow), start with [community.rstudio.com](https://community.rstudio.com/), 
+and/or StackOverflow. There are more people there to answer questions.
+
+If it's a bug, you can create an issue with a reprex.
+
+If it's a false positive or false negative lint, you can either create an issue 
+with a reprex in `{lintr}` repository, or discuss the underlying style guide
+itself in the respective [repository](https://github.com/tidyverse/style/issues/).
 
 Before opening a new issue, be sure to [search issues and pull requests](https://github.com/tidyverse/lintr/issues) to make sure the 
 bug hasn't been reported and/or already fixed in the development version. By 
