@@ -74,6 +74,26 @@ test_that("implicit_assignment_linter skips allowed usages", {
     NULL,
     linter
   )
+
+  expect_lint(
+    trim_some("
+      lapply(x, function(xi) {
+        xi <- xi + 1
+        xi
+      })"),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      map(x, function(xi) {
+        xi <- xi + 1
+        xi
+      })"),
+    NULL,
+    linter
+  )
 })
 
 test_that("implicit_assignment_linter makes exceptions for functions that capture side-effects", {
