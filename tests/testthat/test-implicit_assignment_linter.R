@@ -74,6 +74,60 @@ test_that("implicit_assignment_linter skips allowed usages", {
     NULL,
     linter
   )
+
+  expect_lint(
+    trim_some("
+      map(
+        .x = 1:4,
+        .f = ~ (x <- .x + 1)
+      )"),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      map(
+        .x = 1:4,
+        .f = ~ .x + 1 -> x
+      )"),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      map(
+        .x = 1:4,
+        .f = ~ {
+          x <- .x + 1
+          x
+        }
+      )"),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      lapply(1:4, function(x) {
+        x <- x + 1
+        x
+      })"),
+    NULL,
+    linter
+  )
+
+  skip_if_not_r_version("4.1")
+  expect_lint(
+    trim_some("
+      map(1:4, \\(x) {
+        x <- x + 1
+        x
+      })"),
+    NULL,
+    linter
+  )
 })
 
 test_that("implicit_assignment_linter respects except argument", {
