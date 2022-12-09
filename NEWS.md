@@ -84,6 +84,8 @@
 * `literal_coercion_linter()` reports a replacement in the lint message, e.g. code like `as.integer(1)` will
   suggest using `1L` instead, and code like `as.numeric(NA)` will suggest using `NA_real_` instead (#1439, @MichaelChirico)
 
+* Added `format()` functions for `lint` and `lints` (#1784, @AshesITR)
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
