@@ -16,7 +16,9 @@ You can include code that doesn't lint as expected with the linter in question.
 For example,
 
 ```r
-lintr::lint(
+library(lintr)
+
+lint(
   text = "x = 1",
   linters = assignment_linter()
 )
