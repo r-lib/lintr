@@ -1,6 +1,6 @@
 test_that("brace_linter lints braces correctly", {
   open_curly_msg <- rex::rex(
-    "Opening curly braces should never go on their own line and should always be followed by a new line."
+    "Opening curly braces should never go on their own line"
   )
   closed_curly_msg <- rex::rex(paste(
     "Closing curly-braces should always be on their own line,",
@@ -249,8 +249,8 @@ test_that("brace_linter lints spaces before open braces", {
                      {2}
     "),
     list(
-      rex::rex("Opening curly braces should never go on their own line and should always be followed by a new line."),
-      rex::rex("Closing curly-braces should always be on their own line, unless they are followed by an else.")
+      rex::rex("Opening curly braces should never go on their own line"),
+      rex::rex("Closing curly-braces should always be on their own line")
     ), # , but not lint_msg
     linter
   )
@@ -398,8 +398,8 @@ test_that("empty brace expressions are always allowed inline", {
 
 test_that("formula syntax is linted properly", {
   linter <- brace_linter()
-  lint_msg_open <- rex::rex("Opening curly braces should never go on their own line and should always be followed by a new line.")
-  lint_msg_closed <- rex::rex("Closing curly-braces should always be on their own line, unless they are followed by an else.")
+  lint_msg_open <- rex::rex("Opening curly braces should never go on their own line")
+  lint_msg_closed <- rex::rex("Closing curly-braces should always be on their own line")
 
   expect_lint(
     trim_some("
@@ -455,8 +455,8 @@ test_that("formula syntax is linted properly", {
 
 test_that("code with pipes is handled correctly", {
   linter <- brace_linter()
-  lint_msg_open <- rex::rex("Opening curly braces should never go on their own line and should always be followed by a new line.")
-  lint_msg_closed <- rex::rex("Closing curly-braces should always be on their own line, unless they are followed by an else.")
+  lint_msg_open <- rex::rex("Opening curly braces should never go on their own line")
+  lint_msg_closed <- rex::rex("Closing curly-braces should always be on their own line")
 
   expect_lint(
     trim_some("
