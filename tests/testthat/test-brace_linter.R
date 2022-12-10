@@ -73,16 +73,6 @@ test_that("brace_linter lints braces correctly", {
     linter
   )
 
-  expect_lint(
-    trim_some("
-      out <- lapply(stuff, function(i) {
-        do_something(i)
-      }) %>% unlist
-    "),
-    NULL,
-    linter
-  )
-
   # ,<\n>{ is allowed
   expect_lint(
     trim_some("
@@ -143,22 +133,6 @@ test_that("brace_linter lints braces correctly", {
           message('It\\'s stupid, but proves my point.')
         }
       )
-    "),
-    NULL,
-    linter
-  )
-
-  # %>%\n{ is allowed
-  expect_lint(
-    trim_some("
-    letters %>%
-      {
-        tibble(
-          lo = .,
-          hi = toupper(.)
-        )
-      } %>%
-      mutate(row_id = row_number())
     "),
     NULL,
     linter
@@ -348,6 +322,7 @@ test_that("brace_linter lints function expressions correctly", {
 
 test_that("brace_linter lints if/else matching braces correctly", {
   linter <- brace_linter()
+
   expect_lint("if (TRUE) 1 else 2", NULL, linter)
   expect_lint("if (TRUE) 1", NULL, linter)
 
@@ -419,4 +394,162 @@ test_that("empty brace expressions are always allowed inline", {
   expect_lint("while (FALSE)\n{ }", rex::rex("Opening curly braces"), brace_linter())
   expect_lint("while (FALSE) {}", NULL, brace_linter(allow_single_line = TRUE))
   expect_lint("while (FALSE) { }", NULL, brace_linter(allow_single_line = TRUE))
+})
+
+test_that("formula syntax is linted properly", {
+  linter <- brace_linter()
+  lint_msg_open <- rex::rex("Opening curly braces should never go on their own line and should always be followed by a new line.")
+  lint_msg_closed <- rex::rex("Closing curly-braces should always be on their own line, unless they are followed by an else.")
+
+  expect_lint(
+    trim_some("
+      map(
+        .x = 1:4,
+        .f = ~ {
+                .x + 1
+              }
+      )"),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      map(
+        .x = 1:4,
+        .f = ~ {.x + 1}
+      )"),
+    list(
+      list(message = lint_msg_open, line_number = 3L, column_number = 10L),
+      list(message = lint_msg_closed, line_number = 3L, column_number = 17L)
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      map(
+        .x = 1:4,
+        .f = ~ { .x + 1
+              }
+      )"),
+    list(
+      list(message = lint_msg_open, line_number = 3L, column_number = 10L)
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      map(
+        .x = 1:4,
+        .f = ~ {
+                .x + 1}
+      )"),
+    list(
+      list(message = lint_msg_closed, line_number = 4L, column_number = 17L)
+    ),
+    linter
+  )
+})
+
+test_that("code with pipes is handled correctly", {
+  linter <- brace_linter()
+  lint_msg_open <- rex::rex("Opening curly braces should never go on their own line and should always be followed by a new line.")
+  lint_msg_closed <- rex::rex("Closing curly-braces should always be on their own line, unless they are followed by an else.")
+
+  expect_lint(
+    trim_some("
+      out <- lapply(stuff, function(i) {
+        do_something(i)
+      }) %>% unlist
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      1:4 %>% {
+          sum(.)
+        }
+    "),
+    NULL,
+    linter
+  )
+
+  # %>%\n{ is allowed
+  expect_lint(
+    trim_some("
+      1:4 %>%
+        {
+          sum(.)
+        }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      1:4 %>% { sum(.)
+        }
+    "),
+    list(
+      list(message = lint_msg_open, line_number = 1L, column_number = 9L)
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      1:4 %>%
+        {
+          sum(.) }
+    "),
+    list(
+      list(message = lint_msg_closed, line_number = 3L, column_number = 12L)
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      1:4 %>%
+        { sum(.) }
+    "),
+    list(
+      list(message = lint_msg_closed, line_number = 2L, column_number = 12L)
+    ),
+    linter
+  )
+
+  expect_lint(
+    "1:4 %>% { sum(.) }",
+    list(
+      list(message = lint_msg_open, line_number = 1L, column_number = 9L),
+      list(message = lint_msg_closed, line_number = 1L, column_number = 18L)
+    ),
+    linter
+  )
+
+  skip_if_not_r_version("4.1.0")
+
+  expect_lint(
+    trim_some("
+      out <- lapply(stuff, function(i) {
+        do_something(i)
+      }) |> unlist()
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    "local({ 1:4 |> sum() })",
+    list(
+      list(message = lint_msg_open, line_number = 1L, column_number = 7L)
+    ),
+    linter
+  )
 })
