@@ -32,7 +32,7 @@ test_that("`sarif_output` produces valid files", {
 
   withr::with_tempdir({
     sarif <- sarif_output(l)
-    sarif <- fromJSON(
+    sarif <- jsonlite::fromJSON(
       "lintr_results.sarif",
       simplifyVector = TRUE,
       simplifyDataFrame = FALSE,
