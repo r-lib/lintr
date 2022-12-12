@@ -702,6 +702,11 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
     sarif$runs[[1L]]$results <- append(sarif$runs[[1L]]$results, list(one_result))
   }
 
+  # if lints is empty, add empty results list
+  if (length(lints) == 0L) {
+    sarif$runs[[1L]]$results <- list()
+  }
+
   write(jsonlite::toJSON(sarif, pretty = TRUE, auto_unbox = TRUE), filename)
 }
 
