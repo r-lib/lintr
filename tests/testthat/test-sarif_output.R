@@ -22,3 +22,24 @@ test_that("`sarif_output` writes expected files", {
     expect_true(file.exists("myfile.sarif"))
   })
 })
+
+test_that("`sarif_output` produces valid files", {
+  l <- lint_package(
+    test_path("dummy_packages", "clean"),
+    linters = default_linters,
+    parse_settings = FALSE
+  )
+
+  withr::with_tempdir({
+    sarif <- sarif_output(l)
+    sarif <- jsonlite::fromJSON(
+      "lintr_results.sarif",
+      simplifyVector = TRUE,
+      simplifyDataFrame = FALSE,
+      simplifyMatrix = FALSE
+    )
+
+    expect_false(is.null(sarif$runs))
+    expect_false(is.null(sarif$runs[[1L]]$results))
+  })
+})
