@@ -484,22 +484,26 @@ get_source_expression <- function(source_expression, error = identity) {
   parse_error <- FALSE
 
   tryCatch(
-    source_expression$parsed_content <- parse(
-      text = source_expression$content,
-      srcfile = source_expression,
-      keep.source = TRUE
-    ),
+    {
+      source_expression$parsed_content <- parse(
+        text = source_expression$content,
+        srcfile = source_expression,
+        keep.source = TRUE
+      )
+    },
     error = error
   )
 
   # This needs to be done twice to avoid
   #   https://bugs.r-project.org/bugzilla/show_bug.cgi?id=16041
   e <- tryCatch(
-    source_expression$parsed_content <- parse(
-      text = source_expression$content,
-      srcfile = source_expression,
-      keep.source = TRUE
-    ),
+    {
+      source_expression$parsed_content <- parse(
+        text = source_expression$content,
+        srcfile = source_expression,
+        keep.source = TRUE
+      )
+    },
     error = error
   )
 
@@ -510,7 +514,9 @@ get_source_expression <- function(source_expression, error = identity) {
 
   # Triggers an error if the lines contain invalid characters.
   e <- tryCatch(
-    nchar(source_expression$content, type = "chars"),
+    {
+      nchar(source_expression$content, type = "chars")
+    },
     error = error
   )
 
