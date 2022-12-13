@@ -37,3 +37,10 @@ head.my_s3_object <- function(x, ...) {
 `names<-.my_custom_class` <- function(x, value) {
   NULL
 }
+
+#' @export
+#' Defined S3 generic in R/eat_me.R
+#' Tests #1808
+eat_me.liiiiiiiiiiiiiiiiiiiiiiiiiiist <- function(x, ...) {
+  NULL
+}

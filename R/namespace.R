@@ -1,5 +1,5 @@
 # Parse namespace files and return imports exports, methods
-namespace_imports <- function(path = find_package()) {
+namespace_imports <- function(path = find_package(".")) {
   namespace_data <- tryCatch(
     parseNamespaceFile(basename(path), package.lib = file.path(path, "..")),
     error = function(e) NULL
@@ -35,7 +35,7 @@ safe_get_exports <- function(ns) {
 }
 
 empty_namespace_data <- function() {
-  data.frame(pkg = character(), ns = character(), stringsAsFactors = FALSE)
+  data.frame(pkg = character(), fun = character(), stringsAsFactors = FALSE)
 }
 
 # filter namespace_imports() for S3 generics
@@ -52,6 +52,22 @@ imported_s3_generics <- function(ns_imports) {
   )
 
   ns_imports[is_generic, ]
+}
+
+exported_s3_generics <- function(path = find_package(".")) {
+  namespace_data <- tryCatch(
+    parseNamespaceFile(basename(path), package.lib = file.path(path, "..")),
+    error = function(e) NULL
+  )
+
+  if (length(namespace_data$S3methods) == 0L || nrow(namespace_data$S3methods) == 0L) {
+    return(empty_namespace_data())
+  }
+
+  data.frame(
+    pkg = basename(path),
+    fun = unique(namespace_data$S3methods[, 1L])
+  )
 }
 
 is_s3_generic <- function(fun) {
