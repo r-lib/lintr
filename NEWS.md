@@ -11,7 +11,7 @@
 
 * `object_usage_linter()` no longer silently ignores usage warnings that don't contain a quoted name (#1714, @AshesITR)
 
-* `namespace_linter()` correctly recognizes backticked operators to be exported from respectives namespaces (like `` rlang::`%||%` ``) (#1752, @IndrajeetPatil)
+* `namespace_linter()` correctly recognizes backticked operators to be exported from respective namespaces (like `` rlang::`%||%` ``) (#1752, @IndrajeetPatil)
 
 * `lint_package()` correctly finds a package from within a subdir if the `path` points to anywhere within the package (#1759, @AshesITR)
 
