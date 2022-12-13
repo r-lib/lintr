@@ -2,7 +2,7 @@
 
 ## Bug fixes
 
-* `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
+* `fixed_regex_linter()` no longer fails with regular expression patterns `"\\;"` and `\\/` (#1545, #1845, @IndrajeetPatil).
 
 * `get_source_expressions()` can handle Sweave/Rmarkdown documents with reference chunks like `<<ref_file>>` (#779, @MichaelChirico).
   Note that these are simply skipped, rather than attempting to retrieve the reference and also lint it.
