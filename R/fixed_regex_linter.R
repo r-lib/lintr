@@ -235,7 +235,7 @@ get_token_replacement <- function(token_content, token_type) {
       token_content
     }
   } else { # char_escape token
-    if (rex::re_matches(token_content, rex::rex("\\", one_of("^${}().,~*+?|[]\\<>=:;/_-!@#%&,~")))) {
+    if (rex::re_matches(token_content, rex::rex("\\", one_of("^${}().*+?|[]\\<>=:;/_-!@#%&,~")))) {
       substr(token_content, start = 2L, stop = nchar(token_content))
     } else {
       eval(parse(text = paste0('"', token_content, '"')))
