@@ -27,6 +27,7 @@ drink_me.data.frame <- function(x, ...) {
 }
 
 #' head on my_s3_object
+#' @importFrom utils head
 #' @export
 head.my_s3_object <- function(x, ...) {
   NULL
