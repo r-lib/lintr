@@ -20,7 +20,8 @@ install.packages("lintr")
 Or the development version from GitHub:
 
 ```R
-devtools::install_github("r-lib/lintr")
+# install.packages("remotes")
+remotes::install_github("r-lib/lintr")
 ```
 
 ## Usage
@@ -50,3 +51,7 @@ names(lintr::linters_with_tags(tags = NULL))
 You can also run lintr during continuous integration or within your IDE or text editor. See `vignette("continuous-integration")` and `vignette("editors")` for more details.
 
 Without further configuration, this will run the [default linters](https://lintr.r-lib.org/reference/default_linters.html). See `vignette("lintr")` to learn how to modify these defaults.
+
+## Code of Conduct
+
+Please note that the lintr project is released with a [Contributor Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/). By contributing to this project, you agree to abide by its terms.

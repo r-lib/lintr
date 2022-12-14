@@ -20,6 +20,15 @@
 
 * `lint_package()` correctly finds a package from within a subdir if the `path` points to anywhere within the package (#1759, @AshesITR)
 
+* Improved error behavior in `Lint()`, `lint()` and `xml_nodes_to_lints()` (#1427, #763, @AshesITR)
+  + `Lint()` validates its inputs more thoroughly, preventing errors during `print.Lints` like "Error in rep.int(character, length) : invalid 'times' value:".
+  + `lint()` no longer tries to create an expression tree with unexpected end of input errors, because they can be broken.
+  + `xml_nodes_to_lints()` warns if it can't find lint locations and uses dummy locations as a fallback.
+
+* `linters_with_defaults()` no longer erroneously marks linter factories as linters (#1725, @AshesITR).
+
+* Row names for `available_linters()` data frame are now contiguous (#1781, @IndrajeetPatil).
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
@@ -70,6 +79,8 @@
 
 * `implicit_integer_linter()` gains parameter `allow_colon` to skip lints on expressions like `1:10` (#1155, @MichaelChirico)
 
+* `infix_spaces_linter()` supports the native R pipe `|>` (#1793, @AshesITR)
+
 * `unneeded_concatenation_linter()` no longer lints on `c(...)` (i.e., passing `...` in a function call)
   when `allow_single_expression = FALSE` (#1696, @MichaelChirico)
 
@@ -77,6 +88,8 @@
 
 * `literal_coercion_linter()` reports a replacement in the lint message, e.g. code like `as.integer(1)` will
   suggest using `1L` instead, and code like `as.numeric(NA)` will suggest using `NA_real_` instead (#1439, @MichaelChirico)
+
+* Added `format()` functions for `lint` and `lints` (#1784, @AshesITR)
 
 ### New linters
 
@@ -104,8 +117,12 @@
 
 * `routine_registration_linter()` for identifying native routines that don't use registration (`useDynLib` in the `NAMESPACE`; @MichaelChirico)
 
-* `indentation_linter()` for checking that the indentation conforms to 2-space Tidyverse-style (@AshesITR and @dgkf, #1411).
+* `indentation_linter()` for checking that the indentation conforms to 2-space Tidyverse-style (@AshesITR and @dgkf, #1411, #1792).
 
+* `unnecessary_nested_if_linter()` for checking unnecessary nested `if` statements where a single 
+  `if` statement with appropriate conditional expression would suffice (@IndrajeetPatil and @AshesITR, #1778).
+
+* `implicit_assignment_linter()` for checking implicit assignments in function calls (@IndrajeetPatil and @AshesITR, #1777).
 
 ## Notes
 
@@ -161,6 +178,8 @@
   (#1475, @IndrajeetPatil).
 
 ## New and improved features
+
+* New `sort_linter()` to detect `x[order(x)]` and recommend the faster and clearer alternative: `sort(x)` (#1528, @Bisaloo)
 
 * `unreachable_code_linter()` ignores trailing comments if they match a closing nolint block (#1347, @AshesITR).
 

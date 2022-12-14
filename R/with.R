@@ -48,14 +48,6 @@ modify_defaults <- function(defaults, ...) {
   defaults[nms] <- vals
 
   res <- defaults[!vapply(defaults, is.null, logical(1L))]
-
-  res[] <- lapply(res, function(x) {
-    prev_class <- class(x)
-    if (is.function(x) && !is_linter(x)) {
-      class(x) <- c("linter", prev_class)
-    }
-    x
-  })
   res <- res[platform_independent_order(names(res))]
   res
 }
@@ -81,14 +73,16 @@ modify_defaults <- function(defaults, ...) {
 #' all.equal(linters_with_defaults(), linters_with_tags("default"))
 #'
 #' # Get all linters useful for package development
-#' linters_with_tags(tags = "package_development")
+#' linters <- linters_with_tags(tags = "package_development")
+#' names(linters)
 #'
 #' # Get all linters provided by lintr
-#' linters_with_tags(tags = NULL)
+#' linters <- linters_with_tags(tags = NULL)
+#' names(linters)
 #'
 #' # Get all linters tagged as "default" from lintr and mypkg
-#' \dontrun{
-#' linters_with_tags("default", packages = c("lintr", "mypkg"))
+#' if (FALSE) {
+#'   linters_with_tags("default", packages = c("lintr", "mypkg"))
 #' }
 #' @export
 linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "deprecated") {

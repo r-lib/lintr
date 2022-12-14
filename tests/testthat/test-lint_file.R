@@ -171,6 +171,17 @@ test_that("compatibility warnings work", {
     fixed = TRUE
   )
 
+  # Also within `linters_with_defaults()` (#1725)
+  expect_warning(
+    expect_lint(
+      "a = 42",
+      "Use <-",
+      linters = linters_with_defaults(assignment_linter)
+    ),
+    regexp = "Passing linters as variables",
+    fixed = TRUE
+  )
+
   expect_warning(
     expect_lint(
       "a == NA",

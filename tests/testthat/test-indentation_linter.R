@@ -89,6 +89,16 @@ test_that("indentation linter flags unindented expressions", {
     linter
   )
 
+  # comments do not suppress block indents (#1751)
+  expect_lint(
+    trim_some("
+      a <- # comment
+        42L
+    "),
+    NULL,
+    linter
+  )
+
   # assignment triggers indent
   expect_lint(
     trim_some("
@@ -156,6 +166,170 @@ test_that("function argument indentation works in tidyverse-style", {
     trim_some("
       function(a = 1L,
                b = 2L) {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  # new style (#1754)
+  expect_lint(
+    trim_some("
+      function(
+          a = 1L,
+          b = 2L) {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(
+            a = 1L,
+            b = 2L) {
+        a + b
+      }
+    "),
+    "Indentation should be 4",
+    linter
+  )
+
+  # Hanging is only allowed if there is an argument next to "("
+  expect_lint(
+    trim_some("
+      function(
+               a = 1L,
+               b = 2L) {
+        a + b
+      }
+    "),
+    "Indentation should be 4",
+    linter
+  )
+
+  # Block is only allowed if there is no argument next to ")"
+  expect_lint(
+    trim_some("
+      function(
+        a = 1L,
+        b = 2L) {
+        a + b
+      }
+    "),
+    "Indentation should be 4",
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(
+        a = 1L,
+        b = 2L
+      ) {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  # anchor is correctly found with assignments as well
+  expect_lint(
+    trim_some("
+      test <- function(a = 1L,
+                       b = 2L) {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(a = 1L,
+         b = 2L) {
+        a + b
+      }
+    "),
+    "Hanging",
+    linter
+  )
+
+  # This is a case for brace_linter
+  expect_lint(
+    trim_some("
+      function(a = 1L,
+               b = 2L)
+      {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
+})
+
+test_that("function argument indentation works in always-hanging-style", {
+  linter <- indentation_linter(hanging_indent_style = "always")
+  expect_lint(
+    trim_some("
+      function(a = 1L,
+               b = 2L) {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(
+          a = 1L,
+          b = 2L) {
+        a + b
+      }
+    "),
+    "Hanging",
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(
+               a = 1L,
+               b = 2L) {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  # Block is only allowed if there is no argument next to ")"
+  expect_lint(
+    trim_some("
+      function(
+        a = 1L,
+        b = 2L) {
+        a + b
+      }
+    "),
+    "Hanging",
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(
+        a = 1L,
+        b = 2L
+      ) {
         a + b
       }
     "),
@@ -492,4 +666,32 @@ test_that("consecutive same-level lints are suppressed", {
     ),
     indentation_linter()
   )
+})
+
+test_that("native pipe is supported", {
+  skip_if_not_r_version("4.1")
+  linter <- indentation_linter()
+
+  expect_lint(
+    trim_some("
+      a |>
+        foo()
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      b <- a |>
+        foo()
+    "),
+    NULL,
+    linter
+  )
+})
+
+test_that("it doesn't error on invalid code", {
+  # Part of #1427
+  expect_lint("function() {)", list(linter = "error", message = rex::rex("unexpected ')'")), indentation_linter())
 })
