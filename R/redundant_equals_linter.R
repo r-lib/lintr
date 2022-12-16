@@ -31,8 +31,9 @@
 #' )
 #'
 #' @evalRd rd_tags("redundant_equals_linter")
-#' @seealso [linters] for a complete list of linters available in lintr. \cr
-#'   [outer_negation_linter()]
+#' @seealso
+#' - [linters] for a complete list of linters available in lintr.
+#' - [outer_negation_linter()]
 #' @export
 redundant_equals_linter <- function() {
   xpath <- paste0(
