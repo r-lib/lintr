@@ -252,6 +252,18 @@ test_that("fixed replacement is correct with UTF-8", {
 #   up in practice is for '\<', which is a special character in default
 #   regex but not in PCRE. Empirically relevant for HTML-related regex e.g. \\<li\\>
 
+special_char <- function() {
+  # non-printable unicode behaves wildly different with encodeString() across R versions and platforms.
+  # nonetheless, all of these expressions are valid replacements.
+  if (getRversion() < "4.1.0") {
+    "abc\\U000a0defghi"
+  } else if (.Platform$OS.type == "windows") {
+    "abc\U{0a0def}ghi"
+  } else {
+    "abc\\U{0a0def}ghi"
+  }
+}
+
 # styler: off
 patrick::with_parameters_test_that("fixed replacements are correct", {
   skip_if(
@@ -280,18 +292,7 @@ patrick::with_parameters_test_that("fixed replacements are correct", {
   "[\\123]", "[\\123]", "S",
   "a[*]b", "a[*]b", "a*b",
   "abcdefg", "abcdefg", "abcdefg",
-  "abc\\U{A0DEF}ghi", "abc\\U{A0DEF}ghi",
-  {
-    # non-printable unicode behaves wildly different with encodeString() across R versions and platforms.
-    # nonetheless, all of these expressions are valid replacements.
-    if (getRversion() < "4.1.0") {
-      "abc\\U000a0defghi"
-    } else if (.Platform$OS.type == "windows") {
-      "abc\U{0a0def}ghi"
-    } else {
-      "abc\\U{0a0def}ghi"
-    }
-  },
+  "abc\\U{A0DEF}ghi", "abc\\U{A0DEF}ghi", special_char(),
   "a-z", "a-z", "a-z",
   "[\\n]", "[\\n]", "\\n",
   "\\n", "\n", "\\n",
