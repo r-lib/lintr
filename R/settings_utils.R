@@ -10,7 +10,7 @@ has_rproj <- function(path) {
 find_package <- function(path, allow_rproj = FALSE, max_depth = 2L) {
   path <- normalizePath(path, mustWork = !allow_rproj)
   if (allow_rproj) {
-    found <- function(path) has_description(path) || has_rproj(path))
+    found <- function(path) has_description(path) || has_rproj(path)
   } else {
     found <- function(path) has_description(path)
   }
