@@ -97,5 +97,5 @@ test_that("all_linters contains all available linters", {
   all_linters <- all_linters(packages = "lintr")
 
   expect_identical(linters_with_tags(NULL, packages = "lintr"), all_linters)
-  expect_identical(length(all_linters), nrow(available_linters()))
+  expect_length(all_linters, nrow(available_linters()))
 })
