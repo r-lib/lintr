@@ -45,7 +45,7 @@ implicit_assignment_linter <- function(except = c(
   "expect_output", "expect_silent",
   "local", "quo", "quos", "quote", "test_that"
 )) {
-  if (!is.null(except)) stopifnot(is.character(except))
+  stopifnot(is.null(except) || is.character(except))
 
   if (length(except) > 0L) {
     exceptions <- xp_text_in_table(except)
