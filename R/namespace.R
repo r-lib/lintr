@@ -1,4 +1,4 @@
-  # Parse namespace files and return imports exports, methods
+# Parse namespace files and return imports exports, methods
 namespace_imports <- function(path = find_package(".")) {
   namespace_data <- tryCatch(
     parseNamespaceFile(basename(path), package.lib = file.path(path, "..")),
