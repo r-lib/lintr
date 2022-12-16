@@ -85,11 +85,12 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     # run here, not in the factory, to allow for run- vs. "compile"-time differences in package structure
     namespaces <- lapply(packages, function(package) tryCatch(getNamespace(package), error = identity))
     failed_namespace <- vapply(namespaces, inherits, "condition", FUN.VALUE = logical(1L))
+
     # nocov start
     if (any(failed_namespace)) {
       stop(
-        "Failed to retrieve namespaces for one or more of the packages. ",
-        "Please report an issue at https://github.com/r-lib/lintr/issues."
+        "Failed to retrieve namespaces for one or more of the packages used with `::` or `:::`.",
+        "Please report the issue at https://github.com/r-lib/lintr/issues."
       )
     }
     # nocov end
