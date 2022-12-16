@@ -69,7 +69,7 @@ find_default_encoding <- function(filename) {
     return(NULL)
   }
 
-  root_path <- find_rproj_or_package(filename)
+  root_path <- find_package(filename, allow_rproj = TRUE)
   rproj_enc <- get_encoding_from_dcf(find_rproj_at(root_path))
   if (!is.null(rproj_enc)) {
     return(rproj_enc)
