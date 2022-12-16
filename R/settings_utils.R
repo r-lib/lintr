@@ -3,35 +3,27 @@ has_description <- function(path) {
   !is.na(desc_info$size) && desc_info$size > 0.0 && !desc_info$isdir
 }
 
-find_package <- function(path) {
-  path <- normalizePath(path)
-  depth <- 2L
-  while (!has_description(path)) {
-    path <- dirname(path)
-    if (is_root(path) || depth <= 0L) {
-      return(NULL)
-    }
-    depth <- depth - 1L
-  }
-  path
-}
-
-find_rproj_or_package <- function(path) {
-  path <- normalizePath(path, mustWork = FALSE)
-
-  depth <- 2L
-  while (!(has_description(path) || has_rproj(path))) {
-    path <- dirname(path)
-    if (is_root(path) || depth <= 0L) {
-      return(NULL)
-    }
-    depth <- depth - 1L
-  }
-  path
-}
-
 has_rproj <- function(path) {
-  length(head(Sys.glob(file.path(path, "*.Rproj")), n = 1L)) == 1L
+  length(Sys.glob(file.path(path, "*.Rproj"))) > 0L
+}
+
+find_package <- function(path, allow_rproj = FALSE, max_depth = 2L) {
+  path <- normalizePath(path, mustWork = !allow_rproj)
+  if (allow_rproj) {
+    found <- function(path) has_description(path) || has_rproj(path))
+  } else {
+    found <- function(path) has_description(path)
+  }
+
+  depth <- max_depth
+  while (!found(path)) {
+    path <- dirname(path)
+    if (is_root(path) || depth <= 0L) {
+      return(NULL)
+    }
+    depth <- depth - 1L
+  }
+  path
 }
 
 find_rproj_at <- function(path) {
