@@ -39,12 +39,35 @@ test_that("fixed_regex_linter blocks simple disallowed usages", {
   expect_lint("gregexpr('a-z', y)", lint_msg, linter)
   expect_lint("regexec('\\\\$', x)", lint_msg, linter)
   expect_lint("grep('\n', x)", lint_msg, linter)
-  expect_lint("grep('\\\\;', x)", lint_msg, linter)
-  expect_lint("grep('\\\\/', x)", lint_msg, linter)
 
   # naming the argument doesn't matter (if it's still used positionally)
   expect_lint("gregexpr(pattern = 'a-z', y)", lint_msg, linter)
 })
+
+patrick::with_parameters_test_that(
+  "fixed_regex_linter is robust to unrecognized escapes error",
+  {
+    expect_lint(
+      sprintf("grep('\\\\%s', x)", char),
+      rex::rex("This regular expression is static"),
+      fixed_regex_linter()
+    )
+
+    expect_lint(
+      sprintf("strsplit('a%sb', '\\\\%s')", char, char),
+      rex::rex("This regular expression is static"),
+      fixed_regex_linter()
+    )
+  },
+  .cases = data.frame(
+    char = c(
+      "^", "$", "{", "}", "(", ")", ".", "*", "+", "?",
+      "|", "[", "]", "\\\\", "<", ">", "=", ":", ";", "/",
+      "_", "-", "!", "@", "#", "%", "&", "~"
+    ),
+    stringsAsFactors = FALSE
+  )
+)
 
 test_that("fixed_regex_linter catches regex like [.] or [$]", {
   linter <- fixed_regex_linter()
@@ -79,8 +102,6 @@ test_that("fixed_regex_linter catches calls to strsplit as well", {
   linter <- fixed_regex_linter()
   lint_msg <- rex::rex("This regular expression is static")
 
-  expect_lint("strsplit('a;b', '\\\\;')", lint_msg, linter)
-  expect_lint("strsplit('a/b', '\\\\/')", lint_msg, linter)
   expect_lint("strsplit(x, '\\\\.')", lint_msg, linter)
   expect_lint("strsplit(x, '[.]')", lint_msg, linter)
 
