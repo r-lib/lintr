@@ -45,7 +45,9 @@ if (FALSE) {
 }
 }
 \seealso{
-\link{linters_with_defaults} for basing off lintr's set of default linters.
-\link{available_linters} to get a data frame of available linters.
-\link{linters} for a complete list of linters available in lintr.
+\itemize{
+\item \link{linters_with_defaults} for basing off lintr's set of default linters.
+\item \link{available_linters} to get a data frame of available linters.
+\item \link{linters} for a complete list of linters available in lintr.
+}
 }

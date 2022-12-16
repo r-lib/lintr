@@ -65,9 +65,10 @@ modify_defaults <- function(defaults, ...) {
 #'
 #' @return A modified list of linters.
 #' @seealso
-#' [linters_with_defaults] for basing off lintr's set of default linters.
-#' [available_linters] to get a data frame of available linters.
-#' [linters] for a complete list of linters available in lintr.
+#' - [linters_with_defaults] for basing off lintr's set of default linters.
+#' - [available_linters] to get a data frame of available linters.
+#' - [linters] for a complete list of linters available in lintr.
+#'
 #' @examples
 #' # `linters_with_defaults()` and `linters_with_tags("default")` are the same:
 #' all.equal(linters_with_defaults(), linters_with_tags("default"))
@@ -115,6 +116,23 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
   }
 
   modify_defaults(..., defaults = tagged_linters)
+}
+
+#' Create a linter configuration based on all available linters
+#'
+#' @inheritParams linters_with_tags
+#'
+#' @examples
+#' names(all_linters())
+#'
+#' @seealso
+#' - [linters_with_defaults] for basing off lintr's set of default linters.
+#' - [linters_with_tags] for basing off tags attached to linters, possibly across multiple packages.
+#' - [available_linters] to get a data frame of available linters.
+#' - [linters] for a complete list of linters available in lintr.
+#' @export
+all_linters <- function(packages = "lintr") {
+  linters_with_tags(tags = NULL, packages = packages)
 }
 
 #' Create a linter configuration based on defaults
