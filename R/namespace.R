@@ -1,4 +1,4 @@
-# Parse namespace files and return imports exports, methods
+  # Parse namespace files and return imports exports, methods
 namespace_imports <- function(path = find_package(".")) {
   namespace_data <- tryCatch(
     parseNamespaceFile(basename(path), package.lib = file.path(path, "..")),
@@ -66,7 +66,8 @@ exported_s3_generics <- function(path = find_package(".")) {
 
   data.frame(
     pkg = basename(path),
-    fun = unique(namespace_data$S3methods[, 1L])
+    fun = unique(namespace_data$S3methods[, 1L]),
+    stringsAsFactors = FALSE
   )
 }
 
