@@ -157,7 +157,7 @@ Collate:
     'system_file_linter.R'
     'trailing_blank_lines_linter.R'
     'trailing_whitespace_linter.R'
-    'tree-utils.R'
+    'tree_utils.R'
     'undesirable_function_linter.R'
     'undesirable_operator_linter.R'
     'unnecessary_lambda_linter.R'
