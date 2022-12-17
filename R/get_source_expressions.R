@@ -494,6 +494,19 @@ get_source_expression <- function(source_expression, error = identity) {
     error = error
   )
 
+  # TODO: Remove when minimum R version is bumped to > 3.5
+  #
+  # This needs to be done twice to avoid a bug fixed in R 3.4.4
+  #   https://bugs.r-project.org/bugzilla/show_bug.cgi?id=16041
+  e <- tryCatch(
+    parse(
+      text = source_expression$content,
+      srcfile = source_expression,
+      keep.source = TRUE
+    ),
+    error = error
+  )
+
   if (inherits(e, c("error", "lint"))) {
     assign("e", e, envir = parent.frame())
     parse_error <- TRUE
