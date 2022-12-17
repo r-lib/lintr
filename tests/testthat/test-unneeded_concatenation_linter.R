@@ -12,8 +12,8 @@ test_that("unneeded_concatenation_linter skips allowed usages", {
 
 test_that("unneeded_concatenation_linter blocks disallowed usages", {
   linter <- unneeded_concatenation_linter()
-  msg_c <- rex::escape("Unneeded concatenation of a constant. Remove the \"c\" call.")
-  msg_e <- rex::escape("Unneeded concatenation without arguments. Replace the \"c\" call by NULL")
+  msg_c <- rex::escape('Unneeded concatenation of a constant. Remove the "c" call.')
+  msg_e <- rex::escape('Unneeded concatenation without arguments. Replace the "c" call by NULL')
 
   expect_lint(
     "c()",
