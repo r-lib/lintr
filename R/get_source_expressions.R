@@ -483,14 +483,14 @@ get_single_source_expression <- function(loc,
 get_source_expression <- function(source_expression, error = identity) {
   parse_error <- FALSE
 
+  # This object should be named `e` because, if invalid characters are present,
+  # the error needs to be assigned in the parent frame, where it is named `e`.
   e <- tryCatch(
-    {
-      source_expression$parsed_content <- parse(
-        text = source_expression$content,
-        srcfile = source_expression,
-        keep.source = TRUE
-      )
-    },
+    parse(
+      text = source_expression$content,
+      srcfile = source_expression,
+      keep.source = TRUE
+    ),
     error = error
   )
 
@@ -511,6 +511,7 @@ get_source_expression <- function(source_expression, error = identity) {
     return() # parsed_content is unreliable if encoding is invalid
   }
 
+  source_expression$parsed_content <- e
   fix_octal_escapes(fix_eq_assigns(fix_tab_indentations(source_expression)), source_expression$lines)
 }
 
