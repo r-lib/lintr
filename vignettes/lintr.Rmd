@@ -199,14 +199,14 @@ knitr::kable(defaults_table)
 The default lintr configuration includes only linters relevant to the tidyverse style guide, but there are many other linters available in `{lintr}`. You can see a list of all available linters using
 
 ```{r}
-names(lintr::linters_with_tags(tags = NULL))
+names(lintr::all_linters())
 ```
 
 If you want to use all available linters, you can include this in your `.lintr` file:
 
 ```r
 linters: linters_with_defaults(
-    defaults = linters_with_tags(tags = NULL)
+    defaults = all_linters()
   )
 ```
 
@@ -216,7 +216,7 @@ If you want to use all available linters *except* a few, you can exclude them us
 linters: linters_with_defaults(
     commented_code_linter = NULL,
     implicit_integer_linter = NULL,
-    defaults = linters_with_tags(tags = NULL)
+    defaults = all_linters()
   )
 ```
 
