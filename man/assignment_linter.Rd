@@ -69,8 +69,10 @@ lint(
 
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr. \cr
-\url{https://style.tidyverse.org/syntax.html#assignment-1}
+\itemize{
+\item \link{linters} for a complete list of linters available in lintr.
+\item \url{https://style.tidyverse.org/syntax.html#assignment-1}
+}
 }
 \section{Tags}{
 \link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=style_linters]{style}

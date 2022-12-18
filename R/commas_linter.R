@@ -42,8 +42,8 @@
 #'
 #' @evalRd rd_tags("commas_linter")
 #' @seealso
-#'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#commas>
+#' - [linters] for a complete list of linters available in lintr.
+#' - <https://style.tidyverse.org/syntax.html#commas>
 #' @export
 commas_linter <- function() {
   # conditions are in carefully-chosen order for performance --
