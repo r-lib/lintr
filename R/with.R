@@ -8,11 +8,15 @@
 #' @param defaults named list of elements to modify.
 #' @return A modified list of elements, sorted by name. To achieve this sort in a platform-independent way, two
 #'   transformations are applied to the names: (1) replace `_` with `0` and (2) convert [tolower()].
+#'
 #' @seealso
 #' - [linters_with_defaults] for basing off lintr's set of default linters.
 #' - [all_linters] for basing off all available linters in lintr.
+#' - [linters_with_tags] for basing off tags attached to linters, possibly across multiple packages.
 #' - [available_linters] to get a data frame of available linters.
 #' - [linters] for a complete list of linters available in lintr.
+#'
+#' @family linter-config
 #'
 #' @examples
 #' # custom list of undesirable functions:
@@ -75,6 +79,8 @@ modify_defaults <- function(defaults, ...) {
 #' - [available_linters] to get a data frame of available linters.
 #' - [linters] for a complete list of linters available in lintr.
 #'
+#' @family linter-config
+#'
 #' @examples
 #' # `linters_with_defaults()` and `linters_with_tags("default")` are the same:
 #' all.equal(linters_with_defaults(), linters_with_tags("default"))
@@ -127,14 +133,16 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
 #' @examples
 #' names(all_linters())
 #'
+#' @family linter-config
+#'
 #' @seealso
 #' - [linters_with_defaults] for basing off lintr's set of default linters.
 #' - [linters_with_tags] for basing off tags attached to linters, possibly across multiple packages.
 #' - [available_linters] to get a data frame of available linters.
 #' - [linters] for a complete list of linters available in lintr.
 #' @export
-all_linters <- function(packages = "lintr") {
-  linters_with_tags(tags = NULL, packages = packages)
+all_linters <- function(packages = "lintr", ...) {
+  linters_with_tags(tags = NULL, packages = packages, ...)
 }
 
 #' Create a linter configuration based on defaults
@@ -201,6 +209,8 @@ with_defaults <- function(..., default = default_linters) {
   linters_with_defaults(..., defaults = default)
 }
 
+#' @keywords internal
+#' @noRd
 call_linter_factory <- function(linter_factory, linter_name, package) {
   linter <- tryCatch(
     linter_factory(),
@@ -213,6 +223,8 @@ call_linter_factory <- function(linter_factory, linter_name, package) {
   linter
 }
 
+#' @keywords internal
+#' @noRd
 guess_names <- function(..., missing_index) {
   args <- as.character(eval(substitute(alist(...)[missing_index])))
   # foo_linter(x=1) => "foo"

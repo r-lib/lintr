@@ -1,5 +1,6 @@
 # lintr
-[![R build status](https://github.com/r-lib/lintr/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/lintr/actions)
+
+[![R build status](https://github.com/r-lib/lintr/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/lintr/actions/)
 [![codecov.io](https://codecov.io/github/r-lib/lintr/coverage.svg?branch=main)](https://codecov.io/github/r-lib/lintr?branch=main)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/lintr)](https://cran.r-project.org/package=lintr)
 
@@ -7,7 +8,7 @@
 
 ![](man/figures/demo.gif "lintr demo")
 
-`{lintr}` is complementary to [the `styler` package](https://github.com/r-lib/styler) which automatically restyles code, eliminating some of the problems that `{lintr}` can detect.
+`{lintr}` is complementary to [the `{styler}` package](https://github.com/r-lib/styler/) which automatically restyles code, eliminating some of the problems that `{lintr}` can detect.
 
 ## Installation
 
@@ -26,44 +27,36 @@ remotes::install_github("r-lib/lintr")
 
 ## Usage
 
-Load the library:
-
-```R
-library(lintr)
-```
-
 And then you can create a configuration file and run selected linters:
 
 ```R
-use_lintr(type = "tidyverse")
+lintr::use_lintr(type = "tidyverse")
 
 # in a project:
-lint_dir()
+lintr::lint_dir()
 
 # in a package:
-lint_package()
+lintr::lint_package()
 ```
 
 To see a list of linters included for each configuration:
 
 ```R
 # tidyverse (default)
-names(linters_with_defaults())
+names(lintr::linters_with_defaults())
 
 # full
-names(all_linters())
+names(lintr::all_linters())
 ```
 
 You can use helper functions from `{usethis}` package to generate GitHub action workflow files:
 
 ```R
-library(usethis)
-
 # in a project:
-use_github_action("lint-project")
+usethis::use_github_action("lint-project")
 
 # in a package:
-use_github_action("lint")
+usethis::use_github_action("lint")
 ```
 
 You can also run lintr during continuous integration or within your IDE or text editor. See `vignette("continuous-integration")` and `vignette("editors")` for more details.

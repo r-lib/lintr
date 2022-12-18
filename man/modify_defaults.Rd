@@ -38,7 +38,13 @@ names(my_undesirable_functions)
 \itemize{
 \item \link{linters_with_defaults} for basing off lintr's set of default linters.
 \item \link{all_linters} for basing off all available linters in lintr.
+\item \link{linters_with_tags} for basing off tags attached to linters, possibly across multiple packages.
 \item \link{available_linters} to get a data frame of available linters.
 \item \link{linters} for a complete list of linters available in lintr.
 }
+
+Other linter-config: 
+\code{\link{all_linters}()},
+\code{\link{linters_with_tags}()}
 }
+\concept{linter-config}

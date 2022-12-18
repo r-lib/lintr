@@ -4,10 +4,14 @@
 \alias{all_linters}
 \title{Create a linter configuration based on all available linters}
 \usage{
-all_linters(packages = "lintr")
+all_linters(packages = "lintr", ...)
 }
 \arguments{
 \item{packages}{A character vector of packages to search for linters.}
+
+\item{...}{Arguments of elements to change. If unnamed, the argument is automatically named.
+If the named argument already exists in the list of linters, it is replaced by the new element.
+If it does not exist, it is added. If the value is \code{NULL}, the linter is removed.}
 }
 \description{
 Create a linter configuration based on all available linters
@@ -23,4 +27,9 @@ names(all_linters())
 \item \link{available_linters} to get a data frame of available linters.
 \item \link{linters} for a complete list of linters available in lintr.
 }
+
+Other linter-config: 
+\code{\link{linters_with_tags}()},
+\code{\link{modify_defaults}()}
 }
+\concept{linter-config}
