@@ -116,7 +116,7 @@ test_that("c(...) does not lint under !allow_single_expression", {
 
 test_that("invalid allow_single_expression argument produce informative error messages", {
   expect_error(
-    expect_lint("c()", NULL, unnecessary_concatenation_linter(allow_single_expression = 1)),
+    expect_lint("c()", NULL, unnecessary_concatenation_linter(allow_single_expression = 1.0)),
     rex::rex("is.logical(allow_single_expression) is not TRUE")
   )
 
