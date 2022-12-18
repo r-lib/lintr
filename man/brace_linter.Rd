@@ -57,9 +57,11 @@ lint(
 )
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr. \cr
-\url{https://style.tidyverse.org/syntax.html#indenting} \cr
-\url{https://style.tidyverse.org/syntax.html#if-statements}
+\itemize{
+\item \link{linters} for a complete list of linters available in lintr.
+\item \url{https://style.tidyverse.org/syntax.html#indenting}
+\item \url{https://style.tidyverse.org/syntax.html#if-statements}
+}
 }
 \section{Tags}{
 \link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}

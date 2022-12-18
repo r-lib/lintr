@@ -65,8 +65,10 @@ lint(
 
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr. \cr
-\url{https://style.tidyverse.org/syntax.html#semicolons}
+\itemize{
+\item \link{linters} for a complete list of linters available in lintr.
+\item \url{https://style.tidyverse.org/syntax.html#semicolons}
+}
 }
 \section{Tags}{
 \link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}

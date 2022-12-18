@@ -24,8 +24,8 @@
 #'
 #' @evalRd rd_tags("single_quotes_linter")
 #' @seealso
-#'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#character-vectors>
+#' - [linters] for a complete list of linters available in lintr.
+#' - <https://style.tidyverse.org/syntax.html#character-vectors>
 #' @export
 single_quotes_linter <- function() {
   squote_regex <- rex(
