@@ -26,26 +26,44 @@ remotes::install_github("r-lib/lintr")
 
 ## Usage
 
+Load the library:
+
 ```R
+library(lintr)
+```
+
+And then you can create a configuration file and run selected linters:
+
+```R
+use_lintr(type = "tidyverse")
+
 # in a project:
-lintr::use_lintr(type = "tidyverse")
-usethis::use_github_action("lint-project")
-lintr::lint_dir()
+lint_dir()
 
 # in a package:
-lintr::use_lintr(type = "tidyverse")
-usethis::use_github_action("lint")
-lintr::lint_package()
+lint_package()
 ```
 
 To see a list of linters included for each configuration:
 
 ```R
 # tidyverse (default)
-names(lintr::linters_with_defaults())
+names(linters_with_defaults())
 
 # full
-names(lintr::linters_with_tags(tags = NULL))
+names(all_linters())
+```
+
+You can use helper functions from usethis package to generate GitHub action workflow files:
+
+```R
+library(usethis)
+
+# in a project:
+use_github_action("lint-project")
+
+# in a package:
+use_github_action("lint")
 ```
 
 You can also run lintr during continuous integration or within your IDE or text editor. See `vignette("continuous-integration")` and `vignette("editors")` for more details.

@@ -8,7 +8,12 @@
 #' @param defaults named list of elements to modify.
 #' @return A modified list of elements, sorted by name. To achieve this sort in a platform-independent way, two
 #'   transformations are applied to the names: (1) replace `_` with `0` and (2) convert [tolower()].
-#' @seealso [linters_with_tags], [linters_with_defaults] for creating linter lists.
+#' @seealso
+#' - [linters_with_defaults] for basing off lintr's set of default linters.
+#' - [all_linters] for basing off all available linters in lintr.
+#' - [available_linters] to get a data frame of available linters.
+#' - [linters] for a complete list of linters available in lintr.
+#'
 #' @examples
 #' # custom list of undesirable functions:
 #' #    remove `sapply` (using `NULL`)
@@ -66,6 +71,7 @@ modify_defaults <- function(defaults, ...) {
 #' @return A modified list of linters.
 #' @seealso
 #' - [linters_with_defaults] for basing off lintr's set of default linters.
+#' - [all_linters] for basing off all available linters in lintr.
 #' - [available_linters] to get a data frame of available linters.
 #' - [linters] for a complete list of linters available in lintr.
 #'
@@ -75,10 +81,6 @@ modify_defaults <- function(defaults, ...) {
 #'
 #' # Get all linters useful for package development
 #' linters <- linters_with_tags(tags = "package_development")
-#' names(linters)
-#'
-#' # Get all linters provided by lintr
-#' linters <- linters_with_tags(tags = NULL)
 #' names(linters)
 #'
 #' # Get all linters tagged as "default" from lintr and mypkg
@@ -166,6 +168,7 @@ all_linters <- function(packages = "lintr") {
 #'
 #' @seealso
 #' - [linters_with_tags] for basing off tags attached to linters, possibly across multiple packages.
+#' - [all_linters] for basing off all available linters in lintr.
 #' - [available_linters] to get a data frame of available linters.
 #' - [linters] for a complete list of linters available in lintr.
 #' @export
