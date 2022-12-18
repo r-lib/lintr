@@ -99,3 +99,10 @@ test_that("all_linters contains all available linters", {
   expect_identical(linters_with_tags(NULL, packages = "lintr"), all_linters)
   expect_length(all_linters, nrow(available_linters()))
 })
+
+test_that("all_linters respects ellipsis argument", {
+  expect_identical(
+    linters_with_tags(tags = NULL, implicit_integer_linter = NULL),
+    all_linters(packages = "lintr", implicit_integer_linter = NULL)
+  )
+})
