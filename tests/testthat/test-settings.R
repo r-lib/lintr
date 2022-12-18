@@ -102,7 +102,7 @@ test_that("it has a smart default for encodings", {
   pkg_file <- test_path("dummy_packages", "cp1252", "R", "cp1252.R")
 
   expect_identical(
-    normalizePath(find_rproj_at(find_rproj_or_package(proj_file)), winslash = "/"),
+    normalizePath(find_rproj_at(find_package(proj_file, allow_rproj = TRUE)), winslash = "/"),
     normalizePath(test_path("dummy_projects", "project", "project.Rproj"), winslash = "/")
   )
   expect_identical(
