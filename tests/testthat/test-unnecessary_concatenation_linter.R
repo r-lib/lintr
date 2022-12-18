@@ -113,3 +113,15 @@ test_that("sequences with : are linted whenever a constant is involved", {
 test_that("c(...) does not lint under !allow_single_expression", {
   expect_lint("c(...)", NULL, unnecessary_concatenation_linter(allow_single_expression = FALSE))
 })
+
+test_that("invalid allow_single_expression argument produce informative error messages", {
+  expect_error(
+    expect_lint("c()", NULL, unnecessary_concatenation_linter(allow_single_expression = 1)),
+    rex::rex("is.logical(allow_single_expression) is not TRUE")
+  )
+
+  expect_error(
+    expect_lint("c()", NULL, unnecessary_concatenation_linter(allow_single_expression = c(TRUE, FALSE))),
+    rex::rex("length(allow_single_expression) == 1L is not TRUE")
+  )
+})
