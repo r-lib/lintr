@@ -223,11 +223,9 @@ linters: linters_with_defaults(
 Alternatively, you can also do:
 
 ```r
-linters: linters_with_defaults(
-    defaults = all_linters(
-      commented_code_linter = NULL,
-      implicit_integer_linter = NULL,
-    )
+linters: all_linters(
+    commented_code_linter = NULL,
+    implicit_integer_linter = NULL
   )
 ```
 
