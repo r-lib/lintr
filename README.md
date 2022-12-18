@@ -1,6 +1,6 @@
 # lintr
 
-[![R build status](https://github.com/r-lib/lintr/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/lintr/actions/)
+[![R build status](https://github.com/r-lib/lintr/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/lintr/actions)
 [![codecov.io](https://codecov.io/github/r-lib/lintr/coverage.svg?branch=main)](https://codecov.io/github/r-lib/lintr?branch=main)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/lintr)](https://cran.r-project.org/package=lintr)
 
@@ -8,7 +8,7 @@
 
 ![](man/figures/demo.gif "lintr demo")
 
-`{lintr}` is complementary to [the `{styler}` package](https://github.com/r-lib/styler/) which automatically restyles code, eliminating some of the problems that `{lintr}` can detect.
+`{lintr}` is complementary to [the `{styler}` package](https://github.com/r-lib/styler) which automatically restyles code, eliminating some of the problems that `{lintr}` can detect.
 
 ## Installation
 
