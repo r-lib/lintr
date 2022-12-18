@@ -188,6 +188,9 @@ unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
     type = "Linter"
   )
 
-  stopifnot(is.logical(allow_single_expression) && length(allow_single_expression) == 1L)
+  stopifnot(
+    is.logical(allow_single_expression),
+    length(allow_single_expression) == 1L
+  )
   unnecessary_concatenation_linter(allow_single_expression = allow_single_expression)
 }

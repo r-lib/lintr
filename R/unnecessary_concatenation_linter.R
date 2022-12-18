@@ -52,7 +52,10 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { # nolint: object_length_linter.
-  stopifnot(is.logical(allow_single_expression) && length(allow_single_expression) == 1L)
+  stopifnot(
+    is.logical(allow_single_expression),
+    length(allow_single_expression) == 1L
+  )
 
   msg_empty <- paste(
     "Unneeded concatenation without arguments.",
