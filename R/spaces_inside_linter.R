@@ -29,8 +29,8 @@
 #'
 #' @evalRd rd_tags("spaces_inside_linter")
 #' @seealso
-#'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#parentheses>
+#' - [linters] for a complete list of linters available in lintr.
+#' - <https://style.tidyverse.org/syntax.html#parentheses>
 #' @export
 spaces_inside_linter <- function() {
   left_xpath_condition <- "

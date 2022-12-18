@@ -483,8 +483,8 @@ get_single_source_expression <- function(loc,
 get_source_expression <- function(source_expression, error = identity) {
   parse_error <- FALSE
 
-  tryCatch(
-    source_expression$parsed_content <- parse(
+  parsed_content <- tryCatch(
+    parse(
       text = source_expression$content,
       srcfile = source_expression,
       keep.source = TRUE
@@ -492,10 +492,12 @@ get_source_expression <- function(source_expression, error = identity) {
     error = error
   )
 
-  # This needs to be done twice to avoid
+  # TODO: Remove when minimum R version is bumped to > 3.5
+  #
+  # This needs to be done twice to avoid a bug fixed in R 3.4.4
   #   https://bugs.r-project.org/bugzilla/show_bug.cgi?id=16041
-  e <- tryCatch(
-    source_expression$parsed_content <- parse(
+  parsed_content <- tryCatch(
+    parse(
       text = source_expression$content,
       srcfile = source_expression,
       keep.source = TRUE
@@ -503,23 +505,24 @@ get_source_expression <- function(source_expression, error = identity) {
     error = error
   )
 
-  if (inherits(e, c("error", "lint"))) {
-    assign("e", e, envir = parent.frame())
+  if (inherits(parsed_content, c("error", "lint"))) {
+    assign("e", parsed_content, envir = parent.frame())
     parse_error <- TRUE
   }
 
   # Triggers an error if the lines contain invalid characters.
-  e <- tryCatch(
+  parsed_content <- tryCatch(
     nchar(source_expression$content, type = "chars"),
     error = error
   )
 
-  if (inherits(e, c("error", "lint"))) {
+  if (inherits(parsed_content, c("error", "lint"))) {
     # Let parse errors take precedence over encoding problems
-    if (!parse_error) assign("e", e, envir = parent.frame())
+    if (!parse_error) assign("e", parsed_content, envir = parent.frame())
     return() # parsed_content is unreliable if encoding is invalid
   }
 
+  source_expression$parsed_content <- parsed_content
   fix_octal_escapes(fix_eq_assigns(fix_tab_indentations(source_expression)), source_expression$lines)
 }
 
