@@ -17,9 +17,9 @@
 #'
 #' @evalRd rd_tags("spaces_left_parentheses_linter")
 #' @seealso
-#'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#parentheses> \cr
-#'   [function_left_parentheses_linter()]
+#' - [linters] for a complete list of linters available in lintr.
+#' - <https://style.tidyverse.org/syntax.html#parentheses>
+#' - [function_left_parentheses_linter()]
 #' @export
 spaces_left_parentheses_linter <- function() {
   file_level_xpath <- "//OP-LEFT-PAREN[@start - 1 = ancestor::expr/preceding-sibling::OP-SEMICOLON/@end]"

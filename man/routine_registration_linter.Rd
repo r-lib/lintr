@@ -34,8 +34,10 @@ lint(
 
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr. \cr
-https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Registering-native-routines
+\itemize{
+\item \link{linters} for a complete list of linters available in lintr.
+\item \url{https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Registering-native-routines}
+}
 }
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=efficiency_linters]{efficiency}, \link[=robustness_linters]{robustness}
