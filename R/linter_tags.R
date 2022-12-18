@@ -4,7 +4,8 @@
 #'
 #' @param packages A character vector of packages to search for linters.
 #' @param tags Optional character vector of tags to search. Only linters with at least one matching tag will be
-#' returned. If `tags` is `NULL`, all linters will be returned.
+#' returned. If `tags` is `NULL`, all linters will be returned. See `available_tags("lintr")` to find out what
+#' tags are already used by lintr.
 #' @param exclude_tags Tags to exclude from the results. Linters with at least one matching tag will not be returned.
 #' If `except_tags` is `NULL`, no linters will be excluded.
 #'
