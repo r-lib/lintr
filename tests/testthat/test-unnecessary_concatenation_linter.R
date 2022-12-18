@@ -1,5 +1,5 @@
-test_that("unneeded_concatenation_linter skips allowed usages", {
-  linter <- unneeded_concatenation_linter()
+test_that("unnecessary_concatenation_linter skips allowed usages", {
+  linter <- unnecessary_concatenation_linter()
 
   expect_lint("c(x)", NULL, linter)
   expect_lint("c(1, 2)", NULL, linter)
@@ -10,8 +10,8 @@ test_that("unneeded_concatenation_linter skips allowed usages", {
   expect_lint("c('a' = 1)", NULL, linter)
 })
 
-test_that("unneeded_concatenation_linter blocks disallowed usages", {
-  linter <- unneeded_concatenation_linter()
+test_that("unnecessary_concatenation_linter blocks disallowed usages", {
+  linter <- unnecessary_concatenation_linter()
   msg_c <- rex::escape('Unneeded concatenation of a constant. Remove the "c" call.')
   msg_e <- rex::escape('Unneeded concatenation without arguments. Replace the "c" call by NULL')
 
@@ -46,7 +46,7 @@ test_that("unneeded_concatenation_linter blocks disallowed usages", {
 })
 
 test_that("Correctly handles concatenation within magrittr pipes", {
-  linter <- unneeded_concatenation_linter()
+  linter <- unnecessary_concatenation_linter()
   expect_lint('"a" %>% c("b")', NULL, linter)
   expect_lint(
     '"a" %>% c()',
@@ -62,7 +62,7 @@ test_that("Correctly handles concatenation within magrittr pipes", {
 
 test_that("Correctly handles concatenation within native pipes", {
   skip_if_not_r_version("4.1.0")
-  linter <- unneeded_concatenation_linter()
+  linter <- unnecessary_concatenation_linter()
   expect_lint('"a" |> c("b")', NULL, linter)
   expect_lint(
     '"a" |> c()',
@@ -77,12 +77,12 @@ test_that("Correctly handles concatenation within native pipes", {
 })
 
 test_that("symbolic expressions are allowed, except by request", {
-  expect_lint("c(alpha / 2)", NULL, unneeded_concatenation_linter())
-  expect_lint("c(paste0('.', 1:2))", NULL, unneeded_concatenation_linter())
-  expect_lint("c(DF[cond > 1, col])", NULL, unneeded_concatenation_linter())
+  expect_lint("c(alpha / 2)", NULL, unnecessary_concatenation_linter())
+  expect_lint("c(paste0('.', 1:2))", NULL, unnecessary_concatenation_linter())
+  expect_lint("c(DF[cond > 1, col])", NULL, unnecessary_concatenation_linter())
 
   # allow_single_expression = FALSE turns both into lints
-  linter <- unneeded_concatenation_linter(allow_single_expression = FALSE)
+  linter <- unnecessary_concatenation_linter(allow_single_expression = FALSE)
   message <- "Unneeded concatenation of a simple expression"
   expect_lint("c(alpha / 2)", message, linter)
   expect_lint("c(paste0('.', 1:2))", message, linter)
@@ -90,7 +90,7 @@ test_that("symbolic expressions are allowed, except by request", {
 })
 
 test_that("sequences with : are linted whenever a constant is involved", {
-  linter <- unneeded_concatenation_linter()
+  linter <- unnecessary_concatenation_linter()
   expect_lint("c(1:10)", "Unneeded concatenation of a constant", linter)
   expect_lint("c(1:sum(x))", "Unneeded concatenation of a constant", linter)
 
@@ -101,15 +101,15 @@ test_that("sequences with : are linted whenever a constant is involved", {
   expect_lint(
     "c(a:b)",
     "Unneeded concatenation of a simple expression",
-    unneeded_concatenation_linter(allow_single_expression = FALSE)
+    unnecessary_concatenation_linter(allow_single_expression = FALSE)
   )
   expect_lint(
     "c(a:foo(b))",
     "Unneeded concatenation of a simple expression",
-    unneeded_concatenation_linter(allow_single_expression = FALSE)
+    unnecessary_concatenation_linter(allow_single_expression = FALSE)
   )
 })
 
 test_that("c(...) does not lint under !allow_single_expression", {
-  expect_lint("c(...)", NULL, unneeded_concatenation_linter(allow_single_expression = FALSE))
+  expect_lint("c(...)", NULL, unnecessary_concatenation_linter(allow_single_expression = FALSE))
 })

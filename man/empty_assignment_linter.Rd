@@ -8,7 +8,7 @@ empty_assignment_linter()
 }
 \description{
 Assignment of \code{{}} is the same as assignment of \code{NULL}; use the latter
-for clarity. Closely related: \code{\link[=unneeded_concatenation_linter]{unneeded_concatenation_linter()}}.
+for clarity. Closely related: \code{\link[=unnecessary_concatenation_linter]{unnecessary_concatenation_linter()}}.
 }
 \examples{
 # will produce lints

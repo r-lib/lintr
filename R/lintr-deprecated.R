@@ -176,3 +176,18 @@ semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
   allow_trailing <- !"trailing" %in% semicolon
   semicolon_linter(allow_compound, allow_trailing)
 }
+
+#' Unnecessary concatenation linter
+#' @rdname lintr-deprecated
+#' @export
+unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
+  lintr_deprecated(
+    old = "unneeded_concatenation_linter",
+    new = "unnecessary_concatenation_linter",
+    version = "3.1.0",
+    type = "Linter"
+  )
+
+  stopifnot(is.logical(allow_single_expression) && length(allow_single_expression) == 1L)
+  unnecessary_concatenation_linter(allow_single_expression = allow_single_expression)
+}

@@ -13,45 +13,47 @@
 #' # will produce lints
 #' lint(
 #'   text = "x <- c()",
-#'   linters = unneeded_concatenation_linter()
+#'   linters = unnecessary_concatenation_linter()
 #' )
 #'
 #' lint(
 #'   text = "x <- c(TRUE)",
-#'   linters = unneeded_concatenation_linter()
+#'   linters = unnecessary_concatenation_linter()
 #' )
 #'
 #' lint(
 #'   text = "x <- c(1.5 + 2.5)",
-#'   linters = unneeded_concatenation_linter(allow_single_expression = FALSE)
+#'   linters = unnecessary_concatenation_linter(allow_single_expression = FALSE)
 #' )
 #'
 #' # okay
 #' lint(
 #'   text = "x <- NULL",
-#'   linters = unneeded_concatenation_linter()
+#'   linters = unnecessary_concatenation_linter()
 #' )
 #'
 #' # In case the intent here was to seed a vector of known size
 #' lint(
 #'   text = "x <- integer(4L)",
-#'   linters = unneeded_concatenation_linter()
+#'   linters = unnecessary_concatenation_linter()
 #' )
 #'
 #' lint(
 #'   text = "x <- TRUE",
-#'   linters = unneeded_concatenation_linter()
+#'   linters = unnecessary_concatenation_linter()
 #' )
 #'
 #' lint(
 #'   text = "x <- c(1.5 + 2.5)",
-#'   linters = unneeded_concatenation_linter(allow_single_expression = TRUE)
+#'   linters = unnecessary_concatenation_linter(allow_single_expression = TRUE)
 #' )
 #'
-#' @evalRd rd_tags("unneeded_concatenation_linter")
+#' @evalRd rd_tags("unnecessary_concatenation_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
+unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) {
+  stopifnot(is.logical(allow_single_expression) && length(allow_single_expression) == 1L)
+
   msg_empty <- paste(
     "Unneeded concatenation without arguments.",
     'Replace the "c" call by NULL or, whenever possible,',

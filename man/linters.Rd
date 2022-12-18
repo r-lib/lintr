@@ -118,10 +118,10 @@ The following linters exist:
 \item{\code{\link{trailing_whitespace_linter}} (tags: configurable, default, style)}
 \item{\code{\link{undesirable_function_linter}} (tags: best_practices, configurable, efficiency, robustness, style)}
 \item{\code{\link{undesirable_operator_linter}} (tags: best_practices, configurable, efficiency, robustness, style)}
+\item{\code{\link{unnecessary_concatenation_linter}} (tags: configurable, efficiency, readability, style)}
 \item{\code{\link{unnecessary_lambda_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{unnecessary_nested_if_linter}} (tags: best_practices, readability)}
 \item{\code{\link{unnecessary_placeholder_linter}} (tags: best_practices, readability)}
-\item{\code{\link{unneeded_concatenation_linter}} (tags: configurable, efficiency, readability, style)}
 \item{\code{\link{unreachable_code_linter}} (tags: best_practices, readability)}
 \item{\code{\link{unused_import_linter}} (tags: best_practices, common_mistakes, configurable, executing)}
 \item{\code{\link{vector_logic_linter}} (tags: best_practices, default, efficiency)}
