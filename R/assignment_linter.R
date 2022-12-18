@@ -55,8 +55,8 @@
 #'
 #' @evalRd rd_tags("assignment_linter")
 #' @seealso
-#'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#assignment-1>
+#' - [linters] for a complete list of linters available in lintr.
+#' - <https://style.tidyverse.org/syntax.html#assignment-1>
 #' @export
 assignment_linter <- function(allow_cascading_assign = TRUE, allow_right_assign = FALSE, allow_trailing = TRUE) {
   trailing_assign_xpath <- paste(
