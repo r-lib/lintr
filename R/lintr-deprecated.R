@@ -176,3 +176,22 @@ semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
   allow_trailing <- !"trailing" %in% semicolon
   semicolon_linter(allow_compound, allow_trailing)
 }
+
+#' @keywords internal
+#' @noRd
+find_line_fun <- function(content, newline_locs) {
+  function(line_number) {
+    lintr_deprecated("find_line_fun", new = "XPath logic and xml_nodes_to_lints()", version = "3.0.0")
+    which(newline_locs >= line_number)[1L] - 1L
+  }
+}
+
+#' @keywords internal
+#' @noRd
+find_column_fun <- function(content, newline_locs) {
+  function(line_number) {
+    lintr_deprecated("find_column_fun", new = "XPath logic and xml_nodes_to_lints()", version = "3.0.0")
+    matched_line_number <- which(newline_locs >= line_number)[1L] - 1L
+    line_number - newline_locs[matched_line_number]
+  }
+}
