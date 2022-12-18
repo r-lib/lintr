@@ -23,7 +23,7 @@ The following tags exist:
 \item{\link[=consistency_linters]{consistency} (18 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
-\item{\link[=deprecated_linters]{deprecated} (4 linters)}
+\item{\link[=deprecated_linters]{deprecated} (5 linters)}
 \item{\link[=efficiency_linters]{efficiency} (23 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
@@ -122,7 +122,7 @@ The following linters exist:
 \item{\code{\link{unnecessary_lambda_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{unnecessary_nested_if_linter}} (tags: best_practices, readability)}
 \item{\code{\link{unnecessary_placeholder_linter}} (tags: best_practices, readability)}
-\item{\code{\link{unneeded_concatenation_linter}} (tags: configurable, efficiency, readability, style)}
+\item{\code{\link{unneeded_concatenation_linter}} (tags: configurable, deprecated, efficiency, readability, style)}
 \item{\code{\link{unreachable_code_linter}} (tags: best_practices, readability)}
 \item{\code{\link{unused_import_linter}} (tags: best_practices, common_mistakes, configurable, executing)}
 \item{\code{\link{vector_logic_linter}} (tags: best_practices, default, efficiency)}
