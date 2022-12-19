@@ -199,19 +199,19 @@ Another way to customize linters is by specifying tags in `linters_with_tags()`.
 The available tags are listed below:
 
 ```{r}
-available_tags(packages = "lintr")
+lintr::available_tags(packages = "lintr")
 ```
 
 You can select tags of interest to see which linters are included:
 
 ```{r}
-linters <- linters_with_tags(tags = c("package_development", "readability"))
+linters <- lintr::linters_with_tags(tags = c("package_development", "readability"))
 names(linters)
 ```
 
 You can include tag-based linters in the configuration file, and customize them further:
 
-```r
+```yaml
 linters: linters_with_tags(
     tags = c("package_development", "readability"),
     yoda_test_linter = NULL
@@ -228,13 +228,13 @@ names(lintr::all_linters())
 
 If you want to use all available linters, you can include this in your `.lintr` file:
 
-```r
+```yaml
 linters: all_linters()
 ```
 
 If you want to use all available linters *except* a few, you can exclude them using `NULL`:
 
-```r
+```yaml
 linters: all_linters(
     commented_code_linter = NULL,
     implicit_integer_linter = NULL
