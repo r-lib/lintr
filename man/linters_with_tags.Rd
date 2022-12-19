@@ -8,7 +8,8 @@ linters_with_tags(tags, ..., packages = "lintr", exclude_tags = "deprecated")
 }
 \arguments{
 \item{tags}{Optional character vector of tags to search. Only linters with at least one matching tag will be
-returned. If \code{tags} is \code{NULL}, all linters will be returned.}
+returned. If \code{tags} is \code{NULL}, all linters will be returned. See \code{available_tags("lintr")} to find out what
+tags are already used by lintr.}
 
 \item{...}{Arguments of elements to change. If unnamed, the argument is automatically named.
 If the named argument already exists in the list of linters, it is replaced by the new element.
