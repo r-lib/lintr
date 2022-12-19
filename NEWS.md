@@ -91,6 +91,8 @@
 
 * Added `format()` functions for `lint` and `lints` (#1784, @AshesITR)
 
+* `all_linters()` function provides an easy way to access all available linters (#1843, @IndrajeetPatil)
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.

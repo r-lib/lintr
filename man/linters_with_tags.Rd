@@ -33,11 +33,7 @@ or to be put in your configuration file.
 all.equal(linters_with_defaults(), linters_with_tags("default"))
 
 # Get all linters useful for package development
-linters <- linters_with_tags(tags = "package_development")
-names(linters)
-
-# Get all linters provided by lintr
-linters <- linters_with_tags(tags = NULL)
+linters <- linters_with_tags(tags = c("package_development", "style"))
 names(linters)
 
 # Get all linters tagged as "default" from lintr and mypkg
@@ -46,7 +42,10 @@ if (FALSE) {
 }
 }
 \seealso{
-\link{linters_with_defaults} for basing off lintr's set of default linters.
-\link{available_linters} to get a data frame of available linters.
-\link{linters} for a complete list of linters available in lintr.
+\itemize{
+\item \link{linters_with_defaults} for basing off lintr's set of default linters.
+\item \link{all_linters} for basing off all available linters in lintr.
+\item \link{available_linters} to get a data frame of available linters.
+\item \link{linters} for a complete list of linters available in lintr.
+}
 }
