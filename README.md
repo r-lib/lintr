@@ -49,7 +49,9 @@ names(lintr::linters_with_defaults())
 names(lintr::all_linters())
 ```
 
-You can use helper functions from `{usethis}` package to generate GitHub action workflow files:
+### Setting up GitHub Actions 
+
+`{usethis}` provides helper functions to generate lint workflows for GitHub Actions:
 
 ```R
 # in a project:

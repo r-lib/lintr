@@ -150,6 +150,7 @@ If an Encoding is found in a `.Rproj` file or a `DESCRIPTION` file, that encodin
 
 If you only want to customize some linters, you can use the helper function `linters_with_defaults()`, which will keep all unnamed linters with the default settings.
 Disable a linter by passing `NULL`.
+
 For example, to set the line length limit to 120 characters and globally disable the `no_tab_linter`, you can put this into your `.lintr`:
 
 ``` r
@@ -194,6 +195,29 @@ defaults_table <- data.frame(
 knitr::kable(defaults_table)
 ```
 
+Another way to customize linters is by specifying tags in `linters_with_tags()`.
+The available tags are listed below:
+
+```{r}
+available_tags(packages = "lintr")
+```
+
+You can select tags of interest to see which linters are included:
+
+```{r}
+linters <- linters_with_tags(tags = c("package_development", "readability"))
+names(linters)
+```
+
+You can include tag-based linters in the configuration file, and customize them further:
+
+```r
+linters: linters_with_tags(
+    tags = c("package_development", "readability"),
+    yoda_test_linter = NULL
+  )
+```
+
 #### Using all available linters
 
 The default lintr configuration includes only linters relevant to the tidyverse style guide, but there are many other linters available in `{lintr}`. You can see a list of all available linters using
@@ -205,9 +229,7 @@ names(lintr::all_linters())
 If you want to use all available linters, you can include this in your `.lintr` file:
 
 ```r
-linters: linters_with_defaults(
-    defaults = all_linters()
-  )
+linters: all_linters()
 ```
 
 If you want to use all available linters *except* a few, you can exclude them using `NULL`:

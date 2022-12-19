@@ -33,7 +33,7 @@ or to be put in your configuration file.
 all.equal(linters_with_defaults(), linters_with_tags("default"))
 
 # Get all linters useful for package development
-linters <- linters_with_tags(tags = "package_development")
+linters <- linters_with_tags(tags = c("package_development", "style"))
 names(linters)
 
 # Get all linters tagged as "default" from lintr and mypkg
