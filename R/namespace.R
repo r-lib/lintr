@@ -92,6 +92,6 @@ is_s3_generic <- function(fun) {
     # fallback: search baseenv() for generic methods
     imported_s3_generics(data.frame(pkg = "base", fun = ls(baseenv()), stringsAsFactors = FALSE))$fun
   },
-  # Contains S3 generic groups, see ?base::groupGeneric
+  # Contains S3 generic groups, see ?base::groupGeneric and src/library/base/R/zzz.R
   ls(.GenericArgsEnv)
 ))
