@@ -282,9 +282,13 @@ test_that("fixed replacement is correct with UTF-8", {
 #   up in practice is for '\<', which is a special character in default
 #   regex but not in PCRE. Empirically relevant for HTML-related regex e.g. \\<li\\>
 
-non_printable_utf_for_env <- function() {
-  # non-printable unicode behaves wildly different with encodeString() across R versions and platforms.
-  # nonetheless, all of these expressions are valid replacements.
+#' Generate a string with a non-printable Unicode entry robust to test environment
+#'
+#' Non-printable unicode behaves wildly different with `encodeString()`
+#'   across R versions and platforms. Nonetheless, all of these expressions
+#'   are valid replacements.
+#' @noRd
+robust_non_printable_unicode <- function() {
   if (getRversion() < "4.1.0") {
     "abc\\U000a0defghi"
   } else if (.Platform$OS.type == "windows") {
@@ -322,7 +326,7 @@ patrick::with_parameters_test_that("fixed replacements are correct", {
   "[\\123]",              "[\\123]",              "S",
   "a[*]b",                "a[*]b",                "a*b",
   "abcdefg",              "abcdefg",              "abcdefg",
-  "abc\\U{A0DEF}ghi",     "abc\\U{A0DEF}ghi",     non_printable_utf_for_env(),
+  "abc\\U{A0DEF}ghi",     "abc\\U{A0DEF}ghi",     robust_non_printable_unicode(),
   "a-z",                  "a-z",                  "a-z",
   "[\\n]",                "[\\n]",                "\\n",
   "\\n",                  "\n",                   "\\n",
