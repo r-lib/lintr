@@ -242,10 +242,13 @@ lint_package <- function(path = ".", ...,
     dots <- dots[-1L]
   }
 
+  if (length(path) > 1L) {
+    stop("Only linting one package at a time is supported.")
+  }
   pkg_path <- find_package(path)
 
   if (is.null(pkg_path)) {
-    warning("Didn't find any R package searching upwards from '", path, "'.")
+    warning(sprintf("Didn't find any R package searching upwards from '%s'.", normalizePath(path)))
     return(NULL)
   }
 
