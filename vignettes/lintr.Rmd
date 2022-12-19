@@ -213,16 +213,6 @@ linters: linters_with_defaults(
 If you want to use all available linters *except* a few, you can exclude them using `NULL`:
 
 ```r
-linters: linters_with_defaults(
-    commented_code_linter = NULL,
-    implicit_integer_linter = NULL,
-    defaults = all_linters()
-  )
-```
-
-Alternatively, you can also do:
-
-```r
 linters: all_linters(
     commented_code_linter = NULL,
     implicit_integer_linter = NULL

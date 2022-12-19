@@ -16,8 +16,6 @@
 #' - [available_linters] to get a data frame of available linters.
 #' - [linters] for a complete list of linters available in lintr.
 #'
-#' @family linter-config
-#'
 #' @examples
 #' # custom list of undesirable functions:
 #' #    remove `sapply` (using `NULL`)
@@ -79,8 +77,6 @@ modify_defaults <- function(defaults, ...) {
 #' - [available_linters] to get a data frame of available linters.
 #' - [linters] for a complete list of linters available in lintr.
 #'
-#' @family linter-config
-#'
 #' @examples
 #' # `linters_with_defaults()` and `linters_with_tags("default")` are the same:
 #' all.equal(linters_with_defaults(), linters_with_tags("default"))
@@ -132,8 +128,6 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
 #'
 #' @examples
 #' names(all_linters())
-#'
-#' @family linter-config
 #'
 #' @seealso
 #' - [linters_with_defaults] for basing off lintr's set of default linters.

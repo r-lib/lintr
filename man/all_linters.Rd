@@ -27,9 +27,4 @@ names(all_linters())
 \item \link{available_linters} to get a data frame of available linters.
 \item \link{linters} for a complete list of linters available in lintr.
 }
-
-Other linter-config: 
-\code{\link{linters_with_tags}()},
-\code{\link{modify_defaults}()}
 }
-\concept{linter-config}
