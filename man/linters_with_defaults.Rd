@@ -47,6 +47,7 @@ names(my_linters)
 \seealso{
 \itemize{
 \item \link{linters_with_tags} for basing off tags attached to linters, possibly across multiple packages.
+\item \link{all_linters} for basing off all available linters in lintr.
 \item \link{available_linters} to get a data frame of available linters.
 \item \link{linters} for a complete list of linters available in lintr.
 }

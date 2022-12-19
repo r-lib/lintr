@@ -92,3 +92,17 @@ test_that("linters_with_defaults(default = .) is supported with a deprecation wa
   expect_silent(linters <- linters_with_defaults(defaults = list(), default = default))
   expect_named(linters, "default")
 })
+
+test_that("all_linters contains all available linters", {
+  all_linters <- all_linters(packages = "lintr")
+
+  expect_identical(linters_with_tags(NULL, packages = "lintr"), all_linters)
+  expect_length(all_linters, nrow(available_linters()))
+})
+
+test_that("all_linters respects ellipsis argument", {
+  expect_identical(
+    linters_with_tags(tags = NULL, implicit_integer_linter = NULL),
+    all_linters(packages = "lintr", implicit_integer_linter = NULL)
+  )
+})
