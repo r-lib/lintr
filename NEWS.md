@@ -2,7 +2,7 @@
 
 ## Bug fixes
 
-* `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
+* `fixed_regex_linter()` is more robust to errors stemming from unrecognized escapes (#1545, #1845, @IndrajeetPatil).
 
 * `get_source_expressions()` can handle Sweave/Rmarkdown documents with reference chunks like `<<ref_file>>` (#779, @MichaelChirico).
   Note that these are simply skipped, rather than attempting to retrieve the reference and also lint it.
@@ -11,7 +11,7 @@
 
 * `object_usage_linter()` no longer silently ignores usage warnings that don't contain a quoted name (#1714, @AshesITR)
 
-* `namespace_linter()` correctly recognizes backticked operators to be exported from respectives namespaces (like `` rlang::`%||%` ``) (#1752, @IndrajeetPatil)
+* `namespace_linter()` correctly recognizes backticked operators to be exported from respective namespaces (like `` rlang::`%||%` ``) (#1752, @IndrajeetPatil)
 
 * `lint_package()` correctly finds a package from within a subdir if the `path` points to anywhere within the package (#1759, @AshesITR)
 
@@ -43,6 +43,9 @@
   (#1346, @MichaelChirico)
 
 * The new `indentation_linter()` is part of the default linters. See "New linters" for more details.
+
+* For naming consistency, `unneeded_concatenation_linter()` has been deprecated in favour of
+  `unnecessary_concatenation_linter()` (#1797, @IndrajeetPatil).
 
 ## New and improved features
 

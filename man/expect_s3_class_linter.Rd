@@ -37,8 +37,10 @@ lint(
 
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr. \cr
-\code{\link[=expect_s4_class_linter]{expect_s4_class_linter()}}
+\itemize{
+\item \link{linters} for a complete list of linters available in lintr.
+\item \code{\link[=expect_s4_class_linter]{expect_s4_class_linter()}}
+}
 }
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=package_development_linters]{package_development}

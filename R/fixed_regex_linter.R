@@ -70,8 +70,12 @@ fixed_regex_linter <- function() {
 
   # regular expression pattern is the second argument
   pos_2_regex_funs <- xp_text_in_table(c(
-    "strsplit", "tstrsplit",
-    # stringr functions. even though the user action is different
+    # base functions.
+    "strsplit",
+    # data.table functions.
+    "tstrsplit",
+    # stringr functions.
+    #   even though the user action is different
     #   (setting fixed=TRUE vs. wrapping stringr::fixed()),
     #   detection of the lint is the same
     "str_count", "str_detect", "str_ends", "str_extract", "str_extract_all",
@@ -231,7 +235,7 @@ get_token_replacement <- function(token_content, token_type) {
       token_content
     }
   } else { # char_escape token
-    if (rex::re_matches(token_content, rex::rex("\\", one_of("^${}().*+?|[]\\<>:;")))) {
+    if (rex::re_matches(token_content, rex::rex("\\", one_of("^${}().*+?|[]\\<>=:;/_-!@#%&,~")))) {
       substr(token_content, start = 2L, stop = nchar(token_content))
     } else {
       eval(parse(text = paste0('"', token_content, '"')))
