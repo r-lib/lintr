@@ -282,6 +282,22 @@ test_that("fixed replacement is correct with UTF-8", {
 #   up in practice is for '\<', which is a special character in default
 #   regex but not in PCRE. Empirically relevant for HTML-related regex e.g. \\<li\\>
 
+#' Generate a string with a non-printable Unicode entry robust to test environment
+#'
+#' Non-printable unicode behaves wildly different with `encodeString()`
+#'   across R versions and platforms. Nonetheless, all of these expressions
+#'   are valid replacements.
+#' @noRd
+robust_non_printable_unicode <- function() {
+  if (getRversion() < "4.1.0") {
+    "abc\\U000a0defghi"
+  } else if (.Platform$OS.type == "windows") {
+    "abc\U{0a0def}ghi"
+  } else {
+    "abc\\U{0a0def}ghi"
+  }
+}
+
 # styler: off
 patrick::with_parameters_test_that("fixed replacements are correct", {
   skip_if(
@@ -296,47 +312,36 @@ patrick::with_parameters_test_that("fixed replacements are correct", {
     fixed_regex_linter()
   )
 }, .cases = tibble::tribble(
-  ~.test_name, ~regex_expr, ~fixed_expr,
-  "[.]", "[.]", ".",
-  '[\\\"]', '[\\\"]', '\\"',
-  "[]]", "[]]", "]",
-  "\\\\.", "\\\\.", ".",
-  "\\\\:", "\\\\:", ":",
-  "\\\\<", "\\\\<", "<",
-  "\\\\$", "\\\\$", "$",
-  "[\\1]", "[\\1]", "\\001",
-  "\\1", "\\1", "\\001",
-  "[\\12]", "[\\12]", "\\n",
-  "[\\123]", "[\\123]", "S",
-  "a[*]b", "a[*]b", "a*b",
-  "abcdefg", "abcdefg", "abcdefg",
-  "abc\\U{A0DEF}ghi", "abc\\U{A0DEF}ghi",
-  {
-    # non-printable unicode behaves wildly different with encodeString() across R versions and platforms.
-    # nonetheless, all of these expressions are valid replacements.
-    if (getRversion() < "4.1.0") {
-      "abc\\U000a0defghi"
-    } else if (.Platform$OS.type == "windows") {
-      "abc\U{0a0def}ghi"
-    } else {
-      "abc\\U{0a0def}ghi"
-    }
-  },
-  "a-z", "a-z", "a-z",
-  "[\\n]", "[\\n]", "\\n",
-  "\\n", "\n", "\\n",
-  "[\\u01]", "[\\u01]", "\\001",
-  "[\\u012]", "[\\u012]", "\\022",
-  "[\\u0123]", "[\\u0123]", "\u0123",
-  "[\\u{1}]", "[\\u{1}]", "\\001",
-  "[\\U1d4d7]", "[\\U1d4d7]", "\U1D4D7",
-  "[\\U{1D4D7}]", "[\\U{1D4D7}]", "\U1D4D7",
-  "[\\U8]", "[\\U8]", "\\b",
-  "\\u{A0}", "\\u{A0}", "\uA0",
+  ~.test_name,            ~regex_expr,            ~fixed_expr,
+  "[.]",                  "[.]",                  ".",
+  '[\\\"]',               '[\\\"]',               '\\"',
+  "[]]",                  "[]]",                  "]",
+  "\\\\.",                "\\\\.",                ".",
+  "\\\\:",                "\\\\:",                ":",
+  "\\\\<",                "\\\\<",                "<",
+  "\\\\$",                "\\\\$",                "$",
+  "[\\1]",                "[\\1]",                "\\001",
+  "\\1",                  "\\1",                  "\\001",
+  "[\\12]",               "[\\12]",               "\\n",
+  "[\\123]",              "[\\123]",              "S",
+  "a[*]b",                "a[*]b",                "a*b",
+  "abcdefg",              "abcdefg",              "abcdefg",
+  "abc\\U{A0DEF}ghi",     "abc\\U{A0DEF}ghi",     robust_non_printable_unicode(),
+  "a-z",                  "a-z",                  "a-z",
+  "[\\n]",                "[\\n]",                "\\n",
+  "\\n",                  "\n",                   "\\n",
+  "[\\u01]",              "[\\u01]",              "\\001",
+  "[\\u012]",             "[\\u012]",             "\\022",
+  "[\\u0123]",            "[\\u0123]",            "\u0123",
+  "[\\u{1}]",             "[\\u{1}]",             "\\001",
+  "[\\U1d4d7]",           "[\\U1d4d7]",           "\U1D4D7",
+  "[\\U{1D4D7}]",         "[\\U{1D4D7}]",         "\U1D4D7",
+  "[\\U8]",               "[\\U8]",               "\\b",
+  "\\u{A0}",              "\\u{A0}",              "\uA0",
   "\\u{A0}\\U{0001d4d7}", "\\u{A0}\\U{0001d4d7}", "\uA0\U1D4D7",
-  "[\\uF]", "[\\uF]", "\\017",
-  "[\\U{F7D5}]", "[\\U{F7D5}]", "\UF7D5",
-  "[\\x32]", "[\\x32]", "2",
-  "[\\xa]", "[\\xa]", "\\n"
+  "[\\uF]",               "[\\uF]",               "\\017",
+  "[\\U{F7D5}]",          "[\\U{F7D5}]",          "\UF7D5",
+  "[\\x32]",              "[\\x32]",              "2",
+  "[\\xa]",               "[\\xa]",               "\\n"
 ))
 # styler: on
