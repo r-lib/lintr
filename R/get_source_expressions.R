@@ -535,27 +535,6 @@ get_newline_locs <- function(x) {
   )
 }
 
-find_line_fun <- function(content, newline_locs) {
-  function(line_number) {
-    warning(
-      "find_line is deprecated and will soon be removed. ",
-      "XPath logic and xml_nodes_to_lints() are usually preferable"
-    )
-    which(newline_locs >= line_number)[1L] - 1L
-  }
-}
-
-find_column_fun <- function(content, newline_locs) {
-  function(line_number) {
-    warning(
-      "find_column is deprecated and will soon be removed. ",
-      "XPath logic and xml_nodes_to_lints() are usually preferable"
-    )
-    matched_line_number <- which(newline_locs >= line_number)[1L] - 1L
-    line_number - newline_locs[matched_line_number]
-  }
-}
-
 # Fix column numbers when there are tabs
 # getParseData() counts 1 tab as a variable number of spaces instead of one:
 # https://github.com/wch/r-source/blame/e7401b68ab0e032fce3e376aaca9a5431619b2b4/src/main/gram.y#L512
