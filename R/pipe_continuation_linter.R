@@ -46,8 +46,8 @@
 #' )
 #'
 #' @seealso
-#'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/pipes.html#long-lines-2>
+#' - [linters] for a complete list of linters available in lintr.
+#' - <https://style.tidyverse.org/pipes.html#long-lines-2>
 #' @export
 pipe_continuation_linter <- function() {
   # Where a single-line pipeline is nested inside a larger expression

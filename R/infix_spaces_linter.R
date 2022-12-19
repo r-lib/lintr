@@ -125,8 +125,8 @@ infix_overload <- data.frame(
 #'
 #' @evalRd rd_tags("infix_spaces_linter")
 #' @seealso
-#'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#infix-operators>
+#' - [linters] for a complete list of linters available in lintr.
+#' - <https://style.tidyverse.org/syntax.html#infix-operators>
 #' @export
 infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces = TRUE) {
   if (allow_multiple_spaces) {

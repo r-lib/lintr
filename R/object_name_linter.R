@@ -141,9 +141,11 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
     )
 
     # run namespace_imports at run-time, not "compile" time to allow package structure to change
+    pkg <- find_package(source_expression$filename)
     generics <- c(
       declared_s3_generics(xml),
-      imported_s3_generics(namespace_imports(find_package(source_expression$filename)))$fun,
+      imported_s3_generics(namespace_imports(pkg))$fun,
+      exported_s3_generics(pkg)$fun,
       .base_s3_generics
     )
     generics <- unique(generics[nzchar(generics)])

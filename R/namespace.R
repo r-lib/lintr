@@ -1,5 +1,5 @@
 # Parse namespace files and return imports exports, methods
-namespace_imports <- function(path = find_package()) {
+namespace_imports <- function(path = find_package(".")) {
   namespace_data <- tryCatch(
     parseNamespaceFile(basename(path), package.lib = file.path(path, "..")),
     error = function(e) NULL
@@ -35,7 +35,7 @@ safe_get_exports <- function(ns) {
 }
 
 empty_namespace_data <- function() {
-  data.frame(pkg = character(), ns = character(), stringsAsFactors = FALSE)
+  data.frame(pkg = character(), fun = character(), stringsAsFactors = FALSE)
 }
 
 # filter namespace_imports() for S3 generics
@@ -54,6 +54,23 @@ imported_s3_generics <- function(ns_imports) {
   ns_imports[is_generic, ]
 }
 
+exported_s3_generics <- function(path = find_package(".")) {
+  namespace_data <- tryCatch(
+    parseNamespaceFile(basename(path), package.lib = file.path(path, "..")),
+    error = function(e) NULL
+  )
+
+  if (length(namespace_data$S3methods) == 0L || nrow(namespace_data$S3methods) == 0L) {
+    return(empty_namespace_data())
+  }
+
+  data.frame(
+    pkg = basename(path),
+    fun = unique(namespace_data$S3methods[, 1L]),
+    stringsAsFactors = FALSE
+  )
+}
+
 is_s3_generic <- function(fun) {
   # Inspired by `utils::isS3stdGeneric`, though it will detect functions that
   # have `useMethod()` in places other than the first expression.
@@ -66,14 +83,15 @@ is_s3_generic <- function(fun) {
   ret
 }
 
-.base_s3_generics <- c(
+.base_s3_generics <- unique(c(
   names(.knownS3Generics),
-  .S3PrimitiveGenerics,
   if (getRversion() >= "3.5.0") {
     .S3_methods_table[, 1L]
   } else {
     # R < 3.5.0 doesn't provide .S3_methods_table
     # fallback: search baseenv() for generic methods
     imported_s3_generics(data.frame(pkg = "base", fun = ls(baseenv()), stringsAsFactors = FALSE))$fun
-  }
-)
+  },
+  # Contains S3 generic groups, see ?base::groupGeneric and src/library/base/R/zzz.R
+  ls(.GenericArgsEnv)
+))
