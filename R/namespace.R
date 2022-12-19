@@ -85,7 +85,6 @@ is_s3_generic <- function(fun) {
 
 .base_s3_generics <- unique(c(
   names(.knownS3Generics),
-  .S3PrimitiveGenerics,
   if (getRversion() >= "3.5.0") {
     .S3_methods_table[, 1L]
   } else {
@@ -93,15 +92,6 @@ is_s3_generic <- function(fun) {
     # fallback: search baseenv() for generic methods
     imported_s3_generics(data.frame(pkg = "base", fun = ls(baseenv()), stringsAsFactors = FALSE))$fun
   },
-  # S3 generic groups, see ?base::groupGeneric
-  # Group "Math"
-  c("abs", "sign", "sqrt", "floor", "ceiling", "trunc", "round", "signif", "exp", "log", "expm1", "log1p", "cos",
-    "sin", "tan", "cospi", "sinpi", "tanpi", "acos", "asin", "atan", "cosh", "sinh", "tanh", "acosh", "asinh", "atanh",
-    "lgamma", "gamma", "digamma", "trigamma", "cumsum", "cumprod", "cummax", "cummin"),
-  # Group "Ops"
-  c("+", "-", "*", "/", "^", "%%", "%/%", "&", "|", "!", "==", "!=", "<", "<=", ">=", ">"),
-  # Group "Summary"
-  c("all", "any", "sum", "prod", "min", "max", "range"),
-  # Group "Complex"
-  c("Arg", "Conj", "Im", "Mod", "Re")
+  # Contains S3 generic groups, see ?base::groupGeneric
+  ls(.GenericArgsEnv)
 ))
