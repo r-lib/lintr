@@ -24,6 +24,8 @@
 
 * Row names for `available_linters()` data frame are now contiguous (#1781, @IndrajeetPatil).
 
+* `object_name_linter()` allows all S3 group Generics (see `?base::groupGeneric`) and S3 generics defined in a different file in the same package (#1808, #1841, @AshesITR)
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
