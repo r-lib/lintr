@@ -40,6 +40,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/absolute_path_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/all_linters.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/any_duplicated_linter.html</loc>
   </url>
   <url>
