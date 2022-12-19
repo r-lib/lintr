@@ -27,6 +27,7 @@ drink_me.data.frame <- function(x, ...) {
 }
 
 #' head on my_s3_object
+#' @importFrom utils head
 #' @export
 head.my_s3_object <- function(x, ...) {
   NULL
@@ -35,5 +36,12 @@ head.my_s3_object <- function(x, ...) {
 #' assign names for my_custom_class
 #' @export
 `names<-.my_custom_class` <- function(x, value) {
+  NULL
+}
+
+#' Defined S3 generic in R/eat_me.R
+#' Tests #1808
+#' @export
+eat_me.liiiiiiiiiiiiiiiiiiiiiiiiiiist <- function(x, ...) {
   NULL
 }
