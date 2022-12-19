@@ -144,3 +144,7 @@ test_that("lint_package returns early if no package is found", {
     fixed = TRUE
   )
 })
+
+test_that("length(path)>1 is not supported", {
+  expect_error(lint_package(letters), "one package at a time", fixed = TRUE)
+})

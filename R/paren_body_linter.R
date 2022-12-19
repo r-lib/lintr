@@ -18,8 +18,8 @@
 #' )
 #'
 #' @seealso
-#'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#parentheses>
+#' - [linters] for a complete list of linters available in lintr.
+#' - <https://style.tidyverse.org/syntax.html#parentheses>
 #' @export
 paren_body_linter <- function() {
   # careful to do recursive search to the less common OP-RIGHT-PAREN

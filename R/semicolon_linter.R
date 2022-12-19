@@ -56,8 +56,8 @@
 #'
 #' @evalRd rd_tags("semicolon_linter")
 #' @seealso
-#'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#semicolons>
+#' - [linters] for a complete list of linters available in lintr.
+#' - <https://style.tidyverse.org/syntax.html#semicolons>
 #' @export
 semicolon_linter <- function(allow_compound = FALSE, allow_trailing = FALSE) {
   msg_trailing <- "Trailing semicolons are not needed."

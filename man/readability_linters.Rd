@@ -56,6 +56,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{string_boundary_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
+\item{\code{\link{unnecessary_concatenation_linter}}}
 \item{\code{\link{unnecessary_lambda_linter}}}
 \item{\code{\link{unnecessary_nested_if_linter}}}
 \item{\code{\link{unnecessary_placeholder_linter}}}
