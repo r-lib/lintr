@@ -44,6 +44,7 @@ Suggests:
     rlang,
     rmarkdown,
     rstudioapi (>= 0.2),
+    spelling,
     testthat (>= 3.0.0),
     tibble,
     tufte,
@@ -174,3 +175,4 @@ Collate:
     'xp_utils.R'
     'yoda_test_linter.R'
     'zzz.R'
+Language: en-US
