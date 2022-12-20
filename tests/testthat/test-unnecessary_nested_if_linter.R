@@ -12,6 +12,17 @@ test_that("unnecessary_nested_if_linter skips allowed usages", {
 
   expect_lint(
     trim_some("
+    for (x in 1:3) {
+      if (x && y) {
+        1L
+      }
+    }"),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
       if (x) {
         1L
       } else if (y) {
@@ -210,6 +221,31 @@ test_that("unnecessary_nested_if_linter blocks disallowed usages", {
   expect_lint(
     "if (x) if (y) 1L",
     lint_message,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+    for (x in 1:3) {
+      if (x) if (y) 1L
+    }"),
+    lint_message,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        if (y) {
+          if (z) {
+            1L
+          }
+        }
+      }"),
+    list(
+      list(message = lint_message, line_number = 2L, column_number = 3L),
+      list(message = lint_message, line_number = 3L, column_number = 5L)
+    ),
     linter
   )
 })

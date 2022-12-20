@@ -45,9 +45,10 @@
 #'   linters = brace_linter(allow_single_line = TRUE)
 #' )
 #' @evalRd rd_tags("brace_linter")
-#' @seealso [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#indenting> \cr
-#'   <https://style.tidyverse.org/syntax.html#if-statements>
+#' @seealso
+#' - [linters] for a complete list of linters available in lintr.
+#' - <https://style.tidyverse.org/syntax.html#indenting>
+#' - <https://style.tidyverse.org/syntax.html#if-statements>
 #' @export
 brace_linter <- function(allow_single_line = FALSE) {
   xp_cond_open <- xp_and(c(

@@ -9,11 +9,11 @@ lintr_deprecated <- function(old, new = NULL, version = NULL,
                              type = "Function") {
   msg <- c(
     c(type, " ", old, " was deprecated"),
-    if (length(version)) {
+    if (length(version) > 0L) {
       c(" in lintr version ", version)
     },
     ". ",
-    if (length(new)) {
+    if (length(new) > 0L) {
       c("Use ", new, " instead.")
     }
   )

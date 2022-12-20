@@ -29,8 +29,9 @@
 #' )
 #'
 #' @evalRd rd_tags("expect_s3_class_linter")
-#' @seealso [linters] for a complete list of linters available in lintr. \cr
-#'   [expect_s4_class_linter()]
+#' @seealso
+#' - [linters] for a complete list of linters available in lintr.
+#' - [expect_s4_class_linter()]
 #' @export
 expect_s3_class_linter <- function() {
   # (1) expect_{equal,identical}(class(x), C)

@@ -52,7 +52,7 @@ simplification.
 \item \code{\link[=setwd]{setwd()}} modifies the global working directory. Use \code{\link[withr:with_dir]{withr::with_dir()}} for a temporary change instead.
 \item \code{\link[=sink]{sink()}} permanently redirects output. Use \code{\link[withr:with_sink]{withr::with_sink()}} for a temporary redirection instead.
 \item \code{\link[=source]{source()}} loads code into the global environment unless \code{local = TRUE} is used, which can cause unexpected
-behaviour.
+behavior.
 \item \code{\link[=substring]{substring()}} should be replaced by \code{\link[=substr]{substr()}} with appropriate \verb{stop=} value.
 \item \code{\link[=Sys.setenv]{Sys.setenv()}} permanently modifies the global environment variables. Use \code{\link[withr:with_envvar]{withr::with_envvar()}} for a temporary
 change instead.

@@ -81,7 +81,7 @@ print.lints <- function(x, ...) {
 
   github_annotation_project_dir <- getOption("lintr.github_annotation_project_dir", "")
 
-  if (length(x)) {
+  if (length(x) > 0L) {
     inline_data <- x[[1L]][["filename"]] == "<text>"
     if (!inline_data && use_rstudio_source_markers) {
       rstudio_source_markers(x)

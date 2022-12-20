@@ -4,8 +4,9 @@
 #'
 #' @inheritParams absolute_path_linter
 #' @evalRd rd_tags("nonportable_path_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.  \cr
-#'   [absolute_path_linter()]
+#' @seealso
+#' - [linters] for a complete list of linters available in lintr.
+#' - [absolute_path_linter()]
 #' @export
 nonportable_path_linter <- function(lax = TRUE) {
   path_linter_factory(
