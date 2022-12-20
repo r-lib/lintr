@@ -49,6 +49,7 @@ The following linters are tagged with 'style':
 \item{\code{\link{trailing_whitespace_linter}}}
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
+\item{\code{\link{unnecessary_concatenation_linter}}}
 \item{\code{\link{unneeded_concatenation_linter}}}
 }
 }

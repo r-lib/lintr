@@ -26,7 +26,7 @@ is not recommended for new code.}
 
 \item{file}{if not \code{NULL}, read content from the specified file rather than from \code{content}.}
 
-\item{language}{temporarily override Rs \code{LANGUAGE} envvar, controlling localisation of base R error messages.
+\item{language}{temporarily override Rs \code{LANGUAGE} envvar, controlling localization of base R error messages.
 This makes testing them reproducible on all systems irrespective of their native R language setting.}
 }
 \value{

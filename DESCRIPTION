@@ -160,10 +160,10 @@ Collate:
     'tree_utils.R'
     'undesirable_function_linter.R'
     'undesirable_operator_linter.R'
+    'unnecessary_concatenation_linter.R'
     'unnecessary_lambda_linter.R'
     'unnecessary_nested_if_linter.R'
     'unnecessary_placeholder_linter.R'
-    'unneeded_concatenation_linter.R'
     'unreachable_code_linter.R'
     'unused_import_linter.R'
     'use_lintr.R'
@@ -174,3 +174,4 @@ Collate:
     'xp_utils.R'
     'yoda_test_linter.R'
     'zzz.R'
+Language: en-US

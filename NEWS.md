@@ -24,6 +24,8 @@
 
 * Row names for `available_linters()` data frame are now contiguous (#1781, @IndrajeetPatil).
 
+* `object_name_linter()` allows all S3 group Generics (see `?base::groupGeneric`) and S3 generics defined in a different file in the same package (#1808, #1841, @AshesITR)
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
@@ -43,6 +45,9 @@
   (#1346, @MichaelChirico)
 
 * The new `indentation_linter()` is part of the default linters. See "New linters" for more details.
+
+* For naming consistency, `unneeded_concatenation_linter()` has been deprecated in favor of
+  `unnecessary_concatenation_linter()` (#1797, @IndrajeetPatil).
 
 ## New and improved features
 
@@ -85,6 +90,8 @@
   suggest using `1L` instead, and code like `as.numeric(NA)` will suggest using `NA_real_` instead (#1439, @MichaelChirico)
 
 * Added `format()` functions for `lint` and `lints` (#1784, @AshesITR)
+
+* `all_linters()` function provides an easy way to access all available linters (#1843, @IndrajeetPatil)
 
 ### New linters
 
