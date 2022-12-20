@@ -11,6 +11,8 @@ patrick::with_parameters_test_that(
     expect_lint(sprintf("x %s foo(., .)", pipe), NULL, linter)
     # . used as a keyword argument --> ok
     expect_lint(sprintf("x %s foo(arg = .)", pipe), NULL, linter)
+    # . used inside a scope --> ok
+    expect_lint(sprintf("x %s { foo(arg = .) }", pipe), NULL, linter)
   },
   .test_name = c("forward", "assignment", "tee"),
   pipe = c("%>%", "%<>%", "%T>%")
