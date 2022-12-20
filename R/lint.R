@@ -242,10 +242,13 @@ lint_package <- function(path = ".", ...,
     dots <- dots[-1L]
   }
 
+  if (length(path) > 1L) {
+    stop("Only linting one package at a time is supported.")
+  }
   pkg_path <- find_package(path)
 
   if (is.null(pkg_path)) {
-    warning("Didn't find any R package searching upwards from '", path, "'.")
+    warning(sprintf("Didn't find any R package searching upwards from '%s'.", normalizePath(path)))
     return(NULL)
   }
 
@@ -700,6 +703,11 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
     ))
     one_result <- append(one_result, c(locations = list(list(one_location))))
     sarif$runs[[1L]]$results <- append(sarif$runs[[1L]]$results, list(one_result))
+  }
+
+  # if lints is empty, add empty results list
+  if (length(lints) == 0L) {
+    sarif$runs[[1L]]$results <- list()
   }
 
   write(jsonlite::toJSON(sarif, pretty = TRUE, auto_unbox = TRUE), filename)

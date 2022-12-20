@@ -37,7 +37,7 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
       encoding = '"UTF-8"'
     ),
     full = list(
-      linters = 'linters_with_tags(tags = NULL, packages = "lintr") # see vignette("lintr")',
+      linters = 'all_linters(packages = "lintr") # see vignette("lintr")',
       encoding = '"UTF-8"',
       exclusions = 'list("renv", "packrat") # see ?lintr::exclude'
     )

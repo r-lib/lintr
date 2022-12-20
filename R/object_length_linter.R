@@ -52,10 +52,12 @@ object_length_linter <- function(length = 30L) {
     )
 
     # run namespace_imports at run-time, not "compile" time to allow package structure to change
-    ns_imports <- namespace_imports(find_package(source_expression$filename))
+    pkg <- find_package(source_expression$filename)
+    ns_imports <- namespace_imports(pkg)
     generics <- strip_names(c(
       declared_s3_generics(xml),
       imported_s3_generics(ns_imports)$fun,
+      exported_s3_generics(pkg)$fun,
       .base_s3_generics
     ))
     generics <- unique(generics[nzchar(generics)])
