@@ -39,7 +39,6 @@ addins
 alllowercase
 backports
 backticked
-behaviour
 bookdown
 bugfix
 checkstyle
@@ -56,10 +55,8 @@ de
 debian
 dplyr
 dragosmg
-eg
 envvar
 eval
-favour
 flycheck
 github
 https
@@ -94,7 +91,6 @@ repo
 rlang
 roxygen
 sandboxing
-spilt
 src
 stopifnot
 styler

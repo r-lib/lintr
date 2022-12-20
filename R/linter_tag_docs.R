@@ -11,7 +11,7 @@ NULL
 #' Robustness linters
 #' @name robustness_linters
 #' @description
-#' Linters highlighting code robustness issues, such as possibly wrong edge case behaviour.
+#' Linters highlighting code robustness issues, such as possibly wrong edge case behavior.
 #' @evalRd rd_linters("robustness")
 #' @seealso [linters] for a complete list of linters available in lintr.
 NULL

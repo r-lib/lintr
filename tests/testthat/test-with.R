@@ -34,7 +34,7 @@ test_that("all default linters are tagged default", {
   expect_length(linters_with_tags("default", exclude_tags = "default"), 0L)
 
   # Check that above test also trips on default arguments.
-  skip_if_not_r_version("4.1.0") # Desired all.equal behaviour only available in >= 4.1
+  skip_if_not_r_version("4.1.0") # Desired all.equal behavior only available in >= 4.1
   expect_identical(
     all.equal(linters_with_tags("default"), linters_with_defaults(line_length_linter(120L))),
     'Component "line_length_linter": Component "length": Mean relative difference: 0.5'
