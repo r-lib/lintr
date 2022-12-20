@@ -25,7 +25,7 @@ lint(
 ```
 
 If code in question contains characters that need to be escaped, consider using
-raw strings instead.
+raw strings instead to save yourself some headache figuring out the multiple levels of escapes.
 
 Armed with your reprex, the next step is to figure out [where to ask](https://www.tidyverse.org/help/#where-to-ask). 
 
