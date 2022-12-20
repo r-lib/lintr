@@ -46,7 +46,7 @@
 
 * The new `indentation_linter()` is part of the default linters. See "New linters" for more details.
 
-* For naming consistency, `unneeded_concatenation_linter()` has been deprecated in favour of
+* For naming consistency, `unneeded_concatenation_linter()` has been deprecated in favor of
   `unnecessary_concatenation_linter()` (#1797, @IndrajeetPatil).
 
 ## New and improved features
