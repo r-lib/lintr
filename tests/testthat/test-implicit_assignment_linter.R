@@ -204,7 +204,7 @@ test_that("implicit_assignment_linter makes exceptions for functions that captur
   )
 })
 
-test_that("implicit_assignment_linter blocks disallowed usages", {
+test_that("implicit_assignment_linter blocks disallowed usages in simple conditional statements", {
   lint_message <- rex::rex("Avoid implicit assignments in function calls.")
   linter <- implicit_assignment_linter()
 
@@ -215,8 +215,12 @@ test_that("implicit_assignment_linter blocks disallowed usages", {
   expect_lint("while (0L -> x) FALSE", lint_message, linter)
   expect_lint("for (x in y <- 1:10) print(x)", lint_message, linter)
   expect_lint("for (x in 1:10 -> y) print(x)", lint_message, linter)
+})
 
-  # nested conditional statements
+test_that("implicit_assignment_linter blocks disallowed usages in nested conditional statements", {
+  lint_message <- rex::rex("Avoid implicit assignments in function calls.")
+  linter <- implicit_assignment_linter()
+
   expect_lint(
     trim_some("
     while (x <- 1L) {
@@ -239,8 +243,12 @@ test_that("implicit_assignment_linter blocks disallowed usages", {
     ),
     linter
   )
+})
 
-  # function calls
+test_that("implicit_assignment_linter blocks disallowed usages in function calls", {
+  lint_message <- rex::rex("Avoid implicit assignments in function calls.")
+  linter <- implicit_assignment_linter()
+
   expect_lint("mean(x <- 1:4)", lint_message, linter)
   expect_lint("mean(x <- (y <- 1:3) + 1L)", lint_message, linter)
   expect_lint("y <- median(x <- 1:4)", lint_message, linter)
@@ -255,7 +263,6 @@ test_that("implicit_assignment_linter blocks disallowed usages", {
     linter
   )
 
-  # mix
   expect_lint(
     trim_some("
     foo <- function(x) {
