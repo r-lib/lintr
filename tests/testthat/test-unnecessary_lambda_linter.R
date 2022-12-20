@@ -80,6 +80,11 @@ test_that("purrr-style anonymous functions are also caught", {
     rex::rex("Pass foo directly as a symbol to map_int()"),
     unnecessary_lambda_linter()
   )
+  expect_lint(
+    "purrr::map_vec(x, ~foo(.x, y))",
+    rex::rex("Pass foo directly as a symbol to map_vec()"),
+    unnecessary_lambda_linter()
+  )
 })
 
 test_that("cases with braces are caught", {

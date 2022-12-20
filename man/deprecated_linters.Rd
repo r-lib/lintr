@@ -4,7 +4,7 @@
 \alias{deprecated_linters}
 \title{Deprecated linters}
 \description{
-Linters that are deprecated and provided for backwards compatiblility only.
+Linters that are deprecated and provided for backwards compatibility only.
 These linters will be excluded from \code{linters_with_tags()} by default.
 }
 \seealso{
