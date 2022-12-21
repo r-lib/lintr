@@ -162,23 +162,18 @@ test_that("implicit_assignment_linter respects except argument", {
   )
 })
 
+test_that("implicit_assignment_linter skips allowed usages with braces", {
+  linter <- implicit_assignment_linter(except = character(0L))
+
+  expect_lint("output <- capture.output({ x <- f() })", NULL, linter)
+  expect_lint("quote({ a <- 1L })", NULL, linter)
+  expect_lint("bquote({ a <- 1L })", NULL, linter)
+  expect_lint("expression({ a <- 1L })", NULL, linter)
+  expect_lint("local({ a <- 1L })", NULL, linter)
+})
+
 test_that("implicit_assignment_linter makes exceptions for functions that capture side-effects", {
   linter <- implicit_assignment_linter()
-
-  # base
-  expect_lint("output <- capture.output(x <- f())", NULL, linter)
-  expect_lint("quote(a <- 1L)", NULL, linter)
-  expect_lint("bquote(a <- 1L)", NULL, linter)
-  expect_lint("expression(a <- 1L)", NULL, linter)
-  expect_lint("local({ a <- 1L })", NULL, linter)
-
-  # rlang
-  expect_lint("expr(a <- 1L)", NULL, linter)
-  expect_lint("quo(a <- 1L)", NULL, linter)
-  expect_lint("quos(a <- 1L)", NULL, linter)
-
-  # withr
-  expect_lint("with_options(list(digits = 3L), x <- getOption('digits'))", NULL, linter)
 
   # testthat
   expect_lint("expect_warning(out <- f(-1))", NULL, linter)
@@ -202,13 +197,20 @@ test_that("implicit_assignment_linter makes exceptions for functions that captur
     NULL,
     linter
   )
+
+  # rlang
+  expect_lint("expr(a <- 1L)", NULL, linter)
+  expect_lint("quo(a <- 1L)", NULL, linter)
+  expect_lint("quos(a <- 1L)", NULL, linter)
+
+  # withr
+  expect_lint("with_options(list(digits = 3L), x <- getOption('digits'))", NULL, linter)
 })
 
 test_that("implicit_assignment_linter blocks disallowed usages in simple conditional statements", {
   lint_message <- rex::rex("Avoid implicit assignments in function calls.")
   linter <- implicit_assignment_linter()
 
-  # conditional statements
   expect_lint("if (x <- 1L) TRUE", lint_message, linter)
   expect_lint("if (1L -> x) TRUE", lint_message, linter)
   expect_lint("while (x <- 0L) FALSE", lint_message, linter)
