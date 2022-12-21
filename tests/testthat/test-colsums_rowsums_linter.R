@@ -44,17 +44,17 @@ test_that("colsums_rowsums_linter simple disallowed usages", {
 
 })
 
-test_that("colsums_rowsums_linterr works with multiple lints in a single expression", {
+test_that("colsums_rowsums_linter works with multiple lints in a single expression", {
   linter <- colsums_rowsums_linter()
 
   expect_lint(
     "rbind(
       apply(x, 1, sum),
-      apply(y, 1, sum)
+      apply(y, 1, mean)
     )",
     list(
       rex::rex("colSums"),
-      rex::rex("colSums")
+      rex::rex("colMeans")
     ),
     linter
   )
