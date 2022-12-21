@@ -54,6 +54,13 @@ colsums_rowsums_linter <- function() {
     ]
   "
 
+  xpath <- glue::glue("{sums_xpath} | {means_xpath}")
+
+  # This doesn't handle the case when MARGIN and FUN are named and in a different position
+  # but this should be relatively rate
+  margin_xpath <- "expr[position() = 3]"
+  fun_xpath <- "expr[position() = 4]"
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -61,25 +68,17 @@ colsums_rowsums_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_sums_expr <- xml2::xml_find_all(xml, sums_xpath)
-    sums_lint_message <- sprintf("colSums()")
-    sums_lint <- xml_nodes_to_lints(
-      bad_sums_expr,
+    bad_expr <- xml2::xml_find_all(xml, xpath)
+    fun <- xml2::xml_text(xml2::xml_find_all(bad_expr, fun_xpath))
+    lint_message <- sprintf("col%ss()", tools::toTitleCase(fun))
+
+    xml_nodes_to_lints(
+      bad_expr,
       source_expression = source_expression,
-      sums_lint_message,
+      lint_message,
       type = "warning"
     )
 
-    bad_means_expr <- xml2::xml_find_all(xml, means_xpath)
-    means_lint_message <- sprintf("colMeans()")
-    means_lint <- xml_nodes_to_lints(
-      bad_means_expr,
-      source_expression = source_expression,
-      means_lint_message,
-      type = "warning"
-    )
-
-    c(sums_lint, means_lint)
 
   })
 }
