@@ -51,16 +51,24 @@ test_that("undesirable_operator_linter vectorizes messages", {
 })
 
 test_that("invalid inputs fail correctly", {
+  error_msg <- "'op' should be a non-empty named character vector"
+
   expect_error(
     undesirable_operator_linter("***"),
-    "'op' should be a named character vector",
+    error_msg,
     fixed = TRUE
   )
   expect_error(
     undesirable_operator_linter(c("***" = NA, NA)),
-    "'op' should be a named character vector",
+    error_msg,
     fixed = TRUE
   )
+  expect_error(
+    undesirable_operator_linter(op = NULL),
+    error_msg,
+    fixed = TRUE
+  )
+
   expect_error(
     undesirable_operator_linter(c("***" = NA)),
     "Did not recognize any valid operators in request for: ***",
