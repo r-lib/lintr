@@ -36,14 +36,21 @@ colsums_rowsums_linter <- function() {
       SYMBOL[text() = 'sum']
       and (position() = 3)
     ]
+    /parent::expr
   "
 
+  # Since mean() is a generic, we make sure that we only lint cases with arguments
+  # supported by colMeans() and rowMeans(), i.e., na.rm
   means_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'apply']
     /parent::expr
     /following-sibling::expr[
       SYMBOL[text() = 'mean']
       and (position() = 3)
+    ]
+    /parent::expr[
+      count(expr) = 4
+      or (count(expr) = 5 and SYMBOL_SUB[text() = 'na.rm'])
     ]
   "
 
