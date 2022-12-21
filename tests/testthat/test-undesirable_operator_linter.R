@@ -68,6 +68,11 @@ test_that("invalid inputs fail correctly", {
     error_msg,
     fixed = TRUE
   )
+  expect_error(
+    undesirable_operator_linter(op = character(0L)),
+    error_msg,
+    fixed = TRUE
+  )
 
   expect_error(
     undesirable_operator_linter(c("***" = NA)),

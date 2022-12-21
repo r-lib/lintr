@@ -71,6 +71,11 @@ test_that("invalid inputs fail correctly", {
     error_msg,
     fixed = TRUE
   )
+  expect_error(
+    undesirable_function_linter(fun = character(0L)),
+    error_msg,
+    fixed = TRUE
+  )
 
   expect_error(
     undesirable_function_linter(symbol_is_undesirable = 1.0),
@@ -78,4 +83,3 @@ test_that("invalid inputs fail correctly", {
     fixed = TRUE
   )
 })
-
