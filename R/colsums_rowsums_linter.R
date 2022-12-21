@@ -58,24 +58,56 @@ colsums_rowsums_linter <- function() {
 
   # This doesn't handle the case when MARGIN and FUN are named and in a different position
   # but this should be relatively rate
+  var_xpath  <- "expr[position() = 2]"
   margin_xpath <- "expr[position() = 3]"
   fun_xpath <- "expr[position() = 4]"
+
+  craft_msg <- function(var, margin, fun) {
+    if (is.na(xml2::xml_find_first(margin, "OP-COLON"))) {
+      l1 <- xml2::xml_double(margin)
+      l2 <- NULL
+    } else {
+      l1 <- xml2::xml_double(xml2::xml_find_first(margin, "expr[1]"))
+      l2 <- xml2::xml_double(xml2::xml_find_first(margin, "expr[2]"))
+    }
+
+    if (l1 == 1) {
+      if (is.null(l2)) {
+        reco <- glue::glue("row{fun}s({var})")
+      } else {
+        reco <- glue::glue("row{fun}s({var}, dims = {l2})")
+      }
+    } else {
+      if (is.null(l2)) {
+        l2 <- l1
+      }
+      reco <- glue::glue("row{fun}s(col{fun}s({var}, dims = {l1 - 1}), dims = {l2 - l1 + 1})")
+    }
+  }
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
-
     xml <- source_expression$xml_parsed_content
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
+
+    var <- xml2::xml_text(xml2::xml_find_all(bad_expr, var_xpath))
+
     fun <- xml2::xml_text(xml2::xml_find_all(bad_expr, fun_xpath))
-    lint_message <- sprintf("col%ss()", tools::toTitleCase(fun))
+    fun <- tools::toTitleCase(fun)
+
+    margin <- xml2::xml_find_all(bad_expr, margin_xpath)
+
+    recos <- lapply(seq_along(bad_expr), function(i) {
+      craft_msg(var[i], margin[i], fun[i])
+    })
 
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message,
+      lint_message = sprintf("Use %1$s rather than %2$s", recos, get_r_string(bad_expr)),
       type = "warning"
     )
 
