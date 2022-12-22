@@ -89,7 +89,11 @@ colsums_rowsums_linter <- function() {
     if (identical(l1, 1L)) {
       reco <- glue::glue("row{fun}s({var}, dims = {l2})")
     } else {
-      reco <- glue::glue("row{fun}s(col{fun}s({var}, dims = {l1 - 1}), dims = {l2 - l1 + 1}) or col{fun}s({var}, dims = {l1 - 1}) if {var} has {l2} dimensions")
+      reco <- glue::glue(
+        "row{fun}s(col{fun}s({var}, dims = {l1 - 1}), dims = {l2 - l1 + 1})",
+        " or ",
+        "col{fun}s({var}, dims = {l1 - 1}) if {var} has {l2} dimensions"
+      )
     }
 
     # It's easier to remove this after the fact, rather than having never ending if/elses
