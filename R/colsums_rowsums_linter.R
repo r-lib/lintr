@@ -71,7 +71,7 @@ colsums_rowsums_linter <- function() {
       l2 <- xml2::xml_double(xml2::xml_find_first(margin, "expr[2]"))
     }
 
-    if (l1 == 1) {
+    if (l1 == 1L) {
       if (is.null(l2)) {
         reco <- glue::glue("row{fun}s({var})")
       } else {
@@ -83,6 +83,7 @@ colsums_rowsums_linter <- function() {
       }
       reco <- glue::glue("row{fun}s(col{fun}s({var}, dims = {l1 - 1}), dims = {l2 - l1 + 1})")
     }
+    return(reco)
   }
 
   Linter(function(source_expression) {
