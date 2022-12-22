@@ -21,7 +21,7 @@
 #'   linters = colsums_rowsums_linter()
 #' )
 #'
-#' @evalRd rd_tags("expect_named_linter")
+#' @evalRd rd_tags("colsums_rowsums_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 colsums_rowsums_linter <- function() {
