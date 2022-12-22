@@ -21,6 +21,11 @@
 #'   linters = colsums_rowsums_linter()
 #' )
 #'
+#' lint(
+#'   text = "apply(x, 2:4, sum)",
+#'   linters = colsums_rowsums_linter()
+#' )
+#'
 #' @evalRd rd_tags("colsums_rowsums_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -63,6 +68,7 @@ colsums_rowsums_linter <- function() {
   fun_xpath <- "expr[position() = 4]"
 
   craft_msg <- function(var, margin, fun) {
+
     if (is.na(xml2::xml_find_first(margin, "OP-COLON"))) {
       l1 <- xml2::xml_double(margin)
       l2 <- NULL
@@ -71,18 +77,24 @@ colsums_rowsums_linter <- function() {
       l2 <- xml2::xml_double(xml2::xml_find_first(margin, "expr[2]"))
     }
 
-    if (l1 == 1L) {
-      if (is.null(l2)) {
-        reco <- glue::glue("row{fun}s({var})")
-      } else {
-        reco <- glue::glue("row{fun}s({var}, dims = {l2})")
-      }
-    } else {
-      if (is.null(l2)) {
-        l2 <- l1
-      }
-      reco <- glue::glue("row{fun}s(col{fun}s({var}, dims = {l1 - 1}), dims = {l2 - l1 + 1})")
+    # See #1764 for details about various cases. In short:
+    # - If apply(., 1:l2, sum) -> rowSums(., dims = l2)
+    # - If apply(., l1:l2, sum) -> rowSums(colSums(., dims = l1 - 1), dims = l2 - l1 + 1)
+    # - This last case can be simplified to a simple colSums() call if l2 = length(dim(.))
+    # - dims argument can be dropped if equals to 1. This notably is the case for matrices
+    if (is.null(l2)) {
+      l2 <- l1
     }
+
+    if (l1 == 1L) {
+      reco <- glue::glue("row{fun}s({var}, dims = {l2})")
+    } else {
+      reco <- glue::glue("row{fun}s(col{fun}s({var}, dims = {l1 - 1}), dims = {l2 - l1 + 1}) or col{fun}s({var}, dims = {l1 - 1}) if {var} has {l2} dimensions")
+    }
+
+    # It's easier to remove this after the fact, rather than having never ending if/elses
+    reco <- gsub(", dims = 1", "", reco, fixed = TRUE)
+
     return(reco)
   }
 
