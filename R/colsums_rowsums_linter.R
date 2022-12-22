@@ -70,11 +70,11 @@ colsums_rowsums_linter <- function() {
   craft_msg <- function(var, margin, fun) {
 
     if (is.na(xml2::xml_find_first(margin, "OP-COLON"))) {
-      l1 <- xml2::xml_double(margin)
+      l1 <- xml2::xml_integer(margin)
       l2 <- NULL
     } else {
-      l1 <- xml2::xml_double(xml2::xml_find_first(margin, "expr[1]"))
-      l2 <- xml2::xml_double(xml2::xml_find_first(margin, "expr[2]"))
+      l1 <- xml2::xml_integer(xml2::xml_find_first(margin, "expr[1]"))
+      l2 <- xml2::xml_integer(xml2::xml_find_first(margin, "expr[2]"))
     }
 
     # See #1764 for details about various cases. In short:
@@ -86,7 +86,7 @@ colsums_rowsums_linter <- function() {
       l2 <- l1
     }
 
-    if (l1 == 1L) {
+    if (identical(l1, 1L)) {
       reco <- glue::glue("row{fun}s({var}, dims = {l2})")
     } else {
       reco <- glue::glue("row{fun}s(col{fun}s({var}, dims = {l1 - 1}), dims = {l2 - l1 + 1}) or col{fun}s({var}, dims = {l1 - 1}) if {var} has {l2} dimensions")
