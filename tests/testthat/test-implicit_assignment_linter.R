@@ -204,18 +204,53 @@ test_that("implicit_assignment_linter makes exceptions for functions that captur
   )
 })
 
-test_that("implicit_assignment_linter blocks disallowed usages", {
+test_that("implicit_assignment_linter blocks disallowed usages in simple conditional statements", {
   lint_message <- rex::rex("Avoid implicit assignments in function calls.")
   linter <- implicit_assignment_linter()
 
+  # conditional statements
   expect_lint("if (x <- 1L) TRUE", lint_message, linter)
   expect_lint("if (1L -> x) TRUE", lint_message, linter)
   expect_lint("while (x <- 0L) FALSE", lint_message, linter)
   expect_lint("while (0L -> x) FALSE", lint_message, linter)
   expect_lint("for (x in y <- 1:10) print(x)", lint_message, linter)
   expect_lint("for (x in 1:10 -> y) print(x)", lint_message, linter)
+})
+
+test_that("implicit_assignment_linter blocks disallowed usages in nested conditional statements", {
+  lint_message <- rex::rex("Avoid implicit assignments in function calls.")
+  linter <- implicit_assignment_linter()
+
+  expect_lint(
+    trim_some("
+    while (x <- 1L) {
+      if (0L -> y) FALSE
+    }"),
+    list(
+      list(message = lint_message, line_number = 1L, column_number = 10L),
+      list(message = lint_message, line_number = 2L, column_number = 10L)
+    ),
+    linter
+  )
+  expect_lint(
+    trim_some("
+    for (x in y <- 1:10) {
+      if (0L -> y) print(x)
+    }"),
+    list(
+      list(message = lint_message, line_number = 1L, column_number = 13L),
+      list(message = lint_message, line_number = 2L, column_number = 10L)
+    ),
+    linter
+  )
+})
+
+test_that("implicit_assignment_linter blocks disallowed usages in function calls", {
+  lint_message <- rex::rex("Avoid implicit assignments in function calls.")
+  linter <- implicit_assignment_linter()
 
   expect_lint("mean(x <- 1:4)", lint_message, linter)
+  expect_lint("mean(x <- (y <- 1:3) + 1L)", lint_message, linter)
   expect_lint("y <- median(x <- 1:4)", lint_message, linter)
   expect_lint("lapply(x, function(x) return(x <- x + 1))", lint_message, linter)
   expect_lint("map(x, function(x) return(x <- x + 1))", lint_message, linter)
@@ -225,6 +260,19 @@ test_that("implicit_assignment_linter blocks disallowed usages", {
       return(x <- x + 1)
     }"),
     lint_message,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+    foo <- function(x) {
+      if (x <- 1L) x <- 2L
+      return(x <- x + 1)
+    }"),
+    list(
+      list(message = lint_message, line_number = 2L, column_number = 9L),
+      list(message = lint_message, line_number = 3L, column_number = 12L)
+    ),
     linter
   )
 })
