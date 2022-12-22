@@ -15,6 +15,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{boolean_arithmetic_linter}}}
 \item{\code{\link{brace_linter}}}
 \item{\code{\link{closed_curly_linter}}}
+\item{\code{\link{colsums_rowsums_linter}}}
 \item{\code{\link{commas_linter}}}
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{conjunct_test_linter}}}

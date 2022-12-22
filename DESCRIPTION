@@ -70,6 +70,7 @@ Collate:
     'brace_linter.R'
     'cache.R'
     'class_equals_linter.R'
+    'colsums_rowsums_linter.R'
     'commas_linter.R'
     'comment_linters.R'
     'comments.R'

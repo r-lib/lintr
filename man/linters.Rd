@@ -24,10 +24,10 @@ The following tags exist:
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=deprecated_linters]{deprecated} (5 linters)}
-\item{\link[=efficiency_linters]{efficiency} (23 linters)}
+\item{\link[=efficiency_linters]{efficiency} (24 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
-\item{\link[=readability_linters]{readability} (51 linters)}
+\item{\link[=readability_linters]{readability} (52 linters)}
 \item{\link[=robustness_linters]{robustness} (14 linters)}
 \item{\link[=style_linters]{style} (39 linters)}
 }
@@ -44,6 +44,7 @@ The following linters exist:
 \item{\code{\link{brace_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{class_equals_linter}} (tags: best_practices, consistency, robustness)}
 \item{\code{\link{closed_curly_linter}} (tags: configurable, deprecated, readability, style)}
+\item{\code{\link{colsums_rowsums_linter}} (tags: efficiency, readability)}
 \item{\code{\link{commas_linter}} (tags: default, readability, style)}
 \item{\code{\link{commented_code_linter}} (tags: best_practices, default, readability, style)}
 \item{\code{\link{condition_message_linter}} (tags: best_practices, consistency)}
