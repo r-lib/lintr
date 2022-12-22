@@ -68,6 +68,7 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
+      # `{patrick}` imports `{purrr}`, and so needs to be ignored on R < 3.5
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
