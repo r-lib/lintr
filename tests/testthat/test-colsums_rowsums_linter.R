@@ -63,6 +63,8 @@ test_that("colsums_rowsums_linter recommendation includes na.rm if present in or
   lint_message <- rex::rex(not("na.rm"))
   expect_lint("apply(x, 1, sum)", lint_message, linter)
 
+  expect_lint("apply(x, 1, sum, na.rm = FALSE)", lint_message, linter)
+
 })
 
 test_that("colsums_rowsums_linter works with multiple lints in a single expression", {
