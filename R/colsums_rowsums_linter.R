@@ -67,7 +67,7 @@ colsums_rowsums_linter <- function() {
   margin_xpath <- "expr[position() = 3]"
   fun_xpath <- "expr[position() = 4]"
 
-  craft_msg <- function(var, margin, fun, narm) {
+  craft_msg <- function(var, margin, fun, narm_val) {
 
     if (is.na(xml2::xml_find_first(margin, "OP-COLON"))) {
       l1 <- xml2::xml_integer(margin)
@@ -86,19 +86,19 @@ colsums_rowsums_linter <- function() {
       l2 <- l1
     }
 
-    if (!is.na(narm)) {
-      na.rm <- glue::glue(", na.rm = {narm}")
+    if (!is.na(narm_val)) {
+      narm <- glue::glue(", na.rm = {narm_val}")
     } else {
-      na.rm <- ""
+      narm <- ""
     }
 
     if (identical(l1, 1L)) {
-      reco <- glue::glue("row{fun}s({var}{na.rm}, dims = {l2})")
+      reco <- glue::glue("row{fun}s({var}{narm}, dims = {l2})")
     } else {
       reco <- glue::glue(
-        "row{fun}s(col{fun}s({var}{na.rm}, dims = {l1 - 1}), dims = {l2 - l1 + 1})",
+        "row{fun}s(col{fun}s({var}{narm}, dims = {l1 - 1}), dims = {l2 - l1 + 1})",
         " or ",
-        "col{fun}s({var}{na.rm}, dims = {l1 - 1}) if {var} has {l2} dimensions"
+        "col{fun}s({var}{narm}, dims = {l1 - 1}) if {var} has {l2} dimensions"
       )
     }
 
@@ -123,12 +123,12 @@ colsums_rowsums_linter <- function() {
 
     margin <- xml2::xml_find_all(bad_expr, margin_xpath)
 
-    narm <- xml2::xml_text(
+    narm_val <- xml2::xml_text(
       xml2::xml_find_first(bad_expr, "SYMBOL_SUB[text() = 'na.rm']/following-sibling::expr")
     )
 
     recos <- lapply(seq_along(bad_expr), function(i) {
-      craft_msg(var[i], margin[i], fun[i], narm[i])
+      craft_msg(var[i], margin[i], fun[i], narm_val[i])
     })
 
     xml_nodes_to_lints(
