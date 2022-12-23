@@ -3,7 +3,7 @@
 Thanks for using lintr. Before filing an issue, there are a few places
 to explore and pieces to put together to make the process as smooth as possible.
 
-## Reproducible example
+## Making a reproducible example
 
 Start by making a minimal **repr**oducible **ex**ample using the 
 [reprex](http://reprex.tidyverse.org/) package. For how to use reprex effectivly, 
