@@ -3,12 +3,11 @@
 Thanks for using lintr. Before filing an issue, there are a few places
 to explore and pieces to put together to make the process as smooth as possible.
 
+## Reproducible example
+
 Start by making a minimal **repr**oducible **ex**ample using the 
-[reprex](http://reprex.tidyverse.org/) package. If you haven't heard of or used 
-reprex before, you're in for a treat! Seriously, reprex will make all of your 
-R-question-asking endeavors easier (which is a pretty insane ROI for the five to 
-ten minutes it'll take you to learn what it's all about). For additional reprex
-pointers, check out the [Get help!](https://www.tidyverse.org/help/) section of
+[reprex](http://reprex.tidyverse.org/) package. For how to use reprex effectivly, 
+check out the [Get help!](https://www.tidyverse.org/help/) section of
 the tidyverse site.
 
 The most useful function to create reprexes for `{lintr}` issues is `lint()`.
@@ -27,11 +26,15 @@ lint(
 If code in question contains characters that need to be escaped, consider using
 raw strings instead to save yourself some headache figuring out the multiple levels of escapes.
 
+## Asking for help
+
 Armed with your reprex, the next step is to figure out [where to ask](https://www.tidyverse.org/help/#where-to-ask). 
 
 If it's a clarification question (e.g. you don't know how to exclude certain 
 files from lint workflow), start with [community.rstudio.com](https://community.rstudio.com/), 
 and/or StackOverflow. There are more people there to answer questions.
+
+## Filing an issue
 
 If it's a bug, you can create an issue with a reprex.
 
