@@ -26,8 +26,9 @@
 #' )
 #'
 #' @evalRd rd_tags("routine_registration_linter")
-#' @seealso [linters] for a complete list of linters available in lintr. \cr
-#'   https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Registering-native-routines
+#' @seealso
+#' - [linters] for a complete list of linters available in lintr.
+#' - <https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Registering-native-routines>
 #'
 #' @export
 routine_registration_linter <- function() {

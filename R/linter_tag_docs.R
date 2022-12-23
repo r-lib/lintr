@@ -11,7 +11,7 @@ NULL
 #' Robustness linters
 #' @name robustness_linters
 #' @description
-#' Linters highlighting code robustness issues, such as possibly wrong edge case behaviour.
+#' Linters highlighting code robustness issues, such as possibly wrong edge case behavior.
 #' @evalRd rd_linters("robustness")
 #' @seealso [linters] for a complete list of linters available in lintr.
 NULL
@@ -84,7 +84,7 @@ NULL
 #' Deprecated linters
 #' @name deprecated_linters
 #' @description
-#' Linters that are deprecated and provided for backwards compatiblility only.
+#' Linters that are deprecated and provided for backwards compatibility only.
 #' These linters will be excluded from `linters_with_tags()` by default.
 #' @evalRd rd_linters("deprecated")
 #' @seealso [linters] for a complete list of linters available in lintr.

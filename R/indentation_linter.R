@@ -184,7 +184,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       change_type <- find_indent_type(change)
       change_begin <- as.integer(xml2::xml_attr(change, "line1")) + 1L
       change_end <- xml2::xml_find_num(change, xp_block_ends)
-      if (change_begin <= change_end) {
+      if (isTRUE(change_begin <= change_end)) {
         to_indent <- seq(from = change_begin, to = change_end)
         if (change_type == "hanging") {
           expected_indent_levels[to_indent] <- as.integer(xml2::xml_attr(change, "col2"))
@@ -214,7 +214,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     bad_lines <- which(indent_levels != expected_indent_levels &
                          nzchar(trimws(source_expression$file_lines)) &
                          !in_str_const)
-    if (length(bad_lines)) {
+    if (length(bad_lines) > 0L) {
       # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
       is_consecutive_lint <- c(FALSE, diff(bad_lines) == 1L)
       indent_diff <- expected_indent_levels[bad_lines] - indent_levels[bad_lines]
@@ -231,7 +231,12 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       lint_lines <- unname(as.integer(names(source_expression$file_lines)[bad_lines]))
       lint_ranges <- cbind(
         pmin(expected_indent_levels[bad_lines] + 1L, indent_levels[bad_lines]),
-        pmax(expected_indent_levels[bad_lines], indent_levels[bad_lines])
+        # If the expected indent is larger than the current line width, the lint range would become invalid.
+        # Therefor, limit range end to end of line.
+        pmin(
+          pmax(expected_indent_levels[bad_lines], indent_levels[bad_lines]),
+          nchar(source_expression$file_lines[bad_lines]) + 1L
+        )
       )
       Map(
         Lint,
@@ -241,7 +246,14 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         type = "style",
         message = lint_messages,
         line = unname(source_expression$file_lines[bad_lines]),
-        ranges = apply(lint_ranges, 1L, list, simplify = FALSE)
+        # TODO(AshesITR) when updating supported R version to R >= 4.1:
+        # replace by ranges = apply(lint_ranges, 1L, list, simplify = FALSE)
+        ranges = lapply(
+          seq_along(bad_lines),
+          function(i) {
+            list(lint_ranges[i, ])
+          }
+        )
       )
     } else {
       list()

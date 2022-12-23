@@ -29,6 +29,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{for_loop_index_linter}}}
 \item{\code{\link{function_left_parentheses_linter}}}
 \item{\code{\link{function_return_linter}}}
+\item{\code{\link{implicit_assignment_linter}}}
 \item{\code{\link{indentation_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{inner_combine_linter}}}
@@ -55,6 +56,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{string_boundary_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
+\item{\code{\link{unnecessary_concatenation_linter}}}
 \item{\code{\link{unnecessary_lambda_linter}}}
 \item{\code{\link{unnecessary_nested_if_linter}}}
 \item{\code{\link{unnecessary_placeholder_linter}}}

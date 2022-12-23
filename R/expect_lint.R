@@ -17,7 +17,7 @@
 #' is not recommended for new code.
 #' @param ... arguments passed to [lint()], e.g. the linters or cache to use.
 #' @param file if not `NULL`, read content from the specified file rather than from `content`.
-#' @param language temporarily override Rs `LANGUAGE` envvar, controlling localisation of base R error messages.
+#' @param language temporarily override Rs `LANGUAGE` envvar, controlling localization of base R error messages.
 #' This makes testing them reproducible on all systems irrespective of their native R language setting.
 #' @return `NULL`, invisibly.
 #' @examples
@@ -140,7 +140,7 @@ expect_lint_free <- function(...) {
 
   lint_output <- NULL
   if (has_lints) {
-    lint_output <- paste(collapse = "\n", capture.output(print(lints)))
+    lint_output <- format(lints)
   }
   result <- testthat::expect(
     !has_lints,

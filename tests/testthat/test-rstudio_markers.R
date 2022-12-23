@@ -40,7 +40,7 @@ test_that("it returns markers which match lints", {
       Lint(
         filename = "test_file2",
         line_number = 10L,
-        column_number = 5L,
+        column_number = 1L,
         type = "warning",
         message = "test a message"
       )
