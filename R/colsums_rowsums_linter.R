@@ -67,7 +67,7 @@ colsums_rowsums_linter <- function() {
   margin_xpath <- "expr[position() = 3]"
   fun_xpath <- "expr[position() = 4]"
 
-  craft_msg <- function(var, margin, fun) {
+  craft_msg <- function(var, margin, fun, narm) {
 
     if (is.na(xml2::xml_find_first(margin, "OP-COLON"))) {
       l1 <- xml2::xml_integer(margin)
@@ -86,13 +86,19 @@ colsums_rowsums_linter <- function() {
       l2 <- l1
     }
 
+    if (narm) {
+      na.rm <- ", na.rm = TRUE"
+    } else {
+      na.rm <- ""
+    }
+
     if (identical(l1, 1L)) {
-      reco <- glue::glue("row{fun}s({var}, dims = {l2})")
+      reco <- glue::glue("row{fun}s({var}{na.rm}, dims = {l2})")
     } else {
       reco <- glue::glue(
-        "row{fun}s(col{fun}s({var}, dims = {l1 - 1}), dims = {l2 - l1 + 1})",
+        "row{fun}s(col{fun}s({var}{na.rm}, dims = {l1 - 1}), dims = {l2 - l1 + 1})",
         " or ",
-        "col{fun}s({var}, dims = {l1 - 1}) if {var} has {l2} dimensions"
+        "col{fun}s({var}{na.rm}, dims = {l1 - 1}) if {var} has {l2} dimensions"
       )
     }
 
@@ -117,8 +123,10 @@ colsums_rowsums_linter <- function() {
 
     margin <- xml2::xml_find_all(bad_expr, margin_xpath)
 
+    narm <- !is.na(xml2::xml_find_first(bad_expr, "SYMBOL_SUB[text() = 'na.rm']"))
+
     recos <- lapply(seq_along(bad_expr), function(i) {
-      craft_msg(var[i], margin[i], fun[i])
+      craft_msg(var[i], margin[i], fun[i], narm[i])
     })
 
     xml_nodes_to_lints(
