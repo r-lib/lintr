@@ -49,6 +49,9 @@
 * For naming consistency, `unneeded_concatenation_linter()` has been deprecated in favor of
   `unnecessary_concatenation_linter()` (#1797, @IndrajeetPatil).
 
+* `undesirable_function_linter()` and `undesirable_operator_linter()` now produce an error 
+  if empty vector of undesirable functions or operators is provided (#1867, @IndrajeetPatil).
+
 ## New and improved features
 
 * New `get_r_string()` helper to get the R-equivalent value of a string, especially useful for R-4-style raw strings.
@@ -97,7 +100,7 @@
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
   `lapply(x, function(xi) sum(xi))` can be `lapply(x, sum)` and `purrr::map(x, ~quantile(.x, 0.75, na.rm = TRUE))`
-  can be `purrr::map(x, quantile, 0.75, na.rm = TRUE)`. Naming `probs = 0.75` can further improve readability (#1531, @MichaelChirico).
+  can be `purrr::map(x, quantile, 0.75, na.rm = TRUE)`. Naming `probs = 0.75` can further improve readability (#1531, #1866, @MichaelChirico, @Bisaloo).
 
 * `redundant_equals_linter()` for redundant comparisons to `TRUE` or `FALSE` like `is_treatment == TRUE` (#1500, @MichaelChirico)
 * `lengths_linter()` for encouraging usage of `lengths(x)` instead of `sapply(x, length)` (and similar)
