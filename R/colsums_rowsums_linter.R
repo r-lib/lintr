@@ -86,8 +86,8 @@ colsums_rowsums_linter <- function() {
       l2 <- l1
     }
 
-    if (narm) {
-      na.rm <- ", na.rm = TRUE"
+    if (!is.na(narm)) {
+      na.rm <- glue::glue(", na.rm = {narm}")
     } else {
       na.rm <- ""
     }
@@ -123,7 +123,9 @@ colsums_rowsums_linter <- function() {
 
     margin <- xml2::xml_find_all(bad_expr, margin_xpath)
 
-    narm <- !is.na(xml2::xml_find_first(bad_expr, "SYMBOL_SUB[text() = 'na.rm']"))
+    narm <- xml2::xml_text(
+      xml2::xml_find_first(bad_expr, "SYMBOL_SUB[text() = 'na.rm']/following-sibling::expr")
+    )
 
     recos <- lapply(seq_along(bad_expr), function(i) {
       craft_msg(var[i], margin[i], fun[i], narm[i])
