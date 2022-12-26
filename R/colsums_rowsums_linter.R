@@ -86,8 +86,8 @@ colsums_rowsums_linter <- function() {
       l2 <- l1
     }
 
-    l1 <- as.integer(re_substitutes(l1, "L$", ""))
-    l2 <- as.integer(re_substitutes(l2, "L$", ""))
+    l1 <- suppressWarnings(as.integer(re_substitutes(l1, "L$", "")))
+    l2 <- suppressWarnings(as.integer(re_substitutes(l2, "L$", "")))
 
     if (!is.na(narm_val)) {
       narm <- glue::glue(", na.rm = {narm_val}")
@@ -97,6 +97,16 @@ colsums_rowsums_linter <- function() {
 
     if (identical(l1, 1L)) {
       reco <- glue::glue("row{fun}s({var}{narm}, dims = {l2})")
+    } else if (anyNA(c(l1, l2))) {
+      # Return generic error messages if l1 and l2 can't be parsed since we need
+      # to do arithmetic operations on them to produce custom messages
+      reco <- glue::glue(
+        "row{fun}s(col{fun}s({var}{narm}, dims = l1 - 1), dims = l2 - l1 + 1)",
+        " or ",
+        "row{fun}s({var}{narm}, dims = l2) if l1 == 1L",
+        " or ",
+        "col{fun}s({var}{narm}, dims = l1 - 1) if {var} has l2 dimensions"
+      )
     } else {
       reco <- glue::glue(
         "row{fun}s(col{fun}s({var}{narm}, dims = {l1 - 1}), dims = {l2 - l1 + 1})",

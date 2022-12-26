@@ -50,6 +50,17 @@ test_that("colsums_rowsums_linter simple disallowed usages", {
 
 })
 
+test_that("colsums_rowsums_linter works even when MARGIN can't be parsed", {
+
+  linter <- colsums_rowsums_linter()
+  lint_message <- rex::rex("l1")
+
+  expect_lint("apply(x, seq(2, 4), sum)", lint_message, linter)
+
+  expect_lint("apply(x, m, sum)", lint_message, linter)
+
+})
+
 test_that("colsums_rowsums_linter recommendation includes na.rm if present in original call", {
   linter <- colsums_rowsums_linter()
   lint_message <- rex::rex("na.rm = TRUE")
@@ -83,26 +94,6 @@ test_that("colsums_rowsums_linter works with multiple lints in a single expressi
       rex::rex("Use rowMeans(colMeans(y, na.rm = TRUE), dims = 3) or colMeans(y, na.rm = TRUE) if y has 4 dimensions")
     ),
     linter
-  )
-
-})
-
-test_that("unsupported cases don't error", {
-
-  linter <- colsums_rowsums_linter()
-
-  expect_no_error(
-    lint(
-      text = "apply(x, seq(2, 4), sum)",
-      linters = linter
-    )
-  )
-
-  expect_no_error(
-    lint(
-      text = "apply(x, m, sum)",
-      linters = linter
-    )
   )
 
 })
