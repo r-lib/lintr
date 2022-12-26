@@ -16,7 +16,7 @@ test_that("colsums_rowsums_linter skips allowed usages", {
 
 test_that("colsums_rowsums_linter simple disallowed usages", {
   linter <- colsums_rowsums_linter()
-  lint_message <- rex::rex("rowSums")
+  lint_message <- rex::rex("rowSums(x)")
 
   expect_lint("apply(x, 1, sum)", lint_message, linter)
 
@@ -24,14 +24,11 @@ test_that("colsums_rowsums_linter simple disallowed usages", {
 
   expect_lint("apply(x, 1L, sum)", lint_message, linter)
 
-  # Works with extra args in sum()
-  expect_lint("apply(x, 1, sum, na.rm = TRUE)", lint_message, linter)
+  expect_lint("apply(x, 1:4, sum)", rex::rex("rowSums(x, dims = 4)"), linter)
 
-  lint_message <- rex::rex("colSums")
+  expect_lint("apply(x, 2, sum)", rex::rex("rowSums(colSums(x))"), linter)
 
-  expect_lint("apply(x, 2, sum)", lint_message, linter)
-
-  expect_lint("apply(x, 2:4, sum)", lint_message, linter)
+  expect_lint("apply(x, 2:4, sum)", rex::rex("rowSums(colSums(x), dims = 3)"), linter)
 
   lint_message <- rex::rex("rowMeans")
 
