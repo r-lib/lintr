@@ -86,3 +86,23 @@ test_that("colsums_rowsums_linter works with multiple lints in a single expressi
   )
 
 })
+
+test_that("unsupported cases don't error", {
+
+  linter <- colsums_rowsums_linter()
+
+  expect_no_error(
+    lint(
+      text = "apply(x, seq(2, 4), sum)",
+      linters = linter
+    )
+  )
+
+  expect_no_error(
+    lint(
+      text = "apply(x, m, sum)",
+      linters = linter
+    )
+  )
+
+})
