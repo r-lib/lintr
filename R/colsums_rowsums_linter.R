@@ -70,11 +70,11 @@ colsums_rowsums_linter <- function() {
   craft_msg <- function(var, margin, fun, narm_val) {
 
     if (is.na(xml2::xml_find_first(margin, "OP-COLON"))) {
-      l1 <- xml2::xml_integer(margin)
+      l1 <- xml2::xml_text(margin)
       l2 <- NULL
     } else {
-      l1 <- xml2::xml_integer(xml2::xml_find_first(margin, "expr[1]"))
-      l2 <- xml2::xml_integer(xml2::xml_find_first(margin, "expr[2]"))
+      l1 <- xml2::xml_text(xml2::xml_find_first(margin, "expr[1]"))
+      l2 <- xml2::xml_text(xml2::xml_find_first(margin, "expr[2]"))
     }
 
     # See #1764 for details about various cases. In short:
@@ -85,6 +85,9 @@ colsums_rowsums_linter <- function() {
     if (is.null(l2)) {
       l2 <- l1
     }
+
+    l1 <- as.integer(re_substitutes(l1, "L$", ""))
+    l2 <- as.integer(re_substitutes(l2, "L$", ""))
 
     if (!is.na(narm_val)) {
       narm <- glue::glue(", na.rm = {narm_val}")

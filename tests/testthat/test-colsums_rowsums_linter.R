@@ -22,6 +22,8 @@ test_that("colsums_rowsums_linter simple disallowed usages", {
 
   expect_lint("apply(x, MARGIN = 1, FUN = sum)", lint_message, linter)
 
+  expect_lint("apply(x, 1L, sum)", lint_message, linter)
+
   # Works with extra args in sum()
   expect_lint("apply(x, 1, sum, na.rm = TRUE)", lint_message, linter)
 
