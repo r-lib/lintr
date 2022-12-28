@@ -67,60 +67,6 @@ colsums_rowsums_linter <- function() {
   margin_xpath <- "expr[position() = 3]"
   fun_xpath <- "expr[position() = 4]"
 
-  craft_msg <- function(var, margin, fun, narm_val) {
-
-    if (is.na(xml2::xml_find_first(margin, "OP-COLON"))) {
-      l1 <- xml2::xml_text(margin)
-      l2 <- NULL
-    } else {
-      l1 <- xml2::xml_text(xml2::xml_find_first(margin, "expr[1]"))
-      l2 <- xml2::xml_text(xml2::xml_find_first(margin, "expr[2]"))
-    }
-
-    # See #1764 for details about various cases. In short:
-    # - If apply(., 1:l2, sum) -> rowSums(., dims = l2)
-    # - If apply(., l1:l2, sum) -> rowSums(colSums(., dims = l1 - 1), dims = l2 - l1 + 1)
-    # - This last case can be simplified to a simple colSums() call if l2 = length(dim(.))
-    # - dims argument can be dropped if equals to 1. This notably is the case for matrices
-    if (is.null(l2)) {
-      l2 <- l1
-    }
-
-    l1 <- suppressWarnings(as.integer(re_substitutes(l1, "L$", "")))
-    l2 <- suppressWarnings(as.integer(re_substitutes(l2, "L$", "")))
-
-    if (!is.na(narm_val)) {
-      narm <- glue::glue(", na.rm = {narm_val}")
-    } else {
-      narm <- ""
-    }
-
-    if (identical(l1, 1L)) {
-      reco <- glue::glue("row{fun}s({var}{narm}, dims = {l2})")
-    } else if (anyNA(c(l1, l2))) {
-      # Return generic error messages if l1 and l2 can't be parsed since we need
-      # to do arithmetic operations on them to produce custom messages
-      reco <- glue::glue(
-        "row{fun}s(col{fun}s({var}{narm}, dims = l1 - 1), dims = l2 - l1 + 1)",
-        " or ",
-        "row{fun}s({var}{narm}, dims = l2) if l1 == 1L",
-        " or ",
-        "col{fun}s({var}{narm}, dims = l1 - 1) if {var} has l2 dimensions"
-      )
-    } else {
-      reco <- glue::glue(
-        "row{fun}s(col{fun}s({var}{narm}, dims = {l1 - 1}), dims = {l2 - l1 + 1})",
-        " or ",
-        "col{fun}s({var}{narm}, dims = {l1 - 1}) if {var} has {l2} dimensions"
-      )
-    }
-
-    # It's easier to remove this after the fact, rather than having never ending if/elses
-    reco <- gsub(", dims = 1", "", reco, fixed = TRUE)
-
-    return(reco)
-  }
-
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -140,9 +86,7 @@ colsums_rowsums_linter <- function() {
       xml2::xml_find_first(bad_expr, "SYMBOL_SUB[text() = 'na.rm']/following-sibling::expr")
     )
 
-    recos <- lapply(seq_along(bad_expr), function(i) {
-      craft_msg(var[i], margin[i], fun[i], narm_val[i])
-    })
+    recos <- mapply(craft_colsums_rowsums_msg, var, margin, fun, narm_val)
 
     xml_nodes_to_lints(
       bad_expr,
@@ -150,7 +94,61 @@ colsums_rowsums_linter <- function() {
       lint_message = sprintf("Use %1$s rather than %2$s", recos, get_r_string(bad_expr)),
       type = "warning"
     )
-
-
   })
 }
+
+craft_colsums_rowsums_msg <- function(var, margin, fun, narm_val) {
+
+  if (is.na(xml2::xml_find_first(margin, "OP-COLON"))) {
+    l1 <- xml2::xml_text(margin)
+    l2 <- NULL
+  } else {
+    l1 <- xml2::xml_text(xml2::xml_find_first(margin, "expr[1]"))
+    l2 <- xml2::xml_text(xml2::xml_find_first(margin, "expr[2]"))
+  }
+
+  # See #1764 for details about various cases. In short:
+  # - If apply(., 1:l2, sum) -> rowSums(., dims = l2)
+  # - If apply(., l1:l2, sum) -> rowSums(colSums(., dims = l1 - 1), dims = l2 - l1 + 1)
+  # - This last case can be simplified to a simple colSums() call if l2 = length(dim(.))
+  # - dims argument can be dropped if equals to 1. This notably is the case for matrices
+  if (is.null(l2)) {
+    l2 <- l1
+  }
+
+  # We don't want warnings when converted as NAs
+  l1 <- suppressWarnings(as.integer(re_substitutes(l1, "L$", "")))
+  l2 <- suppressWarnings(as.integer(re_substitutes(l2, "L$", "")))
+
+  if (!is.na(narm_val)) {
+    narm <- glue::glue(", na.rm = {narm_val}")
+  } else {
+    narm <- ""
+  }
+
+  if (identical(l1, 1L)) {
+    reco <- glue::glue("row{fun}s({var}{narm}, dims = {l2})")
+  } else if (anyNA(c(l1, l2))) {
+    # Return generic error messages if l1 and l2 can't be parsed since we need
+    # to do arithmetic operations on them to produce custom messages
+    reco <- glue::glue(
+      "row{fun}s(col{fun}s({var}{narm}, dims = l1 - 1), dims = l2 - l1 + 1)",
+      " or ",
+      "row{fun}s({var}{narm}, dims = l2) if l1 == 1L",
+      " or ",
+      "col{fun}s({var}{narm}, dims = l1 - 1) if {var} has l2 dimensions"
+    )
+  } else {
+    reco <- glue::glue(
+      "row{fun}s(col{fun}s({var}{narm}, dims = {l1 - 1}), dims = {l2 - l1 + 1})",
+      " or ",
+      "col{fun}s({var}{narm}, dims = {l1 - 1}) if {var} has {l2} dimensions"
+    )
+  }
+
+  # It's easier to remove this after the fact, rather than having never ending if/elses
+  reco <- gsub(", dims = 1", "", reco, fixed = TRUE)
+
+  return(reco)
+}
+

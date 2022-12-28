@@ -70,7 +70,7 @@ test_that("colsums_rowsums_linter recommendation includes na.rm if present in or
 
   expect_lint("apply(x, 2, mean, na.rm = TRUE)", lint_message, linter)
 
-  lint_message <- rex::rex(not("na.rm"))
+  lint_message <- rex::rex("rowSums(x)")
   expect_lint("apply(x, 1, sum)", lint_message, linter)
 
   lint_message <- rex::rex("na.rm = foo")
