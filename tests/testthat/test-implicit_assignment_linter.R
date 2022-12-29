@@ -276,3 +276,17 @@ test_that("implicit_assignment_linter blocks disallowed usages in function calls
     linter
   )
 })
+
+test_that("implicit_assignment_linter works as expected with pipes and walrus operator", {
+  linter <- implicit_assignment_linter()
+
+  expect_lint("data %>% mutate(a := b)", NULL, linter)
+  expect_lint("dt %>% .[, z := x + y]", NULL, linter)
+  expect_lint("data %<>% mutate(a := b)", NULL, linter)
+
+  expect_lint("DT[i, x := i]", NULL, linter)
+
+  skip_if_not_r_version("4.1.0")
+
+  expect_lint("data |> mutate(a := b)", NULL, linter)
+})
