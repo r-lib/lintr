@@ -1,6 +1,5 @@
-test_that("returns the correct linting", {
+test_that("single_quotes_linter skips allowed usages", {
   linter <- single_quotes_linter()
-  lint_msg <- rex::rex("Only use double-quotes.")
 
   expect_lint("blah", NULL, linter)
   expect_lint("\"blah\"", NULL, linter)
@@ -10,6 +9,11 @@ test_that("returns the correct linting", {
   expect_lint("\"'blah'\"", NULL, linter)
   expect_lint("'\"'", NULL, linter)
   expect_lint("'\"blah\"'", NULL, linter)
+})
+
+test_that("single_quotes_linter blocks disallowed usages", {
+  linter <- single_quotes_linter()
+  lint_msg <- rex::rex("Only use double-quotes.")
 
   expect_lint("'blah'", lint_msg, linter)
   expect_lint("fun('blah')", lint_msg, linter)
