@@ -47,7 +47,7 @@ lint(
   text = strrep("x", 23L),
   linters = exclude_wrapper_linter(
     line_length_linter(20),
-    exclusions = c(normalizePath(tempdir(), TRUE)),
+    exclusions = c(normalizePath(tempdir(), mustWork = TRUE)),
     pattern = "^file"
    )
 )
