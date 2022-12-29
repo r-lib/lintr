@@ -3,6 +3,8 @@ test_that("implicit_assignment_linter skips allowed usages", {
 
   expect_lint("x <- 1L", NULL, linter)
   expect_lint("1L -> x", NULL, linter)
+  expect_lint("x <<- 1L", NULL, linter)
+  expect_lint("1L ->> x", NULL, linter)
   expect_lint("y <- if (is.null(x)) z else x", NULL, linter)
   expect_lint("for (x in 1:10) x <- x + 1", NULL, linter)
 
@@ -208,9 +210,10 @@ test_that("implicit_assignment_linter blocks disallowed usages in simple conditi
   lint_message <- rex::rex("Avoid implicit assignments in function calls.")
   linter <- implicit_assignment_linter()
 
-  # conditional statements
   expect_lint("if (x <- 1L) TRUE", lint_message, linter)
   expect_lint("if (1L -> x) TRUE", lint_message, linter)
+  expect_lint("if (x <<- 1L) TRUE", lint_message, linter)
+  expect_lint("if (1L ->> x) TRUE", lint_message, linter)
   expect_lint("while (x <- 0L) FALSE", lint_message, linter)
   expect_lint("while (0L -> x) FALSE", lint_message, linter)
   expect_lint("for (x in y <- 1:10) print(x)", lint_message, linter)
@@ -275,4 +278,18 @@ test_that("implicit_assignment_linter blocks disallowed usages in function calls
     ),
     linter
   )
+})
+
+test_that("implicit_assignment_linter works as expected with pipes and walrus operator", {
+  linter <- implicit_assignment_linter()
+
+  expect_lint("data %>% mutate(a := b)", NULL, linter)
+  expect_lint("dt %>% .[, z := x + y]", NULL, linter)
+  expect_lint("data %<>% mutate(a := b)", NULL, linter)
+
+  expect_lint("DT[i, x := i]", NULL, linter)
+
+  skip_if_not_r_version("4.1.0")
+
+  expect_lint("data |> mutate(a := b)", NULL, linter)
 })
