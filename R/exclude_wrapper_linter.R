@@ -4,8 +4,10 @@
 #' for lint_dir or lint_package
 #'
 #' @param ... all linters that need to be exclude with extra rules
+#' @param pattern pattern for files, by default it will take files with any of the extensions
+#' .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...).
+#' @param exclusions exclusions path, relative to the package path.
 #' @param root Base directory for relative filename resolution.
-#' @inheritParams lint
 #'
 #' @evalRd rd_tags("exclude_wrapper_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
@@ -38,7 +40,7 @@
 #' @export
 exclude_wrapper_linter <- function(
     ...,
-    exclusions,
+    exclusions = NULL,
     pattern = rex::rex(".",
                        one_of("Rr"),
                        or("", "html", "md", "nw", "rst", "tex", "txt"),

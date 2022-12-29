@@ -6,7 +6,7 @@
 \usage{
 exclude_wrapper_linter(
   ...,
-  exclusions,
+  exclusions = NULL,
   pattern = rex::rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"),
     end),
   root = getwd()
@@ -15,7 +15,7 @@ exclude_wrapper_linter(
 \arguments{
 \item{...}{all linters that need to be exclude with extra rules}
 
-\item{exclusions}{exclusions for \code{\link[=exclude]{exclude()}}, relative to the package path.}
+\item{exclusions}{exclusions path, relative to the package path.}
 
 \item{pattern}{pattern for files, by default it will take files with any of the extensions
 .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...).}
@@ -57,5 +57,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=configure_linters]{configure}, \link[=efficiency_linters]{efficiency}, \link[=exclude_linters]{exclude}, \link[=package_development_linters]{package_development}
+\link[=configurable_linters]{configurable}, \link[=package_development_linters]{package_development}
 }
