@@ -42,7 +42,7 @@ test_that("exclude from linting", {
   text <- paste0(lines, collapse = "\n")
   file <- normalizePath(file)
   linter <- exclude_wrapper_linter(line_length_linter(80L), T_and_F_symbol_linter(),
-                                   exclusions = c(file))
+                                   exclusions = file)
 
   lint_from_file <- lint(file, linters = linter)
 
