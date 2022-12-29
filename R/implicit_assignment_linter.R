@@ -59,8 +59,8 @@ implicit_assignment_linter <- function(except = c(
   # The walrus operator `:=` is also `LEFT_ASSIGN`, but is not a relevant operator
   # to be considered for the present linter.
   assignments <- c(
-    "LEFT_ASSIGN[text() = '<-']", # e.g. mean(x <- 1:4)
-    "RIGHT_ASSIGN[text() = '->']" # e.g. mean(1:4 -> x)
+    "LEFT_ASSIGN[text() != ':=']", # e.g. mean(x <- 1:4)
+    "RIGHT_ASSIGN" # e.g. mean(1:4 -> x)
   )
 
   xpath_fun_call <- paste0(
