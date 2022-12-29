@@ -52,3 +52,34 @@ test_that("Line numbers are extracted correctly", {
   lines <- c(rep(letters, 10L), "tmp <- tempdir()")
   expect_lint(paste(lines, collapse = "\n"), "undesirable", undesirable_function_linter(c(tempdir = NA)))
 })
+
+test_that("invalid inputs fail correctly", {
+  error_msg <- "'fun' should be a non-empty named character vector"
+
+  expect_error(
+    undesirable_function_linter("***"),
+    error_msg,
+    fixed = TRUE
+  )
+  expect_error(
+    undesirable_function_linter(c("***" = NA, NA)),
+    error_msg,
+    fixed = TRUE
+  )
+  expect_error(
+    undesirable_function_linter(fun = NULL),
+    error_msg,
+    fixed = TRUE
+  )
+  expect_error(
+    undesirable_function_linter(fun = character(0L)),
+    error_msg,
+    fixed = TRUE
+  )
+
+  expect_error(
+    undesirable_function_linter(symbol_is_undesirable = 1.0),
+    "is.logical(symbol_is_undesirable) is not TRUE",
+    fixed = TRUE
+  )
+})

@@ -49,6 +49,9 @@
 * For naming consistency, `unneeded_concatenation_linter()` has been deprecated in favor of
   `unnecessary_concatenation_linter()` (#1797, @IndrajeetPatil).
 
+* `undesirable_function_linter()` and `undesirable_operator_linter()` now produce an error 
+  if empty vector of undesirable functions or operators is provided (#1867, @IndrajeetPatil).
+
 ## New and improved features
 
 * New `get_r_string()` helper to get the R-equivalent value of a string, especially useful for R-4-style raw strings.
