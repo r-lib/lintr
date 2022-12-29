@@ -44,6 +44,7 @@ The following linters are tagged with 'package_development':
 \itemize{
 \item{\code{\link{backport_linter}}}
 \item{\code{\link{conjunct_test_linter}}}
+\item{\code{\link{exclude_wrapper_linter}}}
 \item{\code{\link{expect_comparison_linter}}}
 \item{\code{\link{expect_identical_linter}}}
 \item{\code{\link{expect_length_linter}}}
