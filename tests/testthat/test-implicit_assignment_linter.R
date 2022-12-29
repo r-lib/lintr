@@ -165,11 +165,60 @@ test_that("implicit_assignment_linter respects except argument", {
 test_that("implicit_assignment_linter skips allowed usages with braces", {
   linter <- implicit_assignment_linter(except = character(0L))
 
-  expect_lint("output <- capture.output({ x <- f() })", NULL, linter)
-  expect_lint("quote({ a <- 1L })", NULL, linter)
-  expect_lint("bquote({ a <- 1L })", NULL, linter)
-  expect_lint("expression({ a <- 1L })", NULL, linter)
-  expect_lint("local({ a <- 1L })", NULL, linter)
+  expect_lint(
+    trim_some("
+    foo({
+      a <- 1L
+    })
+    "),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+    output <- capture.output({
+      x <- f()
+    })
+    "),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+    quote({
+      a <- 1L
+    })
+    "),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+    bquote({
+      a <- 1L
+    })
+    "),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+    expression({
+      a <- 1L
+    })
+    "),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+    local({
+      a <- 1L
+    })
+    "),
+    NULL,
+    linter
+  )
 })
 
 test_that("implicit_assignment_linter makes exceptions for functions that capture side-effects", {
