@@ -1,7 +1,7 @@
 #' Block assignment of `{}`
 #'
 #' Assignment of `{}` is the same as assignment of `NULL`; use the latter
-#'   for clarity. Closely related: [unneeded_concatenation_linter()].
+#'   for clarity. Closely related: [unnecessary_concatenation_linter()].
 #'
 #' @examples
 #' # will produce lints

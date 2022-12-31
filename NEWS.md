@@ -2,7 +2,7 @@
 
 ## Bug fixes
 
-* `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
+* `fixed_regex_linter()` is more robust to errors stemming from unrecognized escapes (#1545, #1845, @IndrajeetPatil).
 
 * `get_source_expressions()` can handle Sweave/Rmarkdown documents with reference chunks like `<<ref_file>>` (#779, @MichaelChirico).
   Note that these are simply skipped, rather than attempting to retrieve the reference and also lint it.
@@ -10,6 +10,21 @@
 * `assignment_linter()` no longer lints assignments in braces that include comments when `allow_trailing = FALSE` (#1701, @ashbaldry)
 
 * `object_usage_linter()` no longer silently ignores usage warnings that don't contain a quoted name (#1714, @AshesITR)
+
+* `namespace_linter()` correctly recognizes backticked operators to be exported from respective namespaces (like `` rlang::`%||%` ``) (#1752, @IndrajeetPatil)
+
+* `lint_package()` correctly finds a package from within a subdir if the `path` points to anywhere within the package (#1759, @AshesITR)
+
+* Improved error behavior in `Lint()`, `lint()` and `xml_nodes_to_lints()` (#1427, #763, @AshesITR)
+  + `Lint()` validates its inputs more thoroughly, preventing errors during `print.Lints` like "Error in rep.int(character, length) : invalid 'times' value:".
+  + `lint()` no longer tries to create an expression tree with unexpected end of input errors, because they can be broken.
+  + `xml_nodes_to_lints()` warns if it can't find lint locations and uses dummy locations as a fallback.
+
+* `linters_with_defaults()` no longer erroneously marks linter factories as linters (#1725, @AshesITR).
+
+* Row names for `available_linters()` data frame are now contiguous (#1781, @IndrajeetPatil).
+
+* `object_name_linter()` allows all S3 group Generics (see `?base::groupGeneric`) and S3 generics defined in a different file in the same package (#1808, #1841, @AshesITR)
 
 ## Changes to defaults
 
@@ -28,6 +43,14 @@
   regardless of `allow_single_line` to match the corresponding behavior in {styler}. This is an expedient while
   the style guide on handling this case awaits clarification: https://github.com/tidyverse/style/issues/191.
   (#1346, @MichaelChirico)
+
+* The new `indentation_linter()` is part of the default linters. See "New linters" for more details.
+
+* For naming consistency, `unneeded_concatenation_linter()` has been deprecated in favor of
+  `unnecessary_concatenation_linter()` (#1797, @IndrajeetPatil).
+
+* `undesirable_function_linter()` and `undesirable_operator_linter()` now produce an error 
+  if empty vector of undesirable functions or operators is provided (#1867, @IndrajeetPatil).
 
 ## New and improved features
 
@@ -59,6 +82,8 @@
 
 * `implicit_integer_linter()` gains parameter `allow_colon` to skip lints on expressions like `1:10` (#1155, @MichaelChirico)
 
+* `infix_spaces_linter()` supports the native R pipe `|>` (#1793, @AshesITR)
+
 * `unneeded_concatenation_linter()` no longer lints on `c(...)` (i.e., passing `...` in a function call)
   when `allow_single_expression = FALSE` (#1696, @MichaelChirico)
 
@@ -67,11 +92,15 @@
 * `literal_coercion_linter()` reports a replacement in the lint message, e.g. code like `as.integer(1)` will
   suggest using `1L` instead, and code like `as.numeric(NA)` will suggest using `NA_real_` instead (#1439, @MichaelChirico)
 
+* Added `format()` functions for `lint` and `lints` (#1784, @AshesITR)
+
+* `all_linters()` function provides an easy way to access all available linters (#1843, @IndrajeetPatil)
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
   `lapply(x, function(xi) sum(xi))` can be `lapply(x, sum)` and `purrr::map(x, ~quantile(.x, 0.75, na.rm = TRUE))`
-  can be `purrr::map(x, quantile, 0.75, na.rm = TRUE)`. Naming `probs = 0.75` can further improve readability (#1531, @MichaelChirico).
+  can be `purrr::map(x, quantile, 0.75, na.rm = TRUE)`. Naming `probs = 0.75` can further improve readability (#1531, #1866, @MichaelChirico, @Bisaloo).
 
 * `redundant_equals_linter()` for redundant comparisons to `TRUE` or `FALSE` like `is_treatment == TRUE` (#1500, @MichaelChirico)
 * `lengths_linter()` for encouraging usage of `lengths(x)` instead of `sapply(x, length)` (and similar)
@@ -93,6 +122,13 @@
 
 * `routine_registration_linter()` for identifying native routines that don't use registration (`useDynLib` in the `NAMESPACE`; @MichaelChirico)
 
+* `indentation_linter()` for checking that the indentation conforms to 2-space Tidyverse-style (@AshesITR and @dgkf, #1411, #1792).
+
+* `unnecessary_nested_if_linter()` for checking unnecessary nested `if` statements where a single 
+  `if` statement with appropriate conditional expression would suffice (@IndrajeetPatil and @AshesITR, #1778).
+
+* `implicit_assignment_linter()` for checking implicit assignments in function calls (@IndrajeetPatil and @AshesITR, #1777).
+
 ## Notes
 
 * `lint()` continues to support Rmarkdown documents. For users of custom .Rmd engines, e.g.
@@ -113,6 +149,9 @@
   Thanks to Yihui and other developers for their helpful discussions around this issue (#797, @IndrajeetPatil).
 
 * The output of `lint()` and `Lint()` gain S3 class `"list"` to assist with S3 dispatch (#1494, @MichaelChirico)
+# lintr 3.0.2
+
+* Fix test to avoid leaving behind cache files in the global cache directory.
 
 # lintr 3.0.1
 
@@ -145,6 +184,8 @@
 
 ## New and improved features
 
+* New `sort_linter()` to detect `x[order(x)]` and recommend the faster and clearer alternative: `sort(x)` (#1528, @Bisaloo)
+
 * `unreachable_code_linter()` ignores trailing comments if they match a closing nolint block (#1347, @AshesITR).
 
 * New `function_argument_linter()` to enforce that arguments with defaults appear last in function declarations,
@@ -164,6 +205,7 @@
 * `get_source_expressions()` no longer fails on R files that match a knitr pattern (#743, #879, #1406, @AshesITR).
 * Parse error lints now appear with the linter name `"error"` instead of `NA` (#1405, @AshesITR).  
   Also, linting no longer runs if the `source_expressions` contain invalid string data that would cause error messages
+  in other linters. 
   in other linters.
 * Prevent `lint()` from hanging on Rmd files with some syntax errors (#1443, @MichaelChirico).
 * `get_source_expressions()` no longer omits trailing non-code lines from knitr files (#1400, #1415, @AshesITR).  

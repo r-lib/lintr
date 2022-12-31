@@ -15,14 +15,14 @@
 #' @export
 #' @seealso `vignette("lintr")` for detailed introduction to using and configuring lintr.
 #' @examples
-#' \dontrun{
-#' # use the default set of linters
-#' lintr::use_lintr()
-#' # or try all linters
-#' lintr::use_lintr(type = "full")
+#' if (FALSE) {
+#'   # use the default set of linters
+#'   lintr::use_lintr()
+#'   # or try all linters
+#'   lintr::use_lintr(type = "full")
 #'
-#' # then
-#' lintr::lint_dir()
+#'   # then
+#'   lintr::lint_dir()
 #' }
 use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
   config_file <- normalizePath(file.path(path, getOption("lintr.linter_file")), mustWork = FALSE)
@@ -37,7 +37,7 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
       encoding = '"UTF-8"'
     ),
     full = list(
-      linters = 'linters_with_tags(tags = NULL, packages = "lintr") # see vignette("lintr")',
+      linters = 'all_linters(packages = "lintr") # see vignette("lintr")',
       encoding = '"UTF-8"',
       exclusions = 'list("renv", "packrat") # see ?lintr::exclude'
     )

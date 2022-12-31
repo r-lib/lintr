@@ -8,7 +8,7 @@ no_tab_linter()
 }
 \description{
 Check that only spaces are used for indentation, not tabs. Much ink has been
-spilt on this topic, and we encourage you to check out references for more
+spilled on this topic, and we encourage you to check out references for more
 information.
 }
 \examples{

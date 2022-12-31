@@ -26,7 +26,7 @@ is not recommended for new code.}
 
 \item{file}{if not \code{NULL}, read content from the specified file rather than from \code{content}.}
 
-\item{language}{temporarily override Rs \code{LANGUAGE} envvar, controlling localisation of base R error messages.
+\item{language}{temporarily override Rs \code{LANGUAGE} envvar, controlling localization of base R error messages.
 This makes testing them reproducible on all systems irrespective of their native R language setting.}
 }
 \value{
@@ -37,14 +37,14 @@ This is an expectation function to test that the lints produced by \code{lint} s
 }
 \examples{
 # no expected lint
-expect_lint("a", NULL, trailing_blank_lines_linter)
+expect_lint("a", NULL, trailing_blank_lines_linter())
 
 # one expected lint
-expect_lint("a\n", "superfluous", trailing_blank_lines_linter)
-expect_lint("a\n", list(message = "superfluous", line_number = 2), trailing_blank_lines_linter)
+expect_lint("a\n", "superfluous", trailing_blank_lines_linter())
+expect_lint("a\n", list(message = "superfluous", line_number = 2), trailing_blank_lines_linter())
 
 # several expected lints
-expect_lint("a\n\n", list("superfluous", "superfluous"), trailing_blank_lines_linter)
+expect_lint("a\n\n", list("superfluous", "superfluous"), trailing_blank_lines_linter())
 expect_lint(
   "a\n\n",
   list(

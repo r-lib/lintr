@@ -34,7 +34,7 @@ test_that("all default linters are tagged default", {
   expect_length(linters_with_tags("default", exclude_tags = "default"), 0L)
 
   # Check that above test also trips on default arguments.
-  skip_if_not_r_version("4.1.0") # Desired all.equal behaviour only available in >= 4.1
+  skip_if_not_r_version("4.1.0") # Desired all.equal behavior only available in >= 4.1
   expect_identical(
     all.equal(linters_with_tags("default"), linters_with_defaults(line_length_linter(120L))),
     'Component "line_length_linter": Component "length": Mean relative difference: 0.5'
@@ -91,4 +91,18 @@ test_that("linters_with_defaults(default = .) is supported with a deprecation wa
   default <- Linter(function(.) list())
   expect_silent(linters <- linters_with_defaults(defaults = list(), default = default))
   expect_named(linters, "default")
+})
+
+test_that("all_linters contains all available linters", {
+  all_linters <- all_linters(packages = "lintr")
+
+  expect_identical(linters_with_tags(NULL, packages = "lintr"), all_linters)
+  expect_length(all_linters, nrow(available_linters()))
+})
+
+test_that("all_linters respects ellipsis argument", {
+  expect_identical(
+    linters_with_tags(tags = NULL, implicit_integer_linter = NULL),
+    all_linters(packages = "lintr", implicit_integer_linter = NULL)
+  )
 })

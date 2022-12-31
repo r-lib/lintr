@@ -90,7 +90,7 @@ filter_chunk_end_positions <- function(starts, ends) {
   code_ends <- positions[pmin(1L + code_start_indexes, length(positions))]
 
   bad_end_indexes <- grep("starts", names(code_ends), fixed = TRUE)
-  if (length(bad_end_indexes)) {
+  if (length(bad_end_indexes) > 0L) {
     bad_start_positions <- positions[code_start_indexes[bad_end_indexes]]
     # This error message is formatted like a parse error
     stop(sprintf(
@@ -132,15 +132,8 @@ replace_prefix <- function(lines, prefix_pattern) {
   m <- gregexpr(prefix_pattern, lines)
   non_na <- !is.na(m)
 
-  blanks <- function(n) {
-    vapply(Map(rep.int, rep.int(" ", length(n)), n, USE.NAMES = FALSE),
-      paste, "",
-      collapse = ""
-    )
-  }
-
-  regmatches(lines[non_na], m[non_na]) <-
-    Map(blanks, lapply(regmatches(lines[non_na], m[non_na]), nchar))
+  prefix_lengths <- lapply(regmatches(lines[non_na], m[non_na]), nchar)
+  regmatches(lines[non_na], m[non_na]) <- lapply(prefix_lengths, strrep, x = " ")
 
   lines
 }

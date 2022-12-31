@@ -22,13 +22,13 @@ read_settings <- function(filename) {
   }
 
   if (!is.null(config_file)) {
-    f <- function(e) {
+    malformed <- function(e) {
       stop("Malformed config file, ensure it ends in a newline\n  ", conditionMessage(e), call. = FALSE)
     }
-    tryCatch(
-      config <- read.dcf(config_file, all = TRUE),
-      warning = f,
-      error = f
+    config <- tryCatch(
+      read.dcf(config_file, all = TRUE),
+      warning = malformed,
+      error = malformed
     )
   } else {
     config <- NULL
@@ -64,52 +64,12 @@ clear_settings <- function() {
   rm(list = ls(settings), envir = settings)
 }
 
-find_config <- function(filename) {
-  if (is.null(filename)) {
-    return(NULL)
-  }
-  linter_file <- getOption("lintr.linter_file")
-
-  ## if users changed lintr.linter_file, return immediately.
-  if (is_absolute_path(linter_file) && file.exists(linter_file)) {
-    return(linter_file)
-  }
-
-  path <- if (is_directory(filename)) {
-    filename
-  } else {
-    dirname(filename)
-  }
-
-  ## check for a file in the current directory
-  linter_config <- file.path(path, linter_file)
-  if (isTRUE(file.exists(linter_config))) {
-    return(linter_config)
-  }
-
-  ## next check for a file higher directories
-  linter_config <- find_config2(path)
-  if (isTRUE(file.exists(linter_config))) {
-    return(linter_config)
-  }
-
-  ## next check for a file in the user directory
-  # cf: rstudio@bc9b6a5 SessionRSConnect.R#L32
-  home_dir <- Sys.getenv("HOME", unset = "~")
-  linter_config <- file.path(home_dir, linter_file)
-  if (isTRUE(file.exists(linter_config))) {
-    return(linter_config)
-  }
-
-  NULL
-}
-
 find_default_encoding <- function(filename) {
   if (is.null(filename)) {
     return(NULL)
   }
 
-  root_path <- find_rproj_or_package(filename)
+  root_path <- find_package(filename, allow_rproj = TRUE)
   rproj_enc <- get_encoding_from_dcf(find_rproj_at(root_path))
   if (!is.null(rproj_enc)) {
     return(rproj_enc)
@@ -137,10 +97,4 @@ get_encoding_from_dcf <- function(file) {
   }
 
   NULL
-}
-
-is_directory <- function(filename) {
-  is_dir <- file.info(filename)$isdir
-
-  !is.na(is_dir) && is_dir
 }

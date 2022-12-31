@@ -91,7 +91,11 @@ test_that(
     )
     lints_from_a_subdir <- withr::with_dir(
       file.path(pkg_path, "R"),
-      lint_package("..", linters = list(assignment_linter()))
+      lint_package(".", linters = list(assignment_linter()))
+    )
+    lints_from_a_subsubdir <- withr::with_dir(
+      file.path(pkg_path, "tests", "testthat"),
+      lint_package(".", linters = list(assignment_linter()))
     )
 
     expect_identical(
@@ -114,6 +118,14 @@ test_that(
         "(.lintr config present)"
       )
     )
+    expect_identical(
+      as.data.frame(lints_from_outside),
+      as.data.frame(lints_from_a_subsubdir),
+      info = paste(
+        "lint_package() finds the same lints from a sub-subdir as from outside a pkg",
+        "(.lintr config present)"
+      )
+    )
   }
 )
 
@@ -131,4 +143,8 @@ test_that("lint_package returns early if no package is found", {
     "Didn't find any R package",
     fixed = TRUE
   )
+})
+
+test_that("length(path)>1 is not supported", {
+  expect_error(lint_package(letters), "one package at a time", fixed = TRUE)
 })

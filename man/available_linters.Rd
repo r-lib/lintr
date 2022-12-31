@@ -13,7 +13,8 @@ available_tags(packages = "lintr")
 \item{packages}{A character vector of packages to search for linters.}
 
 \item{tags}{Optional character vector of tags to search. Only linters with at least one matching tag will be
-returned. If \code{tags} is \code{NULL}, all linters will be returned.}
+returned. If \code{tags} is \code{NULL}, all linters will be returned. See \code{available_tags("lintr")} to find out what
+tags are already used by lintr.}
 
 \item{exclude_tags}{Tags to exclude from the results. Linters with at least one matching tag will not be returned.
 If \code{except_tags} is \code{NULL}, no linters will be excluded.}

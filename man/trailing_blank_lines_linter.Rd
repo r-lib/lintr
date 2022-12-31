@@ -10,6 +10,7 @@ trailing_blank_lines_linter()
 Check that there are no trailing blank lines in source code.
 }
 \examples{
+\dontshow{if (requireNamespace("withr", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # will produce lints
 f <- withr::local_tempfile(lines = "x <- 1\n")
 readLines(f)
@@ -25,7 +26,7 @@ lint(
   filename = f,
   linters = trailing_blank_lines_linter()
 )
-
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

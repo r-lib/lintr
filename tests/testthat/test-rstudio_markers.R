@@ -1,4 +1,6 @@
 test_that("it returns markers which match lints", {
+  skip_if_not_installed("mockery")
+
   mockery::stub(rstudio_source_markers, "rstudioapi::callFun", function(...) list(...))
   mockery::stub(rstudio_source_markers, "rstudioapi::executeCommand", function(...) NULL)
 
@@ -38,7 +40,7 @@ test_that("it returns markers which match lints", {
       Lint(
         filename = "test_file2",
         line_number = 10L,
-        column_number = 5L,
+        column_number = 1L,
         type = "warning",
         message = "test a message"
       )
@@ -57,6 +59,8 @@ test_that("it returns markers which match lints", {
 })
 
 test_that("it prepends the package path if it exists", {
+  skip_if_not_installed("mockery")
+
   mockery::stub(rstudio_source_markers, "rstudioapi::callFun", function(...) list(...))
   mockery::stub(rstudio_source_markers, "rstudioapi::executeCommand", function(...) NULL)
 
@@ -86,6 +90,8 @@ test_that("it prepends the package path if it exists", {
 })
 
 test_that("it returns an empty list of markers if there are no lints", {
+  skip_if_not_installed("mockery")
+
   mockery::stub(rstudio_source_markers, "rstudioapi::callFun", function(...) list(...))
   mockery::stub(rstudio_source_markers, "rstudioapi::executeCommand", function(...) NULL)
 
@@ -99,6 +105,8 @@ test_that("it returns an empty list of markers if there are no lints", {
 })
 
 test_that("rstudio_source_markers apply to print within rstudio", {
+  skip_if_not_installed("mockery")
+
   withr::local_options(lintr.rstudio_source_markers = TRUE)
 
   tmp <- withr::local_tempfile(lines = "1:ncol(x)")

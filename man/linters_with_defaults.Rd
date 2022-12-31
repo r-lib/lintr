@@ -22,10 +22,11 @@ The result of this function is meant to be passed to the \code{linters} argument
 or to be put in your configuration file.
 }
 \examples{
+\dontshow{if (requireNamespace("withr", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # When using interactively you will usually pass the result onto `lint` or `lint_package()`
-\dontrun{
-lint("foo.R", linters = linters_with_defaults(line_length_linter = line_length_linter(120)))
-}
+f <- withr::local_tempfile(lines = "my_slightly_long_variable_name <- 2.3", fileext = "R")
+lint(f, linters = linters_with_defaults(line_length_linter = line_length_linter(120)))
+
 # the default linter list with a different line length cutoff
 my_linters <- linters_with_defaults(line_length_linter = line_length_linter(120))
 
@@ -38,9 +39,16 @@ my_linters <- linters_with_defaults(
   assignment_linter = NULL,
   absolute_path_linter()
 )
+
+# checking the included linters
+names(my_linters)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
-\link{linters_with_tags} for basing off tags attached to linters, possibly across multiple packages.
-\link{available_linters} to get a data frame of available linters.
-\link{linters} for a complete list of linters available in lintr.
+\itemize{
+\item \link{linters_with_tags} for basing off tags attached to linters, possibly across multiple packages.
+\item \link{all_linters} for basing off all available linters in lintr.
+\item \link{available_linters} to get a data frame of available linters.
+\item \link{linters} for a complete list of linters available in lintr.
+}
 }

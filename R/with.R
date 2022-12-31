@@ -8,17 +8,27 @@
 #' @param defaults named list of elements to modify.
 #' @return A modified list of elements, sorted by name. To achieve this sort in a platform-independent way, two
 #'   transformations are applied to the names: (1) replace `_` with `0` and (2) convert [tolower()].
-#' @seealso [linters_with_tags], [linters_with_defaults] for creating linter lists.
+#'
+#' @seealso
+#' - [linters_with_defaults] for basing off lintr's set of default linters.
+#' - [all_linters] for basing off all available linters in lintr.
+#' - [linters_with_tags] for basing off tags attached to linters, possibly across multiple packages.
+#' - [available_linters] to get a data frame of available linters.
+#' - [linters] for a complete list of linters available in lintr.
+#'
 #' @examples
 #' # custom list of undesirable functions:
-#' #    remove sapply (using NULL)
-#' #    add cat (with a accompanying message),
-#' #    add print (unnamed, i.e. with no accompanying message)
-#' #    add return (as taken from all_undesirable_functions)
+#' #    remove `sapply` (using `NULL`)
+#' #    add `cat` (with an accompanying message),
+#' #    add `print` (unnamed, i.e. with no accompanying message)
+#' #    add `source` (as taken from `all_undesirable_functions`)
 #' my_undesirable_functions <- modify_defaults(
 #'   defaults = default_undesirable_functions,
-#'   sapply = NULL, "cat" = "No cat allowed", "print", all_undesirable_functions[["return"]]
+#'   sapply = NULL, "cat" = "No cat allowed", "print", all_undesirable_functions[["source"]]
 #' )
+#'
+#' # list names of functions specified as undesirable
+#' names(my_undesirable_functions)
 #' @export
 modify_defaults <- function(defaults, ...) {
   if (missing(defaults) || !is.list(defaults) || !all(nzchar(names2(defaults)))) {
@@ -45,14 +55,6 @@ modify_defaults <- function(defaults, ...) {
   defaults[nms] <- vals
 
   res <- defaults[!vapply(defaults, is.null, logical(1L))]
-
-  res[] <- lapply(res, function(x) {
-    prev_class <- class(x)
-    if (is.function(x) && !is_linter(x)) {
-      class(x) <- c("linter", prev_class)
-    }
-    x
-  })
   res <- res[platform_independent_order(names(res))]
   res
 }
@@ -70,22 +72,22 @@ modify_defaults <- function(defaults, ...) {
 #'
 #' @return A modified list of linters.
 #' @seealso
-#' [linters_with_defaults] for basing off lintr's set of default linters.
-#' [available_linters] to get a data frame of available linters.
-#' [linters] for a complete list of linters available in lintr.
+#' - [linters_with_defaults] for basing off lintr's set of default linters.
+#' - [all_linters] for basing off all available linters in lintr.
+#' - [available_linters] to get a data frame of available linters.
+#' - [linters] for a complete list of linters available in lintr.
+#'
 #' @examples
 #' # `linters_with_defaults()` and `linters_with_tags("default")` are the same:
 #' all.equal(linters_with_defaults(), linters_with_tags("default"))
 #'
 #' # Get all linters useful for package development
-#' linters_with_tags(tags = "package_development")
-#'
-#' # Get all linters provided by lintr
-#' linters_with_tags(tags = NULL)
+#' linters <- linters_with_tags(tags = c("package_development", "style"))
+#' names(linters)
 #'
 #' # Get all linters tagged as "default" from lintr and mypkg
-#' \dontrun{
-#' linters_with_tags("default", packages = c("lintr", "mypkg"))
+#' if (FALSE) {
+#'   linters_with_tags("default", packages = c("lintr", "mypkg"))
 #' }
 #' @export
 linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "deprecated") {
@@ -107,7 +109,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
         )
       }
       linter_factories <- mget(available$linter, envir = pkg_ns)
-      linters <- mapply(
+      linters <- Map(
         call_linter_factory,
         linter_factory = linter_factories,
         linter_name = names(linter_factories),
@@ -120,6 +122,23 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
   modify_defaults(..., defaults = tagged_linters)
 }
 
+#' Create a linter configuration based on all available linters
+#'
+#' @inheritParams linters_with_tags
+#'
+#' @examples
+#' names(all_linters())
+#'
+#' @seealso
+#' - [linters_with_defaults] for basing off lintr's set of default linters.
+#' - [linters_with_tags] for basing off tags attached to linters, possibly across multiple packages.
+#' - [available_linters] to get a data frame of available linters.
+#' - [linters] for a complete list of linters available in lintr.
+#' @export
+all_linters <- function(packages = "lintr", ...) {
+  linters_with_tags(tags = NULL, packages = packages, ...)
+}
+
 #' Create a linter configuration based on defaults
 #'
 #' Make a new list based on \pkg{lintr}'s default linters.
@@ -128,16 +147,11 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
 #'
 #' @param defaults,default Default list of linters to modify. Must be named.
 #' @inheritParams linters_with_tags
-#' @seealso
-#' [linters_with_tags] for basing off tags attached to linters, possibly across multiple packages.
-#' [available_linters] to get a data frame of available linters.
-#' [linters] for a complete list of linters available in lintr.
-#' @export
-#' @examples
+#' @examplesIf requireNamespace("withr", quietly = TRUE)
 #' # When using interactively you will usually pass the result onto `lint` or `lint_package()`
-#' \dontrun{
-#' lint("foo.R", linters = linters_with_defaults(line_length_linter = line_length_linter(120)))
-#' }
+#' f <- withr::local_tempfile(lines = "my_slightly_long_variable_name <- 2.3", fileext = "R")
+#' lint(f, linters = linters_with_defaults(line_length_linter = line_length_linter(120)))
+#'
 #' # the default linter list with a different line length cutoff
 #' my_linters <- linters_with_defaults(line_length_linter = line_length_linter(120))
 #'
@@ -150,6 +164,16 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
 #'   assignment_linter = NULL,
 #'   absolute_path_linter()
 #' )
+#'
+#' # checking the included linters
+#' names(my_linters)
+#'
+#' @seealso
+#' - [linters_with_tags] for basing off tags attached to linters, possibly across multiple packages.
+#' - [all_linters] for basing off all available linters in lintr.
+#' - [available_linters] to get a data frame of available linters.
+#' - [linters] for a complete list of linters available in lintr.
+#' @export
 linters_with_defaults <- function(..., defaults = default_linters) {
   dots <- list(...)
   if (missing(defaults) && "default" %in% names(dots)) {
@@ -179,6 +203,8 @@ with_defaults <- function(..., default = default_linters) {
   linters_with_defaults(..., defaults = default)
 }
 
+#' @keywords internal
+#' @noRd
 call_linter_factory <- function(linter_factory, linter_name, package) {
   linter <- tryCatch(
     linter_factory(),
@@ -191,6 +217,8 @@ call_linter_factory <- function(linter_factory, linter_name, package) {
   linter
 }
 
+#' @keywords internal
+#' @noRd
 guess_names <- function(..., missing_index) {
   args <- as.character(eval(substitute(alist(...)[missing_index])))
   # foo_linter(x=1) => "foo"

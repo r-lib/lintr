@@ -49,7 +49,7 @@ duplicate_argument_linter <- function(except = c("mutate", "transmute")) {
 
     calls <- xml2::xml_find_all(xml, xpath_call_with_args)
 
-    if (length(except)) {
+    if (length(except) > 0L) {
       calls_text <- get_r_string(xp_call_name(calls))
       calls <- calls[!(calls_text %in% except)]
     }

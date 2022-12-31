@@ -34,7 +34,9 @@ function_argument_linter,style consistency best_practices
 function_left_parentheses_linter,style readability default
 function_return_linter,readability best_practices
 ifelse_censor_linter,best_practices efficiency
+implicit_assignment_linter,style best_practices readability configurable
 implicit_integer_linter,style consistency best_practices configurable
+indentation_linter,style readability default configurable
 infix_spaces_linter,style readability default configurable
 inner_combine_linter,efficiency consistency readability
 is_numeric_linter,readability best_practices consistency
@@ -67,6 +69,7 @@ semicolon_linter,style readability default configurable
 semicolon_terminator_linter,style readability deprecated configurable
 seq_linter,robustness efficiency consistency best_practices default
 single_quotes_linter,style consistency readability default
+sort_linter,readability best_practices efficiency
 spaces_inside_linter,style readability default
 spaces_left_parentheses_linter,style readability default
 sprintf_linter,correctness common_mistakes
@@ -79,9 +82,11 @@ trailing_blank_lines_linter,style default
 trailing_whitespace_linter,style default configurable
 undesirable_function_linter,style efficiency configurable robustness best_practices
 undesirable_operator_linter,style efficiency configurable robustness best_practices
+unnecessary_concatenation_linter,style readability efficiency configurable
 unnecessary_lambda_linter,best_practices efficiency readability
+unnecessary_nested_if_linter,readability best_practices
 unnecessary_placeholder_linter,readability best_practices
-unneeded_concatenation_linter,style readability efficiency configurable
+unneeded_concatenation_linter,style readability efficiency configurable deprecated
 unreachable_code_linter,best_practices readability
 unused_import_linter,best_practices common_mistakes configurable executing
 vector_logic_linter,default efficiency best_practices
