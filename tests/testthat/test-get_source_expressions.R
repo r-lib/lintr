@@ -336,8 +336,7 @@ param_df <- expand.grid(
   expression_idx = seq_along(expressions),
   stringsAsFactors = FALSE
 )
-param_df$.test_name <-
-  with(param_df, sprintf("%s on expression %d", linter, expression_idx))
+param_df$.test_name <- with(param_df, sprintf("%s on expression %d", linter, expression_idx))
 
 patrick::with_parameters_test_that(
   "linters pass with xml_missing() content",

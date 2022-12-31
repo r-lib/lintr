@@ -60,12 +60,11 @@ test_that("backport_linter detects backwards-incompatibility", {
 })
 
 test_that("backport_linter generates expected warnings", {
-  skip_if_not_r_version("4.1.0")
+  skip_if_not_installed("magrittr")
 
-  # don't allow dependencies older than we've recorded
   tmp <- withr::local_tempfile(lines = "x <- x + 1")
 
-  lint(tmp, backport_linter("2.0.0")) |>
-    expect_identical(lint(tmp, backport_linter("3.0.0"))) |>
+  lint(tmp, backport_linter("2.0.0")) %>%
+    expect_identical(lint(tmp, backport_linter("3.0.0"))) %>%
     expect_warning("version older than 3.0.0", fixed = TRUE)
 })
