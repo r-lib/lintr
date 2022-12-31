@@ -36,14 +36,7 @@
 #' - <https://style.tidyverse.org/syntax.html#assignment>
 #'
 #' @export
-implicit_assignment_linter <- function(except = c(
-  "bquote", "expression", "expr", "quo", "quos", "quote",
-  "expect_error", "expect_warning", "expect_message",
-  "expect_no_error", "expect_no_warning", "expect_no_message",
-  "expect_condition", "expect_no_condition",
-  "expect_invisible", "expect_visible",
-  "expect_output", "expect_silent"
-)) {
+implicit_assignment_linter <- function(except = c("bquote", "expression", "expr", "quo", "quos", "quote")) {
   stopifnot(is.null(except) || is.character(except))
 
   if (length(except) > 0L) {
