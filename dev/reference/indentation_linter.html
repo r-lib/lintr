@@ -70,7 +70,8 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">indentation_linter</span><span class="op">(</span></span>
 <span>  indent <span class="op">=</span> <span class="fl">2L</span>,</span>
-<span>  hanging_indent_style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tidy"</span>, <span class="st">"always"</span>, <span class="st">"never"</span><span class="op">)</span></span>
+<span>  hanging_indent_style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tidy"</span>, <span class="st">"always"</span>, <span class="st">"never"</span><span class="op">)</span>,</span>
+<span>  assignment_as_infix <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -121,6 +122,28 @@ first line of the function definition contains no arguments and the closing pare
 <span>    <span class="va">b</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># body</span></span>
 <span><span class="op">}</span></span></code></pre><p></p></div></dd>
+
+
+<dt>assignment_as_infix</dt>
+<dd><p>Treat <code>&lt;-</code> as a regular (i.e. left-associative) infix operator?
+This means, that infix operators on the right hand side of an assignment do not trigger a second level of
+indentation:</p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="co"># complies to any style</span></span>
+<span><span class="va">variable</span> <span class="op">&lt;-</span> <span class="va">a</span> <span class="op">%+%</span></span>
+<span>  <span class="va">b</span> <span class="op">%+%</span></span>
+<span>  <span class="va">c</span></span>
+<span></span>
+<span><span class="co"># complies to assignment_as_infix = TRUE</span></span>
+<span><span class="va">variable</span> <span class="op">&lt;-</span></span>
+<span>  <span class="va">a</span> <span class="op">%+%</span></span>
+<span>  <span class="va">b</span> <span class="op">%+%</span></span>
+<span>  <span class="va">c</span></span>
+<span></span>
+<span><span class="co"># complies to assignment_as_infix = FALSE</span></span>
+<span><span class="va">variable</span> <span class="op">&lt;-</span></span>
+<span>  <span class="va">a</span> <span class="op">%+%</span></span>
+<span>    <span class="va">b</span> <span class="op">%+%</span></span>
+<span>    <span class="va">c</span></span></code></pre><p></p></div></dd>
 
 </dl></div>
     <div class="section level2">
