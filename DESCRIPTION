@@ -1,6 +1,6 @@
 Package: lintr
 Title: A 'Linter' for R Code
-Version: 3.0.1.9000
+Version: 3.0.2.9000
 Authors@R: c(
     person("Jim", "Hester", , "james.f.hester@gmail.com", role = c("aut", "cre")),
     person("Florent", "Angly", role = "aut",
@@ -10,7 +10,7 @@ Authors@R: c(
     person("Kun", "Ren", role = "aut"),
     person("Alexander", "Rosenstock", role = "aut",
            comment = "AshesITR"),
-    person("Indrajeet", "Patil", role = "aut", email = "patilindrajeet.science@gmail.com",
+    person("Indrajeet", "Patil", , "patilindrajeet.science@gmail.com", role = "aut",
            comment = c(ORCID = "0000-0003-1995-6531", Twitter = "@patilindrajeets"))
   )
 Description: Checks adherence to a given style, syntax errors and possible
@@ -30,7 +30,6 @@ Imports:
     glue,
     knitr,
     rex,
-    rprojroot,
     stats,
     utils,
     xml2 (>= 1.0.0),
@@ -42,7 +41,7 @@ Suggests:
     jsonlite,
     mockery,
     patrick,
-    pkgdown,
+    rlang,
     rmarkdown,
     rstudioapi (>= 0.2),
     testthat (>= 3.0.0),
@@ -55,11 +54,12 @@ Config/Needs/website: tidyverse/tidytemplate
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Collate:
     'T_and_F_symbol_linter.R'
     'utils.R'
     'aaa.R'
+    'absolute_path_linter.R'
     'actions.R'
     'addins.R'
     'any_duplicated_linter.R'
@@ -104,7 +104,9 @@ Collate:
     'get_source_expressions.R'
     'ids_with_token.R'
     'ifelse_censor_linter.R'
+    'implicit_assignment_linter.R'
     'implicit_integer_linter.R'
+    'indentation_linter.R'
     'infix_spaces_linter.R'
     'inner_combine_linter.R'
     'is_lint_level.R'
@@ -125,14 +127,16 @@ Collate:
     'namespace_linter.R'
     'nested_ifelse_linter.R'
     'no_tab_linter.R'
+    'nonportable_path_linter.R'
     'numeric_leading_zero_linter.R'
-    'object_name_linters.R'
+    'object_length_linter.R'
+    'object_name_linter.R'
     'object_usage_linter.R'
     'outer_negation_linter.R'
     'package_hooks_linter.R'
     'paren_body_linter.R'
     'paste_linter.R'
-    'path_linters.R'
+    'path_utils.R'
     'pipe_call_linter.R'
     'pipe_continuation_linter.R'
     'redundant_equals_linter.R'
@@ -142,7 +146,9 @@ Collate:
     'semicolon_linter.R'
     'seq_linter.R'
     'settings.R'
+    'settings_utils.R'
     'single_quotes_linter.R'
+    'sort_linter.R'
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'
     'sprintf_linter.R'
@@ -151,12 +157,13 @@ Collate:
     'system_file_linter.R'
     'trailing_blank_lines_linter.R'
     'trailing_whitespace_linter.R'
-    'tree-utils.R'
+    'tree_utils.R'
     'undesirable_function_linter.R'
     'undesirable_operator_linter.R'
+    'unnecessary_concatenation_linter.R'
     'unnecessary_lambda_linter.R'
+    'unnecessary_nested_if_linter.R'
     'unnecessary_placeholder_linter.R'
-    'unneeded_concatenation_linter.R'
     'unreachable_code_linter.R'
     'unused_import_linter.R'
     'use_lintr.R'
@@ -167,3 +174,4 @@ Collate:
     'xp_utils.R'
     'yoda_test_linter.R'
     'zzz.R'
+Language: en-US

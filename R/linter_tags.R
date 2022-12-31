@@ -4,7 +4,8 @@
 #'
 #' @param packages A character vector of packages to search for linters.
 #' @param tags Optional character vector of tags to search. Only linters with at least one matching tag will be
-#' returned. If `tags` is `NULL`, all linters will be returned.
+#' returned. If `tags` is `NULL`, all linters will be returned. See `available_tags("lintr")` to find out what
+#' tags are already used by lintr.
 #' @param exclude_tags Tags to exclude from the results. Linters with at least one matching tag will not be returned.
 #' If `except_tags` is `NULL`, no linters will be excluded.
 #'
@@ -87,6 +88,10 @@ build_available_linters <- function(available, package, tags, exclude_tags) {
     matches_exclude <- vapply(available_df$tags, function(linter_tags) any(linter_tags %in% exclude_tags), logical(1L))
     available_df <- available_df[!matches_exclude, ]
   }
+
+  # Due to removal of deprecated linters in the returned data frame, there can be gaps in row numbers.
+  # To avoid this inconsistency, regenerate row names.
+  rownames(available_df) <- NULL
   available_df
 }
 

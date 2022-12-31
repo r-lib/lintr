@@ -1,5 +1,5 @@
 #' @export
-print.lint <- function(x, ...) {
+format.lint <- function(x, ...) {
   if (requireNamespace("crayon", quietly = TRUE)) {
     color <- switch(x$type,
       warning = crayon::magenta,
@@ -15,8 +15,7 @@ print.lint <- function(x, ...) {
     # nocov end
   }
 
-  cat(
-    sep = "",
+  paste0(
     emph(
       x$filename, ":",
       as.character(x$line_number), ":",
@@ -31,6 +30,11 @@ print.lint <- function(x, ...) {
     highlight_string(x$message, x$column_number, x$ranges),
     "\n"
   )
+}
+
+#' @export
+print.lint <- function(x, ...) {
+  cat(format(x))
   invisible(x)
 }
 
@@ -65,6 +69,11 @@ markdown <- function(x, info, ...) {
 }
 
 #' @export
+format.lints <- function(x, ...) {
+  paste(vapply(x, format, character(1L)), collapse = "\n")
+}
+
+#' @export
 print.lints <- function(x, ...) {
   use_rstudio_source_markers <- getOption("lintr.rstudio_source_markers", TRUE) &&
     requireNamespace("rstudioapi", quietly = TRUE) &&
@@ -72,7 +81,7 @@ print.lints <- function(x, ...) {
 
   github_annotation_project_dir <- getOption("lintr.github_annotation_project_dir", "")
 
-  if (length(x)) {
+  if (length(x) > 0L) {
     inline_data <- x[[1L]][["filename"]] == "<text>"
     if (!inline_data && use_rstudio_source_markers) {
       rstudio_source_markers(x)
@@ -154,8 +163,8 @@ split.lints <- function(x, f = NULL, ...) {
 as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) { # nolint: object_name. (row.names, #764)
   data.frame(
     filename = vapply(x, `[[`, character(1L), "filename"),
-    line_number = vapply(x, `[[`, numeric(1L), "line_number"),
-    column_number = vapply(x, `[[`, numeric(1L), "column_number"),
+    line_number = vapply(x, `[[`, integer(1L), "line_number"),
+    column_number = vapply(x, `[[`, integer(1L), "column_number"),
     type = vapply(x, `[[`, character(1L), "type"),
     message = vapply(x, `[[`, character(1L), "message"),
     line = vapply(x, `[[`, character(1L), "line"),

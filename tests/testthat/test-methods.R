@@ -1,11 +1,11 @@
 test_that("it returns the input if less than the max", {
-  expect_equal(lintr:::trim_output(character()), character())
+  expect_identical(lintr:::trim_output(character()), character())
 
-  expect_equal(lintr:::trim_output("test", max = 10L), "test")
+  expect_identical(lintr:::trim_output("test", max = 10L), "test")
 })
 
 test_that("it returns the input trimmed strictly to max if no lints found", {
-  expect_equal(lintr:::trim_output("testing a longer non_lint string", max = 7L), "testing")
+  expect_identical(lintr:::trim_output("testing a longer non_lint string", max = 7L), "testing")
 })
 
 test_that("it returns the input trimmed to the last full lint if one exists within the max", {
@@ -14,38 +14,35 @@ test_that("it returns the input trimmed to the last full lint if one exists with
     # Magic numbers expect newlines to be 1 character
     t1 <- gsub("\r\n", "\n", t1, fixed = TRUE)
   }
-  expect_equal(lintr:::trim_output(t1, max = 200L), substr(t1, 1L, 195L))
-  expect_equal(lintr:::trim_output(t1, max = 400L), substr(t1, 1L, 380L))
-  expect_equal(lintr:::trim_output(t1, max = 2000L), substr(t1, 1L, 1930L))
+  expect_identical(lintr:::trim_output(t1, max = 200L), substr(t1, 1L, 195L))
+  expect_identical(lintr:::trim_output(t1, max = 400L), substr(t1, 1L, 380L))
+  expect_identical(lintr:::trim_output(t1, max = 2000L), substr(t1, 1L, 1930L))
 })
 
 test_that("as.data.frame.lints", {
-  # A minimum lint
-  expect_s3_class(
-    l1 <- Lint(
-      "dummy.R",
-      line_number = 1L,
-      type = "style",
-      message = "",
-      line = ""
-    ),
-    "lint"
+  l1 <- Lint(
+    "dummy.R",
+    line_number = 1L,
+    type = "style",
+    message = "",
+    line = ""
   )
+
+  # A minimum lint
+  expect_s3_class(l1, "lint")
   expect_type(l1, "list")
 
   # A larger lint
-  expect_s3_class(
-    l2 <- Lint(
-      "dummy.R",
-      line_number = 2L,
-      column_number = 6L,
-      type = "error",
-      message = "Under no circumstances is the use of foobar allowed.",
-      line = "a <- 1",
-      ranges = list(c(1L, 2L), c(10L, 20L))
-    ),
-    "lint"
+  l2 <- Lint(
+    "dummy.R",
+    line_number = 2L,
+    column_number = 6L,
+    type = "error",
+    message = "Under no circumstances is the use of foobar allowed.",
+    line = "a <- 1",
+    ranges = list(c(1L, 2L), c(6L, 7L))
   )
+  expect_s3_class(l2, "lint")
 
   expect_warning(
     Lint("dummy.R", linter = "deprecated"),
@@ -55,10 +52,8 @@ test_that("as.data.frame.lints", {
 
   # Convert lints to data.frame
   lints <- structure(list(l1, l2), class = "lints")
-  expect_s3_class(
-    df <- lintr:::as.data.frame.lints(lints),
-    "data.frame"
-  )
+  df <- as.data.frame(lints)
+  expect_s3_class(df, "data.frame")
 
   exp <- data.frame(
     filename = rep("dummy.R", 2L),
@@ -71,10 +66,7 @@ test_that("as.data.frame.lints", {
     stringsAsFactors = FALSE
   )
 
-  expect_equal(
-    df,
-    exp
-  )
+  expect_identical(df, exp)
 })
 
 test_that("summary.lints() works (no lints)", {
@@ -84,7 +76,7 @@ test_that("summary.lints() works (no lints)", {
   )
   no_lint_summary <- summary(no_lints)
   expect_s3_class(no_lint_summary, "data.frame")
-  expect_equal(nrow(no_lint_summary), 0L)
+  expect_identical(nrow(no_lint_summary), 0L)
 })
 
 test_that("summary.lints() works (lints found)", {
@@ -94,10 +86,10 @@ test_that("summary.lints() works (lints found)", {
   )
   has_lint_summary <- summary(has_lints)
   expect_s3_class(has_lint_summary, "data.frame")
-  expect_equal(nrow(has_lint_summary), 1L)
+  expect_identical(nrow(has_lint_summary), 1L)
   expect_gt(has_lint_summary$style, 0L)
-  expect_equal(has_lint_summary$warning, 0L)
-  expect_equal(has_lint_summary$error, 0L)
+  expect_identical(has_lint_summary$warning, 0L)
+  expect_identical(has_lint_summary$error, 0L)
 })
 
 test_that("print.lint works", {
@@ -111,6 +103,8 @@ test_that("print.lint works", {
 })
 
 test_that("print.lint works for inline data, even in RStudio", {
+  skip_if_not_installed("mockery")
+
   l <- lint("x = 1\n")
 
   # Make sure lints print to console.

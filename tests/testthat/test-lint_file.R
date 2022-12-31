@@ -34,15 +34,15 @@ test_that("lint() results do not depend on the working directory", {
     lint_assignments("jkl.R")
   )
 
-  expect_equal(
+  expect_identical(
     as.data.frame(lints_from_pkg_root)[["line"]],
     expected_lines
   )
-  expect_equal(
+  expect_identical(
     as.data.frame(lints_from_outside),
     as.data.frame(lints_from_pkg_root)
   )
-  expect_equal(
+  expect_identical(
     as.data.frame(lints_from_a_subdir),
     as.data.frame(lints_from_pkg_root)
   )
@@ -91,10 +91,10 @@ test_that("lint() results do not depend on the position of the .lintr", {
     )
   )
 
-  expect_equal(
+  expect_identical(
     as.data.frame(lints_with_config_at_pkg_root)[["line"]], expected_lines
   )
-  expect_equal(
+  expect_identical(
     as.data.frame(lints_with_config_at_pkg_root),
     as.data.frame(lints_with_config_in_r_dir),
     info = paste(
@@ -129,7 +129,7 @@ test_that("lint() results from file or text should be consistent", {
   expect_length(lint_from_text, 2L)
   expect_length(lint_from_text2, 2L)
 
-  expect_equal(lint_from_file, lint_from_text2)
+  expect_identical(lint_from_file, lint_from_text2)
 
   for (i in seq_along(lint_from_lines)) {
     lint_from_file[[i]]$filename <- ""
@@ -137,8 +137,8 @@ test_that("lint() results from file or text should be consistent", {
     lint_from_text[[i]]$filename <- ""
   }
 
-  expect_equal(lint_from_file, lint_from_lines)
-  expect_equal(lint_from_file, lint_from_text)
+  expect_identical(lint_from_file, lint_from_lines)
+  expect_identical(lint_from_file, lint_from_text)
 })
 
 test_that("exclusions work with custom linter names", {
@@ -166,6 +166,17 @@ test_that("compatibility warnings work", {
       "a = 42",
       "Use <-",
       linters = assignment_linter
+    ),
+    regexp = "Passing linters as variables",
+    fixed = TRUE
+  )
+
+  # Also within `linters_with_defaults()` (#1725)
+  expect_warning(
+    expect_lint(
+      "a = 42",
+      "Use <-",
+      linters = linters_with_defaults(assignment_linter)
     ),
     regexp = "Passing linters as variables",
     fixed = TRUE

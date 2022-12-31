@@ -32,7 +32,7 @@ patrick::with_parameters_test_that(
     condition_message_linter()
   ),
   .cases = tibble::tribble(
-    ~.test_name,                           ~condition, ~fun,     ~ parameter, ~arg,
+    ~.test_name,                           ~condition, ~fun,     ~parameter, ~arg,
     "stop, paste and collapse = ''",       "stop",     "paste",  "collapse",  "",
     "warning, paste and collapse = '\n'",  "warning",  "paste",  "collapse",  "\n",
     "message, paste and collapse = '|'",   "message",  "paste",  "collapse",  "|",

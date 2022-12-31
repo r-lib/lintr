@@ -33,20 +33,22 @@ lint(
 )
 
 lint(
-  text =  "stats::sd(c(x, y, z))",
+  text = "stats::sd(c(x, y, z))",
   linters = function_left_parentheses_linter()
 )
 
 lint(
-  text =  "foo <- function(x) (x + 1)",
+  text = "foo <- function(x) (x + 1)",
   linters = function_left_parentheses_linter()
 )
 
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr. \cr
-\url{https://style.tidyverse.org/syntax.html#parentheses} \cr
-\code{\link[=spaces_left_parentheses_linter]{spaces_left_parentheses_linter()}}
+\itemize{
+\item \link{linters} for a complete list of linters available in lintr.
+\item \url{https://style.tidyverse.org/syntax.html#parentheses}
+\item \code{\link[=spaces_left_parentheses_linter]{spaces_left_parentheses_linter()}}
+}
 }
 \section{Tags}{
 \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}

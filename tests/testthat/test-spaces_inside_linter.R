@@ -198,6 +198,50 @@ test_that("mutli-line expressions have good markers", {
   )
 })
 
+test_that("spaces_inside_linter blocks disallowed usages with a pipe", {
+  skip_if_not_r_version("4.1.0")
+
+  linter <- spaces_inside_linter()
+
+  expect_lint(
+    "letters[1:3] %>% paste0( )",
+    list(
+      list(
+        message = "Do not place spaces after parentheses",
+        line_number = 1L,
+        column_number = 25L,
+        type = "style"
+      ),
+      list(
+        message = "Do not place spaces before parentheses",
+        line_number = 1L,
+        column_number = 25L,
+        type = "style"
+      )
+    ),
+    linter
+  )
+
+  expect_lint(
+    "letters[1:3] |> paste0( )",
+    list(
+      list(
+        message = "Do not place spaces after parentheses",
+        line_number = 1L,
+        column_number = 24L,
+        type = "style"
+      ),
+      list(
+        message = "Do not place spaces before parentheses",
+        line_number = 1L,
+        column_number = 24L,
+        type = "style"
+      )
+    ),
+    linter
+  )
+})
+
 test_that("terminal missing keyword arguments are OK", {
   expect_lint("alist(missing_arg = )", NULL, spaces_inside_linter())
 })

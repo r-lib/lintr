@@ -4,7 +4,7 @@
 #' [linters_with_defaults()] to customize it. Most of the default linters
 #' are based on [the tidyverse style guide](https://style.tidyverse.org/).
 #'
-#' The set of default linters is as follows (any parameterised linters, eg, `line_length_linter` use their default
+#' The set of default linters is as follows (any parameterized linters, e.g., `line_length_linter` use their default
 #' argument(s), see `?<linter_name>` for details):
 #'
 #' @evalRd rd_linters("default")
@@ -20,6 +20,7 @@ default_linters <- modify_defaults(
   cyclocomp_linter(),
   equals_na_linter(),
   function_left_parentheses_linter(),
+  indentation_linter(),
   infix_spaces_linter(),
   line_length_linter(),
   no_tab_linter(),
@@ -73,7 +74,7 @@ default_linters <- modify_defaults(
 #'  * [setwd()] modifies the global working directory. Use [withr::with_dir()] for a temporary change instead.
 #'  * [sink()] permanently redirects output. Use [withr::with_sink()] for a temporary redirection instead.
 #'  * [source()] loads code into the global environment unless `local = TRUE` is used, which can cause unexpected
-#'    behaviour.
+#'    behavior.
 #'  * [substring()] should be replaced by [substr()] with appropriate `stop=` value.
 #'  * [Sys.setenv()] permanently modifies the global environment variables. Use [withr::with_envvar()] for a temporary
 #'    change instead.
@@ -151,7 +152,7 @@ all_undesirable_functions <- modify_defaults(
   "source" = paste(
     "manage dependencies through packages.",
     "source() loads code into the global environment unless `local = TRUE` is used,",
-    "which can cause hard-to-predict behaviour"
+    "which can cause hard-to-predict behavior"
   ),
   "substring" =
     "use substr() with appropriate `stop=` value.",
@@ -283,10 +284,15 @@ settings <- NULL
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  backports::import(pkgname, c("trimws", "lengths"))
+  backports::import(pkgname, c("trimws", "lengths", "deparse1"))
   # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
-  if (!exists("str2lang", getNamespace("base"))) {
-    assign("str2lang", get("str2lang", getNamespace("backports")), getNamespace(pkgname))
+  base_ns <- getNamespace("base")
+  backports_ns <- getNamespace("backports")
+  lintr_ns <- getNamespace(pkgname)
+  for (base_fun in c("str2lang", "str2expression")) {
+    if (!exists(base_fun, base_ns)) {
+      assign(base_fun, get(base_fun, backports_ns), lintr_ns)
+    }
   }
 
   default_settings <<- list(

@@ -17,7 +17,7 @@
 #'
 #' # will produce lints
 #' lint(
-#'   text = 'sapply(x, mean)',
+#'   text = "sapply(x, mean)",
 #'   linters = undesirable_function_linter()
 #' )
 #'
@@ -38,7 +38,7 @@
 #'
 #' # okay
 #' lint(
-#'   text = 'vapply(x, mean, FUN.VALUE = numeric(1))',
+#'   text = "vapply(x, mean, FUN.VALUE = numeric(1))",
 #'   linters = undesirable_function_linter()
 #' )
 #'
@@ -58,6 +58,9 @@
 undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   stopifnot(is.logical(symbol_is_undesirable))
+  if (is.null(names(fun)) || !all(nzchar(names(fun))) || length(fun) == 0L) {
+    stop("'fun' should be a non-empty named character vector; use missing elements to indicate default messages.")
+  }
 
   xp_condition <- xp_and(
     xp_text_in_table(names(fun)),

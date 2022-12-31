@@ -44,8 +44,8 @@
 #'
 #' @evalRd rd_tags("vector_logic_linter")
 #' @seealso
-#'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#if-statements>
+#' - [linters] for a complete list of linters available in lintr.
+#' - <https://style.tidyverse.org/syntax.html#if-statements>
 #' @export
 vector_logic_linter <- function() {
   # ensures the expr is in the cond part of `if/while (cond) expr` --

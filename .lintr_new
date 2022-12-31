@@ -1,7 +1,7 @@
 linters: linters_with_defaults(
     any_duplicated_linter(),
     any_is_na_linter(),
-    backport_linter("oldrel-4", except = c("R_user_dir", "str2lang")),
+    backport_linter("oldrel-4", except = c("R_user_dir", "str2lang", "str2expression", "deparse1")),
     consecutive_stopifnot_linter(),
     expect_comparison_linter(),
     expect_length_linter(),
@@ -13,6 +13,7 @@ linters: linters_with_defaults(
     expect_true_false_linter(),
     expect_type_linter(),
     for_loop_index_linter(),
+    implicit_assignment_linter(),
     implicit_integer_linter(),
     line_length_linter(120),
     missing_argument_linter(),
@@ -21,9 +22,12 @@ linters: linters_with_defaults(
     paste_linter(),
     redundant_equals_linter(),
     redundant_ifelse_linter(),
+    sort_linter(),
     sprintf_linter(),
+    strings_as_factors_linter(),
+    unnecessary_nested_if_linter(),
     unnecessary_lambda_linter(),
-    unneeded_concatenation_linter(allow_single_expression = FALSE),
+    unnecessary_concatenation_linter(allow_single_expression = FALSE),
     yoda_test_linter()
   )
 exclusions: list(

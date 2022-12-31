@@ -27,8 +27,8 @@
 #'
 #' @evalRd rd_tags("T_and_F_symbol_linter")
 #' @seealso
-#'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#logical-vectors>
+#' - [linters] for a complete list of linters available in lintr.
+#' - <https://style.tidyverse.org/syntax.html#logical-vectors>
 #' @export
 T_and_F_symbol_linter <- function() { # nolint: object_name.
   xpath <- paste0(
@@ -47,7 +47,7 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
     "//SYMBOL[",
     "  (text() = 'T' or text() = 'F')", # T or F symbol
     "  and not(preceding-sibling::OP-DOLLAR)", # not part of a $-subset expression
-    "  and parent::expr[", #, but ...
+    "  and parent::expr[", # , but ...
     "    following-sibling::LEFT_ASSIGN", # target of left assignment
     "    or preceding-sibling::RIGHT_ASSIGN", # target of right assignment
     "    or following-sibling::EQ_ASSIGN", # target of equals assignment

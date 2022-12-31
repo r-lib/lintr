@@ -8,7 +8,8 @@ linters_with_tags(tags, ..., packages = "lintr", exclude_tags = "deprecated")
 }
 \arguments{
 \item{tags}{Optional character vector of tags to search. Only linters with at least one matching tag will be
-returned. If \code{tags} is \code{NULL}, all linters will be returned.}
+returned. If \code{tags} is \code{NULL}, all linters will be returned. See \code{available_tags("lintr")} to find out what
+tags are already used by lintr.}
 
 \item{...}{Arguments of elements to change. If unnamed, the argument is automatically named.
 If the named argument already exists in the list of linters, it is replaced by the new element.
@@ -32,18 +33,19 @@ or to be put in your configuration file.
 all.equal(linters_with_defaults(), linters_with_tags("default"))
 
 # Get all linters useful for package development
-linters_with_tags(tags = "package_development")
-
-# Get all linters provided by lintr
-linters_with_tags(tags = NULL)
+linters <- linters_with_tags(tags = c("package_development", "style"))
+names(linters)
 
 # Get all linters tagged as "default" from lintr and mypkg
-\dontrun{
-linters_with_tags("default", packages = c("lintr", "mypkg"))
+if (FALSE) {
+  linters_with_tags("default", packages = c("lintr", "mypkg"))
 }
 }
 \seealso{
-\link{linters_with_defaults} for basing off lintr's set of default linters.
-\link{available_linters} to get a data frame of available linters.
-\link{linters} for a complete list of linters available in lintr.
+\itemize{
+\item \link{linters_with_defaults} for basing off lintr's set of default linters.
+\item \link{all_linters} for basing off all available linters in lintr.
+\item \link{available_linters} to get a data frame of available linters.
+\item \link{linters} for a complete list of linters available in lintr.
+}
 }

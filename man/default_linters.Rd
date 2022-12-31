@@ -5,7 +5,7 @@
 \alias{default_linters}
 \title{Default linters}
 \format{
-An object of class \code{list} of length 24.
+An object of class \code{list} of length 25.
 }
 \usage{
 default_linters
@@ -15,7 +15,7 @@ List of default linters for \code{\link[=lint]{lint()}}. Use
 \code{\link[=linters_with_defaults]{linters_with_defaults()}} to customize it. Most of the default linters
 are based on \href{https://style.tidyverse.org/}{the tidyverse style guide}.
 
-The set of default linters is as follows (any parameterised linters, eg, \code{line_length_linter} use their default
+The set of default linters is as follows (any parameterized linters, e.g., \code{line_length_linter} use their default
 argument(s), see \verb{?<linter_name>} for details):
 }
 \seealso{
@@ -32,6 +32,7 @@ The following linters are tagged with 'default':
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{equals_na_linter}}}
 \item{\code{\link{function_left_parentheses_linter}}}
+\item{\code{\link{indentation_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{line_length_linter}}}
 \item{\code{\link{no_tab_linter}}}
