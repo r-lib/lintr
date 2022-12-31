@@ -30,11 +30,26 @@ set.seed(2016)
 
 # Summary
 
+The R programming language is a popular choice for data analysis and statistical computing, and is used by a wide range of researchers and data scientists. The `{lintr}` package is designed to help users identify and correct problems in their R code. In this paper, we will introduce lintr and discuss its features and capabilities, as well as some of the ways in which it can be used to improve the quality and reliability of R code.
 
 # Statement of Need
 
+`{lintr}` is an open source R package that provides static code analysis for R scripts and functions. It checks for a variety of common problems, including syntax errors, undefined variables, and style issues. It is designed to be easy to use and integrate into existing workflow. It can be run from the command line, or can be used as part of an automated build or continuous integration process. `{lintr}` also integrates with a number of popular IDEs and text editors, such as RStudio and Visual Studio Code, making it convenient for users to run `{lintr}` checks on their code as they work.
 
 # Features
+
+
+# Benefits of using `{lintr}`
+
+There are several benefits to using `{lintr}` to analyze and improve R code. One of the most obvious is that it can help users identify and fix problems in their code, which can save time and effort during the development process. By catching issues early on, `{lintr}` can help prevent bugs and other issues from creeping into code, which can save time and effort when it comes to debugging and testing.
+
+Another benefit of `{lintr}` is that it can help users write more readable and maintainable code. By enforcing a consistent style and highlighting potential issues, `{lintr}` can help users write code that is easier to understand and work with. This is especially important for larger projects or teams, where multiple contributors may be working on the same codebase and it is important to ensure that code is easy to follow and understand.
+
+Finally, `{lintr}` can be a useful tool for teaching and learning R. By providing feedback on code style and potential issues, it can help users learn good coding practices and improve their skills over time. This can be especially useful for beginners, who may not yet be familiar with all of the best practices for writing R code.
+
+# Conclusion
+
+In conclusion, `{lintr}` is a valuable tool for R users to help improve the quality and reliability of their code. Its static code analysis capabilities, combined with its flexibility and ease of use, make it relevant and valuable for a wide range of applications. 
 
 # Licensing and Availability
 
