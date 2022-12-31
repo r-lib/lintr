@@ -12,12 +12,6 @@ test_that("backport_linter detects backwards-incompatibility", {
   expect_lint(".getNamespaceInfo(dir.exists(lapply(x, toTitleCase)))", NULL, backport_linter("release"))
   expect_lint(".getNamespaceInfo(dir.exists(lapply(x, toTitleCase)))", NULL, backport_linter("devel"))
 
-  # don't allow dependencies older than we've recorded
-  tmp <- withr::local_tempfile(lines = "x <- x + 1")
-
-  expect_warning(l <- lint(tmp, backport_linter("2.0.0")), "version older than 3.0.0", fixed = TRUE)
-  expect_identical(l, lint(tmp, backport_linter("3.0.0")))
-
   expect_lint(
     "numToBits(2)",
     rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 4.0.0."),
@@ -63,4 +57,15 @@ test_that("backport_linter detects backwards-incompatibility", {
     NULL,
     backport_linter("3.0.0", except = c("numToBits", "R_user_dir"))
   )
+})
+
+test_that("backport_linter generates expected warnings", {
+  skip_if_not_r_version("4.1.0")
+
+  # don't allow dependencies older than we've recorded
+  tmp <- withr::local_tempfile(lines = "x <- x + 1")
+
+  lint(tmp, backport_linter("2.0.0")) |>
+    expect_identical(lint(tmp, backport_linter("3.0.0"))) |>
+    expect_warning("version older than 3.0.0", fixed = TRUE)
 })

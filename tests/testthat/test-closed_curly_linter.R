@@ -5,9 +5,10 @@ test_that("returns the correct linting", {
       "unless they are followed by an else."
     )
   )
+  linter <- suppressWarnings(closed_curly_linter())
 
   expect_warning(
-    linter <- closed_curly_linter(),
+    closed_curly_linter(),
     "Linter closed_curly_linter was deprecated",
     fixed = TRUE
   )
