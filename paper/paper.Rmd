@@ -38,6 +38,16 @@ The R programming language is a popular choice for data analysis and statistical
 
 # Features
 
+```{r}
+library(lintr)
+
+# default linters enforce tidyverse style
+names(linters_with_defaults())
+
+# all linters
+names(all_linters())
+```
+
 
 # Benefits of using `{lintr}`
 
