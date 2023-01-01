@@ -7,7 +7,7 @@ authors:
 affiliations:
   - index: 1
     name: Netflix
-date: "2022-12-31"
+date: "2023-01-01"
 bibliography: paper.bib
 output: rticles::joss_article
 csl: apa.csl
@@ -18,15 +18,86 @@ tags: ["R", "linter", "tidyverse"]
 
 
 
-# Summary
-
-The R programming language is a popular choice for data analysis and statistical computing, and is used by a wide range of researchers and data scientists. The `{lintr}` package is designed to help users identify and correct problems in their R code. In this paper, we will introduce lintr and discuss its features and capabilities, as well as some of the ways in which it can be used to improve the quality and reliability of R code.
-
 # Statement of Need
 
-`{lintr}` is an open source R package that provides static code analysis for R scripts and functions. It checks for a variety of common problems, including syntax errors, undefined variables, and style issues. It is designed to be easy to use and integrate into existing workflow. It can be run from the command line, or can be used as part of an automated build or continuous integration process. `{lintr}` also integrates with a number of popular IDEs and text editors, such as RStudio and Visual Studio Code, making it convenient for users to run `{lintr}` checks on their code as they work.
+The R programming language [@base2023] is a popular choice for data analysis and statistical computing, and is used by a wide range of researchers and data scientists. The `{lintr}` package is an open source R package that provides static code analysis that checks for a variety of common problems related to readability, efficiency, consistency, style, etc. It is designed to be easy to use and integrate into existing workflows. It can be run from the command line, or can be used as part of an automated build or continuous integration process. `{lintr}` also integrates with a number of popular IDEs and text editors, such as RStudio and Visual Studio Code, making it convenient for users to run `{lintr}` checks on their code as they work.
 
 # Features
+
+There are a number of linters offered by `{lintr}`. 
+
+
+```r
+library(lintr)
+
+length(all_linters())
+#> [1] 87
+```
+
+For the sake of brevity, we will showcase only a few linters. To see details about all available linters, we will encourage readers to see <https://lintr.r-lib.org/dev/reference/index.html#individual-linters>.
+
+- **Readability**
+
+
+```r
+lint(
+  text = "stats::sd (c (x, y, z))",
+  linters = function_left_parentheses_linter()
+)
+#> <text>:1:10: style: [function_left_parentheses_linter] Remove spaces before the left parenthesis in a function call.
+#> stats::sd (c (x, y, z))
+#>          ^
+#> <text>:1:13: style: [function_left_parentheses_linter] Remove spaces before the left parenthesis in a function call.
+#> stats::sd (c (x, y, z))
+#>             ^
+```
+
+
+```r
+lint(
+  text = "stats::sd(c(x, y, z))",
+  linters = function_left_parentheses_linter()
+)
+```
+
+- **Efficiency**
+
+
+```r
+lint(
+  text = "any(is.na(x), na.rm = TRUE)",
+  linters = any_is_na_linter()
+)
+#> <text>:1:1: warning: [any_is_na_linter] anyNA(x) is better than any(is.na(x)).
+#> any(is.na(x), na.rm = TRUE)
+#> ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+lint(
+  text = "anyNA(x)",
+  linters = any_is_na_linter()
+)
+```
+
+- **Tidyverse style**
+
+
+```r
+lint(
+  text = "1:3 %>% mean %>% as.character",
+  linters = pipe_call_linter()
+)
+#> <text>:1:9: warning: [pipe_call_linter] Use explicit calls in magrittr pipes, i.e., `a %>% foo` should be `a %>% foo()`.
+#> 1:3 %>% mean %>% as.character
+#>         ^~~~
+#> <text>:1:18: warning: [pipe_call_linter] Use explicit calls in magrittr pipes, i.e., `a %>% foo` should be `a %>% foo()`.
+#> 1:3 %>% mean %>% as.character
+#>                  ^~~~~~~~~~~~
+
+lint(
+  text = "1:3 %>% mean() %>% as.character()",
+  linters = pipe_call_linter()
+)
+```
 
 
 # Benefits of using `{lintr}`
