@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-options(width = 80)
+options(width = 60)
 
 library(lintr)
 set.seed(2016)
