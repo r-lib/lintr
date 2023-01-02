@@ -1,11 +1,11 @@
-This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022) (preloaded format=xelatex 2022.12.2)  1 JAN 2023 12:48
+This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022) (preloaded format=xelatex 2023.1.2)  2 JAN 2023 18:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **paper.tex
 (./paper.tex
 LaTeX2e <2022-11-01> patch level 1
-L3 programming layer <2022-11-02> (/Users/indrajeetpatil/Library/TinyTeX/texmf-dist/tex/latex/base/article.cls
+L3 programming layer <2022-12-17> (/Users/indrajeetpatil/Library/TinyTeX/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2022/07/02 v1.4n Standard LaTeX document class
 (/Users/indrajeetpatil/Library/TinyTeX/texmf-dist/tex/latex/base/size10.clo
 File: size10.clo 2022/07/02 v1.4n Standard LaTeX file (size option)
@@ -733,7 +733,7 @@ Package biblatex Info: XeTeX detected.
 (biblatex)             Assuming input encoding 'utf8'.
 Package biblatex Info: Document encoding is UTF8 ....
 (/Users/indrajeetpatil/Library/TinyTeX/texmf-dist/tex/latex/l3kernel/expl3.sty
-Package: expl3 2022-11-02 L3 programming layer (loader) 
+Package: expl3 2022-12-17 L3 programming layer (loader) 
 (/Users/indrajeetpatil/Library/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-xetex.def
 File: l3backend-xetex.def 2022-10-26 L3 backend support: XeTeX
 \g__graphics_track_int=\count441
@@ -743,11 +743,11 @@ File: l3backend-xetex.def 2022-10-26 L3 backend support: XeTeX
 \g__pdf_backend_link_int=\count444
 ))
 Package biblatex Info: ... and expl3
-(biblatex)             2022-11-02 L3 programming layer (loader) 
+(biblatex)             2022-12-17 L3 programming layer (loader) 
 (biblatex)             is new enough (at least 2020/04/06),
 (biblatex)             setting 'casechanger=expl3'.
 (/Users/indrajeetpatil/Library/TinyTeX/texmf-dist/tex/latex/biblatex/blx-case-expl3.sty (/Users/indrajeetpatil/Library/TinyTeX/texmf-dist/tex/latex/l3packages/xparse/xparse.sty
-Package: xparse 2022-06-22 L3 Experimental document command parser
+Package: xparse 2022-12-17 L3 Experimental document command parser
 )
 Package: blx-case-expl3 2022/07/12 v3.18b expl3 case changing code for biblatex
 )) (/Users/indrajeetpatil/Library/TinyTeX/texmf-dist/tex/latex/geometry/geometry.sty
@@ -950,12 +950,12 @@ Package fancyhdr Warning: \headheight is too small (62.59596pt):
 (fancyhdr)                \addtolength{\topmargin}{-0.95425pt}.
 
 LaTeX Font Info:    Font shape `TU/lmss/m/it' in size <8> not available
-(Font)              Font shape `TU/lmss/m/sl' tried instead on input line 355.
+(Font)              Font shape `TU/lmss/m/sl' tried instead on input line 361.
 [1
 
 ]
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <14.4> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 408.
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 424.
 File: /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/rticles/rmarkdown/templates/joss/resources/JOSS-logo.png Graphic file (type bmp)
 </Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/rticles/rmarkdown/templates/joss/resources/JOSS-logo.png>
 
@@ -983,11 +983,11 @@ Package logreq Info: Writing requests to 'paper.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 34908 strings out of 477640
- 721537 string characters out of 5839684
- 1507951 words of memory out of 5000000
- 55548 multiletter control sequences out of 15000+600000
- 476131 words of font info for 76 fonts, out of 8000000 for 9000
+ 34908 strings out of 478777
+ 721537 string characters out of 5849397
+ 1867979 words of memory out of 5000000
+ 54411 multiletter control sequences out of 15000+600000
+ 519159 words of font info for 80 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  84i,12n,81p,678b,848s stack positions out of 10000i,1000n,20000p,200000b,200000s
 

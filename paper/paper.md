@@ -7,7 +7,7 @@ authors:
 affiliations:
   - index: 1
     name: Netflix
-date: "2023-01-01"
+date: "2023-01-02"
 bibliography: paper.bib
 output: rticles::joss_article
 csl: apa.csl
@@ -24,7 +24,7 @@ The R programming language [@base2023] is a popular choice for data analysis and
 
 # Features
 
-There are a number of linters offered by `{lintr}`. 
+There are over 85 linters offered by `{lintr}`!
 
 
 ```r
@@ -34,9 +34,13 @@ length(all_linters())
 #> [1] 87
 ```
 
-For the sake of brevity, we will showcase only a few linters. To see details about all available linters, we will encourage readers to see <https://lintr.r-lib.org/dev/reference/index.html#individual-linters>.
+Naturally, we can't discuss all of them here. For the sake of brevity, we will showcase only a few linters. To see details about all available linters, we encourage readers to see <https://lintr.r-lib.org/dev/reference/index.html#individual-linters>.
 
 - **Readability**
+
+Every coder knows that they spend significantly more time reading compared to writing code. Thus, writing readable code makes the code more maintainable and reduces the possibility of introducing bugs stemming from poor understanding of the code.
+
+`{lintr}` provides a number of linters that suggest more readable alternatives of the code. For example, `function_left_parentheses_linter()`.
 
 
 ```r
@@ -50,10 +54,7 @@ lint(
 #> <text>:1:13: style: [function_left_parentheses_linter] Remove spaces before the left parenthesis in a function call.
 #> stats::sd (c (x, y, z))
 #>             ^
-```
 
-
-```r
 lint(
   text = "stats::sd(c(x, y, z))",
   linters = function_left_parentheses_linter()
@@ -61,6 +62,8 @@ lint(
 ```
 
 - **Efficiency**
+
+Sometimes the users might not be aware of a more efficient way offered by R for carrying out a computation. `{lintr}` offers linters that can provide such suggestions.
 
 
 ```r
@@ -80,6 +83,8 @@ lint(
 
 - **Tidyverse style**
 
+`{lintr}` also provides linters to enforce the style used throughout the `{tidyverse}` [@Wickham2019] ecosystem of packages. This style of coding has been outlined in the tidyverse style guide (https://style.tidyverse.org/index.html).
+
 
 ```r
 lint(
@@ -98,7 +103,6 @@ lint(
   linters = pipe_call_linter()
 )
 ```
-
 
 # Benefits of using `{lintr}`
 
