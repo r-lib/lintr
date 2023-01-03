@@ -22,12 +22,12 @@ and \code{\link[=packageStartupMessage]{packageStartupMessage()}}.
 \examples{
 # will produce lints
 lint(
-  text = 'stop(paste("a string", "another")"',
+  text = 'stop(paste("a string", "another"))',
   linters = condition_message_linter()
 )
 
 lint(
-  text = 'warning(paste0("a string", " another")',
+  text = 'warning(paste0("a string", " another"))',
   linters = condition_message_linter()
 )
 
