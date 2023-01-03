@@ -7,7 +7,7 @@ authors:
 affiliations:
   - index: 1
     name: Netflix
-date: "2023-01-02"
+date: "2023-01-03"
 bibliography: paper.bib
 output: rticles::joss_article
 csl: apa.csl
@@ -54,12 +54,9 @@ lint(
 #> <text>:1:13: style: [function_left_parentheses_linter] Remove spaces before the left parenthesis in a function call.
 #> stats::sd (c (x, y, z))
 #>             ^
-
-lint(
-  text = "stats::sd(c(x, y, z))",
-  linters = function_left_parentheses_linter()
-)
 ```
+
+
 
 - **Efficiency**
 
@@ -74,12 +71,9 @@ lint(
 #> <text>:1:1: warning: [any_is_na_linter] anyNA(x) is better than any(is.na(x)).
 #> any(is.na(x), na.rm = TRUE)
 #> ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-lint(
-  text = "anyNA(x)",
-  linters = any_is_na_linter()
-)
 ```
+
+
 
 - **Tidyverse style**
 
@@ -97,12 +91,9 @@ lint(
 #> <text>:1:18: warning: [pipe_call_linter] Use explicit calls in magrittr pipes, i.e., `a %>% foo` should be `a %>% foo()`.
 #> 1:3 %>% mean %>% as.character
 #>                  ^~~~~~~~~~~~
-
-lint(
-  text = "1:3 %>% mean() %>% as.character()",
-  linters = pipe_call_linter()
-)
 ```
+
+
 
 # Benefits of using `{lintr}`
 

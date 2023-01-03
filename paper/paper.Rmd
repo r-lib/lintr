@@ -54,7 +54,9 @@ lint(
   text = "stats::sd (c (x, y, z))",
   linters = function_left_parentheses_linter()
 )
+```
 
+```{r, echo=FALSE, eval=FALSE}
 lint(
   text = "stats::sd(c(x, y, z))",
   linters = function_left_parentheses_linter()
@@ -70,7 +72,9 @@ lint(
   text = "any(is.na(x), na.rm = TRUE)",
   linters = any_is_na_linter()
 )
+```
 
+```{r, echo=FALSE, eval=FALSE}
 lint(
   text = "anyNA(x)",
   linters = any_is_na_linter()
@@ -86,7 +90,9 @@ lint(
   text = "1:3 %>% mean %>% as.character",
   linters = pipe_call_linter()
 )
+```
 
+```{r, echo=FALSE, eval=FALSE}
 lint(
   text = "1:3 %>% mean() %>% as.character()",
   linters = pipe_call_linter()
