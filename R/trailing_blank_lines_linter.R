@@ -4,7 +4,7 @@
 #'
 #' @examplesIf requireNamespace("withr", quietly = TRUE)
 #' # will produce lints
-#' f <- withr::local_tempfile(lines = "x <- 1\n")
+#' f <- withr::local_tempfile(lines = "x <- 1L\n")
 #' readLines(f)
 #' lint(
 #'   filename = f,
@@ -12,7 +12,7 @@
 #' )
 #'
 #' # okay
-#' f <- withr::local_tempfile(lines = "x <- 1")
+#' f <- withr::local_tempfile(lines = "x <- 1L")
 #' readLines(f)
 #' lint(
 #'   filename = f,

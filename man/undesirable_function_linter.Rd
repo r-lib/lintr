@@ -55,7 +55,7 @@ lint(
 )
 
 lint(
-  text = "log(x, base = 10)",
+  text = "log(x, base = 10L)",
   linters = undesirable_function_linter(fun = c("log10" = "use log()"))
 )
 

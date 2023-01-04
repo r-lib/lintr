@@ -15,7 +15,7 @@
 #'
 #' # will produce lints
 #' lint(
-#'   text = "a <<- log(10)",
+#'   text = "a <<- log(10.0)",
 #'   linters = undesirable_operator_linter()
 #' )
 #'

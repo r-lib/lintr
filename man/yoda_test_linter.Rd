@@ -15,7 +15,7 @@ the simple case of testing an expression against a literal value, e.g.
 \examples{
 # will produce lints
 lint(
-  text = "expect_equal(2, x)",
+  text = "expect_equal(2L, x)",
   linters = yoda_test_linter()
 )
 
@@ -26,7 +26,7 @@ lint(
 
 # okay
 lint(
-  text = "expect_equal(x, 2)",
+  text = "expect_equal(x, 2L)",
   linters = yoda_test_linter()
 )
 

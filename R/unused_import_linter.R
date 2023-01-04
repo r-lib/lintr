@@ -9,14 +9,14 @@
 #'
 #' @examples
 #' # will produce lints
-#' code_lines <- "library(dplyr)\n1 + 1"
+#' code_lines <- "library(dplyr)\n1L + 1L"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
 #'   linters = unused_import_linter()
 #' )
 #'
-#' code_lines <- "library(dplyr)\ndplyr::tibble(a = 1)"
+#' code_lines <- "library(dplyr)\ndplyr::tibble(a = 1L)"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
@@ -24,14 +24,14 @@
 #' )
 #'
 #' # okay
-#' code_lines <- "library(dplyr)\ntibble(a = 1)"
+#' code_lines <- "library(dplyr)\ntibble(a = 1L)"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
 #'   linters = unused_import_linter()
 #' )
 #'
-#' code_lines <- "library(dplyr)\ndplyr::tibble(a = 1)"
+#' code_lines <- "library(dplyr)\ndplyr::tibble(a = 1L)"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,

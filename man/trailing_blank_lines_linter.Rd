@@ -12,7 +12,7 @@ Check that there are no trailing blank lines in source code.
 \examples{
 \dontshow{if (requireNamespace("withr", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # will produce lints
-f <- withr::local_tempfile(lines = "x <- 1\n")
+f <- withr::local_tempfile(lines = "x <- 1L\n")
 readLines(f)
 lint(
   filename = f,
@@ -20,7 +20,7 @@ lint(
 )
 
 # okay
-f <- withr::local_tempfile(lines = "x <- 1")
+f <- withr::local_tempfile(lines = "x <- 1L")
 readLines(f)
 lint(
   filename = f,

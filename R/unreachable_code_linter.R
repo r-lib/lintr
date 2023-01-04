@@ -7,7 +7,7 @@
 #'
 #' @examples
 #' # will produce lints
-#' code_lines <- "f <- function() {\n  return(1 + 1)\n  2 + 2\n}"
+#' code_lines <- "f <- function() {\n  return(1L + 1L)\n  2L + 2L\n}"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
@@ -15,7 +15,7 @@
 #' )
 #'
 #' # okay
-#' code_lines <- "f <- function() {\n  return(1 + 1)\n}"
+#' code_lines <- "f <- function() {\n  return(1L + 1L)\n}"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
