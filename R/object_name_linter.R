@@ -85,13 +85,17 @@ object_name_xpath <- local({
 #'   linters = object_name_linter(styles = "lowercase")
 #' )
 #'
+#' code_lines <- "my.var <- 1L\nmyvar <- 2L"
+#' writeLines(code_lines)
 #' lint(
-#'   text = "my.var <- 1L; myvar <- 2L",
+#'   text = code_lines,
 #'   linters = object_name_linter(styles = c("dotted.case", "lowercase"))
 #' )
 #'
+#' code_lines <- "asdf <- 1L\nasdF <- 1L"
+#' writeLines(code_lines)
 #' lint(
-#'   text = "asdf <- 1L; asdF <- 1L",
+#'   text = code_lines,
 #'   linters = object_name_linter(regexes = c(my_style = "F$", "f$"))
 #' )
 #'

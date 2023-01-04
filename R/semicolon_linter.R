@@ -10,32 +10,32 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "a <- 1;",
+#'   text = "a <- 1L;",
 #'   linters = semicolon_linter()
 #' )
 #'
 #' lint(
-#'   text = "a <- 1; b <- 1",
+#'   text = "a <- 1L; b <- 1L",
 #'   linters = semicolon_linter()
 #' )
 #'
 #' lint(
-#'   text = "function() { a <- 1; b <- 1 }",
+#'   text = "function() { a <- 1L; b <- 1L }",
 #'   linters = semicolon_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "a <- 1",
+#'   text = "a <- 1L",
 #'   linters = semicolon_linter()
 #' )
 #'
 #' lint(
-#'   text = "a <- 1;",
+#'   text = "a <- 1L;",
 #'   linters = semicolon_linter(allow_trailing = TRUE)
 #' )
 #'
-#' code_lines <- "a <- 1\nb <- 1"
+#' code_lines <- "a <- 1L\nb <- 1L"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
@@ -43,11 +43,11 @@
 #' )
 #'
 #' lint(
-#'   text = "a <- 1; b <- 1",
+#'   text = "a <- 1L; b <- 1L",
 #'   linters = semicolon_linter(allow_compound = TRUE)
 #' )
 #'
-#' code_lines <- "function() { \n  a <- 1\n  b <- 1\n}"
+#' code_lines <- "function() { \n  a <- 1L\n  b <- 1L\n}"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,

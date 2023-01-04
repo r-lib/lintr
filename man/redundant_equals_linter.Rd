@@ -17,23 +17,23 @@ nature, while \code{child}, \code{parent_supervision}, \code{watch_horror_movie}
 \examples{
 # will produce lints
 lint(
-  text = "if (any(x == TRUE)) 1",
+  text = "if (any(x == TRUE)) 1L",
   linters = redundant_equals_linter()
 )
 
 lint(
-  text = "if (any(x != FALSE)) 0",
+  text = "if (any(x != FALSE)) 0L",
   linters = redundant_equals_linter()
 )
 
 # okay
 lint(
-  text = "if (any(x)) 1",
+  text = "if (any(x)) 1L",
   linters = redundant_equals_linter()
 )
 
 lint(
-  text = "if (!all(x)) 0",
+  text = "if (!all(x)) 0L",
   linters = redundant_equals_linter()
 )
 

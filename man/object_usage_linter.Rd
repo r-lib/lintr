@@ -21,18 +21,20 @@ Note that this runs \code{\link[base:eval]{base::eval()}} on the code, so \stron
 \examples{
 # will produce lints
 lint(
-  text = "foo <- function() { x <- 1 }",
+  text = "foo <- function() { x <- 1L }",
   linters = object_usage_linter()
 )
 
 # okay
 lint(
-  text = "foo <- function(x) { x <- 1 }",
+  text = "foo <- function(x) { x <- 1L }",
   linters = object_usage_linter()
 )
 
+code_lines <- "foo <- function() {\n  x <- 1L\n  return(x)\n}"
+writeLines(code_lines)
 lint(
-  text = "foo <- function() { x <- 1; return(x) }",
+  text = code_lines,
   linters = object_usage_linter()
 )
 }

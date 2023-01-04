@@ -7,13 +7,13 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "function(x)x + 1",
+#'   text = "function(x)x + 1L",
 #'   linters = paren_body_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "function(x) x + 1",
+#'   text = "function(x) x + 1L",
 #'   linters = paren_body_linter()
 #' )
 #'
