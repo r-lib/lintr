@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022) (preloaded format=xelatex 2023.1.2)  3 JAN 2023 13:38
+This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022) (preloaded format=xelatex 2023.1.2)  4 JAN 2023 11:39
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -940,6 +940,11 @@ Package hyperref Warning: Suppressing link with empty target on input line 291.
 
 Package hyperref Warning: Suppressing link with empty target on input line 291.
 
+
+Underfull \hbox (badness 1163) in paragraph at lines 323--326
+\TU/lmr/m/n/10 ters, we encourage readers to see [][]$[][][][][] [] [] [] [][][][][] [] [][][][][][] [] [][][] [] [][][] [] [][][][][][][][][] [] [][][][][] [] [][][][] []
+ []
+
 File: /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/rticles/rmarkdown/templates/joss/resources/JOSS-logo.png Graphic file (type bmp)
 </Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/rticles/rmarkdown/templates/joss/resources/JOSS-logo.png>
 
@@ -950,12 +955,12 @@ Package fancyhdr Warning: \headheight is too small (62.59596pt):
 (fancyhdr)                \addtolength{\topmargin}{-0.95425pt}.
 
 LaTeX Font Info:    Font shape `TU/lmss/m/it' in size <8> not available
-(Font)              Font shape `TU/lmss/m/sl' tried instead on input line 356.
+(Font)              Font shape `TU/lmss/m/sl' tried instead on input line 362.
 [1
 
 ]
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <14.4> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 409.
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 440.
 File: /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/rticles/rmarkdown/templates/joss/resources/JOSS-logo.png Graphic file (type bmp)
 </Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/rticles/rmarkdown/templates/joss/resources/JOSS-logo.png>
 
@@ -985,7 +990,7 @@ Package logreq Info: Writing requests to 'paper.run.xml'.
 Here is how much of TeX's memory you used:
  34908 strings out of 478777
  721537 string characters out of 5849397
- 1867979 words of memory out of 5000000
+ 1866979 words of memory out of 5000000
  54411 multiletter control sequences out of 15000+600000
  519159 words of font info for 80 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191

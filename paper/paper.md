@@ -1,26 +1,29 @@
 ---
 title: "Static Code Analysis for R"
+date: "2023-01-04"
+tags: ["R", "linter", "tidyverse"]
+
 authors:
   - name: Jim Hester
     affiliation: 1
     orcid: ~
+
 affiliations:
   - index: 1
     name: Netflix
-date: "2023-01-03"
-bibliography: paper.bib
+
 output: rticles::joss_article
+bibliography: paper.bib
 csl: apa.csl
 journal: JOSS
 link-citations: yes
-tags: ["R", "linter", "tidyverse"]
 ---
 
 
 
 # Statement of Need
 
-The R programming language [@base2023] is a popular choice for data analysis and statistical computing, and is used by a wide range of researchers and data scientists. The `{lintr}` package is an open source R package that provides static code analysis that checks for a variety of common problems related to readability, efficiency, consistency, style, etc. It is designed to be easy to use and integrate into existing workflows. It can be run from the command line, or can be used as part of an automated build or continuous integration process. `{lintr}` also integrates with a number of popular IDEs and text editors, such as RStudio and Visual Studio Code, making it convenient for users to run `{lintr}` checks on their code as they work.
+The R programming language [@base2023] is a popular choice for statistical analysis and visualization, and is used by a wide range of researchers and data scientists. The `{lintr}` package is an open-source R package that provides static code analysis to check for a variety of common problems related to readability, efficiency, consistency, style, etc. It is designed to be easy to use and integrate into existing workflows, and can be run from the command line or used as part of an automated build or continuous integration process. `{lintr}` also integrates with a number of popular IDEs and text editors, such as RStudio and Visual Studio Code, making it convenient for users to run `{lintr}` checks on their code as they work.
 
 # Features
 
@@ -34,13 +37,51 @@ length(all_linters())
 #> [1] 87
 ```
 
-Naturally, we can't discuss all of them here. For the sake of brevity, we will showcase only a few linters. To see details about all available linters, we encourage readers to see <https://lintr.r-lib.org/dev/reference/index.html#individual-linters>.
+Naturally, we can't discuss all of them here. To see details about all available linters, we encourage readers to see <https://lintr.r-lib.org/dev/reference/index.html#individual-linters>.
+
+We will showcase one linter for each kind of common problem found in R code.
+
+- **Best practices**
+
+`{lintr}` offers linters that can detect problematic antipatterns and suggest alternative patterns that follow best practices.
+
+For example, usage of vectorized `&` and `|` logical operators in conditional statements is error-prone, and scalar `&&` and `||`, respectively, are to be preferred. The `vector_logic_linter()` linter detects such problematic usages.
+
+
+```r
+lint(
+  text = "if (x & y) 1",
+  linters = vector_logic_linter()
+)
+#> <text>:1:7: warning: [vector_logic_linter] Conditional expressions require scalar logical operators (&& and ||)
+#> if (x & y) 1
+#>       ^
+```
+
+
+
+- **Efficiency**
+
+Sometimes the users might not be aware of a more efficient way offered by R for carrying out a computation. `{lintr}` offers linters to provide suggestions to improve code efficiency.
+
+
+```r
+lint(
+  text = "any(is.na(x), na.rm = TRUE)",
+  linters = any_is_na_linter()
+)
+#> <text>:1:1: warning: [any_is_na_linter] anyNA(x) is better than any(is.na(x)).
+#> any(is.na(x), na.rm = TRUE)
+#> ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+
+
 
 - **Readability**
 
-Every coder knows that they spend significantly more time reading compared to writing code. Thus, writing readable code makes the code more maintainable and reduces the possibility of introducing bugs stemming from poor understanding of the code.
+Coders spend significantly more time reading compared to writing code [@mcconnell2004code]. Thus, writing readable code makes the code more maintainable and reduces the possibility of introducing bugs stemming from a poor understanding of the code.
 
-`{lintr}` provides a number of linters that suggest more readable alternatives of the code. For example, `function_left_parentheses_linter()`.
+`{lintr}` provides a number of linters that suggest more readable alternatives. For example, `function_left_parentheses_linter()`.
 
 
 ```r
@@ -58,26 +99,9 @@ lint(
 
 
 
-- **Efficiency**
-
-Sometimes the users might not be aware of a more efficient way offered by R for carrying out a computation. `{lintr}` offers linters that can provide such suggestions.
-
-
-```r
-lint(
-  text = "any(is.na(x), na.rm = TRUE)",
-  linters = any_is_na_linter()
-)
-#> <text>:1:1: warning: [any_is_na_linter] anyNA(x) is better than any(is.na(x)).
-#> any(is.na(x), na.rm = TRUE)
-#> ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-```
-
-
-
 - **Tidyverse style**
 
-`{lintr}` also provides linters to enforce the style used throughout the `{tidyverse}` [@Wickham2019] ecosystem of packages. This style of coding has been outlined in the tidyverse style guide (https://style.tidyverse.org/index.html).
+`{lintr}` also provides linters to enforce the style used throughout the `{tidyverse}` [@Wickham2019] ecosystem of R packages. This style of coding has been outlined in the tidyverse style guide (https://style.tidyverse.org/index.html).
 
 
 ```r
