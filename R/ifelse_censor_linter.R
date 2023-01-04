@@ -16,7 +16,7 @@
 #' )
 #'
 #' lint(
-#'   text = "ifelse(x > 0, x, 0)",
+#'   text = "ifelse(x > 0L, x, 0L)",
 #'   linters = ifelse_censor_linter()
 #' )
 #'
@@ -27,7 +27,7 @@
 #' )
 #'
 #' lint(
-#'   text = "pmax(x, 0)",
+#'   text = "pmax(x, 0L)",
 #'   linters = ifelse_censor_linter()
 #' )
 #'

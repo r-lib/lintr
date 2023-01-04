@@ -27,7 +27,7 @@ lint(
 )
 
 lint(
-  text = "c(log(x, base = 10), log10(x, base = 2))",
+  text = "c(log(x, base = 10L), log10(x, base = 2L))",
   linters = inner_combine_linter()
 )
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/any_duplicated_linter.R
 \name{any_duplicated_linter}
 \alias{any_duplicated_linter}
-\title{Require usage of \code{anyDuplicated(x) > 0} over \code{any(duplicated(x))}}
+\title{Require usage of \code{anyDuplicated(x) > 0L} over \code{any(duplicated(x))}}
 \usage{
 any_duplicated_linter()
 }

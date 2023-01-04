@@ -30,7 +30,7 @@
 #' )
 #'
 #' lint(
-#'   text = "foo <- function(x) (x + 1)",
+#'   text = "foo <- function(x) (x + 1L)",
 #'   linters = function_left_parentheses_linter()
 #' )
 #'

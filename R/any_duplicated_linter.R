@@ -1,4 +1,4 @@
-#' Require usage of `anyDuplicated(x) > 0` over `any(duplicated(x))`
+#' Require usage of `anyDuplicated(x) > 0L` over `any(duplicated(x))`
 #'
 #' [anyDuplicated()] exists as a replacement for `any(duplicated(.))`, which is
 #'   more efficient for simple objects, and is at worst equally efficient.

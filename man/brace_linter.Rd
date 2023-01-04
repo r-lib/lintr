@@ -26,33 +26,33 @@ does.
 \examples{
 # will produce lints
 lint(
-  text = "f <- function() { 1 }",
+  text = "f <- function() { 1L }",
   linters = brace_linter()
 )
 
-writeLines("if (TRUE) {\n return(1) }")
+writeLines("if (TRUE) {\n return(1L) }")
 lint(
-  text = "if (TRUE) {\n return(1) }",
+  text = "if (TRUE) {\n return(1L) }",
   linters = brace_linter()
 )
 
 # okay
-writeLines("f <- function() {\n  1\n}")
+writeLines("f <- function() {\n  1L\n}")
 lint(
-  text = "f <- function() {\n  1\n}",
+  text = "f <- function() {\n  1L\n}",
   linters = brace_linter()
 )
 
-writeLines("if (TRUE) { \n return(1) \n}")
+writeLines("if (TRUE) { \n return(1L) \n}")
 lint(
-  text = "if (TRUE) { \n return(1) \n}",
+  text = "if (TRUE) { \n return(1L) \n}",
   linters = brace_linter()
 )
 
 # customizing using arguments
-writeLines("if (TRUE) { return(1) }")
+writeLines("if (TRUE) { return(1L) }")
 lint(
-  text = "if (TRUE) { return(1) }",
+  text = "if (TRUE) { return(1L) }",
   linters = brace_linter(allow_single_line = TRUE)
 )
 }

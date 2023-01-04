@@ -22,23 +22,23 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "if (TRUE & FALSE) 1",
+#'   text = "if (TRUE & FALSE) 1.0",
 #'   linters = vector_logic_linter()
 #' )
 #'
 #' lint(
-#'   text = "if (TRUE && (TRUE | FALSE)) 4",
+#'   text = "if (TRUE && (TRUE | FALSE)) 4.2",
 #'   linters = vector_logic_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "if (TRUE && FALSE) 1",
+#'   text = "if (TRUE && FALSE) 1.0",
 #'   linters = vector_logic_linter()
 #' )
 #'
 #' lint(
-#'   text = "if (TRUE && (TRUE || FALSE)) 4",
+#'   text = "if (TRUE && (TRUE || FALSE)) 4.2",
 #'   linters = vector_logic_linter()
 #' )
 #'

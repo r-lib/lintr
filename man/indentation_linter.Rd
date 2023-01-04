@@ -27,26 +27,26 @@ first line of the function definition contains no arguments and the closing pare
 map(
   x,
   f,
-  additional_arg = 42
+  additional_arg = 42L
 )
 
 # complies to "tidy" and "never"
 map(x, f,
-  additional_arg = 42
+  additional_arg = 42L
 )
 
 # complies to "always"
 map(x, f,
-    additional_arg = 42
+    additional_arg = 42L
 )
 
 # complies to "tidy" and "always"
 map(x, f,
-    additional_arg = 42)
+    additional_arg = 42L)
 
 # complies to "never"
 map(x, f,
-  additional_arg = 42)
+  additional_arg = 42L)
 
 # complies to "tidy"
 function(
@@ -90,21 +90,21 @@ lint(
   linters = indentation_linter()
 )
 
-code_lines <- "if (TRUE) {\n    1 + 1\n}"
+code_lines <- "if (TRUE) {\n    1L + 1L\n}"
 writeLines(code_lines)
 lint(
   text = code_lines,
   linters = indentation_linter()
 )
 
-code_lines <- "map(x, f,\n  additional_arg = 42\n)"
+code_lines <- "map(x, f,\n  additional_arg = 42L\n)"
 writeLines(code_lines)
 lint(
   text = code_lines,
   linters = indentation_linter(hanging_indent_style = "always")
 )
 
-code_lines <- "map(x, f,\n    additional_arg = 42)"
+code_lines <- "map(x, f,\n    additional_arg = 42L)"
 writeLines(code_lines)
 lint(
   text = code_lines,
@@ -112,18 +112,18 @@ lint(
 )
 
 # okay
-code_lines <- "map(x, f,\n  additional_arg = 42\n)"
+code_lines <- "map(x, f,\n  additional_arg = 42L\n)"
 writeLines(code_lines)
 lint(
   text = code_lines,
   linters = indentation_linter()
 )
 
-code_lines <- "if (TRUE) {\n    1 + 1\n}"
+code_lines <- "if (TRUE) {\n    1L + 1L\n}"
 writeLines(code_lines)
 lint(
   text = code_lines,
-  linters = indentation_linter(indent = 4)
+  linters = indentation_linter(indent = 4L)
 )
 
 }

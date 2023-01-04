@@ -7,30 +7,30 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "foo <- function(x) return(y <- x + 1)",
+#'   text = "foo <- function(x) return(y <- x + 1L)",
 #'   linters = function_return_linter()
 #' )
 #'
 #' lint(
-#'   text = "foo <- function(x) return(x <<- x + 1)",
+#'   text = "foo <- function(x) return(x <<- x + 1L)",
 #'   linters = function_return_linter()
 #' )
 #'
-#' writeLines("e <- new.env() \nfoo <- function(x) return(e$val <- x + 1)")
+#' writeLines("e <- new.env() \nfoo <- function(x) return(e$val <- x + 1L)")
 #' lint(
-#'   text = "e <- new.env() \nfoo <- function(x) return(e$val <- x + 1)",
+#'   text = "e <- new.env() \nfoo <- function(x) return(e$val <- x + 1L)",
 #'   linters = function_return_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "foo <- function(x) return(x + 1)",
+#'   text = "foo <- function(x) return(x + 1L)",
 #'   linters = function_return_linter()
 #' )
 #'
 #' code_lines <- "
 #' foo <- function(x) {
-#'   x <<- x + 1
+#'   x <<- x + 1L
 #'   return(x)
 #' }
 #' "
@@ -42,7 +42,7 @@
 #' code_lines <- "
 #' e <- new.env()
 #' foo <- function(x) {
-#'   e$val <- x + 1
+#'   e$val <- x + 1L
 #'   return(e$val)
 #' }
 #' "

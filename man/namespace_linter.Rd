@@ -19,28 +19,28 @@ potentially change the global state.
 \examples{
 # will produce lints
 lint(
-  text = "xyzxyz::sd(c(1, 2, 3))",
+  text = "xyzxyz::sd(c(1.1, 2.3, 3.4))",
   linters = namespace_linter()
 )
 
 lint(
-  text = "stats::ssd(c(1, 2, 3))",
+  text = "stats::ssd(c(1.1, 2.3, 3.4))",
   linters = namespace_linter()
 )
 
 # okay
 lint(
-  text = "stats::sd(c(1, 2, 3))",
+  text = "stats::sd(c(1.1, 2.3, 3.4))",
   linters = namespace_linter()
 )
 
 lint(
-  text = "stats::ssd(c(1, 2, 3))",
+  text = "stats::ssd(c(1.1, 2.3, 3.4))",
   linters = namespace_linter(check_exports = FALSE)
 )
 
 lint(
-  text = "stats:::ssd(c(1, 2, 3))",
+  text = "stats:::ssd(c(1.1, 2.3, 3.4))",
   linters = namespace_linter(check_nonexports = FALSE)
 )
 

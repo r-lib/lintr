@@ -16,33 +16,33 @@ is to instead set the default for such arguments to \code{NULL}.
 \examples{
 # will produce lints
 lint(
-  text = "function(y = 1, z = 2, x) {}",
+  text = "function(y = 1L, z = 2L, x) {}",
   linters = function_argument_linter()
 )
 
 lint(
-  text = "function(x, y, z = 1, ..., w) {}",
+  text = "function(x, y, z = 1L, ..., w) {}",
   linters = function_argument_linter()
 )
 
 # okay
 lint(
-  text = "function(x, y = 1, z = 2) {}",
+  text = "function(x, y = 1L, z = 2L) {}",
   linters = function_argument_linter()
 )
 
 lint(
-  text = "function(x, y, w, z = 1, ...) {}",
+  text = "function(x, y, w, z = 1L, ...) {}",
   linters = function_argument_linter()
 )
 
 lint(
-  text = "function(y = 1, z = 2, x = NULL) {}",
+  text = "function(y = 1L, z = 2L, x = NULL) {}",
   linters = function_argument_linter()
 )
 
 lint(
-  text = "function(x, y, z = 1, ..., w = NULL) {}",
+  text = "function(x, y, z = 1L, ..., w = NULL) {}",
   linters = function_argument_linter()
 )
 

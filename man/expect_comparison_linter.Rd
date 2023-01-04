@@ -26,7 +26,7 @@ lint(
 )
 
 lint(
-  text = "expect_true(x == (y == 2))",
+  text = "expect_true(x == (y == 2L))",
   linters = expect_comparison_linter()
 )
 
@@ -42,12 +42,12 @@ lint(
 )
 
 lint(
-  text = "expect_identical(x, y == 2)",
+  text = "expect_identical(x, y == 2L)",
   linters = expect_comparison_linter()
 )
 
 lint(
-  text = "expect_true(x < y | x > y^2)",
+  text = "expect_true(x < y | x > y^2L)",
   linters = expect_comparison_linter()
 )
 

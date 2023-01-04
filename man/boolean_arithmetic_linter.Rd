@@ -18,7 +18,7 @@ lint(
 )
 
 lint(
-  text = "sum(grepl(pattern, x)) == 0",
+  text = "sum(grepl(pattern, x)) == 0L",
   linters = boolean_arithmetic_linter()
 )
 

@@ -14,7 +14,7 @@
 #'   linters = assignment_linter()
 #' )
 #'
-#' code_lines <- "1 -> x\n2 ->> y"
+#' code_lines <- "1L -> x\n2L ->> y"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
@@ -27,7 +27,7 @@
 #'   linters = assignment_linter()
 #' )
 #'
-#' code_lines <- "x <- 1\ny <<- 2"
+#' code_lines <- "x <- 1L\ny <<- 2L"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
@@ -35,7 +35,7 @@
 #' )
 #'
 #' # customizing using arguments
-#' code_lines <- "1 -> x\n2 ->> y"
+#' code_lines <- "1L -> x\n2L ->> y"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
@@ -43,13 +43,13 @@
 #' )
 #'
 #' lint(
-#'   text = "x <<- 1",
+#'   text = "x <<- 1L",
 #'   linters = assignment_linter(allow_cascading_assign = FALSE)
 #' )
 #'
-#' writeLines("foo(bar = \n 1)")
+#' writeLines("foo(bar = \n 1L)")
 #' lint(
-#'   text = "foo(bar = \n 1)",
+#'   text = "foo(bar = \n 1L)",
 #'   linters = assignment_linter(allow_trailing = FALSE)
 #' )
 #'

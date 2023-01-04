@@ -5,20 +5,18 @@
 #'
 #' @examples
 #' # will produce lints
+#' code_lines <- "x <- {\n}"
+#' writeLines(code_lines)
 #' lint(
-#'   text = "x <- {}",
-#'   linters = empty_assignment_linter()
-#' )
-#'
-#' writeLines("x = {\n}")
-#' lint(
-#'   text = "x = {\n}",
+#'   text = code_lines,
 #'   linters = empty_assignment_linter()
 #' )
 #'
 #' # okay
+#' code_lines <- "x <- {\n3L + 4L\n}"
+#' writeLines(code_lines)
 #' lint(
-#'   text = "x <- { 3 + 4 }",
+#'   text = code_lines,
 #'   linters = empty_assignment_linter()
 #' )
 #'
