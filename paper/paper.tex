@@ -1,0 +1,507 @@
+\documentclass[10pt,a4paper,onecolumn]{article}
+\usepackage{marginnote}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{authblk,etoolbox}
+\usepackage{titlesec}
+\usepackage{calc}
+\usepackage{tikz}
+\usepackage{hyperref}
+\hypersetup{colorlinks,breaklinks,
+            urlcolor=[rgb]{0.0, 0.5, 1.0},
+            linkcolor=[rgb]{0.0, 0.5, 1.0}}
+\usepackage{caption}
+\usepackage{tcolorbox}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{seqsplit}
+\usepackage{fixltx2e} % provides \textsubscript
+\usepackage[
+  backend=biber,
+%  style=alphabetic,
+%  citestyle=numeric
+]{biblatex}
+\bibliography{paper.bib}
+
+
+% --- Page layout -------------------------------------------------------------
+\usepackage[top=3.5cm, bottom=3cm, right=1.5cm, left=1.0cm,
+            headheight=2.2cm, reversemp, includemp, marginparwidth=4.5cm]{geometry}
+
+% --- Default font ------------------------------------------------------------
+% \renewcommand\familydefault{\sfdefault}
+
+% --- Style -------------------------------------------------------------------
+\renewcommand{\bibfont}{\small \sffamily}
+\renewcommand{\captionfont}{\small\sffamily}
+\renewcommand{\captionlabelfont}{\bfseries}
+
+% --- Section/SubSection/SubSubSection ----------------------------------------
+\titleformat{\section}
+  {\normalfont\sffamily\Large\bfseries}
+  {}{0pt}{}
+\titleformat{\subsection}
+  {\normalfont\sffamily\large\bfseries}
+  {}{0pt}{}
+\titleformat{\subsubsection}
+  {\normalfont\sffamily\bfseries}
+  {}{0pt}{}
+\titleformat*{\paragraph}
+  {\sffamily\normalsize}
+
+
+% --- Header / Footer ---------------------------------------------------------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+%\renewcommand{\headrulewidth}{0.50pt}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[L]{\hspace{-0.75cm}\includegraphics[width=5.5cm]{/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/rticles/rmarkdown/templates/joss/resources/JOSS-logo.png}}
+\fancyhead[C]{}
+\fancyhead[R]{}
+\renewcommand{\footrulewidth}{0.25pt}
+
+\fancyfoot[L]{\footnotesize{\sffamily , (). Static Code Analysis for
+R. \textit{Journal of Open Source Software}, (), . \href{https://doi.org/}{https://doi.org/}}}
+
+
+\fancyfoot[R]{\sffamily \thepage}
+\makeatletter
+\let\ps@plain\ps@fancy
+\fancyheadoffset[L]{4.5cm}
+\fancyfootoffset[L]{4.5cm}
+
+% --- Macros ---------
+
+\definecolor{linky}{rgb}{0.0, 0.5, 1.0}
+
+\newtcolorbox{repobox}
+   {colback=red, colframe=red!75!black,
+     boxrule=0.5pt, arc=2pt, left=6pt, right=6pt, top=3pt, bottom=3pt}
+
+\newcommand{\ExternalLink}{%
+   \tikz[x=1.2ex, y=1.2ex, baseline=-0.05ex]{%
+       \begin{scope}[x=1ex, y=1ex]
+           \clip (-0.1,-0.1)
+               --++ (-0, 1.2)
+               --++ (0.6, 0)
+               --++ (0, -0.6)
+               --++ (0.6, 0)
+               --++ (0, -1);
+           \path[draw,
+               line width = 0.5,
+               rounded corners=0.5]
+               (0,0) rectangle (1,1);
+       \end{scope}
+       \path[draw, line width = 0.5] (0.5, 0.5)
+           -- (1, 1);
+       \path[draw, line width = 0.5] (0.6, 1)
+           -- (1, 1) -- (1, 0.6);
+       }
+   }
+
+% --- Title / Authors ---------------------------------------------------------
+% patch \maketitle so that it doesn't center
+\patchcmd{\@maketitle}{center}{flushleft}{}{}
+\patchcmd{\@maketitle}{center}{flushleft}{}{}
+% patch \maketitle so that the font size for the title is normal
+\patchcmd{\@maketitle}{\LARGE}{\LARGE\sffamily}{}{}
+% patch the patch by authblk so that the author block is flush left
+\def\maketitle{{%
+  \renewenvironment{tabular}[2][]
+    {\begin{flushleft}}
+    {\end{flushleft}}
+  \AB@maketitle}}
+\makeatletter
+\renewcommand\AB@affilsepx{ \protect\Affilfont}
+%\renewcommand\AB@affilnote[1]{{\bfseries #1}\hspace{2pt}}
+\renewcommand\AB@affilnote[1]{{\bfseries #1}\hspace{3pt}}
+\makeatother
+\renewcommand\Authfont{\sffamily\bfseries}
+\renewcommand\Affilfont{\sffamily\small\mdseries}
+\setlength{\affilsep}{1em}
+
+
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Static Code Analysis for R},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% Pandoc syntax highlighting
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+
+% tightlist command for lists without linebreak
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+% Pandoc citation processing
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
+% for Pandoc 2.8 to 2.10.1
+\newenvironment{cslreferences}%
+  {}%
+  {\par}
+% For Pandoc 2.11+
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
+  \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+
+\title{Static Code Analysis for R}
+
+        \author[1]{Jim Hester}
+    
+      \affil[1]{Netflix}
+  \date{\vspace{-5ex}}
+
+\begin{document}
+\maketitle
+
+\marginpar{
+  %\hrule
+  \sffamily\small
+
+  {\bfseries DOI:} \href{https://doi.org/}{\color{linky}{}}
+
+  \vspace{2mm}
+
+  {\bfseries Software}
+  \begin{itemize}
+    \setlength\itemsep{0em}
+    \item \href{}{\color{linky}{Review}} \ExternalLink
+    \item \href{}{\color{linky}{Repository}} \ExternalLink
+    \item \href{}{\color{linky}{Archive}} \ExternalLink
+  \end{itemize}
+
+  \vspace{2mm}
+
+  {\bfseries Submitted:} \\
+  {\bfseries Published:} 
+
+  \vspace{2mm}
+  {\bfseries License}\\
+  Authors of papers retain copyright and release the work under a Creative Commons Attribution 4.0 International License (\href{http://creativecommons.org/licenses/by/4.0/}{\color{linky}{CC-BY}}).
+}
+
+\hypertarget{statement-of-need}{%
+\section{Statement of Need}\label{statement-of-need}}
+
+The R programming language (\protect\hyperlink{ref-base2023}{R Core
+Team, 2023}) is a popular choice for statistical analysis and
+visualization, and is used by a wide range of researchers and data
+scientists. The \texttt{\{lintr\}} package is an open-source R package
+that provides static code analysis to check for a variety of common
+problems related to readability, efficiency, consistency, style, etc. It
+is designed to be easy to use and integrate into existing workflows, and
+can be run from the command line or used as part of an automated build
+or continuous integration process. \texttt{\{lintr\}} also integrates
+with a number of popular IDEs and text editors, such as RStudio and
+Visual Studio Code, making it convenient for users to run
+\texttt{\{lintr\}} checks on their code as they work.
+
+\hypertarget{features}{%
+\section{Features}\label{features}}
+
+There are over 85 linters offered by \texttt{\{lintr\}}!
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(lintr)}
+
+\FunctionTok{length}\NormalTok{(}\FunctionTok{all\_linters}\NormalTok{())}
+\CommentTok{\#\textgreater{} [1] 87}
+\end{Highlighting}
+\end{Shaded}
+
+Naturally, we can't discuss all of them here. To see details about all
+available linters, we encourage readers to see
+\url{https://lintr.r-lib.org/dev/reference/index.html\#individual-linters}.
+
+We will showcase one linter for each kind of common problem found in R
+code.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Best practices}
+\end{itemize}
+
+\texttt{\{lintr\}} offers linters that can detect problematic
+antipatterns and suggest alternative patterns that follow best
+practices.
+
+For example, usage of vectorized \texttt{\&} and \texttt{\textbar{}}
+logical operators in conditional statements is error-prone, and scalar
+\texttt{\&\&} and \texttt{\textbar{}\textbar{}}, respectively, are to be
+preferred. The \texttt{vector\_logic\_linter()} linter detects such
+problematic usages.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{lint}\NormalTok{(}
+  \AttributeTok{text =} \StringTok{"if (x \& y) 1"}\NormalTok{,}
+  \AttributeTok{linters =} \FunctionTok{vector\_logic\_linter}\NormalTok{()}
+\NormalTok{)}
+\CommentTok{\#\textgreater{} \textless{}text\textgreater{}:1:7: warning: [vector\_logic\_linter] Conditional expressions require scalar logical operators (\&\& and ||)}
+\CommentTok{\#\textgreater{} if (x \& y) 1}
+\CommentTok{\#\textgreater{}       \^{}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Efficiency}
+\end{itemize}
+
+Sometimes the users might not be aware of a more efficient way offered
+by R for carrying out a computation. \texttt{\{lintr\}} offers linters
+to provide suggestions to improve code efficiency.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{lint}\NormalTok{(}
+  \AttributeTok{text =} \StringTok{"any(is.na(x), na.rm = TRUE)"}\NormalTok{,}
+  \AttributeTok{linters =} \FunctionTok{any\_is\_na\_linter}\NormalTok{()}
+\NormalTok{)}
+\CommentTok{\#\textgreater{} \textless{}text\textgreater{}:1:1: warning: [any\_is\_na\_linter] anyNA(x) is better than any(is.na(x)).}
+\CommentTok{\#\textgreater{} any(is.na(x), na.rm = TRUE)}
+\CommentTok{\#\textgreater{} \^{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Readability}
+\end{itemize}
+
+Coders spend significantly more time reading compared to writing code
+(\protect\hyperlink{ref-mcconnell2004code}{McConnell, 2004}). Thus,
+writing readable code makes the code more maintainable and reduces the
+possibility of introducing bugs stemming from a poor understanding of
+the code.
+
+\texttt{\{lintr\}} provides a number of linters that suggest more
+readable alternatives. For example,
+\texttt{function\_left\_parentheses\_linter()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{lint}\NormalTok{(}
+  \AttributeTok{text =} \StringTok{"stats::sd (c (x, y, z))"}\NormalTok{,}
+  \AttributeTok{linters =} \FunctionTok{function\_left\_parentheses\_linter}\NormalTok{()}
+\NormalTok{)}
+\CommentTok{\#\textgreater{} \textless{}text\textgreater{}:1:10: style: [function\_left\_parentheses\_linter] Remove spaces before the left parenthesis in a function call.}
+\CommentTok{\#\textgreater{} stats::sd (c (x, y, z))}
+\CommentTok{\#\textgreater{}          \^{}}
+\CommentTok{\#\textgreater{} \textless{}text\textgreater{}:1:13: style: [function\_left\_parentheses\_linter] Remove spaces before the left parenthesis in a function call.}
+\CommentTok{\#\textgreater{} stats::sd (c (x, y, z))}
+\CommentTok{\#\textgreater{}             \^{}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Tidyverse style}
+\end{itemize}
+
+\texttt{\{lintr\}} also provides linters to enforce the style used
+throughout the \texttt{\{tidyverse\}}
+(\protect\hyperlink{ref-Wickham2019}{Wickham et al., 2019}) ecosystem of
+R packages. This style of coding has been outlined in the tidyverse
+style guide (\url{https://style.tidyverse.org/index.html}).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{lint}\NormalTok{(}
+  \AttributeTok{text =} \StringTok{"1:3 \%\textgreater{}\% mean \%\textgreater{}\% as.character"}\NormalTok{,}
+  \AttributeTok{linters =} \FunctionTok{pipe\_call\_linter}\NormalTok{()}
+\NormalTok{)}
+\CommentTok{\#\textgreater{} \textless{}text\textgreater{}:1:9: warning: [pipe\_call\_linter] Use explicit calls in magrittr pipes, i.e., \textasciigrave{}a \%\textgreater{}\% foo\textasciigrave{} should be \textasciigrave{}a \%\textgreater{}\% foo()\textasciigrave{}.}
+\CommentTok{\#\textgreater{} 1:3 \%\textgreater{}\% mean \%\textgreater{}\% as.character}
+\CommentTok{\#\textgreater{}         \^{}\textasciitilde{}\textasciitilde{}\textasciitilde{}}
+\CommentTok{\#\textgreater{} \textless{}text\textgreater{}:1:18: warning: [pipe\_call\_linter] Use explicit calls in magrittr pipes, i.e., \textasciigrave{}a \%\textgreater{}\% foo\textasciigrave{} should be \textasciigrave{}a \%\textgreater{}\% foo()\textasciigrave{}.}
+\CommentTok{\#\textgreater{} 1:3 \%\textgreater{}\% mean \%\textgreater{}\% as.character}
+\CommentTok{\#\textgreater{}                  \^{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{benefits-of-using-lintr}{%
+\section{\texorpdfstring{Benefits of using
+\texttt{\{lintr\}}}{Benefits of using \{lintr\}}}\label{benefits-of-using-lintr}}
+
+There are several benefits to using \texttt{\{lintr\}} to analyze and
+improve R code. One of the most obvious is that it can help users
+identify and fix problems in their code, which can save time and effort
+during the development process. By catching issues early on,
+\texttt{\{lintr\}} can help prevent bugs and other issues from creeping
+into code, which can save time and effort when it comes to debugging and
+testing.
+
+Another benefit of \texttt{\{lintr\}} is that it can help users write
+more readable and maintainable code. By enforcing a consistent style and
+highlighting potential issues, \texttt{\{lintr\}} can help users write
+code that is easier to understand and work with. This is especially
+important for larger projects or teams, where multiple contributors may
+be working on the same codebase and it is important to ensure that code
+is easy to follow and understand.
+
+Finally, \texttt{\{lintr\}} can be a useful tool for teaching and
+learning R. By providing feedback on code style and potential issues, it
+can help users learn good coding practices and improve their skills over
+time. This can be especially useful for beginners, who may not yet be
+familiar with all of the best practices for writing R code.
+
+\hypertarget{conclusion}{%
+\section{Conclusion}\label{conclusion}}
+
+In conclusion, \texttt{\{lintr\}} is a valuable tool for R users to help
+improve the quality and reliability of their code. Its static code
+analysis capabilities, combined with its flexibility and ease of use,
+make it relevant and valuable for a wide range of applications.
+
+\hypertarget{licensing-and-availability}{%
+\section{Licensing and Availability}\label{licensing-and-availability}}
+
+\texttt{\{lintr\}} is licensed under the MIT License, with all source
+code openly developed and stored on GitHub
+(\url{https://github.com/r-lib/lintr}), along with a corresponding issue
+tracker for bug reporting and feature enhancements.
+
+\hypertarget{acknowledgments}{%
+\section{Acknowledgments}\label{acknowledgments}}
+
+\hypertarget{references}{%
+\section*{References}\label{references}}
+\addcontentsline{toc}{section}{References}
+
+\hypertarget{refs}{}
+\begin{CSLReferences}{1}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-mcconnell2004code}{}}%
+McConnell, S. (2004). \emph{Code complete}. Pearson Education.
+
+\leavevmode\vadjust pre{\hypertarget{ref-base2023}{}}%
+R Core Team. (2023). \emph{{R}: A language and environment for
+statistical computing}. R Foundation for Statistical Computing.
+\url{https://www.R-project.org/}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Wickham2019}{}}%
+Wickham, H., Averick, M., Bryan, J., Chang, W., McGowan, L. D.,
+François, R., Grolemund, G., Hayes, A., Henry, L., Hester, J., Kuhn, M.,
+Pedersen, T. L., Miller, E., Bache, S. M., Müller, K., Ooms, J.,
+Robinson, D., Seidel, D. P., Spinu, V., \ldots{} Yutani, H. (2019).
+Welcome to the {tidyverse}. \emph{Journal of Open Source Software},
+\emph{4}(43), 1686. \url{https://doi.org/10.21105/joss.01686}
+
+\end{CSLReferences}
+
+\end{document}

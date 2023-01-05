@@ -12,7 +12,9 @@ affiliations:
   - index: 1
     name: Netflix
 
-output: rticles::joss_article
+output: 
+  rticles::joss_article:
+    keep_tex: true
 bibliography: paper.bib
 csl: apa.csl
 journal: JOSS

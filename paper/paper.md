@@ -1,6 +1,6 @@
 ---
 title: "Static Code Analysis for R"
-date: "2023-01-04"
+date: "2023-01-05"
 tags: ["R", "linter", "tidyverse"]
 
 authors:
@@ -12,7 +12,9 @@ affiliations:
   - index: 1
     name: Netflix
 
-output: rticles::joss_article
+output: 
+  rticles::joss_article:
+    keep_tex: true
 bibliography: paper.bib
 csl: apa.csl
 journal: JOSS
