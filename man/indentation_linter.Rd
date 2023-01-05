@@ -6,7 +6,8 @@
 \usage{
 indentation_linter(
   indent = 2L,
-  hanging_indent_style = c("tidy", "always", "never")
+  hanging_indent_style = c("tidy", "always", "never"),
+  assignment_as_infix = TRUE
 )
 }
 \arguments{
@@ -53,6 +54,28 @@ function(
     b) \{
   # body
 \}
+}\if{html}{\out{</div>}}}
+
+\item{assignment_as_infix}{Treat \verb{<-} as a regular (i.e. left-associative) infix operator?
+This means, that infix operators on the right hand side of an assignment do not trigger a second level of
+indentation:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# complies to any style
+variable <- a \%+\%
+  b \%+\%
+  c
+
+# complies to assignment_as_infix = TRUE
+variable <-
+  a \%+\%
+  b \%+\%
+  c
+
+# complies to assignment_as_infix = FALSE
+variable <-
+  a \%+\%
+    b \%+\%
+    c
 }\if{html}{\out{</div>}}}
 }
 \description{

@@ -634,6 +634,96 @@ test_that("hanging_indent_stlye works", {
   expect_lint(code_hanging_same_line, "Indent", non_hanging_linter)
 })
 
+test_that("assignment_as_infix works", {
+  # test function call restorator and LEFT_ASSIGN suppressor
+  code_infix <- trim_some("
+    ok_code <-
+      var1 +
+      f(
+        var2 +
+          var3
+      ) +
+      var4
+  ")
+
+  # test that innermost ancestor token decides the indentation
+  code_infix_2 <- trim_some("
+    lapply(x,
+      function(e) {
+        temp_var <-
+          e +
+          42
+      }
+    )
+  ")
+
+  # test brace restorator
+  code_infix_3 <- trim_some("
+    ok_code <-
+      if (condition) {
+        a +
+          b
+      } else {
+        c +
+          d
+      } +
+      e
+  ")
+
+  # test EQ_ASSIGN, EQ_SUB and EQ_FORMALS suppressors
+  code_infix_4 <- trim_some("
+    # EQ_ASSIGN
+    ok_code =
+      a +
+      b
+
+    # EQ_SUB
+    f(
+      a =
+        b +
+        c
+    )
+
+    # EQ_FORMALS
+    f <- function(
+      a =
+        b +
+        c
+    ) {
+      NULL
+    }
+  ")
+
+  code_no_infix <- trim_some("
+    ok_code <-
+      var1 +
+        f(
+          var2 +
+            var3
+        ) +
+        var4
+  ")
+
+  tidy_linter <- indentation_linter()
+  no_infix_linter <- indentation_linter(assignment_as_infix = FALSE)
+
+  expect_lint(code_infix, NULL, tidy_linter)
+  expect_lint(code_infix_2, NULL, tidy_linter)
+  expect_lint(code_infix_3, NULL, tidy_linter)
+  expect_lint(code_infix_4, NULL, tidy_linter)
+  expect_lint(code_no_infix, rex::rex("Indentation should be 2 spaces but is 4 spaces."), tidy_linter)
+
+  expect_lint(code_infix, rex::rex("Indentation should be 4 spaces but is 2 spaces."), no_infix_linter)
+  expect_lint(code_infix_2, rex::rex("Indentation should be 8 spaces but is 6 spaces."), no_infix_linter)
+  expect_lint(code_infix_3, rex::rex("Indentation should be 4 spaces but is 2 spaces."), no_infix_linter)
+  expect_lint(code_infix_4, list(
+    list(line_number = 4L, rex::rex("Indentation should be 4 spaces but is 2 spaces.")),
+    list(line_number = 10L, rex::rex("Indentation should be 6 spaces but is 4 spaces.")),
+    list(line_number = 17L, rex::rex("Indentation should be 6 spaces but is 4 spaces."))
+  ), no_infix_linter)
+  expect_lint(code_no_infix, NULL, no_infix_linter)
+})
+
 test_that("consecutive same-level lints are suppressed", {
   bad_code <- trim_some("
     ok_code <- 42
