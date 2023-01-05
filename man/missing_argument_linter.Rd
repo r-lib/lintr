@@ -4,7 +4,10 @@
 \alias{missing_argument_linter}
 \title{Missing argument linter}
 \usage{
-missing_argument_linter(except = c("switch", "alist"), allow_trailing = FALSE)
+missing_argument_linter(
+  except = c("alist", "quote", "switch"),
+  allow_trailing = FALSE
+)
 }
 \arguments{
 \item{except}{a character vector of function names as exceptions.}
