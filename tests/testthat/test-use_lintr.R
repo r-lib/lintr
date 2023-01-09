@@ -45,5 +45,5 @@ test_that("use_lintr add .lintr to .Rbuildignore for packages", {
   setwd(tmp_package_dir)
   lintr_file <- use_lintr()
   expect_true(file.exists(lintr_file))
-  expect_true("^\\.lintr$" %in% readLines(".Rbuildignore"))
+  expect_snapshot(cat(brio::read_file(file.path(tmp_package_dir, ".Rbuildignore"))))
 })
