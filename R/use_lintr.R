@@ -45,12 +45,27 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
   write.dcf(the_config, config_file, width = Inf)
 
   # If this is an R package and if available, add .lintr file to .Rbuildignore
-  if (file.exists("DESCRIPTION")) {
+  if (file.exists("DESCRIPTION") && file.exists(".Rbuildignore")) {
     try(
-      usethis::use_build_ignore(fs::path_rel(config_file)),
+      add_build_ignore(config_file),
       silent = TRUE
     )
   }
 
   invisible(config_file)
+}
+
+add_build_ignore <- function(path) {
+  path_build_ignore <- file.path(".", ".Rbuildignore")
+  existing_lines <- xfun::read_utf8(path_build_ignore)
+
+  escape_path <- rex::rex(start, rex::re_substitutes(path, list(start, "./") %or% list("/", end), ""), end)
+
+  new_lines <- c(existing_lines, setdiff(escape_path, existing_lines))
+
+  xfun::write_utf8(new_lines, path_build_ignore)
+
+  message("Add '", escape_path, "' to ", path_build_ignore)
+
+  invisible(NULL)
 }
