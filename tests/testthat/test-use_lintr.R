@@ -37,11 +37,12 @@ test_that("use_lintr with type = full also works", {
 })
 
 test_that("use_lintr add .lintr to .Rbuildignore for packages", {
-  skip_if_not_installed("usethis")
-
   tmp <- withr::local_tempdir()
-  usethis::create_package(tmp)
-  setwd(tmp)
+  tmp_package_dir <- paste0(tmp, "/package")
+  package_dir <- test_path("dummy_packages", "package")
+  dir.create(tmp_package_dir)
+  file.copy(package_dir, tmp, recursive = TRUE)
+  setwd(tmp_package_dir)
   lintr_file <- use_lintr()
   expect_true(file.exists(lintr_file))
   expect_true("^\\.lintr$" %in% readLines(".Rbuildignore"))
