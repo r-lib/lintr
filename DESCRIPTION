@@ -37,6 +37,7 @@ Imports:
 Suggests:
     bookdown,
     crayon,
+    fs,
     httr (>= 1.2.1),
     jsonlite,
     mockery,
@@ -47,8 +48,8 @@ Suggests:
     testthat (>= 3.0.0),
     tibble,
     tufte,
-    withr (>= 2.5.0),
-    xfun
+    usethis,
+    withr (>= 2.5.0)
 VignetteBuilder: 
     knitr
 Config/Needs/website: tidyverse/tidytemplate
