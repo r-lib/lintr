@@ -45,5 +45,7 @@ test_that("use_lintr add .lintr to .Rbuildignore for packages", {
   setwd(tmp_package_dir)
   lintr_file <- use_lintr()
   expect_true(file.exists(lintr_file))
+
+  skip_if_not_installed("usethis")
   expect_true("^\\.lintr$" %in% readLines(".Rbuildignore"))
 })
