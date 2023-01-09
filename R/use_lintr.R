@@ -45,7 +45,7 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
   write.dcf(the_config, config_file, width = Inf)
 
   # If this is an R package and if available, add .lintr file to .Rbuildignore
-  if (file.exists("DESCRIPTION") && file.exists(".Rbuildignore")) {
+  if (file.exists("DESCRIPTION")) {
     try(
       add_build_ignore(config_file),
       silent = TRUE
