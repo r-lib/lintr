@@ -9,9 +9,52 @@
 #'      is exacerbated for nested calls
 #'
 #' Users can instead rely on a more readable alternative modeled after SQL
-#'   CASE WHEN statements, such as `data.table::fcase()` or `dplyr::case_when()`,
-#'   or use a look-up-and-merge approach (build a mapping table between values
-#'   and outputs and merge this to the input).
+#'   CASE WHEN statements.
+#'
+#' Let's say this is our original code:
+#'
+#' ```r
+#' ifelse(
+#'   x == "a",
+#'   2L,
+#'   ifelse(x == "b", 3L, 1L)
+#' )
+#' ```
+#'
+#' Here are a few ways to avoid nesting and make the code more readable:
+#'
+#'   - `data.table::fcase()`
+#'
+#'     ```r
+#'     data.table::fcase(
+#'       x == "a", 2L,
+#'       x == "b", 3L,
+#'       default = 1L
+#'     )
+#'     ```
+#'
+#'   - `dplyr::case_when()`,
+#'
+#'     ```r
+#'     dplyr::case_when(
+#'       x == "a" ~ 2L,
+#'       x == "b" ~ 3L,
+#'       TRUE ~ 1L
+#'     )
+#'     ```
+#'
+#'   - Use a look-up-and-merge approach (build a mapping table between values
+#'     and outputs and merge this to the input).
+#'
+#'     ```r
+#'     default <- 1L
+#'     values <- data.frame(
+#'       a = 2L,
+#'       b = 3L
+#'     )
+#'     found_value <- values[[x]]
+#'     ifelse(is.null(found_value), default, found_value)
+#'     ```
 #'
 #' @examples
 #' # will produce lints
