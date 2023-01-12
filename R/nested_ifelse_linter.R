@@ -23,7 +23,7 @@
 #'
 #' Here are a few ways to avoid nesting and make the code more readable:
 #'
-#'   - `data.table::fcase()`
+#'   - Use `data.table::fcase()`
 #'
 #'     ```r
 #'     data.table::fcase(
@@ -33,7 +33,7 @@
 #'     )
 #'     ```
 #'
-#'   - `dplyr::case_when()`,
+#'   - Use `dplyr::case_when()`
 #'
 #'     ```r
 #'     dplyr::case_when(
@@ -44,7 +44,7 @@
 #'     ```
 #'
 #'   - Use a look-up-and-merge approach (build a mapping table between values
-#'     and outputs and merge this to the input).
+#'     and outputs and merge this to the input)
 #'
 #'     ```r
 #'     default <- 1L

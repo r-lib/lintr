@@ -32,7 +32,7 @@ Let's say this is our original code:
 
 Here are a few ways to avoid nesting and make the code more readable:
 \itemize{
-\item \code{data.table::fcase()}
+\item Use \code{data.table::fcase()}
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{data.table::fcase(
   x == "a", 2L,
@@ -40,7 +40,7 @@ Here are a few ways to avoid nesting and make the code more readable:
   default = 1L
 )
 }\if{html}{\out{</div>}}
-\item \code{dplyr::case_when()},
+\item Use \code{dplyr::case_when()}
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{dplyr::case_when(
   x == "a" ~ 2L,
@@ -49,7 +49,7 @@ Here are a few ways to avoid nesting and make the code more readable:
 )
 }\if{html}{\out{</div>}}
 \item Use a look-up-and-merge approach (build a mapping table between values
-and outputs and merge this to the input).
+and outputs and merge this to the input)
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{default <- 1L
 values <- data.frame(
