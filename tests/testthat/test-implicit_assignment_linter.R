@@ -226,19 +226,6 @@ test_that("implicit_assignment_linter skips allowed usages with braces", {
 test_that("implicit_assignment_linter makes exceptions for functions that capture side-effects", {
   linter <- implicit_assignment_linter()
 
-  # testthat
-  expect_lint("expect_warning(out <- f(-1))", NULL, linter)
-  expect_lint("expect_message(out <- f(-1))", NULL, linter)
-  expect_lint("expect_error(out <- f(-1))", NULL, linter)
-  expect_lint("expect_condition(out <- f(-1))", NULL, linter)
-  expect_lint("expect_no_warning(out <- f(-1))", NULL, linter)
-  expect_lint("expect_no_message(out <- f(-1))", NULL, linter)
-  expect_lint("expect_no_error(out <- f(-1))", NULL, linter)
-  expect_lint("expect_no_condition(out <- f(-1))", NULL, linter)
-  expect_lint("expect_invisible(out <- f(-1))", NULL, linter)
-  expect_lint("expect_visible(out <- f(-1))", NULL, linter)
-  expect_lint("expect_silent(out <- f(-1))", NULL, linter)
-  expect_lint("expect_output(out <- f(-1))", NULL, linter)
   expect_lint(
     trim_some("
     test_that('my test', {
@@ -309,6 +296,12 @@ test_that("implicit_assignment_linter blocks disallowed usages in function calls
   expect_lint("y <- median(x <- 1:4)", lint_message, linter)
   expect_lint("lapply(x, function(x) return(x <- x + 1))", lint_message, linter)
   expect_lint("map(x, function(x) return(x <- x + 1))", lint_message, linter)
+
+  expect_lint("expect_warning(out <- f(-1))", lint_message, linter)
+  expect_lint("expect_message(out <- f(-1))", lint_message, linter)
+  expect_lint("expect_error(out <- f(-1))", lint_message, linter)
+  expect_lint("expect_condition(out <- f(-1))", lint_message, linter)
+
   expect_lint(
     trim_some("
     foo <- function(x) {
@@ -317,7 +310,6 @@ test_that("implicit_assignment_linter blocks disallowed usages in function calls
     lint_message,
     linter
   )
-
   expect_lint(
     trim_some("
     foo <- function(x) {

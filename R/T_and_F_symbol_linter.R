@@ -10,7 +10,7 @@
 #' )
 #'
 #' lint(
-#'   text = "T = 1.2, F = 2.4",
+#'   text = "T = 1.2; F = 2.4",
 #'   linters = T_and_F_symbol_linter()
 #' )
 #'
