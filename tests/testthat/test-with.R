@@ -80,17 +80,22 @@ test_that("modify_defaults works", {
 })
 
 test_that("linters_with_defaults(default = .) is supported with a deprecation warning", {
-  expect_warning(linters <- linters_with_defaults(default = list(), no_tab_linter()), "'default'")
-  expect_named(linters, "no_tab_linter")
+  skip_if_not_installed("magrittr")
+
+  linters_with_defaults(default = list(), no_tab_linter()) %>%
+    expect_named("no_tab_linter") %>%
+    expect_warning("'default'")
 
   # the same warning is not triggered in modify_defaults
-  expect_silent(linters <- modify_defaults(defaults = list(), default = list(), no_tab_linter()))
-  expect_named(linters, c("default", "no_tab_linter"))
+  modify_defaults(defaults = list(), default = list(), no_tab_linter()) %>%
+    expect_named(c("default", "no_tab_linter")) %>%
+    expect_silent()
 
   # if default= is explicitly provided alongside defaults=, assume that was intentional
   default <- Linter(function(.) list())
-  expect_silent(linters <- linters_with_defaults(defaults = list(), default = default))
-  expect_named(linters, "default")
+  linters_with_defaults(defaults = list(), default = default) %>%
+    expect_named("default") %>%
+    expect_silent()
 })
 
 test_that("all_linters contains all available linters", {
