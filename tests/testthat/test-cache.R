@@ -92,12 +92,19 @@ test_that("load_cache returns an empty environment if reading cache file fails",
   cache_f1 <- file.path(d1, fhash(f1))
   writeLines(character(), cache_f1)
 
-  expect_warning(e2 <- lintr:::load_cache(file = f1, path = d1), "Could not load cache file")
-  saveRDS(e1, cache_f1)
-  expect_warning(e3 <- lintr:::load_cache(file = f1, path = d1), "Could not load cache file")
+  skip_if_not_installed("magrittr")
 
-  expect_identical(ls(e2), character())
-  expect_identical(ls(e3), character())
+  lintr:::load_cache(file = f1, path = d1) %>%
+    ls() %>%
+    expect_identical(character()) %>%
+    expect_warning("Could not load cache file")
+
+  saveRDS(e1, cache_f1)
+
+  lintr:::load_cache(file = f1, path = d1) %>%
+    ls() %>%
+    expect_identical(character()) %>%
+    expect_warning("Could not load cache file")
 })
 
 # `save_cache`

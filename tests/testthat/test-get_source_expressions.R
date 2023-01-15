@@ -341,10 +341,14 @@ param_df$.test_name <- with(param_df, sprintf("%s on expression %d", linter, exp
 patrick::with_parameters_test_that(
   "linters pass with xml_missing() content",
   {
+    skip_if_not_installed("magrittr")
+
     linter <- eval(call(linter))
     expression <- expressions[[expression_idx]]
-    expect_warning(lints <- linter(expression), NA)
-    expect_length(lints, 0L)
+
+    linter(expression) %>%
+      expect_length(0L) %>%
+      expect_warning(NA)
   },
   .test_name = param_df$.test_name,
   linter = param_df$linter,
