@@ -99,7 +99,7 @@ test_that("lint_dir continues to accept relative_path= in 2nd positional argumen
   the_dir <- test_path("dummy_packages", "package", "vignettes")
 
   lint_dir(the_dir, FALSE) %>%
-  expect_identical(lint_dir(the_dir, relative_path = FALSE)) %>%
+    expect_identical(lint_dir(the_dir, relative_path = FALSE)) %>%
     expect_warning(
       "'relative_path' is no longer available as a positional argument",
       fixed = TRUE

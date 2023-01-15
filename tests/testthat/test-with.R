@@ -63,7 +63,7 @@ test_that("with_defaults is supported with a deprecation warning", {
 
   # linters_with_defaults only accepts `defaults = list()` to start from blank
   linters_with_defaults(defaults = list(), no_tab_linter()) %>%
-  expect_identical(with_defaults(default = NULL, no_tab_linter())) %>%
+    expect_identical(with_defaults(default = NULL, no_tab_linter())) %>%
     expect_warning(warning_msg)
 })
 
