@@ -106,9 +106,8 @@ not deteriorate code style.</p>
 GitHub Actions. The workflow configuration files use YAML syntax. The
 <code>usethis</code> package has some great functionality that can help
 you with workflow files. The most straightforward way to add a
-<code>lintr</code> workflow to your package is to use the <a href="https://github.com/r-lib/actions/tree/master/examples" class="external-link">r-lib/actions</a>’s
-<code>lint</code> example. To do this with <code>usethis</code>, you
-need to call</p>
+<code>lintr</code> workflow to your package is to use the <a href="https://github.com/r-lib/actions/" class="external-link">r-lib/actions</a>’s <a href="https://github.com/r-lib/actions/tree/v2-branch/examples#lint-workflow" class="external-link"><code>lint</code>
+example</a>. To do this with <code>usethis</code>, you need to call</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/github_actions.html" class="external-link">use_github_action</a></span><span class="op">(</span><span class="st">"lint"</span><span class="op">)</span></span></code></pre></div>
 <p>This will create a workflow file called <code>lint.yaml</code> and
@@ -168,9 +167,8 @@ project.</p>
 <h3 id="github-actions-1">GitHub Actions<a class="anchor" aria-label="anchor" href="#github-actions-1"></a>
 </h3>
 <p>If your project is on GitHub, you could take advantage of GitHub
-Actions and the <code>usethis</code> functionality. <a href="https://github.com/r-lib/actions/tree/master/examples" class="external-link">r-lib/actions</a>
-includes a <code>lint-project</code> example, which you can use by
-calling:</p>
+Actions and the <code>usethis</code> functionality. <a href="https://github.com/r-lib/actions/" class="external-link">r-lib/actions</a> includes a <a href="https://github.com/r-lib/actions/tree/v2-branch/examples#lint-project-workflow" class="external-link"><code>lint-project</code>
+example</a>, which you can use by calling:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/github_actions.html" class="external-link">use_github_action</a></span><span class="op">(</span><span class="st">"lint-project"</span><span class="op">)</span></span></code></pre></div>
 </div>
