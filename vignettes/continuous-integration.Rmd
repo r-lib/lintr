@@ -33,11 +33,17 @@ usethis::use_github_action("lint")
 This will create a workflow file called `lint.yaml` and place it in the correct location, namely in the `.github/workflows` directory of your repository.
 This file configures all the steps required to run `lintr::lint_package()` on your package.
 
+Alternatively you can use the eponymous [`lint-changed-files.yaml`](https://github.com/r-lib/actions/blob/v2-branch/examples/lint-changed-files.yaml) to only lint any changed files:
+
+```r
+usethis::use_github_action("lint-changed-files")
+```
+
 Comments to the commit or pull request will be printed as
 [annotations](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-status-checks#types-of-status-checks-on-github)
 along side the status check on GitHub.
 If you want the builds to produce an error instead of just a warning, you can set the environment variable `LINTR_ERROR_ON_LINT=true`.
-This is set by default in [r-lib/actions](https://github.com/r-lib/actions/)'s `lint.yaml`.
+This is set by default for both [r-lib/actions](https://github.com/r-lib/actions/)'s `lint.yaml` and `lint-changed-files.yaml`. 
 Note that this will kill the R process in case of a lint.
 
 If your project is in a subdirectory and you would like to use GitHub Actions annotations, you can set
