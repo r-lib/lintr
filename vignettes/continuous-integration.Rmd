@@ -59,12 +59,7 @@ r_github_packages:
   - r-lib/lintr
 ```
 
-We recommend running `lintr::lint_package()` as an [after_success step in your build process](#non-failing-lints)]
-
-If lints are found in the commit or pull request they will be printed on Travis-CI.
-The environment variable `LINTR_ERROR_ON_LINT` mentioned for GitHub actions also works with Travis CI builds.
-
-##### Non-failing Lints {#non-failing-lints}
+We recommend running `lintr::lint_package()` as an after_success step in your build process:
 
 ``` yaml
 after_success:
@@ -72,8 +67,8 @@ after_success:
   - Rscript -e 'lintr::lint_package()'
 ```
 
-Live example of a package using this setup:
-[`hibpwned`](https://github.com/jumpingrivers/HIBPwned/blob/master/.travis.yml).
+If lints are found in the commit or pull request they will be printed on Travis-CI.
+The environment variable `LINTR_ERROR_ON_LINT` mentioned for GitHub actions also works with Travis CI builds.
 
 ## For projects
 
