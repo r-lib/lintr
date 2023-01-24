@@ -15,12 +15,12 @@ The following linters are tagged with 'efficiency':
 \item{\code{\link{any_duplicated_linter}}}
 \item{\code{\link{any_is_na_linter}}}
 \item{\code{\link{boolean_arithmetic_linter}}}
-\item{\code{\link{colsums_rowsums_linter}}}
 \item{\code{\link{fixed_regex_linter}}}
 \item{\code{\link{ifelse_censor_linter}}}
 \item{\code{\link{inner_combine_linter}}}
 \item{\code{\link{lengths_linter}}}
 \item{\code{\link{literal_coercion_linter}}}
+\item{\code{\link{matrix_apply_linter}}}
 \item{\code{\link{nested_ifelse_linter}}}
 \item{\code{\link{outer_negation_linter}}}
 \item{\code{\link{redundant_equals_linter}}}

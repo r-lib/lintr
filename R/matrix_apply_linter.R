@@ -8,28 +8,28 @@
 #' # will produce lints
 #' lint(
 #'   text = "apply(x, 1, sum)",
-#'   linters = colsums_rowsums_linter()
+#'   linters = matrix_apply_linter()
 #' )
 #'
 #' lint(
 #'   text = "apply(x, 2, sum)",
-#'   linters = colsums_rowsums_linter()
+#'   linters = matrix_apply_linter()
 #' )
 #'
 #' lint(
 #'   text = "apply(x, 2, sum, na.rm = TRUE)",
-#'   linters = colsums_rowsums_linter()
+#'   linters = matrix_apply_linter()
 #' )
 #'
 #' lint(
 #'   text = "apply(x, 2:4, sum)",
-#'   linters = colsums_rowsums_linter()
+#'   linters = matrix_apply_linter()
 #' )
 #'
-#' @evalRd rd_tags("colsums_rowsums_linter")
+#' @evalRd rd_tags("matrix_apply_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-colsums_rowsums_linter <- function() {
+matrix_apply_linter <- function() {
 
   # mean() and sum() have very different signatures so we treat them separately.
   # sum() takes values to sum over via ..., has just one extra argument and is not a generic

@@ -1,5 +1,5 @@
-test_that("colsums_rowsums_linter skips allowed usages", {
-  linter <- colsums_rowsums_linter()
+test_that("matrix_apply_linter skips allowed usages", {
+  linter <- matrix_apply_linter()
 
   expect_lint("apply(x, 1, prod)", NULL, linter)
 
@@ -13,8 +13,8 @@ test_that("colsums_rowsums_linter skips allowed usages", {
   expect_lint("apply(x, 1, mean, trim = 0.2)", NULL, linter)
 })
 
-test_that("colsums_rowsums_linter is not implemented for complex MARGIN values", {
-  linter <- colsums_rowsums_linter()
+test_that("matrix_apply_linter is not implemented for complex MARGIN values", {
+  linter <- matrix_apply_linter()
 
   # Could be implemented at some point
   expect_lint("apply(x, seq(2, 4), sum)", NULL, linter)
@@ -30,8 +30,8 @@ test_that("colsums_rowsums_linter is not implemented for complex MARGIN values",
 })
 
 
-test_that("colsums_rowsums_linter simple disallowed usages", {
-  linter <- colsums_rowsums_linter()
+test_that("matrix_apply_linter simple disallowed usages", {
+  linter <- matrix_apply_linter()
   lint_message <- rex::rex("rowSums(x)")
 
   expect_lint("apply(x, 1, sum)", lint_message, linter)
@@ -63,8 +63,8 @@ test_that("colsums_rowsums_linter simple disallowed usages", {
 
 })
 
-test_that("colsums_rowsums_linter recommendation includes na.rm if present in original call", {
-  linter <- colsums_rowsums_linter()
+test_that("matrix_apply_linter recommendation includes na.rm if present in original call", {
+  linter <- matrix_apply_linter()
   lint_message <- rex::rex("na.rm = TRUE")
 
   expect_lint("apply(x, 1, sum, na.rm = TRUE)", lint_message, linter)
@@ -83,8 +83,8 @@ test_that("colsums_rowsums_linter recommendation includes na.rm if present in or
 
 })
 
-test_that("colsums_rowsums_linter works with multiple lints in a single expression", {
-  linter <- colsums_rowsums_linter()
+test_that("matrix_apply_linter works with multiple lints in a single expression", {
+  linter <- matrix_apply_linter()
 
   expect_lint(
     "rbind(
