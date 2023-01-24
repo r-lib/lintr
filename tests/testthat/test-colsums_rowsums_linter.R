@@ -13,6 +13,22 @@ test_that("colsums_rowsums_linter skips allowed usages", {
   expect_lint("apply(x, 1, mean, trim = 0.2)", NULL, linter)
 })
 
+test_that("colsums_rowsums_linter is not implemented for complex MARGIN values", {
+  linter <- colsums_rowsums_linter()
+
+  # Could be implemented at some point
+  expect_lint("apply(x, seq(2, 4), sum)", NULL, linter)
+
+  # No equivalent
+  expect_lint("apply(x, c(2, 4), sum)", NULL, linter)
+
+  # Beyond the scope of static analysis
+  expect_lint("apply(x, m, sum)", NULL, linter)
+
+  expect_lint("apply(x, 1 + 2:4, sum)", NULL, linter)
+
+})
+
 
 test_that("colsums_rowsums_linter simple disallowed usages", {
   linter <- colsums_rowsums_linter()
@@ -44,17 +60,6 @@ test_that("colsums_rowsums_linter simple disallowed usages", {
   expect_lint("apply(x, 2, mean)", lint_message, linter)
 
   expect_lint("apply(x, 2:4, mean)", lint_message, linter)
-
-})
-
-test_that("colsums_rowsums_linter works even when MARGIN can't be parsed", {
-
-  linter <- colsums_rowsums_linter()
-  lint_message <- rex::rex("l1")
-
-  expect_lint("apply(x, seq(2, 4), sum)", lint_message, linter)
-
-  expect_lint("apply(x, m, sum)", lint_message, linter)
 
 })
 

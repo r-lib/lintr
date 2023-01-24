@@ -34,12 +34,18 @@ colsums_rowsums_linter <- function() {
   # mean() and sum() have very different signatures so we treat them separately.
   # sum() takes values to sum over via ..., has just one extra argument and is not a generic
   # mean() is a generic, takes values to average via a single argument, and can have extra arguments
+  #
+  # Currently supported values for MARGIN: scalar numeric and vector of contiguous values created by : (OP-COLON)
   sums_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'apply']
     /parent::expr
     /following-sibling::expr[
+      NUM_CONST or OP-COLON/preceding-sibling::expr[NUM_CONST]/following-sibling::expr[NUM_CONST]
+      and (position() = 2)
+    ]
+    /following-sibling::expr[
       SYMBOL[text() = 'sum']
-      and (position() = 3)
+      and (position() = 1)
     ]
     /parent::expr
   "
@@ -50,8 +56,12 @@ colsums_rowsums_linter <- function() {
   //SYMBOL_FUNCTION_CALL[text() = 'apply']
     /parent::expr
     /following-sibling::expr[
+      NUM_CONST or OP-COLON/preceding-sibling::expr[NUM_CONST]/following-sibling::expr[NUM_CONST]
+      and (position() = 2)
+    ]
+    /following-sibling::expr[
       SYMBOL[text() = 'mean']
-      and (position() = 3)
+      and (position() = 1)
     ]
     /parent::expr[
       count(expr) = 4
@@ -128,16 +138,6 @@ craft_colsums_rowsums_msg <- function(var, margin, fun, narm_val) {
 
   if (identical(l1, 1L)) {
     reco <- glue::glue("row{fun}s({var}{narm}, dims = {l2})")
-  } else if (anyNA(c(l1, l2))) {
-    # Return generic error messages if l1 and l2 can't be parsed since we need
-    # to do arithmetic operations on them to produce custom messages
-    reco <- glue::glue(
-      "row{fun}s(col{fun}s({var}{narm}, dims = l1 - 1), dims = l2 - l1 + 1)",
-      " or ",
-      "row{fun}s({var}{narm}, dims = l2) if l1 == 1L",
-      " or ",
-      "col{fun}s({var}{narm}, dims = l1 - 1) if {var} has l2 dimensions"
-    )
   } else {
     reco <- glue::glue(
       "row{fun}s(col{fun}s({var}{narm}, dims = {l1 - 1}), dims = {l2 - l1 + 1})",
