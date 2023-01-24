@@ -96,6 +96,8 @@
 
 * `all_linters()` function provides an easy way to access all available linters (#1843, @IndrajeetPatil)
 
+* `missing_argument_linter()` allows missing arguments in `quote()` calls (#1889, @IndrajeetPatil). 
+
 ### New linters
 
 * `colsums_rowsums_linter()` recommends use of dedicated `rowSums()`, `colSums()`, `colMeans()`, `rowMeans()` over `apply(., MARGIN, sum)` or `apply(., MARGIN, mean)`. The recommended alternative is much more efficient and more readable (#1869, @Bisaloo).

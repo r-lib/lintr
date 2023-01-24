@@ -44,6 +44,27 @@
 #'     # body
 #'   }
 #'   ```
+#' @param assignment_as_infix Treat `<-` as a regular (i.e. left-associative) infix operator?
+#'   This means, that infix operators on the right hand side of an assignment do not trigger a second level of
+#'   indentation:
+#'   ```r
+#'   # complies to any style
+#'   variable <- a %+%
+#'     b %+%
+#'     c
+#'
+#'   # complies to assignment_as_infix = TRUE
+#'   variable <-
+#'     a %+%
+#'     b %+%
+#'     c
+#'
+#'   # complies to assignment_as_infix = FALSE
+#'   variable <-
+#'     a %+%
+#'       b %+%
+#'       c
+#'   ```
 #'
 #' @examples
 #' # will produce lints
@@ -97,7 +118,8 @@
 #' - <https://style.tidyverse.org/functions.html#long-lines-1>
 #'
 #' @export
-indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "always", "never")) {
+indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "always", "never"),
+                               assignment_as_infix = TRUE) {
   paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
   infix_tokens <- setdiff(infix_metadata$xml_tag, c("OP-LEFT-BRACE", "OP-COMMA", paren_tokens_left))
@@ -116,6 +138,24 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     find_indent_type <- function(change) {
       "block"
     }
+  }
+
+  if (isTRUE(assignment_as_infix)) {
+    suppressing_tokens <- c("LEFT_ASSIGN", "EQ_ASSIGN", "EQ_SUB", "EQ_FORMALS")
+    xp_suppress <- glue::glue("preceding-sibling::{suppressing_tokens}[{xp_last_on_line}]")
+
+    restoring_tokens <- c("expr[SYMBOL_FUNCTION_CALL]", "OP-LEFT-BRACE")
+    xp_restore <- glue::glue("preceding-sibling::{restoring_tokens}")
+
+    # match the first ancestor expr that is either
+    #  * a suppressing token (<- or =) or
+    #  * a restoring token (braces or a function call)
+    # suppress the indent if the matched ancestor is a suppressing token
+    infix_condition <- glue::glue("
+      and not(ancestor::expr[{xp_or(c(xp_suppress, xp_restore))}][1][{xp_or(xp_suppress)}])
+    ")
+  } else {
+    infix_condition <- ""
   }
 
   xp_block_ends <- paste0(
@@ -141,7 +181,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
                     @line2 > @line1 and
                     ({xp_or(paste0('descendant::', paren_tokens_left, '[', xp_last_on_line, ']'))})
                   ]/@line1)]"),
-      glue::glue("//{infix_tokens}[{xp_last_on_line}]"),
+      glue::glue("//{infix_tokens}[{xp_last_on_line}{infix_condition}]"),
       glue::glue("//{no_paren_keywords}[{xp_last_on_line}]"),
       glue::glue("//{keyword_tokens}/following-sibling::OP-RIGHT-PAREN[
                     {xp_last_on_line} and
@@ -186,17 +226,13 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       change_end <- xml2::xml_find_num(change, xp_block_ends)
       if (isTRUE(change_begin <= change_end)) {
         to_indent <- seq(from = change_begin, to = change_end)
-        if (change_type == "hanging") {
-          expected_indent_levels[to_indent] <- as.integer(xml2::xml_attr(change, "col2"))
-          is_hanging[to_indent] <- TRUE
-        } else { # block or double
-          if (change_type == "double") {
-            expected_indent_levels[to_indent] <- expected_indent_levels[to_indent] + 2L * indent
-          } else {
-            expected_indent_levels[to_indent] <- expected_indent_levels[to_indent] + indent
-          }
-          is_hanging[to_indent] <- FALSE
-        }
+        expected_indent_levels[to_indent] <- find_new_indent(
+          current_indent = expected_indent_levels[to_indent],
+          change_type = change_type,
+          indent = indent,
+          hanging_indent = as.integer(xml2::xml_attr(change, "col2"))
+        )
+        is_hanging[to_indent] <- change_type == "hanging"
       }
     }
 
@@ -259,6 +295,16 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       list()
     }
   })
+}
+
+find_new_indent <- function(current_indent, change_type, indent, hanging_indent) {
+  if (change_type == "hanging") {
+    hanging_indent
+  } else if (change_type == "double") {
+    current_indent + 2L * indent
+  } else {
+    current_indent + indent
+  }
 }
 
 build_indentation_style_tidy <- function() {
