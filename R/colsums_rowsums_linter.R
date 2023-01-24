@@ -151,4 +151,3 @@ craft_colsums_rowsums_msg <- function(var, margin, fun, narm_val) {
 
   return(reco)
 }
-
