@@ -86,7 +86,7 @@ colsums_rowsums_linter <- function() {
       xml2::xml_find_first(bad_expr, "SYMBOL_SUB[text() = 'na.rm']/following-sibling::expr")
     )
 
-    recos <- mapply(craft_colsums_rowsums_msg, var, margin, fun, narm_val)
+    recos <- Map(craft_colsums_rowsums_msg, var, margin, fun, narm_val)
 
     xml_nodes_to_lints(
       bad_expr,
