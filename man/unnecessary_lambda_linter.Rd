@@ -14,7 +14,7 @@ the former is more readable.
 \examples{
 # will produce lints
 lint(
-  text = "lapply(list(1:3, 2:4), function(xi) { sum(xi) })",
+  text = "lapply(list(1:3, 2:4), function(xi) sum(xi))",
   linters = unnecessary_lambda_linter()
 )
 
