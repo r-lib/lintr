@@ -100,7 +100,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
       lintable_symbols <- xml2::xml_find_all(
         fun_assignment,
         "
-        descendant::SYMBOL
+        descendant::SYMBOL[not(ancestor::expr[OP-TILDE])]
         | descendant::SYMBOL_FUNCTION_CALL
         | descendant::SPECIAL
         | descendant::LEFT_ASSIGN[text() = ':=']

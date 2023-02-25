@@ -624,3 +624,23 @@ test_that("messages without a quoted name are caught", {
     object_usage_linter()
   )
 })
+
+# See #1914
+test_that("symbol on LHS of formula isn't treated as 'undefined global'", {
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        lm(
+          y ~ z,
+          data = x[!is.na(y)]
+        )
+      }
+    "),
+    list(
+      message = "no visible binding for global variable 'y'",
+      line_number = 4L,
+      column_number = 21L
+    ),
+    object_usage_linter()
+  )
+})
