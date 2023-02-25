@@ -101,7 +101,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
         fun_assignment,
         "
         descendant::SYMBOL[not(ancestor::expr[OP-TILDE])]
-        | descendant::SYMBOL_FUNCTION_CALL
+        | descendant::SYMBOL_FUNCTION_CALL[not(ancestor::expr[OP-TILDE])]
         | descendant::SPECIAL
         | descendant::LEFT_ASSIGN[text() = ':=']
         "

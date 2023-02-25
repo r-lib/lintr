@@ -679,4 +679,25 @@ test_that("symbols in formulas aren't treated as 'undefined global'", {
     ),
     object_usage_linter()
   )
+
+  # nor as a call
+  # NB: I wanted this to be s(), as in mgcv::s(), but that
+  #   doesn't work in this test suite because it resolves to
+  #   rex::s() since we attach that in testthat.R
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        lm(
+          y(w) ~ z,
+          data = x[!is.na(y)]
+        )
+      }
+    "),
+    list(
+      message = "no visible binding for global variable 'y'",
+      line_number = 4L,
+      column_number = 21L
+    ),
+    object_usage_linter()
+  )
 })
