@@ -1,7 +1,7 @@
 # lintr
 
 [![R build status](https://github.com/r-lib/lintr/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/lintr/actions)
-[![codecov.io](https://codecov.io/github/r-lib/lintr/coverage.svg?branch=main)]([https://codecov.io/github/r-lib/lintr?branch=main](https://app.codecov.io/gh/r-lib/lintr?branch=main))
+[![codecov.io](https://codecov.io/github/r-lib/lintr/coverage.svg?branch=main)](https://app.codecov.io/gh/r-lib/lintr?branch=main)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/lintr)](https://cran.r-project.org/package=lintr)
 [![lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 
