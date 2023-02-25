@@ -59,14 +59,14 @@ patrick::with_parameters_test_that(
       fixed_regex_linter()
     )
   },
-  .cases = data.frame(
-    char = c(
+  .cases = local({
+    char <- c(
       "^", "$", "{", "}", "(", ")", ".", "*", "+", "?",
       "|", "[", "]", "\\\\", "<", ">", "=", ":", ";", "/",
       "_", "-", "!", "@", "#", "%", "&", "~"
-    ),
-    stringsAsFactors = FALSE
-  )
+    )
+    data.frame(char = char, .test_name = char, stringsAsFactors = FALSE)
+  })
 )
 
 test_that("fixed_regex_linter catches regex like [.] or [$]", {
