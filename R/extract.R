@@ -41,7 +41,15 @@ get_knitr_pattern <- function(filename, lines) {
   if (parsable(lines)) {
     return(NULL)
   }
-  pattern <- ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename)))
+  # suppressWarnings for #1920. TODO(michaelchirico): this is a bit sloppy -- we ignore
+  #   warnings here because encoding issues are caught later and that code path handles them
+  #   correctly by converting to a lint. It would require some refactoring to get that
+  #   right here as well, but it would avoid the duplication & avoid suppressing
+  #   good warnings. We might also convert this to a withCallingHandlers() to ignore only
+  #   the 'invalidMBCS' condition the parser is throwing.
+  pattern <- suppressWarnings(
+    ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename)))
+  )
   if (!is.null(pattern)) {
     knitr::all_patterns[[pattern]]
   } else {
