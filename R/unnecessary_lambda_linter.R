@@ -17,6 +17,16 @@
 #'   linters = unnecessary_lambda_linter()
 #' )
 #'
+#' lint(
+#'   text = 'lapply(x, function(xi) grep("ptn", xi))',
+#'   linters = unnecessary_lambda_linter()
+#' )
+#'
+#' lint(
+#'   text = "lapply(x, function(xi) data.frame(col = xi))",
+#'   linters = unnecessary_lambda_linter()
+#' )
+#'
 #' @evalRd rd_tags("unnecessary_lambda_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
