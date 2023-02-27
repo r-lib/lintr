@@ -1,10 +1,10 @@
 library(testthat)
 library(lintr)
 
-# suppress printing environment name (noisy)
-invisible({
-  loadNamespace("patrick")
-  loadNamespace("withr")
-})
-
-test_check("lintr")
+# These packages are used heavily in the suite and are thus required
+if (
+  requireNamespace("patrick", quietly = TRUE) &&
+    requireNamespace("withr", quietly = TRUE)
+) {
+  test_check("lintr")
+}
