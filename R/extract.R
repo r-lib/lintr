@@ -47,7 +47,12 @@ get_knitr_pattern <- function(filename, lines) {
   #   right here as well, but it would avoid the duplication.
   pattern <- withCallingHandlers(
     ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename))),
-    invalidMBCS = function(cond) invokeRestart("muffleWarning")
+    warning = function(cond) {
+      if (!grepl("invalid UTF-8", conditionMessage(cond), fixed = TRUE)) {
+        warning(cond)
+      }
+      invokeRestart("muffleWarning")
+    }
   )
   if (!is.null(pattern)) {
     knitr::all_patterns[[pattern]]
