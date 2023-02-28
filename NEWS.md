@@ -135,6 +135,8 @@
 
 ## Notes
 
+* {lintr} now depends on R version 3.5.0, in line with the tidyverse policy for R version compatibility.
+
 * `lint()` continues to support Rmarkdown documents. For users of custom .Rmd engines, e.g.
   `marginformat` from {tufte} or `theorem` from {bookdown}, note that those engines must be registered
   in {knitr} prior to running `lint()` in order for {lintr} to behave as expected, i.e., they should be
