@@ -39,7 +39,7 @@ jobs:
           - {os: ubuntu-latest,  r: 'oldrel-2'}
           - {os: ubuntu-latest,  r: 'oldrel-3'}
           - {os: ubuntu-latest,  r: 'oldrel-4'}
-          - {os: ubuntu-latest,  r: '3.4'}
+          - {os: ubuntu-latest,  r: '3.5'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -73,9 +73,6 @@ jobs:
         with:
           extra-packages: |
             any::rcmdcheck
-            bookdown=?ignore-before-r=3.5.0
-            patrick=?ignore-before-r=3.5.0
-            purrr=?ignore-before-r=3.5.0
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
