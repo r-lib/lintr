@@ -64,36 +64,38 @@ test_that("unnecessary_lambda_linter doesn't apply to keyword args", {
 })
 
 test_that("purrr-style anonymous functions are also caught", {
+  linter <- unnecessary_lambda_linter()
+
   # TODO(michaelchirico): this is just purrr::flatten(x). We should write another
   #   linter to encourage that usage.
-  expect_lint("purrr::map(x, ~.x)", NULL, unnecessary_lambda_linter())
-  expect_lint("purrr::map_df(x, ~lm(y, .x))", NULL, unnecessary_lambda_linter())
-  expect_lint("map_dbl(x, ~foo(bar = .x))", NULL, unnecessary_lambda_linter())
+  expect_lint("purrr::map(x, ~.x)", NULL, linter)
+  expect_lint("purrr::map_df(x, ~lm(y, .x))", NULL, linter)
+  expect_lint("map_dbl(x, ~foo(bar = .x))", NULL, linter)
 
   expect_lint(
     "purrr::map(x, ~foo(.x))",
     rex::rex("Pass foo directly as a symbol to map()"),
-    unnecessary_lambda_linter()
+    linter
   )
   expect_lint(
     "purrr::map_int(x, ~foo(.x, y))",
     rex::rex("Pass foo directly as a symbol to map_int()"),
-    unnecessary_lambda_linter()
+    linter
   )
   expect_lint(
     "purrr::map_vec(x, ~foo(.x, y))",
     rex::rex("Pass foo directly as a symbol to map_vec()"),
-    unnecessary_lambda_linter()
+    linter
   )
 })
 
 test_that("cases with braces are caught", {
   linter <- unnecessary_lambda_linter()
-  print_msg <- rex::rex("Pass print directly as a symbol to lapply()")
+  lint_msg <- rex::rex("Pass print directly as a symbol to lapply()")
 
   expect_lint(
     "lapply(x, function(xi) { print(xi) })",
-    print_msg,
+    lint_msg,
     linter
   )
 
@@ -103,7 +105,7 @@ test_that("cases with braces are caught", {
         print(xi)
       })
     "),
-    print_msg,
+    lint_msg,
     linter
   )
 

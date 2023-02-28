@@ -8,7 +8,7 @@
 "_PACKAGE"
 
 ## lintr namespace: start
-#' @import rex
+#' @importFrom rex rex regex re_matches re_substitutes character_class
 #' @importFrom stats na.omit
 #' @importFrom utils capture.output head getParseData relist
 #' @importFrom xml2 xml_find_all as_list
