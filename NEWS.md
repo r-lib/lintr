@@ -26,7 +26,7 @@
 
 * `object_name_linter()` allows all S3 group Generics (see `?base::groupGeneric`) and S3 generics defined in a different file in the same package (#1808, #1841, @AshesITR)
 
-* `object_usage_linter()` improves identification of the exact source of a lint for undefined variables in expresssions with formulas (#1914, @MichaelChirico).
+* `object_usage_linter()` improves identification of the exact source of a lint for undefined variables in expressions with where the variable is used as a symbol in a usual way, for example in a formula or in an extraction with `$` (#1914, @MichaelChirico).
 
 ## Changes to defaults
 
