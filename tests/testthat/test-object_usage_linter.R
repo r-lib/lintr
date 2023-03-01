@@ -701,3 +701,39 @@ test_that("symbols in formulas aren't treated as 'undefined global'", {
     object_usage_linter()
   )
 })
+
+test_that("NSE-ish symbols after $/@ are ignored as sources for lints", {
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        ggplot2::ggplot(
+          x[!is.na(x$column), ],
+          ggplot2::aes(x = column, fill = factor(x$grp))
+        )
+      }
+    "),
+    list(
+      message = "no visible binding for global variable 'column'",
+      line_number = 4L,
+      column_number = 22L
+    ),
+    object_usage_linter()
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        ggplot2::ggplot(
+          x[!is.na(x@column), ],
+          ggplot2::aes(x = column, fill = factor(x$grp))
+        )
+      }
+    "),
+    list(
+      message = "no visible binding for global variable 'column'",
+      line_number = 4L,
+      column_number = 22L
+    ),
+    object_usage_linter()
+  )
+})

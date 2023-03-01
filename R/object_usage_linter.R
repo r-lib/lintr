@@ -46,6 +46,15 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
     sep = " | "
   )
 
+  # not all instances of linted symbols are potential sources for the observed violations -- see #1914
+  symbol_exclude_cond <- "preceding-sibling::OP-DOLLAR or preceding-sibling::OP-AT or ancestor::expr[OP-TILDE]"
+  xpath_culprit_symbol <- glue::glue(        "
+    descendant::SYMBOL[not( {symbol_exclude_cond} )]
+    | descendant::SYMBOL_FUNCTION_CALL[not( {symbol_exclude_cond} )]
+    | descendant::SPECIAL
+    | descendant::LEFT_ASSIGN[text() = ':=']
+  ")
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
       return(list())
@@ -97,15 +106,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
       # e.g. `not_existing<-`(a, b)
       res$name <- rex::re_substitutes(res$name, rex::rex("<-"), "")
 
-      lintable_symbols <- xml2::xml_find_all(
-        fun_assignment,
-        "
-        descendant::SYMBOL[not(ancestor::expr[OP-TILDE])]
-        | descendant::SYMBOL_FUNCTION_CALL[not(ancestor::expr[OP-TILDE])]
-        | descendant::SPECIAL
-        | descendant::LEFT_ASSIGN[text() = ':=']
-        "
-      )
+      lintable_symbols <- xml2::xml_find_all(fun_assignment, xpath_culprit_symbol)
 
       lintable_symbol_names <- gsub("^`|`$", "", xml2::xml_text(lintable_symbols))
       lintable_symbol_lines <- as.integer(xml2::xml_attr(lintable_symbols, "line1"))
