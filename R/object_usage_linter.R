@@ -48,7 +48,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
 
   # not all instances of linted symbols are potential sources for the observed violations -- see #1914
   symbol_exclude_cond <- "preceding-sibling::OP-DOLLAR or preceding-sibling::OP-AT or ancestor::expr[OP-TILDE]"
-  xpath_culprit_symbol <- glue::glue(        "
+  xpath_culprit_symbol <- glue::glue("
     descendant::SYMBOL[not( {symbol_exclude_cond} )]
     | descendant::SYMBOL_FUNCTION_CALL[not( {symbol_exclude_cond} )]
     | descendant::SPECIAL
