@@ -96,6 +96,8 @@
 
 * `all_linters()` function provides an easy way to access all available linters (#1843, @IndrajeetPatil)
 
+* `missing_argument_linter()` allows missing arguments in `quote()` calls (#1889, @IndrajeetPatil). 
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
@@ -130,6 +132,8 @@
 * `implicit_assignment_linter()` for checking implicit assignments in function calls (@IndrajeetPatil and @AshesITR, #1777).
 
 ## Notes
+
+* {lintr} now depends on R version 3.5.0, in line with the tidyverse policy for R version compatibility.
 
 * `lint()` continues to support Rmarkdown documents. For users of custom .Rmd engines, e.g.
   `marginformat` from {tufte} or `theorem` from {bookdown}, note that those engines must be registered
