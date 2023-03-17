@@ -348,7 +348,7 @@ patrick::with_parameters_test_that(
 
     linter(expression) %>%
       expect_length(0L) %>%
-      expect_warning(NA)
+      expect_no_warning()
   },
   .test_name = param_df$.test_name,
   linter = param_df$linter,
