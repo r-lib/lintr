@@ -216,6 +216,7 @@ find_column_fun <- function(content, newline_locs) {
 
 #' Single quotes linter
 #' @rdname lintr-deprecated
+#' @export
 single_quotes_linter <- function() {
   lintr_deprecated(
     old = "single_quotes_linter",
