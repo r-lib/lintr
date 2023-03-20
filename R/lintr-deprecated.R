@@ -213,3 +213,15 @@ find_column_fun <- function(content, newline_locs) {
     line_number - newline_locs[matched_line_number]
   }
 }
+
+#' Single quotes linter
+#' @rdname lintr-deprecated
+single_quotes_linter <- function() {
+  lintr_deprecated(
+    old = "single_quotes_linter",
+    new = "quotes_linter",
+    version = "3.1.0",
+    type = "Linter"
+  )
+  quotes_linter()
+}

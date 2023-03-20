@@ -1,5 +1,10 @@
 # lintr (development version)
 
+## Deprecations
+
+* `single_quotes_linter()` is deprecated in favor of the more generalizable `quotes_linter()` (#1729, @MichaelChirico).
+* `unneeded_concatentation_linter()` is deprecated in favor of `unnecessary_concatenation_linter()` for naming consistency (#1707, @IndrajeetPatil).
+
 ## Bug fixes
 
 * `fixed_regex_linter()` is more robust to errors stemming from unrecognized escapes (#1545, #1845, @IndrajeetPatil).
@@ -44,13 +49,13 @@
   the style guide on handling this case awaits clarification: https://github.com/tidyverse/style/issues/191.
   (#1346, @MichaelChirico)
 
-* The new `indentation_linter()` is part of the default linters. See "New linters" for more details.
-
-* For naming consistency, `unneeded_concatenation_linter()` has been deprecated in favor of
-  `unnecessary_concatenation_linter()` (#1797, @IndrajeetPatil).
-
 * `undesirable_function_linter()` and `undesirable_operator_linter()` now produce an error 
   if empty vector of undesirable functions or operators is provided (#1867, @IndrajeetPatil).
+
+* New linters which are also included as defaults (see "New linters" for more details):
+   + `indentation_linter()`
+   + `quotes_linter()`
+   + `unnecessary_concatenation_linter()`
 
 ## New and improved features
 
@@ -98,6 +103,7 @@
 
 * `missing_argument_linter()` allows missing arguments in `quote()` calls (#1889, @IndrajeetPatil). 
 
+
 ### New linters
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
@@ -130,6 +136,10 @@
   `if` statement with appropriate conditional expression would suffice (@IndrajeetPatil and @AshesITR, #1778).
 
 * `implicit_assignment_linter()` for checking implicit assignments in function calls (@IndrajeetPatil and @AshesITR, #1777).
+
+* `quotes_linter()` is a generalized version of (now deprecated) `single_quotes_linter()`. It accepts an argument `quote_char` to specify whether `"` or `'` should be the accepted method for quoting character literals. The default, `"`, reflects the Tidyverse guide recommendation and matches the behavior of `single_quotes_linter()`.
+
+* `unnecessary_concatenation_linter()` is simply `unneeded_concatenation_linter()`, renamed.
 
 ## Notes
 

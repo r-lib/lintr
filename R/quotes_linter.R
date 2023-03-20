@@ -1,7 +1,9 @@
-#' Single quotes linter
+#' Character string quote linter
 #'
-#' Check that only double quotes are used to delimit string constants.
+#' Check that the desired quoting character is used to delimit string constants.
 #'
+#' @param quote_char Which quote character to accept. Defaults to the tidyverse
+#'   default of `"` (double-quoted strings).
 #' @examples
 #' # will produce lints
 #' lint(
@@ -27,16 +29,29 @@
 #' - [linters] for a complete list of linters available in lintr.
 #' - <https://style.tidyverse.org/syntax.html#character-vectors>
 #' @export
-single_quotes_linter <- function() {
-  squote_regex <- rex(
-    start,
-    zero_or_one(character_class("rR")),
-    single_quote,
-    any_non_double_quotes,
-    single_quote,
-    end
-  )
-
+quotes_linter <- function(quote_char = c('"', "'")) {
+  quote_char <- match.arg(quote_char)
+  if (quote_char == '"') {
+    quote_regex <- rex(
+      start,
+      zero_or_one(character_class("rR")),
+      single_quote,
+      any_non_double_quotes,
+      single_quote,
+      end
+    )
+    lint_message <- "Only use double-quotes."
+  } else {
+    quote_regex <- rex(
+      start,
+      zero_or_one(character_class("rR")),
+      double_quote,
+      any_non_single_quotes,
+      double_quote,
+      end
+    )
+    lint_message <- "Only use single-quotes."
+  }
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
       return(list())
@@ -44,10 +59,10 @@ single_quotes_linter <- function() {
 
     content <- source_expression$full_parsed_content
     str_idx <- which(content$token == "STR_CONST")
-    squote_matches <- which(re_matches(content[str_idx, "text"], squote_regex))
+    quote_matches <- which(re_matches(content[str_idx, "text"], quote_regex))
 
     lapply(
-      squote_matches,
+      quote_matches,
       function(id) {
         with(content[str_idx[id], ], {
           line <- source_expression$file_lines[[line1]]
@@ -57,7 +72,7 @@ single_quotes_linter <- function() {
             line_number = line1,
             column_number = col1,
             type = "style",
-            message = "Only use double-quotes.",
+            message = lint_message,
             line = line,
             ranges = list(c(col1, col2))
           )
