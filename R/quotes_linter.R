@@ -41,7 +41,7 @@ quotes_linter <- function(quote_char = c('"', "'")) {
       single_quote,
       end
     )
-    lint_message <- "Only use double-quotes."
+    lint_message <- "Only use double-quotes." # nolint: object_usage_linter. An apparent codetools bug.
   } else {
     quote_regex <- rex(
       start,
