@@ -17,20 +17,20 @@ Check that the desired quoting character is used to delimit string constants.
 # will produce lints
 lint(
   text = "c('a', 'b')",
-  linters = single_quotes_linter()
+  linters = quotes_linter()
 )
 
 # okay
 lint(
   text = 'c("a", "b")',
-  linters = single_quotes_linter()
+  linters = quotes_linter()
 )
 
 code_lines <- "paste0(x, '\"this is fine\"')"
 writeLines(code_lines)
 lint(
   text = code_lines,
-  linters = single_quotes_linter()
+  linters = quotes_linter()
 )
 
 }
@@ -41,5 +41,5 @@ lint(
 }
 }
 \section{Tags}{
-\link[=consistency_linters]{consistency}, \link[=deprecated_linters]{deprecated}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }

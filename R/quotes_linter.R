@@ -4,27 +4,28 @@
 #'
 #' @param quote_char Which quote character to accept. Defaults to the tidyverse
 #'   default of `"` (double-quoted strings).
+#'
 #' @examples
 #' # will produce lints
 #' lint(
 #'   text = "c('a', 'b')",
-#'   linters = single_quotes_linter()
+#'   linters = quotes_linter()
 #' )
 #'
 #' # okay
 #' lint(
 #'   text = 'c("a", "b")',
-#'   linters = single_quotes_linter()
+#'   linters = quotes_linter()
 #' )
 #'
 #' code_lines <- "paste0(x, '\"this is fine\"')"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
-#'   linters = single_quotes_linter()
+#'   linters = quotes_linter()
 #' )
 #'
-#' @evalRd rd_tags("single_quotes_linter")
+#' @evalRd rd_tags("quotes_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
 #' - <https://style.tidyverse.org/syntax.html#character-vectors>
