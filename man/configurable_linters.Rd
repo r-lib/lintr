@@ -33,6 +33,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{object_usage_linter}}}
 \item{\code{\link{open_curly_linter}}}
 \item{\code{\link{paste_linter}}}
+\item{\code{\link{quotes_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{semicolon_terminator_linter}}}

@@ -41,5 +41,5 @@ lint(
 }
 }
 \section{Tags}{
-\link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }
