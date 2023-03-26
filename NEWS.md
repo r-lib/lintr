@@ -9,7 +9,9 @@
   
 * `assignment_linter()` no longer lints assignments in braces that include comments when `allow_trailing = FALSE` (#1701, @ashbaldry)
 
-* `object_usage_linter()` no longer silently ignores usage warnings that don't contain a quoted name (#1714, @AshesITR)
+* `object_usage_linter()`
+   + No longer silently ignores usage warnings that don't contain a quoted name (#1714, @AshesITR)
+   + No longer fails on code with comments inside a multi-line call to `glue::glue()` (#1919, @MichaelChirico)
 
 * `namespace_linter()` correctly recognizes backticked operators to be exported from respective namespaces (like `` rlang::`%||%` ``) (#1752, @IndrajeetPatil)
 
