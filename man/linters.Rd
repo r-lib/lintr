@@ -24,10 +24,10 @@ The following tags exist:
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=deprecated_linters]{deprecated} (6 linters)}
-\item{\link[=efficiency_linters]{efficiency} (23 linters)}
+\item{\link[=efficiency_linters]{efficiency} (24 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
-\item{\link[=readability_linters]{readability} (52 linters)}
+\item{\link[=readability_linters]{readability} (53 linters)}
 \item{\link[=robustness_linters]{robustness} (14 linters)}
 \item{\link[=style_linters]{style} (40 linters)}
 }
@@ -79,6 +79,7 @@ The following linters exist:
 \item{\code{\link{lengths_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{line_length_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{literal_coercion_linter}} (tags: best_practices, consistency, efficiency)}
+\item{\code{\link{matrix_apply_linter}} (tags: efficiency, readability)}
 \item{\code{\link{missing_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{missing_package_linter}} (tags: common_mistakes, robustness)}
 \item{\code{\link{namespace_linter}} (tags: configurable, correctness, executing, robustness)}
