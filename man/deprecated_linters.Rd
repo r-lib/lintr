@@ -4,7 +4,7 @@
 \alias{deprecated_linters}
 \title{Deprecated linters}
 \description{
-Linters that are deprecated and provided for backwards compatiblility only.
+Linters that are deprecated and provided for backwards compatibility only.
 These linters will be excluded from \code{linters_with_tags()} by default.
 }
 \seealso{
@@ -17,5 +17,7 @@ The following linters are tagged with 'deprecated':
 \item{\code{\link{open_curly_linter}}}
 \item{\code{\link{paren_brace_linter}}}
 \item{\code{\link{semicolon_terminator_linter}}}
+\item{\code{\link{single_quotes_linter}}}
+\item{\code{\link{unneeded_concatenation_linter}}}
 }
 }

@@ -24,8 +24,9 @@
 #' )
 #'
 #' @evalRd rd_tags("absolute_path_linter")
-#' @seealso [linters] for a complete list of linters available in lintr. \cr
-#'   [nonportable_path_linter()]
+#' @seealso
+#' - [linters] for a complete list of linters available in lintr.
+#' - [nonportable_path_linter()]
 #' @export
 absolute_path_linter <- function(lax = TRUE) {
   path_linter_factory(

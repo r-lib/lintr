@@ -33,6 +33,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{object_usage_linter}}}
 \item{\code{\link{open_curly_linter}}}
 \item{\code{\link{paste_linter}}}
+\item{\code{\link{quotes_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{semicolon_terminator_linter}}}
@@ -41,6 +42,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{trailing_whitespace_linter}}}
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
+\item{\code{\link{unnecessary_concatenation_linter}}}
 \item{\code{\link{unneeded_concatenation_linter}}}
 \item{\code{\link{unused_import_linter}}}
 }

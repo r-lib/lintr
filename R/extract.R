@@ -41,7 +41,19 @@ get_knitr_pattern <- function(filename, lines) {
   if (parsable(lines)) {
     return(NULL)
   }
-  pattern <- ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename)))
+  # suppressWarnings for #1920. TODO(michaelchirico): this is a bit sloppy -- we ignore
+  #   warnings here because encoding issues are caught later and that code path handles them
+  #   correctly by converting to a lint. It would require some refactoring to get that
+  #   right here as well, but it would avoid the duplication.
+  pattern <- withCallingHandlers(
+    ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename))),
+    warning = function(cond) {
+      if (!grepl("invalid UTF-8", conditionMessage(cond), fixed = TRUE)) {
+        warning(cond)
+      }
+      invokeRestart("muffleWarning")
+    }
+  )
   if (!is.null(pattern)) {
     knitr::all_patterns[[pattern]]
   } else {
@@ -90,7 +102,7 @@ filter_chunk_end_positions <- function(starts, ends) {
   code_ends <- positions[pmin(1L + code_start_indexes, length(positions))]
 
   bad_end_indexes <- grep("starts", names(code_ends), fixed = TRUE)
-  if (length(bad_end_indexes)) {
+  if (length(bad_end_indexes) > 0L) {
     bad_start_positions <- positions[code_start_indexes[bad_end_indexes]]
     # This error message is formatted like a parse error
     stop(sprintf(

@@ -15,7 +15,7 @@ List of default linters for \code{\link[=lint]{lint()}}. Use
 \code{\link[=linters_with_defaults]{linters_with_defaults()}} to customize it. Most of the default linters
 are based on \href{https://style.tidyverse.org/}{the tidyverse style guide}.
 
-The set of default linters is as follows (any parameterised linters, eg, \code{line_length_linter} use their default
+The set of default linters is as follows (any parameterized linters, e.g., \code{line_length_linter} use their default
 argument(s), see \verb{?<linter_name>} for details):
 }
 \seealso{
@@ -41,9 +41,9 @@ The following linters are tagged with 'default':
 \item{\code{\link{object_usage_linter}}}
 \item{\code{\link{paren_body_linter}}}
 \item{\code{\link{pipe_continuation_linter}}}
+\item{\code{\link{quotes_linter}}}
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{seq_linter}}}
-\item{\code{\link{single_quotes_linter}}}
 \item{\code{\link{spaces_inside_linter}}}
 \item{\code{\link{spaces_left_parentheses_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}

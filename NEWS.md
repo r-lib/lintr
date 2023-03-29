@@ -1,22 +1,26 @@
 # lintr (development version)
 
-## Breaking changes
+## Breaking changes & deprecations
 
 * Updated the location priority order that `lintr` checks to find a `.lintr` settings file. It now checks in the `.github/linters` project sub folder after the currently searched directory. This is to improve 
   compatibility with Super-Linter(#1746, @tonyk7440)
-  
+* `single_quotes_linter()` is deprecated in favor of the more generalizable `quotes_linter()` (#1729, @MichaelChirico).
+* `unneeded_concatentation_linter()` is deprecated in favor of `unnecessary_concatenation_linter()` for naming consistency (#1707, @IndrajeetPatil).
+
 ## Bug fixes
 
-* `fixed_regex_linter()` no longer fails with regular expression pattern `"\\;"` (#1545, @IndrajeetPatil).
+* `fixed_regex_linter()` is more robust to errors stemming from unrecognized escapes (#1545, #1845, @IndrajeetPatil).
 
 * `get_source_expressions()` can handle Sweave/Rmarkdown documents with reference chunks like `<<ref_file>>` (#779, @MichaelChirico).
   Note that these are simply skipped, rather than attempting to retrieve the reference and also lint it.
   
 * `assignment_linter()` no longer lints assignments in braces that include comments when `allow_trailing = FALSE` (#1701, @ashbaldry)
 
-* `object_usage_linter()` no longer silently ignores usage warnings that don't contain a quoted name (#1714, @AshesITR)
+* `object_usage_linter()`
+   + No longer silently ignores usage warnings that don't contain a quoted name (#1714, @AshesITR)
+   + No longer fails on code with comments inside a multi-line call to `glue::glue()` (#1919, @MichaelChirico)
 
-* `namespace_linter()` correctly recognizes backticked operators to be exported from respectives namespaces (like `` rlang::`%||%` ``) (#1752, @IndrajeetPatil)
+* `namespace_linter()` correctly recognizes backticked operators to be exported from respective namespaces (like `` rlang::`%||%` ``) (#1752, @IndrajeetPatil)
 
 * `lint_package()` correctly finds a package from within a subdir if the `path` points to anywhere within the package (#1759, @AshesITR)
 
@@ -28,6 +32,8 @@
 * `linters_with_defaults()` no longer erroneously marks linter factories as linters (#1725, @AshesITR).
 
 * Row names for `available_linters()` data frame are now contiguous (#1781, @IndrajeetPatil).
+
+* `object_name_linter()` allows all S3 group Generics (see `?base::groupGeneric`) and S3 generics defined in a different file in the same package (#1808, #1841, @AshesITR)
 
 ## Changes to defaults
 
@@ -47,7 +53,13 @@
   the style guide on handling this case awaits clarification: https://github.com/tidyverse/style/issues/191.
   (#1346, @MichaelChirico)
 
-* The new `indentation_linter()` is part of the default linters. See "New linters" for more details.
+* `undesirable_function_linter()` and `undesirable_operator_linter()` now produce an error 
+  if empty vector of undesirable functions or operators is provided (#1867, @IndrajeetPatil).
+
+* New linters which are also included as defaults (see "New linters" for more details):
+   + `indentation_linter()`
+   + `quotes_linter()`
+   + `unnecessary_concatenation_linter()`
 
 ## New and improved features
 
@@ -91,11 +103,17 @@
 
 * Added `format()` functions for `lint` and `lints` (#1784, @AshesITR)
 
+* `all_linters()` function provides an easy way to access all available linters (#1843, @IndrajeetPatil)
+
+* `missing_argument_linter()` allows missing arguments in `quote()` calls (#1889, @IndrajeetPatil). 
+
 ### New linters
+
+* `matrix_apply_linter()` recommends use of dedicated `rowSums()`, `colSums()`, `colMeans()`, `rowMeans()` over `apply(., MARGIN, sum)` or `apply(., MARGIN, mean)`. The recommended alternative is much more efficient and more readable (#1869, @Bisaloo).
 
 * `unnecessary_lambda_linter()`: detect unnecessary lambdas (anonymous functions), e.g.
   `lapply(x, function(xi) sum(xi))` can be `lapply(x, sum)` and `purrr::map(x, ~quantile(.x, 0.75, na.rm = TRUE))`
-  can be `purrr::map(x, quantile, 0.75, na.rm = TRUE)`. Naming `probs = 0.75` can further improve readability (#1531, @MichaelChirico).
+  can be `purrr::map(x, quantile, 0.75, na.rm = TRUE)`. Naming `probs = 0.75` can further improve readability (#1531, #1866, @MichaelChirico, @Bisaloo).
 
 * `redundant_equals_linter()` for redundant comparisons to `TRUE` or `FALSE` like `is_treatment == TRUE` (#1500, @MichaelChirico)
 * `lengths_linter()` for encouraging usage of `lengths(x)` instead of `sapply(x, length)` (and similar)
@@ -124,7 +142,13 @@
 
 * `implicit_assignment_linter()` for checking implicit assignments in function calls (@IndrajeetPatil and @AshesITR, #1777).
 
+* `quotes_linter()` is a generalized version of (now deprecated) `single_quotes_linter()`. It accepts an argument `delimiter` to specify whether `"` or `'` should be the accepted method for delimiting character literals. The default, `"`, reflects the Tidyverse style guide recommendation and matches the behavior of `single_quotes_linter()`.
+
+* `unnecessary_concatenation_linter()` is simply `unneeded_concatenation_linter()`, renamed.
+
 ## Notes
+
+* {lintr} now depends on R version 3.5.0, in line with the tidyverse policy for R version compatibility.
 
 * `lint()` continues to support Rmarkdown documents. For users of custom .Rmd engines, e.g.
   `marginformat` from {tufte} or `theorem` from {bookdown}, note that those engines must be registered

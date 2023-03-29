@@ -145,6 +145,10 @@ test_that("lint_package returns early if no package is found", {
   )
 })
 
+test_that("length(path)>1 is not supported", {
+  expect_error(lint_package(letters), "one package at a time", fixed = TRUE)
+})
+
 test_that(
   "`lint_package` will use a `.lintr` file in `.github/linters/` directory the same as the package root",
   {

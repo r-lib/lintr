@@ -38,6 +38,7 @@ The following linters are tagged with 'style':
 \item{\code{\link{paren_brace_linter}}}
 \item{\code{\link{pipe_call_linter}}}
 \item{\code{\link{pipe_continuation_linter}}}
+\item{\code{\link{quotes_linter}}}
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{semicolon_terminator_linter}}}
 \item{\code{\link{single_quotes_linter}}}
@@ -49,6 +50,7 @@ The following linters are tagged with 'style':
 \item{\code{\link{trailing_whitespace_linter}}}
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
+\item{\code{\link{unnecessary_concatenation_linter}}}
 \item{\code{\link{unneeded_concatenation_linter}}}
 }
 }

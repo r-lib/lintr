@@ -1,11 +1,15 @@
-test_that("returns the correct linting", {
+test_that("assignment_linter skips allowed usages", {
   linter <- assignment_linter()
-  lint_msg <- rex::rex("Use <-, not =, for assignment.")
 
   expect_lint("blah", NULL, linter)
   expect_lint("blah <- 1", NULL, linter)
   expect_lint("blah<-1", NULL, linter)
   expect_lint("fun(blah=1)", NULL, linter)
+})
+
+test_that("assignment_linter blocks disallowed usages", {
+  linter <- assignment_linter()
+  lint_msg <- rex::rex("Use <-, not =, for assignment.")
 
   expect_lint("blah=1", lint_msg, linter)
   expect_lint("blah = 1", lint_msg, linter)

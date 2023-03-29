@@ -4,7 +4,7 @@
 #' [linters_with_defaults()] to customize it. Most of the default linters
 #' are based on [the tidyverse style guide](https://style.tidyverse.org/).
 #'
-#' The set of default linters is as follows (any parameterised linters, eg, `line_length_linter` use their default
+#' The set of default linters is as follows (any parameterized linters, e.g., `line_length_linter` use their default
 #' argument(s), see `?<linter_name>` for details):
 #'
 #' @evalRd rd_linters("default")
@@ -29,9 +29,9 @@ default_linters <- modify_defaults(
   object_usage_linter(),
   paren_body_linter(),
   pipe_continuation_linter(),
+  quotes_linter(),
   semicolon_linter(),
   seq_linter(),
-  single_quotes_linter(),
   spaces_inside_linter(),
   spaces_left_parentheses_linter(),
   T_and_F_symbol_linter(),
@@ -74,7 +74,7 @@ default_linters <- modify_defaults(
 #'  * [setwd()] modifies the global working directory. Use [withr::with_dir()] for a temporary change instead.
 #'  * [sink()] permanently redirects output. Use [withr::with_sink()] for a temporary redirection instead.
 #'  * [source()] loads code into the global environment unless `local = TRUE` is used, which can cause unexpected
-#'    behaviour.
+#'    behavior.
 #'  * [substring()] should be replaced by [substr()] with appropriate `stop=` value.
 #'  * [Sys.setenv()] permanently modifies the global environment variables. Use [withr::with_envvar()] for a temporary
 #'    change instead.
@@ -152,7 +152,7 @@ all_undesirable_functions <- modify_defaults(
   "source" = paste(
     "manage dependencies through packages.",
     "source() loads code into the global environment unless `local = TRUE` is used,",
-    "which can cause hard-to-predict behaviour"
+    "which can cause hard-to-predict behavior"
   ),
   "substring" =
     "use substr() with appropriate `stop=` value.",

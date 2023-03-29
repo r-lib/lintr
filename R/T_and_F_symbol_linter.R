@@ -10,7 +10,7 @@
 #' )
 #'
 #' lint(
-#'   text = "T = 1.2, F = 2.4",
+#'   text = "T = 1.2; F = 2.4",
 #'   linters = T_and_F_symbol_linter()
 #' )
 #'
@@ -27,8 +27,8 @@
 #'
 #' @evalRd rd_tags("T_and_F_symbol_linter")
 #' @seealso
-#'   [linters] for a complete list of linters available in lintr. \cr
-#'   <https://style.tidyverse.org/syntax.html#logical-vectors>
+#' - [linters] for a complete list of linters available in lintr.
+#' - <https://style.tidyverse.org/syntax.html#logical-vectors>
 #' @export
 T_and_F_symbol_linter <- function() { # nolint: object_name.
   xpath <- paste0(

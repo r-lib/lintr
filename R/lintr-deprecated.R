@@ -7,14 +7,14 @@
 #'
 #' - `open_curly_linter()` and `closed_curly_linter()` check that open and closed curly braces
 #'   are on their own line unless they follow an else, a comma, or a closing bracket.
-#'   Deprecated in favour of `brace_linter()`.
+#'   Deprecated in favor of `brace_linter()`.
 #'
 #' - `paren_brace_linter()` checks that there is a space between right parentheses and an opening
 #'    curly brace. E.g., `function(){}` doesn't have a space, while `function() {}` does.
-#'    Deprecated in favour of `brace_linter()`.
+#'    Deprecated in favor of `brace_linter()`.
 #'
 #' - `semicolon_terminator_linter()` checks that no semicolons terminate expressions.
-#'    Deprecated in favour of `semicolon_linter()`.
+#'    Deprecated in favor of `semicolon_linter()`.
 #'
 #' @param allow_single_line if `TRUE`, allow an open and closed curly pair on the same line.
 #' @param semicolon A character vector defining which semicolons to report:
@@ -175,4 +175,54 @@ semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
   allow_compound <- !"compound" %in% semicolon
   allow_trailing <- !"trailing" %in% semicolon
   semicolon_linter(allow_compound, allow_trailing)
+}
+
+#' Unnecessary concatenation linter
+#' @rdname lintr-deprecated
+#' @export
+unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
+  lintr_deprecated(
+    old = "unneeded_concatenation_linter",
+    new = "unnecessary_concatenation_linter",
+    version = "3.1.0",
+    type = "Linter"
+  )
+
+  stopifnot(
+    is.logical(allow_single_expression),
+    length(allow_single_expression) == 1L
+  )
+  unnecessary_concatenation_linter(allow_single_expression = allow_single_expression)
+}
+
+#' @keywords internal
+#' @noRd
+find_line_fun <- function(content, newline_locs) {
+  function(line_number) {
+    lintr_deprecated("find_line_fun", new = "XPath logic and xml_nodes_to_lints()", version = "3.0.0")
+    which(newline_locs >= line_number)[1L] - 1L
+  }
+}
+
+#' @keywords internal
+#' @noRd
+find_column_fun <- function(content, newline_locs) {
+  function(line_number) {
+    lintr_deprecated("find_column_fun", new = "XPath logic and xml_nodes_to_lints()", version = "3.0.0")
+    matched_line_number <- which(newline_locs >= line_number)[1L] - 1L
+    line_number - newline_locs[matched_line_number]
+  }
+}
+
+#' Single quotes linter
+#' @rdname lintr-deprecated
+#' @export
+single_quotes_linter <- function() {
+  lintr_deprecated(
+    old = "single_quotes_linter",
+    new = "quotes_linter",
+    version = "3.1.0",
+    type = "Linter"
+  )
+  quotes_linter()
 }

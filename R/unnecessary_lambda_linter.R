@@ -4,6 +4,29 @@
 #'   e.g. `lapply(DF, sum)` is the same as `lapply(DF, function(x) sum(x))` and
 #'   the former is more readable.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "lapply(list(1:3, 2:4), function(xi) sum(xi))",
+#'   linters = unnecessary_lambda_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "lapply(list(1:3, 2:4), sum)",
+#'   linters = unnecessary_lambda_linter()
+#' )
+#'
+#' lint(
+#'   text = 'lapply(x, function(xi) grep("ptn", xi))',
+#'   linters = unnecessary_lambda_linter()
+#' )
+#'
+#' lint(
+#'   text = "lapply(x, function(xi) data.frame(col = xi))",
+#'   linters = unnecessary_lambda_linter()
+#' )
+#'
 #' @evalRd rd_tags("unnecessary_lambda_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -122,6 +145,6 @@ unnecessary_lambda_linter <- function() {
 
 purrr_mappers <- c(
   "map", "walk",
-  "map_raw", "map_lgl", "map_int", "map_dbl", "map_chr",
+  "map_raw", "map_lgl", "map_int", "map_dbl", "map_chr", "map_vec",
   "map_df", "map_dfr", "map_dfc"
 )
