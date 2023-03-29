@@ -34,7 +34,9 @@ consecutive_assertion_linter <- function() {
   xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'stopifnot']
     /parent::expr
-    /parent::expr[expr[1]/SYMBOL_FUNCTION_CALL = following-sibling::expr[1]/expr[1]/SYMBOL_FUNCTION_CALL]
+    /parent::expr[
+      expr[1]/SYMBOL_FUNCTION_CALL = following-sibling::expr[1]/expr[1]/SYMBOL_FUNCTION_CALL
+    ]
   |
   //SYMBOL_FUNCTION_CALL[text() = 'assert_that']
     /parent::expr
