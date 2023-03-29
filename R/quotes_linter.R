@@ -1,8 +1,8 @@
 #' Character string quote linter
 #'
-#' Check that the desired quoting character is used to delimit string constants.
+#' Check that the desired quote delimiter is used for string constants.
 #'
-#' @param quote_char Which quote character to accept. Defaults to the tidyverse
+#' @param delimiter Which quote delimiter to accept. Defaults to the tidyverse
 #'   default of `"` (double-quoted strings).
 #'
 #' @examples
@@ -25,14 +25,20 @@
 #'   linters = quotes_linter()
 #' )
 #'
+#' # okay
+#' lint(
+#'   text = "c('a', 'b')",
+#'   linters = quotes_linter(delimiter = "'")
+#' )
+#'
 #' @evalRd rd_tags("quotes_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
 #' - <https://style.tidyverse.org/syntax.html#character-vectors>
 #' @export
-quotes_linter <- function(quote_char = c('"', "'")) {
-  quote_char <- match.arg(quote_char)
-  if (quote_char == '"') {
+quotes_linter <- function(delimiter = c('"', "'")) {
+  delimiter <- match.arg(delimiter)
+  if (delimiter == '"') {
     quote_regex <- rex(
       start,
       zero_or_one(character_class("rR")),

@@ -4,14 +4,14 @@
 \alias{quotes_linter}
 \title{Character string quote linter}
 \usage{
-quotes_linter(quote_char = c("\\"", "'"))
+quotes_linter(delimiter = c("\\"", "'"))
 }
 \arguments{
-\item{quote_char}{Which quote character to accept. Defaults to the tidyverse
+\item{delimiter}{Which quote delimiter to accept. Defaults to the tidyverse
 default of \verb{"} (double-quoted strings).}
 }
 \description{
-Check that the desired quoting character is used to delimit string constants.
+Check that the desired quote delimiter is used for string constants.
 }
 \examples{
 # will produce lints
@@ -31,6 +31,12 @@ writeLines(code_lines)
 lint(
   text = code_lines,
   linters = quotes_linter()
+)
+
+# okay
+lint(
+  text = "c('a', 'b')",
+  linters = quotes_linter(delimiter = "'")
 )
 
 }
