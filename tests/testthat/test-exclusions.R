@@ -141,12 +141,12 @@ test_that("#1442: is_excluded_files works if no global exclusions are specified"
     file.path(tmp, "bad.R")
   )
 
-  # 3 lints: assignment_linter(), single_quotes_linter() and line_length_linter()
+  # 3 lints: assignment_linter(), quotes_linter() and line_length_linter()
   expect_lint(
     file = file.path(tmp, "bad.R"),
     checks = list(
       list(linter = "assignment_linter", line_number = 1L),
-      list(linter = "single_quotes_linter", line_number = 1L),
+      list(linter = "quotes_linter", line_number = 1L),
       list(linter = "line_length_linter", line_number = 1L)
     )
   )

@@ -19,17 +19,17 @@ The following tags exist:
 \itemize{
 \item{\link[=best_practices_linters]{best_practices} (50 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (7 linters)}
-\item{\link[=configurable_linters]{configurable} (32 linters)}
-\item{\link[=consistency_linters]{consistency} (18 linters)}
+\item{\link[=configurable_linters]{configurable} (33 linters)}
+\item{\link[=consistency_linters]{consistency} (19 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
-\item{\link[=deprecated_linters]{deprecated} (5 linters)}
+\item{\link[=deprecated_linters]{deprecated} (6 linters)}
 \item{\link[=efficiency_linters]{efficiency} (23 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
-\item{\link[=readability_linters]{readability} (51 linters)}
+\item{\link[=readability_linters]{readability} (52 linters)}
 \item{\link[=robustness_linters]{robustness} (14 linters)}
-\item{\link[=style_linters]{style} (39 linters)}
+\item{\link[=style_linters]{style} (40 linters)}
 }
 }
 \section{Linters}{
@@ -97,6 +97,7 @@ The following linters exist:
 \item{\code{\link{paste_linter}} (tags: best_practices, configurable, consistency)}
 \item{\code{\link{pipe_call_linter}} (tags: readability, style)}
 \item{\code{\link{pipe_continuation_linter}} (tags: default, readability, style)}
+\item{\code{\link{quotes_linter}} (tags: configurable, consistency, default, readability, style)}
 \item{\code{\link{redundant_equals_linter}} (tags: best_practices, common_mistakes, efficiency, readability)}
 \item{\code{\link{redundant_ifelse_linter}} (tags: best_practices, configurable, consistency, efficiency)}
 \item{\code{\link{regex_subset_linter}} (tags: best_practices, efficiency)}
@@ -104,7 +105,7 @@ The following linters exist:
 \item{\code{\link{semicolon_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{semicolon_terminator_linter}} (tags: configurable, deprecated, readability, style)}
 \item{\code{\link{seq_linter}} (tags: best_practices, consistency, default, efficiency, robustness)}
-\item{\code{\link{single_quotes_linter}} (tags: consistency, default, readability, style)}
+\item{\code{\link{single_quotes_linter}} (tags: consistency, deprecated, readability, style)}
 \item{\code{\link{sort_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{spaces_inside_linter}} (tags: default, readability, style)}
 \item{\code{\link{spaces_left_parentheses_linter}} (tags: default, readability, style)}
