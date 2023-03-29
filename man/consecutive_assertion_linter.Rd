@@ -18,9 +18,19 @@ lint(
   linters = consecutive_assertion_linter()
 )
 
+lint(
+  text = "assert_that(x); assert_that(y)",
+  linters = consecutive_assertion_linter()
+)
+
 # okay
 lint(
   text = "stopifnot(x, y)",
+  linters = consecutive_assertion_linter()
+)
+
+lint(
+  text = 'assert_that(x, msg = "Bad x!"); assert_that(y)',
   linters = consecutive_assertion_linter()
 )
 
