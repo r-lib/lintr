@@ -28,8 +28,8 @@ test_that("quotes_linter blocks disallowed usages", {
 })
 
 # NB: repeat of above tests with (mostly) opposite results
-test_that("quotes_linter skips allowed usages of quote_char='", {
-  linter <- quotes_linter(quote_char = "'")
+test_that("quotes_linter skips allowed usages of delimiter='", {
+  linter <- quotes_linter(delimiter = "'")
 
   expect_lint("blah", NULL, linter)
   expect_lint('"\'blah"', NULL, linter)
@@ -42,8 +42,8 @@ test_that("quotes_linter skips allowed usages of quote_char='", {
   expect_lint("{'blah'}", NULL, linter)
 })
 
-test_that("quotes_linter blocks disallowed usages of quote_char='", {
-  linter <- quotes_linter(quote_char = "'")
+test_that("quotes_linter blocks disallowed usages of delimiter='", {
+  linter <- quotes_linter(delimiter = "'")
   lint_msg <- rex::rex("Only use single-quotes.")
 
   expect_lint('"blah"', lint_msg, linter)
