@@ -17,6 +17,7 @@ The following linters are tagged with 'deprecated':
 \item{\code{\link{open_curly_linter}}}
 \item{\code{\link{paren_brace_linter}}}
 \item{\code{\link{semicolon_terminator_linter}}}
+\item{\code{\link{single_quotes_linter}}}
 \item{\code{\link{unneeded_concatenation_linter}}}
 }
 }

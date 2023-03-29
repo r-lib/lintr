@@ -120,7 +120,7 @@ test_that("implicit_assignment_linter skips allowed usages", {
     linter
   )
 
-  skip_if_not_r_version("4.1")
+  skip_if_not_r_version("4.1.0")
   expect_lint(
     trim_some("
       map(1:4, \\(x) {
