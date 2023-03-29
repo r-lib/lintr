@@ -137,7 +137,6 @@
 * `implicit_assignment_linter()` for checking implicit assignments in function calls (@IndrajeetPatil and @AshesITR, #1777).
 
 * `quotes_linter()` is a generalized version of (now deprecated) `single_quotes_linter()`. It accepts an argument `delimiter` to specify whether `"` or `'` should be the accepted method for delimiting character literals. The default, `"`, reflects the Tidyverse style guide recommendation and matches the behavior of `single_quotes_linter()`.
-* `quotes_linter()` is a generalized version of (now deprecated) `single_quotes_linter()`. It accepts an argument `quote_char` to specify whether `"` or `'` should be the accepted method for quoting character literals. The default, `"`, reflects the Tidyverse style guide recommendation and matches the behavior of `single_quotes_linter()`.
 
 * `unnecessary_concatenation_linter()` is simply `unneeded_concatenation_linter()`, renamed.
 
