@@ -59,6 +59,7 @@ quotes_linter <- function(delimiter = c('"', "'")) {
     )
     lint_message <- "Only use single-quotes."
   }
+  
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
       return(list())
