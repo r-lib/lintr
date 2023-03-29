@@ -277,6 +277,18 @@ get_r_code <- function(xml) {
   paste(lines, collapse = "\n")
 }
 
+#' str2lang, but for xml children.
+#'
+#' [xml2::xml_text()] is deceptively close to obviating this helper, but it collapses
+#'   text across lines. R is _mostly_ whitespace-agnostic, so this only matters in some edge cases,
+#'   in particular when there are comments within an expression (<expr> node). See #1919.
+#'
+#' @noRd
+xml2lang <- function(x) {
+  x_strip_comments <- xml_find_all(x, ".//*[not(self::COMMENT or self::expr)]")
+  str2lang(paste(xml2::xml_text(x_strip_comments), collapse = ""))
+}
+
 is_linter <- function(x) inherits(x, "linter")
 
 is_tainted <- function(lines) {
