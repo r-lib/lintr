@@ -21,7 +21,7 @@ License: MIT + file LICENSE
 URL: https://github.com/r-lib/lintr, https://lintr.r-lib.org
 BugReports: https://github.com/r-lib/lintr/issues
 Depends:
-    R (>= 3.2)
+    R (>= 3.5)
 Imports:
     backports,
     codetools,
@@ -44,7 +44,7 @@ Suggests:
     rlang,
     rmarkdown,
     rstudioapi (>= 0.2),
-    testthat (>= 3.0.0),
+    testthat (>= 3.1.5),
     tibble,
     tufte,
     withr (>= 2.5.0)
@@ -140,6 +140,7 @@ Collate:
     'path_utils.R'
     'pipe_call_linter.R'
     'pipe_continuation_linter.R'
+    'quotes_linter.R'
     'redundant_equals_linter.R'
     'redundant_ifelse_linter.R'
     'regex_subset_linter.R'
@@ -148,7 +149,6 @@ Collate:
     'seq_linter.R'
     'settings.R'
     'settings_utils.R'
-    'single_quotes_linter.R'
     'sort_linter.R'
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'

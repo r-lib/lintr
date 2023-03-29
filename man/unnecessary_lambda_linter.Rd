@@ -11,6 +11,30 @@ Using an anonymous function in, e.g., \code{\link[=lapply]{lapply()}} is not alw
 e.g. \code{lapply(DF, sum)} is the same as \code{lapply(DF, function(x) sum(x))} and
 the former is more readable.
 }
+\examples{
+# will produce lints
+lint(
+  text = "lapply(list(1:3, 2:4), function(xi) sum(xi))",
+  linters = unnecessary_lambda_linter()
+)
+
+# okay
+lint(
+  text = "lapply(list(1:3, 2:4), sum)",
+  linters = unnecessary_lambda_linter()
+)
+
+lint(
+  text = 'lapply(x, function(xi) grep("ptn", xi))',
+  linters = unnecessary_lambda_linter()
+)
+
+lint(
+  text = "lapply(x, function(xi) data.frame(col = xi))",
+  linters = unnecessary_lambda_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
