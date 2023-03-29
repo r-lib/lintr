@@ -64,6 +64,13 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="lintr-development-version">lintr (development version)<a class="anchor" aria-label="anchor" href="#lintr-development-version"></a></h2>
 <div class="section level3">
+<h3 id="deprecations-development-version">Deprecations<a class="anchor" aria-label="anchor" href="#deprecations-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/lintr-deprecated.html">single_quotes_linter()</a></code> is deprecated in favor of the more generalizable <code><a href="../reference/quotes_linter.html">quotes_linter()</a></code> (<a href="https://github.com/r-lib/lintr/issues/1729" class="external-link">#1729</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code>unneeded_concatentation_linter()</code> is deprecated in favor of <code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code> for naming consistency (<a href="https://github.com/r-lib/lintr/issues/1707" class="external-link">#1707</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</li>
+</ul></div>
+<div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li><p><code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> is more robust to errors stemming from unrecognized escapes (<a href="https://github.com/r-lib/lintr/issues/1545" class="external-link">#1545</a>, <a href="https://github.com/r-lib/lintr/issues/1845" class="external-link">#1845</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</p></li>
 <li><p><code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> can handle Sweave/Rmarkdown documents with reference chunks like <code>&lt;&lt;ref_file&gt;&gt;</code> (<a href="https://github.com/r-lib/lintr/issues/779" class="external-link">#779</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Note that these are simply skipped, rather than attempting to retrieve the reference and also lint it.</p></li>
@@ -94,9 +101,13 @@
 </ul></li>
 <li><p><code><a href="../reference/spaces_inside_linter.html">spaces_inside_linter()</a></code> allows terminal missing keyword arguments (e.g. <code>alist(arg = )</code>; <a href="https://github.com/r-lib/lintr/issues/540" class="external-link">#540</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
 <li><p><code><a href="../reference/brace_linter.html">brace_linter()</a></code> allows empty braced expression on the same line (e.g. <code>while (updating_condition()) { }</code>) regardless of <code>allow_single_line</code> to match the corresponding behavior in {styler}. This is an expedient while the style guide on handling this case awaits clarification: <a href="https://github.com/tidyverse/style/issues/191" class="external-link uri">https://github.com/tidyverse/style/issues/191</a>. (<a href="https://github.com/r-lib/lintr/issues/1346" class="external-link">#1346</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
-<li><p>The new <code><a href="../reference/indentation_linter.html">indentation_linter()</a></code> is part of the default linters. See “New linters” for more details.</p></li>
-<li><p>For naming consistency, <code><a href="../reference/lintr-deprecated.html">unneeded_concatenation_linter()</a></code> has been deprecated in favor of <code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code> (<a href="https://github.com/r-lib/lintr/issues/1797" class="external-link">#1797</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</p></li>
 <li><p><code><a href="../reference/undesirable_function_linter.html">undesirable_function_linter()</a></code> and <code><a href="../reference/undesirable_operator_linter.html">undesirable_operator_linter()</a></code> now produce an error if empty vector of undesirable functions or operators is provided (<a href="https://github.com/r-lib/lintr/issues/1867" class="external-link">#1867</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</p></li>
+<li>
+<p>New linters which are also included as defaults (see “New linters” for more details):</p>
+<ul><li><code><a href="../reference/indentation_linter.html">indentation_linter()</a></code></li>
+<li><code><a href="../reference/quotes_linter.html">quotes_linter()</a></code></li>
+<li><code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code></li>
+</ul></li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
@@ -135,6 +146,8 @@
 <li><p><code><a href="../reference/indentation_linter.html">indentation_linter()</a></code> for checking that the indentation conforms to 2-space Tidyverse-style (<a href="https://github.com/AshesITR" class="external-link">@AshesITR</a> and <a href="https://github.com/dgkf" class="external-link">@dgkf</a>, <a href="https://github.com/r-lib/lintr/issues/1411" class="external-link">#1411</a>, <a href="https://github.com/r-lib/lintr/issues/1792" class="external-link">#1792</a>).</p></li>
 <li><p><code><a href="../reference/unnecessary_nested_if_linter.html">unnecessary_nested_if_linter()</a></code> for checking unnecessary nested <code>if</code> statements where a single <code>if</code> statement with appropriate conditional expression would suffice (<a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a> and <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>, <a href="https://github.com/r-lib/lintr/issues/1778" class="external-link">#1778</a>).</p></li>
 <li><p><code><a href="../reference/implicit_assignment_linter.html">implicit_assignment_linter()</a></code> for checking implicit assignments in function calls (<a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a> and <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>, <a href="https://github.com/r-lib/lintr/issues/1777" class="external-link">#1777</a>).</p></li>
+<li><p><code><a href="../reference/quotes_linter.html">quotes_linter()</a></code> is a generalized version of (now deprecated) <code><a href="../reference/lintr-deprecated.html">single_quotes_linter()</a></code>. It accepts an argument <code>delimiter</code> to specify whether <code>"</code> or <code>'</code> should be the accepted method for delimiting character literals. The default, <code>"</code>, reflects the Tidyverse style guide recommendation and matches the behavior of <code><a href="../reference/lintr-deprecated.html">single_quotes_linter()</a></code>.</p></li>
+<li><p><code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code> is simply <code><a href="../reference/lintr-deprecated.html">unneeded_concatenation_linter()</a></code>, renamed.</p></li>
 </ul></div>
 </div>
 <div class="section level3">
@@ -483,7 +496,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <li>
 <code><a href="../reference/extraction_operator_linter.html">extraction_operator_linter()</a></code>: no longer lint <code>x[NULL]</code> (<a href="https://github.com/r-lib/lintr/issues/1273" class="external-link">#1273</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>
-<code><a href="../reference/is_lint_level.html">is_lint_level()</a></code>: new exported helper for readably explaining which type of expression is required for a custom linter. Some linters are written to require the full file’s parse tree (for example, <code><a href="../reference/single_quotes_linter.html">single_quotes_linter()</a></code>). Others only need single expressions, which is more cache-friendly (most linters are written this way to leverage caching) (<a href="https://github.com/r-lib/lintr/issues/921" class="external-link">#921</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<code><a href="../reference/is_lint_level.html">is_lint_level()</a></code>: new exported helper for readably explaining which type of expression is required for a custom linter. Some linters are written to require the full file’s parse tree (for example, <code><a href="../reference/lintr-deprecated.html">single_quotes_linter()</a></code>). Others only need single expressions, which is more cache-friendly (most linters are written this way to leverage caching) (<a href="https://github.com/r-lib/lintr/issues/921" class="external-link">#921</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/lint.html">lint_dir()</a></code> excludes the <code>renv</code> and <code>packrat</code> directories by default (<a href="https://github.com/r-lib/lintr/issues/697" class="external-link">#697</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>

@@ -106,7 +106,7 @@ If it does not exist, it is added. If the value is <code>NULL</code>, the linter
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># When using interactively you will usually pass the result onto `lint` or `lint_package()`</span></span></span>
 <span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu">withr</span><span class="fu">::</span><span class="fu"><a href="https://withr.r-lib.org/reference/with_tempfile.html" class="external-link">local_tempfile</a></span><span class="op">(</span>lines <span class="op">=</span> <span class="st">"my_slightly_long_variable_name &lt;- 2.3"</span>, fileext <span class="op">=</span> <span class="st">"R"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span><span class="va">f</span>, linters <span class="op">=</span> <span class="fu">linters_with_defaults</span><span class="op">(</span>line_length_linter <span class="op">=</span> <span class="fu"><a href="line_length_linter.html">line_length_linter</a></span><span class="op">(</span><span class="fl">120</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cannot open file '/tmp/Rtmpf4Cv9R/file1b241df468e7R': No such file or directory</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cannot open file '/tmp/RtmpLUp7Wa/file175694d8cdbR': No such file or directory</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in file(con, "r"):</span> cannot open the connection</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># the default linter list with a different line length cutoff</span></span></span>
@@ -132,8 +132,8 @@ If it does not exist, it is added. If the value is <code>NULL</code>, the linter
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11] "no_tab_linter"                    "object_length_linter"            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [13] "object_name_linter"               "object_usage_linter"             </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [15] "paren_body_linter"                "pipe_continuation_linter"        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "semicolon_linter"                 "seq_linter"                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "single_quotes_linter"             "spaces_inside_linter"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "quotes_linter"                    "semicolon_linter"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "seq_linter"                       "spaces_inside_linter"            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21] "spaces_left_parentheses_linter"   "T_and_F_symbol_linter"           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [23] "trailing_blank_lines_linter"      "trailing_whitespace_linter"      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [25] "vector_logic_linter"             </span>

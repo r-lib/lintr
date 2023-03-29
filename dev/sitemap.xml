@@ -319,6 +319,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/pipe_continuation_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/quotes_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/read_settings.html</loc>
   </url>
   <url>
@@ -347,9 +350,6 @@
   </url>
   <url>
     <loc>https://lintr.r-lib.org/dev/reference/seq_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/single_quotes_linter.html</loc>
   </url>
   <url>
     <loc>https://lintr.r-lib.org/dev/reference/sort_linter.html</loc>
