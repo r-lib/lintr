@@ -31,8 +31,6 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 consecutive_assertion_linter <- function() {
-  # match on the expr, not the SYMBOL_FUNCTION_CALL, to ensure
-  #   namespace-qualified calls only match if the namespaces do.
   xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'stopifnot']
     /parent::expr
