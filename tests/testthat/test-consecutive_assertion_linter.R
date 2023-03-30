@@ -69,7 +69,7 @@ test_that("assert_that usages are handled correctly too", {
     assert_that(y, msg = 'bad y')
   ")
   expect_lint(lines, NULL, consecutive_assertion_linter())
- 
+
   # one test of inline usage
   expect_lint(
     "assert_that(x); assert_that(y)",
@@ -104,6 +104,6 @@ test_that("old name consecutive_stopifnot_linter() is deprecated", {
     "Use consecutive_assertion_linter instead",
     fixed = TRUE
   )
-  expect_lint('stopifnot(x); y; stopifnot(z)', NULL, old_linter)
+  expect_lint("stopifnot(x); y; stopifnot(z)", NULL, old_linter)
   expect_lint("stopifnot(x); stopifnot(y)", "Unify consecutive calls", old_linter)
 })
