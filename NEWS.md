@@ -43,6 +43,7 @@
      `R CMD check`, it defaults to `TRUE` (#941, #1458, @IndrajeetPatil).
    + Handles backticked symbols inside {glue} expressions correctly, e.g. ``glue("{`x`}")`` correctly
      determines `x` was used (#1619, @MichaelChirico)
+   + Detects problems inside R4.1.0+ lambda functions (`\(...)`) (#1933, @MichaelChirico)
 
 * `spaces_inside_linter()` allows terminal missing keyword arguments (e.g. `alist(arg = )`; #540, @MichaelChirico)
 

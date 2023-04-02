@@ -37,12 +37,12 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
   # TODO(#1106): use //[...] to capture assignments in more scopes
   xpath_function_assignment <- paste(
     # direct assignments
-    "expr[LEFT_ASSIGN or EQ_ASSIGN]/expr[2][FUNCTION]",
-    "expr_or_assign_or_help[EQ_ASSIGN]/expr[2][FUNCTION]",
-    "equal_assign[EQ_ASSIGN]/expr[2][FUNCTION]",
+    "expr[LEFT_ASSIGN or EQ_ASSIGN]/expr[2][FUNCTION or OP-LAMBDA]",
+    "expr_or_assign_or_help[EQ_ASSIGN]/expr[2][FUNCTION or OP-LAMBDA]",
+    "equal_assign[EQ_ASSIGN]/expr[2][FUNCTION or OP-LAMBDA]",
     # assign() and setMethod() assignments
-    "//SYMBOL_FUNCTION_CALL[text() = 'assign']/parent::expr/following-sibling::expr[2][FUNCTION]",
-    "//SYMBOL_FUNCTION_CALL[text() = 'setMethod']/parent::expr/following-sibling::expr[3][FUNCTION]",
+    "//SYMBOL_FUNCTION_CALL[text() = 'assign']/parent::expr/following-sibling::expr[2][FUNCTION or OP-LAMBDA]",
+    "//SYMBOL_FUNCTION_CALL[text() = 'setMethod']/parent::expr/following-sibling::expr[3][FUNCTION or OP-LAMBDA]",
     sep = " | "
   )
 
