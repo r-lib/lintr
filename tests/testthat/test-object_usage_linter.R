@@ -469,6 +469,20 @@ test_that("errors/edge cases in glue syntax don't fail lint()", {
     NULL,
     linter
   )
+
+  # comment inside glue range (#1919)
+  expect_lint(
+    trim_some("
+      fun <- function() {
+        a <- 2
+        glue::glue(
+          'The answer is {}: {a}' # show the answer
+        )
+      }
+    "),
+    NULL,
+    linter
+  )
 })
 
 test_that("backtick'd names in glue are handled", {

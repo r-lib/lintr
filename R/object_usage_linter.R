@@ -188,9 +188,9 @@ extract_glued_symbols <- function(expr) {
     stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond)) # nocov
   }
   glued_symbols <- new.env(parent = emptyenv())
-  for (call_text in xml2::xml_text(glue_calls)) {
+  for (glue_call in glue_calls) {
     # TODO(michaelchirico): consider dropping tryCatch() here if we're more confident in our logic
-    parsed_call <- tryCatch(str2lang(call_text), error = unexpected_error, warning = unexpected_error)
+    parsed_call <- tryCatch(xml2lang(glue_call), error = unexpected_error, warning = unexpected_error)
     parsed_call[[".envir"]] <- glued_symbols
     parsed_call[[".transformer"]] <- symbol_extractor
     # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint

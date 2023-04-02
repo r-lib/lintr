@@ -36,6 +36,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{is_numeric_linter}}}
 \item{\code{\link{lengths_linter}}}
 \item{\code{\link{line_length_linter}}}
+\item{\code{\link{matrix_apply_linter}}}
 \item{\code{\link{nested_ifelse_linter}}}
 \item{\code{\link{numeric_leading_zero_linter}}}
 \item{\code{\link{object_length_linter}}}
@@ -46,6 +47,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{paren_brace_linter}}}
 \item{\code{\link{pipe_call_linter}}}
 \item{\code{\link{pipe_continuation_linter}}}
+\item{\code{\link{quotes_linter}}}
 \item{\code{\link{redundant_equals_linter}}}
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{semicolon_terminator_linter}}}
