@@ -8,7 +8,7 @@
 ## Bug fixes
 
 * `linters_with_tags()` now includes the previously missing spaces around "and" when listing missing linters advertised by `available_linters()`. 
-  This error message typically appears when you update lintr to a version with new linters but don't restart your R session (#1946, @Bisaloo)
+  This error message may appear e.g. when you update lintr to a version with new linters but don't restart your R session (#1946, @Bisaloo)
 
 * `fixed_regex_linter()` is more robust to errors stemming from unrecognized escapes (#1545, #1845, @IndrajeetPatil).
 
