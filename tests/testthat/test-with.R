@@ -21,6 +21,19 @@ test_that("linters_with_defaults warns on unused NULLs", {
   )
 })
 
+test_that("linters_with_tags() verifies the output of available_linters()", {
+  skip_if_not_installed("mockery")
+  mockery::stub(
+    linters_with_tags,
+    "available_linters",
+    data.frame(linter = c("fake_linter", "super_fake_linter"), package = "lintr", tags = "test")
+  )
+  expect_error(
+    linters_with_tags(NULL),
+    "'fake_linter' and 'super_fake_linter'"
+  )
+})
+
 test_that("all default linters are tagged default", {
   expect_named(linters_with_defaults(), available_linters(tags = "default")$linter)
 
