@@ -313,7 +313,7 @@ build_indentation_style_tidy <- function() {
   paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
-  xp_inner_expr <- "preceding-sibling::*[1][self::expr]/*[not(self::COMMENT)]"
+  xp_inner_expr <- "preceding-sibling::*[1][self::expr and expr[SYMBOL_FUNCTION_CALL]]/*[not(self::COMMENT)]"
 
   # double indent is tidyverse style for function definitions
   # triggered only if the closing parenthesis of the function definition is not on its own line and the opening
