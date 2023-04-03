@@ -26,11 +26,11 @@ test_that("linters_with_tags() verifies the output of available_linters()", {
   mockery::stub(
     linters_with_tags,
     "available_linters",
-    data.frame(linter = c("fake_linter", "super_fake_linter"), package = "lintr", tags = "test", stringsAsFactors = FALSE)
+    data.frame(linter = c("fake_linter", "very_fake_linter"), package = "lintr", tags = "", stringsAsFactors = FALSE)
   )
   expect_error(
     linters_with_tags(NULL),
-    "'fake_linter' and 'super_fake_linter'"
+    "'fake_linter' and 'very_fake_linter'"
   )
 })
 
