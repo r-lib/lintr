@@ -104,7 +104,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
       if (!all(available$linter %in% ns_exports)) {
         missing_linters <- setdiff(available$linter, ns_exports)
         stop(
-          "Linters ", glue::glue_collapse(sQuote(missing_linters), sep = ", ", last = "and"),
+          "Linters ", glue::glue_collapse(sQuote(missing_linters), sep = ", ", last = " and "),
           " advertised by `available_linters()` but not exported by package ", package, "."
         )
       }
