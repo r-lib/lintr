@@ -7,13 +7,15 @@ test_that("with_id works as expected", {
   expect_identical(ref, source_expression$parsed_content[c(1L, 3L, 6L), ])
   expect_identical(ref$token, rep_len("expr", nrow(ref)))
 
-  skip_if_not_installed("magrittr")
-
   # deprecated argument
-  with_id(
-    source_file = source_expression,
-    id = ids_with_token(source_expression = source_expression, value = "expr")
-  ) %>%
-    expect_identical(ref) %>%
-    expect_warning("Argument source_file was deprecated")
+  expect_warning(
+    {
+      old_arg <- with_id(
+        source_file = source_expression,
+        id = ids_with_token(source_expression = source_expression, value = "expr")
+      )
+    },
+    "Argument source_file was deprecated"
+  )
+  expect_identical(old_arg, ref)
 })

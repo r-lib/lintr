@@ -94,14 +94,14 @@ test_that("lint_dir works with specific linters without specifying other argumen
 })
 
 test_that("lint_dir continues to accept relative_path= in 2nd positional argument, with a warning", {
-  skip_if_not_installed("magrittr")
-
   the_dir <- test_path("dummy_packages", "package", "vignettes")
 
-  lint_dir(the_dir, FALSE) %>%
-    expect_identical(lint_dir(the_dir, relative_path = FALSE)) %>%
-    expect_warning(
-      "'relative_path' is no longer available as a positional argument",
-      fixed = TRUE
-    )
+  expect_warning(
+    {
+      positional_lints <- lint_dir(the_dir, FALSE)
+    },
+    "'relative_path' is no longer available as a positional argument",
+    fixed = TRUE
+  )
+  expect_identical(positional_lints, lint_dir(the_dir, relative_path = FALSE))
 })

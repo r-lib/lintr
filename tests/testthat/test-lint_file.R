@@ -220,14 +220,14 @@ test_that("compatibility warnings work", {
 })
 
 test_that("Deprecated positional usage of cache= works, with warning", {
-  skip_if_not_installed("magrittr")
-
-  lint("a = 2\n", FALSE, linters = assignment_linter()) %>%
-    expect_identical(lint("a = 2\n", assignment_linter(), cache = FALSE)) %>%
-    expect_warning(
-      "'cache' is no longer available as a positional argument",
-      fixed = TRUE
-    )
+  expect_warning(
+    {
+      l <- lint("a = 2\n", FALSE, linters = assignment_linter())
+    },
+    "'cache' is no longer available as a positional argument",
+    fixed = TRUE
+  )
+  expect_identical(l, lint("a = 2\n", assignment_linter(), cache = FALSE))
 })
 
 test_that("Linters throwing an error give a helpful error", {

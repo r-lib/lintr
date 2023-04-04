@@ -39,7 +39,6 @@ Suggests:
     crayon,
     httr (>= 1.2.1),
     jsonlite,
-    magrittr,
     mockery,
     patrick,
     rlang,
