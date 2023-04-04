@@ -109,6 +109,8 @@
 
 * `missing_argument_linter()` allows missing arguments in `quote()` calls (#1889, @IndrajeetPatil). 
 
+* `get_source_expressions()` outdents code extracted from indented chunks, which helps avoid spurious lints related to whitespace (#1945, @MichaelChirico).
+
 ### New linters
 
 * `matrix_apply_linter()` recommends use of dedicated `rowSums()`, `colSums()`, `colMeans()`, `rowMeans()` over `apply(., MARGIN, sum)` or `apply(., MARGIN, mean)`. The recommended alternative is much more efficient and more readable (#1869, @Bisaloo).

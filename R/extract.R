@@ -22,12 +22,14 @@ extract_r_source <- function(filename, lines, error = identity) {
 
   output_env <- environment() # nolint: object_usage_linter. False positive-ish -- used below.
   Map(
-    function(start, end) {
+    function(start, end, indent) {
       line_seq <- seq(start + 1L, end - 1L)
-      output_env$output[line_seq] <- lines[line_seq]
+      chunk_code <- lines[line_seq]
+      output_env$output[line_seq] <- if (indent > 0L) substr(chunk_code, indent + 1L, nchar(chunk_code)) else chunk_code
     },
     chunks[["starts"]],
-    chunks[["ends"]]
+    chunks[["ends"]],
+    chunks[["indents"]]
   )
   # drop <<chunk>> references, too
   is.na(output) <- grep(pattern$ref.chunk, output)
@@ -73,7 +75,11 @@ get_chunk_positions <- function(pattern, lines) {
   # only keep those blocks that contain at least one line of code
   keep <- which(ends - starts > 1L)
 
-  list(starts = starts[keep], ends = ends[keep])
+  starts <- starts[keep]
+  ends <- ends[keep]
+
+  start_indent_matches <- gregexpr("^[\t >]*", lines[starts], perl = TRUE)
+  list(starts = starts, ends = ends, indents = vapply(start_indent_matches, attr, integer(1L), "match.length"))
 }
 
 filter_chunk_start_positions <- function(starts, lines) {
