@@ -4,6 +4,7 @@
 
 * `single_quotes_linter()` is deprecated in favor of the more generalizable `quotes_linter()` (#1729, @MichaelChirico).
 * `unneeded_concatentation_linter()` is deprecated in favor of `unnecessary_concatenation_linter()` for naming consistency (#1707, @IndrajeetPatil).
+* `consecutive_stopifnot_linter()` is deprecated in favor of the more general (see below) `consecutive_assertion_linter()` (#1604, @MichaelChirico).
 
 ## Bug fixes
 
@@ -95,8 +96,7 @@
 
 * `infix_spaces_linter()` supports the native R pipe `|>` (#1793, @AshesITR)
 
-* `unneeded_concatenation_linter()` no longer lints on `c(...)` (i.e., passing `...` in a function call)
-  when `allow_single_expression = FALSE` (#1696, @MichaelChirico)
+* `unnecessary_concatenation_linter()` (f.k.a. `unneeded_concatenation_linter()`) no longer lints on `c(...)` (i.e., passing `...` in a function call) when `allow_single_expression = FALSE` (#1696, @MichaelChirico)
 
 * `object_name_linter()` gains parameter `regexes` to allow custom naming conventions (#822, #1421, @AshesITR)
 
@@ -147,6 +147,8 @@
 * `quotes_linter()` is a generalized version of (now deprecated) `single_quotes_linter()`. It accepts an argument `delimiter` to specify whether `"` or `'` should be the accepted method for delimiting character literals. The default, `"`, reflects the Tidyverse style guide recommendation and matches the behavior of `single_quotes_linter()`.
 
 * `unnecessary_concatenation_linter()` is simply `unneeded_concatenation_linter()`, renamed.
+
+* `consecutive_assertion_linter()` (f.k.a. `consecutive_stopifnot_linter()`) now lints for consecutive calls to `assertthat::assert_that()` (as long as the `msg=` argument is not used; #1604, @MichaelChirico).
 
 ## Notes
 
