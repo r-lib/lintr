@@ -281,7 +281,7 @@ get_r_code <- function(xml) {
 #'
 #' [xml2::xml_text()] is deceptively close to obviating this helper, but it collapses
 #'   text across lines. R is _mostly_ whitespace-agnostic, so this only matters in some edge cases,
-#'   in particular when there are comments within an expression (<expr> node). See #1919.
+#'   in particular when there are comments within an expression (`<expr>` node). See #1919.
 #'
 #' @noRd
 xml2lang <- function(x) {
