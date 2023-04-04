@@ -473,7 +473,7 @@ included:</p>
 <span><span class="co">#&gt;  [1] "backport_linter"                  "boolean_arithmetic_linter"       </span></span>
 <span><span class="co">#&gt;  [3] "brace_linter"                     "commas_linter"                   </span></span>
 <span><span class="co">#&gt;  [5] "commented_code_linter"            "conjunct_test_linter"            </span></span>
-<span><span class="co">#&gt;  [7] "consecutive_stopifnot_linter"     "cyclocomp_linter"                </span></span>
+<span><span class="co">#&gt;  [7] "consecutive_assertion_linter"     "cyclocomp_linter"                </span></span>
 <span><span class="co">#&gt;  [9] "empty_assignment_linter"          "expect_comparison_linter"        </span></span>
 <span><span class="co">#&gt; [11] "expect_identical_linter"          "expect_length_linter"            </span></span>
 <span><span class="co">#&gt; [13] "expect_named_linter"              "expect_not_linter"               </span></span>
@@ -520,7 +520,7 @@ using</p>
 <span><span class="co">#&gt;  [7] "brace_linter"                     "class_equals_linter"             </span></span>
 <span><span class="co">#&gt;  [9] "commas_linter"                    "commented_code_linter"           </span></span>
 <span><span class="co">#&gt; [11] "condition_message_linter"         "conjunct_test_linter"            </span></span>
-<span><span class="co">#&gt; [13] "consecutive_stopifnot_linter"     "cyclocomp_linter"                </span></span>
+<span><span class="co">#&gt; [13] "consecutive_assertion_linter"     "cyclocomp_linter"                </span></span>
 <span><span class="co">#&gt; [15] "duplicate_argument_linter"        "empty_assignment_linter"         </span></span>
 <span><span class="co">#&gt; [17] "equals_na_linter"                 "expect_comparison_linter"        </span></span>
 <span><span class="co">#&gt; [19] "expect_identical_linter"          "expect_length_linter"            </span></span>
@@ -600,15 +600,15 @@ enough:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="../reference/lint.html">lint</a></span><span class="op">(</span><span class="va">tmp</span>, linters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/call.html" class="external-link">call</a></span><span class="op">(</span><span class="va">linter_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpTwuHGS/file1df533848cf8           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmpXGz0zf/file1d906f6c43b7           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1    get</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpTwuHGS/file1df533848cf8           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmpXGz0zf/file1d906f6c43b7           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpTwuHGS/file1df533848cf8           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmpXGz0zf/file1d906f6c43b7           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span></code></pre></div>
 </div>
