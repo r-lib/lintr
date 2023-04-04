@@ -8,6 +8,7 @@
 \alias{semicolon_terminator_linter}
 \alias{unneeded_concatenation_linter}
 \alias{single_quotes_linter}
+\alias{consecutive_stopifnot_linter}
 \title{Deprecated functions in lintr}
 \usage{
 closed_curly_linter(allow_single_line = FALSE)
@@ -21,6 +22,8 @@ semicolon_terminator_linter(semicolon = c("compound", "trailing"))
 unneeded_concatenation_linter(allow_single_expression = TRUE)
 
 single_quotes_linter()
+
+consecutive_stopifnot_linter()
 }
 \arguments{
 \item{allow_single_line}{if \code{TRUE}, allow an open and closed curly pair on the same line.}
