@@ -78,6 +78,8 @@ get_chunk_positions <- function(pattern, lines) {
   starts <- starts[keep]
   ends <- ends[keep]
 
+  # This is _somewhat_ fragile... better may be to do gsub("```.*", "", pattern$chunk.begin),
+  #   but that somehow feels roughly as fragile (and less readable).
   start_indent_matches <- gregexpr("^[\t >]*", lines[starts], perl = TRUE)
   list(starts = starts, ends = ends, indents = vapply(start_indent_matches, attr, integer(1L), "match.length"))
 }
