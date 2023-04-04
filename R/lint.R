@@ -3,7 +3,7 @@
 #' * `lint()` lints a single file.
 #' * `lint_dir()` lints all files in a directory.
 #' * `lint_package()` lints all likely locations for R files in a package, i.e.
-#'   `R/`, `tests/`, `inst/`, `vignettes/`, `data-raw/`, and `demo/`.
+#'   `R/`, `tests/`, `inst/`, `vignettes/`, `data-raw/`, `demo/` and `exec/`.
 #'
 #' Read `vignette("lintr")` to learn how to configure which linters are run
 #' by default.
@@ -262,7 +262,7 @@ lint_package <- function(path = ".", ...,
     root = pkg_path
   )
 
-  r_directories <- file.path(pkg_path, c("R", "tests", "inst", "vignettes", "data-raw", "demo"))
+  r_directories <- file.path(pkg_path, c("R", "tests", "inst", "vignettes", "data-raw", "demo", "exec"))
   # TODO: once relative_path= is fully deprecated as 2nd positional argument (see top of body), restore the cleaner:
   # > lints <- lint_dir(r_directories, relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
   lints <- do.call(

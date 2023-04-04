@@ -74,7 +74,7 @@ An object of class \code{c("lints", "list")}, each element of which is a \code{"
 \item \code{lint()} lints a single file.
 \item \code{lint_dir()} lints all files in a directory.
 \item \code{lint_package()} lints all likely locations for R files in a package, i.e.
-\verb{R/}, \verb{tests/}, \verb{inst/}, \verb{vignettes/}, \verb{data-raw/}, and \verb{demo/}.
+\verb{R/}, \verb{tests/}, \verb{inst/}, \verb{vignettes/}, \verb{data-raw/}, \verb{demo/} and \verb{exec/}.
 }
 }
 \details{
