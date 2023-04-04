@@ -643,6 +643,40 @@ test_that("hanging_indent_stlye works", {
     NULL,
     tidy_linter
   )
+
+  expect_lint(
+    trim_some("
+      outer_fun(inner_fun(x, # this is first arg
+        one_indent = 42L # this is second arg
+      ))
+    "),
+    NULL,
+    tidy_linter
+  )
+
+  expect_lint(
+    trim_some("
+      outer_fun(inner_fun(
+        x,
+        one_indent = 42L
+      ))
+    "),
+    NULL,
+    tidy_linter
+  )
+
+  expect_lint(
+    trim_some("
+      outer_fun(
+        inner_fun(
+          x,
+          one_indent = 42L
+        )
+      )
+    "),
+    NULL,
+    tidy_linter
+  )
 })
 
 test_that("assignment_as_infix works", {
