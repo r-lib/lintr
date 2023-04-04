@@ -8,6 +8,9 @@
 
 ## Bug fixes
 
+* `linters_with_tags()` now includes the previously missing spaces around "and" when listing missing linters advertised by `available_linters()`. 
+  This error message may appear e.g. when you update lintr to a version with new linters but don't restart your R session (#1946, @Bisaloo)
+
 * `fixed_regex_linter()` is more robust to errors stemming from unrecognized escapes (#1545, #1845, @IndrajeetPatil).
 
 * `get_source_expressions()` can handle Sweave/Rmarkdown documents with reference chunks like `<<ref_file>>` (#779, @MichaelChirico).
@@ -44,6 +47,7 @@
      `R CMD check`, it defaults to `TRUE` (#941, #1458, @IndrajeetPatil).
    + Handles backticked symbols inside {glue} expressions correctly, e.g. ``glue("{`x`}")`` correctly
      determines `x` was used (#1619, @MichaelChirico)
+   + Detects problems inside R4.1.0+ lambda functions (`\(...)`) (#1933, @MichaelChirico)
 
 * `spaces_inside_linter()` allows terminal missing keyword arguments (e.g. `alist(arg = )`; #540, @MichaelChirico)
 

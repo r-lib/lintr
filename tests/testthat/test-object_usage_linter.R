@@ -638,3 +638,17 @@ test_that("messages without a quoted name are caught", {
     object_usage_linter()
   )
 })
+
+test_that("functional lambda definitions are also caught", {
+  skip_if_not_r_version("4.1.0")
+
+  expect_lint(
+    trim_some("
+      fun <- \\() {
+        a <- 1
+      }
+    "),
+    rex::rex("local variable", anything, "assigned but may not be used"),
+    object_usage_linter()
+  )
+})
