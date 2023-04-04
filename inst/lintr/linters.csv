@@ -12,7 +12,8 @@ commas_linter,style readability default
 commented_code_linter,style readability best_practices default
 condition_message_linter,best_practices consistency
 conjunct_test_linter,package_development best_practices readability configurable
-consecutive_stopifnot_linter,style readability consistency
+consecutive_assertion_linter,style readability consistency
+consecutive_stopifnot_linter,style readability consistency deprecated
 cyclocomp_linter,style readability best_practices default configurable
 duplicate_argument_linter,correctness common_mistakes configurable
 empty_assignment_linter,readability best_practices
@@ -43,6 +44,7 @@ is_numeric_linter,readability best_practices consistency
 lengths_linter,efficiency readability best_practices
 line_length_linter,style readability default configurable
 literal_coercion_linter,best_practices consistency efficiency
+matrix_apply_linter,readability efficiency
 missing_argument_linter,correctness common_mistakes configurable
 missing_package_linter,robustness common_mistakes
 namespace_linter,correctness robustness configurable executing

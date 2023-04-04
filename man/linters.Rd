@@ -20,16 +20,16 @@ The following tags exist:
 \item{\link[=best_practices_linters]{best_practices} (50 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (7 linters)}
 \item{\link[=configurable_linters]{configurable} (33 linters)}
-\item{\link[=consistency_linters]{consistency} (19 linters)}
+\item{\link[=consistency_linters]{consistency} (20 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
-\item{\link[=deprecated_linters]{deprecated} (6 linters)}
-\item{\link[=efficiency_linters]{efficiency} (23 linters)}
+\item{\link[=deprecated_linters]{deprecated} (7 linters)}
+\item{\link[=efficiency_linters]{efficiency} (24 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
-\item{\link[=readability_linters]{readability} (52 linters)}
+\item{\link[=readability_linters]{readability} (54 linters)}
 \item{\link[=robustness_linters]{robustness} (14 linters)}
-\item{\link[=style_linters]{style} (40 linters)}
+\item{\link[=style_linters]{style} (41 linters)}
 }
 }
 \section{Linters}{
@@ -48,7 +48,8 @@ The following linters exist:
 \item{\code{\link{commented_code_linter}} (tags: best_practices, default, readability, style)}
 \item{\code{\link{condition_message_linter}} (tags: best_practices, consistency)}
 \item{\code{\link{conjunct_test_linter}} (tags: best_practices, configurable, package_development, readability)}
-\item{\code{\link{consecutive_stopifnot_linter}} (tags: consistency, readability, style)}
+\item{\code{\link{consecutive_assertion_linter}} (tags: consistency, readability, style)}
+\item{\code{\link{consecutive_stopifnot_linter}} (tags: consistency, deprecated, readability, style)}
 \item{\code{\link{cyclocomp_linter}} (tags: best_practices, configurable, default, readability, style)}
 \item{\code{\link{duplicate_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{empty_assignment_linter}} (tags: best_practices, readability)}
@@ -79,6 +80,7 @@ The following linters exist:
 \item{\code{\link{lengths_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{line_length_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{literal_coercion_linter}} (tags: best_practices, consistency, efficiency)}
+\item{\code{\link{matrix_apply_linter}} (tags: efficiency, readability)}
 \item{\code{\link{missing_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{missing_package_linter}} (tags: common_mistakes, robustness)}
 \item{\code{\link{namespace_linter}} (tags: configurable, correctness, executing, robustness)}
