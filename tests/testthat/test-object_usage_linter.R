@@ -747,7 +747,7 @@ test_that("NSE-ish symbols after $/@ are ignored as sources for lints", {
       message = "no visible binding for global variable 'column'",
       line_number = 4L,
       column_number = 22L
-    ),  
+    ),
     object_usage_linter()
   )
 })
