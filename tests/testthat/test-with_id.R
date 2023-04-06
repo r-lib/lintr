@@ -9,10 +9,12 @@ test_that("with_id works as expected", {
 
   # deprecated argument
   expect_warning(
-    old_arg <- with_id(
-      source_file = source_expression,
-      id = ids_with_token(source_expression = source_expression, value = "expr")
-    ),
+    {
+      old_arg <- with_id(
+        source_file = source_expression,
+        id = ids_with_token(source_expression = source_expression, value = "expr")
+      )
+    },
     "Argument source_file was deprecated"
   )
   expect_identical(old_arg, ref)

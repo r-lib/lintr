@@ -75,7 +75,7 @@ Collate:
     'comments.R'
     'condition_message_linter.R'
     'conjunct_test_linter.R'
-    'consecutive_stopifnot_linter.R'
+    'consecutive_assertion_linter.R'
     'cyclocomp_linter.R'
     'declared_functions.R'
     'deprecated.R'
