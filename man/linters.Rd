@@ -20,16 +20,16 @@ The following tags exist:
 \item{\link[=best_practices_linters]{best_practices} (50 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (7 linters)}
 \item{\link[=configurable_linters]{configurable} (33 linters)}
-\item{\link[=consistency_linters]{consistency} (19 linters)}
+\item{\link[=consistency_linters]{consistency} (20 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
-\item{\link[=deprecated_linters]{deprecated} (6 linters)}
+\item{\link[=deprecated_linters]{deprecated} (7 linters)}
 \item{\link[=efficiency_linters]{efficiency} (24 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=readability_linters]{readability} (53 linters)}
 \item{\link[=robustness_linters]{robustness} (14 linters)}
-\item{\link[=style_linters]{style} (40 linters)}
+\item{\link[=style_linters]{style} (41 linters)}
 }
 }
 \section{Linters}{
@@ -84,7 +84,7 @@ The following linters exist:
 \item{\code{\link{missing_package_linter}} (tags: common_mistakes, robustness)}
 \item{\code{\link{namespace_linter}} (tags: configurable, correctness, executing, robustness)}
 \item{\code{\link{nested_ifelse_linter}} (tags: efficiency, readability)}
-\item{\code{\link{no_tab_linter}} (tags: consistency, default, style)}
+\item{\code{\link{no_tab_linter}} (tags: consistency, deprecated, style)}
 \item{\code{\link{nonportable_path_linter}} (tags: best_practices, configurable, robustness)}
 \item{\code{\link{numeric_leading_zero_linter}} (tags: consistency, readability, style)}
 \item{\code{\link{object_length_linter}} (tags: configurable, default, executing, readability, style)}
@@ -128,6 +128,7 @@ The following linters exist:
 \item{\code{\link{unreachable_code_linter}} (tags: best_practices, readability)}
 \item{\code{\link{unused_import_linter}} (tags: best_practices, common_mistakes, configurable, executing)}
 \item{\code{\link{vector_logic_linter}} (tags: best_practices, default, efficiency)}
+\item{\code{\link{whitespace_linter}} (tags: consistency, default, style)}
 \item{\code{\link{yoda_test_linter}} (tags: best_practices, package_development, readability)}
 }
 }

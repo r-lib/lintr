@@ -32,5 +32,6 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{single_quotes_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
+\item{\code{\link{whitespace_linter}}}
 }
 }

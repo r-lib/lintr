@@ -226,3 +226,16 @@ single_quotes_linter <- function() {
   )
   quotes_linter()
 }
+
+#' No tabs linter
+#' @rdname lintr-deprecated
+#' @export
+no_tab_linter <- function() {
+  lintr_deprecated(
+    old = "no_tab_linter",
+    new = "whitespace_linter",
+    version = "3.1.0",
+    type = "Linter"
+  )
+  whitespace_linter()
+}
