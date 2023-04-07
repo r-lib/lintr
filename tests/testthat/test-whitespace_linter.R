@@ -68,5 +68,5 @@ test_that("no_tab_linter id deprecated", {
     fixed = TRUE
   )
   expect_lint("  f(a, b, c)", NULL, old_linter)
-  expect_lint("\ta\tb\tc", "not tabs", old_linter)
+  expect_lint("\tf(a, b, c)", "not tabs", old_linter)
 })
