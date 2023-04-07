@@ -37,14 +37,23 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
   # TODO(#1106): use //[...] to capture assignments in more scopes
   xpath_function_assignment <- paste(
     # direct assignments
-    "expr[LEFT_ASSIGN or EQ_ASSIGN]/expr[2][FUNCTION]",
-    "expr_or_assign_or_help[EQ_ASSIGN]/expr[2][FUNCTION]",
-    "equal_assign[EQ_ASSIGN]/expr[2][FUNCTION]",
+    "expr[LEFT_ASSIGN or EQ_ASSIGN]/expr[2][FUNCTION or OP-LAMBDA]",
+    "expr_or_assign_or_help[EQ_ASSIGN]/expr[2][FUNCTION or OP-LAMBDA]",
+    "equal_assign[EQ_ASSIGN]/expr[2][FUNCTION or OP-LAMBDA]",
     # assign() and setMethod() assignments
-    "//SYMBOL_FUNCTION_CALL[text() = 'assign']/parent::expr/following-sibling::expr[2][FUNCTION]",
-    "//SYMBOL_FUNCTION_CALL[text() = 'setMethod']/parent::expr/following-sibling::expr[3][FUNCTION]",
+    "//SYMBOL_FUNCTION_CALL[text() = 'assign']/parent::expr/following-sibling::expr[2][FUNCTION or OP-LAMBDA]",
+    "//SYMBOL_FUNCTION_CALL[text() = 'setMethod']/parent::expr/following-sibling::expr[3][FUNCTION or OP-LAMBDA]",
     sep = " | "
   )
+
+  # not all instances of linted symbols are potential sources for the observed violations -- see #1914
+  symbol_exclude_cond <- "preceding-sibling::OP-DOLLAR or preceding-sibling::OP-AT or ancestor::expr[OP-TILDE]"
+  xpath_culprit_symbol <- glue::glue("
+    descendant::SYMBOL[not( {symbol_exclude_cond} )]
+    | descendant::SYMBOL_FUNCTION_CALL[not( {symbol_exclude_cond} )]
+    | descendant::SPECIAL
+    | descendant::LEFT_ASSIGN[text() = ':=']
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
@@ -97,15 +106,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
       # e.g. `not_existing<-`(a, b)
       res$name <- rex::re_substitutes(res$name, rex::rex("<-"), "")
 
-      lintable_symbols <- xml2::xml_find_all(
-        fun_assignment,
-        "
-        descendant::SYMBOL
-        | descendant::SYMBOL_FUNCTION_CALL
-        | descendant::SPECIAL
-        | descendant::LEFT_ASSIGN[text() = ':=']
-        "
-      )
+      lintable_symbols <- xml2::xml_find_all(fun_assignment, xpath_culprit_symbol)
 
       lintable_symbol_names <- gsub("^`|`$", "", xml2::xml_text(lintable_symbols))
       lintable_symbol_lines <- as.integer(xml2::xml_attr(lintable_symbols, "line1"))
