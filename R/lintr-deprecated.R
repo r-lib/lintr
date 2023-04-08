@@ -252,4 +252,3 @@ no_tab_linter <- function() {
   )
   whitespace_linter()
 }
-
