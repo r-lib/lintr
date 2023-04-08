@@ -43,13 +43,11 @@ The following linters exist:
 \item{\code{\link{boolean_arithmetic_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{brace_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{class_equals_linter}} (tags: best_practices, consistency, robustness)}
-\item{\code{\link{closed_curly_linter}} (tags: configurable, deprecated, readability, style)}
 \item{\code{\link{commas_linter}} (tags: default, readability, style)}
 \item{\code{\link{commented_code_linter}} (tags: best_practices, default, readability, style)}
 \item{\code{\link{condition_message_linter}} (tags: best_practices, consistency)}
 \item{\code{\link{conjunct_test_linter}} (tags: best_practices, configurable, package_development, readability)}
 \item{\code{\link{consecutive_assertion_linter}} (tags: consistency, readability, style)}
-\item{\code{\link{consecutive_stopifnot_linter}} (tags: consistency, deprecated, readability, style)}
 \item{\code{\link{cyclocomp_linter}} (tags: best_practices, configurable, default, readability, style)}
 \item{\code{\link{duplicate_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{empty_assignment_linter}} (tags: best_practices, readability)}
@@ -91,11 +89,9 @@ The following linters exist:
 \item{\code{\link{object_length_linter}} (tags: configurable, default, executing, readability, style)}
 \item{\code{\link{object_name_linter}} (tags: configurable, consistency, default, executing, style)}
 \item{\code{\link{object_usage_linter}} (tags: configurable, correctness, default, executing, readability, style)}
-\item{\code{\link{open_curly_linter}} (tags: configurable, deprecated, readability, style)}
 \item{\code{\link{outer_negation_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{package_hooks_linter}} (tags: correctness, package_development, style)}
 \item{\code{\link{paren_body_linter}} (tags: default, readability, style)}
-\item{\code{\link{paren_brace_linter}} (tags: deprecated, readability, style)}
 \item{\code{\link{paste_linter}} (tags: best_practices, configurable, consistency)}
 \item{\code{\link{pipe_call_linter}} (tags: readability, style)}
 \item{\code{\link{pipe_continuation_linter}} (tags: default, readability, style)}
@@ -105,9 +101,7 @@ The following linters exist:
 \item{\code{\link{regex_subset_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{routine_registration_linter}} (tags: best_practices, efficiency, robustness)}
 \item{\code{\link{semicolon_linter}} (tags: configurable, default, readability, style)}
-\item{\code{\link{semicolon_terminator_linter}} (tags: configurable, deprecated, readability, style)}
 \item{\code{\link{seq_linter}} (tags: best_practices, consistency, default, efficiency, robustness)}
-\item{\code{\link{single_quotes_linter}} (tags: consistency, deprecated, readability, style)}
 \item{\code{\link{sort_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{spaces_inside_linter}} (tags: default, readability, style)}
 \item{\code{\link{spaces_left_parentheses_linter}} (tags: default, readability, style)}
@@ -125,7 +119,6 @@ The following linters exist:
 \item{\code{\link{unnecessary_lambda_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{unnecessary_nested_if_linter}} (tags: best_practices, readability)}
 \item{\code{\link{unnecessary_placeholder_linter}} (tags: best_practices, readability)}
-\item{\code{\link{unneeded_concatenation_linter}} (tags: configurable, deprecated, efficiency, readability, style)}
 \item{\code{\link{unreachable_code_linter}} (tags: best_practices, readability)}
 \item{\code{\link{unused_import_linter}} (tags: best_practices, common_mistakes, configurable, executing)}
 \item{\code{\link{vector_logic_linter}} (tags: best_practices, default, efficiency)}
