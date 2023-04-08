@@ -78,14 +78,12 @@ get_chunk_positions <- function(pattern, lines) {
   starts <- starts[keep]
   ends <- ends[keep]
 
-  # This is _somewhat_ fragile... better may be to do gsub("```.*", "", pattern$chunk.begin),
-  #   but that somehow feels roughly as fragile (and less readable).
   # Check indent on all lines in the chunk to allow for staggered indentation within a chunk;
   #   set the initial column to the leftmost one within each chunk (including the start+end gates). See tests.
+  # use 'ws_re' to make clear that we're matching knitr's definition of initial whitespace.
+  ws_re <- sub("```.*", "", pattern$chunk.begin)
   indents <- mapply(
-    function(start, end) {
-      min(vapply(gregexpr("^[\t >]*", lines[start:end], perl = TRUE), attr, integer(1L), "match.length"))
-    },
+    function(start, end) min(vapply(gregexpr(ws_re, lines[start:end], perl = TRUE), attr, integer(1L), "match.length")),
     starts, ends
   )
   list(starts = starts, ends = ends, indents = indents)
