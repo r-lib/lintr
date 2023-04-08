@@ -319,12 +319,23 @@ test_that("Indented Rmd chunks don't cause spurious whitespace lints", {
     "",
     "```{r unindented_chunk}",
     '  "improperly indented"',
-    "```"
+    "```",
+    "",
+    "# Third section",
+    "",
+    "   ```{r staggered}",
+    ' "leftmost code"',
+    '  "further right"',
+    '   "aligned with code gate"',
+    "   ```"
   ))
 
   parsed_lines <- get_source_expressions(tmp)$lines
   expect_identical(parsed_lines[4L], '"properly indented"', ignore_attr = "names")
   expect_identical(parsed_lines[10L], '  "improperly indented"', ignore_attr = "names")
+  expect_identical(parsed_lines[16L], '"leftmost code"', ignore_attr = "names")
+  expect_identical(parsed_lines[17L], ' "further right"', ignore_attr = "names")
+  expect_identical(parsed_lines[18L], '  "aligned with code gate"', ignore_attr = "names")
 })
 
 test_that("Reference chunks in Sweave/Rmd are ignored", {

@@ -80,8 +80,15 @@ get_chunk_positions <- function(pattern, lines) {
 
   # This is _somewhat_ fragile... better may be to do gsub("```.*", "", pattern$chunk.begin),
   #   but that somehow feels roughly as fragile (and less readable).
-  start_indent_matches <- gregexpr("^[\t >]*", lines[starts], perl = TRUE)
-  list(starts = starts, ends = ends, indents = vapply(start_indent_matches, attr, integer(1L), "match.length"))
+  # Check indent on all lines in the chunk to allow for staggered indentation within a chunk;
+  #   set the initial column to the leftmost one within each chunk (including the start+end gates). See tests.
+  indents <- mapply(
+    function(start, end) {
+      min(vapply(gregexpr("^[\t >]*", lines[start:end], perl = TRUE), attr, integer(1L), "match.length"))
+    },
+    starts, ends
+  )
+  list(starts = starts, ends = ends, indents = indents)
 }
 
 filter_chunk_start_positions <- function(starts, lines) {

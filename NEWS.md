@@ -111,7 +111,7 @@
 
 * `missing_argument_linter()` allows missing arguments in `quote()` calls (#1889, @IndrajeetPatil). 
 
-* `get_source_expressions()` outdents code extracted from indented chunks, which helps avoid spurious lints related to whitespace (#1945, @MichaelChirico).
+* `get_source_expressions()` correctly extracts indented code chunks from R Markdown documents, which helps avoid spurious lints related to whitespace (#1945, @MichaelChirico). The convention taken is that, within each chunk, all code is anchored relative to the leftmost non-whitespace column.
 
 ### New linters
 
