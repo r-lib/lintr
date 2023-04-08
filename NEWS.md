@@ -37,6 +37,8 @@
 
 * `object_name_linter()` allows all S3 group Generics (see `?base::groupGeneric`) and S3 generics defined in a different file in the same package (#1808, #1841, @AshesITR)
 
+* `object_usage_linter()` improves identification of the exact source of a lint for undefined variables in expressions with where the variable is used as a symbol in a usual way, for example in a formula or in an extraction with `$` (#1914, @MichaelChirico).
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
@@ -139,7 +141,7 @@
 
 * `routine_registration_linter()` for identifying native routines that don't use registration (`useDynLib` in the `NAMESPACE`; @MichaelChirico)
 
-* `indentation_linter()` for checking that the indentation conforms to 2-space Tidyverse-style (@AshesITR and @dgkf, #1411, #1792).
+* `indentation_linter()` for checking that the indentation conforms to 2-space Tidyverse-style (@AshesITR and @dgkf, #1411, #1792, #1898).
 
 * `unnecessary_nested_if_linter()` for checking unnecessary nested `if` statements where a single 
   `if` statement with appropriate conditional expression would suffice (@IndrajeetPatil and @AshesITR, #1778).

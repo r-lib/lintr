@@ -298,7 +298,9 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 }
 
 find_new_indent <- function(current_indent, change_type, indent, hanging_indent) {
-  if (change_type == "hanging") {
+  if (change_type == "suppress") {
+    current_indent
+  } else if (change_type == "hanging") {
     hanging_indent
   } else if (change_type == "double") {
     current_indent + 2L * indent
@@ -311,6 +313,7 @@ build_indentation_style_tidy <- function() {
   paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
+  xp_inner_expr <- "preceding-sibling::*[1][self::expr and expr[SYMBOL_FUNCTION_CALL]]/*[not(self::COMMENT)]"
 
   # double indent is tidyverse style for function definitions
   # triggered only if the closing parenthesis of the function definition is not on its own line and the opening
@@ -333,6 +336,18 @@ build_indentation_style_tidy <- function() {
     parent::expr[FUNCTION and not(@line1 = SYMBOL_FORMALS/@line1)]
       /OP-RIGHT-PAREN[@line1 = preceding-sibling::*[not(self::COMMENT)][1]/@line2]
   "
+
+  xp_suppress <- paste(
+    glue::glue("
+        self::{paren_tokens_left}[
+          @line1 = following-sibling::{paren_tokens_right}/{xp_inner_expr}[position() = 1]/@line1
+        ]/following-sibling::{paren_tokens_right}[
+          @line1 > {xp_inner_expr}[position() = last() - 1]/@line2
+        ]"
+    ),
+    collapse = " | "
+  )
+
   xp_is_not_hanging <- paste(
     c(
       glue::glue(
@@ -346,6 +361,8 @@ build_indentation_style_tidy <- function() {
   function(change) {
     if (length(xml2::xml_find_first(change, xp_is_double_indent)) > 0L) {
       "double"
+    } else if (length(xml2::xml_find_first(change, xp_suppress)) > 0L) {
+      "suppress"
     } else if (length(xml2::xml_find_first(change, xp_is_not_hanging)) == 0L) {
       "hanging"
     } else {
