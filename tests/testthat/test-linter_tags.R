@@ -167,10 +167,10 @@ test_that("lintr help files are up to date", {
     responseName = "n_linters",
     stringsAsFactors = FALSE
   )
-  n_deprecated = nrow(available_linters(tags = "deprecated", exclude_tags = NULL))
+  n_deprecated <- nrow(available_linters(tags = "deprecated", exclude_tags = NULL))
   db_tag_table <- rbind(
     db_tag_table,
-    data.frame(tag = "deprecated", n_linters = n_deprecated)
+    data.frame(tag = "deprecated", n_linters = n_deprecated, stringsAsFactors = FALSE)
   )
   # In ?linters, entries in the enumeration of tags look like
   #   \item{\link[=${TAG}_linters]{${TAG}} (${N_LINTERS_WITH_TAG} linters)}
