@@ -1,5 +1,5 @@
-test_that("no_tab_linter skips allowed usages", {
-  linter <- no_tab_linter()
+test_that("whitespace_linter skips allowed usages", {
+  linter <- whitespace_linter()
 
   expect_lint("blah", NULL, linter)
   expect_lint("  blah", NULL, linter)
@@ -7,8 +7,8 @@ test_that("no_tab_linter skips allowed usages", {
   expect_lint("#\tblah", NULL, linter)
 })
 
-test_that("no_tab_linter skips allowed tab usages inside strings", {
-  linter <- no_tab_linter()
+test_that("whitespace_linter skips allowed tab usages inside strings", {
+  linter <- whitespace_linter()
 
   expect_lint(
     'lint_msg <- "dont flag tabs if\tthey are inside a string."',
@@ -23,8 +23,8 @@ test_that("no_tab_linter skips allowed tab usages inside strings", {
   )
 })
 
-test_that("no_tab_linter blocks disallowed usages", {
-  linter <- no_tab_linter()
+test_that("whitespace_linter blocks disallowed usages", {
+  linter <- whitespace_linter()
   lint_msg <- rex::rex("Use spaces to indent, not tabs.")
 
   expect_lint(
@@ -40,10 +40,10 @@ test_that("no_tab_linter blocks disallowed usages", {
   )
 })
 
-test_that("no_tab_linter blocks disallowed usages with a pipe", {
+test_that("whitespace_linter blocks disallowed usages with a pipe", {
   skip_if_not_r_version("4.1.0")
 
-  linter <- no_tab_linter()
+  linter <- whitespace_linter()
   lint_msg <- rex::rex("Use spaces to indent, not tabs.")
 
   expect_lint(
@@ -57,4 +57,16 @@ test_that("no_tab_linter blocks disallowed usages with a pipe", {
     list(message = lint_msg, line_number = 2L, column_number = 1L, ranges = list(c(1L, 1L))),
     linter
   )
+})
+
+test_that("no_tab_linter id deprecated", {
+  expect_warning(
+    {
+      old_linter <- no_tab_linter()
+    },
+    "Use whitespace_linter instead",
+    fixed = TRUE
+  )
+  expect_lint("  f(a, b, c)", NULL, old_linter)
+  expect_lint("\tf(a, b, c)", "not tabs", old_linter)
 })

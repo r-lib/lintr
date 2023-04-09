@@ -53,5 +53,6 @@ The following linters are tagged with 'style':
 \item{\code{\link{undesirable_operator_linter}}}
 \item{\code{\link{unnecessary_concatenation_linter}}}
 \item{\code{\link{unneeded_concatenation_linter}}}
+\item{\code{\link{whitespace_linter}}}
 }
 }

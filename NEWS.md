@@ -5,6 +5,7 @@
 * `single_quotes_linter()` is deprecated in favor of the more generalizable `quotes_linter()` (#1729, @MichaelChirico).
 * `unneeded_concatentation_linter()` is deprecated in favor of `unnecessary_concatenation_linter()` for naming consistency (#1707, @IndrajeetPatil).
 * `consecutive_stopifnot_linter()` is deprecated in favor of the more general (see below) `consecutive_assertion_linter()` (#1604, @MichaelChirico).
+* `no_tab_linter()` is deprecated in favor of `whitespace_linter()` for naming consistency and future generalization (#1954, @MichaelChirico).
 
 ## Bug fixes
 
@@ -65,6 +66,7 @@
    + `indentation_linter()`
    + `quotes_linter()`
    + `unnecessary_concatenation_linter()`
+   + `whitespace_linter()`
 
 ## New and improved features
 
@@ -151,6 +153,8 @@
 * `unnecessary_concatenation_linter()` is simply `unneeded_concatenation_linter()`, renamed.
 
 * `consecutive_assertion_linter()` (f.k.a. `consecutive_stopifnot_linter()`) now lints for consecutive calls to `assertthat::assert_that()` (as long as the `msg=` argument is not used; #1604, @MichaelChirico).
+
+* `whitespace_linter()` is simply `no_tab_linter()`, renamed. In the future, we plan to extend it to work for different whitespace preferences.
 
 ## Notes
 
