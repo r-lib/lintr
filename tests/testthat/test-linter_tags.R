@@ -103,6 +103,7 @@ test_that("rownames for available_linters data frame doesn't have missing entrie
 # See the roxygen helpers in R/linter_tags.R for the code used to generate the docs.
 #   This test helps ensure the documentation is up to date with the available_linters() database
 test_that("lintr help files are up to date", {
+  browser()
   # You need to run these tests from the installed package, since we need the package help file to
   # be available, which is retrieved from the installed location.
   #
@@ -119,7 +120,7 @@ test_that("lintr help files are up to date", {
   help_env <- new.env(parent = topenv())
   lazyLoad(file.path(helper_db_dir, "lintr"), help_env)
 
-  lintr_db <- available_linters(exclude_tags = NULL)
+  lintr_db <- available_linters(exclude_tags = "deprecated")
   lintr_db$package <- NULL
   lintr_db$tags <- lapply(lintr_db$tags, sort)
 
@@ -134,7 +135,7 @@ test_that("lintr help files are up to date", {
 
   # Rd markup for items looks like \item{\code{\link{...}} (tags: ...)}
   help_linters <- rex::re_matches(
-    linter_help_text,
+    grep("deprecated", linter_help_text, fixed = TRUE, invert = TRUE, value = TRUE),
     rex::rex(
       "\\item{\\code{\\link{",
       capture(some_of(letter, number, "_", "."), name = "linter"),
