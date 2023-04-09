@@ -167,6 +167,11 @@ test_that("lintr help files are up to date", {
     responseName = "n_linters",
     stringsAsFactors = FALSE
   )
+  n_deprecated = nrow(available_linters(tags = "deprecated", exclude_tags = NULL))
+  db_tag_table <- rbind(
+    db_tag_table,
+    data.frame(tag = "deprecated", n_linters = n_deprecated)
+  )
   # In ?linters, entries in the enumeration of tags look like
   #   \item{\link[=${TAG}_linters]{${TAG}} (${N_LINTERS_WITH_TAG} linters)}
   help_tag_table <- rex::re_matches(
@@ -191,6 +196,7 @@ test_that("lintr help files are up to date", {
   expect_identical(
     help_tag_table[order(help_tag_table$tag), ],
     db_tag_table[order(db_tag_table$tag), ],
+    ignore_attr = "row.names",
     info = "Tags and corresponding counts in ?linters is the same as in available_linters()"
   )
 
@@ -208,12 +214,17 @@ test_that("lintr help files are up to date", {
       global = TRUE
     )[[1L]]
 
-    # those entries in available_linters() with the current tag
-    db_linter_has_tag <- vapply(lintr_db$tags, function(linter_tag) any(tag %in% linter_tag), logical(1L))
-
+    if (tag == "deprecated") {
+      deprecated_linters <- available_linters(tag = "deprecated", exclude_tag = NULL)
+      expected <- deprecated_linters$linter
+    } else {
+      # those entries in available_linters() with the current tag
+      db_linter_has_tag <- vapply(lintr_db$tags, function(linter_tag) any(tag %in% linter_tag), logical(1L))
+      expected <- lintr_db$linter[db_linter_has_tag]
+    }
     expect_identical(
       sort(help_tag_linters$linter),
-      sort(lintr_db$linter[db_linter_has_tag]),
+      sort(expected),
       info = paste0("?", tag, "_linters lists all linters with that tag in available_linters()")
     )
   }
