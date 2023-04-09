@@ -112,16 +112,15 @@ test_that("lintr help files are up to date", {
   # 2. Rscript -e "library(lintr); testthat::test_file('tests/testthat/test-linter_tags.R')"
 
   helper_db_dir <- system.file("help", package = "lintr")
-  skip_if_not(dir.exists(helper_db_dir), message = "Couldn't find package help")
   skip_if_not(
-    all(file.exists(file.path(helper_db_dir, c("lintr.rdb", "lintr.rdx")))),
-    message = "'lintr.rdb' or 'lintr.rdx' not found in installed help directory"
+    dir.exists(helper_db_dir) && all(file.exists(file.path(helper_db_dir, c("lintr.rdb", "lintr.rdx")))),
+    message = "Package help not installed or corrupted"
   )
 
   help_env <- new.env(parent = topenv())
   lazyLoad(file.path(helper_db_dir, "lintr"), help_env)
 
-  lintr_db <- available_linters(exclude_tags = "deprecated")
+  lintr_db <- available_linters()
   lintr_db$package <- NULL
   lintr_db$tags <- lapply(lintr_db$tags, sort)
 
