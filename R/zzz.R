@@ -23,21 +23,21 @@ default_linters <- modify_defaults(
   indentation_linter(),
   infix_spaces_linter(),
   line_length_linter(),
-  no_tab_linter(),
   object_length_linter(),
   object_name_linter(),
   object_usage_linter(),
   paren_body_linter(),
   pipe_continuation_linter(),
+  quotes_linter(),
   semicolon_linter(),
   seq_linter(),
-  single_quotes_linter(),
   spaces_inside_linter(),
   spaces_left_parentheses_linter(),
   T_and_F_symbol_linter(),
   trailing_blank_lines_linter(),
   trailing_whitespace_linter(),
-  vector_logic_linter()
+  vector_logic_linter(),
+  whitespace_linter()
 )
 
 #' Default undesirable functions and operators
