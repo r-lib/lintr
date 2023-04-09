@@ -76,10 +76,10 @@ test_that("with_defaults is supported with a deprecation warning", {
   expect_identical(defaults, old_defaults)
 
   # linters_with_defaults only accepts `defaults = list()` to start from blank
-  defaults <- linters_with_defaults(defaults = list(), no_tab_linter())
+  defaults <- linters_with_defaults(defaults = list(), whitespace_linter())
   expect_warning(
     {
-      old_defaults <- with_defaults(default = NULL, no_tab_linter())
+      old_defaults <- with_defaults(default = NULL, whitespace_linter())
     },
     rex::rex("Use linters_with_defaults or modify_defaults instead.")
   )
@@ -99,17 +99,17 @@ test_that("modify_defaults works", {
 test_that("linters_with_defaults(default = .) is supported with a deprecation warning", {
   expect_warning(
     {
-      linters <- linters_with_defaults(default = list(), no_tab_linter())
+      linters <- linters_with_defaults(default = list(), whitespace_linter())
     },
     "'default'"
   )
-  expect_named(linters, "no_tab_linter")
+  expect_named(linters, "whitespace_linter")
 
   # the same warning is not triggered in modify_defaults
   expect_silent({
-    linters <- modify_defaults(defaults = list(), default = list(), no_tab_linter())
+    linters <- modify_defaults(defaults = list(), default = list(), whitespace_linter())
   })
-  expect_named(linters, c("default", "no_tab_linter"))
+  expect_named(linters, c("default", "whitespace_linter"))
 
   # if default= is explicitly provided alongside defaults=, assume that was intentional
   default <- Linter(function(.) list())

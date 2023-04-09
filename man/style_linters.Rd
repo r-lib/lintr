@@ -26,7 +26,6 @@ The following linters are tagged with 'style':
 \item{\code{\link{indentation_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
 \item{\code{\link{line_length_linter}}}
-\item{\code{\link{no_tab_linter}}}
 \item{\code{\link{numeric_leading_zero_linter}}}
 \item{\code{\link{object_length_linter}}}
 \item{\code{\link{object_name_linter}}}
@@ -46,5 +45,6 @@ The following linters are tagged with 'style':
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
 \item{\code{\link{unnecessary_concatenation_linter}}}
+\item{\code{\link{whitespace_linter}}}
 }
 }

@@ -22,7 +22,6 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{inner_combine_linter}}}
 \item{\code{\link{is_numeric_linter}}}
 \item{\code{\link{literal_coercion_linter}}}
-\item{\code{\link{no_tab_linter}}}
 \item{\code{\link{numeric_leading_zero_linter}}}
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{paste_linter}}}
@@ -31,5 +30,6 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
+\item{\code{\link{whitespace_linter}}}
 }
 }
