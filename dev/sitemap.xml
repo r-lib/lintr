@@ -277,9 +277,6 @@
     <loc>https://lintr.r-lib.org/dev/reference/nested_ifelse_linter.html</loc>
   </url>
   <url>
-    <loc>https://lintr.r-lib.org/dev/reference/no_tab_linter.html</loc>
-  </url>
-  <url>
     <loc>https://lintr.r-lib.org/dev/reference/nonportable_path_linter.html</loc>
   </url>
   <url>
@@ -416,6 +413,9 @@
   </url>
   <url>
     <loc>https://lintr.r-lib.org/dev/reference/vector_logic_linter.html</loc>
+  </url>
+  <url>
+    <loc>https://lintr.r-lib.org/dev/reference/whitespace_linter.html</loc>
   </url>
   <url>
     <loc>https://lintr.r-lib.org/dev/reference/xml_nodes_to_lints.html</loc>

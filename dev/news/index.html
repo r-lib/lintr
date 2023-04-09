@@ -71,6 +71,8 @@
 <code>unneeded_concatentation_linter()</code> is deprecated in favor of <code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code> for naming consistency (<a href="https://github.com/r-lib/lintr/issues/1707" class="external-link">#1707</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</li>
 <li>
 <code><a href="../reference/lintr-deprecated.html">consecutive_stopifnot_linter()</a></code> is deprecated in favor of the more general (see below) <code><a href="../reference/consecutive_assertion_linter.html">consecutive_assertion_linter()</a></code> (<a href="https://github.com/r-lib/lintr/issues/1604" class="external-link">#1604</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/lintr-deprecated.html">no_tab_linter()</a></code> is deprecated in favor of <code><a href="../reference/whitespace_linter.html">whitespace_linter()</a></code> for naming consistency and future generalization (<a href="https://github.com/r-lib/lintr/issues/1954" class="external-link">#1954</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
@@ -116,6 +118,7 @@
 <ul><li><code><a href="../reference/indentation_linter.html">indentation_linter()</a></code></li>
 <li><code><a href="../reference/quotes_linter.html">quotes_linter()</a></code></li>
 <li><code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code></li>
+<li><code><a href="../reference/whitespace_linter.html">whitespace_linter()</a></code></li>
 </ul></li>
 </ul></div>
 <div class="section level3">
@@ -159,6 +162,7 @@
 <li><p><code><a href="../reference/quotes_linter.html">quotes_linter()</a></code> is a generalized version of (now deprecated) <code><a href="../reference/lintr-deprecated.html">single_quotes_linter()</a></code>. It accepts an argument <code>delimiter</code> to specify whether <code>"</code> or <code>'</code> should be the accepted method for delimiting character literals. The default, <code>"</code>, reflects the Tidyverse style guide recommendation and matches the behavior of <code><a href="../reference/lintr-deprecated.html">single_quotes_linter()</a></code>.</p></li>
 <li><p><code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code> is simply <code><a href="../reference/lintr-deprecated.html">unneeded_concatenation_linter()</a></code>, renamed.</p></li>
 <li><p><code><a href="../reference/consecutive_assertion_linter.html">consecutive_assertion_linter()</a></code> (f.k.a. <code><a href="../reference/lintr-deprecated.html">consecutive_stopifnot_linter()</a></code>) now lints for consecutive calls to <code>assertthat::assert_that()</code> (as long as the <code>msg=</code> argument is not used; <a href="https://github.com/r-lib/lintr/issues/1604" class="external-link">#1604</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</p></li>
+<li><p><code><a href="../reference/whitespace_linter.html">whitespace_linter()</a></code> is simply <code><a href="../reference/lintr-deprecated.html">no_tab_linter()</a></code>, renamed. In the future, we plan to extend it to work for different whitespace preferences.</p></li>
 </ul></div>
 </div>
 <div class="section level3">
@@ -309,7 +313,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <li>
 <code><a href="../reference/line_length_linter.html">line_length_linter()</a></code>: place the source marker at the margin of the affected line to improve user experience during de-linting – just press <kbd>Return</kbd> (<a href="https://github.com/r-lib/lintr/issues/735" class="external-link">#735</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).*</li>
 <li>
-<code><a href="../reference/no_tab_linter.html">no_tab_linter()</a></code>: use more reliable matching (e.g., excluding matches found in comments; <a href="https://github.com/r-lib/lintr/issues/441" class="external-link">#441</a>, <a href="https://github.com/russHyde" class="external-link">@russHyde</a>).</li>
+<code><a href="../reference/lintr-deprecated.html">no_tab_linter()</a></code>: use more reliable matching (e.g., excluding matches found in comments; <a href="https://github.com/r-lib/lintr/issues/441" class="external-link">#441</a>, <a href="https://github.com/russHyde" class="external-link">@russHyde</a>).</li>
 <li>
 <code><a href="../reference/object_length_linter.html">object_length_linter()</a></code>: correctly detect generics and only count the implementation class towards the length. This prevents false positive lints in the case of long generic names, e.g. <code>very_very_very_long_generic_name.short_class</code> no longer produces a lint (<a href="https://github.com/r-lib/lintr/issues/871" class="external-link">#871</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>
@@ -645,7 +649,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <li>
 <code><a href="../reference/function_left_parentheses_linter.html">function_left_parentheses_linter()</a></code> now allows spaces if a function starts with a left parenthesis (<a href="https://github.com/r-lib/lintr/issues/311" class="external-link">#311</a>)</li>
 <li>
-<code><a href="../reference/no_tab_linter.html">no_tab_linter()</a></code> now reports proper line in all cases (<a href="https://github.com/r-lib/lintr/issues/134" class="external-link">#134</a>, <a href="https://github.com/fangly" class="external-link">@fangly</a>)</li>
+<code><a href="../reference/lintr-deprecated.html">no_tab_linter()</a></code> now reports proper line in all cases (<a href="https://github.com/r-lib/lintr/issues/134" class="external-link">#134</a>, <a href="https://github.com/fangly" class="external-link">@fangly</a>)</li>
 <li>
 <code><a href="../reference/object_length_linter.html">object_length_linter()</a></code> argument <code>length</code> now defaults to 30 for consistency (<a href="https://github.com/r-lib/lintr/issues/325" class="external-link">#325</a> <a href="https://github.com/DragosMG" class="external-link">@DragosMG</a>)</li>
 <li>

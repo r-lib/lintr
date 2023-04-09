@@ -330,12 +330,12 @@ function <code><a href="../reference/linters_with_defaults.html">linters_with_de
 unnamed linters with the default settings. Disable a linter by passing
 <code>NULL</code>.</p>
 <p>For example, to set the line length limit to 120 characters and
-globally disable the <code>no_tab_linter</code>, you can put this into
-your <code>.lintr</code>:</p>
+globally disable the <code><a href="../reference/whitespace_linter.html">whitespace_linter()</a></code>, you can put this
+into your <code>.lintr</code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">linters</span><span class="op">:</span> <span class="fu"><a href="../reference/linters_with_defaults.html">linters_with_defaults</a></span><span class="op">(</span></span>
 <span>    line_length_linter <span class="op">=</span> <span class="fu"><a href="../reference/line_length_linter.html">line_length_linter</a></span><span class="op">(</span><span class="fl">120L</span><span class="op">)</span>,</span>
-<span>    no_tab_linter <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>    whitespace_linter <span class="op">=</span> <span class="cn">NULL</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>By default, the following linters are enabled. Where applicable, the
 default settings are also shown.</p>
@@ -393,64 +393,64 @@ TRUE</td>
 <td align="left">length = 80L</td>
 </tr>
 <tr class="odd">
-<td align="left">no_tab_linter</td>
-<td align="left"></td>
-</tr>
-<tr class="even">
 <td align="left">object_length_linter</td>
 <td align="left">length = 30L</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">object_name_linter</td>
 <td align="left">styles = c(“snake_case”, “symbols”), regexes =
 character(0)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">object_usage_linter</td>
 <td align="left">interpret_glue = TRUE, skip_with = TRUE</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">paren_body_linter</td>
 <td align="left"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">pipe_continuation_linter</td>
 <td align="left"></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">quotes_linter</td>
 <td align="left">delimiter = “"”</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">semicolon_linter</td>
 <td align="left">allow_compound = FALSE, allow_trailing = FALSE</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">seq_linter</td>
 <td align="left"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">spaces_inside_linter</td>
 <td align="left"></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">spaces_left_parentheses_linter</td>
 <td align="left"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">T_and_F_symbol_linter</td>
 <td align="left"></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">trailing_blank_lines_linter</td>
 <td align="left"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">trailing_whitespace_linter</td>
 <td align="left">allow_empty_lines = FALSE, allow_in_strings = TRUE</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">vector_logic_linter</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">whitespace_linter</td>
 <td align="left"></td>
 </tr>
 </tbody>
@@ -538,26 +538,26 @@ using</p>
 <span><span class="co">#&gt; [43] "literal_coercion_linter"          "matrix_apply_linter"             </span></span>
 <span><span class="co">#&gt; [45] "missing_argument_linter"          "missing_package_linter"          </span></span>
 <span><span class="co">#&gt; [47] "namespace_linter"                 "nested_ifelse_linter"            </span></span>
-<span><span class="co">#&gt; [49] "no_tab_linter"                    "nonportable_path_linter"         </span></span>
-<span><span class="co">#&gt; [51] "numeric_leading_zero_linter"      "object_length_linter"            </span></span>
-<span><span class="co">#&gt; [53] "object_name_linter"               "object_usage_linter"             </span></span>
-<span><span class="co">#&gt; [55] "outer_negation_linter"            "package_hooks_linter"            </span></span>
-<span><span class="co">#&gt; [57] "paren_body_linter"                "paste_linter"                    </span></span>
-<span><span class="co">#&gt; [59] "pipe_call_linter"                 "pipe_continuation_linter"        </span></span>
-<span><span class="co">#&gt; [61] "quotes_linter"                    "redundant_equals_linter"         </span></span>
-<span><span class="co">#&gt; [63] "redundant_ifelse_linter"          "regex_subset_linter"             </span></span>
-<span><span class="co">#&gt; [65] "routine_registration_linter"      "semicolon_linter"                </span></span>
-<span><span class="co">#&gt; [67] "seq_linter"                       "sort_linter"                     </span></span>
-<span><span class="co">#&gt; [69] "spaces_inside_linter"             "spaces_left_parentheses_linter"  </span></span>
-<span><span class="co">#&gt; [71] "sprintf_linter"                   "string_boundary_linter"          </span></span>
-<span><span class="co">#&gt; [73] "strings_as_factors_linter"        "system_file_linter"              </span></span>
-<span><span class="co">#&gt; [75] "T_and_F_symbol_linter"            "todo_comment_linter"             </span></span>
-<span><span class="co">#&gt; [77] "trailing_blank_lines_linter"      "trailing_whitespace_linter"      </span></span>
-<span><span class="co">#&gt; [79] "undesirable_function_linter"      "undesirable_operator_linter"     </span></span>
-<span><span class="co">#&gt; [81] "unnecessary_concatenation_linter" "unnecessary_lambda_linter"       </span></span>
-<span><span class="co">#&gt; [83] "unnecessary_nested_if_linter"     "unnecessary_placeholder_linter"  </span></span>
-<span><span class="co">#&gt; [85] "unreachable_code_linter"          "unused_import_linter"            </span></span>
-<span><span class="co">#&gt; [87] "vector_logic_linter"              "yoda_test_linter"</span></span></code></pre></div>
+<span><span class="co">#&gt; [49] "nonportable_path_linter"          "numeric_leading_zero_linter"     </span></span>
+<span><span class="co">#&gt; [51] "object_length_linter"             "object_name_linter"              </span></span>
+<span><span class="co">#&gt; [53] "object_usage_linter"              "outer_negation_linter"           </span></span>
+<span><span class="co">#&gt; [55] "package_hooks_linter"             "paren_body_linter"               </span></span>
+<span><span class="co">#&gt; [57] "paste_linter"                     "pipe_call_linter"                </span></span>
+<span><span class="co">#&gt; [59] "pipe_continuation_linter"         "quotes_linter"                   </span></span>
+<span><span class="co">#&gt; [61] "redundant_equals_linter"          "redundant_ifelse_linter"         </span></span>
+<span><span class="co">#&gt; [63] "regex_subset_linter"              "routine_registration_linter"     </span></span>
+<span><span class="co">#&gt; [65] "semicolon_linter"                 "seq_linter"                      </span></span>
+<span><span class="co">#&gt; [67] "sort_linter"                      "spaces_inside_linter"            </span></span>
+<span><span class="co">#&gt; [69] "spaces_left_parentheses_linter"   "sprintf_linter"                  </span></span>
+<span><span class="co">#&gt; [71] "string_boundary_linter"           "strings_as_factors_linter"       </span></span>
+<span><span class="co">#&gt; [73] "system_file_linter"               "T_and_F_symbol_linter"           </span></span>
+<span><span class="co">#&gt; [75] "todo_comment_linter"              "trailing_blank_lines_linter"     </span></span>
+<span><span class="co">#&gt; [77] "trailing_whitespace_linter"       "undesirable_function_linter"     </span></span>
+<span><span class="co">#&gt; [79] "undesirable_operator_linter"      "unnecessary_concatenation_linter"</span></span>
+<span><span class="co">#&gt; [81] "unnecessary_lambda_linter"        "unnecessary_nested_if_linter"    </span></span>
+<span><span class="co">#&gt; [83] "unnecessary_placeholder_linter"   "unreachable_code_linter"         </span></span>
+<span><span class="co">#&gt; [85] "unused_import_linter"             "vector_logic_linter"             </span></span>
+<span><span class="co">#&gt; [87] "whitespace_linter"                "yoda_test_linter"</span></span></code></pre></div>
 <p>If you want to use all available linters, you can include this in
 your <code>.lintr</code> file:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">linters</span><span class="kw">:</span><span class="at"> all_linters()</span></span></code></pre></div>
@@ -599,16 +599,16 @@ enough:</p>
 <span>  <span class="co"># more concise alternative: use eval(call(.))</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="../reference/lint.html">lint</a></span><span class="op">(</span><span class="va">tmp</span>, linters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/call.html" class="external-link">call</a></span><span class="op">(</span><span class="va">linter_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpyaMHTI/file1cd9627ef537           1             3 style</span></span>
+<span><span class="co">#&gt;                          filename line_number column_number  type</span></span>
+<span><span class="co">#&gt; 1 /tmp/Rtmpso4qdD/file1cf33f0d90f           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1    get</span></span>
-<span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpyaMHTI/file1cd9627ef537           1             3 style</span></span>
+<span><span class="co">#&gt;                          filename line_number column_number  type</span></span>
+<span><span class="co">#&gt; 1 /tmp/Rtmpso4qdD/file1cf33f0d90f           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span>
-<span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpyaMHTI/file1cd9627ef537           1             3 style</span></span>
+<span><span class="co">#&gt;                          filename line_number column_number  type</span></span>
+<span><span class="co">#&gt; 1 /tmp/Rtmpso4qdD/file1cf33f0d90f           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span></code></pre></div>
 </div>
