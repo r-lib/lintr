@@ -107,3 +107,14 @@ test_that("multi-line cases are handled correctly", {
     linter
   )
 })
+
+test_that("it doesn't produce invalid lints", {
+  # Part of #1427
+  expect_no_warning(
+    expect_lint(
+      "function() {)",
+      list(list(linter = "error")),
+      function_left_parentheses_linter()
+    )
+  )
+})
