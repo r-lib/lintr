@@ -64,8 +64,10 @@ function_left_parentheses_linter <- function() { # nolint: object_length.
       # this is a janky XPath 1.0 implementation for if(same line, "before (", "range[1]")
       #   by converting if(COND, x, y) to 1[COND] * x + (1 - 1[COND]) * y for 1[.] an indicator function
       range_end_xpath = "
-        number(./@line1  = ./following-sibling::OP-LEFT-PAREN/@line1) * number(./following-sibling::OP-LEFT-PAREN/@col1 - 1) +
-        number(./@line1 != ./following-sibling::OP-LEFT-PAREN/@line1) * number(./@col2 + 1)
+        number(./@line1  = ./following-sibling::OP-LEFT-PAREN/@line1) *
+          number(./following-sibling::OP-LEFT-PAREN/@col1 - 1) +
+        number(./@line1 != ./following-sibling::OP-LEFT-PAREN/@line1) *
+          number(./@col2 + 1)
       "
     )
   })
