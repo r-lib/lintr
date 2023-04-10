@@ -48,7 +48,7 @@ test_that("function_left_parentheses_linter blocks disallowed usages", {
 
 test_that("multi-line cases are handled correctly", {
   linter <- function_left_parentheses_linter()
-  lint_msg <- rex::rex("Remove spaces before the left parenthesis in a function call.")
+  lint_msg <- rex::rex("Left parenthesis should be on the same line as the function's symbol.")
 
   expect_lint(
     trim_some("

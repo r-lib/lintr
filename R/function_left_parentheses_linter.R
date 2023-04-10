@@ -41,11 +41,14 @@
 #' - [spaces_left_parentheses_linter()]
 #' @export
 function_left_parentheses_linter <- function() { # nolint: object_length.
-  pos_xpath <- xp_or(
-    "@line1 != following-sibling::OP-LEFT-PAREN/@line1",
+  xpath_fmt <- "//FUNCTION[ {xpath} ] | //SYMBOL_FUNCTION_CALL/parent::expr[ {xpath} ]"
+  bad_line_cond <- "@line1 != following-sibling::OP-LEFT-PAREN/@line1"
+  bad_col_cond <- xp_and(
+    "@line1 = following-sibling::OP-LEFT-PAREN/@line1",
     "@col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1"
   )
-  xpath <- glue::glue("//FUNCTION[ {pos_xpath} ] | //SYMBOL_FUNCTION_CALL/parent::expr[ {pos_xpath} ]")
+  bad_line_xpath <- glue::glue(xpath_fmt, xpath = bad_line_cond)
+  bad_col_xpath <- glue::glue(xpath_fmt, xpath = bad_col_cond)
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -53,22 +56,22 @@ function_left_parentheses_linter <- function() { # nolint: object_length.
     }
 
     xml <- source_expression$xml_parsed_content
-    bad_exprs <- xml2::xml_find_all(xml, xpath)
 
-    xml_nodes_to_lints(
-      bad_exprs,
+    bad_line_exprs <- xml2::xml_find_all(xml, bad_line_xpath)
+    bad_line_lints <- xml_nodes_to_lints(
+      bad_line_exprs,
+      source_expression = source_expression,
+      lint_message = "Left parenthesis should be on the same line as the function's symbol.",
+    )
+
+    bad_col_exprs <- xml2::xml_find_all(xml, bad_col_xpath)
+    bad_col_lints <- xml_nodes_to_lints(
+      bad_col_exprs,
       source_expression = source_expression,
       lint_message = "Remove spaces before the left parenthesis in a function call.",
       range_start_xpath = "number(./@col2 + 1)", # start after function / fun
-      # if '(' is on the same line, end before '(', otherwise, just set range[2]=range[1].
-      # this is a janky XPath 1.0 implementation for if(same line, "before (", "range[1]")
-      #   by converting if(COND, x, y) to 1[COND] * x + (1 - 1[COND]) * y for 1[.] an indicator function
-      range_end_xpath = "
-        number(./@line1  = ./following-sibling::OP-LEFT-PAREN/@line1) *
-          number(./following-sibling::OP-LEFT-PAREN/@col1 - 1) +
-        number(./@line1 != ./following-sibling::OP-LEFT-PAREN/@line1) *
-          number(./@col2 + 1)
-      "
+      range_end_xpath = "number(./following-sibling::OP-LEFT-PAREN/@col1 - 1)" # end before (
     )
+    c(bad_line_lints, bad_col_lints)
   })
 }
