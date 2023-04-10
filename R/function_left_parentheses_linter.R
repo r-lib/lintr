@@ -45,7 +45,7 @@ function_left_parentheses_linter <- function() { # nolint: object_length.
     "@line1 != following-sibling::OP-LEFT-PAREN/@line1",
     "@col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1"
   )
-  xpath <- glue::glue("//FUNCTION[ {pos_xpath}] | //SYMBOL_FUNCTION_CALL/parent::expr[ {pos_xpath} ]")
+  xpath <- glue::glue("//FUNCTION[ {pos_xpath} ] | //SYMBOL_FUNCTION_CALL/parent::expr[ {pos_xpath} ]")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
