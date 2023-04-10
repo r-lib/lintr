@@ -45,3 +45,65 @@ test_that("function_left_parentheses_linter blocks disallowed usages", {
     linter
   )
 })
+
+test_that("multi-line cases are handled correctly", {
+  linter <- function_left_parentheses_linter()
+  lint_msg <- rex::rex("Remove spaces before the left parenthesis in a function call.")
+
+  expect_lint(
+    trim_some("
+      foo <- function
+      (
+        param
+      ) {
+        param + 1
+      }
+    "),
+    lint_msg,
+    linter
+  )
+
+  # edge case where '(' is in the right place on the wrong line
+  expect_lint(
+    trim_some("
+      foo <- function
+                     (
+        param
+      ) {
+        param + 1
+      }
+    "),
+    lint_msg,
+    linter
+  )
+
+  # ditto for function calls
+  expect_lint(
+    trim_some("
+      if (
+        y > sum
+        (
+          x
+        )
+      ) {
+        TRUE
+      }
+    "),
+    lint_msg,
+    linter
+  )
+  expect_lint(
+    trim_some("
+      if (
+        y > sum
+               (
+          x
+        )
+      ) {
+        TRUE
+      }
+    "),
+    lint_msg,
+    linter
+  )
+})
