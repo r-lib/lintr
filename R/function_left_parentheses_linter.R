@@ -41,14 +41,14 @@
 #' - [spaces_left_parentheses_linter()]
 #' @export
 function_left_parentheses_linter <- function() { # nolint: object_length.
-  xpath_fmt <- "//FUNCTION[ {xpath} ] | //SYMBOL_FUNCTION_CALL/parent::expr[ {xpath} ]"
+  xpath_fmt <- "//FUNCTION[ {cond} ] | //SYMBOL_FUNCTION_CALL/parent::expr[ {cond} ]"
   bad_line_cond <- "@line1 != following-sibling::OP-LEFT-PAREN/@line1"
   bad_col_cond <- xp_and(
     "@line1 = following-sibling::OP-LEFT-PAREN/@line1",
     "@col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1"
   )
-  bad_line_xpath <- glue::glue(xpath_fmt, xpath = bad_line_cond)
-  bad_col_xpath <- glue::glue(xpath_fmt, xpath = bad_col_cond)
+  bad_line_xpath <- glue::glue(xpath_fmt, cond = bad_line_cond)
+  bad_col_xpath <- glue::glue(xpath_fmt, cond = bad_col_cond)
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
