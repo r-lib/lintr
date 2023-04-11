@@ -167,7 +167,7 @@ test_that("lintr help files are up to date", {
     responseName = "n_linters",
     stringsAsFactors = FALSE
   )
-  n_deprecated <- nrow(available_linters(tags = "deprecated", exclude_tags = NULL))
+  n_deprecated <- nrow(available_linters(tags = "deprecated"))
   db_tag_table <- rbind(
     db_tag_table,
     data.frame(tag = "deprecated", n_linters = n_deprecated, stringsAsFactors = FALSE)

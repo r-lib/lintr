@@ -160,10 +160,7 @@ rd_tags <- function(linter_name) {
 #'
 #' @noRd
 rd_linters <- function(tag_name) {
-  # don't show any deprecated linters on a tag's page
-  #   (except, of course, on the 'deprecated' tag's page)
-  exclude_tags <- if (tag_name == "deprecated") NULL else "deprecated"
-  linters <- available_linters(tags = tag_name, exclude_tags = exclude_tags)
+  linters <- available_linters(tags = tag_name)
   tagged <- platform_independent_sort(linters[["linter"]])
   if (length(tagged) == 0L) {
     stop("No linters found associated with tag ", tag_name)
@@ -184,7 +181,7 @@ rd_linters <- function(tag_name) {
 #' @noRd
 rd_taglist <- function() {
   linters <- available_linters()
-  n_deprecated <- nrow(available_linters(tags = "deprecated", exclude_tags = NULL))
+  n_deprecated <- nrow(available_linters(tags = "deprecated"))
 
   tag_table <- c(table(unlist(linters[["tags"]])), c(deprecated = n_deprecated))
   tags <- platform_independent_sort(names(tag_table))
