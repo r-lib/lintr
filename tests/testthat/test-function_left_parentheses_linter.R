@@ -141,7 +141,7 @@ test_that("it doesn't produce invalid lints", {
   expect_no_warning(
     expect_lint(
       "function() {)",
-      list(list(linter = "error")),
+      list(linter = "error"),
       function_left_parentheses_linter()
     )
   )
