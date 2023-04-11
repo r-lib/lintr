@@ -127,10 +127,26 @@ test_that("multi-lint case works", {
       }
     "),
     list(
-      list(message = "Left parenthesis should be on the same line as the function's symbol.", line_number = 2L, ranges = list(c(7, 9))),
-      list(message = "Left parenthesis should be on the same line as the function's symbol.", line_number = 6L, ranges = list(c(7, 10))),
-      list(message = "Remove spaces before the left parenthesis in a function call.", line_number = 10L, ranges = list(c(9, 9))),
-      list(message = "Remove spaces before the left parenthesis in a function call.", line_number = 11L, ranges = list(10:11))
+      list(
+        message = "Left parenthesis should be on the same line as the function's symbol.",
+        line_number = 2L,
+        ranges = list(c(7L, 9L))
+      ),
+      list(
+        message = "Left parenthesis should be on the same line as the function's symbol.",
+        line_number = 6L,
+        ranges = list(c(7L, 10L))
+      ),
+      list(
+        message = "Remove spaces before the left parenthesis in a function call.",
+        line_number = 10L,
+        ranges = list(c(9L, 9L))
+      ),
+      list(
+        message = "Remove spaces before the left parenthesis in a function call.",
+        line_number = 11L,
+        ranges = list(10:11)
+      )
     ),
     function_left_parentheses_linter()
   )
