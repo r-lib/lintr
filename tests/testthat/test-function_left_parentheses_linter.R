@@ -145,7 +145,7 @@ test_that("multi-lint case works", {
       list(
         message = "Remove spaces before the left parenthesis in a function call.",
         line_number = 11L,
-        ranges = list(10:11)
+        ranges = list(10L:11L)
       )
     ),
     function_left_parentheses_linter()
