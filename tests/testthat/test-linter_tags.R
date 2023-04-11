@@ -120,9 +120,10 @@ test_that("lintr help files are up to date", {
   help_env <- new.env(parent = topenv())
   lazyLoad(file.path(helper_db_dir, "lintr"), help_env)
 
-  lintr_db <- available_linters()
+  lintr_db <- available_linters(exclude_tags = NULL)
   lintr_db$package <- NULL
-  lintr_db$tags <- lapply(lintr_db$tags, sort)
+  lintr_db$tags <- lapply(lintr_db$tags, function(x) if ("deprecated" %in% x) "deprecated" else sort(x))
+  lintr_db <- lintr_db[order(lintr_db$linter), ]
 
   expect_true(exists("linters", envir = help_env), info = "?linters exists")
 
@@ -153,12 +154,15 @@ test_that("lintr help files are up to date", {
     global = TRUE
   )[[1L]]
   help_linters$tags <- lapply(strsplit(help_linters$tags, ", ", fixed = TRUE), sort)
+  help_linters <- help_linters[order(help_linters$linter), ]
 
   # (1) the complete list of linters and tags matches that in available_linters()
   expect_identical(
-    help_linters[order(help_linters$linter), ],
-    lintr_db[order(lintr_db$linter), ],
-    info = "Database implied by ?linters is the same as is available_linters()"
+    help_linters,
+    # deprecated linters are excluded from this page
+    lintr_db[!vapply(lintr_db$tags, identical, "deprecated", FUN.VALUE = NA), ],
+    info = "Database implied by ?linters is the same as is available_linters()",
+    ignore_attr = "row.names"
   )
 
   # Counts of tags from available_linters()
@@ -166,11 +170,6 @@ test_that("lintr help files are up to date", {
     table(tag = unlist(lintr_db$tags)),
     responseName = "n_linters",
     stringsAsFactors = FALSE
-  )
-  n_deprecated <- nrow(available_linters(tags = "deprecated"))
-  db_tag_table <- rbind(
-    db_tag_table,
-    data.frame(tag = "deprecated", n_linters = n_deprecated, stringsAsFactors = FALSE)
   )
   # In ?linters, entries in the enumeration of tags look like
   #   \item{\link[=${TAG}_linters]{${TAG}} (${N_LINTERS_WITH_TAG} linters)}
@@ -214,14 +213,10 @@ test_that("lintr help files are up to date", {
       global = TRUE
     )[[1L]]
 
-    if (tag == "deprecated") {
-      deprecated_linters <- available_linters(tag = "deprecated", exclude_tag = NULL)
-      expected <- deprecated_linters$linter
-    } else {
-      # those entries in available_linters() with the current tag
-      db_linter_has_tag <- vapply(lintr_db$tags, function(linter_tag) any(tag %in% linter_tag), logical(1L))
-      expected <- lintr_db$linter[db_linter_has_tag]
-    }
+    # those entries in available_linters() with the current tag
+    db_linter_has_tag <- vapply(lintr_db$tags, function(linter_tag) any(tag %in% linter_tag), logical(1L))
+    expected <- lintr_db$linter[db_linter_has_tag]
+
     expect_identical(
       sort(help_tag_linters$linter),
       sort(expected),
@@ -230,7 +225,11 @@ test_that("lintr help files are up to date", {
   }
 
   # (3) the 'configurable' tag applies if and only if the linter has parameters
-  has_args <- lengths(lapply(lintr_db$linter, function(linter) formals(match.fun(linter)))) > 0L
+  has_args <- 0L < lengths(mapply(
+    function(linter, tags) if ("deprecated" %in% tags) NULL else formals(match.fun(linter)),
+    lintr_db$linter, lintr_db$tags,
+    USE.NAMES = FALSE, SIMPLIFY = FALSE
+  ))
   has_configurable_tag <- vapply(lintr_db$tags, function(tags) "configurable" %in% tags, logical(1L))
 
   expect_identical(has_configurable_tag, has_args)
