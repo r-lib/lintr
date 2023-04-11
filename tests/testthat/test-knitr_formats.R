@@ -4,7 +4,7 @@ regexes <- list(
   quotes = rex::rex("Only use double-quotes."),
   trailing = rex::rex("Trailing blank lines are superfluous."),
   trailws = rex::rex("Trailing whitespace is superfluous."),
-  indent = rex("Indentation should be")
+  indent = rex::rex("Indentation should be")
 )
 
 test_that("it handles dir", {
