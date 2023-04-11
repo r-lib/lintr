@@ -61,7 +61,7 @@ function_left_parentheses_linter <- function() { # nolint: object_length.
     bad_line_lints <- xml_nodes_to_lints(
       bad_line_exprs,
       source_expression = source_expression,
-      lint_message = "Left parenthesis should be on the same line as the function's symbol.",
+      lint_message = "Left parenthesis should be on the same line as the function's symbol."
     )
 
     bad_col_exprs <- xml2::xml_find_all(xml, bad_col_xpath)
