@@ -186,10 +186,10 @@ rd_linters <- function(tag_name) {
 #'
 #' @noRd
 rd_taglist <- function() {
-  linters <- available_linters()
-  n_deprecated <- nrow(available_linters(tags = "deprecated"))
+  linters <- available_linters(exclude_tags = NULL)
+  linters$tags <- lapply(linters$tags, function(x) if ("deprecated" %in% x) "deprecated" else x)
 
-  tag_table <- c(table(unlist(linters[["tags"]])), c(deprecated = n_deprecated))
+  tag_table <- table(unlist(linters[["tags"]]))
   tags <- platform_independent_sort(names(tag_table))
   # re-order
   tag_table <- tag_table[tags]
