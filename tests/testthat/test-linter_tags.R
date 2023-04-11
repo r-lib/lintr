@@ -212,3 +212,12 @@ test_that("lintr help files are up to date", {
 
   expect_identical(has_configurable_tag, has_args)
 })
+
+test_that("available_linters gives precedence to included tags", {
+  expect_true("style" %in% unlist(available_linters(tags = "style", exclude_tags = "style")$tags))
+  # also for the default case
+  expect_identical(
+    available_linters(tags = "deprecated"),
+    available_linters(tags = "deprecated", exclude_tags = NULL)
+  )
+})
