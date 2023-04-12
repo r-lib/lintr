@@ -64,7 +64,7 @@
    + `quotes_linter()`
    + `unnecessary_concatenation_linter()`
 
-* `lint_package` also looks for files in `exec/` (#1950, @jmaspons).
+* `lint_package()` also looks for files in `exec/` (#1950, @jmaspons).
 
 ## New and improved features
 
