@@ -90,7 +90,8 @@ tags are already used by lintr.</p></dd>
 
 <dt>exclude_tags</dt>
 <dd><p>Tags to exclude from the results. Linters with at least one matching tag will not be returned.
-If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</p></dd>
+If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded. Note that <code>tags</code> takes priority, meaning that any
+tag found in both <code>tags</code> and <code>exclude_tags</code> will be included, not excluded.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -128,7 +129,10 @@ Each row describes a linter by</p><ol><li><p>its function name (e.g. <code>"assi
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><a href="linters.html">linters</a> for a complete list of linters available in lintr.</p></div>
+    <div class="dont-index">
+<ul><li><p><a href="linters.html">linters</a> for a complete list of linters available in lintr.</p></li>
+<li><p><code>available_tags()</code> to retrieve the set of valid tags.</p></li>
+</ul></div>
     </div>
 
     <div class="section level2">

@@ -97,7 +97,8 @@ If it does not exist, it is added. If the value is <code>NULL</code>, the linter
 
 <dt>exclude_tags</dt>
 <dd><p>Tags to exclude from the results. Linters with at least one matching tag will not be returned.
-If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded.</p></dd>
+If <code>except_tags</code> is <code>NULL</code>, no linters will be excluded. Note that <code>tags</code> takes priority, meaning that any
+tag found in both <code>tags</code> and <code>exclude_tags</code> will be included, not excluded.</p></dd>
 
 </dl></div>
     <div class="section level2">
