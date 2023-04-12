@@ -26,7 +26,7 @@ test_that(
       # from jkl.R
       "jkl = 456",
       "mno = 789",
-      # from exec/script.r
+      # from exec/script.R
       "x = 1:4"
     )
 
