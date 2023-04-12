@@ -166,7 +166,7 @@ rd_tags <- function(linter_name) {
 #'
 #' @noRd
 rd_linters <- function(tag_name) {
-  linters <- available_linters(tags = tag_name, exclude_tags = NULL)
+  linters <- available_linters(tags = tag_name)
   tagged <- platform_independent_sort(linters[["linter"]])
   if (length(tagged) == 0L) {
     stop("No linters found associated with tag ", tag_name)
@@ -187,9 +187,11 @@ rd_linters <- function(tag_name) {
 #' @noRd
 rd_taglist <- function() {
   linters <- available_linters(exclude_tags = NULL)
+  # don't count tags on deprecated linters to the counts of other tags
+  linters$tags <- lapply(linters$tags, function(x) if ("deprecated" %in% x) "deprecated" else x)
 
   tag_table <- table(unlist(linters[["tags"]]))
-  tags <- platform_independent_sort(unique(unlist(linters[["tags"]])))
+  tags <- platform_independent_sort(names(tag_table))
   # re-order
   tag_table <- tag_table[tags]
 
@@ -209,7 +211,7 @@ rd_taglist <- function() {
 #'
 #' @noRd
 rd_linterlist <- function() {
-  linters <- available_linters(exclude_tags = NULL)
+  linters <- available_linters()
   linter_names <- platform_independent_sort(linters[["linter"]])
 
   c(

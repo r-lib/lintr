@@ -16,7 +16,6 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{assignment_linter}}}
 \item{\code{\link{backport_linter}}}
 \item{\code{\link{brace_linter}}}
-\item{\code{\link{closed_curly_linter}}}
 \item{\code{\link{conjunct_test_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{duplicate_argument_linter}}}
@@ -31,19 +30,16 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{object_length_linter}}}
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{object_usage_linter}}}
-\item{\code{\link{open_curly_linter}}}
 \item{\code{\link{paste_linter}}}
 \item{\code{\link{quotes_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{semicolon_linter}}}
-\item{\code{\link{semicolon_terminator_linter}}}
 \item{\code{\link{string_boundary_linter}}}
 \item{\code{\link{todo_comment_linter}}}
 \item{\code{\link{trailing_whitespace_linter}}}
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
 \item{\code{\link{unnecessary_concatenation_linter}}}
-\item{\code{\link{unneeded_concatenation_linter}}}
 \item{\code{\link{unused_import_linter}}}
 }
 }
