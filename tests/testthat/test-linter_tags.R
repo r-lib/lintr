@@ -112,27 +112,36 @@ test_that("lintr help files are up to date", {
   # 2. Rscript -e "library(lintr); testthat::test_file('tests/testthat/test-linter_tags.R')"
 
   helper_db_dir <- system.file("help", package = "lintr")
-  skip_if_not(dir.exists(helper_db_dir))
-  skip_if_not(file.exists(file.path(helper_db_dir, "lintr.rdb")))
-  skip_if_not(file.exists(file.path(helper_db_dir, "lintr.rdx")))
+  skip_if_not(
+    dir.exists(helper_db_dir) && all(file.exists(file.path(helper_db_dir, c("lintr.rdb", "lintr.rdx")))),
+    message = "Package help not installed or corrupted"
+  )
 
   help_env <- new.env(parent = topenv())
   lazyLoad(file.path(helper_db_dir, "lintr"), help_env)
 
   lintr_db <- available_linters(exclude_tags = NULL)
   lintr_db$package <- NULL
-  lintr_db$tags <- lapply(lintr_db$tags, sort)
+  lintr_db$tags <- lapply(lintr_db$tags, function(x) if ("deprecated" %in% x) "deprecated" else sort(x))
+  lintr_db <- lintr_db[order(lintr_db$linter), ]
 
-  expect_true(exists("linters", envir = help_env), info = "?linters exist")
-  # objects in help_env are class Rd, see ?as.character.Rd (part of 'tools')
-  linter_help_text <- paste(as.character(help_env$linters), collapse = "")
+  expect_true(exists("linters", envir = help_env), info = "?linters exists")
+
+  # NB: objects in help_env are class Rd, see ?as.character.Rd (part of 'tools')
+  rd_as_string <- function(rd) paste(as.character(rd), collapse = "")
+
+  # Get a character string with the contents of ?linters
+  linter_help_text <- rd_as_string(help_env$linters)
 
   # Test three things about ?linters
   #   (1) the complete list of linters and tags matches that in available_linters()
   #   (2) the tabulation of tags & corresponding count of linters matches that in available_linters()
   #   (3) the 'configurable' tag applies if and only if the linter has parameters
 
+  # Extract linters & associated tags from ?linters text
   # Rd markup for items looks like \item{\code{\link{...}} (tags: ...)}
+  #                                                  [1]          [2]
+  # [1]: linter name; [2]: associated tags
   help_linters <- rex::re_matches(
     linter_help_text,
     rex::rex(
@@ -145,26 +154,31 @@ test_that("lintr help files are up to date", {
     global = TRUE
   )[[1L]]
   help_linters$tags <- lapply(strsplit(help_linters$tags, ", ", fixed = TRUE), sort)
-
+  help_linters <- help_linters[order(help_linters$linter), ]
 
   # (1) the complete list of linters and tags matches that in available_linters()
   expect_identical(
-    help_linters[order(help_linters$linter), ],
-    lintr_db[order(lintr_db$linter), ],
-    info = "Database implied by ?linters is the same as is available_linters()"
+    help_linters,
+    # deprecated linters are excluded from this page
+    lintr_db[!vapply(lintr_db$tags, identical, "deprecated", FUN.VALUE = NA), ],
+    info = "Database implied by ?linters is the same as is available_linters()",
+    ignore_attr = "row.names"
   )
 
+  # Counts of tags from available_linters()
   db_tag_table <- as.data.frame(
     table(tag = unlist(lintr_db$tags)),
     responseName = "n_linters",
     stringsAsFactors = FALSE
   )
+  # In ?linters, entries in the enumeration of tags look like
+  #   \item{\link[=${TAG}_linters]{${TAG}} (${N_LINTERS_WITH_TAG} linters)}
   help_tag_table <- rex::re_matches(
     linter_help_text,
     rex::rex(
       "\\item{\\link[=",
-      capture(some_of(letter, "_"), "_linters", name = "tag_page"),
-      "]{",
+      capture(some_of(letter, "_"), name = "tag_page"),
+      "_linters]{",
       capture(some_of(letter, "_"), name = "tag"),
       "} (",
       capture(numbers, name = "n_linters"),
@@ -172,8 +186,8 @@ test_that("lintr help files are up to date", {
     ),
     global = TRUE
   )[[1L]]
-  # consistency check
-  expect_identical(help_tag_table$tag_page, paste0(help_tag_table$tag, "_linters"))
+  # consistency/sanity check
+  expect_identical(help_tag_table$tag_page, help_tag_table$tag)
   help_tag_table$tag_page <- NULL
   help_tag_table$n_linters <- as.integer(help_tag_table$n_linters)
 
@@ -181,6 +195,7 @@ test_that("lintr help files are up to date", {
   expect_identical(
     help_tag_table[order(help_tag_table$tag), ],
     db_tag_table[order(db_tag_table$tag), ],
+    ignore_attr = "row.names",
     info = "Tags and corresponding counts in ?linters is the same as in available_linters()"
   )
 
@@ -189,26 +204,42 @@ test_that("lintr help files are up to date", {
     expect_true(exists(paste0(tag, "_linters"), envir = help_env), info = paste0("?", tag, "_linters exists"))
 
     tag_help <- help_env[[paste0(tag, "_linters")]]
-    tag_help_text <- paste(as.character(tag_help), collapse = "")
+    tag_help_text <- rd_as_string(tag_help)
 
+    # linters listed in ?${TAG}_linter
     help_tag_linters <- rex::re_matches(
       tag_help_text,
       rex::rex("\\item{\\code{\\link{", capture(some_of(letter, number, "_", "."), name = "linter"), "}}}"),
       global = TRUE
     )[[1L]]
 
+    # those entries in available_linters() with the current tag
     db_linter_has_tag <- vapply(lintr_db$tags, function(linter_tag) any(tag %in% linter_tag), logical(1L))
+    expected <- lintr_db$linter[db_linter_has_tag]
 
     expect_identical(
       sort(help_tag_linters$linter),
-      sort(lintr_db$linter[db_linter_has_tag]),
+      sort(expected),
       info = paste0("?", tag, "_linters lists all linters with that tag in available_linters()")
     )
   }
 
   # (3) the 'configurable' tag applies if and only if the linter has parameters
-  has_args <- lengths(lapply(lintr_db$linter, function(linter) formals(match.fun(linter)))) > 0L
+  has_args <- 0L < lengths(mapply(
+    function(linter, tags) if ("deprecated" %in% tags) NULL else formals(match.fun(linter)),
+    lintr_db$linter, lintr_db$tags,
+    USE.NAMES = FALSE, SIMPLIFY = FALSE
+  ))
   has_configurable_tag <- vapply(lintr_db$tags, function(tags) "configurable" %in% tags, logical(1L))
 
   expect_identical(has_configurable_tag, has_args)
+})
+
+test_that("available_linters gives precedence to included tags", {
+  expect_true("style" %in% unlist(available_linters(tags = "style", exclude_tags = "style")$tags))
+  # also for the default case
+  expect_identical(
+    available_linters(tags = "deprecated"),
+    available_linters(tags = "deprecated", exclude_tags = NULL)
+  )
 })
