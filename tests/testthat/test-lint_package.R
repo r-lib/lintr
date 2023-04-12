@@ -25,7 +25,9 @@ test_that(
       "abc = 123",
       # from jkl.R
       "jkl = 456",
-      "mno = 789"
+      "mno = 789",
+      # from exec/script.R
+      "x = 1:4"
     )
 
     lints_from_outside <- lint_package(
@@ -80,7 +82,7 @@ test_that(
     # `jkl.R` (and remove it on finishing this test)
     local_config(pkg_path, "exclusions: list('R/abc.R', 'R/jkl.R' = 1)")
 
-    expected_lines <- "mno = 789"
+    expected_lines <- c("mno = 789", "x = 1:4")
     lints_from_outside <- lint_package(
       pkg_path,
       linters = list(assignment_linter())
