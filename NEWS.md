@@ -64,6 +64,8 @@
    + `quotes_linter()`
    + `unnecessary_concatenation_linter()`
 
+* `lint_package` also looks for files in `exec/` (#1950, @jmaspons).
+
 ## New and improved features
 
 * New `get_r_string()` helper to get the R-equivalent value of a string, especially useful for R-4-style raw strings.
@@ -172,6 +174,7 @@
   Thanks to Yihui and other developers for their helpful discussions around this issue (#797, @IndrajeetPatil).
 
 * The output of `lint()` and `Lint()` gain S3 class `"list"` to assist with S3 dispatch (#1494, @MichaelChirico)
+
 # lintr 3.0.2
 
 * Fix test to avoid leaving behind cache files in the global cache directory.
