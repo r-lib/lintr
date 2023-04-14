@@ -61,15 +61,17 @@ find_config <- function(filename) {
     dirname(filename)
   }
 
-  # List possible .lintr file locations
+  # NB: This vector specifies a priority order for where to find the configs,
+  # i.e. the first location where a config exists is chosen and configs which
+  # may exist in subsequent directories are ignored
   file_locations <- c(
-    # Check for a file in the current directory
+    # Current directory
     file.path(path, linter_file),
-    # Next check for a file in the .github/linters directory
+    # .github/linters directory
     file.path(path, ".github", "linters", linter_file),
-    # Next check for a file in higher directories
+    # Higher directories
     find_config2(path),
-    # Next check for a file in the user directory
+    # User directory
     # cf: rstudio@bc9b6a5 SessionRSConnect.R#L32
     file.path(Sys.getenv("HOME", unset = "~"), linter_file)
   )
