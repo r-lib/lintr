@@ -2,8 +2,7 @@
 
 ## Deprecations & Breaking Changes
 
-* Updated the location priority order that `lintr` checks to find a `.lintr` settings file. It now checks in the `.github/linters` project sub folder after the currently searched directory. This is to improve 
-  compatibility with Super-Linter(#1746, @tonyk7440)
+* .lintr configs can now be kept in the directory .github/linters for better compatibility with Super-Linter. Note that this may be a breaking change if you already have a config in both such a directory and in your R project's root since the former will now be discovered first where it was ignored before. Please see vignette("lintr") for details on how configs are discovered. (#1746, @tonyk7440)
 * `single_quotes_linter()` is deprecated in favor of the more generalizable `quotes_linter()` (#1729, @MichaelChirico).
 * `unneeded_concatentation_linter()` is deprecated in favor of `unnecessary_concatenation_linter()` for naming consistency (#1707, @IndrajeetPatil).
 * `consecutive_stopifnot_linter()` is deprecated in favor of the more general (see below) `consecutive_assertion_linter()` (#1604, @MichaelChirico).
