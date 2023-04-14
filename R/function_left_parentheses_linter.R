@@ -41,11 +41,14 @@
 #' - [spaces_left_parentheses_linter()]
 #' @export
 function_left_parentheses_linter <- function() { # nolint: object_length.
-  xpath <- "
-  //FUNCTION[@col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1]
-  |
-  //SYMBOL_FUNCTION_CALL/parent::expr[@col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1]
-  "
+  xpath_fmt <- "//FUNCTION[ {cond} ] | //SYMBOL_FUNCTION_CALL/parent::expr[ {cond} ]"
+  bad_line_cond <- "@line1 != following-sibling::OP-LEFT-PAREN/@line1"
+  bad_col_cond <- xp_and(
+    "@line1 = following-sibling::OP-LEFT-PAREN/@line1",
+    "@col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1"
+  )
+  bad_line_xpath <- glue::glue(xpath_fmt, cond = bad_line_cond)
+  bad_col_xpath <- glue::glue(xpath_fmt, cond = bad_col_cond)
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -53,14 +56,22 @@ function_left_parentheses_linter <- function() { # nolint: object_length.
     }
 
     xml <- source_expression$xml_parsed_content
-    bad_exprs <- xml2::xml_find_all(xml, xpath)
 
-    xml_nodes_to_lints(
-      bad_exprs,
+    bad_line_exprs <- xml2::xml_find_all(xml, bad_line_xpath)
+    bad_line_lints <- xml_nodes_to_lints(
+      bad_line_exprs,
+      source_expression = source_expression,
+      lint_message = "Left parenthesis should be on the same line as the function's symbol."
+    )
+
+    bad_col_exprs <- xml2::xml_find_all(xml, bad_col_xpath)
+    bad_col_lints <- xml_nodes_to_lints(
+      bad_col_exprs,
       source_expression = source_expression,
       lint_message = "Remove spaces before the left parenthesis in a function call.",
       range_start_xpath = "number(./@col2 + 1)", # start after function / fun
       range_end_xpath = "number(./following-sibling::OP-LEFT-PAREN/@col1 - 1)" # end before (
     )
+    c(bad_line_lints, bad_col_lints)
   })
 }

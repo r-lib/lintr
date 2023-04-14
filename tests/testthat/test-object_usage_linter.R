@@ -638,3 +638,130 @@ test_that("messages without a quoted name are caught", {
     object_usage_linter()
   )
 })
+
+# See #1914
+test_that("symbols in formulas aren't treated as 'undefined global'", {
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        lm(
+          y ~ z,
+          data = x[!is.na(y)]
+        )
+      }
+    "),
+    list(
+      message = "no visible binding for global variable 'y'",
+      line_number = 4L,
+      column_number = 21L
+    ),
+    object_usage_linter()
+  )
+
+  # neither on the RHS
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        lm(
+          z ~ y,
+          data = x[!is.na(y)]
+        )
+      }
+    "),
+    list(
+      message = "no visible binding for global variable 'y'",
+      line_number = 4L,
+      column_number = 21L
+    ),
+    object_usage_linter()
+  )
+
+  # nor in nested expressions
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        lm(
+          log(log(y)) ~ z,
+          data = x[!is.na(y)]
+        )
+      }
+    "),
+    list(
+      message = "no visible binding for global variable 'y'",
+      line_number = 4L,
+      column_number = 21L
+    ),
+    object_usage_linter()
+  )
+
+  # nor as a call
+  # NB: I wanted this to be s(), as in mgcv::s(), but that
+  #   doesn't work in this test suite because it resolves to
+  #   rex::s() since we attach that in testthat.R
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        lm(
+          y(w) ~ z,
+          data = x[!is.na(y)]
+        )
+      }
+    "),
+    list(
+      message = "no visible binding for global variable 'y'",
+      line_number = 4L,
+      column_number = 21L
+    ),
+    object_usage_linter()
+  )
+})
+
+test_that("NSE-ish symbols after $/@ are ignored as sources for lints", {
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        ggplot2::ggplot(
+          x[!is.na(x$column), ],
+          ggplot2::aes(x = column, fill = factor(x$grp))
+        )
+      }
+    "),
+    list(
+      message = "no visible binding for global variable 'column'",
+      line_number = 4L,
+      column_number = 22L
+    ),
+    object_usage_linter()
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        ggplot2::ggplot(
+          x[!is.na(x@column), ],
+          ggplot2::aes(x = column, fill = factor(x$grp))
+        )
+      }
+    "),
+    list(
+      message = "no visible binding for global variable 'column'",
+      line_number = 4L,
+      column_number = 22L
+    ),
+    object_usage_linter()
+  )
+})
+
+test_that("functional lambda definitions are also caught", {
+  skip_if_not_r_version("4.1.0")
+
+  expect_lint(
+    trim_some("
+      fun <- \\() {
+        a <- 1
+      }
+    "),
+    rex::rex("local variable", anything, "assigned but may not be used"),
+    object_usage_linter()
+  )
+})

@@ -12,7 +12,8 @@ commas_linter,style readability default
 commented_code_linter,style readability best_practices default
 condition_message_linter,best_practices consistency
 conjunct_test_linter,package_development best_practices readability configurable
-consecutive_stopifnot_linter,style readability consistency
+consecutive_assertion_linter,style readability consistency
+consecutive_stopifnot_linter,style readability consistency deprecated
 cyclocomp_linter,style readability best_practices default configurable
 duplicate_argument_linter,correctness common_mistakes configurable
 empty_assignment_linter,readability best_practices
@@ -48,7 +49,7 @@ missing_argument_linter,correctness common_mistakes configurable
 missing_package_linter,robustness common_mistakes
 namespace_linter,correctness robustness configurable executing
 nested_ifelse_linter,efficiency readability
-no_tab_linter,style consistency default
+no_tab_linter,style consistency deprecated
 nonportable_path_linter,robustness best_practices configurable
 numeric_leading_zero_linter,style consistency readability
 object_length_linter,style readability default configurable executing
@@ -92,4 +93,5 @@ unneeded_concatenation_linter,style readability efficiency configurable deprecat
 unreachable_code_linter,best_practices readability
 unused_import_linter,best_practices common_mistakes configurable executing
 vector_logic_linter,default efficiency best_practices
+whitespace_linter,style consistency default
 yoda_test_linter,package_development best_practices readability

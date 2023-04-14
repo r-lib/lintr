@@ -21,6 +21,19 @@ test_that("linters_with_defaults warns on unused NULLs", {
   )
 })
 
+test_that("linters_with_tags() verifies the output of available_linters()", {
+  skip_if_not_installed("mockery")
+  mockery::stub(
+    linters_with_tags,
+    "available_linters",
+    data.frame(linter = c("fake_linter", "very_fake_linter"), package = "lintr", tags = "", stringsAsFactors = FALSE)
+  )
+  expect_error(
+    linters_with_tags(NULL),
+    "'fake_linter' and 'very_fake_linter'"
+  )
+})
+
 test_that("all default linters are tagged default", {
   expect_named(linters_with_defaults(), available_linters(tags = "default")$linter)
 
@@ -31,7 +44,7 @@ test_that("all default linters are tagged default", {
   skip_on_covr()
 
   expect_identical(linters_with_tags("default"), linters_with_defaults())
-  expect_length(linters_with_tags("default", exclude_tags = "default"), 0L)
+  expect_length(linters_with_tags(NULL, exclude_tags = available_tags()), 0L)
 
   # Check that above test also trips on default arguments.
   skip_if_not_r_version("4.1.0") # Desired all.equal behavior only available in >= 4.1
@@ -55,15 +68,19 @@ test_that("can instantiate all linters without arguments", {
 test_that("with_defaults is supported with a deprecation warning", {
   defaults <- linters_with_defaults()
   expect_warning(
-    old_defaults <- with_defaults(),
+    {
+      old_defaults <- with_defaults()
+    },
     rex::rex("Use linters_with_defaults or modify_defaults instead.")
   )
   expect_identical(defaults, old_defaults)
 
   # linters_with_defaults only accepts `defaults = list()` to start from blank
-  defaults <- linters_with_defaults(defaults = list(), no_tab_linter())
+  defaults <- linters_with_defaults(defaults = list(), whitespace_linter())
   expect_warning(
-    old_defaults <- with_defaults(default = NULL, no_tab_linter()),
+    {
+      old_defaults <- with_defaults(default = NULL, whitespace_linter())
+    },
     rex::rex("Use linters_with_defaults or modify_defaults instead.")
   )
   expect_identical(defaults, old_defaults)
@@ -80,16 +97,25 @@ test_that("modify_defaults works", {
 })
 
 test_that("linters_with_defaults(default = .) is supported with a deprecation warning", {
-  expect_warning(linters <- linters_with_defaults(default = list(), no_tab_linter()), "'default'")
-  expect_named(linters, "no_tab_linter")
+  expect_warning(
+    {
+      linters <- linters_with_defaults(default = list(), whitespace_linter())
+    },
+    "'default'"
+  )
+  expect_named(linters, "whitespace_linter")
 
   # the same warning is not triggered in modify_defaults
-  expect_silent(linters <- modify_defaults(defaults = list(), default = list(), no_tab_linter()))
-  expect_named(linters, c("default", "no_tab_linter"))
+  expect_silent({
+    linters <- modify_defaults(defaults = list(), default = list(), whitespace_linter())
+  })
+  expect_named(linters, c("default", "whitespace_linter"))
 
   # if default= is explicitly provided alongside defaults=, assume that was intentional
   default <- Linter(function(.) list())
-  expect_silent(linters <- linters_with_defaults(defaults = list(), default = default))
+  expect_silent({
+    linters <- linters_with_defaults(defaults = list(), default = default)
+  })
   expect_named(linters, "default")
 })
 

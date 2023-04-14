@@ -226,3 +226,29 @@ single_quotes_linter <- function() {
   )
   quotes_linter()
 }
+
+#' Consecutive stopifnot linter
+#' @rdname lintr-deprecated
+#' @export
+consecutive_stopifnot_linter <- function() {
+  lintr_deprecated(
+    old = "consecutive_stopifnot_linter",
+    new = "consecutive_assertion_linter",
+    version = "3.1.0",
+    type = "Linter"
+  )
+  consecutive_assertion_linter()
+}
+
+#' No tabs linter
+#' @rdname lintr-deprecated
+#' @export
+no_tab_linter <- function() {
+  lintr_deprecated(
+    old = "no_tab_linter",
+    new = "whitespace_linter",
+    version = "3.1.0",
+    type = "Linter"
+  )
+  whitespace_linter()
+}

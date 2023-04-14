@@ -1,13 +1,19 @@
 # lintr (development version)
 
-## Breaking changes & deprecations
+## Deprecations & Breaking Changes
 
 * Updated the location priority order that `lintr` checks to find a `.lintr` settings file. It now checks in the `.github/linters` project sub folder after the currently searched directory. This is to improve 
   compatibility with Super-Linter(#1746, @tonyk7440)
 * `single_quotes_linter()` is deprecated in favor of the more generalizable `quotes_linter()` (#1729, @MichaelChirico).
 * `unneeded_concatentation_linter()` is deprecated in favor of `unnecessary_concatenation_linter()` for naming consistency (#1707, @IndrajeetPatil).
+* `consecutive_stopifnot_linter()` is deprecated in favor of the more general (see below) `consecutive_assertion_linter()` (#1604, @MichaelChirico).
+* `no_tab_linter()` is deprecated in favor of `whitespace_linter()` for naming consistency and future generalization (#1954, @MichaelChirico).
+* `available_linters()` prioritizes `tags` over `exclude_tags` in the case of overlap, i.e., tags listed in both arguments are included, not excluded. We don't expect many people to be affected by this, and the old behavior was not made explicit in the documentation, but make note of it here since it required changing a test in lintr's own suite where `linters_with_tags()` implicitly assumed this behavior.
 
 ## Bug fixes
+
+* `linters_with_tags()` now includes the previously missing spaces around "and" when listing missing linters advertised by `available_linters()`. 
+  This error message may appear e.g. when you update lintr to a version with new linters but don't restart your R session (#1946, @Bisaloo)
 
 * `fixed_regex_linter()` is more robust to errors stemming from unrecognized escapes (#1545, #1845, @IndrajeetPatil).
 
@@ -35,6 +41,9 @@
 
 * `object_name_linter()` allows all S3 group Generics (see `?base::groupGeneric`) and S3 generics defined in a different file in the same package (#1808, #1841, @AshesITR)
 
+* `object_usage_linter()` improves identification of the exact source of a lint for undefined variables in expressions with where the variable is used as a symbol in a usual way, for example in a formula or in an extraction with `$` (#1914, @MichaelChirico).
+
+* `function_left_parentheses_linter()` produces a more specific lint (and no longer fails) when the opening parenthesis is on a different line than `function` or the call name (#1953, @MichaelChirico).
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
@@ -45,6 +54,7 @@
      `R CMD check`, it defaults to `TRUE` (#941, #1458, @IndrajeetPatil).
    + Handles backticked symbols inside {glue} expressions correctly, e.g. ``glue("{`x`}")`` correctly
      determines `x` was used (#1619, @MichaelChirico)
+   + Detects problems inside R4.1.0+ lambda functions (`\(...)`) (#1933, @MichaelChirico)
 
 * `spaces_inside_linter()` allows terminal missing keyword arguments (e.g. `alist(arg = )`; #540, @MichaelChirico)
 
@@ -60,6 +70,9 @@
    + `indentation_linter()`
    + `quotes_linter()`
    + `unnecessary_concatenation_linter()`
+   + `whitespace_linter()`
+
+* `lint_package()` also looks for files in `exec/` (#1950, @jmaspons).
 
 ## New and improved features
 
@@ -93,8 +106,7 @@
 
 * `infix_spaces_linter()` supports the native R pipe `|>` (#1793, @AshesITR)
 
-* `unneeded_concatenation_linter()` no longer lints on `c(...)` (i.e., passing `...` in a function call)
-  when `allow_single_expression = FALSE` (#1696, @MichaelChirico)
+* `unnecessary_concatenation_linter()` (f.k.a. `unneeded_concatenation_linter()`) no longer lints on `c(...)` (i.e., passing `...` in a function call) when `allow_single_expression = FALSE` (#1696, @MichaelChirico)
 
 * `object_name_linter()` gains parameter `regexes` to allow custom naming conventions (#822, #1421, @AshesITR)
 
@@ -106,6 +118,10 @@
 * `all_linters()` function provides an easy way to access all available linters (#1843, @IndrajeetPatil)
 
 * `missing_argument_linter()` allows missing arguments in `quote()` calls (#1889, @IndrajeetPatil). 
+
+* `get_source_expressions()` correctly extracts indented code chunks from R Markdown documents, which helps avoid spurious lints related to whitespace (#1945, @MichaelChirico). The convention taken is that, within each chunk, all code is anchored relative to the leftmost non-whitespace column.
+
+* `available_linters()` gives priority to `tags` over `exclude_tags` in the case of overlap. In particular, this means that `available_linters(tags = "deprecated")` will work to return deprecated linters without needing to specify `exclude_tags` (#1959, @MichaelChirico).
 
 ### New linters
 
@@ -135,7 +151,7 @@
 
 * `routine_registration_linter()` for identifying native routines that don't use registration (`useDynLib` in the `NAMESPACE`; @MichaelChirico)
 
-* `indentation_linter()` for checking that the indentation conforms to 2-space Tidyverse-style (@AshesITR and @dgkf, #1411, #1792).
+* `indentation_linter()` for checking that the indentation conforms to 2-space Tidyverse-style (@AshesITR and @dgkf, #1411, #1792, #1898).
 
 * `unnecessary_nested_if_linter()` for checking unnecessary nested `if` statements where a single 
   `if` statement with appropriate conditional expression would suffice (@IndrajeetPatil and @AshesITR, #1778).
@@ -145,6 +161,10 @@
 * `quotes_linter()` is a generalized version of (now deprecated) `single_quotes_linter()`. It accepts an argument `delimiter` to specify whether `"` or `'` should be the accepted method for delimiting character literals. The default, `"`, reflects the Tidyverse style guide recommendation and matches the behavior of `single_quotes_linter()`.
 
 * `unnecessary_concatenation_linter()` is simply `unneeded_concatenation_linter()`, renamed.
+
+* `consecutive_assertion_linter()` (f.k.a. `consecutive_stopifnot_linter()`) now lints for consecutive calls to `assertthat::assert_that()` (as long as the `msg=` argument is not used; #1604, @MichaelChirico).
+
+* `whitespace_linter()` is simply `no_tab_linter()`, renamed. In the future, we plan to extend it to work for different whitespace preferences.
 
 ## Notes
 
@@ -168,6 +188,7 @@
   Thanks to Yihui and other developers for their helpful discussions around this issue (#797, @IndrajeetPatil).
 
 * The output of `lint()` and `Lint()` gain S3 class `"list"` to assist with S3 dispatch (#1494, @MichaelChirico)
+
 # lintr 3.0.2
 
 * Fix test to avoid leaving behind cache files in the global cache directory.

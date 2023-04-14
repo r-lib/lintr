@@ -221,7 +221,9 @@ test_that("compatibility warnings work", {
 
 test_that("Deprecated positional usage of cache= works, with warning", {
   expect_warning(
-    l <- lint("a = 2\n", FALSE, linters = assignment_linter()),
+    {
+      l <- lint("a = 2\n", FALSE, linters = assignment_linter())
+    },
     "'cache' is no longer available as a positional argument",
     fixed = TRUE
   )
