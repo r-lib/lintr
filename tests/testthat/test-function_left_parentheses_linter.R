@@ -45,3 +45,120 @@ test_that("function_left_parentheses_linter blocks disallowed usages", {
     linter
   )
 })
+
+test_that("multi-line cases are handled correctly", {
+  linter <- function_left_parentheses_linter()
+  lint_msg <- rex::rex("Left parenthesis should be on the same line as the function's symbol.")
+
+  expect_lint(
+    trim_some("
+      foo <- function
+      (
+        param
+      ) {
+        param + 1
+      }
+    "),
+    lint_msg,
+    linter
+  )
+
+  # edge case where '(' is in the right place on the wrong line
+  expect_lint(
+    trim_some("
+      foo <- function
+                     (
+        param
+      ) {
+        param + 1
+      }
+    "),
+    lint_msg,
+    linter
+  )
+
+  # ditto for function calls
+  expect_lint(
+    trim_some("
+      if (
+        y > sum
+        (
+          x
+        )
+      ) {
+        TRUE
+      }
+    "),
+    lint_msg,
+    linter
+  )
+  expect_lint(
+    trim_some("
+      if (
+        y > sum
+               (
+          x
+        )
+      ) {
+        TRUE
+      }
+    "),
+    lint_msg,
+    linter
+  )
+})
+
+test_that("multi-lint case works", {
+  expect_lint(
+    trim_some("
+      if (
+        y > sum
+               (
+          x
+        ) &&
+        z > mean
+        (
+          x
+        ) &&
+        a > sd (x) &&
+        b > var  (x)
+      ) {
+        TRUE
+      }
+    "),
+    list(
+      list(
+        message = "Left parenthesis should be on the same line as the function's symbol.",
+        line_number = 2L,
+        ranges = list(c(7L, 9L))
+      ),
+      list(
+        message = "Left parenthesis should be on the same line as the function's symbol.",
+        line_number = 6L,
+        ranges = list(c(7L, 10L))
+      ),
+      list(
+        message = "Remove spaces before the left parenthesis in a function call.",
+        line_number = 10L,
+        ranges = list(c(9L, 9L))
+      ),
+      list(
+        message = "Remove spaces before the left parenthesis in a function call.",
+        line_number = 11L,
+        ranges = list(10L:11L)
+      )
+    ),
+    function_left_parentheses_linter()
+  )
+})
+
+test_that("it doesn't produce invalid lints", {
+  # Part of #1427
+  expect_no_warning(
+    expect_lint(
+      "function() {)",
+      list(linter = "error"),
+      function_left_parentheses_linter()
+    )
+  )
+})
