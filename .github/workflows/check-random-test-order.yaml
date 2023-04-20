@@ -30,6 +30,6 @@ jobs:
       - name: Run Tests in Random Order
         run: |
           options(crayon.enabled = TRUE)
-          callr::rscript("run-test-files-in-random-order.R")
+          callr::rscript(".dev/run-test-files-in-random-order.R")
 
         shell: Rscript {0}
