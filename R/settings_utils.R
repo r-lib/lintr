@@ -74,7 +74,7 @@ find_config <- function(filename) {
 
   # Search through locations, return first valid result
   for (loc in file_locations) {
-    if (isTRUE(file.exists(loc))) {
+    if (file.exists(loc)) {
       return(loc)
     }
   }
