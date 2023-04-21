@@ -65,11 +65,7 @@ find_config <- function(filename) {
   # i.e. the first location where a config exists is chosen and configs which
   # may exist in subsequent directories are ignored
   file_locations <- c(
-    # Current directory
-    file.path(path, linter_file),
-    # .github/linters directory
-    file.path(path, ".github", "linters", linter_file),
-    # Higher directories
+    # Local (incl. parent) directories
     find_config2(path),
     # User directory
     # cf: rstudio@bc9b6a5 SessionRSConnect.R#L32
@@ -91,6 +87,10 @@ find_config2 <- function(path) {
   path <- normalizePath(path, mustWork = FALSE)
 
   while (!has_config(path, config)) {
+    gh <- file.path(path, ".github", "linters")
+    if (has_config(gh, config)) {
+      return(file.path(gh, config))
+    }
     path <- dirname(path)
     if (is_root(path)) {
       return(character())
