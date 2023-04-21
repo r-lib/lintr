@@ -174,7 +174,7 @@ test_that(
 
     expect_identical(
       as.data.frame(pkg_lints_before)[["line"]],
-      c("'abc'", "test_check('github_lintr_file')", "'abc'"),
+      c("'abc'", "'abc'"),
       "linting the `github_lintr_file` package should fail"
     )
 
@@ -192,14 +192,9 @@ test_that(
     )
 
     pkg_lints <- withr::with_dir(pkg_path, lint_package("."))
-
     expect_length(pkg_lints, 0L)
 
-    subdir_lints <- withr::with_dir(
-      pkg_path,
-      lint_dir("tests/testthat", linters = list(quotes_linter()))
-    )
-
+    subdir_lints <- withr::with_dir(pkg_path, lint_dir("tests/testthat"))
     expect_length(subdir_lints, 0L)
   }
 )
