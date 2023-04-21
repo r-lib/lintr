@@ -164,38 +164,42 @@ test_that(
 
     pkg_path <- test_path("dummy_packages", "github_lintr_file")
 
-    # In `github/linters`add a `.lintr` file that excludes the whole of `abc.R`
-    # and the first line of `jkl.R` (and remove it on finishing this test)
+    # First, ensure that the package has lint messages in the absence of a
+    # custom configuration:
+
+    pkg_lints_before <- withr::with_dir(
+      pkg_path,
+      lint_package(".", linters = list(quotes_linter()))
+    )
+
+    expect_identical(
+      as.data.frame(pkg_lints_before)[["line"]],
+      c("'abc'", "test_check('github_lintr_file')", "'abc'"),
+      "linting the `github_lintr_file` package should fail"
+    )
+
+    # In `github/linters`add a `.lintr` file
     dir.create(
       path = file.path(pkg_path, ".github", "linters/"),
       recursive = TRUE
     )
+    on.exit(unlink(file.path(pkg_path, ".github"), recursive = TRUE), add = TRUE)
 
-    local_config(file.path(pkg_path, ".github", "linters"), "exclusions: list('R/abc.R', 'R/jkl.R' = 1)")
+    local_config(
+      file.path(pkg_path, ".github", "linters"),
+      "linters: linters_with_defaults(quotes_linter(\"'\"))",
+      filename = "lintr_test_config"
+    )
 
-    lints_using_github_lintr <- withr::with_dir(
+    pkg_lints <- withr::with_dir(pkg_path, lint_package("."))
+
+    expect_length(pkg_lints, 0L)
+
+    subdir_lints <- withr::with_dir(
       pkg_path,
-      lint_package(".", linters = list(assignment_linter()))
+      lint_dir("tests/testthat", linters = list(quotes_linter()))
     )
 
-    # Cleanup directory and files created above
-    unlink(file.path(pkg_path, ".github"), recursive = TRUE)
-
-    # Now add the same file to the package root
-    local_config(pkg_path, "exclusions: list('R/abc.R', 'R/jkl.R' = 1)")
-
-    lints_using_lintr_in_pkg_root <- withr::with_dir(
-      pkg_path,
-      lint_package(".", linters = list(assignment_linter()))
-    )
-
-    expect_identical(
-      as.data.frame(lints_using_github_lintr),
-      as.data.frame(lints_using_lintr_in_pkg_root),
-      info = paste(
-        "lint_package() finds the same lints with a `.lintr` file in `.github/linters` as the package root",
-        "(.lintr config present)"
-      )
-    )
+    expect_length(subdir_lints, 0L)
   }
 )

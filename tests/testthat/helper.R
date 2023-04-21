@@ -45,8 +45,8 @@ trim_some <- function(x, num = NULL) {
   rex::re_substitutes(x, rex::rex(start, n_times(any, num)), "", global = TRUE, options = "multi-line")
 }
 
-local_config <- function(config_dir, contents, .local_envir = parent.frame()) {
-  config_path <- file.path(config_dir, ".lintr")
+local_config <- function(config_dir, contents, filename = ".lintr", .local_envir = parent.frame()) {
+  config_path <- file.path(config_dir, filename)
   writeLines(contents, config_path)
   withr::defer(unlink(config_path), envir = .local_envir)
   config_path
