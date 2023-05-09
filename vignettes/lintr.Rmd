@@ -89,13 +89,14 @@ exclusions: list(
 ### Other configuration options
 
 More generally, `lintr` searches for a settings file according to following prioritized list.
-The first one found, if any, will be used.
+The first one found, if any, will be used:
 
 1.  If `options("lintr.linter_file")` is an absolute path, this file will be used. The default for this option is `".lintr"`.
-2.  A linter file (that is a file named like `lintr.linter_file`) in the currently-searched directory, i.e. the directory of the file passed to `lint()`, or in the closest parent directory. When run from `lint_package()`, this directory can differ for each linted file.
-3.  A linter file in the `.github/linters` child directory of the currently-searched directory, or in the closest parent directory.
-4.  A linter file in a parent directory of the currently-searched directory, starting from the deepest path, moving upwards one level at a time.
-5.  A linter file in the user's `HOME` directory.
+2. A project-local linter file; that is, either
+    1. a linter file (that is, a file named like `lintr.linter_file`) in the currently-searched directory, i.e. the directory of the file passed to `lint()`; or
+    2. a linter file in the `.github/linters` child directory of the currently-searched directory.
+3. A project-local linter file in the closest parent directory of the currently-searched directory, starting from the deepest path, moving upwards one level at a time. When run from `lint_package()`, this directory can differ for each linted file.
+4.  A linter file in the user's `HOME` directory.
 
 If no linter file is found, only default settings take effect (see [defaults](#defaults)).
 
