@@ -200,19 +200,24 @@ files.</p>
 </h3>
 <p>More generally, <code>lintr</code> searches for a settings file
 according to following prioritized list. The first one found, if any,
-will be used.</p>
+will be used:</p>
 <ol style="list-style-type: decimal">
-<li>If <code>options(lintr.linter_file)</code> is an absolute path, this
-file will be used. The default for this option is
+<li>If <code>options("lintr.linter_file")</code> is an absolute path,
+this file will be used. The default for this option is
 <code>".lintr"</code>.</li>
-<li>A linter file (that is a file named like
-<code>lintr.linter_file</code>) in the currently searched directory,
-i.e. the directory of the file passed to <code><a href="../reference/lint.html">lint()</a></code>. When run
-from <code><a href="../reference/lint.html">lint_package()</a></code>, this directory can differ for each
-linted file.</li>
-<li>A linter file in a parent directory of the currently-searched
-directory, starting from the deepest path, moving upwards one level at a
-time.</li>
+<li>A project-local linter file; that is, either
+<ol style="list-style-type: decimal">
+<li>a linter file (that is, a file named like
+<code>lintr.linter_file</code>) in the currently-searched directory,
+i.e. the directory of the file passed to <code><a href="../reference/lint.html">lint()</a></code>; or</li>
+<li>a linter file in the <code>.github/linters</code> child directory of
+the currently-searched directory.</li>
+</ol>
+</li>
+<li>A project-local linter file in the closest parent directory of the
+currently-searched directory, starting from the deepest path, moving
+upwards one level at a time. When run from <code><a href="../reference/lint.html">lint_package()</a></code>,
+this directory can differ for each linted file.</li>
 <li>A linter file in the user’s <code>HOME</code> directory.</li>
 </ol>
 <p>If no linter file is found, only default settings take effect (see <a href="#defaults">defaults</a>).</p>
@@ -600,15 +605,15 @@ enough:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="../reference/lint.html">lint</a></span><span class="op">(</span><span class="va">tmp</span>, linters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/call.html" class="external-link">call</a></span><span class="op">(</span><span class="va">linter_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpMM3VdF/file1d8e520481f1           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/Rtmpct7VJe/file1d7f4ec81d61           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1    get</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpMM3VdF/file1d8e520481f1           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/Rtmpct7VJe/file1d7f4ec81d61           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpMM3VdF/file1d8e520481f1           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/Rtmpct7VJe/file1d7f4ec81d61           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span></code></pre></div>
 </div>

@@ -66,6 +66,8 @@
 <div class="section level3">
 <h3 id="deprecations--breaking-changes-development-version">Deprecations &amp; Breaking Changes<a class="anchor" aria-label="anchor" href="#deprecations--breaking-changes-development-version"></a></h3>
 <ul><li>
+<code>.lintr</code> files can now be kept in the directory <code>.github/linters</code> for better compatibility with Super-Linter. Note that this may be a breaking change if you already have a config in <code>.github/linters</code> inside a subdirectory as well as in your R project’s root, since the former will now be discovered first where it was ignored before. Please see <code><a href="../articles/lintr.html">vignette("lintr")</a></code> for details on how configs are discovered (<a href="https://github.com/r-lib/lintr/issues/1746" class="external-link">#1746</a>, <a href="https://github.com/tonyk7440" class="external-link">@tonyk7440</a> and <a href="https://github.com/klmr" class="external-link">@klmr</a>).</li>
+<li>
 <code><a href="../reference/lintr-deprecated.html">single_quotes_linter()</a></code> is deprecated in favor of the more generalizable <code><a href="../reference/quotes_linter.html">quotes_linter()</a></code> (<a href="https://github.com/r-lib/lintr/issues/1729" class="external-link">#1729</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code>unneeded_concatentation_linter()</code> is deprecated in favor of <code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code> for naming consistency (<a href="https://github.com/r-lib/lintr/issues/1707" class="external-link">#1707</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</li>
@@ -120,6 +122,7 @@
 <li><code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code></li>
 <li><code><a href="../reference/whitespace_linter.html">whitespace_linter()</a></code></li>
 </ul></li>
+<li><p><code><a href="../reference/lint.html">lint_package()</a></code> also looks for files in <code>exec/</code> (<a href="https://github.com/r-lib/lintr/issues/1950" class="external-link">#1950</a>, <a href="https://github.com/jmaspons" class="external-link">@jmaspons</a>).</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
@@ -176,10 +179,13 @@
 <p>However, there is no requirement that <code><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">loadNamespace()</a></code> will register a package’s custom {knitr} engines, so you may need to work with other package authors to figure out a solution for other engines.</p>
 <p>Thanks to Yihui and other developers for their helpful discussions around this issue (<a href="https://github.com/r-lib/lintr/issues/797" class="external-link">#797</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</p>
 </li>
-<li><p>The output of <code><a href="../reference/lint.html">lint()</a></code> and <code><a href="../reference/lint-s3.html">Lint()</a></code> gain S3 class <code>"list"</code> to assist with S3 dispatch (<a href="https://github.com/r-lib/lintr/issues/1494" class="external-link">#1494</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>) # lintr 3.0.2</p></li>
-<li><p>Fix test to avoid leaving behind cache files in the global cache directory.</p></li>
+<li><p>The output of <code><a href="../reference/lint.html">lint()</a></code> and <code><a href="../reference/lint-s3.html">Lint()</a></code> gain S3 class <code>"list"</code> to assist with S3 dispatch (<a href="https://github.com/r-lib/lintr/issues/1494" class="external-link">#1494</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
 </ul></div>
 </div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="3.0.2" id="lintr-302">lintr 3.0.2<a class="anchor" aria-label="anchor" href="#lintr-302"></a></h2><p class="text-muted">CRAN release: 2022-10-19</p>
+<ul><li>Fix test to avoid leaving behind cache files in the global cache directory.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.0.1" id="lintr-301">lintr 3.0.1<a class="anchor" aria-label="anchor" href="#lintr-301"></a></h2><p class="text-muted">CRAN release: 2022-09-13</p>
 <ul><li><p>Skip multi-byte tests in non UTF-8 locales (<a href="https://github.com/r-lib/lintr/issues/1504" class="external-link">#1504</a>)</p></li>
