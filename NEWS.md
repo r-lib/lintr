@@ -524,7 +524,7 @@ of general interest to the broader R community. More will be included in future 
      This feature is extensible by package authors providing add-on linters for {lintr}.
    + `available_tags()`: new function to list available tags.
    + `linters_with_tags()`: new function to help build a list of linters using tags.
-* **Encodings**: lintr now supports non-system character Encodings. The correct the correct encoding
+* **Encodings**: lintr now supports non-system character Encodings. The correct encoding
   is auto-detected from .Rproj or DESCRIPTION files in your project.
   Override the default in the `encoding` setting of lintr (#752, #782, @AshesITR).
 * **Jenkins CI**: Support for writing comments to GitHub repo when running in Jenkins CI (#488, @fdlk).
@@ -645,7 +645,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
   dotted.case, lowerCamelCalse, UpperCamelCase, alllowercase or ALLUPPERCASE
   (#59, @fangly).
 * Deprecated absolute_paths_linter() in favor of the new `absolute_path_linter()`,
-  with a lax mode for fewer false positive lints (#199, fangly).
+  with a lax mode for fewer false positive lints (#199, @fangly).
 
 ## New linters
 
@@ -663,7 +663,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * New `paren_brace_linter()` checks that there is a space between right
   parenthesis and an opening curly brace (@bfgray3, #242).
 * New `pipe_continuation_linter()` to ensure there is a space before %>% and newline afterwards (#216).
-* New `semicolon_terminator_linter()` reports semicolons at the end a line (#147,
+* New `semicolon_terminator_linter()` reports semicolons at the end of a line (#147,
   @gaborcsardi) and between expressions (#181, @fangly).
 * New `seq_linter()`, finds `1:length(...)` (and similar) expressions (#155, @gaborcsardi)
 * New `todo_comment_linter()` lints TODOs (@fangly).
@@ -715,7 +715,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * `lint()` no longer errors with '<% %>' constructs (#185).
 * `lint_package()` now works with the cache, as intended (#146, @schloerke)
 * `lint_package()` now excludes `R/RcppExports.R` by default (#282)
-* `lint_package()` now removes fully excluded files as soon as possible to
+* `lint_package()` now removes fully excluded files as soon as possible
 * lintr now looks up its configuration in any parent directories as well as the package directory (#238, #345)
 * `seq_linter` is now one of the default linters (#316).
 * Fix issue in lintr's compatibility with R-devel, due to to a new version of the PCRE library (#411.)
@@ -780,7 +780,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * `trailing_whitespace_linter` was reporting the incorrect line number
 * Use RStudio source marker API to display lints (#37, @jjallaire)
 * Permit single quotes if they quote literal double quotes (#28, @jackwasey)
-* # nolint comments are respected with caching (#68, @krlmlr)
+* nolint comments are respected with caching (#68, @krlmlr)
 * Properly handle all knitr document formats
 * Allow for (( when linting (#259, @nathaneastwood)
 * Remove ^ from infix spaces to conform with tidyverse. (#302, @nathaneastwood)
