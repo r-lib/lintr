@@ -780,7 +780,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * `trailing_whitespace_linter` was reporting the incorrect line number
 * Use RStudio source marker API to display lints (#37, @jjallaire)
 * Permit single quotes if they quote literal double quotes (#28, @jackwasey)
-* nolint comments are respected with caching (#68, @krlmlr)
+* `# nolint` comments are respected with caching (#68, @krlmlr)
 * Properly handle all knitr document formats
 * Allow for (( when linting (#259, @nathaneastwood)
 * Remove ^ from infix spaces to conform with tidyverse. (#302, @nathaneastwood)
