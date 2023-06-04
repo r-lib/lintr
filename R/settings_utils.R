@@ -69,7 +69,9 @@ find_config <- function(filename) {
     find_config2(path),
     # User directory
     # cf: rstudio@bc9b6a5 SessionRSConnect.R#L32
-    file.path(Sys.getenv("HOME", unset = "~"), linter_file)
+    file.path(Sys.getenv("HOME", unset = "~"), linter_file),
+    # Next check for a global config file
+    file.path(R_user_dir("lintr", which = "config"), "config")
   )
 
   # Search through locations, return first valid result
