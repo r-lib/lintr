@@ -122,6 +122,9 @@
 
 * `available_linters()` gives priority to `tags` over `exclude_tags` in the case of overlap. In particular, this means that `available_linters(tags = "deprecated")` will work to return deprecated linters without needing to specify `exclude_tags` (#1959, @MichaelChirico).
 
+* The {lintr} configuration file is now searched in the system's user configuration path; the lintr config filename can
+  also be configured explicitly by setting the environment variable `R_LINTR_LINTER_FILE` (#460, @klmr)
+
 ### New linters
 
 * `matrix_apply_linter()` recommends use of dedicated `rowSums()`, `colSums()`, `colMeans()`, `rowMeans()` over `apply(., MARGIN, sum)` or `apply(., MARGIN, mean)`. The recommended alternative is much more efficient and more readable (#1869, @Bisaloo).
