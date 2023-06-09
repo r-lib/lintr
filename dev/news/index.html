@@ -505,7 +505,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <code><a href="../reference/linters_with_tags.html">linters_with_tags()</a></code>: new function to help build a list of linters using tags.</li>
 </ul></li>
 <li>
-<strong>Encodings</strong>: lintr now supports non-system character Encodings. The correct the correct encoding is auto-detected from .Rproj or DESCRIPTION files in your project. Override the default in the <code>encoding</code> setting of lintr (<a href="https://github.com/r-lib/lintr/issues/752" class="external-link">#752</a>, <a href="https://github.com/r-lib/lintr/issues/782" class="external-link">#782</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
+<strong>Encodings</strong>: lintr now supports non-system character Encodings. The correct encoding is auto-detected from .Rproj or DESCRIPTION files in your project. Override the default in the <code>encoding</code> setting of lintr (<a href="https://github.com/r-lib/lintr/issues/752" class="external-link">#752</a>, <a href="https://github.com/r-lib/lintr/issues/782" class="external-link">#782</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>
 <strong>Jenkins CI</strong>: Support for writing comments to GitHub repo when running in Jenkins CI (<a href="https://github.com/r-lib/lintr/issues/488" class="external-link">#488</a>, <a href="https://github.com/fdlk" class="external-link">@fdlk</a>).</li>
 <li>
@@ -614,7 +614,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <div class="section level3">
 <h3 id="deprecated-functions-2-0-0">Deprecated functions<a class="anchor" aria-label="anchor" href="#deprecated-functions-2-0-0"></a></h3>
 <ul><li>Deprecated <code>camel_case_linter()</code>, <code>snake_case_linter()</code> and <code>multiple_dots_linter()</code> in favor of <code><a href="../reference/object_name_linter.html">object_name_linter()</a></code> which enforce the given style: snake_case, dotted.case, lowerCamelCalse, UpperCamelCase, alllowercase or ALLUPPERCASE (<a href="https://github.com/r-lib/lintr/issues/59" class="external-link">#59</a>, <a href="https://github.com/fangly" class="external-link">@fangly</a>).</li>
-<li>Deprecated absolute_paths_linter() in favor of the new <code><a href="../reference/absolute_path_linter.html">absolute_path_linter()</a></code>, with a lax mode for fewer false positive lints (<a href="https://github.com/r-lib/lintr/issues/199" class="external-link">#199</a>, fangly).</li>
+<li>Deprecated absolute_paths_linter() in favor of the new <code><a href="../reference/absolute_path_linter.html">absolute_path_linter()</a></code>, with a lax mode for fewer false positive lints (<a href="https://github.com/r-lib/lintr/issues/199" class="external-link">#199</a>, <a href="https://github.com/fangly" class="external-link">@fangly</a>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-linters-2-0-0">New linters<a class="anchor" aria-label="anchor" href="#new-linters-2-0-0"></a></h3>
@@ -626,7 +626,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <li>New <code><a href="../reference/nonportable_path_linter.html">nonportable_path_linter()</a></code> identifies paths constructed without file.path() (<a href="https://github.com/fangly" class="external-link">@fangly</a>).</li>
 <li>New <code><a href="../reference/lintr-deprecated.html">paren_brace_linter()</a></code> checks that there is a space between right parenthesis and an opening curly brace (<a href="https://github.com/bfgray3" class="external-link">@bfgray3</a>, <a href="https://github.com/r-lib/lintr/issues/242" class="external-link">#242</a>).</li>
 <li>New <code><a href="../reference/pipe_continuation_linter.html">pipe_continuation_linter()</a></code> to ensure there is a space before %&gt;% and newline afterwards (<a href="https://github.com/r-lib/lintr/issues/216" class="external-link">#216</a>).</li>
-<li>New <code><a href="../reference/lintr-deprecated.html">semicolon_terminator_linter()</a></code> reports semicolons at the end a line (<a href="https://github.com/r-lib/lintr/issues/147" class="external-link">#147</a>,
+<li>New <code><a href="../reference/lintr-deprecated.html">semicolon_terminator_linter()</a></code> reports semicolons at the end of a line (<a href="https://github.com/r-lib/lintr/issues/147" class="external-link">#147</a>,
 <ol class="example" style="list-style-type: decimal"><li>and between expressions (<a href="https://github.com/r-lib/lintr/issues/181" class="external-link">#181</a>, <a href="https://github.com/fangly" class="external-link">@fangly</a>).</li>
 </ol></li>
 <li>New <code><a href="../reference/seq_linter.html">seq_linter()</a></code>, finds <code>1:length(...)</code> (and similar) expressions (<a href="https://github.com/r-lib/lintr/issues/155" class="external-link">#155</a>, 1)</li>
@@ -695,7 +695,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <li>
 <code><a href="../reference/lint.html">lint_package()</a></code> now excludes <code>R/RcppExports.R</code> by default (<a href="https://github.com/r-lib/lintr/issues/282" class="external-link">#282</a>)</li>
 <li>
-<code><a href="../reference/lint.html">lint_package()</a></code> now removes fully excluded files as soon as possible to</li>
+<code><a href="../reference/lint.html">lint_package()</a></code> now removes fully excluded files as soon as possible</li>
 <li>lintr now looks up its configuration in any parent directories as well as the package directory (<a href="https://github.com/r-lib/lintr/issues/238" class="external-link">#238</a>, <a href="https://github.com/r-lib/lintr/issues/345" class="external-link">#345</a>)</li>
 <li>
 <code>seq_linter</code> is now one of the default linters (<a href="https://github.com/r-lib/lintr/issues/316" class="external-link">#316</a>).</li>
@@ -757,7 +757,8 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <code>trailing_whitespace_linter</code> was reporting the incorrect line number</li>
 <li>Use RStudio source marker API to display lints (<a href="https://github.com/r-lib/lintr/issues/37" class="external-link">#37</a>, <a href="https://github.com/jjallaire" class="external-link">@jjallaire</a>)</li>
 <li>Permit single quotes if they quote literal double quotes (<a href="https://github.com/r-lib/lintr/issues/28" class="external-link">#28</a>, <a href="https://github.com/jackwasey" class="external-link">@jackwasey</a>)</li>
-<li><h2 id="nolint-comments-are-respected-with-caching-68-krlmlr" class="pkg-version" data-toc-text="0.3.3">nolint comments are respected with caching (<a href="https://github.com/r-lib/lintr/issues/68" class="external-link">#68</a>, <a href="https://github.com/krlmlr" class="external-link">@krlmlr</a>)</h2><p class="text-muted">CRAN release: 2015-09-15</p></li>
+<li>
+<code># nolint</code> comments are respected with caching (<a href="https://github.com/r-lib/lintr/issues/68" class="external-link">#68</a>, <a href="https://github.com/krlmlr" class="external-link">@krlmlr</a>)</li>
 <li>Properly handle all knitr document formats</li>
 <li>Allow for (( when linting (<a href="https://github.com/r-lib/lintr/issues/259" class="external-link">#259</a>, <a href="https://github.com/nathaneastwood" class="external-link">@nathaneastwood</a>)</li>
 <li>Remove ^ from infix spaces to conform with tidyverse. (<a href="https://github.com/r-lib/lintr/issues/302" class="external-link">#302</a>, <a href="https://github.com/nathaneastwood" class="external-link">@nathaneastwood</a>)</li>
