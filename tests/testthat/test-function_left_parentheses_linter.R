@@ -164,5 +164,19 @@ test_that("it doesn't produce invalid lints", {
 })
 
 test_that("newline in character string doesn't trigger false positive (#1963)", {
-  expect_lint('foo("\n")$bar()', NULL, function_left_parentheses_linter())
+  linter <- function_left_parentheses_linter()
+  expect_lint('foo("\n")$bar()', NULL, linter)
+  # also corrected the lint metadata for similar cases
+  expect_lint(
+    trim_some('
+      (
+        foo("
+        ")$bar
+        ()
+      )
+    '),
+    # attach to 'b' in '$bar'
+    list(line_number = 3L, column_number = 6L),
+    linter
+  )
 })
