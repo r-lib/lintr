@@ -162,3 +162,7 @@ test_that("it doesn't produce invalid lints", {
     )
   )
 })
+
+test_that("newline in character string doesn't trigger false positive (#1963)", {
+  expect_lint('foo("\n")$bar()', NULL, function_left_parentheses_linter())
+})

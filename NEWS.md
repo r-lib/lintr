@@ -42,7 +42,8 @@
 
 * `object_usage_linter()` improves identification of the exact source of a lint for undefined variables in expressions with where the variable is used as a symbol in a usual way, for example in a formula or in an extraction with `$` (#1914, @MichaelChirico).
 
-* `function_left_parentheses_linter()` produces a more specific lint (and no longer fails) when the opening parenthesis is on a different line than `function` or the call name (#1953, @MichaelChirico).
+* `function_left_parentheses_linter()` produces a more specific lint (and no longer fails) when the opening parenthesis is on a different line than `function` or the call name (#1953, @MichaelChirico). Thanks also to @IndrajeetPatil and @lorenzwalthert for identifying a regression in the initial fix, #1963.
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.

@@ -41,14 +41,23 @@
 #' - [spaces_left_parentheses_linter()]
 #' @export
 function_left_parentheses_linter <- function() { # nolint: object_length.
-  xpath_fmt <- "//FUNCTION[ {cond} ] | //SYMBOL_FUNCTION_CALL/parent::expr[ {cond} ]"
-  bad_line_cond <- "@line1 != following-sibling::OP-LEFT-PAREN/@line1"
-  bad_col_cond <- xp_and(
+  xpath_fmt <- "//FUNCTION[ {fun_cond} ] | //SYMBOL_FUNCTION_CALL[ {call_cond} ]"
+  bad_line_fun_cond <- "@line1 != following-sibling::OP-LEFT-PAREN/@line1"
+  # NB: attach to SYMBOL_FUNCTION_CALL instead of SYMBOL_FUNCTION_CALL/parent::expr because
+  #   the latter might be associated with a different line, e.g. in the case of a
+  #   complicated call to an "extracted" function (see #1963). This mistake was made earlier
+  #   because it allows the xpath to be the same for both FUNCTION and SYMBOL_FUNCTION_CALL
+  bad_line_call_cond <- "@line1 != parent::expr/following-sibling::OP-LEFT-PAREN/@line1"
+  bad_col_fun_cond <- xp_and(
     "@line1 = following-sibling::OP-LEFT-PAREN/@line1",
     "@col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1"
   )
-  bad_line_xpath <- glue::glue(xpath_fmt, cond = bad_line_cond)
-  bad_col_xpath <- glue::glue(xpath_fmt, cond = bad_col_cond)
+  bad_col_call_cond <- xp_and(
+    "@line1 = parent::expr/following-sibling::OP-LEFT-PAREN/@line1",
+    "@col2 != parent::expr/following-sibling::OP-LEFT-PAREN/@col1 - 1"
+  )
+  bad_line_xpath <- glue::glue(xpath_fmt, fun_cond = bad_line_fun_cond, call_cond = bad_line_call_cond)
+  bad_col_xpath <- glue::glue(xpath_fmt, fun_cond = bad_col_fun_cond, call_cond = bad_col_call_cond)
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
