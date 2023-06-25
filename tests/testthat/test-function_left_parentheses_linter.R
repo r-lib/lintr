@@ -29,7 +29,7 @@ test_that("function_left_parentheses_linter blocks disallowed usages", {
   fun_lint_msg <- rex::rex("Remove spaces before the left parenthesis in a function definition.")
   call_lint_msg <- rex::rex("Remove spaces before the left parenthesis in a function call.")
 
-  expect_lint("blah (1)", lint_msg, linter)
+  expect_lint("blah (1)", call_lint_msg, linter)
   expect_lint("base::print (blah)", call_lint_msg, linter)
   expect_lint("base::print(blah, f (1))", call_lint_msg, linter)
   expect_lint("`+` (1, 1)", call_lint_msg, linter)
