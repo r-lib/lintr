@@ -815,4 +815,25 @@ test_that("messages without location info are repaired", {
     ),
     object_usage_linter()
   )
+
+  # More complex case with two lints and missing location info
+  expect_lint(
+    trim_some("
+      foo <- function() a <-
+        bar()
+    "),
+    list(
+      list(
+        message = rex::rex("local variable", anything, "assigned but may not be used"),
+        line_number = 1L,
+        column_number = 19L
+      ),
+      list(
+        message = rex::rex("no visible global function definition for", anything),
+        line_number = 2L,
+        column_number = 3L
+      )
+    ),
+    object_usage_linter()
+  )
 })

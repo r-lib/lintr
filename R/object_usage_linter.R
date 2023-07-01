@@ -99,6 +99,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
         known_used_symbols = known_used_symbols,
         declared_globals = declared_globals,
         start_line = as.integer(xml2::xml_attr(fun_assignment, "line1")),
+        end_line = as.integer(xml2::xml_attr(fun_assignment, "line2")),
         skip_with = skip_with
       )
 
@@ -245,6 +246,7 @@ parse_check_usage <- function(expression,
                               known_used_symbols = character(),
                               declared_globals = character(),
                               start_line = 1L,
+                              end_line = 1L,
                               skip_with = TRUE) {
   vals <- list()
 
@@ -304,13 +306,16 @@ parse_check_usage <- function(expression,
   res$line1 <- ifelse(
     nzchar(res$line1),
     as.integer(res$line1) + start_line - 1L,
-    start_line
+    NA_integer_
   )
   res$line2 <- ifelse(
     nzchar(res$line2),
     as.integer(res$line2) + start_line - 1L,
     res$line1
   )
+
+  res$line1[is.na(res$line1)] <- start_line
+  res$line2[is.na(res$line2)] <- end_line
 
   res
 }
