@@ -201,7 +201,7 @@ extract_glued_symbols <- function(expr) {
       error = function(cond) {
         warning(
           "Evaluating glue expression while testing for local variable usage failed: ",
-          conditionMessage(cond),
+          conditionMessage(cond), "\nPlease ensure correct glue syntax, e.g., matched delimiters.",
           call. = FALSE
         )
         NULL

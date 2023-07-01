@@ -8,6 +8,7 @@
 * `consecutive_stopifnot_linter()` is deprecated in favor of the more general (see below) `consecutive_assertion_linter()` (#1604, @MichaelChirico).
 * `no_tab_linter()` is deprecated in favor of `whitespace_linter()` for naming consistency and future generalization (#1954, @MichaelChirico).
 * `available_linters()` prioritizes `tags` over `exclude_tags` in the case of overlap, i.e., tags listed in both arguments are included, not excluded. We don't expect many people to be affected by this, and the old behavior was not made explicit in the documentation, but make note of it here since it required changing a test in lintr's own suite where `linters_with_tags()` implicitly assumed this behavior.
+* `lint()`, `lint_dir()`, and `lint_package()` no longer accept certain arguments (`cache=` for `lint()`, `relative_path=` for the latter two) positionally. The `warning()` since 3.0.0 has been upgraded to an error.
 
 ## Bug fixes
 
@@ -128,6 +129,8 @@
 * The {lintr} configuration file is now searched in the system's user configuration path; the lintr config filename can
   also be configured explicitly by setting the environment variable `R_LINTR_LINTER_FILE` (#460, @klmr)
 
+* Errors in the {lintr} configuration file now produce more informative error messages (#886, @AshesITR)
+
 ### New linters
 
 * `matrix_apply_linter()` recommends use of dedicated `rowSums()`, `colSums()`, `colMeans()`, `rowMeans()` over `apply(., MARGIN, sum)` or `apply(., MARGIN, mean)`. The recommended alternative is much more efficient and more readable (#1869, @Bisaloo).
@@ -187,12 +190,14 @@
   after our request to do so (see https://github.com/rstudio/tufte/issues/117). Therefore, ensure you're using a
   more recent version to get the behavior described here for {tufte}.
   
-  However, there is no requirement that `loadNamespace()` will register a package's custom {knitr}
+  More generally, there is no requirement that `loadNamespace()` will register a package's custom {knitr}
   engines, so you may need to work with other package authors to figure out a solution for other engines.
   
   Thanks to Yihui and other developers for their helpful discussions around this issue (#797, @IndrajeetPatil).
 
 * The output of `lint()` and `Lint()` gain S3 class `"list"` to assist with S3 dispatch (#1494, @MichaelChirico)
+
+* `object_usage_linter()` gives a more helpful warning when a `glue()` expression fails to evaluate (#1985, @MichaelChirico)
 
 # lintr 3.0.2
 

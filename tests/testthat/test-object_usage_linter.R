@@ -428,7 +428,7 @@ test_that("errors/edge cases in glue syntax don't fail lint()", {
       NULL,
       linter
     ),
-    "Evaluating glue expression.*failed: Expecting '\\}'"
+    "Evaluating glue expression.*failed: Expecting '\\}'.*Please ensure correct glue syntax"
   )
 
   # generates a lint because the "usage" inside glue() is not detected
