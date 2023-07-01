@@ -22,8 +22,8 @@
 * `assignment_linter()` no longer lints assignments in braces that include comments when `allow_trailing = FALSE` (#1701, @ashbaldry)
 
 * `object_usage_linter()`
-   + No longer silently ignores usage warnings that don't contain a quoted name (#1714, @AshesITR)
-   + No longer fails on code with comments inside a multi-line call to `glue::glue()` (#1919, @MichaelChirico)
+  + No longer silently ignores usage warnings that don't contain a quoted name (#1714, @AshesITR)
+  + No longer fails on code with comments inside a multi-line call to `glue::glue()` (#1919, @MichaelChirico)
 
 * `namespace_linter()` correctly recognizes backticked operators to be exported from respective namespaces (like `` rlang::`%||%` ``) (#1752, @IndrajeetPatil)
 
@@ -40,7 +40,9 @@
 
 * `object_name_linter()` allows all S3 group Generics (see `?base::groupGeneric`) and S3 generics defined in a different file in the same package (#1808, #1841, @AshesITR)
 
-* `object_usage_linter()` improves identification of the exact source of a lint for undefined variables in expressions with where the variable is used as a symbol in a usual way, for example in a formula or in an extraction with `$` (#1914, @MichaelChirico).
+* `object_usage_linter()` improves identification of the exact source of a lint
+  + for undefined variables in expressions with where the variable is used as a symbol in a usual way, for example in a formula or in an extraction with `$` (#1914, @MichaelChirico).
+  + for general usage warnings without location info (#1986, @AshesITR)
 
 * `function_left_parentheses_linter()` produces a more specific lint (and no longer fails) when the opening parenthesis is on a different line than `function` or the call name (#1953, @MichaelChirico). Thanks also to @IndrajeetPatil and @lorenzwalthert for identifying a regression in the initial fix, #1963.
 

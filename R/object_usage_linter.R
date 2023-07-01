@@ -282,10 +282,10 @@ parse_check_usage <- function(expression,
           "'",
           capture(name = "name", anything),
           "'",
-          anything
+          zero_or_more(any, type = "lazy")
         )
       ),
-      line_info
+      or(line_info, end)
     )
   )
 
@@ -301,7 +301,11 @@ parse_check_usage <- function(expression,
   # nocov end
   res <- res[!missing, ]
 
-  res$line1 <- as.integer(res$line1) + start_line - 1L
+  res$line1 <- ifelse(
+    nzchar(res$line1),
+    as.integer(res$line1) + start_line - 1L,
+    start_line
+  )
   res$line2 <- ifelse(
     nzchar(res$line2),
     as.integer(res$line2) + start_line - 1L,
