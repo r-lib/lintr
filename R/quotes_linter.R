@@ -47,7 +47,7 @@ quotes_linter <- function(delimiter = c('"', "'")) {
       single_quote,
       end
     )
-    lint_message <- "Only use double-quotes." # nolint: object_usage_linter. An apparent codetools bug.
+    lint_message <- "Only use double-quotes." # nolint: object_usage. An apparent codetools bug.
   } else {
     quote_regex <- rex(
       start,
@@ -73,8 +73,8 @@ quotes_linter <- function(delimiter = c('"', "'")) {
       quote_matches,
       function(id) {
         with(content[str_idx[id], ], {
-          line <- source_expression$file_lines[[line1]]
-          col2 <- if (line1 == line2) col2 else nchar(line)
+          line <- source_expression$file_lines[[line1]] # nolint: object_usage. Codetools bug
+          col2 <- if (line1 == line2) col2 else nchar(line) # nolint: object_usage. Codetools bug
           Lint(
             filename = source_expression$filename,
             line_number = line1,
