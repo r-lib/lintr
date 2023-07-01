@@ -77,6 +77,8 @@
 <code><a href="../reference/lintr-deprecated.html">no_tab_linter()</a></code> is deprecated in favor of <code><a href="../reference/whitespace_linter.html">whitespace_linter()</a></code> for naming consistency and future generalization (<a href="https://github.com/r-lib/lintr/issues/1954" class="external-link">#1954</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/available_linters.html">available_linters()</a></code> prioritizes <code>tags</code> over <code>exclude_tags</code> in the case of overlap, i.e., tags listed in both arguments are included, not excluded. We don’t expect many people to be affected by this, and the old behavior was not made explicit in the documentation, but make note of it here since it required changing a test in lintr’s own suite where <code><a href="../reference/linters_with_tags.html">linters_with_tags()</a></code> implicitly assumed this behavior.</li>
+<li>
+<code><a href="../reference/lint.html">lint()</a></code>, <code><a href="../reference/lint.html">lint_dir()</a></code>, and <code><a href="../reference/lint.html">lint_package()</a></code> no longer accept certain arguments (<code>cache=</code> for <code><a href="../reference/lint.html">lint()</a></code>, <code>relative_path=</code> for the latter two) positionally. The <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code> since 3.0.0 has been upgraded to an error.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
