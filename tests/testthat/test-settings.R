@@ -68,8 +68,13 @@ test_that("it errors if the config file does not end in a newline", {
 })
 
 test_that("it gives informative erros if the config file contains errors", {
-  f <- withr::local_tempfile()
-  cat("linters: linters_with_defaults(\n   closed_curly_linter = NULL, \n )\n", file = f)
+  f <- withr::local_tempfile(
+    lines = c(
+      "linters: linters_with_defaults(",
+      "   closed_curly_linter = NULL,",
+      " )"
+    )
+  )
   withr::local_options(list(lintr.linter_file = f))
   expect_error(lintr:::read_settings("foo"), "Malformed config setting 'linters'")
 })
