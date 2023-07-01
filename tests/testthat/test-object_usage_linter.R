@@ -765,3 +765,42 @@ test_that("functional lambda definitions are also caught", {
     object_usage_linter()
   )
 })
+
+test_that("messages without location info are repaired", {
+  # regression test for #1986
+  expect_lint(
+    trim_some("
+      foo <- function() no_fun()
+    "),
+    list(
+      message = rex::rex("no visible global function definition for", anything),
+      line_number = 1L,
+      column_number = 19L
+    ),
+    object_usage_linter()
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() no_global
+    "),
+    list(
+      message = rex::rex("no visible binding for global variable", anything),
+      line_number = 1L,
+      column_number = 19L
+    ),
+    object_usage_linter()
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() unused_local <- 42L
+    "),
+    list(
+      message = rex::rex("local variable", anything, "assigned but may not be used"),
+      line_number = 1L,
+      column_number = 19L
+    ),
+    object_usage_linter()
+  )
+})
