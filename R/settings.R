@@ -55,7 +55,13 @@ get_setting <- function(setting, config, defaults) {
   if (!is.null(option)) {
     option
   } else if (!is.null(config[[setting]])) {
-    eval(parse(text = config[[setting]]))
+    malformed <- function(e) {
+      stop("Malformed config setting '", setting, "'\n  ", conditionMessage(e), call. = FALSE)
+    }
+    tryCatch(
+      eval(parse(text = config[[setting]])),
+      error = malformed
+    )
   } else {
     defaults[[setting]]
   }
