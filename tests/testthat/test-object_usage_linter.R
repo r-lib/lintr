@@ -782,6 +782,18 @@ test_that("messages without location info are repaired", {
 
   expect_lint(
     trim_some("
+      foo <- function(a = no_fun()) a
+    "),
+    list(
+      message = rex::rex("no visible global function definition for", anything),
+      line_number = 1L,
+      column_number = 21L
+    ),
+    object_usage_linter()
+  )
+
+  expect_lint(
+    trim_some("
       foo <- function() no_global
     "),
     list(
