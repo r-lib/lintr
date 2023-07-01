@@ -188,12 +188,14 @@
   after our request to do so (see https://github.com/rstudio/tufte/issues/117). Therefore, ensure you're using a
   more recent version to get the behavior described here for {tufte}.
   
-  However, there is no requirement that `loadNamespace()` will register a package's custom {knitr}
+  More generally, there is no requirement that `loadNamespace()` will register a package's custom {knitr}
   engines, so you may need to work with other package authors to figure out a solution for other engines.
   
   Thanks to Yihui and other developers for their helpful discussions around this issue (#797, @IndrajeetPatil).
 
 * The output of `lint()` and `Lint()` gain S3 class `"list"` to assist with S3 dispatch (#1494, @MichaelChirico)
+
+* `object_usage_linter()` gives a more helpful warning when a `glue()` expression fails to evaluate (#1985, @MichaelChirico)
 
 # lintr 3.0.2
 
