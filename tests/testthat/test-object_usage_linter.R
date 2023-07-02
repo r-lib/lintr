@@ -765,3 +765,75 @@ test_that("functional lambda definitions are also caught", {
     object_usage_linter()
   )
 })
+
+test_that("messages without location info are repaired", {
+  # regression test for #1986
+  expect_lint(
+    trim_some("
+      foo <- function() no_fun()
+    "),
+    list(
+      message = rex::rex("no visible global function definition for", anything),
+      line_number = 1L,
+      column_number = 19L
+    ),
+    object_usage_linter()
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(a = no_fun()) a
+    "),
+    list(
+      message = rex::rex("no visible global function definition for", anything),
+      line_number = 1L,
+      column_number = 21L
+    ),
+    object_usage_linter()
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() no_global
+    "),
+    list(
+      message = rex::rex("no visible binding for global variable", anything),
+      line_number = 1L,
+      column_number = 19L
+    ),
+    object_usage_linter()
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() unused_local <- 42L
+    "),
+    list(
+      message = rex::rex("local variable", anything, "assigned but may not be used"),
+      line_number = 1L,
+      column_number = 19L
+    ),
+    object_usage_linter()
+  )
+
+  # More complex case with two lints and missing location info
+  expect_lint(
+    trim_some("
+      foo <- function() a <-
+        bar()
+    "),
+    list(
+      list(
+        message = rex::rex("local variable", anything, "assigned but may not be used"),
+        line_number = 1L,
+        column_number = 19L
+      ),
+      list(
+        message = rex::rex("no visible global function definition for", anything),
+        line_number = 2L,
+        column_number = 3L
+      )
+    ),
+    object_usage_linter()
+  )
+})
