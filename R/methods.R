@@ -181,6 +181,11 @@ as_tibble.lints <- function(x, ..., # nolint: object_name_linter.
   tibble::as_tibble(as.data.frame(x), ..., .rows = .rows, .name_repair = .name_repair, rownames = rownames)
 }
 
+as.data.table.lints <- function(x, keep.rownames = FALSE, ...) { # nolint: object_name_linter.
+  stopifnot(requireNamespace("data.table", quietly = TRUE))
+  data.table::setDT(as.data.frame(x), keep.rownames = keep.rownames, ...)
+}
+
 #' @export
 `[.lints` <- function(x, ...) {
   attrs <- attributes(x)
