@@ -196,6 +196,7 @@
   Thanks to Yihui and other developers for their helpful discussions around this issue (#797, @IndrajeetPatil).
 
 * The output of `lint()` and `Lint()` gain S3 class `"list"` to assist with S3 dispatch (#1494, @MichaelChirico)
+  + As a corollary, we now register an `as_tibble` method for class `lints`, conditional on {tibble} availability, to avoid dispatching to the `list` method which does not work with `lint()` output (#1997, @MichaelChirico)
 
 * `object_usage_linter()` gives a more helpful warning when a `glue()` expression fails to evaluate (#1985, @MichaelChirico)
 
