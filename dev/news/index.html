@@ -190,7 +190,10 @@
 <p>More generally, there is no requirement that <code><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">loadNamespace()</a></code> will register a package’s custom {knitr} engines, so you may need to work with other package authors to figure out a solution for other engines.</p>
 <p>Thanks to Yihui and other developers for their helpful discussions around this issue (<a href="https://github.com/r-lib/lintr/issues/797" class="external-link">#797</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</p>
 </li>
-<li><p>The output of <code><a href="../reference/lint.html">lint()</a></code> and <code><a href="../reference/lint-s3.html">Lint()</a></code> gain S3 class <code>"list"</code> to assist with S3 dispatch (<a href="https://github.com/r-lib/lintr/issues/1494" class="external-link">#1494</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
+<li>
+<p>The output of <code><a href="../reference/lint.html">lint()</a></code> and <code><a href="../reference/lint-s3.html">Lint()</a></code> gain S3 class <code>"list"</code> to assist with S3 dispatch (<a href="https://github.com/r-lib/lintr/issues/1494" class="external-link">#1494</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p>
+<ul><li>As a corollary, we now register an <code>as_tibble</code> method for class <code>lints</code>, conditional on {tibble} availability, to avoid dispatching to the <code>list</code> method which does not work with <code><a href="../reference/lint.html">lint()</a></code> output (<a href="https://github.com/r-lib/lintr/issues/1997" class="external-link">#1997</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</li>
+</ul></li>
 <li><p><code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code> gives a more helpful warning when a <code>glue()</code> expression fails to evaluate (<a href="https://github.com/r-lib/lintr/issues/1985" class="external-link">#1985</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
 </ul></div>
 </div>
