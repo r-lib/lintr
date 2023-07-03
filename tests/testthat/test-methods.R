@@ -148,3 +148,11 @@ test_that("within.list is dispatched", {
   })
   expect_identical(vapply(l, `[[`, integer(1L), "line_number"), 2L:3L)
 })
+
+test_that("as_tibble.list is _not_ dispatched directly", {
+  skip_if_not_installed("tibble")
+  expect_identical(
+    nrow(tibble::as_tibble(lint(text = "a = 1", linters = assignment_linter()))),
+    1L
+  )
+})

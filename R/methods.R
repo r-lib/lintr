@@ -173,6 +173,14 @@ as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) { # 
   )
 }
 
+as_tibble.lints <- function(x, ..., # nolint: object_name_linter.
+                            .rows = NULL,
+                            .name_repair = c("check_unique", "unique", "universal", "minimal"),
+                            rownames = NULL) {
+  stopifnot(requireNamespace("tibble", quietly = TRUE))
+  tibble::as_tibble(as.data.frame(x), ..., .rows = .rows, .name_repair = .name_repair, rownames = rownames)
+}
+
 #' @export
 `[.lints` <- function(x, ...) {
   attrs <- attributes(x)

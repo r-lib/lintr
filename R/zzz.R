@@ -326,6 +326,9 @@ settings <- NULL
   )
 
   settings <<- list2env(default_settings, parent = emptyenv())
-  invisible()
+
+  if (requireNamespace("tibble", quietly = TRUE)) {
+    registerS3method("as_tibble", "lints", as_tibble.lints, asNamespace("tibble"))
+  }
 }
 # nocov end
