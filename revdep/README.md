@@ -45,34 +45,26 @@
 
 # Revdeps
 
-## Failed to check (26)
+## Failed to check (10)
 
-|package             |version |error |warning |note |
-|:-------------------|:-------|:-----|:-------|:----|
-|abbyyR              |?       |      |        |     |
-|activatr            |?       |      |        |     |
-|adaptalint          |?       |      |        |     |
-|admiral             |?       |      |        |     |
-|admiral.test        |?       |      |        |     |
-|admiraldev          |?       |      |        |     |
-|admiralonco         |?       |      |        |     |
-|admiralophtha       |?       |      |        |     |
-|admiralvaccine      |?       |      |        |     |
-|ASSIGN              |?       |      |        |     |
-|autoharp            |?       |      |        |     |
-|babette             |?       |      |        |     |
-|beautier            |?       |      |        |     |
-|caretEnsemble       |?       |      |        |     |
-|chimeraviz          |?       |      |        |     |
-|foundry             |?       |      |        |     |
-|geofacet            |?       |      |        |     |
-|ggfortify           |?       |      |        |     |
-|INSPECTumours       |?       |      |        |     |
-|latrend             |?       |      |        |     |
-|MetaScope           |?       |      |        |     |
-|mimager             |?       |      |        |     |
-|mlr                 |?       |      |        |     |
-|RLSeq               |?       |      |        |     |
-|singleCellTK        |?       |      |        |     |
-|TBSignatureProfiler |?       |      |        |     |
+|package             |version |error  |warning |note |
+|:-------------------|:-------|:------|:-------|:----|
+|chimeraviz          |?       |       |        |     |
+|foundry             |?       |       |        |     |
+|FSelectorRcpp       |0.3.11  |1      |        |     |
+|latrend             |?       |       |        |     |
+|MetaScope           |?       |       |        |     |
+|mlr                 |?       |       |        |     |
+|RLSeq               |?       |       |        |     |
+|[simaerep](failures.md#simaerep)|0.4.3   |__+1__ |        |     |
+|singleCellTK        |?       |       |        |     |
+|TBSignatureProfiler |?       |       |        |     |
+
+## New problems (3)
+
+|package        |version |error  |warning   |note   |
+|:--------------|:-------|:------|:---------|:------|
+|[adaptalint](problems.md#adaptalint)|0.2.4   |__+2__ |          |       |
+|[fstcore](problems.md#fstcore)|0.9.14  |-1     |          |__+2__ |
+|[stencilaschema](problems.md#stencilaschema)|1.0.0   |       |-1 __+2__ |       |
 
