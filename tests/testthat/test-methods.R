@@ -156,3 +156,11 @@ test_that("as_tibble.list is _not_ dispatched directly", {
     1L
   )
 })
+
+test_that("as.data.table.list is _not_ dispatched directly", {
+  skip_if_not_installed("data.table")
+  expect_identical(
+    nrow(data.table::as.data.table(lint(text = "a = 1", linters = assignment_linter()))),
+    1L
+  )
+})
