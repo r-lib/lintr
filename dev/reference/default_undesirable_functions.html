@@ -97,7 +97,7 @@ Use <code><a href="modify_defaults.html">modify_defaults()</a></code> to produce
 <li><p><code><a href="https://rdrr.io/r/base/detach.html" class="external-link">detach()</a></code> modifies the global search path. Detaching environments from the search path is rarely necessary in
 production code.</p></li>
 <li><p><code><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse()</a></code> isn't type stable. Use an <code>if</code>/<code>else</code> block for scalar logic, or use
-<code><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">dplyr::if_else()</a></code>/<code>data.table::fifelse()</code> for type stable vectorized logic.</p></li>
+<code><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">dplyr::if_else()</a></code>/<code><a href="https://Rdatatable.gitlab.io/data.table/reference/fifelse.html" class="external-link">data.table::fifelse()</a></code> for type stable vectorized logic.</p></li>
 <li><p><code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code> permanently modifies the library location. Use <code><a href="https://withr.r-lib.org/reference/with_libpaths.html" class="external-link">withr::with_libpaths()</a></code> for a temporary change
 instead.</p></li>
 <li><p><code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code> modifies the global search path. Use roxygen2's @importFrom statement in packages, or <code>::</code> in scripts.</p></li>
