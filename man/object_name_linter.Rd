@@ -9,7 +9,9 @@ object_name_linter(styles = c("snake_case", "symbols"), regexes = character())
 \arguments{
 \item{styles}{A subset of
 \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
-match at least one of these styles.}
+match at least one of these styles. The \code{"symbols"} style refers to
+names containing only non-alphanumeric characters, e.g., \verb{\%+\%} from
+ggplot2 or \verb{\%>\%} from magrittr.}
 
 \item{regexes}{A (possibly named) character vector specifying a custom naming convention.
 If named, the names will be used in the lint message. Otherwise, the regexes enclosed by \code{/} will be used in the
