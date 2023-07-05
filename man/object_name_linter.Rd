@@ -10,8 +10,10 @@ object_name_linter(styles = c("snake_case", "symbols"), regexes = character())
 \item{styles}{A subset of
 \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
 match at least one of these styles. The \code{"symbols"} style refers to
-names containing only non-alphanumeric characters, e.g., \verb{\%+\%} from
-ggplot2 or \verb{\%>\%} from magrittr.}
+names containing \emph{only} non-alphanumeric characters; e.g., \verb{\%+\%} from
+ggplot2 or \verb{\%>\%} from magrittr will not generate lint markers, whereas
+\code{\%in\%} (containing both alphanumeric \emph{and} non-alphanumeric characters)
+will.}
 
 \item{regexes}{A (possibly named) character vector specifying a custom naming convention.
 If named, the names will be used in the lint message. Otherwise, the regexes enclosed by \code{/} will be used in the
