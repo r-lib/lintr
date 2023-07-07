@@ -200,6 +200,9 @@
 
 * `object_usage_linter()` gives a more helpful warning when a `glue()` expression fails to evaluate (#1985, @MichaelChirico)
 
+* The documentation of `object_name_linter()` now describes how `"symbols"`
+works when passed to the `styles` parameter (#1924, @hedsnz).
+
 # lintr 3.0.2
 
 * Fix test to avoid leaving behind cache files in the global cache directory.
