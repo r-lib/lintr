@@ -80,7 +80,11 @@ The default naming styles are "snake_case" and "symbols".</p>
 <dd><p>A subset of
 ‘symbols’, ‘CamelCase’, ‘camelCase’, ‘snake_case’, ‘SNAKE_CASE’, ‘dotted.case’, ‘lowercase’, ‘UPPERCASE’
 . A name should
-match at least one of these styles.</p></dd>
+match at least one of these styles. The <code>"symbols"</code> style refers to
+names containing <em>only</em> non-alphanumeric characters; e.g., defining <code>%+%</code>
+from ggplot2 or <code>%&gt;%</code> from magrittr would not generate lint markers,
+whereas <code>%m+%</code> from lubridate (containing both alphanumeric <em>and</em>
+non-alphanumeric characters) would.</p></dd>
 
 
 <dt>regexes</dt>
