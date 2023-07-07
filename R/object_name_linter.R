@@ -46,10 +46,10 @@ object_name_xpath <- local({
 #' @param styles A subset of
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
 #'   match at least one of these styles. The `"symbols"` style refers to
-#'   names containing *only* non-alphanumeric characters; e.g., `%+%` from
-#'   ggplot2 or `%>%` from magrittr will not generate lint markers, whereas
-#'   `%m+%` from lubridate (containing both alphanumeric *and* non-alphanumeric
-#'   characters) will.
+#'   names containing *only* non-alphanumeric characters; e.g., defining `%+%`
+#'   from ggplot2 or `%>%` from magrittr would not generate lint markers,
+#'   whereas `%m+%` from lubridate (containing both alphanumeric *and*
+#'   non-alphanumeric characters) would.
 #'
 #' @param regexes A (possibly named) character vector specifying a custom naming convention.
 #'   If named, the names will be used in the lint message. Otherwise, the regexes enclosed by `/` will be used in the
