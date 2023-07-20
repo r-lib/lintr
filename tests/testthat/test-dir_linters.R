@@ -1,5 +1,5 @@
 test_that("lint all files in a directory", {
-  # NB: not using .lintr in the the test packages because
+  # NB: not using .lintr in the test packages because
   #   R CMD check doesn't like hidden files in any subdirectory
   withr::local_options(lintr.linter_file = "lintr_test_config")
   the_dir <- test_path("dummy_packages", "package", "vignettes")

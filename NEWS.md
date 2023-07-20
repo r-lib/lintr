@@ -789,7 +789,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * Robust configuration system and exclusion logic
 * Emacs and Sublime Text 3 plugins now available from their respective package repositories.
 * add `names.lints`, `split.lints` (#49, @ttriche)
-* Fixed bug that caused vim syntatic plugin not to work properly in windows (#46, @abossenbroek)
+* Fixed bug that caused vim syntastic plugin not to work properly in windows (#46, @abossenbroek)
 * allow lintr customization per project using `.lintr` config files.
 * use `globalenv()` instead of `baseenv()` for default parent environment so
   that `methods` will be included.
