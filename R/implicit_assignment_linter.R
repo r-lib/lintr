@@ -62,7 +62,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
     /following-sibling::expr[1]
     /"
   )
-  xpath_fun_assigment <- paste0(
+  xpath_fun_assignment <- paste0(
     xpath_fun_call,
     assignments,
     collapse = " | "
@@ -91,7 +91,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
     collapse = " | "
   )
 
-  xpath <- paste0(c(xpath_controls_assignment, xpath_fun_assigment), collapse = " | ")
+  xpath <- paste0(c(xpath_controls_assignment, xpath_fun_assignment), collapse = " | ")
 
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level
