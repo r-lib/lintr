@@ -538,7 +538,7 @@ get_newline_locs <- function(x) {
 # Fix column numbers when there are tabs
 # getParseData() counts 1 tab as a variable number of spaces instead of one:
 # https://github.com/wch/r-source/blame/e7401b68ab0e032fce3e376aaca9a5431619b2b4/src/main/gram.y#L512
-# The number of spaces is so that the code is brought to the next 8-character indentation level e.g:
+# The number of spaces is so that the code is brought to the next 8-character indentation level e.g.:
 #   "1\t;"          --> "1       ;"
 #   "12\t;"         --> "12      ;"
 #   "123\t;"        --> "123     ;"

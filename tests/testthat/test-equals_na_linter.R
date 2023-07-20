@@ -12,8 +12,8 @@ test_that("equals_na_linter skips allowed usages", {
   expect_lint("x[!is.na(x)]", NULL, linter)
 
   # equals_na_linter should ignore strings and comments
-  expect_lint("is.na(x) # dont flag x == NA if inside a comment", NULL, linter)
-  expect_lint("lint_msg <- 'dont flag x == NA if inside a string'", NULL, linter)
+  expect_lint("is.na(x) # do not flag x == NA if inside a comment", NULL, linter)
+  expect_lint("lint_msg <- 'do not flag x == NA if inside a string'", NULL, linter)
 
   # nested NAs are okay
   expect_lint("x==f(1, ignore = NA)", NULL, linter)
