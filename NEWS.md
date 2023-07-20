@@ -1,5 +1,7 @@
 # lintr (development version)
 
+# lintr 3.1.0
+
 ## Deprecations & Breaking Changes
 
 * `.lintr` files can now be kept in the directory `.github/linters` for better compatibility with Super-Linter. Note that this may be a breaking change if you already have a config in `.github/linters` inside a subdirectory as well as in your R project's root, since the former will now be discovered first where it was ignored before. Please see `vignette("lintr")` for details on how configs are discovered (#1746, @tonyk7440 and @klmr).
