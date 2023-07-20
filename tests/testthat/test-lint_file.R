@@ -63,7 +63,7 @@ test_that("lint() results do not depend on the position of the .lintr", {
   }
 
   # a dummy package for use in the test
-  pkg_path <- file.path("dummy_packages", "assignmentLinter")
+  pkg_path <- test_path("dummy_packages", "assignmentLinter")
 
   # we lint the file <pkg-root>/R/jkl.R using the pkg-root as working directory
   # and
