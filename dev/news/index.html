@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">3.0.2.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">3.1.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,8 +63,11 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="lintr-development-version">lintr (development version)<a class="anchor" aria-label="anchor" href="#lintr-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="3.1.0" id="lintr-310">lintr 3.1.0<a class="anchor" aria-label="anchor" href="#lintr-310"></a></h2><p class="text-muted">CRAN release: 2023-07-19</p>
 <div class="section level3">
-<h3 id="deprecations--breaking-changes-development-version">Deprecations &amp; Breaking Changes<a class="anchor" aria-label="anchor" href="#deprecations--breaking-changes-development-version"></a></h3>
+<h3 id="deprecations--breaking-changes-3-1-0">Deprecations &amp; Breaking Changes<a class="anchor" aria-label="anchor" href="#deprecations--breaking-changes-3-1-0"></a></h3>
 <ul><li>
 <code>.lintr</code> files can now be kept in the directory <code>.github/linters</code> for better compatibility with Super-Linter. Note that this may be a breaking change if you already have a config in <code>.github/linters</code> inside a subdirectory as well as in your R project’s root, since the former will now be discovered first where it was ignored before. Please see <code><a href="../articles/lintr.html">vignette("lintr")</a></code> for details on how configs are discovered (<a href="https://github.com/r-lib/lintr/issues/1746" class="external-link">#1746</a>, <a href="https://github.com/tonyk7440" class="external-link">@tonyk7440</a> and <a href="https://github.com/klmr" class="external-link">@klmr</a>).</li>
 <li>
@@ -81,7 +84,7 @@
 <code><a href="../reference/lint.html">lint()</a></code>, <code><a href="../reference/lint.html">lint_dir()</a></code>, and <code><a href="../reference/lint.html">lint_package()</a></code> no longer accept certain arguments (<code>cache=</code> for <code><a href="../reference/lint.html">lint()</a></code>, <code>relative_path=</code> for the latter two) positionally. The <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code> since 3.0.0 has been upgraded to an error.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<h3 id="bug-fixes-3-1-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-3-1-0"></a></h3>
 <ul><li><p><code><a href="../reference/linters_with_tags.html">linters_with_tags()</a></code> now includes the previously missing spaces around “and” when listing missing linters advertised by <code><a href="../reference/available_linters.html">available_linters()</a></code>. This error message may appear e.g. when you update lintr to a version with new linters but don’t restart your R session (<a href="https://github.com/r-lib/lintr/issues/1946" class="external-link">#1946</a>, <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>)</p></li>
 <li><p><code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> is more robust to errors stemming from unrecognized escapes (<a href="https://github.com/r-lib/lintr/issues/1545" class="external-link">#1545</a>, <a href="https://github.com/r-lib/lintr/issues/1845" class="external-link">#1845</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</p></li>
 <li><p><code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> can handle Sweave/Rmarkdown documents with reference chunks like <code>&lt;&lt;ref_file&gt;&gt;</code> (<a href="https://github.com/r-lib/lintr/issues/779" class="external-link">#779</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Note that these are simply skipped, rather than attempting to retrieve the reference and also lint it.</p></li>
@@ -113,7 +116,7 @@
 <li><p><code><a href="../reference/function_left_parentheses_linter.html">function_left_parentheses_linter()</a></code> produces a more specific lint (and no longer fails) when the opening parenthesis is on a different line than <code>function</code> or the call name (<a href="https://github.com/r-lib/lintr/issues/1953" class="external-link">#1953</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Thanks also to <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a> and <a href="https://github.com/lorenzwalthert" class="external-link">@lorenzwalthert</a> for identifying a regression in the initial fix, <a href="https://github.com/r-lib/lintr/issues/1963" class="external-link">#1963</a>.</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="changes-to-defaults-development-version">Changes to defaults<a class="anchor" aria-label="anchor" href="#changes-to-defaults-development-version"></a></h3>
+<h3 id="changes-to-defaults-3-1-0">Changes to defaults<a class="anchor" aria-label="anchor" href="#changes-to-defaults-3-1-0"></a></h3>
 <ul><li><p>Set the default for the <code>except</code> argument in <code><a href="../reference/duplicate_argument_linter.html">duplicate_argument_linter()</a></code> to <code>c("mutate", "transmute")</code>. This allows sequential updates like <code>x |&gt; mutate(a = b + 1, a = log(a))</code> (<a href="https://github.com/r-lib/lintr/issues/1345" class="external-link">#1345</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</p></li>
 <li>
 <p><code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code></p>
@@ -134,7 +137,7 @@
 <li><p><code><a href="../reference/lint.html">lint_package()</a></code> also looks for files in <code>exec/</code> (<a href="https://github.com/r-lib/lintr/issues/1950" class="external-link">#1950</a>, <a href="https://github.com/jmaspons" class="external-link">@jmaspons</a>).</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
+<h3 id="new-and-improved-features-3-1-0">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-3-1-0"></a></h3>
 <ul><li><p>New <code><a href="../reference/get_r_string.html">get_r_string()</a></code> helper to get the R-equivalent value of a string, especially useful for R-4-style raw strings. Previously an internal <code>lintr</code> helper, now exported to facilitate writing custom linters (<a href="https://github.com/r-lib/lintr/issues/1493" class="external-link">#1493</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</p></li>
 <li><p><code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code> improves lint metadata when detecting undefined infix operators, e.g. <code>%&gt;%</code> or <code>:=</code> (<a href="https://github.com/r-lib/lintr/issues/1497" class="external-link">#1497</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
 <li><p><code><a href="../reference/unused_import_linter.html">unused_import_linter()</a></code> can detect datasets from imported packages and no longer warns when a package is imported only for its datasets (<a href="https://github.com/r-lib/lintr/issues/1545" class="external-link">#1545</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</p></li>
@@ -160,7 +163,7 @@
 <li><p>The {lintr} configuration file is now searched in the system’s user configuration path; the lintr config filename can also be configured explicitly by setting the environment variable <code>R_LINTR_LINTER_FILE</code> (<a href="https://github.com/r-lib/lintr/issues/460" class="external-link">#460</a>, <a href="https://github.com/klmr" class="external-link">@klmr</a>)</p></li>
 <li><p>Errors in the {lintr} configuration file now produce more informative error messages (<a href="https://github.com/r-lib/lintr/issues/886" class="external-link">#886</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>)</p></li>
 </ul><div class="section level4">
-<h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
+<h4 id="new-linters-3-1-0">New linters<a class="anchor" aria-label="anchor" href="#new-linters-3-1-0"></a></h4>
 <ul><li><p><code><a href="../reference/matrix_apply_linter.html">matrix_apply_linter()</a></code> recommends use of dedicated <code><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums()</a></code>, <code><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums()</a></code>, <code><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colMeans()</a></code>, <code><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans()</a></code> over <code>apply(., MARGIN, sum)</code> or <code>apply(., MARGIN, mean)</code>. The recommended alternative is much more efficient and more readable (<a href="https://github.com/r-lib/lintr/issues/1869" class="external-link">#1869</a>, <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>).</p></li>
 <li><p><code><a href="../reference/unnecessary_lambda_linter.html">unnecessary_lambda_linter()</a></code>: detect unnecessary lambdas (anonymous functions), e.g. <code>lapply(x, function(xi) sum(xi))</code> can be <code>lapply(x, sum)</code> and <code>purrr::map(x, ~quantile(.x, 0.75, na.rm = TRUE))</code> can be <code>purrr::map(x, quantile, 0.75, na.rm = TRUE)</code>. Naming <code>probs = 0.75</code> can further improve readability (<a href="https://github.com/r-lib/lintr/issues/1531" class="external-link">#1531</a>, <a href="https://github.com/r-lib/lintr/issues/1866" class="external-link">#1866</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>, <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>).</p></li>
 <li><p><code><a href="../reference/redundant_equals_linter.html">redundant_equals_linter()</a></code> for redundant comparisons to <code>TRUE</code> or <code>FALSE</code> like <code>is_treatment == TRUE</code> (<a href="https://github.com/r-lib/lintr/issues/1500" class="external-link">#1500</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</p></li>
@@ -182,7 +185,7 @@
 </ul></div>
 </div>
 <div class="section level3">
-<h3 id="notes-development-version">Notes<a class="anchor" aria-label="anchor" href="#notes-development-version"></a></h3>
+<h3 id="notes-3-1-0">Notes<a class="anchor" aria-label="anchor" href="#notes-3-1-0"></a></h3>
 <ul><li><p>{lintr} now depends on R version 3.5.0, in line with the tidyverse policy for R version compatibility.</p></li>
 <li>
 <p><code><a href="../reference/lint.html">lint()</a></code> continues to support Rmarkdown documents. For users of custom .Rmd engines, e.g. <code>marginformat</code> from {tufte} or <code>theorem</code> from {bookdown}, note that those engines must be registered in {knitr} prior to running <code><a href="../reference/lint.html">lint()</a></code> in order for {lintr} to behave as expected, i.e., they should be shown as part of <code>knitr::knit_engines$get()</code>.</p>
@@ -764,7 +767,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <li>Robust configuration system and exclusion logic</li>
 <li>Emacs and Sublime Text 3 plugins now available from their respective package repositories.</li>
 <li>add <code>names.lints</code>, <code>split.lints</code> (<a href="https://github.com/r-lib/lintr/issues/49" class="external-link">#49</a>, <a href="https://github.com/ttriche" class="external-link">@ttriche</a>)</li>
-<li>Fixed bug that caused vim syntatic plugin not to work properly in windows (<a href="https://github.com/r-lib/lintr/issues/46" class="external-link">#46</a>, <a href="https://github.com/abossenbroek" class="external-link">@abossenbroek</a>)</li>
+<li>Fixed bug that caused vim syntastic plugin not to work properly in windows (<a href="https://github.com/r-lib/lintr/issues/46" class="external-link">#46</a>, <a href="https://github.com/abossenbroek" class="external-link">@abossenbroek</a>)</li>
 <li>allow lintr customization per project using <code>.lintr</code> config files.</li>
 <li>use <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">globalenv()</a></code> instead of <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">baseenv()</a></code> for default parent environment so that <code>methods</code> will be included.</li>
 <li>do not check object usage if eval fails. Fixes (<a href="https://github.com/r-lib/lintr/issues/24" class="external-link">#24</a>, reported by <a href="https://github.com/fabian-s" class="external-link">@fabian-s</a>)</li>
