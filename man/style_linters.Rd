@@ -33,6 +33,7 @@ The following linters are tagged with 'style':
 \item{\code{\link{package_hooks_linter}}}
 \item{\code{\link{paren_body_linter}}}
 \item{\code{\link{pipe_call_linter}}}
+\item{\code{\link{pipe_consistency_linter}}}
 \item{\code{\link{pipe_continuation_linter}}}
 \item{\code{\link{quotes_linter}}}
 \item{\code{\link{semicolon_linter}}}
