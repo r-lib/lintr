@@ -27,9 +27,9 @@ The following tags exist:
 \item{\link[=efficiency_linters]{efficiency} (23 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
-\item{\link[=readability_linters]{readability} (47 linters)}
+\item{\link[=readability_linters]{readability} (48 linters)}
 \item{\link[=robustness_linters]{robustness} (14 linters)}
-\item{\link[=style_linters]{style} (34 linters)}
+\item{\link[=style_linters]{style} (35 linters)}
 }
 }
 \section{Linters}{
@@ -93,6 +93,7 @@ The following linters exist:
 \item{\code{\link{paren_body_linter}} (tags: default, readability, style)}
 \item{\code{\link{paste_linter}} (tags: best_practices, configurable, consistency)}
 \item{\code{\link{pipe_call_linter}} (tags: readability, style)}
+\item{\code{\link{pipe_consistency_linter}} (tags: readability, style)}
 \item{\code{\link{pipe_continuation_linter}} (tags: default, readability, style)}
 \item{\code{\link{quotes_linter}} (tags: configurable, consistency, default, readability, style)}
 \item{\code{\link{redundant_equals_linter}} (tags: best_practices, common_mistakes, efficiency, readability)}
