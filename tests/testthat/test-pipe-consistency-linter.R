@@ -1,4 +1,5 @@
 test_that("pipe_consistency skips allowed usage", {
+  skip_if_not_r_version("4.1.0")
   expect_lint("1:3 %>% mean() %>% as.character()", NULL, pipe_consistency_linter())
   expect_lint("1:3 |> mean() |> as.character()", NULL, pipe_consistency_linter())
   # With no pipes
@@ -12,6 +13,7 @@ test_that("pipe_consistency skips allowed usage", {
 })
 
 test_that("pipe_consistency lints inconsistent usage", {
+  skip_if_not_r_version("4.1.0")
   expected_msg <- rex::rex("Use consistent pipe operators (either all %>% or all |>).")
   expect_lint(
     "1:3 |> mean() %>% as.character()",
