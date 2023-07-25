@@ -112,7 +112,7 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
     }
 
     operator <- xml2::xml_text(bad_expr)
-    lint_message_fmt <- "Use <-, not %s, for assignment."
+    lint_message_fmt <- rep("Use <-, not %s, for assignment.", length(operator))
     lint_message_fmt[operator %in% c("<<-", "->>")] <-
       "%s can have hard-to-predict behavior; prefer assigning to a specific environment instead (with assign() or <-)."
     lint_message_fmt[operator == "%<>%"] <-

@@ -171,3 +171,16 @@ test_that("%<>% throws a lint", {
   # interaction with allow_trailing
   expect_lint("x %<>%\n  sum()", "Assignment %<>% should not be trailing", assignment_linter(allow_trailing = FALSE))
 })
+
+test_that("multiple lints throw correct messages", {
+  expect_lint(
+    "{ x <<- 1; y ->> 2; z -> 3; x %<>% as.character() }",
+    list(
+      list(message = "<<- can have hard-to-predict behavior"),
+      list(message = "->> can have hard-to-predict behavior"),
+      list(message = "Use <-, not ->"),
+      list(message = "Avoid the assignment pipe %<>%")
+    ),
+    assignment_linter(allow_cascading_assign = FALSE)
+  )
+})
