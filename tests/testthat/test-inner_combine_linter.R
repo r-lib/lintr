@@ -67,6 +67,10 @@ test_that("inner_combine_linter is order-agnostic for matching arguments", {
   )
 })
 
+test_that("c() with ...length()=1 is OK", {
+  expect_lint("c(exp())", NULL, inner_combine_linter())
+})
+
 skip_if_not_installed("tibble")
 patrick::with_parameters_test_that(
   "inner_combine_linter skips allowed usages:",
