@@ -10,7 +10,7 @@ make_linter_from_regex <- function(regex,
 
   function() {
     Linter(function(source_expression) {
-      if (!is_lint_level(source_expression, "expression")) {
+      if (!is_lint_level(source_expression, "file")) {
         return(list())
       }
 
