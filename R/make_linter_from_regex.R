@@ -81,4 +81,3 @@ is_match_covered <- function(match, source_expression, token_type = "STR_CONST")
 
   any_single_line_covers() || any_multi_line_covers()
 }
-
