@@ -1,7 +1,6 @@
 make_linter_from_regex <- function(regex,
                                    lint_type,
-                                   lint_msg,
-                                   ignore_strings = TRUE) {
+                                   lint_msg) {
   function() {
     Linter(function(source_expression) {
       if (!is_lint_level(source_expression, "file")) {
@@ -19,28 +18,20 @@ make_linter_from_regex <- function(regex,
 
       matches_by_row <- split(all_matches, seq_len(nrow(all_matches)))
 
-      make_lint_from_match <- function(match) {
+      lints <- lapply(matches_by_row, function(.match) {
+        if (is_match_covered(.match, source_expression)) {
+          return()
+        }
         Lint(
           filename = source_expression[["filename"]],
-          line_number = match$line_number,
+          line_number = .match$line_number,
           type = lint_type,
           message = lint_msg,
-          line = source_expression[["file_lines"]][[rownames(match)]],
-          ranges = list(c(match$start, match$end))
+          line = source_expression[["file_lines"]][[rownames(.match)]],
+          ranges = list(c(.match$start, .match$end))
         )
-      }
-
-      if (ignore_strings) {
-        lints <- lapply(matches_by_row, function(.match) {
-          if (is_match_covered(.match, source_expression)) {
-            return()
-          }
-          make_lint_from_match(.match)
-        })
-        lints[lengths(lints) > 0L]
-      } else {
-        lapply(matches_by_row, make_lint_from_match)
-      }
+      })
+      lints[lengths(lints) > 0L]
     })
   }
 }
