@@ -55,7 +55,7 @@ test_that("arguments handle trailing assignment operators correctly", {
 
   expect_lint(
     "foo(bar =\n1)",
-    rex::rex("= should not be trailing at the end of the line."),
+    rex::rex("= should not be trailing at the end of a line."),
     assignment_linter(allow_trailing = FALSE)
   )
 
