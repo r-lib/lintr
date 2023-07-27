@@ -43,7 +43,7 @@
 #' @evalRd rd_tags("function_argument_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
-#' - <https://design.tidyverse.org/args-data-details.html>
+#' - <https://design.tidyverse.org/required-no-defaults.html>
 #' @export
 function_argument_linter <- function() {
   xpath <- paste(collapse = " | ", glue::glue("
