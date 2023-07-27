@@ -253,7 +253,7 @@ works when passed to the `styles` parameter (#1924, @hedsnz).
 * `unreachable_code_linter()` ignores trailing comments if they match a closing nolint block (#1347, @AshesITR).
 
 * New `function_argument_linter()` to enforce that arguments with defaults appear last in function declarations,
-  see the [Tidyverse design guide](https://design.tidyverse.org/args-data-details.html) (#450, @AshesITR).
+  see the [Tidyverse design guide](https://design.tidyverse.org/required-no-defaults.html) (#450, @AshesITR).
 
 * New `allow_trailing` argument added to `assignment_linter()` to check when assignment operators are at the 
   end of a line, and the value is on the following line (#1491, @ashbaldry) 
@@ -334,7 +334,7 @@ works when passed to the `styles` parameter (#1924, @hedsnz).
    + `open_curly_linter()`
    + `paren_brace_linter()`
 * The `...` argument for `lint()`, `lint_dir()`, and `lint_package()` has been promoted to an earlier position to
-  better match the [Tidyverse design principle](https://design.tidyverse.org/args-data-details.html) of
+  better match the [Tidyverse design principle](https://design.tidyverse.org/required-no-defaults.html) of
   data->descriptor->details. This change enables passing objects to `...` without needing to specify non-required
   arguments, e.g. `lint_dir("/path/to/dir", linter())` now works without the need to specify `relative_path`.
   This affects some code that uses positional arguments (#935, @MichaelChirico).
