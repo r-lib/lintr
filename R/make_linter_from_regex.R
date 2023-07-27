@@ -15,13 +15,13 @@ make_linter_from_regex <- function(regex,
       }
 
       all_matches <- re_matches(
-        source_expression[["lines"]],
+        source_expression[["file_lines"]],
         regex,
         locations = TRUE,
         global = TRUE
       )
 
-      line_numbers <- as.integer(names(source_expression[["lines"]]))
+      line_numbers <- as.integer(names(source_expression[["file_lines"]]))
 
       lints <- Map(
         function(line_matches, line_number) {
@@ -42,7 +42,7 @@ make_linter_from_regex <- function(regex,
                 column_number = start,
                 type = lint_type,
                 message = lint_msg,
-                line = source_expression[["lines"]][[as.character(line_number)]],
+                line = source_expression[["file_lines"]][[as.character(line_number)]],
                 ranges = list(c(start, end))
               )
             }
@@ -67,7 +67,7 @@ make_linter_from_regex <- function(regex,
 #'   within a string
 #' @noRd
 is_match_covered <- function(source_expression, line_number, match, token_type = NULL) {
-  pc <- source_expression[["parsed_content"]]
+  pc <- source_expression[["full_parsed_content"]]
   if (!is.null(token_type)) {
     pc <- pc[pc[["token"]] == token_type, ]
   }
