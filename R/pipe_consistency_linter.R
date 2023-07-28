@@ -60,14 +60,14 @@ pipe_consistency_linter <- function(pipe = c("auto", "%>%", "|>")) {
       )
     } else if (pipe == "%>%" && n_native > 0L) {
       xml_nodes_to_lints(
-        xml = c(match_native),
+        xml = match_native,
         source_expression = source_expression,
         lint_message = "Use magrittr pipe operator (%>%) instead of native pipe operator (|>).",
         type = "style"
       )
     } else if (pipe == "|>" && n_magrittr > 0L) {
       xml_nodes_to_lints(
-        xml = c(match_magrittr),
+        xml = match_magrittr,
         source_expression = source_expression,
         lint_message = "Use native pipe operator (|>) instead of magrittr pipe operator (%>%).",
         type = "style"
