@@ -4,20 +4,27 @@
 \alias{pipe_consistency_linter}
 \title{Pipe consistency linter}
 \usage{
-pipe_consistency_linter()
+pipe_consistency_linter(pipe = c("auto", "\%>\%", "|>"))
+}
+\arguments{
+\item{pipe}{Which pipe operator to use (either \code{"\%>\%"} or \code{"|>"}). By default
+(`"auto"``), the linter has no preference but will check that the same pipe
+operator is used throughout the file.}
 }
 \description{
-Check that all pipes are consistent (either all \%>\% or all |>).
-}
-\details{
-Checks consistency across an entire file, not just a single
-expression.
+Check that pipe operators are consistently used throughout a file. Optionally
+specify which pipe operator to use.
 }
 \examples{
 # will produce lints
 lint(
   text = "1:3 |> mean() \%>\% as.character()",
   linters = pipe_consistency_linter()
+)
+
+lint(
+  text = "1:3 \%>\% mean() \%>\% as.character()",
+  linters = pipe_consistency_linter("|>")
 )
 
 # okay
@@ -35,5 +42,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=configurable_linters]{configurable}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }

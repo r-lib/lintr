@@ -1,15 +1,22 @@
 #' Pipe consistency linter
 #'
-#' Check that all pipes are consistent (either all %>% or all |>).
+#' Check that pipe operators are consistently used throughout a file. Optionally
+#' specify which pipe operator to use.
 #'
-#' Checks consistency across an entire file, not just a single
-#' expression.
+#' @param pipe Which pipe operator to use (either `"%>%"` or `"|>"`). By default
+#' (`"auto"``), the linter has no preference but will check that the same pipe
+#' operator is used throughout the file.
 #'
 #' @examples
 #' # will produce lints
 #' lint(
 #'   text = "1:3 |> mean() %>% as.character()",
 #'   linters = pipe_consistency_linter()
+#' )
+#'
+#' lint(
+#'   text = "1:3 %>% mean() %>% as.character()",
+#'   linters = pipe_consistency_linter("|>")
 #' )
 #'
 #' # okay
@@ -25,7 +32,9 @@
 #' @evalRd rd_tags("pipe_consistency_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-pipe_consistency_linter <- function() {
+pipe_consistency_linter <- function(pipe = c("auto", "%>%", "|>")) {
+  pipe <- match.arg(pipe)
+
   xpath_magrittr <- "//SPECIAL[text() = '%>%']"
   xpath_native <- "//PIPE"
 
@@ -42,15 +51,29 @@ pipe_consistency_linter <- function() {
     n_magrittr <- length(match_magrittr)
     n_native <- length(match_native)
 
-    if (n_magrittr == 0L || n_native == 0L) {
-      return(list())
+    if (pipe == "auto" && n_magrittr > 0L && n_native > 0L) {
+      xml_nodes_to_lints(
+        xml = c(match_magrittr, match_native),
+        source_expression = source_expression,
+        lint_message = "Use consistent pipe operators (either all %>% or all |>).",
+        type = "style"
+      )
+    } else if (pipe == "%>%" && n_native > 0L) {
+      xml_nodes_to_lints(
+        xml = c(match_native),
+        source_expression = source_expression,
+        lint_message = "Use magrittr pipe operator (%>%) instead of native pipe operator (|>).",
+        type = "style"
+      )
+    } else if (pipe == "|>" && n_magrittr > 0L) {
+      xml_nodes_to_lints(
+        xml = c(match_magrittr),
+        source_expression = source_expression,
+        lint_message = "Use native pipe operator (|>) instead of magrittr pipe operator (%>%).",
+        type = "style"
+      )
+    } else {
+      list()
     }
-
-    xml_nodes_to_lints(
-      xml = c(match_magrittr, match_native),
-      source_expression = source_expression,
-      lint_message = "Use consistent pipe operators (either all %>% or all |>).",
-      type = "style"
-    )
   })
 }
