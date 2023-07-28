@@ -42,6 +42,7 @@ infix_spaces_linter,style readability default configurable
 inner_combine_linter,efficiency consistency readability
 is_numeric_linter,readability best_practices consistency
 lengths_linter,efficiency readability best_practices
+library_call_linter,style best_practices
 line_length_linter,style readability default configurable
 literal_coercion_linter,best_practices consistency efficiency
 matrix_apply_linter,readability efficiency
