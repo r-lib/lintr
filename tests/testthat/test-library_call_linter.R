@@ -14,6 +14,11 @@ test_that("library_call_linter skips allowed usages", {
     NULL,
     library_call_linter()
   )
+
+  expect_lint(c("print('test')", "# library(dplyr)"),
+    NULL,
+    library_call_linter()
+  )
 })
 
 test_that("library_call_linter warns on disallowed usages", {
