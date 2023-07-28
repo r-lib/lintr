@@ -26,7 +26,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 pipe_consistency_linter <- function() {
-  xpath_magrittir <- "//SPECIAL[text() = '%>%']"
+  xpath_magrittr <- "//SPECIAL[text() = '%>%']"
   xpath_native <- "//PIPE"
 
   Linter(function(source_expression) {
@@ -36,7 +36,7 @@ pipe_consistency_linter <- function() {
 
     xml <- source_expression$full_xml_parsed_content
 
-    match_magrittr <- xml2::xml_find_all(xml, xpath_magrittir)
+    match_magrittr <- xml2::xml_find_all(xml, xpath_magrittr)
     match_native <- xml2::xml_find_all(xml, xpath_native)
 
     n_magrittr <- length(match_magrittr)
