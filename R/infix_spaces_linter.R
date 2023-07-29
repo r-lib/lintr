@@ -144,7 +144,7 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
 
   # NB: preceding-sibling::* and not preceding-sibling::expr because
   #   of the foo(a=1) case, where the tree is <SYMBOL_SUB><EQ_SUB><expr>
-  # NB: parent::*[count(expr) + count(OP-LEFT-PAREN) > 1] for the unary case, e.g. x[-1]
+  # NB: parent::*[count(expr | SYMBOL_SUB)) > 1] for the unary case, e.g. x[-1]
   #  SYMBOL_SUB for case with missing argument like alist(a =)
   # NB: the last not() disables lints inside box::use() declarations
   xpath <- paste(collapse = "|", glue::glue("//{infix_tokens}[
