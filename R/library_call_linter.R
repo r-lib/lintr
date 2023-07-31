@@ -46,7 +46,7 @@ library_call_linter <- function() {
     bad_expr_library <- xml2::xml_find_all(
       xml,
       "//SYMBOL_FUNCTION_CALL[text() = 'library'][last()]"
-      )
+    )
 
     xml_nodes_to_lints(
       bad_expr_library,
