@@ -142,16 +142,16 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
   if (isTRUE(assignment_as_infix)) {
     suppressing_tokens <- c("LEFT_ASSIGN", "EQ_ASSIGN", "EQ_SUB", "EQ_FORMALS")
-    xp_suppress <- glue::glue("preceding-sibling::{suppressing_tokens}[{xp_last_on_line}]")
+    xp_suppress <- glue("preceding-sibling::{suppressing_tokens}[{xp_last_on_line}]")
 
     restoring_tokens <- c("expr[SYMBOL_FUNCTION_CALL]", "OP-LEFT-BRACE")
-    xp_restore <- glue::glue("preceding-sibling::{restoring_tokens}")
+    xp_restore <- glue("preceding-sibling::{restoring_tokens}")
 
     # match the first ancestor expr that is either
     #  * a suppressing token (<- or =) or
     #  * a restoring token (braces or a function call)
     # suppress the indent if the matched ancestor is a suppressing token
-    infix_condition <- glue::glue("
+    infix_condition <- glue("
       and not(ancestor::expr[{xp_or(c(xp_suppress, xp_restore))}][1][{xp_or(xp_suppress)}])
     ")
   } else {
@@ -162,10 +162,10 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     "number(",
     paste(
       c(
-        glue::glue("self::{paren_tokens_left}/following-sibling::{paren_tokens_right}/preceding-sibling::*[1]/@line2"),
-        glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))}]
+        glue("self::{paren_tokens_left}/following-sibling::{paren_tokens_right}/preceding-sibling::*[1]/@line2"),
+        glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))}]
                       /following-sibling::SYMBOL_FUNCTION_CALL/parent::expr/following-sibling::expr[1]/@line2"),
-        glue::glue("self::*[
+        glue("self::*[
                       {xp_and(paste0('not(self::', paren_tokens_left, ')'))} and
                       not(following-sibling::SYMBOL_FUNCTION_CALL)
                     ]/following-sibling::*[not(self::COMMENT)][1]/@line2")
@@ -177,13 +177,13 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
   xp_indent_changes <- paste(
     c(
-      glue::glue("//{paren_tokens_left}[not(@line1 = following-sibling::expr[
+      glue("//{paren_tokens_left}[not(@line1 = following-sibling::expr[
                     @line2 > @line1 and
                     ({xp_or(paste0('descendant::', paren_tokens_left, '[', xp_last_on_line, ']'))})
                   ]/@line1)]"),
-      glue::glue("//{infix_tokens}[{xp_last_on_line}{infix_condition}]"),
-      glue::glue("//{no_paren_keywords}[{xp_last_on_line}]"),
-      glue::glue("//{keyword_tokens}/following-sibling::OP-RIGHT-PAREN[
+      glue("//{infix_tokens}[{xp_last_on_line}{infix_condition}]"),
+      glue("//{no_paren_keywords}[{xp_last_on_line}]"),
+      glue("//{keyword_tokens}/following-sibling::OP-RIGHT-PAREN[
                     {xp_last_on_line} and
                     not(following-sibling::expr[1][OP-LEFT-BRACE])
                   ]")
@@ -338,7 +338,7 @@ build_indentation_style_tidy <- function() {
   "
 
   xp_suppress <- paste(
-    glue::glue("
+    glue("
         self::{paren_tokens_left}[
           @line1 = following-sibling::{paren_tokens_right}/{xp_inner_expr}[position() = 1]/@line1
         ]/following-sibling::{paren_tokens_right}[
@@ -350,10 +350,10 @@ build_indentation_style_tidy <- function() {
 
   xp_is_not_hanging <- paste(
     c(
-      glue::glue(
+      glue(
         "self::{paren_tokens_left}/following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]"
       ),
-      glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
+      glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
     ),
     collapse = " | "
   )
@@ -378,11 +378,11 @@ build_indentation_style_always <- function() {
 
   xp_is_not_hanging <- paste(
     c(
-      glue::glue("
+      glue("
         self::{paren_tokens_left}[{xp_last_on_line}]/
           following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]
       "),
-      glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
+      glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
     ),
     collapse = " | "
   )
