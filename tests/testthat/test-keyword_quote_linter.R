@@ -213,14 +213,14 @@ test_that("keyword_quote_linter blocks quoted $, @ extractions", {
 
 test_that("multiple lints are generated correctly", {
   expect_lint(
-    c(
-      "{",
-      "  foo('a' = 1)",
-      "  'b' <- 2",
-      "  x$'c'",
-      "  y@'d'",
-      "}"
-    ),
+    trim_some('
+      {
+        foo("a" = 1)
+        "b" <- 2
+        x$"c"
+        y@"d"
+      }
+    '),
     list(
       list(message = "Only quote named arguments"),
       list(message = "Only quote targets of assignment"),
