@@ -16,6 +16,11 @@ Force library calls to all be at the top of the script.
    linters = library_call_linter()
  )
 
+ lint(
+   text = c("library(dplyr)", "print('test')", "library(tidyr)", "library(purrr)"),
+   linters = library_call_linter()
+ )
+
  # okay
  lint(
    text = c("library(dplyr)", "print('test')"),

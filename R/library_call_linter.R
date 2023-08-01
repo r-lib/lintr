@@ -9,6 +9,11 @@
 #'    linters = library_call_linter()
 #'  )
 #'
+#'  lint(
+#'    text = c("library(dplyr)", "print('test')", "library(tidyr)", "library(purrr)"),
+#'    linters = library_call_linter()
+#'  )
+#'
 #'  # okay
 #'  lint(
 #'    text = c("library(dplyr)", "print('test')"),
@@ -26,10 +31,12 @@
 library_call_linter <- function() {
 
   xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'library'][last()]
+  (//SYMBOL_FUNCTION_CALL[text() = 'library'])[last()]
   //preceding::expr
-  /SYMBOL_FUNCTION_CALL[text() != 'library'][last()]
+  //SYMBOL_FUNCTION_CALL[text() != 'library'][last()]
+  //following::expr[SYMBOL_FUNCTION_CALL[text() = 'library']]
   "
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
       return(list())
@@ -37,19 +44,16 @@ library_call_linter <- function() {
 
     xml <- source_expression$full_xml_parsed_content
 
+    writeLines(as.character(xml))
+
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
     if (length(bad_expr) == 0L) {
       return(list())
     }
 
-    bad_expr_library <- xml2::xml_find_all(
-      xml,
-      "//SYMBOL_FUNCTION_CALL[text() = 'library'][last()]"
-    )
-
     xml_nodes_to_lints(
-      bad_expr_library,
+      bad_expr,
       source_expression = source_expression,
       lint_message = "Move all library calls to the top of the script.",
       type = "warning"

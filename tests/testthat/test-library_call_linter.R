@@ -30,7 +30,7 @@ test_that("library_call_linter warns on disallowed usages", {
   )
 
   expect_lint(c("library(dplyr)", "print('test')", "library(tidyr)", "library(purrr)"),
-    lint_message,
+    list(lint_message, lint_message),
     library_call_linter()
   )
 
@@ -45,7 +45,7 @@ test_that("library_call_linter warns on disallowed usages", {
   )
 
   expect_lint(c("library(dplyr)", "print('test')", "library(tidyr)", "print('test')", "library(tidyr)"),
-    lint_message,
+    list(lint_message, lint_message),
     library_call_linter()
   )
 })
