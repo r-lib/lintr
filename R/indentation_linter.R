@@ -175,7 +175,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     ")"
   )
 
-  global_nodes <- function(nodes) paste0("//", nodes, collapse = "|") # nolint: object_usage_linter. False positive.
+  global_nodes <- function(nodes) paste0("//", nodes, collapse = "|") # nolint: object_usage. TODO(#2029): Fix this.
   xp_indent_changes <- paste(
     c(
       glue::glue("//{paren_tokens_left}[not(@line1 = following-sibling::expr[
