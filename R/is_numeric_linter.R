@@ -76,7 +76,7 @@ is_numeric_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    or_expr <- xml2::xml_find_all(xml, or_xpath)
+    or_expr <- xml_find_all(xml, or_xpath)
     or_lints <- xml_nodes_to_lints(
       or_expr,
       source_expression = source_expression,
@@ -87,7 +87,7 @@ is_numeric_linter <- function() {
       type = "warning"
     )
 
-    class_expr <- xml2::xml_find_all(xml, class_xpath)
+    class_expr <- xml_find_all(xml, class_xpath)
     if (length(class_expr) > 0L) {
       class_strings <- c(
         get_r_string(class_expr, "expr[2]/expr[2]/STR_CONST"),

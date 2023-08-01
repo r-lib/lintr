@@ -70,15 +70,15 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
 
     xml <- source_expression$full_xml_parsed_content
 
-    import_exprs <- xml2::xml_find_all(xml, import_xpath)
+    import_exprs <- xml_find_all(xml, import_xpath)
     if (length(import_exprs) == 0L) {
       return(list())
     }
-    imported_pkgs <- xml_find_char(import_exprs, "string(expr[STR_CONST|SYMBOL])")
+    imported_pkgs <- xml_find_chr(import_exprs, "string(expr[STR_CONST|SYMBOL])")
     # as.character(parse(...)) returns one entry per expression
     imported_pkgs <- as.character(parse(text = imported_pkgs, keep.source = FALSE))
 
-    used_symbols <- xml2::xml_text(xml2::xml_find_all(xml, xp_used_symbols))
+    used_symbols <- xml_text(xml_find_all(xml, xp_used_symbols))
 
     is_used <- vapply(
       imported_pkgs,
@@ -101,7 +101,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
     is_ns_used <- vapply(
       imported_pkgs,
       function(pkg) {
-        ns_usage <- xml2::xml_find_first(xml, paste0("//SYMBOL_PACKAGE[text() = '", pkg, "']"))
+        ns_usage <- xml_find_first(xml, paste0("//SYMBOL_PACKAGE[text() = '", pkg, "']"))
         !identical(ns_usage, xml2::xml_missing())
       },
       logical(1L)

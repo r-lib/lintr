@@ -17,7 +17,7 @@ xml_nodes_to_lints(
 \arguments{
 \item{xml}{An \code{xml_node} object (to generate one \code{Lint}) or an
 \code{xml_nodeset} object (to generate several \code{Lint}s), e.g. as returned by
-\code{\link[xml2:xml_find_all]{xml2::xml_find_all()}} or \code{\link[xml2:xml_find_all]{xml2::xml_find_first()}} or a
+\code{\link[=xml_find_all]{xml_find_all()}} or \code{\link[=xml_find_first]{xml_find_first()}} or a
 list of \code{xml_node} objects.}
 
 \item{source_expression}{A source expression object, e.g. as
@@ -48,7 +48,7 @@ linter logic into a \code{\link[=Lint]{Lint()}} object to return.
 }
 \details{
 The location XPaths, \code{column_number_xpath}, \code{range_start_xpath} and \code{range_end_xpath} are evaluated using
-\code{\link[xml2:xml_find_all]{xml2::xml_find_num()}} and will usually be of the form \code{"number(./relative/xpath)"}.
+\code{\link[=xml_find_num]{xml_find_num()}} and will usually be of the form \code{"number(./relative/xpath)"}.
 Note that the location line number cannot be changed and lints spanning multiple lines will ignore \code{range_end_xpath}.
 \code{column_number_xpath} and \code{range_start_xpath} are assumed to always refer to locations on the starting line of the
 \code{xml} node.

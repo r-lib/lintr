@@ -104,11 +104,11 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
     }
 
     xml <- source_expression$xml_parsed_content
-    c_calls <- xml2::xml_find_all(xml, call_xpath)
+    c_calls <- xml_find_all(xml, call_xpath)
 
     # bump count(args) by 1 if inside a pipeline
-    num_args <- as.integer(xml2::xml_find_num(c_calls, num_args_xpath)) +
-      as.integer(!is.na(xml2::xml_find_first(c_calls, to_pipe_xpath)))
+    num_args <- as.integer(xml_find_num(c_calls, num_args_xpath)) +
+      as.integer(!is.na(xml_find_first(c_calls, to_pipe_xpath)))
     # NB: the xpath guarantees num_args is 0, 1, or 2. 2 comes
     #   in "a" %>% c("b").
     # TODO(michaelchirico): can we handle this all inside the XPath with reasonable concision?
@@ -117,7 +117,7 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
     num_args <- num_args[is_unneeded]
     msg <- ifelse(num_args == 0L, msg_empty, msg_const)
     if (!allow_single_expression) {
-      is_single_expression <- !is.na(xml2::xml_find_first(c_calls, path_to_non_constant))
+      is_single_expression <- !is.na(xml_find_first(c_calls, path_to_non_constant))
       msg[is_single_expression] <- msg_const_expr
     }
 

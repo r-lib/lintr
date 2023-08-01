@@ -74,7 +74,7 @@ regex_subset_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    grep_expr <- xml2::xml_find_all(xml, grep_xpath)
+    grep_expr <- xml_find_all(xml, grep_xpath)
 
     grep_lints <- xml_nodes_to_lints(
       grep_expr,
@@ -84,7 +84,7 @@ regex_subset_linter <- function() {
       type = "warning"
     )
 
-    stringr_expr <- xml2::xml_find_all(xml, stringr_xpath)
+    stringr_expr <- xml_find_all(xml, stringr_xpath)
 
     stringr_lints <- xml_nodes_to_lints(
       stringr_expr,

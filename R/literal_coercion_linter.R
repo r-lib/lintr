@@ -80,7 +80,7 @@ literal_coercion_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     coercer <- xp_call_name(bad_expr)
     # tiptoe around the fact that we don't require {rlang}
@@ -96,7 +96,7 @@ literal_coercion_linter <- function() {
       )
     } else {
       # duplicate, unless we add 'rlang::' and it wasn't there originally
-      coercion_str <- report_str <- xml2::xml_text(bad_expr)
+      coercion_str <- report_str <- xml_text(bad_expr)
       if (any(is_rlang_coercer) && !("package:rlang" %in% search())) {
         needs_prefix <- is_rlang_coercer & !startsWith(coercion_str, "rlang::")
         coercion_str[needs_prefix] <- paste0("rlang::", coercion_str[needs_prefix])

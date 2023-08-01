@@ -50,8 +50,8 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
 
     xml <- source_expression$full_xml_parsed_content
 
-    missing_args <- xml2::xml_find_all(xml, xpath)
-    function_call_name <- get_r_string(xml_find_char(missing_args, to_function_xpath))
+    missing_args <- xml_find_all(xml, xpath)
+    function_call_name <- get_r_string(xml_find_chr(missing_args, to_function_xpath))
 
     xml_nodes_to_lints(
       missing_args[!function_call_name %in% except],

@@ -219,29 +219,29 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     expected_indent_levels <- integer(length(indent_levels))
     is_hanging <- logical(length(indent_levels))
 
-    indent_changes <- xml2::xml_find_all(xml, xp_indent_changes)
+    indent_changes <- xml_find_all(xml, xp_indent_changes)
     for (change in indent_changes) {
       change_type <- find_indent_type(change)
-      change_begin <- as.integer(xml2::xml_attr(change, "line1")) + 1L
-      change_end <- xml2::xml_find_num(change, xp_block_ends)
+      change_begin <- as.integer(xml_attr(change, "line1")) + 1L
+      change_end <- xml_find_num(change, xp_block_ends)
       if (isTRUE(change_begin <= change_end)) {
         to_indent <- seq(from = change_begin, to = change_end)
         expected_indent_levels[to_indent] <- find_new_indent(
           current_indent = expected_indent_levels[to_indent],
           change_type = change_type,
           indent = indent,
-          hanging_indent = as.integer(xml2::xml_attr(change, "col2"))
+          hanging_indent = as.integer(xml_attr(change, "col2"))
         )
         is_hanging[to_indent] <- change_type == "hanging"
       }
     }
 
     in_str_const <- logical(length(indent_levels))
-    multiline_strings <- xml2::xml_find_all(xml, xp_multiline_string)
+    multiline_strings <- xml_find_all(xml, xp_multiline_string)
     for (string in multiline_strings) {
       is_in_str <- seq(
-        from = as.integer(xml2::xml_attr(string, "line1")) + 1L,
-        to = as.integer(xml2::xml_attr(string, "line2"))
+        from = as.integer(xml_attr(string, "line1")) + 1L,
+        to = as.integer(xml_attr(string, "line2"))
       )
       in_str_const[is_in_str] <- TRUE
     }
@@ -359,11 +359,11 @@ build_indentation_style_tidy <- function() {
   )
 
   function(change) {
-    if (length(xml2::xml_find_first(change, xp_is_double_indent)) > 0L) {
+    if (length(xml_find_first(change, xp_is_double_indent)) > 0L) {
       "double"
-    } else if (length(xml2::xml_find_first(change, xp_suppress)) > 0L) {
+    } else if (length(xml_find_first(change, xp_suppress)) > 0L) {
       "suppress"
-    } else if (length(xml2::xml_find_first(change, xp_is_not_hanging)) == 0L) {
+    } else if (length(xml_find_first(change, xp_is_not_hanging)) == 0L) {
       "hanging"
     } else {
       "block"
@@ -388,7 +388,7 @@ build_indentation_style_always <- function() {
   )
 
   function(change) {
-    if (length(xml2::xml_find_first(change, xp_is_not_hanging)) == 0L) {
+    if (length(xml_find_first(change, xp_is_not_hanging)) == 0L) {
       "hanging"
     } else {
       "block"

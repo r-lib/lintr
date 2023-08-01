@@ -41,7 +41,7 @@ system_file_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     outer_call <- xp_call_name(bad_expr)
     lint_message <- paste(

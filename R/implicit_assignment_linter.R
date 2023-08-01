@@ -101,7 +101,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
 
     xml <- source_expression$full_xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     lint_message <- paste(
       "Avoid implicit assignments in function calls.",

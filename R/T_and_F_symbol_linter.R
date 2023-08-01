@@ -62,11 +62,11 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
       return(list())
     }
 
-    bad_exprs <- xml2::xml_find_all(source_expression$xml_parsed_content, xpath)
-    bad_assigns <- xml2::xml_find_all(source_expression$xml_parsed_content, xpath_assignment)
+    bad_exprs <- xml_find_all(source_expression$xml_parsed_content, xpath)
+    bad_assigns <- xml_find_all(source_expression$xml_parsed_content, xpath_assignment)
 
     make_lints <- function(expr, fmt) {
-      symbol <- xml2::xml_text(expr)
+      symbol <- xml_text(expr)
       lint_message <- sprintf(fmt, replacement_map[symbol], symbol)
       xml_nodes_to_lints(
         xml = expr,

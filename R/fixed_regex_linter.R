@@ -114,12 +114,12 @@ fixed_regex_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    patterns <- xml2::xml_find_all(xml, xpath)
+    patterns <- xml_find_all(xml, xpath)
     pattern_strings <- get_r_string(patterns)
     is_static <- is_not_regex(pattern_strings)
 
     fixed_equivalent <- encodeString(get_fixed_string(pattern_strings[is_static]), quote = '"', justify = "none")
-    call_name <- xml_find_char(patterns[is_static], "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")
+    call_name <- xml_find_chr(patterns[is_static], "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")
 
     is_stringr <- startsWith(call_name, "str_")
     replacement <- ifelse(

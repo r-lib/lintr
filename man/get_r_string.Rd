@@ -8,10 +8,10 @@ get_r_string(s, xpath = NULL)
 }
 \arguments{
 \item{s}{An input string or strings. If \code{s} is an \code{xml_node} or \code{xml_nodeset} and \code{xpath} is \code{NULL},
-extract its string value with \code{\link[xml2:xml_text]{xml2::xml_text()}}. If \code{s} is an \code{xml_node} or \code{xml_nodeset}
-and \code{xpath} is specified, it is extracted with \code{\link[xml2:xml_find_all]{xml2::xml_find_chr()}}.}
+extract its string value with \code{\link[=xml_text]{xml_text()}}. If \code{s} is an \code{xml_node} or \code{xml_nodeset}
+and \code{xpath} is specified, it is extracted with \code{\link[=xml_find_chr]{xml_find_chr()}}.}
 
-\item{xpath}{An XPath, passed on to \code{\link[xml2:xml_find_all]{xml2::xml_find_chr()}} after wrapping with \code{string()}.}
+\item{xpath}{An XPath, passed on to \code{\link[=xml_find_chr]{xml_find_chr()}} after wrapping with \code{string()}.}
 }
 \description{
 Convert \code{STR_CONST} \code{text()} values into R strings. This is useful to account for arbitrary

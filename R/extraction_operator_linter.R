@@ -67,8 +67,8 @@ extraction_operator_linter <- function() {
     }
 
     xml <- source_expression$xml_parsed_content
-    bad_exprs <- xml2::xml_find_all(xml, xpath)
-    msgs <- sprintf("Use `[[` instead of `%s` to extract an element.", xml2::xml_text(bad_exprs))
+    bad_exprs <- xml_find_all(xml, xpath)
+    msgs <- sprintf("Use `[[` instead of `%s` to extract an element.", xml_text(bad_exprs))
 
     xml_nodes_to_lints(
       bad_exprs,

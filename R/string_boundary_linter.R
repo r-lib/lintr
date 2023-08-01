@@ -87,7 +87,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
   }
 
   get_regex_lint_data <- function(xml, xpath) {
-    expr <- xml2::xml_find_all(xml, xpath)
+    expr <- xml_find_all(xml, xpath)
     patterns <- get_r_string(expr)
     initial_anchor <- startsWith(patterns, "^")
     search_start <- 1L + initial_anchor
@@ -164,8 +164,8 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
       ))
     }
 
-    substr_expr <- xml2::xml_find_all(xml, substr_xpath)
-    substr_one <- xml_find_char(substr_expr, substr_arg2_xpath) %in% c("1", "1L")
+    substr_expr <- xml_find_all(xml, substr_xpath)
+    substr_one <- xml_find_chr(substr_expr, substr_arg2_xpath) %in% c("1", "1L")
     substr_lint_message <- paste(
       ifelse(
         substr_one,

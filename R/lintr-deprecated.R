@@ -64,7 +64,7 @@ closed_curly_linter <- function(allow_single_line = FALSE) {
     }
 
     xml_nodes_to_lints(
-      xml2::xml_find_all(source_expression$xml_parsed_content, xpath),
+      xml_find_all(source_expression$xml_parsed_content, xpath),
       source_expression = source_expression,
       lint_message = "Closing curly-braces should always be on their own line, unless they are followed by an else."
     )
@@ -109,7 +109,7 @@ open_curly_linter <- function(allow_single_line = FALSE) {
 
     xml <- source_expression$xml_parsed_content
 
-    expr_before <- xml2::xml_find_all(xml, xpath_before)
+    expr_before <- xml_find_all(xml, xpath_before)
     lints_before <- xml_nodes_to_lints(
       expr_before,
       source_expression = source_expression,
@@ -117,7 +117,7 @@ open_curly_linter <- function(allow_single_line = FALSE) {
       type = "style"
     )
 
-    expr_after <- xml2::xml_find_all(xml, xpath_after)
+    expr_after <- xml_find_all(xml, xpath_after)
     lints_after <- xml_nodes_to_lints(
       expr_after,
       source_expression = source_expression,
@@ -150,7 +150,7 @@ paren_brace_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    match_exprs <- xml2::xml_find_all(xml, xpath)
+    match_exprs <- xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(
       match_exprs,

@@ -64,21 +64,21 @@ function_left_parentheses_linter <- function() { # nolint: object_length.
 
     xml <- source_expression$xml_parsed_content
 
-    bad_line_fun_exprs <- xml2::xml_find_all(xml, bad_line_fun_xpath)
+    bad_line_fun_exprs <- xml_find_all(xml, bad_line_fun_xpath)
     bad_line_fun_lints <- xml_nodes_to_lints(
       bad_line_fun_exprs,
       source_expression = source_expression,
       lint_message = "Left parenthesis should be on the same line as the 'function' symbol."
     )
 
-    bad_line_call_exprs <- xml2::xml_find_all(xml, bad_line_call_xpath)
+    bad_line_call_exprs <- xml_find_all(xml, bad_line_call_xpath)
     bad_line_call_lints <- xml_nodes_to_lints(
       bad_line_call_exprs,
       source_expression = source_expression,
       lint_message = "Left parenthesis should be on the same line as the function's symbol."
     )
 
-    bad_col_fun_exprs <- xml2::xml_find_all(xml, bad_col_fun_xpath)
+    bad_col_fun_exprs <- xml_find_all(xml, bad_col_fun_xpath)
     bad_col_fun_lints <- xml_nodes_to_lints(
       bad_col_fun_exprs,
       source_expression = source_expression,
@@ -87,7 +87,7 @@ function_left_parentheses_linter <- function() { # nolint: object_length.
       range_end_xpath = "number(./following-sibling::OP-LEFT-PAREN/@col1 - 1)" # end before (
     )
 
-    bad_col_call_exprs <- xml2::xml_find_all(xml, bad_col_call_xpath)
+    bad_col_call_exprs <- xml_find_all(xml, bad_col_call_xpath)
     bad_col_call_lints <- xml_nodes_to_lints(
       bad_col_call_exprs,
       source_expression = source_expression,

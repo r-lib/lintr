@@ -101,7 +101,7 @@ get_source_expressions <- function(filename, lines = NULL) {
 
     if (!is.null(xml_parsed_content) && !is.na(xml_parsed_content)) {
       expression_xmls <- lapply(
-        xml2::xml_find_all(xml_parsed_content, "/exprlist/*"),
+        xml_find_all(xml_parsed_content, "/exprlist/*"),
         function(top_level_expr) xml2::xml_add_parent(xml2::xml_new_root(top_level_expr), "exprlist")
       )
       for (i in seq_along(expressions)) {

@@ -62,7 +62,7 @@ boolean_arithmetic_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    any_expr <- xml2::xml_find_all(xml, any_xpath)
+    any_expr <- xml_find_all(xml, any_xpath)
 
     xml_nodes_to_lints(
       any_expr,
