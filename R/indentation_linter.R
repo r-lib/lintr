@@ -130,8 +130,6 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
   hanging_indent_style <- match.arg(hanging_indent_style)
 
-  global_nodes <- function(nodes) paste0("//", nodes, collapse = "|")
-
   if (hanging_indent_style == "tidy") {
     find_indent_type <- build_indentation_style_tidy()
   } else if (hanging_indent_style == "always") {
@@ -177,6 +175,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     ")"
   )
 
+  global_nodes <- function(nodes) paste0("//", nodes, collapse = "|") # nolint: object_usage_linter. False positive.
   xp_indent_changes <- paste(
     c(
       glue::glue("//{paren_tokens_left}[not(@line1 = following-sibling::expr[
