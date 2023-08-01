@@ -47,7 +47,7 @@
 #' @export
 function_argument_linter <- function() {
   xpath <- paste(collapse = " | ", glue::glue("
-  //{c('FUNCTION', 'OP-LAMBDA')}
+  (//FUNCTION | //OP-LAMBDA)
     /following-sibling::EQ_FORMALS[1]
     /following-sibling::SYMBOL_FORMALS[
       text() != '...'

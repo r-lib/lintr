@@ -130,6 +130,8 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
   hanging_indent_style <- match.arg(hanging_indent_style)
 
+  global_nodes <- function(nodes) paste0("//", nodes, collapse = "|")
+
   if (hanging_indent_style == "tidy") {
     find_indent_type <- build_indentation_style_tidy()
   } else if (hanging_indent_style == "always") {
@@ -181,9 +183,9 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
                     @line2 > @line1 and
                     ({xp_or(paste0('descendant::', paren_tokens_left, '[', xp_last_on_line, ']'))})
                   ]/@line1)]"),
-      glue::glue("//{infix_tokens}[{xp_last_on_line}{infix_condition}]"),
-      glue::glue("//{no_paren_keywords}[{xp_last_on_line}]"),
-      glue::glue("//{keyword_tokens}/following-sibling::OP-RIGHT-PAREN[
+      glue::glue("({ global_nodes(infix_tokens) })[{xp_last_on_line}{infix_condition}]"),
+      glue::glue("({ global_nodes(no_paren_keywords) })[{xp_last_on_line}]"),
+      glue::glue("({ global_nodes(keyword_tokens) })/following-sibling::OP-RIGHT-PAREN[
                     {xp_last_on_line} and
                     not(following-sibling::expr[1][OP-LEFT-BRACE])
                   ]")
