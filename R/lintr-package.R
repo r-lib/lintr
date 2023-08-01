@@ -8,6 +8,7 @@
 "_PACKAGE"
 
 ## lintr namespace: start
+#' @importFrom glue glue
 #' @importFrom rex rex regex re_matches re_substitutes character_class
 #' @importFrom stats na.omit
 #' @importFrom utils capture.output head getParseData relist
