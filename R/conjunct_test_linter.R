@@ -79,7 +79,7 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
     }
 
     matched_fun <- xp_call_name(bad_expr)
-    operator <- xml2::xml_find_chr(bad_expr, "string(expr/*[self::AND2 or self::OR2])")
+    operator <- xml_find_char(bad_expr, "string(expr/*[self::AND2 or self::OR2])")
     replacement_fmt <- ifelse(
       matched_fun %in% c("expect_true", "expect_false"),
       "write multiple expectations like %1$s(A) and %1$s(B)",

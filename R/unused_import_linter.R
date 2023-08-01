@@ -74,7 +74,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
     if (length(import_exprs) == 0L) {
       return(list())
     }
-    imported_pkgs <- xml2::xml_find_chr(import_exprs, "string(expr[STR_CONST|SYMBOL])")
+    imported_pkgs <- xml_find_char(import_exprs, "string(expr[STR_CONST|SYMBOL])")
     # as.character(parse(...)) returns one entry per expression
     imported_pkgs <- as.character(parse(text = imported_pkgs, keep.source = FALSE))
 

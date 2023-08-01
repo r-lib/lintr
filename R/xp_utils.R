@@ -53,7 +53,7 @@ xp_call_name <- function(expr, depth = 1L, condition = NULL) {
 
   xpath <- paste0("string(", strrep("expr/", depth), node, ")")
 
-  xml2::xml_find_chr(expr, xpath)
+  xml_find_char(expr, xpath)
 }
 
 xp_find_location <- function(xml, xpath) {

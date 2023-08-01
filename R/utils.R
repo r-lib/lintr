@@ -209,8 +209,8 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #'
 #' @param s An input string or strings. If `s` is an `xml_node` or `xml_nodeset` and `xpath` is `NULL`,
 #'   extract its string value with [xml2::xml_text()]. If `s` is an `xml_node` or `xml_nodeset`
-#'   and `xpath` is specified, it is extracted with [xml2::xml_find_chr()].
-#' @param xpath An XPath, passed on to [xml2::xml_find_chr()] after wrapping with `string()`.
+#'   and `xpath` is specified, it is extracted with [xml_find_char()].
+#' @param xpath An XPath, passed on to [xml_find_char()] after wrapping with `string()`.
 #'
 #' @examplesIf requireNamespace("withr", quietly = TRUE)
 #' tmp <- withr::local_tempfile(lines = "c('a', 'b')")
@@ -233,7 +233,7 @@ get_r_string <- function(s, xpath = NULL) {
     if (is.null(xpath)) {
       s <- xml2::xml_text(s)
     } else {
-      s <- xml2::xml_find_chr(s, sprintf("string(%s)", xpath))
+      s <- xml_find_char(s, sprintf("string(%s)", xpath))
     }
   }
   # parse() skips "" elements --> offsets the length of the output,

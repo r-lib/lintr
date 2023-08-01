@@ -143,7 +143,7 @@ package_hooks_linter <- function() {
 
     load_arg_name_message <- sprintf(
       "%s() should take two arguments, with the first starting with 'lib' and the second starting with 'pkg'.",
-      xml2::xml_find_chr(load_arg_name_expr, hook_xpath)
+      xml_find_char(load_arg_name_expr, hook_xpath)
     )
     load_arg_name_lints <-
       xml_nodes_to_lints(load_arg_name_expr, source_expression, load_arg_name_message, type = "warning")
@@ -153,7 +153,7 @@ package_hooks_linter <- function() {
     library_require_expr <- xml2::xml_find_all(xml, library_require_xpath)
 
     library_require_bad_call <- xml2::xml_text(library_require_expr)
-    library_require_hook <- xml2::xml_find_chr(library_require_expr, hook_xpath)
+    library_require_hook <- xml_find_char(library_require_expr, hook_xpath)
     library_require_message <- character(length(library_require_bad_call))
     is_installed_packages <- library_require_bad_call == "installed.packages"
     library_require_message[is_installed_packages] <-
@@ -168,7 +168,7 @@ package_hooks_linter <- function() {
 
     bad_unload_call_message <- sprintf(
       "Use library.dynam.unload() calls in .onUnload(), not %s().",
-      xml2::xml_find_chr(bad_unload_call_expr, hook_xpath)
+      xml_find_char(bad_unload_call_expr, hook_xpath)
     )
     bad_unload_call_lints <-
       xml_nodes_to_lints(bad_unload_call_expr, source_expression, bad_unload_call_message, type = "warning")
@@ -178,7 +178,7 @@ package_hooks_linter <- function() {
 
     unload_arg_name_message <- sprintf(
       "%s() should take one argument starting with 'lib'.",
-      xml2::xml_find_chr(unload_arg_name_expr, hook_xpath)
+      xml_find_char(unload_arg_name_expr, hook_xpath)
     )
     unload_arg_name_lints <-
       xml_nodes_to_lints(unload_arg_name_expr, source_expression, unload_arg_name_message, type = "warning")

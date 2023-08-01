@@ -165,7 +165,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     }
 
     substr_expr <- xml2::xml_find_all(xml, substr_xpath)
-    substr_one <- xml2::xml_find_chr(substr_expr, substr_arg2_xpath) %in% c("1", "1L")
+    substr_one <- xml_find_char(substr_expr, substr_arg2_xpath) %in% c("1", "1L")
     substr_lint_message <- paste(
       ifelse(
         substr_one,
