@@ -69,7 +69,7 @@ matrix_apply_linter <- function() {
     ]
   "
 
-  xpath <- glue::glue("{sums_xpath} | {means_xpath}")
+  xpath <- glue("{sums_xpath} | {means_xpath}")
 
   # This doesn't handle the case when MARGIN and FUN are named and in a different position
   # but this should be relatively rate
@@ -131,15 +131,15 @@ craft_colsums_rowsums_msg <- function(var, margin, fun, narm_val) {
   l2 <- suppressWarnings(as.integer(re_substitutes(l2, "L$", "")))
 
   if (!is.na(narm_val)) {
-    narm <- glue::glue(", na.rm = {narm_val}")
+    narm <- glue(", na.rm = {narm_val}")
   } else {
     narm <- ""
   }
 
   if (identical(l1, 1L)) {
-    reco <- glue::glue("row{fun}s({var}{narm}, dims = {l2})")
+    reco <- glue("row{fun}s({var}{narm}, dims = {l2})")
   } else {
-    reco <- glue::glue(
+    reco <- glue(
       "row{fun}s(col{fun}s({var}{narm}, dims = {l1 - 1}), dims = {l2 - l1 + 1})",
       " or ",
       "col{fun}s({var}{narm}, dims = {l1 - 1}) if {var} has {l2} dimensions"

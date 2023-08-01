@@ -42,7 +42,7 @@
 #' @export
 condition_message_linter <- function() {
   translators <- c("packageStartupMessage", "message", "warning", "stop")
-  xpath <- glue::glue("
+  xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(translators)} ]
     /parent::expr
     /following-sibling::expr[

@@ -54,7 +54,7 @@ any_duplicated_linter <- function() {
   #  the final parent::expr/expr gets us to the expr on the other side of EQ;
   #  this lets us match on either side of EQ, where following-sibling
   #  assumes we are before EQ, preceding-sibling assumes we are after EQ.
-  length_unique_xpath_parts <- glue::glue("
+  length_unique_xpath_parts <- glue("
   //{ c('EQ', 'NE', 'GT', 'LT') }
     /parent::expr
     /expr[

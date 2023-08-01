@@ -3,7 +3,7 @@
 #' Check that closures have the proper usage using [codetools::checkUsage()].
 #' Note that this runs [base::eval()] on the code, so **do not use with untrusted code**.
 #'
-#' @param interpret_glue If `TRUE`, interpret [glue::glue()] calls to avoid false positives caused by local variables
+#' @param interpret_glue If `TRUE`, interpret [glue()] calls to avoid false positives caused by local variables
 #' which are only used in a glue expression.
 #' @param skip_with A logical. If `TRUE` (default), code in `with()` expressions
 #'   will be skipped. This argument will be passed to `skipWith` argument of
@@ -48,7 +48,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
 
   # not all instances of linted symbols are potential sources for the observed violations -- see #1914
   symbol_exclude_cond <- "preceding-sibling::OP-DOLLAR or preceding-sibling::OP-AT or ancestor::expr[OP-TILDE]"
-  xpath_culprit_symbol <- glue::glue("
+  xpath_culprit_symbol <- glue("
     descendant::SYMBOL[not( {symbol_exclude_cond} )]
     | descendant::SYMBOL_FUNCTION_CALL[not( {symbol_exclude_cond} )]
     | descendant::SPECIAL
@@ -131,7 +131,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
       nodes[missing_symbol] <- lapply(which(missing_symbol), function(i) {
         line_based_match <- xml2::xml_find_first(
           fun_assignment,
-          glue::glue_data(res[i, ], "descendant::expr[@line1 = {line1} and @line2 = {line2}]")
+          glue_data(res[i, ], "descendant::expr[@line1 = {line1} and @line2 = {line2}]")
         )
         if (is.na(line_based_match)) fun_assignment else line_based_match
       })

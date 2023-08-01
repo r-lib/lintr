@@ -51,7 +51,7 @@ closed_curly_linter <- function(allow_single_line = FALSE) {
     )"
   ))
 
-  xpath <- glue::glue("//OP-RIGHT-BRACE[
+  xpath <- glue("//OP-RIGHT-BRACE[
     { xp_cond_closed } and (
       (@line1 = preceding-sibling::*[1]/@line2) or
       (@line1 = parent::expr/following-sibling::*[1][not(self::ELSE)]/@line1)

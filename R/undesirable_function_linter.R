@@ -73,9 +73,9 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
   )
 
   if (symbol_is_undesirable) {
-    xpath <- glue::glue("//SYMBOL_FUNCTION_CALL[{xp_condition}] | //SYMBOL[{xp_condition}]")
+    xpath <- glue("//SYMBOL_FUNCTION_CALL[{xp_condition}] | //SYMBOL[{xp_condition}]")
   } else {
-    xpath <- glue::glue("//SYMBOL_FUNCTION_CALL[{xp_condition}]")
+    xpath <- glue("//SYMBOL_FUNCTION_CALL[{xp_condition}]")
   }
 
 

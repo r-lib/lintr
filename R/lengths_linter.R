@@ -32,7 +32,7 @@
 #' @export
 lengths_linter <- function() {
   loop_funs <- c("sapply", "vapply", "map_int", "map_dbl")
-  xpath <- glue::glue("
+  xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(loop_funs)} ]
     /parent::expr
     /parent::expr[expr/SYMBOL[text() = 'length']]

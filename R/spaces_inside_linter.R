@@ -38,7 +38,7 @@ spaces_inside_linter <- function() {
     and @end != following-sibling::*[1]/@start - 1
     and @line1 = following-sibling::*[1]/@line1
   "
-  left_xpath <- glue::glue("
+  left_xpath <- glue("
   //OP-LEFT-BRACKET[{left_xpath_condition}]
   | //LBB[{left_xpath_condition}]
   | //OP-LEFT-PAREN[{left_xpath_condition}]")
@@ -48,7 +48,7 @@ spaces_inside_linter <- function() {
     and @start != preceding-sibling::*[1]/@end + 1
     and @line1 = preceding-sibling::*[1]/@line2
   "
-  right_xpath <- glue::glue("
+  right_xpath <- glue("
   //OP-RIGHT-BRACKET[{right_xpath_condition}]
   | //OP-RIGHT-PAREN[{right_xpath_condition} and not(preceding-sibling::*[1][self::EQ_SUB])]")
 

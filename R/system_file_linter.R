@@ -27,7 +27,7 @@
 system_file_linter <- function() {
   funs <- c("system.file", "file.path")
   # either system.file(file.path(...)) or file.path(system.file(...))
-  xpath_parts <- glue::glue("
+  xpath_parts <- glue("
   //SYMBOL_FUNCTION_CALL[text() = '{funs}']
     /parent::expr[following-sibling::expr/expr/SYMBOL_FUNCTION_CALL[text() = '{rev(funs)}']]
     /parent::expr

@@ -41,7 +41,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
 
   if (length(except) > 0L) {
     exceptions <- xp_text_in_table(except)
-    xpath_exceptions <- glue::glue("
+    xpath_exceptions <- glue("
     //SYMBOL_FUNCTION_CALL[ not({exceptions}) ]")
   } else {
     xpath_exceptions <- "

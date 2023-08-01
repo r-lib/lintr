@@ -46,7 +46,7 @@
 #' - <https://design.tidyverse.org/required-no-defaults.html>
 #' @export
 function_argument_linter <- function() {
-  xpath <- paste(collapse = " | ", glue::glue("
+  xpath <- paste(collapse = " | ", glue("
   //{c('FUNCTION', 'OP-LAMBDA')}
     /following-sibling::EQ_FORMALS[1]
     /following-sibling::SYMBOL_FORMALS[

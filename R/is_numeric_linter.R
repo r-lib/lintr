@@ -43,7 +43,7 @@ is_numeric_linter <- function() {
   is_integer_expr <- "expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.integer']]"
 
   # testing things like is.numeric(x) || is.integer(x)
-  or_xpath <- glue::glue("
+  or_xpath <- glue("
   //OR2
     /parent::expr[
       expr/{is_numeric_expr}

@@ -64,7 +64,7 @@ literal_coercion_linter <- function() {
       or STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
     )
   "
-  xpath <- glue::glue("
+  xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {coercers} ]
     /parent::expr
     /parent::expr[

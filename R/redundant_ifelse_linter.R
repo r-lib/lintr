@@ -44,7 +44,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 redundant_ifelse_linter <- function(allow10 = FALSE) {
-  tf_xpath <- glue::glue("
+  tf_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
     /parent::expr
     /parent::expr[
@@ -53,7 +53,7 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
     ]
   ")
 
-  num_xpath <- glue::glue("
+  num_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
     /parent::expr
     /parent::expr[

@@ -75,7 +75,7 @@ brace_linter <- function(allow_single_line = FALSE) {
   ))
 
   # TODO (AshesITR): if c_style_braces is TRUE, invert the preceding-sibling condition
-  xp_open_curly <- glue::glue("//OP-LEFT-BRACE[
+  xp_open_curly <- glue("//OP-LEFT-BRACE[
     { xp_cond_open }
     and (
       not(@line1 = parent::expr/preceding-sibling::*/@line2)
@@ -85,7 +85,7 @@ brace_linter <- function(allow_single_line = FALSE) {
 
   xp_open_preceding <- "parent::expr/preceding-sibling::*[1][self::OP-RIGHT-PAREN or self::ELSE or self::REPEAT]"
 
-  xp_paren_brace <- glue::glue("//OP-LEFT-BRACE[
+  xp_paren_brace <- glue("//OP-LEFT-BRACE[
     @line1 = { xp_open_preceding }/@line1
     and @col1 = { xp_open_preceding }/@col2 + 1
   ]")
@@ -110,7 +110,7 @@ brace_linter <- function(allow_single_line = FALSE) {
   ))
 
   # TODO (AshesITR): if c_style_braces is TRUE, skip the not(ELSE) condition
-  xp_closed_curly <- glue::glue("//OP-RIGHT-BRACE[
+  xp_closed_curly <- glue("//OP-RIGHT-BRACE[
     { xp_cond_closed }
     and (
       (@line1 = preceding-sibling::*[1][not(self::OP-LEFT-BRACE)]/@line2)
@@ -122,7 +122,7 @@ brace_linter <- function(allow_single_line = FALSE) {
   # need to (?) repeat previous_curly_path since != will return true if there is
   #   no such node. ditto for approach with not(@line1 = ...).
   # TODO (AshesITR): if c_style_braces is TRUE, this needs to be @line2 + 1
-  xp_else_same_line <- glue::glue("//ELSE[{xp_else_closed_curly} and @line1 != {xp_else_closed_curly}/@line2]")
+  xp_else_same_line <- glue("//ELSE[{xp_else_closed_curly} and @line1 != {xp_else_closed_curly}/@line2]")
 
   xp_function_brace <- "//FUNCTION/parent::expr[@line1 != @line2 and not(expr[OP-LEFT-BRACE])]"
 

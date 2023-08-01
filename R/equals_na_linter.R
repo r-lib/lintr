@@ -32,7 +32,7 @@
 equals_na_linter <- function() {
   na_table <- xp_text_in_table(c("NA", "NA_integer_", "NA_real_", "NA_complex_", "NA_character_"))
 
-  xpath <- glue::glue("
+  xpath <- glue("
   //NUM_CONST[ {na_table} ]
     /parent::expr
     /parent::expr[EQ or NE]

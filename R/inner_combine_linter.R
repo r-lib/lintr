@@ -76,7 +76,7 @@ inner_combine_linter <- function() {
     log_args_cond,
     lubridate_args_cond
   )
-  xpath <- glue::glue("
+  xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'c']
     /parent::expr[count(following-sibling::expr) > 1]
     /following-sibling::expr[1][ {c_expr_cond} ]

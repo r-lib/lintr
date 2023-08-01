@@ -73,8 +73,8 @@ unnecessary_lambda_linter <- function() {
   "
   default_fun_xpath <- paste(
     sep = "|",
-    glue::glue(default_fun_xpath_fmt, paren_path = "expr"),
-    glue::glue(default_fun_xpath_fmt, paren_path = "expr[OP-LEFT-BRACE and count(expr) = 1]/expr[1]")
+    glue(default_fun_xpath_fmt, paren_path = "expr"),
+    glue(default_fun_xpath_fmt, paren_path = "expr[OP-LEFT-BRACE and count(expr) = 1]/expr[1]")
   )
 
   # purrr-style inline formulas-as-functions, e.g. ~foo(.x)
@@ -82,7 +82,7 @@ unnecessary_lambda_linter <- function() {
   #   1. a formula (OP-TILDE)
   #   2. the lone argument marker `.x` or `.`
   purrr_symbol <- "SYMBOL[text() = '.x' or text() = '.']"
-  purrr_fun_xpath <- glue::glue("
+  purrr_fun_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(purrr_mappers)} ]
     /parent::expr
     /following-sibling::expr[
@@ -95,7 +95,7 @@ unnecessary_lambda_linter <- function() {
   # path to calling function symbol from the matched expressions
   fun_xpath <- "./parent::expr/expr/SYMBOL_FUNCTION_CALL"
   # path to the symbol of the simpler function that avoids a lambda
-  symbol_xpath <- glue::glue("(expr|expr[OP-LEFT-BRACE]/expr[1])/expr[SYMBOL_FUNCTION_CALL]")
+  symbol_xpath <- glue("(expr|expr[OP-LEFT-BRACE]/expr[1])/expr[SYMBOL_FUNCTION_CALL]")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

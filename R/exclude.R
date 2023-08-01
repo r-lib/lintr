@@ -181,7 +181,7 @@ add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep
         bad <- excluded_linters[!matched]
         warning(
           "Could not find linter", if (length(bad) > 1L) "s" else "", " named ",
-          glue::glue_collapse(sQuote(bad), sep = ", ", last = " and "),
+          glue_collapse(sQuote(bad), sep = ", ", last = " and "),
           " in the list of active linters. Make sure the linter is uniquely identified by the given name or prefix."
         )
       }

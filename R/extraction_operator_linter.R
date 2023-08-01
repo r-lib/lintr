@@ -52,7 +52,7 @@
 #' @export
 extraction_operator_linter <- function() {
   constant_nodes_in_brackets <- paste0("self::", c("expr", "OP-PLUS", "NUM_CONST", "STR_CONST"))
-  xpath <- glue::glue("
+  xpath <- glue("
   //OP-DOLLAR[not(preceding-sibling::expr[1]/SYMBOL[text() = 'self' or text() = '.self'])]
   |
   //OP-LEFT-BRACKET[

@@ -62,7 +62,7 @@ strings_as_factors_linter <- function() {
   # two exclusions
   #   (1) above argument is to row.names=
   #   (2) stringsAsFactors is manually supplied (with any value)
-  xpath <- glue::glue("
+  xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'data.frame']
     /parent::expr
     /parent::expr[

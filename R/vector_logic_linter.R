@@ -60,7 +60,7 @@ vector_logic_linter <- function() {
   #     <expr> ... </expr>
   #  </expr>
   #  we _don't_ want to match anything on the second expr, hence this
-  xpath_parts <- glue::glue("
+  xpath_parts <- glue("
   //{ c('AND', 'OR') }[
     ancestor::expr[
       not(preceding-sibling::OP-RIGHT-PAREN)

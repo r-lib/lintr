@@ -63,7 +63,7 @@ pipe_continuation_linter <- function() {
       or @line1 = preceding-sibling::expr/descendant-or-self::*[self::SPECIAL[text() = '%>%'] or self::PIPE]/@line1
     )
   "
-  xpath <- glue::glue("
+  xpath <- glue("
   //SPECIAL[text() = '%>%' and {pipe_conditions} ]
   | //PIPE[ {pipe_conditions} ]
   ")

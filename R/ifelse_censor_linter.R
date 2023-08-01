@@ -35,7 +35,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 ifelse_censor_linter <- function() {
-  xpath <- glue::glue("
+  xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
     /parent::expr
     /following-sibling::expr[

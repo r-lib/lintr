@@ -7,7 +7,7 @@
 object_usage_linter(interpret_glue = TRUE, skip_with = TRUE)
 }
 \arguments{
-\item{interpret_glue}{If \code{TRUE}, interpret \code{\link[glue:glue]{glue::glue()}} calls to avoid false positives caused by local variables
+\item{interpret_glue}{If \code{TRUE}, interpret \code{\link[=glue]{glue()}} calls to avoid false positives caused by local variables
 which are only used in a glue expression.}
 
 \item{skip_with}{A logical. If \code{TRUE} (default), code in \code{with()} expressions

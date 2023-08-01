@@ -12,7 +12,7 @@ object_name_xpath <- local({
     "])"
   )
 
-  glue::glue("
+  glue("
   //SYMBOL[ {xp_assignment_target} ]
   |  //STR_CONST[ {xp_assignment_target} ]
   |  //SYMBOL_FORMALS
@@ -128,7 +128,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
 
   lint_message <- paste0(
     "Variable and function name style should match ",
-    glue::glue_collapse(unique(names(style_list)), sep = ", ", last = " or "), "."
+    glue_collapse(unique(names(style_list)), sep = ", ", last = " or "), "."
   )
 
   Linter(function(source_expression) {

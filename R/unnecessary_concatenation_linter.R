@@ -75,20 +75,20 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
   "
   if (allow_single_expression) {
     zero_arg_cond <-
-      glue::glue("count(expr) = 1 and not( {to_pipe_xpath} / preceding-sibling::expr[ {non_constant_cond} ])")
+      glue("count(expr) = 1 and not( {to_pipe_xpath} / preceding-sibling::expr[ {non_constant_cond} ])")
     one_arg_cond <-
-      glue::glue("count(expr) = 2 and not(expr[2][ {non_constant_cond} ])")
+      glue("count(expr) = 2 and not(expr[2][ {non_constant_cond} ])")
   } else {
-    zero_arg_cond <- glue::glue("count(expr) = 1 and not( {to_pipe_xpath} )")
+    zero_arg_cond <- glue("count(expr) = 1 and not( {to_pipe_xpath} )")
     one_arg_cond <- "count(expr) = 2 and not(expr[2]/SYMBOL[text() = '...'])"
-    path_to_non_constant <- glue::glue("./expr[2][ {non_constant_cond} ]")
+    path_to_non_constant <- glue("./expr[2][ {non_constant_cond} ]")
 
     msg_const_expr <- paste(
       'Unneeded concatenation of a simple expression. Remove the "c" call,',
       'replacing with "as.vector" if using "c" to string attributes, e.g. in converting an array to a vector.'
     )
   }
-  call_xpath <- glue::glue("
+  call_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'c']
     /parent::expr
     /parent::expr[

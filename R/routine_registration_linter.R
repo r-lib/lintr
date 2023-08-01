@@ -33,7 +33,7 @@
 #' @export
 routine_registration_linter <- function() {
   native_routine_callers <- c(".C", ".Call", ".Fortran", ".External")
-  xpath <- glue::glue("
+  xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(native_routine_callers)} ]
     /parent::expr
     /following-sibling::expr[1]/STR_CONST
