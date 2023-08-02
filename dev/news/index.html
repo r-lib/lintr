@@ -73,7 +73,10 @@
 <ul><li>
 <code><a href="../reference/assignment_linter.html">assignment_linter()</a></code> lints the {magrittr} assignment pipe <code>%&lt;&gt;%</code> (<a href="https://github.com/r-lib/lintr/issues/2008" class="external-link">#2008</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). This can be deactivated by setting the new argument <code>allow_pipe_assign</code> to <code>TRUE</code>.</li>
 <li>
-<code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code> finds function usages inside <code>glue()</code> calls to avoid false positives for “unused objects” (<a href="https://github.com/r-lib/lintr/issues/2029" class="external-link">#2029</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code>:
+<ul><li>assumes <code>glue()</code> is <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code> when <code>interpret_glue=TRUE</code> (<a href="https://github.com/r-lib/lintr/issues/2032" class="external-link">#2032</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>finds function usages inside <code>glue()</code> calls to avoid false positives for “unused objects” (<a href="https://github.com/r-lib/lintr/issues/2029" class="external-link">#2029</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+</ul></li>
 </ul></div>
 </div>
     <div class="section level2">
