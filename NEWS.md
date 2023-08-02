@@ -7,6 +7,7 @@
 ## Changes to defaults
 
 * `assignment_linter()` lints the {magrittr} assignment pipe `%<>%` (#2008, @MichaelChirico). This can be deactivated by setting the new argument `allow_pipe_assign` to `TRUE`.
+* `object_usage_linter()` finds function usages inside `glue()` calls to avoid false positives for "unused objects" (#2029, @MichaelChirico).
 
 # lintr 3.1.0
 
