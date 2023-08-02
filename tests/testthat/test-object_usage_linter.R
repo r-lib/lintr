@@ -418,6 +418,19 @@ test_that("interprets glue expressions", {
       glue::glue('The answer is {local_var}.')
     }
   "), "local_var", object_usage_linter(interpret_glue = FALSE))
+
+  # call in glue is caught
+  expect_lint(
+    trim_some("
+      fun <- function() {
+        local_call <- identity
+        local_unused_call <- identity
+        glue::glue('{local_call(1)}')
+      }
+    "),
+    "local_unused_call",
+    linter
+  )
 })
 
 test_that("errors/edge cases in glue syntax don't fail lint()", {
