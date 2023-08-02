@@ -416,10 +416,11 @@ test_that("interprets glue expressions", {
     trim_some("
       fun <- function() {
         local_call <- identity
+        local_unused_call <- identity
         glue::glue('{local_call(1)}')
       }
     "),
-    NULL,
+    "local_unused_call",
     linter
   )
 })
