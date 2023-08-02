@@ -21,7 +21,7 @@ The following issues are linted by default by this linter
 \enumerate{
 \item Block usage of \code{\link[=paste]{paste()}} with \code{sep = ""}. \code{\link[=paste0]{paste0()}} is a faster, more concise alternative.
 \item Block usage of \code{paste()} or \code{paste0()} with \code{collapse = ", "}. \code{\link[=toString]{toString()}} is a direct
-wrapper for this, and alternatives like \code{\link[=glue_collapse]{glue_collapse()}} might give better messages for humans.
+wrapper for this, and alternatives like \code{\link[glue:glue_collapse]{glue::glue_collapse()}} might give better messages for humans.
 \item Block usage of \code{paste0()} that supplies \verb{sep=} -- this is not a formal argument to \code{paste0}, and
 is likely to be a mistake.
 \item Block usage of \code{paste()} / \code{paste0()} combined with \code{\link[=rep]{rep()}} that could be replaced by

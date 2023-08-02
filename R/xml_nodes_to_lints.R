@@ -5,7 +5,7 @@
 #'
 #' @details
 #' The location XPaths, `column_number_xpath`, `range_start_xpath` and `range_end_xpath` are evaluated using
-#' [xml_find_num()] and will usually be of the form `"number(./relative/xpath)"`.
+#' [xml2::xml_find_num()] and will usually be of the form `"number(./relative/xpath)"`.
 #' Note that the location line number cannot be changed and lints spanning multiple lines will ignore `range_end_xpath`.
 #' `column_number_xpath` and `range_start_xpath` are assumed to always refer to locations on the starting line of the
 #' `xml` node.
@@ -13,7 +13,7 @@
 #' @inheritParams lint-s3
 #' @param xml An `xml_node` object (to generate one `Lint`) or an
 #'   `xml_nodeset` object (to generate several `Lint`s), e.g. as returned by
-#'   [xml_find_all()] or [xml_find_first()] or a
+#'   [xml2::xml_find_all()] or [xml2::xml_find_first()] or a
 #'   list of `xml_node` objects.
 #' @param source_expression A source expression object, e.g. as
 #'   returned typically by [lint()], or more generally

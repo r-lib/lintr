@@ -3,7 +3,7 @@
 #' Check that closures have the proper usage using [codetools::checkUsage()].
 #' Note that this runs [base::eval()] on the code, so **do not use with untrusted code**.
 #'
-#' @param interpret_glue If `TRUE`, interpret [glue()] calls to avoid false positives caused by local variables
+#' @param interpret_glue If `TRUE`, interpret [glue::glue()] calls to avoid false positives caused by local variables
 #' which are only used in a glue expression.
 #' @param skip_with A logical. If `TRUE` (default), code in `with()` expressions
 #'   will be skipped. This argument will be passed to `skipWith` argument of

@@ -5,7 +5,7 @@
 #'
 #'  1. Block usage of [paste()] with `sep = ""`. [paste0()] is a faster, more concise alternative.
 #'  2. Block usage of `paste()` or `paste0()` with `collapse = ", "`. [toString()] is a direct
-#'     wrapper for this, and alternatives like [glue_collapse()] might give better messages for humans.
+#'     wrapper for this, and alternatives like [glue::glue_collapse()] might give better messages for humans.
 #'  3. Block usage of `paste0()` that supplies `sep=` -- this is not a formal argument to `paste0`, and
 #'     is likely to be a mistake.
 #'  4. Block usage of `paste()` / `paste0()` combined with [rep()] that could be replaced by
