@@ -47,9 +47,9 @@ library_call_linter <- function() {
 
   xpath <- "
     (//SYMBOL_FUNCTION_CALL[text() = 'library'])[last()]
-    /preceding::expr
-    /SYMBOL_FUNCTION_CALL[text() != 'library'][last()]
-    /following::expr[SYMBOL_FUNCTION_CALL[text() = 'library']]
+      /preceding::expr
+      /SYMBOL_FUNCTION_CALL[text() != 'library'][last()]
+      /following::expr[SYMBOL_FUNCTION_CALL[text() = 'library']]
   "
 
   Linter(function(source_expression) {
