@@ -147,7 +147,8 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
   # NB: parent::*[count(expr | SYMBOL_SUB)) > 1] for the unary case, e.g. x[-1]
   #  SYMBOL_SUB for case with missing argument like alist(a =)
   # NB: the last not() disables lints inside box::use() declarations
-  xpath <- paste(collapse = "|", glue::glue("//{infix_tokens}[
+  global_xpath <- paste0("//", infix_tokens, collapse = "|")
+  xpath <- glue::glue("({global_xpath})[
     parent::*[count(expr | SYMBOL_SUB) > 1]
     and (
       (
@@ -166,7 +167,7 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
         ]
       ]
     )
-  ]"))
+  ]")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
