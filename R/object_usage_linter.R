@@ -223,7 +223,7 @@ symbol_extractor <- function(text, envir, data) {
   parse_data <- utils::getParseData(parsed_text)
 
   # strip backticked symbols; `x` is the same as x.
-  symbols <- gsub("^`(.*)`$", "\\1", parse_data$text[parse_data$token == "SYMBOL"])
+  symbols <- gsub("^`(.*)`$", "\\1", parse_data$text[parse_data$token %in% c("SYMBOL", "SYMBOL_FUNCTION_CALL")])
   for (sym in symbols) {
     assign(sym, NULL, envir = envir)
   }
