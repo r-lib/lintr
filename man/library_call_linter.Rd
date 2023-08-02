@@ -10,27 +10,42 @@ library_call_linter()
 Force library calls to all be at the top of the script.
 }
 \examples{
- # will produce lints
- lint(
-   text = c("library(dplyr)", "print('test')", "library(tidyr)"),
-   linters = library_call_linter()
- )
+# will produce lints
+lint(
+  text = "
+    library(dplyr)
+    print('test')
+    library(tidyr)
+  ",
+  linters = library_call_linter()
+)
 
- lint(
-   text = c("library(dplyr)", "print('test')", "library(tidyr)", "library(purrr)"),
-   linters = library_call_linter()
- )
+lint(
+  text = "
+    library(dplyr)
+    print('test')
+    library(tidyr)
+    library(purrr)
+  ",
+  linters = library_call_linter()
+)
 
- # okay
- lint(
-   text = c("library(dplyr)", "print('test')"),
-   linters = library_call_linter()
- )
+# okay
+lint(
+  text = "
+    library(dplyr)
+    print('test')
+  ",
+  linters = library_call_linter()
+)
 
- lint(
-   text = c("# comment", "library(dplyr)"),
-   linters = library_call_linter()
- )
+lint(
+  text = "
+    # comment
+    library(dplyr)
+  ",
+  linters = library_call_linter()
+)
 
 }
 \seealso{
