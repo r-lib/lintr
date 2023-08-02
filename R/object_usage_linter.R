@@ -170,7 +170,6 @@ extract_glued_symbols <- function(expr) {
     expr,
     xpath = paste0(
       "descendant::SYMBOL_FUNCTION_CALL[text() = 'glue']/", # a glue() call
-      "preceding-sibling::NS_GET/preceding-sibling::SYMBOL_PACKAGE[text() = 'glue']/", # qualified with glue::
       "parent::expr[",
       # without .envir or .transform arguments
       "not(following-sibling::SYMBOL_SUB[text() = '.envir' or text() = '.transform']) and",
