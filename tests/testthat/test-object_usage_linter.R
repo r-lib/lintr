@@ -352,6 +352,15 @@ test_that("interprets glue expressions", {
     }
   "), NULL, linter)
 
+  # no need for namespace-qualification
+  expect_lint(trim_some("
+    glue <- glue::glue # imitate this being an @import
+    fun <- function() {
+      local_var <- 42
+      glue('The answer is {local_var}.')
+    }
+  "), NULL, linter)
+
   # multiple variables in different interpolations
   expect_lint(trim_some("
     fun <- function() {
