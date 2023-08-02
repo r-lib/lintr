@@ -7,13 +7,13 @@
 pipe_consistency_linter(pipe = c("auto", "\%>\%", "|>"))
 }
 \arguments{
-\item{pipe}{Which pipe operator to use (either \code{"\%>\%"} or \code{"|>"}). By default
-(`"auto"``), the linter has no preference but will check that the same pipe
-operator is used throughout the file.}
+\item{pipe}{Which pipe operator is valid (either \code{"\%>\%"} or \code{"|>"}). By default
+(\code{"auto"}), the linter has no preference but will check that each file uses
+only one type of pipe operator.}
 }
 \description{
-Check that pipe operators are consistently used throughout a file. Optionally
-specify which pipe operator to use.
+Check that pipe operators are used consistently by file, or optionally
+specify one valid pipe operator.
 }
 \examples{
 # will produce lints

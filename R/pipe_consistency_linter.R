@@ -1,11 +1,11 @@
 #' Pipe consistency linter
 #'
-#' Check that pipe operators are consistently used throughout a file. Optionally
-#' specify which pipe operator to use.
+#' Check that pipe operators are used consistently by file, or optionally
+#' specify one valid pipe operator.
 #'
-#' @param pipe Which pipe operator to use (either `"%>%"` or `"|>"`). By default
-#' (`"auto"``), the linter has no preference but will check that the same pipe
-#' operator is used throughout the file.
+#' @param pipe Which pipe operator is valid (either `"%>%"` or `"|>"`). By default
+#' (`"auto"`), the linter has no preference but will check that each file uses
+#' only one type of pipe operator.
 #'
 #' @examples
 #' # will produce lints
