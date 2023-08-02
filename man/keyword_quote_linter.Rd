@@ -15,6 +15,42 @@ spaces); besides this edge case, quoting should not be done.
 \details{
 The most common source of violation for this is creating named vectors,
 lists, or data.frame-alikes, but it can be observed in other calls as well.
+
+Similar reasoning applies to extractions with \code{$} or \code{@}.
+}
+\examples{
+# will produce lints
+lint(
+  text = 'data.frame("a" = 1)',,
+  linters = keyword_quote_linter()
+)
+
+lint(
+  text = "data.frame(`a` = 1)",
+  linters = keyword_quote_linter()
+)
+
+lint(
+  text = 'my_list$"key",
+  linters = keyword_quote_linter()
+)
+
+lint(
+  text = 's4obj@"key",
+  linters = keyword_quote_linter()
+)
+
+# okay
+lint(
+  text = "data.frame(`a b` = 1)",
+  linters = keyword_quote_linter()
+)
+
+lint(
+  text = 'my_list$`a b`',
+  linters = keyword_quote_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
