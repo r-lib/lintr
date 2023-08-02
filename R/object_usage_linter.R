@@ -170,7 +170,6 @@ extract_glued_symbols <- function(expr) {
     expr,
     xpath = paste0(
       "descendant::SYMBOL_FUNCTION_CALL[text() = 'glue']/", # a glue() call
-      "preceding-sibling::NS_GET/preceding-sibling::SYMBOL_PACKAGE[text() = 'glue']/", # qualified with glue::
       "parent::expr[",
       # without .envir or .transform arguments
       "not(following-sibling::SYMBOL_SUB[text() = '.envir' or text() = '.transform']) and",
@@ -223,7 +222,7 @@ symbol_extractor <- function(text, envir, data) {
   parse_data <- utils::getParseData(parsed_text)
 
   # strip backticked symbols; `x` is the same as x.
-  symbols <- gsub("^`(.*)`$", "\\1", parse_data$text[parse_data$token == "SYMBOL"])
+  symbols <- gsub("^`(.*)`$", "\\1", parse_data$text[parse_data$token %in% c("SYMBOL", "SYMBOL_FUNCTION_CALL")])
   for (sym in symbols) {
     assign(sym, NULL, envir = envir)
   }

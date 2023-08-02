@@ -53,19 +53,17 @@ pipe_continuation_linter <- function() {
   # Where a single-line pipeline is nested inside a larger expression
   #   e.g. inside a function definition), the outer expression can span multiple lines
   #   without throwing a lint.
-
-  pipe_conditions <- "
-    parent::expr[@line1 < @line2]
-    and preceding-sibling::expr/descendant-or-self::*[self::SPECIAL[text() = '%>%'] or self::PIPE]
-    and (
-      preceding-sibling::expr/descendant-or-self::expr/@line2
-      = following-sibling::expr/descendant-or-self::expr/@line1
-      or @line1 = preceding-sibling::expr/descendant-or-self::*[self::SPECIAL[text() = '%>%'] or self::PIPE]/@line1
-    )
-  "
+  preceding_pipe <- "preceding-sibling::expr[1]/descendant::*[self::SPECIAL[text() = '%>%'] or self::PIPE]"
   xpath <- glue("
-  //SPECIAL[text() = '%>%' and {pipe_conditions} ]
-  | //PIPE[ {pipe_conditions} ]
+  (//PIPE | //SPECIAL[text() = '%>%'])[
+    parent::expr[@line1 < @line2]
+    and {preceding_pipe}
+    and (
+      preceding-sibling::expr[1]/descendant-or-self::expr/@line2
+      = following-sibling::expr[1]/descendant-or-self::expr/@line1
+      or @line1 = {preceding_pipe}/@line1
+    )
+  ]
   ")
 
   Linter(function(source_expression) {
