@@ -54,8 +54,8 @@ test_that("library_call_linter warns on disallowed usages", {
       library(purrr)
     "),
     list(
-      list(lint_message, line_number = 3, column_number = 1),
-      list(lint_message, line_number = 4, column_number = 1)
+      list(lint_message, line_number = 3L, column_number = 1L),
+      list(lint_message, line_number = 4L, column_number = 1L)
     ),
     library_call_linter()
   )
@@ -91,8 +91,8 @@ test_that("library_call_linter warns on disallowed usages", {
       library(purrr)
     "),
     list(
-      list(lint_message, line_number = 3, column_number = 1),
-      list(lint_message, line_number = 5, column_number = 1)
+      list(lint_message, line_number = 3L, column_number = 1L),
+      list(lint_message, line_number = 5L, column_number = 1L)
     ),
     library_call_linter()
   )
