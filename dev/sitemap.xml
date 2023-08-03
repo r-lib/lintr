@@ -232,6 +232,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/lengths_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/library_call_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/line_length_linter.html</loc>
   </url>
   <url>

@@ -69,6 +69,11 @@
 <code><a href="../reference/inner_combine_linter.html">inner_combine_linter()</a></code> no longer throws on length-1 calls to <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> like <code>c(exp(2))</code> or <code>c(log(3))</code> (<a href="https://github.com/r-lib/lintr/issues/2017" class="external-link">#2017</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Such usage is discouraged by <code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code>, but <code><a href="../reference/inner_combine_linter.html">inner_combine_linter()</a></code> <em>per se</em> does not apply.</li>
 </ul></div>
 <div class="section level3">
+<h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/library_call_linter.html">library_call_linter()</a></code> can detect if all library calls are not at the top of your script (<a href="https://github.com/r-lib/lintr/issues/2027" class="external-link">#2027</a>, <a href="https://github.com/nicholas-masel" class="external-link">@nicholas-masel</a>).</li>
+</ul></div>
+<div class="section level3">
 <h3 id="changes-to-defaults-development-version">Changes to defaults<a class="anchor" aria-label="anchor" href="#changes-to-defaults-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/assignment_linter.html">assignment_linter()</a></code> lints the {magrittr} assignment pipe <code>%&lt;&gt;%</code> (<a href="https://github.com/r-lib/lintr/issues/2008" class="external-link">#2008</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). This can be deactivated by setting the new argument <code>allow_pipe_assign</code> to <code>TRUE</code>.</li>
