@@ -4,6 +4,11 @@
 
 * `inner_combine_linter()` no longer throws on length-1 calls to `c()` like `c(exp(2))` or `c(log(3))` (#2017, @MichaelChirico). Such usage is discouraged by `unnecessary_concatenation_linter()`, but `inner_combine_linter()` _per se_ does not apply.
 
+## New and improved features
+
+* `library_call_linter()` can detect if all library calls are not at the top of your script (#2027, @nicholas-masel).
+
+
 ## Changes to defaults
 
 * `assignment_linter()` lints the {magrittr} assignment pipe `%<>%` (#2008, @MichaelChirico). This can be deactivated by setting the new argument `allow_pipe_assign` to `TRUE`.
