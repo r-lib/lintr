@@ -144,7 +144,7 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
         source_expression = source_expression,
         lint_message = paste(
           'toString(.) is more expressive than paste(., collapse = ", ").',
-          "Note also glue_collapse() and and::and()",
+          "Note also glue::glue_collapse() and and::and()",
           "for constructing human-readable / translation-friendly lists"
         ),
         type = "warning"
