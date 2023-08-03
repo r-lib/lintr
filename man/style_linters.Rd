@@ -25,6 +25,7 @@ The following linters are tagged with 'style':
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{indentation_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
+\item{\code{\link{library_call_linter}}}
 \item{\code{\link{line_length_linter}}}
 \item{\code{\link{numeric_leading_zero_linter}}}
 \item{\code{\link{object_length_linter}}}
