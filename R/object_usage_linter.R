@@ -131,7 +131,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
       nodes[missing_symbol] <- lapply(which(missing_symbol), function(i) {
         line_based_match <- xml_find_first(
           fun_assignment,
-          glue_data(res[i, ], "descendant::expr[@line1 = {line1} and @line2 = {line2}]")
+          glue::glue_data(res[i, ], "descendant::expr[@line1 = {line1} and @line2 = {line2}]")
         )
         if (is.na(line_based_match)) fun_assignment else line_based_match
       })
