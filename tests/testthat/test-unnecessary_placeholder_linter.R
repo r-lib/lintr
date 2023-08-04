@@ -14,8 +14,8 @@ patrick::with_parameters_test_that(
     # . used inside a scope --> ok
     expect_lint(sprintf("x %s { foo(arg = .) }", pipe), NULL, linter)
   },
-  .test_name = c("forward", "assignment", "tee"),
-  pipe = c("%>%", "%<>%", "%T>%")
+  .test_name = c("forward", "assignment", "tee", "greedy", "extraction"),
+  pipe = c("%>%", "%<>%", "%T>%", "%!>%", "%$%")
 )
 
 patrick::with_parameters_test_that(
@@ -34,6 +34,6 @@ patrick::with_parameters_test_that(
       unnecessary_placeholder_linter()
     )
   },
-  .test_name = c("forward", "assignment", "tee"),
-  pipe = c("%>%", "%<>%", "%T>%")
+  .test_name = c("forward", "assignment", "tee", "greedy", "extraction"),
+  pipe = c("%>%", "%<>%", "%T>%", "%!>%", "%$%")
 )
