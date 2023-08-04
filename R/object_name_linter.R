@@ -10,7 +10,7 @@ object_name_xpath <- local({
   #   is not possible for strings, though we do still have to
   #   be aware of cases like 'a$"b" <- 1'.
   xp_assignment_target_fmt <- paste0(
-    "not(preceding-sibling::OP-DOLLAR or preceding-sibling::OP-AT)",
+    "not(parent::expr[OP-DOLLAR or OP-AT])",
     "and %1$s::expr[",
     " following-sibling::LEFT_ASSIGN",
     " or preceding-sibling::RIGHT_ASSIGN",
