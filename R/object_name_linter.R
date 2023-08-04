@@ -1,6 +1,6 @@
 object_name_xpath <- local({
   xp_assignment_target <- paste0(
-    "not(preceding-sibling::OP-DOLLAR)",
+    "not(preceding-sibling::OP-DOLLAR or preceding-sibling::OP-AT)",
     "and ancestor::expr[",
     " following-sibling::LEFT_ASSIGN",
     " or preceding-sibling::RIGHT_ASSIGN",
