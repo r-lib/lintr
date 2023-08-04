@@ -261,3 +261,9 @@ test_that("object_name_linter supports custom regexes", {
     object_name_linter(regexes = c(a = "^a$", "^b$"))
   )
 })
+
+test_that("complex LHS of := doesn't cause false positive", {
+  # "_l" would be included under previous logic which tried ancestor::expr[ASSIGN] for STR_CONST,
+  #   but only parent::expr[ASSIGN] is needed for strings.
+  expect_lint('dplyr::mutate(df, !!paste0(v, "_l") := df$a * 2)', NULL, object_name_linter())
+})
