@@ -67,6 +67,8 @@
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/inner_combine_linter.html">inner_combine_linter()</a></code> no longer throws on length-1 calls to <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> like <code>c(exp(2))</code> or <code>c(log(3))</code> (<a href="https://github.com/r-lib/lintr/issues/2017" class="external-link">#2017</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Such usage is discouraged by <code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code>, but <code><a href="../reference/inner_combine_linter.html">inner_combine_linter()</a></code> <em>per se</em> does not apply.</li>
+<li>
+<code><a href="../reference/condition_message_linter.html">condition_message_linter()</a></code> ignores usages of extracted calls like <code>env$stop(paste(a, b))</code> (<a href="https://github.com/r-lib/lintr/issues/1455" class="external-link">#1455</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
