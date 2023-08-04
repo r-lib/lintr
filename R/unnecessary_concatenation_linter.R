@@ -68,7 +68,7 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
   non_constant_cond <- "SYMBOL or (expr and not(OP-COLON and count(expr[SYMBOL or expr]) != 2))"
 
   pipes <- setdiff(magrittr_pipes, "%$%")
-  to_pipe_xpath <- glue::glue("
+  to_pipe_xpath <- glue("
     ./preceding-sibling::*[1][
       self::PIPE or
       self::SPECIAL[{ xp_text_in_table(pipes) }]

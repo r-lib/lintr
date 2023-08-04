@@ -65,7 +65,7 @@ brace_linter <- function(allow_single_line = FALSE) {
     #
     # note that '{' is not supported in RHS call of base-R's native pipe (`|>`),
     # so no exception needs to be made for this operator
-    glue::glue("not(
+    glue("not(
       @line1 > parent::expr/preceding-sibling::*[not(self::COMMENT)][1][
         self::OP-LEFT-PAREN
         or self::OP-COMMA
