@@ -22,6 +22,7 @@ test_that("linter returns correct linting", {
   )
   # regression test for #1050
   expect_lint("df$return <- 1", NULL, linter)
+  expect_lint("df@return <- 1", NULL, linter)
 })
 
 test_that("it's possible to NOT lint symbols", {

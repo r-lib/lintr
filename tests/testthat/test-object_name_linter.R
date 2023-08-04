@@ -105,13 +105,28 @@ test_that("linter accepts vector of styles", {
 test_that("dollar subsetting only lints the first expression", {
   # Regression test for #582
   linter <- object_name_linter()
-  lint_msg <- "Variable and function name style should match snake_case or symbols."
+  lint_msg <- rex::rex("Variable and function name style should match snake_case or symbols.")
 
   expect_lint("my_var$MY_COL <- 42L", NULL, linter)
   expect_lint("MY_VAR$MY_COL <- 42L", lint_msg, linter)
-  expect_lint("my_var$MY_SUB$MY_COL <- 42L", NULL, linter)
-  expect_lint("MY_VAR$MY_SUB$MY_COL <- 42L", lint_msg, linter)
+  expect_lint("my_var@MY_SUB <- 42L", NULL, linter)
+  expect_lint("MY_VAR@MY_SUB <- 42L", lint_msg, linter)
 })
+
+patrick::with_parameters_test_that(
+  "nested extraction only lints on the first symbol",
+  expect_lint(
+    sprintf("%s%sMY_SUB%sMY_COL <- 42L", if (should_lint) "MY_VAR" else "my_var", op1, op2),
+    if (should_lint) rex::rex("Variable and function name style should match snake_case or symbols."),
+    object_name_linter()
+  ),
+  .cases = within(
+    expand.grid(should_lint = c(TRUE, FALSE), op1 = c("$", "@"), op2 = c("$", "@"), stringsAsFactors = FALSE),
+    {
+      .test_name <- sprintf("(should lint? %s, op1=%s, op2=%s)", should_lint, op1, op2)
+    }
+  )
+)
 
 test_that("assignment targets of compound lhs are correctly identified", {
   linter <- object_name_linter()

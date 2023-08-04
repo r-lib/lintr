@@ -35,15 +35,16 @@ test_that("T_and_F_symbol_linter blocks disallowed usages", {
       )
 
       x$F <- 42L
+      y@T <- 84L
 
       T <- \"foo\"
       F = \"foo2\"
       \"foo3\" -> T
     "),
     list(
-      list(message = msg_variable_true),
-      list(message = msg_variable_false),
-      list(message = msg_variable_true)
+      list(message = msg_variable_true, line_number = 9L),
+      list(message = msg_variable_false, line_number = 10L),
+      list(message = msg_variable_true, line_number = 11L)
     ),
     linter
   )

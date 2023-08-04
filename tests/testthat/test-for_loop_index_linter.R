@@ -5,6 +5,7 @@ test_that("for_loop_index_linter skips allowed usages", {
 
   # this is OK, so not every symbol is problematic
   expect_lint("for (col in DF$col) {}", NULL, linter)
+  expect_lint("for (col in S4@col) {}", NULL, linter)
   expect_lint("for (col in DT[, col]) {}", NULL, linter)
 })
 
