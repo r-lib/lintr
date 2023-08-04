@@ -3,11 +3,11 @@
 ## Bug fixes
 
 * `inner_combine_linter()` no longer throws on length-1 calls to `c()` like `c(exp(2))` or `c(log(3))` (#2017, @MichaelChirico). Such usage is discouraged by `unnecessary_concatenation_linter()`, but `inner_combine_linter()` _per se_ does not apply.
+* `condition_message_linter()` ignores usages of extracted calls like `env$stop(paste(a, b))` (#1455, @MichaelChirico).
 
 ## New and improved features
 
 * `library_call_linter()` can detect if all library calls are not at the top of your script (#2027, @nicholas-masel).
-
 
 ## Changes to defaults
 
@@ -15,6 +15,7 @@
 * `object_usage_linter()`:
   + assumes `glue()` is `glue::glue()` when `interpret_glue=TRUE` (#2032, @MichaelChirico).
   + finds function usages inside `glue()` calls to avoid false positives for "unused objects" (#2029, @MichaelChirico).
+* `object_name_linter()` no longer attempts to lint strings in function calls on the LHS of assignments (#1466, @MichaelChirico).
 
 # lintr 3.1.0
 
@@ -37,7 +38,7 @@
 
 * `get_source_expressions()` can handle Sweave/Rmarkdown documents with reference chunks like `<<ref_file>>` (#779, @MichaelChirico).
   Note that these are simply skipped, rather than attempting to retrieve the reference and also lint it.
-  
+
 * `assignment_linter()` no longer lints assignments in braces that include comments when `allow_trailing = FALSE` (#1701, @ashbaldry)
 
 * `object_usage_linter()`
