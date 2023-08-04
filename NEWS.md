@@ -8,6 +8,13 @@
 ## New and improved features
 
 * `library_call_linter()` can detect if all library calls are not at the top of your script (#2027, @nicholas-masel).
+* Linters with logic around the magrittr pipe `%>%` consistently apply it to the other pipes `%!>%`, `%T>%`, `%<>%` (and possibly `%$%`) where appropriate (#2008, @MichaelChirico).
+  + `brace_linter()`
+  + `pipe_call_linter()`
+  + `pipe_continuation_linter()`
+  + `unnecessary_concatenation_linter()`
+  + `unnecessary_placeholder_linter()`
+  + `yoda_test_linter()`
 
 ## Changes to defaults
 
