@@ -84,6 +84,8 @@
 <ul><li>assumes <code>glue()</code> is <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code> when <code>interpret_glue=TRUE</code> (<a href="https://github.com/r-lib/lintr/issues/2032" class="external-link">#2032</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>finds function usages inside <code>glue()</code> calls to avoid false positives for “unused objects” (<a href="https://github.com/r-lib/lintr/issues/2029" class="external-link">#2029</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></li>
+<li>
+<code><a href="../reference/object_name_linter.html">object_name_linter()</a></code> no longer attempts to lint strings in function calls on the LHS of assignments (<a href="https://github.com/r-lib/lintr/issues/1466" class="external-link">#1466</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 </div>
     <div class="section level2">
