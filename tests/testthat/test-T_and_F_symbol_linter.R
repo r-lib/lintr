@@ -26,6 +26,9 @@ test_that("T_and_F_symbol_linter blocks disallowed usages", {
     linter
   )
 
+  expect_lint("DF$bool <- T", msg_true, linter)
+  expect_lint("sum(x, na.rm = T)", msg_true, linter)
+
   # Regression test for #657
   expect_lint(
     trim_some("

@@ -35,7 +35,8 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
     (text() = 'T' or text() = 'F')
     and not(parent::expr[OP-DOLLAR or OP-AT])
   ]"
-  assignment_xpath <- "parent::expr/parent::*[LEFT_ASSIGN or RIGHT_ASSIGN or EQ_ASSIGN]"
+  assignment_xpath <-
+    "parent::expr[following-sibling::LEFT_ASSIGN or preceding-sibling::RIGHT_ASSIGN or following-sibling::EQ_ASSIGN]"
 
   usage_xpath <- sprintf("%s[not(%s)]", symbol_xpath, assignment_xpath)
   assignment_xpath <- sprintf("%s[%s]", symbol_xpath, assignment_xpath)
