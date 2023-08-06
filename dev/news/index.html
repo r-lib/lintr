@@ -74,6 +74,15 @@
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/library_call_linter.html">library_call_linter()</a></code> can detect if all library calls are not at the top of your script (<a href="https://github.com/r-lib/lintr/issues/2027" class="external-link">#2027</a>, <a href="https://github.com/nicholas-masel" class="external-link">@nicholas-masel</a>).</li>
+<li>Several linters avoiding false positives in <code>$</code> extractions get the same exceptions for <code>@</code> extractions, e.g. <code>S4@T</code> will no longer throw a <code><a href="../reference/T_and_F_symbol_linter.html">T_and_F_symbol_linter()</a></code> hit (<a href="https://github.com/r-lib/lintr/issues/2039" class="external-link">#2039</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).
+<ul><li><code><a href="../reference/T_and_F_symbol_linter.html">T_and_F_symbol_linter()</a></code></li>
+<li><code><a href="../reference/for_loop_index_linter.html">for_loop_index_linter()</a></code></li>
+<li><code><a href="../reference/literal_coercion_linter.html">literal_coercion_linter()</a></code></li>
+<li><code><a href="../reference/object_name_linter.html">object_name_linter()</a></code></li>
+<li><code><a href="../reference/undesirable_function_linter.html">undesirable_function_linter()</a></code></li>
+<li><code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code></li>
+<li><code><a href="../reference/yoda_test_linter.html">yoda_test_linter()</a></code></li>
+</ul></li>
 </ul></div>
 <div class="section level3">
 <h3 id="changes-to-defaults-development-version">Changes to defaults<a class="anchor" aria-label="anchor" href="#changes-to-defaults-development-version"></a></h3>
