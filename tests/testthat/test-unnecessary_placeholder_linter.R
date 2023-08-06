@@ -18,22 +18,25 @@ patrick::with_parameters_test_that(
   pipe = c("%>%", "%<>%", "%T>%", "%!>%", "%$%")
 )
 
-patrick::with_parameters_test_that(
-  "unnecessary_placeholder_linter blocks simple disallowed usages",
-  {
-    linter <- unnecessary_placeholder_linter()
-    expect_lint(
-      sprintf("x %s sum(.)", pipe),
-      rex::rex("Don't use the placeholder (`.`) when it's not needed"),
-      unnecessary_placeholder_linter()
-    )
+local({
+  linter <- unnecessary_placeholder_linter()
+  pipes <- pipes(exclude = "|>")
+  patrick::with_parameters_test_that(
+    "unnecessary_placeholder_linter blocks simple disallowed usages",
+    {
+      expect_lint(
+        sprintf("x %s sum(.)", pipe),
+        rex::rex("Don't use the placeholder (`.`) when it's not needed"),
+        unnecessary_placeholder_linter()
+      )
 
-    expect_lint(
-      sprintf("x %s y(.) %s sum()", pipe, pipe),
-      rex::rex("Don't use the placeholder (`.`) when it's not needed"),
-      unnecessary_placeholder_linter()
-    )
-  },
-  .test_name = names(pipes(exclude = "|>")),
-  pipe = pipes(exclude = "|>")
-)
+      expect_lint(
+        sprintf("x %s y(.) %s sum()", pipe, pipe),
+        rex::rex("Don't use the placeholder (`.`) when it's not needed"),
+        unnecessary_placeholder_linter()
+      )
+    },
+    .test_name = names(pipes),
+    pipe = pipes
+  )
+})
