@@ -63,7 +63,7 @@ test_that("pipe_call_linter blocks simple disallowed usages", {
 })
 
 local({
-  pipes <- c("%>%", "%!>%", "%T>%", "%<>%")
+  pipes <- pipes(exclude = c("%$%", "|>"))
   linter <- pipe_call_linter()
   patrick::with_parameters_test_that(
     "All pipe operators are caught",
@@ -72,7 +72,7 @@ local({
       expect_lint(sprintf("a %s foo", pipe), sprintf("`a %s foo`", pipe), linter)
     },
     pipe = pipes,
-    .test_name = pipes
+    .test_name = names(pipes)
   )
 })
 

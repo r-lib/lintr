@@ -34,6 +34,6 @@ patrick::with_parameters_test_that(
       unnecessary_placeholder_linter()
     )
   },
-  .test_name = c("forward", "assignment", "tee", "greedy", "extraction"),
-  pipe = c("%>%", "%<>%", "%T>%", "%!>%", "%$%")
+  .test_name = names(pipes(exclude = "|>")),
+  pipe = pipes(exclude = "|>")
 )

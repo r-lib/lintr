@@ -191,7 +191,7 @@ local({
 
 local({
   linter <- pipe_continuation_linter()
-  pipes <- c("%>%", "%!>%", "%T>%", "%$%", "%<>%")
+  pipes <- pipes()
   cases <- expand.grid(pipe1 = pipes, pipe2 = pipes, stringsAsFactors = FALSE)
   cases <- within(cases, {
     .test_name <- sprintf("(%s, %s)", pipe1, pipe2)

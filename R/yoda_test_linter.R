@@ -45,7 +45,7 @@ yoda_test_linter <- function() {
     or (STR_CONST and not(OP-DOLLAR or OP-AT))
     or ((OP-PLUS or OP-MINUS) and count(expr[NUM_CONST]) = 2)
   "
-  pipes <- setdiff(magrittr_pipes, "%$%")
+  pipes <- setdiff(magrittr_pipes, c("%$%", "%<>%"))
   xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical' or text() = 'expect_setequal']
     /parent::expr

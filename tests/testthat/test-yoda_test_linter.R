@@ -39,13 +39,13 @@ test_that("yoda_test_linter ignores strings in $ expressions", {
 
 # if we only inspect the first argument & ignore context, get false positives
 local({
-  pipes <- c("%>%", "%!>%", "%T>%", "%<>%", if (getRversion() >= "4.1.0") "|>")
+  pipes <- pipes(exclude = c("%<>%", "%$%"))
   linter <- yoda_test_linter()
   patrick::with_parameters_test_that(
     "yoda_test_linter ignores usage in pipelines",
     expect_lint(sprintf("foo() %s expect_identical(2)", pipe), NULL, linter),
     pipe = pipes,
-    .test_name = pipes
+    .test_name = names(pipes)
   )
 })
 
