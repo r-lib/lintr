@@ -91,3 +91,9 @@ test_that("edge cases are detected correctly", {
     linter
   )
 })
+
+test_that("piping into sprintf works", {
+  linter <- sprintf_linter()
+
+  expect_lint("x %>% sprintf(fmt = '%s')", NULL, linter)
+})
