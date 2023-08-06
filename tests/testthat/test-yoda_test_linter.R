@@ -34,6 +34,7 @@ test_that("yoda_test_linter blocks simple disallowed usages", {
 test_that("yoda_test_linter ignores strings in $ expressions", {
   # the "key" here shows up at the same level of the parse tree as plain "key" normally would
   expect_lint('expect_equal(x$"key", 2)', NULL, yoda_test_linter())
+  expect_lint('expect_equal(x@"key", 2)', NULL, yoda_test_linter())
 })
 
 # if we only inspect the first argument & ignore context, get false positives

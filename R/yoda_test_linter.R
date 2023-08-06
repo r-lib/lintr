@@ -42,7 +42,7 @@ yoda_test_linter <- function() {
   # TODO(#963): fully generalize this & re-use elsewhere
   const_condition <- "
     NUM_CONST
-    or (STR_CONST and not(OP-DOLLAR))
+    or (STR_CONST and not(OP-DOLLAR or OP-AT))
     or ((OP-PLUS or OP-MINUS) and count(expr[NUM_CONST]) = 2)
   "
   pipes <- setdiff(magrittr_pipes, "%$%")

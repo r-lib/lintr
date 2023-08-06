@@ -14,6 +14,13 @@
   + `pipe_continuation_linter()`
   + `unnecessary_concatenation_linter()`
   + `unnecessary_placeholder_linter()`
+* Several linters avoiding false positives in `$` extractions get the same exceptions for `@` extractions, e.g. `S4@T` will no longer throw a `T_and_F_symbol_linter()` hit (#2039, @MichaelChirico).
+  + `T_and_F_symbol_linter()`
+  + `for_loop_index_linter()`
+  + `literal_coercion_linter()`
+  + `object_name_linter()`
+  + `undesirable_function_linter()`
+  + `unreachable_code_linter()`
   + `yoda_test_linter()`
 
 ## Changes to defaults

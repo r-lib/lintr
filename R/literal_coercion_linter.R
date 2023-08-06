@@ -54,11 +54,11 @@ literal_coercion_linter <- function() {
 
   # notes for clarification:
   #  - as.integer(1e6) is arguably easier to read than 1000000L
-  #  - in x$"abc", the "abc" STR_CONST is at the top level, so exclude OP-DOLLAR
+  #  - in x$"abc", the "abc" STR_CONST is at the top level, so exclude OP-DOLLAR (ditto OP-AT)
   #  - need condition against STR_CONST w/ EQ_SUB to skip quoted keyword arguments (see tests)
   #  - for {rlang} coercers, both `int(1)` and `int(1, )` need to be linted
   not_extraction_or_scientific <- "
-    not(OP-DOLLAR)
+    not(OP-DOLLAR or OP-AT)
     and (
       NUM_CONST[not(contains(translate(text(), 'E', 'e'), 'e'))]
       or STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
