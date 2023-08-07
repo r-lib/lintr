@@ -85,7 +85,7 @@ keyword_quote_linter <- function() {
   "
 
   no_quote_msg <- "Use backticks to create non-syntactic names, not quotes."
-  clarification <- "i.e., the name is not a valid R symbol (see ?make.names)."
+  clarification <- "i.e., if the name is not a valid R symbol (see ?make.names)."
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
