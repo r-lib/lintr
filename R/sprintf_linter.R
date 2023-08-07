@@ -83,7 +83,7 @@ sprintf_linter <- function() {
     # convert x %>% sprintf(...) to sprintf(x, ...)
     if (length(xml_find_first(xml, in_pipe_xpath)) > 0L) {
       arg_names <- names(parsed_expr)
-      arg_idx <- 2:length(parsed_expr)
+      arg_idx <- 2L:length(parsed_expr)
       parsed_expr[arg_idx + 1L] <- parsed_expr[arg_idx]
       names(parsed_expr)[arg_idx + 1L] <- arg_names[arg_idx]
       parsed_expr[[2L]] <- xml2lang(xml_find_first(xml, "preceding-sibling::*[2]"))
