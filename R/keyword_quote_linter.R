@@ -145,13 +145,6 @@ keyword_quote_linter <- function() {
   })
 }
 
-# from ?Reserved
-r_reserved_words <- c(
-  "if", "else", "repeat", "while", "function", "for", "in", "next", "break",
-  "TRUE", "FALSE", "NULL", "Inf", "NaN", "NA",
-  "NA_integer_", "NA_real_", "NA_complex_", "NA_character_"
-)
-
 #' Check if a string could be assigned as an R variable.
 #'
 #'   considered valid, i.e., anything wrapped in '' or "" is linted.
