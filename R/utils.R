@@ -104,7 +104,7 @@ get_content <- function(lines, info) {
   if (!missing(info)) {
     if (inherits(info, "xml_node")) {
       info <- lapply(stats::setNames(nm = c("col1", "col2", "line1", "line2")), function(attr) {
-        as.integer(xml2::xml_attr(info, attr))
+        as.integer(xml_attr(info, attr))
       })
     }
 
@@ -231,9 +231,9 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 get_r_string <- function(s, xpath = NULL) {
   if (inherits(s, c("xml_node", "xml_nodeset"))) {
     if (is.null(xpath)) {
-      s <- xml2::xml_text(s)
+      s <- xml_text(s)
     } else {
-      s <- xml2::xml_find_chr(s, sprintf("string(%s)", xpath))
+      s <- xml_find_chr(s, sprintf("string(%s)", xpath))
     }
   }
   # parse() skips "" elements --> offsets the length of the output,
@@ -246,7 +246,7 @@ get_r_string <- function(s, xpath = NULL) {
 
 #' Convert XML node to R code within
 #'
-#' NB this is not equivalent to `xml2::xml_text(xml)` in the presence of line breaks
+#' NB this is not equivalent to `xml_text(xml)` in the presence of line breaks
 #'
 #' @param xml An `xml_node`.
 #'
@@ -256,22 +256,22 @@ get_r_string <- function(s, xpath = NULL) {
 get_r_code <- function(xml) {
   # shortcut if xml has line1 and line2 attrs and they are equal
   # if they are missing, xml_attr() returns NA, so we continue
-  if (isTRUE(xml2::xml_attr(xml, "line1") == xml2::xml_attr(xml, "line2"))) {
-    return(xml2::xml_text(xml))
+  if (isTRUE(xml_attr(xml, "line1") == xml_attr(xml, "line2"))) {
+    return(xml_text(xml))
   }
   # find all unique line numbers
-  line_numbers <- sort(unique(xml2::xml_find_num(
-    xml2::xml_find_all(xml, "./descendant-or-self::*[@line1]"),
+  line_numbers <- sort(unique(xml_find_num(
+    xml_find_all(xml, "./descendant-or-self::*[@line1]"),
     "number(./@line1)"
   )))
   if (length(line_numbers) <= 1L) {
     # no line breaks necessary
-    return(xml2::xml_text(xml))
+    return(xml_text(xml))
   }
   lines <- vapply(line_numbers, function(line_num) {
     # all terminal nodes starting on line_num
-    paste(xml2::xml_text(
-      xml2::xml_find_all(xml, sprintf("./descendant-or-self::*[@line1 = %d and not(*)]", line_num))
+    paste(xml_text(
+      xml_find_all(xml, sprintf("./descendant-or-self::*[@line1 = %d and not(*)]", line_num))
     ), collapse = "")
   }, character(1L))
   paste(lines, collapse = "\n")
@@ -286,7 +286,7 @@ get_r_code <- function(xml) {
 #' @noRd
 xml2lang <- function(x) {
   x_strip_comments <- xml_find_all(x, ".//*[not(self::COMMENT or self::expr)]")
-  str2lang(paste(xml2::xml_text(x_strip_comments), collapse = ""))
+  str2lang(paste(xml_text(x_strip_comments), collapse = ""))
 }
 
 is_linter <- function(x) inherits(x, "linter")

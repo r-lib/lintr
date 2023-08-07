@@ -53,7 +53,7 @@ yoda_test_linter <- function() {
     /parent::expr[not(preceding-sibling::*[self::PIPE or self::SPECIAL[{ xp_text_in_table(pipes) }]])]
   ")
 
-  second_const_xpath <- glue::glue("expr[position() = 3 and ({const_condition})]")
+  second_const_xpath <- glue("expr[position() = 3 and ({const_condition})]")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -62,10 +62,10 @@ yoda_test_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     matched_call <- xp_call_name(bad_expr)
-    second_const <- xml2::xml_find_first(bad_expr, second_const_xpath)
+    second_const <- xml_find_first(bad_expr, second_const_xpath)
     lint_message <- ifelse(
       is.na(second_const),
       paste(

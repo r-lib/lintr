@@ -79,8 +79,8 @@ commented_code_linter <- function() {
     if (!is_lint_level(source_expression, "file")) {
       return(list())
     }
-    all_comment_nodes <- xml2::xml_find_all(source_expression$full_xml_parsed_content, "//COMMENT")
-    all_comments <- xml2::xml_text(all_comment_nodes)
+    all_comment_nodes <- xml_find_all(source_expression$full_xml_parsed_content, "//COMMENT")
+    all_comments <- xml_text(all_comment_nodes)
     code_candidates <- re_matches(all_comments, code_candidate_regex, global = FALSE, locations = TRUE)
     extracted_code <- code_candidates[, "code"]
     # ignore trailing ',' when testing for parsability

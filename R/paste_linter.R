@@ -120,7 +120,7 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
     optional_lints <- list()
 
     if (!allow_empty_sep) {
-      empty_sep_expr <- xml2::xml_find_all(xml, sep_xpath)
+      empty_sep_expr <- xml_find_all(xml, sep_xpath)
       sep_value <- get_r_string(empty_sep_expr, xpath = "./SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1]")
 
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
@@ -133,7 +133,7 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
 
     if (!allow_to_string) {
       # 3 expr: the function call, the argument, and collapse=
-      to_string_expr <- xml2::xml_find_all(xml, to_string_xpath)
+      to_string_expr <- xml_find_all(xml, to_string_xpath)
       collapse_value <- get_r_string(
         to_string_expr,
         xpath = "./SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1]"
@@ -151,7 +151,7 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
       ))
     }
 
-    paste0_sep_expr <- xml2::xml_find_all(xml, paste0_sep_xpath)
+    paste0_sep_expr <- xml_find_all(xml, paste0_sep_xpath)
     paste0_sep_lints <- xml_nodes_to_lints(
       paste0_sep_expr,
       source_expression = source_expression,
@@ -159,7 +159,7 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
       type = "warning"
     )
 
-    paste_strrep_expr <- xml2::xml_find_all(xml, paste_strrep_xpath)
+    paste_strrep_expr <- xml_find_all(xml, paste_strrep_xpath)
     collapse_arg <- get_r_string(paste_strrep_expr, "SYMBOL_SUB/following-sibling::expr[1]/STR_CONST")
     paste_strrep_expr <- paste_strrep_expr[!nzchar(collapse_arg)]
     paste_call <- xp_call_name(paste_strrep_expr)

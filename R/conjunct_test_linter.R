@@ -48,7 +48,7 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
   /following-sibling::expr[1][AND2]
   "
   named_stopifnot_condition <- if (allow_named_stopifnot) "and not(preceding-sibling::*[1][self::EQ_SUB])" else ""
-  stopifnot_xpath <- glue::glue("
+  stopifnot_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'stopifnot']
   /parent::expr
   /following-sibling::expr[1][AND2 {named_stopifnot_condition}]
@@ -72,14 +72,14 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
 
     xml <- source_expression$full_xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     if (length(bad_expr) == 0L) {
       return(list())
     }
 
     matched_fun <- xp_call_name(bad_expr)
-    operator <- xml2::xml_find_chr(bad_expr, "string(expr/*[self::AND2 or self::OR2])")
+    operator <- xml_find_chr(bad_expr, "string(expr/*[self::AND2 or self::OR2])")
     replacement_fmt <- ifelse(
       matched_fun %in% c("expect_true", "expect_false"),
       "write multiple expectations like %1$s(A) and %1$s(B)",

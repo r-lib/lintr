@@ -49,14 +49,14 @@ seq_linter <- function() {
   bad_funcs <- xp_text_in_table(c("length", "n", "nrow", "ncol", "NROW", "NCOL", "dim"))
 
   # Exact `xpath` depends on whether bad function was used in conjunction with `seq()`
-  seq_xpath <- glue::glue("
+  seq_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'seq']
     /parent::expr
     /following-sibling::expr[1][expr/SYMBOL_FUNCTION_CALL[ {bad_funcs} ]]
     /parent::expr[count(expr) = 2]
   ")
   # `.N` from {data.table} is special since it's not a function but a symbol
-  colon_xpath <- glue::glue("
+  colon_xpath <- glue("
   //OP-COLON
     /parent::expr[
       expr[NUM_CONST[text() = '1' or text() = '1L']]
@@ -72,7 +72,7 @@ seq_linter <- function() {
   ## The actual order of the nodes is document order
   ## In practice we need to handle length(x):1
   get_fun <- function(expr, n) {
-    funcall <- xml2::xml_find_chr(expr, sprintf("string(./expr[%d])", n))
+    funcall <- xml_find_chr(expr, sprintf("string(./expr[%d])", n))
 
     # `dplyr::n()` is special because it has no arguments, so the lint message
     # should mention `n()`, and not `n(...)`
@@ -93,7 +93,7 @@ seq_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    badx <- xml2::xml_find_all(xml, xpath)
+    badx <- xml_find_all(xml, xpath)
 
     # TODO: better message customization. For example, length(x):1
     #   would get rev(seq_along(x)) as the preferred replacement.

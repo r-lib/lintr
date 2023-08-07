@@ -33,7 +33,7 @@ pipe_call_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
     pipe <- xml_text(xml_find_first(bad_expr, "preceding-sibling::SPECIAL[1]"))
 
     xml_nodes_to_lints(

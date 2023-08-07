@@ -48,7 +48,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
 
   # not all instances of linted symbols are potential sources for the observed violations -- see #1914
   symbol_exclude_cond <- "preceding-sibling::OP-DOLLAR or preceding-sibling::OP-AT or ancestor::expr[OP-TILDE]"
-  xpath_culprit_symbol <- glue::glue("
+  xpath_culprit_symbol <- glue("
     descendant::SYMBOL[not( {symbol_exclude_cond} )]
     | descendant::SYMBOL_FUNCTION_CALL[not( {symbol_exclude_cond} )]
     | descendant::SPECIAL
@@ -78,7 +78,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
       assign(symbol, function(...) invisible(), envir = env)
     }
 
-    fun_assignments <- xml2::xml_find_all(xml, xpath_function_assignment)
+    fun_assignments <- xml_find_all(xml, xpath_function_assignment)
 
     lapply(fun_assignments, function(fun_assignment) {
       code <- get_content(lines = source_expression$content, fun_assignment)
@@ -98,8 +98,8 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
         fun,
         known_used_symbols = known_used_symbols,
         declared_globals = declared_globals,
-        start_line = as.integer(xml2::xml_attr(fun_assignment, "line1")),
-        end_line = as.integer(xml2::xml_attr(fun_assignment, "line2")),
+        start_line = as.integer(xml_attr(fun_assignment, "line1")),
+        end_line = as.integer(xml_attr(fun_assignment, "line2")),
         skip_with = skip_with
       )
 
@@ -107,10 +107,10 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
       # e.g. `not_existing<-`(a, b)
       res$name <- rex::re_substitutes(res$name, rex::rex("<-"), "")
 
-      lintable_symbols <- xml2::xml_find_all(fun_assignment, xpath_culprit_symbol)
+      lintable_symbols <- xml_find_all(fun_assignment, xpath_culprit_symbol)
 
-      lintable_symbol_names <- gsub("^`|`$", "", xml2::xml_text(lintable_symbols))
-      lintable_symbol_lines <- as.integer(xml2::xml_attr(lintable_symbols, "line1"))
+      lintable_symbol_names <- gsub("^`|`$", "", xml_text(lintable_symbols))
+      lintable_symbol_lines <- as.integer(xml_attr(lintable_symbols, "line1"))
 
       matched_symbol <- vapply(
         seq_len(nrow(res)),
@@ -129,7 +129,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
       # fallback to line based matching if no symbol is found
       missing_symbol <- is.na(matched_symbol)
       nodes[missing_symbol] <- lapply(which(missing_symbol), function(i) {
-        line_based_match <- xml2::xml_find_first(
+        line_based_match <- xml_find_first(
           fun_assignment,
           glue::glue_data(res[i, ], "descendant::expr[@line1 = {line1} and @line2 = {line2}]")
         )
@@ -166,7 +166,7 @@ extract_glued_symbols <- function(expr) {
   #
   # Package stringr:
   #  - str_interp
-  glue_calls <- xml2::xml_find_all(
+  glue_calls <- xml_find_all(
     expr,
     xpath = paste0(
       "descendant::SYMBOL_FUNCTION_CALL[text() = 'glue']/", # a glue() call
@@ -230,7 +230,7 @@ symbol_extractor <- function(text, envir, data) {
 }
 
 get_assignment_symbols <- function(xml) {
-  get_r_string(xml2::xml_find_all(
+  get_r_string(xml_find_all(
     xml,
     "
       expr[LEFT_ASSIGN]/expr[1]/SYMBOL[1] |
@@ -332,7 +332,7 @@ get_imported_symbols <- function(xml) {
   ]
   /expr[STR_CONST or SYMBOL][1]
   "
-  import_exprs <- xml2::xml_find_all(xml, import_exprs_xpath)
+  import_exprs <- xml_find_all(xml, import_exprs_xpath)
   if (length(import_exprs) == 0L) {
     return(character())
   }

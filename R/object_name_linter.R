@@ -22,7 +22,7 @@ object_name_xpath <- local({
     "])"
   )
 
-  glue::glue("
+  glue("
   //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor')} ]
   |  //STR_CONST[ {sprintf(xp_assignment_target_fmt, 'parent')} ]
   |  //SYMBOL_FORMALS
@@ -138,7 +138,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
 
   lint_message <- paste0(
     "Variable and function name style should match ",
-    glue::glue_collapse(unique(names(style_list)), sep = ", ", last = " or "), "."
+    glue_collapse(unique(names(style_list)), sep = ", ", last = " or "), "."
   )
 
   Linter(function(source_expression) {
@@ -148,11 +148,11 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
 
     xml <- source_expression$full_xml_parsed_content
 
-    assignments <- xml2::xml_find_all(xml, object_name_xpath)
+    assignments <- xml_find_all(xml, object_name_xpath)
 
     # Retrieve assigned name
     nms <- strip_names(
-      xml2::xml_text(assignments)
+      xml_text(assignments)
     )
 
     # run namespace_imports at run-time, not "compile" time to allow package structure to change

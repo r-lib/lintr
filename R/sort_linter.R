@@ -61,7 +61,7 @@ sort_linter <- function() {
                                text() = 'decreasing' or
                                text() = 'na.last']"
 
-  arg_values_xpath <- glue::glue("{args_xpath}/following-sibling::expr[1]")
+  arg_values_xpath <- glue("{args_xpath}/following-sibling::expr[1]")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -70,10 +70,10 @@ sort_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
-    var <- xml2::xml_text(
-      xml2::xml_find_first(
+    var <- xml_text(
+      xml_find_first(
         bad_expr,
         ".//SYMBOL_FUNCTION_CALL[text() = 'order']/parent::expr[1]/following-sibling::expr[1]"
       )
@@ -87,9 +87,9 @@ sort_linter <- function() {
 
     # Reconstruct new argument call for each expression separately
     args <- vapply(bad_expr, function(e) {
-      arg_names <- xml2::xml_text(xml2::xml_find_all(e, args_xpath))
-      arg_values <- xml2::xml_text(
-        xml2::xml_find_all(e, arg_values_xpath)
+      arg_names <- xml_text(xml_find_all(e, args_xpath))
+      arg_values <- xml_text(
+        xml_find_all(e, arg_values_xpath)
       )
       if (!"na.last" %in% arg_names) {
         arg_names <- c(arg_names, "na.last")

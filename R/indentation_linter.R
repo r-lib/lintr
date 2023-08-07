@@ -142,16 +142,16 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
   if (isTRUE(assignment_as_infix)) {
     suppressing_tokens <- c("LEFT_ASSIGN", "EQ_ASSIGN", "EQ_SUB", "EQ_FORMALS")
-    xp_suppress <- glue::glue("preceding-sibling::{suppressing_tokens}[{xp_last_on_line}]")
+    xp_suppress <- glue("preceding-sibling::{suppressing_tokens}[{xp_last_on_line}]")
 
     restoring_tokens <- c("expr[SYMBOL_FUNCTION_CALL]", "OP-LEFT-BRACE")
-    xp_restore <- glue::glue("preceding-sibling::{restoring_tokens}")
+    xp_restore <- glue("preceding-sibling::{restoring_tokens}")
 
     # match the first ancestor expr that is either
     #  * a suppressing token (<- or =) or
     #  * a restoring token (braces or a function call)
     # suppress the indent if the matched ancestor is a suppressing token
-    infix_condition <- glue::glue("
+    infix_condition <- glue("
       and not(ancestor::expr[{xp_or(c(xp_suppress, xp_restore))}][1][{xp_or(xp_suppress)}])
     ")
   } else {
@@ -162,13 +162,22 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     "number(",
     paste(
       c(
-        glue::glue("self::{paren_tokens_left}/following-sibling::{paren_tokens_right}/preceding-sibling::*[1]/@line2"),
-        glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))}]
-                      /following-sibling::SYMBOL_FUNCTION_CALL/parent::expr/following-sibling::expr[1]/@line2"),
-        glue::glue("self::*[
-                      {xp_and(paste0('not(self::', paren_tokens_left, ')'))} and
-                      not(following-sibling::SYMBOL_FUNCTION_CALL)
-                    ]/following-sibling::*[not(self::COMMENT)][1]/@line2")
+        glue("self::{paren_tokens_left}/following-sibling::{paren_tokens_right}/preceding-sibling::*[1]/@line2"),
+        glue("
+          self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))}]
+            /following-sibling::SYMBOL_FUNCTION_CALL
+            /parent::expr
+            /following-sibling::expr[1]
+            /@line2
+        "),
+        glue("
+          self::*[
+            {xp_and(paste0('not(self::', paren_tokens_left, ')'))}
+            and not(following-sibling::SYMBOL_FUNCTION_CALL)
+          ]
+            /following-sibling::*[not(self::COMMENT)][1]
+            /@line2
+        ")
       ),
       collapse = " | "
     ),
@@ -178,16 +187,21 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
   global_nodes <- function(nodes) paste0("//", nodes, collapse = "|")
   xp_indent_changes <- paste(
     c(
-      glue::glue("//{paren_tokens_left}[not(@line1 = following-sibling::expr[
-                    @line2 > @line1 and
-                    ({xp_or(paste0('descendant::', paren_tokens_left, '[', xp_last_on_line, ']'))})
-                  ]/@line1)]"),
+      glue("//{paren_tokens_left}[not(
+        @line1 = following-sibling::expr[
+          @line2 > @line1 and
+          ({xp_or(paste0('descendant::', paren_tokens_left, '[', xp_last_on_line, ']'))})
+        ]/@line1
+      )]"),
       glue::glue("({ global_nodes(infix_tokens) })[{xp_last_on_line}{infix_condition}]"),
       glue::glue("({ global_nodes(no_paren_keywords) })[{xp_last_on_line}]"),
-      glue::glue("({ global_nodes(keyword_tokens) })/following-sibling::OP-RIGHT-PAREN[
-                    {xp_last_on_line} and
-                    not(following-sibling::expr[1][OP-LEFT-BRACE])
-                  ]")
+      glue::glue("
+        ({ global_nodes(keyword_tokens) })
+          /following-sibling::OP-RIGHT-PAREN[
+            {xp_last_on_line} and
+            not(following-sibling::expr[1][OP-LEFT-BRACE])
+          ]
+      ")
     ),
     collapse = " | "
   )
@@ -220,29 +234,29 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     expected_indent_levels <- integer(length(indent_levels))
     is_hanging <- logical(length(indent_levels))
 
-    indent_changes <- xml2::xml_find_all(xml, xp_indent_changes)
+    indent_changes <- xml_find_all(xml, xp_indent_changes)
     for (change in indent_changes) {
       change_type <- find_indent_type(change)
-      change_begin <- as.integer(xml2::xml_attr(change, "line1")) + 1L
-      change_end <- xml2::xml_find_num(change, xp_block_ends)
+      change_begin <- as.integer(xml_attr(change, "line1")) + 1L
+      change_end <- xml_find_num(change, xp_block_ends)
       if (isTRUE(change_begin <= change_end)) {
         to_indent <- seq(from = change_begin, to = change_end)
         expected_indent_levels[to_indent] <- find_new_indent(
           current_indent = expected_indent_levels[to_indent],
           change_type = change_type,
           indent = indent,
-          hanging_indent = as.integer(xml2::xml_attr(change, "col2"))
+          hanging_indent = as.integer(xml_attr(change, "col2"))
         )
         is_hanging[to_indent] <- change_type == "hanging"
       }
     }
 
     in_str_const <- logical(length(indent_levels))
-    multiline_strings <- xml2::xml_find_all(xml, xp_multiline_string)
+    multiline_strings <- xml_find_all(xml, xp_multiline_string)
     for (string in multiline_strings) {
       is_in_str <- seq(
-        from = as.integer(xml2::xml_attr(string, "line1")) + 1L,
-        to = as.integer(xml2::xml_attr(string, "line2"))
+        from = as.integer(xml_attr(string, "line1")) + 1L,
+        to = as.integer(xml_attr(string, "line2"))
       )
       in_str_const[is_in_str] <- TRUE
     }
@@ -339,7 +353,7 @@ build_indentation_style_tidy <- function() {
   "
 
   xp_suppress <- paste(
-    glue::glue("
+    glue("
         self::{paren_tokens_left}[
           @line1 = following-sibling::{paren_tokens_right}/{xp_inner_expr}[position() = 1]/@line1
         ]/following-sibling::{paren_tokens_right}[
@@ -351,20 +365,20 @@ build_indentation_style_tidy <- function() {
 
   xp_is_not_hanging <- paste(
     c(
-      glue::glue(
+      glue(
         "self::{paren_tokens_left}/following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]"
       ),
-      glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
+      glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
     ),
     collapse = " | "
   )
 
   function(change) {
-    if (length(xml2::xml_find_first(change, xp_is_double_indent)) > 0L) {
+    if (length(xml_find_first(change, xp_is_double_indent)) > 0L) {
       "double"
-    } else if (length(xml2::xml_find_first(change, xp_suppress)) > 0L) {
+    } else if (length(xml_find_first(change, xp_suppress)) > 0L) {
       "suppress"
-    } else if (length(xml2::xml_find_first(change, xp_is_not_hanging)) == 0L) {
+    } else if (length(xml_find_first(change, xp_is_not_hanging)) == 0L) {
       "hanging"
     } else {
       "block"
@@ -379,17 +393,17 @@ build_indentation_style_always <- function() {
 
   xp_is_not_hanging <- paste(
     c(
-      glue::glue("
+      glue("
         self::{paren_tokens_left}[{xp_last_on_line}]/
           following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]
       "),
-      glue::glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
+      glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
     ),
     collapse = " | "
   )
 
   function(change) {
-    if (length(xml2::xml_find_first(change, xp_is_not_hanging)) == 0L) {
+    if (length(xml_find_first(change, xp_is_not_hanging)) == 0L) {
       "hanging"
     } else {
       "block"
