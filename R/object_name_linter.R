@@ -22,15 +22,9 @@ object_name_xpath <- local({
     "])"
   )
 
-<<<<<<< HEAD
   glue("
-  //SYMBOL[ {xp_assignment_target} ]
-  |  //STR_CONST[ {xp_assignment_target} ]
-=======
-  glue::glue("
   //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor')} ]
   |  //STR_CONST[ {sprintf(xp_assignment_target_fmt, 'parent')} ]
->>>>>>> main
   |  //SYMBOL_FORMALS
   ")
 })

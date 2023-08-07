@@ -42,16 +42,11 @@
 #' @export
 condition_message_linter <- function() {
   translators <- c("packageStartupMessage", "message", "warning", "stop")
-<<<<<<< HEAD
   xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(translators)} ]
-=======
-  xpath <- glue::glue("
   //SYMBOL_FUNCTION_CALL[
     ({xp_text_in_table(translators)})
     and not(preceding-sibling::OP-DOLLAR or preceding-sibling::OP-AT)
   ]
->>>>>>> main
     /parent::expr
     /following-sibling::expr[
       expr[1][SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']]
