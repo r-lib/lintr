@@ -84,7 +84,7 @@ keyword_quote_linter <- function() {
     | //OP-AT/following-sibling::SLOT[starts-with(text(), '`')]
   "
 
-  return(Linter(function(source_expression) {
+  Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
@@ -138,8 +138,8 @@ keyword_quote_linter <- function() {
       type = "warning"
     )
 
-    return(c(call_arg_lints, assignment_lints, extraction_lints))
-  }))
+    c(call_arg_lints, assignment_lints, extraction_lints)
+  })
 }
 
 # from ?Reserved
@@ -163,5 +163,5 @@ is_valid_r_name <- function(x, no_quote = FALSE) {
     bad_quote <- FALSE
   }
   is_valid_symbol <- grepl("^([a-zA-Z][a-zA-Z0-9._]*|[.]|[.][a-zA-Z._][a-zA-Z0-9._]*)$", x)
-  return(bad_quote | (is_valid_symbol & !(x %in% r_reserved_words)))
+  bad_quote | (is_valid_symbol & !(x %in% r_reserved_words))
 }
