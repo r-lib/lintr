@@ -107,10 +107,13 @@ keyword_quote_linter <- function() {
 
     invalid_assignment_quoting <- is_valid_r_name(get_r_string(assignment_expr), no_quote = TRUE)
 
+    assignment_expr <- assignment_expr[invalid_assignment_quoting]
+    is_backtick <- xml_name(xml_find_first(assignment_expr, "*")) == "SYMBOL"
     assignment_lints <- xml_nodes_to_lints(
-      assignment_expr[invalid_assignment_quoting],
+      assignment_expr,
       source_expression = source_expression,
-      lint_message = paste(
+      lint_message = ifelse(
+        is_backtick,
         "Only quote targets of assignment if necessary, i.e., the name is not a valid R symbol (see ?make.names).",
         "If necessary, use backticks to create non-syntactic names, not quotes."
       ),
@@ -163,5 +166,5 @@ is_valid_r_name <- function(x, no_quote = FALSE) {
     bad_quote <- FALSE
   }
   is_valid_symbol <- make.names(x) == x
-  bad_quote | (is_valid_symbol & !(x %in% r_reserved_words))
+  bad_quote | is_valid_symbol
 }
