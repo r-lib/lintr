@@ -23,6 +23,10 @@
   + `unreachable_code_linter()`
   + `yoda_test_linter()`
 
+### New linters
+
+* `keyword_quote_linter()` for finding unnecessary or discouraged quoting of symbols in assignment, function arguments, or extraction (part of #884, @MichaelChirico). Quoting is unnecessary when the target is a valid R name, e.g. `c("a" = 1)` can be `c(a = 1)`. The same goes to assignment (`"a" <- 1`) and extraction (`x$"a"`). Where quoting is necessary, the linter encourages doing so with backticks (e.g. `` x$`a b` `` instead of `x$"a"`).
+
 ## Changes to defaults
 
 * `assignment_linter()` lints the {magrittr} assignment pipe `%<>%` (#2008, @MichaelChirico). This can be deactivated by setting the new argument `allow_pipe_assign` to `TRUE`.
