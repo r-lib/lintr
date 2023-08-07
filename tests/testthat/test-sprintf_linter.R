@@ -96,5 +96,11 @@ test_that("piping into sprintf works", {
   linter <- sprintf_linter()
 
   expect_lint("x %>% sprintf(fmt = '%s')", NULL, linter)
+  # no fmt= specified -> this is just 'sprintf("%s", "%s%s")', which won't lint
+  expect_lint('"%s" %>% sprintf("%s%s")', NULL, linter)
   expect_lint("x %>% sprintf(fmt = '%s%s')", "too few arguments", linter)
+
+  skip_if_not_r_version("4.1.0")
+  # Cannot evaluate statically --> skip
+  expect_lint('x |> sprintf("a")', NULL, linter)
 })

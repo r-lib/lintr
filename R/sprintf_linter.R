@@ -40,18 +40,24 @@ sprintf_linter <- function() {
   "
 
   pipes <- setdiff(magrittr_pipes, "%$%")
-  in_pipe_xpath <- glue("preceding-sibling::*[1][self::PIPE or self::SPECIAL[{ xp_text_in_table(pipes) }]]")
+  in_pipe_xpath <- glue("self::expr[
+    preceding-sibling::*[1][self::PIPE or self::SPECIAL[{ xp_text_in_table(pipes) }]]
+    and (
+      preceding-sibling::*[2]/STR_CONST
+      or SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST
+    )
+  ]")
 
   is_missing <- function(x) is.symbol(x) && !nzchar(x)
 
-  # Zap sprintf() call to contain only constants
-  #
-  # Set all extra arguments to 0L if they aren't a constant
-  #
-  # @param parsed_expr A parsed `sprintf()` call
-  #
-  # @return A `sprintf()` call with all non-constants replaced by `0L`
-  # (which is compatible with all sprintf format specifiers)
+  #' Zap sprintf() call to contain only constants
+  #'
+  #' Set all extra arguments to 0L if they aren't a constant
+  #'
+  #' @param parsed_expr A parsed `sprintf()` call
+  #'
+  #' @return A `sprintf()` call with all non-constants replaced by `0L`
+  #' (which is compatible with all sprintf format specifiers)
   zap_extra_args <- function(parsed_expr) {
     if ("fmt" %in% names(parsed_expr)) {
       fmt_loc <- which(names(parsed_expr) == "fmt")
