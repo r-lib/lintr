@@ -61,3 +61,16 @@ skip_if_not_r_version <- function(min_version) {
 skip_if_not_utf8_locale <- function() {
   testthat::skip_if_not(l10n_info()[["UTF-8"]], "Not a UTF-8 locale")
 }
+
+pipes <- function(exclude = NULL) {
+  if (getRversion() < "4.1.0") exclude <- unique(c(exclude, "|>"))
+  all_pipes <- c(
+    standard = "%>%",
+    greedy = "%!>%",
+    tee = "%T>%",
+    assignment = "%<>%",
+    extraction = "%$%",
+    native = "|>"
+  )
+  all_pipes[!all_pipes %in% exclude]
+}

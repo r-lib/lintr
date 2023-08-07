@@ -81,12 +81,12 @@ sprintf_linter <- function() {
   capture_sprintf_warning <- function(xml) {
     parsed_expr <- xml2lang(xml)
     if (length(xml_find_first(xml, in_pipe_xpath)) > 0L) {
-      browser()
       arg_names <- names(parsed_expr)
       arg_idx <- 2:length(parsed_expr)
       parsed_expr[arg_idx + 1L] <- parsed_expr[arg_idx]
       names(parsed_expr)[arg_idx + 1L] <- arg_names[arg_idx]
       parsed_expr[[2L]] <- xml2lang(xml_find_first(xml, "preceding-sibling::*[2]"))
+      names(parsed_expr)[2L] <- ""
     }
     parsed_expr <- zap_extra_args(parsed_expr)
     res <- tryCatch(eval(parsed_expr, envir = baseenv()), warning = identity, error = identity)

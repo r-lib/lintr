@@ -65,13 +65,13 @@ brace_linter <- function(allow_single_line = FALSE) {
     #
     # note that '{' is not supported in RHS call of base-R's native pipe (`|>`),
     # so no exception needs to be made for this operator
-    "not(
+    glue("not(
       @line1 > parent::expr/preceding-sibling::*[not(self::COMMENT)][1][
         self::OP-LEFT-PAREN
         or self::OP-COMMA
-        or (self::SPECIAL and text() = '%>%')
+        or (self::SPECIAL and ({xp_text_in_table(magrittr_pipes)}) )
       ]/@line2
-    )"
+    )")
   ))
 
   # TODO (AshesITR): if c_style_braces is TRUE, invert the preceding-sibling condition

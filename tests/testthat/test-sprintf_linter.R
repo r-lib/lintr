@@ -96,4 +96,5 @@ test_that("piping into sprintf works", {
   linter <- sprintf_linter()
 
   expect_lint("x %>% sprintf(fmt = '%s')", NULL, linter)
+  expect_lint("x %>% sprintf(fmt = '%s%s')", "too few arguments", linter)
 })

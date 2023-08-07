@@ -8,6 +8,12 @@
 ## New and improved features
 
 * `library_call_linter()` can detect if all library calls are not at the top of your script (#2027, @nicholas-masel).
+* Linters with logic around the magrittr pipe `%>%` consistently apply it to the other pipes `%!>%`, `%T>%`, `%<>%` (and possibly `%$%`) where appropriate (#2008, @MichaelChirico).
+  + `brace_linter()`
+  + `pipe_call_linter()`
+  + `pipe_continuation_linter()`
+  + `unnecessary_concatenation_linter()`
+  + `unnecessary_placeholder_linter()`
 * Several linters avoiding false positives in `$` extractions get the same exceptions for `@` extractions, e.g. `S4@T` will no longer throw a `T_and_F_symbol_linter()` hit (#2039, @MichaelChirico).
   + `T_and_F_symbol_linter()`
   + `for_loop_index_linter()`
@@ -16,6 +22,7 @@
   + `undesirable_function_linter()`
   + `unreachable_code_linter()`
   + `yoda_test_linter()`
+* `sprintf_linter()` is pipe-aware, so that `x %>% sprintf(fmt = "%s")` no longer lints (#1943, @MichaelChirico).
 
 ## Changes to defaults
 
