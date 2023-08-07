@@ -470,7 +470,7 @@ test_that("code with pipes is handled correctly", {
 
   expect_lint(
     trim_some("
-      1:4 %>% {
+      1:4 %!>% {
           sum(.)
         }
     "),
@@ -481,7 +481,7 @@ test_that("code with pipes is handled correctly", {
   # %>%\n{ is allowed
   expect_lint(
     trim_some("
-      1:4 %>%
+      1:4 %T>%
         {
           sum(.)
         }
@@ -492,7 +492,7 @@ test_that("code with pipes is handled correctly", {
 
   expect_lint(
     trim_some("
-      1:4 %>% { sum(.)
+      xx %<>% { sum(.)
         }
     "),
     list(
@@ -503,9 +503,9 @@ test_that("code with pipes is handled correctly", {
 
   expect_lint(
     trim_some("
-      1:4 %>%
+      x %>%
         {
-          sum(.) }
+          uvwxyz }
     "),
     list(
       list(message = lint_msg_closed, line_number = 3L, column_number = 12L)

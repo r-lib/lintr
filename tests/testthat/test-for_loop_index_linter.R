@@ -5,7 +5,22 @@ test_that("for_loop_index_linter skips allowed usages", {
 
   # this is OK, so not every symbol is problematic
   expect_lint("for (col in DF$col) {}", NULL, linter)
+  expect_lint("for (col in S4@col) {}", NULL, linter)
   expect_lint("for (col in DT[, col]) {}", NULL, linter)
+
+  # make sure symbol check is scoped
+  expect_lint(
+    trim_some("
+      {
+        for (i in 1:10) {
+          42L
+        }
+        i <- 7L
+      }
+    "),
+    NULL,
+    linter
+  )
 })
 
 test_that("for_loop_index_linter blocks simple disallowed usages", {
