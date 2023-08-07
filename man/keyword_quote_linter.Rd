@@ -31,12 +31,12 @@ lint(
 )
 
 lint(
-  text = 'my_list$"key",
+  text = 'my_list$"key"',
   linters = keyword_quote_linter()
 )
 
 lint(
-  text = 's4obj@"key",
+  text = 's4obj@"key"',
   linters = keyword_quote_linter()
 )
 
