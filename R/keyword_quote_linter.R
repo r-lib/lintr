@@ -98,7 +98,8 @@ keyword_quote_linter <- function() {
     call_arg_lints <- xml_nodes_to_lints(
       call_arg_expr[invalid_call_quoting],
       source_expression = source_expression,
-      lint_message = "Only quote named arguments to functions if necessary, i.e., the name is not a valid R symbol (see ?make.names).",
+      lint_message =
+        "Only quote named arguments to functions if necessary, i.e., the name is not a valid R symbol (see ?make.names).",
       type = "warning"
     )
 
@@ -129,8 +130,10 @@ keyword_quote_linter <- function() {
       extraction_expr[invalid_extraction_quoting],
       source_expression = source_expression,
       lint_message = paste(
-        "Only quote targets of extraction with", extractor, "if necessary, i.e., the name is not a valid R symbol (see ?make.names).",
-        "If necessary, use backticks to create non-syntactic names, not quotes, or use", gen_extractor, "to extract by string."
+        "Only quote targets of extraction with", extractor, "if necessary, i.e.,",
+        "the name is not a valid R symbol (see ?make.names).",
+        "If necessary, use backticks to create non-syntactic names, not quotes,",
+        "or use", gen_extractor, "to extract by string."
       ),
       type = "warning"
     )
