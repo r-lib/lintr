@@ -162,6 +162,6 @@ is_valid_r_name <- function(x, no_quote = FALSE) {
   } else {
     bad_quote <- FALSE
   }
-  is_valid_symbol <- grepl("^([a-zA-Z][a-zA-Z0-9._]*|[.]|[.][a-zA-Z._][a-zA-Z0-9._]*)$", x)
+  is_valid_symbol <- make.names(x) == x
   bad_quote | (is_valid_symbol & !(x %in% r_reserved_words))
 }
