@@ -104,12 +104,12 @@ test_that("keyword_quote_linter finds blocked usages in any function call", {
 test_that("keyword_quote_linter blocks quoted assignment targets", {
   expect_lint(
     '"foo bar" <- 1',
-    rex::rex("Only quote targets of assignment if necessary"),
+    rex::rex("Use backticks to create non-syntactic names, not quotes."),
     keyword_quote_linter()
   )
   expect_lint(
     "'foo bar' = 1",
-    rex::rex("Only quote targets of assignment if necessary"),
+    rex::rex("Use backticks to create non-syntactic names, not quotes."),
     keyword_quote_linter()
   )
   # valid choice: use backticks
@@ -139,17 +139,17 @@ test_that("keyword_quote_linter blocks quoted assignment targets", {
   # include common use cases: [<-/$ methods and infixes
   expect_lint(
     '"$.my_class" <- function(x, key) { }',
-    rex::rex("Only quote targets of assignment if necessary"),
+    rex::rex("Use backticks to create non-syntactic names, not quotes."),
     keyword_quote_linter()
   )
   expect_lint(
     "'Setter[<-.my_class' = function(x, idx, value) { }",
-    rex::rex("Only quote targets of assignment if necessary"),
+    rex::rex("Use backticks to create non-syntactic names, not quotes."),
     keyword_quote_linter()
   )
   expect_lint(
     '"%nin%" <- function(x, table) !x %in% table',
-    rex::rex("Only quote targets of assignment if necessary"),
+    rex::rex("Use backticks to create non-syntactic names, not quotes."),
     keyword_quote_linter()
   )
 })
@@ -157,22 +157,22 @@ test_that("keyword_quote_linter blocks quoted assignment targets", {
 test_that("keyword_quote_linter blocks quoted $, @ extractions", {
   expect_lint(
     'x$"foo bar" <- 1',
-    rex::rex("Only quote targets of extraction with $ if necessary"),
+    rex::rex("Use backticks to create non-syntactic names, not quotes."),
     keyword_quote_linter()
   )
   expect_lint(
     "x$'foo bar' = 1",
-    rex::rex("Only quote targets of extraction with $ if necessary"),
+    rex::rex("Use backticks to create non-syntactic names, not quotes."),
     keyword_quote_linter()
   )
   expect_lint(
     'x@"foo bar" <- 1',
-    rex::rex("Only quote targets of extraction with @ if necessary"),
+    rex::rex("Use backticks to create non-syntactic names, not quotes."),
     keyword_quote_linter()
   )
   expect_lint(
     "x@'foo bar' = 1",
-    rex::rex("Only quote targets of extraction with @ if necessary"),
+    rex::rex("Use backticks to create non-syntactic names, not quotes."),
     keyword_quote_linter()
   )
   # valid choice: non-syntactic name with backticks
@@ -212,21 +212,59 @@ test_that("keyword_quote_linter blocks quoted $, @ extractions", {
 })
 
 test_that("multiple lints are generated correctly", {
+  linter <- keyword_quote_linter()
   expect_lint(
-    trim_some('
-      {
-        foo("a" = 1)
-        "b" <- 2
-        x$"c"
-        y@"d"
-      }
-    '),
+    trim_some('{
+      foo("a" = 1)
+      "b" <- 2
+      x$"c"
+      y@"d"
+    }'),
     list(
-      list(message = "Only quote named arguments"),
-      list(message = "Only quote targets of assignment"),
-      list(message = "Only quote targets of extraction with \\$"),
-      list(message = "Only quote targets of extraction with @")
+      "Only quote named arguments",
+      "Only quote targets of assignment",
+      "Only quote targets of extraction with \\$",
+      "Only quote targets of extraction with @"
     ),
-    keyword_quote_linter()
+    linter
+  )
+
+  # multiple flavors of assignment lints
+  expect_lint(
+    trim_some('{
+      "a" <- 1
+      "a b" <- 1
+      `a` <- 1
+      `a b` <- 1
+    }'),
+    list(
+      "Only quote targets of assignment if necessary",
+      "Use backticks to create non-syntactic names, not quotes",
+      "Only quote targets of assignment if necessary"
+    ),
+    linter
+  )
+
+  # multiple flavors of extraction lints
+  expect_lint(
+    trim_some('{
+      x$"a"
+      x$"a b" <- 1
+      x$`a` <- 1
+      x$`a b` <- 1
+      y@"a"
+      y@"a b" <- 1
+      y@`a` <- 1
+      y@`a b` <- 1
+    }'),
+    list(
+      rex::rex("Only quote targets of extraction with $ if necessary"),
+      rex::rex("Use backticks to create non-syntactic names, not quotes."),
+      rex::rex("Only quote targets of extraction with $ if necessary"),
+      rex::rex("Only quote targets of extraction with @ if necessary"),
+      rex::rex("Use backticks to create non-syntactic names, not quotes."),
+      rex::rex("Only quote targets of extraction with @ if necessary")
+    ),
+    linter
   )
 })

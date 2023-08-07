@@ -84,6 +84,9 @@ keyword_quote_linter <- function() {
     | //OP-AT/following-sibling::SLOT[starts-with(text(), '`')]
   "
 
+  no_quote_msg <- "Use backticks to create non-syntactic names, not quotes."
+  clarification <- "i.e., the name is not a valid R symbol (see ?make.names)."
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -98,66 +101,62 @@ keyword_quote_linter <- function() {
     call_arg_lints <- xml_nodes_to_lints(
       call_arg_expr[invalid_call_quoting],
       source_expression = source_expression,
-      lint_message =
-        "Only quote named arguments to functions if necessary, i.e., the name is not a valid R symbol (see ?make.names).",
+      lint_message = paste("Only quote named arguments to functions if necessary,", clarification),
       type = "warning"
     )
 
     assignment_expr <- xml_find_all(xml, assignment_xpath)
 
-    invalid_assignment_quoting <- is_valid_r_name(get_r_string(assignment_expr), no_quote = TRUE)
+    invalid_assignment_quoting <- is_valid_r_name(get_r_string(assignment_expr))
+    assignment_to_string <- xml_name(xml_find_first(assignment_expr, "*")) == "STR_CONST"
 
-    assignment_expr <- assignment_expr[invalid_assignment_quoting]
-    is_backtick <- xml_name(xml_find_first(assignment_expr, "*")) == "SYMBOL"
-    assignment_lints <- xml_nodes_to_lints(
-      assignment_expr,
+    string_assignment_lints <- xml_nodes_to_lints(
+      assignment_expr[assignment_to_string & !invalid_assignment_quoting],
       source_expression = source_expression,
-      lint_message = ifelse(
-        is_backtick,
-        "Only quote targets of assignment if necessary, i.e., the name is not a valid R symbol (see ?make.names).",
-        "If necessary, use backticks to create non-syntactic names, not quotes."
-      ),
+      lint_message = no_quote_msg,
+      type = "warning"
+    )
+
+    assignment_lints <- xml_nodes_to_lints(
+      assignment_expr[invalid_assignment_quoting],
+      source_expression = source_expression,
+      lint_message = paste("Only quote targets of assignment if necessary,", clarification),
       type = "warning"
     )
 
     extraction_expr <- xml_find_all(xml, extraction_xpath)
 
-    invalid_extraction_quoting <-
-      is_valid_r_name(get_r_string(extraction_expr), no_quote = TRUE)
+    invalid_extraction_quoting <- is_valid_r_name(get_r_string(extraction_expr))
+    extraction_of_string <- xml_name(extraction_expr) == "STR_CONST"
+
+    string_extraction_lints <- xml_nodes_to_lints(
+      extraction_expr[extraction_of_string & !invalid_extraction_quoting],
+      source_expression = source_expression,
+      lint_message = no_quote_msg,
+      type = "warning"
+    )
 
     extraction_expr <- extraction_expr[invalid_extraction_quoting]
     extractor <- xml_find_chr(extraction_expr, "string(preceding-sibling::*[1])")
     gen_extractor <- ifelse(extractor == "$", "[[", "slot()")
 
     extraction_lints <- xml_nodes_to_lints(
-      extraction_expr[invalid_extraction_quoting],
+      extraction_expr,
       source_expression = source_expression,
       lint_message = paste(
-        "Only quote targets of extraction with", extractor, "if necessary, i.e.,",
-        "the name is not a valid R symbol (see ?make.names).",
-        "If necessary, use backticks to create non-syntactic names, not quotes,",
-        "or use", gen_extractor, "to extract by string."
+        "Only quote targets of extraction with", extractor, "if necessary,", clarification,
+        "Use backticks to create non-syntactic names, or use", gen_extractor, "to extract by string."
       ),
       type = "warning"
     )
 
-    c(call_arg_lints, assignment_lints, extraction_lints)
+    c(call_arg_lints, string_assignment_lints, assignment_lints, string_extraction_lints, extraction_lints)
   })
 }
 
 #' Check if a string could be assigned as an R variable.
 #'
-#'   considered valid, i.e., anything wrapped in '' or "" is linted.
-#'
 #' See [make.names()] for the description of syntactically valid names in R.
-#'   we could also replace this with `make.names(x) == x`
+#'
 #' @noRd
-is_valid_r_name <- function(x, no_quote = FALSE) {
-  if (no_quote) {
-    bad_quote <- !startsWith(x, "`")
-  } else {
-    bad_quote <- FALSE
-  }
-  is_valid_symbol <- make.names(x) == x
-  bad_quote | is_valid_symbol
-}
+is_valid_r_name <- function(x) make.names(x) == x
