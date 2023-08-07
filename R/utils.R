@@ -208,9 +208,9 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #'  will become `NA` outputs, which helps ensure that `length(get_r_string(s)) == length(s)`.
 #'
 #' @param s An input string or strings. If `s` is an `xml_node` or `xml_nodeset` and `xpath` is `NULL`,
-#'   extract its string value with [xml_text()]. If `s` is an `xml_node` or `xml_nodeset`
-#'   and `xpath` is specified, it is extracted with [xml_find_chr()].
-#' @param xpath An XPath, passed on to [xml_find_chr()] after wrapping with `string()`.
+#'   extract its string value with [xml2::xml_text()]. If `s` is an `xml_node` or `xml_nodeset`
+#'   and `xpath` is specified, it is extracted with [xml2::xml_find_chr()].
+#' @param xpath An XPath, passed on to [xml2::xml_find_chr()] after wrapping with `string()`.
 #'
 #' @examplesIf requireNamespace("withr", quietly = TRUE)
 #' tmp <- withr::local_tempfile(lines = "c('a', 'b')")
@@ -279,7 +279,7 @@ get_r_code <- function(xml) {
 
 #' str2lang, but for xml children.
 #'
-#' [xml_text()] is deceptively close to obviating this helper, but it collapses
+#' [xml2::xml_text()] is deceptively close to obviating this helper, but it collapses
 #'   text across lines. R is _mostly_ whitespace-agnostic, so this only matters in some edge cases,
 #'   in particular when there are comments within an expression (`<expr>` node). See #1919.
 #'

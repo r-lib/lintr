@@ -27,9 +27,9 @@ The following tags exist:
 \item{\link[=efficiency_linters]{efficiency} (23 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
-\item{\link[=readability_linters]{readability} (48 linters)}
+\item{\link[=readability_linters]{readability} (49 linters)}
 \item{\link[=robustness_linters]{robustness} (14 linters)}
-\item{\link[=style_linters]{style} (35 linters)}
+\item{\link[=style_linters]{style} (36 linters)}
 }
 }
 \section{Linters}{
