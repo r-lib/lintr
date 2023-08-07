@@ -59,7 +59,7 @@ library_call_linter <- function() {
 
     xml <- source_expression$full_xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     if (length(bad_expr) == 0L) {
       return(list())

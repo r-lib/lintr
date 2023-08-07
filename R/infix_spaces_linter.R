@@ -148,7 +148,7 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
   #  SYMBOL_SUB for case with missing argument like alist(a =)
   # NB: the last not() disables lints inside box::use() declarations
   global_xpath <- paste0("//", infix_tokens, collapse = "|")
-  xpath <- glue::glue("({global_xpath})[
+  xpath <- glue("({global_xpath})[
     parent::*[count(expr | SYMBOL_SUB) > 1]
     and (
       (
@@ -175,7 +175,7 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
     }
 
     xml <- source_expression$xml_parsed_content
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(
       bad_expr,

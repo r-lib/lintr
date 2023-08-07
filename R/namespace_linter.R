@@ -46,7 +46,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
 
     xml <- source_expression$full_xml_parsed_content
 
-    ns_nodes <- xml2::xml_find_all(xml, "//NS_GET | //NS_GET_INT")
+    ns_nodes <- xml_find_all(xml, "//NS_GET | //NS_GET_INT")
 
     if (length(ns_nodes) == 0L) {
       return(list())
@@ -54,7 +54,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
 
     ## Case 1: pkg is uninstalled in pkg::foo
 
-    package_nodes <- xml2::xml_find_all(ns_nodes, "preceding-sibling::*[1]")
+    package_nodes <- xml_find_all(ns_nodes, "preceding-sibling::*[1]")
     packages <- get_r_string(package_nodes)
 
     lints <- list()
@@ -95,8 +95,8 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     }
     # nocov end
 
-    ns_get <- xml2::xml_text(ns_nodes) == "::"
-    symbol_nodes <- xml2::xml_find_all(ns_nodes, "following-sibling::*[1]")
+    ns_get <- xml_text(ns_nodes) == "::"
+    symbol_nodes <- xml_find_all(ns_nodes, "following-sibling::*[1]")
     symbols <- get_r_string(symbol_nodes)
 
     if (check_nonexports) {

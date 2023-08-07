@@ -59,7 +59,7 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
     )
   }
   type <- match.arg(type, c("style", "warning", "error"))
-  line1 <- xml2::xml_attr(xml, "line1")
+  line1 <- xml_attr(xml, "line1")
   col1 <- xp_find_location(xml, range_start_xpath)
   if (is.na(col1)) {
     warning("Could not find range start for lint. Defaulting to start of line.")
@@ -69,7 +69,7 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
   lines <- source_expression[["lines"]]
   if (is.null(lines)) lines <- source_expression[["file_lines"]]
 
-  if (xml2::xml_attr(xml, "line2") == line1) {
+  if (xml_attr(xml, "line2") == line1) {
     col2 <- xp_find_location(xml, range_end_xpath)
     if (is.na(col2)) {
       warning("Could not find range end for lint. Defaulting to width 1.")

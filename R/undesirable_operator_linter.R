@@ -83,9 +83,9 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_op <- xml2::xml_find_all(xml, xpath)
+    bad_op <- xml_find_all(xml, xpath)
 
-    operator <- xml2::xml_text(bad_op)
+    operator <- xml_text(bad_op)
     lint_message <- sprintf("Operator `%s` is undesirable.", operator)
     alternative <- op[operator]
     has_alternative <- !is.na(alternative)

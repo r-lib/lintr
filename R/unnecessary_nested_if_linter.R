@@ -43,7 +43,7 @@ unnecessary_nested_if_linter <- function() {
 
     xml <- source_expression$full_xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     lint_message <- paste(
       "Don't use nested `if` statements,",

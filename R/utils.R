@@ -104,7 +104,7 @@ get_content <- function(lines, info) {
   if (!missing(info)) {
     if (inherits(info, "xml_node")) {
       info <- lapply(stats::setNames(nm = c("col1", "col2", "line1", "line2")), function(attr) {
-        as.integer(xml2::xml_attr(info, attr))
+        as.integer(xml_attr(info, attr))
       })
     }
 
@@ -231,9 +231,9 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 get_r_string <- function(s, xpath = NULL) {
   if (inherits(s, c("xml_node", "xml_nodeset"))) {
     if (is.null(xpath)) {
-      s <- xml2::xml_text(s)
+      s <- xml_text(s)
     } else {
-      s <- xml2::xml_find_chr(s, sprintf("string(%s)", xpath))
+      s <- xml_find_chr(s, sprintf("string(%s)", xpath))
     }
   }
   # parse() skips "" elements --> offsets the length of the output,
@@ -253,7 +253,7 @@ get_r_string <- function(s, xpath = NULL) {
 #' @noRd
 xml2lang <- function(x) {
   x_strip_comments <- xml_find_all(x, ".//*[not(self::COMMENT or self::expr)]")
-  str2lang(paste(xml2::xml_text(x_strip_comments), collapse = ""))
+  str2lang(paste(xml_text(x_strip_comments), collapse = ""))
 }
 
 is_linter <- function(x) inherits(x, "linter")

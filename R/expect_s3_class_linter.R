@@ -46,7 +46,7 @@ expect_s3_class_linter <- function() {
     /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label' or text() = 'expected.label'])]
   "
   is_class_call <- xp_text_in_table(c(is_s3_class_calls, "inherits"))
-  expect_true_xpath <- glue::glue("
+  expect_true_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
     /parent::expr
     /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[ {is_class_call} ]]]
@@ -61,7 +61,7 @@ expect_s3_class_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
     matched_function <- xp_call_name(bad_expr)
     msg <- ifelse(
       matched_function %in% c("expect_equal", "expect_identical"),

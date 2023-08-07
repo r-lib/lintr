@@ -73,8 +73,8 @@ unnecessary_lambda_linter <- function() {
   "
   default_fun_xpath <- paste(
     sep = "|",
-    glue::glue(default_fun_xpath_fmt, paren_path = "expr"),
-    glue::glue(default_fun_xpath_fmt, paren_path = "expr[OP-LEFT-BRACE and count(expr) = 1]/expr[1]")
+    glue(default_fun_xpath_fmt, paren_path = "expr"),
+    glue(default_fun_xpath_fmt, paren_path = "expr[OP-LEFT-BRACE and count(expr) = 1]/expr[1]")
   )
 
   # purrr-style inline formulas-as-functions, e.g. ~foo(.x)
@@ -82,7 +82,7 @@ unnecessary_lambda_linter <- function() {
   #   1. a formula (OP-TILDE)
   #   2. the lone argument marker `.x` or `.`
   purrr_symbol <- "SYMBOL[text() = '.x' or text() = '.']"
-  purrr_fun_xpath <- glue::glue("
+  purrr_fun_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(purrr_mappers)} ]
     /parent::expr
     /following-sibling::expr[
@@ -95,7 +95,7 @@ unnecessary_lambda_linter <- function() {
   # path to calling function symbol from the matched expressions
   fun_xpath <- "./parent::expr/expr/SYMBOL_FUNCTION_CALL"
   # path to the symbol of the simpler function that avoids a lambda
-  symbol_xpath <- glue::glue("(expr|expr[OP-LEFT-BRACE]/expr[1])/expr[SYMBOL_FUNCTION_CALL]")
+  symbol_xpath <- glue("(expr|expr[OP-LEFT-BRACE]/expr[1])/expr[SYMBOL_FUNCTION_CALL]")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -104,15 +104,15 @@ unnecessary_lambda_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    default_fun_expr <- xml2::xml_find_all(xml, default_fun_xpath)
+    default_fun_expr <- xml_find_all(xml, default_fun_xpath)
 
     # TODO(michaelchirico): further message customization is possible here,
     #   e.g. don't always refer to 'lapply()' in the example, and customize to
     #   whether arguments need to be subsumed in '...' or not. The trouble is in
     #   keeping track of which argument the anonymous function is supplied (2nd
     #   argument for many calls, but 3rd e.g. for apply())
-    default_call_fun <- xml2::xml_text(xml2::xml_find_first(default_fun_expr, fun_xpath))
-    default_symbol <- xml2::xml_text(xml2::xml_find_first(default_fun_expr, symbol_xpath))
+    default_call_fun <- xml_text(xml_find_first(default_fun_expr, fun_xpath))
+    default_symbol <- xml_text(xml_find_first(default_fun_expr, symbol_xpath))
     default_fun_lints <- xml_nodes_to_lints(
       default_fun_expr,
       source_expression = source_expression,
@@ -124,10 +124,10 @@ unnecessary_lambda_linter <- function() {
       type = "warning"
     )
 
-    purrr_fun_expr <- xml2::xml_find_all(xml, purrr_fun_xpath)
+    purrr_fun_expr <- xml_find_all(xml, purrr_fun_xpath)
 
-    purrr_call_fun <- xml2::xml_text(xml2::xml_find_first(purrr_fun_expr, fun_xpath))
-    purrr_symbol <- xml2::xml_text(xml2::xml_find_first(purrr_fun_expr, symbol_xpath))
+    purrr_call_fun <- xml_text(xml_find_first(purrr_fun_expr, fun_xpath))
+    purrr_symbol <- xml_text(xml_find_first(purrr_fun_expr, symbol_xpath))
     purrr_fun_lints <- xml_nodes_to_lints(
       purrr_fun_expr,
       source_expression = source_expression,

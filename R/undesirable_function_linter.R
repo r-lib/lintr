@@ -73,9 +73,9 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
   )
 
   if (symbol_is_undesirable) {
-    xpath <- glue::glue("//SYMBOL_FUNCTION_CALL[{xp_condition}] | //SYMBOL[{xp_condition}]")
+    xpath <- glue("//SYMBOL_FUNCTION_CALL[{xp_condition}] | //SYMBOL[{xp_condition}]")
   } else {
-    xpath <- glue::glue("//SYMBOL_FUNCTION_CALL[{xp_condition}]")
+    xpath <- glue("//SYMBOL_FUNCTION_CALL[{xp_condition}]")
   }
 
 
@@ -83,7 +83,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
-    matched_nodes <- xml2::xml_find_all(source_expression$xml_parsed_content, xpath)
+    matched_nodes <- xml_find_all(source_expression$xml_parsed_content, xpath)
     fun_names <- get_r_string(matched_nodes)
 
     msgs <- vapply(
