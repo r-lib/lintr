@@ -119,6 +119,17 @@ test_that("unreachable_code_linter ignores code after foo$stop(), which might be
     NULL,
     unreachable_code_linter()
   )
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        bar <- get_process()
+        bar@stop()
+        TRUE
+      }
+    "),
+    NULL,
+    unreachable_code_linter()
+  )
 })
 
 test_that("unreachable_code_linter ignores terminal nolint end comments", {

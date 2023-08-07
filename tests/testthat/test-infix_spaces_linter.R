@@ -185,3 +185,14 @@ test_that("native pipe is supported", {
   expect_lint("a |> foo()", NULL, linter)
   expect_lint("a|>foo()", rex::rex("Put spaces around all infix operators."), linter)
 })
+
+test_that("mixed unary & binary operators aren't mis-lint", {
+  expect_lint(
+    "-1-1",
+    list(
+      message = rex::rex("Put spaces around all infix operators."),
+      column_number = 3L
+    ),
+    infix_spaces_linter()
+  )
+})

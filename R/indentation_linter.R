@@ -163,30 +163,45 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     paste(
       c(
         glue("self::{paren_tokens_left}/following-sibling::{paren_tokens_right}/preceding-sibling::*[1]/@line2"),
-        glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))}]
-                      /following-sibling::SYMBOL_FUNCTION_CALL/parent::expr/following-sibling::expr[1]/@line2"),
-        glue("self::*[
-                      {xp_and(paste0('not(self::', paren_tokens_left, ')'))} and
-                      not(following-sibling::SYMBOL_FUNCTION_CALL)
-                    ]/following-sibling::*[not(self::COMMENT)][1]/@line2")
+        glue("
+          self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))}]
+            /following-sibling::SYMBOL_FUNCTION_CALL
+            /parent::expr
+            /following-sibling::expr[1]
+            /@line2
+        "),
+        glue("
+          self::*[
+            {xp_and(paste0('not(self::', paren_tokens_left, ')'))}
+            and not(following-sibling::SYMBOL_FUNCTION_CALL)
+          ]
+            /following-sibling::*[not(self::COMMENT)][1]
+            /@line2
+        ")
       ),
       collapse = " | "
     ),
     ")"
   )
 
+  global_nodes <- function(nodes) paste0("//", nodes, collapse = "|")
   xp_indent_changes <- paste(
     c(
-      glue("//{paren_tokens_left}[not(@line1 = following-sibling::expr[
-                    @line2 > @line1 and
-                    ({xp_or(paste0('descendant::', paren_tokens_left, '[', xp_last_on_line, ']'))})
-                  ]/@line1)]"),
-      glue("//{infix_tokens}[{xp_last_on_line}{infix_condition}]"),
-      glue("//{no_paren_keywords}[{xp_last_on_line}]"),
-      glue("//{keyword_tokens}/following-sibling::OP-RIGHT-PAREN[
-                    {xp_last_on_line} and
-                    not(following-sibling::expr[1][OP-LEFT-BRACE])
-                  ]")
+      glue("//{paren_tokens_left}[not(
+        @line1 = following-sibling::expr[
+          @line2 > @line1 and
+          ({xp_or(paste0('descendant::', paren_tokens_left, '[', xp_last_on_line, ']'))})
+        ]/@line1
+      )]"),
+      glue::glue("({ global_nodes(infix_tokens) })[{xp_last_on_line}{infix_condition}]"),
+      glue::glue("({ global_nodes(no_paren_keywords) })[{xp_last_on_line}]"),
+      glue::glue("
+        ({ global_nodes(keyword_tokens) })
+          /following-sibling::OP-RIGHT-PAREN[
+            {xp_last_on_line} and
+            not(following-sibling::expr[1][OP-LEFT-BRACE])
+          ]
+      ")
     ),
     collapse = " | "
   )

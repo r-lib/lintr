@@ -36,11 +36,12 @@
 #' - [outer_negation_linter()]
 #' @export
 redundant_equals_linter <- function() {
-  xpath <- paste0(
-    c("//EQ", "//NE"),
-    "/parent::expr/expr[NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]/parent::expr",
-    collapse = " | "
-  )
+  xpath <- "
+  (//EQ | //NE)
+    /parent::expr
+    /expr[NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]
+    /parent::expr
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

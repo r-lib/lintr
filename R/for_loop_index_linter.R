@@ -34,10 +34,7 @@ for_loop_index_linter <- function() {
   //forcond
     /SYMBOL[text() =
       following-sibling::expr
-        //SYMBOL[not(
-          preceding-sibling::OP-DOLLAR
-          or parent::expr[preceding-sibling::OP-LEFT-BRACKET]
-        )]
+        //SYMBOL[not(parent::expr[OP-DOLLAR or OP-AT or preceding-sibling::OP-LEFT-BRACKET])]
         /text()
     ]
   "

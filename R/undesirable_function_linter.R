@@ -69,7 +69,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       xp_text_in_table(c("library", "require")),
       "]])"
     ),
-    "not(preceding-sibling::OP-DOLLAR)"
+    "not(parent::expr[OP-DOLLAR or OP-AT])"
   )
 
   if (symbol_is_undesirable) {

@@ -120,7 +120,7 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
 
     if (!allow_trailing) {
       bad_trailing_expr <- xml_find_all(xml, trailing_assign_xpath)
-      trailing_assignments <- xml_attrs(bad_expr) %in% xml_attrs(bad_trailing_expr)
+      trailing_assignments <- xml2::xml_attrs(bad_expr) %in% xml2::xml_attrs(bad_trailing_expr)
       lint_message_fmt[trailing_assignments] <- "Assignment %s should not be trailing at the end of a line."
     }
 
