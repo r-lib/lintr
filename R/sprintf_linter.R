@@ -80,6 +80,7 @@ sprintf_linter <- function() {
   # replacing all dynamic components by 0, which is compatible with all format specifiers.
   capture_sprintf_warning <- function(xml) {
     parsed_expr <- xml2lang(xml)
+    # convert x %>% sprintf(...) to sprintf(x, ...)
     if (length(xml_find_first(xml, in_pipe_xpath)) > 0L) {
       arg_names <- names(parsed_expr)
       arg_idx <- 2:length(parsed_expr)
