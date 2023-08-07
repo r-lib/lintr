@@ -53,9 +53,10 @@ pipe_continuation_linter <- function() {
   # Where a single-line pipeline is nested inside a larger expression
   #   e.g. inside a function definition), the outer expression can span multiple lines
   #   without throwing a lint.
-  preceding_pipe <- "preceding-sibling::expr[1]/descendant::*[self::SPECIAL[text() = '%>%'] or self::PIPE]"
-  xpath <- glue::glue("
-  (//PIPE | //SPECIAL[text() = '%>%'])[
+  pipe_node <- glue("SPECIAL[{ xp_text_in_table(magrittr_pipes) }]")
+  preceding_pipe <- glue("preceding-sibling::expr[1]/descendant::*[self::{pipe_node} or self::PIPE]")
+  xpath <- glue("
+  (//PIPE | //{pipe_node})[
     parent::expr[@line1 < @line2]
     and {preceding_pipe}
     and (
@@ -73,7 +74,7 @@ pipe_continuation_linter <- function() {
     xml <- source_expression$full_xml_parsed_content
 
     pipe_exprs <- xml2::xml_find_all(xml, xpath)
-    pipe_text <- ifelse(xml2::xml_name(pipe_exprs) == "PIPE", "|>", "%>%")
+    pipe_text <- xml_text(pipe_exprs)
 
     xml_nodes_to_lints(
       pipe_exprs,
