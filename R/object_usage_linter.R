@@ -143,17 +143,17 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
     }
 
     withr::with_options(
-             list(useFancyQuotes = FALSE),
-             code = {
-               try(codetools::checkUsage(
-                                expression,
-                                report = report,
-                                suppressLocalUnused = known_used_symbols,
-                                suppressUndefined = declared_globals,
-                                skipWith = skip_with
-                              ))
-             }
-           )
+      list(useFancyQuotes = FALSE),
+      code = {
+        try(codetools::checkUsage(
+          expression,
+          report = report,
+          suppressLocalUnused = known_used_symbols,
+          suppressUndefined = declared_globals,
+          skipWith = skip_with
+        ))
+      }
+    )
 
     function_name <- rex(anything, ": ")
     line_info <- rex(
