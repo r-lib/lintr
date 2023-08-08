@@ -108,7 +108,7 @@ keyword_quote_linter <- function() {
     assignment_expr <- xml_find_all(xml, assignment_xpath)
 
     invalid_assignment_quoting <- is_valid_r_name(get_r_string(assignment_expr))
-    assignment_to_string <- xml_name(xml_find_first(assignment_expr, "*")) == "STR_CONST"
+    assignment_to_string <- xml_name(xml2::xml_children(assignment_expr)) == "STR_CONST"
 
     string_assignment_lints <- xml_nodes_to_lints(
       assignment_expr[assignment_to_string & !invalid_assignment_quoting],
