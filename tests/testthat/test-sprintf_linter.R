@@ -103,4 +103,6 @@ test_that("piping into sprintf works", {
   skip_if_not_r_version("4.1.0")
   # Cannot evaluate statically --> skip
   expect_lint('x |> sprintf("a")', NULL, linter)
+  # We don't handle nested piping, so don't test exact behavior, just ensure no error
+  expect_no_error(lint("'%%sb' |> sprintf('%s') |> sprintf('a')\n", linter))
 })
