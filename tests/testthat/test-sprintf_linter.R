@@ -108,7 +108,6 @@ local({
       # Cannot evaluate statically --> skip
       expect_lint(paste("x", pipe, 'sprintf("a")'), NULL, linter)
       # Nested pipes
-      pipe_width <- nchar(pipe)
       expect_lint(
         paste("'%%sb'", pipe, "sprintf('%s')", pipe, "sprintf('a')"),
         list(column_number = nchar(paste("'%%sb'", pipe, "x")), message = unused_arg_msg),
@@ -129,4 +128,3 @@ local({
     .test_name = names(pipes)
   )
 })
-
