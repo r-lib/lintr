@@ -21,6 +21,7 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{inner_combine_linter}}}
 \item{\code{\link{is_numeric_linter}}}
+\item{\code{\link{length_levels_linter}}}
 \item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{numeric_leading_zero_linter}}}
 \item{\code{\link{object_name_linter}}}
