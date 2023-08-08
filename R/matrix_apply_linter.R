@@ -30,6 +30,47 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 matrix_apply_linter <- function() {
+  craft_colsums_rowsums_msg <- function(var, margin, fun, narm_val) {
+    if (is.na(xml_find_first(margin, "OP-COLON"))) {
+      l1 <- xml_text(margin)
+      l2 <- NULL
+    } else {
+      l1 <- xml_text(xml_find_first(margin, "expr[1]"))
+      l2 <- xml_text(xml_find_first(margin, "expr[2]"))
+    }
+
+    # See #1764 for details about various cases. In short:
+    # - If apply(., 1:l2, sum) -> rowSums(., dims = l2)
+    # - If apply(., l1:l2, sum) -> rowSums(colSums(., dims = l1 - 1), dims = l2 - l1 + 1)
+    # - This last case can be simplified to a simple colSums() call if l2 = length(dim(.))
+    # - dims argument can be dropped if equals to 1. This notably is the case for matrices
+    if (is.null(l2)) {
+      l2 <- l1
+    }
+
+    # We don't want warnings when converted as NAs
+    l1 <- suppressWarnings(as.integer(re_substitutes(l1, "L$", "")))
+    l2 <- suppressWarnings(as.integer(re_substitutes(l2, "L$", "")))
+
+    if (!is.na(narm_val)) {
+      narm <- glue(", na.rm = {narm_val}")
+    } else {
+      narm <- ""
+    }
+
+    if (identical(l1, 1L)) {
+      reco <- glue("row{fun}s({var}{narm}, dims = {l2})")
+    } else {
+      reco <- glue(
+        "row{fun}s(col{fun}s({var}{narm}, dims = {l1 - 1}), dims = {l2 - l1 + 1})",
+        " or ",
+        "col{fun}s({var}{narm}, dims = {l1 - 1}) if {var} has {l2} dimensions"
+      )
+    }
+
+    # It's easier to remove this after the fact, rather than having never ending if/elses
+    gsub(", dims = 1", "", reco, fixed = TRUE)
+  }
 
   # mean() and sum() have very different signatures so we treat them separately.
   # sum() takes values to sum over via ..., has just one extra argument and is not a generic
@@ -105,49 +146,4 @@ matrix_apply_linter <- function() {
       type = "warning"
     )
   })
-}
-
-craft_colsums_rowsums_msg <- function(var, margin, fun, narm_val) {
-
-  if (is.na(xml_find_first(margin, "OP-COLON"))) {
-    l1 <- xml_text(margin)
-    l2 <- NULL
-  } else {
-    l1 <- xml_text(xml_find_first(margin, "expr[1]"))
-    l2 <- xml_text(xml_find_first(margin, "expr[2]"))
-  }
-
-  # See #1764 for details about various cases. In short:
-  # - If apply(., 1:l2, sum) -> rowSums(., dims = l2)
-  # - If apply(., l1:l2, sum) -> rowSums(colSums(., dims = l1 - 1), dims = l2 - l1 + 1)
-  # - This last case can be simplified to a simple colSums() call if l2 = length(dim(.))
-  # - dims argument can be dropped if equals to 1. This notably is the case for matrices
-  if (is.null(l2)) {
-    l2 <- l1
-  }
-
-  # We don't want warnings when converted as NAs
-  l1 <- suppressWarnings(as.integer(re_substitutes(l1, "L$", "")))
-  l2 <- suppressWarnings(as.integer(re_substitutes(l2, "L$", "")))
-
-  if (!is.na(narm_val)) {
-    narm <- glue(", na.rm = {narm_val}")
-  } else {
-    narm <- ""
-  }
-
-  if (identical(l1, 1L)) {
-    reco <- glue("row{fun}s({var}{narm}, dims = {l2})")
-  } else {
-    reco <- glue(
-      "row{fun}s(col{fun}s({var}{narm}, dims = {l1 - 1}), dims = {l2 - l1 + 1})",
-      " or ",
-      "col{fun}s({var}{narm}, dims = {l1 - 1}) if {var} has {l2} dimensions"
-    )
-  }
-
-  # It's easier to remove this after the fact, rather than having never ending if/elses
-  reco <- gsub(", dims = 1", "", reco, fixed = TRUE)
-
-  return(reco)
 }

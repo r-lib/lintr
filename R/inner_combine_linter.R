@@ -28,6 +28,34 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 inner_combine_linter <- function() {
+  # Make the XPath condition ensuring an argument matches across calls
+  #
+  # @param arg Character scalar naming an argument
+  arg_match_condition <- function(arg) {
+    this_symbol <- sprintf("SYMBOL_SUB[text() = '%s']", arg)
+    following_symbol <- sprintf("following-sibling::expr/%s", this_symbol)
+    next_expr <- "following-sibling::expr[1]"
+    xp_or(
+      sprintf("not(%s) and not(%s)", this_symbol, following_symbol),
+      xp_and(
+        this_symbol,
+        following_symbol,
+        sprintf(
+          "not(%1$s/%3$s != %2$s/%3$s)",
+          this_symbol, following_symbol, next_expr
+        )
+      )
+    )
+  }
+
+  build_arg_condition <- function(calls, arguments) {
+    xp_or(
+      sprintf("not(expr[1][SYMBOL_FUNCTION_CALL[%s]])", xp_text_in_table(calls)),
+      "not(EQ_SUB) and not(following-sibling::expr/EQ_SUB)",
+      xp_and(vapply(arguments, arg_match_condition, character(1L)))
+    )
+  }
+
   # these don't take any other arguments (except maybe by non-default
   #   methods), so don't need to check equality of other arguments
   no_arg_vectorized_funs <- c(
@@ -102,33 +130,4 @@ inner_combine_linter <- function() {
     )
     xml_nodes_to_lints(bad_expr, source_expression = source_expression, lint_message, type = "warning")
   })
-}
-
-#' Make the XPath condition ensuring an argument matches across calls
-#'
-#' @param arg Character scalar naming an argument
-#' @noRd
-arg_match_condition <- function(arg) {
-  this_symbol <- sprintf("SYMBOL_SUB[text() = '%s']", arg)
-  following_symbol <- sprintf("following-sibling::expr/%s", this_symbol)
-  next_expr <- "following-sibling::expr[1]"
-  return(xp_or(
-    sprintf("not(%s) and not(%s)", this_symbol, following_symbol),
-    xp_and(
-      this_symbol,
-      following_symbol,
-      sprintf(
-        "not(%1$s/%3$s != %2$s/%3$s)",
-        this_symbol, following_symbol, next_expr
-      )
-    )
-  ))
-}
-
-build_arg_condition <- function(calls, arguments) {
-  xp_or(
-    sprintf("not(expr[1][SYMBOL_FUNCTION_CALL[%s]])", xp_text_in_table(calls)),
-    "not(EQ_SUB) and not(following-sibling::expr/EQ_SUB)",
-    xp_and(vapply(arguments, arg_match_condition, character(1L)))
-  )
 }
