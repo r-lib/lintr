@@ -121,21 +121,19 @@
 indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "always", "never"),
                                assignment_as_infix = TRUE) {
   find_new_indent <- function(current_indent, change_type, indent, hanging_indent) {
-    if (change_type == "suppress") {
-      current_indent
-    } else if (change_type == "hanging") {
-      hanging_indent
-    } else if (change_type == "double") {
-      current_indent + 2L * indent
-    } else {
+    switch(change_type,
+      suppress = current_indent,
+      hanging = hanging_indent,
+      double = current_indent + 2L * indent, 
       current_indent + indent
-    }
+    )
   }
 
+  paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
+  paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
+  xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
+
   build_indentation_style_tidy <- function() {
-    paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
-    paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
-    xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
     xp_inner_expr <- "preceding-sibling::*[1][self::expr and expr[SYMBOL_FUNCTION_CALL]]/*[not(self::COMMENT)]"
 
     # double indent is tidyverse style for function definitions
@@ -195,10 +193,6 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
   }
 
   build_indentation_style_always <- function() {
-    paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
-    paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
-    xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
-
     xp_is_not_hanging <- paste(
       c(
         glue("
@@ -218,25 +212,18 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       }
     }
   }
-  paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
-  paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
+
   infix_tokens <- setdiff(infix_metadata$xml_tag, c("OP-LEFT-BRACE", "OP-COMMA", paren_tokens_left))
   no_paren_keywords <- c("ELSE", "REPEAT")
   keyword_tokens <- c("FUNCTION", "IF", "FOR", "WHILE")
 
-  xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
-
   hanging_indent_style <- match.arg(hanging_indent_style)
 
-  if (hanging_indent_style == "tidy") {
-    find_indent_type <- build_indentation_style_tidy()
-  } else if (hanging_indent_style == "always") {
-    find_indent_type <- build_indentation_style_always()
-  } else { # "never"
-    find_indent_type <- function(change) {
-      "block"
-    }
-  }
+  find_indent_type <- switch(hanging_indent_style,
+    tidy = build_indentation_style_tidy(),
+    always = build_indentation_style_always(),
+    never = function(change) "block"
+  )
 
   if (isTRUE(assignment_as_infix)) {
     suppressing_tokens <- c("LEFT_ASSIGN", "EQ_ASSIGN", "EQ_SUB", "EQ_FORMALS")
