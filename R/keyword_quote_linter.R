@@ -13,7 +13,7 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = 'data.frame("a" = 1)',,
+#'   text = 'data.frame("a" = 1)',
 #'   linters = keyword_quote_linter()
 #' )
 #'
@@ -110,7 +110,9 @@ keyword_quote_linter <- function() {
     assignment_expr <- xml_find_all(xml, assignment_xpath)
 
     invalid_assignment_quoting <- is_valid_r_name(get_r_string(assignment_expr))
-    assignment_to_string <- xml_name(xml2::xml_child(assignment_expr)) == "STR_CONST"
+    # NB: XPath is such that there is <= 1 node, so xml_children is fine.
+    #   xml_child() exists but assumes >0 nodes.
+    assignment_to_string <- xml_name(xml2::xml_children(assignment_expr)) == "STR_CONST"
 
     string_assignment_lints <- xml_nodes_to_lints(
       assignment_expr[assignment_to_string & !invalid_assignment_quoting],

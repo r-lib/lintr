@@ -21,7 +21,7 @@ Similar reasoning applies to extractions with \code{$} or \code{@}.
 \examples{
 # will produce lints
 lint(
-  text = 'data.frame("a" = 1)',,
+  text = 'data.frame("a" = 1)',
   linters = keyword_quote_linter()
 )
 
