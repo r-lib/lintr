@@ -86,6 +86,7 @@ literal_coercion_linter <- function() {
     # tiptoe around the fact that we don't require {rlang}
     is_rlang_coercer <- coercer %in% rlang_coercers
     if (any(is_rlang_coercer) && !requireNamespace("rlang", quietly = TRUE)) {
+      # nocov start: test suite will have 'rlang' available
       # NB: we _could_ do some extreme customization where each lint
       #   gets a message according to whether the coercer is from rlang,
       #   but this seems like overkill. Just use a generic message and move on.
@@ -94,6 +95,7 @@ literal_coercion_linter <- function() {
         "c.f. 1L instead of as.integer(1) or rlang::int(1), or NA_real_ instead of as.numeric(NA).",
         "NB: this message can be improved to show a specific replacement if 'rlang' is installed."
       )
+      # nocov end
     } else {
       # duplicate, unless we add 'rlang::' and it wasn't there originally
       coercion_str <- report_str <- xml_text(bad_expr)

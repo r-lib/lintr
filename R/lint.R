@@ -213,10 +213,12 @@ lint_package <- function(path = ".", ...,
                          exclusions = list("R/RcppExports.R"),
                          parse_settings = TRUE) {
   if (has_positional_logical(list(...))) {
+    # nocov start: dead code path
     stop(
       "'relative_path' is no longer available as a positional argument; ",
       "please supply 'relative_path' as a named argument instead. "
     )
+    # nocov end
   }
 
   if (length(path) > 1L) {
@@ -532,7 +534,7 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 #' @export
 sarif_output <- function(lints, filename = "lintr_results.sarif") {
   if (!requireNamespace("jsonlite", quietly = TRUE)) {
-    stop("'jsonlite' is required to produce SARIF reports, please install to continue.")
+    stop("'jsonlite' is required to produce SARIF reports, please install to continue.") # nocov
   }
 
   # package path will be `NULL` unless it is a relative path
@@ -618,7 +620,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   if (startsWith(root_path_uri, "/")) {
     root_path_uri <- paste0("file://", root_path_uri)
   } else {
-    root_path_uri <- paste0("file:///", root_path_uri)
+    root_path_uri <- paste0("file:///", root_path_uri) # nocov
   }
 
   if (!endsWith(root_path_uri, "/")) {
