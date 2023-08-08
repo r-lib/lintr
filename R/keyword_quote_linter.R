@@ -70,13 +70,15 @@ keyword_quote_linter <- function() {
   ")
 
   # also exclude $ or @, which are handled below
-  assignment_xpath <- "
-  (//EQ_ASSIGN | //LEFT_ASSIGN[text() != ':='])
-    /preceding-sibling::expr[
-      not(OP-DOLLAR or OP-AT)
-      and (STR_CONST or SYMBOL[starts-with(text(), '`')])
-    ]
+  assignment_candidate_cond <- "
+    not(OP-DOLLAR or OP-AT)
+    and (STR_CONST or SYMBOL[starts-with(text(), '`')])
   "
+  assignment_xpath <- glue("
+  (//EQ_ASSIGN | //LEFT_ASSIGN[text() != ':='])
+    /preceding-sibling::expr[{ assignment_candidate_cond }]
+  | //RIGHT_ASSIGN/following-sibling::expr[{ assignment_candidate_cond }]
+  ")
 
   extraction_xpath <- "
     (//OP-DOLLAR | //OP-AT)/following-sibling::STR_CONST
@@ -108,7 +110,7 @@ keyword_quote_linter <- function() {
     assignment_expr <- xml_find_all(xml, assignment_xpath)
 
     invalid_assignment_quoting <- is_valid_r_name(get_r_string(assignment_expr))
-    assignment_to_string <- xml_name(xml2::xml_children(assignment_expr)) == "STR_CONST"
+    assignment_to_string <- xml_name(xml2::xml_child(assignment_expr)) == "STR_CONST"
 
     string_assignment_lints <- xml_nodes_to_lints(
       assignment_expr[assignment_to_string & !invalid_assignment_quoting],

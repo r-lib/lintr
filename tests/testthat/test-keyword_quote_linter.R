@@ -106,6 +106,11 @@ test_that("keyword_quote_linter blocks quoted assignment targets", {
   expect_lint('"$.my_class" <- function(x, key) { }', backtick_msg, linter)
   expect_lint("'Setter[<-.my_class' = function(x, idx, value) { }", backtick_msg, linter)
   expect_lint('"%nin%" <- function(x, table) !x %in% table', backtick_msg, linter)
+
+  # right assignment
+  expect_lint('1 -> "foo"', assign_msg, linter)
+  expect_lint("1 -> foo", NULL, linter)
+  expect_lint('1 -> "a b"', backtick_msg, linter)
 })
 
 test_that("keyword_quote_linter blocks quoted $, @ extractions", {
