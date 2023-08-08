@@ -37,10 +37,21 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
     if (is.null(pkg_name) || inherits(parent_env, "try-error")) {
       parent_env <- globalenv()
     }
-    env <- new.env(parent = parent_env)
-    return(env)
+    new.env(parent = parent_env)
   }
 
+  unexpected_error <- function(cond) {
+    stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond)) # nocov
+  }
+
+  parse_failure_warning <- function(cond) {
+    warning(
+      "Evaluating glue expression while testing for local variable usage failed: ",
+      conditionMessage(cond), "\nPlease ensure correct glue syntax, e.g., matched delimiters.",
+      call. = FALSE
+    )
+    NULL
+  }
 
   extract_glued_symbols <- function(expr) {
     # TODO support more glue functions
@@ -74,9 +85,6 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
       return(character())
     }
 
-    unexpected_error <- function(cond) {
-      stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond)) # nocov
-    }
     glued_symbols <- new.env(parent = emptyenv())
     for (glue_call in glue_calls) {
       # TODO(michaelchirico): consider dropping tryCatch() here if we're more confident in our logic
@@ -84,17 +92,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
       parsed_call[[".envir"]] <- glued_symbols
       parsed_call[[".transformer"]] <- symbol_extractor
       # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint
-      tryCatch(
-        eval(parsed_call),
-        error = function(cond) {
-          warning(
-            "Evaluating glue expression while testing for local variable usage failed: ",
-            conditionMessage(cond), "\nPlease ensure correct glue syntax, e.g., matched delimiters.",
-            call. = FALSE
-          )
-          NULL
-        }
-      )
+      tryCatch(eval(parsed_call), error = parse_failure_warning)
     }
     names(glued_symbols)
   }
@@ -122,11 +120,11 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
     get_r_string(xml_find_all(
       xml,
       "
-      expr[LEFT_ASSIGN]/expr[1]/SYMBOL[1] |
-      equal_assign/expr[1]/SYMBOL[1] |
-      expr[expr[1][SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/* |
-      expr[expr[1][SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[2]/*
-    "
+        expr[LEFT_ASSIGN]/expr[1]/SYMBOL[1] |
+        equal_assign/expr[1]/SYMBOL[1] |
+        expr[expr[1][SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/* |
+        expr[expr[1][SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[2]/*
+      "
     ))
   }
 
@@ -210,17 +208,17 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
 
   get_imported_symbols <- function(xml) {
     import_exprs_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
-  /parent::expr
-  /parent::expr[
-    not(SYMBOL_SUB[
-      text() = 'character.only' and
-      following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-    ])
-    or expr[2][STR_CONST]
-  ]
-  /expr[STR_CONST or SYMBOL][1]
-  "
+    //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
+      /parent::expr
+      /parent::expr[
+        not(SYMBOL_SUB[
+          text() = 'character.only' and
+          following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+        ])
+        or expr[2][STR_CONST]
+      ]
+      /expr[STR_CONST or SYMBOL][1]
+    "
     import_exprs <- xml_find_all(xml, import_exprs_xpath)
     if (length(import_exprs) == 0L) {
       return(character())
