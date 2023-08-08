@@ -22,6 +22,7 @@
   + `undesirable_function_linter()`
   + `unreachable_code_linter()`
   + `yoda_test_linter()`
+* `sprintf_linter()` is pipe-aware, so that `x %>% sprintf(fmt = "%s")` no longer lints (#1943, @MichaelChirico).
 
 ### New linters
 
