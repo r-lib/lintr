@@ -12,7 +12,7 @@
 #' @importFrom rex rex regex re_matches re_substitutes character_class
 #' @importFrom stats na.omit
 #' @importFrom utils capture.output head getParseData relist
-#' @importFrom xml2 xml_attr xml_find_all xml_find_chr xml_find_num xml_find_first xml_text as_list
+#' @importFrom xml2 xml_attr xml_find_all xml_find_chr xml_find_num xml_find_first xml_name xml_text as_list
 #' @importFrom cyclocomp cyclocomp
 #' @importFrom utils tail
 #' @rawNamespace

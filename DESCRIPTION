@@ -113,6 +113,7 @@ Collate:
     'inner_combine_linter.R'
     'is_lint_level.R'
     'is_numeric_linter.R'
+    'keyword_quote_linter.R'
     'length_levels_linter.R'
     'lengths_linter.R'
     'library_call_linter.R'

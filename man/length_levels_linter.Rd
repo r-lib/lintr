@@ -9,6 +9,20 @@ length_levels_linter()
 \description{
 \code{length(levels(x))} is the same as \code{nlevels(x)}, but harder to read.
 }
+\examples{
+# will produce lints
+lint(
+  text = "length(levels(x))",
+  linters = length_levels_linter()
+)
+
+# okay
+lint(
+  text = "length(c(levels(x), levels(y)))",
+  linters = length_levels_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
