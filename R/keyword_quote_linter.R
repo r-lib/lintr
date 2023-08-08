@@ -110,8 +110,8 @@ keyword_quote_linter <- function() {
     assignment_expr <- xml_find_all(xml, assignment_xpath)
 
     invalid_assignment_quoting <- is_valid_r_name(get_r_string(assignment_expr))
-    # NB: XPath is such that there is <= 1 node, so xml_children is fine.
-    #   xml_child() exists but assumes >0 nodes.
+    # NB: XPath is such that there is exactly 1 node per match, but xml_child() assumes >0 nodes,
+    #   which would make this expression fail when there are no matches.
     assignment_to_string <- xml_name(xml2::xml_children(assignment_expr)) == "STR_CONST"
 
     string_assignment_lints <- xml_nodes_to_lints(
