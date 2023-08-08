@@ -84,22 +84,24 @@ test_that("rot utility works as intended", {
 })
 
 test_that("logical_env utility works as intended", {
+  test_env <- "LINTR_TEST_LOGICAL_ENV_"
   withr::with_envvar(
-    c(LINTR_TEST_LOGICAL_ENV_ = "true"),
+    setNames("true", test_env),
     expect_true(lintr:::logical_env(test_env))
   )
 
   withr::with_envvar(
-    c(LINTR_TEST_LOGICAL_ENV_ = "F"),
+    setNames("F", test_env),
     expect_false(lintr:::logical_env(test_env))
   )
 
   withr::with_envvar(
-    c(LINTR_TEST_LOGICAL_ENV_ = ""),
-  expect_null(lintr:::logical_env(test_env))
+    setNames("", test_env),
+    expect_null(lintr:::logical_env(test_env))
+  )
 
   withr::with_envvar(
-    list(LINTR_TEST_LOGICAL_ENV_ = NULL),
+    setNames(list(NULL), test_env),
     expect_null(lintr:::logical_env(test_env))
   )
 })
