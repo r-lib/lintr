@@ -130,15 +130,11 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
   hanging_indent_style <- match.arg(hanging_indent_style)
 
-  if (hanging_indent_style == "tidy") {
-    find_indent_type <- build_indentation_style_tidy()
-  } else if (hanging_indent_style == "always") {
-    find_indent_type <- build_indentation_style_always()
-  } else { # "never"
-    find_indent_type <- function(change) {
-      "block"
-    }
-  }
+  find_indent_type <- switch(hanging_indent_style,
+    tidy = build_indentation_style_tidy(),
+    always = build_indentation_style_always(),
+    never = function(change) "block"
+  )
 
   if (isTRUE(assignment_as_infix)) {
     suppressing_tokens <- c("LEFT_ASSIGN", "EQ_ASSIGN", "EQ_SUB", "EQ_FORMALS")
@@ -313,15 +309,12 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 }
 
 find_new_indent <- function(current_indent, change_type, indent, hanging_indent) {
-  if (change_type == "suppress") {
-    current_indent
-  } else if (change_type == "hanging") {
-    hanging_indent
-  } else if (change_type == "double") {
-    current_indent + 2L * indent
-  } else {
+  switch(change_type,
+    suppress = current_indent,
+    hanging = hanging_indent,
+    double = current_indent + 2L * indent,
     current_indent + indent
-  }
+  )
 }
 
 build_indentation_style_tidy <- function() {
