@@ -493,21 +493,21 @@ included:</p>
 <span><span class="co">#&gt; [23] "function_return_linter"           "implicit_assignment_linter"      </span></span>
 <span><span class="co">#&gt; [25] "indentation_linter"               "infix_spaces_linter"             </span></span>
 <span><span class="co">#&gt; [27] "inner_combine_linter"             "is_numeric_linter"               </span></span>
-<span><span class="co">#&gt; [29] "length_levels_linter"             "lengths_linter"                  </span></span>
-<span><span class="co">#&gt; [31] "library_call_linter"              "line_length_linter"              </span></span>
-<span><span class="co">#&gt; [33] "matrix_apply_linter"              "nested_ifelse_linter"            </span></span>
-<span><span class="co">#&gt; [35] "numeric_leading_zero_linter"      "object_length_linter"            </span></span>
-<span><span class="co">#&gt; [37] "object_usage_linter"              "outer_negation_linter"           </span></span>
-<span><span class="co">#&gt; [39] "package_hooks_linter"             "paren_body_linter"               </span></span>
-<span><span class="co">#&gt; [41] "pipe_call_linter"                 "pipe_continuation_linter"        </span></span>
-<span><span class="co">#&gt; [43] "quotes_linter"                    "redundant_equals_linter"         </span></span>
-<span><span class="co">#&gt; [45] "semicolon_linter"                 "sort_linter"                     </span></span>
-<span><span class="co">#&gt; [47] "spaces_inside_linter"             "spaces_left_parentheses_linter"  </span></span>
-<span><span class="co">#&gt; [49] "string_boundary_linter"           "system_file_linter"              </span></span>
-<span><span class="co">#&gt; [51] "T_and_F_symbol_linter"            "unnecessary_concatenation_linter"</span></span>
-<span><span class="co">#&gt; [53] "unnecessary_lambda_linter"        "unnecessary_nested_if_linter"    </span></span>
-<span><span class="co">#&gt; [55] "unnecessary_placeholder_linter"   "unreachable_code_linter"         </span></span>
-<span><span class="co">#&gt; [57] "yoda_test_linter"</span></span></code></pre></div>
+<span><span class="co">#&gt; [29] "keyword_quote_linter"             "length_levels_linter"            </span></span>
+<span><span class="co">#&gt; [31] "lengths_linter"                   "library_call_linter"             </span></span>
+<span><span class="co">#&gt; [33] "line_length_linter"               "matrix_apply_linter"             </span></span>
+<span><span class="co">#&gt; [35] "nested_ifelse_linter"             "numeric_leading_zero_linter"     </span></span>
+<span><span class="co">#&gt; [37] "object_length_linter"             "object_usage_linter"             </span></span>
+<span><span class="co">#&gt; [39] "outer_negation_linter"            "package_hooks_linter"            </span></span>
+<span><span class="co">#&gt; [41] "paren_body_linter"                "pipe_call_linter"                </span></span>
+<span><span class="co">#&gt; [43] "pipe_continuation_linter"         "quotes_linter"                   </span></span>
+<span><span class="co">#&gt; [45] "redundant_equals_linter"          "semicolon_linter"                </span></span>
+<span><span class="co">#&gt; [47] "sort_linter"                      "spaces_inside_linter"            </span></span>
+<span><span class="co">#&gt; [49] "spaces_left_parentheses_linter"   "string_boundary_linter"          </span></span>
+<span><span class="co">#&gt; [51] "system_file_linter"               "T_and_F_symbol_linter"           </span></span>
+<span><span class="co">#&gt; [53] "unnecessary_concatenation_linter" "unnecessary_lambda_linter"       </span></span>
+<span><span class="co">#&gt; [55] "unnecessary_nested_if_linter"     "unnecessary_placeholder_linter"  </span></span>
+<span><span class="co">#&gt; [57] "unreachable_code_linter"          "yoda_test_linter"</span></span></code></pre></div>
 <p>You can include tag-based linters in the configuration file, and
 customize them further:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">linters</span><span class="kw">:</span><span class="at"> linters_with_tags(</span></span>
@@ -544,31 +544,32 @@ using</p>
 <span><span class="co">#&gt; [35] "implicit_assignment_linter"       "implicit_integer_linter"         </span></span>
 <span><span class="co">#&gt; [37] "indentation_linter"               "infix_spaces_linter"             </span></span>
 <span><span class="co">#&gt; [39] "inner_combine_linter"             "is_numeric_linter"               </span></span>
-<span><span class="co">#&gt; [41] "length_levels_linter"             "lengths_linter"                  </span></span>
-<span><span class="co">#&gt; [43] "library_call_linter"              "line_length_linter"              </span></span>
-<span><span class="co">#&gt; [45] "literal_coercion_linter"          "matrix_apply_linter"             </span></span>
-<span><span class="co">#&gt; [47] "missing_argument_linter"          "missing_package_linter"          </span></span>
-<span><span class="co">#&gt; [49] "namespace_linter"                 "nested_ifelse_linter"            </span></span>
-<span><span class="co">#&gt; [51] "nonportable_path_linter"          "numeric_leading_zero_linter"     </span></span>
-<span><span class="co">#&gt; [53] "object_length_linter"             "object_name_linter"              </span></span>
-<span><span class="co">#&gt; [55] "object_usage_linter"              "outer_negation_linter"           </span></span>
-<span><span class="co">#&gt; [57] "package_hooks_linter"             "paren_body_linter"               </span></span>
-<span><span class="co">#&gt; [59] "paste_linter"                     "pipe_call_linter"                </span></span>
-<span><span class="co">#&gt; [61] "pipe_continuation_linter"         "quotes_linter"                   </span></span>
-<span><span class="co">#&gt; [63] "redundant_equals_linter"          "redundant_ifelse_linter"         </span></span>
-<span><span class="co">#&gt; [65] "regex_subset_linter"              "routine_registration_linter"     </span></span>
-<span><span class="co">#&gt; [67] "semicolon_linter"                 "seq_linter"                      </span></span>
-<span><span class="co">#&gt; [69] "sort_linter"                      "spaces_inside_linter"            </span></span>
-<span><span class="co">#&gt; [71] "spaces_left_parentheses_linter"   "sprintf_linter"                  </span></span>
-<span><span class="co">#&gt; [73] "string_boundary_linter"           "strings_as_factors_linter"       </span></span>
-<span><span class="co">#&gt; [75] "system_file_linter"               "T_and_F_symbol_linter"           </span></span>
-<span><span class="co">#&gt; [77] "todo_comment_linter"              "trailing_blank_lines_linter"     </span></span>
-<span><span class="co">#&gt; [79] "trailing_whitespace_linter"       "undesirable_function_linter"     </span></span>
-<span><span class="co">#&gt; [81] "undesirable_operator_linter"      "unnecessary_concatenation_linter"</span></span>
-<span><span class="co">#&gt; [83] "unnecessary_lambda_linter"        "unnecessary_nested_if_linter"    </span></span>
-<span><span class="co">#&gt; [85] "unnecessary_placeholder_linter"   "unreachable_code_linter"         </span></span>
-<span><span class="co">#&gt; [87] "unused_import_linter"             "vector_logic_linter"             </span></span>
-<span><span class="co">#&gt; [89] "whitespace_linter"                "yoda_test_linter"</span></span></code></pre></div>
+<span><span class="co">#&gt; [41] "keyword_quote_linter"             "length_levels_linter"            </span></span>
+<span><span class="co">#&gt; [43] "lengths_linter"                   "library_call_linter"             </span></span>
+<span><span class="co">#&gt; [45] "line_length_linter"               "literal_coercion_linter"         </span></span>
+<span><span class="co">#&gt; [47] "matrix_apply_linter"              "missing_argument_linter"         </span></span>
+<span><span class="co">#&gt; [49] "missing_package_linter"           "namespace_linter"                </span></span>
+<span><span class="co">#&gt; [51] "nested_ifelse_linter"             "nonportable_path_linter"         </span></span>
+<span><span class="co">#&gt; [53] "numeric_leading_zero_linter"      "object_length_linter"            </span></span>
+<span><span class="co">#&gt; [55] "object_name_linter"               "object_usage_linter"             </span></span>
+<span><span class="co">#&gt; [57] "outer_negation_linter"            "package_hooks_linter"            </span></span>
+<span><span class="co">#&gt; [59] "paren_body_linter"                "paste_linter"                    </span></span>
+<span><span class="co">#&gt; [61] "pipe_call_linter"                 "pipe_continuation_linter"        </span></span>
+<span><span class="co">#&gt; [63] "quotes_linter"                    "redundant_equals_linter"         </span></span>
+<span><span class="co">#&gt; [65] "redundant_ifelse_linter"          "regex_subset_linter"             </span></span>
+<span><span class="co">#&gt; [67] "routine_registration_linter"      "semicolon_linter"                </span></span>
+<span><span class="co">#&gt; [69] "seq_linter"                       "sort_linter"                     </span></span>
+<span><span class="co">#&gt; [71] "spaces_inside_linter"             "spaces_left_parentheses_linter"  </span></span>
+<span><span class="co">#&gt; [73] "sprintf_linter"                   "string_boundary_linter"          </span></span>
+<span><span class="co">#&gt; [75] "strings_as_factors_linter"        "system_file_linter"              </span></span>
+<span><span class="co">#&gt; [77] "T_and_F_symbol_linter"            "todo_comment_linter"             </span></span>
+<span><span class="co">#&gt; [79] "trailing_blank_lines_linter"      "trailing_whitespace_linter"      </span></span>
+<span><span class="co">#&gt; [81] "undesirable_function_linter"      "undesirable_operator_linter"     </span></span>
+<span><span class="co">#&gt; [83] "unnecessary_concatenation_linter" "unnecessary_lambda_linter"       </span></span>
+<span><span class="co">#&gt; [85] "unnecessary_nested_if_linter"     "unnecessary_placeholder_linter"  </span></span>
+<span><span class="co">#&gt; [87] "unreachable_code_linter"          "unused_import_linter"            </span></span>
+<span><span class="co">#&gt; [89] "vector_logic_linter"              "whitespace_linter"               </span></span>
+<span><span class="co">#&gt; [91] "yoda_test_linter"</span></span></code></pre></div>
 <p>If you want to use all available linters, you can include this in
 your <code>.lintr</code> file:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">linters</span><span class="kw">:</span><span class="at"> all_linters()</span></span></code></pre></div>
@@ -611,15 +612,15 @@ enough:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="../reference/lint.html">lint</a></span><span class="op">(</span><span class="va">tmp</span>, linters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/call.html" class="external-link">call</a></span><span class="op">(</span><span class="va">linter_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpcJoIDf/file1e985b7fed53           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmpUtqeSB/file1eb12d6e687e           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1    get</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpcJoIDf/file1e985b7fed53           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmpUtqeSB/file1eb12d6e687e           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span>
 <span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpcJoIDf/file1e985b7fed53           1             3 style</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmpUtqeSB/file1eb12d6e687e           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span></code></pre></div>
 </div>

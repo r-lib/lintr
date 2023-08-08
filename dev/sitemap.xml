@@ -229,6 +229,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/is_numeric_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/keyword_quote_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/length_levels_linter.html</loc>
   </url>
   <url>
