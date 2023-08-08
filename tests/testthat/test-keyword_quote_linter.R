@@ -14,7 +14,7 @@ test_that("keyword_quote_linter skips allowed usages", {
   # don't catch unnamed arguments
   expect_lint('c(1, 2, "a")', NULL, linter)
   # don't get thrown off by missing arguments
-  expect_lint('alist(`a b` =)', NULL, linter)
+  expect_lint("alist(`a b` =)", NULL, linter)
 
   # other use cases: switch() and list()
   expect_lint("list(a = 1, b = list(c = 2))", NULL, linter)
