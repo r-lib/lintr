@@ -34,6 +34,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{inner_combine_linter}}}
 \item{\code{\link{is_numeric_linter}}}
 \item{\code{\link{keyword_quote_linter}}}
+\item{\code{\link{length_levels_linter}}}
 \item{\code{\link{lengths_linter}}}
 \item{\code{\link{library_call_linter}}}
 \item{\code{\link{line_length_linter}}}
