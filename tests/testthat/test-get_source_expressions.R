@@ -383,3 +383,19 @@ patrick::with_parameters_test_that(
   linter = param_df$linter,
   expression_idx = param_df$expression_idx
 )
+
+test_that("invalid function definition parser failure lints", {
+  expect_lint(
+    "function(a = 1, a = 1) NULL",
+    rex::rex("Repeated formal argument 'a'."),
+    linters = list()
+  )
+})
+
+test_that("Disallowed embedded null gives parser failure lint", {
+  expect_lint(
+    "'\\0'",
+    rex::rex("Nul character not allowed."),
+    linters = list()
+  )
+})
