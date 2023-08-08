@@ -265,6 +265,7 @@ lint_parse_error_r42 <- function(message_info, source_expression) {
 #' @noRd
 lint_parse_error_nonstandard <- function(e, source_expression) {
   if (grepl("invalid multibyte character in parser at line", e$message, fixed = TRUE)) {
+    # nocov start: platform-specific
     l <- as.integer(re_matches(
       e$message,
       rex("invalid multibyte character in parser at line ", capture(name = "line", digits))
@@ -280,6 +281,7 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
         line = fixup_line(source_expression$lines[[l]])
       )
     )
+    # nocov end
   } else if (grepl("invalid multibyte string, element", e$message, fixed = TRUE)) {
     # Invalid encoding, will break even re_matches() below, so we need to handle this first.
     return(
@@ -325,8 +327,8 @@ lint_parse_error_nonstandard <- function(e, source_expression) {
   # parser_files <- c("src/main/gram.c", "src/main/character.c")
   #
   # lines <- unlist(lapply(
-  #   parser_files,
-  #   function(f) readLines(paste0("https://raw.githubusercontent.com/wch/r-source/trunk/", f))
+  #   file.path("https://raw.githubusercontent.com/wch/r-source/trunk", parser_files),
+  #   readLines
   # ))
   # error_calls <- grep("error(_(", lines, fixed = TRUE, value = TRUE)
   # error_formats <- trimws(gsub("^.*error\\(_\\(\"(.+)\".+", "\\1", error_calls))
