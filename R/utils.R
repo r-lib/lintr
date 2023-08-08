@@ -10,7 +10,7 @@
   identical(x, y)
 }
 
-"%:::%" <- function(p, f) {
+`%:::%` <- function(p, f) {
   get(f, envir = asNamespace(p))
 }
 

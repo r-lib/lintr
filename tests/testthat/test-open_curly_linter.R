@@ -1,6 +1,8 @@
 test_that("returns the correct linting", {
   expect_warning(
-    linter <- open_curly_linter(),
+    {
+      linter <- open_curly_linter()
+    },
     "Linter open_curly_linter was deprecated",
     fixed = TRUE
   )
@@ -87,7 +89,9 @@ test_that("returns the correct linting", {
 
 test_that("allow_single_line=TRUE works", {
   expect_warning(
-    linter <- open_curly_linter(allow_single_line = TRUE),
+    {
+      linter <- open_curly_linter(allow_single_line = TRUE)
+    },
     "Linter open_curly_linter was deprecated",
     fixed = TRUE
   )

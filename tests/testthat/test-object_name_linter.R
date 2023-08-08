@@ -180,12 +180,12 @@ test_that("object_name_linter won't fail if an imported namespace is unavailable
 test_that("object_name_linter supports custom regexes", {
   # disables default styles
   linter <- object_name_linter(
-    regexes = c("shinyModule" = rex::rex(start, lower, zero_or_more(alnum), "UI" %or% "Server", end))
+    regexes = c(shinyModule = rex::rex(start, lower, zero_or_more(alnum), "UI" %or% "Server", end))
   )
   msg <- rex::rex("Variable and function name style should match shinyModule.")
   linter2 <- object_name_linter(
     styles = c("snake_case", "symbols"),
-    regexes = c("shinyModule" = rex::rex(start, lower, zero_or_more(alnum), "UI" %or% "Server", end))
+    regexes = c(shinyModule = rex::rex(start, lower, zero_or_more(alnum), "UI" %or% "Server", end))
   )
   msg2 <- rex::rex("Variable and function name style should match snake_case, symbols or shinyModule.")
 

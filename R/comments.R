@@ -104,7 +104,7 @@ github_comment <- function(text, info = NULL, token = settings$comment_token) {
   response <- httr::POST(
     "https://api.github.com",
     path = file.path("repos", info$user, info$repo, api_subdir, "comments"),
-    body = list("body" = jsonlite::unbox(text)),
+    body = list(body = jsonlite::unbox(text)),
     query = list(access_token = token),
     encode = "json"
   )

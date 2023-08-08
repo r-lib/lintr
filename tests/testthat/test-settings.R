@@ -84,22 +84,24 @@ test_that("rot utility works as intended", {
 })
 
 test_that("logical_env utility works as intended", {
-  test_env <- "LINTR_TEST_LOGICAL_ENV_"
-  sym_set_env <- function(key, value) do.call(Sys.setenv, setNames(list(value), key))
-  old <- Sys.getenv(test_env, unset = NA)
-  on.exit(if (is.na(old)) Sys.unsetenv(test_env) else sym_set_env(test_env, old))
+  withr::with_envvar(
+    c(LINTR_TEST_LOGICAL_ENV_ = "true"),
+    expect_true(lintr:::logical_env(test_env))
+  )
 
-  sym_set_env(test_env, "true")
-  expect_true(lintr:::logical_env(test_env))
+  withr::with_envvar(
+    c(LINTR_TEST_LOGICAL_ENV_ = "F"),
+    expect_false(lintr:::logical_env(test_env))
+  )
 
-  sym_set_env(test_env, "F")
-  expect_false(lintr:::logical_env(test_env))
-
-  sym_set_env(test_env, "")
+  withr::with_envvar(
+    c(LINTR_TEST_LOGICAL_ENV_ = ""),
   expect_null(lintr:::logical_env(test_env))
 
-  Sys.unsetenv(test_env)
-  expect_null(lintr:::logical_env(test_env))
+  withr::with_envvar(
+    list(LINTR_TEST_LOGICAL_ENV_ = NULL),
+    expect_null(lintr:::logical_env(test_env))
+  )
 })
 
 # fixing #774
