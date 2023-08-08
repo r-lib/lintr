@@ -90,6 +90,8 @@
 <li><code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code></li>
 <li><code><a href="../reference/yoda_test_linter.html">yoda_test_linter()</a></code></li>
 </ul></li>
+<li>
+<code><a href="../reference/sprintf_linter.html">sprintf_linter()</a></code> is pipe-aware, so that <code>x %&gt;% sprintf(fmt = "%s")</code> no longer lints (<a href="https://github.com/r-lib/lintr/issues/1943" class="external-link">#1943</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>
