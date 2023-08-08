@@ -110,7 +110,7 @@ local({
       # Nested pipes
       expect_lint(
         paste("'%%sb'", pipe, "sprintf('%s')", pipe, "sprintf('a')"),
-        list(column_number = nchar(paste("'%%sb'", pipe, "x")), message = unused_arg_msg),
+        if (getRversion() >= "4.1.0") list(column_number = nchar(paste("'%%sb'", pipe, "x")), message = unused_arg_msg),
         linter
       )
       expect_lint(
