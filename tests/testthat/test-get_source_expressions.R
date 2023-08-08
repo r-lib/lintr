@@ -388,7 +388,7 @@ test_that("invalid function definition parser failure lints", {
   expect_lint(
     "function(a = 1, a = 1) NULL",
     rex::rex("Repeated formal argument 'a'."),
-    assignment_linter()
+    linters = list()
   )
 })
 
@@ -396,6 +396,6 @@ test_that("Disallowed embedded null gives parser failure lint", {
   expect_lint(
     "'\\0'",
     rex::rex("Nul character not allowed."),
-    assignment_linter()
+    linters = list()
   )
 })
