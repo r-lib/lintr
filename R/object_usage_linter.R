@@ -53,6 +53,14 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
     NULL
   }
 
+  glue_call_xpath <- "
+    descendant::SYMBOL_FUNCTION_CALL[text() = 'glue']
+      /parent::expr
+      /parent::expr[
+        not(SYMBOL_SUB[text() = '.envir' or text() = '.transform'])
+        and not(expr/STR_CONST)
+      ]
+  "
   extract_glued_symbols <- function(expr) {
     # TODO support more glue functions
     # Package glue:
@@ -66,20 +74,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
     #
     # Package stringr:
     #  - str_interp
-    glue_calls <- xml_find_all(
-      expr,
-      xpath = paste0(
-        "descendant::SYMBOL_FUNCTION_CALL[text() = 'glue']/", # a glue() call
-        "parent::expr[",
-        # without .envir or .transform arguments
-        "not(following-sibling::SYMBOL_SUB[text() = '.envir' or text() = '.transform']) and",
-        # argument that is not a string constant
-        "not(following-sibling::expr[not(STR_CONST)])",
-        "]/",
-        # get the complete call
-        "parent::expr"
-      )
-    )
+    glue_calls <- xml_find_all(expr, glue_call_xpath)
 
     if (length(glue_calls) == 0L) {
       return(character())
@@ -98,18 +93,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
   }
 
   symbol_extractor <- function(text, envir, data) {
-    parsed_text <- tryCatch(
-      parse(text = text, keep.source = TRUE),
-      error = function(...) NULL,
-      warning = function(...) NULL
-    )
-    if (length(parsed_text) == 0L) {
-      return("")
-    }
-    parse_data <- utils::getParseData(parsed_text)
-
-    # strip backticked symbols; `x` is the same as x.
-    symbols <- gsub("^`(.*)`$", "\\1", parse_data$text[parse_data$token %in% c("SYMBOL", "SYMBOL_FUNCTION_CALL")])
+    symbols <- all.vars(parse(text = text), functions = TRUE)
     for (sym in symbols) {
       assign(sym, NULL, envir = envir)
     }
