@@ -42,7 +42,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
   exported_symbols <- function(ns) c(getNamespaceExports(ns), names(.getNamespaceInfo(ns, "lazydata")))
   is_exported <- function(symbols, namespaces) {
     mapply(
-      function(pkg_sym, pkg_ns) pkg_sym %in% exported_symbols(ns),
+      function(pkg_sym, pkg_ns) pkg_sym %in% exported_symbols(pkg_ns),
       symbols, namespaces
     )
   }
