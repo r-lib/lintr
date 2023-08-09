@@ -124,7 +124,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     switch(change_type,
       suppress = current_indent,
       hanging = hanging_indent,
-      double = current_indent + 2L * indent, 
+      double = current_indent + 2L * indent,
       current_indent + indent
     )
   }

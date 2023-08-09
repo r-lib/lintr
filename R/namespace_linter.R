@@ -39,9 +39,10 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
+  exported_symbols <- function(ns) c(getNamespaceExports(ns), names(.getNamespaceInfo(ns, "lazydata")))
   is_exported <- function(symbols, namespaces) {
     mapply(
-      function(pkg_sym, pkg_ns) pkg_sym %in% c(getNamespaceExports(pkg_ns), names(.getNamespaceInfo(pkg_ns, "lazydata"))),
+      function(pkg_sym, pkg_ns) pkg_sym %in% exported_symbols(ns),
       symbols, namespaces
     )
   }
