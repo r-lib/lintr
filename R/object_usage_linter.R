@@ -58,7 +58,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
       /parent::expr
       /parent::expr[
         not(SYMBOL_SUB[text() = '.envir' or text() = '.transform'])
-        and not(expr/STR_CONST)
+        and not(expr[position() > 1 and not(STR_CONST)])
       ]
   "
   extract_glued_symbols <- function(expr) {
@@ -93,7 +93,11 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
   }
 
   symbol_extractor <- function(text, envir, data) {
-    symbols <- all.vars(parse(text = text), functions = TRUE)
+    symbols <- tryCatch(
+      all.vars(parse(text = text), functions = TRUE),
+      error = function(...) NULL,
+      warning = function(...) NULL
+    )
     for (sym in symbols) {
       assign(sym, NULL, envir = envir)
     }
