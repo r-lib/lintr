@@ -30,205 +30,6 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
-  make_check_env <- function(pkg_name, xml) {
-    if (!is.null(pkg_name)) {
-      parent_env <- try_silently(getNamespace(pkg_name))
-    }
-    if (is.null(pkg_name) || inherits(parent_env, "try-error")) {
-      parent_env <- globalenv()
-    }
-    env <- new.env(parent = parent_env)
-
-    symbols <- c(
-      get_assignment_symbols(xml),
-      get_imported_symbols(xml)
-    )
-
-    # Just assign them an empty function
-    for (symbol in symbols) {
-      assign(symbol, do_nothing, envir = env)
-    }
-    env
-  }
-
-  unexpected_error <- function(cond) {
-    stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond)) # nocov
-  }
-
-  parse_failure_warning <- function(cond) {
-    warning(
-      "Evaluating glue expression while testing for local variable usage failed: ",
-      conditionMessage(cond), "\nPlease ensure correct glue syntax, e.g., matched delimiters.",
-      call. = FALSE
-    )
-    NULL
-  }
-
-  glue_call_xpath <- "
-    descendant::SYMBOL_FUNCTION_CALL[text() = 'glue']
-      /parent::expr
-      /parent::expr[
-        not(SYMBOL_SUB[text() = '.envir' or text() = '.transform'])
-        and not(expr[position() > 1 and not(STR_CONST)])
-      ]
-  "
-  extract_glued_symbols <- function(expr, interpret_glue) {
-    if (!isTRUE(interpret_glue)) {
-      return(character())
-    }
-    # TODO support more glue functions
-    # Package glue:
-    #  - glue_sql
-    #  - glue_safe
-    #  - glue_col
-    #  - glue_data
-    #  - glue_data_sql
-    #  - glue_data_safe
-    #  - glue_data_col
-    #
-    # Package stringr:
-    #  - str_interp
-    glue_calls <- xml_find_all(expr, glue_call_xpath)
-
-    glued_symbols <- new.env(parent = emptyenv())
-    for (glue_call in glue_calls) {
-      # TODO(michaelchirico): consider dropping tryCatch() here if we're more confident in our logic
-      parsed_call <- tryCatch(xml2lang(glue_call), error = unexpected_error, warning = unexpected_error)
-      parsed_call[[".envir"]] <- glued_symbols
-      parsed_call[[".transformer"]] <- symbol_extractor
-      # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint
-      tryCatch(eval(parsed_call), error = parse_failure_warning)
-    }
-    names(glued_symbols)
-  }
-
-  do_nothing <- function(...) NULL
-  symbol_extractor <- function(text, envir, data) {
-    symbols <- tryCatch(
-      all.vars(parse(text = text), functions = TRUE),
-      error = do_nothing,
-      warning = do_nothing
-    )
-    for (sym in symbols) {
-      assign(sym, NULL, envir = envir)
-    }
-    ""
-  }
-
-  get_assignment_symbols <- function(xml) {
-    get_r_string(xml_find_all(
-      xml,
-      "
-        expr[LEFT_ASSIGN]/expr[1]/SYMBOL[1] |
-        equal_assign/expr[1]/SYMBOL[1] |
-        expr[expr[1][SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/* |
-        expr[expr[1][SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[2]/*
-      "
-    ))
-  }
-
-  get_check_usage_results <- function(expression, known_used_symbols, declared_globals, skip_with) {
-    report_env <- new.env(parent = emptyenv())
-    report_env$vals <- character()
-    report <- function(x) report_env$vals <- c(report_env$vals, x)
-    withr::local_options(list(useFancyQuotes = FALSE))
-    try(
-      codetools::checkUsage(
-        expression,
-        report = report,
-        suppressLocalUnused = known_used_symbols,
-        suppressUndefined = declared_globals,
-        skipWith = skip_with
-      )
-    )
-    report_env$vals
-  }
-
-  parse_check_usage <- function(expression,
-                                known_used_symbols = character(),
-                                declared_globals = character(),
-                                start_line = 1L,
-                                end_line = 1L,
-                                skip_with = TRUE) {
-    vals <- get_check_usage_results(expression, known_used_symbols, declared_globals, skip_with)
-
-    function_name <- rex(anything, ": ")
-    line_info <- rex(
-      " ", "(", capture(name = "path", non_spaces), ":",
-      capture(name = "line1", digits), maybe("-", capture(name = "line2", digits)), ")"
-    )
-
-    res <- re_matches(
-      vals,
-      rex(
-        function_name,
-        capture(
-          name = "message",
-          zero_or_more(any, type = "lazy"),
-          maybe(
-            "'",
-            capture(name = "name", anything),
-            "'",
-            zero_or_more(any, type = "lazy")
-          )
-        ),
-        or(line_info, end)
-      )
-    )
-
-    # nocov start
-    missing <- is.na(res$message)
-    if (any(missing)) {
-      # TODO (AshesITR): Remove this in the future, if no bugs arise from this safeguard
-      warning(
-        "Possible bug in lintr: Couldn't parse usage message ", sQuote(vals[missing][[1L]]), ". ",
-        "Ignoring ", sum(missing), " usage warnings. Please report an issue at https://github.com/r-lib/lintr/issues."
-      )
-    }
-    # nocov end
-    res <- res[!missing, ]
-
-    res$line1 <- ifelse(
-      nzchar(res$line1),
-      as.integer(res$line1) + start_line - 1L,
-      NA_integer_
-    )
-    res$line2 <- ifelse(
-      nzchar(res$line2),
-      as.integer(res$line2) + start_line - 1L,
-      res$line1
-    )
-
-    res$line1[is.na(res$line1)] <- start_line
-    res$line2[is.na(res$line2)] <- end_line
-
-    res
-  }
-
-  get_imported_symbols <- function(xml) {
-    import_exprs_xpath <- "
-    //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
-      /parent::expr
-      /parent::expr[
-        not(SYMBOL_SUB[
-          text() = 'character.only' and
-          following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-        ])
-        or expr[2][STR_CONST]
-      ]
-      /expr[STR_CONST or SYMBOL][1]
-    "
-    import_exprs <- xml_find_all(xml, import_exprs_xpath)
-    imported_pkgs <- get_r_string(import_exprs)
-
-    unlist(lapply(imported_pkgs, function(pkg) {
-      tryCatch(
-        getNamespaceExports(pkg),
-        error = function(e) character()
-      )
-    }))
-  }
-
   # NB: difference across R versions in how EQ_ASSIGN is represented in the AST
   #   (under <expr_or_assign_or_help> or <equal_assign>)
   # NB: the repeated expr[2][FUNCTION] XPath has no performance impact, so the different direct assignment XPaths are
@@ -328,4 +129,201 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
 
     lapply(fun_assignments, lint_assignment, source_expression, declared_globals, env)
   })
+}
+
+make_check_env <- function(pkg_name, xml) {
+  if (!is.null(pkg_name)) {
+    parent_env <- try_silently(getNamespace(pkg_name))
+  }
+  if (is.null(pkg_name) || inherits(parent_env, "try-error")) {
+    parent_env <- globalenv()
+  }
+  env <- new.env(parent = parent_env)
+
+  symbols <- c(
+    get_assignment_symbols(xml),
+    get_imported_symbols(xml)
+  )
+
+  # Just assign them an empty function
+  for (symbol in symbols) {
+    assign(symbol, function(...) invisible(), envir = env)
+  }
+  env
+}
+
+extract_glued_symbols <- function(expr, interpret_glue) {
+  if (!isTRUE(interpret_glue)) {
+    return(character())
+  }
+  # TODO support more glue functions
+  # Package glue:
+  #  - glue_sql
+  #  - glue_safe
+  #  - glue_col
+  #  - glue_data
+  #  - glue_data_sql
+  #  - glue_data_safe
+  #  - glue_data_col
+  #
+  # Package stringr:
+  #  - str_interp
+  glue_call_xpath <- "
+    descendant::SYMBOL_FUNCTION_CALL[text() = 'glue']
+      /parent::expr
+      /parent::expr[
+        not(SYMBOL_SUB[text() = '.envir' or text() = '.transform'])
+        and not(expr[position() > 1 and not(STR_CONST)])
+      ]
+  "
+  glue_calls <- xml_find_all(expr, glue_call_xpath)
+
+  unexpected_error <- function(cond) {
+    stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond)) # nocov
+  }
+  parse_failure_warning <- function(cond) {
+    warning(
+      "Evaluating glue expression while testing for local variable usage failed: ",
+      conditionMessage(cond), "\nPlease ensure correct glue syntax, e.g., matched delimiters.",
+      call. = FALSE
+    )
+    NULL
+  }
+
+  glued_symbols <- new.env(parent = emptyenv())
+  for (glue_call in glue_calls) {
+    # TODO(michaelchirico): consider dropping tryCatch() here if we're more confident in our logic
+    parsed_call <- tryCatch(xml2lang(glue_call), error = unexpected_error, warning = unexpected_error)
+    parsed_call[[".envir"]] <- glued_symbols
+    parsed_call[[".transformer"]] <- symbol_extractor
+    # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint
+    tryCatch(eval(parsed_call), error = parse_failure_warning)
+  }
+  names(glued_symbols)
+}
+
+symbol_extractor <- function(text, envir, data) {
+  symbols <- tryCatch(
+    all.vars(parse(text = text), functions = TRUE),
+    error = function(...) NULL,
+    warning = function(...) NULL
+  )
+  for (sym in symbols) {
+    assign(sym, NULL, envir = envir)
+  }
+  ""
+}
+
+get_assignment_symbols <- function(xml) {
+  get_r_string(xml_find_all(
+    xml,
+    "
+      expr[LEFT_ASSIGN]/expr[1]/SYMBOL[1] |
+      equal_assign/expr[1]/SYMBOL[1] |
+      expr[expr[1][SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/* |
+      expr[expr[1][SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[2]/*
+    "
+  ))
+}
+
+get_check_usage_results <- function(expression, known_used_symbols, declared_globals, skip_with) {
+  report_env <- new.env(parent = emptyenv())
+  report_env$vals <- character()
+  report <- function(x) report_env$vals <- c(report_env$vals, x)
+  withr::local_options(list(useFancyQuotes = FALSE))
+  try(
+    codetools::checkUsage(
+      expression,
+      report = report,
+      suppressLocalUnused = known_used_symbols,
+      suppressUndefined = declared_globals,
+      skipWith = skip_with
+    )
+  )
+  report_env$vals
+}
+
+parse_check_usage <- function(expression,
+                              known_used_symbols = character(),
+                              declared_globals = character(),
+                              start_line = 1L,
+                              end_line = 1L,
+                              skip_with = TRUE) {
+  vals <- get_check_usage_results(expression, known_used_symbols, declared_globals, skip_with)
+
+  function_name <- rex(anything, ": ")
+  line_info <- rex(
+    " ", "(", capture(name = "path", non_spaces), ":",
+    capture(name = "line1", digits), maybe("-", capture(name = "line2", digits)), ")"
+  )
+
+  res <- re_matches(
+    vals,
+    rex(
+      function_name,
+      capture(
+        name = "message",
+        zero_or_more(any, type = "lazy"),
+        maybe(
+          "'",
+          capture(name = "name", anything),
+          "'",
+          zero_or_more(any, type = "lazy")
+        )
+      ),
+      or(line_info, end)
+    )
+  )
+
+  # nocov start
+  missing <- is.na(res$message)
+  if (any(missing)) {
+    # TODO (AshesITR): Remove this in the future, if no bugs arise from this safeguard
+    warning(
+      "Possible bug in lintr: Couldn't parse usage message ", sQuote(vals[missing][[1L]]), ". ",
+      "Ignoring ", sum(missing), " usage warnings. Please report an issue at https://github.com/r-lib/lintr/issues."
+    )
+  }
+  # nocov end
+  res <- res[!missing, ]
+
+  res$line1 <- ifelse(
+    nzchar(res$line1),
+    as.integer(res$line1) + start_line - 1L,
+    NA_integer_
+  )
+  res$line2 <- ifelse(
+    nzchar(res$line2),
+    as.integer(res$line2) + start_line - 1L,
+    res$line1
+  )
+
+  res$line1[is.na(res$line1)] <- start_line
+  res$line2[is.na(res$line2)] <- end_line
+
+  res
+}
+
+get_imported_symbols <- function(xml) {
+  import_exprs_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
+    /parent::expr
+    /parent::expr[
+      not(SYMBOL_SUB[
+        text() = 'character.only' and
+        following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+      ])
+      or expr[2][STR_CONST]
+    ]
+    /expr[STR_CONST or SYMBOL][1]
+  "
+  import_exprs <- xml_find_all(xml, import_exprs_xpath)
+  imported_pkgs <- get_r_string(import_exprs)
+
+  unlist(lapply(imported_pkgs, function(pkg) {
+    tryCatch(
+      getNamespaceExports(pkg),
+      error = function(e) character()
+    )
+  }))
 }
