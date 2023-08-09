@@ -122,11 +122,11 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
                                assignment_as_infix = TRUE) {
   paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
-  xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
-
   infix_tokens <- setdiff(infix_metadata$xml_tag, c("OP-LEFT-BRACE", "OP-COMMA", paren_tokens_left))
   no_paren_keywords <- c("ELSE", "REPEAT")
   keyword_tokens <- c("FUNCTION", "IF", "FOR", "WHILE")
+
+  xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
 
   hanging_indent_style <- match.arg(hanging_indent_style)
 
