@@ -51,8 +51,8 @@ test_that("it determines Jenkins PR build info", {
       expect_true(lintr:::in_ci())
 
       expect_identical(
-       lintr:::ci_build_info(),
-       list(user = "user", repo = "repo", pull = "123", commit = NULL)
+        lintr:::ci_build_info(),
+        list(user = "user", repo = "repo", pull = "123", commit = NULL)
       )
     }
   )
