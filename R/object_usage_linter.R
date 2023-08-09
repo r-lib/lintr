@@ -61,7 +61,10 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
         and not(expr[position() > 1 and not(STR_CONST)])
       ]
   "
-  extract_glued_symbols <- function(expr) {
+  extract_glued_symbols <- function(expr, interpret_glue) {
+    if (!isTRUE(interpret_glue)) {
+      return(character())
+    }
     # TODO support more glue functions
     # Package glue:
     #  - glue_sql
@@ -75,10 +78,6 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
     # Package stringr:
     #  - str_interp
     glue_calls <- xml_find_all(expr, glue_call_xpath)
-
-    if (length(glue_calls) == 0L) {
-      return(character())
-    }
 
     glued_symbols <- new.env(parent = emptyenv())
     for (glue_call in glue_calls) {
@@ -116,30 +115,30 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
     ))
   }
 
+  get_check_usage_results <- function(expression, known_used_symbols, declared_globals, skip_with) {
+    report_env <- new.env(parent = emptyenv())
+    report_env$vals <- character()
+    report <- function(x) report_env$vals <- c(report_env$vals, x)
+    withr::local_options(list(useFancyQuotes = FALSE))
+    try(
+      codetools::checkUsage(
+        expression,
+        report = report,
+        suppressLocalUnused = known_used_symbols,
+        suppressUndefined = declared_globals,
+        skipWith = skip_with
+      )
+    )
+    report_env$vals
+  }
+
   parse_check_usage <- function(expression,
                                 known_used_symbols = character(),
                                 declared_globals = character(),
                                 start_line = 1L,
                                 end_line = 1L,
                                 skip_with = TRUE) {
-    vals <- list()
-
-    report <- function(x) {
-      vals[[length(vals) + 1L]] <<- x
-    }
-
-    withr::with_options(
-      list(useFancyQuotes = FALSE),
-      code = {
-        try(codetools::checkUsage(
-          expression,
-          report = report,
-          suppressLocalUnused = known_used_symbols,
-          suppressUndefined = declared_globals,
-          skipWith = skip_with
-        ))
-      }
-    )
+    vals <- get_check_usage_results(expression, known_used_symbols, declared_globals, skip_with)
 
     function_name <- rex(anything, ": ")
     line_info <- rex(
@@ -208,26 +207,14 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
       /expr[STR_CONST or SYMBOL][1]
     "
     import_exprs <- xml_find_all(xml, import_exprs_xpath)
-    if (length(import_exprs) == 0L) {
-      return(character())
-    }
     imported_pkgs <- get_r_string(import_exprs)
 
     unlist(lapply(imported_pkgs, function(pkg) {
       tryCatch(
         getNamespaceExports(pkg),
-        error = function(e) {
-          character()
-        }
+        error = function(e) character()
       )
     }))
-  }
-
-  get_used_symbols <- function(expr, interpret_glue) {
-    if (!isTRUE(interpret_glue)) {
-      return(character())
-    }
-    extract_glued_symbols(expr)
   }
 
   # NB: difference across R versions in how EQ_ASSIGN is represented in the AST
@@ -293,7 +280,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
       if (inherits(fun, "try-error")) {
         return()
       }
-      known_used_symbols <- get_used_symbols(fun_assignment, interpret_glue = interpret_glue)
+      known_used_symbols <- extract_glued_symbols(fun_assignment, interpret_glue = interpret_glue)
       res <- parse_check_usage(
         fun,
         known_used_symbols = known_used_symbols,
