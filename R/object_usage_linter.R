@@ -30,14 +30,25 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
-  make_check_env <- function(pkg_name) {
+  make_check_env <- function(pkg_name, xml) {
     if (!is.null(pkg_name)) {
       parent_env <- try_silently(getNamespace(pkg_name))
     }
     if (is.null(pkg_name) || inherits(parent_env, "try-error")) {
       parent_env <- globalenv()
     }
-    new.env(parent = parent_env)
+    env <- new.env(parent = parent_env)
+
+    symbols <- c(
+      get_assignment_symbols(xml),
+      get_imported_symbols(xml)
+    )
+
+    # Just assign them an empty function
+    for (symbol in symbols) {
+      assign(symbol, do_nothing, envir = env)
+    }
+    env
   }
 
   unexpected_error <- function(cond) {
@@ -91,11 +102,12 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
     names(glued_symbols)
   }
 
+  do_nothing <- function(...) NULL
   symbol_extractor <- function(text, envir, data) {
     symbols <- tryCatch(
       all.vars(parse(text = text), functions = TRUE),
-      error = function(...) NULL,
-      warning = function(...) NULL
+      error = do_nothing,
+      warning = do_nothing
     )
     for (sym in symbols) {
       assign(sym, NULL, envir = envir)
@@ -222,16 +234,13 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
   # NB: the repeated expr[2][FUNCTION] XPath has no performance impact, so the different direct assignment XPaths are
   #   split for better readability, see PR#1197
   # TODO(#1106): use //[...] to capture assignments in more scopes
-  xpath_function_assignment <- paste(
-    # direct assignments
-    "expr[LEFT_ASSIGN or EQ_ASSIGN]/expr[2][FUNCTION or OP-LAMBDA]",
-    "expr_or_assign_or_help[EQ_ASSIGN]/expr[2][FUNCTION or OP-LAMBDA]",
-    "equal_assign[EQ_ASSIGN]/expr[2][FUNCTION or OP-LAMBDA]",
-    # assign() and setMethod() assignments
-    "//SYMBOL_FUNCTION_CALL[text() = 'assign']/parent::expr/following-sibling::expr[2][FUNCTION or OP-LAMBDA]",
-    "//SYMBOL_FUNCTION_CALL[text() = 'setMethod']/parent::expr/following-sibling::expr[3][FUNCTION or OP-LAMBDA]",
-    sep = " | "
-  )
+  xpath_function_assignment <- "
+    expr[LEFT_ASSIGN or EQ_ASSIGN]/expr[2][FUNCTION or OP-LAMBDA]
+    | expr_or_assign_or_help[EQ_ASSIGN]/expr[2][FUNCTION or OP-LAMBDA]
+    | equal_assign[EQ_ASSIGN]/expr[2][FUNCTION or OP-LAMBDA]
+    | //SYMBOL_FUNCTION_CALL[text() = 'assign']/parent::expr/following-sibling::expr[2][FUNCTION or OP-LAMBDA]
+    | //SYMBOL_FUNCTION_CALL[text() = 'setMethod']/parent::expr/following-sibling::expr[3][FUNCTION or OP-LAMBDA]
+  "
 
   # not all instances of linted symbols are potential sources for the observed violations -- see #1914
   symbol_exclude_cond <- "preceding-sibling::OP-DOLLAR or preceding-sibling::OP-AT or ancestor::expr[OP-TILDE]"
@@ -242,88 +251,81 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
     | descendant::LEFT_ASSIGN[text() = ':=']
   ")
 
+  lint_assignment <- function(fun_assignment, source_expression, declared_globals, env) {
+    code <- get_content(lines = source_expression$content, fun_assignment)
+    fun <- try_silently(eval(
+      envir = env,
+      parse(
+        text = code,
+        keep.source = TRUE
+      )
+    ))
+
+    if (inherits(fun, "try-error")) {
+      return()
+    }
+    known_used_symbols <- extract_glued_symbols(fun_assignment, interpret_glue = interpret_glue)
+    res <- parse_check_usage(
+      fun,
+      known_used_symbols = known_used_symbols,
+      declared_globals = declared_globals,
+      start_line = as.integer(xml_attr(fun_assignment, "line1")),
+      end_line = as.integer(xml_attr(fun_assignment, "line2")),
+      skip_with = skip_with
+    )
+
+    # TODO handle assignment functions properly
+    # e.g. `not_existing<-`(a, b)
+    res$name <- rex::re_substitutes(res$name, rex::rex("<-"), "")
+
+    lintable_symbols <- xml_find_all(fun_assignment, xpath_culprit_symbol)
+
+    lintable_symbol_names <- gsub("^`|`$", "", xml_text(lintable_symbols))
+    lintable_symbol_lines <- as.integer(xml_attr(lintable_symbols, "line1"))
+
+    matched_symbol <- vapply(
+      seq_len(nrow(res)),
+      function(i) {
+        match(
+          TRUE,
+          lintable_symbol_names == res$name[i] &
+            lintable_symbol_lines >= res$line1[i] &
+            lintable_symbol_lines <= res$line2[i]
+        )
+      },
+      integer(1L)
+    )
+    nodes <- unclass(lintable_symbols)[matched_symbol]
+
+    # fallback to line based matching if no symbol is found
+    missing_symbol <- is.na(matched_symbol)
+    nodes[missing_symbol] <- lapply(which(missing_symbol), function(i) {
+      line_based_match <- xml_find_first(
+        fun_assignment,
+        glue::glue_data(res[i, ], "descendant::expr[@line1 = {line1} and @line2 = {line2}]")
+      )
+      if (is.na(line_based_match)) fun_assignment else line_based_match
+    })
+
+    xml_nodes_to_lints(nodes, source_expression = source_expression, lint_message = res$message, type = "warning")
+  }
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
       return(list())
     }
 
     pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
-    # run the following at run-time, not "compile" time to allow package structure to change
-    env <- make_check_env(pkg_name)
 
     declared_globals <- try_silently(utils::globalVariables(package = pkg_name %||% globalenv()))
 
     xml <- source_expression$full_xml_parsed_content
 
-    symbols <- c(
-      get_assignment_symbols(xml),
-      get_imported_symbols(xml)
-    )
-
-    # Just assign them an empty function
-    for (symbol in symbols) {
-      assign(symbol, function(...) invisible(), envir = env)
-    }
+    # run the following at run-time, not "compile" time to allow package structure to change
+    env <- make_check_env(pkg_name, xml)
 
     fun_assignments <- xml_find_all(xml, xpath_function_assignment)
 
-    lapply(fun_assignments, function(fun_assignment) {
-      code <- get_content(lines = source_expression$content, fun_assignment)
-      fun <- try_silently(eval(
-        envir = env,
-        parse(
-          text = code,
-          keep.source = TRUE
-        )
-      ))
-
-      if (inherits(fun, "try-error")) {
-        return()
-      }
-      known_used_symbols <- extract_glued_symbols(fun_assignment, interpret_glue = interpret_glue)
-      res <- parse_check_usage(
-        fun,
-        known_used_symbols = known_used_symbols,
-        declared_globals = declared_globals,
-        start_line = as.integer(xml_attr(fun_assignment, "line1")),
-        end_line = as.integer(xml_attr(fun_assignment, "line2")),
-        skip_with = skip_with
-      )
-
-      # TODO handle assignment functions properly
-      # e.g. `not_existing<-`(a, b)
-      res$name <- rex::re_substitutes(res$name, rex::rex("<-"), "")
-
-      lintable_symbols <- xml_find_all(fun_assignment, xpath_culprit_symbol)
-
-      lintable_symbol_names <- gsub("^`|`$", "", xml_text(lintable_symbols))
-      lintable_symbol_lines <- as.integer(xml_attr(lintable_symbols, "line1"))
-
-      matched_symbol <- vapply(
-        seq_len(nrow(res)),
-        function(i) {
-          match(
-            TRUE,
-            lintable_symbol_names == res$name[i] &
-              lintable_symbol_lines >= res$line1[i] &
-              lintable_symbol_lines <= res$line2[i]
-          )
-        },
-        integer(1L)
-      )
-      nodes <- unclass(lintable_symbols)[matched_symbol]
-
-      # fallback to line based matching if no symbol is found
-      missing_symbol <- is.na(matched_symbol)
-      nodes[missing_symbol] <- lapply(which(missing_symbol), function(i) {
-        line_based_match <- xml_find_first(
-          fun_assignment,
-          glue::glue_data(res[i, ], "descendant::expr[@line1 = {line1} and @line2 = {line2}]")
-        )
-        if (is.na(line_based_match)) fun_assignment else line_based_match
-      })
-
-      xml_nodes_to_lints(nodes, source_expression = source_expression, lint_message = res$message, type = "warning")
-    })
+    lapply(fun_assignments, lint_assignment, source_expression, declared_globals, env)
   })
 }
