@@ -82,6 +82,13 @@ get_fixed_string <- function(static_regex) {
   paste0(fixed_string, static_regex)
 }
 
+#' Get a fixed string equivalent to a regular expression token
+#'
+#' This handles two cases: converting a "trivial" character group like `[$]` to `$`,
+#'   and converting an escaped character like `"\\$"` to `$`. Splitting a full expression
+#'   into tokens is handled by [get_fixed_string()].
+#'
+#' @noRd
 get_token_replacement <- function(token_content, token_type) {
   if (token_type == "trivial_char_group") {
     token_content <- substr(token_content, start = 2L, stop = nchar(token_content) - 1L)
