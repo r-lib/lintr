@@ -123,20 +123,23 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
   })
 }
 
-exported_symbols <- function(ns) c(getNamespaceExports(ns), names(.getNamespaceInfo(ns, "lazydata")))
-is_exported <- function(symbols, namespaces) {
+namespace_symbols <- function(ns, exported = TRUE) {
+  if (exported) {
+    c(getNamespaceExports(ns), names(.getNamespaceInfo(ns, "lazydata")))
+  } else {
+    ls(ns, all.names = TRUE)
+  }
+}
+is_in_pkg <- function(symbols, namespaces, exported = TRUE) {
   mapply(
-    function(pkg_sym, pkg_ns) pkg_sym %in% exported_symbols(pkg_ns),
+    function(pkg_sym, pkg_ns) pkg_sym %in% namespace_symbols(pkg_ns, exported = exported),
     symbols, namespaces
   )
 }
 
 build_ns_get_int_lints <- function(packages, symbols, symbol_nodes, namespaces, source_expression) {
   ## Case 2: foo does not exist in pkg:::foo
-  non_symbols <- !mapply(
-    function(pkg_sym, pkg_ns) pkg_sym %in% ls(pkg_ns, all.names = TRUE),
-    symbols, namespaces
-  )
+  non_symbols <- !is_in_pkg(symbols, namespaces, exported = FALSE)
   non_symbols_lints <- xml_nodes_to_lints(
     symbol_nodes[non_symbols],
     source_expression = source_expression,
@@ -150,7 +153,7 @@ build_ns_get_int_lints <- function(packages, symbols, symbol_nodes, namespaces, 
   namespaces <- namespaces[!non_symbols]
 
   ## Case 3: foo is already exported pkg:::foo
-  exported <- is_exported(symbols, namespaces)
+  exported <- is_in_pkg(symbols, namespaces)
   exported_lints <- xml_nodes_to_lints(
     symbol_nodes[exported],
     source_expression = source_expression,
@@ -167,7 +170,7 @@ build_ns_get_lints <- function(packages, symbols, symbol_nodes, namespaces, sour
   symbols <- gsub("^`(.*)`$", "\\1", symbols)
 
   ## Case 4: foo is not an export in pkg::foo
-  unexported <- !is_exported(symbols, namespaces)
+  unexported <- !is_in_pkg(symbols, namespaces)
   xml_nodes_to_lints(
     symbol_nodes[unexported],
     source_expression = source_expression,
