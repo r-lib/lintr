@@ -4,7 +4,12 @@
 \alias{if_not_else_linter}
 \title{Block statements like if (!A) x else y}
 \usage{
-if_not_else_linter()
+if_not_else_linter(exceptions = c("is.null", "is.na", "missing"))
+}
+\arguments{
+\item{exceptions}{Character vector of calls to exclude from linting.
+By default, \code{\link[=is.null]{is.null()}}, \code{\link[=is.na]{is.na()}}, and \code{\link[=missing]{missing()}} are excluded
+given the common idiom \code{!is.na(x)} as "x is present".}
 }
 \description{
 \code{if (!A) x else y} is the same as \code{if (A) y else x}, but the latter is
@@ -23,5 +28,5 @@ It also applies to \code{\link[=ifelse]{ifelse()}} and the package equivalents
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=consistency_linters]{consistency}, \link[=readability_linters]{readability}
+\link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=readability_linters]{readability}
 }

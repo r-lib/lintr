@@ -34,7 +34,7 @@ for_loop_index_linter,best_practices readability robustness
 function_argument_linter,style consistency best_practices
 function_left_parentheses_linter,style readability default
 function_return_linter,readability best_practices
-if_not_else_linter,readability consistency
+if_not_else_linter,readability consistency configurable
 ifelse_censor_linter,best_practices efficiency
 implicit_assignment_linter,style best_practices readability configurable
 implicit_integer_linter,style consistency best_practices configurable
