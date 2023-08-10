@@ -63,6 +63,6 @@ test_that("Multiple lints give custom messages", {
       hijklmnop
     }"),
     list("9 characters", "11 characters"),
-    line_length_linter(5)
+    line_length_linter(5L)
   )
 })
