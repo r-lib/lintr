@@ -52,65 +52,6 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
     | descendant::LEFT_ASSIGN[text() = ':=']
   ")
 
-  lint_assignment <- function(fun_assignment, source_expression, declared_globals, env) {
-    code <- get_content(lines = source_expression$content, fun_assignment)
-    fun <- try_silently(eval(
-      envir = env,
-      parse(
-        text = code,
-        keep.source = TRUE
-      )
-    ))
-
-    if (inherits(fun, "try-error")) {
-      return()
-    }
-    known_used_symbols <- extract_glued_symbols(fun_assignment, interpret_glue = interpret_glue)
-    res <- parse_check_usage(
-      fun,
-      known_used_symbols = known_used_symbols,
-      declared_globals = declared_globals,
-      start_line = as.integer(xml_attr(fun_assignment, "line1")),
-      end_line = as.integer(xml_attr(fun_assignment, "line2")),
-      skip_with = skip_with
-    )
-
-    # TODO handle assignment functions properly
-    # e.g. `not_existing<-`(a, b)
-    res$name <- rex::re_substitutes(res$name, rex::rex("<-"), "")
-
-    lintable_symbols <- xml_find_all(fun_assignment, xpath_culprit_symbol)
-
-    lintable_symbol_names <- gsub("^`|`$", "", xml_text(lintable_symbols))
-    lintable_symbol_lines <- as.integer(xml_attr(lintable_symbols, "line1"))
-
-    matched_symbol <- vapply(
-      seq_len(nrow(res)),
-      function(i) {
-        match(
-          TRUE,
-          lintable_symbol_names == res$name[i] &
-            lintable_symbol_lines >= res$line1[i] &
-            lintable_symbol_lines <= res$line2[i]
-        )
-      },
-      integer(1L)
-    )
-    nodes <- unclass(lintable_symbols)[matched_symbol]
-
-    # fallback to line based matching if no symbol is found
-    missing_symbol <- is.na(matched_symbol)
-    nodes[missing_symbol] <- lapply(which(missing_symbol), function(i) {
-      line_based_match <- xml_find_first(
-        fun_assignment,
-        glue::glue_data(res[i, ], "descendant::expr[@line1 = {line1} and @line2 = {line2}]")
-      )
-      if (is.na(line_based_match)) fun_assignment else line_based_match
-    })
-
-    xml_nodes_to_lints(nodes, source_expression = source_expression, lint_message = res$message, type = "warning")
-  }
-
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
       return(list())
@@ -127,7 +68,64 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
 
     fun_assignments <- xml_find_all(xml, xpath_function_assignment)
 
-    lapply(fun_assignments, lint_assignment, source_expression, declared_globals, env)
+    lapply(fun_assignments, function(fun_assignment) {
+      code <- get_content(lines = source_expression$content, fun_assignment)
+      fun <- try_silently(eval(
+        envir = env,
+        parse(
+          text = code,
+          keep.source = TRUE
+        )
+      ))
+
+      if (inherits(fun, "try-error")) {
+        return()
+      }
+      known_used_symbols <- extract_glued_symbols(fun_assignment, interpret_glue = interpret_glue)
+      res <- parse_check_usage(
+        fun,
+        known_used_symbols = known_used_symbols,
+        declared_globals = declared_globals,
+        start_line = as.integer(xml_attr(fun_assignment, "line1")),
+        end_line = as.integer(xml_attr(fun_assignment, "line2")),
+        skip_with = skip_with
+      )
+
+      # TODO handle assignment functions properly
+      # e.g. `not_existing<-`(a, b)
+      res$name <- rex::re_substitutes(res$name, rex::rex("<-"), "")
+
+      lintable_symbols <- xml_find_all(fun_assignment, xpath_culprit_symbol)
+
+      lintable_symbol_names <- gsub("^`|`$", "", xml_text(lintable_symbols))
+      lintable_symbol_lines <- as.integer(xml_attr(lintable_symbols, "line1"))
+
+      matched_symbol <- vapply(
+        seq_len(nrow(res)),
+        function(i) {
+          match(
+            TRUE,
+            lintable_symbol_names == res$name[i] &
+              lintable_symbol_lines >= res$line1[i] &
+              lintable_symbol_lines <= res$line2[i]
+          )
+        },
+        integer(1L)
+      )
+      nodes <- unclass(lintable_symbols)[matched_symbol]
+
+      # fallback to line based matching if no symbol is found
+      missing_symbol <- is.na(matched_symbol)
+      nodes[missing_symbol] <- lapply(which(missing_symbol), function(i) {
+        line_based_match <- xml_find_first(
+          fun_assignment,
+          glue::glue_data(res[i, ], "descendant::expr[@line1 = {line1} and @line2 = {line2}]")
+        )
+        if (is.na(line_based_match)) fun_assignment else line_based_match
+      })
+
+      xml_nodes_to_lints(nodes, source_expression = source_expression, lint_message = res$message, type = "warning")
+    })
   })
 }
 
