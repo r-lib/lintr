@@ -1,8 +1,23 @@
-#' Require usage of `sort()` over `.[order(.)]`
+#' Check for common mistakes around sorting vectors
+#'
+#' This linter checks for some common mistakes when using [order()] or [sort()].
+#'
+#' First, it requires usage of `sort()` over `.[order(.)]`.
 #'
 #' [sort()] is the dedicated option to sort a list or vector. It is more legible
 #' and around twice as fast as `.[order(.)]`, with the gap in performance
 #' growing with the vector size.
+#'
+#' Second, it requires usage of [is.unsorted()] over equivalents using `sort()`.
+#'
+#' The base function `is.unsorted()` exists to test the sortedness of a vector.
+#'   Prefer it to inefficient and less-readable equivalents like
+#'   `x != sort(x)`. The same goes for checking `x == sort(x)` -- use
+#'   `!is.unsorted(x)` instead.
+#'
+#' Moreover, use of `x == sort(x)` can be risky because [sort()] drops missing
+#'   elements by default, meaning `==` might end up trying to compare vectors
+#'   of differing lengths.
 #'
 #' @examples
 #' # will produce lints
