@@ -191,7 +191,7 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE, allow
   ")
 
   empty_paste_note <-
-    'Note well that paste() converts empty inputs to "", whereas file.path() leaves it empty.'
+    'Note that paste() converts empty inputs to "", whereas file.path() leaves it empty.'
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
