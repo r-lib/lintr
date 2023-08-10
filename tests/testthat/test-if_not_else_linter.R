@@ -72,4 +72,14 @@ test_that("multiple lints are generated correctly", {
   )
 })
 
+test_that("exceptions= argument works", {
+  expect_lint(
+    "if (!is.null(x)) x else y",
+    "In a simple if/else statement",
+    if_not_else_linter(exceptions = character())
+  )
+
+  expect_lint("if (!foo(x)) y else z", NULL, if_not_else_linter(exceptions = "foo"))
+})
+
 # TODO(michaelchirico): should if (A != B) be considered as well?
