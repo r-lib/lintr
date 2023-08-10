@@ -51,7 +51,7 @@ test_that("all default linters are tagged default", {
   expect_identical(
     all.equal(linters_with_tags("default"), linters_with_defaults(line_length_linter(120L))),
     c(
-      'Component "line_length_linter": Component "general_msg": 1 string mismatch', 
+      'Component "line_length_linter": Component "general_msg": 1 string mismatch',
       'Component "line_length_linter": Component "length": Mean relative difference: 0.5'
     )
   )
