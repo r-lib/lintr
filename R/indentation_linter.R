@@ -313,7 +313,7 @@ find_new_indent <- function(current_indent, change_type, indent, hanging_indent)
     suppress = current_indent,
     hanging = hanging_indent,
     double = current_indent + 2L * indent,
-    current_indent + indent
+    block = current_indent + indent
   )
 }
 
