@@ -23,6 +23,11 @@ lint(
   linters = sort_linter()
 )
 
+lint(
+  text = "sort(x) == x",
+  linters = sort_linter()
+)
+
 # okay
 lint(
   text = "x[sample(order(x))]",
@@ -31,6 +36,11 @@ lint(
 
 lint(
   text = "y[order(x)]",
+  linters = sort_linter()
+)
+
+lint(
+  text = "sort(x, decreasing = TRUE) == x",
   linters = sort_linter()
 )
 

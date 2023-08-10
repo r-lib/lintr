@@ -79,3 +79,36 @@ test_that("sort_linter works with multiple lints in a single expression", {
   )
 
 })
+
+test_that("sorted_linter skips usages calling sort arguments", {
+  linter <- sort_linter()
+
+  # any arguments to sorted --> not compatible
+  expect_lint("sort(x, decreasing = TRUE) == x", NULL, linter)
+  expect_lint("sort(x, na.last = TRUE) != x", NULL, linter)
+  expect_lint("sort(x, method_arg = TRUE) == x", NULL, linter)
+})
+
+test_that("sorted_linter skips when inputs don't match", {
+  linter <- sort_linter()
+
+  expect_lint("sort(x) == y", NULL, linter)
+  expect_lint("sort(x) == foo(x)", NULL, linter)
+  expect_lint("sort(foo(x)) == x", NULL, linter)
+})
+
+test_that("sorted_linter blocks simple disallowed usages", {
+  linter <- sort_linter()
+  lint_msg <- rex::rex("Use is.unsorted() to test the (un-)sortedness of a vector.")
+
+  expect_lint("sort(x) == x", lint_msg, linter)
+
+  # argument order doesn't matter
+  expect_lint("x == sort(x)", lint_msg, linter)
+
+  # inverted version
+  expect_lint("sort(x) != x", lint_msg, linter)
+
+  # expression matching
+  expect_lint("sort(foo(x)) == foo(x)", lint_msg, linter)
+})

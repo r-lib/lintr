@@ -16,6 +16,11 @@
 #'   linters = sort_linter()
 #' )
 #'
+#' lint(
+#'   text = "sort(x) == x",
+#'   linters = sort_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "x[sample(order(x))]",
@@ -24,6 +29,11 @@
 #'
 #' lint(
 #'   text = "y[order(x)]",
+#'   linters = sort_linter()
+#' )
+#'
+#' lint(
+#'   text = "sort(x, decreasing = TRUE) == x",
 #'   linters = sort_linter()
 #' )
 #'
@@ -44,7 +54,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 sort_linter <- function() {
-  xpath <- "
+  order_xpath <- "
   //OP-LEFT-BRACKET
     /following-sibling::expr[1][
       expr[1][
@@ -56,6 +66,17 @@ sort_linter <- function() {
       ]
     ]
   "
+
+  sorted_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'sort']
+    /parent::expr
+    /parent::expr[not(SYMBOL_SUB)]
+    /parent::expr[
+      (EQ or NE)
+      and expr/expr = expr
+    ]
+  "
+
 
   args_xpath <- ".//SYMBOL_SUB[text() = 'method' or
                                text() = 'decreasing' or
@@ -70,45 +91,44 @@ sort_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml_find_all(xml, xpath)
+    order_expr <- xml_find_all(xml, order_xpath)
 
-    var <- xml_text(
-      xml_find_first(
-        bad_expr,
-        ".//SYMBOL_FUNCTION_CALL[text() = 'order']/parent::expr[1]/following-sibling::expr[1]"
-      )
-    )
+    var <- xml_text(xml_find_first(
+      order_expr,
+      ".//SYMBOL_FUNCTION_CALL[text() = 'order']/parent::expr[1]/following-sibling::expr[1]"
+    ))
 
-    orig_call <- sprintf(
-      "%1$s[%2$s]",
-      var,
-      get_r_string(bad_expr)
-    )
+    orig_call <- sprintf("%s[%s]", var, get_r_string(order_expr))
 
     # Reconstruct new argument call for each expression separately
-    args <- vapply(bad_expr, function(e) {
+    args <- vapply(order_expr, function(e) {
       arg_names <- xml_text(xml_find_all(e, args_xpath))
-      arg_values <- xml_text(
-        xml_find_all(e, arg_values_xpath)
-      )
+      arg_values <- xml_text(xml_find_all(e, arg_values_xpath))
       if (!"na.last" %in% arg_names) {
         arg_names <- c(arg_names, "na.last")
         arg_values <- c(arg_values, "TRUE")
       }
-      toString(paste(arg_names, "=", arg_values))
+      paste(arg_names, "=", arg_values, collapse = ", ")
     }, character(1L))
 
-    new_call <- sprintf(
-      "sort(%1$s, %2$s)",
-      var,
-      args
-    )
+    new_call <- sprintf("sort(%s, %s)", var, args)
 
-    xml_nodes_to_lints(
-      bad_expr,
+    order_lints <- xml_nodes_to_lints(
+      order_expr,
       source_expression = source_expression,
       lint_message = paste0(new_call, " is better than ", orig_call, "."),
       type = "warning"
     )
+
+    sorted_expr <- xml_find_all(xml, sorted_xpath)
+
+    sorted_lints <- xml_nodes_to_lints(
+      sorted_expr,
+      source_expression = source_expression,
+      lint_message = "Use is.unsorted() to test the (un-)sortedness of a vector.",
+      type = "warning"
+    )
+
+    c(order_lints, sorted_lints)
   })
 }

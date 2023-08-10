@@ -23,6 +23,7 @@
   + `yoda_test_linter()`
 * `sprintf_linter()` is pipe-aware, so that `x %>% sprintf(fmt = "%s")` no longer lints (#1943, @MichaelChirico).
 * `line_length_linter()` helpfully includes the line length in the lint message (#2057, @MichaelChirico).
+* `sort_linter()` checks for code like `x == sort(x)` which is better served by using the function `is.unsorted()` (part of #884, @MichaelChirico).
 
 ### New linters
 
