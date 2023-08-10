@@ -15,6 +15,39 @@
 #'   By default, [is.null()], [is.na()], and [missing()] are excluded
 #'   given the common idiom `!is.na(x)` as "x is present".
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "if (!A) x else y",
+#'   linters = if_not_else_linter()
+#' )
+#'
+#' lint(
+#'   text = "ifelse(!is_treatment, x, y)",
+#'   linters = if_not_else_linter()
+#' )
+#'
+#' lint(
+#'   text = "if (!is.null(x)) x else 2",
+#'   linters = if_not_else_linter(exceptions = character())
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "if (A) x else y",
+#'   linters = if_not_else_linter()
+#' )
+#'
+#' lint(
+#'   text = "ifelse(is_treatment, y, x)",
+#'   linters = if_not_else_linter()
+#' )
+#'
+#' lint(
+#'   text = "if (!is.null(x)) x else 2",
+#'   linters = if_not_else_linter()
+#' )
+#'
 #' @evalRd rd_tags("if_not_else_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
