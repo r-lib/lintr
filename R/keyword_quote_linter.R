@@ -52,6 +52,11 @@
 #   //expr[expr[SYMBOL_FUNCTION_CALL]]/SYMBOL_SUB[starts-with(text(), '`')]
 #   //expr[expr[SYMBOL_FUNCTION_CALL]]/STR_CONST[{is_quoted(text())}]
 keyword_quote_linter <- function() {
+  # Check if a string could be assigned as an R variable.
+  #
+  # See [make.names()] for the description of syntactically valid names in R.
+  is_valid_r_name <- function(x) make.names(x) == x
+
   # NB: xml2 uses xpath 1.0 which doesn't support matches() for regex, so we
   #   have to jump out of xpath to complete this lint.
   # It's also a bit tough to get the escaping through R and then xpath to
@@ -157,10 +162,3 @@ keyword_quote_linter <- function() {
     c(call_arg_lints, string_assignment_lints, assignment_lints, string_extraction_lints, extraction_lints)
   })
 }
-
-#' Check if a string could be assigned as an R variable.
-#'
-#' See [make.names()] for the description of syntactically valid names in R.
-#'
-#' @noRd
-is_valid_r_name <- function(x) make.names(x) == x

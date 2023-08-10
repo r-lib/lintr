@@ -42,6 +42,14 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bit64", "data.table", "tidyverse")) {
+  # Get dataset names lazy-loaded by imported packages
+  get_datasets <- function(pkg) {
+    results <- utils::data(package = pkg)$results
+    items <- results[, "Item"]
+    # e.g. 'state.abb (state)' in 'datasets'
+    gsub("\\s*\\([^)]*\\)$", "", items)
+  }
+
   import_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
     /parent::expr
@@ -125,13 +133,4 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
     )
     xml_nodes_to_lints(import_exprs, source_expression, lint_message, type = "warning")
   })
-}
-
-#' Get dataset names lazy-loaded by imported packages
-#' @noRd
-get_datasets <- function(pkg) {
-  results <- utils::data(package = pkg)$results
-  items <- results[, "Item"]
-  # e.g. 'state.abb (state)' in 'datasets'
-  gsub("\\s*\\([^)]*\\)$", "", items)
 }
