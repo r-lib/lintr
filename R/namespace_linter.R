@@ -131,9 +131,10 @@ namespace_symbols <- function(ns, exported = TRUE) {
   }
 }
 is_in_pkg <- function(symbols, namespaces, exported = TRUE) {
-  mapply(
-    function(pkg_sym, pkg_ns) pkg_sym %in% namespace_symbols(pkg_ns, exported = exported),
-    symbols, namespaces
+  vapply(
+    seq_along(symbols),
+    function(ii) symbols[[ii]] %in% namespace_symbols(namespaces[[ii]], exported = exported),
+    logical(1L)
   )
 }
 
