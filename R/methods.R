@@ -45,8 +45,7 @@ markdown <- function(x, info, ...) {
     as.character(x$line_number), ":",
     as.character(x$column_number), ":", "]",
     "(",
-    paste(
-      sep = "/",
+    file.path(
       "https://github.com",
       info$user,
       info$repo,
