@@ -23,6 +23,7 @@
   + `unreachable_code_linter()`
   + `yoda_test_linter()`
 * `sprintf_linter()` is pipe-aware, so that `x %>% sprintf(fmt = "%s")` no longer lints (#1943, @MichaelChirico).
+* `line_length_linter()` helpful includes the line length in the lint message (#2057, @MichaelChirico).
 
 ### New linters
 

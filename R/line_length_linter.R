@@ -32,18 +32,25 @@ line_length_linter <- function(length = 80L) {
     line_lengths <- nchar(source_expression$file_lines)
     long_lines <- which(line_lengths > length)
 
-    lint_message <- sprintf("Lines should not be more than %d characters.", length)
+    lint_messages <- sprintf(
+      "Lines should not be more than %d characters. This line is %d characters.",
+      length, line_lengths[long_lines]
+    )
 
-    lapply(long_lines, function(long_line) {
-      Lint(
-        filename = source_expression$filename,
-        line_number = long_line,
-        column_number = length + 1L,
-        type = "style",
-        message = lint_message,
-        line = source_expression$file_lines[long_line],
-        ranges = list(c(1L, line_lengths[long_line]))
-      )
-    })
+    mapply(
+      function(long_line, lint_message) {
+        Lint(
+          filename = source_expression$filename,
+          line_number = long_line,
+          column_number = length + 1L,
+          type = "style",
+          message = lint_message,
+          line = source_expression$file_lines[long_line],
+          ranges = list(c(1L, line_lengths[long_line]))
+        )
+      },
+      long_lines, lint_messages,
+      SIMPLIFY = FALSE
+    )
   })
 }
