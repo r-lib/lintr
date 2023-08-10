@@ -141,40 +141,32 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE, allow
   ")
 
   # Type II: paste0(x, "/", y, "/", z)
-  #   more specifically, paste0 need not be replaced by file.path when
-  #   (1) there are consecutive SYMBOL|expr (like paste0(x, y))
-  #   (2) a STR_CONST precedes a SYMBOL|expr, but doesn't end with /
-  #   (3) a STR_CONST follows a SYMBOL|expr, but doesn't start with /
-  #   (4) there are consecutive STR_CONSTs but neither
-  #       the first ends with / nor the second starts with /
-  #   (5) there is only one argument
-  #   (6) there is any NUM_CONST
-  #   (7) collapse is used
-  #   (8) / is the first character in an initial STR_CONST or the
-  #       last character in a terminal STR_CONST, where file.path
-  #       replacement would somewhat awkwardly look like
-  #       file.path("", ...) and/or file.path(..., "")
-  #   (9) a STR_CONST beginning or ending with >1 slashes (like "//x")
-  # use count() to exclude paste0(x)
-  # don't use starts-with() -- (1) there's no ends-with() in XPath 1.0 and
-  #   (2) we need to cater for both ' and " quotations which ^ complexity
-  # NB: XPath's substring() signature is (text, initial_index, n_characters)
-  # an expression matching any of the not(...) conditions is _not_ a path
-  paste0_file_path_xpath <- glue("
+  paste0_file_path_xpath <- xp_strip_comments(glue("
   //SYMBOL_FUNCTION_CALL[text() = 'paste0']
     /parent::expr
     /parent::expr[
+      (: exclude paste0(x) :)
       count(expr) > 2
+      (: An expression matching _any_ of these conditions is _not_ a file path :)
       and not(
+        (: Any numeric input :)
         expr/NUM_CONST
+        (: A call using collapse= :)
         or SYMBOL_SUB[text() = 'collapse']
+        (: First input is '/', meaning file.path() would need to start with '' :)
         or expr[2][{slash_str}]
+        (: Last input is '/', meaning file.path() would need to end with '' :)
         or expr[last()][{slash_str}]
+        (: String starting or ending with multiple / :)
+        (: TODO(#2075): run this logic on the actual R string :)
         or expr/STR_CONST[
+          (: NB: this is (text, initial_index, n_characters) :)
           substring(text(), 2, 2) = '//'
           or substring(text(), string-length(text()) - 2, 2) = '//'
         ]
+        (: Consecutive non-strings like paste0(x, y) :)
         or expr[({non_str}) and following-sibling::expr[1][{non_str}]]
+        (: A string not ending with /, followed by non-string or string not starting with / :)
         or expr[
           {str_not_end_with_slash}
           and following-sibling::expr[1][
@@ -182,13 +174,15 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE, allow
             or {str_not_start_with_slash}
           ]
         ]
+        (: A string not starting with /, preceded by a non-string       :)
+        (: NB: consecutive strings is covered by the previous condition :)
         or expr[
           {str_not_start_with_slash}
           and preceding-sibling::expr[1][{non_str}]
         ]
       )
     ]
-  ")
+  "))
 
   empty_paste_note <-
     'Note that paste() converts empty inputs to "", whereas file.path() leaves it empty.'
