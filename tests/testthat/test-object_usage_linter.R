@@ -370,13 +370,6 @@ test_that("interprets glue expressions", {
     }
   "), NULL, linter)
 
-  expect_lint(trim_some("
-    foo <- function() {
-      `%++%` <- `+`
-      glue('{x %++% y}')
-    }
-  "), NULL, linter)
-
   # multiple variables in single interpolation
   expect_lint(trim_some("
     fun <- function() {
@@ -439,6 +432,15 @@ test_that("interprets glue expressions", {
     "local_unused_call",
     linter
   )
+
+  # ditto infix operator
+  expect_lint(trim_some("
+    glue <- glue::glue # imitate this being an @import
+    foo <- function() {
+      `%++%` <- `+`
+      glue('{x %++% y}')
+    }
+  "), NULL, linter)
 })
 
 test_that("errors/edge cases in glue syntax don't fail lint()", {
