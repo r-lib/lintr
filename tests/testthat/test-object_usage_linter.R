@@ -370,6 +370,13 @@ test_that("interprets glue expressions", {
     }
   "), NULL, linter)
 
+  expect_lint(trim_some("
+    foo <- function() {
+      `%++%` <- `+`
+      glue('{x %++% y}')
+    }
+  "), NULL, linter)
+
   # multiple variables in single interpolation
   expect_lint(trim_some("
     fun <- function() {
