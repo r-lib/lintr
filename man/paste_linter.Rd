@@ -62,6 +62,11 @@ lint(
   linters = paste_linter()
 )
 
+lint(
+  text = 'paste0(dir, "/", file)',
+  linters = paste_linter()
+)
+
 # okay
 lint(
   text = 'paste0("a", "b")',
@@ -91,6 +96,11 @@ lint(
 lint(
   text = 'strrep("*", 10L)',
   linters = paste_linter()
+)
+
+lint(
+  text = 'paste0(year, "/", month, "/", day)',
+  linters = paste_linter(allow_file_path = TRUE)
 )
 
 }
