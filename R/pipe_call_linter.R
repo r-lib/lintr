@@ -45,5 +45,3 @@ pipe_call_linter <- function() {
     )
   })
 }
-
-magrittr_pipes <- c("%>%", "%!>%", "%T>%", "%$%", "%<>%")

@@ -27,6 +27,20 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_type_linter <- function() {
+  # NB: the full list of values that can arise from `typeof(x)` is available
+  #   in ?typeof (or, slightly more robustly, in the R source: src/main/util.c.
+  #   Not all of them are available in is.<type> form, e.g. 'any' or
+  #   'special'. 'builtin' and 'closure' are special cases, corresponding to
+  #   is.primitive and is.function (essentially).
+  base_types <- c(
+    "raw", "logical", "integer", "double", "complex", "character", "list",
+    "numeric", "function", "primitive", "environment", "pairlist", "promise",
+    # Per ?is.language, it's the same as is.call || is.name || is.expression.
+    #   so by blocking it, we're forcing more precise tests of one of
+    #   those directly ("language", "symbol", and "expression", resp.)
+    # NB: is.name and is.symbol are identical.
+    "language", "call", "name", "symbol", "expression"
+  )
   base_type_tests <- xp_text_in_table(paste0("is.", base_types))
   expect_equal_identical_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
@@ -67,18 +81,3 @@ expect_type_linter <- function() {
     )
   })
 }
-
-# NB: the full list of values that can arise from `typeof(x)` is available
-#   in ?typeof (or, slightly more robustly, in the R source: src/main/util.c.
-#   Not all of them are available in is.<type> form, e.g. 'any' or
-#   'special'. 'builtin' and 'closure' are special cases, corresponding to
-#   is.primitive and is.function (essentially).
-base_types <- c(
-  "raw", "logical", "integer", "double", "complex", "character", "list",
-  "numeric", "function", "primitive", "environment", "pairlist", "promise",
-  # Per ?is.language, it's the same as is.call || is.name || is.expression.
-  #   so by blocking it, we're forcing more precise tests of one of
-  #   those directly ("language", "symbol", and "expression", resp.)
-  # NB: is.name and is.symbol are identical.
-  "language", "call", "name", "symbol", "expression"
-)

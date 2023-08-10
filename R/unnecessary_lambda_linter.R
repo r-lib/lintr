@@ -142,9 +142,3 @@ unnecessary_lambda_linter <- function() {
     c(default_fun_lints, purrr_fun_lints)
   })
 }
-
-purrr_mappers <- c(
-  "map", "walk",
-  "map_raw", "map_lgl", "map_int", "map_dbl", "map_chr", "map_vec",
-  "map_df", "map_dfr", "map_dfc"
-)
