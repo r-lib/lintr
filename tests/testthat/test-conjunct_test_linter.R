@@ -109,3 +109,47 @@ test_that("conjunct_test_linter's allow_named_stopifnot argument works", {
     conjunct_test_linter(allow_named_stopifnot = FALSE)
   )
 })
+
+test_that("conjunct_test_linter skips allowed usages", {
+  linter <- conjunct_test_linter()
+
+  expect_lint("dplyr::filter(DF, A, B)", NULL, linter)
+  expect_lint("dplyr::filter(DF, !(A & B))", NULL, linter)
+  # | is the "top-level" operator here
+  expect_lint("dplyr::filter(DF, A & B | C)", NULL, linter)
+  expect_lint("dplyr::filter(DF, A | B & C)", NULL, linter)
+
+  # TODO(michaelchirico): shut these off to stay on the conservative side and
+  #   only lint for calls that we _know_ are coming from dplyr. consider
+  #   whether to use an argument to change this, or if we can improve the
+  #   logic to ensure dplyr::filter() is being used.
+  # # using & in stats::filter() calls should be uncommon, but ensure
+  # #   either dplyr:: is used or there's no namespace qualification
+  # expect_lint(
+  #   "stats::filter(A & B)",
+  #   NULL,
+  #   conjunct_test_linter
+  # )
+  # expect_lint(
+  #   "ns::filter(A & B)",
+  #   NULL,
+  #   conjunct_test_linter
+  # )
+})
+
+test_that("conjunct_test_linter blocks simple disallowed usages", {
+  linter <- conjunct_test_linter()
+  lint_msg <- rex::rex("Use dplyr::filter(DF, A, B) instead of dplyr::filter(DF, A & B)")
+
+  expect_lint("dplyr::filter(DF, A & B)", lint_msg, linter)
+  expect_lint("dplyr::filter(DF, A & B & C)", lint_msg, linter)
+
+  # more common usage, in pipes
+  expect_lint("DF %>% dplyr::filter(A & B)", lint_msg, linter)
+  # TODO(michaelchirico): see above
+  # expect_lint(
+  #   "DF %>% filter(A & B)",
+  #   "Use dplyr::filter\\(DF, A, B\\) instead of dplyr::filter\\(DF, A & B\\)",
+  #   conjunct_test_linter
+  # )
+})
