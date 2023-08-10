@@ -72,9 +72,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
-<ul><li>
-<code><a href="../reference/library_call_linter.html">library_call_linter()</a></code> can detect if all library calls are not at the top of your script (<a href="https://github.com/r-lib/lintr/issues/2027" class="external-link">#2027</a>, <a href="https://github.com/nicholas-masel" class="external-link">@nicholas-masel</a>).</li>
-<li>Linters with logic around the magrittr pipe <code>%&gt;%</code> consistently apply it to the other pipes <code>%!&gt;%</code>, <code>%T&gt;%</code>, <code>%&lt;&gt;%</code> (and possibly <code>%$%</code>) where appropriate (<a href="https://github.com/r-lib/lintr/issues/2008" class="external-link">#2008</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).
+<ul><li>Linters with logic around the magrittr pipe <code>%&gt;%</code> consistently apply it to the other pipes <code>%!&gt;%</code>, <code>%T&gt;%</code>, <code>%&lt;&gt;%</code> (and possibly <code>%$%</code>) where appropriate (<a href="https://github.com/r-lib/lintr/issues/2008" class="external-link">#2008</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).
 <ul><li><code><a href="../reference/brace_linter.html">brace_linter()</a></code></li>
 <li><code><a href="../reference/pipe_call_linter.html">pipe_call_linter()</a></code></li>
 <li><code><a href="../reference/pipe_continuation_linter.html">pipe_continuation_linter()</a></code></li>
@@ -97,6 +95,8 @@
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>
+<code><a href="../reference/library_call_linter.html">library_call_linter()</a></code> can detect if all library calls are not at the top of your script (<a href="https://github.com/r-lib/lintr/issues/2027" class="external-link">#2027</a>, <a href="https://github.com/nicholas-masel" class="external-link">@nicholas-masel</a>).</li>
+<li>
 <code><a href="../reference/keyword_quote_linter.html">keyword_quote_linter()</a></code> for finding unnecessary or discouraged quoting of symbols in assignment, function arguments, or extraction (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Quoting is unnecessary when the target is a valid R name, e.g. <code>c("a" = 1)</code> can be <code>c(a = 1)</code>. The same goes to assignment (<code>"a" &lt;- 1</code>) and extraction (<code>x$"a"</code>). Where quoting is necessary, the linter encourages doing so with backticks (e.g. <code>x$`a b`</code> instead of <code>x$"a b"</code>).</li>
 <li>
 <code><a href="../reference/length_levels_linter.html">length_levels_linter()</a></code> for using the specific function <code><a href="https://rdrr.io/r/base/nlevels.html" class="external-link">nlevels()</a></code> instead of checking <code>length(levels(x))</code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
