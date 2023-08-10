@@ -259,7 +259,8 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE, allow
         source_expression = source_expression,
         lint_message = paste(
           'Construct file paths with file.path(...) instead of paste(..., sep = "/").',
-          'If you are using paste(sep = "/") to construct a date, consider using format() or lubridate helpers instead.',
+          'If you are using paste(sep = "/") to construct a date,',
+          "consider using format() or lubridate helpers instead.",
           empty_paste_note
         ),
         type = "warning"
