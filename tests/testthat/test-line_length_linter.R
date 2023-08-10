@@ -55,3 +55,14 @@ test_that("line_length_linter blocks disallowed usages", {
     1L
   )
 })
+
+test_that("Multiple lints give custom messages", {
+  expect_lint(
+    trim_some("{
+      abcdefg
+      hijklmnop
+    }"),
+    list("9 characters", "11 characters"),
+    line_length_linter(5)
+  )
+})
