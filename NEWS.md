@@ -7,7 +7,6 @@
 
 ## New and improved features
 
-* `library_call_linter()` can detect if all library calls are not at the top of your script (#2027, @nicholas-masel).
 * Linters with logic around the magrittr pipe `%>%` consistently apply it to the other pipes `%!>%`, `%T>%`, `%<>%` (and possibly `%$%`) where appropriate (#2008, @MichaelChirico).
   + `brace_linter()`
   + `pipe_call_linter()`
@@ -27,6 +26,7 @@
 
 ### New linters
 
+* `library_call_linter()` can detect if all library calls are not at the top of your script (#2027, @nicholas-masel).
 * `keyword_quote_linter()` for finding unnecessary or discouraged quoting of symbols in assignment, function arguments, or extraction (part of #884, @MichaelChirico). Quoting is unnecessary when the target is a valid R name, e.g. `c("a" = 1)` can be `c(a = 1)`. The same goes to assignment (`"a" <- 1`) and extraction (`x$"a"`). Where quoting is necessary, the linter encourages doing so with backticks (e.g. `` x$`a b` `` instead of `x$"a b"`).
 * `length_levels_linter()` for using the specific function `nlevels()` instead of checking `length(levels(x))` (part of #884, @MichaelChirico).
 
