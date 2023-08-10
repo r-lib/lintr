@@ -34,11 +34,6 @@ line_length_linter <- function(length = 80L) {
     line_lengths <- nchar(source_expression$file_lines)
     long_lines <- which(line_lengths > length)
 
-    lint_messages <- sprintf(
-      "Lines should not be more than %d characters. This line is %d characters.",
-      length, line_lengths[long_lines]
-    )
-
     mapply(
       function(long_line, line_length) {
         Lint(
