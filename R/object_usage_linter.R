@@ -166,6 +166,7 @@ extract_glued_symbols <- function(expr, interpret_glue) {
   #
   # Package stringr:
   #  - str_interp
+  # NB: position() > 1 because position=1 is <expr><SYMBOL_FUNCTION_CALL>
   glue_call_xpath <- "
     descendant::SYMBOL_FUNCTION_CALL[text() = 'glue']
       /parent::expr
