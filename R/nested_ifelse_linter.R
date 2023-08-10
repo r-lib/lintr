@@ -59,7 +59,3 @@ nested_ifelse_linter <- function() {
     xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "warning")
   })
 }
-
-# functions equivalent to base::ifelse() for linting purposes
-# NB: this is re-used elsewhere, e.g. in ifelse_censor_linter
-ifelse_funs <- c("ifelse", "if_else", "fifelse")
