@@ -497,7 +497,7 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 
   # setup file
   d <- xml2::xml_new_document()
-  n <- xml2::xml_add_child(d, "checkstyle", version = paste0("lintr-", packageVersion("lintr")))
+  n <- xml2::xml_add_child(d, "checkstyle", version = paste0("lintr-", utils::packageVersion("lintr")))
 
   # output the style markers to the file
   lapply(split(lints, names(lints)), function(lints_per_file) {
@@ -612,7 +612,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   # assign values
   sarif$runs[[1L]]$results <- NULL
   sarif$runs[[1L]]$tool$driver$rules <- NULL
-  sarif$runs[[1L]]$tool$driver$version <- as.character(packageVersion("lintr"))
+  sarif$runs[[1L]]$tool$driver$version <- as.character(utils::packageVersion("lintr"))
   sarif$runs[[1L]]$originalUriBaseIds$ROOTPATH$uri <- ""
   rule_index_exists <- FALSE
   root_path_uri <- gsub("\\", "/", package_path, fixed = TRUE)
