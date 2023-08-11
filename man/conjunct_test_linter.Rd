@@ -20,7 +20,9 @@ For readability of test outputs, testing only one thing per call to
 Similar reasoning applies to \code{&&} usage inside \code{\link[=stopifnot]{stopifnot()}} and \code{assertthat::assert_that()} calls.
 
 Relatedly, \code{dplyr::filter(DF, A & B)} is the same as \code{dplyr::filter(DF, A, B)}, but the
-latter will be more readable / easier to format for long conditions.
+latter will be more readable / easier to format for long conditions. Note that this linter
+assumes usages of \code{filter()} are \code{dplyr::filter()}; if you're using another function named \code{filter()},
+e.g. \code{\link[stats:filter]{stats::filter()}}, please namespace-qualify it to avoid false positives.
 }
 \examples{
 # will produce lints

@@ -8,7 +8,9 @@
 #' Similar reasoning applies to `&&` usage inside [stopifnot()] and `assertthat::assert_that()` calls.
 #'
 #' Relatedly, `dplyr::filter(DF, A & B)` is the same as `dplyr::filter(DF, A, B)`, but the
-#'   latter will be more readable / easier to format for long conditions.
+#'   latter will be more readable / easier to format for long conditions. Note that this linter
+#'   assumes usages of `filter()` are `dplyr::filter()`; if you're using another function named `filter()`,
+#'   e.g. [stats::filter()], please namespace-qualify it to avoid false positives.
 #'
 #' @param allow_named_stopifnot Logical, `TRUE` by default. If `FALSE`, "named" calls to `stopifnot()`,
 #'   available since R 4.0.0 to provide helpful messages for test failures, are also linted.
