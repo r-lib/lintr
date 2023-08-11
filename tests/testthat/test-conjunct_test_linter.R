@@ -130,3 +130,15 @@ test_that("conjunct_test_linter blocks simple disallowed usages", {
   # more common usage, in pipes
   expect_lint("DF %>% dplyr::filter(A & B)", lint_msg, linter)
 })
+
+test_that("filter() is assumed to be dplyr::filter() by default, unless o/w specified", {
+  linter <- conjunct_test_linter()
+
+  expect_lint("stats::filter(A & B)", NULL, linter)
+  expect_lint("ns::filter(A & B)", NULL, linter)
+  expect_lint(
+    "DF %>% filter(A & B)",
+    rex::rex("Use dplyr::filter(DF, A, B) instead of dplyr::filter(DF, A & B)"),
+    linter
+  )
+})

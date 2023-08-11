@@ -73,7 +73,7 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
 
   filter_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'filter']
-    /parent::expr[SYMBOL_PACKAGE[text() = 'dplyr']]
+    /parent::expr[not(SYMBOL_PACKAGE[text() != 'dplyr'])]
     /parent::expr
     /expr[AND]
   "
@@ -97,6 +97,7 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
     )
     lint_message <- paste(
       sprintf("Instead of %s(A %s B),", matched_fun, operator),
+      # as.character() needed for 0-lint case where ifelse(logical(0)) returns logical(0)
       sprintf(as.character(replacement_fmt), matched_fun),
       "The latter will produce better error messages in the case of failure."
     )
