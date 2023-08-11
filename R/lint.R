@@ -39,7 +39,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     stop("'cache' is no longer available as a positional argument; please supply 'cache' as a named argument instead.")
   }
 
-  needs_tempfile <- missing(filename) || rex::re_matches(filename, rex::rex(newline))
+  needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
   lines <- get_lines(filename, text)
 
@@ -125,7 +125,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 lint_dir <- function(path = ".", ...,
                      relative_path = TRUE,
                      exclusions = list("renv", "packrat"),
-                     pattern = rex::rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"), end),
+                     pattern = rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"), end),
                      parse_settings = TRUE) {
   if (has_positional_logical(list(...))) {
     stop(
@@ -497,7 +497,7 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 
   # setup file
   d <- xml2::xml_new_document()
-  n <- xml2::xml_add_child(d, "checkstyle", version = paste0("lintr-", utils::packageVersion("lintr")))
+  n <- xml2::xml_add_child(d, "checkstyle", version = paste0("lintr-", packageVersion("lintr")))
 
   # output the style markers to the file
   lapply(split(lints, names(lints)), function(lints_per_file) {
@@ -612,7 +612,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   # assign values
   sarif$runs[[1L]]$results <- NULL
   sarif$runs[[1L]]$tool$driver$rules <- NULL
-  sarif$runs[[1L]]$tool$driver$version <- as.character(utils::packageVersion("lintr"))
+  sarif$runs[[1L]]$tool$driver$version <- as.character(packageVersion("lintr"))
   sarif$runs[[1L]]$originalUriBaseIds$ROOTPATH$uri <- ""
   rule_index_exists <- FALSE
   root_path_uri <- gsub("\\", "/", package_path, fixed = TRUE)
@@ -738,7 +738,7 @@ maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
 get_lines <- function(filename, text) {
   if (!is.null(text)) {
     strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
-  } else if (rex::re_matches(filename, rex::rex(newline))) {
+  } else if (re_matches(filename, rex(newline))) {
     strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
   } else {
     read_lines(filename)

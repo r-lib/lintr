@@ -70,7 +70,7 @@ available_linters <- function(packages = "lintr", tags = NULL, exclude_tags = "d
   if (!file.exists(csv_file)) {
     return(empty_linters())
   }
-  available <- utils::read.csv(csv_file, encoding = "UTF-8", as.is = TRUE)
+  available <- read.csv(csv_file, encoding = "UTF-8", as.is = TRUE)
 
   if (!validate_linter_db(available, packages)) {
     return(empty_linters())
