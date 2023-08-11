@@ -8,10 +8,10 @@
 <meta name="description" content="lintr">
 <title>Continuous integration • lintr</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Continuous integration">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Continuous integration">
 <meta property="og:description" content="lintr">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-default me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,53 +91,86 @@
 
     
     
-<p>You can configure <code>lintr</code> to run as part of continuous integration (either for a package or a general project containing R files) in order to automatically check that commits and pull requests do not deteriorate code style.</p>
+<p>You can configure <code>lintr</code> to run as part of continuous
+integration (either for a package or a general project containing R
+files) in order to automatically check that commits and pull requests do
+not deteriorate code style.</p>
 <div class="section level2">
 <h2 id="for-packages">For packages<a class="anchor" aria-label="anchor" href="#for-packages"></a>
 </h2>
 <div class="section level3">
 <h3 id="github-actions">GitHub Actions<a class="anchor" aria-label="anchor" href="#github-actions"></a>
 </h3>
-<p>If your package is on GitHub, the easiest way to do this is with GitHub Actions. The workflow configuration files use YAML syntax. The <code>usethis</code> package has some great functionality that can help you with workflow files. The most straightforward way to add a <code>lintr</code> workflow to your package is to use the <a href="https://github.com/r-lib/actions/tree/master/examples" class="external-link">r-lib/actions</a>’s <code>lint</code> example. To do this with <code>usethis</code>, you need to call</p>
+<p>If your package is on GitHub, the easiest way to do this is with
+GitHub Actions. The workflow configuration files use YAML syntax. The
+<code>usethis</code> package has some great functionality that can help
+you with workflow files. The most straightforward way to add a
+<code>lintr</code> workflow to your package is to use the <a href="https://github.com/r-lib/actions/" class="external-link">r-lib/actions</a>’s <a href="https://github.com/r-lib/actions/tree/v2-branch/examples#lint-workflow" class="external-link"><code>lint</code>
+example</a>. To do this with <code>usethis</code>, you need to call</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_github_action</span><span class="op">(</span><span class="st">"lint"</span><span class="op">)</span></span></code></pre></div>
-<p>This will create a workflow file called <code>lint.yaml</code> and place it in the correct location, namely in the <code>.github/workflows</code> directory of your repository. This file configures all the steps required to run <code><a href="../reference/lint.html">lintr::lint_package()</a></code> on your package.</p>
-<p><a href="https://github.com/lintr-bot" class="external-link">lintr-bot</a> will then add comments to the commit or pull request with the lints found and they will also be printed as <a href="https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-status-checks#types-of-status-checks-on-github" class="external-link">annotations</a> along side the status check on GitHub. If you want to disable the commenting you can set the environment variable <code>LINTR_COMMENT_BOT=false</code>. Additionally, if you want the builds to produce an error instead of just a warning, you can set the environment variable <code>LINTR_ERROR_ON_LINT=true</code>. Note that this will kill the R process in case of a lint.</p>
-<p>If your project is in a subdirectory and you would like to use GitHub Actions annotations, you can set <code>options(lintr.github_annotation_project_dir = "path/to/project")</code> which will make sure that the annotations point to the correct paths.</p>
+<p>This will create a workflow file called <code>lint.yaml</code> and
+place it in the correct location, namely in the
+<code>.github/workflows</code> directory of your repository. This file
+configures all the steps required to run
+<code><a href="../reference/lint.html">lintr::lint_package()</a></code> on your package.</p>
+<p>Alternatively you can use the eponymous <a href="https://github.com/r-lib/actions/blob/v2-branch/examples/lint-changed-files.yaml" class="external-link"><code>lint-changed-files.yaml</code></a>
+to only lint any changed files:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_github_action</span><span class="op">(</span><span class="st">"lint-changed-files"</span><span class="op">)</span></span></code></pre></div>
+<p>Comments to the commit or pull request will be printed as <a href="https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-status-checks#types-of-status-checks-on-github" class="external-link">annotations</a>
+along side the status check on GitHub. If you want the builds to produce
+an error instead of just a warning, you can set the environment variable
+<code>LINTR_ERROR_ON_LINT=true</code>. This is set by default for both
+<a href="https://github.com/r-lib/actions/" class="external-link">r-lib/actions</a>’s
+<code>lint.yaml</code> and <code>lint-changed-files.yaml</code>. Note
+that this will kill the R process in case of a lint.</p>
+<p>If your project is in a subdirectory and you would like to use GitHub
+Actions annotations, you can set
+<code>options(lintr.github_annotation_project_dir = "path/to/project")</code>
+which will make sure that the annotations point to the correct
+paths.</p>
 </div>
 <div class="section level3">
 <h3 id="travis-ci">Travis CI<a class="anchor" aria-label="anchor" href="#travis-ci"></a>
 </h3>
-<p>If you want to run <code>lintr</code> on <a href="https://www.travis-ci.com/" class="external-link">Travis-CI</a>, you will need to have Travis install the package first. This can be done by adding the following line to your <code>.travis.yml</code></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">r_github_packages</span><span class="kw">:</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> r-lib/lintr</span></span></code></pre></div>
-<p>We recommend running <code><a href="../reference/lint.html">lintr::lint_package()</a></code> as an <a href="#non-failing-lints">after_success step in your build process</a>]</p>
-<p>Just like with GitHub Actions, <a href="https://github.com/lintr-bot" class="external-link">lintr-bot</a> will then add comments to the commit or pull request with the lints found and they will also be printed on Travis-CI. The environment variables <code>LINTR_COMMENT_BOT</code> and <code>LINTR_ERROR_ON_LINT</code> mentioned for GitHub actions also work with Travis CI builds.</p>
-<div class="section level5">
-<h5 id="non-failing-lints">Non-failing Lints<a class="anchor" aria-label="anchor" href="#non-failing-lints"></a>
-</h5>
-<div class="sourceCode" id="cb3"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">after_success</span><span class="kw">:</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> R CMD INSTALL $PKG_TARBALL</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> Rscript -e 'lintr::lint_package()'</span></span></code></pre></div>
-<p>Live example of a package using this setup: <a href="https://github.com/jumpingrivers/HIBPwned/blob/master/.travis.yml" class="external-link"><code>hibpwned</code></a>, <a href="https://github.com/jumpingrivers/HIBPwned/pull/30" class="external-link">lintr-bot commenting on a PR</a>.</p>
-</div>
+<p>If you want to run <code>lintr</code> on <a href="https://www.travis-ci.com/" class="external-link">Travis-CI</a>, you will need to have
+Travis install the package first. This can be done by adding the
+following line to your <code>.travis.yml</code></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">r_github_packages</span><span class="kw">:</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> r-lib/lintr</span></span></code></pre></div>
+<p>We recommend running <code><a href="../reference/lint.html">lintr::lint_package()</a></code> as an
+after_success step in your build process:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">after_success</span><span class="kw">:</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> R CMD INSTALL $PKG_TARBALL</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> Rscript -e 'lintr::lint_package()'</span></span></code></pre></div>
+<p>If lints are found in the commit or pull request they will be printed
+on Travis-CI. The environment variable <code>LINTR_ERROR_ON_LINT</code>
+mentioned for GitHub actions also works with Travis CI builds.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="for-projects">For projects<a class="anchor" aria-label="anchor" href="#for-projects"></a>
 </h2>
-<p>You are not limited you using <code>lintr</code> for packages – you can use it in combination with continuous integration for any other project.</p>
+<p>You are not limited to using <code>lintr</code> for packages – you
+can use it in combination with continuous integration for any other
+project.</p>
 <div class="section level3">
 <h3 id="github-actions-1">GitHub Actions<a class="anchor" aria-label="anchor" href="#github-actions-1"></a>
 </h3>
-<p>If your project is on GitHub, you could take advantage of GitHub Actions and the <code>usethis</code> functionality. <a href="https://github.com/r-lib/actions/tree/master/examples" class="external-link">r-lib/actions</a> includes a <code>lint-project</code> example, which you can use by calling:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>If your project is on GitHub, you could take advantage of GitHub
+Actions and the <code>usethis</code> functionality. <a href="https://github.com/r-lib/actions/" class="external-link">r-lib/actions</a> includes a <a href="https://github.com/r-lib/actions/tree/v2-branch/examples#lint-project-workflow" class="external-link"><code>lint-project</code>
+example</a>, which you can use by calling:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_github_action</span><span class="op">(</span><span class="st">"lint-project"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="super-linter">Super-Linter<a class="anchor" aria-label="anchor" href="#super-linter"></a>
 </h3>
-<p><code>lintr</code> powers R lints for <a href="https://github.com/github/super-linter" class="external-link">Super-Linter</a> and <a href="https://oxsecurity.github.io/megalinter/latest/" class="external-link">MegaLinter</a>, which provide a unified linting experience across many languages. Specifically, they execute <code><a href="../reference/lint.html">lintr::lint()</a></code> on the R and R Markdown files included in a given project.</p>
+<p><code>lintr</code> powers R lints for <a href="https://github.com/github/super-linter" class="external-link">Super-Linter</a> and <a href="https://megalinter.io/latest/" class="external-link">MegaLinter</a>, which provide a
+unified linting experience across many languages. Specifically, they
+execute <code><a href="../reference/lint.html">lintr::lint()</a></code> on the R and R Markdown files
+included in a given project.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -153,7 +186,7 @@
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
     </footer>
