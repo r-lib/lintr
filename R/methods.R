@@ -45,8 +45,7 @@ markdown <- function(x, info, ...) {
     as.character(x$line_number), ":",
     as.character(x$column_number), ":", "]",
     "(",
-    paste(
-      sep = "/",
+    file.path(
       "https://github.com",
       info$user,
       info$repo,
@@ -122,7 +121,7 @@ trim_output <- function(x, max = 65535L) {
   # otherwise trim x to the max, then search for the lint starts
   x <- substr(x, 1L, max)
 
-  re <- rex::rex(
+  re <- rex(
     "[", except_some_of(":"), ":", numbers, ":", numbers, ":", "]",
     "(", except_some_of(")"), ")",
     space,
@@ -134,7 +133,7 @@ trim_output <- function(x, max = 65535L) {
     except_some_of("\r\n"), newline
   )
 
-  lint_starts <- rex::re_matches(x, re, global = TRUE, locations = TRUE)[[1L]]
+  lint_starts <- re_matches(x, re, global = TRUE, locations = TRUE)[[1L]]
 
   # if at least one lint ends before the cutoff, cutoff there, else just use
   # the cutoff

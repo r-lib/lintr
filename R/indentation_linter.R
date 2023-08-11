@@ -189,9 +189,9 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
           ({xp_or(paste0('descendant::', paren_tokens_left, '[', xp_last_on_line, ']'))})
         ]/@line1
       )]"),
-      glue::glue("({ global_nodes(infix_tokens) })[{xp_last_on_line}{infix_condition}]"),
-      glue::glue("({ global_nodes(no_paren_keywords) })[{xp_last_on_line}]"),
-      glue::glue("
+      glue("({ global_nodes(infix_tokens) })[{xp_last_on_line}{infix_condition}]"),
+      glue("({ global_nodes(no_paren_keywords) })[{xp_last_on_line}]"),
+      glue("
         ({ global_nodes(keyword_tokens) })
           /following-sibling::OP-RIGHT-PAREN[
             {xp_last_on_line} and
@@ -223,9 +223,9 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     #     + if there is no token following ( on the same line, a block indent is required until )
     #  - binary operators where the second arguments starts on a new line
 
-    indent_levels <- rex::re_matches(
+    indent_levels <- re_matches(
       source_expression$file_lines,
-      rex::rex(start, any_spaces), locations = TRUE
+      rex(start, any_spaces), locations = TRUE
     )[, "end"]
     expected_indent_levels <- integer(length(indent_levels))
     is_hanging <- logical(length(indent_levels))

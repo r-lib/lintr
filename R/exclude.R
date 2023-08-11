@@ -110,8 +110,8 @@ parse_exclusions <- function(file, exclude = settings$exclude,
     return(list())
   }
 
-  start_locations <- rex::re_matches(lines, exclude_start, locations = TRUE)[, "end"] + 1L
-  end_locations <- rex::re_matches(lines, exclude_end, locations = TRUE)[, "start"]
+  start_locations <- re_matches(lines, exclude_start, locations = TRUE)[, "end"] + 1L
+  end_locations <- re_matches(lines, exclude_end, locations = TRUE)[, "start"]
   starts <- which(!is.na(start_locations))
   ends <- which(!is.na(end_locations))
 
@@ -125,20 +125,20 @@ parse_exclusions <- function(file, exclude = settings$exclude,
     for (i in seq_along(starts)) {
       excluded_lines <- seq(starts[i], ends[i])
       linters_string <- substring(lines[starts[i]], start_locations[starts[i]])
-      linters_string <- rex::re_matches(linters_string, exclude_linter)[, 1L]
+      linters_string <- re_matches(linters_string, exclude_linter)[, 1L]
 
       exclusions <- add_exclusions(exclusions, excluded_lines, linters_string, exclude_linter_sep, linter_names)
     }
   }
 
-  nolint_locations <- rex::re_matches(lines, exclude, locations = TRUE)[, "end"] + 1L
+  nolint_locations <- re_matches(lines, exclude, locations = TRUE)[, "end"] + 1L
   nolints <- which(!is.na(nolint_locations))
   # Disregard nolint tags if they also match nolint start / end
   nolints <- setdiff(nolints, c(starts, ends))
 
   for (i in seq_along(nolints)) {
     linters_string <- substring(lines[nolints[i]], nolint_locations[nolints[i]])
-    linters_string <- rex::re_matches(linters_string, exclude_linter)[, 1L]
+    linters_string <- re_matches(linters_string, exclude_linter)[, 1L]
     exclusions <- add_exclusions(exclusions, nolints[i], linters_string, exclude_linter_sep, linter_names)
   }
 
