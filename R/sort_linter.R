@@ -137,10 +137,17 @@ sort_linter <- function() {
 
     sorted_expr <- xml_find_all(xml, sorted_xpath)
 
+    sorted_op <- xml_text(xml_find_first(sorted_expr, "*[2]"))
+    lint_message <- ifelse(
+      sorted_op == "==",
+      "Use !is.unsorted(x) to test the sortedness of a vector.",
+      "Use is.unsorted(x) to test the unsortedness of a vector."
+    )
+
     sorted_lints <- xml_nodes_to_lints(
       sorted_expr,
       source_expression = source_expression,
-      lint_message = "Use is.unsorted() to test the (un-)sortedness of a vector.",
+      lint_message = lint_message,
       type = "warning"
     )
 

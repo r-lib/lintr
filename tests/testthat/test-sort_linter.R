@@ -99,16 +99,17 @@ test_that("sort_linter skips when inputs don't match", {
 
 test_that("sort_linter blocks simple disallowed usages", {
   linter <- sort_linter()
-  lint_msg <- rex::rex("Use is.unsorted() to test the (un-)sortedness of a vector.")
+  unsorted_msg <- rex::rex("Use is.unsorted(x) to test the unsortedness of a vector.")
+  sorted_msg <- rex::rex("Use !is.unsorted(x) to test the sortedness of a vector.")
 
-  expect_lint("sort(x) == x", lint_msg, linter)
+  expect_lint("sort(x) == x", sorted_msg, linter)
 
   # argument order doesn't matter
-  expect_lint("x == sort(x)", lint_msg, linter)
+  expect_lint("x == sort(x)", sorted_msg, linter)
 
   # inverted version
-  expect_lint("sort(x) != x", lint_msg, linter)
+  expect_lint("sort(x) != x", unsorted_msg, linter)
 
   # expression matching
-  expect_lint("sort(foo(x)) == foo(x)", lint_msg, linter)
+  expect_lint("sort(foo(x)) == foo(x)", sorted_msg, linter)
 })
