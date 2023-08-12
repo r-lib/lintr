@@ -4,7 +4,11 @@
 \alias{paste_linter}
 \title{Raise lints for several common poor usages of \code{paste()}}
 \usage{
-paste_linter(allow_empty_sep = FALSE, allow_to_string = FALSE)
+paste_linter(
+  allow_empty_sep = FALSE,
+  allow_to_string = FALSE,
+  allow_file_path = FALSE
+)
 }
 \arguments{
 \item{allow_empty_sep}{Logical, default \code{FALSE}. If \code{TRUE}, usage of
@@ -12,6 +16,9 @@ paste_linter(allow_empty_sep = FALSE, allow_to_string = FALSE)
 
 \item{allow_to_string}{Logical, default \code{FALSE}. If \code{TRUE}, usage of
 \code{paste()} and \code{paste0()} with \code{collapse = ", "} is not linted.}
+
+\item{allow_file_path}{Logical, default \code{FALSE}. If \code{TRUE}, usage of
+\code{paste()} and \code{paste0()} to construct file paths is not linted.}
 }
 \description{
 The following issues are linted by default by this linter
@@ -55,6 +62,11 @@ lint(
   linters = paste_linter()
 )
 
+lint(
+  text = 'paste0(dir, "/", file)',
+  linters = paste_linter()
+)
+
 # okay
 lint(
   text = 'paste0("a", "b")',
@@ -84,6 +96,11 @@ lint(
 lint(
   text = 'strrep("*", 10L)',
   linters = paste_linter()
+)
+
+lint(
+  text = 'paste0(year, "/", month, "/", day)',
+  linters = paste_linter(allow_file_path = TRUE)
 )
 
 }
