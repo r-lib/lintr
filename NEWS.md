@@ -1,12 +1,56 @@
 # lintr (development version)
 
+## Bug fixes
+
+* `inner_combine_linter()` no longer throws on length-1 calls to `c()` like `c(exp(2))` or `c(log(3))` (#2017, @MichaelChirico). Such usage is discouraged by `unnecessary_concatenation_linter()`, but `inner_combine_linter()` _per se_ does not apply.
+* `condition_message_linter()` ignores usages of extracted calls like `env$stop(paste(a, b))` (#1455, @MichaelChirico).
+
+## New and improved features
+
+* Linters with logic around the magrittr pipe `%>%` consistently apply it to the other pipes `%!>%`, `%T>%`, `%<>%` (and possibly `%$%`) where appropriate (#2008, @MichaelChirico).
+  + `brace_linter()`
+  + `pipe_call_linter()`
+  + `pipe_continuation_linter()`
+  + `unnecessary_concatenation_linter()`
+  + `unnecessary_placeholder_linter()`
+* Several linters avoiding false positives in `$` extractions get the same exceptions for `@` extractions, e.g. `S4@T` will no longer throw a `T_and_F_symbol_linter()` hit (#2039, @MichaelChirico).
+  + `T_and_F_symbol_linter()`
+  + `for_loop_index_linter()`
+  + `literal_coercion_linter()`
+  + `object_name_linter()`
+  + `undesirable_function_linter()`
+  + `unreachable_code_linter()`
+  + `yoda_test_linter()`
+* `sprintf_linter()` is pipe-aware, so that `x %>% sprintf(fmt = "%s")` no longer lints (#1943, @MichaelChirico).
+* `line_length_linter()` helpfully includes the line length in the lint message (#2057, @MichaelChirico).
+* `sort_linter()` checks for code like `x == sort(x)` which is better served by using the function `is.unsorted()` (part of #884, @MichaelChirico).
+* `paste_linter()` gains detection for file paths that are better constructed with `file.path()`, e.g. `paste0(dir, "/", file)` would be better as `file.path(dir, file)` (part of #884, @MichaelChirico).
+
+### New linters
+
+* `library_call_linter()` can detect if all library calls are not at the top of your script (#2027, @nicholas-masel).
+* `keyword_quote_linter()` for finding unnecessary or discouraged quoting of symbols in assignment, function arguments, or extraction (part of #884, @MichaelChirico). Quoting is unnecessary when the target is a valid R name, e.g. `c("a" = 1)` can be `c(a = 1)`. The same goes to assignment (`"a" <- 1`) and extraction (`x$"a"`). Where quoting is necessary, the linter encourages doing so with backticks (e.g. `` x$`a b` `` instead of `x$"a b"`).
+* `length_levels_linter()` for using the specific function `nlevels()` instead of checking `length(levels(x))` (part of #884, @MichaelChirico).
+
+## Changes to defaults
+
+* `assignment_linter()` lints the {magrittr} assignment pipe `%<>%` (#2008, @MichaelChirico). This can be deactivated by setting the new argument `allow_pipe_assign` to `TRUE`.
+* `object_usage_linter()`:
+  + assumes `glue()` is `glue::glue()` when `interpret_glue=TRUE` (#2032, @MichaelChirico).
+  + finds function usages, including infix usage, inside `glue()` calls to avoid false positives for "unused objects" (#2029 and #2069, @MichaelChirico).
+* `object_name_linter()` no longer attempts to lint strings in function calls on the LHS of assignments (#1466, @MichaelChirico).
+
+# lintr 3.1.0
+
 ## Deprecations & Breaking Changes
 
+* `.lintr` files can now be kept in the directory `.github/linters` for better compatibility with Super-Linter. Note that this may be a breaking change if you already have a config in `.github/linters` inside a subdirectory as well as in your R project's root, since the former will now be discovered first where it was ignored before. Please see `vignette("lintr")` for details on how configs are discovered (#1746, @tonyk7440 and @klmr).
 * `single_quotes_linter()` is deprecated in favor of the more generalizable `quotes_linter()` (#1729, @MichaelChirico).
 * `unneeded_concatentation_linter()` is deprecated in favor of `unnecessary_concatenation_linter()` for naming consistency (#1707, @IndrajeetPatil).
 * `consecutive_stopifnot_linter()` is deprecated in favor of the more general (see below) `consecutive_assertion_linter()` (#1604, @MichaelChirico).
 * `no_tab_linter()` is deprecated in favor of `whitespace_linter()` for naming consistency and future generalization (#1954, @MichaelChirico).
 * `available_linters()` prioritizes `tags` over `exclude_tags` in the case of overlap, i.e., tags listed in both arguments are included, not excluded. We don't expect many people to be affected by this, and the old behavior was not made explicit in the documentation, but make note of it here since it required changing a test in lintr's own suite where `linters_with_tags()` implicitly assumed this behavior.
+* `lint()`, `lint_dir()`, and `lint_package()` no longer accept certain arguments (`cache=` for `lint()`, `relative_path=` for the latter two) positionally. The `warning()` since 3.0.0 has been upgraded to an error.
 
 ## Bug fixes
 
@@ -17,12 +61,12 @@
 
 * `get_source_expressions()` can handle Sweave/Rmarkdown documents with reference chunks like `<<ref_file>>` (#779, @MichaelChirico).
   Note that these are simply skipped, rather than attempting to retrieve the reference and also lint it.
-  
+
 * `assignment_linter()` no longer lints assignments in braces that include comments when `allow_trailing = FALSE` (#1701, @ashbaldry)
 
 * `object_usage_linter()`
-   + No longer silently ignores usage warnings that don't contain a quoted name (#1714, @AshesITR)
-   + No longer fails on code with comments inside a multi-line call to `glue::glue()` (#1919, @MichaelChirico)
+  + No longer silently ignores usage warnings that don't contain a quoted name (#1714, @AshesITR)
+  + No longer fails on code with comments inside a multi-line call to `glue::glue()` (#1919, @MichaelChirico)
 
 * `namespace_linter()` correctly recognizes backticked operators to be exported from respective namespaces (like `` rlang::`%||%` ``) (#1752, @IndrajeetPatil)
 
@@ -39,9 +83,12 @@
 
 * `object_name_linter()` allows all S3 group Generics (see `?base::groupGeneric`) and S3 generics defined in a different file in the same package (#1808, #1841, @AshesITR)
 
-* `object_usage_linter()` improves identification of the exact source of a lint for undefined variables in expressions with where the variable is used as a symbol in a usual way, for example in a formula or in an extraction with `$` (#1914, @MichaelChirico).
+* `object_usage_linter()` improves identification of the exact source of a lint
+  + for undefined variables in expressions with where the variable is used as a symbol in a usual way, for example in a formula or in an extraction with `$` (#1914, @MichaelChirico).
+  + for general usage warnings without location info (#1986 and #1917, @AshesITR)
 
-* `function_left_parentheses_linter()` produces a more specific lint (and no longer fails) when the opening parenthesis is on a different line than `function` or the call name (#1953, @MichaelChirico).
+* `function_left_parentheses_linter()` produces a more specific lint (and no longer fails) when the opening parenthesis is on a different line than `function` or the call name (#1953, @MichaelChirico). Thanks also to @IndrajeetPatil and @lorenzwalthert for identifying a regression in the initial fix, #1963.
+
 ## Changes to defaults
 
 * Set the default for the `except` argument in `duplicate_argument_linter()` to `c("mutate", "transmute")`.
@@ -121,6 +168,11 @@
 
 * `available_linters()` gives priority to `tags` over `exclude_tags` in the case of overlap. In particular, this means that `available_linters(tags = "deprecated")` will work to return deprecated linters without needing to specify `exclude_tags` (#1959, @MichaelChirico).
 
+* The {lintr} configuration file is now searched in the system's user configuration path; the lintr config filename can
+  also be configured explicitly by setting the environment variable `R_LINTR_LINTER_FILE` (#460, @klmr)
+
+* Errors in the {lintr} configuration file now produce more informative error messages (#886, @AshesITR)
+
 ### New linters
 
 * `matrix_apply_linter()` recommends use of dedicated `rowSums()`, `colSums()`, `colMeans()`, `rowMeans()` over `apply(., MARGIN, sum)` or `apply(., MARGIN, mean)`. The recommended alternative is much more efficient and more readable (#1869, @Bisaloo).
@@ -180,12 +232,18 @@
   after our request to do so (see https://github.com/rstudio/tufte/issues/117). Therefore, ensure you're using a
   more recent version to get the behavior described here for {tufte}.
   
-  However, there is no requirement that `loadNamespace()` will register a package's custom {knitr}
+  More generally, there is no requirement that `loadNamespace()` will register a package's custom {knitr}
   engines, so you may need to work with other package authors to figure out a solution for other engines.
   
   Thanks to Yihui and other developers for their helpful discussions around this issue (#797, @IndrajeetPatil).
 
 * The output of `lint()` and `Lint()` gain S3 class `"list"` to assist with S3 dispatch (#1494, @MichaelChirico)
+  + As a corollary, we now register an `as_tibble` method for class `lints`, conditional on {tibble} availability, to avoid dispatching to the `list` method which does not work with `lint()` output (#1997, @MichaelChirico)
+
+* `object_usage_linter()` gives a more helpful warning when a `glue()` expression fails to evaluate (#1985, @MichaelChirico)
+
+* The documentation of `object_name_linter()` now describes how `"symbols"`
+works when passed to the `styles` parameter (#1924, @hedsnz).
 
 # lintr 3.0.2
 
@@ -227,7 +285,7 @@
 * `unreachable_code_linter()` ignores trailing comments if they match a closing nolint block (#1347, @AshesITR).
 
 * New `function_argument_linter()` to enforce that arguments with defaults appear last in function declarations,
-  see the [Tidyverse design guide](https://design.tidyverse.org/args-data-details.html) (#450, @AshesITR).
+  see the [Tidyverse design guide](https://design.tidyverse.org/required-no-defaults.html) (#450, @AshesITR).
 
 * New `allow_trailing` argument added to `assignment_linter()` to check when assignment operators are at the 
   end of a line, and the value is on the following line (#1491, @ashbaldry) 
@@ -308,7 +366,7 @@
    + `open_curly_linter()`
    + `paren_brace_linter()`
 * The `...` argument for `lint()`, `lint_dir()`, and `lint_package()` has been promoted to an earlier position to
-  better match the [Tidyverse design principle](https://design.tidyverse.org/args-data-details.html) of
+  better match the [Tidyverse design principle](https://design.tidyverse.org/required-no-defaults.html) of
   data->descriptor->details. This change enables passing objects to `...` without needing to specify non-required
   arguments, e.g. `lint_dir("/path/to/dir", linter())` now works without the need to specify `relative_path`.
   This affects some code that uses positional arguments (#935, @MichaelChirico).
@@ -523,7 +581,7 @@ of general interest to the broader R community. More will be included in future 
      This feature is extensible by package authors providing add-on linters for {lintr}.
    + `available_tags()`: new function to list available tags.
    + `linters_with_tags()`: new function to help build a list of linters using tags.
-* **Encodings**: lintr now supports non-system character Encodings. The correct the correct encoding
+* **Encodings**: lintr now supports non-system character Encodings. The correct encoding
   is auto-detected from .Rproj or DESCRIPTION files in your project.
   Override the default in the `encoding` setting of lintr (#752, #782, @AshesITR).
 * **Jenkins CI**: Support for writing comments to GitHub repo when running in Jenkins CI (#488, @fdlk).
@@ -644,7 +702,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
   dotted.case, lowerCamelCalse, UpperCamelCase, alllowercase or ALLUPPERCASE
   (#59, @fangly).
 * Deprecated absolute_paths_linter() in favor of the new `absolute_path_linter()`,
-  with a lax mode for fewer false positive lints (#199, fangly).
+  with a lax mode for fewer false positive lints (#199, @fangly).
 
 ## New linters
 
@@ -662,7 +720,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * New `paren_brace_linter()` checks that there is a space between right
   parenthesis and an opening curly brace (@bfgray3, #242).
 * New `pipe_continuation_linter()` to ensure there is a space before %>% and newline afterwards (#216).
-* New `semicolon_terminator_linter()` reports semicolons at the end a line (#147,
+* New `semicolon_terminator_linter()` reports semicolons at the end of a line (#147,
   @gaborcsardi) and between expressions (#181, @fangly).
 * New `seq_linter()`, finds `1:length(...)` (and similar) expressions (#155, @gaborcsardi)
 * New `todo_comment_linter()` lints TODOs (@fangly).
@@ -714,7 +772,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * `lint()` no longer errors with '<% %>' constructs (#185).
 * `lint_package()` now works with the cache, as intended (#146, @schloerke)
 * `lint_package()` now excludes `R/RcppExports.R` by default (#282)
-* `lint_package()` now removes fully excluded files as soon as possible to
+* `lint_package()` now removes fully excluded files as soon as possible
 * lintr now looks up its configuration in any parent directories as well as the package directory (#238, #345)
 * `seq_linter` is now one of the default linters (#316).
 * Fix issue in lintr's compatibility with R-devel, due to to a new version of the PCRE library (#411.)
@@ -771,7 +829,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * Robust configuration system and exclusion logic
 * Emacs and Sublime Text 3 plugins now available from their respective package repositories.
 * add `names.lints`, `split.lints` (#49, @ttriche)
-* Fixed bug that caused vim syntatic plugin not to work properly in windows (#46, @abossenbroek)
+* Fixed bug that caused vim syntastic plugin not to work properly in windows (#46, @abossenbroek)
 * allow lintr customization per project using `.lintr` config files.
 * use `globalenv()` instead of `baseenv()` for default parent environment so
   that `methods` will be included.
@@ -779,7 +837,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * `trailing_whitespace_linter` was reporting the incorrect line number
 * Use RStudio source marker API to display lints (#37, @jjallaire)
 * Permit single quotes if they quote literal double quotes (#28, @jackwasey)
-* # nolint comments are respected with caching (#68, @krlmlr)
+* `# nolint` comments are respected with caching (#68, @krlmlr)
 * Properly handle all knitr document formats
 * Allow for (( when linting (#259, @nathaneastwood)
 * Remove ^ from infix spaces to conform with tidyverse. (#302, @nathaneastwood)

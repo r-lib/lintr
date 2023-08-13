@@ -63,7 +63,7 @@ test_that("lint() results do not depend on the position of the .lintr", {
   }
 
   # a dummy package for use in the test
-  pkg_path <- file.path("dummy_packages", "assignmentLinter")
+  pkg_path <- test_path("dummy_packages", "assignmentLinter")
 
   # we lint the file <pkg-root>/R/jkl.R using the pkg-root as working directory
   # and
@@ -220,14 +220,11 @@ test_that("compatibility warnings work", {
 })
 
 test_that("Deprecated positional usage of cache= works, with warning", {
-  expect_warning(
-    {
-      l <- lint("a = 2\n", FALSE, linters = assignment_linter())
-    },
+  expect_error(
+    lint("a = 2\n", FALSE, linters = assignment_linter()),
     "'cache' is no longer available as a positional argument",
     fixed = TRUE
   )
-  expect_identical(l, lint("a = 2\n", assignment_linter(), cache = FALSE))
 })
 
 test_that("Linters throwing an error give a helpful error", {

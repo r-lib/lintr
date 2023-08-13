@@ -62,7 +62,7 @@ strings_as_factors_linter <- function() {
   # two exclusions
   #   (1) above argument is to row.names=
   #   (2) stringsAsFactors is manually supplied (with any value)
-  xpath <- glue::glue("
+  xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'data.frame']
     /parent::expr
     /parent::expr[
@@ -89,7 +89,7 @@ strings_as_factors_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(
       bad_expr,

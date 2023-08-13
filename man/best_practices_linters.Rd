@@ -40,7 +40,9 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{implicit_assignment_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{is_numeric_linter}}}
+\item{\code{\link{length_levels_linter}}}
 \item{\code{\link{lengths_linter}}}
+\item{\code{\link{library_call_linter}}}
 \item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
 \item{\code{\link{outer_negation_linter}}}

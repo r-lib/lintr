@@ -41,7 +41,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
 
   if (length(except) > 0L) {
     exceptions <- xp_text_in_table(except)
-    xpath_exceptions <- glue::glue("
+    xpath_exceptions <- glue("
     //SYMBOL_FUNCTION_CALL[ not({exceptions}) ]")
   } else {
     xpath_exceptions <- "
@@ -62,7 +62,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
     /following-sibling::expr[1]
     /"
   )
-  xpath_fun_assigment <- paste0(
+  xpath_fun_assignment <- paste0(
     xpath_fun_call,
     assignments,
     collapse = " | "
@@ -91,7 +91,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
     collapse = " | "
   )
 
-  xpath <- paste0(c(xpath_controls_assignment, xpath_fun_assigment), collapse = " | ")
+  xpath <- paste0(c(xpath_controls_assignment, xpath_fun_assignment), collapse = " | ")
 
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level
@@ -101,7 +101,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
 
     xml <- source_expression$full_xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     lint_message <- paste(
       "Avoid implicit assignments in function calls.",

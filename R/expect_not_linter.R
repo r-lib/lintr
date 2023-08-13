@@ -37,7 +37,7 @@ expect_not_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(
       bad_expr,

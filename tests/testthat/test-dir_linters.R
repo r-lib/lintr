@@ -1,5 +1,5 @@
 test_that("lint all files in a directory", {
-  # NB: not using .lintr in the the test packages because
+  # NB: not using .lintr in the test packages because
   #   R CMD check doesn't like hidden files in any subdirectory
   withr::local_options(lintr.linter_file = "lintr_test_config")
   the_dir <- test_path("dummy_packages", "package", "vignettes")
@@ -96,12 +96,9 @@ test_that("lint_dir works with specific linters without specifying other argumen
 test_that("lint_dir continues to accept relative_path= in 2nd positional argument, with a warning", {
   the_dir <- test_path("dummy_packages", "package", "vignettes")
 
-  expect_warning(
-    {
-      positional_lints <- lint_dir(the_dir, FALSE)
-    },
+  expect_error(
+    lint_dir(the_dir, FALSE),
     "'relative_path' is no longer available as a positional argument",
     fixed = TRUE
   )
-  expect_identical(positional_lints, lint_dir(the_dir, relative_path = FALSE))
 })

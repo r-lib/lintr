@@ -1,0 +1,225 @@
+rx_non_active_char <- rex(none_of("^${(.*+?|[\\"))
+rx_static_escape <- local({
+  rx_char_escape <- rex(or(
+    group("\\", none_of(alnum)),
+    group("\\x", between(xdigit, 1L, 2L)),
+    group("\\", between("0":"7", 1L, 3L)),
+    group("\\u{", between(xdigit, 1L, 4L), "}"),
+    group("\\u", between(xdigit, 1L, 4L)),
+    group("\\U{", between(xdigit, 1L, 8L), "}"),
+    group("\\U", between(xdigit, 1L, 8L))
+  ))
+  rx_trivial_char_group <- rex(
+    "[",
+    or(
+      any,
+      group("\\", none_of("dswDSW")), # character classes, e.g. \d are enabled in [] too if perl = TRUE
+      rx_char_escape
+    ),
+    "]"
+  )
+  rex(or(
+    capture(rx_char_escape, name = "char_escape"),
+    capture(rx_trivial_char_group, name = "trivial_char_group")
+  ))
+})
+
+rx_static_token <- local({
+  rex(or(
+    rx_non_active_char,
+    rx_static_escape
+  ))
+})
+
+rx_static_regex <- paste0("(?s)", rex(start, zero_or_more(rx_static_token), end))
+rx_first_static_token <- paste0("(?s)", rex(start, zero_or_more(rx_non_active_char), rx_static_escape))
+
+#' Determine whether a regex pattern actually uses regex patterns
+#'
+#' Note that is applies to the strings that are found on the XML parse tree,
+#'   _not_ plain strings. This is important for backslash escaping, which
+#'   happens at different layers of escaping than one might expect. So testing
+#'   this function is best done through testing the expected results of a lint
+#'   on a given file, rather than passing strings to this function, which can
+#'   be confusing.
+#'
+#' @param str A character vector.
+#' @return A logical vector, `TRUE` wherever `str` could be replaced by a
+#'   string with `fixed = TRUE`.
+#' @noRd
+is_not_regex <- function(str) {
+  # need to add single-line option to allow literal newlines
+  grepl(rx_static_regex, str, perl = TRUE)
+}
+
+#' Compute a fixed string equivalent to a static regular expression
+#'
+#' @param static_regex A regex for which `is_not_regex()` returns `TRUE`
+#' @return A string such that `grepl(static_regex, x)` is equivalent to
+#' `grepl(get_fixed_string(static_regex), x, fixed = TRUE)`
+#'
+#' @noRd
+get_fixed_string <- function(static_regex) {
+  if (length(static_regex) == 0L) {
+    return(character())
+  } else if (length(static_regex) > 1L) {
+    return(vapply(static_regex, get_fixed_string, character(1L)))
+  }
+  fixed_string <- ""
+  current_match <- regexpr(rx_first_static_token, static_regex, perl = TRUE)
+  while (current_match != -1L) {
+    token_type <- attr(current_match, "capture.names")[attr(current_match, "capture.start") > 0L]
+    token_start <- max(attr(current_match, "capture.start"))
+    if (token_start > 1L) {
+      fixed_string <- paste0(fixed_string, substr(static_regex, 1L, token_start - 1L))
+    }
+    consume_to <- attr(current_match, "match.length")
+    token_content <- substr(static_regex, token_start, consume_to)
+    fixed_string <- paste0(fixed_string, get_token_replacement(token_content, token_type))
+    static_regex <- substr(static_regex, start = consume_to + 1L, stop = nchar(static_regex))
+    current_match <- regexpr(rx_first_static_token, static_regex, perl = TRUE)
+  }
+  paste0(fixed_string, static_regex)
+}
+
+#' Get a fixed string equivalent to a regular expression token
+#'
+#' This handles two cases: converting a "trivial" character group like `[$]` to `$`,
+#'   and converting an escaped character like `"\\$"` to `$`. Splitting a full expression
+#'   into tokens is handled by [get_fixed_string()].
+#'
+#' @noRd
+get_token_replacement <- function(token_content, token_type) {
+  if (token_type == "trivial_char_group") {
+    token_content <- substr(token_content, start = 2L, stop = nchar(token_content) - 1L)
+    if (startsWith(token_content, "\\")) { # escape within trivial char group
+      get_token_replacement(token_content, "char_escape")
+    } else {
+      token_content
+    }
+  } else { # char_escape token
+    if (re_matches(token_content, rex("\\", one_of("^${}().*+?|[]\\<>=:;/_-!@#%&,~")))) {
+      substr(token_content, start = 2L, stop = nchar(token_content))
+    } else {
+      eval(parse(text = paste0('"', token_content, '"')))
+    }
+  }
+}
+
+# some metadata about infix operators on the R parse tree.
+#   xml_tag gives the XML tag as returned by xmlparsedata::xml_parse_data().
+#   r_string gives the operator as you would write it in R code.
+
+# styler: off
+infix_metadata <- data.frame(stringsAsFactors = FALSE, matrix(byrow = TRUE, ncol = 2L, c(
+  "OP-PLUS",         "+",
+  "OP-MINUS",        "-",
+  "OP-TILDE",        "~",
+  "GT",              ">",
+  "GE",              ">=",
+  "LT",              "<",
+  "LE",              "<=",
+  "EQ",              "==",
+  "NE",              "!=",
+  "AND",              "&",
+  "OR",              "|",
+  "AND2",            "&&",
+  "OR2",             "||",
+  "LEFT_ASSIGN",     "<-",  # also includes := and <<-
+  "RIGHT_ASSIGN",    "->",  # also includes ->>
+  "EQ_ASSIGN",       "=",
+  "EQ_SUB",          "=",   # in calls: foo(x = 1)
+  "EQ_FORMALS",      "=",   # in definitions: function(x = 1)
+  "PIPE",            "|>",
+  "SPECIAL",         "%%",
+  "OP-SLASH",        "/",
+  "OP-STAR",         "*",
+  "OP-COMMA",        ",",
+  "OP-CARET",        "^",   # also includes **
+  "OP-AT",           "@",
+  "OP-EXCLAMATION",  "!",
+  "OP-COLON",        ":",
+  "NS_GET",          "::",
+  "NS_GET_INT",      ":::",
+  "OP-LEFT-BRACE",   "{",
+  "OP-LEFT-BRACKET", "[",
+  "LBB",             "[[",
+  "OP-LEFT-PAREN",   "(",
+  "OP-QUESTION",     "?",
+  "OP-DOLLAR",       "$",
+  NULL
+)))
+# styler: on
+
+names(infix_metadata) <- c("xml_tag", "string_value")
+# utils::getParseData()'s designation for the tokens wouldn't be valid as XML tags
+infix_metadata$parse_tag <- ifelse(
+  startsWith(infix_metadata$xml_tag, "OP-"),
+  quote_wrap(infix_metadata$string_value, "'"),
+  infix_metadata$xml_tag
+)
+# treated separately because spacing rules are different for unary operators
+infix_metadata$unary <- infix_metadata$xml_tag %in% c("OP-PLUS", "OP-MINUS", "OP-TILDE")
+# high-precedence operators are ignored by this linter; see
+#   https://style.tidyverse.org/syntax.html#infix-operators
+infix_metadata$low_precedence <- infix_metadata$string_value %in% c(
+  "+", "-", "~", ">", ">=", "<", "<=", "==", "!=", "&", "&&", "|", "||", "<-", "->", "=", "%%", "/", "*", "|>"
+)
+# comparators come up in several lints
+infix_metadata$comparator <- infix_metadata$string_value %in% c("<", "<=", ">", ">=", "==", "!=")
+
+# undesirable_operator_linter needs to distinguish
+infix_overload <- data.frame(
+  exact_string_value = c("<-", "<<-", "=", "->", "->>", "^", "**"),
+  xml_tag = rep(c("LEFT_ASSIGN", "RIGHT_ASSIGN", "OP-CARET"), c(3L, 2L, 2L)),
+  stringsAsFactors = FALSE
+)
+
+# functions equivalent to base::ifelse() for linting purposes
+ifelse_funs <- c("ifelse", "if_else", "fifelse")
+
+object_name_xpath <- local({
+  # search ancestor:: axis for assignments of symbols for
+  #   cases like a$b$c. We only try to lint 'a' since 'b'
+  #   and 'c' might be beyond the user's control to name.
+  #   the tree structure for 'a$b$c <- 1' has 'a'
+  #   at the 'bottom' of the <expr> list; it is distinguished
+  #   from 'b' and 'c' by not having '$' as a sibling.
+  # search parent:: axis for assignments of strings because
+  #   the complicated nested assignment available for symbols
+  #   is not possible for strings, though we do still have to
+  #   be aware of cases like 'a$"b" <- 1'.
+  xp_assignment_target_fmt <- paste0(
+    "not(parent::expr[OP-DOLLAR or OP-AT])",
+    "and %1$s::expr[",
+    " following-sibling::LEFT_ASSIGN",
+    " or preceding-sibling::RIGHT_ASSIGN",
+    " or following-sibling::EQ_ASSIGN",
+    "]",
+    "and not(%1$s::expr[",
+    " preceding-sibling::OP-LEFT-BRACKET",
+    " or preceding-sibling::LBB",
+    "])"
+  )
+
+  glue("
+  //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor')} ]
+  |  //STR_CONST[ {sprintf(xp_assignment_target_fmt, 'parent')} ]
+  |  //SYMBOL_FORMALS
+  ")
+})
+
+# Remove quotes or other things from names
+strip_names <- function(x) {
+  x <- re_substitutes(x, rex(start, some_of(quote, "`", "%")), "")
+  x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%"), end), "")
+  x
+}
+
+magrittr_pipes <- c("%>%", "%!>%", "%T>%", "%$%", "%<>%")
+
+purrr_mappers <- c(
+  "map", "walk",
+  "map_raw", "map_lgl", "map_int", "map_dbl", "map_chr", "map_vec",
+  "map_df", "map_dfr", "map_dfc"
+)

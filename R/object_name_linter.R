@@ -1,24 +1,3 @@
-object_name_xpath <- local({
-  xp_assignment_target <- paste0(
-    "not(preceding-sibling::OP-DOLLAR)",
-    "and ancestor::expr[",
-    " following-sibling::LEFT_ASSIGN",
-    " or preceding-sibling::RIGHT_ASSIGN",
-    " or following-sibling::EQ_ASSIGN",
-    "]",
-    "and not(ancestor::expr[",
-    " preceding-sibling::OP-LEFT-BRACKET",
-    " or preceding-sibling::LBB",
-    "])"
-  )
-
-  glue::glue("
-  //SYMBOL[ {xp_assignment_target} ]
-  |  //STR_CONST[ {xp_assignment_target} ]
-  |  //SYMBOL_FORMALS
-  ")
-})
-
 #' Object name linter
 #'
 #' Check that object names conform to a naming style.
@@ -45,7 +24,12 @@ object_name_xpath <- local({
 #'
 #' @param styles A subset of
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
-#'   match at least one of these styles.
+#'   match at least one of these styles. The `"symbols"` style refers to
+#'   names containing *only* non-alphanumeric characters; e.g., defining `%+%`
+#'   from ggplot2 or `%>%` from magrittr would not generate lint markers,
+#'   whereas `%m+%` from lubridate (containing both alphanumeric *and*
+#'   non-alphanumeric characters) would.
+#'
 #' @param regexes A (possibly named) character vector specifying a custom naming convention.
 #'   If named, the names will be used in the lint message. Otherwise, the regexes enclosed by `/` will be used in the
 #'   lint message.
@@ -123,7 +107,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
 
   lint_message <- paste0(
     "Variable and function name style should match ",
-    glue::glue_collapse(unique(names(style_list)), sep = ", ", last = " or "), "."
+    glue_collapse(unique(names(style_list)), sep = ", ", last = " or "), "."
   )
 
   Linter(function(source_expression) {
@@ -133,11 +117,11 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
 
     xml <- source_expression$full_xml_parsed_content
 
-    assignments <- xml2::xml_find_all(xml, object_name_xpath)
+    assignments <- xml_find_all(xml, object_name_xpath)
 
     # Retrieve assigned name
     nms <- strip_names(
-      xml2::xml_text(assignments)
+      xml_text(assignments)
     )
 
     # run namespace_imports at run-time, not "compile" time to allow package structure to change
@@ -187,13 +171,6 @@ check_style <- function(nms, style, generics = character()) {
     conforming[!conforming][is_special] <- TRUE
   }
   conforming
-}
-
-# Remove quotes or other things from names
-strip_names <- function(x) {
-  x <- re_substitutes(x, rex(start, some_of(quote, "`", "%")), "")
-  x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%"), end), "")
-  x
 }
 
 # see ?".onLoad", ?Startup, and ?quit. Remove leading dot to match behavior of strip_names().

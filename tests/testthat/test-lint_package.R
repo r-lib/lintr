@@ -156,3 +156,45 @@ test_that("lint_package returns early if no package is found", {
 test_that("length(path)>1 is not supported", {
   expect_error(lint_package(letters), "one package at a time", fixed = TRUE)
 })
+
+test_that(
+  "`lint_package` will use a `.lintr` file in `.github/linters/` directory the same as the package root",
+  {
+    withr::local_options(lintr.linter_file = "lintr_test_config")
+
+    pkg_path <- test_path("dummy_packages", "github_lintr_file")
+
+    # First, ensure that the package has lint messages in the absence of a
+    # custom configuration:
+
+    pkg_lints_before <- withr::with_dir(
+      pkg_path,
+      lint_package(".", linters = list(quotes_linter()))
+    )
+
+    expect_identical(
+      as.data.frame(pkg_lints_before)[["line"]],
+      c("'abc'", "'abc'"),
+      "linting the `github_lintr_file` package should fail"
+    )
+
+    # In `github/linters`add a `.lintr` file
+    dir.create(
+      path = file.path(pkg_path, ".github", "linters/"),
+      recursive = TRUE
+    )
+    on.exit(unlink(file.path(pkg_path, ".github"), recursive = TRUE), add = TRUE)
+
+    local_config(
+      file.path(pkg_path, ".github", "linters"),
+      "linters: linters_with_defaults(quotes_linter(\"'\"))",
+      filename = "lintr_test_config"
+    )
+
+    pkg_lints <- withr::with_dir(pkg_path, lint_package("."))
+    expect_length(pkg_lints, 0L)
+
+    subdir_lints <- withr::with_dir(pkg_path, lint_dir("tests/testthat"))
+    expect_length(subdir_lints, 0L)
+  }
+)
