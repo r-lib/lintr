@@ -149,6 +149,7 @@ Collate:
     'redundant_ifelse_linter.R'
     'regex_subset_linter.R'
     'routine_registration_linter.R'
+    'scalar_in_linter.R'
     'semicolon_linter.R'
     'seq_linter.R'
     'settings.R'
