@@ -2,7 +2,7 @@
 % Please edit documentation in R/conjunct_test_linter.R
 \name{conjunct_test_linter}
 \alias{conjunct_test_linter}
-\title{Force \code{&&} conditions in \code{expect_true()} and \code{expect_false()} to be written separately}
+\title{Force \code{&&} conditions to be written separately where appropriate}
 \usage{
 conjunct_test_linter(allow_named_stopifnot = TRUE)
 }
@@ -18,6 +18,11 @@ For readability of test outputs, testing only one thing per call to
 }
 \details{
 Similar reasoning applies to \code{&&} usage inside \code{\link[=stopifnot]{stopifnot()}} and \code{assertthat::assert_that()} calls.
+
+Relatedly, \code{dplyr::filter(DF, A & B)} is the same as \code{dplyr::filter(DF, A, B)}, but the
+latter will be more readable / easier to format for long conditions. Note that this linter
+assumes usages of \code{filter()} are \code{dplyr::filter()}; if you're using another function named \code{filter()},
+e.g. \code{\link[stats:filter]{stats::filter()}}, please namespace-qualify it to avoid false positives.
 }
 \examples{
 # will produce lints

@@ -57,7 +57,7 @@ linter_auto_name <- function(which = -3L) {
   if (re_matches(nm, regex)) {
     match <- re_matches(nm, regex, locations = TRUE)
     nm <- substr(nm, start = 1L, stop = match[1L, "end"])
-    nm <- re_substitutes(nm, rex::rex(start, alnums, "::"), "")
+    nm <- re_substitutes(nm, rex(start, alnums, "::"), "")
   }
   nm
 }
