@@ -11,10 +11,8 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 scalar_in_linter <- function() {
-  # TODO(michaelchirico): this could be extended to work for a few more cases, e.g.
-  #   x %in% c(1) _and_ x %in% 1+3i. Deprioritized because the former would be
-  #   caught by the concatentation linter, and I assume the latter is quite rare
-  # all of logical, integer, double, hex, complex are parsed as NUM_CONST
+  # TODO(#2085): Extend to include other cases where the RHS is clearly a scalar
+  # NB: all of logical, integer, double, hex, complex are parsed as NUM_CONST
   xpath <- "
   //SPECIAL[text() = '%in%' or text() = '%chin%']
     /following-sibling::expr[NUM_CONST or STR_CONST]
