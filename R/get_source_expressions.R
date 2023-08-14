@@ -185,7 +185,7 @@ fixup_line <- function(line) {
 #'
 #' @noRd
 lint_parse_error_r43 <- function(e, source_expression) {
-  msg <- rex::re_substitutes(e$message, rex::rex(" (", except_some_of(")"), ")", end), "")
+  msg <- re_substitutes(e$message, rex(" (", except_some_of(")"), ")", end), "")
   line_number <- e$lineno
   column <- e$colno
   substr(msg, 1L, 1L) <- toupper(substr(msg, 1L, 1L))
@@ -621,7 +621,7 @@ fix_eq_assigns <- function(pc) {
 
   eq_assign_locs <- which(pc$token == "EQ_ASSIGN")
   # check whether the equal-assignment is the final entry
-  if (length(eq_assign_locs) == 0L || utils::tail(eq_assign_locs, 1L) == nrow(pc)) {
+  if (length(eq_assign_locs) == 0L || tail(eq_assign_locs, 1L) == nrow(pc)) {
     return(pc)
   }
 

@@ -66,3 +66,17 @@ xp_find_location <- function(xml, xpath) {
     as.integer(xml_find_num(xml, xpath))
   }
 }
+
+#' Strip XPath 2.0-style comments from an XPath
+#'
+#' xml2 uses XPath 1.0, which has no support for comments. But comments are
+#'   useful in a codebase with as many XPaths as we maintain, so we fudge our
+#'   way to XPath 2.0-ish support by writing this simple function to remove comments.
+#'
+#' @noRd
+xpath_comment_re <- rex::rex(
+  "(:",
+  zero_or_more(not(":)")),
+  ":)"
+)
+xp_strip_comments <- function(xpath) rex::re_substitutes(xpath, xpath_comment_re, "", global = TRUE)

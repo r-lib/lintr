@@ -84,8 +84,8 @@ commented_code_linter <- function() {
     code_candidates <- re_matches(all_comments, code_candidate_regex, global = FALSE, locations = TRUE)
     extracted_code <- code_candidates[, "code"]
     # ignore trailing ',' when testing for parsability
-    extracted_code <- rex::re_substitutes(extracted_code, rex::rex(",", any_spaces, end), "")
-    extracted_code <- rex::re_substitutes(extracted_code, rex::rex(start, any_spaces, ","), "")
+    extracted_code <- re_substitutes(extracted_code, rex(",", any_spaces, end), "")
+    extracted_code <- re_substitutes(extracted_code, rex(start, any_spaces, ","), "")
     is_parsable <- which(vapply(extracted_code, parsable, logical(1L)))
 
     lint_list <- xml_nodes_to_lints(
