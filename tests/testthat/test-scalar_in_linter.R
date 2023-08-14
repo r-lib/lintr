@@ -11,10 +11,11 @@ test_that("scalar_in_linter skips allowed usages", {
 
 test_that("scalar_in_linter blocks simple disallowed usages", {
   linter <- scalar_in_linter()
-  lint_msg <- rex::rex("Use == to match length-1 scalars, not %in%.")
+  lint_in_msg <- rex::rex("Use == to match length-1 scalars, not %in%.")
+  lint_chin_msg <- rex::rex("Use == to match length-1 scalars, not %chin%.")
 
-  expect_lint("x %in% 1", lint_msg, linter)
-  expect_lint("x %chin% 'a'", lint_msg, linter)
+  expect_lint("x %in% 1", lint_in_msg, linter)
+  expect_lint("x %chin% 'a'", lint_chin_msg, linter)
 })
 
 test_that("multiple lints are generated correctly", {
