@@ -1,6 +1,8 @@
 test_that("returns the correct linting", {
   expect_warning(
-    linter <- paren_brace_linter(),
+    {
+      linter <- paren_brace_linter()
+    },
     "Linter paren_brace_linter was deprecated",
     fixed = TRUE
   )
