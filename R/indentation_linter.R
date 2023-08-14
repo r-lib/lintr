@@ -130,15 +130,11 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
   hanging_indent_style <- match.arg(hanging_indent_style)
 
-  if (hanging_indent_style == "tidy") {
-    find_indent_type <- build_indentation_style_tidy()
-  } else if (hanging_indent_style == "always") {
-    find_indent_type <- build_indentation_style_always()
-  } else { # "never"
-    find_indent_type <- function(change) {
-      "block"
-    }
-  }
+  find_indent_type <- switch(hanging_indent_style,
+    tidy = build_indentation_style_tidy(),
+    always = build_indentation_style_always(),
+    never = function(change) "block"
+  )
 
   if (isTRUE(assignment_as_infix)) {
     suppressing_tokens <- c("LEFT_ASSIGN", "EQ_ASSIGN", "EQ_SUB", "EQ_FORMALS")
@@ -193,9 +189,9 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
           ({xp_or(paste0('descendant::', paren_tokens_left, '[', xp_last_on_line, ']'))})
         ]/@line1
       )]"),
-      glue::glue("({ global_nodes(infix_tokens) })[{xp_last_on_line}{infix_condition}]"),
-      glue::glue("({ global_nodes(no_paren_keywords) })[{xp_last_on_line}]"),
-      glue::glue("
+      glue("({ global_nodes(infix_tokens) })[{xp_last_on_line}{infix_condition}]"),
+      glue("({ global_nodes(no_paren_keywords) })[{xp_last_on_line}]"),
+      glue("
         ({ global_nodes(keyword_tokens) })
           /following-sibling::OP-RIGHT-PAREN[
             {xp_last_on_line} and
@@ -227,9 +223,9 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     #     + if there is no token following ( on the same line, a block indent is required until )
     #  - binary operators where the second arguments starts on a new line
 
-    indent_levels <- rex::re_matches(
+    indent_levels <- re_matches(
       source_expression$file_lines,
-      rex::rex(start, any_spaces), locations = TRUE
+      rex(start, any_spaces), locations = TRUE
     )[, "end"]
     expected_indent_levels <- integer(length(indent_levels))
     is_hanging <- logical(length(indent_levels))
@@ -313,15 +309,12 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 }
 
 find_new_indent <- function(current_indent, change_type, indent, hanging_indent) {
-  if (change_type == "suppress") {
-    current_indent
-  } else if (change_type == "hanging") {
-    hanging_indent
-  } else if (change_type == "double") {
-    current_indent + 2L * indent
-  } else {
-    current_indent + indent
-  }
+  switch(change_type,
+    suppress = current_indent,
+    hanging = hanging_indent,
+    double = current_indent + 2L * indent,
+    block = current_indent + indent
+  )
 }
 
 build_indentation_style_tidy <- function() {

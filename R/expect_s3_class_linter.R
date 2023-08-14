@@ -45,6 +45,21 @@ expect_s3_class_linter <- function() {
     ]
     /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label' or text() = 'expected.label'])]
   "
+  # NB: there is no easy way to make an exhaustive list of places where an
+  #   is.<x> call can be replaced by expect_s3_class(); this list was manually
+  #   populated from the default R packages by inspection. For example,
+  #   is.matrix(x) cannot be replaced by expect_s3_class(x, "matrix") because
+  #   it is not actually an S3 class (is.object(x) is not TRUE).
+  #   Further, there are functions named is.<x> that have nothing to do with
+  #   object type, e.g. is.finite(), is.nan(), or is.R().
+  is_s3_class_calls <- paste0("is.", c(
+    # base
+    "data.frame", "factor", "numeric_version", "ordered", "package_version", "qr", "table",
+    #      utils grDevices     tcltk    tcltk    grid    grid
+    "relistable", "raster", "tclObj", "tkwin", "grob", "unit",
+    # stats
+    "mts", "stepfun", "ts", "tskernel"
+  ))
   is_class_call <- xp_text_in_table(c(is_s3_class_calls, "inherits"))
   expect_true_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
@@ -76,19 +91,3 @@ expect_s3_class_linter <- function() {
     )
   })
 }
-
-# NB: there is no easy way to make an exhaustive list of places where an
-#   is.<x> call can be replaced by expect_s3_class(); this list was manually
-#   populated from the default R packages by inspection. For example,
-#   is.matrix(x) cannot be replaced by expect_s3_class(x, "matrix") because
-#   it is not actually an S3 class (is.object(x) is not TRUE).
-#   Further, there are functions named is.<x> that have nothing to do with
-#   object type, e.g. is.finite(), is.nan(), or is.R().
-is_s3_class_calls <- paste0("is.", c(
-  # base
-  "data.frame", "factor", "numeric_version", "ordered", "package_version", "qr", "table",
-  #      utils grDevices     tcltk    tcltk    grid    grid
-  "relistable", "raster", "tclObj", "tkwin", "grob", "unit",
-  # stats
-  "mts", "stepfun", "ts", "tskernel"
-))

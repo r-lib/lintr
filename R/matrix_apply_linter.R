@@ -149,5 +149,5 @@ craft_colsums_rowsums_msg <- function(var, margin, fun, narm_val) {
   # It's easier to remove this after the fact, rather than having never ending if/elses
   reco <- gsub(", dims = 1", "", reco, fixed = TRUE)
 
-  return(reco)
+  reco
 }

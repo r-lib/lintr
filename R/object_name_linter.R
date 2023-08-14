@@ -1,34 +1,3 @@
-object_name_xpath <- local({
-  # search ancestor:: axis for assignments of symbols for
-  #   cases like a$b$c. We only try to lint 'a' since 'b'
-  #   and 'c' might be beyond the user's control to name.
-  #   the tree structure for 'a$b$c <- 1' has 'a'
-  #   at the 'bottom' of the <expr> list; it is distinguished
-  #   from 'b' and 'c' by not having '$' as a sibling.
-  # search parent:: axis for assignments of strings because
-  #   the complicated nested assignment available for symbols
-  #   is not possible for strings, though we do still have to
-  #   be aware of cases like 'a$"b" <- 1'.
-  xp_assignment_target_fmt <- paste0(
-    "not(parent::expr[OP-DOLLAR or OP-AT])",
-    "and %1$s::expr[",
-    " following-sibling::LEFT_ASSIGN",
-    " or preceding-sibling::RIGHT_ASSIGN",
-    " or following-sibling::EQ_ASSIGN",
-    "]",
-    "and not(%1$s::expr[",
-    " preceding-sibling::OP-LEFT-BRACKET",
-    " or preceding-sibling::LBB",
-    "])"
-  )
-
-  glue("
-  //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor')} ]
-  |  //STR_CONST[ {sprintf(xp_assignment_target_fmt, 'parent')} ]
-  |  //SYMBOL_FORMALS
-  ")
-})
-
 #' Object name linter
 #'
 #' Check that object names conform to a naming style.
@@ -202,13 +171,6 @@ check_style <- function(nms, style, generics = character()) {
     conforming[!conforming][is_special] <- TRUE
   }
   conforming
-}
-
-# Remove quotes or other things from names
-strip_names <- function(x) {
-  x <- re_substitutes(x, rex(start, some_of(quote, "`", "%")), "")
-  x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%"), end), "")
-  x
 }
 
 # see ?".onLoad", ?Startup, and ?quit. Remove leading dot to match behavior of strip_names().

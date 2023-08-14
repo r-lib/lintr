@@ -54,7 +54,7 @@ unreachable_code_linter <- function() {
     bad_expr <- xml_find_all(xml, xpath)
 
     is_nolint_end_comment <- xml2::xml_name(bad_expr) == "COMMENT" &
-      rex::re_matches(xml_text(bad_expr), settings$exclude_end)
+      re_matches(xml_text(bad_expr), settings$exclude_end)
 
     xml_nodes_to_lints(
       bad_expr[!is_nolint_end_comment],

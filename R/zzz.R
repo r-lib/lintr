@@ -298,10 +298,10 @@ settings <- NULL
   default_settings <<- list(
     linters = default_linters,
     encoding = "UTF-8",
-    exclude = rex::rex("#", any_spaces, "nolint"),
-    exclude_start = rex::rex("#", any_spaces, "nolint start"),
-    exclude_end = rex::rex("#", any_spaces, "nolint end"),
-    exclude_linter = rex::rex(
+    exclude = rex("#", any_spaces, "nolint"),
+    exclude_start = rex("#", any_spaces, "nolint start"),
+    exclude_end = rex("#", any_spaces, "nolint end"),
+    exclude_linter = rex(
       start, any_spaces, ":", any_spaces,
       capture(
         name = "linters",
@@ -309,7 +309,7 @@ settings <- NULL
         one_or_more(none_of(",."))
       ), "."
     ),
-    exclude_linter_sep = rex::rex(any_spaces, ",", any_spaces),
+    exclude_linter_sep = rex(any_spaces, ",", any_spaces),
     exclusions = list(),
     cache_directory = R_user_dir("lintr", "cache"),
     comment_token = Sys.getenv("GITHUB_TOKEN", unset = NA) %||% rot(

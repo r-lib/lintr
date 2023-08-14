@@ -137,16 +137,16 @@ defines_knitr_engine <- function(start_lines) {
   engines <- names(knitr::knit_engines$get())
 
   # {some_engine}, {some_engine label, ...} or {some_engine, ...}
-  bare_engine_pattern <- rex::rex(
+  bare_engine_pattern <- rex(
     "{", or(engines), one_of("}", " ", ",")
   )
   # {... engine = "some_engine" ...}
-  explicit_engine_pattern <- rex::rex(
+  explicit_engine_pattern <- rex(
     boundary, "engine", any_spaces, "="
   )
 
-  rex::re_matches(start_lines, explicit_engine_pattern) |
-    rex::re_matches(start_lines, bare_engine_pattern)
+  re_matches(start_lines, explicit_engine_pattern) |
+    re_matches(start_lines, bare_engine_pattern)
 }
 
 replace_prefix <- function(lines, prefix_pattern) {
