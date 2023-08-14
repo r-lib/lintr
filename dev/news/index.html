@@ -93,6 +93,8 @@
 <li>
 <code><a href="../reference/line_length_linter.html">line_length_linter()</a></code> helpfully includes the line length in the lint message (<a href="https://github.com/r-lib/lintr/issues/2057" class="external-link">#2057</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
+<code><a href="../reference/conjunct_test_linter.html">conjunct_test_linter()</a></code> also lints usage like <code>dplyr::filter(x, A &amp; B)</code> in favor of using <code>dplyr::filter(x, A, B)</code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
 <code><a href="../reference/sort_linter.html">sort_linter()</a></code> checks for code like <code>x == sort(x)</code> which is better served by using the function <code><a href="https://rdrr.io/r/base/is.unsorted.html" class="external-link">is.unsorted()</a></code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/paste_linter.html">paste_linter()</a></code> gains detection for file paths that are better constructed with <code><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path()</a></code>, e.g. <code>paste0(dir, "/", file)</code> would be better as <code>file.path(dir, file)</code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>

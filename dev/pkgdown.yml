@@ -6,7 +6,7 @@ articles:
   creating_linters: creating_linters.html
   editors: editors.html
   lintr: lintr.html
-last_built: 2023-08-13T07:15Z
+last_built: 2023-08-14T05:21Z
 urls:
   reference: https://lintr.r-lib.org/reference
   article: https://lintr.r-lib.org/articles
