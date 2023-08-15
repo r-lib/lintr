@@ -229,7 +229,8 @@ get_check_usage_results <- function(expression, known_used_symbols, declared_glo
   report_env <- new.env(parent = emptyenv())
   report_env$vals <- character()
   report <- function(x) report_env$vals <- c(report_env$vals, x)
-  withr::local_options(list(useFancyQuotes = FALSE))
+  old <- options(useFancyQuotes = FALSE)
+  on.exit(options(old))
   try(
     codetools::checkUsage(
       expression,

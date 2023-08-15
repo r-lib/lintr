@@ -50,8 +50,8 @@
 package_hooks_linter <- function() {
   bad_msg_calls <- c("cat", "message", "print", "writeLines")
   bad_calls <- list(
-    ".onLoad" = c(bad_msg_calls, "packageStartupMessage"),
-    ".onAttach" = c(bad_msg_calls, "library.dynam")
+    .onLoad = c(bad_msg_calls, "packageStartupMessage"),
+    .onAttach = c(bad_msg_calls, "library.dynam")
   )
   bad_msg_call_xpath_fmt <- "
   //FUNCTION

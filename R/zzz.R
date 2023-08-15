@@ -99,76 +99,76 @@ default_linters <- modify_defaults(
 #' @export
 all_undesirable_functions <- modify_defaults(
   defaults = list(),
-  "attach" =
+  attach =
     "use roxygen2's @importFrom statement in packages, or `::` in scripts. attach() modifies the global search path",
-  "browser" =
+  browser =
     "remove this likely leftover from debugging. It pauses execution when run",
-  "debug" = paste(
+  debug = paste(
     "remove this likely leftover from debugging.",
     "It traps a function and causes execution to pause when that function is run"
   ),
-  "debugcall" = paste(
+  debugcall = paste(
     "remove this likely leftover from debugging.",
     "It traps a function and causes execution to pause when that function is run"
   ),
-  "debugonce" = paste(
+  debugonce = paste(
     "remove this likely leftover from debugging.",
     "It traps a function and causes execution to pause when that function is run"
   ),
-  "detach" = paste(
+  detach = paste(
     "avoid modifying the global search path.",
     "Detaching environments from the search path is rarely necessary in production code"
   ),
-  "ifelse" = paste(
+  ifelse = paste(
     "use an `if`/`else` block for scalar logic,",
     "or use dplyr::if_else()/data.table::fifelse() for type-stable vectorized logic"
   ),
-  ".libPaths" = paste(
+  .libPaths = paste(
     "use withr::with_libpaths() for a temporary change",
     "instead of permanently modifying the library location"
   ),
-  "library" = paste(
+  library = paste(
     "use roxygen2's @importFrom statement in packages and `::` in scripts,",
     "instead of modifying the global search path"
   ),
-  "loadNamespace" =
+  loadNamespace =
     "use the return value of requireNamespace() instead to provide an easy way to signal failures",
-  "mapply" =
+  mapply =
     "use Map() to guarantee a list is returned and simplify accordingly",
-  "options" =
+  options =
     "use withr::with_options() for a temporary change instead of permanently modifying the session options",
-  "par" =
+  par =
     "use withr::with_par() for a temporary change instead of permanently modifying the graphics device parameters",
-  "require" = paste(
+  require = paste(
     "use roxygen2's @importFrom statement in packages and library() or `::` in scripts,",
     "instead of modifying the global search path"
   ),
-  "sapply" =
+  sapply =
     "use vapply() with an appropriate `FUN.VALUE=` argument to obtain type-stable simplification",
-  "setwd" =
+  setwd =
     "use withr::with_dir() for a temporary change instead of modifying the global working directory",
-  "sink" =
+  sink =
     "use withr::with_sink() for a temporary redirection instead of permanently redirecting output",
-  "source" = paste(
+  source = paste(
     "manage dependencies through packages.",
     "source() loads code into the global environment unless `local = TRUE` is used,",
     "which can cause hard-to-predict behavior"
   ),
-  "substring" =
+  substring =
     "use substr() with appropriate `stop=` value.",
-  "Sys.setenv" =
+  Sys.setenv =
     "use withr::with_envvar() for a temporary change instead of permanently modifying global environment variables",
-  "Sys.setlocale" =
+  Sys.setlocale =
     "use withr::with_locale() for a temporary change instead of permanently modifying the session locale",
-  "trace" = paste(
+  trace = paste(
     "remove this likely leftover from debugging.",
     "It traps a function and causes execution of arbitrary code when that function is run"
   ),
-  "undebug" = paste(
+  undebug = paste(
     "remove this likely leftover from debugging.",
     "It is only useful for interactive debugging with debug()"
   ),
-  "untrace" = paste(
+  untrace = paste(
     "remove this likely leftover from debugging.",
     "It is only useful for interactive debugging with trace()"
   )
