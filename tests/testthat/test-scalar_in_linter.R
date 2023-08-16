@@ -27,3 +27,20 @@ test_that("multiple lints are generated correctly", {
     scalar_in_linter()
   )
 })
+
+test_that("%in% NA recommends using is.na() alone, not ==", {
+  linter <- scalar_in_linter()
+
+  expect_lint("x %in% NA", NULL, linter)
+  expect_lint("x %in% NA_real_", NULL, linter)
+  expect_lint(
+    trim_some("{
+      x %in% NA
+      x %chin% 2
+      x %chin% NA_character_
+      x %in% 'd'
+    }"),
+    NULL,
+    linter
+  )
+})
