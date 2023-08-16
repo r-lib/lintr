@@ -41,5 +41,5 @@ lint(
 \url{https://en.wikipedia.org/wiki/Yoda_conditions}
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=package_development_linters]{package_development}, \link[=readability_linters]{readability}
+\link[=best_practices_linters]{best_practices}, \link[=package_development_linters]{package_development}, \link[=readability_linters]{readability}, \link[=testthat_linters]{testthat}
 }

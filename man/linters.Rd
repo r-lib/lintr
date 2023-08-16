@@ -30,6 +30,7 @@ The following tags exist:
 \item{\link[=readability_linters]{readability} (50 linters)}
 \item{\link[=robustness_linters]{robustness} (14 linters)}
 \item{\link[=style_linters]{style} (36 linters)}
+\item{\link[=testthat_linters]{testthat} (11 linters)}
 }
 }
 \section{Linters}{
@@ -52,16 +53,16 @@ The following linters exist:
 \item{\code{\link{duplicate_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{empty_assignment_linter}} (tags: best_practices, readability)}
 \item{\code{\link{equals_na_linter}} (tags: common_mistakes, correctness, default, robustness)}
-\item{\code{\link{expect_comparison_linter}} (tags: best_practices, package_development)}
-\item{\code{\link{expect_identical_linter}} (tags: package_development)}
-\item{\code{\link{expect_length_linter}} (tags: best_practices, package_development, readability)}
-\item{\code{\link{expect_named_linter}} (tags: best_practices, package_development, readability)}
-\item{\code{\link{expect_not_linter}} (tags: best_practices, package_development, readability)}
-\item{\code{\link{expect_null_linter}} (tags: best_practices, package_development)}
-\item{\code{\link{expect_s3_class_linter}} (tags: best_practices, package_development)}
-\item{\code{\link{expect_s4_class_linter}} (tags: best_practices, package_development)}
-\item{\code{\link{expect_true_false_linter}} (tags: best_practices, package_development, readability)}
-\item{\code{\link{expect_type_linter}} (tags: best_practices, package_development)}
+\item{\code{\link{expect_comparison_linter}} (tags: best_practices, package_development, testthat)}
+\item{\code{\link{expect_identical_linter}} (tags: package_development, testthat)}
+\item{\code{\link{expect_length_linter}} (tags: best_practices, package_development, readability, testthat)}
+\item{\code{\link{expect_named_linter}} (tags: best_practices, package_development, readability, testthat)}
+\item{\code{\link{expect_not_linter}} (tags: best_practices, package_development, readability, testthat)}
+\item{\code{\link{expect_null_linter}} (tags: best_practices, package_development, testthat)}
+\item{\code{\link{expect_s3_class_linter}} (tags: best_practices, package_development, testthat)}
+\item{\code{\link{expect_s4_class_linter}} (tags: best_practices, package_development, testthat)}
+\item{\code{\link{expect_true_false_linter}} (tags: best_practices, package_development, readability, testthat)}
+\item{\code{\link{expect_type_linter}} (tags: best_practices, package_development, testthat)}
 \item{\code{\link{extraction_operator_linter}} (tags: best_practices, style)}
 \item{\code{\link{fixed_regex_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{for_loop_index_linter}} (tags: best_practices, readability, robustness)}
@@ -125,6 +126,6 @@ The following linters exist:
 \item{\code{\link{unused_import_linter}} (tags: best_practices, common_mistakes, configurable, executing)}
 \item{\code{\link{vector_logic_linter}} (tags: best_practices, default, efficiency)}
 \item{\code{\link{whitespace_linter}} (tags: consistency, default, style)}
-\item{\code{\link{yoda_test_linter}} (tags: best_practices, package_development, readability)}
+\item{\code{\link{yoda_test_linter}} (tags: best_practices, package_development, readability, testthat)}
 }
 }

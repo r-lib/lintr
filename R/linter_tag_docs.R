@@ -99,3 +99,11 @@ NULL
 #' @evalRd rd_linters("executing")
 #' @seealso [linters] for a complete list of linters available in lintr.
 NULL
+
+#' Testthat linters
+#' @name testthat_linters
+#' @description
+#' Linters encouraging best practices within testthat suites.
+#' @evalRd rd_linters("testthat")
+#' @seealso [linters] for a complete list of linters available in lintr.
+NULL

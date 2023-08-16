@@ -64,5 +64,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=package_development_linters]{package_development}
+\link[=package_development_linters]{package_development}, \link[=testthat_linters]{testthat}
 }
