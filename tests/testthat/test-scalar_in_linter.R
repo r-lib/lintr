@@ -18,22 +18,26 @@ test_that("scalar_in_linter blocks simple disallowed usages", {
   expect_lint("x %chin% 'a'", lint_chin_msg, linter)
 })
 
+test_that("%in% NA recommends using is.na() alone, not ==", {
+  linter <- scalar_in_linter()
+  lint_msg <- rex::rex("Use is.na() to check missingness, not %in%.")
+
+  expect_lint("x %in% NA", lint_msg, linter)
+  expect_lint("x %in% NA_real_", lint_msg, linter)
+})
+
 test_that("multiple lints are generated correctly", {
+  linter <- scalar_in_linter()
+
   expect_lint(
     trim_some('{
       x %in% 1
       y %chin% "a"
     }'),
     list("%in%", "%chin%"),
-    scalar_in_linter()
+    linter
   )
-})
 
-test_that("%in% NA recommends using is.na() alone, not ==", {
-  linter <- scalar_in_linter()
-
-  expect_lint("x %in% NA", NULL, linter)
-  expect_lint("x %in% NA_real_", NULL, linter)
   expect_lint(
     trim_some("{
       x %in% NA
@@ -41,7 +45,12 @@ test_that("%in% NA recommends using is.na() alone, not ==", {
       x %chin% NA_character_
       x %in% 'd'
     }"),
-    NULL,
+    list(
+      rex::rex("Use is.na() to check missingness, not %in%."),
+      rex::rex("Use == to match length-1 scalars, not %chin%."),
+      rex::rex("Use is.na() to check missingness, not %chin%."),
+      rex::rex("Use == to match length-1 scalars, not %in%.")
+    ),
     linter
   )
 })
