@@ -48,9 +48,10 @@ conjunction with \code{ids_with_token} to iterate over rows containing desired t
 
 }}
 \examples{
+\dontshow{if (requireNamespace("withr", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
 source_exprs <- get_source_expressions(tmp)
 ids_with_token(source_exprs$expressions[[1L]], value = "SYMBOL")
 with_id(source_exprs$expressions[[1L]], 2L)
-
+\dontshow{\}) # examplesIf}
 }

@@ -115,13 +115,13 @@ test_that("print.lint works for inline data, even in RStudio", {
   # >   ^
 
   withr::with_options(
-    list("lintr.rstudio_source_markers" = FALSE),
+    list(lintr.rstudio_source_markers = FALSE),
     expect_output(print(l), "not =")
   )
 
   mockery::stub(print.lints, "rstudioapi::hasFun", function(...) FALSE)
   withr::with_options(
-    list("lintr.rstudio_source_markers" = TRUE),
+    list(lintr.rstudio_source_markers = TRUE),
     expect_output(print(l), "not =")
   )
 })

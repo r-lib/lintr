@@ -17,7 +17,7 @@
 #' the `token` column of `parsed_content`. Typically `==` or `%in%`.
 #' @param source_file (DEPRECATED) Same as `source_expression`. Will be removed.
 #'
-#' @examples
+#' @examplesIf requireNamespace("withr", quietly = TRUE)
 #' tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
 #' source_exprs <- get_source_expressions(tmp)
 #' ids_with_token(source_exprs$expressions[[1L]], value = "SYMBOL")
