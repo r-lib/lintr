@@ -15,7 +15,7 @@ scalar_in_linter <- function() {
   # NB: all of logical, integer, double, hex, complex are parsed as NUM_CONST
   xpath <- "
   //SPECIAL[text() = '%in%' or text() = '%chin%']
-    /following-sibling::expr[NUM_CONST or STR_CONST]
+    /following-sibling::expr[NUM_CONST[not(starts-with(text(), 'NA'))] or STR_CONST]
     /parent::expr
   "
 
@@ -28,13 +28,8 @@ scalar_in_linter <- function() {
 
     bad_expr <- xml_find_all(xml, xpath)
     in_op <- xml_find_chr(bad_expr, "string(SPECIAL)")
-    # NB: NA_character_ is also a NUM_CONST, somewhat strangely.
-    rhs_na <- startsWith(xml_find_chr(bad_expr, "string(expr[2]/NUM_CONST)"), "NA")
-    lint_msg <- ifelse(
-      rhs_na,
-      paste0("Use is.na() to check missingness, not ", in_op, "."),
+    lint_msg <-
       paste0("Use == to match length-1 scalars, not ", in_op, ". Note that == preserves NA where ", in_op, " does not.")
-    )
 
     xml_nodes_to_lints(
       bad_expr,
