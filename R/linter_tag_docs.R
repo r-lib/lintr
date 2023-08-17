@@ -108,4 +108,5 @@ NULL
 #' @seealso
 #'  - [linters] for a complete list of linters available in lintr.
 #'  - <https://testthat.r-lib.org>
+#'  - <https://r-pkgs.org/testing-basics.html>
 NULL

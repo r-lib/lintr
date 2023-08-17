@@ -10,6 +10,7 @@ Linters encouraging best practices within testthat suites.
 \itemize{
 \item \link{linters} for a complete list of linters available in lintr.
 \item \url{https://testthat.r-lib.org}
+\item \url{https://r-pkgs.org/testing-basics.html}
 }
 }
 \section{Linters}{
