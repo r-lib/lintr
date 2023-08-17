@@ -299,6 +299,7 @@ settings <- NULL
     linters = default_linters,
     encoding = "UTF-8",
     exclude = rex("#", any_spaces, "nolint"),
+    exclude_next = rex("#", any_spaces, "nolint next"),
     exclude_start = rex("#", any_spaces, "nolint start"),
     exclude_end = rex("#", any_spaces, "nolint end"),
     exclude_linter = rex(
