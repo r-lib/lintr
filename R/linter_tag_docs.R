@@ -105,5 +105,7 @@ NULL
 #' @description
 #' Linters encouraging best practices within testthat suites.
 #' @evalRd rd_linters("testthat")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso
+#'  - [linters] for a complete list of linters available in lintr.
+#'  - <https://testthat.r-lib.org>
 NULL

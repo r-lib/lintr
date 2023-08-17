@@ -7,7 +7,10 @@
 Linters encouraging best practices within testthat suites.
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\itemize{
+\item \link{linters} for a complete list of linters available in lintr.
+\item \url{https://testthat.r-lib.org}
+}
 }
 \section{Linters}{
 The following linters are tagged with 'testthat':
