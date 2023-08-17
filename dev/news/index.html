@@ -72,7 +72,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
-<ul><li>Linters with logic around the magrittr pipe <code>%&gt;%</code> consistently apply it to the other pipes <code>%!&gt;%</code>, <code>%T&gt;%</code>, <code>%&lt;&gt;%</code> (and possibly <code>%$%</code>) where appropriate (<a href="https://github.com/r-lib/lintr/issues/2008" class="external-link">#2008</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).
+<ul><li>New exclusion sentinel <code># nolint next</code> to signify the next line should skip linting (<a href="https://github.com/r-lib/lintr/issues/1791" class="external-link">#1791</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). The usual rules apply for excluding specific linters, e.g. <code># nolint next: assignment_linter.</code>. The exact string used to match a subsequent-line exclusion is controlled by the <code>exclude_next</code> config entry or R option <code>"lintr.exclude_next"</code>.</li>
+<li>Linters with logic around the magrittr pipe <code>%&gt;%</code> consistently apply it to the other pipes <code>%!&gt;%</code>, <code>%T&gt;%</code>, <code>%&lt;&gt;%</code> (and possibly <code>%$%</code>) where appropriate (<a href="https://github.com/r-lib/lintr/issues/2008" class="external-link">#2008</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).
 <ul><li><code><a href="../reference/brace_linter.html">brace_linter()</a></code></li>
 <li><code><a href="../reference/pipe_call_linter.html">pipe_call_linter()</a></code></li>
 <li><code><a href="../reference/pipe_continuation_linter.html">pipe_continuation_linter()</a></code></li>
