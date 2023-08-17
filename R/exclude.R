@@ -83,7 +83,7 @@ line_info <- function(line_numbers, type = c("start", "end")) {
 #'
 #' @param file R source file
 #' @param exclude Regular expression used to mark lines to exclude.
-#' @param exclude_next Regular expression used to mark lines previous to excluded lines.
+#' @param exclude_next Regular expression used to mark lines immediately preceding excluded lines.
 #' @param exclude_start Regular expression used to mark the start of an excluded range.
 #' @param exclude_end Regular expression used to mark the end of an excluded range.
 #' @param exclude_linter Regular expression used to capture a list of to-be-excluded linters immediately following a

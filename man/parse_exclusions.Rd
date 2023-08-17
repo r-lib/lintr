@@ -21,7 +21,7 @@ parse_exclusions(
 
 \item{exclude}{Regular expression used to mark lines to exclude.}
 
-\item{exclude_next}{Regular expression used to mark lines previous to excluded lines.}
+\item{exclude_next}{Regular expression used to mark lines immediately preceding excluded lines.}
 
 \item{exclude_start}{Regular expression used to mark the start of an excluded range.}
 
