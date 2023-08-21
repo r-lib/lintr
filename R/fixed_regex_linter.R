@@ -10,8 +10,8 @@
 #'   likely cases. It should _never_ report false positives, however; please
 #'   report false positives as an error.
 #'
-#' @param allow_unescaped Logical, default `FALSE`. If `TRUE`, pattern strings
-#'   not requiring escapes will not throw a lint. See examples.
+#' @param allow_unescaped Logical, default `FALSE`. If `TRUE`, patterns that do not
+#'   require regex escapes (e.g. `"\\$"` or `"[$]"` will not be linted. See examples.
 #' @examples
 #' # will produce lints
 #' code_lines <- 'gsub("\\\\.", "", x)'

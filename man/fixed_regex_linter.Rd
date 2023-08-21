@@ -7,8 +7,8 @@
 fixed_regex_linter(allow_unescaped = FALSE)
 }
 \arguments{
-\item{allow_unescaped}{Logical, default \code{FALSE}. If \code{TRUE}, pattern strings
-not requiring escapes will not throw a lint. See examples.}
+\item{allow_unescaped}{Logical, default \code{FALSE}. If \code{TRUE}, patterns that do not
+require regex escapes (e.g. \code{"\\\\$"} or \code{"[$]"} will not be linted. See examples.}
 }
 \description{
 Invoking a regular expression engine is overkill for cases when the search
