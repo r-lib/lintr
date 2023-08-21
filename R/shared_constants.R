@@ -31,6 +31,7 @@ rx_static_token <- local({
   ))
 })
 
+rx_unescaped_regex <- paste0("(?s)", rex(start, zero_or_more(rx_non_active_char), end))
 rx_static_regex <- paste0("(?s)", rex(start, zero_or_more(rx_static_token), end))
 rx_first_static_token <- paste0("(?s)", rex(start, zero_or_more(rx_non_active_char), rx_static_escape))
 
@@ -47,9 +48,13 @@ rx_first_static_token <- paste0("(?s)", rex(start, zero_or_more(rx_non_active_ch
 #' @return A logical vector, `TRUE` wherever `str` could be replaced by a
 #'   string with `fixed = TRUE`.
 #' @noRd
-is_not_regex <- function(str) {
+is_not_regex <- function(str, allow_unescaped = FALSE) {
   # need to add single-line option to allow literal newlines
-  grepl(rx_static_regex, str, perl = TRUE)
+  if (allow_unescaped) {
+    !grepl(rx_unescaped_regex, str, perl = TRUE)
+  } else {
+    grepl(rx_static_regex, str, perl = TRUE)
+  }
 }
 
 #' Compute a fixed string equivalent to a static regular expression
