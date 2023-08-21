@@ -7,7 +7,8 @@
 paste_linter(
   allow_empty_sep = FALSE,
   allow_to_string = FALSE,
-  allow_file_path = FALSE
+  allow_file_path = FALSE,
+  allow_file_path_double_slash = TRUE
 )
 }
 \arguments{
@@ -19,6 +20,13 @@ paste_linter(
 
 \item{allow_file_path}{Logical, default \code{FALSE}. If \code{TRUE}, usage of
 \code{paste()} and \code{paste0()} to construct file paths is not linted.}
+
+\item{allow_file_path_double_slash}{Logical, default \code{TRUE}. Only relevant
+when \code{allow_file_path} is \code{FALSE}. When \code{TRUE}, strings containing consecutive
+forward slashes will not lint. The main use case here is for URLs -- "paths" like
+\code{"https://"} will not induce lints, since constructing them with \code{file.path()} might
+be deemed unnatural. \code{"//"} is never linted when it comes at the beginning or end of
+the input, to avoid requiring empty inputs like \code{file.path("", ...)} or \code{file.path(..., "")}.}
 }
 \description{
 The following issues are linted by default by this linter
@@ -63,8 +71,8 @@ lint(
 )
 
 lint(
-  text = 'paste0(dir, "/", file)',
-  linters = paste_linter()
+  text = 'paste0("http://site.com/", path)',
+  linters = paste_linter(allow_file_path_double_slash = FALSE)
 )
 
 # okay
@@ -101,6 +109,11 @@ lint(
 lint(
   text = 'paste0(year, "/", month, "/", day)',
   linters = paste_linter(allow_file_path = TRUE)
+)
+
+lint(
+  text = 'paste0("http://site.com/", path)',
+  linters = paste_linter()
 )
 
 }

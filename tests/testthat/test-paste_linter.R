@@ -205,3 +205,11 @@ test_that("multiple path lints are generated correctly", {
 test_that("allow_file_path argument works", {
   expect_lint("paste(x, y, sep = '/')", NULL, paste_linter(allow_file_path = TRUE))
 })
+
+test_that("URLs are ignored by default, linted optionally", {
+  linter <- paste_linter()
+  linter_url <- paste_linter(allow_file_path_double_slash = FALSE)
+
+  expect_lint("paste0('http://site.com/', x)", NULL, linter)
+  expect_lint("paste0('http://site.com/', x)", rex::rex("Construct file paths with file.path(...)"), linter_url)
+})

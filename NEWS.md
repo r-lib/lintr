@@ -26,7 +26,7 @@
 * `line_length_linter()` helpfully includes the line length in the lint message (#2057, @MichaelChirico).
 * `conjunct_test_linter()` also lints usage like `dplyr::filter(x, A & B)` in favor of using `dplyr::filter(x, A, B)` (part of #884, @MichaelChirico).
 * `sort_linter()` checks for code like `x == sort(x)` which is better served by using the function `is.unsorted()` (part of #884, @MichaelChirico).
-* `paste_linter()` gains detection for file paths that are better constructed with `file.path()`, e.g. `paste0(dir, "/", file)` would be better as `file.path(dir, file)` (part of #884, @MichaelChirico).
+* `paste_linter()` gains detection for file paths that are better constructed with `file.path()`, e.g. `paste0(dir, "/", file)` would be better as `file.path(dir, file)` (part of #884, #2082, @MichaelChirico). There are two associated options for fine-tuning what gets linted here -- `allow_file_path` (`FALSE` by default) and `allow_file_path_double_slash` (`TRUE` by default). If the former is `TRUE`, no lints related to `paste()`/`paste0()` inputs that look like file paths are emitted. If the latter is `TRUE`, any path that uses `//`, e.g. URLs, will be skipped.
 * `fixed_regex_linter()` gains an option `allow_unescaped` (default `FALSE`) to toggle linting regexes not requiring any escapes or character classes (#1689, @MichaelChirico). Thus `fixed_regex_linter(allow_unescaped = TRUE)` would lint on `grepl("[$]", x)` but not on `grepl("a", x)` since the latter does not use any regex special characters.
 
 ### New linters

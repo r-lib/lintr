@@ -23,6 +23,12 @@
 #'   `paste()` and `paste0()` with `collapse = ", "` is not linted.
 #' @param allow_file_path Logical, default `FALSE`. If `TRUE`, usage of
 #'   `paste()` and `paste0()` to construct file paths is not linted.
+#' @param allow_file_path_double_slash Logical, default `TRUE`. Only relevant
+#'   when `allow_file_path` is `FALSE`. When `TRUE`, strings containing consecutive
+#'   forward slashes will not lint. The main use case here is for URLs -- "paths" like
+#'   `"https://"` will not induce lints, since constructing them with `file.path()` might
+#'   be deemed unnatural. `"//"` is never linted when it comes at the beginning or end of
+#'   the input, to avoid requiring empty inputs like `file.path("", ...)` or `file.path(..., "")`.
 #'
 #' @examples
 #' # will produce lints
@@ -47,8 +53,8 @@
 #' )
 #'
 #' lint(
-#'   text = 'paste0(dir, "/", file)',
-#'   linters = paste_linter()
+#'   text = 'paste0("http://site.com/", path)',
+#'   linters = paste_linter(allow_file_path_double_slash = FALSE)
 #' )
 #'
 #' # okay
@@ -87,9 +93,17 @@
 #'   linters = paste_linter(allow_file_path = TRUE)
 #' )
 #'
+#' lint(
+#'   text = 'paste0("http://site.com/", path)',
+#'   linters = paste_linter()
+#' )
+#'
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE, allow_file_path = FALSE) {
+paste_linter <- function(allow_empty_sep = FALSE,
+                         allow_to_string = FALSE,
+                         allow_file_path = FALSE,
+                         allow_file_path_double_slash = TRUE) {
   sep_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'paste']
     /parent::expr
@@ -140,6 +154,13 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE, allow
     ]
   ")
 
+  if (allow_file_path_double_slash) {
+    slash_cond <- "contains(text(), '//')"
+  } else {
+    # NB: substring() signature is (text, initial_index, n_characters)
+    slash_cond <- "substring(text(), 2, 2) = '//' or substring(text(), string-length(text()) - 2, 2) = '//'"
+  }
+
   # Type II: paste0(x, "/", y, "/", z)
   paste0_file_path_xpath <- xp_strip_comments(glue("
   //SYMBOL_FUNCTION_CALL[text() = 'paste0']
@@ -159,11 +180,7 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE, allow
         or expr[last()][{slash_str}]
         (: String starting or ending with multiple / :)
         (: TODO(#2075): run this logic on the actual R string :)
-        or expr/STR_CONST[
-          (: NB: this is (text, initial_index, n_characters) :)
-          substring(text(), 2, 2) = '//'
-          or substring(text(), string-length(text()) - 2, 2) = '//'
-        ]
+        or expr/STR_CONST[{ slash_cond }]
         (: Consecutive non-strings like paste0(x, y) :)
         or expr[({non_str}) and following-sibling::expr[1][{non_str}]]
         (: A string not ending with /, followed by non-string or string not starting with / :)
