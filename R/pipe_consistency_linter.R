@@ -35,7 +35,7 @@
 pipe_consistency_linter <- function(pipe = c("auto", "%>%", "|>")) {
   pipe <- match.arg(pipe)
 
-  xpath_magrittr <- "//SPECIAL[text() = '%>%']"
+  xpath_magrittr <- glue("//SPECIAL[{ xp_text_in_table(magrittr_pipes) }]")
   xpath_native <- "//PIPE"
 
   Linter(function(source_expression) {

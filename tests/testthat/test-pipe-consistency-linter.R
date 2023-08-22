@@ -146,3 +146,30 @@ test_that("pipe_consistency_linter works with %>% argument", {
     linter
   )
 })
+
+test_that("pipe_consistency_linter works with other magrittr pipes", {
+  expect_lint(
+    "1:3 %>% mean() %T% print()",
+    NULL,
+    pipe_consistency_linter()
+  )
+
+  expected_message <- rex("Found 1 instances of %>% and 1 instances of |>. Stick to one pipe operator.")
+
+  expect_lint(
+    "1:3 |> mean() %T>% print()",
+    list(
+      list(
+        message = expected_message,
+        line_number = 1L,
+        column_number = 5L
+      ),
+      list(
+        message = expected_message,
+        line_number = 1L,
+        column_number = 15L
+      )
+    ),
+    pipe_consistency_linter()
+  )
+})
