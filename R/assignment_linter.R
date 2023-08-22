@@ -106,12 +106,12 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
     if (length(bad_expr) == 0L) {
       return(list())
     }
 
-    operator <- xml2::xml_text(bad_expr)
+    operator <- xml_text(bad_expr)
     lint_message_fmt <- rep("Use <-, not %s, for assignment.", length(operator))
     lint_message_fmt[operator %in% c("<<-", "->>")] <-
       "%s can have hard-to-predict behavior; prefer assigning to a specific environment instead (with assign() or <-)."
@@ -119,7 +119,7 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
       "Avoid the assignment pipe %s; prefer using <- and %%>%% separately."
 
     if (!allow_trailing) {
-      bad_trailing_expr <- xml2::xml_find_all(xml, trailing_assign_xpath)
+      bad_trailing_expr <- xml_find_all(xml, trailing_assign_xpath)
       trailing_assignments <- xml2::xml_attrs(bad_expr) %in% xml2::xml_attrs(bad_trailing_expr)
       lint_message_fmt[trailing_assignments] <- "Assignment %s should not be trailing at the end of a line."
     }

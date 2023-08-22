@@ -50,8 +50,8 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
 
     xml <- source_expression$xml_parsed_content
 
-    all_names_nodes <- xml2::xml_find_all(xml, names_xpath)
-    all_names <- xml2::xml_text(all_names_nodes)
+    all_names_nodes <- xml_find_all(xml, names_xpath)
+    all_names <- xml_text(all_names_nodes)
 
     # not sapply/vapply, which may over-simplify to vector
     # rbind makes sure we have a matrix with dimensions [n_versions x n_names]

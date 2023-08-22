@@ -46,14 +46,14 @@
 #' - <https://design.tidyverse.org/required-no-defaults.html>
 #' @export
 function_argument_linter <- function() {
-  xpath <- paste(collapse = " | ", glue::glue("
-  //{c('FUNCTION', 'OP-LAMBDA')}
+  xpath <- "
+  (//FUNCTION | //OP-LAMBDA)
     /following-sibling::EQ_FORMALS[1]
     /following-sibling::SYMBOL_FORMALS[
       text() != '...'
       and not(following-sibling::*[not(self::COMMENT)][1][self::EQ_FORMALS])
     ]
-  "))
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -62,7 +62,7 @@ function_argument_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(
       bad_expr,

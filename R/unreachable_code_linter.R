@@ -37,7 +37,7 @@ unreachable_code_linter <- function() {
     /following-sibling::expr
     /*[
       self::expr
-      and expr[1][not(OP-DOLLAR) and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]
+      and expr[1][not(OP-DOLLAR or OP-AT) and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]
       and (position() != last() - 1 or not(following-sibling::OP-RIGHT-BRACE))
       and @line2 < following-sibling::*[1]/@line2
     ]
@@ -51,10 +51,10 @@ unreachable_code_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     is_nolint_end_comment <- xml2::xml_name(bad_expr) == "COMMENT" &
-      rex::re_matches(xml2::xml_text(bad_expr), settings$exclude_end)
+      re_matches(xml_text(bad_expr), settings$exclude_end)
 
     xml_nodes_to_lints(
       bad_expr[!is_nolint_end_comment],

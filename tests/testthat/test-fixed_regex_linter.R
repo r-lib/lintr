@@ -345,3 +345,11 @@ patrick::with_parameters_test_that("fixed replacements are correct", {
   "[\\xa]",               "[\\xa]",               "\\n"
 ))
 # styler: on
+
+test_that("'unescaped' regex can optionally be skipped", {
+  linter <- fixed_regex_linter(allow_unescaped = TRUE)
+
+  expect_lint("grepl('a', x)", NULL, linter)
+  expect_lint("str_detect(x, 'a')", NULL, linter)
+  expect_lint("grepl('[$]', x)", rex::rex('Here, you can use "$"'), linter)
+})

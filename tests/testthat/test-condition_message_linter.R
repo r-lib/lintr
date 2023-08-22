@@ -4,9 +4,11 @@ test_that("condition_message_linter skips allowed usages", {
   expect_lint("stop('a string', 'another')", NULL, linter)
   expect_lint("warning('a string', 'another')", NULL, linter)
   expect_lint("message('a string', 'another')", NULL, linter)
+  # extracted calls likely don't obey base::stop() semantics
+  expect_lint("ctx$stop(paste('a', 'b'))", NULL, linter)
+  expect_lint("ctx@stop(paste('a', 'b'))", NULL, linter)
 
-  # sprintf is OK (really should be gettextf but offering translations
-  #   at google internally is not likely to happen any time soon)
+  # sprintf is OK -- gettextf() enforcement is left to other linters
   expect_lint("stop(sprintf('A %s!', 'string'))", NULL, linter)
 
   # get multiple sep= in one expression

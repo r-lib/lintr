@@ -352,6 +352,15 @@ test_that("interprets glue expressions", {
     }
   "), NULL, linter)
 
+  # no need for namespace-qualification
+  expect_lint(trim_some("
+    glue <- glue::glue # imitate this being an @import
+    fun <- function() {
+      local_var <- 42
+      glue('The answer is {local_var}.')
+    }
+  "), NULL, linter)
+
   # multiple variables in different interpolations
   expect_lint(trim_some("
     fun <- function() {
@@ -410,6 +419,28 @@ test_that("interprets glue expressions", {
       glue::glue('The answer is {local_var}.')
     }
   "), "local_var", object_usage_linter(interpret_glue = FALSE))
+
+  # call in glue is caught
+  expect_lint(
+    trim_some("
+      fun <- function() {
+        local_call <- identity
+        local_unused_call <- identity
+        glue::glue('{local_call(1)}')
+      }
+    "),
+    "local_unused_call",
+    linter
+  )
+
+  # ditto infix operator
+  expect_lint(trim_some("
+    glue <- glue::glue # imitate this being an @import
+    foo <- function() {
+      `%++%` <- `+`
+      glue('{x %++% y}')
+    }
+  "), NULL, linter)
 })
 
 test_that("errors/edge cases in glue syntax don't fail lint()", {

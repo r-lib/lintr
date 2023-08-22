@@ -33,7 +33,7 @@
 #' @export
 routine_registration_linter <- function() {
   native_routine_callers <- c(".C", ".Call", ".Fortran", ".External")
-  xpath <- glue::glue("
+  xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(native_routine_callers)} ]
     /parent::expr
     /following-sibling::expr[1]/STR_CONST
@@ -47,7 +47,7 @@ routine_registration_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(
       bad_expr,

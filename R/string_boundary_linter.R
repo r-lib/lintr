@@ -60,7 +60,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     "string-length(text()) > 3",
     "contains(text(), '^') or contains(text(), '$')"
   )
-  str_detect_xpath <- glue::glue("
+  str_detect_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'str_detect']
     /parent::expr
     /following-sibling::expr[2]
@@ -68,7 +68,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
   ")
 
   if (!allow_grepl) {
-    grepl_xpath <- glue::glue("
+    grepl_xpath <- glue("
     //SYMBOL_FUNCTION_CALL[text() = 'grepl']
       /parent::expr
       /parent::expr[
@@ -87,7 +87,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
   }
 
   get_regex_lint_data <- function(xml, xpath) {
-    expr <- xml2::xml_find_all(xml, xpath)
+    expr <- xml_find_all(xml, xpath)
     patterns <- get_r_string(expr)
     initial_anchor <- startsWith(patterns, "^")
     search_start <- 1L + initial_anchor
@@ -96,7 +96,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     list(lint_expr = expr[can_replace], initial_anchor = initial_anchor[can_replace])
   }
 
-  substr_xpath_parts <- glue::glue("
+  substr_xpath_parts <- glue("
   //{ c('EQ', 'NE') }
     /parent::expr[
       expr[STR_CONST]
@@ -164,8 +164,8 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
       ))
     }
 
-    substr_expr <- xml2::xml_find_all(xml, substr_xpath)
-    substr_one <- xml2::xml_find_chr(substr_expr, substr_arg2_xpath) %in% c("1", "1L")
+    substr_expr <- xml_find_all(xml, substr_xpath)
+    substr_one <- xml_find_chr(substr_expr, substr_arg2_xpath) %in% c("1", "1L")
     substr_lint_message <- paste(
       ifelse(
         substr_one,

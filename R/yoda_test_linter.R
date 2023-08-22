@@ -42,17 +42,18 @@ yoda_test_linter <- function() {
   # TODO(#963): fully generalize this & re-use elsewhere
   const_condition <- "
     NUM_CONST
-    or (STR_CONST and not(OP-DOLLAR))
+    or (STR_CONST and not(OP-DOLLAR or OP-AT))
     or ((OP-PLUS or OP-MINUS) and count(expr[NUM_CONST]) = 2)
   "
-  xpath <- glue::glue("
+  pipes <- setdiff(magrittr_pipes, c("%$%", "%<>%"))
+  xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical' or text() = 'expect_setequal']
     /parent::expr
     /following-sibling::expr[1][ {const_condition} ]
-    /parent::expr[not(preceding-sibling::*[self::PIPE or self::SPECIAL[text() = '%>%']])]
+    /parent::expr[not(preceding-sibling::*[self::PIPE or self::SPECIAL[{ xp_text_in_table(pipes) }]])]
   ")
 
-  second_const_xpath <- glue::glue("expr[position() = 3 and ({const_condition})]")
+  second_const_xpath <- glue("expr[position() = 3 and ({const_condition})]")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -61,10 +62,10 @@ yoda_test_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     matched_call <- xp_call_name(bad_expr)
-    second_const <- xml2::xml_find_first(bad_expr, second_const_xpath)
+    second_const <- xml_find_first(bad_expr, second_const_xpath)
     lint_message <- ifelse(
       is.na(second_const),
       paste(

@@ -1,24 +1,3 @@
-object_name_xpath <- local({
-  xp_assignment_target <- paste0(
-    "not(preceding-sibling::OP-DOLLAR)",
-    "and ancestor::expr[",
-    " following-sibling::LEFT_ASSIGN",
-    " or preceding-sibling::RIGHT_ASSIGN",
-    " or following-sibling::EQ_ASSIGN",
-    "]",
-    "and not(ancestor::expr[",
-    " preceding-sibling::OP-LEFT-BRACKET",
-    " or preceding-sibling::LBB",
-    "])"
-  )
-
-  glue::glue("
-  //SYMBOL[ {xp_assignment_target} ]
-  |  //STR_CONST[ {xp_assignment_target} ]
-  |  //SYMBOL_FORMALS
-  ")
-})
-
 #' Object name linter
 #'
 #' Check that object names conform to a naming style.
@@ -128,7 +107,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
 
   lint_message <- paste0(
     "Variable and function name style should match ",
-    glue::glue_collapse(unique(names(style_list)), sep = ", ", last = " or "), "."
+    glue_collapse(unique(names(style_list)), sep = ", ", last = " or "), "."
   )
 
   Linter(function(source_expression) {
@@ -138,11 +117,11 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
 
     xml <- source_expression$full_xml_parsed_content
 
-    assignments <- xml2::xml_find_all(xml, object_name_xpath)
+    assignments <- xml_find_all(xml, object_name_xpath)
 
     # Retrieve assigned name
     nms <- strip_names(
-      xml2::xml_text(assignments)
+      xml_text(assignments)
     )
 
     # run namespace_imports at run-time, not "compile" time to allow package structure to change
@@ -194,13 +173,6 @@ check_style <- function(nms, style, generics = character()) {
   conforming
 }
 
-# Remove quotes or other things from names
-strip_names <- function(x) {
-  x <- re_substitutes(x, rex(start, some_of(quote, "`", "%")), "")
-  x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%"), end), "")
-  x
-}
-
 # see ?".onLoad", ?Startup, and ?quit. Remove leading dot to match behavior of strip_names().
 #   All of .onLoad, .onAttach, and .onUnload are used in base packages,
 #   and should be caught in is_base_function; they're included here for completeness / stability
@@ -224,14 +196,14 @@ loweralnum <- rex(one_of(lower, digit))
 upperalnum <- rex(one_of(upper, digit))
 
 style_regexes <- list(
-  "symbols"     = rex(start, zero_or_more(none_of(alnum)), end),
-  "CamelCase"   = rex(start, maybe("."), upper, zero_or_more(alnum), end),
-  "camelCase"   = rex(start, maybe("."), lower, zero_or_more(alnum), end),
-  "snake_case"  = rex(start, maybe("."), some_of(lower, digit), any_of("_", lower, digit), end),
-  "SNAKE_CASE"  = rex(start, maybe("."), some_of(upper, digit), any_of("_", upper, digit), end),
-  "dotted.case" = rex(start, maybe("."), one_or_more(loweralnum), zero_or_more(dot, one_or_more(loweralnum)), end),
-  "lowercase"   = rex(start, maybe("."), one_or_more(loweralnum), end),
-  "UPPERCASE"   = rex(start, maybe("."), one_or_more(upperalnum), end)
+  symbols     = rex(start, zero_or_more(none_of(alnum)), end),
+  CamelCase   = rex(start, maybe("."), upper, zero_or_more(alnum), end),
+  camelCase   = rex(start, maybe("."), lower, zero_or_more(alnum), end),
+  snake_case  = rex(start, maybe("."), some_of(lower, digit), any_of("_", lower, digit), end),
+  SNAKE_CASE  = rex(start, maybe("."), some_of(upper, digit), any_of("_", upper, digit), end),
+  dotted.case = rex(start, maybe("."), one_or_more(loweralnum), zero_or_more(dot, one_or_more(loweralnum)), end),
+  lowercase   = rex(start, maybe("."), one_or_more(loweralnum), end),
+  UPPERCASE   = rex(start, maybe("."), one_or_more(upperalnum), end)
 )
 
 regexes_rd <- toString(paste0("\\sQuote{", names(style_regexes), "}"))

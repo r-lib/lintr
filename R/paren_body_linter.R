@@ -53,7 +53,7 @@ paren_body_linter <- function() {
     }
 
     xml <- source_expression$xml_parsed_content
-    matched_expressions <- xml2::xml_find_all(xml, xpath)
+    matched_expressions <- xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(
       matched_expressions,
