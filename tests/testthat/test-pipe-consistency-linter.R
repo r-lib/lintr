@@ -148,6 +148,8 @@ test_that("pipe_consistency_linter works with %>% argument", {
 })
 
 test_that("pipe_consistency_linter works with other magrittr pipes", {
+  skip_if_not_r_version("4.1.0")
+
   expect_lint(
     "1:3 %>% mean() %T% print()",
     NULL,
