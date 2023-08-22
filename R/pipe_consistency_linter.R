@@ -55,7 +55,10 @@ pipe_consistency_linter <- function(pipe = c("auto", "%>%", "|>")) {
       xml_nodes_to_lints(
         xml = c(match_magrittr, match_native),
         source_expression = source_expression,
-        lint_message = glue("Found {n_magrittr} instances of %>% and {n_native} instances of |>. Stick to one pipe operator."),
+        lint_message = glue(
+          "Found {n_magrittr} instances of %>% and {n_native} instances of |>.",
+          " Stick to one pipe operator."
+        ),
         type = "style"
       )
     } else if (pipe == "%>%" && n_native > 0L) {
