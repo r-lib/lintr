@@ -10,6 +10,8 @@
 #'   likely cases. It should _never_ report false positives, however; please
 #'   report false positives as an error.
 #'
+#' @param allow_unescaped Logical, default `FALSE`. If `TRUE`, only patterns that
+#'   require regex escapes (e.g. `"\\$"` or `"[$]"`) will be linted. See examples.
 #' @examples
 #' # will produce lints
 #' code_lines <- 'gsub("\\\\.", "", x)'
@@ -22,6 +24,11 @@
 #' lint(
 #'   text = 'grepl("a[*]b", x)',
 #'   linters = fixed_regex_linter()
+#' )
+#'
+#' lint(
+#'   text = 'grepl("a[*]b", x)',
+#'   linters = fixed_regex_linter(allow_unescaped = TRUE)
 #' )
 #'
 #' code_lines <- 'stringr::str_subset(x, "\\\\$")'
@@ -59,10 +66,15 @@
 #'   linters = fixed_regex_linter()
 #' )
 #'
+#' lint(
+#'   text = 'grepl("Munich", address)',
+#'   linters = fixed_regex_linter(allow_unescaped = TRUE)
+#' )
+#'
 #' @evalRd rd_tags("fixed_regex_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-fixed_regex_linter <- function() {
+fixed_regex_linter <- function(allow_unescaped = FALSE) {
   # regular expression pattern is the first argument
   pos_1_regex_funs <- xp_text_in_table(c(
     "grep", "gsub", "sub", "regexec", "grepl", "regexpr", "gregexpr"
@@ -133,7 +145,7 @@ fixed_regex_linter <- function() {
 
     patterns <- xml_find_all(xml, xpath)
     pattern_strings <- get_r_string(patterns)
-    is_static <- is_not_regex(pattern_strings)
+    is_static <- is_not_regex(pattern_strings, allow_unescaped)
 
     fixed_equivalent <- encodeString(get_fixed_string(pattern_strings[is_static]), quote = '"', justify = "none")
     call_name <- xml_find_chr(patterns[is_static], "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")

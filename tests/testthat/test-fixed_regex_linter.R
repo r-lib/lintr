@@ -346,6 +346,14 @@ patrick::with_parameters_test_that("fixed replacements are correct", {
 ))
 # styler: on
 
+test_that("'unescaped' regex can optionally be skipped", {
+  linter <- fixed_regex_linter(allow_unescaped = TRUE)
+
+  expect_lint("grepl('a', x)", NULL, linter)
+  expect_lint("str_detect(x, 'a')", NULL, linter)
+  expect_lint("grepl('[$]', x)", rex::rex('Here, you can use "$"'), linter)
+})
+
 test_that("linter is pipe-aware", {
   linter <- fixed_regex_linter()
   lint_msg <- "This regular expression is static"
