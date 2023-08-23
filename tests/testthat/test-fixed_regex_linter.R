@@ -348,18 +348,19 @@ patrick::with_parameters_test_that("fixed replacements are correct", {
 
 test_that("linter is pipe-aware", {
   linter <- fixed_regex_linter()
+  lint_msg <- "This regular expression is static"
 
-  expect_lint("x %>% grepl(pattern = 'a')", "This regular expression is static", linter)
+  expect_lint("x %>% grepl(pattern = 'a')", lint_msg, linter)
   expect_lint("x %>% grepl(pattern = '^a')", NULL, linter)
   expect_lint("x %>% grepl(pattern = 'a', fixed = TRUE)", NULL, linter)
-  expect_lint("x %>% str_detect('a')", "xxx", linter)
+  expect_lint("x %>% str_detect('a')", lint_msg, linter)
   expect_lint("x %>% str_detect('^a')", NULL, linter)
   expect_lint("x %>% str_detect(fixed('a'))", NULL, linter)
 
-  expect_lint("x %>% gsub(pattern = 'a', replacement = '')", "This regular expression is static", linter)
+  expect_lint("x %>% gsub(pattern = 'a', replacement = '')", lint_msg, linter)
   expect_lint("x %>% gsub(pattern = '^a', replacement = '')", NULL, linter)
   expect_lint("x %>% gsub(pattern = 'a', replacement = '', fixed = TRUE)", NULL, linter)
-  expect_lint("x %>% str_replace('a', '')", "This regular expression is static", linter)
+  expect_lint("x %>% str_replace('a', '')", lint_msg, linter)
   expect_lint("x %>% str_replace('^a', '')", NULL, linter)
   expect_lint("x %>% str_replace(fixed('a'), '')", NULL, linter)
 })
