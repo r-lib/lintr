@@ -16,6 +16,6 @@ test_that("xp_call_name input validation works", {
 
   xml <- xml2::read_xml("<a></a>")
   expect_error(xp_call_name(xml, depth = -1L), "depth >= 0", fixed = TRUE)
-  expect_error(xp_call_name(xml, depth = '1'), "is.numeric(depth)", fixed = TRUE)
-  expect_error(xp_call_name(xml, condition = 1), "is.character(condition)", fixed = TRUE)
+  expect_error(xp_call_name(xml, depth = "1"), "is.numeric(depth)", fixed = TRUE)
+  expect_error(xp_call_name(xml, condition = 1L), "is.character(condition)", fixed = TRUE)
 })
