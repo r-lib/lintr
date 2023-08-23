@@ -116,7 +116,8 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
       (
         position() = 1
         and STR_CONST
-        and not(EQ_SUB) and not({ in_pipe_cond })
+        and not(EQ_SUB)
+        and not({ in_pipe_cond })
       ) or (
         preceding-sibling::*[2][self::SYMBOL_SUB/text() = 'pattern']
       )
