@@ -97,8 +97,9 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
     "str_view", "str_view_all", "str_which"
   ))
 
+  pipes <- setdiff(magrittr_pipes, c("%$%", "%T>%"))
   in_pipe_cond <- glue("
-    parent::expr/preceding-sibling::SPECIAL[{ xp_text_in_table(magrittr_pipes) }]
+    parent::expr/preceding-sibling::SPECIAL[{ xp_text_in_table(pipes) }]
     | parent::expr/preceding-sibling::PIPE
   ")
 

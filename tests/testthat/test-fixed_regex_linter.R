@@ -354,21 +354,29 @@ test_that("'unescaped' regex can optionally be skipped", {
   expect_lint("grepl('[$]', x)", rex::rex('Here, you can use "$"'), linter)
 })
 
-test_that("linter is pipe-aware", {
-  linter <- fixed_regex_linter()
-  lint_msg <- "This regular expression is static"
+local({
+  pipes <- pipes(exclude = c("%$%", "%T>%"))
+  patrick::with_parameters_test_that(
+    "linter is pipe-aware",
+    {
+      linter <- fixed_regex_linter()
+      lint_msg <- "This regular expression is static"
 
-  expect_lint("x %>% grepl(pattern = 'a')", lint_msg, linter)
-  expect_lint("x %>% grepl(pattern = '^a')", NULL, linter)
-  expect_lint("x %>% grepl(pattern = 'a', fixed = TRUE)", NULL, linter)
-  expect_lint("x %>% str_detect('a')", lint_msg, linter)
-  expect_lint("x %>% str_detect('^a')", NULL, linter)
-  expect_lint("x %>% str_detect(fixed('a'))", NULL, linter)
+      expect_lint(paste("x", pipe, "grepl(pattern = 'a')"), lint_msg, linter)
+      expect_lint(paste("x", pipe, "grepl(pattern = '^a')"), NULL, linter)
+      expect_lint(paste("x", pipe, "grepl(pattern = 'a', fixed = TRUE)"), NULL, linter)
+      expect_lint(paste("x", pipe, "str_detect('a')"), lint_msg, linter)
+      expect_lint(paste("x", pipe, "str_detect('^a')"), NULL, linter)
+      expect_lint(paste("x", pipe, "str_detect(fixed('a'))"), NULL, linter)
 
-  expect_lint("x %>% gsub(pattern = 'a', replacement = '')", lint_msg, linter)
-  expect_lint("x %>% gsub(pattern = '^a', replacement = '')", NULL, linter)
-  expect_lint("x %>% gsub(pattern = 'a', replacement = '', fixed = TRUE)", NULL, linter)
-  expect_lint("x %>% str_replace('a', '')", lint_msg, linter)
-  expect_lint("x %>% str_replace('^a', '')", NULL, linter)
-  expect_lint("x %>% str_replace(fixed('a'), '')", NULL, linter)
+      expect_lint(paste("x", pipe, "gsub(pattern = 'a', replacement = '')"), lint_msg, linter)
+      expect_lint(paste("x", pipe, "gsub(pattern = '^a', replacement = '')"), NULL, linter)
+      expect_lint(paste("x", pipe, "gsub(pattern = 'a', replacement = '', fixed = TRUE)"), NULL, linter)
+      expect_lint(paste("x", pipe, "str_replace('a', '')"), lint_msg, linter)
+      expect_lint(paste("x", pipe, "str_replace('^a', '')"), NULL, linter)
+      expect_lint(paste("x", pipe, "str_replace(fixed('a'), '')"), NULL, linter)
+    },
+    pipe = pipes,
+    .test_name = names(pipes)
+  )
 })
