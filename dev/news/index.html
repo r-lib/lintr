@@ -73,6 +73,11 @@
 <div class="section level3">
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
 <ul><li>New exclusion sentinel <code># nolint next</code> to signify the next line should skip linting (<a href="https://github.com/r-lib/lintr/issues/1791" class="external-link">#1791</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). The usual rules apply for excluding specific linters, e.g. <code># nolint next: assignment_linter.</code>. The exact string used to match a subsequent-line exclusion is controlled by the <code>exclude_next</code> config entry or R option <code>"lintr.exclude_next"</code>.</li>
+<li>
+<code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code>
+<ul><li>Is pipe-aware, in particular removing false positives arong piping into {stringr} functions like <code>x |&gt; str_replace(fixed("a"), "b")</code> (<a href="https://github.com/r-lib/lintr/issues/1811" class="external-link">#1811</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>Gains an option <code>allow_unescaped</code> (default <code>FALSE</code>) to toggle linting regexes not requiring any escapes or character classes (<a href="https://github.com/r-lib/lintr/issues/1689" class="external-link">#1689</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Thus <code>fixed_regex_linter(allow_unescaped = TRUE)</code> would lint on <code>grepl("[$]", x)</code> but not on <code>grepl("a", x)</code> since the latter does not use any regex special characters.</li>
+</ul></li>
 <li>Linters with logic around the magrittr pipe <code>%&gt;%</code> consistently apply it to the other pipes <code>%!&gt;%</code>, <code>%T&gt;%</code>, <code>%&lt;&gt;%</code> (and possibly <code>%$%</code>) where appropriate (<a href="https://github.com/r-lib/lintr/issues/2008" class="external-link">#2008</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).
 <ul><li><code><a href="../reference/brace_linter.html">brace_linter()</a></code></li>
 <li><code><a href="../reference/pipe_call_linter.html">pipe_call_linter()</a></code></li>
@@ -99,8 +104,6 @@
 <code><a href="../reference/sort_linter.html">sort_linter()</a></code> checks for code like <code>x == sort(x)</code> which is better served by using the function <code><a href="https://rdrr.io/r/base/is.unsorted.html" class="external-link">is.unsorted()</a></code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/paste_linter.html">paste_linter()</a></code> gains detection for file paths that are better constructed with <code><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path()</a></code>, e.g. <code>paste0(dir, "/", file)</code> would be better as <code>file.path(dir, file)</code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>
-<code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> gains an option <code>allow_unescaped</code> (default <code>FALSE</code>) to toggle linting regexes not requiring any escapes or character classes (<a href="https://github.com/r-lib/lintr/issues/1689" class="external-link">#1689</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Thus <code>fixed_regex_linter(allow_unescaped = TRUE)</code> would lint on <code>grepl("[$]", x)</code> but not on <code>grepl("a", x)</code> since the latter does not use any regex special characters.</li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>
