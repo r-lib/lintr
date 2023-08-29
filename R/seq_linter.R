@@ -95,8 +95,6 @@ seq_linter <- function() {
 
     badx <- xml_find_all(xml, xpath)
 
-    # TODO: better message customization. For example, length(x):1
-    #   would get rev(seq_along(x)) as the preferred replacement.
     dot_expr1 <- get_fun(badx, 1L)
     dot_expr2 <- get_fun(badx, 2L)
     seq_along_idx <- grepl("length(", dot_expr1, fixed = TRUE) | grepl("length(", dot_expr2, fixed = TRUE)
