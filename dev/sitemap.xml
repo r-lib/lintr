@@ -433,6 +433,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/xml_nodes_to_lints.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/xp_call_name.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/yoda_test_linter.html</loc>
   </url>
 </urlset>
