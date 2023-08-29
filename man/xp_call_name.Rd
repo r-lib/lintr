@@ -7,7 +7,7 @@
 xp_call_name(expr, depth = 1L, condition = NULL)
 }
 \arguments{
-\item{expr}{An}
+\item{expr}{An \code{xml_node} or \code{xml_nodeset}, e.g. from \code{\link[xml2:xml_find_all]{xml2::xml_find_all()}}.}
 
 \item{depth}{Integer, default \code{1L}. How deep in the AST represented by \code{expr}
 should we look to find the call? By default, we assume \code{expr} is matched
@@ -20,7 +20,7 @@ nodes must be traversed before finding the call.}
 required for a match. The default (\code{NULL}) is no condition. See examples.}
 }
 \description{
-Often, it is mroe helpful to custom-tailer the \code{message} of a lint to record
+Often, it is more helpful to custom-tailer the \code{message} of a lint to record
 which function was matched by the lint logic. This function encapsualtes
 the logic to pull out the matched call in common situations.
 }
