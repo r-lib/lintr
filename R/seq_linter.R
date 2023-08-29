@@ -103,7 +103,7 @@ seq_linter <- function() {
     rev_idx <- startsWith(dot_expr2, "1")
 
     replacement <- rep("seq_along(...)", length(badx))
-    replacement[!seq_along_idx] <- paste0("seq_len(", dot_expr2[!seq_along_idx], ")")
+    replacement[!seq_along_idx] <- paste0("seq_len(", ifelse(rev_idx, dot_expr1, dot_expr2)[!seq_along_idx], ")")
     replacement[rev_idx] <- paste0("rev(", replacement[rev_idx], ")")
 
     lint_message <- ifelse(
