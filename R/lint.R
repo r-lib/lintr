@@ -296,12 +296,12 @@ define_linters <- function(linters = NULL) {
   } else if (is_linter(linters)) {
     linters <- list(linters)
     names(linters) <- attr(linters[[1L]], "name", exact = TRUE)
-  } else if (is.list(linters)) {
-    names(linters) <- auto_names(linters)
-  } else {
+  } else if (!is.list(linters)) {
     name <- deparse(substitute(linters))
     linters <- list(linters)
     names(linters) <- name
+  } else {
+    names(linters) <- auto_names(linters)
   }
   linters
 }
