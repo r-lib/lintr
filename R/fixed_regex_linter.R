@@ -97,6 +97,12 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
     "str_view", "str_view_all", "str_which"
   ))
 
+  pipes <- setdiff(magrittr_pipes, c("%$%", "%T>%"))
+  in_pipe_cond <- glue("
+    parent::expr/preceding-sibling::SPECIAL[{ xp_text_in_table(pipes) }]
+    | parent::expr/preceding-sibling::PIPE
+  ")
+
   # NB: strsplit doesn't have an ignore.case argument
   # NB: we intentionally exclude cases like gsub(x, c("a" = "b")), where "b" is fixed
   xpath <- glue("
@@ -107,7 +113,16 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
         and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
       ])
     ]
-    /following-sibling::expr[1][STR_CONST and not(EQ_SUB)]
+    /following-sibling::expr[
+      (
+        position() = 1
+        and STR_CONST
+        and not(EQ_SUB)
+        and not({ in_pipe_cond })
+      ) or (
+        preceding-sibling::*[2][self::SYMBOL_SUB/text() = 'pattern']
+      )
+    ]
   |
   //SYMBOL_FUNCTION_CALL[ {pos_2_regex_funs} ]
     /parent::expr[
@@ -116,7 +131,11 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
         and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
       ])
     ]
-    /following-sibling::expr[2][STR_CONST and not(EQ_SUB)]
+    /following-sibling::expr[
+      position() = 2 - count({ in_pipe_cond })
+      and STR_CONST
+      and not(EQ_SUB)
+    ]
   ")
 
   Linter(function(source_expression) {
