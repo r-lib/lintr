@@ -59,7 +59,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
 
     pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
 
-    declared_globals <- try_silently(utils::globalVariables(package = pkg_name %||% globalenv()))
+    declared_globals <- try_silently(globalVariables(package = pkg_name %||% globalenv()))
 
     xml <- source_expression$full_xml_parsed_content
 
@@ -93,7 +93,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
 
       # TODO handle assignment functions properly
       # e.g. `not_existing<-`(a, b)
-      res$name <- rex::re_substitutes(res$name, rex::rex("<-"), "")
+      res$name <- re_substitutes(res$name, rex("<-"), "")
 
       lintable_symbols <- xml_find_all(fun_assignment, xpath_culprit_symbol)
 
@@ -229,7 +229,8 @@ get_check_usage_results <- function(expression, known_used_symbols, declared_glo
   report_env <- new.env(parent = emptyenv())
   report_env$vals <- character()
   report <- function(x) report_env$vals <- c(report_env$vals, x)
-  withr::local_options(list(useFancyQuotes = FALSE))
+  old <- options(useFancyQuotes = FALSE)
+  on.exit(options(old))
   try(
     codetools::checkUsage(
       expression,

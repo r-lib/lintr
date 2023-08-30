@@ -43,5 +43,5 @@ lint(
 }
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=package_development_linters]{package_development}
+\link[=best_practices_linters]{best_practices}, \link[=package_development_linters]{package_development}, \link[=pkg_testthat_linters]{pkg_testthat}
 }

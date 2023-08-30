@@ -21,6 +21,8 @@
 #'   `paste()` with `sep = ""` is not linted.
 #' @param allow_to_string Logical, default `FALSE`. If `TRUE`, usage of
 #'   `paste()` and `paste0()` with `collapse = ", "` is not linted.
+#' @param allow_file_path Logical, default `FALSE`. If `TRUE`, usage of
+#'   `paste()` and `paste0()` to construct file paths is not linted.
 #'
 #' @examples
 #' # will produce lints
@@ -41,6 +43,11 @@
 #'
 #' lint(
 #'   text = 'paste0(rep("*", 10L), collapse = "")',
+#'   linters = paste_linter()
+#' )
+#'
+#' lint(
+#'   text = 'paste0(dir, "/", file)',
 #'   linters = paste_linter()
 #' )
 #'
@@ -75,9 +82,14 @@
 #'   linters = paste_linter()
 #' )
 #'
+#' lint(
+#'   text = 'paste0(year, "/", month, "/", day)',
+#'   linters = paste_linter(allow_file_path = TRUE)
+#' )
+#'
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
+paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE, allow_file_path = FALSE) {
   sep_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'paste']
     /parent::expr
@@ -110,6 +122,70 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
     ]
     /parent::expr
   "
+
+  slash_str <- sprintf("STR_CONST[%s]", xp_text_in_table(c("'/'", '"/"')))
+  str_not_start_with_slash <-
+    "STR_CONST[not(substring(text(), 2, 1) = '/')]"
+  str_not_end_with_slash <-
+    "STR_CONST[not(substring(text(), string-length(text()) - 1, 1) = '/')]"
+  non_str <- "SYMBOL or expr"
+
+  # Type I: paste(..., sep = "/")
+  paste_file_path_xpath <- glue("
+  //SYMBOL_FUNCTION_CALL[text() = 'paste']
+    /parent::expr
+    /parent::expr[
+      SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1][{slash_str}]
+      and not(SYMBOL_SUB[text() = 'collapse'])
+    ]
+  ")
+
+  # Type II: paste0(x, "/", y, "/", z)
+  paste0_file_path_xpath <- xp_strip_comments(glue("
+  //SYMBOL_FUNCTION_CALL[text() = 'paste0']
+    /parent::expr
+    /parent::expr[
+      (: exclude paste0(x) :)
+      count(expr) > 2
+      (: An expression matching _any_ of these conditions is _not_ a file path :)
+      and not(
+        (: Any numeric input :)
+        expr/NUM_CONST
+        (: A call using collapse= :)
+        or SYMBOL_SUB[text() = 'collapse']
+        (: First input is '/', meaning file.path() would need to start with '' :)
+        or expr[2][{slash_str}]
+        (: Last input is '/', meaning file.path() would need to end with '' :)
+        or expr[last()][{slash_str}]
+        (: String starting or ending with multiple / :)
+        (: TODO(#2075): run this logic on the actual R string :)
+        or expr/STR_CONST[
+          (: NB: this is (text, initial_index, n_characters) :)
+          substring(text(), 2, 2) = '//'
+          or substring(text(), string-length(text()) - 2, 2) = '//'
+        ]
+        (: Consecutive non-strings like paste0(x, y) :)
+        or expr[({non_str}) and following-sibling::expr[1][{non_str}]]
+        (: A string not ending with /, followed by non-string or string not starting with / :)
+        or expr[
+          {str_not_end_with_slash}
+          and following-sibling::expr[1][
+            {non_str}
+            or {str_not_start_with_slash}
+          ]
+        ]
+        (: A string not starting with /, preceded by a non-string       :)
+        (: NB: consecutive strings is covered by the previous condition :)
+        or expr[
+          {str_not_start_with_slash}
+          and preceding-sibling::expr[1][{non_str}]
+        ]
+      )
+    ]
+  "))
+
+  empty_paste_note <-
+    'Note that paste() converts empty inputs to "", whereas file.path() leaves it empty.'
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -169,6 +245,32 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE) {
       lint_message = sprintf('strrep(x, times) is better than %s(rep(x, times), collapse = "").', paste_call),
       type = "warning"
     )
+
+    if (!allow_file_path) {
+      paste_file_path_expr <- xml_find_all(xml, paste_file_path_xpath)
+      optional_lints <- c(optional_lints, xml_nodes_to_lints(
+        paste_file_path_expr,
+        source_expression = source_expression,
+        lint_message = paste(
+          'Construct file paths with file.path(...) instead of paste(..., sep = "/").',
+          'If you are using paste(sep = "/") to construct a date,',
+          "consider using format() or lubridate helpers instead.",
+          empty_paste_note
+        ),
+        type = "warning"
+      ))
+
+      paste0_file_path_expr <- xml_find_all(xml, paste0_file_path_xpath)
+      optional_lints <- c(optional_lints, xml_nodes_to_lints(
+        paste0_file_path_expr,
+        source_expression = source_expression,
+        lint_message = paste(
+          'Construct file paths with file.path(...) instead of paste0(x, "/", y, "/", z).',
+          empty_paste_note
+        ),
+        type = "warning"
+      ))
+    }
 
     c(optional_lints, paste0_sep_lints, paste_strrep_lints)
   })

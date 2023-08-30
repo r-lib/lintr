@@ -1,6 +1,6 @@
-rx_non_active_char <- rex::rex(none_of("^${(.*+?|[\\"))
+rx_non_active_char <- rex(none_of("^${(.*+?|[\\"))
 rx_static_escape <- local({
-  rx_char_escape <- rex::rex(or(
+  rx_char_escape <- rex(or(
     group("\\", none_of(alnum)),
     group("\\x", between(xdigit, 1L, 2L)),
     group("\\", between("0":"7", 1L, 3L)),
@@ -9,7 +9,7 @@ rx_static_escape <- local({
     group("\\U{", between(xdigit, 1L, 8L), "}"),
     group("\\U", between(xdigit, 1L, 8L))
   ))
-  rx_trivial_char_group <- rex::rex(
+  rx_trivial_char_group <- rex(
     "[",
     or(
       any,
@@ -18,21 +18,22 @@ rx_static_escape <- local({
     ),
     "]"
   )
-  rex::rex(or(
+  rex(or(
     capture(rx_char_escape, name = "char_escape"),
     capture(rx_trivial_char_group, name = "trivial_char_group")
   ))
 })
 
 rx_static_token <- local({
-  rex::rex(or(
+  rex(or(
     rx_non_active_char,
     rx_static_escape
   ))
 })
 
-rx_static_regex <- paste0("(?s)", rex::rex(start, zero_or_more(rx_static_token), end))
-rx_first_static_token <- paste0("(?s)", rex::rex(start, zero_or_more(rx_non_active_char), rx_static_escape))
+rx_unescaped_regex <- paste0("(?s)", rex(start, zero_or_more(rx_non_active_char), end))
+rx_static_regex <- paste0("(?s)", rex(start, zero_or_more(rx_static_token), end))
+rx_first_static_token <- paste0("(?s)", rex(start, zero_or_more(rx_non_active_char), rx_static_escape))
 
 #' Determine whether a regex pattern actually uses regex patterns
 #'
@@ -47,9 +48,13 @@ rx_first_static_token <- paste0("(?s)", rex::rex(start, zero_or_more(rx_non_acti
 #' @return A logical vector, `TRUE` wherever `str` could be replaced by a
 #'   string with `fixed = TRUE`.
 #' @noRd
-is_not_regex <- function(str) {
+is_not_regex <- function(str, allow_unescaped = FALSE) {
   # need to add single-line option to allow literal newlines
-  grepl(rx_static_regex, str, perl = TRUE)
+  if (allow_unescaped) {
+    !grepl(rx_unescaped_regex, str, perl = TRUE)
+  } else {
+    grepl(rx_static_regex, str, perl = TRUE)
+  }
 }
 
 #' Compute a fixed string equivalent to a static regular expression
@@ -98,7 +103,7 @@ get_token_replacement <- function(token_content, token_type) {
       token_content
     }
   } else { # char_escape token
-    if (rex::re_matches(token_content, rex::rex("\\", one_of("^${}().*+?|[]\\<>=:;/_-!@#%&,~")))) {
+    if (re_matches(token_content, rex("\\", one_of("^${}().*+?|[]\\<>=:;/_-!@#%&,~")))) {
       substr(token_content, start = 2L, stop = nchar(token_content))
     } else {
       eval(parse(text = paste0('"', token_content, '"')))

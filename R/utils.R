@@ -10,7 +10,7 @@
   identical(x, y)
 }
 
-"%:::%" <- function(p, f) {
+`%:::%` <- function(p, f) {
   get(f, envir = asNamespace(p))
 }
 
@@ -57,7 +57,7 @@ linter_auto_name <- function(which = -3L) {
   if (re_matches(nm, regex)) {
     match <- re_matches(nm, regex, locations = TRUE)
     nm <- substr(nm, start = 1L, stop = match[1L, "end"])
-    nm <- re_substitutes(nm, rex::rex(start, alnums, "::"), "")
+    nm <- re_substitutes(nm, rex(start, alnums, "::"), "")
   }
   nm
 }
@@ -145,12 +145,16 @@ quote_wrap <- function(x, q) paste0(q, x, q)
 # interface to work like options() or setwd() -- returns the old value for convenience
 set_lang <- function(new_lang) {
   old_lang <- Sys.getenv("LANGUAGE", unset = NA)
-  Sys.setenv(LANGUAGE = new_lang)
+  Sys.setenv(LANGUAGE = new_lang) # nolint: undesirable_function. Avoiding {withr} dep in pkg.
   old_lang
 }
 # handle the logic of either unsetting if it was previously unset, or resetting
 reset_lang <- function(old_lang) {
-  if (is.na(old_lang)) Sys.unsetenv("LANGUAGE") else Sys.setenv(LANGUAGE = old_lang)
+  if (is.na(old_lang)) {
+    Sys.unsetenv("LANGUAGE")
+  } else {
+    Sys.setenv(LANGUAGE = old_lang) # nolint: undesirable_function. Avoiding {withr} dep in pkg.
+  }
 }
 
 #' Create a `linter` closure

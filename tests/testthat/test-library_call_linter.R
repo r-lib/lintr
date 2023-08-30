@@ -1,4 +1,5 @@
 test_that("library_call_linter skips allowed usages", {
+  linter <- library_call_linter()
 
   expect_lint(
     trim_some("
@@ -6,12 +7,12 @@ test_that("library_call_linter skips allowed usages", {
       print('test')
     "),
     NULL,
-    library_call_linter()
+    linter
   )
 
   expect_lint("print('test')",
     NULL,
-    library_call_linter()
+    linter
   )
 
   expect_lint(
@@ -20,7 +21,7 @@ test_that("library_call_linter skips allowed usages", {
       library(dplyr)
     "),
     NULL,
-    library_call_linter()
+    linter
   )
 
   expect_lint(
@@ -29,11 +30,12 @@ test_that("library_call_linter skips allowed usages", {
       # library(dplyr)
     "),
     NULL,
-    library_call_linter()
+    linter
   )
 })
 
 test_that("library_call_linter warns on disallowed usages", {
+  linter <- library_call_linter()
   lint_message <- rex::rex("Move all library calls to the top of the script.")
 
   expect_lint(
@@ -43,7 +45,7 @@ test_that("library_call_linter warns on disallowed usages", {
       library(tidyr)
     "),
     lint_message,
-    library_call_linter()
+    linter
   )
 
   expect_lint(
@@ -57,7 +59,7 @@ test_that("library_call_linter warns on disallowed usages", {
       list(lint_message, line_number = 3L, column_number = 1L),
       list(lint_message, line_number = 4L, column_number = 1L)
     ),
-    library_call_linter()
+    linter
   )
 
   expect_lint(
@@ -68,7 +70,7 @@ test_that("library_call_linter warns on disallowed usages", {
       library(tidyr)
     "),
     lint_message,
-    library_call_linter()
+    linter
   )
 
   expect_lint(
@@ -79,7 +81,7 @@ test_that("library_call_linter warns on disallowed usages", {
       print('test')
     "),
     lint_message,
-    library_call_linter()
+    linter
   )
 
   expect_lint(
@@ -94,6 +96,45 @@ test_that("library_call_linter warns on disallowed usages", {
       list(lint_message, line_number = 3L, column_number = 1L),
       list(lint_message, line_number = 5L, column_number = 1L)
     ),
-    library_call_linter()
+    linter
+  )
+})
+
+test_that("require() treated the same as library()", {
+  linter <- library_call_linter()
+  lint_message_library <- rex::rex("Move all library calls to the top of the script.")
+  lint_message_require <- rex::rex("Move all require calls to the top of the script.")
+
+  expect_lint(
+    trim_some('
+      library(dplyr)
+      require("tidyr")
+    '),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some('
+      library(dplyr)
+      print(letters)
+      require("tidyr")
+    '),
+    list(lint_message_require, line_number = 3L),
+    linter
+  )
+
+  expect_lint(
+    trim_some('
+      library(dplyr)
+      print(letters)
+      library(dbplyr)
+      require("tidyr")
+    '),
+    list(
+      list(lint_message_library, line_number = 3L),
+      list(lint_message_require, line_number = 4L)
+    ),
+    linter
   )
 })

@@ -106,7 +106,9 @@ test_that("Compound semicolons only", {
 
 test_that("deprecation notices for semicolon_terminator_linter succeed, and the deprecated version works", {
   expect_warning(
-    linter <- semicolon_terminator_linter(),
+    {
+      linter <- semicolon_terminator_linter()
+    },
     "Linter semicolon_terminator_linter was deprecated",
     fixed = TRUE
   )
@@ -116,7 +118,9 @@ test_that("deprecation notices for semicolon_terminator_linter succeed, and the 
 
   # old string argument gets translated to new boolean arguments
   expect_warning(
-    linter <- semicolon_terminator_linter("compound"),
+    {
+      linter <- semicolon_terminator_linter("compound")
+    },
     "Linter semicolon_terminator_linter was deprecated",
     fixed = TRUE
   )
@@ -125,7 +129,9 @@ test_that("deprecation notices for semicolon_terminator_linter succeed, and the 
   expect_lint("a <- 1; b <- 2", rex::rex("Compound semicolons are discouraged."), linter)
 
   expect_warning(
-    linter <- semicolon_terminator_linter("trailing"),
+    {
+      linter <- semicolon_terminator_linter("trailing")
+    },
     "Linter semicolon_terminator_linter was deprecated",
     fixed = TRUE
   )
@@ -135,9 +141,8 @@ test_that("deprecation notices for semicolon_terminator_linter succeed, and the 
 
   # linters_with_defaults warns about now-absent semicolon_terminator_linter
   expect_warning(
-    d <- linters_with_defaults(semicolon_terminator_linter = NULL),
+    expect_true("semicolon_linter" %in% names(linters_with_defaults(semicolon_terminator_linter = NULL))),
     # regex because the message uses sQuote() --> fancy quotes
     rex::rex("Trying to remove", anything, "semicolon_terminator_linter", anything, ", which is not in `defaults`.")
   )
-  expect_true("semicolon_linter" %in% names(d))
 })

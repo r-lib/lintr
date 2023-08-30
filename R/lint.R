@@ -39,7 +39,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     stop("'cache' is no longer available as a positional argument; please supply 'cache' as a named argument instead.")
   }
 
-  needs_tempfile <- missing(filename) || rex::re_matches(filename, rex::rex(newline))
+  needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
   lines <- get_lines(filename, text)
 
@@ -125,7 +125,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 lint_dir <- function(path = ".", ...,
                      relative_path = TRUE,
                      exclusions = list("renv", "packrat"),
-                     pattern = rex::rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"), end),
+                     pattern = rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"), end),
                      parse_settings = TRUE) {
   if (has_positional_logical(list(...))) {
     stop(
@@ -738,7 +738,7 @@ maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
 get_lines <- function(filename, text) {
   if (!is.null(text)) {
     strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
-  } else if (rex::re_matches(filename, rex::rex(newline))) {
+  } else if (re_matches(filename, rex(newline))) {
     strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
   } else {
     read_lines(filename)
