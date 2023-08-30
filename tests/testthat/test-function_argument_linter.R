@@ -94,6 +94,13 @@ test_that("Use of missing() is reported in the lint message", {
     linter
   )
 
+  # inline function
+  expect_lint(
+    "function(x = 2, y) if (missing(y)) x else y",
+    rex::rex(simple_msg, anything, "missing()"),
+    linter
+  )
+
   # missing() used for a different argument
   expect_lint(
     trim_some("
