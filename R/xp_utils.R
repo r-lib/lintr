@@ -44,7 +44,41 @@ xp_and <- function(...) paren_wrap(..., sep = "and")
 #' @noRd
 xp_or <- function(...) paren_wrap(..., sep = "or")
 
+#' Get the name of the function matched by an XPath
+#'
+#' Often, it is more helpful to custom-tailer the `message` of a lint to record
+#'   which function was matched by the lint logic. This function encapsualtes
+#'   the logic to pull out the matched call in common situations.
+#'
+#' @param expr An `xml_node` or `xml_nodeset`, e.g. from [xml2::xml_find_all()].
+#' @param depth Integer, default `1L`. How deep in the AST represented by `expr`
+#'   should we look to find the call? By default, we assume `expr` is matched
+#'   to an `<expr>` node under which the corresponding `<SYMBOL_FUNCTION_CALL>`
+#'   node is found directly. `depth = 0L` means `expr` is matched directly
+#'   to the `SYMBOL_FUNCTION_CALL`; `depth > 1L` means `depth` total `<expr>`
+#'   nodes must be traversed before finding the call.
+#' @param condition An additional (XPath condition on the `SYMBOL_FUNCTION_CALL`
+#'   required for a match. The default (`NULL`) is no condition. See examples.
+#'
+#' @examples
+#' xml_from_code <- function(str) {
+#'   xml2::read_xml(xmlparsedata::xml_parse_data(parse(text = str, keep.source = TRUE)))
+#' }
+#' xml <- xml_from_code("sum(1:10)")
+#' xp_call_name(xml, depth = 2L)
+#'
+#' xp_call_name(xml2::xml_find_first(xml, "expr"))
+#'
+#' xml <- xml_from_code(c("sum(1:10)", "sd(1:10)"))
+#' xp_call_name(xml, depth = 2L, condition = "text() = 'sum'")
+#'
+#' @export
 xp_call_name <- function(expr, depth = 1L, condition = NULL) {
+  stopifnot(
+    inherits(expr, c("xml_node", "xml_nodeset")),
+    is.numeric(depth), depth >= 0L,
+    is.null(condition) || is.character(condition)
+  )
   if (is.null(condition)) {
     node <- "SYMBOL_FUNCTION_CALL"
   } else {
