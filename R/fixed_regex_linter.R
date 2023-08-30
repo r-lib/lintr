@@ -10,6 +10,8 @@
 #'   likely cases. It should _never_ report false positives, however; please
 #'   report false positives as an error.
 #'
+#' @param allow_unescaped Logical, default `FALSE`. If `TRUE`, only patterns that
+#'   require regex escapes (e.g. `"\\$"` or `"[$]"`) will be linted. See examples.
 #' @examples
 #' # will produce lints
 #' code_lines <- 'gsub("\\\\.", "", x)'
@@ -22,6 +24,11 @@
 #' lint(
 #'   text = 'grepl("a[*]b", x)',
 #'   linters = fixed_regex_linter()
+#' )
+#'
+#' lint(
+#'   text = 'grepl("a[*]b", x)',
+#'   linters = fixed_regex_linter(allow_unescaped = TRUE)
 #' )
 #'
 #' code_lines <- 'stringr::str_subset(x, "\\\\$")'
@@ -59,10 +66,15 @@
 #'   linters = fixed_regex_linter()
 #' )
 #'
+#' lint(
+#'   text = 'grepl("Munich", address)',
+#'   linters = fixed_regex_linter(allow_unescaped = TRUE)
+#' )
+#'
 #' @evalRd rd_tags("fixed_regex_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-fixed_regex_linter <- function() {
+fixed_regex_linter <- function(allow_unescaped = FALSE) {
   # regular expression pattern is the first argument
   pos_1_regex_funs <- xp_text_in_table(c(
     "grep", "gsub", "sub", "regexec", "grepl", "regexpr", "gregexpr"
@@ -85,6 +97,12 @@ fixed_regex_linter <- function() {
     "str_view", "str_view_all", "str_which"
   ))
 
+  pipes <- setdiff(magrittr_pipes, c("%$%", "%T>%"))
+  in_pipe_cond <- glue("
+    parent::expr/preceding-sibling::SPECIAL[{ xp_text_in_table(pipes) }]
+    | parent::expr/preceding-sibling::PIPE
+  ")
+
   # NB: strsplit doesn't have an ignore.case argument
   # NB: we intentionally exclude cases like gsub(x, c("a" = "b")), where "b" is fixed
   xpath <- glue("
@@ -95,7 +113,16 @@ fixed_regex_linter <- function() {
         and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
       ])
     ]
-    /following-sibling::expr[1][STR_CONST and not(EQ_SUB)]
+    /following-sibling::expr[
+      (
+        position() = 1
+        and STR_CONST
+        and not(EQ_SUB)
+        and not({ in_pipe_cond })
+      ) or (
+        preceding-sibling::*[2][self::SYMBOL_SUB/text() = 'pattern']
+      )
+    ]
   |
   //SYMBOL_FUNCTION_CALL[ {pos_2_regex_funs} ]
     /parent::expr[
@@ -104,7 +131,11 @@ fixed_regex_linter <- function() {
         and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
       ])
     ]
-    /following-sibling::expr[2][STR_CONST and not(EQ_SUB)]
+    /following-sibling::expr[
+      position() = 2 - count({ in_pipe_cond })
+      and STR_CONST
+      and not(EQ_SUB)
+    ]
   ")
 
   Linter(function(source_expression) {
@@ -116,7 +147,7 @@ fixed_regex_linter <- function() {
 
     patterns <- xml_find_all(xml, xpath)
     pattern_strings <- get_r_string(patterns)
-    is_static <- is_not_regex(pattern_strings)
+    is_static <- is_not_regex(pattern_strings, allow_unescaped)
 
     fixed_equivalent <- encodeString(get_fixed_string(pattern_strings[is_static]), quote = '"', justify = "none")
     call_name <- xml_find_chr(patterns[is_static], "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")

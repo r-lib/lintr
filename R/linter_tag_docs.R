@@ -99,3 +99,14 @@ NULL
 #' @evalRd rd_linters("executing")
 #' @seealso [linters] for a complete list of linters available in lintr.
 NULL
+
+#' Testthat linters
+#' @name pkg_testthat_linters
+#' @description
+#' Linters encouraging best practices within testthat suites.
+#' @evalRd rd_linters("pkg_testthat")
+#' @seealso
+#'  - [linters] for a complete list of linters available in lintr.
+#'  - <https://testthat.r-lib.org>
+#'  - <https://r-pkgs.org/testing-basics.html>
+NULL

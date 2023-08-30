@@ -23,7 +23,7 @@ BugReports: https://github.com/r-lib/lintr/issues
 Depends:
     R (>= 3.5)
 Imports:
-    backports,
+    backports (>= 1.1.7),
     codetools,
     cyclocomp,
     digest,
