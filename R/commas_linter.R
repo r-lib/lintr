@@ -73,7 +73,7 @@ commas_linter <- function(allow_trailing_comma = FALSE) {
   ]"
   xpath_after <- paste0(
     "//OP-COMMA[@line1 = following-sibling::*[1]/@line1 and @col1 = following-sibling::*[1]/@col1 - 1",
-    if(allow_trailing_comma) " and not(following-sibling::*[1]/self::OP-RIGHT-BRACKET)",
+    if (allow_trailing_comma) " and not(following-sibling::*[1]/self::OP-RIGHT-BRACKET)",
     "]"
   )
 
