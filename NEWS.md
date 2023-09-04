@@ -40,7 +40,7 @@
 * `keyword_quote_linter()` for finding unnecessary or discouraged quoting of symbols in assignment, function arguments, or extraction (part of #884, @MichaelChirico). Quoting is unnecessary when the target is a valid R name, e.g. `c("a" = 1)` can be `c(a = 1)`. The same goes to assignment (`"a" <- 1`) and extraction (`x$"a"`). Where quoting is necessary, the linter encourages doing so with backticks (e.g. `` x$`a b` `` instead of `x$"a b"`).
 * `length_levels_linter()` for using the specific function `nlevels()` instead of checking `length(levels(x))` (part of #884, @MichaelChirico).
 * `if_not_else_linter()` for encouraging `if` statements to be structured as `if (A) x else y` instead of `if (!A) y else x` (part of #884, @MichaelChirico).
-* `commas_linter()` add parameter `allow_trailing` to allow trailing commas while indexing.
+* `commas_linter()` gains an option `allow_trailing` (default `FALSE`) to allow trailing commas while indexing. (#2104, @MEO265)
 
 ## Changes to defaults
 
