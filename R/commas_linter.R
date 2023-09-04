@@ -72,8 +72,8 @@ commas_linter <- function(allow_trailing = FALSE) {
     not(preceding-sibling::*[1][self::OP-COMMA or self::EQ_SUB])
   ]"
   xpath_after <- paste0(
-    "//OP-COMMA[@line1 = following-sibling::*[1]/@line1 and @col1 = following-sibling::*[1]/@col1 - 1",
-    if (allow_trailing) " and not(following-sibling::*[1][self::OP-RIGHT-BRACKET or self::RBB or self::OP-RIGHT-PAREN])",
+    "//OP-COMMA[@line1 = following-sibling::*[1]/@line1 and @col1 = following-sibling::*[1]/@col1 - 1 ",
+    if (allow_trailing) "and not(following-sibling::*[1][self::OP-RIGHT-BRACKET or self::RBB or self::OP-RIGHT-PAREN])",
     "]"
   )
 
