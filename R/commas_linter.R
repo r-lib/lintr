@@ -2,7 +2,7 @@
 #'
 #' Check that all commas are followed by spaces, but do not have spaces before them.
 #'
-#' @param allow_trailing_comma If `TRUE`, the linter allows a comma to be followed
+#' @param allow_trailing If `TRUE`, the linter allows a comma to be followed
 #' directly by a closing bracket without a space.
 #'
 #' @examples
@@ -50,7 +50,7 @@
 #'
 #' lint(
 #'   text = "x[1,]",
-#'   linters = commas_linter(allow_trailing_comma = TRUE)
+#'   linters = commas_linter(allow_trailing = TRUE)
 #' )
 #'
 #' @evalRd rd_tags("commas_linter")
@@ -58,7 +58,7 @@
 #' - [linters] for a complete list of linters available in lintr.
 #' - <https://style.tidyverse.org/syntax.html#commas>
 #' @export
-commas_linter <- function(allow_trailing_comma = FALSE) {
+commas_linter <- function(allow_trailing = FALSE) {
   # conditions are in carefully-chosen order for performance --
   #   an expression like c(a,b,c,....) with many elements can have
   #   a huge number of preceding-siblings and the performance of
@@ -73,7 +73,7 @@ commas_linter <- function(allow_trailing_comma = FALSE) {
   ]"
   xpath_after <- paste0(
     "//OP-COMMA[@line1 = following-sibling::*[1]/@line1 and @col1 = following-sibling::*[1]/@col1 - 1",
-    if (allow_trailing_comma) " and not(following-sibling::*[1][self::OP-RIGHT-BRACKET or self::RBB or self::OP-RIGHT-PAREN])",
+    if (allow_trailing) " and not(following-sibling::*[1][self::OP-RIGHT-BRACKET or self::RBB or self::OP-RIGHT-PAREN])",
     "]"
   )
 

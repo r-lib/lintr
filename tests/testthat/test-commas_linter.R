@@ -50,8 +50,8 @@ test_that("returns the correct linting (with default parameters)", {
   )
 })
 
-test_that("returns the correct linting (with 'allow_trailing_comma' set)", {
-  linter <- commas_linter(allow_trailing_comma = TRUE)
+test_that("returns the correct linting (with 'allow_trailing' set)", {
+  linter <- commas_linter(allow_trailing = TRUE)
   msg_after <- rex::rex("Commas should always have a space after.")
   msg_before <- rex::rex("Commas should never have a space before.")
 

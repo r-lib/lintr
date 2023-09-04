@@ -4,10 +4,10 @@
 \alias{commas_linter}
 \title{Commas linter}
 \usage{
-commas_linter(allow_trailing_comma = FALSE)
+commas_linter(allow_trailing = FALSE)
 }
 \arguments{
-\item{allow_trailing_comma}{If \code{TRUE}, the linter allows a comma to be followed
+\item{allow_trailing}{If \code{TRUE}, the linter allows a comma to be followed
 directly by a closing bracket without a space.}
 }
 \description{
@@ -58,7 +58,7 @@ lint(
 
 lint(
   text = "x[1,]",
-  linters = commas_linter(allow_trailing_comma = TRUE)
+  linters = commas_linter(allow_trailing = TRUE)
 )
 
 }
