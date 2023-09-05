@@ -22,7 +22,7 @@
 #' @export
 repeat_linter <- function() {
   xpath <- "
-  //*[(self::WHILE or self::expr[SYMBOL_FUNCTION_CALL[.='while']])
+  //*[(self::WHILE or self::expr[SYMBOL_FUNCTION_CALL[.='`while`']])
   and following-sibling::expr
   and following-sibling::expr[1]/NUM_CONST[.='TRUE']]"
 
