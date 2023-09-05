@@ -16,6 +16,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{assignment_linter}}}
 \item{\code{\link{backport_linter}}}
 \item{\code{\link{brace_linter}}}
+\item{\code{\link{commas_linter}}}
 \item{\code{\link{conjunct_test_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{duplicate_argument_linter}}}
