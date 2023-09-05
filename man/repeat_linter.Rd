@@ -7,7 +7,7 @@
 repeat_linter()
 }
 \description{
-Check that \code{while} is not used for infinite loops.
+Check that \verb{while (TRUE)} is not used for infinite loops.
 }
 \examples{
 # will produce lints
