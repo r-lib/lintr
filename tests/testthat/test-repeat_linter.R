@@ -1,7 +1,7 @@
 library(testthat)
 test_that("test repeat_linter", {
   linter <- repeat_linter()
-  msg <- rex::rex("'while (TRUE)' is not recommended for infinite loops. Use 'repeat' instead.")
+  msg <- rex::rex("Use 'repeat' instead of 'while (TRUE)' for infinite loops.")
 
   expect_lint("repeat { }", NULL, linter)
   expect_lint("while (FALSE) { }", NULL, linter)

@@ -36,7 +36,7 @@ repeat_linter <- function() {
     lints <- xml_nodes_to_lints(
       xml_find_all(xml, xpath),
       source_expression = source_expression,
-      lint_message = "'while (TRUE)' is not recommended for infinite loops. Use 'repeat' instead.",
+      lint_message = "Use 'repeat' instead of 'while (TRUE)' for infinite loops.",
       range_start_xpath = "number(./@col1)",
       range_end_xpath = "number(./following-sibling::*[3]/@col2)"
     )
