@@ -22,9 +22,9 @@
 #' @export
 repeat_linter <- function() {
   xpath <- "
-  //WHILE[following-sibling::*[1][self::OP-LEFT-PAREN] and
-  following-sibling::*[2][self::expr[NUM_CONST[text()='TRUE'] and count(*)=1]]
-  and following-sibling::*[3][self::OP-RIGHT-PAREN]]"
+  //*[(self::WHILE or self::expr[SYMBOL_FUNCTION_CALL[.='while']])
+  and following-sibling::expr
+  and following-sibling::expr[1]/NUM_CONST[.='TRUE']]"
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
