@@ -1,6 +1,6 @@
 #' Repeat linter
 #'
-#' Check that `while` is not used for infinite loops.
+#' Check that `while (TRUE)` is not used for infinite loops.
 #'
 #' @examples
 #' # will produce lints
