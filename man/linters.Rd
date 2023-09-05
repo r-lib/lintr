@@ -28,9 +28,9 @@ The following tags exist:
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
-\item{\link[=readability_linters]{readability} (51 linters)}
+\item{\link[=readability_linters]{readability} (52 linters)}
 \item{\link[=robustness_linters]{robustness} (14 linters)}
-\item{\link[=style_linters]{style} (36 linters)}
+\item{\link[=style_linters]{style} (37 linters)}
 }
 }
 \section{Linters}{
@@ -103,6 +103,7 @@ The following linters exist:
 \item{\code{\link{redundant_equals_linter}} (tags: best_practices, common_mistakes, efficiency, readability)}
 \item{\code{\link{redundant_ifelse_linter}} (tags: best_practices, configurable, consistency, efficiency)}
 \item{\code{\link{regex_subset_linter}} (tags: best_practices, efficiency)}
+\item{\code{\link{repeat_linter}} (tags: readability, style)}
 \item{\code{\link{routine_registration_linter}} (tags: best_practices, efficiency, robustness)}
 \item{\code{\link{semicolon_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{seq_linter}} (tags: best_practices, consistency, default, efficiency, robustness)}

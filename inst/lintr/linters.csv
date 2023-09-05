@@ -71,6 +71,7 @@ quotes_linter,style consistency readability default configurable
 redundant_equals_linter,best_practices readability efficiency common_mistakes
 redundant_ifelse_linter,best_practices efficiency consistency configurable
 regex_subset_linter,best_practices efficiency
+repeat_linter,style readability
 routine_registration_linter,best_practices efficiency robustness
 semicolon_linter,style readability default configurable
 semicolon_terminator_linter,style readability deprecated configurable
