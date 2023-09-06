@@ -77,7 +77,7 @@ expect_false(A); expect_false(B) is better than expect_false(A || B)."><meta nam
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">conjunct_test_linter</span><span class="op">(</span>allow_named_stopifnot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">conjunct_test_linter</span><span class="op">(</span>allow_named_stopifnot <span class="op">=</span> <span class="cn">TRUE</span>, allow_filter <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -86,14 +86,18 @@ expect_false(A); expect_false(B) is better than expect_false(A || B)."><meta nam
 <dd><p>Logical, <code>TRUE</code> by default. If <code>FALSE</code>, "named" calls to <code><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot()</a></code>,
 available since R 4.0.0 to provide helpful messages for test failures, are also linted.</p></dd>
 
+
+<dt>allow_filter</dt>
+<dd><p>Logical, <code>FALSE</code> by default. If <code>TRUE</code>, <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter()</a></code> expressions are not linted.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Similar reasoning applies to <code>&amp;&amp;</code> usage inside <code><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot()</a></code> and <code>assertthat::assert_that()</code> calls.</p>
-<p>Relatedly, <code>dplyr::filter(DF, A &amp; B)</code> is the same as <code>dplyr::filter(DF, A, B)</code>, but the
-latter will be more readable / easier to format for long conditions. Note that this linter
-assumes usages of <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter()</a></code> are <code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">dplyr::filter()</a></code>; if you're using another function named <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter()</a></code>,
-e.g. <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">stats::filter()</a></code>, please namespace-qualify it to avoid false positives.</p>
+<p>Relatedly, <code>dplyr::filter(DF, A &amp; B)</code> is the same as <code>dplyr::filter(DF, A, B)</code>, but the latter will be more readable
+/ easier to format for long conditions. Note that this linter assumes usages of <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter()</a></code> are <code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">dplyr::filter()</a></code>;
+if you're using another function named <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter()</a></code>, e.g. <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">stats::filter()</a></code>, please namespace-qualify it to avoid
+false positives. You can omit linting <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter()</a></code> expressions altogether via <code>allow_filter = TRUE</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -125,6 +129,15 @@ e.g. <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">s
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[conjunct_test_linter] Instead of stopifnot(A &amp;&amp; B), write multiple conditions like stopifnot(A, B). The latter will produce better error messages in the case of failure.</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"dplyr::filter(</span></span></span>
+<span class="r-in"><span><span class="st">    mtcars,</span></span></span>
+<span class="r-in"><span><span class="st">    mpg &gt; 20 &amp; vs == 0</span></span></span>
+<span class="r-in"><span><span class="st">  )"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">conjunct_test_linter</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=3,col=5::file=&lt;text&gt;,line=3,col=5,[conjunct_test_linter] Use dplyr::filter(DF, A, B) instead of dplyr::filter(DF, A &amp; B).</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"expect_true(x || (y &amp;&amp; z))"</span>,</span></span>
@@ -134,6 +147,14 @@ e.g. <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">s
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">'stopifnot("x must be a logical scalar" = length(x) == 1 &amp;&amp; is.logical(x) &amp;&amp; !is.na(x))'</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">conjunct_test_linter</span><span class="op">(</span>allow_named_stopifnot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"dplyr::filter(</span></span></span>
+<span class="r-in"><span><span class="st">    mtcars,</span></span></span>
+<span class="r-in"><span><span class="st">    mpg &gt; 20 &amp; vs == 0</span></span></span>
+<span class="r-in"><span><span class="st">  )"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">conjunct_test_linter</span><span class="op">(</span>allow_filter <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
