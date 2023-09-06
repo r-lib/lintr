@@ -8,7 +8,7 @@ test_that("scalar_in_linter skips allowed usages", {
   # scalars on LHS are fine (often used as `"col" %in% names(DF)`)
   expect_lint("3L %in% x", NULL, linter)
 
-  # this should be NA, but it more directly uses the "always TRUE/FALSE, _not_ NA"
+  # this should be is.na(x), but it more directly uses the "always TRUE/FALSE, _not_ NA"
   #   aspect of %in%, so we delegate linting here to equals_na_linter()
   expect_lint("x %in% NA", NULL, linter)
   expect_lint("x %in% NA_character_", NULL, linter)
