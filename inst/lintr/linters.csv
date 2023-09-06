@@ -8,7 +8,7 @@ boolean_arithmetic_linter,efficiency best_practices readability
 brace_linter,style readability default configurable
 class_equals_linter,best_practices robustness consistency
 closed_curly_linter,style readability deprecated configurable
-commas_linter,style readability default
+commas_linter,style readability default configurable
 commented_code_linter,style readability best_practices default
 condition_message_linter,best_practices consistency
 conjunct_test_linter,package_development best_practices readability configurable pkg_testthat
@@ -34,6 +34,7 @@ for_loop_index_linter,best_practices readability robustness
 function_argument_linter,style consistency best_practices
 function_left_parentheses_linter,style readability default
 function_return_linter,readability best_practices
+if_not_else_linter,readability consistency configurable
 ifelse_censor_linter,best_practices efficiency
 implicit_assignment_linter,style best_practices readability configurable
 implicit_integer_linter,style consistency best_practices configurable

@@ -23,7 +23,7 @@ BugReports: https://github.com/r-lib/lintr/issues
 Depends:
     R (>= 3.5)
 Imports:
-    backports,
+    backports (>= 1.1.7),
     codetools,
     cyclocomp,
     digest,
@@ -105,6 +105,7 @@ Collate:
     'function_return_linter.R'
     'get_source_expressions.R'
     'ids_with_token.R'
+    'if_not_else_linter.R'
     'ifelse_censor_linter.R'
     'implicit_assignment_linter.R'
     'implicit_integer_linter.R'

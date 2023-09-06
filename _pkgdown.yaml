@@ -41,6 +41,7 @@ reference:
       - get_r_string
       - use_lintr
       - xml_nodes_to_lints
+      - xp_call_name
 
   - title: Meta-tooling
     contents:
