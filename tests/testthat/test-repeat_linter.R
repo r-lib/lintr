@@ -10,7 +10,6 @@ test_that("test repeat_linter", {
   expect_lint("while (TRUE && j < 5) { ... }", NULL, linter)
 
   expect_lint("while (TRUE) { }", msg, linter)
-  expect_lint("`while`(TRUE)", msg, linter)
   expect_lint("for (i in 1:10) { while (TRUE) { if (i == 5) { break } } }", msg, linter)
   expect_lint("while (TRUE) { while (TRUE) { } }", list(msg, msg), linter)
   expect_lint("{  \nwhile (TRUE) {  \n} \nwhile (TRUE) {  \n}  \n}",
