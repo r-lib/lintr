@@ -131,6 +131,14 @@ test_that("conjunct_test_linter blocks simple disallowed usages", {
   expect_lint("DF %>% dplyr::filter(A & B)", lint_msg, linter)
 })
 
+test_that("conjunct_test_linter respects its allow_filter argument", {
+  linter <- conjunct_test_linter(allow_filter = TRUE)
+
+  expect_lint("dplyr::filter(DF, A & B)", NULL, linter)
+  expect_lint("dplyr::filter(DF, A & B & C)", NULL, linter)
+  expect_lint("DF %>% dplyr::filter(A & B)", NULL, linter)
+})
+
 test_that("filter() is assumed to be dplyr::filter() by default, unless o/w specified", {
   linter <- conjunct_test_linter()
 
