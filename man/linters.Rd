@@ -19,8 +19,8 @@ The following tags exist:
 \itemize{
 \item{\link[=best_practices_linters]{best_practices} (53 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (7 linters)}
-\item{\link[=configurable_linters]{configurable} (30 linters)}
-\item{\link[=consistency_linters]{consistency} (21 linters)}
+\item{\link[=configurable_linters]{configurable} (32 linters)}
+\item{\link[=consistency_linters]{consistency} (22 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=deprecated_linters]{deprecated} (8 linters)}
@@ -28,7 +28,7 @@ The following tags exist:
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
-\item{\link[=readability_linters]{readability} (51 linters)}
+\item{\link[=readability_linters]{readability} (52 linters)}
 \item{\link[=robustness_linters]{robustness} (14 linters)}
 \item{\link[=style_linters]{style} (36 linters)}
 }
@@ -44,7 +44,7 @@ The following linters exist:
 \item{\code{\link{boolean_arithmetic_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{brace_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{class_equals_linter}} (tags: best_practices, consistency, robustness)}
-\item{\code{\link{commas_linter}} (tags: default, readability, style)}
+\item{\code{\link{commas_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{commented_code_linter}} (tags: best_practices, default, readability, style)}
 \item{\code{\link{condition_message_linter}} (tags: best_practices, consistency)}
 \item{\code{\link{conjunct_test_linter}} (tags: best_practices, configurable, package_development, pkg_testthat, readability)}
@@ -69,6 +69,7 @@ The following linters exist:
 \item{\code{\link{function_argument_linter}} (tags: best_practices, consistency, style)}
 \item{\code{\link{function_left_parentheses_linter}} (tags: default, readability, style)}
 \item{\code{\link{function_return_linter}} (tags: best_practices, readability)}
+\item{\code{\link{if_not_else_linter}} (tags: configurable, consistency, readability)}
 \item{\code{\link{ifelse_censor_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{implicit_assignment_linter}} (tags: best_practices, configurable, readability, style)}
 \item{\code{\link{implicit_integer_linter}} (tags: best_practices, configurable, consistency, style)}
