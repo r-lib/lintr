@@ -4,11 +4,13 @@
 \alias{conjunct_test_linter}
 \title{Force \code{&&} conditions to be written separately where appropriate}
 \usage{
-conjunct_test_linter(allow_named_stopifnot = TRUE)
+conjunct_test_linter(allow_named_stopifnot = TRUE, allow_filter = FALSE)
 }
 \arguments{
 \item{allow_named_stopifnot}{Logical, \code{TRUE} by default. If \code{FALSE}, "named" calls to \code{stopifnot()},
 available since R 4.0.0 to provide helpful messages for test failures, are also linted.}
+
+\item{allow_filter}{Logical, \code{FALSE} by default. If \code{TRUE}, \code{filter()} expressions are not linted.}
 }
 \description{
 For readability of test outputs, testing only one thing per call to
@@ -19,10 +21,10 @@ For readability of test outputs, testing only one thing per call to
 \details{
 Similar reasoning applies to \code{&&} usage inside \code{\link[=stopifnot]{stopifnot()}} and \code{assertthat::assert_that()} calls.
 
-Relatedly, \code{dplyr::filter(DF, A & B)} is the same as \code{dplyr::filter(DF, A, B)}, but the
-latter will be more readable / easier to format for long conditions. Note that this linter
-assumes usages of \code{filter()} are \code{dplyr::filter()}; if you're using another function named \code{filter()},
-e.g. \code{\link[stats:filter]{stats::filter()}}, please namespace-qualify it to avoid false positives.
+Relatedly, \code{dplyr::filter(DF, A & B)} is the same as \code{dplyr::filter(DF, A, B)}, but the latter will be more readable
+/ easier to format for long conditions. Note that this linter assumes usages of \code{filter()} are \code{dplyr::filter()};
+if you're using another function named \code{filter()}, e.g. \code{\link[stats:filter]{stats::filter()}}, please namespace-qualify it to avoid
+false positives. You can omit linting \code{filter()} expressions altogether via \code{allow_filter = TRUE}.
 }
 \examples{
 # will produce lints
@@ -41,6 +43,14 @@ lint(
   linters = conjunct_test_linter(allow_named_stopifnot = FALSE)
 )
 
+lint(
+  text = "dplyr::filter(
+    mtcars,
+    mpg > 20 & vs == 0
+  )",
+  linters = conjunct_test_linter()
+)
+
 # okay
 lint(
   text = "expect_true(x || (y && z))",
@@ -50,6 +60,14 @@ lint(
 lint(
   text = 'stopifnot("x must be a logical scalar" = length(x) == 1 && is.logical(x) && !is.na(x))',
   linters = conjunct_test_linter(allow_named_stopifnot = TRUE)
+)
+
+lint(
+  text = "dplyr::filter(
+    mtcars,
+    mpg > 20 & vs == 0
+  )",
+  linters = conjunct_test_linter(allow_filter = TRUE)
 )
 
 }
