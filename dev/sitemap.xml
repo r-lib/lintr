@@ -361,6 +361,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/sarif_output.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/scalar_in_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/semicolon_linter.html</loc>
   </url>
   <url>
