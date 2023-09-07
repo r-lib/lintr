@@ -70,6 +70,8 @@ test_that("The three `=` are all linted", {
 })
 
 test_that("exclude_operators works", {
+  lint_msg <- rex::rex("Put spaces around all infix operators.")
+
   expect_lint("a+b", NULL, infix_spaces_linter(exclude_operators = "+"))
   expect_lint(
     trim_some("
@@ -80,10 +82,13 @@ test_that("exclude_operators works", {
     infix_spaces_linter(exclude_operators = c("+", "-"))
   )
 
-  # grouped operators
-  expect_lint("a<<-1", NULL, infix_spaces_linter(exclude_operators = "<-"))
-  expect_lint("a:=1", NULL, infix_spaces_linter(exclude_operators = "<-"))
-  expect_lint("a->>1", NULL, infix_spaces_linter(exclude_operators = "->"))
+  # operators match on text, not hidden node
+  expect_lint("a<<-1", lint_msg, infix_spaces_linter(exclude_operators = "<-"))
+  expect_lint("a<<-1", NULL, infix_spaces_linter(exclude_operators = "<<-"))
+  expect_lint("a:=1", lint_msg, infix_spaces_linter(exclude_operators = "<-"))
+  expect_lint("a:=1", NULL, infix_spaces_linter(exclude_operators = ":="))
+  expect_lint("a->>1", lint_msg, infix_spaces_linter(exclude_operators = "->"))
+  expect_lint("a->>1", NULL, infix_spaces_linter(exclude_operators = "->>"))
   expect_lint("a%any%1", NULL, infix_spaces_linter(exclude_operators = "%%"))
   expect_lint("function(a=1) { }", NULL, infix_spaces_linter(exclude_operators = "="))
   expect_lint("foo(a=1)", NULL, infix_spaces_linter(exclude_operators = "="))

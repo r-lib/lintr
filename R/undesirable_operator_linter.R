@@ -46,23 +46,18 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
   if (is.null(names(op)) || !all(nzchar(names(op))) || length(op) == 0L) {
     stop("'op' should be a non-empty named character vector; use missing elements to indicate default messages.")
   }
-  undesirable_operator_metadata <- merge(
-    # infix must be handled individually below; non-assignment `=` are always OK
-    infix_metadata[
-      infix_metadata$string_value != "%%" & !infix_metadata$xml_tag %in% c("EQ_SUB", "EQ_FORMALS"),
-    ],
-    infix_overload,
-    by = "xml_tag", all.x = TRUE
-  )
+  # infix must be handled individually below; non-assignment `=` are always OK
+  undesirable_operator_metadata <- infix_metadata[
+    infix_metadata$string_value != "%%" & !infix_metadata$xml_tag %in% c("EQ_SUB", "EQ_FORMALS"),
+  ]
 
-  included_operators <- undesirable_operator_metadata$string_value %in% names(op) |
-    undesirable_operator_metadata$exact_string_value %in% names(op)
+  included_operators <- undesirable_operator_metadata$string_value %in% names(op)
   operator_nodes <- undesirable_operator_metadata$xml_tag[included_operators]
-  needs_exact_string <- !is.na(undesirable_operator_metadata$exact_string_value[included_operators])
+  needs_exact_string <- operator_nodes %in% infix_metadata$xml_tag[infix_metadata$ambiguous_node]
   operator_nodes[needs_exact_string] <- sprintf(
     "%s[text() = '%s']",
     operator_nodes[needs_exact_string],
-    undesirable_operator_metadata$exact_string_value[included_operators][needs_exact_string]
+    undesirable_operator_metadata$string_value[included_operators][needs_exact_string]
   )
 
   is_infix <- startsWith(names(op), "%")
