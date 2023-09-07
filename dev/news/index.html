@@ -111,6 +111,8 @@
 <li>New <code><a href="../reference/xp_call_name.html">xp_call_name()</a></code> helper to facilitate writing custom linters (<a href="https://github.com/r-lib/lintr/issues/2023" class="external-link">#2023</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). This helper converts a matched XPath to the R function to which it corresponds. This is useful for including the “offending” function in the lint’s message.</li>
 <li>
 <code><a href="../reference/function_argument_linter.html">function_argument_linter()</a></code> detects usage of <code><a href="https://rdrr.io/r/base/missing.html" class="external-link">missing()</a></code> for the linted argument (<a href="https://github.com/r-lib/lintr/issues/1546" class="external-link">#1546</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). The simplest fix for <code><a href="../reference/function_argument_linter.html">function_argument_linter()</a></code> lints is typically to set that argument to <code>NULL</code> by default, in which case it’s usually preferable to update function logic checking <code><a href="https://rdrr.io/r/base/missing.html" class="external-link">missing()</a></code> to check <code><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null()</a></code> instead.</li>
+<li>
+<code><a href="../reference/commas_linter.html">commas_linter()</a></code> gains an option <code>allow_trailing</code> (default <code>FALSE</code>) to allow trailing commas while indexing. (<a href="https://github.com/r-lib/lintr/issues/2104" class="external-link">#2104</a>, <a href="https://github.com/MEO265" class="external-link">@MEO265</a>)</li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>
@@ -124,7 +126,7 @@
 <li>
 <code><a href="../reference/if_not_else_linter.html">if_not_else_linter()</a></code> for encouraging <code>if</code> statements to be structured as <code>if (A) x else y</code> instead of <code>if (!A) y else x</code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
-<code><a href="../reference/commas_linter.html">commas_linter()</a></code> gains an option <code>allow_trailing</code> (default <code>FALSE</code>) to allow trailing commas while indexing. (<a href="https://github.com/r-lib/lintr/issues/2104" class="external-link">#2104</a>, <a href="https://github.com/MEO265" class="external-link">@MEO265</a>)</li>
+<code><a href="../reference/repeat_linter.html">repeat_linter()</a></code> for encouraging <code>repeat</code> for infinite loops instead of <code>while (TRUE)</code> (<a href="https://github.com/r-lib/lintr/issues/2106" class="external-link">#2106</a>, <a href="https://github.com/MEO265" class="external-link">@MEO265</a>).</li>
 </ul></div>
 </div>
 <div class="section level3">
