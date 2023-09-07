@@ -59,6 +59,11 @@ unreachable_code_linter <- function() {
   /following-sibling::expr[2]/expr[1]
   "
 
+  xpath_else <- "
+  //IF[following-sibling::expr[1]/NUM_CONST[text() = 'TRUE']]
+  /following-sibling::ELSE/following-sibling::expr/expr[1]
+  "
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -68,6 +73,7 @@ unreachable_code_linter <- function() {
 
     lints_return_stop <- xml_find_all(xml, xpath_return_stop)
     lints_if_while <- xml_find_all(xml, xpath_if_while)
+    lints_else <- xml_find_all(xml, xpath_else)
 
     # exclude comments that start with a nolint directive
     is_nolint_end_comment_return_stop <- xml2::xml_name(lints_return_stop) == "COMMENT" &
@@ -87,6 +93,13 @@ unreachable_code_linter <- function() {
       type = "warning"
     )
 
-    c(lints_return_stop, lints_if_while)
+    lints_else <- xml_nodes_to_lints(
+      lints_else,
+      source_expression = source_expression,
+      lint_message = "Code inside an else block after a deterministically true if condition is not reachable.",
+      type = "warning"
+    )
+
+    c(lints_return_stop, lints_if_while, lints_else)
   })
 }
