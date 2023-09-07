@@ -1,4 +1,3 @@
-library(testthat)
 test_that("test repeat_linter", {
   linter <- repeat_linter()
   msg <- rex::rex("Use 'repeat' instead of 'while (TRUE)' for infinite loops.")
@@ -12,10 +11,17 @@ test_that("test repeat_linter", {
   expect_lint("while (TRUE) { }", msg, linter)
   expect_lint("for (i in 1:10) { while (TRUE) { if (i == 5) { break } } }", msg, linter)
   expect_lint("while (TRUE) { while (TRUE) { } }", list(msg, msg), linter)
-  expect_lint("{  \nwhile (TRUE) {  \n} \nwhile (TRUE) {  \n}  \n}",
-              list(
-                list(message = msg, line_number = 2L, column_number = 1L, ranges = list(c(1L, 12L))),
-                list(message = msg, line_number = 4L, column_number = 1L, ranges = list(c(1L, 12L)))
-              ),
-              linter)
+  expect_lint(
+    trim_some("{
+      while (TRUE) {
+      }
+      while (TRUE) {
+      }
+    }"),
+    list(
+      list(message = msg, line_number = 2L, column_number = 1L, ranges = list(c(1L, 12L))),
+      list(message = msg, line_number = 4L, column_number = 1L, ranges = list(c(1L, 12L)))
+    ),
+    linter
+  )
 })
