@@ -104,7 +104,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
                          allow_file_path = c("double_slash", "always", "never")) {
   allow_file_path <- match.arg(allow_file_path)
 
-  sep_xpath <- "
+  paste_sep_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'paste']
     /parent::expr
     /following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST]]
@@ -137,32 +137,36 @@ paste_linter <- function(allow_empty_sep = FALSE,
     /parent::expr
   "
 
-  slash_str <- sprintf("STR_CONST[%s]", xp_text_in_table(c("'/'", '"/"')))
-  str_not_start_with_slash <-
-    "STR_CONST[not(substring(text(), 2, 1) = '/')]"
-  str_not_end_with_slash <-
-    "STR_CONST[not(substring(text(), string-length(text()) - 1, 1) = '/')]"
-  non_str <- "SYMBOL or expr"
-
-  # Type I: paste(..., sep = "/")
-  paste_file_path_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'paste']
-    /parent::expr
-    /parent::expr[
-      SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1][{slash_str}]
-      and not(SYMBOL_SUB[text() = 'collapse'])
-    ]
-  ")
-
   if (allow_file_path %in% c("always", "double_slash")) {
-    slash_cond <- "contains(text(), '//')"
+    check_double_slash <- function(str) any(grepl("//", str))
   } else {
-    # NB: substring() signature is (text, initial_index, n_characters)
-    slash_cond <- "substring(text(), 2, 2) = '//' or substring(text(), string-length(text()) - 2, 2) = '//'"
+    # always skip on strings starting/ending with //, since switching to
+    #   file.path() would require file.path("", ...) or file.path(..., "")
+    check_double_slash <- function(str) any(grepl("^//|//$", str))
+  }
+
+  check_is_not_file_path <- function(expr) {
+    args <- xml_find_all(expr, "expr[position() > 1]")
+    is_string <- !is.na(xml_find_first(args, "STR_CONST"))
+    string_values <- character(length(args))
+    string_values[is_string] <- get_r_string(args[is_string])
+    not_start_slash <- which(!startsWith(string_values, "/"))
+    not_end_slash <- which(!endsWith(string_values, "/"))
+    # First input is '/', meaning file.path() would need to start with ''
+    string_values[1L] == "/" ||
+      # Last input is '/', meaning file.path() would need to end with ''
+      string_values[length(string_values)] == "/" ||
+      check_double_slash(string_values) ||
+      # A string not ending with /, followed by non-string,
+      #   or a string not starting with /, preceded by a non-string
+      any(!is_string[c(not_end_slash + 1L, not_start_slash - 1L)], na.rm = TRUE) ||
+      # A string not starting with / preceded by a string not ending with /
+      any(not_start_slash %in% (not_end_slash + 1L))
   }
 
   # Type II: paste0(x, "/", y, "/", z)
-  paste0_file_path_xpath <- xp_strip_comments(glue("
+  #   NB: some conditions require evaluating the R string, only a few can be done in pure XPath. See below.
+  paste0_file_path_xpath <- xp_strip_comments("
   //SYMBOL_FUNCTION_CALL[text() = 'paste0']
     /parent::expr
     /parent::expr[
@@ -174,32 +178,11 @@ paste_linter <- function(allow_empty_sep = FALSE,
         expr/NUM_CONST
         (: A call using collapse= :)
         or SYMBOL_SUB[text() = 'collapse']
-        (: First input is '/', meaning file.path() would need to start with '' :)
-        or expr[2][{slash_str}]
-        (: Last input is '/', meaning file.path() would need to end with '' :)
-        or expr[last()][{slash_str}]
-        (: String starting or ending with multiple / :)
-        (: TODO(#2075): run this logic on the actual R string :)
-        or expr/STR_CONST[{ slash_cond }]
         (: Consecutive non-strings like paste0(x, y) :)
-        or expr[({non_str}) and following-sibling::expr[1][{non_str}]]
-        (: A string not ending with /, followed by non-string or string not starting with / :)
-        or expr[
-          {str_not_end_with_slash}
-          and following-sibling::expr[1][
-            {non_str}
-            or {str_not_start_with_slash}
-          ]
-        ]
-        (: A string not starting with /, preceded by a non-string       :)
-        (: NB: consecutive strings is covered by the previous condition :)
-        or expr[
-          {str_not_start_with_slash}
-          and preceding-sibling::expr[1][{non_str}]
-        ]
+        or expr[(SYMBOL or expr) and following-sibling::expr[1][SYMBOL or expr]]
       )
     ]
-  "))
+  ")
 
   empty_paste_note <-
     'Note that paste() converts empty inputs to "", whereas file.path() leaves it empty.'
@@ -212,12 +195,16 @@ paste_linter <- function(allow_empty_sep = FALSE,
     xml <- source_expression$xml_parsed_content
     optional_lints <- list()
 
-    if (!allow_empty_sep) {
-      empty_sep_expr <- xml_find_all(xml, sep_xpath)
-      sep_value <- get_r_string(empty_sep_expr, xpath = "./SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1]")
+    # Both of these look for paste(..., sep = "..."), differing in which 'sep' is linted,
+    #   so run the expensive XPath search/R parse only once
+    if (!allow_empty_sep || allow_file_path %in% c("double_slash", "never")) {
+      paste_sep_expr <- xml_find_all(xml, paste_sep_xpath)
+      paste_sep_value <- get_r_string(paste_sep_expr, xpath = "./SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1]")
+    }
 
+    if (!allow_empty_sep) {
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
-        empty_sep_expr[!nzchar(sep_value)],
+        paste_sep_expr[!nzchar(paste_sep_value)],
         source_expression = source_expression,
         lint_message = 'paste0(...) is better than paste(..., sep = "").',
         type = "warning"
@@ -264,9 +251,10 @@ paste_linter <- function(allow_empty_sep = FALSE,
     )
 
     if (allow_file_path %in% c("double_slash", "never")) {
-      paste_file_path_expr <- xml_find_all(xml, paste_file_path_xpath)
+      paste_sep_slash_expr <- paste_sep_expr[paste_sep_value == "/"]
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
-        paste_file_path_expr,
+        # in addition to paste(..., sep = "/") we ensure collapse= is not present
+        paste_sep_slash_expr[is.na(xml_find_first(paste_sep_slash_expr, "./SYMBOL_SUB[text() = 'collapse']"))],
         source_expression = source_expression,
         lint_message = paste(
           'Construct file paths with file.path(...) instead of paste(..., sep = "/").',
@@ -278,8 +266,9 @@ paste_linter <- function(allow_empty_sep = FALSE,
       ))
 
       paste0_file_path_expr <- xml_find_all(xml, paste0_file_path_xpath)
+      is_file_path <- !vapply(paste0_file_path_expr, check_is_not_file_path, logical(1L))
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
-        paste0_file_path_expr,
+        paste0_file_path_expr[is_file_path],
         source_expression = source_expression,
         lint_message = paste(
           'Construct file paths with file.path(...) instead of paste0(x, "/", y, "/", z).',

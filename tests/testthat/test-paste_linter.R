@@ -213,3 +213,16 @@ test_that("URLs are ignored by default, linted optionally", {
   expect_lint("paste0('http://site.com/', x)", NULL, linter)
   expect_lint("paste0('http://site.com/', x)", rex::rex("Construct file paths with file.path(...)"), linter_url)
 })
+
+test_that("raw strings are detected in file path logic", {
+  skip_if_not_r_version("4.0.0")
+
+  linter <- paste_linter()
+  lint_msg <- rex::rex("Construct file paths with file.path(...) instead of ")
+
+  withr::local_envvar(LINT_DEBUG = 'true')
+  expect_lint("paste0(x, R'{abc}', y)", NULL, linter)
+  expect_lint("paste0(x, R'{/abc/}', y)", lint_msg, linter)
+  expect_lint("paste(x, y, sep = R'{//}')", NULL, linter)
+  expect_lint("paste(x, y, sep = R'{/}')", lint_msg, linter)
+})
