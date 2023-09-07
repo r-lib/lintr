@@ -17,20 +17,20 @@ see also \code{\link[=available_tags]{available_tags()}}.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (52 linters)}
+\item{\link[=best_practices_linters]{best_practices} (53 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (7 linters)}
 \item{\link[=configurable_linters]{configurable} (32 linters)}
-\item{\link[=consistency_linters]{consistency} (21 linters)}
+\item{\link[=consistency_linters]{consistency} (22 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=deprecated_linters]{deprecated} (8 linters)}
-\item{\link[=efficiency_linters]{efficiency} (23 linters)}
+\item{\link[=efficiency_linters]{efficiency} (24 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
-\item{\link[=readability_linters]{readability} (51 linters)}
+\item{\link[=readability_linters]{readability} (53 linters)}
 \item{\link[=robustness_linters]{robustness} (14 linters)}
-\item{\link[=style_linters]{style} (36 linters)}
+\item{\link[=style_linters]{style} (37 linters)}
 }
 }
 \section{Linters}{
@@ -103,7 +103,9 @@ The following linters exist:
 \item{\code{\link{redundant_equals_linter}} (tags: best_practices, common_mistakes, efficiency, readability)}
 \item{\code{\link{redundant_ifelse_linter}} (tags: best_practices, configurable, consistency, efficiency)}
 \item{\code{\link{regex_subset_linter}} (tags: best_practices, efficiency)}
+\item{\code{\link{repeat_linter}} (tags: readability, style)}
 \item{\code{\link{routine_registration_linter}} (tags: best_practices, efficiency, robustness)}
+\item{\code{\link{scalar_in_linter}} (tags: best_practices, consistency, efficiency, readability)}
 \item{\code{\link{semicolon_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{seq_linter}} (tags: best_practices, consistency, default, efficiency, robustness)}
 \item{\code{\link{sort_linter}} (tags: best_practices, efficiency, readability)}
