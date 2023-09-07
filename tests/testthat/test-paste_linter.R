@@ -189,6 +189,8 @@ test_that("paste_linter doesn't skip all initial/terminal '/' for paths", {
 })
 
 test_that("multiple path lints are generated correctly", {
+  linter <- paste_linter()
+
   expect_lint(
     trim_some("{
       paste(x, y, sep = '/')
@@ -198,7 +200,24 @@ test_that("multiple path lints are generated correctly", {
       rex::rex('paste(..., sep = "/")'),
       rex::rex('paste0(x, "/", y, "/", z)')
     ),
-    paste_linter()
+    linter
+  )
+
+  # check vectorization of multiple paste0 file paths
+  expect_lint(
+    trim_some('{
+      paste0(x, y)
+      paste0("a/", x, y, "/b")
+      paste0("a", "b")
+      paste0("a", x)
+      paste0(a, "x")
+      paste0("a/", NA_character_, "/b")
+      paste0("a/", "bcd//efg", "/h")
+      paste0("/", a)
+      paste0(a, "/")
+    }'),
+    NULL,
+    linter
   )
 })
 
