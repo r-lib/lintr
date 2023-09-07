@@ -115,7 +115,7 @@ test_that("lintr help files are up to date", {
   lintr_db$tags <- lapply(lintr_db$tags, function(x) if ("deprecated" %in% x) "deprecated" else sort(x))
   lintr_db <- lintr_db[order(lintr_db$linter), ]
 
-  expect_true("linters.Rd" %in% names(help_db))
+  expect_true("linters.Rd" %in% names(help_db), info = "?linters exists")
 
   # NB: objects in help_env are class Rd, see ?as.character.Rd (part of 'tools')
   rd_as_string <- function(rd) paste(as.character(rd), collapse = "")
