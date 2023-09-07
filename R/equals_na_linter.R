@@ -1,6 +1,6 @@
 #' Equality check with NA linter
 #'
-#' Check for `x == NA` and `x != NA`. Such usage is almost surely incorrect --
+#' Check for `x == NA`, `x != NA` and `x %in% NA`. Such usage is almost surely incorrect --
 #' checks for missing values should be done with [is.na()].
 #'
 #' @examples
@@ -12,6 +12,11 @@
 #'
 #' lint(
 #'   text = "x != NA",
+#'   linters = equals_na_linter()
+#' )
+#'
+#' lint(
+#'   text = "x %in% NA",
 #'   linters = equals_na_linter()
 #' )
 #'
@@ -35,7 +40,7 @@ equals_na_linter <- function() {
   xpath <- glue("
   //NUM_CONST[ {na_table} ]
     /parent::expr
-    /parent::expr[EQ or NE]
+    /parent::expr[EQ or NE or SPECIAL[text() = '%in%']]
   ")
 
   Linter(function(source_expression) {
@@ -50,7 +55,7 @@ equals_na_linter <- function() {
     xml_nodes_to_lints(
       bad_expr,
       source_expression,
-      lint_message = "Use is.na for comparisons to NA (not == or !=)",
+      lint_message = "Use is.na for comparisons to NA (not == or != or %in%)",
       type = "warning"
     )
   })
