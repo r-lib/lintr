@@ -148,6 +148,46 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", {
   )
 })
 
+test_that("unreachable_code_linter identifies unreachable code in conditional loops", {
+  linter <- unreachable_code_linter()
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (FALSE) {
+        x <- 3
+      }
+      x + 3
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      line_number = 3L,
+      message = rex::rex("Code and comments coming after a top-level return() or stop()")
+    ),
+    unreachable_code_linter()
+  )
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      while (FALSE) {
+        x <- 3
+      }
+      x + 3
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      line_number = 3L,
+      message = rex::rex("Code and comments coming after a top-level return() or stop()")
+    ),
+    unreachable_code_linter()
+  )
+})
+
 # nolint start: commented_code_linter.
 # TODO(michaelchirico): extend to work on switch() statements
 # test_that("unreachable_code_linter interacts with switch() as expected", {

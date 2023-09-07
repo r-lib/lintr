@@ -43,6 +43,21 @@ unreachable_code_linter <- function() {
     ]
     /following-sibling::*[1]
   "
+  xpath_if_while <- "
+  //WHILE
+  [
+    following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']
+    and following-sibling::expr[2]/expr
+  ]
+  /following-sibling::expr[2]/expr[1]
+  |
+  //IF
+  [
+    following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']
+    and following-sibling::expr[2]/expr
+  ]
+  /following-sibling::expr[2]/expr[1]
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -52,15 +67,25 @@ unreachable_code_linter <- function() {
     xml <- source_expression$xml_parsed_content
 
     lints_return_stop <- xml_find_all(xml, xpath_return_stop)
+    lints_if_while <- xml_find_all(xml, xpath_if_while)
 
-    is_nolint_end_comment <- xml2::xml_name(lints_return_stop) == "COMMENT" &
+    is_nolint_end_comment_return_stop <- xml2::xml_name(lints_return_stop) == "COMMENT" &
       re_matches(xml_text(lints_return_stop), settings$exclude_end)
 
     lints_return_stop <- xml_nodes_to_lints(
-      lints_return_stop[!is_nolint_end_comment],
+      lints_return_stop[!is_nolint_end_comment_return_stop],
       source_expression = source_expression,
       lint_message = "Code and comments coming after a top-level return() or stop() should be removed.",
       type = "warning"
     )
+
+    lints_if_while <- xml_nodes_to_lints(
+      lints_if_while,
+      source_expression = source_expression,
+      lint_message = "Code inside a conditional loop with a deterministically false condition is not reachable.",
+      type = "warning"
+    )
+
+    c(lints_return_stop, lints_if_while)
   })
 }
