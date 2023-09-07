@@ -19,8 +19,8 @@ test_that("test repeat_linter", {
       }
     }"),
     list(
-      list(message = msg, line_number = 2L, column_number = 1L, ranges = list(c(1L, 12L))),
-      list(message = msg, line_number = 4L, column_number = 1L, ranges = list(c(1L, 12L)))
+      list(message = msg, line_number = 2L, column_number = 3L, ranges = list(c(3L, 14L))),
+      list(message = msg, line_number = 4L, column_number = 3L, ranges = list(c(3L, 14L)))
     ),
     linter
   )
