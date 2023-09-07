@@ -32,7 +32,7 @@ unreachable_code_linter <- function() {
   #    this is also why we need /* and not /expr -- position() must include all nodes
   #  - use not(OP-DOLLAR) to prevent matching process$stop(), #1051
   #  - land on the culprit expression
-  xpath <- "
+  xpath_return_stop <- "
   //FUNCTION
     /following-sibling::expr
     /*[
@@ -51,13 +51,13 @@ unreachable_code_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml_find_all(xml, xpath)
+    lints_return_stop <- xml_find_all(xml, xpath_return_stop)
 
-    is_nolint_end_comment <- xml2::xml_name(bad_expr) == "COMMENT" &
-      re_matches(xml_text(bad_expr), settings$exclude_end)
+    is_nolint_end_comment <- xml2::xml_name(lints_return_stop) == "COMMENT" &
+      re_matches(xml_text(lints_return_stop), settings$exclude_end)
 
-    xml_nodes_to_lints(
-      bad_expr[!is_nolint_end_comment],
+    lints_return_stop <- xml_nodes_to_lints(
+      lints_return_stop[!is_nolint_end_comment],
       source_expression = source_expression,
       lint_message = "Code and comments coming after a top-level return() or stop() should be removed.",
       type = "warning"
