@@ -28,16 +28,14 @@ repeat_linter <- function() {
       return(list())
     }
     xml <- source_expression$xml_parsed_content
+    lints <- xml_find_all(xml, xpath)
 
-
-    lints <- xml_nodes_to_lints(
-      xml_find_all(xml, xpath),
+    xml_nodes_to_lints(
+      lints,
       source_expression = source_expression,
       lint_message = "Use 'repeat' instead of 'while (TRUE)' for infinite loops.",
       range_start_xpath = "number(./@col1)",
       range_end_xpath = "number(./following-sibling::*[3]/@col2)"
     )
-
-    lints
   })
 }
