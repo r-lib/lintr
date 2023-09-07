@@ -1,5 +1,10 @@
 # lintr (development version)
 
+## Breaking changes
+
+* `infix_spaces_linter()` distinguishes `<-`, `:=`, `<<-` and `->`, `->>`, i.e. `infix_spaces_linter(exclude_operators = "->")` will no longer exclude `->>` (#2115, @MichaelChirico). This change is breaking for users relying on manually-supplied `exclude_operators` containing `"<-"` to also exclude `:=` and `<<-`. The fix is to manually supply `":="` and `"<<-"` as well. We don't expect this change to affect many users, the fix is simple, and the new behavior is much more transparent, so we are including this breakage in a minor release.
+
+
 ## Bug fixes
 
 * `inner_combine_linter()` no longer throws on length-1 calls to `c()` like `c(exp(2))` or `c(log(3))` (#2017, @MichaelChirico). Such usage is discouraged by `unnecessary_concatenation_linter()`, but `inner_combine_linter()` _per se_ does not apply.
@@ -51,7 +56,6 @@
   + assumes `glue()` is `glue::glue()` when `interpret_glue=TRUE` (#2032, @MichaelChirico).
   + finds function usages, including infix usage, inside `glue()` calls to avoid false positives for "unused objects" (#2029 and #2069, @MichaelChirico).
 * `object_name_linter()` no longer attempts to lint strings in function calls on the LHS of assignments (#1466, @MichaelChirico).
-* `infix_spaces_linter()` distinguishes `<-`, `:=`, `<<-` and `->`, `->>`, i.e. `infix_spaces_linter(exclude_operator = "->")` will no longer exclude `->>` (#2115, @MichaelChirico).
 
 # lintr 3.1.0
 
