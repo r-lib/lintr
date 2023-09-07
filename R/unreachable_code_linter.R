@@ -69,6 +69,7 @@ unreachable_code_linter <- function() {
     lints_return_stop <- xml_find_all(xml, xpath_return_stop)
     lints_if_while <- xml_find_all(xml, xpath_if_while)
 
+    # exclude comments that start with a nolint directive
     is_nolint_end_comment_return_stop <- xml2::xml_name(lints_return_stop) == "COMMENT" &
       re_matches(xml_text(lints_return_stop), settings$exclude_end)
 
