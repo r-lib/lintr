@@ -172,11 +172,13 @@ infix_metadata$unary <- infix_metadata$xml_tag %in% c("OP-PLUS", "OP-MINUS", "OP
 # high-precedence operators are ignored by this linter; see
 #   https://style.tidyverse.org/syntax.html#infix-operators
 infix_metadata$low_precedence <- infix_metadata$string_value %in% c(
-  "+", "-", "~", ">", ">=", "<", "<=", "==", "!=", "&", "&&", "|", "||", "<-", ":=", "<<-", "->", "->>", "=", "%%", "/", "*", "|>"
+  "+", "-", "~", ">", ">=", "<", "<=", "==", "!=", "&", "&&", "|", "||",
+  "<-", ":=", "<<-", "->", "->>", "=", "%%", "/", "*", "|>"
 )
 # comparators come up in several lints
 infix_metadata$comparator <- infix_metadata$string_value %in% c("<", "<=", ">", ">=", "==", "!=")
 
+# these XML nodes require checking the text() to disambiguate multiple operators using the same tag
 infix_metadata$ambiguous_node <- infix_metadata$xml_tag %in% infix_metadata$xml_tag[duplicated(infix_metadata$xml_tag)]
 
 # functions equivalent to base::ifelse() for linting purposes
