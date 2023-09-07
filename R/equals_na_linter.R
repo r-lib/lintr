@@ -42,8 +42,7 @@ equals_na_linter <- function() {
     /parent::expr
     /parent::expr[EQ or NE]
   |
-  //NUM_CONST[ {na_table} ]
-    /parent::expr[preceding-sibling::SPECIAL[text() = '%in%']]
+  //SPECIAL[text() = '%in%' and following-sibling::expr/NUM_CONST[ {na_table} ]]
     /parent::expr
   ")
 
