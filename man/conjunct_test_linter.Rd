@@ -44,10 +44,7 @@ lint(
 )
 
 lint(
-  text = "dplyr::filter(
-    mtcars,
-    mpg > 20 & vs == 0
-  )",
+  text = "dplyr::filter(mtcars, mpg > 20 & vs == 0)",
   linters = conjunct_test_linter()
 )
 
@@ -63,10 +60,7 @@ lint(
 )
 
 lint(
-  text = "dplyr::filter(
-    mtcars,
-    mpg > 20 & vs == 0
-  )",
+  text = "dplyr::filter(mtcars, mpg > 20 & vs == 0)",
   linters = conjunct_test_linter(allow_filter = TRUE)
 )
 
