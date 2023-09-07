@@ -21,8 +21,13 @@
 #'   `paste()` with `sep = ""` is not linted.
 #' @param allow_to_string Logical, default `FALSE`. If `TRUE`, usage of
 #'   `paste()` and `paste0()` with `collapse = ", "` is not linted.
-#' @param allow_file_path Logical, default `FALSE`. If `TRUE`, usage of
-#'   `paste()` and `paste0()` to construct file paths is not linted.
+#' @param allow_file_path String, one of `"never"`, `"double_slash"`, or `"always"`; `"double_slash"` by default.
+#'   If `"never"`, usage of `paste()` and `paste0()` to construct file paths is not linted. If `"double_slash"`,
+#'   strings containing consecutive forward slashes will not lint. The main use case here is for URLs -- "paths" like
+#'   `"https://"` will not induce lints, since constructing them with `file.path()` might be deemed unnatural.
+#'   Lastly, if `"always"`, strings with consecutive forward slashes will also lint. Note that `"//"` is never linted
+#'   when it comes at the beginning or end of the input, to avoid requiring empty inputs like
+#'  `file.path("", ...)` or `file.path(..., "")`.
 #'
 #' @examples
 #' # will produce lints
@@ -47,8 +52,8 @@
 #' )
 #'
 #' lint(
-#'   text = 'paste0(dir, "/", file)',
-#'   linters = paste_linter()
+#'   text = 'paste0("http://site.com/", path)',
+#'   linters = paste_linter(allow_file_path = "never")
 #' )
 #'
 #' # okay
@@ -84,12 +89,21 @@
 #'
 #' lint(
 #'   text = 'paste0(year, "/", month, "/", day)',
-#'   linters = paste_linter(allow_file_path = TRUE)
+#'   linters = paste_linter(allow_file_path = "always")
+#' )
+#'
+#' lint(
+#'   text = 'paste0("http://site.com/", path)',
+#'   linters = paste_linter()
 #' )
 #'
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE, allow_file_path = FALSE) {
+paste_linter <- function(allow_empty_sep = FALSE,
+                         allow_to_string = FALSE,
+                         allow_file_path = c("double_slash", "always", "never")) {
+  allow_file_path <- match.arg(allow_file_path)
+
   sep_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'paste']
     /parent::expr
@@ -140,6 +154,13 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE, allow
     ]
   ")
 
+  if (allow_file_path %in% c("always", "double_slash")) {
+    slash_cond <- "contains(text(), '//')"
+  } else {
+    # NB: substring() signature is (text, initial_index, n_characters)
+    slash_cond <- "substring(text(), 2, 2) = '//' or substring(text(), string-length(text()) - 2, 2) = '//'"
+  }
+
   # Type II: paste0(x, "/", y, "/", z)
   paste0_file_path_xpath <- xp_strip_comments(glue("
   //SYMBOL_FUNCTION_CALL[text() = 'paste0']
@@ -159,11 +180,7 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE, allow
         or expr[last()][{slash_str}]
         (: String starting or ending with multiple / :)
         (: TODO(#2075): run this logic on the actual R string :)
-        or expr/STR_CONST[
-          (: NB: this is (text, initial_index, n_characters) :)
-          substring(text(), 2, 2) = '//'
-          or substring(text(), string-length(text()) - 2, 2) = '//'
-        ]
+        or expr/STR_CONST[{ slash_cond }]
         (: Consecutive non-strings like paste0(x, y) :)
         or expr[({non_str}) and following-sibling::expr[1][{non_str}]]
         (: A string not ending with /, followed by non-string or string not starting with / :)
@@ -246,7 +263,7 @@ paste_linter <- function(allow_empty_sep = FALSE, allow_to_string = FALSE, allow
       type = "warning"
     )
 
-    if (!allow_file_path) {
+    if (allow_file_path %in% c("double_slash", "never")) {
       paste_file_path_expr <- xml_find_all(xml, paste_file_path_xpath)
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
         paste_file_path_expr,
