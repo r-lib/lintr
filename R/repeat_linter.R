@@ -21,7 +21,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 repeat_linter <- function() {
-  xpath <- "//WHILE[following-sibling::expr and following-sibling::expr[1]/NUM_CONST[text()='TRUE']]"
+  xpath <- "//WHILE[following-sibling::expr[1]/NUM_CONST[text() = 'TRUE']]"
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
