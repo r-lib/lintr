@@ -40,7 +40,11 @@ equals_na_linter <- function() {
   xpath <- glue("
   //NUM_CONST[ {na_table} ]
     /parent::expr
-    /parent::expr[EQ or NE or SPECIAL[text() = '%in%']]
+    /parent::expr[EQ or NE]
+  |
+  //NUM_CONST[ {na_table} ]
+    /parent::expr[preceding-sibling::SPECIAL[text() = '%in%']]
+    /parent::expr
   ")
 
   Linter(function(source_expression) {
