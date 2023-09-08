@@ -62,7 +62,7 @@ jobs:
           sudo locale-gen zh_CN
           echo "LC_ALL=zh_CN" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: r-lib/actions/setup-pandoc@v2
 
