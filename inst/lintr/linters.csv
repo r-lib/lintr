@@ -44,7 +44,6 @@ inner_combine_linter,efficiency consistency readability
 is_numeric_linter,readability best_practices consistency
 keyword_quote_linter,readability consistency style
 length_levels_linter,readability best_practices consistency
-length_test_linter,common_mistakes efficiency
 lengths_linter,efficiency readability best_practices
 library_call_linter,style best_practices readability
 line_length_linter,style readability default configurable

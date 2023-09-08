@@ -18,13 +18,13 @@ see also \code{\link[=available_tags]{available_tags()}}.
 The following tags exist:
 \itemize{
 \item{\link[=best_practices_linters]{best_practices} (53 linters)}
-\item{\link[=common_mistakes_linters]{common_mistakes} (8 linters)}
+\item{\link[=common_mistakes_linters]{common_mistakes} (7 linters)}
 \item{\link[=configurable_linters]{configurable} (32 linters)}
 \item{\link[=consistency_linters]{consistency} (22 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=deprecated_linters]{deprecated} (8 linters)}
-\item{\link[=efficiency_linters]{efficiency} (25 linters)}
+\item{\link[=efficiency_linters]{efficiency} (24 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
@@ -79,7 +79,6 @@ The following linters exist:
 \item{\code{\link{is_numeric_linter}} (tags: best_practices, consistency, readability)}
 \item{\code{\link{keyword_quote_linter}} (tags: consistency, readability, style)}
 \item{\code{\link{length_levels_linter}} (tags: best_practices, consistency, readability)}
-\item{\code{\link{length_test_linter}} (tags: common_mistakes, efficiency)}
 \item{\code{\link{lengths_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{library_call_linter}} (tags: best_practices, readability, style)}
 \item{\code{\link{line_length_linter}} (tags: configurable, default, readability, style)}
