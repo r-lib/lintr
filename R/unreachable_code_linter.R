@@ -1,6 +1,7 @@
 #' Block unreachable code and comments following return statements
 #'
-#' Code after a top-level [return()] or [stop()] can't be reached; typically
+#' Code after a top-level [return()] or [stop()]
+#'   or in deterministically false conditional loops can't be reached; typically
 #'   this is vestigial code left after refactoring or sandboxing code, which is
 #'   fine for exploration, but shouldn't ultimately be checked in. Comments
 #'   meant for posterity should be placed *before* the final `return()`.
