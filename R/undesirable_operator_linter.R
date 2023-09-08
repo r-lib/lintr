@@ -47,12 +47,10 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
     stop("'op' should be a non-empty named character vector; use missing elements to indicate default messages.")
   }
   # infix must be handled individually below; non-assignment `=` are always OK
-  undesirable_operator_metadata <- infix_metadata[
-    infix_metadata$string_value != "%%" & !infix_metadata$xml_tag %in% c("EQ_SUB", "EQ_FORMALS"),
+  operator_nodes <- infix_metadata$xml_tag_exact[
+    infix_metadata$string_value %in% setdiff(names(op), "%%") &
+      !infix_metadata$xml_tag %in% c("EQ_SUB", "EQ_FORMALS")
   ]
-
-  included_operators <- undesirable_operator_metadata$string_value %in% names(op)
-  operator_nodes <- undesirable_operator_metadata$xml_tag_exact[included_operators]
 
   is_infix <- startsWith(names(op), "%")
   if (any(is_infix)) {
