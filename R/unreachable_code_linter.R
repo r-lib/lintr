@@ -51,7 +51,7 @@ unreachable_code_linter <- function() {
 
   xpath_else <- "
   //IF[following-sibling::expr[1]/NUM_CONST[text() = 'TRUE']]
-  /following-sibling::ELSE/following-sibling::expr/expr[1]
+  /following-sibling::ELSE/following-sibling::expr[1]
   "
 
   handle_inline_conditions <- function(lints) {
@@ -70,6 +70,7 @@ unreachable_code_linter <- function() {
     lints_if_while <- xml_find_all(xml, xpath_if_while)
     lints_if_while <- handle_inline_conditions(lints_if_while)
     lints_else <- xml_find_all(xml, xpath_else)
+    lints_else <- handle_inline_conditions(lints_else)
 
     # exclude comments that start with a nolint directive
     is_nolint_end_comment_return_stop <- xml2::xml_name(lints_return_stop) == "COMMENT" &
