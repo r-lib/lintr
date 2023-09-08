@@ -64,6 +64,11 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="lintr-development-version">lintr (development version)<a class="anchor" aria-label="anchor" href="#lintr-development-version"></a></h2>
 <div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/infix_spaces_linter.html">infix_spaces_linter()</a></code> distinguishes <code>&lt;-</code>, <code>:=</code>, <code>&lt;&lt;-</code> and <code>-&gt;</code>, <code>-&gt;&gt;</code>, i.e. <code>infix_spaces_linter(exclude_operators = "-&gt;")</code> will no longer exclude <code>-&gt;&gt;</code> (<a href="https://github.com/r-lib/lintr/issues/2115" class="external-link">#2115</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). This change is breaking for users relying on manually-supplied <code>exclude_operators</code> containing <code>"&lt;-"</code> to also exclude <code>:=</code> and <code>&lt;&lt;-</code>. The fix is to manually supply <code>":="</code> and <code>"&lt;&lt;-"</code> as well. We don’t expect this change to affect many users, the fix is simple, and the new behavior is much more transparent, so we are including this breakage in a minor release.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/inner_combine_linter.html">inner_combine_linter()</a></code> no longer throws on length-1 calls to <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> like <code>c(exp(2))</code> or <code>c(log(3))</code> (<a href="https://github.com/r-lib/lintr/issues/2017" class="external-link">#2017</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Such usage is discouraged by <code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code>, but <code><a href="../reference/inner_combine_linter.html">inner_combine_linter()</a></code> <em>per se</em> does not apply.</li>
