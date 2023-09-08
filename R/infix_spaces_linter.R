@@ -6,9 +6,8 @@
 #' @param exclude_operators Character vector of operators to exclude from consideration for linting.
 #'   Default is to include the following "low-precedence" operators:
 #'   `+`, `-`, `~`, `>`, `>=`, `<`, `<=`, `==`, `!=`, `&`, `&&`, `|`, `||`, `<-`, `:=`, `<<-`, `->`, `->>`,
-#'   `=`, `/`, `*`, and any infix operator (exclude infixes by passing `"%%"`). Note that `<-`, `:=`, and `<<-`
-#'   are included/excluded as a group (indicated by passing `"<-"`), as are `->` and `->>` (_viz_, `"->"`),
-#'   and that `=` for assignment and for setting arguments in calls are treated the same.
+#'   `=`, `/`, `*`, and any infix operator (exclude infixes by passing `"%%"`). Note that `=` for assignment
+#'   and for setting arguments in calls are treated the same.
 #' @param allow_multiple_spaces Logical, default `TRUE`. If `FALSE`, usage like `x  =  2` will also be linted;
 #'   excluded by default because such usage can sometimes be used for better code alignment, as is allowed
 #'   by the style guide.
@@ -65,9 +64,8 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
     lint_message <- "Put exactly one space on each side of infix operators."
   }
 
-  infix_tokens <- infix_metadata[
-    infix_metadata$low_precedence & !infix_metadata$string_value %in% exclude_operators,
-    "xml_tag"
+  infix_tokens <- infix_metadata$xml_tag_exact[
+    infix_metadata$low_precedence & !infix_metadata$string_value %in% exclude_operators
   ]
 
   # NB: preceding-sibling::* and not preceding-sibling::expr because
