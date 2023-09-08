@@ -7,7 +7,8 @@
 unreachable_code_linter()
 }
 \description{
-Code after a top-level \code{\link[=return]{return()}} or \code{\link[=stop]{stop()}} can't be reached; typically
+Code after a top-level \code{\link[=return]{return()}} or \code{\link[=stop]{stop()}}
+or in deterministically false conditional loops can't be reached; typically
 this is vestigial code left after refactoring or sandboxing code, which is
 fine for exploration, but shouldn't ultimately be checked in. Comments
 meant for posterity should be placed \emph{before} the final \code{return()}.
@@ -21,9 +22,33 @@ lint(
   linters = unreachable_code_linter()
 )
 
+code_lines <- "f <- if (FALSE) {\n 2 + 2\n}"
+lint(
+  text = code_lines,
+  linters = unreachable_code_linter()
+)
+
+code_lines <- "f <- while (FALSE) {\n 2 + 2\n}"
+lint(
+  text = code_lines,
+  linters = unreachable_code_linter()
+)
+
 # okay
 code_lines <- "f <- function() {\n  return(1 + 1)\n}"
 writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = unreachable_code_linter()
+)
+
+code_lines <- "f <- if (foo) {\n 2 + 2\n}"
+lint(
+  text = code_lines,
+  linters = unreachable_code_linter()
+)
+
+code_lines <- "f <- while (foo) {\n 2 + 2\n}"
 lint(
   text = code_lines,
   linters = unreachable_code_linter()

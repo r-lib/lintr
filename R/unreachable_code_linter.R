@@ -15,9 +15,33 @@
 #'   linters = unreachable_code_linter()
 #' )
 #'
+#' code_lines <- "f <- if (FALSE) {\n 2 + 2\n}"
+#' lint(
+#'   text = code_lines,
+#'   linters = unreachable_code_linter()
+#' )
+#'
+#' code_lines <- "f <- while (FALSE) {\n 2 + 2\n}"
+#' lint(
+#'   text = code_lines,
+#'   linters = unreachable_code_linter()
+#' )
+#'
 #' # okay
 #' code_lines <- "f <- function() {\n  return(1 + 1)\n}"
 #' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = unreachable_code_linter()
+#' )
+#'
+#' code_lines <- "f <- if (foo) {\n 2 + 2\n}"
+#' lint(
+#'   text = code_lines,
+#'   linters = unreachable_code_linter()
+#' )
+#'
+#' code_lines <- "f <- while (foo) {\n 2 + 2\n}"
 #' lint(
 #'   text = code_lines,
 #'   linters = unreachable_code_linter()
