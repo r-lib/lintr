@@ -172,6 +172,46 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
 
   lines <- trim_some("
     foo <- function(bar) {
+      if (FALSE) {
+        # Unlinted comment
+        x <- 3
+      }
+      x + 3
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      line_number = 4L,
+      message = msg
+    ),
+    unreachable_code_linter()
+  )
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (bla) {
+        x <- 3
+      } else if (FALSE) {
+        # Unlinted comment
+        y <- 3
+      }
+      x + 3
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      line_number = 6L,
+      message = msg
+    ),
+    unreachable_code_linter()
+  )
+
+  lines <- trim_some("
+    foo <- function(bar) {
       while (FALSE) {
         x <- 3
       }
@@ -183,6 +223,70 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
     lines,
     list(
       line_number = 3L,
+      message = msg
+    ),
+    unreachable_code_linter()
+  )
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      while (FALSE) {
+        # Unlinted comment
+        x <- 3
+      }
+      x + 3
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      line_number = 4L,
+      message = msg
+    ),
+    unreachable_code_linter()
+  )
+})
+
+test_that("unreachable_code_linter identifies unreachable code in conditional loops", {
+  linter <- unreachable_code_linter()
+  msg <- rex::rex("Code inside an else block after a deterministically true if condition is not reachable.")
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (TRUE) {
+        x <- 3
+      } else {
+        # Unlinted comment
+        x + 3
+      }
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      line_number = 6L,
+      message = msg
+    ),
+    unreachable_code_linter()
+  )
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (TRUE) {
+        x <- 3
+      } else if (bar) {
+        # Unlinted comment
+        x + 3
+      }
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      line_number = 4L,
       message = msg
     ),
     unreachable_code_linter()
