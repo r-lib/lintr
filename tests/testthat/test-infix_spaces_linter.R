@@ -201,3 +201,34 @@ test_that("mixed unary & binary operators aren't mis-lint", {
     infix_spaces_linter()
   )
 })
+
+test_that("parse tags are accepted by exclude_operators", {
+  expect_lint("sum(x, na.rm=TRUE)", NULL, infix_spaces_linter(exclude_operators = "EQ_SUB"))
+  expect_lint("function(x, na.rm=TRUE) { }", NULL, infix_spaces_linter(exclude_operators = "EQ_FORMALS"))
+  expect_lint("x=1", NULL, infix_spaces_linter(exclude_operators = "EQ_ASSIGN"))
+
+  # uses parse_tag
+  expect_lint("1+1", NULL, infix_spaces_linter(exclude_operators = "'+'"))
+
+  # mixing
+  text = "x=function(a=foo(bar=1)) { }"
+  expect_lint(text, NULL, infix_spaces_linter(exclude_operators = c("EQ_SUB", "EQ_FORMALS", "EQ_ASSIGN")))
+  expect_lint(text, list(column_number = 2L), infix_spaces_linter(exclude_operators = c("EQ_SUB", "EQ_FORMALS")))
+  expect_lint(text, list(column_number = 13L), infix_spaces_linter(exclude_operators = c("EQ_SUB", "EQ_ASSIGN")))
+  expect_lint(text, list(column_number = 21L), infix_spaces_linter(exclude_operators = c("EQ_FORMALS", "EQ_ASSIGN")))
+  expect_lint(
+    text,
+    list(list(column_number = 2L), list(column_number = 13L)),
+    infix_spaces_linter(exclude_operators = "EQ_SUB")
+  )
+  expect_lint(
+    text,
+    list(list(column_number = 2L), list(column_number = 21L)),
+    infix_spaces_linter(exclude_operators = "EQ_FORMALS")
+  )
+  expect_lint(
+    text,
+    list(list(column_number = 13L), list(column_number = 21L)),
+    infix_spaces_linter(exclude_operators = "EQ_ASSIGN")
+  )
+})
