@@ -7,13 +7,9 @@
 length_test_linter()
 }
 \description{
-Usage like \code{length(x == 0)} is a mistake. If checking the length of \code{x},
-\code{length(x) == 0} was intended. The length of the logical vector \code{x == 0}
-will be the same as the length of \code{x}, so it would be more direct to use
-\code{length(x)} if that value was really intended. Even in more complicated
-cases like \code{length(x == y)} where \code{x} and \code{y} may have different lengths
-and this expression relies on recycling rules, it is far preferable to
-make the intent clearer, e.g. \code{max(length(x), length(y))}.
+Usage like \code{length(x == 0)} is a mistake. If you intended to check \code{x} is empty,
+use \code{length(x) == 0}. Other mistakes are possible, but running \code{length()} on the
+outcome of a logical comparison is never the best choice.
 }
 \examples{
 # will produce lints

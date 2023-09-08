@@ -21,9 +21,11 @@ local({
 
   patrick::with_parameters_test_that(
     "all logical operators detected",
-    {
-      expect_lint(paste("length(x", op, "y)"), rex::rex("`length(x) ", op, " y`?"), linter)
-    },
+    expect_lint(
+      paste("length(x", op, "y)"),
+      rex::rex("`length(x) ", op, " y`?"),
+      linter
+    ),
     op = ops,
     .test_name = names(ops)
   )
