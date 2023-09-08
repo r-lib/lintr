@@ -137,33 +137,6 @@ paste_linter <- function(allow_empty_sep = FALSE,
     /parent::expr
   "
 
-  if (allow_file_path %in% c("always", "double_slash")) {
-    check_double_slash <- function(str) any(grepl("//", str, fixed = TRUE))
-  } else {
-    # always skip on strings starting/ending with //, since switching to
-    #   file.path() would require file.path("", ...) or file.path(..., "")
-    check_double_slash <- function(str) any(grepl("^//|//$", str))
-  }
-
-  check_is_not_file_path <- function(expr) {
-    args <- xml_find_all(expr, "expr[position() > 1]")
-    is_string <- !is.na(xml_find_first(args, "STR_CONST"))
-    string_values <- character(length(args))
-    string_values[is_string] <- get_r_string(args[is_string])
-    not_start_slash <- which(!startsWith(string_values, "/"))
-    not_end_slash <- which(!endsWith(string_values, "/"))
-    # First input is '/', meaning file.path() would need to start with ''
-    string_values[1L] == "/" ||
-      # Last input is '/', meaning file.path() would need to end with ''
-      string_values[length(string_values)] == "/" ||
-      check_double_slash(string_values) ||
-      # A string not ending with /, followed by non-string,
-      #   or a string not starting with /, preceded by a non-string
-      any(!is_string[c(not_end_slash + 1L, not_start_slash - 1L)], na.rm = TRUE) ||
-      # A string not starting with / preceded by a string not ending with /
-      any(not_start_slash %in% (not_end_slash + 1L))
-  }
-
   # Type II: paste0(x, "/", y, "/", z)
   #   NB: some conditions require evaluating the R string, only a few can be done in pure XPath. See below.
   paste0_file_path_xpath <- xp_strip_comments("
@@ -266,7 +239,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
       ))
 
       paste0_file_path_expr <- xml_find_all(xml, paste0_file_path_xpath)
-      is_file_path <- !vapply(paste0_file_path_expr, check_is_not_file_path, logical(1L))
+      is_file_path <- !vapply(paste0_file_path_expr, check_is_not_file_path, logical(1L), allow_file_path = allow_file_path)
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
         paste0_file_path_expr[is_file_path],
         source_expression = source_expression,
@@ -280,4 +253,33 @@ paste_linter <- function(allow_empty_sep = FALSE,
 
     c(optional_lints, paste0_sep_lints, paste_strrep_lints)
   })
+}
+
+check_is_not_file_path <- function(expr, allow_file_path) {
+  args <- xml_find_all(expr, "expr[position() > 1]")
+
+  is_string <- !is.na(xml_find_first(args, "STR_CONST"))
+  string_values <- character(length(args))
+  string_values[is_string] <- get_r_string(args[is_string])
+  not_start_slash <- which(!startsWith(string_values, "/"))
+  not_end_slash <- which(!endsWith(string_values, "/"))
+
+  if (allow_file_path == "double_slash") {
+    check_double_slash <- function(str) any(grepl("//", str, fixed = TRUE))
+  } else {
+    # always skip on strings starting/ending with //, since switching to
+    #   file.path() would require file.path("", ...) or file.path(..., "")
+    check_double_slash <- function(str) any(grepl("^//|//$", str))
+  }
+
+  # First input is '/', meaning file.path() would need to start with ''
+  string_values[1L] == "/" ||
+    # Last input is '/', meaning file.path() would need to end with ''
+    string_values[length(string_values)] == "/" ||
+    check_double_slash(string_values) ||
+    # A string not ending with /, followed by non-string,
+    #   or a string not starting with /, preceded by a non-string
+    any(!is_string[c(not_end_slash + 1L, not_start_slash - 1L)], na.rm = TRUE) ||
+    # A string not starting with / preceded by a string not ending with /
+    any(not_start_slash %in% (not_end_slash + 1L))
 }

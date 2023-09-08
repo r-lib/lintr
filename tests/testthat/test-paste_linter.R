@@ -240,7 +240,6 @@ test_that("raw strings are detected in file path logic", {
   linter <- paste_linter()
   lint_msg <- rex::rex("Construct file paths with file.path(...) instead of ")
 
-  withr::local_envvar(LINT_DEBUG = 'true')
   expect_lint("paste0(x, R'{abc}', y)", NULL, linter)
   expect_lint("paste0(x, R'{/abc/}', y)", lint_msg, linter)
   expect_lint("paste(x, y, sep = R'{//}')", NULL, linter)
