@@ -45,6 +45,7 @@
 * `scalar_in_linter()` for discouraging `%in%` when the right-hand side is a scalar, e.g. `x %in% 1` (part of #884, @MichaelChirico).
 * `if_not_else_linter()` for encouraging `if` statements to be structured as `if (A) x else y` instead of `if (!A) y else x` (part of #884, @MichaelChirico).
 * `repeat_linter()` for encouraging `repeat` for infinite loops instead of `while (TRUE)` (#2106, @MEO265).
+* `length_test_linter()` detects the common mistake `length(x == 0)` which is meant to be `length(x) == 0` (#1991, @MichaelChirico).
 
 ## Changes to defaults
 
