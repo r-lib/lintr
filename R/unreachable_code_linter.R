@@ -44,19 +44,9 @@ unreachable_code_linter <- function() {
     /following-sibling::*[1]
   "
   xpath_if_while <- "
-  //WHILE
-  [
-    following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']
-    and following-sibling::expr[2]/expr
-  ]
-  /following-sibling::expr[2]/expr[1]
+  //WHILE[following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']]/following-sibling::expr[2]
   |
-  //IF
-  [
-    following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']
-    and following-sibling::expr[2]/expr
-  ]
-  /following-sibling::expr[2]/expr[1]
+  //IF[following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']]/following-sibling::expr[2]
   "
 
   xpath_else <- "
@@ -73,6 +63,8 @@ unreachable_code_linter <- function() {
 
     lints_return_stop <- xml_find_all(xml, xpath_return_stop)
     lints_if_while <- xml_find_all(xml, xpath_if_while)
+    lints_if_while <- lapply(lints_if_while, function (x) if(xml2::xml_name(xml2::xml_child(x)) != "OP-LEFT-BRACE") x else xml2::xml_find_first(x,"expr"))
+    lints_if_while <- lints_if_while[ lapply(lints_if_while, FUN = xml2::xml_length) != 0]
     lints_else <- xml_find_all(xml, xpath_else)
 
     # exclude comments that start with a nolint directive

@@ -150,6 +150,7 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", {
 
 test_that("unreachable_code_linter identifies unreachable code in conditional loops", {
   linter <- unreachable_code_linter()
+  msg <- rex::rex("Code inside a conditional loop with a deterministically false condition is not reachable.")
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -164,7 +165,7 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
     lines,
     list(
       line_number = 3L,
-      message = rex::rex("Code and comments coming after a top-level return() or stop()")
+      message = msg
     ),
     unreachable_code_linter()
   )
@@ -182,7 +183,7 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
     lines,
     list(
       line_number = 3L,
-      message = rex::rex("Code and comments coming after a top-level return() or stop()")
+      message = msg
     ),
     unreachable_code_linter()
   )
