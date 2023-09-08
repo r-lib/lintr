@@ -80,7 +80,16 @@ unreachable_code_linter <- function() {
   "
 
   handle_inline_conditions <- function(lints) {
-    lints <- lapply(lints, function(x) if (xml2::xml_name(xml2::xml_child(x)) != "OP-LEFT-BRACE") x else xml2::xml_find_first(x, "expr"))
+    lints <- lapply(
+      lints,
+      FUN = function(x) {
+        if (xml2::xml_name(xml2::xml_child(x)) == "OP-LEFT-BRACE") {
+          xml2::xml_find_first(x, "expr")
+        } else {
+          x
+        }
+      }
+    )
     lints <- lints[lapply(lints, FUN = xml2::xml_length) != 0L]
   }
 
