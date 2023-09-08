@@ -179,7 +179,13 @@ infix_metadata$low_precedence <- infix_metadata$string_value %in% c(
 infix_metadata$comparator <- infix_metadata$string_value %in% c("<", "<=", ">", ">=", "==", "!=")
 
 # these XML nodes require checking the text() to disambiguate multiple operators using the same tag
-infix_metadata$ambiguous_node <- infix_metadata$xml_tag %in% infix_metadata$xml_tag[duplicated(infix_metadata$xml_tag)]
+infix_metadata$ambiguous_tag <- infix_metadata$xml_tag %in% infix_metadata$xml_tag[duplicated(infix_metadata$xml_tag)]
+infix_metadata$xml_tag_exact <- infix_metadata$xml_tag
+infix_metadata$xml_tag_exact[infix_metadata$ambiguous_tag] <- sprintf(
+  "%s[text() = '%s']",
+  infix_metadata$xml_tag_exact[infix_metadata$ambiguous_tag],
+  infix_metadata$string_value[infix_metadata$ambiguous_tag]
+)
 
 # functions equivalent to base::ifelse() for linting purposes
 ifelse_funs <- c("ifelse", "if_else", "fifelse")

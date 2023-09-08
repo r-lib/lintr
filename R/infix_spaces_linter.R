@@ -65,13 +65,7 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
   }
 
   include_tokens <- infix_metadata$low_precedence & !infix_metadata$string_value %in% exclude_operators
-  infix_tokens <- infix_metadata$xml_tag[include_tokens]
-  need_exact_match <- infix_tokens %in% infix_metadata$xml_tag[infix_metadata$ambiguous_node]
-  infix_tokens[need_exact_match] <- sprintf(
-    "%s[text() = '%s']",
-    infix_tokens[need_exact_match],
-    infix_metadata$string_value[include_tokens][need_exact_match]
-  )
+  infix_tokens <- infix_metadata$xml_tag_exact[include_tokens]
 
   # NB: preceding-sibling::* and not preceding-sibling::expr because
   #   of the foo(a=1) case, where the tree is <SYMBOL_SUB><EQ_SUB><expr>

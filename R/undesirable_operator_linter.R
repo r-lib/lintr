@@ -52,13 +52,7 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
   ]
 
   included_operators <- undesirable_operator_metadata$string_value %in% names(op)
-  operator_nodes <- undesirable_operator_metadata$xml_tag[included_operators]
-  needs_exact_string <- operator_nodes %in% infix_metadata$xml_tag[infix_metadata$ambiguous_node]
-  operator_nodes[needs_exact_string] <- sprintf(
-    "%s[text() = '%s']",
-    operator_nodes[needs_exact_string],
-    undesirable_operator_metadata$string_value[included_operators][needs_exact_string]
-  )
+  operator_nodes <- undesirable_operator_metadata$xml_tag_exact[included_operators]
 
   is_infix <- startsWith(names(op), "%")
   if (any(is_infix)) {
