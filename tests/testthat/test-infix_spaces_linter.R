@@ -211,24 +211,15 @@ test_that("parse tags are accepted by exclude_operators", {
   expect_lint("1+1", NULL, infix_spaces_linter(exclude_operators = "'+'"))
 
   # mixing
-  text = "x=function(a=foo(bar=1)) { }"
+  text <- "x=function(a=foo(bar=1)) { }"
+  col_assign <- list(column_number = 2L)
+  col_formals <- list(column_number = 13L)
+  col_sub <- list(column_number = 21L)
   expect_lint(text, NULL, infix_spaces_linter(exclude_operators = c("EQ_SUB", "EQ_FORMALS", "EQ_ASSIGN")))
-  expect_lint(text, list(column_number = 2L), infix_spaces_linter(exclude_operators = c("EQ_SUB", "EQ_FORMALS")))
-  expect_lint(text, list(column_number = 13L), infix_spaces_linter(exclude_operators = c("EQ_SUB", "EQ_ASSIGN")))
-  expect_lint(text, list(column_number = 21L), infix_spaces_linter(exclude_operators = c("EQ_FORMALS", "EQ_ASSIGN")))
-  expect_lint(
-    text,
-    list(list(column_number = 2L), list(column_number = 13L)),
-    infix_spaces_linter(exclude_operators = "EQ_SUB")
-  )
-  expect_lint(
-    text,
-    list(list(column_number = 2L), list(column_number = 21L)),
-    infix_spaces_linter(exclude_operators = "EQ_FORMALS")
-  )
-  expect_lint(
-    text,
-    list(list(column_number = 13L), list(column_number = 21L)),
-    infix_spaces_linter(exclude_operators = "EQ_ASSIGN")
-  )
+  expect_lint(text, col_assign, infix_spaces_linter(exclude_operators = c("EQ_SUB", "EQ_FORMALS")))
+  expect_lint(text, col_formals, infix_spaces_linter(exclude_operators = c("EQ_SUB", "EQ_ASSIGN")))
+  expect_lint(text, col_sub, infix_spaces_linter(exclude_operators = c("EQ_FORMALS", "EQ_ASSIGN")))
+  expect_lint(text, list(col_assign, col_formals), infix_spaces_linter(exclude_operators = "EQ_SUB"))
+  expect_lint(text, list(col_assign, col_sub), infix_spaces_linter(exclude_operators = "EQ_FORMALS"))
+  expect_lint(text, list(col_formals, col_sub), infix_spaces_linter(exclude_operators = "EQ_ASSIGN"))
 })
