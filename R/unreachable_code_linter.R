@@ -35,13 +35,11 @@ unreachable_code_linter <- function() {
   xpath <- "
   //FUNCTION
     /following-sibling::expr
-    /*[
-      self::expr
-      and expr[1][not(OP-DOLLAR or OP-AT) and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]
-      and (position() != last() - 1 or not(following-sibling::OP-RIGHT-BRACE))
-      and @line2 < following-sibling::*[1]/@line2
-    ]
-    /following-sibling::*[1]
+    /expr[expr[1][not(OP-DOLLAR or OP-AT) and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]]
+    /following-sibling::*[
+      not(self::OP-RIGHT-BRACE)
+      and (not(self::COMMENT or self::OP-SEMICOLON) or @line2 > preceding-sibling::*[1]/@line2)
+    ][1]
   "
 
   Linter(function(source_expression) {
