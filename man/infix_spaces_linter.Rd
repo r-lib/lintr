@@ -8,7 +8,7 @@ infix_spaces_linter(exclude_operators = NULL, allow_multiple_spaces = TRUE)
 }
 \arguments{
 \item{exclude_operators}{Character vector of operators to exclude from consideration for linting.
-Ddefault is to include the following "low-precedence" operators:
+Default is to include the following "low-precedence" operators:
 \code{+}, \code{-}, \code{~}, \code{>}, \code{>=}, \code{<}, \code{<=}, \code{==}, \code{!=}, \code{&}, \code{&&}, \code{|}, \code{||}, \verb{<-}, \verb{:=}, \verb{<<-}, \verb{->}, \verb{->>},
 \code{=}, \code{/}, \code{*}, and any infix operator (exclude infixes by passing \code{"\%\%"}). Note that \code{"="} here includes
 three different operators, from the parser's point of view. To lint only some of these, pass the

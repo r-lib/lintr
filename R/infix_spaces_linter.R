@@ -4,7 +4,7 @@
 #'   see <https://style.tidyverse.org/syntax.html#infix-operators>.
 #'
 #' @param exclude_operators Character vector of operators to exclude from consideration for linting.
-#'   Ddefault is to include the following "low-precedence" operators:
+#'   Default is to include the following "low-precedence" operators:
 #'   `+`, `-`, `~`, `>`, `>=`, `<`, `<=`, `==`, `!=`, `&`, `&&`, `|`, `||`, `<-`, `:=`, `<<-`, `->`, `->>`,
 #'   `=`, `/`, `*`, and any infix operator (exclude infixes by passing `"%%"`). Note that `"="` here includes
 #'   three different operators, from the parser's point of view. To lint only some of these, pass the
