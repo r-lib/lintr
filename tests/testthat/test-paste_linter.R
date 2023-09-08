@@ -212,11 +212,12 @@ test_that("multiple path lints are generated correctly", {
       paste0("a", x)
       paste0(a, "x")
       paste0("a/", NA_character_, "/b")
+      paste0("a/", "b")
       paste0("a/", "bcd//efg", "/h")
       paste0("/", a)
       paste0(a, "/")
     }'),
-    NULL,
+    list(message = rex::rex("Construct file paths with file.path(...)"), line_number = 8L),
     linter
   )
 })

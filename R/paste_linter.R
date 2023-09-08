@@ -138,7 +138,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
   "
 
   if (allow_file_path %in% c("always", "double_slash")) {
-    check_double_slash <- function(str) any(grepl("//", str))
+    check_double_slash <- function(str) any(grepl("//", str, fixed = TRUE))
   } else {
     # always skip on strings starting/ending with //, since switching to
     #   file.path() would require file.path("", ...) or file.path(..., "")
