@@ -103,6 +103,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
                          allow_to_string = FALSE,
                          allow_file_path = c("double_slash", "always", "never")) {
   allow_file_path <- match.arg(allow_file_path)
+  check_file_paths <- allow_file_path %in% c("double_slash", "never")
 
   paste_sep_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'paste']
@@ -170,7 +171,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
 
     # Both of these look for paste(..., sep = "..."), differing in which 'sep' is linted,
     #   so run the expensive XPath search/R parse only once
-    if (!allow_empty_sep || allow_file_path %in% c("double_slash", "never")) {
+    if (!allow_empty_sep || check_file_paths) {
       paste_sep_expr <- xml_find_all(xml, paste_sep_xpath)
       paste_sep_value <- get_r_string(paste_sep_expr, xpath = "./SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1]")
     }
@@ -223,7 +224,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
       type = "warning"
     )
 
-    if (allow_file_path %in% c("double_slash", "never")) {
+    if (check_file_paths) {
       paste_sep_slash_expr <- paste_sep_expr[paste_sep_value == "/"]
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
         # in addition to paste(..., sep = "/") we ensure collapse= is not present
@@ -239,7 +240,8 @@ paste_linter <- function(allow_empty_sep = FALSE,
       ))
 
       paste0_file_path_expr <- xml_find_all(xml, paste0_file_path_xpath)
-      is_file_path <- !vapply(paste0_file_path_expr, check_is_not_file_path, logical(1L), allow_file_path = allow_file_path)
+      is_file_path <-
+        !vapply(paste0_file_path_expr, check_is_not_file_path, logical(1L), allow_file_path = allow_file_path)
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
         paste0_file_path_expr[is_file_path],
         source_expression = source_expression,
