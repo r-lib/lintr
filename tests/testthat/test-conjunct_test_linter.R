@@ -109,3 +109,44 @@ test_that("conjunct_test_linter's allow_named_stopifnot argument works", {
     conjunct_test_linter(allow_named_stopifnot = FALSE)
   )
 })
+
+test_that("conjunct_test_linter skips allowed usages", {
+  linter <- conjunct_test_linter()
+
+  expect_lint("dplyr::filter(DF, A, B)", NULL, linter)
+  expect_lint("dplyr::filter(DF, !(A & B))", NULL, linter)
+  # | is the "top-level" operator here
+  expect_lint("dplyr::filter(DF, A & B | C)", NULL, linter)
+  expect_lint("dplyr::filter(DF, A | B & C)", NULL, linter)
+})
+
+test_that("conjunct_test_linter blocks simple disallowed usages", {
+  linter <- conjunct_test_linter()
+  lint_msg <- rex::rex("Use dplyr::filter(DF, A, B) instead of dplyr::filter(DF, A & B)")
+
+  expect_lint("dplyr::filter(DF, A & B)", lint_msg, linter)
+  expect_lint("dplyr::filter(DF, A & B & C)", lint_msg, linter)
+
+  # more common usage, in pipes
+  expect_lint("DF %>% dplyr::filter(A & B)", lint_msg, linter)
+})
+
+test_that("conjunct_test_linter respects its allow_filter argument", {
+  linter <- conjunct_test_linter(allow_filter = TRUE)
+
+  expect_lint("dplyr::filter(DF, A & B)", NULL, linter)
+  expect_lint("dplyr::filter(DF, A & B & C)", NULL, linter)
+  expect_lint("DF %>% dplyr::filter(A & B)", NULL, linter)
+})
+
+test_that("filter() is assumed to be dplyr::filter() by default, unless o/w specified", {
+  linter <- conjunct_test_linter()
+
+  expect_lint("stats::filter(A & B)", NULL, linter)
+  expect_lint("ns::filter(A & B)", NULL, linter)
+  expect_lint(
+    "DF %>% filter(A & B)",
+    rex::rex("Use dplyr::filter(DF, A, B) instead of dplyr::filter(DF, A & B)"),
+    linter
+  )
+})

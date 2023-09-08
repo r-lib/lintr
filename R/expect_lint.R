@@ -50,12 +50,12 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
 
   if (is.null(file)) {
     file <- tempfile()
-    con <- base::file(file, encoding = "UTF-8")
     on.exit(unlink(file), add = TRUE)
-    withr::with_connection(
-      list(con = con),
+    local({
+      con <- base::file(file, encoding = "UTF-8")
+      on.exit(close(con))
       writeLines(content, con = con, sep = "\n")
-    )
+    })
   }
 
   lints <- lint(file, ...)

@@ -1,4 +1,4 @@
-#' Force `&&` conditions in `expect_true()` and `expect_false()` to be written separately
+#' Force `&&` conditions to be written separately where appropriate
 #'
 #' For readability of test outputs, testing only one thing per call to
 #'   [testthat::expect_true()] is preferable, i.e.,
@@ -7,8 +7,14 @@
 #'
 #' Similar reasoning applies to `&&` usage inside [stopifnot()] and `assertthat::assert_that()` calls.
 #'
+#' Relatedly, `dplyr::filter(DF, A & B)` is the same as `dplyr::filter(DF, A, B)`, but the latter will be more readable
+#'   / easier to format for long conditions. Note that this linter assumes usages of `filter()` are `dplyr::filter()`;
+#'   if you're using another function named `filter()`, e.g. [stats::filter()], please namespace-qualify it to avoid
+#'   false positives. You can omit linting `filter()` expressions altogether via `allow_filter = TRUE`.
+#'
 #' @param allow_named_stopifnot Logical, `TRUE` by default. If `FALSE`, "named" calls to `stopifnot()`,
 #'   available since R 4.0.0 to provide helpful messages for test failures, are also linted.
+#' @param allow_filter Logical, `FALSE` by default. If `TRUE`, `filter()` expressions are not linted.
 #'
 #' @examples
 #' # will produce lints
@@ -27,6 +33,11 @@
 #'   linters = conjunct_test_linter(allow_named_stopifnot = FALSE)
 #' )
 #'
+#' lint(
+#'   text = "dplyr::filter(mtcars, mpg > 20 & vs == 0)",
+#'   linters = conjunct_test_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "expect_true(x || (y && z))",
@@ -38,31 +49,48 @@
 #'   linters = conjunct_test_linter(allow_named_stopifnot = TRUE)
 #' )
 #'
+#' lint(
+#'   text = "dplyr::filter(mtcars, mpg > 20 & vs == 0)",
+#'   linters = conjunct_test_linter(allow_filter = TRUE)
+#' )
+#'
 #' @evalRd rd_tags("conjunct_test_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
+conjunct_test_linter <- function(allow_named_stopifnot = TRUE,
+                                 allow_filter = FALSE) {
   expect_true_assert_that_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'assert_that']
-  /parent::expr
-  /following-sibling::expr[1][AND2]
+    /parent::expr
+    /following-sibling::expr[1][AND2]
+    /parent::expr
   "
   named_stopifnot_condition <- if (allow_named_stopifnot) "and not(preceding-sibling::*[1][self::EQ_SUB])" else ""
   stopifnot_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'stopifnot']
-  /parent::expr
-  /following-sibling::expr[1][AND2 {named_stopifnot_condition}]
+    /parent::expr
+    /following-sibling::expr[1][AND2 {named_stopifnot_condition}]
+    /parent::expr
   ")
   expect_false_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'expect_false']
-  /parent::expr
-  /following-sibling::expr[1][OR2]
+    /parent::expr
+    /following-sibling::expr[1][OR2]
+    /parent::expr
   "
-  xpath <- paste0(
-    c(expect_true_assert_that_xpath, stopifnot_xpath, expect_false_xpath),
-    "/parent::expr",
-    collapse = " | "
+  test_xpath <- paste(
+    expect_true_assert_that_xpath,
+    stopifnot_xpath,
+    expect_false_xpath,
+    sep = " | "
   )
+
+  filter_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'filter']
+    /parent::expr[not(SYMBOL_PACKAGE[text() != 'dplyr'])]
+    /parent::expr
+    /expr[AND]
+  "
 
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level
@@ -72,14 +100,10 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
 
     xml <- source_expression$full_xml_parsed_content
 
-    bad_expr <- xml_find_all(xml, xpath)
+    test_expr <- xml_find_all(xml, test_xpath)
 
-    if (length(bad_expr) == 0L) {
-      return(list())
-    }
-
-    matched_fun <- xp_call_name(bad_expr)
-    operator <- xml_find_chr(bad_expr, "string(expr/*[self::AND2 or self::OR2])")
+    matched_fun <- xp_call_name(test_expr)
+    operator <- xml_find_chr(test_expr, "string(expr/*[self::AND2 or self::OR2])")
     replacement_fmt <- ifelse(
       matched_fun %in% c("expect_true", "expect_false"),
       "write multiple expectations like %1$s(A) and %1$s(B)",
@@ -87,9 +111,30 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE) {
     )
     lint_message <- paste(
       sprintf("Instead of %s(A %s B),", matched_fun, operator),
-      sprintf(replacement_fmt, matched_fun),
+      # as.character() needed for 0-lint case where ifelse(logical(0)) returns logical(0)
+      sprintf(as.character(replacement_fmt), matched_fun),
       "The latter will produce better error messages in the case of failure."
     )
-    xml_nodes_to_lints(bad_expr, source_expression, lint_message = lint_message, type = "warning")
+    lints <- xml_nodes_to_lints(
+      test_expr,
+      source_expression = source_expression,
+      lint_message = lint_message,
+      type = "warning"
+    )
+
+    if (!allow_filter) {
+      filter_expr <- xml_find_all(xml, filter_xpath)
+
+      filter_lints <- xml_nodes_to_lints(
+        filter_expr,
+        source_expression = source_expression,
+        lint_message = "Use dplyr::filter(DF, A, B) instead of dplyr::filter(DF, A & B).",
+        type = "warning"
+      )
+
+      lints <- c(lints, filter_lints)
+    }
+
+    lints
   })
 }
