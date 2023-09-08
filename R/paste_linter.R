@@ -263,8 +263,8 @@ check_is_not_file_path <- function(expr, allow_file_path) {
   is_string <- !is.na(xml_find_first(args, "STR_CONST"))
   string_values <- character(length(args))
   string_values[is_string] <- get_r_string(args[is_string])
-  not_start_slash <- which(!startsWith(string_values, "/"))
-  not_end_slash <- which(!endsWith(string_values, "/"))
+  not_start_slash <- grep("^[^/]", string_values)
+  not_end_slash <- grep("[^/]$", string_values)
 
   if (allow_file_path == "double_slash") {
     check_double_slash <- function(str) any(grepl("//", str, fixed = TRUE))
