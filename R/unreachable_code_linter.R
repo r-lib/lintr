@@ -107,11 +107,11 @@ unreachable_code_linter <- function() {
     lints_else <- handle_inline_conditions(lints_else)
 
     # exclude comments that start with a nolint directive
-    is_nolint_end_comment_return_stop <- xml2::xml_name(lints_return_stop) == "COMMENT" &
+    is_nolint_end_comment <- xml2::xml_name(lints_return_stop) == "COMMENT" &
       re_matches(xml_text(lints_return_stop), settings$exclude_end)
 
     lints_return_stop <- xml_nodes_to_lints(
-      lints_return_stop[!is_nolint_end_comment_return_stop],
+      lints_return_stop[!is_nolint_end_comment],
       source_expression = source_expression,
       lint_message = "Code and comments coming after a top-level return() or stop() should be removed.",
       type = "warning"
