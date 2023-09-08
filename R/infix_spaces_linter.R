@@ -64,8 +64,9 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
     lint_message <- "Put exactly one space on each side of infix operators."
   }
 
-  include_tokens <- infix_metadata$low_precedence & !infix_metadata$string_value %in% exclude_operators
-  infix_tokens <- infix_metadata$xml_tag_exact[include_tokens]
+  infix_tokens <- infix_metadata$xml_tag_exact[
+    infix_metadata$low_precedence & !infix_metadata$string_value %in% exclude_operators
+  ]
 
   # NB: preceding-sibling::* and not preceding-sibling::expr because
   #   of the foo(a=1) case, where the tree is <SYMBOL_SUB><EQ_SUB><expr>
