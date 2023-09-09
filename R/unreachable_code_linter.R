@@ -32,8 +32,8 @@ unreachable_code_linter <- function() {
     /following-sibling::expr
     /expr[expr[1][not(OP-DOLLAR or OP-AT) and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]]
     /following-sibling::*[
-      not(self::OP-RIGHT-BRACE)
-      and (not(self::COMMENT or self::OP-SEMICOLON) or @line2 > preceding-sibling::*[1]/@line2)
+      not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON)
+      and (not(self::COMMENT) or @line2 > preceding-sibling::*[1]/@line2)
     ][1]
   "
 
