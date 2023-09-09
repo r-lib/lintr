@@ -1,6 +1,6 @@
 test_that("basic usage works", {
   linter <- make_linter_from_xpath("//NUM_CONST", "Number")
-  expect_true(is.function(linter))
+  expect_type(linter, "closure")
   expect_lint("1", list("Number", type = "warning"), linter())
 
   expect_lint("'a'", "Letter", make_linter_from_xpath("//STR_CONST", "Letter")())
@@ -18,6 +18,7 @@ test_that("input validation works", {
   expect_error(
     make_linter_from_xpath("//NUM_CONST", "Number", level = "x"),
     'one of "expression", "file"',
+    fixed = TRUE
   )
 
   expect_error(
