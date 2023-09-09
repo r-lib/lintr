@@ -1,13 +1,17 @@
 test_that("basic usage works", {
   linter <- make_linter_from_xpath("//NUM_CONST", "Number")
   expect_true(is.function(linter))
-  expect_lint("1", "Number", linter())
+  expect_lint("1", list("Number", type = "warning"), linter())
+
+  expect_lint("'a'", "Letter", make_linter_from_xpath("//STR_CONST", "Letter")())
+  expect_lint("'a'", "Letter", make_linter_from_xpath("//STR_CONST", "Letter", level = "file")())
+  expect_lint("'a'", list("Letter", type = "style"), make_linter_from_xpath("//STR_CONST", "Letter", type = "style")())
 })
 
 test_that("input validation works", {
   expect_error(
     make_linter_from_xpath("//NUM_CONST", "Number", type = "x"),
-    'one of "style", "warning", "error"',
+    'one of "warning", "style", "error"',
     fixed = TRUE
   )
 
