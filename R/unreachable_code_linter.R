@@ -85,8 +85,8 @@ unreachable_code_linter <- function() {
     lints <- lapply(
       lints,
       FUN = function(x) {
-        if (xml2::xml_name(xml2::xml_child(x)) == "OP-LEFT-BRACE") {
-          xml2::xml_find_first(x, "expr")
+        if (xml_name(xml2::xml_child(x)) == "OP-LEFT-BRACE") {
+          xml_find_first(x, "expr")
         } else {
           x
         }
