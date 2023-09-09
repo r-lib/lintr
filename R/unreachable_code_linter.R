@@ -92,7 +92,7 @@ unreachable_code_linter <- function() {
         }
       }
     )
-    lints <- lints[lapply(lints, FUN = xml2::xml_length) != 0L]
+    lints <- lints[vapply(lints, xml2::xml_length, integer(1L)) != 0L]
   }
 
   Linter(function(source_expression) {
