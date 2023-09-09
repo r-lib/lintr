@@ -246,6 +246,22 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
     ),
     unreachable_code_linter()
   )
+
+  lines <- "while (FALSE) x <- 3"
+
+  expect_lint(
+    lines,
+    list(line_number = 1L, ranges = list(c(15L, 20L)), message = msg),
+    unreachable_code_linter()
+  )
+
+  lines <- "if (FALSE) x <- 3 # Test comment"
+
+  expect_lint(
+    lines,
+    list(line_number = 1L, ranges = list(c(12L, 17L)), message = msg),
+    unreachable_code_linter()
+  )
 })
 
 test_that("unreachable_code_linter identifies unreachable code in conditional loops", {
@@ -291,6 +307,14 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
     ),
     unreachable_code_linter()
   )
+
+  lines <- "if (TRUE) x <- 3 else if (bar) x + 3"
+
+  expect_lint(
+    lines,
+    list(line_number = 1L, ranges = list(c(23L, 36L)), message = msg),
+    unreachable_code_linter()
+  )
 })
 
 test_that("unreachable_code_linter identifies unreachable code in mixed conditional loops", {
@@ -326,6 +350,21 @@ test_that("unreachable_code_linter identifies unreachable code in mixed conditio
       list(
         line_number = 13L,
         message = rex::rex("Code and comments coming after a top-level return() or stop()")
+      )
+    ),
+    unreachable_code_linter()
+  )
+
+  lines <- "if (FALSE) x <- 3 else if (TRUE) x + 3 else x + 4"
+
+  expect_lint(
+    lines,
+    list(
+      list(line_number = 1L, ranges = list(c(12L, 17L)), message = msg),
+      list(
+        line_number = 1L,
+        ranges = list(c(45L, 49L)),
+        message =  rex::rex("Code inside an else block after a deterministically true if condition should be removed.")
       )
     ),
     unreachable_code_linter()
