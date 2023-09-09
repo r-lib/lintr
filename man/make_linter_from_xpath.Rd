@@ -30,5 +30,5 @@ Create a linter from an XPath
 }
 \examples{
 number_linter <- make_linter_from_xpath("//NUM_CONST", "This is a number.")
-lint(text = "1 + 2", number_linter())
+lint(text = "1 + 2", linters = number_linter())
 }
