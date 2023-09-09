@@ -122,7 +122,10 @@
 <li>
 <code><a href="../reference/commas_linter.html">commas_linter()</a></code> gains an option <code>allow_trailing</code> (default <code>FALSE</code>) to allow trailing commas while indexing. (<a href="https://github.com/r-lib/lintr/issues/2104" class="external-link">#2104</a>, <a href="https://github.com/MEO265" class="external-link">@MEO265</a>)</li>
 <li>
-<code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code> finds unreachable code even in the presence of a comment or semicolon after <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> or <code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop()</a></code> (<a href="https://github.com/r-lib/lintr/issues/2127" class="external-link">#2127</a>, <a href="https://github.com/MEO265" class="external-link">@MEO265</a>).</li>
+<code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code>
+<ul><li>finds unreachable code even in the presence of a comment or semicolon after <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> or <code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop()</a></code> (<a href="https://github.com/r-lib/lintr/issues/2127" class="external-link">#2127</a>, <a href="https://github.com/MEO265" class="external-link">@MEO265</a>).</li>
+<li>checks for code inside <code>if (FALSE)</code> and other conditional loops with deterministically false conditions (<a href="https://github.com/r-lib/lintr/issues/1428" class="external-link">#1428</a>, <a href="https://github.com/ME0265" class="external-link">@ME0265</a>).</li>
+</ul></li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>
