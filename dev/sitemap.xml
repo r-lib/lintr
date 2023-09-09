@@ -271,6 +271,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/literal_coercion_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/make_linter_from_xpath.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/matrix_apply_linter.html</loc>
   </url>
   <url>
