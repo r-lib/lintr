@@ -103,10 +103,6 @@ unreachable_code_linter <- function() {
     xml <- source_expression$xml_parsed_content
 
     lints_return_stop <- xml_find_all(xml, xpath_return_stop)
-    lints_if_while <- xml_find_all(xml, xpath_if_while)
-    lints_if_while <- handle_inline_conditions(lints_if_while)
-    lints_else <- xml_find_all(xml, xpath_else)
-    lints_else <- handle_inline_conditions(lints_else)
 
     # exclude comments that start with a nolint directive
     is_nolint_end_comment <- xml2::xml_name(lints_return_stop) == "COMMENT" &
@@ -119,12 +115,18 @@ unreachable_code_linter <- function() {
       type = "warning"
     )
 
+    lints_if_while <- xml_find_all(xml, xpath_if_while)
+    lints_if_while <- handle_inline_conditions(lints_if_while)
+
     lints_if_while <- xml_nodes_to_lints(
       lints_if_while,
       source_expression = source_expression,
       lint_message = "Code inside a conditional loop with a deterministically false condition should be removed.",
       type = "warning"
     )
+
+    lints_else <- xml_find_all(xml, xpath_else)
+    lints_else <- handle_inline_conditions(lints_else)
 
     lints_else <- xml_nodes_to_lints(
       lints_else,
