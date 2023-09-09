@@ -293,6 +293,45 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
   )
 })
 
+test_that("unreachable_code_linter identifies unreachable code in mixed conditional loops", {
+  linter <- unreachable_code_linter()
+  msg <- rex::rex("Code inside a conditional loop with a deterministically false condition should be removed.")
+
+  lines <- trim_some("
+    function (bla) {
+      if (FALSE) {
+        code + 4
+      }
+      while (FALSE) {
+        code == 3
+      }
+      if (TRUE) {
+      } else {
+        code + bla
+      }
+      stop('.')
+      code <- 1
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      list(line_number = 3L, message = msg),
+      list(line_number = 6L, message = msg),
+      list(
+        line_number = 10L,
+        message = rex::rex("Code inside an else block after a deterministically true if condition should be removed.")
+      ),
+      list(
+        line_number = 13L,
+        message = rex::rex("Code and comments coming after a top-level return() or stop()")
+      )
+    ),
+    unreachable_code_linter()
+  )
+})
+
 # nolint start: commented_code_linter.
 # TODO(michaelchirico): extend to work on switch() statements
 # test_that("unreachable_code_linter interacts with switch() as expected", {
