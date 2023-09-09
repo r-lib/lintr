@@ -30,7 +30,7 @@
 #' @evalRd rd_tags("empty_assignment_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-empty_assignment_linter <- make_linter_from_regex(
+empty_assignment_linter <- make_linter_from_xpath(
   # for some reason, the parent in the `=` case is <equal_assign>, not <expr>, hence parent::expr
   xpath = "
   //OP-LEFT-BRACE[following-sibling::*[1][self::OP-RIGHT-BRACE]]
