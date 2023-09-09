@@ -10,9 +10,8 @@ infix_spaces_linter(exclude_operators = NULL, allow_multiple_spaces = TRUE)
 \item{exclude_operators}{Character vector of operators to exclude from consideration for linting.
 Default is to include the following "low-precedence" operators:
 \code{+}, \code{-}, \code{~}, \code{>}, \code{>=}, \code{<}, \code{<=}, \code{==}, \code{!=}, \code{&}, \code{&&}, \code{|}, \code{||}, \verb{<-}, \verb{:=}, \verb{<<-}, \verb{->}, \verb{->>},
-\code{=}, \code{/}, \code{*}, and any infix operator (exclude infixes by passing \code{"\%\%"}). Note that \verb{<-}, \verb{:=}, and \verb{<<-}
-are included/excluded as a group (indicated by passing \code{"<-"}), as are \verb{->} and \verb{->>} (\emph{viz}, \code{"->"}),
-and that \code{=} for assignment and for setting arguments in calls are treated the same.}
+\code{=}, \code{/}, \code{*}, and any infix operator (exclude infixes by passing \code{"\%\%"}). Note that \code{=} for assignment
+and for setting arguments in calls are treated the same.}
 
 \item{allow_multiple_spaces}{Logical, default \code{TRUE}. If \code{FALSE}, usage like \code{x  =  2} will also be linted;
 excluded by default because such usage can sometimes be used for better code alignment, as is allowed
