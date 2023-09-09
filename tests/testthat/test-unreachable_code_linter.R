@@ -210,14 +210,7 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
     }
   ")
 
-  expect_lint(
-    lines,
-    list(
-      line_number = 3L,
-      message = msg
-    ),
-    unreachable_code_linter()
-  )
+  expect_lint(lines, list(line_number = 3L, message = msg), linter)
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -229,14 +222,7 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
     }
   ")
 
-  expect_lint(
-    lines,
-    list(
-      line_number = 4L,
-      message = msg
-    ),
-    unreachable_code_linter()
-  )
+  expect_lint(lines, list(line_number = 4L, message = msg), linter)
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -250,14 +236,7 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
     }
   ")
 
-  expect_lint(
-    lines,
-    list(
-      line_number = 6L,
-      message = msg
-    ),
-    unreachable_code_linter()
-  )
+  expect_lint(lines, list(line_number = 6L, message = msg), linter)
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -268,14 +247,7 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
     }
   ")
 
-  expect_lint(
-    lines,
-    list(
-      line_number = 3L,
-      message = msg
-    ),
-    unreachable_code_linter()
-  )
+  expect_lint(lines, list(line_number = 3L, message = msg), linter)
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -287,21 +259,14 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
     }
   ")
 
-  expect_lint(
-    lines,
-    list(
-      line_number = 4L,
-      message = msg
-    ),
-    unreachable_code_linter()
-  )
+  expect_lint(lines, list(line_number = 4L, message = msg), linter)
 
   lines <- "while (FALSE) x <- 3"
 
   expect_lint(
     lines,
     list(line_number = 1L, ranges = list(c(15L, 20L)), message = msg),
-    unreachable_code_linter()
+    linter
   )
 
   lines <- "if (FALSE) x <- 3 # Test comment"
@@ -309,7 +274,7 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
   expect_lint(
     lines,
     list(line_number = 1L, ranges = list(c(12L, 17L)), message = msg),
-    unreachable_code_linter()
+    linter
   )
 })
 
@@ -328,14 +293,7 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
     }
   ")
 
-  expect_lint(
-    lines,
-    list(
-      line_number = 6L,
-      message = msg
-    ),
-    unreachable_code_linter()
-  )
+  expect_lint(lines, list(line_number = 6L, message = msg), linter)
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -348,21 +306,14 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
     }
   ")
 
-  expect_lint(
-    lines,
-    list(
-      line_number = 4L,
-      message = msg
-    ),
-    unreachable_code_linter()
-  )
+  expect_lint(lines, list(line_number = 4L, message = msg), linter)
 
   lines <- "if (TRUE) x <- 3 else if (bar) x + 3"
 
   expect_lint(
     lines,
     list(line_number = 1L, ranges = list(c(23L, 36L)), message = msg),
-    unreachable_code_linter()
+    linter
   )
 })
 
@@ -401,7 +352,7 @@ test_that("unreachable_code_linter identifies unreachable code in mixed conditio
         message = rex::rex("Code and comments coming after a top-level return() or stop()")
       )
     ),
-    unreachable_code_linter()
+    linter
   )
 
   lines <- "if (FALSE) x <- 3 else if (TRUE) x + 3 else x + 4"
@@ -416,7 +367,7 @@ test_that("unreachable_code_linter identifies unreachable code in mixed conditio
         message = rex::rex("Code inside an else block after a deterministically true if condition should be removed.")
       )
     ),
-    unreachable_code_linter()
+    linter
   )
 })
 
