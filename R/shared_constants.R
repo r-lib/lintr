@@ -130,8 +130,11 @@ infix_metadata <- data.frame(stringsAsFactors = FALSE, matrix(byrow = TRUE, ncol
   "OR",              "|",
   "AND2",            "&&",
   "OR2",             "||",
-  "LEFT_ASSIGN",     "<-",  # also includes := and <<-
-  "RIGHT_ASSIGN",    "->",  # also includes ->>
+  "LEFT_ASSIGN",     "<-",
+  "LEFT_ASSIGN",     ":=",
+  "LEFT_ASSIGN",     "<<-",
+  "RIGHT_ASSIGN",    "->",
+  "RIGHT_ASSIGN",    "->>",
   "EQ_ASSIGN",       "=",
   "EQ_SUB",          "=",   # in calls: foo(x = 1)
   "EQ_FORMALS",      "=",   # in definitions: function(x = 1)
@@ -140,7 +143,8 @@ infix_metadata <- data.frame(stringsAsFactors = FALSE, matrix(byrow = TRUE, ncol
   "OP-SLASH",        "/",
   "OP-STAR",         "*",
   "OP-COMMA",        ",",
-  "OP-CARET",        "^",   # also includes **
+  "OP-CARET",        "^",
+  "OP-CARET",        "**",
   "OP-AT",           "@",
   "OP-EXCLAMATION",  "!",
   "OP-COLON",        ":",
@@ -168,16 +172,19 @@ infix_metadata$unary <- infix_metadata$xml_tag %in% c("OP-PLUS", "OP-MINUS", "OP
 # high-precedence operators are ignored by this linter; see
 #   https://style.tidyverse.org/syntax.html#infix-operators
 infix_metadata$low_precedence <- infix_metadata$string_value %in% c(
-  "+", "-", "~", ">", ">=", "<", "<=", "==", "!=", "&", "&&", "|", "||", "<-", "->", "=", "%%", "/", "*", "|>"
+  "+", "-", "~", ">", ">=", "<", "<=", "==", "!=", "&", "&&", "|", "||",
+  "<-", ":=", "<<-", "->", "->>", "=", "%%", "/", "*", "|>"
 )
 # comparators come up in several lints
 infix_metadata$comparator <- infix_metadata$string_value %in% c("<", "<=", ">", ">=", "==", "!=")
 
-# undesirable_operator_linter needs to distinguish
-infix_overload <- data.frame(
-  exact_string_value = c("<-", "<<-", "=", "->", "->>", "^", "**"),
-  xml_tag = rep(c("LEFT_ASSIGN", "RIGHT_ASSIGN", "OP-CARET"), c(3L, 2L, 2L)),
-  stringsAsFactors = FALSE
+# these XML nodes require checking the text() to disambiguate multiple operators using the same tag
+infix_metadata$ambiguous_tag <- infix_metadata$xml_tag %in% infix_metadata$xml_tag[duplicated(infix_metadata$xml_tag)]
+infix_metadata$xml_tag_exact <- infix_metadata$xml_tag
+infix_metadata$xml_tag_exact[infix_metadata$ambiguous_tag] <- sprintf(
+  "%s[text() = '%s']",
+  infix_metadata$xml_tag_exact[infix_metadata$ambiguous_tag],
+  infix_metadata$string_value[infix_metadata$ambiguous_tag]
 )
 
 # functions equivalent to base::ifelse() for linting purposes

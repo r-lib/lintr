@@ -55,22 +55,15 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unreachable_code_linter <- function() {
-  # NB:
-  #  - * returns all children, including the terminal }, so the position
-  #    is not last(), but last()-1. If there's no }, this linter doesn't apply.
-  #    this is also why we need /* and not /expr -- position() must include all nodes
-  #  - use not(OP-DOLLAR) to prevent matching process$stop(), #1051
-  #  - land on the culprit expression
+  # NB: use not(OP-DOLLAR) to prevent matching process$stop(), #1051
   xpath_return_stop <- "
   //FUNCTION
     /following-sibling::expr
-    /*[
-      self::expr
-      and expr[1][not(OP-DOLLAR or OP-AT) and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]
-      and (position() != last() - 1 or not(following-sibling::OP-RIGHT-BRACE))
-      and @line2 < following-sibling::*[1]/@line2
-    ]
-    /following-sibling::*[1]
+    /expr[expr[1][not(OP-DOLLAR or OP-AT) and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]]
+    /following-sibling::*[
+      not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON)
+      and (not(self::COMMENT) or @line2 > preceding-sibling::*[1]/@line2)
+    ][1]
   "
   xpath_if_while <- "
   (//WHILE | //IF)[following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']]/following-sibling::expr[2]
