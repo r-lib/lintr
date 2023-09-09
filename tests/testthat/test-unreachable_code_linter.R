@@ -116,7 +116,7 @@ test_that("unreachable_code_linter finds expressions in the same line", {
 })
 
 test_that("unreachable_code_linter finds expressions and comments after comment in return line", {
- lines <- trim_some("
+  lines <- trim_some("
     foo <- function(x) {
       return(y^2) #Test comment
       #Test comment 2
