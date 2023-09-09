@@ -197,6 +197,180 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", {
   )
 })
 
+test_that("unreachable_code_linter identifies unreachable code in conditional loops", {
+  linter <- unreachable_code_linter()
+  msg <- rex::rex("Code inside a conditional loop with a deterministically false condition should be removed.")
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (FALSE) {
+        x <- 3
+      }
+      x + 3
+    }
+  ")
+
+  expect_lint(lines, list(line_number = 3L, message = msg), linter)
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (FALSE) {
+        # Unlinted comment
+        x <- 3
+      }
+      x + 3
+    }
+  ")
+
+  expect_lint(lines, list(line_number = 4L, message = msg), linter)
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (bla) {
+        x <- 3
+      } else if (FALSE) {
+        # Unlinted comment
+        y <- 3
+      }
+      x + 3
+    }
+  ")
+
+  expect_lint(lines, list(line_number = 6L, message = msg), linter)
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      while (FALSE) {
+        x <- 3
+      }
+      x + 3
+    }
+  ")
+
+  expect_lint(lines, list(line_number = 3L, message = msg), linter)
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      while (FALSE) {
+        # Unlinted comment
+        x <- 3
+      }
+      x + 3
+    }
+  ")
+
+  expect_lint(lines, list(line_number = 4L, message = msg), linter)
+
+  lines <- "while (FALSE) x <- 3"
+
+  expect_lint(
+    lines,
+    list(line_number = 1L, ranges = list(c(15L, 20L)), message = msg),
+    linter
+  )
+
+  lines <- "if (FALSE) x <- 3 # Test comment"
+
+  expect_lint(
+    lines,
+    list(line_number = 1L, ranges = list(c(12L, 17L)), message = msg),
+    linter
+  )
+})
+
+test_that("unreachable_code_linter identifies unreachable code in conditional loops", {
+  linter <- unreachable_code_linter()
+  msg <- rex::rex("Code inside an else block after a deterministically true if condition should be removed.")
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (TRUE) {
+        x <- 3
+      } else {
+        # Unlinted comment
+        x + 3
+      }
+    }
+  ")
+
+  expect_lint(lines, list(line_number = 6L, message = msg), linter)
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (TRUE) {
+        x <- 3
+      } else if (bar) {
+        # Unlinted comment
+        x + 3
+      }
+    }
+  ")
+
+  expect_lint(lines, list(line_number = 4L, message = msg), linter)
+
+  lines <- "if (TRUE) x <- 3 else if (bar) x + 3"
+
+  expect_lint(
+    lines,
+    list(line_number = 1L, ranges = list(c(23L, 36L)), message = msg),
+    linter
+  )
+})
+
+test_that("unreachable_code_linter identifies unreachable code in mixed conditional loops", {
+  linter <- unreachable_code_linter()
+  msg <- rex::rex("Code inside a conditional loop with a deterministically false condition should be removed.")
+
+  lines <- trim_some("
+    function (bla) {
+      if (FALSE) {
+        code + 4
+      }
+      while (FALSE) {
+        code == 3
+      }
+      if (TRUE) {
+      } else {
+        code + bla
+      }
+      stop('.')
+      code <- 1
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      list(line_number = 3L, message = msg),
+      list(line_number = 6L, message = msg),
+      list(
+        line_number = 10L,
+        message = rex::rex("Code inside an else block after a deterministically true if condition should be removed.")
+      ),
+      list(
+        line_number = 13L,
+        message = rex::rex("Code and comments coming after a top-level return() or stop()")
+      )
+    ),
+    linter
+  )
+
+  lines <- "if (FALSE) x <- 3 else if (TRUE) x + 3 else x + 4"
+
+  expect_lint(
+    lines,
+    list(
+      list(line_number = 1L, ranges = list(c(12L, 17L)), message = msg),
+      list(
+        line_number = 1L,
+        ranges = list(c(45L, 49L)),
+        message = rex::rex("Code inside an else block after a deterministically true if condition should be removed.")
+      )
+    ),
+    linter
+  )
+})
+
 # nolint start: commented_code_linter.
 # TODO(michaelchirico): extend to work on switch() statements
 # test_that("unreachable_code_linter interacts with switch() as expected", {
