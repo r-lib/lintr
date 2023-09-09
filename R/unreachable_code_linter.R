@@ -73,9 +73,7 @@ unreachable_code_linter <- function() {
     /following-sibling::*[1]
   "
   xpath_if_while <- "
-  //WHILE[following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']]/following-sibling::expr[2]
-  |
-  //IF[following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']]/following-sibling::expr[2]
+  (//WHILE | //IF)[following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']]/following-sibling::expr[2]
   "
 
   xpath_else <- "
