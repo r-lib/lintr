@@ -127,6 +127,7 @@ Collate:
     'lintr-package.R'
     'literal_coercion_linter.R'
     'make_linter_from_regex.R'
+    'make_linter_from_xpath.R'
     'matrix_apply_linter.R'
     'methods.R'
     'missing_argument_linter.R'

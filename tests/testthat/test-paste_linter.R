@@ -189,6 +189,8 @@ test_that("paste_linter doesn't skip all initial/terminal '/' for paths", {
 })
 
 test_that("multiple path lints are generated correctly", {
+  linter <- paste_linter()
+
   expect_lint(
     trim_some("{
       paste(x, y, sep = '/')
@@ -198,7 +200,25 @@ test_that("multiple path lints are generated correctly", {
       rex::rex('paste(..., sep = "/")'),
       rex::rex('paste0(x, "/", y, "/", z)')
     ),
-    paste_linter()
+    linter
+  )
+
+  # check vectorization of multiple paste0 file paths
+  expect_lint(
+    trim_some('{
+      paste0(x, y)
+      paste0("a/", x, y, "/b")
+      paste0("a", "b")
+      paste0("a", x)
+      paste0(a, "x")
+      paste0("a/", NA_character_, "/b")
+      paste0("a/", "b")
+      paste0("a/", "bcd//efg", "/h")
+      paste0("/", a)
+      paste0(a, "/")
+    }'),
+    list(message = rex::rex("Construct file paths with file.path(...)"), line_number = 8L),
+    linter
   )
 })
 
@@ -212,4 +232,16 @@ test_that("URLs are ignored by default, linted optionally", {
 
   expect_lint("paste0('http://site.com/', x)", NULL, linter)
   expect_lint("paste0('http://site.com/', x)", rex::rex("Construct file paths with file.path(...)"), linter_url)
+})
+
+test_that("raw strings are detected in file path logic", {
+  skip_if_not_r_version("4.0.0")
+
+  linter <- paste_linter()
+  lint_msg <- rex::rex("Construct file paths with file.path(...) instead of ")
+
+  expect_lint("paste0(x, R'{abc}', y)", NULL, linter)
+  expect_lint("paste0(x, R'{/abc/}', y)", lint_msg, linter)
+  expect_lint("paste(x, y, sep = R'{//}')", NULL, linter)
+  expect_lint("paste(x, y, sep = R'{/}')", lint_msg, linter)
 })
