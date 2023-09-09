@@ -364,7 +364,7 @@ test_that("unreachable_code_linter identifies unreachable code in mixed conditio
       list(
         line_number = 1L,
         ranges = list(c(45L, 49L)),
-        message =  rex::rex("Code inside an else block after a deterministically true if condition should be removed.")
+        message = rex::rex("Code inside an else block after a deterministically true if condition should be removed.")
       )
     ),
     unreachable_code_linter()
