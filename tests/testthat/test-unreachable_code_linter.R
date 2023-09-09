@@ -79,6 +79,8 @@ test_that("unreachable_code_linter finds unreachable comments", {
 })
 
 test_that("unreachable_code_linter finds expressions in the same line", {
+  msg <- rex::rex("Code and comments coming after a top-level return() or stop()")
+
   lines <- trim_some("
     foo <- function(x) {
       return(
@@ -86,47 +88,33 @@ test_that("unreachable_code_linter finds expressions in the same line", {
       ); 3 + 1
     }
   ")
-  expect_lint(
-    lines,
-    rex::rex("Code and comments coming after a top-level return() or stop()"),
-    unreachable_code_linter()
-  )
+  expect_lint(lines, msg, unreachable_code_linter())
 
   lines <- trim_some("
     foo <- function(x) {
       return(y^2); 3 + 1
     }
   ")
-  expect_lint(
-    lines,
-    rex::rex("Code and comments coming after a top-level return() or stop()"),
-    unreachable_code_linter()
-  )
+  expect_lint(lines, msg, unreachable_code_linter())
 
   lines <- trim_some("
     foo <- function(x) {
       return(y^2); 3 + 1 # Test
     }
   ")
-  expect_lint(
-    lines,
-    rex::rex("Code and comments coming after a top-level return() or stop()"),
-    unreachable_code_linter()
-  )
+  expect_lint(lines, msg, unreachable_code_linter())
 })
 
 test_that("unreachable_code_linter finds expressions and comments after comment in return line", {
+  msg <- rex::rex("Code and comments coming after a top-level return() or stop()")
+
   lines <- trim_some("
     foo <- function(x) {
       return(y^2) #Test comment
       #Test comment 2
     }
   ")
-  expect_lint(
-    lines,
-    rex::rex("Code and comments coming after a top-level return() or stop()"),
-    unreachable_code_linter()
-  )
+  expect_lint(lines, msg, unreachable_code_linter())
 
   lines <- trim_some("
     foo <- function(x) {
@@ -134,11 +122,7 @@ test_that("unreachable_code_linter finds expressions and comments after comment 
       3 + 1
     }
   ")
-  expect_lint(
-    lines,
-    rex::rex("Code and comments coming after a top-level return() or stop()"),
-    unreachable_code_linter()
-  )
+  expect_lint(lines, msg, unreachable_code_linter())
 })
 
 test_that("unreachable_code_linter finds a double return", {
