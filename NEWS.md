@@ -40,9 +40,10 @@
 * `seq_linter()` recommends `rev()` in the lint message for lints like `nrow(x):1` (#1542, @MichaelChirico).
 * `function_argument_linter()` detects usage of `missing()` for the linted argument (#1546, @MichaelChirico). The simplest fix for `function_argument_linter()` lints is typically to set that argument to `NULL` by default, in which case it's usually preferable to update function logic checking `missing()` to check `is.null()` instead.
 * `equals_na_linter()` checks for `x %in% NA`, which is a more convoluted form of `is.na(x)` (#2088, @MichaelChirico).
-* `unreachable_code_linter()` checks for code inside `if (FALSE)` and other conditional loops with deterministically false conditions (#1428, @ME0265).
 * `commas_linter()` gains an option `allow_trailing` (default `FALSE`) to allow trailing commas while indexing. (#2104, @MEO265)
-* `unreachable_code_linter()` finds unreachable code even in the presence of a comment or semicolon after `return()` or `stop()` (#2127, @MEO265).
+* `unreachable_code_linter()`
+  + finds unreachable code even in the presence of a comment or semicolon after `return()` or `stop()` (#2127, @MEO265).
+  + checks for code inside `if (FALSE)` and other conditional loops with deterministically false conditions (#1428, @ME0265).
 
 ### New linters
 
