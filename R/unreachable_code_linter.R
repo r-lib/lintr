@@ -74,10 +74,10 @@ unreachable_code_linter <- function() {
     /following-sibling::ELSE/following-sibling::expr[1]
   "
 
-  handle_inline_conditions <- function(lints) {
-    lints <- lapply(
-      lints,
-      FUN = function(x) {
+  handle_inline_conditions <- function(expr) {
+    expr <- lapply(
+      expr,
+      function(x) {
         if (xml_name(xml2::xml_child(x)) == "OP-LEFT-BRACE") {
           xml_find_first(x, "expr")
         } else {
@@ -85,7 +85,7 @@ unreachable_code_linter <- function() {
         }
       }
     )
-    lints <- lints[vapply(lints, xml2::xml_length, integer(1L)) != 0L]
+    expr[vapply(expr, xml2::xml_length, integer(1L)) != 0L]
   }
 
   Linter(function(source_expression) {
@@ -95,34 +95,32 @@ unreachable_code_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    lints_return_stop <- xml_find_all(xml, xpath_return_stop)
+    expr_return_stop <- xml_find_all(xml, xpath_return_stop)
 
     # exclude comments that start with a nolint directive
-    is_nolint_end_comment <- xml2::xml_name(lints_return_stop) == "COMMENT" &
-      re_matches(xml_text(lints_return_stop), settings$exclude_end)
+    is_nolint_end_comment <- xml2::xml_name(expr_return_stop) == "COMMENT" &
+      re_matches(xml_text(expr_return_stop), settings$exclude_end)
 
     lints_return_stop <- xml_nodes_to_lints(
-      lints_return_stop[!is_nolint_end_comment],
+      expr_return_stop[!is_nolint_end_comment],
       source_expression = source_expression,
       lint_message = "Code and comments coming after a top-level return() or stop() should be removed.",
       type = "warning"
     )
 
-    lints_if_while <- xml_find_all(xml, xpath_if_while)
-    lints_if_while <- handle_inline_conditions(lints_if_while)
+    expr_if_while <- handle_inline_conditions(xml_find_all(xml, xpath_if_while))
 
     lints_if_while <- xml_nodes_to_lints(
-      lints_if_while,
+      expr_if_while,
       source_expression = source_expression,
       lint_message = "Code inside a conditional loop with a deterministically false condition should be removed.",
       type = "warning"
     )
 
-    lints_else <- xml_find_all(xml, xpath_else)
-    lints_else <- handle_inline_conditions(lints_else)
+    expr_else <- handle_inline_conditions(xml_find_all(xml, xpath_else))
 
     lints_else <- xml_nodes_to_lints(
-      lints_else,
+      expr_else,
       source_expression = source_expression,
       lint_message = "Code inside an else block after a deterministically true if condition should be removed.",
       type = "warning"
