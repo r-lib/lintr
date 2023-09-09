@@ -35,7 +35,7 @@
 * New `xp_call_name()` helper to facilitate writing custom linters (#2023, @MichaelChirico). This helper converts a matched XPath to the R function to which it corresponds. This is useful for including the "offending" function in the lint's message.
 * `function_argument_linter()` detects usage of `missing()` for the linted argument (#1546, @MichaelChirico). The simplest fix for `function_argument_linter()` lints is typically to set that argument to `NULL` by default, in which case it's usually preferable to update function logic checking `missing()` to check `is.null()` instead.
 * `equals_na_linter()` checks for `x %in% NA`, which is a more convoluted form of `is.na(x)` (#2088, @MichaelChirico).
-* `unreachable_code_linter()` checks for code inside a conditional loop with a deterministically false condition (#1428, @ME0265).
+* `unreachable_code_linter()` checks for code inside `if (FALSE)` and other conditional loops with deterministically false conditions (#1428, @ME0265).
 * `commas_linter()` gains an option `allow_trailing` (default `FALSE`) to allow trailing commas while indexing. (#2104, @MEO265)
 
 ### New linters
