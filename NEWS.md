@@ -4,6 +4,7 @@
 
 * `inner_combine_linter()` no longer throws on length-1 calls to `c()` like `c(exp(2))` or `c(log(3))` (#2017, @MichaelChirico). Such usage is discouraged by `unnecessary_concatenation_linter()`, but `inner_combine_linter()` _per se_ does not apply.
 * `condition_message_linter()` ignores usages of extracted calls like `env$stop(paste(a, b))` (#1455, @MichaelChirico).
+* `unrechable_code_linter()` Code or comments on subsequent lines will no longer be escaped by code or comments on the same line as `return` or `stop` (#2127, @MEO265).
 
 ## New and improved features
 
