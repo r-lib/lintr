@@ -78,6 +78,69 @@ test_that("unreachable_code_linter finds unreachable comments", {
   )
 })
 
+test_that("unreachable_code_linter finds expressions in the same line", {
+  lines <- trim_some("
+    foo <- function(x) {
+      return(
+        y^2
+      ); 3 + 1
+    }
+  ")
+  expect_lint(
+    lines,
+    rex::rex("Code and comments coming after a top-level return() or stop()"),
+    unreachable_code_linter()
+  )
+
+  lines <- trim_some("
+    foo <- function(x) {
+      return(y^2); 3 + 1
+    }
+  ")
+  expect_lint(
+    lines,
+    rex::rex("Code and comments coming after a top-level return() or stop()"),
+    unreachable_code_linter()
+  )
+
+  lines <- trim_some("
+    foo <- function(x) {
+      return(y^2); 3 + 1 # Test
+    }
+  ")
+  expect_lint(
+    lines,
+    rex::rex("Code and comments coming after a top-level return() or stop()"),
+    unreachable_code_linter()
+  )
+})
+
+test_that("unreachable_code_linter finds expressions and comments after comment in return line", {
+ lines <- trim_some("
+    foo <- function(x) {
+      return(y^2) #Test comment
+      #Test comment 2
+    }
+  ")
+  expect_lint(
+    lines,
+    rex::rex("Code and comments coming after a top-level return() or stop()"),
+    unreachable_code_linter()
+  )
+
+  lines <- trim_some("
+    foo <- function(x) {
+      return(y^2) # Test
+      3 + 1
+    }
+  ")
+  expect_lint(
+    lines,
+    rex::rex("Code and comments coming after a top-level return() or stop()"),
+    unreachable_code_linter()
+  )
+})
+
 test_that("unreachable_code_linter finds a double return", {
   lines <- trim_some("
     foo <- function(x) {
@@ -178,7 +241,5 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", {
 #   be followed by return(invisible()) or similar), but could be included to
 #   catch comments for completeness / robustness as a standalone function.
 #   Terminal if statements are a bit messy, but would have some payoff.
-# TODO(michaelchirico): similarly, return(x); x+1 should also lint, even though
-#   the styler won't allow this in our current setup.
 # TODO(michaelchirico): again similarly, this could also apply to cases without
 #   explicit returns (where it can only apply to comments)
