@@ -40,6 +40,7 @@ reference:
       - is_lint_level
       - get_r_string
       - use_lintr
+      - make_linter_from_xpath
       - xml_nodes_to_lints
       - xp_call_name
 
