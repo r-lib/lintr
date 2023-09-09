@@ -21,27 +21,9 @@ test_that("input validation works", {
     fixed = TRUE
   )
 
-  expect_error(
-    make_linter_from_xpath(FALSE),
-    "xpath should be a character string",
-    fixed = TRUE
-  )
-
-  expect_error(
-    make_linter_from_xpath(letters),
-    "xpath should be a character string",
-    fixed = TRUE
-  )
-
-  expect_error(
-    make_linter_from_xpath(NA_character_),
-    "xpath should be a character string",
-    fixed = TRUE
-  )
-
-  expect_error(
-    make_linter_from_xpath(character()),
-    "xpath should be a character string",
-    fixed = TRUE
-  )
+  err_msg <- if (getRversion() < "4.0.0") "is.character(xpath)" else "xpath should be a character string"
+  expect_error(make_linter_from_xpath(FALSE), err_msg, fixed = TRUE)
+  expect_error(make_linter_from_xpath(letters), err_msg, fixed = TRUE)
+  expect_error(make_linter_from_xpath(NA_character_), err_msg, fixed = TRUE)
+  expect_error(make_linter_from_xpath(character()), err_msg, fixed = TRUE)
 })
