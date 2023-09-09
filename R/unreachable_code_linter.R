@@ -120,14 +120,14 @@ unreachable_code_linter <- function() {
     lints_if_while <- xml_nodes_to_lints(
       lints_if_while,
       source_expression = source_expression,
-      lint_message = "Code inside a conditional loop with a deterministically false condition is not reachable.",
+      lint_message = "Code inside a conditional loop with a deterministically false condition.",
       type = "warning"
     )
 
     lints_else <- xml_nodes_to_lints(
       lints_else,
       source_expression = source_expression,
-      lint_message = "Code inside an else block after a deterministically true if condition is not reachable.",
+      lint_message = "Code inside an else block after a deterministically true if condition.",
       type = "warning"
     )
 
