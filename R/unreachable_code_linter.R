@@ -78,7 +78,7 @@ unreachable_code_linter <- function() {
 
   xpath_else <- "
   //IF[following-sibling::expr[1]/NUM_CONST[text() = 'TRUE']]
-  /following-sibling::ELSE/following-sibling::expr[1]
+    /following-sibling::ELSE/following-sibling::expr[1]
   "
 
   handle_inline_conditions <- function(lints) {
