@@ -7,7 +7,7 @@
 make_linter_from_xpath(
   xpath,
   lint_message,
-  type = c("style", "warning", "error"),
+  type = c("warning", "style", "error"),
   level = c("expression", "file")
 )
 }
