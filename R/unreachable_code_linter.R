@@ -57,8 +57,7 @@
 unreachable_code_linter <- function() {
   # NB: use not(OP-DOLLAR) to prevent matching process$stop(), #1051
   xpath_return_stop <- "
-  //FUNCTION
-    /following-sibling::expr
+  ((//FUNCTION | //REPEAT)/following-sibling::expr | (//IF | //WHILE)/following-sibling::expr[2])
     /expr[expr[1][not(OP-DOLLAR or OP-AT) and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]]
     /following-sibling::*[
       not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON)
