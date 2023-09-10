@@ -58,9 +58,11 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Collate:
-    'T_and_F_symbol_linter.R'
+    'make_linter_from_xpath.R'
+    'xp_utils.R'
     'utils.R'
-    'aaa.R'
+    'AAA.R'
+    'T_and_F_symbol_linter.R'
     'absolute_path_linter.R'
     'actions.R'
     'addins.R'
@@ -127,7 +129,6 @@ Collate:
     'lintr-package.R'
     'literal_coercion_linter.R'
     'make_linter_from_regex.R'
-    'make_linter_from_xpath.R'
     'matrix_apply_linter.R'
     'methods.R'
     'missing_argument_linter.R'
@@ -183,7 +184,6 @@ Collate:
     'with.R'
     'with_id.R'
     'xml_nodes_to_lints.R'
-    'xp_utils.R'
     'yoda_test_linter.R'
     'zzz.R'
 Language: en-US

@@ -1,4 +1,6 @@
 #' @include utils.R
+#' @include xp_utils.R
+#' @include make_linter_from_xpath.R
 NULL
 
 #' Available linters
