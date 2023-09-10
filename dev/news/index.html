@@ -140,6 +140,8 @@
 <code><a href="../reference/if_not_else_linter.html">if_not_else_linter()</a></code> for encouraging <code>if</code> statements to be structured as <code>if (A) x else y</code> instead of <code>if (!A) y else x</code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/repeat_linter.html">repeat_linter()</a></code> for encouraging <code>repeat</code> for infinite loops instead of <code>while (TRUE)</code> (<a href="https://github.com/r-lib/lintr/issues/2106" class="external-link">#2106</a>, <a href="https://github.com/MEO265" class="external-link">@MEO265</a>).</li>
+<li>
+<code><a href="../reference/length_test_linter.html">length_test_linter()</a></code> detects the common mistake <code>length(x == 0)</code> which is meant to be <code>length(x) == 0</code> (<a href="https://github.com/r-lib/lintr/issues/1991" class="external-link">#1991</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 </div>
 <div class="section level3">
