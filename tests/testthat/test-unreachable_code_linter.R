@@ -7,6 +7,79 @@ test_that("unreachable_code_linter works in simple function", {
   expect_lint(lines, NULL, unreachable_code_linter())
 })
 
+test_that("unreachable_code_linter works in sub expressions", {
+  linter <- unreachable_code_linter()
+  msg <- rex::rex("Code and comments coming after a top-level return() or stop()")
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (bar) {
+        return(bar)
+        # Test comment
+        while (bar) {
+          return(bar)
+          5 + 3
+          repeat {
+            return(bar)
+            # Test comment
+          }
+        }
+      }
+      return(bar)
+      5 + 1
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      list(line_number = 4L, message = msg),
+      list(line_number = 7L, message = msg),
+      list(line_number = 10L, message = msg),
+      list(line_number = 15L, message = msg)
+    ),
+    linter)
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (bar) {
+        return(bar) # Test comment
+      }
+      while (bar) {
+        return(bar) # 5 + 3
+      }
+      repeat {
+        return(bar) # Test comment
+      }
+    }
+  ")
+
+  expect_lint(lines, NULL, linter)
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (bar) {
+        return(bar); x <- 2
+      }
+      while (bar) {
+        return(bar); 5 + 3
+      }
+      repeat {
+        return(bar); test()
+      }
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      list(line_number = 3L, message = msg),
+      list(line_number = 6L, message = msg),
+      list(line_number = 9L, message = msg)
+    ),
+    linter)
+})
+
 test_that("unreachable_code_linter ignores expressions that aren't functions", {
   expect_lint("x + 1", NULL, unreachable_code_linter())
 })
