@@ -48,16 +48,20 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
 
   # The walrus operator `:=` is also `LEFT_ASSIGN`, but is not a relevant operator
   # to be considered for the present linter.
-  assignments <- c(
-    "LEFT_ASSIGN[text() != ':=']",
-    "RIGHT_ASSIGN"
+  assignments <- paste(
+    "//LEFT_ASSIGN[text() != ':=']",
+    "//RIGHT_ASSIGN",
+    sep = " | "
   )
 
-  xpath <- sprintf(
-    "(%s)/parent::expr[preceding-sibling::*[2][self::IF or self::WHILE] or preceding-sibling::expr/%s or parent::forcond]",
-    paste0("//", assignments, collapse = " | "),
-    xpath_exceptions
-  )
+  xpath <- glue("
+    ({assignments})
+      /parent::expr[
+        preceding-sibling::*[2][self::IF or self::WHILE]
+        or parent::forcond
+        or preceding-sibling::expr/{xpath_exceptions}
+      ]
+  ")
 
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level
