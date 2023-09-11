@@ -337,3 +337,18 @@ test_that("implicit_assignment_linter works as expected with pipes and walrus op
 
   expect_lint("data |> mutate(a := b)", NULL, linter)
 })
+
+test_that("allow_scoped skips scoped assignments", {
+  linter <- implicit_assignment_linter()
+
+  debug(linter)
+  expect_lint(
+    trim_some("
+      if (any(idx <- x < 0)) {
+        stop('negative elements: ', toString(which(idx)))
+      }
+    "),
+    NULL,
+    linter
+  )
+})

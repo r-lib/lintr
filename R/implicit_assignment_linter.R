@@ -4,6 +4,9 @@
 #' be avoided, except for functions that capture side-effects (e.g. [capture.output()]).
 #'
 #' @param except A character vector of functions to be excluded from linting.
+#' @param allow_scoped Logical, default `FALSE`. If `TRUE`, "scoped assignments",
+#'   where the object is assigned in the statement beginning a branch and used only
+#'   within that branch, are skipped.
 #'
 #' @examples
 #' # will produce lints
@@ -18,16 +21,25 @@
 #' )
 #'
 #' # okay
-#' writeLines("x <- 1L\nif (x) TRUE")
+#' lines <- "x <- 1L\nif (x) TRUE"
+#' writeLines(lines)
 #' lint(
-#'   text = "x <- 1L\nif (x) TRUE",
+#'   text = lines,
 #'   linters = implicit_assignment_linter()
 #' )
 #'
-#' writeLines("x <- 1:4\nmean(x)")
+#' lines <- "x <- 1:4\nmean(x)"
+#' writeLines(lines)
 #' lint(
-#'   text = "x <- 1:4\nmean(x)",
+#'   text = lines,
 #'   linters = implicit_assignment_linter()
+#' )
+#'
+#' lines <- "if (any(idx <- x < 0)) {\n  stop('negative elements: ', toString(which(idx)))\n}"
+#' writeLines(lines)
+#' lint(
+#'   text = lines
+#'   linters = implicit_assigment_linter(allow_scoped = TRUE)
 #' )
 #'
 #' @evalRd rd_tags("implicit_assignment_linter")
@@ -36,7 +48,8 @@
 #' - <https://style.tidyverse.org/syntax.html#assignment>
 #'
 #' @export
-implicit_assignment_linter <- function(except = c("bquote", "expression", "expr", "quo", "quos", "quote")) {
+implicit_assignment_linter <- function(except = c("bquote", "expression", "expr", "quo", "quos", "quote"),
+                                       allow_scoped = FALSE) {
   stopifnot(is.null(except) || is.character(except))
 
   if (length(except) > 0L) {
