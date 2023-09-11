@@ -338,6 +338,20 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", {
     NULL,
     list(unreachable_code_linter(), one_linter = assignment_linter())
   )
+
+    expect_lint(
+    trim_some("
+      foo <- function() {
+        do_something
+        # nolint start: one_linter.
+        a = 42
+        next
+        # nolint end
+      }
+    "),
+    NULL,
+    unreachable_code_linter()
+  )
 })
 
 test_that("unreachable_code_linter identifies unreachable code in conditional loops", {
