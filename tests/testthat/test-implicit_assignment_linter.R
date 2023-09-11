@@ -319,6 +319,12 @@ test_that("implicit_assignment_linter blocks disallowed usages in function calls
     lint_message,
     linter
   )
+
+  expect_lint(
+    "foo(a <- 1, b <- 2, c <- 3)",
+    list(list(column_number = 5L), list(column_number = 13L), list(column_number = 21L)),
+    linter
+  )
 })
 
 test_that("implicit_assignment_linter works as expected with pipes and walrus operator", {
