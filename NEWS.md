@@ -6,8 +6,7 @@
 
 ## Bug fixes
 
-* `inner_combine_linter()` no longer throws on length-1 calls to `c()` like `c(exp(2))` or `c(log(3))` (#2017, @MichaelChirico). Such usage is discouraged by `unnecessary_concatenation_linter()`, but `inner_combine_linter()` _per se_ does not apply.
-* `condition_message_linter()` ignores usages of extracted calls like `env$stop(paste(a, b))` (#1455, @MichaelChirico).
+* `sprintf_linter()` doesn't error in cases where whitespace in `...` arguments is significant, e.g. `sprintf("%s", if (A) "" else y)`, which won't parse if whitespace is removed (#2131, @MichaelChirico).
 
 ## New and improved features
 
@@ -46,6 +45,8 @@
   + finds unreachable code even in the presence of a comment or semicolon after `return()` or `stop()` (#2127, @MEO265).
   + checks for code inside `if (FALSE)` and other conditional loops with deterministically false conditions (#1428, @ME0265).
 * `implicit_assignment_linter()` finds assignments in call arguments besides the first one (#2136, @MichaelChirico).
+* `inner_combine_linter()` no longer throws on length-1 calls to `c()` like `c(exp(2))` or `c(log(3))` (#2017, @MichaelChirico). Such usage is discouraged by `unnecessary_concatenation_linter()`, but `inner_combine_linter()` _per se_ does not apply.
+* `condition_message_linter()` ignores usages of extracted calls like `env$stop(paste(a, b))` (#1455, @MichaelChirico).
 
 ### New linters
 
