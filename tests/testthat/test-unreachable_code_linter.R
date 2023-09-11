@@ -339,7 +339,7 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", {
     list(unreachable_code_linter(), one_linter = assignment_linter())
   )
 
-    expect_lint(
+  expect_lint(
     trim_some("
       foo <- function() {
         do_something
