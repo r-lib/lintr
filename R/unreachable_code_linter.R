@@ -1,6 +1,6 @@
 #' Block unreachable code and comments following return statements
 #'
-#' Code after a top-level [return()] or [stop()]
+#' Code after a [return()] or [stop()]
 #'   or in deterministically false conditional loops like `if (FALSE)` can't be reached;
 #'   typically this is vestigial code left after refactoring or sandboxing code, which
 #'   is fine for exploration, but shouldn't ultimately be checked in. Comments
