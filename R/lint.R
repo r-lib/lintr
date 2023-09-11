@@ -106,6 +106,9 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 #' @param exclusions exclusions for [exclude()], relative to the package path.
 #' @param pattern pattern for files, by default it will take files with any of the extensions
 #' .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...).
+#' @param show_progress Logical controlling whether to show linting progress with a simple text
+#'   progress bar _via_ [utils::txtProgressBar()]. The default behavior is to show progress in
+#'   [interactive()] sessions not running a testthat suite.
 #'
 #' @examples
 #' if (FALSE) {
@@ -126,7 +129,8 @@ lint_dir <- function(path = ".", ...,
                      relative_path = TRUE,
                      exclusions = list("renv", "packrat"),
                      pattern = rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"), end),
-                     parse_settings = TRUE) {
+                     parse_settings = TRUE,
+                     show_progress = NULL) {
   if (has_positional_logical(list(...))) {
     stop(
       "'relative_path' is no longer available as a positional argument; ",
@@ -140,6 +144,8 @@ lint_dir <- function(path = ".", ...,
 
     exclusions <- c(exclusions, settings$exclusions)
   }
+
+  if (is.null(show_progress)) show_progress <- interactive() && !identical(Sys.getenv("TESTTHAT"), "true")
 
   exclusions <- normalize_exclusions(
     exclusions,
@@ -159,15 +165,19 @@ lint_dir <- function(path = ".", ...,
   # Remove fully ignored files to avoid reading & parsing
   files <- drop_excluded(files, exclusions)
 
+  pb <- if (isTRUE(show_progress)) {
+    txtProgressBar(max = length(files), style = 3L)
+  }
+
   lints <- flatten_lints(lapply(
     files,
     function(file) {
-      maybe_report_progress()
+      maybe_report_progress(pb)
       lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
     }
   ))
 
-  maybe_report_progress(done = TRUE)
+  if (!is.null(pb)) close(pb)
 
   lints <- reorder_lints(lints)
 
@@ -211,7 +221,8 @@ drop_excluded <- function(files, exclusions) {
 lint_package <- function(path = ".", ...,
                          relative_path = TRUE,
                          exclusions = list("R/RcppExports.R"),
-                         parse_settings = TRUE) {
+                         parse_settings = TRUE,
+                         show_progress = NULL) {
   if (has_positional_logical(list(...))) {
     # nocov start: dead code path
     stop(
@@ -242,7 +253,13 @@ lint_package <- function(path = ".", ...,
   )
 
   r_directories <- file.path(pkg_path, c("R", "tests", "inst", "vignettes", "data-raw", "demo", "exec"))
-  lints <- lint_dir(r_directories, relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
+  lints <- lint_dir(r_directories,
+    relative_path = FALSE,
+    exclusions = exclusions,
+    parse_settings = FALSE,
+    show_progress = show_progress,
+    ...
+  )
 
   if (isTRUE(relative_path)) {
     path <- normalizePath(pkg_path, mustWork = FALSE)
@@ -711,16 +728,11 @@ has_positional_logical <- function(dots) {
     !nzchar(names2(dots)[1L])
 }
 
-maybe_report_progress <- function(done = FALSE) {
-  if (interactive() && !identical(Sys.getenv("TESTTHAT"), "true")) {
-    # nocov start
-    if (done) {
-      message()
-    } else {
-      message(".", appendLF = FALSE)
-    }
-    # nocov end
+maybe_report_progress <- function(pb) {
+  if (is.null(pb)) {
+    return(invisible())
   }
+  setTxtProgressBar(pb, getTxtProgressBar(pb) + 1L)
 }
 
 maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
