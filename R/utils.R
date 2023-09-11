@@ -257,7 +257,7 @@ get_r_string <- function(s, xpath = NULL) {
 #' @noRd
 xml2lang <- function(x) {
   x_strip_comments <- xml_find_all(x, ".//*[not(self::COMMENT or self::expr)]")
-  str2lang(paste(xml_text(x_strip_comments), collapse = ""))
+  str2lang(paste(xml_text(x_strip_comments), collapse = " "))
 }
 
 is_linter <- function(x) inherits(x, "linter")
