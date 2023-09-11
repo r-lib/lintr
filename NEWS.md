@@ -45,6 +45,10 @@
 * `unreachable_code_linter()`
   + finds unreachable code even in the presence of a comment or semicolon after `return()` or `stop()` (#2127, @MEO265).
   + checks for code inside `if (FALSE)` and other conditional loops with deterministically false conditions (#1428, @ME0265).
+* `implicit_assignment_linter()`
+  + finds assignments in call arguments besides the first one (#2136, @MichaelChirico).
+  + finds assignments in parenthetical expressions like `if (A && (B <- foo(A))) { }` (#2138, @MichaelChirico).
+  * gains an argument `allow_lazy` (default `FALSE`) that allows optionally skipping lazy assignments like `A && (B <- foo(A))` (#2016, @MichaelChirico).
 
 ### New linters
 

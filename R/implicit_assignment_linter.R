@@ -4,6 +4,8 @@
 #' be avoided, except for functions that capture side-effects (e.g. [capture.output()]).
 #'
 #' @param except A character vector of functions to be excluded from linting.
+#' @param allow_lazy logical, default `FALSE`. If `TRUE`, assignments that only
+#'   trigger conditionally (e.g. in the RHS of `&&` or `||` expressions) are skipped.
 #' @param allow_scoped Logical, default `FALSE`. If `TRUE`, "scoped assignments",
 #'   where the object is assigned in the statement beginning a branch and used only
 #'   within that branch, are skipped.
@@ -35,6 +37,11 @@
 #'   linters = implicit_assignment_linter()
 #' )
 #'
+#' lint(
+#'   text = "A && (B <- foo(A))",
+#'   linters = implicit_assignment_linter(allow_lazy = TRUE)
+#' )
+#'
 #' lines <- "if (any(idx <- x < 0)) {\n  stop('negative elements: ', toString(which(idx)))\n}"
 #' writeLines(lines)
 #' lint(
@@ -49,62 +56,38 @@
 #'
 #' @export
 implicit_assignment_linter <- function(except = c("bquote", "expression", "expr", "quo", "quos", "quote"),
+                                       allow_lazy = FALSE,
                                        allow_scoped = FALSE) {
   stopifnot(is.null(except) || is.character(except))
 
   if (length(except) > 0L) {
     exceptions <- xp_text_in_table(except)
-    xpath_exceptions <- glue("
-    //SYMBOL_FUNCTION_CALL[ not({exceptions}) ]")
+    xpath_exceptions <- glue("SYMBOL_FUNCTION_CALL[ not({exceptions}) ]")
   } else {
-    xpath_exceptions <- "
-    //SYMBOL_FUNCTION_CALL"
+    xpath_exceptions <- "SYMBOL_FUNCTION_CALL"
   }
 
   # The walrus operator `:=` is also `LEFT_ASSIGN`, but is not a relevant operator
   # to be considered for the present linter.
-  assignments <- c(
-    "LEFT_ASSIGN[text() != ':=']", # e.g. mean(x <- 1:4)
-    "RIGHT_ASSIGN" # e.g. mean(1:4 -> x)
+  assignments <- paste(
+    "//LEFT_ASSIGN[text() != ':=']",
+    "//RIGHT_ASSIGN",
+    sep = " | "
   )
 
-  xpath_fun_call <- paste0(
-    xpath_exceptions,
-    "
-    /parent::expr
-    /following-sibling::expr[1]
-    /"
-  )
-  xpath_fun_assignment <- paste0(
-    xpath_fun_call,
-    assignments,
-    collapse = " | "
-  )
+  xpath <- glue("
+    ({assignments})
+      /parent::expr[
+        preceding-sibling::*[2][self::IF or self::WHILE]
+        or parent::forcond
+        or preceding-sibling::expr/{xpath_exceptions}
+        or parent::expr/*[1][self::OP-LEFT-PAREN]
+      ]
+  ")
 
-  controls <- c(
-    # e.g. if (x <- 1L) { ... }
-    "
-    //IF
-    /following-sibling::expr[1]
-    /",
-    # e.g. while (x <- 0L) { ... }
-    "
-    //WHILE
-    /following-sibling::expr[1]
-    /",
-    # e.g. for (x in y <- 1:10) { ... }
-    "
-    //forcond
-    /expr[1]
-    /"
-  )
-  xpath_controls_assignment <- paste0(
-    rep(controls, each = length(assignments)),
-    assignments,
-    collapse = " | "
-  )
-
-  xpath <- paste0(c(xpath_controls_assignment, xpath_fun_assignment), collapse = " | ")
+  if (allow_lazy) {
+    xpath <- paste0(xpath, "[not(ancestor::expr/preceding-sibling::*[self::AND2 or self::OR2])]")
+  }
 
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level
