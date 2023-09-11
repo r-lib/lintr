@@ -80,6 +80,76 @@ test_that("unreachable_code_linter works in sub expressions", {
     linter)
 })
 
+test_that("unreachable_code_linter works with next and break in sub expressions", {
+  linter <- unreachable_code_linter()
+  msg <- rex::rex("Code and comments coming after a `next` or `break`")
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (bar) {
+        next
+        # Test comment
+        while (bar) {
+          break
+          5 + 3
+          repeat {
+            next
+            # Test comment
+          }
+        }
+      }
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      list(line_number = 4L, message = msg),
+      list(line_number = 7L, message = msg),
+      list(line_number = 10L, message = msg)
+    ),
+    linter)
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (bar) {
+        break # Test comment
+      }
+      while (bar) {
+        next # 5 + 3
+      }
+      repeat {
+        next # Test comment
+      }
+    }
+  ")
+
+  expect_lint(lines, NULL, linter)
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (bar) {
+        next; x <- 2
+      }
+      while (bar) {
+        break; 5 + 3
+      }
+      repeat {
+        next; test()
+      }
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      list(line_number = 3L, message = msg),
+      list(line_number = 6L, message = msg),
+      list(line_number = 9L, message = msg)
+    ),
+    linter)
+})
+
 test_that("unreachable_code_linter ignores expressions that aren't functions", {
   expect_lint("x + 1", NULL, unreachable_code_linter())
 })
