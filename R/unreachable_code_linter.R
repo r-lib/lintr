@@ -118,8 +118,11 @@ unreachable_code_linter <- function() {
 
     expr_next_break <- xml_find_all(xml, xpath_next_break)
 
+    is_nolint_end_comment <- xml2::xml_name(expr_next_break) == "COMMENT" &
+      re_matches(xml_text(expr_next_break), settings$exclude_end)
+
     lints_next_break <- xml_nodes_to_lints(
-      expr_next_break,
+      expr_next_break[!is_nolint_end_comment],
       source_expression = source_expression,
       lint_message = "Code and comments coming after a `next` or `break` should be removed.",
       type = "warning"
