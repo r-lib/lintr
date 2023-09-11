@@ -71,9 +71,7 @@
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li>
-<code><a href="../reference/inner_combine_linter.html">inner_combine_linter()</a></code> no longer throws on length-1 calls to <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> like <code>c(exp(2))</code> or <code>c(log(3))</code> (<a href="https://github.com/r-lib/lintr/issues/2017" class="external-link">#2017</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Such usage is discouraged by <code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code>, but <code><a href="../reference/inner_combine_linter.html">inner_combine_linter()</a></code> <em>per se</em> does not apply.</li>
-<li>
-<code><a href="../reference/condition_message_linter.html">condition_message_linter()</a></code> ignores usages of extracted calls like <code>env$stop(paste(a, b))</code> (<a href="https://github.com/r-lib/lintr/issues/1455" class="external-link">#1455</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<code><a href="../reference/sprintf_linter.html">sprintf_linter()</a></code> doesn’t error in cases where whitespace in <code>...</code> arguments is significant, e.g. <code>sprintf("%s", if (A) "" else y)</code>, which won’t parse if whitespace is removed (<a href="https://github.com/r-lib/lintr/issues/2131" class="external-link">#2131</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
@@ -127,6 +125,10 @@
 <ul><li>finds unreachable code even in the presence of a comment or semicolon after <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> or <code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop()</a></code> (<a href="https://github.com/r-lib/lintr/issues/2127" class="external-link">#2127</a>, <a href="https://github.com/MEO265" class="external-link">@MEO265</a>).</li>
 <li>checks for code inside <code>if (FALSE)</code> and other conditional loops with deterministically false conditions (<a href="https://github.com/r-lib/lintr/issues/1428" class="external-link">#1428</a>, <a href="https://github.com/ME0265" class="external-link">@ME0265</a>).</li>
 </ul></li>
+<li>
+<code><a href="../reference/inner_combine_linter.html">inner_combine_linter()</a></code> no longer throws on length-1 calls to <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> like <code>c(exp(2))</code> or <code>c(log(3))</code> (<a href="https://github.com/r-lib/lintr/issues/2017" class="external-link">#2017</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Such usage is discouraged by <code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code>, but <code><a href="../reference/inner_combine_linter.html">inner_combine_linter()</a></code> <em>per se</em> does not apply.</li>
+<li>
+<code><a href="../reference/condition_message_linter.html">condition_message_linter()</a></code> ignores usages of extracted calls like <code>env$stop(paste(a, b))</code> (<a href="https://github.com/r-lib/lintr/issues/1455" class="external-link">#1455</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>
