@@ -64,6 +64,15 @@ unreachable_code_linter <- function() {
       and (not(self::COMMENT) or @line2 > preceding-sibling::*[1]/@line2)
     ][1]
   "
+  xpath_next_break <- "
+  (//REPEAT/following-sibling::expr | (//IF | //WHILE)/following-sibling::expr[2])
+    /expr[NEXT or BREAK]
+    /following-sibling::*[
+      not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON)
+      and (not(self::COMMENT) or @line2 > preceding-sibling::*[1]/@line2)
+    ][1]
+  "
+
   xpath_if_while <- "
   (//WHILE | //IF)[following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']]/following-sibling::expr[2]
   "
@@ -107,6 +116,15 @@ unreachable_code_linter <- function() {
       type = "warning"
     )
 
+    expr_next_break <- xml_find_all(xml, xpath_next_break)
+
+    lints_next_break <- xml_nodes_to_lints(
+      expr_next_break,
+      source_expression = source_expression,
+      lint_message = "Code and comments coming after a `next` or `break` should be removed.",
+      type = "warning"
+    )
+
     expr_if_while <- handle_inline_conditions(xml_find_all(xml, xpath_if_while))
 
     lints_if_while <- xml_nodes_to_lints(
@@ -125,6 +143,6 @@ unreachable_code_linter <- function() {
       type = "warning"
     )
 
-    c(lints_return_stop, lints_if_while, lints_else)
+    c(lints_return_stop, lints_next_break, lints_if_while, lints_else)
   })
 }
