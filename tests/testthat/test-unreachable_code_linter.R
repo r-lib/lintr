@@ -9,7 +9,7 @@ test_that("unreachable_code_linter works in simple function", {
 
 test_that("unreachable_code_linter works in sub expressions", {
   linter <- unreachable_code_linter()
-  msg <- rex::rex("Code and comments coming after a top-level return() or stop()")
+  msg <- rex::rex("Code and comments coming after a return() or stop()")
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -130,7 +130,7 @@ test_that("unreachable_code_linter identifies simple unreachable code", {
     lines,
     list(
       line_number = 3L,
-      message = rex::rex("Code and comments coming after a top-level return() or stop()")
+      message = rex::rex("Code and comments coming after a return() or stop()")
     ),
     unreachable_code_linter()
   )
@@ -146,13 +146,13 @@ test_that("unreachable_code_linter finds unreachable comments", {
   ")
   expect_lint(
     lines,
-    rex::rex("Code and comments coming after a top-level return() or stop()"),
+    rex::rex("Code and comments coming after a return() or stop()"),
     unreachable_code_linter()
   )
 })
 
 test_that("unreachable_code_linter finds expressions in the same line", {
-  msg <- rex::rex("Code and comments coming after a top-level return() or stop()")
+  msg <- rex::rex("Code and comments coming after a return() or stop()")
   linter <- unreachable_code_linter()
 
   lines <- trim_some("
@@ -180,7 +180,7 @@ test_that("unreachable_code_linter finds expressions in the same line", {
 })
 
 test_that("unreachable_code_linter finds expressions and comments after comment in return line", {
-  msg <- rex::rex("Code and comments coming after a top-level return() or stop()")
+  msg <- rex::rex("Code and comments coming after a return() or stop()")
   linter <- unreachable_code_linter()
 
   lines <- trim_some("
@@ -209,7 +209,7 @@ test_that("unreachable_code_linter finds a double return", {
   ")
   expect_lint(
     lines,
-    rex::rex("Code and comments coming after a top-level return() or stop()"),
+    rex::rex("Code and comments coming after a return() or stop()"),
     unreachable_code_linter()
   )
 })
@@ -224,7 +224,7 @@ test_that("unreachable_code_linter finds code after stop()", {
   ")
   expect_lint(
     lines,
-    rex::rex("Code and comments coming after a top-level return() or stop()"),
+    rex::rex("Code and comments coming after a return() or stop()"),
     unreachable_code_linter()
   )
 })
@@ -422,7 +422,7 @@ test_that("unreachable_code_linter identifies unreachable code in mixed conditio
       ),
       list(
         line_number = 13L,
-        message = rex::rex("Code and comments coming after a top-level return() or stop()")
+        message = rex::rex("Code and comments coming after a return() or stop()")
       )
     ),
     linter
@@ -462,7 +462,7 @@ test_that("unreachable_code_linter identifies unreachable code in mixed conditio
 #   ")
 #   expect_lint(
 #     unreachable_inside_switch_lines,
-#     rex::rex("Code and comments coming after a top-level return() or stop()"),
+#     rex::rex("Code and comments coming after a return() or stop()"),
 #     unreachable_code_linter()
 #   )
 # })

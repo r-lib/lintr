@@ -103,7 +103,7 @@ unreachable_code_linter <- function() {
     lints_return_stop <- xml_nodes_to_lints(
       expr_return_stop[!is_nolint_end_comment],
       source_expression = source_expression,
-      lint_message = "Code and comments coming after a top-level return() or stop() should be removed.",
+      lint_message = "Code and comments coming after a return() or stop() should be removed.",
       type = "warning"
     )
 
