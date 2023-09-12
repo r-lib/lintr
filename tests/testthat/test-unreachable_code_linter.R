@@ -24,6 +24,17 @@ test_that("unreachable_code_linter works in sub expressions", {
             # Test comment
           }
         }
+      } else if (bla) {
+        # test
+        return(5)
+        # Test 2
+      } else {
+        return(bar)
+        # Test comment
+        for(i in 1:3) {
+          return(bar)
+          5 + 4
+        }
       }
       return(bar)
       5 + 1
@@ -36,7 +47,10 @@ test_that("unreachable_code_linter works in sub expressions", {
       list(line_number = 4L, message = msg),
       list(line_number = 7L, message = msg),
       list(line_number = 10L, message = msg),
-      list(line_number = 15L, message = msg)
+      list(line_number = 16L, message = msg),
+      list(line_number = 19L, message = msg),
+      list(line_number = 22L, message = msg),
+      list(line_number = 26L, message = msg)
     ),
     linter
   )
@@ -52,6 +66,7 @@ test_that("unreachable_code_linter works in sub expressions", {
       repeat {
         return(bar) # Test comment
       }
+
     }
   ")
 
@@ -61,12 +76,17 @@ test_that("unreachable_code_linter works in sub expressions", {
     foo <- function(bar) {
       if (bar) {
         return(bar); x <- 2
+      } else {
+        return(bar); x <- 3
       }
       while (bar) {
         return(bar); 5 + 3
       }
       repeat {
         return(bar); test()
+      }
+      for(i in 1:3) {
+        return(bar); 5 + 4
       }
     }
   ")
@@ -75,8 +95,10 @@ test_that("unreachable_code_linter works in sub expressions", {
     lines,
     list(
       list(line_number = 3L, message = msg),
-      list(line_number = 6L, message = msg),
-      list(line_number = 9L, message = msg)
+      list(line_number = 5L, message = msg),
+      list(line_number = 8L, message = msg),
+      list(line_number = 11L, message = msg),
+      list(line_number = 14L, message = msg)
     ),
     linter
   )
@@ -99,6 +121,13 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
             # Test comment
           }
         }
+      } else {
+        next
+        # test
+        for(i in 1:3) {
+          break
+          5 + 4
+        }
       }
     }
   ")
@@ -108,7 +137,9 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
     list(
       list(line_number = 4L, message = msg),
       list(line_number = 7L, message = msg),
-      list(line_number = 10L, message = msg)
+      list(line_number = 10L, message = msg),
+      list(line_number = 15L, message = msg),
+      list(line_number = 18L, message = msg)
     ),
     linter
   )
@@ -117,12 +148,17 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
     foo <- function(bar) {
       if (bar) {
         break # Test comment
+      } else {
+        next # Test comment
       }
       while (bar) {
         next # 5 + 3
       }
       repeat {
         next # Test comment
+      }
+      for(i in 1:3) {
+        break # 5 + 4
       }
     }
   ")
@@ -133,12 +169,17 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
     foo <- function(bar) {
       if (bar) {
         next; x <- 2
+      } else {
+        break; x <- 3
       }
       while (bar) {
         break; 5 + 3
       }
       repeat {
         next; test()
+      }
+      for(i in 1:3) {
+        break; 5 + 4
       }
     }
   ")
@@ -147,8 +188,10 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
     lines,
     list(
       list(line_number = 3L, message = msg),
-      list(line_number = 6L, message = msg),
-      list(line_number = 9L, message = msg)
+      list(line_number = 5L, message = msg),
+      list(line_number = 8L, message = msg),
+      list(line_number = 11L, message = msg),
+      list(line_number = 14L, message = msg)
     ),
     linter
   )
