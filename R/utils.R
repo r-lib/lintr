@@ -265,3 +265,22 @@ is_linter <- function(x) inherits(x, "linter")
 is_tainted <- function(lines) {
   inherits(tryCatch(nchar(lines), error = identity), "error")
 }
+
+#' Check that the entries in ... are valid
+#'
+#' @param dot_names Supplied names, from [...names()].
+#' @param ref_calls Functions consuming these `...` (character).
+#' @param ref_help Help page to refer users hitting an error to.
+#' @noRd
+check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1L)[[1L]])) {
+  valid_args <- unlist(lapply(ref_calls, formalArgs))
+  is_valid <- dot_names %in% valid_args
+  if (all(is_valid)) {
+    return(invisible())
+  }
+  stop(
+    "Found unknown arguments in ...: ", toString(dot_names[!is_valid]), ".\n",
+    "Check for typos and see ?", ref_help, " for valid arguments.",
+    call. = FALSE
+  )
+}
