@@ -126,6 +126,8 @@
 <li>checks for code inside <code>if (FALSE)</code> and other conditional loops with deterministically false conditions (<a href="https://github.com/r-lib/lintr/issues/1428" class="external-link">#1428</a>, <a href="https://github.com/ME0265" class="external-link">@ME0265</a>).</li>
 </ul></li>
 <li>
+<code><a href="../reference/implicit_assignment_linter.html">implicit_assignment_linter()</a></code> finds assignments in call arguments besides the first one (<a href="https://github.com/r-lib/lintr/issues/2136" class="external-link">#2136</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
 <code><a href="../reference/inner_combine_linter.html">inner_combine_linter()</a></code> no longer throws on length-1 calls to <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> like <code>c(exp(2))</code> or <code>c(log(3))</code> (<a href="https://github.com/r-lib/lintr/issues/2017" class="external-link">#2017</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Such usage is discouraged by <code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code>, but <code><a href="../reference/inner_combine_linter.html">inner_combine_linter()</a></code> <em>per se</em> does not apply.</li>
 <li>
 <code><a href="../reference/condition_message_linter.html">condition_message_linter()</a></code> ignores usages of extracted calls like <code>env$stop(paste(a, b))</code> (<a href="https://github.com/r-lib/lintr/issues/1455" class="external-link">#1455</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
