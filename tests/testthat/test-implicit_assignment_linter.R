@@ -91,16 +91,6 @@ test_that("implicit_assignment_linter skips allowed usages", {
     trim_some("
       map(
         .x = 1:4,
-        .f = ~ .x + 1 -> x
-      )"),
-    NULL,
-    linter
-  )
-
-  expect_lint(
-    trim_some("
-      map(
-        .x = 1:4,
         .f = ~ {
           x <- .x + 1
           x
@@ -240,9 +230,6 @@ test_that("implicit_assignment_linter makes exceptions for functions that captur
   expect_lint("expr(a <- 1L)", NULL, linter)
   expect_lint("quo(a <- 1L)", NULL, linter)
   expect_lint("quos(a <- 1L)", NULL, linter)
-
-  # withr
-  expect_lint("with_options(list(digits = 3L), x <- getOption('digits'))", NULL, linter)
 })
 
 test_that("implicit_assignment_linter blocks disallowed usages in simple conditional statements", {
@@ -269,8 +256,8 @@ test_that("implicit_assignment_linter blocks disallowed usages in nested conditi
       if (0L -> y) FALSE
     }"),
     list(
-      list(message = lint_message, line_number = 1L, column_number = 10L),
-      list(message = lint_message, line_number = 2L, column_number = 10L)
+      list(message = lint_message, line_number = 1L, column_number = 8L),
+      list(message = lint_message, line_number = 2L, column_number = 7L)
     ),
     linter
   )
@@ -280,8 +267,8 @@ test_that("implicit_assignment_linter blocks disallowed usages in nested conditi
       if (0L -> y) print(x)
     }"),
     list(
-      list(message = lint_message, line_number = 1L, column_number = 13L),
-      list(message = lint_message, line_number = 2L, column_number = 10L)
+      list(message = lint_message, line_number = 1L, column_number = 11L),
+      list(message = lint_message, line_number = 2L, column_number = 7L)
     ),
     linter
   )
@@ -317,9 +304,25 @@ test_that("implicit_assignment_linter blocks disallowed usages in function calls
       return(x <- x + 1)
     }"),
     list(
-      list(message = lint_message, line_number = 2L, column_number = 9L),
-      list(message = lint_message, line_number = 3L, column_number = 12L)
+      list(message = lint_message, line_number = 2L, column_number = 7L),
+      list(message = lint_message, line_number = 3L, column_number = 10L)
     ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      map(
+        .x = 1:4,
+        .f = ~ .x + 1 -> x
+      )"),
+    lint_message,
+    linter
+  )
+
+  expect_lint(
+    "foo(a <- 1, b <- 2, c <- 3)",
+    list(list(column_number = 5L), list(column_number = 13L), list(column_number = 21L)),
     linter
   )
 })
