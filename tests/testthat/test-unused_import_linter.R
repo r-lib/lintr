@@ -62,6 +62,8 @@ test_that("unused_import_linter lints packages with exports like pkg::pkg", {
 })
 
 test_that("glue usages are seen", {
+  lint_msg <- rex::rex("Package 'xmlparsedata' is attached but never used.")
+
   lines <- trim_some("
     library(glue)
     library(xmlparsedata)
@@ -69,5 +71,5 @@ test_that("glue usages are seen", {
     glue('{ xml_parse_data() }')
   ")
   expect_lint(lines, NULL, unused_import_linter())
-  expect_lint(lines, rex::rex("Package 'xmlparsedata' is attached but never used."), unused_import_linter(interpret_glue = FALSE))
+  expect_lint(lines, lint_msg, unused_import_linter(interpret_glue = FALSE))
 })
