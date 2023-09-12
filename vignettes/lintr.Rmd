@@ -9,6 +9,7 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
+library(lintr)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
