@@ -80,24 +80,23 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
 
   local({
     itr <- 0L
-    outer_env <- environment()
     # keep 'linter' as a field even if we remove the deprecated argument from Lint() in the future
     lint_fields <- unique(c(names(formals(Lint)), "linter"))
     Map(
       function(lint, check) {
-        outer_env$itr <- outer_env$itr + 1L
+        itr <<- itr + 1L
         lapply(names(check), function(field) {
           if (!field %in% lint_fields) {
             stop(sprintf(
               "check #%d had an invalid field: \"%s\"\nValid fields are: %s\n",
-              outer_env$itr, field, toString(lint_fields)
+              itr, field, toString(lint_fields)
             ))
           }
           check <- check[[field]]
           value <- lint[[field]]
           msg <- sprintf(
             "check #%d: %s %s did not match %s",
-            outer_env$itr, field, deparse(value), deparse(check)
+            itr, field, deparse(value), deparse(check)
           )
           # deparse ensures that NULL, list(), etc are handled gracefully
           exp <- if (field == "message") {
