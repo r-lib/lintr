@@ -41,57 +41,27 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
 
   if (length(except) > 0L) {
     exceptions <- xp_text_in_table(except)
-    xpath_exceptions <- glue("
-    //SYMBOL_FUNCTION_CALL[ not({exceptions}) ]")
+    xpath_exceptions <- glue("SYMBOL_FUNCTION_CALL[ not({exceptions}) ]")
   } else {
-    xpath_exceptions <- "
-    //SYMBOL_FUNCTION_CALL"
+    xpath_exceptions <- "SYMBOL_FUNCTION_CALL"
   }
 
   # The walrus operator `:=` is also `LEFT_ASSIGN`, but is not a relevant operator
   # to be considered for the present linter.
-  assignments <- c(
-    "LEFT_ASSIGN[text() != ':=']", # e.g. mean(x <- 1:4)
-    "RIGHT_ASSIGN" # e.g. mean(1:4 -> x)
+  assignments <- paste(
+    "//LEFT_ASSIGN[text() != ':=']",
+    "//RIGHT_ASSIGN",
+    sep = " | "
   )
 
-  xpath_fun_call <- paste0(
-    xpath_exceptions,
-    "
-    /parent::expr
-    /following-sibling::expr[1]
-    /"
-  )
-  xpath_fun_assignment <- paste0(
-    xpath_fun_call,
-    assignments,
-    collapse = " | "
-  )
-
-  controls <- c(
-    # e.g. if (x <- 1L) { ... }
-    "
-    //IF
-    /following-sibling::expr[1]
-    /",
-    # e.g. while (x <- 0L) { ... }
-    "
-    //WHILE
-    /following-sibling::expr[1]
-    /",
-    # e.g. for (x in y <- 1:10) { ... }
-    "
-    //forcond
-    /expr[1]
-    /"
-  )
-  xpath_controls_assignment <- paste0(
-    rep(controls, each = length(assignments)),
-    assignments,
-    collapse = " | "
-  )
-
-  xpath <- paste0(c(xpath_controls_assignment, xpath_fun_assignment), collapse = " | ")
+  xpath <- glue("
+    ({assignments})
+      /parent::expr[
+        preceding-sibling::*[2][self::IF or self::WHILE]
+        or parent::forcond
+        or preceding-sibling::expr/{xpath_exceptions}
+      ]
+  ")
 
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level

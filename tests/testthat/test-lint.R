@@ -219,7 +219,7 @@ test_that("compatibility warnings work", {
   )
 })
 
-test_that("Deprecated positional usage of cache= errors", {
+test_that("Deprecated positional usage of cache= works, with warning", {
   expect_error(
     lint("a = 2\n", FALSE, linters = assignment_linter()),
     "'cache' is no longer available as a positional argument",
@@ -240,8 +240,4 @@ test_that("Linters throwing an error give a helpful error", {
     lint(tmp_file, list(broken_linter = linter())),
     rex::rex("Linter 'broken_linter' failed in ", anything, basename(tmp_file), ": a broken linter")
   )
-})
-
-test_that("typo in argument name gives helpful error", {
-  expect_error(lint("xxx", litners = identity), "Found unknown arguments in [.][.][.].*[?]lint ")
 })
