@@ -20,7 +20,6 @@ linters: linters_with_defaults(
     implicit_integer_linter(),
     keyword_quote_linter(),
     lengths_linter(),
-    library_call_linter(),
     line_length_linter(120),
     missing_argument_linter(),
     nested_ifelse_linter(),
