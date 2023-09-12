@@ -46,9 +46,7 @@
 library_call_linter <- function() {
   attach_call <- "text() = 'library' or text() = 'require'"
   xpath <- glue("
-    //SYMBOL_FUNCTION_CALL[{ attach_call }][last()]
-      /preceding::expr
-      /SYMBOL_FUNCTION_CALL[not({ attach_call })][last()]
+    //SYMBOL_FUNCTION_CALL[not({ attach_call })][last()]
       /following::expr[SYMBOL_FUNCTION_CALL[{ attach_call }]]
       /parent::expr
   ")
