@@ -128,7 +128,8 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 lint_dir <- function(path = ".", ...,
                      relative_path = TRUE,
                      exclusions = list("renv", "packrat"),
-                     pattern = rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"), end),
+                     pattern = rex(".", or(group(one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt")),
+                                           group(one_of("Qq"), "md")), end),
                      parse_settings = TRUE,
                      show_progress = NULL) {
   if (has_positional_logical(list(...))) {
