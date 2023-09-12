@@ -60,13 +60,13 @@ test_that("warnings occur only for deprecated linters", {
   expect_silent(linters_with_tags(tags = NULL))
   num_deprecated_linters <- nrow(available_linters(tags = "deprecated", exclude_tags = NULL))
   deprecation_warns_seen <- 0L
-  test_env <- environment()
+  outer_env <- environment()
   expect_silent({
     withCallingHandlers(
       linters_with_tags(tags = "deprecated", exclude_tags = NULL),
       warning = function(w) {
         if (grepl("was deprecated", conditionMessage(w), fixed = TRUE)) {
-          test_env$deprecation_warns_seen <- test_env$deprecation_warns_seen + 1L
+          outer_env$deprecation_warns_seen <- outer_env$deprecation_warns_seen + 1L
           invokeRestart("muffleWarning")
         } else {
           w
