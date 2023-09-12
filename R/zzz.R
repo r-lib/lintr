@@ -288,18 +288,17 @@ settings <- NULL
   # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
   base_ns <- getNamespace("base")
   backports_ns <- getNamespace("backports")
-  lintr_ns <- getNamespace(pkgname)
   # NB: we're _probably_ meant to use utils::assignInNamespace() here, but
   #   there's a rather clunky R CMD check under tools:::.check_package_code_tampers()
   #   that requries such calls to pass asNamespace("lintr") explicitly instead of
   #   re-using the getNamespace() outcome as we do here.
   for (base_fun in c("str2lang", "str2expression")) {
     if (!exists(base_fun, base_ns)) {
-      assign(base_fun, get(base_fun, backports_ns), lintr_ns)
+      utils::assignInMyNamespace(base_fun, get(base_fun, backports_ns))
     }
   }
 
-  assign("default_settings", envir = lintr_ns, list(
+  utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,
     encoding = "UTF-8",
     exclude = rex("#", any_spaces, "nolint"),
@@ -330,7 +329,7 @@ settings <- NULL
     error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
   ))
 
-  assign("settings", list2env(default_settings, parent = emptyenv()), lintr_ns)
+  utils::assignInMyNamespace("settings", list2env(default_settings, parent = emptyenv()))
 
   if (requireNamespace("tibble", quietly = TRUE)) {
     registerS3method("as_tibble", "lints", as_tibble.lints, asNamespace("tibble"))
