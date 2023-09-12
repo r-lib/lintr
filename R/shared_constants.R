@@ -228,6 +228,15 @@ strip_names <- function(x) {
   x
 }
 
+#' Pull out symbols used in glue strings under the current sub-tree
+#'
+#' Required by any linter (e.g. [object_usage_linter()] / [unused_imports_linter()])
+#'   that lints based on whether certain symbols are present, to ensure any
+#'   symbols only used inside glue strings are also visible to the linter.
+#'
+#' @param expr An XML AST
+#' @param interpret_glue Logical, if `FALSE` return nothing.
+#' @noRd
 extract_glued_symbols <- function(expr, interpret_glue) {
   if (!isTRUE(interpret_glue)) {
     return(character())
@@ -258,19 +267,20 @@ extract_glued_symbols <- function(expr, interpret_glue) {
   glued_symbols <- new.env(parent = emptyenv())
   for (glue_call in glue_calls) {
     # TODO(michaelchirico): consider dropping tryCatch() here if we're more confident in our logic
-    parsed_call <- tryCatch(xml2lang(glue_call), error = unexpected_error, warning = unexpected_error)
+    parsed_call <-
+      tryCatch(xml2lang(glue_call), error = unexpected_glue_parse_error, warning = unexpected_glue_parse_error)
     parsed_call[[".envir"]] <- glued_symbols
-    parsed_call[[".transformer"]] <- symbol_extractor
+    parsed_call[[".transformer"]] <- glue_symbol_extractor
     # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint
-    tryCatch(eval(parsed_call), error = parse_failure_warning)
+    tryCatch(eval(parsed_call), error = glue_parse_failure_warning)
   }
   names(glued_symbols)
 }
 
-unexpected_error <- function(cond) {
+unexpected_glue_parse_error <- function(cond) {
   stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond)) # nocov
 }
-parse_failure_warning <- function(cond) {
+glue_parse_failure_warning <- function(cond) {
   warning(
     "Evaluating glue expression while testing for local variable usage failed: ", conditionMessage(cond),
     "\nPlease ensure correct glue syntax, e.g., matched delimiters.",
@@ -278,7 +288,7 @@ parse_failure_warning <- function(cond) {
   )
   NULL
 }
-symbol_extractor <- function(text, envir, data) {
+glue_symbol_extractor <- function(text, envir, data) {
   symbols <- tryCatch(
     all.vars(parse(text = text), functions = TRUE),
     error = function(...) NULL,
