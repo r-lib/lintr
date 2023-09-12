@@ -251,7 +251,6 @@ For some use cases, it may be useful to specify linters by string instead of by 
 Beware that in such cases, a simple `get()` is not enough:
 
 ```{r programmatic_lintr}
-library(lintr)
 linter_name <- "assignment_linter"
 
 withr::with_tempfile("tmp", {
