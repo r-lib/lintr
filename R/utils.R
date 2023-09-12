@@ -26,10 +26,11 @@ flatten_lints <- function(x) {
 flatten_list <- function(x, class) {
   res <- list()
   itr <- 1L
+  flatten_env <- environment()
   assign_item <- function(x) {
     if (inherits(x, class)) {
-      res[[itr]] <<- x
-      itr <<- itr + 1L
+      flatten_env$res[[itr]] <- x
+      flatten_env$itr <- flatten_env$itr + 1L
     } else if (is.list(x)) {
       lapply(x, assign_item)
     }
@@ -174,11 +175,12 @@ Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name.
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
   terminal_newline <- TRUE
+  env <- environment()
   lines <- withCallingHandlers(
     readLines(file, warn = TRUE, ...),
     warning = function(w) {
       if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
-        terminal_newline <<- FALSE
+        env$terminal_newline <- FALSE
         invokeRestart("muffleWarning")
       }
     }

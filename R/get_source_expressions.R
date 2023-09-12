@@ -600,11 +600,12 @@ fix_tab_columns <- function(parse_content, tab_cols) {
 
 tab_offsets <- function(tab_columns) {
   cum_offset <- 0L
+  offset_env <- environment()
   vapply(
     tab_columns - 1L,
     function(tab_idx) {
       offset <- 7L - (tab_idx + cum_offset) %% 8L # using a tab width of 8 characters
-      cum_offset <<- cum_offset + offset
+      offset_env$cum_offset <- offset_env$cum_offset + offset
       offset
     },
     integer(1L),

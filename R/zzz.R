@@ -295,7 +295,7 @@ settings <- NULL
     }
   }
 
-  default_settings <<- list(
+  assignInNamespace("default_settings", ns = lintr_ns, list(
     linters = default_linters,
     encoding = "UTF-8",
     exclude = rex("#", any_spaces, "nolint"),
@@ -324,9 +324,9 @@ settings <- NULL
     ),
     comment_bot = logical_env("LINTR_COMMENT_BOT") %||% TRUE,
     error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
-  )
+  ))
 
-  settings <<- list2env(default_settings, parent = emptyenv())
+  assignInNamespace("settings", list2env(default_settings, parent = emptyenv()), ns = lintr_ns)
 
   if (requireNamespace("tibble", quietly = TRUE)) {
     registerS3method("as_tibble", "lints", as_tibble.lints, asNamespace("tibble"))

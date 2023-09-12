@@ -80,11 +80,12 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
 
   local({
     itr <- 0L
+    this_env <- environment()
     # keep 'linter' as a field even if we remove the deprecated argument from Lint() in the future
     lint_fields <- unique(c(names(formals(Lint)), "linter"))
     Map(
       function(lint, check) {
-        itr <<- itr + 1L
+        this_env$itr <- this_env$itr + 1L
         lapply(names(check), function(field) {
           if (!field %in% lint_fields) {
             stop(sprintf(
