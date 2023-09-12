@@ -144,11 +144,7 @@ test_that("split.lint works as intended", {
 test_that("within.list is dispatched", {
   l <- lint(text = "a=1\nb=2", linters = infix_spaces_linter())
   expect_silent({
-    l <- lapply(l, function(li) {
-      within(li, {
-        line_number <- line_number + 1L
-      })
-    })
+    l <- lapply(l, within, line_number <- line_number + 1L)
   })
   expect_identical(vapply(l, `[[`, integer(1L), "line_number"), 2L:3L)
 })
