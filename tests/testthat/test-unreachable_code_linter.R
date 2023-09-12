@@ -38,7 +38,8 @@ test_that("unreachable_code_linter works in sub expressions", {
       list(line_number = 10L, message = msg),
       list(line_number = 15L, message = msg)
     ),
-    linter)
+    linter
+  )
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -77,7 +78,8 @@ test_that("unreachable_code_linter works in sub expressions", {
       list(line_number = 6L, message = msg),
       list(line_number = 9L, message = msg)
     ),
-    linter)
+    linter
+  )
 })
 
 test_that("unreachable_code_linter works with next and break in sub expressions", {
@@ -108,7 +110,8 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
       list(line_number = 7L, message = msg),
       list(line_number = 10L, message = msg)
     ),
-    linter)
+    linter
+  )
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -147,7 +150,8 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
       list(line_number = 6L, message = msg),
       list(line_number = 9L, message = msg)
     ),
-    linter)
+    linter
+  )
 })
 
 test_that("unreachable_code_linter ignores expressions that aren't functions", {
