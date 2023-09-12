@@ -666,12 +666,13 @@ fix_eq_assigns <- function(pc) {
     prev_loc <- prev_locs[start]
     next_loc <- next_locs[end]
 
+    id_itr <- id_itr + 1L
     supplemental_content[i, ] <- list(
       pc[prev_loc, "line1"],
       pc[prev_loc, "col1"],
       pc[next_loc, "line2"],
       pc[next_loc, "col2"],
-      id_itr <- id_itr + 1L,
+      id_itr,
       pc[eq_assign_locs[true_locs[i]], "parent"],
       "expr", # R now uses "equal_assign"
       FALSE,
