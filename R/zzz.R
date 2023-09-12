@@ -288,7 +288,7 @@ settings <- NULL
   # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
   base_ns <- getNamespace("base")
   backports_ns <- getNamespace("backports")
-  lintr_ns <- getNamespace("lintr")
+  lintr_ns <- getNamespace(pkgname)
   for (base_fun in c("str2lang", "str2expression")) {
     if (!exists(base_fun, base_ns)) {
       assign(base_fun, get(base_fun, backports_ns), lintr_ns)
