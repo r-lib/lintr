@@ -127,18 +127,20 @@ test_that("allow10 works as intended", {
 test_that("ifelse(missing = ) gives correct lints", {
   linter <- redundant_ifelse_linter()
 
-  expect_lint("if_else(x > 5, TRUE, FALSE, NA)", "xxx", linter)
-  expect_lint("if_else(x > 5, TRUE, FALSE, NA_integer_)", "xxx", linter)
-  expect_lint("if_else(x > 5, TRUE, FALSE, TRUE)", "xxx", linter)
-  expect_lint("if_else(x > 5, TRUE, FALSE, 5L)", "xxx", linter)
+  expect_lint("if_else(x > 5, TRUE, FALSE, NA)", rex::rex("Just use the logical condition"), linter)
+  expect_lint("if_else(x > 5, TRUE, FALSE, TRUE)", NULL, linter)
+  expect_lint("if_else(x > 5, TRUE, FALSE, 5L)", NULL, linter)
 
-  expect_lint("if_else(x > 5, 1L, 0L, NA_integer_)", "xxx", linter)
-  expect_lint("if_else(x > 5, 1L, 0L, NA_real_)", "xxx", linter)
-  expect_lint("if_else(x > 5, 1L, 0L, 2L)", "xxx", linter)
-  expect_lint("if_else(x > 5, 1L, 0L, 5)", "xxx", linter)
+  expect_lint("if_else(x > 5, 1L, 0L, NA_integer_)", rex::rex("Prefer as.integer(x)"), linter)
+  expect_lint("if_else(x > 5, 1L, 0L, 2L)", NULL, linter)
+  expect_lint("if_else(x > 5, 1L, 0L, 5)", NULL, linter)
 
-  expect_lint("if_else(x > 5, 1, 0, NA_real_)", "xxx", linter)
-  expect_lint("if_else(x > 5, 1, 0, NA_character_)", "xxx", linter)
-  expect_lint("if_else(x > 5, 1, 0, 2)", "xxx", linter)
-  expect_lint("if_else(x > 5, 1, 0, '5')", "xxx", linter)
+  expect_lint("if_else(x > 5, 1, 0, NA_real_)", rex::rex("Prefer as.numeric(x)"), linter)
+  expect_lint("if_else(x > 5, 1, 0, 2)", NULL, linter)
+  expect_lint("if_else(x > 5, 1, 0, '5')", NULL, linter)
+
+  # TRUE/FALSE must be found in yes/no, not missing=
+  expect_lint("if_else(x > 5, 'a', TRUE, FALSE)", NULL, linter)
+  expect_lint("if_else(x > 5, 'a', 0L, 1L)", NULL, linter)
+  expect_lint("if_else(x > 5, 'a', 1, 0)", NULL, linter)
 })
