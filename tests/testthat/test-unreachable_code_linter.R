@@ -372,14 +372,18 @@ test_that("unreachable_code_linter ignores code after foo$stop(), which might be
 })
 
 test_that("unreachable_code_linter ignores terminal nolint end comments", {
+  withr::local_options(list(
+    lintr.exclude_start = "#\\s*TestNoLintStart",
+    lintr.exclude_end = "#\\s*TestNoLintEnd"
+  ))
   expect_lint(
     trim_some("
       foo <- function() {
         do_something
-        # nolint start: one_linter.
+        # TestNoLintStart: one_linter.
         a = 42
         return(a)
-        # nolint end
+        # TestNoLintEnd
       }
     "),
     NULL,
