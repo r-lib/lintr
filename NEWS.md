@@ -37,7 +37,6 @@
 * `conjunct_test_linter()` also lints usage like `dplyr::filter(x, A & B)` in favor of using `dplyr::filter(x, A, B)` unless `allow_filter = TRUE` (part of #884, @MichaelChirico; #2110, @salim-b).
 * `sort_linter()` checks for code like `x == sort(x)` which is better served by using the function `is.unsorted()` (part of #884, @MichaelChirico).
 * `paste_linter()` gains detection for file paths that are better constructed with `file.path()`, e.g. `paste0(dir, "/", file)` would be better as `file.path(dir, file)` (part of #884, #2082, @MichaelChirico). What exactly gets linted here can be fine-tuned with the `allow_file_path` option (`"double_slash"` by default, with alternatives `"never"` and `"always"`). When `"always"`, these rules are ignored. When `"double_slash"`, paths appearing to construct a URL that have consecutive forward slashes (`/`) are skipped. When `"never"`, even URLs should be construced with `file.path()`.
-* `paste_linter()` gains detection for file paths that are better constructed with `file.path()`, e.g. `paste0(dir, "/", file)` would be better as `file.path(dir, file)` (part of #884, @MichaelChirico).
 * `seq_linter()` recommends `rev()` in the lint message for lints like `nrow(x):1` (#1542, @MichaelChirico).
 * `function_argument_linter()` detects usage of `missing()` for the linted argument (#1546, @MichaelChirico). The simplest fix for `function_argument_linter()` lints is typically to set that argument to `NULL` by default, in which case it's usually preferable to update function logic checking `missing()` to check `is.null()` instead.
 * `equals_na_linter()` checks for `x %in% NA`, which is a more convoluted form of `is.na(x)` (#2088, @MichaelChirico).
@@ -48,6 +47,7 @@
 * `implicit_assignment_linter()` finds assignments in call arguments besides the first one (#2136, @MichaelChirico).
 * `inner_combine_linter()` no longer throws on length-1 calls to `c()` like `c(exp(2))` or `c(log(3))` (#2017, @MichaelChirico). Such usage is discouraged by `unnecessary_concatenation_linter()`, but `inner_combine_linter()` _per se_ does not apply.
 * `condition_message_linter()` ignores usages of extracted calls like `env$stop(paste(a, b))` (#1455, @MichaelChirico).
+* `sort_linter()` only lints on `order()` of a single vector, excluding e.g. `x[order(x, y)]` and `x[order(y, x)]` (#2156, @MichaelChirico).
 * `redundant_ifelse_linter()` is aware of `dplyr::if_else()`'s `missing=` argument, so that `if_else(A, TRUE, FALSE, missing = FALSE)` doesn't lint, but `if_else(A, TRUE, FALSE, NA)` does (#1941, @MichaelChirico). Note that `dplyr::coalesce()` or `tidyr::replace_na()` may still be preferable.
 
 ### New linters
