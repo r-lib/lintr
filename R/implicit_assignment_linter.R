@@ -60,6 +60,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
         preceding-sibling::*[2][self::IF or self::WHILE]
         or parent::forcond
         or preceding-sibling::expr/{xpath_exceptions}
+        or parent::expr/*[1][self::OP-LEFT-PAREN]
       ]
   ")
 
