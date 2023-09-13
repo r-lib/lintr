@@ -48,6 +48,7 @@
 * `implicit_assignment_linter()` finds assignments in call arguments besides the first one (#2136, @MichaelChirico).
 * `inner_combine_linter()` no longer throws on length-1 calls to `c()` like `c(exp(2))` or `c(log(3))` (#2017, @MichaelChirico). Such usage is discouraged by `unnecessary_concatenation_linter()`, but `inner_combine_linter()` _per se_ does not apply.
 * `condition_message_linter()` ignores usages of extracted calls like `env$stop(paste(a, b))` (#1455, @MichaelChirico).
+* `redundant_ifelse_linter()` is aware of `dplyr::if_else()`'s `missing=` argument, so that `if_else(A, TRUE, FALSE, missing = FALSE)` doesn't lint, but `if_else(A, TRUE, FALSE, NA)` does (#1941, @MichaelChirico). Note that `dplyr::coalesce()` or `tidyr::replace_na()` may still be preferable.
 
 ### New linters
 
