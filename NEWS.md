@@ -14,6 +14,7 @@
 * New `xp_call_name()` helper to facilitate writing custom linters (#2023, @MichaelChirico). This helper converts a matched XPath to the R function to which it corresponds. This is useful for including the "offending" function in the lint's message.
 * New `make_linter_from_xpath()` to facilitate making simple linters directly from a single XPath (#2064, @MichaelChirico). This is especially helpful for making on-the-fly/exploratory linters, but also extends to any case where the linter can be fully defined from a static lint message and single XPath.
 * Toggle lint progress indicators with argument `show_progress` to `lint_dir()` and `lint_package()` (#972, @MichaelChirico). The default is still to show progress in `interactive()` sessions. Progress is also now shown with a "proper" progress bar (`utils::txtProgressBar()`), which in particular solves the issue of progress `.` spilling well past the width of the screen in large directories.
+* `lint()`, `lint_dir()`, and `lint_package()` fail more gracefully when the user mis-spells an argument name (#2134, @MichaelChirico).
 * `fixed_regex_linter()`
   + Is pipe-aware, in particular removing false positives arong piping into {stringr} functions like `x |> str_replace(fixed("a"), "b")` (#1811, @MichaelChirico).
   + Gains an option `allow_unescaped` (default `FALSE`) to toggle linting regexes not requiring any escapes or character classes (#1689, @MichaelChirico). Thus `fixed_regex_linter(allow_unescaped = TRUE)` would lint on `grepl("[$]", x)` but not on `grepl("a", x)` since the latter does not use any regex special characters.
@@ -36,7 +37,6 @@
 * `conjunct_test_linter()` also lints usage like `dplyr::filter(x, A & B)` in favor of using `dplyr::filter(x, A, B)` unless `allow_filter = TRUE` (part of #884, @MichaelChirico; #2110, @salim-b).
 * `sort_linter()` checks for code like `x == sort(x)` which is better served by using the function `is.unsorted()` (part of #884, @MichaelChirico).
 * `paste_linter()` gains detection for file paths that are better constructed with `file.path()`, e.g. `paste0(dir, "/", file)` would be better as `file.path(dir, file)` (part of #884, #2082, @MichaelChirico). What exactly gets linted here can be fine-tuned with the `allow_file_path` option (`"double_slash"` by default, with alternatives `"never"` and `"always"`). When `"always"`, these rules are ignored. When `"double_slash"`, paths appearing to construct a URL that have consecutive forward slashes (`/`) are skipped. When `"never"`, even URLs should be construced with `file.path()`.
-* `paste_linter()` gains detection for file paths that are better constructed with `file.path()`, e.g. `paste0(dir, "/", file)` would be better as `file.path(dir, file)` (part of #884, @MichaelChirico).
 * `seq_linter()` recommends `rev()` in the lint message for lints like `nrow(x):1` (#1542, @MichaelChirico).
 * `function_argument_linter()` detects usage of `missing()` for the linted argument (#1546, @MichaelChirico). The simplest fix for `function_argument_linter()` lints is typically to set that argument to `NULL` by default, in which case it's usually preferable to update function logic checking `missing()` to check `is.null()` instead.
 * `equals_na_linter()` checks for `x %in% NA`, which is a more convoluted form of `is.na(x)` (#2088, @MichaelChirico).
@@ -44,9 +44,15 @@
 * `unreachable_code_linter()`
   + finds unreachable code even in the presence of a comment or semicolon after `return()` or `stop()` (#2127, @MEO265).
   + checks for code inside `if (FALSE)` and other conditional loops with deterministically false conditions (#1428, @ME0265).
+* `implicit_assignment_linter()`
+  + finds assignments in call arguments besides the first one (#2136, @MichaelChirico).
+  + finds assignments in parenthetical expressions like `if (A && (B <- foo(A))) { }` (#2138, @MichaelChirico).
+* `implicit_assignment_linter()` finds assignments in call arguments besides the first one (#2136, @MichaelChirico).
 * `inner_combine_linter()` no longer throws on length-1 calls to `c()` like `c(exp(2))` or `c(log(3))` (#2017, @MichaelChirico). Such usage is discouraged by `unnecessary_concatenation_linter()`, but `inner_combine_linter()` _per se_ does not apply.
 * `condition_message_linter()` ignores usages of extracted calls like `env$stop(paste(a, b))` (#1455, @MichaelChirico).
 * `unused_import_linter()` gains an argument `interpret_glue` (default `TRUE`) paralleling that in `object_usage_linter()` to toggle whether `glue::glue()` expressions should be inspected for exported object usage (#2042, @MichaelChirico).
+* `sort_linter()` only lints on `order()` of a single vector, excluding e.g. `x[order(x, y)]` and `x[order(y, x)]` (#2156, @MichaelChirico).
+* `redundant_ifelse_linter()` is aware of `dplyr::if_else()`'s `missing=` argument, so that `if_else(A, TRUE, FALSE, missing = FALSE)` doesn't lint, but `if_else(A, TRUE, FALSE, NA)` does (#1941, @MichaelChirico). Note that `dplyr::coalesce()` or `tidyr::replace_na()` may still be preferable.
 
 ### New linters
 
