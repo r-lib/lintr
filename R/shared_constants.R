@@ -236,6 +236,8 @@ strip_names <- function(x) {
 #'
 #' @param expr An XML AST
 #' @param interpret_glue Logical, if `FALSE` return nothing.
+#' @return A character vector of symbols (variables, infix operators, and
+#'   function calls) found in glue calls under `expr`.
 #' @noRd
 extract_glued_symbols <- function(expr, interpret_glue) {
   if (!isTRUE(interpret_glue)) {
