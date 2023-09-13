@@ -98,6 +98,16 @@ test_that("library_call_linter warns on disallowed usages", {
     ),
     linter
   )
+
+  expect_lint(
+    trim_some("
+      fun()
+      library(moreFun)
+      oops()
+    "),
+    lint_message,
+    linter
+  )
 })
 
 test_that("require() treated the same as library()", {
