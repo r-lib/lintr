@@ -385,9 +385,9 @@ test_that("allow_lazy lets lazy assignments through", {
 })
 
 test_that("allow_scoped skips scoped assignments", {
-  linter <- implicit_assignment_linter()
+  linter <- implicit_assignment_linter(allow_scoped = TRUE)
+  lint_message <- rex::rex("Avoid implicit assignments in function calls.")
 
-  debug(linter)
   expect_lint(
     trim_some("
       if (any(idx <- x < 0)) {
@@ -404,7 +404,7 @@ test_that("allow_scoped skips scoped assignments", {
       }
       print(idx)
     "),
-    NULL,
+    lint_message,
     linter
   )
 
@@ -424,7 +424,31 @@ test_that("allow_scoped skips scoped assignments", {
         print(n)
       }
     "),
+    lint_message,
+    linter
+  )
+})
+
+test_that("interaction of allow_lazy and allow_scoped", {
+  linter <- implicit_assignment_linter(allow_scoped = TRUE, allow_lazy = TRUE)
+
+  expect_lint(
+    trim_some("
+      if (any(idx <- foo()) && BB) {
+        stop('Invalid foo() output: ', toString(idx))
+      }
+    "),
     NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+      if (any(idx <- foo()) && BB) {
+        stop('Invalid foo() output: ', toString(idx))
+      }
+      print(format(idx))
+    "),
+    rex::rex("Avoid implicit assignments in function calls."),
     linter
   )
 })

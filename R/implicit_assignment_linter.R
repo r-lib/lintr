@@ -92,6 +92,9 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
   if (allow_lazy) {
     xpath <- paste0(xpath, "[not(ancestor::expr/preceding-sibling::*[self::AND2 or self::OR2])]")
   }
+  if (allow_scoped) {
+   xpath <- paste0(xpath, "[expr[1]/SYMBOL = ancestor::expr[preceding-sibling::IF or preceding-sibling::WHILE]/parent::expr/following::SYMBOL]")
+  }
 
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level
