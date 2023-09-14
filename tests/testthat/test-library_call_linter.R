@@ -119,6 +119,17 @@ test_that("library_call_linter warns on disallowed usages", {
     lint_message,
     linter
   )
+
+  expect_lint(
+    trim_some("
+      library(dplyr)
+      print('test')
+      suppressMessages(library(tidyr))
+      print('test')
+    "),
+    lint_message,
+    linter
+  )
 })
 
 test_that("require() treated the same as library()", {
