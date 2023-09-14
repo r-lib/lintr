@@ -50,7 +50,7 @@
 #' writeLines(lines)
 #' lint(
 #'   text = lines,
-#'   linters = implicit_assigment_linter(allow_scoped = TRUE)
+#'   linters = implicit_assignment_linter(allow_scoped = TRUE)
 #' )
 #'
 #' @evalRd rd_tags("implicit_assignment_linter")
