@@ -47,7 +47,7 @@
 * `implicit_assignment_linter()`
   + finds assignments in call arguments besides the first one (#2136, @MichaelChirico).
   + finds assignments in parenthetical expressions like `if (A && (B <- foo(A))) { }` (#2138, @MichaelChirico).
-  * gains an argument `allow_lazy` (default `FALSE`) that allows optionally skipping lazy assignments like `A && (B <- foo(A))` (#2016, @MichaelChirico).
+  + gains an argument `allow_lazy` (default `FALSE`) that allows optionally skipping lazy assignments like `A && (B <- foo(A))` (#2016, @MichaelChirico).
 * `implicit_assignment_linter()` finds assignments in call arguments besides the first one (#2136, @MichaelChirico).
 * `inner_combine_linter()` no longer throws on length-1 calls to `c()` like `c(exp(2))` or `c(log(3))` (#2017, @MichaelChirico). Such usage is discouraged by `unnecessary_concatenation_linter()`, but `inner_combine_linter()` _per se_ does not apply.
 * `condition_message_linter()` ignores usages of extracted calls like `env$stop(paste(a, b))` (#1455, @MichaelChirico).
