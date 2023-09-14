@@ -427,6 +427,11 @@ test_that("allow_scoped skips scoped assignments", {
     lint_message,
     linter
   )
+
+  # outside of branching, doesn't matter
+  expect_lint("(idx <- foo()); bar()", lint_message, linter)
+  expect_lint("foo(idx <- bar()); baz()", lint_message, linter)
+  expect_lint("foo(x, idx <- bar()); baz()", lint_message, linter)
 })
 
 test_that("interaction of allow_lazy and allow_scoped", {
