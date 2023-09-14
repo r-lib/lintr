@@ -70,7 +70,8 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">unused_import_linter</span><span class="op">(</span></span>
 <span>  allow_ns_usage <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  except_packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bit64"</span>, <span class="st">"data.table"</span>, <span class="st">"tidyverse"</span><span class="op">)</span></span>
+<span>  except_packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bit64"</span>, <span class="st">"data.table"</span>, <span class="st">"tidyverse"</span><span class="op">)</span>,</span>
+<span>  interpret_glue <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -86,6 +87,11 @@ installed without loading it.</p></dd>
 <dt>except_packages</dt>
 <dd><p>Character vector of packages that are ignored.
 These are usually attached for their side effects.</p></dd>
+
+
+<dt>interpret_glue</dt>
+<dd><p>If <code>TRUE</code>, interpret <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code> calls to avoid false positives caused by local variables
+which are only used in a glue expression.</p></dd>
 
 </dl></div>
     <div class="section level2">
