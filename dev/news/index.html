@@ -67,6 +67,7 @@
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/infix_spaces_linter.html">infix_spaces_linter()</a></code> distinguishes <code>&lt;-</code>, <code>:=</code>, <code>&lt;&lt;-</code> and <code>-&gt;</code>, <code>-&gt;&gt;</code>, i.e. <code>infix_spaces_linter(exclude_operators = "-&gt;")</code> will no longer exclude <code>-&gt;&gt;</code> (<a href="https://github.com/r-lib/lintr/issues/2115" class="external-link">#2115</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). This change is breaking for users relying on manually-supplied <code>exclude_operators</code> containing <code>"&lt;-"</code> to also exclude <code>:=</code> and <code>&lt;&lt;-</code>. The fix is to manually supply <code>":="</code> and <code>"&lt;&lt;-"</code> as well. We don’t expect this change to affect many users, the fix is simple, and the new behavior is much more transparent, so we are including this breakage in a minor release.</li>
+<li>Removed <code>find_line()</code> and <code>find_column()</code> entries from <code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> expression-level objects. These have been marked deprecated since version 3.0.0. No users were found on GitHub.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>

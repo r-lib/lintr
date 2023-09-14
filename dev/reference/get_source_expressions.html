@@ -98,8 +98,6 @@ expression, named with the line number corresponding to <code>filename</code></p
 <li><p><code>xml_parsed_content</code> (<code>xml_document</code>) the XML parse tree of this
 expression as given by <code><a href="https://rdrr.io/pkg/xmlparsedata/man/xml_parse_data.html" class="external-link">xmlparsedata::xml_parse_data()</a></code></p></li>
 <li><p><code>content</code> (<code>character</code>) the same as <code>lines</code> as a single string (not split across lines)</p></li>
-<li><p>(<strong>Deprecated</strong>) <code>find_line</code> (<code>function</code>) a function for returning lines in this expression</p></li>
-<li><p>(<strong>Deprecated</strong>) <code>find_column</code> (<code>function</code>) a similar function for columns</p></li>
 </ul><p>The final element of <code>expressions</code> is a list corresponding to the full file
 consisting of 6 elements:</p><ul><li><p><code>filename</code> (<code>character</code>)</p></li>
 <li><p><code>file_lines</code> (<code>character</code>) the <code><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines()</a></code> output for this file</p></li>
@@ -134,7 +132,7 @@ This setting is found by taking the first valid result from the following locati
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu">withr</span><span class="fu">::</span><span class="fu"><a href="https://withr.r-lib.org/reference/with_tempfile.html" class="external-link">local_tempfile</a></span><span class="op">(</span>lines <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x &lt;- 1"</span>, <span class="st">"y &lt;- x + 1"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">get_source_expressions</span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cannot open file '/tmp/Rtmp1mTO4q/file188056a783da': No such file or directory</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cannot open file '/tmp/Rtmp3w6juo/file1880bfa1099': No such file or directory</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in file(con, "r"):</span> cannot open the connection</span>
 </code></pre></div>
     </div>
