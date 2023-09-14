@@ -148,3 +148,42 @@ test_that("require() treated the same as library()", {
     linter
   )
 })
+
+test_that("allow_preamble applies as intended", {
+  linter_preamble <- library_call_linter(allow_preamble = TRUE)
+  linter_no_preamble <- library_call_linter(allow_preamble = FALSE)
+
+  lines <- trim_some("
+    opts_chunk$set(eval = FALSE)
+    library(dplyr)
+    library(knitr)
+  ")
+  expect_lint(lines, NULL, linter_preamble)
+  expect_lint(lines, "xxx", linter_preamble)
+
+  lines <- trim_some("
+    opts_chunk$set(eval = FALSE)
+    suppressPackageStartupMessages({
+      library(dplyr)
+      library(knitr)
+    })
+  ")
+  expect_lint(lines, NULL, linter_preamble)
+  expect_lint(lines, "xxx", linter_preamble)
+
+  lines <- trim_some("
+    opts_chunk$set(eval = FALSE)
+    suppressPackageStartupMessages(library(dplyr))
+    library(knitr)
+  ")
+  expect_lint(lines, NULL, linter_preamble)
+  expect_lint(lines, "xxx", linter_preamble)
+
+  lines <- trim_some("
+    opts_chunk$set(eval = FALSE)
+    library(dplyr)
+    suppressPackageStartupMessages(library(knitr)
+  ")
+  expect_lint(lines, NULL, linter_preamble)
+  expect_lint(lines, "xxx", linter_preamble)
+})
