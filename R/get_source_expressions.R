@@ -29,8 +29,6 @@
 #'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of this
 #'          expression as given by [xmlparsedata::xml_parse_data()]}
 #'     \item{`content` (`character`) the same as `lines` as a single string (not split across lines)}
-#'     \item{(**Deprecated**) `find_line` (`function`) a function for returning lines in this expression}
-#'     \item{(**Deprecated**) `find_column` (`function`) a similar function for columns}
 #'   }
 #'
 #'   The final element of `expressions` is a list corresponding to the full file
@@ -472,7 +470,6 @@ get_single_source_expression <- function(loc,
   content <- get_content(source_expression$lines, parsed_content[loc, ])
   id <- parsed_content$id[loc]
   pc <- parsed_content[which(top_level_map == id), ]
-  newline_locs <- get_newline_locs(content)
   list(
     filename = filename,
     line = parsed_content[loc, "line1"],
@@ -480,9 +477,7 @@ get_single_source_expression <- function(loc,
     lines = expr_lines,
     parsed_content = pc,
     xml_parsed_content = xml2::xml_missing(),
-    content = content,
-    find_line = find_line_fun(content, newline_locs),
-    find_column = find_column_fun(content, newline_locs)
+    content = content
   )
 }
 
