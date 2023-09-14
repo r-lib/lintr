@@ -95,7 +95,8 @@ NULL
 #' @description
 #' Linters that evaluate parts of the linted code, such as loading referenced packages.
 #' These linters should not be used with untrusted code, and may need dependencies of the linted package or project to
-#' be available in order to function correctly.
+#' be available in order to function correctly. For package authors, note that this includes loading the package itself,
+#'   e.g. with `pkgload::load_all()` or installing and attaching the package.
 #' @evalRd rd_linters("executing")
 #' @seealso [linters] for a complete list of linters available in lintr.
 NULL

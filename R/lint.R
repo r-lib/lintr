@@ -39,6 +39,8 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     stop("'cache' is no longer available as a positional argument; please supply 'cache' as a named argument instead.")
   }
 
+  check_dots(...names(), c("exclude", "parse_exclusions"))
+
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
   lines <- get_lines(filename, text)
@@ -137,6 +139,8 @@ lint_dir <- function(path = ".", ...,
       "please supply 'relative_path' as a named argument instead. "
     )
   }
+
+  check_dots(...names(), c("lint", "exclude", "parse_exclusions"))
 
   if (isTRUE(parse_settings)) {
     read_settings(path)
@@ -313,12 +317,12 @@ define_linters <- function(linters = NULL) {
   } else if (is_linter(linters)) {
     linters <- list(linters)
     names(linters) <- attr(linters[[1L]], "name", exact = TRUE)
-  } else if (!is.list(linters)) {
+  } else if (is.list(linters)) {
+    names(linters) <- auto_names(linters)
+  } else {
     name <- deparse(substitute(linters))
     linters <- list(linters)
     names(linters) <- name
-  } else {
-    names(linters) <- auto_names(linters)
   }
   linters
 }

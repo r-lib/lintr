@@ -281,7 +281,7 @@ check_is_not_file_path <- function(expr, allow_file_path) {
     check_double_slash(string_values) ||
     # A string not ending with /, followed by non-string,
     #   or a string not starting with /, preceded by a non-string
-    any(!is_string[c(not_end_slash + 1L, not_start_slash - 1L)], na.rm = TRUE) ||
+    !all(is_string[c(not_end_slash + 1L, not_start_slash - 1L)], na.rm = TRUE) ||
     # A string not starting with / preceded by a string not ending with /
     any(not_start_slash %in% (not_end_slash + 1L))
 }

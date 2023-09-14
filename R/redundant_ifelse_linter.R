@@ -48,8 +48,12 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
     /parent::expr
     /parent::expr[
-      expr[NUM_CONST[text() = 'TRUE']]
-      and expr[NUM_CONST[text() = 'FALSE']]
+      expr[position() <= 4 and NUM_CONST[text() = 'TRUE']]
+      and expr[position() <= 4 and NUM_CONST[text() = 'FALSE']]
+      and (
+        count(expr) = 4
+        or expr[5]/NUM_CONST[text() = 'NA']
+      )
     ]
   ")
 
@@ -57,8 +61,12 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
     /parent::expr
     /parent::expr[
-      expr[NUM_CONST[text() = '1' or text() = '1L']]
-      and expr[NUM_CONST[text() = '0' or text() = '0L']]
+      expr[position() <= 4 and NUM_CONST[text() = '1' or text() = '1L']]
+      and expr[position() <= 4 and NUM_CONST[text() = '0' or text() = '0L']]
+      and (
+        count(expr) = 4
+        or expr[5]/NUM_CONST[text() = 'NA' or text() = 'NA_integer_' or text() = 'NA_real_']
+      )
     ]
   ")
 

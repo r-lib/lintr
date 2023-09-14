@@ -397,4 +397,34 @@ test_that("allow_scoped skips scoped assignments", {
     NULL,
     linter
   )
+  expect_lint(
+    trim_some("
+      if (any(idx <- x < 0)) {
+        stop('negative elements: ', toString(which(idx)))
+      }
+      print(idx)
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      obj <- letters
+      while ((n <- length(obj)) > 0) obj <- obj[-n]
+    "),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+      obj <- letters
+      while ((n <- length(obj)) > 0) obj <- obj[-n]
+      if (TRUE) {
+        print(n)
+      }
+    "),
+    NULL,
+    linter
+  )
 })
