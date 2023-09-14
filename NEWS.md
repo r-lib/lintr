@@ -56,7 +56,7 @@
 
 ### New linters
 
-* `library_call_linter()` can detect if all library/require calls are not at the top of your script (#2027 and #2043, @nicholas-masel and @MichaelChirico).
+* `library_call_linter()` can detect if all library/require calls are not at the top of your script (#2027, #2043, and #2163, @nicholas-masel and @MichaelChirico).
 * `keyword_quote_linter()` for finding unnecessary or discouraged quoting of symbols in assignment, function arguments, or extraction (part of #884, @MichaelChirico). Quoting is unnecessary when the target is a valid R name, e.g. `c("a" = 1)` can be `c(a = 1)`. The same goes to assignment (`"a" <- 1`) and extraction (`x$"a"`). Where quoting is necessary, the linter encourages doing so with backticks (e.g. `` x$`a b` `` instead of `x$"a b"`).
 * `length_levels_linter()` for using the specific function `nlevels()` instead of checking `length(levels(x))` (part of #884, @MichaelChirico).
 * `scalar_in_linter()` for discouraging `%in%` when the right-hand side is a scalar, e.g. `x %in% 1` (part of #884, @MichaelChirico).
