@@ -93,8 +93,12 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
     xpath <- paste0(xpath, "[not(ancestor::expr/preceding-sibling::*[self::AND2 or self::OR2])]")
   }
   if (allow_scoped) {
-    branch_cond <- "ancestor::expr[preceding-sibling::IF or preceding-sibling::WHILE]"
-    xpath <- paste0(xpath, glue("[not({branch_cond}) or expr[1]/SYMBOL = {branch_cond}/parent::expr/following::SYMBOL]"))
+    # force 2nd preceding to ensure we're in the loop condition, not the loop expression
+    in_branch_cond <- "ancestor::expr[preceding-sibling::*[2][self::IF or self::WHILE]]"
+    xpath <- paste0(
+      xpath,
+      glue("[not({in_branch_cond}) or expr[1]/SYMBOL = {in_branch_cond}/parent::expr/following::SYMBOL]"
+    )
   }
 
   Linter(function(source_expression) {

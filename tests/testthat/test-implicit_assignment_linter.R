@@ -407,6 +407,16 @@ test_that("allow_scoped skips scoped assignments", {
     lint_message,
     linter
   )
+  # only applies to the branch condition itself -- within the branch, still lint
+  expect_lint(
+    trim_some("
+      if (TRUE) {
+        foo(idx <- bar())
+      }
+    "),
+    lint_message,
+    linter
+  )
 
   expect_lint(
     trim_some("
