@@ -349,6 +349,37 @@ test_that("implicit_assignment_linter works as expected with pipes and walrus op
 test_that("parenthetical assignments are caught", {
   linter <- implicit_assignment_linter()
   lint_message <- rex::rex("Avoid implicit assignments in function calls.")
+
   expect_lint("(x <- 1:10)", lint_message, linter)
   expect_lint("if (A && (B <- foo())) { }", lint_message, linter)
+})
+
+test_that("allow_lazy lets lazy assignments through", {
+  linter <- implicit_assignment_linter(allow_lazy = TRUE)
+  lint_message <- rex::rex("Avoid implicit assignments in function calls.")
+
+  expect_lint("A && (B <- foo(A))", NULL, linter)
+  # || also admits laziness
+  expect_lint("A || (B <- foo(A))", NULL, linter)
+  # & and |, however, do not
+  expect_lint("A & (B <- foo(A))", lint_message, linter)
+  expect_lint("A | (B <- foo(A))", lint_message, linter)
+  expect_lint("A && foo(bar(idx <- baz()))", NULL, linter)
+  # LHS _is_ linted
+  expect_lint("(A <- foo()) && B", lint_message, linter)
+  # however we skip on _any_ RHS (even if it's later an LHS)
+  # test on all &&/|| combinations to stress test operator precedence
+  expect_lint("A && (B <- foo(A)) && C", NULL, linter)
+  expect_lint("A && (B <- foo(A)) || C", NULL, linter)
+  expect_lint("A || (B <- foo(A)) && C", NULL, linter)
+  expect_lint("A || (B <- foo(A)) || C", NULL, linter)
+  # &&/|| elsewhere in the tree don't matter
+  expect_lint(
+    trim_some("
+      A && B
+      foo(C <- bar())
+    "),
+    lint_message,
+    linter
+  )
 })

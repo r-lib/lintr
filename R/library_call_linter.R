@@ -54,7 +54,7 @@ library_call_linter <- function(allow_preamble = TRUE) {
       //SYMBOL_FUNCTION_CALL[{ attach_call }][last()]
         /preceding::expr
         /SYMBOL_FUNCTION_CALL[
-          not({ attach_call })
+          not({ attach_call } or starts-with(text(), 'suppress'))
           and @line1 > //SYMBOL_FUNCTION_CALL[{ attach_call }][1]/@line1
         ][last()]
         /following::expr[SYMBOL_FUNCTION_CALL[{ attach_call }]]
@@ -64,7 +64,7 @@ library_call_linter <- function(allow_preamble = TRUE) {
     xpath <- glue("
       //SYMBOL_FUNCTION_CALL[{ attach_call }][last()]
         /preceding::expr
-        /SYMBOL_FUNCTION_CALL[not({ attach_call })][last()]
+        /SYMBOL_FUNCTION_CALL[not({ attach_call } or starts-with(text(), 'suppress'))][last()]
         /following::expr[SYMBOL_FUNCTION_CALL[{ attach_call }]]
         /parent::expr
     ")

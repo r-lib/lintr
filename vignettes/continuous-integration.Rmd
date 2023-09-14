@@ -18,6 +18,8 @@ You can configure `lintr` to run as part of continuous integration (either for a
 
 ## For packages
 
+First, take special note of the proviso in `?executing_linters` about the need to have your package and its dependencies installed or loaded (e.g. with `pkgload::load_all()`) in order for certain linters (e.g. `object_usage_linter()`) to function as intended.
+
 ### GitHub Actions
 
 If your package is on GitHub, the easiest way to do this is with GitHub Actions.

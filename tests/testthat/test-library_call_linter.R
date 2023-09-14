@@ -32,6 +32,17 @@ test_that("library_call_linter skips allowed usages", {
     NULL,
     linter
   )
+
+  expect_lint(
+    trim_some("
+      suppressPackageStartupMessages({
+        library(dplyr)
+        library(knitr)
+      })
+    "),
+    NULL,
+    linter
+  )
 })
 
 test_that("library_call_linter warns on disallowed usages", {
@@ -96,6 +107,17 @@ test_that("library_call_linter warns on disallowed usages", {
       list(lint_message, line_number = 3L, column_number = 1L),
       list(lint_message, line_number = 5L, column_number = 1L)
     ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      library(dplyr)
+      print('test')
+      suppressMessages(library(tidyr))
+      print('test')
+    "),
+    lint_message,
     linter
   )
 })
