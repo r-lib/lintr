@@ -5,11 +5,15 @@
 \title{Avoid implicit assignment in function calls}
 \usage{
 implicit_assignment_linter(
-  except = c("bquote", "expression", "expr", "quo", "quos", "quote")
+  except = c("bquote", "expression", "expr", "quo", "quos", "quote"),
+  allow_lazy = FALSE
 )
 }
 \arguments{
 \item{except}{A character vector of functions to be excluded from linting.}
+
+\item{allow_lazy}{logical, default \code{FALSE}. If \code{TRUE}, assignments that only
+trigger conditionally (e.g. in the RHS of \code{&&} or \code{||} expressions) are skipped.}
 }
 \description{
 Assigning inside function calls makes the code difficult to read, and should
@@ -38,6 +42,11 @@ writeLines("x <- 1:4\nmean(x)")
 lint(
   text = "x <- 1:4\nmean(x)",
   linters = implicit_assignment_linter()
+)
+
+lint(
+  text = "A && (B <- foo(A))",
+  linters = implicit_assignment_linter(allow_lazy = TRUE)
 )
 
 }
