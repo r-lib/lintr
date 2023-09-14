@@ -42,7 +42,11 @@
 #'   linters = implicit_assignment_linter(allow_lazy = TRUE)
 #' )
 #'
-#' lines <- "if (any(idx <- x < 0)) {\n  stop('negative elements: ', toString(which(idx)))\n}"
+#' lines <- c(
+#'   "if (any(idx <- x < 0)) {",
+#'   "  stop('negative elements: ', toString(which(idx)))",
+#'   "}"
+#' )
 #' writeLines(lines)
 #' lint(
 #'   text = lines
