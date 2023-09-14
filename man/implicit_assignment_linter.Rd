@@ -63,7 +63,7 @@ lines <- c(
 )
 writeLines(lines)
 lint(
-  text = lines
+  text = lines,
   linters = implicit_assigment_linter(allow_scoped = TRUE)
 )
 
