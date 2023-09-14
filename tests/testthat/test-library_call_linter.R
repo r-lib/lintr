@@ -98,16 +98,6 @@ test_that("library_call_linter warns on disallowed usages", {
     ),
     linter
   )
-
-  expect_lint(
-    trim_some("
-      fun()
-      library(moreFun)
-      oops()
-    "),
-    lint_message,
-    linter
-  )
 })
 
 test_that("require() treated the same as library()", {
@@ -152,38 +142,55 @@ test_that("require() treated the same as library()", {
 test_that("allow_preamble applies as intended", {
   linter_preamble <- library_call_linter(allow_preamble = TRUE)
   linter_no_preamble <- library_call_linter(allow_preamble = FALSE)
+  lint_msg <- rex::rex("Move all library calls to the top of the script.")
 
   lines <- trim_some("
     opts_chunk$set(eval = FALSE)
     library(dplyr)
     library(knitr)
+
+    print(letters)
   ")
   expect_lint(lines, NULL, linter_preamble)
-  expect_lint(lines, "xxx", linter_preamble)
+  expect_lint(lines, lint_msg, linter_preamble)
 
   lines <- trim_some("
     opts_chunk$set(eval = FALSE)
     suppressPackageStartupMessages({
       library(dplyr)
       library(knitr)
+
+    print(letters)
     })
   ")
   expect_lint(lines, NULL, linter_preamble)
-  expect_lint(lines, "xxx", linter_preamble)
+  expect_lint(lines, lint_msg, linter_preamble)
 
   lines <- trim_some("
     opts_chunk$set(eval = FALSE)
     suppressPackageStartupMessages(library(dplyr))
     library(knitr)
+
+    print(letters)
   ")
   expect_lint(lines, NULL, linter_preamble)
-  expect_lint(lines, "xxx", linter_preamble)
+  expect_lint(lines, lint_msg, linter_preamble)
 
   lines <- trim_some("
     opts_chunk$set(eval = FALSE)
     library(dplyr)
-    suppressPackageStartupMessages(library(knitr)
+    suppressPackageStartupMessages(library(knitr))
+
+    print(letters)
   ")
   expect_lint(lines, NULL, linter_preamble)
-  expect_lint(lines, "xxx", linter_preamble)
+  expect_lint(lines, lint_msg, linter_preamble)
+
+  lines <- trim_some("
+    fun()
+    library(moreFun)
+    oops()
+  ")
+  expect_lint(lines, NULL, linter_preamble)
+  expect_lint(lines, lint_msg, linter_preamble)
 })

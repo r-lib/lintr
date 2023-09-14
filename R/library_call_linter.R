@@ -50,6 +50,16 @@
 library_call_linter <- function(allow_preamble = TRUE) {
   attach_call <- "text() = 'library' or text() = 'require'"
   if (allow_preamble) {
+    xpath <- glue("
+      //SYMBOL_FUNCTION_CALL[{ attach_call }][last()]
+        /preceding::expr
+        /SYMBOL_FUNCTION_CALL[
+          not({ attach_call })
+          and @line1 > //SYMBOL_FUNCTION_CALL[{ attach_call }][1]/@line1
+        ][last()]
+        /following::expr[SYMBOL_FUNCTION_CALL[{ attach_call }]]
+        /parent::expr
+    ")
   } else {
     xpath <- glue("
       //SYMBOL_FUNCTION_CALL[{ attach_call }][last()]
