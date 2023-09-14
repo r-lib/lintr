@@ -3,6 +3,7 @@
 ## Breaking changes
 
 * `infix_spaces_linter()` distinguishes `<-`, `:=`, `<<-` and `->`, `->>`, i.e. `infix_spaces_linter(exclude_operators = "->")` will no longer exclude `->>` (#2115, @MichaelChirico). This change is breaking for users relying on manually-supplied `exclude_operators` containing `"<-"` to also exclude `:=` and `<<-`. The fix is to manually supply `":="` and `"<<-"` as well. We don't expect this change to affect many users, the fix is simple, and the new behavior is much more transparent, so we are including this breakage in a minor release.
+* Removed `find_line()` and `find_column()` entries from `get_source_expressions()` expression-level objects. These have been marked deprecated since version 3.0.0. No users were found on GitHub.
 
 ## Bug fixes
 
@@ -34,7 +35,7 @@
   + `yoda_test_linter()`
 * `sprintf_linter()` is pipe-aware, so that `x %>% sprintf(fmt = "%s")` no longer lints (#1943, @MichaelChirico).
 * `line_length_linter()` helpfully includes the line length in the lint message (#2057, @MichaelChirico).
-* `conjunct_test_linter()` also lints usage like `dplyr::filter(x, A & B)` in favor of using `dplyr::filter(x, A, B)` unless `allow_filter = TRUE` (part of #884, @MichaelChirico; #2110, @salim-b).
+* `conjunct_test_linter()` also lints usage like `dplyr::filter(x, A & B)` in favor of using `dplyr::filter(x, A, B)` (part of #884; #2110 and #2078, @salim-b and @MichaelChirico). Option `allow_filter` toggles when this applies. `allow_filter = "always"` drops such lints entirely, while `"not_dplyr"` only lints calls explicitly qualified as `dplyr::filter()`. The default, `"never"`, assumes all unqualified calls to `filter()` are `dplyr::filter()`.
 * `sort_linter()` checks for code like `x == sort(x)` which is better served by using the function `is.unsorted()` (part of #884, @MichaelChirico).
 * `paste_linter()` gains detection for file paths that are better constructed with `file.path()`, e.g. `paste0(dir, "/", file)` would be better as `file.path(dir, file)` (part of #884, #2082, @MichaelChirico). What exactly gets linted here can be fine-tuned with the `allow_file_path` option (`"double_slash"` by default, with alternatives `"never"` and `"always"`). When `"always"`, these rules are ignored. When `"double_slash"`, paths appearing to construct a URL that have consecutive forward slashes (`/`) are skipped. When `"never"`, even URLs should be construced with `file.path()`.
 * `seq_linter()` recommends `rev()` in the lint message for lints like `nrow(x):1` (#1542, @MichaelChirico).
@@ -57,7 +58,7 @@
 
 ### New linters
 
-* `library_call_linter()` can detect if all library/require calls are not at the top of your script (#2027 and #2043, @nicholas-masel and @MichaelChirico).
+* `library_call_linter()` can detect if all library/require calls are not at the top of your script (#2027, #2043, and #2163, @nicholas-masel and @MichaelChirico).
 * `keyword_quote_linter()` for finding unnecessary or discouraged quoting of symbols in assignment, function arguments, or extraction (part of #884, @MichaelChirico). Quoting is unnecessary when the target is a valid R name, e.g. `c("a" = 1)` can be `c(a = 1)`. The same goes to assignment (`"a" <- 1`) and extraction (`x$"a"`). Where quoting is necessary, the linter encourages doing so with backticks (e.g. `` x$`a b` `` instead of `x$"a b"`).
 * `length_levels_linter()` for using the specific function `nlevels()` instead of checking `length(levels(x))` (part of #884, @MichaelChirico).
 * `scalar_in_linter()` for discouraging `%in%` when the right-hand side is a scalar, e.g. `x %in% 1` (part of #884, @MichaelChirico).
