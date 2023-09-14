@@ -142,6 +142,10 @@ files.</li>
 </li>
 </ul>
 <p>For more information about the assumed package structure, see <a href="https://r-pkgs.org/structure.html" class="external-link">R Packages</a>.</p>
+<p>Note that some linters (e.g. <code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code>)
+require the package to be installed to function properly.
+<code><a href="https://pkgload.r-lib.org/reference/load_all.html" class="external-link">pkgload::load_all()</a></code> will also suffice. See
+<code><a href="../reference/executing_linters.html">?executing_linters</a></code> for more details.</p>
 </div>
 <div class="section level2">
 <h2 id="configuring-linters">Configuring linters<a class="anchor" aria-label="anchor" href="#configuring-linters"></a>
@@ -620,16 +624,16 @@ enough:</p>
 <span>  <span class="co"># more concise alternative: use eval(call(.))</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="../reference/lint.html">lint</a></span><span class="op">(</span><span class="va">tmp</span>, linters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/call.html" class="external-link">call</a></span><span class="op">(</span><span class="va">linter_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpJlYptY/file20616281c0ed           1             3 style</span></span>
+<span><span class="co">#&gt;                          filename line_number column_number  type</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmpHRkE5q/file20ca3a915a3           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1    get</span></span>
-<span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpJlYptY/file20616281c0ed           1             3 style</span></span>
+<span><span class="co">#&gt;                          filename line_number column_number  type</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmpHRkE5q/file20ca3a915a3           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span>
-<span><span class="co">#&gt;                           filename line_number column_number  type</span></span>
-<span><span class="co">#&gt; 1 /tmp/RtmpJlYptY/file20616281c0ed           1             3 style</span></span>
+<span><span class="co">#&gt;                          filename line_number column_number  type</span></span>
+<span><span class="co">#&gt; 1 /tmp/RtmpHRkE5q/file20ca3a915a3           1             3 style</span></span>
 <span><span class="co">#&gt;                          message  line            linter</span></span>
 <span><span class="co">#&gt; 1 Use &lt;-, not =, for assignment. a = 1 assignment_linter</span></span></code></pre></div>
 </div>
