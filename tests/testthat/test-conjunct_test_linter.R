@@ -59,7 +59,7 @@ test_that("conjunct_test_linter skips allowed stopifnot() and assert_that() usag
 
 test_that("conjunct_test_linter blocks simple disallowed usages of stopifnot() and assert_that()", {
   linter <- conjunct_test_linter()
-  lint_msg <- function(FUN) rex::rex("Instead of ", FUN, "(A && B), write multiple conditions")
+  lint_msg <- function(fun) rex::rex("Instead of ", fun, "(A && B), write multiple conditions")
 
   expect_lint("stopifnot(x && y)", lint_msg("stopifnot"), linter)
   expect_lint("stopifnot(x && y && z)", lint_msg("stopifnot"), linter)
