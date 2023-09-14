@@ -7,6 +7,11 @@ test_that("sort_linter skips allowed usages", {
 
   # If another function is intercalated, don't fail
   expect_lint("x[c(order(x))]", NULL, linter)
+
+  expect_lint("x[order(y, x)]", NULL, linter)
+  expect_lint("x[order(x, y)]", NULL, linter)
+  # pretty sure this never makes sense, but test anyway
+  expect_lint("x[order(y, na.last = x)]", NULL, linter)
 })
 
 

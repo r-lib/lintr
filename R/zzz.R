@@ -284,7 +284,7 @@ settings <- NULL
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  backports::import(pkgname, c("trimws", "lengths", "deparse1"))
+  backports::import(pkgname, c("trimws", "lengths", "deparse1", "...names"))
   # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
   base_ns <- getNamespace("base")
   backports_ns <- getNamespace("backports")
