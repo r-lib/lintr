@@ -48,6 +48,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   if (needs_tempfile) {
     filename <- tempfile()
     con <- file(filename, open = "w", encoding = settings$encoding)
+    on.exit(unlink(filename), add = TRUE)
     writeLines(text = lines, con = con, sep = "\n")
     close(con)
   }
