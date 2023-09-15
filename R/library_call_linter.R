@@ -51,8 +51,10 @@ library_call_linter <- function(allow_preamble = TRUE) {
   attach_call <- "text() = 'library' or text() = 'require'"
   unsuppressed_call <- glue("not( {attach_call} or starts-with(text(), 'suppress'))")
   if (allow_preamble) {
-    unsuppressed_call <-
-      paste(unsuppressed_call, "and", glue("@line1 > //SYMBOL_FUNCTION_CALL[{ attach_call }][1]/@line1"))
+    unsuppressed_call <- xp_and(
+      unsuppressed_call,
+      glue("@line1 > //SYMBOL_FUNCTION_CALL[{ attach_call }][1]/@line1")
+    )
   }
   xpath <- glue("
     //SYMBOL_FUNCTION_CALL[{ attach_call }][last()]
