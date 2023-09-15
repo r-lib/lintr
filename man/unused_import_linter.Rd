@@ -6,7 +6,8 @@
 \usage{
 unused_import_linter(
   allow_ns_usage = FALSE,
-  except_packages = c("bit64", "data.table", "tidyverse")
+  except_packages = c("bit64", "data.table", "tidyverse"),
+  interpret_glue = TRUE
 )
 }
 \arguments{
@@ -17,6 +18,9 @@ installed without loading it.}
 
 \item{except_packages}{Character vector of packages that are ignored.
 These are usually attached for their side effects.}
+
+\item{interpret_glue}{If \code{TRUE}, interpret \code{\link[glue:glue]{glue::glue()}} calls to avoid false positives caused by local variables
+which are only used in a glue expression.}
 }
 \description{
 Check that imported packages are actually used

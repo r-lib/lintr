@@ -141,14 +141,70 @@ test_that("#1442: is_excluded_files works if no global exclusions are specified"
     file.path(tmp, "bad.R")
   )
 
-  # 3 lints: assignment_linter(), single_quotes_linter() and line_length_linter()
+  # 3 lints: assignment_linter(), quotes_linter() and line_length_linter()
   expect_lint(
     file = file.path(tmp, "bad.R"),
     checks = list(
       list(linter = "assignment_linter", line_number = 1L),
-      list(linter = "single_quotes_linter", line_number = 1L),
+      list(linter = "quotes_linter", line_number = 1L),
       list(linter = "line_length_linter", line_number = 1L)
     )
   )
   expect_length(lint_dir(tmp), 3L)
+})
+
+test_that("next-line exclusion works", {
+  withr::local_options(
+    lintr.exclude = "# NL",
+    lintr.exclude_next = "# NLN",
+    lintr.exlcude_linter = default_settings$exclude_linter
+  )
+
+  linter <- assignment_linter()
+
+  # blanket exclusion works
+  expect_lint(
+    trim_some("
+      # NLN
+      x = 1
+    "),
+    NULL,
+    linter
+  )
+
+  # specific exclusion works
+  expect_lint(
+    trim_some("
+      # NLN: assignment_linter.
+      x = 1
+    "),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+      # NLN: assignment.
+      x = 1
+    "),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+      # NLN: line_length_linter.
+      x = 1
+    "),
+    rex::rex("Use <-, not =, for assignment."),
+    list(linter, line_length_linter())
+  )
+
+  # interaction with plain nolint
+  expect_lint(
+    trim_some("
+      x = 1 # NLN: assignment_linter.
+      x = 2
+    "),
+    list(rex::rex("Use <-, not =, for assignment."), line_number = 1L),
+    linter
+  )
 })

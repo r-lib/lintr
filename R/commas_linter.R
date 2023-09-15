@@ -2,6 +2,9 @@
 #'
 #' Check that all commas are followed by spaces, but do not have spaces before them.
 #'
+#' @param allow_trailing If `TRUE`, the linter allows a comma to be followed
+#' directly by a closing bracket without a space.
+#'
 #' @examples
 #' # will produce lints
 #' lint(
@@ -16,6 +19,11 @@
 #'
 #' lint(
 #'   text = "x[ ,, drop=TRUE]",
+#'   linters = commas_linter()
+#' )
+#'
+#' lint(
+#'   text = "x[1,]",
 #'   linters = commas_linter()
 #' )
 #'
@@ -40,12 +48,17 @@
 #'   linters = commas_linter()
 #' )
 #'
+#' lint(
+#'   text = "x[1,]",
+#'   linters = commas_linter(allow_trailing = TRUE)
+#' )
+#'
 #' @evalRd rd_tags("commas_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
 #' - <https://style.tidyverse.org/syntax.html#commas>
 #' @export
-commas_linter <- function() {
+commas_linter <- function(allow_trailing = FALSE) {
   # conditions are in carefully-chosen order for performance --
   #   an expression like c(a,b,c,....) with many elements can have
   #   a huge number of preceding-siblings and the performance of
@@ -58,7 +71,11 @@ commas_linter <- function() {
     @line1 = preceding-sibling::*[1]/@line1 and
     not(preceding-sibling::*[1][self::OP-COMMA or self::EQ_SUB])
   ]"
-  xpath_after <- "//OP-COMMA[@line1 = following-sibling::*[1]/@line1 and @col1 = following-sibling::*[1]/@col1 - 1]"
+  xpath_after <- paste0(
+    "//OP-COMMA[@line1 = following-sibling::*[1]/@line1 and @col1 = following-sibling::*[1]/@col1 - 1 ",
+    if (allow_trailing) "and not(following-sibling::*[1][self::OP-RIGHT-BRACKET or self::RBB or self::OP-RIGHT-PAREN])",
+    "]"
+  )
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -67,7 +84,7 @@ commas_linter <- function() {
     xml <- source_expression$xml_parsed_content
 
     before_lints <- xml_nodes_to_lints(
-      xml2::xml_find_all(xml, xpath_before),
+      xml_find_all(xml, xpath_before),
       source_expression = source_expression,
       lint_message = "Commas should never have a space before.",
       range_start_xpath = "number(./preceding-sibling::*[1]/@col2 + 1)", # start after preceding expression
@@ -75,7 +92,7 @@ commas_linter <- function() {
     )
 
     after_lints <- xml_nodes_to_lints(
-      xml2::xml_find_all(xml, xpath_after),
+      xml_find_all(xml, xpath_after),
       source_expression = source_expression,
       lint_message = "Commas should always have a space after.",
       range_start_xpath = "number(./@col2 + 1)", # start and end after comma

@@ -20,6 +20,7 @@ Lintr searches for settings for a given source file in the following order.
 }
 }
 \details{
-The default linter_file name is \code{.lintr} but it can be changed with option \code{lintr.linter_file}.
+The default linter_file name is \code{.lintr} but it can be changed with option \code{lintr.linter_file}
+or the environment variable \code{R_LINTR_LINTER_FILE}
 This file is a dcf file, see \code{\link[base:dcf]{base::read.dcf()}} for details.
 }

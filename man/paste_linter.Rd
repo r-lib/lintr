@@ -4,7 +4,11 @@
 \alias{paste_linter}
 \title{Raise lints for several common poor usages of \code{paste()}}
 \usage{
-paste_linter(allow_empty_sep = FALSE, allow_to_string = FALSE)
+paste_linter(
+  allow_empty_sep = FALSE,
+  allow_to_string = FALSE,
+  allow_file_path = c("double_slash", "always", "never")
+)
 }
 \arguments{
 \item{allow_empty_sep}{Logical, default \code{FALSE}. If \code{TRUE}, usage of
@@ -12,6 +16,14 @@ paste_linter(allow_empty_sep = FALSE, allow_to_string = FALSE)
 
 \item{allow_to_string}{Logical, default \code{FALSE}. If \code{TRUE}, usage of
 \code{paste()} and \code{paste0()} with \code{collapse = ", "} is not linted.}
+
+\item{allow_file_path}{String, one of \code{"never"}, \code{"double_slash"}, or \code{"always"}; \code{"double_slash"} by default.
+If \code{"never"}, usage of \code{paste()} and \code{paste0()} to construct file paths is not linted. If \code{"double_slash"},
+strings containing consecutive forward slashes will not lint. The main use case here is for URLs -- "paths" like
+\code{"https://"} will not induce lints, since constructing them with \code{file.path()} might be deemed unnatural.
+Lastly, if \code{"always"}, strings with consecutive forward slashes will also lint. Note that \code{"//"} is never linted
+when it comes at the beginning or end of the input, to avoid requiring empty inputs like
+\code{file.path("", ...)} or \code{file.path(..., "")}.}
 }
 \description{
 The following issues are linted by default by this linter
@@ -55,6 +67,11 @@ lint(
   linters = paste_linter()
 )
 
+lint(
+  text = 'paste0("http://site.com/", path)',
+  linters = paste_linter(allow_file_path = "never")
+)
+
 # okay
 lint(
   text = 'paste0("a", "b")',
@@ -83,6 +100,16 @@ lint(
 
 lint(
   text = 'strrep("*", 10L)',
+  linters = paste_linter()
+)
+
+lint(
+  text = 'paste0(year, "/", month, "/", day)',
+  linters = paste_linter(allow_file_path = "always")
+)
+
+lint(
+  text = 'paste0("http://site.com/", path)',
   linters = paste_linter()
 )
 

@@ -218,10 +218,7 @@ test_that("returned data structure is complete", {
 
   for (i in seq_along(lines)) {
     expr <- exprs$expressions[[i]]
-    expect_named(expr, c(
-      "filename", "line", "column", "lines", "parsed_content", "xml_parsed_content", "content", "find_line",
-      "find_column"
-    ))
+    expect_named(expr, c("filename", "line", "column", "lines", "parsed_content", "xml_parsed_content", "content"))
     expect_identical(expr$filename, temp_file)
     expect_identical(expr$line, i)
     expect_identical(expr$column, 1L)
@@ -229,11 +226,6 @@ test_that("returned data structure is complete", {
     expect_identical(nrow(expr$parsed_content), 2L)
     expect_true(xml2::xml_find_lgl(expr$xml_parsed_content, "count(//SYMBOL) > 0"))
     expect_identical(expr$content, lines[i])
-    expect_type(expr$find_line, "closure")
-    expect_type(expr$find_column, "closure")
-    # find_line() and find_column() are deprecated
-    expect_warning(expr$find_line(1L), "find_line.*deprecated")
-    expect_warning(expr$find_column(1L), "find_column.*deprecated")
   }
   full_expr <- exprs$expressions[[length(lines) + 1L]]
   expect_named(full_expr, c(
@@ -307,6 +299,37 @@ test_that("Syntax errors in Rmd or qmd don't choke lintr", {
   expect_silent(get_source_expressions(tmp))
 })
 
+test_that("Indented Rmd chunks don't cause spurious whitespace lints", {
+  tmp <- withr::local_tempfile(lines = c(
+    "* An enumeration item with code:",
+    "",
+    "  ```{r}",
+    '  "properly indented"',
+    "  ```",
+    "",
+    "# New section",
+    "",
+    "```{r unindented_chunk}",
+    '  "improperly indented"',
+    "```",
+    "",
+    "# Third section",
+    "",
+    "   ```{r staggered}",
+    ' "leftmost code"',
+    '  "further right"',
+    '   "aligned with code gate"',
+    "   ```"
+  ))
+
+  parsed_lines <- get_source_expressions(tmp)$lines
+  expect_identical(parsed_lines[4L], '"properly indented"', ignore_attr = "names")
+  expect_identical(parsed_lines[10L], '  "improperly indented"', ignore_attr = "names")
+  expect_identical(parsed_lines[16L], '"leftmost code"', ignore_attr = "names")
+  expect_identical(parsed_lines[17L], ' "further right"', ignore_attr = "names")
+  expect_identical(parsed_lines[18L], '  "aligned with code gate"', ignore_attr = "names")
+})
+
 test_that("Reference chunks in Sweave/Rmd are ignored", {
   example_rnw <- system.file("Sweave", "example-1.Rnw", package = "utils")
   # ensure such a chunk continues to exist upstream
@@ -336,18 +359,35 @@ param_df <- expand.grid(
   expression_idx = seq_along(expressions),
   stringsAsFactors = FALSE
 )
-param_df$.test_name <-
-  with(param_df, sprintf("%s on expression %d", linter, expression_idx))
+param_df$.test_name <- with(param_df, sprintf("%s on expression %d", linter, expression_idx))
 
 patrick::with_parameters_test_that(
   "linters pass with xml_missing() content",
   {
     linter <- eval(call(linter))
     expression <- expressions[[expression_idx]]
-    expect_warning(lints <- linter(expression), NA)
+    expect_no_warning({
+      lints <- linter(expression)
+    })
     expect_length(lints, 0L)
   },
   .test_name = param_df$.test_name,
   linter = param_df$linter,
   expression_idx = param_df$expression_idx
 )
+
+test_that("invalid function definition parser failure lints", {
+  expect_lint(
+    "function(a = 1, a = 1) NULL",
+    rex::rex("Repeated formal argument 'a'."),
+    linters = list()
+  )
+})
+
+test_that("Disallowed embedded null gives parser failure lint", {
+  expect_lint(
+    "'\\0'",
+    rex::rex("Nul character not allowed."),
+    linters = list()
+  )
+})
