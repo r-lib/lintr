@@ -130,6 +130,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 lint_dir <- function(path = ".", ...,
                      relative_path = TRUE,
                      exclusions = list("renv", "packrat"),
+                     # TODO(r-lib/rex#85): Re-write in case-sensitive rex()
                      pattern = "(?i)[.](r|rmd|qmd|rnw|rhtml|rrst|rtex|rtxt)$",
                      parse_settings = TRUE,
                      show_progress = NULL) {
