@@ -10,18 +10,19 @@
 #' Note that if files contain unparseable encoding problems, only the encoding problem will be linted to avoid
 #' unintelligible error messages from other linters.
 #'
-#' @param filename either the filename for a file to lint, or a character string of inline R code for linting.
-#' The latter (inline data) applies whenever `filename` has a newline character (\\n).
-#' @param linters a named list of linter functions to apply. See [linters] for a full list of default and available
-#' linters.
+#' @param filename Either the filename for a file to lint, or a character string of inline R code for linting.
+#'   The latter (inline data) applies whenever `filename` has a newline character (\\n).
+#' @param linters A named list of linter functions to apply. See [linters] for a full list of default and available
+#'   linters.
 #' @param ... Provide additional arguments to be passed to:
-#' - [exclude()] (in case of `lint()`; e.g. `lints` or `exclusions`)
-#' - [lint()] (in case of `lint_dir()` and `lint_package()`; e.g. `linters` or `cache`)
-#' @param cache given a logical, toggle caching of lint results. If passed a character string, store the cache in this
-#' directory.
-#' @param parse_settings whether to try and parse the settings.
+#'   - [exclude()] (in case of `lint()`; e.g. `lints` or `exclusions`)
+#'   - [lint()] (in case of `lint_dir()` and `lint_package()`; e.g. `linters` or `cache`)
+#' @param cache When logical, toggle caching of lint results. I1f passed a character string, store the cache in this
+#'   directory.
+#' @param parse_settings Logical, default `TRUE`. Whether to try and parse the settings; otherwise, the [default_settings()]
+#'   are used.
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
-#' linting is being done ad hoc.
+#'   linting is being done ad hoc.
 #'
 #' @aliases lint_file
 # TODO(next release after 3.0.0): remove the alias
