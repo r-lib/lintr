@@ -10,7 +10,7 @@ read_settings(filename)
 \item{filename}{source file to be linted}
 }
 \description{
-Lintr searches for settings for a given source file in the following order.
+Lintr searches for settings for a given source file in the following order:
 \enumerate{
 \item options defined as \code{linter.setting}.
 \item \code{linter_file} in the same directory
