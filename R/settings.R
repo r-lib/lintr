@@ -22,18 +22,7 @@ read_settings <- function(filename) {
     default_settings[["encoding"]] <- default_encoding
   }
 
-  if (!is.null(config_file)) {
-    malformed <- function(e) {
-      stop("Malformed config file, ensure it ends in a newline\n  ", conditionMessage(e), call. = FALSE)
-    }
-    config <- tryCatch(
-      read.dcf(config_file, all = TRUE),
-      warning = malformed,
-      error = malformed
-    )
-  } else {
-    config <- NULL
-  }
+  config <- read_config_file(config_file)
 
   for (setting in names(default_settings)) {
     value <- get_setting(setting, config, default_settings)
@@ -50,18 +39,45 @@ read_settings <- function(filename) {
   }
 }
 
+read_config_file <- function(config_file) {
+  if (is.null(config_file)) {
+    return(NULL)
+  }
+
+  if (endsWith(config_file, ".R")) {
+    config <- new.env()
+    read <- function(file) {
+      sys.source(file, config)
+      config
+    }
+    malformed <- function(e) {
+      stop("Malformed config file, ensure it is valid R syntax\n  ", conditionMessage(e), call. = FALSE)
+    }
+  } else {
+    read <- function(file) read.dcf(file, all = TRUE)
+    malformed <- function(e) {
+      stop("Malformed config file, ensure it ends in a newline\n  ", conditionMessage(e), call. = FALSE)
+    }
+  }
+  tryCatch(read(config_file), warning = malformed, error = malformed)
+}
+
 get_setting <- function(setting, config, defaults) {
   option <- getOption(paste(sep = ".", "lintr", setting))
   if (!is.null(option)) {
     option
   } else if (!is.null(config[[setting]])) {
-    malformed <- function(e) {
-      stop("Malformed config setting '", setting, "'\n  ", conditionMessage(e), call. = FALSE)
+    if (is.environment(config)) {
+      config[[setting]]
+    } else {
+      malformed <- function(e) {
+        stop("Malformed config setting '", setting, "'\n  ", conditionMessage(e), call. = FALSE)
+      }
+      tryCatch(
+        eval(parse(text = config[[setting]])),
+        error = malformed
+      )
     }
-    tryCatch(
-      eval(parse(text = config[[setting]])),
-      error = malformed
-    )
   } else {
     defaults[[setting]]
   }
