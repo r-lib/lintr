@@ -174,19 +174,19 @@ test_that("allow_preamble applies as intended", {
     print(letters)
   ")
   expect_lint(lines, NULL, linter_preamble)
-  expect_lint(lines, lint_msg, linter_preamble)
+  expect_lint(lines, list(list(line_number = 2L), list(line_number = 3L)), linter_no_preamble)
 
   lines <- trim_some("
     opts_chunk$set(eval = FALSE)
     suppressPackageStartupMessages({
       library(dplyr)
       library(knitr)
+    })
 
     print(letters)
-    })
   ")
   expect_lint(lines, NULL, linter_preamble)
-  expect_lint(lines, lint_msg, linter_preamble)
+  expect_lint(lines, list(list(line_number = 3L), list(line_number = 4L)), linter_no_preamble)
 
   lines <- trim_some("
     opts_chunk$set(eval = FALSE)
@@ -196,7 +196,7 @@ test_that("allow_preamble applies as intended", {
     print(letters)
   ")
   expect_lint(lines, NULL, linter_preamble)
-  expect_lint(lines, lint_msg, linter_preamble)
+  expect_lint(lines, list(list(line_number = 2L), list(line_number = 3L)), linter_no_preamble)
 
   lines <- trim_some("
     opts_chunk$set(eval = FALSE)
@@ -206,7 +206,7 @@ test_that("allow_preamble applies as intended", {
     print(letters)
   ")
   expect_lint(lines, NULL, linter_preamble)
-  expect_lint(lines, lint_msg, linter_preamble)
+  expect_lint(lines, list(list(line_number = 2L), list(line_number = 3L)), linter_no_preamble)
 
   lines <- trim_some("
     fun()
@@ -214,5 +214,5 @@ test_that("allow_preamble applies as intended", {
     oops()
   ")
   expect_lint(lines, NULL, linter_preamble)
-  expect_lint(lines, lint_msg, linter_preamble)
+  expect_lint(lines, lint_msg, linter_no_preamble)
 })
