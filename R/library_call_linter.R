@@ -49,26 +49,18 @@
 #' @export
 library_call_linter <- function(allow_preamble = TRUE) {
   attach_call <- "text() = 'library' or text() = 'require'"
+  unsuppressed_call <- glue("not( {attach_call} or starts-with(text(), 'suppress'))")
   if (allow_preamble) {
-    xpath <- glue("
-      //SYMBOL_FUNCTION_CALL[{ attach_call }][last()]
-        /preceding::expr
-        /SYMBOL_FUNCTION_CALL[
-          not({ attach_call } or starts-with(text(), 'suppress'))
-          and @line1 > //SYMBOL_FUNCTION_CALL[{ attach_call }][1]/@line1
-        ][last()]
-        /following::expr[SYMBOL_FUNCTION_CALL[{ attach_call }]]
-        /parent::expr
-    ")
-  } else {
-    xpath <- glue("
-      //SYMBOL_FUNCTION_CALL[{ attach_call }][last()]
-        /preceding::expr
-        /SYMBOL_FUNCTION_CALL[not({ attach_call } or starts-with(text(), 'suppress'))][last()]
-        /following::expr[SYMBOL_FUNCTION_CALL[{ attach_call }]]
-        /parent::expr
-    ")
+    unsuppressed_call <-
+      paste(unsuppressed_call, "and", glue("@line1 > //SYMBOL_FUNCTION_CALL[{ attach_call }][1]/@line1"))
   }
+  xpath <- glue("
+    //SYMBOL_FUNCTION_CALL[{ attach_call }][last()]
+      /preceding::expr
+      /SYMBOL_FUNCTION_CALL[{ unsuppressed_call }][last()]
+      /following::expr[SYMBOL_FUNCTION_CALL[{ attach_call }]]
+      /parent::expr
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "file")) {
