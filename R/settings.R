@@ -59,7 +59,7 @@ read_config_file <- function(config_file) {
       out <- lapply(names(dcf_values), function(setting) {
         tryCatch(
           eval(parse(text = dcf_values[[setting]], keep.source = FALSE)),
-          error = stop("Malformed config setting '", setting, "'\n  ", conditionMessage(e), call. = FALSE)
+          error = function(e) stop("Malformed config setting '", setting, "'\n  ", conditionMessage(e), call. = FALSE)
         )
       })
       names(out) <- names(dcf_values)
