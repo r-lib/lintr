@@ -301,7 +301,6 @@ settings <- NULL
   }
   if ("keep.parse.data" %in% formalArgs(sys.source)) {
     sys_source <- function(...) sys.source(..., keep.parse.data = FALSE, keep.source = FALSE)
-    )
   } else {
     sys_source <- function(...) sys.source(..., keep.source = FALSE)
   }
