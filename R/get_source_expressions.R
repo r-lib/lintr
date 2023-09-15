@@ -62,7 +62,7 @@ get_source_expressions <- function(filename, lines = NULL) {
   on.exit(reset_lang(old_lang))
 
   source_expression$lines <- if (is.null(lines)) {
-    read_lines(filename)
+    read_lines(file(filename, open = "r"))
   } else {
     lines
   }

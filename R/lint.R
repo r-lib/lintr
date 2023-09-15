@@ -43,6 +43,12 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
+
+  if (isTRUE(parse_settings)) {
+    read_settings(filename)
+    on.exit(clear_settings(), add = TRUE)
+  }
+
   lines <- get_lines(filename, text)
 
   if (needs_tempfile) {
@@ -55,11 +61,6 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   filename <- normalizePath(filename, mustWork = !inline_data) # to ensure a unique file in cache
   source_expressions <- get_source_expressions(filename, lines)
-
-  if (isTRUE(parse_settings)) {
-    read_settings(filename)
-    on.exit(clear_settings(), add = TRUE)
-  }
 
   linters <- define_linters(linters)
   linters <- Map(validate_linter_object, linters, names(linters))
@@ -754,12 +755,14 @@ maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
 
 get_lines <- function(filename, text) {
   if (!is.null(text)) {
-    strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
+    conn <- textConnection(text)
   } else if (re_matches(filename, rex(newline))) {
-    strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
+    text <- gsub("\n$", "", filename)
+    conn <- textConnection(text)
   } else {
-    read_lines(filename)
+    conn <- file(filename, open = "r")
   }
+  read_lines(conn)
 }
 
 zap_temp_filename <- function(res, needs_tempfile) {
