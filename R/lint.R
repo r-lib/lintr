@@ -43,28 +43,22 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
-
-  # read_settings() is done below, so this may not be set yet
-  encoding <- get_setting(settings, "encoding")
-  lines <- get_lines(filename, text, encoding)
+  lines <- get_lines(filename, text)
 
   if (needs_tempfile) {
     filename <- tempfile()
-    on.exit(unlink(filename), add = TRUE)
-    local({
-      con <- file(filename, open = "w", encoding = encoding)
-      on.exit(close(con))
-      writeLines(text = lines, con = con, sep = "\n")
-    })
-  }
-
-  if (isTRUE(parse_settings)) {
-    read_settings(filename)
-    on.exit(clear_settings(), add = TRUE)
+    con <- file(filename, open = "w", encoding = settings$encoding)
+    writeLines(text = lines, con = con, sep = "\n")
+    close(con)
   }
 
   filename <- normalizePath(filename, mustWork = !inline_data) # to ensure a unique file in cache
   source_expressions <- get_source_expressions(filename, lines)
+
+  if (isTRUE(parse_settings)) {
+    read_settings(filename)
+    on.exit(clear_settings, add = TRUE)
+  }
 
   linters <- define_linters(linters)
   linters <- Map(validate_linter_object, linters, names(linters))
@@ -150,7 +144,7 @@ lint_dir <- function(path = ".", ...,
 
   if (isTRUE(parse_settings)) {
     read_settings(path)
-    on.exit(clear_settings(), add = TRUE)
+    on.exit(clear_settings, add = TRUE)
 
     exclusions <- c(exclusions, settings$exclusions)
   }
@@ -254,7 +248,7 @@ lint_package <- function(path = ".", ...,
 
   if (parse_settings) {
     read_settings(pkg_path)
-    on.exit(clear_settings(), add = TRUE)
+    on.exit(clear_settings, add = TRUE)
   }
 
   exclusions <- normalize_exclusions(
@@ -757,13 +751,13 @@ maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
   lints
 }
 
-get_lines <- function(filename, text = NULL, encoding) {
+get_lines <- function(filename, text) {
   if (!is.null(text)) {
     strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
   } else if (re_matches(filename, rex(newline))) {
     strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
   } else {
-    read_lines(filename, encoding = encoding)
+    read_lines(filename)
   }
 }
 
