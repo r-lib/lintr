@@ -35,6 +35,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{object_usage_linter}}}
 \item{\code{\link{paste_linter}}}
+\item{\code{\link{pipe_consistency_linter}}}
 \item{\code{\link{quotes_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{semicolon_linter}}}

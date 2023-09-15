@@ -19,7 +19,7 @@ The following tags exist:
 \itemize{
 \item{\link[=best_practices_linters]{best_practices} (53 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (8 linters)}
-\item{\link[=configurable_linters]{configurable} (33 linters)}
+\item{\link[=configurable_linters]{configurable} (34 linters)}
 \item{\link[=consistency_linters]{consistency} (22 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
@@ -28,9 +28,9 @@ The following tags exist:
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
-\item{\link[=readability_linters]{readability} (53 linters)}
+\item{\link[=readability_linters]{readability} (54 linters)}
 \item{\link[=robustness_linters]{robustness} (14 linters)}
-\item{\link[=style_linters]{style} (37 linters)}
+\item{\link[=style_linters]{style} (38 linters)}
 }
 }
 \section{Linters}{
@@ -99,6 +99,7 @@ The following linters exist:
 \item{\code{\link{paren_body_linter}} (tags: default, readability, style)}
 \item{\code{\link{paste_linter}} (tags: best_practices, configurable, consistency)}
 \item{\code{\link{pipe_call_linter}} (tags: readability, style)}
+\item{\code{\link{pipe_consistency_linter}} (tags: configurable, readability, style)}
 \item{\code{\link{pipe_continuation_linter}} (tags: default, readability, style)}
 \item{\code{\link{quotes_linter}} (tags: configurable, consistency, default, readability, style)}
 \item{\code{\link{redundant_equals_linter}} (tags: best_practices, common_mistakes, efficiency, readability)}
