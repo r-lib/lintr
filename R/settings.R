@@ -13,7 +13,7 @@
 #' This file is a dcf file, see [base::read.dcf()] for details.
 #' @param filename source file to be linted
 read_settings <- function(filename) {
-  clear_settings()
+  reset_settings()
 
   config_file <- find_config(filename)
   default_encoding <- find_default_encoding(filename)
@@ -36,7 +36,7 @@ read_settings <- function(filename) {
   }
 
   for (setting in names(default_settings)) {
-    value <- get_text_setting(setting, config, default_settings)
+    value <- get_setting(setting, config, default_settings)
     if (setting == "exclusions") {
       if (!is.null(config_file)) {
         root <- dirname(config_file)
@@ -50,7 +50,7 @@ read_settings <- function(filename) {
   }
 }
 
-get_text_setting <- function(setting, config, defaults) {
+get_setting <- function(setting, config, defaults) {
   option <- getOption(paste(sep = ".", "lintr", setting))
   if (!is.null(option)) {
     option
@@ -67,12 +67,11 @@ get_text_setting <- function(setting, config, defaults) {
   }
 }
 
-get_setting <- function(settings, key, defaults = default_settings) {
-  settings[[key]] %||% defaults[[key]]
-}
 
-clear_settings <- function() {
-  rm(list = ls(settings), envir = settings)
+reset_settings <- function() {
+  for (setting in names(default_settings)) {
+    settings[[setting]] <- default_settings[[setting]]
+  }
 }
 
 find_default_encoding <- function(filename) {
