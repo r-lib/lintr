@@ -23,7 +23,7 @@
 #'   "   list of the files and lines to exclude, or just the filenames if you want to exclude the entire file, or the",
 #'   "   directory names if you want to exclude all files in a directory."
 #' )
-exclude <- function(lints, exclusions = settings$exclusions %||% default_settings$exclusions, linter_names = NULL, ...) {
+exclude <- function(lints, exclusions = get_setting(settings, "exclusions"), linter_names = NULL, ...) {
   if (length(lints) <= 0L) {
     return(lints)
   }
@@ -94,12 +94,12 @@ line_info <- function(line_numbers, type = c("start", "end")) {
 #'
 #' @return A possibly named list of excluded lines, possibly for specific linters.
 parse_exclusions <- function(file,
-                             exclude = settings$exclude %||% default_settings$exclude,
-                             exclude_next = settings$exclude_next %||% default_settings$exclude_next,
-                             exclude_start = settings$exclude_start %||% default_settings$exclude_start,
-                             exclude_end = settings$exclude_end %||% default_settings$exclude_end,
-                             exclude_linter = settings$exclude_linter %||% default_settings$exclude_linter,
-                             exclude_linter_sep = settings$exclude_linter_sep %||% default_settings$exclude_linter_sep,
+                             exclude = get_setting(settings, "exclude"),
+                             exclude_next = get_setting(settings, "exclude_next"),
+                             exclude_start = get_setting(settings, "exclude_start"),
+                             exclude_end = get_setting(settings, "exclude_end"),
+                             exclude_linter = get_setting(settings, "exclude_linter"),
+                             exclude_linter_sep = get_setting(settings, "exclude_linter_sep"),
                              lines = NULL,
                              linter_names = NULL) {
   if (is.null(lines)) {

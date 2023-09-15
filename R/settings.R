@@ -36,7 +36,7 @@ read_settings <- function(filename) {
   }
 
   for (setting in names(default_settings)) {
-    value <- get_setting(setting, config, default_settings)
+    value <- get_text_setting(setting, config, default_settings)
     if (setting == "exclusions") {
       if (!is.null(config_file)) {
         root <- dirname(config_file)
@@ -50,7 +50,7 @@ read_settings <- function(filename) {
   }
 }
 
-get_setting <- function(setting, config, defaults) {
+get_text_setting <- function(setting, config, defaults) {
   option <- getOption(paste(sep = ".", "lintr", setting))
   if (!is.null(option)) {
     option
@@ -65,6 +65,10 @@ get_setting <- function(setting, config, defaults) {
   } else {
     defaults[[setting]]
   }
+}
+
+get_setting <- function(settings, key, defaults = default_settings) {
+  settings[[key]] %||% defaults[[key]]
 }
 
 clear_settings <- function() {

@@ -45,7 +45,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   inline_data <- !is.null(text) || needs_tempfile
 
   # read_settings() is done below, so this may not be set yet
-  encoding <- settings$encoding %||% default_settings$encoding
+  encoding <- get_setting(settings, "encoding")
   lines <- get_lines(filename, text, encoding)
 
   if (needs_tempfile) {
@@ -318,7 +318,7 @@ get_lints <- function(expr, linter, linter_fun, lint_cache, lines) {
 
 define_linters <- function(linters = NULL) {
   if (is.null(linters)) {
-    linters <- settings$linters %||% default_settings$linters
+    linters <- get_setting(settings, "linters")
     names(linters) <- auto_names(linters)
   } else if (is_linter(linters)) {
     linters <- list(linters)
