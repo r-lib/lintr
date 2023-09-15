@@ -1,9 +1,11 @@
 test_that("pipe_consistency skips allowed usage", {
   skip_if_not_r_version("4.1.0")
-  expect_lint("1:3 %>% mean() %>% as.character()", NULL, pipe_consistency_linter())
-  expect_lint("1:3 |> mean() |> as.character()", NULL, pipe_consistency_linter())
+  linter <- pipe_consistency_linter()
+
+  expect_lint("1:3 %>% mean() %>% as.character()", NULL, )
+  expect_lint("1:3 |> mean() |> as.character()", NULL, linter)
   # With no pipes
-  expect_lint("x <- 1:5", NULL, pipe_consistency_linter())
+  expect_lint("x <- 1:5", NULL, linter)
   # Across multiple lines
   expect_lint(
     trim_some("
@@ -12,20 +14,22 @@ test_that("pipe_consistency skips allowed usage", {
         as.character()
     "),
     NULL,
-    pipe_consistency_linter()
+    linter
   )
 })
 
 test_that("pipe_consistency lints inconsistent usage", {
   skip_if_not_r_version("4.1.0")
+  linter <- pipe_consistency_linter()
   expected_msg <- rex("Found 1 instances of %>% and 1 instances of |>. Stick to one pipe operator.")
+
   expect_lint(
     "1:3 |> mean() %>% as.character()",
     list(
       list(message = expected_msg, line_number = 1L, column_number = 5L),
       list(message = expected_msg, line_number = 1L, column_number = 15L)
     ),
-    pipe_consistency_linter()
+    linter
   )
 
   expect_lint(
@@ -34,7 +38,7 @@ test_that("pipe_consistency lints inconsistent usage", {
       list(message = expected_msg, line_number = 1L, column_number = 5L),
       list(message = expected_msg, line_number = 1L, column_number = 16L)
     ),
-    pipe_consistency_linter()
+    linter
   )
 
   expect_lint(
@@ -47,7 +51,7 @@ test_that("pipe_consistency lints inconsistent usage", {
       list(message = expected_msg, line_number = 1L, column_number = 5L),
       list(message = expected_msg, line_number = 2L, column_number = 10L)
     ),
-    pipe_consistency_linter()
+    linter
   )
 
   expected_msg_multi <- rex("Found 1 instances of %>% and 2 instances of |>. Stick to one pipe operator.")
@@ -58,7 +62,7 @@ test_that("pipe_consistency lints inconsistent usage", {
       list(message = expected_msg_multi, line_number = 1L, column_number = 15L),
       list(message = expected_msg_multi, line_number = 1L, column_number = 25L)
     ),
-    pipe_consistency_linter()
+    linter
   )
 })
 
@@ -149,29 +153,16 @@ test_that("pipe_consistency_linter works with %>% argument", {
 
 test_that("pipe_consistency_linter works with other magrittr pipes", {
   skip_if_not_r_version("4.1.0")
-
-  expect_lint(
-    "1:3 %>% mean() %T% print()",
-    NULL,
-    pipe_consistency_linter()
-  )
-
+  linter <- pipe_consistency_linter()
   expected_message <- rex("Found 1 instances of %>% and 1 instances of |>. Stick to one pipe operator.")
 
+  expect_lint("1:3 %>% mean() %T% print()", NULL, linter )
   expect_lint(
     "1:3 |> mean() %T>% print()",
     list(
-      list(
-        message = expected_message,
-        line_number = 1L,
-        column_number = 5L
-      ),
-      list(
-        message = expected_message,
-        line_number = 1L,
-        column_number = 15L
-      )
+      list(message = expected_message, line_number = 1L, column_number = 5L),
+      list(message = expected_message, line_number = 1L, column_number = 15L)
     ),
-    pipe_consistency_linter()
+    linter
   )
 })
