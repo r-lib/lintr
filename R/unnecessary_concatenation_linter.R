@@ -67,28 +67,29 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
 
   non_constant_cond <- "SYMBOL or (expr and not(OP-COLON and count(expr[SYMBOL or expr]) != 2))"
 
-  to_pipe_xpath <- "
+  pipes <- setdiff(magrittr_pipes, "%$%")
+  to_pipe_xpath <- glue("
     ./preceding-sibling::*[1][
       self::PIPE or
-      self::SPECIAL[text() = '%>%']
+      self::SPECIAL[{ xp_text_in_table(pipes) }]
     ]
-  "
+  ")
   if (allow_single_expression) {
     zero_arg_cond <-
-      glue::glue("count(expr) = 1 and not( {to_pipe_xpath} / preceding-sibling::expr[ {non_constant_cond} ])")
+      glue("count(expr) = 1 and not( {to_pipe_xpath} / preceding-sibling::expr[ {non_constant_cond} ])")
     one_arg_cond <-
-      glue::glue("count(expr) = 2 and not(expr[2][ {non_constant_cond} ])")
+      glue("count(expr) = 2 and not(expr[2][ {non_constant_cond} ])")
   } else {
-    zero_arg_cond <- glue::glue("count(expr) = 1 and not( {to_pipe_xpath} )")
+    zero_arg_cond <- glue("count(expr) = 1 and not( {to_pipe_xpath} )")
     one_arg_cond <- "count(expr) = 2 and not(expr[2]/SYMBOL[text() = '...'])"
-    path_to_non_constant <- glue::glue("./expr[2][ {non_constant_cond} ]")
+    path_to_non_constant <- glue("./expr[2][ {non_constant_cond} ]")
 
     msg_const_expr <- paste(
       'Unneeded concatenation of a simple expression. Remove the "c" call,',
       'replacing with "as.vector" if using "c" to string attributes, e.g. in converting an array to a vector.'
     )
   }
-  call_xpath <- glue::glue("
+  call_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'c']
     /parent::expr
     /parent::expr[
@@ -104,11 +105,11 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
     }
 
     xml <- source_expression$xml_parsed_content
-    c_calls <- xml2::xml_find_all(xml, call_xpath)
+    c_calls <- xml_find_all(xml, call_xpath)
 
     # bump count(args) by 1 if inside a pipeline
-    num_args <- as.integer(xml2::xml_find_num(c_calls, num_args_xpath)) +
-      as.integer(!is.na(xml2::xml_find_first(c_calls, to_pipe_xpath)))
+    num_args <- as.integer(xml_find_num(c_calls, num_args_xpath)) +
+      as.integer(!is.na(xml_find_first(c_calls, to_pipe_xpath)))
     # NB: the xpath guarantees num_args is 0, 1, or 2. 2 comes
     #   in "a" %>% c("b").
     # TODO(michaelchirico): can we handle this all inside the XPath with reasonable concision?
@@ -117,7 +118,7 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
     num_args <- num_args[is_unneeded]
     msg <- ifelse(num_args == 0L, msg_empty, msg_const)
     if (!allow_single_expression) {
-      is_single_expression <- !is.na(xml2::xml_find_first(c_calls, path_to_non_constant))
+      is_single_expression <- !is.na(xml_find_first(c_calls, path_to_non_constant))
       msg[is_single_expression] <- msg_const_expr
     }
 

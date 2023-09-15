@@ -345,3 +345,38 @@ patrick::with_parameters_test_that("fixed replacements are correct", {
   "[\\xa]",               "[\\xa]",               "\\n"
 ))
 # styler: on
+
+test_that("'unescaped' regex can optionally be skipped", {
+  linter <- fixed_regex_linter(allow_unescaped = TRUE)
+
+  expect_lint("grepl('a', x)", NULL, linter)
+  expect_lint("str_detect(x, 'a')", NULL, linter)
+  expect_lint("grepl('[$]', x)", rex::rex('Here, you can use "$"'), linter)
+})
+
+local({
+  pipes <- pipes(exclude = c("%$%", "%T>%"))
+  patrick::with_parameters_test_that(
+    "linter is pipe-aware",
+    {
+      linter <- fixed_regex_linter()
+      lint_msg <- "This regular expression is static"
+
+      expect_lint(paste("x", pipe, "grepl(pattern = 'a')"), lint_msg, linter)
+      expect_lint(paste("x", pipe, "grepl(pattern = '^a')"), NULL, linter)
+      expect_lint(paste("x", pipe, "grepl(pattern = 'a', fixed = TRUE)"), NULL, linter)
+      expect_lint(paste("x", pipe, "str_detect('a')"), lint_msg, linter)
+      expect_lint(paste("x", pipe, "str_detect('^a')"), NULL, linter)
+      expect_lint(paste("x", pipe, "str_detect(fixed('a'))"), NULL, linter)
+
+      expect_lint(paste("x", pipe, "gsub(pattern = 'a', replacement = '')"), lint_msg, linter)
+      expect_lint(paste("x", pipe, "gsub(pattern = '^a', replacement = '')"), NULL, linter)
+      expect_lint(paste("x", pipe, "gsub(pattern = 'a', replacement = '', fixed = TRUE)"), NULL, linter)
+      expect_lint(paste("x", pipe, "str_replace('a', '')"), lint_msg, linter)
+      expect_lint(paste("x", pipe, "str_replace('^a', '')"), NULL, linter)
+      expect_lint(paste("x", pipe, "str_replace(fixed('a'), '')"), NULL, linter)
+    },
+    pipe = pipes,
+    .test_name = names(pipes)
+  )
+})

@@ -40,7 +40,7 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
     conds <- c(conds, "self::OP-COMMA[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN]]")
   }
 
-  xpath <- glue::glue("//SYMBOL_FUNCTION_CALL/parent::expr/parent::expr/*[{xp_or(conds)}]")
+  xpath <- glue("//SYMBOL_FUNCTION_CALL/parent::expr/parent::expr/*[{xp_or(conds)}]")
   to_function_xpath <- "string(./preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)"
 
   Linter(function(source_expression) {
@@ -50,8 +50,8 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
 
     xml <- source_expression$full_xml_parsed_content
 
-    missing_args <- xml2::xml_find_all(xml, xpath)
-    function_call_name <- get_r_string(xml2::xml_find_chr(missing_args, to_function_xpath))
+    missing_args <- xml_find_all(xml, xpath)
+    function_call_name <- get_r_string(xml_find_chr(missing_args, to_function_xpath))
 
     xml_nodes_to_lints(
       missing_args[!function_call_name %in% except],

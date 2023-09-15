@@ -55,7 +55,7 @@ test_that("arguments handle trailing assignment operators correctly", {
 
   expect_lint(
     "foo(bar =\n1)",
-    rex::rex("= should not be trailing"),
+    rex::rex("= should not be trailing at the end of a line."),
     assignment_linter(allow_trailing = FALSE)
   )
 
@@ -161,5 +161,26 @@ test_that("allow_trailing interacts correctly with comments in braced expression
     "),
     NULL,
     linter
+  )
+})
+
+test_that("%<>% throws a lint", {
+  expect_lint("x %<>% sum()", "Avoid the assignment pipe %<>%", assignment_linter())
+  expect_lint("x %<>% sum()", NULL, assignment_linter(allow_pipe_assign = TRUE))
+
+  # interaction with allow_trailing
+  expect_lint("x %<>%\n  sum()", "Assignment %<>% should not be trailing", assignment_linter(allow_trailing = FALSE))
+})
+
+test_that("multiple lints throw correct messages", {
+  expect_lint(
+    "{ x <<- 1; y ->> 2; z -> 3; x %<>% as.character() }",
+    list(
+      list(message = "<<- can have hard-to-predict behavior"),
+      list(message = "->> can have hard-to-predict behavior"),
+      list(message = "Use <-, not ->"),
+      list(message = "Avoid the assignment pipe %<>%")
+    ),
+    assignment_linter(allow_cascading_assign = FALSE)
   )
 })

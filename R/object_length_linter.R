@@ -44,11 +44,11 @@ object_length_linter <- function(length = 30L) {
 
     xml <- source_expression$full_xml_parsed_content
 
-    assignments <- xml2::xml_find_all(xml, object_name_xpath)
+    assignments <- xml_find_all(xml, object_name_xpath)
 
     # Retrieve assigned name
     nms <- strip_names(
-      xml2::xml_text(assignments)
+      xml_text(assignments)
     )
 
     # run namespace_imports at run-time, not "compile" time to allow package structure to change

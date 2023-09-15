@@ -116,7 +116,7 @@ test_that("reverse seq is ok", {
 
   expect_lint(
     "function(x) { length(x):1 }",
-    rex::rex("length(...):1", anything, "Use seq_along"),
+    rex::rex("length(...):1", anything, "Use rev(seq_along(...))"),
     seq_linter()
   )
 })
@@ -157,4 +157,13 @@ test_that("Message vectorization works for multiple lints", {
     ),
     seq_linter()
   )
+})
+
+test_that("Message recommends rev() correctly", {
+  linter <- seq_linter()
+
+  expect_lint(".N:1", rex::rex("Use rev(seq_len(.N))"), linter)
+  expect_lint("n():1", rex::rex("Use rev(seq_len(n()))"), linter)
+  expect_lint("nrow(x):1", rex::rex("Use rev(seq_len(nrow(...)))"), linter)
+  expect_lint("length(x):1", rex::rex("Use rev(seq_along(...))"), linter)
 })
