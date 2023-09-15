@@ -5,7 +5,7 @@ test_that("redundant_equals_linter skips allowed usages", {
   expect_lint("x != 'TRUE'", NULL, redundant_equals_linter())
 })
 
-test_that("mutliple lints return correct custom messages", {
+test_that("multiple lints return correct custom messages", {
   expect_lint(
     "list(x == TRUE, y != TRUE)",
     list(

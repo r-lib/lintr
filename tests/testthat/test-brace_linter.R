@@ -238,7 +238,7 @@ test_that("brace_linter lints spaces before open braces", {
   # should ignore strings and comments, as in regexes:
   expect_lint("grepl('(iss){2}', 'Mississippi')", NULL, linter)
   expect_lint(
-    "x <- 123 # dont flag (paren){brace} if inside a comment",
+    "x <- 123 # don't flag (paren){brace} if inside a comment",
     NULL,
     linter
   )
@@ -470,7 +470,7 @@ test_that("code with pipes is handled correctly", {
 
   expect_lint(
     trim_some("
-      1:4 %>% {
+      1:4 %!>% {
           sum(.)
         }
     "),
@@ -481,7 +481,7 @@ test_that("code with pipes is handled correctly", {
   # %>%\n{ is allowed
   expect_lint(
     trim_some("
-      1:4 %>%
+      1:4 %T>%
         {
           sum(.)
         }
@@ -492,7 +492,7 @@ test_that("code with pipes is handled correctly", {
 
   expect_lint(
     trim_some("
-      1:4 %>% { sum(.)
+      xx %<>% { sum(.)
         }
     "),
     list(
@@ -503,9 +503,9 @@ test_that("code with pipes is handled correctly", {
 
   expect_lint(
     trim_some("
-      1:4 %>%
+      x %>%
         {
-          sum(.) }
+          uvwxyz }
     "),
     list(
       list(message = lint_msg_closed, line_number = 3L, column_number = 12L)

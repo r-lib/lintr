@@ -26,7 +26,7 @@ test_that("single check", {
   expect_error(expect_lint("a=1", c(message = lint_msg, lineXXX = 1L), linter), "invalid field")
 
   expect_failure(expect_lint("foo ()", list(ranges = list(c(2L, 2L))), function_left_parentheses_linter()))
-  expect_success(expect_lint("\t1", list(ranges = list(c(1L, 1L))), no_tab_linter()))
+  expect_success(expect_lint("\t1", list(ranges = list(c(1L, 1L))), whitespace_linter()))
   expect_success(expect_lint("a=1", list(message = lint_msg, line_number = 1L), linter))
   expect_failure(expect_lint("a=1", list(2L, lint_msg), linter))
 
@@ -48,7 +48,7 @@ test_that("multiple checks", {
   expect_success(expect_lint("a=1; b=2", list(list(line_number = 1L), list(line_number = 2L)), linter))
   expect_failure(expect_lint("a=1; b=2", list(list(line_number = 2L), list(line_number = 2L)), linter))
   expect_success(
-    expect_lint("\t1\n\t2", list("tabs", list(column_number = 1L, ranges = list(c(1L, 1L)))), no_tab_linter())
+    expect_lint("\t1\n\t2", list("tabs", list(column_number = 1L, ranges = list(c(1L, 1L)))), whitespace_linter())
   )
 })
 
@@ -65,8 +65,8 @@ test_that("expect_lint_free works", {
 })
 
 test_that("expect_lint doesn't change language", {
-  withr::with_envvar(c("LANGUAGE" = "mr"), {
+  withr::with_envvar(c(LANGUAGE = "mr"), {
     expect_success(expect_lint("a=1", lint_msg, linter))
-    expect_equal(Sys.getenv("LANGUAGE"), "mr")
+    expect_identical(Sys.getenv("LANGUAGE"), "mr")
   })
 })

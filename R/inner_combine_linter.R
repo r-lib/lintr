@@ -76,9 +76,9 @@ inner_combine_linter <- function() {
     log_args_cond,
     lubridate_args_cond
   )
-  xpath <- glue::glue("
+  xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'c']
-    /parent::expr
+    /parent::expr[count(following-sibling::expr) > 1]
     /following-sibling::expr[1][ {c_expr_cond} ]
     /parent::expr
   ")
@@ -90,7 +90,7 @@ inner_combine_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     matched_call <- xp_call_name(bad_expr, depth = 2L)
     lint_message <- paste(

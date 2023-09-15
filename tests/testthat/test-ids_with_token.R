@@ -6,7 +6,9 @@ test_that("ids_with_token works as expected", {
 
   # deprecated argument
   expect_warning(
-    old_arg <- ids_with_token(source_file = source_expression, value = "expr"),
+    {
+      old_arg <- ids_with_token(source_file = source_expression, value = "expr")
+    },
     "Argument source_file was deprecated"
   )
   expect_identical(old_arg, ref)

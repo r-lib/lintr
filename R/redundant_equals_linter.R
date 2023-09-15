@@ -36,11 +36,12 @@
 #' - [outer_negation_linter()]
 #' @export
 redundant_equals_linter <- function() {
-  xpath <- paste0(
-    c("//EQ", "//NE"),
-    "/parent::expr/expr[NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]/parent::expr",
-    collapse = " | "
-  )
+  xpath <- "
+  (//EQ | //NE)
+    /parent::expr
+    /expr[NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]
+    /parent::expr
+  "
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
@@ -49,8 +50,8 @@ redundant_equals_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
-    op <- xml2::xml_text(xml2::xml_find_first(bad_expr, "*[2]"))
+    bad_expr <- xml_find_all(xml, xpath)
+    op <- xml_text(xml_find_first(bad_expr, "*[2]"))
 
     xml_nodes_to_lints(
       bad_expr,

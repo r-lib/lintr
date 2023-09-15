@@ -7,7 +7,8 @@
 assignment_linter(
   allow_cascading_assign = TRUE,
   allow_right_assign = FALSE,
-  allow_trailing = TRUE
+  allow_trailing = TRUE,
+  allow_pipe_assign = FALSE
 )
 }
 \arguments{
@@ -17,6 +18,8 @@ If \code{FALSE}, \code{\link[base:assignOps]{<<-}} and \verb{->>} are not allowe
 \item{allow_right_assign}{Logical, default \code{FALSE}. If \code{TRUE}, \verb{->} and \verb{->>} are allowed.}
 
 \item{allow_trailing}{Logical, default \code{TRUE}. If \code{FALSE} then assignments aren't allowed at end of lines.}
+
+\item{allow_pipe_assign}{Logical, default \code{FALSE}. If \code{TRUE}, magrittr's \verb{\%<>\%} assignment is allowed.}
 }
 \description{
 Check that \verb{<-} is always used for assignment.
@@ -32,6 +35,11 @@ code_lines <- "1 -> x\n2 ->> y"
 writeLines(code_lines)
 lint(
   text = code_lines,
+  linters = assignment_linter()
+)
+
+lint(
+  text = "x \%<>\% as.character()",
   linters = assignment_linter()
 )
 
@@ -67,11 +75,17 @@ lint(
   linters = assignment_linter(allow_trailing = FALSE)
 )
 
+lint(
+  text = "x \%<>\% as.character()",
+  linters = assignment_linter(allow_pipe_assign = TRUE)
+)
+
 }
 \seealso{
 \itemize{
 \item \link{linters} for a complete list of linters available in lintr.
 \item \url{https://style.tidyverse.org/syntax.html#assignment-1}
+\item \url{https://style.tidyverse.org/pipes.html#assignment-2}
 }
 }
 \section{Tags}{

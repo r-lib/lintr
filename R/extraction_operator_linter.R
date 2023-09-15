@@ -52,7 +52,7 @@
 #' @export
 extraction_operator_linter <- function() {
   constant_nodes_in_brackets <- paste0("self::", c("expr", "OP-PLUS", "NUM_CONST", "STR_CONST"))
-  xpath <- glue::glue("
+  xpath <- glue("
   //OP-DOLLAR[not(preceding-sibling::expr[1]/SYMBOL[text() = 'self' or text() = '.self'])]
   |
   //OP-LEFT-BRACKET[
@@ -67,8 +67,8 @@ extraction_operator_linter <- function() {
     }
 
     xml <- source_expression$xml_parsed_content
-    bad_exprs <- xml2::xml_find_all(xml, xpath)
-    msgs <- sprintf("Use `[[` instead of `%s` to extract an element.", xml2::xml_text(bad_exprs))
+    bad_exprs <- xml_find_all(xml, xpath)
+    msgs <- sprintf("Use `[[` instead of `%s` to extract an element.", xml_text(bad_exprs))
 
     xml_nodes_to_lints(
       bad_exprs,

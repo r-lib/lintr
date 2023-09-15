@@ -90,4 +90,44 @@ test_that("edge cases are detected correctly", {
     list(message = rex::rex("reference to non-existent argument 3")),
     linter
   )
+
+  # #2131: xml2lang stripped necessary whitespace
+  expect_lint("sprintf('%s', if (A) '' else y)", NULL, linter)
+})
+
+local({
+  linter <- sprintf_linter()
+  unused_fmt_msg <- "too few arguments"
+  unused_arg_msg <- "one argument not used by format"
+  pipes <- pipes(exclude = "%$%")
+  patrick::with_parameters_test_that(
+    "piping into sprintf works",
+    {
+      expect_lint(paste("x", pipe, "sprintf(fmt = '%s')"), NULL, linter)
+      # no fmt= specified -> this is just 'sprintf("%s", "%s%s")', which won't lint
+      expect_lint(paste('"%s"', pipe, 'sprintf("%s%s")'), NULL, linter)
+      expect_lint(paste("x", pipe, "sprintf(fmt = '%s%s')"), unused_fmt_msg, linter)
+
+      # Cannot evaluate statically --> skip
+      expect_lint(paste("x", pipe, 'sprintf("a")'), NULL, linter)
+      # Nested pipes
+      expect_lint(
+        paste("'%%sb'", pipe, "sprintf('%s')", pipe, "sprintf('a')"),
+        if (getRversion() >= "4.1.0") list(column_number = nchar(paste("'%%sb'", pipe, "x")), message = unused_arg_msg),
+        linter
+      )
+      expect_lint(
+        paste("x", pipe, 'sprintf(fmt = "%s")', pipe, 'sprintf(fmt = "%s%s")'),
+        list(column_number = nchar(paste("x", pipe, 'sprintf(fmt = "%s")', pipe, "x")), message = unused_fmt_msg),
+        linter
+      )
+      expect_lint(
+        paste("x", pipe, 'sprintf(fmt = "%s%s")', pipe, 'sprintf(fmt = "%s")'),
+        list(column_number = nchar(paste("x", pipe, "x")), message = unused_fmt_msg),
+        linter
+      )
+    },
+    pipe = pipes,
+    .test_name = names(pipes)
+  )
 })

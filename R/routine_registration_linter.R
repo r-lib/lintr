@@ -31,29 +31,15 @@
 #' - <https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Registering-native-routines>
 #'
 #' @export
-routine_registration_linter <- function() {
+routine_registration_linter <- local({
   native_routine_callers <- c(".C", ".Call", ".Fortran", ".External")
-  xpath <- glue::glue("
-  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(native_routine_callers)} ]
-    /parent::expr
-    /following-sibling::expr[1]/STR_CONST
-    /parent::expr
-  ")
-
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml2::xml_find_all(xml, xpath)
-
-    xml_nodes_to_lints(
-      bad_expr,
-      source_expression = source_expression,
-      lint_message = "Register your native code routines with useDynLib and R_registerRoutines().",
-      type = "warning"
-    )
-  })
-}
+  make_linter_from_xpath(
+    xpath = glue("
+    //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(native_routine_callers)} ]
+      /parent::expr
+      /following-sibling::expr[1]/STR_CONST
+      /parent::expr
+    "),
+    lint_message = "Register your native code routines with useDynLib and R_registerRoutines()."
+  )
+})

@@ -35,7 +35,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 ifelse_censor_linter <- function() {
-  xpath <- glue::glue("
+  xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
     /parent::expr
     /following-sibling::expr[
@@ -53,11 +53,11 @@ ifelse_censor_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     matched_call <- xp_call_name(bad_expr)
-    operator <- xml2::xml_find_chr(bad_expr, "string(expr[2]/*[2])")
-    match_first <- !is.na(xml2::xml_find_first(bad_expr, "expr[2][expr[1] = following-sibling::expr[1]]"))
+    operator <- xml_find_chr(bad_expr, "string(expr[2]/*[2])")
+    match_first <- !is.na(xml_find_first(bad_expr, "expr[2][expr[1] = following-sibling::expr[1]]"))
     optimizer <- ifelse((operator %in% c("<", "<=")) == match_first, "pmin", "pmax")
     first_var <- rep_len("x", length(match_first))
     second_var <- rep_len("y", length(match_first))

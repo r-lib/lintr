@@ -1,5 +1,5 @@
 test_that("linter returns correct linting", {
-  linter <- undesirable_function_linter(fun = c("return" = NA, "log10" = "use log()"))
+  linter <- undesirable_function_linter(fun = c(return = NA, log10 = "use log()"))
   msg_return <- "Function \"return\" is undesirable.$"
   msg_log10 <- "Function \"log10\" is undesirable. As an alternative, use log\\(\\)."
 
@@ -22,11 +22,12 @@ test_that("linter returns correct linting", {
   )
   # regression test for #1050
   expect_lint("df$return <- 1", NULL, linter)
+  expect_lint("df@return <- 1", NULL, linter)
 })
 
 test_that("it's possible to NOT lint symbols", {
   linter <- undesirable_function_linter(
-    fun = c("dir" = NA, "log10" = "use log()"),
+    fun = c(dir = NA, log10 = "use log()"),
     symbol_is_undesirable = FALSE
   )
   expect_lint("dir <- 'path/to/a/directory'", NULL, linter)
@@ -34,16 +35,16 @@ test_that("it's possible to NOT lint symbols", {
 })
 
 test_that("undesirable_function_linter doesn't lint library and require calls", {
-  linter <- undesirable_function_linter(fun = c("foo" = NA))
+  linter <- undesirable_function_linter(fun = c(foo = NA))
   expect_lint("test::foo()", "undesirable", linter)
   expect_lint("foo::test()", NULL, linter)
   expect_lint("library(foo)", NULL, linter)
   expect_lint("require(foo)", NULL, linter)
 
-  linter <- undesirable_function_linter(fun = c("foo" = NA, "bar" = NA))
+  linter <- undesirable_function_linter(fun = c(foo = NA, bar = NA))
   expect_lint("library(foo)", NULL, linter)
 
-  linter <- undesirable_function_linter(fun = c("foo" = NA, "bar" = NA), symbol_is_undesirable = FALSE)
+  linter <- undesirable_function_linter(fun = c(foo = NA, bar = NA), symbol_is_undesirable = FALSE)
   expect_lint("library(foo)", NULL, linter)
 })
 

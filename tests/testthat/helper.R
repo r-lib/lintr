@@ -45,8 +45,8 @@ trim_some <- function(x, num = NULL) {
   rex::re_substitutes(x, rex::rex(start, n_times(any, num)), "", global = TRUE, options = "multi-line")
 }
 
-local_config <- function(config_dir, contents, .local_envir = parent.frame()) {
-  config_path <- file.path(config_dir, ".lintr")
+local_config <- function(config_dir, contents, filename = ".lintr", .local_envir = parent.frame()) {
+  config_path <- file.path(config_dir, filename)
   writeLines(contents, config_path)
   withr::defer(unlink(config_path), envir = .local_envir)
   config_path
@@ -60,4 +60,17 @@ skip_if_not_r_version <- function(min_version) {
 
 skip_if_not_utf8_locale <- function() {
   testthat::skip_if_not(l10n_info()[["UTF-8"]], "Not a UTF-8 locale")
+}
+
+pipes <- function(exclude = NULL) {
+  if (getRversion() < "4.1.0") exclude <- unique(c(exclude, "|>"))
+  all_pipes <- c(
+    standard = "%>%",
+    greedy = "%!>%",
+    tee = "%T>%",
+    assignment = "%<>%",
+    extraction = "%$%",
+    native = "|>"
+  )
+  all_pipes[!all_pipes %in% exclude]
 }

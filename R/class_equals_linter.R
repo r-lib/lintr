@@ -51,9 +51,9 @@ class_equals_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
-    operator <- xml2::xml_find_chr(bad_expr, "string(*[2])")
+    operator <- xml_find_chr(bad_expr, "string(*[2])")
     lint_message <- sprintf(
       "Instead of comparing class(x) with %s, use inherits(x, 'class-name') or is.<class> or is(x, 'class')",
       operator

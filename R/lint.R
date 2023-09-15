@@ -3,7 +3,7 @@
 #' * `lint()` lints a single file.
 #' * `lint_dir()` lints all files in a directory.
 #' * `lint_package()` lints all likely locations for R files in a package, i.e.
-#'   `R/`, `tests/`, `inst/`, `vignettes/`, `data-raw/`, and `demo/`.
+#'   `R/`, `tests/`, `inst/`, `vignettes/`, `data-raw/`, `demo/`, and `exec/`.
 #'
 #' Read `vignette("lintr")` to learn how to configure which linters are run
 #' by default.
@@ -35,18 +35,13 @@
 #'
 #' @export
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
-  # TODO(next release after 3.0.0): remove this deprecated workaround
-  dots <- list(...)
-  if (has_positional_logical(dots)) {
-    warning(
-      "'cache' is no longer available as a positional argument; please supply 'cache' as a named argument instead. ",
-      "This warning will be upgraded to an error in the next release."
-    )
-    cache <- dots[[1L]]
-    dots <- dots[-1L]
+  if (has_positional_logical(list(...))) {
+    stop("'cache' is no longer available as a positional argument; please supply 'cache' as a named argument instead.")
   }
 
-  needs_tempfile <- missing(filename) || rex::re_matches(filename, rex::rex(newline))
+  check_dots(...names(), c("exclude", "parse_exclusions"))
+
+  needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
   lines <- get_lines(filename, text)
 
@@ -75,9 +70,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   lint_obj <- define_cache_key(filename, inline_data, lines)
   lints <- retrieve_file(lint_cache, lint_obj, linters)
   if (!is.null(lints)) {
-    # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
-    # > exclude(lints, lines = lines, ...)
-    return(do.call(exclude, c(list(lints, lines = lines, linter_names = names(linters)), dots)))
+    return(exclude(lints, lines = lines, linter_names = names(linters), ...))
   }
 
   lints <- list()
@@ -102,9 +95,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   cache_file(lint_cache, filename, linters, lints)
   save_cache(lint_cache, filename, cache_path)
 
-  # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
-  # > exclude(lints, lines = lines, ...)
-  res <- do.call(exclude, c(list(lints, lines = lines, linter_names = names(linters)), dots))
+  res <- exclude(lints, lines = lines, linter_names = names(linters), ...)
 
   # simplify filename if inline
   zap_temp_filename(res, needs_tempfile)
@@ -117,6 +108,9 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 #' @param exclusions exclusions for [exclude()], relative to the package path.
 #' @param pattern pattern for files, by default it will take files with any of the extensions
 #' .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...).
+#' @param show_progress Logical controlling whether to show linting progress with a simple text
+#'   progress bar _via_ [utils::txtProgressBar()]. The default behavior is to show progress in
+#'   [interactive()] sessions not running a testthat suite.
 #'
 #' @examples
 #' if (FALSE) {
@@ -136,19 +130,18 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 lint_dir <- function(path = ".", ...,
                      relative_path = TRUE,
                      exclusions = list("renv", "packrat"),
-                     pattern = rex::rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"), end),
-                     parse_settings = TRUE) {
-  # TODO(next release after 3.0.0): remove this deprecated workaround
-  dots <- list(...)
-  if (has_positional_logical(dots)) {
-    warning(
+                     # TODO(r-lib/rex#85): Re-write in case-sensitive rex()
+                     pattern = "(?i)[.](r|rmd|qmd|rnw|rhtml|rrst|rtex|rtxt)$",
+                     parse_settings = TRUE,
+                     show_progress = NULL) {
+  if (has_positional_logical(list(...))) {
+    stop(
       "'relative_path' is no longer available as a positional argument; ",
-      "please supply 'relative_path' as a named argument instead. ",
-      "This warning will be upgraded to an error in the next release."
+      "please supply 'relative_path' as a named argument instead. "
     )
-    relative_path <- dots[[1L]]
-    dots <- dots[-1L]
   }
+
+  check_dots(...names(), c("lint", "exclude", "parse_exclusions"))
 
   if (isTRUE(parse_settings)) {
     read_settings(path)
@@ -156,6 +149,8 @@ lint_dir <- function(path = ".", ...,
 
     exclusions <- c(exclusions, settings$exclusions)
   }
+
+  if (is.null(show_progress)) show_progress <- interactive() && !identical(Sys.getenv("TESTTHAT"), "true")
 
   exclusions <- normalize_exclusions(
     exclusions,
@@ -175,17 +170,19 @@ lint_dir <- function(path = ".", ...,
   # Remove fully ignored files to avoid reading & parsing
   files <- drop_excluded(files, exclusions)
 
+  pb <- if (isTRUE(show_progress)) {
+    txtProgressBar(max = length(files), style = 3L)
+  }
+
   lints <- flatten_lints(lapply(
     files,
     function(file) {
-      maybe_report_progress()
-      # TODO: once relative_path= is fully deprecated as 2nd positional argument (see top of body), restore the cleaner:
-      # > lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
-      do.call(lint, c(list(file, parse_settings = FALSE, exclusions = exclusions), dots))
+      maybe_report_progress(pb)
+      lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
     }
   ))
 
-  maybe_report_progress(done = TRUE)
+  if (!is.null(pb)) close(pb)
 
   lints <- reorder_lints(lints)
 
@@ -229,17 +226,15 @@ drop_excluded <- function(files, exclusions) {
 lint_package <- function(path = ".", ...,
                          relative_path = TRUE,
                          exclusions = list("R/RcppExports.R"),
-                         parse_settings = TRUE) {
-  # TODO(next release after 3.0.0): remove this deprecated workaround
-  dots <- list(...)
-  if (has_positional_logical(dots)) {
-    warning(
+                         parse_settings = TRUE,
+                         show_progress = NULL) {
+  if (has_positional_logical(list(...))) {
+    # nocov start: dead code path
+    stop(
       "'relative_path' is no longer available as a positional argument; ",
-      "please supply 'relative_path' as a named argument instead. ",
-      "This warning will be upgraded to an error in the next release."
+      "please supply 'relative_path' as a named argument instead. "
     )
-    relative_path <- dots[[1L]]
-    dots <- dots[-1L]
+    # nocov end
   }
 
   if (length(path) > 1L) {
@@ -262,12 +257,13 @@ lint_package <- function(path = ".", ...,
     root = pkg_path
   )
 
-  r_directories <- file.path(pkg_path, c("R", "tests", "inst", "vignettes", "data-raw", "demo"))
-  # TODO: once relative_path= is fully deprecated as 2nd positional argument (see top of body), restore the cleaner:
-  # > lints <- lint_dir(r_directories, relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
-  lints <- do.call(
-    lint_dir,
-    c(list(r_directories, relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE), dots)
+  r_directories <- file.path(pkg_path, c("R", "tests", "inst", "vignettes", "data-raw", "demo", "exec"))
+  lints <- lint_dir(r_directories,
+    relative_path = FALSE,
+    exclusions = exclusions,
+    parse_settings = FALSE,
+    show_progress = show_progress,
+    ...
   )
 
   if (isTRUE(relative_path)) {
@@ -322,12 +318,12 @@ define_linters <- function(linters = NULL) {
   } else if (is_linter(linters)) {
     linters <- list(linters)
     names(linters) <- attr(linters[[1L]], "name", exact = TRUE)
-  } else if (!is.list(linters)) {
+  } else if (is.list(linters)) {
+    names(linters) <- auto_names(linters)
+  } else {
     name <- deparse(substitute(linters))
     linters <- list(linters)
     names(linters) <- name
-  } else {
-    names(linters) <- auto_names(linters)
   }
   linters
 }
@@ -560,7 +556,7 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 #' @export
 sarif_output <- function(lints, filename = "lintr_results.sarif") {
   if (!requireNamespace("jsonlite", quietly = TRUE)) {
-    stop("'jsonlite' is required to produce SARIF reports, please install to continue.")
+    stop("'jsonlite' is required to produce SARIF reports, please install to continue.") # nocov
   }
 
   # package path will be `NULL` unless it is a relative path
@@ -646,7 +642,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   if (startsWith(root_path_uri, "/")) {
     root_path_uri <- paste0("file://", root_path_uri)
   } else {
-    root_path_uri <- paste0("file:///", root_path_uri)
+    root_path_uri <- paste0("file:///", root_path_uri) # nocov
   }
 
   if (!endsWith(root_path_uri, "/")) {
@@ -737,16 +733,11 @@ has_positional_logical <- function(dots) {
     !nzchar(names2(dots)[1L])
 }
 
-maybe_report_progress <- function(done = FALSE) {
-  if (interactive() && !identical(Sys.getenv("TESTTHAT"), "true")) {
-    # nocov start
-    if (done) {
-      message()
-    } else {
-      message(".", appendLF = FALSE)
-    }
-    # nocov end
+maybe_report_progress <- function(pb) {
+  if (is.null(pb)) {
+    return(invisible())
   }
+  setTxtProgressBar(pb, getTxtProgressBar(pb) + 1L)
 }
 
 maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
@@ -764,7 +755,7 @@ maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
 get_lines <- function(filename, text) {
   if (!is.null(text)) {
     strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
-  } else if (rex::re_matches(filename, rex::rex(newline))) {
+  } else if (re_matches(filename, rex(newline))) {
     strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
   } else {
     read_lines(filename)
