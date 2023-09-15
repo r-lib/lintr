@@ -466,4 +466,14 @@ test_that("interaction of allow_lazy and allow_scoped", {
     rex::rex("Avoid implicit assignments in function calls."),
     linter
   )
+  expect_lint(
+    trim_some("
+      if (AA && any(idx <- foo())) {
+        stop('Invalid foo() output: ', toString(idx))
+      }
+      print(format(idx)) # NB: bad code! idx may not exist.
+    "),
+    NULL,
+    linter
+  )
 })
