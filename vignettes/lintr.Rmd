@@ -145,6 +145,9 @@ defaults_table <- data.frame(
   stringsAsFactors = FALSE
 )
 
+# avoid conflict when loading lintr in echo=TRUE cell below
+rm(default_settings)
+
 knitr::kable(defaults_table)
 ```
 
@@ -254,19 +257,24 @@ Beware that in such cases, a simple `get()` is not enough:
 library(lintr)
 linter_name <- "assignment_linter"
 
+show_lint <- function(l) {
+  lint_df <- as.data.frame(l)
+  print(lint_df[, c("line_number", "message", "linter")])
+}
+
 withr::with_tempfile("tmp", {
   writeLines("a = 1", tmp)
 
   # linter column is just 'get'
-  print(as.data.frame(lint(tmp, linters = get(linter_name)())))
+  show_lint(lint(tmp, linters = get(linter_name)()))
 
   this_linter <- get(linter_name)()
   attr(this_linter, "name") <- linter_name
   # linter column is 'assignment_linter'
-  print(as.data.frame(lint(tmp, linters = this_linter)))
+  show_lint(lint(tmp, linters = this_linter))
 
-  # more concise alternative: use eval(call(.))
-  print(as.data.frame(lint(tmp, linters = eval(call(linter_name)))))
+  # more concise alternative for this case: use eval(call(.))
+  show_lint(lint(tmp, linters = eval(call(linter_name))))
 })
 ```
 
