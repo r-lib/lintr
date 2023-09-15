@@ -174,7 +174,6 @@ Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name.
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
   terminal_newline <- TRUE
-  on.exit(close(file))
   lines <- withCallingHandlers(
     readLines(file, warn = TRUE, ...),
     warning = function(w) {

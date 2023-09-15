@@ -44,19 +44,23 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
 
-  if (isTRUE(parse_settings)) {
-    read_settings(filename)
-    on.exit(clear_settings(), add = TRUE)
-  }
-
-  lines <- get_lines(filename, text)
+  # read_settings() is done below, so this may not be set yet
+  encoding <- settings$encoding %||% default_settings$encoding
+  lines <- get_lines(filename, text, encoding)
 
   if (needs_tempfile) {
     filename <- tempfile()
-    con <- file(filename, open = "w", encoding = settings$encoding)
     on.exit(unlink(filename), add = TRUE)
-    writeLines(text = lines, con = con, sep = "\n")
-    close(con)
+    local({
+      con <- file(filename, open = "w", encoding = encoding)
+      on.exit(close(con))
+      writeLines(text = lines, con = con, sep = "\n")
+    })
+  }
+
+  if (isTRUE(parse_settings)) {
+    read_settings(filename)
+    on.exit(clear_settings(), add = TRUE)
   }
 
   filename <- normalizePath(filename, mustWork = !inline_data) # to ensure a unique file in cache
@@ -314,7 +318,7 @@ get_lints <- function(expr, linter, linter_fun, lint_cache, lines) {
 
 define_linters <- function(linters = NULL) {
   if (is.null(linters)) {
-    linters <- settings$linters
+    linters <- settings$linters %||% default_settings$linters
     names(linters) <- auto_names(linters)
   } else if (is_linter(linters)) {
     linters <- list(linters)
@@ -753,16 +757,14 @@ maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
   lints
 }
 
-get_lines <- function(filename, text) {
+get_lines <- function(filename, text = NULL, encoding) {
   if (!is.null(text)) {
-    conn <- textConnection(text)
+    strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
   } else if (re_matches(filename, rex(newline))) {
-    text <- gsub("\n$", "", filename)
-    conn <- textConnection(text)
+    strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
   } else {
-    conn <- file(filename, open = "r")
+    read_lines(filename, encoding = encoding)
   }
-  read_lines(conn)
 }
 
 zap_temp_filename <- function(res, needs_tempfile) {

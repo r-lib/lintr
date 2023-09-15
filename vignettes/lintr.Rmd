@@ -261,17 +261,20 @@ show_lint <- function(l) {
   lint_df <- as.data.frame(l)
   print(lint_df[, c("line_number", "message", "linter")])
 }
+hline <- function() cat(strrep("-", getOption("width") - 5L), "\n", sep = "")
 
 withr::with_tempfile("tmp", {
   writeLines("a = 1", tmp)
 
   # linter column is just 'get'
   show_lint(lint(tmp, linters = get(linter_name)()))
+  hline()
 
   this_linter <- get(linter_name)()
   attr(this_linter, "name") <- linter_name
   # linter column is 'assignment_linter'
   show_lint(lint(tmp, linters = this_linter))
+  hline()
 
   # more concise alternative for this case: use eval(call(.))
   show_lint(lint(tmp, linters = eval(call(linter_name))))
@@ -302,7 +305,8 @@ X = 42L # -------------- this comment overflows the default 80 chars line length
 `> lint("file.R")`
 
 ```{r show_long_line_lint, echo = FALSE}
-lintr::lint("X = 42L # -------------- this comment overflows the default 80 chars line length.\n",
+debug(lint)
+lint("X = 42L # -------------- this comment overflows the default 80 chars line length.\n",
   parse_settings = FALSE
 )
 ```
@@ -316,7 +320,7 @@ X = 42L # nolint ------ this comment overflows the default 80 chars line length.
 `> lint("file2.R")`
 
 ```{r show_nolint, echo = FALSE}
-lintr::lint("X = 42L # nolint ------ this comment overflows the default 80 chars line length.\n",
+lint("X = 42L # nolint ------ this comment overflows the default 80 chars line length.\n",
   parse_settings = FALSE
 )
 ```
@@ -336,7 +340,7 @@ X = 42L # nolint: object_name_linter. this comment overflows the default 80 char
 `> lint("file3.R")`
 
 ```{r show_long_line_lint_not_skipped, echo = FALSE}
-lintr::lint("X = 42L # nolint: object_name_linter. this comment overflows the default 80 chars line length.\n",
+lint("X = 42L # nolint: object_name_linter. this comment overflows the default 80 chars line length.\n",
   parse_settings = FALSE
 )
 ```
@@ -355,7 +359,7 @@ X = 42L # nolint: object_name_linter, line_length_linter. this comment overflows
 `> lint("file4.R")`
 
 ```{r show_nolint_multiple, echo = FALSE}
-lintr::lint(
+lint(
   paste(
     "X = 42L",
     "# nolint: object_name_linter, line_length_linter. this comment overflows the default 80 chars line length.\n"
@@ -375,7 +379,7 @@ X = 42L # nolint: object_name, line_len. this comment still overflows the defaul
 `> lint("file5.R")`
 
 ```{r show_nolint_abbrev, echo = FALSE}
-lintr::lint(
+lint(
   paste(
     "X = 42L",
     "# nolint: object_name, line_len. this comment still overflows the default 80 chars line length.\n"
@@ -397,7 +401,7 @@ They default to `# nolint start` and `# nolint end` respectively.
 ```
 
 ```{r show_comment_code_lint, echo = FALSE}
-lintr::lint("# x <- 42L\n# print(x)\n", parse_settings = FALSE)
+lint("# x <- 42L\n# print(x)\n", parse_settings = FALSE)
 ```
 
 ``` r
@@ -408,7 +412,7 @@ lintr::lint("# x <- 42L\n# print(x)\n", parse_settings = FALSE)
 ```
 
 ```{r show_comment_code_nolint, echo = FALSE}
-lintr::lint("# nolint start: commented_code_linter.\n# x <- 42L\n# print(x)\n# nolint end\n",
+lint("# nolint start: commented_code_linter.\n# x <- 42L\n# print(x)\n# nolint end\n",
   parse_settings = FALSE
 )
 ```
