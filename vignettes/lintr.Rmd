@@ -8,7 +8,7 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-```{r setup, include = FALSE}
+```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -78,12 +78,12 @@ Below is an example .lintr file that uses 120 character line lengths, disables  
 
 ``` yaml
 linters: linters_with_defaults(
-    line_length_linter(120),
+    line_length_linter(120), 
     commented_code_linter = NULL
   )
 exclusions: list(
-    "inst/doc/creating_linters.R" = 1,
-    "inst/example/bad.R",
+    "inst/doc/creating_linters.R" = 1, 
+    "inst/example/bad.R", 
     "tests/testthat/exclusions-test"
   )
 ```
@@ -126,7 +126,7 @@ However, the behavior can be customized using different methods.
 
 Apart from `lintr.linter_file`, which defaults to `".lintr"`, there are the following settings:
 
-```{r show_default_settings, echo = FALSE}
+```{r, echo = FALSE}
 default_settings <- lintr::default_settings
 default_settings$linters <- "`lintr::default_linters`"
 default_settings$comment_token <- "(lintr-bot comment token for automatic GitHub comments)"
@@ -144,9 +144,6 @@ defaults_table <- data.frame(
   default = vapply(default_settings, make_string, character(1L)),
   stringsAsFactors = FALSE
 )
-
-# avoid conflict when loading lintr in echo=TRUE cell below
-rm(default_settings)
 
 knitr::kable(defaults_table)
 ```
@@ -171,11 +168,13 @@ linters: linters_with_defaults(
 By default, the following linters are enabled.
 Where applicable, the default settings are also shown.
 
-```{r show_linter_defaults, echo = FALSE}
+```{r, echo = FALSE}
 default_linters <- lintr::default_linters
 linters_with_args <- lapply(
   setNames(nm = intersect(names(default_linters), lintr::available_linters(tags = "configurable")$linter)),
-  formalArgs
+  function(linter_name) {
+    names(formals(get(linter_name, envir = asNamespace("lintr"))))
+  }
 )
 
 make_setting_string <- function(linter_name) {
@@ -204,13 +203,13 @@ knitr::kable(defaults_table)
 Another way to customize linters is by specifying tags in `linters_with_tags()`.
 The available tags are listed below:
 
-```{r show_tags}
+```{r}
 lintr::available_tags(packages = "lintr")
 ```
 
 You can select tags of interest to see which linters are included:
 
-```{r show_tag_linters}
+```{r}
 linters <- lintr::linters_with_tags(tags = c("package_development", "readability"))
 names(linters)
 ```
@@ -228,7 +227,7 @@ linters: linters_with_tags(
 
 The default lintr configuration includes only linters relevant to the tidyverse style guide, but there are many other linters available in `{lintr}`. You can see a list of all available linters using
 
-```{r show_all_linter_names}
+```{r}
 names(lintr::all_linters())
 ```
 
@@ -257,27 +256,19 @@ Beware that in such cases, a simple `get()` is not enough:
 library(lintr)
 linter_name <- "assignment_linter"
 
-show_lint <- function(l) {
-  lint_df <- as.data.frame(l)
-  print(lint_df[, c("line_number", "message", "linter")])
-}
-hline <- function() cat(strrep("-", getOption("width") - 5L), "\n", sep = "")
-
 withr::with_tempfile("tmp", {
   writeLines("a = 1", tmp)
 
   # linter column is just 'get'
-  show_lint(lint(tmp, linters = get(linter_name)()))
-  hline()
+  print(as.data.frame(lint(tmp, linters = get(linter_name)())))
 
   this_linter <- get(linter_name)()
   attr(this_linter, "name") <- linter_name
   # linter column is 'assignment_linter'
-  show_lint(lint(tmp, linters = this_linter))
-  hline()
+  print(as.data.frame(lint(tmp, linters = this_linter)))
 
-  # more concise alternative for this case: use eval(call(.))
-  show_lint(lint(tmp, linters = eval(call(linter_name))))
+  # more concise alternative: use eval(call(.))
+  print(as.data.frame(lint(tmp, linters = eval(call(linter_name)))))
 })
 ```
 
@@ -304,9 +295,8 @@ X = 42L # -------------- this comment overflows the default 80 chars line length
 
 `> lint("file.R")`
 
-```{r show_long_line_lint, echo = FALSE}
-debug(lint)
-lint("X = 42L # -------------- this comment overflows the default 80 chars line length.\n",
+```{r, echo = FALSE}
+lintr::lint("X = 42L # -------------- this comment overflows the default 80 chars line length.\n",
   parse_settings = FALSE
 )
 ```
@@ -319,8 +309,8 @@ X = 42L # nolint ------ this comment overflows the default 80 chars line length.
 
 `> lint("file2.R")`
 
-```{r show_nolint, echo = FALSE}
-lint("X = 42L # nolint ------ this comment overflows the default 80 chars line length.\n",
+```{r, echo = FALSE}
+lintr::lint("X = 42L # nolint ------ this comment overflows the default 80 chars line length.\n",
   parse_settings = FALSE
 )
 ```
@@ -339,8 +329,8 @@ X = 42L # nolint: object_name_linter. this comment overflows the default 80 char
 
 `> lint("file3.R")`
 
-```{r show_long_line_lint_not_skipped, echo = FALSE}
-lint("X = 42L # nolint: object_name_linter. this comment overflows the default 80 chars line length.\n",
+```{r, echo = FALSE}
+lintr::lint("X = 42L # nolint: object_name_linter. this comment overflows the default 80 chars line length.\n",
   parse_settings = FALSE
 )
 ```
@@ -358,8 +348,8 @@ X = 42L # nolint: object_name_linter, line_length_linter. this comment overflows
 
 `> lint("file4.R")`
 
-```{r show_nolint_multiple, echo = FALSE}
-lint(
+```{r, echo = FALSE}
+lintr::lint(
   paste(
     "X = 42L",
     "# nolint: object_name_linter, line_length_linter. this comment overflows the default 80 chars line length.\n"
@@ -378,8 +368,8 @@ X = 42L # nolint: object_name, line_len. this comment still overflows the defaul
 
 `> lint("file5.R")`
 
-```{r show_nolint_abbrev, echo = FALSE}
-lint(
+```{r, echo = FALSE}
+lintr::lint(
   paste(
     "X = 42L",
     "# nolint: object_name, line_len. this comment still overflows the default 80 chars line length.\n"
@@ -400,8 +390,8 @@ They default to `# nolint start` and `# nolint end` respectively.
 # print(x)
 ```
 
-```{r show_comment_code_lint, echo = FALSE}
-lint("# x <- 42L\n# print(x)\n", parse_settings = FALSE)
+```{r, echo = FALSE}
+lintr::lint("# x <- 42L\n# print(x)\n", parse_settings = FALSE)
 ```
 
 ``` r
@@ -411,8 +401,8 @@ lint("# x <- 42L\n# print(x)\n", parse_settings = FALSE)
 # nolint end
 ```
 
-```{r show_comment_code_nolint, echo = FALSE}
-lint("# nolint start: commented_code_linter.\n# x <- 42L\n# print(x)\n# nolint end\n",
+```{r, echo = FALSE}
+lintr::lint("# nolint start: commented_code_linter.\n# x <- 42L\n# print(x)\n# nolint end\n",
   parse_settings = FALSE
 )
 ```
