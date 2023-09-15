@@ -54,6 +54,8 @@ Checking an R project for lints can be done with three different functions:
 
 For more information about the assumed package structure, see [R Packages](https://r-pkgs.org/structure.html).
 
+Note that some linters (e.g. `object_usage_linter()`) require the package to be installed to function properly. `pkgload::load_all()` will also suffice. See `?executing_linters` for more details.
+
 ## Configuring linters
 
 ### The `.lintr` file

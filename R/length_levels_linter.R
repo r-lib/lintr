@@ -18,28 +18,12 @@
 #' @evalRd rd_tags("length_levels_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-length_levels_linter <- function() {
-  xpath <- "
+length_levels_linter <- make_linter_from_xpath(
+  xpath = "
   //SYMBOL_FUNCTION_CALL[text() = 'levels']
     /parent::expr
     /parent::expr
     /parent::expr[expr/SYMBOL_FUNCTION_CALL[text() = 'length']]
-  "
-
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml_find_all(xml, xpath)
-
-    xml_nodes_to_lints(
-      bad_expr,
-      source_expression = source_expression,
-      lint_message = "nlevels(x) is better than length(levels(x)).",
-      type = "warning"
-    )
-  })
-}
+  ",
+  lint_message = "nlevels(x) is better than length(levels(x))."
+)

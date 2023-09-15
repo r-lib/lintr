@@ -284,7 +284,7 @@ settings <- NULL
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  backports::import(pkgname, c("trimws", "lengths", "deparse1"))
+  backports::import(pkgname, c("trimws", "lengths", "deparse1", "...names"))
   # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
   base_ns <- getNamespace("base")
   backports_ns <- getNamespace("backports")
@@ -295,7 +295,7 @@ settings <- NULL
     }
   }
 
-  default_settings <<- list(
+  utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,
     encoding = "UTF-8",
     exclude = rex("#", any_spaces, "nolint"),
@@ -324,9 +324,9 @@ settings <- NULL
     ),
     comment_bot = logical_env("LINTR_COMMENT_BOT") %||% TRUE,
     error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
-  )
+  ))
 
-  settings <<- list2env(default_settings, parent = emptyenv())
+  utils::assignInMyNamespace("settings", list2env(default_settings, parent = emptyenv()))
 
   if (requireNamespace("tibble", quietly = TRUE)) {
     registerS3method("as_tibble", "lints", as_tibble.lints, asNamespace("tibble"))

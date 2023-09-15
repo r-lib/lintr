@@ -8,7 +8,7 @@ boolean_arithmetic_linter,efficiency best_practices readability
 brace_linter,style readability default configurable
 class_equals_linter,best_practices robustness consistency
 closed_curly_linter,style readability deprecated configurable
-commas_linter,style readability default
+commas_linter,style readability default configurable
 commented_code_linter,style readability best_practices default
 condition_message_linter,best_practices consistency
 conjunct_test_linter,package_development best_practices readability configurable pkg_testthat
@@ -34,6 +34,7 @@ for_loop_index_linter,best_practices readability robustness
 function_argument_linter,style consistency best_practices
 function_left_parentheses_linter,style readability default
 function_return_linter,readability best_practices
+if_not_else_linter,readability consistency configurable
 ifelse_censor_linter,best_practices efficiency
 implicit_assignment_linter,style best_practices readability configurable
 implicit_integer_linter,style consistency best_practices configurable
@@ -43,8 +44,9 @@ inner_combine_linter,efficiency consistency readability
 is_numeric_linter,readability best_practices consistency
 keyword_quote_linter,readability consistency style
 length_levels_linter,readability best_practices consistency
+length_test_linter,common_mistakes efficiency
 lengths_linter,efficiency readability best_practices
-library_call_linter,style best_practices readability
+library_call_linter,style best_practices readability configurable
 line_length_linter,style readability default configurable
 literal_coercion_linter,best_practices consistency efficiency
 matrix_apply_linter,readability efficiency
@@ -71,7 +73,9 @@ quotes_linter,style consistency readability default configurable
 redundant_equals_linter,best_practices readability efficiency common_mistakes
 redundant_ifelse_linter,best_practices efficiency consistency configurable
 regex_subset_linter,best_practices efficiency
+repeat_linter,style readability
 routine_registration_linter,best_practices efficiency robustness
+scalar_in_linter,readability consistency best_practices efficiency
 semicolon_linter,style readability default configurable
 semicolon_terminator_linter,style readability deprecated configurable
 seq_linter,robustness efficiency consistency best_practices default

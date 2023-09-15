@@ -28,6 +28,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{for_loop_index_linter}}}
 \item{\code{\link{function_left_parentheses_linter}}}
 \item{\code{\link{function_return_linter}}}
+\item{\code{\link{if_not_else_linter}}}
 \item{\code{\link{implicit_assignment_linter}}}
 \item{\code{\link{indentation_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
@@ -50,6 +51,8 @@ The following linters are tagged with 'readability':
 \item{\code{\link{pipe_continuation_linter}}}
 \item{\code{\link{quotes_linter}}}
 \item{\code{\link{redundant_equals_linter}}}
+\item{\code{\link{repeat_linter}}}
+\item{\code{\link{scalar_in_linter}}}
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{sort_linter}}}
 \item{\code{\link{spaces_inside_linter}}}

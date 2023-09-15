@@ -21,8 +21,10 @@ lint_dir(
   ...,
   relative_path = TRUE,
   exclusions = list("renv", "packrat"),
-  pattern = rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"), end),
-  parse_settings = TRUE
+  pattern = rex(".", or(group(one_of("Rr"), or("", "html", "md", "nw", "rst", "tex",
+    "txt")), group(one_of("Qq"), "md")), end),
+  parse_settings = TRUE,
+  show_progress = NULL
 )
 
 lint_package(
@@ -30,7 +32,8 @@ lint_package(
   ...,
   relative_path = TRUE,
   exclusions = list("R/RcppExports.R"),
-  parse_settings = TRUE
+  parse_settings = TRUE,
+  show_progress = NULL
 )
 }
 \arguments{
@@ -64,6 +67,10 @@ If \code{FALSE}, use the full absolute path.}
 
 \item{pattern}{pattern for files, by default it will take files with any of the extensions
 .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...).}
+
+\item{show_progress}{Logical controlling whether to show linting progress with a simple text
+progress bar \emph{via} \code{\link[utils:txtProgressBar]{utils::txtProgressBar()}}. The default behavior is to show progress in
+\code{\link[=interactive]{interactive()}} sessions not running a testthat suite.}
 }
 \value{
 An object of class \code{c("lints", "list")}, each element of which is a \code{"list"} object.

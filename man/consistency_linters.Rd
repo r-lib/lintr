@@ -18,6 +18,7 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{condition_message_linter}}}
 \item{\code{\link{consecutive_assertion_linter}}}
 \item{\code{\link{function_argument_linter}}}
+\item{\code{\link{if_not_else_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{inner_combine_linter}}}
 \item{\code{\link{is_numeric_linter}}}
@@ -29,6 +30,7 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{paste_linter}}}
 \item{\code{\link{quotes_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
+\item{\code{\link{scalar_in_linter}}}
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}

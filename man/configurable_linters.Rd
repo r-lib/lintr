@@ -16,14 +16,17 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{assignment_linter}}}
 \item{\code{\link{backport_linter}}}
 \item{\code{\link{brace_linter}}}
+\item{\code{\link{commas_linter}}}
 \item{\code{\link{conjunct_test_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{duplicate_argument_linter}}}
 \item{\code{\link{fixed_regex_linter}}}
+\item{\code{\link{if_not_else_linter}}}
 \item{\code{\link{implicit_assignment_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{indentation_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
+\item{\code{\link{library_call_linter}}}
 \item{\code{\link{line_length_linter}}}
 \item{\code{\link{missing_argument_linter}}}
 \item{\code{\link{namespace_linter}}}

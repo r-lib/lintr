@@ -55,6 +55,10 @@ function_argument_linter <- function() {
     ]
   "
 
+  used_in_missing_xpath <- "
+    text() = following-sibling::expr[last()]//expr[expr/SYMBOL_FUNCTION_CALL[text() = 'missing']]/expr[2]/SYMBOL/text()
+  "
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -64,10 +68,15 @@ function_argument_linter <- function() {
 
     bad_expr <- xml_find_all(xml, xpath)
 
+    uses_missing <- xml_find_lgl(bad_expr, used_in_missing_xpath)
+
+    missing_note <-
+      ifelse(uses_missing, " Consider setting the default to NULL and using is.null() instead of using missing()", "")
+
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = "Arguments without defaults should come before arguments with defaults.",
+      lint_message = paste0("Arguments without defaults should come before arguments with defaults.", missing_note),
       type = "style"
     )
   })
