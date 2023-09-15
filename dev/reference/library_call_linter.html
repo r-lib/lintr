@@ -68,16 +68,25 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">library_call_linter</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">library_call_linter</span><span class="op">(</span>allow_preamble <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
+    <dl><dt>allow_preamble</dt>
+<dd><p>Logical, default <code>TRUE</code>. If <code>FALSE</code>,
+no code is allowed to precede the first <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code> call,
+otherwise some setup code is allowed, but all <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code>
+calls must follow consecutively after the first one.</p></dd>
+
+</dl></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><a href="linters.html">linters</a> for a complete list of linters available in lintr.</p></div>
     </div>
     <div class="section level2">
     <h2 id="tags">Tags<a class="anchor" aria-label="anchor" href="#tags"></a></h2>
-    <p><a href="best_practices_linters.html">best_practices</a>, <a href="readability_linters.html">readability</a>, <a href="style_linters.html">style</a></p>
+    <p><a href="best_practices_linters.html">best_practices</a>, <a href="configurable_linters.html">configurable</a>, <a href="readability_linters.html">readability</a>, <a href="style_linters.html">style</a></p>
     </div>
 
     <div class="section level2">
