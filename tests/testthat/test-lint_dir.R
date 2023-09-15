@@ -95,7 +95,7 @@ test_that("respect directory exclusions from settings", {
 test_that("lint_dir works with specific linters without specifying other arguments", {
   withr::local_options(lintr.linter_file = "lintr_test_config")
   the_dir <- test_path("dummy_packages", "package", "vignettes")
-  expect_length(lint_dir(the_dir, assignment_linter(), parse_settings = FALSE), 12L)
+  expect_length(lint_dir(the_dir, assignment_linter(), parse_settings = FALSE), 14L)
   expect_length(lint_dir(the_dir, commented_code_linter(), parse_settings = FALSE), 0L)
 })
 

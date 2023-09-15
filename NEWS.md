@@ -16,6 +16,7 @@
 * New `make_linter_from_xpath()` to facilitate making simple linters directly from a single XPath (#2064, @MichaelChirico). This is especially helpful for making on-the-fly/exploratory linters, but also extends to any case where the linter can be fully defined from a static lint message and single XPath.
 * Toggle lint progress indicators with argument `show_progress` to `lint_dir()` and `lint_package()` (#972, @MichaelChirico). The default is still to show progress in `interactive()` sessions. Progress is also now shown with a "proper" progress bar (`utils::txtProgressBar()`), which in particular solves the issue of progress `.` spilling well past the width of the screen in large directories.
 * `lint()`, `lint_dir()`, and `lint_package()` fail more gracefully when the user mis-spells an argument name (#2134, @MichaelChirico).
+* Quarto files (.qmd) are included by `lint_dir()` by default (#2150, @dave-lovell).
 * `fixed_regex_linter()`
   + Is pipe-aware, in particular removing false positives arong piping into {stringr} functions like `x |> str_replace(fixed("a"), "b")` (#1811, @MichaelChirico).
   + Gains an option `allow_unescaped` (default `FALSE`) to toggle linting regexes not requiring any escapes or character classes (#1689, @MichaelChirico). Thus `fixed_regex_linter(allow_unescaped = TRUE)` would lint on `grepl("[$]", x)` but not on `grepl("a", x)` since the latter does not use any regex special characters.
