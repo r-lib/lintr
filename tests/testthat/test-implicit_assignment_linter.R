@@ -383,3 +383,97 @@ test_that("allow_lazy lets lazy assignments through", {
     linter
   )
 })
+
+test_that("allow_scoped skips scoped assignments", {
+  linter <- implicit_assignment_linter(allow_scoped = TRUE)
+  lint_message <- rex::rex("Avoid implicit assignments in function calls.")
+
+  expect_lint(
+    trim_some("
+      if (any(idx <- x < 0)) {
+        stop('negative elements: ', toString(which(idx)))
+      }
+    "),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+      if (any(idx <- x < 0)) {
+        stop('negative elements: ', toString(which(idx)))
+      }
+      print(idx)
+    "),
+    lint_message,
+    linter
+  )
+  # only applies to the branch condition itself -- within the branch, still lint
+  expect_lint(
+    trim_some("
+      if (TRUE) {
+        foo(idx <- bar())
+      }
+    "),
+    lint_message,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      obj <- letters
+      while ((n <- length(obj)) > 0) obj <- obj[-n]
+    "),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+      obj <- letters
+      while ((n <- length(obj)) > 0) obj <- obj[-n]
+      if (TRUE) {
+        print(n)
+      }
+    "),
+    lint_message,
+    linter
+  )
+
+  # outside of branching, doesn't matter
+  expect_lint("(idx <- foo()); bar()", lint_message, linter)
+  expect_lint("foo(idx <- bar()); baz()", lint_message, linter)
+  expect_lint("foo(x, idx <- bar()); baz()", lint_message, linter)
+})
+
+test_that("interaction of allow_lazy and allow_scoped", {
+  linter <- implicit_assignment_linter(allow_scoped = TRUE, allow_lazy = TRUE)
+
+  expect_lint(
+    trim_some("
+      if (any(idx <- foo()) && BB) {
+        stop('Invalid foo() output: ', toString(idx))
+      }
+    "),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+      if (any(idx <- foo()) && BB) {
+        stop('Invalid foo() output: ', toString(idx))
+      }
+      print(format(idx))
+    "),
+    rex::rex("Avoid implicit assignments in function calls."),
+    linter
+  )
+  expect_lint(
+    trim_some("
+      if (AA && any(idx <- foo())) {
+        stop('Invalid foo() output: ', toString(idx))
+      }
+      print(format(idx)) # NB: bad code! idx may not exist.
+    "),
+    NULL,
+    linter
+  )
+})
