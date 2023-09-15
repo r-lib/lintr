@@ -67,8 +67,9 @@ get_setting <- function(setting, config, defaults) {
   }
 }
 
-clear_settings <- function() {
+clear_settings <- function(revert = c("encoding", "linters")) {
   rm(list = ls(settings), envir = settings)
+  for (key in revert) settings[[key]] <- default_settings[[key]]
 }
 
 find_default_encoding <- function(filename) {

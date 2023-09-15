@@ -183,10 +183,8 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
       }
     }
   )
-  if (!is.null(encoding)) {
-    lines_conv <- iconv(lines, from = encoding, to = "UTF-8")
-    lines[!is.na(lines_conv)] <- lines_conv[!is.na(lines_conv)]
-  }
+  lines_conv <- iconv(lines, from = encoding, to = "UTF-8")
+  lines[!is.na(lines_conv)] <- lines_conv[!is.na(lines_conv)]
   Encoding(lines) <- "UTF-8"
   attr(lines, "terminal_newline") <- terminal_newline
   lines
