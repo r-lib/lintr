@@ -15,5 +15,5 @@ declared_s3_generics <- function(x) {
     "/expr/SYMBOL/text()"
   )
 
-  as.character(xml2::xml_find_all(x, xpath))
+  as.character(xml_find_all(x, xpath))
 }

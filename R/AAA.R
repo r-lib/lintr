@@ -1,4 +1,6 @@
 #' @include utils.R
+#' @include xp_utils.R
+#' @include make_linter_from_xpath.R
 NULL
 
 #' Available linters
@@ -21,7 +23,7 @@ NULL
 # need to register rex shortcuts as globals to avoid CRAN check errors
 rex::register_shortcuts("lintr")
 
-utils::globalVariables(
+globalVariables(
   c(
     "line1", "col1", "line2", "col2", # columns of parsed_content
     "id", "parent", "token", "terminal", "text" # ditto

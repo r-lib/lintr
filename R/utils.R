@@ -10,7 +10,7 @@
   identical(x, y)
 }
 
-"%:::%" <- function(p, f) {
+`%:::%` <- function(p, f) {
   get(f, envir = asNamespace(p))
 }
 
@@ -57,7 +57,7 @@ linter_auto_name <- function(which = -3L) {
   if (re_matches(nm, regex)) {
     match <- re_matches(nm, regex, locations = TRUE)
     nm <- substr(nm, start = 1L, stop = match[1L, "end"])
-    nm <- re_substitutes(nm, rex::rex(start, alnums, "::"), "")
+    nm <- re_substitutes(nm, rex(start, alnums, "::"), "")
   }
   nm
 }
@@ -104,7 +104,7 @@ get_content <- function(lines, info) {
   if (!missing(info)) {
     if (inherits(info, "xml_node")) {
       info <- lapply(stats::setNames(nm = c("col1", "col2", "line1", "line2")), function(attr) {
-        as.integer(xml2::xml_attr(info, attr))
+        as.integer(xml_attr(info, attr))
       })
     }
 
@@ -145,12 +145,16 @@ quote_wrap <- function(x, q) paste0(q, x, q)
 # interface to work like options() or setwd() -- returns the old value for convenience
 set_lang <- function(new_lang) {
   old_lang <- Sys.getenv("LANGUAGE", unset = NA)
-  Sys.setenv(LANGUAGE = new_lang)
+  Sys.setenv(LANGUAGE = new_lang) # nolint: undesirable_function. Avoiding {withr} dep in pkg.
   old_lang
 }
 # handle the logic of either unsetting if it was previously unset, or resetting
 reset_lang <- function(old_lang) {
-  if (is.na(old_lang)) Sys.unsetenv("LANGUAGE") else Sys.setenv(LANGUAGE = old_lang)
+  if (is.na(old_lang)) {
+    Sys.unsetenv("LANGUAGE")
+  } else {
+    Sys.setenv(LANGUAGE = old_lang) # nolint: undesirable_function. Avoiding {withr} dep in pkg.
+  }
 }
 
 #' Create a `linter` closure
@@ -233,9 +237,9 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 get_r_string <- function(s, xpath = NULL) {
   if (inherits(s, c("xml_node", "xml_nodeset"))) {
     if (is.null(xpath)) {
-      s <- xml2::xml_text(s)
+      s <- xml_text(s)
     } else {
-      s <- xml2::xml_find_chr(s, sprintf("string(%s)", xpath))
+      s <- xml_find_chr(s, sprintf("string(%s)", xpath))
     }
   }
   # parse() skips "" elements --> offsets the length of the output,
@@ -246,41 +250,39 @@ get_r_string <- function(s, xpath = NULL) {
   out
 }
 
-#' Convert XML node to R code within
+#' str2lang, but for xml children.
 #'
-#' NB this is not equivalent to `xml2::xml_text(xml)` in the presence of line breaks
-#'
-#' @param xml An `xml_node`.
-#'
-#' @return A source-code equivalent of `xml` with unnecessary whitespace removed.
+#' [xml2::xml_text()] is deceptively close to obviating this helper, but it collapses
+#'   text across lines. R is _mostly_ whitespace-agnostic, so this only matters in some edge cases,
+#'   in particular when there are comments within an expression (`<expr>` node). See #1919.
 #'
 #' @noRd
-get_r_code <- function(xml) {
-  # shortcut if xml has line1 and line2 attrs and they are equal
-  # if they are missing, xml_attr() returns NA, so we continue
-  if (isTRUE(xml2::xml_attr(xml, "line1") == xml2::xml_attr(xml, "line2"))) {
-    return(xml2::xml_text(xml))
-  }
-  # find all unique line numbers
-  line_numbers <- sort(unique(xml2::xml_find_num(
-    xml2::xml_find_all(xml, "./descendant-or-self::*[@line1]"),
-    "number(./@line1)"
-  )))
-  if (length(line_numbers) <= 1L) {
-    # no line breaks necessary
-    return(xml2::xml_text(xml))
-  }
-  lines <- vapply(line_numbers, function(line_num) {
-    # all terminal nodes starting on line_num
-    paste(xml2::xml_text(
-      xml2::xml_find_all(xml, sprintf("./descendant-or-self::*[@line1 = %d and not(*)]", line_num))
-    ), collapse = "")
-  }, character(1L))
-  paste(lines, collapse = "\n")
+xml2lang <- function(x) {
+  x_strip_comments <- xml_find_all(x, ".//*[not(self::COMMENT or self::expr)]")
+  str2lang(paste(xml_text(x_strip_comments), collapse = " "))
 }
 
 is_linter <- function(x) inherits(x, "linter")
 
 is_tainted <- function(lines) {
   inherits(tryCatch(nchar(lines), error = identity), "error")
+}
+
+#' Check that the entries in ... are valid
+#'
+#' @param dot_names Supplied names, from [...names()].
+#' @param ref_calls Functions consuming these `...` (character).
+#' @param ref_help Help page to refer users hitting an error to.
+#' @noRd
+check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1L)[[1L]])) {
+  valid_args <- unlist(lapply(ref_calls, function(f) names(formals(f))))
+  is_valid <- dot_names %in% valid_args
+  if (all(is_valid)) {
+    return(invisible())
+  }
+  stop(
+    "Found unknown arguments in ...: ", toString(dot_names[!is_valid]), ".\n",
+    "Check for typos and see ?", ref_help, " for valid arguments.",
+    call. = FALSE
+  )
 }

@@ -26,6 +26,10 @@ test_that("T_and_F_symbol_linter blocks disallowed usages", {
     linter
   )
 
+  expect_lint("DF$bool <- T", msg_true, linter)
+  expect_lint("S4@bool <- T", msg_true, linter)
+  expect_lint("sum(x, na.rm = T)", msg_true, linter)
+
   # Regression test for #657
   expect_lint(
     trim_some("
@@ -35,15 +39,16 @@ test_that("T_and_F_symbol_linter blocks disallowed usages", {
       )
 
       x$F <- 42L
+      y@T <- 84L
 
       T <- \"foo\"
       F = \"foo2\"
       \"foo3\" -> T
     "),
     list(
-      list(message = msg_variable_true),
-      list(message = msg_variable_false),
-      list(message = msg_variable_true)
+      list(message = msg_variable_true, line_number = 9L),
+      list(message = msg_variable_false, line_number = 10L),
+      list(message = msg_variable_true, line_number = 11L)
     ),
     linter
   )

@@ -184,7 +184,7 @@ test_that("spaces_inside_linter blocks diallowed usages", {
   )
 })
 
-test_that("mutli-line expressions have good markers", {
+test_that("multi-line expressions have good markers", {
   expect_lint(
     trim_some("
       ( x |

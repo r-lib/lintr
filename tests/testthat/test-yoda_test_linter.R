@@ -34,13 +34,19 @@ test_that("yoda_test_linter blocks simple disallowed usages", {
 test_that("yoda_test_linter ignores strings in $ expressions", {
   # the "key" here shows up at the same level of the parse tree as plain "key" normally would
   expect_lint('expect_equal(x$"key", 2)', NULL, yoda_test_linter())
+  expect_lint('expect_equal(x@"key", 2)', NULL, yoda_test_linter())
 })
 
 # if we only inspect the first argument & ignore context, get false positives
-test_that("yoda_test_linter ignores usage in pipelines", {
-  expect_lint("foo() %>% expect_identical(2)", NULL, yoda_test_linter())
-  skip_if_not_r_version("4.1.0")
-  expect_lint("bar() |> expect_equal('a')", NULL, yoda_test_linter())
+local({
+  pipes <- pipes(exclude = c("%<>%", "%$%"))
+  linter <- yoda_test_linter()
+  patrick::with_parameters_test_that(
+    "yoda_test_linter ignores usage in pipelines",
+    expect_lint(sprintf("foo() %s expect_identical(2)", pipe), NULL, linter),
+    pipe = pipes,
+    .test_name = names(pipes)
+  )
 })
 
 test_that("yoda_test_linter throws a special message for placeholder tests", {

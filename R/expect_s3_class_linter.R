@@ -45,8 +45,23 @@ expect_s3_class_linter <- function() {
     ]
     /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label' or text() = 'expected.label'])]
   "
+  # NB: there is no easy way to make an exhaustive list of places where an
+  #   is.<x> call can be replaced by expect_s3_class(); this list was manually
+  #   populated from the default R packages by inspection. For example,
+  #   is.matrix(x) cannot be replaced by expect_s3_class(x, "matrix") because
+  #   it is not actually an S3 class (is.object(x) is not TRUE).
+  #   Further, there are functions named is.<x> that have nothing to do with
+  #   object type, e.g. is.finite(), is.nan(), or is.R().
+  is_s3_class_calls <- paste0("is.", c(
+    # base
+    "data.frame", "factor", "numeric_version", "ordered", "package_version", "qr", "table",
+    #      utils grDevices     tcltk    tcltk    grid    grid
+    "relistable", "raster", "tclObj", "tkwin", "grob", "unit",
+    # stats
+    "mts", "stepfun", "ts", "tskernel"
+  ))
   is_class_call <- xp_text_in_table(c(is_s3_class_calls, "inherits"))
-  expect_true_xpath <- glue::glue("
+  expect_true_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
     /parent::expr
     /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[ {is_class_call} ]]]
@@ -61,7 +76,7 @@ expect_s3_class_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
     matched_function <- xp_call_name(bad_expr)
     msg <- ifelse(
       matched_function %in% c("expect_equal", "expect_identical"),
@@ -76,19 +91,3 @@ expect_s3_class_linter <- function() {
     )
   })
 }
-
-# NB: there is no easy way to make an exhaustive list of places where an
-#   is.<x> call can be replaced by expect_s3_class(); this list was manually
-#   populated from the default R packages by inspection. For example,
-#   is.matrix(x) cannot be replaced by expect_s3_class(x, "matrix") because
-#   it is not actually an S3 class (is.object(x) is not TRUE).
-#   Further, there are functions named is.<x> that have nothing to do with
-#   object type, e.g. is.finite(), is.nan(), or is.R().
-is_s3_class_calls <- paste0("is.", c(
-  # base
-  "data.frame", "factor", "numeric_version", "ordered", "package_version", "qr", "table",
-  #      utils grDevices     tcltk    tcltk    grid    grid
-  "relistable", "raster", "tclObj", "tkwin", "grob", "unit",
-  # stats
-  "mts", "stepfun", "ts", "tskernel"
-))

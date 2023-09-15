@@ -58,10 +58,10 @@ implicit_integer_linter <- function(allow_colon = FALSE) {
 
     xml <- source_expression$full_xml_parsed_content
 
-    numbers <- xml2::xml_find_all(xml, xpath)
+    numbers <- xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(
-      numbers[is_implicit_integer(xml2::xml_text(numbers))],
+      numbers[is_implicit_integer(xml_text(numbers))],
       source_expression = source_expression,
       lint_message = "Integers should not be implicit. Use the form 1L for integers or 1.0 for doubles.",
       type = "style",

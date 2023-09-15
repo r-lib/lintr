@@ -115,13 +115,13 @@ test_that("print.lint works for inline data, even in RStudio", {
   # >   ^
 
   withr::with_options(
-    list("lintr.rstudio_source_markers" = FALSE),
+    list(lintr.rstudio_source_markers = FALSE),
     expect_output(print(l), "not =")
   )
 
   mockery::stub(print.lints, "rstudioapi::hasFun", function(...) FALSE)
   withr::with_options(
-    list("lintr.rstudio_source_markers" = TRUE),
+    list(lintr.rstudio_source_markers = TRUE),
     expect_output(print(l), "not =")
   )
 })
@@ -143,6 +143,25 @@ test_that("split.lint works as intended", {
 
 test_that("within.list is dispatched", {
   l <- lint(text = "a=1\nb=2", linters = infix_spaces_linter())
-  expect_silent(l <- lapply(l, within, line_number <- line_number + 1L))
+  expect_silent({
+    # nolint next: implicit_assignment_linter. Workaround is pretty horrid.
+    l <- lapply(l, within, line_number <- line_number + 1L)
+  })
   expect_identical(vapply(l, `[[`, integer(1L), "line_number"), 2L:3L)
+})
+
+test_that("as_tibble.list is _not_ dispatched directly", {
+  skip_if_not_installed("tibble")
+  expect_identical(
+    nrow(tibble::as_tibble(lint(text = "a = 1", linters = assignment_linter()))),
+    1L
+  )
+})
+
+test_that("as.data.table.list is _not_ dispatched directly", {
+  skip_if_not_installed("data.table")
+  expect_identical(
+    nrow(data.table::as.data.table(lint(text = "a = 1", linters = assignment_linter()))),
+    1L
+  )
 })
