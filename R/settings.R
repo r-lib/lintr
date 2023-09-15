@@ -54,7 +54,15 @@ read_config_file <- function(config_file) {
       stop("Malformed config file, ensure it is valid R syntax\n  ", conditionMessage(e), call. = FALSE)
     }
   } else {
-    read <- function(file) read.dcf(file, all = TRUE)
+    malformed_key <- function(e) {
+      stop("Malformed config setting '", setting, "'\n  ", conditionMessage(e), call. = FALSE)
+    }
+    read <- function(file) {
+      dcf_values <- read.dcf(file, all = TRUE)
+      lapply(dcf_values, function(setting_str) {
+        tryCatch(eval(parse(text = setting_str, keep.source = FALSE)), error = malformed_key)
+      })
+    }
     malformed <- function(e) {
       stop("Malformed config file, ensure it ends in a newline\n  ", conditionMessage(e), call. = FALSE)
     }
@@ -67,17 +75,7 @@ get_setting <- function(setting, config, defaults) {
   if (!is.null(option)) {
     option
   } else if (!is.null(config[[setting]])) {
-    if (is.environment(config)) {
-      config[[setting]]
-    } else {
-      malformed <- function(e) {
-        stop("Malformed config setting '", setting, "'\n  ", conditionMessage(e), call. = FALSE)
-      }
-      tryCatch(
-        eval(parse(text = config[[setting]])),
-        error = malformed
-      )
-    }
+    config[[setting]]
   } else {
     defaults[[setting]]
   }
