@@ -47,7 +47,7 @@ read_config_file <- function(config_file) {
   if (endsWith(config_file, ".R")) {
     config <- new.env()
     read <- function(file) {
-      sys.source(file, config, keep.source = FALSE, keep.parse.data = FALSE)
+      sys_source(file, config)
       config
     }
     malformed <- function(e) {

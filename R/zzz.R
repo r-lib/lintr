@@ -287,8 +287,10 @@ settings <- NULL
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  backports::import(pkgname, c("trimws", "lengths", "deparse1", "...names"))
-  # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
+  # R>=3.6.0: str2expression, str2lang, sys.source(keep.parse.data=)
+  # R>=4.0.0: deparse1
+  # R>=4.1.0: ...names
+  backports::import(pkgname, c("deparse1", "...names"))
   base_ns <- getNamespace("base")
   backports_ns <- getNamespace("backports")
   lintr_ns <- getNamespace(pkgname)
@@ -297,6 +299,13 @@ settings <- NULL
       assign(base_fun, get(base_fun, backports_ns), lintr_ns)
     }
   }
+  if ("keep.parse.data" %in% formalArgs(sys.source)) {
+    sys_source <- function(...) sys.source(..., keep.parse.data = FALSE, keep.source = FALSE)
+    )
+  } else {
+    sys_source <- function(...) sys.source(..., keep.source = FALSE)
+  }
+  utils::assignInMyNamespace("sys_source", sys_source)
 
   utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,
