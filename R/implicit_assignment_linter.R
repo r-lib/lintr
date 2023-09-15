@@ -4,6 +4,8 @@
 #' be avoided, except for functions that capture side-effects (e.g. [capture.output()]).
 #'
 #' @param except A character vector of functions to be excluded from linting.
+#' @param allow_lazy logical, default `FALSE`. If `TRUE`, assignments that only
+#'   trigger conditionally (e.g. in the RHS of `&&` or `||` expressions) are skipped.
 #'
 #' @examples
 #' # will produce lints
@@ -30,13 +32,19 @@
 #'   linters = implicit_assignment_linter()
 #' )
 #'
+#' lint(
+#'   text = "A && (B <- foo(A))",
+#'   linters = implicit_assignment_linter(allow_lazy = TRUE)
+#' )
+#'
 #' @evalRd rd_tags("implicit_assignment_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
 #' - <https://style.tidyverse.org/syntax.html#assignment>
 #'
 #' @export
-implicit_assignment_linter <- function(except = c("bquote", "expression", "expr", "quo", "quos", "quote")) {
+implicit_assignment_linter <- function(except = c("bquote", "expression", "expr", "quo", "quos", "quote"),
+                                       allow_lazy = FALSE) {
   stopifnot(is.null(except) || is.character(except))
 
   if (length(except) > 0L) {
@@ -60,8 +68,13 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
         preceding-sibling::*[2][self::IF or self::WHILE]
         or parent::forcond
         or preceding-sibling::expr/{xpath_exceptions}
+        or parent::expr/*[1][self::OP-LEFT-PAREN]
       ]
   ")
+
+  if (allow_lazy) {
+    xpath <- paste0(xpath, "[not(ancestor::expr/preceding-sibling::*[self::AND2 or self::OR2])]")
+  }
 
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level

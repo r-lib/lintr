@@ -81,16 +81,6 @@ test_that("implicit_assignment_linter skips allowed usages", {
     trim_some("
       map(
         .x = 1:4,
-        .f = ~ (x <- .x + 1)
-      )"),
-    NULL,
-    linter
-  )
-
-  expect_lint(
-    trim_some("
-      map(
-        .x = 1:4,
         .f = ~ {
           x <- .x + 1
           x
@@ -279,7 +269,11 @@ test_that("implicit_assignment_linter blocks disallowed usages in function calls
   linter <- implicit_assignment_linter()
 
   expect_lint("mean(x <- 1:4)", lint_message, linter)
-  expect_lint("mean(x <- (y <- 1:3) + 1L)", lint_message, linter)
+  expect_lint(
+    "mean(x <- (y <- 1:3) + 1L)",
+    list(list(column_number = 6L), list(column_number = 12L)),
+    linter
+  )
   expect_lint("y <- median(x <- 1:4)", lint_message, linter)
   expect_lint("lapply(x, function(x) return(x <- x + 1))", lint_message, linter)
   expect_lint("map(x, function(x) return(x <- x + 1))", lint_message, linter)
@@ -321,6 +315,17 @@ test_that("implicit_assignment_linter blocks disallowed usages in function calls
   )
 
   expect_lint(
+    trim_some("
+      map(
+        .x = 1:4,
+        .f = ~ (x <- .x + 1)
+      )"),
+    lint_message,
+    linter
+  )
+
+
+  expect_lint(
     "foo(a <- 1, b <- 2, c <- 3)",
     list(list(column_number = 5L), list(column_number = 13L), list(column_number = 21L)),
     linter
@@ -339,4 +344,42 @@ test_that("implicit_assignment_linter works as expected with pipes and walrus op
   skip_if_not_r_version("4.1.0")
 
   expect_lint("data |> mutate(a := b)", NULL, linter)
+})
+
+test_that("parenthetical assignments are caught", {
+  linter <- implicit_assignment_linter()
+  lint_message <- rex::rex("Avoid implicit assignments in function calls.")
+
+  expect_lint("(x <- 1:10)", lint_message, linter)
+  expect_lint("if (A && (B <- foo())) { }", lint_message, linter)
+})
+
+test_that("allow_lazy lets lazy assignments through", {
+  linter <- implicit_assignment_linter(allow_lazy = TRUE)
+  lint_message <- rex::rex("Avoid implicit assignments in function calls.")
+
+  expect_lint("A && (B <- foo(A))", NULL, linter)
+  # || also admits laziness
+  expect_lint("A || (B <- foo(A))", NULL, linter)
+  # & and |, however, do not
+  expect_lint("A & (B <- foo(A))", lint_message, linter)
+  expect_lint("A | (B <- foo(A))", lint_message, linter)
+  expect_lint("A && foo(bar(idx <- baz()))", NULL, linter)
+  # LHS _is_ linted
+  expect_lint("(A <- foo()) && B", lint_message, linter)
+  # however we skip on _any_ RHS (even if it's later an LHS)
+  # test on all &&/|| combinations to stress test operator precedence
+  expect_lint("A && (B <- foo(A)) && C", NULL, linter)
+  expect_lint("A && (B <- foo(A)) || C", NULL, linter)
+  expect_lint("A || (B <- foo(A)) && C", NULL, linter)
+  expect_lint("A || (B <- foo(A)) || C", NULL, linter)
+  # &&/|| elsewhere in the tree don't matter
+  expect_lint(
+    trim_some("
+      A && B
+      foo(C <- bar())
+    "),
+    lint_message,
+    linter
+  )
 })

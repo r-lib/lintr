@@ -99,7 +99,7 @@ test_that("lint_dir works with specific linters without specifying other argumen
   expect_length(lint_dir(the_dir, commented_code_linter(), parse_settings = FALSE), 0L)
 })
 
-test_that("lint_dir continues to accept relative_path= in 2nd positional argument, with a warning", {
+test_that("lint_dir errors for relative_path= in 2nd positional argument", {
   the_dir <- test_path("dummy_packages", "package", "vignettes")
 
   expect_error(
@@ -107,4 +107,8 @@ test_that("lint_dir continues to accept relative_path= in 2nd positional argumen
     "'relative_path' is no longer available as a positional argument",
     fixed = TRUE
   )
+})
+
+test_that("typo in argument name gives helpful error", {
+  expect_error(lint_dir(litners = identity), "Found unknown arguments in [.][.][.].*[?]lint_dir ")
 })

@@ -150,69 +150,6 @@ make_check_env <- function(pkg_name, xml) {
   env
 }
 
-extract_glued_symbols <- function(expr, interpret_glue) {
-  if (!isTRUE(interpret_glue)) {
-    return(character())
-  }
-  # TODO support more glue functions
-  # Package glue:
-  #  - glue_sql
-  #  - glue_safe
-  #  - glue_col
-  #  - glue_data
-  #  - glue_data_sql
-  #  - glue_data_safe
-  #  - glue_data_col
-  #
-  # Package stringr:
-  #  - str_interp
-  # NB: position() > 1 because position=1 is <expr><SYMBOL_FUNCTION_CALL>
-  glue_call_xpath <- "
-    descendant::SYMBOL_FUNCTION_CALL[text() = 'glue']
-      /parent::expr
-      /parent::expr[
-        not(SYMBOL_SUB[text() = '.envir' or text() = '.transform'])
-        and not(expr[position() > 1 and not(STR_CONST)])
-      ]
-  "
-  glue_calls <- xml_find_all(expr, glue_call_xpath)
-
-  unexpected_error <- function(cond) {
-    stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond)) # nocov
-  }
-  parse_failure_warning <- function(cond) {
-    warning(
-      "Evaluating glue expression while testing for local variable usage failed: ",
-      conditionMessage(cond), "\nPlease ensure correct glue syntax, e.g., matched delimiters.",
-      call. = FALSE
-    )
-    NULL
-  }
-
-  glued_symbols <- new.env(parent = emptyenv())
-  for (glue_call in glue_calls) {
-    # TODO(michaelchirico): consider dropping tryCatch() here if we're more confident in our logic
-    parsed_call <- tryCatch(xml2lang(glue_call), error = unexpected_error, warning = unexpected_error)
-    parsed_call[[".envir"]] <- glued_symbols
-    parsed_call[[".transformer"]] <- symbol_extractor
-    # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint
-    tryCatch(eval(parsed_call), error = parse_failure_warning)
-  }
-  names(glued_symbols)
-}
-
-symbol_extractor <- function(text, envir, data) {
-  symbols <- tryCatch(
-    all.vars(parse(text = text), functions = TRUE),
-    error = function(...) NULL,
-    warning = function(...) NULL
-  )
-  for (sym in symbols) {
-    assign(sym, NULL, envir = envir)
-  }
-  ""
-}
-
 get_assignment_symbols <- function(xml) {
   get_r_string(xml_find_all(
     xml,
