@@ -172,6 +172,8 @@ By default, the following linters are enabled.
 Where applicable, the default settings are also shown.
 
 ```{r show_linter_defaults, echo = FALSE}
+library(lintr) # needed here for formalArgs
+
 default_linters <- lintr::default_linters
 linters_with_args <- lapply(
   setNames(nm = intersect(names(default_linters), lintr::available_linters(tags = "configurable")$linter)),
