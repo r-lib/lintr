@@ -2,7 +2,7 @@ test_that("pipe_consistency skips allowed usage", {
   skip_if_not_r_version("4.1.0")
   linter <- pipe_consistency_linter()
 
-  expect_lint("1:3 %>% mean() %>% as.character()", NULL, )
+  expect_lint("1:3 %>% mean() %>% as.character()", NULL, linter)
   expect_lint("1:3 |> mean() |> as.character()", NULL, linter)
   # With no pipes
   expect_lint("x <- 1:5", NULL, linter)
@@ -156,7 +156,7 @@ test_that("pipe_consistency_linter works with other magrittr pipes", {
   linter <- pipe_consistency_linter()
   expected_message <- rex("Found 1 instances of %>% and 1 instances of |>. Stick to one pipe operator.")
 
-  expect_lint("1:3 %>% mean() %T% print()", NULL, linter )
+  expect_lint("1:3 %>% mean() %T% print()", NULL, linter)
   expect_lint(
     "1:3 |> mean() %T>% print()",
     list(
