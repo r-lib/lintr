@@ -277,6 +277,7 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 default_settings <- NULL
 
 settings <- NULL
+sys_source <- function(...) NULL
 
 # nocov start
 .onLoad <- function(libname, pkgname) {
