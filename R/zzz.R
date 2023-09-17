@@ -300,7 +300,8 @@ sys_source <- function(...) NULL
       assign(base_fun, get(base_fun, backports_ns), lintr_ns)
     }
   }
-  if ("keep.parse.data" %in% formalArgs(sys.source)) {
+  # NB: glue loads methods, so no harm loading it just to use this helpful wrapper
+  if ("keep.parse.data" %in% methods::formalArgs(sys.source)) {
     sys_source <- function(...) sys.source(..., keep.parse.data = FALSE, keep.source = FALSE)
   } else {
     sys_source <- function(...) sys.source(..., keep.source = FALSE)
