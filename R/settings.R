@@ -67,12 +67,7 @@ get_setting <- function(setting, config, defaults) {
   }
 }
 
-
-reset_settings <- function() {
-  for (setting in names(default_settings)) {
-    settings[[setting]] <- default_settings[[setting]]
-  }
-}
+reset_settings <- function() list2env(default_settings, envir = settings)
 
 find_default_encoding <- function(filename) {
   if (is.null(filename)) {
