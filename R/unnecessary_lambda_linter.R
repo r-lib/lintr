@@ -61,8 +61,8 @@ unnecessary_lambda_linter <- function() {
   #     d. the function argument doesn't appear elsewhere in the call
   # TODO(#1703): handle explicit returns too: function(x) return(x)
   symbol_tests_fmt <- "
-    {call_expr_path}/OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[1][self::EQ_SUB])]/SYMBOL
-    and SYMBOL_FORMALS = {call_expr_path}/OP-LEFT-PAREN/following-sibling::expr[1]/SYMBOL
+    SYMBOL_FORMALS = {call_expr_path}/OP-LEFT-PAREN/following-sibling::expr[1]/SYMBOL
+    and not({call_expr_path}/expr[2]/preceding-sibling::EQ_SUB)
     and not(SYMBOL_FORMALS = {call_expr_path}/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//SYMBOL)
   "
   default_fun_xpath <- glue("
