@@ -73,7 +73,7 @@ unnecessary_lambda_linter <- function() {
       and count(SYMBOL_FORMALS) = 1
       and (
         (
-          { glue(symbol_loc_fmt, paren_path = 'expr') })
+          { glue(symbol_loc_fmt, paren_path = 'expr') }
         ) or (
           { glue(symbol_loc_fmt, paren_path = 'expr[OP-LEFT-BRACE and count(expr) = 1]/expr[1]') }
         )
