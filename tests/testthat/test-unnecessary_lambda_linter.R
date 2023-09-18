@@ -34,9 +34,6 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
     NULL,
     linter
   )
-  # TODO(michaelchirico): I believe there's cases where it's impossible to avoid an anonymous function due to a
-  #   conflict where you have to pass FUN= to an inner *apply function but it gets interpreted as the outer *apply's FUN
-  #   argument... but it's escaping me now.
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
@@ -103,6 +100,33 @@ test_that("cases with braces are caught", {
     trim_some("
       lapply(x, function(xi) {
         print(xi)
+      })
+    "),
+    lint_msg,
+    linter
+  )
+
+debug(linter)
+  expect_lint(
+    "lapply(x, function(xi) { return(print(xi)) })",
+    lint_msg,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      lapply(x, function(xi) {
+        print(xi)
+      })
+    "),
+    lint_msg,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      lapply(x, function(xi) {
+        return(print(xi))
       })
     "),
     lint_msg,
