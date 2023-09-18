@@ -44,32 +44,28 @@ read_config_file <- function(config_file) {
     return(NULL)
   }
 
+  config <- new.env()
   if (endsWith(config_file, ".R")) {
-    config <- new.env()
-    read <- function(file) {
-      sys_source(file, config)
-      config
-    }
+    load_config <- function(file) sys_source(file, config)
     malformed <- function(e) {
       stop("Malformed config file, ensure it is valid R syntax\n  ", conditionMessage(e), call. = FALSE)
     }
   } else {
-    read <- function(file) {
+    load_config <- function(file) {
       dcf_values <- read.dcf(file, all = TRUE)
-      out <- lapply(names(dcf_values), function(setting) {
+      for (setting in names(dcf_values)) {
         tryCatch(
-          eval(parse(text = dcf_values[[setting]], keep.source = FALSE)),
+          assign(setting, eval(str2lang(dcf_values[[setting]])), envir = config)
           error = function(e) stop("Malformed config setting '", setting, "'\n  ", conditionMessage(e), call. = FALSE)
         )
-      })
-      names(out) <- names(dcf_values)
-      out
+      }
     }
     malformed <- function(e) {
       stop("Malformed config file, ensure it ends in a newline\n  ", conditionMessage(e), call. = FALSE)
     }
   }
-  tryCatch(read(config_file), warning = malformed, error = malformed)
+  tryCatch(load_config(config_file), warning = malformed, error = malformed)
+  config
 }
 
 get_setting <- function(setting, config, defaults) {
