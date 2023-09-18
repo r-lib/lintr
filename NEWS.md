@@ -20,6 +20,7 @@
 * `fixed_regex_linter()`
   + Is pipe-aware, in particular removing false positives arong piping into {stringr} functions like `x |> str_replace(fixed("a"), "b")` (#1811, @MichaelChirico).
   + Gains an option `allow_unescaped` (default `FALSE`) to toggle linting regexes not requiring any escapes or character classes (#1689, @MichaelChirico). Thus `fixed_regex_linter(allow_unescaped = TRUE)` would lint on `grepl("[$]", x)` but not on `grepl("a", x)` since the latter does not use any regex special characters.
+  + Ignores non-string inputs to `pattern=` as a keyword argument (#2159, @MichaelChirico).
 * Linters with logic around the magrittr pipe `%>%` consistently apply it to the other pipes `%!>%`, `%T>%`, `%<>%` (and possibly `%$%`) where appropriate (#2008, @MichaelChirico).
   + `brace_linter()`
   + `pipe_call_linter()`
