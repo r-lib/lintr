@@ -40,22 +40,25 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
+  linter <- unnecessary_lambda_linter()
+
+debug(linter)
   expect_lint(
     "lapply(DF, function(x) sum(x))",
     rex::rex("Pass sum directly as a symbol to lapply()"),
-    unnecessary_lambda_linter()
+    linter
   )
 
   expect_lint(
     "rapply(l, function(x) is.data.frame(x))",
     rex::rex("Pass is.data.frame directly as a symbol to rapply()"),
-    unnecessary_lambda_linter()
+    linter
   )
 
   expect_lint(
     "eapply(env, function(x) sum(x, na.rm = TRUE))",
     rex::rex("Pass sum directly as a symbol to eapply()"),
-    unnecessary_lambda_linter()
+    linter
   )
 })
 
@@ -109,6 +112,7 @@ test_that("cases with braces are caught", {
     linter
   )
 
+debug(linter)
   expect_lint(
     trim_some("
       lapply(x, function(xi) {
