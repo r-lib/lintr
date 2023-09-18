@@ -34,6 +34,12 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
     NULL,
     linter
   )
+
+  # This _could_ be lapply(x, `%in%`, tbl), but don't force infix into lambda
+  expect_lint("lapply(x, function(xi) xi %in% tbl)", NULL, linter)
+  # This one could not
+  expect_lint("lapply(x, function(xi) tbl %in% xi)", NULL, linter)
+
   # TODO(michaelchirico): I believe there's cases where it's impossible to avoid an anonymous function due to a
   #   conflict where you have to pass FUN= to an inner *apply function but it gets interpreted as the outer *apply's FUN
   #   argument... but it's escaping me now.
@@ -42,7 +48,6 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
   linter <- unnecessary_lambda_linter()
 
-debug(linter)
   expect_lint(
     "lapply(DF, function(x) sum(x))",
     rex::rex("Pass sum directly as a symbol to lapply()"),
@@ -112,7 +117,6 @@ test_that("cases with braces are caught", {
     linter
   )
 
-debug(linter)
   expect_lint(
     trim_some("
       lapply(x, function(xi) {
