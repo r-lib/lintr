@@ -55,7 +55,7 @@ read_config_file <- function(config_file) {
       dcf_values <- read.dcf(file, all = TRUE)
       for (setting in names(dcf_values)) {
         tryCatch(
-          assign(setting, eval(str2lang(dcf_values[[setting]])), envir = config)
+          assign(setting, eval(str2lang(dcf_values[[setting]])), envir = config),
           error = function(e) stop("Malformed config setting '", setting, "'\n  ", conditionMessage(e), call. = FALSE)
         )
       }
