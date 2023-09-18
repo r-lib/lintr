@@ -60,10 +60,10 @@ unnecessary_lambda_linter <- function() {
   #       - and it has to be passed positionally (not as a keyword)
   #     d. the function argument doesn't appear elsewhere in the call
   # TODO(#1703): handle explicit returns too: function(x) return(x)
-  symbol_loc_fmt <- "
-    {paren_path}/OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[1][self::EQ_SUB])]/SYMBOL
-    and SYMBOL_FORMALS = {paren_path}/OP-LEFT-PAREN/following-sibling::expr[1]/SYMBOL
-    and not(SYMBOL_FORMALS = {paren_path}/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//SYMBOL)
+  symbol_tests_fmt <- "
+    {call_paren_path}/OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[1][self::EQ_SUB])]/SYMBOL
+    and SYMBOL_FORMALS = {call_paren_path}/OP-LEFT-PAREN/following-sibling::expr[1]/SYMBOL
+    and not(SYMBOL_FORMALS = {call_paren_path}/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//SYMBOL)
   "
   default_fun_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {apply_funs} ]
@@ -73,9 +73,9 @@ unnecessary_lambda_linter <- function() {
       and count(SYMBOL_FORMALS) = 1
       and (
         (
-          { glue(symbol_loc_fmt, paren_path = 'expr') }
+          { glue(symbol_tests_fmt, call_paren_path = 'expr') }
         ) or (
-          { glue(symbol_loc_fmt, paren_path = 'expr[OP-LEFT-BRACE and count(expr) = 1]/expr[1]') }
+          { glue(symbol_tests_fmt, call_paren_path = 'expr[OP-LEFT-BRACE and count(expr) = 1]/expr[1]') }
         )
       )
     ]
