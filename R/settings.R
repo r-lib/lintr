@@ -72,7 +72,7 @@ get_setting <- function(setting, config, defaults) {
   option <- getOption(paste(sep = ".", "lintr", setting))
   if (!is.null(option)) {
     option
-  } else if (!is.null(config[[setting]])) {
+  } else if (exists(setting, config)) {
     config[[setting]]
   } else {
     defaults[[setting]]
