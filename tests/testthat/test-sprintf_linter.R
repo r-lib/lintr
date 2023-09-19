@@ -90,6 +90,9 @@ test_that("edge cases are detected correctly", {
     list(message = rex::rex("reference to non-existent argument 3")),
     linter
   )
+
+  # #2131: xml2lang stripped necessary whitespace
+  expect_lint("sprintf('%s', if (A) '' else y)", NULL, linter)
 })
 
 local({

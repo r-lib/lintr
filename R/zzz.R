@@ -250,6 +250,8 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #'  - `comment_bot`: decides if lintr comment bot on GitHub can comment on commits
 #'  - `error_on_lint`: decides if error should be produced when any lints are found
 #'
+#' There are no settings without defaults, i.e., this list describes every valid setting.
+#'
 #' @examples
 #' # available settings
 #' names(default_settings)
@@ -270,6 +272,7 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #' )]
 #'
 #' @seealso [read_settings()], [default_linters]
+#' @aliases settings config lintr-config lintr-settings .lintr
 #' @export
 default_settings <- NULL
 
@@ -284,7 +287,7 @@ settings <- NULL
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  backports::import(pkgname, c("trimws", "lengths", "deparse1"))
+  backports::import(pkgname, c("trimws", "lengths", "deparse1", "...names"))
   # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
   base_ns <- getNamespace("base")
   backports_ns <- getNamespace("backports")
@@ -295,7 +298,7 @@ settings <- NULL
     }
   }
 
-  default_settings <<- list(
+  utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,
     encoding = "UTF-8",
     exclude = rex("#", any_spaces, "nolint"),
@@ -324,9 +327,9 @@ settings <- NULL
     ),
     comment_bot = logical_env("LINTR_COMMENT_BOT") %||% TRUE,
     error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
-  )
+  ))
 
-  settings <<- list2env(default_settings, parent = emptyenv())
+  utils::assignInMyNamespace("settings", list2env(default_settings, parent = emptyenv()))
 
   if (requireNamespace("tibble", quietly = TRUE)) {
     registerS3method("as_tibble", "lints", as_tibble.lints, asNamespace("tibble"))
