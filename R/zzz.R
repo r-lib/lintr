@@ -196,6 +196,7 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
   "source",
   "Sys.setenv",
   "Sys.setlocale",
+  "Sys.unsetenv",
   "trace",
   "undebug",
   "untrace"

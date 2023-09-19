@@ -39,7 +39,7 @@
 #' )
 #'
 #' lint(
-#'   text = 'my_list$`a b`',
+#'   text = "my_list$`a b`",
 #'   linters = keyword_quote_linter()
 #' )
 #'
