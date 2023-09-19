@@ -67,6 +67,7 @@ unnecessary_lambda_linter <- function() {
       FUNCTION
       and count(SYMBOL_FORMALS) = 1
       and count(expr[last()]//SYMBOL[self::* = preceding::SYMBOL_FORMALS[1]]) = 1
+      and count(expr[last()]//SYMBOL_FUNCTION_CALL) = 1
       and SYMBOL_FORMALS =
         expr[last()]
           //expr[
