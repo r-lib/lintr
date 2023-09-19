@@ -34,8 +34,8 @@ lint(
 )
 
 lint(
- text = "1:3 |> mean() |> as.character()",
- linters = pipe_consistency_linter()
+  text = "1:3 |> mean() |> as.character()",
+  linters = pipe_consistency_linter()
 )
 }
 \seealso{

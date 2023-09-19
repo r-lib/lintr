@@ -225,7 +225,8 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
     indent_levels <- re_matches(
       source_expression$file_lines,
-      rex(start, any_spaces), locations = TRUE
+      rex(start, any_spaces),
+      locations = TRUE
     )[, "end"]
     expected_indent_levels <- integer(length(indent_levels))
     is_hanging <- logical(length(indent_levels))
@@ -259,8 +260,8 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
     # Only lint non-empty lines if the indentation level doesn't match.
     bad_lines <- which(indent_levels != expected_indent_levels &
-                         nzchar(trimws(source_expression$file_lines)) &
-                         !in_str_const)
+      nzchar(trimws(source_expression$file_lines)) &
+      !in_str_const)
     if (length(bad_lines) > 0L) {
       # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
       is_consecutive_lint <- c(FALSE, diff(bad_lines) == 1L)
@@ -351,8 +352,7 @@ build_indentation_style_tidy <- function() {
           @line1 = following-sibling::{paren_tokens_right}/{xp_inner_expr}[position() = 1]/@line1
         ]/following-sibling::{paren_tokens_right}[
           @line1 > {xp_inner_expr}[position() = last() - 1]/@line2
-        ]"
-    ),
+        ]"),
     collapse = " | "
   )
 
