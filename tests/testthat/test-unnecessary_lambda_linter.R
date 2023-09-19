@@ -120,3 +120,11 @@ test_that("cases with braces are caught", {
     linter
   )
 })
+
+test_that("function shorthand is handled", {
+  expect_lint(
+    "lapply(DF, \\(x) sum(x))",
+    rex::rex("Pass sum directly as a symbol to lapply()"),
+    unnecessary_lambda_linter()
+  )
+})
