@@ -6,6 +6,7 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
   # the first argument may be ... or have a cumbersome name, so an anonymous
   #   function may be preferable (e.g. this is often the case for grep() calls)
   expect_lint("sapply(x, function(xi) foo(1, xi))", NULL, linter)
+  expect_lint("sapply(x, function(xi) return(foo(1, xi)))", NULL, linter)
 
   # if the argument is re-used, that's also a no-go
   expect_lint("dendrapply(x, function(xi) foo(xi, xi))", NULL, linter)
@@ -41,6 +42,7 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
   expect_lint("lapply(x, function(xi) tbl %in% xi)", NULL, linter)
   # would require multiple lapply() loops
   expect_lint("lapply(x, function(xi) foo(bar(xi)))", NULL, linter)
+  expect_lint("lapply(x, function(xi) return(foo(bar(xi))))", NULL, linter)
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
@@ -48,6 +50,11 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
 
   expect_lint(
     "lapply(DF, function(x) sum(x))",
+    rex::rex("Pass sum directly as a symbol to lapply()"),
+    linter
+  )
+  expect_lint(
+    "lapply(DF, function(x) return(sum(x)))",
     rex::rex("Pass sum directly as a symbol to lapply()"),
     linter
   )
@@ -63,10 +70,16 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
     rex::rex("Pass sum directly as a symbol to eapply()"),
     linter
   )
+  expect_lint(
+    "eapply(env, function(x) return(sum(x, na.rm = TRUE)))",
+    rex::rex("Pass sum directly as a symbol to eapply()"),
+    linter
+  )
 })
 
 test_that("unnecessary_lambda_linter doesn't apply to keyword args", {
   expect_lint("lapply(x, function(xi) data.frame(nm = xi))", NULL, unnecessary_lambda_linter())
+  expect_lint("lapply(x, function(xi) return(data.frame(nm = xi)))", NULL, unnecessary_lambda_linter())
 })
 
 test_that("purrr-style anonymous functions are also caught", {
@@ -115,7 +128,6 @@ test_that("cases with braces are caught", {
     linter
   )
 
-debug(linter)
   expect_lint(
     "lapply(x, function(xi) { return(print(xi)) })",
     lint_msg,

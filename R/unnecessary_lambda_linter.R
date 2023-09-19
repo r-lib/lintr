@@ -66,7 +66,7 @@ unnecessary_lambda_linter <- function() {
     /following-sibling::expr[FUNCTION and count(SYMBOL_FORMALS) = 1]
     /expr[last()][
       count(.//SYMBOL[self::* = preceding::SYMBOL_FORMALS[1]]) = 1
-      and count(.//SYMBOL_FUNCTION_CALL) = 1
+      and count(.//SYMBOL_FUNCTION_CALL[text() != 'return']) = 1
       and preceding-sibling::SYMBOL_FORMALS =
         //expr[
           position() = 2
@@ -95,7 +95,7 @@ unnecessary_lambda_linter <- function() {
   # path to calling function symbol from the matched expressions
   fun_xpath <- "./parent::expr/expr/SYMBOL_FUNCTION_CALL"
   # path to the symbol of the simpler function that avoids a lambda
-  symbol_xpath <- glue("(expr|expr[OP-LEFT-BRACE]/expr[1])/expr[SYMBOL_FUNCTION_CALL]")
+  symbol_xpath <- "expr[last()]//expr[SYMBOL_FUNCTION_CALL[text() != 'return']]"
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
