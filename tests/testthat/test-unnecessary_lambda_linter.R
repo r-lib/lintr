@@ -34,25 +34,34 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
     NULL,
     linter
   )
+
+  # This _could_ be lapply(x, `%in%`, tbl), but don't force infix into lambda
+  expect_lint("lapply(x, function(xi) xi %in% tbl)", NULL, linter)
+  # This one could not
+  expect_lint("lapply(x, function(xi) tbl %in% xi)", NULL, linter)
+  # would require multiple lapply() loops
+  expect_lint("lapply(x, function(xi) foo(bar(xi)))", NULL, linter)
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
+  linter <- unnecessary_lambda_linter()
+
   expect_lint(
     "lapply(DF, function(x) sum(x))",
     rex::rex("Pass sum directly as a symbol to lapply()"),
-    unnecessary_lambda_linter()
+    linter
   )
 
   expect_lint(
     "rapply(l, function(x) is.data.frame(x))",
     rex::rex("Pass is.data.frame directly as a symbol to rapply()"),
-    unnecessary_lambda_linter()
+    linter
   )
 
   expect_lint(
     "eapply(env, function(x) sum(x, na.rm = TRUE))",
     rex::rex("Pass sum directly as a symbol to eapply()"),
-    unnecessary_lambda_linter()
+    linter
   )
 })
 
