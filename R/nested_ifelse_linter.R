@@ -36,10 +36,11 @@
 #'   - Use `dplyr::case_when()`
 #'
 #'     ```r
-#'     dplyr::case_when(
-#'       x == "a" ~ 2L,
-#'       x == "b" ~ 3L,
-#'       TRUE ~ 1L
+#'     dplyr::case_match(
+#'       x,
+#'       "a" ~ 2L,
+#'       "b" ~ 3L,
+#'       .default = 1L
 #'     )
 #'     ```
 #'

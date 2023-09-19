@@ -42,10 +42,11 @@ Here are a few ways to avoid nesting and make the code more readable:
 }\if{html}{\out{</div>}}
 \item Use \code{dplyr::case_when()}
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{dplyr::case_when(
-  x == "a" ~ 2L,
-  x == "b" ~ 3L,
-  TRUE ~ 1L
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{dplyr::case_match(
+  x,
+  "a" ~ 2L,
+  "b" ~ 3L,
+  .default = 1L
 )
 }\if{html}{\out{</div>}}
 \item Use a look-up-and-merge approach (build a mapping table between values
