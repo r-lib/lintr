@@ -60,26 +60,20 @@ unnecessary_lambda_linter <- function() {
   #       - and it has to be passed positionally (not as a keyword)
   #     d. the function argument doesn't appear elsewhere in the call
   # TODO(#1703): handle explicit returns too: function(x) return(x)
-  symbol_tests_fmt <- "
-    SYMBOL_FORMALS = {call_expr_path}/OP-LEFT-PAREN/following-sibling::expr[1]/SYMBOL
-    and not({call_expr_path}/expr[2]/preceding-sibling::EQ_SUB)
-    and not(SYMBOL_FORMALS = {call_expr_path}/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//SYMBOL)
-  "
-  symbol_test_no_braces <- glue(symbol_tests_fmt, call_expr_path = 'expr')
-  symbol_test_braces <- glue(symbol_tests_fmt, call_expr_path = 'expr[OP-LEFT-BRACE and count(expr) = 1]/expr[1]')
   default_fun_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {apply_funs} ]
     /parent::expr
     /following-sibling::expr[
       FUNCTION
       and count(SYMBOL_FORMALS) = 1
-      and (
-        (
-          {symbol_test_no_braces}
-        ) or (
-          {symbol_test_braces}
-        )
-      )
+      and count(expr[last()]//SYMBOL[self::* = preceding::SYMBOL_FORMALS[1]]) = 1
+      and SYMBOL_FORMALS =
+        expr[last()]
+          //expr[
+            position() = 2
+            and preceding-sibling::expr/SYMBOL_FUNCTION_CALL
+            and not(preceding-sibling::*[1][self::EQ_SUB])]
+          /SYMBOL
     ]
   ")
 
