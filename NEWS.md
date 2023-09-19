@@ -35,7 +35,7 @@
   + `undesirable_function_linter()`
   + `unreachable_code_linter()`
   + `yoda_test_linter()`
-* Linters with logic around functon declarations consistently include the R4.0.0 shorthand `\()` (@MichaelChirico).
+* Linters with logic around functon declarations consistently include the R4.0.0 shorthand `\()` (#2190, @MichaelChirico).
   + `brace_linter()`
   + `function_left_parentheses_linter()`
   + `indentation_linter()`
