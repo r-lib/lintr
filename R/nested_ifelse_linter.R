@@ -33,7 +33,7 @@
 #'     )
 #'     ```
 #'
-#'   - Use `dplyr::case_when()`
+#'   - Use `dplyr::case_match()`
 #'
 #'     ```r
 #'     dplyr::case_match(

@@ -40,7 +40,7 @@ Here are a few ways to avoid nesting and make the code more readable:
   default = 1L
 )
 }\if{html}{\out{</div>}}
-\item Use \code{dplyr::case_when()}
+\item Use \code{dplyr::case_match()}
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{dplyr::case_match(
   x,
