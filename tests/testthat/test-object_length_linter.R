@@ -66,7 +66,7 @@ test_that("object_length_linter won't fail if dependency has no exports", {
 })
 
 test_that("function shorthand is caught", {
-  skip_if_not_r_version("4.0.0")
+  skip_if_not_r_version("4.1.0")
 
   expect_lint(
     "abcdefghijklm <- \\() NULL",

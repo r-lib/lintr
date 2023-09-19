@@ -832,7 +832,7 @@ test_that("it doesn't error on invalid code", {
 })
 
 test_that("function shorthand is handled", {
-  skip_if_not_r_version("4.0.0")
+  skip_if_not_r_version("4.1.0")
   linter <- indentation_linter()
 
   expect_lint(

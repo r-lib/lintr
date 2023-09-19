@@ -555,7 +555,7 @@ test_that("code with pipes is handled correctly", {
 })
 
 test_that("function shorthand is treated like 'full' function", {
-  skip_if_not_r_version("4.0.0")
+  skip_if_not_r_version("4.1.0")
   linter <- brace_linter()
 
   expect_lint("a <- \\() {  \n}", NULL, linter)
