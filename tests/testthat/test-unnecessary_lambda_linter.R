@@ -122,6 +122,8 @@ test_that("cases with braces are caught", {
 })
 
 test_that("function shorthand is handled", {
+  skip_if_not_r_version("4.0.0")
+
   expect_lint(
     "lapply(DF, \\(x) sum(x))",
     rex::rex("Pass sum directly as a symbol to lapply()"),
