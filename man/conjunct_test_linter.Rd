@@ -4,13 +4,18 @@
 \alias{conjunct_test_linter}
 \title{Force \code{&&} conditions to be written separately where appropriate}
 \usage{
-conjunct_test_linter(allow_named_stopifnot = TRUE, allow_filter = FALSE)
+conjunct_test_linter(
+  allow_named_stopifnot = TRUE,
+  allow_filter = c("never", "not_dplyr", "always")
+)
 }
 \arguments{
 \item{allow_named_stopifnot}{Logical, \code{TRUE} by default. If \code{FALSE}, "named" calls to \code{stopifnot()},
 available since R 4.0.0 to provide helpful messages for test failures, are also linted.}
 
-\item{allow_filter}{Logical, \code{FALSE} by default. If \code{TRUE}, \code{filter()} expressions are not linted.}
+\item{allow_filter}{Character naming the method for linting calls to \code{filter()}. The default, \code{"never"}, means
+\code{filter()} and \code{dplyr::filter()} calls are linted; \code{"not_dplyr"} means only \code{dplyr::filter()} calls are linted;
+and \code{"always"} means no calls to \code{filter()} are linted. Calls like \code{stats::filter()} are never linted.}
 }
 \description{
 For readability of test outputs, testing only one thing per call to
@@ -44,10 +49,12 @@ lint(
 )
 
 lint(
-  text = "dplyr::filter(
-    mtcars,
-    mpg > 20 & vs == 0
-  )",
+  text = "dplyr::filter(mtcars, mpg > 20 & vs == 0)",
+  linters = conjunct_test_linter()
+)
+
+lint(
+  text = "filter(mtcars, mpg > 20 & vs == 0)",
   linters = conjunct_test_linter()
 )
 
@@ -63,11 +70,18 @@ lint(
 )
 
 lint(
-  text = "dplyr::filter(
-    mtcars,
-    mpg > 20 & vs == 0
-  )",
-  linters = conjunct_test_linter(allow_filter = TRUE)
+  text = "dplyr::filter(mtcars, mpg > 20 & vs == 0)",
+  linters = conjunct_test_linter(allow_filter = "always")
+)
+
+lint(
+  text = "filter(mtcars, mpg > 20 & vs == 0)",
+  linters = conjunct_test_linter(allow_filter = "not_dplyr")
+)
+
+lint(
+  text = "stats::filter(mtcars$cyl, mtcars$mpg > 20 & mtcars$vs == 0)",
+  linters = conjunct_test_linter()
 )
 
 }

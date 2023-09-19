@@ -1,5 +1,6 @@
 test_that("unused_import_linter lints as expected", {
   linter <- unused_import_linter()
+
   expect_lint("library(dplyr)\ntibble(a = 1)", NULL, linter)
   # SYMBOL_FUNCTION_CALL usage is detected
   expect_lint("library(tidyverse)\ntibble(a = 1)", NULL, linter)
@@ -58,4 +59,17 @@ test_that("unused_import_linter lints packages with exports like pkg::pkg", {
     rex::rex("Package 'glue' is attached but never used."),
     unused_import_linter()
   )
+})
+
+test_that("glue usages are seen", {
+  lint_msg <- rex::rex("Package 'xmlparsedata' is attached but never used.")
+
+  lines <- trim_some("
+    library(glue)
+    library(xmlparsedata)
+
+    glue('{ xml_parse_data() }')
+  ")
+  expect_lint(lines, NULL, unused_import_linter())
+  expect_lint(lines, lint_msg, unused_import_linter(interpret_glue = FALSE))
 })

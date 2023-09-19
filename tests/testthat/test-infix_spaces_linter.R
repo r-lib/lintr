@@ -70,6 +70,8 @@ test_that("The three `=` are all linted", {
 })
 
 test_that("exclude_operators works", {
+  lint_msg <- rex::rex("Put spaces around all infix operators.")
+
   expect_lint("a+b", NULL, infix_spaces_linter(exclude_operators = "+"))
   expect_lint(
     trim_some("
@@ -80,10 +82,13 @@ test_that("exclude_operators works", {
     infix_spaces_linter(exclude_operators = c("+", "-"))
   )
 
-  # grouped operators
-  expect_lint("a<<-1", NULL, infix_spaces_linter(exclude_operators = "<-"))
-  expect_lint("a:=1", NULL, infix_spaces_linter(exclude_operators = "<-"))
-  expect_lint("a->>1", NULL, infix_spaces_linter(exclude_operators = "->"))
+  # operators match on text, not hidden node
+  expect_lint("a<<-1", lint_msg, infix_spaces_linter(exclude_operators = "<-"))
+  expect_lint("a<<-1", NULL, infix_spaces_linter(exclude_operators = "<<-"))
+  expect_lint("a:=1", lint_msg, infix_spaces_linter(exclude_operators = "<-"))
+  expect_lint("a:=1", NULL, infix_spaces_linter(exclude_operators = ":="))
+  expect_lint("a->>1", lint_msg, infix_spaces_linter(exclude_operators = "->"))
+  expect_lint("a->>1", NULL, infix_spaces_linter(exclude_operators = "->>"))
   expect_lint("a%any%1", NULL, infix_spaces_linter(exclude_operators = "%%"))
   expect_lint("function(a=1) { }", NULL, infix_spaces_linter(exclude_operators = "="))
   expect_lint("foo(a=1)", NULL, infix_spaces_linter(exclude_operators = "="))
@@ -195,4 +200,26 @@ test_that("mixed unary & binary operators aren't mis-lint", {
     ),
     infix_spaces_linter()
   )
+})
+
+test_that("parse tags are accepted by exclude_operators", {
+  expect_lint("sum(x, na.rm=TRUE)", NULL, infix_spaces_linter(exclude_operators = "EQ_SUB"))
+  expect_lint("function(x, na.rm=TRUE) { }", NULL, infix_spaces_linter(exclude_operators = "EQ_FORMALS"))
+  expect_lint("x=1", NULL, infix_spaces_linter(exclude_operators = "EQ_ASSIGN"))
+
+  # uses parse_tag
+  expect_lint("1+1", NULL, infix_spaces_linter(exclude_operators = "'+'"))
+
+  # mixing
+  text <- "x=function(a=foo(bar=1)) { }"
+  col_assign <- list(column_number = 2L)
+  col_formals <- list(column_number = 13L)
+  col_sub <- list(column_number = 21L)
+  expect_lint(text, NULL, infix_spaces_linter(exclude_operators = c("EQ_SUB", "EQ_FORMALS", "EQ_ASSIGN")))
+  expect_lint(text, col_assign, infix_spaces_linter(exclude_operators = c("EQ_SUB", "EQ_FORMALS")))
+  expect_lint(text, col_formals, infix_spaces_linter(exclude_operators = c("EQ_SUB", "EQ_ASSIGN")))
+  expect_lint(text, col_sub, infix_spaces_linter(exclude_operators = c("EQ_FORMALS", "EQ_ASSIGN")))
+  expect_lint(text, list(col_assign, col_formals), infix_spaces_linter(exclude_operators = "EQ_SUB"))
+  expect_lint(text, list(col_assign, col_sub), infix_spaces_linter(exclude_operators = "EQ_FORMALS"))
+  expect_lint(text, list(col_formals, col_sub), infix_spaces_linter(exclude_operators = "EQ_ASSIGN"))
 })

@@ -60,12 +60,13 @@ test_that("warnings occur only for deprecated linters", {
   expect_silent(linters_with_tags(tags = NULL))
   num_deprecated_linters <- nrow(available_linters(tags = "deprecated", exclude_tags = NULL))
   deprecation_warns_seen <- 0L
+  outer_env <- environment()
   expect_silent({
     withCallingHandlers(
       linters_with_tags(tags = "deprecated", exclude_tags = NULL),
       warning = function(w) {
-        if (grepl("was deprecated", conditionMessage(w))) {
-          deprecation_warns_seen <<- deprecation_warns_seen + 1L
+        if (grepl("was deprecated", conditionMessage(w), fixed = TRUE)) {
+          outer_env$deprecation_warns_seen <- outer_env$deprecation_warns_seen + 1L
           invokeRestart("muffleWarning")
         } else {
           w
@@ -103,35 +104,25 @@ test_that("rownames for available_linters data frame doesn't have missing entrie
 # See the roxygen helpers in R/linter_tags.R for the code used to generate the docs.
 #   This test helps ensure the documentation is up to date with the available_linters() database
 test_that("lintr help files are up to date", {
-  # You need to run these tests from the installed package, since we need the package help file to
-  # be available, which is retrieved from the installed location.
-  #
-  # So, to test it locally:
-  #
-  # 1. R CMD INSTALL .
-  # 2. Rscript -e "library(lintr); testthat::test_file('tests/testthat/test-linter_tags.R')"
-
-  helper_db_dir <- system.file("help", package = "lintr")
-  skip_if_not(
-    dir.exists(helper_db_dir) && all(file.exists(file.path(helper_db_dir, c("lintr.rdb", "lintr.rdx")))),
-    message = "Package help not installed or corrupted"
-  )
-
-  help_env <- new.env(parent = topenv())
-  lazyLoad(file.path(helper_db_dir, "lintr"), help_env)
+  help_db <- tools::Rd_db("lintr")
+  # e.g. in dev under pkgload::load_all()
+  if (length(help_db) == 0L) {
+    help_db <- tools::Rd_db(dir = test_path("..", ".."))
+    skip_if_not(length(help_db) > 0L, message = "Package help not installed or corrupted")
+  }
 
   lintr_db <- available_linters(exclude_tags = NULL)
   lintr_db$package <- NULL
   lintr_db$tags <- lapply(lintr_db$tags, function(x) if ("deprecated" %in% x) "deprecated" else sort(x))
   lintr_db <- lintr_db[order(lintr_db$linter), ]
 
-  expect_true(exists("linters", envir = help_env), info = "?linters exists")
+  expect_true("linters.Rd" %in% names(help_db), info = "?linters exists")
 
   # NB: objects in help_env are class Rd, see ?as.character.Rd (part of 'tools')
   rd_as_string <- function(rd) paste(as.character(rd), collapse = "")
 
   # Get a character string with the contents of ?linters
-  linter_help_text <- rd_as_string(help_env$linters)
+  linter_help_text <- rd_as_string(help_db$linters.Rd)
 
   # Test three things about ?linters
   #   (1) the complete list of linters and tags matches that in available_linters()
@@ -201,9 +192,9 @@ test_that("lintr help files are up to date", {
 
   # Now test an analogue to (1) from above for each tag's help page
   for (tag in db_tag_table$tag) {
-    expect_true(exists(paste0(tag, "_linters"), envir = help_env), info = paste0("?", tag, "_linters exists"))
+    expect_true(paste0(tag, "_linters.Rd") %in% names(help_db), info = paste0("?", tag, "_linters exists"))
 
-    tag_help <- help_env[[paste0(tag, "_linters")]]
+    tag_help <- help_db[[paste0(tag, "_linters.Rd")]]
     tag_help_text <- rd_as_string(tag_help)
 
     # linters listed in ?${TAG}_linter

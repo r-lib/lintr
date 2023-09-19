@@ -4,7 +4,13 @@
 \alias{library_call_linter}
 \title{Library call linter}
 \usage{
-library_call_linter()
+library_call_linter(allow_preamble = TRUE)
+}
+\arguments{
+\item{allow_preamble}{Logical, default \code{TRUE}. If \code{FALSE},
+no code is allowed to precede the first \code{library()} call,
+otherwise some setup code is allowed, but all \code{library()}
+calls must follow consecutively after the first one.}
 }
 \description{
 Force library calls to all be at the top of the script.
@@ -52,5 +58,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }
