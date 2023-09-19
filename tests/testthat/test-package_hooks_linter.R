@@ -255,7 +255,7 @@ test_that("function shorthand is handled", {
     ".onLoad <- \\(lib, pkg) packageStartupMessage('hi')",
     rex::rex("Put packageStartupMessage() calls in .onAttach()"),
     linter
-  )  
+  )
   expect_lint(
     ".onAttach <- \\(xxx, pkg) { }",
     rex::rex(".onAttach() should take two arguments"),
