@@ -63,19 +63,18 @@ unnecessary_lambda_linter <- function() {
   default_fun_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {apply_funs} ]
     /parent::expr
-    /following-sibling::expr[
-      FUNCTION
-      and count(SYMBOL_FORMALS) = 1
-      and count(expr[last()]//SYMBOL[self::* = preceding::SYMBOL_FORMALS[1]]) = 1
-      and count(expr[last()]//SYMBOL_FUNCTION_CALL) = 1
-      and SYMBOL_FORMALS =
-        expr[last()]
-          //expr[
-            position() = 2
-            and preceding-sibling::expr/SYMBOL_FUNCTION_CALL
-            and not(preceding-sibling::*[1][self::EQ_SUB])]
-          /SYMBOL
+    /following-sibling::expr[FUNCTION and count(SYMBOL_FORMALS) = 1]
+    /expr[last()][
+      count(.//SYMBOL[self::* = preceding::SYMBOL_FORMALS[1]]) = 1
+      and count(.//SYMBOL_FUNCTION_CALL) = 1
+      and preceding-sibling::SYMBOL_FORMALS =
+        //expr[
+          position() = 2
+          and preceding-sibling::expr/SYMBOL_FUNCTION_CALL
+          and not(preceding-sibling::*[1][self::EQ_SUB])
+        ]/SYMBOL
     ]
+    /parent::expr
   ")
 
   # purrr-style inline formulas-as-functions, e.g. ~foo(.x)
