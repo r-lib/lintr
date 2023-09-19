@@ -28,6 +28,9 @@ test_that("fixed_regex_linter skips allowed usages", {
   expect_lint("sub('[][]', '', y)", NULL, linter)
   expect_lint("sub('[][ ]', '', y)", NULL, linter)
   expect_lint("sub('[],[]', '', y)", NULL, linter)
+
+  # wrapper functions don't throw
+  expect_lint("gregexpr(pattern = pattern, data, perl = TRUE, ...)", NULL, linter)
 })
 
 test_that("fixed_regex_linter blocks simple disallowed usages", {

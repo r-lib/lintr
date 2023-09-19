@@ -196,6 +196,7 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
   "source",
   "Sys.setenv",
   "Sys.setlocale",
+  "Sys.unsetenv",
   "trace",
   "undebug",
   "untrace"
@@ -250,6 +251,8 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #'  - `comment_bot`: decides if lintr comment bot on GitHub can comment on commits
 #'  - `error_on_lint`: decides if error should be produced when any lints are found
 #'
+#' There are no settings without defaults, i.e., this list describes every valid setting.
+#'
 #' @examples
 #' # available settings
 #' names(default_settings)
@@ -270,6 +273,7 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #' )]
 #'
 #' @seealso [read_settings()], [default_linters]
+#' @aliases settings config lintr-config lintr-settings .lintr
 #' @export
 default_settings <- NULL
 

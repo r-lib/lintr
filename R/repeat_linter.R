@@ -16,7 +16,6 @@
 #'   linters = repeat_linter()
 #' )
 #'
-#'
 #' @evalRd rd_tags("repeat_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

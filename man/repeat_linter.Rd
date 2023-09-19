@@ -23,7 +23,6 @@ lint(
   linters = repeat_linter()
 )
 
-
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
