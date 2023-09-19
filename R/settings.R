@@ -1,4 +1,3 @@
-
 #' Read lintr settings
 #'
 #' Lintr searches for settings for a given source file in the following order:
