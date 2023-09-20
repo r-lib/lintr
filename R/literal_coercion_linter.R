@@ -54,17 +54,17 @@ literal_coercion_linter <- function() {
 
   # notes for clarification:
   #  - as.integer(1e6) is arguably easier to read than 1000000L
-  #  - in x$"abc", the "abc" STR_CONST is at the top level, so exclude OP-DOLLAR
+  #  - in x$"abc", the "abc" STR_CONST is at the top level, so exclude OP-DOLLAR (ditto OP-AT)
   #  - need condition against STR_CONST w/ EQ_SUB to skip quoted keyword arguments (see tests)
   #  - for {rlang} coercers, both `int(1)` and `int(1, )` need to be linted
   not_extraction_or_scientific <- "
-    not(OP-DOLLAR)
+    not(OP-DOLLAR or OP-AT)
     and (
       NUM_CONST[not(contains(translate(text(), 'E', 'e'), 'e'))]
       or STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
     )
   "
-  xpath <- glue::glue("
+  xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {coercers} ]
     /parent::expr
     /parent::expr[
@@ -80,12 +80,13 @@ literal_coercion_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
     coercer <- xp_call_name(bad_expr)
     # tiptoe around the fact that we don't require {rlang}
     is_rlang_coercer <- coercer %in% rlang_coercers
     if (any(is_rlang_coercer) && !requireNamespace("rlang", quietly = TRUE)) {
+      # nocov start: test suite will have 'rlang' available
       # NB: we _could_ do some extreme customization where each lint
       #   gets a message according to whether the coercer is from rlang,
       #   but this seems like overkill. Just use a generic message and move on.
@@ -94,9 +95,10 @@ literal_coercion_linter <- function() {
         "c.f. 1L instead of as.integer(1) or rlang::int(1), or NA_real_ instead of as.numeric(NA).",
         "NB: this message can be improved to show a specific replacement if 'rlang' is installed."
       )
+      # nocov end
     } else {
       # duplicate, unless we add 'rlang::' and it wasn't there originally
-      coercion_str <- report_str <- xml2::xml_text(bad_expr)
+      coercion_str <- report_str <- xml_text(bad_expr)
       if (any(is_rlang_coercer) && !("package:rlang" %in% search())) {
         needs_prefix <- is_rlang_coercer & !startsWith(coercion_str, "rlang::")
         coercion_str[needs_prefix] <- paste0("rlang::", coercion_str[needs_prefix])

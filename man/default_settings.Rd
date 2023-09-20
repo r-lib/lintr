@@ -3,9 +3,14 @@
 \docType{data}
 \name{default_settings}
 \alias{default_settings}
+\alias{settings}
+\alias{config}
+\alias{lintr-config}
+\alias{lintr-settings}
+\alias{.lintr}
 \title{Default lintr settings}
 \format{
-An object of class \code{list} of length 12.
+An object of class \code{list} of length 13.
 }
 \usage{
 default_settings
@@ -24,6 +29,8 @@ The default settings consist of
 \item \code{comment_bot}: decides if lintr comment bot on GitHub can comment on commits
 \item \code{error_on_lint}: decides if error should be produced when any lints are found
 }
+
+There are no settings without defaults, i.e., this list describes every valid setting.
 }
 \examples{
 # available settings

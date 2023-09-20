@@ -632,6 +632,51 @@ test_that("hanging_indent_stlye works", {
   expect_lint(code_hanging_same_line, NULL, tidy_linter)
   expect_lint(code_hanging_same_line, NULL, hanging_linter)
   expect_lint(code_hanging_same_line, "Indent", non_hanging_linter)
+
+  # regression test for #1898
+  expect_lint(
+    trim_some("
+      outer_fun(inner_fun(x,
+        one_indent = 42L
+      ))
+    "),
+    NULL,
+    tidy_linter
+  )
+
+  expect_lint(
+    trim_some("
+      outer_fun(inner_fun(x, # this is first arg
+        one_indent = 42L # this is second arg
+      ))
+    "),
+    NULL,
+    tidy_linter
+  )
+
+  expect_lint(
+    trim_some("
+      outer_fun(inner_fun(
+        x,
+        one_indent = 42L
+      ))
+    "),
+    NULL,
+    tidy_linter
+  )
+
+  expect_lint(
+    trim_some("
+      outer_fun(
+        inner_fun(
+          x,
+          one_indent = 42L
+        )
+      )
+    "),
+    NULL,
+    tidy_linter
+  )
 })
 
 test_that("assignment_as_infix works", {
@@ -759,7 +804,7 @@ test_that("consecutive same-level lints are suppressed", {
 })
 
 test_that("native pipe is supported", {
-  skip_if_not_r_version("4.1")
+  skip_if_not_r_version("4.1.0")
   linter <- indentation_linter()
 
   expect_lint(
@@ -784,4 +829,41 @@ test_that("native pipe is supported", {
 test_that("it doesn't error on invalid code", {
   # Part of #1427
   expect_lint("function() {)", list(linter = "error", message = rex::rex("unexpected ')'")), indentation_linter())
+})
+
+test_that("function shorthand is handled", {
+  skip_if_not_r_version("4.1.0")
+  linter <- indentation_linter()
+
+  expect_lint(
+    trim_some("
+      lapply(1:10, \\(i) {
+        i %% 2
+      })
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      lapply(1:10, \\(i) {
+       i %% 2  # indentation is only 1 character
+      })
+    "),
+    "Indentation",
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      \\(
+          a = 1L,
+          b = 2L) {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
 })

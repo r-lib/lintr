@@ -45,34 +45,26 @@ test_that("unnecessary_concatenation_linter blocks disallowed usages", {
   )
 })
 
-test_that("Correctly handles concatenation within magrittr pipes", {
+local({
+  pipes <- pipes(exclude = "%$%")
   linter <- unnecessary_concatenation_linter()
-  expect_lint('"a" %>% c("b")', NULL, linter)
-  expect_lint(
-    '"a" %>% c()',
-    "Unneeded concatenation of a constant",
-    linter
-  )
-  expect_lint(
-    '"a" %>% list("b", c())',
-    "Unneeded concatenation without arguments",
-    linter
-  )
-})
-
-test_that("Correctly handles concatenation within native pipes", {
-  skip_if_not_r_version("4.1.0")
-  linter <- unnecessary_concatenation_linter()
-  expect_lint('"a" |> c("b")', NULL, linter)
-  expect_lint(
-    '"a" |> c()',
-    "Unneeded concatenation of a constant",
-    linter
-  )
-  expect_lint(
-    '"a" |> list("b", c())',
-    "Unneeded concatenation without arguments",
-    linter
+  patrick::with_parameters_test_that(
+    "Correctly handles concatenation within magrittr pipes",
+    {
+      expect_lint(sprintf('"a" %s c("b")', pipe), NULL, linter)
+      expect_lint(
+        sprintf('"a" %s c()', pipe),
+        "Unneeded concatenation of a constant",
+        linter
+      )
+      expect_lint(
+        sprintf('"a" %s list("b", c())', pipe),
+        "Unneeded concatenation without arguments",
+        linter
+      )
+    },
+    pipe = pipes,
+    .test_name = names(pipes)
   )
 })
 

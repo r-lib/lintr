@@ -42,7 +42,7 @@ expect_s4_class_linter <- function() {
     # TODO(michaelchirico): also catch expect_{equal,identical}(methods::is(x), k).
     #   this seems empirically rare, but didn't check many S4-heavy packages.
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,

@@ -3,6 +3,7 @@ test_that("literal_coercion_linter skips allowed usages", {
 
   # naive xpath includes the "_f0" here as a literal
   expect_lint('as.numeric(x$"_f0")', NULL, linter)
+  expect_lint('as.numeric(x@"_f0")', NULL, linter)
   # only examine the first method for as.<type> methods
   expect_lint("as.character(as.Date(x), '%Y%m%d')", NULL, linter)
 

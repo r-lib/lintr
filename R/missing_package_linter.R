@@ -49,8 +49,8 @@ missing_package_linter <- function() {
 
     xml <- source_expression$full_xml_parsed_content
 
-    pkg_calls <- xml2::xml_find_all(xml, call_xpath)
-    pkg_names <- get_r_string(xml2::xml_find_all(
+    pkg_calls <- xml_find_all(xml, call_xpath)
+    pkg_names <- get_r_string(xml_find_all(
       pkg_calls,
       "OP-LEFT-PAREN[1]/following-sibling::expr[1][SYMBOL | STR_CONST]"
     ))

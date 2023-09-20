@@ -1,14 +1,14 @@
-
 #' Read lintr settings
 #'
-#' Lintr searches for settings for a given source file in the following order.
+#' Lintr searches for settings for a given source file in the following order:
 #'  1. options defined as `linter.setting`.
 #'  2. `linter_file` in the same directory
 #'  3. `linter_file` in the project directory
 #'  4. `linter_file` in the user home directory
 #'  5. [default_settings()]
 #'
-#' The default linter_file name is `.lintr` but it can be changed with option `lintr.linter_file`.
+#' The default linter_file name is `.lintr` but it can be changed with option `lintr.linter_file`
+#'   or the environment variable `R_LINTR_LINTER_FILE`
 #' This file is a dcf file, see [base::read.dcf()] for details.
 #' @param filename source file to be linted
 read_settings <- function(filename) {
@@ -54,7 +54,13 @@ get_setting <- function(setting, config, defaults) {
   if (!is.null(option)) {
     option
   } else if (!is.null(config[[setting]])) {
-    eval(parse(text = config[[setting]]))
+    malformed <- function(e) {
+      stop("Malformed config setting '", setting, "'\n  ", conditionMessage(e), call. = FALSE)
+    }
+    tryCatch(
+      eval(parse(text = config[[setting]])),
+      error = malformed
+    )
   } else {
     defaults[[setting]]
   }

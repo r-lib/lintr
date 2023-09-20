@@ -6,6 +6,7 @@
 #'   If `FALSE`, [`<<-`][base::assignOps] and `->>` are not allowed.
 #' @param allow_right_assign Logical, default `FALSE`. If `TRUE`, `->` and `->>` are allowed.
 #' @param allow_trailing Logical, default `TRUE`. If `FALSE` then assignments aren't allowed at end of lines.
+#' @param allow_pipe_assign Logical, default `FALSE`. If `TRUE`, magrittr's `%<>%` assignment is allowed.
 #'
 #' @examples
 #' # will produce lints
@@ -18,6 +19,11 @@
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
+#'   linters = assignment_linter()
+#' )
+#'
+#' lint(
+#'   text = "x %<>% as.character()",
 #'   linters = assignment_linter()
 #' )
 #'
@@ -53,19 +59,29 @@
 #'   linters = assignment_linter(allow_trailing = FALSE)
 #' )
 #'
+#' lint(
+#'   text = "x %<>% as.character()",
+#'   linters = assignment_linter(allow_pipe_assign = TRUE)
+#' )
+#'
 #' @evalRd rd_tags("assignment_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
 #' - <https://style.tidyverse.org/syntax.html#assignment-1>
+#' - <https://style.tidyverse.org/pipes.html#assignment-2>
 #' @export
-assignment_linter <- function(allow_cascading_assign = TRUE, allow_right_assign = FALSE, allow_trailing = TRUE) {
+assignment_linter <- function(allow_cascading_assign = TRUE,
+                              allow_right_assign = FALSE,
+                              allow_trailing = TRUE,
+                              allow_pipe_assign = FALSE) {
   trailing_assign_xpath <- paste(
     collapse = " | ",
     c(
       paste0("//LEFT_ASSIGN", if (allow_cascading_assign) "" else "[text() = '<-']"),
       if (allow_right_assign) paste0("//RIGHT_ASSIGN", if (allow_cascading_assign) "" else "[text() = '->']"),
       "//EQ_SUB",
-      "//EQ_FORMALS"
+      "//EQ_FORMALS",
+      if (!allow_pipe_assign) "//SPECIAL[text() = '%<>%']"
     ),
     "[@line1 < following-sibling::expr[1]/@line1]"
   )
@@ -79,7 +95,8 @@ assignment_linter <- function(allow_cascading_assign = TRUE, allow_right_assign 
     # NB: := is not linted because of (1) its common usage in rlang/data.table and
     #   (2) it's extremely uncommon as a normal assignment operator
     if (!allow_cascading_assign) "//LEFT_ASSIGN[text() = '<<-']",
-    if (!allow_trailing) trailing_assign_xpath
+    if (!allow_trailing) trailing_assign_xpath,
+    if (!allow_pipe_assign) "//SPECIAL[text() = '%<>%']"
   ))
 
   Linter(function(source_expression) {
@@ -89,22 +106,22 @@ assignment_linter <- function(allow_cascading_assign = TRUE, allow_right_assign 
 
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
     if (length(bad_expr) == 0L) {
       return(list())
     }
 
-    operator <- xml2::xml_text(bad_expr)
-    lint_message_fmt <- ifelse(
-      operator %in% c("<<-", "->>"),
-      "%s can have hard-to-predict behavior; prefer assigning to a specific environment instead (with assign() or <-).",
-      "Use <-, not %s, for assignment."
-    )
+    operator <- xml_text(bad_expr)
+    lint_message_fmt <- rep("Use <-, not %s, for assignment.", length(operator))
+    lint_message_fmt[operator %in% c("<<-", "->>")] <-
+      "%s can have hard-to-predict behavior; prefer assigning to a specific environment instead (with assign() or <-)."
+    lint_message_fmt[operator == "%<>%"] <-
+      "Avoid the assignment pipe %s; prefer using <- and %%>%% separately."
 
     if (!allow_trailing) {
-      bad_trailing_expr <- xml2::xml_find_all(xml, trailing_assign_xpath)
+      bad_trailing_expr <- xml_find_all(xml, trailing_assign_xpath)
       trailing_assignments <- xml2::xml_attrs(bad_expr) %in% xml2::xml_attrs(bad_trailing_expr)
-      lint_message_fmt[trailing_assignments] <- "Assignment %s should not be trailing at end of line"
+      lint_message_fmt[trailing_assignments] <- "Assignment %s should not be trailing at the end of a line."
     }
 
     lint_message <- sprintf(lint_message_fmt, operator)

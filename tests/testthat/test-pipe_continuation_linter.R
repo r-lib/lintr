@@ -188,3 +188,21 @@ local({
     code_string = valid_code
   )
 })
+
+local({
+  linter <- pipe_continuation_linter()
+  pipes <- pipes()
+  cases <- expand.grid(pipe1 = pipes, pipe2 = pipes, stringsAsFactors = FALSE)
+  cases <- within(cases, {
+    .test_name <- sprintf("(%s, %s)", pipe1, pipe2)
+  })
+  patrick::with_parameters_test_that(
+    "Various pipes are linted correctly",
+    expect_lint(
+      sprintf("a %s b() %s\n  c()", pipe1, pipe2),
+      rex::rex(sprintf("`%s` should always have a space before it", pipe2)),
+      linter
+    ),
+    .cases = cases
+  )
+})

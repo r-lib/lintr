@@ -47,14 +47,14 @@ duplicate_argument_linter <- function(except = c("mutate", "transmute")) {
 
     xml <- source_expression$full_xml_parsed_content
 
-    calls <- xml2::xml_find_all(xml, xpath_call_with_args)
+    calls <- xml_find_all(xml, xpath_call_with_args)
 
     if (length(except) > 0L) {
       calls_text <- get_r_string(xp_call_name(calls))
       calls <- calls[!(calls_text %in% except)]
     }
 
-    all_arg_nodes <- lapply(calls, xml2::xml_find_all, xpath_arg_name)
+    all_arg_nodes <- lapply(calls, xml_find_all, xpath_arg_name)
     arg_names <- lapply(all_arg_nodes, get_r_string)
     is_duplicated <- lapply(arg_names, duplicated)
 

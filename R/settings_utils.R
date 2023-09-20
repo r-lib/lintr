@@ -61,24 +61,24 @@ find_config <- function(filename) {
     dirname(filename)
   }
 
-  ## check for a file in the current directory
-  linter_config <- file.path(path, linter_file)
-  if (isTRUE(file.exists(linter_config))) {
-    return(linter_config)
-  }
+  # NB: This vector specifies a priority order for where to find the configs,
+  # i.e. the first location where a config exists is chosen and configs which
+  # may exist in subsequent directories are ignored
+  file_locations <- c(
+    # Local (incl. parent) directories
+    find_config2(path),
+    # User directory
+    # cf: rstudio@bc9b6a5 SessionRSConnect.R#L32
+    file.path(Sys.getenv("HOME", unset = "~"), linter_file),
+    # Next check for a global config file
+    file.path(R_user_dir("lintr", which = "config"), "config")
+  )
 
-  ## next check for a file higher directories
-  linter_config <- find_config2(path)
-  if (isTRUE(file.exists(linter_config))) {
-    return(linter_config)
-  }
-
-  ## next check for a file in the user directory
-  # cf: rstudio@bc9b6a5 SessionRSConnect.R#L32
-  home_dir <- Sys.getenv("HOME", unset = "~")
-  linter_config <- file.path(home_dir, linter_file)
-  if (isTRUE(file.exists(linter_config))) {
-    return(linter_config)
+  # Search through locations, return first valid result
+  for (loc in file_locations) {
+    if (file.exists(loc)) {
+      return(loc)
+    }
   }
 
   NULL
@@ -89,6 +89,10 @@ find_config2 <- function(path) {
   path <- normalizePath(path, mustWork = FALSE)
 
   while (!has_config(path, config)) {
+    gh <- file.path(path, ".github", "linters")
+    if (has_config(gh, config)) {
+      return(file.path(gh, config))
+    }
     path <- dirname(path)
     if (is_root(path)) {
       return(character())

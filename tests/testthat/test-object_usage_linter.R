@@ -330,7 +330,7 @@ test_that("global variable detection works", {
 test_that("package detection works", {
   expect_length(
     lint_package(test_path("dummy_packages", "package"), linters = object_usage_linter(), parse_settings = FALSE),
-    9L
+    10L
   )
 })
 
@@ -349,6 +349,15 @@ test_that("interprets glue expressions", {
     fun <- function() {
       local_var <- 42
       glue::glue('The answer is {local_var}.')
+    }
+  "), NULL, linter)
+
+  # no need for namespace-qualification
+  expect_lint(trim_some("
+    glue <- glue::glue # imitate this being an @import
+    fun <- function() {
+      local_var <- 42
+      glue('The answer is {local_var}.')
     }
   "), NULL, linter)
 
@@ -410,6 +419,28 @@ test_that("interprets glue expressions", {
       glue::glue('The answer is {local_var}.')
     }
   "), "local_var", object_usage_linter(interpret_glue = FALSE))
+
+  # call in glue is caught
+  expect_lint(
+    trim_some("
+      fun <- function() {
+        local_call <- identity
+        local_unused_call <- identity
+        glue::glue('{local_call(1)}')
+      }
+    "),
+    "local_unused_call",
+    linter
+  )
+
+  # ditto infix operator
+  expect_lint(trim_some("
+    glue <- glue::glue # imitate this being an @import
+    foo <- function() {
+      `%++%` <- `+`
+      glue('{x %++% y}')
+    }
+  "), NULL, linter)
 })
 
 test_that("errors/edge cases in glue syntax don't fail lint()", {
@@ -428,7 +459,7 @@ test_that("errors/edge cases in glue syntax don't fail lint()", {
       NULL,
       linter
     ),
-    "Evaluating glue expression.*failed: Expecting '\\}'"
+    "Evaluating glue expression.*failed: Expecting '\\}'.*Please ensure correct glue syntax"
   )
 
   # generates a lint because the "usage" inside glue() is not detected
@@ -464,6 +495,20 @@ test_that("errors/edge cases in glue syntax don't fail lint()", {
       fun <- function() {
         a <- 2
         glue::glue('The answer is {}: {a}')
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  # comment inside glue range (#1919)
+  expect_lint(
+    trim_some("
+      fun <- function() {
+        a <- 2
+        glue::glue(
+          'The answer is {}: {a}' # show the answer
+        )
       }
     "),
     NULL,
@@ -620,6 +665,205 @@ test_that("messages without a quoted name are caught", {
     list(
       message = "... may be used in an incorrect context",
       line_number = 2L
+    ),
+    object_usage_linter()
+  )
+})
+
+# See #1914
+test_that("symbols in formulas aren't treated as 'undefined global'", {
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        lm(
+          y ~ z,
+          data = x[!is.na(y)]
+        )
+      }
+    "),
+    list(
+      message = "no visible binding for global variable 'y'",
+      line_number = 4L,
+      column_number = 21L
+    ),
+    object_usage_linter()
+  )
+
+  # neither on the RHS
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        lm(
+          z ~ y,
+          data = x[!is.na(y)]
+        )
+      }
+    "),
+    list(
+      message = "no visible binding for global variable 'y'",
+      line_number = 4L,
+      column_number = 21L
+    ),
+    object_usage_linter()
+  )
+
+  # nor in nested expressions
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        lm(
+          log(log(y)) ~ z,
+          data = x[!is.na(y)]
+        )
+      }
+    "),
+    list(
+      message = "no visible binding for global variable 'y'",
+      line_number = 4L,
+      column_number = 21L
+    ),
+    object_usage_linter()
+  )
+
+  # nor as a call
+  # NB: I wanted this to be s(), as in mgcv::s(), but that
+  #   doesn't work in this test suite because it resolves to
+  #   rex::s() since we attach that in testthat.R
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        lm(
+          y(w) ~ z,
+          data = x[!is.na(y)]
+        )
+      }
+    "),
+    list(
+      message = "no visible binding for global variable 'y'",
+      line_number = 4L,
+      column_number = 21L
+    ),
+    object_usage_linter()
+  )
+})
+
+test_that("NSE-ish symbols after $/@ are ignored as sources for lints", {
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        ggplot2::ggplot(
+          x[!is.na(x$column), ],
+          ggplot2::aes(x = column, fill = factor(x$grp))
+        )
+      }
+    "),
+    list(
+      message = "no visible binding for global variable 'column'",
+      line_number = 4L,
+      column_number = 22L
+    ),
+    object_usage_linter()
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        ggplot2::ggplot(
+          x[!is.na(x@column), ],
+          ggplot2::aes(x = column, fill = factor(x$grp))
+        )
+      }
+    "),
+    list(
+      message = "no visible binding for global variable 'column'",
+      line_number = 4L,
+      column_number = 22L
+    ),
+    object_usage_linter()
+  )
+})
+
+test_that("functional lambda definitions are also caught", {
+  skip_if_not_r_version("4.1.0")
+
+  expect_lint(
+    trim_some("
+      fun <- \\() {
+        a <- 1
+      }
+    "),
+    rex::rex("local variable", anything, "assigned but may not be used"),
+    object_usage_linter()
+  )
+})
+
+test_that("messages without location info are repaired", {
+  # regression test for #1986
+  expect_lint(
+    trim_some("
+      foo <- function() no_fun()
+    "),
+    list(
+      message = rex::rex("no visible global function definition for", anything),
+      line_number = 1L,
+      column_number = 19L
+    ),
+    object_usage_linter()
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(a = no_fun()) a
+    "),
+    list(
+      message = rex::rex("no visible global function definition for", anything),
+      line_number = 1L,
+      column_number = 21L
+    ),
+    object_usage_linter()
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() no_global
+    "),
+    list(
+      message = rex::rex("no visible binding for global variable", anything),
+      line_number = 1L,
+      column_number = 19L
+    ),
+    object_usage_linter()
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() unused_local <- 42L
+    "),
+    list(
+      message = rex::rex("local variable", anything, "assigned but may not be used"),
+      line_number = 1L,
+      column_number = 19L
+    ),
+    object_usage_linter()
+  )
+
+  # More complex case with two lints and missing location info
+  expect_lint(
+    trim_some("
+      foo <- function() a <-
+        bar()
+    "),
+    list(
+      list(
+        message = rex::rex("local variable", anything, "assigned but may not be used"),
+        line_number = 1L,
+        column_number = 19L
+      ),
+      list(
+        message = rex::rex("no visible global function definition for", anything),
+        line_number = 2L,
+        column_number = 3L
+      )
     ),
     object_usage_linter()
   )

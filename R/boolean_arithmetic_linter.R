@@ -34,7 +34,7 @@ boolean_arithmetic_linter <- function() {
   # TODO(#1581): extend to include all()-alike expressions
   zero_expr <- "(EQ or NE or GT or LE) and expr[NUM_CONST[text() = '0' or text() = '0L']]"
   one_expr <- "(LT or GE) and expr[NUM_CONST[text() = '1' or text() = '1L']]"
-  length_xpath <- glue::glue("
+  length_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'which' or text() = 'grep']
     /parent::expr
     /parent::expr
@@ -43,7 +43,7 @@ boolean_arithmetic_linter <- function() {
       and parent::expr[ ({zero_expr}) or ({one_expr})]
     ]
   ")
-  sum_xpath <- glue::glue("
+  sum_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'sum']
     /parent::expr
     /parent::expr[
@@ -62,7 +62,7 @@ boolean_arithmetic_linter <- function() {
 
     xml <- source_expression$xml_parsed_content
 
-    any_expr <- xml2::xml_find_all(xml, any_xpath)
+    any_expr <- xml_find_all(xml, any_xpath)
 
     xml_nodes_to_lints(
       any_expr,

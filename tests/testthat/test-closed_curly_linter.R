@@ -7,7 +7,9 @@ test_that("returns the correct linting", {
   )
 
   expect_warning(
-    linter <- closed_curly_linter(),
+    {
+      linter <- closed_curly_linter()
+    },
     "Linter closed_curly_linter was deprecated",
     fixed = TRUE
   )

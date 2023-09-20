@@ -22,12 +22,14 @@ extract_r_source <- function(filename, lines, error = identity) {
 
   output_env <- environment() # nolint: object_usage_linter. False positive-ish -- used below.
   Map(
-    function(start, end) {
+    function(start, end, indent) {
       line_seq <- seq(start + 1L, end - 1L)
-      output_env$output[line_seq] <- lines[line_seq]
+      chunk_code <- lines[line_seq]
+      output_env$output[line_seq] <- if (indent > 0L) substr(chunk_code, indent + 1L, nchar(chunk_code)) else chunk_code
     },
     chunks[["starts"]],
-    chunks[["ends"]]
+    chunks[["ends"]],
+    chunks[["indents"]]
   )
   # drop <<chunk>> references, too
   is.na(output) <- grep(pattern$ref.chunk, output)
@@ -41,7 +43,19 @@ get_knitr_pattern <- function(filename, lines) {
   if (parsable(lines)) {
     return(NULL)
   }
-  pattern <- ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename)))
+  # suppressWarnings for #1920. TODO(michaelchirico): this is a bit sloppy -- we ignore
+  #   warnings here because encoding issues are caught later and that code path handles them
+  #   correctly by converting to a lint. It would require some refactoring to get that
+  #   right here as well, but it would avoid the duplication.
+  pattern <- withCallingHandlers(
+    ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename))),
+    warning = function(cond) {
+      if (!grepl("invalid UTF-8", conditionMessage(cond), fixed = TRUE)) {
+        warning(cond)
+      }
+      invokeRestart("muffleWarning")
+    }
+  )
   if (!is.null(pattern)) {
     knitr::all_patterns[[pattern]]
   } else {
@@ -61,7 +75,18 @@ get_chunk_positions <- function(pattern, lines) {
   # only keep those blocks that contain at least one line of code
   keep <- which(ends - starts > 1L)
 
-  list(starts = starts[keep], ends = ends[keep])
+  starts <- starts[keep]
+  ends <- ends[keep]
+
+  # Check indent on all lines in the chunk to allow for staggered indentation within a chunk;
+  #   set the initial column to the leftmost one within each chunk (including the start+end gates). See tests.
+  # use 'ws_re' to make clear that we're matching knitr's definition of initial whitespace.
+  ws_re <- sub("```.*", "", pattern$chunk.begin)
+  indents <- mapply(
+    function(start, end) min(vapply(gregexpr(ws_re, lines[start:end], perl = TRUE), attr, integer(1L), "match.length")),
+    starts, ends
+  )
+  list(starts = starts, ends = ends, indents = indents)
 }
 
 filter_chunk_start_positions <- function(starts, lines) {
@@ -112,16 +137,16 @@ defines_knitr_engine <- function(start_lines) {
   engines <- names(knitr::knit_engines$get())
 
   # {some_engine}, {some_engine label, ...} or {some_engine, ...}
-  bare_engine_pattern <- rex::rex(
+  bare_engine_pattern <- rex(
     "{", or(engines), one_of("}", " ", ",")
   )
   # {... engine = "some_engine" ...}
-  explicit_engine_pattern <- rex::rex(
+  explicit_engine_pattern <- rex(
     boundary, "engine", any_spaces, "="
   )
 
-  rex::re_matches(start_lines, explicit_engine_pattern) |
-    rex::re_matches(start_lines, bare_engine_pattern)
+  re_matches(start_lines, explicit_engine_pattern) |
+    re_matches(start_lines, bare_engine_pattern)
 }
 
 replace_prefix <- function(lines, prefix_pattern) {

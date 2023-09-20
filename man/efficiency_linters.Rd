@@ -18,14 +18,17 @@ The following linters are tagged with 'efficiency':
 \item{\code{\link{fixed_regex_linter}}}
 \item{\code{\link{ifelse_censor_linter}}}
 \item{\code{\link{inner_combine_linter}}}
+\item{\code{\link{length_test_linter}}}
 \item{\code{\link{lengths_linter}}}
 \item{\code{\link{literal_coercion_linter}}}
+\item{\code{\link{matrix_apply_linter}}}
 \item{\code{\link{nested_ifelse_linter}}}
 \item{\code{\link{outer_negation_linter}}}
 \item{\code{\link{redundant_equals_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{regex_subset_linter}}}
 \item{\code{\link{routine_registration_linter}}}
+\item{\code{\link{scalar_in_linter}}}
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{sort_linter}}}
 \item{\code{\link{string_boundary_linter}}}
@@ -33,7 +36,6 @@ The following linters are tagged with 'efficiency':
 \item{\code{\link{undesirable_operator_linter}}}
 \item{\code{\link{unnecessary_concatenation_linter}}}
 \item{\code{\link{unnecessary_lambda_linter}}}
-\item{\code{\link{unneeded_concatenation_linter}}}
 \item{\code{\link{vector_logic_linter}}}
 }
 }
