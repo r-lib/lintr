@@ -112,3 +112,7 @@ test_that("lint_dir errors for relative_path= in 2nd positional argument", {
 test_that("typo in argument name gives helpful error", {
   expect_error(lint_dir(litners = identity), "Found unknown arguments in [.][.][.].*[?]lint_dir ")
 })
+
+test_that("linting empty directory passes", {
+  expect_length(withr::local_tempdir(), 0L)
+})
