@@ -114,5 +114,5 @@ test_that("typo in argument name gives helpful error", {
 })
 
 test_that("linting empty directory passes", {
-  expect_length(withr::local_tempdir(), 0L)
+  expect_length(lint_dir(withr::local_tempdir(), any_duplicated_linter()), 0L)
 })
