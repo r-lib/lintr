@@ -5,7 +5,7 @@ declared_s3_generics <- function(x) {
 
     # Assigns to a symbol
     "[./LEFT_ASSIGN|EQ_ASSIGN]",
-    "[./expr[FUNCTION]]",
+    "[./expr[FUNCTION or OP-LAMBDA]]",
     "[./expr/SYMBOL]",
 
     # Is a S3 Generic (contains call to UseMethod)

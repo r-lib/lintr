@@ -84,3 +84,11 @@ test_that("multi-line versions are caught", {
     paren_body_linter()
   )
 })
+
+test_that("function shorthand is handled", {
+  skip_if_not_r_version("4.1.0")
+  linter <- paren_body_linter()
+  lint_msg <- rex::rex("There should be a space between a right parenthesis and a body expression.")
+
+  expect_lint("\\()test", lint_msg, linter)
+})

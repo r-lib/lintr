@@ -267,3 +267,9 @@ test_that("complex LHS of := doesn't cause false positive", {
   #   but only parent::expr[ASSIGN] is needed for strings.
   expect_lint('dplyr::mutate(df, !!paste0(v, "_l") := df$a * 2)', NULL, object_name_linter())
 })
+
+test_that("function shorthand also lints", {
+  skip_if_not_r_version("4.1.0")
+
+  expect_lint("aBc <- \\() NULL", "function name style", object_name_linter())
+})

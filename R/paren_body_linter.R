@@ -33,6 +33,7 @@ paren_body_linter <- make_linter_from_xpath(
     and @line1 = following-sibling::expr[1]/@line1
     and (
       preceding-sibling::FUNCTION
+      or preceding-sibling::OP-LAMBDA
       or preceding-sibling::IF
       or preceding-sibling::WHILE
       or preceding-sibling::OP-LAMBDA
