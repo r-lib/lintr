@@ -22,5 +22,13 @@ Lintr searches for settings for a given source file in the following order:
 \details{
 The default linter_file name is \code{.lintr} but it can be changed with option \code{lintr.linter_file}
 or the environment variable \code{R_LINTR_LINTER_FILE}
-This file is a dcf file, see \code{\link[base:dcf]{base::read.dcf()}} for details.
+This file is a DCF file, see \code{\link[base:dcf]{base::read.dcf()}} for details.
+Experimentally, we also support keeping the config in a plain R file. We are still deciding the
+future of config support in lintr, so user feedback is welcome. The advantage of R is that it
+maps more closely to how the configs are actually stored, whereas the DCF approach requires
+somewhat awkward formatting of parseable R code within valid DCF key-value pairs. The main
+disadvantage of the R file is it might be \emph{too} flexible, with users tempted to write configs
+with side effects causing hard-to-detect bugs or otherwise "abusing" the ability to evaluate
+generic R code. Other recursive key-value stores like YAML could work, but require new
+dependencies and are harder to parse both programmatically and visually.
 }
