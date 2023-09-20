@@ -48,7 +48,7 @@ find_config <- function(filename) {
   if (is.null(filename)) {
     return(NULL)
   }
-  linter_file <- getOption("lintr.linter_file")
+  linter_file <- lintr_option("linter_file")
 
   ## if users changed lintr.linter_file, return immediately.
   if (is_absolute_path(linter_file) && file.exists(linter_file)) {
@@ -85,7 +85,7 @@ find_config <- function(filename) {
 }
 
 find_config2 <- function(path) {
-  config <- basename(getOption("lintr.linter_file"))
+  config <- basename(lintr_option("linter_file"))
   path <- normalizePath(path, mustWork = FALSE)
 
   while (!has_config(path, config)) {

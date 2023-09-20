@@ -74,11 +74,11 @@ format.lints <- function(x, ...) {
 
 #' @export
 print.lints <- function(x, ...) {
-  use_rstudio_source_markers <- getOption("lintr.rstudio_source_markers", TRUE) &&
+  use_rstudio_source_markers <- lintr_option("rstudio_source_markers", TRUE) &&
     requireNamespace("rstudioapi", quietly = TRUE) &&
     rstudioapi::hasFun("sourceMarkers")
 
-  github_annotation_project_dir <- getOption("lintr.github_annotation_project_dir", "")
+  github_annotation_project_dir <- lintr_option("github_annotation_project_dir", "")
 
   if (length(x) > 0L) {
     inline_data <- x[[1L]][["filename"]] == "<text>"

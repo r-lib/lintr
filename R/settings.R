@@ -67,7 +67,7 @@ read_config_file <- function(config_file) {
   config
 }
 
-lintr_option <- function(setting) getOption(paste0("lintr.", setting))
+lintr_option <- function(setting, default = NULL) getOption(paste0("lintr.", setting), default)
 
 get_setting <- function(setting, config, defaults) {
   lintr_option(setting) %||% config[[setting]] %||% defaults[[setting]]
