@@ -64,7 +64,7 @@ unnecessary_lambda_linter <- function() {
   //SYMBOL_FUNCTION_CALL[ {apply_funs} ]
     /parent::expr
     /following-sibling::expr[
-      FUNCTION
+      (FUNCTION or OP-LAMBDA)
       and count(SYMBOL_FORMALS) = 1
       and {paren_path}/OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[1][self::EQ_SUB])]/SYMBOL
       and SYMBOL_FORMALS = {paren_path}/OP-LEFT-PAREN/following-sibling::expr[1]/SYMBOL
