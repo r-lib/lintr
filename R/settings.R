@@ -69,13 +69,7 @@ read_config_file <- function(config_file) {
 
 get_setting <- function(setting, config, defaults) {
   option <- getOption(paste(sep = ".", "lintr", setting))
-  if (!is.null(option)) {
-    option
-  } else if (!is.null(config[[setting]])) {
-    config[[setting]]
-  } else {
-    defaults[[setting]]
-  }
+  option %||% config[[setting]] %||% defaults[[setting]]
 }
 
 clear_settings <- function() {
