@@ -78,16 +78,6 @@ find_config <- function(filename) {
   NULL
 }
 
-<<<<<<< Updated upstream
-find_config2 <- function(path) {
-  config <- basename(getOption("lintr.linter_file"))
-  path <- normalizePath(path, mustWork = FALSE)
-
-  while (!has_config(path, config)) {
-    gh <- file.path(path, ".github", "linters")
-    if (has_config(gh, config)) {
-      return(file.path(gh, config))
-=======
 find_local_config <- function(path, config_file) {
   repeat {
     guesses_in_dir <- c(
@@ -98,7 +88,6 @@ find_local_config <- function(path, config_file) {
       if (file.exists(guess)) {
         return(guess)
       }
->>>>>>> Stashed changes
     }
     path <- dirname(path)
     if (is_root(path)) {
