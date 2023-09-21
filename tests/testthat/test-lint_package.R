@@ -205,4 +205,10 @@ test_that("package using .lintr.R config lints correctly", {
   lints <- as.data.frame(lint_package(test_path("dummy_packages", "RConfig")))
   expect_identical(unique(basename(lints$filename)), "lint_me.R")
   expect_identical(lints$linter, c("infix_spaces_linter", "any_duplicated_linter"))
+
+  expect_error(
+    lint_package(test_path("dummy_packages", "RConfigInvalid")),
+    "Malformed config file, ensure it is valid R syntax",
+    fixed = TRUE
+  )
 })
