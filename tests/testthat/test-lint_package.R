@@ -198,3 +198,11 @@ test_that(
     expect_length(subdir_lints, 0L)
   }
 )
+
+test_that("package using .lintr.R config lints correctly", {
+  withr::local_options(lintr.linter_file = "lintr_test_config")
+
+  lints <- as.data.frame(lint_package(test_path("dummy_packages", "RConfig")))
+  expect_identical(unique(lints$filename), "R/lint_me.R")
+  expect_identical(lints$linter, c("infix_spaces_linter", "any_duplicated_linter"))
+})
