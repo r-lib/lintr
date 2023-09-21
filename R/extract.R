@@ -82,10 +82,13 @@ get_chunk_positions <- function(pattern, lines) {
   #   set the initial column to the leftmost one within each chunk (including the start+end gates). See tests.
   # use 'ws_re' to make clear that we're matching knitr's definition of initial whitespace.
   ws_re <- sub("```.*", "", pattern$chunk.begin)
-  indents <- mapply(
-    function(start, end) min(vapply(gregexpr(ws_re, lines[start:end], perl = TRUE), attr, integer(1L), "match.length")),
-    starts, ends
-  )
+  extract_indent <- function(start, end) {
+    lines_subset <- lines[start:end]
+    matches <- gregexpr(ws_re, lines_subset, perl = TRUE)
+    lengths <- vapply(matches, attr, integer(1L), "match.length")
+    min(lengths)
+  }
+  indents <- Map(extract_indent, starts, ends)
   list(starts = starts, ends = ends, indents = indents)
 }
 
