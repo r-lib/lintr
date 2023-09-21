@@ -83,7 +83,6 @@ get_chunk_positions <- function(pattern, lines) {
   # use 'ws_re' to make clear that we're matching knitr's definition of initial whitespace.
   ws_re <- sub("```.*", "", pattern$chunk.begin)
   extract_indent <- function(start, end) {
-    lines_subset <- lines[start:end]
     matches <- gregexpr(ws_re, lines[start:end], perl = TRUE)
     lengths <- vapply(matches, attr, integer(1L), "match.length")
     min(lengths)
