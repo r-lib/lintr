@@ -3,6 +3,7 @@ linters: linters_with_defaults(
     extraction_operator_linter = NULL,
     implicit_integer_linter = NULL,
     line_length_linter(120),
+    todo_comment_linter = NULL,
     unnecessary_concatenation_linter(allow_single_expression = FALSE),
     defaults = linters_with_tags(tags = NULL)
   )
