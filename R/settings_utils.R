@@ -36,6 +36,21 @@ is_root <- function(path) {
 
 is_directory <- function(filename) isTRUE(file.info(filename)$isdir)
 
+#' Return the first of a vector of files that exists.
+#'
+#' Avoid running 'expensive' [file.exists()] for the full vector,
+#'   since typically the first entries will lead to early exit.
+#' TODO(#2204): check if the implementation should be simpler
+#' @noRd
+first_exists <- function(files) {
+  for (file in files) {
+    if (file.exists(file)) {
+      return(file)
+    }
+  }
+  NULL
+}
+
 find_config <- function(filename) {
   if (is.null(filename)) {
     return(NULL)
@@ -68,14 +83,7 @@ find_config <- function(filename) {
     file.path(R_user_dir("lintr", which = "config"), "config")
   )
 
-  # Search through locations, return first valid result
-  for (loc in file_locations) {
-    if (file.exists(loc)) {
-      return(loc)
-    }
-  }
-
-  NULL
+  first_exists(file_locations)
 }
 
 find_local_config <- function(path, config_file) {
@@ -84,10 +92,9 @@ find_local_config <- function(path, config_file) {
       file.path(path, config_file),
       file.path(path, ".github", "linters", config_file)
     )
-    for (guess in guesses_in_dir) {
-      if (file.exists(guess)) {
-        return(guess)
-      }
+    found <- first_exists(guesses_in_dir)
+    if (!is.null(found)) {
+      return(found)
     }
     path <- dirname(path)
     if (is_root(path)) {
