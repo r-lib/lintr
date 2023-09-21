@@ -87,7 +87,8 @@ get_chunk_positions <- function(pattern, lines) {
     lengths <- vapply(matches, attr, integer(1L), "match.length")
     min(lengths)
   }
-  indents <- Map(extract_indent, starts, ends)
+  # min() guarantees length(indents) == length(starts)
+  indents <- unlist(Map(extract_indent, starts, ends))
   list(starts = starts, ends = ends, indents = indents)
 }
 
