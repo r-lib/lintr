@@ -202,16 +202,26 @@ test_that(
 test_that("package using .lintr.R config lints correctly", {
   withr::local_options(lintr.linter_file = "lintr_test_config")
 
-  lints <- as.data.frame(lint_package(test_path("dummy_packages", "RConfig")))
+  r_config_pkg <- test_path("dummy_packages", "RConfig")
+
+  lints <- as.data.frame(lint_package(r_config_pkg))
   expect_identical(unique(basename(lints$filename)), "lint_me.R")
   expect_identical(lints$linter, c("infix_spaces_linter", "any_duplicated_linter"))
 
+  # config has bad R syntax
   expect_error(
     lint_package(test_path("dummy_packages", "RConfigInvalid")),
     "Malformed config file, ensure it is valid R syntax",
     fixed = TRUE
   )
 
+  # config produces unused variables
   withr::local_options(lintr.linter_file = "lintr_test_config_extraneous")
-  expect_length(lint_package(test_path("dummy_packages", "RConfig")), 2L)
+  expect_length(lint_package(r_config_pkg), 2L)
+
+  # DCF is preferred if multiple matched configs
+  withr::local_options(lintr.linter_file = "lintr_test_config_conflict")
+  lints <- as.data.frame(lint_package(r_config_pkg))
+  expect_identical(unique(basename(lints$filename)), "testthat.R")
+  expect_identical(lints$linter, c("expect_null_linter", "trailing_blank_lines_linter"))
 })
