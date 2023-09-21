@@ -34,15 +34,7 @@ is_root <- function(path) {
   identical(path, dirname(path))
 }
 
-is_directory <- function(filename) {
-  is_dir <- file.info(filename)$isdir
-
-  !is.na(is_dir) && is_dir
-}
-
-has_config <- function(path, config) {
-  file.exists(file.path(path, config))
-}
+is_directory <- function(filename) isTRUE(file.info(filename)$isdir)
 
 find_config <- function(filename) {
   if (is.null(filename)) {
@@ -61,12 +53,14 @@ find_config <- function(filename) {
     dirname(filename)
   }
 
+  path <- normalizePath(path, mustWork = FALSE)
+
   # NB: This vector specifies a priority order for where to find the configs,
   # i.e. the first location where a config exists is chosen and configs which
   # may exist in subsequent directories are ignored
   file_locations <- c(
     # Local (incl. parent) directories
-    find_config2(path),
+    find_local_config(path, basename(linter_file)),
     # User directory
     # cf: rstudio@bc9b6a5 SessionRSConnect.R#L32
     file.path(Sys.getenv("HOME", unset = "~"), linter_file),
@@ -84,6 +78,7 @@ find_config <- function(filename) {
   NULL
 }
 
+<<<<<<< Updated upstream
 find_config2 <- function(path) {
   config <- basename(getOption("lintr.linter_file"))
   path <- normalizePath(path, mustWork = FALSE)
@@ -92,13 +87,24 @@ find_config2 <- function(path) {
     gh <- file.path(path, ".github", "linters")
     if (has_config(gh, config)) {
       return(file.path(gh, config))
+=======
+find_local_config <- function(path, config_file) {
+  repeat {
+    guesses_in_dir <- c(
+      file.path(path, config_file),
+      file.path(path, ".github", "linters", config_file)
+    )
+    for (guess in guesses_in_dir) {
+      if (file.exists(guess)) {
+        return(guess)
+      }
+>>>>>>> Stashed changes
     }
     path <- dirname(path)
     if (is_root(path)) {
       return(character())
     }
   }
-  return(file.path(path, config))
 }
 
 pkg_name <- function(path = find_package()) {
