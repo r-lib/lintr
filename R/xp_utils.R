@@ -84,7 +84,7 @@ xp_call_name <- function(expr, depth = 1L, condition = NULL) {
   is_valid_expr <- is_node(expr) || is_nodeset(expr)
   if (!is_valid_expr) {
     stop(
-      "Expected an xml_nodeset, a list of xml_nodes or an xml_node, got an object of class(es): ",
+      "Expected an xml_nodeset or an xml_node, instead got an object of class(es): ",
       toString(class(expr))
     )
   }
