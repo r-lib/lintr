@@ -78,10 +78,17 @@ xp_or <- function(...) paren_wrap(..., sep = "or")
 #' @export
 xp_call_name <- function(expr, depth = 1L, condition = NULL) {
   stopifnot(
-    inherits(expr, c("xml_node", "xml_nodeset")),
     is.numeric(depth), depth >= 0L,
     is.null(condition) || is.character(condition)
   )
+  is_valid_expr <- is_node(expr) || is_nodeset(expr)
+  if (!is_valid_expr) {
+    stop(
+      "Expected an xml_nodeset, a list of xml_nodes or an xml_node, got an object of class(es): ",
+      toString(class(expr))
+    )
+  }
+
   if (is.null(condition)) {
     node <- "SYMBOL_FUNCTION_CALL"
   } else {

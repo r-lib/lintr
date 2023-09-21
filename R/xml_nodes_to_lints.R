@@ -52,7 +52,7 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
     )
     class(lints) <- "lints"
     return(lints)
-  } else if (!inherits(xml, "xml_node")) {
+  } else if (!is_node(xml)) {
     stop(
       "Expected an xml_nodeset, a list of xml_nodes or an xml_node, got an object of class(es): ",
       toString(class(xml))
@@ -96,7 +96,9 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
   )
 }
 
+is_node <- function(xml) inherits(xml, "xml_node")
+is_nodeset <- function(xml) inherits(xml, "xml_nodeset")
 is_nodeset_like <- function(xml) {
-  inherits(xml, "xml_nodeset") ||
-    (is.list(xml) && all(vapply(xml, inherits, logical(1L), what = "xml_node")))
+  is_nodeset(xml) ||
+    (is.list(xml) && all(vapply(xml, is_node, logical(1L))))
 }
