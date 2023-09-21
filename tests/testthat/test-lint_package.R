@@ -211,4 +211,7 @@ test_that("package using .lintr.R config lints correctly", {
     "Malformed config file, ensure it is valid R syntax",
     fixed = TRUE
   )
+
+  withr::local_options(lintr.linter_file = "lintr_test_config_extraneous")
+  expect_length(lint_package(test_path("dummy_packages", "RConfig")), 2L)
 })
