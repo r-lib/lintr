@@ -81,11 +81,12 @@ get_chunk_positions <- function(pattern, lines) {
   # Check indent on all lines in the chunk to allow for staggered indentation within a chunk;
   #   set the initial column to the leftmost one within each chunk (including the start+end gates). See tests.
   # use 'ws_re' to make clear that we're matching knitr's definition of initial whitespace.
-  ws_re <- sub("```.*", "", pattern$chunk.begin)
+  extract_min_chunk_indent <- function(start, end) {
+    indents <- attr(regexpr(ws_re, lines[start:end], perl = TRUE), "match.length")
+    min(indents)
+  }
   # NB: min() guarantees length(indents) == length(starts)
-  indents <- unlist(
-    Map(function(start, end) min(attr(regexpr(ws_re, lines[start:end], perl = TRUE), "match.length")), starts, ends)
-  )
+  indents <- unlist(Map(extract_min_chunk_indent, starts, ends))
   list(starts = starts, ends = ends, indents = indents)
 }
 
