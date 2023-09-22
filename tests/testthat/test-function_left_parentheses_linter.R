@@ -167,6 +167,7 @@ test_that("it doesn't produce invalid lints", {
 
 test_that("newline in character string doesn't trigger false positive (#1963)", {
   linter <- function_left_parentheses_linter()
+
   expect_lint('foo("\n")$bar()', NULL, linter)
   # also corrected the lint metadata for similar cases
   expect_lint(
@@ -181,4 +182,14 @@ test_that("newline in character string doesn't trigger false positive (#1963)", 
     list(line_number = 3L, column_number = 6L),
     linter
   )
+})
+
+test_that("shorthand functions are handled", {
+  skip_if_not_r_version("4.1.0")
+  linter <- function_left_parentheses_linter()
+  fun_lint_msg <- rex::rex("Remove spaces before the left parenthesis in a function definition.")
+
+  expect_lint("blah <- \\(blah) { }", NULL, linter)
+  expect_lint("\\(){\\(){}}()()", NULL, linter)
+  expect_lint("test <- \\ (x) { }", fun_lint_msg, linter)
 })

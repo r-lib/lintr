@@ -54,7 +54,7 @@ package_hooks_linter <- function() {
     .onAttach = c(bad_msg_calls, "library.dynam")
   )
   bad_msg_call_xpath_fmt <- "
-  //FUNCTION
+  (//FUNCTION | //OP-LAMBDA)
     /parent::expr[preceding-sibling::expr/SYMBOL[text() = '%s']]
     //SYMBOL_FUNCTION_CALL[%s]
   "
@@ -81,7 +81,7 @@ package_hooks_linter <- function() {
   hook_xpath <- sprintf("string(./ancestor::expr/expr/SYMBOL[%s])", ns_calls)
 
   load_arg_name_xpath <- "
-  //FUNCTION
+  (//FUNCTION | //OP-LAMBDA)
     /parent::expr[
       preceding-sibling::expr/SYMBOL[text() = '.onAttach' or text() = '.onLoad']
       and (
@@ -95,7 +95,7 @@ package_hooks_linter <- function() {
   "
 
   library_require_xpath <- "
-  //FUNCTION
+  (//FUNCTION | //OP-LAMBDA)
     /parent::expr[preceding-sibling::expr/SYMBOL[text() = '.onAttach' or text() = '.onLoad']]
     //*[1][
       (self::SYMBOL or self::SYMBOL_FUNCTION_CALL)
@@ -104,13 +104,13 @@ package_hooks_linter <- function() {
   "
 
   bad_unload_call_xpath <- "
-  //FUNCTION
+  (//FUNCTION | //OP-LAMBDA)
     /parent::expr[preceding-sibling::expr/SYMBOL[text() = '.Last.lib' or text() = '.onDetach']]
     //SYMBOL_FUNCTION_CALL[text() = 'library.dynam.unload']
   "
 
   unload_arg_name_xpath <- "
-  //FUNCTION
+  (//FUNCTION | //OP-LAMBDA)
     /parent::expr[
       preceding-sibling::expr/SYMBOL[text() = '.onDetach' or text() = '.Last.lib']
       and (

@@ -2,7 +2,9 @@
 
 # like `text() %in% table`, translated to XPath 1.0
 xp_text_in_table <- function(table) {
-  if (length(table) == 0L) return("true")
+  if (length(table) == 0L) {
+    return("true")
+  }
   # xpath doesn't seem to have a standard way of escaping quotes, so attempt
   #   to use "" whenever the string has ' (not a perfect solution). info on
   #   escaping from https://stackoverflow.com/questions/14822153

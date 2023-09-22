@@ -170,6 +170,12 @@ lint_dir <- function(path = ".", ...,
   # Remove fully ignored files to avoid reading & parsing
   files <- drop_excluded(files, exclusions)
 
+  if (length(files) == 0L) {
+    lints <- list()
+    class(lints) <- "lints"
+    return(lints)
+  }
+
   pb <- if (isTRUE(show_progress)) {
     txtProgressBar(max = length(files), style = 3L)
   }

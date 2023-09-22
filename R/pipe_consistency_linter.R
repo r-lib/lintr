@@ -26,8 +26,8 @@
 #' )
 #'
 #' lint(
-#'  text = "1:3 |> mean() |> as.character()",
-#'  linters = pipe_consistency_linter()
+#'   text = "1:3 |> mean() |> as.character()",
+#'   linters = pipe_consistency_linter()
 #' )
 #' @evalRd rd_tags("pipe_consistency_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.

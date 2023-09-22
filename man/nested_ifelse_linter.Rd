@@ -19,9 +19,48 @@ is exacerbated for nested calls
 }
 \details{
 Users can instead rely on a more readable alternative modeled after SQL
-CASE WHEN statements, such as \code{data.table::fcase()} or \code{dplyr::case_when()},
-or use a look-up-and-merge approach (build a mapping table between values
-and outputs and merge this to the input).
+CASE WHEN statements.
+
+Let's say this is our original code:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{ifelse(
+  x == "a",
+  2L,
+  ifelse(x == "b", 3L, 1L)
+)
+}\if{html}{\out{</div>}}
+
+Here are a few ways to avoid nesting and make the code more readable:
+\itemize{
+\item Use \code{data.table::fcase()}
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{data.table::fcase(
+  x == "a", 2L,
+  x == "b", 3L,
+  default = 1L
+)
+}\if{html}{\out{</div>}}
+\item Use \code{dplyr::case_match()}
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{dplyr::case_match(
+  x,
+  "a" ~ 2L,
+  "b" ~ 3L,
+  .default = 1L
+)
+}\if{html}{\out{</div>}}
+\item Use a look-up-and-merge approach (build a mapping table between values
+and outputs and merge this to the input)
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{default <- 1L
+values <- data.frame(
+  a = 2L,
+  b = 3L
+)
+found_value <- values[[x]]
+ifelse(is.null(found_value), default, found_value)
+}\if{html}{\out{</div>}}
+}
 }
 \examples{
 # will produce lints

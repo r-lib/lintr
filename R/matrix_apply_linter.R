@@ -30,7 +30,6 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 matrix_apply_linter <- function() {
-
   # mean() and sum() have very different signatures so we treat them separately.
   # sum() takes values to sum over via ..., has just one extra argument and is not a generic
   # mean() is a generic, takes values to average via a single argument, and can have extra arguments
@@ -73,7 +72,7 @@ matrix_apply_linter <- function() {
 
   # This doesn't handle the case when MARGIN and FUN are named and in a different position
   # but this should be relatively rate
-  var_xpath  <- "expr[position() = 2]"
+  var_xpath <- "expr[position() = 2]"
   margin_xpath <- "expr[position() = 3]"
   fun_xpath <- "expr[position() = 4]"
 
@@ -108,7 +107,6 @@ matrix_apply_linter <- function() {
 }
 
 craft_colsums_rowsums_msg <- function(var, margin, fun, narm_val) {
-
   if (is.na(xml_find_first(margin, "OP-COLON"))) {
     l1 <- xml_text(margin)
     l2 <- NULL

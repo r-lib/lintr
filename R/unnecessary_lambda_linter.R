@@ -63,7 +63,7 @@ unnecessary_lambda_linter <- function() {
   default_fun_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {apply_funs} ]
     /parent::expr
-    /following-sibling::expr[FUNCTION and count(SYMBOL_FORMALS) = 1]
+    /following-sibling::expr[(FUNCTION or OP-LAMBDA) and count(SYMBOL_FORMALS) = 1]
     /expr[last()][
       count(.//SYMBOL[self::* = preceding::SYMBOL_FORMALS[1]]) = 1
       and count(.//SYMBOL_FUNCTION_CALL) = 1
