@@ -32,6 +32,11 @@ lint(
 )
 
 lint(
+  text = "if (!A) x else if (!B) y else z",
+  linters = if_not_else_linter()
+)
+
+lint(
   text = "ifelse(!is_treatment, x, y)",
   linters = if_not_else_linter()
 )
@@ -44,6 +49,11 @@ lint(
 # okay
 lint(
   text = "if (A) x else y",
+  linters = if_not_else_linter()
+)
+
+lint(
+  text = "if (!A) x else if (B) z else y",
   linters = if_not_else_linter()
 )
 

@@ -91,7 +91,7 @@ get_content <- function(lines, info) {
   lines[is.na(lines)] <- ""
 
   if (!missing(info)) {
-    if (inherits(info, "xml_node")) {
+    if (is_node(info)) {
       info <- lapply(stats::setNames(nm = c("col1", "col2", "line1", "line2")), function(attr) {
         as.integer(xml_attr(info, attr))
       })
@@ -222,7 +222,7 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #'
 #' @export
 get_r_string <- function(s, xpath = NULL) {
-  if (inherits(s, c("xml_node", "xml_nodeset"))) {
+  if (is_node(s) || is_nodeset(s)) {
     if (is.null(xpath)) {
       s <- xml_text(s)
     } else {
