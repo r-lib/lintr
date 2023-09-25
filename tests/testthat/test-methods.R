@@ -101,21 +101,22 @@ test_that("print.lint works for inline data, even in RStudio", {
 
   l <- lint("x = 1\n")
 
+  # Make sure lints print to console.
+  # The full output is:
+  #
+  # > <text>:1:3: style: Use <-, not =, for assignment.
+  # > x = 1
+  # >   ^
+
   withr::with_options(
     list(lintr.rstudio_source_markers = FALSE),
-    expect_snapshot({
-      options("lintr.rstudio_source_markers")
-      print(l)
-    })
+    expect_output(print(l), "not =")
   )
 
   mockery::stub(print.lints, "rstudioapi::hasFun", function(...) FALSE)
   withr::with_options(
     list(lintr.rstudio_source_markers = TRUE),
-    expect_snapshot({
-      options("lintr.rstudio_source_markers")
-      print(l)
-    })
+    expect_output(print(l), "not =")
   )
 })
 
