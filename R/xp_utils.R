@@ -49,8 +49,8 @@ xp_or <- function(...) paren_wrap(..., sep = "or")
 
 #' Get the name of the function matched by an XPath
 #'
-#' Often, it is more helpful to custom-tailer the `message` of a lint to record
-#'   which function was matched by the lint logic. This function encapsualtes
+#' Often, it is more helpful to tailor the `message` of a lint to record
+#'   which function was matched by the lint logic. This function encapsulates
 #'   the logic to pull out the matched call in common situations.
 #'
 #' @param expr An `xml_node` or `xml_nodeset`, e.g. from [xml2::xml_find_all()].
