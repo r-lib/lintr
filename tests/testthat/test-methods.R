@@ -123,10 +123,9 @@ test_that("print.lint works for inline data, even in RStudio", {
 test_that("print.lints works", {
   withr::local_options(lintr.rstudio_source_markers = FALSE)
 
-  withr::with_tempfile("tmp", code = {
-    file.create(tmp)
-    expect_invisible(print(lint(tmp)))
-  })
+  tmp <- withr::local_tempfile()
+  stopifnot(file.create(tmp))
+  expect_invisible(print(lint(tmp)))
 })
 
 test_that("split.lint works as intended", {
@@ -147,13 +146,13 @@ test_that("within.list is dispatched", {
 test_that("as_tibble.list is _not_ dispatched directly", {
   skip_if_not_installed("tibble")
 
-  l <- lint(text = "a = 1", linters = assignment_linter())
-  expect_identical(nrow(tibble::as_tibble(l)), 1L)
+  lints <- lint(text = "a = 1", linters = assignment_linter())
+  expect_identical(nrow(tibble::as_tibble(lints)), 1L)
 })
 
 test_that("as.data.table.list is _not_ dispatched directly", {
   skip_if_not_installed("data.table")
 
-  l <- lint(text = "a = 1", linters = assignment_linter())
-  expect_identical(nrow(data.table::as.data.table(l)), 1L)
+  lints <- lint(text = "a = 1", linters = assignment_linter())
+  expect_identical(nrow(data.table::as.data.table(lints)), 1L)
 })
