@@ -11,6 +11,7 @@ test_that("if_not_else_linter skips allowed usages", {
   # nested statements are also OK
   expect_lint("if (!A) x else if (B) y", NULL, linter)
   expect_lint("if (!A) x else if (B) y else z", NULL, linter)
+  expect_lint("if (A) x else if (B) y else if (!C) z", NULL, linter)
 
   # ! picked up in the evaluation statements is skipped
   expect_lint("if (A) !x else y", NULL, linter)
@@ -22,6 +23,7 @@ test_that("if_not_else_linter blocks simple disallowed usages", {
   lint_msg <- rex::rex("In a simple if/else statement, prefer `if (A) x else y`")
 
   expect_lint("if (!A) x else y", lint_msg, linter)
+  expect_lint("if (!A) x else if (!B) y else z", lint_msg, linter)
 
   # ditto for more complicated expressions where ! is still the outer operator
   expect_lint("if (!x %in% 1:10) y else z", lint_msg, linter)
