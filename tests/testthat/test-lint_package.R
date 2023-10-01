@@ -234,8 +234,10 @@ test_that("lintr need not be attached for .lintr.R configs to use lintr function
     'cat(paste(as.data.frame(lints)$linter, collapse = "|"), "\n", sep = "")',
     sep = "; "
   )
+  # As recommended in WRE1.6
+  Rscript <- file.path(Sys.getenv("R_HOME"), "bin", "Rscript")
   expect_identical(
-    system2("Rscript", c("-e", shQuote(exprs)), stdout = TRUE),
+    system2(Rscript, c("-e", shQuote(exprs)), stdout = TRUE),
     "infix_spaces_linter|any_duplicated_linter"
   )
 })
