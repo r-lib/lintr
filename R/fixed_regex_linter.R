@@ -120,7 +120,8 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
         and not(EQ_SUB)
         and not({ in_pipe_cond })
       ) or (
-        preceding-sibling::*[2][self::SYMBOL_SUB/text() = 'pattern']
+        STR_CONST
+        and preceding-sibling::*[2][self::SYMBOL_SUB/text() = 'pattern']
       )
     ]
   |
