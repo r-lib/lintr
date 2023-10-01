@@ -4,10 +4,7 @@ library(pkgload)
 library(data.table)
 library(glue)
 
-# allow running as .dev/revdep_compare_releases.R or ./revdep_compare_releases.R
-if (dir.exists(".dev")) setwd(".dev")
-
-if (!all(file.exists(c("revdep-repos", "revdep-extra-repos", "revdep-no-repos")))) {
+if (!file.exists("revdep-repos")) {
   stop("Please run .dev/revdep_get_repos.R first before running this")
 }
 withr::local_options(width = 180)
@@ -28,7 +25,7 @@ if (length(failed_install) > 0L) {
 
 dev_dir <- getwd()
 dev_branch <- system2("git", c("rev-parse", "--abbrev-ref", "HEAD"), stdout = TRUE)
-old_release <- "v3.1.0"
+old_release <- "v3.0.2"
 main <- "main"
 
 all_repos <- repo_data$repo
