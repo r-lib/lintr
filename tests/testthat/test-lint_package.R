@@ -227,8 +227,6 @@ test_that("package using .lintr.R config lints correctly", {
 })
 
 test_that("lintr need not be attached for .lintr.R configs to use lintr functions", {
-  skip_on_os("windows")
-  skip_if_not_r_version("4.0.0")
   exprs <- paste(
     'options(lintr.linter_file = "lintr_test_config")',
     sprintf('lints <- lintr::lint_package("%s")', test_path("dummy_packages", "RConfig")),
@@ -236,8 +234,11 @@ test_that("lintr need not be attached for .lintr.R configs to use lintr function
     'cat(paste(as.data.frame(lints)$linter, collapse = "|"), "\n", sep = "")',
     sep = "; "
   )
-  # As recommended in WRE1.6
-  rscript <- shQuote(file.path(Sys.getenv("R_HOME"), "bin", "Rscript"))
+  if (tolower(Sys.info()[["sysname"]]) == "windows") {
+    rscript <- file.path(R.home("bin"), "Rscript.exe")
+  } else {
+    rscript <- file.path(R.home("bin"), "Rscript")
+  }
   expect_identical(
     system2(rscript, c("-e", shQuote(exprs)), stdout = TRUE),
     "infix_spaces_linter|any_duplicated_linter"
