@@ -227,6 +227,7 @@ test_that("package using .lintr.R config lints correctly", {
 })
 
 test_that("lintr need not be attached for .lintr.R configs to use lintr functions", {
+  skip_on_os("windows")
   exprs <- paste(
     'options(lintr.linter_file = "lintr_test_config")',
     sprintf('lints <- lintr::lint_package("%s")', test_path("dummy_packages", "RConfig")),
