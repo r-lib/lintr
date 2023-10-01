@@ -225,3 +225,17 @@ test_that("package using .lintr.R config lints correctly", {
   expect_identical(unique(basename(lints$filename)), "testthat.R")
   expect_identical(lints$linter, c("expect_null_linter", "trailing_blank_lines_linter"))
 })
+
+test_that("lintr need not be attached for .lintr.R configs to use lintr functions", {
+  exprs <- paste(
+    'options(lintr.linter_file = "lintr_test_config")',
+    sprintf('lints <- lintr::lint_package("%s")', test_path("dummy_packages", "RConfig")),
+    # simplify output to be read from stdout
+    'cat(paste(as.data.frame(lints)$linter, collapse = "|"), "\n", sep = "")',
+    sep = "; "
+  )
+  expect_identical(
+    system2("Rscript", c("-e", shQuote(exprs)), stdout = TRUE),
+    "infix_spaces_linter|any_duplicated_linter"
+  )
+})
