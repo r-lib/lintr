@@ -4,6 +4,10 @@
 #'   e.g. `lapply(DF, sum)` is the same as `lapply(DF, function(x) sum(x))` and
 #'   the former is more readable.
 #'
+#' Cases like `lapply(x, \(xi) grep("ptn", xi))` are excluded because, though
+#'   the anonymous function _can_ be avoided, doing so is not always more
+#'   readable.
+#'
 #' @examples
 #' # will produce lints
 #' lint(

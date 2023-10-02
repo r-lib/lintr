@@ -51,8 +51,8 @@ linters.}
 \item{cache}{When logical, toggle caching of lint results. I1f passed a character string, store the cache in this
 directory.}
 
-\item{parse_settings}{Logical, default \code{TRUE}. Whether to try and parse the settings; otherwise, the \code{\link[=default_settings]{default_settings()}}
-are used.}
+\item{parse_settings}{Logical, default \code{TRUE}. Whether to try and parse the settings;
+otherwise, the \code{\link[=default_settings]{default_settings()}} are used.}
 
 \item{text}{Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
 linting is being done ad hoc.}
