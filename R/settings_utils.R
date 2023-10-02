@@ -87,12 +87,12 @@ find_config <- function(filename) {
 }
 
 find_local_config <- function(path, config_file) {
+  # R config gets precedence
+  configs_to_check <- c(paste0(config_file, ".R"), config_file)
   repeat {
     guesses_in_dir <- c(
-      file.path(path, config_file),
-      file.path(path, paste0(config_file, ".R")),
-      file.path(path, ".github", "linters", config_file),
-      file.path(path, ".github", "linters", paste0(config_file, ".R"))
+      file.path(path, configs_to_check),
+      file.path(path, ".github", "linters", configs_to_check)
     )
     found <- first_exists(guesses_in_dir)
     if (!is.null(found)) {

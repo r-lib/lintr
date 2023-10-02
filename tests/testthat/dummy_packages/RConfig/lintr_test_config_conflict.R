@@ -1,6 +1,6 @@
 linters <- linters_with_defaults(
-  any_duplicated_linter(),
+  expect_null_linter(),
   assignment_linter = NULL
 )
-exclude <- "# NOLINT"
-exclusions <- list("tests/testthat.R")
+exclude <- "# SKIP_LINT"
+exclusions <- list("R/lint_me.R")
