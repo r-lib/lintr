@@ -277,7 +277,7 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #' @export
 default_settings <- NULL
 
-settings <- new.env(parent = topenv())
+settings <- new.env(parent = emptyenv())
 
 # nocov start
 .onLoad <- function(libname, pkgname) {
