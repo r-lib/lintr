@@ -277,7 +277,6 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #' @export
 default_settings <- NULL
 
-settings <- NULL
 # TODO(R>=3.6.0): Just use sys.source() directly. Note that we can't
 #   write a wrapper that only passes keep.parse.data=FALSE on R>3.5.0
 #   (without doing some wizardry to evade R CMD check) because
@@ -290,6 +289,7 @@ sys_source <- function(...) {
   on.exit(options(old))
   sys.source(...)
 }
+settings <- new.env(parent = emptyenv())
 
 # nocov start
 .onLoad <- function(libname, pkgname) {
@@ -344,7 +344,7 @@ sys_source <- function(...) {
     error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
   ))
 
-  utils::assignInMyNamespace("settings", list2env(default_settings, parent = emptyenv()))
+  reset_settings()
 
   if (requireNamespace("tibble", quietly = TRUE)) {
     registerS3method("as_tibble", "lints", as_tibble.lints, asNamespace("tibble"))

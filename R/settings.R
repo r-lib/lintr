@@ -22,7 +22,7 @@
 #'   both programmatically and visually.
 #' @param filename source file to be linted
 read_settings <- function(filename) {
-  clear_settings()
+  reset_settings()
 
   config_file <- find_config(filename)
   default_encoding <- find_default_encoding(filename)
@@ -83,9 +83,7 @@ get_setting <- function(setting, config, defaults) {
   lintr_option(setting) %||% config[[setting]] %||% defaults[[setting]]
 }
 
-clear_settings <- function() {
-  rm(list = ls(settings), envir = settings)
-}
+reset_settings <- function() list2env(default_settings, envir = settings)
 
 find_default_encoding <- function(filename) {
   if (is.null(filename)) {
