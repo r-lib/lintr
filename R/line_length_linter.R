@@ -34,7 +34,7 @@ line_length_linter <- function(length = 80L) {
     line_lengths <- nchar(source_expression$file_lines)
     long_lines <- which(line_lengths > length)
 
-    mapply(
+    Map(
       function(long_line, line_length) {
         Lint(
           filename = source_expression$filename,
@@ -46,8 +46,8 @@ line_length_linter <- function(length = 80L) {
           ranges = list(c(1L, line_length))
         )
       },
-      long_lines, line_lengths[long_lines],
-      SIMPLIFY = FALSE
+      long_lines,
+      line_lengths[long_lines]
     )
   })
 }

@@ -20,8 +20,8 @@ nodes must be traversed before finding the call.}
 required for a match. The default (\code{NULL}) is no condition. See examples.}
 }
 \description{
-Often, it is more helpful to custom-tailer the \code{message} of a lint to record
-which function was matched by the lint logic. This function encapsualtes
+Often, it is more helpful to tailor the \code{message} of a lint to record
+which function was matched by the lint logic. This function encapsulates
 the logic to pull out the matched call in common situations.
 }
 \examples{

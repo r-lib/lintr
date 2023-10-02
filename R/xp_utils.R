@@ -2,7 +2,9 @@
 
 # like `text() %in% table`, translated to XPath 1.0
 xp_text_in_table <- function(table) {
-  if (length(table) == 0L) return("true")
+  if (length(table) == 0L) {
+    return("true")
+  }
   # xpath doesn't seem to have a standard way of escaping quotes, so attempt
   #   to use "" whenever the string has ' (not a perfect solution). info on
   #   escaping from https://stackoverflow.com/questions/14822153
@@ -47,8 +49,8 @@ xp_or <- function(...) paren_wrap(..., sep = "or")
 
 #' Get the name of the function matched by an XPath
 #'
-#' Often, it is more helpful to custom-tailer the `message` of a lint to record
-#'   which function was matched by the lint logic. This function encapsualtes
+#' Often, it is more helpful to tailor the `message` of a lint to record
+#'   which function was matched by the lint logic. This function encapsulates
 #'   the logic to pull out the matched call in common situations.
 #'
 #' @param expr An `xml_node` or `xml_nodeset`, e.g. from [xml2::xml_find_all()].
@@ -76,10 +78,17 @@ xp_or <- function(...) paren_wrap(..., sep = "or")
 #' @export
 xp_call_name <- function(expr, depth = 1L, condition = NULL) {
   stopifnot(
-    inherits(expr, c("xml_node", "xml_nodeset")),
     is.numeric(depth), depth >= 0L,
     is.null(condition) || is.character(condition)
   )
+  is_valid_expr <- is_node(expr) || is_nodeset(expr)
+  if (!is_valid_expr) {
+    stop(
+      "Expected an xml_nodeset or an xml_node, instead got an object of class(es): ",
+      toString(class(expr))
+    )
+  }
+
   if (is.null(condition)) {
     node <- "SYMBOL_FUNCTION_CALL"
   } else {

@@ -2,10 +2,10 @@ test_that("brace_linter lints braces correctly", {
   open_curly_msg <- rex::rex(
     "Opening curly braces should never go on their own line"
   )
-  closed_curly_msg <- rex::rex(paste(
-    "Closing curly-braces should always be on their own line,",
+  closed_curly_msg <- rex::rex(
+    "Closing curly-braces should always be on their own line, ",
     "unless they are followed by an else."
-  ))
+  )
 
   linter <- brace_linter()
   expect_lint("blah", NULL, linter)
@@ -549,6 +549,24 @@ test_that("code with pipes is handled correctly", {
     "local({ 1:4 |> sum() })",
     list(
       list(message = lint_msg_open, line_number = 1L, column_number = 7L)
+    ),
+    linter
+  )
+})
+
+test_that("function shorthand is treated like 'full' function", {
+  skip_if_not_r_version("4.1.0")
+  linter <- brace_linter()
+
+  expect_lint("a <- \\() {  \n}", NULL, linter)
+  expect_lint(
+    trim_some("
+      x <- \\()
+              {2}
+    "),
+    list(
+      rex::rex("Opening curly braces should never go on their own line"),
+      rex::rex("Closing curly-braces should always be on their own line")
     ),
     linter
   )

@@ -36,10 +36,10 @@ lint_package(
 )
 }
 \arguments{
-\item{filename}{either the filename for a file to lint, or a character string of inline R code for linting.
+\item{filename}{Either the filename for a file to lint, or a character string of inline R code for linting.
 The latter (inline data) applies whenever \code{filename} has a newline character (\\n).}
 
-\item{linters}{a named list of linter functions to apply. See \link{linters} for a full list of default and available
+\item{linters}{A named list of linter functions to apply. See \link{linters} for a full list of default and available
 linters.}
 
 \item{...}{Provide additional arguments to be passed to:
@@ -48,10 +48,11 @@ linters.}
 \item \code{\link[=lint]{lint()}} (in case of \code{lint_dir()} and \code{lint_package()}; e.g. \code{linters} or \code{cache})
 }}
 
-\item{cache}{given a logical, toggle caching of lint results. If passed a character string, store the cache in this
+\item{cache}{When logical, toggle caching of lint results. I1f passed a character string, store the cache in this
 directory.}
 
-\item{parse_settings}{whether to try and parse the settings.}
+\item{parse_settings}{Logical, default \code{TRUE}. Whether to try and parse the settings; otherwise, the \code{\link[=default_settings]{default_settings()}}
+are used.}
 
 \item{text}{Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
 linting is being done ad hoc.}

@@ -375,6 +375,24 @@ test_that("unreachable_code_linter identifies unreachable code in mixed conditio
   )
 })
 
+test_that("function shorthand is handled", {
+  skip_if_not_r_version("4.1.0")
+
+  expect_lint(
+    trim_some("
+      foo <- \\(bar) {
+        return(bar)
+        x + 3
+      }
+    "),
+    list(
+      line_number = 3L,
+      message = rex::rex("Code and comments coming after a top-level return() or stop()")
+    ),
+    unreachable_code_linter()
+  )
+})
+
 # nolint start: commented_code_linter.
 # TODO(michaelchirico): extend to work on switch() statements
 # test_that("unreachable_code_linter interacts with switch() as expected", {

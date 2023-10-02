@@ -1,6 +1,5 @@
 test_that("it returns the input if less than the max", {
   expect_identical(lintr:::trim_output(character()), character())
-
   expect_identical(lintr:::trim_output("test", max = 10L), "test")
 })
 
@@ -70,21 +69,16 @@ test_that("as.data.frame.lints", {
 })
 
 test_that("summary.lints() works (no lints)", {
-  no_lints <- lint(
-    "x <- 1\n",
-    linters = assignment_linter()
-  )
+  no_lints <- lint("x <- 1\n", linters = assignment_linter())
   no_lint_summary <- summary(no_lints)
   expect_s3_class(no_lint_summary, "data.frame")
   expect_identical(nrow(no_lint_summary), 0L)
 })
 
 test_that("summary.lints() works (lints found)", {
-  has_lints <- lint(
-    "x = 1\n",
-    linters = assignment_linter()
-  )
+  has_lints <- lint("x = 1\n", linters = assignment_linter())
   has_lint_summary <- summary(has_lints)
+
   expect_s3_class(has_lint_summary, "data.frame")
   expect_identical(nrow(has_lint_summary), 1L)
   expect_gt(has_lint_summary$style, 0L)
@@ -128,15 +122,14 @@ test_that("print.lint works for inline data, even in RStudio", {
 
 test_that("print.lints works", {
   withr::local_options(lintr.rstudio_source_markers = FALSE)
-  tmp <- withr::local_tempfile()
 
-  expect_true(file.create(tmp))
+  tmp <- withr::local_tempfile()
+  stopifnot(file.create(tmp))
   expect_invisible(print(lint(tmp)))
 })
 
 test_that("split.lint works as intended", {
   tmp <- withr::local_tempfile(lines = c("1:nrow(x)", "1:ncol(x)"))
-
   l <- lint(tmp, seq_linter())
   expect_true(all(vapply(split(l), inherits, logical(1L), "lints")))
 })
@@ -152,16 +145,14 @@ test_that("within.list is dispatched", {
 
 test_that("as_tibble.list is _not_ dispatched directly", {
   skip_if_not_installed("tibble")
-  expect_identical(
-    nrow(tibble::as_tibble(lint(text = "a = 1", linters = assignment_linter()))),
-    1L
-  )
+
+  lints <- lint(text = "a = 1", linters = assignment_linter())
+  expect_identical(nrow(tibble::as_tibble(lints)), 1L)
 })
 
 test_that("as.data.table.list is _not_ dispatched directly", {
   skip_if_not_installed("data.table")
-  expect_identical(
-    nrow(data.table::as.data.table(lint(text = "a = 1", linters = assignment_linter()))),
-    1L
-  )
+
+  lints <- lint(text = "a = 1", linters = assignment_linter())
+  expect_identical(nrow(data.table::as.data.table(lints)), 1L)
 })

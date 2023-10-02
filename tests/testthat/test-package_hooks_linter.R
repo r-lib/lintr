@@ -246,3 +246,34 @@ test_that("package_hooks_linter detects bad argument names in .onDetach()/.Last.
     package_hooks_linter()
   )
 })
+
+test_that("function shorthand is handled", {
+  skip_if_not_r_version("4.1.0")
+  linter <- package_hooks_linter()
+
+  expect_lint(
+    ".onLoad <- \\(lib, pkg) packageStartupMessage('hi')",
+    rex::rex("Put packageStartupMessage() calls in .onAttach()"),
+    linter
+  )
+  expect_lint(
+    ".onAttach <- \\(xxx, pkg) { }",
+    rex::rex(".onAttach() should take two arguments"),
+    linter
+  )
+  expect_lint(
+    ".onAttach <- \\(lib, pkg) { require(foo) }",
+    rex::rex("Don't alter the search() path in .onAttach() by calling require()."),
+    linter
+  )
+  expect_lint(
+    ".onDetach <- \\(lib) { library.dynam.unload() }",
+    rex::rex("Use library.dynam.unload() calls in .onUnload(), not .onDetach()."),
+    linter
+  )
+  expect_lint(
+    ".onDetach <- \\(xxx) { }",
+    rex::rex(".onDetach() should take one argument starting with 'lib'."),
+    linter
+  )
+})
