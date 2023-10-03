@@ -132,19 +132,13 @@ validate_exclusions <- function(config) {
 validate_named_exclusion <- function(config, idx) {
   entry <- config$exclusions[[idx]]
   if (is.list(entry)) {
-    if (is.null(names(entry)) || !all(nzchar(names(entry)))) {
-      stop("Named entries of setting 'exclusions' containing lists should be named. Check exclusion ", idx, ".")
-    }
     valid_entry <- vapply(entry, function(x) is.numeric(x) &&!anyNA(x), logical(1L))
-    if (!all(valid_entry)) {
-      stop(
-        "Named entries of setting 'exclusions' containing lists should designate line numbers for exclusion, ",
-        "check exclusion: ", idx, "."
-      )
-    }
-  } else if (!is.numeric(entry) || anyNA(entry)) {
+  } else {
+    valid_entry <- is.numeric(entry) && !anyNA(entry)
+  }
+  if (!all(valid_entry)) {
     stop(
-      "Named entries of setting 'exclusions' not containing lists should designate line numbers for exclusion, ",
+      "Named entries of setting 'exclusions' should designate line numbers for exclusion, ",
       "check exclusion: ", idx, "."
     )
   }
