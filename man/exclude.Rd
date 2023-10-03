@@ -27,7 +27,7 @@ If the listing is missing, all linters are excluded on that line. The default li
 and the listing must be terminated with a full stop (\code{.}) for the linter list to be respected.
 \item Line range in the source file. default: \verb{# nolint start}, \verb{# nolint end}. \verb{# nolint start} accepts linter
 lists in the same form as \verb{# nolint}.
-\item Exclusions parameter, a list named and/or unnamed entries. If present, the name is a path relative to
+\item Exclusions parameter, a list with named and/or unnamed entries. If present, the name is a path relative to
 the config. Moreover, elements have the following characteristics:
 \enumerate{
 \item Unnamed elements specify filenames or directories.
