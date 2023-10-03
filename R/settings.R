@@ -132,7 +132,7 @@ validate_exclusions <- function(config) {
 validate_named_exclusion <- function(config, idx) {
   entry <- config$exclusions[[idx]]
   if (is.list(entry)) {
-    valid_entry <- vapply(entry, function(x) is.numeric(x) &&!anyNA(x), logical(1L))
+    valid_entry <- vapply(entry, function(x) is.numeric(x) && !anyNA(x), logical(1L))
   } else {
     valid_entry <- is.numeric(entry) && !anyNA(entry)
   }
