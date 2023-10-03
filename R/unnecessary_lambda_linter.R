@@ -4,6 +4,10 @@
 #'   e.g. `lapply(DF, sum)` is the same as `lapply(DF, function(x) sum(x))` and
 #'   the former is more readable.
 #'
+#' Cases like `lapply(x, \(xi) grep("ptn", xi))` are excluded because, though
+#'   the anonymous function _can_ be avoided, doing so is not always more
+#'   readable.
+#'
 #' @examples
 #' # will produce lints
 #' lint(
@@ -66,7 +70,7 @@ unnecessary_lambda_linter <- function() {
     /following-sibling::expr[(FUNCTION or OP-LAMBDA) and count(SYMBOL_FORMALS) = 1]
     /expr[last()][
       count(.//SYMBOL[self::* = preceding::SYMBOL_FORMALS[1]]) = 1
-      and count(.//SYMBOL_FUNCTION_CALL) = 1
+      and count(.//SYMBOL_FUNCTION_CALL[text() != 'return']) = 1
       and preceding-sibling::SYMBOL_FORMALS =
         //expr[
           position() = 2
@@ -95,7 +99,7 @@ unnecessary_lambda_linter <- function() {
   # path to calling function symbol from the matched expressions
   fun_xpath <- "./parent::expr/expr/SYMBOL_FUNCTION_CALL"
   # path to the symbol of the simpler function that avoids a lambda
-  symbol_xpath <- glue("(expr|expr[OP-LEFT-BRACE]/expr[1])/expr[SYMBOL_FUNCTION_CALL]")
+  symbol_xpath <- "expr[last()]//expr[SYMBOL_FUNCTION_CALL[text() != 'return']]"
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

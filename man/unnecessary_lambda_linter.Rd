@@ -11,6 +11,11 @@ Using an anonymous function in, e.g., \code{\link[=lapply]{lapply()}} is not alw
 e.g. \code{lapply(DF, sum)} is the same as \code{lapply(DF, function(x) sum(x))} and
 the former is more readable.
 }
+\details{
+Cases like \verb{lapply(x, \\(xi) grep("ptn", xi))} are excluded because, though
+the anonymous function \emph{can} be avoided, doing so is not always more
+readable.
+}
 \examples{
 # will produce lints
 lint(
