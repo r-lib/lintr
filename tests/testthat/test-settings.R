@@ -152,3 +152,58 @@ test_that("it has a smart default for encodings", {
   lintr:::read_settings(pkg_file)
   expect_identical(settings$encoding, "ISO8859-1")
 })
+
+test_that("validate_config_file() detects improperly-formed settings", {
+  .lintr <- withr::local_tempfile()
+  withr::local_options(lintr.linter_file = .lintr)
+  withr::local_dir(withr::local_tempdir())
+
+  writeLines("asdf: 1", .lintr)
+  expect_warning(lint_dir(), "Found non-setting objects in config", fixed = TRUE)
+
+  writeLines("a=1", "aaa.R")
+  writeLines(c('exclusions: list("aaa.R")', "asdf: 1"), .lintr)
+  expect_warning(lint_dir(), "Found non-setting objects in config", fixed = TRUE)
+
+  writeLines("exclude: FALSE", .lintr)
+  expect_error(lint_dir(), "Setting 'exclude' should be of type 'character', not 'logical'", fixed = TRUE)
+
+  writeLines(c('exclusions: list("aaa.R")', "exclude: FALSE"), .lintr)
+  expect_error(lint_dir(), "Setting 'exclude' should be of type 'character', not 'logical'", fixed = TRUE)
+
+  writeLines("linters: list(1)", .lintr)
+  expect_error(lint_dir(), "Setting 'linters' should be a list of linters", fixed = TRUE)
+
+  writeLines("linters: list(assignment_linter(), 1)", .lintr)
+  expect_error(lint_dir(), "Setting 'linters' should be a list of linters", fixed = TRUE)
+
+  writeLines("exclusions: list(1L)", .lintr)
+  expect_error(lint_dir(), "Unnamed entries of setting 'exclusions' should be strings", fixed = TRUE)
+
+  writeLines('exclusions: list("aaa.R", 1L)', .lintr)
+  expect_error(lint_dir(), "Unnamed entries of setting 'exclusions' should be strings", fixed = TRUE)
+
+  writeLines("exclusions: list(letters)", .lintr)
+  expect_error(lint_dir(), "Unnamed entries of setting 'exclusions' should be strings", fixed = TRUE)
+
+  writeLines("exclusions: list(NA_character_)", .lintr)
+  expect_error(lint_dir(), "Unnamed entries of setting 'exclusions' should be strings", fixed = TRUE)
+
+  writeLines('exclusions: list(aaa.R = "abc")', .lintr)
+  expect_error(lint_dir(), "Named entries of setting 'exclusions' should designate line numbers", fixed = TRUE)
+
+  writeLines("exclusions: list(aaa.R = NA_integer_)", .lintr)
+  expect_error(lint_dir(), "Named entries of setting 'exclusions' should designate line numbers", fixed = TRUE)
+
+  writeLines('exclusions: list(aaa.R = list("abc"))', .lintr)
+  expect_error(lint_dir(), "Named entries of setting 'exclusions' should designate line numbers", fixed = TRUE)
+
+  writeLines("exclusions: list(aaa.R = list(NA_integer_))", .lintr)
+  expect_error(lint_dir(), "Named entries of setting 'exclusions' should designate line numbers", fixed = TRUE)
+
+  writeLines('exclusions: list(aaa.R = list(assignment_linter = "abc"))', .lintr)
+  expect_error(lint_dir(), "Named entries of setting 'exclusions' should designate line numbers", fixed = TRUE)
+
+  writeLines("exclusions: list(aaa.R = list(assignment_linter = NA_integer_))", .lintr)
+  expect_error(lint_dir(), "Named entries of setting 'exclusions' should designate line numbers", fixed = TRUE)
+})
