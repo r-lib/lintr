@@ -158,6 +158,8 @@
 <li>
 <code><a href="../reference/redundant_ifelse_linter.html">redundant_ifelse_linter()</a></code> is aware of <code><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">dplyr::if_else()</a></code>’s <code>missing=</code> argument, so that <code>if_else(A, TRUE, FALSE, missing = FALSE)</code> doesn’t lint, but <code>if_else(A, TRUE, FALSE, NA)</code> does (<a href="https://github.com/r-lib/lintr/issues/1941" class="external-link">#1941</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Note that <code><a href="https://dplyr.tidyverse.org/reference/coalesce.html" class="external-link">dplyr::coalesce()</a></code> or <code>tidyr::replace_na()</code> may still be preferable.</li>
 <li>
+<code><a href="../reference/unnecessary_lambda_linter.html">unnecessary_lambda_linter()</a></code> checks for cases using explicit returns, e.g. <code>lapply(x, \(xi) return(sum(xi)))</code> (<a href="https://github.com/r-lib/lintr/issues/1567" class="external-link">#1567</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
 <code>default_undesirable_functions</code> is updated to also include <code><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.unsetenv()</a></code> (<a href="https://github.com/r-lib/lintr/issues/2192" class="external-link">#2192</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
