@@ -217,7 +217,11 @@ test_that("package using .lintr.R config lints correctly", {
 
   # config produces unused variables
   withr::local_options(lintr.linter_file = "lintr_test_config_extraneous")
-  expect_length(lint_package(r_config_pkg), 2L)
+  expect_warning(
+    expect_length(lint_package(r_config_pkg), 2L),
+    "Found non-setting objects in config",
+    fixed = TRUE
+  )
 
   # DCF is preferred if multiple matched configs
   withr::local_options(lintr.linter_file = "lintr_test_config_conflict")
