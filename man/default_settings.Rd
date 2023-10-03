@@ -23,7 +23,7 @@ The default settings consist of
 \item \code{exclude}: pattern used to exclude a line of code
 \item \code{exclude_start}, \code{exclude_end}: patterns used to mark start and end of the code block to exclude
 \item \code{exclude_linter}, \code{exclude_linter_sep}: patterns used to exclude linters
-\item \code{exclusions}:a list of files to exclude
+\item \code{exclusions}: a list of exclusions, see \code{?exclude} for a complete description of valid values.
 \item \code{cache_directory}: location of cache directory
 \item \code{comment_token}: a GitHub token character
 \item \code{comment_bot}: decides if lintr comment bot on GitHub can comment on commits

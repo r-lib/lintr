@@ -245,7 +245,7 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #'  - `exclude`: pattern used to exclude a line of code
 #'  - `exclude_start`, `exclude_end`: patterns used to mark start and end of the code block to exclude
 #'  - `exclude_linter`, `exclude_linter_sep`: patterns used to exclude linters
-#'  - `exclusions`:a list of files to exclude
+#'  - `exclusions`: a list of exclusions, see `?exclude` for a complete description of valid values.
 #'  - `cache_directory`: location of cache directory
 #'  - `comment_token`: a GitHub token character
 #'  - `comment_bot`: decides if lintr comment bot on GitHub can comment on commits
