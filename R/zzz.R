@@ -277,6 +277,18 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #' @export
 default_settings <- NULL
 
+# TODO(R>=3.6.0): Just use sys.source() directly. Note that we can't
+#   write a wrapper that only passes keep.parse.data=FALSE on R>3.5.0
+#   (without doing some wizardry to evade R CMD check) because
+#   there is a check for arguments not matching the signature which
+#   will throw a false positive on R3.5.0. Luckily the argument
+#   defaults on R>=3.6.0 are dictated by global options, so we can use
+#   that for the wrapper here rather than doing some NSE tricks.
+sys_source <- function(...) {
+  old <- options(keep.source.pkgs = FALSE, keep.parse.data.pkgs = FALSE)
+  on.exit(options(old))
+  sys.source(...)
+}
 settings <- new.env(parent = emptyenv())
 
 # nocov start
@@ -288,8 +300,10 @@ settings <- new.env(parent = emptyenv())
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  backports::import(pkgname, c("trimws", "lengths", "deparse1", "...names"))
-  # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
+  # R>=3.6.0: str2expression, str2lang
+  # R>=4.0.0: deparse1
+  # R>=4.1.0: ...names
+  backports::import(pkgname, c("deparse1", "...names"))
   base_ns <- getNamespace("base")
   backports_ns <- getNamespace("backports")
   lintr_ns <- getNamespace(pkgname)
