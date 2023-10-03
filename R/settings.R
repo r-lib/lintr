@@ -32,6 +32,7 @@ read_settings <- function(filename) {
   }
 
   config <- read_config_file(config_file)
+  validate_config_file(config, config_file, default_settings)
 
   for (setting in names(default_settings)) {
     value <- get_setting(setting, config, default_settings)
@@ -75,6 +76,78 @@ read_config_file <- function(config_file) {
   }
   tryCatch(load_config(config_file), warning = malformed, error = malformed)
   config
+}
+
+validate_config_file <- function(config, config_file, defaults) {
+  matched <- names(config) %in% names(defaults)
+  if (!all(matched)) {
+    warning("Found non-setting objects in config '", config_file, "': ", toString(names(config)[!matched]))
+  }
+
+  check_types <- intersect(names(config), names(defaults))
+  for (setting in check_types) {
+    observed_type <- typeof(config[[setting]])
+    expected_type <- typeof(defaults[[setting]])
+    if (observed_type != expected_type) {
+      stop("Setting '", setting, "' should be of type '", expected_type, "', not '", observed_type, "'.")
+    }
+  }
+
+  validate_linters(config)
+  validate_exclusions(config)
+}
+
+validate_linters <- function(config) {
+  if (!"linters" %in% names(config)) {
+    return(invisible())
+  }
+
+  is_linter <- vapply(config$linters, inherits, "linter", FUN.VALUE = logical(1L))
+  if (!all(is_linter)) {
+    stop(
+      "Setting 'linters' should be a list of linters, but found non-linters at elements ",
+      toString(which(!is_linter)), "."
+    )
+  }
+}
+
+validate_exclusions <- function(config) {
+  if (!"exclusions" %in% names(config)) {
+    return(invisible())
+  }
+
+  config_names <- names2(config$exclusions)
+  has_names <- config_names != ""
+  unnamed_is_string <-
+    vapply(config$exclusions[!has_names], function(x) is.character(x) && length(x) == 1L && !is.na(x), logical(1L))
+  if (!all(unnamed_is_string)) {
+    stop(
+      "Unnamed entries of setting 'exclusions' should be strings naming files or directories, check entries: ",
+      toString(which(!has_names)[!unnamed_is_string]), "."
+    )
+  }
+  for (ii in which(has_names)) validate_named_exclusion(config, ii)
+}
+
+validate_named_exclusion <- function(config, idx) {
+  entry <- config$exclusions[[idx]]
+  if (is.list(entry)) {
+    if (is.null(names(entry)) || !all(nzchar(names(entry)))) {
+      stop("Named entries of setting 'exclusions' containing lists should be named. Check exclusion ", idx, ".")
+    }
+    valid_entry <- vapply(entry, function(x) is.numeric(x) &&!anyNA(x), logical(1L))
+    if (!all(valid_entry)) {
+      stop(
+        "Named entries of setting 'exclusions' containing lists should designate line numbers for exclusion, ",
+        "check exclusion: ", idx, "."
+      )
+    }
+  } else if (!is.numeric(entry) || anyNA(entry)) {
+    stop(
+      "Named entries of setting 'exclusions' not containing lists should designate line numbers for exclusion, ",
+      "check exclusion: ", idx, "."
+    )
+  }
 }
 
 lintr_option <- function(setting, default = NULL) getOption(paste0("lintr.", setting), default)
