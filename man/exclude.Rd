@@ -21,14 +21,21 @@ Exclude lines or files from linting
 \details{
 Exclusions can be specified in three different ways.
 \enumerate{
-\item single line in the source file. default: \verb{# nolint}, possibly followed by a listing of linters to exclude.
+\item Single line in the source file. default: \verb{# nolint}, possibly followed by a listing of linters to exclude.
 If the listing is missing, all linters are excluded on that line. The default listing format is
 \verb{# nolint: linter_name, linter2_name.}. There may not be anything between the colon and the line exclusion tag
 and the listing must be terminated with a full stop (\code{.}) for the linter list to be respected.
-\item line range in the source file. default: \verb{# nolint start}, \verb{# nolint end}. \verb{# nolint start} accepts linter
+\item Line range in the source file. default: \verb{# nolint start}, \verb{# nolint end}. \verb{# nolint start} accepts linter
 lists in the same form as \verb{# nolint}.
-\item exclusions parameter, a named list of files with named lists of linters and lines to exclude them on, a named
-list of the files and lines to exclude, or just the filenames if you want to exclude the entire file, or the
-directory names if you want to exclude all files in a directory.
+\item Exclusions parameter, a list named and/or unnamed entries. If present, the name is a path relative to
+the config. Moreover, elements have the following characteristics:
+\enumerate{
+\item Unnamed elements specify filenames or directories.
+\item Named elements are numeric or a list. If present, the name is a linter.
+\enumerate{
+\item Numeric or unnamed list elements are line numbers to be excluded.
+\item Named list elements are line numbers to be excluded for specific linters.
+}
+}
 }
 }

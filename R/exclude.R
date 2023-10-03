@@ -10,18 +10,21 @@
 #'   "@details",
 #'   "Exclusions can be specified in three different ways.",
 #'   "",
-#'   "1. single line in the source file. default: `# nolint`, possibly followed by a listing of linters to exclude.",
+#'   "1. Single line in the source file. default: `# nolint`, possibly followed by a listing of linters to exclude.",
 #'   "   If the listing is missing, all linters are excluded on that line. The default listing format is",
 #'   paste(
 #'     "   `#",
 #'     "nolint: linter_name, linter2_name.`. There may not be anything between the colon and the line exclusion tag"
 #'   ),
 #'   "   and the listing must be terminated with a full stop (`.`) for the linter list to be respected.",
-#'   "2. line range in the source file. default: `# nolint start`, `# nolint end`. `# nolint start` accepts linter",
+#'   "2. Line range in the source file. default: `# nolint start`, `# nolint end`. `# nolint start` accepts linter",
 #'   "   lists in the same form as `# nolint`.",
-#'   "3. exclusions parameter, a named list of files with named lists of linters and lines to exclude them on, a named",
-#'   "   list of the files and lines to exclude, or just the filenames if you want to exclude the entire file, or the",
-#'   "   directory names if you want to exclude all files in a directory."
+#'   "3. Exclusions parameter, a list named and/or unnamed entries. If present, the name is a path relative to ",
+#'   "   the config. Moreover, elements have the following characteristics:",
+#'   "   1. Unnamed elements specify filenames or directories.",
+#'   "   2. Named elements are numeric or a list. If present, the name is a linter.",
+#'   "      1. Numeric or unnamed list elements are line numbers to be excluded.",
+#'   "      2. Named list elements are line numbers to be excluded for specific linters."
 #' )
 exclude <- function(lints, exclusions = settings$exclusions, linter_names = NULL, ...) {
   if (length(lints) <= 0L) {
