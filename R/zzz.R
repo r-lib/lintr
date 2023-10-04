@@ -171,7 +171,9 @@ all_undesirable_functions <- modify_defaults(
   untrace = paste(
     "remove this likely leftover from debugging.",
     "It is only useful for interactive debugging with trace()"
-  )
+  ),
+  structure =
+    "Use class<-, names<-, and attr<- to set attributes"
 )
 
 #' @rdname default_undesirable_functions
