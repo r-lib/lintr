@@ -51,7 +51,7 @@ test_that("as.data.frame.lints", {
 
   # Convert lints to data.frame
   lints <- list(l1, l2)
-  class(lints) <- "linter"
+  class(lints) <- "lints"
   df <- as.data.frame(lints)
   expect_s3_class(df, "data.frame")
 
