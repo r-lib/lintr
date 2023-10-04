@@ -196,12 +196,14 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
   "setwd",
   "sink",
   "source",
+  "structure",
   "Sys.setenv",
   "Sys.setlocale",
   "Sys.unsetenv",
   "trace",
   "undebug",
-  "untrace"
+  "untrace",
+  NULL
 )]
 
 #' @rdname default_undesirable_functions
@@ -234,7 +236,8 @@ all_undesirable_operators <- modify_defaults(
 default_undesirable_operators <- all_undesirable_operators[names(all_undesirable_operators) %in% c(
   ":::",
   "<<-",
-  "->>"
+  "->>",
+  NULL
 )]
 
 #' Default lintr settings
