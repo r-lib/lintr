@@ -53,6 +53,22 @@
 * `implicit_assignment_linter()` gains an argument `allow_lazy` (default `FALSE`) that allows optionally skipping lazy assignments like `A && (B <- foo(A))` (#2016, @MichaelChirico).
 * `unused_import_linter()` gains an argument `interpret_glue` (default `TRUE`) paralleling that in `object_usage_linter()` to toggle whether `glue::glue()` expressions should be inspected for exported object usage (#2042, @MichaelChirico).
 * `default_undesirable_functions` is updated to also include `Sys.unsetenv()` (#2192, @IndrajeetPatil).
+* Linters with logic around the magrittr pipe `%>%` consistently apply it to the other pipes `%!>%`, `%T>%`, `%<>%` (and possibly `%$%`) where appropriate (#2008, @MichaelChirico).
+  + `brace_linter()`
+  + `pipe_call_linter()`
+  + `pipe_continuation_linter()`
+  + `unnecessary_concatenation_linter()`
+  + `unnecessary_placeholder_linter()`
+* Linters with logic around function declarations consistently include the R 4.0.0 shorthand `\()` (#2190, @MichaelChirico).
+  + `brace_linter()`
+  + `function_left_parentheses_linter()`
+  + `indentation_linter()`
+  + `object_length_linter()`
+  + `object_name_linter()`
+  + `package_hooks_linter()`
+  + `paren_body_linter()`
+  + `unnecessary_lambda_linter()`
+  + `unreachable_code_linter()`
 
 ### Lint accuracy fixes: removing false positives
 
@@ -80,25 +96,6 @@
   + finds assignments in call arguments besides the first one (#2136, @MichaelChirico).
   + finds assignments in parenthetical expressions like `if (A && (B <- foo(A))) { }` (#2138, @MichaelChirico).
 * `unnecessary_lambda_linter()` checks for cases using explicit returns, e.g. `lapply(x, \(xi) return(sum(xi)))` (#1567, @MichaelChirico).
-
-These repo-wide cleanups typically reduced false negatives, but could reduce false positives as well:
-
-* Linters with logic around the magrittr pipe `%>%` consistently apply it to the other pipes `%!>%`, `%T>%`, `%<>%` (and possibly `%$%`) where appropriate (#2008, @MichaelChirico).
-  + `brace_linter()`
-  + `pipe_call_linter()`
-  + `pipe_continuation_linter()`
-  + `unnecessary_concatenation_linter()`
-  + `unnecessary_placeholder_linter()`
-* Linters with logic around function declarations consistently include the R 4.0.0 shorthand `\()` (#2190, @MichaelChirico).
-  + `brace_linter()`
-  + `function_left_parentheses_linter()`
-  + `indentation_linter()`
-  + `object_length_linter()`
-  + `object_name_linter()`
-  + `package_hooks_linter()`
-  + `paren_body_linter()`
-  + `unnecessary_lambda_linter()`
-  + `unreachable_code_linter()`
 
 # lintr 3.1.0
 
