@@ -103,11 +103,11 @@ validate_linters <- function(config) {
     return(invisible())
   }
 
-  is_linter <- vapply(config$linters, inherits, "linter", FUN.VALUE = logical(1L))
-  if (!all(is_linter)) {
+  is_linters <- vapply(config$linters, is_linter, logical(1L))
+  if (!all(is_linters)) {
     stop(
       "Setting 'linters' should be a list of linters, but found non-linters at elements ",
-      toString(which(!is_linter)), "."
+      toString(which(!is_linters)), "."
     )
   }
 }
