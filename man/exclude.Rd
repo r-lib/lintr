@@ -35,6 +35,8 @@ the config. Moreover, elements have the following characteristics:
 \enumerate{
 \item Numeric or unnamed list elements are line numbers to be excluded.
 \item Named list elements are line numbers to be excluded for specific linters.
+For convenience, a vector can be used in place of a list whenever it would not introduce ambiguity, e.g.
+a character vector of files to exclude or a vector of lines to exclude.
 }
 }
 }
