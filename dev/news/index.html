@@ -68,11 +68,28 @@
 <ul><li>
 <code><a href="../reference/infix_spaces_linter.html">infix_spaces_linter()</a></code> distinguishes <code>&lt;-</code>, <code>:=</code>, <code>&lt;&lt;-</code> and <code>-&gt;</code>, <code>-&gt;&gt;</code>, i.e. <code>infix_spaces_linter(exclude_operators = "-&gt;")</code> will no longer exclude <code>-&gt;&gt;</code> (<a href="https://github.com/r-lib/lintr/issues/2115" class="external-link">#2115</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). This change is breaking for users relying on manually-supplied <code>exclude_operators</code> containing <code>"&lt;-"</code> to also exclude <code>:=</code> and <code>&lt;&lt;-</code>. The fix is to manually supply <code>":="</code> and <code>"&lt;&lt;-"</code> as well. We don’t expect this change to affect many users, the fix is simple, and the new behavior is much more transparent, so we are including this breakage in a minor release.</li>
 <li>Removed <code>find_line()</code> and <code>find_column()</code> entries from <code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> expression-level objects. These have been marked deprecated since version 3.0.0. No users were found on GitHub.</li>
+<li>There is experimental support for writing config in plain R scripts (as opposed to DCF files; <a href="https://github.com/r-lib/lintr/issues/1210" class="external-link">#1210</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). The script is run in a new environment and variables matching settings (<code><a href="../reference/default_settings.html">?default_settings</a></code>) are copied over. In particular, this removes the need to write R code in a DCF-friendly way, and allows normal R syntax highlighting in the saved file. We may eventually deprecate the DCF approach in favor of this one; user feedback is welcome on strong preferences for either approach, or for a different approach like YAML. Generally you should be able to convert your existing <code>.lintr</code> file to an equivalent R config by replacing the <code>:</code> key-value separators with assignments (<code>&lt;-</code>). By default, such a config is searched for in a file named ‘.lintr.R’. This is a mildly breaking change if you happened to be keeping a file ‘.lintr.R’ around since that file is given precedence over ‘.lintr’.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/sprintf_linter.html">sprintf_linter()</a></code> doesn’t error in cases where whitespace in <code>...</code> arguments is significant, e.g. <code>sprintf("%s", if (A) "" else y)</code>, which won’t parse if whitespace is removed (<a href="https://github.com/r-lib/lintr/issues/2131" class="external-link">#2131</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-to-default-linters-development-version">Changes to default linters<a class="anchor" aria-label="anchor" href="#changes-to-default-linters-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/assignment_linter.html">assignment_linter()</a></code> lints the {magrittr} assignment pipe <code>%&lt;&gt;%</code> (<a href="https://github.com/r-lib/lintr/issues/2008" class="external-link">#2008</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). This can be deactivated by setting the new argument <code>allow_pipe_assign</code> to <code>TRUE</code>.</li>
+<li>
+<code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code>:
+<ul><li>assumes <code>glue()</code> is <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code> when <code>interpret_glue=TRUE</code> (<a href="https://github.com/r-lib/lintr/issues/2032" class="external-link">#2032</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>finds function usages, including infix usage, inside <code>glue()</code> calls to avoid false positives for “unused objects” (<a href="https://github.com/r-lib/lintr/issues/2029" class="external-link">#2029</a> and <a href="https://github.com/r-lib/lintr/issues/2069" class="external-link">#2069</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+</ul></li>
+<li>
+<code><a href="../reference/object_name_linter.html">object_name_linter()</a></code> no longer attempts to lint strings in function calls on the LHS of assignments (<a href="https://github.com/r-lib/lintr/issues/1466" class="external-link">#1466</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/infix_spaces_linter.html">infix_spaces_linter()</a></code> allows finer control for linting <code>=</code> in different scenarios using parse tags <code>EQ_ASSIGN</code>, <code>EQ_SUB</code>, and <code>EQ_FORMALS</code> (<a href="https://github.com/r-lib/lintr/issues/1977" class="external-link">#1977</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/equals_na_linter.html">equals_na_linter()</a></code> checks for <code>x %in% NA</code>, which is a more convoluted form of <code>is.na(x)</code> (<a href="https://github.com/r-lib/lintr/issues/2088" class="external-link">#2088</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
@@ -83,85 +100,6 @@
 <li>
 <code><a href="../reference/lint.html">lint()</a></code>, <code><a href="../reference/lint.html">lint_dir()</a></code>, and <code><a href="../reference/lint.html">lint_package()</a></code> fail more gracefully when the user mis-spells an argument name (<a href="https://github.com/r-lib/lintr/issues/2134" class="external-link">#2134</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>Quarto files (.qmd) are included by <code><a href="../reference/lint.html">lint_dir()</a></code> by default (<a href="https://github.com/r-lib/lintr/issues/2150" class="external-link">#2150</a>, <a href="https://github.com/dave-lovell" class="external-link">@dave-lovell</a>).</li>
-<li>There is experimental support for writing config in plain R scripts (as opposed to DCF files; <a href="https://github.com/r-lib/lintr/issues/1210" class="external-link">#1210</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). The script is run in a new environment and variables matching settings (<code><a href="../reference/default_settings.html">?default_settings</a></code>) are copied over. In particular, this removes the need to write R code in a DCF-friendly way, and allows normal R syntax highlighting in the saved file. We may eventually deprecate the DCF approach in favor of this one; user feedback is welcome on strong preferences for either approach, or for a different approach like YAML. Generally you should be able to convert your existing <code>.lintr</code> file to an equivalent R config by replacing the <code>:</code> key-value separators with assignments (<code>&lt;-</code>). By default, such a config is searched for in a file named ‘.lintr.R’.</li>
-<li>
-<code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code>
-<ul><li>Is pipe-aware, in particular removing false positives around piping into {stringr} functions like <code>x |&gt; str_replace(fixed("a"), "b")</code> (<a href="https://github.com/r-lib/lintr/issues/1811" class="external-link">#1811</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>Gains an option <code>allow_unescaped</code> (default <code>FALSE</code>) to toggle linting regexes not requiring any escapes or character classes (<a href="https://github.com/r-lib/lintr/issues/1689" class="external-link">#1689</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Thus <code>fixed_regex_linter(allow_unescaped = TRUE)</code> would lint on <code>grepl("[$]", x)</code> but not on <code>grepl("a", x)</code> since the latter does not use any regex special characters.</li>
-<li>Ignores non-string inputs to <code>pattern=</code> as a keyword argument (<a href="https://github.com/r-lib/lintr/issues/2159" class="external-link">#2159</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-</ul></li>
-<li>Linters with logic around the magrittr pipe <code>%&gt;%</code> consistently apply it to the other pipes <code>%!&gt;%</code>, <code>%T&gt;%</code>, <code>%&lt;&gt;%</code> (and possibly <code>%$%</code>) where appropriate (<a href="https://github.com/r-lib/lintr/issues/2008" class="external-link">#2008</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).
-<ul><li><code><a href="../reference/brace_linter.html">brace_linter()</a></code></li>
-<li><code><a href="../reference/pipe_call_linter.html">pipe_call_linter()</a></code></li>
-<li><code><a href="../reference/pipe_continuation_linter.html">pipe_continuation_linter()</a></code></li>
-<li><code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code></li>
-<li><code><a href="../reference/unnecessary_placeholder_linter.html">unnecessary_placeholder_linter()</a></code></li>
-</ul></li>
-<li>Several linters avoiding false positives in <code>$</code> extractions get the same exceptions for <code>@</code> extractions, e.g. <code>S4@T</code> will no longer throw a <code><a href="../reference/T_and_F_symbol_linter.html">T_and_F_symbol_linter()</a></code> hit (<a href="https://github.com/r-lib/lintr/issues/2039" class="external-link">#2039</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).
-<ul><li><code><a href="../reference/T_and_F_symbol_linter.html">T_and_F_symbol_linter()</a></code></li>
-<li><code><a href="../reference/for_loop_index_linter.html">for_loop_index_linter()</a></code></li>
-<li><code><a href="../reference/literal_coercion_linter.html">literal_coercion_linter()</a></code></li>
-<li><code><a href="../reference/object_name_linter.html">object_name_linter()</a></code></li>
-<li><code><a href="../reference/undesirable_function_linter.html">undesirable_function_linter()</a></code></li>
-<li><code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code></li>
-<li><code><a href="../reference/yoda_test_linter.html">yoda_test_linter()</a></code></li>
-</ul></li>
-<li>Linters with logic around function declarations consistently include the R 4.0.0 shorthand <code>\()</code> (<a href="https://github.com/r-lib/lintr/issues/2190" class="external-link">#2190</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).
-<ul><li><code><a href="../reference/brace_linter.html">brace_linter()</a></code></li>
-<li><code><a href="../reference/function_left_parentheses_linter.html">function_left_parentheses_linter()</a></code></li>
-<li><code><a href="../reference/indentation_linter.html">indentation_linter()</a></code></li>
-<li><code><a href="../reference/object_length_linter.html">object_length_linter()</a></code></li>
-<li><code><a href="../reference/object_name_linter.html">object_name_linter()</a></code></li>
-<li><code><a href="../reference/package_hooks_linter.html">package_hooks_linter()</a></code></li>
-<li><code><a href="../reference/paren_body_linter.html">paren_body_linter()</a></code></li>
-<li><code><a href="../reference/unnecessary_lambda_linter.html">unnecessary_lambda_linter()</a></code></li>
-<li><code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code></li>
-</ul></li>
-<li>
-<code><a href="../reference/sprintf_linter.html">sprintf_linter()</a></code> is pipe-aware, so that <code>x %&gt;% sprintf(fmt = "%s")</code> no longer lints (<a href="https://github.com/r-lib/lintr/issues/1943" class="external-link">#1943</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>
-<code><a href="../reference/line_length_linter.html">line_length_linter()</a></code> helpfully includes the line length in the lint message (<a href="https://github.com/r-lib/lintr/issues/2057" class="external-link">#2057</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>
-<code><a href="../reference/conjunct_test_linter.html">conjunct_test_linter()</a></code> also lints usage like <code>dplyr::filter(x, A &amp; B)</code> in favor of using <code>dplyr::filter(x, A, B)</code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>; <a href="https://github.com/r-lib/lintr/issues/2110" class="external-link">#2110</a> and <a href="https://github.com/r-lib/lintr/issues/2078" class="external-link">#2078</a>, <a href="https://github.com/salim-b" class="external-link">@salim-b</a> and <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Option <code>allow_filter</code> toggles when this applies. <code>allow_filter = "always"</code> drops such lints entirely, while <code>"not_dplyr"</code> only lints calls explicitly qualified as <code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">dplyr::filter()</a></code>. The default, <code>"never"</code>, assumes all unqualified calls to <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter()</a></code> are <code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">dplyr::filter()</a></code>.</li>
-<li>
-<code><a href="../reference/sort_linter.html">sort_linter()</a></code> checks for code like <code>x == sort(x)</code> which is better served by using the function <code><a href="https://rdrr.io/r/base/is.unsorted.html" class="external-link">is.unsorted()</a></code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>
-<code><a href="../reference/paste_linter.html">paste_linter()</a></code> gains detection for file paths that are better constructed with <code><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path()</a></code>, e.g. <code>paste0(dir, "/", file)</code> would be better as <code>file.path(dir, file)</code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/r-lib/lintr/issues/2082" class="external-link">#2082</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). What exactly gets linted here can be fine-tuned with the <code>allow_file_path</code> option (<code>"double_slash"</code> by default, with alternatives <code>"never"</code> and <code>"always"</code>). When <code>"always"</code>, these rules are ignored. When <code>"double_slash"</code>, paths appearing to construct a URL that have consecutive forward slashes (<code>/</code>) are skipped. When <code>"never"</code>, even URLs should be constructed with <code><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path()</a></code>.</li>
-<li>
-<code><a href="../reference/seq_linter.html">seq_linter()</a></code> recommends <code><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev()</a></code> in the lint message for lints like <code>nrow(x):1</code> (<a href="https://github.com/r-lib/lintr/issues/1542" class="external-link">#1542</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>
-<code><a href="../reference/function_argument_linter.html">function_argument_linter()</a></code> detects usage of <code><a href="https://rdrr.io/r/base/missing.html" class="external-link">missing()</a></code> for the linted argument (<a href="https://github.com/r-lib/lintr/issues/1546" class="external-link">#1546</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). The simplest fix for <code><a href="../reference/function_argument_linter.html">function_argument_linter()</a></code> lints is typically to set that argument to <code>NULL</code> by default, in which case it’s usually preferable to update function logic checking <code><a href="https://rdrr.io/r/base/missing.html" class="external-link">missing()</a></code> to check <code><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null()</a></code> instead.</li>
-<li>
-<code><a href="../reference/equals_na_linter.html">equals_na_linter()</a></code> checks for <code>x %in% NA</code>, which is a more convoluted form of <code>is.na(x)</code> (<a href="https://github.com/r-lib/lintr/issues/2088" class="external-link">#2088</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>
-<code><a href="../reference/commas_linter.html">commas_linter()</a></code> gains an option <code>allow_trailing</code> (default <code>FALSE</code>) to allow trailing commas while indexing. (<a href="https://github.com/r-lib/lintr/issues/2104" class="external-link">#2104</a>, <a href="https://github.com/MEO265" class="external-link">@MEO265</a>)</li>
-<li>
-<code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code>
-<ul><li>finds unreachable code even in the presence of a comment or semicolon after <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> or <code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop()</a></code> (<a href="https://github.com/r-lib/lintr/issues/2127" class="external-link">#2127</a>, <a href="https://github.com/MEO265" class="external-link">@MEO265</a>).</li>
-<li>checks for code inside <code>if (FALSE)</code> and other conditional loops with deterministically false conditions (<a href="https://github.com/r-lib/lintr/issues/1428" class="external-link">#1428</a>, <a href="https://github.com/ME0265" class="external-link">@ME0265</a>).</li>
-</ul></li>
-<li>
-<code><a href="../reference/implicit_assignment_linter.html">implicit_assignment_linter()</a></code>
-<ul><li>finds assignments in call arguments besides the first one (<a href="https://github.com/r-lib/lintr/issues/2136" class="external-link">#2136</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>finds assignments in parenthetical expressions like <code>if (A &amp;&amp; (B &lt;- foo(A))) { }</code> (<a href="https://github.com/r-lib/lintr/issues/2138" class="external-link">#2138</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>gains an argument <code>allow_lazy</code> (default <code>FALSE</code>) that allows optionally skipping lazy assignments like <code>A &amp;&amp; (B &lt;- foo(A))</code> (<a href="https://github.com/r-lib/lintr/issues/2016" class="external-link">#2016</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-</ul></li>
-<li>
-<code><a href="../reference/implicit_assignment_linter.html">implicit_assignment_linter()</a></code> finds assignments in call arguments besides the first one (<a href="https://github.com/r-lib/lintr/issues/2136" class="external-link">#2136</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>
-<code><a href="../reference/inner_combine_linter.html">inner_combine_linter()</a></code> no longer throws on length-1 calls to <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> like <code>c(exp(2))</code> or <code>c(log(3))</code> (<a href="https://github.com/r-lib/lintr/issues/2017" class="external-link">#2017</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Such usage is discouraged by <code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code>, but <code><a href="../reference/inner_combine_linter.html">inner_combine_linter()</a></code> <em>per se</em> does not apply.</li>
-<li>
-<code><a href="../reference/condition_message_linter.html">condition_message_linter()</a></code> ignores usages of extracted calls like <code>env$stop(paste(a, b))</code> (<a href="https://github.com/r-lib/lintr/issues/1455" class="external-link">#1455</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>
-<code><a href="../reference/unused_import_linter.html">unused_import_linter()</a></code> gains an argument <code>interpret_glue</code> (default <code>TRUE</code>) paralleling that in <code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code> to toggle whether <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code> expressions should be inspected for exported object usage (<a href="https://github.com/r-lib/lintr/issues/2042" class="external-link">#2042</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>
-<code><a href="../reference/sort_linter.html">sort_linter()</a></code> only lints on <code><a href="https://rdrr.io/r/base/order.html" class="external-link">order()</a></code> of a single vector, excluding e.g. <code>x[order(x, y)]</code> and <code>x[order(y, x)]</code> (<a href="https://github.com/r-lib/lintr/issues/2156" class="external-link">#2156</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>
-<code><a href="../reference/redundant_ifelse_linter.html">redundant_ifelse_linter()</a></code> is aware of <code><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">dplyr::if_else()</a></code>’s <code>missing=</code> argument, so that <code>if_else(A, TRUE, FALSE, missing = FALSE)</code> doesn’t lint, but <code>if_else(A, TRUE, FALSE, NA)</code> does (<a href="https://github.com/r-lib/lintr/issues/1941" class="external-link">#1941</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Note that <code><a href="https://dplyr.tidyverse.org/reference/coalesce.html" class="external-link">dplyr::coalesce()</a></code> or <code>tidyr::replace_na()</code> may still be preferable.</li>
-<li>
-<code><a href="../reference/unnecessary_lambda_linter.html">unnecessary_lambda_linter()</a></code> checks for cases using explicit returns, e.g. <code>lapply(x, \(xi) return(sum(xi)))</code> (<a href="https://github.com/r-lib/lintr/issues/1567" class="external-link">#1567</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>
-<code>default_undesirable_functions</code> is updated to also include <code><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.unsetenv()</a></code> (<a href="https://github.com/r-lib/lintr/issues/2192" class="external-link">#2192</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>
@@ -179,21 +117,91 @@
 <li>
 <code><a href="../reference/length_test_linter.html">length_test_linter()</a></code> detects the common mistake <code>length(x == 0)</code> which is meant to be <code>length(x) == 0</code> (<a href="https://github.com/r-lib/lintr/issues/1991" class="external-link">#1991</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
-</div>
-<div class="section level3">
-<h3 id="changes-to-defaults-development-version">Changes to defaults<a class="anchor" aria-label="anchor" href="#changes-to-defaults-development-version"></a></h3>
+<div class="section level4">
+<h4 id="extensions-to-existing-linters-development-version">Extensions to existing linters<a class="anchor" aria-label="anchor" href="#extensions-to-existing-linters-development-version"></a></h4>
 <ul><li>
-<code><a href="../reference/assignment_linter.html">assignment_linter()</a></code> lints the {magrittr} assignment pipe <code>%&lt;&gt;%</code> (<a href="https://github.com/r-lib/lintr/issues/2008" class="external-link">#2008</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). This can be deactivated by setting the new argument <code>allow_pipe_assign</code> to <code>TRUE</code>.</li>
+<code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> gains an option <code>allow_unescaped</code> (default <code>FALSE</code>) to toggle linting regexes not requiring any escapes or character classes (<a href="https://github.com/r-lib/lintr/issues/1689" class="external-link">#1689</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Thus <code>fixed_regex_linter(allow_unescaped = TRUE)</code> would lint on <code>grepl("[$]", x)</code> but not on <code>grepl("a", x)</code> since the latter does not use any regex special characters.</li>
 <li>
-<code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code>:
-<ul><li>assumes <code>glue()</code> is <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code> when <code>interpret_glue=TRUE</code> (<a href="https://github.com/r-lib/lintr/issues/2032" class="external-link">#2032</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>finds function usages, including infix usage, inside <code>glue()</code> calls to avoid false positives for “unused objects” (<a href="https://github.com/r-lib/lintr/issues/2029" class="external-link">#2029</a> and <a href="https://github.com/r-lib/lintr/issues/2069" class="external-link">#2069</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<code><a href="../reference/line_length_linter.html">line_length_linter()</a></code> helpfully includes the line length in the lint message (<a href="https://github.com/r-lib/lintr/issues/2057" class="external-link">#2057</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/conjunct_test_linter.html">conjunct_test_linter()</a></code> also lints usage like <code>dplyr::filter(x, A &amp; B)</code> in favor of using <code>dplyr::filter(x, A, B)</code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>; <a href="https://github.com/r-lib/lintr/issues/2110" class="external-link">#2110</a> and <a href="https://github.com/r-lib/lintr/issues/2078" class="external-link">#2078</a>, <a href="https://github.com/salim-b" class="external-link">@salim-b</a> and <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Option <code>allow_filter</code> toggles when this applies. <code>allow_filter = "always"</code> drops such lints entirely, while <code>"not_dplyr"</code> only lints calls explicitly qualified as <code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">dplyr::filter()</a></code>. The default, <code>"never"</code>, assumes all unqualified calls to <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter()</a></code> are <code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">dplyr::filter()</a></code>.</li>
+<li>
+<code><a href="../reference/sort_linter.html">sort_linter()</a></code> checks for code like <code>x == sort(x)</code> which is better served by using the function <code><a href="https://rdrr.io/r/base/is.unsorted.html" class="external-link">is.unsorted()</a></code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/paste_linter.html">paste_linter()</a></code> gains detection for file paths that are better constructed with <code><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path()</a></code>, e.g. <code>paste0(dir, "/", file)</code> would be better as <code>file.path(dir, file)</code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/r-lib/lintr/issues/2082" class="external-link">#2082</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). What exactly gets linted here can be fine-tuned with the <code>allow_file_path</code> option (<code>"double_slash"</code> by default, with alternatives <code>"never"</code> and <code>"always"</code>). When <code>"always"</code>, these rules are ignored. When <code>"double_slash"</code>, paths appearing to construct a URL that have consecutive forward slashes (<code>/</code>) are skipped. When <code>"never"</code>, even URLs should be constructed with <code><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path()</a></code>.</li>
+<li>
+<code><a href="../reference/seq_linter.html">seq_linter()</a></code> recommends <code><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev()</a></code> in the lint message for lints like <code>nrow(x):1</code> (<a href="https://github.com/r-lib/lintr/issues/1542" class="external-link">#1542</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/function_argument_linter.html">function_argument_linter()</a></code> detects usage of <code><a href="https://rdrr.io/r/base/missing.html" class="external-link">missing()</a></code> for the linted argument (<a href="https://github.com/r-lib/lintr/issues/1546" class="external-link">#1546</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). The simplest fix for <code><a href="../reference/function_argument_linter.html">function_argument_linter()</a></code> lints is typically to set that argument to <code>NULL</code> by default, in which case it’s usually preferable to update function logic checking <code><a href="https://rdrr.io/r/base/missing.html" class="external-link">missing()</a></code> to check <code><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null()</a></code> instead.</li>
+<li>
+<code><a href="../reference/commas_linter.html">commas_linter()</a></code> gains an option <code>allow_trailing</code> (default <code>FALSE</code>) to allow trailing commas while indexing. (<a href="https://github.com/r-lib/lintr/issues/2104" class="external-link">#2104</a>, <a href="https://github.com/MEO265" class="external-link">@MEO265</a>)</li>
+<li>
+<code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code> checks for code inside <code>if (FALSE)</code> and other conditional loops with deterministically false conditions (<a href="https://github.com/r-lib/lintr/issues/1428" class="external-link">#1428</a>, <a href="https://github.com/ME0265" class="external-link">@ME0265</a>).</li>
+<li>
+<code><a href="../reference/implicit_assignment_linter.html">implicit_assignment_linter()</a></code> gains an argument <code>allow_lazy</code> (default <code>FALSE</code>) that allows optionally skipping lazy assignments like <code>A &amp;&amp; (B &lt;- foo(A))</code> (<a href="https://github.com/r-lib/lintr/issues/2016" class="external-link">#2016</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/unused_import_linter.html">unused_import_linter()</a></code> gains an argument <code>interpret_glue</code> (default <code>TRUE</code>) paralleling that in <code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code> to toggle whether <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code> expressions should be inspected for exported object usage (<a href="https://github.com/r-lib/lintr/issues/2042" class="external-link">#2042</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code>default_undesirable_functions</code> is updated to also include <code><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.unsetenv()</a></code> (<a href="https://github.com/r-lib/lintr/issues/2192" class="external-link">#2192</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</li>
+<li>Linters with logic around the magrittr pipe <code>%&gt;%</code> consistently apply it to the other pipes <code>%!&gt;%</code>, <code>%T&gt;%</code>, <code>%&lt;&gt;%</code> (and possibly <code>%$%</code>) where appropriate (<a href="https://github.com/r-lib/lintr/issues/2008" class="external-link">#2008</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).
+<ul><li><code><a href="../reference/brace_linter.html">brace_linter()</a></code></li>
+<li><code><a href="../reference/pipe_call_linter.html">pipe_call_linter()</a></code></li>
+<li><code><a href="../reference/pipe_continuation_linter.html">pipe_continuation_linter()</a></code></li>
+<li><code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code></li>
+<li><code><a href="../reference/unnecessary_placeholder_linter.html">unnecessary_placeholder_linter()</a></code></li>
+</ul></li>
+<li>Linters with logic around function declarations consistently include the R 4.0.0 shorthand <code>\()</code> (<a href="https://github.com/r-lib/lintr/issues/2190" class="external-link">#2190</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).
+<ul><li><code><a href="../reference/brace_linter.html">brace_linter()</a></code></li>
+<li><code><a href="../reference/function_left_parentheses_linter.html">function_left_parentheses_linter()</a></code></li>
+<li><code><a href="../reference/indentation_linter.html">indentation_linter()</a></code></li>
+<li><code><a href="../reference/object_length_linter.html">object_length_linter()</a></code></li>
+<li><code><a href="../reference/object_name_linter.html">object_name_linter()</a></code></li>
+<li><code><a href="../reference/package_hooks_linter.html">package_hooks_linter()</a></code></li>
+<li><code><a href="../reference/paren_body_linter.html">paren_body_linter()</a></code></li>
+<li><code><a href="../reference/unnecessary_lambda_linter.html">unnecessary_lambda_linter()</a></code></li>
+<li><code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code></li>
+</ul></li>
+</ul></div>
+<div class="section level4">
+<h4 id="lint-accuracy-fixes-removing-false-positives-development-version">Lint accuracy fixes: removing false positives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-positives-development-version"></a></h4>
+<ul><li>
+<code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code>
+<ul><li>Is pipe-aware, in particular removing false positives around piping into {stringr} functions like <code>x |&gt; str_replace(fixed("a"), "b")</code> (<a href="https://github.com/r-lib/lintr/issues/1811" class="external-link">#1811</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>Ignores non-string inputs to <code>pattern=</code> as a keyword argument (<a href="https://github.com/r-lib/lintr/issues/2159" class="external-link">#2159</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+</ul></li>
+<li>Several linters avoiding false positives in <code>$</code> extractions get the same exceptions for <code>@</code> extractions, e.g. <code>S4@T</code> will no longer throw a <code><a href="../reference/T_and_F_symbol_linter.html">T_and_F_symbol_linter()</a></code> hit (<a href="https://github.com/r-lib/lintr/issues/2039" class="external-link">#2039</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).
+<ul><li><code><a href="../reference/T_and_F_symbol_linter.html">T_and_F_symbol_linter()</a></code></li>
+<li><code><a href="../reference/for_loop_index_linter.html">for_loop_index_linter()</a></code></li>
+<li><code><a href="../reference/literal_coercion_linter.html">literal_coercion_linter()</a></code></li>
+<li><code><a href="../reference/object_name_linter.html">object_name_linter()</a></code></li>
+<li><code><a href="../reference/undesirable_function_linter.html">undesirable_function_linter()</a></code></li>
+<li><code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code></li>
+<li><code><a href="../reference/yoda_test_linter.html">yoda_test_linter()</a></code></li>
 </ul></li>
 <li>
-<code><a href="../reference/object_name_linter.html">object_name_linter()</a></code> no longer attempts to lint strings in function calls on the LHS of assignments (<a href="https://github.com/r-lib/lintr/issues/1466" class="external-link">#1466</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<code><a href="../reference/sprintf_linter.html">sprintf_linter()</a></code> is pipe-aware, so that <code>x %&gt;% sprintf(fmt = "%s")</code> no longer lints (<a href="https://github.com/r-lib/lintr/issues/1943" class="external-link">#1943</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
-<code><a href="../reference/infix_spaces_linter.html">infix_spaces_linter()</a></code> allows finer control for linting <code>=</code> in different scenarios using parse tags <code>EQ_ASSIGN</code>, <code>EQ_SUB</code>, and <code>EQ_FORMALS</code> (<a href="https://github.com/r-lib/lintr/issues/1977" class="external-link">#1977</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<code><a href="../reference/condition_message_linter.html">condition_message_linter()</a></code> ignores usages of extracted calls like <code>env$stop(paste(a, b))</code> (<a href="https://github.com/r-lib/lintr/issues/1455" class="external-link">#1455</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/inner_combine_linter.html">inner_combine_linter()</a></code> no longer throws on length-1 calls to <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> like <code>c(exp(2))</code> or <code>c(log(3))</code> (<a href="https://github.com/r-lib/lintr/issues/2017" class="external-link">#2017</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Such usage is discouraged by <code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code>, but <code><a href="../reference/inner_combine_linter.html">inner_combine_linter()</a></code> <em>per se</em> does not apply.</li>
+<li>
+<code><a href="../reference/sort_linter.html">sort_linter()</a></code> only lints on <code><a href="https://rdrr.io/r/base/order.html" class="external-link">order()</a></code> of a single vector, excluding e.g. <code>x[order(x, y)]</code> and <code>x[order(y, x)]</code> (<a href="https://github.com/r-lib/lintr/issues/2156" class="external-link">#2156</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/redundant_ifelse_linter.html">redundant_ifelse_linter()</a></code> is aware of <code><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">dplyr::if_else()</a></code>’s <code>missing=</code> argument, so that <code>if_else(A, TRUE, FALSE, missing = FALSE)</code> doesn’t lint, but <code>if_else(A, TRUE, FALSE, NA)</code> does (<a href="https://github.com/r-lib/lintr/issues/1941" class="external-link">#1941</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Note that <code><a href="https://dplyr.tidyverse.org/reference/coalesce.html" class="external-link">dplyr::coalesce()</a></code> or <code>tidyr::replace_na()</code> may still be preferable.</li>
 </ul></div>
+<div class="section level4">
+<h4 id="lint-accuracy-fixes-removing-false-negatives-development-version">Lint accuracy fixes: removing false negatives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-negatives-development-version"></a></h4>
+<ul><li>
+<code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code> finds unreachable code even in the presence of a comment or semicolon after <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> or <code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop()</a></code> (<a href="https://github.com/r-lib/lintr/issues/2127" class="external-link">#2127</a>, <a href="https://github.com/MEO265" class="external-link">@MEO265</a>).</li>
+<li>
+<code><a href="../reference/implicit_assignment_linter.html">implicit_assignment_linter()</a></code>
+<ul><li>finds assignments in call arguments besides the first one (<a href="https://github.com/r-lib/lintr/issues/2136" class="external-link">#2136</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>finds assignments in parenthetical expressions like <code>if (A &amp;&amp; (B &lt;- foo(A))) { }</code> (<a href="https://github.com/r-lib/lintr/issues/2138" class="external-link">#2138</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+</ul></li>
+<li>
+<code><a href="../reference/unnecessary_lambda_linter.html">unnecessary_lambda_linter()</a></code> checks for cases using explicit returns, e.g. <code>lapply(x, \(xi) return(sum(xi)))</code> (<a href="https://github.com/r-lib/lintr/issues/1567" class="external-link">#1567</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+</ul></div>
+</div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.1.0" id="lintr-310">lintr 3.1.0<a class="anchor" aria-label="anchor" href="#lintr-310"></a></h2><p class="text-muted">CRAN release: 2023-07-19</p>
