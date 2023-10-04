@@ -159,11 +159,11 @@ test_that("validate_config_file() detects improperly-formed settings", {
   withr::local_dir(withr::local_tempdir())
 
   writeLines("asdf: 1", .lintr)
-  expect_warning(lint_dir(), "Found non-setting objects in config", fixed = TRUE)
+  expect_warning(lint_dir(), "Found unused settings in config", fixed = TRUE)
 
   writeLines("a=1", "aaa.R")
   writeLines(c('exclusions: list("aaa.R")', "asdf: 1"), .lintr)
-  expect_warning(lint_dir(), "Found non-setting objects in config", fixed = TRUE)
+  expect_warning(lint_dir(), "Found unused settings in config", fixed = TRUE)
 
   writeLines("exclude: FALSE", .lintr)
   expect_error(lint_dir(), "Setting 'exclude' should be of type 'character', not 'logical'", fixed = TRUE)

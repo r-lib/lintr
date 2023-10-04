@@ -81,7 +81,7 @@ read_config_file <- function(config_file) {
 validate_config_file <- function(config, config_file, defaults) {
   matched <- names(config) %in% names(defaults)
   if (!all(matched)) {
-    warning("Found non-setting objects in config '", config_file, "': ", toString(names(config)[!matched]))
+    warning("Found unused settings in config '", config_file, "': ", toString(names(config)[!matched]))
   }
 
   # exclude can flexibly accept list() or character()
