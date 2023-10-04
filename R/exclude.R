@@ -19,12 +19,15 @@
 #'   "   and the listing must be terminated with a full stop (`.`) for the linter list to be respected.",
 #'   "2. Line range in the source file. default: `# nolint start`, `# nolint end`. `# nolint start` accepts linter",
 #'   "   lists in the same form as `# nolint`.",
-#'   "3. Exclusions parameter, a list with named and/or unnamed entries. If present, the name is a path relative to ",
+#'   "3. Exclusions parameter, a list with named and/or unnamed entries. If present, the name is a path relative to",
 #'   "   the config. Moreover, elements have the following characteristics:",
 #'   "   1. Unnamed elements specify filenames or directories.",
 #'   "   2. Named elements are numeric or a list. If present, the name is a linter.",
 #'   "      1. Numeric or unnamed list elements are line numbers to be excluded.",
-#'   "      2. Named list elements are line numbers to be excluded for specific linters."
+#'   "      2. Named list elements are line numbers to be excluded for specific linters.",
+#'   "   For convenience, a vector can be used in place of a list whenever it would not introduce ambiguity, e.g.",
+#'   "   a character vector of files to exclude or a vector of lines to exclude.",
+#'   NULL
 #' )
 exclude <- function(lints, exclusions = settings$exclusions, linter_names = NULL, ...) {
   if (length(lints) <= 0L) {

@@ -84,7 +84,8 @@ validate_config_file <- function(config, config_file, defaults) {
     warning("Found non-setting objects in config '", config_file, "': ", toString(names(config)[!matched]))
   }
 
-  check_types <- intersect(names(config), names(defaults))
+  # exclude can flexibly accept list() or character()
+  check_types <- setdiff(intersect(names(config), names(defaults)), "exclusions")
   for (setting in check_types) {
     observed_type <- typeof(config[[setting]])
     expected_type <- typeof(defaults[[setting]])
