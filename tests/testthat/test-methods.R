@@ -50,7 +50,8 @@ test_that("as.data.frame.lints", {
   )
 
   # Convert lints to data.frame
-  lints <- structure(list(l1, l2), class = "lints")
+  lints <- list(l1, l2)
+  class(lints) <- "linter"
   df <- as.data.frame(lints)
   expect_s3_class(df, "data.frame")
 
