@@ -207,3 +207,18 @@ test_that("validate_config_file() detects improperly-formed settings", {
   writeLines("exclusions: list(aaa.R = list(assignment_linter = NA_integer_))", .lintr)
   expect_error(lint_dir(), "Named entries of setting 'exclusions' should designate line numbers", fixed = TRUE)
 })
+
+test_that("exclusions can be a character vector", {
+  withr::local_dir(withr::local_tempdir())
+  # exclusions are relative to dirname(.lintr), so must create it here
+  .lintr <- withr::local_tempfile(tmpdir = getwd())
+  withr::local_options(lintr.linter_file = .lintr)
+
+  writeLines('exclusions: "aaa.R"', .lintr)
+  writeLines("a=1", "aaa.R")
+  writeLines("b<-1", "bbb.R")
+  expect_length(lint_dir(), 1L)
+
+  writeLines('exclusions: c("aaa.R", "bbb.R")', .lintr)
+  expect_length(lint_dir(), 0L)
+})
