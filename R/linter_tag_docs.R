@@ -124,7 +124,7 @@ NULL
 #' @name tidy_design_linters
 #' @description
 #' Linters based on guidelines described in the 'Tidy design principles' book.
-#' @evalRd rd_linters("tidy_design_linters")
+#' @evalRd rd_linters("tidy_design")
 #' @seealso
 #'  - [linters] for a complete list of linters available in lintr.
 #'  - <https://testthat.r-lib.org>

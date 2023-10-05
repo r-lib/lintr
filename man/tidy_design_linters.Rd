@@ -13,3 +13,9 @@ Linters based on guidelines described in the 'Tidy design principles' book.
 \item \url{https://design.tidyverse.org/}
 }
 }
+\section{Linters}{
+The following linters are tagged with 'tidy_design':
+\itemize{
+\item{\code{\link{condition_call_linter}}}
+}
+}
