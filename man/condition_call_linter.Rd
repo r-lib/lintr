@@ -52,5 +52,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=style_linters]{style}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=style_linters]{style}, \link[=tidy_design_linters]{tidy_design}
 }

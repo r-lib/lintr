@@ -119,3 +119,14 @@ NULL
 #' @evalRd rd_linters("regex")
 #' @seealso [linters] for a complete list of linters available in lintr.
 NULL
+
+#' Tidyverse design linters
+#' @name tidy_design_linters
+#' @description
+#' Linters based on guidelines described in the 'Tidy design principles' book.
+#' @evalRd rd_linters("tidy_design_linters")
+#' @seealso
+#'  - [linters] for a complete list of linters available in lintr.
+#'  - <https://testthat.r-lib.org>
+#'  - <https://design.tidyverse.org/>
+NULL

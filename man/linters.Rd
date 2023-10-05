@@ -32,6 +32,7 @@ The following tags exist:
 \item{\link[=regex_linters]{regex} (4 linters)}
 \item{\link[=robustness_linters]{robustness} (17 linters)}
 \item{\link[=style_linters]{style} (41 linters)}
+\item{\link[=tidy_design_linters]{tidy_design} (1 linters)}
 }
 }
 \section{Linters}{
@@ -48,7 +49,7 @@ The following linters exist:
 \item{\code{\link{commas_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{commented_code_linter}} (tags: best_practices, default, readability, style)}
 \item{\code{\link{comparison_negation_linter}} (tags: consistency, readability)}
-\item{\code{\link{condition_call_linter}} (tags: best_practices, configurable, default, style)}
+\item{\code{\link{condition_call_linter}} (tags: best_practices, configurable, style, tidy_design)}
 \item{\code{\link{condition_message_linter}} (tags: best_practices, consistency)}
 \item{\code{\link{conjunct_test_linter}} (tags: best_practices, configurable, package_development, pkg_testthat, readability)}
 \item{\code{\link{consecutive_assertion_linter}} (tags: consistency, readability, style)}
