@@ -4,19 +4,15 @@ test_that("it returns markers which match lints", {
   mockery::stub(rstudio_source_markers, "rstudioapi::callFun", function(...) list(...))
   mockery::stub(rstudio_source_markers, "rstudioapi::executeCommand", function(...) NULL)
 
-  lint1 <- structure(
-    list(
-      Lint(
-        filename = "test_file",
-        line_number = 1L,
-        column_number = 2L,
-        type = "error",
-        line = "a line",
-        message = "hi"
-      )
-    ),
-    class = "lints"
-  )
+  lint1 <- list(Lint(
+    filename = "test_file",
+    line_number = 1L,
+    column_number = 2L,
+    type = "error",
+    line = "a line",
+    message = "hi"
+  ))
+  class(lint1) <- "lints"
   lint1[[1L]]$linter <- "linter_name"
 
   marker1 <- rstudio_source_markers(lint1)
@@ -27,26 +23,24 @@ test_that("it returns markers which match lints", {
   expect_identical(marker1$markers[[1L]]$column, lint1[[1L]]$column_number)
   expect_identical(marker1$markers[[1L]]$message, paste0("[", lint1[[1L]]$linter, "] ", lint1[[1L]]$message))
 
-  lint2 <- structure(
-    list(
-      Lint(
-        filename = "test_file",
-        line_number = 1L,
-        column_number = 2L,
-        type = "error",
-        line = "a line",
-        message = "hi"
-      ),
-      Lint(
-        filename = "test_file2",
-        line_number = 10L,
-        column_number = 1L,
-        type = "warning",
-        message = "test a message"
-      )
+  lint2 <- list(
+    Lint(
+      filename = "test_file",
+      line_number = 1L,
+      column_number = 2L,
+      type = "error",
+      line = "a line",
+      message = "hi"
     ),
-    class = "lints"
+    Lint(
+      filename = "test_file2",
+      line_number = 10L,
+      column_number = 1L,
+      type = "warning",
+      message = "test a message"
+    )
   )
+  class(lint2) <- "lints"
   lint2[[1L]]$linter <- "linter_name"
   lint2[[2L]]$linter <- "linter_name"
   marker2 <- rstudio_source_markers(lint2)
@@ -64,20 +58,16 @@ test_that("it prepends the package path if it exists", {
   mockery::stub(rstudio_source_markers, "rstudioapi::callFun", function(...) list(...))
   mockery::stub(rstudio_source_markers, "rstudioapi::executeCommand", function(...) NULL)
 
-  lint3 <- structure(
-    list(
-      Lint(
-        filename = "test_file",
-        line_number = 1L,
-        column_number = 2L,
-        type = "error",
-        line = "a line",
-        message = "hi"
-      )
-    ),
-    class = "lints",
-    path = "test"
-  )
+  lint3 <- list(Lint(
+    filename = "test_file",
+    line_number = 1L,
+    column_number = 2L,
+    type = "error",
+    line = "a line",
+    message = "hi"
+  ))
+  class(lint3) <- "lints"
+  attr(lint3, "path") <- "test"
   lint3[[1L]]$linter <- "linter_name"
   marker3 <- rstudio_source_markers(lint3)
   expect_identical(marker3$name, "lintr")
@@ -95,10 +85,7 @@ test_that("it returns an empty list of markers if there are no lints", {
   mockery::stub(rstudio_source_markers, "rstudioapi::callFun", function(...) list(...))
   mockery::stub(rstudio_source_markers, "rstudioapi::executeCommand", function(...) NULL)
 
-  lint4 <- structure(
-    list(),
-    class = "lints"
-  )
+  lint4 <- `class<-`(list(), "lints")
   marker4 <- rstudio_source_markers(lint4)
   expect_identical(marker4$name, "lintr")
   expect_identical(marker4$markers, list())

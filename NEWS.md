@@ -52,7 +52,7 @@
 * `unreachable_code_linter()` checks for code inside `if (FALSE)` and other conditional loops with deterministically false conditions (#1428, @ME0265).
 * `implicit_assignment_linter()` gains an argument `allow_lazy` (default `FALSE`) that allows optionally skipping lazy assignments like `A && (B <- foo(A))` (#2016, @MichaelChirico).
 * `unused_import_linter()` gains an argument `interpret_glue` (default `TRUE`) paralleling that in `object_usage_linter()` to toggle whether `glue::glue()` expressions should be inspected for exported object usage (#2042, @MichaelChirico).
-* `default_undesirable_functions` is updated to also include `Sys.unsetenv()` (#2192, @IndrajeetPatil).
+* `default_undesirable_functions` is updated to also include `Sys.unsetenv()` and `structure()` (#2192 and #2228, @IndrajeetPatil and @MichaelChirico).
 * Linters with logic around the magrittr pipe `%>%` consistently apply it to the other pipes `%!>%`, `%T>%`, `%<>%` (and possibly `%$%`) where appropriate (#2008, @MichaelChirico).
   + `brace_linter()`
   + `pipe_call_linter()`
