@@ -6,6 +6,16 @@
 \usage{
 condition_call_linter(display_call = FALSE)
 }
+\arguments{
+\item{display_call}{Logical specifying expected behaviour regarding \code{call.}
+argument in conditions.
+\itemize{
+\item \code{NA} forces providing \verb{call.=} but ignores its value (this can be used in
+cases where you expect a mix of \code{call. = FALSE} and \code{call. = TRUE})
+\item lints \code{call. = FALSE}
+\item forces \code{call. = FALSE} (lints \code{call. = TRUE} or missing \verb{call.=} value)
+}}
+}
 \description{
 Recommend usage of \code{call. = FALSE} in conditions
 }

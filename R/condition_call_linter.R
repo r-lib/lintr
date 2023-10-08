@@ -1,5 +1,13 @@
 #' Recommend usage of `call. = FALSE` in conditions
 #'
+#' @param display_call Logical specifying expected behaviour regarding `call.`
+#' argument in conditions.
+#'   - `NA` forces providing `call.=` but ignores its value (this can be used in
+#'     cases where you expect a mix of `call. = FALSE` and `call. = TRUE`)
+#'   - lints `call. = FALSE`
+#'   - forces `call. = FALSE` (lints `call. = TRUE` or missing `call.=` value)
+#'
+#'
 #' @examples
 #' # will produce lints
 #' lint(
