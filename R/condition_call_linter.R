@@ -53,7 +53,9 @@ condition_call_linter <- function(display_call = FALSE) {
     ]
   "
 
-  if (!display_call) {
+  if (is.na(display_call)) {
+    frag <- no_call_xpath
+  } else if (!display_call) {
     # call. = TRUE can be expressed in two way:
     #  - either explicitly with call. = TRUE
     #  - or by implicitly relying on the default
@@ -77,14 +79,18 @@ condition_call_linter <- function(display_call = FALSE) {
 
     bad_expr <- xml_find_all(xml, xpath)
 
-    if (display_call) {
+    if (is.na(display_call)) {
       msg <- glue::glue(
-        "Use {xp_call_name(bad_expr)}(.) to display call in error message"
+        "Provide an explicit value for call. in {xp_call_name(bad_expr)}()."
+      )
+    } else if (display_call) {
+      msg <- glue::glue(
+        "Use {xp_call_name(bad_expr)}(.) to display call in error message."
       )
     } else {
       msg <- glue::glue(
         "Use {xp_call_name(bad_expr)}(., call. = FALSE)",
-        " to not display call in error message"
+        " to not display call in error message."
       )
     }
 
