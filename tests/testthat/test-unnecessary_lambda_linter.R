@@ -43,6 +43,12 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
   # would require multiple lapply() loops
   expect_lint("lapply(x, function(xi) foo(bar(xi)))", NULL, linter)
   expect_lint("lapply(x, function(xi) return(foo(bar(xi))))", NULL, linter)
+
+  # extractions, #2231
+  expect_lint("lapply(l, function(x) rle(x)$values)", NULL, linter)
+  expect_lint('lapply(l, function(x) rle(x)["values"])', NULL, linter)
+  expect_lint('lapply(l, function(x) rle(x)[["values"]])', NULL, linter)
+  expect_lint("lapply(l, function(x) rle(x)@values)", NULL, linter)
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
