@@ -84,26 +84,46 @@ validate_config_file <- function(config, config_file, defaults) {
     warning("Found unused settings in config '", config_file, "': ", toString(names(config)[!matched]))
   }
 
-  # exclude can flexibly accept list() or character()
-  check_types <- setdiff(intersect(names(config), names(defaults)), "exclusions")
-  for (setting in check_types) {
-    observed_type <- typeof(config[[setting]])
-    expected_type <- typeof(defaults[[setting]])
-    if (observed_type != expected_type) {
-      stop("Setting '", setting, "' should be of type '", expected_type, "', not '", observed_type, "'.")
-    }
-  }
-
-  validate_linters(config)
-  validate_exclusions(config)
+  validate_regexes(config, c("exclude", "exclude_next", "exclude_start", "exclude_end", "exclude_linter", "exclude_linter_sep"))
+  validate_character_string(config, c("encoding", "cache_directory", "comment_token"))
+  validate_true_false(config, c("comment_bot", "error_on_lint"))
+  validate_linters(config$linters)
+  validate_exclusions(config$exclusions)
 }
 
-validate_linters <- function(config) {
-  if (!"linters" %in% names(config)) {
+is_character_string <- function(x) is.character(x) && length(x) == 1L && !is.na(x)
+is_valid_regex <- function(str) !inherits(tryCatch(grepl(str, ""), condition = identity), "condition")
+
+validate_keys <- function(config, keys, test, what) {
+  for (key in keys) {
+    val <- config[[key]]
+    if (is.null(val)) {
+      next
+    }
+    if (!test(val)) {
+      stop("Setting '", key, "' should be ", what, ", not '", toString(val), "'.")
+    }
+  }
+}
+
+validate_regexes <- function(config, keys) {
+  validate_keys(config, keys, function(val) is_character_string(val) && is_valid_regex(val), "a single regular expression")
+}
+
+validate_character_string <- function(config, keys) {
+  validate_keys(config, keys, is_character_string, "a character string")
+}
+
+validate_true_false <- function(config, keys) {
+  validate_keys(config, keys, function(val) is.logical(val) && length(val) == 1L && !is.na(val), "TRUE or FALSE")
+}
+
+validate_linters <- function(linters) {
+  if (is.null(linters)) {
     return(invisible())
   }
 
-  is_linters <- vapply(config$linters, is_linter, logical(1L))
+  is_linters <- vapply(linters, is_linter, logical(1L))
   if (!all(is_linters)) {
     stop(
       "Setting 'linters' should be a list of linters, but found non-linters at elements ",
@@ -112,26 +132,26 @@ validate_linters <- function(config) {
   }
 }
 
-validate_exclusions <- function(config) {
-  if (!"exclusions" %in% names(config)) {
+validate_exclusions <- function(exclusions) {
+  if (is.null(exclusions)) {
     return(invisible())
   }
 
-  config_names <- names2(config$exclusions)
-  has_names <- config_names != ""
+  exclusion_names <- names2(exclusions)
+  has_names <- exclusion_names != ""
   unnamed_is_string <-
-    vapply(config$exclusions[!has_names], function(x) is.character(x) && length(x) == 1L && !is.na(x), logical(1L))
+    vapply(exclusions[!has_names], function(x) is.character(x) && length(x) == 1L && !is.na(x), logical(1L))
   if (!all(unnamed_is_string)) {
     stop(
       "Unnamed entries of setting 'exclusions' should be strings naming files or directories, check entries: ",
       toString(which(!has_names)[!unnamed_is_string]), "."
     )
   }
-  for (ii in which(has_names)) validate_named_exclusion(config, ii)
+  for (ii in which(has_names)) validate_named_exclusion(exclusions, ii)
 }
 
-validate_named_exclusion <- function(config, idx) {
-  entry <- config$exclusions[[idx]]
+validate_named_exclusion <- function(exclusions, idx) {
+  entry <- exclusions[[idx]]
   if (is.list(entry)) {
     valid_entry <- vapply(entry, function(x) is.numeric(x) && !anyNA(x), logical(1L))
   } else {

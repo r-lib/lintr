@@ -166,10 +166,10 @@ test_that("validate_config_file() detects improperly-formed settings", {
   expect_warning(lint_dir(), "Found unused settings in config", fixed = TRUE)
 
   writeLines("exclude: FALSE", .lintr)
-  expect_error(lint_dir(), "Setting 'exclude' should be of type 'character', not 'logical'", fixed = TRUE)
+  expect_error(lint_dir(), "Setting 'exclude' should be a single regular expression, not 'FALSE'", fixed = TRUE)
 
   writeLines(c('exclusions: list("aaa.R")', "exclude: FALSE"), .lintr)
-  expect_error(lint_dir(), "Setting 'exclude' should be of type 'character', not 'logical'", fixed = TRUE)
+  expect_error(lint_dir(), "Setting 'exclude' should be a single regular expression, not 'FALSE'", fixed = TRUE)
 
   writeLines("linters: list(1)", .lintr)
   expect_error(lint_dir(), "Setting 'linters' should be a list of linters", fixed = TRUE)
