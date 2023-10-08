@@ -165,11 +165,32 @@ test_that("validate_config_file() detects improperly-formed settings", {
   writeLines(c('exclusions: list("aaa.R")', "asdf: 1"), .lintr)
   expect_warning(lint_dir(), "Found unused settings in config", fixed = TRUE)
 
+  writeLines("encoding: FALSE", .lintr)
+  expect_error(lint_dir(), "Setting 'encoding' should be a character string, not 'FALSE'", fixed = TRUE)
+
+  writeLines("encoding: NA_character_", .lintr)
+  expect_error(lint_dir(), "Setting 'encoding' should be a character string, not 'NA'", fixed = TRUE)
+
+  writeLines("encoding: letters", .lintr)
+  expect_error(lint_dir(), "Setting 'encoding' should be a character string, not '[a-z, ]+'")
+
   writeLines("exclude: FALSE", .lintr)
   expect_error(lint_dir(), "Setting 'exclude' should be a single regular expression, not 'FALSE'", fixed = TRUE)
 
   writeLines(c('exclusions: list("aaa.R")', "exclude: FALSE"), .lintr)
   expect_error(lint_dir(), "Setting 'exclude' should be a single regular expression, not 'FALSE'", fixed = TRUE)
+
+  writeLines('exclude: "("', .lintr)
+  expect_error(lint_dir(), "Setting 'exclude' should be a single regular expression, not '('", fixed = TRUE)
+
+  writeLines('comment_bot: "a"', .lintr)
+  expect_error(lint_dir(), "Setting 'comment_bot' should be TRUE or FALSE, not 'a'", fixed = TRUE)
+
+  writeLines('comment_bot: NA', .lintr)
+  expect_error(lint_dir(), "Setting 'comment_bot' should be TRUE or FALSE, not 'NA'", fixed = TRUE)
+
+  writeLines('comment_bot: c(TRUE, FALSE)', .lintr)
+  expect_error(lint_dir(), "Setting 'comment_bot' should be TRUE or FALSE, not 'TRUE, FALSE'", fixed = TRUE)
 
   writeLines("linters: list(1)", .lintr)
   expect_error(lint_dir(), "Setting 'linters' should be a list of linters", fixed = TRUE)
