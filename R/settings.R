@@ -84,7 +84,9 @@ validate_config_file <- function(config, config_file, defaults) {
     warning("Found unused settings in config '", config_file, "': ", toString(names(config)[!matched]))
   }
 
-  validate_regexes(config, c("exclude", "exclude_next", "exclude_start", "exclude_end", "exclude_linter", "exclude_linter_sep"))
+  validate_regexes(config,
+    c("exclude", "exclude_next", "exclude_start", "exclude_end", "exclude_linter", "exclude_linter_sep")
+  )
   validate_character_string(config, c("encoding", "cache_directory", "comment_token"))
   validate_true_false(config, c("comment_bot", "error_on_lint"))
   validate_linters(config$linters)
@@ -93,6 +95,8 @@ validate_config_file <- function(config, config_file, defaults) {
 
 is_character_string <- function(x) is.character(x) && length(x) == 1L && !is.na(x)
 is_valid_regex <- function(str) !inherits(tryCatch(grepl(str, ""), condition = identity), "condition")
+is_single_regex <- function(x) is_character_string(x) && is_valid_regex(x)
+is_true_false <- function(x) is.logical(x) && length(x) == 1L && !is.na(x)
 
 validate_keys <- function(config, keys, test, what) {
   for (key in keys) {
@@ -107,7 +111,7 @@ validate_keys <- function(config, keys, test, what) {
 }
 
 validate_regexes <- function(config, keys) {
-  validate_keys(config, keys, function(val) is_character_string(val) && is_valid_regex(val), "a single regular expression")
+  validate_keys(config, keys, is_single_regex, "a single regular expression")
 }
 
 validate_character_string <- function(config, keys) {
@@ -115,7 +119,7 @@ validate_character_string <- function(config, keys) {
 }
 
 validate_true_false <- function(config, keys) {
-  validate_keys(config, keys, function(val) is.logical(val) && length(val) == 1L && !is.na(val), "TRUE or FALSE")
+  validate_keys(config, keys, is_true_false, "TRUE or FALSE")
 }
 
 validate_linters <- function(linters) {
