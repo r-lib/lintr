@@ -84,7 +84,7 @@ validate_config_file <- function(config, config_file, defaults) {
     warning("Found unused settings in config '", config_file, "': ", toString(names(config)[!matched]))
   }
 
-  validate_regexes(config,
+  validate_regex(config,
     c("exclude", "exclude_next", "exclude_start", "exclude_end", "exclude_linter", "exclude_linter_sep")
   )
   validate_character_string(config, c("encoding", "cache_directory", "comment_token"))
@@ -110,7 +110,7 @@ validate_keys <- function(config, keys, test, what) {
   }
 }
 
-validate_regexes <- function(config, keys) {
+validate_regex <- function(config, keys) {
   validate_keys(config, keys, is_single_regex, "a single regular expression")
 }
 
