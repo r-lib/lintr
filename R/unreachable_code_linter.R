@@ -55,32 +55,38 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unreachable_code_linter <- function() {
-  # NB: use not(OP-DOLLAR) to prevent matching process$stop(), #1051
-  xpath_return_stop <- "
-  (
-    (//FUNCTION | //OP-LAMBDA | //REPEAT | //ELSE | //FOR)/following-sibling::expr
+  expr_after_control <- "
+    (//REPEAT | //ELSE | //FOR)/following-sibling::expr[1]
     | (//IF | //WHILE)/following-sibling::expr[2]
+  "
+  # NB: use not(OP-DOLLAR) to prevent matching process$stop(), #1051
+  xpath_return_stop <- glue("
+  (
+    (//FUNCTION | //OP-LAMBDA)/following-sibling::expr
+    | {expr_after_control}
   )
     /expr[expr[1][
       not(OP-DOLLAR or OP-AT)
-      and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]
+      and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']
     ]]
     /following-sibling::*[
       not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON)
       and (not(self::COMMENT) or @line2 > preceding-sibling::*[1]/@line2)
     ][1]
-  "
-  xpath_next_break <- "
-  ((//REPEAT | //ELSE | //FOR)/following-sibling::expr | (//IF | //WHILE)/following-sibling::expr[2])
+  ")
+  xpath_next_break <- glue("
+  ({expr_after_control})
     /expr[NEXT or BREAK]
     /following-sibling::*[
       not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON)
       and (not(self::COMMENT) or @line2 > preceding-sibling::*[1]/@line2)
     ][1]
-  "
+  ")
 
   xpath_if_while <- "
-  (//WHILE | //IF)[following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']]/following-sibling::expr[2]
+  (//WHILE | //IF)
+    /following-sibling::expr[1][NUM_CONST[text() = 'FALSE']]
+    /following-sibling::expr[1]
   "
 
   xpath_else <- "
