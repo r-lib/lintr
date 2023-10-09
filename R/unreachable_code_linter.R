@@ -108,6 +108,13 @@ unreachable_code_linter <- function() {
     expr[vapply(expr, xml2::xml_length, integer(1L)) != 0L]
   }
 
+  # exclude comments that start with a nolint directive
+  drop_nolint_end_comment <- function(expr) {
+    is_nolint_end_comment <- xml2::xml_name(expr) == "COMMENT" &
+      re_matches(xml_text(expr), settings$exclude_end)
+    expr[!is_nolint_end_comment]
+  }
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -117,12 +124,8 @@ unreachable_code_linter <- function() {
 
     expr_return_stop <- xml_find_all(xml, xpath_return_stop)
 
-    # exclude comments that start with a nolint directive
-    is_nolint_end_comment <- xml2::xml_name(expr_return_stop) == "COMMENT" &
-      re_matches(xml_text(expr_return_stop), settings$exclude_end)
-
     lints_return_stop <- xml_nodes_to_lints(
-      expr_return_stop[!is_nolint_end_comment],
+      drop_nolint_end_comment(expr_return_stop),
       source_expression = source_expression,
       lint_message = "Code and comments coming after a return() or stop() should be removed.",
       type = "warning"
@@ -130,11 +133,8 @@ unreachable_code_linter <- function() {
 
     expr_next_break <- xml_find_all(xml, xpath_next_break)
 
-    is_nolint_end_comment <- xml2::xml_name(expr_next_break) == "COMMENT" &
-      re_matches(xml_text(expr_next_break), settings$exclude_end)
-
     lints_next_break <- xml_nodes_to_lints(
-      expr_next_break[!is_nolint_end_comment],
+      drop_nolint_end_comment(expr_next_break),
       source_expression = source_expression,
       lint_message = "Code and comments coming after a `next` or `break` should be removed.",
       type = "warning"
