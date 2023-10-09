@@ -31,11 +31,11 @@ lists in the same form as \verb{# nolint}.
 Outer elements have the following characteristics:
 \enumerate{
 \item Unnamed elements specify filenames or directories.
-\item Named elements are numeric or a list. The name gives a path relative to the config.
-\code{Inf} can always be used to indicate 'all lines'.
+\item Named elements are a vector or list of line numbers, with \code{Inf} indicating 'all lines'.
+The name gives a path relative to the config.
 \enumerate{
-\item Numeric or unnamed list elements are line numbers to be excluded in the given path or directory.
-\item Named list elements, where the name specifies a linter, are line numbers to be excluded for that linter.
+\item Unnamed elements denote exclusion of all linters in the given path or directory.
+\item Named elements, where the name specifies a linter, denote exclusion for that linter.
 For convenience, a vector can be used in place of a list whenever it would not introduce ambiguity, e.g.
 a character vector of files to exclude or a vector of lines to exclude.
 }
