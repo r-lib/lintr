@@ -171,8 +171,8 @@ test_that("validate_config_file() detects improperly-formed settings", {
   writeLines("encoding: NA_character_", .lintr)
   expect_error(lint_dir(), "Setting 'encoding' should be a character string, not 'NA'", fixed = TRUE)
 
-  writeLines("encoding: letters", .lintr)
-  expect_error(lint_dir(), "Setting 'encoding' should be a character string, not '[a-z, ]+'")
+  writeLines('encoding: c("a", "b")', .lintr)
+  expect_error(lint_dir(), "Setting 'encoding' should be a character string, not 'a, b'")
 
   writeLines("exclude: FALSE", .lintr)
   expect_error(lint_dir(), "Setting 'exclude' should be a single regular expression, not 'FALSE'", fixed = TRUE)
