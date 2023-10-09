@@ -223,7 +223,7 @@ test_that("package using .lintr.R config lints correctly", {
     fixed = TRUE
   )
 
-  # DCF is preferred if multiple matched configs
+  # R is preferred if multiple matched configs
   withr::local_options(lintr.linter_file = "lintr_test_config_conflict")
   lints <- as.data.frame(lint_package(r_config_pkg))
   expect_identical(unique(basename(lints$filename)), "testthat.R")
