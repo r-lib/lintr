@@ -171,7 +171,9 @@ all_undesirable_functions <- modify_defaults(
   untrace = paste(
     "remove this likely leftover from debugging.",
     "It is only useful for interactive debugging with trace()"
-  )
+  ),
+  structure =
+    "Use class<-, names<-, and attr<- to set attributes"
 )
 
 #' @rdname default_undesirable_functions
@@ -194,11 +196,14 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
   "setwd",
   "sink",
   "source",
+  "structure",
   "Sys.setenv",
   "Sys.setlocale",
+  "Sys.unsetenv",
   "trace",
   "undebug",
-  "untrace"
+  "untrace",
+  NULL
 )]
 
 #' @rdname default_undesirable_functions
@@ -231,7 +236,8 @@ all_undesirable_operators <- modify_defaults(
 default_undesirable_operators <- all_undesirable_operators[names(all_undesirable_operators) %in% c(
   ":::",
   "<<-",
-  "->>"
+  "->>",
+  NULL
 )]
 
 #' Default lintr settings
@@ -249,6 +255,8 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #'  - `comment_token`: a GitHub token character
 #'  - `comment_bot`: decides if lintr comment bot on GitHub can comment on commits
 #'  - `error_on_lint`: decides if error should be produced when any lints are found
+#'
+#' There are no settings without defaults, i.e., this list describes every valid setting.
 #'
 #' @examples
 #' # available settings
@@ -270,10 +278,23 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #' )]
 #'
 #' @seealso [read_settings()], [default_linters]
+#' @aliases settings config lintr-config lintr-settings .lintr
 #' @export
 default_settings <- NULL
 
-settings <- NULL
+# TODO(R>=3.6.0): Just use sys.source() directly. Note that we can't
+#   write a wrapper that only passes keep.parse.data=FALSE on R>3.5.0
+#   (without doing some wizardry to evade R CMD check) because
+#   there is a check for arguments not matching the signature which
+#   will throw a false positive on R3.5.0. Luckily the argument
+#   defaults on R>=3.6.0 are dictated by global options, so we can use
+#   that for the wrapper here rather than doing some NSE tricks.
+sys_source <- function(...) {
+  old <- options(keep.source.pkgs = FALSE, keep.parse.data.pkgs = FALSE)
+  on.exit(options(old))
+  sys.source(...)
+}
+settings <- new.env(parent = emptyenv())
 
 # nocov start
 .onLoad <- function(libname, pkgname) {
@@ -284,8 +305,10 @@ settings <- NULL
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  backports::import(pkgname, c("trimws", "lengths", "deparse1", "...names"))
-  # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
+  # R>=3.6.0: str2expression, str2lang
+  # R>=4.0.0: deparse1
+  # R>=4.1.0: ...names
+  backports::import(pkgname, c("deparse1", "...names"))
   base_ns <- getNamespace("base")
   backports_ns <- getNamespace("backports")
   lintr_ns <- getNamespace(pkgname)
@@ -295,7 +318,7 @@ settings <- NULL
     }
   }
 
-  default_settings <<- list(
+  utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,
     encoding = "UTF-8",
     exclude = rex("#", any_spaces, "nolint"),
@@ -324,9 +347,9 @@ settings <- NULL
     ),
     comment_bot = logical_env("LINTR_COMMENT_BOT") %||% TRUE,
     error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
-  )
+  ))
 
-  settings <<- list2env(default_settings, parent = emptyenv())
+  reset_settings()
 
   if (requireNamespace("tibble", quietly = TRUE)) {
     registerS3method("as_tibble", "lints", as_tibble.lints, asNamespace("tibble"))

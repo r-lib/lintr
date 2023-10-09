@@ -1,7 +1,6 @@
-
 #' Read lintr settings
 #'
-#' Lintr searches for settings for a given source file in the following order.
+#' Lintr searches for settings for a given source file in the following order:
 #'  1. options defined as `linter.setting`.
 #'  2. `linter_file` in the same directory
 #'  3. `linter_file` in the project directory
@@ -9,11 +8,21 @@
 #'  5. [default_settings()]
 #'
 #' The default linter_file name is `.lintr` but it can be changed with option `lintr.linter_file`
-#' or the environment variable `R_LINTR_LINTER_FILE`
-#' This file is a dcf file, see [base::read.dcf()] for details.
+#'   or the environment variable `R_LINTR_LINTER_FILE`
+#' This file is a DCF file, see [base::read.dcf()] for details.
+#' Experimentally, we also support keeping the config in a plain R file. By default we look for
+#'   a file named '.lintr.R' (in the same directories where we search for '.lintr').
+#' We are still deciding the future of config support in lintr, so user feedback is welcome.
+#'   The advantage of R is that it maps more closely to how the configs are actually stored,
+#'   whereas the DCF approach requires somewhat awkward formatting of parseable R code within
+#'   valid DCF key-value pairs. The main disadvantage of the R file is it might be _too_ flexible,
+#'   with users tempted to write configs with side effects causing hard-to-detect bugs or
+#"   otherwise "abusing" the ability to evaluate generic R code. Other recursive key-value stores
+#'   like YAML could work, but require new dependencies and are harder to parse
+#'   both programmatically and visually.
 #' @param filename source file to be linted
 read_settings <- function(filename) {
-  clear_settings()
+  reset_settings()
 
   config_file <- find_config(filename)
   default_encoding <- find_default_encoding(filename)
@@ -22,18 +31,7 @@ read_settings <- function(filename) {
     default_settings[["encoding"]] <- default_encoding
   }
 
-  if (!is.null(config_file)) {
-    malformed <- function(e) {
-      stop("Malformed config file, ensure it ends in a newline\n  ", conditionMessage(e), call. = FALSE)
-    }
-    config <- tryCatch(
-      read.dcf(config_file, all = TRUE),
-      warning = malformed,
-      error = malformed
-    )
-  } else {
-    config <- NULL
-  }
+  config <- read_config_file(config_file)
 
   for (setting in names(default_settings)) {
     value <- get_setting(setting, config, default_settings)
@@ -50,26 +48,42 @@ read_settings <- function(filename) {
   }
 }
 
-get_setting <- function(setting, config, defaults) {
-  option <- getOption(paste(sep = ".", "lintr", setting))
-  if (!is.null(option)) {
-    option
-  } else if (!is.null(config[[setting]])) {
-    malformed <- function(e) {
-      stop("Malformed config setting '", setting, "'\n  ", conditionMessage(e), call. = FALSE)
-    }
-    tryCatch(
-      eval(parse(text = config[[setting]])),
-      error = malformed
-    )
-  } else {
-    defaults[[setting]]
+read_config_file <- function(config_file) {
+  if (is.null(config_file)) {
+    return(NULL)
   }
+
+  config <- new.env()
+  if (endsWith(config_file, ".R")) {
+    load_config <- function(file) sys_source(file, config)
+    malformed <- function(e) {
+      stop("Malformed config file, ensure it is valid R syntax\n  ", conditionMessage(e), call. = FALSE)
+    }
+  } else {
+    load_config <- function(file) {
+      dcf_values <- read.dcf(file, all = TRUE)
+      for (setting in names(dcf_values)) {
+        tryCatch(
+          assign(setting, eval(str2lang(dcf_values[[setting]])), envir = config),
+          error = function(e) stop("Malformed config setting '", setting, "'\n  ", conditionMessage(e), call. = FALSE)
+        )
+      }
+    }
+    malformed <- function(e) {
+      stop("Malformed config file, ensure it ends in a newline\n  ", conditionMessage(e), call. = FALSE)
+    }
+  }
+  tryCatch(load_config(config_file), warning = malformed, error = malformed)
+  config
 }
 
-clear_settings <- function() {
-  rm(list = ls(settings), envir = settings)
+lintr_option <- function(setting, default = NULL) getOption(paste0("lintr.", setting), default)
+
+get_setting <- function(setting, config, defaults) {
+  lintr_option(setting) %||% config[[setting]] %||% defaults[[setting]]
 }
+
+reset_settings <- function() list2env(default_settings, envir = settings)
 
 find_default_encoding <- function(filename) {
   if (is.null(filename)) {

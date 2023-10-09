@@ -4,6 +4,11 @@
 #' be avoided, except for functions that capture side-effects (e.g. [capture.output()]).
 #'
 #' @param except A character vector of functions to be excluded from linting.
+#' @param allow_lazy logical, default `FALSE`. If `TRUE`, assignments that only
+#'   trigger conditionally (e.g. in the RHS of `&&` or `||` expressions) are skipped.
+#' @param allow_scoped Logical, default `FALSE`. If `TRUE`, "scoped assignments",
+#'   where the object is assigned in the statement beginning a branch and used only
+#'   within that branch, are skipped.
 #'
 #' @examples
 #' # will produce lints
@@ -18,16 +23,34 @@
 #' )
 #'
 #' # okay
-#' writeLines("x <- 1L\nif (x) TRUE")
+#' lines <- "x <- 1L\nif (x) TRUE"
+#' writeLines(lines)
 #' lint(
-#'   text = "x <- 1L\nif (x) TRUE",
+#'   text = lines,
 #'   linters = implicit_assignment_linter()
 #' )
 #'
-#' writeLines("x <- 1:4\nmean(x)")
+#' lines <- "x <- 1:4\nmean(x)"
+#' writeLines(lines)
 #' lint(
-#'   text = "x <- 1:4\nmean(x)",
+#'   text = lines,
 #'   linters = implicit_assignment_linter()
+#' )
+#'
+#' lint(
+#'   text = "A && (B <- foo(A))",
+#'   linters = implicit_assignment_linter(allow_lazy = TRUE)
+#' )
+#'
+#' lines <- c(
+#'   "if (any(idx <- x < 0)) {",
+#'   "  stop('negative elements: ', toString(which(idx)))",
+#'   "}"
+#' )
+#' writeLines(lines)
+#' lint(
+#'   text = lines,
+#'   linters = implicit_assignment_linter(allow_scoped = TRUE)
 #' )
 #'
 #' @evalRd rd_tags("implicit_assignment_linter")
@@ -36,7 +59,9 @@
 #' - <https://style.tidyverse.org/syntax.html#assignment>
 #'
 #' @export
-implicit_assignment_linter <- function(except = c("bquote", "expression", "expr", "quo", "quos", "quote")) {
+implicit_assignment_linter <- function(except = c("bquote", "expression", "expr", "quo", "quos", "quote"),
+                                       allow_lazy = FALSE,
+                                       allow_scoped = FALSE) {
   stopifnot(is.null(except) || is.character(except))
 
   if (length(except) > 0L) {
@@ -63,6 +88,19 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
         or parent::expr/*[1][self::OP-LEFT-PAREN]
       ]
   ")
+
+  if (allow_lazy) {
+    xpath <- paste0(xpath, "[not(ancestor::expr/preceding-sibling::*[self::AND2 or self::OR2])]")
+  }
+  if (allow_scoped) {
+    # force 2nd preceding to ensure we're in the loop condition, not the loop expression
+    in_branch_cond <- "ancestor::expr[preceding-sibling::*[2][self::IF or self::WHILE]]"
+    xpath <- paste0(
+      xpath,
+      # _if_ we're in an IF/WHILE branch, lint if the assigned SYMBOL appears anywhere later on.
+      glue("[not({in_branch_cond}) or expr[1]/SYMBOL = {in_branch_cond}/parent::expr/following::SYMBOL]")
+    )
+  }
 
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level

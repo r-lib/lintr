@@ -10,18 +10,19 @@
 #' Note that if files contain unparseable encoding problems, only the encoding problem will be linted to avoid
 #' unintelligible error messages from other linters.
 #'
-#' @param filename either the filename for a file to lint, or a character string of inline R code for linting.
-#' The latter (inline data) applies whenever `filename` has a newline character (\\n).
-#' @param linters a named list of linter functions to apply. See [linters] for a full list of default and available
-#' linters.
+#' @param filename Either the filename for a file to lint, or a character string of inline R code for linting.
+#'   The latter (inline data) applies whenever `filename` has a newline character (\\n).
+#' @param linters A named list of linter functions to apply. See [linters] for a full list of default and available
+#'   linters.
 #' @param ... Provide additional arguments to be passed to:
-#' - [exclude()] (in case of `lint()`; e.g. `lints` or `exclusions`)
-#' - [lint()] (in case of `lint_dir()` and `lint_package()`; e.g. `linters` or `cache`)
-#' @param cache given a logical, toggle caching of lint results. If passed a character string, store the cache in this
-#' directory.
-#' @param parse_settings whether to try and parse the settings.
+#'   - [exclude()] (in case of `lint()`; e.g. `lints` or `exclusions`)
+#'   - [lint()] (in case of `lint_dir()` and `lint_package()`; e.g. `linters` or `cache`)
+#' @param cache When logical, toggle caching of lint results. I1f passed a character string, store the cache in this
+#'   directory.
+#' @param parse_settings Logical, default `TRUE`. Whether to try and parse the settings;
+#'   otherwise, the [default_settings()] are used.
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
-#' linting is being done ad hoc.
+#'   linting is being done ad hoc.
 #'
 #' @aliases lint_file
 # TODO(next release after 3.0.0): remove the alias
@@ -58,7 +59,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   if (isTRUE(parse_settings)) {
     read_settings(filename)
-    on.exit(clear_settings, add = TRUE)
+    on.exit(reset_settings(), add = TRUE)
   }
 
   linters <- define_linters(linters)
@@ -130,7 +131,8 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 lint_dir <- function(path = ".", ...,
                      relative_path = TRUE,
                      exclusions = list("renv", "packrat"),
-                     pattern = rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"), end),
+                     # TODO(r-lib/rex#85): Re-write in case-sensitive rex()
+                     pattern = "(?i)[.](r|rmd|qmd|rnw|rhtml|rrst|rtex|rtxt)$",
                      parse_settings = TRUE,
                      show_progress = NULL) {
   if (has_positional_logical(list(...))) {
@@ -144,7 +146,7 @@ lint_dir <- function(path = ".", ...,
 
   if (isTRUE(parse_settings)) {
     read_settings(path)
-    on.exit(clear_settings, add = TRUE)
+    on.exit(reset_settings(), add = TRUE)
 
     exclusions <- c(exclusions, settings$exclusions)
   }
@@ -168,6 +170,12 @@ lint_dir <- function(path = ".", ...,
 
   # Remove fully ignored files to avoid reading & parsing
   files <- drop_excluded(files, exclusions)
+
+  if (length(files) == 0L) {
+    lints <- list()
+    class(lints) <- "lints"
+    return(lints)
+  }
 
   pb <- if (isTRUE(show_progress)) {
     txtProgressBar(max = length(files), style = 3L)
@@ -248,7 +256,7 @@ lint_package <- function(path = ".", ...,
 
   if (parse_settings) {
     read_settings(pkg_path)
-    on.exit(clear_settings, add = TRUE)
+    on.exit(reset_settings(), add = TRUE)
   }
 
   exclusions <- normalize_exclusions(
@@ -317,12 +325,12 @@ define_linters <- function(linters = NULL) {
   } else if (is_linter(linters)) {
     linters <- list(linters)
     names(linters) <- attr(linters[[1L]], "name", exact = TRUE)
-  } else if (!is.list(linters)) {
+  } else if (is.list(linters)) {
+    names(linters) <- auto_names(linters)
+  } else {
     name <- deparse(substitute(linters))
     linters <- list(linters)
     names(linters) <- name
-  } else {
-    names(linters) <- auto_names(linters)
   }
   linters
 }

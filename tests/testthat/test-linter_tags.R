@@ -60,12 +60,13 @@ test_that("warnings occur only for deprecated linters", {
   expect_silent(linters_with_tags(tags = NULL))
   num_deprecated_linters <- nrow(available_linters(tags = "deprecated", exclude_tags = NULL))
   deprecation_warns_seen <- 0L
+  outer_env <- environment()
   expect_silent({
     withCallingHandlers(
       linters_with_tags(tags = "deprecated", exclude_tags = NULL),
       warning = function(w) {
-        if (grepl("was deprecated", conditionMessage(w))) {
-          deprecation_warns_seen <<- deprecation_warns_seen + 1L
+        if (grepl("was deprecated", conditionMessage(w), fixed = TRUE)) {
+          outer_env$deprecation_warns_seen <- outer_env$deprecation_warns_seen + 1L
           invokeRestart("muffleWarning")
         } else {
           w
@@ -215,14 +216,14 @@ test_that("lintr help files are up to date", {
   }
 
   # (3) the 'configurable' tag applies if and only if the linter has parameters
-  has_args <- 0L < lengths(mapply(
+  has_args <- 0L < lengths(Map(
     function(linter, tags) if ("deprecated" %in% tags) NULL else formals(match.fun(linter)),
-    lintr_db$linter, lintr_db$tags,
-    USE.NAMES = FALSE, SIMPLIFY = FALSE
+    lintr_db$linter,
+    lintr_db$tags
   ))
   has_configurable_tag <- vapply(lintr_db$tags, function(tags) "configurable" %in% tags, logical(1L))
 
-  expect_identical(has_configurable_tag, has_args)
+  expect_identical(has_configurable_tag, unname(has_args))
 })
 
 test_that("available_linters gives precedence to included tags", {

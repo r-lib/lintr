@@ -46,9 +46,9 @@ function_left_parentheses_linter <- function() { # nolint: object_length.
   #   complicated call to an "extracted" function (see #1963). This mistake was made earlier
   #   because it allows the xpath to be the same for both FUNCTION and SYMBOL_FUNCTION_CALL.
   #   Further, write 4 separate XPaths because the 'range_end_xpath' differs for these two nodes.
-  bad_line_fun_xpath <- "//FUNCTION[@line1 != following-sibling::OP-LEFT-PAREN/@line1]"
+  bad_line_fun_xpath <- "(//FUNCTION | //OP-LAMBDA)[@line1 != following-sibling::OP-LEFT-PAREN/@line1]"
   bad_line_call_xpath <- "//SYMBOL_FUNCTION_CALL[@line1 != parent::expr/following-sibling::OP-LEFT-PAREN/@line1]"
-  bad_col_fun_xpath <- "//FUNCTION[
+  bad_col_fun_xpath <- "(//FUNCTION | //OP-LAMBDA)[
     @line1 = following-sibling::OP-LEFT-PAREN/@line1
     and @col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1
   ]"
