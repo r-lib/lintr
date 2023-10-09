@@ -621,11 +621,5 @@ test_that("function shorthand is handled", {
 # })
 # nolint end: commented_code_linter.
 
-# TODO(michaelchirico): the logic could be extended to terminal if statements
-#   or control flows (for/while). There shouldn't really be such a thing as
-#   a terminal for/while (owing to ExplicitReturnLinter forcing these to
-#   be followed by return(invisible()) or similar), but could be included to
-#   catch comments for completeness / robustness as a standalone function.
-#   Terminal if statements are a bit messy, but would have some payoff.
-# TODO(michaelchirico): again similarly, this could also apply to cases without
+# TODO(michaelchirico): This could also apply to cases without
 #   explicit returns (where it can only apply to comments)
