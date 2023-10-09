@@ -27,14 +27,15 @@ If the listing is missing, all linters are excluded on that line. The default li
 and the listing must be terminated with a full stop (\code{.}) for the linter list to be respected.
 \item Line range in the source file. default: \verb{# nolint start}, \verb{# nolint end}. \verb{# nolint start} accepts linter
 lists in the same form as \verb{# nolint}.
-\item Exclusions parameter, a list with named and/or unnamed entries. If present, the name is a path relative to
-the config. Moreover, elements have the following characteristics:
+\item Exclusions parameter, a list with named and/or unnamed entries.
+Outer elements have the following characteristics:
 \enumerate{
 \item Unnamed elements specify filenames or directories.
-\item Named elements are numeric or a list. If present, the name is a linter.
+\item Named elements are numeric or a list. The name gives a path relative to the config.
+\code{Inf} can always be used to indicate 'all lines'.
 \enumerate{
-\item Numeric or unnamed list elements are line numbers to be excluded.
-\item Named list elements are line numbers to be excluded for specific linters.
+\item Numeric or unnamed list elements are line numbers to be excluded in the given path or directory.
+\item Named list elements, where the name specifies a linter, are line numbers to be excluded for that linter.
 For convenience, a vector can be used in place of a list whenever it would not introduce ambiguity, e.g.
 a character vector of files to exclude or a vector of lines to exclude.
 }
