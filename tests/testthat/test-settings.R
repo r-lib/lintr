@@ -250,11 +250,11 @@ test_that("lines Inf means 'all lines'", {
   .lintr <- withr::local_tempfile(tmpdir = getwd())
   withr::local_options(lintr.linter_file = .lintr)
 
-  writeLines('exclusions: list(aaa.R = Inf)', .lintr)
+  writeLines("exclusions: list(aaa.R = Inf)", .lintr)
   writeLines("a<-1", "aaa.R")
   expect_length(lint_dir(linters = infix_spaces_linter()), 0L)
 
-  writeLines('exclusions: list(aaa.R = list(infix_spaces_linter = Inf))', .lintr)
+  writeLines("exclusions: list(aaa.R = list(infix_spaces_linter = Inf))", .lintr)
   # exclude infix_spaces_linter, include assignment_linter()
   writeLines("a=1", "aaa.R")
   expect_length(lint_dir(linters = list(assignment_linter(), infix_spaces_linter())), 1L)
