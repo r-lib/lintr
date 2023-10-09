@@ -7,7 +7,7 @@
 unreachable_code_linter()
 }
 \description{
-Code after a top-level \code{\link[=return]{return()}} or \code{\link[=stop]{stop()}}
+Code after e.g. a \code{\link[=return]{return()}} or \code{\link[=stop]{stop()}}
 or in deterministically false conditional loops like \verb{if (FALSE)} can't be reached;
 typically this is vestigial code left after refactoring or sandboxing code, which
 is fine for exploration, but shouldn't ultimately be checked in. Comments
