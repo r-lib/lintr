@@ -49,7 +49,9 @@
 * `seq_linter()` recommends `rev()` in the lint message for lints like `nrow(x):1` (#1542, @MichaelChirico).
 * `function_argument_linter()` detects usage of `missing()` for the linted argument (#1546, @MichaelChirico). The simplest fix for `function_argument_linter()` lints is typically to set that argument to `NULL` by default, in which case it's usually preferable to update function logic checking `missing()` to check `is.null()` instead.
 * `commas_linter()` gains an option `allow_trailing` (default `FALSE`) to allow trailing commas while indexing. (#2104, @MEO265)
-* `unreachable_code_linter()` checks for code inside `if (FALSE)` and other conditional loops with deterministically false conditions (#1428, @ME0265).
+* `unreachable_code_linter()`
+  + checks for code inside `if (FALSE)` and other conditional loops with deterministically false conditions (#1428, @ME0265).
+  + checks for unreachable code inside `if`, `else`, `for`, `while`, and `repeat` blocks, including combinations with `break` and `next` statements. (#2105, @ME0265).
 * `implicit_assignment_linter()` gains an argument `allow_lazy` (default `FALSE`) that allows optionally skipping lazy assignments like `A && (B <- foo(A))` (#2016, @MichaelChirico).
 * `unused_import_linter()` gains an argument `interpret_glue` (default `TRUE`) paralleling that in `object_usage_linter()` to toggle whether `glue::glue()` expressions should be inspected for exported object usage (#2042, @MichaelChirico).
 * `default_undesirable_functions` is updated to also include `Sys.unsetenv()` and `structure()` (#2192 and #2228, @IndrajeetPatil and @MichaelChirico).
@@ -84,22 +86,6 @@
   + `unreachable_code_linter()`
   + `yoda_test_linter()`
 * `sprintf_linter()` is pipe-aware, so that `x %>% sprintf(fmt = "%s")` no longer lints (#1943, @MichaelChirico).
-* `line_length_linter()` helpfully includes the line length in the lint message (#2057, @MichaelChirico).
-* `conjunct_test_linter()` also lints usage like `dplyr::filter(x, A & B)` in favor of using `dplyr::filter(x, A, B)` unless `allow_filter = TRUE` (part of #884, @MichaelChirico; #2110, @salim-b).
-* `sort_linter()` checks for code like `x == sort(x)` which is better served by using the function `is.unsorted()` (part of #884, @MichaelChirico).
-* `paste_linter()` gains detection for file paths that are better constructed with `file.path()`, e.g. `paste0(dir, "/", file)` would be better as `file.path(dir, file)` (part of #884, #2082, @MichaelChirico). What exactly gets linted here can be fine-tuned with the `allow_file_path` option (`"double_slash"` by default, with alternatives `"never"` and `"always"`). When `"always"`, these rules are ignored. When `"double_slash"`, paths appearing to construct a URL that have consecutive forward slashes (`/`) are skipped. When `"never"`, even URLs should be construced with `file.path()`.
-* `seq_linter()` recommends `rev()` in the lint message for lints like `nrow(x):1` (#1542, @MichaelChirico).
-* `function_argument_linter()` detects usage of `missing()` for the linted argument (#1546, @MichaelChirico). The simplest fix for `function_argument_linter()` lints is typically to set that argument to `NULL` by default, in which case it's usually preferable to update function logic checking `missing()` to check `is.null()` instead.
-* `equals_na_linter()` checks for `x %in% NA`, which is a more convoluted form of `is.na(x)` (#2088, @MichaelChirico).
-* `commas_linter()` gains an option `allow_trailing` (default `FALSE`) to allow trailing commas while indexing. (#2104, @MEO265)
-* `unreachable_code_linter()`
-  + finds unreachable code even in the presence of a comment or semicolon after `return()` or `stop()` (#2127, @MEO265).
-  + checks for code inside `if (FALSE)` and other conditional loops with deterministically false conditions (#1428, @ME0265).
-  + checks for unreachable code inside `if`, `else`, `for`, `while`, and `repeat` blocks, including combinations with `break` and `next` statements. (#2105, @ME0265).
-* `implicit_assignment_linter()`
-  + finds assignments in call arguments besides the first one (#2136, @MichaelChirico).
-  + finds assignments in parenthetical expressions like `if (A && (B <- foo(A))) { }` (#2138, @MichaelChirico).
-* `inner_combine_linter()` no longer throws on length-1 calls to `c()` like `c(exp(2))` or `c(log(3))` (#2017, @MichaelChirico). Such usage is discouraged by `unnecessary_concatenation_linter()`, but `inner_combine_linter()` _per se_ does not apply.
 * `condition_message_linter()` ignores usages of extracted calls like `env$stop(paste(a, b))` (#1455, @MichaelChirico).
 * `inner_combine_linter()` no longer throws on length-1 calls to `c()` like `c(exp(2))` or `c(log(3))` (#2017, @MichaelChirico). Such usage is discouraged by `unnecessary_concatenation_linter()`, but `inner_combine_linter()` _per se_ does not apply.
 * `sort_linter()` only lints on `order()` of a single vector, excluding e.g. `x[order(x, y)]` and `x[order(y, x)]` (#2156, @MichaelChirico).
