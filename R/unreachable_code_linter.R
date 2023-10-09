@@ -62,8 +62,8 @@ unreachable_code_linter <- function() {
   # NB: use not(OP-DOLLAR) to prevent matching process$stop(), #1051
   xpath_return_stop <- glue("
   (
-    (//FUNCTION | //OP-LAMBDA)/following-sibling::expr
-    | {expr_after_control}
+    {expr_after_control}
+    | (//FUNCTION | //OP-LAMBDA)/following-sibling::expr
   )
     /expr[expr[1][
       not(OP-DOLLAR or OP-AT)
