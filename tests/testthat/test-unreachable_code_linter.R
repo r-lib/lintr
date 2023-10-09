@@ -591,7 +591,7 @@ test_that("function shorthand is handled", {
     "),
     list(
       line_number = 3L,
-      message = rex::rex("Code and comments coming after a top-level return() or stop()")
+      message = rex::rex("Code and comments coming after a return() or stop()")
     ),
     unreachable_code_linter()
   )
