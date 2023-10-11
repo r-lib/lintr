@@ -4,6 +4,10 @@
 #'   e.g. `lapply(DF, sum)` is the same as `lapply(DF, function(x) sum(x))` and
 #'   the former is more readable.
 #'
+#' Cases like `lapply(x, \(xi) grep("ptn", xi))` are excluded because, though
+#'   the anonymous function _can_ be avoided, doing so is not always more
+#'   readable.
+#'
 #' @examples
 #' # will produce lints
 #' lint(
@@ -60,22 +64,23 @@ unnecessary_lambda_linter <- function() {
   #       - and it has to be passed positionally (not as a keyword)
   #     d. the function argument doesn't appear elsewhere in the call
   # TODO(#1703): handle explicit returns too: function(x) return(x)
-  default_fun_xpath_fmt <- "
+  default_fun_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {apply_funs} ]
     /parent::expr
-    /following-sibling::expr[
-      (FUNCTION or OP-LAMBDA)
-      and count(SYMBOL_FORMALS) = 1
-      and {paren_path}/OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[1][self::EQ_SUB])]/SYMBOL
-      and SYMBOL_FORMALS = {paren_path}/OP-LEFT-PAREN/following-sibling::expr[1]/SYMBOL
-      and not(SYMBOL_FORMALS = {paren_path}/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//SYMBOL)
+    /following-sibling::expr[(FUNCTION or OP-LAMBDA) and count(SYMBOL_FORMALS) = 1]
+    /expr[last()][
+      count(.//SYMBOL[self::* = preceding::SYMBOL_FORMALS[1]]) = 1
+      and count(.//SYMBOL_FUNCTION_CALL[text() != 'return']) = 1
+      and preceding-sibling::SYMBOL_FORMALS =
+        //expr[
+          position() = 2
+          and preceding-sibling::expr/SYMBOL_FUNCTION_CALL
+          and not(preceding-sibling::*[1][self::EQ_SUB])
+        ]/SYMBOL
+      and not(OP-DOLLAR or OP-AT or OP-LEFT-BRACKET or LBB)
     ]
-  "
-  default_fun_xpath <- paste(
-    sep = "|",
-    glue(default_fun_xpath_fmt, paren_path = "expr"),
-    glue(default_fun_xpath_fmt, paren_path = "expr[OP-LEFT-BRACE and count(expr) = 1]/expr[1]")
-  )
+    /parent::expr
+  ")
 
   # purrr-style inline formulas-as-functions, e.g. ~foo(.x)
   # logic is basically the same as that above, except we need
@@ -95,7 +100,7 @@ unnecessary_lambda_linter <- function() {
   # path to calling function symbol from the matched expressions
   fun_xpath <- "./parent::expr/expr/SYMBOL_FUNCTION_CALL"
   # path to the symbol of the simpler function that avoids a lambda
-  symbol_xpath <- glue("(expr|expr[OP-LEFT-BRACE]/expr[1])/expr[SYMBOL_FUNCTION_CALL]")
+  symbol_xpath <- "expr[last()]//expr[SYMBOL_FUNCTION_CALL[text() != 'return']]"
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

@@ -3,12 +3,15 @@ test_that("returns the correct linting", {
   expect_lint('"\\R"', msg_escape_char)
   expect_lint('"\\A"', msg_escape_char)
   expect_lint('"\\z"', msg_escape_char)
+  placeholder_linter <- function(...) NULL
+  class(placeholder_linter) <- "linter"
+  attr(placeholder_linter, "name") <- "null"
   expect_lint(
     "a <- 1
     function() {
     b",
     rex::rex("unexpected end of input"),
-    structure(function(...) NULL, class = "linter", name = "null")
+    placeholder_linter
   )
 
   linter <- equals_na_linter()

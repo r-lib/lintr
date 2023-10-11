@@ -55,7 +55,7 @@ find_config <- function(filename) {
   if (is.null(filename)) {
     return(NULL)
   }
-  linter_file <- getOption("lintr.linter_file")
+  linter_file <- lintr_option("linter_file")
 
   ## if users changed lintr.linter_file, return immediately.
   if (is_absolute_path(linter_file) && file.exists(linter_file)) {
@@ -87,10 +87,12 @@ find_config <- function(filename) {
 }
 
 find_local_config <- function(path, config_file) {
+  # R config gets precedence
+  configs_to_check <- c(paste0(config_file, ".R"), config_file)
   repeat {
     guesses_in_dir <- c(
-      file.path(path, config_file),
-      file.path(path, ".github", "linters", config_file)
+      file.path(path, configs_to_check),
+      file.path(path, ".github", "linters", configs_to_check)
     )
     found <- first_exists(guesses_in_dir)
     if (!is.null(found)) {

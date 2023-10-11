@@ -1,5 +1,5 @@
 `%||%` <- function(x, y) {
-  if (is.null(x) || length(x) <= 0L || is.na(x[[1L]])) {
+  if (is.null(x) || length(x) == 0L || (is.atomic(x[[1L]]) && is.na(x[[1L]]))) {
     y
   } else {
     x
@@ -15,10 +15,9 @@
 }
 
 flatten_lints <- function(x) {
-  structure(
-    flatten_list(x, class = "lint"),
-    class = "lints"
-  )
+  x <- flatten_list(x, class = "lint")
+  class(x) <- "lints"
+  x
 }
 
 # any function using unlist or c was dropping the classnames,
@@ -169,7 +168,9 @@ Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name.
     stop("`fun` must be a function taking exactly one argument.", call. = FALSE)
   }
   force(name)
-  structure(fun, class = c("linter", "function"), name = name)
+  class(fun) <- c("linter", "function")
+  attr(fun, "name") <- name
+  fun
 }
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
