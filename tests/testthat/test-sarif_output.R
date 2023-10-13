@@ -1,11 +1,13 @@
-skip_if_not_installed("jsonlite")
-
 test_that("`sarif_output` produces expected error", {
+  skip_if_not_installed("jsonlite")
+
   l <- lint(text = "x = 1", linters = assignment_linter())
   expect_error(sarif_output(l), "Package path needs to be a relative path", fixed = TRUE)
 })
 
 test_that("`sarif_output` writes expected files", {
+  skip_if_not_installed("jsonlite")
+
   l <- lint_package(
     test_path("dummy_packages", "missing_dep"),
     linters = object_length_linter(),
@@ -24,6 +26,8 @@ test_that("`sarif_output` writes expected files", {
 })
 
 test_that("`sarif_output` produces valid files", {
+  skip_if_not_installed("jsonlite")
+
   l <- lint_package(
     test_path("dummy_packages", "clean"),
     linters = default_linters,
