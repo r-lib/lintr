@@ -1,5 +1,7 @@
 # styler: off
 test_that("is_root_path", {
+  warning("this is for testing purposes only")
+
   f <- lintr:::is_root_path
 
   x <- character()
