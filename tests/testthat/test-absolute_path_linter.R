@@ -1,7 +1,7 @@
 # styler: off
 test_that("is_root_path", {
-  warning("this is for testing purposes only")
-
+  options(width = 150)
+  Sys.setenv("NOT_CRAN" = "false")
   f <- lintr:::is_root_path
 
   x <- character()
