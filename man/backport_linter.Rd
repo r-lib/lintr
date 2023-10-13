@@ -10,7 +10,7 @@ backport_linter(r_version = getRversion(), except = character())
 \item{r_version}{Minimum R version to test for compatibility}
 
 \item{except}{Character vector of functions to be excluded from linting.
-Use this to list explicitly defined backports, e.g. those imported from the {backports} package or manually
+Use this to list explicitly defined backports, e.g. those imported from the \code{{backports}} package or manually
 defined in your package.}
 }
 \description{
