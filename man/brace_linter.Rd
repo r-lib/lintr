@@ -4,10 +4,17 @@
 \alias{brace_linter}
 \title{Brace linter}
 \usage{
-brace_linter(allow_single_line = FALSE)
+brace_linter(
+  allow_single_line = FALSE,
+  function_braces = c("multi_line", "always", "never")
+)
 }
 \arguments{
-\item{allow_single_line}{if \code{TRUE}, allow an open and closed curly pair on the same line.}
+\item{allow_single_line}{If \code{TRUE}, allow an open and closed curly pair on the same line.}
+
+\item{function_braces}{Character scalar specifying whether to require function bodies to be wrapped in curly braces.
+\code{"multi_line"} means to only require curly braces when a function body is not on the same line as its header or it
+spans over multiple lines.}
 }
 \description{
 Perform various style checks related to placement and spacing of curly braces:
@@ -20,7 +27,7 @@ Perform various style checks related to placement and spacing of curly braces:
 \item Closing curly braces in \code{if} conditions are on the same line as the corresponding \verb{else}.
 \item Either both or neither branch in \code{if}/\verb{else} use curly braces, i.e., either both branches use \code{{...}} or neither
 does.
-\item Functions spanning multiple lines use curly braces.
+\item Function bodies are wrapped in curly braces.
 }
 }
 \examples{
