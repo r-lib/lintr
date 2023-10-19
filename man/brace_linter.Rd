@@ -6,15 +6,17 @@
 \usage{
 brace_linter(
   allow_single_line = FALSE,
-  function_braces = c("multi_line", "always", "never")
+  function_braces = c("multi_line", "always", "not_inline", "never")
 )
 }
 \arguments{
 \item{allow_single_line}{If \code{TRUE}, allow an open and closed curly pair on the same line.}
 
-\item{function_braces}{Character scalar specifying whether to require function bodies to be wrapped in curly braces.
-\code{"multi_line"} means to only require curly braces when a function body is not on the same line as its header or it
-spans over multiple lines.}
+\item{function_braces}{Character specifying whether to require function bodies to be wrapped in curly braces.
+\code{"always"} requires braces for all function definitions, including inline functions.
+\code{"not_inline"} requires bracse when a functions body does not start on the same line as its header.
+\code{"multi_line"} requires braces when a function definition spans multiple lines.
+\code{"never"} never requires braces in function bodies.}
 }
 \description{
 Perform various style checks related to placement and spacing of curly braces:

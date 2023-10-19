@@ -299,58 +299,62 @@ test_that("brace_linter lints else correctly", {
 })
 
 test_that("brace_linter lints function expressions correctly", {
-  expect_lint(
-    "function(x) x + 4",
-    NULL,
-    brace_linter(function_braces = "multi_line")
-  )
+  msg_always <- rex::rex("Any function body should be wrapped in curly braces.")
+  msg_multi_line <- rex::rex("Any function body spanning multiple lines should be wrapped in curly braces.")
+  msg_not_inline <- rex::rex("Any function body starting on a new line should be wrapped in curly braces.")
+
+  linter_always <- brace_linter(function_braces = "always")
+  linter_multi_line <- brace_linter(function_braces = "multi_line")
+  linter_not_inline <- brace_linter(function_braces = "not_inline")
+  linter_never <- brace_linter(function_braces = "never")
 
   lines <- trim_some("
     function(x) {
       x + 4
     }
   ")
+  expect_lint(lines, NULL, linter_always)
+  expect_lint(lines, NULL, linter_multi_line)
+  expect_lint(lines, NULL, linter_not_inline)
+  expect_lint(lines, NULL, linter_never)
+
+  lints_single_line <- list(
+    rex::rex("Opening curly braces should never go on their own line and should always be followed by a new line."),
+    rex::rex("Closing curly-braces should always be on their own line, unless they are followed by an else.")
+  )
+  expect_lint("function(x) { x + 4 }", lints_single_line, linter_always)
+  expect_lint("function(x) { x + 4 }", lints_single_line, linter_multi_line)
+  expect_lint("function(x) { x + 4 }", lints_single_line, linter_not_inline)
+  expect_lint("function(x) { x + 4 }", lints_single_line, linter_never)
+  # using function_braces = "always" without allow_single_line = TRUE prohibits inline function definitions:
   expect_lint(
-    lines,
+    "function(x) { x + 4 }",
     NULL,
-    brace_linter(function_braces = "multi_line")
+    brace_linter(allow_single_line = TRUE, function_braces = "always")
   )
 
-  msg_always <- rex::rex("Any function body should be wrapped in curly braces.")
-  msg_multi_line <- rex::rex("Any function body spanning multiple lines should be wrapped in curly braces.")
-  expect_lint(
-    "function(x) x + 4",
-    msg_always,
-    brace_linter(function_braces = "always")
-  )
-  lines <- trim_some("
-    function(x)
-      x + 4
-  ")
-  expect_lint(
-    lines,
-    msg_always,
-    brace_linter(function_braces = "always")
-  )
-  expect_lint(
-    lines,
-    msg_multi_line,
-    brace_linter(function_braces = "multi_line")
-  )
-  expect_lint(
-    lines,
-    NULL,
-    brace_linter(function_braces = "never")
-  )
+  expect_lint("function(x) x + 4", msg_always, linter_always)
+  expect_lint("function(x) x + 4", NULL, linter_multi_line)
+  expect_lint("function(x) x + 4", NULL, linter_not_inline)
+  expect_lint("function(x) x + 4", NULL, linter_never)
+
   lines <- trim_some("
     function(x) x +
       4
   ")
-  expect_lint(
-    lines,
-    msg_multi_line,
-    brace_linter(function_braces = "multi_line")
-  )
+  expect_lint(lines, msg_always, linter_always)
+  expect_lint(lines, msg_multi_line, linter_multi_line)
+  expect_lint(lines, NULL, linter_not_inline)
+  expect_lint(lines, NULL, linter_never)
+
+  lines <- trim_some("
+    function(x)
+      x + 4
+  ")
+  expect_lint(lines, msg_always, linter_always)
+  expect_lint(lines, msg_multi_line, linter_multi_line)
+  expect_lint(lines, msg_not_inline, linter_not_inline)
+  expect_lint(lines, NULL, linter_never)
 })
 
 test_that("brace_linter lints if/else matching braces correctly", {
