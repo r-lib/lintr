@@ -77,7 +77,7 @@ unnecessary_lambda_linter <- function() {
           and preceding-sibling::expr/SYMBOL_FUNCTION_CALL
           and not(preceding-sibling::*[1][self::EQ_SUB])
         ]/SYMBOL
-      and not(OP-DOLLAR or OP-AT or OP-LEFT-BRACKET or LBB)
+      and count(OP-LEFT-PAREN) + count(OP-LEFT-BRACE/following-sibling::expr/OP-LEFT-PAREN) = 1
     ]
     /parent::expr
   ")

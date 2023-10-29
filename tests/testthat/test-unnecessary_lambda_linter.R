@@ -49,6 +49,12 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
   expect_lint('lapply(l, function(x) rle(x)["values"])', NULL, linter)
   expect_lint('lapply(l, function(x) rle(x)[["values"]])', NULL, linter)
   expect_lint("lapply(l, function(x) rle(x)@values)", NULL, linter)
+
+  # Other operators, #2247
+  expect_lint("lapply(l, function(x) foo(x) - 1)", NULL, linter)
+  expect_lint("lapply(l, function(x) foo(x) * 2)", NULL, linter)
+  expect_lint("lapply(l, function(x) foo(x) ^ 3)", NULL, linter)
+  expect_lint("lapply(l, function(x) foo(x) %% 4)", NULL, linter)
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
@@ -170,6 +176,10 @@ test_that("cases with braces are caught", {
     NULL,
     linter
   )
+
+  # false positives like #2231, #2247 are avoided with braces too
+  expect_lint("lapply(x, function(xi) { foo(xi)$bar })", NULL, linter)
+  expect_lint("lapply(x, function(xi) { foo(xi) - 1 })", NULL, linter)
 })
 
 test_that("function shorthand is handled", {

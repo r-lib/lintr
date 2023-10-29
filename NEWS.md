@@ -99,7 +99,7 @@
   + finds assignments in call arguments besides the first one (#2136, @MichaelChirico).
   + finds assignments in parenthetical expressions like `if (A && (B <- foo(A))) { }` (#2138, @MichaelChirico).
 * `unnecessary_lambda_linter()` checks for cases using explicit returns, e.g. `lapply(x, \(xi) return(sum(xi)))` (#1567, @MichaelChirico).
-  + thanks to @Bisaloo for detecting a regression in the original fix (#2231).
+  + thanks to @Bisaloo and @strengejacke for detecting a regression in the original fix (#2231, #2247).
 
 # lintr 3.1.0
 
