@@ -72,7 +72,7 @@ unnecessary_lambda_linter <- function() {
       count(.//SYMBOL[self::* = preceding::SYMBOL_FORMALS[1]]) = 1
       and count(.//SYMBOL_FUNCTION_CALL[text() != 'return']) = 1
       and preceding-sibling::SYMBOL_FORMALS =
-        //expr[
+        .//expr[
           position() = 2
           and preceding-sibling::expr/SYMBOL_FUNCTION_CALL
           and not(preceding-sibling::*[1][self::EQ_SUB])

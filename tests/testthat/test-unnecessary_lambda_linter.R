@@ -55,6 +55,16 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
   expect_lint("lapply(l, function(x) foo(x) * 2)", NULL, linter)
   expect_lint("lapply(l, function(x) foo(x) ^ 3)", NULL, linter)
   expect_lint("lapply(l, function(x) foo(x) %% 4)", NULL, linter)
+
+  # Don't include other lambdas, #2249
+  expect_lint(
+    trim_some('{
+      lapply(x, function(e) sprintf("%o", e))
+      lapply(y, function(e) paste(strlpad(e, "0", width)))
+    }'),
+    NULL,
+    linter
+  )
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
