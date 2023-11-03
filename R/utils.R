@@ -1,5 +1,5 @@
 `%||%` <- function(x, y) {
-  if (is.null(x) || length(x) <= 0L || is.na(x[[1L]])) {
+  if (is.null(x) || length(x) == 0L || (is.atomic(x[[1L]]) && is.na(x[[1L]]))) {
     y
   } else {
     x
@@ -15,10 +15,9 @@
 }
 
 flatten_lints <- function(x) {
-  structure(
-    flatten_list(x, class = "lint"),
-    class = "lints"
-  )
+  x <- flatten_list(x, class = "lint")
+  class(x) <- "lints"
+  x
 }
 
 # any function using unlist or c was dropping the classnames,
@@ -102,7 +101,7 @@ get_content <- function(lines, info) {
   lines[is.na(lines)] <- ""
 
   if (!missing(info)) {
-    if (inherits(info, "xml_node")) {
+    if (is_node(info)) {
       info <- lapply(stats::setNames(nm = c("col1", "col2", "line1", "line2")), function(attr) {
         as.integer(xml_attr(info, attr))
       })
@@ -169,7 +168,9 @@ Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name.
     stop("`fun` must be a function taking exactly one argument.", call. = FALSE)
   }
   force(name)
-  structure(fun, class = c("linter", "function"), name = name)
+  class(fun) <- c("linter", "function")
+  attr(fun, "name") <- name
+  fun
 }
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
@@ -233,7 +234,7 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #'
 #' @export
 get_r_string <- function(s, xpath = NULL) {
-  if (inherits(s, c("xml_node", "xml_nodeset"))) {
+  if (is_node(s) || is_nodeset(s)) {
     if (is.null(xpath)) {
       s <- xml_text(s)
     } else {

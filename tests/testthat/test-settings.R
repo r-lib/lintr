@@ -152,3 +152,110 @@ test_that("it has a smart default for encodings", {
   lintr:::read_settings(pkg_file)
   expect_identical(settings$encoding, "ISO8859-1")
 })
+
+test_that("validate_config_file() detects improperly-formed settings", {
+  .lintr <- withr::local_tempfile()
+  withr::local_options(lintr.linter_file = .lintr)
+  withr::local_dir(withr::local_tempdir())
+
+  writeLines("asdf: 1", .lintr)
+  expect_warning(lint_dir(), "Found unused settings in config", fixed = TRUE)
+
+  writeLines("a=1", "aaa.R")
+  writeLines(c('exclusions: list("aaa.R")', "asdf: 1"), .lintr)
+  expect_warning(lint_dir(), "Found unused settings in config", fixed = TRUE)
+
+  writeLines("encoding: FALSE", .lintr)
+  expect_error(lint_dir(), "Setting 'encoding' should be a character string, not 'FALSE'", fixed = TRUE)
+
+  writeLines("encoding: NA_character_", .lintr)
+  expect_error(lint_dir(), "Setting 'encoding' should be a character string, not 'NA'", fixed = TRUE)
+
+  writeLines('encoding: c("a", "b")', .lintr)
+  expect_error(lint_dir(), "Setting 'encoding' should be a character string, not 'a, b'")
+
+  writeLines("exclude: FALSE", .lintr)
+  expect_error(lint_dir(), "Setting 'exclude' should be a single regular expression, not 'FALSE'", fixed = TRUE)
+
+  writeLines(c('exclusions: list("aaa.R")', "exclude: FALSE"), .lintr)
+  expect_error(lint_dir(), "Setting 'exclude' should be a single regular expression, not 'FALSE'", fixed = TRUE)
+
+  writeLines('exclude: "("', .lintr)
+  expect_error(lint_dir(), "Setting 'exclude' should be a single regular expression, not '('", fixed = TRUE)
+
+  writeLines('comment_bot: "a"', .lintr)
+  expect_error(lint_dir(), "Setting 'comment_bot' should be TRUE or FALSE, not 'a'", fixed = TRUE)
+
+  writeLines("comment_bot: NA", .lintr)
+  expect_error(lint_dir(), "Setting 'comment_bot' should be TRUE or FALSE, not 'NA'", fixed = TRUE)
+
+  writeLines("comment_bot: c(TRUE, FALSE)", .lintr)
+  expect_error(lint_dir(), "Setting 'comment_bot' should be TRUE or FALSE, not 'TRUE, FALSE'", fixed = TRUE)
+
+  writeLines("linters: list(1)", .lintr)
+  expect_error(lint_dir(), "Setting 'linters' should be a list of linters", fixed = TRUE)
+
+  writeLines("linters: list(assignment_linter(), 1)", .lintr)
+  expect_error(lint_dir(), "Setting 'linters' should be a list of linters", fixed = TRUE)
+
+  writeLines("exclusions: list(1L)", .lintr)
+  expect_error(lint_dir(), "Unnamed entries of setting 'exclusions' should be strings", fixed = TRUE)
+
+  writeLines('exclusions: list("aaa.R", 1L)', .lintr)
+  expect_error(lint_dir(), "Unnamed entries of setting 'exclusions' should be strings", fixed = TRUE)
+
+  writeLines("exclusions: list(letters)", .lintr)
+  expect_error(lint_dir(), "Unnamed entries of setting 'exclusions' should be strings", fixed = TRUE)
+
+  writeLines("exclusions: list(NA_character_)", .lintr)
+  expect_error(lint_dir(), "Unnamed entries of setting 'exclusions' should be strings", fixed = TRUE)
+
+  writeLines('exclusions: list(aaa.R = "abc")', .lintr)
+  expect_error(lint_dir(), "Named entries of setting 'exclusions' should designate line numbers", fixed = TRUE)
+
+  writeLines("exclusions: list(aaa.R = NA_integer_)", .lintr)
+  expect_error(lint_dir(), "Named entries of setting 'exclusions' should designate line numbers", fixed = TRUE)
+
+  writeLines('exclusions: list(aaa.R = list("abc"))', .lintr)
+  expect_error(lint_dir(), "Named entries of setting 'exclusions' should designate line numbers", fixed = TRUE)
+
+  writeLines("exclusions: list(aaa.R = list(NA_integer_))", .lintr)
+  expect_error(lint_dir(), "Named entries of setting 'exclusions' should designate line numbers", fixed = TRUE)
+
+  writeLines('exclusions: list(aaa.R = list(assignment_linter = "abc"))', .lintr)
+  expect_error(lint_dir(), "Named entries of setting 'exclusions' should designate line numbers", fixed = TRUE)
+
+  writeLines("exclusions: list(aaa.R = list(assignment_linter = NA_integer_))", .lintr)
+  expect_error(lint_dir(), "Named entries of setting 'exclusions' should designate line numbers", fixed = TRUE)
+})
+
+test_that("exclusions can be a character vector", {
+  withr::local_dir(withr::local_tempdir())
+  # exclusions are relative to dirname(.lintr), so must create it here
+  .lintr <- withr::local_tempfile(tmpdir = getwd())
+  withr::local_options(lintr.linter_file = .lintr)
+
+  writeLines('exclusions: "aaa.R"', .lintr)
+  writeLines("a<-1", "aaa.R")
+  writeLines("b<-1", "bbb.R")
+  expect_length(lint_dir(linters = infix_spaces_linter()), 1L)
+
+  writeLines('exclusions: c("aaa.R", "bbb.R")', .lintr)
+  expect_length(lint_dir(linters = infix_spaces_linter()), 0L)
+})
+
+test_that("lines Inf means 'all lines'", {
+  withr::local_dir(withr::local_tempdir())
+  # exclusions are relative to dirname(.lintr), so must create it here
+  .lintr <- withr::local_tempfile(tmpdir = getwd())
+  withr::local_options(lintr.linter_file = .lintr)
+
+  writeLines("exclusions: list(aaa.R = Inf)", .lintr)
+  writeLines("a<-1", "aaa.R")
+  expect_length(lint_dir(linters = infix_spaces_linter()), 0L)
+
+  writeLines("exclusions: list(aaa.R = list(infix_spaces_linter = Inf))", .lintr)
+  # exclude infix_spaces_linter, include assignment_linter()
+  writeLines("a=1", "aaa.R")
+  expect_length(lint_dir(linters = list(assignment_linter(), infix_spaces_linter())), 1L)
+})

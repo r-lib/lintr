@@ -1,12 +1,13 @@
 #' Block usage of `paste()` and `paste0()` with messaging functions using `...`
 #'
+#' @description
 #' This linter discourages combining condition functions like [stop()] with string concatenation
-#' functions [paste()] and [paste0()]. This is because
+#'   functions [paste()] and [paste0()]. This is because
 #'
 #'  - `stop(paste0(...))` is redundant as it is exactly equivalent to `stop(...)`
 #'  - `stop(paste(...))` is similarly equivalent to `stop(...)` with separators (see examples)
 #'
-#'   The same applies to the other default condition functions as well, i.e., [warning()], [message()],
+#' The same applies to the other default condition functions as well, i.e., [warning()], [message()],
 #'   and [packageStartupMessage()].
 #'
 #' @examples

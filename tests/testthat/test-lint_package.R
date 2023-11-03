@@ -198,3 +198,54 @@ test_that(
     expect_length(subdir_lints, 0L)
   }
 )
+
+test_that("package using .lintr.R config lints correctly", {
+  withr::local_options(lintr.linter_file = "lintr_test_config")
+
+  r_config_pkg <- test_path("dummy_packages", "RConfig")
+
+  lints <- as.data.frame(lint_package(r_config_pkg))
+  expect_identical(unique(basename(lints$filename)), "lint_me.R")
+  expect_identical(lints$linter, c("infix_spaces_linter", "any_duplicated_linter"))
+
+  # config has bad R syntax
+  expect_error(
+    lint_package(test_path("dummy_packages", "RConfigInvalid")),
+    "Malformed config file, ensure it is valid R syntax",
+    fixed = TRUE
+  )
+
+  # config produces unused variables
+  withr::local_options(lintr.linter_file = "lintr_test_config_extraneous")
+  expect_warning(
+    expect_length(lint_package(r_config_pkg), 2L),
+    "Found unused settings in config",
+    fixed = TRUE
+  )
+
+  # R is preferred if multiple matched configs
+  withr::local_options(lintr.linter_file = "lintr_test_config_conflict")
+  lints <- as.data.frame(lint_package(r_config_pkg))
+  expect_identical(unique(basename(lints$filename)), "testthat.R")
+  expect_identical(lints$linter, c("expect_null_linter", "trailing_blank_lines_linter"))
+})
+
+test_that("lintr need not be attached for .lintr.R configs to use lintr functions", {
+  skip_if_not_r_version("3.6.0") # unclear error message
+  exprs <- paste(
+    'options(lintr.linter_file = "lintr_test_config")',
+    sprintf('lints <- lintr::lint_package("%s")', test_path("dummy_packages", "RConfig")),
+    # simplify output to be read from stdout
+    'cat(paste(as.data.frame(lints)$linter, collapse = "|"), "\n", sep = "")',
+    sep = "; "
+  )
+  if (tolower(Sys.info()[["sysname"]]) == "windows") {
+    rscript <- file.path(R.home("bin"), "Rscript.exe")
+  } else {
+    rscript <- file.path(R.home("bin"), "Rscript")
+  }
+  expect_identical(
+    system2(rscript, c("-e", shQuote(exprs)), stdout = TRUE),
+    "infix_spaces_linter|any_duplicated_linter"
+  )
+})

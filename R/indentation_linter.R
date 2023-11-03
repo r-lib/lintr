@@ -124,7 +124,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
   infix_tokens <- setdiff(infix_metadata$xml_tag, c("OP-LEFT-BRACE", "OP-COMMA", paren_tokens_left))
   no_paren_keywords <- c("ELSE", "REPEAT")
-  keyword_tokens <- c("FUNCTION", "IF", "FOR", "WHILE")
+  keyword_tokens <- c("FUNCTION", "OP-LAMBDA", "IF", "FOR", "WHILE")
 
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
 
@@ -225,7 +225,8 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
     indent_levels <- re_matches(
       source_expression$file_lines,
-      rex(start, any_spaces), locations = TRUE
+      rex(start, any_spaces),
+      locations = TRUE
     )[, "end"]
     expected_indent_levels <- integer(length(indent_levels))
     is_hanging <- logical(length(indent_levels))
@@ -341,7 +342,7 @@ build_indentation_style_tidy <- function() {
   #>   body
   #> }
   xp_is_double_indent <- "
-    parent::expr[FUNCTION and not(@line1 = SYMBOL_FORMALS/@line1)]
+    parent::expr[(FUNCTION or OP-LAMBDA) and not(@line1 = SYMBOL_FORMALS/@line1)]
       /OP-RIGHT-PAREN[@line1 = preceding-sibling::*[not(self::COMMENT)][1]/@line2]
   "
 
@@ -351,8 +352,7 @@ build_indentation_style_tidy <- function() {
           @line1 = following-sibling::{paren_tokens_right}/{xp_inner_expr}[position() = 1]/@line1
         ]/following-sibling::{paren_tokens_right}[
           @line1 > {xp_inner_expr}[position() = last() - 1]/@line2
-        ]"
-    ),
+        ]"),
     collapse = " | "
   )
 

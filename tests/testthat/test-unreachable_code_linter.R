@@ -7,6 +7,196 @@ test_that("unreachable_code_linter works in simple function", {
   expect_lint(lines, NULL, unreachable_code_linter())
 })
 
+test_that("unreachable_code_linter works in sub expressions", {
+  linter <- unreachable_code_linter()
+  msg <- rex::rex("Code and comments coming after a return() or stop()")
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (bar) {
+        return(bar)
+        # Test comment
+        while (bar) {
+          return(bar)
+          5 + 3
+          repeat {
+            return(bar)
+            # Test comment
+          }
+        }
+      } else if (bla) {
+        # test
+        return(5)
+        # Test 2
+      } else {
+        return(bar)
+        # Test comment
+        for(i in 1:3) {
+          return(bar)
+          5 + 4
+        }
+      }
+      return(bar)
+      5 + 1
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      list(line_number = 4L, message = msg),
+      list(line_number = 7L, message = msg),
+      list(line_number = 10L, message = msg),
+      list(line_number = 16L, message = msg),
+      list(line_number = 19L, message = msg),
+      list(line_number = 22L, message = msg),
+      list(line_number = 26L, message = msg)
+    ),
+    linter
+  )
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (bar) {
+        return(bar) # Test comment
+      }
+      while (bar) {
+        return(bar) # 5 + 3
+      }
+      repeat {
+        return(bar) # Test comment
+      }
+
+    }
+  ")
+
+  expect_lint(lines, NULL, linter)
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (bar) {
+        return(bar); x <- 2
+      } else {
+        return(bar); x <- 3
+      }
+      while (bar) {
+        return(bar); 5 + 3
+      }
+      repeat {
+        return(bar); test()
+      }
+      for(i in 1:3) {
+        return(bar); 5 + 4
+      }
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      list(line_number = 3L, message = msg),
+      list(line_number = 5L, message = msg),
+      list(line_number = 8L, message = msg),
+      list(line_number = 11L, message = msg),
+      list(line_number = 14L, message = msg)
+    ),
+    linter
+  )
+})
+
+test_that("unreachable_code_linter works with next and break in sub expressions", {
+  linter <- unreachable_code_linter()
+  msg <- rex::rex("Code and comments coming after a `next` or `break`")
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (bar) {
+        next
+        # Test comment
+        while (bar) {
+          break
+          5 + 3
+          repeat {
+            next
+            # Test comment
+          }
+        }
+      } else {
+        next
+        # test
+        for(i in 1:3) {
+          break
+          5 + 4
+        }
+      }
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      list(line_number = 4L, message = msg),
+      list(line_number = 7L, message = msg),
+      list(line_number = 10L, message = msg),
+      list(line_number = 15L, message = msg),
+      list(line_number = 18L, message = msg)
+    ),
+    linter
+  )
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (bar) {
+        break # Test comment
+      } else {
+        next # Test comment
+      }
+      while (bar) {
+        next # 5 + 3
+      }
+      repeat {
+        next # Test comment
+      }
+      for(i in 1:3) {
+        break # 5 + 4
+      }
+    }
+  ")
+
+  expect_lint(lines, NULL, linter)
+
+  lines <- trim_some("
+    foo <- function(bar) {
+      if (bar) {
+        next; x <- 2
+      } else {
+        break; x <- 3
+      }
+      while (bar) {
+        break; 5 + 3
+      }
+      repeat {
+        next; test()
+      }
+      for(i in 1:3) {
+        break; 5 + 4
+      }
+    }
+  ")
+
+  expect_lint(
+    lines,
+    list(
+      list(line_number = 3L, message = msg),
+      list(line_number = 5L, message = msg),
+      list(line_number = 8L, message = msg),
+      list(line_number = 11L, message = msg),
+      list(line_number = 14L, message = msg)
+    ),
+    linter
+  )
+})
+
 test_that("unreachable_code_linter ignores expressions that aren't functions", {
   expect_lint("x + 1", NULL, unreachable_code_linter())
 })
@@ -57,7 +247,7 @@ test_that("unreachable_code_linter identifies simple unreachable code", {
     lines,
     list(
       line_number = 3L,
-      message = rex::rex("Code and comments coming after a top-level return() or stop()")
+      message = rex::rex("Code and comments coming after a return() or stop()")
     ),
     unreachable_code_linter()
   )
@@ -73,13 +263,13 @@ test_that("unreachable_code_linter finds unreachable comments", {
   ")
   expect_lint(
     lines,
-    rex::rex("Code and comments coming after a top-level return() or stop()"),
+    rex::rex("Code and comments coming after a return() or stop()"),
     unreachable_code_linter()
   )
 })
 
 test_that("unreachable_code_linter finds expressions in the same line", {
-  msg <- rex::rex("Code and comments coming after a top-level return() or stop()")
+  msg <- rex::rex("Code and comments coming after a return() or stop()")
   linter <- unreachable_code_linter()
 
   lines <- trim_some("
@@ -107,7 +297,7 @@ test_that("unreachable_code_linter finds expressions in the same line", {
 })
 
 test_that("unreachable_code_linter finds expressions and comments after comment in return line", {
-  msg <- rex::rex("Code and comments coming after a top-level return() or stop()")
+  msg <- rex::rex("Code and comments coming after a return() or stop()")
   linter <- unreachable_code_linter()
 
   lines <- trim_some("
@@ -136,7 +326,7 @@ test_that("unreachable_code_linter finds a double return", {
   ")
   expect_lint(
     lines,
-    rex::rex("Code and comments coming after a top-level return() or stop()"),
+    rex::rex("Code and comments coming after a return() or stop()"),
     unreachable_code_linter()
   )
 })
@@ -151,7 +341,7 @@ test_that("unreachable_code_linter finds code after stop()", {
   ")
   expect_lint(
     lines,
-    rex::rex("Code and comments coming after a top-level return() or stop()"),
+    rex::rex("Code and comments coming after a return() or stop()"),
     unreachable_code_linter()
   )
 })
@@ -198,6 +388,20 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", {
     "),
     NULL,
     list(unreachable_code_linter(), one_linter = assignment_linter())
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        do_something
+        # nolint start: one_linter.
+        a = 42
+        next
+        # nolint end
+      }
+    "),
+    NULL,
+    unreachable_code_linter()
   )
 })
 
@@ -353,7 +557,7 @@ test_that("unreachable_code_linter identifies unreachable code in mixed conditio
       ),
       list(
         line_number = 13L,
-        message = rex::rex("Code and comments coming after a top-level return() or stop()")
+        message = rex::rex("Code and comments coming after a return() or stop()")
       )
     ),
     linter
@@ -375,6 +579,24 @@ test_that("unreachable_code_linter identifies unreachable code in mixed conditio
   )
 })
 
+test_that("function shorthand is handled", {
+  skip_if_not_r_version("4.1.0")
+
+  expect_lint(
+    trim_some("
+      foo <- \\(bar) {
+        return(bar)
+        x + 3
+      }
+    "),
+    list(
+      line_number = 3L,
+      message = rex::rex("Code and comments coming after a return() or stop()")
+    ),
+    unreachable_code_linter()
+  )
+})
+
 # nolint start: commented_code_linter.
 # TODO(michaelchirico): extend to work on switch() statements
 # test_that("unreachable_code_linter interacts with switch() as expected", {
@@ -393,17 +615,11 @@ test_that("unreachable_code_linter identifies unreachable code in mixed conditio
 #   ")
 #   expect_lint(
 #     unreachable_inside_switch_lines,
-#     rex::rex("Code and comments coming after a top-level return() or stop()"),
+#     rex::rex("Code and comments coming after a return() or stop()"),
 #     unreachable_code_linter()
 #   )
 # })
 # nolint end: commented_code_linter.
 
-# TODO(michaelchirico): the logic could be extended to terminal if statements
-#   or control flows (for/while). There shouldn't really be such a thing as
-#   a terminal for/while (owing to ExplicitReturnLinter forcing these to
-#   be followed by return(invisible()) or similar), but could be included to
-#   catch comments for completeness / robustness as a standalone function.
-#   Terminal if statements are a bit messy, but would have some payoff.
-# TODO(michaelchirico): again similarly, this could also apply to cases without
+# TODO(michaelchirico): This could also apply to cases without
 #   explicit returns (where it can only apply to comments)

@@ -1,7 +1,7 @@
 #' Block usage like x %in% "a"
 #'
 #' `vector %in% set` is appropriate for matching a vector to a set, but if
-#'   that set has size 1, `==` is more appropriate. `%chin%` from `data.table`
+#'   that set has size 1, `==` is more appropriate. `%chin%` from `{data.table}`
 #'   is matched as well.
 #'
 #' `scalar %in% vector` is OK, because the alternative (`any(vector == scalar)`)
