@@ -64,17 +64,27 @@ read_config_file <- function(config_file) {
     load_config <- function(file) {
       dcf_values <- read.dcf(file, all = TRUE)
       for (setting in names(dcf_values)) {
-        tryCatch(
-          assign(setting, eval(str2lang(dcf_values[[setting]])), envir = config),
-          error = function(e) stop("Malformed config setting '", setting, "'\n  ", conditionMessage(e), call. = FALSE)
+        parsed_setting <- tryCatch(
+          str2lang(dcf_values[[setting]]),
+          error = function(e) stop("Malformed config setting '", setting, "':\n    ", conditionMessage(e), call. = FALSE)
         )
+        setting_value <- tryCatch(
+          eval(parsed_setting),
+          warning = function(w) warning("Warning from config setting '", setting, "':\n    ", conditionMessage(w), call. = FALSE),
+          error = function(e) stop("Error from config setting '", setting, "':\n    ", conditionMessage(e), call. = FALSE)
+        )
+        assign(setting, eval(parsed_setting), envir = config)
       }
     }
     malformed <- function(e) {
-      stop("Malformed config file, ensure it ends in a newline\n  ", conditionMessage(e), call. = FALSE)
+      stop("Malformed config file:\n  ", conditionMessage(e), call. = FALSE)
     }
   }
-  tryCatch(load_config(config_file), warning = malformed, error = malformed)
+  tryCatch(
+    load_config(config_file),
+    warning = function(w) warning("Warning encountered while loading config:\n  ", conditionMessage(w), call. = FALSE),
+    error = malformed
+  )
   config
 }
 
