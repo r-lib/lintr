@@ -66,14 +66,20 @@ read_config_file <- function(config_file) {
       for (setting in names(dcf_values)) {
         parsed_setting <- tryCatch(
           str2lang(dcf_values[[setting]]),
-          error = function(e) stop("Malformed config setting '", setting, "':\n    ", conditionMessage(e), call. = FALSE)
+          error = function(e) {
+            stop("Malformed config setting '", setting, "':\n    ", conditionMessage(e), call. = FALSE)
+          }
         )
         setting_value <- tryCatch(
           eval(parsed_setting),
-          warning = function(w) warning("Warning from config setting '", setting, "':\n    ", conditionMessage(w), call. = FALSE),
-          error = function(e) stop("Error from config setting '", setting, "':\n    ", conditionMessage(e), call. = FALSE)
+          warning = function(w) {
+            warning("Warning from config setting '", setting, "':\n    ", conditionMessage(w), call. = FALSE)
+          },
+          error = function(e) {
+            stop("Error from config setting '", setting, "':\n    ", conditionMessage(e), call. = FALSE)
+          }
         )
-        assign(setting, eval(parsed_setting), envir = config)
+        assign(setting, setting_value, envir = config)
       }
     }
     malformed <- function(e) {
