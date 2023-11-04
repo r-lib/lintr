@@ -70,13 +70,16 @@ read_config_file <- function(config_file) {
             stop("Malformed config setting '", setting, "':\n    ", conditionMessage(e), call. = FALSE)
           }
         )
-        setting_value <- tryCatch(
-          eval(parsed_setting),
+        setting_value <- withCallingHandlers(
+          tryCatch(
+            eval(parsed_setting),
+            error = function(e) {
+              stop("Error from config setting '", setting, "':\n    ", conditionMessage(e))
+            }
+          ),
           warning = function(w) {
-            warning("Warning from config setting '", setting, "':\n    ", conditionMessage(w), call. = FALSE)
-          },
-          error = function(e) {
-            stop("Error from config setting '", setting, "':\n    ", conditionMessage(e), call. = FALSE)
+            warning("Warning from config setting '", setting, "':\n    ", conditionMessage(w))
+            invokeRestart("muffleWarning")
           }
         )
         assign(setting, setting_value, envir = config)
@@ -86,10 +89,15 @@ read_config_file <- function(config_file) {
       stop("Malformed config file:\n  ", conditionMessage(e), call. = FALSE)
     }
   }
-  tryCatch(
-    load_config(config_file),
-    warning = function(w) warning("Warning encountered while loading config:\n  ", conditionMessage(w), call. = FALSE),
-    error = malformed
+  withCallingHandlers(
+    tryCatch(
+      load_config(config_file),
+      error = malformed
+    ),
+    warning = function(w) {
+      warning("Warning encountered while loading config:\n  ", conditionMessage(w), call. = FALSE)
+      invokeRestart("muffleWarning")
+    }
   )
   config
 }
