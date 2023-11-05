@@ -75,14 +75,14 @@ read_config_file <- function(config_file) {
             eval(parsed_setting),
             error = function(e) {
               stop(
-                "Error from config setting '", setting, "' at call '", format(conditionCall(e)), "':\n",
+                "Error from config setting '", setting, "' while calling '", format(conditionCall(e)), "':\n",
                 "    ", conditionMessage(e)
               )
             }
           ),
           warning = function(w) {
             warning(
-              "Warning from config setting '", setting, "' at call '", format(conditionCall(w)), "':\n",
+              "Warning from config setting '", setting, "' while calling '", format(conditionCall(w)), "':\n",
               "    ", conditionMessage(w)
             )
             invokeRestart("muffleWarning")
