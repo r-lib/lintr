@@ -2,7 +2,7 @@
 test_that("styles are correctly identified", {
   do_style_check <- function(nms) lapply(unname(style_regexes), lintr:::check_style, nms = nms)
 
-  #                                            symbl   UpC   lowC   snake  SNAKE  dot     allow  ALLUP
+  #                                            symbl   UpC   lowC   snake  SNAKE  dot    alllow  ALLUP
   expect_identical(do_style_check("x"),   list(FALSE, FALSE, TRUE,  TRUE,  FALSE, TRUE,   TRUE,  FALSE))
   expect_identical(do_style_check(".x"),  list(FALSE, FALSE, TRUE,  TRUE,  FALSE, TRUE,   TRUE,  FALSE))
   expect_identical(do_style_check("X"),   list(FALSE, TRUE,  FALSE, FALSE, TRUE,  FALSE,  FALSE,  TRUE))
@@ -24,7 +24,7 @@ test_that("styles are correctly identified", {
   expect_identical(do_style_check("x.2"), list(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE,   FALSE, FALSE))
   expect_identical(do_style_check("X.2"), list(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
 
-  #                                                     symbl   UpC   lowC   snake  SNAKE  dot     allow  ALLUP
+  #                                                     symbl   UpC   lowC   snake  SNAKE  dot    alllow  ALLUP
   expect_identical(do_style_check("IHave1Cat"),     list(FALSE, TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
   expect_identical(do_style_check("iHave1Cat"),     list(FALSE, FALSE, TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE))
   expect_identical(do_style_check("i_have_1_cat"),  list(FALSE, FALSE, FALSE, TRUE,  FALSE, FALSE, FALSE, FALSE))
