@@ -2,7 +2,7 @@
 test_that("styles are correctly identified", {
   do_style_check <- function(nms) lapply(unname(style_regexes), lintr:::check_style, nms = nms)
 
-  #                                            symbl   UpC   lowC   snake  SNAKE  dot    allow  ALLUP
+  #                                            symbl   UpC   lowC   snake  SNAKE  dot    alllow  ALLUP
   expect_identical(do_style_check("x"),   list(FALSE, FALSE, TRUE,  TRUE,  FALSE, TRUE,   TRUE,  FALSE))
   expect_identical(do_style_check(".x"),  list(FALSE, FALSE, TRUE,  TRUE,  FALSE, TRUE,   TRUE,  FALSE))
   expect_identical(do_style_check("X"),   list(FALSE, TRUE,  FALSE, FALSE, TRUE,  FALSE,  FALSE,  TRUE))

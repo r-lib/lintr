@@ -33,7 +33,7 @@ test_that("returns the correct linting", {
   # paren_brace_linter should ignore strings and comments, as in regexes:
   expect_lint("grepl('(iss){2}', 'Mississippi')", NULL, linter)
   expect_lint(
-    "x <- 123 # dont flag (paren){brace} if inside a comment",
+    "x <- 123 # don't flag (paren){brace} if inside a comment",
     NULL,
     linter
   )
