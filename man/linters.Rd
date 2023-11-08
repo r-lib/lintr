@@ -30,7 +30,7 @@ The following tags exist:
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
 \item{\link[=readability_linters]{readability} (54 linters)}
 \item{\link[=robustness_linters]{robustness} (14 linters)}
-\item{\link[=style_linters]{style} (38 linters)}
+\item{\link[=style_linters]{style} (39 linters)}
 }
 }
 \section{Linters}{
@@ -106,6 +106,7 @@ The following linters exist:
 \item{\code{\link{redundant_ifelse_linter}} (tags: best_practices, configurable, consistency, efficiency)}
 \item{\code{\link{regex_subset_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{repeat_linter}} (tags: readability, style)}
+\item{\code{\link{return_linter}} (tags: style)}
 \item{\code{\link{routine_registration_linter}} (tags: best_practices, efficiency, robustness)}
 \item{\code{\link{scalar_in_linter}} (tags: best_practices, consistency, efficiency, readability)}
 \item{\code{\link{semicolon_linter}} (tags: configurable, default, readability, style)}
