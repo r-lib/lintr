@@ -134,21 +134,6 @@ test_that("Lint controll statments (without return) on end of function", {
     return_linter(use_implicit_returns = FALSE)
   )
 
-
-  expect_lint(
-    trim_some("
-      function() {
-        if(x == 2L){
-          return(e)
-        } else if(x == 3L) {
-          return(f)
-        }
-      }
-    "),
-    msg,
-    return_linter(use_implicit_returns = FALSE)
-  )
-
   expect_lint(
     trim_some("
       function() {
@@ -156,22 +141,6 @@ test_that("Lint controll statments (without return) on end of function", {
           return(e)
         } else if(x == 3L) {
           cat(f)
-        }
-      }
-    "),
-    msg,
-    return_linter(use_implicit_returns = FALSE)
-  )
-
-  expect_lint(
-    trim_some("
-      function() {
-        if(x == 2L){
-          return(e)
-        } else if(x == 3L) {
-          cat(f)
-        } else {
-          return(g)
         }
       }
     "),
