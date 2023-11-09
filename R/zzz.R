@@ -305,18 +305,9 @@ settings <- new.env(parent = emptyenv())
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  # R>=3.6.0: str2expression, str2lang
   # R>=4.0.0: deparse1
   # R>=4.1.0: ...names
   backports::import(pkgname, c("deparse1", "...names"))
-  base_ns <- getNamespace("base")
-  backports_ns <- getNamespace("backports")
-  lintr_ns <- getNamespace(pkgname)
-  for (base_fun in c("str2lang", "str2expression")) {
-    if (!exists(base_fun, base_ns)) {
-      assign(base_fun, get(base_fun, backports_ns), lintr_ns)
-    }
-  }
 
   utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,
