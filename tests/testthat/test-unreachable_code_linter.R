@@ -600,7 +600,7 @@ test_that("function shorthand is handled", {
 test_that("Do not lint inline else after stop", {
 
   expect_lint(
-    "if(x > 3L) stop() else x + 3",
+    "if (x > 3L) stop() else x + 3",
     NULL,
     unreachable_code_linter()
   )
@@ -609,13 +609,13 @@ test_that("Do not lint inline else after stop", {
 test_that("Do not lint inline else after stop in inline function", {
 
   expect_lint(
-    "function(x) if(x > 3L) stop() else x + 3",
+    "function(x) if (x > 3L) stop() else x + 3",
     NULL,
     unreachable_code_linter()
   )
 
   expect_lint(
-    "function(x) if(x > 3L) { stop() } else {x + 3}",
+    "function(x) if (x > 3L) { stop() } else {x + 3}",
     NULL,
     unreachable_code_linter()
   )
@@ -625,7 +625,7 @@ test_that("Do not lint inline else after stop in inline lambda function", {
   skip_if_not_r_version("4.1.0")
 
   expect_lint(
-    "\\(x) if(x > 3L) stop() else x + 3",
+    "\\(x) if (x > 3L) stop() else x + 3",
     NULL,
     unreachable_code_linter()
   )
@@ -635,7 +635,7 @@ test_that("Do not lint inline else after stop in lambda function", {
   skip_if_not_r_version("4.1.0")
 
   expect_lint(
-    "\\(x){ if(x > 3L) stop() else x + 3 }",
+    "\\(x){ if (x > 3L) stop() else x + 3 }",
     NULL,
     unreachable_code_linter()
   )
