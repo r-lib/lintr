@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">3.1.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">3.1.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,8 +63,11 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="lintr-development-version">lintr (development version)<a class="anchor" aria-label="anchor" href="#lintr-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="3.1.1" id="lintr-311">lintr 3.1.1<a class="anchor" aria-label="anchor" href="#lintr-311"></a></h2><p class="text-muted">CRAN release: 2023-11-07</p>
 <div class="section level3">
-<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<h3 id="breaking-changes-3-1-1">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-3-1-1"></a></h3>
 <ul><li>
 <code><a href="../reference/infix_spaces_linter.html">infix_spaces_linter()</a></code> distinguishes <code>&lt;-</code>, <code>:=</code>, <code>&lt;&lt;-</code> and <code>-&gt;</code>, <code>-&gt;&gt;</code>, i.e. <code>infix_spaces_linter(exclude_operators = "-&gt;")</code> will no longer exclude <code>-&gt;&gt;</code> (<a href="https://github.com/r-lib/lintr/issues/2115" class="external-link">#2115</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). This change is breaking for users relying on manually-supplied <code>exclude_operators</code> containing <code>"&lt;-"</code> to also exclude <code>:=</code> and <code>&lt;&lt;-</code>. The fix is to manually supply <code>":="</code> and <code>"&lt;&lt;-"</code> as well. We don’t expect this change to affect many users, the fix is simple, and the new behavior is much more transparent, so we are including this breakage in a minor release.</li>
 <li>Removed <code>find_line()</code> and <code>find_column()</code> entries from <code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> expression-level objects. These have been marked deprecated since version 3.0.0. No users were found on GitHub.</li>
@@ -73,12 +76,12 @@
 </ul></li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<h3 id="bug-fixes-3-1-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-3-1-1"></a></h3>
 <ul><li>
 <code><a href="../reference/sprintf_linter.html">sprintf_linter()</a></code> doesn’t error in cases where whitespace in <code>...</code> arguments is significant, e.g. <code>sprintf("%s", if (A) "" else y)</code>, which won’t parse if whitespace is removed (<a href="https://github.com/r-lib/lintr/issues/2131" class="external-link">#2131</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="changes-to-default-linters-development-version">Changes to default linters<a class="anchor" aria-label="anchor" href="#changes-to-default-linters-development-version"></a></h3>
+<h3 id="changes-to-default-linters-3-1-1">Changes to default linters<a class="anchor" aria-label="anchor" href="#changes-to-default-linters-3-1-1"></a></h3>
 <ul><li>
 <code><a href="../reference/assignment_linter.html">assignment_linter()</a></code> lints the {magrittr} assignment pipe <code>%&lt;&gt;%</code> (<a href="https://github.com/r-lib/lintr/issues/2008" class="external-link">#2008</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). This can be deactivated by setting the new argument <code>allow_pipe_assign</code> to <code>TRUE</code>.</li>
 <li>
@@ -94,7 +97,7 @@
 <code><a href="../reference/equals_na_linter.html">equals_na_linter()</a></code> checks for <code>x %in% NA</code>, which is a more convoluted form of <code>is.na(x)</code> (<a href="https://github.com/r-lib/lintr/issues/2088" class="external-link">#2088</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
+<h3 id="new-and-improved-features-3-1-1">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-3-1-1"></a></h3>
 <ul><li>New exclusion sentinel <code># nolint next</code> to signify the next line should skip linting (<a href="https://github.com/r-lib/lintr/issues/1791" class="external-link">#1791</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). The usual rules apply for excluding specific linters, e.g. <code># nolint next: assignment_linter.</code>. The exact string used to match a subsequent-line exclusion is controlled by the <code>exclude_next</code> config entry or R option <code>"lintr.exclude_next"</code>.</li>
 <li>New <code><a href="../reference/xp_call_name.html">xp_call_name()</a></code> helper to facilitate writing custom linters (<a href="https://github.com/r-lib/lintr/issues/2023" class="external-link">#2023</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). This helper converts a matched XPath to the R function to which it corresponds. This is useful for including the “offending” function in the lint’s message.</li>
 <li>New <code><a href="../reference/make_linter_from_xpath.html">make_linter_from_xpath()</a></code> to facilitate making simple linters directly from a single XPath (<a href="https://github.com/r-lib/lintr/issues/2064" class="external-link">#2064</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). This is especially helpful for making on-the-fly/exploratory linters, but also extends to any case where the linter can be fully defined from a static lint message and single XPath.</li>
@@ -103,7 +106,7 @@
 <code><a href="../reference/lint.html">lint()</a></code>, <code><a href="../reference/lint.html">lint_dir()</a></code>, and <code><a href="../reference/lint.html">lint_package()</a></code> fail more gracefully when the user mis-spells an argument name (<a href="https://github.com/r-lib/lintr/issues/2134" class="external-link">#2134</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>Quarto files (.qmd) are included by <code><a href="../reference/lint.html">lint_dir()</a></code> by default (<a href="https://github.com/r-lib/lintr/issues/2150" class="external-link">#2150</a>, <a href="https://github.com/dave-lovell" class="external-link">@dave-lovell</a>).</li>
 </ul><div class="section level4">
-<h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
+<h4 id="new-linters-3-1-1">New linters<a class="anchor" aria-label="anchor" href="#new-linters-3-1-1"></a></h4>
 <ul><li>
 <code><a href="../reference/library_call_linter.html">library_call_linter()</a></code> can detect if all library/require calls are not at the top of your script (<a href="https://github.com/r-lib/lintr/issues/2027" class="external-link">#2027</a>, <a href="https://github.com/r-lib/lintr/issues/2043" class="external-link">#2043</a>, <a href="https://github.com/r-lib/lintr/issues/2163" class="external-link">#2163</a>, and <a href="https://github.com/r-lib/lintr/issues/2170" class="external-link">#2170</a>, <a href="https://github.com/nicholas-masel" class="external-link">@nicholas-masel</a> and <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
@@ -120,7 +123,7 @@
 <code><a href="../reference/length_test_linter.html">length_test_linter()</a></code> detects the common mistake <code>length(x == 0)</code> which is meant to be <code>length(x) == 0</code> (<a href="https://github.com/r-lib/lintr/issues/1991" class="external-link">#1991</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level4">
-<h4 id="extensions-to-existing-linters-development-version">Extensions to existing linters<a class="anchor" aria-label="anchor" href="#extensions-to-existing-linters-development-version"></a></h4>
+<h4 id="extensions-to-existing-linters-3-1-1">Extensions to existing linters<a class="anchor" aria-label="anchor" href="#extensions-to-existing-linters-3-1-1"></a></h4>
 <ul><li>
 <code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> gains an option <code>allow_unescaped</code> (default <code>FALSE</code>) to toggle linting regexes not requiring any escapes or character classes (<a href="https://github.com/r-lib/lintr/issues/1689" class="external-link">#1689</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Thus <code>fixed_regex_linter(allow_unescaped = TRUE)</code> would lint on <code>grepl("[$]", x)</code> but not on <code>grepl("a", x)</code> since the latter does not use any regex special characters.</li>
 <li>
@@ -168,7 +171,7 @@
 </ul></li>
 </ul></div>
 <div class="section level4">
-<h4 id="lint-accuracy-fixes-removing-false-positives-development-version">Lint accuracy fixes: removing false positives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-positives-development-version"></a></h4>
+<h4 id="lint-accuracy-fixes-removing-false-positives-3-1-1">Lint accuracy fixes: removing false positives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-positives-3-1-1"></a></h4>
 <ul><li>
 <code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code>
 <ul><li>Is pipe-aware, in particular removing false positives around piping into {stringr} functions like <code>x |&gt; str_replace(fixed("a"), "b")</code> (<a href="https://github.com/r-lib/lintr/issues/1811" class="external-link">#1811</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
@@ -195,7 +198,7 @@
 <code><a href="../reference/redundant_ifelse_linter.html">redundant_ifelse_linter()</a></code> is aware of <code><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">dplyr::if_else()</a></code>’s <code>missing=</code> argument, so that <code>if_else(A, TRUE, FALSE, missing = FALSE)</code> doesn’t lint, but <code>if_else(A, TRUE, FALSE, NA)</code> does (<a href="https://github.com/r-lib/lintr/issues/1941" class="external-link">#1941</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Note that <code><a href="https://dplyr.tidyverse.org/reference/coalesce.html" class="external-link">dplyr::coalesce()</a></code> or <code>tidyr::replace_na()</code> may still be preferable.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="lint-accuracy-fixes-removing-false-negatives-development-version">Lint accuracy fixes: removing false negatives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-negatives-development-version"></a></h4>
+<h4 id="lint-accuracy-fixes-removing-false-negatives-3-1-1">Lint accuracy fixes: removing false negatives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-negatives-3-1-1"></a></h4>
 <ul><li>
 <code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code> finds unreachable code even in the presence of a comment or semicolon after <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> or <code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop()</a></code> (<a href="https://github.com/r-lib/lintr/issues/2127" class="external-link">#2127</a>, <a href="https://github.com/MEO265" class="external-link">@MEO265</a>).</li>
 <li>
