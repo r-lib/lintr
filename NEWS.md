@@ -1,3 +1,5 @@
+# lintr (development version)
+
 # lintr 3.1.1
 
 ## Breaking changes
