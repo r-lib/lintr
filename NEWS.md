@@ -2,7 +2,10 @@
 
 ## New and improved features
 
+* More helpful errors for invalid configs (#2253, @MichaelChirico).
+
 ### Lint accuracy fixes: removing false positives
+
 * `unreachable_code_linter()` ignores reachable code in inline functions like `function(x) if (x > 2) stop() else x` (#2259, @MEO265).
 
 # lintr 3.1.1

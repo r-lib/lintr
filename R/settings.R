@@ -64,17 +64,47 @@ read_config_file <- function(config_file) {
     load_config <- function(file) {
       dcf_values <- read.dcf(file, all = TRUE)
       for (setting in names(dcf_values)) {
-        tryCatch(
-          assign(setting, eval(str2lang(dcf_values[[setting]])), envir = config),
-          error = function(e) stop("Malformed config setting '", setting, "'\n  ", conditionMessage(e), call. = FALSE)
+        parsed_setting <- tryCatch(
+          str2lang(dcf_values[[setting]]),
+          error = function(e) {
+            stop("Malformed config setting '", setting, "':\n    ", conditionMessage(e), call. = FALSE)
+          }
         )
+        setting_value <- withCallingHandlers(
+          tryCatch(
+            eval(parsed_setting),
+            error = function(e) {
+              stop(
+                "Error from config setting '", setting, "' in '", format(conditionCall(e)), "':\n",
+                "    ", conditionMessage(e)
+              )
+            }
+          ),
+          warning = function(w) {
+            warning(
+              "Warning from config setting '", setting, "' in '", format(conditionCall(w)), "':\n",
+              "    ", conditionMessage(w)
+            )
+            invokeRestart("muffleWarning")
+          }
+        )
+        assign(setting, setting_value, envir = config)
       }
     }
     malformed <- function(e) {
-      stop("Malformed config file, ensure it ends in a newline\n  ", conditionMessage(e), call. = FALSE)
+      stop("Malformed config file:\n  ", conditionMessage(e), call. = FALSE)
     }
   }
-  tryCatch(load_config(config_file), warning = malformed, error = malformed)
+  withCallingHandlers(
+    tryCatch(
+      load_config(config_file),
+      error = malformed
+    ),
+    warning = function(w) {
+      warning("Warning encountered while loading config:\n  ", conditionMessage(w), call. = FALSE)
+      invokeRestart("muffleWarning")
+    }
+  )
   config
 }
 
