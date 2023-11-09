@@ -5,7 +5,6 @@
 ### Lint accuracy fixes: removing false positives
 * `unreachable_code_linter()` ignores inline functions like `function(x) if (x > 2) stop() else x` (#2259, @MEO265).
 
-
 # lintr 3.1.1
 
 ## Breaking changes
