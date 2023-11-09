@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -187,7 +187,7 @@
           
           <code><a href="conjunct_test_linter.html">conjunct_test_linter()</a></code> 
         </dt>
-        <dd>Force <code>&amp;&amp;</code> conditions in <code>expect_true()</code> and <code>expect_false()</code> to be written separately</dd>
+        <dd>Force <code>&amp;&amp;</code> conditions to be written separately where appropriate</dd>
       </dl><dl><dt>
           
           <code><a href="consecutive_assertion_linter.html">consecutive_assertion_linter()</a></code> 
@@ -295,6 +295,11 @@
         <dd>Lint common mistakes/style issues cropping up from return statements</dd>
       </dl><dl><dt>
           
+          <code><a href="if_not_else_linter.html">if_not_else_linter()</a></code> 
+        </dt>
+        <dd>Block statements like if (!A) x else y</dd>
+      </dl><dl><dt>
+          
           <code><a href="ifelse_censor_linter.html">ifelse_censor_linter()</a></code> 
         </dt>
         <dd>Block usage of <code><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse()</a></code> where <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin()</a></code> or <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax()</a></code> is more appropriate</dd>
@@ -330,9 +335,29 @@
         <dd>Redirect <code>is.numeric(x) || is.integer(x)</code> to just use <code>is.numeric(x)</code></dd>
       </dl><dl><dt>
           
+          <code><a href="keyword_quote_linter.html">keyword_quote_linter()</a></code> 
+        </dt>
+        <dd>Block unnecessary quoting in calls</dd>
+      </dl><dl><dt>
+          
+          <code><a href="length_levels_linter.html">length_levels_linter()</a></code> 
+        </dt>
+        <dd>Require usage of nlevels over length(levels(.))</dd>
+      </dl><dl><dt>
+          
+          <code><a href="length_test_linter.html">length_test_linter()</a></code> 
+        </dt>
+        <dd>Check for a common mistake where length is applied in the wrong place</dd>
+      </dl><dl><dt>
+          
           <code><a href="lengths_linter.html">lengths_linter()</a></code> 
         </dt>
         <dd>Require usage of <code><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths()</a></code> where possible</dd>
+      </dl><dl><dt>
+          
+          <code><a href="library_call_linter.html">library_call_linter()</a></code> 
+        </dt>
+        <dd>Library call linter</dd>
       </dl><dl><dt>
           
           <code><a href="line_length_linter.html">line_length_linter()</a></code> 
@@ -420,6 +445,11 @@
         <dd>Pipe call linter</dd>
       </dl><dl><dt>
           
+          <code><a href="pipe_consistency_linter.html">pipe_consistency_linter()</a></code> 
+        </dt>
+        <dd>Pipe consistency linter</dd>
+      </dl><dl><dt>
+          
           <code><a href="pipe_continuation_linter.html">pipe_continuation_linter()</a></code> 
         </dt>
         <dd>Pipe continuation linter</dd>
@@ -445,9 +475,19 @@
         <dd>Require usage of direct methods for subsetting strings via regex</dd>
       </dl><dl><dt>
           
+          <code><a href="repeat_linter.html">repeat_linter()</a></code> 
+        </dt>
+        <dd>Repeat linter</dd>
+      </dl><dl><dt>
+          
           <code><a href="routine_registration_linter.html">routine_registration_linter()</a></code> 
         </dt>
         <dd>Identify unregistered native routines</dd>
+      </dl><dl><dt>
+          
+          <code><a href="scalar_in_linter.html">scalar_in_linter()</a></code> 
+        </dt>
+        <dd>Block usage like x %in% "a"</dd>
       </dl><dl><dt>
           
           <code><a href="semicolon_linter.html">semicolon_linter()</a></code> 
@@ -462,7 +502,7 @@
           
           <code><a href="sort_linter.html">sort_linter()</a></code> 
         </dt>
-        <dd>Require usage of <code><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort()</a></code> over <code>.[order(.)]</code></dd>
+        <dd>Check for common mistakes around sorting vectors</dd>
       </dl><dl><dt>
           
           <code><a href="spaces_inside_linter.html">spaces_inside_linter()</a></code> 
@@ -637,9 +677,19 @@
         <dd>Use lintr in your project</dd>
       </dl><dl><dt>
           
+          <code><a href="make_linter_from_xpath.html">make_linter_from_xpath()</a></code> 
+        </dt>
+        <dd>Create a linter from an XPath</dd>
+      </dl><dl><dt>
+          
           <code><a href="xml_nodes_to_lints.html">xml_nodes_to_lints()</a></code> 
         </dt>
         <dd>Convert an XML node or nodeset into a Lint</dd>
+      </dl><dl><dt>
+          
+          <code><a href="xp_call_name.html">xp_call_name()</a></code> 
+        </dt>
+        <dd>Get the name of the function matched by an XPath</dd>
       </dl></div><div class="section level2">
       <h2 id="meta-tooling">Meta-tooling<a class="anchor" aria-label="anchor" href="#meta-tooling"></a></h2>
       
@@ -716,6 +766,11 @@
           <code><a href="package_development_linters.html">package_development_linters</a></code> 
         </dt>
         <dd>Package development linters</dd>
+      </dl><dl><dt>
+          
+          <code><a href="pkg_testthat_linters.html">pkg_testthat_linters</a></code> 
+        </dt>
+        <dd>Testthat linters</dd>
       </dl><dl><dt>
           
           <code><a href="readability_linters.html">readability_linters</a></code> 

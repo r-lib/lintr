@@ -14,7 +14,7 @@ or to be put in your configuration file."><!-- mathjax --><script src="https://c
     
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -138,18 +138,20 @@ tag found in both <code>tags</code> and <code>exclude_tags</code> will be includ
 <span class="r-out co"><span class="r-pr">#&gt;</span> [19] "extraction_operator_linter"       "function_argument_linter"        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21] "function_left_parentheses_linter" "implicit_assignment_linter"      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [23] "implicit_integer_linter"          "indentation_linter"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] "infix_spaces_linter"              "line_length_linter"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [27] "numeric_leading_zero_linter"      "object_length_linter"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [29] "object_name_linter"               "object_usage_linter"             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [31] "package_hooks_linter"             "paren_body_linter"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33] "pipe_call_linter"                 "pipe_continuation_linter"        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [35] "quotes_linter"                    "semicolon_linter"                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [37] "spaces_inside_linter"             "spaces_left_parentheses_linter"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [39] "T_and_F_symbol_linter"            "todo_comment_linter"             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [41] "trailing_blank_lines_linter"      "trailing_whitespace_linter"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [43] "undesirable_function_linter"      "undesirable_operator_linter"     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [45] "unnecessary_concatenation_linter" "whitespace_linter"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [47] "yoda_test_linter"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] "infix_spaces_linter"              "keyword_quote_linter"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [27] "library_call_linter"              "line_length_linter"              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [29] "numeric_leading_zero_linter"      "object_length_linter"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [31] "object_name_linter"               "object_usage_linter"             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33] "package_hooks_linter"             "paren_body_linter"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [35] "pipe_call_linter"                 "pipe_consistency_linter"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [37] "pipe_continuation_linter"         "quotes_linter"                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [39] "repeat_linter"                    "semicolon_linter"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [41] "spaces_inside_linter"             "spaces_left_parentheses_linter"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [43] "T_and_F_symbol_linter"            "todo_comment_linter"             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [45] "trailing_blank_lines_linter"      "trailing_whitespace_linter"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [47] "undesirable_function_linter"      "undesirable_operator_linter"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [49] "unnecessary_concatenation_linter" "whitespace_linter"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [51] "yoda_test_linter"                </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get all linters tagged as "default" from lintr and mypkg</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>

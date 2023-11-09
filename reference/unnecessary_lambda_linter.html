@@ -14,7 +14,7 @@ the former is more readable."><!-- mathjax --><script src="https://cdnjs.cloudfl
     
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,6 +77,12 @@ the former is more readable.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">unnecessary_lambda_linter</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Cases like <code>lapply(x, \(xi) grep("ptn", xi))</code> are excluded because, though
+the anonymous function <em>can</em> be avoided, doing so is not always more
+readable.</p>
+    </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><a href="linters.html">linters</a> for a complete list of linters available in lintr.</p></div>

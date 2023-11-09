@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,6 +71,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">parse_exclusions</span><span class="op">(</span></span>
 <span>  <span class="va">file</span>,</span>
 <span>  exclude <span class="op">=</span> <span class="va">settings</span><span class="op">$</span><span class="va">exclude</span>,</span>
+<span>  exclude_next <span class="op">=</span> <span class="va">settings</span><span class="op">$</span><span class="va">exclude_next</span>,</span>
 <span>  exclude_start <span class="op">=</span> <span class="va">settings</span><span class="op">$</span><span class="va">exclude_start</span>,</span>
 <span>  exclude_end <span class="op">=</span> <span class="va">settings</span><span class="op">$</span><span class="va">exclude_end</span>,</span>
 <span>  exclude_linter <span class="op">=</span> <span class="va">settings</span><span class="op">$</span><span class="va">exclude_linter</span>,</span>
@@ -87,32 +88,36 @@
 
 
 <dt>exclude</dt>
-<dd><p>regular expression used to mark lines to exclude</p></dd>
+<dd><p>Regular expression used to mark lines to exclude.</p></dd>
+
+
+<dt>exclude_next</dt>
+<dd><p>Regular expression used to mark lines immediately preceding excluded lines.</p></dd>
 
 
 <dt>exclude_start</dt>
-<dd><p>regular expression used to mark the start of an excluded range</p></dd>
+<dd><p>Regular expression used to mark the start of an excluded range.</p></dd>
 
 
 <dt>exclude_end</dt>
-<dd><p>regular expression used to mark the end of an excluded range</p></dd>
+<dd><p>Regular expression used to mark the end of an excluded range.</p></dd>
 
 
 <dt>exclude_linter</dt>
-<dd><p>regular expression used to capture a list of to-be-excluded linters immediately following a
+<dd><p>Regular expression used to capture a list of to-be-excluded linters immediately following a
 <code>exclude</code> or <code>exclude_start</code> marker.</p></dd>
 
 
 <dt>exclude_linter_sep</dt>
-<dd><p>regular expression used to split a linter list into individual linter names for exclusion.</p></dd>
+<dd><p>Regular expression used to split a linter list into individual linter names for exclusion.</p></dd>
 
 
 <dt>lines</dt>
-<dd><p>a character vector of the content lines of <code>file</code></p></dd>
+<dd><p>A character vector of the content lines of <code>file</code>.</p></dd>
 
 
 <dt>linter_names</dt>
-<dd><p>Names of active linters</p></dd>
+<dd><p>Names of active linters.</p></dd>
 
 </dl></div>
     <div class="section level2">

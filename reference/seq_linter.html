@@ -14,7 +14,7 @@ conjunction with seq() (e.g., seq(length(...)), seq(nrow(...)), etc.)."><!-- mat
     
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,7 +79,7 @@ conjunction with <code><a href="https://rdrr.io/r/base/seq.html" class="external
 
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Additionally, it checks for <code>1:n()</code> (from dplyr) and <code>1:.N</code> (from data.table).</p>
+    <p>Additionally, it checks for <code>1:n()</code> (from <code>{dplyr}</code>) and <code>1:.N</code> (from <code>{data.table}</code>).</p>
 <p>These often cause bugs when the right-hand side is zero.
 It is safer to use <code><a href="https://rdrr.io/r/base/seq.html" class="external-link">base::seq_len()</a></code> or <code><a href="https://rdrr.io/r/base/seq.html" class="external-link">base::seq_along()</a></code> instead.</p>
     </div>

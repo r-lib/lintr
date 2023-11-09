@@ -26,7 +26,7 @@ is exacerbated for nested calls
     
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,10 +95,36 @@ is exacerbated for nested calls</p></li>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Users can instead rely on a more readable alternative modeled after SQL
-CASE WHEN statements, such as <code><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">data.table::fcase()</a></code> or <code><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">dplyr::case_when()</a></code>,
-or use a look-up-and-merge approach (build a mapping table between values
-and outputs and merge this to the input).</p>
-    </div>
+CASE WHEN statements.</p>
+<p>Let's say this is our original code:</p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span></span>
+<span>  <span class="va">x</span> <span class="op">==</span> <span class="st">"a"</span>,</span>
+<span>  <span class="fl">2L</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">x</span> <span class="op">==</span> <span class="st">"b"</span>, <span class="fl">3L</span>, <span class="fl">1L</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre><p></p></div>
+<p>Here are a few ways to avoid nesting and make the code more readable:</p><ul><li><p>Use <code><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">data.table::fcase()</a></code></p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
+<span>  <span class="va">x</span> <span class="op">==</span> <span class="st">"a"</span>, <span class="fl">2L</span>,</span>
+<span>  <span class="va">x</span> <span class="op">==</span> <span class="st">"b"</span>, <span class="fl">3L</span>,</span>
+<span>  default <span class="op">=</span> <span class="fl">1L</span></span>
+<span><span class="op">)</span></span></code></pre><p></p></div></li>
+<li><p>Use <code><a href="https://dplyr.tidyverse.org/reference/case_match.html" class="external-link">dplyr::case_match()</a></code></p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_match.html" class="external-link">case_match</a></span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="st">"a"</span> <span class="op">~</span> <span class="fl">2L</span>,</span>
+<span>  <span class="st">"b"</span> <span class="op">~</span> <span class="fl">3L</span>,</span>
+<span>  .default <span class="op">=</span> <span class="fl">1L</span></span>
+<span><span class="op">)</span></span></code></pre><p></p></div></li>
+<li><p>Use a look-up-and-merge approach (build a mapping table between values
+and outputs and merge this to the input)</p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="va">default</span> <span class="op">&lt;-</span> <span class="fl">1L</span></span>
+<span><span class="va">values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  a <span class="op">=</span> <span class="fl">2L</span>,</span>
+<span>  b <span class="op">=</span> <span class="fl">3L</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">found_value</span> <span class="op">&lt;-</span> <span class="va">values</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">found_value</span><span class="op">)</span>, <span class="va">default</span>, <span class="va">found_value</span><span class="op">)</span></span></code></pre><p></p></div></li>
+</ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><a href="linters.html">linters</a> for a complete list of linters available in lintr.</p></div>

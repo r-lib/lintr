@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,15 +91,21 @@
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Exclusions can be specified in three different ways.</p><ol><li><p>single line in the source file. default: <code># nolint</code>, possibly followed by a listing of linters to exclude.
+    <p>Exclusions can be specified in three different ways.</p><ol><li><p>Single line in the source file. default: <code># nolint</code>, possibly followed by a listing of linters to exclude.
 If the listing is missing, all linters are excluded on that line. The default listing format is
 <code># nolint: linter_name, linter2_name.</code>. There may not be anything between the colon and the line exclusion tag
 and the listing must be terminated with a full stop (<code>.</code>) for the linter list to be respected.</p></li>
-<li><p>line range in the source file. default: <code># nolint start</code>, <code># nolint end</code>. <code># nolint start</code> accepts linter
+<li><p>Line range in the source file. default: <code># nolint start</code>, <code># nolint end</code>. <code># nolint start</code> accepts linter
 lists in the same form as <code># nolint</code>.</p></li>
-<li><p>exclusions parameter, a named list of files with named lists of linters and lines to exclude them on, a named
-list of the files and lines to exclude, or just the filenames if you want to exclude the entire file, or the
-directory names if you want to exclude all files in a directory.</p></li>
+<li><p>Exclusions parameter, a list with named and/or unnamed entries.
+Outer elements have the following characteristics:</p><ol><li><p>Unnamed elements specify filenames or directories.</p></li>
+<li><p>Named elements are a vector or list of line numbers, with <code>Inf</code> indicating 'all lines'.
+The name gives a path relative to the config.</p><ol><li><p>Unnamed elements denote exclusion of all linters in the given path or directory.</p></li>
+<li><p>Named elements, where the name specifies a linter, denote exclusion for that linter.
+For convenience, a vector can be used in place of a list whenever it would not introduce ambiguity, e.g.
+a character vector of files to exclude or a vector of lines to exclude.</p></li>
+</ol></li>
+</ol></li>
 </ol></div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
