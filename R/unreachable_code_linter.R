@@ -63,7 +63,7 @@ unreachable_code_linter <- function() {
   xpath_return_stop <- glue("
   (
     {expr_after_control}
-    | (//FUNCTION | //OP-LAMBDA)/following-sibling::expr
+    | (//FUNCTION | //OP-LAMBDA)[following-sibling::expr[1]/*[1][self::OP-LEFT-BRACE]]/following-sibling::expr[1]
   )
     /expr[expr[1][
       not(OP-DOLLAR or OP-AT)
