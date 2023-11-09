@@ -172,3 +172,47 @@ test_that("Do not lint stop on end of function", {
     return_linter()
   )
 })
+
+test_that("Do not lint stop on end of function", {
+  msg <- rex::rex("An explicit return at the end of a function is desired")
+
+  expect_lint(
+    trim_some("
+      function(x) {
+        switch(x, a = 1, 'b' = 2, '3' = 3, 4)
+      }
+    "),
+    msg,
+    return_linter(use_implicit_returns = FALSE)
+  )
+
+  expect_lint(
+    trim_some("
+      function(x) {
+        switch(x, a = return(1), 'b' = stop(2), '3' = return(3), 4)
+      }
+    "),
+    msg,
+    return_linter(use_implicit_returns = FALSE)
+  )
+
+  expect_lint(
+    trim_some("
+      function() {
+        switch(x, a = return(1), 'b' = stop(2), '3' = return(3))
+      }
+    "),
+    msg,
+    return_linter(use_implicit_returns = FALSE)
+  )
+
+  expect_lint(
+    trim_some("
+      function(x) {
+        switch(x, a = return(1), 'b' = stop(2), '3' = return(3), stop('End'))
+      }
+    "),
+    NULL,
+    return_linter(use_implicit_returns = FALSE)
+  )
+})

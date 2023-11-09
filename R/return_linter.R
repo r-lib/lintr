@@ -29,7 +29,17 @@ return_linter <- function(use_implicit_returns = TRUE) {
       expr[last()][
         expr[1][not(
           (not(OP-DOLLAR or OP-AT) and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop'])
-        )] and not(
+        )] and
+        expr[1][
+          not(
+            not(OP-DOLLAR or OP-AT) and SYMBOL_FUNCTION_CALL[text() = 'switch'] and
+            not(following-sibling::expr[position()>1][
+              not(descendant::SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop'])
+            ]) and
+            following-sibling::expr[position()>1][preceding-sibling::*[1][self::OP-COMMA]]
+          )
+        ] and
+        not(
           REPEAT or IF[
             following-sibling::ELSE[
               following-sibling::expr[1][
