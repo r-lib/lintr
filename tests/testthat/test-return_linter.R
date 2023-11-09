@@ -59,3 +59,123 @@ test_that("Lint return on end of lambda function", {
   )
 })
 
+test_that("Do not lint controll statments (with return) on end of function", {
+  expect_lint(
+    trim_some("
+      function() {
+        repeat {
+          cat(4)
+        }
+      }
+    "),
+    NULL,
+    return_linter(use_implicit_returns = FALSE)
+  )
+
+  expect_lint(
+    trim_some("
+      function() {
+        if(x) {
+          return(4)
+        } else if(y) {
+          return(5)
+        } else {
+          return(6)
+        }
+      }
+    "),
+    NULL,
+    return_linter(use_implicit_returns = FALSE)
+  )
+})
+
+test_that("Lint controll statments (without return) on end of function", {
+  msg <- rex::rex("An explicit return at the end of a function is desired")
+
+  expect_lint(
+    trim_some("
+      function() {
+        while(x > 4) {
+          cat(4)
+          if(x < 4) {
+            return(x)
+          }
+        }
+      }
+    "),
+    msg,
+    return_linter(use_implicit_returns = FALSE)
+  )
+
+  expect_lint(
+    trim_some("
+      function() {
+        for(i in 1:10) {
+          cat(4)
+          if(i > 11) {
+            return(x)
+          }
+        }
+      }
+    "),
+    msg,
+    return_linter(use_implicit_returns = FALSE)
+  )
+
+  expect_lint(
+    trim_some("
+      function() {
+        if(x == 2L){
+          return(e)
+        }
+      }
+    "),
+    msg,
+    return_linter(use_implicit_returns = FALSE)
+  )
+
+
+  expect_lint(
+    trim_some("
+      function() {
+        if(x == 2L){
+          return(e)
+        } else if(x == 3L) {
+          return(f)
+        }
+      }
+    "),
+    msg,
+    return_linter(use_implicit_returns = FALSE)
+  )
+
+  expect_lint(
+    trim_some("
+      function() {
+        if(x == 2L){
+          return(e)
+        } else if(x == 3L) {
+          cat(f)
+        }
+      }
+    "),
+    msg,
+    return_linter(use_implicit_returns = FALSE)
+  )
+
+  expect_lint(
+    trim_some("
+      function() {
+        if(x == 2L){
+          return(e)
+        } else if(x == 3L) {
+          cat(f)
+        } else {
+          return(g)
+        }
+      }
+    "),
+    msg,
+    return_linter(use_implicit_returns = FALSE)
+  )
+})

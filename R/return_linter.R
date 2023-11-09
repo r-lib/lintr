@@ -28,9 +28,16 @@ return_linter <- function(use_implicit_returns = TRUE) {
       /following-sibling::expr[1]/
       expr[last()][
         expr[1][not(
-          not(OP-DOLLAR or OP-AT)
-          and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']
-        )]
+          (not(OP-DOLLAR or OP-AT) and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop'])
+        )] and not(
+          REPEAT or IF[
+            following-sibling::ELSE[
+              following-sibling::expr[1][
+                descendant::SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']
+              ]
+            ]
+          ]
+        )
       ]
     "
     msg <- "An explicit return at the end of a function is desired"
