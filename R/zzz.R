@@ -282,18 +282,6 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #' @export
 default_settings <- NULL
 
-# TODO(R>=3.6.0): Just use sys.source() directly. Note that we can't
-#   write a wrapper that only passes keep.parse.data=FALSE on R>3.5.0
-#   (without doing some wizardry to evade R CMD check) because
-#   there is a check for arguments not matching the signature which
-#   will throw a false positive on R3.5.0. Luckily the argument
-#   defaults on R>=3.6.0 are dictated by global options, so we can use
-#   that for the wrapper here rather than doing some NSE tricks.
-sys_source <- function(...) {
-  old <- options(keep.source.pkgs = FALSE, keep.parse.data.pkgs = FALSE)
-  on.exit(options(old))
-  sys.source(...)
-}
 settings <- new.env(parent = emptyenv())
 
 # nocov start

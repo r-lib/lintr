@@ -138,9 +138,6 @@ try_silently <- function(expr) {
   )
 }
 
-# imitate sQuote(x, q) [requires R>=3.6]
-quote_wrap <- function(x, q) paste0(q, x, q)
-
 # interface to work like options() or setwd() -- returns the old value for convenience
 set_lang <- function(new_lang) {
   old_lang <- Sys.getenv("LANGUAGE", unset = NA)
