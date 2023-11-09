@@ -63,6 +63,14 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="lintr-development-version">lintr (development version)<a class="anchor" aria-label="anchor" href="#lintr-development-version"></a></h2>
+<div class="section level3">
+<h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
+<div class="section level4">
+<h4 id="lint-accuracy-fixes-removing-false-positives-development-version">Lint accuracy fixes: removing false positives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-positives-development-version"></a></h4>
+<ul><li>
+<code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code> ignores reachable code in inline functions like <code>function(x) if (x &gt; 2) stop() else x</code> (<a href="https://github.com/r-lib/lintr/issues/2259" class="external-link">#2259</a>, <a href="https://github.com/MEO265" class="external-link">@MEO265</a>).</li>
+</ul></div>
+</div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.1.1" id="lintr-311">lintr 3.1.1<a class="anchor" aria-label="anchor" href="#lintr-311"></a></h2><p class="text-muted">CRAN release: 2023-11-07</p>
