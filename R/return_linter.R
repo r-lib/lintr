@@ -17,7 +17,7 @@ return_linter <- function(use_implicit_returns = TRUE) {
       expr[last()][
         expr[1][
           not(OP-DOLLAR or OP-AT)
-          and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']
+          and SYMBOL_FUNCTION_CALL[text() = 'return']
         ]
       ]
     "

@@ -148,3 +148,27 @@ test_that("Lint controll statments (without return) on end of function", {
     return_linter(use_implicit_returns = FALSE)
   )
 })
+
+test_that("Do not lint stop on end of function", {
+  expect_lint(
+    trim_some("
+      function() {
+        # Test
+        3 + 4
+        stop(1)
+      }
+    "),
+    NULL,
+    return_linter(use_implicit_returns = FALSE)
+  )
+
+  expect_lint(
+    trim_some("
+      function() {
+        stop(1)
+      }
+    "),
+    NULL,
+    return_linter()
+  )
+})
