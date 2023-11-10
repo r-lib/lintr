@@ -84,6 +84,7 @@ sort_linter,readability best_practices efficiency
 spaces_inside_linter,style readability default
 spaces_left_parentheses_linter,style readability default
 sprintf_linter,correctness common_mistakes
+stopifnot_all_linter,readability best_practices
 string_boundary_linter,readability efficiency configurable
 strings_as_factors_linter,robustness
 system_file_linter,consistency readability best_practices

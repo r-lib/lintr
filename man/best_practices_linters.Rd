@@ -54,6 +54,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{scalar_in_linter}}}
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{sort_linter}}}
+\item{\code{\link{stopifnot_all_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
 \item{\code{\link{undesirable_function_linter}}}
