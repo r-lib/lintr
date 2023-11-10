@@ -103,7 +103,10 @@ test_that("Lint controll statments (without return) on end of function", {
         }
       }
     "),
-    msg,
+    list(
+      line_number = 2L,
+      message = msg
+    ),
     return_linter(use_implicit_returns = FALSE)
   )
 
@@ -118,7 +121,10 @@ test_that("Lint controll statments (without return) on end of function", {
         }
       }
     "),
-    msg,
+    list(
+      line_number = 2L,
+      message = msg
+    ),
     return_linter(use_implicit_returns = FALSE)
   )
 
@@ -130,7 +136,10 @@ test_that("Lint controll statments (without return) on end of function", {
         }
       }
     "),
-    msg,
+    list(
+      line_number = 2L,
+      message = msg
+    ),
     return_linter(use_implicit_returns = FALSE)
   )
 
@@ -144,7 +153,10 @@ test_that("Lint controll statments (without return) on end of function", {
         }
       }
     "),
-    msg,
+    list(
+      line_number = 2L,
+      message = msg
+    ),
     return_linter(use_implicit_returns = FALSE)
   )
 })
@@ -182,7 +194,10 @@ test_that("Do not lint stop on end of function", {
         switch(x, a = 1, 'b' = 2, '3' = 3, 4)
       }
     "),
-    msg,
+    list(
+      line_number = 2L,
+      message = msg
+    ),
     return_linter(use_implicit_returns = FALSE)
   )
 
@@ -192,17 +207,28 @@ test_that("Do not lint stop on end of function", {
         switch(x, a = return(1), 'b' = stop(2), '3' = return(3), 4)
       }
     "),
-    msg,
+    list(
+      line_number = 2L,
+      message = msg
+    ),
     return_linter(use_implicit_returns = FALSE)
   )
 
   expect_lint(
     trim_some("
       function() {
-        switch(x, a = return(1), 'b' = stop(2), '3' = return(3))
+        switch(
+          x,
+          a = return(1),
+          'b' = stop(2),
+          '3' = return(3)
+        )
       }
     "),
-    msg,
+    list(
+      line_number = 2L,
+      message = msg
+    ),
     return_linter(use_implicit_returns = FALSE)
   )
 
