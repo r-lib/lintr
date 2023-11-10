@@ -4,7 +4,7 @@
 #' @param allow_ns_usage Suppress lints for packages only used via namespace.
 #' This is `FALSE` by default because `pkg::fun()` doesn't require `library(pkg)`.
 #' You can use [requireNamespace("pkg")][requireNamespace()] to ensure a package is
-#' installed without loading it.
+#' installed without attaching it.
 #' @param except_packages Character vector of packages that are ignored.
 #' These are usually attached for their side effects.
 #'
