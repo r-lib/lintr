@@ -19,8 +19,8 @@
 #'   - [lint()] (in case of `lint_dir()` and `lint_package()`; e.g. `linters` or `cache`)
 #' @param cache When logical, toggle caching of lint results. If passed a character string, store the cache in this
 #'   directory.
-#' @param parse_settings Logical, default `TRUE`. Whether to try and parse the settings;
-#'   otherwise, the [default_settings()] are used.
+#' @param parse_settings Logical, default `TRUE`. Whether to try and parse the [settings][read_settings]. Otherwise,
+#'   the [default_settings()] are used.
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
 #'   linting is being done ad hoc.
 #'
