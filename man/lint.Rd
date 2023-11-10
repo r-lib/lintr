@@ -48,7 +48,7 @@ linters.}
 \item \code{\link[=lint]{lint()}} (in case of \code{lint_dir()} and \code{lint_package()}; e.g. \code{linters} or \code{cache})
 }}
 
-\item{cache}{When logical, toggle caching of lint results. I1f passed a character string, store the cache in this
+\item{cache}{When logical, toggle caching of lint results. If passed a character string, store the cache in this
 directory.}
 
 \item{parse_settings}{Logical, default \code{TRUE}. Whether to try and parse the settings;
