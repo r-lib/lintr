@@ -16,5 +16,5 @@ This linter checks for explicit \code{\link[=return]{return()}} at the end of a 
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=style_linters]{style}
+\link[=configurable_linters]{configurable}, \link[=style_linters]{style}
 }
