@@ -14,7 +14,7 @@ brace_linter(
 
 \item{function_braces}{Character specifying whether to require function bodies to be wrapped in curly braces.
 \code{"always"} requires braces for all function definitions, including inline functions.
-\code{"not_inline"} requires bracse when a functions body does not start on the same line as its header.
+\code{"not_inline"} requires braces when a function body does not start on the same line as its header.
 \code{"multi_line"} requires braces when a function definition spans multiple lines.
 \code{"never"} never requires braces in function bodies.}
 }
