@@ -15,6 +15,8 @@ test_that("comparison_negation_linter skips allowed usages", {
 })
 
 local({
+  linter <- comparison_negation_linter()
+
   comparators <- c("==", "!=", ">=", ">", "<=", "<")
   inverses <- c("!=", "==", "<", "<=", ">", ">=")
   patrick::with_parameters_test_that(
