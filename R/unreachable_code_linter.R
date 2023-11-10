@@ -1,6 +1,6 @@
 #' Block unreachable code and comments following return statements
 #'
-#' Code after a top-level [return()] or [stop()]
+#' Code after e.g. a [return()] or [stop()]
 #'   or in deterministically false conditional loops like `if (FALSE)` can't be reached;
 #'   typically this is vestigial code left after refactoring or sandboxing code, which
 #'   is fine for exploration, but shouldn't ultimately be checked in. Comments
@@ -55,18 +55,38 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unreachable_code_linter <- function() {
+  expr_after_control <- "
+    (//REPEAT | //ELSE | //FOR)/following-sibling::expr[1]
+    | (//IF | //WHILE)/following-sibling::expr[2]
+  "
   # NB: use not(OP-DOLLAR) to prevent matching process$stop(), #1051
-  xpath_return_stop <- "
-  (//FUNCTION | //OP-LAMBDA)
-    /following-sibling::expr
-    /expr[expr[1][not(OP-DOLLAR or OP-AT) and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]]
+  xpath_return_stop <- glue("
+  (
+    {expr_after_control}
+    | (//FUNCTION | //OP-LAMBDA)[following-sibling::expr[1]/*[1][self::OP-LEFT-BRACE]]/following-sibling::expr[1]
+  )
+    /expr[expr[1][
+      not(OP-DOLLAR or OP-AT)
+      and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']
+    ]]
     /following-sibling::*[
       not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON)
       and (not(self::COMMENT) or @line2 > preceding-sibling::*[1]/@line2)
     ][1]
-  "
+  ")
+  xpath_next_break <- glue("
+  ({expr_after_control})
+    /expr[NEXT or BREAK]
+    /following-sibling::*[
+      not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON)
+      and (not(self::COMMENT) or @line2 > preceding-sibling::*[1]/@line2)
+    ][1]
+  ")
+
   xpath_if_while <- "
-  (//WHILE | //IF)[following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']]/following-sibling::expr[2]
+  (//WHILE | //IF)
+    /following-sibling::expr[1][NUM_CONST[text() = 'FALSE']]
+    /following-sibling::expr[1]
   "
 
   xpath_else <- "
@@ -88,6 +108,13 @@ unreachable_code_linter <- function() {
     expr[vapply(expr, xml2::xml_length, integer(1L)) != 0L]
   }
 
+  # exclude comments that start with a nolint directive
+  drop_nolint_end_comment <- function(expr) {
+    is_nolint_end_comment <- xml2::xml_name(expr) == "COMMENT" &
+      re_matches(xml_text(expr), settings$exclude_end)
+    expr[!is_nolint_end_comment]
+  }
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
@@ -97,14 +124,19 @@ unreachable_code_linter <- function() {
 
     expr_return_stop <- xml_find_all(xml, xpath_return_stop)
 
-    # exclude comments that start with a nolint directive
-    is_nolint_end_comment <- xml2::xml_name(expr_return_stop) == "COMMENT" &
-      re_matches(xml_text(expr_return_stop), settings$exclude_end)
-
     lints_return_stop <- xml_nodes_to_lints(
-      expr_return_stop[!is_nolint_end_comment],
+      drop_nolint_end_comment(expr_return_stop),
       source_expression = source_expression,
-      lint_message = "Code and comments coming after a top-level return() or stop() should be removed.",
+      lint_message = "Code and comments coming after a return() or stop() should be removed.",
+      type = "warning"
+    )
+
+    expr_next_break <- xml_find_all(xml, xpath_next_break)
+
+    lints_next_break <- xml_nodes_to_lints(
+      drop_nolint_end_comment(expr_next_break),
+      source_expression = source_expression,
+      lint_message = "Code and comments coming after a `next` or `break` should be removed.",
       type = "warning"
     )
 
@@ -126,6 +158,6 @@ unreachable_code_linter <- function() {
       type = "warning"
     )
 
-    c(lints_return_stop, lints_if_while, lints_else)
+    c(lints_return_stop, lints_next_break, lints_if_while, lints_else)
   })
 }

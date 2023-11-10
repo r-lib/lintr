@@ -49,8 +49,8 @@ xp_or <- function(...) paren_wrap(..., sep = "or")
 
 #' Get the name of the function matched by an XPath
 #'
-#' Often, it is more helpful to custom-tailer the `message` of a lint to record
-#'   which function was matched by the lint logic. This function encapsualtes
+#' Often, it is more helpful to tailor the `message` of a lint to record
+#'   which function was matched by the lint logic. This function encapsulates
 #'   the logic to pull out the matched call in common situations.
 #'
 #' @param expr An `xml_node` or `xml_nodeset`, e.g. from [xml2::xml_find_all()].
@@ -112,7 +112,7 @@ xp_find_location <- function(xml, xpath) {
 
 #' Strip XPath 2.0-style comments from an XPath
 #'
-#' xml2 uses XPath 1.0, which has no support for comments. But comments are
+#' `{xml2}` uses XPath 1.0, which has no support for comments. But comments are
 #'   useful in a codebase with as many XPaths as we maintain, so we fudge our
 #'   way to XPath 2.0-ish support by writing this simple function to remove comments.
 #'

@@ -31,7 +31,7 @@ linters: linters_with_defaults(
     sort_linter(),
     sprintf_linter(),
     strings_as_factors_linter(),
-    undesirable_function_linter(c(Sys.setenv = NA_character_, mapply = NA_character_)),
+    undesirable_function_linter(c(Sys.setenv = NA_character_, mapply = NA_character_, structure = NA_character_)),
     unnecessary_nested_if_linter(),
     unnecessary_lambda_linter(),
     unnecessary_concatenation_linter(allow_single_expression = FALSE),

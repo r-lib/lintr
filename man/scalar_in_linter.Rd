@@ -8,7 +8,7 @@ scalar_in_linter()
 }
 \description{
 \code{vector \%in\% set} is appropriate for matching a vector to a set, but if
-that set has size 1, \code{==} is more appropriate. \verb{\%chin\%} from \code{data.table}
+that set has size 1, \code{==} is more appropriate. \verb{\%chin\%} from \code{{data.table}}
 is matched as well.
 }
 \details{

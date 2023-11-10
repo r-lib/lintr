@@ -157,7 +157,7 @@ test_that("next-line exclusion works", {
   withr::local_options(
     lintr.exclude = "# NL",
     lintr.exclude_next = "# NLN",
-    lintr.exlcude_linter = default_settings$exclude_linter
+    lintr.exclude_linter = default_settings$exclude_linter
   )
 
   linter <- assignment_linter()
