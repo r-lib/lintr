@@ -11,7 +11,7 @@
 #'   or the environment variable `R_LINTR_LINTER_FILE`
 #' This file is a DCF file, see [base::read.dcf()] for details.
 #' Experimentally, we also support keeping the config in a plain R file. By default we look for
-#'   a file named '.lintr.R' (in the same directories where we search for '.lintr').
+#'   a file named `.lintr.R` (in the same directories where we search for `.lintr`).
 #' We are still deciding the future of config support in lintr, so user feedback is welcome.
 #'   The advantage of R is that it maps more closely to how the configs are actually stored,
 #'   whereas the DCF approach requires somewhat awkward formatting of parseable R code within
@@ -20,7 +20,7 @@
 #"   otherwise "abusing" the ability to evaluate generic R code. Other recursive key-value stores
 #'   like YAML could work, but require new dependencies and are harder to parse
 #'   both programmatically and visually.
-#' @param filename source file to be linted
+#' @param filename Source file to be linted.
 read_settings <- function(filename) {
   reset_settings()
 
