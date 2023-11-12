@@ -1,0 +1,74 @@
+test_that("nzchar_linter skips allowed usages", {
+  linter <- nzchar_linter()
+
+  expect_lint("if (any(nzchar(x))) TRUE", NULL, linter)
+
+  expect_lint("letters == 'a'", NULL, linter)
+
+  expect_lint("which(nchar(x) == 4)", NULL, linter)
+  expect_lint("which(nchar(x) != 2)", NULL, linter)
+})
+
+test_that("nzchar_linter skips as appropriate for other nchar args", {
+  linter <- nzchar_linter()
+
+  # using type="width" can lead to 0-width strings that are counted as
+  #   nzchar, c.f. nchar("\u200b", type="width"), so don't lint this.
+  # type="bytes" should be >= the value for the default (type="chars")
+  expect_lint("nchar(x, type='width') == 0L", NULL, linter)
+
+  # TODO(michaelchirico): check compatibility of nchar(., allowNA=TRUE).
+  #   there are no examples in ?nchar, nor any relevant usages on StackOverflow.
+  #   just assume they are incompatible now to be conservative.
+  expect_lint("nchar(x, allowNA=TRUE) == 0L", NULL, linter)
+
+  # nzchar also has keepNA argument so a drop-in switch is easy
+  expect_lint(
+    "nchar(x, keepNA=TRUE) == 0",
+    rex::rex("Instead of comparing nchar(x) to 0"),
+    linter
+  )
+})
+
+test_that("nzchar_linter blocks simple disallowed usages", {
+  linter <- nzchar_linter()
+  lint_msg_quote <- rex::rex('Instead of comparing strings to "", use nzchar()')
+  lint_msg_nchar <- rex::rex("Instead of comparing nchar(x) to 0")
+
+  expect_lint("which(x == '')", lint_msg_quote, linter)
+  expect_lint("any(nchar(x) >= 0)", lint_msg_nchar, linter)
+  expect_lint("all(nchar(x) == 0L)", lint_msg_nchar, linter)
+  expect_lint("sum(0.0 < nchar(x))", lint_msg_nchar, linter)
+})
+
+test_that("nzchar_linter skips comparison to '' in if/while statements", {
+  linter <- nzchar_linter()
+  lint_msg_quote <- rex::rex('Instead of comparing strings to "", use nzchar()')
+  lint_msg_nchar <- rex::rex("Instead of comparing nchar(x) to 0")
+
+  # still lint nchar() comparisons
+  expect_lint("if (nchar(x) > 0) TRUE", lint_msg_nchar, linter)
+  expect_lint('if (x == "") TRUE', NULL, linter)
+  expect_lint('while (x == "") TRUE', NULL, linter)
+
+  # nested versions, a la nesting issues with vector_logic_linter
+  expect_lint('if (TRUE || (x == "" && FALSE)) TRUE', NULL, linter)
+  expect_lint('if (TRUE && x == "" && FALSE) TRUE', NULL, linter)
+  expect_lint('if (any(x == "")) TRUE', lint_msg_quote, linter)
+  expect_lint('if (TRUE || any(x == "" | FALSE)) TRUE', lint_msg_quote, linter)
+  expect_lint('foo(if (x == "") y else z)', NULL, linter)
+})
+
+test_that("multiple lints are generated correctly", {
+  expect_lint(
+    trim_some("{
+      a == ''
+      nchar(b) != 0
+    }"),
+    list(
+      rex::rex('Instead of comparing strings to ""'),
+      rex::rex("Instead of comparing nchar(x) to 0")
+    ),
+    nzchar_linter()
+  )
+})
