@@ -14,5 +14,5 @@ Functions that end in \code{close(x)} are almost always better written by using
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_bractices_linters]{best_bractices}, \link[=robustness_linters]{robustness}
+\link[=best_practices_linters]{best_practices}, \link[=robustness_linters]{robustness}
 }
