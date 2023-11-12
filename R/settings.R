@@ -56,7 +56,7 @@ read_config_file <- function(config_file) {
 
   config <- new.env()
   if (endsWith(config_file, ".R")) {
-    load_config <- function(file) sys.source(file, config, keep.source.pkgs = FALSE, keep.parse.data.pkgs = FALSE)
+    load_config <- function(file) sys.source(file, config, keep.source = FALSE, keep.parse.data = FALSE)
     malformed <- function(e) {
       stop("Malformed config file, ensure it is valid R syntax\n  ", conditionMessage(e), call. = FALSE)
     }
