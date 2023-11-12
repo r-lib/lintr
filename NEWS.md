@@ -7,7 +7,7 @@
 ### New linters
 
 * `comparison_negation_linter()` for discouraging negated comparisons when a direct negation is preferable, e.g. `!(x == y)` could be `x != y` (part of #884, @MichaelChirico).
-* `nzchar_linter()` for encouraging `nzchar()` to test for empty strings, e.g. `nchar(x) > 0` can be `nzchar(x)`.
+* `nzchar_linter()` for encouraging `nzchar()` to test for empty strings, e.g. `nchar(x) > 0` can be `nzchar(x)` (part of #884, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
 
