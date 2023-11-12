@@ -17,6 +17,7 @@ see also \code{\link[=available_tags]{available_tags()}}.
 \section{Tags}{
 The following tags exist:
 \itemize{
+\item{\link[=best_bractices_linters]{best_bractices} (1 linters)}
 \item{\link[=best_practices_linters]{best_practices} (53 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (8 linters)}
 \item{\link[=configurable_linters]{configurable} (34 linters)}
@@ -29,7 +30,7 @@ The following tags exist:
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
 \item{\link[=readability_linters]{readability} (55 linters)}
-\item{\link[=robustness_linters]{robustness} (14 linters)}
+\item{\link[=robustness_linters]{robustness} (15 linters)}
 \item{\link[=style_linters]{style} (38 linters)}
 }
 }
@@ -119,6 +120,7 @@ The following linters exist:
 \item{\code{\link{strings_as_factors_linter}} (tags: robustness)}
 \item{\code{\link{system_file_linter}} (tags: best_practices, consistency, readability)}
 \item{\code{\link{T_and_F_symbol_linter}} (tags: best_practices, consistency, default, readability, robustness, style)}
+\item{\code{\link{terminal_close_linter}} (tags: best_bractices, robustness)}
 \item{\code{\link{todo_comment_linter}} (tags: configurable, style)}
 \item{\code{\link{trailing_blank_lines_linter}} (tags: default, style)}
 \item{\code{\link{trailing_whitespace_linter}} (tags: configurable, default, style)}

@@ -169,6 +169,7 @@ Collate:
     'string_boundary_linter.R'
     'strings_as_factors_linter.R'
     'system_file_linter.R'
+    'terminal_close_linter.R'
     'trailing_blank_lines_linter.R'
     'trailing_whitespace_linter.R'
     'tree_utils.R'
