@@ -7,6 +7,7 @@
 ### New linters
 
 * `stopifnot_all_linter()` discourages tests with `all()` like `stopifnot(all(x > 0))`; `stopifnot()` runs `all()` itself, and uses a better error message (part of #884, @MichaelChirico).
+* `comparison_negation_linter()` for discouraging negated comparisons when a direct negation is preferable, e.g. `!(x == y)` could be `x != y` (part of #884, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
 
