@@ -5,13 +5,13 @@ test_that("stopifnot_all_linter skips allowed usages", {
 test_that("stopifnot_all_linter blocks simple disallowed usages", {
   expect_lint(
     "stopifnot(all(A))",
-    rex::rex("stopifnot(x) runs all() 'under the hood'"),
+    list(rex::rex("stopifnot(x) runs all() 'under the hood'"), column_number = 11L),
     stopifnot_all_linter()
   )
 
   expect_lint(
     "stopifnot(x, y, all(z))",
-    rex::rex("stopifnot(x) runs all() 'under the hood'"),
+    list(rex::rex("stopifnot(x) runs all() 'under the hood'"), column_number = 17L),
     stopifnot_all_linter()
   )
 })
