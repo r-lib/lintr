@@ -88,6 +88,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/common_mistakes_linters.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/comparison_negation_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/condition_message_linter.html</loc>
   </url>
   <url>
