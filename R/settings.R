@@ -11,7 +11,7 @@
 #'   or the environment variable `R_LINTR_LINTER_FILE`
 #' This file is a DCF file, see [base::read.dcf()] for details.
 #' Experimentally, we also support keeping the config in a plain R file. By default we look for
-#'   a file named '.lintr.R' (in the same directories where we search for '.lintr').
+#'   a file named `.lintr.R` (in the same directories where we search for `.lintr`).
 #' We are still deciding the future of config support in lintr, so user feedback is welcome.
 #'   The advantage of R is that it maps more closely to how the configs are actually stored,
 #'   whereas the DCF approach requires somewhat awkward formatting of parseable R code within
@@ -20,7 +20,7 @@
 #"   otherwise "abusing" the ability to evaluate generic R code. Other recursive key-value stores
 #'   like YAML could work, but require new dependencies and are harder to parse
 #'   both programmatically and visually.
-#' @param filename source file to be linted
+#' @param filename Source file to be linted.
 read_settings <- function(filename) {
   reset_settings()
 
@@ -64,17 +64,47 @@ read_config_file <- function(config_file) {
     load_config <- function(file) {
       dcf_values <- read.dcf(file, all = TRUE)
       for (setting in names(dcf_values)) {
-        tryCatch(
-          assign(setting, eval(str2lang(dcf_values[[setting]])), envir = config),
-          error = function(e) stop("Malformed config setting '", setting, "'\n  ", conditionMessage(e), call. = FALSE)
+        parsed_setting <- tryCatch(
+          str2lang(dcf_values[[setting]]),
+          error = function(e) {
+            stop("Malformed config setting '", setting, "':\n    ", conditionMessage(e), call. = FALSE)
+          }
         )
+        setting_value <- withCallingHandlers(
+          tryCatch(
+            eval(parsed_setting),
+            error = function(e) {
+              stop(
+                "Error from config setting '", setting, "' in '", format(conditionCall(e)), "':\n",
+                "    ", conditionMessage(e)
+              )
+            }
+          ),
+          warning = function(w) {
+            warning(
+              "Warning from config setting '", setting, "' in '", format(conditionCall(w)), "':\n",
+              "    ", conditionMessage(w)
+            )
+            invokeRestart("muffleWarning")
+          }
+        )
+        assign(setting, setting_value, envir = config)
       }
     }
     malformed <- function(e) {
-      stop("Malformed config file, ensure it ends in a newline\n  ", conditionMessage(e), call. = FALSE)
+      stop("Malformed config file:\n  ", conditionMessage(e), call. = FALSE)
     }
   }
-  tryCatch(load_config(config_file), warning = malformed, error = malformed)
+  withCallingHandlers(
+    tryCatch(
+      load_config(config_file),
+      error = malformed
+    ),
+    warning = function(w) {
+      warning("Warning encountered while loading config:\n  ", conditionMessage(w), call. = FALSE)
+      invokeRestart("muffleWarning")
+    }
+  )
   config
 }
 

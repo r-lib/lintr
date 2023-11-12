@@ -14,7 +14,7 @@ unused_import_linter(
 \item{allow_ns_usage}{Suppress lints for packages only used via namespace.
 This is \code{FALSE} by default because \code{pkg::fun()} doesn't require \code{library(pkg)}.
 You can use \link[=requireNamespace]{requireNamespace("pkg")} to ensure a package is
-installed without loading it.}
+installed without attaching it.}
 
 \item{except_packages}{Character vector of packages that are ignored.
 These are usually attached for their side effects.}

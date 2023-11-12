@@ -77,6 +77,7 @@ Collate:
     'commas_linter.R'
     'comment_linters.R'
     'comments.R'
+    'comparison_negation_linter.R'
     'condition_message_linter.R'
     'conjunct_test_linter.R'
     'consecutive_assertion_linter.R'
