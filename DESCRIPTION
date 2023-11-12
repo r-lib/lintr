@@ -37,7 +37,7 @@ Imports:
 Suggests:
     bookdown,
     crayon,
-    httr (>= 1.2.1),
+    httr2,
     jsonlite,
     mockery,
     patrick,
