@@ -85,10 +85,10 @@ test_that("multiple lints are generated correctly", {
       sample(seq(10), 2)
     }"),
     list(
-      rex::rex("sample(1:n"),
-      rex::rex("sample(n"),
-      rex::rex("sample(seq_len(n)"),
-      rex::rex("sample(seq(n)")
+      list(rex::rex("sample(1:n"), line_number = 2L, column_number = 3L),
+      list(rex::rex("sample(n"), line_number = 3L, column_number = 3L),
+      list(rex::rex("sample(seq_len(n)"), line_number = 4L, column_number = 3L),
+      list(rex::rex("sample(seq(n)"), line_number = 5L, column_number = 3L)
     ),
     sample_int_linter()
   )
