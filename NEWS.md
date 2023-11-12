@@ -4,6 +4,10 @@
 
 * More helpful errors for invalid configs (#2253, @MichaelChirico).
 
+### New linters
+
+* `comparison_negation_linter()` for discouraging negated comparisons when a direct negation is preferable, e.g. `!(x == y)` could be `x != y` (part of #884, @MichaelChirico).
+
 ### Lint accuracy fixes: removing false positives
 
 * `unreachable_code_linter()` ignores reachable code in inline functions like `function(x) if (x > 2) stop() else x` (#2259, @MEO265).
