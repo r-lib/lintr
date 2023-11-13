@@ -397,6 +397,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/sprintf_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/stopifnot_all_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/string_boundary_linter.html</loc>
   </url>
   <url>
