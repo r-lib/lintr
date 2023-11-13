@@ -166,6 +166,7 @@ Collate:
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'
     'sprintf_linter.R'
+    'stopifnot_all_linter.R'
     'string_boundary_linter.R'
     'strings_as_factors_linter.R'
     'system_file_linter.R'
