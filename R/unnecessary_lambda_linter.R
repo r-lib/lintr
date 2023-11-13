@@ -63,7 +63,6 @@ unnecessary_lambda_linter <- function() {
   #     c. that call's _first_ argument is just the function argument (a SYMBOL)
   #       - and it has to be passed positionally (not as a keyword)
   #     d. the function argument doesn't appear elsewhere in the call
-  # TODO(#1703): handle explicit returns too: function(x) return(x)
   default_fun_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[ {apply_funs} ]
     /parent::expr
