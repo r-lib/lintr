@@ -32,21 +32,27 @@ test_that("terminal_close_linter blocks simple cases", {
   linter <- terminal_close_linter()
   lint_msg <- rex::rex("Use on.exit(close(x)) to close connections")
 
-  lines <- trim_some("
-    foo <- function(bar) {
-      tmp <- tempfile()
-      writeLines(bar, tmp)
-      return(close(tmp))
-    }
-  ")
-  expect_lint(lines, lint_msg, linter)
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        tmp <- tempfile()
+        writeLines(bar, tmp)
+        return(close(tmp))
+      }
+    "),
+    list(lint_msg, line_number = 4L, column_number = 3L),
+    linter
+  )
 
-  lines <- trim_some("
-    foo <- function(bar) {
-      tmp <- tempfile()
-      writeLines(bar, tmp)
-      close(tmp)
-    }
-  ")
-  expect_lint(lines, lint_msg, linter)
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        tmp <- tempfile()
+        writeLines(bar, tmp)
+        close(tmp)
+      }
+    "),
+    list(lint_msg, line_number = 4L, column_number = 3L),
+    linter
+  )
 })
