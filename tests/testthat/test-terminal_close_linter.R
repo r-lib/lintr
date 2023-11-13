@@ -55,4 +55,20 @@ test_that("terminal_close_linter blocks simple cases", {
     list(lint_msg, line_number = 4L, column_number = 3L),
     linter
   )
+
+  # When multiple terminations happen, only lint the one
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        tmp1 <- tempfile()
+        tmp2 <- tempfile()
+        writeLines(bar, tmp1)
+        writeLines(bar, tmp2)
+        close(tmp1)
+        close(tmp2)
+      }
+    "),
+    list(lint_msg, line_number = 7L, column_number = 3L),
+    linter
+  )
 })
