@@ -12,15 +12,17 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 nzchar_linter <- function() {
+  comparator_nodes <- infix_metadata$xml_tag[infix_metadata$comparator]
+
   # use string-length to capture both "" and ''
   # if (any(x == "")) is not treated like it's part of if(), but
   #   any(if (x == "") y else z) _is_ treated so. this condition looks for the
   #   expr to be inside a call that's _not_ above an IF/WHILE.
-  comparison_xpath <- "
+  comparison_xpath <- glue("
   //STR_CONST[string-length(text()) = 2]
     /parent::expr
     /parent::expr[
-      (EQ or NE or LT or GT or LE or GE)
+      ({ xp_or(comparator_nodes) })
       and (
         not(ancestor-or-self::expr[
           preceding-sibling::IF
@@ -36,16 +38,16 @@ nzchar_linter <- function() {
         ]
       )
     ]
-  "
+  ")
 
   # nchar(., type="width") not strictly compatible with nzchar
   # unsure allowNA compatible, so allow it just in case (see TODO in tests)
-  nchar_xpath <- "
+  nchar_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'nchar']
     /parent::expr
     /parent::expr
     /parent::expr[
-      (EQ or NE or LT or GT or LE or GE)
+      ({ xp_or(comparator_nodes) })
       and not(expr[SYMBOL_SUB[
         (
           text() = 'type'
@@ -57,7 +59,7 @@ nzchar_linter <- function() {
       ]])
       and expr[NUM_CONST[text() = '0' or text() = '0L' or text() = '0.0']]
     ]
-  "
+  ")
 
   keepna_note <- paste(
     "Whenever missing data is possible,",
