@@ -80,10 +80,8 @@ nzchar_linter <- function() {
       source_expression = source_expression,
       lint_message = paste(
         'Instead of comparing strings to "", use nzchar().',
-        'An exception is carved out for comparing scalar strings to "" in',
-        "if/where conditions. Note that if x is a factor, you'll have use ",
-        "as.character() to cast x to character explicitly to replicate an ",
-        'implicit conversion that happens in x == "".',
+        "Note that if x is a factor, you'll have use ",
+        'as.character() to replicate an implicit conversion that happens in x == "".',
         keepna_note
       ),
       type = "warning"
