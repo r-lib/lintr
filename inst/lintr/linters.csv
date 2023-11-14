@@ -6,6 +6,7 @@ assignment_linter,style consistency default configurable
 backport_linter,robustness configurable package_development
 boolean_arithmetic_linter,efficiency best_practices readability
 brace_linter,style readability default configurable
+character_only_linter,consistency best_practices readability
 class_equals_linter,best_practices robustness consistency
 closed_curly_linter,style readability deprecated configurable
 commas_linter,style readability default configurable

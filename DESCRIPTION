@@ -73,6 +73,7 @@ Collate:
     'boolean_arithmetic_linter.R'
     'brace_linter.R'
     'cache.R'
+    'character_only_linter.R'
     'class_equals_linter.R'
     'commas_linter.R'
     'comment_linters.R'
