@@ -412,6 +412,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/system_file_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/terminal_close_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/todo_comment_linter.html</loc>
   </url>
   <url>
