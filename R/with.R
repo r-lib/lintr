@@ -145,7 +145,7 @@ all_linters <- function(packages = "lintr", ...) {
 #' The result of this function is meant to be passed to the `linters` argument of `lint()`,
 #' or to be put in your configuration file.
 #'
-#' @param defaults,default Default list of linters to modify. Must be named.
+#' @param defaults Default list of linters to modify. Must be named.
 #' @inheritParams linters_with_tags
 #' @examplesIf requireNamespace("withr", quietly = TRUE)
 #' # When using interactively you will usually pass the result onto `lint` or `lint_package()`
