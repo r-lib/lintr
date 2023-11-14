@@ -150,7 +150,7 @@ test_that("exclusions work with custom linter names", {
   )
 })
 
-test_that("compatibility warnings work", {
+test_that("old compatibility usage errors", {
   expect_error(
     expect_lint(
       "a == NA",
