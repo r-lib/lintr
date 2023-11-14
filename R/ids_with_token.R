@@ -29,7 +29,11 @@
 #' @export
 ids_with_token <- function(source_expression, value, fun = `==`, source_file = NULL) {
   if (!missing(source_file)) {
-    lintr_deprecated(old = "source_file", new = "source_expression", version = "3.0.0", type = "Argument", signal = "stop")
+    lintr_deprecated(
+      old = "source_file", new = "source_expression",
+      version = "3.0.0", type = "Argument",
+      signal = "stop"
+    )
   }
   if (!is_lint_level(source_expression, "expression")) {
     return(integer())
