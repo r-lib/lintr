@@ -7,11 +7,13 @@
 ### New linters
 
 * `sample_int_linter()` for encouraging `sample.int(n, ...)` over equivalents like `sample(1:n, ...)` (part of #884, @MichaelChirico).
+* `stopifnot_all_linter()` discourages tests with `all()` like `stopifnot(all(x > 0))`; `stopifnot()` runs `all()` itself, and uses a better error message (part of #884, @MichaelChirico).
 * `comparison_negation_linter()` for discouraging negated comparisons when a direct negation is preferable, e.g. `!(x == y)` could be `x != y` (part of #884, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
 
 * `unreachable_code_linter()` ignores reachable code in inline functions like `function(x) if (x > 2) stop() else x` (#2259, @MEO265).
+* `unnecessary_lambda_linter()` ignores extractions with explicit returns like `lapply(l, function(x) foo(x)$bar)` (#2258, @MichaelChirico).
 
 # lintr 3.1.1
 

@@ -56,7 +56,7 @@ read_config_file <- function(config_file) {
 
   config <- new.env()
   if (endsWith(config_file, ".R")) {
-    load_config <- function(file) sys_source(file, config)
+    load_config <- function(file) sys.source(file, config, keep.source = FALSE, keep.parse.data = FALSE)
     malformed <- function(e) {
       stop("Malformed config file, ensure it is valid R syntax\n  ", conditionMessage(e), call. = FALSE)
     }
@@ -231,10 +231,7 @@ get_encoding_from_dcf <- function(file) {
     warning = function(e) NULL
   )
 
-  if (!is.null(encodings)) {
-    # Produces a warning in R <= 3.5 if encoding is NULL
-    encodings <- encodings[!is.na(encodings)]
-  }
+  encodings <- encodings[!is.na(encodings)]
   if (length(encodings) > 0L) {
     return(encodings[1L])
   }

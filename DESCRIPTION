@@ -21,7 +21,7 @@ License: MIT + file LICENSE
 URL: https://github.com/r-lib/lintr, https://lintr.r-lib.org
 BugReports: https://github.com/r-lib/lintr/issues
 Depends:
-    R (>= 3.5)
+    R (>= 3.6)
 Imports:
     backports (>= 1.1.7),
     codetools,
@@ -167,6 +167,7 @@ Collate:
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'
     'sprintf_linter.R'
+    'stopifnot_all_linter.R'
     'string_boundary_linter.R'
     'strings_as_factors_linter.R'
     'system_file_linter.R'
