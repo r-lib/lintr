@@ -21,6 +21,7 @@ The following linters are tagged with 'robustness':
 \item{\code{\link{namespace_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
 \item{\code{\link{routine_registration_linter}}}
+\item{\code{\link{sample_int_linter}}}
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{strings_as_factors_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
