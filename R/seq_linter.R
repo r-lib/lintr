@@ -98,10 +98,12 @@ seq_linter <- function() {
     dot_expr1 <- get_fun(badx, 1L)
     dot_expr2 <- get_fun(badx, 2L)
     seq_along_idx <- grepl("length(", dot_expr1, fixed = TRUE) | grepl("length(", dot_expr2, fixed = TRUE)
+    dot_n_idx <- dot_expr1 == ".N" | dot_expr2 == ".N"
     rev_idx <- startsWith(dot_expr2, "1")
 
     replacement <- rep("seq_along(...)", length(badx))
     replacement[!seq_along_idx] <- paste0("seq_len(", ifelse(rev_idx, dot_expr1, dot_expr2)[!seq_along_idx], ")")
+    replacement[dot_n_idx] <- ".I"
     replacement[rev_idx] <- paste0("rev(", replacement[rev_idx], ")")
 
     lint_message <- ifelse(

@@ -96,7 +96,7 @@ test_that("finds 1:length(...) expressions", {
 
   expect_lint(
     "function(x) { x[, .id := 1:.N] }",
-    rex::rex(".N is", anything, "Use seq_len"),
+    rex::rex(".N is", anything, "Use .I"),
     linter
   )
 })
@@ -122,13 +122,15 @@ test_that("reverse seq is ok", {
 })
 
 test_that("Message vectorization works for multiple lints", {
+  linter <- seq_linter()
+
   expect_lint(
     "c(1:length(x), 1:nrow(y))",
     list(
       rex::rex("1:length(...)", anything, "seq_along(...)"),
       rex::rex("1:nrow(...)", anything, "seq_len(nrow(...))")
     ),
-    seq_linter()
+    linter
   )
 
   expect_lint(
@@ -137,7 +139,7 @@ test_that("Message vectorization works for multiple lints", {
       rex::rex("seq(length(...))", anything, "seq_along(...)"),
       rex::rex("1:nrow(...)", anything, "seq_len(nrow(...))")
     ),
-    seq_linter()
+    linter
   )
 
   expect_lint(
@@ -146,7 +148,7 @@ test_that("Message vectorization works for multiple lints", {
       rex::rex("seq(length(...))", anything, "seq_along(...)"),
       rex::rex("seq(nrow(...))", anything, "seq_len(nrow(...))")
     ),
-    seq_linter()
+    linter
   )
 
   expect_lint(
@@ -155,14 +157,24 @@ test_that("Message vectorization works for multiple lints", {
       rex::rex("1:NROW(...)", anything, "seq_len(NROW(...)"),
       rex::rex("seq(NCOL(...))", anything, "seq_len(NCOL(...))")
     ),
-    seq_linter()
+    linter
+  )
+
+  expect_lint(
+    "c(1:.N, .N:1, seq(length(x)))",
+    list(
+      rex::rex("1:.N", anything, "Use .I"),
+      rex::rex(".N:1", anything, "rev(.I)"),
+      rex::rex("seq(length(...))", anything, "seq_along(...)")
+    ),
+    linter
   )
 })
 
 test_that("Message recommends rev() correctly", {
   linter <- seq_linter()
 
-  expect_lint(".N:1", rex::rex("Use rev(seq_len(.N))"), linter)
+  expect_lint(".N:1", rex::rex("Use rev(.I)"), linter)
   expect_lint("n():1", rex::rex("Use rev(seq_len(n()))"), linter)
   expect_lint("nrow(x):1", rex::rex("Use rev(seq_len(nrow(...)))"), linter)
   expect_lint("length(x):1", rex::rex("Use rev(seq_along(...))"), linter)

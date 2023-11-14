@@ -3,6 +3,7 @@
 ## New and improved features
 
 * More helpful errors for invalid configs (#2253, @MichaelChirico).
+* Lint message for using `.N` from {data.table} like `1:.N` mentions the {data.table}-specific `.I` as an alternative (#2101, @MichaelChirico).
 
 ### New linters
 
