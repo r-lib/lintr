@@ -68,25 +68,16 @@ test_that("can instantiate all linters without arguments", {
   expect_length(really_all_linters, nrow(available_linters(exclude_tags = NULL)))
 })
 
-test_that("with_defaults is supported with a deprecation warning", {
-  defaults <- linters_with_defaults()
-  expect_warning(
-    {
-      old_defaults <- with_defaults()
-    },
+test_that("with_defaults is fully deprecated", {
+  expect_error(
+    old_defaults <- with_defaults(),
     rex::rex("Use linters_with_defaults or modify_defaults instead.")
   )
-  expect_identical(defaults, old_defaults)
 
-  # linters_with_defaults only accepts `defaults = list()` to start from blank
-  defaults <- linters_with_defaults(defaults = list(), whitespace_linter())
-  expect_warning(
-    {
-      old_defaults <- with_defaults(default = NULL, whitespace_linter())
-    },
+  expect_error(
+    old_defaults <- with_defaults(default = NULL, whitespace_linter()),
     rex::rex("Use linters_with_defaults or modify_defaults instead.")
   )
-  expect_identical(defaults, old_defaults)
 })
 
 test_that("modify_defaults works", {

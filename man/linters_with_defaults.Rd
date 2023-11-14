@@ -2,12 +2,9 @@
 % Please edit documentation in R/with.R
 \name{linters_with_defaults}
 \alias{linters_with_defaults}
-\alias{with_defaults}
 \title{Create a linter configuration based on defaults}
 \usage{
 linters_with_defaults(..., defaults = default_linters)
-
-with_defaults(..., default = default_linters)
 }
 \arguments{
 \item{...}{Arguments of elements to change. If unnamed, the argument is automatically named.
