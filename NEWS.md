@@ -1,5 +1,14 @@
 # lintr (development version)
 
+## Deprecations & breaking changes
+
+* Various things marked deprecated since {lintr} 3.0.0 have been fully deprecated. They will be completely removed in the subsequent release, if they aren't already here.
+   + `source_file=` argument to `ids_with_token()` and `with_id()`.
+   + Passing linters by name or as non-`"linter"`-classed functions.
+   + `linter=` argument of `Lint()`.
+   + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()` have all been removed.
+   + `with_defaults()`.
+
 ## New and improved features
 
 * More helpful errors for invalid configs (#2253, @MichaelChirico).
