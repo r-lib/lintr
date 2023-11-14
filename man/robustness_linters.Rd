@@ -25,6 +25,7 @@ The following linters are tagged with 'robustness':
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{strings_as_factors_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
+\item{\code{\link{terminal_close_linter}}}
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
 }

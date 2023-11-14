@@ -91,6 +91,7 @@ string_boundary_linter,readability efficiency configurable
 strings_as_factors_linter,robustness
 system_file_linter,consistency readability best_practices
 T_and_F_symbol_linter,style readability robustness consistency best_practices default
+terminal_close_linter,best_practices robustness
 todo_comment_linter,style configurable
 trailing_blank_lines_linter,style default
 trailing_whitespace_linter,style default configurable
