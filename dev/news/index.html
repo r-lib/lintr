@@ -69,6 +69,8 @@
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>
+<code><a href="../reference/sample_int_linter.html">sample_int_linter()</a></code> for encouraging <code>sample.int(n, ...)</code> over equivalents like <code>sample(1:n, ...)</code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
 <code><a href="../reference/stopifnot_all_linter.html">stopifnot_all_linter()</a></code> discourages tests with <code><a href="https://rdrr.io/r/base/all.html" class="external-link">all()</a></code> like <code>stopifnot(all(x &gt; 0))</code>; <code><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot()</a></code> runs <code><a href="https://rdrr.io/r/base/all.html" class="external-link">all()</a></code> itself, and uses a better error message (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/comparison_negation_linter.html">comparison_negation_linter()</a></code> for discouraging negated comparisons when a direct negation is preferable, e.g. <code>!(x == y)</code> could be <code>x != y</code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
