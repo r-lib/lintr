@@ -23,10 +23,10 @@ character_only_linter <- function() {
   "
 
   bad_indirect_funs <- c("do.call", "lapply", "sapply", "map", "walk")
-  call_symbol_cond <- R"{
+  call_symbol_cond <- "
   SYMBOL[text() = 'library' or text() = 'require']
-    or STR_CONST[text() = '"library"' or text() = '"require"']
-  }"
+    or STR_CONST[text() = '\"library\"' or text() = '\"require\"']
+  "
   indirect_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[{ xp_text_in_table(bad_indirect_funs) }]
     /parent::expr
