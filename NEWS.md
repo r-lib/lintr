@@ -10,6 +10,7 @@
 * `stopifnot_all_linter()` discourages tests with `all()` like `stopifnot(all(x > 0))`; `stopifnot()` runs `all()` itself, and uses a better error message (part of #884, @MichaelChirico).
 * `comparison_negation_linter()` for discouraging negated comparisons when a direct negation is preferable, e.g. `!(x == y)` could be `x != y` (part of #884, @MichaelChirico).
 * `terminal_close_linter()` for discouraging using `close()` to end functions (part of #884, @MichaelChirico). Such usages are not robust to errors, where `close()` will not be run as intended. Put `close()` in an `on.exit()` hook, or use {withr} to manage connections with proper cleanup.
+* `which_grepl_linter()` for discouraging `which(grepl(ptn, x))` in favor of directly using `grep(ptn, x)` (part of #884, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
 
