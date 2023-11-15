@@ -8,6 +8,31 @@
 #'   missing strings. `nzchar(NA_character_)` is `TRUE`, while `NA_character_ == ""`
 #'   and `nchar(NA_character_) == 0` are both `NA`.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "x[x == '']",
+#'   linters = nzchar_linter()
+#' )
+#'
+#' lint(
+#'   text = "x[nchar(x) > 0]",
+#'   linters = nzchar_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "x[nchar(x) > 1]",
+#'   linters = nzchar_linter()
+#' )
+#'
+#' # nzchar()'s primary benefit is for vector input;
+#' #   for guaranteed-scalar cases like if() conditions, comparing to "" is OK.
+#' lint(
+#'   text = "if (x == '') y",
+#'   linters = nzchar_linter()
+#' )
+#'
 #' @evalRd rd_tags("nzchar_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

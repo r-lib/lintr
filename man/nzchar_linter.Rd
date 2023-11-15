@@ -16,6 +16,32 @@ One crucial difference is in the default handling of \code{NA_character_}, i.e.,
 missing strings. \code{nzchar(NA_character_)} is \code{TRUE}, while \code{NA_character_ == ""}
 and \code{nchar(NA_character_) == 0} are both \code{NA}.
 }
+\examples{
+# will produce lints
+lint(
+  text = "x[x == '']",
+  linters = nzchar_linter()
+)
+
+lint(
+  text = "x[nchar(x) > 0]",
+  linters = nzchar_linter()
+)
+
+# okay
+lint(
+  text = "x[nchar(x) > 1]",
+  linters = nzchar_linter()
+)
+
+# nzchar()'s primary benefit is for vector input;
+#   for guaranteed-scalar cases like if() conditions, comparing to "" is OK.
+lint(
+  text = "if (x == '') y",
+  linters = nzchar_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
