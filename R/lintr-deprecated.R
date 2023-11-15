@@ -5,23 +5,12 @@
 #'
 #' These functions have been deprecated from lintr.
 #'
-#' - `open_curly_linter()` and `closed_curly_linter()` check that open and closed curly braces
-#'   are on their own line unless they follow an else, a comma, or a closing bracket.
-#'   Deprecated in favor of [brace_linter()].
+#' - `open_curly_linter()` (use [brace_linter()])
+#' - `closed_curly_linter()` (use `brace_linter`)
+#' - `paren_brace_linter()` (use `brace_linter()`)
+#' - `semicolon_terminator_linter()` (use [semicolon_linter()])
 #'
-#' - `paren_brace_linter()` checks that there is a space between right parentheses and an opening
-#'    curly brace. E.g., `function(){}` doesn't have a space, while `function() {}` does.
-#'    Deprecated in favor of [brace_linter()].
-#'
-#' - `semicolon_terminator_linter()` checks that no semicolons terminate expressions.
-#'    Deprecated in favor of [semicolon_linter()].
-#'
-#' @param allow_single_line if `TRUE`, allow an open and closed curly pair on the same line.
-#' @param semicolon A character vector defining which semicolons to report:
-#' \describe{
-#'   \item{compound}{Semicolons that separate two statements on the same line.}
-#'   \item{trailing}{Semicolons following the last statement on the line.}
-#' }
+#' @param allow_single_line,semicolon Irrelevant parameters to defunct linters.
 #'
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @evalRd rd_tags("single_quotes_linter")

@@ -32,25 +32,15 @@ no_tab_linter()
 with_defaults(..., default = default_linters)
 }
 \arguments{
-\item{allow_single_line}{if \code{TRUE}, allow an open and closed curly pair on the same line.}
-
-\item{semicolon}{A character vector defining which semicolons to report:
-\describe{
-\item{compound}{Semicolons that separate two statements on the same line.}
-\item{trailing}{Semicolons following the last statement on the line.}
-}}
+\item{allow_single_line, semicolon}{Irrelevant parameters to defunct linters.}
 }
 \description{
 These functions have been deprecated from lintr.
 \itemize{
-\item \code{open_curly_linter()} and \code{closed_curly_linter()} check that open and closed curly braces
-are on their own line unless they follow an else, a comma, or a closing bracket.
-Deprecated in favor of \code{\link[=brace_linter]{brace_linter()}}.
-\item \code{paren_brace_linter()} checks that there is a space between right parentheses and an opening
-curly brace. E.g., \code{function(){}} doesn't have a space, while \code{function() {}} does.
-Deprecated in favor of \code{\link[=brace_linter]{brace_linter()}}.
-\item \code{semicolon_terminator_linter()} checks that no semicolons terminate expressions.
-Deprecated in favor of \code{\link[=semicolon_linter]{semicolon_linter()}}.
+\item \code{open_curly_linter()} (use \code{\link[=brace_linter]{brace_linter()}})
+\item \code{closed_curly_linter()} (use \code{brace_linter})
+\item \code{paren_brace_linter()} (use \code{brace_linter()})
+\item \code{semicolon_terminator_linter()} (use \code{\link[=semicolon_linter]{semicolon_linter()}})
 }
 }
 \seealso{
