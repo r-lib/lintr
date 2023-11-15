@@ -14,6 +14,7 @@ The following linters are tagged with 'readability':
 \itemize{
 \item{\code{\link{boolean_arithmetic_linter}}}
 \item{\code{\link{brace_linter}}}
+\item{\code{\link{closed_curly_linter}}}
 \item{\code{\link{commas_linter}}}
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{comparison_negation_linter}}}
@@ -45,8 +46,10 @@ The following linters are tagged with 'readability':
 \item{\code{\link{numeric_leading_zero_linter}}}
 \item{\code{\link{object_length_linter}}}
 \item{\code{\link{object_usage_linter}}}
+\item{\code{\link{open_curly_linter}}}
 \item{\code{\link{outer_negation_linter}}}
 \item{\code{\link{paren_body_linter}}}
+\item{\code{\link{paren_brace_linter}}}
 \item{\code{\link{pipe_call_linter}}}
 \item{\code{\link{pipe_consistency_linter}}}
 \item{\code{\link{pipe_continuation_linter}}}
@@ -56,6 +59,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{sample_int_linter}}}
 \item{\code{\link{scalar_in_linter}}}
 \item{\code{\link{semicolon_linter}}}
+\item{\code{\link{semicolon_terminator_linter}}}
 \item{\code{\link{sort_linter}}}
 \item{\code{\link{spaces_inside_linter}}}
 \item{\code{\link{spaces_left_parentheses_linter}}}

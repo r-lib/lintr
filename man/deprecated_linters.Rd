@@ -5,7 +5,7 @@
 \title{Deprecated linters}
 \description{
 Linters that are deprecated and provided for backwards compatibility only.
-These linters will be excluded from \code{linters_with_tags()} by default.
+These linters will be excluded from \code{\link[=linters_with_tags]{linters_with_tags()}} by default.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
