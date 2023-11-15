@@ -10,6 +10,20 @@ which_grepl_linter()
 \code{which(grepl(pattern, x))} is the same as \code{grep(pattern, x)}, but harder
 to read and requires two passes over the vector.
 }
+\examples{
+# will produce lints
+lint(
+  text = "which(grepl('^a', x))",
+  linters = which_grepl_linter()
+)
+
+# okay
+lint(
+  text = "which(grepl('^a', x) | grepl('^b', x))",
+  linters = which_grepl_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

@@ -3,6 +3,19 @@
 #' `which(grepl(pattern, x))` is the same as `grep(pattern, x)`, but harder
 #'   to read and requires two passes over the vector.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "which(grepl('^a', x))",
+#'   linters = which_grepl_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "which(grepl('^a', x) | grepl('^b', x))",
+#'   linters = which_grepl_linter()
+#' )
+#'
 #' @evalRd rd_tags("which_grepl_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
