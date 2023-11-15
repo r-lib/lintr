@@ -8,6 +8,8 @@
    + `linter=` argument of `Lint()`.
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`..
    + `with_defaults()`.
+   + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
+   + Helper `with_defaults()`.
 
 ## New and improved features
 
