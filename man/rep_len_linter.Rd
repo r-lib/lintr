@@ -8,7 +8,7 @@ rep_len_linter()
 }
 \description{
 \code{rep(x, length.out = n)} calls \code{rep_len(x, n)} "under the hood". The latter
-is thus more direct and equally readable. See also \code{\link[=SampleIntLinter]{SampleIntLinter()}}.
+is thus more direct and equally readable.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
