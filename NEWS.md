@@ -7,7 +7,7 @@
    + Passing linters by name or as non-`"linter"`-classed functions.
    + `linter=` argument of `Lint()`.
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
-   + `with_defaults()`.
+   + Helper `with_defaults()`.
 
 ## New and improved features
 
