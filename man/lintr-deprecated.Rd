@@ -45,12 +45,12 @@ These functions have been deprecated from lintr.
 \itemize{
 \item \code{open_curly_linter()} and \code{closed_curly_linter()} check that open and closed curly braces
 are on their own line unless they follow an else, a comma, or a closing bracket.
-Deprecated in favor of \code{brace_linter()}.
+Deprecated in favor of \code{\link[=brace_linter]{brace_linter()}}.
 \item \code{paren_brace_linter()} checks that there is a space between right parentheses and an opening
 curly brace. E.g., \code{function(){}} doesn't have a space, while \code{function() {}} does.
-Deprecated in favor of \code{brace_linter()}.
+Deprecated in favor of \code{\link[=brace_linter]{brace_linter()}}.
 \item \code{semicolon_terminator_linter()} checks that no semicolons terminate expressions.
-Deprecated in favor of \code{semicolon_linter()}.
+Deprecated in favor of \code{\link[=semicolon_linter]{semicolon_linter()}}.
 }
 }
 \seealso{
@@ -58,5 +58,5 @@ Deprecated in favor of \code{semicolon_linter()}.
 }
 \keyword{internal}
 \section{Tags}{
-\link[=configurable_linters]{configurable}, \link[=defunct_linters]{defunct}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=consistency_linters]{consistency}, \link[=deprecated_linters]{deprecated}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }

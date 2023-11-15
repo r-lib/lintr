@@ -58,7 +58,8 @@ available_linters <- function(packages = "lintr", tags = NULL, exclude_tags = "d
   }
 
   # any tags specified explicitly will not be excluded (#1959)
-  exclude_tags <- setdiff(exclude_tags, tags)
+  # never include defunct linters, which don't work / error on instantiation (#2284).
+  exclude_tags <- unique(c(setdiff(exclude_tags, tags), "defunct"))
 
   # Handle multiple packages
   if (length(packages) > 1L) {

@@ -90,15 +90,6 @@ NULL
 #' @seealso [linters] for a complete list of linters available in lintr.
 NULL
 
-#' Defunct linters
-#' @name defunct_linters
-#' @description
-#' Linters that are fully deprecated and slated for removal. They do not work,
-#'   and are always excluded from [linters_with_tags()].
-#' @evalRd rd_linters("defunct")
-#' @seealso [linters] for a complete list of linters available in lintr.
-NULL
-
 #' Code executing linters
 #' @name executing_linters
 #' @description

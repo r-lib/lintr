@@ -24,7 +24,7 @@
 #' }
 #'
 #' @seealso [linters] for a complete list of linters available in lintr.
-#' @evalRd rd_tags("closed_curly_linter")
+#' @evalRd rd_tags("single_quotes_linter")
 #' @keywords internal
 NULL
 
