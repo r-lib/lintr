@@ -154,6 +154,7 @@ Collate:
     'redundant_equals_linter.R'
     'redundant_ifelse_linter.R'
     'regex_subset_linter.R'
+    'rep_len_linter.R'
     'repeat_linter.R'
     'routine_registration_linter.R'
     'sample_int_linter.R'
