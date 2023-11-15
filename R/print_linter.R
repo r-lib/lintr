@@ -7,7 +7,7 @@
 #'   to [sprintf()] for constructing templated strings). Lastly, note that [message()] differs slightly
 #'   from `cat()` in that it prints to `stderr` by default, not `stdout`, but is still a good option
 #'   to consider for logging purposes.
-#' 
+#'
 #' @examples
 #' # will produce lints
 #' lint(
@@ -40,5 +40,6 @@ print_linter <- make_linter_from_xpath(
         ]
       ]]
   ",
-  lint_message = "Use cat() instead of print() logging messages. Use message() in cases calling for a signalled condition."
+  lint_message =
+    "Use cat() instead of print() logging messages. Use message() in cases calling for a signalled condition."
 )

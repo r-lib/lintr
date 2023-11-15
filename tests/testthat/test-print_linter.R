@@ -9,7 +9,7 @@ test_that("print_linter blocks disallowed usages", {
   linter <- print_linter()
   lint_msg <-
     rex::rex("Use cat() instead of print() logging messages. Use message() in cases calling for a signalled condition.")
-  
+
   expect_lint('print("hi")', lint_msg, linter)
 
   # basic known-character functions
@@ -17,7 +17,7 @@ test_that("print_linter blocks disallowed usages", {
   expect_lint('print(paste0(x, "c", y))', lint_msg, linter)
   expect_lint('print(sprintf("a %s", x))', lint_msg, linter)
 
-  # vectorization + metadata
+  # vectorization, metadata
   expect_lint(
     trim_some("{
       print('a')
