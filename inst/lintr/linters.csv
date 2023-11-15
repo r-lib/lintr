@@ -30,7 +30,7 @@ expect_s4_class_linter,package_development best_practices pkg_testthat
 expect_true_false_linter,package_development best_practices readability pkg_testthat
 expect_type_linter,package_development best_practices pkg_testthat
 extraction_operator_linter,style best_practices
-fixed_regex_linter,best_practices readability efficiency configurable
+fixed_regex_linter,best_practices readability efficiency configurable regex
 for_loop_index_linter,best_practices readability robustness
 function_argument_linter,style consistency best_practices
 function_left_parentheses_linter,style readability default
@@ -73,7 +73,7 @@ pipe_continuation_linter,style readability default
 quotes_linter,style consistency readability default configurable
 redundant_equals_linter,best_practices readability efficiency common_mistakes
 redundant_ifelse_linter,best_practices efficiency consistency configurable
-regex_subset_linter,best_practices efficiency
+regex_subset_linter,best_practices efficiency regex
 repeat_linter,style readability
 routine_registration_linter,best_practices efficiency robustness
 sample_int_linter,efficiency readability robustness
@@ -87,7 +87,7 @@ spaces_inside_linter,style readability default
 spaces_left_parentheses_linter,style readability default
 sprintf_linter,correctness common_mistakes
 stopifnot_all_linter,readability best_practices
-string_boundary_linter,readability efficiency configurable
+string_boundary_linter,readability efficiency configurable regex
 strings_as_factors_linter,robustness
 system_file_linter,consistency readability best_practices
 T_and_F_symbol_linter,style readability robustness consistency best_practices default
@@ -105,6 +105,6 @@ unneeded_concatenation_linter,style readability efficiency configurable deprecat
 unreachable_code_linter,best_practices readability
 unused_import_linter,best_practices common_mistakes configurable executing
 vector_logic_linter,default efficiency best_practices
-which_grepl_linter,readability efficiency consistency
+which_grepl_linter,readability efficiency consistency regex
 whitespace_linter,style consistency default
 yoda_test_linter,package_development best_practices readability pkg_testthat
