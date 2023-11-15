@@ -7,7 +7,7 @@
 #'   returned. If `tags` is `NULL`, all linters will be returned. See `available_tags("lintr")` to find out what
 #'   tags are already used by lintr.
 #' @param exclude_tags Tags to exclude from the results. Linters with at least one matching tag will not be returned.
-#'   If `except_tags` is `NULL`, no linters will be excluded. Note that `tags` takes priority, meaning that any
+#'   If `exclude_tags` is `NULL`, no linters will be excluded. Note that `tags` takes priority, meaning that any
 #'   tag found in both `tags` and `exclude_tags` will be included, not excluded. Note that linters with tag `"defunct"`
 #'   (which do not work and can no longer be run) cannot be queried directly. See [lintr-deprecated] instead.
 #'
