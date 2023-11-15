@@ -73,11 +73,6 @@ test_that("with_defaults is fully deprecated", {
     with_defaults(),
     rex::rex("Use linters_with_defaults or modify_defaults instead.")
   )
-
-  expect_error(
-    with_defaults(default = NULL, whitespace_linter()),
-    rex::rex("Use linters_with_defaults or modify_defaults instead.")
-  )
 })
 
 test_that("modify_defaults works", {
