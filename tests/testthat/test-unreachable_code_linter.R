@@ -394,10 +394,10 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", {
     trim_some("
       foo <- function() {
         do_something
-        # nolint start: one_linter.
+        # TestNoLintStart: one_linter.
         a = 42
         next
-        # nolint end
+        # TestNoLintEnd
       }
     "),
     NULL,
