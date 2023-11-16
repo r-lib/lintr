@@ -128,31 +128,31 @@ test_that("require() treated the same as library()", {
   lint_message_require <- rex::rex("Move all require calls to the top of the script.")
 
   expect_lint(
-    trim_some('
+    trim_some("
       library(dplyr)
       require(tidyr)
-    '),
+    "),
     NULL,
     linter
   )
 
   expect_lint(
-    trim_some('
+    trim_some("
       library(dplyr)
       print(letters)
       require(tidyr)
-    '),
+    "),
     list(lint_message_require, line_number = 3L),
     linter
   )
 
   expect_lint(
-    trim_some('
+    trim_some("
       library(dplyr)
       print(letters)
       library(dbplyr)
       require(tidyr)
-    '),
+    "),
     list(
       list(lint_message_library, line_number = 3L),
       list(lint_message_require, line_number = 4L)

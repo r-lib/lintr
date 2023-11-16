@@ -60,7 +60,7 @@
 #'   text = code,
 #'   linters = library_call_linter()
 #' )
-#' 
+#'
 #' @evalRd rd_tags("library_call_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
