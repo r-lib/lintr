@@ -44,7 +44,7 @@ code <- paste(
 writeLines(code)
 lint(
   text = code,
-  library_call_linter()
+  linters = library_call_linter()
 )
 
 # okay
@@ -70,7 +70,7 @@ code <- paste(
 writeLines(code)
 lint(
   text = code,
-  library_call_linter()
+  linters = library_call_linter()
 )
 
 }
