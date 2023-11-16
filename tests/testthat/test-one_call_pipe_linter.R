@@ -1,0 +1,97 @@
+test_that("one_call_pipe_linter skips allowed usages", {
+  linter <- one_call_pipe_linter()
+
+  # two pipe steps is OK
+  expect_lint("x %>% foo() %>% bar()", NULL, linter)
+  # call in first step --> OK
+  expect_lint("foo(x) %>% bar()", NULL, linter)
+  # both calls in second step --> OK
+  expect_lint("x %>% foo(bar(.))", NULL, linter)
+})
+
+test_that("one_call_pipe_linter blocks simple disallowed usages", {
+  linter <- one_call_pipe_linter()
+  lint_msg <- rex::rex("Expressions with only a single call shouldn't use pipe %>%.")
+
+  expect_lint("x %>% foo()", lint_msg, linter)
+
+  # new lines don't matter
+  expect_lint("x %>%\n  foo()", lint_msg, linter)
+
+  # catch the "inner" pipe chain, not the "outer" one
+  # TODO(michaelchirico): actually, this should lint twice -- we're too aggressive
+  #   in counting _all_ nested calls.
+  expect_lint("x %>% inner_join(y %>% filter(is_treatment))", lint_msg, linter)
+})
+
+test_that("one_call_pipe_linter skips data.table chains", {
+  linter <- one_call_pipe_linter()
+  lint_msg <- rex::rex("Expressions with only a single call shouldn't use pipe %>%.")
+
+  expect_lint("DT[x > 5, sum(y), by = keys] %>% .[, .SD[1], by = key1]", NULL, linter)
+
+  # lint here: instead of a pipe, use DT[x > 5, sum(y), by = keys]
+  expect_lint("DT %>% .[x > 5, sum(y), by = keys]", lint_msg, linter)
+
+  # ditto for [[
+  expect_lint("DT %>% rowSums() %>% .[[idx]]", NULL, linter)
+
+  expect_lint("DT %>% .[[idx]]", lint_msg, linter)
+})
+
+test_that("one_call_pipe_linter treats all pipes equally", {
+  linter <- one_call_pipe_linter()
+
+  expect_lint("foo %>% bar() %$% col", NULL, linter)
+  expect_lint(
+    "x %T>% foo()",
+    rex::rex("Expressions with only a single call shouldn't use pipe %T>%."),
+    linter
+  )
+  expect_lint(
+    "x %$%\n  foo()",
+    rex::rex("Expressions with only a single call shouldn't use pipe %$%."),
+    linter
+  )
+  expect_lint(
+    'data %>% filter(type == "console") %$% obscured_gaia_id %>% unique()',
+    NULL,
+    linter
+  )
+})
+
+test_that("multiple lints are generated correctly", {
+  expect_lint(
+    trim_some("{
+      a %>% b()
+      c %$% d()
+      e %T>% f()
+    }"),
+    list(
+      list(message = "pipe %>%"),
+      list(message = "pipe %\\$%"),
+      list(message = "pipe %T>%")
+    ),
+    one_call_pipe_linter()
+  )
+})
+
+test_that("Native pipes are handled as well", {
+  expect_lint(
+    "x |> foo()",
+    rex::rex("Expressions with only a single call shouldn't use pipe |>."),
+    one_call_pipe_linter()
+  )
+
+  expect_lint(
+    trim_some("{
+      a %>% b()
+      c |> d()
+    }"),
+    list(
+      list(message = "pipe %>%"),
+      list(message = "pipe |>")
+    ),
+    one_call_pipe_linter()
+  )
+})
