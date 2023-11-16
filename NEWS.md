@@ -3,6 +3,7 @@
 ## New and improved features
 
 * More helpful errors for invalid configs (#2253, @MichaelChirico).
+* `library_call_linter()` is extended to encouraging all packages to be attached with `library(symbol)`, not `library("symbol", character.only = TRUE)` or "vectorized" approaches looping over package names (part of #884, @MichaelChirico).
 
 ### New linters
 
@@ -10,7 +11,6 @@
 * `stopifnot_all_linter()` discourages tests with `all()` like `stopifnot(all(x > 0))`; `stopifnot()` runs `all()` itself, and uses a better error message (part of #884, @MichaelChirico).
 * `comparison_negation_linter()` for discouraging negated comparisons when a direct negation is preferable, e.g. `!(x == y)` could be `x != y` (part of #884, @MichaelChirico).
 * `terminal_close_linter()` for discouraging using `close()` to end functions (part of #884, @MichaelChirico). Such usages are not robust to errors, where `close()` will not be run as intended. Put `close()` in an `on.exit()` hook, or use {withr} to manage connections with proper cleanup.
-* `character_only_linter()` for encouraging all attached packages to be included with `library(symbol)`, not `library("symbol", character.only = TRUE)` or "vectorized" approaches looping over package names (part of #884, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
 
