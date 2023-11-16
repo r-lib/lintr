@@ -13,7 +13,7 @@
 #' # will produce lints
 #'
 #' code <- "library(dplyr)\nprint('test')\nlibrary(tidyr)"
-#' writeLines(ode)
+#' writeLines(code)
 #' lint(
 #'   text = code,
 #'   linters = library_call_linter()
