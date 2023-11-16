@@ -55,7 +55,7 @@ lint(
   linters = library_call_linter()
 )
 
-code <- '# comment\nlibrary(dplyr)'
+code <- "# comment\nlibrary(dplyr)"
 lint(
   text = code,
   linters = library_call_linter()
