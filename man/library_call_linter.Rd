@@ -13,44 +13,64 @@ otherwise some setup code is allowed, but all \code{library()}
 calls must follow consecutively after the first one.}
 }
 \description{
-Force library calls to all be at the top of the script.
+This linter covers several rules related to \code{\link[=library]{library()}} calls:
+}
+\details{
+\itemize{
+\item Enforce such calls to all be at the top of the script.
+\item Block usage of argument \code{character.only}.
+}
 }
 \examples{
 # will produce lints
+
+code <- "library(dplyr)\nprint('test')\nlibrary(tidyr)"
+writeLines(ode)
 lint(
-  text = "
-    library(dplyr)
-    print('test')
-    library(tidyr)
-  ",
+  text = code,
   linters = library_call_linter()
 )
 
 lint(
-  text = "
-    library(dplyr)
-    print('test')
-    library(tidyr)
-    library(purrr)
-  ",
+  text = "library('dplyr', character.only = TRUE)",
   linters = library_call_linter()
+)
+
+code <- paste(
+  "pkg <- c('dplyr', 'tibble')",
+  "sapply(pkg, library, character.only = TRUE)",
+  sep = "\n"
+)
+writeLines(code)
+lint(
+  text = code,
+  library_call_linter()
 )
 
 # okay
+code <- "library(dplyr)\nprint('test')"
+writeLines(code)
 lint(
-  text = "
-    library(dplyr)
-    print('test')
-  ",
+  text = code,
   linters = library_call_linter()
 )
 
+code <- '# comment\nlibrary(dplyr)'
 lint(
-  text = "
-    # comment
-    library(dplyr)
-  ",
+  text = code,
   linters = library_call_linter()
+)
+
+code <- paste(
+  "foo <- function(pkg) {",
+  "  sapply(pkg, library, character.only = TRUE)",
+  "}",
+  sep = "\n"
+)
+writeLines(code)
+lint(
+  text = code,
+  library_call_linter()
 )
 
 }

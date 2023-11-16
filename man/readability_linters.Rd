@@ -14,7 +14,6 @@ The following linters are tagged with 'readability':
 \itemize{
 \item{\code{\link{boolean_arithmetic_linter}}}
 \item{\code{\link{brace_linter}}}
-\item{\code{\link{character_only_linter}}}
 \item{\code{\link{commas_linter}}}
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{comparison_negation_linter}}}

@@ -130,7 +130,7 @@ test_that("require() treated the same as library()", {
   expect_lint(
     trim_some('
       library(dplyr)
-      require("tidyr")
+      require(tidyr)
     '),
     NULL,
     linter
@@ -140,7 +140,7 @@ test_that("require() treated the same as library()", {
     trim_some('
       library(dplyr)
       print(letters)
-      require("tidyr")
+      require(tidyr)
     '),
     list(lint_message_require, line_number = 3L),
     linter
@@ -151,7 +151,7 @@ test_that("require() treated the same as library()", {
       library(dplyr)
       print(letters)
       library(dbplyr)
-      require("tidyr")
+      require(tidyr)
     '),
     list(
       list(lint_message_library, line_number = 3L),
@@ -215,4 +215,99 @@ test_that("allow_preamble applies as intended", {
   ")
   expect_lint(lines, NULL, linter_preamble)
   expect_lint(lines, lint_msg, linter_no_preamble)
+})
+
+test_that("skips allowed usages of library()/character.only=TRUE", {
+  linter <- library_call_linter()
+
+  expect_lint("library(data.table)", NULL, linter)
+  expect_lint("function(pkg) library(pkg, character.only = TRUE)", NULL, linter)
+  expect_lint("function(pkgs) sapply(pkgs, require, character.only = TRUE)", NULL, linter)
+})
+
+test_that("blocks disallowed usages of strings in library()/require()", {
+  linter <- library_call_linter()
+
+  expect_lint(
+    'library("data.table")',
+    rex::rex("Use symbols, not strings, in library calls."),
+    linter
+  )
+
+  expect_lint(
+    'library("data.table", character.only = TRUE)',
+    rex::rex("Use symbols in library calls", anything, "character.only"),
+    linter
+  )
+
+  expect_lint(
+    'suppressWarnings(library("data.table", character.only = TRUE))',
+    rex::rex("Use symbols in library calls", anything, "character.only"),
+    linter
+  )
+
+  expect_lint(
+    "do.call(library, list(data.table))",
+    rex::rex("Call library() directly, not vectorized with do.call()"),
+    linter
+  )
+
+  expect_lint(
+    'do.call("library", list(data.table))',
+    rex::rex("Call library() directly, not vectorized with do.call()"),
+    linter
+  )
+
+  expect_lint(
+    'lapply("data.table", library, character.only = TRUE)',
+    rex::rex("Call library() directly, not vectorized with lapply()"),
+    linter
+  )
+
+  expect_lint(
+    'purr::map("data.table", library, character.only = TRUE)',
+    rex::rex("Call library() directly, not vectorized with map()"),
+    linter
+  )
+})
+
+test_that("character.only=TRUE is caught with multiple-line source", {
+  expect_lint(
+    trim_some('
+      suppressWarnings(library(
+        "data.table",
+        character.only = TRUE
+      ))
+    '),
+    rex::rex("Use symbols in library calls", anything, "character.only"),
+    library_call_linter()
+  )
+})
+
+test_that("character.only=TRUE is caught inside purrr::walk as well", {
+  expect_lint(
+    'purr::walk("data.table", library, character.only = TRUE)',
+    rex::rex("Call library() directly, not vectorized with walk()"),
+    library_call_linter()
+  )
+})
+
+test_that("multiple lints are generated correctly", {
+  expect_lint(
+    trim_some('{
+      library("dplyr", character.only = TRUE)
+      print("not a library call")
+      require("gfile")
+      sapply(pkg_list, "library", character.only = TRUE)
+      purrr::walk(extra_list, require, character.only = TRUE)
+    }'),
+    list(
+      list(message = rex::rex("library calls", anything, "character.only")),
+      list(message = rex::rex("Move all require calls to the top of the script.")),
+      list(message = "symbols, not strings, in require calls"),
+      list(message = rex::rex("library() directly", anything, "vectorized with sapply()")),
+      list(message = rex::rex("require() directly", anything, "vectorized with walk()"))
+    ),
+    library_call_linter()
+  )
 })

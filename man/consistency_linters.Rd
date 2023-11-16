@@ -14,7 +14,6 @@ something.
 The following linters are tagged with 'consistency':
 \itemize{
 \item{\code{\link{assignment_linter}}}
-\item{\code{\link{character_only_linter}}}
 \item{\code{\link{class_equals_linter}}}
 \item{\code{\link{comparison_negation_linter}}}
 \item{\code{\link{condition_message_linter}}}
