@@ -6,7 +6,7 @@
 #' These functions have been deprecated from lintr.
 #'
 #' - `open_curly_linter()` (use [brace_linter()])
-#' - `closed_curly_linter()` (use `brace_linter`)
+#' - `closed_curly_linter()` (use `brace_linter()`)
 #' - `paren_brace_linter()` (use `brace_linter()`)
 #' - `semicolon_terminator_linter()` (use [semicolon_linter()])
 #'

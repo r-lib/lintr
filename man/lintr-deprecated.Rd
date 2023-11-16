@@ -38,7 +38,7 @@ with_defaults(..., default = default_linters)
 These functions have been deprecated from lintr.
 \itemize{
 \item \code{open_curly_linter()} (use \code{\link[=brace_linter]{brace_linter()}})
-\item \code{closed_curly_linter()} (use \code{brace_linter})
+\item \code{closed_curly_linter()} (use \code{brace_linter()})
 \item \code{paren_brace_linter()} (use \code{brace_linter()})
 \item \code{semicolon_terminator_linter()} (use \code{\link[=semicolon_linter]{semicolon_linter()}})
 }
