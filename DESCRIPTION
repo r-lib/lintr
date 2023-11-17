@@ -115,6 +115,7 @@ Collate:
     'indentation_linter.R'
     'infix_spaces_linter.R'
     'inner_combine_linter.R'
+    'inner_comparison_linter.R'
     'is_lint_level.R'
     'is_numeric_linter.R'
     'keyword_quote_linter.R'

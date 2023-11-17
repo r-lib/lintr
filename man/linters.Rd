@@ -20,11 +20,11 @@ The following tags exist:
 \item{\link[=best_practices_linters]{best_practices} (56 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (8 linters)}
 \item{\link[=configurable_linters]{configurable} (34 linters)}
-\item{\link[=consistency_linters]{consistency} (24 linters)}
+\item{\link[=consistency_linters]{consistency} (25 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=deprecated_linters]{deprecated} (8 linters)}
-\item{\link[=efficiency_linters]{efficiency} (26 linters)}
+\item{\link[=efficiency_linters]{efficiency} (27 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
@@ -77,6 +77,7 @@ The following linters exist:
 \item{\code{\link{indentation_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{infix_spaces_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{inner_combine_linter}} (tags: consistency, efficiency, readability)}
+\item{\code{\link{inner_comparison_linter}} (tags: consistency, efficiency)}
 \item{\code{\link{is_numeric_linter}} (tags: best_practices, consistency, readability)}
 \item{\code{\link{keyword_quote_linter}} (tags: consistency, readability, style)}
 \item{\code{\link{length_levels_linter}} (tags: best_practices, consistency, readability)}

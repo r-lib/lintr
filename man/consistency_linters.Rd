@@ -22,6 +22,7 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{if_not_else_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{inner_combine_linter}}}
+\item{\code{\link{inner_comparison_linter}}}
 \item{\code{\link{is_numeric_linter}}}
 \item{\code{\link{keyword_quote_linter}}}
 \item{\code{\link{length_levels_linter}}}
