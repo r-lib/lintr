@@ -17,8 +17,8 @@ test_that("returns the correct linting", {
   expect_lint(complexity, lint_msg, cc_linter_2)
   expect_lint(
     complexity,
-    "should have cyclomatic complexity of less than 2, this has 10",
+    "should have cyclomatic complexity of less than 2, this has 6",
     cc_linter_2
   )
-  expect_lint(complexity, NULL, cyclocomp_linter(10L))
+  expect_lint(complexity, NULL, cyclocomp_linter(6L))
 })
