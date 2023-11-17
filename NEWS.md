@@ -15,6 +15,7 @@
 * `comparison_negation_linter()` for discouraging negated comparisons when a direct negation is preferable, e.g. `!(x == y)` could be `x != y` (part of #884, @MichaelChirico).
 * `terminal_close_linter()` for discouraging using `close()` to end functions (part of #884, @MichaelChirico). Such usages are not robust to errors, where `close()` will not be run as intended. Put `close()` in an `on.exit()` hook, or use {withr} to manage connections with proper cleanup.
 * `print_linter()` for discouraging usage of `print()` on string literals like `print("Reached here")` or `print(paste("Found", nrow(DF), "rows."))` (#1894, @MichaelChirico).
+* `consecutive_suppression_linter()` for encouraging combining consecutive calls to `suppressMessages()` into one (part of #884, @MichaelChirico)
 
 ### Lint accuracy fixes: removing false positives
 

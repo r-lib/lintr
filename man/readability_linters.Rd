@@ -19,6 +19,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{comparison_negation_linter}}}
 \item{\code{\link{conjunct_test_linter}}}
 \item{\code{\link{consecutive_assertion_linter}}}
+\item{\code{\link{consecutive_suppression_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{empty_assignment_linter}}}
 \item{\code{\link{expect_length_linter}}}
