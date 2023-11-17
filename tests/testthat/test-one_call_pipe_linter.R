@@ -77,6 +77,7 @@ test_that("multiple lints are generated correctly", {
 })
 
 test_that("Native pipes are handled as well", {
+  skip_if_not_r_version("4.1.0")
   expect_lint(
     "x |> foo()",
     rex::rex("Expressions with only a single call shouldn't use pipe |>."),
