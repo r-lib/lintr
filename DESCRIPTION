@@ -138,6 +138,7 @@ Collate:
     'namespace_linter.R'
     'nested_ifelse_linter.R'
     'nonportable_path_linter.R'
+    'nrow_subset_linter.R'
     'numeric_leading_zero_linter.R'
     'object_length_linter.R'
     'object_name_linter.R'

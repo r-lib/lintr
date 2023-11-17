@@ -45,6 +45,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{library_call_linter}}}
 \item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
+\item{\code{\link{nrow_subset_linter}}}
 \item{\code{\link{outer_negation_linter}}}
 \item{\code{\link{paste_linter}}}
 \item{\code{\link{print_linter}}}
