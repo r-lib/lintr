@@ -78,11 +78,18 @@ test_that("multiple lints are generated correctly", {
 
 test_that("Native pipes are handled as well", {
   skip_if_not_r_version("4.1.0")
+
+  linter <- one_call_pipe_linter()
+
   expect_lint(
     "x |> foo()",
     rex::rex("Expressions with only a single call shouldn't use pipe |>."),
-    one_call_pipe_linter()
+    linter
   )
+
+  # mixed pipes
+  expect_lint("x |> foo() %>% bar()", NULL, linter)
+  expect_lint("x %>% foo() |> bar()", NULL, linter)
 
   expect_lint(
     trim_some("{
@@ -93,6 +100,23 @@ test_that("Native pipes are handled as well", {
       list(message = "pipe %>%"),
       list(message = "pipe |>")
     ),
-    one_call_pipe_linter()
+    linter
   )
+})
+
+test_that("one_call_pipe_linter skips data.table chains with native pipe", {
+  skip_if_not_r_version("4.3.0")
+
+  linter <- one_call_pipe_linter()
+  lint_msg <- rex::rex("Expressions with only a single call shouldn't use pipe |>.")
+
+  expect_lint("DT[x > 5, sum(y), by = keys] |> _[, .SD[1], by = key1]", NULL, linter)
+
+  # lint here: instead of a pipe, use DT[x > 5, sum(y), by = keys]
+  expect_lint("DT |> _[x > 5, sum(y), by = keys]", lint_msg, linter)
+
+  # ditto for [[
+  expect_lint("DT |> rowSums() |> _[[idx]]", NULL, linter)
+
+  expect_lint("DT |> _[[idx]]", lint_msg, linter)
 })

@@ -44,24 +44,16 @@ one_call_pipe_linter <- function() {
   #   (but not DT %>% .[...])
   # parent::expr/SPECIAL: make sure we are at the top of a pipeline
   # count(): any call anywhere else in the AST within the pipe expression
-  # TODO(michaelchirico): Add support for native pipe |> like DT |> _[...]
   xpath <- glue("
-  //SPECIAL[
-    ({ pipes_cond })
-    and not(preceding-sibling::expr[1]/SPECIAL[{ xp_text_in_table(magrittr_pipes) }])
+  (//SPECIAL[{pipes_cond}] | //PIPE)[
+    not(preceding-sibling::expr[1]/*[self::SPECIAL[{pipes_cond}] or self::PIPE])
     and (
       not(following-sibling::expr[OP-LEFT-BRACKET or LBB])
       or not(preceding-sibling::expr[OP-LEFT-BRACKET or LBB])
     )
   ]
     /parent::expr[
-      not(parent::expr/SPECIAL[{ pipes_cond }])
-      and count(.//SYMBOL_FUNCTION_CALL) <= 1
-    ]
-  |
-  //PIPE[not(preceding-sibling::expr[1]/PIPE)]
-    /parent::expr[
-      not(parent::expr/PIPE)
+      not(parent::expr/*[self::SPECIAL[{ pipes_cond }] or self::PIPE])
       and count(.//SYMBOL_FUNCTION_CALL) <= 1
     ]
   ")
