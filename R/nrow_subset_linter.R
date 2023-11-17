@@ -8,7 +8,20 @@
 #'   `with(x, sum(condition, na.rm = TRUE))`).
 #' The same can be said of other versions of this like
 #'   `nrow(DT[(condition)])` for subsetting a `data.table` or
-# "   `DT %>% filter(condition) %>% nrow()`.
+#'   `DT %>% filter(condition) %>% nrow()`.
+#'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "nrow(subset(x, is_treatment))",
+#'   linters = nrow_subset_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "with(x, sum(is_treatment, na.rm = TRUE))",
+#'   linters = nrow_subset_linter()
+#' )
 #'
 #' @evalRd rd_tags("nrow_subset_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.

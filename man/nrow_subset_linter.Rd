@@ -15,6 +15,21 @@ subset, e.g. \code{with(x, sum(condition))} (or, more generically,
 \code{with(x, sum(condition, na.rm = TRUE))}).
 The same can be said of other versions of this like
 \code{nrow(DT[(condition)])} for subsetting a \code{data.table} or
+\code{DT \%>\% filter(condition) \%>\% nrow()}.
+}
+\examples{
+# will produce lints
+lint(
+  text = "nrow(subset(x, is_treatment))",
+  linters = nrow_subset_linter()
+)
+
+# okay
+lint(
+  text = "with(x, sum(is_treatment, na.rm = TRUE))",
+  linters = nrow_subset_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
