@@ -1,5 +1,9 @@
 # lintr (development version)
 
+## Bug fixes
+
+* `object_name_linter()` no longer errors when user-supplied `regexes=` have capture groups (#2188, @MichaelChirico).
+
 ## New and improved features
 
 * More helpful errors for invalid configs (#2253, @MichaelChirico).
