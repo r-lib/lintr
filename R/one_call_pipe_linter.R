@@ -8,6 +8,29 @@
 #' Note also that un-"called" steps are *not* counted, since they should
 #'   be calls (see [pipe_call_linter()]).
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "(1:10) %>% sum()",
+#'   linters = one_call_pipe_linter()
+#' )
+#'
+#' lint(
+#'   text = "DT %>% .[grp == 'a', sum(v)]",
+#'   linters = one_call_pipe_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "rowSums(x) %>% mean()",
+#'   linters = one_call_pipe_linter()
+#' )
+#'
+#' lint(
+#'   text = "DT[src == 'a', .N, by = grp] %>% .[N > 10]",
+#'   linters = one_call_pipe_linter()
+#' )
+#'
 #' @evalRd rd_tags("one_call_pipe_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.

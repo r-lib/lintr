@@ -16,6 +16,30 @@ because there are two total calls (\code{rowSums()} and \code{max()}).
 Note also that un-"called" steps are \emph{not} counted, since they should
 be calls (see \code{\link[=pipe_call_linter]{pipe_call_linter()}}).
 }
+\examples{
+# will produce lints
+lint(
+  text = "(1:10) \%>\% sum()",
+  linters = one_call_pipe_linter()
+)
+
+lint(
+  text = "DT \%>\% .[grp == 'a', sum(v)]",
+  linters = one_call_pipe_linter()
+)
+
+# okay
+lint(
+  text = "rowSums(x) \%>\% mean()",
+  linters = one_call_pipe_linter()
+)
+
+lint(
+  text = "DT[src == 'a', .N, by = grp] \%>\% .[N > 10]",
+  linters = one_call_pipe_linter()
+)
+
+}
 \seealso{
 \itemize{
 \item \link{linters} for a complete list of linters available in lintr.
