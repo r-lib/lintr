@@ -17,6 +17,7 @@ The following linters are tagged with 'common_mistakes':
 \item{\code{\link{length_test_linter}}}
 \item{\code{\link{missing_argument_linter}}}
 \item{\code{\link{missing_package_linter}}}
+\item{\code{\link{pipe_return_linter}}}
 \item{\code{\link{redundant_equals_linter}}}
 \item{\code{\link{sprintf_linter}}}
 \item{\code{\link{unused_import_linter}}}
