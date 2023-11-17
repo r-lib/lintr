@@ -3,6 +3,7 @@ complexity <- function(x) {
     if (x > 10.0) {
       if (x > 20.0) {
         x <- x / 2.0
+        return(x)
       } else {
         return(x)
       }
@@ -13,6 +14,7 @@ complexity <- function(x) {
     if (x < -10.0) {
       if (x < -20.0) {
         x <- x * 2.0
+        return(x)
       } else {
         return(x)
       }
@@ -20,5 +22,4 @@ complexity <- function(x) {
       return(x)
     }
   }
-  x
 }
