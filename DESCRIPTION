@@ -150,6 +150,7 @@ Collate:
     'pipe_call_linter.R'
     'pipe_consistency_linter.R'
     'pipe_continuation_linter.R'
+    'print_linter.R'
     'quotes_linter.R'
     'redundant_equals_linter.R'
     'redundant_ifelse_linter.R'
