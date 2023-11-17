@@ -3,6 +3,34 @@
 #' `!(x == y)` is more readably expressed as `x != y`. The same is true of
 #'   other negations of simple comparisons like `!(x > y)` and `!(x <= y)`.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "!x == 2",
+#'   linters = comparison_negation_linter()
+#' )
+#'
+#' lint(
+#'   text = "!(x > 2)",
+#'   linters = comparison_negation_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "!(x == 2 & y > 2)",
+#'   linters = comparison_negation_linter()
+#' )
+#'
+#' lint(
+#'   text = "!(x & y)",
+#'   linters = comparison_negation_linter()
+#' )
+#'
+#' lint(
+#'   text = "x != 2",
+#'   linters = comparison_negation_linter()
+#' )
+#'
 #' @evalRd rd_tags("comparison_negation_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
