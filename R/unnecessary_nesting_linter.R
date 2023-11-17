@@ -20,7 +20,7 @@
 #' )
 #'
 #' # okay
-#' code <- "if (A) {\n  stop("A is bad because a.")\n} else {\n  stop("!A is bad too.")\n}"
+#' code <- "if (A) {\n  stop('A is bad because a.')\n} else {\n  stop('!A is bad too.')\n}"
 #' writeLines(code)
 #' lint(
 #'   text = code,
