@@ -1,0 +1,83 @@
+test_that("nested_pipe_linter skips allowed usages", {
+  linter <- nested_pipe_linter()
+
+  expect_lint("a %>% b() %>% c()", NULL, linter)
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        out <- a %>% b()
+        return(out)
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  # switch outputs are OK
+  expect_lint("switch(x, a = x %>% foo())", NULL, linter)
+  # final position is an output position
+  expect_lint("switch(x, a = x, x %>% foo())", NULL, linter)
+
+  # try/tryCatch must be evaluated inside the call
+  expect_lint("try(x %>% foo())", NULL, linter)
+  expect_lint("tryCatch(x %>% foo(), error = identity)", NULL, linter)
+})
+
+test_that("nested_pipe_linter blocks simple disallowed usages", {
+  linter <- nested_pipe_linter()
+  lint_msg <- rex::rex("Don't nest pipes inside other calls.")
+
+  expect_lint(
+    "bind_rows(a %>% select(b), c %>% select(b))",
+    list(lint_msg, lint_msg),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      print(
+        a %>%
+          filter(b > c)
+      )
+    "),
+    lint_msg,
+    linter
+  )
+
+  # switch inputs are linted
+  expect_lint(
+    trim_some("
+      switch(
+        x %>% foo(),
+        a = x
+      )
+    "),
+    lint_msg,
+    linter
+  )
+})
+
+test_that("Native pipes are handled as well", {
+  skip_if_not_r_version("4.1.0")
+
+  linter <- nested_pipe_linter()
+  lint_msg <- rex::rex("Don't nest pipes inside other calls.")
+
+  expect_lint(
+    "bind_rows(a |> select(b), c |> select(b))",
+    list(lint_msg, lint_msg),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      print(
+        a |>
+          filter(b > c)
+      )
+    "),
+    lint_msg,
+    linter
+  )
+})

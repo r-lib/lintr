@@ -55,6 +55,7 @@ missing_argument_linter,correctness common_mistakes configurable
 missing_package_linter,robustness common_mistakes
 namespace_linter,correctness robustness configurable executing
 nested_ifelse_linter,efficiency readability
+nested_pipe_linter,readability consistency
 no_tab_linter,style consistency deprecated
 nonportable_path_linter,robustness best_practices configurable
 numeric_leading_zero_linter,style consistency readability
