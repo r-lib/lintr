@@ -3,6 +3,37 @@
 #' Excessive nesting harms readability. Use helper functions or early returns
 #'   to reduce nesting wherever possible.
 #'
+#' @examples
+#' # will produce lints
+#' code <- "if (A) {\n  stop('A is bad!')\n} else {\n  do_good()\n}"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = unnecessary_nesting_linter()
+#' )
+#'
+#' code <- "tryCatch(\n  {\n    foo()\n  },\n  error = identity\n)"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = unnecessary_nesting_linter()
+#' )
+#'
+#' # okay
+#' code <- "if (A) {\n  stop("A is bad because a.")\n} else {\n  stop("!A is bad too.")\n}"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = unnecessary_nesting_linter()
+#' )
+#'
+#' code <- "capture.output({\n  foo()\n})"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = unnecessary_nesting_linter()
+#' )
+#'
 #' @evalRd rd_tags("unnecessary_nesting_linter")
 #' @seealso
 #'  - [cyclocomp_linter()] for another linter that penalizes overly complexcode.

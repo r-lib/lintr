@@ -7,15 +7,46 @@
 unnecessary_nesting_linter()
 }
 \description{
-See \href{https://goto.google.com/c-readability-advice#avoid-unnecessary-nesting-by-using-early-returns.}{go/c-readability-advice#avoid-unnecessary-nesting-by-using-early-returns.}
-This linter covers instances of excessive nesting in R code.
+Excessive nesting harms readability. Use helper functions or early returns
+to reduce nesting wherever possible.
 }
-\details{
-NB: This does not apply to in-line if/else statements, which, per
-\href{https://goto.google.com/rstyle#inline-statements}{go/rstyle#inline-statements}, shouldn't be in-line anyway.
+\examples{
+# will produce lints
+code <- "if (A) {\n  stop('A is bad!')\n} else {\n  do_good()\n}"
+writeLines(code)
+lint(
+  text = code,
+  linters = unnecessary_nesting_linter()
+)
+
+code <- "tryCatch(\n  {\n    foo()\n  },\n  error = identity\n)"
+writeLines(code)
+lint(
+  text = code,
+  linters = unnecessary_nesting_linter()
+)
+
+# okay
+code <- "if (A) {\n  stop("A is bad because a.")\n} else {\n  stop("!A is bad too.")\n}"
+writeLines(code)
+lint(
+  text = code,
+  linters = unnecessary_nesting_linter()
+)
+
+code <- "capture.output({\n  foo()\n})"
+writeLines(code)
+lint(
+  text = code,
+  linters = unnecessary_nesting_linter()
+)
+
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\itemize{
+\item \code{\link[=cyclocomp_linter]{cyclocomp_linter()}} for another linter that penalizes overly complexcode.
+\item \link{linters} for a complete list of linters available in lintr.
+}
 }
 \section{Tags}{
 \link[=consistency_linters]{consistency}, \link[=readability_linters]{readability}
