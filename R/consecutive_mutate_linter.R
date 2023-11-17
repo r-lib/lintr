@@ -8,6 +8,11 @@
 #'   as sophisticated as that in the default `dplyr`, for example in
 #'   `DF %>% mutate(a = a + 1) %>% mutate(b = a - 2)`.
 #'
+#' @param invalid_backends Character vector of packages providing dplyr backends
+#'   which may not be compatible with combining `mutate()` calls in all cases.
+#'   Defaults to `"dbplyr"` since not all SQL backends can handle re-using
+#'   a variable defined in the same `mutate()` expression.
+#'
 #' @examples
 #' # will produce lints
 #' lint(

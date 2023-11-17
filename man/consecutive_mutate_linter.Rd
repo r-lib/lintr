@@ -6,6 +6,12 @@
 \usage{
 consecutive_mutate_linter(invalid_backends = "dbplyr")
 }
+\arguments{
+\item{invalid_backends}{Character vector of packages providing dplyr backends
+which may not be compatible with combining \code{mutate()} calls in all cases.
+Defaults to \code{"dbplyr"} since not all SQL backends can handle re-using
+a variable defined in the same \code{mutate()} expression.}
+}
 \description{
 \code{dplyr::mutate()} accepts any number of columns, so sequences like
 \code{DF \%>\% dplyr::mutate(..1) \%>\% dplyr::mutate(..2)} are redundant --
