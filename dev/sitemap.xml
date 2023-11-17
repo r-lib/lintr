@@ -346,6 +346,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/pkg_testthat_linters.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/print_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/quotes_linter.html</loc>
   </url>
   <url>
