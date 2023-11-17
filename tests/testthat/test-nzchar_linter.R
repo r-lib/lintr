@@ -66,8 +66,8 @@ test_that("multiple lints are generated correctly", {
       nchar(b) != 0
     }"),
     list(
-      rex::rex('Instead of comparing strings to ""'),
-      rex::rex("Instead of comparing nchar(x) to 0")
+      list(rex::rex('Instead of comparing strings to ""'), line_number = 2L),
+      list(rex::rex("Instead of comparing nchar(x) to 0"), line_number = 3L)
     ),
     nzchar_linter()
   )
