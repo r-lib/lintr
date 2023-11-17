@@ -4,7 +4,7 @@
 \alias{regex_linters}
 \title{Regular expression linters}
 \description{
-Linters that examine the usage of regular expressions in user code.
+Linters that examine the usage of regular expressions and functions executing them in user code.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
