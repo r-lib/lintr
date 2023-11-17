@@ -53,11 +53,13 @@ The following linters are tagged with 'readability':
 \item{\code{\link{quotes_linter}}}
 \item{\code{\link{redundant_equals_linter}}}
 \item{\code{\link{repeat_linter}}}
+\item{\code{\link{sample_int_linter}}}
 \item{\code{\link{scalar_in_linter}}}
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{sort_linter}}}
 \item{\code{\link{spaces_inside_linter}}}
 \item{\code{\link{spaces_left_parentheses_linter}}}
+\item{\code{\link{stopifnot_all_linter}}}
 \item{\code{\link{string_boundary_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}

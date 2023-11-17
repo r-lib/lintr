@@ -47,6 +47,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{nonportable_path_linter}}}
 \item{\code{\link{outer_negation_linter}}}
 \item{\code{\link{paste_linter}}}
+\item{\code{\link{print_linter}}}
 \item{\code{\link{redundant_equals_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{regex_subset_linter}}}
@@ -54,8 +55,10 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{scalar_in_linter}}}
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{sort_linter}}}
+\item{\code{\link{stopifnot_all_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
+\item{\code{\link{terminal_close_linter}}}
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
 \item{\code{\link{unnecessary_lambda_linter}}}
