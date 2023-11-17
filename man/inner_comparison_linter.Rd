@@ -8,7 +8,26 @@ inner_comparison_linter()
 }
 \description{
 \code{sapply(x, function(xi) foo(xi) == 2)} is the same as \code{sapply(x, foo) == 2},
-but harder to read and requires two passes over the vector.
+but misses the opportunity to vectorize the call to \code{==}.
+}
+\examples{
+# will produce lints
+lint(
+  text = "sapply(x, function(xi) xi == 2)",
+  linters = inner_comparison_linter()
+)
+
+lint(
+  text = "sapply(x, function(xi) sum(xi) > 0)",
+  linters = inner_comparison_linter()
+)
+
+# okay
+lint(
+  text = "sapply(x, sum) > 0",
+  linters = inner_comparison_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
