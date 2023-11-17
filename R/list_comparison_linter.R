@@ -26,7 +26,8 @@ list_comparison_linter <- function() {
   list_mapper_alternatives <- c(
     lapply = "vapply(x, FUN, character(1L))",
     map = "map_chr(x, FUN)",
-    Map = "mapply()"
+    Map = "mapply()",
+    .mapply = "mapply()"
   )
 
   # NB: anchor to the comparison expr so that we can easily include the comparator
