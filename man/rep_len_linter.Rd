@@ -10,6 +10,20 @@ rep_len_linter()
 \code{rep(x, length.out = n)} calls \code{rep_len(x, n)} "under the hood". The latter
 is thus more direct and equally readable.
 }
+\examples{
+# will produce lints
+lint(
+  text = "rep(1:3, length.out = 10)",
+  linters = rep_len_linter()
+)
+
+# okay
+lint(
+  text = "rep(1:3, each = 2L, length.out = 10L)",
+  linters = rep_len_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
