@@ -10,6 +10,35 @@ sample_int_linter()
 \code{\link[=sample.int]{sample.int()}} is preferable to \code{sample()} for the case of sampling numbers
 between 1 and \code{n}. \code{sample} calls \code{sample.int()} "under the hood".
 }
+\examples{
+# will produce lints
+lint(
+  text = "sample(1:10, 2)",
+  linters = sample_int_linter()
+)
+
+lint(
+  text = "sample(seq(4), 2)",
+  linters = sample_int_linter()
+)
+
+lint(
+  text = "sample(seq_len(8), 2)",
+  linters = sample_int_linter()
+)
+
+# okay
+lint(
+  text = "sample(seq(1, 5, by = 2), 2)",
+  linters = sample_int_linter()
+)
+
+lint(
+  text = "sample(letters, 2)",
+  linters = sample_int_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

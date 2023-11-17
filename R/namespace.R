@@ -85,13 +85,7 @@ is_s3_generic <- function(fun) {
 
 .base_s3_generics <- unique(c(
   names(.knownS3Generics),
-  if (getRversion() >= "3.5.0") {
-    .S3_methods_table[, 1L]
-  } else {
-    # R < 3.5.0 doesn't provide .S3_methods_table
-    # fallback: search baseenv() for generic methods
-    imported_s3_generics(data.frame(pkg = "base", fun = ls(baseenv()), stringsAsFactors = FALSE))$fun
-  },
+  .S3_methods_table[, 1L],
   # Contains S3 generic groups, see ?base::groupGeneric and src/library/base/R/zzz.R
   ls(.GenericArgsEnv)
 ))

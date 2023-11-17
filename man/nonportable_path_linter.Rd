@@ -17,6 +17,20 @@ If \code{TRUE}, only lint path strings, which
 \description{
 Check that \code{\link[=file.path]{file.path()}} is used to construct safe and portable paths.
 }
+\examples{
+# will produce lints
+lint(
+  text = "'abcdefg/hijklmnop/qrst/uv/wxyz'",
+  linters = nonportable_path_linter()
+)
+
+# okay
+lint(
+  text = "file.path('abcdefg', 'hijklmnop', 'qrst', 'uv', 'wxyz')",
+  linters = nonportable_path_linter()
+)
+
+}
 \seealso{
 \itemize{
 \item \link{linters} for a complete list of linters available in lintr.
