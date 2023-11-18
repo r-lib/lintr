@@ -1,4 +1,4 @@
-n#' Check for common mistakes around sorting vectors
+#' Check for common mistakes around sorting vectors
 #'
 #' This linter checks for some common mistakes when using [order()] or [sort()].
 #'
