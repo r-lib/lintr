@@ -3,7 +3,8 @@
 #' This linter covers several rules related to [library()] calls:
 #'
 #'  - Enforce such calls to all be at the top of the script.
-#'  - Block usage of argument `character.only`.
+#'  - Block usage of argument `character.only`, in particular
+#'    for loading packages in a loop.
 #'
 #' @param allow_preamble Logical, default `TRUE`. If `FALSE`,
 #'   no code is allowed to precede the first `library()` call,

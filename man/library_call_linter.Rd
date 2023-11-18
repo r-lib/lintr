@@ -18,7 +18,8 @@ This linter covers several rules related to \code{\link[=library]{library()}} ca
 \details{
 \itemize{
 \item Enforce such calls to all be at the top of the script.
-\item Block usage of argument \code{character.only}.
+\item Block usage of argument \code{character.only}, in particular
+for loading packages in a loop.
 }
 }
 \examples{
