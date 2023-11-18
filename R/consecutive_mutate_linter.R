@@ -32,10 +32,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 consecutive_mutate_linter <- function(invalid_backends = "dbplyr") {
-  blocked_library_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'library']
+  # NB: ignore R"()" strings for simplicity here.
+  attach_pkg_xpath <- glue("
+  //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
     /parent::expr
-    /following-sibling::expr[SYMBOL[{ xp_text_in_table(invalid_backends) }]]
+    /following-sibling::expr
+    /*[self::SYMBOL or self::STR_CONST]
   ")
 
   # match on the expr, not the SYMBOL_FUNCTION_CALL, to ensure
@@ -62,8 +64,8 @@ consecutive_mutate_linter <- function(invalid_backends = "dbplyr") {
 
     xml <- source_expression$full_xml_parsed_content
 
-    blocked_expr <- xml_find_first(xml, blocked_library_xpath)
-    if (!is.na(blocked_expr)) {
+    attach_str <- get_r_string(xml_find_all(xml, attach_pkg_xpath))
+    if (any(invalid_backends %in% attach_str)) {
       return(list())
     }
 

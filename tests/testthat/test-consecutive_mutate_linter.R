@@ -16,25 +16,79 @@ test_that("consecutive_mutate_linter skips allowed usages", {
   expect_lint("DF %>% mutate(a = 1, .keep = 'none') %>% mutate(a = a + 1)", NULL, linter)
 })
 
-test_that("consecutive_mutate_linter skips files loading SQL backends", {
-  expect_lint(
-    trim_some("
-      library(dbplyr)
-      DF %>% mutate(a = a + 1) %>% mutate(b = a - 2)
-    "),
-    NULL,
-    consecutive_mutate_linter()
-  )
+patrick::with_parameters_test_that(
+  "consecutive_mutate_linter skips files loading SQL backends",
+  {
+    linter <- consecutive_mutate_linter(invalid_backends = backend)
 
-  expect_lint(
-    trim_some("
-      library(custom.backend)
-      DF %>% mutate(a = a + 1) %>% mutate(b = a - 2)
-    "),
-    NULL,
-    consecutive_mutate_linter(invalid_backends = "custom.backend")
-  )
-})
+    expect_lint(
+      trim_some(glue::glue("
+        library({backend})
+        DF %>% mutate(a = a + 1) %>% mutate(b = a - 2)
+      ")),
+      NULL,
+      linter
+    )
+
+    expect_lint(
+      trim_some(glue::glue("
+        require('{backend}')
+        DF %>% mutate(a = a + 1) %>% mutate(b = a - 2)
+      ")),
+      NULL,
+      linter
+    )
+
+    expect_lint(
+      trim_some("
+        conn %>%
+          tbl(dbplyr::sql('SELECT 1 AS x')) %>%
+          mutate(a = x + 1) %>%
+          mutate(b = a + 1)
+      "),
+      NULL,
+      linter
+    )
+
+    expect_lint(
+      trim_some("
+        conn %>%
+          tbl(dbplyr:::sql('SELECT 1 AS x')) %>%
+          mutate(a = x + 1) %>%
+          mutate(b = a + 1)
+      "),
+      NULL,
+      linter
+    )
+
+    expect_lint(
+      trim_some("
+        #' @import dbplyr
+        NULL
+
+        DF %>% mutate(a = a + 1) %>% mutate(b = a - 2)
+      "),
+      NULL,
+      linter
+    )
+
+    expect_lint(
+      trim_some("
+        #' @importFrom dbplyr sql
+        NULL
+
+        conn %>%
+          tbl(sql('SELECT 1 AS x')) %>%
+          mutate(a = x + 1) %>%
+          mutate(b = a + 1)
+      "),
+      NULL,
+      linter
+    )
+  },
+  .test_name = c("dbplyr", "custom.backend"),
+  backend = c("dbplyr", "custom.backend")
+)
 
 test_that("consecutive_mutate_linter blocks simple disallowed usages", {
   linter <- consecutive_mutate_linter()
