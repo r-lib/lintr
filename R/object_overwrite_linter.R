@@ -13,14 +13,14 @@
 #' writeLines(code)
 #' lint(
 #'   text = code,
-#'   object_overwrite_linter()
+#'   linters = object_overwrite_linter()
 #' )
 #'
 #' code <- "function(x) {\n  lint <- 'fun'\n  lint\n}"
 #' writeLines(code)
 #' lint(
 #'   text = code,
-#'   object_overwrite_linter(packages = "lintr")
+#'   linters = object_overwrite_linter(packages = "lintr")
 #' )
 #'
 #' # okay
@@ -28,14 +28,14 @@
 #' writeLines(code)
 #' lint(
 #'   text = code,
-#'   object_overwrite_linter()
+#'   linters = object_overwrite_linter()
 #' )
 #'
 #' code <- "function(x) {\n  data <- x\n  data\n}"
 #' writeLines(code)
 #' lint(
 #'   text = code,
-#'   object_overwrite_linter(packages = "base")
+#'   linters = object_overwrite_linter(packages = "base")
 #' )
 #'
 #' @evalRd rd_tags("object_overwrite_linter")
