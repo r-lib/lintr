@@ -141,6 +141,7 @@ Collate:
     'numeric_leading_zero_linter.R'
     'object_length_linter.R'
     'object_name_linter.R'
+    'object_overwrite_linter.R'
     'object_usage_linter.R'
     'outer_negation_linter.R'
     'package_hooks_linter.R'

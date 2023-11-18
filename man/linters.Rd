@@ -17,19 +17,19 @@ see also \code{\link[=available_tags]{available_tags()}}.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (56 linters)}
+\item{\link[=best_practices_linters]{best_practices} (57 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (8 linters)}
-\item{\link[=configurable_linters]{configurable} (34 linters)}
+\item{\link[=configurable_linters]{configurable} (35 linters)}
 \item{\link[=consistency_linters]{consistency} (24 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=deprecated_linters]{deprecated} (8 linters)}
 \item{\link[=efficiency_linters]{efficiency} (26 linters)}
-\item{\link[=executing_linters]{executing} (5 linters)}
+\item{\link[=executing_linters]{executing} (6 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
-\item{\link[=readability_linters]{readability} (57 linters)}
-\item{\link[=robustness_linters]{robustness} (16 linters)}
+\item{\link[=readability_linters]{readability} (58 linters)}
+\item{\link[=robustness_linters]{robustness} (17 linters)}
 \item{\link[=style_linters]{style} (38 linters)}
 }
 }
@@ -94,6 +94,7 @@ The following linters exist:
 \item{\code{\link{numeric_leading_zero_linter}} (tags: consistency, readability, style)}
 \item{\code{\link{object_length_linter}} (tags: configurable, default, executing, readability, style)}
 \item{\code{\link{object_name_linter}} (tags: configurable, consistency, default, executing, style)}
+\item{\code{\link{object_overwrite_linter}} (tags: best_practices, configurable, executing, readability, robustness)}
 \item{\code{\link{object_usage_linter}} (tags: configurable, correctness, default, executing, readability, style)}
 \item{\code{\link{outer_negation_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{package_hooks_linter}} (tags: correctness, package_development, style)}
