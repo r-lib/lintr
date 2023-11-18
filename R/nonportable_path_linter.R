@@ -6,7 +6,7 @@
 #' # will produce lints
 #' lint(
 #'   text = "'abcdefg/hijklmnop/qrst/uv/wxyz'",
-#'   linters = nonportable_path_linter
+#'   linters = nonportable_path_linter()
 #' )
 #'
 #' # okay

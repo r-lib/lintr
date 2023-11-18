@@ -21,7 +21,7 @@ Check that \code{\link[=file.path]{file.path()}} is used to construct safe and p
 # will produce lints
 lint(
   text = "'abcdefg/hijklmnop/qrst/uv/wxyz'",
-  linters = nonportable_path_linter
+  linters = nonportable_path_linter()
 )
 
 # okay
