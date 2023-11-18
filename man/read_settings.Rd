@@ -29,7 +29,7 @@ Here is an example of a \code{.lintr} file:
     any_duplicated_linter(),
     any_is_na_linter(),
     backport_linter("oldrel-4", except = c("R_user_dir", "str2lang")),
-    line_length_linter(120),
+    line_length_linter(120L),
     missing_argument_linter(),
     unnecessary_concatenation_linter(allow_single_expression = FALSE),
     yoda_test_linter()
@@ -57,7 +57,7 @@ Here is an example of a \code{.lintr.R} file:
     any_duplicated_linter(),
     any_is_na_linter(),
     backport_linter("oldrel-4", except = c("R_user_dir", "str2lang")),
-    line_length_linter(120),
+    line_length_linter(120L),
     missing_argument_linter(),
     unnecessary_concatenation_linter(allow_single_expression = FALSE),
     yoda_test_linter()

@@ -17,7 +17,7 @@
 #'      any_duplicated_linter(),
 #'      any_is_na_linter(),
 #'      backport_linter("oldrel-4", except = c("R_user_dir", "str2lang")),
-#'      line_length_linter(120),
+#'      line_length_linter(120L),
 #'      missing_argument_linter(),
 #'      unnecessary_concatenation_linter(allow_single_expression = FALSE),
 #'      yoda_test_linter()
@@ -28,7 +28,7 @@
 #'      "tests/testthat/default_linter_testcode.R",
 #'      "tests/testthat/dummy_packages"
 #'    )
-#' ```
+#'  ```
 #'
 #' Experimentally, we also support keeping the config in a plain R file. By default we look for
 #'   a file named `.lintr.R` (in the same directories where we search for `.lintr`).
@@ -47,7 +47,7 @@
 #'      any_duplicated_linter(),
 #'      any_is_na_linter(),
 #'      backport_linter("oldrel-4", except = c("R_user_dir", "str2lang")),
-#'      line_length_linter(120),
+#'      line_length_linter(120L),
 #'      missing_argument_linter(),
 #'      unnecessary_concatenation_linter(allow_single_expression = FALSE),
 #'      yoda_test_linter()
@@ -58,7 +58,8 @@
 #'      "tests/testthat/default_linter_testcode.R",
 #'      "tests/testthat/dummy_packages"
 #'    )
-#' ```
+#'  ```
+#'
 #' @param filename Source file to be linted.
 read_settings <- function(filename) {
   reset_settings()
