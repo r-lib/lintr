@@ -24,7 +24,7 @@
 #' )
 #'
 #' # okay
-#' code <- "function(x) {\n  data("mtcars")\n}"
+#' code <- "function(x) {\n  data('mtcars')\n}"
 #' writeLines(code)
 #' lint(
 #'   text = code,
