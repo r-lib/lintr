@@ -20,15 +20,16 @@ The following tags exist:
 \item{\link[=best_practices_linters]{best_practices} (58 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (9 linters)}
 \item{\link[=configurable_linters]{configurable} (34 linters)}
-\item{\link[=consistency_linters]{consistency} (25 linters)}
+\item{\link[=consistency_linters]{consistency} (26 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=deprecated_linters]{deprecated} (4 linters)}
-\item{\link[=efficiency_linters]{efficiency} (28 linters)}
+\item{\link[=efficiency_linters]{efficiency} (29 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
-\item{\link[=readability_linters]{readability} (57 linters)}
+\item{\link[=readability_linters]{readability} (58 linters)}
+\item{\link[=regex_linters]{regex} (4 linters)}
 \item{\link[=robustness_linters]{robustness} (16 linters)}
 \item{\link[=style_linters]{style} (38 linters)}
 }
@@ -65,7 +66,7 @@ The following linters exist:
 \item{\code{\link{expect_true_false_linter}} (tags: best_practices, package_development, pkg_testthat, readability)}
 \item{\code{\link{expect_type_linter}} (tags: best_practices, package_development, pkg_testthat)}
 \item{\code{\link{extraction_operator_linter}} (tags: best_practices, style)}
-\item{\code{\link{fixed_regex_linter}} (tags: best_practices, configurable, efficiency, readability)}
+\item{\code{\link{fixed_regex_linter}} (tags: best_practices, configurable, efficiency, readability, regex)}
 \item{\code{\link{for_loop_index_linter}} (tags: best_practices, readability, robustness)}
 \item{\code{\link{function_argument_linter}} (tags: best_practices, consistency, style)}
 \item{\code{\link{function_left_parentheses_linter}} (tags: default, readability, style)}
@@ -108,7 +109,7 @@ The following linters exist:
 \item{\code{\link{quotes_linter}} (tags: configurable, consistency, default, readability, style)}
 \item{\code{\link{redundant_equals_linter}} (tags: best_practices, common_mistakes, efficiency, readability)}
 \item{\code{\link{redundant_ifelse_linter}} (tags: best_practices, configurable, consistency, efficiency)}
-\item{\code{\link{regex_subset_linter}} (tags: best_practices, efficiency)}
+\item{\code{\link{regex_subset_linter}} (tags: best_practices, efficiency, regex)}
 \item{\code{\link{repeat_linter}} (tags: readability, style)}
 \item{\code{\link{routine_registration_linter}} (tags: best_practices, efficiency, robustness)}
 \item{\code{\link{sample_int_linter}} (tags: efficiency, readability, robustness)}
@@ -120,7 +121,7 @@ The following linters exist:
 \item{\code{\link{spaces_left_parentheses_linter}} (tags: default, readability, style)}
 \item{\code{\link{sprintf_linter}} (tags: common_mistakes, correctness)}
 \item{\code{\link{stopifnot_all_linter}} (tags: best_practices, readability)}
-\item{\code{\link{string_boundary_linter}} (tags: configurable, efficiency, readability)}
+\item{\code{\link{string_boundary_linter}} (tags: configurable, efficiency, readability, regex)}
 \item{\code{\link{strings_as_factors_linter}} (tags: robustness)}
 \item{\code{\link{system_file_linter}} (tags: best_practices, consistency, readability)}
 \item{\code{\link{T_and_F_symbol_linter}} (tags: best_practices, consistency, default, readability, robustness, style)}
@@ -137,6 +138,7 @@ The following linters exist:
 \item{\code{\link{unreachable_code_linter}} (tags: best_practices, readability)}
 \item{\code{\link{unused_import_linter}} (tags: best_practices, common_mistakes, configurable, executing)}
 \item{\code{\link{vector_logic_linter}} (tags: best_practices, default, efficiency)}
+\item{\code{\link{which_grepl_linter}} (tags: consistency, efficiency, readability, regex)}
 \item{\code{\link{whitespace_linter}} (tags: consistency, default, style)}
 \item{\code{\link{yoda_test_linter}} (tags: best_practices, package_development, pkg_testthat, readability)}
 }
