@@ -150,10 +150,10 @@ all_linters <- function(packages = "lintr", ...) {
 #' @examplesIf requireNamespace("withr", quietly = TRUE)
 #' # When using interactively you will usually pass the result onto `lint` or `lint_package()`
 #' f <- withr::local_tempfile(lines = "my_slightly_long_variable_name <- 2.3", fileext = "R")
-#' lint(f, linters = linters_with_defaults(line_length_linter = line_length_linter(120)))
+#' lint(f, linters = linters_with_defaults(line_length_linter = line_length_linter(120L)))
 #'
 #' # the default linter list with a different line length cutoff
-#' my_linters <- linters_with_defaults(line_length_linter = line_length_linter(120))
+#' my_linters <- linters_with_defaults(line_length_linter = line_length_linter(120L))
 #'
 #' # omit the argument name if you are just using different arguments
 #' my_linters <- linters_with_defaults(defaults = my_linters, object_name_linter("camelCase"))
@@ -220,14 +220,14 @@ call_linter_factory <- function(linter_factory, linter_name, package) {
 #' @keywords internal
 #' @noRd
 guess_names <- function(..., missing_index) {
-  args <- as.character(eval(substitute(alist(...)[missing_index])))
+  arguments <- as.character(eval(substitute(alist(...)[missing_index])))
   # foo_linter(x=1) => "foo"
   # var[["foo"]]    => "foo"
   # strip call: foo_linter(x=1) --> foo_linter
   # NB: Very long input might have newlines which are not caught
   #  by . in a perl regex; see #774
-  args <- re_substitutes(args, rex("(", anything), "", options = "s")
+  arguments <- re_substitutes(arguments, rex("(", anything), "", options = "s")
   # strip extractors: pkg::foo_linter, var[["foo_linter"]] --> foo_linter
-  args <- re_substitutes(args, rex(start, anything, '["' %or% "::"), "")
-  re_substitutes(args, rex('"]', anything, end), "")
+  arguments <- re_substitutes(arguments, rex(start, anything, '["' %or% "::"), "")
+  re_substitutes(arguments, rex('"]', anything, end), "")
 }
