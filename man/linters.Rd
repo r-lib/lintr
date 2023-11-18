@@ -28,7 +28,7 @@ The following tags exist:
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
-\item{\link[=readability_linters]{readability} (58 linters)}
+\item{\link[=readability_linters]{readability} (57 linters)}
 \item{\link[=robustness_linters]{robustness} (16 linters)}
 \item{\link[=style_linters]{style} (38 linters)}
 }
@@ -91,7 +91,7 @@ The following linters exist:
 \item{\code{\link{namespace_linter}} (tags: configurable, correctness, executing, robustness)}
 \item{\code{\link{nested_ifelse_linter}} (tags: efficiency, readability)}
 \item{\code{\link{nonportable_path_linter}} (tags: best_practices, configurable, robustness)}
-\item{\code{\link{nrow_subset_linter}} (tags: best_practices, consistency, efficiency, readability)}
+\item{\code{\link{nrow_subset_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{numeric_leading_zero_linter}} (tags: consistency, readability, style)}
 \item{\code{\link{object_length_linter}} (tags: configurable, default, executing, readability, style)}
 \item{\code{\link{object_name_linter}} (tags: configurable, consistency, default, executing, style)}
