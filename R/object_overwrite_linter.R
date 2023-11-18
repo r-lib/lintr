@@ -77,7 +77,7 @@ object_overwrite_linter <- function(
     bad_expr <- xml_find_all(xml, xpath)
     bad_symbol <- xml_text(xml_find_first(bad_expr, "SYMBOL"))
     source_pkg <- pkg_exports$package[match(bad_symbol, pkg_exports$name)]
-    lint_message <- 
+    lint_message <-
       sprintf("'%s' is an exported object from package '%s'. Avoid re-using such symbols.", bad_symbol, source_pkg)
 
     xml_nodes_to_lints(
