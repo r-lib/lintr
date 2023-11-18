@@ -27,6 +27,7 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{length_levels_linter}}}
 \item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{numeric_leading_zero_linter}}}
+\item{\code{\link{nzchar_linter}}}
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{paste_linter}}}
 \item{\code{\link{print_linter}}}

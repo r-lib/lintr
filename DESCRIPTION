@@ -140,6 +140,7 @@ Collate:
     'nested_ifelse_linter.R'
     'nonportable_path_linter.R'
     'numeric_leading_zero_linter.R'
+    'nzchar_linter.R'
     'object_length_linter.R'
     'object_name_linter.R'
     'object_usage_linter.R'
