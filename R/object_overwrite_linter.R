@@ -56,7 +56,11 @@ object_overwrite_linter <- function(
       stop("Package '", package, "' is not available.")
     }
   }
-  pkg_exports <- lapply(packages, getNamespaceExports)
+  pkg_exports <- lapply(
+    packages,
+    # Drop these 150+ "virtual" names since they are very unlikely to appear anyway
+    function(pkg) grep("^[.]__[A-Z]__", getNamespaceExports(pkg), value = TRUE, invert = TRUE)
+  )
   pkg_exports <- data.frame(
     package = rep(packages, lengths(pkg_exports)),
     name = unlist(pkg_exports),

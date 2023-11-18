@@ -5,6 +5,9 @@ test_that("object_overwrite_linter skips allowed usages", {
 
   # don't block names subassigned e.g. as columns or list elements
   expect_lint("function() x$sd <- sd(rnorm(100))", NULL, linter)
+
+  # These virtual names are ignored to slightly reduce the search space
+  expect_lint("function() .__C__logical <- TRUE", NULL, linter)
 })
 
 test_that("object_overwrite_linter blocks simple disallowed usages", {
