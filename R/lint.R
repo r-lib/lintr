@@ -339,7 +339,7 @@ validate_linter_object <- function(linter, name) {
   if (!is_linter(linter) && is.function(linter)) {
     if (is_linter_factory(linter)) {
       lintr_deprecated(
-        old = "Passing linters as variables"
+        old = "Passing linters as variables",
         new =  "a call to the linters (see ?linters)",
         version = "3.0.0",
         type = ""
