@@ -145,15 +145,15 @@ all_linters <- function(packages = "lintr", ...) {
 #' The result of this function is meant to be passed to the `linters` argument of `lint()`,
 #' or to be put in your configuration file.
 #'
-#' @param defaults,default Default list of linters to modify. Must be named.
+#' @param defaults Default list of linters to modify. Must be named.
 #' @inheritParams linters_with_tags
 #' @examplesIf requireNamespace("withr", quietly = TRUE)
 #' # When using interactively you will usually pass the result onto `lint` or `lint_package()`
 #' f <- withr::local_tempfile(lines = "my_slightly_long_variable_name <- 2.3", fileext = "R")
-#' lint(f, linters = linters_with_defaults(line_length_linter = line_length_linter(120)))
+#' lint(f, linters = linters_with_defaults(line_length_linter = line_length_linter(120L)))
 #'
 #' # the default linter list with a different line length cutoff
-#' my_linters <- linters_with_defaults(line_length_linter = line_length_linter(120))
+#' my_linters <- linters_with_defaults(line_length_linter = line_length_linter(120L))
 #'
 #' # omit the argument name if you are just using different arguments
 #' my_linters <- linters_with_defaults(defaults = my_linters, object_name_linter("camelCase"))
@@ -194,13 +194,10 @@ linters_with_defaults <- function(..., defaults = default_linters) {
   modify_defaults(..., defaults = defaults)
 }
 
-#' @rdname linters_with_defaults
+#' @rdname lintr-deprecated
 #' @export
 with_defaults <- function(..., default = default_linters) {
-  lintr_deprecated("with_defaults", "linters_with_defaults or modify_defaults", "3.0.0")
-  # to ease the burden of transition -- default = NULL used to behave like defaults = list() now does
-  if (is.null(default)) default <- list()
-  linters_with_defaults(..., defaults = default)
+  lintr_deprecated("with_defaults", "linters_with_defaults or modify_defaults", "3.0.0", signal = "stop")
 }
 
 #' @keywords internal
