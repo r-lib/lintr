@@ -310,6 +310,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/numeric_leading_zero_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/nzchar_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/object_length_linter.html</loc>
   </url>
   <url>
