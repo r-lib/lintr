@@ -102,6 +102,7 @@ The following linters exist:
 \item{\code{\link{pipe_call_linter}} (tags: readability, style)}
 \item{\code{\link{pipe_consistency_linter}} (tags: configurable, readability, style)}
 \item{\code{\link{pipe_continuation_linter}} (tags: default, readability, style)}
+\item{\code{\link{print_linter}} (tags: best_practices, consistency)}
 \item{\code{\link{quotes_linter}} (tags: configurable, consistency, default, readability, style)}
 \item{\code{\link{redundant_equals_linter}} (tags: best_practices, common_mistakes, efficiency, readability)}
 \item{\code{\link{redundant_ifelse_linter}} (tags: best_practices, configurable, consistency, efficiency)}
