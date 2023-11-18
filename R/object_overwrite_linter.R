@@ -51,7 +51,11 @@ object_overwrite_linter <- function(
     }
   }
   pkg_exports <- lapply(packages, getNamespaceExports)
-  pkg_exports <- data.frame(package = rep(packages, lengths(pkg_exports)), name = unlist(pkg_exports))
+  pkg_exports <- data.frame(
+    package = rep(packages, lengths(pkg_exports)),
+    name = unlist(pkg_exports),
+    stringsAsFactors = FALSE
+  )
 
   # test that the symbol doesn't match an argument name in the function
   # NB: data.table := has parse token LEFT_ASSIGN as well
