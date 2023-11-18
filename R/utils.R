@@ -77,7 +77,7 @@ auto_names <- function(x) {
   }
   defaults <- vapply(x[empty], default_name, character(1L), USE.NAMES = FALSE)
 
-  nms[missing] <- defaults
+  nms[empty] <- defaults
   nms
 }
 
