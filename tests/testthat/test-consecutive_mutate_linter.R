@@ -40,48 +40,48 @@ patrick::with_parameters_test_that(
     )
 
     expect_lint(
-      trim_some("
+      trim_some(glue("
         conn %>%
-          tbl(dbplyr::sql('SELECT 1 AS x')) %>%
+          tbl({backend}::sql('SELECT 1 AS x')) %>%
           mutate(a = x + 1) %>%
           mutate(b = a + 1)
-      "),
+      ")),
       NULL,
       linter
     )
 
     expect_lint(
-      trim_some("
+      trim_some(glue("
         conn %>%
-          tbl(dbplyr:::sql('SELECT 1 AS x')) %>%
+          tbl({backend}:::sql('SELECT 1 AS x')) %>%
           mutate(a = x + 1) %>%
           mutate(b = a + 1)
-      "),
+      ")),
       NULL,
       linter
     )
 
     expect_lint(
-      trim_some("
-        #' @import dbplyr
+      trim_some(glue("
+        #' @import {backend}
         NULL
 
         DF %>% mutate(a = a + 1) %>% mutate(b = a - 2)
-      "),
+      ")),
       NULL,
       linter
     )
 
     expect_lint(
-      trim_some("
-        #' @importFrom dbplyr sql
+      trim_some(glue("
+        #' @importFrom {backend} sql
         NULL
 
         conn %>%
           tbl(sql('SELECT 1 AS x')) %>%
           mutate(a = x + 1) %>%
           mutate(b = a + 1)
-      "),
+      ")),
       NULL,
       linter
     )
