@@ -68,9 +68,9 @@ test_that("multiple lints are generated correctly", {
       e %T>% f()
     }"),
     list(
-      list(message = "pipe %>%"),
-      list(message = "pipe %\\$%"),
-      list(message = "pipe %T>%")
+      list(rex::rex("pipe %>%"), line_number = 2L),
+      list(rex::rex("pipe %$%"), line_number = 3L),
+      list(rex::rex("pipe %T>%"), line_number = 4L)
     ),
     one_call_pipe_linter()
   )
