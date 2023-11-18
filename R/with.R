@@ -217,14 +217,14 @@ call_linter_factory <- function(linter_factory, linter_name, package) {
 #' @keywords internal
 #' @noRd
 guess_names <- function(..., missing_index) {
-  args <- as.character(eval(substitute(alist(...)[missing_index])))
+  arguments <- as.character(eval(substitute(alist(...)[missing_index])))
   # foo_linter(x=1) => "foo"
   # var[["foo"]]    => "foo"
   # strip call: foo_linter(x=1) --> foo_linter
   # NB: Very long input might have newlines which are not caught
   #  by . in a perl regex; see #774
-  args <- re_substitutes(args, rex("(", anything), "", options = "s")
+  arguments <- re_substitutes(arguments, rex("(", anything), "", options = "s")
   # strip extractors: pkg::foo_linter, var[["foo_linter"]] --> foo_linter
-  args <- re_substitutes(args, rex(start, anything, '["' %or% "::"), "")
-  re_substitutes(args, rex('"]', anything, end), "")
+  arguments <- re_substitutes(arguments, rex(start, anything, '["' %or% "::"), "")
+  re_substitutes(arguments, rex('"]', anything, end), "")
 }
