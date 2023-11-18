@@ -21,7 +21,7 @@
 #' )
 #'
 #' # okay
-#' code <- "library(dplyr)\nx %>% mutate(a = 1) %>% mutate(a = a + 1)"
+#' code <- "library(dbplyr)\nx %>% mutate(a = 1) %>% mutate(a = a + 1)"
 #' writeLines(code)
 #' lint(
 #'   text = code,
