@@ -17,6 +17,38 @@ utils, tools, methods, graphics, and grDevices.}
 Re-using existing names creates a risk of subtle error best avoided.
 Avoiding this practice also encourages using better, more descriptive names.
 }
+\examples{
+# will produce lints
+code <- "function(x) {\n  data <- x\n  data\n}"
+writeLines(code)
+lint(
+  text = code,
+  object_overwrite_linter()
+)
+
+code <- "function(x) {\n  lint <- 'fun'\n  lint\n}"
+writeLines(code)
+lint(
+  text = code,
+  object_overwrite_linter(packages = "lintr")
+)
+
+# okay
+code <- "function(x) {\n  data("mtcars")\n}"
+writeLines(code)
+lint(
+  text = code,
+  object_overwrite_linter()
+)
+
+code <- "function(x) {\n  data <- x\n  data\n}"
+writeLines(code)
+lint(
+  text = code,
+  object_overwrite_linter(packages = "base")
+)
+
+}
 \seealso{
 \itemize{
 \item \link{linters} for a complete list of linters available in lintr.
