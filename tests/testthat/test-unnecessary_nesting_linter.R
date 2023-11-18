@@ -269,17 +269,30 @@ test_that("rlang's double-brace operator is skipped", {
 })
 
 test_that("unnecessary_nesting_linter blocks one-expression braced expressions", {
-  lines <- c(
-    "tryCatch(",
-    "  {",
-    "    foo(x)",
-    "  },",
-    "  error = identity",
-    ")"
-  )
+  linter <- unnecessary_nesting_linter()
+  lint_msg <- rex::rex("Reduce the nesting of this statement by removing the braces {}.")
+
   expect_lint(
-    lines,
-    R"(Reduce the nesting of this statement by removing the braces \{\}\.)",
-    unnecessary_nesting_linter()
+    trim_some("
+      tryCatch(
+        {
+          foo(x)
+        },
+        error = identity
+      )
+    "),
+    lint_msg,
+    linter
+  )
+
+  # NB: styler would re-style this anyway
+  expect_lint(
+    trim_some("
+      tryCatch({
+        foo()
+      }, error = identity)
+    "),
+    lint_msg,
+    linter
   )
 })
