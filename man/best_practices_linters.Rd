@@ -43,6 +43,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{length_levels_linter}}}
 \item{\code{\link{lengths_linter}}}
 \item{\code{\link{library_call_linter}}}
+\item{\code{\link{list_comparison_linter}}}
 \item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
 \item{\code{\link{object_overwrite_linter}}}
