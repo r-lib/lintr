@@ -8,7 +8,7 @@ local({
 
 
   cases <- expand.grid(
-    list_mapper = c("lapply", "map", "Map"),
+    list_mapper = c("lapply", "map", "Map", ".mapply"),
     comparator = c("==", "!=", ">=", "<=", ">", "<")
   )
   cases$.test_name <- with(cases, paste(list_mapper, comparator))
