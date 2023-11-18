@@ -370,6 +370,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/redundant_ifelse_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/regex_linters.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/regex_subset_linter.html</loc>
   </url>
   <url>
@@ -464,6 +467,9 @@
   </url>
   <url>
     <loc>https://lintr.r-lib.org/dev/reference/vector_logic_linter.html</loc>
+  </url>
+  <url>
+    <loc>https://lintr.r-lib.org/dev/reference/which_grepl_linter.html</loc>
   </url>
   <url>
     <loc>https://lintr.r-lib.org/dev/reference/whitespace_linter.html</loc>

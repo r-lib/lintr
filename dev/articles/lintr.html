@@ -482,7 +482,7 @@ below:</p>
 <span><span class="co">#&gt;  [4] "consistency"         "correctness"         "default"            </span></span>
 <span><span class="co">#&gt;  [7] "deprecated"          "efficiency"          "executing"          </span></span>
 <span><span class="co">#&gt; [10] "package_development" "pkg_testthat"        "readability"        </span></span>
-<span><span class="co">#&gt; [13] "robustness"          "style"</span></span></code></pre></div>
+<span><span class="co">#&gt; [13] "regex"               "robustness"          "style"</span></span></code></pre></div>
 <p>You can select tags of interest to see which linters are
 included:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -520,7 +520,7 @@ included:</p>
 <span><span class="co">#&gt; [59] "T_and_F_symbol_linter"            "unnecessary_concatenation_linter"</span></span>
 <span><span class="co">#&gt; [61] "unnecessary_lambda_linter"        "unnecessary_nested_if_linter"    </span></span>
 <span><span class="co">#&gt; [63] "unnecessary_placeholder_linter"   "unreachable_code_linter"         </span></span>
-<span><span class="co">#&gt; [65] "yoda_test_linter"</span></span></code></pre></div>
+<span><span class="co">#&gt; [65] "which_grepl_linter"               "yoda_test_linter"</span></span></code></pre></div>
 <p>You can include tag-based linters in the configuration file, and
 customize them further:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">linters</span><span class="kw">:</span><span class="at"> linters_with_tags(</span></span>
@@ -587,8 +587,8 @@ using</p>
 <span><span class="co">#&gt;  [95] "unnecessary_concatenation_linter" "unnecessary_lambda_linter"       </span></span>
 <span><span class="co">#&gt;  [97] "unnecessary_nested_if_linter"     "unnecessary_placeholder_linter"  </span></span>
 <span><span class="co">#&gt;  [99] "unreachable_code_linter"          "unused_import_linter"            </span></span>
-<span><span class="co">#&gt; [101] "vector_logic_linter"              "whitespace_linter"               </span></span>
-<span><span class="co">#&gt; [103] "yoda_test_linter"</span></span></code></pre></div>
+<span><span class="co">#&gt; [101] "vector_logic_linter"              "which_grepl_linter"              </span></span>
+<span><span class="co">#&gt; [103] "whitespace_linter"                "yoda_test_linter"</span></span></code></pre></div>
 <p>If you want to use all available linters, you can include this in
 your <code>.lintr</code> file:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">linters</span><span class="kw">:</span><span class="at"> all_linters()</span></span></code></pre></div>
