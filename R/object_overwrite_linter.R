@@ -38,6 +38,12 @@
 #'   linters = object_overwrite_linter(packages = "base")
 #' )
 #'
+#' # names in function signatures are ignored
+#' lint(
+#'   text = "function(data) data <- subset(data, x > 0)",
+#'   linters = object_overwrite_linter()
+#' )
+#'
 #' @evalRd rd_tags("object_overwrite_linter")
 #' @seealso
 #'  - [linters] for a complete list of linters available in lintr.

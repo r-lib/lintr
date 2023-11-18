@@ -48,6 +48,12 @@ lint(
   linters = object_overwrite_linter(packages = "base")
 )
 
+# names in function signatures are ignored
+lint(
+  text = "function(data) data <- subset(data, x > 0)",
+  linters = object_overwrite_linter()
+)
+
 }
 \seealso{
 \itemize{
