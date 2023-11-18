@@ -99,19 +99,19 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
             itr, field, deparse(value), deparse(check)
           )
           # deparse ensures that NULL, list(), etc are handled gracefully
-          exp <- if (field == "message") {
+          ok <- if (field == "message") {
             re_matches(value, check)
           } else {
             isTRUE(all.equal(value, check))
           }
-          if (!is.logical(exp)) {
+          if (!is.logical(ok)) {
             stop(
               "Invalid regex result, did you mistakenly have a capture group in the regex? ",
               "Be sure to escape parenthesis with `[]`",
               call. = FALSE
             )
           }
-          testthat::expect(exp, msg)
+          testthat::expect(ok, msg)
         })
       },
       lints,

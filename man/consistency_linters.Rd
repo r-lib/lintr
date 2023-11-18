@@ -30,6 +30,7 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{nzchar_linter}}}
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{paste_linter}}}
+\item{\code{\link{print_linter}}}
 \item{\code{\link{quotes_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{scalar_in_linter}}}

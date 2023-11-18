@@ -273,3 +273,8 @@ test_that("function shorthand also lints", {
 
   expect_lint("aBc <- \\() NULL", "function name style", object_name_linter())
 })
+
+test_that("capture groups in style are fine", {
+  expect_lint("a <- 1\nab <- 2", NULL, object_name_linter(regexes = c(capture = "^(a)")))
+  expect_lint("ab <- 1\nabc <- 2", NULL, object_name_linter(regexes = c(capture = "^(a)(b)")))
+})
