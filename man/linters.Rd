@@ -23,7 +23,7 @@ The following tags exist:
 \item{\link[=consistency_linters]{consistency} (24 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
-\item{\link[=deprecated_linters]{deprecated} (5 linters)}
+\item{\link[=deprecated_linters]{deprecated} (4 linters)}
 \item{\link[=efficiency_linters]{efficiency} (27 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
@@ -36,9 +36,6 @@ The following tags exist:
 \section{Linters}{
 The following linters exist:
 \itemize{
-\item{\code{\link{<<<<<<< HEAD}} (tags: )}
-\item{\code{\link{=======}} (tags: )}
-\item{\code{\link{>>>>>>> main}} (tags: )}
 \item{\code{\link{absolute_path_linter}} (tags: best_practices, configurable, robustness)}
 \item{\code{\link{any_duplicated_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{any_is_na_linter}} (tags: best_practices, efficiency)}
