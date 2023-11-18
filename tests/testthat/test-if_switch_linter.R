@@ -50,5 +50,33 @@ test_that("if_switch_linter handles further nested if/else correctly", {
   )
 })
 
+test_that("multiple lints have right metadata", {
+  lint_msg <- rex::rex("Prefer switch() statements over repeated if/else equality tests")
+
+  expect_lint(
+    trim_some("{
+      if (x == 'a') {
+        do_a()
+      } else if (x == 'b') {
+        do_b()
+      } else if (x == 'c') {
+        do_c()
+      }
+      if (y == 'A') {
+        do_A()
+      } else if (y == 'B') {
+        do_B()
+      } else if (y == 'C') {
+        do_C()
+      }
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 9L)
+    ),
+    if_switch_linter()
+  )
+})
+
 # TODO(michaelchirico): be more explicit/deliberate about nested `{}` cases like
 #   if (x == 'a') 1 else { if (x == 'b') 2 else 3 }
