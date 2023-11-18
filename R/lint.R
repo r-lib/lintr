@@ -338,18 +338,18 @@ define_linters <- function(linters = NULL) {
 validate_linter_object <- function(linter, name) {
   if (!is_linter(linter) && is.function(linter)) {
     if (is_linter_factory(linter)) {
-      old <- "Passing linters as variables"
-      new <- "a call to the linters (see ?linters)"
       lintr_deprecated(
-        old = old, new = new, version = "3.0.0",
+        old = "Passing linters as variables"
+        new =  "a call to the linters (see ?linters)",
+        version = "3.0.0",
         type = ""
       )
       linter <- linter()
     } else {
-      old <- "The use of linters of class 'function'"
-      new <- "linters classed as 'linter' (see ?Linter)"
       lintr_deprecated(
-        old = old, new = new, version = "3.0.0",
+        old = "The use of linters of class 'function'",
+        new = "linters classed as 'linter' (see ?Linter)",
+        version = "3.0.0",
         type = ""
       )
       linter <- Linter(linter, name = name)
