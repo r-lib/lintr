@@ -100,7 +100,9 @@ default_settings()
     <p>The default linter_file name is <code>.lintr</code> but it can be changed with option <code>lintr.linter_file</code>
 or the environment variable <code>R_LINTR_LINTER_FILE</code>
 This file is a DCF file, see <code><a href="https://rdrr.io/r/base/dcf.html" class="external-link">base::read.dcf()</a></code> for details.
-Experimentally, we also support keeping the config in a plain R file. By default we look for
+Here is an example of a <code>.lintr</code> file:</p>
+<p></p><div class="sourceCode dcf"><pre><code></code></pre><p></p></div>
+<p>Experimentally, we also support keeping the config in a plain R file. By default we look for
 a file named <code>.lintr.R</code> (in the same directories where we search for <code>.lintr</code>).
 We are still deciding the future of config support in lintr, so user feedback is welcome.
 The advantage of R is that it maps more closely to how the configs are actually stored,
@@ -108,7 +110,23 @@ whereas the DCF approach requires somewhat awkward formatting of parseable R cod
 valid DCF key-value pairs. The main disadvantage of the R file is it might be <em>too</em> flexible,
 with users tempted to write configs with side effects causing hard-to-detect bugs or
 like YAML could work, but require new dependencies and are harder to parse
-both programmatically and visually.</p>
+both programmatically and visually.
+Here is an example of a <code>.lintr.R</code> file:</p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="va">linters</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/linters_with_defaults.html">linters_with_defaults</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="../reference/any_duplicated_linter.html">any_duplicated_linter</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/any_is_na_linter.html">any_is_na_linter</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/backport_linter.html">backport_linter</a></span><span class="op">(</span><span class="st">"oldrel-4"</span>, except <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"R_user_dir"</span>, <span class="st">"str2lang"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/line_length_linter.html">line_length_linter</a></span><span class="op">(</span><span class="fl">120L</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/missing_argument_linter.html">missing_argument_linter</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter</a></span><span class="op">(</span>allow_single_expression <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/yoda_test_linter.html">yoda_test_linter</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="va">exclusions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    <span class="st">"inst/doc/creating_linters.R"</span> <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>    <span class="st">"inst/example/bad.R"</span>,</span>
+<span>    <span class="st">"tests/testthat/default_linter_testcode.R"</span>,</span>
+<span>    <span class="st">"tests/testthat/dummy_packages"</span></span>
+<span>  <span class="op">)</span></span></code></pre><p></p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
