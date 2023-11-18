@@ -274,6 +274,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/lintr-package.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/list_comparison_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/literal_coercion_linter.html</loc>
   </url>
   <url>
