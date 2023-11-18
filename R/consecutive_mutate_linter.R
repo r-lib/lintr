@@ -44,16 +44,14 @@ consecutive_mutate_linter <- function(invalid_backends = "dbplyr") {
   #   starting like mutate(DF, ...) %>% foo() %>% mutate().
   # similarly, expr[1][expr[call='mutate']] covers pipelines
   #   starting like mutate(DF, ...) %>% mutate(...)
+  mutate_cond <- xp_and(
+    "expr/SYMBOL_FUNCTION_CALL[text() = 'mutate']",
+    "not(SYMBOL_SUB[text() = '.keep' or text() = '.by'])"
+  )
   xpath <- glue("
   (//PIPE | //SPECIAL[{ xp_text_in_table(magrittr_pipes) }])
-    /preceding-sibling::expr[
-      expr[2][expr/SYMBOL_FUNCTION_CALL[text() = 'mutate']]
-      or expr/SYMBOL_FUNCTION_CALL[text() = 'mutate']
-    ]
-    /following-sibling::expr[
-      expr/SYMBOL_FUNCTION_CALL[text() = 'mutate']
-      and not(SYMBOL_SUB[text() = '.keep' or text() = '.by'])
-    ]
+    /preceding-sibling::expr[expr[2][{ mutate_cond }] or ({ mutate_cond })]
+    /following-sibling::expr[{ mutate_cond }]
   ")
 
   Linter(function(source_expression) {

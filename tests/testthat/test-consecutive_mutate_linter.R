@@ -12,6 +12,8 @@ test_that("consecutive_mutate_linter skips allowed usages", {
   # new dplyr: .keep and .by arguments are ignored
   expect_lint("DF %>% mutate(a = 1) %>% mutate(a = a / sum(a), .by = b)", NULL, linter)
   expect_lint("DF %>% mutate(a = 1) %>% mutate(a = b, .keep = 'none')", NULL, linter)
+  expect_lint("DF %>% mutate(a = a / sum(a), .by = b) %>% mutate(c = 1)", NULL, linter)
+  expect_lint("DF %>% mutate(a = 1, .keep = 'none') %>% mutate(a = a + 1)", NULL, linter)
 })
 
 test_that("consecutive_mutate_linter skips files loading SQL backends", {
