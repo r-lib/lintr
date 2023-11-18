@@ -113,13 +113,13 @@ sprintf_linter <- function() {
 
     sprintf_calls <- xml_find_all(xml, call_xpath)
 
-    message <- vapply(sprintf_calls, capture_sprintf_warning, character(1L))
+    sprintf_warning <- vapply(sprintf_calls, capture_sprintf_warning, character(1L))
 
-    has_message <- !is.na(message)
+    has_warning <- !is.na(sprintf_warning)
     xml_nodes_to_lints(
-      sprintf_calls[has_message],
+      sprintf_calls[has_warning],
       source_expression = source_expression,
-      lint_message = message[has_message],
+      lint_message = sprintf_warning[has_warning],
       type = "warning"
     )
   })
