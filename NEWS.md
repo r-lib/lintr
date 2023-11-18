@@ -1,5 +1,16 @@
 # lintr (development version)
 
+## Deprecations & breaking changes
+
+* Various things marked deprecated since {lintr} 3.0.0 have been fully deprecated. They will be completely removed in the subsequent release.
+   + `source_file=` argument to `ids_with_token()` and `with_id()`.
+   + Passing linters by name or as non-`"linter"`-classed functions.
+   + `linter=` argument of `Lint()`.
+   + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`..
+   + `with_defaults()`.
+   + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
+   + Helper `with_defaults()`.
+
 ## Bug fixes
 
 * `object_name_linter()` no longer errors when user-supplied `regexes=` have capture groups (#2188, @MichaelChirico).

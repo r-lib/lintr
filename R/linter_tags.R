@@ -4,11 +4,12 @@
 #'
 #' @param packages A character vector of packages to search for linters.
 #' @param tags Optional character vector of tags to search. Only linters with at least one matching tag will be
-#' returned. If `tags` is `NULL`, all linters will be returned. See `available_tags("lintr")` to find out what
-#' tags are already used by lintr.
+#'   returned. If `tags` is `NULL`, all linters will be returned. See `available_tags("lintr")` to find out what
+#'   tags are already used by lintr.
 #' @param exclude_tags Tags to exclude from the results. Linters with at least one matching tag will not be returned.
-#' If `except_tags` is `NULL`, no linters will be excluded. Note that `tags` takes priority, meaning that any
-#' tag found in both `tags` and `exclude_tags` will be included, not excluded.
+#'   If `exclude_tags` is `NULL`, no linters will be excluded. Note that `tags` takes priority, meaning that any
+#'   tag found in both `tags` and `exclude_tags` will be included, not excluded. Note that linters with tag `"defunct"`
+#'   (which do not work and can no longer be run) cannot be queried directly. See [lintr-deprecated] instead.
 #'
 #' @section Package Authors:
 #'
@@ -58,7 +59,8 @@ available_linters <- function(packages = "lintr", tags = NULL, exclude_tags = "d
   }
 
   # any tags specified explicitly will not be excluded (#1959)
-  exclude_tags <- setdiff(exclude_tags, tags)
+  # never include defunct linters, which don't work / error on instantiation (#2284).
+  exclude_tags <- unique(c(setdiff(exclude_tags, tags), "defunct"))
 
   # Handle multiple packages
   if (length(packages) > 1L) {
