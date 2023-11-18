@@ -43,7 +43,8 @@
 #'  - [linters] for a complete list of linters available in lintr.
 #'  - <https://style.tidyverse.org/syntax.html#object-names>
 #' @export
-object_overwrite_linter <- function(packages = c("base", "stats", "utils", "tools", "methods", "graphics", "grDevices")) {
+object_overwrite_linter <- function(
+    packages = c("base", "stats", "utils", "tools", "methods", "graphics", "grDevices")) {
   for (package in packages) {
     if (!requireNamespace(package, quietly = TRUE)) {
       stop("Package '", package, "' is not available.")
@@ -74,13 +75,15 @@ object_overwrite_linter <- function(packages = c("base", "stats", "utils", "tool
     xml <- source_expression$xml_parsed_content
 
     bad_expr <- xml_find_all(xml, xpath)
-    bad_symbol <- xml_text(xml_find_first(bad_expr, 'SYMBOL'))
+    bad_symbol <- xml_text(xml_find_first(bad_expr, "SYMBOL"))
     source_pkg <- pkg_exports$package[match(bad_symbol, pkg_exports$name)]
+    lint_message <- 
+      sprintf("'%s' is an exported object from package '%s'. Avoid re-using such symbols.", bad_symbol, source_pkg)
 
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = sprintf("'%s' is an exported object from package '%s'. Avoid re-using such symbols.", bad_symbol, source_pkg),
+      lint_message = lint_message,
       type = "warning"
     )
   })
