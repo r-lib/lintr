@@ -42,5 +42,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=readability_linters]{readability}
+\link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
 }
