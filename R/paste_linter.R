@@ -258,11 +258,11 @@ paste_linter <- function(allow_empty_sep = FALSE,
 }
 
 check_is_not_file_path <- function(expr, allow_file_path) {
-  args <- xml_find_all(expr, "expr[position() > 1]")
+  arguments <- xml_find_all(expr, "expr[position() > 1]")
 
-  is_string <- !is.na(xml_find_first(args, "STR_CONST"))
-  string_values <- character(length(args))
-  string_values[is_string] <- get_r_string(args[is_string])
+  is_string <- !is.na(xml_find_first(arguments, "STR_CONST"))
+  string_values <- character(length(arguments))
+  string_values[is_string] <- get_r_string(arguments[is_string])
   not_start_slash <- which(!startsWith(string_values, "/"))
   not_end_slash <- which(!endsWith(string_values, "/"))
 

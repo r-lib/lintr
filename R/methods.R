@@ -1,13 +1,13 @@
 #' @export
 format.lint <- function(x, ...) {
-  if (requireNamespace("crayon", quietly = TRUE)) {
+  if (requireNamespace("cli", quietly = TRUE)) {
     color <- switch(x$type,
-      warning = crayon::magenta,
-      error = crayon::red,
-      style = crayon::blue,
-      crayon::bold
+      warning = cli::col_magenta,
+      error = cli::col_red,
+      style = cli::col_blue,
+      cli::style_bold
     )
-    emph <- crayon::bold
+    emph <- cli::style_bold
   } else {
     # nocov start
     color <- identity

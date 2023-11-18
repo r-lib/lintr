@@ -17,13 +17,13 @@ see also \code{\link[=available_tags]{available_tags()}}.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (55 linters)}
+\item{\link[=best_practices_linters]{best_practices} (56 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (8 linters)}
 \item{\link[=configurable_linters]{configurable} (34 linters)}
-\item{\link[=consistency_linters]{consistency} (23 linters)}
+\item{\link[=consistency_linters]{consistency} (24 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
-\item{\link[=deprecated_linters]{deprecated} (8 linters)}
+\item{\link[=deprecated_linters]{deprecated} (5 linters)}
 \item{\link[=efficiency_linters]{efficiency} (26 linters)}
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
@@ -36,6 +36,9 @@ The following tags exist:
 \section{Linters}{
 The following linters exist:
 \itemize{
+\item{\code{\link{<<<<<<< HEAD}} (tags: )}
+\item{\code{\link{=======}} (tags: )}
+\item{\code{\link{>>>>>>> main}} (tags: )}
 \item{\code{\link{absolute_path_linter}} (tags: best_practices, configurable, robustness)}
 \item{\code{\link{any_duplicated_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{any_is_na_linter}} (tags: best_practices, efficiency)}
@@ -103,6 +106,7 @@ The following linters exist:
 \item{\code{\link{pipe_call_linter}} (tags: readability, style)}
 \item{\code{\link{pipe_consistency_linter}} (tags: configurable, readability, style)}
 \item{\code{\link{pipe_continuation_linter}} (tags: default, readability, style)}
+\item{\code{\link{print_linter}} (tags: best_practices, consistency)}
 \item{\code{\link{quotes_linter}} (tags: configurable, consistency, default, readability, style)}
 \item{\code{\link{redundant_equals_linter}} (tags: best_practices, common_mistakes, efficiency, readability)}
 \item{\code{\link{redundant_ifelse_linter}} (tags: best_practices, configurable, consistency, efficiency)}
