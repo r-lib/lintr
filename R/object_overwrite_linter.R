@@ -72,8 +72,15 @@ object_overwrite_linter <- function(
     ]/
       parent::expr[
         count(*) = 1
-        and following-sibling::LEFT_ASSIGN[text() = '<-']
-        and ancestor::expr/preceding-sibling::FUNCTION
+        and (
+          following-sibling::LEFT_ASSIGN[text() != ':=']
+          or following-sibling::EQ_ASSIGN
+          or preceding-sibling::RIGHT_ASSIGN
+        )
+        and (
+          ancestor::expr/preceding-sibling::FUNCTION
+          or ancestor::expr_or_assign_or_help/preceding-sibling::FUNCTION
+        )
       ]
   ")
 

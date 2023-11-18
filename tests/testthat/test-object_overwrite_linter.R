@@ -81,3 +81,13 @@ test_that("object_overwrite_linter optionally accepts package names", {
     object_overwrite_linter(packages = "lintr")
   )
 })
+
+test_that("non-<- assignments are detected", {
+  linter <- object_overwrite_linter()
+  lint_msg <- rex::rex("'sum' is an exported object from package 'base'.")
+
+  expect_lint("function(x) sum(x) -> sum", lint_msg, linter)
+  expect_lint("function(x) sum <<- sum(x)", lint_msg, linter)
+  expect_lint("function(x) sum(x) ->> sum", lint_msg, linter)
+  expect_lint("function(x) sum = sum(x)", lint_msg, linter)
+})
