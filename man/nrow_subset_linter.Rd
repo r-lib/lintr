@@ -13,9 +13,6 @@ count the number of rows in the resulting subset.
 There are a number of equivalent expressions that don't require the full
 subset, e.g. \code{with(x, sum(condition))} (or, more generically,
 \code{with(x, sum(condition, na.rm = TRUE))}).
-The same can be said of other versions of this like
-\code{nrow(DT[(condition)])} for subsetting a \code{data.table} or
-\code{DT \%>\% filter(condition) \%>\% nrow()}.
 }
 \examples{
 # will produce lints
