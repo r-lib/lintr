@@ -19,6 +19,11 @@ lint(
 
 # okay
 lint(
+  text = "rep_len(1:3, 10)",
+  linters = rep_len_linter()
+)
+
+lint(
   text = "rep(1:3, each = 2L, length.out = 10L)",
   linters = rep_len_linter()
 )
