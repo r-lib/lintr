@@ -63,13 +63,35 @@ test_that("spaces_left_parentheses_linter blocks disallowed usages", {
 })
 
 test_that("doesn't produce a warning", {
-  # complexity.R contains a function with nested if-statements where the conditional includes a unary minus.
+  # this contains a function with nested if-statements where the conditional includes a unary minus.
   # This specific constellation with another if-statement at the same nesting level on the other enclosing if-branch
   # caused a warning in spaces_left_parentheses_linter (e.g. 84bc3a is broken)
+  complex_lines <- trim_some("
+    complexity <- function(x) {
+      if (x > 0.0) {
+        if (x > 10.0) {
+          if (x > 20.0) {
+            x <- x / 2.0
+          } else {
+            return(x)
+          }
+        } else {
+          return(x)
+        }
+      } else {
+        if (x < -10.0) {
+          if (x < -20.0) {
+            x <- x * 2.0
+          } else {
+            return(x)
+          }
+        } else {
+          return(x)
+        }
+      }
+      x
+    }
+  ")
 
-  expect_silent(
-    lint(
-      system.file("example/complexity.R", package = "lintr")
-    )
-  )
+  expect_no_warning(lint(text = complex_lines, linters = spaces_left_parentheses_linter())
 })
