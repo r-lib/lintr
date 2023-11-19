@@ -32,6 +32,7 @@ The following linters are tagged with 'style':
 \item{\code{\link{object_length_linter}}}
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{object_usage_linter}}}
+\item{\code{\link{one_call_pipe_linter}}}
 \item{\code{\link{package_hooks_linter}}}
 \item{\code{\link{paren_body_linter}}}
 \item{\code{\link{pipe_call_linter}}}

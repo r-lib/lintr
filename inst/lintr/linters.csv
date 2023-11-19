@@ -64,6 +64,7 @@ object_length_linter,style readability default configurable executing
 object_name_linter,style consistency default configurable executing
 object_overwrite_linter,best_practices robustness readability configurable executing
 object_usage_linter,style readability correctness default executing configurable
+one_call_pipe_linter,style readability
 open_curly_linter,defunct
 outer_negation_linter,readability efficiency best_practices
 package_hooks_linter,style correctness package_development
