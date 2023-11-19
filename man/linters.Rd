@@ -17,8 +17,8 @@ see also \code{\link[=available_tags]{available_tags()}}.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (59 linters)}
-\item{\link[=common_mistakes_linters]{common_mistakes} (9 linters)}
+\item{\link[=best_practices_linters]{best_practices} (60 linters)}
+\item{\link[=common_mistakes_linters]{common_mistakes} (10 linters)}
 \item{\link[=configurable_linters]{configurable} (35 linters)}
 \item{\link[=consistency_linters]{consistency} (26 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
@@ -106,6 +106,7 @@ The following linters exist:
 \item{\code{\link{pipe_call_linter}} (tags: readability, style)}
 \item{\code{\link{pipe_consistency_linter}} (tags: configurable, readability, style)}
 \item{\code{\link{pipe_continuation_linter}} (tags: default, readability, style)}
+\item{\code{\link{pipe_return_linter}} (tags: best_practices, common_mistakes)}
 \item{\code{\link{print_linter}} (tags: best_practices, consistency)}
 \item{\code{\link{quotes_linter}} (tags: configurable, consistency, default, readability, style)}
 \item{\code{\link{redundant_equals_linter}} (tags: best_practices, common_mistakes, efficiency, readability)}
