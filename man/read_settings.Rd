@@ -23,6 +23,25 @@ Lintr searches for settings for a given source file in the following order:
 The default linter_file name is \code{.lintr} but it can be changed with option \code{lintr.linter_file}
 or the environment variable \code{R_LINTR_LINTER_FILE}
 This file is a DCF file, see \code{\link[base:dcf]{base::read.dcf()}} for details.
+Here is an example of a \code{.lintr} file:
+
+\if{html}{\out{<div class="sourceCode dcf">}}\preformatted{linters: linters_with_defaults(
+    any_duplicated_linter(),
+    any_is_na_linter(),
+    backport_linter("oldrel-4", except = c("R_user_dir", "str2lang")),
+    line_length_linter(120L),
+    missing_argument_linter(),
+    unnecessary_concatenation_linter(allow_single_expression = FALSE),
+    yoda_test_linter()
+  )
+exclusions: list(
+    "inst/doc/creating_linters.R" = 1,
+    "inst/example/bad.R",
+    "tests/testthat/default_linter_testcode.R",
+    "tests/testthat/dummy_packages"
+  )
+}\if{html}{\out{</div>}}
+
 Experimentally, we also support keeping the config in a plain R file. By default we look for
 a file named \code{.lintr.R} (in the same directories where we search for \code{.lintr}).
 We are still deciding the future of config support in lintr, so user feedback is welcome.
@@ -32,4 +51,22 @@ valid DCF key-value pairs. The main disadvantage of the R file is it might be \e
 with users tempted to write configs with side effects causing hard-to-detect bugs or
 like YAML could work, but require new dependencies and are harder to parse
 both programmatically and visually.
+Here is an example of a \code{.lintr.R} file:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{linters <- linters_with_defaults(
+    any_duplicated_linter(),
+    any_is_na_linter(),
+    backport_linter("oldrel-4", except = c("R_user_dir", "str2lang")),
+    line_length_linter(120L),
+    missing_argument_linter(),
+    unnecessary_concatenation_linter(allow_single_expression = FALSE),
+    yoda_test_linter()
+  )
+exclusions <- list(
+    "inst/doc/creating_linters.R" = 1,
+    "inst/example/bad.R",
+    "tests/testthat/default_linter_testcode.R",
+    "tests/testthat/dummy_packages"
+  )
+}\if{html}{\out{</div>}}
 }

@@ -5,7 +5,7 @@
 \title{Deprecated linters}
 \description{
 Linters that are deprecated and provided for backwards compatibility only.
-These linters will be excluded from \code{linters_with_tags()} by default.
+These linters will be excluded from \code{\link[=linters_with_tags]{linters_with_tags()}} by default.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
@@ -13,12 +13,8 @@ These linters will be excluded from \code{linters_with_tags()} by default.
 \section{Linters}{
 The following linters are tagged with 'deprecated':
 \itemize{
-\item{\code{\link{closed_curly_linter}}}
 \item{\code{\link{consecutive_stopifnot_linter}}}
 \item{\code{\link{no_tab_linter}}}
-\item{\code{\link{open_curly_linter}}}
-\item{\code{\link{paren_brace_linter}}}
-\item{\code{\link{semicolon_terminator_linter}}}
 \item{\code{\link{single_quotes_linter}}}
 \item{\code{\link{unneeded_concatenation_linter}}}
 }
