@@ -198,6 +198,20 @@ library_call_linter <- function(allow_preamble = TRUE) {
       type = "warning"
     )
 
+    consecutive_suppress_expr <- xml_find_all(xml, consecutive_suppress_xpath)
+    consecutive_suppress_call_text <- xp_call_name(consecutive_suppress_expr)
+    consecutive_suppress_message <- glue(
+      "Unify consecutive calls to {consecutive_suppress_call_text}(). ",
+      "You can do so by writing all of the calls in one braced expression ",
+      "like {consecutive_suppress_call_text}({{...}})."
+    )
+    consecutive_suppress_lints <- xml_nodes_to_lints(
+      consecutive_suppress_expr,
+      source_expression = source_expression,
+      lint_message = consecutive_suppress_message,
+      type = "warning"
+    )
+
     c(upfront_call_lints, char_only_direct_lints, char_only_indirect_lints, consecutive_suppress_lints)
   })
 }
