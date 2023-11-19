@@ -25,7 +25,7 @@
 #'   text = "x %>% mutate(a = 1, b = 2)",
 #'   linters = consecutive_mutate_linter()
 #' )
-#' 
+#'
 #' code <- "library(dbplyr)\nx %>% mutate(a = 1) %>% mutate(a = a + 1)"
 #' writeLines(code)
 #' lint(
