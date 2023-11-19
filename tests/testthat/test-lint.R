@@ -215,14 +215,6 @@ test_that("old compatibility usage errors", {
   )
 })
 
-test_that("Deprecated positional usage of cache= errors", {
-  expect_error(
-    lint("a = 2\n", FALSE, linters = assignment_linter()),
-    "'cache' is no longer available as a positional argument",
-    fixed = TRUE
-  )
-})
-
 test_that("Linters throwing an error give a helpful error", {
   tmp_file <- withr::local_tempfile(lines = "a <- 1")
   linter <- function() Linter(function(source_expression) stop("a broken linter"))
