@@ -24,6 +24,7 @@ The following linters are tagged with 'efficiency':
 \item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{matrix_apply_linter}}}
 \item{\code{\link{nested_ifelse_linter}}}
+\item{\code{\link{nrow_subset_linter}}}
 \item{\code{\link{nzchar_linter}}}
 \item{\code{\link{outer_negation_linter}}}
 \item{\code{\link{redundant_equals_linter}}}
