@@ -34,3 +34,21 @@ test_that("rep_len_linter blocks simple disallowed usages", {
   # implicit usage in third argument
   expect_lint("rep(1:10, 10:1, 50)", lint_msg, linter)
 })
+
+test_that("vectorized lints work", {
+  lint_msg <- rex::rex("Use rep_len(x, n) instead of rep(x, length.out = n).")
+
+  expect_lint(
+    trim_some("{
+      rep(x, y)
+      rep(1:10, length.out = 50)
+      rep(x, each = 4, length.out = 50)
+      rep(x, length.out = 50)
+    }"),
+    list(
+      list(lint_msg, line_number = 3L),
+      list(lint_msg, line_number = 5L)
+    ),
+    rep_len_linter()
+  )
+})
