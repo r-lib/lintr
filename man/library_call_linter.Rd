@@ -55,7 +55,7 @@ code <- "suppressMessages(library(dplyr))\nsuppressMessages(library(tidyr))"
 writeLines(code)
 lint(
   text = code,
-  linters = consecutive_suppression_linter()
+  linters = library_call_linter()
 )
 
 # okay
@@ -88,7 +88,7 @@ code <- "suppressMessages({\n  library(dplyr)\n  library(tidyr)\n})"
 writeLines(code)
 lint(
   text = code,
-  linters = consecutive_suppression_linter()
+  linters = library_call_linter()
 )
 
 }

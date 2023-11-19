@@ -43,7 +43,7 @@
 #' writeLines(code)
 #' lint(
 #'   text = code,
-#'   linters = consecutive_suppression_linter()
+#'   linters = library_call_linter()
 #' )
 #'
 #' # okay
@@ -76,7 +76,7 @@
 #' writeLines(code)
 #' lint(
 #'   text = code,
-#'   linters = consecutive_suppression_linter()
+#'   linters = library_call_linter()
 #' )
 #'
 #' @evalRd rd_tags("library_call_linter")
