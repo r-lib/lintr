@@ -7,7 +7,7 @@
 #'    for loading packages in a loop.
 #'  - Block consecutive calls to `suppressMessages(library(.))`
 #'    in favor of using [suppressMessages()] only once to suppress
-#'    messages from all `library()` calls.
+#'    messages from all `library()` calls. Ditto [suppressPackageStartupMessages()].
 #'
 #' @param allow_preamble Logical, default `TRUE`. If `FALSE`,
 #'   no code is allowed to precede the first `library()` call,
