@@ -18,7 +18,9 @@
 ## New and improved features
 
 * More helpful errors for invalid configs (#2253, @MichaelChirico).
-* `library_call_linter()` is extended to encourage all packages to be attached with `library(symbol)`, not `library("symbol", character.only = TRUE)` or "vectorized" approaches looping over package names (part of #884, @MichaelChirico).
+* `library_call_linter()` is extended
+  + to encourage all packages to be attached with `library(symbol)`, not `library("symbol", character.only = TRUE)` or "vectorized" approaches looping over package names (part of #884, @MichaelChirico).
+  + to discourage many consecutive calls to `suppressMessages()` or `suppressPackageStartupMessages()` (part of #884, @MichaelChirico).
 
 ### New linters
 
@@ -30,7 +32,6 @@
 * `which_grepl_linter()` for discouraging `which(grepl(ptn, x))` in favor of directly using `grep(ptn, x)` (part of #884, @MichaelChirico).
 * `list_comparison_linter()` for discouraging comparisons on the output of `lapply()`, e.g. `lapply(x, sum) > 10` (part of #884, @MichaelChirico).
 * `print_linter()` for discouraging usage of `print()` on string literals like `print("Reached here")` or `print(paste("Found", nrow(DF), "rows."))` (#1894, @MichaelChirico).
-* `consecutive_suppression_linter()` for encouraging combining consecutive calls to `suppressMessages()` into one (part of #884, @MichaelChirico)
 
 ### Lint accuracy fixes: removing false positives
 
