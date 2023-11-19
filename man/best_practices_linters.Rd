@@ -49,10 +49,12 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{nzchar_linter}}}
 \item{\code{\link{outer_negation_linter}}}
 \item{\code{\link{paste_linter}}}
+\item{\code{\link{pipe_return_linter}}}
 \item{\code{\link{print_linter}}}
 \item{\code{\link{redundant_equals_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{regex_subset_linter}}}
+\item{\code{\link{rep_len_linter}}}
 \item{\code{\link{routine_registration_linter}}}
 \item{\code{\link{scalar_in_linter}}}
 \item{\code{\link{seq_linter}}}
