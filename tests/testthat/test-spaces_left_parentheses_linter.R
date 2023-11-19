@@ -93,5 +93,5 @@ test_that("doesn't produce a warning", {
     }
   ")
 
-  expect_no_warning(lint(text = complex_lines, linters = spaces_left_parentheses_linter())
+  expect_no_warning(lint(text = complex_lines, linters = spaces_left_parentheses_linter()))
 })
