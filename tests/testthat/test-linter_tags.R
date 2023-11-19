@@ -79,11 +79,14 @@ test_that("warnings occur only for deprecated linters", {
 
 test_that("available_linters matches the set of linters available from lintr", {
   lintr_db <- available_linters(exclude_tags = NULL)
-  linters_in_namespace <- setdiff(ls(asNamespace("lintr"), pattern = "_linter$"), "is_linter")
+  defunct_linters <-
+    subset(read.csv(system.file("lintr", "linters.csv", package = "lintr"), as.is = TRUE), tags == "defunct")$linter
+  ignore <- c("is_linter", defunct_linters)
+  linters_in_namespace <- setdiff(ls(asNamespace("lintr"), pattern = "_linter$"), ignore)
   # ensure that the contents of inst/lintr/linters.csv covers all _linter objects in our namespace
   expect_identical(sort(lintr_db$linter), sort(linters_in_namespace))
   # ensure that all _linter objects in our namespace are also exported
-  exported_linters <- setdiff(grep("_linter$", getNamespaceExports("lintr"), value = TRUE), "is_linter")
+  exported_linters <- setdiff(grep("_linter$", getNamespaceExports("lintr"), value = TRUE), ignore)
   expect_identical(sort(linters_in_namespace), sort(exported_linters))
 })
 
