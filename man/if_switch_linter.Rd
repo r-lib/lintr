@@ -31,6 +31,12 @@ lint(
 
 # okay
 lint(
+  text = "switch(x, a = 1, b = 2, 3)",
+  linters = if_switch_linter()
+)
+
+# switch() version not as clear
+lint(
   text = "if (x == 'a') 1 else if (x == 'b' & y == 2) 2 else 3",
   linters = if_switch_linter()
 )
