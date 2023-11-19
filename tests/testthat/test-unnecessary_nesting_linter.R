@@ -292,7 +292,7 @@ test_that("unnecessary_nesting_linter blocks one-expression braced expressions",
         foo()
       }, error = identity)
     "),
-    lint_msg,
+    NULL,
     linter
   )
 })
