@@ -77,6 +77,3 @@ test_that("multiple lints have right metadata", {
     if_switch_linter()
   )
 })
-
-# TODO(michaelchirico): be more explicit/deliberate about nested `{}` cases like
-#   if (x == 'a') 1 else { if (x == 'b') 2 else 3 }
