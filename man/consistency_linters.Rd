@@ -18,7 +18,6 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{comparison_negation_linter}}}
 \item{\code{\link{condition_message_linter}}}
 \item{\code{\link{consecutive_assertion_linter}}}
-\item{\code{\link{consecutive_suppression_linter}}}
 \item{\code{\link{function_argument_linter}}}
 \item{\code{\link{if_not_else_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
