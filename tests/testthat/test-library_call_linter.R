@@ -311,3 +311,109 @@ test_that("multiple lints are generated correctly", {
     library_call_linter()
   )
 })
+
+patrick::with_parameters_test_that(
+  "library_call_linter skips allowed usages",
+  {
+    linter <- library_call_linter()
+
+    expect_lint(sprintf("%s(x)", call), NULL, linter)
+    expect_lint(sprintf("%s(x, y, z)", call), NULL, linter)
+
+    # intervening expression
+    expect_lint(sprintf("%1$s(x); y; %1$s(z)", call), NULL, linter)
+
+    # inline or potentially with gaps don't matter
+    lines <- c(
+      sprintf("%s(x)", call),
+      "y",
+      "",
+      "stopifnot(z)"
+    )
+    expect_lint(lines, NULL, linter)
+
+    # only suppressing calls with library()
+    lines_consecutive <- c(
+      sprintf("%s(x)", call),
+      sprintf("%s(y)", call)
+    )
+    expect_lint(lines_consecutive, NULL, linter)
+  },
+  .test_name = c("suppressMessages", "suppressPackageStartupMessages"),
+  call = c("suppressMessages", "suppressPackageStartupMessages")
+)
+
+patrick::with_parameters_test_that(
+  "library_call_linter blocks simple disallowed usages",
+  {
+    linter <- library_call_linter()
+    message <- sprintf("Unify consecutive calls to %s\\(\\)\\.", call)
+
+    # one test of inline usage
+    expect_lint(sprintf("%1$s(library(x)); %1$s(library(y))", call), message, linter)
+
+    lines_gap <- c(
+      sprintf("%s(library(x))", call),
+      "",
+      sprintf("%s(library(y))", call)
+    )
+    expect_lint(lines_gap, message, linter)
+
+    lines_consecutive <- c(
+      sprintf("%s(require(x))", call),
+      sprintf("%s(require(y))", call)
+    )
+    expect_lint(lines_consecutive, message, linter)
+
+    lines_comment <- c(
+      sprintf("%s(library(x))", call),
+      "# a comment on y",
+      sprintf("%s(library(y))", call)
+    )
+    expect_lint(lines_comment, message, linter)
+  },
+  .test_name = c("suppressMessages", "suppressPackageStartupMessages"),
+  call = c("suppressMessages", "suppressPackageStartupMessages")
+)
+
+test_that("Namespace differences are detected", {
+  linter <- library_call_linter()
+
+  # totally different namespaces
+  expect_lint(
+    "ns::suppressMessages(library(x)); base::suppressMessages(library(y))",
+    NULL,
+    linter
+  )
+
+  # one namespaced, one not
+  expect_lint(
+    "ns::suppressMessages(library(x)); suppressMessages(library(y))",
+    NULL,
+    linter
+  )
+})
+
+test_that("Consecutive calls to different blocked calls is OK", {
+  expect_lint(
+    "suppressPackageStartupMessages(library(x)); suppressMessages(library(y))",
+    NULL,
+    library_call_linter()
+  )
+})
+
+test_that("Multiple violations across different calls are caught", {
+  expect_lint(
+    trim_some("
+      suppressPackageStartupMessages(library(x))
+      suppressPackageStartupMessages(library(x))
+      suppressMessages(library(x))
+      suppressMessages(library(x))
+    "),
+    list(
+      "Unify consecutive calls to suppressPackageStartupMessages",
+      "Unify consecutive calls to suppressMessages"
+    ),
+    library_call_linter()
+  )
+})
