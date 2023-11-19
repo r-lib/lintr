@@ -111,3 +111,11 @@ NULL
 #'  - <https://testthat.r-lib.org>
 #'  - <https://r-pkgs.org/testing-basics.html>
 NULL
+
+#' Regular expression linters
+#' @name regex_linters
+#' @description
+#' Linters that examine the usage of regular expressions and functions executing them in user code.
+#' @evalRd rd_linters("regex")
+#' @seealso [linters] for a complete list of linters available in lintr.
+NULL
