@@ -307,6 +307,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/normalize_exclusions.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/nrow_subset_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/numeric_leading_zero_linter.html</loc>
   </url>
   <url>

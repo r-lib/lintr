@@ -109,6 +109,8 @@
 <li>
 <code><a href="../reference/print_linter.html">print_linter()</a></code> for discouraging usage of <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> on string literals like <code>print("Reached here")</code> or <code>print(paste("Found", nrow(DF), "rows."))</code> (<a href="https://github.com/r-lib/lintr/issues/1894" class="external-link">#1894</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
+<code><a href="../reference/nrow_subset_linter.html">nrow_subset_linter()</a></code> for discouraging usage like <code>nrow(subset(x, conditions))</code> in favor of something like <code>with(x, sum(conditions))</code> which doesn’t require a full subset of <code>x</code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
 <code><a href="../reference/pipe_return_linter.html">pipe_return_linter()</a></code> for discouraging usage of <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> inside a {magrittr} pipeline (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level4">
