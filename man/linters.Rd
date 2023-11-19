@@ -19,7 +19,7 @@ The following tags exist:
 \itemize{
 \item{\link[=best_practices_linters]{best_practices} (58 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (9 linters)}
-\item{\link[=configurable_linters]{configurable} (34 linters)}
+\item{\link[=configurable_linters]{configurable} (35 linters)}
 \item{\link[=consistency_linters]{consistency} (27 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
@@ -92,7 +92,7 @@ The following linters exist:
 \item{\code{\link{missing_package_linter}} (tags: common_mistakes, robustness)}
 \item{\code{\link{namespace_linter}} (tags: configurable, correctness, executing, robustness)}
 \item{\code{\link{nested_ifelse_linter}} (tags: efficiency, readability)}
-\item{\code{\link{nested_pipe_linter}} (tags: consistency, readability)}
+\item{\code{\link{nested_pipe_linter}} (tags: configurable, consistency, readability)}
 \item{\code{\link{nonportable_path_linter}} (tags: best_practices, configurable, robustness)}
 \item{\code{\link{numeric_leading_zero_linter}} (tags: consistency, readability, style)}
 \item{\code{\link{nzchar_linter}} (tags: best_practices, consistency, efficiency)}
