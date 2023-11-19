@@ -5,13 +5,17 @@
 \title{Block assigning any variables whose name clashes with a \code{base} R function}
 \usage{
 object_overwrite_linter(
-  packages = c("base", "stats", "utils", "tools", "methods", "graphics", "grDevices")
+  packages = c("base", "stats", "utils", "tools", "methods", "graphics", "grDevices"),
+  allow_names = character()
 )
 }
 \arguments{
 \item{packages}{Character vector of packages to search for names that should
 be avoided. Defaults to the most common default packages: base, stats,
 utils, tools, methods, graphics, and grDevices.}
+
+\item{allow_names}{Character vector of object names to ignore, i.e., which
+are allowed to collide with exports from \code{packages}.}
 }
 \description{
 Re-using existing names creates a risk of subtle error best avoided.

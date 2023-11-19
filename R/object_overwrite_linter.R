@@ -6,6 +6,8 @@
 #' @param packages Character vector of packages to search for names that should
 #'   be avoided. Defaults to the most common default packages: base, stats,
 #'   utils, tools, methods, graphics, and grDevices.
+#' @param allow_names Character vector of object names to ignore, i.e., which
+#'   are allowed to collide with exports from `packages`.
 #'
 #' @examples
 #' # will produce lints
@@ -50,7 +52,8 @@
 #'  - <https://style.tidyverse.org/syntax.html#object-names>
 #' @export
 object_overwrite_linter <- function(
-    packages = c("base", "stats", "utils", "tools", "methods", "graphics", "grDevices")) {
+    packages = c("base", "stats", "utils", "tools", "methods", "graphics", "grDevices"),
+    allow_names = character()) {
   for (package in packages) {
     if (!requireNamespace(package, quietly = TRUE)) {
       stop("Package '", package, "' is not available.")
@@ -58,8 +61,8 @@ object_overwrite_linter <- function(
   }
   pkg_exports <- lapply(
     packages,
-    # Drop these 150+ "virtual" names since they are very unlikely to appear anyway
-    function(pkg) grep("^[.]__[A-Z]__", getNamespaceExports(pkg), value = TRUE, invert = TRUE)
+    # .__C__ etc.: drop 150+ "virtual" names since they are very unlikely to appear anyway
+    function(pkg) setdiff(grep("^[.]__[A-Z]__", getNamespaceExports(pkg), value = TRUE, invert = TRUE), allow_names)
   )
   pkg_exports <- data.frame(
     package = rep(packages, lengths(pkg_exports)),

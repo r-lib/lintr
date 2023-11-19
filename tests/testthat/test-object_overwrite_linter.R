@@ -100,3 +100,7 @@ test_that("shorthand lambda is detected", {
 
   expect_lint("\\() data <- 1", "'data' is an exported object", object_overwrite_linter())
 })
+
+test_that("allow_names= works to ignore certain symbols", {
+  expect_lint("function() data <- 1", NULL, object_overwrite_linter(allow_names = "data"))
+})
