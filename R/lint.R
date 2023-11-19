@@ -336,31 +336,27 @@ define_linters <- function(linters = NULL) {
 }
 
 validate_linter_object <- function(linter, name) {
-  if (!is_linter(linter) && is.function(linter)) {
-    if (is_linter_factory(linter)) {
-      old <- "Passing linters as variables"
-      new <- "a call to the linters (see ?linters)"
-      lintr_deprecated(
-        old = old, new = new, version = "3.0.0",
-        type = ""
-      )
-      linter <- linter()
-    } else {
-      old <- "The use of linters of class 'function'"
-      new <- "linters classed as 'linter' (see ?Linter)"
-      lintr_deprecated(
-        old = old, new = new, version = "3.0.0",
-        type = ""
-      )
-      linter <- Linter(linter, name = name)
-    }
-  } else if (!is.function(linter)) {
+  if (is_linter(linter)) {
+    return(linter)
+  }
+  if (!is.function(linter)) {
     stop(gettextf(
       "Expected '%s' to be a function of class 'linter', not a %s of class '%s'",
       name, typeof(linter), class(linter)[[1L]]
     ))
   }
-  linter
+  if (is_linter_factory(linter)) {
+    old <- "Passing linters as variables"
+    new <- "a call to the linters (see ?linters)"
+  } else {
+    old <- "The use of linters of class 'function'"
+    new <- "linters classed as 'linter' (see ?Linter)"
+  }
+  lintr_deprecated(
+    old = old, new = new, version = "3.0.0",
+    type = "",
+    signal = "stop"
+  )
 }
 
 is_linter_factory <- function(fun) {
@@ -404,7 +400,8 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
     lintr_deprecated(
       old = "Using the `linter` argument of `Lint()`",
       version = "3.0.0",
-      type = ""
+      type = "",
+      signal = "stop"
     )
   }
 

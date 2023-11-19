@@ -15,6 +15,7 @@ The following linters are tagged with 'common_mistakes':
 \item{\code{\link{duplicate_argument_linter}}}
 \item{\code{\link{equals_na_linter}}}
 \item{\code{\link{length_test_linter}}}
+\item{\code{\link{list_comparison_linter}}}
 \item{\code{\link{missing_argument_linter}}}
 \item{\code{\link{missing_package_linter}}}
 \item{\code{\link{redundant_equals_linter}}}
