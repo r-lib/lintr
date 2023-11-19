@@ -14,10 +14,29 @@ test_that("nested_pipe_linter skips allowed usages", {
     linter
   )
 
+  # pipes fitting on one line can be ignored
+  expect_lint(
+    "bind_rows(a %>% select(b), c %>% select(b))",
+    NULL,
+    linter
+  )
+
   # switch outputs are OK
   expect_lint("switch(x, a = x %>% foo())", NULL, linter)
   # final position is an output position
   expect_lint("switch(x, a = x, x %>% foo())", NULL, linter)
+
+  # inline switch inputs are not linted
+  expect_lint(
+    trim_some("
+      switch(
+        x %>% foo(),
+        a = x
+      )
+    "),
+    NULL,
+    linter
+  )
 
   # try/tryCatch must be evaluated inside the call
   expect_lint("try(x %>% foo())", NULL, linter)
@@ -26,12 +45,13 @@ test_that("nested_pipe_linter skips allowed usages", {
 
 test_that("nested_pipe_linter blocks simple disallowed usages", {
   linter <- nested_pipe_linter()
+  linter_inline <- nested_pipe_linter(allow_inline = FALSE)
   lint_msg <- rex::rex("Don't nest pipes inside other calls.")
 
   expect_lint(
     "bind_rows(a %>% select(b), c %>% select(b))",
     list(lint_msg, lint_msg),
-    linter
+    linter_inline
   )
 
   expect_lint(
@@ -49,12 +69,24 @@ test_that("nested_pipe_linter blocks simple disallowed usages", {
   expect_lint(
     trim_some("
       switch(
-        x %>% foo(),
+        x %>%
+          foo(),
         a = x
       )
     "),
     lint_msg,
     linter
+  )
+
+  expect_lint(
+    trim_some("
+      switch(
+        x %>% foo(),
+        a = x
+      )
+    "),
+    lint_msg,
+    linter_inline
   )
 })
 
@@ -62,12 +94,18 @@ test_that("Native pipes are handled as well", {
   skip_if_not_r_version("4.1.0")
 
   linter <- nested_pipe_linter()
+  linter_inline <- nested_pipe_linter(allow_inline = FALSE)
   lint_msg <- rex::rex("Don't nest pipes inside other calls.")
 
   expect_lint(
     "bind_rows(a |> select(b), c |> select(b))",
-    list(lint_msg, lint_msg),
+    NULL,
     linter
+  )
+  expect_lint(
+    "bind_rows(a |> select(b), c |> select(b))",
+    list(lint_msg, lint_msg),
+    linter_inline
   )
 
   expect_lint(

@@ -4,20 +4,42 @@
 \alias{nested_pipe_linter}
 \title{Block usage of pipes nested inside other calls}
 \usage{
-nested_pipe_linter()
+nested_pipe_linter(allow_inline = TRUE)
+}
+\arguments{
+\item{allow_inline}{Logical, default \code{TRUE}, in which case only "inner"
+pipelines which span more than one line are linted. If \code{FALSE}, even
+"inner" pipelines that fit in one line are linted.}
 }
 \description{
 Nesting pipes harms readability; extract sub-steps to separate variables,
 append further pipeline steps, or otherwise refactor such usage away.
 }
+\details{
+When \code{\link[=try]{try()}} or \code{\link[=tryCatch]{tryCatch()}} are the "outer" call, no lint is thrown,
+since the "unnested" version of such usage may not work as intended
+due to how evaluation happens in such cases.
+}
 \examples{
 # will produce lints
+code <- "df1 \%>\%\n  inner_join(df2 \%>\%\n    select(a, b)\n  )"
+writeLines(code)
+lint(
+  text = code,
+  linters = nested_pipe_linter()
+)
+
+lint(
+  text = "df1 \%>\% inner_join(df2 \%>\% select(a, b))",
+  linters = nested_pipe_linter(allow_inline = FALSE)
+)
+
+# okay
 lint(
   text = "df1 \%>\% inner_join(df2 \%>\% select(a, b))",
   linters = nested_pipe_linter()
 )
 
-# okay
 lint(
   text = "tryCatch(x \%>\% filter(grp == 'a'), error = identity)",
   linters = nested_pipe_linter()
@@ -28,5 +50,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=consistency_linters]{consistency}, \link[=readability_linters]{readability}
+\link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=readability_linters]{readability}
 }
