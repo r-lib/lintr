@@ -85,7 +85,7 @@ NULL
 #' @name deprecated_linters
 #' @description
 #' Linters that are deprecated and provided for backwards compatibility only.
-#' These linters will be excluded from `linters_with_tags()` by default.
+#' These linters will be excluded from [linters_with_tags()] by default.
 #' @evalRd rd_linters("deprecated")
 #' @seealso [linters] for a complete list of linters available in lintr.
 NULL
@@ -110,4 +110,12 @@ NULL
 #'  - [linters] for a complete list of linters available in lintr.
 #'  - <https://testthat.r-lib.org>
 #'  - <https://r-pkgs.org/testing-basics.html>
+NULL
+
+#' Regular expression linters
+#' @name regex_linters
+#' @description
+#' Linters that examine the usage of regular expressions and functions executing them in user code.
+#' @evalRd rd_linters("regex")
+#' @seealso [linters] for a complete list of linters available in lintr.
 NULL
