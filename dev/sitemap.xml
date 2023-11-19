@@ -349,6 +349,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/pipe_continuation_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/pipe_return_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/pkg_testthat_linters.html</loc>
   </url>
   <url>
