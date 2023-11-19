@@ -114,10 +114,16 @@ test_that("library_call_linter warns on disallowed usages", {
     trim_some("
       library(dplyr)
       print('test')
+      suppressMessages(library('lubridate', character.only = TRUE))
       suppressMessages(library(tidyr))
       print('test')
     "),
-    lint_message,
+    list(
+      list(rex::rex("Unify consecutive calls to suppressMessages()"), line_number = 3L),
+      list(lint_message, line_number = 3L),
+      list(rex::rex("Use symbols in library calls to avoid the need for 'character.only'"), line_number = 3L),
+      list(lint_message, line_number = 4L)
+    ),
     linter
   )
 })
