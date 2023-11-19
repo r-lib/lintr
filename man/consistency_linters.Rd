@@ -34,6 +34,7 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{print_linter}}}
 \item{\code{\link{quotes_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
+\item{\code{\link{rep_len_linter}}}
 \item{\code{\link{scalar_in_linter}}}
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{system_file_linter}}}
