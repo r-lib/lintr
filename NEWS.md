@@ -1,5 +1,16 @@
 # lintr (development version)
 
+## Deprecations & breaking changes
+
+* Various things marked deprecated since {lintr} 3.0.0 have been fully deprecated. They will be completely removed in the subsequent release.
+   + `source_file=` argument to `ids_with_token()` and `with_id()`.
+   + Passing linters by name or as non-`"linter"`-classed functions.
+   + `linter=` argument of `Lint()`.
+   + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`..
+   + `with_defaults()`.
+   + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
+   + Helper `with_defaults()`.
+
 ## Bug fixes
 
 * `object_name_linter()` no longer errors when user-supplied `regexes=` have capture groups (#2188, @MichaelChirico).
@@ -7,13 +18,17 @@
 ## New and improved features
 
 * More helpful errors for invalid configs (#2253, @MichaelChirico).
+* `library_call_linter()` is extended to encourage all packages to be attached with `library(symbol)`, not `library("symbol", character.only = TRUE)` or "vectorized" approaches looping over package names (part of #884, @MichaelChirico).
 
 ### New linters
 
 * `sample_int_linter()` for encouraging `sample.int(n, ...)` over equivalents like `sample(1:n, ...)` (part of #884, @MichaelChirico).
 * `stopifnot_all_linter()` discourages tests with `all()` like `stopifnot(all(x > 0))`; `stopifnot()` runs `all()` itself, and uses a better error message (part of #884, @MichaelChirico).
 * `comparison_negation_linter()` for discouraging negated comparisons when a direct negation is preferable, e.g. `!(x == y)` could be `x != y` (part of #884, @MichaelChirico).
+* `nzchar_linter()` for encouraging `nzchar()` to test for empty strings, e.g. `nchar(x) > 0` can be `nzchar(x)` (part of #884, @MichaelChirico).
 * `terminal_close_linter()` for discouraging using `close()` to end functions (part of #884, @MichaelChirico). Such usages are not robust to errors, where `close()` will not be run as intended. Put `close()` in an `on.exit()` hook, or use {withr} to manage connections with proper cleanup.
+* `which_grepl_linter()` for discouraging `which(grepl(ptn, x))` in favor of directly using `grep(ptn, x)` (part of #884, @MichaelChirico).
+* `list_comparison_linter()` for discouraging comparisons on the output of `lapply()`, e.g. `lapply(x, sum) > 10` (part of #884, @MichaelChirico).
 * `print_linter()` for discouraging usage of `print()` on string literals like `print("Reached here")` or `print(paste("Found", nrow(DF), "rows."))` (#1894, @MichaelChirico).
 * `consecutive_suppression_linter()` for encouraging combining consecutive calls to `suppressMessages()` into one (part of #884, @MichaelChirico)
 
@@ -28,7 +43,7 @@
 
 * `infix_spaces_linter()` distinguishes `<-`, `:=`, `<<-` and `->`, `->>`, i.e. `infix_spaces_linter(exclude_operators = "->")` will no longer exclude `->>` (#2115, @MichaelChirico). This change is breaking for users relying on manually-supplied `exclude_operators` containing `"<-"` to also exclude `:=` and `<<-`. The fix is to manually supply `":="` and `"<<-"` as well. We don't expect this change to affect many users, the fix is simple, and the new behavior is much more transparent, so we are including this breakage in a minor release.
 * Removed `find_line()` and `find_column()` entries from `get_source_expressions()` expression-level objects. These have been marked deprecated since version 3.0.0. No users were found on GitHub.
-* There is experimental support for writing config in plain R scripts (as opposed to DCF files; #1210, @MichaelChirico). The script is run in a new environment and variables matching settings (`?default_settings`) are copied over. In particular, this removes the need to write R code in a DCF-friendly way, and allows normal R syntax highlighting in the saved file. We may eventually deprecate the DCF approach in favor of this one; user feedback is welcome on strong preferences for either approach, or for a different approach like YAML. Generally you should be able to convert your existing `.lintr` file to an equivalent R config by replacing the `:` key-value separators with assignments (`<-`). By default, such a config is searched for in a file named '.lintr.R'. This is a mildly breaking change if you happened to be keeping a file '.lintr.R' around since that file is given precedence over '.lintr'.
+* There is experimental support for writing config in plain R scripts (as opposed to DCF files; #1210, @MichaelChirico). The script is run in a new environment and variables matching settings (`?default_settings`) are copied over. In particular, this removes the need to write R code in a DCF-friendly way, and allows normal R syntax highlighting in the saved file. We may eventually deprecate the DCF approach in favor of this one; user feedback is welcome on strong preferences for either approach, or for a different approach like YAML. Generally you should be able to convert your existing `.lintr` file to an equivalent R config by replacing the `:` key-value separators with assignments (`<-`). By default, such a config is searched for in a file named `.lintr.R`. This is a mildly breaking change if you happened to be keeping a file `.lintr.R` around since that file is given precedence over `.lintr`.
   + We also validate config files up-front make it clearer when invalid configs are present (#2195, @MichaelChirico). There is a warning for "invalid" settings, i.e., settings not part of `?default_settings`. We think this is more likely to affect users declaring settings in R, since any variable defined in the config that's not a setting must be removed to make it clearer which variables are settings vs. ancillary.
 
 ## Bug fixes
