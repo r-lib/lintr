@@ -49,7 +49,7 @@
 #' @export
 expect_comparison_linter <- function() {
   # != doesn't have a clean replacement
-  comparator_nodes <- setdiff(as.list(infix_metadata$xml_tag[infix_metadata$comparator]), "NE")
+  comparator_nodes <- setdiff(infix_metadata$xml_tag[infix_metadata$comparator], "NE")
   xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
     /parent::expr
