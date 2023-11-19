@@ -144,6 +144,7 @@ Collate:
     'object_length_linter.R'
     'object_name_linter.R'
     'object_usage_linter.R'
+    'one_call_pipe_linter.R'
     'outer_negation_linter.R'
     'package_hooks_linter.R'
     'paren_body_linter.R'

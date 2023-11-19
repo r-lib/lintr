@@ -28,10 +28,10 @@ The following tags exist:
 \item{\link[=executing_linters]{executing} (5 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
-\item{\link[=readability_linters]{readability} (59 linters)}
+\item{\link[=readability_linters]{readability} (60 linters)}
 \item{\link[=regex_linters]{regex} (4 linters)}
 \item{\link[=robustness_linters]{robustness} (16 linters)}
-\item{\link[=style_linters]{style} (38 linters)}
+\item{\link[=style_linters]{style} (39 linters)}
 }
 }
 \section{Linters}{
@@ -98,6 +98,7 @@ The following linters exist:
 \item{\code{\link{object_length_linter}} (tags: configurable, default, executing, readability, style)}
 \item{\code{\link{object_name_linter}} (tags: configurable, consistency, default, executing, style)}
 \item{\code{\link{object_usage_linter}} (tags: configurable, correctness, default, executing, readability, style)}
+\item{\code{\link{one_call_pipe_linter}} (tags: readability, style)}
 \item{\code{\link{outer_negation_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{package_hooks_linter}} (tags: correctness, package_development, style)}
 \item{\code{\link{paren_body_linter}} (tags: default, readability, style)}
