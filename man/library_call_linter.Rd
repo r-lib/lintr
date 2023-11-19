@@ -22,7 +22,7 @@ This linter covers several rules related to \code{\link[=library]{library()}} ca
 for loading packages in a loop.
 \item Block consecutive calls to \code{suppressMessages(library(.))}
 in favor of using \code{\link[=suppressMessages]{suppressMessages()}} only once to suppress
-messages from all \code{library()} calls.
+messages from all \code{library()} calls. Ditto \code{\link[=suppressPackageStartupMessages]{suppressPackageStartupMessages()}}.
 }
 }
 \examples{
