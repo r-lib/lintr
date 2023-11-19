@@ -65,7 +65,8 @@ test_that("multiple lints are generated correctly", {
     trim_some("{
       a %>% b()
       c %$% d()
-      e %T>% f()
+      e %T>%
+        f()
     }"),
     list(
       list(rex::rex("pipe %>%"), line_number = 2L),
