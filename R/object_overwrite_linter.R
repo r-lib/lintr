@@ -84,10 +84,10 @@ object_overwrite_linter <- function(
           or following-sibling::EQ_ASSIGN
           or preceding-sibling::RIGHT_ASSIGN
         )
-        and (
-          ancestor::expr/preceding-sibling::*[self::FUNCTION or self::OP-LAMBDA]
-          or ancestor::expr_or_assign_or_help/preceding-sibling::*[self::FUNCTION or self::OP-LAMBDA]
-        )
+        and ancestor::*[
+          (self::expr or self::expr_or_assign_or_help or self::equal_assign)
+          and (preceding-sibling::FUNCTION or preceding-sibling::OP-LAMBDA)
+        ]
       ]
   ")
 
