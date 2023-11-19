@@ -44,6 +44,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{nested_ifelse_linter}}}
 \item{\code{\link{numeric_leading_zero_linter}}}
 \item{\code{\link{object_length_linter}}}
+\item{\code{\link{object_overwrite_linter}}}
 \item{\code{\link{object_usage_linter}}}
 \item{\code{\link{one_call_pipe_linter}}}
 \item{\code{\link{outer_negation_linter}}}
