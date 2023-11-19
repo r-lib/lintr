@@ -322,6 +322,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/object_usage_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/one_call_pipe_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/outer_negation_linter.html</loc>
   </url>
   <url>
