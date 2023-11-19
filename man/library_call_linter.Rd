@@ -87,7 +87,7 @@ lint(
 code <- "suppressMessages({\n  library(dplyr)\n  library(tidyr)\n})"
 writeLines(code)
 lint(
-  text = code
+  text = code,
   linters = consecutive_suppression_linter()
 )
 
