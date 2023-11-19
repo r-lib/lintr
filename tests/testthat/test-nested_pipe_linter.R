@@ -119,3 +119,38 @@ test_that("Native pipes are handled as well", {
     linter
   )
 })
+
+test_that("lints vectorize", {
+  lint_msg <- rex::rex("Don't nest pipes inside other calls.")
+
+  lines <- trim_some("{
+    bind_rows(
+      a %>% select(b),
+      c %>%
+        select(d),
+      e %>%
+        select(f) %>%
+        filter(g > 0),
+      h %>% filter(i < 0)
+    )
+  }")
+  expect_lint(
+    lines,
+    list(
+      list(lint_msg, line_number = 4L),
+      list(lint_msg, line_number = 6L)
+    ),
+    nested_pipe_linter()
+  )
+
+  expect_lint(
+    lines,
+    list(
+      list(lint_msg, line_number = 3L),
+      list(lint_msg, line_number = 4L),
+      list(lint_msg, line_number = 6L),
+      list(lint_msg, line_number = 9L)
+    ),
+    nested_pipe_linter(allow_inline = FALSE)
+  )
+})
