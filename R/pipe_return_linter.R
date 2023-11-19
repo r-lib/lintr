@@ -35,6 +35,5 @@ pipe_return_linter <- make_linter_from_xpath(
     "Using return() as the final step of a magrittr pipeline",
     "is an anti-pattern. Instead, assign the output of the pipeline to",
     "a well-named object and return that.",
-    "See go/r-primer#how-magrittr-pipes-work."
   )
 )
