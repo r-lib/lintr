@@ -37,7 +37,7 @@
 #' - <https://style.tidyverse.org/pipes.html#short-pipes>
 #' @export
 one_call_pipe_linter <- function() {
-  pipes_cond <- xp_text_in_table(c("%>%", "%$%", "%T>%"))
+  pipes_cond <- xp_text_in_table(magrittr_pipes)
 
   # preceding-sibling::SPECIAL: if there are ever two pipes, don't lint
   # OP-LEFT-BRACKET/LBB: accept DT[...] %>% .[...] as a two-call pipe,
