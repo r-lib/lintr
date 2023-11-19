@@ -79,6 +79,7 @@ quotes_linter,style consistency readability default configurable
 redundant_equals_linter,best_practices readability efficiency common_mistakes
 redundant_ifelse_linter,best_practices efficiency consistency configurable
 regex_subset_linter,best_practices efficiency regex
+rep_len_linter,readability consistency best_practices
 repeat_linter,style readability
 routine_registration_linter,best_practices efficiency robustness
 sample_int_linter,efficiency readability robustness

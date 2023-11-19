@@ -53,6 +53,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{pipe_continuation_linter}}}
 \item{\code{\link{quotes_linter}}}
 \item{\code{\link{redundant_equals_linter}}}
+\item{\code{\link{rep_len_linter}}}
 \item{\code{\link{repeat_linter}}}
 \item{\code{\link{sample_int_linter}}}
 \item{\code{\link{scalar_in_linter}}}
