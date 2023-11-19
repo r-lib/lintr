@@ -319,6 +319,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/object_name_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/object_overwrite_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/object_usage_linter.html</loc>
   </url>
   <url>
