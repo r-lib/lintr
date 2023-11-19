@@ -43,11 +43,11 @@ unnecessary_nesting_linter <- function() {
   exit_calls <- c("stop", "return", "abort", "quit", "q")
   # These calls can be called in the sibling branch and not trigger a lint,
   #   allowing for cleanly parallel code, where breaking it would often harm readability:
-  #   if (A) {
-  #     stop()
-  #   } else {
-  #     warning()
-  #   }
+  #   > if (A) {
+  #   >   stop()
+  #   > } else {
+  #   >   warning()
+  #   > }
   # NB: print() is intentionally excluded since its usage is usually a mistake (?print_linter)
   signal_calls <- c(
     exit_calls,
