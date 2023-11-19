@@ -104,3 +104,31 @@ test_that("shorthand lambda is detected", {
 test_that("allow_names= works to ignore certain symbols", {
   expect_lint("function() data <- 1", NULL, object_overwrite_linter(allow_names = "data"))
 })
+
+test_that("lints vectorize", {
+  lines <- trim_some("{
+    foo <- function() {
+      data <- 1
+      var <- 2
+    }
+    bar <- function(data) {
+      data <- data + 3
+      sum <- 4
+    }
+  }")
+  expect_lint(
+    lines,
+    list(
+      list(rex::rex("'data' is an exported object from package 'utils'."), line_number = 3L),
+      list(rex::rex("'var' is an exported object from package 'stats'."), line_number = 4L),
+      list(rex::rex("'sum' is an exported object from package 'base'."), line_number = 8L)
+    ),
+    object_overwrite_linter()
+  )
+
+  expect_lint(
+    lines,
+    list(rex::rex("'var' is an exported object from package 'stats'."), line_number = 4L),
+    object_overwrite_linter(packages = c("stats", "base"), allow_names = "sum")
+  )
+})
