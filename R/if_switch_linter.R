@@ -82,8 +82,3 @@ if_switch_linter <- function() {
     )
   })
 }
-
-# TODO(michaelchirico): set the lint to apply whenever there are <=3 child
-#   expressions in any of the if/else branches.
-# TODO(michaelchirico): tighten the logic around this -- what exactly makes "long"
-#   expressions more suitable for if/else vs. switch()? pick a rule apply it.
