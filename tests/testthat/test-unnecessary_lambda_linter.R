@@ -77,6 +77,20 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
   expect_lint("lapply(l, function(x = 1) 'a' %in% names(x))", NULL, linter)
 })
 
+test_that("unnecessary_lambda_linter skips allowed inner comparisons", {
+  linter <- unnecessary_lambda_linter()
+
+  # lapply returns a list, so not the same, though as.list is probably
+  #   a better choice
+  expect_lint("lapply(x, function(xi) foo(xi) == 2)", NULL, linter)
+
+  # this _may_ return a matrix, though outer is probably a better choice if so
+  expect_lint("sapply(x, function(xi) foo(xi) == y)", NULL, linter)
+
+  # only lint "plain" calls that can be replaced by eliminating the lambda
+  expect_lint("sapply(x, function(xi) sum(abs(xi)) == 0)", NULL, linter)
+})
+
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
   linter <- unnecessary_lambda_linter()
 
@@ -107,6 +121,42 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
     rex::rex("Pass sum directly as a symbol to eapply()"),
     linter
   )
+})
+
+test_that("unnecessary_lambda_linter blocks simple disallowed usages", {
+  linter <- unnecessary_lambda_linter()
+  linter_allow <- unnecessary_lambda_linter(allow_comparison = TRUE)
+  lint_msg <- rex::rex("Compare to a constant after calling sapply() to get", anything, "sapply(x, foo)")
+
+  expect_lint("sapply(x, function(xi) foo(xi) == 2)", lint_msg, linter)
+  expect_lint("sapply(x, function(xi) foo(xi) == 'a')", lint_msg, linter)
+  expect_lint("sapply(x, function(xi) foo(xi) == 1 + 2i)", lint_msg, linter)
+
+  expect_lint("sapply(x, function(xi) foo(xi) == 2)", NULL, linter_allow)
+  expect_lint("sapply(x, function(xi) foo(xi) == 'a')", NULL, linter_allow)
+  expect_lint("sapply(x, function(xi) foo(xi) == 1 + 2i)", NULL, linter_allow)
+
+  # vapply counts as well
+  # NB: we ignore the FUN.VALUE argument, for now
+  expect_lint(
+    "vapply(x, function(xi) foo(xi) == 2, logical(1L))",
+    rex::rex("Compare to a constant after calling vapply()", anything, "vapply(x, foo, FUN.VALUE = <intermediate>)"),
+    linter
+  )
+})
+
+test_that("unnecessary_lambda_linter blocks other comparators as well", {
+  linter <- unnecessary_lambda_linter()
+  linter_allow <- unnecessary_lambda_linter(allow_comparison = TRUE)
+  lint_msg <- rex::rex("Compare to a constant after calling sapply() to get")
+
+  expect_lint("sapply(x, function(xi) foo(xi) >= 2)", lint_msg, linter)
+  expect_lint("sapply(x, function(xi) foo(xi) != 'a')", lint_msg, linter)
+  expect_lint("sapply(x, function(xi) foo(xi) < 1 + 2i)", lint_msg, linter)
+
+  expect_lint("sapply(x, function(xi) foo(xi) >= 2)", NULL, linter_allow)
+  expect_lint("sapply(x, function(xi) foo(xi) != 'a')", NULL, linter_allow)
+  expect_lint("sapply(x, function(xi) foo(xi) < 1 + 2i)", NULL, linter_allow)
 })
 
 test_that("unnecessary_lambda_linter doesn't apply to keyword args", {

@@ -42,7 +42,6 @@ implicit_integer_linter,style consistency best_practices configurable
 indentation_linter,style readability default configurable
 infix_spaces_linter,style readability default configurable
 inner_combine_linter,efficiency consistency readability
-inner_comparison_linter,efficiency consistency
 is_numeric_linter,readability best_practices consistency
 keyword_quote_linter,readability consistency style
 length_levels_linter,readability best_practices consistency
@@ -108,7 +107,7 @@ trailing_whitespace_linter,style default configurable
 undesirable_function_linter,style efficiency configurable robustness best_practices
 undesirable_operator_linter,style efficiency configurable robustness best_practices
 unnecessary_concatenation_linter,style readability efficiency configurable
-unnecessary_lambda_linter,best_practices efficiency readability
+unnecessary_lambda_linter,best_practices efficiency readability configurable
 unnecessary_nested_if_linter,readability best_practices
 unnecessary_placeholder_linter,readability best_practices
 unneeded_concatenation_linter,style readability efficiency configurable deprecated

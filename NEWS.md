@@ -21,6 +21,8 @@
 * `library_call_linter()` is extended
   + to encourage all packages to be attached with `library(symbol)`, not `library("symbol", character.only = TRUE)` or "vectorized" approaches looping over package names (part of #884, @MichaelChirico).
   + to discourage many consecutive calls to `suppressMessages()` or `suppressPackageStartupMessages()` (part of #884, @MichaelChirico).
+* `library_call_linter()` is extended to encourage all packages to be attached with `library(symbol)`, not `library("symbol", character.only = TRUE)` or "vectorized" approaches looping over package names (part of #884, @MichaelChirico).
+* `unnecessary_lambda_linter` is extended to encourage vectorized comparisons where possible, e.g. `sapply(x, sum) > 0` instead of `sapply(x, function(x) sum(x) > 0)` (part of #884, @MichaelChirico). Toggle this behavior with argument `allow_comparison`.
 
 ### New linters
 
@@ -33,7 +35,6 @@
 * `which_grepl_linter()` for discouraging `which(grepl(ptn, x))` in favor of directly using `grep(ptn, x)` (part of #884, @MichaelChirico).
 * `list_comparison_linter()` for discouraging comparisons on the output of `lapply()`, e.g. `lapply(x, sum) > 10` (part of #884, @MichaelChirico).
 * `print_linter()` for discouraging usage of `print()` on string literals like `print("Reached here")` or `print(paste("Found", nrow(DF), "rows."))` (#1894, @MichaelChirico).
-* `inner_comparison_linter()` for encouraging vectorized code instead of loops like `sapply(x, function(xi) xi == 2)` (part of #884, @MichaelChirico).
 * `nested_pipe_linter()` for discouraging pipes within pipes, e.g. `df1 %>% inner_join(df2 %>% select(a, b))` (part of #884, @MichaelChirico).
 * `nrow_subset_linter()` for discouraging usage like `nrow(subset(x, conditions))` in favor of something like `with(x, sum(conditions))` which doesn't require a full subset of `x` (part of #884, @MichaelChirico).
 * `pipe_return_linter()` for discouraging usage of `return()` inside a {magrittr} pipeline (part of #884, @MichaelChirico).
