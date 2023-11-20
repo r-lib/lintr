@@ -59,7 +59,7 @@ test_that("Lint return on end of lambda function", {
   )
 })
 
-test_that("Do not lint controll statments (with return) on end of function", {
+test_that("Do not lint control statments (with return) on end of function", {
   expect_lint(
     trim_some("
       function() {
