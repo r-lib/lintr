@@ -95,6 +95,7 @@ test_that("Lint control statements (without return) on end of function", {
   linter <- return_linter(use_implicit_returns = FALSE)
   msg <- rex::rex("All functions must have an explicit return().")
 
+  debug(linter)
   expect_lint(
     trim_some("
       function() {

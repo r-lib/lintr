@@ -103,13 +103,9 @@ return_linter <- function(use_implicit_returns = TRUE) {
       /expr[last()]
       /*[
         (
-          ({ xp_or(paste0('preceding::', control_calls)) })
-          and (preceding-sibling::OP-RIGHT-PAREN or preceding-sibling::forcond)
-          and self::expr[not(
-            .//SYMBOL_FUNCTION_CALL[{ xp_text_in_table(allowed_functions) }]
-          )]
+          { xp_or(paste0('self::', setdiff(control_calls, 'IF'))) }
         ) or (
-          not({ xp_or(paste0('preceding::', control_calls)) })
+          not({ xp_or(paste0('preceding-sibling::', control_calls)) })
           and not({ xp_or(paste0('self::', control_calls)) })
           and (
             (
