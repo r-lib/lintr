@@ -20,6 +20,9 @@ This linter covers several rules related to \code{\link[=library]{library()}} ca
 \item Enforce such calls to all be at the top of the script.
 \item Block usage of argument \code{character.only}, in particular
 for loading packages in a loop.
+\item Block consecutive calls to \code{suppressMessages(library(.))}
+in favor of using \code{\link[=suppressMessages]{suppressMessages()}} only once to suppress
+messages from all \code{library()} calls. Ditto \code{\link[=suppressPackageStartupMessages]{suppressPackageStartupMessages()}}.
 }
 }
 \examples{
@@ -48,6 +51,13 @@ lint(
   linters = library_call_linter()
 )
 
+code <- "suppressMessages(library(dplyr))\nsuppressMessages(library(tidyr))"
+writeLines(code)
+lint(
+  text = code,
+  linters = library_call_linter()
+)
+
 # okay
 code <- "library(dplyr)\nprint('test')"
 writeLines(code)
@@ -68,6 +78,13 @@ code <- paste(
   "}",
   sep = "\n"
 )
+writeLines(code)
+lint(
+  text = code,
+  linters = library_call_linter()
+)
+
+code <- "suppressMessages({\n  library(dplyr)\n  library(tidyr)\n})"
 writeLines(code)
 lint(
   text = code,
