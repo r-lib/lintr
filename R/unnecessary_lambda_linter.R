@@ -86,20 +86,20 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
 
   # OP-PLUS: condition for complex literal, e.g. 0+2i.
   # NB: this includes 0+3 and TRUE+FALSE, which are also fine.
-  inner_comparison_xpath <- "
+  inner_comparison_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'sapply' or text() = 'vapply']
     /parent::expr
     /parent::expr
     /expr[FUNCTION]
     /expr[
-      (EQ or NE or GT or GE or LT or LE)
+      ({ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) })
       and expr[
         NUM_CONST
         or STR_CONST
         or (OP-PLUS and count(expr/NUM_CONST) = 2)
       ]
     ]
-  "
+  ")
 
   # outline:
   #   1. match one of the identified mappers
