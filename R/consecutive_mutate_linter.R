@@ -1,4 +1,4 @@
-#' Force consecutive calls to mutate() into just one when possible
+#' Require consecutive calls to mutate() to be combined when possible
 #'
 #' `dplyr::mutate()` accepts any number of columns, so sequences like
 #'   `DF %>% dplyr::mutate(..1) %>% dplyr::mutate(..2)` are redundant --

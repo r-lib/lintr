@@ -2,7 +2,7 @@
 % Please edit documentation in R/consecutive_mutate_linter.R
 \name{consecutive_mutate_linter}
 \alias{consecutive_mutate_linter}
-\title{Force consecutive calls to mutate() into just one when possible}
+\title{Require consecutive calls to mutate() to be combined when possible}
 \usage{
 consecutive_mutate_linter(invalid_backends = "dbplyr")
 }
