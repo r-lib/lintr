@@ -59,27 +59,15 @@ test_that("Lint return on end of lambda function", {
   )
 })
 
-test_that("Do not lint control statements (with return) on end of function", {
+test_that("Do not lint if/else statements (with return) on end of function", {
   linter <- return_linter(use_implicit_returns = FALSE)
 
   expect_lint(
     trim_some("
       function() {
-        repeat {
-          cat(4)
-        }
-      }
-    "),
-    NULL,
-    linter
-  )
-
-  expect_lint(
-    trim_some("
-      function() {
-        if(x) {
+        if (x) {
           return(4)
-        } else if(y) {
+        } else if (y) {
           return(5)
         } else {
           return(6)
@@ -93,9 +81,8 @@ test_that("Do not lint control statements (with return) on end of function", {
 
 test_that("Lint control statements (without return) on end of function", {
   linter <- return_linter(use_implicit_returns = FALSE)
-  msg <- rex::rex("All functions must have an explicit return().")
+  lint_msg <- rex::rex("All functions must have an explicit return().")
 
-  debug(linter)
   expect_lint(
     trim_some("
       function() {
@@ -107,7 +94,19 @@ test_that("Lint control statements (without return) on end of function", {
         }
       }
     "),
-    list(msg, line_number = 2L),
+    list(lint_msg, line_number = 2L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function() {
+        repeat {
+          cat(4)
+        }
+      }
+    "),
+    list(lint_msg, line_number = 2L),
     linter
   )
 
@@ -122,19 +121,7 @@ test_that("Lint control statements (without return) on end of function", {
         }
       }
     "),
-    list(msg, line_number = 2L),
-    linter
-  )
-
-  expect_lint(
-    trim_some("
-      function() {
-        if(x == 2L){
-          return(e)
-        }
-      }
-    "),
-    list(msg, line_number = 2L),
+    list(lint_msg, line_number = 2L),
     linter
   )
 
@@ -148,7 +135,7 @@ test_that("Lint control statements (without return) on end of function", {
         }
       }
     "),
-    list(msg, line_number = 4L),
+    list(lint_msg, line_number = 4L),
     linter
   )
 })

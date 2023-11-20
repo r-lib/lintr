@@ -101,33 +101,21 @@ return_linter <- function(use_implicit_returns = TRUE) {
     )]]
       /following-sibling::expr[OP-LEFT-BRACE and expr[last()]/@line1 != @line1]
       /expr[last()]
-      /*[
+      /*[1][
         (
+          self::IF
+          and not(following-sibling::expr//SYMBOL_FUNCTION_CALL[{ xp_text_in_table(allowed_functions) }])
+        ) or (
           { xp_or(paste0('self::', setdiff(control_calls, 'IF'))) }
         ) or (
-          not({ xp_or(paste0('preceding-sibling::', control_calls)) })
-          and not({ xp_or(paste0('self::', control_calls)) })
-          and (
-            (
-              position() = last()
-              and (
-                preceding-sibling::PIPE
-                or preceding-sibling::SPECIAL[text() = '%>%']
-              )
-              and not(self::expr/expr/SYMBOL_FUNCTION_CALL[
-                { xp_text_in_table(allowed_functions) }
-              ])
-            ) or (
-              position() = 1
-              and not(
-                following-sibling::PIPE
-                or following-sibling::SPECIAL[text() = '%>%']
-              )
-              and not(self::expr/SYMBOL_FUNCTION_CALL[
-                { xp_text_in_table(allowed_functions) }
-              ])
-            )
+          not({ xp_or(paste0('self::', control_calls)) })
+          and not(
+            following-sibling::PIPE
+            or following-sibling::SPECIAL[text() = '%>%']
           )
+          and not(self::expr/SYMBOL_FUNCTION_CALL[
+            { xp_text_in_table(allowed_functions) }
+          ])
         )
       ]
     ")
