@@ -30,12 +30,12 @@ lint(
 
 lint(
   text = "sapply(x, function(xi) xi == 2)",
-  linters = inner_comparison_linter()
+  linters = unnecessary_lambda_linter()
 )
 
 lint(
   text = "sapply(x, function(xi) sum(xi) > 0)",
-  linters = inner_comparison_linter()
+  linters = unnecessary_lambda_linter()
 )
 
 # okay
@@ -56,17 +56,22 @@ lint(
 
 lint(
   text = "sapply(x, function(xi) xi == 2)",
-  linters = inner_comparison_linter(allow_comparison = TRUE)
+  linters = unnecessary_lambda_linter(allow_comparison = TRUE)
 )
 
 lint(
   text = "sapply(x, function(xi) sum(xi) > 0)",
-  linters = inner_comparison_linter(allow_comparison = TRUE)
+  linters = unnecessary_lambda_linter(allow_comparison = TRUE)
+)
+
+lint(
+  text = "sapply(x, function(xi) sum(abs(xi)) > 10)",
+  linters = unnecessary_lambda_linter()
 )
 
 lint(
   text = "sapply(x, sum) > 0",
-  linters = inner_comparison_linter()
+  linters = unnecessary_lambda_linter()
 )
 
 }
