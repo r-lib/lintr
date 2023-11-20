@@ -86,9 +86,9 @@ test_that("Lint control statements (without return) on end of function", {
   expect_lint(
     trim_some("
       function() {
-        while(x > 4) {
+        while (x > 4) {
           cat(4)
-          if(x < 4) {
+          if (x < 4) {
             return(x)
           }
         }
@@ -113,9 +113,9 @@ test_that("Lint control statements (without return) on end of function", {
   expect_lint(
     trim_some("
       function() {
-        for(i in 1:10) {
+        for (i in 1:10) {
           cat(4)
-          if(i > 11) {
+          if (i > 11) {
             return(x)
           }
         }
@@ -128,9 +128,9 @@ test_that("Lint control statements (without return) on end of function", {
   expect_lint(
     trim_some("
       function() {
-        if(x == 2L){
+        if (x == 2L){
           return(e)
-        } else if(x == 3L) {
+        } else if (x == 3L) {
           cat(f)
         }
       }
@@ -262,7 +262,7 @@ test_that("return_linter ignores anonymous/inline functions", {
 
 test_that("return_linter ignores if statements outside of functions", {
   lines <- c(
-    "if(TRUE) {",
+    "if (TRUE) {",
     "  TRUE",
     "} else {",
     "  FALSE",
@@ -331,7 +331,7 @@ test_that("return_linter finds multiple missing returns in branches", {
   expect_lint(
     trim_some("
       foo <- function() {
-        if(TRUE) {
+        if (TRUE) {
           TRUE
         } else {
           FALSE
@@ -349,7 +349,7 @@ test_that("return_linter works regardless of braces in final if case", {
 
   lines <- c(
     "foo <- function() {",
-    "  if(TRUE) TRUE",
+    "  if (TRUE) TRUE",
     "}"
   )
   expect_lint(
@@ -359,7 +359,7 @@ test_that("return_linter works regardless of braces in final if case", {
   )
   other_lines <- c(
     "foo <- function() {",
-    "  if(TRUE) return(TRUE)",
+    "  if (TRUE) return(TRUE)",
     "}"
   )
   expect_lint(other_lines, NULL, linter)
@@ -372,7 +372,7 @@ test_that("return_linter finds missing return in one branch of an if", {
   expect_lint(
     trim_some("
       foo <- function() {
-        if(TRUE) {
+        if (TRUE) {
           return(TRUE)
         } else {
           FALSE
@@ -386,7 +386,7 @@ test_that("return_linter finds missing return in one branch of an if", {
   expect_lint(
     trim_some("
       foo <- function() {
-        if(TRUE) {
+        if (TRUE) {
           TRUE
         } else {
           return(FALSE)
@@ -403,7 +403,7 @@ test_that("return_linter works in nested if statements", {
 
   lines <- c(
     "foo <- function() {",
-    "  if(TRUE) {",
+    "  if (TRUE) {",
     "    return(TRUE)",
     "  } else if (nzchar(\"a\")) {",
     "    return(TRUE)",
@@ -416,7 +416,7 @@ test_that("return_linter works in nested if statements", {
 
   more_lines <- c(
     "foo <- function() {",
-    "  if(TRUE) {",
+    "  if (TRUE) {",
     "    if (nzchar(\"a\")) {",
     "      TRUE",
     "    }",
@@ -437,7 +437,7 @@ test_that("return_linter works in multi-line nested if statements", {
 
   lines <- c(
     "foo <- function() {",
-    "  if(TRUE) {",
+    "  if (TRUE) {",
     "    if (nzchar(\"a\")) {",
     "      y <- 1 + 1",
     "      y",
@@ -455,7 +455,7 @@ test_that("return_linter works in multi-line nested if statements", {
 
   other_lines <- c(
     "foo <- function() {",
-    "  if(TRUE) {",
+    "  if (TRUE) {",
     "    if (nzchar(\"a\")) {",
     "      y <- 1 + 1",
     "      return(y)",
