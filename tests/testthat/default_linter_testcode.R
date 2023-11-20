@@ -7,6 +7,11 @@
 # paren_brace
 f = function (x,y = 1){}
 
+# return_linter
+g <- function(x) {
+  return(x + 1)
+}
+
 # commented_code
 # some <- commented("out code")
 
@@ -20,6 +25,7 @@ f = function (x,y = 1){}
 # object_name
 # object_usage
 # open_curly
+# return
 # T_and_F_symbol
 someComplicatedFunctionWithALongCamelCaseName <- function(x)
 {
