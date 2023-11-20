@@ -309,3 +309,14 @@ purrr_mappers <- c(
   "map_raw", "map_lgl", "map_int", "map_dbl", "map_chr", "map_vec",
   "map_df", "map_dfr", "map_dfc"
 )
+
+# Shared between returns_linter and implicit_else_return_inter
+# See `?.onAttach`; these functions are all exclusively used for their
+#   side-effects, so implicit return is generally acceptable
+return_not_needed_funs <- c(
+  # namespace hooks
+  ".onLoad", ".onUnload", ".onAttach", ".onDetach", ".Last.lib",
+
+  # from RUnit
+  ".setUp", ".tearDown"
+)
