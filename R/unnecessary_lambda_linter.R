@@ -100,11 +100,6 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
       ]
     ]
   "
-  lint_message <- paste(
-    "Compare to a constant after calling sapply()/vapply()",
-    "to get the full benefits of vectorization.",
-    "Prefer sapply(x, foo) == 2 over sapply(x, function(xi) foo(xi) == 2)."
-  )
 
   # outline:
   #   1. match one of the identified mappers
@@ -182,6 +177,22 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
       type = "warning"
     )
 
+    inner_comparison_lints <- NULL
+    if (!allow_comparison) {
+      inner_comparison_expr <- xml_find_all(xml, inner_comparison_xpath)
+
+      inner_comparison_lints <- xml_nodes_to_lints(
+        inner_comparison_expr,
+        source_expression = source_expression,
+        lint_message = paste(
+          "Compare to a constant after calling sapply()/vapply()",
+          "to get the full benefits of vectorization.",
+          "Prefer sapply(x, foo) == 2 over sapply(x, function(xi) foo(xi) == 2)."
+        ),
+        type = "warning"
+      )
+    }
+
     purrr_fun_expr <- xml_find_all(xml, purrr_fun_xpath)
 
     purrr_call_fun <- xml_text(xml_find_first(purrr_fun_expr, fun_xpath))
@@ -197,6 +208,6 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
       type = "warning"
     )
 
-    c(default_fun_lints, purrr_fun_lints)
+    c(default_fun_lints, inner_comparison_lints, purrr_fun_lints)
   })
 }

@@ -122,11 +122,16 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usages", {
   linter <- unnecessary_lambda_linter()
+  linter_allow <- unnecessary_lambda_linter(allow_comparison = TRUE)
   lint_msg <- rex::rex("Compare to a constant after calling sapply()/vapply()")
 
   expect_lint("sapply(x, function(xi) foo(xi) == 2)", lint_msg, linter)
   expect_lint("sapply(x, function(xi) foo(xi) == 'a')", lint_msg, linter)
   expect_lint("sapply(x, function(xi) foo(xi) == 1 + 2i)", lint_msg, linter)
+
+  expect_lint("sapply(x, function(xi) foo(xi) == 2)", NULL, linter_allow)
+  expect_lint("sapply(x, function(xi) foo(xi) == 'a')", NULL, linter_allow)
+  expect_lint("sapply(x, function(xi) foo(xi) == 1 + 2i)", NULL, linter_allow)
 
   # vapply counts as well
   # NB: we ignore the FUN.VALUE argument, for now
@@ -135,11 +140,16 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usages", {
 
 test_that("unnecessary_lambda_linter blocks other comparators as well", {
   linter <- unnecessary_lambda_linter()
+  linter_allow <- unnecessary_lambda_linter(allow_comparison = TRUE)
   lint_msg <- rex::rex("Compare to a constant after calling sapply()/vapply()")
 
   expect_lint("sapply(x, function(xi) foo(xi) >= 2)", lint_msg, linter)
   expect_lint("sapply(x, function(xi) foo(xi) != 'a')", lint_msg, linter)
   expect_lint("sapply(x, function(xi) foo(xi) < 1 + 2i)", lint_msg, linter)
+
+  expect_lint("sapply(x, function(xi) foo(xi) >= 2)", NULL, linter_allow)
+  expect_lint("sapply(x, function(xi) foo(xi) != 'a')", NULL, linter_allow)
+  expect_lint("sapply(x, function(xi) foo(xi) < 1 + 2i)", NULL, linter_allow)
 })
 
 test_that("unnecessary_lambda_linter doesn't apply to keyword args", {
