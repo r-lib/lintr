@@ -181,13 +181,18 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
     if (!allow_comparison) {
       inner_comparison_expr <- xml_find_all(xml, inner_comparison_xpath)
 
+      mapper <- xp_call_name(xml_find_first(inner_comparison_expr, "parent::expr/parent::expr"))
+      if (length(mapper) > 0L) fun_value <- if (mapper == "sapply") "" else ", FUN.VALUE = <intermediate>"
+
       inner_comparison_lints <- xml_nodes_to_lints(
         inner_comparison_expr,
         source_expression = source_expression,
-        lint_message = paste(
-          "Compare to a constant after calling sapply()/vapply()",
-          "to get the full benefits of vectorization.",
-          "Prefer sapply(x, foo) == 2 over sapply(x, function(xi) foo(xi) == 2)."
+        lint_message = sprintf(
+          paste(
+            "Compare to a constant after calling %1$s() to get the full benefits of vectorization.",
+            "Prefer %1$s(x, foo%2$s) == 2 over %1$s(x, function(xi) foo(xi) == 2, logical(1L))."
+          ),
+          mapper, fun_value
         ),
         type = "warning"
       )

@@ -123,7 +123,7 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
 test_that("unnecessary_lambda_linter blocks simple disallowed usages", {
   linter <- unnecessary_lambda_linter()
   linter_allow <- unnecessary_lambda_linter(allow_comparison = TRUE)
-  lint_msg <- rex::rex("Compare to a constant after calling sapply()/vapply()")
+  lint_msg <- rex::rex("Compare to a constant after calling sapply() to get", anything, "sapply(x, foo)")
 
   expect_lint("sapply(x, function(xi) foo(xi) == 2)", lint_msg, linter)
   expect_lint("sapply(x, function(xi) foo(xi) == 'a')", lint_msg, linter)
@@ -135,13 +135,17 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usages", {
 
   # vapply counts as well
   # NB: we ignore the FUN.VALUE argument, for now
-  expect_lint("vapply(x, function(xi) foo(xi) == 2, logical(1L))", lint_msg, linter)
+  expect_lint(
+    "vapply(x, function(xi) foo(xi) == 2, logical(1L))",
+    rex::rex("Compare to a constant after calling vapply()", anything, "vapply(x, foo, FUN.VALUE = <intermediate>)"),
+    linter
+  )
 })
 
 test_that("unnecessary_lambda_linter blocks other comparators as well", {
   linter <- unnecessary_lambda_linter()
   linter_allow <- unnecessary_lambda_linter(allow_comparison = TRUE)
-  lint_msg <- rex::rex("Compare to a constant after calling sapply()/vapply()")
+  lint_msg <- rex::rex("Compare to a constant after calling sapply() to get")
 
   expect_lint("sapply(x, function(xi) foo(xi) >= 2)", lint_msg, linter)
   expect_lint("sapply(x, function(xi) foo(xi) != 'a')", lint_msg, linter)
