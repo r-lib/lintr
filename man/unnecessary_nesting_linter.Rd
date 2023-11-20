@@ -4,7 +4,15 @@
 \alias{unnecessary_nesting_linter}
 \title{Block instances of excessive nesting}
 \usage{
-unnecessary_nesting_linter()
+unnecessary_nesting_linter(allow_assignment = TRUE)
+}
+\arguments{
+\item{allow_assignment}{Logical, default \code{TRUE}, in which case
+braced expressions consisting only of a single assignment are skipped.
+if \code{FALSE}, all braced expressions with only one child expression are linted.
+The \code{TRUE} case facilitates interaction with \code{\link[=implicit_assignment_linter]{implicit_assignment_linter()}}
+for certain cases where an implicit assignment is necessary, so a braced
+assignment is used to further distinguish the assignment. See examples.}
 }
 \description{
 Excessive nesting harms readability. Use helper functions or early returns
@@ -26,6 +34,13 @@ lint(
   linters = unnecessary_nesting_linter()
 )
 
+code <- "expect_warning(\n  {\n    x <- foo()\n  },\n  'warned'\n)"
+writeLines(code)
+lint(
+  text = code,
+  linters = unnecessary_nesting_linter(allow_assignment = FALSE)
+)
+
 # okay
 code <- "if (A) {\n  stop('A is bad because a.')\n} else {\n  stop('!A is bad too.')\n}"
 writeLines(code)
@@ -41,6 +56,13 @@ lint(
   linters = unnecessary_nesting_linter()
 )
 
+code <- "expect_warning(\n  {\n    x <- foo()\n  },\n  'warned'\n)"
+writeLines(code)
+lint(
+  text = code,
+  linters = unnecessary_nesting_linter()
+)
+
 }
 \seealso{
 \itemize{
@@ -49,5 +71,5 @@ lint(
 }
 }
 \section{Tags}{
-\link[=consistency_linters]{consistency}, \link[=readability_linters]{readability}
+\link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=readability_linters]{readability}
 }

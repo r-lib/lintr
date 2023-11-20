@@ -224,6 +224,18 @@ test_that("unnecessary_nesting_linter skips one-expression switch statements", {
   expect_lint(lines, NULL, unnecessary_nesting_linter())
 })
 
+test_that("unnecessary_nesting_linter skips one-expression assignments by default", {
+  expect_lint(
+    trim_some("
+      {
+        x <- foo()
+      }
+    "),
+    NULL,
+    unnecessary_nesting_linter()
+  )
+})
+
 test_that("unnecessary_nesting_linter passes for multi-line braced expressions", {
   lines <- c(
     "tryCatch(",
@@ -240,24 +252,55 @@ test_that("unnecessary_nesting_linter passes for multi-line braced expressions",
 test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", {
   linter <- unnecessary_nesting_linter()
 
-  test_that_lines <- c(
-    "test_that('this works', {",
-    "  expect_true(TRUE)",
-    "})"
+  expect_lint(
+    trim_some("
+      test_that('this works', {
+        expect_true(TRUE)
+      })
+    "),
+    NULL,
+    linter
   )
-  expect_lint(test_that_lines, NULL, linter)
-  data_table_lines <- c(
-    "DT[, {",
-    "  plot(x, y)",
-    "}]"
+  expect_lint(
+    trim_some("
+      DT[, {
+        plot(x, y)
+      }]
+    "),
+    NULL,
+    linter
   )
-  expect_lint(data_table_lines, NULL, linter)
-  data_table_assign_lines <- c(
-    "DT[, x := {",
-    "  foo(x, y)",
-    "}]"
+  expect_lint(
+    trim_some("
+      DT[, x := {
+        foo(x, y)
+      }]
+    "),
+    NULL,
+    linter
   )
-  expect_lint(data_table_assign_lines, NULL, linter)
+
+  # NB: styler would re-style these anyway
+  expect_lint(
+    trim_some("
+      tryCatch({
+        foo()
+      }, error = identity)
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      DT[{
+        n <- .N - 1
+        x[n] < y[n]
+      }, j = TRUE, by = x]
+    "),
+    NULL,
+    linter
+  )
 })
 
 test_that("rlang's double-brace operator is skipped", {
@@ -269,17 +312,31 @@ test_that("rlang's double-brace operator is skipped", {
 })
 
 test_that("unnecessary_nesting_linter blocks one-expression braced expressions", {
-  lines <- c(
-    "tryCatch(",
-    "  {",
-    "    foo(x)",
-    "  },",
-    "  error = identity",
-    ")"
-  )
   expect_lint(
-    lines,
-    R"(Reduce the nesting of this statement by removing the braces \{\}\.)",
+    trim_some("
+      tryCatch(
+        {
+          foo(x)
+        },
+        error = identity
+      )
+    "),
+    rex::rex("Reduce the nesting of this statement by removing the braces {}."),
     unnecessary_nesting_linter()
+  )
+})
+
+test_that("unnecessary_nesting_linter allow_assignment= argument works", {
+  expect_lint(
+    trim_some("
+      tryCatch(
+        {
+          idx <- foo(x)
+        },
+        error = identity
+      )
+    "),
+    rex::rex("Reduce the nesting of this statement by removing the braces {}."),
+    unnecessary_nesting_linter(allow_assignment = FALSE)
   )
 })

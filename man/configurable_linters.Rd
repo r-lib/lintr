@@ -47,6 +47,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
 \item{\code{\link{unnecessary_concatenation_linter}}}
+\item{\code{\link{unnecessary_nesting_linter}}}
 \item{\code{\link{unused_import_linter}}}
 }
 }
