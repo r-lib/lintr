@@ -36,10 +36,6 @@
 #'
 #' @export
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
-  if (has_positional_logical(list(...))) {
-    stop("'cache' is no longer available as a positional argument; please supply 'cache' as a named argument instead.")
-  }
-
   check_dots(...names(), c("exclude", "parse_exclusions"))
 
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
@@ -135,13 +131,6 @@ lint_dir <- function(path = ".", ...,
                      pattern = "(?i)[.](r|rmd|qmd|rnw|rhtml|rrst|rtex|rtxt)$",
                      parse_settings = TRUE,
                      show_progress = NULL) {
-  if (has_positional_logical(list(...))) {
-    stop(
-      "'relative_path' is no longer available as a positional argument; ",
-      "please supply 'relative_path' as a named argument instead. "
-    )
-  }
-
   check_dots(...names(), c("lint", "exclude", "parse_exclusions"))
 
   if (isTRUE(parse_settings)) {
@@ -235,15 +224,6 @@ lint_package <- function(path = ".", ...,
                          exclusions = list("R/RcppExports.R"),
                          parse_settings = TRUE,
                          show_progress = NULL) {
-  if (has_positional_logical(list(...))) {
-    # nocov start: dead code path
-    stop(
-      "'relative_path' is no longer available as a positional argument; ",
-      "please supply 'relative_path' as a named argument instead. "
-    )
-    # nocov end
-  }
-
   if (length(path) > 1L) {
     stop("Only linting one package at a time is supported.")
   }
