@@ -9,7 +9,6 @@
 #'
 #' @export
 return_linter <- function(use_implicit_returns = TRUE) {
-
   if (use_implicit_returns) {
     xpath <- "
       (//FUNCTION | //OP-LAMBDA)[following-sibling::expr[1]/*[1][self::OP-LEFT-BRACE]]
@@ -21,7 +20,7 @@ return_linter <- function(use_implicit_returns = TRUE) {
         ]
       ]
     "
-    msg <- "An explicit return at the end of a function is not required"
+    msg <- "Use implicit return behavior; explicit return() is not needed."
   } else {
     xpath <- "
       (//FUNCTION | //OP-LAMBDA)[following-sibling::expr[1]/*[1][self::OP-LEFT-BRACE]]
@@ -50,7 +49,7 @@ return_linter <- function(use_implicit_returns = TRUE) {
         )
       ]
     "
-    msg <- "An explicit return at the end of a function is desired"
+    msg <- "All functions must have an explicit return()."
   }
 
   Linter(function(source_expression) {
@@ -68,6 +67,5 @@ return_linter <- function(use_implicit_returns = TRUE) {
       lint_message = msg,
       type = "style"
     )
-
   })
 }
