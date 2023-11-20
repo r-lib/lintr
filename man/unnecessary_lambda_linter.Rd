@@ -4,7 +4,12 @@
 \alias{unnecessary_lambda_linter}
 \title{Block usage of anonymous functions in iteration functions when unnecessary}
 \usage{
-unnecessary_lambda_linter()
+unnecessary_lambda_linter(allow_comparison = FALSE)
+}
+\arguments{
+\item{allow_comparison}{Logical, default \code{FALSE}. If \code{TRUE}, lambdas like
+\code{function(x) foo(x) == 2}, where \code{foo} can be extracted to the "mapping"
+function and \code{==} vectorized instead of called repeatedly, are linted.}
 }
 \description{
 Using an anonymous function in, e.g., \code{\link[=lapply]{lapply()}} is not always necessary,
@@ -23,6 +28,16 @@ lint(
   linters = unnecessary_lambda_linter()
 )
 
+lint(
+  text = "sapply(x, function(xi) xi == 2)",
+  linters = inner_comparison_linter()
+)
+
+lint(
+  text = "sapply(x, function(xi) sum(xi) > 0)",
+  linters = inner_comparison_linter()
+)
+
 # okay
 lint(
   text = "lapply(list(1:3, 2:4), sum)",
@@ -39,10 +54,25 @@ lint(
   linters = unnecessary_lambda_linter()
 )
 
+lint(
+  text = "sapply(x, function(xi) xi == 2)",
+  linters = inner_comparison_linter(allow_comparison = TRUE)
+)
+
+lint(
+  text = "sapply(x, function(xi) sum(xi) > 0)",
+  linters = inner_comparison_linter(allow_comparison = TRUE)
+)
+
+lint(
+  text = "sapply(x, sum) > 0",
+  linters = inner_comparison_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
 }

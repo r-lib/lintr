@@ -8,11 +8,25 @@
 #'   the anonymous function _can_ be avoided, doing so is not always more
 #'   readable.
 #'
+#' @param allow_comparison Logical, default `FALSE`. If `TRUE`, lambdas like
+#'   `function(x) foo(x) == 2`, where `foo` can be extracted to the "mapping"
+#'   function and `==` vectorized instead of called repeatedly, are linted.
+#'
 #' @examples
 #' # will produce lints
 #' lint(
 #'   text = "lapply(list(1:3, 2:4), function(xi) sum(xi))",
 #'   linters = unnecessary_lambda_linter()
+#' )
+#'
+#' lint(
+#'   text = "sapply(x, function(xi) xi == 2)",
+#'   linters = inner_comparison_linter()
+#' )
+#'
+#' lint(
+#'   text = "sapply(x, function(xi) sum(xi) > 0)",
+#'   linters = inner_comparison_linter()
 #' )
 #'
 #' # okay
@@ -31,10 +45,25 @@
 #'   linters = unnecessary_lambda_linter()
 #' )
 #'
+#' lint(
+#'   text = "sapply(x, function(xi) xi == 2)",
+#'   linters = inner_comparison_linter(allow_comparison = TRUE)
+#' )
+#'
+#' lint(
+#'   text = "sapply(x, function(xi) sum(xi) > 0)",
+#'   linters = inner_comparison_linter(allow_comparison = TRUE)
+#' )
+#'
+#' lint(
+#'   text = "sapply(x, sum) > 0",
+#'   linters = inner_comparison_linter()
+#' )
+#'
 #' @evalRd rd_tags("unnecessary_lambda_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-unnecessary_lambda_linter <- function() {
+unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   # include any base function like those where FUN is an argument
   #   and ... follows positionally directly afterwards (with ...
   #   being passed on to FUN). That excludes functions like
@@ -54,6 +83,28 @@ unnecessary_lambda_linter <- function() {
     "parLapplyLB", "parRapply", "parSapply", "parSapplyLB", "pvec",
     purrr_mappers
   ))
+
+  # OP-PLUS: condition for complex literal, e.g. 0+2i.
+  # NB: this includes 0+3 and TRUE+FALSE, which are also fine.
+  inner_comparison_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'sapply' or text() = 'vapply']
+    /parent::expr
+    /parent::expr
+    /expr[FUNCTION]
+    /expr[
+      (EQ or NE or GT or GE or LT or LE)
+      and expr[
+        NUM_CONST
+        or STR_CONST
+        or (OP-PLUS and count(expr/NUM_CONST) = 2)
+      ]
+    ]
+  "
+  lint_message <- paste(
+    "Compare to a constant after calling sapply()/vapply()",
+    "to get the full benefits of vectorization.",
+    "Prefer sapply(x, foo) == 2 over sapply(x, function(xi) foo(xi) == 2)."
+  )
 
   # outline:
   #   1. match one of the identified mappers
