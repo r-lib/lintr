@@ -101,7 +101,7 @@ unnecessary_nesting_linter <- function() {
   #       + includes purrr-like anonymous functions as ~ {...}
   #   - rlang's double-brace expressions like {{ var }}
   #       + NB: both braces would trigger here, so we must exclude both of them
-  #   - any expression ending like `})` or `}]`
+  #   - any expression starting like `({` or `[{` or ending like `})` or `}]`
   #       + note that nesting is not improved by "fixing" such cases,
   #         and could also be worsened
   #       + motivated by the most common cases:
@@ -128,8 +128,8 @@ unnecessary_nesting_linter <- function() {
       and not(expr/OP-LEFT-BRACE)
       and not(preceding-sibling::OP-LEFT-BRACE)
       and not(
-        OP-RIGHT-BRACE/@end + 1 = following-sibling::OP-RIGHT-PAREN/@end
-        or OP-RIGHT-BRACE/@end + 1 = following-sibling::OP-RIGHT-BRACKET/@end
+        OP-LEFT-BRACE/@end - 1 = preceding-sibling::*[1][self::OP-LEFT-PAREN or self::OP-LEFT-BRACKET]/@end
+        or OP-RIGHT-BRACE/@end + 1 = following-sibling::*[1][self::OP-RIGHT-PAREN or self::OP-RIGHT-BRACKET]/@end
       )
     ]
   "
