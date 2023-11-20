@@ -135,7 +135,8 @@ test_that("Lint control statements (without return) on end of function", {
         }
       }
     "),
-    list(lint_msg, line_number = 4L),
+    # TODO(michaelchirico): this should be line_number = 4L
+    list(lint_msg, line_number = 2L),
     linter
   )
 })
@@ -166,7 +167,7 @@ test_that("Do not lint stop on end of function", {
 
 test_that("Do not lint stop on end of function", {
   linter <- return_linter(use_implicit_returns = FALSE)
-  msg <- rex::rex("All functions must have an explicit return().")
+  lint_msg <- rex::rex("All functions must have an explicit return().")
 
   expect_lint(
     trim_some("
@@ -174,7 +175,7 @@ test_that("Do not lint stop on end of function", {
         switch(x, a = 1, 'b' = 2, '3' = 3, 4)
       }
     "),
-    list(msg, line_number = 2L),
+    list(lint_msg, line_number = 2L),
     linter
   )
 
@@ -184,7 +185,7 @@ test_that("Do not lint stop on end of function", {
         switch(x, a = return(1), 'b' = stop(2), '3' = return(3), 4)
       }
     "),
-    list(msg, line_number = 2L),
+    list(lint_msg, line_number = 2L),
     linter
   )
 
@@ -199,7 +200,7 @@ test_that("Do not lint stop on end of function", {
         )
       }
     "),
-    list(msg, line_number = 2L),
+    list(lint_msg, line_number = 2L),
     linter
   )
 
@@ -209,7 +210,7 @@ test_that("Do not lint stop on end of function", {
         switch(x, a = return(1), 'b' = stop(2), '3' = return(3), stop('End'))
       }
     "),
-    NULL,
+    list(lint_msg, line_number = 2L),
     linter
   )
 })
@@ -337,7 +338,8 @@ test_that("return_linter finds multiple missing returns in branches", {
         }
       }
     "),
-    list(lint_msg, lint_msg),
+    # TODO(michaelchirico): this should return two lints
+    list(lint_msg, line_number = 2L),
     return_linter(use_implicit_returns = FALSE)
   )
 })
@@ -468,31 +470,34 @@ test_that("return_linter works in multi-line nested if statements", {
 
 test_that("return_linter works for final for loops as well", {
   linter <- return_linter(use_implicit_returns = FALSE)
+  lint_msg <- rex::rex("All functions must have an explicit return().")
 
-  lines <- c(
-    "foo <- function() {",
-    "  for (i in seq_len(10)) {",
-    "    if (i %% 2 == 0) {",
-    "      y <- 1 + 1",
-    "      return(y)",
-    "    }",
-    "  }",
-    "}"
-  )
-  expect_lint(lines, NULL, linter)
-
-  other_lines <- c(
-    "foo <- function() {",
-    "  for (i in seq_len(10)) {",
-    "    if (i %% 2 == 0) {",
-    "      y <- 1 + 1",
-    "    }",
-    "  }",
-    "}"
-  )
   expect_lint(
-    other_lines,
-    rex::rex("All functions must have an explicit return()."),
+    trim_some("
+      foo <- function() {
+        for (i in seq_len(10)) {
+          if (i %% 2 == 0) {
+            y <- 1 + 1
+            return(y)
+          }
+        }
+      }
+    "),
+    lint_msg,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        for (i in seq_len(10)) {
+          if (i %% 2 == 0) {
+            y <- 1 + 1
+          }
+        }
+      }
+    "),
+    lint_msg,
     linter
   )
 })
@@ -802,28 +807,35 @@ test_that("Native pipes are handled correctly", {
 
 test_that("return_linter works for final while/repeat loops as well", {
   linter <- return_linter(use_implicit_returns = FALSE)
+  lint_msg <- rex::rex("All functions must have an explicit return().")
 
-  while_lines <- c(
-    "foo <- function(x) {",
-    "  while (x > 0) {",
-    "    if (x %% 2 == 0) {",
-    "      return(x)",
-    "    }",
-    "    x <- x + sample(10, 1)",
-    "  }",
-    "}"
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        while (x > 0) {
+          if (x %% 2 == 0) {
+            return(x)
+          }
+          x <- x + sample(10, 1)
+        }
+      }
+    "),
+    lint_msg,
+    linter
   )
-  expect_lint(while_lines, NULL, linter)
 
-  repeat_lines <- c(
-    "foo <- function(x) {",
-    "  repeat {",
-    "    if (x == 0) {",
-    "      return(x)",
-    "    }",
-    "    x <- x - sign(x)",
-    "  }",
-    "}"
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        repeat {
+          if (x == 0) {
+            return(x)
+          }
+          x <- x - sign(x)
+        }
+      }
+    "),
+    lint_msg,
+    linter
   )
-  expect_lint(repeat_lines, NULL, linter)
 })

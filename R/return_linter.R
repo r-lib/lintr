@@ -104,7 +104,13 @@ return_linter <- function(use_implicit_returns = TRUE) {
       /*[1][
         (
           self::IF
-          and not(following-sibling::expr//SYMBOL_FUNCTION_CALL[{ xp_text_in_table(allowed_functions) }])
+          and (
+            not(following-sibling::expr[2]//SYMBOL_FUNCTION_CALL[{ xp_text_in_table(allowed_functions) }])
+            or (
+              count(following-sibling::expr) = 3
+              and not(following-sibling::expr[3]//SYMBOL_FUNCTION_CALL[{ xp_text_in_table(allowed_functions) }])
+            )
+          )
         ) or (
           { xp_or(paste0('self::', setdiff(control_calls, 'IF'))) }
         ) or (
