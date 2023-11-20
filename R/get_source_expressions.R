@@ -68,8 +68,7 @@ get_source_expressions <- function(filename, lines = NULL) {
   }
 
   # Only regard explicit attribute terminal_newline=FALSE as FALSE and all other cases (e.g. NULL or TRUE) as TRUE.
-  # We don't use isFALSE since it is introduced in R 3.5.0.
-  terminal_newline <- !identical(attr(source_expression$lines, "terminal_newline", exact = TRUE), FALSE)
+  terminal_newline <- !isFALSE(attr(source_expression$lines, "terminal_newline", exact = TRUE))
 
   e <- NULL
   source_expression$lines <- extract_r_source(
@@ -484,19 +483,6 @@ get_single_source_expression <- function(loc,
 get_source_expression <- function(source_expression, error = identity) {
   parse_error <- FALSE
 
-  parsed_content <- tryCatch(
-    parse(
-      text = source_expression$content,
-      srcfile = source_expression,
-      keep.source = TRUE
-    ),
-    error = error
-  )
-
-  # TODO: Remove when minimum R version is bumped to > 3.5
-  #
-  # This needs to be done twice to avoid a bug fixed in R 3.4.4
-  #   https://bugs.r-project.org/bugzilla/show_bug.cgi?id=16041
   parsed_content <- tryCatch(
     parse(
       text = source_expression$content,

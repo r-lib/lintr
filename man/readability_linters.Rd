@@ -16,6 +16,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{brace_linter}}}
 \item{\code{\link{commas_linter}}}
 \item{\code{\link{commented_code_linter}}}
+\item{\code{\link{comparison_negation_linter}}}
 \item{\code{\link{conjunct_test_linter}}}
 \item{\code{\link{consecutive_assertion_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
@@ -41,9 +42,12 @@ The following linters are tagged with 'readability':
 \item{\code{\link{line_length_linter}}}
 \item{\code{\link{matrix_apply_linter}}}
 \item{\code{\link{nested_ifelse_linter}}}
+\item{\code{\link{nested_pipe_linter}}}
 \item{\code{\link{numeric_leading_zero_linter}}}
 \item{\code{\link{object_length_linter}}}
+\item{\code{\link{object_overwrite_linter}}}
 \item{\code{\link{object_usage_linter}}}
+\item{\code{\link{one_call_pipe_linter}}}
 \item{\code{\link{outer_negation_linter}}}
 \item{\code{\link{paren_body_linter}}}
 \item{\code{\link{pipe_call_linter}}}
@@ -51,12 +55,15 @@ The following linters are tagged with 'readability':
 \item{\code{\link{pipe_continuation_linter}}}
 \item{\code{\link{quotes_linter}}}
 \item{\code{\link{redundant_equals_linter}}}
+\item{\code{\link{rep_len_linter}}}
 \item{\code{\link{repeat_linter}}}
+\item{\code{\link{sample_int_linter}}}
 \item{\code{\link{scalar_in_linter}}}
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{sort_linter}}}
 \item{\code{\link{spaces_inside_linter}}}
 \item{\code{\link{spaces_left_parentheses_linter}}}
+\item{\code{\link{stopifnot_all_linter}}}
 \item{\code{\link{string_boundary_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
@@ -65,6 +72,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{unnecessary_nested_if_linter}}}
 \item{\code{\link{unnecessary_placeholder_linter}}}
 \item{\code{\link{unreachable_code_linter}}}
+\item{\code{\link{which_grepl_linter}}}
 \item{\code{\link{yoda_test_linter}}}
 }
 }

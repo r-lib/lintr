@@ -36,10 +36,6 @@
 #'
 #' @export
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
-  if (has_positional_logical(list(...))) {
-    stop("'cache' is no longer available as a positional argument; please supply 'cache' as a named argument instead.")
-  }
-
   check_dots(...names(), c("exclude", "parse_exclusions"))
 
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
@@ -135,13 +131,6 @@ lint_dir <- function(path = ".", ...,
                      pattern = "(?i)[.](r|rmd|qmd|rnw|rhtml|rrst|rtex|rtxt)$",
                      parse_settings = TRUE,
                      show_progress = NULL) {
-  if (has_positional_logical(list(...))) {
-    stop(
-      "'relative_path' is no longer available as a positional argument; ",
-      "please supply 'relative_path' as a named argument instead. "
-    )
-  }
-
   check_dots(...names(), c("lint", "exclude", "parse_exclusions"))
 
   if (isTRUE(parse_settings)) {
@@ -235,15 +224,6 @@ lint_package <- function(path = ".", ...,
                          exclusions = list("R/RcppExports.R"),
                          parse_settings = TRUE,
                          show_progress = NULL) {
-  if (has_positional_logical(list(...))) {
-    # nocov start: dead code path
-    stop(
-      "'relative_path' is no longer available as a positional argument; ",
-      "please supply 'relative_path' as a named argument instead. "
-    )
-    # nocov end
-  }
-
   if (length(path) > 1L) {
     stop("Only linting one package at a time is supported.")
   }
@@ -336,31 +316,27 @@ define_linters <- function(linters = NULL) {
 }
 
 validate_linter_object <- function(linter, name) {
-  if (!is_linter(linter) && is.function(linter)) {
-    if (is_linter_factory(linter)) {
-      old <- "Passing linters as variables"
-      new <- "a call to the linters (see ?linters)"
-      lintr_deprecated(
-        old = old, new = new, version = "3.0.0",
-        type = ""
-      )
-      linter <- linter()
-    } else {
-      old <- "The use of linters of class 'function'"
-      new <- "linters classed as 'linter' (see ?Linter)"
-      lintr_deprecated(
-        old = old, new = new, version = "3.0.0",
-        type = ""
-      )
-      linter <- Linter(linter, name = name)
-    }
-  } else if (!is.function(linter)) {
+  if (is_linter(linter)) {
+    return(linter)
+  }
+  if (!is.function(linter)) {
     stop(gettextf(
       "Expected '%s' to be a function of class 'linter', not a %s of class '%s'",
       name, typeof(linter), class(linter)[[1L]]
     ))
   }
-  linter
+  if (is_linter_factory(linter)) {
+    old <- "Passing linters as variables"
+    new <- "a call to the linters (see ?linters)"
+  } else {
+    old <- "The use of linters of class 'function'"
+    new <- "linters classed as 'linter' (see ?Linter)"
+  }
+  lintr_deprecated(
+    old = old, new = new, version = "3.0.0",
+    type = "",
+    signal = "stop"
+  )
 }
 
 is_linter_factory <- function(fun) {
@@ -404,7 +380,8 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
     lintr_deprecated(
       old = "Using the `linter` argument of `Lint()`",
       version = "3.0.0",
-      type = ""
+      type = "",
+      signal = "stop"
     )
   }
 

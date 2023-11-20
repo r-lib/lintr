@@ -50,6 +50,12 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
   expect_lint('lapply(l, function(x) rle(x)[["values"]])', NULL, linter)
   expect_lint("lapply(l, function(x) rle(x)@values)", NULL, linter)
 
+  # return() extractions, #2258
+  expect_lint("lapply(l, function(x) return(foo(x)$bar))", NULL, linter)
+  expect_lint('lapply(l, function(x) return(rle(x)["values"]))', NULL, linter)
+  expect_lint('lapply(l, function(x) return(rle(x)[["values"]]))', NULL, linter)
+  expect_lint("lapply(l, function(x) return(rle(x)@values))", NULL, linter)
+
   # Other operators, #2247
   expect_lint("lapply(l, function(x) foo(x) - 1)", NULL, linter)
   expect_lint("lapply(l, function(x) foo(x) * 2)", NULL, linter)
@@ -65,6 +71,10 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
     NULL,
     linter
   )
+
+  # only call is on RHS of operator, #2310
+  expect_lint("lapply(l, function(x) 'a' %in% names(x))", NULL, linter)
+  expect_lint("lapply(l, function(x = 1) 'a' %in% names(x))", NULL, linter)
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {

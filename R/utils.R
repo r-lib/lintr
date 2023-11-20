@@ -50,12 +50,12 @@ fix_names <- function(x, default) {
 }
 
 linter_auto_name <- function(which = -3L) {
-  call <- sys.call(which = which)
-  nm <- paste(deparse(call, 500L), collapse = " ")
+  sys_call <- sys.call(which = which)
+  nm <- paste(deparse(sys_call, 500L), collapse = " ")
   regex <- rex(start, one_or_more(alnum %or% "." %or% "_" %or% ":"))
   if (re_matches(nm, regex)) {
-    match <- re_matches(nm, regex, locations = TRUE)
-    nm <- substr(nm, start = 1L, stop = match[1L, "end"])
+    match_data <- re_matches(nm, regex, locations = TRUE)
+    nm <- substr(nm, start = 1L, stop = match_data[1L, "end"])
     nm <- re_substitutes(nm, rex(start, alnums, "::"), "")
   }
   nm
@@ -63,8 +63,8 @@ linter_auto_name <- function(which = -3L) {
 
 auto_names <- function(x) {
   nms <- names2(x)
-  missing <- nms == ""
-  if (!any(missing)) {
+  empty <- !nzchar(nms, keepNA = TRUE)
+  if (!any(empty)) {
     return(nms)
   }
 
@@ -75,9 +75,9 @@ auto_names <- function(x) {
       paste(deparse(x, 500L), collapse = " ")
     }
   }
-  defaults <- vapply(x[missing], default_name, character(1L), USE.NAMES = FALSE)
+  defaults <- vapply(x[empty], default_name, character(1L), USE.NAMES = FALSE)
 
-  nms[missing] <- defaults
+  nms[empty] <- defaults
   nms
 }
 
@@ -137,9 +137,6 @@ try_silently <- function(expr) {
     )
   )
 }
-
-# imitate sQuote(x, q) [requires R>=3.6]
-quote_wrap <- function(x, q) paste0(q, x, q)
 
 # interface to work like options() or setwd() -- returns the old value for convenience
 set_lang <- function(new_lang) {

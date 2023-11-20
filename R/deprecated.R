@@ -6,7 +6,9 @@
 NULL
 
 lintr_deprecated <- function(old, new = NULL, version = NULL,
-                             type = "Function") {
+                             type = "Function", signal = c("warning", "stop")) {
+  signal <- match.arg(signal)
+  signal <- match.fun(signal)
   msg <- c(
     c(type, " ", old, " was deprecated"),
     if (length(version) > 0L) {
@@ -18,5 +20,5 @@ lintr_deprecated <- function(old, new = NULL, version = NULL,
     }
   )
   msg <- paste0(msg, collapse = "")
-  warning(msg, call. = FALSE, domain = NA)
+  signal(msg, call. = FALSE, domain = NA)
 }

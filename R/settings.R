@@ -10,6 +10,26 @@
 #' The default linter_file name is `.lintr` but it can be changed with option `lintr.linter_file`
 #'   or the environment variable `R_LINTR_LINTER_FILE`
 #' This file is a DCF file, see [base::read.dcf()] for details.
+#' Here is an example of a `.lintr` file:
+#'
+#'  ```dcf
+#'  linters: linters_with_defaults(
+#'      any_duplicated_linter(),
+#'      any_is_na_linter(),
+#'      backport_linter("oldrel-4", except = c("R_user_dir", "str2lang")),
+#'      line_length_linter(120L),
+#'      missing_argument_linter(),
+#'      unnecessary_concatenation_linter(allow_single_expression = FALSE),
+#'      yoda_test_linter()
+#'    )
+#'  exclusions: list(
+#'      "inst/doc/creating_linters.R" = 1,
+#'      "inst/example/bad.R",
+#'      "tests/testthat/default_linter_testcode.R",
+#'      "tests/testthat/dummy_packages"
+#'    )
+#'  ```
+#'
 #' Experimentally, we also support keeping the config in a plain R file. By default we look for
 #'   a file named `.lintr.R` (in the same directories where we search for `.lintr`).
 #' We are still deciding the future of config support in lintr, so user feedback is welcome.
@@ -20,6 +40,26 @@
 #"   otherwise "abusing" the ability to evaluate generic R code. Other recursive key-value stores
 #'   like YAML could work, but require new dependencies and are harder to parse
 #'   both programmatically and visually.
+#' Here is an example of a `.lintr.R` file:
+#'
+#'  ```r
+#'  linters <- linters_with_defaults(
+#'      any_duplicated_linter(),
+#'      any_is_na_linter(),
+#'      backport_linter("oldrel-4", except = c("R_user_dir", "str2lang")),
+#'      line_length_linter(120L),
+#'      missing_argument_linter(),
+#'      unnecessary_concatenation_linter(allow_single_expression = FALSE),
+#'      yoda_test_linter()
+#'    )
+#'  exclusions <- list(
+#'      "inst/doc/creating_linters.R" = 1,
+#'      "inst/example/bad.R",
+#'      "tests/testthat/default_linter_testcode.R",
+#'      "tests/testthat/dummy_packages"
+#'    )
+#'  ```
+#'
 #' @param filename Source file to be linted.
 read_settings <- function(filename) {
   reset_settings()
@@ -56,7 +96,7 @@ read_config_file <- function(config_file) {
 
   config <- new.env()
   if (endsWith(config_file, ".R")) {
-    load_config <- function(file) sys_source(file, config)
+    load_config <- function(file) sys.source(file, config, keep.source = FALSE, keep.parse.data = FALSE)
     malformed <- function(e) {
       stop("Malformed config file, ensure it is valid R syntax\n  ", conditionMessage(e), call. = FALSE)
     }
@@ -231,10 +271,7 @@ get_encoding_from_dcf <- function(file) {
     warning = function(e) NULL
   )
 
-  if (!is.null(encodings)) {
-    # Produces a warning in R <= 3.5 if encoding is NULL
-    encodings <- encodings[!is.na(encodings)]
-  }
+  encodings <- encodings[!is.na(encodings)]
   if (length(encodings) > 0L) {
     return(encodings[1L])
   }
