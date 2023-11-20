@@ -37,11 +37,23 @@ test_that("nested_pipe_linter skips allowed usages", {
     NULL,
     linter
   )
-
-  # try/tryCatch must be evaluated inside the call
-  expect_lint("try(x %>% foo())", NULL, linter)
-  expect_lint("tryCatch(x %>% foo(), error = identity)", NULL, linter)
 })
+
+patrick::with_parameters_test_that(
+  "allow_outer_calls defaults are ignored by default",
+  expect_lint(
+    trim_some(sprintf(outer_call, fmt = "
+      %s(
+        x %%>%%
+          foo()
+      )
+    ")),
+    NULL,
+    nested_pipe_linter()
+  ),
+  .test_name = c("try", "tryCatch", "withCallingHandlers"),
+  outer_call = c("try", "tryCatch", "withCallingHandlers")
+)
 
 test_that("nested_pipe_linter blocks simple disallowed usages", {
   linter <- nested_pipe_linter()
@@ -87,6 +99,30 @@ test_that("nested_pipe_linter blocks simple disallowed usages", {
     "),
     lint_msg,
     linter_inline
+  )
+})
+
+test_that("allow_outer_calls= argument works", {
+  expect_lint(
+    trim_some("
+      try(
+        x %>%
+          foo()
+      )
+    "),
+    rex::rex("Don't nest pipes inside other calls."),
+    nested_pipe_linter(allow_outer_calls = character())
+  )
+
+  expect_lint(
+    trim_some("
+      print(
+        x %>%
+          foo()
+      )
+    "),
+    NULL,
+    nested_pipe_linter(allow_outer_calls = "print")
   )
 })
 
