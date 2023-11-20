@@ -60,6 +60,8 @@ test_that("Lint return on end of lambda function", {
 })
 
 test_that("Do not lint control statements (with return) on end of function", {
+  linter <- return_linter(use_implicit_returns = FALSE)
+
   expect_lint(
     trim_some("
       function() {
@@ -69,7 +71,7 @@ test_that("Do not lint control statements (with return) on end of function", {
       }
     "),
     NULL,
-    return_linter(use_implicit_returns = FALSE)
+    linter
   )
 
   expect_lint(
@@ -85,11 +87,12 @@ test_that("Do not lint control statements (with return) on end of function", {
       }
     "),
     NULL,
-    return_linter(use_implicit_returns = FALSE)
+    linter
   )
 })
 
 test_that("Lint control statements (without return) on end of function", {
+  linter <- return_linter(use_implicit_returns = FALSE)
   msg <- rex::rex("All functions must have an explicit return().")
 
   expect_lint(
@@ -103,11 +106,8 @@ test_that("Lint control statements (without return) on end of function", {
         }
       }
     "),
-    list(
-      line_number = 2L,
-      message = msg
-    ),
-    return_linter(use_implicit_returns = FALSE)
+    list(msg, line_number = 2L),
+    linter
   )
 
   expect_lint(
@@ -121,11 +121,8 @@ test_that("Lint control statements (without return) on end of function", {
         }
       }
     "),
-    list(
-      line_number = 2L,
-      message = msg
-    ),
-    return_linter(use_implicit_returns = FALSE)
+    list(msg, line_number = 2L),
+    linter
   )
 
   expect_lint(
@@ -136,11 +133,8 @@ test_that("Lint control statements (without return) on end of function", {
         }
       }
     "),
-    list(
-      line_number = 2L,
-      message = msg
-    ),
-    return_linter(use_implicit_returns = FALSE)
+    list(msg, line_number = 2L),
+    linter
   )
 
   expect_lint(
@@ -153,11 +147,8 @@ test_that("Lint control statements (without return) on end of function", {
         }
       }
     "),
-    list(
-      line_number = 4L,
-      message = msg
-    ),
-    return_linter(use_implicit_returns = FALSE)
+    list(msg, line_number = 4L),
+    linter
   )
 })
 
@@ -186,6 +177,7 @@ test_that("Do not lint stop on end of function", {
 })
 
 test_that("Do not lint stop on end of function", {
+  linter <- return_linter(use_implicit_returns = FALSE)
   msg <- rex::rex("All functions must have an explicit return().")
 
   expect_lint(
@@ -194,11 +186,8 @@ test_that("Do not lint stop on end of function", {
         switch(x, a = 1, 'b' = 2, '3' = 3, 4)
       }
     "),
-    list(
-      line_number = 2L,
-      message = msg
-    ),
-    return_linter(use_implicit_returns = FALSE)
+    list(msg, line_number = 2L),
+    linter
   )
 
   expect_lint(
@@ -207,11 +196,8 @@ test_that("Do not lint stop on end of function", {
         switch(x, a = return(1), 'b' = stop(2), '3' = return(3), 4)
       }
     "),
-    list(
-      line_number = 2L,
-      message = msg
-    ),
-    return_linter(use_implicit_returns = FALSE)
+    list(msg, line_number = 2L),
+    linter
   )
 
   expect_lint(
@@ -225,11 +211,8 @@ test_that("Do not lint stop on end of function", {
         )
       }
     "),
-    list(
-      line_number = 2L,
-      message = msg
-    ),
-    return_linter(use_implicit_returns = FALSE)
+    list(msg, line_number = 2L),
+    linter
   )
 
   expect_lint(
@@ -239,7 +222,7 @@ test_that("Do not lint stop on end of function", {
       }
     "),
     NULL,
-    return_linter(use_implicit_returns = FALSE)
+    linter
   )
 })
 
@@ -256,6 +239,8 @@ test_that("return_linter works in simple function", {
 })
 
 test_that("return_linter works for using stop() instead of returning", {
+  linter <- return_linter(use_implicit_returns = FALSE)
+
   expect_lint(
     trim_some("
       foo <- function(bar) {
@@ -263,7 +248,7 @@ test_that("return_linter works for using stop() instead of returning", {
       }
     "),
     NULL,
-    return_linter(use_implicit_returns = FALSE)
+    linter
   )
 
   expect_lint(
@@ -273,14 +258,12 @@ test_that("return_linter works for using stop() instead of returning", {
       }
     "),
     NULL,
-    return_linter(use_implicit_returns = FALSE)
+    linter
   )
 })
 
 test_that("return_linter ignores expressions that aren't functions", {
-  expect_lint(
-    "x + 1", NULL, return_linter(use_implicit_returns = FALSE)
-  )
+  expect_lint("x + 1", NULL, return_linter(use_implicit_returns = FALSE))
 })
 
 test_that("return_linter ignores anonymous/inline functions", {
@@ -354,26 +337,26 @@ test_that("return_linter finds a missing return despite early returns", {
 
 
 test_that("return_linter finds multiple missing returns in branches", {
-  lines <- c(
-    "foo <- function() {",
-    "  if(TRUE) {",
-    "    TRUE",
-    "  } else {",
-    "    FALSE",
-    "  }",
-    "}"
-  )
+  lint_msg <- rex::rex("All functions must have an explicit return().")
+
   expect_lint(
-    lines,
-    list(
-      rex::rex("All functions must have an explicit return()."),
-      rex::rex("All functions must have an explicit return().")
-    ),
+    trim_some("
+      foo <- function() {
+        if(TRUE) {
+          TRUE
+        } else {
+          FALSE
+        }
+      }
+    "),
+    list(lint_msg, lint_msg),
     return_linter(use_implicit_returns = FALSE)
   )
 })
 
 test_that("return_linter works regardless of braces in final if case", {
+  linter <- return_linter(use_implicit_returns = FALSE)
+
   lines <- c(
     "foo <- function() {",
     "  if(TRUE) TRUE",
@@ -382,49 +365,52 @@ test_that("return_linter works regardless of braces in final if case", {
   expect_lint(
     lines,
     rex::rex("All functions must have an explicit return()."),
-    return_linter(use_implicit_returns = FALSE)
+    linter
   )
   other_lines <- c(
     "foo <- function() {",
     "  if(TRUE) return(TRUE)",
     "}"
   )
-  expect_lint(other_lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(other_lines, NULL, linter)
 })
 
 test_that("return_linter finds missing return in one branch of an if", {
-  lines <- c(
-    "foo <- function() {",
-    "  if(TRUE) {",
-    "    return(TRUE)",
-    "  } else {",
-    "    FALSE",
-    "  }",
-    "}"
-  )
+  linter <- return_linter(use_implicit_returns = FALSE)
+  lint_msg <- rex::rex("All functions must have an explicit return().")
+
   expect_lint(
-    lines,
-    rex::rex("All functions must have an explicit return()."),
-    return_linter(use_implicit_returns = FALSE)
+    trim_some("
+      foo <- function() {
+        if(TRUE) {
+          return(TRUE)
+        } else {
+          FALSE
+        }
+      }
+    "),
+    lint_msg,
+    linter
   )
 
-  lines_other_way <- c(
-    "foo <- function() {",
-    "  if(TRUE) {",
-    "    TRUE",
-    "  } else {",
-    "    return(FALSE)",
-    "  }",
-    "}"
-  )
   expect_lint(
-    lines_other_way,
-    rex::rex("All functions must have an explicit return()."),
-    return_linter(use_implicit_returns = FALSE)
+    trim_some("
+      foo <- function() {
+        if(TRUE) {
+          TRUE
+        } else {
+          return(FALSE)
+        }
+      }
+    "),
+    lint_msg,
+    linter
   )
 })
 
 test_that("return_linter works in nested if statements", {
+  linter <- return_linter(use_implicit_returns = FALSE)
+
   lines <- c(
     "foo <- function() {",
     "  if(TRUE) {",
@@ -436,7 +422,7 @@ test_that("return_linter works in nested if statements", {
     "  }",
     "}"
   )
-  expect_lint(lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(lines, NULL, linter)
 
   more_lines <- c(
     "foo <- function() {",
@@ -452,11 +438,13 @@ test_that("return_linter works in nested if statements", {
   expect_lint(
     more_lines,
     rex::rex("All functions must have an explicit return()."),
-    return_linter(use_implicit_returns = FALSE)
+    linter
   )
 })
 
 test_that("return_linter works in multi-line nested if statements", {
+  linter <- return_linter(use_implicit_returns = FALSE)
+
   lines <- c(
     "foo <- function() {",
     "  if(TRUE) {",
@@ -472,7 +460,7 @@ test_that("return_linter works in multi-line nested if statements", {
   expect_lint(
     lines,
     rex::rex("All functions must have an explicit return()."),
-    return_linter(use_implicit_returns = FALSE)
+    linter
   )
 
   other_lines <- c(
@@ -487,10 +475,12 @@ test_that("return_linter works in multi-line nested if statements", {
     "  }",
     "}"
   )
-  expect_lint(other_lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(other_lines, NULL, linter)
 })
 
 test_that("return_linter works for final for loops as well", {
+  linter <- return_linter(use_implicit_returns = FALSE)
+
   lines <- c(
     "foo <- function() {",
     "  for (i in seq_len(10)) {",
@@ -501,7 +491,7 @@ test_that("return_linter works for final for loops as well", {
     "  }",
     "}"
   )
-  expect_lint(lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(lines, NULL, linter)
 
   other_lines <- c(
     "foo <- function() {",
@@ -515,38 +505,36 @@ test_that("return_linter works for final for loops as well", {
   expect_lint(
     other_lines,
     rex::rex("All functions must have an explicit return()."),
-    return_linter(use_implicit_returns = FALSE)
+    linter
   )
 })
 
 test_that("return_linter works for function factories", {
-  lines <- c(
-    "foo <- function(x) {",
-    "  function () {",
-    "    return(x + 1)",
-    "  }",
-    "}"
-  )
+  linter <- return_linter(use_implicit_returns = FALSE)
+  lint_msg <- rex::rex("All functions must have an explicit return().")
+
   expect_lint(
-    lines,
-    rex::rex("All functions must have an explicit return()."),
-    return_linter(use_implicit_returns = FALSE)
+    trim_some("
+      foo <- function(x) {
+        function () {
+          return(x + 1)
+        }
+      }
+    "),
+    lint_msg,
+    linter
   )
 
-  failing_lines <- c(
-    "foo <- function(x) {",
-    "  function () {",
-    "    x + 1",
-    "  }",
-    "}"
-  )
   expect_lint(
-    failing_lines,
-    list(
-      rex::rex("All functions must have an explicit return()."),
-      rex::rex("All functions must have an explicit return().")
-    ),
-    return_linter(use_implicit_returns = FALSE)
+    trim_some("
+      foo <- function(x) {
+        function () {
+          x + 1
+        }
+      }
+    "),
+    list(lint_msg, lint_msg),
+    linter
   )
 })
 
@@ -562,20 +550,22 @@ test_that("return_linter allows return()-less Rcpp wrappers", {
 test_that("return_linter allows return()-less namespace hook calls", {
   lines <- c(
     ".onLoad <- function(libname, pkgname) {",
-    "  nativesupport::LoadNativeExtension()",
+    "  do_setup()",
     "}"
   )
   expect_lint(lines, NULL, return_linter(use_implicit_returns = FALSE))
 })
 
 test_that("return_linter correctly handles pipes", {
+  linter <- return_linter(use_implicit_returns = FALSE)
+
   lines <- c(
     "foo <- function(x) {",
     "  x %>%",
     "    return()",
     "}"
   )
-  expect_lint(lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(lines, NULL, linter)
 
   multiple_function_lines <- c(
     "foo <- function(x) {",
@@ -584,7 +574,7 @@ test_that("return_linter correctly handles pipes", {
     "    return()",
     "}"
   )
-  expect_lint(multiple_function_lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(multiple_function_lines, NULL, linter)
 
   preceding_pipe_lines <- c(
     "foo <- function(x) {",
@@ -595,10 +585,13 @@ test_that("return_linter correctly handles pipes", {
     "    return()",
     "}"
   )
-  expect_lint(preceding_pipe_lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(preceding_pipe_lines, NULL, linter)
 })
 
 test_that("return_linter handles pipes in control flow", {
+  linter <- return_linter(use_implicit_returns = FALSE)
+  lint_msg <- rex::rex("All functions must have an explicit return().")
+
   lines <- c(
     "foo <- function(x) {",
     "  if (TRUE) {",
@@ -609,36 +602,34 @@ test_that("return_linter handles pipes in control flow", {
     "  }",
     "}"
   )
-  expect_lint(lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(lines, NULL, linter)
 
-  bad_lines <- c(
-    "foo <- function(x) {",
-    "  for (i in seq_len(10)) {",
-    "    x %>%",
-    "      mean()",
-    "  }",
-    "}"
-  )
   expect_lint(
-    bad_lines,
-    rex::rex("All functions must have an explicit return()."),
-    return_linter(use_implicit_returns = FALSE)
+    trim_some("
+      foo <- function(x) {
+        for (i in seq_len(10)) {
+          x %>%
+            mean()
+        }
+      }
+    "),
+    lint_msg,
+    linter
   )
 
-  missing_branch_lines <- c(
-    "foo <- function(x) {",
-    "  if (TRUE) {",
-    "    x %>%",
-    "      mean()",
-    "  } else {",
-    "    return(TRUE)",
-    "  }",
-    "}"
-  )
   expect_lint(
-    missing_branch_lines,
-    rex::rex("All functions must have an explicit return()."),
-    return_linter(use_implicit_returns = FALSE)
+    trim_some("
+      foo <- function(x) {
+        if (TRUE) {
+          x %>%
+            mean()
+        } else {
+          return(TRUE)
+        }
+      }
+    "),
+    lint_msg,
+    linter
   )
 })
 
@@ -656,22 +647,26 @@ test_that("return_linter passes on q() or quit() calls", {
 })
 
 test_that("return_linter passes on .setUp/.tearDown calls", {
+  linter <- return_linter(use_implicit_returns = FALSE)
+
   setup_lines <- c(
     ".setUp <- function() {",
     "  options(foo = TRUE)",
     "}"
   )
-  expect_lint(setup_lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(setup_lines, NULL, linter)
 
   teardown_lines <- c(
     ".tearDown <- function() {",
     "  options(foo = TRUE)",
     "}"
   )
-  expect_lint(teardown_lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(teardown_lines, NULL, linter)
 })
 
 test_that("return_linter allows RUnit tests to pass", {
+  linter <- return_linter(use_implicit_returns = FALSE)
+
   lines <- c(
     "TestKpSxsSummary <- function() {",
     "  context <- foo(72643424)",
@@ -679,19 +674,19 @@ test_that("return_linter allows RUnit tests to pass", {
     "  checkEquals(expected, bar(context))",
     "}"
   )
-  expect_lint(lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(lines, NULL, linter)
 
   custom_lines <- c(
     "TestMyPackage <- function() {",
     "  checkMyCustomComparator(x, y)",
     "}"
   )
-  expect_lint(custom_lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(custom_lines, NULL, linter)
 })
 
 test_that("return_linter skips RUnit functions in argumented tests", {
   lines <- c(
-    "TestKpSxsSummary <- function(an_argument) {",
+    "TestSummary <- function(an_argument) {",
     "  context <- foo(an_argument)",
     "  expected <- data.frame(a = 2)",
     "  checkEquals(expected, bar(context))",
@@ -701,27 +696,30 @@ test_that("return_linter skips RUnit functions in argumented tests", {
 })
 
 test_that("return_linter skips terminal LOG and logging::LOG", {
+  linter <- return_linter(use_implicit_returns = FALSE)
+
   lines <- c(
     "foo <- function(bar) {",
     "  LOG('INFO', 'bad')",
     "}"
   )
-  expect_lint(lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(lines, NULL, linter)
 
   ns_lines <- c(
     "foo <- function(bar) {",
     "  logging::LOG('INFO', 'bad')",
     "}"
   )
-  expect_lint(ns_lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(ns_lines, NULL, linter)
 })
 
 test_that("return_linter skips brace-wrapped inline functions", {
   expect_lint("function(x) { sum(x) }", NULL, return_linter(use_implicit_returns = FALSE))
 })
 
-# b/194585283
 test_that("return_linter skips common S4 method functions", {
+  linter <- return_linter(use_implicit_returns = FALSE)
+
   lines_standard_generic <- c(
     "setGeneric(",
     '  "ReadCircuitsPBAsDataTable",',
@@ -730,40 +728,44 @@ test_that("return_linter skips common S4 method functions", {
     "  }",
     ")"
   )
-  expect_lint(lines_standard_generic, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(lines_standard_generic, NULL, linter)
 
   lines_call_next_method <- c(
     'setMethod("initialize", "CircuitsTopology", function(.Object, ...) {',
     "  callNextMethod(.Object, ...)",
     "})"
   )
-  expect_lint(lines_call_next_method, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(lines_call_next_method, NULL, linter)
 })
 
 test_that("return_linter skips rlang::abort", {
+  linter <- return_linter(use_implicit_returns = FALSE)
+
   lines <- c(
     "foo <- function(bar) {",
     "  abort('bad')",
     "}"
   )
-  expect_lint(lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(lines, NULL, linter)
 
   ns_lines <- c(
     "foo <- function(bar) {",
     "  rlang::abort('bad')",
     "}"
   )
-  expect_lint(ns_lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(ns_lines, NULL, linter)
 })
 
 test_that("return_linter skips invokeRestart(), tryInvokeRestart()", {
+  linter <- return_linter(use_implicit_returns = FALSE)
+
   invoke_lines <- c(
     "warning = function(w) {",
     "  warn <<- append(warn, conditionMessage(w))",
     '  invokeRestart("muffleWarning")',
     "}"
   )
-  expect_lint(invoke_lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(invoke_lines, NULL, linter)
 
   try_invoke_lines <- c(
     "custom_warning = function(w) {",
@@ -771,41 +773,48 @@ test_that("return_linter skips invokeRestart(), tryInvokeRestart()", {
     '  tryInvokeRestart("muffleCustom_warning")',
     "}"
   )
-  expect_lint(try_invoke_lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(try_invoke_lines, NULL, linter)
 })
 
 # NB: x |> return() is blocked by the parser, so no need to test that.
 test_that("Native pipes are handled correctly", {
+  skip_if_not_r_version("4.1.0")
+
+  linter <- return_linter(use_implicit_returns = FALSE)
+  lint_msg <- rex::rex("All functions must have an explicit return().")
+
   expect_lint(
-    c(
-      "foo <- function(x) {",
-      "  for (i in seq_len(10)) {",
-      "    x |>",
-      "      mean()",
-      "  }",
-      "}"
-    ),
-    rex::rex("All functions must have an explicit return()."),
-    return_linter(use_implicit_returns = FALSE)
+    trim_some("
+      foo <- function(x) {
+        for (i in seq_len(10)) {
+          x |>
+            mean()
+        }
+      }
+    "),
+    lint_msg,
+    linter
   )
 
   expect_lint(
-    c(
-      "foo <- function(x) {",
-      "  if (TRUE) {",
-      "    x |>",
-      "      mean()",
-      "  } else {",
-      "    return(TRUE)",
-      "  }",
-      "}"
-    ),
-    rex::rex("All functions must have an explicit return()."),
-    return_linter(use_implicit_returns = FALSE)
+    trim_some("
+      foo <- function(x) {
+        if (TRUE) {
+          x |>
+            mean()
+        } else {
+          return(TRUE)
+        }
+      }
+    "),
+    lint_msg,
+    linter
   )
 })
 
 test_that("return_linter works for final while/repeat loops as well", {
+  linter <- return_linter(use_implicit_returns = FALSE)
+
   while_lines <- c(
     "foo <- function(x) {",
     "  while (x > 0) {",
@@ -816,7 +825,7 @@ test_that("return_linter works for final while/repeat loops as well", {
     "  }",
     "}"
   )
-  expect_lint(while_lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(while_lines, NULL, linter)
 
   repeat_lines <- c(
     "foo <- function(x) {",
@@ -828,5 +837,5 @@ test_that("return_linter works for final while/repeat loops as well", {
     "  }",
     "}"
   )
-  expect_lint(repeat_lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(repeat_lines, NULL, linter)
 })
