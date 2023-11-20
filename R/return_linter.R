@@ -4,9 +4,40 @@
 #'
 #' @param use_implicit_returns Whether to use implicit or explicit returns
 #'
+#' @examples
+#' # will produce lints
+#' code <- "function(x) {\n  return(x + 1)\n}"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = return_linter()
+#' )
+#'
+#' code <- "function(x) {\n  x + 1\n}"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = return_linter(use_implicit_returns = FALSE)
+#' )
+#'
+#' # okay
+#' code <- "function(x) {\n  x + 1\n}"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = return_linter()
+#' )
+#'
+#' code <- "function(x) {\n  return(x + 1)\n}"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = return_linter(use_implicit_returns = FALSE)
+#' )
+#'
+#'
 #' @evalRd rd_tags("return_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
-#'
 #' @export
 return_linter <- function(use_implicit_returns = TRUE) {
   if (use_implicit_returns) {

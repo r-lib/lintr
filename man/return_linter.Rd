@@ -12,6 +12,39 @@ return_linter(use_implicit_returns = TRUE)
 \description{
 This linter checks for explicit \code{\link[=return]{return()}} at the end of a function
 }
+\examples{
+# will produce lints
+code <- "function(x) {\n  return(x + 1)\n}"
+writeLines(code)
+lint(
+  text = code,
+  linters = return_linter()
+)
+
+code <- "function(x) {\n  x + 1\n}"
+writeLines(code)
+lint(
+  text = code,
+  linters = return_linter(use_implicit_returns = FALSE)
+)
+
+# okay
+code <- "function(x) {\n  x + 1\n}"
+writeLines(code)
+lint(
+  text = code,
+  linters = return_linter()
+)
+
+code <- "function(x) {\n  return(x + 1)\n}"
+writeLines(code)
+lint(
+  text = code,
+  linters = return_linter(use_implicit_returns = FALSE)
+)
+
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
