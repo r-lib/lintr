@@ -93,8 +93,8 @@ get_chunk_positions <- function(pattern, lines) {
 
 filter_chunk_start_positions <- function(starts, lines) {
   # keep blocks that don't set a knitr engine (and so contain evaluated R code)
-  drop <- defines_knitr_engine(lines[starts])
-  starts[!drop]
+  drop_idx <- defines_knitr_engine(lines[starts])
+  starts[!drop_idx]
 }
 
 filter_chunk_end_positions <- function(starts, ends) {

@@ -43,7 +43,7 @@ test_that("as.data.frame.lints", {
   )
   expect_s3_class(l2, "lint")
 
-  expect_warning(
+  expect_error(
     Lint("dummy.R", linter = "deprecated"),
     regexp = "deprecated",
     fixed = TRUE

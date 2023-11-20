@@ -30,9 +30,11 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{line_length_linter}}}
 \item{\code{\link{missing_argument_linter}}}
 \item{\code{\link{namespace_linter}}}
+\item{\code{\link{nested_pipe_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
 \item{\code{\link{object_length_linter}}}
 \item{\code{\link{object_name_linter}}}
+\item{\code{\link{object_overwrite_linter}}}
 \item{\code{\link{object_usage_linter}}}
 \item{\code{\link{paste_linter}}}
 \item{\code{\link{pipe_consistency_linter}}}

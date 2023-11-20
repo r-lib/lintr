@@ -9,8 +9,7 @@ implicit_else_return_linter()
 \description{
 When an \code{if} statement in R is missing \verb{else}, the alternative is implicitly
 set to \code{NULL}. When the \code{if} statement comes at the end of a function
-definition, then, there is an implicit return of \code{NULL}, which violates
-\href{https://goto.google.com/rstyle#use-explicit-returns.}{go/rstyle#use-explicit-returns.}
+definition, then, there is an implicit return of \code{NULL}.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
