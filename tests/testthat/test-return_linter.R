@@ -59,7 +59,7 @@ test_that("Lint return on end of lambda function", {
   )
 })
 
-test_that("Do not lint control statments (with return) on end of function", {
+test_that("Do not lint control statements (with return) on end of function", {
   expect_lint(
     trim_some("
       function() {
@@ -89,7 +89,7 @@ test_that("Do not lint control statments (with return) on end of function", {
   )
 })
 
-test_that("Lint controll statments (without return) on end of function", {
+test_that("Lint control statements (without return) on end of function", {
   msg <- rex::rex("All functions must have an explicit return().")
 
   expect_lint(
@@ -154,7 +154,7 @@ test_that("Lint controll statments (without return) on end of function", {
       }
     "),
     list(
-      line_number = 2L,
+      line_number = 4L,
       message = msg
     ),
     return_linter(use_implicit_returns = FALSE)

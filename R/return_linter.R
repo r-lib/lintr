@@ -62,7 +62,7 @@ return_linter <- function(use_implicit_returns = TRUE) {
       ".C", ".Call", ".External", ".Fortran"
     )
 
-    preceding_control_calls <- paste0("preceding-sibling::", c("IF", "FOR", "WHILE", "REPEAT"))
+    control_calls <- c("IF", "FOR", "WHILE", "REPEAT")
 
     # from top, look for a FUNCTION definition that uses { (one-line
     #   function definitions are excepted), then look for failure to find
@@ -92,7 +92,7 @@ return_linter <- function(use_implicit_returns = TRUE) {
     # because of special 'in' syntax for 'for' loops, the condition is
     #   tagged differently than for 'if'/'while' conditions (simple PAREN)
     xpath <- glue("
-    //FUNCTION[parent::expr[not(
+    (//FUNCTION | //OP-LAMBDA)[parent::expr[not(
       preceding-sibling::expr[SYMBOL[{ xp_text_in_table(return_not_needed_funs) }]]
       or (
         preceding-sibling::expr/SYMBOL[starts-with(text(), 'Test')]
@@ -103,14 +103,14 @@ return_linter <- function(use_implicit_returns = TRUE) {
       /expr[last()]
       /*[
         (
-          ({ xp_or(preceding_control_calls) })
+          ({ xp_or(paste0('preceding::', control_calls)) })
           and (preceding-sibling::OP-RIGHT-PAREN or preceding-sibling::forcond)
           and self::expr[not(
             .//SYMBOL_FUNCTION_CALL[{ xp_text_in_table(allowed_functions) }]
           )]
         ) or (
-          not({ xp_or(preceding_control_calls) })
-          and not(self::IF or self::FOR or self::WHILE or self::REPEAT)
+          not({ xp_or(paste0('preceding::', control_calls)) })
+          and not({ xp_or(paste0('self::', control_calls)) })
           and (
             (
               position() = last()
