@@ -11,9 +11,9 @@
 return_linter <- function(use_implicit_returns = TRUE) {
   if (use_implicit_returns) {
     xpath <- "
-      (//FUNCTION | //OP-LAMBDA)[following-sibling::expr[1]/*[1][self::OP-LEFT-BRACE]]
-      /following-sibling::expr[1]/
-      expr[last()][
+      (//FUNCTION | //OP-LAMBDA)
+      /following-sibling::expr[1][*[1][self::OP-LEFT-BRACE]]
+      /expr[last()][
         expr[1][
           not(OP-DOLLAR or OP-AT)
           and SYMBOL_FUNCTION_CALL[text() = 'return']
