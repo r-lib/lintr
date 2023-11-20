@@ -49,5 +49,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=configurable_linters]{configurable}, \link[=style_linters]{style}
+\link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=style_linters]{style}
 }
