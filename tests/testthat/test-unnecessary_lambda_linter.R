@@ -86,6 +86,9 @@ test_that("unnecessary_lambda_linter skips allowed inner comparisons", {
 
   # this _may_ return a matrix, though outer is probably a better choice if so
   expect_lint("sapply(x, function(xi) foo(xi) == y)", NULL, linter)
+
+  # only lint "plain" calls that can be replaced by eliminating the lambda
+  expect_lint("sapply(x, function(xi) sum(abs(xi)) == 0)", NULL, linter)
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {

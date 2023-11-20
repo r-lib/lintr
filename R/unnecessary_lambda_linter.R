@@ -99,6 +99,10 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
     /expr[
       ({ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) })
       and expr[
+        expr/SYMBOL_FUNCTION_CALL
+        and expr/SYMBOL
+      ]
+      and expr[
         NUM_CONST
         or STR_CONST
         or (OP-PLUS and count(expr/NUM_CONST) = 2)
