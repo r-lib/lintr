@@ -409,6 +409,8 @@ test_that("Consecutive calls to different blocked calls is OK", {
 })
 
 test_that("Multiple violations across different calls are caught", {
+  linter <- library_call_linter()
+
   expect_lint(
     trim_some("
       suppressPackageStartupMessages(library(x))
@@ -420,6 +422,18 @@ test_that("Multiple violations across different calls are caught", {
       "Unify consecutive calls to suppressPackageStartupMessages",
       "Unify consecutive calls to suppressMessages"
     ),
-    library_call_linter()
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      suppressMessages(library(A))
+      suppressPackageStartupMessages(library(A))
+      suppressMessages(library(A))
+      suppressPackageStartupMessages(library(A))
+      suppressPackageStartupMessages(library(A))
+    "),
+    list("Unify consecutive calls to suppressPackageStartupMessages", line_number = 4L),
+    linter
   )
 })
