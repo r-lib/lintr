@@ -213,16 +213,16 @@ parse_check_usage <- function(expression,
   )
 
   # nocov start
-  missing <- is.na(res$message)
-  if (any(missing)) {
+  is_missing <- is.na(res$message)
+  if (any(is_missing)) {
     # TODO (AshesITR): Remove this in the future, if no bugs arise from this safeguard
     warning(
-      "Possible bug in lintr: Couldn't parse usage message ", sQuote(vals[missing][[1L]]), ". ",
-      "Ignoring ", sum(missing), " usage warnings. Please report an issue at https://github.com/r-lib/lintr/issues."
+      "Possible bug in lintr: Couldn't parse usage message ", sQuote(vals[is_missing][[1L]]), ". ",
+      "Ignoring ", sum(is_missing), " usage warnings. Please report an issue at https://github.com/r-lib/lintr/issues."
     )
   }
   # nocov end
-  res <- res[!missing, ]
+  res <- res[!is_missing, ]
 
   res$line1 <- ifelse(
     nzchar(res$line1),

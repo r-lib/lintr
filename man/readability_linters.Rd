@@ -42,9 +42,12 @@ The following linters are tagged with 'readability':
 \item{\code{\link{line_length_linter}}}
 \item{\code{\link{matrix_apply_linter}}}
 \item{\code{\link{nested_ifelse_linter}}}
+\item{\code{\link{nested_pipe_linter}}}
 \item{\code{\link{numeric_leading_zero_linter}}}
 \item{\code{\link{object_length_linter}}}
+\item{\code{\link{object_overwrite_linter}}}
 \item{\code{\link{object_usage_linter}}}
+\item{\code{\link{one_call_pipe_linter}}}
 \item{\code{\link{outer_negation_linter}}}
 \item{\code{\link{paren_body_linter}}}
 \item{\code{\link{pipe_call_linter}}}
@@ -52,6 +55,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{pipe_continuation_linter}}}
 \item{\code{\link{quotes_linter}}}
 \item{\code{\link{redundant_equals_linter}}}
+\item{\code{\link{rep_len_linter}}}
 \item{\code{\link{repeat_linter}}}
 \item{\code{\link{sample_int_linter}}}
 \item{\code{\link{scalar_in_linter}}}
@@ -69,6 +73,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{unnecessary_nesting_linter}}}
 \item{\code{\link{unnecessary_placeholder_linter}}}
 \item{\code{\link{unreachable_code_linter}}}
+\item{\code{\link{which_grepl_linter}}}
 \item{\code{\link{yoda_test_linter}}}
 }
 }

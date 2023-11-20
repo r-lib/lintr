@@ -35,20 +35,20 @@ exclude <- function(lints, exclusions = settings$exclusions, linter_names = NULL
     return(lints)
   }
 
-  df <- as.data.frame(lints)
+  lint_df <- as.data.frame(lints)
 
-  filenames <- unique(df$filename)
+  filenames <- unique(lint_df$filename)
   source_exclusions <- lapply(filenames, parse_exclusions, linter_names = linter_names, ...)
   names(source_exclusions) <- filenames
 
 
   exclusions <- normalize_exclusions(c(source_exclusions, exclusions))
   to_exclude <- vapply(
-    seq_len(nrow(df)),
+    seq_len(nrow(lint_df)),
     function(i) {
-      file <- df$filename[i]
-      file %in% names(exclusions) &&
-        is_excluded(df$line_number[i], df$linter[i], exclusions[[file]])
+      filename <- lint_df$filename[i]
+      filename %in% names(exclusions) &&
+        is_excluded(lint_df$line_number[i], lint_df$linter[i], exclusions[[filename]])
     },
     logical(1L)
   )
@@ -375,11 +375,11 @@ remove_linter_duplicates <- function(x) {
 
     if (length(unique_linters) < length(ex)) {
       ex <- lapply(unique_linters, function(linter) {
-        lines <- unlist(ex[names2(ex) == linter])
-        if (Inf %in% lines) {
+        excluded_lines <- unlist(ex[names2(ex) == linter])
+        if (Inf %in% excluded_lines) {
           Inf
         } else {
-          lines
+          excluded_lines
         }
       })
 

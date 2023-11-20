@@ -108,7 +108,6 @@ find_local_config <- function(path, config_file) {
 pkg_name <- function(path = find_package()) {
   if (is.null(path)) {
     return(NULL)
-  } else {
-    read.dcf(file.path(path, "DESCRIPTION"), fields = "Package")[1L]
   }
+  read.dcf(file.path(path, "DESCRIPTION"), fields = "Package")[1L]
 }
