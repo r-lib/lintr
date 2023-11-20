@@ -37,7 +37,9 @@
 #'
 #'
 #' @evalRd rd_tags("return_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso
+#'  - [linters] for a complete list of linters available in lintr.
+#'  - <https://style.tidyverse.org/functions.html?q=return#return>
 #' @export
 return_linter <- function(use_implicit_returns = TRUE) {
   if (use_implicit_returns) {
