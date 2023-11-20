@@ -3,6 +3,13 @@
 #' Excessive nesting harms readability. Use helper functions or early returns
 #'   to reduce nesting wherever possible.
 #'
+#' @param allow_assignment Logical, default `TRUE`, in which case
+#'   braced expressions consisting only of a single assignment are skipped.
+#'   if `FALSE`, all braced expressions with only one child expression are linted.
+#'   The `TRUE` case facilitates interaction with [implicit_assignment_linter()]
+#'   for certain cases where an implicit assignment is necessary, so a braced
+#'   assignment is used to further distinguish the assignment. See examples.
+#'
 #' @examples
 #' # will produce lints
 #' code <- "if (A) {\n  stop('A is bad!')\n} else {\n  do_good()\n}"
@@ -17,6 +24,13 @@
 #' lint(
 #'   text = code,
 #'   linters = unnecessary_nesting_linter()
+#' )
+#'
+#' code <- "expect_warning(\n  {\n    x <- foo()\n  },\n  'warned'\n)"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = unnecessary_nesting_linter(allow_assignment = FALSE)
 #' )
 #'
 #' # okay
@@ -34,12 +48,19 @@
 #'   linters = unnecessary_nesting_linter()
 #' )
 #'
+#' code <- "expect_warning(\n  {\n    x <- foo()\n  },\n  'warned'\n)"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = unnecessary_nesting_linter()
+#' )
+#'
 #' @evalRd rd_tags("unnecessary_nesting_linter")
 #' @seealso
 #'  - [cyclocomp_linter()] for another linter that penalizes overly complexcode.
 #'  - [linters] for a complete list of linters available in lintr.
 #' @export
-unnecessary_nesting_linter <- function() {
+unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
   exit_calls <- c("stop", "return", "abort", "quit", "q")
   # These calls can be called in the sibling branch and not trigger a lint,
   #   allowing for cleanly parallel code, where breaking it would often harm readability:
@@ -93,6 +114,8 @@ unnecessary_nesting_linter <- function() {
   ]
   ")
 
+  assignment_cond <- if (allow_assignment) "expr[LEFT_ASSIGN or RIGHT_ASSIGN]" else "false"
+
   # several carve-outs of common cases where single-expression braces are OK
   #   - control flow statements: if, for, while, repeat, switch()
   #       + switch() is unique in being a function, not a language element
@@ -110,7 +133,7 @@ unnecessary_nesting_linter <- function() {
   #          * suppressWarnings({ expr })
   #          * DataTable[, { expr }]
   #          * DataTable[, col := { expr }] <- requires carve-out for `:=`
-  unnecessary_brace_xpath <- "
+  unnecessary_brace_xpath <- glue("
   //OP-LEFT-BRACE
     /parent::expr[
       count(expr) = 1
@@ -131,8 +154,9 @@ unnecessary_nesting_linter <- function() {
         OP-LEFT-BRACE/@end - 1 = preceding-sibling::*[1][self::OP-LEFT-PAREN or self::OP-LEFT-BRACKET]/@end
         or OP-RIGHT-BRACE/@end + 1 = following-sibling::*[1][self::OP-RIGHT-PAREN or self::OP-RIGHT-BRACKET]/@end
       )
+      and not({assignment_cond})
     ]
-  "
+  ")
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {

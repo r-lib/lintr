@@ -224,6 +224,18 @@ test_that("unnecessary_nesting_linter skips one-expression switch statements", {
   expect_lint(lines, NULL, unnecessary_nesting_linter())
 })
 
+test_that("unnecessary_nesting_linter skips one-expression assignments by default", {
+  expect_lint(
+    trim_some("
+      {
+        x <- foo()
+      }
+    "),
+    NULL,
+    unnecessary_nesting_linter()
+  )
+})
+
 test_that("unnecessary_nesting_linter passes for multi-line braced expressions", {
   lines <- c(
     "tryCatch(",
@@ -300,9 +312,6 @@ test_that("rlang's double-brace operator is skipped", {
 })
 
 test_that("unnecessary_nesting_linter blocks one-expression braced expressions", {
-  linter <- unnecessary_nesting_linter()
-  lint_msg <- rex::rex("Reduce the nesting of this statement by removing the braces {}.")
-
   expect_lint(
     trim_some("
       tryCatch(
@@ -312,7 +321,22 @@ test_that("unnecessary_nesting_linter blocks one-expression braced expressions",
         error = identity
       )
     "),
-    lint_msg,
-    linter
+    rex::rex("Reduce the nesting of this statement by removing the braces {}."),
+    unnecessary_nesting_linter()
+  )
+})
+
+test_that("unnecessary_nesting_linter allow_assignment= argument works", {
+  expect_lint(
+    trim_some("
+      tryCatch(
+        {
+          idx <- foo(x)
+        },
+        error = identity
+      )
+    "),
+    rex::rex("Reduce the nesting of this statement by removing the braces {}."),
+    unnecessary_nesting_linter(allow_assignment = FALSE)
   )
 })
