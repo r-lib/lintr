@@ -58,11 +58,14 @@ namespace_linter,correctness robustness configurable executing
 nested_ifelse_linter,efficiency readability
 no_tab_linter,style consistency deprecated
 nonportable_path_linter,robustness best_practices configurable
+nrow_subset_linter,efficiency consistency best_practices
 numeric_leading_zero_linter,style consistency readability
 nzchar_linter,efficiency best_practices consistency
 object_length_linter,style readability default configurable executing
 object_name_linter,style consistency default configurable executing
+object_overwrite_linter,best_practices robustness readability configurable executing
 object_usage_linter,style readability correctness default executing configurable
+one_call_pipe_linter,style readability
 open_curly_linter,defunct
 outer_negation_linter,readability efficiency best_practices
 package_hooks_linter,style correctness package_development
@@ -72,11 +75,13 @@ paste_linter,best_practices consistency configurable
 pipe_call_linter,style readability
 pipe_consistency_linter,style readability configurable
 pipe_continuation_linter,style readability default
+pipe_return_linter,best_practices common_mistakes
 print_linter,best_practices consistency
 quotes_linter,style consistency readability default configurable
 redundant_equals_linter,best_practices readability efficiency common_mistakes
 redundant_ifelse_linter,best_practices efficiency consistency configurable
 regex_subset_linter,best_practices efficiency regex
+rep_len_linter,readability consistency best_practices
 repeat_linter,style readability
 routine_registration_linter,best_practices efficiency robustness
 sample_int_linter,efficiency readability robustness
