@@ -19,8 +19,8 @@ The following tags exist:
 \itemize{
 \item{\link[=best_practices_linters]{best_practices} (62 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (10 linters)}
-\item{\link[=configurable_linters]{configurable} (36 linters)}
-\item{\link[=consistency_linters]{consistency} (28 linters)}
+\item{\link[=configurable_linters]{configurable} (37 linters)}
+\item{\link[=consistency_linters]{consistency} (29 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=deprecated_linters]{deprecated} (4 linters)}
@@ -28,7 +28,7 @@ The following tags exist:
 \item{\link[=executing_linters]{executing} (6 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
-\item{\link[=readability_linters]{readability} (61 linters)}
+\item{\link[=readability_linters]{readability} (62 linters)}
 \item{\link[=regex_linters]{regex} (4 linters)}
 \item{\link[=robustness_linters]{robustness} (17 linters)}
 \item{\link[=style_linters]{style} (39 linters)}
@@ -92,6 +92,7 @@ The following linters exist:
 \item{\code{\link{missing_package_linter}} (tags: common_mistakes, robustness)}
 \item{\code{\link{namespace_linter}} (tags: configurable, correctness, executing, robustness)}
 \item{\code{\link{nested_ifelse_linter}} (tags: efficiency, readability)}
+\item{\code{\link{nested_pipe_linter}} (tags: configurable, consistency, readability)}
 \item{\code{\link{nonportable_path_linter}} (tags: best_practices, configurable, robustness)}
 \item{\code{\link{nrow_subset_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{numeric_leading_zero_linter}} (tags: consistency, readability, style)}
