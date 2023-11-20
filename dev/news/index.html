@@ -120,7 +120,10 @@
 <ul><li>
 <code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code> ignores reachable code in inline functions like <code>function(x) if (x &gt; 2) stop() else x</code> (<a href="https://github.com/r-lib/lintr/issues/2259" class="external-link">#2259</a>, <a href="https://github.com/MEO265" class="external-link">@MEO265</a>).</li>
 <li>
-<code><a href="../reference/unnecessary_lambda_linter.html">unnecessary_lambda_linter()</a></code> ignores extractions with explicit returns like <code>lapply(l, function(x) foo(x)$bar)</code> (<a href="https://github.com/r-lib/lintr/issues/2258" class="external-link">#2258</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<code><a href="../reference/unnecessary_lambda_linter.html">unnecessary_lambda_linter()</a></code>
+<ul><li>ignores extractions with explicit returns like <code>lapply(l, function(x) foo(x)$bar)</code> (<a href="https://github.com/r-lib/lintr/issues/2258" class="external-link">#2258</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>ignores calls on the RHS of operators like <code>lapply(l, function(x) "a" %in% names(x))</code> (<a href="https://github.com/r-lib/lintr/issues/2310" class="external-link">#2310</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+</ul></li>
 </ul></div>
 </div>
 </div>
