@@ -76,6 +76,10 @@ unnecessary_lambda_linter <- function() {
           position() = 2
           and preceding-sibling::expr/SYMBOL_FUNCTION_CALL
           and not(preceding-sibling::*[1][self::EQ_SUB])
+          and not(parent::expr[
+            preceding-sibling::expr[not(SYMBOL_FUNCTION_CALL)]
+            or following-sibling::*[not(self::OP-RIGHT-PAREN or self::OP-RIGHT-BRACE)]
+          ])
         ]/SYMBOL
       and count(OP-LEFT-PAREN) + count(OP-LEFT-BRACE/following-sibling::expr/OP-LEFT-PAREN) = 1
     ]

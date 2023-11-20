@@ -65,6 +65,10 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
     NULL,
     linter
   )
+
+  # only call is on RHS of operator, #2310
+  expect_lint("lapply(l, function(x) 'a' %in% names(x))", NULL, linter)
+  expect_lint("lapply(l, function(x = 1) 'a' %in% names(x))", NULL, linter)
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
