@@ -150,8 +150,8 @@ test_that("exclusions work with custom linter names", {
   )
 })
 
-test_that("compatibility warnings work", {
-  expect_warning(
+test_that("old compatibility usage errors", {
+  expect_error(
     expect_lint(
       "a == NA",
       "Use is.na",
@@ -161,7 +161,7 @@ test_that("compatibility warnings work", {
     fixed = TRUE
   )
 
-  expect_warning(
+  expect_error(
     expect_lint(
       "a = 42",
       "Use <-",
@@ -172,7 +172,7 @@ test_that("compatibility warnings work", {
   )
 
   # Also within `linters_with_defaults()` (#1725)
-  expect_warning(
+  expect_error(
     expect_lint(
       "a = 42",
       "Use <-",
@@ -182,7 +182,7 @@ test_that("compatibility warnings work", {
     fixed = TRUE
   )
 
-  expect_warning(
+  expect_error(
     expect_lint(
       "a == NA",
       "Use is.na",
@@ -193,7 +193,7 @@ test_that("compatibility warnings work", {
   )
 
   # Trigger compatibility in auto_names()
-  expect_warning(
+  expect_error(
     expect_lint(
       "a == NA",
       "Use is.na",
@@ -204,26 +204,14 @@ test_that("compatibility warnings work", {
   )
 
   expect_error(
-    expect_warning(
-      lint("a <- 1\n", linters = function(two, arguments) NULL),
-      regexp = "The use of linters of class 'function'",
-      fixed = TRUE
-    ),
-    regexp = "`fun` must be a function taking exactly one argument",
+    lint("a <- 1\n", linters = function(two, arguments) NULL),
+    regexp = "The use of linters of class 'function'",
     fixed = TRUE
   )
 
   expect_error(
     lint("a <- 1\n", linters = "equals_na_linter"),
     regexp = rex::rex("Expected '", anything, "' to be a function of class 'linter'")
-  )
-})
-
-test_that("Deprecated positional usage of cache= errors", {
-  expect_error(
-    lint("a = 2\n", FALSE, linters = assignment_linter()),
-    "'cache' is no longer available as a positional argument",
-    fixed = TRUE
   )
 })
 
