@@ -21,6 +21,7 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{consecutive_mutate_linter}}}
 \item{\code{\link{function_argument_linter}}}
 \item{\code{\link{if_not_else_linter}}}
+\item{\code{\link{if_switch_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{inner_combine_linter}}}
 \item{\code{\link{is_numeric_linter}}}

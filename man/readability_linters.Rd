@@ -31,6 +31,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{function_left_parentheses_linter}}}
 \item{\code{\link{function_return_linter}}}
 \item{\code{\link{if_not_else_linter}}}
+\item{\code{\link{if_switch_linter}}}
 \item{\code{\link{implicit_assignment_linter}}}
 \item{\code{\link{indentation_linter}}}
 \item{\code{\link{infix_spaces_linter}}}
