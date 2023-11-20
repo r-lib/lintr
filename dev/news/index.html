@@ -87,7 +87,10 @@
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
 <ul><li>More helpful errors for invalid configs (<a href="https://github.com/r-lib/lintr/issues/2253" class="external-link">#2253</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
-<code><a href="../reference/library_call_linter.html">library_call_linter()</a></code> is extended to encourage all packages to be attached with <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library(symbol)</a></code>, not <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library("symbol", character.only = TRUE)</a></code> or “vectorized” approaches looping over package names (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<code><a href="../reference/library_call_linter.html">library_call_linter()</a></code> is extended
+<ul><li>to encourage all packages to be attached with <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library(symbol)</a></code>, not <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library("symbol", character.only = TRUE)</a></code> or “vectorized” approaches looping over package names (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>to discourage many consecutive calls to <code><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages()</a></code> or <code><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages()</a></code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+</ul></li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>

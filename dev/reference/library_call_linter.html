@@ -86,6 +86,9 @@ calls must follow consecutively after the first one.</p></dd>
 <ul><li><p>Enforce such calls to all be at the top of the script.</p></li>
 <li><p>Block usage of argument <code>character.only</code>, in particular
 for loading packages in a loop.</p></li>
+<li><p>Block consecutive calls to <code>suppressMessages(library(.))</code>
+in favor of using <code><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages()</a></code> only once to suppress
+messages from all <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code> calls. Ditto <code><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages()</a></code>.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -131,6 +134,16 @@ for loading packages in a loop.</p></li>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=2,col=1::file=&lt;text&gt;,line=2,col=1,[library_call_linter] Call library() directly, not vectorized with sapply().</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">code</span> <span class="op">&lt;-</span> <span class="st">"suppressMessages(library(dplyr))\nsuppressMessages(library(tidyr))"</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> suppressMessages(library(dplyr))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> suppressMessages(library(tidyr))</span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">library_call_linter</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[library_call_linter] Unify consecutive calls to suppressMessages(). You can do so by writing all of the calls in one braced expression like suppressMessages({...}).</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="va">code</span> <span class="op">&lt;-</span> <span class="st">"library(dplyr)\nprint('test')"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code</span><span class="op">)</span></span></span>
@@ -157,6 +170,17 @@ for loading packages in a loop.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> foo &lt;- function(pkg) {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   sapply(pkg, library, character.only = TRUE)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">library_call_linter</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">code</span> <span class="op">&lt;-</span> <span class="st">"suppressMessages({\n  library(dplyr)\n  library(tidyr)\n})"</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> suppressMessages({</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   library(dplyr)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   library(tidyr)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> })</span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">library_call_linter</span><span class="op">(</span><span class="op">)</span></span></span>
