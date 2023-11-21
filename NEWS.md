@@ -15,12 +15,17 @@
 
 * `object_name_linter()` no longer errors when user-supplied `regexes=` have capture groups (#2188, @MichaelChirico).
 
+## Changes to default linters
+
+* New default linter `return_linter()` for the style guide rule that terminal returns should be left implicit (#1100, @MEO265).
+
 ## New and improved features
 
 * More helpful errors for invalid configs (#2253, @MichaelChirico).
 * `library_call_linter()` is extended
   + to encourage all packages to be attached with `library(symbol)`, not `library("symbol", character.only = TRUE)` or "vectorized" approaches looping over package names (part of #884, @MichaelChirico).
   + to discourage many consecutive calls to `suppressMessages()` or `suppressPackageStartupMessages()` (part of #884, @MichaelChirico).
+* `return_linter()` also has an argument `use_implicit_returns` (`TRUE` by default) which, when `FALSE`, forces all returns to be explicit (part of #884, @MichaelChirico and @MEO265).
 
 ### New linters
 
