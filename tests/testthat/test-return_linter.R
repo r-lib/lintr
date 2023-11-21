@@ -135,8 +135,7 @@ test_that("Lint control statements (without return) on end of function", {
         }
       }
     "),
-    # TODO(michaelchirico): this should be line_number = 4L
-    list(lint_msg, line_number = 2L),
+    list(lint_msg, line_number = 4L),
     linter
   )
 })
@@ -338,8 +337,10 @@ test_that("return_linter finds multiple missing returns in branches", {
         }
       }
     "),
-    # TODO(michaelchirico): this should return two lints
-    list(lint_msg, line_number = 2L),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 4L)
+    ),
     return_linter(use_implicit_returns = FALSE)
   )
 })
