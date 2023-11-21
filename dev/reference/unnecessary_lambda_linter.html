@@ -74,9 +74,17 @@ the former is more readable.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">unnecessary_lambda_linter</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">unnecessary_lambda_linter</span><span class="op">(</span>allow_comparison <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
+    <dl><dt>allow_comparison</dt>
+<dd><p>Logical, default <code>FALSE</code>. If <code>TRUE</code>, lambdas like
+<code>function(x) foo(x) == 2</code>, where <code>foo</code> can be extracted to the "mapping"
+function and <code>==</code> vectorized instead of called repeatedly, are linted.</p></dd>
+
+</dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Cases like <code>lapply(x, \(xi) grep("ptn", xi))</code> are excluded because, though
@@ -89,7 +97,7 @@ readable.</p>
     </div>
     <div class="section level2">
     <h2 id="tags">Tags<a class="anchor" aria-label="anchor" href="#tags"></a></h2>
-    <p><a href="best_practices_linters.html">best_practices</a>, <a href="efficiency_linters.html">efficiency</a>, <a href="readability_linters.html">readability</a></p>
+    <p><a href="best_practices_linters.html">best_practices</a>, <a href="configurable_linters.html">configurable</a>, <a href="efficiency_linters.html">efficiency</a>, <a href="readability_linters.html">readability</a></p>
     </div>
 
     <div class="section level2">
@@ -100,6 +108,17 @@ readable.</p>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unnecessary_lambda_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=24::file=&lt;text&gt;,line=1,col=24,[unnecessary_lambda_linter] Pass sum directly as a symbol to lapply() instead of wrapping it in an unnecessary anonymous function. For example, prefer lapply(DF, sum) to lapply(DF, function(x) sum(x)).</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"sapply(x, function(xi) xi == 2)"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unnecessary_lambda_linter</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"sapply(x, function(xi) sum(xi) &gt; 0)"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unnecessary_lambda_linter</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=24::file=&lt;text&gt;,line=1,col=24,[unnecessary_lambda_linter] Compare to a constant after calling sapply() to get the full benefits of vectorization. Prefer sapply(x, foo) == 2 over sapply(x, function(xi) foo(xi) == 2, logical(1L)).</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
@@ -114,6 +133,26 @@ readable.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"lapply(x, function(xi) data.frame(col = xi))"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unnecessary_lambda_linter</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"sapply(x, function(xi) xi == 2)"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unnecessary_lambda_linter</span><span class="op">(</span>allow_comparison <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"sapply(x, function(xi) sum(xi) &gt; 0)"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unnecessary_lambda_linter</span><span class="op">(</span>allow_comparison <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"sapply(x, function(xi) sum(abs(xi)) &gt; 10)"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unnecessary_lambda_linter</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"sapply(x, sum) &gt; 0"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unnecessary_lambda_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
