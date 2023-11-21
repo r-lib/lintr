@@ -212,7 +212,7 @@ validate_exclusions <- function(exclusions) {
   }
 
   exclusion_names <- names2(exclusions)
-  has_names <- exclusion_names != ""
+  has_names <- nzchar(exclusion_names)
   unnamed_is_string <-
     vapply(exclusions[!has_names], function(x) is.character(x) && length(x) == 1L && !is.na(x), logical(1L))
   if (!all(unnamed_is_string)) {
