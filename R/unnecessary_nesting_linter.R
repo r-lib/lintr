@@ -67,8 +67,6 @@ unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
   ")
   # block IF here for cases where a nested if/else is entirely within
   #   one of the branches.
-  # TODO(michaelchirico): we could try and make the parallel exits requirement
-  #   more recursive, but it's a pain to do so.
   no_exit_call_expr <- glue("
   expr[
     OP-LEFT-BRACE
@@ -154,7 +152,6 @@ unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
     xml <- source_expression$xml_parsed_content
 
     if_else_exit_expr <- xml_find_all(xml, if_else_exit_xpath)
-    # TODO(michaelchirico): customize the error message to the exit clause used
     if_else_exit_lints <- xml_nodes_to_lints(
       if_else_exit_expr,
       source_expression = source_expression,
