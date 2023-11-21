@@ -113,6 +113,6 @@ any_duplicated_linter <- function() {
       type = "warning"
     )
 
-    return(c(any_duplicated_lints, length_unique_lints))
+    c(any_duplicated_lints, length_unique_lints)
   })
 }

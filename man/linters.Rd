@@ -24,7 +24,7 @@ The following tags exist:
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=deprecated_linters]{deprecated} (4 linters)}
-\item{\link[=efficiency_linters]{efficiency} (31 linters)}
+\item{\link[=efficiency_linters]{efficiency} (32 linters)}
 \item{\link[=executing_linters]{executing} (6 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
@@ -51,6 +51,7 @@ The following linters exist:
 \item{\code{\link{condition_message_linter}} (tags: best_practices, consistency)}
 \item{\code{\link{conjunct_test_linter}} (tags: best_practices, configurable, package_development, pkg_testthat, readability)}
 \item{\code{\link{consecutive_assertion_linter}} (tags: consistency, readability, style)}
+\item{\code{\link{consecutive_mutate_linter}} (tags: configurable, consistency, efficiency, readability)}
 \item{\code{\link{cyclocomp_linter}} (tags: best_practices, configurable, default, readability, style)}
 \item{\code{\link{duplicate_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{empty_assignment_linter}} (tags: best_practices, readability)}

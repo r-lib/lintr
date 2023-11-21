@@ -42,7 +42,7 @@ jenkins_build_info <- function() {
 }
 
 in_travis <- function() {
-  return(nzchar(Sys.getenv("TRAVIS_REPO_SLUG")))
+  nzchar(Sys.getenv("TRAVIS_REPO_SLUG"))
 }
 
 travis_build_info <- function() {
@@ -59,7 +59,7 @@ travis_build_info <- function() {
 }
 
 in_wercker <- function() {
-  return(nzchar(Sys.getenv("WERCKER_GIT_BRANCH")))
+  nzchar(Sys.getenv("WERCKER_GIT_BRANCH"))
 }
 
 ci_build_info <- function() {

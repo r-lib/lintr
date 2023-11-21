@@ -37,7 +37,7 @@ scalar_in_linter <- function() {
     /parent::expr
   "
 
-  return(Linter(function(source_expression) {
+  Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
@@ -55,5 +55,5 @@ scalar_in_linter <- function() {
       lint_message = lint_msg,
       type = "warning"
     )
-  }))
+  })
 }
