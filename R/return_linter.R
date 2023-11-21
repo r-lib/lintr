@@ -7,7 +7,7 @@
 #' @param additional_allowed_func Names of additional functions that are
 #'  accepted as return if `!use_implicit_returns`
 #'
-#' @param additional_allowed_func Names of additional functions that are
+#' @param additional_side_effect_func Names of additional functions that are
 #'  not checked for an explicit retun if `!use_implicit_returns`
 #'
 #' @param use_runit Whether to ignore Runit like functions or not
