@@ -10,6 +10,7 @@
    + `with_defaults()`.
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
    + Helper `with_defaults()`.
+* `all_linters()` has signature `all_linters(..., package)` rather than `all_linters(package, ...)` (#2332, @MichaelChirico). This forces `package=` to be supplied by name and will break users who rely on supplying `package=` positionally, of which we found none searching GitHub.
 
 ## Bug fixes
 
