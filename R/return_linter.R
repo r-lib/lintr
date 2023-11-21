@@ -78,7 +78,7 @@ return_linter <- function(
 
     allowed_functions <- c(
       # Normal calls
-      "return", "stop", "warning", "message", "stopifnot", "q", "quit",
+      "return", "stop", "q", "quit",
       "invokeRestart", "tryInvokeRestart",
 
       # Functions related to S3 methods
