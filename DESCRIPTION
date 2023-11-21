@@ -109,6 +109,7 @@ Collate:
     'get_source_expressions.R'
     'ids_with_token.R'
     'if_not_else_linter.R'
+    'if_switch_linter.R'
     'ifelse_censor_linter.R'
     'implicit_assignment_linter.R'
     'implicit_integer_linter.R'
