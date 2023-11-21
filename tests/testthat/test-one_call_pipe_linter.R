@@ -7,6 +7,9 @@ test_that("one_call_pipe_linter skips allowed usages", {
   expect_lint("foo(x) %>% bar()", NULL, linter)
   # both calls in second step --> OK
   expect_lint("x %>% foo(bar(.))", NULL, linter)
+
+  # assignment pipe is exempted
+  expect_lint("x %<>% as.character()", NULL, linter)
 })
 
 test_that("one_call_pipe_linter blocks simple disallowed usages", {
@@ -41,20 +44,13 @@ test_that("one_call_pipe_linter skips data.table chains", {
 
 test_that("one_call_pipe_linter treats all pipes equally", {
   linter <- one_call_pipe_linter()
+  lint_msg_part <- "Expressions with only a single call shouldn't use pipe "
 
   expect_lint("foo %>% bar() %$% col", NULL, linter)
+  expect_lint("x %T>% foo()", rex::rex(lint_msg_part, "%T>%."), linter)
+  expect_lint("x %$%\n  foo", rex::rex(lint_msg_part, "%$%."), linter)
   expect_lint(
-    "x %T>% foo()",
-    rex::rex("Expressions with only a single call shouldn't use pipe %T>%."),
-    linter
-  )
-  expect_lint(
-    "x %$%\n  foo()",
-    rex::rex("Expressions with only a single call shouldn't use pipe %$%."),
-    linter
-  )
-  expect_lint(
-    'data %>% filter(type == "console") %$% obscured_gaia_id %>% unique()',
+    'data %>% filter(type == "console") %$% obscured_id %>% unique()',
     NULL,
     linter
   )
@@ -64,7 +60,7 @@ test_that("multiple lints are generated correctly", {
   expect_lint(
     trim_some("{
       a %>% b()
-      c %$% d()
+      c %$% d
       e %T>%
         f()
     }"),
