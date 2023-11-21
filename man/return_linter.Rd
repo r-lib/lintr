@@ -4,10 +4,17 @@
 \alias{return_linter}
 \title{Return linter}
 \usage{
-return_linter(use_implicit_returns = TRUE)
+return_linter(
+  use_implicit_returns = TRUE,
+  additional_allowed_func = NULL,
+  additional_side_effect_func = NULL
+)
 }
 \arguments{
 \item{use_implicit_returns}{Whether to use implicit or explicit returns}
+
+\item{additional_allowed_func}{Names of additional functions that are
+not checked for an explicit retun if \code{!use_implicit_returns}}
 }
 \description{
 This linter checks for explicit \code{\link[=return]{return()}} at the end of a function

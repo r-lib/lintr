@@ -689,8 +689,8 @@ test_that("return_linter skips RUnit functions in argumented tests", {
   expect_lint(lines, NULL, return_linter(use_implicit_returns = FALSE))
 })
 
-test_that("return_linter skips terminal LOG and logging::LOG", {
-  linter <- return_linter(use_implicit_returns = FALSE)
+test_that("return_linter accepts additional allowed functions I", {
+  linter <- return_linter(use_implicit_returns = FALSE, additional_allowed_func = "LOG")
 
   lines <- c(
     "foo <- function(bar) {",
@@ -705,6 +705,17 @@ test_that("return_linter skips terminal LOG and logging::LOG", {
     "}"
   )
   expect_lint(ns_lines, NULL, linter)
+})
+
+test_that("return_linter accepts additional side effect functions", {
+  linter <- return_linter(use_implicit_returns = FALSE, additional_side_effect_func = "foo")
+
+  lines <- c(
+    "foo <- function(bar) {",
+    "  5 +3",
+    "}"
+  )
+  expect_lint(lines, NULL, linter)
 })
 
 test_that("return_linter skips brace-wrapped inline functions", {
@@ -732,8 +743,8 @@ test_that("return_linter skips common S4 method functions", {
   expect_lint(lines_call_next_method, NULL, linter)
 })
 
-test_that("return_linter skips rlang::abort", {
-  linter <- return_linter(use_implicit_returns = FALSE)
+test_that("return_linter accepts additional allowed functions II", {
+  linter <- return_linter(use_implicit_returns = FALSE, additional_allowed_func = "abort")
 
   lines <- c(
     "foo <- function(bar) {",
