@@ -183,13 +183,13 @@ package_hooks_linter <- function() {
     unload_arg_name_lints <-
       xml_nodes_to_lints(unload_arg_name_expr, source_expression, unload_arg_name_message, type = "warning")
 
-    return(c(
+    c(
       onload_bad_msg_call_lints,
       onattach_bad_msg_call_lints,
       load_arg_name_lints,
       library_require_lints,
       bad_unload_call_lints,
       unload_arg_name_lints
-    ))
+    )
   })
 }

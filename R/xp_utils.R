@@ -11,7 +11,7 @@ xp_text_in_table <- function(table) {
   single_quoted <- grepl("'", table, fixed = TRUE)
   table[single_quoted] <- sQuote(table[single_quoted], '"')
   table[!single_quoted] <- sQuote(table[!single_quoted], "'")
-  return(paste0("text() = ", table, collapse = " or "))
+  paste0("text() = ", table, collapse = " or ")
 }
 
 paren_wrap <- function(..., sep) {
