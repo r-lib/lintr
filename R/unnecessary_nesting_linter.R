@@ -103,16 +103,14 @@ unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
   assignment_cond <- if (allow_assignment) "expr[LEFT_ASSIGN or RIGHT_ASSIGN]" else "false"
 
   # several carve-outs of common cases where single-expression braces are OK
-  #   - control flow statements: if, for, while, repeat, switch()
-  #       + switch() is unique in being a function, not a language element
+  #   - control flow statements: if, for, while, repeat
   #       + include foreach() as a common package-based for loop extension
   #   - function definitions
   #       + includes purrr-like anonymous functions as ~ {...}
   #   - rlang's double-brace expressions like {{ var }}
   #       + NB: both braces would trigger here, so we must exclude both of them
   #   - any expression starting like `({` or `[{` or ending like `})` or `}]`
-  #       + note that nesting is not improved by "fixing" such cases,
-  #         and could also be worsened
+  #       + note that nesting is not improved by "fixing" such cases, and could also be worsened
   #       + motivated by the most common cases:
   #          * test_that("test", { expr })
   #          * with(x, { expr }) / within(x, { expr })
@@ -129,7 +127,6 @@ unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
         or self::IF
         or self::WHILE
         or self::REPEAT
-        or self::expr/SYMBOL_FUNCTION_CALL[text() = 'switch']
         or self::expr/expr/SYMBOL_FUNCTION_CALL[text() = 'foreach']
         or self::OP-TILDE
         or self::LEFT_ASSIGN[text() = ':=']

@@ -199,20 +199,6 @@ test_that("unnecessary_nesting_linter skips one-expression repeat loops", {
   expect_lint(lines, NULL, unnecessary_nesting_linter())
 })
 
-test_that("unnecessary_nesting_linter skips one-expression switch statements", {
-  lines <- c(
-    "switch(x,",
-    "  a = {",
-    "    do_a()",
-    "  },",
-    "  b = {",
-    "    do_b()",
-    "  }",
-    ")"
-  )
-  expect_lint(lines, NULL, unnecessary_nesting_linter())
-})
-
 test_that("unnecessary_nesting_linter skips one-expression assignments by default", {
   expect_lint(
     trim_some("
