@@ -39,6 +39,12 @@ lint(
   linters = one_call_pipe_linter()
 )
 
+# assignment pipe is exempted
+lint(
+  text = "DF \%<>\% mutate(a = 2)",
+  linters = one_call_pipe_linter()
+)
+
 }
 \seealso{
 \itemize{

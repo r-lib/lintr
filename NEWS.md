@@ -40,6 +40,7 @@
 * `nested_pipe_linter()` for discouraging pipes within pipes, e.g. `df1 %>% inner_join(df2 %>% select(a, b))` (part of #884, @MichaelChirico).
 * `nrow_subset_linter()` for discouraging usage like `nrow(subset(x, conditions))` in favor of something like `with(x, sum(conditions))` which doesn't require a full subset of `x` (part of #884, @MichaelChirico).
 * `pipe_return_linter()` for discouraging usage of `return()` inside a {magrittr} pipeline (part of #884, @MichaelChirico).
+* `one_call_pipe_linter()` for discouraging one-step pipelines like `x |> as.character()` (#2330 and part of #884, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
 
