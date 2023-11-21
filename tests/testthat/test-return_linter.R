@@ -641,7 +641,7 @@ test_that("return_linter passes on q() or quit() calls", {
 })
 
 test_that("return_linter passes on .setUp/.tearDown calls", {
-  linter <- return_linter(use_implicit_returns = FALSE)
+  linter <- return_linter(use_implicit_returns = FALSE, use_runit = TRUE)
 
   setup_lines <- c(
     ".setUp <- function() {",
@@ -659,7 +659,7 @@ test_that("return_linter passes on .setUp/.tearDown calls", {
 })
 
 test_that("return_linter allows RUnit tests to pass", {
-  linter <- return_linter(use_implicit_returns = FALSE)
+  linter <- return_linter(use_implicit_returns = FALSE, use_runit = TRUE)
 
   lines <- c(
     "TestKpSxsSummary <- function() {",
@@ -686,7 +686,7 @@ test_that("return_linter skips RUnit functions in argumented tests", {
     "  checkEquals(expected, bar(context))",
     "}"
   )
-  expect_lint(lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(lines, NULL, return_linter(use_implicit_returns = FALSE, use_runit = TRUE))
 })
 
 test_that("return_linter accepts additional allowed functions I", {
