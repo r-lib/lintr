@@ -1,4 +1,4 @@
-#' Block instances of excessive nesting
+#' Block instances of unnecessary nesting
 #'
 #' Excessive nesting harms readability. Use helper functions or early returns
 #'   to reduce nesting wherever possible.

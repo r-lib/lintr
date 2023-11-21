@@ -2,7 +2,7 @@
 % Please edit documentation in R/unnecessary_nesting_linter.R
 \name{unnecessary_nesting_linter}
 \alias{unnecessary_nesting_linter}
-\title{Block instances of excessive nesting}
+\title{Block instances of unnecessary nesting}
 \usage{
 unnecessary_nesting_linter(allow_assignment = TRUE)
 }
