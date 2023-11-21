@@ -1,5 +1,4 @@
-linters: modify_defaults(
-    defaults = all_linters(),
+linters: all_linters(
     backport_linter("oldrel-4", except = c("R_user_dir", "deparse1", "...names")),
     line_length_linter(120L),
     object_overwrite_linter(
