@@ -103,6 +103,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/consecutive_assertion_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/consecutive_mutate_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/consistency_linters.html</loc>
   </url>
   <url>

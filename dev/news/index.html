@@ -112,6 +112,8 @@
 <li>
 <code><a href="../reference/print_linter.html">print_linter()</a></code> for discouraging usage of <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> on string literals like <code>print("Reached here")</code> or <code>print(paste("Found", nrow(DF), "rows."))</code> (<a href="https://github.com/r-lib/lintr/issues/1894" class="external-link">#1894</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
+<code><a href="../reference/consecutive_mutate_linter.html">consecutive_mutate_linter()</a></code> for encouraging consecutive calls to <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">dplyr::mutate()</a></code> to be combined (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
 <code><a href="../reference/if_switch_linter.html">if_switch_linter()</a></code> for encouraging <code><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch()</a></code> over repeated <code>if</code>/<code>else</code> tests (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/nested_pipe_linter.html">nested_pipe_linter()</a></code> for discouraging pipes within pipes, e.g. <code>df1 %&gt;% inner_join(df2 %&gt;% select(a, b))</code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
