@@ -181,9 +181,7 @@ local({
   )
   patrick::with_parameters_test_that(
     "valid nesting is handled",
-    {
-      expect_lint(code_string, NULL, linter)
-    },
+    expect_lint(code_string, NULL, linter),
     .test_name = valid_code,
     code_string = valid_code
   )
