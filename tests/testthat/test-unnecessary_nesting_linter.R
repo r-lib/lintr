@@ -21,17 +21,6 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
   expect_lint(double_return_lines, NULL, linter)
 })
 
-test_that("parallel stop()/warning() branches are OK", {
-  stop_warning_lines <- c(
-    "if (i == force.iter) {",
-    "  stop(msg, call. = FALSE)",
-    "} else {",
-    "  warning(attempt, call. = FALSE)",
-    "}"
-  )
-  expect_lint(stop_warning_lines, NULL, unnecessary_nesting_linter())
-})
-
 # TODO(michaelchirico): consider if there's a nice easy pattern to enforce for
 #   multiple if/else cases. This test in particular would be easy to un-nest,
 #   but it's not true in general.

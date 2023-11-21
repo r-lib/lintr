@@ -62,32 +62,20 @@
 #' @export
 unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
   exit_calls <- c("stop", "return", "abort", "quit", "q")
-  # These calls can be called in the sibling branch and not trigger a lint,
-  #   allowing for cleanly parallel code, where breaking it would often harm readability:
-  #   > if (A) {
-  #   >   stop()
-  #   > } else {
-  #   >   warning()
-  #   > }
-  # NB: print() is intentionally excluded since its usage is usually a mistake (?print_linter)
-  signal_calls <- c(
-    exit_calls,
-    "warning", "warn", "message", "cat", "LOG", "stopifnot"
-  )
   exit_call_expr <- glue("
-  expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(exit_calls)}]]
+    expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(exit_calls)}]]
   ")
   # block IF here for cases where a nested if/else is entirely within
   #   one of the branches.
   # TODO(michaelchirico): we could try and make the parallel exits requirement
   #   more recursive, but it's a pain to do so.
-  no_signal_call_expr <- glue("
+  no_exit_call_expr <- glue("
   expr[
     OP-LEFT-BRACE
     and expr[
       position() = last()
       and not(IF)
-      and not(expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(signal_calls)}]])
+      and not(expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(exit_calls)}]])
     ]
   ]
   ")
@@ -107,8 +95,8 @@ unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
       OP-LEFT-BRACE
       and expr[position() = last() and {exit_call_expr}]
       and (
-        following-sibling::{no_signal_call_expr}
-        or preceding-sibling::{no_signal_call_expr}
+        following-sibling::{no_exit_call_expr}
+        or preceding-sibling::{no_exit_call_expr}
       )
     ]
   ]
