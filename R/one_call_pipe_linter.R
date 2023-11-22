@@ -31,13 +31,20 @@
 #'   linters = one_call_pipe_linter()
 #' )
 #'
+#' # assignment pipe is exempted
+#' lint(
+#'   text = "DF %<>% mutate(a = 2)",
+#'   linters = one_call_pipe_linter()
+#' )
+#'
 #' @evalRd rd_tags("one_call_pipe_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
 #' - <https://style.tidyverse.org/pipes.html#short-pipes>
 #' @export
 one_call_pipe_linter <- function() {
-  pipes_cond <- xp_text_in_table(magrittr_pipes)
+  # exception for assignment pipe per #2330
+  pipes_cond <- xp_text_in_table(setdiff(magrittr_pipes, "%<>%"))
 
   # preceding-sibling::SPECIAL: if there are ever two pipes, don't lint
   # OP-LEFT-BRACKET/LBB: accept DT[...] %>% .[...] as a two-call pipe,
