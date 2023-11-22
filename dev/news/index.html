@@ -77,6 +77,8 @@
 <li>Linters <code><a href="../reference/lintr-deprecated.html">closed_curly_linter()</a></code>, <code><a href="../reference/lintr-deprecated.html">open_curly_linter()</a></code>, <code><a href="../reference/lintr-deprecated.html">paren_brace_linter()</a></code>, and <code><a href="../reference/lintr-deprecated.html">semicolon_terminator_linter()</a></code>.</li>
 <li>Helper <code><a href="../reference/lintr-deprecated.html">with_defaults()</a></code>.</li>
 </ul></li>
+<li>
+<code><a href="../reference/all_linters.html">all_linters()</a></code> has signature <code>all_linters(..., packages)</code> rather than <code>all_linters(packages, ...)</code> (<a href="https://github.com/r-lib/lintr/issues/2332" class="external-link">#2332</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). This forces <code>packages=</code> to be supplied by name and will break users who rely on supplying <code>packages=</code> positionally, of which we found none searching GitHub.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
