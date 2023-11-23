@@ -630,55 +630,6 @@ test_that("return_linter passes on q() or quit() calls", {
   expect_lint(lines, NULL, return_linter(use_implicit_returns = FALSE))
 })
 
-test_that("return_linter passes on .setUp/.tearDown calls", {
-  linter <- return_linter(use_implicit_returns = FALSE, use_runit = TRUE)
-
-  setup_lines <- c(
-    ".setUp <- function() {",
-    "  options(foo = TRUE)",
-    "}"
-  )
-  expect_lint(setup_lines, NULL, linter)
-
-  teardown_lines <- c(
-    ".tearDown <- function() {",
-    "  options(foo = TRUE)",
-    "}"
-  )
-  expect_lint(teardown_lines, NULL, linter)
-})
-
-test_that("return_linter allows RUnit tests to pass", {
-  linter <- return_linter(use_implicit_returns = FALSE, use_runit = TRUE)
-
-  lines <- c(
-    "TestKpSxsSummary <- function() {",
-    "  context <- foo(72643424)",
-    "  expected <- data.frame(a = 2)",
-    "  checkEquals(expected, bar(context))",
-    "}"
-  )
-  expect_lint(lines, NULL, linter)
-
-  custom_lines <- c(
-    "TestMyPackage <- function() {",
-    "  checkMyCustomComparator(x, y)",
-    "}"
-  )
-  expect_lint(custom_lines, NULL, linter)
-})
-
-test_that("return_linter skips RUnit functions in argumented tests", {
-  lines <- c(
-    "TestSummary <- function(an_argument) {",
-    "  context <- foo(an_argument)",
-    "  expected <- data.frame(a = 2)",
-    "  checkEquals(expected, bar(context))",
-    "}"
-  )
-  expect_lint(lines, NULL, return_linter(use_implicit_returns = FALSE, use_runit = TRUE))
-})
-
 test_that("return_linter accepts additional allowed functions I", {
   linter <- return_linter(use_implicit_returns = FALSE, additional_allowed_func = "LOG")
 
