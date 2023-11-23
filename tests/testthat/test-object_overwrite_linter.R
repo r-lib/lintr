@@ -54,6 +54,17 @@ test_that("object_overwrite_linter blocks simple disallowed usages", {
     ),
     linter
   )
+
+  # non-syntactic names (#2346)
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        `+` <- 2L
+      }
+    "),
+    rex::rex("'+' is an exported object from package 'base'."),
+    linter
+  )
 })
 
 test_that("object_overwrite_linter skips any name assigned at the top level", {
