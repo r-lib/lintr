@@ -57,6 +57,7 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
     # rbind makes sure we have a matrix with dimensions [n_versions x n_names]
     # so that colSums() works to tell us which names are in an unavailable version
     # rbind not cbind because R is column-major --> which() below will be in column order
+    if (length(all_names) > 100) browser()
     needs_backport <- do.call(rbind, lapply(backport_blacklist, function(nm) all_names %in% nm))
     bad_idx <- colSums(needs_backport) > 0L
 
