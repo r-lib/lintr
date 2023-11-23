@@ -6,10 +6,15 @@
 #'   the default, enforeces the Tidyverse guide recommendation to leave terminal
 #'   returns implicit. `"explicit"` style requires that `return()` always be
 #'   explicitly supplied.
-#' @param additional_allowed_func Names of additional functions that are
-#'   accepted as return if `return_style = "explicit"`.
-#' @param additional_side_effect_func Names of additional functions that are
-#'   not checked for an explicit retun if `return_style = "explicit"`.
+#' @param return_functions Character vector of functions that are accepted as terminal calls
+#'   when `return_style = "explicit"`. These are in addition to exit functions
+#'   from base that are always allowed: [stop()], [q()], [quit()], [invokeRestart()],
+#'   [tryInvokeRestart()], [UseMethod()], [NextMethod()], [standardGeneric()],
+#'   [callNextMethod()], [.C()], [.Call()], [.External()], and [.Fortran()].
+#' @param except Character vector of functions that are not checked when
+#'   `return_style = "explicit"`. These are in addition to namespace hook functions
+#'   that are never checked: `.onLoad()`, `.onUnload()`, `.onAttach()`, `.onDetach()`,
+#'   and `.Last.lib()`.
 #'
 #' @examples
 #' # will produce lints
@@ -50,8 +55,8 @@
 #' @export
 return_linter <- function(
     return_style = c("implicit", "explicit"),
-    additional_allowed_func = NULL,
-    additional_side_effect_func = NULL) {
+    return_functions = NULL,
+    except = NULL) {
   return_style <- match.arg(return_style)
 
   if (return_style == "implicit") {
@@ -69,14 +74,11 @@ return_linter <- function(
   } else {
     # See `?.onAttach`; these functions are all exclusively used for their
     #   side-effects, so implicit return is generally acceptable
-    side_effect_functions <- c(
-      # namespace hooks
-      ".onLoad", ".onUnload", ".onAttach", ".onDetach", ".Last.lib"
-    )
+    default_except <- c(".onLoad", ".onUnload", ".onAttach", ".onDetach", ".Last.lib")
 
-    side_effect_functions <- union(side_effect_functions, additional_side_effect_func)
+    except <- union(default_except, except)
 
-    allowed_functions <- c(
+    base_return_functions <- c(
       # Normal calls
       "return", "stop", "q", "quit",
       "invokeRestart", "tryInvokeRestart",
@@ -91,7 +93,7 @@ return_linter <- function(
       ".C", ".Call", ".External", ".Fortran"
     )
 
-    allowed_functions <- union(allowed_functions, additional_allowed_func)
+    return_functions <- union(base_return_functions, return_functions)
 
     control_calls <- c("IF", "FOR", "WHILE", "REPEAT")
 
@@ -124,7 +126,7 @@ return_linter <- function(
     #   tagged differently than for 'if'/'while' conditions (simple PAREN)
     xpath <- glue("
     (//FUNCTION | //OP-LAMBDA)[parent::expr[not(
-      preceding-sibling::expr[SYMBOL[{ xp_text_in_table(side_effect_functions) }]]
+      preceding-sibling::expr[SYMBOL[{ xp_text_in_table(except) }]]
     )]]
       /following-sibling::expr[OP-LEFT-BRACE and expr[last()]/@line1 != @line1]
       /expr[last()]
@@ -141,7 +143,7 @@ return_linter <- function(
                 or following-sibling::SPECIAL[text() = '%>%']
               )
               and not(self::expr/SYMBOL_FUNCTION_CALL[
-                { xp_text_in_table(allowed_functions) }
+                { xp_text_in_table(return_functions) }
               ])
             )
           )
@@ -149,7 +151,7 @@ return_linter <- function(
           preceding-sibling::IF
           and self::expr
           and position() > 4
-          and not(.//SYMBOL_FUNCTION_CALL[{ xp_text_in_table(allowed_functions) }])
+          and not(.//SYMBOL_FUNCTION_CALL[{ xp_text_in_table(return_functions) }])
         )
       ]
     ")

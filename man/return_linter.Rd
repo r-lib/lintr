@@ -6,8 +6,8 @@
 \usage{
 return_linter(
   return_style = c("implicit", "explicit"),
-  additional_allowed_func = NULL,
-  additional_side_effect_func = NULL
+  return_functions = NULL,
+  except = NULL
 )
 }
 \arguments{
@@ -16,11 +16,16 @@ the default, enforeces the Tidyverse guide recommendation to leave terminal
 returns implicit. \code{"explicit"} style requires that \code{return()} always be
 explicitly supplied.}
 
-\item{additional_allowed_func}{Names of additional functions that are
-accepted as return if \code{return_style = "explicit"}.}
+\item{return_functions}{Character vector of functions that are accepted as terminal calls
+when \code{return_style = "explicit"}. These are in addition to exit functions
+from base that are always allowed: \code{\link[=stop]{stop()}}, \code{\link[=q]{q()}}, \code{\link[=quit]{quit()}}, \code{\link[=invokeRestart]{invokeRestart()}},
+\code{\link[=tryInvokeRestart]{tryInvokeRestart()}}, \code{\link[=UseMethod]{UseMethod()}}, \code{\link[=NextMethod]{NextMethod()}}, \code{\link[=standardGeneric]{standardGeneric()}},
+\code{\link[=callNextMethod]{callNextMethod()}}, \code{\link[=.C]{.C()}}, \code{\link[=.Call]{.Call()}}, \code{\link[=.External]{.External()}}, and \code{\link[=.Fortran]{.Fortran()}}.}
 
-\item{additional_side_effect_func}{Names of additional functions that are
-not checked for an explicit retun if \code{return_style = "explicit"}.}
+\item{except}{Character vector of functions that are not checked when
+\code{return_style = "explicit"}. These are in addition to namespace hook functions
+that are never checked: \code{.onLoad()}, \code{.onUnload()}, \code{.onAttach()}, \code{.onDetach()},
+and \code{.Last.lib()}.}
 }
 \description{
 This linter checks functions' \code{\link[=return]{return()}} expressions.
