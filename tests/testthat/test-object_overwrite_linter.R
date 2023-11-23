@@ -29,6 +29,14 @@ test_that("object_overwrite_linter blocks simple disallowed usages", {
     linter
   )
 
+  # base and graphics both export 'plot' (in recent R); ensure this is no issue
+  plot_pkg <- environmentName(environment(plot))
+  expect_lint(
+    "function() plot <- 1",
+    rex::rex("'plot' is an exported object from package '", plot_pkg, "'."),
+    linter
+  )
+
   # not just the top level of the function
   expect_lint(
     trim_some("
