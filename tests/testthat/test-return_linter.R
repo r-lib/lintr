@@ -238,16 +238,6 @@ test_that("return_linter works for using stop() instead of returning", {
     NULL,
     linter
   )
-
-  expect_lint(
-    trim_some("
-      foo <- function(bar) {
-        stopifnot(bar == 'd')
-      }
-    "),
-    NULL,
-    linter
-  )
 })
 
 test_that("return_linter ignores expressions that aren't functions", {
@@ -641,7 +631,7 @@ test_that("return_linter passes on q() or quit() calls", {
 })
 
 test_that("return_linter passes on .setUp/.tearDown calls", {
-  linter <- return_linter(use_implicit_returns = FALSE)
+  linter <- return_linter(use_implicit_returns = FALSE, use_runit = TRUE)
 
   setup_lines <- c(
     ".setUp <- function() {",
@@ -659,7 +649,7 @@ test_that("return_linter passes on .setUp/.tearDown calls", {
 })
 
 test_that("return_linter allows RUnit tests to pass", {
-  linter <- return_linter(use_implicit_returns = FALSE)
+  linter <- return_linter(use_implicit_returns = FALSE, use_runit = TRUE)
 
   lines <- c(
     "TestKpSxsSummary <- function() {",
@@ -686,11 +676,11 @@ test_that("return_linter skips RUnit functions in argumented tests", {
     "  checkEquals(expected, bar(context))",
     "}"
   )
-  expect_lint(lines, NULL, return_linter(use_implicit_returns = FALSE))
+  expect_lint(lines, NULL, return_linter(use_implicit_returns = FALSE, use_runit = TRUE))
 })
 
-test_that("return_linter skips terminal LOG and logging::LOG", {
-  linter <- return_linter(use_implicit_returns = FALSE)
+test_that("return_linter accepts additional allowed functions I", {
+  linter <- return_linter(use_implicit_returns = FALSE, additional_allowed_func = "LOG")
 
   lines <- c(
     "foo <- function(bar) {",
@@ -705,6 +695,17 @@ test_that("return_linter skips terminal LOG and logging::LOG", {
     "}"
   )
   expect_lint(ns_lines, NULL, linter)
+})
+
+test_that("return_linter accepts additional side effect functions", {
+  linter <- return_linter(use_implicit_returns = FALSE, additional_side_effect_func = "foo")
+
+  lines <- c(
+    "foo <- function(bar) {",
+    "  5 +3",
+    "}"
+  )
+  expect_lint(lines, NULL, linter)
 })
 
 test_that("return_linter skips brace-wrapped inline functions", {
@@ -732,8 +733,8 @@ test_that("return_linter skips common S4 method functions", {
   expect_lint(lines_call_next_method, NULL, linter)
 })
 
-test_that("return_linter skips rlang::abort", {
-  linter <- return_linter(use_implicit_returns = FALSE)
+test_that("return_linter accepts additional allowed functions II", {
+  linter <- return_linter(use_implicit_returns = FALSE, additional_allowed_func = "abort")
 
   lines <- c(
     "foo <- function(bar) {",
@@ -834,6 +835,41 @@ test_that("return_linter works for final while/repeat loops as well", {
           }
           x <- x - sign(x)
         }
+      }
+    "),
+    lint_msg,
+    linter
+  )
+})
+
+test_that("return_linter lints `message`, `warning` and `stopifnot`", {
+  linter <- return_linter(use_implicit_returns = FALSE)
+  lint_msg <- rex::rex("All functions must have an explicit return().")
+
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        stopifnot(bar == 'd')
+      }
+    "),
+    lint_msg,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        message('test')
+      }
+    "),
+    lint_msg,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        warning(test)
       }
     "),
     lint_msg,

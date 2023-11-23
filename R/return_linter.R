@@ -4,6 +4,15 @@
 #'
 #' @param use_implicit_returns Whether to use implicit or explicit returns
 #'
+#' @param additional_allowed_func Names of additional functions that are
+#'  accepted as return if `!use_implicit_returns`
+#'
+#' @param additional_side_effect_func Names of additional functions that are
+#'  not checked for an explicit retun if `!use_implicit_returns`
+#'
+#' @param use_runit Whether to ignore Runit like functions or not
+#'  if `!use_implicit_returns`
+#'
 #' @examples
 #' # will produce lints
 #' code <- "function(x) {\n  return(x + 1)\n}"
@@ -41,7 +50,10 @@
 #'  - [linters] for a complete list of linters available in lintr.
 #'  - <https://style.tidyverse.org/functions.html?q=return#return>
 #' @export
-return_linter <- function(use_implicit_returns = TRUE) {
+return_linter <- function(
+  use_implicit_returns = TRUE, additional_allowed_func = NULL,
+  additional_side_effect_func = NULL, use_runit = FALSE
+) {
   if (use_implicit_returns) {
     xpath <- "
       (//FUNCTION | //OP-LAMBDA)
@@ -57,33 +69,17 @@ return_linter <- function(use_implicit_returns = TRUE) {
   } else {
     # See `?.onAttach`; these functions are all exclusively used for their
     #   side-effects, so implicit return is generally acceptable
-    return_not_needed_funs <- c(
+    side_effect_functions <- c(
       # namespace hooks
-      ".onLoad", ".onUnload", ".onAttach", ".onDetach", ".Last.lib",
-
-      # from RUnit
-      ".setUp", ".tearDown"
+      ".onLoad", ".onUnload", ".onAttach", ".onDetach", ".Last.lib"
     )
+
+    side_effect_functions <- union(side_effect_functions, additional_side_effect_func)
 
     allowed_functions <- c(
       # Normal calls
-      "return", "stop", "warning", "message", "stopifnot", "q", "quit",
+      "return", "stop", "q", "quit",
       "invokeRestart", "tryInvokeRestart",
-
-      # Normal calls from non-default libraries
-      "LOG", "abort",
-
-      # tests in the RUnit framework are functions ending with a call to one
-      #   of the below. would rather users just use a different framework
-      #   (e.g. testthat or tinytest), but already 250+ BUILD files depend
-      #   on RUnit, so just cater to that. confirmed the efficiency impact
-      #   of including these is minimal.
-      # RUnit tests look like 'TestInCamelCase <- function()'
-      #   NB: check for starts-with(text(), 'Test') below is not sufficient, e.g.
-      #   in cases of a "driver" test function taking arguments and the main unit
-      #   test iterating over those.
-      "checkEquals", "checkEqualsNumeric", "checkException", "checkIdentical",
-      "checkStop", "checkTrue", "checkWarnings",
 
       # Functions related to S3 methods
       "UseMethod", "NextMethod",
@@ -94,6 +90,39 @@ return_linter <- function(use_implicit_returns = TRUE) {
       # Functions related to C interfaces
       ".C", ".Call", ".External", ".Fortran"
     )
+
+    allowed_functions <- union(allowed_functions, additional_allowed_func)
+
+    if (use_runit) {
+
+      side_effect_functions <- union(side_effect_functions, c(".setUp", ".tearDown"))
+
+      # tests in the RUnit framework are functions ending with a call to one
+      #   of the below. would rather users just use a different framework
+      #   (e.g. testthat or tinytest), but already 250+ BUILD files depend
+      #   on RUnit, so just cater to that. confirmed the efficiency impact
+      #   of including these is minimal.
+      # RUnit tests look like 'TestInCamelCase <- function()'
+      #   NB: check for starts-with(text(), 'Test') below is not sufficient, e.g.
+      #   in cases of a "driver" test function taking arguments and the main unit
+      #   test iterating over those.
+      allowed_functions <- union(
+        allowed_functions,
+        c(
+          "checkEquals", "checkEqualsNumeric", "checkException", "checkIdentical",
+          "checkStop", "checkTrue", "checkWarnings"
+        )
+      )
+
+      ignore_start <- "
+      or (
+        preceding-sibling::expr/SYMBOL[starts-with(text(), 'Test')]
+        and not(SYMBOL_FORMALS)
+      )
+      "
+    } else {
+      ignore_start <- ""
+    }
 
     control_calls <- c("IF", "FOR", "WHILE", "REPEAT")
 
@@ -126,11 +155,7 @@ return_linter <- function(use_implicit_returns = TRUE) {
     #   tagged differently than for 'if'/'while' conditions (simple PAREN)
     xpath <- glue("
     (//FUNCTION | //OP-LAMBDA)[parent::expr[not(
-      preceding-sibling::expr[SYMBOL[{ xp_text_in_table(return_not_needed_funs) }]]
-      or (
-        preceding-sibling::expr/SYMBOL[starts-with(text(), 'Test')]
-        and not(SYMBOL_FORMALS)
-      )
+      preceding-sibling::expr[SYMBOL[{ xp_text_in_table(side_effect_functions) }]] {ignore_start}
     )]]
       /following-sibling::expr[OP-LEFT-BRACE and expr[last()]/@line1 != @line1]
       /expr[last()]
