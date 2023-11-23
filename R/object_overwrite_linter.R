@@ -104,8 +104,10 @@ object_overwrite_linter <- function(
     assigned_symbols <- get_r_string(assigned_exprs, "SYMBOL")
     is_bad <- assigned_symbols %in% pkg_exports$name
     source_pkg <- pkg_exports$package[match(assigned_symbols[is_bad], pkg_exports$name)]
-    lint_message <-
-      sprintf("'%s' is an exported object from package '%s'. Avoid re-using such symbols.", bad_symbol, source_pkg)
+    lint_message <- sprintf(
+      "'%s' is an exported object from package '%s'. Avoid re-using such symbols.",
+      assigned_symbols[is_bad], source_pkg
+    )
 
     xml_nodes_to_lints(
       assigned_exprs[is_bad],
