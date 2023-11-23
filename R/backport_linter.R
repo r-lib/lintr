@@ -44,6 +44,7 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
   backport_blacklist <- lapply(backport_blacklist, setdiff, except)
   backport_funs <- unlist(backport_blacklist)
   backport_versions <- rep(names(backport_blacklist), times = lengths(backport_blacklist))
+  backport_index <- setNames(backport_versions, backport_funs)
 
   names_xpath <- "//SYMBOL | //SYMBOL_FUNCTION_CALL"
 
@@ -57,8 +58,8 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
     all_names_nodes <- xml_find_all(xml, names_xpath)
     all_names <- xml_text(all_names_nodes)
 
-    needs_backport <- all_names %in% backport_funs
-    bad_versions <- backport_versions[match(all_names[needs_backport], backport_funs)]
+    bad_versions <- unname(backport_index[all_names])
+    needs_backport <- !is.na(bad_versions)
 
     lint_message <- sprintf(
       paste(
@@ -66,7 +67,7 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
         "Use the `except` argument of `backport_linter()` to configure available backports."
       ),
       all_names[needs_backport],
-      bad_versions,
+      bad_versions[needs_backport],
       r_version
     )
     xml_nodes_to_lints(
