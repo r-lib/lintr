@@ -69,8 +69,8 @@ object_overwrite_linter <- function(
   pkg_exports <- pkg_exports[
     # .__C__ etc.: drop 150+ "virtual" names since they are very unlikely to appear anyway
     !grepl("^[.]__[A-Z]__", pkg_exports$name) &
-    # exclude non-syntactic names. this might be supported upon user request.
-    make.names(pkg_exports$name) == pkg_exports$name,
+      # exclude non-syntactic names. this might be supported upon user request.
+      make.names(pkg_exports$name) == pkg_exports$name,
   ]
 
   # test that the symbol doesn't match an argument name in the function
