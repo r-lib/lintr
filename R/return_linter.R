@@ -3,12 +3,10 @@
 #' This linter checks for explicit [return()] at the end of a function
 #'
 #' @param use_implicit_returns Whether to use implicit or explicit returns
-#'
 #' @param additional_allowed_func Names of additional functions that are
-#'  accepted as return if `!use_implicit_returns`
-#'
+#'   accepted as return if `!use_implicit_returns`
 #' @param additional_side_effect_func Names of additional functions that are
-#'  not checked for an explicit retun if `!use_implicit_returns`
+#'   not checked for an explicit retun if `!use_implicit_returns`
 #'
 #' @examples
 #' # will produce lints
