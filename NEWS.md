@@ -26,7 +26,7 @@
 * `library_call_linter()` is extended
   + to encourage all packages to be attached with `library(symbol)`, not `library("symbol", character.only = TRUE)` or "vectorized" approaches looping over package names (part of #884, @MichaelChirico).
   + to discourage many consecutive calls to `suppressMessages()` or `suppressPackageStartupMessages()` (part of #884, @MichaelChirico).
-* `return_linter()` also has an argument `use_implicit_returns` (`TRUE` by default) which, when `FALSE`, forces all returns to be explicit (part of #884, @MichaelChirico and @MEO265).
+* `return_linter()` also has an argument `return_style` (`"implicit"` by default) which checks that all functions confirm to the specified return style of `"implicit"` or `"explicit"` (part of #884, @MichaelChirico, @AshesITR and @MEO265).
 * `unnecessary_lambda_linter` is extended to encourage vectorized comparisons where possible, e.g. `sapply(x, sum) > 0` instead of `sapply(x, function(x) sum(x) > 0)` (part of #884, @MichaelChirico). Toggle this behavior with argument `allow_comparison`.
 
 ### New linters

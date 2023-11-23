@@ -25,7 +25,6 @@ g <- function(x) {
 # object_name
 # object_usage
 # open_curly
-# return
 # T_and_F_symbol
 someComplicatedFunctionWithALongCamelCaseName <- function(x)
 {

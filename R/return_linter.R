@@ -14,7 +14,7 @@
 #' @param except Character vector of functions that are not checked when
 #'   `return_style = "explicit"`. These are in addition to namespace hook functions
 #'   that are never checked: `.onLoad()`, `.onUnload()`, `.onAttach()`, `.onDetach()`,
-#'   and `.Last.lib()`.
+#'   `.Last.lib()`, `.First()` and `.Last()`.
 #'
 #' @examples
 #' # will produce lints
@@ -74,9 +74,8 @@ return_linter <- function(
   } else {
     # See `?.onAttach`; these functions are all exclusively used for their
     #   side-effects, so implicit return is generally acceptable
-    default_except <- c(".onLoad", ".onUnload", ".onAttach", ".onDetach", ".Last.lib")
 
-    except <- union(default_except, except)
+    except <- union(special_funs, except)
 
     base_return_functions <- c(
       # Normal calls
