@@ -70,6 +70,9 @@ object_overwrite_linter <- function(
     stringsAsFactors = FALSE
   )
 
+  # Take the first among duplicate names, e.g. 'plot' resolves to base::plot, not graphics::plot
+  pkg_exports <- pkg_exports[!duplicated(pkg_exports$name), ]
+
   # test that the symbol doesn't match an argument name in the function
   # NB: data.table := has parse token LEFT_ASSIGN as well
   xpath <- glue("
