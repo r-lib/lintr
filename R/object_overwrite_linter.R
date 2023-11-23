@@ -59,7 +59,7 @@ object_overwrite_linter <- function(
       stop("Package '", package, "' is not available.")
     }
   }
-  pkg_exports <- lapply(packages, function(pkg) setdiff(getNamespaceExports(pkg), allow_names))
+  pkg_exports <- lapply(packages, getNamespaceExports)
   pkg_exports <- data.frame(
     package = rep(packages, lengths(pkg_exports)),
     name = unlist(pkg_exports),
@@ -69,8 +69,9 @@ object_overwrite_linter <- function(
   pkg_exports <- pkg_exports[
     # .__C__ etc.: drop 150+ "virtual" names since they are very unlikely to appear anyway
     !grepl("^[.]__[A-Z]__", pkg_exports$name) &
-    # exclude non-syntactic names. this might be supported upon user request.
-    make.names(pkg_exports$name) == pkg_exports$name,
+      # exclude non-syntactic names. this might be supported upon user request.
+      make.names(pkg_exports$name) == pkg_exports$name &
+      !pkg_exports$name %in% allow_names,
   ]
 
   # test that the symbol doesn't match an argument name in the function
