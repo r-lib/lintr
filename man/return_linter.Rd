@@ -25,7 +25,7 @@ from base that are always allowed: \code{\link[=stop]{stop()}}, \code{\link[=q]{
 \item{except}{Character vector of functions that are not checked when
 \code{return_style = "explicit"}. These are in addition to namespace hook functions
 that are never checked: \code{.onLoad()}, \code{.onUnload()}, \code{.onAttach()}, \code{.onDetach()},
-and \code{.Last.lib()}.}
+\code{.Last.lib()}, \code{.First()} and \code{.Last()}.}
 }
 \description{
 This linter checks functions' \code{\link[=return]{return()}} expressions.
