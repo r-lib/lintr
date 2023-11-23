@@ -1,12 +1,15 @@
 #' Return linter
 #'
-#' This linter checks for explicit [return()] at the end of a function
+#' This linter checks functions' [return()] expressions.
 #'
-#' @param use_implicit_returns Whether to use implicit or explicit returns
+#' @param return_style Character string naming the return style. `"implicit"`,
+#'   the default, enforeces the Tidyverse guide recommendation to leave terminal
+#'   returns implicit. `"explicit"` style requires that `return()` always be
+#'   explicitly supplied.
 #' @param additional_allowed_func Names of additional functions that are
-#'   accepted as return if `!use_implicit_returns`
+#'   accepted as return if `return_style = "explicit"`.
 #' @param additional_side_effect_func Names of additional functions that are
-#'   not checked for an explicit retun if `!use_implicit_returns`
+#'   not checked for an explicit retun if `return_style = "explicit"`.
 #'
 #' @examples
 #' # will produce lints
@@ -21,7 +24,7 @@
 #' writeLines(code)
 #' lint(
 #'   text = code,
-#'   linters = return_linter(use_implicit_returns = FALSE)
+#'   linters = return_linter(return_style = "explicit")
 #' )
 #'
 #' # okay
@@ -36,7 +39,7 @@
 #' writeLines(code)
 #' lint(
 #'   text = code,
-#'   linters = return_linter(use_implicit_returns = FALSE)
+#'   linters = return_linter(return_style = "explicit")
 #' )
 #'
 #'
@@ -46,10 +49,12 @@
 #'  - <https://style.tidyverse.org/functions.html?q=return#return>
 #' @export
 return_linter <- function(
-    use_implicit_returns = TRUE,
+    return_style = c("implicit", "explicit"),
     additional_allowed_func = NULL,
     additional_side_effect_func = NULL) {
-  if (use_implicit_returns) {
+  return_style <- match.arg(return_style)
+
+  if (return_style == "implicit") {
     xpath <- "
       (//FUNCTION | //OP-LAMBDA)
       /following-sibling::expr[1][*[1][self::OP-LEFT-BRACE]]

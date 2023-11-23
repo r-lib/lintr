@@ -5,26 +5,25 @@
 \title{Return linter}
 \usage{
 return_linter(
-  use_implicit_returns = TRUE,
+  return_style = c("implicit", "explicit"),
   additional_allowed_func = NULL,
-  additional_side_effect_func = NULL,
-  use_runit = FALSE
+  additional_side_effect_func = NULL
 )
 }
 \arguments{
-\item{use_implicit_returns}{Whether to use implicit or explicit returns}
+\item{return_style}{Character string naming the return style. \code{"implicit"},
+the default, enforeces the Tidyverse guide recommendation to leave terminal
+returns implicit. \code{"explicit"} style requires that \code{return()} always be
+explicitly supplied.}
 
 \item{additional_allowed_func}{Names of additional functions that are
-accepted as return if \code{!use_implicit_returns}}
+accepted as return if \code{return_style = "explicit"}.}
 
 \item{additional_side_effect_func}{Names of additional functions that are
-not checked for an explicit retun if \code{!use_implicit_returns}}
-
-\item{use_runit}{Whether to ignore Runit like functions or not
-if \code{!use_implicit_returns}}
+not checked for an explicit retun if \code{return_style = "explicit"}.}
 }
 \description{
-This linter checks for explicit \code{\link[=return]{return()}} at the end of a function
+This linter checks functions' \code{\link[=return]{return()}} expressions.
 }
 \examples{
 # will produce lints
@@ -39,7 +38,7 @@ code <- "function(x) {\n  x + 1\n}"
 writeLines(code)
 lint(
   text = code,
-  linters = return_linter(use_implicit_returns = FALSE)
+  linters = return_linter(return_style = "explicit")
 )
 
 # okay
@@ -54,7 +53,7 @@ code <- "function(x) {\n  return(x + 1)\n}"
 writeLines(code)
 lint(
   text = code,
-  linters = return_linter(use_implicit_returns = FALSE)
+  linters = return_linter(return_style = "explicit")
 )
 
 
