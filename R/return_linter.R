@@ -9,7 +9,7 @@
 #' @param return_functions Character vector of functions that are accepted as terminal calls
 #'   when `return_style = "explicit"`. These are in addition to exit functions
 #'   from base that are always allowed: [stop()], [q()], [quit()], [invokeRestart()],
-#'   [tryInvokeRestart()], [UseMethod()], [NextMethod()], [standardGeneric()],
+#'   `tryInvokeRestart()`, [UseMethod()], [NextMethod()], [standardGeneric()],
 #'   [callNextMethod()], [.C()], [.Call()], [.External()], and [.Fortran()].
 #' @param except Character vector of functions that are not checked when
 #'   `return_style = "explicit"`. These are in addition to namespace hook functions

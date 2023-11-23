@@ -19,7 +19,7 @@ explicitly supplied.}
 \item{return_functions}{Character vector of functions that are accepted as terminal calls
 when \code{return_style = "explicit"}. These are in addition to exit functions
 from base that are always allowed: \code{\link[=stop]{stop()}}, \code{\link[=q]{q()}}, \code{\link[=quit]{quit()}}, \code{\link[=invokeRestart]{invokeRestart()}},
-\code{\link[=tryInvokeRestart]{tryInvokeRestart()}}, \code{\link[=UseMethod]{UseMethod()}}, \code{\link[=NextMethod]{NextMethod()}}, \code{\link[=standardGeneric]{standardGeneric()}},
+\code{tryInvokeRestart()}, \code{\link[=UseMethod]{UseMethod()}}, \code{\link[=NextMethod]{NextMethod()}}, \code{\link[=standardGeneric]{standardGeneric()}},
 \code{\link[=callNextMethod]{callNextMethod()}}, \code{\link[=.C]{.C()}}, \code{\link[=.Call]{.Call()}}, \code{\link[=.External]{.External()}}, and \code{\link[=.Fortran]{.Fortran()}}.}
 
 \item{except}{Character vector of functions that are not checked when
