@@ -19,6 +19,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{comparison_negation_linter}}}
 \item{\code{\link{conjunct_test_linter}}}
 \item{\code{\link{consecutive_assertion_linter}}}
+\item{\code{\link{consecutive_mutate_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{empty_assignment_linter}}}
 \item{\code{\link{expect_length_linter}}}
@@ -30,6 +31,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{function_left_parentheses_linter}}}
 \item{\code{\link{function_return_linter}}}
 \item{\code{\link{if_not_else_linter}}}
+\item{\code{\link{if_switch_linter}}}
 \item{\code{\link{implicit_assignment_linter}}}
 \item{\code{\link{implicit_else_return_linter}}}
 \item{\code{\link{indentation_linter}}}
@@ -71,6 +73,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{unnecessary_concatenation_linter}}}
 \item{\code{\link{unnecessary_lambda_linter}}}
 \item{\code{\link{unnecessary_nested_if_linter}}}
+\item{\code{\link{unnecessary_nesting_linter}}}
 \item{\code{\link{unnecessary_placeholder_linter}}}
 \item{\code{\link{unreachable_code_linter}}}
 \item{\code{\link{which_grepl_linter}}}

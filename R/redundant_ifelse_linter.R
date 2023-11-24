@@ -108,6 +108,6 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
       lints <- c(lints, xml_nodes_to_lints(num_expr, source_expression, lint_message, type = "warning"))
     }
 
-    return(lints)
+    lints
   })
 }

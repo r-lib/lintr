@@ -94,6 +94,6 @@ regex_subset_linter <- function() {
       type = "warning"
     )
 
-    return(c(grep_lints, stringr_lints))
+    c(grep_lints, stringr_lints)
   })
 }
