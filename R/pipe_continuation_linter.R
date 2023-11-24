@@ -68,9 +68,6 @@ pipe_continuation_linter <- function() {
   ")
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
     xml <- source_expression$full_xml_parsed_content
 
     pipe_exprs <- xml_find_all(xml, xpath)
@@ -85,5 +82,5 @@ pipe_continuation_linter <- function() {
       ),
       type = "style"
     )
-  })
+  }, linter_level = "file")
 }

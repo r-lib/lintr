@@ -83,10 +83,6 @@ semicolon_linter <- function(allow_compound = FALSE, allow_trailing = FALSE) {
   compound_xpath <- "self::*[@line1 = following-sibling::*[1]/@line1]"
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
     xml <- source_expression$full_xml_parsed_content
     bad_exprs <- xml_find_all(xml, xpath)
     if (need_detection) {
@@ -99,5 +95,5 @@ semicolon_linter <- function(allow_compound = FALSE, allow_trailing = FALSE) {
       source_expression = source_expression,
       lint_message = msg
     )
-  })
+  }, linter_level = "file")
 }

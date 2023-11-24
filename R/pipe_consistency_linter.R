@@ -39,10 +39,6 @@ pipe_consistency_linter <- function(pipe = c("auto", "%>%", "|>")) {
   xpath_native <- "//PIPE"
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
     xml <- source_expression$full_xml_parsed_content
 
     match_magrittr <- xml_find_all(xml, xpath_magrittr)
@@ -78,5 +74,5 @@ pipe_consistency_linter <- function(pipe = c("auto", "%>%", "|>")) {
     } else {
       list()
     }
-  })
+  }, linter_level = "file")
 }

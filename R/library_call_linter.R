@@ -149,10 +149,6 @@ library_call_linter <- function(allow_preamble = TRUE) {
   ")
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
     xml <- source_expression$full_xml_parsed_content
 
     upfront_call_expr <- xml_find_all(xml, upfront_call_xpath)
@@ -213,5 +209,5 @@ library_call_linter <- function(allow_preamble = TRUE) {
     )
 
     c(upfront_call_lints, char_only_direct_lints, char_only_indirect_lints, consecutive_suppress_lints)
-  })
+  }, linter_level = "file")
 }

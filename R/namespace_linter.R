@@ -40,10 +40,6 @@
 #' @export
 namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
     xml <- source_expression$full_xml_parsed_content
 
     ns_nodes <- xml_find_all(xml, "//NS_GET | //NS_GET_INT")
@@ -120,7 +116,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     }
 
     lints
-  })
+  }, linter_level = "file")
 }
 
 namespace_symbols <- function(ns, exported = TRUE) {

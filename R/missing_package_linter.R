@@ -43,10 +43,6 @@ missing_package_linter <- function() {
   call_xpath <- paste(library_require_xpath, "|", load_require_namespace_xpath)
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
     xml <- source_expression$full_xml_parsed_content
 
     pkg_calls <- xml_find_all(xml, call_xpath)
@@ -65,5 +61,5 @@ missing_package_linter <- function() {
       lint_message = sprintf("Package '%s' is not installed.", pkg_names[missing_pkgs]),
       type = "warning"
     )
-  })
+  }, linter_level = "file")
 }

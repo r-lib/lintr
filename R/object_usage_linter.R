@@ -53,10 +53,6 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
   ")
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
     pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
 
     declared_globals <- try_silently(globalVariables(package = pkg_name %||% globalenv()))
@@ -126,7 +122,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
 
       xml_nodes_to_lints(nodes, source_expression = source_expression, lint_message = res$message, type = "warning")
     })
-  })
+  }, linter_level = "file")
 }
 
 make_check_env <- function(pkg_name, xml) {

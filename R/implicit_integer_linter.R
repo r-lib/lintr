@@ -52,10 +52,6 @@ implicit_integer_linter <- function(allow_colon = FALSE) {
     xpath <- "//NUM_CONST"
   }
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
     xml <- source_expression$full_xml_parsed_content
 
     numbers <- xml_find_all(xml, xpath)
@@ -68,7 +64,7 @@ implicit_integer_linter <- function(allow_colon = FALSE) {
       column_number_xpath = "number(./@col2 + 1)", # mark at end
       range_end_xpath = "number(./@col2 + 1)" # end after number for easy fixing (enter "L" or ".0")
     )
-  })
+  }, linter_level = "file")
 }
 
 is_implicit_integer <- function(s) {
