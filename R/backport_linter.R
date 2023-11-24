@@ -35,6 +35,11 @@
 #' @export
 backport_linter <- function(r_version = getRversion(), except = character()) {
   r_version <- normalize_r_version(r_version)
+
+  if (all(r_version >= R_system_version(names(backports)))) {
+    return(Linter(function(source_expression) list()))
+  }
+
   backport_blacklist <- backports[r_version < R_system_version(names(backports))]
   backport_blacklist <- lapply(backport_blacklist, setdiff, except)
 
@@ -42,9 +47,6 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-    if (all(r_version >= R_system_version(names(backports)))) {
       return(list())
     }
 
