@@ -157,6 +157,23 @@ return_linter <- function(
     msg <- "All functions must have an explicit return()."
   }
 
+  # for inline functions, terminal <expr> is a sibling of <FUNCTION>, otherwise
+  #   it's a descendant of the <expr> following <FUNCTION>
+  xpath <- glue("
+  //FUNCTION[parent::expr[{fun_expr_cond}]]
+    /following-sibling::expr[
+      (position() = last() and IF and not(ELSE))
+      or expr[position() = last() and IF and not(ELSE)]
+    ]
+  ")
+#' When an `if` statement in R is missing `else`, the alternative is implicitly
+#'   set to `NULL`. When the `if` statement comes at the end of a function
+#'   definition, then, there is an implicit return of `NULL`.
+paste(
+      "All functions with terminal if statements must have a corresponding terminal else clause,",
+      "or else a new explicit return() after the if statement."
+    )
+
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
