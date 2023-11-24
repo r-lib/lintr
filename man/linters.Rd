@@ -19,10 +19,10 @@ The following tags exist:
 \itemize{
 \item{\link[=best_practices_linters]{best_practices} (63 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (10 linters)}
-\item{\link[=configurable_linters]{configurable} (39 linters)}
+\item{\link[=configurable_linters]{configurable} (40 linters)}
 \item{\link[=consistency_linters]{consistency} (32 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
-\item{\link[=default_linters]{default} (25 linters)}
+\item{\link[=default_linters]{default} (26 linters)}
 \item{\link[=deprecated_linters]{deprecated} (4 linters)}
 \item{\link[=efficiency_linters]{efficiency} (32 linters)}
 \item{\link[=executing_linters]{executing} (6 linters)}
@@ -31,7 +31,7 @@ The following tags exist:
 \item{\link[=readability_linters]{readability} (65 linters)}
 \item{\link[=regex_linters]{regex} (4 linters)}
 \item{\link[=robustness_linters]{robustness} (17 linters)}
-\item{\link[=style_linters]{style} (39 linters)}
+\item{\link[=style_linters]{style} (40 linters)}
 }
 }
 \section{Linters}{
@@ -119,6 +119,7 @@ The following linters exist:
 \item{\code{\link{regex_subset_linter}} (tags: best_practices, efficiency, regex)}
 \item{\code{\link{rep_len_linter}} (tags: best_practices, consistency, readability)}
 \item{\code{\link{repeat_linter}} (tags: readability, style)}
+\item{\code{\link{return_linter}} (tags: configurable, default, style)}
 \item{\code{\link{routine_registration_linter}} (tags: best_practices, efficiency, robustness)}
 \item{\code{\link{sample_int_linter}} (tags: efficiency, readability, robustness)}
 \item{\code{\link{scalar_in_linter}} (tags: best_practices, consistency, efficiency, readability)}
