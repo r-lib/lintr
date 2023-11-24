@@ -101,6 +101,8 @@
 <code><a href="../reference/return_linter.html">return_linter()</a></code> also has an argument <code>return_style</code> (<code>"implicit"</code> by default) which checks that all functions confirm to the specified return style of <code>"implicit"</code> or <code>"explicit"</code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a> and <a href="https://github.com/MEO265" class="external-link">@MEO265</a>).</li>
 <li>
 <code>unnecessary_lambda_linter</code> is extended to encourage vectorized comparisons where possible, e.g. <code>sapply(x, sum) &gt; 0</code> instead of <code>sapply(x, function(x) sum(x) &gt; 0)</code> (part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Toggle this behavior with argument <code>allow_comparison</code>.</li>
+<li>
+<code><a href="../reference/Linter.html">Linter()</a></code> has a new argument <code>linter_level</code> (default <code>NA</code>). This is used by <code><a href="../reference/lint.html">lint()</a></code> to more efficiently check for expression levels than the idiom <code>if (!is_lint_level(...)) { return(list()) }</code> (<a href="https://github.com/r-lib/lintr/issues/2351" class="external-link">#2351</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>

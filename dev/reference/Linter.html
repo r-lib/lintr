@@ -68,7 +68,11 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">Linter</span><span class="op">(</span><span class="va">fun</span>, name <span class="op">=</span> <span class="fu">linter_auto_name</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">Linter</span><span class="op">(</span></span>
+<span>  <span class="va">fun</span>,</span>
+<span>  name <span class="op">=</span> <span class="fu">linter_auto_name</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  linter_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA_character_</span>, <span class="st">"file"</span>, <span class="st">"expression"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -80,6 +84,13 @@
 <dt>name</dt>
 <dd><p>Default name of the Linter.
 Lints produced by the linter will be labelled with <code>name</code> by default.</p></dd>
+
+
+<dt>linter_level</dt>
+<dd><p>Which level of expression is the linter working with?
+<code>"expression"</code> means an individual expression in <code>xml_parsed_content</code>, while <code>"file"</code> means all expressions
+in the current file are available in <code>full_xml_parsed_content</code>.
+<code>NA</code> means the linter will be run with both, expression-level and file-level source expressions.</p></dd>
 
 </dl></div>
     <div class="section level2">

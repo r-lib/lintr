@@ -119,6 +119,7 @@ for <a href="https://github.com/r-lib/lintr" class="external-link">lintr</a>.</p
 <span>    <span class="op">}</span></span>
 <span></span>
 <span>    <span class="va">xml</span> <span class="op">&lt;-</span> <span class="va">source_expression</span><span class="op">$</span><span class="va">xml_parsed_content</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">xml</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span>    <span class="va">bad_expr</span> <span class="op">&lt;-</span> <span class="fu">xml2</span><span class="fu">::</span><span class="fu"><a href="http://xml2.r-lib.org/reference/xml_find_all.html" class="external-link">xml_find_all</a></span><span class="op">(</span><span class="va">xml</span>, <span class="va">xpath</span><span class="op">)</span></span>
 <span></span>
@@ -128,7 +129,7 @@ for <a href="https://github.com/r-lib/lintr" class="external-link">lintr</a>.</p
 <span>      lint_message <span class="op">=</span> <span class="st">"Use explicit calls in magrittr pipes, i.e., `a %&gt;% foo` should be `a %&gt;% foo()`."</span>,</span>
 <span>      type <span class="op">=</span> <span class="st">"warning"</span></span>
 <span>    <span class="op">)</span></span>
-<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  <span class="op">}</span>, linter_level <span class="op">=</span> <span class="st">"expression"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>Let’s walk through the parts of the linter individually.</p>
 <div class="section level2">
@@ -241,6 +242,10 @@ long source file (e.g., 100s of expressions) – rather than run linters
 on every expression every time the file is updated, when caching is
 activated <code>lintr</code> will only run the linter again on
 expressions that have changed.</p>
+<p>Note that this check is unnecessary because we provided
+<code>linter_level = "expression"</code> which guarantees that
+<code>source_expression</code> will be at the expression level and not
+at the file level.</p>
 <p>Therefore, it is preferable to write expression-level linters
 whenever possible. Two types of exceptions observed in
 <code>lintr</code> are (1) when several or all expressions are
@@ -285,6 +290,10 @@ observed usage. In such cases, <code>xml_nodes_to_lint()</code> can
 conveniently accept a function in <code>lint_message</code> which takes
 a node as input and converts it to a customized message. See, for
 example, <code>seq_linter</code>.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">linter_level</span> <span class="op">=</span> <span class="st">"expression"</span></span></code></pre></div>
+<p>This is a more efficient way to implement the condition
+<code>if (!is_lint_level(source_expression, "expression"))</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="writing-linter-tests">Writing linter tests<a class="anchor" aria-label="anchor" href="#writing-linter-tests"></a>
@@ -297,7 +306,7 @@ unit testing framework, in particular, <a href="https://github.com/r-lib/lintr" 
 other testthat expectations.</p>
 <p>You can define tests inside separate <code>test_that</code> calls.
 Most of the linters use the same default form.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"returns the correct linting"</span>, {</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"returns the correct linting"</span>, {</span></code></pre></div>
 <p>You then test a series of expectations for the linter using
 <code>expect_lint</code>. Please see <code><a href="../reference/expect_lint.html">?expect_lint</a></code> for a
 full description of the parameters.</p>
@@ -305,12 +314,12 @@ full description of the parameters.</p>
 <ol style="list-style-type: decimal">
 <li>Linter returns no lints when there is nothing to lint, e.g.</li>
 </ol>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/expect_lint.html">expect_lint</a></span><span class="op">(</span><span class="st">"blah"</span>, <span class="cn">NULL</span>, <span class="fu"><a href="../reference/assignment_linter.html">assignment_linter</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Linter returns a lint when there is something to lint, e.g.</li>
 </ol>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/expect_lint.html">expect_lint</a></span><span class="op">(</span><span class="st">"blah=1"</span>,</span>
 <span>  <span class="fu">rex</span><span class="op">(</span><span class="st">"Use &lt;-, not =, for assignment."</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/assignment_linter.html">assignment_linter</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -319,27 +328,27 @@ full description of the parameters.</p>
 <li>As many edge cases as you can think of that might break it,
 e.g.</li>
 </ol>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/expect_lint.html">expect_lint</a></span><span class="op">(</span><span class="st">"fun((blah = fun(1)))"</span>,</span>
 <span>  <span class="fu">rex</span><span class="op">(</span><span class="st">"Use &lt;-, not =, for assignment."</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/assignment_linter.html">assignment_linter</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>You may want to test that additional <code>lint</code> attributes are
 correct, such as the type, line number, column number, e.g.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/expect_lint.html">expect_lint</a></span><span class="op">(</span><span class="st">"blah=1"</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>message <span class="op">=</span> <span class="st">"assignment"</span>, line_number <span class="op">=</span> <span class="fl">1</span>, column_number <span class="op">=</span> <span class="fl">5</span>, type <span class="op">=</span> <span class="st">"style"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/assignment_linter.html">assignment_linter</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Finally, it is a good idea to test that your linter reports multiple
 lints if needed, e.g.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_lint</span>(<span class="st">"blah=1; blah=2"</span>,</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(<span class="at">line_number =</span> <span class="dv">1</span>, <span class="at">column_number =</span> <span class="dv">5</span>),</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(<span class="at">line_number =</span> <span class="dv">1</span>, <span class="at">column_number =</span> <span class="dv">13</span>),</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">assignment_linter</span>()</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_lint</span>(<span class="st">"blah=1; blah=2"</span>,</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(<span class="at">line_number =</span> <span class="dv">1</span>, <span class="at">column_number =</span> <span class="dv">5</span>),</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(<span class="at">line_number =</span> <span class="dv">1</span>, <span class="at">column_number =</span> <span class="dv">13</span>),</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">assignment_linter</span>()</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>It is always better to write too many tests rather than too few.</p>
 </div>
 <div class="section level2">
