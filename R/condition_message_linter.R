@@ -57,11 +57,8 @@ condition_message_linter <- function() {
   ")
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
     sep_value <- get_r_string(bad_expr, xpath = "./expr/SYMBOL_SUB[text() = 'sep']/following-sibling::expr/STR_CONST")
@@ -75,5 +72,5 @@ condition_message_linter <- function() {
       '(using "" as a separator). For translatable strings, prefer using gettextf().'
     )
     xml_nodes_to_lints(bad_expr, source_expression = source_expression, lint_message = lint_message, type = "warning")
-  })
+  }, linter_level = "expression")
 }

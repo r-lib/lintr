@@ -70,11 +70,8 @@ is_numeric_linter <- function() {
   "
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     or_expr <- xml_find_all(xml, or_xpath)
     or_lints <- xml_nodes_to_lints(
@@ -107,5 +104,5 @@ is_numeric_linter <- function() {
     )
 
     c(or_lints, class_lints)
-  })
+  }, linter_level = "expression")
 }

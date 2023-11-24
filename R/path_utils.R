@@ -157,5 +157,5 @@ path_linter_factory <- function(path_function, message, linter, name = linter_au
         }
       }
     )
-  }, name = name)
+  }, name = name, linter_level = "expression")
 }

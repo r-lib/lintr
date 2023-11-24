@@ -23,9 +23,6 @@
 #' @export
 cyclocomp_linter <- function(complexity_limit = 15L) {
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
     complexity <- try_silently(
       cyclocomp::cyclocomp(parse(text = source_expression$content))
     )
@@ -45,5 +42,5 @@ cyclocomp_linter <- function(complexity_limit = 15L) {
       ranges = list(rep(col1, 2L)),
       line = source_expression$lines[1L]
     )
-  })
+  }, linter_level = "expression")
 }

@@ -28,6 +28,7 @@
   + to discourage many consecutive calls to `suppressMessages()` or `suppressPackageStartupMessages()` (part of #884, @MichaelChirico).
 * `return_linter()` also has an argument `return_style` (`"implicit"` by default) which checks that all functions confirm to the specified return style of `"implicit"` or `"explicit"` (part of #884, @MichaelChirico, @AshesITR and @MEO265).
 * `unnecessary_lambda_linter` is extended to encourage vectorized comparisons where possible, e.g. `sapply(x, sum) > 0` instead of `sapply(x, function(x) sum(x) > 0)` (part of #884, @MichaelChirico). Toggle this behavior with argument `allow_comparison`.
+* `Linter()` has a new argument `linter_level` (default `NA`). This is used by `lint()` to more efficiently check for expression levels than the idiom `if (!is_lint_level(...)) { return(list()) }` (#2351, @AshesITR).
 
 ### New linters
 
