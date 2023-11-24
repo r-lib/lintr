@@ -67,11 +67,11 @@ test_that("object_overwrite_linter blocks simple disallowed usages", {
   )
 
   expect_lint(
-    trim_some("
+    trim_some('
       foo <- function() {
-        \"+\" <- 2L
+        "+" <- 2L
       }
-    "),
+    '),
     rex::rex("'+' is an exported object from package 'base'."),
     linter
   )
