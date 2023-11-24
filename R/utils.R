@@ -158,6 +158,11 @@ reset_lang <- function(old_lang) {
 #' @param fun A function that takes a source file and returns `lint` objects.
 #' @param name Default name of the Linter.
 #' Lints produced by the linter will be labelled with `name` by default.
+#' @param linter_level Which level of expression is the linter working with?
+#'   `"expression"` means an individual expression in `xml_parsed_content`, while `"file"` means all expressions
+#'   in the current file are available in `full_xml_parsed_content`.
+#'   `NA` means the linter will be run with both, expression-level and file-level source expressions.
+#'
 #' @return The same function with its class set to 'linter'.
 #' @export
 Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character_, "file", "expression")) { # nolint: object_name, line_length.
