@@ -882,3 +882,80 @@ test_that("return_linter lints `message`, `warning` and `stopifnot`", {
     linter
   )
 })
+
+test_that("non-if returns are skipped under allow_implicit_else = FALSE", {
+  lines <- c(
+    "foo <- function(bar) {",
+    "  bar",
+    "}"
+  )
+  expect_lint(lines, NULL, return_linter(allow_implicit_else = FALSE))
+})
+
+test_that("if/else don't throw a lint under allow_implicit_else = FALSE", {
+  lines <- c(
+    "foo <- function(bar) {",
+    "  if (TRUE) {",
+    "    return(bar)",
+    "  } else {",
+    "    return(NULL)",
+    "  }",
+    "}"
+  )
+  expect_lint(lines, NULL, return_linter(allow_implicit_else = FALSE))
+})
+
+test_that("implicit else outside a function doesn't lint under allow_implicit_else = FALSE", {
+  expect_lint("if(TRUE) TRUE", NULL, return_linter(allow_implicit_else = FALSE))
+})
+
+test_that("allow_implicit_else = FALSE identifies a simple implicit else", {
+  lines <- c(
+    "foo <- function(bar) {",
+    "  if (TRUE) {",
+    "    bar",
+    "  }",
+    "}"
+  )
+  expect_lint(
+    lines,
+    rex::rex("All functions with terminal if statements must"),
+    return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("allow_implicit_else = FALSE finds implicit else with nested if+else", {
+  lines <- c(
+    "foo <- function() {",
+    "  if (TRUE) {",
+    "    if (TRUE) {",
+    "      FALSE",
+    "    } else {",
+    "      TRUE",
+    "    }",
+    "  }",
+    "}"
+  )
+  expect_lint(
+    lines,
+    rex::rex("All functions with terminal if statements must"),
+    return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("allow_implicit_else = FALSE works on anonymous/inline functions", {
+  expect_lint(
+    "lapply(rnorm(10), function(x) if (TRUE) x + 1)",
+    rex::rex("All functions with terminal if statements must"),
+    return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("allow_implicit_else = FALSE skips side-effect functions like .onLoad", {
+  lines <- c(
+    ".onAttach <- function(libname, pkgname) {",
+    "  if (TRUE) foo()",
+    "}"
+  )
+  expect_lint(lines, NULL, return_linter(allow_implicit_else = FALSE))
+})
