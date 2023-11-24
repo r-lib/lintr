@@ -33,10 +33,6 @@ expect_s4_class_linter <- function() {
   "
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
 
     # TODO(michaelchirico): also catch expect_{equal,identical}(methods::is(x), k).
@@ -52,5 +48,5 @@ expect_s4_class_linter <- function() {
       ),
       type = "warning"
     )
-  })
+  }, linter_level = "expression")
 }

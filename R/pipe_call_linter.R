@@ -27,10 +27,6 @@ pipe_call_linter <- function() {
   xpath <- glue("//SPECIAL[{ xp_text_in_table(pipes) }]/following-sibling::expr[*[1][self::SYMBOL]]")
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
 
     bad_expr <- xml_find_all(xml, xpath)
@@ -43,5 +39,5 @@ pipe_call_linter <- function() {
         sprintf("Use explicit calls in magrittr pipes, i.e., `a %1$s foo` should be `a %1$s foo()`.", pipe),
       type = "warning"
     )
-  })
+  }, linter_level = "expression")
 }

@@ -160,10 +160,6 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   symbol_xpath <- "expr[last()]//expr[SYMBOL_FUNCTION_CALL[text() != 'return']]"
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
 
     default_fun_expr <- xml_find_all(xml, default_fun_xpath)
@@ -223,5 +219,5 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
     )
 
     c(default_fun_lints, inner_comparison_lints, purrr_fun_lints)
-  })
+  }, linter_level = "expression")
 }

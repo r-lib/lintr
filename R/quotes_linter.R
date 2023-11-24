@@ -61,13 +61,9 @@ quotes_linter <- function(delimiter = c('"', "'")) {
   }
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     string_exprs <- xml_find_all(source_expression$xml_parsed_content, "//STR_CONST")
     is_bad <- re_matches(xml_text(string_exprs), quote_regex)
 
     xml_nodes_to_lints(string_exprs[is_bad], source_expression, lint_message)
-  })
+  }, linter_level = "expression")
 }

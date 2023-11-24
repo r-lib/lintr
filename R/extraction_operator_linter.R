@@ -62,10 +62,6 @@ extraction_operator_linter <- function() {
   ")
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
     bad_exprs <- xml_find_all(xml, xpath)
     msgs <- sprintf("Use `[[` instead of `%s` to extract an element.", xml_text(bad_exprs))
@@ -76,5 +72,5 @@ extraction_operator_linter <- function() {
       lint_message = msgs,
       type = "warning"
     )
-  })
+  }, linter_level = "expression")
 }

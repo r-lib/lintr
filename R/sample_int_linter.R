@@ -66,10 +66,6 @@ sample_int_linter <- function() {
   ")
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
 
     bad_expr <- xml_find_all(xml, xpath)
@@ -84,5 +80,5 @@ sample_int_linter <- function() {
       lint_message = glue("sample.int(n, m, ...) is preferable to sample({original}, m, ...)."),
       type = "warning"
     )
-  })
+  }, linter_level = "expression")
 }

@@ -64,10 +64,6 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
   xpath <- paste(paste0("//", operator_nodes), collapse = " | ")
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
 
     bad_op <- xml_find_all(xml, xpath)
@@ -79,5 +75,5 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
     lint_message[has_alternative] <- paste(lint_message[has_alternative], alternative[has_alternative])
 
     xml_nodes_to_lints(bad_op, source_expression, lint_message, type = "warning")
-  })
+  }, linter_level = "expression")
 }

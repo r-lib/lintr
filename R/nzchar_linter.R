@@ -93,10 +93,6 @@ nzchar_linter <- function() {
   )
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
 
     comparison_expr <- xml_find_all(xml, comparison_xpath)
@@ -124,5 +120,5 @@ nzchar_linter <- function() {
     )
 
     c(comparison_lints, nchar_lints)
-  })
+  }, linter_level = "expression")
 }

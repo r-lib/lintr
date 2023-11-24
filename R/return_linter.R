@@ -158,10 +158,6 @@ return_linter <- function(
   }
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
 
     xml_nodes <- xml_find_all(xml, xpath)
@@ -172,5 +168,5 @@ return_linter <- function(
       lint_message = msg,
       type = "style"
     )
-  })
+  }, linter_level = "expression")
 }

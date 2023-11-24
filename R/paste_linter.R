@@ -162,10 +162,6 @@ paste_linter <- function(allow_empty_sep = FALSE,
     'Note that paste() converts empty inputs to "", whereas file.path() leaves it empty.'
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
     optional_lints <- list()
 
@@ -254,7 +250,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
     }
 
     c(optional_lints, paste0_sep_lints, paste_strrep_lints)
-  })
+  }, linter_level = "expression")
 }
 
 check_is_not_file_path <- function(expr, allow_file_path) {

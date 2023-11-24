@@ -61,10 +61,6 @@ comparison_negation_linter <- function() {
   ")
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
 
     bad_expr <- xml_find_all(xml, xpath)
@@ -88,5 +84,5 @@ comparison_negation_linter <- function() {
       lint_message = glue("Use x {inverse} y, not !(x {comparator_text} y)."),
       type = "warning"
     )
-  })
+  }, linter_level = "expression")
 }

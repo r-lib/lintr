@@ -70,10 +70,18 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     return(exclude(lints, lines = lines, linter_names = names(linters), ...))
   }
 
+  file_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "file")]
+  expression_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "expression")]
+
   lints <- list()
   if (!is_tainted(source_expressions$lines)) {
     for (expr in source_expressions$expressions) {
-      for (linter in names(linters)) {
+      if (is_lint_level(expr, "expression")) {
+        necessary_linters <- expression_linter_names
+      } else {
+        necessary_linters <- file_linter_names
+      }
+      for (linter in necessary_linters) {
         # use withCallingHandlers for friendlier failures on unexpected linter errors
         lints[[length(lints) + 1L]] <- withCallingHandlers(
           get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),

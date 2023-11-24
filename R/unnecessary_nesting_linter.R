@@ -142,10 +142,6 @@ unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
   ")
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
 
     if_else_exit_expr <- xml_find_all(xml, if_else_exit_xpath)
@@ -170,5 +166,5 @@ unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
     )
 
     c(if_else_exit_lints, unnecessary_brace_lints)
-  })
+  }, linter_level = "expression")
 }

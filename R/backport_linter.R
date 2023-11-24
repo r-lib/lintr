@@ -46,10 +46,6 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
   names_xpath <- "//SYMBOL | //SYMBOL_FUNCTION_CALL"
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
 
     all_names_nodes <- xml_find_all(xml, names_xpath)
@@ -79,7 +75,7 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
       lint_message = lint_message,
       type = "warning"
     )
-  })
+  }, linter_level = "expression")
 }
 
 normalize_r_version <- function(r_version) {
