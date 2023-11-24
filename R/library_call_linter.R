@@ -150,6 +150,7 @@ library_call_linter <- function(allow_preamble = TRUE) {
 
   Linter(function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
+    if (is.null(xml)) return(list())
 
     upfront_call_expr <- xml_find_all(xml, upfront_call_xpath)
 

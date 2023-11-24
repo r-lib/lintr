@@ -80,7 +80,9 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
 
 
   Linter(function(source_expression) {
-    matched_nodes <- xml_find_all(source_expression$xml_parsed_content, xpath)
+    xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
+    matched_nodes <- xml_find_all(xml, xpath)
     fun_names <- get_r_string(matched_nodes)
 
     msgs <- vapply(

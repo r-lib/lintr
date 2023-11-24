@@ -58,6 +58,7 @@ condition_message_linter <- function() {
 
   Linter(function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
     sep_value <- get_r_string(bad_expr, xpath = "./expr/SYMBOL_SUB[text() = 'sep']/following-sibling::expr/STR_CONST")

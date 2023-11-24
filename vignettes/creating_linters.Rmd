@@ -33,6 +33,7 @@ pipe_call_linter <- function() {
     }
 
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 

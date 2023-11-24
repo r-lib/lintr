@@ -47,6 +47,7 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
 
   Linter(function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     all_names_nodes <- xml_find_all(xml, names_xpath)
     all_names <- xml_text(all_names_nodes)

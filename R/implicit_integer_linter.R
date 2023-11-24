@@ -53,6 +53,7 @@ implicit_integer_linter <- function(allow_colon = FALSE) {
   }
   Linter(function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
+    if (is.null(xml)) return(list())
 
     numbers <- xml_find_all(xml, xpath)
 

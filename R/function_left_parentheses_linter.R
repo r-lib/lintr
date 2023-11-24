@@ -59,6 +59,7 @@ function_left_parentheses_linter <- function() { # nolint: object_length.
 
   Linter(function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     bad_line_fun_exprs <- xml_find_all(xml, bad_line_fun_xpath)
     bad_line_fun_lints <- xml_nodes_to_lints(
