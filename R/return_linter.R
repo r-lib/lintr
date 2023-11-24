@@ -76,6 +76,12 @@ return_linter <- function(
     except = NULL) {
   return_style <- match.arg(return_style)
 
+  if (!allow_implicit_else || return_style == "explicit") {
+    # See `?.onAttach`; these functions are all exclusively used for their
+    #   side-effects, so implicit return is generally acceptable
+    except <- union(special_funs, except)
+  }
+
   if (return_style == "implicit") {
     return_xpath <- "
       (//FUNCTION | //OP-LAMBDA)
@@ -89,11 +95,6 @@ return_linter <- function(
     "
     return_msg <- "Use implicit return behavior; explicit return() is not needed."
   } else {
-    # See `?.onAttach`; these functions are all exclusively used for their
-    #   side-effects, so implicit return is generally acceptable
-
-    except <- union(special_funs, except)
-
     base_return_functions <- c(
       # Normal calls
       "return", "stop", "q", "quit",
@@ -179,7 +180,7 @@ return_linter <- function(
     #   it's a descendant of the <expr> following <FUNCTION>
     implicit_else_xpath <- glue("
     //FUNCTION[not(
-      parent::expr/preceding-sibling::expr/SYMBOL[{ xp_text_in_table(except) }])
+      parent::expr/preceding-sibling::expr/SYMBOL[{ xp_text_in_table(except) }]
     )]
       /following-sibling::expr[
         (position() = last() and IF and not(ELSE))
