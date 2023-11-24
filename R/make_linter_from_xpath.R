@@ -24,10 +24,6 @@ make_linter_from_xpath <- function(xpath,
 
   function() {
     Linter(function(source_expression) {
-      if (!is_lint_level(source_expression, level)) {
-        return(list())
-      }
-
       xml <- source_expression[[xml_key]]
 
       expr <- xml_find_all(xml, xpath)
@@ -38,6 +34,6 @@ make_linter_from_xpath <- function(xpath,
         lint_message = lint_message,
         type = type
       )
-    })
+    }, linter_level = level)
   }
 }
