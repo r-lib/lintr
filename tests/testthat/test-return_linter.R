@@ -930,6 +930,8 @@ test_that("allow_implicit_else = FALSE identifies a simple implicit else", {
 })
 
 test_that("allow_implicit_else = FALSE finds implicit else with nested if+else", {
+  lint_msg <- rex::rex("All functions with terminal if statements must have a corresponding terminal else clause")
+
   expect_lint(
     trim_some("
       foo <- function() {
@@ -942,8 +944,24 @@ test_that("allow_implicit_else = FALSE finds implicit else with nested if+else",
         }
       }
     "),
-    rex::rex("All functions with terminal if statements must"),
+    lint_msg,
     return_linter(allow_implicit_else = FALSE)
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        if (TRUE) {
+          if (TRUE) {
+            return(FALSE)
+          } else {
+            return(TRUE)
+          }
+        }
+      }
+    "),
+    lint_msg,
+    return_linter(return_style = "explicit", allow_implicit_else = FALSE)
   )
 })
 
@@ -964,5 +982,17 @@ test_that("allow_implicit_else = FALSE skips side-effect functions like .onLoad"
     "),
     NULL,
     return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("allow_implicit_else = FALSE + explicit returns skips side-effect functions like .onLoad", {
+  expect_lint(
+    trim_some("
+      .onAttach <- function(libname, pkgname) {
+        if (TRUE) return(foo())
+      }
+    "),
+    NULL,
+    return_linter(return_style = "explicit", allow_implicit_else = FALSE)
   )
 })
