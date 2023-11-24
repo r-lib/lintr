@@ -174,18 +174,22 @@ return_linter <- function(
     return_msg <- "All functions must have an explicit return()."
   }
 
-  # for inline functions, terminal <expr> is a sibling of <FUNCTION>, otherwise
-  #   it's a descendant of the <expr> following <FUNCTION>
-  implicit_else_xpath <- glue("
-  //FUNCTION[parent::expr[{fun_expr_cond}]]
-    /following-sibling::expr[
-      (position() = last() and IF and not(ELSE))
-      or expr[position() = last() and IF and not(ELSE)]
-    ]
-  ")
+  if (!allow_implicit_else) {
+    # for inline functions, terminal <expr> is a sibling of <FUNCTION>, otherwise
+    #   it's a descendant of the <expr> following <FUNCTION>
+    implicit_else_xpath <- glue("
+    //FUNCTION[not(
+      parent::expr/preceding-sibling::expr/SYMBOL[{ xp_text_in_table(except) }])
+    )]
+      /following-sibling::expr[
+        (position() = last() and IF and not(ELSE))
+        or expr[position() = last() and IF and not(ELSE)]
+      ]
+    ")
 
-  implicit_else_msg <-
-    "All functions with terminal if statements must have a corresponding terminal else clause"
+    implicit_else_msg <-
+      "All functions with terminal if statements must have a corresponding terminal else clause"
+  }
 
   Linter(function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
