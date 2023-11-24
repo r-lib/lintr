@@ -4,7 +4,11 @@
 \alias{Linter}
 \title{Create a \code{linter} closure}
 \usage{
-Linter(fun, name = linter_auto_name())
+Linter(
+  fun,
+  name = linter_auto_name(),
+  linter_level = c(NA_character_, "file", "expression")
+)
 }
 \arguments{
 \item{fun}{A function that takes a source file and returns \code{lint} objects.}
