@@ -8,8 +8,8 @@
 <meta name="description" content="lintr">
 <title>Using lintr • lintr</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Using lintr">
 <meta property="og:description" content="lintr">
@@ -436,38 +436,43 @@ character(0)</td>
 <td align="left">delimiter = “"”</td>
 </tr>
 <tr class="odd">
+<td align="left">return_linter</td>
+<td align="left">return_style = “implicit”, return_functions = NULL,
+except = NULL</td>
+</tr>
+<tr class="even">
 <td align="left">semicolon_linter</td>
 <td align="left">allow_compound = FALSE, allow_trailing = FALSE</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">seq_linter</td>
 <td align="left"></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">spaces_inside_linter</td>
 <td align="left"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">spaces_left_parentheses_linter</td>
 <td align="left"></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">T_and_F_symbol_linter</td>
 <td align="left"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">trailing_blank_lines_linter</td>
 <td align="left"></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">trailing_whitespace_linter</td>
 <td align="left">allow_empty_lines = FALSE, allow_in_strings = TRUE</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">vector_logic_linter</td>
 <td align="left"></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">whitespace_linter</td>
 <td align="left"></td>
 </tr>
@@ -582,22 +587,22 @@ using</p>
 <span><span class="co">#&gt;  [77] "quotes_linter"                    "redundant_equals_linter"         </span></span>
 <span><span class="co">#&gt;  [79] "redundant_ifelse_linter"          "regex_subset_linter"             </span></span>
 <span><span class="co">#&gt;  [81] "rep_len_linter"                   "repeat_linter"                   </span></span>
-<span><span class="co">#&gt;  [83] "routine_registration_linter"      "sample_int_linter"               </span></span>
-<span><span class="co">#&gt;  [85] "scalar_in_linter"                 "semicolon_linter"                </span></span>
-<span><span class="co">#&gt;  [87] "seq_linter"                       "sort_linter"                     </span></span>
-<span><span class="co">#&gt;  [89] "spaces_inside_linter"             "spaces_left_parentheses_linter"  </span></span>
-<span><span class="co">#&gt;  [91] "sprintf_linter"                   "stopifnot_all_linter"            </span></span>
-<span><span class="co">#&gt;  [93] "string_boundary_linter"           "strings_as_factors_linter"       </span></span>
-<span><span class="co">#&gt;  [95] "system_file_linter"               "T_and_F_symbol_linter"           </span></span>
-<span><span class="co">#&gt;  [97] "terminal_close_linter"            "todo_comment_linter"             </span></span>
-<span><span class="co">#&gt;  [99] "trailing_blank_lines_linter"      "trailing_whitespace_linter"      </span></span>
-<span><span class="co">#&gt; [101] "undesirable_function_linter"      "undesirable_operator_linter"     </span></span>
-<span><span class="co">#&gt; [103] "unnecessary_concatenation_linter" "unnecessary_lambda_linter"       </span></span>
-<span><span class="co">#&gt; [105] "unnecessary_nested_if_linter"     "unnecessary_nesting_linter"      </span></span>
-<span><span class="co">#&gt; [107] "unnecessary_placeholder_linter"   "unreachable_code_linter"         </span></span>
-<span><span class="co">#&gt; [109] "unused_import_linter"             "vector_logic_linter"             </span></span>
-<span><span class="co">#&gt; [111] "which_grepl_linter"               "whitespace_linter"               </span></span>
-<span><span class="co">#&gt; [113] "yoda_test_linter"</span></span></code></pre></div>
+<span><span class="co">#&gt;  [83] "return_linter"                    "routine_registration_linter"     </span></span>
+<span><span class="co">#&gt;  [85] "sample_int_linter"                "scalar_in_linter"                </span></span>
+<span><span class="co">#&gt;  [87] "semicolon_linter"                 "seq_linter"                      </span></span>
+<span><span class="co">#&gt;  [89] "sort_linter"                      "spaces_inside_linter"            </span></span>
+<span><span class="co">#&gt;  [91] "spaces_left_parentheses_linter"   "sprintf_linter"                  </span></span>
+<span><span class="co">#&gt;  [93] "stopifnot_all_linter"             "string_boundary_linter"          </span></span>
+<span><span class="co">#&gt;  [95] "strings_as_factors_linter"        "system_file_linter"              </span></span>
+<span><span class="co">#&gt;  [97] "T_and_F_symbol_linter"            "terminal_close_linter"           </span></span>
+<span><span class="co">#&gt;  [99] "todo_comment_linter"              "trailing_blank_lines_linter"     </span></span>
+<span><span class="co">#&gt; [101] "trailing_whitespace_linter"       "undesirable_function_linter"     </span></span>
+<span><span class="co">#&gt; [103] "undesirable_operator_linter"      "unnecessary_concatenation_linter"</span></span>
+<span><span class="co">#&gt; [105] "unnecessary_lambda_linter"        "unnecessary_nested_if_linter"    </span></span>
+<span><span class="co">#&gt; [107] "unnecessary_nesting_linter"       "unnecessary_placeholder_linter"  </span></span>
+<span><span class="co">#&gt; [109] "unreachable_code_linter"          "unused_import_linter"            </span></span>
+<span><span class="co">#&gt; [111] "vector_logic_linter"              "which_grepl_linter"              </span></span>
+<span><span class="co">#&gt; [113] "whitespace_linter"                "yoda_test_linter"</span></span></code></pre></div>
 <p>If you want to use all available linters, you can include this in
 your <code>.lintr</code> file:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">linters</span><span class="kw">:</span><span class="at"> all_linters()</span></span></code></pre></div>
