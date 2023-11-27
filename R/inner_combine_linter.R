@@ -84,11 +84,8 @@ inner_combine_linter <- function() {
   ")
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
 
@@ -101,7 +98,7 @@ inner_combine_linter <- function() {
       )
     )
     xml_nodes_to_lints(bad_expr, source_expression = source_expression, lint_message, type = "warning")
-  })
+  }, linter_level = "expression")
 }
 
 #' Make the XPath condition ensuring an argument matches across calls
@@ -112,7 +109,7 @@ arg_match_condition <- function(arg) {
   this_symbol <- sprintf("SYMBOL_SUB[text() = '%s']", arg)
   following_symbol <- sprintf("following-sibling::expr/%s", this_symbol)
   next_expr <- "following-sibling::expr[1]"
-  return(xp_or(
+  xp_or(
     sprintf("not(%s) and not(%s)", this_symbol, following_symbol),
     xp_and(
       this_symbol,
@@ -122,7 +119,7 @@ arg_match_condition <- function(arg) {
         this_symbol, following_symbol, next_expr
       )
     )
-  ))
+  )
 }
 
 build_arg_condition <- function(calls, arguments) {

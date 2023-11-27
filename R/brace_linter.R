@@ -147,11 +147,8 @@ brace_linter <- function(allow_single_line = FALSE) {
   "
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
     lints <- list()
 
     lints <- c(
@@ -211,5 +208,5 @@ brace_linter <- function(allow_single_line = FALSE) {
     )
 
     lints
-  })
+  }, linter_level = "expression")
 }

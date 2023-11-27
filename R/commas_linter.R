@@ -78,10 +78,8 @@ commas_linter <- function(allow_trailing = FALSE) {
   )
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     before_lints <- xml_nodes_to_lints(
       xml_find_all(xml, xpath_before),
@@ -100,5 +98,5 @@ commas_linter <- function(allow_trailing = FALSE) {
     )
 
     c(before_lints, after_lints)
-  })
+  }, linter_level = "expression")
 }

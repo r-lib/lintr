@@ -18,6 +18,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{brace_linter}}}
 \item{\code{\link{commas_linter}}}
 \item{\code{\link{conjunct_test_linter}}}
+\item{\code{\link{consecutive_mutate_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{duplicate_argument_linter}}}
 \item{\code{\link{fixed_regex_linter}}}
@@ -40,6 +41,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{pipe_consistency_linter}}}
 \item{\code{\link{quotes_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
+\item{\code{\link{return_linter}}}
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{string_boundary_linter}}}
 \item{\code{\link{todo_comment_linter}}}
@@ -47,6 +49,8 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
 \item{\code{\link{unnecessary_concatenation_linter}}}
+\item{\code{\link{unnecessary_lambda_linter}}}
+\item{\code{\link{unnecessary_nesting_linter}}}
 \item{\code{\link{unused_import_linter}}}
 }
 }

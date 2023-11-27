@@ -58,11 +58,8 @@ function_left_parentheses_linter <- function() { # nolint: object_length.
   ]"
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     bad_line_fun_exprs <- xml_find_all(xml, bad_line_fun_xpath)
     bad_line_fun_lints <- xml_nodes_to_lints(
@@ -97,5 +94,5 @@ function_left_parentheses_linter <- function() { # nolint: object_length.
     )
 
     c(bad_line_fun_lints, bad_line_call_lints, bad_col_fun_lints, bad_col_call_lints)
-  })
+  }, linter_level = "expression")
 }

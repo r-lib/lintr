@@ -80,10 +80,9 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
 
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-    matched_nodes <- xml_find_all(source_expression$xml_parsed_content, xpath)
+    xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
+    matched_nodes <- xml_find_all(xml, xpath)
     fun_names <- get_r_string(matched_nodes)
 
     msgs <- vapply(
@@ -104,5 +103,5 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       source_expression = source_expression,
       lint_message = unname(msgs[fun_names])
     )
-  })
+  }, linter_level = "expression")
 }

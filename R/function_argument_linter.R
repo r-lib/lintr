@@ -60,11 +60,8 @@ function_argument_linter <- function() {
   "
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
 
@@ -79,5 +76,5 @@ function_argument_linter <- function() {
       lint_message = paste0("Arguments without defaults should come before arguments with defaults.", missing_note),
       type = "style"
     )
-  })
+  }, linter_level = "expression")
 }

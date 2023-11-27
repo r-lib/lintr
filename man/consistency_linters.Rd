@@ -18,8 +18,10 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{comparison_negation_linter}}}
 \item{\code{\link{condition_message_linter}}}
 \item{\code{\link{consecutive_assertion_linter}}}
+\item{\code{\link{consecutive_mutate_linter}}}
 \item{\code{\link{function_argument_linter}}}
 \item{\code{\link{if_not_else_linter}}}
+\item{\code{\link{if_switch_linter}}}
 \item{\code{\link{implicit_else_return_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{inner_combine_linter}}}
@@ -41,6 +43,7 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{system_file_linter}}}
 \item{\code{\link{T_and_F_symbol_linter}}}
+\item{\code{\link{unnecessary_nesting_linter}}}
 \item{\code{\link{which_grepl_linter}}}
 \item{\code{\link{whitespace_linter}}}
 }

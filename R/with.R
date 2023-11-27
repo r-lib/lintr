@@ -135,7 +135,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
 #' - [available_linters] to get a data frame of available linters.
 #' - [linters] for a complete list of linters available in lintr.
 #' @export
-all_linters <- function(packages = "lintr", ...) {
+all_linters <- function(..., packages = "lintr") {
   linters_with_tags(tags = NULL, packages = packages, ...)
 }
 

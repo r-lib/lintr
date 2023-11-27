@@ -82,11 +82,8 @@ expect_identical_linter <- function() {
   xpath <- paste(expect_equal_xpath, "|", expect_true_xpath)
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
     xml_nodes_to_lints(
@@ -98,5 +95,5 @@ expect_identical_linter <- function() {
       ),
       type = "warning"
     )
-  })
+  }, linter_level = "expression")
 }

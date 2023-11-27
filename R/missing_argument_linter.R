@@ -44,11 +44,8 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
   to_function_xpath <- "string(./preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)"
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
     xml <- source_expression$full_xml_parsed_content
+    if (is.null(xml)) return(list())
 
     missing_args <- xml_find_all(xml, xpath)
     function_call_name <- get_r_string(xml_find_chr(missing_args, to_function_xpath))
@@ -58,5 +55,5 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
       source_expression = source_expression,
       lint_message = "Missing argument in function call."
     )
-  })
+  }, linter_level = "file")
 }

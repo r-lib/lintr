@@ -10,15 +10,25 @@
    + `with_defaults()`.
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
    + Helper `with_defaults()`.
+* `all_linters()` has signature `all_linters(..., packages)` rather than `all_linters(packages, ...)` (#2332, @MichaelChirico). This forces `packages=` to be supplied by name and will break users who rely on supplying `packages=` positionally, of which we found none searching GitHub.
 
 ## Bug fixes
 
 * `object_name_linter()` no longer errors when user-supplied `regexes=` have capture groups (#2188, @MichaelChirico).
 
+## Changes to default linters
+
+* New default linter `return_linter()` for the style guide rule that terminal returns should be left implicit (#1100, @MEO265).
+
 ## New and improved features
 
 * More helpful errors for invalid configs (#2253, @MichaelChirico).
-* `library_call_linter()` is extended to encourage all packages to be attached with `library(symbol)`, not `library("symbol", character.only = TRUE)` or "vectorized" approaches looping over package names (part of #884, @MichaelChirico).
+* `library_call_linter()` is extended
+  + to encourage all packages to be attached with `library(symbol)`, not `library("symbol", character.only = TRUE)` or "vectorized" approaches looping over package names (part of #884, @MichaelChirico).
+  + to discourage many consecutive calls to `suppressMessages()` or `suppressPackageStartupMessages()` (part of #884, @MichaelChirico).
+* `return_linter()` also has an argument `return_style` (`"implicit"` by default) which checks that all functions confirm to the specified return style of `"implicit"` or `"explicit"` (part of #884, @MichaelChirico, @AshesITR and @MEO265).
+* `unnecessary_lambda_linter` is extended to encourage vectorized comparisons where possible, e.g. `sapply(x, sum) > 0` instead of `sapply(x, function(x) sum(x) > 0)` (part of #884, @MichaelChirico). Toggle this behavior with argument `allow_comparison`.
+* `Linter()` has a new argument `linter_level` (default `NA`). This is used by `lint()` to more efficiently check for expression levels than the idiom `if (!is_lint_level(...)) { return(list()) }` (#2351, @AshesITR).
 
 ### New linters
 
@@ -32,9 +42,14 @@
 * `list_comparison_linter()` for discouraging comparisons on the output of `lapply()`, e.g. `lapply(x, sum) > 10` (part of #884, @MichaelChirico).
 * `print_linter()` for discouraging usage of `print()` on string literals like `print("Reached here")` or `print(paste("Found", nrow(DF), "rows."))` (#1894, @MichaelChirico).
 * `implicit_else_return_linter()` for encouraging an explicit `return()` statement even in the case of a terminal `if` statement where the `else` clause is left implicit (part of #884, @MichaelChirico).
+* `unnecessary_nesting_linter()` for discouraging overly-nested code where an early return or eliminated sub-expression (inside '{') is preferable (part of #884, @MichaelChirico).
+* `consecutive_mutate_linter()` for encouraging consecutive calls to `dplyr::mutate()` to be combined (part of #884, @MichaelChirico).
+* `if_switch_linter()` for encouraging `switch()` over repeated `if`/`else` tests (part of #884, @MichaelChirico).
 * `nested_pipe_linter()` for discouraging pipes within pipes, e.g. `df1 %>% inner_join(df2 %>% select(a, b))` (part of #884, @MichaelChirico).
 * `nrow_subset_linter()` for discouraging usage like `nrow(subset(x, conditions))` in favor of something like `with(x, sum(conditions))` which doesn't require a full subset of `x` (part of #884, @MichaelChirico).
 * `pipe_return_linter()` for discouraging usage of `return()` inside a {magrittr} pipeline (part of #884, @MichaelChirico).
+* `one_call_pipe_linter()` for discouraging one-step pipelines like `x |> as.character()` (#2330 and part of #884, @MichaelChirico).
+* `object_overwrite_linter()` for discouraging re-use of upstream package exports as local variables (#2344, #2346 and part of #884, @MichaelChirico and @AshesITR).
 
 ### Lint accuracy fixes: removing false positives
 

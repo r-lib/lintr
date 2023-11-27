@@ -111,11 +111,8 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
   )
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
     xml <- source_expression$full_xml_parsed_content
+    if (is.null(xml)) return(list())
 
     assignments <- xml_find_all(xml, object_name_xpath)
 
@@ -146,7 +143,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
       lint_message = lint_message,
       type = "style"
     )
-  })
+  }, linter_level = "file")
 }
 
 check_style <- function(nms, style, generics = character()) {
