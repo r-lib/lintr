@@ -42,10 +42,8 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
 
   backport_blacklist <- backports[r_version < R_system_version(names(backports))]
   backport_blacklist <- lapply(backport_blacklist, setdiff, except)
-  backport_index <- stats::setNames(
-    rep(names(backport_blacklist), times = lengths(backport_blacklist)),
-    unlist(backport_blacklist)
-  )
+  backport_index <- rep(names(backport_blacklist), times = lengths(backport_blacklist))
+  names(backport_index) <- unlist(backport_blacklist)
 
   names_xpath <- "//SYMBOL | //SYMBOL_FUNCTION_CALL"
 
