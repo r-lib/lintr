@@ -116,11 +116,8 @@ unreachable_code_linter <- function() {
   }
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     expr_return_stop <- xml_find_all(xml, xpath_return_stop)
 
@@ -159,5 +156,5 @@ unreachable_code_linter <- function() {
     )
 
     c(lints_return_stop, lints_next_break, lints_if_while, lints_else)
-  })
+  }, linter_level = "expression")
 }

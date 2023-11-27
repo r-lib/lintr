@@ -3,10 +3,6 @@ make_linter_from_regex <- function(regex,
                                    lint_msg) {
   function() {
     Linter(function(source_expression) {
-      if (!is_lint_level(source_expression, "file")) {
-        return(list())
-      }
-
       all_matches <- re_matches(
         source_expression[["file_lines"]],
         regex,
@@ -32,7 +28,7 @@ make_linter_from_regex <- function(regex,
         )
       })
       lints[lengths(lints) > 0L]
-    })
+    }, linter_level = "file")
   }
 }
 

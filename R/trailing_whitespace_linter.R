@@ -42,10 +42,6 @@
 #' @export
 trailing_whitespace_linter <- function(allow_empty_lines = FALSE, allow_in_strings = TRUE) {
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
     res <- re_matches(
       source_expression$file_lines,
       rex(blanks, end),
@@ -81,5 +77,5 @@ trailing_whitespace_linter <- function(allow_empty_lines = FALSE, allow_in_strin
         )
       }
     )
-  })
+  }, linter_level = "file")
 }

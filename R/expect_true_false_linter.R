@@ -40,11 +40,8 @@ expect_true_false_linter <- function() {
   "
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
 
@@ -57,5 +54,5 @@ expect_true_false_linter <- function() {
     )
 
     xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "warning")
-  })
+  }, linter_level = "expression")
 }

@@ -94,11 +94,8 @@ object_overwrite_linter <- function(
   ")
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     assigned_exprs <- xml_find_all(xml, xpath_assignments)
     assigned_symbols <- get_r_string(assigned_exprs, "SYMBOL|STR_CONST")
@@ -117,5 +114,5 @@ object_overwrite_linter <- function(
       lint_message = lint_message,
       type = "warning"
     )
-  })
+  }, linter_level = "expression")
 }

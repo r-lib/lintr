@@ -71,11 +71,8 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
   ")
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
     lints <- list()
 
     tf_expr <- xml_find_all(xml, tf_xpath)
@@ -109,5 +106,5 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
     }
 
     lints
-  })
+  }, linter_level = "expression")
 }

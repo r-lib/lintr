@@ -44,11 +44,8 @@ redundant_equals_linter <- function() {
   "
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
     op <- xml_text(xml_find_first(bad_expr, "*[2]"))
@@ -63,5 +60,5 @@ redundant_equals_linter <- function() {
       ),
       type = "warning"
     )
-  })
+  }, linter_level = "expression")
 }

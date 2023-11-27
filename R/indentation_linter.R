@@ -211,11 +211,9 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     #    a) # comment
     #
     # will have "# comment" as a separate expression
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
 
     xml <- source_expression$full_xml_parsed_content
+    if (is.null(xml)) return(list())
     # Indentation increases by 1 for:
     #  - { } blocks that span multiple lines
     #  - ( ), [ ], or [[ ]] calls that span multiple lines
@@ -306,7 +304,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     } else {
       list()
     }
-  })
+  }, linter_level = "file")
 }
 
 find_new_indent <- function(current_indent, change_type, indent, hanging_indent) {
