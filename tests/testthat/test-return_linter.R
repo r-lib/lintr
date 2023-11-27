@@ -994,3 +994,17 @@ test_that("side-effect functions like .onLoad ignore the lack of explicit else u
     return_linter(return_style = "explicit", allow_implicit_else = FALSE)
   )
 })
+
+test_that("implicit else lint has the correct metadata", {
+  expect_lint(
+    trim_some("
+      foo <- function(x, y = 3) {
+        if (x) {
+          return(x)
+        }
+      }
+    "),
+    list("All functions with terminal if statements", line_number = 2L),
+    return_linter(return_style = "explicit", allow_implicit_else = FALSE)
+  )
+})

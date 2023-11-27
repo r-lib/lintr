@@ -178,15 +178,15 @@ return_linter <- function(
   if (!allow_implicit_else) {
     # for inline functions, terminal <expr> is a sibling of <FUNCTION>, otherwise
     #   it's a descendant of the <expr> following <FUNCTION>
+    implicit_else_cond <- "position() = last() and IF and not(ELSE)"
     implicit_else_xpath <- glue("
-      //FUNCTION[not(
-        parent::expr/preceding-sibling::expr/SYMBOL[{ xp_text_in_table(except) }]
-      )]
-        /following-sibling::expr[
-          (position() = last() and IF and not(ELSE))
-          or expr[position() = last() and IF and not(ELSE)]
-        ]
+      //FUNCTION[not(parent::expr/preceding-sibling::expr/SYMBOL[{ xp_text_in_table(except) }])]
+        /following-sibling::expr[({implicit_else_cond}) or expr[{implicit_else_cond}]]
     ")
+
+    # to land on the child if present since XPath 1.0 doesn't support
+    #   '/(following-sibling::expr | following-sibling::expr/expr)[...]'
+    child_xpath <- glue("./expr[{implicit_else_cond}]")
 
     implicit_else_msg <-
       "All functions with terminal if statements must have a corresponding terminal else clause"
@@ -207,6 +207,10 @@ return_linter <- function(
 
     if (!allow_implicit_else) {
       implicit_else_expr <- xml_find_all(xml, implicit_else_xpath)
+
+      child_expr <- xml_find_first(implicit_else_expr, child_xpath)
+
+      if (length(child_expr) > 0L && !is.na(child_expr)) implicit_else_expr <- child_expr
 
       lints <- c(lints, xml_nodes_to_lints(
         implicit_else_expr,
