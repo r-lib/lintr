@@ -257,7 +257,7 @@ test_that("xml_find_function_calls works as intended", {
 
   expect_length(exprs$expressions[[1L]]$xml_find_function_calls("foo"), 1L)
   expect_length(exprs$expressions[[1L]]$xml_find_function_calls("bar"), 0L)
-  expect_equal(
+  expect_identical(
     exprs$expressions[[1L]]$xml_find_function_calls("foo"),
     xml_find_all(exprs$expressions[[1L]]$xml_parsed_content, "//SYMBOL_FUNCTION_CALL[text() = 'foo']")
   )
@@ -274,7 +274,7 @@ test_that("xml_find_function_calls works as intended", {
   expect_length(exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar")), 6L)
 
   # Also check order is retained:
-  expect_equal(
+  expect_identical(
     exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar")),
     xml_find_all(exprs$expressions[[5L]]$full_xml_parsed_content, "//SYMBOL_FUNCTION_CALL")
   )
