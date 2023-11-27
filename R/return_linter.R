@@ -209,8 +209,8 @@ return_linter <- function(
       implicit_else_expr <- xml_find_all(xml, implicit_else_xpath)
 
       child_expr <- xml_find_first(implicit_else_expr, child_xpath)
-
-      if (length(child_expr) > 0L && !is.na(child_expr)) implicit_else_expr <- child_expr
+      has_child_expr <- !is.na(child_expr)
+      implicit_else_expr[has_child_expr] <- child_expr[has_child_expr]
 
       lints <- c(lints, xml_nodes_to_lints(
         implicit_else_expr,
