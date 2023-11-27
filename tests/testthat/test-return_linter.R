@@ -882,3 +882,117 @@ test_that("return_linter lints `message`, `warning` and `stopifnot`", {
     linter
   )
 })
+
+test_that("non-if returns are skipped under allow_implicit_else = FALSE", {
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        bar
+      }
+    "),
+    NULL,
+    return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("if/else don't throw a lint under allow_implicit_else = FALSE", {
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        if (TRUE) {
+          return(bar)
+        } else {
+          return(NULL)
+        }
+      }
+    "),
+    NULL,
+    return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("implicit else outside a function doesn't lint under allow_implicit_else = FALSE", {
+  expect_lint("if(TRUE) TRUE", NULL, return_linter(allow_implicit_else = FALSE))
+})
+
+test_that("allow_implicit_else = FALSE identifies a simple implicit else", {
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        if (TRUE) {
+          bar
+        }
+      }
+    "),
+    rex::rex("All functions with terminal if statements must"),
+    return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("allow_implicit_else = FALSE finds implicit else with nested if+else", {
+  lint_msg <- rex::rex("All functions with terminal if statements must have a corresponding terminal else clause")
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        if (TRUE) {
+          if (TRUE) {
+            FALSE
+          } else {
+            TRUE
+          }
+        }
+      }
+    "),
+    lint_msg,
+    return_linter(allow_implicit_else = FALSE)
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        if (TRUE) {
+          if (TRUE) {
+            return(FALSE)
+          } else {
+            return(TRUE)
+          }
+        }
+      }
+    "),
+    lint_msg,
+    return_linter(return_style = "explicit", allow_implicit_else = FALSE)
+  )
+})
+
+test_that("allow_implicit_else = FALSE works on anonymous/inline functions", {
+  expect_lint(
+    "lapply(rnorm(10), function(x) if (TRUE) x + 1)",
+    rex::rex("All functions with terminal if statements must"),
+    return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("allow_implicit_else = FALSE skips side-effect functions like .onLoad", {
+  expect_lint(
+    trim_some("
+      .onAttach <- function(libname, pkgname) {
+        if (TRUE) foo()
+      }
+    "),
+    NULL,
+    return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("allow_implicit_else = FALSE + explicit returns skips side-effect functions like .onLoad", {
+  expect_lint(
+    trim_some("
+      .onAttach <- function(libname, pkgname) {
+        if (TRUE) return(foo())
+      }
+    "),
+    NULL,
+    return_linter(return_style = "explicit", allow_implicit_else = FALSE)
+  )
+})

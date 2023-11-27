@@ -6,6 +6,9 @@
 #'   the default, enforeces the Tidyverse guide recommendation to leave terminal
 #'   returns implicit. `"explicit"` style requires that `return()` always be
 #'   explicitly supplied.
+#' @param allow_implicit_else Logical, default `TRUE`. If `FALSE`, functions with a terminal
+#'   `if` clause must always have an `else` clause, making the `NULL` alternative explicit
+#'   if necessary.
 #' @param return_functions Character vector of functions that are accepted as terminal calls
 #'   when `return_style = "explicit"`. These are in addition to exit functions
 #'   from base that are always allowed: [stop()], [q()], [quit()], [invokeRestart()],
@@ -32,6 +35,13 @@
 #'   linters = return_linter(return_style = "explicit")
 #' )
 #'
+#' code <- "function(x) {\n  if (x > 0) 2\n}"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = return_linter(allow_implicit_else = FALSE)
+#' )
+#'
 #' # okay
 #' code <- "function(x) {\n  x + 1\n}"
 #' writeLines(code)
@@ -47,6 +57,12 @@
 #'   linters = return_linter(return_style = "explicit")
 #' )
 #'
+#' code <- "function(x) {\n  if (x > 0) 2 else NULL\n}"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = return_linter(allow_implicit_else = FALSE)
+#' )
 #'
 #' @evalRd rd_tags("return_linter")
 #' @seealso
@@ -55,12 +71,19 @@
 #' @export
 return_linter <- function(
     return_style = c("implicit", "explicit"),
+    allow_implicit_else = TRUE,
     return_functions = NULL,
     except = NULL) {
   return_style <- match.arg(return_style)
 
+  if (!allow_implicit_else || return_style == "explicit") {
+    # See `?.onAttach`; these functions are all exclusively used for their
+    #   side-effects, so implicit return is generally acceptable
+    except <- union(special_funs, except)
+  }
+
   if (return_style == "implicit") {
-    xpath <- "
+    return_xpath <- "
       (//FUNCTION | //OP-LAMBDA)
       /following-sibling::expr[1][*[1][self::OP-LEFT-BRACE]]
       /expr[last()][
@@ -70,13 +93,8 @@ return_linter <- function(
         ]
       ]
     "
-    msg <- "Use implicit return behavior; explicit return() is not needed."
+    return_msg <- "Use implicit return behavior; explicit return() is not needed."
   } else {
-    # See `?.onAttach`; these functions are all exclusively used for their
-    #   side-effects, so implicit return is generally acceptable
-
-    except <- union(special_funs, except)
-
     base_return_functions <- c(
       # Normal calls
       "return", "stop", "q", "quit",
@@ -123,7 +141,7 @@ return_linter <- function(
     #   two top level branches have at least two return()s
     # because of special 'in' syntax for 'for' loops, the condition is
     #   tagged differently than for 'if'/'while' conditions (simple PAREN)
-    xpath <- glue("
+    return_xpath <- glue("
     (//FUNCTION | //OP-LAMBDA)[parent::expr[not(
       preceding-sibling::expr[SYMBOL[{ xp_text_in_table(except) }]]
     )]]
@@ -154,20 +172,50 @@ return_linter <- function(
         )
       ]
     ")
-    msg <- "All functions must have an explicit return()."
+    return_msg <- "All functions must have an explicit return()."
+  }
+
+  if (!allow_implicit_else) {
+    # for inline functions, terminal <expr> is a sibling of <FUNCTION>, otherwise
+    #   it's a descendant of the <expr> following <FUNCTION>
+    implicit_else_xpath <- glue("
+      //FUNCTION[not(
+        parent::expr/preceding-sibling::expr/SYMBOL[{ xp_text_in_table(except) }]
+      )]
+        /following-sibling::expr[
+          (position() = last() and IF and not(ELSE))
+          or expr[position() = last() and IF and not(ELSE)]
+        ]
+    ")
+
+    implicit_else_msg <-
+      "All functions with terminal if statements must have a corresponding terminal else clause"
   }
 
   Linter(function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
-    xml_nodes <- xml_find_all(xml, xpath)
+    return_expr <- xml_find_all(xml, return_xpath)
 
-    xml_nodes_to_lints(
-      xml_nodes,
+    lints <- xml_nodes_to_lints(
+      return_expr,
       source_expression = source_expression,
-      lint_message = msg,
+      lint_message = return_msg,
       type = "style"
     )
+
+    if (!allow_implicit_else) {
+      implicit_else_expr <- xml_find_all(xml, implicit_else_xpath)
+
+      lints <- c(lints, xml_nodes_to_lints(
+        implicit_else_expr,
+        source_expression = source_expression,
+        lint_message = implicit_else_msg,
+        type = "warning"
+      ))
+    }
+
+    lints
   }, linter_level = "expression")
 }

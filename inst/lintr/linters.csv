@@ -40,7 +40,6 @@ if_not_else_linter,readability consistency configurable
 if_switch_linter,best_practices readability consistency efficiency
 ifelse_censor_linter,best_practices efficiency
 implicit_assignment_linter,style best_practices readability configurable
-implicit_else_return_linter,readability consistency
 implicit_integer_linter,style consistency best_practices configurable
 indentation_linter,style readability default configurable
 infix_spaces_linter,style readability default configurable
