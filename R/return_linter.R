@@ -179,13 +179,13 @@ return_linter <- function(
     # for inline functions, terminal <expr> is a sibling of <FUNCTION>, otherwise
     #   it's a descendant of the <expr> following <FUNCTION>
     implicit_else_xpath <- glue("
-    //FUNCTION[not(
-      parent::expr/preceding-sibling::expr/SYMBOL[{ xp_text_in_table(except) }]
-    )]
-      /following-sibling::expr[
-        (position() = last() and IF and not(ELSE))
-        or expr[position() = last() and IF and not(ELSE)]
-      ]
+      //FUNCTION[not(
+        parent::expr/preceding-sibling::expr/SYMBOL[{ xp_text_in_table(except) }]
+      )]
+        /following-sibling::expr[
+          (position() = last() and IF and not(ELSE))
+          or expr[position() = last() and IF and not(ELSE)]
+        ]
     ")
 
     implicit_else_msg <-
