@@ -33,11 +33,8 @@ expect_s4_class_linter <- function() {
   "
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     # TODO(michaelchirico): also catch expect_{equal,identical}(methods::is(x), k).
     #   this seems empirically rare, but didn't check many S4-heavy packages.
@@ -52,5 +49,5 @@ expect_s4_class_linter <- function() {
       ),
       type = "warning"
     )
-  })
+  }, linter_level = "expression")
 }

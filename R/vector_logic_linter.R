@@ -78,11 +78,8 @@ vector_logic_linter <- function() {
   "
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
     bad_expr <- xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(
@@ -91,5 +88,5 @@ vector_logic_linter <- function() {
       lint_message = "Conditional expressions require scalar logical operators (&& and ||)",
       type = "warning"
     )
-  })
+  }, linter_level = "expression")
 }

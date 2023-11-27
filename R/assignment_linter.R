@@ -100,11 +100,8 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
   ))
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
     if (length(bad_expr) == 0L) {
@@ -126,5 +123,5 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
 
     lint_message <- sprintf(lint_message_fmt, operator)
     xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "style")
-  })
+  }, linter_level = "expression")
 }

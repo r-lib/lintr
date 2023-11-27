@@ -35,20 +35,19 @@
 #' @export
 backport_linter <- function(r_version = getRversion(), except = character()) {
   r_version <- normalize_r_version(r_version)
+
+  if (all(r_version >= R_system_version(names(backports)))) {
+    return(Linter(function(source_expression) list(), linter_level = "file"))
+  }
+
   backport_blacklist <- backports[r_version < R_system_version(names(backports))]
   backport_blacklist <- lapply(backport_blacklist, setdiff, except)
 
   names_xpath <- "//SYMBOL | //SYMBOL_FUNCTION_CALL"
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-    if (all(r_version >= R_system_version(names(backports)))) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     all_names_nodes <- xml_find_all(xml, names_xpath)
     all_names <- xml_text(all_names_nodes)
@@ -77,7 +76,7 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
       lint_message = lint_message,
       type = "warning"
     )
-  })
+  }, linter_level = "expression")
 }
 
 normalize_r_version <- function(r_version) {

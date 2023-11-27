@@ -118,11 +118,8 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE,
 
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
     xml <- source_expression$full_xml_parsed_content
+    if (is.null(xml)) return(list())
 
     test_expr <- xml_find_all(xml, test_xpath)
 
@@ -160,5 +157,5 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE,
     }
 
     lints
-  })
+  }, linter_level = "file")
 }

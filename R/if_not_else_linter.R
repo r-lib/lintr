@@ -84,11 +84,8 @@ if_not_else_linter <- function(exceptions = c("is.null", "is.na", "missing")) {
   ")
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     if_expr <- xml_find_all(xml, if_xpath)
     if_lints <- xml_nodes_to_lints(
@@ -114,5 +111,5 @@ if_not_else_linter <- function(exceptions = c("is.null", "is.na", "missing")) {
     )
 
     c(if_lints, ifelse_lints)
-  })
+  }, linter_level = "expression")
 }

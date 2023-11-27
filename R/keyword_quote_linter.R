@@ -95,11 +95,8 @@ keyword_quote_linter <- function() {
   clarification <- "i.e., if the name is not a valid R symbol (see ?make.names)."
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     call_arg_expr <- xml_find_all(xml, call_arg_xpath)
 
@@ -160,5 +157,5 @@ keyword_quote_linter <- function() {
     )
 
     c(call_arg_lints, string_assignment_lints, assignment_lints, string_extraction_lints, extraction_lints)
-  })
+  }, linter_level = "expression")
 }

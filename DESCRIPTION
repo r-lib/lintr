@@ -166,6 +166,7 @@ Collate:
     'regex_subset_linter.R'
     'rep_len_linter.R'
     'repeat_linter.R'
+    'return_linter.R'
     'routine_registration_linter.R'
     'sample_int_linter.R'
     'scalar_in_linter.R'

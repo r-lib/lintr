@@ -68,11 +68,8 @@ regex_subset_linter <- function() {
   stringr_xpath <- glue(xpath_fmt, calls = c("str_detect", "str_which"), arg_pos = 2L)
 
   Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     grep_expr <- xml_find_all(xml, grep_xpath)
 
@@ -95,5 +92,5 @@ regex_subset_linter <- function() {
     )
 
     c(grep_lints, stringr_lints)
-  })
+  }, linter_level = "expression")
 }

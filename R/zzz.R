@@ -29,6 +29,7 @@ default_linters <- modify_defaults(
   paren_body_linter(),
   pipe_continuation_linter(),
   quotes_linter(),
+  return_linter(),
   semicolon_linter(),
   seq_linter(),
   spaces_inside_linter(),
