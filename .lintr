@@ -6,9 +6,6 @@ linters: all_linters(
     ),
     undesirable_function_linter(modify_defaults(
       defaults = default_undesirable_functions,
-      Sys.setenv = NA_character_,
-      mapply = NA_character_,
-      structure = NA_character_,
       library = NULL,
       options = NULL
     )),
