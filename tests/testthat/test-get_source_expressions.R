@@ -218,7 +218,10 @@ test_that("returned data structure is complete", {
 
   for (i in seq_along(lines)) {
     expr <- exprs$expressions[[i]]
-    expect_named(expr, c("filename", "line", "column", "lines", "parsed_content", "xml_parsed_content", "content"))
+    expect_named(expr, c(
+      "filename", "line", "column", "lines", "parsed_content", "xml_parsed_content", "content",
+      "xml_find_function_calls"
+    ))
     expect_identical(expr$filename, temp_file)
     expect_identical(expr$line, i)
     expect_identical(expr$column, 1L)
@@ -229,7 +232,8 @@ test_that("returned data structure is complete", {
   }
   full_expr <- exprs$expressions[[length(lines) + 1L]]
   expect_named(full_expr, c(
-    "filename", "file_lines", "content", "full_parsed_content", "full_xml_parsed_content", "terminal_newline"
+    "filename", "file_lines", "content", "full_parsed_content", "full_xml_parsed_content", "xml_find_function_calls",
+    "terminal_newline"
   ))
   expect_identical(full_expr$filename, temp_file)
   expect_identical(full_expr$file_lines, lines_with_attr)
@@ -243,6 +247,37 @@ test_that("returned data structure is complete", {
 
   expect_null(exprs$error)
   expect_identical(exprs$lines, lines_with_attr)
+})
+
+test_that("xml_find_function_calls works as intended", {
+  lines <- c("foo()", "bar()", "foo()", "{ foo(); foo(); bar() }")
+  temp_file <- withr::local_tempfile(lines = lines)
+
+  exprs <- get_source_expressions(temp_file)
+
+  expect_length(exprs$expressions[[1L]]$xml_find_function_calls("foo"), 1L)
+  expect_length(exprs$expressions[[1L]]$xml_find_function_calls("bar"), 0L)
+  expect_equal(
+    exprs$expressions[[1L]]$xml_find_function_calls("foo"),
+    xml_find_all(exprs$expressions[[1L]]$xml_parsed_content, "//SYMBOL_FUNCTION_CALL[text() = 'foo']")
+  )
+
+  expect_length(exprs$expressions[[2L]]$xml_find_function_calls("foo"), 0L)
+  expect_length(exprs$expressions[[2L]]$xml_find_function_calls("bar"), 1L)
+
+  expect_length(exprs$expressions[[4L]]$xml_find_function_calls("foo"), 2L)
+  expect_length(exprs$expressions[[4L]]$xml_find_function_calls("bar"), 1L)
+  expect_length(exprs$expressions[[4L]]$xml_find_function_calls(c("foo", "bar")), 3L)
+
+  expect_length(exprs$expressions[[5L]]$xml_find_function_calls("foo"), 4L)
+  expect_length(exprs$expressions[[5L]]$xml_find_function_calls("bar"), 2L)
+  expect_length(exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar")), 6L)
+
+  # Also check order is retained:
+  expect_equal(
+    exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar")),
+    xml_find_all(exprs$expressions[[5L]]$full_xml_parsed_content, "//SYMBOL_FUNCTION_CALL")
+  )
 })
 
 test_that("#1262: xml_parsed_content gets returned as missing even if there's no parsed_content", {

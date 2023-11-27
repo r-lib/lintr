@@ -18,32 +18,36 @@
 #' \describe{
 #'   \item{expressions}{a `list` of
 #'   `n+1` objects. The first `n` elements correspond to each expression in
-#'   `filename`, and consist of a list of 9 elements:
+#'   `filename`, and consist of a list of 8 elements:
 #'   \itemize{
-#'     \item{`filename` (`character`)}
-#'     \item{`line` (`integer`) the line in `filename` where this expression begins}
-#'     \item{`column` (`integer`) the column in `filename` where this expression begins}
+#'     \item{`filename` (`character`) the name of the file.}
+#'     \item{`line` (`integer`) the line in the file where this expression begins.}
+#'     \item{`column` (`integer`) the column in the file where this expression begins.}
 #'     \item{`lines` (named `character`) vector of all lines spanned by this
-#'           expression, named with the line number corresponding to `filename`}
-#'     \item{`parsed_content` (`data.frame`) as given by [utils::getParseData()] for this expression}
-#'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of this
-#'          expression as given by [xmlparsedata::xml_parse_data()]}
-#'     \item{`content` (`character`) the same as `lines` as a single string (not split across lines)}
+#'           expression, named with the corresponding line numbers.}
+#'     \item{`parsed_content` (`data.frame`) as given by [utils::getParseData()] for this expression.}
+#'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of this expression as given by
+#'           [xmlparsedata::xml_parse_data()].}
+#'     \item{`content` (`character`) the same as `lines` as a single string (not split across lines).}
+#'     \item{`xml_find_function_calls(function_names)` (`function`) a function that returns all `SYMBOL_FUNCTION_CALL`
+#'           XML nodes from `xml_parsed_content` with specified function names.}
 #'   }
 #'
 #'   The final element of `expressions` is a list corresponding to the full file
-#'   consisting of 6 elements:
+#'   consisting of 7 elements:
 #'   \itemize{
-#'     \item{`filename` (`character`)}
-#'     \item{`file_lines` (`character`) the [readLines()] output for this file}
+#'     \item{`filename` (`character`) the name of this file.}
+#'     \item{`file_lines` (`character`) the [readLines()] output for this file.}
 #'     \item{`content` (`character`) for .R files, the same as `file_lines`;
-#'           for .Rmd or .qmd scripts, this is the extracted R source code (as text)}
+#'           for .Rmd or .qmd scripts, this is the extracted R source code (as text).}
 #'     \item{`full_parsed_content` (`data.frame`) as given by
-#'           [utils::getParseData()] for the full content}
+#'           [utils::getParseData()] for the full content.}
 #'     \item{`full_xml_parsed_content` (`xml_document`) the XML parse tree of all
-#'           expressions as given by [xmlparsedata::xml_parse_data()]}
+#'           expressions as given by [xmlparsedata::xml_parse_data()].}
 #'     \item{`terminal_newline` (`logical`) records whether `filename` has a terminal
-#'           newline (as determined by [readLines()] producing a corresponding warning)}
+#'           newline (as determined by [readLines()] producing a corresponding warning).}
+#'     \item{`xml_find_function_calls(function_names)` (`function`) a function that returns all `SYMBOL_FUNCTION_CALL`
+#'           XML nodes from `full_xml_parsed_content` with specified function names.}
 #'   }
 #'   }
 #'   \item{error}{A `Lint` object describing any parsing error.}
@@ -103,6 +107,7 @@ get_source_expressions <- function(filename, lines = NULL) {
       )
       for (i in seq_along(expressions)) {
         expressions[[i]]$xml_parsed_content <- expression_xmls[[i]]
+        expressions[[i]]$xml_find_function_calls <- build_xml_find_function_calls(expression_xmls[[i]])
       }
     }
 
@@ -113,6 +118,7 @@ get_source_expressions <- function(filename, lines = NULL) {
       content = source_expression$lines,
       full_parsed_content = parsed_content,
       full_xml_parsed_content = xml_parsed_content,
+      xml_find_function_calls = build_xml_find_function_calls(xml_parsed_content),
       terminal_newline = terminal_newline
     )
   }
