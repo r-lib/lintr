@@ -991,7 +991,7 @@ test_that("allow_implicit_else = FALSE works on anonymous/inline functions", {
   )
 })
 
-test_that("allow_implicit_else = FALSE skips side-effect functions like .onLoad", {
+test_that("side-effect functions like .onLoad ignore the lack of explicit else under allow_implicit_else = FALSE", {
   expect_lint(
     trim_some("
       .onAttach <- function(libname, pkgname) {
@@ -1001,9 +1001,7 @@ test_that("allow_implicit_else = FALSE skips side-effect functions like .onLoad"
     NULL,
     return_linter(allow_implicit_else = FALSE)
   )
-})
 
-test_that("allow_implicit_else = FALSE + explicit returns skips side-effect functions like .onLoad", {
   expect_lint(
     trim_some("
       .onAttach <- function(libname, pkgname) {
