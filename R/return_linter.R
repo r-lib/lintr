@@ -185,7 +185,7 @@ return_linter <- function(
     ")
 
     # to land on the child if present since XPath 1.0 doesn't support
-    #   '/(following-sibling::expr | following-sibling::expr/expr)[...]'
+    #   /(following-sibling::expr | following-sibling::expr/expr)[...]
     child_xpath <- glue("./expr[{implicit_else_cond}]")
 
     implicit_else_msg <-
