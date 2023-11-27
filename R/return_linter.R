@@ -86,10 +86,11 @@ return_linter <- function(
     return_xpath <- "
       (//FUNCTION | //OP-LAMBDA)
       /following-sibling::expr[1][*[1][self::OP-LEFT-BRACE]]
-      /expr[last()]
-      //expr[
-        not(OP-DOLLAR or OP-AT)
-        and SYMBOL_FUNCTION_CALL[text() = 'return']
+      /expr[last()][
+        expr[1][
+          not(OP-DOLLAR or OP-AT)
+          and SYMBOL_FUNCTION_CALL[text() = 'return']
+        ]
       ]
     "
     return_msg <- "Use implicit return behavior; explicit return() is not needed."

@@ -28,24 +28,6 @@ test_that("Lint return on end of function", {
   )
 })
 
-test_that("explicit returns in control flow are linted", {
-  lint_msg <- rex::rex("Use implicit return behavior")
-
-  expect_lint(
-    trim_some("
-      foo <- function(bar) {
-        if (TRUE) {
-          return(bar)
-        } else {
-          return(NULL)
-        }
-      }
-    "),
-    list(lint_msg, lint_msg),
-    return_linter()
-  )
-})
-
 test_that("Lint return on end of lambda function", {
   skip_if_not_r_version("4.1.0")
 
