@@ -124,7 +124,9 @@ lints_from_terminal_expr <- function(expr, lint_xpath, source_expression, lint_m
     lints_from_terminal_expr(child_expr[[length(child_expr) - 1L]], lint_xpath, source_expression, lint_message)
   } else if (top_node == "IF") {
     c(
+      # TRUE condition
       lints_from_terminal_expr(child_expr[[5L]], lint_xpath, source_expression, lint_message),
+      # FALSE condition, if present
       if (length(child_expr) > 5L) lints_from_terminal_expr(child_expr[[7L]], lint_xpath, source_expression, lint_message)
     )
   } else {
