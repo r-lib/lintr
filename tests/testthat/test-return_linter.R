@@ -1137,17 +1137,103 @@ test_that("terminal = assignment is not an error", {
   )
 })
 
-test_that("empty terminal '{' expression is not an error", {
-  linter <- return_linter()
+test_that("empty terminal '{' expression is handled correctly", {
+  implicit_linter <- return_linter()
+  implicit_msg <- rex::rex("Use implicit return behavior; explicit return() is not needed.")
+  explicit_linter <- return_linter(return_style = "explicit")
+  explicit_msg <- rex::rex("All functions must have an explicit return().")
 
-  expect_lint("foo <- function() { }", NULL, linter)
+  empty_inline <- "foo <- function() { }"
+  expect_lint(empty_inline, NULL, implicit_linter)
+  expect_lint(empty_inline, NULL, explicit_linter)
 
-  expect_lint(
-    trim_some("
-      foo <- function() {
+  empty_multiline <- trim_some("
+    foo <- function() {
+    }
+  ")
+  expect_lint(empty_multiline, NULL, implicit_linter)
+  expect_lint(empty_multiline, NULL, explicit_linter)
+
+  empty_comment <- trim_some("
+    foo <- function() {
+      # this line intentionally left blank
+    }
+  ")
+  expect_lint(empty_comment, NULL, implicit_linter)
+  expect_lint(empty_comment, NULL, explicit_linter)
+
+  empty_if_implicit <- trim_some("
+    foo <- function() {
+      if (TRUE) {
+      } else {
+        FALSE
       }
-    "),
-    NULL,
-    linter
+    }
+  ")
+  expect_lint(empty_if_implicit, NULL, implicit_linter)
+  expect_lint(
+    empty_if_implicit,
+    list(
+      list(explicit_msg, line_number = 2L),
+      list(explicit_msg, line_number = 4L)
+    ),
+    explicit_linter
+  )
+
+  empty_else_implicit <- trim_some("
+    foo <- function() {
+      if (TRUE) {
+        FALSE
+      } else {
+      }
+    }
+  ")
+  expect_lint(empty_else_implicit, NULL, implicit_linter)
+  expect_lint(
+    empty_else_implicit,
+    list(
+      list(explicit_msg, line_number = 3L),
+      list(explicit_msg, line_number = 4L)
+    ),
+    explicit_linter
+  )
+
+  empty_if_explicit <- trim_some("
+    foo <- function() {
+      if (TRUE) {
+      } else {
+        return(FALSE)
+      }
+    }
+  ")
+  expect_lint(empty_if_explicit, list(implicit_msg, line_number = 4L), implicit_linter)
+  expect_lint(empty_if_explicit, list(explicit_msg, line_number = 2L), explicit_linter)
+
+  empty_else_explicit <- trim_some("
+    foo <- function() {
+      if (TRUE) {
+        return(FALSE)
+      } else {
+      }
+    }
+  ")
+  expect_lint(empty_else_explicit, list(implicit_msg, line_number = 3L), implicit_linter)
+  expect_lint(empty_else_explicit, list(explicit_msg, line_number = 4L), explicit_linter)
+
+  empty_if_else <- trim_some("
+    foo <- function() {
+      if (TRUE) {
+      } else {
+      }
+    }
+  ")
+  expect_lint(empty_if_else, NULL, implicit_linter)
+  expect_lint(
+    empty_if_else,
+    list(
+      list(explicit_msg, line_number = 2L),
+      list(explicit_msg, line_number = 3L)
+    ),
+    explicit_linter
   )
 })

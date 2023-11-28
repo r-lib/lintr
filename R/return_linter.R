@@ -64,9 +64,6 @@ return_linter <- function(
     lint_xpath <- "SYMBOL_FUNCTION_CALL[text() = 'return']"
     msg <- "Use implicit return behavior; explicit return() is not needed."
   } else {
-    # See `?.onAttach`; these functions are all exclusively used for their
-    #   side-effects, so implicit return is generally acceptable
-
     except <- union(special_funs, except)
 
     base_return_functions <- c(
@@ -107,11 +104,11 @@ return_linter <- function(
     body_expr <- xml_find_all(xml, body_xpath)
 
     # nested_return_lints not "vectorized" due to xml_children()
-    lapply(body_expr, nested_return_lints, lint_xpath, source_expression, msg)
+    lapply(body_expr, nested_return_lints, return_style == "implicit", lint_xpath, source_expression, msg)
   })
 }
 
-nested_return_lints <- function(expr, xpath, source_expression, lint_message) {
+nested_return_lints <- function(expr, implicit, xpath, source_expression, lint_message) {
   child_expr <- xml_children(expr)
   if (length(child_expr) == 0L) {
     return(list())
@@ -121,16 +118,25 @@ nested_return_lints <- function(expr, xpath, source_expression, lint_message) {
   if (child_node[1L] == "OP-LEFT-BRACE") {
     expr_idx <- which(child_node %in% c("expr", "equal_assign", "expr_or_assign_or_help"))
     if (length(expr_idx) == 0L) { # empty brace expression {}
-      return(list())
+      if (implicit) {
+        return(list())
+      } else {
+        return(list(xml_nodes_to_lints(
+          expr,
+          source_expression = source_expression,
+          lint_message = lint_message,
+          type = "style"
+        )))
+      }
     }
-    Recall(child_expr[[tail(expr_idx, 1L)]], xpath, source_expression, lint_message)
+    Recall(child_expr[[tail(expr_idx, 1L)]], implicit, xpath, source_expression, lint_message)
   } else if (child_node[1L] == "IF") {
     expr_idx <- which(child_node %in% c("expr", "equal_assign", "expr_or_assign_or_help"))
     c(
       # TRUE condition
-      Recall(child_expr[[expr_idx[2L]]], xpath, source_expression, lint_message),
+      Recall(child_expr[[expr_idx[2L]]], implicit, xpath, source_expression, lint_message),
       # FALSE condition, if present
-      if (length(expr_idx) > 2L) Recall(child_expr[[expr_idx[3L]]], xpath, source_expression, lint_message)
+      if (length(expr_idx) > 2L) Recall(child_expr[[expr_idx[3L]]], implicit, xpath, source_expression, lint_message)
     )
   } else {
     list(xml_nodes_to_lints(
