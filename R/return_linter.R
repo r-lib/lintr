@@ -86,8 +86,6 @@ return_linter <- function(
 
     return_functions <- union(base_return_functions, return_functions)
 
-    control_calls <- c("IF", "FOR", "WHILE", "REPEAT")
-
     body_xpath <- glue("
     (//FUNCTION | //OP-LAMBDA)[parent::expr[not(
       preceding-sibling::expr[SYMBOL[{ xp_text_in_table(except) }]]
@@ -108,12 +106,12 @@ return_linter <- function(
 
     body_expr <- xml_find_all(xml, body_xpath)
 
-    # lints_from_terminal_expr not "vectorized" due to xml_children()
-    lapply(body_expr, lints_from_terminal_expr, lint_xpath, source_expression, msg)
+    # nested_return_lints not "vectorized" due to xml_children()
+    lapply(body_expr, nested_return_lints, lint_xpath, source_expression, msg)
   })
 }
 
-lints_from_terminal_expr <- function(expr, lint_xpath, source_expression, lint_message) {
+nested_return_lints <- function(expr, xpath, source_expression, lint_message) {
   child_expr <- xml_children(expr)
   if (length(child_expr) == 0L) {
     return(list())
@@ -122,18 +120,18 @@ lints_from_terminal_expr <- function(expr, lint_xpath, source_expression, lint_m
 
   if (child_node[1L] == "OP-LEFT-BRACE") {
     expr_idx <- which(child_node == "expr")
-    lints_from_terminal_expr(child_expr[[tail(expr_idx, 1L)]], lint_xpath, source_expression, lint_message)
+    nested_return_lints(child_expr[[tail(expr_idx, 1L)]], xpath, source_expression, lint_message)
   } else if (child_node[1L] == "IF") {
     expr_idx <- which(child_node == "expr")
     c(
       # TRUE condition
-      lints_from_terminal_expr(child_expr[[expr_idx[2L]]], lint_xpath, source_expression, lint_message),
+      nested_return_lints(child_expr[[expr_idx[2L]]], xpath, source_expression, lint_message),
       # FALSE condition, if present
-      if (length(expr_idx) > 2L) lints_from_terminal_expr(child_expr[[expr_idx[3L]]], lint_xpath, source_expression, lint_message)
+      if (length(expr_idx) > 2L) nested_return_lints(child_expr[[expr_idx[3L]]], xpath, source_expression, lint_message)
     )
   } else {
     list(xml_nodes_to_lints(
-      xml_find_first(child_expr[[1L]], lint_xpath),
+      xml_find_first(child_expr[[1L]], xpath),
       source_expression = source_expression,
       lint_message = lint_message,
       type = "style"
