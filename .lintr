@@ -2,7 +2,7 @@ linters: all_linters(
     backport_linter("3.6.0", except = c("R_user_dir", "deparse1", "...names")),
     line_length_linter(120L),
     object_overwrite_linter(
-      allow_names = c("end", "line", "lines", "new", "offset", "pipe", "start", "symbols")
+      allow_names = c("line", "lines", "new", "pipe", "symbols")
     ),
     undesirable_function_linter(modify_defaults(
       defaults = default_undesirable_functions,
