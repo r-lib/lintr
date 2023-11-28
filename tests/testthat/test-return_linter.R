@@ -1123,3 +1123,16 @@ test_that("logic is robust to terminal comments under '{'", {
     explicit_linter
   )
 })
+
+test_that("terminal = assignment is not an error", {
+  # key is this is not an <expr> node
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        a = 1
+      }
+    "),
+    NULL,
+    return_linter()
+  )
+})
