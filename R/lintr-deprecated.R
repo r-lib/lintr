@@ -21,21 +21,21 @@ NULL
 #' @rdname lintr-deprecated
 #' @export
 closed_curly_linter <- function(allow_single_line = FALSE) {
-  lintr_deprecated("closed_curly_linter", new = "brace_linter", version = "3.0.0", type = "Linter", signal = "stop")
+  lintr_deprecated("closed_curly_linter", alternative = "brace_linter", version = "3.0.0", type = "Linter", signal = "stop")
 }
 
 #' Open curly linter
 #' @rdname lintr-deprecated
 #' @export
 open_curly_linter <- function(allow_single_line = FALSE) {
-  lintr_deprecated("open_curly_linter", new = "brace_linter", version = "3.0.0", type = "Linter", signal = "stop")
+  lintr_deprecated("open_curly_linter", alternative = "brace_linter", version = "3.0.0", type = "Linter", signal = "stop")
 }
 
 #' Parentheses before brace linter
 #' @rdname lintr-deprecated
 #' @export
 paren_brace_linter <- function() {
-  lintr_deprecated("paren_brace_linter", new = "brace_linter", version = "3.0.0", type = "Linter", signal = "stop")
+  lintr_deprecated("paren_brace_linter", alternative = "brace_linter", version = "3.0.0", type = "Linter", signal = "stop")
 }
 
 #' Semicolon linter
@@ -43,8 +43,8 @@ paren_brace_linter <- function() {
 #' @export
 semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
   lintr_deprecated(
-    old = "semicolon_terminator_linter",
-    new = "semicolon_linter",
+    what = "semicolon_terminator_linter",
+    alternative = "semicolon_linter",
     version = "3.0.0",
     type = "Linter",
     signal = "stop"
@@ -56,8 +56,8 @@ semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
 #' @export
 unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
   lintr_deprecated(
-    old = "unneeded_concatenation_linter",
-    new = "unnecessary_concatenation_linter",
+    what = "unneeded_concatenation_linter",
+    alternative = "unnecessary_concatenation_linter",
     version = "3.1.0",
     type = "Linter"
   )
@@ -74,8 +74,8 @@ unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
 #' @export
 single_quotes_linter <- function() {
   lintr_deprecated(
-    old = "single_quotes_linter",
-    new = "quotes_linter",
+    what = "single_quotes_linter",
+    alternative = "quotes_linter",
     version = "3.1.0",
     type = "Linter"
   )
@@ -87,8 +87,8 @@ single_quotes_linter <- function() {
 #' @export
 consecutive_stopifnot_linter <- function() {
   lintr_deprecated(
-    old = "consecutive_stopifnot_linter",
-    new = "consecutive_assertion_linter",
+    what = "consecutive_stopifnot_linter",
+    alternative = "consecutive_assertion_linter",
     version = "3.1.0",
     type = "Linter"
   )
@@ -100,8 +100,8 @@ consecutive_stopifnot_linter <- function() {
 #' @export
 no_tab_linter <- function() {
   lintr_deprecated(
-    old = "no_tab_linter",
-    new = "whitespace_linter",
+    what = "no_tab_linter",
+    alternative = "whitespace_linter",
     version = "3.1.0",
     type = "Linter"
   )

@@ -386,7 +386,7 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
                  message = "", line = "", ranges = NULL, linter = "") {
   if (!missing(linter)) {
     lintr_deprecated(
-      old = "Using the `linter` argument of `Lint()`",
+      what = "Using the `linter` argument of `Lint()`",
       version = "3.0.0",
       type = "",
       signal = "stop"
