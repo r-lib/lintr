@@ -19,9 +19,8 @@
 #'
 #' @export
 is_lint_level <- function(source_expression, level = c("expression", "file")) {
-  stopifnot(!missing(level))
   level <- match.arg(level)
-  required_key <- paste0(if (level == "file") "full_", "parsed_content")
+  required_key <- if (level == "file") "full_parsed_content" else "parsed_content"
   required_key %in% names(source_expression)
 }
 
