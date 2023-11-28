@@ -118,16 +118,17 @@ lints_from_terminal_expr <- function(expr, lint_xpath, source_expression, lint_m
   if (length(child_expr) == 0L) {
     return(list())
   }
-  top_node <- xml_name(child_expr[[1L]])
+  child_node <- xml_name(child_expr)
 
-  if (top_node == "OP-LEFT-BRACE") {
+  if (child_node[1L] == "OP-LEFT-BRACE") {
     lints_from_terminal_expr(child_expr[[length(child_expr) - 1L]], lint_xpath, source_expression, lint_message)
-  } else if (top_node == "IF") {
+  } else if (child_node[1L] == "IF") {
+    expr_idx <- which(child_node == "expr")
     c(
       # TRUE condition
-      lints_from_terminal_expr(child_expr[[5L]], lint_xpath, source_expression, lint_message),
+      lints_from_terminal_expr(child_expr[[expr_idx[2L]]], lint_xpath, source_expression, lint_message),
       # FALSE condition, if present
-      if (length(child_expr) > 5L) lints_from_terminal_expr(child_expr[[7L]], lint_xpath, source_expression, lint_message)
+      if (length(expr_idx) > 2L) lints_from_terminal_expr(child_expr[[expr_idx[3L]]], lint_xpath, source_expression, lint_message)
     )
   } else {
     list(xml_nodes_to_lints(

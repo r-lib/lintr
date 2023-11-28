@@ -1040,3 +1040,46 @@ test_that("explicit returns in control flow are linted correctly", {
     linter
   )
 })
+
+# inspired by grid:::draw.all
+#   https://github.com/r-devel/r-svn/blob/eeff859e427b2399f1474427a531365d2672f52f/src/library/grid/R/grob.R#L1940
+test_that("logic is robust to absence of '{'", {
+  linter <- return_linter()
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        if (TRUE) # comment is a neighbor of 'if'
+          FALSE
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        if (TRUE)
+          FALSE
+        else # cannot rely on 'else' expr being e.g. 7th
+          NA
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        if (TRUE) {
+          FALSE
+        } else # cannot rely on 'else' expr being e.g. 7th
+          NA
+      }
+    "),
+    NULL,
+    linter
+  )
+})
