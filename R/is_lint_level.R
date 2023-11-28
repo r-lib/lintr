@@ -20,7 +20,7 @@
 #' @export
 is_lint_level <- function(source_expression, level = c("expression", "file")) {
   level <- match.arg(level)
-  required_key <- if (level == "file") "full_parsed_content" else "parsed_content"
+  required_key <- switch(level, file = "full_parsed_content", expression = "parsed_content")
   required_key %in% names(source_expression)
 }
 
