@@ -123,14 +123,14 @@ nested_return_lints <- function(expr, xpath, source_expression, lint_message) {
     if (length(expr_idx) == 0L) { # empty brace expression {}
       return(list())
     }
-    nested_return_lints(child_expr[[tail(expr_idx, 1L)]], xpath, source_expression, lint_message)
+    Recall(child_expr[[tail(expr_idx, 1L)]], xpath, source_expression, lint_message)
   } else if (child_node[1L] == "IF") {
     expr_idx <- which(child_node %in% c("expr", "equal_assign", "expr_or_assign_or_help"))
     c(
       # TRUE condition
-      nested_return_lints(child_expr[[expr_idx[2L]]], xpath, source_expression, lint_message),
+      Recall(child_expr[[expr_idx[2L]]], xpath, source_expression, lint_message),
       # FALSE condition, if present
-      if (length(expr_idx) > 2L) nested_return_lints(child_expr[[expr_idx[3L]]], xpath, source_expression, lint_message)
+      if (length(expr_idx) > 2L) Recall(child_expr[[expr_idx[3L]]], xpath, source_expression, lint_message)
     )
   } else {
     list(xml_nodes_to_lints(
