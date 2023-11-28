@@ -40,7 +40,7 @@ duplicate_argument_linter <- function(except = c("mutate", "transmute")) {
   xpath_call_with_args <- "//EQ_SUB/parent::expr"
   xpath_arg_name <- "./EQ_SUB/preceding-sibling::*[1]"
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -61,5 +61,5 @@ duplicate_argument_linter <- function(except = c("mutate", "transmute")) {
       lint_message = "Duplicate arguments in function call.",
       type = "warning"
     )
-  }, linter_level = "file")
+  })
 }

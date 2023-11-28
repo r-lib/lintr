@@ -110,7 +110,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
     glue_collapse(unique(names(style_list)), sep = ", ", last = " or "), "."
   )
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -143,7 +143,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
       lint_message = lint_message,
       type = "style"
     )
-  }, linter_level = "file")
+  })
 }
 
 check_style <- function(nms, style, generics = character()) {

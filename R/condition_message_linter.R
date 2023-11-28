@@ -56,7 +56,7 @@ condition_message_linter <- function() {
     /parent::expr
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -72,5 +72,5 @@ condition_message_linter <- function() {
       '(using "" as a separator). For translatable strings, prefer using gettextf().'
     )
     xml_nodes_to_lints(bad_expr, source_expression = source_expression, lint_message = lint_message, type = "warning")
-  }, linter_level = "expression")
+  })
 }

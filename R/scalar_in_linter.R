@@ -37,7 +37,7 @@ scalar_in_linter <- function() {
     /parent::expr
   "
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -52,5 +52,5 @@ scalar_in_linter <- function() {
       lint_message = lint_msg,
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }

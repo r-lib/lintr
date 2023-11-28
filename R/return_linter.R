@@ -102,7 +102,7 @@ return_linter <- function(
     msg <- "All functions must have an explicit return()."
   }
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -110,7 +110,7 @@ return_linter <- function(
 
     # lints_from_terminal_expr not "vectorized" due to xml_children()
     lapply(body_expr, lints_from_terminal_expr, lint_xpath, source_expression, msg)
-  }, linter_level = "expression")
+  })
 }
 
 lints_from_terminal_expr <- function(expr, lint_xpath, source_expression, lint_message) {

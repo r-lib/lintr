@@ -32,7 +32,7 @@ expect_s4_class_linter <- function() {
     /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label'])]
   "
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -49,5 +49,5 @@ expect_s4_class_linter <- function() {
       ),
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }

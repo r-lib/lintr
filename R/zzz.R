@@ -155,6 +155,8 @@ all_undesirable_functions <- modify_defaults(
     "source() loads code into the global environment unless `local = TRUE` is used,",
     "which can cause hard-to-predict behavior"
   ),
+  structure =
+    "Use class<-, names<-, and attr<- to set attributes",
   substring =
     "use substr() with appropriate `stop=` value.",
   Sys.setenv =
@@ -172,9 +174,7 @@ all_undesirable_functions <- modify_defaults(
   untrace = paste(
     "remove this likely leftover from debugging.",
     "It is only useful for interactive debugging with trace()"
-  ),
-  structure =
-    "Use class<-, names<-, and attr<- to set attributes"
+  )
 )
 
 #' @rdname default_undesirable_functions
