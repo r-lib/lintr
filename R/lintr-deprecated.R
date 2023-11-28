@@ -21,21 +21,39 @@ NULL
 #' @rdname lintr-deprecated
 #' @export
 closed_curly_linter <- function(allow_single_line = FALSE) {
-  lintr_deprecated("closed_curly_linter", alternative = "brace_linter", version = "3.0.0", type = "Linter", signal = "stop")
+  lintr_deprecated(
+    what = "closed_curly_linter",
+    alternative = "brace_linter",
+    version = "3.0.0",
+    type = "Linter",
+    signal = "stop"
+  )
 }
 
 #' Open curly linter
 #' @rdname lintr-deprecated
 #' @export
 open_curly_linter <- function(allow_single_line = FALSE) {
-  lintr_deprecated("open_curly_linter", alternative = "brace_linter", version = "3.0.0", type = "Linter", signal = "stop")
+  lintr_deprecated(
+    what = "open_curly_linter",
+    alternative = "brace_linter",
+    version = "3.0.0",
+    type = "Linter",
+    signal = "stop"
+  )
 }
 
 #' Parentheses before brace linter
 #' @rdname lintr-deprecated
 #' @export
 paren_brace_linter <- function() {
-  lintr_deprecated("paren_brace_linter", alternative = "brace_linter", version = "3.0.0", type = "Linter", signal = "stop")
+  lintr_deprecated(
+    what = "paren_brace_linter",
+    alternative = "brace_linter",
+    version = "3.0.0",
+    type = "Linter",
+    signal = "stop"
+  )
 }
 
 #' Semicolon linter
