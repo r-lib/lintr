@@ -121,7 +121,8 @@ lints_from_terminal_expr <- function(expr, lint_xpath, source_expression, lint_m
   child_node <- xml_name(child_expr)
 
   if (child_node[1L] == "OP-LEFT-BRACE") {
-    lints_from_terminal_expr(child_expr[[length(child_expr) - 1L]], lint_xpath, source_expression, lint_message)
+    expr_idx <- which(child_node == "expr")
+    lints_from_terminal_expr(child_expr[[tail(expr_idx, 1L)]], lint_xpath, source_expression, lint_message)
   } else if (child_node[1L] == "IF") {
     expr_idx <- which(child_node == "expr")
     c(

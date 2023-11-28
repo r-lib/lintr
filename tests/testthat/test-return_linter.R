@@ -1083,3 +1083,43 @@ test_that("logic is robust to absence of '{'", {
     linter
   )
 })
+
+test_that("logic is robust to terminal comments under '{'", {
+  implicit_linter <- return_linter()
+  implicit_msg <- rex::rex("Use implicit return behavior; explicit return() is not needed.")
+  explicit_linter <- return_linter(return_style = "explicit")
+  explicit_msg <- rex::rex("All functions must have an explicit return().")
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        return(TRUE)
+        # comment
+      }
+    "),
+    implicit_msg,
+    implicit_linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        return(TRUE)
+        # comment
+      }
+    "),
+    NULL,
+    explicit_linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        TRUE
+        # comment
+      }
+    "),
+    explicit_msg,
+    explicit_linter
+  )
+})
