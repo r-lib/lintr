@@ -46,7 +46,7 @@ equals_na_linter <- function() {
     /parent::expr
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -58,5 +58,5 @@ equals_na_linter <- function() {
       lint_message = "Use is.na for comparisons to NA (not == or != or %in%)",
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }

@@ -139,7 +139,7 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
     ]
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -168,5 +168,5 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
       lint_message = msg,
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }

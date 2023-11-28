@@ -159,7 +159,7 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   # path to the symbol of the simpler function that avoids a lambda
   symbol_xpath <- "expr[last()]//expr[SYMBOL_FUNCTION_CALL[text() != 'return']]"
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -220,5 +220,5 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
     )
 
     c(default_fun_lints, inner_comparison_lints, purrr_fun_lints)
-  }, linter_level = "expression")
+  })
 }

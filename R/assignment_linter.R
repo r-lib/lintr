@@ -99,7 +99,7 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
     if (!allow_pipe_assign) "//SPECIAL[text() = '%<>%']"
   ))
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -123,5 +123,5 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
 
     lint_message <- sprintf(lint_message_fmt, operator)
     xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "style")
-  }, linter_level = "expression")
+  })
 }

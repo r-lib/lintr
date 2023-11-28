@@ -82,7 +82,7 @@ strings_as_factors_linter <- function() {
     ]
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -99,5 +99,5 @@ strings_as_factors_linter <- function() {
       ),
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }
