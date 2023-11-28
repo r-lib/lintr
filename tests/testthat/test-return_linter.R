@@ -1136,3 +1136,18 @@ test_that("terminal = assignment is not an error", {
     return_linter()
   )
 })
+
+test_that("empty terminal '{' expression is not an error", {
+  linter <- return_linter()
+
+  expect_lint("foo <- function() { }", NULL, linter)
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+      }
+    "),
+    NULL,
+    linter
+  )
+})

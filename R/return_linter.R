@@ -120,6 +120,9 @@ nested_return_lints <- function(expr, xpath, source_expression, lint_message) {
 
   if (child_node[1L] == "OP-LEFT-BRACE") {
     expr_idx <- which(child_node %in% c("expr", "equal_assign", "expr_or_assign_or_help"))
+    if (length(expr_idx) == 0L) { # empty brace expression {}
+      return(list())
+    }
     nested_return_lints(child_expr[[tail(expr_idx, 1L)]], xpath, source_expression, lint_message)
   } else if (child_node[1L] == "IF") {
     expr_idx <- which(child_node %in% c("expr", "equal_assign", "expr_or_assign_or_help"))
