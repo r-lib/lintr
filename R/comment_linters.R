@@ -75,7 +75,8 @@ commented_code_linter <- function() {
       anything
     )
   )
-  Linter(function(source_expression) {
+
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
     if (is.null(xml)) return(list())
     all_comment_nodes <- xml_find_all(xml, "//COMMENT")
@@ -105,7 +106,7 @@ commented_code_linter <- function() {
     }
 
     lint_list
-  }, linter_level = "file")
+  })
 }
 
 # is given text parsable

@@ -136,26 +136,26 @@ split_path <- function(dirs, prefix) {
 #' @include utils.R
 path_linter_factory <- function(path_function, message, linter, name = linter_auto_name()) {
   force(name)
-  Linter(function(source_expression) {
+  Linter(name = name, linter_level = "expression", function(source_expression) {
     lapply(
       ids_with_token(source_expression, "STR_CONST"),
       function(id) {
         token <- with_id(source_expression, id)
         path <- get_r_string(token$text)
         if (path_function(path)) {
-          start <- token[["col1"]] + 1L
-          end <- token[["col2"]] - 1L
+          path_start <- token[["col1"]] + 1L
+          path_end <- token[["col2"]] - 1L
           Lint(
             filename = source_expression[["filename"]],
             line_number = token[["line1"]],
-            column_number = start,
+            column_number = path_start,
             type = "warning",
             message = message,
             line = source_expression[["lines"]][[as.character(token[["line1"]])]],
-            ranges = list(c(start, end))
+            ranges = list(c(path_start, path_end))
           )
         }
       }
     )
-  }, name = name, linter_level = "expression")
+  })
 }

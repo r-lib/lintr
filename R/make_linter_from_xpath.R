@@ -23,7 +23,7 @@ make_linter_from_xpath <- function(xpath,
   xml_key <- if (level == "expression") "xml_parsed_content" else "full_xml_parsed_content"
 
   function() {
-    Linter(function(source_expression) {
+    Linter(linter_level = level, function(source_expression) {
       xml <- source_expression[[xml_key]]
       if (is.null(xml)) return(list())
 
@@ -35,6 +35,6 @@ make_linter_from_xpath <- function(xpath,
         lint_message = lint_message,
         type = type
       )
-    }, linter_level = level)
+    })
   }
 }

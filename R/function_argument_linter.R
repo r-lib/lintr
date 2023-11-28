@@ -59,7 +59,7 @@ function_argument_linter <- function() {
     text() = following-sibling::expr[last()]//expr[expr/SYMBOL_FUNCTION_CALL[text() = 'missing']]/expr[2]/SYMBOL/text()
   "
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -76,5 +76,5 @@ function_argument_linter <- function() {
       lint_message = paste0("Arguments without defaults should come before arguments with defaults.", missing_note),
       type = "style"
     )
-  }, linter_level = "expression")
+  })
 }

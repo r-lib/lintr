@@ -74,7 +74,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
     sep = " | "
   )
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -135,5 +135,5 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
       paste0("Package '", unused_packages, "' is attached but never used.")
     )
     xml_nodes_to_lints(import_exprs, source_expression, lint_message, type = "warning")
-  }, linter_level = "file")
+  })
 }
