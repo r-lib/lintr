@@ -13,7 +13,7 @@ lintr_deprecated <- function(what, alternative = NULL, version = NULL,
     c(type, " ", what, " was deprecated"),
     if (length(version) > 0L) c(" in lintr version ", version),
     ". ",
-    if (length(new) > 0L) c("Use ", alternative, " instead.")
+    if (length(alternative) > 0L) c("Use ", alternative, " instead.")
   )
   msg <- paste0(msg, collapse = "")
   signal(msg, call. = FALSE, domain = NA)
