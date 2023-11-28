@@ -60,16 +60,8 @@ return_linter <- function(
   return_style <- match.arg(return_style)
 
   if (return_style == "implicit") {
-    xpath <- "
-      (//FUNCTION | //OP-LAMBDA)
-      /following-sibling::expr[1][*[1][self::OP-LEFT-BRACE]]
-      /expr[last()][
-        expr[1][
-          not(OP-DOLLAR or OP-AT)
-          and SYMBOL_FUNCTION_CALL[text() = 'return']
-        ]
-      ]
-    "
+    body_xpath <- "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[1]"
+    lint_xpath <- "SYMBOL_FUNCTION_CALL[text() = 'return']"
     msg <- "Use implicit return behavior; explicit return() is not needed."
   } else {
     # See `?.onAttach`; these functions are all exclusively used for their
@@ -96,64 +88,17 @@ return_linter <- function(
 
     control_calls <- c("IF", "FOR", "WHILE", "REPEAT")
 
-    # from top, look for a FUNCTION definition that uses { (one-line
-    #   function definitions are excepted), then look for failure to find
-    #   return() on the last() expr of the function definition.
-    # exempt .onLoad which shows up in the tree like
-    #   <expr><expr><SYMBOL>.onLoad</></><LEFT_ASSIGN></><expr><FUNCTION>...
-    # simple final expression (no control flow) must be
-    # <expr><expr> CALL( <expr> ) </expr></expr>
-    # NB: if this syntax _isn't_ used, the node may not be <expr>, hence
-    #   the use of /*[...] below and self::expr here. position() = 1 is
-    #   needed to guard against a few other cases.
-    #   We also need to make sure that this expression isn't followed by a pipe
-    #   symbol, which would indicate that we need to also check the last
-    #   expression.
-    # pipe expressions are like
-    #   ...
-    #   <SPECIAL>%&gt;%</SPECIAL>
-    #   <expr><expr><SYMBOL_FUNCTION_CALL>return</SYMBOL_FUNCTION_CALL>
-    #   </expr></expr>
-    # Unlike the following case, the return should be the last expression in
-    # the sequence.
-    # conditional expressions are like
-    #   <expr><IF> ( <expr> ) <expr> [ <ELSE> <expr>] </expr>
-    # we require _any_ call to return() in either of the latter two <expr>, i.e.,
-    #   we don't apply recursive logic to check every branch, only that the
-    #   two top level branches have at least two return()s
-    # because of special 'in' syntax for 'for' loops, the condition is
-    #   tagged differently than for 'if'/'while' conditions (simple PAREN)
-    xpath <- glue("
+    body_xpath <- glue("
     (//FUNCTION | //OP-LAMBDA)[parent::expr[not(
       preceding-sibling::expr[SYMBOL[{ xp_text_in_table(except) }]]
     )]]
       /following-sibling::expr[OP-LEFT-BRACE and expr[last()]/@line1 != @line1]
       /expr[last()]
-      /*[
-        (
-          position() = 1
-          and (
-            (
-              { xp_or(paste0('self::', setdiff(control_calls, 'IF'))) }
-            ) or (
-              not({ xp_or(paste0('self::', control_calls)) })
-              and not(
-                following-sibling::PIPE
-                or following-sibling::SPECIAL[text() = '%>%']
-              )
-              and not(self::expr/SYMBOL_FUNCTION_CALL[
-                { xp_text_in_table(return_functions) }
-              ])
-            )
-          )
-        ) or (
-          preceding-sibling::IF
-          and self::expr
-          and position() > 4
-          and not(.//SYMBOL_FUNCTION_CALL[{ xp_text_in_table(return_functions) }])
-        )
-      ]
     ")
+    lint_xpath <- glue("self::*[not(
+      (self::expr | following-sibling::SPECIAL[text() = '%>%']/following-sibling::expr/expr[1])
+        /SYMBOL_FUNCTION_CALL[{ xp_text_in_table(return_functions) }]
+    )]")
     msg <- "All functions must have an explicit return()."
   }
 
@@ -161,13 +106,33 @@ return_linter <- function(
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
-    xml_nodes <- xml_find_all(xml, xpath)
+    body_expr <- xml_find_all(xml, body_xpath)
 
-    xml_nodes_to_lints(
-      xml_nodes,
-      source_expression = source_expression,
-      lint_message = msg,
-      type = "style"
-    )
+    # lints_from_terminal_expr not "vectorized" due to xml_children()
+    lapply(body_expr, lints_from_terminal_expr, lint_xpath, source_expression, msg)
   }, linter_level = "expression")
+}
+
+lints_from_terminal_expr <- function(expr, lint_xpath, source_expression, lint_message) {
+  child_expr <- xml_children(expr)
+  if (length(child_expr) == 0L) {
+    return(list())
+  }
+  top_node <- xml_name(child_expr[[1L]])
+
+  if (top_node == "OP-LEFT-BRACE") {
+    lints_from_terminal_expr(child_expr[[length(child_expr) - 1L]], lint_xpath, source_expression, lint_message)
+  } else if (top_node == "IF") {
+    c(
+      lints_from_terminal_expr(child_expr[[5L]], lint_xpath, source_expression, lint_message),
+      if (length(child_expr) > 5L) lints_from_terminal_expr(child_expr[[7L]], lint_xpath, source_expression, lint_message)
+    )
+  } else {
+    list(xml_nodes_to_lints(
+      xml_find_first(child_expr[[1L]], lint_xpath),
+      source_expression = source_expression,
+      lint_message = lint_message,
+      type = "style"
+    ))
+  }
 }

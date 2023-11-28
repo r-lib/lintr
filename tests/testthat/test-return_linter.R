@@ -135,7 +135,7 @@ test_that("Lint control statements (without return) on end of function", {
         }
       }
     "),
-    list(lint_msg, line_number = 4L),
+    list(lint_msg, line_number = 5L),
     linter
   )
 })
@@ -331,8 +331,8 @@ test_that("return_linter finds multiple missing returns in branches", {
       }
     "),
     list(
-      list(lint_msg, line_number = 2L),
-      list(lint_msg, line_number = 4L)
+      list(lint_msg, line_number = 3L),
+      list(lint_msg, line_number = 5L)
     ),
     return_linter(return_style = "explicit")
   )
@@ -879,6 +879,164 @@ test_that("return_linter lints `message`, `warning` and `stopifnot`", {
       }
     "),
     lint_msg,
+    linter
+  )
+})
+
+test_that("return_linter handles arbitrarily nested terminal statements", {
+  implicit_linter <- return_linter()
+  implicit_msg <- rex::rex("Use implicit return behavior; explicit return() is not needed.")
+  explicit_linter <- return_linter(return_style = "explicit")
+  explicit_msg <- rex::rex("All functions must have an explicit return().")
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        if (x < 0) {
+          if (x == -1) {
+            return(TRUE)
+          }
+          if (x > -10) {
+            NA
+          } else {
+            FALSE
+          }
+        } else if (x == 0) {
+          TRUE
+        } else {
+          y <- x**2
+          if (y > 10) {
+            z <- sin(y)
+            if (z > 0) {
+              FALSE
+            } else {
+              NA
+            }
+          } else {
+            TRUE
+          }
+        }
+      }
+    "),
+    NULL,
+    implicit_linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        if (x < 0) {
+          if (x == -1) {
+            return(TRUE)
+          }
+          if (x > -10) {
+            return(NA)
+          } else {
+            return(FALSE)
+          }
+        } else if (x == 0) {
+          return(TRUE)
+        } else {
+          y <- x**2
+          if (y > 10) {
+            z <- sin(y)
+            if (z > 0) {
+              return(FALSE)
+            } else {
+              return(NA)
+            }
+          } else {
+            return(TRUE)
+          }
+        }
+      }
+    "),
+    NULL,
+    explicit_linter
+  )
+
+  mixed_lines <- trim_some("
+    foo <- function(x) {
+      if (x < 0) {
+        if (x == -1) {
+          return(TRUE)
+        }
+        if (x > -10) {
+          return(NA)
+        } else {
+          FALSE
+        }
+      } else if (x == 0) {
+        return(TRUE)
+      } else {
+        y <- x**2
+        if (y > 10) {
+          z <- sin(y)
+          if (z > 0) {
+            FALSE
+          } else {
+            return(NA)
+          }
+        } else {
+          TRUE
+        }
+      }
+    }
+  ")
+
+  expect_lint(
+    mixed_lines,
+    list(
+      list(implicit_msg, line_number = 7L),
+      list(implicit_msg, line_number = 12L),
+      list(implicit_msg, line_number = 20L)
+    ),
+    implicit_linter
+  )
+
+  expect_lint(
+    mixed_lines,
+    list(
+      list(explicit_msg, line_number = 9L),
+      list(explicit_msg, line_number = 18L),
+      list(explicit_msg, line_number = 23L)
+    ),
+    explicit_linter
+  )
+})
+
+test_that("explicit returns in control flow are linted correctly", {
+  linter <- return_linter()
+  lint_msg <- rex::rex("Use implicit return behavior")
+
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        if (TRUE) {
+          return(bar)
+        } else {
+          return(NULL)
+        }
+      }
+    "),
+    list(lint_msg, lint_msg),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        if (TRUE) {
+          if (TRUE) {
+            return(1)
+          }
+          2
+        } else {
+          3
+        }
+      }
+    "),
+    NULL,
     linter
   )
 })
