@@ -92,7 +92,7 @@ nzchar_linter <- function() {
     "nzchar(NA) is TRUE by default."
   )
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -121,5 +121,5 @@ nzchar_linter <- function() {
     )
 
     c(comparison_lints, nchar_lints)
-  }, linter_level = "expression")
+  })
 }

@@ -55,7 +55,7 @@ yoda_test_linter <- function() {
 
   second_const_xpath <- glue("expr[position() = 3 and ({const_condition})]")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -73,5 +73,5 @@ yoda_test_linter <- function() {
     )
 
     xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "warning")
-  }, linter_level = "expression")
+  })
 }

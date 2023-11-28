@@ -157,7 +157,7 @@ return_linter <- function(
     msg <- "All functions must have an explicit return()."
   }
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -169,5 +169,5 @@ return_linter <- function(
       lint_message = msg,
       type = "style"
     )
-  }, linter_level = "expression")
+  })
 }
