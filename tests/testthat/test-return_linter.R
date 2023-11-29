@@ -1457,7 +1457,7 @@ test_that("Mixing exempted functions doesn't miss lints", {
 
       bar <- function() {
         if (TRUE) {
-          2
+          return(2)
         }
       }
 
@@ -1467,7 +1467,10 @@ test_that("Mixing exempted functions doesn't miss lints", {
         }
       }
     }"),
-    list("All functions with terminal if statements", line_number = 13L),
+    list(
+      list("Use implicit return behavior", line_number = 8L),
+      list("All functions with terminal if statements", line_number = 13L)
+    ),
     return_linter(allow_implicit_else = FALSE, except = "bar")
   )
 })
