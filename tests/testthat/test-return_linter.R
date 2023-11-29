@@ -1407,7 +1407,11 @@ test_that("implicit else lint has the correct metadata", {
   )
 })
 
-test_that("two lints thrown when lacking explicit return and explicit else", {
+test_that("Correct lints thrown when lacking explicit return and explicit else", {
+  linter <- return_linter(return_style = "explicit", allow_implicit_else = FALSE)
+  explicit_return_msg <- rex::rex("All functions must have an explicit return().")
+  implicit_else_msg <- rex::rex("All functions with terminal if statements")
+
   expect_lint(
     trim_some("
       foo <- function(x, y = 3) {
@@ -1417,9 +1421,27 @@ test_that("two lints thrown when lacking explicit return and explicit else", {
       }
     "),
     list(
-      rex::rex("All functions with terminal if statements"),
-      rex::rex("All functions must have an explicit return().")
+      list(implicit_else_msg, line_number = 2L),
+      list(explicit_return_msg, line_number = 3L)
     ),
-    return_linter(return_style = "explicit", allow_implicit_else = FALSE)
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(x, y) {
+        if (x) {
+          1
+        } else if (y) {
+          2
+        }
+      }
+    "),
+    list(
+      list(explicit_return_msg, line_number = 3L),
+      list(implicit_else_msg, line_number = 4L),
+      list(explicit_return_msg, line_number = 5L)
+    ),
+    linter
   )
 })
