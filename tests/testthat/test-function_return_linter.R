@@ -22,13 +22,13 @@ test_that("function_return_linter blocks simple disallowed usages", {
   linter <- function_return_linter()
   lint_msg <- rex::rex("Move the assignment outside of the return() clause")
 
-  expect_lint(function_body("return(x <- x + 1)", signature = "x"), lint_msg, linter)
+  expect_lint(function_body(signature = "x", "return(x <- x + 1)"), lint_msg, linter)
 
-  expect_lint(function_body("return(x <<- x + 1)", signature = "x"), lint_msg, linter)
+  expect_lint(function_body(signature = "x", "return(x <<- x + 1)"), lint_msg, linter)
 
-  expect_lint(function_body("return(x + 1 ->> x)", signature = "x"), lint_msg, linter)
+  expect_lint(function_body(signature = "x", "return(x + 1 ->> x)"), lint_msg, linter)
 
-  expect_lint(function_body("return(x + 1 -> x)", signature = "x"), lint_msg, linter)
+  expect_lint(function_body(signature = "x", "return(x + 1 -> x)"), lint_msg, linter)
 
   expect_lint(
     trim_some("
