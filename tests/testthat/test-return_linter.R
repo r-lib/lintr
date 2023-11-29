@@ -1236,4 +1236,16 @@ test_that("empty terminal '{' expression is handled correctly", {
     ),
     explicit_linter
   )
+
+  weird <- trim_some("
+    foo <- function() {
+      if (TRUE) {{{{
+        0
+      }}}} else {
+        { return(1) }
+      }
+    }
+  ")
+  expect_lint(weird, list(implicit_msg, line_number = 5L), implicit_linter)
+  expect_lint(weird, list(explicit_msg, line_number = 3L), explicit_linter)
 })
