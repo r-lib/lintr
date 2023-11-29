@@ -181,6 +181,7 @@ local({
   )
   patrick::with_parameters_test_that(
     "valid nesting is handled",
+    # nolint next: unnecessary_nesting_linter. TODO(#2334): Remove this nolint.
     {
       expect_lint(code_string, NULL, linter)
     },

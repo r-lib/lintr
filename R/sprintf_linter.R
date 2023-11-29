@@ -104,7 +104,7 @@ sprintf_linter <- function() {
     }
   }
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -119,5 +119,5 @@ sprintf_linter <- function() {
       lint_message = sprintf_warning[has_warning],
       type = "warning"
     )
-  }, linter_level = "file")
+  })
 }

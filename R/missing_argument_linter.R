@@ -43,7 +43,7 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
   xpath <- glue("//SYMBOL_FUNCTION_CALL/parent::expr/parent::expr/*[{xp_or(conds)}]")
   to_function_xpath <- "string(./preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)"
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -55,5 +55,5 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
       source_expression = source_expression,
       lint_message = "Missing argument in function call."
     )
-  }, linter_level = "file")
+  })
 }

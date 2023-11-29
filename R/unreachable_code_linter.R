@@ -115,7 +115,7 @@ unreachable_code_linter <- function() {
     expr[!is_nolint_end_comment]
   }
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -156,5 +156,5 @@ unreachable_code_linter <- function() {
     )
 
     c(lints_return_stop, lints_next_break, lints_if_while, lints_else)
-  }, linter_level = "expression")
+  })
 }

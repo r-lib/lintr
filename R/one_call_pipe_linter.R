@@ -65,7 +65,7 @@ one_call_pipe_linter <- function() {
     ]
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -78,5 +78,5 @@ one_call_pipe_linter <- function() {
       lint_message = paste0("Expressions with only a single call shouldn't use pipe ", pipe, "."),
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }

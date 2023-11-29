@@ -39,7 +39,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -117,7 +117,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     }
 
     lints
-  }, linter_level = "file")
+  })
 }
 
 namespace_symbols <- function(ns, exported = TRUE) {

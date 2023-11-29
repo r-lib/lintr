@@ -43,7 +43,7 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
 
   replacement_map <- c(T = "TRUE", F = "FALSE")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
     bad_usage <- xml_find_all(xml, usage_xpath)
@@ -66,5 +66,5 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
       make_lints(bad_usage, "Use %s instead of the symbol %s."),
       make_lints(bad_assignment, "Don't use %2$s as a variable name, as it can break code relying on %2$s being %1$s.")
     )
-  }, linter_level = "expression")
+  })
 }

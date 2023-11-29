@@ -67,7 +67,7 @@ pipe_continuation_linter <- function() {
   ]
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -83,5 +83,5 @@ pipe_continuation_linter <- function() {
       ),
       type = "style"
     )
-  }, linter_level = "file")
+  })
 }

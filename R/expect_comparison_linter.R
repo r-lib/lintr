@@ -63,7 +63,7 @@ expect_comparison_linter <- function() {
     `==` = "expect_identical"
   )
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -73,5 +73,5 @@ expect_comparison_linter <- function() {
     expectation <- comparator_expectation_map[comparator]
     lint_message <- sprintf("%s(x, y) is better than expect_true(x %s y).", expectation, comparator)
     xml_nodes_to_lints(bad_expr, source_expression, lint_message = lint_message, type = "warning")
-  }, linter_level = "expression")
+  })
 }

@@ -32,6 +32,7 @@
   + `return_functions` to customize which functions are equivalent to `return()` as "exit" clauses, e.g. `rlang::abort()` can be considered in addition to the default functions like `stop()` and `q()` from base (#2271 and part of #884, @MichaelChirico and @MEO265).
   + `except` to customize which functions are ignored entirely (i.e., whether they have a return of the specified style is not checked; #2271 and part of #884, @MichaelChirico and @MEO265). Namespace hooks like `.onAttach()` and `.onLoad()` are always ignored.
 * `unnecessary_lambda_linter` is extended to encourage vectorized comparisons where possible, e.g. `sapply(x, sum) > 0` instead of `sapply(x, function(x) sum(x) > 0)` (part of #884, @MichaelChirico). Toggle this behavior with argument `allow_comparison`.
+* `backport_linter()` is slightly faster by moving expensive computations outside the linting function (#2339, #2348, @AshesITR and @MichaelChirico).
 * `Linter()` has a new argument `linter_level` (default `NA`). This is used by `lint()` to more efficiently check for expression levels than the idiom `if (!is_lint_level(...)) { return(list()) }` (#2351, @AshesITR).
 
 ### New linters
