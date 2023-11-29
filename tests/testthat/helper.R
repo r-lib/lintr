@@ -53,9 +53,9 @@ function_body <- function(x, signature = "", assign = TRUE) {
   } else {
     symbol <- ""
   }
-  x <- paste0("      ", unlist(strsplit(trim_some(x), "\n", fixed = TRUE)), collapse = "\n")
-  fmt <- "    %sfunction(%s) {\n%s\n    }"
-  trim_some(sprintf(fmt, symbol, signature, x))
+  x <- paste0("   ", unlist(strsplit(trim_some(x), "\n", fixed = TRUE)), collapse = "\n")
+  fmt <- "%sfunction(%s) {\n%s\n}"
+  sprintf(fmt, symbol, signature, x)
 }
 
 local_config <- function(config_dir, contents, filename = ".lintr", .local_envir = parent.frame()) {
