@@ -61,8 +61,12 @@ return_linter <- function(
 
   if (return_style == "implicit") {
     body_xpath <- "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[1]"
-    lint_xpath <- "SYMBOL_FUNCTION_CALL[text() = 'return']"
-    msg <- "Use implicit return behavior; explicit return() is not needed."
+    params <- list(
+      implicit = TRUE,
+      type = "style",
+      lint_xpath = "SYMBOL_FUNCTION_CALL[text() = 'return']",
+      lint_message = "Use implicit return behavior; explicit return() is not needed."
+    )
   } else {
     except <- union(special_funs, except)
 
@@ -90,11 +94,15 @@ return_linter <- function(
       /following-sibling::expr[OP-LEFT-BRACE and expr[last()]/@line1 != @line1]
       /expr[last()]
     ")
-    lint_xpath <- glue("self::*[not(
-      (self::expr | following-sibling::SPECIAL[text() = '%>%']/following-sibling::expr/expr[1])
-        /SYMBOL_FUNCTION_CALL[{ xp_text_in_table(return_functions) }]
-    )]")
-    msg <- "All functions must have an explicit return()."
+    params <- list(
+      implicit = FALSE,
+      type = "warning",
+      lint_xpath = glue("self::*[not(
+        (self::expr | following-sibling::SPECIAL[text() = '%>%']/following-sibling::expr/expr[1])
+          /SYMBOL_FUNCTION_CALL[{ xp_text_in_table(return_functions) }]
+      )]"),
+      lint_message = "All functions must have an explicit return()."
+    )
   }
 
   Linter(linter_level = "expression", function(source_expression) {
@@ -103,12 +111,13 @@ return_linter <- function(
 
     body_expr <- xml_find_all(xml, body_xpath)
 
+    params$source_expression <- source_expression
     # nested_return_lints not "vectorized" due to xml_children()
-    lapply(body_expr, nested_return_lints, return_style == "implicit", lint_xpath, source_expression, msg)
+    lapply(body_expr, nested_return_lints, params)
   })
 }
 
-nested_return_lints <- function(expr, implicit, xpath, source_expression, lint_message) {
+nested_return_lints <- function(expr, params) {
   child_expr <- xml_children(expr)
   if (length(child_expr) == 0L) {
     return(list())
@@ -118,32 +127,32 @@ nested_return_lints <- function(expr, implicit, xpath, source_expression, lint_m
   if (child_node[1L] == "OP-LEFT-BRACE") {
     expr_idx <- which(child_node %in% c("expr", "equal_assign", "expr_or_assign_or_help"))
     if (length(expr_idx) == 0L) { # empty brace expression {}
-      if (implicit) {
+      if (params$implicit) {
         return(list())
       } else {
         return(list(xml_nodes_to_lints(
           expr,
-          source_expression = source_expression,
-          lint_message = lint_message,
-          type = "style"
+          source_expression = params$source_expression,
+          lint_message = params$lint_message,
+          type = params$type
         )))
       }
     }
-    Recall(child_expr[[tail(expr_idx, 1L)]], implicit, xpath, source_expression, lint_message)
+    Recall(child_expr[[tail(expr_idx, 1L)]], params)
   } else if (child_node[1L] == "IF") {
     expr_idx <- which(child_node %in% c("expr", "equal_assign", "expr_or_assign_or_help"))
     c(
       # TRUE condition
-      Recall(child_expr[[expr_idx[2L]]], implicit, xpath, source_expression, lint_message),
+      Recall(child_expr[[expr_idx[2L]]], params),
       # FALSE condition, if present
-      if (length(expr_idx) > 2L) Recall(child_expr[[expr_idx[3L]]], implicit, xpath, source_expression, lint_message)
+      if (length(expr_idx) > 2L) Recall(child_expr[[expr_idx[3L]]], params)
     )
   } else {
     list(xml_nodes_to_lints(
-      xml_find_first(child_expr[[1L]], xpath),
-      source_expression = source_expression,
-      lint_message = lint_message,
-      type = "style"
+      xml_find_first(child_expr[[1L]], params$lint_xpath),
+      source_expression = params$source_expression,
+      lint_message = params$lint_message,
+      type = params$type
     ))
   }
 }

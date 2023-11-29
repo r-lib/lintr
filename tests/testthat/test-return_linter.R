@@ -9,7 +9,8 @@ test_that("Lint return on end of function", {
     "),
     list(
       line_number = 4L,
-      message = rex::rex("All functions must have an explicit return().")
+      message = rex::rex("All functions must have an explicit return()."),
+      type = "warning"
     ),
     return_linter(return_style = "explicit")
   )
@@ -22,7 +23,8 @@ test_that("Lint return on end of function", {
     "),
     list(
       line_number = 2L,
-      message = rex::rex("Use implicit return behavior; explicit return() is not needed.")
+      message = rex::rex("Use implicit return behavior; explicit return() is not needed."),
+      type = "style"
     ),
     return_linter()
   )
