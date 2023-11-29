@@ -1,7 +1,7 @@
 test_that("function_return_linter skips allowed usages", {
   linter <- function_return_linter()
 
-  lines_simple <- function_body(signature = "x", "
+  lines_simple <- function_body("
     x <- x + 1
     return(x)
   ")
@@ -9,7 +9,7 @@ test_that("function_return_linter skips allowed usages", {
 
   # arguably an expression as complicated as this should also be assigned,
   #   but for now that's out of the scope of this linter
-  lines_subassignment <- function_body(signature = "x", "
+  lines_subassignment <- function_body("
     return(x[, {
       col <- col + 1
       .(grp, col)
@@ -22,13 +22,13 @@ test_that("function_return_linter blocks simple disallowed usages", {
   linter <- function_return_linter()
   lint_msg <- rex::rex("Move the assignment outside of the return() clause")
 
-  expect_lint(function_body(signature = "x", "return(x <- x + 1)"), lint_msg, linter)
+  expect_lint(function_body("return(x <- x + 1)"), lint_msg, linter)
 
-  expect_lint(function_body(signature = "x", "return(x <<- x + 1)"), lint_msg, linter)
+  expect_lint(function_body("return(x <<- x + 1)"), lint_msg, linter)
 
-  expect_lint(function_body(signature = "x", "return(x + 1 ->> x)"), lint_msg, linter)
+  expect_lint(function_body("return(x + 1 ->> x)"), lint_msg, linter)
 
-  expect_lint(function_body(signature = "x", "return(x + 1 -> x)"), lint_msg, linter)
+  expect_lint(function_body("return(x + 1 -> x)"), lint_msg, linter)
 
   expect_lint(
     trim_some("
