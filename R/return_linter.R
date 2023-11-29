@@ -138,21 +138,16 @@ nested_return_lints <- function(expr, params) {
         )))
       }
     }
-    Recall(child_expr[[tail(expr_idx, 1L)]], params)
+    nested_return_lints(child_expr[[tail(expr_idx, 1L)]], params)
   } else if (child_node[1L] == "IF") {
     expr_idx <- which(child_node %in% c("expr", "equal_assign", "expr_or_assign_or_help"))
-    c(
-      # TRUE condition
-      Recall(child_expr[[expr_idx[2L]]], params),
-      # FALSE condition, if present
-      if (length(expr_idx) > 2L) Recall(child_expr[[expr_idx[3L]]], params)
-    )
+    lapply(child_expr[expr_idx[-1L]], nested_return_lints, params)
   } else {
-    list(xml_nodes_to_lints(
+    xml_nodes_to_lints(
       xml_find_first(child_expr[[1L]], params$lint_xpath),
       source_expression = params$source_expression,
       lint_message = params$lint_message,
       type = params$type
-    ))
+    )
   }
 }
