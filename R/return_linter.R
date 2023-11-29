@@ -137,6 +137,8 @@ return_linter <- function(
     params$source_expression <- source_expression
     # nested_return_lints not "vectorized" due to xml_children()
     lapply(body_expr, function(expr) {
+      # can't incorporate this into the body_xpath for implicit return style,
+      #   since we still lint explicit returns for except= functions.
       if (params$implicit && !params$allow_implicit_else) {
         params$allow_implicit_else <- is.na(xml_find_first(expr, except_xpath))
       }
