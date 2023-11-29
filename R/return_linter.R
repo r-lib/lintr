@@ -135,15 +135,22 @@ return_linter <- function(
     body_expr <- xml_find_all(xml, body_xpath)
 
     params$source_expression <- source_expression
-    # nested_return_lints not "vectorized" due to xml_children()
-    lapply(body_expr, function(expr) {
+
+    if (params$implicit && !params$allow_implicit_else) {
       # can't incorporate this into the body_xpath for implicit return style,
       #   since we still lint explicit returns for except= functions.
-      if (params$implicit && !params$allow_implicit_else) {
-        params$allow_implicit_else <- is.na(xml_find_first(expr, except_xpath))
-      }
-      nested_return_lints(expr, params)
-    })
+      allow_implicit_else <- is.na(xml_find_first(body_expr, except_xpath))
+    } else {
+      allow_implicit_else <- rep(params$allow_implicit_else, length(body_expr))
+    }
+    # nested_return_lints not "vectorized" due to xml_children()
+    Map(
+      function(expr, allow_implicit_else) {
+        params$allow_implicit_else <- allow_implicit_else
+        nested_return_lints(expr, params)
+      },
+      body_expr, allow_implicit_else
+    )
   })
 }
 
