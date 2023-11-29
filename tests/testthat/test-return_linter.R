@@ -1474,3 +1474,50 @@ test_that("Mixing exempted functions doesn't miss lints", {
     return_linter(allow_implicit_else = FALSE, except = "bar")
   )
 })
+
+test_that("= assignments are handled correctly", {
+  implicit_linter <- return_linter(allow_implicit_else = FALSE)
+  implicit_msg <- rex::rex("All functions with terminal if statements")
+  explicit_linter <- return_linter(return_style = "explicit")
+  explicit_msg <- rex::rex("All functions must have an explicit return().")
+
+  expect_lint(
+    trim_some("
+      .onLoad = function() {
+        1
+      }
+    "),
+    NULL,
+    explicit_linter
+  )
+
+  expect_lint(
+    trim_some("
+      .onLoad = function() {
+        if (TRUE) 1
+      }
+    "),
+    NULL,
+    implicit_linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo = function() {
+        1
+      }
+    "),
+    explicit_msg,
+    explicit_linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo = function() {
+        if (TRUE) 1
+      }
+    "),
+    implicit_msg,
+    implicit_linter
+  )
+})
