@@ -45,6 +45,19 @@ trim_some <- function(x, num = NULL) {
   rex::re_substitutes(x, rex::rex(start, n_times(any, num)), "", global = TRUE, options = "multi-line")
 }
 
+function_body <- function(x, signature = "", assign = TRUE) {
+  if (is.character(assign)) {
+    symbol <- paste(assign, "<- ")
+  } else if (assign) {
+    symbol <- "foo <- "
+  } else {
+    symbol <- ""
+  }
+  x <- paste0("      ", unlist(strsplit(trim_some(x), "\n", fixed = TRUE)), collapse = "\n")
+  fmt <- "    %sfunction(%s) {\n%s\n    }"
+  trim_some(sprintf(fmt, symbol, signature, x))
+}
+
 local_config <- function(config_dir, contents, filename = ".lintr", .local_envir = parent.frame()) {
   config_path <- file.path(config_dir, filename)
   writeLines(contents, config_path)
