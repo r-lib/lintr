@@ -885,61 +885,6 @@ test_that("return_linter lints `message`, `warning` and `stopifnot`", {
   )
 })
 
-test_that("non-if returns are skipped under allow_implicit_else = FALSE", {
-  expect_lint(
-    trim_some("
-      foo <- function(bar) {
-        bar
-      }
-    "),
-    NULL,
-    return_linter(allow_implicit_else = FALSE)
-  )
-})
-
-test_that("if/else don't throw a lint under allow_implicit_else = FALSE", {
-  expect_lint(
-    trim_some("
-      foo <- function(bar) {
-        if (TRUE) {
-          bar
-        } else {
-          NULL
-        }
-      }
-    "),
-    NULL,
-    return_linter(allow_implicit_else = FALSE)
-  )
-})
-
-test_that("implicit else outside a function doesn't lint under allow_implicit_else = FALSE", {
-  expect_lint("if(TRUE) TRUE", NULL, return_linter(allow_implicit_else = FALSE))
-})
-
-test_that("allow_implicit_else = FALSE identifies a simple implicit else", {
-  expect_lint(
-    trim_some("
-      foo <- function(bar) {
-        if (TRUE) {
-          bar
-        }
-      }
-    "),
-    rex::rex("All functions with terminal if statements must"),
-    return_linter(allow_implicit_else = FALSE)
-  )
-})
-
-test_that("allow_implicit_else = FALSE finds implicit else with nested if+else", {
-  lint_msg <- rex::rex("All functions with terminal if statements must have a corresponding terminal else clause")
-
-  expect_lint(
-    trim_some("
-      foo <- function() {
-        if (TRUE) {
-          if (TRUE) {
-            FALSE
 test_that("return_linter handles arbitrarily nested terminal statements", {
   implicit_linter <- return_linter()
   implicit_msg <- rex::rex("Use implicit return behavior; explicit return() is not needed.")
@@ -975,8 +920,6 @@ test_that("return_linter handles arbitrarily nested terminal statements", {
         }
       }
     "),
-    lint_msg,
-    return_linter(allow_implicit_else = FALSE)
     NULL,
     implicit_linter
   )
@@ -1087,86 +1030,6 @@ test_that("explicit returns in control flow are linted correctly", {
       foo <- function() {
         if (TRUE) {
           if (TRUE) {
-
-            return(FALSE)
-          } else {
-            return(TRUE)
-          }
-        }
-      }
-    "),
-    lint_msg,
-    return_linter(return_style = "explicit", allow_implicit_else = FALSE)
-  )
-})
-
-test_that("allow_implicit_else = FALSE works on anonymous/inline functions", {
-  expect_lint(
-    "lapply(rnorm(10), function(x) if (TRUE) x + 1)",
-    rex::rex("All functions with terminal if statements must"),
-    return_linter(allow_implicit_else = FALSE)
-  )
-})
-
-test_that("side-effect functions like .onLoad ignore the lack of explicit else under allow_implicit_else = FALSE", {
-  expect_lint(
-    trim_some("
-      .onAttach <- function(libname, pkgname) {
-        if (TRUE) foo()
-      }
-    "),
-    NULL,
-    return_linter(allow_implicit_else = FALSE)
-  )
-
-  expect_lint(
-    trim_some("
-      .onAttach <- function(libname, pkgname) {
-        if (TRUE) return(foo())
-      }
-    "),
-    NULL,
-    return_linter(return_style = "explicit", allow_implicit_else = FALSE)
-  )
-})
-
-test_that("implicit else lint has the correct metadata", {
-  linter <- return_linter(return_style = "explicit", allow_implicit_else = FALSE)
-  lint_msg <- "All functions with terminal if statements"
-
-  expect_lint(
-    trim_some("
-      foo <- function(x, y = 3) {
-        if (x) {
-          return(x)
-        }
-      }
-    "),
-    list(lint_msg, line_number = 2L),
-    linter
-  )
-
-  expect_lint(
-    trim_some("{
-      foo <- function(x, y = 3) {
-        if (x) {
-          return(x)
-        }
-      }
-
-      bar <- function(x, y = 3) {
-        if (x) {
-          return(x)
-        }
-      }
-
-      baz <- function(x, y = 3) if (x) return(x)
-    }"),
-    list(
-      list(lint_msg, line_number = 3L),
-      list(lint_msg, line_number = 9L),
-      list(lint_msg, line_number = 14L)
-    ),
             return(1)
           }
           2
@@ -1180,22 +1043,6 @@ test_that("implicit else lint has the correct metadata", {
   )
 })
 
-test_that("two lints thrown when lacking explicit return and explicit else", {
-  expect_lint(
-    trim_some("
-      foo <- function(x, y = 3) {
-        if (x) {
-          x
-        }
-      }
-    "),
-    list(
-      rex::rex("All functions with terminal if statements"),
-      rex::rex("All functions must have an explicit return().")
-    ),
-    return_linter(return_style = "explicit", allow_implicit_else = FALSE)
-  )
-})
 # inspired by grid:::draw.all
 #   https://github.com/r-devel/r-svn/blob/eeff859e427b2399f1474427a531365d2672f52f/src/library/grid/R/grob.R#L1940
 test_that("logic is robust to absence of '{'", {
@@ -1403,4 +1250,174 @@ test_that("empty terminal '{' expression is handled correctly", {
   ")
   expect_lint(weird, list(implicit_msg, line_number = 5L), implicit_linter)
   expect_lint(weird, list(explicit_msg, line_number = 3L), explicit_linter)
+})
+
+test_that("non-if returns are skipped under allow_implicit_else = FALSE", {
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        bar
+      }
+    "),
+    NULL,
+    return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("if/else don't throw a lint under allow_implicit_else = FALSE", {
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        if (TRUE) {
+          bar
+        } else {
+          NULL
+        }
+      }
+    "),
+    NULL,
+    return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("implicit else outside a function doesn't lint under allow_implicit_else = FALSE", {
+  expect_lint("if(TRUE) TRUE", NULL, return_linter(allow_implicit_else = FALSE))
+})
+
+test_that("allow_implicit_else = FALSE identifies a simple implicit else", {
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        if (TRUE) {
+          bar
+        }
+      }
+    "),
+    rex::rex("All functions with terminal if statements must"),
+    return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("allow_implicit_else = FALSE finds implicit else with nested if+else", {
+  lint_msg <- rex::rex("All functions with terminal if statements must have a corresponding terminal else clause")
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        if (TRUE) {
+          if (TRUE) {
+            FALSE
+          } else {
+            TRUE
+          }
+        }
+      }
+    "),
+    lint_msg,
+    return_linter(allow_implicit_else = FALSE)
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        if (TRUE) {
+          if (TRUE) {
+            return(FALSE)
+          } else {
+            return(TRUE)
+          }
+        }
+      }
+    "),
+    lint_msg,
+    return_linter(return_style = "explicit", allow_implicit_else = FALSE)
+  )
+})
+
+test_that("allow_implicit_else = FALSE works on anonymous/inline functions", {
+  expect_lint(
+    "lapply(rnorm(10), function(x) if (TRUE) x + 1)",
+    rex::rex("All functions with terminal if statements must"),
+    return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("side-effect functions like .onLoad ignore the lack of explicit else under allow_implicit_else = FALSE", {
+  expect_lint(
+    trim_some("
+      .onAttach <- function(libname, pkgname) {
+        if (TRUE) foo()
+      }
+    "),
+    NULL,
+    return_linter(allow_implicit_else = FALSE)
+  )
+
+  expect_lint(
+    trim_some("
+      .onAttach <- function(libname, pkgname) {
+        if (TRUE) return(foo())
+      }
+    "),
+    NULL,
+    return_linter(return_style = "explicit", allow_implicit_else = FALSE)
+  )
+})
+
+test_that("implicit else lint has the correct metadata", {
+  linter <- return_linter(return_style = "explicit", allow_implicit_else = FALSE)
+  lint_msg <- "All functions with terminal if statements"
+
+  expect_lint(
+    trim_some("
+      foo <- function(x, y = 3) {
+        if (x) {
+          return(x)
+        }
+      }
+    "),
+    list(lint_msg, line_number = 2L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("{
+      foo <- function(x, y = 3) {
+        if (x) {
+          return(x)
+        }
+      }
+
+      bar <- function(x, y = 3) {
+        if (x) {
+          return(x)
+        }
+      }
+
+      baz <- function(x, y = 3) if (x) return(x)
+    }"),
+    list(
+      list(lint_msg, line_number = 3L),
+      list(lint_msg, line_number = 9L),
+      list(lint_msg, line_number = 14L)
+    ),
+    linter
+  )
+})
+
+test_that("two lints thrown when lacking explicit return and explicit else", {
+  expect_lint(
+    trim_some("
+      foo <- function(x, y = 3) {
+        if (x) {
+          x
+        }
+      }
+    "),
+    list(
+      rex::rex("All functions with terminal if statements"),
+      rex::rex("All functions must have an explicit return().")
+    ),
+    return_linter(return_style = "explicit", allow_implicit_else = FALSE)
+  )
 })

@@ -77,8 +77,6 @@ return_linter <- function(
   return_style <- match.arg(return_style)
 
   if (!allow_implicit_else || return_style == "explicit") {
-    # See `?.onAttach`; these functions are all exclusively used for their
-    #   side-effects, so implicit return is generally acceptable
     except <- union(special_funs, except)
   }
 
