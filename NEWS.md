@@ -18,7 +18,7 @@
 
 ## Changes to default linters
 
-* New default linter `return_linter()` for the style guide rule that terminal returns should be left implicit (#1100, @MEO265).
+* New default linter `return_linter()` for the style guide rule that terminal returns should be left implicit (#1100, #2354, and #2356, @MEO265 and @MichaelChirico).
 
 ## New and improved features
 
