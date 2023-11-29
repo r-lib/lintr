@@ -44,8 +44,9 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
   backport_blacklist <- lapply(backport_blacklist, setdiff, except)
   backport_index <- rep(names(backport_blacklist), times = lengths(backport_blacklist))
   names(backport_index) <- unlist(backport_blacklist)
+  backport_cond <- xp_text_in_table(names(backport_index))
 
-  names_xpath <- "//SYMBOL | //SYMBOL_FUNCTION_CALL"
+  names_xpath <- glue("//SYMBOL[{backport_cond}] | //SYMBOL_FUNCTION_CALL[{backport_cond}]")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
