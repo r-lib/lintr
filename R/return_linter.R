@@ -77,12 +77,13 @@ return_linter <- function(
   return_style <- match.arg(return_style)
 
   if (!allow_implicit_else || return_style == "explicit") {
-    except <- union(special_funs, except)
+    except_xpath <- glue("parent::expr[not(
+      preceding-sibling::expr/SYMBOL[{ xp_text_in_table(union(special_funs, except)) }]
+    )]")
   }
 
   if (return_style == "implicit") {
     body_xpath <- "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[1]"
-    # nolint next: object_usage. False positive from {codetools} says 'params' isn't used.
     params <- list(
       implicit = TRUE,
       type = "style",
@@ -110,9 +111,7 @@ return_linter <- function(
     return_functions <- union(base_return_functions, return_functions)
 
     body_xpath <- glue("
-    (//FUNCTION | //OP-LAMBDA)[parent::expr[not(
-      preceding-sibling::expr[SYMBOL[{ xp_text_in_table(except) }]]
-    )]]
+    (//FUNCTION | //OP-LAMBDA)[{ except_xpath }]
       /following-sibling::expr[OP-LEFT-BRACE and expr[last()]/@line1 != @line1]
       /expr[last()]
     ")
@@ -127,6 +126,8 @@ return_linter <- function(
     )
   }
 
+  params$allow_implicit_else <- allow_implicit_else
+
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
@@ -135,7 +136,12 @@ return_linter <- function(
 
     params$source_expression <- source_expression
     # nested_return_lints not "vectorized" due to xml_children()
-    lapply(body_expr, nested_return_lints, params)
+    lapply(body_expr, function(expr) {
+      if (params$implicit && !params$allow_implicit_else) {
+        params$allow_implicit_else <- is.na(xml_find_first(expr, except_xpath))
+      }
+      nested_return_lints(expr, params)
+    })
   })
 }
 
@@ -163,7 +169,17 @@ nested_return_lints <- function(expr, params) {
     nested_return_lints(child_expr[[tail(expr_idx, 1L)]], params)
   } else if (child_node[1L] == "IF") {
     expr_idx <- which(child_node %in% c("expr", "equal_assign", "expr_or_assign_or_help"))
-    lapply(child_expr[expr_idx[-1L]], nested_return_lints, params)
+    return_lints <- lapply(child_expr[expr_idx[-1L]], nested_return_lints, params)
+    if (params$allow_implicit_else || length(expr_idx) == 3L) {
+      return(return_lints)
+    }
+    implicit_else_lints <- list(xml_nodes_to_lints(
+      expr,
+      source_expression = params$source_expression,
+      lint_message = "All functions with terminal if statements must have a corresponding terminal else clause",
+      type = "warning"
+    ))
+    c(flatten_lints(return_lints), implicit_else_lints)
   } else {
     xml_nodes_to_lints(
       xml_find_first(child_expr[[1L]], params$lint_xpath),

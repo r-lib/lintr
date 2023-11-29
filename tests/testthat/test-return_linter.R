@@ -1293,7 +1293,7 @@ test_that("allow_implicit_else = FALSE identifies a simple implicit else", {
         }
       }
     "),
-    rex::rex("All functions with terminal if statements must"),
+    rex::rex("All functions with terminal if statements must have a corresponding terminal else clause"),
     return_linter(allow_implicit_else = FALSE)
   )
 })
@@ -1394,12 +1394,14 @@ test_that("implicit else lint has the correct metadata", {
         }
       }
 
-      baz <- function(x, y = 3) if (x) return(x)
+      baz <- function(x, y = 3) {
+        if (x) return(x)
+      }
     }"),
     list(
       list(lint_msg, line_number = 3L),
       list(lint_msg, line_number = 9L),
-      list(lint_msg, line_number = 14L)
+      list(lint_msg, line_number = 15L)
     ),
     linter
   )
