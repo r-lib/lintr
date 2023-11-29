@@ -1445,3 +1445,29 @@ test_that("Correct lints thrown when lacking explicit return and explicit else",
     linter
   )
 })
+
+test_that("Mixing exempted functions doesn't miss lints", {
+  # in the current implementation, a local copy of 'params' is
+  #   edited in a loop; this test ensures that behavior continues to be correct
+  expect_lint(
+    trim_some("{
+      foo <- function() {
+        1
+      }
+
+      bar <- function() {
+        if (TRUE) {
+          2
+        }
+      }
+
+      baz <- function() {
+        if (TRUE) {
+          3
+        }
+      }
+    }"),
+    list("All functions with terminal if statements", line_number = 13L),
+    return_linter(allow_implicit_else = FALSE, except = "bar")
+  )
+})
