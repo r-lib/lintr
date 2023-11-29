@@ -61,6 +61,7 @@ return_linter <- function(
 
   if (return_style == "implicit") {
     body_xpath <- "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[1]"
+    # nolint next: object_usage. False positive from {codetools} says 'params' isn't used.
     params <- list(
       implicit = TRUE,
       type = "style",
