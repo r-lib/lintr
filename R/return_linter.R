@@ -188,7 +188,7 @@ nested_return_lints <- function(expr, params) {
       lint_message = "All functions with terminal if statements must have a corresponding terminal else clause",
       type = "warning"
     ))
-    c(flatten_lints(return_lints), implicit_else_lints)
+    c(return_lints, implicit_else_lints)
   } else {
     xml_nodes_to_lints(
       xml_find_first(child_expr[[1L]], params$lint_xpath),
