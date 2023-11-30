@@ -55,7 +55,8 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
   } else if (!is_node(xml)) {
     stop(
       "Expected an xml_nodeset, a list of xml_nodes, or an xml_node, instead got an object of class(es): ",
-      toString(class(xml))
+      toString(class(xml)),
+      call. = FALSE
     )
   }
   type <- match.arg(type, c("style", "warning", "error"))

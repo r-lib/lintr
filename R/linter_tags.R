@@ -49,13 +49,13 @@
 #' @export
 available_linters <- function(packages = "lintr", tags = NULL, exclude_tags = "deprecated") {
   if (!is.character(packages)) {
-    stop("`packages` must be a character vector.")
+    stop("`packages` must be a character vector.", call. = FALSE)
   }
   if (!is.null(tags) && !is.character(tags)) {
-    stop("`tags` must be a character vector.")
+    stop("`tags` must be a character vector.", call. = FALSE)
   }
   if (!is.null(exclude_tags) && !is.character(exclude_tags)) {
-    stop("`exclude_tags` must be a character vector.")
+    stop("`exclude_tags` must be a character vector.", call. = FALSE)
   }
 
   # any tags specified explicitly will not be excluded (#1959)
@@ -153,7 +153,7 @@ rd_tags <- function(linter_name) {
   linters <- available_linters(exclude_tags = NULL)
   tags <- platform_independent_sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
   if (length(tags) == 0L) {
-    stop("tags are required, but found none for ", linter_name)
+    stop("tags are required, but found none for ", linter_name, call. = FALSE)
   }
 
   c(
@@ -172,7 +172,7 @@ rd_linters <- function(tag_name) {
   linters <- available_linters(tags = tag_name)
   tagged <- platform_independent_sort(linters[["linter"]])
   if (length(tagged) == 0L) {
-    stop("No linters found associated with tag ", tag_name)
+    stop("No linters found associated with tag ", tag_name, call. = FALSE)
   }
 
   c(

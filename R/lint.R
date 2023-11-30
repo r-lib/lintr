@@ -233,7 +233,7 @@ lint_package <- function(path = ".", ...,
                          parse_settings = TRUE,
                          show_progress = NULL) {
   if (length(path) > 1L) {
-    stop("Only linting one package at a time is supported.")
+    stop("Only linting one package at a time is supported.", call. = FALSE)
   }
   pkg_path <- find_package(path)
 
@@ -334,7 +334,7 @@ validate_linter_object <- function(linter, name) {
     stop(gettextf(
       "Expected '%s' to be a function of class 'linter', not a %s of class '%s'",
       name, typeof(linter), class(linter)[[1L]]
-    ))
+    ), call. = FALSE)
   }
   if (is_linter_factory(linter)) {
     what <- "Passing linters as variables"
@@ -397,17 +397,17 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
   }
 
   if (length(line) != 1L || !is.character(line)) {
-    stop("`line` must be a string.")
+    stop("`line` must be a string.", call. = FALSE)
   }
   max_col <- max(nchar(line) + 1L, 1L, na.rm = TRUE)
   if (!is_number(column_number) || column_number < 0L || column_number > max_col) {
     stop(sprintf(
       "`column_number` must be an integer between 0 and nchar(line) + 1 (%d). It was %s.",
       max_col, column_number
-    ))
+    ), call. = FALSE)
   }
   if (!is_number(line_number) || line_number < 1L) {
-    stop(sprintf("`line_number` must be a positive integer. It was %s.", line_number))
+    stop(sprintf("`line_number` must be a positive integer. It was %s.", line_number), call. = FALSE)
   }
   check_ranges(ranges, max_col)
 
@@ -442,23 +442,23 @@ check_ranges <- function(ranges, max_col) {
     return()
   }
   if (!is.list(ranges)) {
-    stop("`ranges` must be NULL or a list.")
+    stop("`ranges` must be NULL or a list.", call. = FALSE)
   }
 
   for (range in ranges) {
     if (!is_number(range, 2L)) {
-      stop("`ranges` must only contain length 2 integer vectors without NAs.")
+      stop("`ranges` must only contain length 2 integer vectors without NAs.", call. = FALSE)
     } else if (!is_valid_range(range, max_col)) {
       stop(sprintf(
         "All entries in `ranges` must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 (%d).", max_col
-      ))
+      ), call. = FALSE)
     }
   }
 }
 
 rstudio_source_markers <- function(lints) {
   if (!requireNamespace("rstudioapi", quietly = TRUE)) {
-    stop("'rstudioapi' is required for rstudio_source_markers().") # nocov
+    stop("'rstudioapi' is required for rstudio_source_markers().", call. = FALSE) # nocov
   }
 
   # package path will be NULL unless it is a relative path
@@ -551,7 +551,7 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 #' @export
 sarif_output <- function(lints, filename = "lintr_results.sarif") {
   if (!requireNamespace("jsonlite", quietly = TRUE)) {
-    stop("'jsonlite' is required to produce SARIF reports, please install to continue.") # nocov
+    stop("'jsonlite' is required to produce SARIF reports, please install to continue.", call. = FALSE) # nocov
   }
 
   # package path will be `NULL` unless it is a relative path

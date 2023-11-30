@@ -116,7 +116,8 @@ read_config_file <- function(config_file) {
             error = function(e) {
               stop(
                 "Error from config setting '", setting, "' in '", format(conditionCall(e)), "':\n",
-                "    ", conditionMessage(e)
+                "    ", conditionMessage(e),
+                call. = FALSE
               )
             }
           ),
@@ -179,7 +180,7 @@ validate_keys <- function(config, keys, test, what) {
       next
     }
     if (!test(val)) {
-      stop("Setting '", key, "' should be ", what, ", not '", toString(val), "'.")
+      stop("Setting '", key, "' should be ", what, ", not '", toString(val), "'.", call. = FALSE)
     }
   }
 }
@@ -205,7 +206,8 @@ validate_linters <- function(linters) {
   if (!all(is_linters)) {
     stop(
       "Setting 'linters' should be a list of linters, but found non-linters at elements ",
-      toString(which(!is_linters)), "."
+      toString(which(!is_linters)), ".",
+      call. = FALSE
     )
   }
 }
@@ -222,7 +224,8 @@ validate_exclusions <- function(exclusions) {
   if (!all(unnamed_is_string)) {
     stop(
       "Unnamed entries of setting 'exclusions' should be strings naming files or directories, check entries: ",
-      toString(which(!has_names)[!unnamed_is_string]), "."
+      toString(which(!has_names)[!unnamed_is_string]), ".",
+      call. = FALSE
     )
   }
   for (ii in which(has_names)) validate_named_exclusion(exclusions, ii)
@@ -238,7 +241,8 @@ validate_named_exclusion <- function(exclusions, idx) {
   if (!all(valid_entry)) {
     stop(
       "Named entries of setting 'exclusions' should designate line numbers for exclusion, ",
-      "check exclusion: ", idx, "."
+      "check exclusion: ", idx, ".",
+      call. = FALSE
     )
   }
 }

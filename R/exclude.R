@@ -129,7 +129,7 @@ parse_exclusions <- function(file,
     if (length(starts) != length(ends)) {
       starts_msg <- line_info(starts, type = "start")
       ends_msg <- line_info(ends, type = "end")
-      stop(file, " has ", starts_msg, " but only ", ends_msg, " for exclusion from linting!")
+      stop(file, " has ", starts_msg, " but only ", ends_msg, " for exclusion from linting!", call. = FALSE)
     }
 
     for (i in seq_along(starts)) {
