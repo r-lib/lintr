@@ -613,10 +613,7 @@ test_that("Do not lint inline else after stop in inline lambda function", {
 })
 
 test_that("allow_comment_regex= works", {
-  withr::local_options(c(
-    lintr.exclude_end = "#\\s*TestNoLintEnd",
-    covr.exclude_end = "#\\s*TestNoCovEnd"
-  ))
+  withr::local_options(c(lintr.exclude_end = "#\\s*TestNoLintEnd"))
 
   linter_covr <- unreachable_code_linter()
   linter_xxxx <- unreachable_code_linter(allow_comment_regex = "#.*xxxx")
@@ -626,7 +623,7 @@ test_that("allow_comment_regex= works", {
     trim_some("
       function() {
         return(1)
-        # TestNoCovEnd
+        # nocov end
       }
     "),
     NULL,
@@ -638,7 +635,7 @@ test_that("allow_comment_regex= works", {
       function() {
         return(1)
         # TestNoLintEnd
-        # TestNoCovEnd
+        # nocov end
       }
     "),
     NULL,

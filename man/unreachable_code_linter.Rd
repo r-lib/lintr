@@ -4,12 +4,14 @@
 \alias{unreachable_code_linter}
 \title{Block unreachable code and comments following return statements}
 \usage{
-unreachable_code_linter(allow_comment_regex = getOption("covr.exclude_end"))
+unreachable_code_linter(
+  allow_comment_regex = rex::rex("#", any_spaces, "nocov", any_spaces, "end")
+)
 }
 \arguments{
 \item{allow_comment_regex}{Character vector of regular expressions which identify
 comments to exclude when finding unreachable terminal comments. By default, this
-includes the "skip region" end marker for \code{{covr}} (\code{getOption("covr.exclude_end")});
+includes the default "skip region" end marker for \code{{covr}} (\verb{# nocov end});
 the end marker for \code{{lintr}} (\code{settings$exclude_end}) is always included.
 Note that the regexes should include the initial comment character \verb{#}.}
 }

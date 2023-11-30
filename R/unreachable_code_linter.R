@@ -8,7 +8,7 @@
 #'
 #' @param allow_comment_regex Character vector of regular expressions which identify
 #'   comments to exclude when finding unreachable terminal comments. By default, this
-#'   includes the "skip region" end marker for `{covr}` (`getOption("covr.exclude_end")`);
+#'   includes the default "skip region" end marker for `{covr}` (`# nocov end`);
 #'   the end marker for `{lintr}` (`settings$exclude_end`) is always included.
 #'   Note that the regexes should include the initial comment character `#`.
 #'
@@ -74,7 +74,7 @@
 #' @evalRd rd_tags("unreachable_code_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclude_end")) {
+unreachable_code_linter <- function(allow_comment_regex = rex::rex("#", any_spaces, "nocov", any_spaces, "end")) {
   expr_after_control <- "
     (//REPEAT | //ELSE | //FOR)/following-sibling::expr[1]
     | (//IF | //WHILE)/following-sibling::expr[2]
