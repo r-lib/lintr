@@ -19,7 +19,7 @@ The following tags exist:
 \itemize{
 \item{\link[=best_practices_linters]{best_practices} (63 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (10 linters)}
-\item{\link[=configurable_linters]{configurable} (40 linters)}
+\item{\link[=configurable_linters]{configurable} (41 linters)}
 \item{\link[=consistency_linters]{consistency} (32 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (26 linters)}
@@ -145,7 +145,7 @@ The following linters exist:
 \item{\code{\link{unnecessary_nested_if_linter}} (tags: best_practices, readability)}
 \item{\code{\link{unnecessary_nesting_linter}} (tags: configurable, consistency, readability)}
 \item{\code{\link{unnecessary_placeholder_linter}} (tags: best_practices, readability)}
-\item{\code{\link{unreachable_code_linter}} (tags: best_practices, readability)}
+\item{\code{\link{unreachable_code_linter}} (tags: best_practices, configurable, readability)}
 \item{\code{\link{unused_import_linter}} (tags: best_practices, common_mistakes, configurable, executing)}
 \item{\code{\link{vector_logic_linter}} (tags: best_practices, default, efficiency)}
 \item{\code{\link{which_grepl_linter}} (tags: consistency, efficiency, readability, regex)}

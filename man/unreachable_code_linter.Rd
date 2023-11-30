@@ -4,7 +4,12 @@
 \alias{unreachable_code_linter}
 \title{Block unreachable code and comments following return statements}
 \usage{
-unreachable_code_linter()
+unreachable_code_linter(allow_comment_regex = getOption("covr.exclude_end"))
+}
+\arguments{
+\item{allow_comment_regex}{Character vector of regular expressions which identify
+comments to exclude when finding unreachable terminal comments. By default, this
+includes tje "skip region" end marker for \code{{covr}} (getOption("covr.exclude_end")\verb{); the end marker for }{lintr}\verb{ (}settings$exclude_end\verb{) is always included. Note that the regexes should include the initial comment character }#`.}
 }
 \description{
 Code after e.g. a \code{\link[=return]{return()}} or \code{\link[=stop]{stop()}}
@@ -22,14 +27,21 @@ lint(
   linters = unreachable_code_linter()
 )
 
-code_lines <- "f <- if (FALSE) {\n 2 + 2\n}"
+code_lines <- "if (FALSE) {\n 2 + 2\n}"
 writeLines(code_lines)
 lint(
   text = code_lines,
   linters = unreachable_code_linter()
 )
 
-code_lines <- "f <- while (FALSE) {\n 2 + 2\n}"
+code_lines <- "while (FALSE) {\n 2 + 2\n}"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = unreachable_code_linter()
+)
+
+code_lines <- "f <- function() {\n  return(1)\n  # end skip\n}"
 writeLines(code_lines)
 lint(
   text = code_lines,
@@ -44,18 +56,25 @@ lint(
   linters = unreachable_code_linter()
 )
 
-code_lines <- "f <- if (foo) {\n 2 + 2\n}"
+code_lines <- "if (foo) {\n 2 + 2\n}"
 writeLines(code_lines)
 lint(
   text = code_lines,
   linters = unreachable_code_linter()
 )
 
-code_lines <- "f <- while (foo) {\n 2 + 2\n}"
+code_lines <- "while (foo) {\n 2 + 2\n}"
 writeLines(code_lines)
 lint(
   text = code_lines,
   linters = unreachable_code_linter()
+)
+
+code_lines <- "f <- function() {\n  return(1)\n  # end skip\n}"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = unreachable_code_linter(allow_comment_regex = "# end skip"))
 )
 
 }
@@ -63,5 +82,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=readability_linters]{readability}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=readability_linters]{readability}
 }
