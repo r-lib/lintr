@@ -162,6 +162,8 @@ local({
   # avoid impact of CLI mark-up on strwrap output.
   #   (testthat, or cli, already do so, but force it explicitly here for emphasis)
   withr::local_options(c(cli.num_colors = 0L))
+  # force "default" print method even on GHA
+  withr::local_envvar(c(GITHUB_ACTIONS = NA))
 
   test_linter <- make_linter_from_xpath("*[1]", lint_message = "The quick brown fox jumps over the lazy dog.")
 
