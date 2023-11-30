@@ -22,7 +22,7 @@ The following tags exist:
 \item{\link[=configurable_linters]{configurable} (41 linters)}
 \item{\link[=consistency_linters]{consistency} (32 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
-\item{\link[=default_linters]{default} (27 linters)}
+\item{\link[=default_linters]{default} (26 linters)}
 \item{\link[=deprecated_linters]{deprecated} (4 linters)}
 \item{\link[=efficiency_linters]{efficiency} (32 linters)}
 \item{\link[=executing_linters]{executing} (6 linters)}

@@ -9,7 +9,6 @@ Linters based on guidelines described in the 'Tidy design principles' book.
 \seealso{
 \itemize{
 \item \link{linters} for a complete list of linters available in lintr.
-\item \url{https://testthat.r-lib.org}
 \item \url{https://design.tidyverse.org/}
 }
 }
