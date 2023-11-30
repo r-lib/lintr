@@ -47,7 +47,8 @@ modify_defaults <- function(defaults, ...) {
     is_are <- if (length(bad_nms) > 1L) "are" else "is"
     warning(
       "Trying to remove ", glue_collapse(sQuote(bad_nms), sep = ", ", last = " and "),
-      ", which ", is_are, " not in `defaults`."
+      ", which ", is_are, " not in `defaults`.",
+      call. = FALSE
     )
   }
 
@@ -179,7 +180,8 @@ linters_with_defaults <- function(..., defaults = default_linters) {
   if (missing(defaults) && "default" %in% names(dots)) {
     warning(
       "'default' is not an argument to linters_with_defaults(). Did you mean 'defaults'? ",
-      "This warning will be removed when with_defaults() is fully deprecated."
+      "This warning will be removed when with_defaults() is fully deprecated.",
+      call. = FALSE
     )
     defaults <- dots$default
     nms <- names2(dots)

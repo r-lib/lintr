@@ -121,7 +121,8 @@ validate_linter_db <- function(available, package) {
       "`linters.csv` must contain the columns 'linter' and 'tags'.\nPackage '",
       package, "' is missing ",
       paste0("'", setdiff(c("linter", "tags"), names(available)), "'", collapse = " and "),
-      "."
+      ".",
+      call. = FALSE
     )
     return(FALSE)
   }

@@ -123,7 +123,8 @@ read_config_file <- function(config_file) {
           warning = function(w) {
             warning(
               "Warning from config setting '", setting, "' in '", format(conditionCall(w)), "':\n",
-              "    ", conditionMessage(w)
+              "    ", conditionMessage(w),
+              call. = FALSE
             )
             invokeRestart("muffleWarning")
           }
@@ -151,7 +152,10 @@ read_config_file <- function(config_file) {
 validate_config_file <- function(config, config_file, defaults) {
   matched <- names(config) %in% names(defaults)
   if (!all(matched)) {
-    warning("Found unused settings in config '", config_file, "': ", toString(names(config)[!matched]))
+    warning(
+      "Found unused settings in config '", config_file, "': ", toString(names(config)[!matched]),
+      call. = FALSE
+    )
   }
 
   validate_regex(config,

@@ -62,7 +62,7 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
   line1 <- xml_attr(xml, "line1")
   col1 <- xp_find_location(xml, range_start_xpath)
   if (is.na(col1)) {
-    warning("Could not find range start for lint. Defaulting to start of line.")
+    warning("Could not find range start for lint. Defaulting to start of line.", call. = FALSE)
     col1 <- 1L
   }
 
@@ -72,7 +72,7 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
   if (xml_attr(xml, "line2") == line1) {
     col2 <- xp_find_location(xml, range_end_xpath)
     if (is.na(col2)) {
-      warning("Could not find range end for lint. Defaulting to width 1.")
+      warning("Could not find range end for lint. Defaulting to width 1.", call. = FALSE)
       col2 <- col1
     }
   } else {
@@ -81,7 +81,7 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
 
   column_number <- xp_find_location(xml, column_number_xpath)
   if (is.na(column_number)) {
-    warning("Could not find location for lint. Defaulting to start of range.")
+    warning("Could not find location for lint. Defaulting to start of range.", call. = FALSE)
     column_number <- col1
   }
 

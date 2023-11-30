@@ -51,7 +51,7 @@ get_knitr_pattern <- function(filename, lines) {
     ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename))),
     warning = function(cond) {
       if (!grepl("invalid UTF-8", conditionMessage(cond), fixed = TRUE)) {
-        warning(cond)
+        warning(cond, call. = FALSE)
       }
       invokeRestart("muffleWarning")
     }
