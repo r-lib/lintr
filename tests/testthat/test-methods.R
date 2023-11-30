@@ -167,7 +167,7 @@ local({
 
   test_linter <- make_linter_from_xpath("*[1]", lint_message = "The quick brown fox jumps over the lazy dog.")
 
-  lints <- lint(text = 'a', linters = test_linter())
+  lints <- lint(text = "a", linters = test_linter())
   lint <- lints[[1L]]
 
   wrapped_strings <- c(
@@ -192,8 +192,8 @@ local({
         expect_output(print(lints), wrapped_string, fixed = TRUE)
       })
     },
-    .test_name = c(10, 20, 40, 80),
-    width = c(10, 20, 40, 80),
+    .test_name = c(10L, 20L, 40L, 80L),
+    width = c(10L, 20L, 40L, 80L),
     wrapped_string = wrapped_strings
   )
 })
