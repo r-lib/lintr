@@ -34,6 +34,7 @@
 
 ### New linters
 
+* `condition_call_linter()` for ensuring consistent use of `call.` in `warning()` and `stop()`. The default `call. = FALSE` follows the tidyverse guidance of not displaying the call (#2226, @Bisaloo)
 * `sample_int_linter()` for encouraging `sample.int(n, ...)` over equivalents like `sample(1:n, ...)` (part of #884, @MichaelChirico).
 * `stopifnot_all_linter()` discourages tests with `all()` like `stopifnot(all(x > 0))`; `stopifnot()` runs `all()` itself, and uses a better error message (part of #884, @MichaelChirico).
 * `comparison_negation_linter()` for discouraging negated comparisons when a direct negation is preferable, e.g. `!(x == y)` could be `x != y` (part of #884, @MichaelChirico).
