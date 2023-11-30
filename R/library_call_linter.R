@@ -179,16 +179,21 @@ library_call_linter <- function(allow_preamble = TRUE) {
     )
 
     char_only_indirect_expr <- xml_find_all(xml, char_only_indirect_xpath)
-    char_only_indirect_lib_calls <- lapply(char_only_indirect_expr, function(expr) {
-      calls <- get_r_string(xml_find_all(expr, call_symbol_path))
-      calls[calls %in% attach_calls]
-    })
+    char_only_indirect_lib_calls <- vapply(
+      char_only_indirect_expr,
+      function(expr) {
+        calls <- get_r_string(xml_find_all(expr, call_symbol_path))
+        calls <- calls[calls %in% attach_calls]
+        if (length(calls) == 1L) calls else NA_character_
+      },
+      character(1L)
+    )
 
     # For STR_CONST entries, the XPath doesn't check the string value -- we use
     #   get_r_string() here to do that filter more robustly.
-    is_attach_call <- lengths(char_only_indirect_lib_calls) == 1L
+    is_attach_call <- !is.na(char_only_indirect_lib_calls)
     char_only_indirect_expr <- char_only_indirect_expr[is_attach_call]
-    char_only_indirect_lib_calls <- unlist(char_only_indirect_lib_calls[is_attach_call])
+    char_only_indirect_lib_calls <- char_only_indirect_lib_calls[is_attach_call]
 
     char_only_indirect_loop_calls <- xp_call_name(char_only_indirect_expr)
     char_only_indirect_msg <- sprintf(
