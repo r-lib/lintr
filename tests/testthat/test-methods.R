@@ -157,3 +157,41 @@ test_that("as.data.table.list is _not_ dispatched directly", {
   lints <- lint(text = "a = 1", linters = assignment_linter())
   expect_identical(nrow(data.table::as.data.table(lints)), 1L)
 })
+
+local({
+  # avoid impact of CLI mark-up on strwrap output.
+  #   (testthat, or cli, already do so, but force it explicitly here for emphasis)
+  withr::local_options(c(cli.num_colors = 0L))
+
+  test_linter <- make_linter_from_xpath("*[1]", lint_message = "The quick brown fox jumps over the lazy dog.")
+
+  lints <- lint(text = 'a', linters = test_linter())
+  lint <- lints[[1L]]
+
+  wrapped_strings <- c(
+    "[test_linter]\n    The\n    quick\n    brown\n    fox\n    jumps\n    over\n    the\n    lazy\n    dog.",
+    "[test_linter]\n    The quick brown\n    fox jumps over\n    the lazy dog.",
+    "[test_linter] The\n    quick brown fox jumps over the lazy\n    dog.",
+    "[test_linter] The quick brown fox jumps over the lazy dog."
+  )
+
+  patrick::with_parameters_test_that(
+    "format.lint, format.lints, print.lint, print.lints support optional message wrapping",
+    {
+      expect_match(format(lint, width = width), wrapped_string, fixed = TRUE)
+      expect_match(format(lints, width = width), wrapped_string, fixed = TRUE)
+      expect_output(print(lint, width = width), wrapped_string, fixed = TRUE)
+      expect_output(print(lints, width = width), wrapped_string, fixed = TRUE)
+
+      withr::with_options(c(lintr.format_width = width), {
+        expect_match(format(lint), wrapped_string, fixed = TRUE)
+        expect_match(format(lints), wrapped_string, fixed = TRUE)
+        expect_output(print(lint), wrapped_string, fixed = TRUE)
+        expect_output(print(lints), wrapped_string, fixed = TRUE)
+      })
+    },
+    .test_name = c(10, 20, 40, 80),
+    width = c(10, 20, 40, 80),
+    wrapped_string = wrapped_strings
+  )
+})
