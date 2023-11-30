@@ -9,7 +9,9 @@ unreachable_code_linter(allow_comment_regex = getOption("covr.exclude_end"))
 \arguments{
 \item{allow_comment_regex}{Character vector of regular expressions which identify
 comments to exclude when finding unreachable terminal comments. By default, this
-includes tje "skip region" end marker for \code{{covr}} (getOption("covr.exclude_end")\verb{); the end marker for }{lintr}\verb{ (}settings$exclude_end\verb{) is always included. Note that the regexes should include the initial comment character }#`.}
+includes the "skip region" end marker for \code{{covr}} (\code{getOption("covr.exclude_end")});
+the end marker for \code{{lintr}} (\code{settings$exclude_end}) is always included.
+Note that the regexes should include the initial comment character \verb{#}.}
 }
 \description{
 Code after e.g. a \code{\link[=return]{return()}} or \code{\link[=stop]{stop()}}

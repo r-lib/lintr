@@ -8,7 +8,7 @@
 #'
 #' @param allow_comment_regex Character vector of regular expressions which identify
 #'   comments to exclude when finding unreachable terminal comments. By default, this
-#'   includes tje "skip region" end marker for `{covr}` (getOption("covr.exclude_end")`);
+#'   includes the "skip region" end marker for `{covr}` (`getOption("covr.exclude_end")`);
 #'   the end marker for `{lintr}` (`settings$exclude_end`) is always included.
 #'   Note that the regexes should include the initial comment character `#`.
 #'
