@@ -17,7 +17,9 @@ cases where you expect a mix of \code{call. = FALSE} and \code{call. = TRUE})
 }}
 }
 \description{
-Recommend usage of \code{call. = FALSE} in conditions
+This linter, with the default \code{display_call = FALSE}, enforces the
+recommendation of the tidyverse design guide regarding displaying error
+calls: \url{https://design.tidyverse.org/err-call.html}
 }
 \examples{
 # will produce lints

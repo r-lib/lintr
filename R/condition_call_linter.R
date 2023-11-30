@@ -1,5 +1,9 @@
 #' Recommend usage of `call. = FALSE` in conditions
 #'
+#' This linter, with the default `display_call = FALSE`, enforces the
+#' recommendation of the tidyverse design guide regarding displaying error
+#' calls: <https://design.tidyverse.org/err-call.html>
+#'
 #' @param display_call Logical specifying expected behaviour regarding `call.`
 #' argument in conditions.
 #'   - `NA` forces providing `call.=` but ignores its value (this can be used in
