@@ -68,7 +68,7 @@
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
-#'   linters = unreachable_code_linter(allow_comment_regex = "# end skip"))
+#'   linters = unreachable_code_linter(allow_comment_regex = "# end skip")
 #' )
 #'
 #' @evalRd rd_tags("unreachable_code_linter")

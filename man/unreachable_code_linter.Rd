@@ -74,7 +74,7 @@ code_lines <- "f <- function() {\n  return(1)\n  # end skip\n}"
 writeLines(code_lines)
 lint(
   text = code_lines,
-  linters = unreachable_code_linter(allow_comment_regex = "# end skip"))
+  linters = unreachable_code_linter(allow_comment_regex = "# end skip")
 )
 
 }
