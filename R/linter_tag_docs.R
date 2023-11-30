@@ -127,6 +127,5 @@ NULL
 #' @evalRd rd_linters("tidy_design")
 #' @seealso
 #'  - [linters] for a complete list of linters available in lintr.
-#'  - <https://testthat.r-lib.org>
 #'  - <https://design.tidyverse.org/>
 NULL
