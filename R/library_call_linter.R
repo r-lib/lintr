@@ -117,10 +117,7 @@ library_call_linter <- function(allow_preamble = TRUE) {
   ")
 
   bad_indirect_funs <- c("do.call", "lapply", "sapply", "map", "walk")
-  call_symbol_cond <- glue("
-    SYMBOL[{attach_call_cond}]
-    or STR_CONST[{ xp_text_in_table(dQuote(attach_calls, '\"')) }]
-  ")
+  call_symbol_cond <- glue("SYMBOL[{attach_call_cond}] or STR_CONST")
   char_only_indirect_xpath <- glue("
   //SYMBOL_FUNCTION_CALL[{ xp_text_in_table(bad_indirect_funs) }]
     /parent::expr
@@ -131,7 +128,7 @@ library_call_linter <- function(allow_preamble = TRUE) {
   ")
   call_symbol_path <- glue("./expr[{call_symbol_cond}]")
 
-  attach_expr_cond <- glue("expr[expr[SYMBOL_FUNCTION_CALL[{attach_call_cond}]]]")
+  attach_expr_cond <- glue("expr[expr/SYMBOL_FUNCTION_CALL[{attach_call_cond}]]")
 
   # Use `calls` in the first condition, not in the second, to prevent, e.g.,
   #   the first call matching calls[1] but the second matching calls[2].
@@ -182,7 +179,17 @@ library_call_linter <- function(allow_preamble = TRUE) {
     )
 
     char_only_indirect_expr <- xml_find_all(xml, char_only_indirect_xpath)
-    char_only_indirect_lib_calls <- get_r_string(char_only_indirect_expr, call_symbol_path)
+    char_only_indirect_lib_calls <- lapply(char_only_indirect_expr, function(expr) {
+      calls <- get_r_string(xml_find_all(expr, call_symbol_path))
+      calls[calls %in% attach_calls]
+    })
+
+    # For STR_CONST entries, the XPath doesn't check the string value -- we use
+    #   get_r_string() here to do that filter more robustly.
+    is_attach_call <- lengths(char_only_indirect_lib_calls) == 1L
+    char_only_indirect_expr <- char_only_indirect_expr[is_attach_call]
+    char_only_indirect_lib_calls <- unlist(char_only_indirect_lib_calls[is_attach_call])
+
     char_only_indirect_loop_calls <- xp_call_name(char_only_indirect_expr)
     char_only_indirect_msg <- sprintf(
       "Call %s() directly, not vectorized with %s().",
