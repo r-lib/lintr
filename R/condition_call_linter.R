@@ -67,13 +67,13 @@ condition_call_linter <- function(display_call = FALSE) {
 
   if (is.na(display_call)) {
     frag <- no_call_xpath
-  } else if (!display_call) {
+  } else if (display_call) {
+    frag <- call_xpath
+  } else {
     # call. = TRUE can be expressed in two way:
     #  - either explicitly with call. = TRUE
     #  - or by implicitly relying on the default
     frag <- xp_or(call_xpath, no_call_xpath)
-  } else {
-    frag <- call_xpath
   }
 
   xpath <- glue::glue("
