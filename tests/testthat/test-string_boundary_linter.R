@@ -150,3 +150,33 @@ test_that("whole-string regex recommends ==, not {starts,ends}With()", {
   expect_lint("str_detect(x, '^abc$')", lint_msg, linter)
   expect_lint("str_detect(x, '^a[.]b$')", lint_msg, linter)
 })
+
+test_that("vectorization + metadata work as intended", {
+  expect_lint(
+    trim_some("{
+      substring(a, 1, 3) == 'abc'
+      substring(b, nchar(b) - 3, nchar(b)) == 'defg'
+      substr(c, 1, 3) == 'hij'
+      substr(d, nchar(d) - 3, nchar(d)) == 'klmn'
+      grepl('^abc', e)
+      grepl('abc$', f)
+      grepl('^abc$', g)
+      str_detect(h, '^abc')
+      str_detect(i, 'abc$')
+      str_detect(j, '^abc$')
+    }"),
+    list(
+      list("startsWith", line_number = 2L),
+      list("endsWith", line_number = 3L),
+      list("startsWith", line_number = 4L),
+      list("endsWith", line_number = 5L),
+      list("startsWith", line_number = 6L),
+      list("endsWith", line_number = 7L),
+      list("==", line_number = 8L),
+      list("startsWith", line_number = 9L),
+      list("endsWith", line_number = 10L),
+      list("==", line_number = 11L)
+    ),
+    string_boundary_linter()
+  )
+})
