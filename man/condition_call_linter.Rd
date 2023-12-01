@@ -19,7 +19,7 @@ cases where you expect a mix of \code{call. = FALSE} and \code{call. = TRUE})
 \description{
 This linter, with the default \code{display_call = FALSE}, enforces the
 recommendation of the tidyverse design guide regarding displaying error
-calls: \url{https://design.tidyverse.org/err-call.html}
+calls.
 }
 \examples{
 # will produce lints
@@ -61,7 +61,10 @@ lint(
 
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\itemize{
+\item \link{linters} for a complete list of linters available in lintr.
+\item \url{https://design.tidyverse.org/err-call.html}>
+}
 }
 \section{Tags}{
 \link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=style_linters]{style}, \link[=tidy_design_linters]{tidy_design}

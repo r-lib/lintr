@@ -2,7 +2,7 @@
 #'
 #' This linter, with the default `display_call = FALSE`, enforces the
 #' recommendation of the tidyverse design guide regarding displaying error
-#' calls: <https://design.tidyverse.org/err-call.html>
+#' calls.
 #'
 #' @param display_call Logical specifying expected behaviour regarding `call.`
 #' argument in conditions.
@@ -51,7 +51,9 @@
 #' )
 #'
 #' @evalRd rd_tags("condition_call_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso
+#'   - [linters] for a complete list of linters available in lintr.
+#'   - <https://design.tidyverse.org/err-call.html>>
 #' @export
 condition_call_linter <- function(display_call = FALSE) {
   call_xpath <- glue::glue("
