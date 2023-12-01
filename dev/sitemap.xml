@@ -91,6 +91,9 @@
     <loc>https://lintr.r-lib.org/dev/reference/comparison_negation_linter.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/dev/reference/condition_call_linter.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/dev/reference/condition_message_linter.html</loc>
   </url>
   <url>
@@ -455,6 +458,9 @@
   </url>
   <url>
     <loc>https://lintr.r-lib.org/dev/reference/terminal_close_linter.html</loc>
+  </url>
+  <url>
+    <loc>https://lintr.r-lib.org/dev/reference/tidy_design_linters.html</loc>
   </url>
   <url>
     <loc>https://lintr.r-lib.org/dev/reference/todo_comment_linter.html</loc>
