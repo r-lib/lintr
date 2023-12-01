@@ -94,11 +94,15 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     search_start <- 1L + initial_anchor
     search_end <- nchar(patterns) - terminal_anchor
     can_replace <- is_not_regex(substr(patterns, search_start, search_end))
-    list(
-      lint_expr = expr[can_replace],
-      initial_anchor = initial_anchor[can_replace],
-      terminal_anchor = terminal_anchor[can_replace]
-    )
+    initial_anchor <- initial_anchor[can_replace]
+    terminal_anchor <- terminal_anchor[can_replace]
+
+    lint_type <- character(length(initial_anchor))
+
+    lint_type[initial_anchor & terminal_anchor] <- "both"
+    lint_type[initial_anchor & !terminal_anchor] <- "initial"
+    lint_type[!initial_anchor & terminal_anchor] <- "terminal"
+    list(lint_expr = expr[can_replace], lint_type = lint_type)
   }
 
   substr_xpath_parts <- glue("
@@ -131,11 +135,11 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
 
     str_detect_lint_data <- get_regex_lint_data(xml, str_detect_xpath)
     str_detect_lint_message <- character(length(str_detect_lint_data$lint_expr))
-    str_detect_lint_message[with(str_detect_lint_data, initial_anchor & terminal_anchor)] <-
+    str_detect_lint_message[str_detect_lint_data$lint_type == "both"] <-
       "Use == to check for an exact string match."
-    str_detect_lint_message[with(str_detect_lint_data, initial_anchor & !terminal_anchor)] <-
+    str_detect_lint_message[str_detect_lint_data$lint_type == "initial"] <-
       "Use startsWith() to detect a fixed initial substring."
-    str_detect_lint_message[with(str_detect_lint_data, !initial_anchor & terminal_anchor)] <-
+    str_detect_lint_message[str_detect_lint_data$lint_type == "terminal"] <-
       "Use endsWith() to detect a fixed terminal substring."
     str_detect_lint_message <- paste(str_detect_lint_message, "Doing so is more readable and more efficient.")
 
@@ -153,11 +157,11 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
         "Use !is.na(x) & %1$s(x, string) to detect a fixed %2$s substring, or,",
         "if missingness is not a concern, just %1$s()."
       )
-      grepl_lint_message[with(grepl_lint_data, initial_anchor & terminal_anchor)] <-
+      grepl_lint_message[grepl_lint_data$lint_type == "both"] <-
         "Use == to check for an exact string match."
-      grepl_lint_message[with(grepl_lint_data, initial_anchor & !terminal_anchor)] <-
+      grepl_lint_message[grepl_lint_data$lint_type == "initial"] <-
         sprintf(grepl_lint_fmt, "startsWith", "initial")
-      grepl_lint_message[with(grepl_lint_data, !initial_anchor & terminal_anchor)] <-
+      grepl_lint_message[grepl_lint_data$lint_type == "terminal"] <-
         sprintf(grepl_lint_fmt, "endsWith", "terminal")
       grepl_lint_message <- paste(grepl_lint_message, "Doing so is more readable and more efficient.")
 
