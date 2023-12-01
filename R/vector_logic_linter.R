@@ -74,6 +74,10 @@ vector_logic_linter <- function() {
       preceding-sibling::expr[last()][SYMBOL_FUNCTION_CALL[not(text() = 'expect_true' or text() = 'expect_false')]]
       or preceding-sibling::OP-LEFT-BRACKET
     ])
+    and not(parent::expr/expr[
+      STR_CONST
+      or expr/SYMBOL_FUNCTION_CALL[text() = 'as.raw' or text() = 'as.octmode' or text() = 'as.hexmode']
+    ])
   ]
   "
 
