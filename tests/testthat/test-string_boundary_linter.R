@@ -71,78 +71,82 @@ test_that("string_boundary_linter blocks simple disallowed grepl() usages", {
 })
 
 test_that("string_boundary_linter blocks simple disallowed str_detect() usages", {
+  linter <- string_boundary_linter()
+
   expect_lint(
     "str_detect(x, '^a')",
     rex::rex("Use startsWith() to detect a fixed initial substring."),
-    string_boundary_linter()
+    linter
   )
   expect_lint(
     "str_detect(x, 'a$')",
     rex::rex("Use endsWith() to detect a fixed terminal substring."),
-    string_boundary_linter()
+    linter
   )
 })
 
 test_that("string_boundary_linter blocks disallowed substr()/substring() usage", {
-  expect_lint(
-    "substr(x, 1L, 2L) == 'ab'",
-    rex::rex("Use startsWith() to detect an initial substring."),
-    string_boundary_linter()
-  )
+  linter <- string_boundary_linter()
+  starts_message <- rex::rex("Use startsWith() to detect an initial substring.")
+  ends_message <- rex::rex("Use endsWith() to detect a terminal substring.")
+
+  expect_lint("substr(x, 1L, 2L) == 'ab'", starts_message, linter)
   # end doesn't matter, just anchoring to 1L
-  expect_lint(
-    "substr(x, 1L, end) == 'ab'",
-    rex::rex("Use startsWith() to detect an initial substring."),
-    string_boundary_linter()
-  )
-  expect_lint(
-    "substring(x, nchar(x) - 4L, nchar(x)) == 'abcde'",
-    rex::rex("Use endsWith() to detect a terminal substring."),
-    string_boundary_linter()
-  )
+  expect_lint("substr(x, 1L, end) == 'ab'", starts_message, linter)
+  expect_lint("substring(x, nchar(x) - 4L, nchar(x)) == 'abcde'", ends_message, linter)
   # start doesn't matter, just anchoring to nchar(x)
-  expect_lint(
-    "substring(x, start, nchar(x)) == 'abcde'",
-    rex::rex("Use endsWith() to detect a terminal substring."),
-    string_boundary_linter()
-  )
+  expect_lint("substring(x, start, nchar(x)) == 'abcde'", ends_message, linter)
   # more complicated expressions
-  expect_lint(
-    "substring(colnames(x), start, nchar(colnames(x))) == 'abc'",
-    rex::rex("Use endsWith() to detect a terminal substring."),
-    string_boundary_linter()
-  )
+  expect_lint("substring(colnames(x), start, nchar(colnames(x))) == 'abc'", ends_message, linter)
 })
 
 test_that("plain ^ or $ are skipped", {
-  expect_lint('grepl("^", x)', NULL, string_boundary_linter())
-  expect_lint('grepl("$", x)', NULL, string_boundary_linter())
+  linter <- string_boundary_linter()
+
+  expect_lint('grepl("^", x)', NULL, linter)
+  expect_lint('grepl("$", x)', NULL, linter)
 })
 
 test_that("substr inverted tests are caught as well", {
+  linter <- string_boundary_linter()
+
   expect_lint(
     "substr(x, 1L, 2L) != 'ab'",
     rex::rex("Use startsWith() to detect an initial substring."),
-    string_boundary_linter()
+    linter
   )
   expect_lint(
     "substring(x, nchar(x) - 4L, nchar(x)) != 'abcde'",
     rex::rex("Use endsWith() to detect a terminal substring."),
-    string_boundary_linter()
+    linter
   )
 })
 
 test_that("R>=4 raw strings are detected", {
+  linter <- string_boundary_linter()
+
   skip_if_not_r_version("4.0.0")
-  expect_lint('grepl(R"(^.{3})", x)', NULL, string_boundary_linter())
+  expect_lint('grepl(R"(^.{3})", x)', NULL, linter)
   expect_lint(
     'grepl(R"(^abc)", x)',
     rex::rex("Use !is.na(x) & startsWith(x, string) to detect a fixed initial substring,"),
-    string_boundary_linter()
+    linter
   )
 })
 
 test_that("grepl() can optionally be ignored", {
-  expect_lint("grepl('^abc', x)", NULL, string_boundary_linter(allow_grepl = TRUE))
-  expect_lint("grepl('xyz$', x)", NULL, string_boundary_linter(allow_grepl = TRUE))
+  linter <- string_boundary_linter(allow_grepl = TRUE)
+
+  expect_lint("grepl('^abc', x)", NULL, linter)
+  expect_lint("grepl('xyz$', x)", NULL, linter)
+})
+
+test_that("whole-string regex recommends ==, not {starts,ends}With()", {
+  linter <- string_boundary_linter()
+  lint_msg <- rex::rex("Use == to check for an exact string match.")
+
+  expect_lint("grepl('^abc$', x)", lint_msg, linter)
+  expect_lint("grepl('^a\\\\.b$', x)", lint_msg, linter)
+  expect_lint("str_detect(x, '^abc$')", lint_msg, linter)
+  expect_lint("str_detect(x, '^a[.]b$')", lint_msg, linter)
 })
