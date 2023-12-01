@@ -49,9 +49,9 @@ default_linters <- modify_defaults(
 #'
 #' @evalRd c(
 #'   "\\details{",
-#'   rd_default_undesirable_functions(),
+#'   rd_undesirable_functions(),
 #'   "",
-#'   rd_default_undesirable_operators(),
+#'   rd_undesirable_operators(),
 #'   "}"
 #' )
 #'
@@ -167,7 +167,7 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
   NULL
 )]
 
-rd_default_undesirable_functions <- function() {
+rd_undesirable_functions <- function() {
   alternatives <- unlist(default_undesirable_functions)
   alternatives <- gsub("`([^`]+)`", "\\\\code{\\1}", alternatives)
   alternatives <- gsub("withr::([a-zA-Z0-9._]+)\\(\\)", "\\\\code{\\\\link[withr:\\1]{withr::\\1()}}", alternatives)
@@ -218,7 +218,7 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
   NULL
 )]
 
-rd_default_undesirable_operators <- function() {
+rd_undesirable_operators <- function() {
   c(
     "The following operators are sometimes regarded as undesirable:",
     "\\itemize{",
