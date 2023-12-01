@@ -73,6 +73,7 @@ test_that("vector_logic_linter recognizes some false positves around bitwise &/|
   linter <- vector_logic_linter()
 
   expect_lint("if (info & as.raw(12)) { }", NULL, linter)
+  expect_lint("if (as.raw(12) & info) { }", NULL, linter)
   expect_lint("if (info | as.raw(12)) { }", NULL, linter)
   expect_lint("if (info & as.octmode('100')) { }", NULL, linter)
   expect_lint("if (info | as.octmode('011')) { }", NULL, linter)
@@ -81,6 +82,7 @@ test_that("vector_logic_linter recognizes some false positves around bitwise &/|
   # implicit as.octmode() coercion
   expect_lint("if (info & '100') { }", NULL, linter)
   expect_lint("if (info | '011') { }", NULL, linter)
+  expect_lint("if ('011' | info) { }", NULL, linter)
 
   # further nesting
   expect_lint("if ((info & as.raw(12)) == as.raw(12)) { }", NULL, linter)
