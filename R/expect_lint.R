@@ -42,7 +42,8 @@
 expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   if (!requireNamespace("testthat", quietly = TRUE)) {
     stop( # nocov start
-      "'expect_lint' is designed to work within the 'testthat' testing framework, but 'testthat' is not installed."
+      "'expect_lint' is designed to work within the 'testthat' testing framework, but 'testthat' is not installed.",
+      call. = FALSE
     ) # nocov end
   }
   old_lang <- set_lang(language)
@@ -90,7 +91,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
             stop(sprintf(
               "check #%d had an invalid field: \"%s\"\nValid fields are: %s\n",
               itr, field, toString(lint_fields)
-            ))
+            ), call. = FALSE)
           }
           check <- check[[field]]
           value <- lint[[field]]

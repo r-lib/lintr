@@ -17,9 +17,9 @@ see also \code{\link[=available_tags]{available_tags()}}.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (63 linters)}
+\item{\link[=best_practices_linters]{best_practices} (64 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (10 linters)}
-\item{\link[=configurable_linters]{configurable} (40 linters)}
+\item{\link[=configurable_linters]{configurable} (41 linters)}
 \item{\link[=consistency_linters]{consistency} (32 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (26 linters)}
@@ -31,7 +31,8 @@ The following tags exist:
 \item{\link[=readability_linters]{readability} (65 linters)}
 \item{\link[=regex_linters]{regex} (4 linters)}
 \item{\link[=robustness_linters]{robustness} (17 linters)}
-\item{\link[=style_linters]{style} (40 linters)}
+\item{\link[=style_linters]{style} (41 linters)}
+\item{\link[=tidy_design_linters]{tidy_design} (1 linters)}
 }
 }
 \section{Linters}{
@@ -48,6 +49,7 @@ The following linters exist:
 \item{\code{\link{commas_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{commented_code_linter}} (tags: best_practices, default, readability, style)}
 \item{\code{\link{comparison_negation_linter}} (tags: consistency, readability)}
+\item{\code{\link{condition_call_linter}} (tags: best_practices, configurable, style, tidy_design)}
 \item{\code{\link{condition_message_linter}} (tags: best_practices, consistency)}
 \item{\code{\link{conjunct_test_linter}} (tags: best_practices, configurable, package_development, pkg_testthat, readability)}
 \item{\code{\link{consecutive_assertion_linter}} (tags: consistency, readability, style)}
