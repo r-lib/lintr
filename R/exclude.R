@@ -129,7 +129,7 @@ parse_exclusions <- function(file,
     if (length(starts) != length(ends)) {
       starts_msg <- line_info(starts, type = "start")
       ends_msg <- line_info(ends, type = "end")
-      stop(file, " has ", starts_msg, " but only ", ends_msg, " for exclusion from linting!")
+      stop(file, " has ", starts_msg, " but only ", ends_msg, " for exclusion from linting!", call. = FALSE)
     }
 
     for (i in seq_along(starts)) {
@@ -204,7 +204,8 @@ add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep
         warning(
           "Could not find linter", if (length(bad) > 1L) "s" else "", " named ",
           glue_collapse(sQuote(bad), sep = ", ", last = " and "),
-          " in the list of active linters. Make sure the linter is uniquely identified by the given name or prefix."
+          " in the list of active linters. Make sure the linter is uniquely identified by the given name or prefix.",
+          call. = FALSE
         )
       }
       excluded_linters[matched] <- linter_names[idxs[matched]]
