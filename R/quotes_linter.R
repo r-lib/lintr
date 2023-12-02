@@ -60,12 +60,10 @@ quotes_linter <- function(delimiter = c('"', "'")) {
     lint_message <- "Only use single-quotes."
   }
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    string_exprs <- xml_find_all(source_expression$xml_parsed_content, "//STR_CONST")
+  Linter(linter_level = "expression", function(source_expression) {
+    xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
+    string_exprs <- xml_find_all(xml, "//STR_CONST")
     is_bad <- re_matches(xml_text(string_exprs), quote_regex)
 
     xml_nodes_to_lints(string_exprs[is_bad], source_expression, lint_message)

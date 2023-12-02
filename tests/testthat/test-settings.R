@@ -60,23 +60,28 @@ test_that("it uses system config directory settings if provided", {
   expect_identical(settings$exclude, "test")
 })
 
-test_that("it errors if the config file does not end in a newline", {
-  f <- withr::local_tempfile()
-  cat("linters: linters_with_defaults(closed_curly_linter = NULL)", file = f)
-  withr::local_options(list(lintr.linter_file = f))
-  expect_error(lintr:::read_settings("foo"), "Malformed config file")
+test_that("read_config_file() warns if the config file does not end in a newline", {
+  .lintr <- withr::local_tempfile()
+  withr::local_options(lintr.linter_file = .lintr)
+  withr::local_dir(withr::local_tempdir())
+
+  # cat() not writeLines() to ensure no trailing \n
+  cat("linters: linters_with_defaults(brace_linter = NULL)", file = .lintr)
+  writeLines("a <- 1", "aaa.R")
+  expect_warning(lint_dir(), "Warning encountered while loading config", fixed = TRUE)
 })
 
 test_that("it gives informative errors if the config file contains errors", {
-  f <- withr::local_tempfile(
-    lines = c(
-      "linters: linters_with_defaults(",
-      "   closed_curly_linter = NULL,",
-      " )"
-    )
-  )
-  withr::local_options(list(lintr.linter_file = f))
-  expect_error(lintr:::read_settings("foo"), "Malformed config setting 'linters'")
+  .lintr <- withr::local_tempfile(lines = c(
+    "linters: linters_with_defaults(",
+    "    brace_linter = NULL,",
+    "  )"
+  ))
+  withr::local_options(lintr.linter_file = .lintr)
+  withr::local_dir(withr::local_tempdir())
+
+  writeLines("a <- 1", "aaa.R")
+  expect_error(lint_dir(), "Error from config setting 'linters'", fixed = TRUE)
 })
 
 test_that("rot utility works as intended", {
@@ -258,4 +263,22 @@ test_that("lines Inf means 'all lines'", {
   # exclude infix_spaces_linter, include assignment_linter()
   writeLines("a=1", "aaa.R")
   expect_length(lint_dir(linters = list(assignment_linter(), infix_spaces_linter())), 1L)
+})
+
+test_that("read_config_file() bubbles up warnings helpfully, without erroring (#2253)", {
+  .lintr <- withr::local_tempfile(lines = 'linters: list(backport_linter("2.0.0"))')
+  withr::local_options(lintr.linter_file = .lintr)
+  withr::local_dir(withr::local_tempdir())
+
+  writeLines("a <- 1", "aaa.R")
+  expect_warning(lint_dir(), "Warning from config setting 'linters'.*Resetting 'r_version' to 3.0.0")
+})
+
+test_that("perl-only regular expressions are accepted in config", {
+  .lintr <- withr::local_tempfile(lines = 'exclude: "# (?<=a)b"')
+  withr::local_options(lintr.linter_file = .lintr)
+  withr::local_dir(withr::local_tempdir())
+
+  writeLines("a <- 1", "aaa.R")
+  expect_silent(lint("aaa.R"))
 })

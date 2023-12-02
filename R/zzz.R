@@ -29,6 +29,7 @@ default_linters <- modify_defaults(
   paren_body_linter(),
   pipe_continuation_linter(),
   quotes_linter(),
+  return_linter(),
   semicolon_linter(),
   seq_linter(),
   spaces_inside_linter(),
@@ -154,6 +155,8 @@ all_undesirable_functions <- modify_defaults(
     "source() loads code into the global environment unless `local = TRUE` is used,",
     "which can cause hard-to-predict behavior"
   ),
+  structure =
+    "Use class<-, names<-, and attr<- to set attributes",
   substring =
     "use substr() with appropriate `stop=` value.",
   Sys.setenv =
@@ -171,9 +174,7 @@ all_undesirable_functions <- modify_defaults(
   untrace = paste(
     "remove this likely leftover from debugging.",
     "It is only useful for interactive debugging with trace()"
-  ),
-  structure =
-    "Use class<-, names<-, and attr<- to set attributes"
+  )
 )
 
 #' @rdname default_undesirable_functions
@@ -282,18 +283,6 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #' @export
 default_settings <- NULL
 
-# TODO(R>=3.6.0): Just use sys.source() directly. Note that we can't
-#   write a wrapper that only passes keep.parse.data=FALSE on R>3.5.0
-#   (without doing some wizardry to evade R CMD check) because
-#   there is a check for arguments not matching the signature which
-#   will throw a false positive on R3.5.0. Luckily the argument
-#   defaults on R>=3.6.0 are dictated by global options, so we can use
-#   that for the wrapper here rather than doing some NSE tricks.
-sys_source <- function(...) {
-  old <- options(keep.source.pkgs = FALSE, keep.parse.data.pkgs = FALSE)
-  on.exit(options(old))
-  sys.source(...)
-}
 settings <- new.env(parent = emptyenv())
 
 # nocov start
@@ -305,18 +294,9 @@ settings <- new.env(parent = emptyenv())
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  # R>=3.6.0: str2expression, str2lang
   # R>=4.0.0: deparse1
   # R>=4.1.0: ...names
   backports::import(pkgname, c("deparse1", "...names"))
-  base_ns <- getNamespace("base")
-  backports_ns <- getNamespace("backports")
-  lintr_ns <- getNamespace(pkgname)
-  for (base_fun in c("str2lang", "str2expression")) {
-    if (!exists(base_fun, base_ns)) {
-      assign(base_fun, get(base_fun, backports_ns), lintr_ns)
-    }
-  }
 
   utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,

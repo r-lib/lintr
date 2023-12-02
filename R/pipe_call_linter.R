@@ -26,12 +26,9 @@ pipe_call_linter <- function() {
   pipes <- setdiff(magrittr_pipes, "%$%")
   xpath <- glue("//SPECIAL[{ xp_text_in_table(pipes) }]/following-sibling::expr[*[1][self::SYMBOL]]")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
     pipe <- xml_text(xml_find_first(bad_expr, "preceding-sibling::SPECIAL[1]"))

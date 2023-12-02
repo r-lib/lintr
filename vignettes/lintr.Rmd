@@ -181,17 +181,17 @@ linters_with_args <- lapply(
 )
 
 make_setting_string <- function(linter_name) {
-  args <- linters_with_args[[linter_name]]
-  if (is.null(args)) {
+  linter_args <- linters_with_args[[linter_name]]
+  if (is.null(linter_args)) {
     return("")
   }
 
-  arglist <- vapply(args, function(arg) {
+  arglist <- vapply(linter_args, function(arg) {
     env <- environment(default_linters[[linter_name]])
     deparse(env[[arg]])
   }, character(1L))
 
-  paste0(args, " = ", arglist, collapse = ", ")
+  paste0(linter_args, " = ", arglist, collapse = ", ")
 }
 
 defaults_table <- data.frame(

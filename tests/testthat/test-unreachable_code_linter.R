@@ -394,10 +394,10 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", {
     trim_some("
       foo <- function() {
         do_something
-        # nolint start: one_linter.
+        # TestNoLintStart: one_linter.
         a = 42
         next
-        # nolint end
+        # TestNoLintEnd
       }
     "),
     NULL,
@@ -593,6 +593,50 @@ test_that("function shorthand is handled", {
       line_number = 3L,
       message = rex::rex("Code and comments coming after a return() or stop()")
     ),
+    unreachable_code_linter()
+  )
+})
+
+test_that("Do not lint inline else after stop", {
+
+  expect_lint(
+    "if (x > 3L) stop() else x + 3",
+    NULL,
+    unreachable_code_linter()
+  )
+})
+
+test_that("Do not lint inline else after stop in inline function", {
+
+  expect_lint(
+    "function(x) if (x > 3L) stop() else x + 3",
+    NULL,
+    unreachable_code_linter()
+  )
+
+  expect_lint(
+    "function(x) if (x > 3L) { stop() } else {x + 3}",
+    NULL,
+    unreachable_code_linter()
+  )
+})
+
+test_that("Do not lint inline else after stop in inline lambda function", {
+  skip_if_not_r_version("4.1.0")
+
+  expect_lint(
+    "\\(x) if (x > 3L) stop() else x + 3",
+    NULL,
+    unreachable_code_linter()
+  )
+})
+
+test_that("Do not lint inline else after stop in lambda function", {
+  skip_if_not_r_version("4.1.0")
+
+  expect_lint(
+    "\\(x){ if (x > 3L) stop() else x + 3 }",
+    NULL,
     unreachable_code_linter()
   )
 })

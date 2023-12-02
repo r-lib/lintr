@@ -85,12 +85,9 @@ any_duplicated_linter <- function() {
 
   uses_nrow_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'nrow']"
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     any_duplicated_expr <- xml_find_all(xml, any_duplicated_xpath)
     any_duplicated_lints <- xml_nodes_to_lints(
@@ -113,6 +110,6 @@ any_duplicated_linter <- function() {
       type = "warning"
     )
 
-    return(c(any_duplicated_lints, length_unique_lints))
+    c(any_duplicated_lints, length_unique_lints)
   })
 }

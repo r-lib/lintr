@@ -4,7 +4,7 @@
 #' @param allow_ns_usage Suppress lints for packages only used via namespace.
 #' This is `FALSE` by default because `pkg::fun()` doesn't require `library(pkg)`.
 #' You can use [requireNamespace("pkg")][requireNamespace()] to ensure a package is
-#' installed without loading it.
+#' installed without attaching it.
 #' @param except_packages Character vector of packages that are ignored.
 #' These are usually attached for their side effects.
 #'
@@ -74,12 +74,9 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
     sep = " | "
   )
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
+    if (is.null(xml)) return(list())
 
     import_exprs <- xml_find_all(xml, import_xpath)
     if (length(import_exprs) == 0L) {

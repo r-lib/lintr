@@ -4,11 +4,12 @@
 #'
 #' @param packages A character vector of packages to search for linters.
 #' @param tags Optional character vector of tags to search. Only linters with at least one matching tag will be
-#' returned. If `tags` is `NULL`, all linters will be returned. See `available_tags("lintr")` to find out what
-#' tags are already used by lintr.
+#'   returned. If `tags` is `NULL`, all linters will be returned. See `available_tags("lintr")` to find out what
+#'   tags are already used by lintr.
 #' @param exclude_tags Tags to exclude from the results. Linters with at least one matching tag will not be returned.
-#' If `except_tags` is `NULL`, no linters will be excluded. Note that `tags` takes priority, meaning that any
-#' tag found in both `tags` and `exclude_tags` will be included, not excluded.
+#'   If `exclude_tags` is `NULL`, no linters will be excluded. Note that `tags` takes priority, meaning that any
+#'   tag found in both `tags` and `exclude_tags` will be included, not excluded. Note that linters with tag `"defunct"`
+#'   (which do not work and can no longer be run) cannot be queried directly. See [lintr-deprecated] instead.
 #'
 #' @section Package Authors:
 #'
@@ -48,17 +49,18 @@
 #' @export
 available_linters <- function(packages = "lintr", tags = NULL, exclude_tags = "deprecated") {
   if (!is.character(packages)) {
-    stop("`packages` must be a character vector.")
+    stop("`packages` must be a character vector.", call. = FALSE)
   }
   if (!is.null(tags) && !is.character(tags)) {
-    stop("`tags` must be a character vector.")
+    stop("`tags` must be a character vector.", call. = FALSE)
   }
   if (!is.null(exclude_tags) && !is.character(exclude_tags)) {
-    stop("`exclude_tags` must be a character vector.")
+    stop("`exclude_tags` must be a character vector.", call. = FALSE)
   }
 
   # any tags specified explicitly will not be excluded (#1959)
-  exclude_tags <- setdiff(exclude_tags, tags)
+  # never include defunct linters, which don't work / error on instantiation (#2284).
+  exclude_tags <- unique(c(setdiff(exclude_tags, tags), "defunct"))
 
   # Handle multiple packages
   if (length(packages) > 1L) {
@@ -119,7 +121,8 @@ validate_linter_db <- function(available, package) {
       "`linters.csv` must contain the columns 'linter' and 'tags'.\nPackage '",
       package, "' is missing ",
       paste0("'", setdiff(c("linter", "tags"), names(available)), "'", collapse = " and "),
-      "."
+      ".",
+      call. = FALSE
     )
     return(FALSE)
   }
@@ -150,7 +153,7 @@ rd_tags <- function(linter_name) {
   linters <- available_linters(exclude_tags = NULL)
   tags <- platform_independent_sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
   if (length(tags) == 0L) {
-    stop("tags are required, but found none for ", linter_name)
+    stop("tags are required, but found none for ", linter_name, call. = FALSE)
   }
 
   c(
@@ -169,7 +172,7 @@ rd_linters <- function(tag_name) {
   linters <- available_linters(tags = tag_name)
   tagged <- platform_independent_sort(linters[["linter"]])
   if (length(tagged) == 0L) {
-    stop("No linters found associated with tag ", tag_name)
+    stop("No linters found associated with tag ", tag_name, call. = FALSE)
   }
 
   c(

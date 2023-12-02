@@ -25,12 +25,8 @@
 line_length_linter <- function(length = 80L) {
   general_msg <- paste("Lines should not be more than", length, "characters.")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     # Only go over complete file
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
     line_lengths <- nchar(source_expression$file_lines)
     long_lines <- which(line_lengths > length)
 

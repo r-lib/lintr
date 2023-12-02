@@ -42,12 +42,9 @@ missing_package_linter <- function() {
   "
   call_xpath <- paste(library_require_xpath, "|", load_require_namespace_xpath)
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
+    if (is.null(xml)) return(list())
 
     pkg_calls <- xml_find_all(xml, call_xpath)
     pkg_names <- get_r_string(xml_find_all(
