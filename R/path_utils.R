@@ -108,10 +108,10 @@ is_valid_long_path <- function(path, lax = FALSE) {
 
 split_paths <- function(path, sep = "/|\\\\") {
   if (!is.character(path)) {
-    stop("argument 'path' should be a character vector")
+    stop("argument 'path' should be a character vector", call. = FALSE)
   }
   if (!is.character(sep) || length(sep) != 1L || !nzchar(sep)) {
-    stop("argument 'sep' should be a non-empty regular expression character string")
+    stop("argument 'sep' should be a non-empty regular expression character string", call. = FALSE)
   }
   Map(split_path, strsplit(path, sep), substr(path, 1L, 1L))
 }
