@@ -584,6 +584,7 @@ tab_offsets <- function(tab_columns) {
   vapply(
     tab_columns - 1L,
     function(tab_idx) {
+      # nolint next: object_overwrite_linter. 'offset' is a perfect name here.
       offset <- 7L - (tab_idx + cum_offset) %% 8L # using a tab width of 8 characters
       cum_offset <<- cum_offset + offset
       offset
@@ -630,22 +631,22 @@ fix_eq_assigns <- function(pc) {
   )
 
   for (i in seq_len(n_expr)) {
-    start <- true_locs[i]
+    start_loc <- true_locs[i]
 
     # TODO(michaelchirico): vectorize this loop away. the tricky part is,
     #   this loop doesn't execute on most R versions (we tried 3.6.3 and 4.2.0).
     #   so it likely requires some GHA print debugging -- tedious :)
-    end <- true_locs[i]
-    j <- end + 1L
+    end_loc <- true_locs[i]
+    j <- end_loc + 1L
     # nocov start: only runs on certain R versions
     while (j <= length(expr_locs) && !expr_locs[j]) {
-      end <- j
+      end_loc <- j
       j <- j + 1L
     }
     # nocov end
 
-    prev_loc <- prev_locs[start]
-    next_loc <- next_locs[end]
+    prev_loc <- prev_locs[start_loc]
+    next_loc <- next_locs[end_loc]
 
     id_itr <- id_itr + 1L
     supplemental_content[i, ] <- list(
@@ -661,9 +662,9 @@ fix_eq_assigns <- function(pc) {
     )
 
     new_parent_locs <- c(
-      prev_locs[start:end],
-      eq_assign_locs[start:end],
-      next_locs[start:end],
+      prev_locs[start_loc:end_loc],
+      eq_assign_locs[start_loc:end_loc],
+      next_locs[start_loc:end_loc],
       next_loc
     )
     pc[new_parent_locs, "parent"] <- id_itr

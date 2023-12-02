@@ -83,12 +83,9 @@ inner_combine_linter <- function() {
     /parent::expr
   ")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
 
@@ -112,7 +109,7 @@ arg_match_condition <- function(arg) {
   this_symbol <- sprintf("SYMBOL_SUB[text() = '%s']", arg)
   following_symbol <- sprintf("following-sibling::expr/%s", this_symbol)
   next_expr <- "following-sibling::expr[1]"
-  return(xp_or(
+  xp_or(
     sprintf("not(%s) and not(%s)", this_symbol, following_symbol),
     xp_and(
       this_symbol,
@@ -122,7 +119,7 @@ arg_match_condition <- function(arg) {
         this_symbol, following_symbol, next_expr
       )
     )
-  ))
+  )
 }
 
 build_arg_condition <- function(calls, arguments) {

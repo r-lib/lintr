@@ -59,7 +59,10 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   stopifnot(is.logical(symbol_is_undesirable))
   if (is.null(names(fun)) || !all(nzchar(names(fun))) || length(fun) == 0L) {
-    stop("'fun' should be a non-empty named character vector; use missing elements to indicate default messages.")
+    stop(
+      "'fun' should be a non-empty named character vector; use missing elements to indicate default messages.",
+      call. = FALSE
+    )
   }
 
   xp_condition <- xp_and(
@@ -79,11 +82,10 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
   }
 
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-    matched_nodes <- xml_find_all(source_expression$xml_parsed_content, xpath)
+  Linter(linter_level = "expression", function(source_expression) {
+    xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
+    matched_nodes <- xml_find_all(xml, xpath)
     fun_names <- get_r_string(matched_nodes)
 
     msgs <- vapply(

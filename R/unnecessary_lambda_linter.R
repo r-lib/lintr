@@ -8,10 +8,24 @@
 #'   the anonymous function _can_ be avoided, doing so is not always more
 #'   readable.
 #'
+#' @param allow_comparison Logical, default `FALSE`. If `TRUE`, lambdas like
+#'   `function(x) foo(x) == 2`, where `foo` can be extracted to the "mapping"
+#'   function and `==` vectorized instead of called repeatedly, are linted.
+#'
 #' @examples
 #' # will produce lints
 #' lint(
 #'   text = "lapply(list(1:3, 2:4), function(xi) sum(xi))",
+#'   linters = unnecessary_lambda_linter()
+#' )
+#'
+#' lint(
+#'   text = "sapply(x, function(xi) xi == 2)",
+#'   linters = unnecessary_lambda_linter()
+#' )
+#'
+#' lint(
+#'   text = "sapply(x, function(xi) sum(xi) > 0)",
 #'   linters = unnecessary_lambda_linter()
 #' )
 #'
@@ -31,10 +45,30 @@
 #'   linters = unnecessary_lambda_linter()
 #' )
 #'
+#' lint(
+#'   text = "sapply(x, function(xi) xi == 2)",
+#'   linters = unnecessary_lambda_linter(allow_comparison = TRUE)
+#' )
+#'
+#' lint(
+#'   text = "sapply(x, function(xi) sum(xi) > 0)",
+#'   linters = unnecessary_lambda_linter(allow_comparison = TRUE)
+#' )
+#'
+#' lint(
+#'   text = "sapply(x, function(xi) sum(abs(xi)) > 10)",
+#'   linters = unnecessary_lambda_linter()
+#' )
+#'
+#' lint(
+#'   text = "sapply(x, sum) > 0",
+#'   linters = unnecessary_lambda_linter()
+#' )
+#'
 #' @evalRd rd_tags("unnecessary_lambda_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-unnecessary_lambda_linter <- function() {
+unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   # include any base function like those where FUN is an argument
   #   and ... follows positionally directly afterwards (with ...
   #   being passed on to FUN). That excludes functions like
@@ -54,6 +88,27 @@ unnecessary_lambda_linter <- function() {
     "parLapplyLB", "parRapply", "parSapply", "parSapplyLB", "pvec",
     purrr_mappers
   ))
+
+  # OP-PLUS: condition for complex literal, e.g. 0+2i.
+  # NB: this includes 0+3 and TRUE+FALSE, which are also fine.
+  inner_comparison_xpath <- glue("
+  //SYMBOL_FUNCTION_CALL[text() = 'sapply' or text() = 'vapply']
+    /parent::expr
+    /parent::expr
+    /expr[FUNCTION]
+    /expr[
+      ({ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) })
+      and expr[
+        expr/SYMBOL_FUNCTION_CALL
+        and expr/SYMBOL
+      ]
+      and expr[
+        NUM_CONST
+        or STR_CONST
+        or (OP-PLUS and count(expr/NUM_CONST) = 2)
+      ]
+    ]
+  ")
 
   # outline:
   #   1. match one of the identified mappers
@@ -75,7 +130,10 @@ unnecessary_lambda_linter <- function() {
           position() = 2
           and preceding-sibling::expr/SYMBOL_FUNCTION_CALL
           and not(preceding-sibling::*[1][self::EQ_SUB])
-          and not(parent::expr/following-sibling::*[not(self::OP-RIGHT-PAREN or self::OP-RIGHT-BRACE)])
+          and not(parent::expr[
+            preceding-sibling::expr[not(SYMBOL_FUNCTION_CALL)]
+            or following-sibling::*[not(self::OP-RIGHT-PAREN or self::OP-RIGHT-BRACE)]
+          ])
         ]/SYMBOL
     ]
     /parent::expr
@@ -101,12 +159,9 @@ unnecessary_lambda_linter <- function() {
   # path to the symbol of the simpler function that avoids a lambda
   symbol_xpath <- "expr[last()]//expr[SYMBOL_FUNCTION_CALL[text() != 'return']]"
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     default_fun_expr <- xml_find_all(xml, default_fun_xpath)
 
@@ -128,6 +183,27 @@ unnecessary_lambda_linter <- function() {
       type = "warning"
     )
 
+    inner_comparison_lints <- NULL
+    if (!allow_comparison) {
+      inner_comparison_expr <- xml_find_all(xml, inner_comparison_xpath)
+
+      mapper <- xp_call_name(xml_find_first(inner_comparison_expr, "parent::expr/parent::expr"))
+      if (length(mapper) > 0L) fun_value <- if (mapper == "sapply") "" else ", FUN.VALUE = <intermediate>"
+
+      inner_comparison_lints <- xml_nodes_to_lints(
+        inner_comparison_expr,
+        source_expression = source_expression,
+        lint_message = sprintf(
+          paste(
+            "Compare to a constant after calling %1$s() to get the full benefits of vectorization.",
+            "Prefer %1$s(x, foo%2$s) == 2 over %1$s(x, function(xi) foo(xi) == 2, logical(1L))."
+          ),
+          mapper, fun_value
+        ),
+        type = "warning"
+      )
+    }
+
     purrr_fun_expr <- xml_find_all(xml, purrr_fun_xpath)
 
     purrr_call_fun <- xml_text(xml_find_first(purrr_fun_expr, fun_xpath))
@@ -143,6 +219,6 @@ unnecessary_lambda_linter <- function() {
       type = "warning"
     )
 
-    c(default_fun_lints, purrr_fun_lints)
+    c(default_fun_lints, inner_comparison_lints, purrr_fun_lints)
   })
 }

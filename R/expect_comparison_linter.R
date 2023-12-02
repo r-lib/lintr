@@ -49,7 +49,7 @@
 #' @export
 expect_comparison_linter <- function() {
   # != doesn't have a clean replacement
-  comparator_nodes <- setdiff(as.list(infix_metadata$xml_tag[infix_metadata$comparator]), "NE")
+  comparator_nodes <- setdiff(infix_metadata$xml_tag[infix_metadata$comparator], "NE")
   xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
     /parent::expr
@@ -63,12 +63,9 @@ expect_comparison_linter <- function() {
     `==` = "expect_identical"
   )
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
 

@@ -11,8 +11,11 @@
 #' @export
 with_id <- function(source_expression, id, source_file) {
   if (!missing(source_file)) {
-    lintr_deprecated(old = "source_file", new = "source_expression", version = "3.0.0", type = "Argument")
-    source_expression <- source_file
+    lintr_deprecated(
+      what = "source_file", alternative = "source_expression", version = "3.0.0",
+      type = "Argument",
+      signal = "stop"
+    )
   }
   if (!is_lint_level(source_expression, "expression")) {
     return(data.frame())

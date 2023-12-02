@@ -19,8 +19,27 @@
 #'
 #' @export
 is_lint_level <- function(source_expression, level = c("expression", "file")) {
-  stopifnot(!missing(level))
   level <- match.arg(level)
-  required_key <- paste0(if (level == "file") "full_", "parsed_content")
+  required_key <- switch(level, file = "full_parsed_content", expression = "parsed_content")
   required_key %in% names(source_expression)
+}
+
+#' Determine whether a linter needs to run for a given source_expression level
+#'
+#' Used by [lint()] to avoid unneccessary calls to linters.
+#'
+#' @param linter A linter.
+#' @param level Which level of expression is being tested? `"expression"`
+#'   means an individual expression, while `"file"` means all expressions
+#'   in the current file are available.
+#'
+#' @keywords internal
+#' @noRd
+is_linter_level <- function(linter, level = c("expression", "file")) {
+  linter_level <- attr(linter, "linter_level", exact = TRUE)
+  if (is.null(linter_level) || is.na(linter_level)) {
+    return(TRUE)
+  }
+  level <- match.arg(level)
+  identical(linter_level, level)
 }

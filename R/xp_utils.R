@@ -11,7 +11,7 @@ xp_text_in_table <- function(table) {
   single_quoted <- grepl("'", table, fixed = TRUE)
   table[single_quoted] <- sQuote(table[single_quoted], '"')
   table[!single_quoted] <- sQuote(table[!single_quoted], "'")
-  return(paste0("text() = ", table, collapse = " or "))
+  paste0("text() = ", table, collapse = " or ")
 }
 
 paren_wrap <- function(..., sep) {
@@ -85,7 +85,8 @@ xp_call_name <- function(expr, depth = 1L, condition = NULL) {
   if (!is_valid_expr) {
     stop(
       "Expected an xml_nodeset or an xml_node, instead got an object of class(es): ",
-      toString(class(expr))
+      toString(class(expr)),
+      call. = FALSE
     )
   }
 
