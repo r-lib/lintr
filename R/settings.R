@@ -169,7 +169,8 @@ validate_config_file <- function(config, config_file, defaults) {
 }
 
 is_character_string <- function(x) is.character(x) && length(x) == 1L && !is.na(x)
-is_valid_regex <- function(str) !inherits(tryCatch(grepl(str, ""), condition = identity), "condition")
+# perl=TRUE matches rex::re_matches()
+is_valid_regex <- function(str) !inherits(tryCatch(grepl(str, "", perl = TRUE), condition = identity), "condition")
 is_single_regex <- function(x) is_character_string(x) && is_valid_regex(x)
 is_true_false <- function(x) is.logical(x) && length(x) == 1L && !is.na(x)
 
