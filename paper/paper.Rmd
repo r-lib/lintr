@@ -2,22 +2,16 @@
 title: "Static Code Analysis for R"
 date: "`r Sys.Date()`"
 tags: ["R", "linter", "tidyverse"]
-
 authors:
   - name: Jim Hester
     affiliation: 1
     orcid: ~
-
 affiliations:
   - index: 1
     name: Netflix
-
-output: 
-  rticles::joss_article:
-    keep_tex: true
+output: md_document
 bibliography: paper.bib
 csl: apa.csl
-journal: JOSS
 link-citations: yes
 ---
 
@@ -25,13 +19,14 @@ link-citations: yes
 knitr::opts_chunk$set(
   collapse = TRUE,
   out.width = "100%",
-  dpi = 300,
   comment = "#>"
 )
 
 library(lintr)
 
-withr::local_options(lintr.format_width = 60L)
+withr::local_options(list(
+  lintr.format_width = 60L
+))
 ```
 
 # Statement of Need
@@ -145,6 +140,10 @@ In conclusion, `{lintr}` is a valuable tool for R users to help improve the qual
 # Licensing and Availability
 
 `{lintr}` is licensed under the MIT License, with all source code openly developed and stored on GitHub (<https://github.com/r-lib/lintr>), along with a corresponding issue tracker for bug reporting and feature enhancements.
+
+# Conflicts of interest
+
+The authors declare no conflict of interest.
 
 # Acknowledgments
 
