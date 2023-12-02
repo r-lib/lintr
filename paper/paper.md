@@ -73,21 +73,21 @@ code.
 `{lintr}` offers linters that can detect problematic antipatterns and
 suggest alternative patterns that follow best practices.
 
-For example, usage of vectorized `&` and `|` logical operators in
-conditional statements is error-prone, and scalar `&&` and `||`,
-respectively, are to be preferred. The `vector_logic_linter()` linter
-detects such problematic usages.
+For example, expressions like `ifelse(x, TRUE, FALSE)` and
+`ifelse(x, FALSE, TRUE)` are redundant; just `x` or `!x` suffice in R
+code where logical vectors are a core data structure. The
+`vector_logic_linter()` linter detects such problematic usages.
 
 ``` r
 lint(
-  text = "if (x & y) 1",
-  linters = vector_logic_linter()
+  text = "ifelse(x >= 2.5, TRUE, FALSE)",
+  linters = redundant_ifelse_linter()
 )
-#> <text>:1:7: warning: [vector_logic_linter] Conditional
-#>     expressions require scalar logical operators (&& and
-#>     ||)
-#> if (x & y) 1
-#>       ^
+#> <text>:1:1: warning: [redundant_ifelse_linter] Just use the
+#>     logical condition (or its negation) directly instead of
+#>     calling ifelse(x, TRUE, FALSE)
+#> ifelse(x >= 2.5, TRUE, FALSE)
+#> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ```
 
 -   **Efficiency**
@@ -206,5 +206,10 @@ enhancements.
 The authors declare no conflict of interest.
 
 # Acknowledgments
+
+The `{lintr}` would not be possible without the immense work of the
+[R-core team](https://www.r-project.org/contributors.html) who maintain
+the R language and we are deeply indebted to them. We are also grateful
+to all contributors to the `{lintr}` package.
 
 # References {#references .unnumbered}
