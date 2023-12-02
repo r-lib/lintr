@@ -61,7 +61,6 @@ lint(
   linters = return_linter(return_style = "explicit")
 )
 
-
 }
 \seealso{
 \itemize{
