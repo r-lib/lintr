@@ -6,10 +6,29 @@ authors:
   - name: Jim Hester
     affiliation: 1
     orcid: ~
+  - name: Michael Chirico
+    affiliation: 2
+    orcid: ~
+  - name: Alexander Rosenstock
+    affiliation: 3
+    orcid: ~
+  - name: Indrajeet Patil
+    orcid: 0000-0003-1995-6531
+    affiliation: 4
 affiliations:
   - index: 1
     name: Netflix
-output: md_document
+  - index: 2
+    name: Google
+  - index: 3
+    name: Mathematisches Institut der Heinrich-Heine-Universität Düsseldorf
+  - index: 4
+    name: Center for Humans and Machines, Max Planck Institute for Human Development, Berlin, Germany
+output: 
+    md_document:
+      variant: "markdown"
+      preserve_yaml: true
+      standalone: true
 bibliography: paper.bib
 csl: apa.csl
 link-citations: yes
