@@ -119,7 +119,9 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE,
   Linter(linter_level = "file", function(source_expression) {
     # need the full file to also catch usages at the top level
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
+    if (is.null(xml)) {
+      return(list())
+    }
 
     test_expr <- xml_find_all(xml, test_xpath)
 

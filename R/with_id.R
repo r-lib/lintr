@@ -1,4 +1,3 @@
-
 #' Extract row by ID
 #'
 #' @describeIn ids_with_token

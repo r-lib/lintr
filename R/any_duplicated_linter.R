@@ -87,7 +87,9 @@ any_duplicated_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
+    if (is.null(xml)) {
+      return(list())
+    }
 
     any_duplicated_expr <- xml_find_all(xml, any_duplicated_xpath)
     any_duplicated_lints <- xml_nodes_to_lints(

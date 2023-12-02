@@ -148,7 +148,9 @@ brace_linter <- function(allow_single_line = FALSE) {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
+    if (is.null(xml)) {
+      return(list())
+    }
     lints <- list()
 
     lints <- c(

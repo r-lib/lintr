@@ -47,7 +47,6 @@
 #'   linters = return_linter(return_style = "explicit")
 #' )
 #'
-#'
 #' @evalRd rd_tags("return_linter")
 #' @seealso
 #'  - [linters] for a complete list of linters available in lintr.
@@ -159,7 +158,9 @@ return_linter <- function(
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
+    if (is.null(xml)) {
+      return(list())
+    }
 
     xml_nodes <- xml_find_all(xml, xpath)
 

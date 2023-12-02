@@ -41,7 +41,9 @@
 namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
+    if (is.null(xml)) {
+      return(list())
+    }
 
     ns_nodes <- xml_find_all(xml, "//NS_GET | //NS_GET_INT")
 

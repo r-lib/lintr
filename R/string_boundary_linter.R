@@ -121,7 +121,9 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
+    if (is.null(xml)) {
+      return(list())
+    }
     lints <- list()
 
     str_detect_lint_data <- get_regex_lint_data(xml, str_detect_xpath)
