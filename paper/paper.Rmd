@@ -70,7 +70,7 @@ We will showcase one linter for each kind of common problem found in R code.
 
 `{lintr}` offers linters that can detect problematic antipatterns and suggest alternative patterns that follow best practices.
 
-For example, expressions like `ifelse(x, TRUE, FALSE)` and `ifelse(x, FALSE, TRUE)` are redundant; just `x` or `!x` suffice in R code where logical vectors are a core data structure. The `vector_logic_linter()` linter detects such problematic usages.
+For example, expressions like `ifelse(x, TRUE, FALSE)` and `ifelse(x, FALSE, TRUE)` are redundant; just `x` or `!x` suffice in R code where logical vectors are a core data structure. The `redundant_ifelse_linter()` linter detects such problematic usages.
 
 ```{r}
 lint(
@@ -81,7 +81,7 @@ lint(
 
 ```{r, eval=FALSE, echo=FALSE}
 lint(
-  text = "ifelse(x >= 2.5, TRUE, FALSE)",
+  text = "ifelse(x >= 2.5)",
   linters = redundant_ifelse_linter()
 )
 ```

@@ -76,7 +76,7 @@ suggest alternative patterns that follow best practices.
 For example, expressions like `ifelse(x, TRUE, FALSE)` and
 `ifelse(x, FALSE, TRUE)` are redundant; just `x` or `!x` suffice in R
 code where logical vectors are a core data structure. The
-`vector_logic_linter()` linter detects such problematic usages.
+`redundant_ifelse_linter()` linter detects such problematic usages.
 
 ``` r
 lint(
