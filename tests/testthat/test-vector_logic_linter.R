@@ -28,66 +28,67 @@ test_that("vector_logic_linter skips allowed usages", {
 })
 
 test_that("vector_logic_linter blocks simple disallowed usages", {
-  expect_lint(
-    "if (TRUE & FALSE) 1",
-    rex::rex("Conditional expressions require scalar logical operators"),
-    vector_logic_linter()
-  )
+  linter <- vector_logic_linter()
+  lint_msg <- rex::rex("Conditional expressions require scalar logical operators")
 
-  expect_lint(
-    "while (TRUE | TRUE) 2",
-    rex::rex("Conditional expressions require scalar logical operators"),
-    vector_logic_linter()
-  )
+  expect_lint("if (TRUE & FALSE) 1", lint_msg, linter)
+  expect_lint("while (TRUE | TRUE) 2", lint_msg, linter)
 })
 
 test_that("vector_logic_linter detects nested conditions", {
-  expect_lint(
-    "if (TRUE & TRUE || FALSE) 4",
-    rex::rex("Conditional expressions require scalar logical operators"),
-    vector_logic_linter()
-  )
+  linter <- vector_logic_linter()
+  lint_msg <- rex::rex("Conditional expressions require scalar logical operators")
 
-  expect_lint(
-    "if (TRUE && (TRUE | FALSE)) 4",
-    rex::rex("Conditional expressions require scalar logical operators"),
-    vector_logic_linter()
-  )
+  expect_lint("if (TRUE & TRUE || FALSE) 4", lint_msg, linter)
+  expect_lint("if (TRUE && (TRUE | FALSE)) 4", lint_msg, linter)
 })
 
 test_that("vector_logic_linter catches usages in expect_true()/expect_false()", {
-  expect_lint(
-    "expect_true(TRUE & FALSE)",
-    rex::rex("Conditional expressions require scalar logical operators"),
-    vector_logic_linter()
-  )
+  linter <- vector_logic_linter()
+  lint_msg <- rex::rex("Conditional expressions require scalar logical operators")
 
-  expect_lint(
-    "expect_false(TRUE | TRUE)",
-    rex::rex("Conditional expressions require scalar logical operators"),
-    vector_logic_linter()
-  )
+  expect_lint("expect_true(TRUE & FALSE)", lint_msg, linter)
+  expect_lint("expect_false(TRUE | TRUE)", lint_msg, linter)
 
   # ditto with namespace qualification
-  expect_lint(
-    "testthat::expect_true(TRUE & FALSE)",
-    rex::rex("Conditional expressions require scalar logical operators"),
-    vector_logic_linter()
-  )
+  expect_lint("testthat::expect_true(TRUE & FALSE)", lint_msg, linter)
+  expect_lint("testthat::expect_false(TRUE | TRUE)", lint_msg, linter)
+})
 
+test_that("vector_logic_linter doesn't get mixed up from complex usage", {
   expect_lint(
-    "testthat::expect_false(TRUE | TRUE)",
-    rex::rex("Conditional expressions require scalar logical operators"),
+    trim_some("
+      if (a) {
+        expect_true(ok)
+        x <- 2
+        a | b
+      }
+    "),
+    NULL,
     vector_logic_linter()
   )
 })
 
-test_that("vector_logic_linter doesn't get mixed up from complex usage", {
-  lines <- trim_some("
-  if (a) {
-    expect_true(ok)
-    x <- 2
-    a | b
-  }")
-  expect_lint(lines, NULL, vector_logic_linter())
+test_that("vector_logic_linter recognizes some false positves around bitwise &/|", {
+  linter <- vector_logic_linter()
+
+  expect_lint("if (info & as.raw(12)) { }", NULL, linter)
+  expect_lint("if (as.raw(12) & info) { }", NULL, linter)
+  expect_lint("if (info | as.raw(12)) { }", NULL, linter)
+  expect_lint("if (info & as.octmode('100')) { }", NULL, linter)
+  expect_lint("if (info | as.octmode('011')) { }", NULL, linter)
+  expect_lint("if (info & as.hexmode('100')) { }", NULL, linter)
+  expect_lint("if (info | as.hexmode('011')) { }", NULL, linter)
+  # implicit as.octmode() coercion
+  expect_lint("if (info & '100') { }", NULL, linter)
+  expect_lint("if (info | '011') { }", NULL, linter)
+  expect_lint("if ('011' | info) { }", NULL, linter)
+
+  # further nesting
+  expect_lint("if ((info & as.raw(12)) == as.raw(12)) { }", NULL, linter)
+  expect_lint("if ((info | as.raw(12)) == as.raw(12)) { }", NULL, linter)
+  expect_lint('if ((mode & "111") != as.octmode("111")) { }', NULL, linter)
+  expect_lint('if ((mode | "111") != as.octmode("111")) { }', NULL, linter)
+  expect_lint('if ((mode & "111") != as.hexmode("111")) { }', NULL, linter)
+  expect_lint('if ((mode | "111") != as.hexmode("111")) { }', NULL, linter)
 })
