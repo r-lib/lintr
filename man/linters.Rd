@@ -19,7 +19,7 @@ The following tags exist:
 \itemize{
 \item{\link[=best_practices_linters]{best_practices} (64 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (10 linters)}
-\item{\link[=configurable_linters]{configurable} (41 linters)}
+\item{\link[=configurable_linters]{configurable} (42 linters)}
 \item{\link[=consistency_linters]{consistency} (32 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (26 linters)}

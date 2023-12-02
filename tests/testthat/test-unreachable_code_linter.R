@@ -689,6 +689,38 @@ test_that("allow_comment_regex= works", {
   )
 })
 
+test_that("allow_comment_regex= obeys covr's custom exclusion when set", {
+  withr::local_options(c(
+    lintr.exclude_end = "#\\s*TestNoLintEnd",
+    covr.exclude_end = "#\\s*TestNoCovEnd"
+  ))
+
+  linter_covr <- unreachable_code_linter()
+
+  expect_lint(
+    trim_some("
+      function() {
+        return(1)
+        # TestNoCovEnd
+      }
+    "),
+    NULL,
+    linter_covr
+  )
+
+  expect_lint(
+    trim_some("
+      function() {
+        return(1)
+        # TestNoLintEnd
+        # TestNoCovEnd
+      }
+    "),
+    NULL,
+    linter_covr
+  )
+})
+
 # nolint start: commented_code_linter.
 # TODO(michaelchirico): extend to work on switch() statements
 # test_that("unreachable_code_linter interacts with switch() as expected", {
