@@ -166,4 +166,6 @@ The authors declare no conflict of interest.
 
 # Acknowledgments
 
+The `{lintr}` would not be possible without the immense work of the [R-core team](https://www.r-project.org/contributors.html) who maintain the R language and we are deeply indebted to them. We are also grateful to all contributors to the `{lintr}` package.
+
 # References
