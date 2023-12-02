@@ -157,6 +157,8 @@
 <ul><li>ignores extractions with explicit returns like <code>lapply(l, function(x) foo(x)$bar)</code> (<a href="https://github.com/r-lib/lintr/issues/2258" class="external-link">#2258</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>ignores calls on the RHS of operators like <code>lapply(l, function(x) "a" %in% names(x))</code> (<a href="https://github.com/r-lib/lintr/issues/2310" class="external-link">#2310</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></li>
+<li>
+<code><a href="../reference/vector_logic_linter.html">vector_logic_linter()</a></code> recognizes some cases where bitwise <code>&amp;</code>/<code>|</code> are used correctly (<a href="https://github.com/r-lib/lintr/issues/1453" class="external-link">#1453</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 </div>
 </div>
