@@ -32,7 +32,7 @@
 #' @export
 modify_defaults <- function(defaults, ...) {
   if (missing(defaults) || !is.list(defaults) || !all(nzchar(names2(defaults)))) {
-    stop("`defaults` must be a named list.")
+    stop("`defaults` must be a named list.", call. = FALSE)
   }
   vals <- list(...)
   nms <- names2(vals)
@@ -47,7 +47,8 @@ modify_defaults <- function(defaults, ...) {
     is_are <- if (length(bad_nms) > 1L) "are" else "is"
     warning(
       "Trying to remove ", glue_collapse(sQuote(bad_nms), sep = ", ", last = " and "),
-      ", which ", is_are, " not in `defaults`."
+      ", which ", is_are, " not in `defaults`.",
+      call. = FALSE
     )
   }
 
@@ -92,7 +93,7 @@ modify_defaults <- function(defaults, ...) {
 #' @export
 linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "deprecated") {
   if (!is.character(tags) && !is.null(tags)) {
-    stop("`tags` must be a character vector, or NULL.")
+    stop("`tags` must be a character vector, or NULL.", call. = FALSE)
   }
   tagged_linters <- list()
 
@@ -105,7 +106,8 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
         missing_linters <- setdiff(available$linter, ns_exports)
         stop(
           "Linters ", glue_collapse(sQuote(missing_linters), sep = ", ", last = " and "),
-          " advertised by `available_linters()` but not exported by package ", package, "."
+          " advertised by `available_linters()` but not exported by package ", package, ".",
+          call. = FALSE
         )
       }
       linter_factories <- mget(available$linter, envir = pkg_ns)
@@ -179,7 +181,8 @@ linters_with_defaults <- function(..., defaults = default_linters) {
   if (missing(defaults) && "default" %in% names(dots)) {
     warning(
       "'default' is not an argument to linters_with_defaults(). Did you mean 'defaults'? ",
-      "This warning will be removed when with_defaults() is fully deprecated."
+      "This warning will be removed when with_defaults() is fully deprecated.",
+      call. = FALSE
     )
     defaults <- dots$default
     nms <- names2(dots)
@@ -206,7 +209,10 @@ call_linter_factory <- function(linter_factory, linter_name, package) {
   linter <- tryCatch(
     linter_factory(),
     error = function(e) {
-      stop("Could not create linter with ", package, "::", linter_name, "(): ", conditionMessage(e))
+      stop(
+        "Could not create linter with ", package, "::", linter_name, "(): ", conditionMessage(e),
+        call. = FALSE
+      )
     }
   )
   # Otherwise, all linters would be called "linter_factory".
