@@ -84,6 +84,8 @@
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/object_name_linter.html">object_name_linter()</a></code> no longer errors when user-supplied <code>regexes=</code> have capture groups (<a href="https://github.com/r-lib/lintr/issues/2188" class="external-link">#2188</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code>.lintr</code> config validation correctly accepts regular exressions which only compile under <code>perl = TRUE</code> (<a href="https://github.com/r-lib/lintr/issues/2375" class="external-link">#2375</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). These have always been valid (since <code><a href="https://rdrr.io/pkg/rex/man/re_matches.html" class="external-link">rex::re_matches()</a></code>, which powers the lint exclusion logic, also uses this setting), but the new up-front validation in v3.1.1 incorrectly used <code>perl = FALSE</code>.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="changes-to-default-linters-development-version">Changes to default linters<a class="anchor" aria-label="anchor" href="#changes-to-default-linters-development-version"></a></h3>
