@@ -38,7 +38,7 @@ The R programming language [@base2023] is a popular choice for statistical analy
 
 # Features
 
-There are over 85 linters offered by `{lintr}`!
+As of this writing, `{lintr}` offers 85 linters.
 
 ```{r}
 library(lintr)
