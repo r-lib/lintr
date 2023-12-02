@@ -164,7 +164,7 @@ names(infix_metadata) <- c("xml_tag", "string_value")
 # utils::getParseData()'s designation for the tokens wouldn't be valid as XML tags
 infix_metadata$parse_tag <- ifelse(
   startsWith(infix_metadata$xml_tag, "OP-"),
-  quote_wrap(infix_metadata$string_value, "'"),
+  sQuote(infix_metadata$string_value, "'"),
   infix_metadata$xml_tag
 )
 # treated separately because spacing rules are different for unary operators
@@ -280,7 +280,7 @@ extract_glued_symbols <- function(expr, interpret_glue) {
 }
 
 unexpected_glue_parse_error <- function(cond) {
-  stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond)) # nocov
+  stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond), call. = FALSE) # nocov
 }
 glue_parse_failure_warning <- function(cond) {
   warning(

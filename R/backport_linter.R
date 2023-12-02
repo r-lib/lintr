@@ -4,7 +4,7 @@
 #'
 #' @param r_version Minimum R version to test for compatibility
 #' @param except Character vector of functions to be excluded from linting.
-#'  Use this to list explicitly defined backports, e.g. those imported from the {backports} package or manually
+#'  Use this to list explicitly defined backports, e.g. those imported from the `{backports}` package or manually
 #'  defined in your package.
 #'
 #' @examples
@@ -35,44 +35,39 @@
 #' @export
 backport_linter <- function(r_version = getRversion(), except = character()) {
   r_version <- normalize_r_version(r_version)
+
+  if (all(r_version >= R_system_version(names(backports)))) {
+    return(Linter(function(source_expression) list(), linter_level = "file"))
+  }
+
   backport_blacklist <- backports[r_version < R_system_version(names(backports))]
   backport_blacklist <- lapply(backport_blacklist, setdiff, except)
+  backport_index <- rep(names(backport_blacklist), times = lengths(backport_blacklist))
+  names(backport_index) <- unlist(backport_blacklist)
 
   names_xpath <- "//SYMBOL | //SYMBOL_FUNCTION_CALL"
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-    if (all(r_version >= R_system_version(names(backports)))) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     all_names_nodes <- xml_find_all(xml, names_xpath)
     all_names <- xml_text(all_names_nodes)
 
-    # not sapply/vapply, which may over-simplify to vector
-    # rbind makes sure we have a matrix with dimensions [n_versions x n_names]
-    # so that colSums() works to tell us which names are in an unavailable version
-    # rbind not cbind because R is column-major --> which() below will be in column order
-    needs_backport <- do.call(rbind, lapply(backport_blacklist, function(nm) all_names %in% nm))
-    bad_idx <- colSums(needs_backport) > 0L
+    bad_versions <- unname(backport_index[all_names])
+    needs_backport <- !is.na(bad_versions)
 
-    # which(arr.ind) returns things in the same order as which()
-    needs_backport_version_idx <- ((which(needs_backport) - 1L) %% length(backport_blacklist)) + 1L
     lint_message <- sprintf(
       paste(
         "%s (R %s) is not available for dependency R >= %s.",
         "Use the `except` argument of `backport_linter()` to configure available backports."
       ),
-      all_names[bad_idx],
-      names(backport_blacklist)[needs_backport_version_idx],
+      all_names[needs_backport],
+      bad_versions[needs_backport],
       r_version
     )
     xml_nodes_to_lints(
-      all_names_nodes[bad_idx],
+      all_names_nodes[needs_backport],
       source_expression = source_expression,
       lint_message = lint_message,
       type = "warning"
@@ -99,7 +94,7 @@ normalize_r_version <- function(r_version) {
     version_names <- c("devel", "release", paste0("oldrel-", seq_len(length(minor_versions) - 2L)))
     if (!r_version %in% version_names) {
       # This can only trip if e.g. oldrel-99 is requested
-      stop("`r_version` must be a version number or one of ", toString(sQuote(version_names)))
+      stop("`r_version` must be a version number or one of ", toString(sQuote(version_names)), call. = FALSE)
     }
     requested_version <- minor_versions[match(r_version, table = version_names)]
     available_patches <- all_versions[startsWith(all_versions, requested_version)]
@@ -111,10 +106,13 @@ normalize_r_version <- function(r_version) {
   } else if (is.character(r_version)) {
     r_version <- R_system_version(r_version, strict = TRUE)
   } else if (!inherits(r_version, "R_system_version")) {
-    stop("`r_version` must be a R version number, returned by R_system_version(), or a string.")
+    stop("`r_version` must be a R version number, returned by R_system_version(), or a string.", call. = FALSE)
   }
   if (r_version < "3.0.0") {
-    warning("It is not recommended to depend on an R version older than 3.0.0. Resetting 'r_version' to 3.0.0.")
+    warning(
+      "It is not recommended to depend on an R version older than 3.0.0. Resetting 'r_version' to 3.0.0.",
+      call. = FALSE
+    )
     r_version <- R_system_version("3.0.0")
   }
   r_version

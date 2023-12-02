@@ -9,9 +9,9 @@ xp_text_in_table <- function(table) {
   #   to use "" whenever the string has ' (not a perfect solution). info on
   #   escaping from https://stackoverflow.com/questions/14822153
   single_quoted <- grepl("'", table, fixed = TRUE)
-  table[single_quoted] <- quote_wrap(table[single_quoted], '"')
-  table[!single_quoted] <- quote_wrap(table[!single_quoted], "'")
-  return(paste0("text() = ", table, collapse = " or "))
+  table[single_quoted] <- sQuote(table[single_quoted], '"')
+  table[!single_quoted] <- sQuote(table[!single_quoted], "'")
+  paste0("text() = ", table, collapse = " or ")
 }
 
 paren_wrap <- function(..., sep) {
@@ -49,8 +49,8 @@ xp_or <- function(...) paren_wrap(..., sep = "or")
 
 #' Get the name of the function matched by an XPath
 #'
-#' Often, it is more helpful to custom-tailer the `message` of a lint to record
-#'   which function was matched by the lint logic. This function encapsualtes
+#' Often, it is more helpful to tailor the `message` of a lint to record
+#'   which function was matched by the lint logic. This function encapsulates
 #'   the logic to pull out the matched call in common situations.
 #'
 #' @param expr An `xml_node` or `xml_nodeset`, e.g. from [xml2::xml_find_all()].
@@ -78,10 +78,18 @@ xp_or <- function(...) paren_wrap(..., sep = "or")
 #' @export
 xp_call_name <- function(expr, depth = 1L, condition = NULL) {
   stopifnot(
-    inherits(expr, c("xml_node", "xml_nodeset")),
     is.numeric(depth), depth >= 0L,
     is.null(condition) || is.character(condition)
   )
+  is_valid_expr <- is_node(expr) || is_nodeset(expr)
+  if (!is_valid_expr) {
+    stop(
+      "Expected an xml_nodeset or an xml_node, instead got an object of class(es): ",
+      toString(class(expr)),
+      call. = FALSE
+    )
+  }
+
   if (is.null(condition)) {
     node <- "SYMBOL_FUNCTION_CALL"
   } else {
@@ -105,7 +113,7 @@ xp_find_location <- function(xml, xpath) {
 
 #' Strip XPath 2.0-style comments from an XPath
 #'
-#' xml2 uses XPath 1.0, which has no support for comments. But comments are
+#' `{xml2}` uses XPath 1.0, which has no support for comments. But comments are
 #'   useful in a codebase with as many XPaths as we maintain, so we fudge our
 #'   way to XPath 2.0-ish support by writing this simple function to remove comments.
 #'

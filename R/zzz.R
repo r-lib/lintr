@@ -29,6 +29,7 @@ default_linters <- modify_defaults(
   paren_body_linter(),
   pipe_continuation_linter(),
   quotes_linter(),
+  return_linter(),
   semicolon_linter(),
   seq_linter(),
   spaces_inside_linter(),
@@ -154,6 +155,8 @@ all_undesirable_functions <- modify_defaults(
     "source() loads code into the global environment unless `local = TRUE` is used,",
     "which can cause hard-to-predict behavior"
   ),
+  structure =
+    "Use class<-, names<-, and attr<- to set attributes",
   substring =
     "use substr() with appropriate `stop=` value.",
   Sys.setenv =
@@ -194,12 +197,14 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
   "setwd",
   "sink",
   "source",
+  "structure",
   "Sys.setenv",
   "Sys.setlocale",
   "Sys.unsetenv",
   "trace",
   "undebug",
-  "untrace"
+  "untrace",
+  NULL
 )]
 
 #' @rdname default_undesirable_functions
@@ -232,7 +237,8 @@ all_undesirable_operators <- modify_defaults(
 default_undesirable_operators <- all_undesirable_operators[names(all_undesirable_operators) %in% c(
   ":::",
   "<<-",
-  "->>"
+  "->>",
+  NULL
 )]
 
 #' Default lintr settings
@@ -245,7 +251,7 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #'  - `exclude`: pattern used to exclude a line of code
 #'  - `exclude_start`, `exclude_end`: patterns used to mark start and end of the code block to exclude
 #'  - `exclude_linter`, `exclude_linter_sep`: patterns used to exclude linters
-#'  - `exclusions`:a list of files to exclude
+#'  - `exclusions`: a list of exclusions, see [exclude()] for a complete description of valid values.
 #'  - `cache_directory`: location of cache directory
 #'  - `comment_token`: a GitHub token character
 #'  - `comment_bot`: decides if lintr comment bot on GitHub can comment on commits
@@ -277,7 +283,7 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 #' @export
 default_settings <- NULL
 
-settings <- NULL
+settings <- new.env(parent = emptyenv())
 
 # nocov start
 .onLoad <- function(libname, pkgname) {
@@ -288,16 +294,9 @@ settings <- NULL
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  backports::import(pkgname, c("trimws", "lengths", "deparse1", "...names"))
-  # requires R>=3.6.0; see https://github.com/r-lib/backports/issues/68
-  base_ns <- getNamespace("base")
-  backports_ns <- getNamespace("backports")
-  lintr_ns <- getNamespace(pkgname)
-  for (base_fun in c("str2lang", "str2expression")) {
-    if (!exists(base_fun, base_ns)) {
-      assign(base_fun, get(base_fun, backports_ns), lintr_ns)
-    }
-  }
+  # R>=4.0.0: deparse1
+  # R>=4.1.0: ...names
+  backports::import(pkgname, c("deparse1", "...names"))
 
   utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,
@@ -330,7 +329,7 @@ settings <- NULL
     error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
   ))
 
-  utils::assignInMyNamespace("settings", list2env(default_settings, parent = emptyenv()))
+  reset_settings()
 
   if (requireNamespace("tibble", quietly = TRUE)) {
     registerS3method("as_tibble", "lints", as_tibble.lints, asNamespace("tibble"))

@@ -42,7 +42,8 @@
 expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   if (!requireNamespace("testthat", quietly = TRUE)) {
     stop( # nocov start
-      "'expect_lint' is designed to work within the 'testthat' testing framework, but 'testthat' is not installed."
+      "'expect_lint' is designed to work within the 'testthat' testing framework, but 'testthat' is not installed.",
+      call. = FALSE
     ) # nocov end
   }
   old_lang <- set_lang(language)
@@ -90,7 +91,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
             stop(sprintf(
               "check #%d had an invalid field: \"%s\"\nValid fields are: %s\n",
               itr, field, toString(lint_fields)
-            ))
+            ), call. = FALSE)
           }
           check <- check[[field]]
           value <- lint[[field]]
@@ -99,19 +100,19 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
             itr, field, deparse(value), deparse(check)
           )
           # deparse ensures that NULL, list(), etc are handled gracefully
-          exp <- if (field == "message") {
+          ok <- if (field == "message") {
             re_matches(value, check)
           } else {
             isTRUE(all.equal(value, check))
           }
-          if (!is.logical(exp)) {
+          if (!is.logical(ok)) {
             stop(
               "Invalid regex result, did you mistakenly have a capture group in the regex? ",
               "Be sure to escape parenthesis with `[]`",
               call. = FALSE
             )
           }
-          testthat::expect(exp, msg)
+          testthat::expect(ok, msg)
         })
       },
       lints,

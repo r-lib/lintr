@@ -1,5 +1,5 @@
 `%||%` <- function(x, y) {
-  if (is.null(x) || length(x) <= 0L || is.na(x[[1L]])) {
+  if (is.null(x) || length(x) == 0L || (is.atomic(x[[1L]]) && is.na(x[[1L]]))) {
     y
   } else {
     x
@@ -15,10 +15,9 @@
 }
 
 flatten_lints <- function(x) {
-  structure(
-    flatten_list(x, class = "lint"),
-    class = "lints"
-  )
+  x <- flatten_list(x, class = "lint")
+  class(x) <- "lints"
+  x
 }
 
 # any function using unlist or c was dropping the classnames,
@@ -44,19 +43,19 @@ fix_names <- function(x, default) {
   if (is.null(nms)) {
     nms <- default
   } else {
-    nms[nms == ""] <- default
+    nms[!nzchar(nms)] <- default
   }
   names(x) <- nms
   x
 }
 
 linter_auto_name <- function(which = -3L) {
-  call <- sys.call(which = which)
-  nm <- paste(deparse(call, 500L), collapse = " ")
+  sys_call <- sys.call(which = which)
+  nm <- paste(deparse(sys_call, 500L), collapse = " ")
   regex <- rex(start, one_or_more(alnum %or% "." %or% "_" %or% ":"))
   if (re_matches(nm, regex)) {
-    match <- re_matches(nm, regex, locations = TRUE)
-    nm <- substr(nm, start = 1L, stop = match[1L, "end"])
+    match_data <- re_matches(nm, regex, locations = TRUE)
+    nm <- substr(nm, start = 1L, stop = match_data[1L, "end"])
     nm <- re_substitutes(nm, rex(start, alnums, "::"), "")
   }
   nm
@@ -64,8 +63,8 @@ linter_auto_name <- function(which = -3L) {
 
 auto_names <- function(x) {
   nms <- names2(x)
-  missing <- nms == ""
-  if (!any(missing)) {
+  empty <- !nzchar(nms, keepNA = TRUE)
+  if (!any(empty)) {
     return(nms)
   }
 
@@ -76,9 +75,9 @@ auto_names <- function(x) {
       paste(deparse(x, 500L), collapse = " ")
     }
   }
-  defaults <- vapply(x[missing], default_name, character(1L), USE.NAMES = FALSE)
+  defaults <- vapply(x[empty], default_name, character(1L), USE.NAMES = FALSE)
 
-  nms[missing] <- defaults
+  nms[empty] <- defaults
   nms
 }
 
@@ -102,7 +101,7 @@ get_content <- function(lines, info) {
   lines[is.na(lines)] <- ""
 
   if (!missing(info)) {
-    if (inherits(info, "xml_node")) {
+    if (is_node(info)) {
       info <- lapply(stats::setNames(nm = c("col1", "col2", "line1", "line2")), function(attr) {
         as.integer(xml_attr(info, attr))
       })
@@ -139,9 +138,6 @@ try_silently <- function(expr) {
   )
 }
 
-# imitate sQuote(x, q) [requires R>=3.6]
-quote_wrap <- function(x, q) paste0(q, x, q)
-
 # interface to work like options() or setwd() -- returns the old value for convenience
 set_lang <- function(new_lang) {
   old_lang <- Sys.getenv("LANGUAGE", unset = NA)
@@ -162,14 +158,23 @@ reset_lang <- function(old_lang) {
 #' @param fun A function that takes a source file and returns `lint` objects.
 #' @param name Default name of the Linter.
 #' Lints produced by the linter will be labelled with `name` by default.
+#' @param linter_level Which level of expression is the linter working with?
+#'   `"expression"` means an individual expression in `xml_parsed_content`, while `"file"` means all expressions
+#'   in the current file are available in `full_xml_parsed_content`.
+#'   `NA` means the linter will be run with both, expression-level and file-level source expressions.
+#'
 #' @return The same function with its class set to 'linter'.
 #' @export
-Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name.
+Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character_, "file", "expression")) { # nolint: object_name, line_length.
   if (!is.function(fun) || length(formals(args(fun))) != 1L) {
     stop("`fun` must be a function taking exactly one argument.", call. = FALSE)
   }
+  linter_level <- match.arg(linter_level)
   force(name)
-  structure(fun, class = c("linter", "function"), name = name)
+  class(fun) <- c("linter", "function")
+  attr(fun, "name") <- name
+  attr(fun, "linter_level") <- linter_level
+  fun
 }
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
@@ -233,7 +238,7 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #'
 #' @export
 get_r_string <- function(s, xpath = NULL) {
-  if (inherits(s, c("xml_node", "xml_nodeset"))) {
+  if (is_node(s) || is_nodeset(s)) {
     if (is.null(xpath)) {
       s <- xml_text(s)
     } else {

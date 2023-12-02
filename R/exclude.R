@@ -10,38 +10,45 @@
 #'   "@details",
 #'   "Exclusions can be specified in three different ways.",
 #'   "",
-#'   "1. single line in the source file. default: `# nolint`, possibly followed by a listing of linters to exclude.",
+#'   "1. Single line in the source file. default: `# nolint`, possibly followed by a listing of linters to exclude.",
 #'   "   If the listing is missing, all linters are excluded on that line. The default listing format is",
 #'   paste(
 #'     "   `#",
 #'     "nolint: linter_name, linter2_name.`. There may not be anything between the colon and the line exclusion tag"
 #'   ),
 #'   "   and the listing must be terminated with a full stop (`.`) for the linter list to be respected.",
-#'   "2. line range in the source file. default: `# nolint start`, `# nolint end`. `# nolint start` accepts linter",
+#'   "2. Line range in the source file. default: `# nolint start`, `# nolint end`. `# nolint start` accepts linter",
 #'   "   lists in the same form as `# nolint`.",
-#'   "3. exclusions parameter, a named list of files with named lists of linters and lines to exclude them on, a named",
-#'   "   list of the files and lines to exclude, or just the filenames if you want to exclude the entire file, or the",
-#'   "   directory names if you want to exclude all files in a directory."
+#'   "3. Exclusions parameter, a list with named and/or unnamed entries. ",
+#'   "   Outer elements have the following characteristics:",
+#'   "   1. Unnamed elements specify filenames or directories.",
+#'   "   2. Named elements are a vector or list of line numbers, with `Inf` indicating 'all lines'.",
+#'   "      The name gives a path relative to the config.",
+#'   "      1. Unnamed elements denote exclusion of all linters in the given path or directory.",
+#'   "      2. Named elements, where the name specifies a linter, denote exclusion for that linter.",
+#'   "   For convenience, a vector can be used in place of a list whenever it would not introduce ambiguity, e.g.",
+#'   "   a character vector of files to exclude or a vector of lines to exclude.",
+#'   NULL
 #' )
 exclude <- function(lints, exclusions = settings$exclusions, linter_names = NULL, ...) {
   if (length(lints) <= 0L) {
     return(lints)
   }
 
-  df <- as.data.frame(lints)
+  lint_df <- as.data.frame(lints)
 
-  filenames <- unique(df$filename)
+  filenames <- unique(lint_df$filename)
   source_exclusions <- lapply(filenames, parse_exclusions, linter_names = linter_names, ...)
   names(source_exclusions) <- filenames
 
 
   exclusions <- normalize_exclusions(c(source_exclusions, exclusions))
   to_exclude <- vapply(
-    seq_len(nrow(df)),
+    seq_len(nrow(lint_df)),
     function(i) {
-      file <- df$filename[i]
-      file %in% names(exclusions) &&
-        is_excluded(df$line_number[i], df$linter[i], exclusions[[file]])
+      filename <- lint_df$filename[i]
+      filename %in% names(exclusions) &&
+        is_excluded(lint_df$line_number[i], lint_df$linter[i], exclusions[[filename]])
     },
     logical(1L)
   )
@@ -122,7 +129,7 @@ parse_exclusions <- function(file,
     if (length(starts) != length(ends)) {
       starts_msg <- line_info(starts, type = "start")
       ends_msg <- line_info(ends, type = "end")
-      stop(file, " has ", starts_msg, " but only ", ends_msg, " for exclusion from linting!")
+      stop(file, " has ", starts_msg, " but only ", ends_msg, " for exclusion from linting!", call. = FALSE)
     }
 
     for (i in seq_along(starts)) {
@@ -197,7 +204,8 @@ add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep
         warning(
           "Could not find linter", if (length(bad) > 1L) "s" else "", " named ",
           glue_collapse(sQuote(bad), sep = ", ", last = " and "),
-          " in the list of active linters. Make sure the linter is uniquely identified by the given name or prefix."
+          " in the list of active linters. Make sure the linter is uniquely identified by the given name or prefix.",
+          call. = FALSE
         )
       }
       excluded_linters[matched] <- linter_names[idxs[matched]]
@@ -368,11 +376,11 @@ remove_linter_duplicates <- function(x) {
 
     if (length(unique_linters) < length(ex)) {
       ex <- lapply(unique_linters, function(linter) {
-        lines <- unlist(ex[names2(ex) == linter])
-        if (Inf %in% lines) {
+        excluded_lines <- unlist(ex[names2(ex) == linter])
+        if (Inf %in% excluded_lines) {
           Inf
         } else {
-          lines
+          excluded_lines
         }
       })
 

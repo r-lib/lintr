@@ -4,7 +4,7 @@
 #' `1:NROW(...)` and `1:NCOL(...)` expressions in base-R, or their usage in
 #' conjunction with `seq()` (e.g., `seq(length(...))`, `seq(nrow(...))`, etc.).
 #'
-#' Additionally, it checks for `1:n()` (from dplyr) and `1:.N` (from data.table).
+#' Additionally, it checks for `1:n()` (from `{dplyr}`) and `1:.N` (from `{data.table}`).
 #'
 #' These often cause bugs when the right-hand side is zero.
 #' It is safer to use [base::seq_len()] or [base::seq_along()] instead.
@@ -86,12 +86,9 @@ seq_linter <- function() {
     fun
   }
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     badx <- xml_find_all(xml, xpath)
 

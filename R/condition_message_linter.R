@@ -1,12 +1,13 @@
 #' Block usage of `paste()` and `paste0()` with messaging functions using `...`
 #'
+#' @description
 #' This linter discourages combining condition functions like [stop()] with string concatenation
-#' functions [paste()] and [paste0()]. This is because
+#'   functions [paste()] and [paste0()]. This is because
 #'
 #'  - `stop(paste0(...))` is redundant as it is exactly equivalent to `stop(...)`
 #'  - `stop(paste(...))` is similarly equivalent to `stop(...)` with separators (see examples)
 #'
-#'   The same applies to the other default condition functions as well, i.e., [warning()], [message()],
+#' The same applies to the other default condition functions as well, i.e., [warning()], [message()],
 #'   and [packageStartupMessage()].
 #'
 #' @examples
@@ -55,12 +56,9 @@ condition_message_linter <- function() {
     /parent::expr
   ")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
     sep_value <- get_r_string(bad_expr, xpath = "./expr/SYMBOL_SUB[text() = 'sep']/following-sibling::expr/STR_CONST")

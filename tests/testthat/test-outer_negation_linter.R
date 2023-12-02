@@ -18,43 +18,45 @@ test_that("outer_negation_linter skips allowed usages", {
 })
 
 test_that("outer_negation_linter blocks simple disallowed usages", {
+  linter <- outer_negation_linter()
+
   expect_lint(
     "any(!x)",
     rex::rex("!all(x) is better than any(!x)"),
-    outer_negation_linter()
+    linter
   )
 
   expect_lint(
     "all(!foo(x))",
     rex::rex("!any(x) is better than all(!x)"),
-    outer_negation_linter()
+    linter
   )
 
   # na.rm doesn't change the recommendation
   expect_lint(
     "any(!x, na.rm = TRUE)",
     rex::rex("!all(x) is better than any(!x)"),
-    outer_negation_linter()
+    linter
   )
 
   # also catch nested usage
   expect_lint(
     "all(!(x + y))",
     rex::rex("!any(x) is better than all(!x)"),
-    outer_negation_linter()
+    linter
   )
 
   # catch when all inputs are negated
   expect_lint(
     "any(!x, !y)",
     rex::rex("!all(x) is better than any(!x)"),
-    outer_negation_linter()
+    linter
   )
 
   expect_lint(
     "all(!x, !y, na.rm = TRUE)",
     rex::rex("!any(x) is better than all(!x)"),
-    outer_negation_linter()
+    linter
   )
 })
 

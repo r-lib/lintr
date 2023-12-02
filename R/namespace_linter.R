@@ -39,12 +39,9 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
+    if (is.null(xml)) return(list())
 
     ns_nodes <- xml_find_all(xml, "//NS_GET | //NS_GET_INT")
 
@@ -90,7 +87,8 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     if (any(failed_namespace)) {
       stop(
         "Failed to retrieve namespaces for one or more of the packages used with `::` or `:::`. ",
-        "Please report the issue at https://github.com/r-lib/lintr/issues."
+        "Please report the issue at https://github.com/r-lib/lintr/issues.",
+        call. = FALSE
       )
     }
     # nocov end

@@ -37,12 +37,9 @@
 object_length_linter <- function(length = 30L) {
   lint_message <- paste("Variable and function names should not be longer than", length, "characters.")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
+    if (is.null(xml)) return(list())
 
     assignments <- xml_find_all(xml, object_name_xpath)
 
