@@ -29,16 +29,18 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-options(width = 60)
+library(lintr)
+
+withr::local_options(lintr.format_width = 60L)
 ```
 
 # Statement of Need
 
-The R programming language [@base2023] is a popular choice for statistical analysis and visualization, and is used by a wide range of researchers and data scientists. The `{lintr}` package is an open-source R package that provides static code analysis to check for a variety of common problems related to readability, efficiency, consistency, style, etc. It is designed to be easy to use and integrate into existing workflows, and can be run from the command line or used as part of an automated build or continuous integration process. `{lintr}` also integrates with a number of popular IDEs and text editors, such as RStudio and Visual Studio Code, making it convenient for users to run `{lintr}` checks on their code as they work.
+R is an interpreted, dynamically typed programming language [@base2023]. It is a popular choice for statistical analysis and visualization, and is used by a wide range of researchers and data scientists. The `{lintr}` package is an open-source R package that provides static code analysis to check for a variety of common problems related to readability, efficiency, consistency, style, etc. In particular, it enforces the [tidyverse style guide]((https://style.tidyverse.org/index.html)). It is designed to be easy to use and integrate into existing workflows, and can be run from the command line or used as part of an automated build or continuous integration process. `{lintr}` also integrates with a number of popular IDEs and text editors, such as RStudio and Visual Studio Code, making it convenient for users to run `{lintr}` checks on their code as they work.
 
 # Features
 
-As of this writing, `{lintr}` offers 85 linters.
+As of this writing, `{lintr}` offers `r length(all_linters())` linters.
 
 ```{r}
 library(lintr)
