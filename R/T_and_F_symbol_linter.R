@@ -1,6 +1,7 @@
 #' `T` and `F` symbol linter
 #'
-#' Avoid the symbols `T` and `F`, and use `TRUE` and `FALSE` instead.
+#' Although they are synonyms, avoid the symbols `T` and `F`, and use `TRUE` and `FALSE`, respectively, instead.
+#' `T` and `F` are not reserved keywords and can be assigned to any other values.
 #'
 #' @examples
 #' # will produce lints
