@@ -183,13 +183,26 @@ local({
     width = widths
   )
 
+  wrapped_strings <- c(
+    "[test_linter]\n    The\n    quick\n    brown\n    fox\n    jumps\n    over\n    the\n    lazy\n    dog.",
+    "[test_linter]\n    The quick brown\n    fox jumps over\n    the lazy dog.",
+    "[test_linter] The\n    quick brown fox jumps over the lazy\n    dog.",
+    "[test_linter] The quick brown fox jumps over the lazy dog."
+  )
+
   patrick::with_parameters_test_that(
     "format.lint, format.lints support optional message wrapping",
     {
-      withr::local_options(c(lintr.format_width = width))
-      expect_snapshot(cat(format(lints)))
+      expect_match(format(lint, width = width), wrapped_string, fixed = TRUE)
+      expect_match(format(lints, width = width), wrapped_string, fixed = TRUE)
+
+      withr::with_options(c(lintr.format_width = width), {
+        expect_match(format(lint), wrapped_string, fixed = TRUE)
+        expect_match(format(lints), wrapped_string, fixed = TRUE)
+      })
     },
     .test_name = test_names,
-    width = widths
+    width = widths,
+    wrapped_string = wrapped_strings
   )
 })
