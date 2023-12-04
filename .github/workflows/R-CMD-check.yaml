@@ -37,7 +37,7 @@ jobs:
           # Use older ubuntu to maximise backward compatibility
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release', locale: 'en_US'}
-          - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release', locale: 'zh_CN'}
+          - {os: ubuntu-latest,  r: 'release', http-user-agent: 'release', locale: 'zh_CN'}
           - {os: ubuntu-latest,  r: 'release'}
           - {os: ubuntu-latest,  r: 'oldrel-1'}
           - {os: ubuntu-latest,  r: 'oldrel-2'}
