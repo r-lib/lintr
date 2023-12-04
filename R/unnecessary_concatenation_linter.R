@@ -60,7 +60,7 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
   msg_empty <-
     "Replace unnecessary c() by NULL or, whenever possible, vector() seeded with the correct type and/or length."
 
-  msg_const <- 'Remove unnecessary c() of a constant.'
+  msg_const <- "Remove unnecessary c() of a constant."
 
   non_constant_cond <- "SYMBOL or (expr and not(OP-COLON and count(expr[SYMBOL or expr]) != 2))"
 

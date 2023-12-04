@@ -56,7 +56,8 @@ local({
 
 test_that("linter returns the correct linting", {
   linter <- implicit_integer_linter()
-  lint_msg <- rex::rex("Avoid implicit integers. Make the type explicit by using the form 1L for integers or 1.0 for doubles.")
+  lint_msg <-
+    rex::rex("Avoid implicit integers. Make the type explicit by using the form 1L for integers or 1.0 for doubles.")
 
   expect_lint("x <<- 1L", NULL, linter)
   expect_lint("1.0/-Inf -> y", NULL, linter)

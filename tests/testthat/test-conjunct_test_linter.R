@@ -20,7 +20,8 @@ test_that("conjunct_test_linter skips allowed usages of expect_true", {
 
 test_that("conjunct_test_linter blocks && conditions with expect_true()", {
   linter <- conjunct_test_linter()
-  lint_msg <- rex::rex("Write multiple expectations like expect_true(A) and expect_true(B) instead of expect_true(A && B)")
+  lint_msg <-
+    rex::rex("Write multiple expectations like expect_true(A) and expect_true(B) instead of expect_true(A && B)")
 
   expect_lint("expect_true(x && y)", lint_msg, linter)
   expect_lint("expect_true(x && y && z)", lint_msg, linter)
@@ -28,7 +29,8 @@ test_that("conjunct_test_linter blocks && conditions with expect_true()", {
 
 test_that("conjunct_test_linter blocks || conditions with expect_false()", {
   linter <- conjunct_test_linter()
-  lint_msg <- rex::rex("Write multiple expectations like expect_false(A) and expect_false(B) instead of expect_false(A || B)")
+  lint_msg <-
+    rex::rex("Write multiple expectations like expect_false(A) and expect_false(B) instead of expect_false(A || B)")
 
   expect_lint("expect_false(x || y)", lint_msg, linter)
   expect_lint("expect_false(x || y || z)", lint_msg, linter)
