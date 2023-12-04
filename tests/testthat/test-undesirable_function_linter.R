@@ -1,7 +1,7 @@
 test_that("linter returns correct linting", {
   linter <- undesirable_function_linter(fun = c(return = NA, log10 = "use log()"))
-  msg_return <- "Function \"return\" is undesirable.$"
-  msg_log10 <- "Function \"log10\" is undesirable. As an alternative, use log\\(\\)."
+  msg_return <- rex::rex('Avoid undesirable function "return".', end)
+  msg_log10 <- rex::rex('Avoid undesirable function "log10". As an alternative, use log().')
 
   expect_lint("x <- options()", NULL, linter)
   expect_lint("cat(\"Try to return\")", NULL, linter)

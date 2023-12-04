@@ -29,7 +29,7 @@ test_that("vector_logic_linter skips allowed usages", {
 
 test_that("vector_logic_linter blocks simple disallowed usages", {
   linter <- vector_logic_linter()
-  lint_msg <- rex::rex("Conditional expressions require scalar logical operators")
+  lint_msg <- rex::rex("Use scalar logical operators (&& and ||) in conditional expressions.")
 
   expect_lint("if (TRUE & FALSE) 1", lint_msg, linter)
   expect_lint("while (TRUE | TRUE) 2", lint_msg, linter)
@@ -37,7 +37,7 @@ test_that("vector_logic_linter blocks simple disallowed usages", {
 
 test_that("vector_logic_linter detects nested conditions", {
   linter <- vector_logic_linter()
-  lint_msg <- rex::rex("Conditional expressions require scalar logical operators")
+  lint_msg <- rex::rex("Use scalar logical operators (&& and ||) in conditional expressions.")
 
   expect_lint("if (TRUE & TRUE || FALSE) 4", lint_msg, linter)
   expect_lint("if (TRUE && (TRUE | FALSE)) 4", lint_msg, linter)
@@ -45,7 +45,7 @@ test_that("vector_logic_linter detects nested conditions", {
 
 test_that("vector_logic_linter catches usages in expect_true()/expect_false()", {
   linter <- vector_logic_linter()
-  lint_msg <- rex::rex("Conditional expressions require scalar logical operators")
+  lint_msg <- rex::rex("Use scalar logical operators (&& and ||) in conditional expressions.")
 
   expect_lint("expect_true(TRUE & FALSE)", lint_msg, linter)
   expect_lint("expect_false(TRUE | TRUE)", lint_msg, linter)
