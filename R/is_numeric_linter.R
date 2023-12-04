@@ -78,7 +78,7 @@ is_numeric_linter <- function() {
       or_expr,
       source_expression = source_expression,
       lint_message = paste(
-        "Use is.numeric(x) instead of equivalent is.numeric(x) || is.integer(x).",
+        "Use `is.numeric(x)` instead of equivalent `is.numeric(x) || is.integer(x)`.",
         "Use is.double(x) to test for objects stored as 64-bit floating point."
       ),
       type = "warning"
