@@ -145,10 +145,13 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
 
     patterns <- xml_find_all(xml, xpath)
     pattern_strings <- get_r_string(patterns)
-    is_static <- is_not_regex(pattern_strings, allow_unescaped)
 
-    fixed_equivalent <- encodeString(get_fixed_string(pattern_strings[is_static]), quote = '"', justify = "none")
-    call_name <- xml_find_chr(patterns[is_static], "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")
+    is_static <- is_not_regex(pattern_strings, allow_unescaped)
+    patterns <- patterns[is_static]
+    pattern_strings <- pattern_strings[is_static]
+
+    fixed_equivalent <- encodeString(get_fixed_string(pattern_strings), quote = '"', justify = "none")
+    call_name <- xml_find_chr(patterns, "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")
 
     is_stringr <- startsWith(call_name, "str_")
     replacement <- ifelse(
@@ -157,13 +160,13 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
       fixed_equivalent
     )
     msg <- paste(
-      "This regular expression is static, i.e., its matches can be expressed as a fixed substring expression, which",
-      "is faster to compute. Here, you can use",
-      replacement, ifelse(is_stringr, "as the pattern.", "with fixed = TRUE.")
+      "Use", replacement, ifelse(is_stringr, "as the pattern", "with fixed = TRUE"), "here.",
+      "This regular expression is static, i.e., its matches can be expressed as a fixed substring expression, ",
+      "which is faster to compute."
     )
 
     xml_nodes_to_lints(
-      patterns[is_static],
+      patterns,
       source_expression = source_expression,
       lint_message = msg,
       type = "warning"

@@ -91,7 +91,7 @@ commented_code_linter <- function() {
     lint_list <- xml_nodes_to_lints(
       all_comment_nodes[is_parsable],
       source_expression = source_expression,
-      lint_message = "Commented code should be removed."
+      lint_message = "Remove commented code."
     )
 
     # Location info needs updating
@@ -175,7 +175,7 @@ todo_comment_linter <- function(todo = c("todo", "fixme")) {
           line_number = token[["line1"]],
           column_number = token[["col1"]],
           type = "style",
-          message = "TODO comments should be removed.",
+          message = "Remove TODO comments.",
           line = source_expression[["lines"]][[as.character(token[["line1"]])]],
           ranges = list(c(token[["col1"]], token[["col2"]]))
         )

@@ -60,7 +60,8 @@ implicit_integer_linter <- function(allow_colon = FALSE) {
     xml_nodes_to_lints(
       numbers[is_implicit_integer(xml_text(numbers))],
       source_expression = source_expression,
-      lint_message = "Integers should not be implicit. Use the form 1L for integers or 1.0 for doubles.",
+      lint_message =
+        "Avoid implicit integers. Make the type explicit by using the form 1L for integers or 1.0 for doubles.",
       type = "style",
       column_number_xpath = "number(./@col2 + 1)", # mark at end
       range_end_xpath = "number(./@col2 + 1)" # end after number for easy fixing (enter "L" or ".0")
