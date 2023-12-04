@@ -64,7 +64,10 @@ semicolon_linter <- function(allow_compound = FALSE, allow_trailing = FALSE) {
   msg_compound <- "Compound semicolons are discouraged. Replace them by a newline."
 
   if (allow_compound && allow_trailing) {
-    stop("At least one of `allow_compound` or `allow_trailing` must be FALSE, otherwise no lints can be generated.")
+    stop(
+      "At least one of `allow_compound` or `allow_trailing` must be FALSE, otherwise no lints can be generated.",
+      call. = FALSE
+    )
   } else if (allow_compound && !allow_trailing) {
     # lint only trailing
     xpath <- "//OP-SEMICOLON[not(@line1 = following-sibling::*[1]/@line1)]"

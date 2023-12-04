@@ -27,7 +27,7 @@
 use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
   config_file <- normalizePath(file.path(path, lintr_option("linter_file")), mustWork = FALSE)
   if (file.exists(config_file)) {
-    stop("Found an existing configuration file at '", config_file, "'.")
+    stop("Found an existing configuration file at '", config_file, "'.", call. = FALSE)
   }
   type <- match.arg(type)
   the_config <- switch(

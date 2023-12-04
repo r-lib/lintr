@@ -114,7 +114,7 @@ keyword_quote_linter <- function() {
     invalid_assignment_quoting <- is_valid_r_name(get_r_string(assignment_expr))
     # NB: XPath is such that there is exactly 1 node per match, making xml_children() ideal.
     #   xml_child() gets it wrong for 0 (an error) and >1 match.
-    assignment_to_string <- xml_name(xml2::xml_children(assignment_expr)) == "STR_CONST"
+    assignment_to_string <- xml_name(xml_children(assignment_expr)) == "STR_CONST"
 
     string_assignment_lints <- xml_nodes_to_lints(
       assignment_expr[assignment_to_string & !invalid_assignment_quoting],

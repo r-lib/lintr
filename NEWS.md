@@ -15,6 +15,7 @@
 ## Bug fixes
 
 * `object_name_linter()` no longer errors when user-supplied `regexes=` have capture groups (#2188, @MichaelChirico).
+* `.lintr` config validation correctly accepts regular exressions which only compile under `perl = TRUE` (#2375, @MichaelChirico). These have always been valid (since `rex::re_matches()`, which powers the lint exclusion logic, also uses this setting), but the new up-front validation in v3.1.1 incorrectly used `perl = FALSE`.
 
 ## Changes to default linters
 
@@ -30,9 +31,12 @@
 * `unnecessary_lambda_linter` is extended to encourage vectorized comparisons where possible, e.g. `sapply(x, sum) > 0` instead of `sapply(x, function(x) sum(x) > 0)` (part of #884, @MichaelChirico). Toggle this behavior with argument `allow_comparison`.
 * `backport_linter()` is slightly faster by moving expensive computations outside the linting function (#2339, #2348, @AshesITR and @MichaelChirico).
 * `Linter()` has a new argument `linter_level` (default `NA`). This is used by `lint()` to more efficiently check for expression levels than the idiom `if (!is_lint_level(...)) { return(list()) }` (#2351, @AshesITR).
+* `unreachable_code_linter()` has an argument `allow_comment_regex` for customizing which "terminal" comments to exclude (#2327, @MichaelChirico). `# nolint end` comments are always excluded, as are {covr} exclusions (e.g. `# nocov end`) by default.
+* `format()` and `print()` methods for `lint` and `lints` classes get a new option `width` to control the printing width of lint messages (#1884, @MichaelChirico). The default is controlled by a new option `lintr.format_width`; if unset, no wrapping occurs (matching earlier behavior).
 
 ### New linters
 
+* `condition_call_linter()` for ensuring consistent use of `call.` in `warning()` and `stop()`. The default `call. = FALSE` follows the tidyverse guidance of not displaying the call (#2226, @Bisaloo)
 * `sample_int_linter()` for encouraging `sample.int(n, ...)` over equivalents like `sample(1:n, ...)` (part of #884, @MichaelChirico).
 * `stopifnot_all_linter()` discourages tests with `all()` like `stopifnot(all(x > 0))`; `stopifnot()` runs `all()` itself, and uses a better error message (part of #884, @MichaelChirico).
 * `comparison_negation_linter()` for discouraging negated comparisons when a direct negation is preferable, e.g. `!(x == y)` could be `x != y` (part of #884, @MichaelChirico).
@@ -57,6 +61,7 @@
 * `unnecessary_lambda_linter()`
   + ignores extractions with explicit returns like `lapply(l, function(x) foo(x)$bar)` (#2258, @MichaelChirico).
   + ignores calls on the RHS of operators like `lapply(l, function(x) "a" %in% names(x))` (#2310, @MichaelChirico).
+* `vector_logic_linter()` recognizes some cases where bitwise `&`/`|` are used correctly (#1453, @MichaelChirico).
 
 # lintr 3.1.1
 
