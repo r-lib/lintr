@@ -176,8 +176,11 @@ local({
   patrick::with_parameters_test_that(
     "print.lint, print.lints support optional message wrapping",
     {
-      withr::local_options(c(lintr.format_width = width))
-      expect_snapshot(print(lints))
+      expect_snapshot(print(lints, width = width))
+
+      withr::with_options(c(lintr.format_width = width), {
+        expect_snapshot(print(lints))
+      })
     },
     .test_name = test_names,
     width = widths
