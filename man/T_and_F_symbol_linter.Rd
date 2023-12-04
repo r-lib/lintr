@@ -7,7 +7,7 @@
 T_and_F_symbol_linter()
 }
 \description{
-Although they are synonyms, avoid the symbols \code{T} and \code{F}, and use \code{TRUE} and \code{FALSE}, respectively, instead.
+Although they can be synonyms, avoid the symbols \code{T} and \code{F}, and use \code{TRUE} and \code{FALSE}, respectively, instead.
 \code{T} and \code{F} are not reserved keywords and can be assigned to any other values.
 }
 \examples{
