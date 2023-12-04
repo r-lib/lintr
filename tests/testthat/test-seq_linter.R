@@ -20,25 +20,25 @@ test_that("finds seq(...) expressions", {
 
   expect_lint(
     "function(x) { seq(length(x)) }",
-    rex::rex("seq(length(...))", anything, "Use seq_along(...)"),
+    rex::rex("Use seq_along(...) instead of seq(length(...))"),
     linter
   )
 
   expect_lint(
     "function(x) { seq(nrow(x)) }",
-    rex::rex("seq(nrow(...))", anything, "Use seq_len(nrow(...))"),
+    rex::rex("Use seq_len(nrow(...)) instead of seq(nrow(...))"),
     linter
   )
 
   expect_lint(
     "function(x) { rev(seq(length(x))) }",
-    rex::rex("seq(length(...))", anything, "Use seq_along(...)"),
+    rex::rex("Use seq_along(...) instead of seq(length(...))"),
     linter
   )
 
   expect_lint(
     "function(x) { rev(seq(nrow(x))) }",
-    rex::rex("seq(nrow(...))", anything, "Use seq_len(nrow(...))"),
+    rex::rex("Use seq_len(nrow(...)) instead of seq(nrow(...))"),
     linter
   )
 })
@@ -48,19 +48,19 @@ test_that("finds 1:length(...) expressions", {
 
   expect_lint(
     "function(x) { 1:length(x) }",
-    rex::rex("length(...)", anything, "Use seq_along"),
+    rex::rex("Use seq_along(...) instead of 1:length(...)"),
     linter
   )
 
   expect_lint(
     "function(x) { 1:nrow(x) }",
-    rex::rex("nrow(...)", anything, "Use seq_len"),
+    rex::rex("Use seq_len(nrow(...)) instead of 1:nrow(...)"),
     linter
   )
 
   expect_lint(
     "function(x) { 1:ncol(x) }",
-    rex::rex("ncol(...)", anything, "Use seq_len"),
+    rex::rex("Use seq_len(ncol(...)) instead of 1:ncol(...)"),
     linter
   )
 

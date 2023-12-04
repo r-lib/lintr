@@ -20,7 +20,7 @@ test_that("if_not_else_linter skips allowed usages", {
 
 test_that("if_not_else_linter blocks simple disallowed usages", {
   linter <- if_not_else_linter()
-  lint_msg <- rex::rex("In a simple if/else statement, prefer `if (A) x else y`")
+  lint_msg <- rex::rex("Prefer `if (A) x else y`")
 
   expect_lint("if (!A) x else y", lint_msg, linter)
   expect_lint("if (!A) x else if (!B) y else z", lint_msg, linter)
@@ -65,7 +65,7 @@ test_that("multiple lints are generated correctly", {
         if_else(!A, x, y)
     }"),
     list(
-      "In a simple if/else statement",
+      rex::rex("Prefer `if (A) x else y`"),
       "Prefer `ifelse",
       "Prefer `fifelse",
       "Prefer `if_else"
@@ -77,7 +77,7 @@ test_that("multiple lints are generated correctly", {
 test_that("exceptions= argument works", {
   expect_lint(
     "if (!is.null(x)) x else y",
-    "In a simple if/else statement",
+    rex::rex("Prefer `if (A) x else y`"),
     if_not_else_linter(exceptions = character())
   )
 

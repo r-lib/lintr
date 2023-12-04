@@ -48,15 +48,15 @@ local({
   linter <- implicit_integer_linter()
   patrick::with_parameters_test_that(
     "single numerical constants are properly identified ",
-    expect_lint(num_value_str, if (should_lint) "Integers should not be implicit", linter),
+    expect_lint(num_value_str, if (should_lint) "Avoid implicit integers", linter),
     .cases = cases
   )
 })
 # styler: on
 
 test_that("linter returns the correct linting", {
-  lint_msg <- "Integers should not be implicit. Use the form 1L for integers or 1.0 for doubles."
   linter <- implicit_integer_linter()
+  lint_msg <- rex::rex("Avoid implicit integers. Make the type explicit by using the form 1L for integers or 1.0 for doubles.")
 
   expect_lint("x <<- 1L", NULL, linter)
   expect_lint("1.0/-Inf -> y", NULL, linter)
@@ -90,7 +90,7 @@ patrick::with_parameters_test_that(
   "numbers in a:b input are optionally not linted",
   expect_lint(
     paste0(left, ":", right),
-    if (n_lints > 0L) rep(list("Integers should not be implicit"), n_lints),
+    if (n_lints > 0L) rep(list("Avoid implicit integers"), n_lints),
     implicit_integer_linter(allow_colon = allow_colon)
   ),
   .cases = tibble::tribble(
