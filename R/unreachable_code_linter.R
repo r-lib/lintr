@@ -6,6 +6,13 @@
 #'   is fine for exploration, but shouldn't ultimately be checked in. Comments
 #'   meant for posterity should be placed *before* the final `return()`.
 #'
+#' @param allow_comment_regex Character vector of regular expressions which identify
+#'   comments to exclude when finding unreachable terminal comments. By default, this
+#'   includes the default "skip region" end marker for `{covr}`
+#'   (option "covr.exclude_end", or `"# nocov end"` if unset).
+#'   The end marker for `{lintr}` (`settings$exclude_end`) is always included.
+#'   Note that the regexes should include the initial comment character `#`.
+#'
 #' @examples
 #' # will produce lints
 #' code_lines <- "f <- function() {\n  return(1 + 1)\n  2 + 2\n}"
@@ -15,14 +22,21 @@
 #'   linters = unreachable_code_linter()
 #' )
 #'
-#' code_lines <- "f <- if (FALSE) {\n 2 + 2\n}"
+#' code_lines <- "if (FALSE) {\n 2 + 2\n}"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
 #'   linters = unreachable_code_linter()
 #' )
 #'
-#' code_lines <- "f <- while (FALSE) {\n 2 + 2\n}"
+#' code_lines <- "while (FALSE) {\n 2 + 2\n}"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = unreachable_code_linter()
+#' )
+#'
+#' code_lines <- "f <- function() {\n  return(1)\n  # end skip\n}"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
@@ -37,24 +51,31 @@
 #'   linters = unreachable_code_linter()
 #' )
 #'
-#' code_lines <- "f <- if (foo) {\n 2 + 2\n}"
+#' code_lines <- "if (foo) {\n 2 + 2\n}"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
 #'   linters = unreachable_code_linter()
 #' )
 #'
-#' code_lines <- "f <- while (foo) {\n 2 + 2\n}"
+#' code_lines <- "while (foo) {\n 2 + 2\n}"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
 #'   linters = unreachable_code_linter()
+#' )
+#'
+#' code_lines <- "f <- function() {\n  return(1)\n  # end skip\n}"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = unreachable_code_linter(allow_comment_regex = "# end skip")
 #' )
 #'
 #' @evalRd rd_tags("unreachable_code_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-unreachable_code_linter <- function() {
+unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclude_end", "# nocov end")) {
   expr_after_control <- "
     (//REPEAT | //ELSE | //FOR)/following-sibling::expr[1]
     | (//IF | //WHILE)/following-sibling::expr[2]
@@ -108,21 +129,24 @@ unreachable_code_linter <- function() {
     expr[vapply(expr, xml2::xml_length, integer(1L)) != 0L]
   }
 
-  # exclude comments that start with a nolint directive
-  drop_nolint_end_comment <- function(expr) {
-    is_nolint_end_comment <- xml2::xml_name(expr) == "COMMENT" &
-      re_matches(xml_text(expr), settings$exclude_end)
-    expr[!is_nolint_end_comment]
+  drop_valid_comments <- function(expr, valid_comment_re) {
+    is_valid_comment <- xml2::xml_name(expr) == "COMMENT" &
+      re_matches(xml_text(expr), valid_comment_re)
+    expr[!is_valid_comment]
   }
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
+    # run here because 'settings$exclude_end' may not be set correctly at "compile time".
+    # also build with '|', not rex::rex(or(.)), the latter which will double-escape the regex.
+    allow_comment_regex <- paste(union(allow_comment_regex, settings$exclude_end), collapse = "|")
+
     expr_return_stop <- xml_find_all(xml, xpath_return_stop)
 
     lints_return_stop <- xml_nodes_to_lints(
-      drop_nolint_end_comment(expr_return_stop),
+      drop_valid_comments(expr_return_stop, allow_comment_regex),
       source_expression = source_expression,
       lint_message = "Code and comments coming after a return() or stop() should be removed.",
       type = "warning"
@@ -131,7 +155,7 @@ unreachable_code_linter <- function() {
     expr_next_break <- xml_find_all(xml, xpath_next_break)
 
     lints_next_break <- xml_nodes_to_lints(
-      drop_nolint_end_comment(expr_next_break),
+      drop_valid_comments(expr_next_break, allow_comment_regex),
       source_expression = source_expression,
       lint_message = "Code and comments coming after a `next` or `break` should be removed.",
       type = "warning"
