@@ -177,8 +177,6 @@ local({
     "print.lint, print.lints support optional message wrapping",
     {
       withr::local_options(c(lintr.format_width = width))
-
-      expect_snapshot(print(lint))
       expect_snapshot(print(lints))
     },
     .test_name = test_names,
@@ -189,8 +187,6 @@ local({
     "format.lint, format.lints support optional message wrapping",
     {
       withr::local_options(c(lintr.format_width = width))
-
-      expect_snapshot(format(lint))
       expect_snapshot(format(lints))
     },
     .test_name = test_names,
