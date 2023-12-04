@@ -167,11 +167,14 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
   NULL
 )]
 
+rd_auto_link <- function(x) {
+  x <- gsub("`([^`]+)`", "\\\\code{\\1}", unlist(x))
+  x <- gsub("withr::([a-zA-Z0-9._]+)\\(\\)", "\\\\code{\\\\link[withr:\\1]{withr::\\1()}}", x)
+  x <- gsub("([^:a-zA-Z0-9._])([a-zA-Z0-9._]+)\\(\\)", "\\1\\\\code{\\\\link[=\\2]{\\2()}}", x)
+}
+
 rd_undesirable_functions <- function() {
-  alternatives <- unlist(default_undesirable_functions)
-  alternatives <- gsub("`([^`]+)`", "\\\\code{\\1}", alternatives)
-  alternatives <- gsub("withr::([a-zA-Z0-9._]+)\\(\\)", "\\\\code{\\\\link[withr:\\1]{withr::\\1()}}", alternatives)
-  alternatives <- gsub("([^:a-zA-Z0-9._])([a-zA-Z0-9._]+)\\(\\)", "\\1\\\\code{\\\\link[=\\2]{\\2()}}", alternatives)
+  alternatives <- rd_auto_link(default_undesirable_functions)
 
   c(
     "The following functions are sometimes regarded as undesirable:",
@@ -197,14 +200,14 @@ all_undesirable_operators <- modify_defaults(
   "<<-" = paste(
     "It assigns outside the current environment in a way that can be hard to reason about.",
     "Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific",
-    "environment with assign(). Recall that you can create an environment at the desired scope with",
-    "new.env()."
+    "environment with `assign()`. Recall that you can create an environment at the desired scope with",
+    "`new.env()`."
   ),
   "->>" = paste(
     "It assigns outside the current environment in a way that can be hard to reason about.",
     "Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific",
-    "environment with assign(). Recall that you can create an environment at the desired scope with",
-    "new.env()."
+    "environment with `assign()`. Recall that you can create an environment at the desired scope with",
+    "`new.env()`."
   )
 )
 
@@ -219,12 +222,21 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 )]
 
 rd_undesirable_operators <- function() {
+  op_link_map <- c(
+    `:::` = "\\link[base:ns-dblcolon]{:::}",
+    `<<-` = "\\link[base:assignOps]{<<-}",
+    `->>` = "\\link[base:assignOps]{<<-}"
+  )
+  op <- names(default_undesirable_operators)
+
+  alternatives <- rd_auto_link(default_undesirable_operators)
+
   c(
     "The following operators are sometimes regarded as undesirable:",
     "\\itemize{",
     sprintf(
       "\\item \\code{%1$s} As an alternative, %2$s",
-      names(default_undesirable_operators), unlist(default_undesirable_operators)
+      op_link_map[op], alternatives
     ),
     "}"
   )
