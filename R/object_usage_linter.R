@@ -215,7 +215,8 @@ parse_check_usage <- function(expression,
     # TODO (AshesITR): Remove this in the future, if no bugs arise from this safeguard
     warning(
       "Possible bug in lintr: Couldn't parse usage message ", sQuote(vals[is_missing][[1L]]), ". ",
-      "Ignoring ", sum(is_missing), " usage warnings. Please report an issue at https://github.com/r-lib/lintr/issues."
+      "Ignoring ", sum(is_missing), " usage warnings. Please report an issue at https://github.com/r-lib/lintr/issues.",
+      call. = FALSE
     )
   }
   # nocov end
