@@ -55,28 +55,54 @@
 # format.lint, format.lints support optional message wrapping : width = 10
 
     Code
-      format(lints)
+      cat(format(lints))
     Output
-      [1] "<text>:1:1:\n    warning:\n    [test_linter]\n    The\n    quick\n    brown\n    fox\n    jumps\n    over\n    the\n    lazy\n    dog.\na\n^\n"
+      <text>:1:1:
+          warning:
+          [test_linter]
+          The
+          quick
+          brown
+          fox
+          jumps
+          over
+          the
+          lazy
+          dog.
+      a
+      ^
 
 # format.lint, format.lints support optional message wrapping : width = 20
 
     Code
-      format(lints)
+      cat(format(lints))
     Output
-      [1] "<text>:1:1:\n    warning:\n    [test_linter]\n    The quick brown\n    fox jumps over\n    the lazy dog.\na\n^\n"
+      <text>:1:1:
+          warning:
+          [test_linter]
+          The quick brown
+          fox jumps over
+          the lazy dog.
+      a
+      ^
 
 # format.lint, format.lints support optional message wrapping : width = 40
 
     Code
-      format(lints)
+      cat(format(lints))
     Output
-      [1] "<text>:1:1: warning: [test_linter] The\n    quick brown fox jumps over the lazy\n    dog.\na\n^\n"
+      <text>:1:1: warning: [test_linter] The
+          quick brown fox jumps over the lazy
+          dog.
+      a
+      ^
 
 # format.lint, format.lints support optional message wrapping : width = 80
 
     Code
-      format(lints)
+      cat(format(lints))
     Output
-      [1] "<text>:1:1: warning: [test_linter] The quick brown fox jumps over the lazy dog.\na\n^\n"
+      <text>:1:1: warning: [test_linter] The quick brown fox jumps over the lazy dog.
+      a
+      ^
 

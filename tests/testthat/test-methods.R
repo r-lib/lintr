@@ -187,7 +187,7 @@ local({
     "format.lint, format.lints support optional message wrapping",
     {
       withr::local_options(c(lintr.format_width = width))
-      expect_snapshot(format(lints))
+      expect_snapshot(cat(format(lints)))
     },
     .test_name = test_names,
     width = widths
