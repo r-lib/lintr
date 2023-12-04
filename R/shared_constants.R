@@ -280,7 +280,7 @@ extract_glued_symbols <- function(expr, interpret_glue) {
 }
 
 unexpected_glue_parse_error <- function(cond) {
-  stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond)) # nocov
+  stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond), call. = FALSE) # nocov
 }
 glue_parse_failure_warning <- function(cond) {
   warning(
