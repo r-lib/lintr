@@ -104,12 +104,12 @@ seq_linter <- function() {
     lint_message <- ifelse(
       grepl("seq", dot_expr1, fixed = TRUE),
       sprintf(
-        "%s(%s) is likely to be wrong in the empty edge case. Use %s instead.",
-        dot_expr1, dot_expr2, replacement
+        "Use %s instead of %s(%s), which is likely to be wrong in the empty edge case.",
+        replacement, dot_expr1, dot_expr2
       ),
       sprintf(
-        "%s:%s is likely to be wrong in the empty edge case. Use %s instead.",
-        dot_expr1, dot_expr2, replacement
+        "Use %s instead of %s:%s, which is likely to be wrong in the empty edge case.",
+        replacement, dot_expr1, dot_expr2
       )
     )
 

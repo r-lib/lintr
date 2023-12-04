@@ -76,7 +76,7 @@ nested_pipe_linter <- function(
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = "Don't nest pipes inside other calls.",
+      lint_message = "Avoid nesting pipes inside other calls.",
       type = "warning"
     )
   })

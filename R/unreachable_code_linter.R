@@ -148,7 +148,7 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     lints_return_stop <- xml_nodes_to_lints(
       drop_valid_comments(expr_return_stop, allow_comment_regex),
       source_expression = source_expression,
-      lint_message = "Code and comments coming after a return() or stop() should be removed.",
+      lint_message = "Remove code and comments coming after return() or stop().",
       type = "warning"
     )
 
@@ -157,7 +157,7 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     lints_next_break <- xml_nodes_to_lints(
       drop_valid_comments(expr_next_break, allow_comment_regex),
       source_expression = source_expression,
-      lint_message = "Code and comments coming after a `next` or `break` should be removed.",
+      lint_message = "Remove code and comments coming after `next` or `break`.",
       type = "warning"
     )
 
@@ -166,7 +166,7 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     lints_if_while <- xml_nodes_to_lints(
       expr_if_while,
       source_expression = source_expression,
-      lint_message = "Code inside a conditional loop with a deterministically false condition should be removed.",
+      lint_message = "Remove code inside a conditional loop with a deterministically false condition.",
       type = "warning"
     )
 
@@ -175,7 +175,7 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     lints_else <- xml_nodes_to_lints(
       expr_else,
       source_expression = source_expression,
-      lint_message = "Code inside an else block after a deterministically true if condition should be removed.",
+      lint_message = "Remove code inside an else block after a deterministically true condition.",
       type = "warning"
     )
 

@@ -89,7 +89,7 @@ vector_logic_linter <- function() {
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = "Conditional expressions require scalar logical operators (&& and ||)",
+      lint_message = "Use scalar logical operators (&& and ||) in conditional expressions.",
       type = "warning"
     )
   })
