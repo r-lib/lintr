@@ -17,6 +17,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{backport_linter}}}
 \item{\code{\link{brace_linter}}}
 \item{\code{\link{commas_linter}}}
+\item{\code{\link{condition_call_linter}}}
 \item{\code{\link{conjunct_test_linter}}}
 \item{\code{\link{consecutive_mutate_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
@@ -51,6 +52,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{unnecessary_concatenation_linter}}}
 \item{\code{\link{unnecessary_lambda_linter}}}
 \item{\code{\link{unnecessary_nesting_linter}}}
+\item{\code{\link{unreachable_code_linter}}}
 \item{\code{\link{unused_import_linter}}}
 }
 }
