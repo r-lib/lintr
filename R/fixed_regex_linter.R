@@ -154,7 +154,7 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
     call_name <- xml_find_chr(patterns, "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")
 
     is_stringr <- startsWith(call_name, "str_")
-    replace_suggestion <- ifelse(
+    replacement_suggestion <- ifelse(
       is_stringr,
       sprintf("stringr::fixed(%s) as the pattern", fixed_equivalent),
       sprintf("%s with fixed = TRUE", fixed_equivalent)
