@@ -1,43 +1,43 @@
 test_that("other : expressions are fine", {
   linter <- seq_linter()
-  expect_lint("function() { 1:10 }", NULL, linter)
-  expect_lint("function(x) { 2:length(x) }", NULL, linter)
-  expect_lint("function(x) { 1:(length(x) || 1) }", NULL, linter)
+  expect_lint("1:10", NULL, linter)
+  expect_lint("2:length(x)", NULL, linter)
+  expect_lint("1:(length(x) || 1)", NULL, linter)
 })
 
 test_that("seq_len(...) or seq_along(...) expressions are fine", {
   linter <- seq_linter()
 
-  expect_lint("function(x) { seq_len(x) }", NULL, linter)
-  expect_lint("function(x) { seq_along(x) }", NULL, linter)
+  expect_lint("seq_len(x)", NULL, linter)
+  expect_lint("seq_along(x)", NULL, linter)
 
-  expect_lint("function(x) { seq(2, length(x)) }", NULL, linter)
-  expect_lint("function(x) { seq(length(x), 2) }", NULL, linter)
+  expect_lint("seq(2, length(x))", NULL, linter)
+  expect_lint("seq(length(x), 2)", NULL, linter)
 })
 
 test_that("finds seq(...) expressions", {
   linter <- seq_linter()
 
   expect_lint(
-    "function(x) { seq(length(x)) }",
+    "seq(length(x))",
     rex::rex("Use seq_along(...) instead of seq(length(...))"),
     linter
   )
 
   expect_lint(
-    "function(x) { seq(nrow(x)) }",
+    "seq(nrow(x))",
     rex::rex("Use seq_len(nrow(...)) instead of seq(nrow(...))"),
     linter
   )
 
   expect_lint(
-    "function(x) { rev(seq(length(x))) }",
+    "rev(seq(length(x)))",
     rex::rex("Use seq_along(...) instead of seq(length(...))"),
     linter
   )
 
   expect_lint(
-    "function(x) { rev(seq(nrow(x))) }",
+    "rev(seq(nrow(x)))",
     rex::rex("Use seq_len(nrow(...)) instead of seq(nrow(...))"),
     linter
   )
