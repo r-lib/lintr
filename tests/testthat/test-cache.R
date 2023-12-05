@@ -34,10 +34,10 @@ fhash <- function(filename) {
 # `clear_cache`
 
 test_that("clear_cache deletes the file if a file is given", {
-  skip_if_not_installed("mockery")
-
-  mockery::stub(clear_cache, "read_settings", function(...) invisible(...))
-  mockery::stub(clear_cache, "unlink", function(...) list(...))
+  local_mocked_bindings(
+    read_settings = function(...) invisible(...),
+    unlink = function(...) list(...)
+  )
 
   e1 <- new.env(parent = emptyenv())
   d1 <- withr::local_tempfile(pattern = "lintr_cache_")
@@ -50,10 +50,10 @@ test_that("clear_cache deletes the file if a file is given", {
 })
 
 test_that("clear_cache deletes the directory if no file is given", {
-  skip_if_not_installed("mockery")
-
-  mockery::stub(clear_cache, "read_settings", function(...) invisible(...))
-  mockery::stub(clear_cache, "unlink", function(...) list(...))
+  local_mocked_bindings(
+    read_settings = function(...) invisible(...),
+    unlink = function(...) list(...)
+  )
 
   expect_identical(clear_cache(file = NULL, path = "."), list(".", recursive = TRUE))
 })
