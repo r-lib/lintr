@@ -5,13 +5,17 @@ library(testthat)
 
 xml_nodes_to_lints_file <- "R/xml_nodes_to_lints.R"
 
-xml_nodes_to_lints_file |>
-  readLines() |>
+original <- readLines(xml_nodes_to_lints_file)
+writeLines(
   sub(
-    pattern = "line_number = as.integer(line1)",
-    replacement = "line_number = as.integer(2^31 - 1)"
-  ) |>
-  writeLines(xml_nodes_to_lints_file)
+    "line_number = as.integer(line1)",
+    "line_number = as.integer(2^31 - 1)",
+    fixed = TRUE
+  ),
+  xml_nodes_to_lints_file
+)
+# Not useful in CI but good when running locally.
+withr::defer(writeLines(original, xml_nodes_to_lints_file))
 
 pkgload::load_all()
 
