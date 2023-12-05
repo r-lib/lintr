@@ -1,6 +1,6 @@
 #' Use lintr in your project
 #'
-#' Create a minimal lintr config file as a starting point for customization
+#' Create a minimal lintr config file as a starting point for customization and add it to the .Rbuildignore
 #'
 #' @param path Path to project root, where a `.lintr` file should be created.
 #' If the `.lintr` file already exists, an error will be thrown.
@@ -25,7 +25,7 @@
 #'   lintr::lint_dir()
 #' }
 use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
-  config_file <- normalizePath(file.path(path, lintr_option("linter_file")), mustWork = FALSE)
+  config_file <- normalizePath(file.path(path, lintr_option("linter_file")), mustWork = FALSE, winslash = "/")
   if (file.exists(config_file)) {
     stop("Found an existing configuration file at '", config_file, "'.")
   }
@@ -43,5 +43,21 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
     )
   )
   write.dcf(the_config, config_file, width = Inf)
+
+  # Check if config_file is in package i.e. lintr_option("linter_file") != "../.lintr"
+  pkg_path <- normalizePath(path, mustWork = FALSE, winslash = "/")
+  if(startsWith(config_file, prefix = pkg_path)) {
+    # Skip a extra character for the leading `/`
+    rel_path <- substring(config_file, first = nchar(pkg_path) + 2L, last = nchar(config_file))
+    ignore_path <- file.path(pkg_path, ".Rbuildignore")
+    if (!file.exists(ignore_path)) file.create(ignore_path)
+    # Follow the same procedure as base R to see if the file is already ignored
+    ignore <- trimws(readLines(ignore_path, warn = FALSE))
+    ignore <- ignore[nzchar(ignore)]
+    if(!any(vapply(ignore, \(x) grepl(rel_path, pattern = x, perl = TRUE, ignore.case = TRUE), logical(1L)))) {
+      cat(file = ignore_path, paste0("^", rel_path, "$"), "\n", append = TRUE)
+    }
+  }
+
   invisible(config_file)
 }
