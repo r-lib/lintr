@@ -12,7 +12,7 @@ return_linter(
 }
 \arguments{
 \item{return_style}{Character string naming the return style. \code{"implicit"},
-the default, enforeces the Tidyverse guide recommendation to leave terminal
+the default, enforces the Tidyverse guide recommendation to leave terminal
 returns implicit. \code{"explicit"} style requires that \code{return()} always be
 explicitly supplied.}
 
