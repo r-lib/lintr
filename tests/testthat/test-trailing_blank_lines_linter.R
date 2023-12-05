@@ -37,6 +37,7 @@ test_that("trailing_blank_lines_linter detects disallowed usages", {
 
 test_that("trailing_blank_lines_linter detects missing terminal newlines in Rmd/qmd docs", {
   linter <- trailing_blank_lines_linter()
+  lint_msg <- rex::rex("Add a terminal newline")
 
   tmp3 <- withr::local_tempfile(fileext = ".Rmd")
   cat(
@@ -56,12 +57,8 @@ test_that("trailing_blank_lines_linter detects missing terminal newlines in Rmd/
   )
   expect_lint(
     file = tmp3,
-    checks = list(
-      message = rex::rex("Add a terminal newline."),
-      line_number = 10L,
-      # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
-      column_number = 1L
-    ),
+    # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
+    list(lint_msg, line_number = 10L, column_number = 1L),
     linters = linter
   )
 
@@ -79,12 +76,8 @@ test_that("trailing_blank_lines_linter detects missing terminal newlines in Rmd/
   )
   expect_lint(
     file = tmp4,
-    checks = list(
-      message = rex::rex("Add a terminal newline."),
-      line_number = 5L,
-      # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
-      column_number = 1L
-    ),
+    # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
+    list(lint_msg, line_number = 5L, column_number = 1L),
     linters = linter
   )
 
@@ -107,18 +100,15 @@ test_that("trailing_blank_lines_linter detects missing terminal newlines in Rmd/
   )
   expect_lint(
     file = tmp5,
-    checks = list(
-      message = rex::rex("Add a terminal newline."),
-      line_number = 10L,
-      # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
-      column_number = 1L
-    ),
+    # We can't get 4 here because the line is NA-masked in get_source_expressions(), so no line length info exists.
+    list(lint_msg, line_number = 10L, column_number = 1L),
     linters = linter
   )
 })
 
 test_that("blank lines in knitr chunks produce lints", {
   linter <- trailing_blank_lines_linter()
+  lint_msg <- rex::rex("Remove trailing blank lines.")
 
   tmp6 <- withr::local_tempfile(
     fileext = ".Rmd",
@@ -137,7 +127,7 @@ test_that("blank lines in knitr chunks produce lints", {
 
   expect_lint(
     file = tmp6,
-    checks = list(message = rex::rex("Remove trailing blank lines."), line_number = 7L, column_number = 1L),
+    list(lint_msg, line_number = 7L, column_number = 1L),
     linters = linter
   )
 
@@ -160,10 +150,10 @@ test_that("blank lines in knitr chunks produce lints", {
 
   expect_lint(
     file = tmp7,
-    checks = list(
-      list(message = rex::rex("Remove trailing blank lines."), line_number = 7L, column_number = 1L),
-      list(message = rex::rex("Remove trailing blank lines."), line_number = 8L, column_number = 1L),
-      list(message = rex::rex("Remove trailing blank lines."), line_number = 9L, column_number = 1L)
+    list(
+      list(lint_msg, line_number = 7L, column_number = 1L),
+      list(lint_msg, line_number = 8L, column_number = 1L),
+      list(lint_msg, line_number = 9L, column_number = 1L)
     ),
     linters = linter
   )
