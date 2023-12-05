@@ -6,13 +6,15 @@ library(testthat)
 xml_nodes_to_lints_file <- "R/xml_nodes_to_lints.R"
 
 original <- readLines(xml_nodes_to_lints_file)
+expected_line <- "line_number = as.integer(line1)"
+if (!any(grepl(expected_line, original, fixed = TRUE))) {
+  stop(sprintf(
+    "Please update this workflow -- didn't find expected line '%s' in file '%s'.",
+    expected_line, xml_nodes_to_lints_file
+  ))
+}
 writeLines(
-  sub(
-    "line_number = as.integer(line1)",
-    "line_number = as.integer(2^31 - 1)",
-    original,
-    fixed = TRUE
-  ),
+  sub(expected_line, "line_number = as.integer(2^31 - 1)", original, fixed = TRUE),
   xml_nodes_to_lints_file
 )
 # Not useful in CI but good when running locally.
@@ -26,7 +28,7 @@ report <- test_dir(
   stop_on_failure = FALSE,
   reporter = SilentReporter$new()
 )
-names(report) <- vapply(report, `[[`, "file", FUN.VALUE = character(1L))
+names(report) <- gsub("^test-|\\.R$", "", vapply(report, `[[`, "file", FUN.VALUE = character(1L)))
 
 # Hack the nested structure of the testthat report to identify which files have
 #   any failed test
@@ -37,8 +39,7 @@ failed <- report |>
   ) |>
   which() |>
   names() |>
-  unique() |>
-  gsub(pattern = "^test-|\\.R$", replacement = "")
+  unique()
 
 passed <- setdiff(
   available_linters(tags = NULL)$linter,
