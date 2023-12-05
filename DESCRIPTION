@@ -40,7 +40,7 @@ Suggests:
     httr (>= 1.2.1),
     jsonlite,
     mockery,
-    patrick,
+    patrick (>= 0.2.0),
     rlang,
     rmarkdown,
     rstudioapi (>= 0.2),
