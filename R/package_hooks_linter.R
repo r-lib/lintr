@@ -128,7 +128,7 @@ package_hooks_linter <- function() {
 
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
-    
+
 
     any_hook <- xml_find_first(xml, any_hook_xpath)
     if (is.na(any_hook)) {

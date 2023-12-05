@@ -78,7 +78,7 @@ commented_code_linter <- function() {
 
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
-    
+
     all_comment_nodes <- xml_find_all(xml, "//COMMENT")
     all_comments <- xml_text(all_comment_nodes)
     code_candidates <- re_matches(all_comments, code_candidate_regex, global = FALSE, locations = TRUE)

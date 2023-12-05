@@ -71,7 +71,7 @@ is_numeric_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    
+
 
     or_expr <- xml_find_all(xml, or_xpath)
     or_lints <- xml_nodes_to_lints(

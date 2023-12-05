@@ -74,7 +74,7 @@ consecutive_mutate_linter <- function(invalid_backends = "dbplyr") {
   Linter(linter_level = "file", function(source_expression) {
     # need the full file to also catch usages at the top level
     xml <- source_expression$full_xml_parsed_content
-    
+
 
     attach_str <- get_r_string(xml_find_all(xml, attach_pkg_xpath))
     if (any(invalid_backends %in% attach_str)) {

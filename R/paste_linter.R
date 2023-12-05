@@ -163,7 +163,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    
+
     optional_lints <- list()
 
     # Both of these look for paste(..., sep = "..."), differing in which 'sep' is linted,

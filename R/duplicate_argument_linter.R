@@ -42,7 +42,7 @@ duplicate_argument_linter <- function(except = c("mutate", "transmute")) {
 
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
-    
+
 
     calls <- xml_find_all(xml, xpath_call_with_args)
 
