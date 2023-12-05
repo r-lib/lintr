@@ -154,15 +154,14 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
     call_name <- xml_find_chr(patterns, "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")
 
     is_stringr <- startsWith(call_name, "str_")
-    replacement <- ifelse(
+    replace_suggestion <- ifelse(
       is_stringr,
-      sprintf("stringr::fixed(%s)", fixed_equivalent),
-      fixed_equivalent
+      sprintf("stringr::fixed(%s) as the pattern", fixed_equivalent),
+      sprintf("%s with fixed = TRUE", fixed_equivalent)
     )
     msg <- paste(
-      "Use", replacement, ifelse(is_stringr, "as the pattern", "with fixed = TRUE"), "here.",
-      "This regular expression is static, i.e., its matches can be expressed as a fixed substring expression, ",
-      "which is faster to compute."
+      "Use", replacement_suggestion, "here. This regular expression is static, i.e.,",
+      "its matches can be expressed as a fixed substring expression, which is faster to compute."
     )
 
     xml_nodes_to_lints(
