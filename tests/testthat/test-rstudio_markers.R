@@ -1,4 +1,5 @@
 test_that("it returns markers which match lints", {
+  skip_if_not_installed("rstudioapi")
   local_mocked_bindings(
     callFun = function(...) list(...),
     executeCommand = function(...) NULL,
@@ -54,6 +55,7 @@ test_that("it returns markers which match lints", {
 })
 
 test_that("it prepends the package path if it exists", {
+  skip_if_not_installed("rstudioapi")
   local_mocked_bindings(
     callFun = function(...) list(...),
     executeCommand = function(...) NULL,
@@ -82,6 +84,7 @@ test_that("it prepends the package path if it exists", {
 })
 
 test_that("it returns an empty list of markers if there are no lints", {
+  skip_if_not_installed("rstudioapi")
   local_mocked_bindings(
     callFun = function(...) list(...),
     executeCommand = function(...) NULL,
@@ -100,6 +103,7 @@ test_that("rstudio_source_markers apply to print within rstudio", {
   tmp <- withr::local_tempfile(lines = "1:ncol(x)")
   empty <- withr::local_tempfile(lines = character(0L))
 
+  skip_if_not_installed("rstudioapi")
   local_mocked_bindings(
     hasFun = function(x, ...) TRUE,
     .package = "rstudioapi"
