@@ -17,7 +17,7 @@ has_expected <- mapply(
 )
 if (!all(has_expected)) {
   stop(
-    "Please update this workflow -- expected to find these strings in these files:\n"
+    "Please update this workflow -- expected to find these strings in these files:\n",
     paste0(names(line_replacements)[!has_expected], ": ", line_replacements[!has_expected], collapse = "\n")
   )
 }
