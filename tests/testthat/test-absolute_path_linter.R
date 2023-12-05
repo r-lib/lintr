@@ -201,6 +201,6 @@ test_that("lints vectorize", {
       list(lint_msg, line_number = 2L),
       list(lint_msg, line_number = 4L)
     ),
-    absolute_path_linter()
+    absolute_path_linter(lax = FALSE)
   )
 })
