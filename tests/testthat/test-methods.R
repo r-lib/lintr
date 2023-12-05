@@ -98,8 +98,6 @@ test_that("print.lint works", {
 })
 
 test_that("print.lint works for inline data, even in RStudio", {
-  skip_if_not_installed("mockery")
-
   l <- lint("x = 1\n")
 
   # Make sure lints print to console.
@@ -114,7 +112,10 @@ test_that("print.lint works for inline data, even in RStudio", {
     expect_output(print(l), "not =")
   )
 
-  mockery::stub(print.lints, "rstudioapi::hasFun", function(...) FALSE)
+  local_mocked_bindings(
+    hasFun = function(x, ...) FALSE,
+    .package = "rstudioapi"
+  )
   withr::with_options(
     list(lintr.rstudio_source_markers = TRUE),
     expect_output(print(l), "not =")

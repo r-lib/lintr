@@ -39,7 +39,6 @@ Suggests:
     cli,
     httr (>= 1.2.1),
     jsonlite,
-    mockery,
     patrick,
     rlang,
     rmarkdown,
