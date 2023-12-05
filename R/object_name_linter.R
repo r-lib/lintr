@@ -112,7 +112,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
 
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
+    
 
     assignments <- xml_find_all(xml, object_name_xpath)
 

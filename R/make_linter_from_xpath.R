@@ -25,7 +25,7 @@ make_linter_from_xpath <- function(xpath,
   function() {
     Linter(linter_level = level, function(source_expression) {
       xml <- source_expression[[xml_key]]
-      if (is.null(xml)) return(list())
+      
 
       expr <- xml_find_all(xml, xpath)
 
