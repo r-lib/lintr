@@ -3,22 +3,36 @@
 #   runs the test suite, and finds linters that nevertheless pass all their tests.
 library(testthat)
 
-xml_nodes_to_lints_file <- "R/xml_nodes_to_lints.R"
+line_replacements <- paste("line_number =", c(
+  `R/xml_nodes_to_lints.R` = "as.integer(line1)",
+  `R/path_utils.R` = 'token[["line1"]]'
+))
 
-original <- readLines(xml_nodes_to_lints_file)
-expected_line <- "line_number = as.integer(line1)"
-if (!any(grepl(expected_line, original, fixed = TRUE))) {
-  stop(sprintf(
-    "Please update this workflow -- didn't find expected line '%s' in file '%s'.",
-    expected_line, xml_nodes_to_lints_file
-  ))
-}
-writeLines(
-  sub(expected_line, "line_number = as.integer(2^31 - 1)", original, fixed = TRUE),
-  xml_nodes_to_lints_file
+originals <- lapply(names(line_replacements), readLines)
+
+# If the code is refactored, this script may need to be updated.
+has_expected <- mapply(
+  function(lines, pattern) any(grepl(pattern, lines, fixed = TRUE)),
+  originals, line_replacements
 )
+if (!all(has_expected)) {
+  stop(
+    "Please update this workflow -- expected to find these strings in these files:\n"
+    paste0(names(line_replacements)[!has_expected], ": ", line_replacements[!has_expected], collapse = "\n")
+  )
+}
+
+for (ii in seq_along(line_replacements)) {
+  writeLines(
+    sub(line_replacements[ii], "line_number = as.integer(2^31 - 1)", originals[[ii]], fixed = TRUE),
+    names(line_replacements[ii])
+  )
+}
+
 # Not useful in CI but good when running locally.
-withr::defer(writeLines(original, xml_nodes_to_lints_file))
+withr::defer({
+  for (ii in seq_along(line_replacements)) writeLines(originals[[ii]], names(line_replacements[ii]))
+})
 
 pkgload::load_all()
 
