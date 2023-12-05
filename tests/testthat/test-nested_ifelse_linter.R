@@ -19,7 +19,7 @@ local({
   patrick::with_parameters_test_that(
     "nested_ifelse_linter blocks simple disallowed usages",
     {
-      lint_msg <- rex::rex("Avoid nested ", ifelse_call, " calls")
+      lint_msg <- rex::rex("Avoid nested ", ifelse_call, "() calls")
 
       expect_lint(glue::glue("{ifelse_call}(l1, v1, {ifelse_call}(l2, v2, v3))"), lint_msg, linter)
       expect_lint(glue::glue("{ifelse_call}(l1, {ifelse_call}(l2, v1, v2), v3)"), lint_msg, linter)
