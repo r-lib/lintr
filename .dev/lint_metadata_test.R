@@ -10,6 +10,7 @@ writeLines(
   sub(
     "line_number = as.integer(line1)",
     "line_number = as.integer(2^31 - 1)",
+    original,
     fixed = TRUE
   ),
   xml_nodes_to_lints_file
