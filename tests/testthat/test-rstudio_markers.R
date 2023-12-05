@@ -100,7 +100,7 @@ test_that("rstudio_source_markers apply to print within rstudio", {
   empty <- withr::local_tempfile(lines = character(0L))
 
   mockery::stub(print.lints, "rstudioapi::hasFun", function(x, ...) TRUE)
-  mockery::stub(print.lints, "rstudio_source_markers", function(x) cat("matched\n"))
+  local_mocked_bindings(rstudio_source_markers = function(x) cat("matched\n"))
 
   l <- lint(tmp, seq_linter())
   expect_output(print(l), "matched", fixed = TRUE)
