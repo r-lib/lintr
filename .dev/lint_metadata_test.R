@@ -3,10 +3,12 @@
 #   runs the test suite, and finds linters that nevertheless pass all their tests.
 library(testthat)
 
-line_replacements <- paste("line_number =", c(
+line_replacements <- c(
   `R/xml_nodes_to_lints.R` = "as.integer(line1)",
   `R/path_utils.R` = 'token[["line1"]]'
-))
+)
+# paste() strips names so be sure to keep them
+line_replacements[] <- paste("line_number =", line_replacements)
 
 originals <- lapply(names(line_replacements), readLines)
 
