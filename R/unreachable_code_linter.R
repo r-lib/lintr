@@ -105,9 +105,8 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
   ")
 
   xpath_if_while <- "
-  (//WHILE | //IF)
-    /following-sibling::expr[1][NUM_CONST[text() = 'FALSE']]
-    /following-sibling::expr[1]
+    (//WHILE | //IF)[following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']]
+      /parent::expr
   "
 
   xpath_else <- "
