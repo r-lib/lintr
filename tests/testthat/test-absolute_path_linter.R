@@ -190,12 +190,12 @@ test_that("lints vectorize", {
   lint_msg <- rex::rex("Do not use absolute paths.")
 
   expect_lint(
-    trim_some("
+    trim_some("{
       '/'
       '/blah/file.txt'
       'abcdefg'
       '~'
-    "),
+    }"),
     list(
       list(lint_msg, line_number = 1L),
       list(lint_msg, line_number = 2L),

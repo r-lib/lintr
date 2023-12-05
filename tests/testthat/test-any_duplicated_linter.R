@@ -38,10 +38,10 @@ test_that("any_duplicated_linter catches length(unique()) equivalencies too", {
   # argument order doesn't matter
   expect_lint("length(x) == length(unique(x))", lint_msg_x, linter)
   # nrow-style equivalency
-  expect_lint("nrow(DF) == length(unique(DF$col))", lint_msg_df, linter)=
-  expect_lint("nrow(DF) == length(unique(DF[['col']]))", lint_msg_df, linter)=
+  expect_lint("nrow(DF) == length(unique(DF$col))", lint_msg_df, linter)
+  expect_lint("nrow(DF) == length(unique(DF[['col']]))", lint_msg_df, linter)
   # match with nesting too
-  expect_lint("nrow(l$DF) == length(unique(l$DF[['col']]))", lint_msg_df, linter)=
+  expect_lint("nrow(l$DF) == length(unique(l$DF[['col']]))", lint_msg_df, linter)
 
   # !=, <, and > usages are all alternative ways of writing a test for dupes
   #   technically, the direction of > / < matter, but writing
