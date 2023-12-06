@@ -51,14 +51,18 @@ duplicate_argument_linter <- function(except = c("mutate", "transmute")) {
     xml <- source_expression$full_xml_parsed_content
     if (is.null(xml)) return(list())
 
-    calls <- xml_find_all(xml, xpath_call_with_args)
+    call_expr <- xml_find_all(xml, xpath_call_with_args)
 
-    all_arg_nodes <- lapply(calls, xml_find_all, xpath_arg_name)
-    arg_names <- lapply(all_arg_nodes, get_r_string)
-    is_duplicated <- lapply(arg_names, duplicated)
+    bad_expr <- lapply(
+      call_expr,
+      function(expr) {
+        arg_expr <- xml_find_all(expr, xpath_arg_name)
+        arg_expr[duplicated(get_r_string(arg_expr))]
+      }
+    )
 
     xml_nodes_to_lints(
-      unlist(all_arg_nodes, recursive = FALSE)[unlist(is_duplicated)],
+      unlist(bad_expr, recursive = FALSE),
       source_expression = source_expression,
       lint_message = "Avoid duplicate arguments in function calls.",
       type = "warning"

@@ -108,10 +108,10 @@ test_that("lints vectorize", {
       list(b = 1, b = 2, b = 3)
     }"),
     list(
-      list(lint_msg, line_number = 2L, column_number = 10L),
-      list(lint_msg, line_number = 2L, column_number = 17L),
-      list(lint_msg, line_number = 3L, column_number = 13L),
-      list(lint_msg, line_number = 3L, column_number = 20L)
+      list(lint_msg, line_number = 2L, column_number = 12L),
+      list(lint_msg, line_number = 2L, column_number = 19L),
+      list(lint_msg, line_number = 3L, column_number = 15L),
+      list(lint_msg, line_number = 3L, column_number = 22L)
     ),
     duplicate_argument_linter()
   )
