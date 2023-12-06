@@ -36,8 +36,8 @@ cyclocomp_linter <- function(complexity_limit = 15L) {
       column_number = source_expression[["column"]][1L],
       type = "style",
       message = sprintf(
-        "Functions should have cyclomatic complexity of less than %d, this has %d.",
-        complexity_limit, complexity
+        "Reduce the cyclomatic complexity of this function from %d to at most %d.",
+        complexity, complexity_limit
       ),
       ranges = list(rep(col1, 2L)),
       line = source_expression$lines[1L]

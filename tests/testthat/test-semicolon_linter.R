@@ -1,7 +1,7 @@
 test_that("Lint all semicolons", {
   linter <- semicolon_linter()
-  trail_msg <- "Trailing semicolons are not needed."
-  comp_msg <- "Compound semicolons are discouraged. Replace them by a newline."
+  trail_msg <- rex::rex("Remove trailing semicolons.")
+  comp_msg <- rex::rex("Replace compound semicolons by a newline.")
 
   # No semicolon
   expect_lint("", NULL, linter)

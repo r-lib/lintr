@@ -20,7 +20,7 @@ test_that("commented_code_linter skips allowed usages", {
 })
 
 test_that("commented_code_linter blocks disallowed usages", {
-  lint_msg <- rex::rex("Commented code should be removed.")
+  lint_msg <- rex::rex("Remove commented code.")
   linter <- commented_code_linter()
 
   expect_lint("# blah <- 1", lint_msg, linter)
@@ -80,7 +80,7 @@ test_that("commented_code_linter blocks disallowed usages", {
 
 test_that("commented_code_linter can detect operators in comments and lint correctly", {
   linter <- commented_code_linter()
-  lint_msg <- rex::rex("Commented code should be removed.")
+  lint_msg <- rex::rex("Remove commented code.")
 
   test_ops <- c(
     "+", "=", "==", "!=", "<=", ">=", "<-", "<<-", "<", ">", "->",
@@ -100,7 +100,7 @@ test_that("commented_code_linter can detect operators in comments and lint corre
 
   expect_lint(
     "# 1:3 |> sum()",
-    rex::rex("Commented code should be removed."),
+    rex::rex("Remove commented code."),
     commented_code_linter()
   )
 })

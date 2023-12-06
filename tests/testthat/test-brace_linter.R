@@ -315,7 +315,7 @@ test_that("brace_linter lints function expressions correctly", {
   ")
   expect_lint(
     lines,
-    rex::rex("Any function spanning multiple lines should use curly braces."),
+    rex::rex("Use curly braces for any function spanning multiple lines."),
     linter
   )
 })

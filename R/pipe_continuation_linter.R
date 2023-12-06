@@ -78,7 +78,7 @@ pipe_continuation_linter <- function() {
       pipe_exprs,
       source_expression = source_expression,
       lint_message = sprintf(
-        "`%s` should always have a space before it and a new line after it, unless the full pipeline fits on one line.",
+        "Put a space before `%s` and a new line after it, unless the full pipeline fits on one line.",
         pipe_text
       ),
       type = "style"
