@@ -1,6 +1,6 @@
 ---
 title: "Static Code Analysis for R"
-date: "2023-12-02"
+date: "2023-12-06"
 tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester
@@ -42,13 +42,12 @@ is used by a wide range of researchers and data scientists. The
 `{lintr}` package is an open-source R package that provides static code
 analysis to check for a variety of common problems related to
 readability, efficiency, consistency, style, etc. In particular, it
-enforces the [tidyverse style
-guide]((https://style.tidyverse.org/index.html)). It is designed to be
-easy to use and integrate into existing workflows, and can be run from
-the command line or used as part of an automated build or continuous
-integration process. `{lintr}` also integrates with a number of popular
-IDEs and text editors, such as RStudio and Visual Studio Code, making it
-convenient for users to run `{lintr}` checks on their code as they work.
+enforces the tidyverse style guide [@Wickham2023]. It is designed to be
+easy to use and integrate into existing workflows, and can be used as
+part of an automated build or continuous integration process. `{lintr}`
+also integrates with a number of popular IDEs and text editors, such as
+RStudio and Visual Studio Code, making it convenient for users to run
+`{lintr}` checks on their code as they work.
 
 # Features
 
@@ -71,7 +70,7 @@ code.
 -   **Best practices**
 
 `{lintr}` offers linters that can detect problematic antipatterns and
-suggest alternative patterns that follow best practices.
+suggest alternatives that follow best practices.
 
 For example, expressions like `ifelse(x, TRUE, FALSE)` and
 `ifelse(x, FALSE, TRUE)` are redundant; just `x` or `!x` suffice in R
@@ -93,8 +92,12 @@ lint(
 -   **Efficiency**
 
 Sometimes the users might not be aware of a more efficient way offered
-by R for carrying out a computation. `{lintr}` offers linters to provide
-suggestions to improve code efficiency.
+by R for carrying out a computation. `{lintr}` offers linters to improve
+code efficiency by avoiding common inefficient patterns.
+
+For example, the `any_is_na_linter()` linter detects usages of
+`any(is.na(x))` and suggests `anyNA(x)` as a more efficient alternative
+to detect presence *any* of missing values.
 
 ``` r
 lint(
@@ -107,9 +110,16 @@ lint(
 #> ^~~~~~~~~~~~~~~~~~~~~~~~~~~
 ```
 
+``` r
+lint(
+  text = "anyNA(x)",
+  linters = any_is_na_linter()
+)
+```
+
 -   **Readability**
 
-Coders spend significantly more time reading compared to writing code
+Coders spend significantly more time reading than writing code
 [@mcconnell2004code]. Thus, writing readable code makes the code more
 maintainable and reduces the possibility of introducing bugs stemming
 from a poor understanding of the code.
@@ -138,8 +148,7 @@ lint(
 
 `{lintr}` also provides linters to enforce the style used throughout the
 `{tidyverse}` [@Wickham2019] ecosystem of R packages. This style of
-coding has been outlined in the tidyverse style guide
-(<https://style.tidyverse.org/index.html>).
+coding has been outlined in the tidyverse style guide [@Wickham2023].
 
 ``` r
 lint(
