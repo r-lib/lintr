@@ -49,7 +49,6 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
       /parent::expr[count(*) > 3]
       /*[{xp_or(conds)}]
   ")
-  to_function_xpath <- "string(./preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)"
 
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
@@ -60,12 +59,13 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
     named_idx <- xml_name(missing_args) == "EQ_SUB"
     arg_id <- character(length(missing_args))
     arg_id[named_idx] <- sQuote(xml_find_chr(missing_args[named_idx], "string(preceding-sibling::SYMBOL_SUB[1])"), "'")
-    arg_id[!named_idx] <- xml_find_num(missing_args[!named_idx], "count(preceding-sibling::OP-COMMA)") + 1
+    # TODO(r-lib/xml2#412-->CRAN): use xml_find_int() instead
+    arg_id[!named_idx] <- xml_find_num(missing_args[!named_idx], "count(preceding-sibling::OP-COMMA)") + 1.0
 
     xml_nodes_to_lints(
       missing_args,
       source_expression = source_expression,
-      lint_message = sprintf("Missing argument %s in function call.", arg_id),
+      lint_message = sprintf("Missing argument %s in function call.", arg_id)
     )
   })
 }
