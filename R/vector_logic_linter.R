@@ -81,15 +81,18 @@ vector_logic_linter <- function() {
   ]
   "
 
+  scalar_map <- c(AND = "&&", OR = "||")
+
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
     bad_expr <- xml_find_all(xml, xpath)
 
+    op <- xml_name(bad_expr)
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = "Conditional expressions require scalar logical operators (&& and ||)",
+      lint_message = sprintf("Use `%s` in conditional expressions.", scalar_map[op]),
       type = "warning"
     )
   })
