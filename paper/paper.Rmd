@@ -88,7 +88,7 @@ lint(
 
 - **Efficiency**
 
-Sometimes the users might not be aware of a more efficient way offered by R for carrying out a computation. `{lintr}` offers linters to provide suggestions to improve code efficiency.
+Sometimes the users might not be aware of a more efficient way offered by R for carrying out a computation. `{lintr}` offers linters to improve code efficiency by avoiding common inefficient patterns.
 
 ```{r}
 lint(
