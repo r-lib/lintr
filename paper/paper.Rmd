@@ -106,7 +106,7 @@ lint(
 
 - **Readability**
 
-Coders spend significantly more time reading compared to writing code [@mcconnell2004code]. Thus, writing readable code makes the code more maintainable and reduces the possibility of introducing bugs stemming from a poor understanding of the code.
+Coders spend significantly more time reading than writing code [@mcconnell2004code]. Thus, writing readable code makes the code more maintainable and reduces the possibility of introducing bugs stemming from a poor understanding of the code.
 
 `{lintr}` provides a number of linters that suggest more readable alternatives. For example, `function_left_parentheses_linter()`.
 
