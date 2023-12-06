@@ -45,7 +45,7 @@ duplicate_argument_linter <- function(except = c("mutate", "transmute")) {
     )]
       /parent::expr[count(EQ_SUB) > 1]
   ")
-  xpath_arg_name <- "./EQ_SUB/preceding-sibling::*[1]"
+  xpath_arg_name <- "./EQ_SUB/preceding-sibling::*[not(self::COMMENT)][1]"
 
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
