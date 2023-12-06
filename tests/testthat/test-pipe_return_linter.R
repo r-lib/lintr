@@ -41,7 +41,7 @@ test_that("pipe_return_linter blocks simple disallowed usages", {
   ")
   expect_lint(
     lines,
-    rex::rex("Using return() as the final step of a magrittr pipeline"),
+    rex::rex("Avoid return() as the final step of a magrittr pipeline"),
     pipe_return_linter()
   )
 })

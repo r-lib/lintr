@@ -66,7 +66,7 @@ yoda_test_linter <- function() {
     lint_message <- ifelse(
       is.na(second_const),
       paste(
-        "Tests should compare objects in the order 'actual', 'expected', not the reverse.",
+        "Compare objects in tests in the order 'actual', 'expected', not the reverse.",
         sprintf("For example, do %1$s(foo(x), 2L) instead of %1$s(2L, foo(x)).", matched_call)
       ),
       sprintf("Avoid storing placeholder tests like %s(1, 1)", matched_call)

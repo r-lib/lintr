@@ -47,6 +47,6 @@ paren_body_linter <- make_linter_from_xpath(
   ]
     /following-sibling::expr
   ",
-  lint_message = "There should be a space between a right parenthesis and a body expression.",
+  lint_message = "Put a space between a right parenthesis and a body expression.",
   type = "style"
 )

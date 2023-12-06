@@ -25,15 +25,15 @@ test_that("nzchar_linter skips as appropriate for other nchar args", {
   # nzchar also has keepNA argument so a drop-in switch is easy
   expect_lint(
     "nchar(x, keepNA=TRUE) == 0",
-    rex::rex("Instead of comparing nchar(x) to 0"),
+    rex::rex("Use nzchar() instead of comparing nchar(x) to 0"),
     linter
   )
 })
 
 test_that("nzchar_linter blocks simple disallowed usages", {
   linter <- nzchar_linter()
-  lint_msg_quote <- rex::rex('Instead of comparing strings to "", use nzchar()')
-  lint_msg_nchar <- rex::rex("Instead of comparing nchar(x) to 0")
+  lint_msg_quote <- rex::rex('Use nzchar() instead of comparing strings to ""')
+  lint_msg_nchar <- rex::rex("Use nzchar() instead of comparing nchar(x) to 0")
 
   expect_lint("which(x == '')", lint_msg_quote, linter)
   expect_lint("any(nchar(x) >= 0)", lint_msg_nchar, linter)
@@ -43,8 +43,8 @@ test_that("nzchar_linter blocks simple disallowed usages", {
 
 test_that("nzchar_linter skips comparison to '' in if/while statements", {
   linter <- nzchar_linter()
-  lint_msg_quote <- rex::rex('Instead of comparing strings to "", use nzchar()')
-  lint_msg_nchar <- rex::rex("Instead of comparing nchar(x) to 0")
+  lint_msg_quote <- rex::rex('Use nzchar() instead of comparing strings to ""')
+  lint_msg_nchar <- rex::rex("Use nzchar() instead of comparing nchar(x) to 0")
 
   # still lint nchar() comparisons
   expect_lint("if (nchar(x) > 0) TRUE", lint_msg_nchar, linter)
@@ -66,8 +66,8 @@ test_that("multiple lints are generated correctly", {
       nchar(b) != 0
     }"),
     list(
-      list(rex::rex('Instead of comparing strings to ""'), line_number = 2L),
-      list(rex::rex("Instead of comparing nchar(x) to 0"), line_number = 3L)
+      list(rex::rex('Use nzchar() instead of comparing strings to ""'), line_number = 2L),
+      list(rex::rex("Use nzchar() instead of comparing nchar(x) to 0."), line_number = 3L)
     ),
     nzchar_linter()
   )
