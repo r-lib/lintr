@@ -132,6 +132,17 @@ test_that("lints vectorize", {
       foo(1,)
       bar(,2)
     }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    linter
+  )
+  expect_lint(
+    trim_some("{
+      foo(1,)
+      bar(,2)
+    }"),
     list(lint_msg, line_number = 3L),
     linter_trailing
   )
