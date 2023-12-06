@@ -48,7 +48,7 @@ test_that("is_numeric_linter blocks disallowed usages involving ||", {
 
 test_that("is_numeric_linter blocks disallowed usages involving %in%", {
   linter <- is_numeric_linter()
-  lint_msg <- rex::rex('Use is.numeric(x) instead of the equivalent class(x) %in% c("integer", "numeric")')
+  lint_msg <- rex::rex('Use is.numeric(x) instead of class(x) %in% c("integer", "numeric")')
 
   expect_lint("class(x) %in% c('integer', 'numeric')", lint_msg, linter)
   expect_lint('class(x) %in% c("numeric", "integer")', lint_msg, linter)
@@ -58,7 +58,7 @@ test_that("raw strings are handled properly when testing in class", {
   skip_if_not_r_version("4.0.0")
 
   linter <- is_numeric_linter()
-  lint_msg <- rex::rex('Use is.numeric(x) instead of the equivalent class(x) %in% c("integer", "numeric")')
+  lint_msg <- rex::rex('Use is.numeric(x) instead of class(x) %in% c("integer", "numeric")')
 
   expect_lint("class(x) %in% c(R'(numeric)', 'integer', 'factor')", NULL, linter)
   expect_lint("class(x) %in% c('numeric', R'--(integer)--', y)", NULL, linter)

@@ -97,7 +97,7 @@ is_numeric_linter <- function() {
       class_expr,
       source_expression = source_expression,
       lint_message = paste(
-        'Use is.numeric(x) instead of the equivalent class(x) %in% c("integer", "numeric").',
+        'Use is.numeric(x) instead of class(x) %in% c("integer", "numeric").',
         "Use is.double(x) to test for objects stored as 64-bit floating point."
       ),
       type = "warning"
