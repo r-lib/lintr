@@ -129,7 +129,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
     lint_message <- ifelse(
       is_ns_used[is_unused][unused_packages],
       paste0(
-        "Package '", unused_packages, "' is only used by namespace. ",
+        "Don't attach package '", unused_packages, "', which is only used by namespace. ",
         "Check that it is installed using loadNamespace() instead."
       ),
       paste0("Package '", unused_packages, "' is attached but never used.")

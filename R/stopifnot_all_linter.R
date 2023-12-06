@@ -37,7 +37,7 @@ stopifnot_all_linter <- make_linter_from_xpath(
     /expr[expr/SYMBOL_FUNCTION_CALL[text() = 'all']]
   ",
   lint_message = paste(
-    "Calling stopifnot(all(x)) is redundant. stopifnot(x) runs all()",
-    "'under the hood' and provides a better error message in case of failure."
+    "Use stopifnot(x) instead of stopifnot(all(x)).",
+    "stopifnot(x) runs all() 'under the hood' and provides a better error message in case of failure."
   )
 )

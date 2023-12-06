@@ -3,7 +3,7 @@
 #' This linter checks functions' [return()] expressions.
 #'
 #' @param return_style Character string naming the return style. `"implicit"`,
-#'   the default, enforeces the Tidyverse guide recommendation to leave terminal
+#'   the default, enforces the Tidyverse guide recommendation to leave terminal
 #'   returns implicit. `"explicit"` style requires that `return()` always be
 #'   explicitly supplied.
 #' @param allow_implicit_else Logical, default `TRUE`. If `FALSE`, functions with a terminal

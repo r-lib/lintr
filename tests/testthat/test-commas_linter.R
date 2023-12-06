@@ -1,7 +1,7 @@
 test_that("returns the correct linting (with default parameters)", {
   linter <- commas_linter()
-  msg_after <- rex::rex("Commas should always have a space after.")
-  msg_before <- rex::rex("Commas should never have a space before.")
+  msg_after <- rex::rex("Put a space after a comma.")
+  msg_before <- rex::rex("Remove spaces before a comma.")
 
   expect_lint("blah", NULL, linter)
   expect_lint("fun(1, 1)", NULL, linter)
@@ -52,8 +52,8 @@ test_that("returns the correct linting (with default parameters)", {
 
 test_that("returns the correct linting (with 'allow_trailing' set)", {
   linter <- commas_linter(allow_trailing = TRUE)
-  msg_after <- rex::rex("Commas should always have a space after.")
-  msg_before <- rex::rex("Commas should never have a space before.")
+  msg_after <- rex::rex("Put a space after a comma.")
+  msg_before <- rex::rex("Remove spaces before a comma.")
 
   expect_lint("blah", NULL, linter)
   expect_lint("fun(1, 1)", NULL, linter)

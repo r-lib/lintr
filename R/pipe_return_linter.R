@@ -32,8 +32,7 @@ pipe_return_linter <- make_linter_from_xpath(
     /following-sibling::expr[expr/SYMBOL_FUNCTION_CALL[text() = 'return']]
   ",
   lint_message = paste(
-    "Using return() as the final step of a magrittr pipeline",
-    "is an anti-pattern. Instead, assign the output of the pipeline to",
-    "a well-named object and return that."
+    "Avoid return() as the final step of a magrittr pipeline. ",
+    "Instead, assign the output of the pipeline to a well-named object and return that."
   )
 )

@@ -9,7 +9,7 @@ test_that("unreachable_code_linter works in simple function", {
 
 test_that("unreachable_code_linter works in sub expressions", {
   linter <- unreachable_code_linter()
-  msg <- rex::rex("Code and comments coming after a return() or stop()")
+  msg <- rex::rex("Remove code and comments coming after return() or stop()")
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -106,7 +106,7 @@ test_that("unreachable_code_linter works in sub expressions", {
 
 test_that("unreachable_code_linter works with next and break in sub expressions", {
   linter <- unreachable_code_linter()
-  msg <- rex::rex("Code and comments coming after a `next` or `break`")
+  msg <- rex::rex("Remove code and comments coming after `next` or `break`")
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -247,7 +247,7 @@ test_that("unreachable_code_linter identifies simple unreachable code", {
     lines,
     list(
       line_number = 3L,
-      message = rex::rex("Code and comments coming after a return() or stop()")
+      message = rex::rex("Remove code and comments coming after return() or stop()")
     ),
     unreachable_code_linter()
   )
@@ -263,13 +263,13 @@ test_that("unreachable_code_linter finds unreachable comments", {
   ")
   expect_lint(
     lines,
-    rex::rex("Code and comments coming after a return() or stop()"),
+    rex::rex("Remove code and comments coming after return() or stop()"),
     unreachable_code_linter()
   )
 })
 
 test_that("unreachable_code_linter finds expressions in the same line", {
-  msg <- rex::rex("Code and comments coming after a return() or stop()")
+  msg <- rex::rex("Remove code and comments coming after return() or stop()")
   linter <- unreachable_code_linter()
 
   lines <- trim_some("
@@ -297,7 +297,7 @@ test_that("unreachable_code_linter finds expressions in the same line", {
 })
 
 test_that("unreachable_code_linter finds expressions and comments after comment in return line", {
-  msg <- rex::rex("Code and comments coming after a return() or stop()")
+  msg <- rex::rex("Remove code and comments coming after return() or stop()")
   linter <- unreachable_code_linter()
 
   lines <- trim_some("
@@ -326,7 +326,7 @@ test_that("unreachable_code_linter finds a double return", {
   ")
   expect_lint(
     lines,
-    rex::rex("Code and comments coming after a return() or stop()"),
+    rex::rex("Remove code and comments coming after return() or stop()"),
     unreachable_code_linter()
   )
 })
@@ -341,7 +341,7 @@ test_that("unreachable_code_linter finds code after stop()", {
   ")
   expect_lint(
     lines,
-    rex::rex("Code and comments coming after a return() or stop()"),
+    rex::rex("Remove code and comments coming after return() or stop()"),
     unreachable_code_linter()
   )
 })
@@ -412,7 +412,7 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", {
 
 test_that("unreachable_code_linter identifies unreachable code in conditional loops", {
   linter <- unreachable_code_linter()
-  msg <- rex::rex("Code inside a conditional loop with a deterministically false condition should be removed.")
+  msg <- rex::rex("Remove code inside a conditional loop with a deterministically false condition.")
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -493,7 +493,7 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
 
 test_that("unreachable_code_linter identifies unreachable code in conditional loops", {
   linter <- unreachable_code_linter()
-  msg <- rex::rex("Code inside an else block after a deterministically true if condition should be removed.")
+  msg <- rex::rex("Remove code inside an else block after a deterministically true condition.")
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -530,8 +530,8 @@ test_that("unreachable_code_linter identifies unreachable code in conditional lo
 
 test_that("unreachable_code_linter identifies unreachable code in mixed conditional loops", {
   linter <- unreachable_code_linter()
-  false_msg <- rex::rex("Code inside a conditional loop with a deterministically false condition should be removed.")
-  true_msg <- rex::rex("Code inside an else block after a deterministically true if condition should be removed.")
+  false_msg <- rex::rex("Remove code inside a conditional loop with a deterministically false condition.")
+  true_msg <- rex::rex("Remove code inside an else block after a deterministically true condition.")
 
   expect_lint(
     trim_some("
@@ -554,7 +554,7 @@ test_that("unreachable_code_linter identifies unreachable code in mixed conditio
       list(false_msg, line_number = 2L),
       list(false_msg, line_number = 5L),
       list(true_msg, line_number = 10L),
-      list(rex::rex("Code and comments coming after a return() or stop() should be removed."), line_number = 13L)
+      list(rex::rex("Remove code and comments coming after return() or stop()."), line_number = 13L)
     ),
     linter
   )
@@ -564,7 +564,7 @@ test_that("unreachable_code_linter identifies unreachable code in mixed conditio
     list(
       list(false_msg, line_number = 1L, ranges = list(c(1L, 49L))),
       list(
-        rex::rex("Code inside an else block after a deterministically true if condition should be removed."),
+        rex::rex("Remove code inside an else block after a deterministically true condition."),
         line_number = 1L,
         ranges = list(c(45L, 49L))
       )
@@ -585,7 +585,7 @@ test_that("function shorthand is handled", {
     "),
     list(
       line_number = 3L,
-      message = rex::rex("Code and comments coming after a return() or stop()")
+      message = rex::rex("Remove code and comments coming after return() or stop()")
     ),
     unreachable_code_linter()
   )
