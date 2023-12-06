@@ -79,13 +79,14 @@
 </ul></li>
 <li>
 <code><a href="../reference/all_linters.html">all_linters()</a></code> has signature <code>all_linters(..., packages)</code> rather than <code>all_linters(packages, ...)</code> (<a href="https://github.com/r-lib/lintr/issues/2332" class="external-link">#2332</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). This forces <code>packages=</code> to be supplied by name and will break users who rely on supplying <code>packages=</code> positionally, of which we found none searching GitHub.</li>
+<li>Adjusted various lint messages for consistency in readability (<a href="https://github.com/r-lib/lintr/issues/1330" class="external-link">#1330</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). In general, we favor lint messages to be phrased like “Action, reason” to but the “what” piece of the message front-and-center. This may be a breaking change for code that tests the specific phrasing of lints.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/object_name_linter.html">object_name_linter()</a></code> no longer errors when user-supplied <code>regexes=</code> have capture groups (<a href="https://github.com/r-lib/lintr/issues/2188" class="external-link">#2188</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
-<code>.lintr</code> config validation correctly accepts regular exressions which only compile under <code>perl = TRUE</code> (<a href="https://github.com/r-lib/lintr/issues/2375" class="external-link">#2375</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). These have always been valid (since <code><a href="https://rdrr.io/pkg/rex/man/re_matches.html" class="external-link">rex::re_matches()</a></code>, which powers the lint exclusion logic, also uses this setting), but the new up-front validation in v3.1.1 incorrectly used <code>perl = FALSE</code>.</li>
+<code>.lintr</code> config validation correctly accepts regular expressions which only compile under <code>perl = TRUE</code> (<a href="https://github.com/r-lib/lintr/issues/2375" class="external-link">#2375</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). These have always been valid (since <code><a href="https://rdrr.io/pkg/rex/man/re_matches.html" class="external-link">rex::re_matches()</a></code>, which powers the lint exclusion logic, also uses this setting), but the new up-front validation in v3.1.1 incorrectly used <code>perl = FALSE</code>.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="changes-to-default-linters-development-version">Changes to default linters<a class="anchor" aria-label="anchor" href="#changes-to-default-linters-development-version"></a></h3>
