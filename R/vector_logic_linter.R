@@ -81,18 +81,16 @@ vector_logic_linter <- function() {
   ]
   "
 
-  scalar_map <- c(AND = "&&", OR = "||")
-
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
     bad_expr <- xml_find_all(xml, xpath)
 
-    op <- xml_name(bad_expr)
+    op <- xml_text(bad_expr)
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = sprintf("Use `%s` in conditional expressions.", scalar_map[op]),
+      lint_message = sprintf("Use `%s` in conditional expressions.", strrep(op, 2L)),
       type = "warning"
     )
   })
