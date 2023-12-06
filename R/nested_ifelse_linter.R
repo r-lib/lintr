@@ -94,8 +94,8 @@ nested_ifelse_linter <- function() {
 
     matched_call <- xp_call_name(bad_expr)
     lint_message <- paste(
-      sprintf("Avoid nested %s() calls.", matched_call),
-      "Instead, try (1) data.table::fcase(); (2) dplyr::case_when(); or (3) using a lookup table."
+      sprintf("Don't use nested %s() calls;", matched_call),
+      "instead, try (1) data.table::fcase; (2) dplyr::case_when; or (3) using a lookup table."
     )
     xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "warning")
   })
