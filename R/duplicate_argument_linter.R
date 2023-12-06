@@ -43,7 +43,7 @@ duplicate_argument_linter <- function(except = c("mutate", "transmute")) {
     //EQ_SUB[not(
       preceding-sibling::expr/SYMBOL_FUNCTION_CALL[{ xp_text_in_table(except) }]
     )]
-      /parent::expr
+      /parent::expr[count(EQ_SUB) > 1]
   ")
   xpath_arg_name <- "./EQ_SUB/preceding-sibling::*[1]"
 
