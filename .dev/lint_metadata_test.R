@@ -18,7 +18,10 @@ writeLines(
   lint_file
 )
 # Not useful in CI but good when running locally.
-withr::defer(writeLines(original, lint_file))
+withr::defer({
+  writeLines(original, lint_file)
+  pkgload::load_all()
+})
 
 pkgload::load_all()
 
