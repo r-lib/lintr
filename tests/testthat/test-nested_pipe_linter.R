@@ -58,7 +58,7 @@ patrick::with_parameters_test_that(
 test_that("nested_pipe_linter blocks simple disallowed usages", {
   linter <- nested_pipe_linter()
   linter_inline <- nested_pipe_linter(allow_inline = FALSE)
-  lint_msg <- rex::rex("Avoid nesting pipes inside other calls.")
+  lint_msg <- rex::rex("Don't nest pipes inside other calls.")
 
   expect_lint(
     "bind_rows(a %>% select(b), c %>% select(b))",
@@ -110,7 +110,7 @@ test_that("allow_outer_calls= argument works", {
           foo()
       )
     "),
-    rex::rex("Avoid nesting pipes inside other calls."),
+    rex::rex("Don't nest pipes inside other calls."),
     nested_pipe_linter(allow_outer_calls = character())
   )
 
@@ -131,7 +131,7 @@ test_that("Native pipes are handled as well", {
 
   linter <- nested_pipe_linter()
   linter_inline <- nested_pipe_linter(allow_inline = FALSE)
-  lint_msg <- rex::rex("Avoid nesting pipes inside other calls.")
+  lint_msg <- rex::rex("Don't nest pipes inside other calls.")
 
   expect_lint(
     "bind_rows(a |> select(b), c |> select(b))",
@@ -157,7 +157,7 @@ test_that("Native pipes are handled as well", {
 })
 
 test_that("lints vectorize", {
-  lint_msg <- rex::rex("Avoid nesting pipes inside other calls.")
+  lint_msg <- rex::rex("Don't nest pipes inside other calls.")
 
   lines <- trim_some("{
     bind_rows(
