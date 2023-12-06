@@ -174,6 +174,11 @@
 <li>
 <code><a href="../reference/vector_logic_linter.html">vector_logic_linter()</a></code> recognizes some cases where bitwise <code>&amp;</code>/<code>|</code> are used correctly (<a href="https://github.com/r-lib/lintr/issues/1453" class="external-link">#1453</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
+<div class="section level4">
+<h4 id="lint-accuracy-fixes-removing-false-negatives-development-version">Lint accuracy fixes: removing false negatives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-negatives-development-version"></a></h4>
+<ul><li>
+<code><a href="../reference/missing_argument_linter.html">missing_argument_linter()</a></code> catches all missing arguments in calls with several, e.g. <code>foo(,,)</code> gives 3 lints instead of 2 (<a href="https://github.com/r-lib/lintr/issues/2399" class="external-link">#2399</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+</ul></div>
 </div>
 </div>
     <div class="section level2">
