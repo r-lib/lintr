@@ -6,6 +6,9 @@
 #'   the default, enforeces the Tidyverse guide recommendation to leave terminal
 #'   returns implicit. `"explicit"` style requires that `return()` always be
 #'   explicitly supplied.
+#' @param allow_implicit_else Logical, default `TRUE`. If `FALSE`, functions with a terminal
+#'   `if` clause must always have an `else` clause, making the `NULL` alternative explicit
+#'   if necessary.
 #' @param return_functions Character vector of functions that are accepted as terminal calls
 #'   when `return_style = "explicit"`. These are in addition to exit functions
 #'   from base that are always allowed: [stop()], [q()], [quit()], [invokeRestart()],
@@ -32,6 +35,13 @@
 #'   linters = return_linter(return_style = "explicit")
 #' )
 #'
+#' code <- "function(x) {\n  if (x > 0) 2\n}"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = return_linter(allow_implicit_else = FALSE)
+#' )
+#'
 #' # okay
 #' code <- "function(x) {\n  x + 1\n}"
 #' writeLines(code)
@@ -47,6 +57,12 @@
 #'   linters = return_linter(return_style = "explicit")
 #' )
 #'
+#' code <- "function(x) {\n  if (x > 0) 2 else NULL\n}"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = return_linter(allow_implicit_else = FALSE)
+#' )
 #'
 #' @evalRd rd_tags("return_linter")
 #' @seealso
@@ -55,13 +71,19 @@
 #' @export
 return_linter <- function(
     return_style = c("implicit", "explicit"),
+    allow_implicit_else = TRUE,
     return_functions = NULL,
     except = NULL) {
   return_style <- match.arg(return_style)
 
+  if (!allow_implicit_else || return_style == "explicit") {
+    except_xpath <- glue("parent::expr[not(
+      preceding-sibling::expr/SYMBOL[{ xp_text_in_table(union(special_funs, except)) }]
+    )]")
+  }
+
   if (return_style == "implicit") {
     body_xpath <- "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[1]"
-    # nolint next: object_usage. False positive from {codetools} says 'params' isn't used.
     params <- list(
       implicit = TRUE,
       type = "style",
@@ -89,9 +111,7 @@ return_linter <- function(
     return_functions <- union(base_return_functions, return_functions)
 
     body_xpath <- glue("
-    (//FUNCTION | //OP-LAMBDA)[parent::expr[not(
-      preceding-sibling::expr[SYMBOL[{ xp_text_in_table(except) }]]
-    )]]
+    (//FUNCTION | //OP-LAMBDA)[{ except_xpath }]
       /following-sibling::expr[OP-LEFT-BRACE and expr[last()]/@line1 != @line1]
       /expr[last()]
     ")
@@ -106,6 +126,8 @@ return_linter <- function(
     )
   }
 
+  params$allow_implicit_else <- allow_implicit_else
+
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
@@ -113,8 +135,22 @@ return_linter <- function(
     body_expr <- xml_find_all(xml, body_xpath)
 
     params$source_expression <- source_expression
+
+    if (params$implicit && !params$allow_implicit_else) {
+      # can't incorporate this into the body_xpath for implicit return style,
+      #   since we still lint explicit returns for except= functions.
+      allow_implicit_else <- is.na(xml_find_first(body_expr, except_xpath))
+    } else {
+      allow_implicit_else <- rep(params$allow_implicit_else, length(body_expr))
+    }
     # nested_return_lints not "vectorized" due to xml_children()
-    lapply(body_expr, nested_return_lints, params)
+    Map(
+      function(expr, allow_implicit_else) {
+        params$allow_implicit_else <- allow_implicit_else
+        nested_return_lints(expr, params)
+      },
+      body_expr, allow_implicit_else
+    )
   })
 }
 
@@ -142,7 +178,17 @@ nested_return_lints <- function(expr, params) {
     nested_return_lints(child_expr[[tail(expr_idx, 1L)]], params)
   } else if (child_node[1L] == "IF") {
     expr_idx <- which(child_node %in% c("expr", "equal_assign", "expr_or_assign_or_help"))
-    lapply(child_expr[expr_idx[-1L]], nested_return_lints, params)
+    return_lints <- lapply(child_expr[expr_idx[-1L]], nested_return_lints, params)
+    if (params$allow_implicit_else || length(expr_idx) == 3L) {
+      return(return_lints)
+    }
+    implicit_else_lints <- list(xml_nodes_to_lints(
+      expr,
+      source_expression = params$source_expression,
+      lint_message = "All functions with terminal if statements must have a corresponding terminal else clause",
+      type = "warning"
+    ))
+    c(return_lints, implicit_else_lints)
   } else {
     xml_nodes_to_lints(
       xml_find_first(child_expr[[1L]], params$lint_xpath),
