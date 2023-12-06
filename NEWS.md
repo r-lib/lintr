@@ -15,6 +15,10 @@
 * `expect_comparison_linter()` ignores faulty usage like `expect_true(x, y > z)` (#2083, @MichaelChirico). Note that `y > z` is being passed to the `info=` argument, so this is likely a mistake.
 * `consecutive_assertion_linter()` ignores cases where a second asssertion follows assignment with `=` (#2444, @MichaelChirico).
 
+### Lint accuracy fixes: removing false negatives
+
+* `missing_argument_linter()` catches all missing arguments in calls with several, e.g. `foo(,,)` gives 3 lints instead of 2 (#2399, @MichaelChirico).
+
 # lintr 3.1.1
 
 ## Breaking changes
