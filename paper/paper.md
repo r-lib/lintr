@@ -110,6 +110,10 @@ lint(
 #> ^~~~~~~~~~~~~~~~~~~~~~~~~~~
 ```
 
+`anyNA()` in R is more efficient than `any(is.na())` because it stops
+execution once a missing value is found, while `is.na()` evaluates the
+entire vector.
+
 ``` r
 lint(
   text = "anyNA(x)",
@@ -125,23 +129,27 @@ maintainable and reduces the possibility of introducing bugs stemming
 from a poor understanding of the code.
 
 `{lintr}` provides a number of linters that suggest more readable
-alternatives. For example, `function_left_parentheses_linter()`.
+alternatives. For example, `comparison_negation_linter()` blocks usages
+like `!(x == y)` where a direct relational operator is appropriate.
 
 ``` r
 lint(
-  text = "stats::sd (c (x, y, z))",
-  linters = function_left_parentheses_linter()
+  text = "!x == 2",
+  linters = comparison_negation_linter()
 )
-#> <text>:1:10: style: [function_left_parentheses_linter]
-#>     Remove spaces before the left parenthesis in a function
-#>     call.
-#> stats::sd (c (x, y, z))
-#>          ^
-#> <text>:1:13: style: [function_left_parentheses_linter]
-#>     Remove spaces before the left parenthesis in a function
-#>     call.
-#> stats::sd (c (x, y, z))
-#>             ^
+#> <text>:1:1: warning: [comparison_negation_linter] Use x !=
+#>     y, not !(x == y).
+#> !x == 2
+#> ^~~~~~~
+```
+
+The more readable alternative here uses `!=`:
+
+``` r
+lint(
+  text = "x != 2",
+  linters = comparison_negation_linter()
+)
 ```
 
 -   **Tidyverse style**
@@ -184,7 +192,12 @@ larger projects or teams, where multiple contributors may be working on
 the same codebase and it is important to ensure that code is easy to
 follow and understand.
 
-`{lintr}` can be a useful tool for teaching and learning R. By providing
+`{lintr}` is designed for extensibility by allowing users to easily
+create custom linting rules, enabling flexible and tailored code
+analysis to suit specific coding conventions, style guides, and project
+requirements.
+
+It can also be a useful tool for teaching and learning R. By providing
 feedback on code style and potential issues, it can help users learn
 good coding practices and improve their skills over time. This can be
 especially useful for beginners, who may not yet be familiar with all of
