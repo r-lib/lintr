@@ -86,10 +86,11 @@ vector_logic_linter <- function() {
     if (is.null(xml)) return(list())
     bad_expr <- xml_find_all(xml, xpath)
 
+    op <- xml_text(bad_expr)
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = "Use scalar logical operators (&& and ||) in conditional expressions.",
+      lint_message = sprintf("Use `%s` in conditional expressions.", strrep(op, 2L)),
       type = "warning"
     )
   })
