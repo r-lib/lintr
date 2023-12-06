@@ -57,7 +57,6 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
 
     missing_args <- xml_find_all(xml, xpath)
 
-
     arg_idx <- as.integer(xml_find_num(missing_args, "count(preceding-sibling::OP-COMMA)") + 1)
 
     xml_nodes_to_lints(
