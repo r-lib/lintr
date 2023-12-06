@@ -37,7 +37,9 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
     "self::EQ_SUB[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN or self::OP-COMMA]]"
   )
   if (!allow_trailing) {
-    conds <- c(conds, "self::OP-RIGHT-PAREN[preceding-sibling::*[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-COMMA]]")
+    conds <- c(conds,
+      "self::OP-RIGHT-PAREN[preceding-sibling::*[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-COMMA]]"
+    )
   }
 
   # require >3 children to exclude foo(), which is <expr><OP-LEFT-PAREN><OP-RIGHT-PAREN>
