@@ -37,7 +37,14 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 duplicate_argument_linter <- function(except = c("mutate", "transmute")) {
-  xpath_call_with_args <- "//EQ_SUB/parent::expr"
+  # NB: approach checking for duplicates in XPath is hard because of
+  #   quoted names, e.g. foo(a = 1, `a` = 2), so compute duplicates in R
+  xpath_call_with_args <- glue("
+    //EQ_SUB[not(
+      preceding-sibling::expr/SYMBOL_FUNCTION_CALL[{ xp_text_in_table(except) }]
+    )]
+      /parent::expr
+  ")
   xpath_arg_name <- "./EQ_SUB/preceding-sibling::*[1]"
 
   Linter(linter_level = "file", function(source_expression) {
@@ -45,11 +52,6 @@ duplicate_argument_linter <- function(except = c("mutate", "transmute")) {
     if (is.null(xml)) return(list())
 
     calls <- xml_find_all(xml, xpath_call_with_args)
-
-    if (length(except) > 0L) {
-      calls_text <- get_r_string(xp_call_name(calls))
-      calls <- calls[!(calls_text %in% except)]
-    }
 
     all_arg_nodes <- lapply(calls, xml_find_all, xpath_arg_name)
     arg_names <- lapply(all_arg_nodes, get_r_string)
