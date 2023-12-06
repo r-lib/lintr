@@ -157,7 +157,7 @@ build_ns_get_int_lints <- function(packages, symbols, symbol_nodes, namespaces, 
     symbol_nodes[exported],
     source_expression = source_expression,
     lint_message =
-      sprintf("Use %2$s::%1$s, not %2$s:::%1$s.", symbols[exported], packages[exported]),
+      sprintf("Don't use `:::` to access %s, which is exported from %s.", symbols[exported], packages[exported]),
     type = "warning"
   )
 

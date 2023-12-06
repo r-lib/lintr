@@ -52,7 +52,7 @@ test_that("namespace_linter blocks disallowed usages", {
 
   expect_lint(
     "stats:::sd(c(1,2,3))",
-    rex::rex("Use stats::sd, not stats:::sd"),
+    rex::rex("Don't use `:::` to access sd, which is exported from stats."),
     linter
   )
 
