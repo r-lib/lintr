@@ -145,6 +145,17 @@ test_that("lints vectorize", {
       foo(1,)
       bar(,2)
     }"),
+    list(
+      list("Missing argument 2", line_number = 2L),
+      list("Missing argument 1", line_number = 3L)
+    ),
+    linter
+  )
+  expect_lint(
+    trim_some("{
+      foo(1,)
+      bar(,2)
+    }"),
     list("Missing argument 1", line_number = 3L),
     linter_trailing
   )
