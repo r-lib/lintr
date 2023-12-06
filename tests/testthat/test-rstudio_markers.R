@@ -105,7 +105,7 @@ test_that("rstudio_source_markers apply to print within rstudio", {
 
   skip_if_not_installed("rstudioapi")
   local_mocked_bindings(
-    hasFun = function(x, ...) TRUE,
+    hasFun = function(...) TRUE,
     .package = "rstudioapi"
   )
   local_mocked_bindings(rstudio_source_markers = function(x) cat("matched\n"))
