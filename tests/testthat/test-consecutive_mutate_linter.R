@@ -152,3 +152,21 @@ test_that("native pipe is linted", {
   # Ditto mixed pipes
   expect_lint("DF %>% mutate(a = 1) |> mutate(b = 2)", lint_msg, linter)
 })
+
+test_that("lints vectorize", {
+  lint_msg <- rex::rex("Unify consecutive calls to mutate().")
+
+  expect_lint(
+    trim_some("
+      DF %>%
+        mutate(a = 1) %>%
+        mutate(b = 2) %>%
+        mutate(c = 3)
+    "),
+    list(
+      list(lint_msg, line_number = 3L),
+      list(lint_msg, line_number = 4L)
+    ),
+    consecutive_mutate_linter()
+  )
+})
