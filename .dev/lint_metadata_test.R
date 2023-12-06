@@ -1,40 +1,24 @@
 # This script is designed to find linters that lack metadata tests.
-#   To do so, it forces xml_nodes_to_lints() to give the wrong information,
+#   To do so, it forces Lint() to give the wrong information,
 #   runs the test suite, and finds linters that nevertheless pass all their tests.
 library(testthat)
 
-line_replacements <- c(
-  `R/xml_nodes_to_lints.R` = "as.integer(line1)",
-  `R/path_utils.R` = 'token[["line1"]]'
-)
-# paste() strips names so be sure to keep them
-line_replacements[] <- paste("line_number =", line_replacements)
+lint_file <- "R/lint.R"
 
-originals <- lapply(names(line_replacements), readLines)
-
-# If the code is refactored, this script may need to be updated.
-has_expected <- mapply(
-  function(lines, pattern) any(grepl(pattern, lines, fixed = TRUE)),
-  originals, line_replacements
-)
-if (!all(has_expected)) {
-  stop(
-    "Please update this workflow -- expected to find these strings in these files:\n",
-    paste0(names(line_replacements)[!has_expected], ": ", line_replacements[!has_expected], collapse = "\n")
-  )
+original <- readLines(lint_file)
+expected_line <- "line_number = as.integer(line_number)"
+if (!any(grepl(expected_line, original, fixed = TRUE))) {
+  stop(sprintf(
+    "Please update this workflow -- didn't find expected line '%s' in file '%s'.",
+    expected_line, lint_file
+  ))
 }
-
-for (ii in seq_along(line_replacements)) {
-  writeLines(
-    sub(line_replacements[ii], "line_number = as.integer(2^31 - 1)", originals[[ii]], fixed = TRUE),
-    names(line_replacements[ii])
-  )
-}
-
+writeLines(
+  sub(expected_line, "line_number = as.integer(2^31 - 1)", original, fixed = TRUE),
+  lint_file
+)
 # Not useful in CI but good when running locally.
-withr::defer({
-  for (ii in seq_along(line_replacements)) writeLines(originals[[ii]], names(line_replacements[ii]))
-})
+withr::defer(writeLines(original, lint_file))
 
 pkgload::load_all()
 
