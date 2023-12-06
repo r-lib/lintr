@@ -31,7 +31,7 @@
 #' @evalRd rd_tags("missing_argument_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-missing_argument_linter <- function(except = c("alist", "quote", "switch"), allow_trailing = FALSE) {
+missing_argument_linter <- function(except = c("alist", "quote", "switch", "extract"), allow_trailing = FALSE) {
   conds <- c(
     "self::OP-COMMA[preceding-sibling::*[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-COMMA]]",
     "self::EQ_SUB[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN or self::OP-COMMA]]"
@@ -40,7 +40,12 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
     conds <- c(conds, "self::OP-COMMA[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN]]")
   }
 
-  xpath <- glue("//SYMBOL_FUNCTION_CALL/parent::expr/parent::expr/*[{xp_or(conds)}]")
+  xpath <- glue("
+    //SYMBOL_FUNCTION_CALL[not({ xp_text_in_table(except) })]
+      /parent::expr
+      /parent::expr
+      /*[{xp_or(conds)}]
+  ")
   to_function_xpath <- "string(./preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)"
 
   Linter(linter_level = "file", function(source_expression) {
@@ -48,12 +53,14 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
     if (is.null(xml)) return(list())
 
     missing_args <- xml_find_all(xml, xpath)
-    function_call_name <- get_r_string(xml_find_chr(missing_args, to_function_xpath))
+
+
+    arg_idx <- as.integer(xml_find_num(missing_args, "count(preceding-sibling::OP-COMMA)") + 1)
 
     xml_nodes_to_lints(
-      missing_args[!function_call_name %in% except],
+      missing_args,
       source_expression = source_expression,
-      lint_message = "Missing argument in function call."
+      lint_message = sprintf("Missing argument %d in function call.", arg_idx),
     )
   })
 }
