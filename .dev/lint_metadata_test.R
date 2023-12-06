@@ -1,17 +1,24 @@
 # This script is designed to find linters that lack metadata tests.
-#   To do so, it forces xml_nodes_to_lints() to give the wrong information,
+#   To do so, it forces Lint() to give the wrong information,
 #   runs the test suite, and finds linters that nevertheless pass all their tests.
 library(testthat)
 
-xml_nodes_to_lints_file <- "R/xml_nodes_to_lints.R"
+lint_file <- "R/lint.R"
 
-xml_nodes_to_lints_file |>
-  readLines() |>
-  sub(
-    pattern = "line_number = as.integer(line1)",
-    replacement = "line_number = as.integer(2^31 - 1)"
-  ) |>
-  writeLines(xml_nodes_to_lints_file)
+original <- readLines(lint_file)
+expected_line <- "line_number = as.integer(line_number)"
+if (!any(grepl(expected_line, original, fixed = TRUE))) {
+  stop(sprintf(
+    "Please update this workflow -- didn't find expected line '%s' in file '%s'.",
+    expected_line, lint_file
+  ))
+}
+writeLines(
+  sub(expected_line, "line_number = as.integer(2^31 - 1)", original, fixed = TRUE),
+  lint_file
+)
+# Not useful in CI but good when running locally.
+withr::defer(writeLines(original, lint_file))
 
 pkgload::load_all()
 
@@ -21,7 +28,7 @@ report <- test_dir(
   stop_on_failure = FALSE,
   reporter = SilentReporter$new()
 )
-names(report) <- vapply(report, `[[`, "file", FUN.VALUE = character(1L))
+names(report) <- gsub("^test-|\\.R$", "", vapply(report, `[[`, "file", FUN.VALUE = character(1L)))
 
 # Hack the nested structure of the testthat report to identify which files have
 #   any failed test
@@ -32,8 +39,7 @@ failed <- report |>
   ) |>
   which() |>
   names() |>
-  unique() |>
-  gsub(pattern = "^test-|\\.R$", replacement = "")
+  unique()
 
 passed <- setdiff(
   available_linters(tags = NULL)$linter,

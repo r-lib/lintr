@@ -22,6 +22,7 @@ jobs:
           use-public-rspm: true
 
       - uses: r-lib/actions/setup-r-dependencies@v2
+
       - name: Ensure lint metadata is tested
         run: |
           options(crayon.enabled = TRUE)
