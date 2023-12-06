@@ -31,7 +31,7 @@
 #' @evalRd rd_tags("missing_argument_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-missing_argument_linter <- function(except = c("alist", "quote", "switch", "extract"), allow_trailing = FALSE) {
+missing_argument_linter <- function(except = c("alist", "quote", "switch"), allow_trailing = FALSE) {
   conds <- c(
     "self::OP-COMMA[preceding-sibling::*[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-COMMA]]",
     "self::EQ_SUB[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN or self::OP-COMMA]]"
