@@ -6,15 +6,20 @@
 \usage{
 return_linter(
   return_style = c("implicit", "explicit"),
+  allow_implicit_else = TRUE,
   return_functions = NULL,
   except = NULL
 )
 }
 \arguments{
 \item{return_style}{Character string naming the return style. \code{"implicit"},
-the default, enforeces the Tidyverse guide recommendation to leave terminal
+the default, enforces the Tidyverse guide recommendation to leave terminal
 returns implicit. \code{"explicit"} style requires that \code{return()} always be
 explicitly supplied.}
+
+\item{allow_implicit_else}{Logical, default \code{TRUE}. If \code{FALSE}, functions with a terminal
+\code{if} clause must always have an \verb{else} clause, making the \code{NULL} alternative explicit
+if necessary.}
 
 \item{return_functions}{Character vector of functions that are accepted as terminal calls
 when \code{return_style = "explicit"}. These are in addition to exit functions
@@ -46,6 +51,13 @@ lint(
   linters = return_linter(return_style = "explicit")
 )
 
+code <- "function(x) {\n  if (x > 0) 2\n}"
+writeLines(code)
+lint(
+  text = code,
+  linters = return_linter(allow_implicit_else = FALSE)
+)
+
 # okay
 code <- "function(x) {\n  x + 1\n}"
 writeLines(code)
@@ -61,6 +73,12 @@ lint(
   linters = return_linter(return_style = "explicit")
 )
 
+code <- "function(x) {\n  if (x > 0) 2 else NULL\n}"
+writeLines(code)
+lint(
+  text = code,
+  linters = return_linter(allow_implicit_else = FALSE)
+)
 
 }
 \seealso{

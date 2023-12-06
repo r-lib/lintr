@@ -11,15 +11,16 @@
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
    + Helper `with_defaults()`.
 * `all_linters()` has signature `all_linters(..., packages)` rather than `all_linters(packages, ...)` (#2332, @MichaelChirico). This forces `packages=` to be supplied by name and will break users who rely on supplying `packages=` positionally, of which we found none searching GitHub.
+* Adjusted various lint messages for consistency in readability (#1330, @MichaelChirico). In general, we favor lint messages to be phrased like "Action, reason" to but the "what" piece of the message front-and-center. This may be a breaking change for code that tests the specific phrasing of lints.
 
 ## Bug fixes
 
 * `object_name_linter()` no longer errors when user-supplied `regexes=` have capture groups (#2188, @MichaelChirico).
-* `.lintr` config validation correctly accepts regular exressions which only compile under `perl = TRUE` (#2375, @MichaelChirico). These have always been valid (since `rex::re_matches()`, which powers the lint exclusion logic, also uses this setting), but the new up-front validation in v3.1.1 incorrectly used `perl = FALSE`.
+* `.lintr` config validation correctly accepts regular expressions which only compile under `perl = TRUE` (#2375, @MichaelChirico). These have always been valid (since `rex::re_matches()`, which powers the lint exclusion logic, also uses this setting), but the new up-front validation in v3.1.1 incorrectly used `perl = FALSE`.
 
 ## Changes to default linters
 
-* New default linter `return_linter()` for the style guide rule that terminal returns should be left implicit (#1100, @MEO265).
+* New default linter `return_linter()` for the style guide rule that terminal returns should be left implicit (#1100, #2354, and #2356, @MEO265 and @MichaelChirico).
 
 ## New and improved features
 
@@ -27,7 +28,11 @@
 * `library_call_linter()` is extended
   + to encourage all packages to be attached with `library(symbol)`, not `library("symbol", character.only = TRUE)` or "vectorized" approaches looping over package names (part of #884, @MichaelChirico).
   + to discourage many consecutive calls to `suppressMessages()` or `suppressPackageStartupMessages()` (part of #884, @MichaelChirico).
-* `return_linter()` also has an argument `return_style` (`"implicit"` by default) which checks that all functions confirm to the specified return style of `"implicit"` or `"explicit"` (part of #884, @MichaelChirico, @AshesITR and @MEO265).
+* `return_linter()` also has arguments for fine-tuning which functions get linted:
+  + `return_style` (`"implicit"` by default) which checks that all functions confirm to the specified return style of `"implicit"` or `"explicit"` (#2271 and part of #884, @MichaelChirico, @AshesITR and @MEO265).
+  + `allow_implicit_else` (default `TRUE`) which, when `FALSE`, checks that all terminal `if` statements are paired with a corresponding `else` statement (part of #884, @MichaelChirico).
+  + `return_functions` to customize which functions are equivalent to `return()` as "exit" clauses, e.g. `rlang::abort()` can be considered in addition to the default functions like `stop()` and `q()` from base (#2271 and part of #884, @MichaelChirico and @MEO265).
+  + `except` to customize which functions are ignored entirely (i.e., whether they have a return of the specified style is not checked; #2271 and part of #884, @MichaelChirico and @MEO265). Namespace hooks like `.onAttach()` and `.onLoad()` are always ignored.
 * `unnecessary_lambda_linter` is extended to encourage vectorized comparisons where possible, e.g. `sapply(x, sum) > 0` instead of `sapply(x, function(x) sum(x) > 0)` (part of #884, @MichaelChirico). Toggle this behavior with argument `allow_comparison`.
 * `backport_linter()` is slightly faster by moving expensive computations outside the linting function (#2339, #2348, @AshesITR and @MichaelChirico).
 * `Linter()` has a new argument `linter_level` (default `NA`). This is used by `lint()` to more efficiently check for expression levels than the idiom `if (!is_lint_level(...)) { return(list()) }` (#2351, @AshesITR).

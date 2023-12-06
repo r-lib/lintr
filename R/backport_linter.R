@@ -58,10 +58,7 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
     needs_backport <- !is.na(bad_versions)
 
     lint_message <- sprintf(
-      paste(
-        "%s (R %s) is not available for dependency R >= %s.",
-        "Use the `except` argument of `backport_linter()` to configure available backports."
-      ),
+      "%s (R %s) is not available for dependency R >= %s.",
       all_names[needs_backport],
       bad_versions[needs_backport],
       r_version

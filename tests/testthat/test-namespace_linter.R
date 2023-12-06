@@ -40,31 +40,31 @@ test_that("namespace_linter blocks disallowed usages", {
 
   expect_lint(
     "statts::sd(c(1,2,3))",
-    list(message = rex::rex("Package 'statts' is not installed.")),
+    rex::rex("Package 'statts' is not installed."),
     linter
   )
 
   expect_lint(
     "stats::ssd(c(1,2,3))",
-    list(message = rex::rex("'ssd' is not exported from {stats}")),
+    rex::rex("'ssd' is not exported from {stats}"),
     linter
   )
 
   expect_lint(
     "stats:::sd(c(1,2,3))",
-    list(message = rex::rex("'sd' is exported from {stats}. Use stats::sd instead.")),
+    rex::rex("Don't use `:::` to access sd, which is exported from stats."),
     linter
   )
 
   expect_lint(
     "statts:::sd(c(1,2,3))",
-    list(message = rex::rex("Package 'statts' is not installed.")),
+    rex::rex("Package 'statts' is not installed."),
     linter
   )
 
   expect_lint(
     "stats:::sdd(c(1,2,3))",
-    list(message = rex::rex("'sdd' does not exist in {stats}")),
+    rex::rex("'sdd' does not exist in {stats}"),
     linter
   )
 

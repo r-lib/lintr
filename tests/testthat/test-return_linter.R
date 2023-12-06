@@ -1251,3 +1251,273 @@ test_that("empty terminal '{' expression is handled correctly", {
   expect_lint(weird, list(implicit_msg, line_number = 5L), implicit_linter)
   expect_lint(weird, list(explicit_msg, line_number = 3L), explicit_linter)
 })
+
+test_that("non-if returns are skipped under allow_implicit_else = FALSE", {
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        bar
+      }
+    "),
+    NULL,
+    return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("if/else don't throw a lint under allow_implicit_else = FALSE", {
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        if (TRUE) {
+          bar
+        } else {
+          NULL
+        }
+      }
+    "),
+    NULL,
+    return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("implicit else outside a function doesn't lint under allow_implicit_else = FALSE", {
+  expect_lint("if(TRUE) TRUE", NULL, return_linter(allow_implicit_else = FALSE))
+})
+
+test_that("allow_implicit_else = FALSE identifies a simple implicit else", {
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        if (TRUE) {
+          bar
+        }
+      }
+    "),
+    rex::rex("All functions with terminal if statements must have a corresponding terminal else clause"),
+    return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("allow_implicit_else = FALSE finds implicit else with nested if+else", {
+  lint_msg <- rex::rex("All functions with terminal if statements must have a corresponding terminal else clause")
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        if (TRUE) {
+          if (TRUE) {
+            FALSE
+          } else {
+            TRUE
+          }
+        }
+      }
+    "),
+    lint_msg,
+    return_linter(allow_implicit_else = FALSE)
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        if (TRUE) {
+          if (TRUE) {
+            return(FALSE)
+          } else {
+            return(TRUE)
+          }
+        }
+      }
+    "),
+    lint_msg,
+    return_linter(return_style = "explicit", allow_implicit_else = FALSE)
+  )
+})
+
+test_that("allow_implicit_else = FALSE works on anonymous/inline functions", {
+  expect_lint(
+    "lapply(rnorm(10), function(x) if (TRUE) x + 1)",
+    rex::rex("All functions with terminal if statements must"),
+    return_linter(allow_implicit_else = FALSE)
+  )
+})
+
+test_that("side-effect functions like .onLoad ignore the lack of explicit else under allow_implicit_else = FALSE", {
+  expect_lint(
+    trim_some("
+      .onAttach <- function(libname, pkgname) {
+        if (TRUE) foo()
+      }
+    "),
+    NULL,
+    return_linter(allow_implicit_else = FALSE)
+  )
+
+  expect_lint(
+    trim_some("
+      .onAttach <- function(libname, pkgname) {
+        if (TRUE) return(foo())
+      }
+    "),
+    NULL,
+    return_linter(return_style = "explicit", allow_implicit_else = FALSE)
+  )
+})
+
+test_that("implicit else lint has the correct metadata", {
+  linter <- return_linter(return_style = "explicit", allow_implicit_else = FALSE)
+  lint_msg <- "All functions with terminal if statements"
+
+  expect_lint(
+    trim_some("
+      foo <- function(x, y = 3) {
+        if (x) {
+          return(x)
+        }
+      }
+    "),
+    list(lint_msg, line_number = 2L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("{
+      foo <- function(x, y = 3) {
+        if (x) {
+          return(x)
+        }
+      }
+
+      bar <- function(x, y = 3) {
+        if (x) {
+          return(x)
+        }
+      }
+
+      baz <- function(x, y = 3) {
+        if (x) return(x)
+      }
+    }"),
+    list(
+      list(lint_msg, line_number = 3L),
+      list(lint_msg, line_number = 9L),
+      list(lint_msg, line_number = 15L)
+    ),
+    linter
+  )
+})
+
+test_that("Correct lints thrown when lacking explicit return and explicit else", {
+  linter <- return_linter(return_style = "explicit", allow_implicit_else = FALSE)
+  explicit_return_msg <- rex::rex("All functions must have an explicit return().")
+  implicit_else_msg <- rex::rex("All functions with terminal if statements")
+
+  expect_lint(
+    trim_some("
+      foo <- function(x, y = 3) {
+        if (x) {
+          x
+        }
+      }
+    "),
+    list(
+      list(implicit_else_msg, line_number = 2L),
+      list(explicit_return_msg, line_number = 3L)
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(x, y) {
+        if (x) {
+          1
+        } else if (y) {
+          2
+        }
+      }
+    "),
+    list(
+      list(explicit_return_msg, line_number = 3L),
+      list(implicit_else_msg, line_number = 4L),
+      list(explicit_return_msg, line_number = 5L)
+    ),
+    linter
+  )
+})
+
+test_that("Mixing exempted functions doesn't miss lints", {
+  # in the current implementation, a local copy of 'params' is
+  #   edited in a loop; this test ensures that behavior continues to be correct
+  expect_lint(
+    trim_some("{
+      foo <- function() {
+        1
+      }
+
+      bar <- function() {
+        if (TRUE) {
+          return(2)
+        }
+      }
+
+      baz <- function() {
+        if (TRUE) {
+          3
+        }
+      }
+    }"),
+    list(
+      list("Use implicit return behavior", line_number = 8L),
+      list("All functions with terminal if statements", line_number = 13L)
+    ),
+    return_linter(allow_implicit_else = FALSE, except = "bar")
+  )
+})
+
+test_that("= assignments are handled correctly", {
+  implicit_linter <- return_linter(allow_implicit_else = FALSE)
+  implicit_msg <- rex::rex("All functions with terminal if statements")
+  explicit_linter <- return_linter(return_style = "explicit")
+  explicit_msg <- rex::rex("All functions must have an explicit return().")
+
+  expect_lint(
+    trim_some("
+      .onLoad = function() {
+        1
+      }
+    "),
+    NULL,
+    explicit_linter
+  )
+
+  expect_lint(
+    trim_some("
+      .onLoad = function() {
+        if (TRUE) 1
+      }
+    "),
+    NULL,
+    implicit_linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo = function() {
+        1
+      }
+    "),
+    explicit_msg,
+    explicit_linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo = function() {
+        if (TRUE) 1
+      }
+    "),
+    implicit_msg,
+    implicit_linter
+  )
+})
