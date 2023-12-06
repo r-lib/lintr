@@ -55,7 +55,7 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
     ignore <- trimws(readLines(ignore_path, warn = FALSE))
     ignore <- ignore[nzchar(ignore)]
     if (!any(vapply(ignore, function(x) grepl(rel_path, pattern = x, perl = TRUE, ignore.case = TRUE), logical(1L)))) {
-      cat(file = ignore_path, paste0("^", rel_path, "$"), "\n", append = TRUE)
+      cat(file = ignore_path, rex::rex(start, rel_path, end), sep = "\n", append = TRUE)
     }
   }
 
