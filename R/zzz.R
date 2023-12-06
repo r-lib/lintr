@@ -169,7 +169,7 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
 
 rd_auto_link <- function(x) {
   x <- unlist(x)
-  x <- gsub("withr::([a-zA-Z0-9._]+)\\(\\)", "\\\\code{\\\\link[withr:\\1]{withr::\\1()}}", x)
+  x <- gsub("([a-zA-Z0-9.]+)::([a-zA-Z0-9._]+)\\(\\)", "\\\\code{\\\\link[\\1:\\2]{\\1::\\2()}}", x)
   x <- gsub("([^:a-zA-Z0-9._])([a-zA-Z0-9._]+)\\(\\)", "\\1\\\\code{\\\\link[=\\2]{\\2()}}", x)
   x <- gsub("`([^`]+)`", "\\\\code{\\1}", x)
   x
