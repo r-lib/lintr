@@ -23,7 +23,7 @@ affiliations:
   - index: 3
     name: Mathematisches Institut der Heinrich-Heine-Universität Düsseldorf
   - index: 4
-    name: Center for Humans and Machines, Max Planck Institute for Human Development, Berlin, Germany
+    name: Preisenergie GmbH, Munich, Germany
 output: 
     md_document:
       variant: "markdown"
@@ -158,21 +158,77 @@ lint(
 `{tidyverse}` [@Wickham2019] ecosystem of R packages. This style of
 coding has been outlined in the tidyverse style guide [@Wickham2023].
 
+For example, the style guide recommends using snake_case for
+identifiers:
+
 ``` r
 lint(
-  text = "1:3 %>% mean %>% as.character",
-  linters = pipe_call_linter()
+  text = "MyVar <- 1L",
+  linters = object_name_linter()
 )
-#> <text>:1:9: warning: [pipe_call_linter] Use explicit calls
-#>     in magrittr pipes, i.e., `a %>% foo` should be `a %>%
-#>     foo()`.
-#> 1:3 %>% mean %>% as.character
-#>         ^~~~
-#> <text>:1:18: warning: [pipe_call_linter] Use explicit calls
-#>     in magrittr pipes, i.e., `a %>% foo` should be `a %>%
-#>     foo()`.
-#> 1:3 %>% mean %>% as.character
-#>                  ^~~~~~~~~~~~
+#> <text>:1:1: style: [object_name_linter] Variable and
+#>     function name style should match snake_case or symbols.
+#> MyVar <- 1L
+#> ^~~~~
+```
+
+But, as with other linters in this category, the linter can be
+customized for any other style guide:
+
+``` r
+lint(
+  text = "my.var <- 1L",
+  linters = object_name_linter(styles = "dotted.case")
+)
+```
+
+-   **Common mistakes**
+
+One category of linters help you detect some common mistakes statically
+and provide early feedback.
+
+For example, duplicate arguments in function calls can sometimes cause
+errors:
+
+``` r
+mean(x = 1:5, x = 2:3)
+#> Error in mean(x = 1:5, x = 2:3): formal argument "x" matched by multiple actual arguments
+```
+
+But `duplicate_argument_linter()` can check for this statically:
+
+``` r
+lint(
+  text = "mean(x = 1:5, x = 2:3)",
+  linters = duplicate_argument_linter()
+)
+#> <text>:1:15: warning: [duplicate_argument_linter] Duplicate
+#>     arguments in function call.
+#> mean(x = 1:5, x = 2:3)
+#>               ^
+```
+
+Even for cases where there will not be a run-time error, this linter
+explicitly discourages duplicate arguments.
+
+``` r
+lint(
+  text = "list(x = TRUE, x = FALSE)",
+  linters = duplicate_argument_linter()
+)
+#> <text>:1:16: warning: [duplicate_argument_linter] Duplicate
+#>     arguments in function call.
+#> list(x = TRUE, x = FALSE)
+#>                ^
+```
+
+This is because duplicate-named objects can be hard to work with
+programmatically and should typically be avoided.
+
+``` r
+l <- list(x = TRUE, x = FALSE)
+l[["x"]]
+#> [1] TRUE
 ```
 
 # Benefits of using `{lintr}`
@@ -226,6 +282,11 @@ enhancements.
 # Conflicts of interest
 
 The authors declare no conflict of interest.
+
+# Funding
+
+This work was not financially supported by any of the affiliated
+institutions of the authors.
 
 # Acknowledgments
 
