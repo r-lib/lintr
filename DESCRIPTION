@@ -39,12 +39,11 @@ Suggests:
     cli,
     httr (>= 1.2.1),
     jsonlite,
-    mockery,
     patrick,
     rlang,
     rmarkdown,
     rstudioapi (>= 0.2),
-    testthat (>= 3.1.5),
+    testthat (>= 3.2.1),
     tibble,
     tufte,
     withr (>= 2.5.0)
