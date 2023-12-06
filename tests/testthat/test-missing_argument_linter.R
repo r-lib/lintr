@@ -21,6 +21,7 @@ test_that("missing_argument_linter blocks disallowed usages", {
   lint_msg1 <- rex::rex("Missing argument 1 in function call.")
   lint_msg2 <- rex::rex("Missing argument 2 in function call.")
   lint_msg3 <- rex::rex("Missing argument 3 in function call.")
+  lint_msga <- rex::rex("Missing argument 'a' in function call.")
 
   expect_lint("fun(, a = 1)", lint_msg1, linter)
   expect_lint(
@@ -29,9 +30,9 @@ test_that("missing_argument_linter blocks disallowed usages", {
     linter
   )
   expect_lint("fun(a = 1,, b = 2)", lint_msg2, linter)
-  expect_lint("fun(a = 1, b =)", lint_msg2, linter)
+  expect_lint("fun(b = 1, a =)", lint_msga, linter)
   expect_lint("fun(a = 1,)", lint_msg2, linter)
-  expect_lint("fun(a = )", lint_msg1, linter)
+  expect_lint("fun(a = )", lint_msga, linter)
 
   expect_lint(
     trim_some("
@@ -44,8 +45,8 @@ test_that("missing_argument_linter blocks disallowed usages", {
     linter
   )
 
-  expect_lint("stats::median(1:10, na.rm =)", lint_msg2, linter)
-  expect_lint("env$get(1:10, default =)", lint_msg2, linter)
+  expect_lint("stats::median(1:10, a =)", lint_msga, linter)
+  expect_lint("env$get(1:10, a =)", lint_msga, linter)
 
   # Fixes https://github.com/r-lib/lintr/issues/906
   # Comments should be ignored so that missing arguments could be
@@ -82,14 +83,14 @@ test_that("missing_argument_linter blocks disallowed usages", {
         1
       )
     "),
-    lint_msg1,
+    lint_msga,
     linter
   )
 })
 
 test_that("except list can be empty", {
   linter <- missing_argument_linter(character())
-  lint_msg <- rex::rex("Missing argument 1 in function call.")
+  lint_msg <- rex::rex("Missing argument 'a' in function call.")
 
   expect_lint("switch(a =, b = 1, 0)", lint_msg, linter)
   expect_lint("alist(a =)", lint_msg, linter)
@@ -112,7 +113,7 @@ test_that("allow_trailing can allow trailing empty args also for non-excepted fu
   # ... but not if the final argument is named
   expect_lint(
     "fun(a = 1, b = )",
-    rex::rex("Missing argument 2 in function call."),
+    rex::rex("Missing argument 'b' in function call."),
     linter
   )
 })
@@ -136,6 +137,24 @@ test_that("lints vectorize", {
     list(
       list("Missing argument 1", column_number = 5L),
       list("Missing argument 2", column_number = 6L)
+    ),
+    linter_trailing
+  )
+
+  expect_lint(
+    "foo(a =,,)",
+    list(
+      list("Missing argument 'a'", column_number = 7L),
+      list("Missing argument 2", column_number = 9L),
+      list("Missing argument 3", column_number = 10L)
+    ),
+    linter
+  )
+  expect_lint(
+    "foo(a =,,)",
+    list(
+      list("Missing argument 'a'", column_number = 7L),
+      list("Missing argument 2", column_number = 9L)
     ),
     linter_trailing
   )

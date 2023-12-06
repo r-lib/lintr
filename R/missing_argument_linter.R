@@ -57,12 +57,15 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
 
     missing_args <- xml_find_all(xml, xpath)
 
-    arg_idx <- as.integer(xml_find_num(missing_args, "count(preceding-sibling::OP-COMMA)") + 1)
+    named_idx <- xml_name(missing_args) == "EQ_SUB"
+    arg_id <- character(length(missing_args))
+    arg_id[named_idx] <- sQuote(xml_find_chr(missing_args[named_idx], "string(preceding-sibling::SYMBOL_SUB[1])"), "'")
+    arg_id[!named_idx] <- xml_find_num(missing_args[!named_idx], "count(preceding-sibling::OP-COMMA)") + 1
 
     xml_nodes_to_lints(
       missing_args,
       source_expression = source_expression,
-      lint_message = sprintf("Missing argument %d in function call.", arg_idx),
+      lint_message = sprintf("Missing argument %s in function call.", arg_id),
     )
   })
 }
