@@ -24,3 +24,8 @@
 #' }
 ## lintr namespace: end
 NULL
+
+# make binding available for mock testing
+# ref: https://testthat.r-lib.org/dev/reference/local_mocked_bindings.html#base-functions
+unlink <- NULL
+quit <- NULL
