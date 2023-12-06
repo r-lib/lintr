@@ -125,17 +125,17 @@ test_that("lints vectorize", {
   expect_lint(
     "foo(,,)",
     list(
-      list(lint_msg, column_number = 5L),
-      list(lint_msg, column_number = 6L),
-      list(lint_msg, column_number = 7L)
+      list("Missing argument 1", column_number = 5L),
+      list("Missing argument 2", column_number = 6L),
+      list("Missing argument 3", column_number = 7L)
     ),
     linter
   )
   expect_lint(
     "foo(,,)",
     list(
-      list(lint_msg, column_number = 5L),
-      list(lint_msg, column_number = 6L)
+      list("Missing argument 1", column_number = 5L),
+      list("Missing argument 2", column_number = 6L)
     ),
     linter_trailing
   )
@@ -145,7 +145,7 @@ test_that("lints vectorize", {
       foo(1,)
       bar(,2)
     }"),
-    list(lint_msg, line_number = 3L),
+    list("Missing argument 1", line_number = 3L),
     linter_trailing
   )
 })
