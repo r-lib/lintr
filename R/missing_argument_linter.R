@@ -37,13 +37,16 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch", "extr
     "self::EQ_SUB[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN or self::OP-COMMA]]"
   )
   if (!allow_trailing) {
-    conds <- c(conds, "self::OP-COMMA[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN]]")
+    conds <- c(conds,
+      "self::OP-RIGHT-PAREN[preceding-sibling::*[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-COMMA]]"
+    )
   }
 
+  # require >3 children to exclude foo(), which is <expr><OP-LEFT-PAREN><OP-RIGHT-PAREN>
   xpath <- glue("
     //SYMBOL_FUNCTION_CALL[not({ xp_text_in_table(except) })]
       /parent::expr
-      /parent::expr
+      /parent::expr[count(*) > 3]
       /*[{xp_or(conds)}]
   ")
   to_function_xpath <- "string(./preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)"

@@ -10,6 +10,9 @@ test_that("missing_argument_linter skips allowed usages", {
   expect_lint("alist(a =, b =, c = 1, 0)", NULL, linter)
   expect_lint("pairlist(path = quote(expr = ))", NULL, linter) #1889
 
+  # always allow this missing usage
+  expect_lint("foo()", NULL, linter)
+
   expect_lint("test(a =, b =, c = 1, 0)", NULL, missing_argument_linter("test"))
 })
 
@@ -111,5 +114,38 @@ test_that("allow_trailing can allow trailing empty args also for non-excepted fu
     "fun(a = 1, b = )",
     rex::rex("Missing argument 2 in function call."),
     linter
+  )
+})
+
+test_that("lints vectorize", {
+  linter <- missing_argument_linter()
+  linter_trailing <- missing_argument_linter(allow_trailing = TRUE)
+  lint_msg <- rex::rex("Missing argument in function call.")
+
+  expect_lint(
+    "foo(,,)",
+    list(
+      list(lint_msg, column_number = 5L),
+      list(lint_msg, column_number = 6L),
+      list(lint_msg, column_number = 7L)
+    ),
+    linter
+  )
+  expect_lint(
+    "foo(,,)",
+    list(
+      list(lint_msg, column_number = 5L),
+      list(lint_msg, column_number = 6L)
+    ),
+    linter_trailing
+  )
+
+  expect_lint(
+    trim_some("{
+      foo(1,)
+      bar(,2)
+    }"),
+    list(lint_msg, line_number = 3L),
+    linter_trailing
   )
 })
