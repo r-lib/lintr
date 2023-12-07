@@ -103,11 +103,13 @@ test_that("vector_logic_linter recognizes some false positves around bitwise &/|
 test_that("lints vectorize", {
   expect_lint(
     trim_some("{
+      if (AA & BB) {}
+      if (CC | DD) {}
     }"),
     list(
-      list(lint_msg, line_number = 2L),
-      list(lint_msg, line_number = 3L)
+      list(rex::rex("`&&`"), line_number = 2L),
+      list(rex::rex("`||`"), line_number = 3L)
     ),
-    linter
+    vector_logic_linter()
   )
 })

@@ -78,13 +78,17 @@ test_that("strings_as_factors_linter catches more functions with string output",
 })
 
 test_that("lints vectorize", {
+  lint_msg <- "Supply an explicit value for stringsAsFactors for this code"
+
   expect_lint(
     trim_some("{
+      data.frame('a')
+      data.frame('b')
     }"),
     list(
       list(lint_msg, line_number = 2L),
       list(lint_msg, line_number = 3L)
     ),
-    linter
+    strings_as_factors_linter()
   )
 })

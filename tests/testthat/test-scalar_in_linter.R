@@ -31,18 +31,9 @@ test_that("multiple lints are generated correctly", {
       x %in% 1
       y %chin% "a"
     }'),
-    list("%in%", "%chin%"),
-    linter
-  )
-})
-
-test_that("lints vectorize", {
-  expect_lint(
-    trim_some("{
-    }"),
     list(
-      list(lint_msg, line_number = 2L),
-      list(lint_msg, line_number = 3L)
+      list("%in%", line_number = 2L),
+      list("%chin%", line_number = 3L)
     ),
     linter
   )

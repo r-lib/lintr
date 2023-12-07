@@ -122,11 +122,13 @@ test_that("sort_linter blocks simple disallowed usages", {
 test_that("lints vectorize", {
   expect_lint(
     trim_some("{
+      x == sort(x)
+      x != sort(x)
     }"),
     list(
-      list(lint_msg, line_number = 2L),
-      list(lint_msg, line_number = 3L)
+      list(rex::rex("is.unsorted(x)"), line_number = 2L),
+      list(rex::rex("!is.unsorted(x)"), line_number = 3L)
     ),
-    linter
+    sort_linter()
   )
 })

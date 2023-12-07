@@ -133,13 +133,17 @@ local({
 })
 
 test_that("lints vectorize", {
+  skip_if_not_r_version("4.1.0")
+
   expect_lint(
     trim_some("{
+      sprintf('%s', a, b)
+      sprintf('%s%s', a)
     }"),
     list(
-      list(lint_msg, line_number = 2L),
-      list(lint_msg, line_number = 3L)
+      list("one argument not used by format", line_number = 2L),
+      list("too few arguments", line_number = 3L)
     ),
-    linter
+    linter <- sprintf_linter()
   )
 })

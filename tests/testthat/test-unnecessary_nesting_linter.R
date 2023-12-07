@@ -2,23 +2,29 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
   linter <- unnecessary_nesting_linter()
 
   # parallel stops() and return()s are OK
-  double_stop_lines <- c(
-    "if (A) {",
-    " stop()",
-    "} else {",
-    " stop()",
-    "}"
+  expect_lint(
+    trim_some("
+      if (A) {
+      stop()
+      } else {
+      stop()
+      }
+    "),
+    NULL,
+    linter
   )
-  expect_lint(double_stop_lines, NULL, linter)
 
-  double_return_lines <- c(
-    "if (A) {",
-    " return()",
-    "} else {",
-    " return()",
-    "}"
+  expect_lint(
+    trim_some("
+      if (A) {
+      return()
+      } else {
+      return()
+      }
+    "),
+    NULL,
+    linter
   )
-  expect_lint(double_return_lines, NULL, linter)
 })
 
 # TODO(michaelchirico): consider if there's a nice easy pattern to enforce for
@@ -317,13 +323,24 @@ test_that("unnecessary_nesting_linter allow_assignment= argument works", {
 })
 
 test_that("lints vectorize", {
+  lint_msg <- rex::rex("Reduce the nesting of this if/else")
+
   expect_lint(
-    trim_some("{
-    }"),
+    trim_some("
+      if (A) {
+        stop('no')
+      } else {
+        if (B) {
+          stop('really no')
+        } else {
+          1
+        }
+      }
+    "),
     list(
       list(lint_msg, line_number = 2L),
       list(lint_msg, line_number = 3L)
     ),
-    linter
+    unnecessary_nesting_linter()
   )
 })

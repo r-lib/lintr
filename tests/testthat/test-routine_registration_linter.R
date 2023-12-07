@@ -14,13 +14,17 @@ patrick::with_parameters_test_that(
 )
 
 test_that("lints vectorize", {
+  lint_msg <- "Register your native code routines with useDynLib"
+
   expect_lint(
     trim_some("{
+      .C('ROUTINE', PACKAGE = 'foo')
+      .External('POUTINE', PACKAGE = 'bar')
     }"),
     list(
       list(lint_msg, line_number = 2L),
       list(lint_msg, line_number = 3L)
     ),
-    linter
+    routine_registration_linter()
   )
 })

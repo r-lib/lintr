@@ -97,13 +97,17 @@ test_that("doesn't produce a warning", {
 })
 
 test_that("lints vectorize", {
+  lint_msg <- rex::rex("Place a space before left parenthesis, except in a function call.")
+
   expect_lint(
     trim_some("{
+      y1<-(abs(yn)>90)*1
+      for(i in j) { }
     }"),
     list(
       list(lint_msg, line_number = 2L),
       list(lint_msg, line_number = 3L)
     ),
-    linter
+    spaces_left_parentheses_linter()
   )
 })

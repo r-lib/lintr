@@ -50,7 +50,7 @@ test_that("lints vectorize", {
   expect_lint(
     trim_some("{
       sapply(x, length)
-      ma_int(x, length)
+      map_int(x, length)
     }"),
     list(
       list(lint_msg, line_number = 2L),
