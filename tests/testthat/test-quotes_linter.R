@@ -78,13 +78,17 @@ test_that("single_quotes_linter is deprecated", {
 })
 
 test_that("lints vectorize", {
+  lint_msg <- rex::rex("Only use single-quotes.")
+
   expect_lint(
     trim_some("{
+      'abc'
+      'def'
     }"),
     list(
       list(lint_msg, line_number = 2L),
       list(lint_msg, line_number = 3L)
     ),
-    linter
+    quotes_linter()
   )
 })

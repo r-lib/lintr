@@ -148,11 +148,13 @@ test_that("ifelse(missing = ) gives correct lints", {
 test_that("lints vectorize", {
   expect_lint(
     trim_some("{
+      ifelse(x > 0, TRUE, FALSE)
+      fifelse(y == 0, 1, 0)
     }"),
     list(
-      list(lint_msg, line_number = 2L),
-      list(lint_msg, line_number = 3L)
+      list("Juse use the logical condition", line_number = 2L),
+      list(rex::rex("refer as.numeric(x)"), line_number = 3L)
     ),
-    linter
+    redundant_ifelse_linter()
   )
 })

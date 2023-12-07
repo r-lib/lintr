@@ -27,13 +27,17 @@ test_that("numeric_leading_zero_linter blocks simple disallowed usages", {
 })
 
 test_that("lints vectorize", {
+  lint_msg <- rex::rex("Include the leading zero for fractional numeric constants.")
+
   expect_lint(
     trim_some("{
+      .1
+      -.2
     }"),
     list(
       list(lint_msg, line_number = 2L),
       list(lint_msg, line_number = 3L)
     ),
-    linter
+    numeric_leading_zero_linter()
   )
 })
