@@ -46,7 +46,7 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
 
   # Check if config_file is in package i.e. lintr_option("linter_file") != "../.lintr"
   pkg_path <- normalizePath(path, mustWork = FALSE, winslash = "/")
-  if (startsWith(config_file, prefix = pkg_path)) {
+  if (file.exists("DESCRIPTION") && startsWith(config_file, prefix = pkg_path)) {
     # Skip a extra character for the leading `/`
     rel_path <- substring(config_file, first = nchar(pkg_path) + 2L, last = nchar(config_file))
     ignore_path <- file.path(pkg_path, ".Rbuildignore")
@@ -56,6 +56,7 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
     ignore <- ignore[nzchar(ignore)]
     if (!any(vapply(ignore, function(x) grepl(rel_path, pattern = x, perl = TRUE, ignore.case = TRUE), logical(1L)))) {
       cat(file = ignore_path, rex::rex(start, rel_path, end), sep = "\n", append = TRUE)
+      message("Adding ", rel_path, " to .Rbuildignore")
     }
   }
 
