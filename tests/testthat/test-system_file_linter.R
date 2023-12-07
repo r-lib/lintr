@@ -19,7 +19,7 @@ test_that("lints vectorize", {
   expect_lint(
     trim_some("{
       file.path(system.file(package = 'foo'), 'bar')
-      system.file(file.path('bar', data'), package = 'foo')
+      system.file(file.path('bar', 'data'), package = 'foo')
     }"),
     list(
       list(lint_msg, line_number = 2L),

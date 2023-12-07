@@ -152,7 +152,7 @@ test_that("lints vectorize", {
       fifelse(y == 0, 1, 0)
     }"),
     list(
-      list("Juse use the logical condition", line_number = 2L),
+      list("Just use the logical condition", line_number = 2L),
       list(rex::rex("refer as.numeric(x)"), line_number = 3L)
     ),
     redundant_ifelse_linter()

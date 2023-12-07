@@ -88,7 +88,7 @@ test_that("matrix_apply_linter works with multiple lints in a single expression"
 
   expect_lint(
     trim_some("{
-      apply(x, 1, sum),
+      apply(x, 1, sum)
       apply(y, 2:4, mean, na.rm = TRUE)
     }"),
     list(

@@ -90,6 +90,6 @@ test_that("lints vectorize", {
       list(rex::rex("'ssd' is not exported from {stats}"), line_number = 3L),
       list(rex::rex("Don't use `:::` to access sd"), line_number = 4L)
     ),
-    linter
+    namespace_linter()
   )
 })

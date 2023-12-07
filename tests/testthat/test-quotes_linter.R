@@ -78,7 +78,7 @@ test_that("single_quotes_linter is deprecated", {
 })
 
 test_that("lints vectorize", {
-  lint_msg <- rex::rex("Only use single-quotes.")
+  lint_msg <- rex::rex("Only use double-quotes.")
 
   expect_lint(
     trim_some("{

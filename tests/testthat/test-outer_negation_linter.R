@@ -34,7 +34,7 @@ test_that("outer_negation_linter blocks simple disallowed usages", {
 })
 
 test_that("outer_negation_linter doesn't trigger on empty calls", {
-  linter <- outer_negation_linter())
+  linter <- outer_negation_linter()
 
   # minimal version of issue
   expect_lint("any()", NULL, linter)

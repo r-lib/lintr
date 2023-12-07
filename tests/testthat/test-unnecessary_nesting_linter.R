@@ -326,20 +326,21 @@ test_that("lints vectorize", {
   lint_msg <- rex::rex("Reduce the nesting of this if/else")
 
   expect_lint(
-    trim_some("
+    trim_some("{
       if (A) {
         stop('no')
       } else {
-        if (B) {
-          stop('really no')
-        } else {
-          1
-        }
+        0
       }
-    "),
+      if (B) {
+        stop('really no')
+      } else {
+        1
+      }
+    }"),
     list(
       list(lint_msg, line_number = 2L),
-      list(lint_msg, line_number = 3L)
+      list(lint_msg, line_number = 7L)
     ),
     unnecessary_nesting_linter()
   )

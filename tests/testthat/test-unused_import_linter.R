@@ -73,15 +73,3 @@ test_that("glue usages are seen", {
   expect_lint(lines, NULL, unused_import_linter())
   expect_lint(lines, lint_msg, unused_import_linter(interpret_glue = FALSE))
 })
-
-test_that("lints vectorize", {
-  expect_lint(
-    trim_some("{
-    }"),
-    list(
-      list(lint_msg, line_number = 2L),
-      list(lint_msg, line_number = 3L)
-    ),
-    linter
-  )
-})

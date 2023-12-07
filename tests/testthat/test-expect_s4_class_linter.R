@@ -26,7 +26,7 @@ test_that("lints vectorize", {
   expect_lint(
     trim_some("{
       expect_true(is(x, 'data.frame'))
-      expect_true(is(x, 'SpatialPolygonsDataFrame))
+      expect_true(is(x, 'SpatialPolygonsDataFrame'))
     }"),
     list(
       list(lint_msg, line_number = 2L),

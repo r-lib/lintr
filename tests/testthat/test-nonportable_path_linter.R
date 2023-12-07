@@ -70,6 +70,6 @@ test_that("lints vectorize", {
       list(lint_msg, line_number = 2L),
       list(lint_msg, line_number = 3L)
     ),
-    nonportable_path_linter()
+    nonportable_path_linter(lax = FALSE)
   )
 })
