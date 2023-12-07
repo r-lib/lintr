@@ -144,6 +144,6 @@ test_that("lints vectorize", {
       list("one argument not used by format", line_number = 2L),
       list("too few arguments", line_number = 3L)
     ),
-    linter <- sprintf_linter()
+    sprintf_linter()
   )
 })
