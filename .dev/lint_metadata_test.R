@@ -7,9 +7,9 @@ lint_file <- "R/lint.R"
 
 original <- readLines(lint_file)
 expected_line <- "line_number = as.integer(line_number)"
-if (!any(grepl(expected_line, original, fixed = TRUE))) {
+if (sum(grepl(expected_line, original, fixed = TRUE)) != 1L) {
   stop(sprintf(
-    "Please update this workflow -- didn't find expected line '%s' in file '%s'.",
+    "Please update this workflow -- need exactly one hit for line '%s' in file '%s'.",
     expected_line, lint_file
   ))
 }

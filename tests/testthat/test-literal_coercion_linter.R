@@ -70,10 +70,13 @@ patrick::with_parameters_test_that(
 skip_if_not_installed("rlang")
 test_that("multiple lints return custom messages", {
   expect_lint(
-    "c(as.integer(1), lgl(1L))",
+    trim_some("{
+      as.integer(1)
+      lgl(1L)
+    }"),
     list(
-      rex::rex("Use 1L instead of as.integer(1)"),
-      rex::rex("Use TRUE instead of lgl(1L)")
+      list(rex::rex("Use 1L instead of as.integer(1)"), line_number = 2L),
+      list(rex::rex("Use TRUE instead of lgl(1L)"), line_number = 3L)
     ),
     literal_coercion_linter()
   )

@@ -42,8 +42,8 @@ test_that("unused_import_linter handles message vectorization", {
       xmlparsedata::xml_parse_data(parse(text = 'a'))
     "),
     list(
-      rex::rex("Package 'crayon' is attached but never used."),
-      rex::rex("Don't attach package 'xmlparsedata', which is only used by namespace")
+      list(rex::rex("Package 'crayon' is attached but never used."), line_number = 1L),
+      list(rex::rex("Don't attach package 'xmlparsedata', which is only used by namespace"), line_number = 2L)
     ),
     unused_import_linter()
   )
@@ -72,4 +72,16 @@ test_that("glue usages are seen", {
   ")
   expect_lint(lines, NULL, unused_import_linter())
   expect_lint(lines, lint_msg, unused_import_linter(interpret_glue = FALSE))
+})
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    linter
+  )
 })
