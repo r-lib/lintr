@@ -37,3 +37,15 @@ patrick::with_parameters_test_that(
   .test_name = names(pipes),
   pipe = pipes
 )
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    linter
+  )
+})

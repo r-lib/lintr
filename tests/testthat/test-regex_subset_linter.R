@@ -54,3 +54,15 @@ test_that("regex_subset_linter blocks disallowed usages for stringr equivalents"
     regex_subset_linter()
   )
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    linter
+  )
+})

@@ -66,3 +66,17 @@ test_that("raw strings are handled properly when testing in class", {
   expect_lint("class(x) %in% c(R'(integer)', 'numeric')", lint_msg, linter)
   expect_lint('class(x) %in% c("numeric", R"--[integer]--")', lint_msg, linter)
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      is.numeric(x) || is.integer(x)
+      class(x) %in% c('integer', 'numeric')
+    }"),
+    list(
+      list(rex::rex("`is.numeric(x) || is.integer(x)`"), line_number = 2L),
+      list(rex::rex('class(x) %in% c("integer", "numeric")'), line_number = 3L)
+    ),
+    is_numeric_linter()
+  )
+})

@@ -74,3 +74,15 @@ test_that("namespace_linter blocks disallowed usages", {
     linter
   )
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    linter
+  )
+})

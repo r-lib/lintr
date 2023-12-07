@@ -99,3 +99,15 @@ test_that("vector_logic_linter recognizes some false positves around bitwise &/|
   expect_lint('if ((mode & "111") != as.hexmode("111")) { }', NULL, linter)
   expect_lint('if ((mode | "111") != as.hexmode("111")) { }', NULL, linter)
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    linter
+  )
+})

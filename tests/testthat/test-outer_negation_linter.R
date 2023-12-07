@@ -66,3 +66,15 @@ test_that("outer_negation_linter doesn't trigger on empty calls", {
   # closer to what was is practically relevant, as another regression test
   expect_lint("x %>% any()", NULL, outer_negation_linter())
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    linter
+  )
+})

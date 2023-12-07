@@ -35,3 +35,15 @@ test_that("multiple lints are generated correctly", {
     linter
   )
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    linter
+  )
+})

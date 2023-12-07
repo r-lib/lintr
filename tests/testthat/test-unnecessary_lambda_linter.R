@@ -261,3 +261,15 @@ test_that("function shorthand is handled", {
     unnecessary_lambda_linter()
   )
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    linter
+  )
+})

@@ -23,10 +23,12 @@ test_that("line_length_linter blocks disallowed usages", {
     list(
       list(
         message = lint_msg,
+        line_number = 1L,
         column_number = 81L
       ),
       list(
         message = lint_msg,
+        line_number = 2L,
         column_number = 81L
       )
     ),

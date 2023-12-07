@@ -76,3 +76,15 @@ test_that("strings_as_factors_linter catches more functions with string output",
   # but not for row.names
   expect_lint("data.frame(a = 1:10, row.names = paste(1:10))", NULL, linter)
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    linter
+  )
+})

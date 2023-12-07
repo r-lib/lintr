@@ -144,3 +144,15 @@ test_that("ifelse(missing = ) gives correct lints", {
   expect_lint("if_else(x > 5, 'a', 0L, 1L)", NULL, linter)
   expect_lint("if_else(x > 5, 'a', 1, 0)", NULL, linter)
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    linter
+  )
+})

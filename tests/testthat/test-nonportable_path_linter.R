@@ -57,3 +57,15 @@ test_that("nonportable_path_linter's lax argument works", {
     expect_lint(double_quote(path), NULL, linter)
   }
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    linter
+  )
+})

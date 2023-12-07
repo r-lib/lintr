@@ -76,3 +76,15 @@ test_that("single_quotes_linter is deprecated", {
   expect_lint('"blah"', NULL, old_linter)
   expect_lint("'blah'", "Only use double-quotes", old_linter)
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    linter
+  )
+})

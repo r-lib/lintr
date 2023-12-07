@@ -43,3 +43,15 @@ test_that("lengths_linter blocks simple disallowed usages with pipes", {
   expect_lint("x |> map_int(length)", lint_msg, linter)
   expect_lint("x %>% map_int(length)", lint_msg, linter)
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    linter
+  )
+})
