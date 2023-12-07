@@ -69,6 +69,10 @@
   + ignores calls on the RHS of operators like `lapply(l, function(x) "a" %in% names(x))` (#2310, @MichaelChirico).
 * `vector_logic_linter()` recognizes some cases where bitwise `&`/`|` are used correctly (#1453, @MichaelChirico).
 
+### Lint accuracy fixes: removing false negatives
+
+* `duplicate_argument_linter()` no longer misses cases with duplicate arguments where a comment comes between the argument name and `=` (#2402, @MichaelChirico).
+
 # lintr 3.1.1
 
 ## Breaking changes
