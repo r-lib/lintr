@@ -89,7 +89,6 @@ seq_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-
     badx <- xml_find_all(xml, xpath)
 
     dot_expr1 <- get_fun(badx, 1L)

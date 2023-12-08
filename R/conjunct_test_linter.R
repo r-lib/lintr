@@ -120,7 +120,6 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE,
     # need the full file to also catch usages at the top level
     xml <- source_expression$full_xml_parsed_content
 
-
     test_expr <- xml_find_all(xml, test_xpath)
 
     matched_fun <- xp_call_name(test_expr)

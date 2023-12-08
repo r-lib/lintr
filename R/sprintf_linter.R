@@ -107,7 +107,6 @@ sprintf_linter <- function() {
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
-
     sprintf_calls <- xml_find_all(xml, call_xpath)
 
     sprintf_warning <- vapply(sprintf_calls, capture_sprintf_warning, character(1L))

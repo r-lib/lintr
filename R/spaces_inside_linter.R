@@ -55,7 +55,6 @@ spaces_inside_linter <- function() {
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
-
     left_expr <- xml_find_all(xml, left_xpath)
     left_msg <- ifelse(
       xml_text(left_expr) %in% c("[", "[["),

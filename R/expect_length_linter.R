@@ -35,7 +35,6 @@ expect_length_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-
     bad_expr <- xml_find_all(xml, xpath)
     matched_function <- xp_call_name(bad_expr)
     lint_message <- sprintf("expect_length(x, n) is better than %s(length(x), n)", matched_function)

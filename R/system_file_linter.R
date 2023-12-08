@@ -37,7 +37,6 @@ system_file_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-
     bad_expr <- xml_find_all(xml, xpath)
 
     outer_call <- xp_call_name(bad_expr)

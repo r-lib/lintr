@@ -51,7 +51,6 @@ consecutive_assertion_linter <- function() {
     # need the full file to also catch usages at the top level
     xml <- source_expression$full_xml_parsed_content
 
-
     bad_expr <- xml_find_all(xml, xpath)
 
     matched_function <- xp_call_name(bad_expr)

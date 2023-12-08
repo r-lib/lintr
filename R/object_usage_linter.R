@@ -59,7 +59,6 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
 
     xml <- source_expression$full_xml_parsed_content
 
-
     # run the following at run-time, not "compile" time to allow package structure to change
     env <- make_check_env(pkg_name, xml)
 

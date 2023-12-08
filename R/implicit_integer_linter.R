@@ -54,7 +54,6 @@ implicit_integer_linter <- function(allow_colon = FALSE) {
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
-
     numbers <- xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(

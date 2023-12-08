@@ -137,7 +137,6 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-
     # run here because 'settings$exclude_end' may not be set correctly at "compile time".
     # also build with '|', not rex::rex(or(.)), the latter which will double-escape the regex.
     allow_comment_regex <- paste(union(allow_comment_regex, settings$exclude_end), collapse = "|")

@@ -162,7 +162,6 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-
     default_fun_expr <- xml_find_all(xml, default_fun_xpath)
 
     # TODO(michaelchirico): further message customization is possible here,

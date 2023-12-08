@@ -79,7 +79,6 @@ matrix_apply_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-
     bad_expr <- xml_find_all(xml, xpath)
 
     variable <- xml_text(xml_find_all(bad_expr, variable_xpath))

@@ -142,7 +142,6 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-
     patterns <- xml_find_all(xml, xpath)
     pattern_strings <- get_r_string(patterns)
 

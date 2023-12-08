@@ -40,7 +40,6 @@ object_length_linter <- function(length = 30L) {
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
-
     assignments <- xml_find_all(xml, object_name_xpath)
 
     # Retrieve assigned name
