@@ -46,7 +46,7 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
 
   # Check if config_file is in package i.e. lintr_option("linter_file") != "../.lintr"
   pkg_path <- normalizePath(path, mustWork = FALSE, winslash = "/")
-  if (file.exists("DESCRIPTION") && startsWith(config_file, prefix = pkg_path)) {
+  if (file.exists(file.path(path, "DESCRIPTION")) && startsWith(config_file, prefix = pkg_path)) {
     # Skip a extra character for the leading `/`
     rel_path <- substring(config_file, first = nchar(pkg_path) + 2L, last = nchar(config_file))
     ignore_path <- file.path(pkg_path, ".Rbuildignore")
