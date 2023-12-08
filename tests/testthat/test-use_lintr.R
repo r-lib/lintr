@@ -68,12 +68,12 @@ test_that("use_lintr creates the correct regex", {
   file.create(file.path(tmp, "DESCRIPTION"))
   ignore <- file.path(tmp, ".Rbuildignore")
   file.create(ignore)
-  cat(file = ignore, "fu", "bar", sep = "\n")
+  cat(file = ignore, "^fu$", "^bar$", sep = "\n")
 
   expect_message({
     lintr_file <- use_lintr(path = tmp, type = "full")
   }, regexp = "Adding .* to .Rbuildignore")
-  expect_identical(readLines(ignore), c("fu", "bar", "^\\.lintr$"))
+  expect_identical(readLines(ignore), c("^fu$", "^bar$", "^\\.lintr$"))
 })
 
 test_that("use_lintr handles missing final new line", {
@@ -81,10 +81,10 @@ test_that("use_lintr handles missing final new line", {
   file.create(file.path(tmp, "DESCRIPTION"))
   ignore <- file.path(tmp, ".Rbuildignore")
   file.create(ignore)
-  cat(file = ignore, "fu\nbar")
+  cat(file = ignore, "^fu$\n^bar$")
 
   expect_message({
     lintr_file <- use_lintr(path = tmp, type = "full")
   }, regexp = "Adding .* to .Rbuildignore")
-  expect_identical(readLines(ignore), c("fu", "bar", "^\\.lintr$"))
+  expect_identical(readLines(ignore), c("^fu$", "^bar$", "^\\.lintr$"))
 })
