@@ -5,9 +5,9 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
   expect_lint(
     trim_some("
       if (A) {
-      stop()
+        stop()
       } else {
-      stop()
+        stop()
       }
     "),
     NULL,
@@ -17,9 +17,9 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
   expect_lint(
     trim_some("
       if (A) {
-      return()
+        return()
       } else {
-      return()
+        return()
       }
     "),
     NULL,
