@@ -19,8 +19,8 @@ test_that("returns the correct linting (with default parameters)", {
   expect_lint(
     "fun(1 ,1)",
     list(
-      msg_before,
-      msg_after
+      list(msg_before, column_number = 6L),
+      list(msg_after, column_number = 8L)
     ),
     linter
   )
@@ -39,6 +39,18 @@ test_that("returns the correct linting (with default parameters)", {
   expect_lint("switch(op , x = foo, y = bar)", msg_before, linter)
   expect_lint("switch(op, x = foo, y = bar(a = 4 , b = 5))", msg_before, linter)
   expect_lint("fun(op, x = foo , y = switch(bar, a = 4, b = 5))", msg_before, linter)
+  expect_lint(
+    trim_some("
+      switch(op ,
+        x = foo,y = bar
+      )
+    "),
+    list(
+      list(msg_before, line_number = 1L),
+      list(msg_after, line_number = 2L)
+    ),
+    linter
+  )
 
   expect_lint(
     "fun(op    ,bar)",

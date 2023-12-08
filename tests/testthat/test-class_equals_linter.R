@@ -47,3 +47,19 @@ test_that("class_equals_linter skips usage for subsetting", {
     linter
   )
 })
+
+test_that("lints vectorize", {
+  lint_msg <- rex::rex("Use inherits(x, 'class-name'), is.<class> or is(x, 'class')")
+
+  expect_lint(
+    trim_some("{
+      'character' %in% class(x)
+      class(x) == 'character'
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    class_equals_linter()
+  )
+})

@@ -7,10 +7,15 @@ test_that("redundant_equals_linter skips allowed usages", {
 
 test_that("multiple lints return correct custom messages", {
   expect_lint(
-    "list(x == TRUE, y != TRUE)",
+    trim_some("
+      list(
+        x == TRUE,
+        y != TRUE
+      )
+    "),
     list(
-      "Using == on a logical vector",
-      "Using != on a logical vector"
+      list("Using == on a logical vector", line_number = 2L),
+      list("Using != on a logical vector", line_number = 3L)
     ),
     redundant_equals_linter()
   )
