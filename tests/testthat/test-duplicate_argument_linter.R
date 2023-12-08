@@ -102,6 +102,7 @@ test_that("interceding comments don't trip up logic", {
   linter <- duplicate_argument_linter()
   lint_msg <- rex::rex("Avoid duplicate arguments")
 
+  # comment before the EQ_SUB
   # actually this case "just works" even before #2402 since
   #   get_r_string() returns NA for both argument names
   expect_lint(
@@ -135,6 +136,103 @@ test_that("interceding comments don't trip up logic", {
         arg = 1,
         arg # yyy
         = 2
+      )
+    "),
+    list(lint_msg, line_number = 3L),
+    linter
+  )
+
+  # comment after the EQ_SUB
+  expect_lint(
+    trim_some("
+      fun(
+        arg = # xxx
+        1,
+        arg = # yyy
+        2
+      )
+    "),
+    list(lint_msg, line_number = 4L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      fun(
+        arg = # xxx
+        1,
+        arg = 2
+      )
+    "),
+    list(lint_msg, line_number = 4L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      fun(
+        arg = 1,
+        arg = # yyy
+        2
+      )
+    "),
+    list(lint_msg, line_number = 3L),
+    linter
+  )
+
+  # comment after the arg value
+  expect_lint(
+    trim_some("
+      fun(
+        arg = 1 # xxx
+        ,
+        arg = 2 # yyy
+      )
+    "),
+    list(lint_msg, line_number = 4L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      fun(
+        arg = 1 # xxx
+        ,
+        arg = 2
+      )
+    "),
+    list(lint_msg, line_number = 4L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      fun(
+        arg = 1,
+        arg = 2 # yyy
+      )
+    "),
+    list(lint_msg, line_number = 3L),
+    linter
+  )
+
+  # comment after the OP-COMMA
+  expect_lint(
+    trim_some("
+      fun(
+        arg = 1, # xxx
+        arg = 2 # yyy
+      )
+    "),
+    list(lint_msg, line_number = 3L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      fun(
+        arg = 1, # xxx
+        arg = 2
       )
     "),
     list(lint_msg, line_number = 3L),
