@@ -101,7 +101,7 @@ nzchar_linter <- function() {
       comparison_expr,
       source_expression = source_expression,
       lint_message = paste(
-        'Instead of comparing strings to "", use nzchar().',
+        'Use nzchar() instead of comparing strings to "".',
         "Note that if x is a factor, you'll have use ",
         'as.character() to replicate an implicit conversion that happens in x == "".',
         keepna_note
@@ -114,7 +114,7 @@ nzchar_linter <- function() {
       nchar_expr,
       source_expression = source_expression,
       lint_message = paste(
-        "Instead of comparing nchar(x) to 0, use nzchar().",
+        "Use nzchar() instead of comparing nchar(x) to 0.",
         keepna_note
       ),
       type = "warning"

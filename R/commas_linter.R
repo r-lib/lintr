@@ -84,7 +84,7 @@ commas_linter <- function(allow_trailing = FALSE) {
     before_lints <- xml_nodes_to_lints(
       xml_find_all(xml, xpath_before),
       source_expression = source_expression,
-      lint_message = "Commas should never have a space before.",
+      lint_message = "Remove spaces before a comma.",
       range_start_xpath = "number(./preceding-sibling::*[1]/@col2 + 1)", # start after preceding expression
       range_end_xpath = "number(./@col1 - 1)" # end before comma
     )
@@ -92,7 +92,7 @@ commas_linter <- function(allow_trailing = FALSE) {
     after_lints <- xml_nodes_to_lints(
       xml_find_all(xml, xpath_after),
       source_expression = source_expression,
-      lint_message = "Commas should always have a space after.",
+      lint_message = "Put a space after a comma.",
       range_start_xpath = "number(./@col2 + 1)", # start and end after comma
       range_end_xpath = "number(./@col2 + 1)"
     )

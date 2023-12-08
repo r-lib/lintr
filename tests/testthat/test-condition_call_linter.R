@@ -20,13 +20,13 @@ patrick::with_parameters_test_that(
   "condition_call_linter blocks disallowed usages",
   {
     linter <- condition_call_linter()
-    lint_message <- rex::rex(call_name, anything, "to not display call")
+    lint_message <- rex::rex(call_name, anything, "not to display the call")
 
     expect_lint(paste0(call_name, "('test')"), lint_message, linter)
     expect_lint(paste0(call_name, "('test', call. = TRUE)"), lint_message, linter)
 
     linter <- condition_call_linter(display_call = TRUE)
-    lint_message <- rex::rex(call_name, anything, "to display call")
+    lint_message <- rex::rex(call_name, anything, "to display the call")
 
     expect_lint(paste0(call_name, "('test', call. = FALSE)"), lint_message, linter)
 

@@ -58,30 +58,29 @@
 condition_call_linter <- function(display_call = FALSE) {
   call_xpath <- glue::glue("
     following-sibling::SYMBOL_SUB[text() = 'call.']
-    /following-sibling::expr[1]
-    /NUM_CONST[text() = '{!display_call}']
+      /following-sibling::expr[1]
+      /NUM_CONST[text() = '{!display_call}']
   ")
-  no_call_xpath <- "
-    parent::expr[
-      count(SYMBOL_SUB[text() = 'call.']) = 0
-    ]
-  "
+  no_call_xpath <- "parent::expr[not(SYMBOL_SUB[text() = 'call.'])]"
 
   if (is.na(display_call)) {
-    frag <- no_call_xpath
+    call_cond <- no_call_xpath
+    msg_fmt <- "Provide an explicit value for `call.` in %s()."
   } else if (display_call) {
-    frag <- call_xpath
+    call_cond <- call_xpath
+    msg_fmt <- "Use %s(.) to display the call in an error message."
   } else {
     # call. = TRUE can be expressed in two way:
     #  - either explicitly with call. = TRUE
     #  - or by implicitly relying on the default
-    frag <- xp_or(call_xpath, no_call_xpath)
+    call_cond <- xp_or(call_xpath, no_call_xpath)
+    msg_fmt <- "Use %s(., call. = FALSE) not to display the call in an error message."
   }
 
   xpath <- glue::glue("
     //SYMBOL_FUNCTION_CALL[text() = 'stop' or text() = 'warning']
-    /parent::expr[{frag}]
-    /parent::expr
+      /parent::expr[{call_cond}]
+      /parent::expr
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
@@ -90,25 +89,10 @@ condition_call_linter <- function(display_call = FALSE) {
 
     bad_expr <- xml_find_all(xml, xpath)
 
-    if (is.na(display_call)) {
-      msg <- glue::glue(
-        "Provide an explicit value for call. in {xp_call_name(bad_expr)}()."
-      )
-    } else if (display_call) {
-      msg <- glue::glue(
-        "Use {xp_call_name(bad_expr)}(.) to display call in error message."
-      )
-    } else {
-      msg <- glue::glue(
-        "Use {xp_call_name(bad_expr)}(., call. = FALSE)",
-        " to not display call in error message."
-      )
-    }
-
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = msg,
+      lint_message = sprintf(msg_fmt, xp_call_name(bad_expr)),
       type = "warning"
     )
   })

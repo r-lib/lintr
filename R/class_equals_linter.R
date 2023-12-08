@@ -52,7 +52,7 @@ class_equals_linter <- function() {
 
     operator <- xml_find_chr(bad_expr, "string(*[2])")
     lint_message <- sprintf(
-      "Instead of comparing class(x) with %s, use inherits(x, 'class-name') or is.<class> or is(x, 'class')",
+      "Use inherits(x, 'class-name'), is.<class> or is(x, 'class') instead of comparing class(x) with %s.",
       operator
     )
     xml_nodes_to_lints(

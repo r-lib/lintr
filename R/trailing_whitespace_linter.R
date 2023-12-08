@@ -71,7 +71,7 @@ trailing_whitespace_linter <- function(allow_empty_lines = FALSE, allow_in_strin
           line_number = line,
           column_number = res$start[[line]],
           type = "style",
-          message = "Trailing whitespace is superfluous.",
+          message = "Remove trailing whitespace.",
           line = source_expression$file_lines[[line]],
           ranges = list(c(res$start[[line]], res$end[[line]]))
         )

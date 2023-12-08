@@ -60,8 +60,8 @@
 #' - <https://style.tidyverse.org/syntax.html#semicolons>
 #' @export
 semicolon_linter <- function(allow_compound = FALSE, allow_trailing = FALSE) {
-  msg_trailing <- "Trailing semicolons are not needed."
-  msg_compound <- "Compound semicolons are discouraged. Replace them by a newline."
+  msg_trailing <- "Remove trailing semicolons."
+  msg_compound <- "Replace compound semicolons by a newline."
 
   if (allow_compound && allow_trailing) {
     stop(

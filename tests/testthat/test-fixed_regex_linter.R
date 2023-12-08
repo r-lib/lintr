@@ -245,8 +245,8 @@ test_that("fixed replacements vectorize and recognize str_detect", {
       )
     "),
     list(
-      rex::rex('Here, you can use "abcdefg" with fixed = TRUE'),
-      rex::rex('Here, you can use "a..b\\n" with fixed = TRUE')
+      rex::rex('Use "abcdefg" with fixed = TRUE'),
+      rex::rex('Use "a..b\\n" with fixed = TRUE')
     ),
     linter
   )
@@ -254,7 +254,7 @@ test_that("fixed replacements vectorize and recognize str_detect", {
   # stringr hint works
   expect_lint(
     "str_detect(x, 'abc')",
-    rex::rex('Here, you can use stringr::fixed("abc") as the pattern'),
+    rex::rex('Use stringr::fixed("abc") as the pattern'),
     linter
   )
 })
@@ -267,7 +267,7 @@ test_that("fixed replacement is correct with UTF-8", {
 
   expect_lint(
     "grepl('[\\U{1D4D7}]', x)",
-    rex::rex('Here, you can use "\U1D4D7" with fixed = TRUE'),
+    rex::rex('Use "\U1D4D7" with fixed = TRUE'),
     fixed_regex_linter()
   )
 })
@@ -311,7 +311,7 @@ patrick::with_parameters_test_that("fixed replacements are correct", {
   )
   expect_lint(
     sprintf("grepl('%s', x)", regex_expr),
-    rex::rex(sprintf('Here, you can use "%s" with fixed = TRUE', fixed_expr)),
+    rex::rex(sprintf('Use "%s" with fixed = TRUE', fixed_expr)),
     fixed_regex_linter()
   )
 }, .cases = tibble::tribble(
@@ -354,7 +354,7 @@ test_that("'unescaped' regex can optionally be skipped", {
 
   expect_lint("grepl('a', x)", NULL, linter)
   expect_lint("str_detect(x, 'a')", NULL, linter)
-  expect_lint("grepl('[$]', x)", rex::rex('Here, you can use "$"'), linter)
+  expect_lint("grepl('[$]', x)", rex::rex('Use "$" with fixed = TRUE'), linter)
 })
 
 local({

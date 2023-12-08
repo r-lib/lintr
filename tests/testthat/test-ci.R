@@ -27,8 +27,6 @@ test_that("GitHub Actions functionality works in a subdirectory", {
 })
 
 test_that("GitHub Actions - linting on error works", {
-  skip_if_not_installed("mockery")
-
   # imitate being on GHA whether or not we are
   withr::local_envvar(list(GITHUB_ACTIONS = "true", LINTR_ERROR_ON_LINT = "true"))
   withr::local_options(lintr.rstudio_source_markers = FALSE)
@@ -36,32 +34,28 @@ test_that("GitHub Actions - linting on error works", {
 
   l <- lint(tmp)
 
-  mockery::stub(print.lints, "base::quit", function(...) cat("Tried to quit.\n"))
+  local_mocked_bindings(quit = function(...) cat("Tried to quit.\n"))
   expect_output(print(l), "::warning file", fixed = TRUE)
 })
 
 test_that("Printing works for Travis", {
-  skip_if_not_installed("mockery")
-
   withr::local_envvar(list(GITHUB_ACTIONS = "false", TRAVIS_REPO_SLUG = "test/repo", LINTR_COMMENT_BOT = "true"))
   withr::local_options(lintr.rstudio_source_markers = FALSE)
   tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
 
   l <- lint(tmp)
 
-  mockery::stub(print.lints, "github_comment", function(x, ...) cat(x, "\n"))
+  local_mocked_bindings(github_comment = function(x, ...) cat(x, "\n"))
   expect_output(print(l), "*warning:*", fixed = TRUE)
 })
 
 test_that("Printing works for Wercker", {
-  skip_if_not_installed("mockery")
-
   withr::local_envvar(list(GITHUB_ACTIONS = "false", WERCKER_GIT_BRANCH = "test/repo", LINTR_COMMENT_BOT = "true"))
   withr::local_options(lintr.rstudio_source_markers = FALSE)
   tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
 
   l <- lint(tmp)
 
-  mockery::stub(print.lints, "github_comment", function(x, ...) cat(x, "\n"))
+  local_mocked_bindings(github_comment = function(x, ...) cat(x, "\n"))
   expect_output(print(l), "*warning:*", fixed = TRUE)
 })
