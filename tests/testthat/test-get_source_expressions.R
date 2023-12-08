@@ -337,6 +337,58 @@ test_that("Reference chunks in Sweave/Rmd are ignored", {
   expect_silent(lint(example_rnw))
 })
 
+# NB: this is just a cursory test for linters not to
+#   fail on files where the XML content is xml_missing;
+#   the main linter test files provide more thorough
+#   evidence that things are working as intended.
+bad_source <- withr::local_tempfile(lines = c("a <- 1L", "b <- 2L"))
+expressions <- get_source_expressions(bad_source)$expressions
+
+# "zap" the xml_parsed_content to be xml_missing -- this gets
+#   around the issue of creating a file that fails to parse now,
+#   but later fails in a different way -> xml not missing.
+for (ii in seq_along(expressions)) {
+  if ("xml_parsed_content" %in% names(expressions[[ii]])) {
+    expressions[[ii]]$xml_parsed_content <- xml2::xml_missing()
+  } else {
+    expressions[[ii]]$full_xml_parsed_content <- xml2::xml_missing()
+  }
+}
+param_df <- expand.grid(
+  linter = available_linters(tags = NULL)$linter,
+  expression_idx = seq_along(expressions),
+  stringsAsFactors = FALSE
+)
+param_df$.test_name <- with(param_df, sprintf("%s on expression %d", linter, expression_idx))
+
+patrick::with_parameters_test_that(
+  "linters pass with xml_missing() content",
+  {
+    if (linter == "backport_linter") {
+      # otherwise we test the trivial linter (#2339)
+      linter <- backport_linter(r_version = "3.6.0")
+    } else {
+      linter <- eval(call(linter))
+    }
+    expression <- expressions[[expression_idx]]
+    if (
+      (is_linter_level(linter, "expression") && is_lint_level(expression, "expression")) ||
+        (is_linter_level(linter, "file") && is_lint_level(expression, "file"))
+    ) {
+      expect_no_warning({
+        lints <- linter(expression)
+      })
+      expect_length(lints, 0L)
+    } else {
+      # suppress "empty test" skips
+      expect_identical(1L, 1L)
+    }
+  },
+  .test_name = param_df$.test_name,
+  linter = param_df$linter,
+  expression_idx = param_df$expression_idx
+)
+
 test_that("invalid function definition parser failure lints", {
   expect_lint(
     "function(a = 1, a = 1) NULL",
