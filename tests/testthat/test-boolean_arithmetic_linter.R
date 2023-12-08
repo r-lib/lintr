@@ -25,3 +25,19 @@ test_that("boolean_arithmetic_linter requires use of any() or !any()", {
   expect_lint("sum(x == y) != 0", lint_msg, linter)
   expect_lint("sum(grepl(pattern, x)) > 0L", lint_msg, linter)
 })
+
+test_that("lints vectorize", {
+  lint_msg <- rex::rex("Use any() to express logical aggregations.")
+
+  expect_lint(
+    trim_some("{
+      length(which(x == y)) > 0L
+      sum(x == y) != 0
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    boolean_arithmetic_linter()
+  )
+})

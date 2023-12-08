@@ -16,29 +16,32 @@ test_that("expect_named_linter skips allowed usages", {
 })
 
 test_that("expect_named_linter blocks simple disallowed usages", {
-  expect_lint(
-    "expect_equal(names(x), 'a')",
-    rex::rex("expect_named(x, n) is better than expect_equal(names(x), n)"),
-    expect_named_linter()
-  )
+  linter <- expect_named_linter()
+  lint_msg <- rex::rex("expect_named(x, n) is better than expect_equal(names(x), n)")
 
-  expect_lint(
-    "testthat::expect_equal(names(DF), names(old))",
-    rex::rex("expect_named(x, n) is better than expect_equal(names(x), n)"),
-    expect_named_linter()
-  )
-
-  expect_lint(
-    "expect_equal('a', names(x))",
-    rex::rex("expect_named(x, n) is better than expect_equal(names(x), n)"),
-    expect_named_linter()
-  )
+  expect_lint("expect_equal(names(x), 'a')", lint_msg, linter)
+  expect_lint("testthat::expect_equal(names(DF), names(old))", lint_msg, linter)
+  expect_lint("expect_equal('a', names(x))", lint_msg, linter)
 })
 
 test_that("expect_named_linter blocks expect_identical usage as well", {
   expect_lint(
     "expect_identical(names(x), 'a')",
     rex::rex("expect_named(x, n) is better than expect_identical(names(x), n)"),
+    expect_named_linter()
+  )
+})
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      expect_equal(names(x), nm)
+      expect_identical(names(x), nm)
+    }"),
+    list(
+      list("expect_equal", line_number = 2L),
+      list("expect_identical", line_number = 3L)
+    ),
     expect_named_linter()
   )
 })
