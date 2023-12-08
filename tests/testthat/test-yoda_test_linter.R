@@ -48,6 +48,20 @@ test_that("yoda_test_linter throws a special message for placeholder tests", {
   )
 })
 
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      expect_equal(1, 1)
+      expect_equal(2, foo(x))
+    }"),
+    list(
+      list("Avoid storing placeholder tests", line_number = 2L),
+      list("Compare objects in tests in the order 'actual', 'expected'", line_number = 3L)
+    ),
+    yoda_test_linter()
+  )
+})
+
 # TODO(michaelchirico): Should this be extended to RUnit tests? It seems yes,
 #   but the argument names in RUnit (inherited from base all.equal()) are a bit
 #   confusing, e.g. `checkEqual(target=, current=)`. From the name, one might

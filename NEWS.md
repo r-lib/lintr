@@ -72,6 +72,7 @@
 ### Lint accuracy fixes: removing false negatives
 
 * `missing_argument_linter()` catches all missing arguments in calls with several, e.g. `foo(,,)` gives 3 lints instead of 2 (#2399, @MichaelChirico).
+* `duplicate_argument_linter()` no longer misses cases with duplicate arguments where a comment comes between the argument name and `=` (#2402, @MichaelChirico).
 
 # lintr 3.1.1
 

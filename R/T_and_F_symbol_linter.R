@@ -46,7 +46,7 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
+
     bad_usage <- xml_find_all(xml, usage_xpath)
     bad_assignment <- xml_find_all(xml, assignment_xpath)
 

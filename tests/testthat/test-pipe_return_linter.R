@@ -45,3 +45,23 @@ test_that("pipe_return_linter blocks simple disallowed usages", {
     pipe_return_linter()
   )
 })
+
+test_that("lints vectorize", {
+  lint_msg <- rex::rex("Avoid return() as the final step of a magrittr pipeline")
+
+  expect_lint(
+    trim_some("{
+      function(x) {
+        x %>% return()
+      }
+      function(y) {
+        y %>% return()
+      }
+    }"),
+    list(
+      list(lint_msg, line_number = 3L),
+      list(lint_msg, line_number = 6L)
+    ),
+    pipe_return_linter()
+  )
+})

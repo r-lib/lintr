@@ -100,6 +100,22 @@ test_that("Mixing test functions is fine", {
   )
 })
 
+test_that("lints vectorie", {
+  expect_lint(
+    trim_some("{
+      stopifnot(A)
+      stopifnot(B)
+      assert_that(C)
+      assert_that(D)
+    }"),
+    list(
+      list("stopifnot", line_number = 2L),
+      list("assert_that", line_number = 4L)
+    ),
+    consecutive_assertion_linter()
+  )
+})
+
 test_that("old name consecutive_stopifnot_linter() is deprecated", {
   expect_warning(
     {

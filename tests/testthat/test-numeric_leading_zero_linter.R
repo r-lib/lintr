@@ -25,3 +25,19 @@ test_that("numeric_leading_zero_linter blocks simple disallowed usages", {
   expect_lint("d <- 6.7+.8i", lint_msg, linter)
   expect_lint("e <- .9e10", lint_msg, linter)
 })
+
+test_that("lints vectorize", {
+  lint_msg <- rex::rex("Include the leading zero for fractional numeric constants.")
+
+  expect_lint(
+    trim_some("{
+      .1
+      -.2
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    numeric_leading_zero_linter()
+  )
+})

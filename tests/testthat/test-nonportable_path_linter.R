@@ -57,3 +57,19 @@ test_that("nonportable_path_linter's lax argument works", {
     expect_lint(double_quote(path), NULL, linter)
   }
 })
+
+test_that("lints vectorize", {
+  lint_msg <- rex::escape("Use file.path() to construct portable file paths.")
+
+  expect_lint(
+    trim_some("{
+      '~/'
+      'C:/'
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    nonportable_path_linter(lax = FALSE)
+  )
+})

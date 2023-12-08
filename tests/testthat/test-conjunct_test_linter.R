@@ -127,3 +127,17 @@ test_that("filter() is assumed to be dplyr::filter() by default, unless o/w spec
     linter
   )
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      stopifnot(A && B)
+      filter(DF, A & B)
+    }"),
+    list(
+      list("stopifnot", line_number = 2L),
+      list("filter", line_number = 3L)
+    ),
+    conjunct_test_linter()
+  )
+})

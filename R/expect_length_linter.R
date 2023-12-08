@@ -34,7 +34,6 @@ expect_length_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
     matched_function <- xp_call_name(bad_expr)

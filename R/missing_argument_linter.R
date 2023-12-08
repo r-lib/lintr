@@ -52,7 +52,6 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
 
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
 
     missing_args <- xml_find_all(xml, xpath)
 

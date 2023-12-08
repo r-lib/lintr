@@ -40,7 +40,7 @@ test_that("returns the correct linting", {
   expect_lint(complex_lines, lint_msg, cc_linter_2)
   expect_lint(
     complex_lines,
-    rex::rex("Reduce the cyclomatic complexity of this function from 10 to at most 2."),
+    list(rex::rex("Reduce the cyclomatic complexity of this function from 10 to at most 2."), line_number = 1L),
     cc_linter_2
   )
   expect_lint(complex_lines, NULL, cyclocomp_linter(10L))

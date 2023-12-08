@@ -58,7 +58,6 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
     declared_globals <- try_silently(globalVariables(package = pkg_name %||% globalenv()))
 
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
 
     # run the following at run-time, not "compile" time to allow package structure to change
     env <- make_check_env(pkg_name, xml)

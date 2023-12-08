@@ -238,15 +238,13 @@ test_that("fixed replacements vectorize and recognize str_detect", {
   linter <- fixed_regex_linter()
   # properly vectorized
   expect_lint(
-    trim_some("
-      c(
-        grepl('abcdefg', x),
-        grepl('a[.]\\\\.b\\n', x)
-      )
-    "),
+    trim_some("{
+      grepl('abcdefg', x)
+      grepl('a[.]\\\\.b\\n', x)
+    }"),
     list(
-      rex::rex('Use "abcdefg" with fixed = TRUE'),
-      rex::rex('Use "a..b\\n" with fixed = TRUE')
+      list(rex::rex('Use "abcdefg" with fixed = TRUE'), line_number = 2L),
+      list(rex::rex('Use "a..b\\n" with fixed = TRUE'), line_number = 3L)
     ),
     linter
   )
