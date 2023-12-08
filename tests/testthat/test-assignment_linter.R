@@ -177,12 +177,17 @@ test_that("%<>% throws a lint", {
 
 test_that("multiple lints throw correct messages", {
   expect_lint(
-    "{ x <<- 1; y ->> 2; z -> 3; x %<>% as.character() }",
+    trim_some("{
+      x <<- 1
+      y ->> 2
+      z -> 3
+      x %<>% as.character()
+    }"),
     list(
-      list(message = "Replace <<- by assigning to a specific environment"),
-      list(message = "Replace ->> by assigning to a specific environment"),
-      list(message = "Use <-, not ->"),
-      list(message = "Avoid the assignment pipe %<>%")
+      list(message = "Replace <<- by assigning to a specific environment", line_number = 2L),
+      list(message = "Replace ->> by assigning to a specific environment", line_number = 3L),
+      list(message = "Use <-, not ->", line_number = 4L),
+      list(message = "Avoid the assignment pipe %<>%", line_number = 5L)
     ),
     assignment_linter(allow_cascading_assign = FALSE)
   )

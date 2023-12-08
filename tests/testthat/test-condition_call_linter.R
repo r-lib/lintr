@@ -37,3 +37,17 @@ patrick::with_parameters_test_that(
   },
   call_name = c("stop", "warning")
 )
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      stop(e)
+      warning(w)
+    }"),
+    list(
+      list("stop", line_number = 2L),
+      list("warning", line_number = 3L)
+    ),
+    condition_call_linter()
+  )
+})

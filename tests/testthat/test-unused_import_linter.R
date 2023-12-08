@@ -42,8 +42,8 @@ test_that("unused_import_linter handles message vectorization", {
       xmlparsedata::xml_parse_data(parse(text = 'a'))
     "),
     list(
-      rex::rex("Package 'crayon' is attached but never used."),
-      rex::rex("Don't attach package 'xmlparsedata', which is only used by namespace")
+      list(rex::rex("Package 'crayon' is attached but never used."), line_number = 1L),
+      list(rex::rex("Don't attach package 'xmlparsedata', which is only used by namespace"), line_number = 2L)
     ),
     unused_import_linter()
   )
