@@ -62,7 +62,8 @@ implicit_integer_linter <- function(allow_colon = FALSE) {
     number <- number[lint_idx]
     is_negative <- !is.na(xml_find_first(number_expr, "parent::expr/preceding-sibling::OP-MINUS"))
 
-    lint_message <- sprintf("Use %1$dL or %1$d.0 to avoid implicit integers.", ((-1) ^ is_negative) * as.integer(number))
+    lint_message <-
+      sprintf("Use %1$dL or %1$d.0 to avoid implicit integers.", ((-1L) ^ is_negative) * as.integer(number))
 
     xml_nodes_to_lints(
       number_expr,
