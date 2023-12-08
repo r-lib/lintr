@@ -18,7 +18,7 @@ test_that("unused_import_linter lints as expected", {
   expect_lint("library(dplyr, character.only = TRUE)\n1 + 1", NULL, linter)
 
   lint_msg <- rex::rex("Package 'dplyr' is attached but never used")
-  msg_ns <- rex::rex("Package 'dplyr' is only used by namespace")
+  msg_ns <- rex::rex("Don't attach package 'dplyr', which is only used by namespace.")
 
   expect_lint("library(dplyr)\n1 + 1", lint_msg, linter)
   expect_lint("require(dplyr)\n1 + 1", lint_msg, linter)
@@ -43,7 +43,7 @@ test_that("unused_import_linter handles message vectorization", {
     "),
     list(
       rex::rex("Package 'crayon' is attached but never used."),
-      rex::rex("Package 'xmlparsedata' is only used by namespace")
+      rex::rex("Don't attach package 'xmlparsedata', which is only used by namespace")
     ),
     unused_import_linter()
   )

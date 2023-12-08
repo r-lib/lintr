@@ -25,16 +25,16 @@
 #' expect_lint("a", NULL, trailing_blank_lines_linter())
 #'
 #' # one expected lint
-#' expect_lint("a\n", "superfluous", trailing_blank_lines_linter())
-#' expect_lint("a\n", list(message = "superfluous", line_number = 2), trailing_blank_lines_linter())
+#' expect_lint("a\n", "trailing blank", trailing_blank_lines_linter())
+#' expect_lint("a\n", list(message = "trailing blank", line_number = 2), trailing_blank_lines_linter())
 #'
 #' # several expected lints
-#' expect_lint("a\n\n", list("superfluous", "superfluous"), trailing_blank_lines_linter())
+#' expect_lint("a\n\n", list("trailing blank", "trailing blank"), trailing_blank_lines_linter())
 #' expect_lint(
 #'   "a\n\n",
 #'   list(
-#'     list(message = "superfluous", line_number = 2),
-#'     list(message = "superfluous", line_number = 3)
+#'     list(message = "trailing blank", line_number = 2),
+#'     list(message = "trailing blank", line_number = 3)
 #'   ),
 #'   trailing_blank_lines_linter()
 #' )
@@ -42,7 +42,8 @@
 expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   if (!requireNamespace("testthat", quietly = TRUE)) {
     stop( # nocov start
-      "'expect_lint' is designed to work within the 'testthat' testing framework, but 'testthat' is not installed."
+      "'expect_lint' is designed to work within the 'testthat' testing framework, but 'testthat' is not installed.",
+      call. = FALSE
     ) # nocov end
   }
   old_lang <- set_lang(language)
@@ -90,7 +91,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
             stop(sprintf(
               "check #%d had an invalid field: \"%s\"\nValid fields are: %s\n",
               itr, field, toString(lint_fields)
-            ))
+            ), call. = FALSE)
           }
           check <- check[[field]]
           value <- lint[[field]]

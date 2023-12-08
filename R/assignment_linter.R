@@ -99,7 +99,7 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
     if (!allow_pipe_assign) "//SPECIAL[text() = '%<>%']"
   ))
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -111,7 +111,7 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
     operator <- xml_text(bad_expr)
     lint_message_fmt <- rep("Use <-, not %s, for assignment.", length(operator))
     lint_message_fmt[operator %in% c("<<-", "->>")] <-
-      "%s can have hard-to-predict behavior; prefer assigning to a specific environment instead (with assign() or <-)."
+      "Replace %s by assigning to a specific environment (with assign() or <-) to avoid hard-to-predict behavior."
     lint_message_fmt[operator == "%<>%"] <-
       "Avoid the assignment pipe %s; prefer using <- and %%>%% separately."
 
@@ -123,5 +123,5 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
 
     lint_message <- sprintf(lint_message_fmt, operator)
     xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "style")
-  }, linter_level = "expression")
+  })
 }

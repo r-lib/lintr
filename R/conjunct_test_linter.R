@@ -116,7 +116,7 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE,
     /expr[AND]
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     # need the full file to also catch usages at the top level
     xml <- source_expression$full_xml_parsed_content
     if (is.null(xml)) return(list())
@@ -127,13 +127,13 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE,
     operator <- xml_find_chr(test_expr, "string(expr/*[self::AND2 or self::OR2])")
     replacement_fmt <- ifelse(
       matched_fun %in% c("expect_true", "expect_false"),
-      "write multiple expectations like %1$s(A) and %1$s(B)",
-      "write multiple conditions like %s(A, B)."
+      "Write multiple expectations like %1$s(A) and %1$s(B)",
+      "Write multiple conditions like %s(A, B)"
     )
     lint_message <- paste(
-      sprintf("Instead of %s(A %s B),", matched_fun, operator),
       # as.character() needed for 0-lint case where ifelse(logical(0)) returns logical(0)
       sprintf(as.character(replacement_fmt), matched_fun),
+      sprintf("instead of %s(A %s B).", matched_fun, operator),
       "The latter will produce better error messages in the case of failure."
     )
     lints <- xml_nodes_to_lints(
@@ -157,5 +157,5 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE,
     }
 
     lints
-  }, linter_level = "file")
+  })
 }

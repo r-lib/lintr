@@ -22,11 +22,15 @@ test_that("linters_with_defaults warns on unused NULLs", {
 })
 
 test_that("linters_with_tags() verifies the output of available_linters()", {
-  skip_if_not_installed("mockery")
-  mockery::stub(
-    linters_with_tags,
-    "available_linters",
-    data.frame(linter = c("fake_linter", "very_fake_linter"), package = "lintr", tags = "", stringsAsFactors = FALSE)
+  local_mocked_bindings(
+    available_linters = function(...) {
+      data.frame(
+        linter = c("fake_linter", "very_fake_linter"),
+        package = "lintr",
+        tags = "",
+        stringsAsFactors = FALSE
+      )
+    }
   )
   expect_error(
     linters_with_tags(NULL),

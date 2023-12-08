@@ -59,7 +59,10 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   stopifnot(is.logical(symbol_is_undesirable))
   if (is.null(names(fun)) || !all(nzchar(names(fun))) || length(fun) == 0L) {
-    stop("'fun' should be a non-empty named character vector; use missing elements to indicate default messages.")
+    stop(
+      "'fun' should be a non-empty named character vector; use missing elements to indicate default messages.",
+      call. = FALSE
+    )
   }
 
   xp_condition <- xp_and(
@@ -79,7 +82,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
   }
 
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
     matched_nodes <- xml_find_all(xml, xpath)
@@ -88,7 +91,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     msgs <- vapply(
       stats::setNames(nm = unique(fun_names)),
       function(fun_name) {
-        msg <- sprintf('Function "%s" is undesirable.', fun_name)
+        msg <- sprintf('Avoid undesirable function "%s".', fun_name)
         alternative <- fun[[fun_name]]
         if (!is.na(alternative)) {
           msg <- paste(msg, sprintf("As an alternative, %s.", alternative))
@@ -103,5 +106,5 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       source_expression = source_expression,
       lint_message = unname(msgs[fun_names])
     )
-  }, linter_level = "expression")
+  })
 }

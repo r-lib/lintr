@@ -19,22 +19,18 @@ test_that("conjunct_test_linter skips allowed usages of expect_true", {
 })
 
 test_that("conjunct_test_linter blocks && conditions with expect_true()", {
-  expect_lint(
-    "expect_true(x && y)",
-    rex::rex("Instead of expect_true(A && B), write multiple expectations"),
-    conjunct_test_linter()
-  )
+  linter <- conjunct_test_linter()
+  lint_msg <-
+    rex::rex("Write multiple expectations like expect_true(A) and expect_true(B) instead of expect_true(A && B)")
 
-  expect_lint(
-    "expect_true(x && y && z)",
-    rex::rex("Instead of expect_true(A && B), write multiple expectations"),
-    conjunct_test_linter()
-  )
+  expect_lint("expect_true(x && y)", lint_msg, linter)
+  expect_lint("expect_true(x && y && z)", lint_msg, linter)
 })
 
 test_that("conjunct_test_linter blocks || conditions with expect_false()", {
   linter <- conjunct_test_linter()
-  lint_msg <- rex::rex("Instead of expect_false(A || B), write multiple expectations")
+  lint_msg <-
+    rex::rex("Write multiple expectations like expect_false(A) and expect_false(B) instead of expect_false(A || B)")
 
   expect_lint("expect_false(x || y)", lint_msg, linter)
   expect_lint("expect_false(x || y || z)", lint_msg, linter)
@@ -59,7 +55,7 @@ test_that("conjunct_test_linter skips allowed stopifnot() and assert_that() usag
 
 test_that("conjunct_test_linter blocks simple disallowed usages of stopifnot() and assert_that()", {
   linter <- conjunct_test_linter()
-  lint_msg <- function(fun) rex::rex("Instead of ", fun, "(A && B), write multiple conditions")
+  lint_msg <- function(fun) rex::rex("Write multiple conditions like ", fun, "(A, B) instead of ", fun, "(A && B)")
 
   expect_lint("stopifnot(x && y)", lint_msg("stopifnot"), linter)
   expect_lint("stopifnot(x && y && z)", lint_msg("stopifnot"), linter)
@@ -78,7 +74,7 @@ test_that("conjunct_test_linter's allow_named_stopifnot argument works", {
   )
   expect_lint(
     "stopifnot('x is a logical scalar' = length(x) == 1 && is.logical(x) && !is.na(x))",
-    rex::rex("Instead of stopifnot(A && B), write multiple conditions"),
+    rex::rex("Write multiple conditions like stopifnot(A, B)"),
     conjunct_test_linter(allow_named_stopifnot = FALSE)
   )
 })

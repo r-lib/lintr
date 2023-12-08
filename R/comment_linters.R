@@ -75,7 +75,8 @@ commented_code_linter <- function() {
       anything
     )
   )
-  Linter(function(source_expression) {
+
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
     if (is.null(xml)) return(list())
     all_comment_nodes <- xml_find_all(xml, "//COMMENT")
@@ -90,7 +91,7 @@ commented_code_linter <- function() {
     lint_list <- xml_nodes_to_lints(
       all_comment_nodes[is_parsable],
       source_expression = source_expression,
-      lint_message = "Commented code should be removed."
+      lint_message = "Remove commented code."
     )
 
     # Location info needs updating
@@ -105,7 +106,7 @@ commented_code_linter <- function() {
     }
 
     lint_list
-  }, linter_level = "file")
+  })
 }
 
 # is given text parsable
@@ -174,7 +175,7 @@ todo_comment_linter <- function(todo = c("todo", "fixme")) {
           line_number = token[["line1"]],
           column_number = token[["col1"]],
           type = "style",
-          message = "TODO comments should be removed.",
+          message = "Remove TODO comments.",
           line = source_expression[["lines"]][[as.character(token[["line1"]])]],
           ranges = list(c(token[["col1"]], token[["col2"]]))
         )

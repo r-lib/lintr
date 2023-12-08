@@ -38,7 +38,7 @@ pipe_consistency_linter <- function(pipe = c("auto", "%>%", "|>")) {
   xpath_magrittr <- glue("//SPECIAL[{ xp_text_in_table(magrittr_pipes) }]")
   xpath_native <- "//PIPE"
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -53,8 +53,7 @@ pipe_consistency_linter <- function(pipe = c("auto", "%>%", "|>")) {
         xml = c(match_magrittr, match_native),
         source_expression = source_expression,
         lint_message = glue(
-          "Found {n_magrittr} instances of %>% and {n_native} instances of |>. ",
-          "Stick to one pipe operator."
+          "Stick to one pipe operator; found {n_magrittr} instances of %>% and {n_native} instances of |>."
         ),
         type = "style"
       )
@@ -75,5 +74,5 @@ pipe_consistency_linter <- function(pipe = c("auto", "%>%", "|>")) {
     } else {
       list()
     }
-  }, linter_level = "file")
+  })
 }

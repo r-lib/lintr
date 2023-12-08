@@ -39,7 +39,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -87,7 +87,8 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     if (any(failed_namespace)) {
       stop(
         "Failed to retrieve namespaces for one or more of the packages used with `::` or `:::`. ",
-        "Please report the issue at https://github.com/r-lib/lintr/issues."
+        "Please report the issue at https://github.com/r-lib/lintr/issues.",
+        call. = FALSE
       )
     }
     # nocov end
@@ -117,7 +118,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     }
 
     lints
-  }, linter_level = "file")
+  })
 }
 
 namespace_symbols <- function(ns, exported = TRUE) {
@@ -156,7 +157,7 @@ build_ns_get_int_lints <- function(packages, symbols, symbol_nodes, namespaces, 
     symbol_nodes[exported],
     source_expression = source_expression,
     lint_message =
-      sprintf("'%1$s' is exported from {%2$s}. Use %2$s::%1$s instead.", symbols[exported], packages[exported]),
+      sprintf("Don't use `:::` to access %s, which is exported from %s.", symbols[exported], packages[exported]),
     type = "warning"
   )
 

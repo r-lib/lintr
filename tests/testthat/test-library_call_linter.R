@@ -233,6 +233,8 @@ test_that("skips allowed usages of library()/character.only=TRUE", {
 
 test_that("blocks disallowed usages of strings in library()/require()", {
   linter <- library_call_linter()
+  char_only_msg <- rex::rex("Use symbols in library calls", anything, "character.only")
+  direct_stub <- "Call library() directly, not vectorized with "
 
   expect_lint(
     'library("data.table")',
@@ -240,41 +242,40 @@ test_that("blocks disallowed usages of strings in library()/require()", {
     linter
   )
 
-  expect_lint(
-    'library("data.table", character.only = TRUE)',
-    rex::rex("Use symbols in library calls", anything, "character.only"),
-    linter
-  )
-
-  expect_lint(
-    'suppressWarnings(library("data.table", character.only = TRUE))',
-    rex::rex("Use symbols in library calls", anything, "character.only"),
-    linter
-  )
+  expect_lint('library("data.table", character.only = TRUE)', char_only_msg, linter)
+  expect_lint('suppressWarnings(library("data.table", character.only = TRUE))', char_only_msg, linter)
 
   expect_lint(
     "do.call(library, list(data.table))",
-    rex::rex("Call library() directly, not vectorized with do.call()"),
+    rex::rex(direct_stub, "do.call()"),
     linter
   )
-
   expect_lint(
     'do.call("library", list(data.table))',
-    rex::rex("Call library() directly, not vectorized with do.call()"),
+    rex::rex(direct_stub, "do.call()"),
     linter
   )
-
   expect_lint(
     'lapply("data.table", library, character.only = TRUE)',
-    rex::rex("Call library() directly, not vectorized with lapply()"),
+    rex::rex(direct_stub, "lapply()"),
     linter
   )
-
   expect_lint(
     'purr::map("data.table", library, character.only = TRUE)',
-    rex::rex("Call library() directly, not vectorized with map()"),
+    rex::rex(direct_stub, "map()"),
     linter
   )
+})
+
+test_that("character.only=TRUE is caught in *apply functions passed as strings", {
+  linter <- library_call_linter()
+  lib_msg <- rex::rex("Call library() directly, not vectorized with sapply()")
+  req_msg <- rex::rex("Call require() directly, not vectorized with sapply()")
+
+  expect_lint("sapply(pkgs, 'library', character.only = TRUE)", lib_msg, linter)
+  expect_lint('sapply(pkgs, "library", character.only = TRUE)', lib_msg, linter)
+  expect_lint("sapply(pkgs, 'require', character.only = TRUE)", req_msg, linter)
+  expect_lint('sapply(pkgs, "require", character.only = TRUE)', req_msg, linter)
 })
 
 test_that("character.only=TRUE is caught with multiple-line source", {

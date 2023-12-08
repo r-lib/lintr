@@ -3,9 +3,12 @@
 #' This linter checks functions' [return()] expressions.
 #'
 #' @param return_style Character string naming the return style. `"implicit"`,
-#'   the default, enforeces the Tidyverse guide recommendation to leave terminal
+#'   the default, enforces the Tidyverse guide recommendation to leave terminal
 #'   returns implicit. `"explicit"` style requires that `return()` always be
 #'   explicitly supplied.
+#' @param allow_implicit_else Logical, default `TRUE`. If `FALSE`, functions with a terminal
+#'   `if` clause must always have an `else` clause, making the `NULL` alternative explicit
+#'   if necessary.
 #' @param return_functions Character vector of functions that are accepted as terminal calls
 #'   when `return_style = "explicit"`. These are in addition to exit functions
 #'   from base that are always allowed: [stop()], [q()], [quit()], [invokeRestart()],
@@ -32,6 +35,13 @@
 #'   linters = return_linter(return_style = "explicit")
 #' )
 #'
+#' code <- "function(x) {\n  if (x > 0) 2\n}"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = return_linter(allow_implicit_else = FALSE)
+#' )
+#'
 #' # okay
 #' code <- "function(x) {\n  x + 1\n}"
 #' writeLines(code)
@@ -47,6 +57,12 @@
 #'   linters = return_linter(return_style = "explicit")
 #' )
 #'
+#' code <- "function(x) {\n  if (x > 0) 2 else NULL\n}"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = return_linter(allow_implicit_else = FALSE)
+#' )
 #'
 #' @evalRd rd_tags("return_linter")
 #' @seealso
@@ -55,26 +71,26 @@
 #' @export
 return_linter <- function(
     return_style = c("implicit", "explicit"),
+    allow_implicit_else = TRUE,
     return_functions = NULL,
     except = NULL) {
   return_style <- match.arg(return_style)
 
-  if (return_style == "implicit") {
-    xpath <- "
-      (//FUNCTION | //OP-LAMBDA)
-      /following-sibling::expr[1][*[1][self::OP-LEFT-BRACE]]
-      /expr[last()][
-        expr[1][
-          not(OP-DOLLAR or OP-AT)
-          and SYMBOL_FUNCTION_CALL[text() = 'return']
-        ]
-      ]
-    "
-    msg <- "Use implicit return behavior; explicit return() is not needed."
-  } else {
-    # See `?.onAttach`; these functions are all exclusively used for their
-    #   side-effects, so implicit return is generally acceptable
+  if (!allow_implicit_else || return_style == "explicit") {
+    except_xpath <- glue("parent::expr[not(
+      preceding-sibling::expr/SYMBOL[{ xp_text_in_table(union(special_funs, except)) }]
+    )]")
+  }
 
+  if (return_style == "implicit") {
+    body_xpath <- "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[1]"
+    params <- list(
+      implicit = TRUE,
+      type = "style",
+      lint_xpath = "SYMBOL_FUNCTION_CALL[text() = 'return']",
+      lint_message = "Use implicit return behavior; explicit return() is not needed."
+    )
+  } else {
     except <- union(special_funs, except)
 
     base_return_functions <- c(
@@ -94,80 +110,91 @@ return_linter <- function(
 
     return_functions <- union(base_return_functions, return_functions)
 
-    control_calls <- c("IF", "FOR", "WHILE", "REPEAT")
-
-    # from top, look for a FUNCTION definition that uses { (one-line
-    #   function definitions are excepted), then look for failure to find
-    #   return() on the last() expr of the function definition.
-    # exempt .onLoad which shows up in the tree like
-    #   <expr><expr><SYMBOL>.onLoad</></><LEFT_ASSIGN></><expr><FUNCTION>...
-    # simple final expression (no control flow) must be
-    # <expr><expr> CALL( <expr> ) </expr></expr>
-    # NB: if this syntax _isn't_ used, the node may not be <expr>, hence
-    #   the use of /*[...] below and self::expr here. position() = 1 is
-    #   needed to guard against a few other cases.
-    #   We also need to make sure that this expression isn't followed by a pipe
-    #   symbol, which would indicate that we need to also check the last
-    #   expression.
-    # pipe expressions are like
-    #   ...
-    #   <SPECIAL>%&gt;%</SPECIAL>
-    #   <expr><expr><SYMBOL_FUNCTION_CALL>return</SYMBOL_FUNCTION_CALL>
-    #   </expr></expr>
-    # Unlike the following case, the return should be the last expression in
-    # the sequence.
-    # conditional expressions are like
-    #   <expr><IF> ( <expr> ) <expr> [ <ELSE> <expr>] </expr>
-    # we require _any_ call to return() in either of the latter two <expr>, i.e.,
-    #   we don't apply recursive logic to check every branch, only that the
-    #   two top level branches have at least two return()s
-    # because of special 'in' syntax for 'for' loops, the condition is
-    #   tagged differently than for 'if'/'while' conditions (simple PAREN)
-    xpath <- glue("
-    (//FUNCTION | //OP-LAMBDA)[parent::expr[not(
-      preceding-sibling::expr[SYMBOL[{ xp_text_in_table(except) }]]
-    )]]
+    body_xpath <- glue("
+    (//FUNCTION | //OP-LAMBDA)[{ except_xpath }]
       /following-sibling::expr[OP-LEFT-BRACE and expr[last()]/@line1 != @line1]
       /expr[last()]
-      /*[
-        (
-          position() = 1
-          and (
-            (
-              { xp_or(paste0('self::', setdiff(control_calls, 'IF'))) }
-            ) or (
-              not({ xp_or(paste0('self::', control_calls)) })
-              and not(
-                following-sibling::PIPE
-                or following-sibling::SPECIAL[text() = '%>%']
-              )
-              and not(self::expr/SYMBOL_FUNCTION_CALL[
-                { xp_text_in_table(return_functions) }
-              ])
-            )
-          )
-        ) or (
-          preceding-sibling::IF
-          and self::expr
-          and position() > 4
-          and not(.//SYMBOL_FUNCTION_CALL[{ xp_text_in_table(return_functions) }])
-        )
-      ]
     ")
-    msg <- "All functions must have an explicit return()."
+    params <- list(
+      implicit = FALSE,
+      type = "warning",
+      lint_xpath = glue("self::*[not(
+        (self::expr | following-sibling::SPECIAL[text() = '%>%']/following-sibling::expr/expr[1])
+          /SYMBOL_FUNCTION_CALL[{ xp_text_in_table(return_functions) }]
+      )]"),
+      lint_message = "All functions must have an explicit return()."
+    )
   }
 
-  Linter(function(source_expression) {
+  params$allow_implicit_else <- allow_implicit_else
+
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
-    xml_nodes <- xml_find_all(xml, xpath)
+    body_expr <- xml_find_all(xml, body_xpath)
 
-    xml_nodes_to_lints(
-      xml_nodes,
-      source_expression = source_expression,
-      lint_message = msg,
-      type = "style"
+    params$source_expression <- source_expression
+
+    if (params$implicit && !params$allow_implicit_else) {
+      # can't incorporate this into the body_xpath for implicit return style,
+      #   since we still lint explicit returns for except= functions.
+      allow_implicit_else <- is.na(xml_find_first(body_expr, except_xpath))
+    } else {
+      allow_implicit_else <- rep(params$allow_implicit_else, length(body_expr))
+    }
+    # nested_return_lints not "vectorized" due to xml_children()
+    Map(
+      function(expr, allow_implicit_else) {
+        params$allow_implicit_else <- allow_implicit_else
+        nested_return_lints(expr, params)
+      },
+      body_expr, allow_implicit_else
     )
-  }, linter_level = "expression")
+  })
+}
+
+nested_return_lints <- function(expr, params) {
+  child_expr <- xml_children(expr)
+  if (length(child_expr) == 0L) {
+    return(list())
+  }
+  child_node <- xml_name(child_expr)
+
+  if (child_node[1L] == "OP-LEFT-BRACE") {
+    expr_idx <- which(child_node %in% c("expr", "equal_assign", "expr_or_assign_or_help"))
+    if (length(expr_idx) == 0L) { # empty brace expression {}
+      if (params$implicit) {
+        return(list())
+      } else {
+        return(list(xml_nodes_to_lints(
+          expr,
+          source_expression = params$source_expression,
+          lint_message = params$lint_message,
+          type = params$type
+        )))
+      }
+    }
+    nested_return_lints(child_expr[[tail(expr_idx, 1L)]], params)
+  } else if (child_node[1L] == "IF") {
+    expr_idx <- which(child_node %in% c("expr", "equal_assign", "expr_or_assign_or_help"))
+    return_lints <- lapply(child_expr[expr_idx[-1L]], nested_return_lints, params)
+    if (params$allow_implicit_else || length(expr_idx) == 3L) {
+      return(return_lints)
+    }
+    implicit_else_lints <- list(xml_nodes_to_lints(
+      expr,
+      source_expression = params$source_expression,
+      lint_message = "All functions with terminal if statements must have a corresponding terminal else clause",
+      type = "warning"
+    ))
+    c(return_lints, implicit_else_lints)
+  } else {
+    xml_nodes_to_lints(
+      xml_find_first(child_expr[[1L]], params$lint_xpath),
+      source_expression = params$source_expression,
+      lint_message = params$lint_message,
+      type = params$type
+    )
+  }
 }

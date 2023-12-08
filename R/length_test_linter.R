@@ -27,7 +27,7 @@ length_test_linter <- function() {
     /parent::expr
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -44,5 +44,5 @@ length_test_linter <- function() {
       lint_message = lint_message,
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }

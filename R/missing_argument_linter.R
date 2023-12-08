@@ -37,13 +37,16 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
     "self::EQ_SUB[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN or self::OP-COMMA]]"
   )
   if (!allow_trailing) {
-    conds <- c(conds, "self::OP-COMMA[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN]]")
+    conds <- c(conds,
+      "self::OP-RIGHT-PAREN[preceding-sibling::*[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-COMMA]]"
+    )
   }
 
-  xpath <- glue("//SYMBOL_FUNCTION_CALL/parent::expr/parent::expr/*[{xp_or(conds)}]")
+  # require >3 children to exclude foo(), which is <expr><OP-LEFT-PAREN><OP-RIGHT-PAREN>
+  xpath <- glue("//SYMBOL_FUNCTION_CALL/parent::expr/parent::expr[count(*) > 3]/*[{xp_or(conds)}]")
   to_function_xpath <- "string(./preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)"
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -55,5 +58,5 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
       source_expression = source_expression,
       lint_message = "Missing argument in function call."
     )
-  }, linter_level = "file")
+  })
 }

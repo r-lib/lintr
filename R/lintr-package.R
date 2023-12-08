@@ -15,7 +15,7 @@
 #' @importFrom utils capture.output getParseData getTxtProgressBar globalVariables head relist
 #'   setTxtProgressBar tail txtProgressBar
 #' @importFrom xml2 as_list
-#'   xml_attr xml_find_all xml_find_chr xml_find_lgl xml_find_num xml_find_first xml_name xml_text
+#'   xml_attr xml_children xml_find_all xml_find_chr xml_find_lgl xml_find_num xml_find_first xml_name xml_text
 #' @rawNamespace
 #' if (getRversion() >= "4.0.0") {
 #'   importFrom(tools, R_user_dir)
@@ -24,3 +24,8 @@
 #' }
 ## lintr namespace: end
 NULL
+
+# make binding available for mock testing
+# ref: https://testthat.r-lib.org/dev/reference/local_mocked_bindings.html#base-functions
+unlink <- NULL
+quit <- NULL

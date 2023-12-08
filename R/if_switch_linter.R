@@ -61,7 +61,7 @@ if_switch_linter <- function() {
     ]
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -77,5 +77,5 @@ if_switch_linter <- function() {
       ),
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }

@@ -39,12 +39,11 @@ Suggests:
     cli,
     httr (>= 1.2.1),
     jsonlite,
-    mockery,
-    patrick,
+    patrick (>= 0.2.0),
     rlang,
     rmarkdown,
     rstudioapi (>= 0.2),
-    testthat (>= 3.1.5),
+    testthat (>= 3.2.1),
     tibble,
     tufte,
     withr (>= 2.5.0)
@@ -78,6 +77,7 @@ Collate:
     'comment_linters.R'
     'comments.R'
     'comparison_negation_linter.R'
+    'condition_call_linter.R'
     'condition_message_linter.R'
     'conjunct_test_linter.R'
     'consecutive_assertion_linter.R'

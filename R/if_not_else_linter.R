@@ -83,7 +83,7 @@ if_not_else_linter <- function(exceptions = c("is.null", "is.na", "missing")) {
     ]]
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -91,10 +91,7 @@ if_not_else_linter <- function(exceptions = c("is.null", "is.na", "missing")) {
     if_lints <- xml_nodes_to_lints(
       if_expr,
       source_expression = source_expression,
-      lint_message = paste(
-        "In a simple if/else statement,",
-        "prefer `if (A) x else y` to the less-readable `if (!A) y else x`."
-      ),
+      lint_message = "Prefer `if (A) x else y` to the less-readable `if (!A) y else x` in a simple if/else statement.",
       type = "warning"
     )
 
@@ -111,5 +108,5 @@ if_not_else_linter <- function(exceptions = c("is.null", "is.na", "missing")) {
     )
 
     c(if_lints, ifelse_lints)
-  }, linter_level = "expression")
+  })
 }
