@@ -222,10 +222,18 @@ test_that("lints vectorize", {
     trim_some("{
       a<-1
       1/2
+      b<-c<-2
+      d+e+f+g/3
     }"),
     list(
       list(lint_msg, line_number = 2L),
-      list(lint_msg, line_number = 3L)
+      list(lint_msg, line_number = 3L),
+      list(lint_msg, line_number = 4L, column_number = 4L),
+      list(lint_msg, line_number = 4L, column_number = 7L),
+      list(lint_msg, line_number = 5L, column_number = 4L),
+      list(lint_msg, line_number = 5L, column_number = 6L),
+      list(lint_msg, line_number = 5L, column_number = 8L),
+      list(lint_msg, line_number = 5L, column_number = 10L)
     ),
     infix_spaces_linter()
   )
