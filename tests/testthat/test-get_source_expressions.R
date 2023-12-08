@@ -381,7 +381,7 @@ patrick::with_parameters_test_that(
       expect_length(lints, 0L)
     } else {
       # suppress "empty test" skips
-      expect_identical(1L, 1L)
+      expect_true(TRUE)
     }
   },
   .test_name = param_df$.test_name,
