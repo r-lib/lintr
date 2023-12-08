@@ -178,6 +178,8 @@
 <h4 id="lint-accuracy-fixes-removing-false-negatives-development-version">Lint accuracy fixes: removing false negatives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-negatives-development-version"></a></h4>
 <ul><li>
 <code><a href="../reference/missing_argument_linter.html">missing_argument_linter()</a></code> catches all missing arguments in calls with several, e.g. <code>foo(,,)</code> gives 3 lints instead of 2 (<a href="https://github.com/r-lib/lintr/issues/2399" class="external-link">#2399</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/duplicate_argument_linter.html">duplicate_argument_linter()</a></code> no longer misses cases with duplicate arguments where a comment comes between the argument name and <code>=</code> (<a href="https://github.com/r-lib/lintr/issues/2402" class="external-link">#2402</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 </div>
 </div>
