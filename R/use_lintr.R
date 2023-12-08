@@ -44,26 +44,34 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
   )
   write.dcf(the_config, config_file, width = Inf)
 
-  # Some OS can only normalize a path if the associated file or folder exists, so the path needs to be re-normalized
-  config_file <- normalizePath(file.path(path, lintr_option("linter_file")), mustWork = TRUE, winslash = "/")
-  pkg_path <- normalizePath(path, mustWork = TRUE, winslash = "/")
-  # Check if config_file is in package i.e. lintr_option("linter_file") != "../.lintr"
-  if (file.exists(file.path(path, "DESCRIPTION")) && startsWith(config_file, prefix = pkg_path)) {
-    # Skip a extra character for the leading `/`
-    rel_path <- substring(config_file, first = nchar(pkg_path) + 2L, last = nchar(config_file))
-    ignore_path <- file.path(pkg_path, ".Rbuildignore")
-    if (!file.exists(ignore_path)) file.create(ignore_path)
-    # Follow the same procedure as base R to see if the file is already ignored
-    ignore <- tryCatch({
-      trimws(readLines(ignore_path))
-    }, warning = function(e) {
-      cat(file = ignore_path, "\n", append = TRUE)
-      trimws(readLines(ignore_path))
+  if (file.exists(file.path(path, "DESCRIPTION"))) {
+    # Some OS can only normalize a path if the associated file or folder exists, so the path needs to be re-normalized
+    tryCatch({
+      pkg_path <- normalizePath(path, mustWork = TRUE, winslash = "/")
+      config_file <- normalizePath(file.path(path, lintr_option("linter_file")), mustWork = TRUE, winslash = "/")
+    }, error = function(e) {
+      stop("No entry could be added to the .Rbuildignore.", call. = FALSE)
     })
-    ignore <- ignore[nzchar(ignore)]
-    if (!any(vapply(ignore, function(x) grepl(rel_path, pattern = x, perl = TRUE, ignore.case = TRUE), logical(1L)))) {
-      cat(file = ignore_path, rex::rex(start, rel_path, end), sep = "\n", append = TRUE)
-      message("Adding ", rel_path, " to .Rbuildignore")
+    # Check if config_file is in package i.e. lintr_option("linter_file") != "../.lintr"
+    if (startsWith(config_file, prefix = pkg_path)) {
+      # Skip a extra character for the leading `/`
+      rel_path <- substring(config_file, first = nchar(pkg_path) + 2L, last = nchar(config_file))
+      ignore_path <- file.path(pkg_path, ".Rbuildignore")
+      if (!file.exists(ignore_path)) file.create(ignore_path)
+      # Follow the same procedure as base R to see if the file is already ignored
+      ignore <- tryCatch({
+        trimws(readLines(ignore_path))
+      }, warning = function(e) {
+        cat(file = ignore_path, "\n", append = TRUE)
+        trimws(readLines(ignore_path))
+      })
+      ignore <- ignore[nzchar(ignore)]
+      already_ignored <-
+        any(vapply(ignore, FUN = grepl, x = rel_path, perl = TRUE, ignore.case = TRUE, FUN.VALUE = logical(1L)))
+      if (!already_ignored) {
+        cat(file = ignore_path, rex::rex(start, rel_path, end), sep = "\n", append = TRUE)
+        message("Adding ", rel_path, " to .Rbuildignore")
+      }
     }
   }
 

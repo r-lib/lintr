@@ -88,15 +88,3 @@ test_that("use_lintr handles missing final new line", {
   }, regexp = "Adding .* to .Rbuildignore")
   expect_identical(readLines(ignore), c("^fu$", "^bar$", "^\\.lintr$"))
 })
-
-test_that("use_lintr handles missing final new line", {
-  path <- withr::local_tempdir()
-  file.create(file.path(path, "DESCRIPTION"))
-  file.create(file.path(path, lintr_option("linter_file")))
-  config_file <- normalizePath(file.path(path, lintr_option("linter_file")), mustWork = TRUE, winslash = "/")
-  pkg_path <- normalizePath(path, mustWork = TRUE, winslash = "/")
-  warning(config_file, call. = FALSE)
-  warning(pkg_path, call. = FALSE)
-  expect_true(startsWith(config_file, prefix = pkg_path))
-  expect_true(file.exists(file.path(path, "DESCRIPTION")))
-})
