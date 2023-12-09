@@ -12,6 +12,7 @@
   + ignores extractions with explicit returns like `lapply(l, function(x) foo(x)$bar)` (#2258, @MichaelChirico).
   + ignores calls on the RHS of operators like `lapply(l, function(x) "a" %in% names(x))` (#2310, @MichaelChirico).
 * `vector_logic_linter()` recognizes some cases where bitwise `&`/`|` are used correctly (#1453, @MichaelChirico).
+* `expect_comparison_linter()` ignores faulty usage like `expect_true(x, y > z)` (#2083, @MichaelChirico). Note that `y > z` is being passed to the `info=` argument, so this is likely a mistake.
 
 # lintr 3.1.1
 
