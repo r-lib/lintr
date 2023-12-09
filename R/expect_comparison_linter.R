@@ -53,7 +53,7 @@ expect_comparison_linter <- function() {
   xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
     /parent::expr
-    /following-sibling::expr[ {xp_or(comparator_nodes)} ]
+    /following-sibling::expr[1][ {xp_or(comparator_nodes)} ]
     /parent::expr[not(SYMBOL_SUB[text() = 'info'])]
   ")
 
