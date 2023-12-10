@@ -12,7 +12,7 @@
    + Helper `with_defaults()`.
 * `all_linters()` has signature `all_linters(..., packages)` rather than `all_linters(packages, ...)` (#2332, @MichaelChirico). This forces `packages=` to be supplied by name and will break users who rely on supplying `packages=` positionally, of which we found none searching GitHub.
 * Adjusted various lint messages for consistency in readability (#1330, @MichaelChirico). In general, we favor lint messages to be phrased like "Action, reason" to but the "what" piece of the message front-and-center. This may be a breaking change for code that tests the specific phrasing of lints.
-* `extraction_operator_linter()` is deprecated. Although switching from `$` to `[[` has microoptimization benefits, it can lead to non-idiomatic code in many contexts (e.g. R6 classes, Shiny applications, etc.) (#2409, @IndrajeetPatil).
+* `extraction_operator_linter()` is deprecated. Although switching from `$` to `[[` has some robustness benefits for package code, it can lead to non-idiomatic code in many contexts (e.g. R6 classes, Shiny applications, etc.) (#2409, @IndrajeetPatil).
 
 ## Bug fixes
 
