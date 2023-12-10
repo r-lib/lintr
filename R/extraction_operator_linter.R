@@ -51,6 +51,13 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 extraction_operator_linter <- function() {
+  lintr_deprecated(
+    what = "extraction_operator_linter",
+    version = "3.2.0",
+    type = "Linter",
+    signal = "warning"
+  )
+
   constant_nodes_in_brackets <- paste0("self::", c("expr", "OP-PLUS", "NUM_CONST", "STR_CONST"))
   xpath <- glue("
   //OP-DOLLAR[not(preceding-sibling::expr[1]/SYMBOL[text() = 'self' or text() = '.self'])]
