@@ -14,10 +14,52 @@
 #'   approach is roughly linear in the number of conditions that need to
 #'   be evaluated, here up to 3 times).
 #'
+#' @param max_branch_lines,max_branch_expr Integer, default 0 indicates "no maximum".
+#'   If set and `if`/`else if`/.../`else`chain where any branch occupies more than
+#'   this number of lines (resp. expressions) will not be linted. See examples.
+#'
 #' @examples
 #' # will produce lints
 #' lint(
 #'   text = "if (x == 'a') 1 else if (x == 'b') 2 else 3",
+#'   linters = if_switch_linter()
+#' )
+#'
+#' code <- paste(
+#'   "if (x == 'a') {",
+#'   "  1",
+#'   "} else if (x == 'b') {",
+#'   "  2",
+#'   "} else if (x == 'c') {",
+#'   "  y <- x",
+#'   "  z <- sqrt(match(y, letters))",
+#'   "  z",
+#'   "}",
+#'   sep = "\n"
+#' )
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = if_switch_linter()
+#' )
+#'
+#' code <- paste(
+#'   "if (x == 'a') {",
+#'   "  1",
+#'   "} else if (x == 'b') {",
+#'   "  2",
+#'   "} else if (x == 'c') {",
+#'   "  y <- x",
+#'   "  z <- sqrt(","
+#'   "    match(y, letters)",
+#'   "  )",
+#'   "  z",
+#'   "}",
+#'   sep = "\n"
+#' )
+#' writeLines(code)
+#' lint(
+#'   text = code,
 #'   linters = if_switch_linter()
 #' )
 #'
@@ -33,11 +75,49 @@
 #'   linters = if_switch_linter()
 #' )
 #'
+#' code <- paste(
+#'   "if (x == 'a') {",
+#'   "  1",
+#'   "} else if (x == 'b') {",
+#'   "  2",
+#'   "} else if (x == 'c') {",
+#'   "  y <- x",
+#'   "  z <- sqrt(match(y, letters))",
+#'   "  z",
+#'   "}",
+#'   sep = "\n"
+#' )
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = if_switch_linter(max_branch_lines = 2L)
+#' )
+#'
+#' code <- paste(
+#'   "if (x == 'a') {",
+#'   "  1",
+#'   "} else if (x == 'b') {",
+#'   "  2",
+#'   "} else if (x == 'c') {",
+#'   "  y <- x",
+#'   "  z <- sqrt(","
+#'   "    match(y, letters)",
+#'   "  )",
+#'   "  z",
+#'   "}",
+#'   sep = "\n"
+#' )
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = if_switch_linter(max_branch_expr = 2L)
+#' )
+#'
 #' @evalRd rd_tags("if_switch_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-if_switch_linter <- function() {
-  equal_str_cond <- "expr[1][EQ and expr[STR_CONST]]"
+if_switch_linter <- function(max_branch_lines = 0L, max_branch_expr = 0L) {
+  equal_str_cond <- "expr[1][EQ and expr/STR_CONST]"
 
   # NB: IF AND {...} AND ELSE/... implies >= 3 equality conditions are present
   # .//expr/IF/...: the expr in `==` that's _not_ the STR_CONST
