@@ -94,7 +94,6 @@ test_that("max_branch_lines= and max_branch_expr= arguments work", {
       3
     }
   ")
-debug(max_lines2_linter)
   expect_lint(one_per_branch_lines, lint_msg, max_lines2_linter)
   expect_lint(one_per_branch_lines, lint_msg, max_lines4_linter)
   expect_lint(one_per_branch_lines, lint_msg, max_expr2_linter)

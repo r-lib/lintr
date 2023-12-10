@@ -119,9 +119,14 @@
 if_switch_linter <- function(max_branch_lines = 0L, max_branch_expr = 0L) {
   equal_str_cond <- "expr[1][EQ and expr/STR_CONST]"
 
-  if (max_branch_lines > 0L) {
-    max_lines_cond <-
-      glue(".//expr[preceding-sibling::IF and position() = 3 and @line2 - @line1 > {max_branch_lines}]")
+  if (max_branch_lines > 0L || max_branch_expr > 0L) {
+    if_branch_conds <- c(
+      "preceding-sibling::IF",
+      "position() = 2",
+      if (max_branch_lines > 0L) paste("OP-RIGHT-BRACE/@line2 - OP-LEFT-BRACE/@line1 > 1 +", max_branch_lines),
+      if (max_branch_expr > 0L) paste("count(expr) >", max_branch_expr)
+    )
+    max_lines_cond <- glue(".//expr[{xp_and(if_branch_conds)}]")
   } else {
     max_lines_cond <- "false"
   }
