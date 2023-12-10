@@ -68,6 +68,10 @@ expect_identical_linter <- function() {
         and expr[NUM_CONST[contains(text(), '.')]]
       ]
       or following-sibling::expr[NUM_CONST[contains(text(), '.')]]
+      or following-sibling::expr[
+        OP-MINUS
+        and expr[NUM_CONST[contains(text(), '.')]]
+      ]
       or following-sibling::expr[SYMBOL[text() = '...']]
     )]
     /parent::expr
