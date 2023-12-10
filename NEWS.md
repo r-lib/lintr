@@ -20,6 +20,7 @@
 
 ## Bug fixes
 
+* `expect_identical_linter()` no longer lints `expect_equal()` comparison to negative non-integers (#2411, @Bisaloo).
 * `object_name_linter()` no longer errors when user-supplied `regexes=` have capture groups (#2188, @MichaelChirico).
 * `.lintr` config validation correctly accepts regular expressions which only compile under `perl = TRUE` (#2375, @MichaelChirico). These have always been valid (since `rex::re_matches()`, which powers the lint exclusion logic, also uses this setting), but the new up-front validation in v3.1.1 incorrectly used `perl = FALSE`.
 * `.lintr` configs set by option `lintr.linter_file` or environment variable `R_LINTR_LINTER_FILE` can point to subdirectories (#2512, @MichaelChirico).
