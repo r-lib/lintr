@@ -30,6 +30,7 @@ test_that("expect_identical_linter skips cases likely testing numeric equality",
   lint_msg <- rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed")
 
   expect_lint("expect_equal(x, 1.034)", NULL, linter)
+  expect_lint("expect_equal(x, -1.034)", NULL, linter)
   expect_lint("expect_equal(x, c(1.01, 1.02))", NULL, linter)
   # whole numbers with explicit decimals are OK, even in mixed scenarios
   expect_lint("expect_equal(x, c(1.0, 2))", NULL, linter)
