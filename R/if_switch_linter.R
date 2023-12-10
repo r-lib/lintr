@@ -119,6 +119,13 @@
 if_switch_linter <- function(max_branch_lines = 0L, max_branch_expr = 0L) {
   equal_str_cond <- "expr[1][EQ and expr/STR_CONST]"
 
+  if (max_branch_lines > 0L) {
+    max_lines_cond <-
+      glue(".//expr[preceding-sibling::IF and position() = 3 and @line2 - @line1 > {max_branch_lines}]")
+  } else {
+    max_lines_cond <- "false"
+  }
+
   # NB: IF AND {...} AND ELSE/... implies >= 3 equality conditions are present
   # .//expr/IF/...: the expr in `==` that's _not_ the STR_CONST
   # not(preceding::IF): prevent nested matches which might be incorrect globally
@@ -138,6 +145,7 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expr = 0L) {
         .//expr/IF/following-sibling::{equal_str_cond}/expr[not(STR_CONST)]
           != expr[1][EQ]/expr[not(STR_CONST)]
       )
+      and not({ max_lines_cond })
     ]
   ")
 
