@@ -10,6 +10,7 @@
 \alias{single_quotes_linter}
 \alias{consecutive_stopifnot_linter}
 \alias{no_tab_linter}
+\alias{extraction_operator_linter}
 \alias{with_defaults}
 \title{Deprecated functions in lintr}
 \usage{
@@ -28,6 +29,8 @@ single_quotes_linter()
 consecutive_stopifnot_linter()
 
 no_tab_linter()
+
+extraction_operator_linter()
 
 with_defaults(..., default = default_linters)
 }
