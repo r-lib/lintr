@@ -4,7 +4,12 @@
 \alias{if_switch_linter}
 \title{Require usage of switch() over repeated if/else blocks}
 \usage{
-if_switch_linter()
+if_switch_linter(max_branch_lines = 0L, max_branch_expr = 0L)
+}
+\arguments{
+\item{max_branch_lines, max_branch_expr}{Integer, default 0 indicates "no maximum".
+If set and \code{if}/\verb{else if}/.../\verb{else}chain where any branch occupies more than
+this number of lines (resp. expressions) will not be linted. See examples.}
 }
 \description{
 \code{\link[=switch]{switch()}} statements in R are used to delegate behavior based
@@ -29,6 +34,44 @@ lint(
   linters = if_switch_linter()
 )
 
+code <- paste(
+  "if (x == 'a') {",
+  "  1",
+  "} else if (x == 'b') {",
+  "  2",
+  "} else if (x == 'c') {",
+  "  y <- x",
+  "  z <- sqrt(match(y, letters))",
+  "  z",
+  "}",
+  sep = "\n"
+)
+writeLines(code)
+lint(
+  text = code,
+  linters = if_switch_linter()
+)
+
+code <- paste(
+  "if (x == 'a') {",
+  "  1",
+  "} else if (x == 'b') {",
+  "  2",
+  "} else if (x == 'c') {",
+  "  y <- x",
+  "  z <- sqrt(","
+  "    match(y, letters)",
+  "  )",
+  "  z",
+  "}",
+  sep = "\n"
+)
+writeLines(code)
+lint(
+  text = code,
+  linters = if_switch_linter()
+)
+
 # okay
 lint(
   text = "switch(x, a = 1, b = 2, 3)",
@@ -41,10 +84,48 @@ lint(
   linters = if_switch_linter()
 )
 
+code <- paste(
+  "if (x == 'a') {",
+  "  1",
+  "} else if (x == 'b') {",
+  "  2",
+  "} else if (x == 'c') {",
+  "  y <- x",
+  "  z <- sqrt(match(y, letters))",
+  "  z",
+  "}",
+  sep = "\n"
+)
+writeLines(code)
+lint(
+  text = code,
+  linters = if_switch_linter(max_branch_lines = 2L)
+)
+
+code <- paste(
+  "if (x == 'a') {",
+  "  1",
+  "} else if (x == 'b') {",
+  "  2",
+  "} else if (x == 'c') {",
+  "  y <- x",
+  "  z <- sqrt(","
+  "    match(y, letters)",
+  "  )",
+  "  z",
+  "}",
+  sep = "\n"
+)
+writeLines(code)
+lint(
+  text = code,
+  linters = if_switch_linter(max_branch_expr = 2L)
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=consistency_linters]{consistency}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
 }
