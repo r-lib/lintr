@@ -59,7 +59,7 @@ code <- paste(
   "  2",
   "} else if (x == 'c') {",
   "  y <- x",
-  "  z <- sqrt(","
+  "  z <- sqrt(",
   "    match(y, letters)",
   "  )",
   "  z",
@@ -109,7 +109,7 @@ code <- paste(
   "  2",
   "} else if (x == 'c') {",
   "  y <- x",
-  "  z <- sqrt(","
+  "  z <- sqrt(",
   "    match(y, letters)",
   "  )",
   "  z",
