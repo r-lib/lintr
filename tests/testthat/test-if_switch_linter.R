@@ -260,3 +260,21 @@ test_that("max_branch_lines= and max_branch_expr= interact correctly", {
     linter
   )
 })
+
+test_that("max_branch_lines= and max_branch_expr= work for a terminal 'else' branch", {
+  else_long_lines <- trim_some("
+    if (x == 'a') {
+      1
+    } else if (x == 'b') {
+      2
+    } else if (x == 'c') {
+      3
+    } else {
+      4
+      5
+      6
+    }
+  ")
+  expect_lint(else_long_lines, NULL, if_switch_linter(max_branch_lines = 2L))
+  expect_lint(else_long_lines, NULL, if_switch_linter(max_branch_expr = 2L))
+})
