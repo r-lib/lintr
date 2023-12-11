@@ -52,13 +52,12 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
     | descendant::LEFT_ASSIGN[text() = ':=']
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
 
     declared_globals <- try_silently(globalVariables(package = pkg_name %||% globalenv()))
 
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
 
     # run the following at run-time, not "compile" time to allow package structure to change
     env <- make_check_env(pkg_name, xml)
@@ -123,7 +122,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
 
       xml_nodes_to_lints(nodes, source_expression = source_expression, lint_message = res$message, type = "warning")
     })
-  }, linter_level = "file")
+  })
 }
 
 make_check_env <- function(pkg_name, xml) {
@@ -215,7 +214,8 @@ parse_check_usage <- function(expression,
     # TODO (AshesITR): Remove this in the future, if no bugs arise from this safeguard
     warning(
       "Possible bug in lintr: Couldn't parse usage message ", sQuote(vals[is_missing][[1L]]), ". ",
-      "Ignoring ", sum(is_missing), " usage warnings. Please report an issue at https://github.com/r-lib/lintr/issues."
+      "Ignoring ", sum(is_missing), " usage warnings. Please report an issue at https://github.com/r-lib/lintr/issues.",
+      call. = FALSE
     )
   }
   # nocov end

@@ -59,3 +59,17 @@ test_that("nested_ifelse_linter also catches data.table::fifelse", {
     nested_ifelse_linter()
   )
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      ifelse(x < 0, ifelse(x == 0, 0, 1), -1)
+      fifelse(y < 0, fifelse(y == 0, 0, 1), -1)
+    }"),
+    list(
+      list("ifelse", line_number = 2L),
+      list("fifelse", line_number = 3L)
+    ),
+    nested_ifelse_linter()
+  )
+})

@@ -82,22 +82,17 @@ strings_as_factors_linter <- function() {
     ]
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = paste(
-        "This code relies on the default value of stringsAsFactors,",
-        "which changed in version R 4.0. Please supply an explicit value for",
-        "stringsAsFactors for this code to work with versions of R both before",
-        "and after this switch."
-      ),
+      lint_message =
+        "Supply an explicit value for stringsAsFactors for this code to work before and after R version 4.0.",
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }

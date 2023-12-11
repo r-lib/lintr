@@ -86,9 +86,8 @@ nested_ifelse_linter <- function() {
     /following-sibling::expr[expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]]
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
 
@@ -98,5 +97,5 @@ nested_ifelse_linter <- function() {
       "instead, try (1) data.table::fcase; (2) dplyr::case_when; or (3) using a lookup table."
     )
     xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "warning")
-  }, linter_level = "expression")
+  })
 }

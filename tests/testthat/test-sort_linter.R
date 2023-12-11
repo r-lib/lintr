@@ -118,3 +118,17 @@ test_that("sort_linter blocks simple disallowed usages", {
   # expression matching
   expect_lint("sort(foo(x)) == foo(x)", sorted_msg, linter)
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      x == sort(x)
+      y[order(y)]
+    }"),
+    list(
+      list(rex::rex("is.unsorted(x)"), line_number = 2L),
+      list(rex::rex("sort(y"), line_number = 3L)
+    ),
+    sort_linter()
+  )
+})

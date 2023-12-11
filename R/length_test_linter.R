@@ -27,9 +27,8 @@ length_test_linter <- function() {
     /parent::expr
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
     expr_parts <- vapply(lapply(bad_expr, xml_find_all, "expr[2]/*"), xml_text, character(3L))
@@ -44,5 +43,5 @@ length_test_linter <- function() {
       lint_message = lint_message,
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }

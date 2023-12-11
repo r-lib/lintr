@@ -69,16 +69,15 @@ is_numeric_linter <- function() {
     /parent::expr
   "
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     or_expr <- xml_find_all(xml, or_xpath)
     or_lints <- xml_nodes_to_lints(
       or_expr,
       source_expression = source_expression,
       lint_message = paste(
-        "is.numeric(x) is the same as is.numeric(x) || is.integer(x).",
+        "Use `is.numeric(x)` instead of the equivalent `is.numeric(x) || is.integer(x)`.",
         "Use is.double(x) to test for objects stored as 64-bit floating point."
       ),
       type = "warning"
@@ -97,12 +96,12 @@ is_numeric_linter <- function() {
       class_expr,
       source_expression = source_expression,
       lint_message = paste(
-        'is.numeric(x) is the same as class(x) %in% c("integer", "numeric").',
+        'Use is.numeric(x) instead of class(x) %in% c("integer", "numeric").',
         "Use is.double(x) to test for objects stored as 64-bit floating point."
       ),
       type = "warning"
     )
 
     c(or_lints, class_lints)
-  }, linter_level = "expression")
+  })
 }

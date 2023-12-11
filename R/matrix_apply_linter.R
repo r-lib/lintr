@@ -76,9 +76,8 @@ matrix_apply_linter <- function() {
   margin_xpath <- "expr[position() = 3]"
   fun_xpath <- "expr[position() = 4]"
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
 
@@ -101,7 +100,7 @@ matrix_apply_linter <- function() {
       lint_message = sprintf("Use %1$s rather than %2$s", recos, get_r_string(bad_expr)),
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }
 
 craft_colsums_rowsums_msg <- function(variable, margin, fun, narm_val) {

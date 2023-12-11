@@ -67,9 +67,8 @@ pipe_continuation_linter <- function() {
   ]
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
 
     pipe_exprs <- xml_find_all(xml, xpath)
     pipe_text <- xml_text(pipe_exprs)
@@ -78,10 +77,10 @@ pipe_continuation_linter <- function() {
       pipe_exprs,
       source_expression = source_expression,
       lint_message = sprintf(
-        "`%s` should always have a space before it and a new line after it, unless the full pipeline fits on one line.",
+        "Put a space before `%s` and a new line after it, unless the full pipeline fits on one line.",
         pipe_text
       ),
       type = "style"
     )
-  }, linter_level = "file")
+  })
 }

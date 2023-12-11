@@ -105,9 +105,9 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
     )
   ]")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
+
     bad_expr <- xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(
@@ -116,5 +116,5 @@ infix_spaces_linter <- function(exclude_operators = NULL, allow_multiple_spaces 
       lint_message = lint_message,
       type = "style"
     )
-  }, linter_level = "expression")
+  })
 }

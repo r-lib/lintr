@@ -83,9 +83,8 @@ inner_combine_linter <- function() {
     /parent::expr
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
 
@@ -98,7 +97,7 @@ inner_combine_linter <- function() {
       )
     )
     xml_nodes_to_lints(bad_expr, source_expression = source_expression, lint_message, type = "warning")
-  }, linter_level = "expression")
+  })
 }
 
 #' Make the XPath condition ensuring an argument matches across calls

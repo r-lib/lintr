@@ -18,6 +18,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{boolean_arithmetic_linter}}}
 \item{\code{\link{class_equals_linter}}}
 \item{\code{\link{commented_code_linter}}}
+\item{\code{\link{condition_call_linter}}}
 \item{\code{\link{condition_message_linter}}}
 \item{\code{\link{conjunct_test_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
@@ -31,7 +32,6 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{expect_s4_class_linter}}}
 \item{\code{\link{expect_true_false_linter}}}
 \item{\code{\link{expect_type_linter}}}
-\item{\code{\link{extraction_operator_linter}}}
 \item{\code{\link{fixed_regex_linter}}}
 \item{\code{\link{for_loop_index_linter}}}
 \item{\code{\link{function_argument_linter}}}

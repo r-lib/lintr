@@ -55,7 +55,8 @@ load_cache <- function(file, path = NULL) {
       error = function(e) {
         warning(
           "Could not load cache file '", file, "':\n",
-          conditionMessage(e)
+          conditionMessage(e),
+          call. = FALSE
         )
       }
     )

@@ -65,9 +65,8 @@ one_call_pipe_linter <- function() {
     ]
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
     pipe <- xml_find_chr(bad_expr, "string(SPECIAL | PIPE)")
@@ -75,8 +74,8 @@ one_call_pipe_linter <- function() {
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = paste0("Expressions with only a single call shouldn't use pipe ", pipe, "."),
+      lint_message = paste0("Avoid pipe ", pipe, " for expressions with only a single call."),
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }

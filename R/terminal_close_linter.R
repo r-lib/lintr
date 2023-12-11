@@ -49,8 +49,5 @@ terminal_close_linter <- make_linter_from_xpath(
       ]
     ]
   ",
-  lint_message = paste(
-    "Use on.exit(close(x)) to close connections instead of",
-    "running it as the last call in a function."
-  )
+  lint_message = "Use on.exit(close(x)) to close connections instead of running it as the last call in a function."
 )

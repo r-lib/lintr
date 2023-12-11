@@ -71,10 +71,9 @@ consecutive_mutate_linter <- function(invalid_backends = "dbplyr") {
     /following-sibling::expr[{ mutate_cond }]
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     # need the full file to also catch usages at the top level
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
 
     attach_str <- get_r_string(xml_find_all(xml, attach_pkg_xpath))
     if (any(invalid_backends %in% attach_str)) {
@@ -94,5 +93,5 @@ consecutive_mutate_linter <- function(invalid_backends = "dbplyr") {
       lint_message = "Unify consecutive calls to mutate().",
       type = "warning"
     )
-  }, linter_level = "file")
+  })
 }

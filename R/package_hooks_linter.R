@@ -126,9 +126,8 @@ package_hooks_linter <- function() {
     ]
   "
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
 
     any_hook <- xml_find_first(xml, any_hook_xpath)
     if (is.na(any_hook)) {
@@ -199,5 +198,5 @@ package_hooks_linter <- function() {
       bad_unload_call_lints,
       unload_arg_name_lints
     )
-  }, linter_level = "file")
+  })
 }

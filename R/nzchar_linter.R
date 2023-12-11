@@ -92,16 +92,15 @@ nzchar_linter <- function() {
     "nzchar(NA) is TRUE by default."
   )
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     comparison_expr <- xml_find_all(xml, comparison_xpath)
     comparison_lints <- xml_nodes_to_lints(
       comparison_expr,
       source_expression = source_expression,
       lint_message = paste(
-        'Instead of comparing strings to "", use nzchar().',
+        'Use nzchar() instead of comparing strings to "".',
         "Note that if x is a factor, you'll have use ",
         'as.character() to replicate an implicit conversion that happens in x == "".',
         keepna_note
@@ -114,12 +113,12 @@ nzchar_linter <- function() {
       nchar_expr,
       source_expression = source_expression,
       lint_message = paste(
-        "Instead of comparing nchar(x) to 0, use nzchar().",
+        "Use nzchar() instead of comparing nchar(x) to 0.",
         keepna_note
       ),
       type = "warning"
     )
 
     c(comparison_lints, nchar_lints)
-  }, linter_level = "expression")
+  })
 }

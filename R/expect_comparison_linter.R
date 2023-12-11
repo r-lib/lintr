@@ -53,7 +53,7 @@ expect_comparison_linter <- function() {
   xpath <- glue("
   //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
     /parent::expr
-    /following-sibling::expr[ {xp_or(comparator_nodes)} ]
+    /following-sibling::expr[1][ {xp_or(comparator_nodes)} ]
     /parent::expr[not(SYMBOL_SUB[text() = 'info'])]
   ")
 
@@ -63,9 +63,8 @@ expect_comparison_linter <- function() {
     `==` = "expect_identical"
   )
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
 
@@ -73,5 +72,5 @@ expect_comparison_linter <- function() {
     expectation <- comparator_expectation_map[comparator]
     lint_message <- sprintf("%s(x, y) is better than expect_true(x %s y).", expectation, comparator)
     xml_nodes_to_lints(bad_expr, source_expression, lint_message = lint_message, type = "warning")
-  }, linter_level = "expression")
+  })
 }

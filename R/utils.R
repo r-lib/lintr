@@ -43,7 +43,7 @@ fix_names <- function(x, default) {
   if (is.null(nms)) {
     nms <- default
   } else {
-    nms[nms == ""] <- default
+    nms[!nzchar(nms)] <- default
   }
   names(x) <- nms
   x

@@ -47,9 +47,8 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
 
   names_xpath <- "//SYMBOL | //SYMBOL_FUNCTION_CALL"
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     all_names_nodes <- xml_find_all(xml, names_xpath)
     all_names <- xml_text(all_names_nodes)
@@ -58,10 +57,7 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
     needs_backport <- !is.na(bad_versions)
 
     lint_message <- sprintf(
-      paste(
-        "%s (R %s) is not available for dependency R >= %s.",
-        "Use the `except` argument of `backport_linter()` to configure available backports."
-      ),
+      "%s (R %s) is not available for dependency R >= %s.",
       all_names[needs_backport],
       bad_versions[needs_backport],
       r_version
@@ -72,7 +68,7 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
       lint_message = lint_message,
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }
 
 normalize_r_version <- function(r_version) {
@@ -94,7 +90,7 @@ normalize_r_version <- function(r_version) {
     version_names <- c("devel", "release", paste0("oldrel-", seq_len(length(minor_versions) - 2L)))
     if (!r_version %in% version_names) {
       # This can only trip if e.g. oldrel-99 is requested
-      stop("`r_version` must be a version number or one of ", toString(sQuote(version_names)))
+      stop("`r_version` must be a version number or one of ", toString(sQuote(version_names)), call. = FALSE)
     }
     requested_version <- minor_versions[match(r_version, table = version_names)]
     available_patches <- all_versions[startsWith(all_versions, requested_version)]
@@ -106,10 +102,13 @@ normalize_r_version <- function(r_version) {
   } else if (is.character(r_version)) {
     r_version <- R_system_version(r_version, strict = TRUE)
   } else if (!inherits(r_version, "R_system_version")) {
-    stop("`r_version` must be a R version number, returned by R_system_version(), or a string.")
+    stop("`r_version` must be a R version number, returned by R_system_version(), or a string.", call. = FALSE)
   }
   if (r_version < "3.0.0") {
-    warning("It is not recommended to depend on an R version older than 3.0.0. Resetting 'r_version' to 3.0.0.")
+    warning(
+      "It is not recommended to depend on an R version older than 3.0.0. Resetting 'r_version' to 3.0.0.",
+      call. = FALSE
+    )
     r_version <- R_system_version("3.0.0")
   }
   r_version

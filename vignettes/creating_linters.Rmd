@@ -27,7 +27,7 @@ A good example of a simple linter is the `pipe_call_linter`.
 pipe_call_linter <- function() {
   xpath <- "//expr[preceding-sibling::SPECIAL[text() = '%>%'] and *[1][self::SYMBOL]]"
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
@@ -43,7 +43,7 @@ pipe_call_linter <- function() {
       lint_message = "Use explicit calls in magrittr pipes, i.e., `a %>% foo` should be `a %>% foo()`.",
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }
 ```
 

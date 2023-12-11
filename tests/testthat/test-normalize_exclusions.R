@@ -99,6 +99,7 @@ test_that("it handles redundant lines", {
 
 test_that("it handles redundant linters", {
   t1 <- list()
+  # nolint next: duplicate_argument_linter.
   t1[[a]] <- list(c(1L, 1L, 1L:10L), my_linter = c(1L, 1L, 1L, 2L), my_linter = 3L)
   res <- list()
   res[[a]] <- list(1L:10L, my_linter = 1L:3L)
@@ -106,6 +107,7 @@ test_that("it handles redundant linters", {
 
   t1 <- list()
   t1[[a]] <- list(c(1L, 1L, 1L:10L), my_linter = c(1L, 1L, 1L, 2L))
+  # nolint next: duplicate_argument_linter.
   t1[[b]] <- list(1L:10L, my_linter = 1L:10L, my_linter = 11L:20L)
   res <- list()
   res[[a]] <- list(1L:10L, my_linter = 1L:2L)

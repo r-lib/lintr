@@ -37,7 +37,7 @@
 #'   whereas the DCF approach requires somewhat awkward formatting of parseable R code within
 #'   valid DCF key-value pairs. The main disadvantage of the R file is it might be _too_ flexible,
 #'   with users tempted to write configs with side effects causing hard-to-detect bugs or
-#"   otherwise "abusing" the ability to evaluate generic R code. Other recursive key-value stores
+# "   otherwise "abusing" the ability to evaluate generic R code. Other recursive key-value stores
 #'   like YAML could work, but require new dependencies and are harder to parse
 #'   both programmatically and visually.
 #' Here is an example of a `.lintr.R` file:
@@ -116,14 +116,16 @@ read_config_file <- function(config_file) {
             error = function(e) {
               stop(
                 "Error from config setting '", setting, "' in '", format(conditionCall(e)), "':\n",
-                "    ", conditionMessage(e)
+                "    ", conditionMessage(e),
+                call. = FALSE
               )
             }
           ),
           warning = function(w) {
             warning(
               "Warning from config setting '", setting, "' in '", format(conditionCall(w)), "':\n",
-              "    ", conditionMessage(w)
+              "    ", conditionMessage(w),
+              call. = FALSE
             )
             invokeRestart("muffleWarning")
           }
@@ -151,7 +153,10 @@ read_config_file <- function(config_file) {
 validate_config_file <- function(config, config_file, defaults) {
   matched <- names(config) %in% names(defaults)
   if (!all(matched)) {
-    warning("Found unused settings in config '", config_file, "': ", toString(names(config)[!matched]))
+    warning(
+      "Found unused settings in config '", config_file, "': ", toString(names(config)[!matched]),
+      call. = FALSE
+    )
   }
 
   validate_regex(config,
@@ -164,7 +169,8 @@ validate_config_file <- function(config, config_file, defaults) {
 }
 
 is_character_string <- function(x) is.character(x) && length(x) == 1L && !is.na(x)
-is_valid_regex <- function(str) !inherits(tryCatch(grepl(str, ""), condition = identity), "condition")
+# perl=TRUE matches rex::re_matches()
+is_valid_regex <- function(str) !inherits(tryCatch(grepl(str, "", perl = TRUE), condition = identity), "condition")
 is_single_regex <- function(x) is_character_string(x) && is_valid_regex(x)
 is_true_false <- function(x) is.logical(x) && length(x) == 1L && !is.na(x)
 
@@ -175,7 +181,7 @@ validate_keys <- function(config, keys, test, what) {
       next
     }
     if (!test(val)) {
-      stop("Setting '", key, "' should be ", what, ", not '", toString(val), "'.")
+      stop("Setting '", key, "' should be ", what, ", not '", toString(val), "'.", call. = FALSE)
     }
   }
 }
@@ -201,7 +207,8 @@ validate_linters <- function(linters) {
   if (!all(is_linters)) {
     stop(
       "Setting 'linters' should be a list of linters, but found non-linters at elements ",
-      toString(which(!is_linters)), "."
+      toString(which(!is_linters)), ".",
+      call. = FALSE
     )
   }
 }
@@ -212,13 +219,14 @@ validate_exclusions <- function(exclusions) {
   }
 
   exclusion_names <- names2(exclusions)
-  has_names <- exclusion_names != ""
+  has_names <- nzchar(exclusion_names)
   unnamed_is_string <-
     vapply(exclusions[!has_names], function(x) is.character(x) && length(x) == 1L && !is.na(x), logical(1L))
   if (!all(unnamed_is_string)) {
     stop(
       "Unnamed entries of setting 'exclusions' should be strings naming files or directories, check entries: ",
-      toString(which(!has_names)[!unnamed_is_string]), "."
+      toString(which(!has_names)[!unnamed_is_string]), ".",
+      call. = FALSE
     )
   }
   for (ii in which(has_names)) validate_named_exclusion(exclusions, ii)
@@ -234,7 +242,8 @@ validate_named_exclusion <- function(exclusions, idx) {
   if (!all(valid_entry)) {
     stop(
       "Named entries of setting 'exclusions' should designate line numbers for exclusion, ",
-      "check exclusion: ", idx, "."
+      "check exclusion: ", idx, ".",
+      call. = FALSE
     )
   }
 }

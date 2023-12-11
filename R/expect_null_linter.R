@@ -53,9 +53,8 @@ expect_null_linter <- function() {
   "
   xpath <- paste(expect_equal_identical_xpath, "|", expect_true_xpath)
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
 
@@ -71,5 +70,5 @@ expect_null_linter <- function() {
       lint_message = msg,
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }

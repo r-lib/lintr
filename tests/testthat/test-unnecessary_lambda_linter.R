@@ -261,3 +261,19 @@ test_that("function shorthand is handled", {
     unnecessary_lambda_linter()
   )
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      sapply(x, function(xi) sd(xi))
+      lapply(y, function(yi) {
+        sum(yi)
+      })
+    }"),
+    list(
+      list("sd", line_number = 2L),
+      list("sum", line_number = 3L)
+    ),
+    unnecessary_lambda_linter()
+  )
+})

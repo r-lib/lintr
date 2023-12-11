@@ -55,9 +55,8 @@ yoda_test_linter <- function() {
 
   second_const_xpath <- glue("expr[position() = 3 and ({const_condition})]")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
 
@@ -66,12 +65,12 @@ yoda_test_linter <- function() {
     lint_message <- ifelse(
       is.na(second_const),
       paste(
-        "Tests should compare objects in the order 'actual', 'expected', not the reverse.",
+        "Compare objects in tests in the order 'actual', 'expected', not the reverse.",
         sprintf("For example, do %1$s(foo(x), 2L) instead of %1$s(2L, foo(x)).", matched_call)
       ),
       sprintf("Avoid storing placeholder tests like %s(1, 1)", matched_call)
     )
 
     xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "warning")
-  }, linter_level = "expression")
+  })
 }

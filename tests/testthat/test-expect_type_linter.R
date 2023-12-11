@@ -69,3 +69,17 @@ local({
     is_type = is_types
   )
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      expect_true(is.integer(x))
+      expect_equal(typeof(x), 'double')
+    }"),
+    list(
+      list("expect_true", line_number = 2L),
+      list("expect_equal", line_number = 3L)
+    ),
+    expect_type_linter()
+  )
+})

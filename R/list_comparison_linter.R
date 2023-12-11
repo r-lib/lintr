@@ -39,9 +39,8 @@ list_comparison_linter <- function() {
     /parent::expr[{ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) }]
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
 
@@ -63,5 +62,5 @@ list_comparison_linter <- function() {
       lint_message = lint_message,
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }

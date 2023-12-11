@@ -69,9 +69,8 @@ expect_s3_class_linter <- function() {
   ")
   xpath <- paste(expect_equal_identical_xpath, "|", expect_true_xpath)
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
     matched_function <- xp_call_name(bad_expr)
@@ -86,5 +85,5 @@ expect_s3_class_linter <- function() {
       lint_message = paste(msg, "Note also expect_s4_class() available for testing S4 objects."),
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }

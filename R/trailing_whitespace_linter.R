@@ -41,7 +41,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 trailing_whitespace_linter <- function(allow_empty_lines = FALSE, allow_in_strings = TRUE) {
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     res <- re_matches(
       source_expression$file_lines,
       rex(blanks, end),
@@ -71,11 +71,11 @@ trailing_whitespace_linter <- function(allow_empty_lines = FALSE, allow_in_strin
           line_number = line,
           column_number = res$start[[line]],
           type = "style",
-          message = "Trailing whitespace is superfluous.",
+          message = "Remove trailing whitespace.",
           line = source_expression$file_lines[[line]],
           ranges = list(c(res$start[[line]], res$end[[line]]))
         )
       }
     )
-  }, linter_level = "file")
+  })
 }

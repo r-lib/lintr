@@ -55,9 +55,8 @@ boolean_arithmetic_linter <- function() {
   ")
   any_xpath <- paste(length_xpath, "|", sum_xpath)
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     any_expr <- xml_find_all(xml, any_xpath)
 
@@ -71,5 +70,5 @@ boolean_arithmetic_linter <- function() {
       ),
       type = "warning"
     )
-  }, linter_level = "expression")
+  })
 }

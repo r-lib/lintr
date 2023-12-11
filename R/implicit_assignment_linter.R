@@ -102,10 +102,9 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
     )
   }
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     # need the full file to also catch usages at the top level
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
 
@@ -120,5 +119,5 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
       lint_message = lint_message,
       type = "warning"
     )
-  }, linter_level = "file")
+  })
 }
