@@ -278,6 +278,16 @@ test_that("xml_find_function_calls works as intended", {
     exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar")),
     xml_find_all(exprs$expressions[[5L]]$full_xml_parsed_content, "//SYMBOL_FUNCTION_CALL")
   )
+
+  # Check naming and full cache
+  expect_identical(
+    exprs$expressions[[5L]]$xml_find_function_calls(NULL),
+    exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar"))
+  )
+  expect_named(
+    exprs$expressions[[4L]]$xml_find_function_calls(c("foo", "bar"), keep_names = TRUE),
+    c("foo", "foo", "bar")
+  )
 })
 
 test_that("#1262: xml_parsed_content gets returned as missing even if there's no parsed_content", {

@@ -10,7 +10,12 @@ build_xml_find_function_calls <- function(xml) {
   function_call_cache <- xml_find_all(xml, "//SYMBOL_FUNCTION_CALL")
   names(function_call_cache) <- get_r_string(function_call_cache)
 
-  function(function_names) {
-    unname(function_call_cache[names(function_call_cache) %in% function_names])
+  function(function_names, keep_names = FALSE) {
+    if (is.null(function_names)) {
+      res <- function_call_cache
+    } else {
+      res <- function_call_cache[names(function_call_cache) %in% function_names]
+    }
+    if (keep_names) res else unname(res)
   }
 }
