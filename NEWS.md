@@ -40,6 +40,7 @@
 * `string_boundary_linter()` recognizes regular expression calls like `grepl("^abc$", x)` that can be replaced by using `==` instead (#1613, @MichaelChirico).
 * `unreachable_code_linter()` has an argument `allow_comment_regex` for customizing which "terminal" comments to exclude (#2327, @MichaelChirico). `# nolint end` comments are always excluded, as are {covr} exclusions (e.g. `# nocov end`) by default.
 * `format()` and `print()` methods for `lint` and `lints` classes get a new option `width` to control the printing width of lint messages (#1884, @MichaelChirico). The default is controlled by a new option `lintr.format_width`; if unset, no wrapping occurs (matching earlier behavior).
+* `implicit_assignment_linter()` gets a custom message for the case of using `(` to induce printing like `(x <- foo())`; use an explicit call to `print()` for clarity (#2257, @MichaelChirico).
 
 ### New linters
 
