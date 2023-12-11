@@ -114,7 +114,7 @@ you with workflow files. The most straightforward way to add a
 <code>lintr</code> workflow to your package is to use the <a href="https://github.com/r-lib/actions/" class="external-link">r-lib/actions</a>’s <a href="https://github.com/r-lib/actions/tree/v2-branch/examples#lint-workflow" class="external-link"><code>lint</code>
 example</a>. To do this with <code>usethis</code>, you need to call</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_github_action</span><span class="op">(</span><span class="st">"lint"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/use_github_action.html" class="external-link">use_github_action</a></span><span class="op">(</span><span class="st">"lint"</span><span class="op">)</span></span></code></pre></div>
 <p>This will create a workflow file called <code>lint.yaml</code> and
 place it in the correct location, namely in the
 <code>.github/workflows</code> directory of your repository. This file
@@ -123,7 +123,7 @@ configures all the steps required to run
 <p>Alternatively you can use the eponymous <a href="https://github.com/r-lib/actions/blob/v2-branch/examples/lint-changed-files.yaml" class="external-link"><code>lint-changed-files.yaml</code></a>
 to only lint any changed files:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_github_action</span><span class="op">(</span><span class="st">"lint-changed-files"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/use_github_action.html" class="external-link">use_github_action</a></span><span class="op">(</span><span class="st">"lint-changed-files"</span><span class="op">)</span></span></code></pre></div>
 <p>Comments to the commit or pull request will be printed as <a href="https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-status-checks#types-of-status-checks-on-github" class="external-link">annotations</a>
 along side the status check on GitHub. If you want the builds to produce
 an error instead of just a warning, you can set the environment variable
@@ -168,7 +168,7 @@ project.</p>
 Actions and the <code>usethis</code> functionality. <a href="https://github.com/r-lib/actions/" class="external-link">r-lib/actions</a> includes a <a href="https://github.com/r-lib/actions/tree/v2-branch/examples#lint-project-workflow" class="external-link"><code>lint-project</code>
 example</a>, which you can use by calling:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_github_action</span><span class="op">(</span><span class="st">"lint-project"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/use_github_action.html" class="external-link">use_github_action</a></span><span class="op">(</span><span class="st">"lint-project"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="super-linter">Super-Linter<a class="anchor" aria-label="anchor" href="#super-linter"></a>
