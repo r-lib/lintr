@@ -64,16 +64,19 @@ expect_identical_linter <- function() {
   parent::expr[not(
       following-sibling::EQ_SUB
       or following-sibling::expr[
-        expr[1][SYMBOL_FUNCTION_CALL[text() = 'c']]
-        and expr[NUM_CONST[contains(text(), '.')]]
+        (
+          expr[1][SYMBOL_FUNCTION_CALL[text() = 'c']]
+          and expr[NUM_CONST[contains(text(), '.')]]
+        ) or (
+          NUM_CONST[contains(text(), '.')]
+        ) or (
+          OP-MINUS
+          and count(expr) = 1
+          and expr[NUM_CONST[contains(text(), '.')]]
+        ) or (
+          SYMBOL[text() = '...']
+        )
       ]
-      or following-sibling::expr[NUM_CONST[contains(text(), '.')]]
-      or following-sibling::expr[
-        OP-MINUS
-        and count(expr) = 1
-        and expr[NUM_CONST[contains(text(), '.')]]
-      ]
-      or following-sibling::expr[SYMBOL[text() = '...']]
     )]
     /parent::expr
   "
