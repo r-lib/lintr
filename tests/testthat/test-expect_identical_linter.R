@@ -31,6 +31,9 @@ test_that("expect_identical_linter skips cases likely testing numeric equality",
 
   expect_lint("expect_equal(x, 1.034)", NULL, linter)
   expect_lint("expect_equal(x, -1.034)", NULL, linter)
+  expect_lint("expect_equal(x, c(-1.034))", NULL, linter)
+  expect_lint("expect_equal(x, -c(1.034))", NULL, linter)
+
   expect_lint("expect_equal(x, c(1.01, 1.02))", NULL, linter)
   # whole numbers with explicit decimals are OK, even in mixed scenarios
   expect_lint("expect_equal(x, c(1.0, 2))", NULL, linter)
