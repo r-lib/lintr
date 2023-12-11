@@ -41,7 +41,8 @@ test_that("expect_identical_linter skips cases likely testing numeric equality",
   #   also a violation of expect_true_false_linter()
   expect_lint("expect_equal(x, TRUE)", lint_msg, linter)
 
-  expect_lint("expect_equal(x, 1.01-y)", lint_msg, linter)
+  expect_lint("expect_equal(x, 1.01 - y)", lint_msg, linter)
+  expect_lint("expect_equal(x, foo() - 0.01)", lint_msg, linter)
 })
 
 test_that("expect_identical_linter skips 3e cases needing expect_equal", {
