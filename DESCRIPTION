@@ -24,6 +24,7 @@ Depends:
     R (>= 3.6)
 Imports:
     backports (>= 1.1.7),
+    cli,
     codetools,
     cyclocomp,
     digest,
