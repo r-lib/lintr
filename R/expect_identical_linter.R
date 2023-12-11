@@ -70,6 +70,7 @@ expect_identical_linter <- function() {
       or following-sibling::expr[NUM_CONST[contains(text(), '.')]]
       or following-sibling::expr[
         OP-MINUS
+        and count(expr) = 1
         and expr[NUM_CONST[contains(text(), '.')]]
       ]
       or following-sibling::expr[SYMBOL[text() = '...']]
