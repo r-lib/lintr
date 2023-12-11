@@ -83,8 +83,7 @@ sort_linter <- function() {
   ")
 
   sorted_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'sort']
-    /parent::expr
+  parent::expr
     /parent::expr[not(SYMBOL_SUB)]
     /parent::expr[
       (EQ or NE)
@@ -130,7 +129,7 @@ sort_linter <- function() {
       type = "warning"
     )
 
-    sorted_expr <- xml_find_all(xml, sorted_xpath)
+    sorted_expr <- xml_find_all(source_expression$xml_find_function_calls("sort"), sorted_xpath)
 
     sorted_op <- xml_text(xml_find_first(sorted_expr, "*[2]"))
     lint_message <- ifelse(

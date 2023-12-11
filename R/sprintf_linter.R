@@ -28,8 +28,7 @@
 #' @export
 sprintf_linter <- function() {
   call_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'sprintf' or text() = 'gettextf']
-    /parent::expr
+    parent::expr
     /parent::expr[
       (
         OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST or
@@ -105,9 +104,7 @@ sprintf_linter <- function() {
   }
 
   Linter(linter_level = "file", function(source_expression) {
-    xml <- source_expression$full_xml_parsed_content
-
-    sprintf_calls <- xml_find_all(xml, call_xpath)
+    sprintf_calls <- xml_find_all(source_expression$xml_find_function_calls(c("sprintf", "gettextf")), call_xpath)
 
     sprintf_warning <- vapply(sprintf_calls, capture_sprintf_warning, character(1L))
 

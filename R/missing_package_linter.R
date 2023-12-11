@@ -20,7 +20,7 @@
 #' @export
 missing_package_linter <- function() {
   library_require_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
+  self::SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
     /parent::expr
     /parent::expr[
       expr[2][STR_CONST]
@@ -35,7 +35,7 @@ missing_package_linter <- function() {
     ]
   "
   load_require_namespace_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'loadNamespace' or text() = 'requireNamespace']
+  self::SYMBOL_FUNCTION_CALL[text() = 'loadNamespace' or text() = 'requireNamespace']
     /parent::expr
     /following-sibling::expr[1][STR_CONST]
     /parent::expr
@@ -43,9 +43,10 @@ missing_package_linter <- function() {
   call_xpath <- paste(library_require_xpath, "|", load_require_namespace_xpath)
 
   Linter(linter_level = "file", function(source_expression) {
-    xml <- source_expression$full_xml_parsed_content
-
-    pkg_calls <- xml_find_all(xml, call_xpath)
+    pkg_calls <- xml_find_all(
+      source_expression$xml_find_function_calls(c("library", "require", "loadNamespace", "requireNamespace")),
+      call_xpath
+    )
     pkg_names <- get_r_string(xml_find_all(
       pkg_calls,
       "OP-LEFT-PAREN[1]/following-sibling::expr[1][SYMBOL | STR_CONST]"

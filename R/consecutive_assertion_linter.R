@@ -32,13 +32,13 @@
 #' @export
 consecutive_assertion_linter <- function() {
   xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'stopifnot']
+  self::SYMBOL_FUNCTION_CALL[text() = 'stopifnot']
     /parent::expr
     /parent::expr[
       expr[1]/SYMBOL_FUNCTION_CALL = following-sibling::expr[1]/expr[1]/SYMBOL_FUNCTION_CALL
     ]
   |
-  //SYMBOL_FUNCTION_CALL[text() = 'assert_that']
+  self::SYMBOL_FUNCTION_CALL[text() = 'assert_that']
     /parent::expr
     /parent::expr[
       not(SYMBOL_SUB[text() = 'msg'])
@@ -49,9 +49,7 @@ consecutive_assertion_linter <- function() {
 
   Linter(linter_level = "file", function(source_expression) {
     # need the full file to also catch usages at the top level
-    xml <- source_expression$full_xml_parsed_content
-
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(source_expression$xml_find_function_calls(c("stopifnot", "assert_that")), xpath)
 
     matched_function <- xp_call_name(bad_expr)
     xml_nodes_to_lints(

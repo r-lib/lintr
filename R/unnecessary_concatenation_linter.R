@@ -87,8 +87,7 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
     )
   }
   call_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'c']
-    /parent::expr
+  parent::expr
     /parent::expr[
       not(EQ_SUB)
       and ( {xp_or(zero_arg_cond, one_arg_cond)} )
@@ -97,9 +96,7 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
   num_args_xpath <- "count(./expr) - 1"
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
-    c_calls <- xml_find_all(xml, call_xpath)
+    c_calls <- xml_find_all(source_expression$xml_find_function_calls("c"), call_xpath)
 
     # bump count(args) by 1 if inside a pipeline
     num_args <- as.integer(xml_find_num(c_calls, num_args_xpath)) +

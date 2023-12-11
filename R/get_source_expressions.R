@@ -482,6 +482,8 @@ get_single_source_expression <- function(loc,
     lines = expr_lines,
     parsed_content = pc,
     xml_parsed_content = xml2::xml_missing(),
+    # Placeholder for xml_find_function_calls, if needed (e.g. on R <= 4.0.5 with input source "\\")
+    xml_find_function_calls = build_xml_find_function_calls(xml2::xml_missing()),
     content = content
   )
 }

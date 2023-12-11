@@ -76,12 +76,12 @@
 #' @export
 fixed_regex_linter <- function(allow_unescaped = FALSE) {
   # regular expression pattern is the first argument
-  pos_1_regex_funs <- xp_text_in_table(c(
+  pos_1_regex_funs <- c(
     "grep", "gsub", "sub", "regexec", "grepl", "regexpr", "gregexpr"
-  ))
+  )
 
   # regular expression pattern is the second argument
-  pos_2_regex_funs <- xp_text_in_table(c(
+  pos_2_regex_funs <- c(
     # base functions.
     "strsplit",
     # data.table functions.
@@ -95,7 +95,7 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
     "str_remove", "str_remove_all", "str_replace", "str_replace_all",
     "str_split", "str_starts", "str_subset",
     "str_view", "str_view_all", "str_which"
-  ))
+  )
 
   pipes <- setdiff(magrittr_pipes, c("%$%", "%T>%"))
   in_pipe_cond <- glue("
@@ -106,7 +106,7 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
   # NB: strsplit doesn't have an ignore.case argument
   # NB: we intentionally exclude cases like gsub(x, c("a" = "b")), where "b" is fixed
   xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[ {pos_1_regex_funs} ]
+  self::SYMBOL_FUNCTION_CALL[ {xp_text_in_table(pos_1_regex_funs)} ]
     /parent::expr[
       not(following-sibling::SYMBOL_SUB[
         (text() = 'fixed' or text() = 'ignore.case')
@@ -125,7 +125,7 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
       )
     ]
   |
-  //SYMBOL_FUNCTION_CALL[ {pos_2_regex_funs} ]
+  self::SYMBOL_FUNCTION_CALL[ {xp_text_in_table(pos_2_regex_funs)} ]
     /parent::expr[
       not(following-sibling::SYMBOL_SUB[
         text() = 'fixed'
@@ -140,9 +140,7 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
-    patterns <- xml_find_all(xml, xpath)
+    patterns <- xml_find_all(source_expression$xml_find_function_calls(c(pos_1_regex_funs, pos_2_regex_funs)), xpath)
     pattern_strings <- get_r_string(patterns)
 
     is_static <- is_not_regex(pattern_strings, allow_unescaped)

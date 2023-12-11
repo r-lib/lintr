@@ -28,16 +28,14 @@ system_file_linter <- function() {
   funs <- c("system.file", "file.path")
   # either system.file(file.path(...)) or file.path(system.file(...))
   xpath_parts <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = '{funs}']
+  self::SYMBOL_FUNCTION_CALL[text() = '{funs}']
     /parent::expr[following-sibling::expr/expr/SYMBOL_FUNCTION_CALL[text() = '{rev(funs)}']]
     /parent::expr
   ")
   xpath <- paste(xpath_parts, collapse = " | ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(source_expression$xml_find_function_calls(funs), xpath)
 
     outer_call <- xp_call_name(bad_expr)
     lint_message <- paste(

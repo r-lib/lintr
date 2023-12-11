@@ -33,16 +33,13 @@
 #' @export
 expect_true_false_linter <- function() {
   xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
-    /parent::expr
+  parent::expr
     /following-sibling::expr[position() <= 2 and NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]
     /parent::expr
   "
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(source_expression$xml_find_function_calls(c("expect_equal", "expect_identical")), xpath)
 
     # NB: use expr/$node, not expr[$node], to exclude other things (especially ns:: parts of the call)
     call_name <- xp_call_name(bad_expr, condition = "starts-with(text(), 'expect_')")

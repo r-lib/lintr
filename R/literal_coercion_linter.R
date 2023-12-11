@@ -46,11 +46,11 @@
 #' @export
 literal_coercion_linter <- function() {
   rlang_coercers <- c("lgl", "int", "dbl", "chr")
-  coercers <- xp_text_in_table(c(
+  coercers <- c(
     # base coercers
     paste0("as.", c("logical", "integer", "numeric", "double", "character")),
     rlang_coercers
-  ))
+  )
 
   # notes for clarification:
   #  - as.integer(1e6) is arguably easier to read than 1000000L
@@ -65,8 +65,7 @@ literal_coercion_linter <- function() {
     )
   "
   xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[ {coercers} ]
-    /parent::expr
+  parent::expr
     /parent::expr[
       count(expr) = 2
       and expr[2][ {not_extraction_or_scientific} ]
@@ -74,9 +73,7 @@ literal_coercion_linter <- function() {
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(source_expression$xml_find_function_calls(coercers), xpath)
 
     coercer <- xp_call_name(bad_expr)
     # tiptoe around the fact that we don't require {rlang}

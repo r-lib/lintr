@@ -21,16 +21,13 @@
 #' @export
 length_test_linter <- function() {
   xpath <- glue::glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'length']
-    /parent::expr
+  parent::expr
     /following-sibling::expr[{ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) }]
     /parent::expr
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(source_expression$xml_find_function_calls("length"), xpath)
     expr_parts <- vapply(lapply(bad_expr, xml_find_all, "expr[2]/*"), xml_text, character(3L))
     lint_message <- sprintf(
       "Checking the length of a logical vector is likely a mistake. Did you mean `length(%s) %s %s`?",

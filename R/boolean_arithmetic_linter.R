@@ -35,7 +35,7 @@ boolean_arithmetic_linter <- function() {
   zero_expr <- "(EQ or NE or GT or LE) and expr[NUM_CONST[text() = '0' or text() = '0L']]"
   one_expr <- "(LT or GE) and expr[NUM_CONST[text() = '1' or text() = '1L']]"
   length_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'which' or text() = 'grep']
+  self::SYMBOL_FUNCTION_CALL[text() = 'which' or text() = 'grep']
     /parent::expr
     /parent::expr
     /parent::expr[
@@ -44,7 +44,7 @@ boolean_arithmetic_linter <- function() {
     ]
   ")
   sum_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'sum']
+  self::SYMBOL_FUNCTION_CALL[text() = 'sum']
     /parent::expr
     /parent::expr[
       expr[
@@ -56,9 +56,7 @@ boolean_arithmetic_linter <- function() {
   any_xpath <- paste(length_xpath, "|", sum_xpath)
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
-    any_expr <- xml_find_all(xml, any_xpath)
+    any_expr <- xml_find_all(source_expression$xml_find_function_calls(c("which", "grep", "sum")), any_xpath)
 
     xml_nodes_to_lints(
       any_expr,

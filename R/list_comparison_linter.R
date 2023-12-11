@@ -33,16 +33,13 @@ list_comparison_linter <- function() {
   # NB: anchor to the comparison expr so that we can easily include the comparator
   #   in the lint message.
   xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[{ xp_text_in_table(names(list_mapper_alternatives)) }]
-    /parent::expr
+  parent::expr
     /parent::expr
     /parent::expr[{ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) }]
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(source_expression$xml_find_function_calls(names(list_mapper_alternatives)), xpath)
 
     list_mapper <- xp_call_name(bad_expr, depth = 2L)
 

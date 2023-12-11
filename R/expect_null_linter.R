@@ -40,13 +40,13 @@ expect_null_linter <- function() {
   #  (1) expect_{equal,identical}(x, NULL) (or NULL, x)
   #  (2) expect_true(is.null(x))
   expect_equal_identical_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
+  self::SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
     /parent::expr
     /following-sibling::expr[position() <= 2 and NULL_CONST]
     /parent::expr
   "
   expect_true_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
+  self::SYMBOL_FUNCTION_CALL[text() = 'expect_true']
     /parent::expr
     /following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.null']]
     /parent::expr
@@ -54,9 +54,10 @@ expect_null_linter <- function() {
   xpath <- paste(expect_equal_identical_xpath, "|", expect_true_xpath)
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(
+      source_expression$xml_find_function_calls(c("expect_equal", "expect_identical", "expect_true")),
+      xpath
+    )
 
     matched_function <- xp_call_name(bad_expr)
     msg <- ifelse(

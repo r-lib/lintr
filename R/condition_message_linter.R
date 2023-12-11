@@ -44,9 +44,8 @@
 condition_message_linter <- function() {
   translators <- c("packageStartupMessage", "message", "warning", "stop")
   xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[
-    ({xp_text_in_table(translators)})
-    and not(preceding-sibling::OP-DOLLAR or preceding-sibling::OP-AT)
+  self::SYMBOL_FUNCTION_CALL[
+    not(preceding-sibling::OP-DOLLAR or preceding-sibling::OP-AT)
   ]
     /parent::expr
     /following-sibling::expr[
@@ -57,9 +56,7 @@ condition_message_linter <- function() {
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(source_expression$xml_find_function_calls(translators), xpath)
     sep_value <- get_r_string(bad_expr, xpath = "./expr/SYMBOL_SUB[text() = 'sep']/following-sibling::expr/STR_CONST")
 
     bad_expr <- bad_expr[is.na(sep_value) | sep_value %in% c("", " ")]
