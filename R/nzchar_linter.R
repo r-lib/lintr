@@ -96,12 +96,12 @@ nzchar_linter <- function() {
   ")
 
   nchar_msg_map <- c(
-    GT = 'Use nzchar(x) instead of nchar(x) > 0. ',
-    NE = 'Use nzchar(x) instead of nchar(x) != 0. ',
-    LE = 'Use !nzchar(x) instead of nchar(x) <= 0. ',
-    EQ = 'Use !nzchar(x) instead of nchar(x) == 0. ',
-    GE = 'nchar(x) >= 0 is always true, maybe you want nzchar(x)? ',
-    LT = 'nchar(x) < 0 is always false, maybe you want !nzchar(x)? '
+    GT = "Use nzchar(x) instead of nchar(x) > 0. ",
+    NE = "Use nzchar(x) instead of nchar(x) != 0. ",
+    LE = "Use !nzchar(x) instead of nchar(x) <= 0. ",
+    EQ = "Use !nzchar(x) instead of nchar(x) == 0. ",
+    GE = "nchar(x) >= 0 is always true, maybe you want nzchar(x)? ",
+    LT = "nchar(x) < 0 is always false, maybe you want !nzchar(x)? "
   )
 
   keepna_note <- paste(
@@ -122,7 +122,7 @@ nzchar_linter <- function() {
 
     needs_flip <- maybe_needs_flip & !is.na(ordered_idx)
     # un-benchmarked, but should be faster (though less readable) as
-    #   ordered_ops[5L - ordered_idx[needs_flip]]
+    # > ordered_ops[5L - ordered_idx[needs_flip]]
     op[needs_flip] <- rev(ordered_ops)[ordered_idx[needs_flip]]
     op
   }
