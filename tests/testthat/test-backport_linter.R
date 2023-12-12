@@ -1,8 +1,7 @@
 test_that("backport_linter produces error when R version misspecified", {
-  expect_error(
+  expect_snapshot(
     lint(text = "numToBits(2)", linters = backport_linter(420L)),
-    "`r_version` must be a R version number, returned by R_system_version(), or a string.",
-    fixed = TRUE
+    error = TRUE
   )
 })
 

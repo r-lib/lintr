@@ -271,7 +271,7 @@ test_that("read_config_file() bubbles up warnings helpfully, without erroring (#
   withr::local_dir(withr::local_tempdir())
 
   writeLines("a <- 1", "aaa.R")
-  expect_warning(lint_dir(), "Warning from config setting 'linters'.*Resetting 'r_version' to 3.0.0")
+  expect_snapshot(lint_dir())
 })
 
 test_that("perl-only regular expressions are accepted in config", {
