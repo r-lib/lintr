@@ -48,11 +48,10 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    all_names_nodes <- c(
+    all_names_nodes <- combine_nodesets(
       source_expression$xml_find_function_calls(NULL),
       xml_find_all(xml, "//SYMBOL")
     )
-    class(all_names_nodes) <- "xml_nodeset"
     all_names <- xml_text(all_names_nodes)
 
     bad_versions <- unname(backport_index[all_names])

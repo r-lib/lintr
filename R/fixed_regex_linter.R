@@ -141,11 +141,10 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
   Linter(linter_level = "expression", function(source_expression) {
     pos_1_calls <- source_expression$xml_find_function_calls(pos_1_regex_funs)
     pos_2_calls <- source_expression$xml_find_function_calls(pos_2_regex_funs)
-    patterns <- c(
+    patterns <- combine_nodesets(
       xml_find_all(pos_1_calls, pos_1_xpath),
       xml_find_all(pos_2_calls, pos_2_xpath)
     )
-    class(patterns) <- "xml_nodeset"
     pattern_strings <- get_r_string(patterns)
 
     is_static <- is_not_regex(pattern_strings, allow_unescaped)

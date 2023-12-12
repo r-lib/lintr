@@ -158,8 +158,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
   Linter(linter_level = "expression", function(source_expression) {
     paste_calls <- source_expression$xml_find_function_calls("paste")
     paste0_calls <- source_expression$xml_find_function_calls("paste0")
-    both_calls <- c(paste_calls, paste0_calls)
-    class(both_calls) <- "xml_nodeset"
+    both_calls <- combine_nodesets(paste_calls, paste0_calls)
 
     optional_lints <- list()
 

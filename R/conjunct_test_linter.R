@@ -144,7 +144,7 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE,
 
     if (allow_filter != "always") {
       xml_calls <- source_expression$xml_find_function_calls("filter")
-filter_expr <- xml_find_all(xml_calls, filter_xpath)
+      filter_expr <- xml_find_all(xml_calls, filter_xpath)
 
       filter_lints <- xml_nodes_to_lints(
         filter_expr,

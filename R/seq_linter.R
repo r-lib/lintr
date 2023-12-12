@@ -87,11 +87,10 @@ seq_linter <- function() {
     xml <- source_expression$xml_parsed_content
     seq_calls <- source_expression$xml_find_function_calls("seq")
 
-    badx <- c(
+    badx <- combine_nodesets(
       xml_find_all(seq_calls, seq_xpath),
       xml_find_all(xml, colon_xpath)
     )
-    class(badx) <- "xml_nodeset"
 
     dot_expr1 <- get_fun(badx, 1L)
     dot_expr2 <- get_fun(badx, 2L)
