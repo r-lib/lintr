@@ -40,6 +40,7 @@
 * `string_boundary_linter()` recognizes regular expression calls like `grepl("^abc$", x)` that can be replaced by using `==` instead (#1613, @MichaelChirico).
 * `unreachable_code_linter()` has an argument `allow_comment_regex` for customizing which "terminal" comments to exclude (#2327, @MichaelChirico). `# nolint end` comments are always excluded, as are {covr} exclusions (e.g. `# nocov end`) by default.
 * `format()` and `print()` methods for `lint` and `lints` classes get a new option `width` to control the printing width of lint messages (#1884, @MichaelChirico). The default is controlled by a new option `lintr.format_width`; if unset, no wrapping occurs (matching earlier behavior).
+* The `source_expression` passed to linters gains a fast way to query function call nodes using `source_expression$xml_find_function_calls()`. Use this to speed up linters using XPaths that start with `//SYMBOL_FUNCTION_CALL`. (@AshesITR, #2357)
 
 ### New linters
 
