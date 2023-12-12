@@ -37,7 +37,6 @@ Imports:
     xmlparsedata (>= 1.0.5)
 Suggests:
     bookdown,
-    cli,
     httr (>= 1.2.1),
     jsonlite,
     patrick (>= 0.2.0),
