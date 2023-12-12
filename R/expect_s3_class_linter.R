@@ -65,7 +65,6 @@ expect_s3_class_linter <- function() {
     /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[ {is_class_call} ]]]
     /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label'])]
   ")
-  xpath <- paste(expect_equal_identical_xpath, "|", expect_true_xpath)
 
   Linter(linter_level = "expression", function(source_expression) {
     expect_equal_identical_calls <- source_expression$xml_find_function_calls(c("expect_equal", "expect_identical"))
