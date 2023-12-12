@@ -107,7 +107,8 @@ nzchar_linter <- function() {
       type = "warning"
     )
 
-    nchar_expr <- xml_find_all(source_expression$xml_find_function_calls("nchar"), nchar_xpath)
+    xml_calls <- source_expression$xml_find_function_calls("nchar")
+    nchar_expr <- xml_find_all(xml_calls, nchar_xpath)
     nchar_lints <- xml_nodes_to_lints(
       nchar_expr,
       source_expression = source_expression,

@@ -39,7 +39,8 @@ expect_true_false_linter <- function() {
   "
 
   Linter(linter_level = "expression", function(source_expression) {
-    bad_expr <- xml_find_all(source_expression$xml_find_function_calls(c("expect_equal", "expect_identical")), xpath)
+    xml_calls <- source_expression$xml_find_function_calls(c("expect_equal", "expect_identical"))
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     # NB: use expr/$node, not expr[$node], to exclude other things (especially ns:: parts of the call)
     call_name <- xp_call_name(bad_expr, condition = "starts-with(text(), 'expect_')")

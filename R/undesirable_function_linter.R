@@ -81,8 +81,9 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    xml_calls <- source_expression$xml_find_function_calls(names(fun))
 
-    matched_nodes <- xml_find_all(source_expression$xml_find_function_calls(names(fun)), xpath)
+    matched_nodes <- xml_find_all(xml_calls, xpath)
     if (symbol_is_undesirable) {
       matched_nodes <- c(matched_nodes, xml_find_all(xml, symbol_xpath))
       class(matched_nodes) <- "xml_nodeset"

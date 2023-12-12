@@ -63,7 +63,8 @@ expect_comparison_linter <- function() {
   )
 
   Linter(linter_level = "expression", function(source_expression) {
-    bad_expr <- xml_find_all(source_expression$xml_find_function_calls("expect_true"), xpath)
+    xml_calls <- source_expression$xml_find_function_calls("expect_true")
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     comparator <- xml_find_chr(bad_expr, "string(expr[2]/*[2])")
     expectation <- comparator_expectation_map[comparator]

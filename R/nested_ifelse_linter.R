@@ -86,7 +86,8 @@ nested_ifelse_linter <- function() {
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    bad_expr <- xml_find_all(source_expression$xml_find_function_calls(ifelse_funs), xpath)
+    xml_calls <- source_expression$xml_find_function_calls(ifelse_funs)
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     matched_call <- xp_call_name(bad_expr)
     lint_message <- paste(

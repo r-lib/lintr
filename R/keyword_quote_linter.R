@@ -95,8 +95,9 @@ keyword_quote_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    xml_calls <- source_expression$xml_find_function_calls(NULL)
 
-    call_arg_expr <- xml_find_all(source_expression$xml_find_function_calls(NULL), call_arg_xpath)
+    call_arg_expr <- xml_find_all(xml_calls, call_arg_xpath)
 
     invalid_call_quoting <- is_valid_r_name(get_r_string(call_arg_expr))
 

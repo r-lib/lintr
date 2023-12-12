@@ -75,8 +75,11 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
 
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
+    library_calls <- source_expression$xml_find_function_calls(c("library", "require"))
+    all_calls <- source_expression$xml_find_function_calls(NULL)
 
-    import_exprs <- xml_find_all(source_expression$xml_find_function_calls(c("library", "require")), import_xpath)
+    import_exprs <- xml_find_all(library_calls, import_xpath)
+
     if (length(import_exprs) == 0L) {
       return(list())
     }
@@ -85,7 +88,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
     imported_pkgs <- as.character(parse(text = imported_pkgs, keep.source = FALSE))
 
     used_symbols <- unique(c(
-      xml_text(xml_find_all(source_expression$xml_find_function_calls(NULL), xp_used_functions)),
+      xml_text(xml_find_all(all_calls, xp_used_functions)),
       xml_text(xml_find_all(xml, xp_used_symbols)),
       extract_glued_symbols(xml, interpret_glue = interpret_glue)
     ))

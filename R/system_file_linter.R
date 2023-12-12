@@ -35,7 +35,8 @@ system_file_linter <- function() {
   xpath <- paste(xpath_parts, collapse = " | ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    bad_expr <- xml_find_all(source_expression$xml_find_function_calls(funs), xpath)
+    xml_calls <- source_expression$xml_find_function_calls(funs)
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     outer_call <- xp_call_name(bad_expr)
     lint_message <- paste(

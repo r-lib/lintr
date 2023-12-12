@@ -73,7 +73,8 @@ literal_coercion_linter <- function() {
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    bad_expr <- xml_find_all(source_expression$xml_find_function_calls(coercers), xpath)
+    xml_calls <- source_expression$xml_find_function_calls(coercers)
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     coercer <- xp_call_name(bad_expr)
     # tiptoe around the fact that we don't require {rlang}

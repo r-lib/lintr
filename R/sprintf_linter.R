@@ -104,7 +104,8 @@ sprintf_linter <- function() {
   }
 
   Linter(linter_level = "file", function(source_expression) {
-    sprintf_calls <- xml_find_all(source_expression$xml_find_function_calls(c("sprintf", "gettextf")), call_xpath)
+    xml_calls <- source_expression$xml_find_function_calls(c("sprintf", "gettextf"))
+    sprintf_calls <- xml_find_all(xml_calls, call_xpath)
 
     sprintf_warning <- vapply(sprintf_calls, capture_sprintf_warning, character(1L))
 

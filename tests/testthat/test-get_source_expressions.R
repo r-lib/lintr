@@ -219,8 +219,8 @@ test_that("returned data structure is complete", {
   for (i in seq_along(lines)) {
     expr <- exprs$expressions[[i]]
     expect_named(expr, c(
-      "filename", "line", "column", "lines", "parsed_content", "xml_parsed_content", "content",
-      "xml_find_function_calls"
+      "filename", "line", "column", "lines", "parsed_content", "xml_parsed_content", "xml_find_function_calls",
+      "content"
     ))
     expect_identical(expr$filename, temp_file)
     expect_identical(expr$line, i)
@@ -269,6 +269,7 @@ test_that("xml_find_function_calls works as intended", {
   expect_length(exprs$expressions[[4L]]$xml_find_function_calls("bar"), 1L)
   expect_length(exprs$expressions[[4L]]$xml_find_function_calls(c("foo", "bar")), 3L)
 
+  # file-level source expression contains all function calls
   expect_length(exprs$expressions[[5L]]$xml_find_function_calls("foo"), 4L)
   expect_length(exprs$expressions[[5L]]$xml_find_function_calls("bar"), 2L)
   expect_length(exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar")), 6L)

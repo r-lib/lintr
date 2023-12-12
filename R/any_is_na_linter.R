@@ -46,7 +46,8 @@ any_is_na_linter <- function() {
   "
 
   Linter(linter_level = "expression", function(source_expression) {
-    bad_expr <- xml_find_all(source_expression$xml_find_function_calls("any"), xpath)
+    xml_calls <- source_expression$xml_find_function_calls("any")
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     xml_nodes_to_lints(
       bad_expr,

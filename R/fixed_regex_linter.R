@@ -105,9 +105,8 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
 
   # NB: strsplit doesn't have an ignore.case argument
   # NB: we intentionally exclude cases like gsub(x, c("a" = "b")), where "b" is fixed
-  xpath <- glue("
-  self::SYMBOL_FUNCTION_CALL[ {xp_text_in_table(pos_1_regex_funs)} ]
-    /parent::expr[
+  pos_1_xpath <- glue("
+    parent::expr[
       not(following-sibling::SYMBOL_SUB[
         (text() = 'fixed' or text() = 'ignore.case')
         and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
@@ -124,9 +123,9 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
         and preceding-sibling::*[2][self::SYMBOL_SUB/text() = 'pattern']
       )
     ]
-  |
-  self::SYMBOL_FUNCTION_CALL[ {xp_text_in_table(pos_2_regex_funs)} ]
-    /parent::expr[
+  ")
+  pos_2_xpath <- glue("
+    parent::expr[
       not(following-sibling::SYMBOL_SUB[
         text() = 'fixed'
         and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
@@ -140,7 +139,13 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    patterns <- xml_find_all(source_expression$xml_find_function_calls(c(pos_1_regex_funs, pos_2_regex_funs)), xpath)
+    pos_1_calls <- source_expression$xml_find_function_calls(pos_1_regex_funs)
+    pos_2_calls <- source_expression$xml_find_function_calls(pos_2_regex_funs)
+    patterns <- c(
+      xml_find_all(pos_1_calls, pos_1_xpath),
+      xml_find_all(pos_2_calls, pos_2_xpath)
+    )
+    class(patterns) <- "xml_nodeset"
     pattern_strings <- get_r_string(patterns)
 
     is_static <- is_not_regex(pattern_strings, allow_unescaped)

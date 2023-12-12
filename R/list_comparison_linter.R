@@ -39,7 +39,8 @@ list_comparison_linter <- function() {
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    bad_expr <- xml_find_all(source_expression$xml_find_function_calls(names(list_mapper_alternatives)), xpath)
+    xml_calls <- source_expression$xml_find_function_calls(names(list_mapper_alternatives))
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     list_mapper <- xp_call_name(bad_expr, depth = 2L)
 

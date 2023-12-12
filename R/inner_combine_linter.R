@@ -83,7 +83,8 @@ inner_combine_linter <- function() {
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    bad_expr <- xml_find_all(source_expression$xml_find_function_calls("c"), xpath)
+    xml_calls <- source_expression$xml_find_function_calls("c")
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     matched_call <- xp_call_name(bad_expr, depth = 2L)
     lint_message <- paste(

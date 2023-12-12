@@ -96,7 +96,8 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
   num_args_xpath <- "count(./expr) - 1"
 
   Linter(linter_level = "expression", function(source_expression) {
-    c_calls <- xml_find_all(source_expression$xml_find_function_calls("c"), call_xpath)
+    xml_calls <- source_expression$xml_find_function_calls("c")
+    c_calls <- xml_find_all(xml_calls, call_xpath)
 
     # bump count(args) by 1 if inside a pipeline
     num_args <- as.integer(xml_find_num(c_calls, num_args_xpath)) +

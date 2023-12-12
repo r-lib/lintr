@@ -56,7 +56,8 @@ condition_message_linter <- function() {
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    bad_expr <- xml_find_all(source_expression$xml_find_function_calls(translators), xpath)
+    xml_calls <- source_expression$xml_find_function_calls(translators)
+    bad_expr <- xml_find_all(xml_calls, xpath)
     sep_value <- get_r_string(bad_expr, xpath = "./expr/SYMBOL_SUB[text() = 'sep']/following-sibling::expr/STR_CONST")
 
     bad_expr <- bad_expr[is.na(sep_value) | sep_value %in% c("", " ")]

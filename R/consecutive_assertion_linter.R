@@ -49,7 +49,8 @@ consecutive_assertion_linter <- function() {
 
   Linter(linter_level = "file", function(source_expression) {
     # need the full file to also catch usages at the top level
-    bad_expr <- xml_find_all(source_expression$xml_find_function_calls(c("stopifnot", "assert_that")), xpath)
+    xml_calls <- source_expression$xml_find_function_calls(c("stopifnot", "assert_that"))
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     matched_function <- xp_call_name(bad_expr)
     xml_nodes_to_lints(

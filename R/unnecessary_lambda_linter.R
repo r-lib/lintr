@@ -157,7 +157,8 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   symbol_xpath <- "expr[last()]//expr[SYMBOL_FUNCTION_CALL[text() != 'return']]"
 
   Linter(linter_level = "expression", function(source_expression) {
-    default_fun_expr <- xml_find_all(source_expression$xml_find_function_calls(apply_funs), default_fun_xpath)
+    default_calls <- source_expression$xml_find_function_calls(apply_funs)
+    default_fun_expr <- xml_find_all(default_calls, default_fun_xpath)
 
     # TODO(michaelchirico): further message customization is possible here,
     #   e.g. don't always refer to 'lapply()' in the example, and customize to
@@ -179,10 +180,8 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
 
     inner_comparison_lints <- NULL
     if (!allow_comparison) {
-      inner_comparison_expr <- xml_find_all(
-        source_expression$xml_find_function_calls(c("sapply", "vapply")),
-        inner_comparison_xpath
-      )
+      sapply_vapply_calls <- source_expression$xml_find_function_calls(c("sapply", "vapply"))
+      inner_comparison_expr <- xml_find_all(sapply_vapply_calls, inner_comparison_xpath)
 
       mapper <- xp_call_name(xml_find_first(inner_comparison_expr, "parent::expr/parent::expr"))
       if (length(mapper) > 0L) fun_value <- if (mapper == "sapply") "" else ", FUN.VALUE = <intermediate>"
@@ -201,7 +200,8 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
       )
     }
 
-    purrr_fun_expr <- xml_find_all(source_expression$xml_find_function_calls(purrr_mappers), purrr_fun_xpath)
+    purrr_calls <- source_expression$xml_find_function_calls(purrr_mappers)
+    purrr_fun_expr <- xml_find_all(purrr_calls, purrr_fun_xpath)
 
     purrr_call_fun <- xml_text(xml_find_first(purrr_fun_expr, fun_xpath))
     purrr_symbol <- xml_text(xml_find_first(purrr_fun_expr, symbol_xpath))

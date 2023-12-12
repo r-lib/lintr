@@ -3,6 +3,8 @@
 #' @param xml The XML parse tree as an XML object (`xml_parsed_content` or `full_xml_parsed_content`)
 #'
 #' @return A fast function to query
+#' `xml_find_all(xml, glue::glue("//SYMBOL_FUNCTION_CALL[text() = '{function_names[1]}' or ...]"))`,
+#' or, using the internal function `xp_text_in_table()`,
 #' `xml_find_all(xml, glue::glue("//SYMBOL_FUNCTION_CALL[{ xp_text_in_table(function_names) }]"))`.
 #'
 #' @noRd

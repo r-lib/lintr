@@ -46,7 +46,8 @@ ifelse_censor_linter <- function() {
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    bad_expr <- xml_find_all(source_expression$xml_find_function_calls(ifelse_funs), xpath)
+    ifelse_calls <- source_expression$xml_find_function_calls(ifelse_funs)
+    bad_expr <- xml_find_all(ifelse_calls, xpath)
 
     matched_call <- xp_call_name(bad_expr)
     operator <- xml_find_chr(bad_expr, "string(expr[2]/*[2])")

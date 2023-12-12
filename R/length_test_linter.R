@@ -27,7 +27,9 @@ length_test_linter <- function() {
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    bad_expr <- xml_find_all(source_expression$xml_find_function_calls("length"), xpath)
+    xml_calls <- source_expression$xml_find_function_calls("length")
+    bad_expr <- xml_find_all(xml_calls, xpath)
+
     expr_parts <- vapply(lapply(bad_expr, xml_find_all, "expr[2]/*"), xml_text, character(3L))
     lint_message <- sprintf(
       "Checking the length of a logical vector is likely a mistake. Did you mean `length(%s) %s %s`?",

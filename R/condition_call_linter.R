@@ -80,7 +80,8 @@ condition_call_linter <- function(display_call = FALSE) {
   xpath <- glue::glue("parent::expr[{call_cond}]/parent::expr")
 
   Linter(linter_level = "expression", function(source_expression) {
-    bad_expr <- xml_find_all(source_expression$xml_find_function_calls(c("stop", "warning")), xpath)
+    xml_calls <- source_expression$xml_find_function_calls(c("stop", "warning"))
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     xml_nodes_to_lints(
       bad_expr,

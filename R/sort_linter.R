@@ -129,7 +129,8 @@ sort_linter <- function() {
       type = "warning"
     )
 
-    sorted_expr <- xml_find_all(source_expression$xml_find_function_calls("sort"), sorted_xpath)
+    xml_calls <- source_expression$xml_find_function_calls("sort")
+    sorted_expr <- xml_find_all(xml_calls, sorted_xpath)
 
     sorted_op <- xml_text(xml_find_first(sorted_expr, "*[2]"))
     lint_message <- ifelse(
