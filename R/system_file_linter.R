@@ -25,21 +25,23 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 system_file_linter <- function() {
-  funs <- c("system.file", "file.path")
   # either system.file(file.path(...)) or file.path(system.file(...))
-  xpath_parts <- glue("
-  parent::expr[following-sibling::expr/expr/SYMBOL_FUNCTION_CALL[text() = '{rev(funs)}']]
+  file_path_xpath <- "
+  parent::expr[following-sibling::expr/expr/SYMBOL_FUNCTION_CALL[text() = 'system.file']]
     /parent::expr
-  ")
+  "
+  system_file_xpath <- "
+  parent::expr[following-sibling::expr/expr/SYMBOL_FUNCTION_CALL[text() = 'file.path']]
+    /parent::expr
+  "
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml_calls <- list(
-      source_expression$xml_find_function_calls(funs[1L]),
-      source_expression$xml_find_function_calls(funs[2L])
-    )
+    file_path_calls <- source_expression$xml_find_function_calls("file.path")
+    system_file_calls <- source_expression$xml_find_function_calls("system.file")
+
     bad_expr <- combine_nodesets(
-      xml_find_all(xml_calls[[1L]], xpath_parts[1L]),
-      xml_find_all(xml_calls[[2L]], xpath_parts[2L])
+      xml_find_all(file_path_calls, file_path_xpath),
+      xml_find_all(system_file_calls, system_file_xpath)
     )
 
     outer_call <- xp_call_name(bad_expr)

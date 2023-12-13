@@ -289,6 +289,11 @@ and so they've been tested and demonstrated their utility already.
    call_xpath <- "parent::expr/some/cond"
    xml_find_all(xml_calls, call_xpath)
    ```
+ * `make_linter_from_xpath()` and `make_linter_from_function_xpath()`: Whenever your
+   linter can be expressed by a static XPath and a static message, use `make_linter_from_xpath()`
+   or, if the XPath starts with `//SYMBOL_FUNCTION_CALL`, use `make_linter_from_function_xpath()`.
+   Instead of `make_linter_from_xpath(xpath = "//SYMBOL_FUNCTION_CALL[text() = 'foo' or text() = 'bar']/cond")`,
+   use `make_linter_from_function_xpath(function_names = c("foo", "bar"), xpath = "cond")`.
 
 ## Contributing to `{lintr}`
 
