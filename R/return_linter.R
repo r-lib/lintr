@@ -189,7 +189,7 @@ nested_return_lints <- function(expr, params) {
     ))
     c(return_lints, implicit_else_lints)
   } else if (!is.na(xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL[text() = 'switch']"))) {
-    # switch(x, ...) | expr[1]: switch; expr[2]: x
+    # switch(x, ...) | expr[1]: switch; expr[2]: x. Drop the first two, check usage in ...
     lapply(child_expr[tail(which(child_node == "expr"), -2L)], nested_return_lints, params)
   } else {
     xml_nodes_to_lints(
