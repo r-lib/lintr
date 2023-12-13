@@ -14,7 +14,9 @@ constructions like \code{string == ""} or \code{nchar(string) == 0}.
 \details{
 One crucial difference is in the default handling of \code{NA_character_}, i.e.,
 missing strings. \code{nzchar(NA_character_)} is \code{TRUE}, while \code{NA_character_ == ""}
-and \code{nchar(NA_character_) == 0} are both \code{NA}.
+and \code{nchar(NA_character_) == 0} are both \code{NA}. Therefore, for strict
+compatibility, use \code{nzchar(x, keepNA = TRUE)}. If the input is known to be
+complete (no missing entries), this argument can be dropped for conciseness.
 }
 \examples{
 # will produce lints
@@ -30,14 +32,12 @@ lint(
 
 # okay
 lint(
-  text = "x[nchar(x) > 1]",
+  text = "x[!nzchar(x, keepNA = TRUE)]",
   linters = nzchar_linter()
 )
 
-# nzchar()'s primary benefit is for vector input;
-#   for guaranteed-scalar cases like if() conditions, comparing to "" is OK.
 lint(
-  text = "if (x == '') y",
+  text = "x[nzchar(x, keepNA = TRUE)]",
   linters = nzchar_linter()
 )
 
