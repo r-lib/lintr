@@ -175,6 +175,7 @@ Collate:
     'settings_utils.R'
     'shared_constants.R'
     'sort_linter.R'
+    'source_utils.R'
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'
     'sprintf_linter.R'
