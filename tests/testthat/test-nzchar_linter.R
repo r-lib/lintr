@@ -25,26 +25,26 @@ test_that("nzchar_linter skips as appropriate for other nchar args", {
   # nzchar also has keepNA argument so a drop-in switch is easy
   expect_lint(
     "nchar(x, keepNA=TRUE) == 0",
-    rex::rex("Use nzchar() instead of comparing nchar(x) to 0"),
+    rex::rex("Use !nzchar(x) instead of nchar(x) == 0"),
     linter
   )
 })
 
 test_that("nzchar_linter blocks simple disallowed usages", {
   linter <- nzchar_linter()
-  lint_msg_quote <- rex::rex('Use nzchar() instead of comparing strings to ""')
+  lint_msg_quote <- rex::rex('Use !nzchar(x) instead of x == ""')
   lint_msg_nchar <- rex::rex("Use nzchar() instead of comparing nchar(x) to 0")
 
   expect_lint("which(x == '')", lint_msg_quote, linter)
-  expect_lint("any(nchar(x) >= 0)", lint_msg_nchar, linter)
-  expect_lint("all(nchar(x) == 0L)", lint_msg_nchar, linter)
-  expect_lint("sum(0.0 < nchar(x))", lint_msg_nchar, linter)
+  expect_lint("any(nchar(x) >= 0)", rex::rex("nchar(x) >= 0 is always true, maybe you want nzchar(x)?"), linter)
+  expect_lint("all(nchar(x) == 0L)", rex::rex("Use !nzchar(x) instead of nchar(x) == 0"), linter)
+  expect_lint("sum(0.0 < nchar(x))", rex::rex("Use nzchar(x) instead of nchar(x) > 0"), linter)
 })
 
 test_that("nzchar_linter skips comparison to '' in if/while statements", {
   linter <- nzchar_linter()
-  lint_msg_quote <- rex::rex('Use nzchar() instead of comparing strings to ""')
-  lint_msg_nchar <- rex::rex("Use nzchar() instead of comparing nchar(x) to 0")
+  lint_msg_quote <- rex::rex('Use !nzchar(x) instead of x == ""')
+  lint_msg_nchar <- rex::rex("Use nzchar(x) instead of nchar(x) > 0")
 
   # still lint nchar() comparisons
   expect_lint("if (nchar(x) > 0) TRUE", lint_msg_nchar, linter)
@@ -63,11 +63,15 @@ test_that("multiple lints are generated correctly", {
   expect_lint(
     trim_some("{
       a == ''
-      nchar(b) != 0
+      '' < b
+      nchar(c) != 0
+      0.0 > nchar(d)
     }"),
     list(
-      list(rex::rex('Use nzchar() instead of comparing strings to ""'), line_number = 2L),
-      list(rex::rex("Use nzchar() instead of comparing nchar(x) to 0."), line_number = 3L)
+      list(rex::rex('Use !nzchar(x) instead of x == ""'), line_number = 2L),
+      list(rex::rex('Use nzchar(x) instead of x > ""'), line_number = 3L),
+      list(rex::rex("Use nzchar(x) instead of nchar(x) != 0."), line_number = 4L),
+      list(rex::rex("nchar(x) < 0 is always false, maybe you want !nzchar(x)?"), line_number = 5L)
     ),
     nzchar_linter()
   )
