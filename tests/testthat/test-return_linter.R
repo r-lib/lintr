@@ -698,6 +698,32 @@ test_that("except= argument works", {
   )
 })
 
+test_that("except_regex= argument works", {
+  linter <- return_linter(return_style = "explicit", except_regex = "^Test")
+
+  expect_lint(
+    trim_some("
+      TestSummary <- function() {
+        context <- foo(72643424)
+        expected <- data.frame(a = 2)
+        checkEquals(expected, bar(context))
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      TestMyPackage <- function() {
+        checkMyCustomComparator(x, y)
+      }
+    "),
+    NULL,
+    linter
+  )
+})
+
 test_that("return_linter skips brace-wrapped inline functions", {
   expect_lint("function(x) { sum(x) }", NULL, return_linter(return_style = "explicit"))
 })
