@@ -32,7 +32,7 @@ test_that("nzchar_linter skips as appropriate for other nchar args", {
 
 test_that("nzchar_linter blocks simple disallowed usages", {
   linter <- nzchar_linter()
-  lint_msg_quote <- rex::rex('Use !nzchar(x) instead of x == "')
+  lint_msg_quote <- rex::rex('Use !nzchar(x) instead of x == ""')
   lint_msg_nchar <- rex::rex("Use nzchar() instead of comparing nchar(x) to 0")
 
   expect_lint("which(x == '')", lint_msg_quote, linter)
