@@ -118,7 +118,6 @@ normalize_r_version <- function(r_version) {
 # devel NEWS https://cran.rstudio.com/doc/manuals/r-devel/NEWS.html
 # release NEWS https://cran.r-project.org/doc/manuals/r-release/NEWS.html
 backports <- list(
-  devel = c("Exec", "Tailcall", "declare"),
   `4.3.0` = c("R_compiled_by", "array2DF"),
   `4.2.1` = "findCRANmirror",
   `4.2.0` = c(".pretty", ".LC.categories", "Sys.setLanguage()"),
