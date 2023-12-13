@@ -118,7 +118,9 @@ normalize_r_version <- function(r_version) {
 # devel NEWS https://cran.rstudio.com/doc/manuals/r-devel/NEWS.html
 # release NEWS https://cran.r-project.org/doc/manuals/r-release/NEWS.html
 backports <- list(
-  `4.3.0` = character(), # R devel needs to be ahead of all other versions
+  devel = c("Exec", "Tailcall", "declare"),
+  `4.3.0` = c("R_compiled_by", "array2DF"),
+  `4.2.1` = "findCRANmirror",
   `4.2.0` = c(".pretty", ".LC.categories", "Sys.setLanguage()"),
   `4.1.3` = character(), # need these for oldrel specifications
   `4.1.0` = c("numToBits", "numToInts", "gregexec", "charClass", "checkRdContents", "...names"),
