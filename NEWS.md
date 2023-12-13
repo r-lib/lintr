@@ -12,6 +12,7 @@
    + Helper `with_defaults()`.
 * `all_linters()` has signature `all_linters(..., packages)` rather than `all_linters(packages, ...)` (#2332, @MichaelChirico). This forces `packages=` to be supplied by name and will break users who rely on supplying `packages=` positionally, of which we found none searching GitHub.
 * Adjusted various lint messages for consistency in readability (#1330, @MichaelChirico). In general, we favor lint messages to be phrased like "Action, reason" to but the "what" piece of the message front-and-center. This may be a breaking change for code that tests the specific phrasing of lints.
+* `extraction_operator_linter()` is deprecated. Although switching from `$` to `[[` has some robustness benefits for package code, it can lead to non-idiomatic code in many contexts (e.g. R6 classes, Shiny applications, etc.) (#2409, @IndrajeetPatil). To enable the detection of the `$` operator for extraction through partial matching, use `options(warnPartialMatchDollar = TRUE)`.
 
 ## Bug fixes
 
@@ -39,6 +40,12 @@
 * `string_boundary_linter()` recognizes regular expression calls like `grepl("^abc$", x)` that can be replaced by using `==` instead (#1613, @MichaelChirico).
 * `unreachable_code_linter()` has an argument `allow_comment_regex` for customizing which "terminal" comments to exclude (#2327, @MichaelChirico). `# nolint end` comments are always excluded, as are {covr} exclusions (e.g. `# nocov end`) by default.
 * `format()` and `print()` methods for `lint` and `lints` classes get a new option `width` to control the printing width of lint messages (#1884, @MichaelChirico). The default is controlled by a new option `lintr.format_width`; if unset, no wrapping occurs (matching earlier behavior).
+* New function node caching for big efficiency gains to most linters (e.g. overall `lint_package()` improvement of 14-27% and core linting improvement up to 30%; #2357, @AshesITR). Most linters are written around function usage, and XPath performance searching for many functions is poor. The new `xml_find_function_calls()` entry in the `get_source_expressions()` output caches all function call nodes instead. See the vignette on creating linters for more details on how to use it.
+* The full linter suite is roughly 14% faster due to caching of the frequently used `//SYMBOL_FUNCTION_CALL` XPath to examine function calls. (@AshesITR, #2357)
+  + The `source_expression` passed to linters gains a fast way to query function call nodes using `source_expression$xml_find_function_calls()`. Use this to speed up linters using XPaths that start with `//SYMBOL_FUNCTION_CALL`.
+  + The vignette on creating linters contains additional information on how to use it.
+  + Instead of `xml_find_all(source_expression$xml_parsed_content, "//SYMBOL_FUNCTION_CALL[text() = 'foo' or text() = 'bar']`, use `source_expression$xml_find_function_calls(c("foo", "bar"))`.
+  + Instead of `make_linter_from_xpath(xpath = "//SYMBOL_FUNCTION_CALL[text() = 'foo' or text() = 'bar']/cond")`, use the new `make_linter_from_function_xpath(function_names = c("foo", "bar"), xpath = "cond")`.
 
 ### New linters
 
@@ -68,6 +75,7 @@
   + ignores extractions with explicit returns like `lapply(l, function(x) foo(x)$bar)` (#2258, @MichaelChirico).
   + ignores calls on the RHS of operators like `lapply(l, function(x) "a" %in% names(x))` (#2310, @MichaelChirico).
 * `vector_logic_linter()` recognizes some cases where bitwise `&`/`|` are used correctly (#1453, @MichaelChirico).
+* `expect_comparison_linter()` ignores faulty usage like `expect_true(x, y > z)` (#2083, @MichaelChirico). Note that `y > z` is being passed to the `info=` argument, so this is likely a mistake.
 
 ### Lint accuracy fixes: removing false negatives
 

@@ -1,5 +1,14 @@
+test_that("extraction_operator_linter generates deprecation warning", {
+  expect_warning(
+    extraction_operator_linter(),
+    rex::rex("Linter extraction_operator_linter was deprecated")
+  )
+})
+
 test_that("extraction_operator_linter skips allowed usages", {
-  linter <- extraction_operator_linter()
+  expect_warning({
+    linter <- extraction_operator_linter()
+  })
 
   expect_lint("x[[1]]", NULL, linter)
   expect_lint("x[-1]", NULL, linter)
@@ -10,7 +19,9 @@ test_that("extraction_operator_linter skips allowed usages", {
 })
 
 test_that("extraction_operator_linter blocks disallowed usages", {
-  linter <- extraction_operator_linter()
+  expect_warning({
+    linter <- extraction_operator_linter()
+  })
   msg_b <- rex::escape("Use `[[` instead of `[` to extract an element.")
   msg_d <- rex::escape("Use `[[` instead of `$` to extract an element.")
 

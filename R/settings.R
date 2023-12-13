@@ -37,7 +37,7 @@
 #'   whereas the DCF approach requires somewhat awkward formatting of parseable R code within
 #'   valid DCF key-value pairs. The main disadvantage of the R file is it might be _too_ flexible,
 #'   with users tempted to write configs with side effects causing hard-to-detect bugs or
-#"   otherwise "abusing" the ability to evaluate generic R code. Other recursive key-value stores
+# "   otherwise "abusing" the ability to evaluate generic R code. Other recursive key-value stores
 #'   like YAML could work, but require new dependencies and are harder to parse
 #'   both programmatically and visually.
 #' Here is an example of a `.lintr.R` file:

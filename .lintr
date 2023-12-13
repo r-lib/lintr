@@ -14,7 +14,6 @@ linters: all_linters(
     )),
     unnecessary_concatenation_linter(allow_single_expression = FALSE),
     absolute_path_linter = NULL,
-    extraction_operator_linter = NULL,
     library_call_linter = NULL,
     nonportable_path_linter = NULL,
     todo_comment_linter = NULL,

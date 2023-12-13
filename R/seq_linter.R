@@ -50,8 +50,7 @@ seq_linter <- function() {
 
   # Exact `xpath` depends on whether bad function was used in conjunction with `seq()`
   seq_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'seq']
-    /parent::expr
+  parent::expr
     /following-sibling::expr[1][expr/SYMBOL_FUNCTION_CALL[ {bad_funcs} ]]
     /parent::expr[count(expr) = 2]
   ")
@@ -66,8 +65,6 @@ seq_linter <- function() {
       )
     ]
   ")
-
-  xpath <- paste(seq_xpath, "|", colon_xpath)
 
   ## The actual order of the nodes is document order
   ## In practice we need to handle length(x):1
@@ -88,9 +85,12 @@ seq_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
+    seq_calls <- source_expression$xml_find_function_calls("seq")
 
-    badx <- xml_find_all(xml, xpath)
+    badx <- combine_nodesets(
+      xml_find_all(seq_calls, seq_xpath),
+      xml_find_all(xml, colon_xpath)
+    )
 
     dot_expr1 <- get_fun(badx, 1L)
     dot_expr2 <- get_fun(badx, 2L)

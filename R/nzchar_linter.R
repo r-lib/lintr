@@ -68,8 +68,7 @@ nzchar_linter <- function() {
   # nchar(., type="width") not strictly compatible with nzchar
   # unsure allowNA compatible, so allow it just in case (see TODO in tests)
   nchar_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'nchar']
-    /parent::expr
+  parent::expr
     /parent::expr
     /parent::expr[
       ({ xp_or(comparator_nodes) })
@@ -94,7 +93,6 @@ nzchar_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     comparison_expr <- xml_find_all(xml, comparison_xpath)
     comparison_lints <- xml_nodes_to_lints(
@@ -109,7 +107,8 @@ nzchar_linter <- function() {
       type = "warning"
     )
 
-    nchar_expr <- xml_find_all(xml, nchar_xpath)
+    xml_calls <- source_expression$xml_find_function_calls("nchar")
+    nchar_expr <- xml_find_all(xml_calls, nchar_xpath)
     nchar_lints <- xml_nodes_to_lints(
       nchar_expr,
       source_expression = source_expression,
