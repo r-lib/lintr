@@ -8,7 +8,8 @@ return_linter(
   return_style = c("implicit", "explicit"),
   allow_implicit_else = TRUE,
   return_functions = NULL,
-  except = NULL
+  except = NULL,
+  except_regex = NULL
 )
 }
 \arguments{
@@ -27,10 +28,11 @@ from base that are always allowed: \code{\link[=stop]{stop()}}, \code{\link[=q]{
 \code{tryInvokeRestart()}, \code{\link[=UseMethod]{UseMethod()}}, \code{\link[=NextMethod]{NextMethod()}}, \code{\link[=standardGeneric]{standardGeneric()}},
 \code{\link[=callNextMethod]{callNextMethod()}}, \code{\link[=.C]{.C()}}, \code{\link[=.Call]{.Call()}}, \code{\link[=.External]{.External()}}, and \code{\link[=.Fortran]{.Fortran()}}.}
 
-\item{except}{Character vector of functions that are not checked when
+\item{except, except_regex}{Character vector of functions that are not checked when
 \code{return_style = "explicit"}. These are in addition to namespace hook functions
 that are never checked: \code{.onLoad()}, \code{.onUnload()}, \code{.onAttach()}, \code{.onDetach()},
-\code{.Last.lib()}, \code{.First()} and \code{.Last()}.}
+\code{.Last.lib()}, \code{.First()} and \code{.Last()}. \code{except} matches function names exactly,
+while \code{except_regex} does exclusion by pattern matching with \code{\link[rex:re_matches]{rex::re_matches()}}.}
 }
 \description{
 This linter checks functions' \code{\link[=return]{return()}} expressions.
