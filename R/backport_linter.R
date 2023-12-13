@@ -48,23 +48,25 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
+    used_symbols <- xml_find_all(xml, "//SYMBOL")
+    used_symbols <- used_symbols[xml_text(used_symbols) %in% names(backport_index)]
+
     all_names_nodes <- combine_nodesets(
-      source_expression$xml_find_function_calls(NULL),
-      xml_find_all(xml, "//SYMBOL")
+      source_expression$xml_find_function_calls(names(backport_index)),
+      used_symbols
     )
     all_names <- xml_text(all_names_nodes)
 
     bad_versions <- unname(backport_index[all_names])
-    needs_backport <- !is.na(bad_versions)
 
     lint_message <- sprintf(
       "%s (R %s) is not available for dependency R >= %s.",
-      all_names[needs_backport],
-      bad_versions[needs_backport],
+      all_names,
+      bad_versions,
       r_version
     )
     xml_nodes_to_lints(
-      all_names_nodes[needs_backport],
+      all_names_nodes,
       source_expression = source_expression,
       lint_message = lint_message,
       type = "warning"
