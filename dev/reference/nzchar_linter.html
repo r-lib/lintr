@@ -81,7 +81,9 @@ constructions like <code>string == ""</code> or <code>nchar(string) == 0</code>.
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>One crucial difference is in the default handling of <code>NA_character_</code>, i.e.,
 missing strings. <code>nzchar(NA_character_)</code> is <code>TRUE</code>, while <code>NA_character_ == ""</code>
-and <code>nchar(NA_character_) == 0</code> are both <code>NA</code>.</p>
+and <code>nchar(NA_character_) == 0</code> are both <code>NA</code>. Therefore, for strict
+compatibility, use <code>nzchar(x, keepNA = TRUE)</code>. If the input is known to be
+complete (no missing entries), this argument can be dropped for conciseness.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -99,24 +101,22 @@ and <code>nchar(NA_character_) == 0</code> are both <code>NA</code>.</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"x[x == '']"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">nzchar_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[nzchar_linter] Use nzchar() instead of comparing strings to "". Note that if x is a factor, you'll have use  as.character() to replicate an implicit conversion that happens in x == "". Whenever missing data is possible, please take care to use nzchar(., keepNA = TRUE); nzchar(NA) is TRUE by default.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[nzchar_linter] Use !nzchar(x) instead of x == "". Note that unlike nzchar(), EQ coerces to character, so you'll have to use as.character() if x is a factor. Whenever missing data is possible, please take care to use nzchar(., keepNA = TRUE); nzchar(NA) is TRUE by default.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"x[nchar(x) &gt; 0]"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">nzchar_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[nzchar_linter] Use nzchar() instead of comparing nchar(x) to 0. Whenever missing data is possible, please take care to use nzchar(., keepNA = TRUE); nzchar(NA) is TRUE by default.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[nzchar_linter] Use nzchar(x) instead of nchar(x) &gt; 0. Whenever missing data is possible, please take care to use nzchar(., keepNA = TRUE); nzchar(NA) is TRUE by default.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"x[nchar(x) &gt; 1]"</span>,</span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"x[!nzchar(x, keepNA = TRUE)]"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">nzchar_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># nzchar()'s primary benefit is for vector input;</span></span></span>
-<span class="r-in"><span><span class="co">#   for guaranteed-scalar cases like if() conditions, comparing to "" is OK.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"if (x == '') y"</span>,</span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"x[nzchar(x, keepNA = TRUE)]"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">nzchar_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
