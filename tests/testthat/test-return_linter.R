@@ -166,56 +166,6 @@ test_that("Do not lint stop on end of function", {
   )
 })
 
-test_that("Do not lint stop on end of function", {
-  linter <- return_linter(return_style = "explicit")
-  lint_msg <- rex::rex("All functions must have an explicit return().")
-
-  expect_lint(
-    trim_some("
-      function(x) {
-        switch(x, a = 1, 'b' = 2, '3' = 3, 4)
-      }
-    "),
-    list(lint_msg, line_number = 2L),
-    linter
-  )
-
-  expect_lint(
-    trim_some("
-      function(x) {
-        switch(x, a = return(1), 'b' = stop(2), '3' = return(3), 4)
-      }
-    "),
-    list(lint_msg, line_number = 2L),
-    linter
-  )
-
-  expect_lint(
-    trim_some("
-      function() {
-        switch(
-          x,
-          a = return(1),
-          'b' = stop(2),
-          '3' = return(3)
-        )
-      }
-    "),
-    list(lint_msg, line_number = 2L),
-    linter
-  )
-
-  expect_lint(
-    trim_some("
-      function(x) {
-        switch(x, a = return(1), 'b' = stop(2), '3' = return(3), stop('End'))
-      }
-    "),
-    list(lint_msg, line_number = 2L),
-    linter
-  )
-})
-
 test_that("return_linter works in simple function", {
   expect_lint(
     trim_some("
@@ -1520,4 +1470,232 @@ test_that("= assignments are handled correctly", {
     implicit_msg,
     implicit_linter
   )
+})
+
+test_that("terminal switch() is handled correctly", {
+  implicit_linter <- return_linter()
+  implicit_msg <- rex::rex("Use implicit return behavior; explicit return() is not needed.")
+  explicit_linter <- return_linter(return_style = "explicit")
+  explicit_msg <- rex::rex("All functions must have an explicit return().")
+
+  no_return_lines <- trim_some("
+    foo <- function(x) {
+      switch(x,
+        a = 1,
+        b = 2
+      )
+    }
+  ")
+  expect_lint(no_return_lines, NULL, implicit_linter)
+  expect_lint(no_return_lines, list(explicit_msg, explicit_msg), explicit_linter)
+
+  outer_return_lines <- trim_some("
+    foo <- function(x) {
+      return(switch(x,
+        a = 1,
+        b = 2
+      ))
+    }
+  ")
+  expect_lint(outer_return_lines, implicit_msg, implicit_linter)
+  expect_lint(outer_return_lines, NULL, explicit_linter)
+
+  partial_return_lines <- trim_some("
+    foo <- function(x) {
+      switch(x,
+        a = return(1),
+        b = 2
+      )
+    }
+  ")
+  expect_lint(partial_return_lines, implicit_msg, implicit_linter)
+  expect_lint(partial_return_lines, explicit_msg, explicit_linter)
+
+  all_return_lines <- trim_some("
+    foo <- function(x) {
+      switch(x,
+        a = return(1),
+        b = return(2)
+      )
+    }
+  ")
+  expect_lint(all_return_lines, list(implicit_msg, implicit_msg), implicit_linter)
+  expect_lint(all_return_lines, NULL, explicit_linter)
+
+  default_all_return_lines <- trim_some("
+    foo <- function(x) {
+      switch(x,
+        a = return(1),
+        return(2)
+      )
+    }
+  ")
+  expect_lint(default_all_return_lines, list(implicit_msg, implicit_msg), implicit_linter)
+  expect_lint(default_all_return_lines, NULL, explicit_linter)
+
+  default_no_return_lines <- trim_some("
+    foo <- function(x) {
+      switch(x,
+        a = 1,
+        2
+      )
+    }
+  ")
+  expect_lint(default_no_return_lines, NULL, implicit_linter)
+  expect_lint(default_no_return_lines, list(explicit_msg, explicit_msg), explicit_linter)
+
+  no_return_braced_lines <- trim_some("
+    foo <- function(x) {
+      switch(x,
+        a = {
+          1
+          2
+          3
+          4
+        },
+        b = {
+          5
+          6
+          7
+        }
+      )
+    }
+  ")
+  expect_lint(no_return_braced_lines, NULL, implicit_linter)
+  expect_lint(
+    no_return_braced_lines,
+    list(
+      list(explicit_msg, line_number = 7L),
+      list(explicit_msg, line_number = 12L)
+    ),
+    explicit_linter
+  )
+
+  all_return_braced_lines <- trim_some("
+    foo <- function(x) {
+      switch(x,
+        a = {
+          1
+          2
+          3
+          return(4)
+        },
+        b = {
+          5
+          6
+          return(7)
+        }
+      )
+    }
+  ")
+  expect_lint(
+    all_return_braced_lines,
+    list(
+      list(implicit_msg, line_number = 7L),
+      list(implicit_msg, line_number = 12L)
+    ),
+    implicit_linter
+  )
+  expect_lint(all_return_braced_lines, NULL, explicit_linter)
+
+  early_return_braced_lines <- trim_some("
+    foo <- function(x) {
+      switch(x,
+        a = {
+          1
+          if (TRUE) {
+            return(2)
+          }
+          3
+          4
+        },
+        b = {
+          5
+          6
+          7
+        }
+      )
+    }
+  ")
+  expect_lint(early_return_braced_lines, NULL, implicit_linter)
+  expect_lint(
+    early_return_braced_lines,
+    list(
+      list(explicit_msg, line_number = 9L),
+      list(explicit_msg, line_number = 14L)
+    ),
+    explicit_linter
+  )
+
+  if_no_return_braced_lines <- trim_some("
+    foo <- function(x) {
+      switch(x,
+        a = {
+          1
+          if (TRUE) {
+            2
+          } else {
+            3
+          }
+        },
+        b = {
+          5
+          6
+          7
+        }
+      )
+    }
+  ")
+  expect_lint(if_no_return_braced_lines, NULL, implicit_linter)
+  expect_lint(
+    if_no_return_braced_lines,
+    list(
+      list(explicit_msg, line_number = 6L),
+      list(explicit_msg, line_number = 8L),
+      list(explicit_msg, line_number = 14L)
+    ),
+    explicit_linter
+  )
+
+  if_return_braced_lines <- trim_some("
+    foo <- function(x) {
+      switch(x,
+        a = {
+          1
+          if (TRUE) {
+            return(2)
+          } else {
+            return(3)
+          }
+        },
+        b = {
+          5
+          6
+          return(7)
+        }
+      )
+    }
+  ")
+  expect_lint(
+    if_return_braced_lines,
+    list(
+      list(implicit_msg, line_number = 6L),
+      list(implicit_msg, line_number = 8L),
+      list(implicit_msg, line_number = 14L)
+    ),
+    implicit_linter
+  )
+  expect_lint(if_return_braced_lines, NULL, explicit_linter)
+
+  ok_exit_lines <- trim_some("
+    foo <- function(x) {
+      switch(x,
+        a = .Call(a_routine, x),
+        b = .Call(b_routine, x),
+        stop('invalid')
+      )
+    }
+  ")
+  expect_lint(ok_exit_lines, NULL, implicit_linter)
+  expect_lint(ok_exit_lines, NULL, explicit_linter)
 })
