@@ -73,6 +73,14 @@
 <span>  <span class="va">lint_message</span>,</span>
 <span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"warning"</span>, <span class="st">"style"</span>, <span class="st">"error"</span><span class="op">)</span>,</span>
 <span>  level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expression"</span>, <span class="st">"file"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">make_linter_from_function_xpath</span><span class="op">(</span></span>
+<span>  <span class="va">function_names</span>,</span>
+<span>  <span class="va">xpath</span>,</span>
+<span>  <span class="va">lint_message</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"warning"</span>, <span class="st">"style"</span>, <span class="st">"error"</span><span class="op">)</span>,</span>
+<span>  level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"expression"</span>, <span class="st">"file"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -80,6 +88,8 @@
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>xpath</dt>
 <dd><p>Character string, an XPath identifying R code to lint.
+For <code>make_linter_from_function_xpath()</code>, the XPath is relative to the <code>SYMBOL_FUNCTION_CALL</code> nodes of the
+selected functions.
 See <code><a href="https://rdrr.io/pkg/xmlparsedata/man/xml_parse_data.html" class="external-link">xmlparsedata::xml_parse_data()</a></code> and <code><a href="get_source_expressions.html">get_source_expressions()</a></code>.</p></dd>
 
 
@@ -97,6 +107,10 @@ the <code>i</code>-th lint will be given the <code>i</code>-th message.</p></dd>
 <dd><p>Which level of expression is being tested? <code>"expression"</code>
 means an individual expression, while <code>"file"</code> means all expressions
 in the current file are available.</p></dd>
+
+
+<dt>function_names</dt>
+<dd><p>Character vector, names of functions whose calls to examine..</p></dd>
 
 </dl></div>
 
