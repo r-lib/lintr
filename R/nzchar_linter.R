@@ -6,7 +6,9 @@
 #'
 #' One crucial difference is in the default handling of `NA_character_`, i.e.,
 #'   missing strings. `nzchar(NA_character_)` is `TRUE`, while `NA_character_ == ""`
-#'   and `nchar(NA_character_) == 0` are both `NA`.
+#'   and `nchar(NA_character_) == 0` are both `NA`. Therefore, for strict
+#'   compatibility, use `nzchar(x, keepNA = TRUE)`. If the input is known to be
+#'   complete (no missing entries), this argument can be dropped for conciseness.
 #'
 #' @examples
 #' # will produce lints
@@ -22,14 +24,12 @@
 #'
 #' # okay
 #' lint(
-#'   text = "x[nchar(x) > 1]",
+#'   text = "x[!nzchar(x, keepNA = TRUE)]",
 #'   linters = nzchar_linter()
 #' )
 #'
-#' # nzchar()'s primary benefit is for vector input;
-#' #   for guaranteed-scalar cases like if() conditions, comparing to "" is OK.
 #' lint(
-#'   text = "if (x == '') y",
+#'   text = "x[nzchar(x, keepNA = TRUE)]",
 #'   linters = nzchar_linter()
 #' )
 #'
