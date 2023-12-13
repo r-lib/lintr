@@ -256,7 +256,7 @@ expect_lint("blah=1; blah=2",
   list(
     list(line_number = 1, column_number = 5),
     list(line_number = 1, column_number = 13),
-  )
+  ),
   assignment_linter()
 )
 ```
