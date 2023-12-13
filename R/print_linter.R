@@ -29,10 +29,10 @@
 #' @evalRd rd_tags("print_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-print_linter <- make_linter_from_xpath(
+print_linter <- make_linter_from_function_xpath(
+  function_names = "print",
   xpath = "
-    //SYMBOL_FUNCTION_CALL[text() = 'print']
-      /parent::expr
+    parent::expr
       /parent::expr[expr[2][
         STR_CONST
         or expr/SYMBOL_FUNCTION_CALL[
