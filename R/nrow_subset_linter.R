@@ -24,10 +24,10 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @include shared_constants.R
 #' @export
-nrow_subset_linter <- make_linter_from_xpath(
+nrow_subset_linter <- make_linter_from_function_xpath(
+  function_names = "subset",
   xpath = glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'subset']
-    /parent::expr
+  parent::expr
     /parent::expr
     /parent::expr[
       expr/SYMBOL_FUNCTION_CALL[text() = 'nrow']

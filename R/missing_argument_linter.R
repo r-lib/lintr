@@ -44,16 +44,16 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
 
   # require >3 children to exclude foo(), which is <expr><OP-LEFT-PAREN><OP-RIGHT-PAREN>
   xpath <- glue("
-    //SYMBOL_FUNCTION_CALL[not({ xp_text_in_table(except) })]
-      /parent::expr
+    parent::expr
       /parent::expr[count(*) > 3]
       /*[{xp_or(conds)}]
   ")
 
   Linter(linter_level = "file", function(source_expression) {
-    xml <- source_expression$full_xml_parsed_content
+    xml_targets <- source_expression$xml_find_function_calls(NULL, keep_names = TRUE)
+    xml_targets <- xml_targets[!names(xml_targets) %in% except]
 
-    missing_args <- xml_find_all(xml, xpath)
+    missing_args <- xml_find_all(xml_targets, xpath)
 
     named_idx <- xml_name(missing_args) == "EQ_SUB"
     arg_id <- character(length(missing_args))
