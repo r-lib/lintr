@@ -32,7 +32,7 @@ expect_s4_class_linter <- function() {
   "
 
   Linter(linter_level = "expression", function(source_expression) {
-    # TODO(michaelchirico): also catch expect_{equal,identical}(methods::is(x), k).
+    # TODO(#2423): also catch expect_{equal,identical}(methods::is(x), k).
     #   this seems empirically rare, but didn't check many S4-heavy packages.
 
     xml_calls <- source_expression$xml_find_function_calls("expect_true")
