@@ -127,7 +127,8 @@ sort_linter <- function() {
       source_expression = source_expression,
       lint_message = paste0(
         new_call, " is better than ", orig_call, ". ",
-        "If the output of order() is re-used, save it to a local variable."
+        "Note that it's always preferable to save the output of order() for the same variable ",
+        "as a local variable than to re-compute it."
       ),
       type = "warning"
     )
