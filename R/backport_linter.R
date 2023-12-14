@@ -93,7 +93,7 @@ normalize_r_version <- function(r_version) {
     version_names <- c("devel", "release", paste0("oldrel-", seq_len(length(minor_versions) - 2L)))
     if (!r_version %in% version_names) {
       # This can only trip if e.g. oldrel-99 is requested
-      cli_abort("{.var r_version} must be a version number or one of {toString(sQuote(version_names))}")
+      cli_abort("{sQuote(r_version)} must be a version number or one of {toString(sQuote(version_names))}")
     }
     requested_version <- minor_versions[match(r_version, table = version_names)]
     available_patches <- all_versions[startsWith(all_versions, requested_version)]

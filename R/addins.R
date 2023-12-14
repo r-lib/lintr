@@ -5,7 +5,7 @@ addin_lint <- function() {
   }
   filename <- rstudioapi::getSourceEditorContext()
   if (filename$path == "") {
-    return("Current source has no path. Please save before continue.")
+    return("Current source has no path. Please save before continuing.")
   }
 
   config_file <- (get("find_config", asNamespace("lintr")))(filename$path)
