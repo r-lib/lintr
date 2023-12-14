@@ -722,6 +722,46 @@ test_that("except_regex= argument works", {
     NULL,
     linter
   )
+
+  expect_lint(
+    trim_some("
+      TestOuter <- function() {
+        actual <- lapply(
+          input,
+          function(x) {
+            no_return()
+          }
+        )
+        TestInner <- function() {
+          no_return()
+        }
+        checkEquals(TestInner(), actual)
+      }
+    "),
+    list(rex::rex("All functions must have an explicit return()."), line_number = 5L),
+    linter
+  )
+})
+
+test_that("except= and except_regex= combination works", {
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        no_return()
+      }
+      bar <- function() {
+        no_return()
+      }
+      abaz <- function() {
+        no_return()
+      }
+      bbaz <- function() {
+        no_return()
+      }
+    "),
+    NULL,
+    return_linter(return_style = "explicit", except = c("foo", "bar"), except_regex = "baz$")
+  )
 })
 
 test_that("return_linter skips brace-wrapped inline functions", {
