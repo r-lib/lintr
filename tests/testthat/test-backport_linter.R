@@ -45,7 +45,7 @@ test_that("backport_linter detects backwards-incompatibility", {
 
   expect_error(
     backport_linter("oldrel-99"),
-    "'oldrel-99' must be a version number or one of"
+    "`r_version` is not valid"
   )
 
   expect_lint(
