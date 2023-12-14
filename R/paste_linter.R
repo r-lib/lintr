@@ -1,5 +1,7 @@
 #' Raise lints for several common poor usages of `paste()`
 #'
+#' @description
+#'
 #' The following issues are linted by default by this linter
 #'   (see arguments for which can be de-activated optionally):
 #'
