@@ -84,10 +84,10 @@ wercker_build_info <- function() {
 # nocov start
 github_comment <- function(text, info = NULL, token = settings$comment_token) {
   if (!requireNamespace("httr", quietly = TRUE)) {
-    stop("Package 'httr' is required to post comments with github_comment().", call. = FALSE)
+    cli_abort("Package {.pkg httr} is required to post comments with {.fn github_comment}.")
   }
   if (!requireNamespace("jsonlite", quietly = TRUE)) {
-    stop("Package 'jsonlite' is required to post comments with github_comment().", call. = FALSE)
+    cli_abort("Package {.pkg jsonlite} is required to post comments with {.fn github_comment}.")
   }
 
   if (is.null(info)) {
@@ -99,7 +99,10 @@ github_comment <- function(text, info = NULL, token = settings$comment_token) {
   } else if (!is.null(info$commit)) {
     api_subdir <- file.path("commits", info$commit)
   } else {
-    stop("Expected a pull or a commit, but received ci_build_info() = ", format(info), call. = FALSE)
+    cli_abort(c(
+      "Expected a pull or a commit",
+      "x" = "Instead received {.fn ci_build_info} = {format(info)}"
+    ))
   }
   response <- httr::POST(
     "https://api.github.com",
