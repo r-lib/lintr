@@ -87,11 +87,13 @@ return_linter <- function(
     except_xpath_fmt <- "parent::expr[not(
       preceding-sibling::expr/SYMBOL[{ xp_text_in_table(union(special_funs, except)) }]
     )]"
-    if (!defer_except) except_xpath <- glue(except_xpath_fmt) # nolint: object_usage_linter. Hidden by dynamic glue.
+    # nolint next: object_usage_linter. Hidden by dynamic glue.
+    if (!defer_except) except_xpath <- glue(except_xpath_fmt)
   }
 
   if (return_style == "implicit") {
-    body_xpath <- "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[1]" # nolint: object_usage_linter. Hidden by dynamic glue.
+    # nolint next: object_usage_linter. Hidden by dynamic glue.
+    body_xpath <- "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[1]"
     params <- list(
       implicit = TRUE,
       type = "style",
