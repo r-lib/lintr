@@ -4,10 +4,13 @@
 \alias{todo_comment_linter}
 \title{TODO comment linter}
 \usage{
-todo_comment_linter(todo = c("todo", "fixme"))
+todo_comment_linter(todo = c("todo", "fixme"), except_regex = NULL)
 }
 \arguments{
 \item{todo}{Vector of case-insensitive strings that identify TODO comments.}
+
+\item{except_regex}{Vector of case-sensitive regular expressions that identify
+\emph{valid} TODO comments.}
 }
 \description{
 Check that the source contains no TODO comments (case-insensitive).
@@ -29,6 +32,11 @@ lint(
   linters = todo_comment_linter(todo = c("todo", "fixme", "hack"))
 )
 
+lint(
+  text = "x <- TRUE # TODO(#1234): Fix this hack.",
+  linters = todo_comment_linter()
+)
+
 # okay
 lint(
   text = "x + y # my informative comment",
@@ -43,6 +51,11 @@ lint(
 lint(
   text = "x <- TRUE",
   linters = todo_comment_linter()
+)
+
+lint(
+  text = "x <- TRUE # TODO(#1234): Fix this hack.",
+  linters = todo_comment_linter(exclude_regex = "TODO\\\\(#[0-9]+\\\\):")
 )
 
 }
