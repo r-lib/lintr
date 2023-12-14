@@ -79,16 +79,19 @@ return_linter <- function(
   return_style <- match.arg(return_style)
 
   check_except <- !allow_implicit_else || return_style == "explicit"
+  # We defer building the XPath strings in this case since we can't build the
+  #   pattern-based "except" logic directly into the XPath (because of v1.0)
+  defer_except <- check_except && !is.null(except_regex)
 
   if (check_except) {
     except_xpath_fmt <- "parent::expr[not(
       preceding-sibling::expr/SYMBOL[{ xp_text_in_table(union(special_funs, except)) }]
     )]"
-    if (is.null(except_regex)) except_xpath <- glue(except_xpath_fmt)
+    if (!defer_except) except_xpath <- glue(except_xpath_fmt) # nolint: object_usage_linter. Hidden by dynamic glue.
   }
 
   if (return_style == "implicit") {
-    body_xpath <- "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[1]"
+    body_xpath <- "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[1]" # nolint: object_usage_linter. Hidden by dynamic glue.
     params <- list(
       implicit = TRUE,
       type = "style",
@@ -120,10 +123,10 @@ return_linter <- function(
       /following-sibling::expr[OP-LEFT-BRACE and expr[last()]/@line1 != @line1]
       /expr[last()]
     "
-    if (is.null(except_regex)) {
-      body_xpath <- glue(body_xpath_fmt)
-    } else {
+    if (defer_except) {
       function_name_xpath <- "(//FUNCTION | //OP-LAMBDA)/parent::expr/preceding-sibling::expr/SYMBOL"
+    } else {
+      body_xpath <- glue(body_xpath_fmt)
     }
 
     params <- list(
@@ -141,7 +144,7 @@ return_linter <- function(
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (check_except && !is.null(except_regex)) {
+    if (defer_except) {
       assigned_functions <- xml_text(xml_find_all(xml, function_name_xpath))
       except <- union(except, assigned_functions[re_matches(assigned_functions, except_regex)])
       except_xpath <- glue(except_xpath_fmt)
