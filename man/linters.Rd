@@ -18,7 +18,7 @@ see also \code{\link[=available_tags]{available_tags()}}.
 The following tags exist:
 \itemize{
 \item{\link[=best_practices_linters]{best_practices} (63 linters)}
-\item{\link[=common_mistakes_linters]{common_mistakes} (10 linters)}
+\item{\link[=common_mistakes_linters]{common_mistakes} (11 linters)}
 \item{\link[=configurable_linters]{configurable} (42 linters)}
 \item{\link[=consistency_linters]{consistency} (32 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
@@ -148,7 +148,7 @@ The following linters exist:
 \item{\code{\link{unnecessary_placeholder_linter}} (tags: best_practices, readability)}
 \item{\code{\link{unreachable_code_linter}} (tags: best_practices, configurable, readability)}
 \item{\code{\link{unused_import_linter}} (tags: best_practices, common_mistakes, configurable, executing)}
-\item{\code{\link{vector_logic_linter}} (tags: best_practices, default, efficiency)}
+\item{\code{\link{vector_logic_linter}} (tags: best_practices, common_mistakes, default, efficiency)}
 \item{\code{\link{which_grepl_linter}} (tags: consistency, efficiency, readability, regex)}
 \item{\code{\link{whitespace_linter}} (tags: consistency, default, style)}
 \item{\code{\link{yoda_test_linter}} (tags: best_practices, package_development, pkg_testthat, readability)}

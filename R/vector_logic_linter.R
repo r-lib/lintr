@@ -31,6 +31,11 @@
 #'   linters = vector_logic_linter()
 #' )
 #'
+#' lint(
+#'   text = "filter(x, A && B)",
+#'   linters = vector_logic_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "if (TRUE && FALSE) 1",
@@ -39,6 +44,11 @@
 #'
 #' lint(
 #'   text = "if (TRUE && (TRUE || FALSE)) 4",
+#'   linters = vector_logic_linter()
+#' )
+#'
+#' lint(
+#'   text = "filter(x, A & B)",
 #'   linters = vector_logic_linter()
 #' )
 #'
