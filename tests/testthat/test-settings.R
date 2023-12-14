@@ -271,7 +271,10 @@ test_that("read_config_file() bubbles up warnings helpfully, without erroring (#
   withr::local_dir(withr::local_tempdir())
 
   writeLines("a <- 1", "aaa.R")
-  expect_snapshot(lint_dir())
+  expect_warning(
+    lint_dir(),
+    "Depending on an R version older than 3.0.0 is not recommended"
+  )
 })
 
 test_that("perl-only regular expressions are accepted in config", {
