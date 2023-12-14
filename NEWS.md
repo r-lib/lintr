@@ -41,6 +41,7 @@
 * `unreachable_code_linter()` has an argument `allow_comment_regex` for customizing which "terminal" comments to exclude (#2327, @MichaelChirico). `# nolint end` comments are always excluded, as are {covr} exclusions (e.g. `# nocov end`) by default.
 * `format()` and `print()` methods for `lint` and `lints` classes get a new option `width` to control the printing width of lint messages (#1884, @MichaelChirico). The default is controlled by a new option `lintr.format_width`; if unset, no wrapping occurs (matching earlier behavior).
 * New function node caching for big efficiency gains to most linters (e.g. overall `lint_package()` improvement of 14-27% and core linting improvement up to 30%; #2357, @AshesITR). Most linters are written around function usage, and XPath performance searching for many functions is poor. The new `xml_find_function_calls()` entry in the `get_source_expressions()` output caches all function call nodes instead. See the vignette on creating linters for more details on how to use it.
+* `any_is_na_linter()` is extended to catch the unusual usage `NA %in% x` (#2113, @MichaelChirico).
 
 ### New linters
 
