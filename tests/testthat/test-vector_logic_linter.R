@@ -100,15 +100,84 @@ test_that("vector_logic_linter recognizes some false positves around bitwise &/|
   expect_lint('if ((mode | "111") != as.hexmode("111")) { }', NULL, linter)
 })
 
+test_that("incorrect subset/filter usage is caught", {
+  linter <- vector_logic_linter()
+  and_msg <- rex::rex("Use `&` in subsetting expressions")
+  or_msg <- rex::rex("Use `|` in subsetting expressions")
+
+  expect_lint("filter(x, y && z)", and_msg, linter)
+  expect_lint("filter(x, y || z)", or_msg, linter)
+  expect_lint("subset(x, y && z)", and_msg, linter)
+  expect_lint("subset(x, y || z)", or_msg, linter)
+
+  expect_lint("x %>% filter(y && z)", and_msg, linter)
+  expect_lint("filter(x, a & b, c | d, e && f)", list(and_msg, column_number = 27L), linter)
+})
+
+test_that("subsetting logic handles nesting", {
+  linter <- vector_logic_linter()
+  and_msg <- rex::rex("Use `&` in subsetting expressions")
+  or_msg <- rex::rex("Use `|` in subsetting expressions")
+
+  expect_lint("filter(x, a & b || c)", or_msg, linter)
+  expect_lint("filter(x, a && b | c)", and_msg, linter)
+
+  # but not valid usage
+  expect_lint("filter(x, y < mean(y, na.rm = AA && BB))", NULL, linter)
+  expect_lint("subset(x, y < mean(y, na.rm = AA && BB) & y > 0)", NULL, linter)
+})
+
+test_that("filter() handling is conservative about stats::filter()", {
+  linter <- vector_logic_linter()
+  and_msg <- rex::rex("Use `&` in subsetting expressions")
+
+  # NB: this should be invalid, filter= is a vector argument
+  expect_lint("stats::filter(x, y && z)", NULL, linter)
+  # The only logical argument to stats::filter(), exclude by keyword
+  expect_lint("filter(x, circular = y && z)", NULL, linter)
+  # But presence of circular= doesn't invalidate lint
+  expect_lint("filter(x, circular = TRUE, y && z)", and_msg, linter)
+  expect_lint("filter(x, y && z, circular = TRUE)", and_msg, linter)
+  expect_lint(
+    trim_some("
+      filter(x, circular # comment
+      = y && z)
+    "),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+      filter(x, circular = # comment
+        y && z)
+    "),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+      filter(x, circular # comment
+      = # comment
+      y && z)
+    "),
+    NULL,
+    linter
+  )
+})
+
 test_that("lints vectorize", {
   expect_lint(
     trim_some("{
       if (AA & BB) {}
       if (CC | DD) {}
+      filter(x, EE && FF)
+      subset(y, GG || HH)
     }"),
     list(
       list(rex::rex("`&&`"), line_number = 2L),
-      list(rex::rex("`||`"), line_number = 3L)
+      list(rex::rex("`||`"), line_number = 3L),
+      list(rex::rex("`&`"), line_number = 4L),
+      list(rex::rex("`|`"), line_number = 5L)
     ),
     vector_logic_linter()
   )
