@@ -125,6 +125,7 @@ test_that("subsetting logic handles nesting", {
   # but not valid usage
   expect_lint("filter(x, y < mean(y, na.rm = AA && BB))", NULL, linter)
   expect_lint("subset(x, y < mean(y, na.rm = AA && BB) & y > 0)", NULL, linter)
+  expect_lint("subset(x, y < x[y > 0, drop = AA && BB, y])", NULL, linter)
 })
 
 test_that("filter() handling is conservative about stats::filter()", {
