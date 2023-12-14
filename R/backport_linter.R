@@ -45,25 +45,28 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
   backport_index <- rep(names(backport_blacklist), times = lengths(backport_blacklist))
   names(backport_index) <- unlist(backport_blacklist)
 
-  names_xpath <- "//SYMBOL | //SYMBOL_FUNCTION_CALL"
-
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    all_names_nodes <- xml_find_all(xml, names_xpath)
+    used_symbols <- xml_find_all(xml, "//SYMBOL")
+    used_symbols <- used_symbols[xml_text(used_symbols) %in% names(backport_index)]
+
+    all_names_nodes <- combine_nodesets(
+      source_expression$xml_find_function_calls(names(backport_index)),
+      used_symbols
+    )
     all_names <- xml_text(all_names_nodes)
 
     bad_versions <- unname(backport_index[all_names])
-    needs_backport <- !is.na(bad_versions)
 
     lint_message <- sprintf(
       "%s (R %s) is not available for dependency R >= %s.",
-      all_names[needs_backport],
-      bad_versions[needs_backport],
+      all_names,
+      bad_versions,
       r_version
     )
     xml_nodes_to_lints(
-      all_names_nodes[needs_backport],
+      all_names_nodes,
       source_expression = source_expression,
       lint_message = lint_message,
       type = "warning"
@@ -115,7 +118,8 @@ normalize_r_version <- function(r_version) {
 # devel NEWS https://cran.rstudio.com/doc/manuals/r-devel/NEWS.html
 # release NEWS https://cran.r-project.org/doc/manuals/r-release/NEWS.html
 backports <- list(
-  `4.3.0` = character(), # R devel needs to be ahead of all other versions
+  `4.3.0` = c("R_compiled_by", "array2DF"),
+  `4.2.1` = "findCRANmirror",
   `4.2.0` = c(".pretty", ".LC.categories", "Sys.setLanguage()"),
   `4.1.3` = character(), # need these for oldrel specifications
   `4.1.0` = c("numToBits", "numToInts", "gregexec", "charClass", "checkRdContents", "...names"),

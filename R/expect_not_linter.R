@@ -22,10 +22,10 @@
 #' @evalRd rd_tags("expect_not_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-expect_not_linter <- make_linter_from_xpath(
+expect_not_linter <- make_linter_from_function_xpath(
+  function_names = c("expect_true", "expect_false"),
   xpath = "
-  //SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']
-    /parent::expr
+  parent::expr
     /following-sibling::expr[OP-EXCLAMATION]
     /parent::expr
   ",

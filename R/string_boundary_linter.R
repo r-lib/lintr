@@ -61,8 +61,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     "contains(text(), '^') or contains(text(), '$')"
   )
   str_detect_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'str_detect']
-    /parent::expr
+  parent::expr
     /following-sibling::expr[2]
     /STR_CONST[ {str_cond} ]
   ")
@@ -74,8 +73,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
 
   if (!allow_grepl) {
     grepl_xpath <- glue("
-    //SYMBOL_FUNCTION_CALL[text() = 'grepl']
-      /parent::expr
+    parent::expr
       /parent::expr[
         not(SYMBOL_SUB[
           text() = 'ignore.case'
@@ -119,8 +117,8 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     list(lint_expr = expr[can_replace], lint_type = lint_type)
   }
 
-  substr_xpath_parts <- glue("
-  //{ c('EQ', 'NE') }
+  substr_xpath <- glue("
+  (//EQ | //NE)
     /parent::expr[
       expr[STR_CONST]
       and expr[
@@ -138,7 +136,6 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
       ]
     ]
   ")
-  substr_xpath <- paste(substr_xpath_parts, collapse = " | ")
 
   substr_arg2_xpath <- "string(./expr[expr[1][SYMBOL_FUNCTION_CALL]]/expr[3])"
 
@@ -147,7 +144,10 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
 
     lints <- list()
 
-    str_detect_lint_data <- get_regex_lint_data(xml, str_detect_xpath)
+    str_detect_lint_data <- get_regex_lint_data(
+      source_expression$xml_find_function_calls("str_detect"),
+      str_detect_xpath
+    )
     str_detect_lint_message <- str_detect_message_map[str_detect_lint_data$lint_type]
 
     lints <- c(lints, xml_nodes_to_lints(
@@ -158,7 +158,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     ))
 
     if (!allow_grepl) {
-      grepl_lint_data <- get_regex_lint_data(xml, grepl_xpath)
+      grepl_lint_data <- get_regex_lint_data(source_expression$xml_find_function_calls("grepl"), grepl_xpath)
       grepl_lint_message <- grepl_message_map[grepl_lint_data$lint_type]
 
       lints <- c(lints, xml_nodes_to_lints(
