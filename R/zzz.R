@@ -176,14 +176,15 @@ rd_auto_link <- function(x) {
 }
 
 rd_undesirable_functions <- function() {
-  alternatives <- rd_auto_link(default_undesirable_functions)
+  funs <- default_undesirable_functions[platform_independent_order(names(default_undesirable_functions))]
+  alternatives <- rd_auto_link(funs)
 
   c(
     "The following functions are sometimes regarded as undesirable:",
     "\\itemize{",
     sprintf(
       "\\item \\code{\\link[=%1$s]{%1$s()}} As an alternative, %2$s.",
-      names(default_undesirable_functions), alternatives
+      names(funs), alternatives
     ),
     "}"
   )
@@ -224,21 +225,22 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
 )]
 
 rd_undesirable_operators <- function() {
+  ops <- default_undesirable_operators[platform_independent_order(names(default_undesirable_operators))]
+
   op_link_map <- c(
     `:::` = "\\link[base:ns-dblcolon]{:::}",
     `<<-` = "\\link[base:assignOps]{<<-}",
     `->>` = "\\link[base:assignOps]{<<-}"
   )
-  op <- names(default_undesirable_operators)
 
-  alternatives <- rd_auto_link(default_undesirable_operators)
+  alternatives <- rd_auto_link(ops)
 
   c(
     "The following operators are sometimes regarded as undesirable:",
     "\\itemize{",
     sprintf(
       "\\item \\code{%1$s} As an alternative, %2$s",
-      op_link_map[op], alternatives
+      op_link_map[names(ops)], alternatives
     ),
     "}"
   )
