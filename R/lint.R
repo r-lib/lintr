@@ -75,92 +75,30 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   supports_exprlist <- vapply(linters[expression_linter_names], linter_supports_exprlist, logical(1L))
 
   lints <- list()
-  if (!is_tainted(source_expressions$lines)) {
+  if (!is_tainted(source_expressions$lines) && length(source_expressions$expressions) > 0L) {
     exprs_expression <- head(source_expressions$expressions, -1L)
     expr_file <- source_expressions$expressions[[length(source_expressions$expressions)]]
 
-    # Compute execution plan
-    file_linter_cached <- vapply(file_linter_names, has_lint,
-                                 expr = expr_file, cache = lint_cache,
-                                 FUN.VALUE = logical(1L))
+    lints <- handle_file_level_lints(
+      lints = lints,
+      file_linter_names = file_linter_names,
+      expr_file = expr_file,
+      lint_cache = lint_cache,
+      linters = linters,
+      lines = source_expressions$lines,
+      filename = filename
+    )
 
-    # For expression level linters, each column is a linter, each row an expr
-    expr_linter_cached <- vapply(expression_linter_names, function(linter_name) {
-      vapply(exprs_expression, has_lint, linter = linter_name, cache = lint_cache, FUN.VALUE = logical(1L))
-    }, FUN.VALUE = logical(length(exprs_expression)))
-    # Ensure 2D array even for just a single expr or linter
-    dim(expr_linter_cached) <- c(length(exprs_expression), length(expression_linter_names))
-    colnames(expr_linter_cached) <- expression_linter_names
-
-    # Retrieve cached lints where available
-    if (any(file_linter_cached)) {
-      lints[[length(lints) + 1L]] <- lapply(file_linter_names[file_linter_cached], function(linter_name) {
-        retrieve_lint(cache = lint_cache, expr = expr_file, linter = linter_name, lines = source_expressions$lines)
-      })
-    }
-
-    if (any(expr_linter_cached)) {
-      lints[[length(lints) + 1L]] <- lapply(
-        # only retrieve lints of linters with at least one cache hit
-        expression_linter_names[colSums(expr_linter_cached) > 0L],
-        function(linter_name) {
-          lapply(exprs_expression[expr_linter_cached[, linter_name]], function(expr) {
-            retrieve_lint(cache = lint_cache, expr = expr, linter = linter_name, lines = source_expressions$lines)
-          })
-        }
-      )
-    }
-
-    # Compute file-level lints where cache missed
-    if (!all(file_linter_cached)) {
-      lints[[length(lints) + 1L]] <- lapply(file_linter_names[!file_linter_cached], function(linter_name) {
-        withCallingHandlers(
-          get_lints(expr_file, linter_name, linters[[linter_name]], lint_cache, source_expressions$lines),
-          error = function(cond) {
-            stop("Linter '", linter_name, "' failed in ", filename, ": ", conditionMessage(cond), call. = FALSE)
-          }
-        )
-      })
-    }
-
-    if (!all(expr_linter_cached)) {
-      # Compute individual expr-lints where exprlist batching is not supported
-      needs_running <- colSums(expr_linter_cached) < length(exprs_expression)
-      lints[[length(lints) + 1L]] <- lapply(
-        expression_linter_names[needs_running & !supports_exprlist],
-        function(linter_name) {
-          lapply(exprs_expression[!expr_linter_cached[, linter_name]], function(expr) {
-            withCallingHandlers(
-              get_lints(expr, linter_name, linters[[linter_name]], lint_cache, source_expressions$lines),
-              error = function(cond) {
-                stop("Linter '", linter_name, "' failed in ", filename, ": ", conditionMessage(cond), call. = FALSE)
-              }
-            )
-          })
-        }
-      )
-
-      lints[[length(lints) + 1L]] <- lapply(
-        expression_linter_names[needs_running & supports_exprlist],
-        function(linter_name) {
-          linter_fun <- linters[[linter_name]]
-          exprs_to_lint <- exprs_expression[!expr_linter_cached[, linter_name]]
-
-          # run on exprlist
-          exprlist_to_lint <- collapse_exprs(exprs_to_lint)
-          expr_lints <- flatten_lints(linter_fun(exprlist_to_lint))
-
-          for (i in seq_along(expr_lints)) {
-            expr_lints[[i]]$linter <- linter
-          }
-
-          # write results to expr-level cache
-
-
-          expr_lints
-        }
-      )
-    }
+    lints <- handle_expr_level_lints(
+      lints = lints,
+      expression_linter_names = expression_linter_names,
+      supports_exprlist = supports_exprlist,
+      exprs_expression = exprs_expression,
+      lint_cache = lint_cache,
+      linters = linters,
+      lines = source_expressions$lines,
+      filename = filename
+    )
   }
 
   lints <- maybe_append_error_lint(lints, source_expressions$error, lint_cache, filename)
@@ -349,34 +287,86 @@ lint_package <- function(path = ".", ...,
   lints
 }
 
-#' Run a linter on a source expression, optionally using a cache
+#' @name get_lints
+#' @title Run a linter on a source expression, optionally using a cache
 #'
 #' @param expr A source expression.
-#' @param linter Name of the linter.
+#' @param exprs_to_lint A list of source expressions.
+#' @param linter_name Name of the linter.
 #' @param linter_fun Closure of the linter.
 #' @param lint_cache Cache environment, or `NULL` if caching is disabled.
 #'
-#' @return A list of lints generated by the linter on `expr`.
+#' @return A list of lints generated by the linter on `expr` or all expressions in `exprs_to_lint`.
 #'
 #' @noRd
-get_lints <- function(expr, linter, linter_fun, lint_cache, lines) {
-  expr_lints <- NULL
-  if (has_lint(lint_cache, expr, linter)) {
-    # retrieve_lint() might return NULL if missing line number is encountered.
-    # It could be caused by nolint comments.
-    expr_lints <- retrieve_lint(lint_cache, expr, linter, lines)
-  }
+get_lints_single <- function(expr, linter_name, linter_fun, lint_cache, filename) {
+  withCallingHandlers(
+    {
+      expr_lints <- flatten_lints(linter_fun(expr))
 
-  if (is.null(expr_lints)) {
-    expr_lints <- flatten_lints(linter_fun(expr))
+      for (i in seq_along(expr_lints)) {
+        expr_lints[[i]]$linter <- linter_name
+      }
 
-    for (i in seq_along(expr_lints)) {
-      expr_lints[[i]]$linter <- linter
+      cache_lint(lint_cache, expr, linter_name, expr_lints)
+
+      expr_lints
+    },
+    error = function(cond) {
+      stop("Linter '", linter_name, "' failed in ", filename, ": ", conditionMessage(cond), call. = FALSE)
     }
+  )
+}
 
-    cache_lint(lint_cache, expr, linter, expr_lints)
-  }
-  expr_lints
+#' @rdname get_lints
+#' @noRd
+get_lints_batched <- function(exprs_to_lint, linter_name, linter_fun, lint_cache, filename) {
+  withCallingHandlers(
+    {
+      # run on exprlist
+      exprlist_to_lint <- collapse_exprs(exprs_to_lint)
+      expr_lints <- flatten_lints(linter_fun(exprlist_to_lint))
+
+      lines_to_cache <- vector(mode = "list", length(exprs_to_lint))
+      for (i in seq_along(expr_lints)) {
+        expr_lints[[i]]$linter <- linter_name
+
+        # Store in cache index if possible (i.e. line number is unique for expr)
+        curr_expr_index <- exprlist_to_lint$expr_index[as.character(expr_lints[[i]]$line)]
+        if (!is.na(curr_expr_index)) {
+          if (is.null(lines_to_cache[[curr_expr_index]])) {
+            lines_to_cache[[curr_expr_index]] <- list(expr_lints[[i]])
+          } else {
+            lines_to_cache[[curr_expr_index]][[length(lines_to_cache[[curr_expr_index]]) + 1L]] <- expr_lints[[i]]
+          }
+        }
+      }
+
+      # write results to expr-level cache
+      for (i in seq_along(lines_to_cache)) {
+        if (!is.null(lines_to_cache[[i]])) {
+          cache_lint(lint_cache, exprs_to_lint[[i]], linter_name, lines_to_cache[[i]])
+        }
+      }
+
+      expr_lints
+    },
+    error = function(cond) {
+      stop("Linter '", linter_name, "' failed in ", filename, ": ", conditionMessage(cond), call. = FALSE)
+    }
+  )
+}
+
+#' @rdname get_lints
+#' @noRd
+get_lints_sequential <- function(exprs_to_lint, linter_name, linter_fun, lint_cache, filename) {
+  lapply(
+    exprs_to_lint, get_lints_single,
+    linter_name = linter_name,
+    linter_fun = linter_fun,
+    lint_cache = lint_cache,
+    filename = filename
+  )
 }
 
 define_linters <- function(linters = NULL) {
@@ -797,13 +787,22 @@ collapse_exprs <- function(expr_list) {
   lines <- character()
   parsed_content <- NULL
   content <- ""
+  expr_index <- integer()
+  i <- 0L
 
   for (expr in expr_list) {
+    i <- i + 1L
     xml2::xml_add_child(xml_pc, expr$xml_parsed_content)
     function_call_cache <- c(function_call_cache, expr$xml_find_function_calls(NULL, keep_names = TRUE))
     lines <- c(lines, expr$lines)
     parsed_content <- if (is.null(parsed_content)) expr$parsed_content else rbind(parsed_content, expr$parsed_content)
     content <- paste(content, expr$content, sep = "\n")
+    if (expr$line %in% names(expr_index)) {
+      # line is not unique to this expr => can't find the expr to cache for from exprlist lints landing on this line
+      expr_index[as.character(expr$line)] <- NA_integer_
+    } else {
+      expr_index[as.character(expr$line)] <- i
+    }
   }
   xml_find_function_calls <- build_xml_find_function_calls(xml_pc, cache = function_call_cache)
 
@@ -813,6 +812,66 @@ collapse_exprs <- function(expr_list) {
     parsed_content = parsed_content,
     xml_parsed_content = xml_pc,
     xml_find_function_calls = xml_find_function_calls,
-    content = content
+    content = content,
+    expr_index = expr_index
   )
+}
+
+handle_file_level_lints <- function(lints, file_linter_names, expr_file, lint_cache, linters, lines, filename) {
+  # Compute execution plan
+  file_linter_cached <- vapply(
+    file_linter_names, has_lint,
+    expr = expr_file,
+    cache = lint_cache,
+    FUN.VALUE = logical(1L)
+  )
+  # Retrieve cached lints where available
+  for (linter_name in file_linter_names[file_linter_cached]) {
+    lints[[length(lints) + 1L]] <- retrieve_lint(
+      cache = lint_cache,
+      expr = expr_file,
+      linter = linter_name,
+      lines = lines
+    )
+  }
+  # Compute file-level lints where cache missed
+  for (linter_name in file_linter_names[!file_linter_cached]) {
+    linter_fun <- linters[[linter_name]]
+    lints[[length(lints) + 1L]] <- get_lints_single(expr_file, linter_name, linter_fun, lint_cache, filename)
+  }
+
+  lints
+}
+
+handle_expr_level_lints <- function(lints, expression_linter_names, supports_exprlist, exprs_expression, lint_cache,
+                                    linters, lines, filename) {
+  # For expression level linters, each column is a linter, each row an expr
+  expr_linter_cached <- vapply(expression_linter_names, function(linter_name) {
+    vapply(exprs_expression, has_lint, linter = linter_name, cache = lint_cache, FUN.VALUE = logical(1L))
+  }, FUN.VALUE = logical(length(exprs_expression)))
+  # Ensure 2D array even for just a single expr or linter
+  dim(expr_linter_cached) <- c(length(exprs_expression), length(expression_linter_names))
+  colnames(expr_linter_cached) <- expression_linter_names
+
+  # Retrieve cached lints where available
+  for (linter_name in expression_linter_names[colSums(expr_linter_cached) > 0L]) {
+    lints[[length(lints) + 1L]] <- lapply(exprs_expression[expr_linter_cached[, linter_name]], function(expr) {
+      retrieve_lint(cache = lint_cache, expr = expr, linter = linter_name, lines = source_expressions$lines)
+    })
+  }
+
+  # Compute individual expr-lints where exprlist batching is not supported
+  needs_running <- colSums(expr_linter_cached) < length(exprs_expression)
+  for (linter_name in expression_linter_names[needs_running & !supports_exprlist]) {
+    linter_fun <- linters[[linter_name]]
+    exprs_to_lint <- exprs_expression[!expr_linter_cached[, linter_name]]
+    lints[[length(lints) + 1L]] <- get_lints_sequential(exprs_to_lint, linter_name, linter_fun, lint_cache, filename)
+  }
+
+  # Compute exprlist expr-lints where exprlist batching is supported
+  for (linter_name in expression_linter_names[needs_running & supports_exprlist]) {
+    linter_fun <- linters[[linter_name]]
+    exprs_to_lint <- exprs_expression[!expr_linter_cached[, linter_name]]
+    lints[[length(lints) + 1L]] <- get_lints_batched(exprs_to_lint, linter_name, linter_fun, lint_cache, filename)
+  }
 }

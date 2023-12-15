@@ -45,7 +45,7 @@ ifelse_censor_linter <- function() {
     /parent::expr
   ")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     ifelse_calls <- source_expression$xml_find_function_calls(ifelse_funs)
     bad_expr <- xml_find_all(ifelse_calls, xpath)
 

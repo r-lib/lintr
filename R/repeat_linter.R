@@ -22,7 +22,7 @@
 repeat_linter <- function() {
   xpath <- "//WHILE[following-sibling::expr[1]/NUM_CONST[text() = 'TRUE']]"
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     lints <- xml_find_all(xml, xpath)

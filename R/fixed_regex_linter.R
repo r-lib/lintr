@@ -138,7 +138,7 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
     ]
   ")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     pos_1_calls <- source_expression$xml_find_function_calls(pos_1_regex_funs)
     pos_2_calls <- source_expression$xml_find_function_calls(pos_2_regex_funs)
     patterns <- combine_nodesets(

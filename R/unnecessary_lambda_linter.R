@@ -156,7 +156,7 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   # path to the symbol of the simpler function that avoids a lambda
   symbol_xpath <- "expr[last()]//expr[SYMBOL_FUNCTION_CALL[text() != 'return']]"
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     default_calls <- source_expression$xml_find_function_calls(apply_funs)
     default_fun_expr <- xml_find_all(default_calls, default_fun_xpath)
 

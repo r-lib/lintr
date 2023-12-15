@@ -93,7 +93,7 @@ keyword_quote_linter <- function() {
   no_quote_msg <- "Use backticks to create non-syntactic names, not quotes."
   clarification <- "i.e., if the name is not a valid R symbol (see ?make.names)."
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml <- source_expression$xml_parsed_content
     xml_calls <- source_expression$xml_find_function_calls(NULL)
 

@@ -44,7 +44,7 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
 
   replacement_map <- c(T = "TRUE", F = "FALSE")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     bad_usage <- xml_find_all(xml, usage_xpath)

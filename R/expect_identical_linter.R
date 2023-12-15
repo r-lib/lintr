@@ -77,7 +77,7 @@ expect_identical_linter <- function() {
     /following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'identical']]
     /parent::expr
   "
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     expect_equal_calls <- source_expression$xml_find_function_calls("expect_equal")
     expect_true_calls <- source_expression$xml_find_function_calls("expect_true")
     bad_expr <- c(

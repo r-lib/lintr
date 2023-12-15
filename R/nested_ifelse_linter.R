@@ -85,7 +85,7 @@ nested_ifelse_linter <- function() {
     /following-sibling::expr[expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]]
   ")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls(ifelse_funs)
     bad_expr <- xml_find_all(xml_calls, xpath)
 

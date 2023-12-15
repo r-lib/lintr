@@ -31,7 +31,7 @@ expect_s4_class_linter <- function() {
     /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label'])]
   "
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     # TODO(#2423): also catch expect_{equal,identical}(methods::is(x), k).
     #   this seems empirically rare, but didn't check many S4-heavy packages.
 

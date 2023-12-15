@@ -136,7 +136,7 @@ split_path <- function(dirs, prefix) {
 #' @include utils.R
 path_linter_factory <- function(path_function, message, linter, name = linter_auto_name()) {
   force(name)
-  Linter(name = name, linter_level = "expression", function(source_expression) {
+  Linter(name = name, linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     lapply(
       ids_with_token(source_expression, "STR_CONST"),
       function(id) {

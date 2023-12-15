@@ -45,7 +45,7 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
   backport_index <- rep(names(backport_blacklist), times = lengths(backport_blacklist))
   names(backport_index) <- unlist(backport_blacklist)
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     used_symbols <- xml_find_all(xml, "//SYMBOL")

@@ -141,7 +141,7 @@ unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
     ]
   ")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     if_else_exit_expr <- xml_find_all(xml, if_else_exit_xpath)
