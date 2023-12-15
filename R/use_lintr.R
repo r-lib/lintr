@@ -8,7 +8,7 @@
 #'
 #'  * `tidyverse` creates a minimal lintr config, based on the default linters ([linters_with_defaults()]).
 #'    These are suitable for following [the tidyverse style guide](https://style.tidyverse.org/).
-#'  * `full` creates a lintr config using all available linters via [linters_with_tags()].
+#'  * `full` creates a lintr config using all available linters via [all_linters()].
 #'
 #' @return Path to the generated configuration, invisibly.
 #'
