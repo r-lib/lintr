@@ -85,14 +85,13 @@ return_linter <- function(
 
   if (check_except) {
     except_xpath_fmt <- "parent::expr[not(
-      preceding-sibling::expr/SYMBOL[{ xp_text_in_table(union(special_funs, except)) }]
+      preceding-sibling::expr/SYMBOL[{ xp_text_in_table(except) }]
     )]"
-    # nolint next: object_usage. Hidden by dynamic glue.
-    if (!defer_except) except_xpath <- glue(except_xpath_fmt)
+    except <- union(special_funs, except)
+    if (!defer_except) except_xpath <- glue(except_xpath_fmt, except = except)
   }
 
   if (return_style == "implicit") {
-    # nolint next: object_usage. Hidden by dynamic glue.
     body_xpath <- "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[1]"
     params <- list(
       implicit = TRUE,
@@ -101,8 +100,6 @@ return_linter <- function(
       lint_message = "Use implicit return behavior; explicit return() is not needed."
     )
   } else {
-    except <- union(special_funs, except)
-
     base_return_functions <- c(
       # Normal calls
       "return", "stop", "q", "quit",
@@ -128,7 +125,7 @@ return_linter <- function(
     if (defer_except) {
       function_name_xpath <- "(//FUNCTION | //OP-LAMBDA)/parent::expr/preceding-sibling::expr/SYMBOL"
     } else {
-      body_xpath <- glue(body_xpath_fmt)
+      body_xpath <- glue(body_xpath_fmt, except_xpath = except_xpath)
     }
 
     params <- list(
@@ -149,8 +146,8 @@ return_linter <- function(
     if (defer_except) {
       assigned_functions <- xml_text(xml_find_all(xml, function_name_xpath))
       except <- union(except, assigned_functions[re_matches(assigned_functions, except_regex)])
-      except_xpath <- glue(except_xpath_fmt)
-      body_xpath <- glue(body_xpath_fmt)
+      except_xpath <- glue(except_xpath_fmt, except = except)
+      body_xpath <- glue(body_xpath_fmt, except_xpath = except_xpath)
     }
 
     body_expr <- xml_find_all(xml, body_xpath)
