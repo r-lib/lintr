@@ -2,7 +2,7 @@ in_ci <- function() {
   in_travis() || in_wercker() || in_jenkins()
 }
 
-ci_type <- function() {
+ci_type = function() {
   if (in_travis()) {
     return("travis")
   }
