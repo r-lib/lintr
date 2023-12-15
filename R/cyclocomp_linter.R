@@ -22,7 +22,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 cyclocomp_linter <- function(complexity_limit = 15L) {
-  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     complexity <- try_silently(
       cyclocomp::cyclocomp(parse(text = source_expression$content))
     )

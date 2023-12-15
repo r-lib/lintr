@@ -791,7 +791,7 @@ collapse_exprs <- function(expr_list) {
   for (expr in expr_list) {
     i <- i + 1L
     xml2::xml_add_child(xml_pc, expr$xml_parsed_content)
-    function_call_cache <- c(function_call_cache, expr$xml_find_function_calls(NULL, keep_names = TRUE))
+    function_call_cache <- combine_nodesets(function_call_cache, expr$xml_find_function_calls(NULL, keep_names = TRUE))
     lines <- c(lines, expr$lines)
     parsed_content <- if (is.null(parsed_content)) expr$parsed_content else rbind(parsed_content, expr$parsed_content)
     content <- paste(content, expr$content, sep = "\n")
@@ -872,4 +872,6 @@ handle_expr_level_lints <- function(lints, expression_linter_names, supports_exp
     exprs_to_lint <- exprs_expression[!expr_linter_cached[, linter_name]]
     lints[[length(lints) + 1L]] <- get_lints_batched(exprs_to_lint, linter_name, linter_fun, lint_cache, filename)
   }
+
+  lints
 }

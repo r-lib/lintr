@@ -178,6 +178,7 @@ Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character
   class(fun) <- c("linter", "function")
   attr(fun, "name") <- name
   attr(fun, "linter_level") <- linter_level
+  attr(fun, "linter_exprlist") <- isTRUE(supports_exprlist)
   fun
 }
 
