@@ -179,50 +179,14 @@ nested_return_lints <- function(expr, params) {
   if (length(child_expr) == 0L) {
     return(list())
   }
-  child_node <- xml_name(child_expr)
+  names(child_expr) <- xml_name(child_expr)
 
-  if (child_node[1L] == "OP-LEFT-BRACE") {
-    expr_idx <- which(child_node %in% c("expr", "equal_assign", "expr_or_assign_or_help"))
-    if (length(expr_idx) == 0L) { # empty brace expression {}
-      if (params$implicit) {
-        return(list())
-      } else {
-        return(list(xml_nodes_to_lints(
-          expr,
-          source_expression = params$source_expression,
-          lint_message = params$lint_message,
-          type = params$type
-        )))
-      }
-    }
-    nested_return_lints(child_expr[[tail(expr_idx, 1L)]], params)
-  } else if (child_node[1L] == "IF") {
-    expr_idx <- which(child_node %in% c("expr", "equal_assign", "expr_or_assign_or_help"))
-    return_lints <- lapply(child_expr[expr_idx[-1L]], nested_return_lints, params)
-    if (params$allow_implicit_else || length(expr_idx) == 3L) {
-      return(return_lints)
-    }
-    implicit_else_lints <- list(xml_nodes_to_lints(
-      expr,
-      source_expression = params$source_expression,
-      lint_message = "All functions with terminal if statements must have a corresponding terminal else clause.",
-      type = "warning"
-    ))
-    c(return_lints, implicit_else_lints)
+  if (names(child_expr)[1L] == "OP-LEFT-BRACE") {
+    brace_return_lints(child_expr, expr, params)
+  } else if (names(child_expr)[1L] == "IF") {
+    if_return_lints(child_expr, expr, params)
   } else if (!is.na(xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL[text() = 'switch']"))) {
-    # switch(x, ...) | expr[1]: switch; expr[2]: x. Drop the first two, check usage in ...
-    return_lints <- lapply(child_expr[tail(which(child_node == "expr"), -2L)], nested_return_lints, params)
-    # in addition to the two <expr> dropped above, a third unmatched <expr> would be the default case.
-    if (params$allow_implicit_else || sum(child_node == "expr") - sum(child_node == "EQ_SUB") == 3L) {
-      return(return_lints)
-    }
-    implicit_else_lints <- list(xml_nodes_to_lints(
-      expr,
-      source_expression = params$source_expression,
-      lint_message = "All functions with terminal switch statements must have a terminal default clause.",
-      type = "warning"
-    ))
-    c(return_lints, implicit_else_lints)
+    switch_return_lints(child_expr, expr, params)
   } else {
     xml_nodes_to_lints(
       xml_find_first(child_expr[[1L]], params$lint_xpath),
@@ -231,4 +195,54 @@ nested_return_lints <- function(expr, params) {
       type = params$type
     )
   }
+}
+
+brace_return_lints <- function(child_expr, expr, params) {
+  expr_idx <- which(names(child_expr) %in% c("expr", "equal_assign", "expr_or_assign_or_help"))
+  if (length(expr_idx) == 0L) { # empty brace expression {}
+    if (params$implicit) {
+      return(list())
+    } else {
+      return(list(xml_nodes_to_lints(
+        expr,
+        source_expression = params$source_expression,
+        lint_message = params$lint_message,
+        type = params$type
+      )))
+    }
+  }
+  nested_return_lints(child_expr[[tail(expr_idx, 1L)]], params)
+}
+
+if_return_lints <- function(child_expr, expr, params) {
+  expr_idx <- which(names(child_expr) %in% c("expr", "equal_assign", "expr_or_assign_or_help"))
+  return_lints <- lapply(child_expr[expr_idx[-1L]], nested_return_lints, params)
+  if (params$allow_implicit_else || length(expr_idx) == 3L) {
+    return(return_lints)
+  }
+  implicit_else_lints <- list(xml_nodes_to_lints(
+    expr,
+    source_expression = params$source_expression,
+    lint_message = "All functions with terminal if statements must have a corresponding terminal else clause.",
+    type = "warning"
+  ))
+  c(return_lints, implicit_else_lints)
+}
+
+switch_return_lints <- function(child_expr, expr, params) {
+  # equal_assign/expr_or_assign_or_help not possible here
+  expr_idx <- which(names(child_expr) == "expr")
+  # switch(x, ...) | expr[1]: switch; expr[2]: x. Drop the first two, check usage in ...
+  return_lints <- lapply(child_expr[tail(expr_idx, -2L)], nested_return_lints, params)
+  # in addition to the two <expr> dropped above, a third unmatched <expr> would be the default case.
+  if (params$allow_implicit_else || length(expr_idx) - sum(names(child_expr) == "EQ_SUB") == 3L) {
+    return(return_lints)
+  }
+  implicit_else_lints <- list(xml_nodes_to_lints(
+    expr,
+    source_expression = params$source_expression,
+    lint_message = "All functions with terminal switch statements must have a terminal default clause.",
+    type = "warning"
+  ))
+  c(return_lints, implicit_else_lints)
 }
