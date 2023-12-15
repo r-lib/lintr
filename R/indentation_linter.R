@@ -233,7 +233,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     for (change in indent_changes) {
       change_type <- find_indent_type(change)
       change_begin <- as.integer(xml_attr(change, "line1")) + 1L
-      change_end <- xml_find_num(change, xp_block_ends)
+      change_end <- xml_find_int(change, xp_block_ends)
       if (isTRUE(change_begin <= change_end)) {
         to_indent <- seq(from = change_begin, to = change_end)
         expected_indent_levels[to_indent] <- find_new_indent(

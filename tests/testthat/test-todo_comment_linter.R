@@ -1,5 +1,5 @@
 test_that("returns the correct linting", {
-  linter <- todo_comment_linter(todo = c("todo", "fixme"))
+  linter <- todo_comment_linter()
   lint_msg <- rex::rex("Remove TODO comments.")
 
   expect_lint('a <- "you#need#to#fixme"', NULL, linter)

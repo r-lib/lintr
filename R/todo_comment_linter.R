@@ -9,22 +9,17 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = "x + y # TODO",
-#'   linters = todo_comment_linter()
+#'   text = "x + y # TOODOO",
+#'   linters = todo_comment_linter(todo = "toodoo")
 #' )
 #'
 #' lint(
-#'   text = "pi <- 1.0 # FIXME",
-#'   linters = todo_comment_linter()
+#'   text = "pi <- 1.0 # FIIXMEE",
+#'   linters = todo_comment_linter(todo = "fiixmee")
 #' )
 #'
 #' lint(
-#'   text = "x <- TRUE # hack",
-#'   linters = todo_comment_linter(todo = c("todo", "fixme", "hack"))
-#' )
-#'
-#' lint(
-#'   text = "x <- TRUE # TODO(#1234): Fix this hack.",
+#'   text = "x <- TRUE # TOODOO(#1234): Fix this hack.",
 #'   linters = todo_comment_linter()
 #' )
 #'

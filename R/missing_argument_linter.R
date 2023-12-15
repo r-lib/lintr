@@ -58,8 +58,7 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
     named_idx <- xml_name(missing_args) == "EQ_SUB"
     arg_id <- character(length(missing_args))
     arg_id[named_idx] <- sQuote(xml_find_chr(missing_args[named_idx], "string(preceding-sibling::SYMBOL_SUB[1])"), "'")
-    # TODO(r-lib/xml2#412-->CRAN): use xml_find_int() instead
-    arg_id[!named_idx] <- xml_find_num(missing_args[!named_idx], "count(preceding-sibling::OP-COMMA)") + 1.0
+    arg_id[!named_idx] <- xml_find_int(missing_args[!named_idx], "count(preceding-sibling::OP-COMMA)") + 1L
 
     xml_nodes_to_lints(
       missing_args,
