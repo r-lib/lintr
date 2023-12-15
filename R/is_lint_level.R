@@ -43,3 +43,16 @@ is_linter_level <- function(linter, level = c("expression", "file")) {
   level <- match.arg(level)
   identical(linter_level, level)
 }
+
+#' Determine whether an expression-level linter can handle multiple expressions at once
+#'
+#' Used by [lint()] to efficiently batch calls to expression-level linters.
+#'
+#' @param linter A linter.
+#'
+#' @keywords internal
+#' @noRd
+linter_supports_exprlist <- function(linter) {
+  linter_exprlist <- attr(linter, "linter_exprlist", exact = TRUE)
+  isTRUE(linter_exprlist)
+}

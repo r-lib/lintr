@@ -72,28 +72,94 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   file_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "file")]
   expression_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "expression")]
+  supports_exprlist <- vapply(linters[expression_linter_names], linter_supports_exprlist, logical(1L))
 
   lints <- list()
   if (!is_tainted(source_expressions$lines)) {
-    for (expr in source_expressions$expressions) {
-      if (is_lint_level(expr, "expression")) {
-        necessary_linters <- character()
-      } else {
-        necessary_linters <- names(linters)
+    exprs_expression <- head(source_expressions$expressions, -1L)
+    expr_file <- source_expressions$expressions[[length(source_expressions$expressions)]]
 
-        expr$lines <- expr$file_lines
-        expr$xml_parsed_content <- expr$full_xml_parsed_content
-        expr$parsed_content <- expr$full_parsed_content
-      }
-      for (linter in necessary_linters) {
-        # use withCallingHandlers for friendlier failures on unexpected linter errors
-        lints[[length(lints) + 1L]] <- withCallingHandlers(
-          get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
+    # Compute execution plan
+    file_linter_cached <- vapply(file_linter_names, has_lint,
+                                 expr = expr_file, cache = lint_cache,
+                                 FUN.VALUE = logical(1L))
+
+    # For expression level linters, each column is a linter, each row an expr
+    expr_linter_cached <- vapply(expression_linter_names, function(linter_name) {
+      vapply(exprs_expression, has_lint, linter = linter_name, cache = lint_cache, FUN.VALUE = logical(1L))
+    }, FUN.VALUE = logical(length(exprs_expression)))
+    # Ensure 2D array even for just a single expr or linter
+    dim(expr_linter_cached) <- c(length(exprs_expression), length(expression_linter_names))
+    colnames(expr_linter_cached) <- expression_linter_names
+
+    # Retrieve cached lints where available
+    if (any(file_linter_cached)) {
+      lints[[length(lints) + 1L]] <- lapply(file_linter_names[file_linter_cached], function(linter_name) {
+        retrieve_lint(cache = lint_cache, expr = expr_file, linter = linter_name, lines = source_expressions$lines)
+      })
+    }
+
+    if (any(expr_linter_cached)) {
+      lints[[length(lints) + 1L]] <- lapply(
+        # only retrieve lints of linters with at least one cache hit
+        expression_linter_names[colSums(expr_linter_cached) > 0L],
+        function(linter_name) {
+          lapply(exprs_expression[expr_linter_cached[, linter_name]], function(expr) {
+            retrieve_lint(cache = lint_cache, expr = expr, linter = linter_name, lines = source_expressions$lines)
+          })
+        }
+      )
+    }
+
+    # Compute file-level lints where cache missed
+    if (!all(file_linter_cached)) {
+      lints[[length(lints) + 1L]] <- lapply(file_linter_names[!file_linter_cached], function(linter_name) {
+        withCallingHandlers(
+          get_lints(expr_file, linter_name, linters[[linter_name]], lint_cache, source_expressions$lines),
           error = function(cond) {
-            stop("Linter '", linter, "' failed in ", filename, ": ", conditionMessage(cond), call. = FALSE)
+            stop("Linter '", linter_name, "' failed in ", filename, ": ", conditionMessage(cond), call. = FALSE)
           }
         )
-      }
+      })
+    }
+
+    if (!all(expr_linter_cached)) {
+      # Compute individual expr-lints where exprlist batching is not supported
+      needs_running <- colSums(expr_linter_cached) < length(exprs_expression)
+      lints[[length(lints) + 1L]] <- lapply(
+        expression_linter_names[needs_running & !supports_exprlist],
+        function(linter_name) {
+          lapply(exprs_expression[!expr_linter_cached[, linter_name]], function(expr) {
+            withCallingHandlers(
+              get_lints(expr, linter_name, linters[[linter_name]], lint_cache, source_expressions$lines),
+              error = function(cond) {
+                stop("Linter '", linter_name, "' failed in ", filename, ": ", conditionMessage(cond), call. = FALSE)
+              }
+            )
+          })
+        }
+      )
+
+      lints[[length(lints) + 1L]] <- lapply(
+        expression_linter_names[needs_running & supports_exprlist],
+        function(linter_name) {
+          linter_fun <- linters[[linter_name]]
+          exprs_to_lint <- exprs_expression[!expr_linter_cached[, linter_name]]
+
+          # run on exprlist
+          exprlist_to_lint <- collapse_exprs(exprs_to_lint)
+          expr_lints <- flatten_lints(linter_fun(exprlist_to_lint))
+
+          for (i in seq_along(expr_lints)) {
+            expr_lints[[i]]$linter <- linter
+          }
+
+          # write results to expr-level cache
+
+
+          expr_lints
+        }
+      )
     }
   }
 
@@ -711,4 +777,42 @@ zap_temp_filename <- function(res, needs_tempfile) {
     }
   }
   res
+}
+
+#' Collapse a list of expression-level source expressions to an exprlist-level source expression
+#'
+#' @param expr_list A list containing expression-level source expressions
+#'
+#' @value An exprlist-level source expression
+#'
+#' @keywords internal
+#' @noRd
+collapse_exprs <- function(expr_list) {
+  if (length(expr_list) == 0L) {
+    return(list())
+  }
+  xml_pc <- xml2::xml_new_root("exprlist")
+  function_call_cache <- list()
+  filename <- expr_list[[1L]]$filename
+  lines <- character()
+  parsed_content <- NULL
+  content <- ""
+
+  for (expr in expr_list) {
+    xml2::xml_add_child(xml_pc, expr$xml_parsed_content)
+    function_call_cache <- c(function_call_cache, expr$xml_find_function_calls(NULL, keep_names = TRUE))
+    lines <- c(lines, expr$lines)
+    parsed_content <- if (is.null(parsed_content)) expr$parsed_content else rbind(parsed_content, expr$parsed_content)
+    content <- paste(content, expr$content, sep = "\n")
+  }
+  xml_find_function_calls <- build_xml_find_function_calls(xml_pc, cache = function_call_cache)
+
+  list(
+    filename = filename,
+    lines = lines,
+    parsed_content = parsed_content,
+    xml_parsed_content = xml_pc,
+    xml_find_function_calls = xml_find_function_calls,
+    content = content
+  )
 }
