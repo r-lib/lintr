@@ -87,8 +87,6 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
         skip_with = skip_with
       )
 
-      # TODO handle assignment functions properly
-      # e.g. `not_existing<-`(a, b)
       res$name <- re_substitutes(res$name, rex("<-"), "")
 
       lintable_symbols <- xml_find_all(fun_assignment, xpath_culprit_symbol)
@@ -211,7 +209,7 @@ parse_check_usage <- function(expression,
   # nocov start
   is_missing <- is.na(res$message)
   if (any(is_missing)) {
-    # TODO (AshesITR): Remove this in the future, if no bugs arise from this safeguard
+    # TODO(AshesITR): Remove this in the future, if no bugs arise from this safeguard
     warning(
       "Possible bug in lintr: Couldn't parse usage message ", sQuote(vals[is_missing][[1L]]), ". ",
       "Ignoring ", sum(is_missing), " usage warnings. Please report an issue at https://github.com/r-lib/lintr/issues.",
