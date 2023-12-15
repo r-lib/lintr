@@ -42,6 +42,7 @@
 * `format()` and `print()` methods for `lint` and `lints` classes get a new option `width` to control the printing width of lint messages (#1884, @MichaelChirico). The default is controlled by a new option `lintr.format_width`; if unset, no wrapping occurs (matching earlier behavior).
 * New function node caching for big efficiency gains to most linters (e.g. overall `lint_package()` improvement of 14-27% and core linting improvement up to 30%; #2357, @AshesITR). Most linters are written around function usage, and XPath performance searching for many functions is poor. The new `xml_find_function_calls()` entry in the `get_source_expressions()` output caches all function call nodes instead. See the vignette on creating linters for more details on how to use it.
 * `vector_logic_linter()` is extended to recognize incorrect usage of scalar operators `&&` and `||` inside subsetting expressions like `dplyr::filter(x, A && B)` (#2166, @MichaelChirico).
+* `any_is_na_linter()` is extended to catch the unusual usage `NA %in% x` (#2113, @MichaelChirico).
 
 ### New linters
 
@@ -59,7 +60,7 @@
 * `consecutive_mutate_linter()` for encouraging consecutive calls to `dplyr::mutate()` to be combined (part of #884, @MichaelChirico).
 * `if_switch_linter()` for encouraging `switch()` over repeated `if`/`else` tests (part of #884, @MichaelChirico).
 * `nested_pipe_linter()` for discouraging pipes within pipes, e.g. `df1 %>% inner_join(df2 %>% select(a, b))` (part of #884, @MichaelChirico).
-* `nrow_subset_linter()` for discouraging usage like `nrow(subset(x, conditions))` in favor of something like `with(x, sum(conditions))` which doesn't require a full subset of `x` (part of #884, @MichaelChirico).
+* `nrow_subset_linter()` for discouraging usage like `nrow(subset(x, conditions))` in favor of something like `with(x, sum(conditions))` which doesn't require a full subset of `x` (#2314 and part of #884, @MichaelChirico).
 * `pipe_return_linter()` for discouraging usage of `return()` inside a {magrittr} pipeline (part of #884, @MichaelChirico).
 * `one_call_pipe_linter()` for discouraging one-step pipelines like `x |> as.character()` (#2330 and part of #884, @MichaelChirico).
 * `object_overwrite_linter()` for discouraging re-use of upstream package exports as local variables (#2344, #2346 and part of #884, @MichaelChirico and @AshesITR).
