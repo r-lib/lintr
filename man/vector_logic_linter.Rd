@@ -39,6 +39,11 @@ lint(
   linters = vector_logic_linter()
 )
 
+lint(
+  text = "filter(x, A && B)",
+  linters = vector_logic_linter()
+)
+
 # okay
 lint(
   text = "if (TRUE && FALSE) 1",
@@ -50,6 +55,11 @@ lint(
   linters = vector_logic_linter()
 )
 
+lint(
+  text = "filter(x, A & B)",
+  linters = vector_logic_linter()
+)
+
 }
 \seealso{
 \itemize{
@@ -58,5 +68,5 @@ lint(
 }
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=default_linters]{default}, \link[=efficiency_linters]{efficiency}
+\link[=best_practices_linters]{best_practices}, \link[=common_mistakes_linters]{common_mistakes}, \link[=default_linters]{default}, \link[=efficiency_linters]{efficiency}
 }
