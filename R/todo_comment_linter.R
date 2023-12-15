@@ -44,7 +44,7 @@ todo_comment_linter <- function(todo = c("todo", "fixme")) {
   todo_comment_regex <- rex(one_or_more("#"), any_spaces, or(todo))
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$full_xml_parsed_content
+    xml <- source_expression$xml_parsed_content
 
     comment_expr <- xml_find_all(xml, "//COMMENT")
     are_todo <- re_matches(xml_text(comment_expr), todo_comment_regex, ignore.case = TRUE)
