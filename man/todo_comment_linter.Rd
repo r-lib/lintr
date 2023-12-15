@@ -7,7 +7,7 @@
 todo_comment_linter(todo = c("todo", "fixme"))
 }
 \arguments{
-\item{todo}{Vector of strings that identify TODO comments.}
+\item{todo}{Vector of case-insensitive strings that identify TODO comments.}
 }
 \description{
 Check that the source contains no TODO comments (case-insensitive).
