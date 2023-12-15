@@ -77,9 +77,13 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   if (!is_tainted(source_expressions$lines)) {
     for (expr in source_expressions$expressions) {
       if (is_lint_level(expr, "expression")) {
-        necessary_linters <- expression_linter_names
+        necessary_linters <- character()
       } else {
-        necessary_linters <- file_linter_names
+        necessary_linters <- names(linters)
+
+        expr$lines <- expr$file_lines
+        expr$xml_parsed_content <- expr$full_xml_parsed_content
+        expr$parsed_content <- expr$full_parsed_content
       }
       for (linter in necessary_linters) {
         # use withCallingHandlers for friendlier failures on unexpected linter errors
