@@ -114,6 +114,12 @@ test_that("incorrect subset/filter usage is caught", {
   expect_lint("filter(x, a & b, c | d, e && f)", list(and_msg, column_number = 27L), linter)
 })
 
+test_that("native pipe usage is caught in subset/filter logic", {
+  skip_if_not_r_versin("4.1.0")
+
+  expect_lint("x |> filter(y && z)", rex::rex("Use `&` in subsetting"), vector_logic_linter())
+})
+
 test_that("subsetting logic handles nesting", {
   linter <- vector_logic_linter()
   and_msg <- rex::rex("Use `&` in subsetting expressions")
