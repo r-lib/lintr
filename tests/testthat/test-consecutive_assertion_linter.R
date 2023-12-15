@@ -100,7 +100,7 @@ test_that("Mixing test functions is fine", {
   )
 })
 
-test_that("lints vectorie", {
+test_that("lints vectorize", {
   expect_lint(
     trim_some("{
       stopifnot(A)
@@ -126,4 +126,20 @@ test_that("old name consecutive_stopifnot_linter() is deprecated", {
   )
   expect_lint("stopifnot(x); y; stopifnot(z)", NULL, old_linter)
   expect_lint("stopifnot(x); stopifnot(y)", "Unify consecutive calls", old_linter)
+})
+
+test_that("interceding = assignments aren't linted", {
+  expect_lint(
+    trim_some("{
+      stopifnot(A)
+      x = 1
+      stopifnot(B)
+
+      assert_that(C)
+      z = 3
+      assert_that(D)
+    }"),
+    NULL,
+    consecutive_assertion_linter()
+  )
 })

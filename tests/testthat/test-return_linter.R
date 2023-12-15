@@ -648,6 +648,72 @@ test_that("except= argument works", {
   )
 })
 
+test_that("except_regex= argument works", {
+  linter <- return_linter(return_style = "explicit", except_regex = "^Test")
+
+  expect_lint(
+    trim_some("
+      TestSummary <- function() {
+        context <- foo(72643424)
+        expected <- data.frame(a = 2)
+        checkEquals(expected, bar(context))
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      TestMyPackage <- function() {
+        checkMyCustomComparator(x, y)
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      TestOuter <- function() {
+        actual <- lapply(
+          input,
+          function(x) {
+            no_return()
+          }
+        )
+        TestInner <- function() {
+          no_return()
+        }
+        checkEquals(TestInner(), actual)
+      }
+    "),
+    list(rex::rex("All functions must have an explicit return()."), line_number = 5L),
+    linter
+  )
+})
+
+test_that("except= and except_regex= combination works", {
+  expect_lint(
+    trim_some("
+      foo <- function() {
+        no_return()
+      }
+      bar <- function() {
+        no_return()
+      }
+      abaz <- function() {
+        no_return()
+      }
+      bbaz <- function() {
+        no_return()
+      }
+    "),
+    NULL,
+    return_linter(return_style = "explicit", except = c("foo", "bar"), except_regex = "baz$")
+  )
+})
+
 test_that("return_linter skips brace-wrapped inline functions", {
   expect_lint("function(x) { sum(x) }", NULL, return_linter(return_style = "explicit"))
 })

@@ -256,7 +256,7 @@ expect_lint("blah=1; blah=2",
   list(
     list(line_number = 1, column_number = 5),
     list(line_number = 1, column_number = 13),
-  )
+  ),
   assignment_linter()
 )
 ```
@@ -274,6 +274,26 @@ and so they've been tested and demonstrated their utility already.
    extract the string exactly as R will see it. This is especially important to make
    your logic robust to R-4-style raw strings like `R"-(hello)-"`, which is otherwise
    difficult to express, for example as an XPath.
+ * `xml_find_function_calls()`: Whenever your linter needs to query R function calls,
+   e.g. via the XPath `//SYMBOL_FUNCTION_CALL[text() = 'myfun']`, use this member of
+   `source_expression` to obtain the function call nodes more efficiently.
+   Instead of
+   ```r
+   xml <- source_expression$xml_parsed_content
+   xpath <- "//SYMBOL_FUNCTION_CALL[text() = 'myfun']/parent::expr/some/cond"
+   xml_find_all(xml, xpath)
+   ```
+   use
+   ```r
+   xml_calls <- source_expression$xml_find_function_calls("myfun")
+   call_xpath <- "parent::expr/some/cond"
+   xml_find_all(xml_calls, call_xpath)
+   ```
+ * `make_linter_from_xpath()` and `make_linter_from_function_xpath()`: Whenever your
+   linter can be expressed by a static XPath and a static message, use `make_linter_from_xpath()`
+   or, if the XPath starts with `//SYMBOL_FUNCTION_CALL`, use `make_linter_from_function_xpath()`.
+   Instead of `make_linter_from_xpath(xpath = "//SYMBOL_FUNCTION_CALL[text() = 'foo' or text() = 'bar']/cond")`,
+   use `make_linter_from_function_xpath(function_names = c("foo", "bar"), xpath = "cond")`.
 
 ## Contributing to `{lintr}`
 
