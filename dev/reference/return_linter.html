@@ -72,7 +72,8 @@
 <span>  return_style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"implicit"</span>, <span class="st">"explicit"</span><span class="op">)</span>,</span>
 <span>  allow_implicit_else <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  return_functions <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  except <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  except <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  except_regex <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -99,11 +100,12 @@ from base that are always allowed: <code><a href="https://rdrr.io/r/base/stop.ht
 <code>callNextMethod()</code>, <code><a href="https://rdrr.io/r/base/Foreign.html" class="external-link">.C()</a></code>, <code><a href="https://rdrr.io/r/base/CallExternal.html" class="external-link">.Call()</a></code>, <code><a href="https://rdrr.io/r/base/CallExternal.html" class="external-link">.External()</a></code>, and <code><a href="https://rdrr.io/r/base/Foreign.html" class="external-link">.Fortran()</a></code>.</p></dd>
 
 
-<dt>except</dt>
+<dt>except, except_regex</dt>
 <dd><p>Character vector of functions that are not checked when
 <code>return_style = "explicit"</code>. These are in addition to namespace hook functions
 that are never checked: <code>.onLoad()</code>, <code>.onUnload()</code>, <code>.onAttach()</code>, <code>.onDetach()</code>,
-<code>.Last.lib()</code>, <code>.First()</code> and <code>.Last()</code>.</p></dd>
+<code>.Last.lib()</code>, <code>.First()</code> and <code>.Last()</code>. <code>except</code> matches function names exactly,
+while <code>except_regex</code> does exclusion by pattern matching with <code><a href="https://rdrr.io/pkg/rex/man/re_matches.html" class="external-link">rex::re_matches()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
