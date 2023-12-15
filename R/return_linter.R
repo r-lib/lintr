@@ -8,7 +8,8 @@
 #'   explicitly supplied.
 #' @param allow_implicit_else Logical, default `TRUE`. If `FALSE`, functions with a terminal
 #'   `if` clause must always have an `else` clause, making the `NULL` alternative explicit
-#'   if necessary.
+#'   if necessary. Similarly, functions with terminal [switch()] statements must have an
+#'   explicit default case.
 #' @param return_functions Character vector of functions that are accepted as terminal calls
 #'   when `return_style = "explicit"`. These are in addition to exit functions
 #'   from base that are always allowed: [stop()], [q()], [quit()], [invokeRestart()],
@@ -204,13 +205,24 @@ nested_return_lints <- function(expr, params) {
     implicit_else_lints <- list(xml_nodes_to_lints(
       expr,
       source_expression = params$source_expression,
-      lint_message = "All functions with terminal if statements must have a corresponding terminal else clause",
+      lint_message = "All functions with terminal if statements must have a corresponding terminal else clause.",
       type = "warning"
     ))
     c(return_lints, implicit_else_lints)
   } else if (!is.na(xml_find_first(expr, "expr/SYMBOL_FUNCTION_CALL[text() = 'switch']"))) {
     # switch(x, ...) | expr[1]: switch; expr[2]: x. Drop the first two, check usage in ...
-    lapply(child_expr[tail(which(child_node == "expr"), -2L)], nested_return_lints, params)
+    return_lints <- lapply(child_expr[tail(which(child_node == "expr"), -2L)], nested_return_lints, params)
+    # in addition to the two <expr> dropped above, a third unmatched <expr> would be the default case.
+    if (params$allow_implicit_else || sum(child_node == "expr") - sum(child_node == "EQ_SUB") == 3L) {
+      return(return_lints)
+    }
+    implicit_else_lints <- list(xml_nodes_to_lints(
+      expr,
+      source_expression = params$source_expression,
+      lint_message = "All functions with terminal switch statements must have a terminal default clause.",
+      type = "warning"
+    ))
+    c(return_lints, implicit_else_lints)
   } else {
     xml_nodes_to_lints(
       xml_find_first(child_expr[[1L]], params$lint_xpath),

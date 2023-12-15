@@ -1765,3 +1765,62 @@ test_that("terminal switch() is handled correctly", {
   expect_lint(ok_exit_lines, NULL, implicit_linter)
   expect_lint(ok_exit_lines, NULL, explicit_linter)
 })
+
+test_that("switch() default statements interact with allow_implicit_else", {
+  implicit_linter <- return_linter(allow_implicit_else = FALSE)
+  explicit_linter <- return_linter(allow_implicit_else = FALSE, return_style = "explicit")
+  implicit_msg <- rex::rex("Use implicit return behavior; explicit return() is not needed.")
+  explicit_msg <- rex::rex("All functions must have an explicit return().")
+  implicit_switch_msg <- rex::rex("All functions with terminal switch statements")
+  implicit_else_msg <- rex::rex("All functions with terminal if statements")
+
+  no_default_lines <- trim_some("
+    foo <- function(x) {
+      switch(x,
+        a = 1,
+        b = 2
+      )
+    }
+  ")
+  expect_lint(no_default_lines, list(implicit_switch_msg, line_number = 2L), implicit_linter)
+  expect_lint(no_default_lines, list(implicit_switch_msg, explicit_msg, explicit_msg), explicit_linter)
+
+  ifelse_default_lines <- trim_some("
+    foo <- function(x) {
+      switch(x,
+        a = 1,
+        b = 2,
+        if (x != 'c') {
+          3
+        } else {
+          4
+        }
+      )
+    }
+  ")
+  expect_lint(ifelse_default_lines, NULL, implicit_linter)
+  expect_lint(ifelse_default_lines, list(explicit_msg, explicit_msg, explicit_msg, explicit_msg), explicit_linter)
+
+  if_no_else_default_lines <- trim_some("
+    foo <- function(x) {
+      switch(x,
+        a = 1,
+        b = 2,
+        if (x != 'c') {
+          3
+        }
+      )
+    }
+  ")
+  expect_lint(if_no_else_default_lines, list(implicit_else_msg, line_number = 5L), implicit_linter)
+  expect_lint(
+    if_no_else_default_lines,
+    list(
+      list(explicit_msg, line_number = 3L),
+      list(explicit_msg, line_number = 4L),
+      list(implicit_else_msg, line_number = 5L),
+      list(explicit_msg, line_number = 6L)
+    ),
+    explicit_linter
+  )
+})
