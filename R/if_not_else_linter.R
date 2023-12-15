@@ -71,8 +71,7 @@ if_not_else_linter <- function(exceptions = c("is.null", "is.na", "missing")) {
   ")
 
   ifelse_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
-    /parent::expr
+  parent::expr
     /parent::expr[expr[
       position() = 2
       and OP-EXCLAMATION
@@ -83,25 +82,19 @@ if_not_else_linter <- function(exceptions = c("is.null", "is.na", "missing")) {
     ]]
   ")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    ifelse_calls <- source_expression$xml_find_function_calls(ifelse_funs)
 
     if_expr <- xml_find_all(xml, if_xpath)
     if_lints <- xml_nodes_to_lints(
       if_expr,
       source_expression = source_expression,
-      lint_message = paste(
-        "In a simple if/else statement,",
-        "prefer `if (A) x else y` to the less-readable `if (!A) y else x`."
-      ),
+      lint_message = "Prefer `if (A) x else y` to the less-readable `if (!A) y else x` in a simple if/else statement.",
       type = "warning"
     )
 
-    ifelse_expr <- xml_find_all(xml, ifelse_xpath)
+    ifelse_expr <- xml_find_all(ifelse_calls, ifelse_xpath)
     ifelse_call <- xp_call_name(ifelse_expr)
     ifelse_lints <- xml_nodes_to_lints(
       ifelse_expr,

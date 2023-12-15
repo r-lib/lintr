@@ -57,13 +57,10 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
     length(allow_single_expression) == 1L
   )
 
-  msg_empty <- paste(
-    "Unneeded concatenation without arguments.",
-    'Replace the "c" call by NULL or, whenever possible,',
-    "vector() seeded with the correct type and/or length."
-  )
+  msg_empty <-
+    "Replace unnecessary c() by NULL or, whenever possible, vector() seeded with the correct type and/or length."
 
-  msg_const <- 'Unneeded concatenation of a constant. Remove the "c" call.'
+  msg_const <- "Remove unnecessary c() of a constant."
 
   non_constant_cond <- "SYMBOL or (expr and not(OP-COLON and count(expr[SYMBOL or expr]) != 2))"
 
@@ -85,13 +82,12 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
     path_to_non_constant <- glue("./expr[2][ {non_constant_cond} ]")
 
     msg_const_expr <- paste(
-      'Unneeded concatenation of a simple expression. Remove the "c" call,',
-      'replacing with "as.vector" if using "c" to string attributes, e.g. in converting an array to a vector.'
+      "Remove unnecessary c() of a constant expression.",
+      "Replace with as.vector() if c() is used to strip attributes, e.g. in converting an array to a vector."
     )
   }
   call_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'c']
-    /parent::expr
+  parent::expr
     /parent::expr[
       not(EQ_SUB)
       and ( {xp_or(zero_arg_cond, one_arg_cond)} )
@@ -99,13 +95,9 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
   ")
   num_args_xpath <- "count(./expr) - 1"
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-    c_calls <- xml_find_all(xml, call_xpath)
+  Linter(linter_level = "expression", function(source_expression) {
+    xml_calls <- source_expression$xml_find_function_calls("c")
+    c_calls <- xml_find_all(xml_calls, call_xpath)
 
     # bump count(args) by 1 if inside a pipeline
     num_args <- as.integer(xml_find_num(c_calls, num_args_xpath)) +

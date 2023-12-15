@@ -29,6 +29,7 @@ default_linters <- modify_defaults(
   paren_body_linter(),
   pipe_continuation_linter(),
   quotes_linter(),
+  return_linter(),
   semicolon_linter(),
   seq_linter(),
   spaces_inside_linter(),
@@ -46,53 +47,13 @@ default_linters <- modify_defaults(
 #' There is a list for the default elements and another that contains all available elements.
 #' Use [modify_defaults()] to produce a custom list.
 #'
-#' @details
-#' The following functions are sometimes regarded as undesirable:
-#'
-#'  * [attach()] modifies the global search path. Use roxygen2's @importFrom statement in packages, or `::` in scripts.
-#'  * [browser()] pauses execution when run and is likely a leftover from debugging. It should be removed.
-#'  * [debug()] traps a function and causes execution to pause when that function is run. It should be removed.
-#'  * [debugcall()] works similarly to [debug()], causing execution to pause. It should be removed.
-#'  * [debugonce()] is only useful for interactive debugging. It should be removed.
-#'  * [detach()] modifies the global search path. Detaching environments from the search path is rarely necessary in
-#'    production code.
-#'  * [ifelse()] isn't type stable. Use an `if`/`else` block for scalar logic, or use
-#'    `dplyr::if_else()`/`data.table::fifelse()` for type stable vectorized logic.
-#'  * [.libPaths()] permanently modifies the library location. Use [withr::with_libpaths()] for a temporary change
-#'    instead.
-#'  * [library()] modifies the global search path. Use roxygen2's @importFrom statement in packages, or `::` in scripts.
-#'  * [loadNamespace()] doesn't provide an easy way to signal failures. Use the return value of [requireNamespace()]
-#'    instead.
-#'  * [mapply()] isn't type stable. Use [Map()] to guarantee a list is returned and simplify accordingly.
-#'  * [options()] permanently modifies the session options. Use [withr::with_options()] for a temporary change instead.
-#'  * [par()] permanently modifies the graphics device parameters. Use [withr::with_par()] for a temporary change
-#'    instead.
-#'  * [require()] modifies the global search path. Use roxygen2's @importFrom statement in packages, and [library()]
-#'    or `::` in scripts.
-#'  * [sapply()] isn't type stable. Use [vapply()] with an appropriate `FUN.VALUE=` argument to obtain type stable
-#'    simplification.
-#'  * [setwd()] modifies the global working directory. Use [withr::with_dir()] for a temporary change instead.
-#'  * [sink()] permanently redirects output. Use [withr::with_sink()] for a temporary redirection instead.
-#'  * [source()] loads code into the global environment unless `local = TRUE` is used, which can cause unexpected
-#'    behavior.
-#'  * [substring()] should be replaced by [substr()] with appropriate `stop=` value.
-#'  * [Sys.setenv()] permanently modifies the global environment variables. Use [withr::with_envvar()] for a temporary
-#'    change instead.
-#'  * [Sys.setlocale()] permanently modifies the session locale. Use [withr::with_locale()] for a temporary change
-#'    instead.
-#'  * [trace()] traps a function and causes execution of arbitrary code when that function is run. It should be removed.
-#'  * [undebug()] is only useful for interactive debugging with [debug()]. It should be removed.
-#'  * [untrace()] is only useful for interactive debugging with [trace()]. It should be removed.
-#'
-#' The following operators are sometimes regarded as undesirable:
-#'
-#'  * \code{\link[base:ns-dblcolon]{:::}} accesses non-exported functions inside packages. Code relying on these is
-#'    likely to break in future versions of the package because the functions are not part of the public interface and
-#'    may be changed or removed by the maintainers without notice.
-#'    Use public functions via `::` instead.
-#'  * [`<<-`][base::assignOps] and `->>` assign outside the current environment in a way that can be hard to reason
-#'    about. Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific environment
-#'    with [assign()]. Recall that you can create an environment at the desired scope with [new.env()].
+#' @evalRd c(
+#'   "\\details{",
+#'   rd_undesirable_functions(),
+#'   "",
+#'   rd_undesirable_operators(),
+#'   "}"
+#' )
 #'
 #' @format A named list of character strings.
 #' @rdname default_undesirable_functions
@@ -154,6 +115,8 @@ all_undesirable_functions <- modify_defaults(
     "source() loads code into the global environment unless `local = TRUE` is used,",
     "which can cause hard-to-predict behavior"
   ),
+  structure =
+    "Use `class<-`, `names<-`, and `attr<-` to set attributes",
   substring =
     "use substr() with appropriate `stop=` value.",
   Sys.setenv =
@@ -171,9 +134,7 @@ all_undesirable_functions <- modify_defaults(
   untrace = paste(
     "remove this likely leftover from debugging.",
     "It is only useful for interactive debugging with trace()"
-  ),
-  structure =
-    "Use class<-, names<-, and attr<- to set attributes"
+  )
 )
 
 #' @rdname default_undesirable_functions
@@ -206,6 +167,28 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
   NULL
 )]
 
+rd_auto_link <- function(x) {
+  x <- unlist(x)
+  x <- gsub("([a-zA-Z0-9.]+)::([a-zA-Z0-9._]+)\\(\\)", "\\\\code{\\\\link[\\1:\\2]{\\1::\\2()}}", x)
+  x <- gsub("([^:a-zA-Z0-9._])([a-zA-Z0-9._]+)\\(\\)", "\\1\\\\code{\\\\link[=\\2]{\\2()}}", x)
+  x <- gsub("`([^`]+)`", "\\\\code{\\1}", x)
+  x
+}
+
+rd_undesirable_functions <- function() {
+  alternatives <- rd_auto_link(default_undesirable_functions)
+
+  c(
+    "The following functions are sometimes regarded as undesirable:",
+    "\\itemize{",
+    sprintf(
+      "\\item \\code{\\link[=%1$s]{%1$s()}} As an alternative, %2$s.",
+      names(default_undesirable_functions), alternatives
+    ),
+    "}"
+  )
+}
+
 #' @rdname default_undesirable_functions
 #' @format NULL
 #' @export
@@ -214,7 +197,7 @@ all_undesirable_operators <- modify_defaults(
   ":::" = paste(
     "It accesses non-exported functions inside packages. Code relying on these is likely to break in",
     "future versions of the package because the functions are not part of the public interface and may be",
-    "changed or removed by the maintainers without notice. Use public functions via :: instead."
+    "changed or removed by the maintainers without notice. Use public functions via `::` instead."
   ),
   "<<-" = paste(
     "It assigns outside the current environment in a way that can be hard to reason about.",
@@ -239,6 +222,27 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
   "->>",
   NULL
 )]
+
+rd_undesirable_operators <- function() {
+  op_link_map <- c(
+    `:::` = "\\link[base:ns-dblcolon]{:::}",
+    `<<-` = "\\link[base:assignOps]{<<-}",
+    `->>` = "\\link[base:assignOps]{<<-}"
+  )
+  op <- names(default_undesirable_operators)
+
+  alternatives <- rd_auto_link(default_undesirable_operators)
+
+  c(
+    "The following operators are sometimes regarded as undesirable:",
+    "\\itemize{",
+    sprintf(
+      "\\item \\code{%1$s} As an alternative, %2$s",
+      op_link_map[op], alternatives
+    ),
+    "}"
+  )
+}
 
 #' Default lintr settings
 #'

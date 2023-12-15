@@ -146,12 +146,9 @@ brace_linter <- function(allow_single_line = FALSE) {
   ]
   "
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+
     lints <- list()
 
     lints <- c(
@@ -197,7 +194,7 @@ brace_linter <- function(allow_single_line = FALSE) {
       xml_nodes_to_lints(
         xml_find_all(xml, xp_function_brace),
         source_expression = source_expression,
-        lint_message = "Any function spanning multiple lines should use curly braces."
+        lint_message = "Use curly braces for any function spanning multiple lines."
       )
     )
 

@@ -59,11 +59,13 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   stopifnot(is.logical(symbol_is_undesirable))
   if (is.null(names(fun)) || !all(nzchar(names(fun))) || length(fun) == 0L) {
-    stop("'fun' should be a non-empty named character vector; use missing elements to indicate default messages.")
+    stop(
+      "'fun' should be a non-empty named character vector; use missing elements to indicate default messages.",
+      call. = FALSE
+    )
   }
 
   xp_condition <- xp_and(
-    xp_text_in_table(names(fun)),
     paste0(
       "not(parent::expr/preceding-sibling::expr[last()][SYMBOL_FUNCTION_CALL[",
       xp_text_in_table(c("library", "require")),
@@ -73,23 +75,25 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
   )
 
   if (symbol_is_undesirable) {
-    xpath <- glue("//SYMBOL_FUNCTION_CALL[{xp_condition}] | //SYMBOL[{xp_condition}]")
-  } else {
-    xpath <- glue("//SYMBOL_FUNCTION_CALL[{xp_condition}]")
+    symbol_xpath <- glue("//SYMBOL[({xp_text_in_table(names(fun))}) and {xp_condition}]")
   }
+  xpath <- glue("self::SYMBOL_FUNCTION_CALL[{xp_condition}]")
 
+  Linter(linter_level = "expression", function(source_expression) {
+    xml <- source_expression$xml_parsed_content
+    xml_calls <- source_expression$xml_find_function_calls(names(fun))
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
+    matched_nodes <- xml_find_all(xml_calls, xpath)
+    if (symbol_is_undesirable) {
+      matched_nodes <- combine_nodesets(matched_nodes, xml_find_all(xml, symbol_xpath))
     }
-    matched_nodes <- xml_find_all(source_expression$xml_parsed_content, xpath)
+
     fun_names <- get_r_string(matched_nodes)
 
     msgs <- vapply(
       stats::setNames(nm = unique(fun_names)),
       function(fun_name) {
-        msg <- sprintf('Function "%s" is undesirable.', fun_name)
+        msg <- sprintf('Avoid undesirable function "%s".', fun_name)
         alternative <- fun[[fun_name]]
         if (!is.na(alternative)) {
           msg <- paste(msg, sprintf("As an alternative, %s.", alternative))

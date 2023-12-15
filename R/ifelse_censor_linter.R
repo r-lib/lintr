@@ -36,8 +36,7 @@
 #' @export
 ifelse_censor_linter <- function() {
   xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
-    /parent::expr
+  parent::expr
     /following-sibling::expr[
       (LT or GT or LE or GE)
       and expr[1] = following-sibling::expr
@@ -46,14 +45,9 @@ ifelse_censor_linter <- function() {
     /parent::expr
   ")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml_find_all(xml, xpath)
+  Linter(linter_level = "expression", function(source_expression) {
+    ifelse_calls <- source_expression$xml_find_function_calls(ifelse_funs)
+    bad_expr <- xml_find_all(ifelse_calls, xpath)
 
     matched_call <- xp_call_name(bad_expr)
     operator <- xml_find_chr(bad_expr, "string(expr[2]/*[2])")

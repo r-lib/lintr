@@ -2,8 +2,8 @@ regexes <- list(
   assign = rex::rex("Use <-, not =, for assignment."),
   local_var = rex::rex("local variable"),
   quotes = rex::rex("Only use double-quotes."),
-  trailing = rex::rex("Trailing blank lines are superfluous."),
-  trailws = rex::rex("Trailing whitespace is superfluous."),
+  trailing = rex::rex("Remove trailing blank lines."),
+  trailws = rex::rex("Remove trailing whitespace."),
   indent = rex::rex("Indentation should be")
 )
 

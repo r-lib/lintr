@@ -74,21 +74,23 @@ vector_logic_linter <- function() {
       preceding-sibling::expr[last()][SYMBOL_FUNCTION_CALL[not(text() = 'expect_true' or text() = 'expect_false')]]
       or preceding-sibling::OP-LEFT-BRACKET
     ])
+    and not(parent::expr/expr[
+      STR_CONST
+      or expr/SYMBOL_FUNCTION_CALL[text() = 'as.raw' or text() = 'as.octmode' or text() = 'as.hexmode']
+    ])
   ]
   "
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+
     bad_expr <- xml_find_all(xml, xpath)
 
+    op <- xml_text(bad_expr)
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = "Conditional expressions require scalar logical operators (&& and ||)",
+      lint_message = sprintf("Use `%s` in conditional expressions.", strrep(op, 2L)),
       type = "warning"
     )
   })

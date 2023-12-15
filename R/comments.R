@@ -42,7 +42,7 @@ jenkins_build_info <- function() {
 }
 
 in_travis <- function() {
-  return(nzchar(Sys.getenv("TRAVIS_REPO_SLUG")))
+  nzchar(Sys.getenv("TRAVIS_REPO_SLUG"))
 }
 
 travis_build_info <- function() {
@@ -59,7 +59,7 @@ travis_build_info <- function() {
 }
 
 in_wercker <- function() {
-  return(nzchar(Sys.getenv("WERCKER_GIT_BRANCH")))
+  nzchar(Sys.getenv("WERCKER_GIT_BRANCH"))
 }
 
 ci_build_info <- function() {
@@ -84,10 +84,10 @@ wercker_build_info <- function() {
 # nocov start
 github_comment <- function(text, info = NULL, token = settings$comment_token) {
   if (!requireNamespace("httr2", quietly = TRUE)) {
-    stop("Package 'httr' is required to post comments with github_comment().")
+    stop("Package 'httr2' is required to post comments with github_comment().", call. = FALSE)
   }
   if (!requireNamespace("jsonlite", quietly = TRUE)) {
-    stop("Package 'jsonlite' is required to post comments with github_comment().")
+    stop("Package 'jsonlite' is required to post comments with github_comment().", call. = FALSE)
   }
 
   if (is.null(info)) {
@@ -99,7 +99,7 @@ github_comment <- function(text, info = NULL, token = settings$comment_token) {
   } else if (!is.null(info$commit)) {
     api_subdir <- file.path("commits", info$commit)
   } else {
-    stop("Expected a pull or a commit, but received ci_build_info() = ", format(info))
+    stop("Expected a pull or a commit, but received ci_build_info() = ", format(info), call. = FALSE)
   }
   response <- httr::POST(
     "https://api.github.com",

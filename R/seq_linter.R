@@ -50,8 +50,7 @@ seq_linter <- function() {
 
   # Exact `xpath` depends on whether bad function was used in conjunction with `seq()`
   seq_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'seq']
-    /parent::expr
+  parent::expr
     /following-sibling::expr[1][expr/SYMBOL_FUNCTION_CALL[ {bad_funcs} ]]
     /parent::expr[count(expr) = 2]
   ")
@@ -66,8 +65,6 @@ seq_linter <- function() {
       )
     ]
   ")
-
-  xpath <- paste(seq_xpath, "|", colon_xpath)
 
   ## The actual order of the nodes is document order
   ## In practice we need to handle length(x):1
@@ -86,14 +83,14 @@ seq_linter <- function() {
     fun
   }
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    seq_calls <- source_expression$xml_find_function_calls("seq")
 
-    badx <- xml_find_all(xml, xpath)
+    badx <- combine_nodesets(
+      xml_find_all(seq_calls, seq_xpath),
+      xml_find_all(xml, colon_xpath)
+    )
 
     dot_expr1 <- get_fun(badx, 1L)
     dot_expr2 <- get_fun(badx, 2L)
@@ -107,12 +104,12 @@ seq_linter <- function() {
     lint_message <- ifelse(
       grepl("seq", dot_expr1, fixed = TRUE),
       sprintf(
-        "%s(%s) is likely to be wrong in the empty edge case. Use %s instead.",
-        dot_expr1, dot_expr2, replacement
+        "Use %s instead of %s(%s), which is likely to be wrong in the empty edge case.",
+        replacement, dot_expr1, dot_expr2
       ),
       sprintf(
-        "%s:%s is likely to be wrong in the empty edge case. Use %s instead.",
-        dot_expr1, dot_expr2, replacement
+        "Use %s instead of %s:%s, which is likely to be wrong in the empty edge case.",
+        replacement, dot_expr1, dot_expr2
       )
     )
 

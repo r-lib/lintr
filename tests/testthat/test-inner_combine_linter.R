@@ -95,3 +95,19 @@ patrick::with_parameters_test_that(
     # "unknown POSIXct method argument", "c(as.POSIXct(x, zoo = zzz), as.POSIXct(y, zoo = zzz))",
   )
 )
+
+test_that("lints vectorize", {
+  lint_msg <- rex::rex("Combine inputs to vectorized functions first")
+
+  expect_lint(
+    trim_some("{
+      c(sin(x), sin(y))
+      c(log(x), log(y))
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    inner_combine_linter()
+  )
+})

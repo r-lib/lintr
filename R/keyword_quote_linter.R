@@ -68,8 +68,7 @@ keyword_quote_linter <- function() {
   )
   # SYMBOL_SUB for backticks, STR_CONST for quoted names
   call_arg_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL
-    /parent::expr
+  parent::expr
     /parent::expr
     /*[(self::SYMBOL_SUB or self::STR_CONST) and {quote_cond}]
   ")
@@ -94,14 +93,11 @@ keyword_quote_linter <- function() {
   no_quote_msg <- "Use backticks to create non-syntactic names, not quotes."
   clarification <- "i.e., if the name is not a valid R symbol (see ?make.names)."
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    xml_calls <- source_expression$xml_find_function_calls(NULL)
 
-    call_arg_expr <- xml_find_all(xml, call_arg_xpath)
+    call_arg_expr <- xml_find_all(xml_calls, call_arg_xpath)
 
     invalid_call_quoting <- is_valid_r_name(get_r_string(call_arg_expr))
 
@@ -117,7 +113,7 @@ keyword_quote_linter <- function() {
     invalid_assignment_quoting <- is_valid_r_name(get_r_string(assignment_expr))
     # NB: XPath is such that there is exactly 1 node per match, making xml_children() ideal.
     #   xml_child() gets it wrong for 0 (an error) and >1 match.
-    assignment_to_string <- xml_name(xml2::xml_children(assignment_expr)) == "STR_CONST"
+    assignment_to_string <- xml_name(xml_children(assignment_expr)) == "STR_CONST"
 
     string_assignment_lints <- xml_nodes_to_lints(
       assignment_expr[assignment_to_string & !invalid_assignment_quoting],

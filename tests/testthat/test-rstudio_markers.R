@@ -1,8 +1,10 @@
 test_that("it returns markers which match lints", {
-  skip_if_not_installed("mockery")
-
-  mockery::stub(rstudio_source_markers, "rstudioapi::callFun", function(...) list(...))
-  mockery::stub(rstudio_source_markers, "rstudioapi::executeCommand", function(...) NULL)
+  skip_if_not_installed("rstudioapi")
+  local_mocked_bindings(
+    callFun = function(...) list(...),
+    executeCommand = function(...) NULL,
+    .package = "rstudioapi"
+  )
 
   lint1 <- list(Lint(
     filename = "test_file",
@@ -53,10 +55,12 @@ test_that("it returns markers which match lints", {
 })
 
 test_that("it prepends the package path if it exists", {
-  skip_if_not_installed("mockery")
-
-  mockery::stub(rstudio_source_markers, "rstudioapi::callFun", function(...) list(...))
-  mockery::stub(rstudio_source_markers, "rstudioapi::executeCommand", function(...) NULL)
+  skip_if_not_installed("rstudioapi")
+  local_mocked_bindings(
+    callFun = function(...) list(...),
+    executeCommand = function(...) NULL,
+    .package = "rstudioapi"
+  )
 
   lint3 <- list(Lint(
     filename = "test_file",
@@ -80,10 +84,12 @@ test_that("it prepends the package path if it exists", {
 })
 
 test_that("it returns an empty list of markers if there are no lints", {
-  skip_if_not_installed("mockery")
-
-  mockery::stub(rstudio_source_markers, "rstudioapi::callFun", function(...) list(...))
-  mockery::stub(rstudio_source_markers, "rstudioapi::executeCommand", function(...) NULL)
+  skip_if_not_installed("rstudioapi")
+  local_mocked_bindings(
+    callFun = function(...) list(...),
+    executeCommand = function(...) NULL,
+    .package = "rstudioapi"
+  )
 
   lint4 <- `class<-`(list(), "lints")
   marker4 <- rstudio_source_markers(lint4)
@@ -92,15 +98,17 @@ test_that("it returns an empty list of markers if there are no lints", {
 })
 
 test_that("rstudio_source_markers apply to print within rstudio", {
-  skip_if_not_installed("mockery")
-
   withr::local_options(lintr.rstudio_source_markers = TRUE)
 
   tmp <- withr::local_tempfile(lines = "1:ncol(x)")
   empty <- withr::local_tempfile(lines = character(0L))
 
-  mockery::stub(print.lints, "rstudioapi::hasFun", function(x, ...) TRUE)
-  mockery::stub(print.lints, "rstudio_source_markers", function(x) cat("matched\n"))
+  skip_if_not_installed("rstudioapi")
+  local_mocked_bindings(
+    hasFun = function(...) TRUE,
+    .package = "rstudioapi"
+  )
+  local_mocked_bindings(rstudio_source_markers = function(x) cat("matched\n"))
 
   l <- lint(tmp, seq_linter())
   expect_output(print(l), "matched", fixed = TRUE)
