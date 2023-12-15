@@ -41,7 +41,7 @@
 #'
 #' lint(
 #'   text = "x <- TRUE # TODO(#1234): Fix this hack.",
-#'   linters = todo_comment_linter(exclude_regex = "TODO\\(#[0-9]+\\):")
+#'   linters = todo_comment_linter(except_regex = "TODO\\(#[0-9]+\\):")
 #' )
 #'
 #' @evalRd rd_tags("todo_comment_linter")
