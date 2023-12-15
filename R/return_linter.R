@@ -92,6 +92,7 @@ return_linter <- function(
   }
 
   if (return_style == "implicit") {
+    # nolint next: object_usage. False positive.
     body_xpath <- "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[1]"
     params <- list(
       implicit = TRUE,
