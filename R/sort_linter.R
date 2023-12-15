@@ -125,7 +125,11 @@ sort_linter <- function() {
     order_lints <- xml_nodes_to_lints(
       order_expr,
       source_expression = source_expression,
-      lint_message = paste0(new_call, " is better than ", orig_call, "."),
+      lint_message = paste0(
+        new_call, " is better than ", orig_call, ". ",
+        "Note that it's always preferable to save the output of order() for the same variable ",
+        "as a local variable than to re-compute it."
+      ),
       type = "warning"
     )
 
