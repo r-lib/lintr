@@ -8,7 +8,7 @@ linters: all_linters(
         group(or(
           # GitHub issue number #1234, possibly from another repo org/repo#5678
           list(maybe(one_or_more(alnum, "-"), "/", one_or_more(alnum, ".", "-", "_")), "#", one_or_more(digit)),
-          # GitHub user
+          # GitHub user. TODO(#2450): remove this temporary immunity
           one_or_more(alnum, "-")
         )),
         ")"
