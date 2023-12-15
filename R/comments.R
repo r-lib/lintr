@@ -80,31 +80,3 @@ wercker_build_info <- function() {
     commit = Sys.getenv("WERCKER_GIT_COMMIT")
   )
 }
-
-# nocov start
-github_comment <- function(text, info = NULL, token = settings$comment_token) {
-  if (!requireNamespace("httr2", quietly = TRUE)) {
-    stop("Package 'httr2' is required to post comments with github_comment().", call. = FALSE)
-  }
-  if (!requireNamespace("jsonlite", quietly = TRUE)) {
-    stop("Package 'jsonlite' is required to post comments with github_comment().", call. = FALSE)
-  }
-
-  if (is.null(info)) {
-    info <- ci_build_info()
-  }
-
-  if (!is.null(info$pull) && info$pull != "false") {
-    api_subdir <- file.path("issues", info$pull)
-  } else if (!is.null(info$commit)) {
-    api_subdir <- file.path("commits", info$commit)
-  } else {
-    stop("Expected a pull or a commit, but received ci_build_info() = ", format(info), call. = FALSE)
-  }
-  req <- httr2::request("https://api.github.com")
-  req <- httr2::req_url_path_append(req, "repos", info$user, info$repo, api_subdir, "comments")
-  req <- httr2::req_body_json(jsonlite::unbox(text))
-  req <- httr2::req_url_query(access_token = token)
-  httr2::req_perform(req)
-}
-# nocov end

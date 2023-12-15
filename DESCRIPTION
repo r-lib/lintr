@@ -37,7 +37,6 @@ Imports:
 Suggests:
     bookdown,
     cli,
-    httr2,
     jsonlite,
     patrick (>= 0.2.0),
     rlang,
