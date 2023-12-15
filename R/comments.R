@@ -101,7 +101,7 @@ github_comment <- function(text, info = NULL, token = settings$comment_token) {
   } else {
     cli_abort(c(
       "Expected a pull or a commit",
-      "x" = "Instead received {.fn ci_build_info} = {format(info)}"
+      x = "Instead received {.fn ci_build_info} = {format(info)}"
     ))
   }
   response <- httr::POST(

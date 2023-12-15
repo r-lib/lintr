@@ -8,7 +8,7 @@ test_that("validate_linter_db works as expected", {
   df_empty <- data.frame()
   expect_warning(
     lintr:::validate_linter_db(df_empty, "mypkg"),
-    "`linters.csv` must contain the columns 'linter' and 'tags'.",
+    'must contain the columns "linter" and "tags"',
     fixed = TRUE
   )
   expect_false(suppressWarnings(lintr:::validate_linter_db(df_empty, "mypkg")))
