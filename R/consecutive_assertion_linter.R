@@ -31,21 +31,23 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 consecutive_assertion_linter <- function() {
-  xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'stopifnot']
-    /parent::expr
+  # annoying expr-but-not-really nodes
+  next_expr <- "following-sibling::*[self::expr or self::expr_or_assign_or_help or self::equal_assign][1]"
+
+  stopifnot_xpath <- glue("
+  parent::expr
     /parent::expr[
-      expr[1]/SYMBOL_FUNCTION_CALL = following-sibling::expr[1]/expr[1]/SYMBOL_FUNCTION_CALL
+      expr[1]/SYMBOL_FUNCTION_CALL = {next_expr}/expr[1]/SYMBOL_FUNCTION_CALL
     ]
-  |
-  //SYMBOL_FUNCTION_CALL[text() = 'assert_that']
-    /parent::expr
+  ")
+  assert_that_xpath <- glue("
+  parent::expr
     /parent::expr[
       not(SYMBOL_SUB[text() = 'msg'])
       and not(following-sibling::expr[1]/SYMBOL_SUB[text() = 'msg'])
-      and expr[1]/SYMBOL_FUNCTION_CALL = following-sibling::expr[1]/expr[1]/SYMBOL_FUNCTION_CALL
+      and expr[1]/SYMBOL_FUNCTION_CALL = {next_expr}/expr[1]/SYMBOL_FUNCTION_CALL
     ]
-  "
+  ")
 
   Linter(function(source_expression) {
     # need the full file to also catch usages at the top level
