@@ -101,16 +101,10 @@ github_comment <- function(text, info = NULL, token = settings$comment_token) {
   } else {
     stop("Expected a pull or a commit, but received ci_build_info() = ", format(info), call. = FALSE)
   }
-  response <- httr::POST(
-    "https://api.github.com",
-    path = file.path("repos", info$user, info$repo, api_subdir, "comments"),
-    body = list(body = jsonlite::unbox(text)),
-    query = list(access_token = token),
-    encode = "json"
-  )
-
-  if (httr::status_code(response) >= 300L) {
-    message(httr::http_condition(response, "error", task = httr::content(response, as = "text")))
-  }
+  req <- httr2::request("https://api.github.com")
+  req <- httr2::req_url_path_append(req, file.path("repos", info$user, info$repo, api_subdir, "comments"))
+  req <- httr2::req_body_json(jsonlite::unbox(text))
+  req <- httr2::req_url_query(access_token = token)
+  httr2::req_perform(req)
 }
 # nocov end
