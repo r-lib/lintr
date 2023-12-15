@@ -107,7 +107,7 @@ xp_find_location <- function(xml, xpath) {
   } else if (identical(xpath, "number(./@col2)")) {
     as.integer(xml_attr(xml, "col2"))
   } else {
-    xml_find_int(xml, xpath)
+    as.integer(xml_find_num(xml, xpath))
   }
 }
 

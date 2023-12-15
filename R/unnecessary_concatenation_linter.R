@@ -100,7 +100,7 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
     c_calls <- xml_find_all(xml_calls, call_xpath)
 
     # bump count(args) by 1 if inside a pipeline
-    num_args <- xml_find_int(c_calls, num_args_xpath) +
+    num_args <- as.integer(xml_find_num(c_calls, num_args_xpath)) +
       as.integer(!is.na(xml_find_first(c_calls, to_pipe_xpath)))
     # NB: the xpath guarantees num_args is 0, 1, or 2. 2 comes
     #   in "a" %>% c("b").

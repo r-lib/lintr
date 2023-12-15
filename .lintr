@@ -9,9 +9,7 @@ linters: all_linters(
           # GitHub issue number #1234, possibly from another repo org/repo#5678
           list(maybe(one_or_more(alnum, "-"), "/", one_or_more(alnum, ".", "-", "_")), "#", one_or_more(digit)),
           # GitHub user
-          one_or_more(alnum, "-"),
-          # version requirement for deprecation notes, e.g. '>3.2.0' --> once 3.2.0 is released, do X
-          list(">", one_or_more(digit, "."))
+          one_or_more(alnum, "-")
         )),
         ")"
       )

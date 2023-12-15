@@ -240,8 +240,8 @@ test_that("returned data structure is complete", {
   expect_identical(full_expr$content, lines_with_attr)
   expect_identical(nrow(full_expr$full_parsed_content), 2L * length(lines))
   expect_identical(
-    xml2::xml_find_int(full_expr$full_xml_parsed_content, "count(//SYMBOL)"),
-    length(lines)
+    xml2::xml_find_num(full_expr$full_xml_parsed_content, "count(//SYMBOL)"),
+    as.numeric(length(lines))
   )
   expect_true(full_expr$terminal_newline)
 
