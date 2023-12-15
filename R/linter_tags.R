@@ -49,13 +49,13 @@
 #' @export
 available_linters <- function(packages = "lintr", tags = NULL, exclude_tags = "deprecated") {
   if (!is.character(packages)) {
-    stop("`packages` must be a character vector.", call. = FALSE)
+    cli_abort("{.arg packages} must be a character vector.")
   }
   if (!is.null(tags) && !is.character(tags)) {
-    stop("`tags` must be a character vector.", call. = FALSE)
+    cli_abort("{.arg tags} must be a character vector.")
   }
   if (!is.null(exclude_tags) && !is.character(exclude_tags)) {
-    stop("`exclude_tags` must be a character vector.", call. = FALSE)
+    cli_abort("{.arg exclude_tags} must be a character vector.")
   }
 
   # any tags specified explicitly will not be excluded (#1959)
@@ -117,13 +117,10 @@ validate_linter_db <- function(available, package) {
   # Check that the csv file contains two character columns, named 'linter' and 'tags'.
   # Otherwise, fallback to an empty data frame.
   if (!all(c("linter", "tags") %in% colnames(available))) {
-    warning(
-      "`linters.csv` must contain the columns 'linter' and 'tags'.\nPackage '",
-      package, "' is missing ",
-      paste0("'", setdiff(c("linter", "tags"), names(available)), "'", collapse = " and "),
-      ".",
-      call. = FALSE
-    )
+    cli_warn(c(
+      "i" = "{.file linters.csv} must contain the columns {.str linter} and {.str tags}.",
+      "x" = "Package {.pkg package} is missing {.str {setdiff(c('linter', 'tags'), names(available))}}."
+    ))
     return(FALSE)
   }
   nrow(available) > 0L
@@ -153,7 +150,7 @@ rd_tags <- function(linter_name) {
   linters <- available_linters(exclude_tags = NULL)
   tags <- platform_independent_sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
   if (length(tags) == 0L) {
-    stop("tags are required, but found none for ", linter_name, call. = FALSE)
+    cli_abort("Tags are required, but found none for {.fn linter_name}.")
   }
 
   c(
@@ -172,7 +169,7 @@ rd_linters <- function(tag_name) {
   linters <- available_linters(tags = tag_name)
   tagged <- platform_independent_sort(linters[["linter"]])
   if (length(tagged) == 0L) {
-    stop("No linters found associated with tag ", tag_name, call. = FALSE)
+    cli_abort("No linters found associated with tag {.emph tag_name}.")
   }
 
   c(
