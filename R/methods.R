@@ -96,7 +96,7 @@ print.lints <- function(x, ...) {
       github_actions_log_lints(x, project_dir = github_annotation_project_dir)
     } else {
       if (in_ci() && settings$comment_bot) {
-        info <- ci_build_info()
+        info = ci_build_info()
 
         lint_output <- trim_output(
           paste0(
