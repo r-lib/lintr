@@ -783,17 +783,20 @@ collapse_exprs <- function(expr_list) {
   function_call_cache <- list()
   filename <- expr_list[[1L]]$filename
   lines <- character()
-  parsed_content <- NULL
+  parsed_content <- do.call(rbind, lapply(expr_list, function(expr) expr$parsed_content))
   content <- ""
   expr_index <- integer()
   i <- 0L
 
+  for (expr in rev(expr_list)) {
+    # prepending is _much_ faster than appending, because it avoids a call to xml_children().
+    xml2::xml_add_child(xml_pc, expr$xml_parsed_content, .where = 0L)
+  }
+
   for (expr in expr_list) {
     i <- i + 1L
-    xml2::xml_add_child(xml_pc, expr$xml_parsed_content)
     function_call_cache <- combine_nodesets(function_call_cache, expr$xml_find_function_calls(NULL, keep_names = TRUE))
     lines <- c(lines, expr$lines)
-    parsed_content <- if (is.null(parsed_content)) expr$parsed_content else rbind(parsed_content, expr$parsed_content)
     content <- paste(content, expr$content, sep = "\n")
     if (expr$line %in% names(expr_index)) {
       # line is not unique to this expr => can't find the expr to cache for from exprlist lints landing on this line
