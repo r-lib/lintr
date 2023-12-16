@@ -16,6 +16,7 @@ linters: all_linters(
     ),
     undesirable_function_linter(modify_defaults(
       defaults = default_undesirable_functions,
+      Sys.setlocale = NULL,
       library = NULL,
       options = NULL
     )),
