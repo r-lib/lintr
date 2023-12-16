@@ -134,7 +134,7 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     expr[!is_valid_comment]
   }
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     # run here because 'settings$exclude_end' may not be set correctly at "compile time".

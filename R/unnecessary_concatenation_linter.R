@@ -95,7 +95,7 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
   ")
   num_args_xpath <- "count(./expr) - 1"
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls("c")
     c_calls <- xml_find_all(xml_calls, call_xpath)
 

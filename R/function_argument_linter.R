@@ -59,7 +59,7 @@ function_argument_linter <- function() {
     text() = following-sibling::expr[last()]//expr[expr/SYMBOL_FUNCTION_CALL[text() = 'missing']]/expr[2]/SYMBOL/text()
   "
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     bad_expr <- xml_find_all(xml, xpath)

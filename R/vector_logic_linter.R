@@ -102,7 +102,7 @@ vector_logic_linter <- function() {
       ]/*[2]
   "
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml <- source_expression$xml_parsed_content
     xml_call <- source_expression$xml_find_function_calls(c("subset", "filter"))
 

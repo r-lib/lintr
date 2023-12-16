@@ -7,7 +7,8 @@
 Linter(
   fun,
   name = linter_auto_name(),
-  linter_level = c(NA_character_, "file", "expression")
+  linter_level = c(NA_character_, "file", "expression"),
+  supports_exprlist = FALSE
 )
 }
 \arguments{
@@ -20,6 +21,9 @@ Lints produced by the linter will be labelled with \code{name} by default.}
 \code{"expression"} means an individual expression in \code{xml_parsed_content}, while \code{"file"} means all expressions
 in the current file are available in \code{full_xml_parsed_content}.
 \code{NA} means the linter will be run with both, expression-level and file-level source expressions.}
+
+\item{supports_exprlist}{Relevant for expression-level linters. If TRUE, signals that the linter can accept
+source expressions that contain multiple individual expressions in \code{xml_parsed_content}.}
 }
 \value{
 The same function with its class set to 'linter'.

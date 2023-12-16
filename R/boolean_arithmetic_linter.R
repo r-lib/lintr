@@ -52,7 +52,7 @@ boolean_arithmetic_linter <- function() {
     ]
   ")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     length_calls <- source_expression$xml_find_function_calls(c("which", "grep"))
     sum_calls <- source_expression$xml_find_function_calls("sum")
     any_expr <- c(

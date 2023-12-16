@@ -99,7 +99,7 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
     if (!allow_pipe_assign) "//SPECIAL[text() = '%<>%']"
   ))
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     bad_expr <- xml_find_all(xml, xpath)

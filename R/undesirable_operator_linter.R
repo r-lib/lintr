@@ -66,7 +66,7 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
 
   xpath <- paste(paste0("//", operator_nodes), collapse = " | ")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     bad_op <- xml_find_all(xml, xpath)

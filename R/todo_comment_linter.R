@@ -52,7 +52,7 @@ todo_comment_linter <- function(todo = c("todo", "fixme"), except_regex = NULL) 
   valid_todo_regex <-
     if (!is.null(except_regex)) paste0("#+", rex::shortcuts$any_spaces, "(?:", paste(except_regex, collapse = "|"), ")")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     comment_expr <- xml_find_all(xml, "//COMMENT")

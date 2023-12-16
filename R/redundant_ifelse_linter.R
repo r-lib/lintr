@@ -68,7 +68,7 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
     ]
   ")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml_targets <- source_expression$xml_find_function_calls(ifelse_funs)
 
     lints <- list()

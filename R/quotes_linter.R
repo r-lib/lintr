@@ -60,7 +60,7 @@ quotes_linter <- function(delimiter = c('"', "'")) {
     lint_message <- "Only use single-quotes."
   }
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     string_exprs <- xml_find_all(xml, "//STR_CONST")

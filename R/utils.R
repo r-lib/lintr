@@ -162,10 +162,14 @@ reset_lang <- function(old_lang) {
 #'   `"expression"` means an individual expression in `xml_parsed_content`, while `"file"` means all expressions
 #'   in the current file are available in `full_xml_parsed_content`.
 #'   `NA` means the linter will be run with both, expression-level and file-level source expressions.
+#' @param supports_exprlist Relevant for expression-level linters. If TRUE, signals that the linter can accept
+#'   source expressions that contain multiple individual expressions in `xml_parsed_content`.
 #'
 #' @return The same function with its class set to 'linter'.
 #' @export
-Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character_, "file", "expression")) { # nolint: object_name, line_length.
+# nolint next: object_name.
+Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character_, "file", "expression"),
+                   supports_exprlist = FALSE) {
   if (!is.function(fun) || length(formals(args(fun))) != 1L) {
     stop("`fun` must be a function taking exactly one argument.", call. = FALSE)
   }
@@ -174,6 +178,7 @@ Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character
   class(fun) <- c("linter", "function")
   attr(fun, "name") <- name
   attr(fun, "linter_level") <- linter_level
+  attr(fun, "linter_exprlist") <- isTRUE(supports_exprlist)
   fun
 }
 

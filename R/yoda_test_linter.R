@@ -54,7 +54,7 @@ yoda_test_linter <- function() {
 
   second_const_xpath <- glue("expr[position() = 3 and ({const_condition})]")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     bad_expr <- xml_find_all(
       source_expression$xml_find_function_calls(c("expect_equal", "expect_identical", "expect_setequal")),
       xpath

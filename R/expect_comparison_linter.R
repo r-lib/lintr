@@ -62,7 +62,7 @@ expect_comparison_linter <- function() {
     `==` = "expect_identical"
   )
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls("expect_true")
     bad_expr <- xml_find_all(xml_calls, xpath)
 

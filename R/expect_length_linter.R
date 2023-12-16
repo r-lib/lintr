@@ -31,7 +31,7 @@ expect_length_linter <- function() {
     /parent::expr[not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])]
   ")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls(c("expect_equal", "expect_identical"))
     bad_expr <- xml_find_all(xml_calls, xpath)
 

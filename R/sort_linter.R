@@ -97,7 +97,7 @@ sort_linter <- function() {
 
   arg_values_xpath <- glue("{arguments_xpath}/following-sibling::expr[1]")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     order_expr <- xml_find_all(xml, order_xpath)

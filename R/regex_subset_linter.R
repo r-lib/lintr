@@ -66,7 +66,7 @@ regex_subset_linter <- function() {
   grep_xpath <- glue(xpath_fmt, arg_pos = 3L)
   stringr_xpath <- glue(xpath_fmt, arg_pos = 2L)
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     grep_calls <- source_expression$xml_find_function_calls(c("grepl", "grep"))
     grep_expr <- xml_find_all(grep_calls, grep_xpath)
 

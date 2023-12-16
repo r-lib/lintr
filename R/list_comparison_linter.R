@@ -38,7 +38,7 @@ list_comparison_linter <- function() {
     /parent::expr[{ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) }]
   ")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls(names(list_mapper_alternatives))
     bad_expr <- xml_find_all(xml_calls, xpath)
 

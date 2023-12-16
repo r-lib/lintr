@@ -157,7 +157,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
   empty_paste_note <-
     'Note that paste() converts empty inputs to "", whereas file.path() leaves it empty.'
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     paste_calls <- source_expression$xml_find_function_calls("paste")
     paste0_calls <- source_expression$xml_find_function_calls("paste0")
     both_calls <- combine_nodesets(paste_calls, paste0_calls)

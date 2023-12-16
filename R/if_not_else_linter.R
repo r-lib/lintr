@@ -82,7 +82,7 @@ if_not_else_linter <- function(exceptions = c("is.null", "is.na", "missing")) {
     ]]
   ")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml <- source_expression$xml_parsed_content
     ifelse_calls <- source_expression$xml_find_function_calls(ifelse_funs)
 

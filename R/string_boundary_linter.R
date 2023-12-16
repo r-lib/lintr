@@ -139,7 +139,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
 
   substr_arg2_xpath <- "string(./expr[expr[1][SYMBOL_FUNCTION_CALL]]/expr[3])"
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     lints <- list()

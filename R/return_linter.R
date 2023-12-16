@@ -142,7 +142,7 @@ return_linter <- function(
 
   params$allow_implicit_else <- allow_implicit_else
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (defer_except) {
       assigned_functions <- xml_text(xml_find_all(xml, function_name_xpath))

@@ -82,7 +82,7 @@ inner_combine_linter <- function() {
     /parent::expr
   ")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(linter_level = "expression", supports_exprlist = TRUE, function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls("c")
     bad_expr <- xml_find_all(xml_calls, xpath)
 
