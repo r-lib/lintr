@@ -895,6 +895,7 @@ handle_expr_level_lints <- function(lints, expression_linter_names, supports_exp
   for (linter_name in expression_linter_names[needs_running & supports_exprlist]) {
     linter_fun <- linters[[linter_name]]
     if (!any(expr_linter_cached[, linter_name])) {
+      exprs_to_lint <- exprs_expression
       exprlist_to_lint <- collapse_exprs(exprs_to_lint, expr_file = expr_file)
     } else {
       exprs_to_lint <- exprs_expression[!expr_linter_cached[, linter_name]]
