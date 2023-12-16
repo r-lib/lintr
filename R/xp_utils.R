@@ -118,7 +118,7 @@ xp_find_location <- function(xml, xpath) {
 #'   way to XPath 2.0-ish support by writing this simple function to remove comments.
 #'
 #' @noRd
-xpath_comment_re <- rex::rex(
+xpath_comment_re <- rex(
   "(:",
   zero_or_more(not(":)")),
   ":)"
