@@ -201,14 +201,9 @@ release_bullets <- function() {
 }
 # nocov end
 
-# see issue #923, PR #2455 -- some locales ignore _ when running sort(), others don't.
-#   we want to consistently treat "_" < "n" = "N"
-platform_independent_order <- function(x) {
-  old <- Sys.getlocale("LC_COLLATE")
-  Sys.setlocale("LC_COLLATE", "C")
-  on.exit(Sys.setlocale("LC_COLLATE", old))
-  order(tolower(x))
-}
+# see issue #923, PR #2455 -- some locales ignore _ when running sort(), others don't. so use C locale
+#   We want to consistently treat "_" < "n" = "N"; C locale does this, which 'radix' uses.
+platform_independent_order <- function(x) order(tolower(x), method = "radix")
 platform_independent_sort <- function(x) x[platform_independent_order(x)]
 
 #' Extract text from `STR_CONST` nodes
