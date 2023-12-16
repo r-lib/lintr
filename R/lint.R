@@ -70,7 +70,6 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   file_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "file")]
   expression_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "expression")]
-  supports_exprlist <- vapply(linters[expression_linter_names], linter_supports_exprlist, logical(1L))
 
   lints <- list()
   if (!is_tainted(source_expressions$lines) && length(source_expressions$expressions) > 0L) {
@@ -90,7 +89,6 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     lints <- handle_expr_level_lints(
       lints = lints,
       expression_linter_names = expression_linter_names,
-      supports_exprlist = supports_exprlist,
       exprs_expression = exprs_expression,
       expr_file = expr_file,
       lint_cache = lint_cache,
@@ -343,7 +341,7 @@ get_lints_batched <- function(exprs_to_lint, exprlist_to_lint, linter_name, lint
       # write results to expr-level cache
       for (i in seq_along(lines_to_cache)) {
         if (!is.null(lines_to_cache[[i]])) {
-          #> cache_lint(lint_cache, exprs_to_lint[[i]], linter_name, lines_to_cache[[i]])
+          cache_lint(lint_cache, exprs_to_lint[[i]], linter_name, lines_to_cache[[i]])
         }
       }
 
@@ -809,12 +807,10 @@ collapse_exprs <- function(expr_list, expr_file) {
   i <- 0L
   for (expr in expr_list) {
     i <- i + 1L
-    if (expr$line %in% names(expr_index)) {
-      # line is not unique to this expr => can't find the expr to cache for from exprlist lints landing on this line
-      expr_index[as.character(expr$line)] <- NA_integer_
-    } else {
-      expr_index[as.character(expr$line)] <- i
-    }
+    curr_lines <- names(expr$lines)
+    # line is not unique to this expr => can't find the expr to cache for from exprlist lints landing on this line
+    expr_index[intersect(curr_lines, names(expr_index))] <- NA_integer_
+    expr_index[setdiff(curr_lines, names(expr_index))] <- i
   }
 
   list(
@@ -862,10 +858,14 @@ handle_file_level_lints <- function(lints, file_linter_names, expr_file, lint_ca
 
 handle_expr_level_lints <- function(lints, expression_linter_names, supports_exprlist, exprs_expression, expr_file,
                                     lint_cache, linters, lines, filename) {
+
+  supports_exprlist <- vapply(linters[expression_linter_names], linter_supports_exprlist, logical(1L))
+
   # For expression level linters, each column is a linter, each row an expr
   expr_linter_cached <- vapply(expression_linter_names, function(linter_name) {
     vapply(exprs_expression, has_lint, linter = linter_name, cache = lint_cache, FUN.VALUE = logical(1L))
   }, FUN.VALUE = logical(length(exprs_expression)))
+
   # Ensure 2D array even for just a single expr or linter
   dim(expr_linter_cached) <- c(length(exprs_expression), length(expression_linter_names))
   colnames(expr_linter_cached) <- expression_linter_names
