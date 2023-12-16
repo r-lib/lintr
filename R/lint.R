@@ -343,7 +343,7 @@ get_lints_batched <- function(exprs_to_lint, exprlist_to_lint, linter_name, lint
       # write results to expr-level cache
       for (i in seq_along(lines_to_cache)) {
         if (!is.null(lines_to_cache[[i]])) {
-          cache_lint(lint_cache, exprs_to_lint[[i]], linter_name, lines_to_cache[[i]])
+          #> cache_lint(lint_cache, exprs_to_lint[[i]], linter_name, lines_to_cache[[i]])
         }
       }
 
