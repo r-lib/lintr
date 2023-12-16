@@ -857,7 +857,7 @@ handle_expr_level_lints <- function(lints, expression_linter_names, supports_exp
   # Retrieve cached lints where available
   for (linter_name in expression_linter_names[colSums(expr_linter_cached) > 0L]) {
     lints[[length(lints) + 1L]] <- lapply(exprs_expression[expr_linter_cached[, linter_name]], function(expr) {
-      retrieve_lint(cache = lint_cache, expr = expr, linter = linter_name, lines = source_expressions$lines)
+      retrieve_lint(cache = lint_cache, expr = expr, linter = linter_name, lines = lines)
     })
   }
 
