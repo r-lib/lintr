@@ -44,21 +44,21 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
 
   # require >3 children to exclude foo(), which is <expr><OP-LEFT-PAREN><OP-RIGHT-PAREN>
   xpath <- glue("
-    //SYMBOL_FUNCTION_CALL[not({ xp_text_in_table(except) })]
-      /parent::expr
+    parent::expr
       /parent::expr[count(*) > 3]
       /*[{xp_or(conds)}]
   ")
 
   Linter(linter_level = "file", function(source_expression) {
-    xml <- source_expression$full_xml_parsed_content
+    xml_targets <- source_expression$xml_find_function_calls(NULL, keep_names = TRUE)
+    xml_targets <- xml_targets[!names(xml_targets) %in% except]
 
-    missing_args <- xml_find_all(xml, xpath)
+    missing_args <- xml_find_all(xml_targets, xpath)
 
     named_idx <- xml_name(missing_args) == "EQ_SUB"
     arg_id <- character(length(missing_args))
     arg_id[named_idx] <- sQuote(xml_find_chr(missing_args[named_idx], "string(preceding-sibling::SYMBOL_SUB[1])"), "'")
-    # TODO(r-lib/xml2#412-->CRAN): use xml_find_int() instead
+    # TODO(#2452): use xml_find_int() instead
     arg_id[!named_idx] <- xml_find_num(missing_args[!named_idx], "count(preceding-sibling::OP-COMMA)") + 1.0
 
     xml_nodes_to_lints(

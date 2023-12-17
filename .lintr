@@ -2,6 +2,18 @@ linters: all_linters(
     backport_linter("3.6.0", except = c("R_user_dir", "deparse1", "...names")),
     line_length_linter(120L),
     object_overwrite_linter(allow_names = c("line", "lines", "pipe", "symbols")),
+    todo_comment_linter(
+      except_regex = rex::rex(
+        "TODO(",
+        group(or(
+          # GitHub issue number #1234, possibly from another repo org/repo#5678
+          list(maybe(one_or_more(alnum, "-"), "/", one_or_more(alnum, ".", "-", "_")), "#", one_or_more(digit)),
+          # GitHub user. TODO(#2450): remove this temporary immunity
+          one_or_more(alnum, "-")
+        )),
+        ")"
+      )
+    ),
     undesirable_function_linter(modify_defaults(
       defaults = default_undesirable_functions,
       library = NULL,
@@ -14,7 +26,6 @@ linters: all_linters(
     )),
     unnecessary_concatenation_linter(allow_single_expression = FALSE),
     absolute_path_linter = NULL,
-    extraction_operator_linter = NULL,
     library_call_linter = NULL,
     nonportable_path_linter = NULL,
     todo_comment_linter = NULL,

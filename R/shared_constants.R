@@ -243,18 +243,7 @@ extract_glued_symbols <- function(expr, interpret_glue) {
   if (!isTRUE(interpret_glue)) {
     return(character())
   }
-  # TODO support more glue functions
-  # Package glue:
-  #  - glue_sql
-  #  - glue_safe
-  #  - glue_col
-  #  - glue_data
-  #  - glue_data_sql
-  #  - glue_data_safe
-  #  - glue_data_col
-  #
-  # Package stringr:
-  #  - str_interp
+  # TODO(#2448): support more glue functions
   # NB: position() > 1 because position=1 is <expr><SYMBOL_FUNCTION_CALL>
   glue_call_xpath <- "
     descendant::SYMBOL_FUNCTION_CALL[text() = 'glue']
@@ -309,3 +298,22 @@ purrr_mappers <- c(
   "map_raw", "map_lgl", "map_int", "map_dbl", "map_chr", "map_vec",
   "map_df", "map_dfr", "map_dfc"
 )
+
+# see ?".onLoad", ?Startup, and ?quit.
+#   All of .onLoad, .onAttach, and .onUnload are used in base packages,
+#   and should be caught in is_base_function; they're included here for completeness / stability
+#   (they don't strictly _have_ to be defined in base, so could in principle be removed).
+#   .Last.sys and .First.sys are part of base itself, so aren't included here.
+special_funs <- c(
+  ".onLoad",
+  ".onAttach",
+  ".onUnload",
+  ".onDetach",
+  ".Last.lib",
+  ".First",
+  ".Last"
+)
+
+is_special_function <- function(x) {
+  x %in% special_funs
+}

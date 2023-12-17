@@ -125,3 +125,39 @@ no_tab_linter <- function() {
   )
   whitespace_linter()
 }
+
+#' Extraction operator linter
+#' @rdname lintr-deprecated
+#' @export
+extraction_operator_linter <- function() {
+  lintr_deprecated(
+    what = "extraction_operator_linter",
+    version = "3.2.0",
+    type = "Linter",
+    signal = "warning"
+  )
+
+  constant_nodes_in_brackets <- paste0("self::", c("expr", "OP-PLUS", "NUM_CONST", "STR_CONST"))
+  xpath <- glue("
+  //OP-DOLLAR[not(preceding-sibling::expr[1]/SYMBOL[text() = 'self' or text() = '.self'])]
+  |
+  //OP-LEFT-BRACKET[
+    not(following-sibling::expr[1]/descendant::*[not({xp_or(constant_nodes_in_brackets)})]) and
+    not(following-sibling::OP-COMMA)
+  ]
+  ")
+
+  Linter(linter_level = "expression", function(source_expression) {
+    xml <- source_expression$xml_parsed_content
+
+    bad_exprs <- xml_find_all(xml, xpath)
+    msgs <- sprintf("Use `[[` instead of `%s` to extract an element.", xml_text(bad_exprs))
+
+    xml_nodes_to_lints(
+      bad_exprs,
+      source_expression = source_expression,
+      lint_message = msgs,
+      type = "warning"
+    )
+  })
+}

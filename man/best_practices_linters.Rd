@@ -32,7 +32,6 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{expect_s4_class_linter}}}
 \item{\code{\link{expect_true_false_linter}}}
 \item{\code{\link{expect_type_linter}}}
-\item{\code{\link{extraction_operator_linter}}}
 \item{\code{\link{fixed_regex_linter}}}
 \item{\code{\link{for_loop_index_linter}}}
 \item{\code{\link{function_argument_linter}}}

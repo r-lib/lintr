@@ -6,10 +6,10 @@
 #'
 #' @param display_call Logical specifying expected behaviour regarding `call.`
 #' argument in conditions.
-#'   - `NA` forces providing `call.=` but ignores its value (this can be used in
+#'   - `NA` forces providing `call. =` but ignores its value (this can be used in
 #'     cases where you expect a mix of `call. = FALSE` and `call. = TRUE`)
-#'   - lints `call. = FALSE`
-#'   - forces `call. = FALSE` (lints `call. = TRUE` or missing `call.=` value)
+#'   - `TRUE` lints `call. = FALSE`
+#'   - `FALSE` forces `call. = FALSE` (lints `call. = TRUE` or missing `call. =` value)
 #'
 #'
 #' @examples
@@ -77,16 +77,11 @@ condition_call_linter <- function(display_call = FALSE) {
     msg_fmt <- "Use %s(., call. = FALSE) not to display the call in an error message."
   }
 
-  xpath <- glue::glue("
-    //SYMBOL_FUNCTION_CALL[text() = 'stop' or text() = 'warning']
-      /parent::expr[{call_cond}]
-      /parent::expr
-  ")
+  xpath <- glue::glue("parent::expr[{call_cond}]/parent::expr")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml_find_all(xml, xpath)
+    xml_calls <- source_expression$xml_find_function_calls(c("stop", "warning"))
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     xml_nodes_to_lints(
       bad_expr,
