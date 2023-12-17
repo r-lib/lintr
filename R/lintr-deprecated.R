@@ -183,7 +183,7 @@ unnecessary_nested_if_linter <- function() {
     ),
     collapse = " | "
   )
-  
+
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
