@@ -25,9 +25,9 @@ if (length(new_not_old) > 0L) {
 
 # Rd2txt() prints to its out= argument, so we'd have to compare file contents;
 #   plain parse_Rd() keeps srcref info that encodes the file path, which as.character() strips.
-comparable_rd <- function(rd_file) as.character(parse_Rd(rd_file))
+normalize_rd <- function(rd_file) as.character(parse_Rd(rd_file))
 
-rd_equal <- function(f1, f2) isTRUE(all.equal(comparable_rd(f1), comparable_rd(f2)))
+rd_equal <- function(f1, f2) isTRUE(all.equal(normalize_rd(f1), normalize_rd(f2)))
 
 for (file in new_files) {
   if (rd_equal(file.path(old_dir, file), file.path(new_dir, file))) {
