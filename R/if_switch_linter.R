@@ -15,8 +15,10 @@
 #'   be evaluated, here up to 3 times).
 #'
 #' @param max_branch_lines,max_branch_expr Integer, default 0 indicates "no maximum".
-#'   If set and `if`/`else if`/.../`else`chain where any branch occupies more than
-#'   this number of lines (resp. expressions) will not be linted. See examples.
+#'   If set any `if`/`else if`/.../`else` chain where any branch occupies more than
+#'   this number of lines (resp. expressions) will not be linted. The conjugate
+#'   applies to `switch()` statements -- if these parameters are set, any `switch()`
+#'   statement with any overly-complicated branches will be linted. See examples.
 #'
 #' @examples
 #' # will produce lints
@@ -61,6 +63,26 @@
 #' lint(
 #'   text = code,
 #'   linters = if_switch_linter()
+#' )
+#' 
+#' code <- paste(
+#'   "switch(x,",
+#'   "  a = {",
+#'   "    1",
+#'   "    2",
+#'   "    3",
+#'   "  },",
+#'   "  b = {",
+#'   "    1",
+#'   "    2",
+#'   "  }",
+#'   ")",
+#'   sep = "\n"
+#' )
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = if_switch_linter(max_branch_lines = 2L)
 #' )
 #'
 #' # okay
@@ -113,6 +135,27 @@
 #'   linters = if_switch_linter(max_branch_expr = 2L)
 #' )
 #'
+#' 
+#' code <- paste(
+#'   "switch(x,",
+#'   "  a = {",
+#'   "    1",
+#'   "    2",
+#'   "    3",
+#'   "  },",
+#'   "  b = {",
+#'   "    1",
+#'   "    2",
+#'   "  }",
+#'   ")",
+#'   sep = "\n"
+#' )
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = if_switch_linter(max_branch_lines = 3L)
+#' )
+#'
 #' @evalRd rd_tags("if_switch_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -120,6 +163,10 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expr = 0L) {
   equal_str_cond <- "expr[1][EQ and expr/STR_CONST]"
 
   if (max_branch_lines > 0L || max_branch_expr > 0L) {
+    complexity_cond <- xp_or(c(
+      if (max_branch_lines > 0L) paste("OP-RIGHT-BRACE/@line2 - OP-LEFT-BRACE/@line1 > 1 +", max_branch_lines),
+      if (max_branch_expr > 0L) paste("count(expr) >", max_branch_expr)
+    ))
     branch_expr_cond <- xp_and(c(
       xp_or(
         # if (x) { <this expr> } ...
@@ -127,14 +174,21 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expr = 0L) {
         # if (x) { ... } else { <this expr> }
         xp_and("preceding-sibling::ELSE", "not(IF)")
       ),
-      xp_or(c(
-        if (max_branch_lines > 0L) paste("OP-RIGHT-BRACE/@line2 - OP-LEFT-BRACE/@line1 > 1 +", max_branch_lines),
-        if (max_branch_expr > 0L) paste("count(expr) >", max_branch_expr)
-      ))
+      complexity_cond
     ))
     max_lines_cond <- glue(".//expr[{branch_expr_cond}]")
+
+    switch_xpath <- glue("
+    parent::expr
+      /parent::expr[expr[
+        position() > 2
+        and {complexity_cond}
+      ]]
+    ")
   } else {
     max_lines_cond <- "false"
+
+    switch_xpath <- NULL
   }
 
   # NB: IF AND {...} AND ELSE/... implies >= 3 equality conditions are present
@@ -142,7 +196,7 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expr = 0L) {
   # not(preceding::IF): prevent nested matches which might be incorrect globally
   # not(. != .): don't match if there are _any_ expr which _don't_ match the top
   #   expr
-  xpath <- glue("
+  if_xpath <- glue("
   //IF
     /parent::expr[
       not(preceding-sibling::IF)
@@ -163,9 +217,9 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expr = 0L) {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, if_xpath)
 
-    xml_nodes_to_lints(
+    lints <- xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
       lint_message = paste(
@@ -175,5 +229,19 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expr = 0L) {
       ),
       type = "warning"
     )
+
+    if (!is.null(switch_xpath)) {
+      xml_calls <- source_expression$xml_find_function_calls("switch")
+      switch_expr <- xml_find_all(xml_calls, switch_xpath)
+
+      lints <- c(lints, xml_nodes_to_lints(
+        switch_expr,
+        source_expression = source_expression,
+        lint_message = "Prefer repeated if/else statements over overly-complicated switch() statements.",
+        type = "warning"
+      ))
+    }
+
+    lints
   })
 }

@@ -209,6 +209,161 @@ test_that("max_branch_lines= and max_branch_expr= arguments work", {
   expect_lint(five_expr_three_lines_lines, NULL, max_expr4_linter)
 })
 
+test_that("max_branch_lines= and max_branch_expr= block over-complex switch() too", {
+  max_lines2_linter <- if_switch_linter(max_branch_lines = 2L)
+  max_lines4_linter <- if_switch_linter(max_branch_lines = 4L)
+  max_expr2_linter <- if_switch_linter(max_branch_expr = 2L)
+  max_expr4_linter <- if_switch_linter(max_branch_expr = 4L)
+  lint_msg <- rex::rex("Prefer repeated if/else statements over overly-complicated switch() statements.")
+
+  one_per_branch_lines <- trim_some("
+    switch(x,
+      a = {
+        1
+      },
+      b = {
+        2
+      },
+      c = {
+        3
+      }
+    )
+  ")
+  expect_lint(one_per_branch_lines, NULL, max_lines2_linter)
+  expect_lint(one_per_branch_lines, NULL, max_lines4_linter)
+  expect_lint(one_per_branch_lines, NULL, max_expr2_linter)
+  expect_lint(one_per_branch_lines, NULL, max_expr4_linter)
+
+  two_per_branch_lines <- trim_some("
+    switch(x,
+      a = {
+        1
+        2
+      },
+      b = {
+        3
+        4
+      },
+      c = {
+        5
+        6
+      }
+    )
+  ")
+  expect_lint(two_per_branch_lines, NULL, max_lines2_linter)
+  expect_lint(two_per_branch_lines, NULL, max_lines4_linter)
+  expect_lint(two_per_branch_lines, NULL, max_expr2_linter)
+  expect_lint(two_per_branch_lines, NULL, max_expr4_linter)
+
+  three_per_branch_lines <- trim_some("
+    switch(x,
+      a = {
+        1
+        2
+        3
+      },
+      b = {
+        4
+        5
+        6
+      },
+      c = {
+        7
+        8
+        9
+      }
+    )
+  ")
+  expect_lint(three_per_branch_lines, lint_msg, max_lines2_linter)
+  expect_lint(three_per_branch_lines, NULL, max_lines4_linter)
+  expect_lint(three_per_branch_lines, lint_msg, max_expr2_linter)
+  expect_lint(three_per_branch_lines, NULL, max_expr4_linter)
+
+  five_per_branch_lines <- trim_some("
+    switch(x,
+      a = {
+        1
+        2
+        3
+        4
+        5
+      },
+      b = {
+        6
+        7
+        8
+        9
+        10
+      },
+      c = {
+        11
+        12
+        13
+        14
+        15
+      }
+    )
+  ")
+  expect_lint(five_per_branch_lines, lint_msg, max_lines2_linter)
+  expect_lint(five_per_branch_lines, lint_msg, max_lines4_linter)
+  expect_lint(five_per_branch_lines, lint_msg, max_expr2_linter)
+  expect_lint(five_per_branch_lines, lint_msg, max_expr4_linter)
+
+  five_lines_three_expr_lines <- trim_some("
+    switch(x,
+      a = {
+        1
+        2
+        foo(
+          x
+        )
+      },
+      b = {
+        6
+        7
+        bar(
+          y
+        )
+      },
+      c = {
+        11
+        12
+        baz(
+          z
+        )
+      }
+    )
+  ")
+  expect_lint(five_lines_three_expr_lines, lint_msg, max_lines2_linter)
+  expect_lint(five_lines_three_expr_lines, lint_msg, max_lines4_linter)
+  expect_lint(five_lines_three_expr_lines, lint_msg, max_expr2_linter)
+  expect_lint(five_lines_three_expr_lines, NULL, max_expr4_linter)
+
+  five_expr_three_lines_lines <- trim_some("
+    switch(x,
+      a = {
+        1
+        2
+        3; 4; 5
+      },
+      b = {
+        6
+        7
+        8; 9; 10
+      },
+      c = {
+        11
+        12
+        13; 14; 15
+      }
+    )
+  ")
+  expect_lint(five_expr_three_lines_lines, lint_msg, max_lines2_linter)
+  expect_lint(five_expr_three_lines_lines, NULL, max_lines4_linter)
+  expect_lint(five_expr_three_lines_lines, lint_msg, max_expr2_linter)
+  expect_lint(five_expr_three_lines_lines, lint_msg, max_expr4_linter)
+})
+
 test_that("max_branch_lines= and max_branch_expr= interact correctly", {
   linter <- if_switch_linter(max_branch_lines = 5L, max_branch_expr = 3L)
   lint_msg <- rex::rex("Prefer switch() statements over repeated if/else equality tests")
