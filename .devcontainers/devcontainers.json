@@ -1,3 +1,11 @@
 {
-    "image": "rocker/r-base"
+	"name": "r-devel",
+	"image": "ghcr.io/r-devel/r-dev-env:devel",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"REditorSupport.r",
+			]
+		}
+	}
 }
