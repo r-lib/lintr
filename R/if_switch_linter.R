@@ -64,7 +64,7 @@
 #'   text = code,
 #'   linters = if_switch_linter()
 #' )
-#' 
+#'
 #' code <- paste(
 #'   "switch(x,",
 #'   "  a = {",
@@ -135,7 +135,6 @@
 #'   linters = if_switch_linter(max_branch_expr = 2L)
 #' )
 #'
-#' 
 #' code <- paste(
 #'   "switch(x,",
 #'   "  a = {",
