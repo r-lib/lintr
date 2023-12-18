@@ -4,6 +4,8 @@ RUN apt-get -qq update \
   && apt-get install -y --no-install-recommends \
   git libxml2-dev
 
+COPY ../DESCRIPTION DESCRIPTION
+
 # NB: patrick also pulls in testthat and pkgload
 RUN Rscript -e '                       \
 read.dcf("DESCRIPTION", "Imports") |>  \
