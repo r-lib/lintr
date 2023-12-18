@@ -15,7 +15,8 @@ normalize_rd <- function(rd_file) as.character(parse_Rd(rd_file))
 
 rd_equal <- function(f1, f2) isTRUE(all.equal(normalize_rd(f1), normalize_rd(f2)))
 
-check_roxygenize_idempotent <- function() {
+check_roxygenize_idempotent <- function(LOCALE) {
+  Sys.setlocale("LC_COLLATE", LOCALE)
   roxygenize()
   
   new_files <- list.files(new_dir, pattern = "\\.Rd$")
@@ -41,14 +42,13 @@ check_roxygenize_idempotent <- function() {
     Rd2txt(old_file)
     cat("Here's the Rd2txt() output for roxygenize():\n")
     Rd2txt(new_file)
-    stop(call. = FALSE)
+    stop("Failed in LOCALE=", LOCALE, ".", call. = FALSE)
   }
 }
 
 # Run the check in a few locales to ensure there's no idempotency issues w.r.t. sorting, too
 for (LOCALE in c("C", "en_US", "hu_HU", "ja_JP")) {
-  Sys.setlocale("LC_COLLATE", LOCALE)
-  check_roxygenize_idempotent()
+  check_roxygenize_idempotent(LOCALE)
 }
 
 unlink(old_dir, recursive = TRUE)
