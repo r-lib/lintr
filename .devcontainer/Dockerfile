@@ -6,7 +6,7 @@ RUN apt-get -qq update \
 
 RUN Rscript -e "
   install.packages('remotes')
-  remotes::install_deps()
-  # also pulls in testthat and pkgload
-  install.packages('patrick')
+  lintr_deps <- remotes::dev_package_deps()
+  # patrick also pulls in testthat and pkgload
+  install.packages(c(lintr_deps, 'patrick'))
 "
