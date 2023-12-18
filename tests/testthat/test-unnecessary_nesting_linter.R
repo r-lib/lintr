@@ -81,6 +81,7 @@ test_that("parallels in further nesting are skipped", {
       if (length(bucket) > 1) {
         return(age)
       } else {
+        age <- age / 2
         if (grepl('[0-9]', age)) {
           return(age)
         } else {
@@ -420,8 +421,9 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
       if (x) {
         1L
       } else {
+        2L
         if (y) {
-          2L
+          3L
         }
       }
     "),
@@ -645,6 +647,68 @@ test_that("unnecessary_nesting_linter blocks disallowed usages", {
     list(
       list(message = lint_message, line_number = 2L, column_number = 3L),
       list(message = lint_message, line_number = 3L, column_number = 5L)
+    ),
+    linter
+  )
+})
+
+test_that("else that can drop braces is found", {
+  linter <- unnecessary_nesting_linter()
+  lint_msg <- rex::rex("Simplify this condition by using 'else if' instead of 'else { if.")
+
+  expect_lint(
+    trim_some("
+      if (A) {
+        1
+      } else {
+        if (B) {
+          2
+        } else {
+          3
+        }
+      }
+    "),
+    list(lint_msg, line_number = 4L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (A) {
+        1
+      } else if (B) {
+        2
+      } else {
+        if (C) {
+          3
+        } else {
+          4
+        }
+      }
+    "),
+    list(lint_msg, line_number = 6L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (A) {
+        1
+      } else {
+        if (B) {
+          2
+        } else {
+          if (C) {
+            3
+          } else {
+            4
+          }
+        }
+      }
+    "),
+    list(
+      list(lint_msg, line_number = 4L),
+      list(lint_msg, line_number = 7L)
     ),
     linter
   )
