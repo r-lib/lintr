@@ -74,7 +74,6 @@ Collate:
     'class_equals_linter.R'
     'commas_linter.R'
     'commented_code_linter.R'
-    'comments.R'
     'comparison_negation_linter.R'
     'condition_call_linter.R'
     'condition_message_linter.R'
