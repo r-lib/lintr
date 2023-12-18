@@ -1,0 +1,7 @@
+language: r
+sudo: false
+env:
+  matrix:
+  - LINTR_COMMENT_BOT=true
+script:
+- Rscript -e 'lintr::lint_package()'
