@@ -33,6 +33,12 @@
 #'   linters = unnecessary_nesting_linter(allow_assignment = FALSE)
 #' )
 #'
+#' writeLines("if (x) { \n  if (y) { \n   return(1L) \n  } \n}")
+#' lint(
+#'   text = "if (x) { \n  if (y) { \n   return(1L) \n  } \n}",
+#'   linters = unnecessary_nested_if_linter()
+#' )
+#'
 #' # okay
 #' code <- "if (A) {\n  stop('A is bad because a.')\n} else {\n  stop('!A is bad too.')\n}"
 #' writeLines(code)
@@ -53,6 +59,18 @@
 #' lint(
 #'   text = code,
 #'   linters = unnecessary_nesting_linter()
+#' )
+#'
+#' writeLines("if (x && y) { \n  return(1L) \n}")
+#' lint(
+#'   text = "if (x && y) { \n  return(1L) \n}",
+#'   linters = unnecessary_nested_if_linter()
+#' )
+#'
+#' writeLines("if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}")
+#' lint(
+#'   text = "if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}",
+#'   linters = unnecessary_nested_if_linter()
 #' )
 #'
 #' @evalRd rd_tags("unnecessary_nesting_linter")
@@ -141,6 +159,17 @@ unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
     ]
   ")
 
+  unnecessary_nested_if_xpath <- paste0(
+    "//IF/parent::expr[not(ELSE)]/OP-RIGHT-PAREN/",
+    c(
+      # catch if (cond) if (other_cond) { ... }
+      "following-sibling::expr[IF and not(ELSE)]",
+      # catch if (cond) { if (other_cond) { ... } }
+      "following-sibling::expr[OP-LEFT-BRACE and count(expr) = 1]/expr[IF and not(ELSE)]"
+    ),
+    collapse = " | "
+  )
+
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
@@ -165,6 +194,16 @@ unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
       type = "warning"
     )
 
-    c(if_else_exit_lints, unnecessary_brace_lints)
+    unnecessary_nested_if_expr <- xml_find_all(xml, unnecessary_nested_if_xpath)
+    unnecessary_nested_if_lints <- xml_nodes_to_lints(
+      unnecessary_nested_if_expr,
+      source_expression = source_expression,
+      lint_message = paste(
+        "Don't use nested `if` statements, where a single `if` with the combined conditional expression will do.",
+        "For example, instead of `if (x) { if (y) { ... }}`, use `if (x && y) { ... }`."
+      )
+    )
+
+    c(if_else_exit_lints, unnecessary_brace_lints, unnecessary_nested_if_lints)
   })
 }

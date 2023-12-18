@@ -32,107 +32,115 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
 #   but it's not true in general.
 test_that("Multiple if/else statements don't require unnesting", {
   # with further branches, reducing nesting might be less readable
-  if_else_if_else_lines <- c(
-    "if (x == 'a') {",
-    "  stop()",
-    "} else if (x == 'b') {",
-    "  do_b()",
-    "} else {",
-    "  stop()",
-    "}"
+  expect_lint(
+    trim_some("
+      if (x == 'a') {
+        stop()
+      } else if (x == 'b') {
+        do_b()
+      } else {
+        stop()
+      }
+    "),
+    NULL,
+    unnecessary_nesting_linter()
   )
-  expect_lint(if_else_if_else_lines, NULL, unnecessary_nesting_linter())
 })
 
 test_that("else-less if statements don't lint", {
-  multi_statement_if_lines <- c(
-    "if (x == 4) {",
-    "  msg <- 'failed'",
-    "  stop(msg)",
-    "}"
+  expect_lint(
+    trim_some("
+      if (x == 4) {
+        msg <- 'failed'
+        stop(msg)
+      }
+    "),
+    NULL,
+    unnecessary_nesting_linter()
   )
-  expect_lint(multi_statement_if_lines, NULL, unnecessary_nesting_linter())
 })
 
 test_that("non-terminal expressions are not considered for the logic", {
-  multi_statement_if_lines <- c(
-    "if (x == 4) {",
-    "  x <- 5",
-    "  return(x)",
-    "} else {",
-    "  return(x)",
-    "}"
+  expect_lint(
+    trim_some("
+      if (x == 4) {
+        x <- 5
+        return(x)
+      } else {
+        return(x)
+      }
+    "),
+    NULL,
+    unnecessary_nesting_linter()
   )
-  expect_lint(multi_statement_if_lines, NULL, unnecessary_nesting_linter())
 })
 
 test_that("parallels in further nesting are skipped", {
-  terminal_if_else_lines <- c(
-    "if (length(bucket) > 1) {",
-    "  return(age)",
-    "} else {",
-    "  if (grepl('[0-9]', age)) {",
-    "    return(age)",
-    "  } else {",
-    "    return('unknown')",
-    "  }",
-    "}"
+  expect_lint(
+    trim_some("
+      if (length(bucket) > 1) {
+        return(age)
+      } else {
+        if (grepl('[0-9]', age)) {
+          return(age)
+        } else {
+          return('unknown')
+        }
+      }
+    "),
+    NULL,
+    unnecessary_nesting_linter()
   )
-  expect_lint(terminal_if_else_lines, NULL, unnecessary_nesting_linter())
 })
 
 test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
   linter <- unnecessary_nesting_linter()
 
-  if_stop_lines <- c(
-    "if (A) {",
-    "  stop()",
-    "} else {",
-    "  B",
-    "}"
-  )
   expect_lint(
-    if_stop_lines,
+    trim_some("
+      if (A) {
+        stop()
+      } else {
+        B
+      }
+    "),
     rex::rex("Reduce the nesting of this if/else statement by unnesting the portion"),
     linter
   )
 
-  if_return_lines <- c(
-    "if (A) {",
-    "  return()",
-    "} else {",
-    "  B",
-    "}"
-  )
   expect_lint(
-    if_return_lines,
+    trim_some("
+      if (A) {
+        return()
+      } else {
+        B
+      }
+    "),
     rex::rex("Reduce the nesting of this if/else statement by unnesting the portion"),
     linter
   )
 
   # also find exits in the later branch
-  else_stop_lines <- c(
-    "if (A) {",
-    "  B",
-    "} else {",
-    "  stop()",
-    "}"
-  )
   expect_lint(
-    else_stop_lines,
+    trim_some("
+      if (A) {
+        B
+      } else {
+        stop()
+      }
+    "),
     rex::rex("Reduce the nesting of this if/else statement by unnesting the portion"),
     linter
   )
 
-  else_return_lines <- c(
-    "if (A) {",
-    "  B",
-    "} else {",
-    "  return()",
-    "}"
-  )
   expect_lint(
-    else_return_lines,
+    trim_some("
+      if (A) {
+        B
+      } else {
+        return()
+      }
+    "),
     rex::rex("Reduce the nesting of this if/else statement by unnesting the portion"),
     linter
   )
@@ -141,68 +149,89 @@ test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
 test_that("unnecessary_nesting_linter skips one-line functions", {
   linter <- unnecessary_nesting_linter()
 
-  anonymous_function_lines <- c(
-    "foo <- function(x) {",
-    "  return(x)",
-    "}"
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        return(x)
+      }
+    "),
+    NULL,
+    linter
   )
-  expect_lint(anonymous_function_lines, NULL, linter)
 
   # purrr anonymous functions also get skipped
-  purrr_function_lines <- c(
-    "purrr::map(x, ~ {",
-    "  .x",
-    "})"
+  expect_lint(
+    trim_some("
+      purrr::map(x, ~ {
+        .x
+      })
+    "),
+    NULL,
+    linter
   )
-  expect_lint(purrr_function_lines, NULL, linter)
 })
 
 test_that("unnecessary_nesting_linter skips one-expression for loops", {
   linter <- unnecessary_nesting_linter()
 
-  for_lines <- c(
-    "for (i in 1:10) {",
-    "  print(i)",
-    "}"
+  expect_lint(
+    trim_some("
+      for (i in 1:10) {
+        print(i)
+      }
+    "),
+    NULL,
+    linter
   )
-  expect_lint(for_lines, NULL, linter)
 
   # also for extended control flow functionality from packages
-  foreach_lines <- c(
-    "foreach (i = 1:10) %dopar% {",
-    "  print(i)",
-    "}"
+  expect_lint(
+    trim_some("
+      foreach (i = 1:10) %dopar% {
+        print(i)
+      }
+    "),
+    NULL,
+    linter
   )
-  expect_lint(foreach_lines, NULL, linter)
 })
 
 test_that("unnecessary_nesting_linter skips one-expression if and else clauses", {
-  lines <- c(
-    "if (TRUE) {",
-    "  x",
-    "} else {",
-    "  y",
-    "}"
+  expect_lint(
+    trim_some("
+      if (TRUE) {
+        x
+      } else {
+        y
+      }
+    "),
+    NULL,
+    unnecessary_nesting_linter()
   )
-  expect_lint(lines, NULL, unnecessary_nesting_linter())
 })
 
 test_that("unnecessary_nesting_linter skips one-expression while loops", {
-  lines <- c(
-    "while (x < 10) {",
-    "  x <- x + 1",
-    "}"
+  expect_lint(
+    trim_some("
+      while (x < 10) {
+        x <- x + 1
+      }
+    "),
+    NULL,
+    unnecessary_nesting_linter()
   )
-  expect_lint(lines, NULL, unnecessary_nesting_linter())
 })
 
 test_that("unnecessary_nesting_linter skips one-expression repeat loops", {
-  lines <- c(
-    "repeat {",
-    "  x <- x + 1",
-    "}"
+  expect_lint(
+    trim_some("
+      repeat {
+        x <- x + 1
+      }
+    "),
+    NULL,
+    unnecessary_nesting_linter()
   )
-  expect_lint(lines, NULL, unnecessary_nesting_linter())
 })
 
 test_that("unnecessary_nesting_linter skips one-expression assignments by default", {
@@ -218,16 +247,19 @@ test_that("unnecessary_nesting_linter skips one-expression assignments by defaul
 })
 
 test_that("unnecessary_nesting_linter passes for multi-line braced expressions", {
-  lines <- c(
-    "tryCatch(",
-    "  {",
-    "    foo(x)",
-    "    bar(x)",
-    "  },",
-    "  error = identity",
-    ")"
+  expect_lint(
+    trim_some("
+      tryCatch(
+        {
+          foo(x)
+          bar(x)
+        },
+        error = identity
+      )
+    "),
+    NULL,
+    unnecessary_nesting_linter()
   )
-  expect_lint(lines, NULL, unnecessary_nesting_linter())
 })
 
 test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", {
@@ -343,5 +375,277 @@ test_that("lints vectorize", {
       list(lint_msg, line_number = 7L)
     ),
     unnecessary_nesting_linter()
+  )
+})
+
+test_that("unnecessary_nesting_linter skips allowed usages", {
+  linter <- unnecessary_nesting_linter()
+
+  expect_lint(
+    trim_some("
+      if (x && y) {
+        1L
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      for (x in 1:3) {
+        if (x && y) {
+          1L
+        }
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        1L
+      } else if (y) {
+        2L
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        1L
+      } else {
+        if (y) {
+          2L
+        }
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (if (x) TRUE else FALSE) {
+        1L
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        y <- x + 1L
+        if (y) {
+          1L
+        }
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if ((x && y) || (if (x) TRUE else FALSE)) {
+        1L
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  # if there is any additional code between the inner and outer scopes, no lint
+  expect_lint(
+    trim_some("
+      if (x && a) {
+        y <- x + 1L
+        if (y || b) {
+          1L
+        }
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        if (y) {
+          1L
+        }
+        y <- x + 1L
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        y <- x + 1L
+        if (y) {
+          1L
+        }
+        y <- x
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        y <- x + 1L
+        {
+          if (y) {
+            1L
+          }
+        }
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        {
+           y <- x + 1L
+           if (y) {
+             1L
+           }
+        }
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        {
+          if (y) {
+            1L
+          }
+        }
+        y <- x + 1L
+      }
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        {
+          y <- x + 1L
+          {
+            if (y) {
+              1L
+            }
+          }
+        }
+      }
+    "),
+    NULL,
+    linter
+  )
+})
+
+test_that("unnecessary_nesting_linter blocks disallowed usages", {
+  lint_message <- rex::rex("Don't use nested `if` statements")
+  linter <- unnecessary_nesting_linter()
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        if (y) {
+          1L
+        }
+      }
+    "),
+    lint_message,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        if (y) 1L
+      }
+    "),
+    lint_message,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (x && a) {
+        if (y || b) {
+          1L
+        }
+      }
+    "),
+    lint_message,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (if (x) TRUE else FALSE) {
+        if (y) {
+          1L
+        }
+      }
+    "),
+    lint_message,
+    linter
+  )
+
+  expect_lint(
+    "if (x) if (y) 1L",
+    lint_message,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      for (x in 1:3) {
+        if (x) if (y) 1L
+      }
+    "),
+    lint_message,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (x) {
+        if (y) {
+          if (z) {
+            1L
+          }
+        }
+      }
+    "),
+    list(
+      list(message = lint_message, line_number = 2L, column_number = 3L),
+      list(message = lint_message, line_number = 3L, column_number = 5L)
+    ),
+    linter
   )
 })
