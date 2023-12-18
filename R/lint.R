@@ -10,8 +10,8 @@
 #' Note that if files contain unparseable encoding problems, only the encoding problem will be linted to avoid
 #' unintelligible error messages from other linters.
 #'
-#' @param filename Either the filename for a file to lint, or a character string of inline R code for linting.
-#'   The latter (inline data) applies whenever `filename` has a newline character (\\n).
+#' @param filename Either a vector of filenames to lint, or a character string of inline R code for linting.
+#'   The latter (inline data) applies whenever `filename` is length one and has a newline character (\\n).
 #' @param linters A named list of linter functions to apply. See [linters] for a full list of default and available
 #'   linters.
 #' @param ... Provide additional arguments to be passed to:
@@ -22,7 +22,7 @@
 #' @param parse_settings Logical, default `TRUE`. Whether to try and parse the [settings][read_settings]. Otherwise,
 #'   the [default_settings()] are used.
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
-#'   linting is being done ad hoc.
+#'   linting is being done _ad hoc_.
 #'
 #' @return An object of class `c("lints", "list")`, each element of which is a `"list"` object.
 #'
@@ -36,42 +36,72 @@
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
   check_dots(...names(), c("exclude", "parse_exclusions"))
 
-  needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
-  inline_data <- !is.null(text) || needs_tempfile
-  lines <- get_lines(filename, text)
-
-  if (needs_tempfile) {
-    filename <- tempfile()
-    con <- file(filename, open = "w", encoding = settings$encoding)
-    on.exit(unlink(filename), add = TRUE)
-    writeLines(text = lines, con = con, sep = "\n")
-    close(con)
+  is_adhoc <- !is.null(text) || (length(filename) == 1L && re_matches(filename, rex(newline)))
+  if (is_adhoc) {
+    return(ad_hoc_lint(filename, lines, linters, ..., parse_settings = parse_settings, text = text))
   }
 
-  filename <- normalizePath(filename, mustWork = !inline_data) # to ensure a unique file in cache
-  source_expressions <- get_source_expressions(filename, lines)
+  filename <- normalizePath(filename) # to ensure a unique file in cache
 
   if (isTRUE(parse_settings)) {
     read_settings(filename)
     on.exit(reset_settings(), add = TRUE)
   }
 
-  linters <- define_linters(linters)
-  linters <- Map(validate_linter_object, linters, names(linters))
+  linters <- setup_linters(linters)
 
   cache_path <- define_cache_path(cache)
 
-  lint_cache <- load_cache(filename, cache_path)
-  lint_obj <- define_cache_key(filename, inline_data, lines)
-  lints <- retrieve_file(lint_cache, lint_obj, linters)
-  if (!is.null(lints)) {
-    return(exclude(lints, lines = lines, linter_names = names(linters), ...))
+  lints <- list()
+  for (single_file in filename) {
+    lines <- get_lines(filename, text)
+    lints <- c(lints, lint_single_file(filename, lines))
   }
 
-  file_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "file")]
-  expression_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "expression")]
+  lints <- reorder_lints(flatten_lints(lints))
+  class(lints) <- c("lints", "list")
 
-  lints <- list()
+  lints
+}
+
+ad_hoc_lint <- function(filename, lines, linters, ..., parse_settings, text) {
+  needs_tempfile <- missing(filename) || (length(filename) == 1L && re_matches(filename, rex(newline)))
+  inline_data <- needs_tempfile || !is.null(text)
+
+  if (needs_tempfile) {
+    lines <- get_lines(filename, text)
+    filename <- tempfile()
+    on.exit(unlink(filename), add = TRUE)
+    local({
+      con <- file(filename, open = "w", encoding = settings$encoding)
+      on.exit(close(con))
+      writeLines(text = lines, con = con, sep = "\n")
+    })
+  }
+
+  filename <- normalizePath(filename) # to ensure a unique file in cache
+
+  if (isTRUE(parse_settings)) {
+    read_settings(filename)
+    on.exit(reset_settings(), add = TRUE)
+  }
+
+  # simplify filename if inline
+  zap_temp_filename(res, needs_tempfile)
+}
+
+lint_single_file <- function(filename, lines, cache_path) {
+  source_expressions <- get_source_expressions(filename, lines)
+
+  lint_cache <- load_cache(filename, cache_path)
+  lint_obj <- define_cache_key(filename, inline_data, lines)
+  file_lints <- retrieve_file(lint_cache, lint_obj, linters)
+  if (!is.null(file_lints)) {
+    lints <- c(lints, exclude(file_lints, lines = lines, linter_names = names(linters), ...))
+    next
+  }
+
+  file_lints <- list()
   if (!is_tainted(source_expressions$lines)) {
     for (expr in source_expressions$expressions) {
       if (is_lint_level(expr, "expression")) {
@@ -81,7 +111,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
       }
       for (linter in necessary_linters) {
         # use withCallingHandlers for friendlier failures on unexpected linter errors
-        lints[[length(lints) + 1L]] <- withCallingHandlers(
+        file_lints[[length(file_lints) + 1L]] <- withCallingHandlers(
           get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
           error = function(cond) {
             stop("Linter '", linter, "' failed in ", filename, ": ", conditionMessage(cond), call. = FALSE)
@@ -90,18 +120,12 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
       }
     }
   }
+  file_lints <- maybe_append_error_lint(file_lints, source_expressions$error, lint_cache, filename)
 
-  lints <- maybe_append_error_lint(lints, source_expressions$error, lint_cache, filename)
-  lints <- reorder_lints(flatten_lints(lints))
-  class(lints) <- c("lints", "list")
-
-  cache_file(lint_cache, filename, linters, lints)
+  cache_file(lint_cache, filename, linters, file_lints)
   save_cache(lint_cache, filename, cache_path)
 
-  res <- exclude(lints, lines = lines, linter_names = names(linters), ...)
-
-  # simplify filename if inline
-  zap_temp_filename(res, needs_tempfile)
+  lints <- c(lints, exclude(file_lints, lines = lines, linter_names = names(linters), ...))
 }
 
 #' @param path For the base directory of the project (for `lint_dir()`) or
@@ -322,6 +346,14 @@ define_linters <- function(linters = NULL) {
     names(linters) <- name
   }
   linters
+}
+
+setup_linters <- function(linters) {
+  linters <- define_linters(linters)
+  linters <- Map(validate_linter_object, linters, names(linters))
+  file_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "file")]
+  expression_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "expression")]
+  list(linters = linters, file_linter_names = file_linter_names, expression_linter_names = expression_linter_names)
 }
 
 validate_linter_object <- function(linter, name) {
