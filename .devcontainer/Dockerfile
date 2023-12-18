@@ -5,8 +5,7 @@ RUN apt-get -qq update \
   git libxml2-dev
 
 RUN Rscript -e "
-  install.packages('remotes')
-  lintr_deps <- remotes::dev_package_deps()
   # patrick also pulls in testthat and pkgload
-  install.packages(c(lintr_deps, 'patrick'))
+  install.packages(c('remotes', 'patrick'))
+  remotes::install_deps()
 "
