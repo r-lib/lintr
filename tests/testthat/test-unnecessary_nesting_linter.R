@@ -353,18 +353,20 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
     trim_some("
       if (x && y) {
         1L
-      }"),
+      }
+    "),
     NULL,
     linter
   )
 
   expect_lint(
     trim_some("
-    for (x in 1:3) {
-      if (x && y) {
-        1L
+      for (x in 1:3) {
+        if (x && y) {
+          1L
+        }
       }
-    }"),
+    "),
     NULL,
     linter
   )
@@ -375,7 +377,8 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         1L
       } else if (y) {
         2L
-      }"),
+      }
+    "),
     NULL,
     linter
   )
@@ -388,7 +391,8 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         if (y) {
           2L
         }
-      }"),
+      }
+    "),
     NULL,
     linter
   )
@@ -397,7 +401,8 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
     trim_some("
       if (if (x) TRUE else FALSE) {
         1L
-      }"),
+      }
+    "),
     NULL,
     linter
   )
@@ -409,7 +414,8 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         if (y) {
           1L
         }
-      }"),
+      }
+    "),
     NULL,
     linter
   )
@@ -418,7 +424,8 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
     trim_some("
       if ((x && y) || (if (x) TRUE else FALSE)) {
         1L
-      }"),
+      }
+    "),
     NULL,
     linter
   )
@@ -431,7 +438,8 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         if (y || b) {
           1L
         }
-      }"),
+      }
+    "),
     NULL,
     linter
   )
@@ -443,7 +451,8 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
           1L
         }
         y <- x + 1L
-      }"),
+      }
+    "),
     NULL,
     linter
   )
@@ -456,7 +465,8 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
           1L
         }
         y <- x
-      }"),
+      }
+    "),
     NULL,
     linter
   )
@@ -470,7 +480,8 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
             1L
           }
         }
-      }"),
+      }
+    "),
     NULL,
     linter
   )
@@ -484,7 +495,8 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
              1L
            }
         }
-      }"),
+      }
+    "),
     NULL,
     linter
   )
@@ -498,7 +510,8 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
           }
         }
         y <- x + 1L
-      }"),
+      }
+    "),
     NULL,
     linter
   )
@@ -514,7 +527,8 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
             }
           }
         }
-      }"),
+      }
+    "),
     NULL,
     linter
   )
@@ -530,7 +544,8 @@ test_that("unnecessary_nesting_linter blocks disallowed usages", {
         if (y) {
           1L
         }
-      }"),
+      }
+    "),
     lint_message,
     linter
   )
@@ -539,7 +554,8 @@ test_that("unnecessary_nesting_linter blocks disallowed usages", {
     trim_some("
       if (x) {
         if (y) 1L
-      }"),
+      }
+    "),
     lint_message,
     linter
   )
@@ -550,7 +566,8 @@ test_that("unnecessary_nesting_linter blocks disallowed usages", {
         if (y || b) {
           1L
         }
-      }"),
+      }
+    "),
     lint_message,
     linter
   )
@@ -561,7 +578,8 @@ test_that("unnecessary_nesting_linter blocks disallowed usages", {
         if (y) {
           1L
         }
-      }"),
+      }
+    "),
     lint_message,
     linter
   )
@@ -574,9 +592,10 @@ test_that("unnecessary_nesting_linter blocks disallowed usages", {
 
   expect_lint(
     trim_some("
-    for (x in 1:3) {
-      if (x) if (y) 1L
-    }"),
+      for (x in 1:3) {
+        if (x) if (y) 1L
+      }
+    "),
     lint_message,
     linter
   )
@@ -589,7 +608,8 @@ test_that("unnecessary_nesting_linter blocks disallowed usages", {
             1L
           }
         }
-      }"),
+      }
+    "),
     list(
       list(message = lint_message, line_number = 2L, column_number = 3L),
       list(message = lint_message, line_number = 3L, column_number = 5L)
