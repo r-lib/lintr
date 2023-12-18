@@ -5,11 +5,7 @@ RUN apt-get -qq update \
   git libxml2-dev
 
 RUN Rscript -e "
-  read.dcf('DESCRIPTION', 'Imports') |>
-  strsplit(',[\\n ]*') |>
-  unlist() |>
-  gsub(pattern = '[\\n ]*[(].*', replacement = '') |>
-  setdiff(tools:::.get_standard_package_names()$base) |>
-  c('pkgload', 'testthat', 'patrick') |>
-  install.packages()
+  install.packages('remotes')
+  remotes::install_deps()
+  install.packages(c('pkgload', 'testthat', 'patrick'))
 "
