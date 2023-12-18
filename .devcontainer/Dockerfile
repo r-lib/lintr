@@ -7,5 +7,6 @@ RUN apt-get -qq update \
 RUN Rscript -e "
   install.packages('remotes')
   remotes::install_deps()
-  install.packages(c('pkgload', 'testthat', 'patrick'))
+  # also pulls in testthat and pkgload
+  install.packages('patrick')
 "
