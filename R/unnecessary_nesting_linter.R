@@ -9,6 +9,12 @@
 #'   The `TRUE` case facilitates interaction with [implicit_assignment_linter()]
 #'   for certain cases where an implicit assignment is necessary, so a braced
 #'   assignment is used to further distinguish the assignment. See examples.
+#' @param allow_functions Character vector of functions which always allow
+#'   one-child braced expressions. `testthat::test_that()` is always allowed because
+#'   testthat requires a braced expression in its `code` argument. The other defaults
+#'   similarly compute on expressions in a way which is worth highlighting by
+#'   em-bracing them, even if there is only one expression, while [switch()] is allowed
+#'   for its use as a control flow analogous to `if`/`else`.
 #'
 #' @examples
 #' # will produce lints
@@ -36,7 +42,12 @@
 #' writeLines("if (x) { \n  if (y) { \n   return(1L) \n  } \n}")
 #' lint(
 #'   text = "if (x) { \n  if (y) { \n   return(1L) \n  } \n}",
-#'   linters = unnecessary_nested_if_linter()
+#'   linters = unnecessary_nesting_linter()
+#' )
+#'
+#' lint(
+#'   text = "my_quote({x})",
+#'   linters = unnecessary_nesting_linter()
 #' )
 #'
 #' # okay
@@ -64,13 +75,18 @@
 #' writeLines("if (x && y) { \n  return(1L) \n}")
 #' lint(
 #'   text = "if (x && y) { \n  return(1L) \n}",
-#'   linters = unnecessary_nested_if_linter()
+#'   linters = unnecessary_nesting_linter()
 #' )
 #'
 #' writeLines("if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}")
 #' lint(
 #'   text = "if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}",
-#'   linters = unnecessary_nested_if_linter()
+#'   linters = unnecessary_nesting_linter()
+#' )
+#'
+#' lint(
+#'   text = "my_quote({x})",
+#'   linters = unnecessary_nesting_linter(allow_functions = "my_quote")
 #' )
 #'
 #' @evalRd rd_tags("unnecessary_nesting_linter")
@@ -78,7 +94,15 @@
 #'  - [cyclocomp_linter()] for another linter that penalizes overly complexcode.
 #'  - [linters] for a complete list of linters available in lintr.
 #' @export
-unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
+unnecessary_nesting_linter <- function(
+    allow_assignment = TRUE,
+    allow_functions = c(
+      "switch",
+      "try", "tryCatch", "withCallingHandlers",
+      "quote", "expression", "bquote", "substitute",
+      "with_parameters_test_that",
+      "reactive", "observe", "observeEvent"
+    )) {
   exit_calls <- c("stop", "return", "abort", "quit", "q")
   exit_call_expr <- glue("
     expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(exit_calls)}]]
@@ -145,6 +169,7 @@ unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
         or self::IF
         or self::WHILE
         or self::REPEAT
+        or self::expr/SYMBOL_FUNCTION_CALL[{ xp_text_in_table(c('test_that', allow_functions)) }]
         or self::expr/expr/SYMBOL_FUNCTION_CALL[text() = 'foreach']
         or self::OP-TILDE
         or self::LEFT_ASSIGN[text() = ':=']

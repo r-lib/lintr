@@ -328,7 +328,7 @@ test_that("rlang's double-brace operator is skipped", {
 test_that("unnecessary_nesting_linter blocks one-expression braced expressions", {
   expect_lint(
     trim_some("
-      tryCatch(
+      tryToCatch(
         {
           foo(x)
         },
@@ -343,7 +343,7 @@ test_that("unnecessary_nesting_linter blocks one-expression braced expressions",
 test_that("unnecessary_nesting_linter allow_assignment= argument works", {
   expect_lint(
     trim_some("
-      tryCatch(
+      tryToCatch(
         {
           idx <- foo(x)
         },
@@ -712,4 +712,20 @@ test_that("else that can drop braces is found", {
     ),
     linter
   )
+})
+
+patrick::with_parameters_test_that(
+  "default allowed functions are skipped",
+  expect_lint(sprintf("%s(x, {y}, z)", call), NULL, unnecessary_nesting_linter()),
+  call = c(
+    "test_that", "with_parameters_test_that",
+    "switch",
+    "try", "tryCatch", "withCallingHandlers",
+    "quote", "bquote", "expression", "substitute",
+    "observe", "observeEvent", "reactive"
+  )
+)
+
+test_that("allow_functions= works", {
+  expect_lint("foo(x, {y}, z)", NULL, unnecessary_nesting_linter(allow_functions = "foo"))
 })
