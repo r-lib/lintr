@@ -3,9 +3,8 @@ test_that("commented_code_linter skips allowed usages", {
 
   expect_lint("blah", NULL, linter)
   expect_lint("#' blah <- 1", NULL, linter)
-  expect_lint(c("a <- 1", "# comment without code"), NULL, linter)
-  expect_lint(c("a <- 1", "# comment without code"), NULL, linter)
-  expect_lint(c("a <- 1", "## whatever"), NULL, linter)
+  expect_lint("a <- 1\n# comment without code", NULL, linter)
+  expect_lint("a <- 1\n## whatever", NULL, linter)
 
   expect_lint("TRUE", NULL, linter)
   expect_lint("#' @examples", NULL, linter)
