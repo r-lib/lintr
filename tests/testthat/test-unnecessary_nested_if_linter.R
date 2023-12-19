@@ -1,5 +1,14 @@
+test_that("unnecessary_nested_if_linter generates deprecation warning", {
+  expect_warning(
+    unnecessary_nested_if_linter(),
+    rex::rex("unnecessary_nested_if_linter was deprecated", anything, "Use unnecessary_nesting_linter")
+  )
+})
+
 test_that("unnecessary_nested_if_linter skips allowed usages", {
-  linter <- unnecessary_nested_if_linter()
+  expect_warning({
+    linter <- unnecessary_nested_if_linter()
+  })
 
   expect_lint(
     trim_some("
@@ -174,7 +183,9 @@ test_that("unnecessary_nested_if_linter skips allowed usages", {
 
 test_that("unnecessary_nested_if_linter blocks disallowed usages", {
   lint_message <- rex::rex("Don't use nested `if` statements")
-  linter <- unnecessary_nested_if_linter()
+  expect_warning({
+    linter <- unnecessary_nested_if_linter()
+  })
 
   expect_lint(
     trim_some("
