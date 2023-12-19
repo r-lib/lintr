@@ -9,7 +9,7 @@ COPY DESCRIPTION .
 # NB: patrick also pulls in testthat and pkgload
 # hard-copied from DESCRIPTION
 RUN Rscript -e '                           \
-  install.packages("remotes")              \
+  install.packages("remotes");             \
   remotes::install_deps(dependencies = c(  \
     "Depends",                             \
     "Imports",                             \
