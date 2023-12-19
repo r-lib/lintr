@@ -8,7 +8,8 @@ unnecessary_nesting_linter(
   allow_assignment = TRUE,
   allow_functions = c("switch", "try", "tryCatch", "withCallingHandlers", "quote",
     "expression", "bquote", "substitute", "with_parameters_test_that", "reactive",
-    "observe", "observeEvent")
+    "observe", "observeEvent", "renderCachedPlot", "renderDataTable", "renderImage",
+    "renderPlot", "renderPrint", "renderTable", "renderText", "renderUI")
 )
 }
 \arguments{
