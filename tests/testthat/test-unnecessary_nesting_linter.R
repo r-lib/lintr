@@ -722,7 +722,9 @@ patrick::with_parameters_test_that(
     "switch",
     "try", "tryCatch", "withCallingHandlers",
     "quote", "bquote", "expression", "substitute",
-    "observe", "observeEvent", "reactive"
+    "observe", "observeEvent", "reactive",
+    "renderCachedPlot", "renderDataTable", "renderImage", "renderPlot", 
+    "renderPrint", "renderTable", "renderText", "renderUI"
   )
 )
 

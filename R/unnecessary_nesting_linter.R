@@ -101,7 +101,9 @@ unnecessary_nesting_linter <- function(
       "try", "tryCatch", "withCallingHandlers",
       "quote", "expression", "bquote", "substitute",
       "with_parameters_test_that",
-      "reactive", "observe", "observeEvent"
+      "reactive", "observe", "observeEvent",
+      "renderCachedPlot", "renderDataTable", "renderImage", "renderPlot",
+      "renderPrint", "renderTable", "renderText", "renderUI"
     )) {
   exit_calls <- c("stop", "return", "abort", "quit", "q")
   exit_call_expr <- glue("
