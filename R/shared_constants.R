@@ -257,7 +257,7 @@ extract_glued_symbols <- function(expr, interpret_glue) {
 
   glued_symbols <- new.env(parent = emptyenv())
   for (glue_call in glue_calls) {
-    # TODO(michaelchirico): consider dropping tryCatch() here if we're more confident in our logic
+    # TODO(#2475): Drop tryCatch().
     parsed_call <-
       tryCatch(xml2lang(glue_call), error = unexpected_glue_parse_error, warning = unexpected_glue_parse_error)
     parsed_call[[".envir"]] <- glued_symbols

@@ -33,7 +33,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unnecessary_placeholder_linter <- function() {
-  # TODO(michaelchirico): handle R4.2.0 native placeholder _ as well
+  # TODO(#2479): Cover |> and _ too.
   xpath <- glue("
   //SPECIAL[{ xp_text_in_table(magrittr_pipes) }]
     /following-sibling::expr[
