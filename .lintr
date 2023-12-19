@@ -6,7 +6,7 @@ linters: all_linters(
       except_regex = rex::rex(
         "TODO(",
         # GitHub issue number #1234, possibly from another repo org/repo#5678
-        maybe(one_or_more(alnum, "-"), "/", one_or_more(alnum, ".", "-", "_")),
+        maybe(one_or_more(character_class("a-zA-Z0-9-")), "/", one_or_more(character_class("a-zA-Z0-9._-"))),
         "#", one_or_more(digit),
         ")"
       )
