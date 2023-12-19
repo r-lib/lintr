@@ -8,10 +8,11 @@ COPY DESCRIPTION .
 
 # NB: patrick also pulls in testthat and pkgload
 # hard-copied from DESCRIPTION
-RUN Rscript -e '                       \
-read.dcf("DESCRIPTION", "Imports") |>  \
-  tools:::.split_dependencies() |>     \
-  names() |>                           \
-  c("patrick") |>                      \
-  install.packages()                   \
+RUN Rscript -e '                           \
+  install.packages("remotes")              \
+  remotes::install_deps(dependencies = c(  \
+    "Depends",                             \
+    "Imports",                             \
+    "Config/needs/development"             \
+  ))                                       \
 '
