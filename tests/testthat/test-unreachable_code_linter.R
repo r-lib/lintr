@@ -720,30 +720,3 @@ test_that("allow_comment_regex= obeys covr's custom exclusion when set", {
     linter_covr
   )
 })
-
-# nolint start: commented_code_linter.
-# TODO(michaelchirico): extend to work on switch() statements
-# test_that("unreachable_code_linter interacts with switch() as expected", {
-#   unreachable_inside_switch_lines <- trim_some("
-#     foo <- function(x) {
-#       switch(x,
-#         a = {
-#           return(x)
-#           x + 1
-#         },
-#         b = {
-#           return(x + 1)
-#         }
-#       )
-#     }
-#   ")
-#   expect_lint(
-#     unreachable_inside_switch_lines,
-#     rex::rex("Code and comments coming after a return() or stop()"),
-#     unreachable_code_linter()
-#   )
-# })
-# nolint end: commented_code_linter.
-
-# TODO(michaelchirico): This could also apply to cases without
-#   explicit returns (where it can only apply to comments)
