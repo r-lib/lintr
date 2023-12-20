@@ -9,7 +9,6 @@ COPY DESCRIPTION .
 RUN Rscript -e '                           \
   install.packages("remotes");             \
   remotes::install_deps(dependencies = c(  \
-    "Depends",                             \
     "Imports",                             \
     "Config/needs/development"             \
   ))                                       \
