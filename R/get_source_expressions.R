@@ -16,43 +16,51 @@
 #'   If `NULL`, then `filename` will be read.
 #' @return A `list` with three components:
 #' \describe{
-#'   \item{expressions}{a `list` of
-#'   `n+1` objects. The first `n` elements correspond to each expression in
-#'   `filename`, and consist of a list of 8 elements:
-#'   \itemize{
-#'     \item{`filename` (`character`) the name of the file.}
-#'     \item{`line` (`integer`) the line in the file where this expression begins.}
-#'     \item{`column` (`integer`) the column in the file where this expression begins.}
-#'     \item{`lines` (named `character`) vector of all lines spanned by this
-#'           expression, named with the corresponding line numbers.}
-#'     \item{`parsed_content` (`data.frame`) as given by [utils::getParseData()] for this expression.}
-#'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of this expression as given by
-#'           [xmlparsedata::xml_parse_data()].}
-#'     \item{`content` (`character`) the same as `lines` as a single string (not split across lines).}
-#'     \item{`xml_find_function_calls(function_names)` (`function`) a function that returns all `SYMBOL_FUNCTION_CALL`
-#'           XML nodes from `xml_parsed_content` with specified function names.}
-#'   }
-#'
-#'   The final element of `expressions` is a list corresponding to the full file
-#'   consisting of 7 elements:
-#'   \itemize{
-#'     \item{`filename` (`character`) the name of this file.}
-#'     \item{`file_lines` (`character`) the [readLines()] output for this file.}
-#'     \item{`content` (`character`) for .R files, the same as `file_lines`;
-#'           for .Rmd or .qmd scripts, this is the extracted R source code (as text).}
-#'     \item{`full_parsed_content` (`data.frame`) as given by
-#'           [utils::getParseData()] for the full content.}
-#'     \item{`full_xml_parsed_content` (`xml_document`) the XML parse tree of all
-#'           expressions as given by [xmlparsedata::xml_parse_data()].}
-#'     \item{`terminal_newline` (`logical`) records whether `filename` has a terminal
-#'           newline (as determined by [readLines()] producing a corresponding warning).}
-#'     \item{`xml_find_function_calls(function_names)` (`function`) a function that returns all `SYMBOL_FUNCTION_CALL`
-#'           XML nodes from `full_xml_parsed_content` with specified function names.}
-#'   }
-#'   }
+#'   \item{expressions}{a `list` of `n+1` objects. The first `n` elements correspond to each expression in
+#'     `filename`, and the last element corresponds to the full file. See sections on source expressions.}
 #'   \item{error}{A `Lint` object describing any parsing error.}
 #'   \item{lines}{The [readLines()] output for this file.}
 #' }
+#'
+#' @details
+#' # Source expressions
+#'
+#' The `expressions` objects come in two flavors: one for each expression in a file, the other for
+#'   the entire file. They are very similar but differ in important ways. Expression-level objects
+#'   are better for caching (since expressions change less often than whole files), but some lints
+#'   cannot be expressed at the expression level. A precise description follows:
+#'
+#' ## Expresion-level objects
+#'
+#' These correspond to each top-level expression in the file and consist of a list of 8 elements:
+#'  * `filename` (`character`) the name of the file.
+#'  * `line` (`integer`) the line in the file where this expression begins.
+#'  * `column` (`integer`) the column in the file where this expression begins.
+#'  * `lines` (named `character`) vector of all lines spanned by this expression, named with the corresponding line numbers.
+#'  * `parsed_content` (`data.frame`) as given by [utils::getParseData()] for this expression.
+#'  * `xml_parsed_content` (`xml_document`) the XML parse tree of this expression as given by [xmlparsedata::xml_parse_data()].
+#'  * `content` (`character`) the same as `lines` as a single string (not split across lines).
+#'  * `xml_find_function_calls(function_names, keep_names, land_on)` (`function`) a function for quickly
+#'    accessing cached function calls in the XML tree. There are three parameters:
+#'     * `function_names` (`character`, default `NULL`) The function(s) to return. `NULL` means all functions.
+#'     * `keep_names` (`logical`, default `FALSE`) Whether to associate each item with the associated function name.
+#'     * `land_on` (`character`, default `"call_symbol"`) Where in the tree should the returned object land?
+#'       The default is to land on the `<SYMBOL_FUNCTION_CALL>` node; `"call_symbol_expr"` gives the `parent::expr`
+#'       of this node, and `"call_expr"` gives the `parent::expr/parent::expr` of this node.
+#'
+#' ## File-level objects
+#'
+#' These encompass the entire file at once and consist of a list of 7 elements:
+#'
+#'  * `filename` (`character`) the name of this file.
+#'  * `file_lines` (`character`) the [readLines()] output for this file.
+#'  * `content` (`character`) for .R files, the same as `file_lines`;
+#'    for .Rmd or .qmd scripts, this is the extracted R source code (as text).
+#'  * `full_parsed_content` (`data.frame`) Same as expression-level `parsed_content`, for the whole file.
+#'  * `full_xml_parsed_content` (`xml_document`) Same as expression-level `xml_parsed_content`, for the whole file.
+#'  * `terminal_newline` (`logical`) records whether `filename` has a terminal
+#'    newline (as determined by [readLines()] producing a corresponding warning).
+#'  * `xml_find_function_calls(function_names, keep_names, land_on)` (`function`) Same as in expression level object.
 #'
 #' @examplesIf requireNamespace("withr", quietly = TRUE)
 #' tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))

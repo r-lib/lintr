@@ -15,40 +15,8 @@ If \code{NULL}, then \code{filename} will be read.}
 \value{
 A \code{list} with three components:
 \describe{
-\item{expressions}{a \code{list} of
-\code{n+1} objects. The first \code{n} elements correspond to each expression in
-\code{filename}, and consist of a list of 8 elements:
-\itemize{
-\item{\code{filename} (\code{character}) the name of the file.}
-\item{\code{line} (\code{integer}) the line in the file where this expression begins.}
-\item{\code{column} (\code{integer}) the column in the file where this expression begins.}
-\item{\code{lines} (named \code{character}) vector of all lines spanned by this
-expression, named with the corresponding line numbers.}
-\item{\code{parsed_content} (\code{data.frame}) as given by \code{\link[utils:getParseData]{utils::getParseData()}} for this expression.}
-\item{\code{xml_parsed_content} (\code{xml_document}) the XML parse tree of this expression as given by
-\code{\link[xmlparsedata:xml_parse_data]{xmlparsedata::xml_parse_data()}}.}
-\item{\code{content} (\code{character}) the same as \code{lines} as a single string (not split across lines).}
-\item{\code{xml_find_function_calls(function_names)} (\code{function}) a function that returns all \code{SYMBOL_FUNCTION_CALL}
-XML nodes from \code{xml_parsed_content} with specified function names.}
-}
-
-The final element of \code{expressions} is a list corresponding to the full file
-consisting of 7 elements:
-\itemize{
-\item{\code{filename} (\code{character}) the name of this file.}
-\item{\code{file_lines} (\code{character}) the \code{\link[=readLines]{readLines()}} output for this file.}
-\item{\code{content} (\code{character}) for .R files, the same as \code{file_lines};
-for .Rmd or .qmd scripts, this is the extracted R source code (as text).}
-\item{\code{full_parsed_content} (\code{data.frame}) as given by
-\code{\link[utils:getParseData]{utils::getParseData()}} for the full content.}
-\item{\code{full_xml_parsed_content} (\code{xml_document}) the XML parse tree of all
-expressions as given by \code{\link[xmlparsedata:xml_parse_data]{xmlparsedata::xml_parse_data()}}.}
-\item{\code{terminal_newline} (\code{logical}) records whether \code{filename} has a terminal
-newline (as determined by \code{\link[=readLines]{readLines()}} producing a corresponding warning).}
-\item{\code{xml_find_function_calls(function_names)} (\code{function}) a function that returns all \code{SYMBOL_FUNCTION_CALL}
-XML nodes from \code{full_xml_parsed_content} with specified function names.}
-}
-}
+\item{expressions}{a \code{list} of \code{n+1} objects. The first \code{n} elements correspond to each expression in
+\code{filename}, and the last element corresponds to the full file. See sections on source expressions.}
 \item{error}{A \code{Lint} object describing any parsing error.}
 \item{lines}{The \code{\link[=readLines]{readLines()}} output for this file.}
 }
@@ -66,6 +34,51 @@ This setting is found by taking the first valid result from the following locati
 \item \code{"UTF-8"} as a fallback.
 }
 }
+\section{Source expressions}{
+The \code{expressions} objects come in two flavors: one for each expression in a file, the other for
+the entire file. They are very similar but differ in important ways. Expression-level objects
+are better for caching (since expressions change less often than whole files), but some lints
+cannot be expressed at the expression level. A precise description follows:
+\subsection{Expresion-level objects}{
+
+These correspond to each top-level expression in the file and consist of a list of 8 elements:
+\itemize{
+\item \code{filename} (\code{character}) the name of the file.
+\item \code{line} (\code{integer}) the line in the file where this expression begins.
+\item \code{column} (\code{integer}) the column in the file where this expression begins.
+\item \code{lines} (named \code{character}) vector of all lines spanned by this expression, named with the corresponding line numbers.
+\item \code{parsed_content} (\code{data.frame}) as given by \code{\link[utils:getParseData]{utils::getParseData()}} for this expression.
+\item \code{xml_parsed_content} (\code{xml_document}) the XML parse tree of this expression as given by \code{\link[xmlparsedata:xml_parse_data]{xmlparsedata::xml_parse_data()}}.
+\item \code{content} (\code{character}) the same as \code{lines} as a single string (not split across lines).
+\item \code{xml_find_function_calls(function_names, keep_names, land_on)} (\code{function}) a function for quickly
+accessing cached function calls in the XML tree. There are three parameters:
+\itemize{
+\item \code{function_names} (\code{character}, default \code{NULL}) The function(s) to return. \code{NULL} means all functions.
+\item \code{keep_names} (\code{logical}, default \code{FALSE}) Whether to associate each item with the associated function name.
+\item \code{land_on} (\code{character}, default \code{"call_symbol"}) Where in the tree should the returned object land?
+The default is to land on the \verb{<SYMBOL_FUNCTION_CALL>} node; \code{"call_symbol_expr"} gives the \code{parent::expr}
+of this node, and \code{"call_expr"} gives the \code{parent::expr/parent::expr} of this node.
+}
+}
+}
+
+\subsection{File-level objects}{
+
+These encompass the entire file at once and consist of a list of 7 elements:
+\itemize{
+\item \code{filename} (\code{character}) the name of this file.
+\item \code{file_lines} (\code{character}) the \code{\link[=readLines]{readLines()}} output for this file.
+\item \code{content} (\code{character}) for .R files, the same as \code{file_lines};
+for .Rmd or .qmd scripts, this is the extracted R source code (as text).
+\item \code{full_parsed_content} (\code{data.frame}) Same as expression-level \code{parsed_content}, for the whole file.
+\item \code{full_xml_parsed_content} (\code{xml_document}) Same as expression-level \code{xml_parsed_content}, for the whole file.
+\item \code{terminal_newline} (\code{logical}) records whether \code{filename} has a terminal
+newline (as determined by \code{\link[=readLines]{readLines()}} producing a corresponding warning).
+\item \code{xml_find_function_calls(function_names, keep_names, land_on)} (\code{function}) Same as in expression level object.
+}
+}
+}
+
 \examples{
 \dontshow{if (requireNamespace("withr", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))

@@ -12,12 +12,18 @@ build_xml_find_function_calls <- function(xml) {
   function_call_cache <- xml_find_all(xml, "//SYMBOL_FUNCTION_CALL")
   names(function_call_cache) <- get_r_string(function_call_cache)
 
-  function(function_names, keep_names = FALSE) {
+  function(function_names, keep_names = FALSE, land_on = c("call_symbol", "call_symbol_expr", "call_expr")) {
+    land_on <- match.arg(land_on)
     if (is.null(function_names)) {
       res <- function_call_cache
     } else {
       res <- function_call_cache[names(function_call_cache) %in% function_names]
     }
-    if (keep_names) res else unname(res)
+    if (!keep_names) res <- unname(res)
+    switch(land_on,
+      call_symbol = res,
+      call_symbol_expr = xml_find_first(res, "parent::expr"),
+      call_expr = xml_find_first(res, "parent::expr/parent::expr")
+    )
   }
 }
