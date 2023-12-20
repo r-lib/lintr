@@ -32,29 +32,28 @@
 boolean_arithmetic_linter <- function() {
   # TODO(#1580): sum() cases x %in% y, A [&|] B, !A, is.na/is.nan/is.finite/is.infinite/is.element
   # TODO(#1581): extend to include all()-alike expressions
-  zero_expr <- "(EQ or NE or GT or LE) and expr[NUM_CONST[text() = '0' or text() = '0L']]"
-  one_expr <- "(LT or GE) and expr[NUM_CONST[text() = '1' or text() = '1L']]"
+  zero_expr <- "(EQ or NE or GT or LE) and expr/NUM_CONST[text() = '0' or text() = '0L']"
+  one_expr <- "(LT or GE) and expr/NUM_CONST[text() = '1' or text() = '1L']"
   length_xpath <- glue("
-  parent::expr
-    /parent::expr
+  self::expr
     /parent::expr[
-      expr[SYMBOL_FUNCTION_CALL[text() = 'length']]
+      expr/SYMBOL_FUNCTION_CALL[text() = 'length']
       and parent::expr[ ({zero_expr}) or ({one_expr})]
     ]
   ")
   sum_xpath <- glue("
-  parent::expr
-    /parent::expr[
-      expr[
-        expr[SYMBOL_FUNCTION_CALL[text() = 'grepl']]
-        or (EQ or NE or GT or LT or GE or LE)
-      ] and parent::expr[ ({zero_expr}) or ({one_expr})]
+  self::expr[
+    expr[
+      expr/SYMBOL_FUNCTION_CALL[text() = 'grepl']
+      or ({ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) })
     ]
+    and parent::expr[ ({zero_expr}) or ({one_expr})]
+  ]
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    length_calls <- source_expression$xml_find_function_calls(c("which", "grep"))
-    sum_calls <- source_expression$xml_find_function_calls("sum")
+    length_calls <- source_expression$xml_find_function_calls(c("which", "grep"), land_on = "call_expr")
+    sum_calls <- source_expression$xml_find_function_calls("sum", land_on = "call_expr")
     any_expr <- c(
       xml_find_all(length_calls, length_xpath),
       xml_find_all(sum_calls, sum_xpath)

@@ -35,8 +35,7 @@
 #' @export
 class_equals_linter <- function() {
   xpath <- "
-  parent::expr
-    /parent::expr
+  self::expr
     /parent::expr[
       not(preceding-sibling::OP-LEFT-BRACKET)
       and (EQ or NE or SPECIAL[text() = '%in%'])
@@ -44,7 +43,7 @@ class_equals_linter <- function() {
   "
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml_calls <- source_expression$xml_find_function_calls("class")
+    xml_calls <- source_expression$xml_find_function_calls("class", land_on = "call_expr")
     bad_expr <- xml_find_all(xml_calls, xpath)
 
     operator <- xml_find_chr(bad_expr, "string(*[2])")

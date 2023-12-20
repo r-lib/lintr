@@ -36,20 +36,20 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 any_is_na_linter <- function() {
-  any_xpath <- "
-  parent::expr
-    /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.na']]]
-    /parent::expr[
+  any_xpath <- "self::expr[
+    expr[2]/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.na']
+    and (
       count(expr) = 2
       or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm'])
-    ]
+    )
+  ]
   "
 
   in_xpath <- "//SPECIAL[text() = '%in%']/preceding-sibling::expr[NUM_CONST[starts-with(text(), 'NA')]]"
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    xml_calls <- source_expression$xml_find_function_calls("any")
+    xml_calls <- source_expression$xml_find_function_calls("any", land_on = "call_expr")
 
     any_expr <- xml_find_all(xml_calls, any_xpath)
     any_lints <- xml_nodes_to_lints(
