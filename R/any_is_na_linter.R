@@ -5,6 +5,7 @@
 #'   Therefore, it should be used in all situations instead of the latter.
 #'
 #' @examples
+#' # comment
 #' # will produce lints
 #' lint(
 #'   text = "any(is.na(x), na.rm = TRUE)",
