@@ -36,9 +36,11 @@
 #'  * `filename` (`character`) the name of the file.
 #'  * `line` (`integer`) the line in the file where this expression begins.
 #'  * `column` (`integer`) the column in the file where this expression begins.
-#'  * `lines` (named `character`) vector of all lines spanned by this expression, named with the corresponding line numbers.
+#'  * `lines` (named `character`) vector of all lines spanned by this expression,
+#'    named with the corresponding line numbers.
 #'  * `parsed_content` (`data.frame`) as given by [utils::getParseData()] for this expression.
-#'  * `xml_parsed_content` (`xml_document`) the XML parse tree of this expression as given by [xmlparsedata::xml_parse_data()].
+#'  * `xml_parsed_content` (`xml_document`) the XML parse tree of this expression
+#'    as given by [xmlparsedata::xml_parse_data()].
 #'  * `content` (`character`) the same as `lines` as a single string (not split across lines).
 #'  * `xml_find_function_calls(function_names, keep_names, land_on)` (`function`) a function for quickly
 #'    accessing cached function calls in the XML tree. There are three parameters:
