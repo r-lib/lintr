@@ -44,7 +44,7 @@ lint(
 writeLines("if (x) { \n  if (y) { \n   return(1L) \n  } \n}")
 lint(
   text = "if (x) { \n  if (y) { \n   return(1L) \n  } \n}",
-  linters = unnecessary_nested_if_linter()
+  linters = unnecessary_nesting_linter()
 )
 
 # okay
@@ -72,13 +72,13 @@ lint(
 writeLines("if (x && y) { \n  return(1L) \n}")
 lint(
   text = "if (x && y) { \n  return(1L) \n}",
-  linters = unnecessary_nested_if_linter()
+  linters = unnecessary_nesting_linter()
 )
 
 writeLines("if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}")
 lint(
   text = "if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}",
-  linters = unnecessary_nested_if_linter()
+  linters = unnecessary_nesting_linter()
 )
 
 }
