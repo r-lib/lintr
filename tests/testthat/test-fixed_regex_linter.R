@@ -341,7 +341,7 @@ local({
       # R version-specific difference in output message on Windows (probably r80051)
       if (getRversion() == "4.0.4") "[\\U{F7D5}]"
     )
-    .cases <- .cases[!regex_expr %in% skip_cases, ]
+    .cases <- .cases[!.cases$regex_expr %in% skip_cases, ]
   }
   patrick::with_parameters_test_that(
     "fixed replacements are correct",
