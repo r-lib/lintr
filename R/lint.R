@@ -140,7 +140,7 @@ lint_dir <- function(path = ".", ...,
                      parse_settings = TRUE,
                      show_progress = NULL) {
   # TODO(#2502): Remove this workaround.
-  dot_names <- if (getRversion() %in% c("4.1.1", "4.1.2")) list(names(...)) else ...names()
+  dot_names <- if (getRversion() %in% c("4.1.1", "4.1.2")) names(list(...)) else ...names()
   check_dots(dot_names, c("lint", "exclude", "parse_exclusions"))
 
   if (isTRUE(parse_settings)) {
