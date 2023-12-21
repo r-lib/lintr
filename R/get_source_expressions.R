@@ -648,6 +648,7 @@ fix_eq_assigns <- function(pc) {
     j <- end_loc + 1L
     # nocov start: only runs on certain R versions
     while (j <= length(expr_locs) && !expr_locs[j]) {
+      stop("Hit the loop :)")
       end_loc <- j
       j <- j + 1L
     }
