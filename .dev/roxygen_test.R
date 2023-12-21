@@ -39,7 +39,7 @@ check_roxygenize_idempotent <- function(LOCALE) {
     }
     cat(sprintf("roxygenize() output differs from saved output for %s.\n", file))
     cat("Here's the tools::Rdiff() comparison of the two files:\n")
-    tools::Rdiff(old_file, new_file)
+    with(tools::Rdiff(tmp1, tmp2, Log = TRUE), writeLines(out[-1L]))
     stop("Failed in LOCALE=", LOCALE, ".", call. = FALSE)
   }
 }
