@@ -33,7 +33,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unnecessary_placeholder_linter <- function() {
-  # NB: Native placeholder '_' must be used with a named argument, so it's not relevant here.
+  # TODO(michaelchirico): handle R4.2.0 native placeholder _ as well
   xpath <- glue("
   //SPECIAL[{ xp_text_in_table(magrittr_pipes) }]
     /following-sibling::expr[
