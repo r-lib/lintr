@@ -640,16 +640,7 @@ fix_eq_assigns <- function(pc) {
 
   for (i in seq_len(n_expr)) {
     start_loc <- true_locs[i]
-
-    # TODO(#2466): Vectorize this loop away, or drop it.
     end_loc <- true_locs[i]
-    j <- end_loc + 1L
-    # nocov start: only runs on certain R versions
-    while (j <= length(expr_locs) && !expr_locs[j]) {
-      end_loc <- j
-      j <- j + 1L
-    }
-    # nocov end
 
     prev_loc <- prev_locs[start_loc]
     next_loc <- next_locs[end_loc]

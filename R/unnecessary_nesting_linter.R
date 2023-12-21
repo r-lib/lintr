@@ -36,7 +36,7 @@
 #' writeLines("if (x) { \n  if (y) { \n   return(1L) \n  } \n}")
 #' lint(
 #'   text = "if (x) { \n  if (y) { \n   return(1L) \n  } \n}",
-#'   linters = unnecessary_nested_if_linter()
+#'   linters = unnecessary_nesting_linter()
 #' )
 #'
 #' # okay
@@ -64,13 +64,13 @@
 #' writeLines("if (x && y) { \n  return(1L) \n}")
 #' lint(
 #'   text = "if (x && y) { \n  return(1L) \n}",
-#'   linters = unnecessary_nested_if_linter()
+#'   linters = unnecessary_nesting_linter()
 #' )
 #'
 #' writeLines("if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}")
 #' lint(
 #'   text = "if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}",
-#'   linters = unnecessary_nested_if_linter()
+#'   linters = unnecessary_nesting_linter()
 #' )
 #'
 #' @evalRd rd_tags("unnecessary_nesting_linter")
@@ -170,6 +170,8 @@ unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
     collapse = " | "
   )
 
+  unnecessary_else_brace_xpath <-  "//IF/parent::expr[parent::expr[preceding-sibling::ELSE and count(expr) = 1]]"
+
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
@@ -201,9 +203,18 @@ unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
       lint_message = paste(
         "Don't use nested `if` statements, where a single `if` with the combined conditional expression will do.",
         "For example, instead of `if (x) { if (y) { ... }}`, use `if (x && y) { ... }`."
-      )
+      ),
+      type = "warning"
     )
 
-    c(if_else_exit_lints, unnecessary_brace_lints, unnecessary_nested_if_lints)
+    unnecessary_else_brace_expr <- xml_find_all(xml, unnecessary_else_brace_xpath)
+    unnecessary_else_brace_lints <- xml_nodes_to_lints(
+      unnecessary_else_brace_expr,
+      source_expression = source_expression,
+      lint_message = "Simplify this condition by using 'else if' instead of 'else { if.",
+      type = "warning"
+    )
+
+    c(if_else_exit_lints, unnecessary_brace_lints, unnecessary_nested_if_lints, unnecessary_else_brace_lints)
   })
 }
