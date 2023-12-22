@@ -255,7 +255,7 @@ get_setting <- function(setting, config, defaults) {
 }
 
 maybe_parse_settings <- function(parse_settings, filename) if (parse_settings) read_settings(filename)
-reset_settings <- function(parse_settings) if (parse_settings) list2env(default_settings, envir = settings)
+reset_settings <- function(do = TRUE) if (do) list2env(default_settings, envir = settings)
 
 find_default_encoding <- function(filename) {
   if (is.null(filename)) {
