@@ -60,7 +60,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   parse_settings <- isTRUE(parse_settings)
   maybe_parse_settings(parse_settings, filename)
-  on.exit(reset_setting(parse_settings), add = TRUE)
+  on.exit(reset_settings(parse_settings), add = TRUE)
 
   linters <- define_linters(linters)
   linters <- Map(validate_linter_object, linters, names(linters))
