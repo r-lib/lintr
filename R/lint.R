@@ -40,6 +40,13 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   inline_data <- !is.null(text) || needs_tempfile
   lines <- get_lines(filename, text)
 
+  if (isTRUE(attr(lines, "lacks_read_permission"))) {
+    warning("File ", filename, " cannot be read by the current user.", call. = FALSE)
+    out <- list()
+    class(out) <- c("lints", "list")
+    return(out)
+  }
+
   if (needs_tempfile) {
     filename <- tempfile()
     con <- file(filename, open = "w", encoding = settings$encoding)

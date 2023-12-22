@@ -106,3 +106,32 @@ test_that("typo in argument name gives helpful error", {
 test_that("linting empty directory passes", {
   expect_length(lint_dir(withr::local_tempdir(), any_duplicated_linter()), 0L)
 })
+
+test_that("directories with unreadable files are OK", {
+  withr::local_dir(withr::local_tempdir())
+  writeLines("a = 1", "unreadable.R")
+  Sys.chmod("unreadable.R", "000")
+
+  # lint_dir() as a simple lint() wrapper
+  expect_warning(
+    expect_length(lint_dir(linters = assignment_linter()), 0L),
+    "cannot be read by the current user.",
+    fixed = TRUE
+  )
+
+  # mixed readable/unreadable
+  writeLines("b = 2", "readable.R")
+  expect_warning(
+    expect_length(lint_dir(linters = assignment_linter()), 1L),
+    "cannot be read by the current user.",
+    fixed = TRUE
+  )
+
+  # multiple unreadable
+  writeLines("c = 3", "unreadable2.R")
+  Sys.chmod("unreadable2.R", "000")
+  warnings <- capture_warnings(expect_length(lint_dir(linters = assignment_linter()), 1L))
+  expect_length(warnings, 2L)
+  expect_match(warnings, "unreadable.R", all = FALSE, fixed = TRUE)
+  expect_match(warnings, "unreadable2.R", all = FALSE, fixed = TRUE)
+})

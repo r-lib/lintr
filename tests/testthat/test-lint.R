@@ -238,3 +238,13 @@ test_that("Linters throwing an error give a helpful error", {
 test_that("typo in argument name gives helpful error", {
   expect_error(lint("xxx", litners = identity), "Found unknown arguments in [.][.][.].*[?]lint ")
 })
+
+test_that("Unreadable files throw a warning", {
+  tmp <- withr::local_tempfile(lines = "a = 1")
+  Sys.chmod(tmp, '000')
+  expect_warning(
+    expect_length(lint(tmp, assignment_linter()), 0L),
+    "cannot be read by the current user.",
+    fixed = TRUE
+  )
+})

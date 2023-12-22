@@ -178,6 +178,11 @@ Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character
 }
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
+  if (file.access(file, 4L) == -1L) {
+    lines <- character()
+    attr(lines, "lacks_read_permission") <- TRUE
+    return(lines)
+  }
   terminal_newline <- TRUE
   lines <- withCallingHandlers(
     readLines(file, warn = TRUE, ...),
