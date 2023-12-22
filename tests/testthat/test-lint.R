@@ -241,7 +241,7 @@ test_that("typo in argument name gives helpful error", {
 
 test_that("Unreadable files throw a warning", {
   tmp <- withr::local_tempfile(lines = "a = 1")
-  Sys.chmod(tmp, '000')
+  Sys.chmod(tmp, "000")
   expect_warning(
     expect_length(lint(tmp, assignment_linter()), 0L),
     "cannot be read by the current user.",

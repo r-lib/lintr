@@ -58,10 +58,9 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   filename <- normalizePath(filename, mustWork = !inline_data) # to ensure a unique file in cache
   source_expressions <- get_source_expressions(filename, lines)
 
-  if (isTRUE(parse_settings)) {
-    read_settings(filename)
-    on.exit(reset_settings(), add = TRUE)
-  }
+  parse_settings <- isTRUE(parse_settings)
+  maybe_parse_settings(parse_settings, filename)
+  on.exit(reset_setting(parse_settings), add = TRUE)
 
   linters <- define_linters(linters)
   linters <- Map(validate_linter_object, linters, names(linters))
