@@ -108,6 +108,8 @@ test_that("linting empty directory passes", {
 })
 
 test_that("directories with unreadable files are OK", {
+  skip_on_os("windows") # Sys.chmod() doesn't work
+
   withr::local_dir(withr::local_tempdir())
   writeLines("a = 1", "unreadable.R")
   Sys.chmod("unreadable.R", "000")

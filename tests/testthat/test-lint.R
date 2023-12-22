@@ -240,6 +240,7 @@ test_that("typo in argument name gives helpful error", {
 })
 
 test_that("Unreadable files throw a warning", {
+  skip_on_os("windows") # Sys.chmod() doesn't work
   tmp <- withr::local_tempfile(lines = "a = 1")
   Sys.chmod(tmp, "000")
   expect_warning(
