@@ -34,6 +34,7 @@ rx_static_token <- local({
 rx_unescaped_regex <- paste0("(?s)", rex(start, zero_or_more(rx_non_active_char), end))
 rx_static_regex <- paste0("(?s)", rex(start, zero_or_more(rx_static_token), end))
 rx_first_static_token <- paste0("(?s)", rex(start, zero_or_more(rx_non_active_char), rx_static_escape))
+rx_escapable_tokens <- "^${}().*+?|[]\\<>=:;/_-!@#%&,~"
 
 #' Determine whether a regex pattern actually uses regex patterns
 #'
@@ -95,19 +96,17 @@ get_fixed_string <- function(static_regex) {
 #'
 #' @noRd
 get_token_replacement <- function(token_content, token_type) {
-  if (token_type == "trivial_char_group") {
+  if (token_type == "trivial_char_group") { # otherwise, char_escape
     token_content <- substr(token_content, start = 2L, stop = nchar(token_content) - 1L)
     if (startsWith(token_content, "\\")) { # escape within trivial char group
       get_token_replacement(token_content, "char_escape")
     } else {
       token_content
     }
-  } else { # char_escape token
-    if (re_matches(token_content, rex("\\", one_of("^${}().*+?|[]\\<>=:;/_-!@#%&,~")))) {
-      substr(token_content, start = 2L, stop = nchar(token_content))
-    } else {
-      eval(parse(text = paste0('"', token_content, '"')))
-    }
+  } else if (re_matches(token_content, rex("\\", one_of(rx_escapable_tokens)))) {
+    substr(token_content, start = 2L, stop = nchar(token_content))
+  } else {
+    eval(parse(text = paste0('"', token_content, '"')))
   }
 }
 
@@ -243,18 +242,7 @@ extract_glued_symbols <- function(expr, interpret_glue) {
   if (!isTRUE(interpret_glue)) {
     return(character())
   }
-  # TODO support more glue functions
-  # Package glue:
-  #  - glue_sql
-  #  - glue_safe
-  #  - glue_col
-  #  - glue_data
-  #  - glue_data_sql
-  #  - glue_data_safe
-  #  - glue_data_col
-  #
-  # Package stringr:
-  #  - str_interp
+  # TODO(#2448): support more glue functions
   # NB: position() > 1 because position=1 is <expr><SYMBOL_FUNCTION_CALL>
   glue_call_xpath <- "
     descendant::SYMBOL_FUNCTION_CALL[text() = 'glue']

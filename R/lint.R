@@ -24,8 +24,6 @@
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
 #'   linting is being done ad hoc.
 #'
-#' @aliases lint_file
-# TODO(next release after 3.0.0): remove the alias
 #' @return An object of class `c("lints", "list")`, each element of which is a `"list"` object.
 #'
 #' @examplesIf requireNamespace("withr", quietly = TRUE)
@@ -36,7 +34,9 @@
 #'
 #' @export
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
-  check_dots(...names(), c("exclude", "parse_exclusions"))
+  # TODO(#2502): Remove this workaround.
+  dot_names <- if (getRversion() %in% c("4.1.1", "4.1.2")) names(list(...)) else ...names()
+  check_dots(dot_names, c("exclude", "parse_exclusions"))
 
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
@@ -139,7 +139,9 @@ lint_dir <- function(path = ".", ...,
                      pattern = "(?i)[.](r|rmd|qmd|rnw|rhtml|rrst|rtex|rtxt)$",
                      parse_settings = TRUE,
                      show_progress = NULL) {
-  check_dots(...names(), c("lint", "exclude", "parse_exclusions"))
+  # TODO(#2502): Remove this workaround.
+  dot_names <- if (getRversion() %in% c("4.1.1", "4.1.2")) names(list(...)) else ...names()
+  check_dots(dot_names, c("lint", "exclude", "parse_exclusions"))
 
   if (isTRUE(parse_settings)) {
     read_settings(path)

@@ -96,7 +96,7 @@ test_that("linter accepts vector of styles", {
   linter <- object_name_linter(styles = c("camelCase", "dotted.case"))
 
   expect_lint(
-    c("var.one <- 1", "varTwo <- 2", "var_three <- 3"),
+    "var.one <- 1\nvarTwo <- 2\nvar_three <- 3",
     list(message = lint_msg, line_number = 3L, column_number = 1L),
     linter
   )

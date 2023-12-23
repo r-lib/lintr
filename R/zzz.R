@@ -237,7 +237,7 @@ rd_undesirable_operators <- function() {
     "The following operators are sometimes regarded as undesirable:",
     "\\itemize{",
     sprintf(
-      "\\item \\code{%1$s} As an alternative, %2$s",
+      "\\item \\code{%1$s}. %2$s",
       op_link_map[op], alternatives
     ),
     "}"
