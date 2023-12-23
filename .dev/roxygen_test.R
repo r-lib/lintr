@@ -38,7 +38,7 @@ check_roxygenize_idempotent <- function(LOCALE) {
       next
     }
     cat(sprintf("roxygenize() output differs from saved output for %s.\n", file))
-    cat("Here's the tools::Rdiff() comparison of the two files:\n")
+    cat("Here's the 'diff' comparison of the two files:\n")
     cat("  [---]: saved output in man/ directory\n")
     cat("  [+++]: roxygenize() output of R/ sources\n")
     system2("diff", c("--unified", old_file, new_file))
