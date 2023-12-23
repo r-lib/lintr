@@ -20,7 +20,8 @@ explicitly supplied.}
 
 \item{allow_implicit_else}{Logical, default \code{TRUE}. If \code{FALSE}, functions with a terminal
 \code{if} clause must always have an \verb{else} clause, making the \code{NULL} alternative explicit
-if necessary.}
+if necessary. Similarly, functions with terminal \code{\link[=switch]{switch()}} statements must have an
+explicit default case.}
 
 \item{return_functions}{Character vector of functions that are accepted as terminal calls
 when \code{return_style = "explicit"}. These are in addition to exit functions
