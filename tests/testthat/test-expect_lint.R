@@ -42,8 +42,8 @@ test_that("multiple checks", {
   expect_success(expect_lint("a=1; b=2", list(c(message = lint_msg), c(message = lint_msg)), linter))
   expect_success(expect_lint("a=1; b=2", list(c(line_number = 1L), c(linter = "assignment_linter")), linter))
   expect_success(expect_lint("a=1; b=2", list(lint_msg, c(line = "a=1; b=2", type = "warning")), linter))
-  expect_success(expect_lint(c("a=1", "b=2"), list(c(line_number = 1L), c(line_number = 2L)), linter))
-  expect_failure(expect_lint(c("a=1", "b=2"), list(c(line_number = 2L), c(line_number = 2L)), linter))
+  expect_success(expect_lint("a=1\nb=2", list(c(line_number = 1L), c(line_number = 2L)), linter))
+  expect_failure(expect_lint("a=1\nb=2", list(c(line_number = 2L), c(line_number = 2L)), linter))
 
   expect_success(expect_lint("a=1; b=2", list(list(line_number = 1L), list(line_number = 2L)), linter))
   expect_failure(expect_lint("a=1; b=2", list(list(line_number = 2L), list(line_number = 2L)), linter))
