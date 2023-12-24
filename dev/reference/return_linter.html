@@ -89,7 +89,8 @@ explicitly supplied.</p></dd>
 <dt>allow_implicit_else</dt>
 <dd><p>Logical, default <code>TRUE</code>. If <code>FALSE</code>, functions with a terminal
 <code>if</code> clause must always have an <code>else</code> clause, making the <code>NULL</code> alternative explicit
-if necessary.</p></dd>
+if necessary. Similarly, functions with terminal <code><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch()</a></code> statements must have an
+explicit default case.</p></dd>
 
 
 <dt>return_functions</dt>
@@ -154,7 +155,7 @@ while <code>except_regex</code> does exclusion by pattern matching with <code><a
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">return_linter</span><span class="op">(</span>allow_implicit_else <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=2,col=3::file=&lt;text&gt;,line=2,col=3,[return_linter] All functions with terminal if statements must have a corresponding terminal else clause</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=2,col=3::file=&lt;text&gt;,line=2,col=3,[return_linter] All functions with terminal if statements must have a corresponding terminal else clause.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="va">code</span> <span class="op">&lt;-</span> <span class="st">"function(x) {\n  x + 1\n}"</span></span></span>
