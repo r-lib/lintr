@@ -236,9 +236,9 @@ test_that("lintr need not be attached for .lintr.R configs to use lintr function
     list(conn = textConnection("lib_paths", "w")),
     dput(.libPaths(), conn)
   )
-  
+
   exprs <- paste(
-    sprintf(".libPaths(%s)", paste(lib_paths, collapse = "")),
+    sprintf("invisible(.libPaths(%s))", paste(lib_paths, collapse = "")),
     'options(lintr.linter_file = "lintr_test_config")',
     sprintf('lints <- lintr::lint_package("%s")', test_path("dummy_packages", "RConfig")),
     # simplify output to be read from stdout
