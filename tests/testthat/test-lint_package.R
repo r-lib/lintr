@@ -232,7 +232,7 @@ test_that("package using .lintr.R config lints correctly", {
 
 test_that("lintr need not be attached for .lintr.R configs to use lintr functions", {
   lib_paths <- character()
-  withr::with_conn(
+  withr::with_connection(
     list(conn = textConnection("lib_paths", "w")),
     dput(.libPaths(), conn)
   )
