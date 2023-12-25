@@ -8,7 +8,7 @@
 ^\.Rproj\.user$
 ^\.idea$
 ^\.dev$
-^\.devcontainers$
+^\.devcontainer$
 ^\.lintr$
 ^\.lintr_new$
 ^wercker\.yml$
