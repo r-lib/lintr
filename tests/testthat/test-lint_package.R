@@ -231,7 +231,14 @@ test_that("package using .lintr.R config lints correctly", {
 })
 
 test_that("lintr need not be attached for .lintr.R configs to use lintr functions", {
+  lib_paths <- character()
+  withr::with_conn(
+    list(conn = textConnection("lib_paths", "w")),
+    dput(.libPaths(), conn)
+  )
+  
   exprs <- paste(
+    sprintf(".libPaths(%s)", paste(lib_paths, collapse = "")),
     'options(lintr.linter_file = "lintr_test_config")',
     sprintf('lints <- lintr::lint_package("%s")', test_path("dummy_packages", "RConfig")),
     # simplify output to be read from stdout
@@ -243,7 +250,6 @@ test_that("lintr need not be attached for .lintr.R configs to use lintr function
   } else {
     rscript <- file.path(R.home("bin"), "Rscript")
   }
-  system2(rscript, c("-e", '"stopifnot(requireNamespace(\'lintr\'))"'), stdout = TRUE)
   expect_identical(
     system2(rscript, c("-e", shQuote(exprs)), stdout = TRUE),
     "infix_spaces_linter|any_duplicated_linter"
