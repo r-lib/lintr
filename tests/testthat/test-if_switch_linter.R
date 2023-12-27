@@ -433,6 +433,10 @@ test_that("max_branch_lines= and max_branch_expr= interact correctly", {
 })
 
 test_that("max_branch_lines= and max_branch_expr= work for a terminal 'else' branch", {
+  max_lines2_linter <- if_switch_linter(max_branch_lines = 2L)
+  max_expr2_linter <- if_switch_linter(max_branch_expr = 2L)
+  lint_msg <- rex::rex("Prefer repeated if/else statements over overly-complicated switch() statements.")
+
   else_long_lines <- trim_some("
     if (x == 'a') {
       1
@@ -446,8 +450,29 @@ test_that("max_branch_lines= and max_branch_expr= work for a terminal 'else' bra
       6
     }
   ")
-  expect_lint(else_long_lines, NULL, if_switch_linter(max_branch_lines = 2L))
-  expect_lint(else_long_lines, NULL, if_switch_linter(max_branch_expr = 2L))
+  expect_lint(else_long_lines, NULL, max_lines2_linter)
+  expect_lint(else_long_lines, NULL, max_expr2_linter)
+
+  default_long_lines <- trim_some("
+    switch(x,
+      a = {
+        1
+      },
+      b = {
+        2
+      },
+      c = {
+        3
+      },
+      {
+        4
+        5
+        6
+      }
+    )
+  ")
+  expect_lint(default_long_lines, lint_msg, max_lines2_linter)
+  expect_lint(default_long_lines, lint_msg, max_expr2_linter)
 })
 
 test_that("max_branch_lines= and max_branch_expr= are guided by the most complex branch", {
@@ -456,7 +481,7 @@ test_that("max_branch_lines= and max_branch_expr= are guided by the most complex
   lint_msg <- rex::rex("Prefer repeated if/else statements over overly-complicated switch() statements.")
 
   # no lint if _any_ branch is too complex
-  five_lines_three_expr_lines <- trim_some("
+  if_else_one_branch_lines <- trim_some("
     if (x == 'a') {
       1
     } else if (x == 'b') {
@@ -467,11 +492,11 @@ test_that("max_branch_lines= and max_branch_expr= are guided by the most complex
       5
     }
   ")
-  expect_lint(five_lines_three_expr_lines, NULL, max_lines2_linter)
-  expect_lint(five_lines_three_expr_lines, NULL, max_expr2_linter)
+  expect_lint(if_else_one_branch_lines, NULL, max_lines2_linter)
+  expect_lint(if_else_one_branch_lines, NULL, max_expr2_linter)
 
   # lint if _any_ branch is too complex
-  five_lines_three_expr_lines <- trim_some("
+  switch_one_branch_lines <- trim_some("
     switch(x,
       a = {
         1
@@ -486,6 +511,6 @@ test_that("max_branch_lines= and max_branch_expr= are guided by the most complex
       }
     )
   ")
-  expect_lint(five_lines_three_expr_lines, lint_msg, max_lines2_linter)
-  expect_lint(five_lines_three_expr_lines, lint_msg, max_expr2_linter)
+  expect_lint(switch_one_branch_lines, lint_msg, max_lines2_linter)
+  expect_lint(switch_one_branch_lines, lint_msg, max_expr2_linter)
 })
