@@ -52,6 +52,7 @@ Enhances:
 VignetteBuilder: 
     knitr
 Config/Needs/website: tidyverse/tidytemplate
+Config/Needs/development: pkgload, cli, testthat, patrick
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -192,7 +193,6 @@ Collate:
     'undesirable_operator_linter.R'
     'unnecessary_concatenation_linter.R'
     'unnecessary_lambda_linter.R'
-    'unnecessary_nested_if_linter.R'
     'unnecessary_nesting_linter.R'
     'unnecessary_placeholder_linter.R'
     'unreachable_code_linter.R'

@@ -14,6 +14,16 @@
 #'   linters = nrow_subset_linter()
 #' )
 #'
+#' lint(
+#'   text = "nrow(filter(x, is_treatment))",
+#'   linters = nrow_subset_linter()
+#' )
+#'
+#' lint(
+#'   text = "x %>% filter(x, is_treatment) %>% nrow()",
+#'   linters = nrow_subset_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "with(x, sum(is_treatment, na.rm = TRUE))",
@@ -25,7 +35,7 @@
 #' @include shared_constants.R
 #' @export
 nrow_subset_linter <- make_linter_from_function_xpath(
-  function_names = "subset",
+  function_names = c("subset", "filter"),
   xpath = glue("
   parent::expr
     /parent::expr

@@ -1,14 +1,14 @@
-# Ensure lint metadata is tested
+# Various repo-level tests for code quality
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
 
-name: ensure-metadata-tests
+name: repo-meta-tests
 
 jobs:
-  ensure-metadata-tests:
+  repo-meta-tests:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -27,4 +27,9 @@ jobs:
         run: |
           options(crayon.enabled = TRUE)
           callr::rscript(".dev/lint_metadata_test.R")
+        shell: Rscript {0}
+
+      - name: Ensure roxygen content matches man directory
+        run: |
+          callr::rscript(".dev/roxygen_test.R")
         shell: Rscript {0}
