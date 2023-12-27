@@ -8,8 +8,10 @@ if_switch_linter(max_branch_lines = 0L, max_branch_expr = 0L)
 }
 \arguments{
 \item{max_branch_lines, max_branch_expr}{Integer, default 0 indicates "no maximum".
-If set and \code{if}/\verb{else if}/.../\verb{else}chain where any branch occupies more than
-this number of lines (resp. expressions) will not be linted. See examples.}
+If set any \code{if}/\verb{else if}/.../\verb{else} chain where any branch occupies more than
+this number of lines (resp. expressions) will not be linted. The conjugate
+applies to \code{switch()} statements -- if these parameters are set, any \code{switch()}
+statement with any overly-complicated branches will be linted. See examples.}
 }
 \description{
 \code{\link[=switch]{switch()}} statements in R are used to delegate behavior based
@@ -72,6 +74,26 @@ lint(
   linters = if_switch_linter()
 )
 
+code <- paste(
+  "switch(x,",
+  "  a = {",
+  "    1",
+  "    2",
+  "    3",
+  "  },",
+  "  b = {",
+  "    1",
+  "    2",
+  "  }",
+  ")",
+  sep = "\n"
+)
+writeLines(code)
+lint(
+  text = code,
+  linters = if_switch_linter(max_branch_lines = 2L)
+)
+
 # okay
 lint(
   text = "switch(x, a = 1, b = 2, 3)",
@@ -120,6 +142,26 @@ writeLines(code)
 lint(
   text = code,
   linters = if_switch_linter(max_branch_expr = 2L)
+)
+
+code <- paste(
+  "switch(x,",
+  "  a = {",
+  "    1",
+  "    2",
+  "    3",
+  "  },",
+  "  b = {",
+  "    1",
+  "    2",
+  "  }",
+  ")",
+  sep = "\n"
+)
+writeLines(code)
+lint(
+  text = code,
+  linters = if_switch_linter(max_branch_lines = 3L)
 )
 
 }

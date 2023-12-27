@@ -186,7 +186,11 @@ test_that("max_branch_lines= and max_branch_expr= arguments work", {
   expect_lint(five_lines_three_expr_lines, NULL, max_lines2_linter)
   expect_lint(five_lines_three_expr_lines, NULL, max_lines4_linter)
   expect_lint(five_lines_three_expr_lines, NULL, max_expr2_linter)
-  expect_lint(five_lines_three_expr_lines, lint_msg, max_expr4_linter)
+  expect_lint(
+    five_lines_three_expr_lines,
+    list(lint_msg, line_number = 1L),
+    max_expr4_linter
+  )
 
   five_expr_three_lines_lines <- trim_some("
     if (x == 'a') {
@@ -204,7 +208,11 @@ test_that("max_branch_lines= and max_branch_expr= arguments work", {
     }
   ")
   expect_lint(five_expr_three_lines_lines, NULL, max_lines2_linter)
-  expect_lint(five_expr_three_lines_lines, lint_msg, max_lines4_linter)
+  expect_lint(
+    five_expr_three_lines_lines,
+    list(lint_msg, line_number = 1L),
+    max_lines4_linter
+  )
   expect_lint(five_expr_three_lines_lines, NULL, max_expr2_linter)
   expect_lint(five_expr_three_lines_lines, NULL, max_expr4_linter)
 })
@@ -274,9 +282,17 @@ test_that("max_branch_lines= and max_branch_expr= block over-complex switch() to
       }
     )
   ")
-  expect_lint(three_per_branch_lines, lint_msg, max_lines2_linter)
+  expect_lint(
+    three_per_branch_lines,
+    list(lint_msg, line_number = 1L),
+    max_lines2_linter
+  )
   expect_lint(three_per_branch_lines, NULL, max_lines4_linter)
-  expect_lint(three_per_branch_lines, lint_msg, max_expr2_linter)
+  expect_lint(
+    three_per_branch_lines,
+    list(lint_msg, line_number = 1L),
+    max_expr2_linter
+  )
   expect_lint(three_per_branch_lines, NULL, max_expr4_linter)
 
   five_per_branch_lines <- trim_some("
