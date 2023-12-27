@@ -433,3 +433,43 @@ test_that("max_branch_lines= and max_branch_expr= work for a terminal 'else' bra
   expect_lint(else_long_lines, NULL, if_switch_linter(max_branch_lines = 2L))
   expect_lint(else_long_lines, NULL, if_switch_linter(max_branch_expr = 2L))
 })
+
+test_that("max_branch_lines= and max_branch_expr= are guided by the most complex branch", {
+  max_lines2_linter <- if_switch_linter(max_branch_lines = 2L)
+  max_expr2_linter <- if_switch_linter(max_branch_expr = 2L)
+  lint_msg <- rex::rex("Prefer repeated if/else statements over overly-complicated switch() statements.")
+
+  # no lint if _any_ branch is too complex
+  five_lines_three_expr_lines <- trim_some("
+    if (x == 'a') {
+      1
+    } else if (x == 'b') {
+      2
+    } else if (x == 'c') {
+      3
+      4
+      5
+    }
+  ")
+  expect_lint(five_lines_three_expr_lines, NULL, max_lines2_linter)
+  expect_lint(five_lines_three_expr_lines, NULL, max_expr2_linter)
+
+  # lint if _any_ branch is too complex
+  five_lines_three_expr_lines <- trim_some("
+    switch(x,
+      a = {
+        1
+      },
+      b = {
+        2
+      },
+      c = {
+        3
+        4
+        5
+      }
+    )
+  ")
+  expect_lint(five_lines_three_expr_lines, lint_msg, max_lines2_linter)
+  expect_lint(five_lines_three_expr_lines, lint_msg, max_expr2_linter)
+})
