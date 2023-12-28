@@ -4,10 +4,10 @@
 \alias{if_switch_linter}
 \title{Require usage of switch() over repeated if/else blocks}
 \usage{
-if_switch_linter(max_branch_lines = 0L, max_branch_expr = 0L)
+if_switch_linter(max_branch_lines = 0L, max_branch_expressions = 0L)
 }
 \arguments{
-\item{max_branch_lines, max_branch_expr}{Integer, default 0 indicates "no maximum".
+\item{max_branch_lines, max_branch_expressions}{Integer, default 0 indicates "no maximum".
 If set any \code{if}/\verb{else if}/.../\verb{else} chain where any branch occupies more than
 this number of lines (resp. expressions) will not be linted. The conjugate
 applies to \code{switch()} statements -- if these parameters are set, any \code{switch()}
@@ -141,7 +141,7 @@ code <- paste(
 writeLines(code)
 lint(
   text = code,
-  linters = if_switch_linter(max_branch_expr = 2L)
+  linters = if_switch_linter(max_branch_expressions = 2L)
 )
 
 code <- paste(

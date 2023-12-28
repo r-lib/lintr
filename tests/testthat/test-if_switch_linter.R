@@ -78,11 +78,11 @@ test_that("multiple lints have right metadata", {
   )
 })
 
-test_that("max_branch_lines= and max_branch_expr= arguments work", {
+test_that("max_branch_lines= and max_branch_expressions= arguments work", {
   max_lines2_linter <- if_switch_linter(max_branch_lines = 2L)
   max_lines4_linter <- if_switch_linter(max_branch_lines = 4L)
-  max_expr2_linter <- if_switch_linter(max_branch_expr = 2L)
-  max_expr4_linter <- if_switch_linter(max_branch_expr = 4L)
+  max_expr2_linter <- if_switch_linter(max_branch_expressions = 2L)
+  max_expr4_linter <- if_switch_linter(max_branch_expressions = 4L)
   lint_msg <- rex::rex("Prefer switch() statements over repeated if/else equality tests")
 
   one_per_branch_lines <- trim_some("
@@ -217,11 +217,11 @@ test_that("max_branch_lines= and max_branch_expr= arguments work", {
   expect_lint(five_expr_three_lines_lines, NULL, max_expr4_linter)
 })
 
-test_that("max_branch_lines= and max_branch_expr= block over-complex switch() too", {
+test_that("max_branch_lines= and max_branch_expressions= block over-complex switch() too", {
   max_lines2_linter <- if_switch_linter(max_branch_lines = 2L)
   max_lines4_linter <- if_switch_linter(max_branch_lines = 4L)
-  max_expr2_linter <- if_switch_linter(max_branch_expr = 2L)
-  max_expr4_linter <- if_switch_linter(max_branch_expr = 4L)
+  max_expr2_linter <- if_switch_linter(max_branch_expressions = 2L)
+  max_expr4_linter <- if_switch_linter(max_branch_expressions = 4L)
   lint_msg <- rex::rex("Prefer repeated if/else statements over overly-complicated switch() statements.")
 
   one_per_branch_lines <- trim_some("
@@ -380,8 +380,8 @@ test_that("max_branch_lines= and max_branch_expr= block over-complex switch() to
   expect_lint(five_expr_three_lines_lines, lint_msg, max_expr4_linter)
 })
 
-test_that("max_branch_lines= and max_branch_expr= interact correctly", {
-  linter <- if_switch_linter(max_branch_lines = 5L, max_branch_expr = 3L)
+test_that("max_branch_lines= and max_branch_expressions= interact correctly", {
+  linter <- if_switch_linter(max_branch_lines = 5L, max_branch_expressions = 3L)
   lint_msg <- rex::rex("Prefer switch() statements over repeated if/else equality tests")
 
   expect_lint(
@@ -432,9 +432,9 @@ test_that("max_branch_lines= and max_branch_expr= interact correctly", {
   )
 })
 
-test_that("max_branch_lines= and max_branch_expr= work for a terminal 'else' branch", {
+test_that("max_branch_lines= and max_branch_expressions= work for a terminal 'else' branch", {
   max_lines2_linter <- if_switch_linter(max_branch_lines = 2L)
-  max_expr2_linter <- if_switch_linter(max_branch_expr = 2L)
+  max_expr2_linter <- if_switch_linter(max_branch_expressions = 2L)
   lint_msg <- rex::rex("Prefer repeated if/else statements over overly-complicated switch() statements.")
 
   else_long_lines <- trim_some("
@@ -475,9 +475,9 @@ test_that("max_branch_lines= and max_branch_expr= work for a terminal 'else' bra
   expect_lint(default_long_lines, lint_msg, max_expr2_linter)
 })
 
-test_that("max_branch_lines= and max_branch_expr= are guided by the most complex branch", {
+test_that("max_branch_lines= and max_branch_expressions= are guided by the most complex branch", {
   max_lines2_linter <- if_switch_linter(max_branch_lines = 2L)
-  max_expr2_linter <- if_switch_linter(max_branch_expr = 2L)
+  max_expr2_linter <- if_switch_linter(max_branch_expressions = 2L)
   lint_msg <- rex::rex("Prefer repeated if/else statements over overly-complicated switch() statements.")
 
   # no lint if _any_ branch is too complex

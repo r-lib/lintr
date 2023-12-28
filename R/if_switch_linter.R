@@ -14,7 +14,7 @@
 #'   approach is roughly linear in the number of conditions that need to
 #'   be evaluated, here up to 3 times).
 #'
-#' @param max_branch_lines,max_branch_expr Integer, default 0 indicates "no maximum".
+#' @param max_branch_lines,max_branch_expressions Integer, default 0 indicates "no maximum".
 #'   If set any `if`/`else if`/.../`else` chain where any branch occupies more than
 #'   this number of lines (resp. expressions) will not be linted. The conjugate
 #'   applies to `switch()` statements -- if these parameters are set, any `switch()`
@@ -132,7 +132,7 @@
 #' writeLines(code)
 #' lint(
 #'   text = code,
-#'   linters = if_switch_linter(max_branch_expr = 2L)
+#'   linters = if_switch_linter(max_branch_expressions = 2L)
 #' )
 #'
 #' code <- paste(
@@ -158,13 +158,13 @@
 #' @evalRd rd_tags("if_switch_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-if_switch_linter <- function(max_branch_lines = 0L, max_branch_expr = 0L) {
+if_switch_linter <- function(max_branch_lines = 0L, max_branch_expressions = 0L) {
   equal_str_cond <- "expr[1][EQ and expr/STR_CONST]"
 
-  if (max_branch_lines > 0L || max_branch_expr > 0L) {
+  if (max_branch_lines > 0L || max_branch_expressions > 0L) {
     complexity_cond <- xp_or(c(
       if (max_branch_lines > 0L) paste("OP-RIGHT-BRACE/@line2 - OP-LEFT-BRACE/@line1 > 1 +", max_branch_lines),
-      if (max_branch_expr > 0L) paste("count(expr) >", max_branch_expr)
+      if (max_branch_expressions > 0L) paste("count(expr) >", max_branch_expressions)
     ))
     branch_expr_cond <- xp_and(c(
       xp_or(
