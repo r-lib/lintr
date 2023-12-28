@@ -10,10 +10,10 @@ generate_top_level_map <- function(pc) {
     tl_parent[i_not_assigned] <- pc$parent[match(tl_parent[i_not_assigned], pc$id)]
     i_not_assigned <- which(!tl_parent %in% tl_ids)
     if (length(i_not_assigned) >= prev_length) { # nocov start
-      stop(
-        "Logical error: unassigned set did not shrink. Check file syntax and please report as a lintr bug.",
-        call. = FALSE
-      )
+      cli_abort(c(
+        x = "Logical error: unassigned set did not shrink.",
+        i = "Check file syntax and please report as a {.pkg lintr} bug."
+      ))
     } # nocov end
   }
   tl_parent
