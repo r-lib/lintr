@@ -112,7 +112,7 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   # outline:
   #   1. match one of the identified mappers
   #   2. match an anonymous function that can be "symbol-ized"
-  #     a. it's a one-variable function [TODO(michaelchirico): is this necessary?]
+  #     a. it's a one-variable function [TODO(#2477): relax this]
   #     b. the function is a single call
   #     c. that call's _first_ argument is just the function argument (a SYMBOL)
   #       - and it has to be passed positionally (not as a keyword)
@@ -160,11 +160,7 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
     default_calls <- source_expression$xml_find_function_calls(apply_funs)
     default_fun_expr <- xml_find_all(default_calls, default_fun_xpath)
 
-    # TODO(michaelchirico): further message customization is possible here,
-    #   e.g. don't always refer to 'lapply()' in the example, and customize to
-    #   whether arguments need to be subsumed in '...' or not. The trouble is in
-    #   keeping track of which argument the anonymous function is supplied (2nd
-    #   argument for many calls, but 3rd e.g. for apply())
+    # TODO(#2478): Give a specific recommendation in the message.
     default_call_fun <- xml_text(xml_find_first(default_fun_expr, fun_xpath))
     default_symbol <- xml_text(xml_find_first(default_fun_expr, symbol_xpath))
     default_fun_lints <- xml_nodes_to_lints(

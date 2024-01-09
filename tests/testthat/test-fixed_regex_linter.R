@@ -270,19 +270,6 @@ test_that("fixed replacement is correct with UTF-8", {
   )
 })
 
-# TODO(michaelchirico): one difference for stringr functions vs. base is that
-#   stringr is much friendlier to piping, so that
-#   > str %>% str_replace_all("x$", "y")
-#   actually doesn't need fixed(), but the logic now is only looking at "y"
-#   since it's the second argument and a non-regex string. Similarly,
-#   > str %>% str_detect("x")
-#   is a false negative. thankfully there appear to be few false positives here
-
-# TODO(michaelchirico): we could in principle build in logic to detect whether
-#   perl=TRUE and interpret "regex or not" accordingly. One place
-#   up in practice is for '\<', which is a special character in default
-#   regex but not in PCRE. Empirically relevant for HTML-related regex e.g. \\<li\\>
-
 #' Generate a string with a non-printable Unicode entry robust to test environment
 #'
 #' Non-printable unicode behaves wildly different with `encodeString()`

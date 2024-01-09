@@ -167,8 +167,6 @@ test_that("unnecessary_lambda_linter doesn't apply to keyword args", {
 test_that("purrr-style anonymous functions are also caught", {
   linter <- unnecessary_lambda_linter()
 
-  # TODO(michaelchirico): this is just purrr::flatten(x). We should write another
-  #   linter to encourage that usage.
   expect_lint("purrr::map(x, ~.x)", NULL, linter)
   expect_lint("purrr::map_df(x, ~lm(y, .x))", NULL, linter)
   expect_lint("map_dbl(x, ~foo(bar = .x))", NULL, linter)
