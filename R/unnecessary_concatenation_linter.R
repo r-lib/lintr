@@ -104,7 +104,7 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
       as.integer(!is.na(xml_find_first(c_calls, to_pipe_xpath)))
     # NB: the xpath guarantees num_args is 0, 1, or 2. 2 comes
     #   in "a" %>% c("b").
-    # TODO(michaelchirico): can we handle this all inside the XPath with reasonable concision?
+    # TODO(#2476): Push this logic back into the XPath.
     is_unneeded <- num_args <= 1L
     c_calls <- c_calls[is_unneeded]
     num_args <- num_args[is_unneeded]

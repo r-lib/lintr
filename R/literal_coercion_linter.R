@@ -98,9 +98,7 @@ literal_coercion_linter <- function() {
         coercion_str[needs_prefix] <- paste0("rlang::", coercion_str[needs_prefix])
       }
       # the linter logic & rlang requirement should ensure that it's safe to run eval() here
-      # TODO(michaelchirico): this recommends '1' to replace as.numeric(1), where our
-      #   own implicit_integer_linter(), if active, would require this to be 1.0. Should
-      #   we recommend this instead, or offer it as an alternative?
+      # TODO(#2473): Avoid a recommendation like '1' that clashes with implicit_integer_linter().
       literal_equivalent_str <- vapply(str2expression(coercion_str), function(expr) deparse1(eval(expr)), character(1L))
       lint_message <- sprintf(
         "Use %s instead of %s, i.e., use literals directly where possible, instead of coercion.",

@@ -21,8 +21,6 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 list_comparison_linter <- function() {
-  # TODO(michaelchirico): extend to cases where using simplify=FALSE implies a
-  #   list output, e.g. with sapply, replicate, mapply.
   list_mapper_alternatives <- c(
     lapply = "vapply(x, FUN, character(1L))",
     map = "map_chr(x, FUN)",

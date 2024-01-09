@@ -21,7 +21,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_length_linter <- function() {
-  # TODO(michaelchirico): also catch expect_true(length(x) == 1)
+  # TODO(#2465): also catch expect_true(length(x) == 1)
   xpath <- sprintf("
   parent::expr
     /following-sibling::expr[

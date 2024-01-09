@@ -109,8 +109,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
       logical(1L)
     )
 
-    # TODO(michaelchirico): instead of vectorizing over packages,
-    #   xml_find_all SYMBOL_PACKAGE namespaces and check imported_pkgs %in%
+    # TODO(#2480): Only call //SYMBOL_PACKAGE once.
     is_ns_used <- vapply(
       imported_pkgs,
       function(pkg) {
