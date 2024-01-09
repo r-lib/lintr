@@ -341,15 +341,23 @@ local({
       # R version-specific difference in output message on Windows (probably r80051)
       if (getRversion() == "4.0.4") "[\\U{F7D5}]"
     )
-    .cases <- .cases[!.cases$regex_expr %in% skip_cases, ]
+  } else {
+    skip_cases <- character()
   }
   patrick::with_parameters_test_that(
     "fixed replacements are correct",
-    expect_lint(
-      sprintf("grepl('%s', x)", regex_expr),
-      rex::rex(sprintf('Use "%s" with fixed = TRUE', fixed_expr)),
-      fixed_regex_linter()
-    ),
+    {
+      # TODO(google/patrick#19): handle this more cleanly by skipping up-front
+      skip_if(
+        regex_expr %in% skip_cases,
+        sprintf("regex '%s' is not supported on this system", regex_expr)
+      )
+      expect_lint(
+        sprintf("grepl('%s', x)", regex_expr),
+        rex::rex(sprintf('Use "%s" with fixed = TRUE', fixed_expr)),
+        fixed_regex_linter()
+      )
+    },
     .cases = .cases
   )
 })
