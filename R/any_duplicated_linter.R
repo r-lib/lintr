@@ -34,14 +34,13 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 any_duplicated_linter <- function() {
-  any_duplicated_xpath <- "
-  parent::expr
-    /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'duplicated']]]
-    /parent::expr[
+  any_duplicated_xpath <- "self::expr[
+    expr[2]/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'duplicated']
+    and (
       count(expr) = 2
       or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm'])
-    ]
-  "
+    )
+  ]"
 
   # outline:
   #   EQ/NE/GT/LT: ensure we're in a comparison clause
@@ -86,7 +85,7 @@ any_duplicated_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    xml_calls <- source_expression$xml_find_function_calls("any")
+    xml_calls <- source_expression$xml_find_function_calls("any", land_on = "call_expr")
 
     any_duplicated_expr <- xml_find_all(xml_calls, any_duplicated_xpath)
     any_duplicated_lints <- xml_nodes_to_lints(

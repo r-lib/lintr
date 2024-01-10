@@ -79,20 +79,14 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE,
   allow_filter <- match.arg(allow_filter)
 
   expect_true_assert_that_xpath <- "
-  parent::expr
-    /following-sibling::expr[1][AND2]
-    /parent::expr
+    following-sibling::expr[1][AND2]/parent::expr
   "
   named_stopifnot_condition <- if (allow_named_stopifnot) "and not(preceding-sibling::*[1][self::EQ_SUB])" else ""
   stopifnot_xpath <- glue("
-  parent::expr
-    /following-sibling::expr[1][AND2 {named_stopifnot_condition}]
-    /parent::expr
+    following-sibling::expr[1][AND2 {named_stopifnot_condition}]/parent::expr
   ")
   expect_false_xpath <- "
-  parent::expr
-    /following-sibling::expr[1][OR2]
-    /parent::expr
+    following-sibling::expr[1][OR2]/parent::expr
   "
 
   filter_ns_cond <- switch(allow_filter,
@@ -101,16 +95,17 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE,
     always = "true"
   )
   filter_xpath <- glue("
-  parent::expr[{ filter_ns_cond }]
+  self::expr[{ filter_ns_cond }]
     /parent::expr
     /expr[AND]
   ")
 
   Linter(linter_level = "file", function(source_expression) {
     # need the full file to also catch usages at the top level
-    expect_true_assert_that_calls <- source_expression$xml_find_function_calls(c("expect_true", "assert_that"))
-    stopifnot_calls <- source_expression$xml_find_function_calls("stopifnot")
-    expect_false_calls <- source_expression$xml_find_function_calls("expect_false")
+    expect_true_assert_that_calls <-
+      source_expression$xml_find_function_calls(c("expect_true", "assert_that"), land_on = "call_symbol_expr")
+    stopifnot_calls <- source_expression$xml_find_function_calls("stopifnot", land_on = "call_symbol_expr")
+    expect_false_calls <- source_expression$xml_find_function_calls("expect_false", land_on = "call_symbol_expr")
     test_expr <- combine_nodesets(
       xml_find_all(expect_true_assert_that_calls, expect_true_assert_that_xpath),
       xml_find_all(stopifnot_calls, stopifnot_xpath),
@@ -138,7 +133,7 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE,
     )
 
     if (allow_filter != "always") {
-      xml_calls <- source_expression$xml_find_function_calls("filter")
+      xml_calls <- source_expression$xml_find_function_calls("filter", land_on = "call_symbol_expr")
       filter_expr <- xml_find_all(xml_calls, filter_xpath)
 
       filter_lints <- xml_nodes_to_lints(

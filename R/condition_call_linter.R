@@ -57,11 +57,11 @@
 #' @export
 condition_call_linter <- function(display_call = FALSE) {
   call_xpath <- glue::glue("
-    following-sibling::SYMBOL_SUB[text() = 'call.']
+    SYMBOL_SUB[text() = 'call.']
       /following-sibling::expr[1]
       /NUM_CONST[text() = '{!display_call}']
   ")
-  no_call_xpath <- "parent::expr[not(SYMBOL_SUB[text() = 'call.'])]"
+  no_call_xpath <- "not(SYMBOL_SUB[text() = 'call.'])"
 
   if (is.na(display_call)) {
     call_cond <- no_call_xpath
@@ -77,10 +77,10 @@ condition_call_linter <- function(display_call = FALSE) {
     msg_fmt <- "Use %s(., call. = FALSE) not to display the call in an error message."
   }
 
-  xpath <- glue::glue("parent::expr[{call_cond}]/parent::expr")
+  xpath <- glue::glue("self::expr[{call_cond}]")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml_calls <- source_expression$xml_find_function_calls(c("stop", "warning"))
+    xml_calls <- source_expression$xml_find_function_calls(c("stop", "warning"), land_on = "call_expr")
     bad_expr <- xml_find_all(xml_calls, xpath)
 
     xml_nodes_to_lints(
