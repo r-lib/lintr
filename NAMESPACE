@@ -6,6 +6,8 @@ if (getRversion() >= "4.0.0") {
 } else {
   importFrom(backports, R_user_dir)
 }
+  importFrom(backports, R_user_dir)
+  importFrom(tools, R_user_dir)
 S3method("[",lints)
 S3method(as.data.frame,lints)
 S3method(format,lint)
@@ -171,6 +173,7 @@ export(with_id)
 export(xml_nodes_to_lints)
 export(xp_call_name)
 export(yoda_test_linter)
+if (getRversion() >= "4.0.0") {
 importFrom(cyclocomp,cyclocomp)
 importFrom(glue,glue)
 importFrom(glue,glue_collapse)
@@ -199,3 +202,5 @@ importFrom(xml2,xml_find_lgl)
 importFrom(xml2,xml_find_num)
 importFrom(xml2,xml_name)
 importFrom(xml2,xml_text)
+}
+} else {
