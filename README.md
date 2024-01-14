@@ -1,11 +1,15 @@
-# lintr
+# `{lintr}`: A 'Linter' for R Code
 
 [![R build status](https://github.com/r-lib/lintr/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/lintr/actions)
 [![codecov.io](https://codecov.io/gh/r-lib/lintr/branch/main/graphs/badge.svg)](https://app.codecov.io/gh/r-lib/lintr?branch=main)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/lintr)](https://cran.r-project.org/package=lintr)
 [![lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 
-`{lintr}` provides [static code analysis for R](https://en.wikipedia.org/wiki/Static_program_analysis). It checks for adherence to a given style, identifying syntax errors and possible semantic issues, then reports them to you so you can take action. Watch lintr in action in the following animation:
+## Overview <img src="man/figures/logo.png" align="right" width="200" />
+
+`{lintr}` provides [static code analysis for R](https://en.wikipedia.org/wiki/Static_program_analysis). It checks for adherence to a given style, identifying syntax errors and possible semantic issues, then reports them to you so you can take action. 
+
+Watch `{lintr}` in action in the following animation:
 
 ![](man/figures/demo.gif "lintr demo")
 
@@ -69,3 +73,9 @@ Without further configuration, this will run the [default linters](https://lintr
 ## Code of Conduct
 
 Please note that the lintr project is released with a [Contributor Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/). By contributing to this project, you agree to abide by its terms.
+
+## Acknowledgments
+
+Hex sticker font is [IBM Plex Serif](https://fonts.google.com/specimen/IBM+Plex+Serif), and 
+the image is taken from icon made by [Freepik](https://www.freepik.com) and 
+available at [flaticon.com](https://www.flaticon.com/free-icon/lint-roller_6981024).
