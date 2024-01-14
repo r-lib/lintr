@@ -32,6 +32,7 @@ linters: all_linters(
 exclusions: list(
     "inst/doc/creating_linters.R" = 1,
     "inst/example/bad.R",
+    "inst/hextools/hexsticker.R",
     "tests/testthat.R" = list(unused_import_linter = Inf),
     "tests/testthat/default_linter_testcode.R",
     "tests/testthat/dummy_packages",
