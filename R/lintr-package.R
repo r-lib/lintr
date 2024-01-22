@@ -17,11 +17,7 @@
 #' @importFrom xml2 as_list
 #'   xml_attr xml_children xml_find_all xml_find_chr xml_find_lgl xml_find_num xml_find_first xml_name xml_text
 #' @rawNamespace
-#' if (getRversion() >= "4.0.0") {
-#'   importFrom(tools, R_user_dir)
-#' } else {
-#'   importFrom(backports, R_user_dir)
-#' }
+#' if (getRversion() >= "4.0.0") importFrom(tools, R_user_dir) else importFrom(backports, R_user_dir)
 ## lintr namespace: end
 NULL
 
