@@ -12,7 +12,7 @@ Check that there are no trailing blank lines in source code.
 \examples{
 # will produce lints
 f <- tempfile()
-cat("x <- 1\n\n", f)
+cat("x <- 1\n\n", file = f)
 writeLines(readChar(f, file.size(f)))
 lint(
   filename = f,
@@ -21,7 +21,7 @@ lint(
 unlink(f)
 
 # okay
-cat("x <- 1\n", f)
+cat("x <- 1\n", file = f)
 writeLines(readChar(f, file.size(f)))
 lint(
   filename = f,
