@@ -25,6 +25,7 @@ will become \code{NA} outputs, which helps ensure that \code{length(get_r_string
 \examples{
 \dontshow{if (requireNamespace("withr", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 tmp <- withr::local_tempfile(lines = "c('a', 'b')")
+stopifnot(file.exists(tmp))
 expr_as_xml <- get_source_expressions(tmp)$expressions[[1L]]$xml_parsed_content
 writeLines(as.character(expr_as_xml))
 get_r_string(expr_as_xml, "expr[2]") # "a"
