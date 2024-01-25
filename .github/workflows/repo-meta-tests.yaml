@@ -24,7 +24,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            r-lib/roxygen2
+            any::roxygen2
 
       - name: Ensure lint metadata is tested
         run: |
