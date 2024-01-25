@@ -2,22 +2,25 @@
 #'
 #' Check that there are no trailing blank lines in source code.
 #'
-#' @examplesIf requireNamespace("withr", quietly = TRUE)
+#' @examples
 #' # will produce lints
-#' f <- withr::local_tempfile(lines = "x <- 1\n")
-#' readLines(f)
+#' f <- tempfile()
+#' cat("x <- 1\n\n", f)
+#' writeLines(readChar(f, file.size(f)))
 #' lint(
 #'   filename = f,
 #'   linters = trailing_blank_lines_linter()
 #' )
+#' unlink(f)
 #'
 #' # okay
-#' f <- withr::local_tempfile(lines = "x <- 1")
-#' readLines(f)
+#' cat("x <- 1\n", f)
+#' writeLines(readChar(f, file.size(f)))
 #' lint(
 #'   filename = f,
 #'   linters = trailing_blank_lines_linter()
 #' )
+#' unlink(f)
 #'
 #' @evalRd rd_tags("trailing_blank_lines_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.

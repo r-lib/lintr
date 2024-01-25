@@ -26,11 +26,13 @@
 #'
 #' @return An object of class `c("lints", "list")`, each element of which is a `"list"` object.
 #'
-#' @examplesIf requireNamespace("withr", quietly = TRUE)
-#' f <- withr::local_tempfile(lines = "a=1", fileext = "R")
+#' @examples
+#' f <- tempfile()
+#' writeLines("a=1", f)
 #' lint(f)                # linting a file
 #' lint("a = 123\n")      # linting inline-code
 #' lint(text = "a = 123") # linting inline-code
+#' unlink(f)
 #'
 #' @export
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
