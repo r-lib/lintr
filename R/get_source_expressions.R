@@ -54,9 +54,11 @@
 #'   \item{lines}{The [readLines()] output for this file.}
 #' }
 #'
-#' @examplesIf requireNamespace("withr", quietly = TRUE)
-#' tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
+#' @examples
+#' tmp <- tempfile()
+#' writeLines(c("x <- 1", "y <- x + 1"), tmp)
 #' get_source_expressions(tmp)
+#' unlink(tmp)
 #' @export
 get_source_expressions <- function(filename, lines = NULL) {
   source_expression <- srcfile(filename, encoding = settings$encoding)
