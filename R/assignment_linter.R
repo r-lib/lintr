@@ -2,6 +2,8 @@
 #'
 #' Check that `<-` is always used for assignment.
 #'
+#' @param allow_equal_assignment Logical, default `FALSE`.
+#'   If `TRUE`, `=` instead of `<-` is used for assignment.
 #' @param allow_cascading_assign Logical, default `TRUE`.
 #'   If `FALSE`, [`<<-`][base::assignOps] and `->>` are not allowed.
 #' @param allow_right_assign Logical, default `FALSE`. If `TRUE`, `->` and `->>` are allowed.
@@ -70,7 +72,8 @@
 #' - <https://style.tidyverse.org/syntax.html#assignment-1>
 #' - <https://style.tidyverse.org/pipes.html#assignment-2>
 #' @export
-assignment_linter <- function(allow_cascading_assign = TRUE,
+assignment_linter <- function(allow_equal_assignment = FALSE,
+                              allow_cascading_assign = TRUE,
                               allow_right_assign = FALSE,
                               allow_trailing = TRUE,
                               allow_pipe_assign = FALSE) {
@@ -88,7 +91,7 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
 
   xpath <- paste(collapse = " | ", c(
     # always block = (NB: the parser differentiates EQ_ASSIGN, EQ_SUB, and EQ_FORMALS)
-    "//EQ_ASSIGN",
+    if (allow_equal_assignment) "//LEFT_ASSIGN" else "//EQ_ASSIGN",
     # -> and ->> are both 'RIGHT_ASSIGN'
     if (!allow_right_assign) "//RIGHT_ASSIGN" else if (!allow_cascading_assign) "//RIGHT_ASSIGN[text() = '->>']",
     # <-, :=, and <<- are all 'LEFT_ASSIGN'; check the text if blocking <<-.
@@ -108,7 +111,12 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
     }
 
     operator <- xml_text(bad_expr)
-    lint_message_fmt <- rep("Use <-, not %s, for assignment.", length(operator))
+    lint_message_fmt <- rep(
+      paste0("Use ",
+             if (allow_equal_assignment) "=" else "<-",
+             ", not %s, for assignment."),
+      length(operator)
+    )
     lint_message_fmt[operator %in% c("<<-", "->>")] <-
       "Replace %s by assigning to a specific environment (with assign() or <-) to avoid hard-to-predict behavior."
     lint_message_fmt[operator == "%<>%"] <-
