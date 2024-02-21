@@ -5,6 +5,7 @@
 \title{Assignment linter}
 \usage{
 assignment_linter(
+  allow_equal_assignment = FALSE,
   allow_cascading_assign = TRUE,
   allow_right_assign = FALSE,
   allow_trailing = TRUE,
@@ -12,6 +13,9 @@ assignment_linter(
 )
 }
 \arguments{
+\item{allow_equal_assignment}{Logical, default \code{FALSE}.
+If \code{TRUE}, \code{=} instead of \verb{<-} is used for assignment.}
+
 \item{allow_cascading_assign}{Logical, default \code{TRUE}.
 If \code{FALSE}, \code{\link[base:assignOps]{<<-}} and \verb{->>} are not allowed.}
 
