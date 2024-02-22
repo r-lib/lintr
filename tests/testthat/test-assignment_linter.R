@@ -193,8 +193,8 @@ test_that("multiple lints throw correct messages", {
   )
 })
 
-test_that("equal = instead of <- can be used for assignment", {
-  linter <- assignment_linter(allow_equal_assignment = TRUE)
+test_that("= instead of <- can be used for assignment", {
+  linter <- assignment_linter(allow_equal_assign = TRUE)
   lint_msg <- rex::rex("Use =, not <-, for assignment.")
 
   expect_lint("blah = 1", NULL, linter)

@@ -2,13 +2,13 @@
 #'
 #' Check that `<-` is always used for assignment.
 #'
-#' @param allow_equal_assignment Logical, default `FALSE`.
-#'   If `TRUE`, `=` instead of `<-` is used for assignment.
 #' @param allow_cascading_assign Logical, default `TRUE`.
 #'   If `FALSE`, [`<<-`][base::assignOps] and `->>` are not allowed.
 #' @param allow_right_assign Logical, default `FALSE`. If `TRUE`, `->` and `->>` are allowed.
 #' @param allow_trailing Logical, default `TRUE`. If `FALSE` then assignments aren't allowed at end of lines.
 #' @param allow_pipe_assign Logical, default `FALSE`. If `TRUE`, magrittr's `%<>%` assignment is allowed.
+#' @param allow_equal_assign Logical, default `FALSE`.
+#'   If `TRUE`, `=` instead of `<-` is used for assignment.
 #'
 #' @examples
 #' # will produce lints
@@ -72,11 +72,11 @@
 #' - <https://style.tidyverse.org/syntax.html#assignment-1>
 #' - <https://style.tidyverse.org/pipes.html#assignment-2>
 #' @export
-assignment_linter <- function(allow_equal_assignment = FALSE,
-                              allow_cascading_assign = TRUE,
+assignment_linter <- function(allow_cascading_assign = TRUE,
                               allow_right_assign = FALSE,
                               allow_trailing = TRUE,
-                              allow_pipe_assign = FALSE) {
+                              allow_pipe_assign = FALSE,
+                              allow_equal_assign = FALSE) {
   trailing_assign_xpath <- paste(
     collapse = " | ",
     c(
@@ -91,7 +91,7 @@ assignment_linter <- function(allow_equal_assignment = FALSE,
 
   xpath <- paste(collapse = " | ", c(
     # always block = (NB: the parser differentiates EQ_ASSIGN, EQ_SUB, and EQ_FORMALS)
-    if (allow_equal_assignment) "//LEFT_ASSIGN" else "//EQ_ASSIGN",
+    if (allow_equal_assign) "//LEFT_ASSIGN" else "//EQ_ASSIGN",
     # -> and ->> are both 'RIGHT_ASSIGN'
     if (!allow_right_assign) "//RIGHT_ASSIGN" else if (!allow_cascading_assign) "//RIGHT_ASSIGN[text() = '->>']",
     # <-, :=, and <<- are all 'LEFT_ASSIGN'; check the text if blocking <<-.
@@ -113,7 +113,7 @@ assignment_linter <- function(allow_equal_assignment = FALSE,
     operator <- xml_text(bad_expr)
     lint_message_fmt <- rep(
       paste0("Use ",
-             if (allow_equal_assignment) "=" else "<-",
+             if (allow_equal_assign) "=" else "<-",
              ", not %s, for assignment."),
       length(operator)
     )
