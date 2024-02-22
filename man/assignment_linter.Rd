@@ -5,17 +5,14 @@
 \title{Assignment linter}
 \usage{
 assignment_linter(
-  allow_equal_assignment = FALSE,
   allow_cascading_assign = TRUE,
   allow_right_assign = FALSE,
   allow_trailing = TRUE,
-  allow_pipe_assign = FALSE
+  allow_pipe_assign = FALSE,
+  allow_equal_assign = FALSE
 )
 }
 \arguments{
-\item{allow_equal_assignment}{Logical, default \code{FALSE}.
-If \code{TRUE}, \code{=} instead of \verb{<-} is used for assignment.}
-
 \item{allow_cascading_assign}{Logical, default \code{TRUE}.
 If \code{FALSE}, \code{\link[base:assignOps]{<<-}} and \verb{->>} are not allowed.}
 
@@ -24,6 +21,9 @@ If \code{FALSE}, \code{\link[base:assignOps]{<<-}} and \verb{->>} are not allowe
 \item{allow_trailing}{Logical, default \code{TRUE}. If \code{FALSE} then assignments aren't allowed at end of lines.}
 
 \item{allow_pipe_assign}{Logical, default \code{FALSE}. If \code{TRUE}, magrittr's \verb{\%<>\%} assignment is allowed.}
+
+\item{allow_equal_assign}{Logical, default \code{FALSE}.
+If \code{TRUE}, \code{=} instead of \verb{<-} is used for assignment.}
 }
 \description{
 Check that \verb{<-} is always used for assignment.
