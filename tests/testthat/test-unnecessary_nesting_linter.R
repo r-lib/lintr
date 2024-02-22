@@ -27,9 +27,6 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
   )
 })
 
-# TODO(michaelchirico): consider if there's a nice easy pattern to enforce for
-#   multiple if/else cases. This test in particular would be easy to un-nest,
-#   but it's not true in general.
 test_that("Multiple if/else statements don't require unnesting", {
   # with further branches, reducing nesting might be less readable
   expect_lint(
