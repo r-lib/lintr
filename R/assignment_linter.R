@@ -91,7 +91,7 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
 
   xpath <- paste(collapse = " | ", c(
     # always block = (NB: the parser differentiates EQ_ASSIGN, EQ_SUB, and EQ_FORMALS)
-    if (allow_equal_assign) "//LEFT_ASSIGN" else "//EQ_ASSIGN",
+    if (allow_equal_assign) "//LEFT_ASSIGN[text() = '<-']" else "//EQ_ASSIGN",
     # -> and ->> are both 'RIGHT_ASSIGN'
     if (!allow_right_assign) "//RIGHT_ASSIGN" else if (!allow_cascading_assign) "//RIGHT_ASSIGN[text() = '->>']",
     # <-, :=, and <<- are all 'LEFT_ASSIGN'; check the text if blocking <<-.
