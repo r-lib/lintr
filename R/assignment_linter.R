@@ -112,9 +112,7 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
 
     operator <- xml_text(bad_expr)
     lint_message_fmt <- rep(
-      paste0("Use ",
-             if (allow_equal_assign) "=" else "<-",
-             ", not %s, for assignment."),
+      paste0("Use ", if (allow_equal_assign) "=" else "<-", ", not %s, for assignment."),
       length(operator)
     )
     lint_message_fmt[operator %in% c("<<-", "->>")] <-
