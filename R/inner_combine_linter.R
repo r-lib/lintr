@@ -36,10 +36,7 @@ inner_combine_linter <- function() {
     "sqrt", "abs"
   )
 
-  # TODO(michaelchirico): the need to spell out specific arguments is pretty brittle,
-  #   but writing the xpath for the alternative case was proving too tricky.
-  #   It's messy enough as is -- it may make sense to take another pass at
-  #   writing the xpath from scratch to see if it can't be simplified.
+  # TODO(#2468): Try and make this XPath less brittle/more extensible.
 
   # See ?as.Date, ?as.POSIXct. tryFormats is not explicitly in any default
   #   POSIXct method, but it is in as.Date.character and as.POSIXlt.character --

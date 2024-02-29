@@ -23,7 +23,7 @@
 
 ## Changes to default linters
 
-* New default linter `return_linter()` for the style guide rule that terminal returns should be left implicit (#1100, #2354, and #2356, @MEO265 and @MichaelChirico).
+* New default linter `return_linter()` for the style guide rule that terminal returns should be left implicit (#1100, #2343, #2354, and #2356, @MEO265 and @MichaelChirico).
 
 ## New and improved features
 
@@ -63,9 +63,9 @@
 * `print_linter()` for discouraging usage of `print()` on string literals like `print("Reached here")` or `print(paste("Found", nrow(DF), "rows."))` (#1894, @MichaelChirico).
 * `unnecessary_nesting_linter()` for discouraging overly-nested code where an early return or eliminated sub-expression (inside '{') is preferable (#2317 and part of #884, @MichaelChirico).
 * `consecutive_mutate_linter()` for encouraging consecutive calls to `dplyr::mutate()` to be combined (part of #884, @MichaelChirico).
-* `if_switch_linter()` for encouraging `switch()` over repeated `if`/`else` tests (part of #884, @MichaelChirico).
+* `if_switch_linter()` for encouraging `switch()` over repeated `if`/`else` tests (#2322 and part of #884, @MichaelChirico).
 * `nested_pipe_linter()` for discouraging pipes within pipes, e.g. `df1 %>% inner_join(df2 %>% select(a, b))` (part of #884, @MichaelChirico).
-* `nrow_subset_linter()` for discouraging usage like `nrow(subset(x, conditions))` in favor of something like `with(x, sum(conditions))` which doesn't require a full subset of `x` (#2314 and part of #884, @MichaelChirico).
+* `nrow_subset_linter()` for discouraging usage like `nrow(subset(x, conditions))` in favor of something like `with(x, sum(conditions))` which doesn't require a full subset of `x` (#2313, #2314 and part of #884, @MichaelChirico).
 * `pipe_return_linter()` for discouraging usage of `return()` inside a {magrittr} pipeline (part of #884, @MichaelChirico).
 * `one_call_pipe_linter()` for discouraging one-step pipelines like `x |> as.character()` (#2330 and part of #884, @MichaelChirico).
 * `object_overwrite_linter()` for discouraging re-use of upstream package exports as local variables (#2344, #2346 and part of #884, @MichaelChirico and @AshesITR).

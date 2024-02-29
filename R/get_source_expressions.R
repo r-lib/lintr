@@ -54,9 +54,11 @@
 #'   \item{lines}{The [readLines()] output for this file.}
 #' }
 #'
-#' @examplesIf requireNamespace("withr", quietly = TRUE)
-#' tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
+#' @examples
+#' tmp <- tempfile()
+#' writeLines(c("x <- 1", "y <- x + 1"), tmp)
 #' get_source_expressions(tmp)
+#' unlink(tmp)
 #' @export
 get_source_expressions <- function(filename, lines = NULL) {
   source_expression <- srcfile(filename, encoding = settings$encoding)
@@ -640,18 +642,7 @@ fix_eq_assigns <- function(pc) {
 
   for (i in seq_len(n_expr)) {
     start_loc <- true_locs[i]
-
-    # TODO(michaelchirico): vectorize this loop away. the tricky part is,
-    #   this loop doesn't execute on most R versions (we tried 3.6.3 and 4.2.0).
-    #   so it likely requires some GHA print debugging -- tedious :)
     end_loc <- true_locs[i]
-    j <- end_loc + 1L
-    # nocov start: only runs on certain R versions
-    while (j <= length(expr_locs) && !expr_locs[j]) {
-      end_loc <- j
-      j <- j + 1L
-    }
-    # nocov end
 
     prev_loc <- prev_locs[start_loc]
     next_loc <- next_locs[end_loc]
