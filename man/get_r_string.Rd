@@ -23,20 +23,22 @@ NB: this is also properly vectorized on \code{s}, and accepts a variety of input
 will become \code{NA} outputs, which helps ensure that \code{length(get_r_string(s)) == length(s)}.
 }
 \examples{
-\dontshow{if (requireNamespace("withr", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-tmp <- withr::local_tempfile(lines = "c('a', 'b')")
+tmp <- tempfile()
+writeLines("c('a', 'b')", tmp)
 expr_as_xml <- get_source_expressions(tmp)$expressions[[1L]]$xml_parsed_content
 writeLines(as.character(expr_as_xml))
 get_r_string(expr_as_xml, "expr[2]") # "a"
 get_r_string(expr_as_xml, "expr[3]") # "b"
+unlink(tmp)
 
 # more importantly, extract strings under R>=4 raw strings
-\dontshow{\}) # examplesIf}
 \dontshow{if (getRversion() >= "4.0.0") (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-tmp4.0 <- withr::local_tempfile(lines = "c(R'(a\\\\b)', R'--[a\\\\\"\'\"\\\\b]--')")
+tmp4.0 <- tempfile()
+writeLines("c(R'(a\\\\b)', R'--[a\\\\\"\'\"\\\\b]--')", tmp4.0)
 expr_as_xml4.0 <- get_source_expressions(tmp4.0)$expressions[[1L]]$xml_parsed_content
 writeLines(as.character(expr_as_xml4.0))
 get_r_string(expr_as_xml4.0, "expr[2]") # "a\\b"
 get_r_string(expr_as_xml4.0, "expr[3]") # "a\\\"'\"\\b"
+unlink(tmp4.0)
 \dontshow{\}) # examplesIf}
 }
