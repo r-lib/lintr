@@ -137,23 +137,6 @@ Actions annotations, you can set
 which will make sure that the annotations point to the correct
 paths.</p>
 </div>
-<div class="section level3">
-<h3 id="travis-ci">Travis CI<a class="anchor" aria-label="anchor" href="#travis-ci"></a>
-</h3>
-<p>If you want to run <code>lintr</code> on <a href="https://www.travis-ci.com/" class="external-link">Travis-CI</a>, you will need to have
-Travis install the package first. This can be done by adding the
-following line to your <code>.travis.yml</code></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">r_github_packages</span><span class="kw">:</span></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> r-lib/lintr</span></span></code></pre></div>
-<p>We recommend running <code><a href="../reference/lint.html">lintr::lint_package()</a></code> as an
-after_success step in your build process:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">after_success</span><span class="kw">:</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> R CMD INSTALL $PKG_TARBALL</span></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> Rscript -e 'lintr::lint_package()'</span></span></code></pre></div>
-<p>If lints are found in the commit or pull request they will be printed
-on Travis-CI. The environment variable <code>LINTR_ERROR_ON_LINT</code>
-mentioned for GitHub actions also works with Travis CI builds.</p>
-</div>
 </div>
 <div class="section level2">
 <h2 id="for-projects">For projects<a class="anchor" aria-label="anchor" href="#for-projects"></a>
@@ -167,7 +150,7 @@ project.</p>
 <p>If your project is on GitHub, you could take advantage of GitHub
 Actions and the <code>usethis</code> functionality. <a href="https://github.com/r-lib/actions/" class="external-link">r-lib/actions</a> includes a <a href="https://github.com/r-lib/actions/tree/v2-branch/examples#lint-project-workflow" class="external-link"><code>lint-project</code>
 example</a>, which you can use by calling:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_github_action</span><span class="op">(</span><span class="st">"lint-project"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">

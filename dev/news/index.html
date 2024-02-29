@@ -84,6 +84,7 @@
 <code><a href="../reference/lintr-deprecated.html">extraction_operator_linter()</a></code> is deprecated. Although switching from <code>$</code> to <code>[[</code> has some robustness benefits for package code, it can lead to non-idiomatic code in many contexts (e.g. R6 classes, Shiny applications, etc.) (<a href="https://github.com/r-lib/lintr/issues/2409" class="external-link">#2409</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>). To enable the detection of the <code>$</code> operator for extraction through partial matching, use <code>options(warnPartialMatchDollar = TRUE)</code>.</li>
 <li>
 <code><a href="../reference/lintr-deprecated.html">unnecessary_nested_if_linter()</a></code> is deprecated and subsumed into the new/more general <code><a href="../reference/unnecessary_nesting_linter.html">unnecessary_nesting_linter()</a></code>.</li>
+<li>Drop support for posting GitHub comments from inside Travis, Wercker, and Jenkins CI tools (spurred by <a href="https://github.com/r-lib/lintr/issues/2148" class="external-link">#2148</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). We rely on GitHub Actions for linting in CI, and don’t see any active users relying on these alternatives. We welcome and encourage community contributions to get support for different CI system going again.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
