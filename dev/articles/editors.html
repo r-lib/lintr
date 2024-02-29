@@ -97,8 +97,8 @@
 </h2>
 <p>lintr lints are automatically displayed in the RStudio Markers pane
 (RStudio versions &gt; v0.99.206).</p>
-<div class="figure">
-<img src="rstudio.png" title="Rstudio Example" alt=""><p class="caption">RStudio Example</p>
+<div class="float">
+<img src="rstudio.png" title="Rstudio Example" alt="RStudio Example"><div class="figcaption">RStudio Example</div>
 </div>
 <p>In order to show the “Markers” pane in RStudio: Menu “Tools” -&gt;
 “Global Options…”, a window with title “Options” will pop up. In that
@@ -140,8 +140,8 @@ line length cutoff. - <code>M-x customize-option</code> -&gt;
 </h2>
 <p>lintr can be integrated with <a href="https://github.com/vim-syntastic/syntastic" class="external-link">syntastic</a> for
 on-the-fly linting.</p>
-<div class="figure">
-<img src="vim-syntastic.gif" title="Vim Example" alt=""><p class="caption">Vim Example</p>
+<div class="float">
+<img src="vim-syntastic.gif" title="Vim Example" alt="Vim Example"><div class="figcaption">Vim Example</div>
 </div>
 <div class="section level3">
 <h3 id="installation-1">Installation<a class="anchor" aria-label="anchor" href="#installation-1"></a>
@@ -200,8 +200,8 @@ endif</code></pre>
 </h2>
 <p>lintr can be integrated with <a href="https://github.com/SublimeLinter/SublimeLinter" class="external-link">Sublime Linter</a>
 for on-the-fly linting.</p>
-<div class="figure">
-<img src="sublime.gif" title="Sublime Example" alt=""><p class="caption">Sublime Example</p>
+<div class="float">
+<img src="sublime.gif" title="Sublime Example" alt="Sublime Example"><div class="figcaption">Sublime Example</div>
 </div>
 <div class="section level3">
 <h3 id="installation-3">Installation<a class="anchor" aria-label="anchor" href="#installation-3"></a>
@@ -216,13 +216,13 @@ Linter Docs</a></p>
 <p>You can also configure what linters are used. e.g. disabling the
 assignment linter and using a different line length cutoff. In the
 SublimeLinter User Settings</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"linters"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"lintr"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"linters"</span><span class="fu">:</span> <span class="st">"linters_with_defaults(assignment_linter = NULL, line_length_linter(120))"</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>      <span class="dt">"linters"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>        <span class="dt">"lintr"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>          <span class="dt">"linters"</span><span class="fu">:</span> <span class="st">"linters_with_defaults(assignment_linter = NULL, line_length_linter(120))"</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>    <span class="fu">}</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -230,15 +230,15 @@ SublimeLinter User Settings</p>
 </h2>
 <p>lintr can be integrated with <a href="https://github.com/steelbrain/linter" class="external-link">Linter</a> for on the fly
 linting.</p>
-<div class="figure">
-<img src="atom.png" title="Atom Example" alt=""><p class="caption">Atom Example</p>
+<div class="float">
+<img src="atom.png" title="Atom Example" alt="Atom Example"><div class="figcaption">Atom Example</div>
 </div>
 <div class="section level3">
 <h3 id="installation-4">Installation<a class="anchor" aria-label="anchor" href="#installation-4"></a>
 </h3>
 <p>Simply install <code>linter-lintr</code> from within Atom or on the
 command line with:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apm</span> install linter-lintr</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">apm</span> install linter-lintr</span></code></pre></div>
 <p>For more information and bug reports see <a href="https://github.com/AtomLinter/linter-lintr" class="external-link">Atom
 linter-lintr</a>.</p>
 </div>
@@ -248,8 +248,8 @@ linter-lintr</a>.</p>
 </h2>
 <p>In Visual Studio Code, <a href="https://github.com/REditorSupport/vscode-R#r-extension-for-visual-studio-code" class="external-link">vscode-R</a>
 presents the lintr diagnostics from <a href="https://github.com/REditorSupport/languageserver" class="external-link">languageserver</a>.</p>
-<div class="figure">
-<img src="vscode.png" title="VS Code Example" alt=""><p class="caption">VS Code Example</p>
+<div class="float">
+<img src="vscode.png" title="VS Code Example" alt="VS Code Example"><div class="figcaption">VS Code Example</div>
 </div>
 <div class="section level3">
 <h3 id="installation-5">Installation<a class="anchor" aria-label="anchor" href="#installation-5"></a>
@@ -257,8 +257,8 @@ presents the lintr diagnostics from <a href="https://github.com/REditorSupport/l
 <p>Installing <code>languageserver</code> package in R and
 <code>vscode-R</code> extension in VS Code will enable lintr in VS Code
 by default or run the following command lines:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'install.packages("languageserver")'</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">code</span> <span class="at">--install-extension</span> reditorsupport.r</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'install.packages("languageserver")'</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="ex">code</span> <span class="at">--install-extension</span> reditorsupport.r</span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

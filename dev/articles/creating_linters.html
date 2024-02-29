@@ -87,7 +87,7 @@
                         <h4 data-toc-skip class="author">lintr
 maintainers</h4>
             
-            <h4 data-toc-skip class="date">2024-01-27</h4>
+            <h4 data-toc-skip class="date">2024-02-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/lintr/blob/HEAD/vignettes/creating_linters.Rmd" class="external-link"><code>vignettes/creating_linters.Rmd</code></a></small>
       <div class="d-none name"><code>creating_linters.Rmd</code></div>
@@ -152,7 +152,7 @@ styling. See R/linter_tags.R.&lt;/p&gt;"><sup>1</sup></a>;
 (2) link to the full table of available linters; and (3) mark the
 function for export. The most unfamiliar here is probably (1), which can
 be skipped outside of <code>lintr</code> itself.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pipe_call_linter <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>pipe_call_linter <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span></code></pre></div>
 <p>Next, we define the name of the new linter. The convention is to
 suffix all linter names with <code>_linter</code>. All
 <code>_linter</code> functions are function factories that return a
@@ -194,7 +194,7 @@ some practice to get accustomed to – use the plentiful XPath-based
 linters in <code>lintr</code> as a guide to get extra practice<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;The W3schools tutorials are also quite helpful; see &lt;a href="https://www.w3schools.com/xml/xpath_intro.asp" class="external-link uri"&gt;https://www.w3schools.com/xml/xpath_intro.asp&lt;/a&gt;&lt;/p&gt;'><sup>2</sup></a>. Note:
 <code>xml2</code> implements XPath 1.0, which lacks some helpful
 features available in XPath 2.0.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Linter</span>(<span class="cf">function</span>(source_expression) {</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">Linter</span>(<span class="cf">function</span>(source_expression) {</span></code></pre></div>
 <p>This is the closure. It will be called on the
 <code>source_expression</code> variable that contains the top level
 expressions in the file to be linted. The call to <code><a href="../reference/Linter.html">Linter()</a></code>
@@ -306,7 +306,7 @@ unit testing framework, in particular, <a href="https://github.com/r-lib/lintr" 
 other testthat expectations.</p>
 <p>You can define tests inside separate <code>test_that</code> calls.
 Most of the linters use the same default form.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"returns the correct linting"</span>, {</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"returns the correct linting"</span>, {</span></code></pre></div>
 <p>You then test a series of expectations for the linter using
 <code>expect_lint</code>. Please see <code><a href="../reference/expect_lint.html">?expect_lint</a></code> for a
 full description of the parameters.</p>

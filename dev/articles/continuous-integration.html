@@ -143,13 +143,13 @@ paths.</p>
 <p>If you want to run <code>lintr</code> on <a href="https://www.travis-ci.com/" class="external-link">Travis-CI</a>, you will need to have
 Travis install the package first. This can be done by adding the
 following line to your <code>.travis.yml</code></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">r_github_packages</span><span class="kw">:</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> r-lib/lintr</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">r_github_packages</span><span class="kw">:</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> r-lib/lintr</span></span></code></pre></div>
 <p>We recommend running <code><a href="../reference/lint.html">lintr::lint_package()</a></code> as an
 after_success step in your build process:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">after_success</span><span class="kw">:</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> R CMD INSTALL $PKG_TARBALL</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> Rscript -e 'lintr::lint_package()'</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">after_success</span><span class="kw">:</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> R CMD INSTALL $PKG_TARBALL</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> Rscript -e 'lintr::lint_package()'</span></span></code></pre></div>
 <p>If lints are found in the commit or pull request they will be printed
 on Travis-CI. The environment variable <code>LINTR_ERROR_ON_LINT</code>
 mentioned for GitHub actions also works with Travis CI builds.</p>
