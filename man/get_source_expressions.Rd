@@ -67,8 +67,8 @@ This setting is found by taking the first valid result from the following locati
 }
 }
 \examples{
-\dontshow{if (requireNamespace("withr", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
+tmp <- tempfile()
+writeLines(c("x <- 1", "y <- x + 1"), tmp)
 get_source_expressions(tmp)
-\dontshow{\}) # examplesIf}
+unlink(tmp)
 }

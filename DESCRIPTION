@@ -37,7 +37,6 @@ Imports:
 Suggests:
     bookdown,
     cli,
-    httr (>= 1.2.1),
     jsonlite,
     patrick (>= 0.2.0),
     rlang,
@@ -52,10 +51,11 @@ Enhances:
 VignetteBuilder: 
     knitr
 Config/Needs/website: tidyverse/tidytemplate
+Config/Needs/development: pkgload, cli, testthat, patrick
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Collate:
     'make_linter_from_xpath.R'
     'xp_utils.R'
@@ -75,7 +75,6 @@ Collate:
     'class_equals_linter.R'
     'commas_linter.R'
     'commented_code_linter.R'
-    'comments.R'
     'comparison_negation_linter.R'
     'condition_call_linter.R'
     'condition_message_linter.R'

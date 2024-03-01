@@ -17,9 +17,6 @@ test_that("nzchar_linter skips as appropriate for other nchar args", {
   # type="bytes" should be >= the value for the default (type="chars")
   expect_lint("nchar(x, type='width') == 0L", NULL, linter)
 
-  # TODO(michaelchirico): check compatibility of nchar(., allowNA=TRUE).
-  #   there are no examples in ?nchar, nor any relevant usages on StackOverflow.
-  #   just assume they are incompatible now to be conservative.
   expect_lint("nchar(x, allowNA=TRUE) == 0L", NULL, linter)
 
   # nzchar also has keepNA argument so a drop-in switch is easy

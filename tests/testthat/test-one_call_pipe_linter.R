@@ -21,9 +21,7 @@ test_that("one_call_pipe_linter blocks simple disallowed usages", {
   # new lines don't matter
   expect_lint("x %>%\n  foo()", lint_msg, linter)
 
-  # catch the "inner" pipe chain, not the "outer" one
-  # TODO(michaelchirico): actually, this should lint twice -- we're too aggressive
-  #   in counting _all_ nested calls.
+  # nested case
   expect_lint("x %>% inner_join(y %>% filter(is_treatment))", lint_msg, linter)
 })
 

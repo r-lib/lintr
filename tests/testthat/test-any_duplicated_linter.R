@@ -49,10 +49,6 @@ test_that("any_duplicated_linter catches length(unique()) equivalencies too", {
   expect_lint("length(unique(x)) != length(x)", lint_msg_x, linter)
   expect_lint("length(unique(x)) < length(x)", lint_msg_x, linter)
   expect_lint("length(x) > length(unique(x))", lint_msg_x, linter)
-
-  # TODO(michaelchirico): try and match data.table- and dplyr-specific versions of
-  #   this, e.g. DT[, length(unique(col)) == .N] or
-  #   > DT %>% filter(length(unique(col)) == n())
 })
 
 test_that("any_duplicated_linter catches expression with two types of lint", {

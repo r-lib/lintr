@@ -81,6 +81,3 @@ test_that("lints vectorize", {
     ifelse_censor_linter()
   )
 })
-
-# TODO(michaelchirico): how easy would it be to strip parens when considering lint?
-#   e.g. ifelse(x < (kMaxIndex - 1), x, kMaxIndex - 1)

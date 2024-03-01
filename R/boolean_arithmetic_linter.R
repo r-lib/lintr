@@ -63,7 +63,7 @@ boolean_arithmetic_linter <- function() {
     xml_nodes_to_lints(
       any_expr,
       source_expression = source_expression,
-      # TODO(michaelchirico): customize this?
+      # TODO(#2464): customize this?
       lint_message = paste(
         "Use any() to express logical aggregations.",
         "For example, replace length(which(x == y)) == 0 with !any(x == y)."
