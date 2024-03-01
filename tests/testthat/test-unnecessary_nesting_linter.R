@@ -729,5 +729,10 @@ patrick::with_parameters_test_that(
 )
 
 test_that("allow_functions= works", {
-  expect_lint("foo(x, {y}, z)", NULL, unnecessary_nesting_linter(allow_functions = "foo"))
+  linter_default <- unnecessary_nesting_linter()
+  linter_foo <- unnecessary_nesting_linter(allow_functions = "foo")
+  expect_lint("foo(x, {y}, z)", "Reduce the nesting of this statement", linter_default)
+  expect_lint("foo(x, {y}, z)", NULL, linter_foo)
+  expect_lint("test_that('a', {y})", NULL, linter_default)
+  expect_lint("that_that('b', {y})", NULL, linter_foo)
 })
