@@ -31,7 +31,10 @@ test_that("multiple lints are generated correctly", {
       x %in% 1
       y %chin% "a"
     }'),
-    list("%in%", "%chin%"),
+    list(
+      list("%in%", line_number = 2L),
+      list("%chin%", line_number = 3L)
+    ),
     linter
   )
 })

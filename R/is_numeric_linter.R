@@ -34,11 +34,9 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 is_numeric_linter <- function() {
-  # TODO(michaelchirico): this should also cover is.double(x) || is.integer(x)
-  # TODO(#1636): is.numeric(x) || is.integer(x) || is.factor(x) is also redundant
-  # TODO(michaelchirico): consdier capturing any(class(x) == "numeric/integer")
-  #   here directly; currently we rely on class_equals_linter() also active
-  # TODO(michaelchirico): also catch inherits(x, c("numeric", "integer"))
+  # TODO(#2469): This should also cover is.double(x) || is.integer(x).
+  # TODO(#1636): is.numeric(x) || is.integer(x) || is.factor(x) is also redundant.
+  # TODO(#2470): Consider usages with class(), typeof(), or inherits().
   is_numeric_expr <- "expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.numeric']]"
   is_integer_expr <- "expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.integer']]"
 
@@ -55,7 +53,6 @@ is_numeric_linter <- function() {
   ")
 
   # testing class(x) %in% c("numeric", "integer")
-  # TODO(michaelchirico): include typeof(x) %in% c("integer", "double")
   class_xpath <- "
   //SPECIAL[
     text() = '%in%'
@@ -71,14 +68,13 @@ is_numeric_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     or_expr <- xml_find_all(xml, or_xpath)
     or_lints <- xml_nodes_to_lints(
       or_expr,
       source_expression = source_expression,
       lint_message = paste(
-        "is.numeric(x) is the same as is.numeric(x) || is.integer(x).",
+        "Use `is.numeric(x)` instead of the equivalent `is.numeric(x) || is.integer(x)`.",
         "Use is.double(x) to test for objects stored as 64-bit floating point."
       ),
       type = "warning"
@@ -97,7 +93,7 @@ is_numeric_linter <- function() {
       class_expr,
       source_expression = source_expression,
       lint_message = paste(
-        'is.numeric(x) is the same as class(x) %in% c("integer", "numeric").',
+        'Use is.numeric(x) instead of class(x) %in% c("integer", "numeric").',
         "Use is.double(x) to test for objects stored as 64-bit floating point."
       ),
       type = "warning"

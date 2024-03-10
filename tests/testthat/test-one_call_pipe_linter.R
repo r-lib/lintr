@@ -14,22 +14,20 @@ test_that("one_call_pipe_linter skips allowed usages", {
 
 test_that("one_call_pipe_linter blocks simple disallowed usages", {
   linter <- one_call_pipe_linter()
-  lint_msg <- rex::rex("Expressions with only a single call shouldn't use pipe %>%.")
+  lint_msg <- rex::rex("Avoid pipe %>% for expressions with only a single call.")
 
   expect_lint("x %>% foo()", lint_msg, linter)
 
   # new lines don't matter
   expect_lint("x %>%\n  foo()", lint_msg, linter)
 
-  # catch the "inner" pipe chain, not the "outer" one
-  # TODO(michaelchirico): actually, this should lint twice -- we're too aggressive
-  #   in counting _all_ nested calls.
+  # nested case
   expect_lint("x %>% inner_join(y %>% filter(is_treatment))", lint_msg, linter)
 })
 
 test_that("one_call_pipe_linter skips data.table chains", {
   linter <- one_call_pipe_linter()
-  lint_msg <- rex::rex("Expressions with only a single call shouldn't use pipe %>%.")
+  lint_msg <- rex::rex("Avoid pipe %>% for expressions with only a single call.")
 
   expect_lint("DT[x > 5, sum(y), by = keys] %>% .[, .SD[1], by = key1]", NULL, linter)
 
@@ -44,11 +42,11 @@ test_that("one_call_pipe_linter skips data.table chains", {
 
 test_that("one_call_pipe_linter treats all pipes equally", {
   linter <- one_call_pipe_linter()
-  lint_msg_part <- "Expressions with only a single call shouldn't use pipe "
+  lint_msg_part <- " for expressions with only a single call."
 
   expect_lint("foo %>% bar() %$% col", NULL, linter)
-  expect_lint("x %T>% foo()", rex::rex(lint_msg_part, "%T>%."), linter)
-  expect_lint("x %$%\n  foo", rex::rex(lint_msg_part, "%$%."), linter)
+  expect_lint("x %T>% foo()", rex::rex("%T>%", lint_msg_part), linter)
+  expect_lint("x %$%\n  foo", rex::rex("%$%", lint_msg_part), linter)
   expect_lint(
     'data %>% filter(type == "console") %$% obscured_id %>% unique()',
     NULL,
@@ -80,7 +78,7 @@ test_that("Native pipes are handled as well", {
 
   expect_lint(
     "x |> foo()",
-    rex::rex("Expressions with only a single call shouldn't use pipe |>."),
+    rex::rex("Avoid pipe |> for expressions with only a single call."),
     linter
   )
 
@@ -105,7 +103,7 @@ test_that("one_call_pipe_linter skips data.table chains with native pipe", {
   skip_if_not_r_version("4.3.0")
 
   linter <- one_call_pipe_linter()
-  lint_msg <- rex::rex("Expressions with only a single call shouldn't use pipe |>.")
+  lint_msg <- rex::rex("Avoid pipe |> for expressions with only a single call.")
 
   expect_lint("DT[x > 5, sum(y), by = keys] |> _[, .SD[1], by = key1]", NULL, linter)
 

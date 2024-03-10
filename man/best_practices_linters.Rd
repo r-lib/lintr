@@ -32,7 +32,6 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{expect_s4_class_linter}}}
 \item{\code{\link{expect_true_false_linter}}}
 \item{\code{\link{expect_type_linter}}}
-\item{\code{\link{extraction_operator_linter}}}
 \item{\code{\link{fixed_regex_linter}}}
 \item{\code{\link{for_loop_index_linter}}}
 \item{\code{\link{function_argument_linter}}}
@@ -70,7 +69,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{undesirable_function_linter}}}
 \item{\code{\link{undesirable_operator_linter}}}
 \item{\code{\link{unnecessary_lambda_linter}}}
-\item{\code{\link{unnecessary_nested_if_linter}}}
+\item{\code{\link{unnecessary_nesting_linter}}}
 \item{\code{\link{unnecessary_placeholder_linter}}}
 \item{\code{\link{unreachable_code_linter}}}
 \item{\code{\link{unused_import_linter}}}

@@ -201,9 +201,9 @@ release_bullets <- function() {
 }
 # nocov end
 
-# see issue #923 -- some locales ignore _ when running sort(), others don't.
-#   we want to consistently treat "_" < "n" = "N"
-platform_independent_order <- function(x) order(tolower(gsub("_", "0", x, fixed = TRUE)))
+# see issue #923, PR #2455 -- some locales ignore _ when running sort(), others don't.
+#   We want to consistently treat "_" < "n" = "N"; C locale does this, which 'radix' uses.
+platform_independent_order <- function(x) order(tolower(x), method = "radix")
 platform_independent_sort <- function(x) x[platform_independent_order(x)]
 
 #' Extract text from `STR_CONST` nodes
@@ -221,20 +221,24 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #'   and `xpath` is specified, it is extracted with [xml2::xml_find_chr()].
 #' @param xpath An XPath, passed on to [xml2::xml_find_chr()] after wrapping with `string()`.
 #'
-#' @examplesIf requireNamespace("withr", quietly = TRUE)
-#' tmp <- withr::local_tempfile(lines = "c('a', 'b')")
+#' @examples
+#' tmp <- tempfile()
+#' writeLines("c('a', 'b')", tmp)
 #' expr_as_xml <- get_source_expressions(tmp)$expressions[[1L]]$xml_parsed_content
 #' writeLines(as.character(expr_as_xml))
 #' get_r_string(expr_as_xml, "expr[2]") # "a"
 #' get_r_string(expr_as_xml, "expr[3]") # "b"
+#' unlink(tmp)
 #'
 #' # more importantly, extract strings under R>=4 raw strings
 #' @examplesIf getRversion() >= "4.0.0"
-#' tmp4.0 <- withr::local_tempfile(lines = "c(R'(a\\b)', R'--[a\\\"\'\"\\b]--')")
+#' tmp4.0 <- tempfile()
+#' writeLines("c(R'(a\\b)', R'--[a\\\"\'\"\\b]--')", tmp4.0)
 #' expr_as_xml4.0 <- get_source_expressions(tmp4.0)$expressions[[1L]]$xml_parsed_content
 #' writeLines(as.character(expr_as_xml4.0))
 #' get_r_string(expr_as_xml4.0, "expr[2]") # "a\\b"
 #' get_r_string(expr_as_xml4.0, "expr[3]") # "a\\\"'\"\\b"
+#' unlink(tmp4.0)
 #'
 #' @export
 get_r_string <- function(s, xpath = NULL) {

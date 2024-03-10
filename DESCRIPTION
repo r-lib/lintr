@@ -37,14 +37,12 @@ Imports:
 Suggests:
     bookdown,
     cli,
-    httr (>= 1.2.1),
     jsonlite,
-    mockery,
-    patrick,
+    patrick (>= 0.2.0),
     rlang,
     rmarkdown,
     rstudioapi (>= 0.2),
-    testthat (>= 3.1.5),
+    testthat (>= 3.2.1),
     tibble,
     tufte,
     withr (>= 2.5.0)
@@ -53,11 +51,12 @@ Enhances:
 VignetteBuilder: 
     knitr
 Config/Needs/website: tidyverse/tidytemplate
+Config/Needs/development: pkgload, cli, testthat, patrick
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Collate:
     'make_linter_from_xpath.R'
     'xp_utils.R'
@@ -76,8 +75,7 @@ Collate:
     'cache.R'
     'class_equals_linter.R'
     'commas_linter.R'
-    'comment_linters.R'
-    'comments.R'
+    'commented_code_linter.R'
     'comparison_negation_linter.R'
     'condition_call_linter.R'
     'condition_message_linter.R'
@@ -103,7 +101,6 @@ Collate:
     'expect_true_false_linter.R'
     'expect_type_linter.R'
     'extract.R'
-    'extraction_operator_linter.R'
     'fixed_regex_linter.R'
     'for_loop_index_linter.R'
     'function_argument_linter.R'
@@ -144,6 +141,7 @@ Collate:
     'nested_ifelse_linter.R'
     'nested_pipe_linter.R'
     'nonportable_path_linter.R'
+    'shared_constants.R'
     'nrow_subset_linter.R'
     'numeric_leading_zero_linter.R'
     'nzchar_linter.R'
@@ -176,8 +174,8 @@ Collate:
     'seq_linter.R'
     'settings.R'
     'settings_utils.R'
-    'shared_constants.R'
     'sort_linter.R'
+    'source_utils.R'
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'
     'sprintf_linter.R'
@@ -186,6 +184,7 @@ Collate:
     'strings_as_factors_linter.R'
     'system_file_linter.R'
     'terminal_close_linter.R'
+    'todo_comment_linter.R'
     'trailing_blank_lines_linter.R'
     'trailing_whitespace_linter.R'
     'tree_utils.R'
@@ -193,7 +192,6 @@ Collate:
     'undesirable_operator_linter.R'
     'unnecessary_concatenation_linter.R'
     'unnecessary_lambda_linter.R'
-    'unnecessary_nested_if_linter.R'
     'unnecessary_nesting_linter.R'
     'unnecessary_placeholder_linter.R'
     'unreachable_code_linter.R'

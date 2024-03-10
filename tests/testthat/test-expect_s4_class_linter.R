@@ -12,16 +12,26 @@ test_that("expect_s4_class_linter skips allowed usages", {
 })
 
 test_that("expect_s4_class blocks simple disallowed usages", {
-  expect_lint(
-    "expect_true(is(x, 'data.frame'))",
-    rex::rex("expect_s4_class(x, k) is better than expect_true(is(x, k))"),
-    expect_s4_class_linter()
-  )
+  linter <- expect_s4_class_linter()
+  lint_msg <- rex::rex("expect_s4_class(x, k) is better than expect_true(is(x, k))")
 
+  expect_lint("expect_true(is(x, 'data.frame'))", lint_msg, linter)
   # namespace qualification is irrelevant
+  expect_lint("testthat::expect_true(methods::is(x, 'SpatialPolygonsDataFrame'))", lint_msg, linter)
+})
+
+test_that("lints vectorize", {
+  lint_msg <- rex::rex("expect_s4_class(x, k) is better than expect_true(is(x, k))")
+
   expect_lint(
-    "testthat::expect_true(methods::is(x, 'SpatialPolygonsDataFrame'))",
-    rex::rex("expect_s4_class(x, k) is better than expect_true(is(x, k))"),
+    trim_some("{
+      expect_true(is(x, 'data.frame'))
+      expect_true(is(x, 'SpatialPolygonsDataFrame'))
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
     expect_s4_class_linter()
   )
 })
