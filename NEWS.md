@@ -49,6 +49,7 @@
 * `todo_comment_linter()` has a new argument `except_regex` for setting _valid_ TODO comments, e.g. for forcing TODO comments to be linked to GitHub issues like `TODO(#154)` (#2047, @MichaelChirico).
 * `vector_logic_linter()` is extended to recognize incorrect usage of scalar operators `&&` and `||` inside subsetting expressions like `dplyr::filter(x, A && B)` (#2166, @MichaelChirico).
 * `any_is_na_linter()` is extended to catch the unusual usage `NA %in% x` (#2113, @MichaelChirico).
+* `brace_linter()`' has a new argument `function_braces` (default `"multi_line"`) which controls whether to require function bodies to be wrapped in curly braces, with the options `"always"`, `"multi_line"` (only require curly braces when a function body spans over multiple lines), `"not_inline"` (only require curly braces when a function body starts on a new line) and `"never"` (#1807, #2240, @salim-b).
 
 ### New linters
 
@@ -108,7 +109,6 @@
 * `object_name_linter()` no longer attempts to lint strings in function calls on the LHS of assignments (#1466, @MichaelChirico).
 * `infix_spaces_linter()` allows finer control for linting `=` in different scenarios using parse tags `EQ_ASSIGN`, `EQ_SUB`, and `EQ_FORMALS` (#1977, @MichaelChirico).
 * `equals_na_linter()` checks for `x %in% NA`, which is a more convoluted form of `is.na(x)` (#2088, @MichaelChirico).
-* `brace_linter()`'s new `function_braces` (default `"multi_line"`) param allows to specify whether to require function bodies to be wrapped in curly braces, with the options `"always"`, `"multi_line"` (only require curly braces when a function body spans over multiple lines), `"not_inline"` (only require curly braces when a function body starts on a new line) and `"never"` (#1807, #2240, @salim-b).
 
 ## New and improved features
 
