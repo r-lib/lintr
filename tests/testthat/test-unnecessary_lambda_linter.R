@@ -49,6 +49,46 @@ test_that("unnecessary_lambda_linter skips allowed usages", {
   expect_lint('lapply(l, function(x) rle(x)["values"])', NULL, linter)
   expect_lint('lapply(l, function(x) rle(x)[["values"]])', NULL, linter)
   expect_lint("lapply(l, function(x) rle(x)@values)", NULL, linter)
+
+  # return() extractions, #2258
+  expect_lint("lapply(l, function(x) return(foo(x)$bar))", NULL, linter)
+  expect_lint('lapply(l, function(x) return(rle(x)["values"]))', NULL, linter)
+  expect_lint('lapply(l, function(x) return(rle(x)[["values"]]))', NULL, linter)
+  expect_lint("lapply(l, function(x) return(rle(x)@values))", NULL, linter)
+
+  # Other operators, #2247
+  expect_lint("lapply(l, function(x) foo(x) - 1)", NULL, linter)
+  expect_lint("lapply(l, function(x) foo(x) * 2)", NULL, linter)
+  expect_lint("lapply(l, function(x) foo(x) ^ 3)", NULL, linter)
+  expect_lint("lapply(l, function(x) foo(x) %% 4)", NULL, linter)
+
+  # Don't include other lambdas, #2249
+  expect_lint(
+    trim_some('{
+      lapply(x, function(e) sprintf("%o", e))
+      lapply(y, function(e) paste(strlpad(e, "0", width)))
+    }'),
+    NULL,
+    linter
+  )
+
+  # only call is on RHS of operator, #2310
+  expect_lint("lapply(l, function(x) 'a' %in% names(x))", NULL, linter)
+  expect_lint("lapply(l, function(x = 1) 'a' %in% names(x))", NULL, linter)
+})
+
+test_that("unnecessary_lambda_linter skips allowed inner comparisons", {
+  linter <- unnecessary_lambda_linter()
+
+  # lapply returns a list, so not the same, though as.list is probably
+  #   a better choice
+  expect_lint("lapply(x, function(xi) foo(xi) == 2)", NULL, linter)
+
+  # this _may_ return a matrix, though outer is probably a better choice if so
+  expect_lint("sapply(x, function(xi) foo(xi) == y)", NULL, linter)
+
+  # only lint "plain" calls that can be replaced by eliminating the lambda
+  expect_lint("sapply(x, function(xi) sum(abs(xi)) == 0)", NULL, linter)
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
@@ -83,6 +123,42 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
   )
 })
 
+test_that("unnecessary_lambda_linter blocks simple disallowed usages", {
+  linter <- unnecessary_lambda_linter()
+  linter_allow <- unnecessary_lambda_linter(allow_comparison = TRUE)
+  lint_msg <- rex::rex("Compare to a constant after calling sapply() to get", anything, "sapply(x, foo)")
+
+  expect_lint("sapply(x, function(xi) foo(xi) == 2)", lint_msg, linter)
+  expect_lint("sapply(x, function(xi) foo(xi) == 'a')", lint_msg, linter)
+  expect_lint("sapply(x, function(xi) foo(xi) == 1 + 2i)", lint_msg, linter)
+
+  expect_lint("sapply(x, function(xi) foo(xi) == 2)", NULL, linter_allow)
+  expect_lint("sapply(x, function(xi) foo(xi) == 'a')", NULL, linter_allow)
+  expect_lint("sapply(x, function(xi) foo(xi) == 1 + 2i)", NULL, linter_allow)
+
+  # vapply counts as well
+  # NB: we ignore the FUN.VALUE argument, for now
+  expect_lint(
+    "vapply(x, function(xi) foo(xi) == 2, logical(1L))",
+    rex::rex("Compare to a constant after calling vapply()", anything, "vapply(x, foo, FUN.VALUE = <intermediate>)"),
+    linter
+  )
+})
+
+test_that("unnecessary_lambda_linter blocks other comparators as well", {
+  linter <- unnecessary_lambda_linter()
+  linter_allow <- unnecessary_lambda_linter(allow_comparison = TRUE)
+  lint_msg <- rex::rex("Compare to a constant after calling sapply() to get")
+
+  expect_lint("sapply(x, function(xi) foo(xi) >= 2)", lint_msg, linter)
+  expect_lint("sapply(x, function(xi) foo(xi) != 'a')", lint_msg, linter)
+  expect_lint("sapply(x, function(xi) foo(xi) < 1 + 2i)", lint_msg, linter)
+
+  expect_lint("sapply(x, function(xi) foo(xi) >= 2)", NULL, linter_allow)
+  expect_lint("sapply(x, function(xi) foo(xi) != 'a')", NULL, linter_allow)
+  expect_lint("sapply(x, function(xi) foo(xi) < 1 + 2i)", NULL, linter_allow)
+})
+
 test_that("unnecessary_lambda_linter doesn't apply to keyword args", {
   expect_lint("lapply(x, function(xi) data.frame(nm = xi))", NULL, unnecessary_lambda_linter())
   expect_lint("lapply(x, function(xi) return(data.frame(nm = xi)))", NULL, unnecessary_lambda_linter())
@@ -91,8 +167,6 @@ test_that("unnecessary_lambda_linter doesn't apply to keyword args", {
 test_that("purrr-style anonymous functions are also caught", {
   linter <- unnecessary_lambda_linter()
 
-  # TODO(michaelchirico): this is just purrr::flatten(x). We should write another
-  #   linter to encourage that usage.
   expect_lint("purrr::map(x, ~.x)", NULL, linter)
   expect_lint("purrr::map_df(x, ~lm(y, .x))", NULL, linter)
   expect_lint("map_dbl(x, ~foo(bar = .x))", NULL, linter)
@@ -170,6 +244,10 @@ test_that("cases with braces are caught", {
     NULL,
     linter
   )
+
+  # false positives like #2231, #2247 are avoided with braces too
+  expect_lint("lapply(x, function(xi) { foo(xi)$bar })", NULL, linter)
+  expect_lint("lapply(x, function(xi) { foo(xi) - 1 })", NULL, linter)
 })
 
 test_that("function shorthand is handled", {
@@ -178,6 +256,22 @@ test_that("function shorthand is handled", {
   expect_lint(
     "lapply(DF, \\(x) sum(x))",
     rex::rex("Pass sum directly as a symbol to lapply()"),
+    unnecessary_lambda_linter()
+  )
+})
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      sapply(x, function(xi) sd(xi))
+      lapply(y, function(yi) {
+        sum(yi)
+      })
+    }"),
+    list(
+      list("sd", line_number = 2L),
+      list("sum", line_number = 3L)
+    ),
     unnecessary_lambda_linter()
   )
 })

@@ -204,18 +204,16 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
   xp_multiline_string <- "//STR_CONST[@line1 < @line2]"
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     # must run on file level because a line can contain multiple expressions, losing indentation information, e.g.
     #
     #> fun(
     #    a) # comment
     #
     # will have "# comment" as a separate expression
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
 
     xml <- source_expression$full_xml_parsed_content
+
     # Indentation increases by 1 for:
     #  - { } blocks that span multiple lines
     #  - ( ), [ ], or [[ ]] calls that span multiple lines
@@ -294,8 +292,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         type = "style",
         message = lint_messages,
         line = unname(source_expression$file_lines[bad_lines]),
-        # TODO(AshesITR) when updating supported R version to R >= 4.1:
-        # replace by ranges = apply(lint_ranges, 1L, list, simplify = FALSE)
+        # TODO(#2467): Use ranges = apply(lint_ranges, 1L, list, simplify = FALSE).
         ranges = lapply(
           seq_along(bad_lines),
           function(i) {

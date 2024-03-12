@@ -15,6 +15,25 @@ is matched as well.
 \code{scalar \%in\% vector} is OK, because the alternative (\code{any(vector == scalar)})
 is more circuitous & potentially less clear.
 }
+\examples{
+# will produce lints
+lint(
+  text = "x \%in\% 1L",
+  linters = scalar_in_linter()
+)
+
+lint(
+  text = "x \%chin\% 'a'",
+  linters = scalar_in_linter()
+)
+
+# okay
+lint(
+  text = "x \%in\% 1:10",
+  linters = scalar_in_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

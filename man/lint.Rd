@@ -2,7 +2,6 @@
 % Please edit documentation in R/lint.R
 \name{lint}
 \alias{lint}
-\alias{lint_file}
 \alias{lint_dir}
 \alias{lint_package}
 \title{Lint a file, directory, or package}
@@ -48,11 +47,11 @@ linters.}
 \item \code{\link[=lint]{lint()}} (in case of \code{lint_dir()} and \code{lint_package()}; e.g. \code{linters} or \code{cache})
 }}
 
-\item{cache}{When logical, toggle caching of lint results. I1f passed a character string, store the cache in this
+\item{cache}{When logical, toggle caching of lint results. If passed a character string, store the cache in this
 directory.}
 
-\item{parse_settings}{Logical, default \code{TRUE}. Whether to try and parse the settings;
-otherwise, the \code{\link[=default_settings]{default_settings()}} are used.}
+\item{parse_settings}{Logical, default \code{TRUE}. Whether to try and parse the \link[=read_settings]{settings}. Otherwise,
+the \code{\link[=default_settings]{default_settings()}} are used.}
 
 \item{text}{Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
 linting is being done ad hoc.}
@@ -90,12 +89,13 @@ Note that if files contain unparseable encoding problems, only the encoding prob
 unintelligible error messages from other linters.
 }
 \examples{
-\dontshow{if (requireNamespace("withr", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-f <- withr::local_tempfile(lines = "a=1", fileext = "R")
+f <- tempfile()
+writeLines("a=1", f)
 lint(f)                # linting a file
 lint("a = 123\n")      # linting inline-code
 lint(text = "a = 123") # linting inline-code
-\dontshow{\}) # examplesIf}
+unlink(f)
+
 if (FALSE) {
   lint_dir()
 

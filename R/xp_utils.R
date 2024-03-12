@@ -9,9 +9,9 @@ xp_text_in_table <- function(table) {
   #   to use "" whenever the string has ' (not a perfect solution). info on
   #   escaping from https://stackoverflow.com/questions/14822153
   single_quoted <- grepl("'", table, fixed = TRUE)
-  table[single_quoted] <- quote_wrap(table[single_quoted], '"')
-  table[!single_quoted] <- quote_wrap(table[!single_quoted], "'")
-  return(paste0("text() = ", table, collapse = " or "))
+  table[single_quoted] <- sQuote(table[single_quoted], '"')
+  table[!single_quoted] <- sQuote(table[!single_quoted], "'")
+  paste0("text() = ", table, collapse = " or ")
 }
 
 paren_wrap <- function(..., sep) {
@@ -85,7 +85,8 @@ xp_call_name <- function(expr, depth = 1L, condition = NULL) {
   if (!is_valid_expr) {
     stop(
       "Expected an xml_nodeset or an xml_node, instead got an object of class(es): ",
-      toString(class(expr))
+      toString(class(expr)),
+      call. = FALSE
     )
   }
 
@@ -117,9 +118,21 @@ xp_find_location <- function(xml, xpath) {
 #'   way to XPath 2.0-ish support by writing this simple function to remove comments.
 #'
 #' @noRd
-xpath_comment_re <- rex::rex(
+xpath_comment_re <- rex(
   "(:",
   zero_or_more(not(":)")),
   ":)"
 )
 xp_strip_comments <- function(xpath) rex::re_substitutes(xpath, xpath_comment_re, "", global = TRUE)
+
+#' Combine two or more nodesets to a single nodeset
+#'
+#' Useful for calling `{xml2}` functions on a combined set of nodes obtained using different XPath searches.
+#'
+#' @noRd
+# TODO(r-lib/xml2#433): remove this and just use c()
+combine_nodesets <- function(...) {
+  res <- c(...)
+  class(res) <- "xml_nodeset"
+  res
+}

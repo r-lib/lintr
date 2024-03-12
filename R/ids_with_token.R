@@ -17,11 +17,13 @@
 #' the `token` column of `parsed_content`. Typically `==` or `%in%`.
 #' @param source_file (DEPRECATED) Same as `source_expression`. Will be removed.
 #'
-#' @examplesIf requireNamespace("withr", quietly = TRUE)
-#' tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
+#' @examples
+#' tmp <- tempfile()
+#' writeLines(c("x <- 1", "y <- x + 1"), tmp)
 #' source_exprs <- get_source_expressions(tmp)
 #' ids_with_token(source_exprs$expressions[[1L]], value = "SYMBOL")
 #' with_id(source_exprs$expressions[[1L]], 2L)
+#' unlink(tmp)
 #'
 #' @return `ids_with_token`: The indices of the `parsed_content` data frame
 #' entry of the list of source expressions. Indices correspond to the
@@ -29,8 +31,11 @@
 #' @export
 ids_with_token <- function(source_expression, value, fun = `==`, source_file = NULL) {
   if (!missing(source_file)) {
-    lintr_deprecated(old = "source_file", new = "source_expression", version = "3.0.0", type = "Argument")
-    source_expression <- source_file
+    lintr_deprecated(
+      what = "source_file", alternative = "source_expression",
+      version = "3.0.0", type = "Argument",
+      signal = "stop"
+    )
   }
   if (!is_lint_level(source_expression, "expression")) {
     return(integer())

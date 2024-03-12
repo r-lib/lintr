@@ -43,7 +43,7 @@ test_that("as.data.frame.lints", {
   )
   expect_s3_class(l2, "lint")
 
-  expect_warning(
+  expect_error(
     Lint("dummy.R", linter = "deprecated"),
     regexp = "deprecated",
     fixed = TRUE
@@ -98,8 +98,6 @@ test_that("print.lint works", {
 })
 
 test_that("print.lint works for inline data, even in RStudio", {
-  skip_if_not_installed("mockery")
-
   l <- lint("x = 1\n")
 
   # Make sure lints print to console.
@@ -114,7 +112,11 @@ test_that("print.lint works for inline data, even in RStudio", {
     expect_output(print(l), "not =")
   )
 
-  mockery::stub(print.lints, "rstudioapi::hasFun", function(...) FALSE)
+  skip_if_not_installed("rstudioapi")
+  local_mocked_bindings(
+    hasFun = function(...) FALSE,
+    .package = "rstudioapi"
+  )
   withr::with_options(
     list(lintr.rstudio_source_markers = TRUE),
     expect_output(print(l), "not =")
@@ -156,4 +158,56 @@ test_that("as.data.table.list is _not_ dispatched directly", {
 
   lints <- lint(text = "a = 1", linters = assignment_linter())
   expect_identical(nrow(data.table::as.data.table(lints)), 1L)
+})
+
+local({
+  # avoid impact of CLI mark-up on strwrap output.
+  #   (testthat, or cli, already do so, but force it explicitly here for emphasis)
+  withr::local_options(c(cli.num_colors = 0L))
+  # force "default" print method even on GHA
+  withr::local_envvar(c(GITHUB_ACTIONS = NA))
+
+  test_linter <- make_linter_from_xpath("*[1]", lint_message = "The quick brown fox jumps over the lazy dog.")
+
+  lints <- lint(text = "a", linters = test_linter())
+  lint <- lints[[1L]]
+
+  widths <- c(10L, 20L, 40L, 80L)
+  test_names <- paste0(": width = ", widths)
+
+  patrick::with_parameters_test_that(
+    "print.lint, print.lints support optional message wrapping",
+    {
+      expect_snapshot(print(lints, width = width))
+
+      withr::with_options(c(lintr.format_width = width), {
+        expect_snapshot(print(lints))
+      })
+    },
+    .test_name = test_names,
+    width = widths
+  )
+
+  wrapped_strings <- c(
+    "[test_linter]\n    The\n    quick\n    brown\n    fox\n    jumps\n    over\n    the\n    lazy\n    dog.",
+    "[test_linter]\n    The quick brown\n    fox jumps over\n    the lazy dog.",
+    "[test_linter] The\n    quick brown fox jumps over the lazy\n    dog.",
+    "[test_linter] The quick brown fox jumps over the lazy dog."
+  )
+
+  patrick::with_parameters_test_that(
+    "format.lint, format.lints support optional message wrapping",
+    {
+      expect_match(format(lint, width = width), wrapped_string, fixed = TRUE)
+      expect_match(format(lints, width = width), wrapped_string, fixed = TRUE)
+
+      withr::with_options(c(lintr.format_width = width), {
+        expect_match(format(lint), wrapped_string, fixed = TRUE)
+        expect_match(format(lints), wrapped_string, fixed = TRUE)
+      })
+    },
+    .test_name = test_names,
+    width = widths,
+    wrapped_string = wrapped_strings
+  )
 })

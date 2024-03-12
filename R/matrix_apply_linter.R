@@ -36,8 +36,7 @@ matrix_apply_linter <- function() {
   #
   # Currently supported values for MARGIN: scalar numeric and vector of contiguous values created by : (OP-COLON)
   sums_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'apply']
-    /parent::expr
+  parent::expr
     /following-sibling::expr[
       NUM_CONST or OP-COLON/preceding-sibling::expr[NUM_CONST]/following-sibling::expr[NUM_CONST]
       and (position() = 2)
@@ -52,8 +51,7 @@ matrix_apply_linter <- function() {
   # Since mean() is a generic, we make sure that we only lint cases with arguments
   # supported by colMeans() and rowMeans(), i.e., na.rm
   means_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'apply']
-    /parent::expr
+  parent::expr
     /following-sibling::expr[
       NUM_CONST or OP-COLON/preceding-sibling::expr[NUM_CONST]/following-sibling::expr[NUM_CONST]
       and (position() = 2)
@@ -72,19 +70,15 @@ matrix_apply_linter <- function() {
 
   # This doesn't handle the case when MARGIN and FUN are named and in a different position
   # but this should be relatively rate
-  var_xpath <- "expr[position() = 2]"
+  variable_xpath <- "expr[position() = 2]"
   margin_xpath <- "expr[position() = 3]"
   fun_xpath <- "expr[position() = 4]"
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-    xml <- source_expression$xml_parsed_content
+  Linter(linter_level = "expression", function(source_expression) {
+    xml_calls <- source_expression$xml_find_function_calls("apply")
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
-    bad_expr <- xml_find_all(xml, xpath)
-
-    var <- xml_text(xml_find_all(bad_expr, var_xpath))
+    variable <- xml_text(xml_find_all(bad_expr, variable_xpath))
 
     fun <- xml_text(xml_find_all(bad_expr, fun_xpath))
     fun <- tools::toTitleCase(fun)
@@ -95,7 +89,7 @@ matrix_apply_linter <- function() {
       xml_find_first(bad_expr, "SYMBOL_SUB[text() = 'na.rm']/following-sibling::expr")
     )
 
-    recos <- Map(craft_colsums_rowsums_msg, var, margin, fun, narm_val)
+    recos <- Map(craft_colsums_rowsums_msg, variable, margin, fun, narm_val)
 
     xml_nodes_to_lints(
       bad_expr,
@@ -106,7 +100,7 @@ matrix_apply_linter <- function() {
   })
 }
 
-craft_colsums_rowsums_msg <- function(var, margin, fun, narm_val) {
+craft_colsums_rowsums_msg <- function(variable, margin, fun, narm_val) {
   if (is.na(xml_find_first(margin, "OP-COLON"))) {
     l1 <- xml_text(margin)
     l2 <- NULL
@@ -135,12 +129,12 @@ craft_colsums_rowsums_msg <- function(var, margin, fun, narm_val) {
   }
 
   if (identical(l1, 1L)) {
-    reco <- glue("row{fun}s({var}{narm}, dims = {l2})")
+    reco <- glue("row{fun}s({variable}{narm}, dims = {l2})")
   } else {
     reco <- glue(
-      "row{fun}s(col{fun}s({var}{narm}, dims = {l1 - 1}), dims = {l2 - l1 + 1})",
+      "row{fun}s(col{fun}s({variable}{narm}, dims = {l1 - 1}), dims = {l2 - l1 + 1})",
       " or ",
-      "col{fun}s({var}{narm}, dims = {l1 - 1}) if {var} has {l2} dimensions"
+      "col{fun}s({variable}{narm}, dims = {l1 - 1}) if {variable} has {l2} dimensions"
     )
   }
 

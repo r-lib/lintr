@@ -28,8 +28,7 @@
 #' @export
 sprintf_linter <- function() {
   call_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'sprintf' or text() = 'gettextf']
-    /parent::expr
+    parent::expr
     /parent::expr[
       (
         OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST or
@@ -104,22 +103,17 @@ sprintf_linter <- function() {
     }
   }
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
+  Linter(linter_level = "file", function(source_expression) {
+    xml_calls <- source_expression$xml_find_function_calls(c("sprintf", "gettextf"))
+    sprintf_calls <- xml_find_all(xml_calls, call_xpath)
 
-    xml <- source_expression$full_xml_parsed_content
+    sprintf_warning <- vapply(sprintf_calls, capture_sprintf_warning, character(1L))
 
-    sprintf_calls <- xml_find_all(xml, call_xpath)
-
-    message <- vapply(sprintf_calls, capture_sprintf_warning, character(1L))
-
-    has_message <- !is.na(message)
+    has_warning <- !is.na(sprintf_warning)
     xml_nodes_to_lints(
-      sprintf_calls[has_message],
+      sprintf_calls[has_warning],
       source_expression = source_expression,
-      lint_message = message[has_message],
+      lint_message = sprintf_warning[has_warning],
       type = "warning"
     )
   })

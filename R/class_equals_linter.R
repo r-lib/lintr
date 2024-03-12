@@ -35,8 +35,7 @@
 #' @export
 class_equals_linter <- function() {
   xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'class']
-    /parent::expr
+  parent::expr
     /parent::expr
     /parent::expr[
       not(preceding-sibling::OP-LEFT-BRACKET)
@@ -44,18 +43,13 @@ class_equals_linter <- function() {
     ]
   "
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml_find_all(xml, xpath)
+  Linter(linter_level = "expression", function(source_expression) {
+    xml_calls <- source_expression$xml_find_function_calls("class")
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     operator <- xml_find_chr(bad_expr, "string(*[2])")
     lint_message <- sprintf(
-      "Instead of comparing class(x) with %s, use inherits(x, 'class-name') or is.<class> or is(x, 'class')",
+      "Use inherits(x, 'class-name'), is.<class> or is(x, 'class') instead of comparing class(x) with %s.",
       operator
     )
     xml_nodes_to_lints(

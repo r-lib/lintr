@@ -1,13 +1,13 @@
 #' @export
-format.lint <- function(x, ...) {
-  if (requireNamespace("crayon", quietly = TRUE)) {
+format.lint <- function(x, ..., width = getOption("lintr.format_width")) {
+  if (requireNamespace("cli", quietly = TRUE)) {
     color <- switch(x$type,
-      warning = crayon::magenta,
-      error = crayon::red,
-      style = crayon::blue,
-      crayon::bold
+      warning = cli::col_magenta,
+      error = cli::col_red,
+      style = cli::col_blue,
+      cli::style_bold
     )
-    emph <- crayon::bold
+    emph <- cli::style_bold
   } else {
     # nocov start
     color <- identity
@@ -15,7 +15,7 @@ format.lint <- function(x, ...) {
     # nocov end
   }
 
-  paste0(
+  annotated_msg <- paste0(
     emph(
       x$filename, ":",
       as.character(x$line_number), ":",
@@ -24,7 +24,15 @@ format.lint <- function(x, ...) {
     ),
     color(x$type, ": ", sep = ""),
     "[", x$linter, "] ",
-    emph(x$message), "\n",
+    emph(x$message)
+  )
+
+  if (!is.null(width)) {
+    annotated_msg <- paste(strwrap(annotated_msg, exdent = 4L, width = width), collapse = "\n")
+  }
+
+  paste0(
+    annotated_msg, "\n",
     # swap tabs for spaces for #528 (sorry Richard Hendricks)
     chartr("\t", " ", x$line), "\n",
     highlight_string(x$message, x$column_number, x$ranges),
@@ -34,7 +42,7 @@ format.lint <- function(x, ...) {
 
 #' @export
 print.lint <- function(x, ...) {
-  cat(format(x))
+  cat(format(x, ...))
   invisible(x)
 }
 
@@ -68,8 +76,8 @@ markdown <- function(x, info, ...) {
 }
 
 #' @export
-format.lints <- function(x, ...) {
-  paste(vapply(x, format, character(1L)), collapse = "\n")
+format.lints <- function(x, ..., width = getOption("lintr.format_width")) {
+  paste(vapply(x, format, character(1L), width = width), collapse = "\n")
 }
 
 #' @export
@@ -87,18 +95,6 @@ print.lints <- function(x, ...) {
     } else if (in_github_actions()) {
       github_actions_log_lints(x, project_dir = github_annotation_project_dir)
     } else {
-      if (in_ci() && settings$comment_bot) {
-        info <- ci_build_info()
-
-        lint_output <- trim_output(
-          paste0(
-            collapse = "\n",
-            capture.output(invisible(lapply(x, markdown, info, ...)))
-          )
-        )
-
-        github_comment(lint_output, info, ...)
-      }
       lapply(x, print, ...)
     }
 

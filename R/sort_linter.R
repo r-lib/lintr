@@ -83,8 +83,7 @@ sort_linter <- function() {
   ")
 
   sorted_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'sort']
-    /parent::expr
+  parent::expr
     /parent::expr[not(SYMBOL_SUB)]
     /parent::expr[
       (EQ or NE)
@@ -93,31 +92,26 @@ sort_linter <- function() {
   "
 
 
-  args_xpath <- ".//SYMBOL_SUB[text() = 'method' or
-                               text() = 'decreasing' or
-                               text() = 'na.last']"
+  arguments_xpath <-
+    ".//SYMBOL_SUB[text() = 'method' or text() = 'decreasing' or text() = 'na.last']"
 
-  arg_values_xpath <- glue("{args_xpath}/following-sibling::expr[1]")
+  arg_values_xpath <- glue("{arguments_xpath}/following-sibling::expr[1]")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     order_expr <- xml_find_all(xml, order_xpath)
 
-    var <- xml_text(xml_find_first(
+    variable <- xml_text(xml_find_first(
       order_expr,
       ".//SYMBOL_FUNCTION_CALL[text() = 'order']/parent::expr[1]/following-sibling::expr[1]"
     ))
 
-    orig_call <- sprintf("%s[%s]", var, get_r_string(order_expr))
+    orig_call <- sprintf("%s[%s]", variable, get_r_string(order_expr))
 
     # Reconstruct new argument call for each expression separately
-    args <- vapply(order_expr, function(e) {
-      arg_names <- xml_text(xml_find_all(e, args_xpath))
+    arguments <- vapply(order_expr, function(e) {
+      arg_names <- xml_text(xml_find_all(e, arguments_xpath))
       arg_values <- xml_text(xml_find_all(e, arg_values_xpath))
       if (!"na.last" %in% arg_names) {
         arg_names <- c(arg_names, "na.last")
@@ -126,16 +120,21 @@ sort_linter <- function() {
       paste(arg_names, "=", arg_values, collapse = ", ")
     }, character(1L))
 
-    new_call <- sprintf("sort(%s, %s)", var, args)
+    new_call <- sprintf("sort(%s, %s)", variable, arguments)
 
     order_lints <- xml_nodes_to_lints(
       order_expr,
       source_expression = source_expression,
-      lint_message = paste0(new_call, " is better than ", orig_call, "."),
+      lint_message = paste0(
+        new_call, " is better than ", orig_call, ". ",
+        "Note that it's always preferable to save the output of order() for the same variable ",
+        "as a local variable than to re-compute it."
+      ),
       type = "warning"
     )
 
-    sorted_expr <- xml_find_all(xml, sorted_xpath)
+    xml_calls <- source_expression$xml_find_function_calls("sort")
+    sorted_expr <- xml_find_all(xml_calls, sorted_xpath)
 
     sorted_op <- xml_text(xml_find_first(sorted_expr, "*[2]"))
     lint_message <- ifelse(

@@ -18,41 +18,47 @@
 #' \describe{
 #'   \item{expressions}{a `list` of
 #'   `n+1` objects. The first `n` elements correspond to each expression in
-#'   `filename`, and consist of a list of 9 elements:
+#'   `filename`, and consist of a list of 8 elements:
 #'   \itemize{
-#'     \item{`filename` (`character`)}
-#'     \item{`line` (`integer`) the line in `filename` where this expression begins}
-#'     \item{`column` (`integer`) the column in `filename` where this expression begins}
+#'     \item{`filename` (`character`) the name of the file.}
+#'     \item{`line` (`integer`) the line in the file where this expression begins.}
+#'     \item{`column` (`integer`) the column in the file where this expression begins.}
 #'     \item{`lines` (named `character`) vector of all lines spanned by this
-#'           expression, named with the line number corresponding to `filename`}
-#'     \item{`parsed_content` (`data.frame`) as given by [utils::getParseData()] for this expression}
-#'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of this
-#'          expression as given by [xmlparsedata::xml_parse_data()]}
-#'     \item{`content` (`character`) the same as `lines` as a single string (not split across lines)}
+#'           expression, named with the corresponding line numbers.}
+#'     \item{`parsed_content` (`data.frame`) as given by [utils::getParseData()] for this expression.}
+#'     \item{`xml_parsed_content` (`xml_document`) the XML parse tree of this expression as given by
+#'           [xmlparsedata::xml_parse_data()].}
+#'     \item{`content` (`character`) the same as `lines` as a single string (not split across lines).}
+#'     \item{`xml_find_function_calls(function_names)` (`function`) a function that returns all `SYMBOL_FUNCTION_CALL`
+#'           XML nodes from `xml_parsed_content` with specified function names.}
 #'   }
 #'
 #'   The final element of `expressions` is a list corresponding to the full file
-#'   consisting of 6 elements:
+#'   consisting of 7 elements:
 #'   \itemize{
-#'     \item{`filename` (`character`)}
-#'     \item{`file_lines` (`character`) the [readLines()] output for this file}
+#'     \item{`filename` (`character`) the name of this file.}
+#'     \item{`file_lines` (`character`) the [readLines()] output for this file.}
 #'     \item{`content` (`character`) for .R files, the same as `file_lines`;
-#'           for .Rmd or .qmd scripts, this is the extracted R source code (as text)}
+#'           for .Rmd or .qmd scripts, this is the extracted R source code (as text).}
 #'     \item{`full_parsed_content` (`data.frame`) as given by
-#'           [utils::getParseData()] for the full content}
+#'           [utils::getParseData()] for the full content.}
 #'     \item{`full_xml_parsed_content` (`xml_document`) the XML parse tree of all
-#'           expressions as given by [xmlparsedata::xml_parse_data()]}
+#'           expressions as given by [xmlparsedata::xml_parse_data()].}
 #'     \item{`terminal_newline` (`logical`) records whether `filename` has a terminal
-#'           newline (as determined by [readLines()] producing a corresponding warning)}
+#'           newline (as determined by [readLines()] producing a corresponding warning).}
+#'     \item{`xml_find_function_calls(function_names)` (`function`) a function that returns all `SYMBOL_FUNCTION_CALL`
+#'           XML nodes from `full_xml_parsed_content` with specified function names.}
 #'   }
 #'   }
 #'   \item{error}{A `Lint` object describing any parsing error.}
 #'   \item{lines}{The [readLines()] output for this file.}
 #' }
 #'
-#' @examplesIf requireNamespace("withr", quietly = TRUE)
-#' tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
+#' @examples
+#' tmp <- tempfile()
+#' writeLines(c("x <- 1", "y <- x + 1"), tmp)
 #' get_source_expressions(tmp)
+#' unlink(tmp)
 #' @export
 get_source_expressions <- function(filename, lines = NULL) {
   source_expression <- srcfile(filename, encoding = settings$encoding)
@@ -68,8 +74,7 @@ get_source_expressions <- function(filename, lines = NULL) {
   }
 
   # Only regard explicit attribute terminal_newline=FALSE as FALSE and all other cases (e.g. NULL or TRUE) as TRUE.
-  # We don't use isFALSE since it is introduced in R 3.5.0.
-  terminal_newline <- !identical(attr(source_expression$lines, "terminal_newline", exact = TRUE), FALSE)
+  terminal_newline <- !isFALSE(attr(source_expression$lines, "terminal_newline", exact = TRUE))
 
   e <- NULL
   source_expression$lines <- extract_r_source(
@@ -104,6 +109,7 @@ get_source_expressions <- function(filename, lines = NULL) {
       )
       for (i in seq_along(expressions)) {
         expressions[[i]]$xml_parsed_content <- expression_xmls[[i]]
+        expressions[[i]]$xml_find_function_calls <- build_xml_find_function_calls(expression_xmls[[i]])
       }
     }
 
@@ -114,6 +120,7 @@ get_source_expressions <- function(filename, lines = NULL) {
       content = source_expression$lines,
       full_parsed_content = parsed_content,
       full_xml_parsed_content = xml_parsed_content,
+      xml_find_function_calls = build_xml_find_function_calls(xml_parsed_content),
       terminal_newline = terminal_newline
     )
   }
@@ -477,6 +484,8 @@ get_single_source_expression <- function(loc,
     lines = expr_lines,
     parsed_content = pc,
     xml_parsed_content = xml2::xml_missing(),
+    # Placeholder for xml_find_function_calls, if needed (e.g. on R <= 4.0.5 with input source "\\")
+    xml_find_function_calls = build_xml_find_function_calls(xml2::xml_missing()),
     content = content
   )
 }
@@ -484,19 +493,6 @@ get_single_source_expression <- function(loc,
 get_source_expression <- function(source_expression, error = identity) {
   parse_error <- FALSE
 
-  parsed_content <- tryCatch(
-    parse(
-      text = source_expression$content,
-      srcfile = source_expression,
-      keep.source = TRUE
-    ),
-    error = error
-  )
-
-  # TODO: Remove when minimum R version is bumped to > 3.5
-  #
-  # This needs to be done twice to avoid a bug fixed in R 3.4.4
-  #   https://bugs.r-project.org/bugzilla/show_bug.cgi?id=16041
   parsed_content <- tryCatch(
     parse(
       text = source_expression$content,
@@ -598,6 +594,7 @@ tab_offsets <- function(tab_columns) {
   vapply(
     tab_columns - 1L,
     function(tab_idx) {
+      # nolint next: object_overwrite_linter. 'offset' is a perfect name here.
       offset <- 7L - (tab_idx + cum_offset) %% 8L # using a tab width of 8 characters
       cum_offset <<- cum_offset + offset
       offset
@@ -644,22 +641,11 @@ fix_eq_assigns <- function(pc) {
   )
 
   for (i in seq_len(n_expr)) {
-    start <- true_locs[i]
+    start_loc <- true_locs[i]
+    end_loc <- true_locs[i]
 
-    # TODO(michaelchirico): vectorize this loop away. the tricky part is,
-    #   this loop doesn't execute on most R versions (we tried 3.6.3 and 4.2.0).
-    #   so it likely requires some GHA print debugging -- tedious :)
-    end <- true_locs[i]
-    j <- end + 1L
-    # nocov start: only runs on certain R versions
-    while (j <= length(expr_locs) && !expr_locs[j]) {
-      end <- j
-      j <- j + 1L
-    }
-    # nocov end
-
-    prev_loc <- prev_locs[start]
-    next_loc <- next_locs[end]
+    prev_loc <- prev_locs[start_loc]
+    next_loc <- next_locs[end_loc]
 
     id_itr <- id_itr + 1L
     supplemental_content[i, ] <- list(
@@ -675,9 +661,9 @@ fix_eq_assigns <- function(pc) {
     )
 
     new_parent_locs <- c(
-      prev_locs[start:end],
-      eq_assign_locs[start:end],
-      next_locs[start:end],
+      prev_locs[start_loc:end_loc],
+      eq_assign_locs[start_loc:end_loc],
+      next_locs[start_loc:end_loc],
       next_loc
     )
     pc[new_parent_locs, "parent"] <- id_itr
