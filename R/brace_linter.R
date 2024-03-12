@@ -14,7 +14,7 @@
 #' @param function_braces Character string specifying whether to require function bodies to be wrapped in curly braces.
 #'   `"always"` requires braces for all function definitions, including inline functions.
 #'   `"not_inline"` requires braces when a function body does not start on the same line as its header.
-#'   `"multi_line"` requires braces when a function definition spans multiple lines.
+#'   `"multi_line"`, the default, requires braces when a function definition spans multiple lines.
 #'   `"never"` never requires braces in function bodies.
 #'
 #' @examples
