@@ -299,9 +299,9 @@ test_that("brace_linter lints else correctly", {
 })
 
 test_that("brace_linter lints function expressions correctly", {
-  msg_always <- rex::rex("Any function body should be wrapped in curly braces.")
-  msg_multi_line <- rex::rex("Any function body spanning multiple lines should be wrapped in curly braces.")
-  msg_not_inline <- rex::rex("Any function body starting on a new line should be wrapped in curly braces.")
+  msg_always <- rex::rex("Wrap function bodies in curly braces.")
+  msg_multi_line <- rex::rex("Wrap multi-line function bodies in curly braces.")
+  msg_not_inline <- rex::rex("Wrap function bodies starting on a new line in curly braces.")
 
   linter_always <- brace_linter(function_bodies = "always")
   linter_multi_line <- brace_linter(function_bodies = "multi_line")
