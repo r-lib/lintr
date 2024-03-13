@@ -146,9 +146,9 @@ brace_linter <- function(allow_single_line = FALSE,
 
     msg_function_brace <- switch(
       function_bodies,
-      always = "Any function body should be wrapped in curly braces.",
-      multi_line = "Any function body spanning multiple lines should be wrapped in curly braces.",
-      not_inline = "Any function body starting on a new line should be wrapped in curly braces."
+      always = "Wrap function bodies in curly braces.",
+      multi_line = "Wrap multi-line function bodies in curly braces.",
+      not_inline = "Wrap function bodies starting on a new line in curly braces."
     )
   }
 
