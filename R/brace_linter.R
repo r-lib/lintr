@@ -11,11 +11,11 @@
 #'  - Function bodies are wrapped in curly braces.
 #'
 #' @param allow_single_line If `TRUE`, allow an open and closed curly pair on the same line.
-#' @param function_braces Character string specifying whether to require function bodies to be wrapped in curly braces.
-#'   `"always"` requires braces for all function definitions, including inline functions.
-#'   `"not_inline"` requires braces when a function body does not start on the same line as its header.
-#'   `"multi_line"`, the default, requires braces when a function definition spans multiple lines.
-#'   `"never"` never requires braces in function bodies.
+#' @param function_braces Whether to require function bodies to be wrapped in curly braces. One of
+#'   - `"always"` to require braces for all function definitions, including inline functions,
+#'   - `"not_inline"` to require braces when a function body does not start on the same line as its signature,
+#'   - `"multi_line"` (the default) to require braces when a function definition spans multiple lines,
+#'   - `"never"` to never require braces in function bodies.
 #'
 #' @examples
 #' # will produce lints

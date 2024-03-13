@@ -12,11 +12,13 @@ brace_linter(
 \arguments{
 \item{allow_single_line}{If \code{TRUE}, allow an open and closed curly pair on the same line.}
 
-\item{function_braces}{Character specifying whether to require function bodies to be wrapped in curly braces.
-\code{"always"} requires braces for all function definitions, including inline functions.
-\code{"not_inline"} requires braces when a function body does not start on the same line as its header.
-\code{"multi_line"} requires braces when a function definition spans multiple lines.
-\code{"never"} never requires braces in function bodies.}
+\item{function_braces}{Whether to require function bodies to be wrapped in curly braces. One of
+\itemize{
+\item \code{"always"} to require braces for all function definitions, including inline functions,
+\item \code{"not_inline"} to require braces when a function body does not start on the same line as its signature,
+\item \code{"multi_line"} (the default) to require braces when a function definition spans multiple lines,
+\item \code{"never"} to never require braces in function bodies.
+}}
 }
 \description{
 Perform various style checks related to placement and spacing of curly braces:
