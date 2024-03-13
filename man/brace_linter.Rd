@@ -6,13 +6,13 @@
 \usage{
 brace_linter(
   allow_single_line = FALSE,
-  function_braces = c("multi_line", "always", "not_inline", "never")
+  function_bodies = c("multi_line", "always", "not_inline", "never")
 )
 }
 \arguments{
 \item{allow_single_line}{If \code{TRUE}, allow an open and closed curly pair on the same line.}
 
-\item{function_braces}{Whether to require function bodies to be wrapped in curly braces. One of
+\item{function_bodies}{Whether to require function bodies to be wrapped in curly braces. One of
 \itemize{
 \item \code{"always"} to require braces for all function definitions, including inline functions,
 \item \code{"not_inline"} to require braces when a function body does not start on the same line as its signature,
