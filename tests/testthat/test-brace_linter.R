@@ -303,10 +303,10 @@ test_that("brace_linter lints function expressions correctly", {
   msg_multi_line <- rex::rex("Any function body spanning multiple lines should be wrapped in curly braces.")
   msg_not_inline <- rex::rex("Any function body starting on a new line should be wrapped in curly braces.")
 
-  linter_always <- brace_linter(function_braces = "always")
-  linter_multi_line <- brace_linter(function_braces = "multi_line")
-  linter_not_inline <- brace_linter(function_braces = "not_inline")
-  linter_never <- brace_linter(function_braces = "never")
+  linter_always <- brace_linter(function_bodies = "always")
+  linter_multi_line <- brace_linter(function_bodies = "multi_line")
+  linter_not_inline <- brace_linter(function_bodies = "not_inline")
+  linter_never <- brace_linter(function_bodies = "never")
 
   lines <- trim_some("
     function(x) {
@@ -326,11 +326,11 @@ test_that("brace_linter lints function expressions correctly", {
   expect_lint("function(x) { x + 4 }", lints_single_line, linter_multi_line)
   expect_lint("function(x) { x + 4 }", lints_single_line, linter_not_inline)
   expect_lint("function(x) { x + 4 }", lints_single_line, linter_never)
-  # using function_braces = "always" without allow_single_line = TRUE prohibits inline function definitions:
+  # using function_bodies = "always" without allow_single_line = TRUE prohibits inline function definitions:
   expect_lint(
     "function(x) { x + 4 }",
     NULL,
-    brace_linter(allow_single_line = TRUE, function_braces = "always")
+    brace_linter(allow_single_line = TRUE, function_bodies = "always")
   )
 
   expect_lint("function(x) x + 4", msg_always, linter_always)

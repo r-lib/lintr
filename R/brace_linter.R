@@ -11,7 +11,7 @@
 #'  - Function bodies are wrapped in curly braces.
 #'
 #' @param allow_single_line If `TRUE`, allow an open and closed curly pair on the same line.
-#' @param function_braces Whether to require function bodies to be wrapped in curly braces. One of
+#' @param function_bodies Whether to require function bodies to be wrapped in curly braces. One of
 #'   - `"always"` to require braces for all function definitions, including inline functions,
 #'   - `"not_inline"` to require braces when a function body does not start on the same line as its signature,
 #'   - `"multi_line"` (the default) to require braces when a function definition spans multiple lines,
@@ -56,8 +56,8 @@
 #' - <https://style.tidyverse.org/syntax.html#if-statements>
 #' @export
 brace_linter <- function(allow_single_line = FALSE,
-                         function_braces = c("multi_line", "always", "not_inline", "never")) {
-  function_braces <- match.arg(function_braces)
+                         function_bodies = c("multi_line", "always", "not_inline", "never")) {
+  function_bodies <- match.arg(function_bodies)
 
   xp_cond_open <- xp_and(c(
     # matching } is on same line
@@ -132,9 +132,9 @@ brace_linter <- function(allow_single_line = FALSE,
   # TODO(#1103): if c_style_braces is TRUE, this needs to be @line2 + 1
   xp_else_same_line <- glue("//ELSE[{xp_else_closed_curly} and @line1 != {xp_else_closed_curly}/@line2]")
 
-  if (function_braces != "never") {
+  if (function_bodies != "never") {
     xp_cond_function_brace <- switch(
-      function_braces,
+      function_bodies,
       always = "1",
       multi_line = "@line1 != @line2",
       not_inline = "@line1 != expr/@line1"
@@ -145,7 +145,7 @@ brace_linter <- function(allow_single_line = FALSE,
     )
 
     msg_function_brace <- switch(
-      function_braces,
+      function_bodies,
       always = "Any function body should be wrapped in curly braces.",
       multi_line = "Any function body spanning multiple lines should be wrapped in curly braces.",
       not_inline = "Any function body starting on a new line should be wrapped in curly braces."
@@ -214,7 +214,7 @@ brace_linter <- function(allow_single_line = FALSE,
         lint_message = "`else` should come on the same line as the previous `}`."
       )
     )
-    if (function_braces != "never") {
+    if (function_bodies != "never") {
       lints <- c(
         lints,
         xml_nodes_to_lints(
