@@ -91,10 +91,11 @@ test_that("Multi-byte characters correct columns", {
 
 test_that("Multi-byte character truncated by parser is ignored", {
   skip_if_not_utf8_locale()
+  skip_if_not_r_version("4.4.0")
   # \U2013 is the Unicode character 'en dash', which is
   # almost identical to a minus sign in monospaced fonts.
   with_content_to_parse("y <- x \U2013 42", {
-    expect_identical(error$message, "unexpected input")
+    expect_identical(error$message, "unexpected invalid token")
     expect_identical(error$column_number, 8L)
   })
 })
