@@ -8,5 +8,4 @@ This release fixes R CMD check issues in R-devel, as requested by CRAN.
 
 ## Reverse dependencies
 
-* I have run R CMD check on the downstream dependencies, no regressions were
-  found.
+* No regressions were found in R CMD check on the downstream dependencies.
