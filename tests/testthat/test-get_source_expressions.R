@@ -91,12 +91,14 @@ test_that("Multi-byte characters correct columns", {
 
 test_that("Multi-byte character truncated by parser is ignored", {
   skip_if_not_utf8_locale()
-  skip_if_not_r_version("4.4.0")
   # \U2013 is the Unicode character 'en dash', which is
   # almost identical to a minus sign in monospaced fonts.
-  with_content_to_parse("y <- x \U2013 42", {
-    expect_identical(error$message, "unexpected invalid token")
-    expect_identical(error$column_number, 8L)
+  content <- "y <- x \U2013 42"
+  # message is like '<text>:1:8: unexpected invalid token\n1: ...'
+  base_msg <- conditionMessage(tryCatch(str2lang(content), error = identity))
+  with_content_to_parse(content, {
+    expect_identical(error$message, gsub(".*: ", "", gsub("\n.*", "", base_msg)))
+    expect_identical(error$column_number, as.integer(gsub(".*:[0-9]+:([0-9]+).*", "\\1", base_msg)))
   })
 })
 
