@@ -95,8 +95,8 @@ test_that("Multi-byte character truncated by parser is ignored", {
   # almost identical to a minus sign in monospaced fonts.
   content <- "y <- x \U2013 42"
   # message is like '<text>:1:8: unexpected invalid token\n1: ...'
-  base_msg <- conditionMessage(tryCatch(str2lang(content), error = identity))
   with_content_to_parse(content, {
+    base_msg <- conditionMessage(tryCatch(str2lang(content), error = identity))
     expect_identical(error$message, gsub(".*: ", "", gsub("\n.*", "", base_msg)))
     expect_identical(error$column_number, as.integer(gsub(".*:[0-9]+:([0-9]+).*", "\\1", base_msg)))
   })
