@@ -98,7 +98,7 @@ test_that("Multi-byte character truncated by parser is ignored", {
   with_content_to_parse(content, {
     base_msg <- conditionMessage(tryCatch(str2lang(content), error = identity))
     # Just ensure that the captured message is a substring of the parser error, #2527
-    expect_true(grepl(error$message, base_msg, fixed = TRUE))
+    expect_true(grepl(error$message, base_msg, fixed = TRUE, useBytes = TRUE))
     expect_identical(error$column_number, 8L)
   })
 })
