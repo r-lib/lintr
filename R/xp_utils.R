@@ -123,3 +123,15 @@ xpath_comment_re <- rex::rex(
   ":)"
 )
 xp_strip_comments <- function(xpath) rex::re_substitutes(xpath, xpath_comment_re, "", global = TRUE)
+
+#' Combine two or more nodesets to a single nodeset
+#'
+#' Useful for calling `{xml2}` functions on a combined set of nodes obtained using different XPath searches.
+#'
+#' @noRd
+# TODO(r-lib/xml2#433): remove this and just use c()
+combine_nodesets <- function(...) {
+  res <- c(...)
+  class(res) <- "xml_nodeset"
+  res
+}
