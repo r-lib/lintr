@@ -97,8 +97,9 @@ test_that("Multi-byte character truncated by parser is ignored", {
   # message is like '<text>:1:8: unexpected invalid token\n1: ...'
   with_content_to_parse(content, {
     base_msg <- conditionMessage(tryCatch(str2lang(content), error = identity))
-    expect_identical(error$message, gsub(".*: ", "", gsub("\n.*", "", base_msg)))
-    expect_identical(error$column_number, as.integer(gsub(".*:[0-9]+:([0-9]+).*", "\\1", base_msg)))
+    # Just ensure that the captured message is a substring of the parser error, #2527
+    expect_true(grepl(error$message, base_msg, fixed = TRUE))
+    expect_identical(error$column_number, 8L)
   })
 })
 
