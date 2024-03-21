@@ -1,3 +1,9 @@
+# lintr 3.1.2
+
+## Notes
+
+* Fixed a test assuming a specific parser error message that recently changed in r-devel (#2527, @IndrajeetPatil).
+
 # lintr 3.1.1
 
 ## Breaking changes
