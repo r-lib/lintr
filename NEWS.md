@@ -1,9 +1,5 @@
 # lintr 3.1.2
 
-## Notes
-
-* Fixed a test assuming a specific parser error message that recently changed in r-devel (#2527, @IndrajeetPatil).
-
 ## New and improved features
 
 ### Lint accuracy fixes: removing false positives
@@ -20,6 +16,11 @@
 
 * `missing_argument_linter()` catches all missing arguments in calls with several, e.g. `foo(,,)` gives 3 lints instead of 2 (#2399, @MichaelChirico).
 * `duplicate_argument_linter()` no longer misses cases with duplicate arguments where a comment comes between the argument name and `=` (#2402, @MichaelChirico).
+
+## Notes
+
+* Fixed a test assuming a specific parser error message that recently changed in r-devel (#2527, @IndrajeetPatil).
+* @MichaelChirico has taken over CRAN maintainer duties for the package. Many thanks to @jimhester for more than 10 years and 15 releases wearing that hat!!
 
 # lintr 3.1.1
 
