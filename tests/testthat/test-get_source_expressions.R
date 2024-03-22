@@ -93,8 +93,12 @@ test_that("Multi-byte character truncated by parser is ignored", {
   skip_if_not_utf8_locale()
   # \U2013 is the Unicode character 'en dash', which is
   # almost identical to a minus sign in monospaced fonts.
-  with_content_to_parse("y <- x \U2013 42", {
-    expect_identical(error$message, "unexpected input")
+  content <- "y <- x \U2013 42"
+  # message is like '<text>:1:8: unexpected invalid token\n1: ...'
+  with_content_to_parse(content, {
+    base_msg <- conditionMessage(tryCatch(str2lang(content), error = identity))
+    # Just ensure that the captured message is a substring of the parser error, #2527
+    expect_true(grepl(error$message, base_msg, fixed = TRUE, useBytes = TRUE))
     expect_identical(error$column_number, 8L)
   })
 })
