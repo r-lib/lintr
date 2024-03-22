@@ -67,7 +67,7 @@ duplicate_argument_linter <- function(except = c("mutate", "transmute")) {
     xml_nodes_to_lints(
       unlist(bad_expr, recursive = FALSE),
       source_expression = source_expression,
-      lint_message = "Duplicate arguments in function call.",
+      lint_message = "Avoid duplicate arguments in function calls.",
       type = "warning"
     )
   })
