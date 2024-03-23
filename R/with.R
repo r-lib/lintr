@@ -181,11 +181,11 @@ all_linters <- function(..., packages = "lintr") {
 linters_with_defaults <- function(..., defaults = default_linters) {
   dots <- list(...)
   if (missing(defaults) && "default" %in% names(dots)) {
-    warning(
-      "'default' is not an argument to linters_with_defaults(). Did you mean 'defaults'? ",
-      "This warning will be removed when with_defaults() is fully deprecated.",
-      call. = FALSE
-    )
+    cli_warn(c(
+      x = "{.arg default} is not an argument to {.fun linters_with_defaults}.",
+      i = "Did you mean {.arg defaults}?",
+      i = "This warning will be removed when {.fun with_defaults} is fully deprecated."
+    ))
     defaults <- dots$default
     nms <- names2(dots)
     missing_index <- !nzchar(nms, keepNA = TRUE)
