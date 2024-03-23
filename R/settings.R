@@ -153,7 +153,7 @@ read_config_file <- function(config_file) {
 validate_config_file <- function(config, config_file, defaults) {
   matched <- names(config) %in% names(defaults)
   if (!all(matched)) {
-    unused_settings <- names(config)[!matched]
+    unused_settings <- names(config)[!matched] # nolint: object_usage_linter.
     cli_warn("Found unused settings in config {.str config_file}: {toString(unused_settings)}")
   }
 
@@ -203,7 +203,7 @@ validate_linters <- function(linters) {
 
   is_linters <- vapply(linters, is_linter, logical(1L))
   if (!all(is_linters)) {
-    non_linters <- which(!is_linters)
+    non_linters <- which(!is_linters) # nolint: object_usage_linter.
     cli_abort(c(
       i = "Setting 'linters' should be a list of linters.",
       x = "Found non-linters at elements: {toString(non_linters)}."

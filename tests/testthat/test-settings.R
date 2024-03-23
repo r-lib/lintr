@@ -273,7 +273,7 @@ test_that("read_config_file() bubbles up warnings helpfully, without erroring (#
   writeLines("a <- 1", "aaa.R")
   expect_warning(
     lint_dir(),
-    "Depending on an R version older than 3.0.0 is not recommended"
+    'Depending on an R version older than "3.0.0" is not recommended'
   )
 })
 

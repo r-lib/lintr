@@ -201,12 +201,10 @@ add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep
       matched <- !is.na(idxs)
       if (!all(matched)) {
         bad <- excluded_linters[!matched]
-        warning(
-          "Could not find linter", if (length(bad) > 1L) "s" else "", " named ",
-          glue_collapse(sQuote(bad), sep = ", ", last = " and "),
-          " in the list of active linters. Make sure the linter is uniquely identified by the given name or prefix.",
-          call. = FALSE
-        )
+        cli_warn(c(
+          x = "Could not find linter{?s} named {.field {sQuote(bad)}} in the list of active linters.",
+          i = "Make sure the linter is uniquely identified by the given name or prefix."
+        ))
       }
       excluded_linters[matched] <- linter_names[idxs[matched]]
     }

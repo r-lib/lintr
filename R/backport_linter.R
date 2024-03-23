@@ -113,8 +113,8 @@ normalize_r_version <- function(r_version) {
   }
   if (r_version < "3.0.0") {
     cli_warn(c(
-      x = "Depending on an R version older than 3.0.0 is not recommended.",
-      i = "Resetting {.var r_version} to 3.0.0."
+      x = "Depending on an R version older than {.val 3.0.0} is not recommended.",
+      i = "Resetting {.var r_version} to {.val 3.0.0}."
     ))
     r_version <- R_system_version("3.0.0")
   }

@@ -72,7 +72,7 @@ test_that("backport_linter generates expected warnings", {
     {
       l <- lint(tmp, backport_linter("2.0.0"))
     },
-    "version older than 3.0.0",
+    'version older than "3.0.0"',
     fixed = TRUE
   )
   expect_identical(l, lint(tmp, backport_linter("3.0.0")))

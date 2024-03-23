@@ -45,11 +45,9 @@ modify_defaults <- function(defaults, ...) {
   if (!all(nms[to_null] %in% names(defaults))) {
     bad_nms <- setdiff(nms[to_null], names(defaults))
     is_are <- if (length(bad_nms) > 1L) "are" else "is"
-    warning(
-      "Trying to remove ", glue_collapse(sQuote(bad_nms), sep = ", ", last = " and "),
-      ", which ", is_are, " not in `defaults`.",
-      call. = FALSE
-    )
+    cli_warn(c(
+      i = "Trying to remove {.field {sQuote(bad_nms)}}, which {is_are} not in {.arg defaults}."
+    ))
   }
 
   is.na(vals) <- nms == vals
@@ -182,8 +180,8 @@ linters_with_defaults <- function(..., defaults = default_linters) {
   dots <- list(...)
   if (missing(defaults) && "default" %in% names(dots)) {
     cli_warn(c(
+      "Did you mean {.arg defaults}?",
       x = "{.arg default} is not an argument to {.fun linters_with_defaults}.",
-      i = "Did you mean {.arg defaults}?",
       i = "This warning will be removed when {.fun with_defaults} is fully deprecated."
     ))
     defaults <- dots$default
