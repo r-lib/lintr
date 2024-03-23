@@ -100,7 +100,7 @@ test_that("it doesn't produce invalid lints", {
   xp_range_end <- "number(./following-sibling::*[1]/@col2)"
   xp_invalid <- "number(./DOES-NOT-EXIST/@col1)"
 
-  expect_snapshot(
+  expect_warning(
     {
       lints1 <- xml_nodes_to_lints(
         xml = node,
@@ -110,13 +110,15 @@ test_that("it doesn't produce invalid lints", {
         range_start_xpath = xp_invalid,
         range_end_xpath = xp_range_end
       )
-    }
+    },
+    "Defaulting to start of line",
+    fixed = TRUE
   )
 
   expect_identical(lints1[["column_number"]], nchar("before") + 1L)
   expect_identical(lints1[["ranges"]], list(c(1L, nchar(code))))
 
-  expect_snapshot(
+  expect_warning(
     {
       lints2 <- xml_nodes_to_lints(
         xml = node,
@@ -126,13 +128,15 @@ test_that("it doesn't produce invalid lints", {
         range_start_xpath = xp_range_start,
         range_end_xpath = xp_invalid
       )
-    }
+    },
+    "Defaulting to width 1",
+    fixed = TRUE
   )
 
   expect_identical(lints2[["column_number"]], nchar("before") + 1L)
   expect_identical(lints2[["ranges"]], list(c(1L, 1L)))
 
-  expect_snapshot(
+  expect_warning(
     {
       lints3 <- xml_nodes_to_lints(
         xml = node,
@@ -142,7 +146,9 @@ test_that("it doesn't produce invalid lints", {
         range_start_xpath = xp_range_start,
         range_end_xpath = xp_range_end
       )
-    }
+    },
+    "Defaulting to start of range",
+    fixed = TRUE
   )
 
   expect_identical(lints3[["column_number"]], 1L)
