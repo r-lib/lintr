@@ -200,7 +200,7 @@ add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep
       idxs <- pmatch(excluded_linters, linter_names, duplicates.ok = TRUE)
       matched <- !is.na(idxs)
       if (!all(matched)) {
-        bad <- excluded_linters[!matched]
+        bad <- excluded_linters[!matched] # nolint: object_usage_linter.
         cli_warn(c(
           x = "Could not find linter{?s} named {.field {sQuote(bad)}} in the list of active linters.",
           i = "Make sure the linter is uniquely identified by the given name or prefix."
