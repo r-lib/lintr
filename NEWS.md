@@ -14,11 +14,13 @@
 * Adjusted various lint messages for consistency in readability (#1330, @MichaelChirico). In general, we favor lint messages to be phrased like "Action, reason" to but the "what" piece of the message front-and-center. This may be a breaking change for code that tests the specific phrasing of lints.
 * `extraction_operator_linter()` is deprecated. Although switching from `$` to `[[` has some robustness benefits for package code, it can lead to non-idiomatic code in many contexts (e.g. R6 classes, Shiny applications, etc.) (#2409, @IndrajeetPatil). To enable the detection of the `$` operator for extraction through partial matching, use `options(warnPartialMatchDollar = TRUE)`.
 * `unnecessary_nested_if_linter()` is deprecated and subsumed into the new/more general `unnecessary_nesting_linter()`.
+* Drop support for posting GitHub comments from inside Travis, Wercker, and Jenkins CI tools (spurred by #2148, @MichaelChirico). We rely on GitHub Actions for linting in CI, and don't see any active users relying on these alternatives. We welcome and encourage community contributions to get support for different CI system going again.
 
 ## Bug fixes
 
 * `object_name_linter()` no longer errors when user-supplied `regexes=` have capture groups (#2188, @MichaelChirico).
 * `.lintr` config validation correctly accepts regular expressions which only compile under `perl = TRUE` (#2375, @MichaelChirico). These have always been valid (since `rex::re_matches()`, which powers the lint exclusion logic, also uses this setting), but the new up-front validation in v3.1.1 incorrectly used `perl = FALSE`.
+* `.lintr` configs set by option `lintr.linter_file` or environment variable `R_LINTR_LINTER_FILE` can point to subdirectories (#2512, @MichaelChirico).
 
 ## Changes to default linters
 
@@ -60,7 +62,7 @@
 * `which_grepl_linter()` for discouraging `which(grepl(ptn, x))` in favor of directly using `grep(ptn, x)` (part of #884, @MichaelChirico).
 * `list_comparison_linter()` for discouraging comparisons on the output of `lapply()`, e.g. `lapply(x, sum) > 10` (part of #884, @MichaelChirico).
 * `print_linter()` for discouraging usage of `print()` on string literals like `print("Reached here")` or `print(paste("Found", nrow(DF), "rows."))` (#1894, @MichaelChirico).
-* `unnecessary_nesting_linter()` for discouraging overly-nested code where an early return or eliminated sub-expression (inside '{') is preferable (#2317 and part of #884, @MichaelChirico).
+* `unnecessary_nesting_linter()` for discouraging overly-nested code where an early return or eliminated sub-expression (inside '{') is preferable (#2317, #2334 and part of #884, @MichaelChirico).
 * `consecutive_mutate_linter()` for encouraging consecutive calls to `dplyr::mutate()` to be combined (part of #884, @MichaelChirico).
 * `if_switch_linter()` for encouraging `switch()` over repeated `if`/`else` tests (#2322 and part of #884, @MichaelChirico).
 * `nested_pipe_linter()` for discouraging pipes within pipes, e.g. `df1 %>% inner_join(df2 %>% select(a, b))` (part of #884, @MichaelChirico).

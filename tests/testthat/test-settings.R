@@ -285,3 +285,19 @@ test_that("perl-only regular expressions are accepted in config", {
   writeLines("a <- 1", "aaa.R")
   expect_silent(lint("aaa.R"))
 })
+
+test_that("settings can be put in a sub-directory", {
+  withr::local_dir(withr::local_tempdir())
+
+  dir.create(".settings")
+  .lintr <- ".settings/.lintr.R"
+  writeLines("linters <- list(line_length_linter(10))", .lintr)
+
+  dir.create("R")
+  writeLines("abcdefghijklmnopqrstuvwxyz=1", "R/a.R")
+
+  writeLines(c("Package: foo", "Version: 0.1"), "DESCRIPTION")
+
+  withr::local_options(lintr.linter_file = .lintr)
+  expect_length(lint_package(), 1L)
+})

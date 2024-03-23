@@ -2,11 +2,11 @@ Package: lintr
 Title: A 'Linter' for R Code
 Version: 3.1.1.9000
 Authors@R: c(
-    person("Jim", "Hester", , "james.f.hester@gmail.com", role = c("aut", "cre")),
+    person("Jim", "Hester", , role = "aut"),
     person("Florent", "Angly", role = "aut",
            comment = "fangly"),
     person("Russ", "Hyde", role = "aut"),
-    person("Michael", "Chirico", role = "aut"),
+    person("Michael", "Chirico", email = "michaelchirico4@gmail.com", role = c("aut", "cre")),
     person("Kun", "Ren", role = "aut"),
     person("Alexander", "Rosenstock", role = "aut",
            comment = "AshesITR"),
@@ -37,7 +37,11 @@ Imports:
     xmlparsedata (>= 1.0.5)
 Suggests:
     bookdown,
+<<<<<<< HEAD
     httr (>= 1.2.1),
+=======
+    cli,
+>>>>>>> main
     jsonlite,
     patrick (>= 0.2.0),
     rlang,
@@ -76,7 +80,6 @@ Collate:
     'class_equals_linter.R'
     'commas_linter.R'
     'commented_code_linter.R'
-    'comments.R'
     'comparison_negation_linter.R'
     'condition_call_linter.R'
     'condition_message_linter.R'

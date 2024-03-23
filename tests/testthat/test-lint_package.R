@@ -231,6 +231,9 @@ test_that("package using .lintr.R config lints correctly", {
 })
 
 test_that("lintr need not be attached for .lintr.R configs to use lintr functions", {
+  # For some obscure reason, running in the subprocess on this specific version of R
+  #   on Windows stopped working after PR #2446 with 'Package lintr not found'.
+  if (getRversion() == "3.6.3") skip_on_os("windows")
   exprs <- paste(
     'options(lintr.linter_file = "lintr_test_config")',
     sprintf('lints <- lintr::lint_package("%s")', test_path("dummy_packages", "RConfig")),
