@@ -180,8 +180,14 @@
 <li>
 <code><a href="../reference/object_overwrite_linter.html">object_overwrite_linter()</a></code> for discouraging re-use of upstream package exports as local variables (<a href="https://github.com/r-lib/lintr/issues/2344" class="external-link">#2344</a>, <a href="https://github.com/r-lib/lintr/issues/2346" class="external-link">#2346</a> and part of <a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a> and <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 </ul></div>
+</div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="3.1.2" id="lintr-312">lintr 3.1.2<a class="anchor" aria-label="anchor" href="#lintr-312"></a></h2><p class="text-muted">CRAN release: 2024-03-25</p>
+<div class="section level3">
+<h3 id="new-and-improved-features-3-1-2">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-3-1-2"></a></h3>
 <div class="section level4">
-<h4 id="lint-accuracy-fixes-removing-false-positives-development-version">Lint accuracy fixes: removing false positives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-positives-development-version"></a></h4>
+<h4 id="lint-accuracy-fixes-removing-false-positives-3-1-2">Lint accuracy fixes: removing false positives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-positives-3-1-2"></a></h4>
 <ul><li>
 <code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code> ignores reachable code in inline functions like <code>function(x) if (x &gt; 2) stop() else x</code> (<a href="https://github.com/r-lib/lintr/issues/2259" class="external-link">#2259</a>, <a href="https://github.com/MEO265" class="external-link">@MEO265</a>).</li>
 <li>
@@ -194,16 +200,21 @@
 <li>
 <code><a href="../reference/expect_comparison_linter.html">expect_comparison_linter()</a></code> ignores faulty usage like <code>expect_true(x, y &gt; z)</code> (<a href="https://github.com/r-lib/lintr/issues/2083" class="external-link">#2083</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Note that <code>y &gt; z</code> is being passed to the <code>info=</code> argument, so this is likely a mistake.</li>
 <li>
-<code><a href="../reference/consecutive_assertion_linter.html">consecutive_assertion_linter()</a></code> ignores cases where a second asssertion follows assignment with <code>=</code> (<a href="https://github.com/r-lib/lintr/issues/2444" class="external-link">#2444</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<code><a href="../reference/consecutive_assertion_linter.html">consecutive_assertion_linter()</a></code> ignores cases where a second assertion follows an intervening assignment with <code>=</code> (<a href="https://github.com/r-lib/lintr/issues/2444" class="external-link">#2444</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level4">
-<h4 id="lint-accuracy-fixes-removing-false-negatives-development-version">Lint accuracy fixes: removing false negatives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-negatives-development-version"></a></h4>
+<h4 id="lint-accuracy-fixes-removing-false-negatives-3-1-2">Lint accuracy fixes: removing false negatives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-negatives-3-1-2"></a></h4>
 <ul><li>
 <code><a href="../reference/missing_argument_linter.html">missing_argument_linter()</a></code> catches all missing arguments in calls with several, e.g. <code>foo(,,)</code> gives 3 lints instead of 2 (<a href="https://github.com/r-lib/lintr/issues/2399" class="external-link">#2399</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/duplicate_argument_linter.html">duplicate_argument_linter()</a></code> no longer misses cases with duplicate arguments where a comment comes between the argument name and <code>=</code> (<a href="https://github.com/r-lib/lintr/issues/2402" class="external-link">#2402</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 </div>
+<div class="section level3">
+<h3 id="notes-3-1-2">Notes<a class="anchor" aria-label="anchor" href="#notes-3-1-2"></a></h3>
+<ul><li>Fixed a test assuming a specific parser error message that recently changed in r-devel (<a href="https://github.com/r-lib/lintr/issues/2527" class="external-link">#2527</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</li>
+<li>@MichaelChirico has taken over CRAN maintainer duties for the package. Many thanks to <a href="https://github.com/jimhester" class="external-link">@jimhester</a> for more than 10 years and 15 releases wearing that hat!!</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.1.1" id="lintr-311">lintr 3.1.1<a class="anchor" aria-label="anchor" href="#lintr-311"></a></h2><p class="text-muted">CRAN release: 2023-11-07</p>
