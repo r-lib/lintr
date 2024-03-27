@@ -268,14 +268,16 @@ extract_glued_symbols <- function(expr, interpret_glue) {
 }
 
 unexpected_glue_parse_error <- function(cond) {
-  stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond), call. = FALSE) # nocov
+  cli_abort(c(
+    x = "Unexpected failure to parse glue call.",
+    i = "Please report: {conditionMessage(cond)}"
+  )) # nocov
 }
 glue_parse_failure_warning <- function(cond) {
-  warning(
-    "Evaluating glue expression while testing for local variable usage failed: ", conditionMessage(cond),
-    "\nPlease ensure correct glue syntax, e.g., matched delimiters.",
-    call. = FALSE
-  )
+  cli_warn(c(
+    x = "Evaluating glue expression while testing for local variable usage failed: {conditionMessage(cond)}",
+    i = "Please ensure correct glue syntax, e.g., matched delimiters."
+  ))
   NULL
 }
 glue_symbol_extractor <- function(text, envir, data) {

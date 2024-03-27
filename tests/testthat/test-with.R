@@ -94,7 +94,7 @@ test_that("linters_with_defaults(default = .) is supported with a deprecation wa
     {
       linters <- linters_with_defaults(default = list(), whitespace_linter())
     },
-    "'default'"
+    "`default` is not an argument"
   )
   expect_named(linters, "whitespace_linter")
 

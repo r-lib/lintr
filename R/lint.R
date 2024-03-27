@@ -242,10 +242,9 @@ lint_package <- function(path = ".", ...,
   pkg_path <- find_package(path)
 
   if (is.null(pkg_path)) {
-    warning(
-      sprintf("Didn't find any R package searching upwards from '%s'.", normalizePath(path)),
-      call. = FALSE
-    )
+    cli_warn(c(
+      i = "Didn't find any R package searching upwards from {.file {normalizePath(path)}}"
+    ))
     return(NULL)
   }
 

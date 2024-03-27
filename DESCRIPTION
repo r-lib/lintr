@@ -24,6 +24,7 @@ Depends:
     R (>= 3.6)
 Imports:
     backports (>= 1.1.7),
+    cli,
     codetools,
     cyclocomp,
     digest,
@@ -36,7 +37,6 @@ Imports:
     xmlparsedata (>= 1.0.5)
 Suggests:
     bookdown,
-    cli,
     jsonlite,
     patrick (>= 0.2.0),
     rlang,

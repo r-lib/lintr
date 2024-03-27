@@ -1,8 +1,7 @@
 test_that("backport_linter produces error when R version misspecified", {
   expect_error(
     lint(text = "numToBits(2)", linters = backport_linter(420L)),
-    "`r_version` must be a R version number, returned by R_system_version(), or a string.",
-    fixed = TRUE
+    "`r_version` must be an R version number"
   )
 })
 
@@ -44,7 +43,10 @@ test_that("backport_linter detects backwards-incompatibility", {
     backport_linter("oldrel")
   )
 
-  expect_error(backport_linter("oldrel-99"), "`r_version` must be a version number or one of")
+  expect_error(
+    backport_linter("oldrel-99"),
+    "`r_version` is not valid"
+  )
 
   expect_lint(
     "numToBits(2)",
@@ -70,7 +72,7 @@ test_that("backport_linter generates expected warnings", {
     {
       l <- lint(tmp, backport_linter("2.0.0"))
     },
-    "version older than 3.0.0",
+    'version older than "3.0.0"',
     fixed = TRUE
   )
   expect_identical(l, lint(tmp, backport_linter("3.0.0")))

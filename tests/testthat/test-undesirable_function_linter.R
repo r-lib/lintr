@@ -55,7 +55,7 @@ test_that("Line numbers are extracted correctly", {
 })
 
 test_that("invalid inputs fail correctly", {
-  error_msg <- "'fun' should be a non-empty named character vector"
+  error_msg <- "`fun` should be a non-empty named character vector"
 
   expect_error(
     undesirable_function_linter("***"),
