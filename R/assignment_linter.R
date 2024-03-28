@@ -7,6 +7,8 @@
 #' @param allow_right_assign Logical, default `FALSE`. If `TRUE`, `->` and `->>` are allowed.
 #' @param allow_trailing Logical, default `TRUE`. If `FALSE` then assignments aren't allowed at end of lines.
 #' @param allow_pipe_assign Logical, default `FALSE`. If `TRUE`, magrittr's `%<>%` assignment is allowed.
+#' @param allow_equal_assign Logical, default `FALSE`.
+#'   If `TRUE`, `=` instead of `<-` is used for assignment.
 #'
 #' @examples
 #' # will produce lints
@@ -73,7 +75,8 @@
 assignment_linter <- function(allow_cascading_assign = TRUE,
                               allow_right_assign = FALSE,
                               allow_trailing = TRUE,
-                              allow_pipe_assign = FALSE) {
+                              allow_pipe_assign = FALSE,
+                              allow_equal_assign = FALSE) {
   trailing_assign_xpath <- paste(
     collapse = " | ",
     c(
@@ -88,7 +91,7 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
 
   xpath <- paste(collapse = " | ", c(
     # always block = (NB: the parser differentiates EQ_ASSIGN, EQ_SUB, and EQ_FORMALS)
-    "//EQ_ASSIGN",
+    if (allow_equal_assign) "//LEFT_ASSIGN[text() = '<-']" else "//EQ_ASSIGN",
     # -> and ->> are both 'RIGHT_ASSIGN'
     if (!allow_right_assign) "//RIGHT_ASSIGN" else if (!allow_cascading_assign) "//RIGHT_ASSIGN[text() = '->>']",
     # <-, :=, and <<- are all 'LEFT_ASSIGN'; check the text if blocking <<-.
@@ -108,7 +111,10 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
     }
 
     operator <- xml_text(bad_expr)
-    lint_message_fmt <- rep("Use <-, not %s, for assignment.", length(operator))
+    lint_message_fmt <- rep(
+      paste0("Use ", if (allow_equal_assign) "=" else "<-", ", not %s, for assignment."),
+      length(operator)
+    )
     lint_message_fmt[operator %in% c("<<-", "->>")] <-
       "Replace %s by assigning to a specific environment (with assign() or <-) to avoid hard-to-predict behavior."
     lint_message_fmt[operator == "%<>%"] <-

@@ -192,3 +192,14 @@ test_that("multiple lints throw correct messages", {
     assignment_linter(allow_cascading_assign = FALSE)
   )
 })
+
+test_that("= instead of <- can be used for assignment", {
+  linter <- assignment_linter(allow_equal_assign = TRUE)
+  lint_msg <- rex::rex("Use =, not <-, for assignment.")
+
+  expect_lint("blah = 1", NULL, linter)
+  expect_lint("blah <- 1", lint_msg, linter)
+
+  # data.table's left assign := needs to be silent
+  expect_lint("dt[, x := 42]", NULL, linter)
+})
