@@ -198,10 +198,10 @@ test_that("validate_config_file() detects improperly-formed settings", {
   expect_error(lint_dir(), "Setting 'comment_bot' should be TRUE or FALSE, not 'TRUE, FALSE'", fixed = TRUE)
 
   writeLines("linters: list(1)", .lintr)
-  expect_error(lint_dir(), "Setting 'linters' should be a list of linters", fixed = TRUE)
+  expect_error(lint_dir(), "Setting `linters` should be a list of linters", fixed = TRUE)
 
   writeLines("linters: list(assignment_linter(), 1)", .lintr)
-  expect_error(lint_dir(), "Setting 'linters' should be a list of linters", fixed = TRUE)
+  expect_error(lint_dir(), "Setting `linters` should be a list of linters", fixed = TRUE)
 
   writeLines("exclusions: list(1L)", .lintr)
   expect_error(lint_dir(), "Unnamed entries of setting 'exclusions' should be strings", fixed = TRUE)
