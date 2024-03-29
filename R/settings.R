@@ -134,7 +134,10 @@ read_config_file <- function(config_file) {
       }
     }
     malformed <- function(e) {
-      stop("Malformed config file:\n  ", conditionMessage(e), call. = FALSE)
+      cli_abort(c(
+        x = "Malformed config file:",
+        i = conditionMessage(e)
+      ))
     }
   }
   withCallingHandlers(
@@ -143,7 +146,10 @@ read_config_file <- function(config_file) {
       error = malformed
     ),
     warning = function(w) {
-      warning("Warning encountered while loading config:\n  ", conditionMessage(w), call. = FALSE)
+      cli::cli_warn(c(
+        x = "Warning encountered while loading config:",
+        i = conditionMessage(w)
+      ))
       invokeRestart("muffleWarning")
     }
   )
@@ -205,7 +211,7 @@ validate_linters <- function(linters) {
   if (!all(is_linters)) {
     non_linters <- which(!is_linters) # nolint: object_usage_linter.
     cli_abort(c(
-      i = "Setting 'linters' should be a list of linters.",
+      i = "Setting {.arg linters} should be a list of linters.",
       x = "Found non-linters at elements: {toString(non_linters)}."
     ))
   }
