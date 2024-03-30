@@ -227,11 +227,11 @@ validate_exclusions <- function(exclusions) {
   unnamed_is_string <-
     vapply(exclusions[!has_names], function(x) is.character(x) && length(x) == 1L && !is.na(x), logical(1L))
   if (!all(unnamed_is_string)) {
-    stop(
-      "Unnamed entries of setting 'exclusions' should be strings naming files or directories, check entries: ",
-      toString(which(!has_names)[!unnamed_is_string]), ".",
-      call. = FALSE
-    )
+    problematic_entries <- toString(which(!has_names)[!unnamed_is_string]) # nolint: object_usage_linter.
+    cli_abort(c(
+      i = "Unnamed entries of setting {.arg exclusions} should be strings naming files or directories.",
+      x = "Check exclusions: {problematic_entries}."
+    ))
   }
   for (ii in which(has_names)) validate_named_exclusion(exclusions, ii)
 }
@@ -244,11 +244,10 @@ validate_named_exclusion <- function(exclusions, idx) {
     valid_entry <- is.numeric(entry) && !anyNA(entry)
   }
   if (!all(valid_entry)) {
-    stop(
-      "Named entries of setting 'exclusions' should designate line numbers for exclusion, ",
-      "check exclusion: ", idx, ".",
-      call. = FALSE
-    )
+    cli_abort(c(
+      i = "Named entries of setting {.arg exclusions} should designate line numbers for exclusion.",
+      x = "Check exclusions: {idx}."
+    ))
   }
 }
 
